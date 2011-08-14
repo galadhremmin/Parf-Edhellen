@@ -1,0 +1,3 @@
+Options +FollowSymLinks
+RewriteEngine on
+RewriteRule ^api\/([A-Za-z0-9\-]+)\/?([0-9=a-zA-Z%]+)?\/?$ api.php?service=$1&param=$2
