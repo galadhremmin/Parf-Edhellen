@@ -92,7 +92,7 @@ var LANGDict = {
   },
   showIndexForm: function(id) {
     $('#index-form').slideToggle(LANGDict.Config.SLIDE_SPEED, function() {
-      
+      $(this).find('input[name="word"]').focus();
     });
     
     return false;
@@ -181,7 +181,7 @@ var LANGDict = {
     var postData = this.extractValues(_form);
     
     if (postData) {
-      if (!postData.indexWord || /^\s*$/.test(postData.indexWord.value)) {
+      if (!postData.word || /^\s*$/.test(postData.word)) {
         alert('Please input the keyword you believe would further enhance the quality of the search operation.');
         return false;
       }
@@ -192,7 +192,9 @@ var LANGDict = {
         data: postData,
         dataType: 'json', 
         success: function(msg) {
-          alert('ha! success!');
+          if (msg.succeeded && msg.response.identifier) {
+            LANGDict.load(msg.response.identifier);
+          }
         }
       });
     }
@@ -255,6 +257,23 @@ var LANGDict = {
         }
       }
     });
+    
+    return false;
+  },
+  removeIndex: function(id) {
+    if (confirm('Are you sure you want to mark this keyword for deletion?')) {
+      $.ajax({
+        url: 'api/index/remove',
+        data: { id: id },
+        type: 'post',
+        dataType: 'json', 
+        success: function(msg) {
+          if (msg.succeeded && msg.response.id) {
+            $('span[rel="keyword-' + msg.response.id + '"]').remove();
+          }
+        }
+      });
+    }
     
     return false;
   },

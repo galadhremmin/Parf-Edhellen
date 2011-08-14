@@ -1,4 +1,8 @@
 <?php
+  if (!defined('SYS_ACTIVE')) {
+    exit;
+  }
+  
   class StringWizard {
     private function __construct() {
       // Disable construction

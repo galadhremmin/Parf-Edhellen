@@ -23,6 +23,7 @@
     
     // Read-only columns
     public $id;
+    public $wordID;
     public $dateCreated;
     public $authorID;
     public $latest;
@@ -43,22 +44,40 @@
     public function validate() {
       if (preg_match('/^\\s*$/', $this->word) || 
           preg_match('/^\\s*$/', $this->translation) || 
-          $this->language < 1) {
+          (!$this->index && $this->language < 1)) {
         return false;
       }
       
       return true;
     }
     
-    public function load($id) {
+    public function remove() {
+      if ($this->id < 1) {
+        throw new InvalidParameterException('id');
+      }
+      
+      $conn = Database::instance()->exclusiveConnection();
+      $stmt = $conn->prepare('DELETE FROM `translation` WHERE `TranslationID` = ?');
+      $stmt->bind_param('i', $this->id);
+      $stmt->execute();
+    }
+    
+    public function load($id = null) {
       // result container
+      if ($id === null) {
+        $id = $this->id;
+      }
+      
+      if ($id < 1) {
+        throw new InvalidParameterException('id');
+      }
       
       $db = Database::instance();
       $query = $db->connection()->prepare(
         'SELECT 
           t.`LanguageID`, t.`Translation`, t.`Etymology`, t.`Type`, t.`Source`, t.`Comments`, 
           t.`Tengwar`, t.`Gender`, t.`Phonetic`, w.`Key`, t.`NamespaceID`, t.`AuthorID`,
-          t.`DateCreated`, t.`Latest`, t.`Index`
+          t.`DateCreated`, t.`Latest`, t.`Index`, t.`WordID`
          FROM `translation` t 
          LEFT JOIN `word` w ON w.`KeyID` = t.`WordID`
          WHERE t.`TranslationID` = ?'
@@ -69,7 +88,7 @@
       $query->bind_result(
         $this->language, $this->translation, $this->etymology, $this->type, $this->source, $this->comments,
         $this->tengwar, $this->gender, $this->phonetic, $this->word, $this->namespaceID, $this->authorID,
-        $this->dateCreated, $this->latest, $this->index
+        $this->dateCreated, $this->latest, $this->index, $this->wordID
       );
       $query->fetch();
       $query->close();

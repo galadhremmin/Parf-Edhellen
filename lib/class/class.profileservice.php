@@ -1,4 +1,8 @@
 <?php
+  if (!defined('SYS_ACTIVE')) {
+    exit;
+  }
+  
   class ProfileService extends RESTfulService {
     public function __construct() {
       parent::__construct();

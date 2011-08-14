@@ -27,7 +27,7 @@
         </tr>
         <tr>
           <th scope="row">Keyword</th>
-          <td><input type="text" maxlength="64" size="40" class="rounded-small" name="indexWord" /></td>
+          <td><input type="text" maxlength="64" size="40" class="rounded-small" name="word" /></td>
         </tr>
       </table>
 
@@ -138,7 +138,7 @@
 {if $indexes|@count > 0}
   <h2>Keywords</h2>
   {foreach $indexes as $index}
-    <span class="keyword">{$index->word} ({$index->id}) <a href="#" onclick="LANGDict.removeIndex({$index->id})">x</a></span>
+    <span class="keyword" rel="keyword-{$index->id}">{$index->word} ({$index->id}) <a href="#" onclick="return LANGDict.removeIndex({$index->id})">x</a></span>
   {/foreach}
 {/if}
 

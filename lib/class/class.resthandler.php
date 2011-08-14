@@ -1,4 +1,8 @@
 <?php
+  if (!defined('SYS_ACTIVE')) {
+    exit;
+  }
+  
   class RESTHandler {
     public static function processRequest() {
       $service = null;

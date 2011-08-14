@@ -139,7 +139,7 @@
                              FROM `translation` t
                              LEFT JOIN `inflection` i ON i.`TranslationID` = t.`TranslationID` 
                              WHERE t.`Latest` = 1 AND (i.`WordID` = ? OR t.`WordID` = ?)');
-      $query->bind_param('i', $id, $id);
+      $query->bind_param('ii', $id, $id);
       $query->execute();
       $query->bind_result($count);
       
@@ -192,9 +192,9 @@
       return self::register($trans);
     }
     
-    private function register(Translation& $trans, Word $word = null) {
+    private static function register(Translation& $trans, Word $word = null) {
       if (!$trans->validate()) {
-        throw new ErrorException('Invalid translation.');
+        throw new InvalidParameterException('translation');
       }
       
       if ($word === null) {
@@ -204,6 +204,12 @@
     
       // Acquire a connection for making changes in the database.
       $db = Database::instance()->exclusiveConnection();
+      
+      // check namespace validity
+      $namespace = new Namespace();
+      if ($namespace->load($trans->namespaceID) === null) {
+        throw new InvalidParameterException('namespaceID');
+      }
 
       // Deprecate current translation entry
       if ($trans->id > 0) {
@@ -239,7 +245,7 @@
         "INSERT INTO `translation` (`Translation`, `Etymology`, `Type`, `Source`, `Comments`, 
         `Tengwar`, `Phonetic`, `LanguageID`, `WordID`, `NamespaceID`, `Index`, `AuthorID`,
         `Latest`, `DateCreated`) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '1', NOW())"
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '1', NOW())"
       );
       $query->bind_param('sssssssiiiii',
         $trans->translation, $trans->etymology, $trans->type, $trans->source, $trans->comments,
@@ -252,8 +258,7 @@
       
       $query->close();
       
-      // if word is null, index, else translation.
-      return $word === null ? $trans : $word;
+      return $trans->index ? $trans : $word;
     }
   }
 ?>

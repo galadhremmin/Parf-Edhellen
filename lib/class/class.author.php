@@ -1,4 +1,8 @@
 <?php
+  if (!defined('SYS_ACTIVE')) {
+    exit;
+  }
+  
   class Author extends Entity {
     public $id;
     public $nickname;
