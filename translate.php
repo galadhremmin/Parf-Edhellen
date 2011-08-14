@@ -2,5 +2,5 @@
   include_once 'lib/system.php';
   
   $r = new TemplateEngine();
-  $r->display('translate', false, false);
+  $r->displayEncapsulated('translate', false, false);
 ?>

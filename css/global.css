@@ -26,6 +26,15 @@ body {
   font: 11pt 'ProcionoRegular', 'Georgia', serif;
   color: black;
 }
+ul {
+  list-style-type: circle;
+  margin: 0 0 0 15px;
+  padding: 0;
+}
+ul li {
+  margin: 0;
+  padding: 0;
+}
 a {
   color: #3c5479;
 }
@@ -147,8 +156,6 @@ table tr td, table tr th {
   color: #666;
   font-size: 90%;
   text-align: left;
-  height: 300px;
-  overflow: auto;
 }
 #sidebar-entry h2 {
   border: none;
@@ -231,4 +238,8 @@ table tr td, table tr th {
   background: #5c728e;
   padding: 0 4px 0 4px;
   border-radius: 4px;
+}
+.scroll-view {
+  height: 300px;
+  overflow: auto;
 }

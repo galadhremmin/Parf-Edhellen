@@ -2,6 +2,8 @@
   define('SYS_ACTIVE', true);
 
   include_once 'config/global.php';
+
+  error_reporting(E_ALL | E_STRICT);
   
   function __autoload($className) {
     $className = strtolower($className);

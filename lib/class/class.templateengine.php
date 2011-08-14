@@ -14,7 +14,7 @@
       parent::__destruct();
     }
     
-    public function display($file, $encapsulate = true, $cache = true) {
+    public function displayEncapsulated($file, $encapsulate = true, $cache = true) {
       $this->caching = $cache;    
     
       $controller = self::getController($file);
@@ -26,13 +26,13 @@
       $controller = new $controller($this);
     
       if ($encapsulate) {
-        $this->display('header', false, false);
+        $this->displayEncapsulated('header', false, false);
       }
       
       parent::display($file.'.tpl');
       
       if ($encapsulate) {
-        $this->display('footer', false, true);
+        $this->displayEncapsulated('footer', false, true);
       }
     }
     

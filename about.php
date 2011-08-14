@@ -2,5 +2,5 @@
   include_once 'lib/system.php';
   
   $r = new TemplateEngine();
-  $r->display('about');
+  $r->displayEncapsulated('about');
 ?>

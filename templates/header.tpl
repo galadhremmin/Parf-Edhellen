@@ -8,7 +8,7 @@
   <script type="text/javascript" src="js/jquery.js"></script>
   <script type="text/javascript" src="js/jquery-ui-1.8.14.custom.min.js"></script>
   <script type="text/javascript" src="js/global.js"></script>
-  <meta name="viewport" content="width=700;initial-scale=1.0Lmaximum-scale=1.0"/>
+  <meta name="viewport" content="width=device-width;initial-scale=1.0;maximum-scale=1.0"/>
 </head>
 <body>
 <h1>{$pageTitle}</h1>

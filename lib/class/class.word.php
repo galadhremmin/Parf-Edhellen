@@ -156,6 +156,7 @@
     
     public static function registerIndex(Translation& $trans) {
       $trans->translation = 'index';
+      $trans->index = true;
       
       if ($trans->word === null) {
         throw new ErrorException('Index missing key.');
@@ -236,14 +237,14 @@
       // Insert the row
       $query = $db->prepare(
         "INSERT INTO `translation` (`Translation`, `Etymology`, `Type`, `Source`, `Comments`, 
-        `Tengwar`, `Phonetic`, `LanguageID`, `WordID`, `NamespaceID`, `AuthorID`, `Latest`, 
-        `DateCreated`) 
+        `Tengwar`, `Phonetic`, `LanguageID`, `WordID`, `NamespaceID`, `Index`, `AuthorID`,
+        `Latest`, `DateCreated`) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '1', NOW())"
       );
-      $query->bind_param('sssssssiiii',
+      $query->bind_param('sssssssiiiii',
         $trans->translation, $trans->etymology, $trans->type, $trans->source, $trans->comments,
         $trans->tengwar, $trans->phonetic, $trans->language, $word->id, $trans->namespaceID,
-        $accountID
+        $trans->index, $accountID
       );
       $query->execute();
       

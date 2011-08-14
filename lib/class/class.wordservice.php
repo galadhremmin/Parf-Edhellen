@@ -1,24 +1,17 @@
 <?php
   class WordService extends RESTfulService {
+    public function __construct() {
+      parent::__construct();
+      
+      parent::registerMainMethod('getWord');
+      parent::registerMethod('search', 'searchWord');
+    }
+  
     public function handleRequest(&$data) {
       throw new ErrorException('Parameterless request presently unsupported.');
-    } 
-    
-    public function handleParameterizedRequest(&$data, $param = null) {
-      if (is_numeric($param)) {
-        return self::getWord($param);
-      }
-      
-      switch ($param) {
-        case 'search':
-          return self::searchWord($data);
-          
-        default:
-          throw new ErrorException("Unrecognised command '".$param."'.");
-      }
     }
     
-    private function getWord($id) {
+    protected static function getWord($id) {
       $word = new Word();
       $word->load($id);
       
@@ -29,7 +22,7 @@
       return $word;
     }
     
-    private function searchWord(&$data) {
+    protected static function searchWord(&$data) {
       if (!isset($data['term'])) {
         throw new ErrorException("Missing parameter 'term'.");
       }

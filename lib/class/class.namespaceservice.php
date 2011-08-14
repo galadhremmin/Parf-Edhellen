@@ -1,24 +1,17 @@
 <?php
   class NamespaceService extends RESTfulService {
-    public function handleRequest(&$data) {
-      throw new ErrorException('Parameterless request presently unsupported.');
-    } 
-    
-    public function handleParameterizedRequest(&$data, $param = null) {
-      if (is_numeric($param)) {
-        return self::getNamespace($param);
-      }
+    public function __construct() {
+      parent::__construct();
       
-      switch ($param) {
-        case 'save':
-          return self::saveNamespace($data);
-          
-        default:
-          throw new ErrorException("Unrecognised command '".$param."'.");
-      }
+      parent::registerMainMethod('getNamespace');
+      parent::registerMethod('save', 'saveNamespace');
     }
     
-    private function getNamespace($id) {    
+    public function handleRequest(&$data) {
+      throw new ErrorException('Parameterless request presently unsupported.');
+    }
+    
+    protected static function getNamespace($id) {    
       $namespace = new DictionaryNamespace();
       $namespace->load($id);
       
@@ -29,7 +22,7 @@
       return $namespace;
     }
     
-    private function saveNamespace(&$data) {
+    protected static function saveNamespace(&$data) {
       if (!isset($data['identifier'])) {
         throw new ErrorException("Missing parameter 'identifier'.");
       }

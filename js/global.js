@@ -1,4 +1,7 @@
 var LANGDict = {
+  Config: {
+    SLIDE_SPEED: 1000
+  },
   messages: {
     'q-wordID': 'This is entry order, according to the function and the sense of the word (word.1, word.2, word.3 etc.).\n\nUsually you can leave this to its default value, but when a word might have multiple meanings such as Sindarin _a_, order the word with dots: a.1, a.2 etc.'
   },
@@ -9,7 +12,7 @@ var LANGDict = {
       
       var targ = $('#loading');
       if (targ.is(':hidden') && this.inst > 0) {
-        targ.show(1000);
+        targ.show(LANGDict.Config.SLIDE_SPEED);
       }
     },
     dec: function() {
@@ -17,11 +20,11 @@ var LANGDict = {
       
       if (this.inst < 1) {
         this.inst = 0;
-        $('#loading').hide(1000);
+        $('#loading').hide(LANGDict.Config.SLIDE_SPEED);
       }
     }
   },
-  init: function() {    
+  init: function() {
     $(window).bind(
       'hashchange',
       $.proxy(
@@ -68,42 +71,31 @@ var LANGDict = {
       }
     );
   },
+  cancelForm: function() {
+    $('.extendable-form:visible').slideUp();
+  },
   showForm: function(id) {
     var values = {};
     if (id) {
       // load values here
     }
-    
-    $('#extend-form').slideToggle(1000, function() {
+
+    $('#extend-form').slideToggle(LANGDict.Config.SLIDE_SPEED, function() {
       var word = new String(window.location.hash);
       if (word.length > 0) {
         word = decodeURIComponent(word.substr(1));
       }
       $('#word-input').val(word).keyup().focus();
     }); // 1 second
-  },
-  saveNamespace: function(identifier) {
-    this.Loader.inc();
-    $.ajax({
-      url: 'api/namespace/save',
-      type: 'post',
-      data: { identifier: identifier },
-      dataType: 'json',
-      success: function(msg) {
-        if (msg.succeeded) {
-          LANGDict.load(msg.response.identifier);
-          $('#extend-form').slideUp(1000);
-        } else {
-          alert('Unfortunately, an error occurred that prevented this record from being saved. '+
-                '\n\nPlease refresh the page and try again.');
-        }
-        LANGDict.Loader.dec();
-      }
-    });
+    
     return false;
   },
-  hideTranslationForm: function() {
-    $('#translation-form').slideUp();
+  showIndexForm: function(id) {
+    $('#index-form').slideToggle(LANGDict.Config.SLIDE_SPEED, function() {
+      
+    });
+    
+    return false;
   },
   showTranslationForm: function(translationIDOrWord, preserveForm) {
     if (/string/i.test(typeof(translationIDOrWord))) {
@@ -159,36 +151,56 @@ var LANGDict = {
     
     var targ = $('#translation-form');
     if (targ.is(':hidden')) {
-      targ.slideDown();
+      targ.slideDown(LANGDict.Config.SLIDE_SPEED);
     }
     
     $('#translation-form span[rel=function]').html(preserveForm ? 'Edit' : 'Add');
     return false;
   },
-  saveTranslation: function(_form) {
-    var postData = null;
-    
-    for (var i = 0; i < _form.elements.length; ++i) {
-      var item = _form.elements[i];
-      
-      if (!item.name || item.name.length < 1) {
-        continue;
-      }
-      
-      var value = null;
-      if (item.selectedIndex !== undefined) {
-        value = item.options[item.selectedIndex].value;
-      } else {
-        value = item.value;
-      }
-      
-      if (value !== null) {
-        if (!postData) {
-          postData = {};
+  saveNamespace: function(identifier) {
+    this.Loader.inc();
+    $.ajax({
+      url: 'api/namespace/save',
+      type: 'post',
+      data: { identifier: identifier },
+      dataType: 'json',
+      success: function(msg) {
+        if (msg.succeeded) {
+          LANGDict.load(msg.response.identifier);
+          LANGDict.cancelForm();
+        } else {
+          alert('Unfortunately, an error occurred that prevented this record from being saved. '+
+                '\n\nPlease refresh the page and try again.');
         }
-        postData[item.name] = value;
+        LANGDict.Loader.dec();
       }
+    });
+    return false;
+  },
+  saveIndex: function(_form) {
+    var postData = this.extractValues(_form);
+    
+    if (postData) {
+      if (!postData.indexWord || /^\s*$/.test(postData.indexWord.value)) {
+        alert('Please input the keyword you believe would further enhance the quality of the search operation.');
+        return false;
+      }
+      
+      $.ajax({
+        url: 'api/index/save',
+        type: 'post',
+        data: postData,
+        dataType: 'json', 
+        success: function(msg) {
+          alert('ha! success!');
+        }
+      });
     }
+    
+    return false;
+  },
+  saveTranslation: function(_form) {
+    var postData = this.extractValues(_form);
     
     if (postData) {
       var error = null;
@@ -245,6 +257,33 @@ var LANGDict = {
     });
     
     return false;
+  },
+  extractValues: function(_form) {
+    var postData = null;
+  
+    for (var i = 0; i < _form.elements.length; ++i) {
+      var item = _form.elements[i];
+      
+      if (!item.name || item.name.length < 1) {
+        continue;
+      }
+      
+      var value = null;
+      if (item.selectedIndex !== undefined) {
+        value = item.options[item.selectedIndex].value;
+      } else {
+        value = item.value;
+      }
+      
+      if (value !== null) {
+        if (!postData) {
+          postData = {};
+        }
+        postData[item.name] = value;
+      }
+    }
+    
+    return postData;
   }
 };
 

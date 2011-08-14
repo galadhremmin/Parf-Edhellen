@@ -1,31 +1,24 @@
 <?php
   class ProfileService extends RESTfulService {
-    public function handleRequest(&$data) {
-      throw new ErrorException('Parameterless request presently unsupported.');
-    } 
-    
-    public function handleParameterizedRequest(&$data, $param = null) {
-      if (is_numeric($param)) {
-        return self::getProfile($param);
-      }
+    public function __construct() {
+      parent::__construct();
       
-      switch ($param) {
-        case 'edit':
-          return self::editProfile($data);
-          break;
-        default:
-          throw new ErrorException("Unrecognised command '".$param."'.");
-      }
+      parent::registerMainMethod('getProfile');
+      parent::registerMethod('edit', 'editProfile');
     }
     
-    private function getProfile($id) {
+    public function handleRequest(&$data) {
+      throw new ErrorException('Parameterless request presently unsupported.');
+    }
+    
+    protected static function getProfile($id) {
       $author = new Author();
       $author->load($id);
       
       return $author;
     }
     
-    private function editProfile(&$data) {
+    protected static function editProfile(&$data) {
       if (!Session::isValid()) {
         throw new ErrorException('Insufficient privileges. Please authenticate.');
       }
