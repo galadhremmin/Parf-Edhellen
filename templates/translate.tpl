@@ -27,7 +27,7 @@
         </tr>
         <tr>
           <th scope="row">Keyword</th>
-          <td><input type="text" maxlength="64" size="40" class="rounded-small" name="word" /></td>
+          <td><input type="text" maxlength="64" size="60" class="rounded-small" name="word" /></td>
         </tr>
       </table>
 
@@ -55,23 +55,23 @@
         </tr>
         <tr>
           <th scope="row">Word</th>
-          <td><input class="rounded-small" type="text" size="40" maxlength="255" name="word" /></td>
+          <td><input class="rounded-small" type="text" size="60" maxlength="255" name="word" /></td>
         </tr>
         <tr>
           <th scope="row">Gloss</th>
-          <td><input class="rounded-small" type="text" size="40" maxlength="255" name="translation" /></td>
+          <td><input class="rounded-small" type="text" size="60" maxlength="255" name="translation" /></td>
         </tr>
         <tr>
           <th scope="row">Etymology</th>
-          <td><input class="rounded-small"  type="text" size="40" maxlength="128" name="etymology" /></td>
+          <td><input class="rounded-small"  type="text" size="60" maxlength="128" name="etymology" /></td>
         </tr>
         <tr>
           <th scope="row">Reference</th>
-          <td><input class="rounded-small" type="text" size="40" maxlength="48" name="source" /></td>
+          <td><input class="rounded-small" type="text" size="60" maxlength="48" name="source" /></td>
         </tr>
         <tr>
           <th scope="row">Phonetic script</th>
-          <td><input class="rounded-small"  type="text" size="40" maxlength="128" name="phonetic" /></td>
+          <td><input class="rounded-small"  type="text" size="60" maxlength="128" name="phonetic" /></td>
         </tr>
         <tr>
           <th scope="row">Tengwar</th>
@@ -81,7 +81,7 @@
           <th colspan="2" scope="col">Comments &amp; Examples</th>
         </tr>
         <tr>
-          <td colspan="2"><textarea name="comments" class="rounded-small" rows="4" cols="52"></textarea></td>
+          <td colspan="2"><textarea name="comments" class="rounded-small" rows="10" cols="75"></textarea></td>
         </tr>
       </table>
       <input type="button" value="Cancel" class="rounded-small" name="cancelAction" onclick="LANGDict.cancelForm()" />
@@ -146,6 +146,8 @@
 
 {* Side bar with information concerning the word itself such as revisioning, contributions and more *}
 <div id="sidebar-entry">
+  <h2>Language filter</h2>
+  {html_options options=$languages name=languageFilter}
   {if $loggedIn == true}
   <h2>Contribute</h2>
   <ul>
@@ -159,7 +161,7 @@
     <p>
       {$rev->DateCreated} [{$rev->TranslationID}]<br />
       Gloss: {$rev->Key}<br />
-      Author: <a href="profile.php?authorID={$rev->AuthorID}" rel="revision-author">{$rev->AuthorName}</a><br />
+      Author: <a href="profile.page?authorID={$rev->AuthorID}" rel="revision-author">{$rev->AuthorName}</a><br />
       {if $rev->Latest}
         <em>Latest revision</em>
       {else}

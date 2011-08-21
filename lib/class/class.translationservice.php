@@ -51,7 +51,7 @@
         if ($validation !== null) {
           if ((is_array($validation) && !in_array($value, $validation)) ||
               (is_string($validation) && !preg_match($validation, $value))) {
-            throw new Exception('Malformed parameter: '.$key);
+            throw new Exception('Malformed parameter: '.$key.'. Received "'.$value.'", expected according to format '.$validation);
           }
         }
       

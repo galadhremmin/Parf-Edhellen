@@ -46,7 +46,7 @@
           // user is authenticated
           if (Session::register($provider)) {
             // authentication success!
-            header('Location: profile.php');
+            header('Location: profile.page');
           } else {
             $error = 'Unfortunately, authentication seems to have failed.';
           }

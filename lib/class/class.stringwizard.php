@@ -10,7 +10,7 @@
   
     public static function preventXSS($str) {
       // might not be sufficient. Implement more rigorous testing
-      return preg_replace('/<[^>]+>/', '', $str);
+      return str_replace(array('>', '<'), array('&gt;', '&lt;'), $str); //preg_replace('/<[^>]+>/', '', $str);
     }
     
     // Replaces all [[textual content]] with anchors <a href="#textual+content">textual content</a>
@@ -38,7 +38,7 @@
       // This might be an performance issue, and might need to be optimised.
       $regs = array(
         '/_([^_]+)_/' => array('tag' => 'em'),
-        '/\\*([^\\*]+)\\*/' => array('tag' => 'u'),
+        '/\\`([^\\`]+)\\`/' => array('tag' => 'strong'),
         '/\\[\\[([^\\]]+)\\]\\]/' => array('tagStart' => 'a href="#{{1:urlencode}}"', 'tagEnd' => 'a')
       );   
       
@@ -88,7 +88,7 @@
       }
       
       $str = preg_replace(
-        '/>>([^\\0\\n\\r]+)/', 
+        '/&gt;&gt;([^\\0\\n\\r]+)/', 
         '<div><img src="img/hand.png" alt="See also" border="0" /> \\1</div>', 
         $str
       );

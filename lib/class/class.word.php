@@ -188,6 +188,8 @@
       if ($trans === null) {
         throw new ErrorException('Null pointer exception for Translation');
       }
+      
+      $trans->index = false;
 
       return self::register($trans);
     }
@@ -206,7 +208,7 @@
       $db = Database::instance()->exclusiveConnection();
       
       // check namespace validity
-      $namespace = new Namespace();
+      $namespace = new DictionaryNamespace();
       if ($namespace->load($trans->namespaceID) === null) {
         throw new InvalidParameterException('namespaceID');
       }

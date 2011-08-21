@@ -92,6 +92,8 @@
       );
       $query->fetch();
       $query->close();
+      
+      $this->id = $id;
     }
     
     public static function getTypes() {

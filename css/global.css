@@ -1,14 +1,4 @@
 @font-face {
-  font-family: 'ProcionoRegular';
-  src: url('../fonts/prociono/Prociono-Regular-webfont.eot');
-  src: url('../fonts/prociono/Prociono-Regular-webfont.eot?#iefix') format('embedded-opentype'),
-    url('../fonts/prociono/Prociono-Regular-webfont.woff') format('woff'),
-    url('../fonts/prociono/Prociono-Regular-webfont.ttf') format('truetype'),
-    url('../fonts/prociono/Prociono-Regular-webfont.svg#ProcionoRegular') format('svg');
-  font-weight: normal;
-  font-style: normal;
-}
-@font-face {
 	font-family: 'TengwarAnnatarItalic';
 	src: url('../fonts/tengwar/tngani-webfont.eot');
 	src: local('?'), url('../fonts/tengwar/tngani-webfont.woff') format('woff'), 
@@ -23,8 +13,9 @@ html, body {
   margin: 0;
 }
 body {
-  font: 11pt 'ProcionoRegular', 'Georgia', serif;
+  font: 1em/1.5em Georgia, 'Georgia', serif;
   color: black;
+  background: url(../img/background.gif) repeat-x left 140px;
 }
 ul {
   list-style-type: circle;
@@ -64,10 +55,10 @@ h1 {
   height: 150px;
   line-height: 150px;
   display: block;
-  color: #eee;
-  box-shadow: 0 100px 100px #bebebe;
+  color: #aaa;
+  /*box-shadow: 0 100px 100px #eee;*/
   border-bottom: 1px solid #aaa;
-  background: #3c5479;
+  background: white; /*#3c5479;'*/
 }
 h2 {
   font-size: 130%;
@@ -125,7 +116,7 @@ table tr td, table tr th {
   margin-top: 0;
 }
 #contents {
-  width: 600px;
+  width: 900px;
   margin: 0 auto;
 }
 #loading {
@@ -142,17 +133,16 @@ table tr td, table tr th {
   margin-top: 20px;
 }
 #translation-entry {
-  width: 450px;
+  width: 700px;
   float: left;
 }
 #sidebar-entry {
-  width: 122px;
+  width: 172px;
   float: right;
-  padding: 10px 2px 15px 10px;
+  padding: 10px 2px 0 10px;
   margin-top: 20px;
   border-radius: 5px;
-  border: 1px solid transparent;
-  background: #ccc;
+  border: 2px solid #eee;
   color: #666;
   font-size: 90%;
   text-align: left;
@@ -242,4 +232,13 @@ table tr td, table tr th {
 .scroll-view {
   height: 300px;
   overflow: auto;
+}
+.disclaimer {
+  padding: 50px 0 0 0;
+  clear: both;
+  color: #666;
+  font: 80% arial, sans-serif;
+}
+.ui-widget {
+  font: 1em/1.5em Georgia, sans-serif !important;
 }

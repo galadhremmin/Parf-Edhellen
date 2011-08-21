@@ -49,11 +49,18 @@
         // Attempt to find the word asked for. This might yield multiple
         // IDs, so these will be put in an array.
         $query = $db->connection()->prepare(
-          'SELECT DISTINCT n.`NamespaceID`, n.`Identifier`
-           FROM `namespace` n
-           LEFT JOIN `translation` t ON t.`NamespaceID` = n.`NamespaceID`
-           LEFT JOIN `word` w ON w.`KeyID` = t.`WordID`
-           WHERE n.`Identifier` = ? OR w.`Key` = ?'
+          'SELECT DISTINCT n.`NamespaceID`, wN.`Key`
+              FROM `namespace` n
+              LEFT JOIN `word` wN ON wN.`KeyID` = n.`IdentifierID`
+              WHERE wN.`Key` = ?
+            UNION (
+              SELECT DISTINCT t.`NamespaceID`, wN.`Key`
+              FROM `translation` t
+              LEFT JOIN `word` wT ON wT.`KeyID` = t.`WordID`
+              LEFT JOIN `namespace` n ON n.`NamespaceID` = t.`NamespaceID`
+              LEFT JOIN `word` wN ON wN.`KeyID` = n.`IdentifierID`
+              WHERE wT.`Key` = ?
+            )'
         );
         
         $query->bind_param('ss', $this->_term, $this->_term);
@@ -144,7 +151,7 @@
            FROM `translation` t
            LEFT JOIN `word` w ON w.`KeyID` = t.`WordID`
            LEFT JOIN `auth_accounts` a ON a.`AccountID` = t.`AuthorID`
-           WHERE t.`NamespaceID` IN(".$namespaceIDs.")
+           WHERE t.`NamespaceID` IN(".$namespaceIDs.") AND t.`Index` = '0'
            ORDER BY w.`Key` ASC, t.`Latest` DESC, t.`DateCreated` DESC"
         );
       

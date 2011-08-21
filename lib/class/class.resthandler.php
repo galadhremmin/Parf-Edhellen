@@ -7,7 +7,7 @@
     public static function processRequest() {
       $service = null;
       $method  = null;
-      
+ 
       if (!isset($_GET['service'])) {
         throw new ErrorException('Missing parameter: service.');
       }

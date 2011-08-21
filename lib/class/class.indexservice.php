@@ -43,7 +43,7 @@
       $t = new Translation($data);
       Word::registerIndex($t);
       
-      $namespace = new Namespace();
+      $namespace = new DictionaryNamespace();
       return $namespace->load($t->namespaceID);
     }
     

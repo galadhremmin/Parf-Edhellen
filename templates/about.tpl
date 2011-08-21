@@ -1,5 +1,5 @@
 <h2>Welcome to the Parf Edhellen</h2>
-The collaborative dictionary for the linguistic world of Tolkien's. Presently in <em>alpha</em>-stage.
+<p>The collaborative dictionary dedicated to the the linguistic world of Tolkien's. Presently in <em>alpha</em>-stage.</p>
 <a name="search"></a>
 <h3>Searching</h3>
 <p>Use the search-box to browse the dictionaries contents. As you type, suggestions are made continously 
@@ -29,9 +29,17 @@ to emend and delete content.</p>
 glosses in many languages.</p>
 
 <p>Syntax:<br />
-<span class="span-column">[[le]]</span> <a href="index.php#le">le</a><br /> 
+<span class="span-column">[[maen]]</span> <a href="index.php#maen">maen</a><br /> 
 <span class="span-column">_mae_</span> <em>mae</em><br /> 
-<span class="span-column">*idhron*</span> <u>idhron</u><br /> 
+<span class="span-column">`idhron`</span> <strong>idhron</strong><br /> 
 <span class="span-column">&gt;&gt;</span> <img src="img/hand.png" alt="" border="0" /></p>
 
-<p><b>Work in progress</b></p>
+<h3>Word lists</h3>
+<p>The following excellent word lists have been successfully imported.</p>
+<dl>
+  <dt><a href="http://folk.uib.no/hnohf/wordlists.htm" target="_blank">Ardalambion Quenya Wordlists</a></dt>
+  <dd>By <em>Helge Fauskanger</em>. <em>Note: as these word lists are presented as rich text documents, the imported quality is unfortunately not up to par with the Sindarin Dictionary. Please help us remedy this issue by <a href="authenticate.page">becoming an editor</a>!</em></dd>
+  <dt><a href="http://www.jrrvf.com/hisweloke/sindar/index.html" target="_blank">Hiswelókë's Sindarin Dictionary</a></dt>
+  <dd>By the <em>SinDict community</em></dd>
+</dl>
+Thank you for your excellent work making these word lists available to the public!

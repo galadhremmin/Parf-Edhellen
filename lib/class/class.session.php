@@ -63,6 +63,8 @@
         return false;
       }
       
+      self::log($id);
+      
       $_SESSION['identity'] = serialize(
         array(
           SEC_INDEX_IDENTITY => $identity, 
@@ -148,6 +150,16 @@
       }
       
       return $identity;
+    }
+    
+    private static function log($id) {
+      $time       = time();
+      $remoteAddr = self::hash($_SERVER['REMOTE_ADDR']);
+    
+      $stmt = Database::instance()->connection()->prepare('INSERT INTO `auth_logins` (`Date`, `IP`, `AccountID`) VALUES (?, ?, ?)');
+      $stmt->bind_param('isi', $time, $remoteAddr, $id);
+      $stmt->execute();
+      $stmt->close();
     }
   }
 ?>

@@ -8,7 +8,7 @@
   <script type="text/javascript" src="js/jquery.js"></script>
   <script type="text/javascript" src="js/jquery-ui-1.8.14.custom.min.js"></script>
   <script type="text/javascript" src="js/global.js"></script>
-  <meta name="viewport" content="width=device-width;initial-scale=1.0;maximum-scale=1.0"/>
+  <!--<meta name="viewport" content="width=device-width;initial-scale=1.0;maximum-scale=1.0"/>-->
 </head>
 <body>
 <h1>{$pageTitle}</h1>
@@ -23,3 +23,9 @@
   <div id="loading">
     Loading... please wait!
   </div>
+  <form method="get" id="search-form" action="#" onsubmit="return LANGDict.submit()">
+    <a href="about.page">Search term</a>
+    &nbsp;
+    <input type="text" size="34" class="rounded word" />
+  </form>
+  <div id="result">

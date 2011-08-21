@@ -20,8 +20,9 @@
     public function load($id) {
       $db = Database::instance()->connection();
       $query = $db->prepare(
-        'SELECT `Identifier` FROM `namespace` 
-         WHERE `NamespaceID` = ?'
+        'SELECT w.`Key` FROM `namespace` n
+         LEFT JOIN `word` w ON w.`KeyID` = n.`IdentifierID`
+         WHERE n.`NamespaceID` = ?'
       );
       
       $query->bind_param('i', $id);
@@ -46,11 +47,16 @@
     
       $db = Database::instance()->exclusiveConnection();
       
+      $word = new Word();
+      $word->create($this->identifier);
+      
       $query = $db->prepare(
-        'SELECT `NamespaceID`, `Identifier` 
-         FROM `namespace` WHERE `Identifier` = ?'
+        'SELECT n.`NamespaceID`, n.`IdentifierID` 
+         FROM `namespace` n
+         LEFT JOIN `word` w ON w.`KeyID` = n.`IdentifierID`
+         WHERE w.`Key` = ?'
       );
-      $query->bind_param('s', $this->identifier);
+      $query->bind_param('i', $word->id);
       $query->execute();
       $query->bind_result($this->id, $this->identifier);
       
@@ -58,9 +64,9 @@
         $query->close();
         
         $query = $db->prepare(
-          'INSERT INTO `namespace` (`identifier`) VALUES (?)'
+          'INSERT INTO `namespace` (`IdentifierID`) VALUES (?)'
         );
-        $query->bind_param('s', $this->identifier);
+        $query->bind_param('i', $word->id);
         $query->execute();
         
         $this->id = $db->insert_id;
