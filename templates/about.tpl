@@ -42,4 +42,7 @@ glosses in many languages.</p>
   <dt><a href="http://www.jrrvf.com/hisweloke/sindar/index.html" target="_blank">Hiswelókë's Sindarin Dictionary</a></dt>
   <dd>By the <em>SinDict community</em></dd>
 </dl>
-Thank you for your excellent work making these word lists available to the public!
+<p>Thank you for your excellent work making these word lists available to the public!</p>
+
+<!--<h3>Support the <em>Parf Edhellen</em>!</h3>
+<p>Donations are more than welcome! Every contribution helps me to maintain the development and hosting of <em>Parf Edhellen</em>.</p>-->

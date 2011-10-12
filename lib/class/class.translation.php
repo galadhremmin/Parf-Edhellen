@@ -17,6 +17,7 @@
     public $phonetic;
     public $language;
     public $namespaceID;
+    public $owner;
     
     // Semi-mutable column
     public $index;
@@ -77,7 +78,7 @@
         'SELECT 
           t.`LanguageID`, t.`Translation`, t.`Etymology`, t.`Type`, t.`Source`, t.`Comments`, 
           t.`Tengwar`, t.`Gender`, t.`Phonetic`, w.`Key`, t.`NamespaceID`, t.`AuthorID`,
-          t.`DateCreated`, t.`Latest`, t.`Index`, t.`WordID`
+          t.`DateCreated`, t.`Latest`, t.`Index`, t.`WordID`, t.`EnforcedOwner`
          FROM `translation` t 
          LEFT JOIN `word` w ON w.`KeyID` = t.`WordID`
          WHERE t.`TranslationID` = ?'
@@ -88,7 +89,7 @@
       $query->bind_result(
         $this->language, $this->translation, $this->etymology, $this->type, $this->source, $this->comments,
         $this->tengwar, $this->gender, $this->phonetic, $this->word, $this->namespaceID, $this->authorID,
-        $this->dateCreated, $this->latest, $this->index, $this->wordID
+        $this->dateCreated, $this->latest, $this->index, $this->wordID, $this->owner
       );
       $query->fetch();
       $query->close();

@@ -17,6 +17,7 @@
         $engine->assign('loggedIn',     $this->_model->getLoggedIn());
         $engine->assign('term',         $this->_model->getTerm());
         $engine->assign('wordExists',   $this->_model->getWordExists());
+        $engine->assign('accountID',    $this->_model->getAccountID());
       }
     }
   }

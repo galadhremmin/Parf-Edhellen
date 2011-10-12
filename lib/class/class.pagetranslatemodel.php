@@ -22,26 +22,26 @@
         if (get_magic_quotes_gpc()) {
           $this->_term = stripslashes($this->_term);
         }
+        
+        $this->_loggedIn = Session::isValid();
                 
         // Load first data necessary for interaction 
-        if ($this->_loggedIn = Session::isValid()) {
-          // Languages
-          $data = array();
-          $query = $db->connection()->query(
-            'SELECT `ID`, `Name`, `Invented` FROM `language` ORDER BY `Order` ASC'
-          );
-        
-          while ($row = $query->fetch_object()) {
-            $data[$row->ID] = $row->Name;
-          }
-        
-          $query->close();
-        
-          $this->_languages = $data;
-        
-          // Grammar types
-          $this->_types = Translation::getTypes();
+        // Languages
+        $data = array();
+        $query = $db->connection()->query(
+          'SELECT `ID`, `Name` FROM `language` WHERE `Invented` = 1 ORDER BY `Order` ASC'
+        );
+      
+        while ($row = $query->fetch_object()) {
+          $data[$row->ID] = $row->Name;
         }
+      
+        $query->close();
+      
+        $this->_languages = $data;
+      
+        // Grammar types
+        $this->_types = Translation::getTypes();
 
         $data         = array();
         $namespaceIDs = array();
@@ -90,7 +90,8 @@
         $query = $db->connection()->prepare(
           'SELECT w.`Key` AS `Word`, t.`TranslationID`, t.`Translation`, t.`Etymology`, 
              t.`Type`, t.`Source`, t.`Comments`, t.`Tengwar`, t.`Phonetic`,
-             l.`Name` AS `Language`, t.`NamespaceID`, l.`Invented` AS `LanguageInvented`
+             l.`Name` AS `Language`, t.`NamespaceID`, l.`Invented` AS `LanguageInvented`,
+             t.`EnforcedOwner`
            FROM `word` w
            LEFT JOIN `translation` t ON t.`WordID` = w.`KeyID`
            LEFT JOIN `language` l ON l.`ID` = t.`LanguageID`
@@ -102,7 +103,7 @@
         $query->bind_result(
           $word, $translationID, $translation, $etymology, $type, 
           $source, $comments, $tengwar, $phonetic, $language,
-          $namespaceID, $inventedLanguage
+          $namespaceID, $inventedLanguage, $owner
         );
         
         $this->_translations   = array();
@@ -135,7 +136,8 @@
               'source'      => StringWizard::preventXSS($source),
               'comments'    => StringWizard::createLinks($comments),
               'language'    => $language,
-              'namespaceID' => $namespaceID
+              'namespaceID' => $namespaceID,
+              'owner'       => $owner
             )
           );
         }
@@ -202,6 +204,10 @@
     
     public function getIndexes() {
       return $this->_keywordIndexes;
+    }
+    
+    public function getAccountID() {
+      return Session::getAccountID();
     }
   }
 ?>

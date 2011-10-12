@@ -212,13 +212,16 @@
       if ($namespace->load($trans->namespaceID) === null) {
         throw new InvalidParameterException('namespaceID');
       }
+      
+      // Acquire current author
+      $accountID = Session::getAccountID();
 
       // Deprecate current translation entry
       if ($trans->id > 0) {
         // Indexes doesn't use words, hence this functionality applies only
         // to translations.
-        $query = $db->prepare('SELECT `WordID` FROM `translation` WHERE `TranslationID` = ?');
-        $query->bind_param('i', $trans->id);
+        $query = $db->prepare('SELECT `WordID` FROM `translation` WHERE `TranslationID` = ? AND (`EnforceOwner` = 0 OR `EnforceOwner` = ?)');
+        $query->bind_param('i', $trans->id, $accountID);
         $query->execute();
         $query->bind_result($currentWordID);
         $query->fetch();
@@ -235,24 +238,26 @@
         $query->close();
       }
       
-      // Acquire current author
-      $accountID = Session::getAccountID();
-      
       if ($accountID < 1) {
         throw new ErrorException('Invalid log in state.');
+      }
+      
+      // Make sure that translations without enforced owners are always set to null.
+      if ($trans->owner == null || !is_numeric($trans->owner)) {
+        $trans->owner = 0;
       }
       
       // Insert the row
       $query = $db->prepare(
         "INSERT INTO `translation` (`Translation`, `Etymology`, `Type`, `Source`, `Comments`, 
         `Tengwar`, `Phonetic`, `LanguageID`, `WordID`, `NamespaceID`, `Index`, `AuthorID`,
-        `Latest`, `DateCreated`) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '1', NOW())"
+        `EnforcedOwner`, `Latest`, `DateCreated`) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '1', NOW())"
       );
-      $query->bind_param('sssssssiiiii',
+      $query->bind_param('sssssssiiiiii',
         $trans->translation, $trans->etymology, $trans->type, $trans->source, $trans->comments,
         $trans->tengwar, $trans->phonetic, $trans->language, $word->id, $trans->namespaceID,
-        $trans->index, $accountID
+        $trans->index, $accountID, $trans->owner
       );
       $query->execute();
       

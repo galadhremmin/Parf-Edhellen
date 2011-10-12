@@ -11,7 +11,7 @@
       
       try {
         // Initialize the OpenID authentication class
-        $provider = new LightOpenID('wickmark.se');
+        $provider = new LightOpenID('elfdict.com');
         
         // Upon class initialization, it's acquiring a variety
         // of modes. Use these do determine subsequent behaviour.

@@ -26,6 +26,6 @@
   <form method="get" id="search-form" action="#" onsubmit="return LANGDict.submit()">
     <a href="about.page">Search term</a>
     &nbsp;
-    <input type="text" size="34" class="rounded word" />
+    <input type="text" size="34" class="rounded word" tabindex="1" accesskey="s" />
   </form>
   <div id="result">

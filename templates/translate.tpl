@@ -116,7 +116,7 @@
   <blockquote>
     <h3 rel="trans-word">{$translation->word}</h3>
     {if $translation->tengwar != null}<span class="tengwar">{$translation->tengwar}</span>{/if}
-    <span class="word-type" rel="trans-type">{$translation->type}.</span> 
+    {if $translation->type != 'unset'}<span class="word-type" rel="trans-type">{$translation->type}.</span>{/if}
     <span rel="trans-translation">{$translation->translation}</span>
 
     <p class="word-comments" rel="trans-comments">{$translation->comments}</p>
@@ -126,7 +126,7 @@
 
     <span class="word-etymology" rel="trans-etymology">{$translation->etymology}</span>
 
-    {if $loggedIn == true}
+    {if $loggedIn == true && ($translation->owner < 1 || $translation->owner == $accountID)}
       {*<a class="feature-link" href="#" onclick="return LANGDict.deleteTranslation({$translation->id})">Delete</a>*}
       <a class="feature-link" href="#" onclick="return LANGDict.showTranslationForm({$translation->id})">Revise</a>
     {/if}
@@ -138,7 +138,10 @@
 {if $indexes|@count > 0}
   <h2>Keywords</h2>
   {foreach $indexes as $index}
-    <span class="keyword" rel="keyword-{$index->id}">{$index->word} ({$index->id}) <a href="#" onclick="return LANGDict.removeIndex({$index->id})">x</a></span>
+    <span class="keyword" rel="keyword-{$index->id}">
+      {$index->word} 
+      {if $loggedIn == true}<a href="#" onclick="return LANGDict.removeIndex({$index->id})">x</a>{/if}
+    </span>
   {/foreach}
 {/if}
 
@@ -147,7 +150,7 @@
 {* Side bar with information concerning the word itself such as revisioning, contributions and more *}
 <div id="sidebar-entry">
   <h2>Language filter</h2>
-  {html_options options=$languages name=languageFilter}
+  {html_checkboxes options=$languages name=languageFilter separator='<br />'}
   {if $loggedIn == true}
   <h2>Contribute</h2>
   <ul>

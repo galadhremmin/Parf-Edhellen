@@ -51,14 +51,14 @@
       $word->create($this->identifier);
       
       $query = $db->prepare(
-        'SELECT n.`NamespaceID`, n.`IdentifierID` 
+        'SELECT n.`NamespaceID`
          FROM `namespace` n
          LEFT JOIN `word` w ON w.`KeyID` = n.`IdentifierID`
          WHERE w.`Key` = ?'
       );
       $query->bind_param('i', $word->id);
       $query->execute();
-      $query->bind_result($this->id, $this->identifier);
+      $query->bind_result($this->id);
       
       if ($query->fetch() !== true) {
         $query->close();
