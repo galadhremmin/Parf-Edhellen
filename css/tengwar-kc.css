@@ -1,0 +1,22 @@
+@font-face {
+    font-family: tengwar;
+    src: url('../fonts/tengwar-kc/custom-webfont.eot');
+    src: url('../fonts/tengwar-kc/custom-webfont.eot#iefix'),
+         url('../fonts/tengwar-kc/custom-webfont.woff') format('woff'), 
+         url('../fonts/tengwar-kc/custom-webfont.ttf') format('truetype'), 
+         url('../fonts/tengwar-kc/custom-webfont.svg#TengwarAnnatarItalic') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+.tengwar {
+    font-family: tengwar;
+    font-size: 110%;
+    text-decoration: none;
+}
+.tengwar.start {
+  color: #ccc;
+  font-size: 200%;
+  text-align: center;
+  margin: 20mm 0 8mm 0;
+  padding: 0;
+}

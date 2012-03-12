@@ -26,43 +26,118 @@
       return $word;
     }
     
-    protected static function searchWord(&$data) {
-      if (!isset($data['term'])) {
+    protected static function searchWord(&$input) {
+      if (!isset($input['term'])) {
         throw new ErrorException("Missing parameter 'term'.");
       }
-    
-      $term = $data['term'];
-      $data = array();
       
-      if (strlen($term) > 0) {
-        $db = Database::instance();
+      if (!isset($input['language-filter'])) {
+        $input['language-filter'] = 0; // default: disabled
+      }
+      
+      $term = (string) $input['term'];
+      $filter = (string) $input['language-filter'];
+      $preciseness = 0;
+      $data = array('words' => array(), 'cap' => 0);
+      
+      // Only measure characters that might contribute to the exactness
+      // of the query. Multiply with 100 to signify the greater result set
+      // the preciser the query is.
+      $preciseness = strlen(preg_replace('/[%\\*\\s\\.\\/\\\\]/', '', $term)) * 100;
+      
+      if ($preciseness > 0) {
+        if (!self::populateFromCache($input, $data)) {
+          self::populateFromDatabase($input, $preciseness, $data);
+        }
+        $data['cap'] = $preciseness;
+      }
+      
+      return $data;
+    }
+    
+    private static function populateFromDatabase(array &$input, $limitResult, array& $data) {
+      $db = Database::instance();
+      
+      $term   = $input['term'];
+      $filter = $input['language-filter'];
+      
+      if (strpos($term, '*') !== false) {
+        $term = str_replace('*', '%', $term);
+      } else {
+        $term .= '%';
+      }
+      
+      if ($filter > 0) {
+        $query = $db->connection()->prepare(
+          "SELECT DISTINCT w.`Key`
+            FROM `translation` t 
+              INNER JOIN `word` w ON w.`KeyID` = t.`WordID`
+            WHERE t.`LanguageID` = ? AND w.`Key` LIKE ?
+            ORDER BY w.`Key` ASC"
+        );
         
+        $query->bind_param('is', $filter, $term);
+      } else {
         $query = $db->connection()->prepare(
           "SELECT DISTINCT `Key`
             FROM `word` w
             WHERE `Key` LIKE ?
-            ORDER BY `Key` ASC
-            LIMIT 8"
+            ORDER BY `Key` ASC"
         );
-        
-        if (strpos($term, '*') !== false) {
-          $term = str_replace('*', '%', $term);
-        } else {
-          $term .= '%';
-        }
-        
         $query->bind_param('s', $term);
-        $query->execute();
-        
-        $query->bind_result($key);
-        while ($query->fetch()) {
-          $data[] = $key;
-        }
-        
-        $query->close();
       }
       
-      return $data;
+      $query->execute();
+      
+      $query->bind_result($key);
+      
+      $index = 0;
+      while ($query->fetch()) {
+        if ($index < $limitResult) {
+          $data['words'][] = $key;
+        }
+        ++$index;
+      }
+      
+      $data['matches'] = $index;
+      
+      $query->close();
+      
+      if ($data['matches'] > 0) {
+        $fp = fopen(self::getCacheName($input), 'w');
+        if (flock($fp, LOCK_EX)) {
+          fwrite($fp, json_encode(array($data['words'], $data['matches'])));
+          flock($fp, LOCK_UN);
+        }
+        fclose($fp);
+      }
+    }
+    
+    private static function populateFromCache(array &$input, array& $data) {
+      $file = self::getCacheName($input);
+      
+      if (!file_exists($file)) {
+        return false;
+      }
+      
+      $d = @json_decode(file_get_contents($term));
+      
+      if ($d != null) {
+        $data['data'] = $d[0];
+        $data['matches'] = $d[1];
+        
+        return true;
+      }
+      
+      return false;
+    }
+    
+    private static function getCacheName(array &$data) {
+      // This is necessary for the iconv-normalization to function properly
+      setlocale(LC_ALL, 'de_DE.UTF8');
+      
+      // TODO: Implement this normalization procedure to all product searches
+      return ROOT.'/cache/search-terms/'.$data['language-filter'].'-'.iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $data['term']);
     }
   }
 ?>

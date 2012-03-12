@@ -4,10 +4,19 @@
   }
   
   class TemplateEngine extends Smarty {
-    public function __construct() {
+    private $_headerName;
+    private $_footerName;
+  
+    public function __construct($headerName = 'header', $footerName = 'footer') {
       parent::__construct();
+      
+      // SMARTY-specific information
       $this->debugging = false;
       $this->cache_lifetime = 120;
+      
+      // encapsulation
+      $this->_headerName = $headerName;
+      $this->_footerName = $footerName;
     }
     
     public function __destruct() {
@@ -26,13 +35,13 @@
       $controller = new $controller($this);
     
       if ($encapsulate) {
-        $this->displayEncapsulated('header', false, false);
+        $this->displayEncapsulated($this->_headerName, false, false);
       }
       
       parent::display($file.'.tpl');
       
       if ($encapsulate) {
-        $this->displayEncapsulated('footer', false, true);
+        $this->displayEncapsulated($this->_footerName, false, true);
       }
     }
     

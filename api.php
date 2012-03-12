@@ -2,18 +2,24 @@
   include_once 'lib/system.php';
     
   $result = array('succeeded' => 'true', 'error' => null, 'response' => null);
+  $servicePtr = null;
   
   try {
-    $result['response'] = RESTHandler::processRequest();
+    $result['response'] = RESTHandler::processRequest(&$servicePtr);
   } catch (Exception $e) {
     $result['succeeded'] = false;
     $result['error']     = $e->getMessage();
   }
 
-  $json = json_encode($result);
+  $handler = new JSONHandler();
   
-  header('Content-Type: application/json; charset=utf-8');
-  header('Content-Length: '.strlen($json));
+  if ($servicePtr !== null) {
+    $handler = $servicePtr->getContentHandler();
+  }
   
-  echo $json;
+  if ($handler == null) {
+    throw new Exception('The service was found and the request was successfully handled, but an output content handler is missing.');
+  }
+  
+  $handler->handle($result);
 ?>

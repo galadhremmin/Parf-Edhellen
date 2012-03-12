@@ -1,3 +1,5 @@
+@import url(tengwar-kc.css);
+
 @font-face {
 	font-family: 'TengwarAnnatarItalic';
 	src: url('../fonts/tengwar/tngani-webfont.eot');
@@ -15,7 +17,23 @@ html, body {
 body {
   font: 1em/1.5em Georgia, 'Georgia', serif;
   color: black;
-  background: url(../img/background.gif) repeat-x left 140px;
+  /*background: url(../img/background.gif) repeat-x left 140px;*/
+  background: url(../img/backgrounds/background.jpg) no-repeat fixed center top;
+  overflow-y: scroll;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+#noscript {
+  padding: 10mm;
+  background: red;
+  color: white;
+  text-align: center;
+  font-size: 110%;
+}
+#noscript a {
+  color: white;
 }
 ul {
   list-style-type: circle;
@@ -27,7 +45,7 @@ ul li {
   padding: 0;
 }
 a {
-  color: #3c5479;
+  color: #334662;
 }
 a.feature-link {
   float: right;
@@ -46,19 +64,15 @@ a.feature-link:hover {
   color: #333;
 }
 h1 {
-  font-size: 200%;
-  font-weight: normal;
-  font-style: italic;
-  text-align: center;
+  text-indent: -9000mm;
+  overflow: hidden;
   padding: 0;
   margin: 0;
   height: 150px;
-  line-height: 150px;
   display: block;
-  color: #aaa;
-  /*box-shadow: 0 100px 100px #eee;*/
-  border-bottom: 1px solid #aaa;
-  background: white; /*#3c5479;'*/
+  color: #3d3d3d;
+  background: #3d3d3d url(../img/parf-edhellen.gif) no-repeat center center; /*#3c5479;'*/
+  border-bottom: 1px solid black;
 }
 h2 {
   font-size: 130%;
@@ -83,13 +97,11 @@ table tr td, table tr th {
   text-align: center;
 }
 #menu {
-  width: 600px;
-  margin: 0 auto;
   text-align: center;
 }
 #menu ul {
   list-style-type: none;
-  margin: 0 0 30px 0;
+  margin: 0;
   padding: 0;
 }
 #menu ul li {
@@ -98,8 +110,7 @@ table tr td, table tr th {
 #menu ul li a {
   display: block;
   padding: 10px;
-  text-decoration: none;
-  color: black;
+  color: #334662;
 }
 .extendable-form {
   background: #aaa;
@@ -115,8 +126,11 @@ table tr td, table tr th {
   border-bottom: none;
   margin-top: 0;
 }
-#contents {
-  width: 900px;
+#contents, #menu  {
+  background: white;
+  color: #191921;
+  width: 760px;
+  padding: 0 20px 0 20px;
   margin: 0 auto;
 }
 #loading {
@@ -133,7 +147,7 @@ table tr td, table tr th {
   margin-top: 20px;
 }
 #translation-entry {
-  width: 700px;
+  width: 100%;
   float: left;
 }
 #sidebar-entry {
@@ -208,9 +222,6 @@ table tr td, table tr th {
 .vertical-cells-top tr td, .vertical-cells-top tr th {
   vertical-align: top;
 }
-.tengwar {
-  font-family: 'TengwarAnnatarItalic', inherit;
-}
 .keyword {
   padding: 3px 6px 3px 6px;
   background: #7e93b0;
@@ -230,15 +241,70 @@ table tr td, table tr th {
   border-radius: 4px;
 }
 .scroll-view {
-  height: 300px;
+  max-height: 300px;
   overflow: auto;
 }
 .disclaimer {
-  padding: 50px 0 0 0;
+  padding: 50px 0 20px 0;
   clear: both;
-  color: #666;
+  color: #bbb;
   font: 80% arial, sans-serif;
+}
+.disclaimer a {
+  color:#aaa;
 }
 .ui-widget {
   font: 1em/1.5em Georgia, sans-serif !important;
+}
+.no-margin-top {
+  margin-top: 0;
+}
+.content {
+  margin-right: 10px;
+}
+.language-box {
+  /*display: none;*/
+}
+#additionals {
+  padding: 20px;
+  background: #fafafa;
+  border-radius: 15px;
+}
+#additionals h2 {
+  border-bottom: none;
+  margin: 0 0 10px 0;
+  padding: 0;
+  font-size: 90%;
+}
+.clear {
+  clear: both;
+}
+#result-table td {
+  vertical-align: top;
+}
+#result-table a {
+  white-space: nowrap;
+  background: #7E93B0;
+  padding: 5px;
+  border-radius: 5px;
+  color: white;
+  text-decoration: none;
+}
+#result-table a:focus {
+  background: #333;
+}
+#result-table div {
+  margin-bottom: 5px;
+}
+#search-result {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  padding-bottom: 10px;
+}
+#search-description {
+  display: none;
+  font-size: 80%;
+  font-style: italic;
+  padding: 5px;
 }

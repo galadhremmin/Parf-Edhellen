@@ -4,7 +4,7 @@
   }
   
   class RESTHandler {
-    public static function processRequest() {
+    public static function processRequest(&$servicePtr) {
       $service = null;
       $method  = null;
  
@@ -53,8 +53,8 @@
           throw new ErrorException('Unsupported method '.$method.' in '.$service);
         }
 
-        $serviceObj = new $service();
-        return $serviceObj->$method($dataSource, $param);
+        $servicePtr = new $service();
+        return $servicePtr->$method($dataSource, $param);
       } catch (ErrorException $e) {
         throw $e;
       } catch (Exception $e) {

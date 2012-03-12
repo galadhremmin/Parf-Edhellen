@@ -29,8 +29,8 @@
       return $this->_conn;
     }
     
-    public function exclusiveConnection() {
-      if (!Session::isValid()) {
+    public function exclusiveConnection($requireLogin = true) {
+      if ($requireLogin && !Session::isValid()) {
         throw new ErrorException('Inadequate permissions.');
       }
       

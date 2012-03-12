@@ -5,7 +5,7 @@
   if (isset($_GET['template']) && preg_match('/^[a-z]+$/', $_GET['template'])) {
     $template = $_GET['template'];
   }
-  
+
   $r = new TemplateEngine();
   
   try {

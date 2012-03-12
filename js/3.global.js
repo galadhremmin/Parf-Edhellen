@@ -5,6 +5,7 @@ var LANGDict = {
   messages: {
     'q-wordID': 'This is entry order, according to the function and the sense of the word (word.1, word.2, word.3 etc.).\n\nUsually you can leave this to its default value, but when a word might have multiple meanings such as Sindarin _a_, order the word with dots: a.1, a.2 etc.'
   },
+  currentWordIndex: 0,
   Loader: {
     inst: 0,
     inc: function() {
@@ -43,10 +44,22 @@ var LANGDict = {
       }
     );
     
+    // check if there are actual browse to links around:
+    var gotoElement = /browseTo=([a-z0-9]+)/.exec(window.location.search);
+    if (gotoElement && gotoElement.length > 1) {
+      var elem = $('a[name="' + gotoElement[1] + '"]');
+      
+      if (elem.length > 0) {
+        LANGAnim.scroll(elem.offset().top);
+      }
+    }
+    
     this.hashChanged();
   },
   contentLoaded: function() {
     // invoke upon hash change
+    this.currentWordIndex = -1;
+    $('.tengwar').tengwar();
   },
   submit: function(item) {
     if (!item) {
@@ -73,6 +86,21 @@ var LANGDict = {
   },
   cancelForm: function() {
     $('.extendable-form:visible').slideUp();
+  },
+  nextResult: function(dir) {
+    this.currentWordIndex += dir;
+    var block = $('#translation-block-' + this.currentWordIndex);
+    
+    if (block.length < 1) {
+      var cur = this.currentWordIndex;
+      this.currentWordIndex = 0;
+      
+      if (cur > 0) {
+        this.nextResult();
+      }
+    } else {
+      LANGAnim.scroll(block.offset().top);
+    }
   },
   showForm: function(id) {
     var values = {};
@@ -306,23 +334,197 @@ var LANGDict = {
   }
 };
 
+var LANGCookies = function() {
+  return {
+    read: function(name) {
+      var nameEQ = name + "=";
+      var ca = document.cookie.split(';');
+      for(var i = 0; i < ca.length; ++i) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') {
+          c = c.substring(1,c.length);
+        }
+        
+        if (c.indexOf(nameEQ) == 0) {
+          return c.substring(nameEQ.length,c.length);
+        }
+      }
+      return null;
+    },
+    create: function(name,value,days) {
+      if (days) {
+        var date = new Date();
+        date.setTime(date.getTime()+(days*24*60*60*1000));
+        var expires = "; expires="+date.toGMTString();
+      } else {
+        var expires = "";
+      }
+      
+      document.cookie = name+"="+value+expires+"; path=/";
+    }
+  };
+}();
+
+var LANGSearch = function() {
+  var hook = function() {
+    $(window).keydown(function(ev) {
+      var keys = {
+        left: 37,
+        right: 39,
+        up: 38,
+        down: 40,
+        searchField: 83, // = S
+        browseDown: 34, // = Page Down
+        browseUp: 33 // = Page Up
+      };
+            
+      var tag = 'a';
+      var indexThreshold = 2;
+      var target = $(document.activeElement);
+      var index = target.attr('tabindex');
+      var isSuggestion = target.parent().hasClass('search-suggestion');
+      
+      if (target.parents('form').attr('id') != 'search-form' && !isSuggestion) {
+        return;
+      }
+      
+      if (!isSuggestion) {
+        tag = indexThreshold = undefined;
+      }
+      
+      switch (ev.keyCode) {
+        case keys.left: 
+          index -= 5;
+          break;
+        case keys.right: 
+          index += 5;
+          break;
+        case keys.up:
+          index -= 1;
+          break;
+        case keys.down:
+          index += 1;
+          break;
+        case keys.browseDown:
+          LANGDict.nextResult(1);
+          isSuggestion = false;
+          break;
+        case keys.browseUp:
+          LANGDict.nextResult(-1);
+          isSuggestion = false;
+          break;
+        default:
+          if (/^[a-zA-Z0-9]$/.test(String.fromCharCode(ev.keyCode))) {
+            if (target.offset().top < $(window).scrollTop()) {
+              LANGAnim.scroll(0);
+            }
+
+            $('#search-query-field').focus();
+            isSuggestion = false;
+          } else {
+            return;
+          }
+      }
+      
+      if (isSuggestion) {
+        if (!isNaN(index) && (indexThreshold === undefined || index >= indexThreshold)) {
+          ev.preventDefault();
+          
+          if (tag !== undefined) {
+            var tagObj = $(tag + '[tabindex=' + index + ']');
+            tagObj.focus();
+          }
+        }
+      }
+    });
+    
+    var lastValue = LANGCookies.read('filter-field-value');
+    if (!lastValue || isNaN(lastValue)) {
+      lastValue = 0;
+    }    
+    
+    $('#search-filter-field').change(searchFilterChanged).val(lastValue);
+  };
+  
+  var languageFilterBox = null;
+  var getFilter = function() {
+    if (!languageFilterBox) {
+      languageFilterBox = $('#search-filter-field');
+    }
+    
+    return languageFilterBox.val();
+  };
+  
+  var searchFilterChanged = function() {
+    LANGCookies.create('filter-field-value', $(this).val());
+    performSearch({ term: $('.word').val() });
+  };
+  
+  var performSearch = function(request, response) {
+    if (/^[\s\t\/\\]*$/.test(request['term'])) {
+      return;
+    }
+  
+    request['language-filter'] = getFilter();
+    $.ajax({
+      url: 'api/word/search',
+      data: request,
+      dataType: 'json',
+      type: 'post',
+      success: function(data) {
+        if (data.succeeded) {
+          LANGSearch.set(data.response);
+        }
+      }
+    });
+  };
+
+  return {
+    init: function() {
+      hook();
+      $('.word').autocomplete({
+        minLength: 1,
+        source: performSearch
+      }).focus();
+    },
+    set: function(data) {
+      var cols = [];
+      
+      for (var i = 0; i < data.words.length; i += 5) {
+        var rows = [];
+        for (var j = i; j < i + 5; ++j) {
+          if (data.words[j] === undefined) {
+            break;
+          }
+          rows.push('<div class="search-suggestion"><a href="#' + encodeURIComponent(data.words[j]) + '" tabindex="' + (j + 2) + '">' + data.words[j] + '</a></div>');
+        }
+        
+        cols.push(rows.join(''));
+      }
+      
+      var $result = $('#search-result');
+      
+      $result.html('<table id="result-table"><tbody><tr><td>' + cols.join('</td><td>') + '</td></tr></tbody></table>');
+      $('#search-description').show().find('span:first').html(data.words.length).next('span').html(data.matches);
+      
+      // this is necessary for IE, lest it's height will fail miserabily
+      $result.css('height', $('#result-table').outerHeight() + 'px');
+      
+      // Apply the scroll view
+      new iScroll($result.attr('id'));
+    }
+  };
+}();
+
+var LANGAnim = function() {
+  return {
+    scroll: function(offset) {
+      $('html, body').animate({ scrollTop: offset }, 500);
+    }
+  };
+}();
+
 $(function() {
   LANGDict.init();
-  $('.word').autocomplete({
-    source: function(request, response) {
-      $.ajax({
-        url: 'api/word/search',
-        data: request,
-        dataType: 'json',
-        type: 'post',
-        success: function(data) {
-          response(data.response);
-        }
-      });
-    },
-    minLength: 1,
-    select: function(e, sender) {
-      LANGDict.submit(sender.item.value);
-    }
-  }).focus();
+  LANGSearch.init();
 });

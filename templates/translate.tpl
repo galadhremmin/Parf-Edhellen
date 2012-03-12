@@ -1,4 +1,39 @@
 <div id="translation-entry">
+{* iterate through all translations where the key of the array defines the associated language. The counter 
+   uniquely identifies each translation entry, so that the user might levelage this information while navigating
+   the results *}
+{counter start=-1 print=false}
+{foreach from=$translations key=language item=translationsForLanguage}
+  <h2 rel="language-box">{$language}</h2>
+  <div class="language-box" id="language-box-{$language}">
+  {* Iterate through each entry for the specificed language *}
+  {foreach $translationsForLanguage as $translation}
+  <blockquote id="translation-block-{counter}">
+    <h3 rel="trans-word">{$translation->word}</h3> 
+    {if $translation->tengwar != null}
+    &#32;<span class="tengwar">{$translation->tengwar}</span>
+    {elseif $language eq 'Noldorin' or $language eq 'Sindarin'}
+    &#32;<a class="tengwar" href="about.page?browseTo=tengwar">{$translation->word}</a> 
+    {/if}
+    {if $translation->type != 'unset'}<span class="word-type" rel="trans-type">{$translation->type}.</span>{/if}
+    <span rel="trans-translation">{$translation->translation}</span>
+
+    <p class="word-comments" rel="trans-comments">{$translation->comments}</p>
+
+    {* Only bother with references if such are defined, as they are put within brackets *}
+    {if $translation->source != null}<span class="word-source" rel="trans-source">[{$translation->source}]</span>{/if}
+
+    <span class="word-etymology" rel="trans-etymology">{$translation->etymology}</span>
+
+    {if $loggedIn == true && ($translation->owner < 1 || $translation->owner == $accountID)}
+      {*<a class="feature-link" href="#" onclick="return LANGDict.deleteTranslation({$translation->id})">Delete</a>*}
+      <a class="feature-link" href="#" onclick="return LANGDict.showTranslationForm({$translation->id})">Revise</a>
+    {/if}
+  </blockquote>
+  {/foreach}
+  </div>
+{/foreach}
+
 
 {if $loggedIn == true}
 {* Add / edit word form *}
@@ -108,69 +143,51 @@
   {/if}
 {/if}
 
-{* iterate through all translations where the key of the array defines the associated language *}
-{foreach from=$translations key=language item=translationsForLanguage}
-  <h2>{$language}</h2>
-  {* Iterate through each entry for the specificed language *}
-  {foreach $translationsForLanguage as $translation}
-  <blockquote>
-    <h3 rel="trans-word">{$translation->word}</h3>
-    {if $translation->tengwar != null}<span class="tengwar">{$translation->tengwar}</span>{/if}
-    {if $translation->type != 'unset'}<span class="word-type" rel="trans-type">{$translation->type}.</span>{/if}
-    <span rel="trans-translation">{$translation->translation}</span>
-
-    <p class="word-comments" rel="trans-comments">{$translation->comments}</p>
-
-    {* Only bother with references if such are defined, as they are put within brackets *}
-    {if $translation->source != null}<span class="word-source" rel="trans-source">[{$translation->source}]</span>{/if}
-
-    <span class="word-etymology" rel="trans-etymology">{$translation->etymology}</span>
-
-    {if $loggedIn == true && ($translation->owner < 1 || $translation->owner == $accountID)}
-      {*<a class="feature-link" href="#" onclick="return LANGDict.deleteTranslation({$translation->id})">Delete</a>*}
-      <a class="feature-link" href="#" onclick="return LANGDict.showTranslationForm({$translation->id})">Revise</a>
-    {/if}
-  </blockquote>
-  {/foreach}
-{/foreach}
-
-
-{if $indexes|@count > 0}
-  <h2>Keywords</h2>
-  {foreach $indexes as $index}
-    <span class="keyword" rel="keyword-{$index->id}">
-      {$index->word} 
-      {if $loggedIn == true}<a href="#" onclick="return LANGDict.removeIndex({$index->id})">x</a>{/if}
-    </span>
-  {/foreach}
-{/if}
-
-</div>
-
-{* Side bar with information concerning the word itself such as revisioning, contributions and more *}
-<div id="sidebar-entry">
-  <h2>Language filter</h2>
-  {html_checkboxes options=$languages name=languageFilter separator='<br />'}
-  {if $loggedIn == true}
-  <h2>Contribute</h2>
-  <ul>
-    <li><a href="#" onclick="return LANGDict.showIndexForm('{addslashes($term)}')">Add keyword</a></li>
-    <li><a href="#" onclick="return LANGDict.showTranslationForm('{addslashes($term)}')">Add gloss</a></li>
-  </ul>
-  {/if}
-  <h2>Revisions</h2>
-  <div class="scroll-view">
-  {foreach $revisions as $rev}
-    <p>
-      {$rev->DateCreated} [{$rev->TranslationID}]<br />
-      Gloss: {$rev->Key}<br />
-      Author: <a href="profile.page?authorID={$rev->AuthorID}" rel="revision-author">{$rev->AuthorName}</a><br />
-      {if $rev->Latest}
-        <em>Latest revision</em>
-      {else}
-        {if $loggedIn == true}<a href="#" onclick="return LANGDict.showTranslationForm({$rev->TranslationID})">Examine revision</a>{/if}
+  <div id="additionals">
+    <div style="width:33%;float:left">
+      <h2>Keywords</h2>
+      <div class="content">
+      {if $indexes|@count > 0}
+      {foreach $indexes as $index}
+        <span class="keyword" rel="keyword-{$index->id}">
+          {$index->word} 
+          <!--{if $loggedIn == true}<a href="#" onclick="return LANGDict.removeIndex({$index->id})">x</a>{/if}-->
+        </span>
+      {/foreach}
       {/if}
-    </p>
-  {/foreach}
+      </div>
+    </div>
+    <div style="width:33%;float:left">
+      <h2>Revisions</h2>
+      <div class="content scroll-view">
+      {foreach $revisions as $rev}
+        <p class="no-margin-top">
+          {$rev->DateCreated} [{$rev->TranslationID}]<br />
+          Gloss: {$rev->Key}<br />
+          Author: <a href="profile.page?authorID={$rev->AuthorID}" rel="revision-author">{$rev->AuthorName}</a><br />
+          {if $rev->Latest}
+            <em>Latest revision</em>
+          {else}
+            {if $loggedIn == true}<a href="#" onclick="return LANGDict.showTranslationForm({$rev->TranslationID})">Examine revision</a>{/if}
+          {/if}
+        </p>
+      {/foreach}
+      </div>
+    </div>
+    <div style="width:34%;float:left">
+      <h2>Contribute</h2>
+      <div class="content">
+      {if $loggedIn == true}
+      <ul>
+        <li><a href="#" onclick="return LANGDict.showIndexForm('{addslashes($term)}')">Add keyword</a></li>
+        <li><a href="#" onclick="return LANGDict.showTranslationForm('{addslashes($term)}')">Add gloss</a></li>
+      </ul>
+      {else}
+      Please log in to access these features.
+      {/if}
+      </div>
+      {*html_checkboxes options=$languages name=languageFilter separator='<br />'*}
+    </div>
+    <div class="clear"></div>
   </div>
 </div>

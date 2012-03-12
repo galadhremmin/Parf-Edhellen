@@ -36,6 +36,10 @@
       return call_user_func(array($this, $this->_methods[$methodName]), $data);
     }
     
+    public function getContentHandler() {
+      return new JSONHandler();
+    }
+    
     public abstract function handleRequest(&$data);
   }
 ?>

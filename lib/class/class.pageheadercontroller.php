@@ -17,6 +17,9 @@
             
       if ($this->_model !== null) {
         $engine->assign('menu', $this->_model->getMenu());
+        $engine->assign('languages', $this->_model->getLanguages());
+        $engine->assign('background', $this->_model->getBackgroundFile());
+        $engine->assign('backgrounds', $this->_model->getBackgroundFiles());
       }
     }
   }

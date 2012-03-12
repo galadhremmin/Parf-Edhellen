@@ -7,6 +7,7 @@
     public $url;
     public $text;
     public $onclick;
+    public $tabIndex;
   
     public function __construct($data) {
       $fields = get_object_vars($this);
