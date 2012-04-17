@@ -1,0 +1,6 @@
+Usage: /clear message-type [for-all]
+Clears all messages of a certain type from the view. As a world master, it's possible to clear them permanently by the for-all flag. This is handy if you want to remove information and error messages without having to manually do it using the /edit command.
+MESSAGE TYPES
+ - message: default message type.
+ - error: all kind of system error messages. The for-all flag does not apply to this kind of messages.
+ - information: system messages and content delivered by the server.

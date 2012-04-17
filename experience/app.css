@@ -1,0 +1,96 @@
+html,body { 
+  padding: 0; 
+  margin: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: hidden; 
+}
+body { 
+  background: url(img/default-scenery.jpg) no-repeat center top;  
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  color: #d1dfbc; 
+  font-size: 95%;
+  scrollbar-3dlight-color:black; 
+  scrollbar-arrow-color:black; 
+  scrollbar-base-color:black; 
+  scrollbar-darkshadow-color:black; 
+  scrollbar-face-color:black; 
+  scrollbar-highlight-color:black; 
+  scrollbar-shadow-color:black;
+}
+#chat-window { 
+  margin: 20% auto 0 auto; 
+  padding: 2mm;
+  height: 50%; 
+  background: rgba(0,0,0,0.85);  
+  width: 50%; 
+  min-width: 600px;
+  box-shadow: 0 0 10px #000;
+  border-radius: 5mm;
+}
+#scroll-window {
+  height: 90%;
+  overflow: auto;
+}
+#scroll-window div:hover {
+  background: #111;
+}
+textarea[name=message] {
+  width: 98%;
+  background: transparent;
+  border: 0.5mm solid #333;
+  border-radius: 5mm;
+  color: #e2e2e2;
+  font: inherit;
+}
+.chat-nick {
+  font-size: 10px;
+  text-align: left;
+  color: #777;
+}
+.chat-information, .chat-error {
+  font-size: 80%;
+}
+.chat-error {
+  color: red;
+}
+.chat-information {
+  color: #888;
+}
+#ie-overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  filter: alpha(opacity=90);
+  background: black;
+  text-align: center;
+  line-height: 500px;
+}
+.loading {
+  background: black url(../img/loading-dark-black.gif) no-repeat center center;
+}
+#config-window, #config-hotspot {
+  position: absolute;
+  width: 100%;
+  height: 40px;
+  left: 0;
+}
+#config-hotspot {
+  top: 0;
+  z-index: 1000;
+}
+#config-window {
+  top: -40px;
+  -webkit-transition: top 0.2s ease-in-out;
+  -ms-transition: top 0.2s ease-in-out;
+  z-index: 1001;
+  background: black;
+  opacity: 0.9;
+  color: white;
+  line-height: 40px;
+}

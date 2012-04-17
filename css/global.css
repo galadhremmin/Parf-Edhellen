@@ -17,13 +17,13 @@ html, body {
 body {
   font: 1em/1.5em Georgia, 'Georgia', serif;
   color: black;
-  /*background: url(../img/background.gif) repeat-x left 140px;*/
-  background: url(../img/backgrounds/background.jpg) no-repeat fixed center top;
+  background: url(http://svc.wickmark.se/referenser/Images/background.jpg) repeat-x fixed center bottom;
   overflow-y: scroll;
+  /*
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
-  background-size: cover;
+  background-size: cover;*/
 }
 #noscript {
   padding: 10mm;
@@ -200,7 +200,7 @@ table tr td, table tr th {
   background-position: center center;
 }
 .span-column {
-  width: 70px;
+  width: 100px;
   display: inline-block;
   text-align: left;
 }
@@ -225,7 +225,6 @@ table tr td, table tr th {
 .keyword {
   padding: 3px 6px 3px 6px;
   background: #7e93b0;
-  border-radius: 10px;
   border: 1px solid transparent;
   color: white;
   font: 10pt arial, sans-serif;
@@ -238,7 +237,6 @@ table tr td, table tr th {
   display: inline-block;
   background: #5c728e;
   padding: 0 4px 0 4px;
-  border-radius: 4px;
 }
 .scroll-view {
   max-height: 300px;
@@ -286,7 +284,6 @@ table tr td, table tr th {
   white-space: nowrap;
   background: #7E93B0;
   padding: 5px;
-  border-radius: 5px;
   color: white;
   text-decoration: none;
 }
@@ -307,4 +304,19 @@ table tr td, table tr th {
   font-size: 80%;
   font-style: italic;
   padding: 5px;
+}
+@media (max-width:480px) {
+  #contents, #menu {
+    width: 440px !important;
+  }
+  #result-table a {
+    padding: 0 5px 0 5px;
+    display: block;
+    line-height: 45px;
+    height: 45px;
+    margin: 5px 0 5px 0;
+  }
+  #search-description  {
+    display: none !important;
+  }
 }

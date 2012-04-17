@@ -1,0 +1,4 @@
+Usage: /room a-picture-url.jpg
+Changes a room scenery to the picture that you specify. Specify a complete URL, eg.:
+
+<a href="http://www.elfdict.com/experience/img/default-scenery.jpg" target="_blank">http://www.elfdict.com/experience/img/default-scenery.jpg</a>

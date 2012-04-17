@@ -1,0 +1,3 @@
+<i>Veranda</i> is a world-based roleplaying chat with living sceneries. Developed and maintained by Aldaleon.
+
+<i>This service is presently under development,</i> but you're very welcome to try it out! I recommend that you to check out the help topics first, and hopefully you'll be able to create your own world.

@@ -489,10 +489,12 @@ var LANGSearch = function() {
     },
     set: function(data) {
       var cols = [];
+      var mobile = /iphone|android|windows\sphone/i.test(navigator.appVersion);
+      var columns = mobile ? 3 : 5;
       
-      for (var i = 0; i < data.words.length; i += 5) {
+      for (var i = 0; i < data.words.length; i += columns) {
         var rows = [];
-        for (var j = i; j < i + 5; ++j) {
+        for (var j = i; j < i + columns; ++j) {
           if (data.words[j] === undefined) {
             break;
           }
@@ -505,13 +507,20 @@ var LANGSearch = function() {
       var $result = $('#search-result');
       
       $result.html('<table id="result-table"><tbody><tr><td>' + cols.join('</td><td>') + '</td></tr></tbody></table>');
-      $('#search-description').show().find('span:first').html(data.words.length).next('span').html(data.matches);
+      
+      if (!mobile) {
+        $('#search-description').show().find('span:first').html(data.words.length).next('span').html(data.matches);
+      }
       
       // this is necessary for IE, lest it's height will fail miserabily
       $result.css('height', $('#result-table').outerHeight() + 'px');
       
       // Apply the scroll view
-      new iScroll($result.attr('id'));
+      if (/ipad|iphone/i.test(navigator.appVersion)) {
+        new iScroll($result.attr('id'));
+      }
+      
+      $result.css('overflow-x', 'scroll');
     }
   };
 }();

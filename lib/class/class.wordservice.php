@@ -38,16 +38,17 @@
       $term = (string) $input['term'];
       $filter = (string) $input['language-filter'];
       $preciseness = 0;
-      $data = array('words' => array(), 'cap' => 0);
+      $data = array('cached' => true, 'words' => array(), 'cap' => 0);
       
       // Only measure characters that might contribute to the exactness
       // of the query. Multiply with 100 to signify the greater result set
       // the preciser the query is.
-      $preciseness = strlen(preg_replace('/[%\\*\\s\\.\\/\\\\]/', '', $term)) * 100;
+      $preciseness = strlen(preg_replace('/[%\\*\\s\\.\\/\\\\]/', '', $term)) * WORD_SERVICE_PRECISENESS_STEPSIZE;
       
       if ($preciseness > 0) {
-        if (!self::populateFromCache($input, $data)) {
+        if (false || !self::populateFromCache($input, $data)) {
           self::populateFromDatabase($input, $preciseness, $data);
+          $data['cached'] = false;
         }
         $data['cap'] = $preciseness;
       }
@@ -58,8 +59,14 @@
     private static function populateFromDatabase(array &$input, $limitResult, array& $data) {
       $db = Database::instance();
       
-      $term   = $input['term'];
+      $term   = trim($input['term']);
       $filter = $input['language-filter'];
+      
+      if (strlen($term) < 1) {
+        return;
+      }
+      
+      $term = StringWizard::normalize($term);
       
       if (strpos($term, '*') !== false) {
         $term = str_replace('*', '%', $term);
@@ -72,7 +79,7 @@
           "SELECT DISTINCT w.`Key`
             FROM `translation` t 
               INNER JOIN `word` w ON w.`KeyID` = t.`WordID`
-            WHERE t.`LanguageID` = ? AND w.`Key` LIKE ?
+            WHERE t.`LanguageID` = ? AND w.`NormalizedKey` LIKE ?
             ORDER BY w.`Key` ASC"
         );
         
@@ -81,7 +88,7 @@
         $query = $db->connection()->prepare(
           "SELECT DISTINCT `Key`
             FROM `word` w
-            WHERE `Key` LIKE ?
+            WHERE `NormalizedKey` LIKE ?
             ORDER BY `Key` ASC"
         );
         $query->bind_param('s', $term);
@@ -120,11 +127,33 @@
         return false;
       }
       
-      $d = @json_decode(file_get_contents($term));
+      $age = time() - filemtime($file);
+      if ($age >= 3600) { // 1 hour refresh rate
+        return false;
+      }
+      
+      $fp = fopen($file, 'r');
+      $contents = '';
+      
+      if (flock($fp, LOCK_SH)) {
+        while (!feof($fp)) {
+          $contents .= fread($fp, 4096);
+        }
+        flock($fp, LOCK_UN);
+      }
+      
+      fclose($fp);
+      
+      if (strlen($contents) < 1) {
+        return false;
+      }
+      
+      $d = @json_decode($contents);
       
       if ($d != null) {
-        $data['data'] = $d[0];
+        $data['words'] = $d[0];
         $data['matches'] = $d[1];
+        $data['cache-age'] = $age;
         
         return true;
       }
@@ -133,11 +162,10 @@
     }
     
     private static function getCacheName(array &$data) {
-      // This is necessary for the iconv-normalization to function properly
-      setlocale(LC_ALL, 'de_DE.UTF8');
+      $cacheName = ROOT.'/cache/search-terms/'.$data['language-filter'].'-'.
+        StringWizard::normalize($data['term']);
       
-      // TODO: Implement this normalization procedure to all product searches
-      return ROOT.'/cache/search-terms/'.$data['language-filter'].'-'.iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $data['term']);
+      return $cacheName;
     }
   }
 ?>

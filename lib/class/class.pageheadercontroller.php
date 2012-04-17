@@ -20,6 +20,7 @@
         $engine->assign('languages', $this->_model->getLanguages());
         $engine->assign('background', $this->_model->getBackgroundFile());
         $engine->assign('backgrounds', $this->_model->getBackgroundFiles());
+        $engine->assign('viewportWidth', $this->_model->getViewportWidth());
       }
     }
   }

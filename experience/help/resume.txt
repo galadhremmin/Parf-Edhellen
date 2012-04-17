@@ -1,0 +1,2 @@
+Usage: /resume
+Loads your last configuration and tries to connect to the world again. Make sure that "local storage" is your method of persistence if you are interested in utilising this functionality. Check /help persistMethod.

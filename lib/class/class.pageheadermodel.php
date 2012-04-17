@@ -8,6 +8,7 @@
     private $_backgroundFile;
     private $_backgroundFiles;
     private $_languages;
+    private $_viewportWidth;
     
     public function __construct() {
       $menu = array();
@@ -55,6 +56,8 @@
       
       foreach ($languages as $id => $name)
         $this->_languages[$id] = $name;
+      
+      $this->_viewportWidth = 0;
     }
     
     public function getMenu() {
@@ -71,6 +74,25 @@
     
     public function getLanguages() {
       return $this->_languages;
+    }
+    
+    public function getViewportWidth() {
+      if ($this->_viewportWidth < 1) {
+         $mobileFound = false;
+         $browsers = array('/iphone/i', '/windows\sphone/i', '/android/i');
+         $browser = $_SERVER['HTTP_USER_AGENT'];
+         
+         foreach ($browsers as $reg) {
+            $mobileFound = preg_match($reg, $browser);
+            if ($mobileFound) {
+               break;
+            }
+         }
+          
+         $this->_viewportWidth = $mobileFound ? 480 : 850;
+      }
+    
+      return $this->_viewportWidth;
     }
   }
 ?>

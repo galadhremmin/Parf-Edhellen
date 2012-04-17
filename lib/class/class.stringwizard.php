@@ -13,6 +13,20 @@
       return str_replace(array('>', '<'), array('&gt;', '&lt;'), $str); //preg_replace('/<[^>]+>/', '', $str);
     }
     
+    public static function normalize($str) {
+      $currentLocale = setlocale(LC_ALL, 0);
+      
+      // This is necessary for the iconv-normalization to function properly
+      setlocale(LC_ALL, 'de_DE.UTF8');
+      
+      $normalizedStr = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $str);
+      
+      // restore the locale
+      setlocale(LC_ALL, $currentLocale);
+      
+      return mb_convert_case($normalizedStr, MB_CASE_LOWER, 'utf-8');
+    }
+    
     // Replaces all [[textual content]] with anchors <a href="#textual+content">textual content</a>
     public static function createLinks($str) {
       $str = self::preventXSS($str);
@@ -37,9 +51,10 @@
       //
       // This might be an performance issue, and might need to be optimised.
       $regs = array(
-        '/_([^_]+)_/' => array('tag' => 'em'),
+        '/_([^_]*)_/' => array('tag' => 'em'),
+        '/~([^~]*)~/' => array('tag' => 'u'),
         '/\\`([^\\`]+)\\`/' => array('tag' => 'strong'),
-        '/\\[\\[([^\\]]+)\\]\\]/' => array('tagStart' => 'a href="#{{1:urlencode}}"', 'tagEnd' => 'a')
+        '/\\[\\[([^\\]]+)\\]\\]/' => array('tagStart' => 'a href="#{{1:createLink}}"', 'tagEnd' => 'a')
       );   
       
       foreach ($regs as $reg => $data) {
@@ -96,4 +111,7 @@
       return $str;
     }
   }
-?>
+  
+  function createLink($s) {
+    return str_replace('+', '%20', urlencode($s));
+  }

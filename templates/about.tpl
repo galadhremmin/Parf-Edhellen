@@ -7,15 +7,12 @@
 <p>Use the search-box to browse the dictionaries contents. As you type, suggestions are made continously 
 based on your enquiry. It is possible to use wildcards to further enhance the quality of these suggestions.</p>
 
-<p>Special characters aren't normalized, which means that you would have to explicitly search for <i>mîr</i> 
-or <i>aníra</i> etc. This is a known issue that will be fixed as soon as a viable solution comes to mind.
-For the time being, you can use wildcards instead of special characters, if you are uncertain which to use:
-<em>m*r</em> and <em>an*ra</em>.</p>
+<p>Special characters are normalized, which means that you that the search query <i>mir</i> will match <i><a href="#m%C3%AEr">mîr</a></i>, <i><a href="#m%C3%ADr%C3%AB">mírë</a></i>, <i><a href="#miril">miril</a></i> and so forth. </p>
 
 <p>A result cap is applied depending on the preciseness of your query. More exact queries are believed to yield more granular results, consequently resulting in a wider more generous result cap. This feature is chiefly in place to limit excessive queries that might impede performance.</p>
 
 <p>The preciseness of your query is calculated according to the follow equation: 
-<br /><u><em>the length of the input string without modifiers and spacing</em></u> &times; 100.</p>
+<br /><u><em>the length of the input string without modifiers and spacing</em></u> &times; 200.</p>
 
 <a name="authentication"></a>
 <h3>Authentication</h3>
@@ -39,20 +36,25 @@ glosses in many languages.</p>
 
 <p>Syntax:<br />
 <span class="span-column">[[maen]]</span> <a href="index.php#maen">maen</a><br /> 
-<span class="span-column">_mae_</span> <em>mae</em><br /> 
+<span class="span-column">_mae_</span> <em>mae</em><br />
+<span class="span-column">~minno~</span> <u>minno</u><br />  
 <span class="span-column">`idhron`</span> <strong>idhron</strong><br /> 
 <span class="span-column">&gt;&gt;</span> <img src="img/hand.png" alt="" border="0" /></p>
 
 <a name="wordlist"></a>
-<h3>Word lists</h3>
+<h3>Credits &amp; Sources</h3>
 <p>The following excellent word lists have been successfully imported.</p>
 <dl>
   <dt><a href="http://folk.uib.no/hnohf/wordlists.htm" target="_blank">Quettaparma Quenyallo</a></dt>
   <dd>The best Quenya lexicon maintained by <em>Helge Fauskanger</em>, presented alongside his <em>excellent</em> course work material on Ardalambion.</dd>
   <dt><a href="http://www.jrrvf.com/hisweloke/sindar/index.html" target="_blank">Hiswelókë's Sindarin Dictionary</a></dt>
   <dd>A community dictionary maintained by the <em>SinDict community</em> that has unfortunately stagnated, but is still very good.</dd>
+  <dt><a href="http://lambenore.free.fr/" target="_blank">Parma Eldalamberon 17 Sindarin Corpus</a></dt>
+  <dd>A big thank-you to David Giraudeau for contributing with his compilation of Sindarin words from Parma Eldalamberon 17. You can find the original <a href="http://lambenore.free.fr/downloads/PE17_S.pdf" target="_blank">over here</a>.</dd>
+  <dt><a href="http://www.forodrim.org/daeron/md_home.html" target="_blank">Mellonath Daeron</a></dt>
+  <dd>Mellonath Daeron's contribution of glossaries from Parma Eldalamberon 18 and 19, and their continuous  feedback and encouragement.</dd>
 </dl>
-<p>Thank you for your excellent work making these word lists available to the public!</p>
+<p>Thank you for your excellent work! It is the quintessence of Parf Edhellen's success!</p>
 
 <a name="tengwar"></a>
 <h3>Tengwar <span class="tengwar">1Rx#6</span></h3>

@@ -3,13 +3,13 @@
 <head>
   <title>{$documentTitle}</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <script type="text/javascript" src="js/js.php"></script>
   <link rel="stylesheet" media="all" type="text/css" href="css/global.css" />
   <link rel="stylesheet" media="all" type="text/css" href="css/ui-lightness/jquery-ui-1.8.14.custom.css" />
-  <script type="text/javascript" src="js/js.php"></script>
-  <!--<meta name="viewport" content="width=device-width;initial-scale=1.0;maximum-scale=1.0"/>-->
+  <meta name="viewport" content="width={$viewportWidth}, user-scalable=no"/>
   <style type="text/css">
   <!--/*<![CDATA[*/
-  body { background-image: url(img/backgrounds/{$background}); }
+  /*body { background-image: url(img/backgrounds/{$background}); }*/
   /*]]>*/-->
   </style>
   <script type="text/javascript">
@@ -62,7 +62,7 @@
         <a href="about.page?browseTo=search">Search term</a>
         &nbsp;
       </label>
-      <input id="search-query-field" type="text" size="34" class="rounded word" tabindex="1" accesskey="s" />
+      <input id="search-query-field" type="text" size="34" class="rounded word" tabindex="1" accesskey="s" autocapitalize="off" autocorrect="off" />
       <select name="search-filter" id="search-filter-field" class="rounded">
         {html_options options=$languages}
       </select>
@@ -78,7 +78,7 @@
   <div id="noscript">
     <strong>Ai! Lá polin saca i quettar!</strong>
     <p><em>ElfDict</em> requires javascript to function properly. Please enable Javascript.</p>
-    <p><a href="http://support.google.com/bin/answer.py?hl=en&answer=23852" target="_blank">Show me how I enable Javascript</a>.</p>
+    <p><a href="http://support.google.com/bin/answer.py?hl=en&amp;answer=23852" target="_blank">Show me how I enable Javascript</a>.</p>
   </div>
   </noscript>
   <div id="result">

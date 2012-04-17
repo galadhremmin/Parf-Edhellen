@@ -5,3 +5,6 @@ lib/config/
 dictionaries/
 fonts/
 img/
+lib/config/global.php
+
+lib/config/config.database.php

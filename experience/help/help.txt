@@ -1,0 +1,2 @@
+Usage: /help help-topic
+Describes commands' functions and utilisations. For available topics, type: /help commands.

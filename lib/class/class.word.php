@@ -46,10 +46,11 @@
         }
         
         $query = $db->prepare(
-          'INSERT INTO `word` (`Key`, `AuthorID`) VALUES (?, ?)'
+          'INSERT INTO `word` (`Key`, `AuthorID`, `NormalizedKey`) VALUES (?, ?, ?)'
         );
         
-        $query->bind_param('si', $key, $this->authorID);
+        $normalizedKey = StringWizard::normalize($key);
+        $query->bind_param('sis', $key, $this->authorID, $normalizedKey);
         if (!$query->execute()) {
           throw new ErrorException('Word insertion failed.');
         }
@@ -116,10 +117,11 @@
         $query->close();
         
         $query = $db->prepare(
-          'INSERT INTO `word` (`Key`, `AuthorID`) VALUES (?, ?)'
+          'INSERT INTO `word` (`Key`, `NormalizedKey`, `AuthorID`) VALUES (?, ?, ?)'
         );
         
-        $query->bind_param('si', $this->key, Session::getAccountID());
+        $normalizedKey = StringWizard::normalize($this->key);
+        $query->bind_param('ssi', $this->key, $normalizedKey, Session::getAccountID());
         $query->execute();
         
         $this->id = $query->insert_id;
@@ -220,17 +222,16 @@
       if ($trans->id > 0) {
         // Indexes doesn't use words, hence this functionality applies only
         // to translations.
-        $query = $db->prepare('SELECT `WordID` FROM `translation` WHERE `TranslationID` = ? AND (`EnforceOwner` = 0 OR `EnforceOwner` = ?)');
-        $query->bind_param('i', $trans->id, $accountID);
+        $query = $db->prepare('SELECT `WordID` FROM `translation` WHERE `TranslationID` = ? AND (`EnforcedOwner` = 0 OR `EnforcedOwner` = ?)');
+        $query->bind_param('ii', $trans->id, $accountID);
         $query->execute();
         $query->bind_result($currentWordID);
         $query->fetch();
-      
+        $query->close();
+        
         if ($currentWordID != $word->id) {
           Word::unregisterReference($currentWordID, 2); // 2 because the entry has not yet been changed
         }
-        
-        $query->close();
       
         $query = $db->prepare("UPDATE `translation` SET `Latest` = '0' WHERE `TranslationID` = ?");
         $query->bind_param('i', $trans->id);

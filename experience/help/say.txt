@@ -1,0 +1,2 @@
+Usage: /say your message
+If no other command is provided, this command is assumed, making this the default command. You have to assign yourself a nick (via the command /nick) and connect to a world (via /world) before this command might be effective. 

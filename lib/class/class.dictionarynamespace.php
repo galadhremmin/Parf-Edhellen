@@ -53,8 +53,7 @@
       $query = $db->prepare(
         'SELECT n.`NamespaceID`
          FROM `namespace` n
-         LEFT JOIN `word` w ON w.`KeyID` = n.`IdentifierID`
-         WHERE w.`Key` = ?'
+         WHERE n.`IdentifierID` = ?'
       );
       $query->bind_param('i', $word->id);
       $query->execute();

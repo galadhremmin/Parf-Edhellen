@@ -1,0 +1,12 @@
+Available commands:
+ - clear
+ - edit
+ - help
+ - nick
+ - persistMethod
+ - resume
+ - scenery
+ - say
+ - room
+ - roll
+ - world

@@ -129,7 +129,7 @@
               'word'        => $word,
               'id'          => $translationID,
               'translation' => StringWizard::createLinks($translation),
-              'etymology'   => StringWizard::preventXSS($etymology),
+              'etymology'   => StringWizard::createLinks($etymology),
               'type'        => $type,
               'tengwar'     => StringWizard::preventXSS($tengwar),
               'phonetic'    => StringWizard::preventXSS($phonetic),

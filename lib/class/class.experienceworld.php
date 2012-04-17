@@ -43,6 +43,7 @@
         $date = time();
         $stmt->bind_param('iisss', $this->ID, $date, $this->nick, $message, $messageType);
         $stmt->execute();
+        $stmt->close();
       }
     }
     
@@ -51,24 +52,81 @@
       $activity = array();
       
       if ($stmt = $db->prepare('SELECT `MessageID`, `Nick`, `Message`, `Type` FROM `experience_message`
-        WHERE `MessageID` > ? ORDER BY `MessageID` ASC')) {
-        $stmt->bind_param('i', $fromID);
+        WHERE `MessageID` > ? AND `WorldID` = ? ORDER BY `MessageID` ASC')) {
+        $stmt->bind_param('ii', $fromID, $this->ID);
         $stmt->execute();
         $stmt->bind_result($id, $nick, $message, $type);
         
         while ($stmt->fetch()) {
           $activity[] = array(
             'id'      => $id,
-            'nick'    => $nick, 
-            'message' => $message,
+            'nick'    => ExperienceUtilities::unescape($nick), 
+            'message' => ExperienceUtilities::unescape($message),
             'type'    => $type
           );
         }
         
         $stmt->free_result();
+        $stmt->close();
       }
       
       return $activity;
+    }
+    
+    public function clear(array $messageTypes) {
+      if (!$this->admin) {
+        throw new Exception('Insufficient privileges.');
+      }
+      
+      $activity = array();
+      $db = Database::instance()->exclusiveConnection(false);
+      
+      if ($stmt = $db->prepare('DELETE FROM `experience_message` WHERE `Type` = ? 
+        AND `WorldID` = ?')) {
+        
+        foreach ($messageTypes as $messageType) {
+          $stmt->bind_param('si', $messageType, $this->ID);
+          $stmt->execute();
+        }
+        
+        $stmt->close();
+        
+        foreach ($messageTypes as $messageType) {
+          $this->recordActivity('/clear '.$messageType, ExperienceMessageType::None);
+        }
+      }
+    }
+    
+    public function removeRecord($recordId) {
+      if (!$this->admin) {
+        throw new Exception('Insufficient privileges.');
+      }
+      
+      $db = Database::instance()->exclusiveConnection(false);
+      
+      if ($stmt = $db->prepare('DELETE FROM `experience_message` WHERE `MessageID` = ?
+        AND `WorldID` = ?')) {
+        
+        $stmt->bind_param('ii', $recordId, $this->ID);
+        $stmt->execute(); 
+        $stmt->close(); 
+      }
+    }
+    
+    public function editRecord($recordId, $newContent) {
+      if (!$this->admin) {
+        throw new Exception('Insufficient privileges.');
+      }
+      
+      $db = Database::instance()->exclusiveConnection(false);
+      
+      if ($stmt = $db->prepare('UPDATE `experience_message` SET `Message` = ? WHERE `MessageID` = ?
+        AND `WorldID` = ?')) {
+        
+        $stmt->bind_param('sii', $newContent, $recordId, $this->ID);
+        $stmt->execute();  
+        $stmt->close();
+      }
     }
     
     private function generateIV() {
@@ -136,6 +194,8 @@
         
         $this->ID    = $db->insert_id;
         $this->admin = true;
+        
+        $stmt->close();
       }
       
       return true;
@@ -158,6 +218,7 @@
         $this->admin = $worldAdmin == $adminPassword;
         
         $stmt->free_result();
+        $stmt->close();
       }
       
       return true;

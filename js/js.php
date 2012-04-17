@@ -1,4 +1,9 @@
 <?php
+  $filter = null;
+  if (isset($_GET['filter']) && preg_match('/^[a-z0-9\\-]+$/i', $_GET['filter'])) {
+    $filter = str_replace('-', '\\-', $_GET['filter']);
+  }
+  
   $files = scandir('.');
   sort($files);
   
@@ -10,7 +15,9 @@
     $info = pathinfo($file);
     
     if ($info['extension'] == 'js') {
-      $js .= file_get_contents($file)."\n\n";
+      if ($filter == null || ($filter != null && preg_match('/^[0-9]+\\.'.$filter.'$/', $info['filename']))) {
+        $js .= file_get_contents($file)."\n\n";
+      }
     }
   }
   
