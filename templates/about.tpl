@@ -1,5 +1,5 @@
 <h2>About <em>Parf Edhellen</em></h2>
-<p>The collaborative dictionary dedicated to the the linguistic world of Tolkien's. Presently in <em>alpha</em>-stage.</p>
+<p>The collaborative dictionary dedicated to the the linguistic world of Tolkien's. Presently in <em>beta</em>-stage.</p>
 
 <a name="search"></a>
 <a name="search"></a>

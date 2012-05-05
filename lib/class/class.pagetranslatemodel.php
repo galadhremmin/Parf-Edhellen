@@ -23,6 +23,7 @@
           $this->_term = stripslashes($this->_term);
         }
         
+        $this->_term = StringWizard::normalize($this->_term);
         $this->_loggedIn = Session::isValid();
                 
         // Load first data necessary for interaction 
@@ -52,14 +53,14 @@
           'SELECT DISTINCT n.`NamespaceID`, wN.`Key`
               FROM `namespace` n
               LEFT JOIN `word` wN ON wN.`KeyID` = n.`IdentifierID`
-              WHERE wN.`Key` = ?
+              WHERE wN.`NormalizedKey` = ?
             UNION (
               SELECT DISTINCT t.`NamespaceID`, wN.`Key`
               FROM `translation` t
               LEFT JOIN `word` wT ON wT.`KeyID` = t.`WordID`
               LEFT JOIN `namespace` n ON n.`NamespaceID` = t.`NamespaceID`
               LEFT JOIN `word` wN ON wN.`KeyID` = n.`IdentifierID`
-              WHERE wT.`Key` = ?
+              WHERE wT.`NormalizedKey` = ?
             )'
         );
         
@@ -92,10 +93,10 @@
              t.`Type`, t.`Source`, t.`Comments`, t.`Tengwar`, t.`Phonetic`,
              l.`Name` AS `Language`, t.`NamespaceID`, l.`Invented` AS `LanguageInvented`,
              t.`EnforcedOwner`
-           FROM `word` w
-           LEFT JOIN `translation` t ON t.`WordID` = w.`KeyID`
+           FROM `translation` t
+           LEFT JOIN `word` w ON w.`KeyID` = t.`WordID`
            LEFT JOIN `language` l ON l.`ID` = t.`LanguageID`
-           WHERE t.`NamespaceID` IN('.$namespaceIDs.') AND t.`Latest` = 1
+           WHERE t.`NamespaceID` IN('.$namespaceIDs.') AND t.`Latest` = 1 AND w.`Key` IS NOT NULL
            ORDER BY t.`NamespaceID` ASC, l.`Name` DESC, w.`Key` ASC'
         );
         

@@ -9,7 +9,20 @@
     protected function __construct($controller) {
       $model = self::getModel($controller);
       if (self::modelExists($model)) {
-        $this->_model = new $model();
+        $c = new Caching(30, Caching::getDefaultTag().'.'.$model);
+        
+        if (Session::isValid() || $c->hasExpired()) {
+          $this->_model = new $model();
+          
+          if (!Session::isValid()) {
+            $c->save(serialize($this->_model));
+          }
+          
+        } else {
+          __autoload($model);
+          $this->_model = unserialize($c->load());
+        }
+        
       }
     }
     
@@ -18,7 +31,7 @@
     }
     
     private function modelExists($model) {
-      $file = 'lib/class/class.'.strtolower($model).'.php';
+      $file = ROOT.'lib/class/class.'.strtolower($model).'.php';
       return file_exists($file);
     }
   }

@@ -4,11 +4,11 @@
 <head>
   <title>Parf Edhellen Experience ~ Veranda</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <script type="text/javascript" src="js/js.php?filter=jquery"></script>
-  <script type="text/javascript" src="experience/app.js"></script>
-  <link rel="stylesheet" media="all" type="text/css" href="css/global.css" />
-  <link rel="stylesheet" media="all" type="text/css" href="css/ui-lightness/jquery-ui-1.8.14.custom.css" />
-  <link rel="stylesheet" media="all" type="text/css" href="experience/app.css" />
+  <script type="text/javascript" src="/js/js.php?filter=jquery"></script>
+  <script type="text/javascript" src="/experience/app.js"></script>
+  <link rel="stylesheet" media="all" type="text/css" href="/css/global.css" />
+  <link rel="stylesheet" media="all" type="text/css" href="/css/ui-lightness/jquery-ui-1.8.14.custom.css" />
+  <link rel="stylesheet" media="all" type="text/css" href="/experience/app.css" />
   <meta name="viewport" content="width=850, user-scalable=no"/>
   <meta http-equiv="Cache-Control" content="No-Cache" />
   <meta http-equiv="Expires" content="0" /> 

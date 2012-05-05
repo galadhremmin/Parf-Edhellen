@@ -22,12 +22,12 @@ body {
   scrollbar-shadow-color:black;
 }
 #chat-window { 
-  margin: 20% auto 0 auto; 
+  margin: 5% auto 0 auto; 
   padding: 2mm;
-  height: 50%; 
+  height: 70%; 
   background: rgba(0,0,0,0.85);  
-  width: 50%; 
-  min-width: 600px;
+  width: 70%; 
+  /*min-width: 600px;*/
   box-shadow: 0 0 10px #000;
   border-radius: 5mm;
 }
@@ -37,14 +37,6 @@ body {
 }
 #scroll-window div:hover {
   background: #111;
-}
-textarea[name=message] {
-  width: 98%;
-  background: transparent;
-  border: 0.5mm solid #333;
-  border-radius: 5mm;
-  color: #e2e2e2;
-  font: inherit;
 }
 .chat-nick {
   font-size: 10px;
@@ -59,6 +51,26 @@ textarea[name=message] {
 }
 .chat-information {
   color: #888;
+}
+#chat-input {
+  height: 10%;
+}
+#chat-input textarea {
+  height: 100%;
+  width: 90%;
+  background: transparent;
+  border: none;
+  color: #e2e2e2;
+  font: inherit;
+}
+#chat-input input {
+  height: 100%;
+  width: 8%;
+  height: 100%;
+  color: white;
+  background: #1a1a1a;
+  border: none;
+  float: right;
 }
 #ie-overlay {
   position: absolute;

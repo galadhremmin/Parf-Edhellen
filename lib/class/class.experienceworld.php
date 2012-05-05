@@ -92,6 +92,10 @@
         $stmt->close();
         
         foreach ($messageTypes as $messageType) {
+          if ($messageType === 'for-all') {
+            continue;
+          }
+          
           $this->recordActivity('/clear '.$messageType, ExperienceMessageType::None);
         }
       }

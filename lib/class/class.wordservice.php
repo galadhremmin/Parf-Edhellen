@@ -46,7 +46,7 @@
       $preciseness = strlen(preg_replace('/[%\\*\\s\\.\\/\\\\]/', '', $term)) * WORD_SERVICE_PRECISENESS_STEPSIZE;
       
       if ($preciseness > 0) {
-        if (false || !self::populateFromCache($input, $data)) {
+        if (!self::populateFromCache($input, $data)) {
           self::populateFromDatabase($input, $preciseness, $data);
           $data['cached'] = false;
         }
@@ -79,17 +79,22 @@
           "SELECT DISTINCT w.`Key`
             FROM `translation` t 
               INNER JOIN `word` w ON w.`KeyID` = t.`WordID`
-            WHERE t.`LanguageID` = ? AND w.`NormalizedKey` LIKE ?
+            WHERE t.`Latest` = 1 AND t.`LanguageID` = ? AND w.`NormalizedKey` LIKE ?
             ORDER BY w.`Key` ASC"
         );
         
         $query->bind_param('is', $filter, $term);
       } else {
         $query = $db->connection()->prepare(
-          "SELECT DISTINCT `Key`
+          "SELECT DISTINCT w.`Key`
             FROM `word` w
-            WHERE `NormalizedKey` LIKE ?
-            ORDER BY `Key` ASC"
+            WHERE w.`NormalizedKey` LIKE ? AND (
+              EXISTS(SELECT NULL FROM `translation` t WHERE t.`Latest` = 1 AND t.`WordID` = w.`KeyID`) OR
+              EXISTS(SELECT NULL FROM `namespace` n 
+                INNER JOIN `translation` t2 ON t2.`NamespaceID` = n.`NamespaceID` AND t2.`Latest` = 1
+                WHERE n.`IdentifierID` = w.`KeyID`)
+            )
+            ORDER BY w.`Key` ASC"
         );
         $query->bind_param('s', $term);
       }

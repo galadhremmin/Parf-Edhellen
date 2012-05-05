@@ -88,6 +88,32 @@ var ENVDATA = (function() {
   };
 })();
 
+var ENVSOUND = (function() {
+  var _activeSounds = {};
+
+  function play(soundId) {
+    if (_activeSounds[soundId]) {
+      return;
+    }
+    
+    var $s = jQuery('#sound-fx-' + soundId);
+    
+    if ($s.length < 1) {
+      return;
+    }
+    
+    _activeSounds[soundId] = true;
+    
+    window.setTimeout(function() {
+      $s.get(0).play();
+      _activeSounds[soundId] = false;
+    }, 1000);
+  }
+  return {
+    play: play
+  }
+})();
+
 // ------------------------------------------------------------
 // INTERNAL FUNCTIONALITY
 // Maintains configuration properties and interaction that 
@@ -108,7 +134,7 @@ var ENVINT = (function() {
       } else {
         var cmd = ENVCOM.trim(args[0]).toLowerCase(); 
         
-        $.get('experience/help/' + cmd + '.txt', function(data) {
+        $.get('/experience/help/' + cmd + '.txt', function(data) {
           registerMessage('information', cmd.toUpperCase() + '\n' + data);
         }).error(function() {
           registerMessage('error', 'Unrecognised help topic "' + cmd + '".');
@@ -367,6 +393,11 @@ var ENVINT = (function() {
     // Replace all new lines with HTML line break tags
     message = message.replace(/\r\n|\r|\n/g, '<br />');
     
+    // if there is a valid nick, and the nick isn't the local's nick, play a sound
+    if (nick && nick != ENVDATA.get('nick')) {
+      ENVSOUND.play('alert');
+    }
+    
     switch (messageType) {
       case 'information':
       case 'error':
@@ -502,10 +533,16 @@ var ENVAPP = (function() {
     
     // pie
     jQuery.ajax({
-      url: 'api/experience/receiveCommand',
+      url: '/api/experience/receiveCommand',
       data: data,
       type: 'post',
       dataType: 'json',  // web service only communicates using JSON
+      error: function(xhr) {
+        ENVINT.registerMessage(
+          'error', 
+          'Error while processing "' + cmd + '". Error: ' + xhr.responseText.replace(/</g, '&lt;')
+        );
+      },
       success: function(msg) {
         if (!msg.succeeded) {
           // Inform the user interface of the error that prevented the desired instruction from
@@ -573,15 +610,23 @@ var ENVAPP = (function() {
     }
   }
   
+  function sendButtonClicked() {
+    var $t = $('textarea[name=message]');
+    
+    processMessage($t.val());
+    navigateChatHistory(0);
+    
+    $t.val('');
+    $t.focus();
+  }
+  
   return {
     keyDown: function(ev) {
       switch (ev.keyCode) {
         case 13: {
           if (ev.shiftKey) {
-            processMessage($(this).val());
-            navigateChatHistory(0);
+            sendButtonClicked();
             ev.preventDefault();
-            $(this).val('');
           }
         } break;
         /*
@@ -595,7 +640,8 @@ var ENVAPP = (function() {
         } break;*/
       }
     },
-    processCommand: processCommand
+    sendButton: sendButtonClicked,
+    processCommand: processCommand,
   };
 })();
 

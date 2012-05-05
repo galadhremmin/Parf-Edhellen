@@ -1,5 +1,5 @@
 <?php
-  include_once 'lib/system.php';
+  include_once '../lib/system.php';
 
   $template = 'xp_index';
   if (isset($_GET['template']) && preg_match('/^[a-z]+$/', $_GET['template'])) {

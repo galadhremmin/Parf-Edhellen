@@ -8,5 +8,6 @@
   </div>
   <div id="chat-input">
     <textarea type="text" name="message"></textarea>
+    <input type="button" value="Send" onclick="ENVAPP.sendButton()" />
   </div>
 </div>

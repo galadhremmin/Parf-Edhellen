@@ -38,7 +38,7 @@
         $this->displayEncapsulated($this->_headerName, false, false);
       }
       
-      parent::display($file.'.tpl');
+      parent::display(ROOT.'/templates/'.$file.'.tpl');
       
       if ($encapsulate) {
         $this->displayEncapsulated($this->_footerName, false, true);

@@ -1,18 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 2.11.8.1
--- http://www.phpmyadmin.net
---
--- Host: mysql.u0228621.fsdata.se
--- Generation Time: Aug 21, 2011 at 03:00 PM
--- Server version: 5.0.67
--- PHP Version: 5.2.14
-
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-
---
--- Database: `u0228621_7`
---
-
 -- --------------------------------------------------------
 
 --
@@ -30,7 +15,7 @@ CREATE TABLE IF NOT EXISTS `auth_accounts` (
   `Profile` text collate utf8_swedish_ci,
   PRIMARY KEY  (`AccountID`),
   UNIQUE KEY `Identity` (`Identity`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci AUTO_INCREMENT=7 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -57,38 +42,38 @@ CREATE TABLE IF NOT EXISTS `auth_providers` (
   `Logo` varchar(128) collate utf8_swedish_ci NOT NULL,
   `URL` varchar(255) collate utf8_swedish_ci NOT NULL,
   PRIMARY KEY  (`ProviderID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci AUTO_INCREMENT=3 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `grammar_type`
+-- Table structure for table `experience_message`
 --
 
-CREATE TABLE IF NOT EXISTS `grammar_type` (
-  `GrammarTypeID` tinyint(2) unsigned NOT NULL auto_increment,
-  `Name` varchar(32) collate utf8_swedish_ci NOT NULL,
-  `Order` smallint(2) unsigned NOT NULL,
-  PRIMARY KEY  (`GrammarTypeID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci AUTO_INCREMENT=41 ;
+CREATE TABLE IF NOT EXISTS `experience_message` (
+  `MessageID` int(10) unsigned NOT NULL auto_increment,
+  `WorldID` int(10) unsigned NOT NULL,
+  `Date` int(10) unsigned NOT NULL,
+  `Nick` varchar(16) collate utf8_swedish_ci NOT NULL,
+  `Message` text collate utf8_swedish_ci NOT NULL,
+  `Type` varchar(12) collate utf8_swedish_ci default NULL,
+  PRIMARY KEY  (`MessageID`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `inflection`
+-- Table structure for table `experience_world`
 --
 
-CREATE TABLE IF NOT EXISTS `inflection` (
-  `InflectionID` int(8) unsigned NOT NULL auto_increment,
-  `WordID` int(6) unsigned NOT NULL,
-  `TranslationID` int(8) unsigned NOT NULL,
-  `GrammarTypeID` tinyint(2) unsigned NOT NULL,
-  `Mutation` enum('sm','nm','mm','lm','stm') collate utf8_swedish_ci default NULL,
-  `Source` varchar(128) collate utf8_swedish_ci default NULL,
-  `Phonetic` varchar(128) collate utf8_swedish_ci default NULL,
-  `Comments` text collate utf8_swedish_ci,
-  PRIMARY KEY  (`InflectionID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci AUTO_INCREMENT=3 ;
+CREATE TABLE IF NOT EXISTS `experience_world` (
+  `WorldID` int(8) NOT NULL auto_increment,
+  `AuthorIP` varchar(15) collate utf8_swedish_ci NOT NULL,
+  `Password` varchar(64) collate utf8_swedish_ci NOT NULL,
+  `AdminPassword` varchar(64) collate utf8_swedish_ci NOT NULL,
+  `CreationDate` timestamp NOT NULL default '0000-00-00 00:00:00' on update CURRENT_TIMESTAMP,
+  PRIMARY KEY  (`WorldID`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -102,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `language` (
   `Order` int(2) NOT NULL,
   `Invented` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  (`ID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci AUTO_INCREMENT=7 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -113,8 +98,9 @@ CREATE TABLE IF NOT EXISTS `language` (
 CREATE TABLE IF NOT EXISTS `namespace` (
   `NamespaceID` int(10) unsigned NOT NULL auto_increment,
   `IdentifierID` int(8) NOT NULL,
-  PRIMARY KEY  (`NamespaceID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci AUTO_INCREMENT=2693 ;
+  PRIMARY KEY  (`NamespaceID`),
+  KEY `IdentifierIDIndex` (`IdentifierID`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -139,9 +125,12 @@ CREATE TABLE IF NOT EXISTS `translation` (
   `Phonetic` varchar(128) collate utf8_swedish_ci default NULL,
   `NamespaceID` int(11) NOT NULL,
   `Index` tinyint(1) NOT NULL default '0',
+  `EnforcedOwner` int(6) NOT NULL default '0',
   PRIMARY KEY  (`TranslationID`),
-  KEY `NamespaceIDIndex` (`NamespaceID`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci AUTO_INCREMENT=27409 ;
+  KEY `NamespaceIDIndex` (`NamespaceID`),
+  KEY `WordIDIndex` (`WordID`),
+  KEY `LanguageIDIndex` (`LanguageID`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -151,8 +140,9 @@ CREATE TABLE IF NOT EXISTS `translation` (
 
 CREATE TABLE IF NOT EXISTS `word` (
   `KeyID` int(8) unsigned NOT NULL auto_increment,
-  `Key` varchar(48) collate utf8_swedish_ci NOT NULL,
+  `Key` varchar(64) collate utf8_swedish_ci NOT NULL,
   `AuthorID` int(5) unsigned NOT NULL,
+  `NormalizedKey` varchar(64) collate utf8_swedish_ci default NULL,
   PRIMARY KEY  (`KeyID`),
-  KEY `KeyIndex` (`Key`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci AUTO_INCREMENT=15714 ;
+  KEY `KeyIndex` (`NormalizedKey`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci AUTO_INCREMENT=1 ;
