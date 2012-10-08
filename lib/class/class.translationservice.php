@@ -9,10 +9,19 @@
       
       parent::registerMainMethod('getTranslation');
       parent::registerMethod('register', 'registerTranslation');
+      parent::registerMethod('translate', 'translate');
     }
     
     public function handleRequest(&$data) {
       throw new ErrorException('Parameterless request presently unsupported.');
+    }
+    
+    protected static function translate(&$input) {
+      if (!isset($input['term'])) {
+        throw new Exception("Missing parameter 'term'.");
+      }
+      
+      return Translation::translate($input['term'], null);
     }
     
     protected static function getTranslation($id) {

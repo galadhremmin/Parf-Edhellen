@@ -25,6 +25,15 @@
         
         $this->_term = StringWizard::normalize($this->_term);
         $this->_loggedIn = Session::isValid();
+        
+        $data = Translation::translate($this->_term);
+        
+        if ($data !== null) {
+          $this->_namespaces     = $data['namespaces'];
+          $this->_translations   = $data['translations'];
+          $this->_keywordIndexes = $data['keywordIndexes'];
+          $this->_wordExists     = true;
+        } 
                 
         // Load first data necessary for interaction 
         // Languages
@@ -43,131 +52,32 @@
       
         // Grammar types
         $this->_types = Translation::getTypes();
-
-        $data         = array();
-        $namespaceIDs = array();
         
-        // Attempt to find the word asked for. This might yield multiple
-        // IDs, so these will be put in an array.
-        $query = $db->connection()->prepare(
-          'SELECT DISTINCT n.`NamespaceID`, wN.`Key`
-              FROM `namespace` n
-              LEFT JOIN `word` wN ON wN.`KeyID` = n.`IdentifierID`
-              WHERE wN.`NormalizedKey` = ?
-            UNION (
-              SELECT DISTINCT t.`NamespaceID`, wN.`Key`
-              FROM `translation` t
-              LEFT JOIN `word` wT ON wT.`KeyID` = t.`WordID`
-              LEFT JOIN `namespace` n ON n.`NamespaceID` = t.`NamespaceID`
-              LEFT JOIN `word` wN ON wN.`KeyID` = n.`IdentifierID`
-              WHERE wT.`NormalizedKey` = ?
-            )'
-        );
-        
-        $query->bind_param('ss', $this->_term, $this->_term);
-        $query->execute();
-        $query->bind_result($namespaceID, $identifier);
-        
-        $this->_namespaces = array();
-        
-        while ($query->fetch()) {
-          $namespaceIDs[] = $namespaceID;
+        if ($this->_wordExists && count($this->_namespaces) > 0) {        
+          $namespaceIDs = implode(',', array_keys($this->_namespaces));
           
-          $this->_namespaces[$namespaceID] = $identifier;
-        }
-        
-        $query->close();
-        
-        // If the array is empty, make sure to inform the view that
-        // the word asked for does not exist
-        if (count($namespaceIDs) < 1) {
-          return;
-        }        
-                
-        $namespaceIDs = implode(',', $namespaceIDs);
-          
-        // Find all translations for the words specified. The array of IDs is used
-        // now as a means to identify the words themselves.
-        $query = $db->connection()->prepare(
-          'SELECT w.`Key` AS `Word`, t.`TranslationID`, t.`Translation`, t.`Etymology`, 
-             t.`Type`, t.`Source`, t.`Comments`, t.`Tengwar`, t.`Phonetic`,
-             l.`Name` AS `Language`, t.`NamespaceID`, l.`Invented` AS `LanguageInvented`,
-             t.`EnforcedOwner`
-           FROM `translation` t
-           LEFT JOIN `word` w ON w.`KeyID` = t.`WordID`
-           LEFT JOIN `language` l ON l.`ID` = t.`LanguageID`
-           WHERE t.`NamespaceID` IN('.$namespaceIDs.') AND t.`Latest` = 1 AND w.`Key` IS NOT NULL
-           ORDER BY t.`NamespaceID` ASC, l.`Name` DESC, w.`Key` ASC'
-        );
-        
-        $query->execute();
-        $query->bind_result(
-          $word, $translationID, $translation, $etymology, $type, 
-          $source, $comments, $tengwar, $phonetic, $language,
-          $namespaceID, $inventedLanguage, $owner
-        );
-        
-        $this->_translations   = array();
-        $this->_keywordIndexes = array();
-        
-        while ($query->fetch()) {
-        
-          if (!$inventedLanguage) {
-            
-            $ptr =& $this->_keywordIndexes;
-          
-          } else {
-            
-            if (!isset($this->_translations[$language]))
-              $this->_translations[$language] = array();
-            
-            $ptr =& $this->_translations[$language];
-          }
-          
-          // Order affected associative array by language
-          $ptr[] = new Translation(
-            array(
-              'word'        => $word,
-              'id'          => $translationID,
-              'translation' => StringWizard::createLinks($translation),
-              'etymology'   => StringWizard::createLinks($etymology),
-              'type'        => $type,
-              'tengwar'     => StringWizard::preventXSS($tengwar),
-              'phonetic'    => StringWizard::preventXSS($phonetic),
-              'source'      => StringWizard::preventXSS($source),
-              'comments'    => StringWizard::createLinks($comments),
-              'language'    => $language,
-              'namespaceID' => $namespaceID,
-              'owner'       => $owner
-            )
+          // Find all revisions
+          $query = $db->connection()->query(
+            "SELECT t.`TranslationID`, DATE_FORMAT(t.`DateCreated`, '%Y-%m-%d') AS `DateCreated`, 
+               t.`Latest`, w.`Key`, a.`Nickname` AS `AuthorName`, a.`AccountID` AS `AuthorID`
+             FROM `translation` t
+             INNER JOIN `word` w ON w.`KeyID` = t.`WordID`
+             INNER JOIN `auth_accounts` a ON a.`AccountID` = t.`AuthorID`
+             WHERE t.`NamespaceID` IN(".$namespaceIDs.") AND t.`Index` = '0'
+             ORDER BY t.`DateCreated` DESC, w.`Key` ASC, t.`Latest` DESC"
           );
+        
+          // reset the data array, as it will now contain a different
+          // data set
+          $data = array();
+          while ($row = $query->fetch_object()) {
+            $data[] = $row;
+          }
+        
+          $query->close();
+        
+          $this->_revisions = $data;
         }
-        
-        $query->close();
-        
-        $this->_wordExists = true;
-        
-        // Find all revisions
-        $query = $db->connection()->query(
-          "SELECT t.`TranslationID`, DATE_FORMAT(t.`DateCreated`, '%Y-%m-%d') AS `DateCreated`, 
-             t.`Latest`, w.`Key`, a.`Nickname` AS `AuthorName`, a.`AccountID` AS `AuthorID`
-           FROM `translation` t
-           LEFT JOIN `word` w ON w.`KeyID` = t.`WordID`
-           LEFT JOIN `auth_accounts` a ON a.`AccountID` = t.`AuthorID`
-           WHERE t.`NamespaceID` IN(".$namespaceIDs.") AND t.`Index` = '0'
-           ORDER BY w.`Key` ASC, t.`Latest` DESC, t.`DateCreated` DESC"
-        );
-      
-        // reset the data array, as it will now contain a different
-        // data set
-        $data = array();
-        while ($row = $query->fetch_object()) {
-          $data[] = $row;
-        }
-      
-        $query->close();
-      
-        $this->_revisions = $data;
       }
     }
     

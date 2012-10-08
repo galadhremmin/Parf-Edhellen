@@ -7,11 +7,12 @@
     public function __construct(&$engine) {
       parent::__construct('profile');
     
-      if ($this->_model !== null) {
-        $engine->assign('loggedIn',      $this->_model->getLoggedIn());
-        $engine->assign('myProfile',     $this->_model->getLoadedAuthenticatedAuthor());
-        $engine->assign('author',        $this->_model->getAuthor());
-        $engine->assign('accountAuthor', $this->_model->getAuthorForAccount());
+      $model = $this->getModel();
+      if ($model !== null) {
+        $engine->assign('loggedIn',      $model->getLoggedIn());
+        $engine->assign('myProfile',     $model->getLoadedAuthenticatedAuthor());
+        $engine->assign('author',        $model->getAuthor());
+        $engine->assign('accountAuthor', $model->getAuthorForAccount());
       }
     }
   }

@@ -4,6 +4,7 @@
   include_once 'config/global.php';
 
   error_reporting(E_ALL | E_STRICT);
+  mb_internal_encoding('UTF-8');
   
   function __autoload($className) {
     $className = strtolower($className);

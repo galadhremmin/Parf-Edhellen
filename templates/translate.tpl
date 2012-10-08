@@ -8,7 +8,10 @@
   <div class="language-box" id="language-box-{$language}">
   {* Iterate through each entry for the specificed language *}
   {foreach $translationsForLanguage as $translation}
-  <blockquote id="translation-block-{counter}">
+  <blockquote id="translation-block-{counter}" {if $translation->owner < 1}class="contribution"{/if}>
+    {if $translation->owner < 1}
+    <span class="contribution"><u>Unverified</u> third-party contribution by <a href="/profile.page?authorID={$translation->authorID}">{$translation->authorName}</a></span>
+    {/if}
     <h3 rel="trans-word">{$translation->word}</h3> 
     {if $translation->tengwar != null}
     &#32;<span class="tengwar">{$translation->tengwar}</span>
@@ -24,7 +27,7 @@
     {if $translation->source != null}<span class="word-source" rel="trans-source">[{$translation->source}]</span>{/if}
 
     <span class="word-etymology" rel="trans-etymology">{$translation->etymology}</span>
-
+    
     {if $loggedIn == true && ($translation->owner < 1 || $translation->owner == $accountID)}
       {*<a class="feature-link" href="#" onclick="return LANGDict.deleteTranslation({$translation->id})">Delete</a>*}
       <a class="feature-link" href="#" onclick="return LANGDict.showTranslationForm({$translation->id})">Revise</a>
@@ -191,3 +194,4 @@
     <div class="clear"></div>
   </div>
 </div>
+<div class="performance-data">{$timeElapsed} s elapsed.</div>

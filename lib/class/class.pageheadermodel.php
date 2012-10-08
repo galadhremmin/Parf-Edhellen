@@ -14,10 +14,10 @@
       $menu = array();
       
       $menu[] = new MenuItem(array('url' => 'index.page', 'text' => 'Home'));
-      //$menu[] = new MenuItem(array('url' => 'news.page', 'text' => 'News')); // 2012-02-20: removed because of unnecessity
       $menu[] = new MenuItem(array('url' => 'about.page', 'text' => 'About'));
-      $menu[] = new MenuItem(array('url' => 'resources.page', 'text' => 'Resources'));
       $menu[] = new MenuItem(array('url' => 'contributors.page', 'text' => 'Contributors'));
+      $menu[] = new MenuItem(array('url' => 'news.page', 'text' => 'Activity'));
+      $menu[] = new MenuItem(array('url' => 'resources.page', 'text' => 'Resources'));
       
       if (Session::isValid()) {
         $menu[] = new MenuItem(array('url' => 'profile.page', 'text' => 'Profile'));
@@ -89,7 +89,7 @@
             }
          }
           
-         $this->_viewportWidth = $mobileFound ? 480 : 850;
+         $this->_viewportWidth = $mobileFound ? 480 : 950;
       }
     
       return $this->_viewportWidth;

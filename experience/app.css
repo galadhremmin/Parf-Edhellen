@@ -1,108 +1,128 @@
-html,body { 
-  padding: 0; 
-  margin: 0;
-  width: 100%; 
-  height: 100%; 
-  overflow: hidden; 
+@media screen {
+  html,body { 
+    padding: 0; 
+    margin: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: hidden; 
+  }
+  body { 
+    background: url(img/default-scenery.jpg) no-repeat center top;  
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    color: #d1dfbc; 
+    font-size: 95%;
+    scrollbar-3dlight-color:black; 
+    scrollbar-arrow-color:black; 
+    scrollbar-base-color:black; 
+    scrollbar-darkshadow-color:black; 
+    scrollbar-face-color:black; 
+    scrollbar-highlight-color:black; 
+    scrollbar-shadow-color:black;
+  }
+  #chat-window { 
+    margin: 5% auto 0 auto; 
+    padding: 2mm;
+    height: 70%; 
+    background: rgba(0,0,0,0.85);  
+    width: 70%; 
+    /*min-width: 600px;*/
+    box-shadow: 0 0 10px #000;
+    border-radius: 5mm;
+  }
+  #scroll-window {
+    height: 90%;
+    overflow: auto;
+  }
+  #scroll-window div:hover {
+    background: #111;
+  }
+  .chat-nick {
+    font-size: 10px;
+    text-align: left;
+    color: #777;
+  }
+  .chat-information, .chat-error {
+    font-size: 80%;
+  }
+  .chat-error {
+    color: red;
+  }
+  .chat-information {
+    color: #888;
+  }
+  #chat-input {
+    height: 10%;
+  }
+  #chat-input textarea {
+    height: 100%;
+    width: 90%;
+    background: transparent;
+    border: none;
+    color: #e2e2e2;
+    font: inherit;
+  }
+  #chat-input input {
+    height: 100%;
+    width: 8%;
+    height: 100%;
+    color: white;
+    background: #1a1a1a;
+    border: none;
+    float: right;
+  }
+  #ie-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    filter: alpha(opacity=90);
+    background: black;
+    text-align: center;
+    line-height: 500px;
+  }
+  .loading {
+    background: black url(../img/loading-dark-black.gif) no-repeat center center;
+  }
+  #config-window, #config-hotspot {
+    position: absolute;
+    width: 100%;
+    height: 40px;
+    left: 0;
+  }
+  #config-hotspot {
+    top: 0;
+    z-index: 1000;
+  }
+  #config-window {
+    top: -40px;
+    -webkit-transition: top 0.2s ease-in-out;
+    -ms-transition: top 0.2s ease-in-out;
+    z-index: 1001;
+    background: black;
+    opacity: 0.9;
+    color: white;
+    line-height: 40px;
+  }
 }
-body { 
-  background: url(img/default-scenery.jpg) no-repeat center top;  
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-  color: #d1dfbc; 
-  font-size: 95%;
-  scrollbar-3dlight-color:black; 
-  scrollbar-arrow-color:black; 
-  scrollbar-base-color:black; 
-  scrollbar-darkshadow-color:black; 
-  scrollbar-face-color:black; 
-  scrollbar-highlight-color:black; 
-  scrollbar-shadow-color:black;
-}
-#chat-window { 
-  margin: 5% auto 0 auto; 
-  padding: 2mm;
-  height: 70%; 
-  background: rgba(0,0,0,0.85);  
-  width: 70%; 
-  /*min-width: 600px;*/
-  box-shadow: 0 0 10px #000;
-  border-radius: 5mm;
-}
-#scroll-window {
-  height: 90%;
-  overflow: auto;
-}
-#scroll-window div:hover {
-  background: #111;
-}
-.chat-nick {
-  font-size: 10px;
-  text-align: left;
-  color: #777;
-}
-.chat-information, .chat-error {
-  font-size: 80%;
-}
-.chat-error {
-  color: red;
-}
-.chat-information {
-  color: #888;
-}
-#chat-input {
-  height: 10%;
-}
-#chat-input textarea {
-  height: 100%;
-  width: 90%;
-  background: transparent;
-  border: none;
-  color: #e2e2e2;
-  font: inherit;
-}
-#chat-input input {
-  height: 100%;
-  width: 8%;
-  height: 100%;
-  color: white;
-  background: #1a1a1a;
-  border: none;
-  float: right;
-}
-#ie-overlay {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  filter: alpha(opacity=90);
-  background: black;
-  text-align: center;
-  line-height: 500px;
-}
-.loading {
-  background: black url(../img/loading-dark-black.gif) no-repeat center center;
-}
-#config-window, #config-hotspot {
-  position: absolute;
-  width: 100%;
-  height: 40px;
-  left: 0;
-}
-#config-hotspot {
-  top: 0;
-  z-index: 1000;
-}
-#config-window {
-  top: -40px;
-  -webkit-transition: top 0.2s ease-in-out;
-  -ms-transition: top 0.2s ease-in-out;
-  z-index: 1001;
-  background: black;
-  opacity: 0.9;
-  color: white;
-  line-height: 40px;
+@media print {
+  #chat-input, #config-window, .chat-error, .chat-nick, .chat-information {
+    display: none;
+  }
+  #chat-window {
+    margin: 0;
+    width: auto;
+    height: auto;
+    background: white;
+    color: black;
+    border: none;
+  }
+  #scroll-window {
+    overflow: none;
+    height: auto;
+    width: auto;
+  }
 }

@@ -14,12 +14,32 @@
     }
     
     public static function getDefaultTag() {
+      $hash = array();
+      foreach ($_GET as $key => $value) {
+        // ignore phpsessid keys, as these uniquely identifies sessions
+        if (strtolower($key) == 'phpsessid') {
+          continue;
+        }
+        
+        $hash[] = $key.'.'.$value;
+      }
+      
+      // combine the query string elements by dots
+      $hash = implode('.', $hash);
+      
+      if (strlen($hash) > 0) {
+        $hash = '.'.$hash;
+      }
+      
+      // get the document without the extension
+      $document = substr($_SERVER['PHP_SELF'], 0, -4);
+      
       return strtolower(
         trim(
           preg_replace(
             '/[^a-zA-Z0-9\\.]/', 
             '', 
-            StringWizard::normalize($_SERVER['PHP_SELF'].'.'.urldecode(str_replace('=', '.', $_SERVER['QUERY_STRING'])))
+            StringWizard::normalize($document.$hash)
           )
         )
       );

@@ -24,13 +24,13 @@
       // restore the locale
       setlocale(LC_ALL, $currentLocale);
       
-      return mb_convert_case($normalizedStr, MB_CASE_LOWER, 'utf-8');
+      return trim(mb_convert_case($normalizedStr, MB_CASE_LOWER, 'utf-8'));
     }
     
     // Replaces all [[textual content]] with anchors <a href="#textual+content">textual content</a>
     public static function createLinks($str) {
       $str = self::preventXSS($str);
-    
+
       $matches = null;
       
       // This is a bloody mess - this needs to be cleaned up. Essentially this is what is done:
@@ -113,5 +113,5 @@
   }
   
   function createLink($s) {
-    return str_replace('+', '%20', urlencode($s));
+    return rawurlencode($s);
   }

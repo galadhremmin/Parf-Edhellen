@@ -27,6 +27,7 @@
     public $wordID;
     public $dateCreated;
     public $authorID;
+    public $authorName;
     public $latest;
   
     public function __construct($data = null) {
@@ -53,11 +54,20 @@
     }
     
     public function remove() {
+      throw new Exception('Not implemented exception');
+    
       if ($this->id < 1) {
         throw new InvalidParameterException('id');
       }
       
       $conn = Database::instance()->exclusiveConnection();
+      
+      // TODO: Deassociate all words from the translation entry
+     
+      $stmt = $conn->prepare('DELETE FROM `keywords` WHERE `TranslationID` = ?');
+      $stmt->bind_param('i', $this->id);
+      $stmt->execute();
+      
       $stmt = $conn->prepare('DELETE FROM `translation` WHERE `TranslationID` = ?');
       $stmt->bind_param('i', $this->id);
       $stmt->execute();
@@ -118,6 +128,111 @@
       
       $query->close();
       
+      return $data;
+    }
+    
+    public static function translate($term, $languageFilter = null) {
+      $db             = Database::instance();
+      $normalizedTerm = StringWizard::normalize($term);
+    
+      $data         = array();
+      $namespaceIDs = array();
+      
+      // Attempt to find the namespaces associated with the word. This might yield multiple
+      // IDs, so these will be put in an array.
+      $query = $db->connection()->prepare(
+        'SELECT DISTINCT k.`NamespaceID`, k.`Keyword`
+           FROM `keywords` k
+           WHERE k.`NormalizedKeyword` = ? AND k.`NamespaceID` IS NOT NULL
+           UNION (
+            SELECT t.`NamespaceID` , k.`Keyword`
+              FROM `keywords` k
+                INNER JOIN `translation` t ON t.`TranslationID` = k.`TranslationID`
+              WHERE k.`TranslationID` IS NOT NULL AND k.`NormalizedKeyword` = ?
+          )'
+      );
+      
+      $query->bind_param('ss', $normalizedTerm, $normalizedTerm);
+      $query->execute();
+      $query->bind_result($namespaceID, $identifier);
+      
+      $data['namespaces'] = array();
+      while ($query->fetch()) {
+        $namespaceIDs[] = $namespaceID;
+        $data['namespaces'][$namespaceID] = $identifier;
+      }
+      
+      $query->close();
+      
+      if (count($namespaceIDs) < 1) {
+        return null;
+      }
+      
+      $namespaceIDs = implode(',', $namespaceIDs);
+
+      // Find all translations for the words specified. The array of IDs is used
+      // now as a means to identify the words themselves.
+      $query = $db->connection()->prepare(
+        'SELECT w.`Key` AS `Word`, t.`TranslationID`, t.`Translation`, t.`Etymology`, 
+           t.`Type`, t.`Source`, t.`Comments`, t.`Tengwar`, t.`Phonetic`,
+           l.`Name` AS `Language`, t.`NamespaceID`, l.`Invented` AS `LanguageInvented`,
+           t.`EnforcedOwner`, t.`AuthorID`, a.`Nickname`
+         FROM `translation` t
+         INNER JOIN `word` w ON w.`KeyID` = t.`WordID`
+         INNER JOIN `language` l ON l.`ID` = t.`LanguageID`
+         LEFT JOIN `auth_accounts` a ON a.`AccountID` = t.`AuthorID`
+         WHERE t.`NamespaceID` IN('.$namespaceIDs.') AND t.`Latest` = 1
+         ORDER BY t.`NamespaceID` ASC, l.`Name` DESC, w.`Key` ASC'
+      );
+      
+      $query->execute();
+      $query->bind_result(
+        $word, $translationID, $translation, $etymology, $type, 
+        $source, $comments, $tengwar, $phonetic, $language,
+        $namespaceID, $inventedLanguage, $owner, $authorID, 
+        $authorName
+      );
+      
+      $data['translations']   = array();
+      $data['keywordIndexes'] = array();
+      
+      while ($query->fetch()) {
+      
+        if (!$inventedLanguage) {
+          
+          $ptr =& $data['keywordIndexes'];
+        
+        } else {
+          
+          if (!isset($data['translations'][$language]))
+            $data['translations'][$language] = array();
+          
+          $ptr =& $data['translations'][$language];
+        }
+        
+        // Order affected associative array by language
+        $ptr[] = new Translation(
+          array(
+            'word'        => $word,
+            'id'          => $translationID,
+            'translation' => StringWizard::createLinks($translation),
+            'etymology'   => StringWizard::createLinks($etymology),
+            'type'        => $type,
+            'tengwar'     => StringWizard::preventXSS($tengwar),
+            'phonetic'    => StringWizard::preventXSS($phonetic),
+            'source'      => StringWizard::preventXSS($source),
+            'comments'    => StringWizard::createLinks($comments),
+            'language'    => $language,
+            'namespaceID' => $namespaceID,
+            'owner'       => $owner,
+            'authorID'    => $authorID,
+            'authorName'  => $authorName
+          )
+        );
+      }
+      
+      $query->close();
+
       return $data;
     }
   }

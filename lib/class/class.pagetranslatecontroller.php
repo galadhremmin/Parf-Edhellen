@@ -5,19 +5,31 @@
   
   class PageTranslateController extends Controller {
     public function __construct(TemplateEngine &$engine) {
-      parent::__construct('translate');
+      $doCache = false;
+      $cacheTag = null;
       
-      if ($this->_model !== null) {
-        $engine->assign('namespaces',   $this->_model->getNamespaces());
-        $engine->assign('translations', $this->_model->getTranslations());
-        $engine->assign('indexes',      $this->_model->getIndexes());
-        $engine->assign('revisions',    $this->_model->getRevisions());
-        $engine->assign('languages',    $this->_model->getLanguages());
-        $engine->assign('types',        $this->_model->getTypes());
-        $engine->assign('loggedIn',     $this->_model->getLoggedIn());
-        $engine->assign('term',         $this->_model->getTerm());
-        $engine->assign('wordExists',   $this->_model->getWordExists());
-        $engine->assign('accountID',    $this->_model->getAccountID());
+      if (isset($_REQUEST['term'])) {
+        $term = $_REQUEST['term'];
+        
+        $doCache = true;
+        $cacheTag = 'translation.term.'.sha1($term);
+      }
+    
+      parent::__construct('translate', $doCache, $cacheTag);
+      
+      $model = $this->getModel();
+      if ($model !== null) {
+        $engine->assign('namespaces',   $model->getNamespaces());
+        $engine->assign('translations', $model->getTranslations());
+        $engine->assign('indexes',      $model->getIndexes());
+        $engine->assign('revisions',    $model->getRevisions());
+        $engine->assign('languages',    $model->getLanguages());
+        $engine->assign('types',        $model->getTypes());
+        $engine->assign('loggedIn',     $model->getLoggedIn());
+        $engine->assign('term',         $model->getTerm());
+        $engine->assign('wordExists',   $model->getWordExists());
+        $engine->assign('accountID',    $model->getAccountID());
+        $engine->assign('timeElapsed',  $this->getTimeElapsed());
       }
     }
   }

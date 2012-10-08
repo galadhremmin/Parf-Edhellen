@@ -7,8 +7,9 @@
     public function __construct(TemplateEngine &$engine) {
       parent::__construct('index');
       
-      if ($this->_model !== null) {
-        $engine->assign('languages', $this->_model->getLanguages());
+      $model = $this->getModel();
+      if ($model !== null) {
+        $engine->assign('languages', $model->getLanguages());
       }
     }
   }

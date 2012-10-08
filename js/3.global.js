@@ -6,6 +6,7 @@ var LANGDict = {
     'q-wordID': 'This is entry order, according to the function and the sense of the word (word.1, word.2, word.3 etc.).\n\nUsually you can leave this to its default value, but when a word might have multiple meanings such as Sindarin _a_, order the word with dots: a.1, a.2 etc.'
   },
   currentWordIndex: 0,
+  lastHash: null,
   Loader: {
     inst: 0,
     inc: function() {
@@ -65,6 +66,7 @@ var LANGDict = {
     if (!item) {
       item = $('.word').val();
     }
+    
     location.hash = '#' + encodeURIComponent(item);
     return false;
   },
@@ -73,19 +75,25 @@ var LANGDict = {
       var s = new String(window.location.hash);
       this.load(decodeURIComponent(s.substr(1)));
       delete s;
+    } else if (window.location.pathname && LANGDict.lastHash) {
+        $.get(window.location.pathname + (window.location.search || ''), function (data) {
+          $('#result').html($(data).find('#result'));
+        });
     }
   },
   load: function(item) {
+    $('#result').html('<div class="loading">Loading...</div>');
     $('#result').load(
-      'translate.php?term=' + encodeURIComponent(item),
-      null,
+      'translate.php',
+      { term: item },
       function(responseText, textStatus, XMLHttpRequest) {
         LANGDict.contentLoaded();
       }
     );
+    LANGDict.lastHash = item;
   },
   cancelForm: function() {
-    $('.extendable-form:visible').slideUp();
+    $('.extendable-form:visible').hide();
   },
   nextResult: function(dir) {
     this.currentWordIndex += dir;
@@ -153,8 +161,6 @@ var LANGDict = {
         }
       }
     } else {
-      this.Loader.inc();
-      
       $.ajax({
         url: 'api/translation/' + translationIDOrWord,
         type: 'post',
@@ -170,7 +176,6 @@ var LANGDict = {
           }
 
           LANGDict.showTranslationForm(msg.response.word, true);
-          LANGDict.Loader.dec();
         }
       });
       
@@ -179,7 +184,12 @@ var LANGDict = {
     
     var targ = $('#translation-form');
     if (targ.is(':hidden')) {
-      targ.slideDown(LANGDict.Config.SLIDE_SPEED);
+      // targ.slideDown(LANGDict.Config.SLIDE_SPEED);
+      targ.css({
+        position: 'absolute',
+        left: (($(document).width() - targ.outerWidth()) * 0.5) + 'px',
+        top: ($(window).scrollTop() + ($(window).height() - targ.outerHeight()) * 0.5) + 'px'
+      }).show();
     }
     
     $('#translation-form span[rel=function]').html(preserveForm ? 'Edit' : 'Add');
@@ -509,7 +519,13 @@ var LANGSearch = function() {
       $result.html('<table id="result-table"><tbody><tr><td>' + cols.join('</td><td>') + '</td></tr></tbody></table>');
       
       if (!mobile) {
-        $('#search-description').show().find('span:first').html(data.words.length).next('span').html(data.matches);
+        var blocks = $('#search-description').show().find('span');
+        
+        if (blocks.length >= 3) {
+          $(blocks[0]).html(data.words.length);
+          $(blocks[1]).html(data.matches);
+          $(blocks[2]).html(Math.round(data.time * 100) / 100);
+        }
       }
       
       // this is necessary for IE, lest it's height will fail miserabily

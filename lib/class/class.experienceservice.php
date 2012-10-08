@@ -70,7 +70,9 @@
       
       self::coerce($world);
       
-      $message = implode(' ', $args);      
+      $message = implode(' ', $args);
+      $message = preg_replace('/&lt;(\\/?[bi]{1})&gt;/', '<\\1>', $message); // allow the <i> and <b> tags.
+      
       $world->recordActivity($message, ExperienceMessageType::Message);
       
       return new ExperienceResponse(

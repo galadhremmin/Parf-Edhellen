@@ -294,16 +294,41 @@ table tr td, table tr th {
   margin-bottom: 5px;
 }
 #search-result {
-  overflow: hidden;
-  width: 100%;
+  overflow: auto;
   position: relative;
-  padding-bottom: 10px;
+  padding-bottom: 20px;
 }
 #search-description {
   display: none;
   font-size: 80%;
   font-style: italic;
   padding: 5px;
+}
+#translation-entry blockquote {
+  margin: 0 20px 0 20px;
+}
+#translation-entry blockquote.contribution {
+  margin: 0 5px 5px 5px;
+  padding: 0 5px 10px 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #fafafa;
+}
+#translation-entry span.contribution {
+  color: #777;
+  font-size: 80%;
+  float: right;
+  line-height: 30px;
+}
+.loading {
+  background: url(../img/loading.gif) no-repeat center 72px;
+  line-height: 250px;
+  text-align: center;
+}
+.performance-data {
+  font-size: 80%;
+  color: #bbb;
+  text-align: right;
 }
 @media (max-width:480px) {
   #contents, #menu {

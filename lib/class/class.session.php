@@ -55,8 +55,36 @@
       if (!$provider->validate()) {
         return false;
       }
-            
-      $identity = self::hash($provider->identity);
+      
+      return self::internalRegister($provider->identity);
+    }
+    
+    public static function registerService($serviceIdentifier) {
+      $fakeIdentity = null;
+      switch ($serviceIdentifier) {
+        case 'ardalambion':
+          $fakeIdentity = 'MASTER-ARDALAMBION';
+          break;
+      }
+      
+      if ($fakeIdentity == null) {
+        return false;
+      }
+      
+      return self::internalRegister($fakeIdentity);
+    }
+    
+    public static function unregister() {
+      if (!self::isValid()) {
+        return;
+      }
+      
+      unset($_SESSION['identity']);
+      session_destroy();
+    }
+    
+    private static function internalRegister($openIdIdentity) {
+      $identity = self::hash($openIdIdentity);
       $id = self::persist($identity);
       
       if ($id < 1) {
@@ -73,15 +101,6 @@
       );
       
       return true;
-    }
-    
-    public static function unregister() {
-      if (!self::isValid()) {
-        return;
-      }
-      
-      unset($_SESSION['identity']);
-      session_destroy();
     }
     
     private static function hash($value) {

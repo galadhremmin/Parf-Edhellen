@@ -137,11 +137,8 @@
     public static function unregisterReference($id, $threshold = 1) {
       $db = Database::instance()->exclusiveConnection();
       
-      $query = $db->prepare('SELECT COUNT(t.`TranslationID`) 
-                             FROM `translation` t
-                             LEFT JOIN `inflection` i ON i.`TranslationID` = t.`TranslationID` 
-                             WHERE t.`Latest` = 1 AND (i.`WordID` = ? OR t.`WordID` = ?)');
-      $query->bind_param('ii', $id, $id);
+      $query = $db->prepare('SELECT COUNT(*) FROM `keywords` k WHERE k.`WordID` = ?');
+      $query->bind_param('i', $id);
       $query->execute();
       $query->bind_result($count);
       
@@ -222,21 +219,47 @@
       if ($trans->id > 0) {
         // Indexes doesn't use words, hence this functionality applies only
         // to translations.
-        $query = $db->prepare('SELECT `WordID` FROM `translation` WHERE `TranslationID` = ? AND (`EnforcedOwner` = 0 OR `EnforcedOwner` = ?)');
+        $query = $db->prepare('SELECT `WordID`, `NamespaceID` FROM `translation` WHERE `TranslationID` = ? AND (`EnforcedOwner` = 0 OR `EnforcedOwner` = ?)');
         $query->bind_param('ii', $trans->id, $accountID);
         $query->execute();
-        $query->bind_result($currentWordID);
+        $query->bind_result($currentWordID, $currentNamespaceID);
         $query->fetch();
         $query->close();
-        
-        if ($currentWordID != $word->id) {
-          Word::unregisterReference($currentWordID, 2); // 2 because the entry has not yet been changed
-        }
       
-        $query = $db->prepare("UPDATE `translation` SET `Latest` = '0' WHERE `TranslationID` = ?");
+        $query = $db->prepare('UPDATE `translation` SET `Latest` = \'0\' WHERE `TranslationID` = ?');
         $query->bind_param('i', $trans->id);
         $query->execute();
         $query->close();
+        
+        // remove all keywords to the (now) deprecated translation entry - the keywords table
+        // shall only contain current, up-to-date definitions.
+        $query = $db->prepare('DELETE FROM `keywords` WHERE `TranslationID` = ?');
+        $query->bind_param('i', $trans->id);
+        $query->execute();
+        $query->close();
+        
+        // deassociate the word with the previous translation entry
+        if ($currentWordID != $word->id) {
+          Word::unregisterReference($currentWordID);
+        }
+        
+        // deassociate the namespace with the previous translation entry
+        if ($currentNamespaceID != $trans->namespaceID) {
+          $query = $db->prepare('SELECT COUNT(*) FROM `translation` WHERE `Latest` = 1 AND `NamespaceID` = ?');
+          $query->bind_param('i', $currentNamespaceID);
+          $query->execute();
+          $query->bind_result($references);
+          $query->fetch();
+          $query->close();
+          
+          // If there are no references, delete the namespace from active keywords table
+          if ($references < 1) {
+            $query = $db->prepare('DELETE FROM `keywords` WHERE `NamespaceID` = ?');
+            $query->bind_param('i', $currentNamespaceID);
+            $query->execute();
+            $query->close();
+          }
+        }
       }
       
       if ($accountID < 1) {
@@ -263,6 +286,36 @@
       $query->execute();
       
       $trans->id = $query->insert_id;
+      
+      $query->close();
+      
+      // update the keywords table with the new results - but in order to do this, we'll need to normalize
+      // the input strings to make sure to avoid collisions
+      $nword    = StringWizard::normalize($word->key);
+      $nkeyword = StringWizard::normalize($trans->translation);
+      
+      // insert reference
+      $insert = array('key' => $word->key, 'nkey' => $nword, 'transID' => $trans->id, 'wordID' => $word->id);
+      
+      // The word key is always associated with this translation entry
+      $query = $db->prepare('INSERT INTO `keywords` (`Keyword`, `NormalizedKeyword`, `TranslationID`, `WordID`) VALUES(?,?,?,?)');
+      $query->bind_param('ssii', $insert['key'], $insert['nkey'], $insert['transID'], $insert['wordID']);
+      $query->execute();
+      
+      // The translation field might contain information interesting in regards to its relevance. If this information
+      // is not equal to the word already associated with the new entry, add the it as well.
+      if ($nword !== $nkeyword && !preg_match('/^\\s*$/', $nkeyword)) {
+        $keywordObj = new Word();
+        $keywordObj->create($trans->translation);
+        
+        $insert['key']     = $trans->translation;
+        $insert['nkey']    = $nkeyword;
+        $insert['transID'] = $trans->id;
+        $insert['wordID']  = $keywordObj->id;
+        
+        $query->bind_param('ssii', $insert['key'], $insert['nkey'], $insert['transID'], $insert['wordID']);
+        $query->execute();
+      }
       
       $query->close();
       

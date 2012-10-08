@@ -1,10 +1,8 @@
-
 templates_c/
 cache/
 lib/config/
 dictionaries/
 fonts/
 img/
-lib/config/global.php
-
-lib/config/config.database.php
+lib/config/
+.DS_Store

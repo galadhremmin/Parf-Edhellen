@@ -46,11 +46,13 @@
       $preciseness = strlen(preg_replace('/[%\\*\\s\\.\\/\\\\]/', '', $term)) * WORD_SERVICE_PRECISENESS_STEPSIZE;
       
       if ($preciseness > 0) {
-        if (!self::populateFromCache($input, $data)) {
+        $executionStart = microtime(true);
+        if (Session::isValid() || !self::populateFromCache($input, $data)) {
           self::populateFromDatabase($input, $preciseness, $data);
           $data['cached'] = false;
         }
         $data['cap'] = $preciseness;
+        $data['time'] = (microtime(true) - $executionStart) * 1000;
       }
       
       return $data;
@@ -86,6 +88,11 @@
         $query->bind_param('is', $filter, $term);
       } else {
         $query = $db->connection()->prepare(
+          "SELECT DISTINCT k.`Keyword` 
+             FROM `keywords` k
+             WHERE k.`NormalizedKeyword` LIKE ?
+             ORDER BY k.`NormalizedKeyword` ASC"
+          /*
           "SELECT DISTINCT w.`Key`
             FROM `word` w
             WHERE w.`NormalizedKey` LIKE ? AND (
@@ -95,6 +102,7 @@
                 WHERE n.`IdentifierID` = w.`KeyID`)
             )
             ORDER BY w.`Key` ASC"
+          */
         );
         $query->bind_param('s', $term);
       }
@@ -133,7 +141,7 @@
       }
       
       $age = time() - filemtime($file);
-      if ($age >= 3600) { // 1 hour refresh rate
+      if ($age >= 3600) { // hourly refresh rate
         return false;
       }
       
@@ -167,8 +175,8 @@
     }
     
     private static function getCacheName(array &$data) {
-      $cacheName = ROOT.'/cache/search-terms/'.$data['language-filter'].'-'.
-        StringWizard::normalize($data['term']);
+      $cacheName = trim(ROOT.'/cache/search-terms/'.$data['language-filter'].'-'.
+        StringWizard::normalize($data['term']));
       
       return $cacheName;
     }

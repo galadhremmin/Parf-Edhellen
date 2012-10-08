@@ -2,6 +2,12 @@
   Account &ldquo;{$author->nickname}&rdquo; 
   {if $author->tengwar != null}<span class="tengwar">{$author->tengwar}</span>{/if}
 </h2>
+{if $myProfile == true && $loggedIn == true}
+<p>Thank you for logging in to <em>Parf Edhellen</em>. By authenticating yourself, an account  has been created that you might use
+to edit the content on this website. Please bear in mind that glossaries imported from recognised dictionaries cannot be edited, but 
+you might create new glossaries within the same context with your corrections.</p>
+<p>If you haven't already, please take some time to finish your profile. <em>Nai Anar siluva parmalyanna!</em></p>
+{/if}
 <h3>Information</h3>
 <table class="vertical-cells-top">
   <tr>

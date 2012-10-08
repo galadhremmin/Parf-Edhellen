@@ -69,6 +69,16 @@
         $query->execute();
         
         $this->id = $db->insert_id;
+        
+        $query->close();
+        
+        // Create a keywords entry
+        $nkey = StringWizard::normalize($word->key);
+        $query = $db->prepare(
+          'INSERT INTO `keywords` (`Keyword`, `NormalizedKeyword`, `NamespaceID`, `WordID`) VALUES (?,?,?,?)'
+        );
+        $query->bind_param('ssii', $word->key, $nkey, $this->id, $word->id);
+        $query->execute();
       }
       
       $query->close();

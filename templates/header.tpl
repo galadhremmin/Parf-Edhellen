@@ -6,7 +6,7 @@
   <script type="text/javascript" src="js/js.php"></script>
   <link rel="stylesheet" media="all" type="text/css" href="css/global.css" />
   <link rel="stylesheet" media="all" type="text/css" href="css/ui-lightness/jquery-ui-1.8.14.custom.css" />
-  <meta name="viewport" content="width={$viewportWidth}, user-scalable=no"/>
+  <!--<meta name="viewport" content="width={$viewportWidth}, user-scalable=no, initial-scale=1"/>-->
   <style type="text/css">
   <!--/*<![CDATA[*/
   /*body { background-image: url(img/backgrounds/{$background}); }*/
@@ -62,7 +62,7 @@
         <a href="about.page?browseTo=search">Search term</a>
         &nbsp;
       </label>
-      <input id="search-query-field" type="text" size="34" class="rounded word" tabindex="1" accesskey="s" autocapitalize="off" autocorrect="off" />
+      <input id="search-query-field" type="search" size="34" class="rounded word" tabindex="1" accesskey="s" autocapitalize="off" autocorrect="off" />
       <select name="search-filter" id="search-filter-field" class="rounded">
         {html_options options=$languages}
       </select>
@@ -70,7 +70,7 @@
   </form>
   <div id="search-result"></div>
   <div id="search-description">
-    <p>Showing <span></span> results of <span></span>. <a href="about.page?browseTo=search">What is this?</a></p>
+    <p>Showing <span></span> results of <span></span>. <a href="about.page?browseTo=search">What is this?</a> This query took <span></span> ms.</p>
     Select the first search result with the tab key and navigate using the arrow keys. While browsing the results, press <em>S</em> to return to the search field. 
     Use page up and page down to scroll between the translation entries.
   </div>
@@ -81,4 +81,4 @@
     <p><a href="http://support.google.com/bin/answer.py?hl=en&amp;answer=23852" target="_blank">Show me how I enable Javascript</a>.</p>
   </div>
   </noscript>
-  <div id="result">
+  <div id="result" class="google-translate">

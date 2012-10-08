@@ -5,9 +5,10 @@
   
   class PageAuthenticateController extends Controller {
     public function __construct(TemplateEngine &$engine) {
-      parent::__construct('authenticate');
+      parent::__construct('authenticate', false);
       
       $error = null;
+      $model = $this->getModel();
       
       try {
         // Initialize the OpenID authentication class
@@ -24,11 +25,11 @@
             }
             
             $providerID = $_POST['provider'];
-            if ($this->_model === null) {
+            if ($model === null) {
               throw new ErrorException('No providers available.');
             }
             
-            $providers = $this->_model->getProviders();
+            $providers = $model->getProviders();
             if (!isset($providers[$providerID])) {
               throw new ErrorException('Unrecognised provider.');
             }
@@ -55,8 +56,8 @@
         $error = $e->getMessage();
       }
 
-      if ($this->_model !== null) {
-        $engine->assign('providers', $this->_model->getProviders());
+      if ($model !== null) {
+        $engine->assign('providers', $model->getProviders());
       }
       $engine->assign('errorMessage', $error);
     }
