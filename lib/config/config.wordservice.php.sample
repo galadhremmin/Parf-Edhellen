@@ -1,0 +1,2 @@
+<?php
+  define('WORD_SERVICE_PRECISENESS_STEPSIZE', 200);
