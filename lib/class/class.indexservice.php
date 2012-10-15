@@ -3,7 +3,7 @@
     exit;
   }
   
-  class IndexService extends RESTfulService {
+  class IndexService extends ServiceBase {
     public function __construct() {
       parent::__construct();
       

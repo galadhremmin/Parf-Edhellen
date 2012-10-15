@@ -3,7 +3,7 @@
     exit;
   }
   
-  class NamespaceService extends RESTfulService {
+  class NamespaceService extends ServiceBase {
     public function __construct() {
       parent::__construct();
       

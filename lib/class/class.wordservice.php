@@ -3,7 +3,7 @@
     exit;
   }
   
-  class WordService extends RESTfulService {
+  class WordService extends ServiceBase {
     public function __construct() {
       parent::__construct();
       

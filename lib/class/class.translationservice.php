@@ -3,7 +3,7 @@
     exit;
   }
   
-  class TranslationService extends RESTfulService {
+  class TranslationService extends ServiceBase {
     public function __construct() {
       parent::__construct();
       

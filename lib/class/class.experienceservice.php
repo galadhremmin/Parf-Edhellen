@@ -3,7 +3,7 @@
     exit;
   }
   
-  class ExperienceService extends RESTfulService {
+  class ExperienceService extends ServiceBase {
     public function __construct() {
       parent::__construct();
       

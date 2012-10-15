@@ -3,7 +3,7 @@
     exit;
   }
   
-  class ProfileService extends RESTfulService {
+  class ProfileService extends ServiceBase {
     public function __construct() {
       parent::__construct();
       

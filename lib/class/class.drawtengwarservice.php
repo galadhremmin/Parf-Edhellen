@@ -3,7 +3,7 @@
     exit;
   }
 
-  class DrawTengwarService extends RESTfulService {
+  class DrawTengwarService extends ServiceBase {
     const TENGWAR_FONT_SIZE = 20.0;
     const PADDING = 10;
   
