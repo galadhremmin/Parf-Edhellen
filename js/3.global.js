@@ -73,7 +73,6 @@ var LANGDict = {
         pattern = new RegExp('([^<\\s"\'=]*)(' + what.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&") + ')([^<\\s"\'=]*)','g'),
         replaceWith = '$1<span class="highlight">$2</span>$3',
         highlighted = content.replace(pattern, replaceWith);
-    console.log(pattern);
     container.innerHTML = highlighted;
   },
   submit: function(item) {
