@@ -57,10 +57,24 @@ var LANGDict = {
     
     this.hashChanged();
   },
-  contentLoaded: function() {
+  contentLoaded: function(word, content) {
     // invoke upon hash change
     this.currentWordIndex = -1;
+    
+    var c = $('#result').html(content);
     $('.tengwar').tengwar();
+    
+    c.find('h3, [rel=trans-translation], .word-comments').each(function () {
+      LANGDict.highlight(this, word);
+    });
+  },
+  highlight: function(container, what) {
+    var content = container.innerHTML,
+        pattern = new RegExp('([^<\\s"\'=]*)(' + what.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&") + ')([^<\\s"\'=]*)','g'),
+        replaceWith = '$1<span class="highlight">$2</span>$3',
+        highlighted = content.replace(pattern, replaceWith);
+    console.log(pattern);
+    container.innerHTML = highlighted;
   },
   submit: function(item) {
     if (!item) {
@@ -83,13 +97,10 @@ var LANGDict = {
   },
   load: function(item) {
     $('#result').html('<div class="loading">Loading...</div>');
-    $('#result').load(
-      'translate.php',
-      { term: item },
-      function(responseText, textStatus, XMLHttpRequest) {
-        LANGDict.contentLoaded();
-      }
-    );
+    $.get('translate.php', { term: item }, function(data) {
+      LANGDict.contentLoaded(item, data);
+    });
+    
     LANGDict.lastHash = item;
   },
   cancelForm: function() {

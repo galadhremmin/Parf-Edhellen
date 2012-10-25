@@ -13,7 +13,7 @@
     private $_types;
     private $_wordExists;
     private $_namespaces;
-  
+    
     public function __construct() {
       if (isset($_REQUEST['term'])) {
         $this->_term = $_REQUEST['term'];
