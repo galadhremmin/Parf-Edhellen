@@ -5,7 +5,7 @@
   $servicePtr = null;
   
   try {
-    $result['response'] = RESTHandler::processRequest(&$servicePtr);
+    $result['response'] = ServiceHandler::processRequest(&$servicePtr);
   } catch (Exception $e) {
     $result['succeeded'] = false;
     $result['error']     = $e->getMessage();

@@ -4,3 +4,5 @@ dictionaries/
 fonts/
 img/
 .DS_Store
+
+lib/config/config.wordservice.php
