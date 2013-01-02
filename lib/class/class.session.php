@@ -65,6 +65,12 @@
         case 'ardalambion':
           $fakeIdentity = 'MASTER-ARDALAMBION';
           break;
+        case 'parviphith':
+          $fakeIdentity = 'MASTER-PARVIPHITH';
+          break;
+        case 'tolkiendil':
+          $fakeIdentity = 'MASTER-TOLKIENDIL';
+          break;
       }
       
       if ($fakeIdentity == null) {

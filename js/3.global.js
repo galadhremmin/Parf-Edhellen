@@ -96,7 +96,7 @@ var LANGDict = {
   },
   load: function(item) {
     $('#result').html('<div class="loading">Loading...</div>');
-    $.get('translate.php', { term: item }, function(data) {
+    $.get('translate.php', { term: item, ajax: true }, function(data) {
       LANGDict.contentLoaded(item, data);
     });
     

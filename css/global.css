@@ -17,13 +17,18 @@ html, body {
 body {
   font: 1em/1.5em Georgia, 'Georgia', serif;
   color: black;
-  background: url(http://svc.wickmark.se/referenser/Images/background.jpg) repeat-x fixed center bottom;
+  background: url(../img/backgrounds/stars.jpg) fixed;
   overflow-y: scroll;
-  /*
+/*
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
-  background-size: cover;*/
+  background-size: cover;
+*/
+}
+.highlight {
+  background: #d9eefe;
+  border-radius: 2px;
 }
 #noscript {
   padding: 10mm;
@@ -71,8 +76,8 @@ h1 {
   height: 150px;
   display: block;
   color: #3d3d3d;
-  background: #3d3d3d url(../img/parf-edhellen.gif) no-repeat center center; /*#3c5479;'*/
-  border-bottom: 1px solid black;
+  background:  url(../img/parf-edhellen.png) no-repeat center center; /* #3d3d3d */
+  /*border-bottom: 1px solid black;*/
 }
 h2 {
   font-size: 130%;
@@ -133,6 +138,24 @@ table tr td, table tr th {
   padding: 0 20px 0 20px;
   margin: 0 auto;
 }
+/* Christmas -------------------------------------------------- */
+#menu {
+  -webkit-border-top-left-radius: 5px;
+  -webkit-border-top-right-radius: 5px;
+  -moz-border-radius-topleft: 5px;
+  -moz-border-radius-topright: 5px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+#contents {
+  -webkit-border-bottom-right-radius: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -moz-border-radius-bottomleft: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+/* /Christmas ------------------------------------------------- */
 #loading {
   display: none;
   background: white;
@@ -312,7 +335,7 @@ table tr td, table tr th {
   padding: 0 5px 10px 15px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  background: #fafafa;
+  background: #fafafa url(../img/unattested.gif);
 }
 #translation-entry span.contribution {
   color: #777;

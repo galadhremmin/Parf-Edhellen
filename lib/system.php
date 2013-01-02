@@ -23,4 +23,6 @@
       smartyAutoload($className);
     }
   }
+  
+  header('Content-Language: en');
 ?>

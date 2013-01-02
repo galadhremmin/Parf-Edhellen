@@ -46,13 +46,17 @@ glosses in many languages.</p>
 <p>The following excellent word lists have been successfully imported.</p>
 <dl>
   <dt><a href="http://folk.uib.no/hnohf/wordlists.htm" target="_blank">Quettaparma Quenyallo</a></dt>
-  <dd>The best Quenya lexicon maintained by <em>Helge Fauskanger</em>, presented alongside his <em>excellent</em> course work material on Ardalambion.</dd>
+  <dd>The best Quenya lexicon maintained by <em>Helge Fauskanger</em>, presented alongside his excellent course work material on Ardalambion.</dd>
+  <dt><a href="http://folk.uib.no/hnohf" target="_blank">Parviphith</a></dt>
+  <dd>Sindarin lexicon maintained by <em>Helge Fauskanger</em>.</dd>
   <dt><a href="http://www.jrrvf.com/hisweloke/sindar/index.html" target="_blank">Hiswelókë's Sindarin Dictionary</a></dt>
   <dd>A community dictionary maintained by the <em>SinDict community</em> that has unfortunately stagnated, but is still very good.</dd>
   <dt><a href="http://lambenore.free.fr/" target="_blank">Parma Eldalamberon 17 Sindarin Corpus</a></dt>
-  <dd>A big thank-you to David Giraudeau for contributing with his compilation of Sindarin words from Parma Eldalamberon 17. You can find the original <a href="http://lambenore.free.fr/downloads/PE17_S.pdf" target="_blank">over here</a>.</dd>
+  <dd>A big thank-you to <em>David Giraudeau</em> for contributing with his compilation of Sindarin words from <em>Parma Eldalamberon</em> 17. You can find the original <a href="http://lambenore.free.fr/downloads/PE17_S.pdf" target="_blank">over here</a>.</dd>
   <dt><a href="http://www.forodrim.org/daeron/md_home.html" target="_blank">Mellonath Daeron</a></dt>
-  <dd>Mellonath Daeron's contribution of glossaries from Parma Eldalamberon 18 and 19, and their continuous  feedback and encouragement.</dd>
+  <dd><em>Mellonath Daeron</em>'s contribution of glossaries from <em>Parma Eldalamberon</em> 18 and 19, and their continuous  feedback and encouragement.</dd>
+  <dt><a href="http://www.tolkiendil.com/langues/english/i-lam_arth/compound_sindarin_names" target="_blank">Tolkiendil Compound Sindarin Names</a></dt>
+  <dd><em>Tolkiendil</em> provides a consolidated list of Sindarin names examined and translated. <em>Parf Edhellen</em> is happy to house their excellent work.</dd>
 </dl>
 <p>Thank you for your excellent work! It is the quintessence of Parf Edhellen's success!</p>
 

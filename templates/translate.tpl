@@ -8,20 +8,20 @@
   <div class="language-box" id="language-box-{$language}">
   {* Iterate through each entry for the specificed language *}
   {foreach $translationsForLanguage as $translation}
-  <blockquote id="translation-block-{counter}" {if $translation->owner < 1}class="contribution"{/if}>
+  <blockquote itemscope="itemscope" itemtype="http://schema.org/Article" id="translation-block-{counter}" {if $translation->owner < 1}class="contribution"{/if}>
     {if $translation->owner < 1}
-    <span class="contribution"><u>Unverified</u> third-party contribution by <a href="/profile.page?authorID={$translation->authorID}">{$translation->authorName}</a></span>
+    <span class="contribution" itemprop="comment"><u>Unverified</u> third-party contribution by <a href="/profile.page?authorID={$translation->authorID}" itemprop="author" rel="author">{$translation->authorName}</a></span>
     {/if}
-    <h3 rel="trans-word">{$translation->word}</h3> 
+    <h3 rel="trans-word" itemprop="about">{$translation->word}</h3> 
     {if $translation->tengwar != null}
     &#32;<span class="tengwar">{$translation->tengwar}</span>
     {elseif $language eq 'Noldorin' or $language eq 'Sindarin'}
-    &#32;<a class="tengwar" href="about.page?browseTo=tengwar">{$translation->word}</a> 
+    &#32;<a class="tengwar" href="about.page?browseTo=tengwar">{strip_tags($translation->word)}</a> 
     {/if}
     {if $translation->type != 'unset'}<span class="word-type" rel="trans-type">{$translation->type}.</span>{/if}
-    <span rel="trans-translation">{$translation->translation}</span>
+    <span rel="trans-translation" itemprop="keywords">{$translation->translation}</span>
 
-    <p class="word-comments" rel="trans-comments">{$translation->comments}</p>
+    <p class="word-comments" rel="trans-comments" itemprop="articleBody">{$translation->comments}</p>
 
     {* Only bother with references if such are defined, as they are put within brackets *}
     {if $translation->source != null}<span class="word-source" rel="trans-source">[{$translation->source}]</span>{/if}

@@ -3,9 +3,6 @@
     exit;
   }
   
-  // necessary to support OpenID negotiations
-  ini_set('allow_url_fopen','ON');
-
 /**
  * This class provides a simple interface for OpenID (1.1 and 2.0) authentication.
  * Supports Yadis discovery.
@@ -217,112 +214,9 @@ class LightOpenID
         return $response;
     }
 
-    protected function request_streams($url, $method='GET', $params=array())
-    {
-        if(!$this->hostExists($url)) {
-            throw new ErrorException("Could not connect to $url.", 404);
-        }
-
-        $params = http_build_query($params, '', '&');
-        switch($method) {
-        case 'GET':
-            $opts = array(
-                'http' => array(
-                    'method' => 'GET',
-                    'header' => 'Accept: application/xrds+xml, */*',
-                    'ignore_errors' => true,
-                ), 'ssl' => array(
-                    'CN_match' => parse_url($url, PHP_URL_HOST),
-                ),
-            );
-            $url = $url . ($params ? '?' . $params : '');
-            break;
-        case 'POST':
-            $opts = array(
-                'http' => array(
-                    'method' => 'POST',
-                    'header'  => 'Content-type: application/x-www-form-urlencoded',
-                    'content' => $params,
-                    'ignore_errors' => true,
-                ), 'ssl' => array(
-                    'CN_match' => parse_url($url, PHP_URL_HOST),
-                ),
-            );
-            break;
-        case 'HEAD':
-            # We want to send a HEAD request,
-            # but since get_headers doesn't accept $context parameter,
-            # we have to change the defaults.
-            $default = stream_context_get_options(stream_context_get_default());
-            stream_context_get_default(
-                array(
-                    'http' => array(
-                        'method' => 'HEAD',
-                        'header' => 'Accept: application/xrds+xml, */*',
-                        'ignore_errors' => true,
-                    ), 'ssl' => array(
-                        'CN_match' => parse_url($url, PHP_URL_HOST),
-                    ),
-                )
-            );
-
-            $url = $url . ($params ? '?' . $params : '');
-            $headers_tmp = CURL::get_headers_curl ($url);
-            if(!$headers_tmp) {
-                return array();
-            }
-
-            # Parsing headers.
-            $headers = array();
-            foreach($headers_tmp as $header) {
-                $pos = strpos($header,':');
-                $name = strtolower(trim(substr($header, 0, $pos)));
-                $headers[$name] = trim(substr($header, $pos+1));
-
-                # Following possible redirections. The point is just to have
-                # claimed_id change with them, because get_headers() will
-                # follow redirections automatically.
-                # We ignore redirections with relative paths.
-                # If any known provider uses them, file a bug report.
-                if($name == 'location') {
-                    if(strpos($headers[$name], 'http') === 0) {
-                        $this->identity = $this->claimed_id = $headers[$name];
-                    } elseif($headers[$name][0] == '/') {
-                        $parsed_url = parse_url($this->claimed_id);
-                        $this->identity =
-                        $this->claimed_id = $parsed_url['scheme'] . '://'
-                                          . $parsed_url['host']
-                                          . $headers[$name];
-                    }
-                }
-            }
-
-            # And restore them.
-            stream_context_get_default($default);
-            return $headers;
-        }
-
-        if($this->verify_peer) {
-            $opts['ssl'] += array(
-                'verify_peer' => true,
-                'capath'      => $this->capath,
-                'cafile'      => $this->cainfo,
-            );
-        }
-
-        $context = stream_context_create ($opts);
-
-        return @file_get_contents($url, false, $context); // @ = deliberately suppress warnings 
-    }
-
     protected function request($url, $method='GET', $params=array())
     {
-        if (function_exists('curl_init')
-            && (!in_array('https', stream_get_wrappers()) || !ini_get('safe_mode') && !ini_get('open_basedir'))
-        ) {
-            return $this->request_curl($url, $method, $params);
-        }
-        return $this->request_streams($url, $method, $params);
+        return $this->request_curl($url, $method, $params);
     }
 
     protected function build_url($url, $parts)

@@ -3,6 +3,8 @@
 <head>
   <title>{$documentTitle}</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="keywords" content="sindarin, quenya, noldorin, quendya, elvish, tolkien, nandorin, ilkorin, black speech, westron" />
+  <meta name="description" content="Parf Edhellen is one of the most comprehensive elvish dictionaries on the Internet, housing thousands of elvish names, words and phrases." />
   <script type="text/javascript" src="js/js.php"></script>
   <link rel="stylesheet" media="all" type="text/css" href="css/global.css" />
   <link rel="stylesheet" media="all" type="text/css" href="css/ui-lightness/jquery-ui-1.8.14.custom.css" />
@@ -24,15 +26,9 @@
     
     var ptr = LANGDict.contentLoaded;
     LANGDict.contentLoaded = function() {
-      ptr();
-       _gaq.push(['_trackPageview',location.pathname + location.search  + location.hash]);
+      ptr.apply(LANGDict, arguments);
+      _gaq.push(['_trackPageview',location.pathname + location.search  + location.hash]);
     }
-    
-    var preload = {};
-    {foreach from=$backgrounds item=background}
-    preload["{$background}"] = new Image();
-    preload["{$background}"].src = "img/backgrounds/{$background}";
-    {/foreach}
   })();
   //]]>-->
   </script>
@@ -81,4 +77,10 @@
     <p><a href="http://support.google.com/bin/answer.py?hl=en&amp;answer=23852" target="_blank">Show me how I enable Javascript</a>.</p>
   </div>
   </noscript>
+  <!--
+  <div id="noscript" style="background:green">
+    <strong>Updating definitions from Ardalambion!</strong>
+    <p>Parma Eldaliéva is presently being updated with the latest definitions from Ardalambion's Quenya Wordlist. Please bear with us as this process is undertaken.</p>
+  </div>
+  -->
   <div id="result" class="google-translate">

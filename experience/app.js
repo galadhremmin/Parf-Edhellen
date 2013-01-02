@@ -1,4 +1,4 @@
-// ------------------------------------------------------------
+20// ------------------------------------------------------------
 // UTILITIES
 // Provides a common implementation for common functionality.
 // ------------------------------------------------------------
@@ -613,7 +613,7 @@ var ENVAPP = (function() {
   function sendButtonClicked() {
     var $t = $('textarea[name=message]');
     
-    processMessage($t.val());
+    processMessage($t.val().replace(/^\s*|\s*$/g, ''));
     navigateChatHistory(0);
     
     $t.val('');
