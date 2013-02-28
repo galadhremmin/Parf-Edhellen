@@ -69,7 +69,7 @@
    <div id="search-pane">
      <form method="get" id="search-form" action="#" onsubmit="return LANGDict.submit()">
       <h2>Search term</h2>
-      <input id="search-query-field" type="search" size="34" class="rounded word" tabindex="1" accesskey="s" autocapitalize="off" autocorrect="off" />
+      <input id="search-query-field" type="search" class="rounded word" tabindex="1" accesskey="s" autocapitalize="off" autocorrect="off" />
 
       <div id="search-result"></div>
       <select name="search-filter" id="search-filter-field">

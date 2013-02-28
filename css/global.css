@@ -206,7 +206,7 @@ table tr td, table tr th {
   float: right;
 }
 #search-query-field {
-  width: 100%;
+  width: 200px;
 }
 #result {
   margin-left: 25%;
