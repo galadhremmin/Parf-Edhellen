@@ -33,7 +33,11 @@ var LANGDict = {
         LANGDict.hashChanged, this
       )
     );
-    
+
+    $(window).bind(
+      'scroll', LANGDict.scrollChanged
+    );
+
     $('.question-mark').bind(
       'click',
       function(ev) {
@@ -67,6 +71,12 @@ var LANGDict = {
     c.find('h3, [rel=trans-translation], .word-comments').each(function () {
       LANGDict.highlight(this, word);
     });
+
+    var list = $('#result-list');
+    var matches = list.find('a[href="' + location.hash + '"]');
+
+    matches.addClass('hash-selected');
+    list.find('a').not(matches).removeClass('hash-selected');
   },
   highlight: function(container, what) {
     var content = container.innerHTML,
@@ -93,6 +103,17 @@ var LANGDict = {
           $('#result').html($(data).find('#result'));
         });
     }
+  },
+  scrollChanged: function (e) {
+    var scrollTop = $(window).scrollTop();
+    var wrapPos = $('#search-container').offset();
+
+    if (scrollTop > wrapPos.top) {
+      var offset = scrollTop - wrapPos.top;
+      $('#search-pane').css('top', offset + 'px');
+   } else {
+      $('#search-pane').css('top', '0px');
+   }
   },
   load: function(item) {
     $('#result').html('<div class="loading">Loading...</div>');
@@ -508,45 +529,20 @@ var LANGSearch = function() {
       }).focus();
     },
     set: function(data) {
-      var cols = [];
-      var mobile = /iphone|android|windows\sphone/i.test(navigator.appVersion);
-      var columns = mobile ? 3 : 5;
-      
-      for (var i = 0; i < data.words.length; i += columns) {
-        var rows = [];
-        for (var j = i; j < i + columns; ++j) {
-          if (data.words[j] === undefined) {
-            break;
-          }
-          rows.push('<div class="search-suggestion"><a href="#' + encodeURIComponent(data.words[j]) + '" tabindex="' + (j + 2) + '">' + data.words[j] + '</a></div>');
-        }
-        
-        cols.push(rows.join(''));
+      var items = []; 
+      for (var i = 0; i < data.words.length; i += 1) {
+        items.push('<li><a href="#' + encodeURIComponent(data.words[i].nkey) + '" tabindex="' + (i + 2) + '">' + data.words[i].key + '</a></li>');
       }
-      
+         
       var $result = $('#search-result');
+      $result.html('<ul id="result-list">' + items.join('') + '</ul>');
       
-      $result.html('<table id="result-table"><tbody><tr><td>' + cols.join('</td><td>') + '</td></tr></tbody></table>');
-      
-      if (!mobile) {
-        var blocks = $('#search-description').show().find('span');
-        
-        if (blocks.length >= 3) {
-          $(blocks[0]).html(data.words.length);
-          $(blocks[1]).html(data.matches);
-          $(blocks[2]).html(Math.round(data.time * 100) / 100);
-        }
-      }
-      
-      // this is necessary for IE, lest it's height will fail miserabily
-      $result.css('height', $('#result-table').outerHeight() + 'px');
-      
-      // Apply the scroll view
-      if (/ipad|iphone/i.test(navigator.appVersion)) {
-        new iScroll($result.attr('id'));
-      }
-      
-      $result.css('overflow-x', 'scroll');
+      var blocks = $('#search-description').show().find('span');  
+      if (blocks.length >= 3) {
+        $(blocks[0]).html(data.words.length);
+        $(blocks[1]).html(data.matches);
+        $(blocks[2]).html(Math.round(data.time * 100) / 100);
+      }  
     }
   };
 }();

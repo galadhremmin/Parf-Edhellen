@@ -52,24 +52,6 @@
   <div id="loading">
     Loading... please wait!
   </div>
-  <form method="get" id="search-form" action="#" onsubmit="return LANGDict.submit()">
-    <div>
-      <label for="search-query-field">
-        <a href="about.page?browseTo=search">Search term</a>
-        &nbsp;
-      </label>
-      <input id="search-query-field" type="search" size="34" class="rounded word" tabindex="1" accesskey="s" autocapitalize="off" autocorrect="off" />
-      <select name="search-filter" id="search-filter-field" class="rounded">
-        {html_options options=$languages}
-      </select>
-    </div>
-  </form>
-  <div id="search-result"></div>
-  <div id="search-description">
-    <p>Showing <span></span> results of <span></span>. <a href="about.page?browseTo=search">What is this?</a> This query took <span></span> ms.</p>
-    Select the first search result with the tab key and navigate using the arrow keys. While browsing the results, press <em>S</em> to return to the search field. 
-    Use page up and page down to scroll between the translation entries.
-  </div>
   <noscript>
   <div id="noscript">
     <strong>Ai! Lá polin saca i quettar!</strong>
@@ -83,4 +65,23 @@
     <p>Parma Eldaliéva is presently being updated with the latest definitions from Ardalambion's Quenya Wordlist. Please bear with us as this process is undertaken.</p>
   </div>
   -->
-  <div id="result" class="google-translate">
+  <div id="search-container">
+   <div id="search-pane">
+     <form method="get" id="search-form" action="#" onsubmit="return LANGDict.submit()">
+      <h2>Search term</h2>
+      <input id="search-query-field" type="search" size="34" class="rounded word" tabindex="1" accesskey="s" autocapitalize="off" autocorrect="off" />
+
+      <div id="search-result"></div>
+      <select name="search-filter" id="search-filter-field">
+        {html_options options=$languages}
+      </select>
+      <div id="search-description">
+        <p>Showing <span></span> results of <span></span>. <a href="about.page?browseTo=search">What is this?</a> This query took <span></span> ms.</p>
+<!--        Select the first search result with the tab key and navigate using the arrow keys. While browsing the results, press <em>S</em> to return to the search field. 
+        Use page up and page down to scroll between the translation entries.-->
+     </div>
+
+    </form>
+  </div>
+ </div>
+ <div id="result" class="google-translate">

@@ -78,7 +78,7 @@
       
       if ($filter > 0) {
         $query = $db->connection()->prepare(
-          "SELECT DISTINCT w.`Key`
+          "SELECT DISTINCT w.`Key`, w.`NormalizedKey`
             FROM `translation` t 
               INNER JOIN `word` w ON w.`KeyID` = t.`WordID`
             WHERE t.`Latest` = 1 AND t.`LanguageID` = ? AND w.`NormalizedKey` LIKE ?
@@ -88,7 +88,7 @@
         $query->bind_param('is', $filter, $term);
       } else {
         $query = $db->connection()->prepare(
-          "SELECT DISTINCT k.`Keyword` 
+          "SELECT DISTINCT k.`Keyword`, k.`NormalizedKeyword`
              FROM `keywords` k
              WHERE k.`NormalizedKeyword` LIKE ?
              ORDER BY k.`NormalizedKeyword` ASC"
@@ -109,12 +109,12 @@
       
       $query->execute();
       
-      $query->bind_result($key);
+      $query->bind_result($key, $nkey);
       
       $index = 0;
       while ($query->fetch()) {
         if ($index < $limitResult) {
-          $data['words'][] = $key;
+          $data['words'][] = array('key' => $key, 'nkey' => $nkey);
         }
         ++$index;
       }
@@ -175,7 +175,7 @@
     }
     
     private static function getCacheName(array &$data) {
-      $cacheName = trim(ROOT.'/cache/search-terms/'.$data['language-filter'].'-'.
+      $cacheName = trim(ROOT.'/cache/search-terms/'.$data['language-filter'].'.'.
         StringWizard::normalize($data['term']));
       
       return $cacheName;

@@ -3,6 +3,7 @@ cache/
 dictionaries/
 fonts/
 img/
+lib/config
 .DS_Store
 
 lib/config/config.wordservice.php

@@ -96,9 +96,6 @@ table tr td, table tr th {
   font-weight: normal;
   text-align: left;
 }
-#search-form {
-  text-align: center;
-}
 #menu {
   text-align: center;
 }
@@ -113,7 +110,9 @@ table tr td, table tr th {
 #menu ul li a {
   display: block;
   padding: 10px;
-  color: #334662;
+  font-size: 120%;
+  color: #eee;
+  text-decoration: none;
 }
 .extendable-form {
   background: #aaa;
@@ -129,30 +128,28 @@ table tr td, table tr th {
   border-bottom: none;
   margin-top: 0;
 }
-#contents, #menu  {
+#contents {
   background: white;
   color: #191921;
-  width: 760px;
-  padding: 0 20px 0 20px;
+  width: 846px;
+  padding: 10px;
+  margin: 10px auto;
+}
+#menu  {
+  background: #333;
+  color: #191921;
+  width: 860px;
+  padding: 2px;
   margin: 0 auto;
 }
+
 /* Christmas -------------------------------------------------- */
-#menu {
-  -webkit-border-top-left-radius: 5px;
-  -webkit-border-top-right-radius: 5px;
-  -moz-border-radius-topleft: 5px;
-  -moz-border-radius-topright: 5px;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
+#contents, #menu {
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
 }
-#contents {
-  -webkit-border-bottom-right-radius: 5px;
-  -webkit-border-bottom-left-radius: 5px;
-  -moz-border-radius-bottomright: 5px;
-  -moz-border-radius-bottomleft: 5px;
-  border-bottom-right-radius: 5px;
-  border-bottom-left-radius: 5px;
-}
+
 /* /Christmas ------------------------------------------------- */
 #loading {
   display: none;
@@ -191,6 +188,29 @@ table tr td, table tr th {
 }
 #revision-entry-info {
   display: none;
+}
+#search-container {
+  position: relative;
+  float: left;
+  min-height: 700px;
+  height: 700px;
+  width: 25%;
+}
+#search-pane {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+}
+#search-pane select {
+  float: right;
+}
+#search-query-field {
+  width: 100%;
+}
+#result {
+  margin-left: 25%;
+  padding-left: 10px;
 }
 .rounded, .rounded-small {
   border: 1px solid #888;
@@ -245,7 +265,7 @@ table tr td, table tr th {
 }
 .keyword {
   padding: 3px 6px 3px 6px;
-  background: #7e93b0;
+  background: #333;
   border: 1px solid transparent;
   color: white;
   font: 10pt arial, sans-serif;
@@ -298,6 +318,21 @@ table tr td, table tr th {
 .clear {
   clear: both;
 }
+#result-list {
+  overflow: auto;
+  overflow-y: none;
+  height: 400px;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+#result-list li a {
+  display: block;
+  border-bottom: 1px solid #ccc;
+  padding: 5px 0 5px 5px;
+  text-decoration: none;
+  text-align: left;
+}
 #result-table td {
   vertical-align: top;
 }
@@ -316,10 +351,21 @@ table tr td, table tr th {
 }
 #search-result {
   overflow: auto;
-  position: relative;
-  padding-bottom: 20px;
+  padding: 5px;
+  background: #ededed;
+  margin: 10px 0 5px 0;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border: 1px solid #d0d0d0;
+  border-radius: 5px;
+/*
+  -moz-box-shadow:    2px 2px 8px #ccc;
+  -webkit-box-shadow: 2px 2px 8px #ccc;
+  box-shadow:         2px 2px 8px #ccc;
+*/
 }
 #search-description {
+  clear: both;
   display: none;
   font-size: 80%;
   font-style: italic;
@@ -351,18 +397,6 @@ table tr td, table tr th {
   color: #bbb;
   text-align: right;
 }
-@media (max-width:480px) {
-  #contents, #menu {
-    width: 440px !important;
-  }
-  #result-table a {
-    padding: 0 5px 0 5px;
-    display: block;
-    line-height: 45px;
-    height: 45px;
-    margin: 5px 0 5px 0;
-  }
-  #search-description  {
-    display: none !important;
-  }
+.hash-selected {
+  font-weight: bold;
 }
