@@ -1,13 +1,13 @@
 @import url(tengwar-kc.css);
 
 @font-face {
-	font-family: 'TengwarAnnatarItalic';
-	src: url('../fonts/tengwar/tngani-webfont.eot');
-	src: local('?'), url('../fonts/tengwar/tngani-webfont.woff') format('woff'), 
-	 url('../fonts/tengwar/tngani-webfont.ttf') format('truetype'), 
-	 url('../fonts/tengwar/tngani-webfont.svg#webfontdJVhvyy6') format('svg');
-	font-weight: normal;
-	font-style: normal;
+  font-family: 'TengwarAnnatarItalic';
+  src: url('../fonts/tengwar/tngani-webfont.eot');
+  src: local('?'), url('../fonts/tengwar/tngani-webfont.woff') format('woff'), 
+     url('../fonts/tengwar/tngani-webfont.ttf') format('truetype'), 
+     url('../fonts/tengwar/tngani-webfont.svg#webfontdJVhvyy6') format('svg');
+  font-weight: normal;
+  font-style: normal;
 }
 html, body {
   width: 100%;
