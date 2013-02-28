@@ -17,14 +17,12 @@ html, body {
 body {
   font: 1em/1.5em Georgia, 'Georgia', serif;
   color: black;
-  background: url(../img/backgrounds/stars.jpg) fixed;
+  background: url(../img/backgrounds/nebulae.jpg) fixed;
   overflow-y: scroll;
-/*
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
-*/
 }
 .highlight {
   background: #d9eefe;
