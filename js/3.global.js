@@ -72,11 +72,20 @@ var LANGDict = {
       LANGDict.highlight(this, word);
     });
 
-    var list = $('#result-list');
-    var matches = list.find('a[href="' + location.hash + '"]');
+    // select the item based on its hash
+    var list = $('#result-list'),
+        matches = list.find('a[href="' + location.hash + '"]'),
+        noMatches = list.find('a').not(matches);
 
     matches.addClass('hash-selected');
-    list.find('a').not(matches).removeClass('hash-selected');
+    noMatches.removeClass('hash-selected');
+
+    // make a new search for the item in question if no pervious searches has been made
+    var queryField = $('#search-query-field');
+    if (/^\s*$/.test(queryField.val())) {
+      queryField.val(word);
+      queryField.trigger('keydown');
+    }
   },
   highlight: function(container, what) {
     var content = container.innerHTML,

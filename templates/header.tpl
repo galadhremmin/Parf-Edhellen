@@ -71,7 +71,7 @@
       <h2>Search term</h2>
       <input id="search-query-field" type="search" class="rounded word" tabindex="1" accesskey="s" autocapitalize="off" autocorrect="off" />
 
-      <div id="search-result"></div>
+      <div id="search-result">Awaiting your query...</div>
       <select name="search-filter" id="search-filter-field">
         {html_options options=$languages}
       </select>
