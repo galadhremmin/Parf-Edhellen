@@ -66,7 +66,7 @@ var LANGDict = {
     this.currentWordIndex = -1;
     
     var c = $('#result').html(content);
-    $('.tengwar').tengwar();
+    //$('.tengwar').tengwar();
     
     c.find('h3, [rel=trans-translation], .word-comments').each(function () {
       LANGDict.highlight(this, word);
@@ -112,6 +112,8 @@ var LANGDict = {
           $('#result').html($(data).find('#result'));
         });
     }
+
+    window.scrollTo(0, 0);
   },
   scrollChanged: function (e) {
     var scrollTop = $(window).scrollTop();

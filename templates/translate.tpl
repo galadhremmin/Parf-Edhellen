@@ -16,7 +16,7 @@
     {if $translation->tengwar != null}
     &#32;<span class="tengwar">{$translation->tengwar}</span>
     {elseif $language eq 'Noldorin' or $language eq 'Sindarin'}
-    &#32;<a class="tengwar" href="about.page?browseTo=tengwar">{strip_tags($translation->word)}</a> 
+    <!--&#32;<a class="tengwar" href="about.page?browseTo=tengwar">{strip_tags($translation->word)}</a> -->
     {/if}
     {if $translation->type != 'unset'}<span class="word-type" rel="trans-type">{$translation->type}.</span>{/if}
     <span rel="trans-translation" itemprop="keywords">{$translation->translation}</span>
