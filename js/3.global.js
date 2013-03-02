@@ -109,7 +109,7 @@ var LANGDict = {
       delete s;
     } else if (window.location.pathname && LANGDict.lastHash) {
         $.get(window.location.pathname + (window.location.search || ''), function (data) {
-          $('#result').html($(data).find('#result'));
+          $('#result').html($(data).find('#result')[0].innerHTML);
         });
     }
 
