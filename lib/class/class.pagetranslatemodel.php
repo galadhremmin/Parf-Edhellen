@@ -59,7 +59,7 @@
           // Find all revisions
           $query = $db->connection()->query(
             "SELECT t.`TranslationID`, DATE_FORMAT(t.`DateCreated`, '%Y-%m-%d') AS `DateCreated`, 
-               t.`Latest`, w.`Key`, a.`Nickname` AS `AuthorName`, a.`AccountID` AS `AuthorID`
+               t.`Latest`, w.`Key`, a.`Nickname` AS `AuthorName`, a.`AccountID` AS `AuthorID`, w.`NormalizedKey`
              FROM `translation` t
              INNER JOIN `word` w ON w.`KeyID` = t.`WordID`
              INNER JOIN `auth_accounts` a ON a.`AccountID` = t.`AuthorID`
@@ -71,14 +71,28 @@
           // data set
           $data = array();
           while ($row = $query->fetch_object()) {
+            $row->Rating = abs(strcmp($row->NormalizedKey, $this->_term));
             $data[] = $row;
           }
-        
+ 
           $query->close();
-        
+          usort($data, array($this, 'ItemCmp'));
+                    
           $this->_revisions = $data;
         }
       }
+    }
+
+    public static function ItemCmp($a, $b) {
+      if ($a->TranslationID == $b->TranslationID) {
+        return 0;
+      }
+
+      if ($a->Rating == $b->Rating) {
+        return strcmp($a->Key, $b->Key) < 0 ? -1 : 1;
+      }
+
+      return $a->Rating - $b->Rating < 0 ? -1 : 1;
     }
     
     public function getTerm() {

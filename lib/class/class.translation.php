@@ -21,6 +21,7 @@
     
     // Semi-mutable column
     public $index;
+    public $rating;
     
     // Read-only columns
     public $id;
@@ -176,7 +177,7 @@
         'SELECT w.`Key` AS `Word`, t.`TranslationID`, t.`Translation`, t.`Etymology`, 
            t.`Type`, t.`Source`, t.`Comments`, t.`Tengwar`, t.`Phonetic`,
            l.`Name` AS `Language`, t.`NamespaceID`, l.`Invented` AS `LanguageInvented`,
-           t.`EnforcedOwner`, t.`AuthorID`, a.`Nickname`
+           t.`EnforcedOwner`, t.`AuthorID`, a.`Nickname`, w.`NormalizedKey`
          FROM `translation` t
          INNER JOIN `word` w ON w.`KeyID` = t.`WordID`
          INNER JOIN `language` l ON l.`ID` = t.`LanguageID`
@@ -190,7 +191,7 @@
         $word, $translationID, $translation, $etymology, $type, 
         $source, $comments, $tengwar, $phonetic, $language,
         $namespaceID, $inventedLanguage, $owner, $authorID, 
-        $authorName
+        $authorName, $normalizedWord
       );
       
       $data['translations']   = array();
@@ -226,12 +227,16 @@
             'namespaceID' => $namespaceID,
             'owner'       => $owner,
             'authorID'    => $authorID,
-            'authorName'  => $authorName
+            'authorName'  => $authorName,
+            'rating'      => abs(strcmp($normalizedWord, $normalizedTerm))
           )
         );
       }
       
       $query->close();
+
+      foreach (array_keys($data['translations']) as $language)
+        usort($data['translations'][$language], 'TranslationComparer::compare');
 
       return $data;
     }
