@@ -222,7 +222,7 @@
             'tengwar'     => StringWizard::preventXSS($tengwar),
             'phonetic'    => StringWizard::preventXSS($phonetic),
             'source'      => StringWizard::preventXSS($source),
-            'comments'    => StringWizard::createLinks($comments),
+            'comments'    => empty($comments) ? null : StringWizard::createLinks($comments),
             'language'    => $language,
             'namespaceID' => $namespaceID,
             'owner'       => $owner,
