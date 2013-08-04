@@ -17,6 +17,7 @@
   
     private function __construct() {
       $this->_conn = new mysqli(MYSQL_SERVER, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_USE_DATABASE);
+      $this->_conn->set_encoding('utf8');
     }
     
     public function __destruct() {
