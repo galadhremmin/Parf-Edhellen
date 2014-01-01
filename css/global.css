@@ -134,6 +134,9 @@ table tr td, table tr th {
   width: 846px;
   padding: 10px;
   margin: 10px auto;
+  -webkit-box-shadow: 2px 2px 28px 1px rgba(0,0,0,0.75);
+  -moz-box-shadow: 2px 2px 28px 1px rgba(0,0,0,0.75);
+  box-shadow: 2px 2px 28px 1px rgba(0,0,0,0.75);
 }
 #menu  {
   background: #333;
