@@ -10,7 +10,7 @@
 
     public function __construct(Database &$db, $lifetimeMinutes, $tag = null) {
       parent::__construct($lifetimeMinutes, $tag);
-      $this->_connection = & $db->connection();
+      $this->_connection = $db->connection();
       $this->_preloadedData = null;
     } 
 
@@ -27,10 +27,11 @@
       // this is no longer up to date, so deallocate it
       $this->_preloadedData = null;
       
+      // Insert (or replace existing) cache item for the generated tag.
+      $today = time();
 
-      // insert a new row with the token as the identifier
       $stmt = $this->_connection->prepare('REPLACE INTO `cache` (`content`, `timestamp`, `token`) VALUES (?, ?, ?)');
-      $stmt->bind_param('sis', $content, time(), parent::$_tag);
+      $stmt->bind_param('sis', $content, $today, $this->_tag);
       $stmt->execute();
       $stmt->close();
     }
@@ -40,20 +41,21 @@
         $this->preload();
       }
 
-      return time() - $this->_preloadedData['timestamp'] > parent::$_lifeTime;
+      return time() - $this->_preloadedData['timestamp'] > $this->_lifeTime;
     }
 
     private function preload() {
       $stmt = $this->_connection->prepare('SELECT `content`, `timestamp` FROM `cache` WHERE `token` = ?');
 
-      $stmt->bind_param('s', parent::$_tag);
+      $stmt->bind_param('s', $this->_tag);
       $stmt->execute();
       
-      $content = null;
-      $timestamp = 0;
-
       $stmt->bind_result($content, $timestamp);
-      $stmt->fetch();
+      if (!$stmt->fetch()) {
+        $content = null;
+        $timestamp = 0; 
+      }
+
       $stmt->close();
 
       $this->_preloadedData = array('data' => $content, 'timestamp' => $timestamp);

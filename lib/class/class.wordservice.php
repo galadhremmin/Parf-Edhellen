@@ -124,39 +124,22 @@
       $query->close();
       
       if ($data['matches'] > 0) {
-        $fp = fopen(self::getCacheName($input), 'w');
-        if (flock($fp, LOCK_EX)) {
-          fwrite($fp, json_encode(array($data['words'], $data['matches'])));
-          flock($fp, LOCK_UN);
-        }
-        fclose($fp);
+        $cache = new DatabaseCache($db, 60, self::getCacheName($input));
+        $cache->save(json_encode(array($data['words'], $data['matches'])));
       }
     }
     
     private static function populateFromCache(array &$input, array& $data) {
       $file = self::getCacheName($input);
+      $db = Database::instance();
+      $cache = new DatabaseCache($db, 60, $file); 
       
-      if (!file_exists($file)) {
+      if (!$cache->hasExpired()) { // hourly refresh rate
         return false;
       }
       
-      $age = time() - filemtime($file);
-      if ($age >= 3600) { // hourly refresh rate
-        return false;
-      }
-      
-      $fp = fopen($file, 'r');
-      $contents = '';
-      
-      if (flock($fp, LOCK_SH)) {
-        while (!feof($fp)) {
-          $contents .= fread($fp, 4096);
-        }
-        flock($fp, LOCK_UN);
-      }
-      
-      fclose($fp);
-      
+      $contents = $cache->load();
+ 
       if (strlen($contents) < 1) {
         return false;
       }
@@ -175,10 +158,7 @@
     }
     
     private static function getCacheName(array &$data) {
-      $cacheName = trim(ROOT.'/cache/search-terms/'.$data['language-filter'].'.'.
-        StringWizard::normalize($data['term']));
-      
-      return $cacheName;
+      return StringWizard::normalize($data['term']);  
     }
   }
 ?>

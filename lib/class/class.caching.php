@@ -1,8 +1,8 @@
 <?php
 
   class Caching {
-    private $_tag;
-    private $_lifeTime;
+    protected $_tag;      // these are `protected` due to friendliness to inheritance
+    protected $_lifeTime;
     
     public function __construct($lifeTimeMinutes, $tag = null) {
       if ($tag == null) {
