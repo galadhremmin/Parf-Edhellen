@@ -134,7 +134,7 @@
       $db = Database::instance();
       $cache = new DatabaseCache($db, 60, $file); 
       
-      if (!$cache->hasExpired()) { // hourly refresh rate
+      if ($cache->hasExpired()) { // hourly refresh rate
         return false;
       }
       
