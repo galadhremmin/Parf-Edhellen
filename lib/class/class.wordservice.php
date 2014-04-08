@@ -149,7 +149,7 @@
       if ($d != null) {
         $data['words'] = $d[0];
         $data['matches'] = $d[1];
-        $data['cache-age'] = $age;
+        $data['cache-age'] = -1;
         
         return true;
       }
