@@ -10,8 +10,15 @@
 
     public function __construct(Database &$db, $lifetimeMinutes, $tag = null) {
       parent::__construct($lifetimeMinutes, $tag);
+
       $this->_connection = $db->connection();
       $this->_preloadedData = null;
+
+      // A slimy override for the default tag behaviour: if there is a tag defined, do not
+      // tamper with it, which otherwise happens in the base class.
+      if ($tag !== null) {
+        $this->_tag = $tag;
+      }
     } 
 
     public function load() {

@@ -4,6 +4,8 @@
   }
   
   class WordService extends ServiceBase {
+    private const CACHE_LIFESPAN_MINUTES = 43200; // cache for a month (60 * 24 * 30)
+
     public function __construct() {
       parent::__construct();
       
@@ -124,7 +126,7 @@
       $query->close();
       
       if ($data['matches'] > 0) {
-        $cache = new DatabaseCache($db, 60, self::getCacheName($input));
+        $cache = new DatabaseCache($db, self::CACHE_LIFESPAN_MINUTES, self::getCacheName($input));
         $cache->save(json_encode(array($data['words'], $data['matches'])));
       }
     }
@@ -132,7 +134,7 @@
     private static function populateFromCache(array &$input, array& $data) {
       $file = self::getCacheName($input);
       $db = Database::instance();
-      $cache = new DatabaseCache($db, 60, $file); 
+      $cache = new DatabaseCache($db, self::CACHE_LIFESPAN_MINUTES, $file); 
       
       if ($cache->hasExpired()) { // hourly refresh rate
         return false;
