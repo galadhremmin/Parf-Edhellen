@@ -4,7 +4,7 @@
   }
   
   class WordService extends ServiceBase {
-    private const CACHE_LIFESPAN_MINUTES = 43200; // cache for a month (60 * 24 * 30)
+    const CACHE_LIFESPAN_MINUTES = 43200; // cache for a month (60 * 24 * 30)
 
     public function __construct() {
       parent::__construct();
