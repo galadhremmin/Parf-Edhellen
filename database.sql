@@ -1,6 +1,18 @@
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `cache`
+--
+
+CREATE TABLE IF NOT EXISTS `cache` (
+  `token` varchar(255) collate utf8_swedish_ci NOT NULL,
+  `content` text collate utf8_swedish_ci NOT NULL,
+  `timestamp` bigint(20) NOT NULL,
+  PRIMARY KEY  (`token`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
+
+
+--
 -- Table structure for table `auth_accounts`
 --
 
