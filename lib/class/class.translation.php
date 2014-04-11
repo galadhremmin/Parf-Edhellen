@@ -30,6 +30,10 @@
     public $authorID;
     public $authorName;
     public $latest;
+
+    // Static comntainer for type lists. This is meant to speed up bulk loading by reducing
+    // database access.
+    private static $availableTypes = null;
   
     public function __construct($data = null) {
       
@@ -102,13 +106,19 @@
         $this->tengwar, $this->gender, $this->phonetic, $this->word, $this->namespaceID, $this->authorID,
         $this->dateCreated, $this->latest, $this->index, $this->wordID, $this->owner
       );
-      $query->fetch();
-      $query->close();
       
-      $this->id = $id;
+      if ($query->fetch()) {
+        $this->id = $id;
+      }
+      
+      $query->close(); 
     }
     
     public static function getTypes() {
+      if (is_array(self::$availableTypes)) {
+        return self::$availableTypes;
+      }
+    
       $db = Database::instance();
     
       $data = array();
@@ -128,7 +138,9 @@
       }
       
       $query->close();
-      
+
+      // Save the results, for quicker access next time.
+      self::$availableTypes = $data;
       return $data;
     }
     
