@@ -17,7 +17,11 @@
   
     private function __construct() {
       $this->_conn = new mysqli(MYSQL_SERVER, MYSQL_USERNAME, MYSQL_PASSWORD, MYSQL_USE_DATABASE);
-      $this->_conn->set_encoding('utf8');
+      if ($this->_conn->connect_error) {
+        throw new Exception('Failed to connect to '.MYSQL_SERVER.'. Error: '.$mysql->connect_error);
+      }
+
+      $this->_conn->set_charset('utf8');
     }
     
     public function __destruct() {

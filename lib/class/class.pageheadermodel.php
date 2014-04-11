@@ -34,22 +34,26 @@
       $this->_menu = $menu;
       
       // Load random background
-      $backgroundFiles = new DirectoryIterator(ROOT.'img/backgrounds');
-      $files = array();
-      foreach ($backgroundFiles as $file) {
-        if ($file->isDot()) {
-          continue;
+      $backgroundPath = ROOT.'img/backgrounds';
+      if (file_exists($backgroundPath)) {
+
+        $backgroundFiles = new DirectoryIterator(ROOT.'img/backgrounds');
+        $files = array();
+        foreach ($backgroundFiles as $file) {
+          if ($file->isDot()) {
+            continue;
+          }
+          $files[] = $file->getFilename();
         }
-        $files[] = $file->getFilename();
+      
+        srand(time());
+        $file = array_splice($files, array_rand($files), 1);
+        $file = $file[0];
+
+        $this->_backgroundFile  = $file;
+        $this->_backgroundFiles = $files;
       }
-      
-      srand(time());
-      $file = array_splice($files, array_rand($files), 1);
-      $file = $file[0];
-      
-      $this->_backgroundFile  = $file;
-      $this->_backgroundFiles = $files;
-      
+           
       //  And lastly, go with languages
       $this->_languages = array('0' => 'All languages');
       $languages = Language::getLanguageArray(false);
