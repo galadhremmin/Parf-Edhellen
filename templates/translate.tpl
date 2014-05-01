@@ -152,10 +152,7 @@
       <div class="content">
       {if $indexes|@count > 0}
       {foreach $indexes as $index}
-        <span class="keyword" rel="keyword-{$index->id}">
-          {$index->word} 
-          <!--{if $loggedIn == true}<a href="#" onclick="return LANGDict.removeIndex({$index->id})">x</a>{/if}-->
-        </span>
+        <a href="#{urlencode($index)}"><span class="keyword">{$index}</span></a>
       {/foreach}
       {/if}
       </div>

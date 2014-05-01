@@ -31,8 +31,15 @@
         if ($data !== null) {
           $this->_namespaces     = $data['namespaces'];
           $this->_translations   = $data['translations'];
-          $this->_keywordIndexes = $data['keywordIndexes'];
           $this->_wordExists     = true;
+          $this->_keywordIndexes = array();
+          
+          // Filter out repeated indexes, and preserve only the index word. 
+          foreach ($data['keywordIndexes'] as $index) {
+            if (!in_array($index->word, $this->_keywordIndexes)) {
+              $this->_keywordIndexes[] = $index->word;
+            }
+          }
         } 
                 
         // Load first data necessary for interaction 
