@@ -201,7 +201,7 @@
       $query->execute();
       $query->bind_result(
         $word, $translationID, $translation, $etymology, $type, 
-        $source, $comments, $tengwar, $phonetic, $language,
+        $source, $comments, $tengwar, $phonetic, $language, 
         $namespaceID, $inventedLanguage, $owner, $authorID, 
         $authorName, $normalizedWord
       );
@@ -224,7 +224,7 @@
         }
         
         // Order affected associative array by language
-        $ptr[] = new Translation(
+        $translation = new Translation(
           array(
             'word'        => $word,
             'id'          => $translationID,
@@ -239,10 +239,13 @@
             'namespaceID' => $namespaceID,
             'owner'       => $owner,
             'authorID'    => $authorID,
-            'authorName'  => $authorName,
-            'rating'      => abs(strcmp($normalizedWord, $normalizedTerm))
+            'authorName'  => $authorName
           )
         );
+        
+        self::calculateRating($translation, $normalizedTerm);
+        
+        $ptr[] = $translation;
       }
       
       $query->close();
@@ -252,5 +255,49 @@
 
       return $data;
     }
+    
+    private static function calculateRating(Translation & $translation, $term) {
+		$rating = 0;
+		
+		// First, check if the gloss contains the search term by looking for its
+		// position within the word property, albeit normalized.
+		$n = StringWizard::normalize($translation->word);
+		$pos = strpos($n, $term);
+		
+		if ($pos !== false) {
+			// The "cleaner" the match, the better
+			$rating = 100000 + ($pos * -1) * 10;
+		}
+		
+		// If the previous check failed, check for the translations field. Statistically,
+		// this is the most common case.
+		if ($rating === 0) {
+			$n = StringWizard::normalize($translation->translation);
+			$pos = strpos($n, $term);
+			
+			if ($pos !== false) {
+				$rating = 10000 + ($pos * -1) * 10;
+			}
+		}
+		
+		// If the previous check failed, check within the comments field. Statistically,
+		// this is an uncommon match.
+		if ($rating === 0 && $translation->comments !== null) {
+			$n = StringWizard::normalize($translation->comments);
+			$pos = strpos($n, $term);
+			
+			if ($pos !== false) {
+				$rating = 1000;
+			}
+		}
+		
+		// Default rating for all other cases, probably matches by keyword.
+		if ($rating === 0) {
+			$rating = 100;
+		}
+		
+		$translation->rating = $rating;
+		$translation->term = $term;
+	}
   }
 ?>
