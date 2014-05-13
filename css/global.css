@@ -25,6 +25,9 @@ body {
 #search-result-wrapper-toggler-title {
   cursor: pointer;
 }
+blockquote {
+  font-size: 100%;
+}
 .highlight {
   background: #d9eefe;
   border-radius: 2px;

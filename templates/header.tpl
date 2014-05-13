@@ -93,7 +93,7 @@
 
     <div id="search-result-wrapper" class="panel panel-default hidden">
       <div class="panel-heading">
-        <h3 class="panel-title" id="search-result-wrapper-toggler-title"><span id="search-result-wrapper-toggler" class="glyphicon glyphicon-minus"></span> Suggestions</h3>
+        <h3 class="panel-title" id="search-result-wrapper-toggler-title"><span id="search-result-wrapper-toggler" class="glyphicon glyphicon-minus"></span> Suggestions (<span id="search-result-count"></span>)</h3>
       </div>
       <div class="panel-body">
         <div class="row">

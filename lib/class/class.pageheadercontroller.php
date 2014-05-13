@@ -19,9 +19,6 @@
       if ($model !== null) {
         $engine->assign('menu', $model->getMenu());
         $engine->assign('languages', $model->getLanguages());
-        $engine->assign('background', $model->getBackgroundFile());
-        $engine->assign('backgrounds', $model->getBackgroundFiles());
-        $engine->assign('viewportWidth', $model->getViewportWidth());
       }
     }
   }

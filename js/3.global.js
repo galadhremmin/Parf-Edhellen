@@ -574,6 +574,9 @@ var LANGSearch = function() {
       var $result = $('#search-result');
       $result.html(items.join('')).find('a').on('click', function() { toggleSuggestions(false); });
       
+      $result = $('#search-result-count');
+      $result.text(data.words.length);
+      
       $result = $('#search-result-wrapper');
       if (items.length > 0) {
         $result.removeClass('hidden');
