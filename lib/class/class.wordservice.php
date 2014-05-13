@@ -94,17 +94,6 @@
              FROM `keywords` k
              WHERE k.`NormalizedKeyword` LIKE ?
              ORDER BY k.`NormalizedKeyword` ASC"
-          /*
-          "SELECT DISTINCT w.`Key`
-            FROM `word` w
-            WHERE w.`NormalizedKey` LIKE ? AND (
-              EXISTS(SELECT NULL FROM `translation` t WHERE t.`Latest` = 1 AND t.`WordID` = w.`KeyID`) OR
-              EXISTS(SELECT NULL FROM `namespace` n 
-                INNER JOIN `translation` t2 ON t2.`NamespaceID` = n.`NamespaceID` AND t2.`Latest` = 1
-                WHERE n.`IdentifierID` = w.`KeyID`)
-            )
-            ORDER BY w.`Key` ASC"
-          */
         );
         $query->bind_param('s', $term);
       }
@@ -160,7 +149,11 @@
     }
     
     private static function getCacheName(array &$data) {
-      return StringWizard::normalize($data['term']);  
+      $key = StringWizard::normalize($data['term']);
+      if (isset($input['language-filter']) && !empty($input['language-filter'])) {
+        $key .= '/'.$input['language-filter'];
+      }
+      return $key;
     }
   }
 ?>

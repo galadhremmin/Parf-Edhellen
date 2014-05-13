@@ -10,7 +10,7 @@
       }
       
       $this->_tag = 'cache.'.$tag;
-      $this->_lifeTime = $lifeTimeMinutes * 60 * 1000;
+      $this->_lifeTime = $lifeTimeMinutes * 60;
     }
     
     public static function getDefaultTag() {
@@ -75,14 +75,19 @@
       fclose($f);
     }
     
-    public function hasExpired() {
+    public function getRemainingLifetime() {
       $path = self::getPath();
       
       if (!file_exists($path)) {
-        return true;
+        return 0;
       }
       
-      return time() - filemtime($path) > $this->_lifeTime;
+      $lifetime = $this->_lifeTime + filemtime($path) - time();
+      return $lifetime;
+    }
+    
+    public function hasExpired() {
+      return $this->getRemainingLifetime() < 1;
     }
     
     public function getPath() {

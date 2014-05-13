@@ -1,12 +1,12 @@
 <?php
-  define('CONSOLIDATED_FILE_NAME', '../cache/_consolidate.js');
-  define('CONSOLIDATION_LIFETIME', 60*60*24*7*30);
+  define('CONSOLIDATION_LIFETIME', -1);
 
   include_once '../lib/system.php';
 
   $js = '';
+  $cache = new Caching(CONSOLIDATION_LIFETIME, 'js');
   
-  if (!file_exists(CONSOLIDATED_FILE_NAME) || time() - filemtime(CONSOLIDATED_FILE_NAME) > CONSOLIDATION_LIFETIME) {
+  if ($cache->hasExpired()) {
     $files = array();
     $fileIt = new DirectoryIterator('.');
     foreach ($fileIt as $it) {
@@ -22,13 +22,15 @@
     }
     
     $js = JSMin::minify($js);
-    file_put_contents(CONSOLIDATED_FILE_NAME, $js);
+    $js = '// '.date('Y-m-d H:i')."\n".$js;
+    $cache->save($js);
+    
+    $expires = 60 * CONSOLIDATION_LIFETIME;
     
   } else {
-    $js = file_get_contents(CONSOLIDATED_FILE_NAME);
+    $js = $cache->load();
+    $expires = $cache->getRemainingLifetime();
   }
-  
-  $expires = 60*60*24*14;
   
   header("Content-Type: text/javascript; charset=utf-8");
   header("Pragma: public");

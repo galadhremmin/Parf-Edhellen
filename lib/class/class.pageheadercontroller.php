@@ -5,7 +5,7 @@
   
   class PageHeaderController extends Controller {
     public function __construct(TemplateEngine &$engine) {
-      parent::__construct('header');
+      parent::__construct('header', false);
       
       $engine->assign('documentTitle', SYS_TITLE);
       

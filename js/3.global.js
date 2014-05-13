@@ -34,10 +34,6 @@ var LANGDict = {
       )
     );
 
-    $(window).bind(
-      'scroll', LANGDict.scrollChanged
-    );
-
     $('.question-mark').bind(
       'click',
       function(ev) {
@@ -114,17 +110,6 @@ var LANGDict = {
     }
 
     window.scrollTo(0, 0);
-  },
-  scrollChanged: function (e) {
-    var scrollTop = $(window).scrollTop();
-    var wrapPos = $('#search-container').offset();
-
-    if (scrollTop > wrapPos.top) {
-      var offset = scrollTop - wrapPos.top;
-      $('#search-pane').css('top', offset + 'px');
-   } else {
-      $('#search-pane').css('top', '0px');
-   }
   },
   load: function(item) {
     $('#result').html('<div class="loading">Loading...</div>');
@@ -530,30 +515,79 @@ var LANGSearch = function() {
       }
     });
   };
+  
+  var toggleSuggestions = function (inferredState) {
+    var toggler = $('#search-result-wrapper-toggler'), removeClassName, addClassName, action;
+    
+    if (typeof inferredState !== "boolean") {
+      inferredState = ! toggler.hasClass('glyphicon-minus');
+    }
+    
+    if (inferredState) {
+      removeClassName = 'plus';
+      addClassName = 'minus';
+      action = 'show';
+    } else {
+      removeClassName = 'minus';
+      addClassName = 'plus';
+      action = 'hide';
+    }
+    
+    toggler.removeClass('glyphicon-' + removeClassName);
+    toggler.addClass('glyphicon-' + addClassName);
+    
+    $('#search-result').parent()[action]('fast');
+  }
 
   return {
     init: function() {
       hook();
-      $('.word').autocomplete({
+      $('#search-query-field').autocomplete({
         minLength: 1,
         source: performSearch
       }).focus();
+      
+      $('#search-result-wrapper-toggler-title').on('click', toggleSuggestions);
     },
     set: function(data) {
-      var items = []; 
-      for (var i = 0; i < data.words.length; i += 1) {
-        items.push('<li><a href="#' + encodeURIComponent(data.words[i].nkey) + '" tabindex="' + (i + 2) + '">' + data.words[i].key + '</a></li>');
+      var items = [],
+          columnBegin = '<div class="col-md-3 col-sm-6"><ul>',
+          columnEnd = '</ul></div>',
+          suggestionsPerRow = 20;
+      
+      for (var i = 1; i < data.words.length; i += 1) {
+        if (i === 1) {
+          items.push(columnBegin);
+        }
+        
+        items.push('<li><a href="#' + encodeURIComponent(data.words[i - 1].nkey) + '" tabindex="' + (i + 1) + '">' + data.words[i - 1].key + '</a></li>');
+                
+        if (i > 1 && (i % suggestionsPerRow === 0 || i + 1 === data.words.length)) {
+          items.push(columnEnd);
+          
+          if (i + 1 < data.words.length) {
+            items.push(columnBegin);
+          }
+        }
       }
          
       var $result = $('#search-result');
-      $result.html('<ul id="result-list">' + items.join('') + '</ul>');
+      $result.html(items.join('')).find('a').on('click', function() { toggleSuggestions(false); });
+      
+      $result = $('#search-result-wrapper');
+      if (items.length > 0) {
+        $result.removeClass('hidden');
+        toggleSuggestions(true);
+      } else {
+        $result.addClass('hidden');
+      }
       
       var blocks = $('#search-description').show().find('span');  
       if (blocks.length >= 3) {
         $(blocks[0]).html(data.words.length);
         $(blocks[1]).html(data.matches);
         $(blocks[2]).html(Math.round(data.time * 100) / 100);
-      }  
+      }
     }
   };
 }();
