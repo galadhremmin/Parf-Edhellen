@@ -25,8 +25,38 @@ body {
 #search-result-wrapper-toggler-title {
   cursor: pointer;
 }
+/* 
+ * Order the search suggestions into columns for the widths: >400, >750 and >970.
+ * */
+@media (min-width: 971px) {
+  #search-result {
+    -webkit-column-count: 4;
+    -moz-column-count: 4;
+    -ms-column-count: 4;
+    column-count: 4;
+  }
+}
+@media (max-width: 970px) and (min-width: 751px) {
+  #search-result {
+    -webkit-column-count: 3;
+    -moz-column-count: 3;
+    -ms-column-count: 3;
+    column-count: 3;
+  }
+}
+@media (max-width: 750px) and (min-width: 401px) {
+  #search-result {
+    -webkit-column-count: 2;
+    -moz-column-count: 2;
+    -ms-column-count: 2;
+    column-count: 2;
+  }
+}
+#search-result ul {
+  list-style-type: none;
+}
 blockquote {
-  font-size: 100%;
+  font-size: 110%;
 }
 .highlight {
   background: #d9eefe;
@@ -60,3 +90,16 @@ blockquote {
   color: #bbb;
   text-align: right;
 }
+/* index.tpl */
+/*
+#start-jumbotron {
+  position: relative;
+}
+#start-jumbotron .tengwar {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  margin: 0;
+  font-size: 90%;
+}
+*/

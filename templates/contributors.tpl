@@ -1,6 +1,6 @@
 <h2>Contributors</h2>
 <h3>Active contributors</h3>
-<table>
+<table class="table">
   <thead>
     <tr>
       <th scope="col">Nickname</th>
@@ -23,7 +23,7 @@
   </tbody>
 </table>
 <h3>All contributors</h3>
-<table>
+<table class="table">
   <thead>
     <tr>
       <th scope="col">Nickname</th>

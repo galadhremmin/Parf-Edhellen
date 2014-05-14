@@ -5,7 +5,7 @@
 {counter start=-1 print=false}
 <div class="row">
   {foreach from=$translations key=language item=translationsForLanguage}
-  <div class="col-sm-12 col-md-6 col-lg-4">
+  <div class="col-sm-{$maxColumnWidth} col-md-{$midColumnWidth} col-lg-{$minColumnWidth}">
     <h2 rel="language-box">{$language}</h2>
     <div class="language-box" id="language-box-{$language}">
     {* Iterate through each entry for the specificed language *}
@@ -156,7 +156,7 @@
 {/if}
 
   <div id="row">
-    <div class="col-md-4">
+    <div class="col-sm-4">
       <h2>Revisions</h2>
       <div class="content scroll-view">
       {foreach $revisions as $rev}
@@ -172,16 +172,20 @@
         </p>
       {/foreach}
       </div>
+      <hr class="visible-xs">
     </div>
-    <div class="col-md-4">
+    <div class="col-sm-4">
       <h2>Keywords</h2>
       {if $indexes|@count > 0}
       {foreach $indexes as $index}
         <a href="#{urlencode($index)}"><span class="keyword">{$index}</span></a>
       {/foreach}
+      {else}
+      There are no additional keywords.
       {/if}
+      <hr class="visible-xs">
     </div>
-    <div class="col-md-4">
+    <div class="col-sm-4">
       <h2>Contribute</h2>
       <div class="content">
       {if $loggedIn == true}
@@ -195,8 +199,5 @@
       </div>
       {*html_checkboxes options=$languages name=languageFilter separator='<br />'*}
     </div>
-    <div class="clear"></div>
   </div>
 </div>
-
-<div class="performance-data">{$timeElapsed} s elapsed.</div>

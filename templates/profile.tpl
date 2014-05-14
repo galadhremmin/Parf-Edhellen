@@ -9,7 +9,7 @@ you might create new glossaries within the same context with your corrections.</
 <p>If you haven't already, please take some time to finish your profile. <em>Nai Anar siluva parmalyanna!</em></p>
 {/if}
 <h3>Information</h3>
-<table class="vertical-cells-top">
+<table class="table">
   <tr>
     <td>Date registered</td>
     <td>{$author->dateRegistered}</td>
@@ -28,9 +28,9 @@ you might create new glossaries within the same context with your corrections.</
   {/if}
 </table>
 <h3>Contributions</h3>
-<table>
+<table class="table">
   <tr>
-    <td>New &amp; revised gloss(es)</td>
+    <td >New &amp; revised gloss(es)</td>
     <td>{$author->translationCount}</td>
   </tr>
   <tr>

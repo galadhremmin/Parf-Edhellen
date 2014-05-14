@@ -2,7 +2,6 @@
 <p>The collaborative dictionary dedicated to the the linguistic world of Tolkien's. Presently in <em>beta</em>-stage.</p>
 
 <a name="search"></a>
-<a name="search"></a>
 <h3>Searching</h3>
 <p>Use the search-box to browse the dictionaries contents. As you type, suggestions are made continously 
 based on your enquiry. It is possible to use wildcards to further enhance the quality of these suggestions.</p>
@@ -13,6 +12,10 @@ based on your enquiry. It is possible to use wildcards to further enhance the qu
 
 <p>The preciseness of your query is calculated according to the follow equation: 
 <br /><u><em>the length of the input string without modifiers and spacing</em></u> &times; 200.</p>
+
+<a name="reversed"></a>
+<h3>Word-end search</h3>
+<p>This feature enables you to search for words with matching word ending. This is useful for finding rhymes or similar words.</p>
 
 <a name="authentication"></a>
 <h3>Authentication</h3>

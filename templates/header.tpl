@@ -40,7 +40,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">Parf Edhellen</a>
+        <a class="navbar-brand" href="/">Parf Edhellen</a>
       </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
@@ -77,7 +77,7 @@
       <div class="row">
         <div class="input-group input-group-lg">
           <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-          <input type="search" class="form-control" placeholder="flower" id="search-query-field" tabindex="1" accesskey="s" autocapitalize="off" autocorrect="off">
+          <input type="search" class="form-control" placeholder="your search term..." id="search-query-field" tabindex="1" accesskey="s" autocapitalize="off" autocorrect="off">
         </div>
       </div>
       <div class="row">

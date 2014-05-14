@@ -550,26 +550,13 @@ var LANGSearch = function() {
       $('#search-result-wrapper-toggler-title').on('click', toggleSuggestions);
     },
     set: function(data) {
-      var items = [],
-          columnBegin = '<div class="col-md-3 col-sm-6"><ul>',
-          columnEnd = '</ul></div>',
-          suggestionsPerRow = 20;
+      var items = ['<ul>'];
       
-      for (var i = 1; i < data.words.length; i += 1) {
-        if (i === 1) {
-          items.push(columnBegin);
-        }
-        
-        items.push('<li><a href="#' + encodeURIComponent(data.words[i - 1].nkey) + '" tabindex="' + (i + 1) + '">' + data.words[i - 1].key + '</a></li>');
-                
-        if (i > 1 && (i % suggestionsPerRow === 0 || i + 1 === data.words.length)) {
-          items.push(columnEnd);
-          
-          if (i + 1 < data.words.length) {
-            items.push(columnBegin);
-          }
-        }
+      for (var i = 0; i < data.words.length; i += 1) {
+        items.push('<li><a href="#' + encodeURIComponent(data.words[i].nkey) + '" tabindex="' + i + '">' + data.words[i].key + '</a></li>');
       }
+      
+      items.push('</ul>');
          
       var $result = $('#search-result');
       $result.html(items.join('')).find('a').on('click', function() { toggleSuggestions(false); });

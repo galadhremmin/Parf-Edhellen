@@ -19,7 +19,7 @@
       
       $model = $this->getModel();
       if ($model !== null) {
-        $engine->assign('namespaces',   $model->getNamespaces());
+        $engine->assign('namespaces',   $model->getTranslations());
         $engine->assign('translations', $model->getTranslations());
         $engine->assign('indexes',      $model->getIndexes());
         $engine->assign('revisions',    $model->getRevisions());
@@ -30,7 +30,26 @@
         $engine->assign('wordExists',   $model->getWordExists());
         $engine->assign('accountID',    $model->getAccountID());
         $engine->assign('timeElapsed',  $this->getTimeElapsed());
+        
+        $this->assignColumnWidths($model, $engine);
       }
+    }
+    
+    private function assignColumnWidths(PageTranslateModel &$model, TemplateEngine &$engine) {
+      $translations = $model->getTranslations();
+      if (!is_array($translations)) {
+        return;
+      }
+      
+      $numberOfLanguages = count(array_keys($translations));
+        
+      $max = 12;
+      $mid = $numberOfLanguages > 1 ? 6 : $max;
+      $min = $numberOfLanguages > 2 ? 4 : $mid;
+      
+      $engine->assign('maxColumnWidth', $max);
+      $engine->assign('midColumnWidth', $mid);
+      $engine->assign('minColumnWidth', $min);
     }
   }
 ?>

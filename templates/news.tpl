@@ -1,6 +1,6 @@
 <h2>Activity</h2>
 <h3>Last recorded activity ({count($activityList)})</h3>
-<table>
+<table class="table">
   <thead>
     <tr>
       <th scope="col">ID</th>
