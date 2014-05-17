@@ -414,95 +414,56 @@ var LANGSearch = function() {
         browseDown: 34, // = Page Down
         browseUp: 33 // = Page Up
       };
-            
-      var tag = 'a';
-      var indexThreshold = 2;
-      var target = $(document.activeElement);
-      var index = target.attr('tabindex');
-      var isSuggestion = target.parent().hasClass('search-suggestion');
-      
-      if (target.parents('form').attr('id') != 'search-form' && !isSuggestion) {
-        return;
-      }
-      
-      if (!isSuggestion) {
-        tag = indexThreshold = undefined;
-      }
       
       switch (ev.keyCode) {
-        case keys.left: 
-          index -= 5;
-          break;
-        case keys.right: 
-          index += 5;
-          break;
-        case keys.up:
-          index -= 1;
-          break;
-        case keys.down:
-          index += 1;
-          break;
         case keys.browseDown:
           LANGDict.nextResult(1);
-          isSuggestion = false;
           break;
         case keys.browseUp:
           LANGDict.nextResult(-1);
-          isSuggestion = false;
           break;
         default:
-          if (/^[a-zA-Z0-9]$/.test(String.fromCharCode(ev.keyCode))) {
-            if (target.offset().top < $(window).scrollTop()) {
-              LANGAnim.scroll(0);
-            }
+        /*
+          if (/^[a-zA-Z0-9]$/.test(String.fromCharCode(ev.keyCode)) ) {
+            
+            if (document.activeElement && document.activeElement.id !== 'search-query-field') {
+              var target = $('#search-query-field');
+              
+              if (target.offset().top < $('body').scrollTop()) {
+                LANGAnim.scroll(0);
+              }
 
-            $('#search-query-field').focus();
-            isSuggestion = false;
-          } else {
-            return;
-          }
-      }
-      
-      if (isSuggestion) {
-        if (!isNaN(index) && (indexThreshold === undefined || index >= indexThreshold)) {
-          ev.preventDefault();
-          
-          if (tag !== undefined) {
-            var tagObj = $(tag + '[tabindex=' + index + ']');
-            tagObj.focus();
-          }
-        }
+              target.focus();
+              target.select();
+            }
+          } 
+          */
       }
     });
-    
-    var lastValue = LANGCookies.read('filter-field-value');
-    if (!lastValue || isNaN(lastValue)) {
-      lastValue = 0;
-    }    
-    
-    $('#search-filter-field').change(searchFilterChanged).val(lastValue);
   };
   
-  var languageFilterBox = null;
   var getFilter = function() {
-    if (!languageFilterBox) {
-      languageFilterBox = $('#search-filter-field');
+    var selectBox = document.getElementById('search-language-select');
+    
+    if (selectBox.selectedIndex < 0) {
+      return 0;
     }
     
-    return languageFilterBox.val();
-  };
-  
-  var searchFilterChanged = function() {
-    LANGCookies.create('filter-field-value', $(this).val());
-    performSearch({ term: $('.word').val() });
+    return selectBox.options[selectBox.selectedIndex].value;
   };
   
   var performSearch = function(request, response) {
+    if (!request || !request.hasOwnProperty('term')) {
+      request = {'term': $('#search-query-field').val()};
+    }
+    
     if (/^[\s\t\/\\]*$/.test(request['term'])) {
       return;
     }
   
     request['language-filter'] = getFilter();
+    request['reversed'] = document.getElementById('search-reverse-box').checked ? 1:0;
+    
     $.ajax({
       url: 'api/word/search',
       data: request,
@@ -547,6 +508,7 @@ var LANGSearch = function() {
         source: performSearch
       }).focus();
       
+      $('#search-reverse-box,#search-language-select').on('change', performSearch);
       $('#search-result-wrapper-toggler-title').on('click', toggleSuggestions);
     },
     set: function(data) {
@@ -585,7 +547,16 @@ var LANGSearch = function() {
 var LANGAnim = function() {
   return {
     scroll: function(offset) {
-      $('html, body').animate({ scrollTop: offset }, 500);
+      var bodyTag = $('body');
+      if (bodyTag.scrollTop() < 10) {
+        bodyTag.scrollTop(0);
+      } else {      
+        bodyTag.animate({ scrollTop: offset }, 800);
+      }
+    },
+    scrollTop: function (ev) {
+      LANGAnim.scroll(0);
+      return false;
     }
   };
 }();

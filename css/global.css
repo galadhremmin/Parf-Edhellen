@@ -22,6 +22,17 @@ body {
   -o-background-size: cover;
   background-size: cover;
 }
+blockquote {
+  color:#333333;
+}
+#search-reverse-box-wrapper,
+#search-language-select {
+  float: right;
+}
+#search-language-select {
+  margin-top: 15px;
+  margin-right: 15px;
+}
 #search-result-wrapper-toggler-title {
   cursor: pointer;
 }
@@ -56,7 +67,7 @@ body {
   list-style-type: none;
 }
 blockquote {
-  font-size: 110%;
+  font-size: 100%;
 }
 .highlight {
   background: #d9eefe;
@@ -90,16 +101,3 @@ blockquote {
   color: #bbb;
   text-align: right;
 }
-/* index.tpl */
-/*
-#start-jumbotron {
-  position: relative;
-}
-#start-jumbotron .tengwar {
-  position: absolute;
-  right: 10px;
-  top: 10px;
-  margin: 0;
-  font-size: 90%;
-}
-*/

@@ -21,7 +21,7 @@
       $js .= file_get_contents($file)."\n";
     }
     
-    $js = JSMin::minify($js);
+    //$js = JSMin::minify($js);
     $js = '// '.date('Y-m-d H:i')."\n".$js;
     $cache->save($js);
     

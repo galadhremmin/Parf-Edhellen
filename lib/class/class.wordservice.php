@@ -35,12 +35,14 @@
       
       if (!isset($input['language-filter'])) {
         $input['language-filter'] = 0; // default: disabled
+      } else {
+        settype($input['language-filter'], 'integer');
       }
       
-      $term = (string) $input['term'];
-      $filter = (string) $input['language-filter'];
+      $term        = (string) $input['term'];
+      $reversed    = false;
       $preciseness = 0;
-      $data = array('cached' => true, 'words' => array(), 'cap' => 0);
+      $data        = array('cached' => true, 'words' => array(), 'cap' => 0);
       
       // Only measure characters that might contribute to the exactness
       // of the query. Multiply with 100 to signify the greater result set
@@ -63,8 +65,13 @@
     private static function populateFromDatabase(array &$input, $limitResult, array& $data) {
       $db = Database::instance();
       
-      $term   = trim($input['term']);
-      $filter = $input['language-filter'];
+      $term     = trim($input['term']);
+      $filter   = (integer) $input['language-filter'];
+      $reversed = false;
+      
+      if (isset($input['reversed'])) {
+        $reversed = (boolean) $input['reversed'];
+      }
       
       if (strlen($term) < 1) {
         return;
@@ -79,22 +86,35 @@
       }
       
       if ($filter > 0) {
+        
+        $column = 'NormalizedKey';
+        if ($reversed) {
+          $column = 'ReversedNormalizedKey';
+        }
+        
         $query = $db->connection()->prepare(
           "SELECT DISTINCT w.`Key`, w.`NormalizedKey`
             FROM `translation` t 
               INNER JOIN `word` w ON w.`KeyID` = t.`WordID`
-            WHERE t.`Latest` = 1 AND t.`LanguageID` = ? AND w.`NormalizedKey` LIKE ?
+            WHERE t.`Latest` = 1 AND t.`LanguageID` = ? AND w.`".$column."` LIKE ?
             ORDER BY w.`Key` ASC"
         );
         
         $query->bind_param('is', $filter, $term);
       } else {
+      
+        $column = 'NormalizedKeyword';
+        if ($reversed) {
+          $column = 'ReversedNormalizedKeyword';
+        }
+      
         $query = $db->connection()->prepare(
           "SELECT DISTINCT k.`Keyword`, k.`NormalizedKeyword`
              FROM `keywords` k
-             WHERE k.`NormalizedKeyword` LIKE ?
+             WHERE k.`".$column."` LIKE ?
              ORDER BY k.`NormalizedKeyword` ASC"
         );
+        
         $query->bind_param('s', $term);
       }
       
@@ -150,9 +170,15 @@
     
     private static function getCacheName(array &$data) {
       $key = StringWizard::normalize($data['term']);
-      if (isset($input['language-filter']) && !empty($input['language-filter'])) {
-        $key .= '/'.$input['language-filter'];
+      
+      if (isset($data['language-filter']) && !empty($data['language-filter'])) {
+        $key .= '/'.$data['language-filter'];
       }
+      
+      if (isset($data['reversed']) && (boolean) $data['reversed']) {
+        $key .= '/r';
+      }
+      
       return $key;
     }
   }

@@ -56,7 +56,7 @@
           <li><a href="{$item->url}"{if $item->active} class="active"{/if}{if $item->onclick != null} onclick="{$item->onclick}"{/if}>{$item->text}</a></li>
           {/if}
         {/foreach}
-          <li><a href="#top"><span class="glyphicon glyphicon-chevron-up"></span> To top</a></li>
+          <li><a href="#" onclick="return LANGAnim.scrollTop();"><span class="glyphicon glyphicon-chevron-up"></span> To top</a></li>
         </ul>
       </div><!--/.nav-collapse -->
     </div><!--/.container-fluid -->
@@ -75,18 +75,21 @@
     <!-- search component -->
     <form method="get" id="search-form" action="#" onsubmit="return LANGDict.submit()">
       <div class="row">
-        <div class="input-group input-group-lg">
-          <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-          <input type="search" class="form-control" placeholder="your search term..." id="search-query-field" tabindex="1" accesskey="s" autocapitalize="off" autocorrect="off">
+        <div class="col-md-12">
+          <div class="input-group input-group-lg">
+            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+            <input type="search" class="form-control" placeholder="your search term..." id="search-query-field" tabindex="1" accesskey="s" autocapitalize="off" autocorrect="off">
+          </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div class="checkbox input-lg pull-right">
-            <label>
-              <input type="checkbox"> Reverse search 
-            </label>
-          </div>
+      <div class="row" id="search-params-wrapper">
+        <select id="search-language-select">
+          {html_options options=$languages}
+        </select>
+        <div class="checkbox input-sm" id="search-reverse-box-wrapper">
+          <label>
+            <input type="checkbox" id="search-reverse-box" value="1"> Reverse search 
+          </label>
         </div>
       </div>
     </form>
