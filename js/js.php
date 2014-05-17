@@ -1,10 +1,10 @@
 <?php
-  define('CONSOLIDATION_LIFETIME', -1);
+  define('CONSOLIDATION_LIFETIME_MINUTES', 60);
 
   include_once '../lib/system.php';
 
   $js = '';
-  $cache = new Caching(CONSOLIDATION_LIFETIME, 'js');
+  $cache = new Caching(CONSOLIDATION_LIFETIME_MINUTES, 'js');
   
   if ($cache->hasExpired()) {
     $files = array();
@@ -21,11 +21,11 @@
       $js .= file_get_contents($file)."\n";
     }
     
-    //$js = JSMin::minify($js);
+    $js = JSMin::minify($js);
     $js = '// '.date('Y-m-d H:i')."\n".$js;
     $cache->save($js);
     
-    $expires = 60 * CONSOLIDATION_LIFETIME;
+    $expires = 60 * CONSOLIDATION_LIFETIME_MINUTES;
     
   } else {
     $js = $cache->load();

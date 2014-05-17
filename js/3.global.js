@@ -92,7 +92,7 @@ var LANGDict = {
   },
   submit: function(item) {
     if (!item) {
-      item = $('.word').val();
+      item = $('#search-query-field').val();
     }
     
     location.hash = '#' + encodeURIComponent(item);
