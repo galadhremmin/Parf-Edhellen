@@ -69,19 +69,7 @@ var LANGDict = {
     });
 
     // select the item based on its hash
-    var list = $('#result-list'),
-        matches = list.find('a[href="' + location.hash + '"]'),
-        noMatches = list.find('a').not(matches);
-
-    matches.addClass('hash-selected');
-    noMatches.removeClass('hash-selected');
-
-    // make a new search for the item in question if no pervious searches has been made
-    var queryField = $('#search-query-field');
-    if (/^\s*$/.test(queryField.val())) {
-      queryField.val(word);
-      queryField.trigger('keydown');
-    }
+    LANGSearch.select(word);
   },
   highlight: function(container, what) {
     var content = container.innerHTML,
@@ -406,6 +394,7 @@ var LANGSearch = function() {
   var hook = function() {
     $(window).keydown(function(ev) {
       var keys = {
+        submit: 13, // enter
         left: 37,
         right: 39,
         up: 38,
@@ -414,8 +403,16 @@ var LANGSearch = function() {
         browseDown: 34, // = Page Down
         browseUp: 33 // = Page Up
       };
-      
+            
       switch (ev.keyCode) {
+        case keys.submit:
+          if (document.activeElement && document.activeElement.id === 'search-query-field') {
+            ev.preventDefault();
+            window.setTimeout(function() { 
+              location.hash = $('a.search-result-item:first-child').prop('href').split('#')[1]; 
+            }, 0); // break out of the event asynchronously
+          }
+          break;
         case keys.browseDown:
           LANGDict.nextResult(1);
           break;
@@ -497,8 +494,10 @@ var LANGSearch = function() {
     toggler.removeClass('glyphicon-' + removeClassName);
     toggler.addClass('glyphicon-' + addClassName);
     
+    $('#search-result-description').parent()[action]();
     $('#search-result').parent()[action]('fast');
   }
+  
 
   return {
     init: function() {
@@ -515,7 +514,7 @@ var LANGSearch = function() {
       var items = ['<ul>'];
       
       for (var i = 0; i < data.words.length; i += 1) {
-        items.push('<li><a href="#' + encodeURIComponent(data.words[i].nkey) + '" tabindex="' + i + '">' + data.words[i].key + '</a></li>');
+        items.push('<li><a class="search-result-item" href="#' + encodeURIComponent(data.words[i].nkey) + '">' + data.words[i].key + '</a></li>');
       }
       
       items.push('</ul>');
@@ -533,13 +532,19 @@ var LANGSearch = function() {
       } else {
         $result.addClass('hidden');
       }
-      
-      var blocks = $('#search-description').show().find('span');  
-      if (blocks.length >= 3) {
-        $(blocks[0]).html(data.words.length);
-        $(blocks[1]).html(data.matches);
-        $(blocks[2]).html(Math.round(data.time * 100) / 100);
-      }
+    },
+    select: function (term) {
+      var term = encodeURIComponent(term);
+      $('a.search-result-item').each(function () {
+        var element = $(this), 
+            uri = element.prop('href').split('#');
+        
+        if (uri.length === 2 && uri[1] === term) {
+          element.addClass('selected');
+        } else {
+          element.removeClass('selected');
+        }
+      });
     }
   };
 }();

@@ -17,6 +17,12 @@ based on your enquiry. It is possible to use wildcards to further enhance the qu
 <h3>Word-end search</h3>
 <p>This feature enables you to search for words with matching word ending. This is useful for finding rhymes or similar words.</p>
 
+<a href="unverified"></a>
+<h3>Unverified or debatable glosses</h3>
+<p>Sometimes, you'll encounter this symbol <span class="glyphicon glyphicon-question-sign"></span> and also a warning, calling the translation "debatable." This usually means that the gloss has 
+been imported from a source that hasn't been updated in quite some time. This is actually quite common, as publications from the Tolkien Estate come infrequently, with years apart. Dictionaries like Hiswelókë hasn't been updated for years, but it's still excellent.</p>
+<p>Can you use these words? Yes, but always try to use a more current source, if there's one. For this reason, all words from outdated, unverified or debatable sources have been pushed to the bottom of each column.</p>
+
 <a name="authentication"></a>
 <h3>Authentication</h3>
 <p><em>Parf Edhellen</em> does not maintain its own authentication database. Instead, it uses 

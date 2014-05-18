@@ -1,4 +1,5 @@
-Options +FollowSymLinks
+Options +FollowSymLinks -MultiViews
 RewriteEngine on
-RewriteRule ^api\/([A-Za-z0-9\-]+)\/?([0-9=a-zA-Z%]+)?\/?$  /api.php?service=$1&param=$2 [QSA,L]
-RewriteRule ^([a-z]+)\.page$                                /index.php?template=$1 [QSA,L]
+
+RewriteRule ^api\/([A-Za-z0-9\-]+)\/?([0-9=a-zA-Z%]+)?\/?$     /api.php?service=$1&param=$2 [QSA,L]
+RewriteRule ^([a-z]+)\.page$                                   /index.php?template=$1 [QSA,L]

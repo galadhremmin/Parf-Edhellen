@@ -36,6 +36,9 @@ blockquote {
 #search-result-wrapper-toggler-title {
   cursor: pointer;
 }
+a.selected {
+  font-weight: bold;
+}
 /* 
  * Order the search suggestions into columns for the widths: >400, >750 and >970.
  * */
@@ -68,6 +71,9 @@ blockquote {
 }
 blockquote {
   font-size: 100%;
+}
+blockquote h3 a {
+  color: inherit;
 }
 .highlight {
   background: #d9eefe;

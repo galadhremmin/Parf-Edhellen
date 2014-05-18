@@ -78,7 +78,7 @@
         <div class="col-md-12">
           <div class="input-group input-group-lg">
             <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
-            <input type="search" class="form-control" placeholder="your search term..." id="search-query-field" tabindex="1" accesskey="s" autocapitalize="off" autocorrect="off">
+            <input type="search" class="form-control" placeholder="your search query..." id="search-query-field" tabindex="1" accesskey="s" autocapitalize="off" autocorrect="off">
           </div>
         </div>
       </div>
@@ -96,9 +96,14 @@
 
     <div id="search-result-wrapper" class="panel panel-default hidden">
       <div class="panel-heading">
-        <h3 class="panel-title" id="search-result-wrapper-toggler-title"><span id="search-result-wrapper-toggler" class="glyphicon glyphicon-minus"></span> Suggestions (<span id="search-result-count"></span>)</h3>
+        <h3 class="panel-title" id="search-result-wrapper-toggler-title"><span id="search-result-wrapper-toggler" class="glyphicon glyphicon-minus"></span> Matching words (<span id="search-result-count"></span>)</h3>
       </div>
       <div class="panel-body">
+        <div class="row">
+          <div class="col-xs-12" id="search-result-description">
+            These words match your search query. Click on the one most relevant to you, or simply press enter to expand the first item in the list.
+          </div>
+        </div>
         <div class="row">
           <div id="search-result"></div>
         </div>

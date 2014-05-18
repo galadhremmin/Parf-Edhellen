@@ -5,20 +5,18 @@
 {counter start=-1 print=false}
 <div class="row">
   {foreach from=$translations key=language item=translationsForLanguage}
-  <div class="col-sm-{$maxColumnWidth} col-md-{$midColumnWidth} col-lg-{$minColumnWidth}">
-    <h2 rel="language-box">{$language}</h2>
-    <div class="language-box" id="language-box-{$language}">
+  <article class="col-sm-{$maxColumnWidth} col-md-{$midColumnWidth} col-lg-{$minColumnWidth}">
+    <header><h2 rel="language-box">{$language}</h2></header>
+    <section class="language-box" id="language-box-{$language}">
     {* Iterate through each entry for the specificed language *}
     {foreach $translationsForLanguage as $translation}
     <blockquote itemscope="itemscope" itemtype="http://schema.org/Article" id="translation-block-{counter}" {if $translation->owner < 1}class="contribution"{/if}>
-      {if $translation->owner < 1}
-      <div class="alert alert-warning" itemprop="comment">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        Unverified or debatable content. Added by 
-        <a href="/profile.page?authorID={$translation->authorID}" itemprop="author" rel="author" title="View profile for {$translation->authorName}.">{$translation->authorName}</a>.
-        </div>
-      {/if}
-      <h3 rel="trans-word" itemprop="about">{$translation->word}</h3> 
+      <h3 rel="trans-word" class="trans-word" itemprop="about">
+        {if $translation->owner === 0}
+        <a href="about.page?browseTo=unverified" title="This gloss originated from an outdated, unverified or debatable source."><span class="glyphicon glyphicon-question-sign"></span></a>
+        {/if}
+        {$translation->word}
+      </h3> 
       {if $translation->tengwar != null}
       &#32;<span class="tengwar">{$translation->tengwar}</span>
       {elseif $language eq 'Noldorin' or $language eq 'Sindarin'}
@@ -29,11 +27,20 @@
 
       <p class="word-comments" rel="trans-comments" itemprop="articleBody">{$translation->comments}</p>
 
+      {if $translation->owner === 0}
+      <section class="alert alert-warning" itemprop="comment">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        Unverified or debatable content. Added by 
+        <a href="/profile.page?authorID={$translation->authorID}" itemprop="author" rel="author" title="View profile for {$translation->authorName}.">{$translation->authorName}</a>.
+      </section>
+      {/if}
+
       {* Only bother with references if such are defined, as they are put within brackets *}
       <footer>
         {if $translation->source != null}<span class="word-source" rel="trans-source">[{$translation->source}]</span>{/if}
 
         <span class="word-etymology" rel="trans-etymology">{$translation->etymology}</span>
+        (<a href="/profile.page?authorID={$translation->authorID}" itemprop="author" rel="author" title="View profile for {$translation->authorName}.">{$translation->authorName}</a>)
         
         {if $loggedIn == true && ($translation->owner < 1 || $translation->owner == $accountID)}
           {*<a class="feature-link" href="#" onclick="return LANGDict.deleteTranslation({$translation->id})">Delete</a>*}
@@ -42,8 +49,8 @@
       </footer>
     </blockquote>
     {/foreach}
-    </div>
-  </div>
+    </section>
+  </article>
   {/foreach}
 </div>
 
