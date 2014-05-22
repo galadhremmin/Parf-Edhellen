@@ -15,15 +15,17 @@ html, body {
   margin: 0;
 }
 body {
-  /*background: url(../img/backgrounds/forest-sky.jpg) fixed;*/
+  background: url(../img/backgrounds/background.png) no-repeat fixed right bottom;
   overflow-y: scroll;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
 }
 blockquote {
   color:#333333;
+}
+.loading {
+  margin-top: 30px;
+  padding-left: 50px;
+  line-height: 36px;
+  background: url(../img/loading.gif) no-repeat left center;
 }
 #search-reverse-box-wrapper,
 #search-language-select {

@@ -109,7 +109,16 @@
         </div>
       </div>
     </div>
-
+    
+    <div class="row hidden" id="search-result-navigator">
+      <div class="col-xs-12 col-sm-6">
+        <button type="button" class="btn btn-default btn-sm" id="search-result-navigator-backward"><span class="glyphicon glyphicon-chevron-left"></span> <span class="word">Previous word</span></button>
+      </div>
+      <div class="col-xs-12 col-sm-6 text-right">
+        <button type="button" class="btn btn-default btn-sm" id="search-result-navigator-forward"><span class="glyphicon glyphicon-chevron-right"></span> <span class="word">Next word</span></button>
+      </div>
+    </div>
+    
     <!-- begin content -->
     <div id="result">
     
