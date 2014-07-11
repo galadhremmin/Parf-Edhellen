@@ -6,19 +6,9 @@
   <meta name="keywords" content="sindarin, quenya, noldorin, quendya, elvish, tolkien, nandorin, ilkorin, black speech, westron">
   <meta name="description" content="Parf Edhellen is one of the most comprehensive elvish dictionaries on the Internet, housing thousands of elvish names, words and phrases.">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="css/global.css" rel="stylesheet">
-  
-
-<!--
-
-  <script type="text/javascript" src="js/js.php"></script>
-
-  <link rel="stylesheet" media="all" type="text/css" href="css/global.css" />
-  <link rel="stylesheet" media="all" type="text/css" href="css/ui-lightness/jquery-ui-1.8.14.custom.css" />  
--->
-  
   <style type="text/css">
   <!--/*<![CDATA[*/
   /*body { background-image: url(img/backgrounds/{$background}); }*/

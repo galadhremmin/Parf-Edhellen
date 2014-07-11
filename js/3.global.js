@@ -270,7 +270,15 @@ var LANGSearch = function() {
       items.push('</ul>');
          
       var $result = $('#search-result');
-      $result.html(items.join('')).find('a').on('click', function() { toggleSuggestions(false); });
+      $result.html(items.join('')).find('a').on('click', function() {
+        
+        // Slide up the suggestions for smaller screens.
+        if ($('body').outerWidth() < 800) {
+          toggleSuggestions(false);
+        } else {
+          LANGAnim.scroll($('#result').offset().top - 50);
+        }
+      });
       
       $result = $('#search-result-count');
       $result.text(data.words.length);
@@ -355,7 +363,8 @@ var LANGAnim = function() {
   return {
     scroll: function(offset) {
       var bodyTag = $('body');
-      if (bodyTag.scrollTop() < 10) {
+      var increasing = $(window).scrollTop() < offset;
+      if (!increasing && bodyTag.scrollTop() < 10) {
         bodyTag.scrollTop(0);
       } else {      
         bodyTag.animate({ scrollTop: offset }, 800);
