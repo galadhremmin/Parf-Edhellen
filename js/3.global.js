@@ -271,16 +271,14 @@ var LANGSearch = function() {
          
       var $result = $('#search-result');
       $result.html(items.join('')).find('a').on('click', function(ev) {
-        ev.preventDefault();
-        
-        // Slide up the suggestions for smaller screens.
-        if ($('body').outerWidth() < 800) {
-          toggleSuggestions(false);
-        } else {
-          LANGAnim.scroll($('#result').offset().top - 50);
-        }
-        
-        return false;
+        window.setTimeout(function () {
+          // Slide up the suggestions for smaller screens.
+          if ($('body').outerWidth() < 800) {
+            toggleSuggestions(false);
+          } else {
+            LANGAnim.scroll($('#result').offset().top - 50);
+          }
+        }, 100);
       });
       
       $result = $('#search-result-count');
