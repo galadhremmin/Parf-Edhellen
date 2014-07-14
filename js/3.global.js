@@ -270,7 +270,8 @@ var LANGSearch = function() {
       items.push('</ul>');
          
       var $result = $('#search-result');
-      $result.html(items.join('')).find('a').on('click', function() {
+      $result.html(items.join('')).find('a').on('click', function(ev) {
+        ev.preventDefault();
         
         // Slide up the suggestions for smaller screens.
         if ($('body').outerWidth() < 800) {
@@ -278,6 +279,8 @@ var LANGSearch = function() {
         } else {
           LANGAnim.scroll($('#result').offset().top - 50);
         }
+        
+        return false;
       });
       
       $result = $('#search-result-count');
