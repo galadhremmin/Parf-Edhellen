@@ -74,10 +74,11 @@
         
         // Create a keywords entry
         $nkey = StringWizard::normalize($word->key);
+        $rnkey = strrev($nkey);
         $query = $db->prepare(
-          'INSERT INTO `keywords` (`Keyword`, `NormalizedKeyword`, `NamespaceID`, `WordID`) VALUES (?,?,?,?)'
+          'INSERT INTO `keywords` (`Keyword`, `NormalizedKeyword`, `ReversedNormalizedKeyword`, `NamespaceID`, `WordID`) VALUES (?,?,?,?,?)'
         );
-        $query->bind_param('ssii', $word->key, $nkey, $this->id, $word->id);
+        $query->bind_param('sssii', $word->key, $nkey, $rnkey, $this->id, $word->id);
         $query->execute();
       }
       

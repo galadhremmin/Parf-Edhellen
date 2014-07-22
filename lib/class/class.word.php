@@ -25,52 +25,11 @@
       }
     }
     
-    public function create($key) {
-      $db = Database::instance()->exclusiveConnection();
-      
-      $query = $db->prepare(
-        'SELECT `KeyID`, `AuthorID` FROM `word` WHERE `Key` = ?'
-      );
-      
-      $query->bind_param('s', $key);
-      $query->execute();
-      $query->bind_result($this->id, $this->authorID);
-      
-      if ($query->fetch() !== true) {
-        $query->close();
-        
-        $this->authorID = Session::getAccountID();
-        
-        if ($this->authorID < 1) {
-          throw new ErrorException('Invalid or malformed session cookie.');
-        }
-        
-        $query = $db->prepare(
-          'INSERT INTO `word` (`Key`, `AuthorID`, `NormalizedKey`) VALUES (?, ?, ?)'
-        );
-        
-        $normalizedKey = StringWizard::normalize($key);
-        $query->bind_param('sis', $key, $this->authorID, $normalizedKey);
-        if (!$query->execute()) {
-          throw new ErrorException('Word insertion failed.');
-        }
-        
-        $this->id = $db->insert_id;
-      }
-      
-      $query->close();
-      
-      $this->key = $key;
-      
-      return $this;
-    }
-    
     public function load($id) {
       $db = Database::instance();
       
       $query = $db->connection()->prepare(
-        'SELECT `Key`, `AuthorID` 
-         FROM `word` WHERE `KeyID` = ?'
+        'SELECT `Key`, `AuthorID` FROM `word` WHERE `KeyID` = ?'
       );
       $query->bind_param('i', $id);
       $query->execute();
@@ -87,9 +46,15 @@
     }
     
     public function validate() {
-      return $this->key != null && $this->keyID != null &&
-             !preg_match('/^\\s*$/', $this->key) && 
-             !preg_match('/^\\s*$/', $this->keyID);
+      return $this->key != null && !preg_match('/^\\s*$/', $this->key) && 
+             ($this->id === null || is_numeric($this->id));
+    }
+    
+    public function create($key) {
+      $this->id = 0;
+      $this->key = $key;
+      
+      return $this->save();
     }
     
     public function save() {
@@ -117,19 +82,23 @@
         $query->close();
         
         $query = $db->prepare(
-          'INSERT INTO `word` (`Key`, `NormalizedKey`, `AuthorID`) VALUES (?, ?, ?)'
+          'INSERT INTO `word` (`Key`, `NormalizedKey`, `ReversedNormalizedKey`, `AuthorID`) VALUES (?, ?, ?, ?)'
         );
         
         $normalizedKey = StringWizard::normalize($this->key);
-        $query->bind_param('ssi', $this->key, $normalizedKey, Session::getAccountID());
+        $reversedNormalizedKey = strrev($normalizedKey);
+        $accountID = Session::getAccountID();
+        $query->bind_param('sssi', $this->key, $normalizedKey, $reversedNormalizedKey, $accountID);
         $query->execute();
         
         $this->id = $query->insert_id;
+        
+        $query->close();
       } else {
+        $query->close();
+        
         $this->load($this->id);
       }
-      
-      $query->close();
       
       return $this;
     }
