@@ -14,6 +14,10 @@ define(['require', 'exports'], function (require, exports) {
   CAssert.boolean = function () {
     assertInternal(arguments, 'boolean');
   }
+
+  CAssert.array = function () {
+    assertInternal(arguments, 'array');
+  }
   
   CAssert.event = function () {
     assertInternal(arguments, function (param) {
@@ -27,21 +31,21 @@ define(['require', 'exports'], function (require, exports) {
     });
   }
 
-  function assertInternal(params, typeOrCallback) {
+  function assertInternal(params, typeOrFunction) {
     var i = 0, actualType;
     
     // The typeOrCallback parameter is internal, so rigorous testing isn't
     // necessary.
-    var isFunction = typeof typeOrCallback === 'function'; 
+    var isFunction = typeof typeOrFunction === 'function'; 
     
     for (; i < params.length; i += 1) {
       // Perform rigorous type testing on the param parameter
       actualType = $.type(params[i]);
       
-      if ((isFunction && !typeOrCallback(params[i])) || 
-          (!isFunction && actualType !== typeOrCallback)) {
+      if ((isFunction && !typeOrFunction(params[i])) || 
+          (!isFunction && actualType !== typeOrFunction)) {
         throw 'Parameter "' + params[i] + '" is a ' + actualType + '. Expecting ' + 
-          typeOrCallback + '.';
+          (isFunction ? typeOrFunction.toString() : typeOrFunction) + '.';
       }
     }
   }

@@ -203,7 +203,15 @@ define(['exports', 'utilities'], function (exports, util) {
     this.springSuggestions(term);
     this.currentDigest = digest;
   }
-  
+   
+  /**
+   * Retrieves suggestions for the specified term through an AJAX request to 
+   * the web service.
+   *
+   * @private
+   * @method springSuggestions
+   * @param {String} term  Term to retrieve suggestions for.
+   */
   CSearchNavigator.prototype.springSuggestions = function (term) {
     util.CAssert.string(term);
     
@@ -228,8 +236,18 @@ define(['exports', 'utilities'], function (exports, util) {
     });
   }
   
+  /**
+   * Presents the provided array with suggestions. This method assumes that the 
+   * array contains objects with at least two properties, nkey and key.
+   *
+   * @private
+   * @method presentSuggestions
+   * @param {String} suggestions  An array with objects containing key and nkey.
+   */
   CSearchNavigator.prototype.presentSuggestions = function (suggestions) {
-    var items = ['<ul>'];
+    util.CAssert.array(suggestions);
+    
+    var items = [];
     var suggestion, i, container, wrapper;
     
     for (i = 0; i < suggestions.length; i += 1) {
@@ -237,14 +255,17 @@ define(['exports', 'utilities'], function (exports, util) {
       items.push('<li><a class="search-result-item" href="#' + encodeURIComponent(suggestion.nkey) + '">' + suggestion.key + '</a></li>');
     }
     
-    items.push('</ul>');
-    
-    container = document.getElementById(this.searchResultId);
-    container.innerHTML = items.join('');
-    
+    // Open/close the wrapper depending on the result set.
     wrapper = document.getElementById(this.searchResultId + '-wrapper');
     if (items.length > 0) {
       $(wrapper).removeClass('hidden');
+    
+      // Wrap the items in an <ul> tag and and update the result container
+      items.unshift('<ul>');
+      items.push('</ul>');
+      
+      container = document.getElementById(this.searchResultId);
+      container.innerHTML = items.join('');
     } else {
       $(wrapper).addClass('hidden');
     }
