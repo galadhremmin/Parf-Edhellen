@@ -95,6 +95,7 @@ define(['exports', 'utilities'], function (exports, util) {
     this.reversedSearchId = reversedSearchId;
     this.languageFilterId = languageFilterId;
     
+    this.searchField      = null;
     this.resultContainer  = null;
     this.resultWrapper    = null;
     this.resultCountLabel = null;
@@ -118,13 +119,14 @@ define(['exports', 'utilities'], function (exports, util) {
     
     // Find all result container. References to them are retained for 
     // performance reasons.
+    this.searchField      = document.getElementById(this.searchFieldId);
     this.resultContainer  = document.getElementById(this.searchResultId);
     this.resultWrapper    = document.getElementById(this.searchResultId + '-wrapper');
     this.resultCountLabel = document.getElementById(this.searchResultId + '-count');
     
     // Attach events
-    $('#' + this.searchFieldId).on('keyup', function (ev) {
-      _this.beginSpringSuggestions(ev, $(this));
+    $(this.searchField).on('keyup', function (ev) {
+      _this.beginSpringSuggestions($(this));
     });
     
     $('#' + this.languageFilterId).on('change', function () {
@@ -133,7 +135,7 @@ define(['exports', 'utilities'], function (exports, util) {
     });
     
     $('#' + this.reversedSearchId).on('change', function () {
-      var reversed = this.value === '1';
+      var reversed = this.checked;
       _this.changeReversed(reversed);
     });
     
@@ -154,6 +156,9 @@ define(['exports', 'utilities'], function (exports, util) {
   CSearchNavigator.prototype.changeLanguage = function (id) {
     util.CAssert.number(id);
     this.language = id;
+    
+    // Search conditions have changed! Request new suggestions.
+    this.endSpringSuggestions();
   }
   
   /**
@@ -166,6 +171,9 @@ define(['exports', 'utilities'], function (exports, util) {
   CSearchNavigator.prototype.changeReversed = function (reversed) {
     util.CAssert.boolean(reversed);
     this.isReversed = reversed ? 1 : 0;
+    
+    // Search conditions have changed! Request new suggestions.
+    this.endSpringSuggestions();
   }
   
   /**
@@ -175,20 +183,16 @@ define(['exports', 'utilities'], function (exports, util) {
    *
    * @private
    * @method beginSpringSuggestions
-   * @param {Event} ev        The JQuery event object
-   * @param {JQuery} element  A JQuery object to the active input element.
    */
-  CSearchNavigator.prototype.beginSpringSuggestions = function (ev, element) {
-    util.CAssert.event(ev);
-    util.CAssert.jQuery(element);
-        
+  CSearchNavigator.prototype.beginSpringSuggestions = function () {        
     if (this.changeTimeout) {
       window.clearTimeout(this.changeTimeout);
     }
     
     var _this = this;
     this.changeTimeout = window.setTimeout(function () {
-      _this.endSpringSuggestions(element);
+      _this.changeTimeout = 0;
+      _this.endSpringSuggestions();
     }, 250);
   }
     
@@ -198,18 +202,18 @@ define(['exports', 'utilities'], function (exports, util) {
    *
    * @private
    * @method endSpringSuggestions
-   * @param {JQuery} element  A JQuery object to the active input element.
    */
-  CSearchNavigator.prototype.endSpringSuggestions = function (element) {
-    var digest = element.val().hashCode();
-    var term;
+  CSearchNavigator.prototype.endSpringSuggestions = function () {
+    var value = this.searchField.value,
+        digest = (value + ',' + this.isReversed + ',' + this.language).hashCode(),
+        term;
     
     if (digest === this.currentDigest) {
       // No change, so return!
       return;
     }
     
-    term = $.trim(element.val());
+    term = $.trim(value);
     if (term.length < 1) {
       return;
     }
