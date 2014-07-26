@@ -200,7 +200,7 @@ define(['exports', 'utilities'], function (exports, util) {
       return;
     }
     
-    this.springSuggestions(term);
+    this.requestSuggestions(term);
     this.currentDigest = digest;
   }
    
@@ -209,10 +209,10 @@ define(['exports', 'utilities'], function (exports, util) {
    * the web service.
    *
    * @private
-   * @method springSuggestions
+   * @method requestSuggestions
    * @param {String} term  Term to retrieve suggestions for.
    */
-  CSearchNavigator.prototype.springSuggestions = function (term) {
+  CSearchNavigator.prototype.requestSuggestions = function (term) {
     util.CAssert.string(term);
     
     var requestData = {
@@ -260,7 +260,7 @@ define(['exports', 'utilities'], function (exports, util) {
     if (items.length > 0) {
       $(wrapper).removeClass('hidden');
     
-      // Wrap the items in an <ul> tag and and update the result container
+      // Wrap the items in <ul> tags and and update the result container
       items.unshift('<ul>');
       items.push('</ul>');
       
