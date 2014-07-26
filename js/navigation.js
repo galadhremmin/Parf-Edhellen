@@ -23,8 +23,10 @@ define(['exports', 'utilities'], function (exports, util) {
     var _this = this;
     var currentHash;
     
-    $(window).on('hashchange', function () {
-      _this.navigate( String(window.location.hash).substr(1) );
+    $(window).on('hashchange', function (ev) {
+      ev.preventDefault();
+      
+      _this.navigate(String(window.location.hash).substr(1));
     });
     
     this.navigate(String(window.location.hash).substr(1));
@@ -53,6 +55,8 @@ define(['exports', 'utilities'], function (exports, util) {
     $.get('translate.php', { term: term, ajax: true }, function (data) {
       _this.navigated(data);
       _this.currentTerm = term;
+      
+      $(window).trigger('navigator.navigated', [term]);
     });
   }
   
@@ -105,6 +109,7 @@ define(['exports', 'utilities'], function (exports, util) {
     this.languageId       = 0;
     
     this.isReversed       = false;
+    this.iterationIndex   = 0;
   }
   
   /**
@@ -137,6 +142,10 @@ define(['exports', 'utilities'], function (exports, util) {
     $('#' + this.reversedSearchId).on('change', function () {
       var reversed = this.checked;
       _this.changeReversed(reversed);
+    });
+    
+    $(window).on('navigator.navigated', function (ev, term) {
+      _this.updateSelectedSuggestion(term);
     });
     
     // Free up resources no longer needed
@@ -269,7 +278,13 @@ define(['exports', 'utilities'], function (exports, util) {
     
     for (i = 0; i < suggestions.length; i += 1) {
       suggestion = suggestions[i];
-      items.push('<li><a class="search-result-item" href="#' + encodeURIComponent(suggestion.nkey) + '">' + suggestion.key + '</a></li>');
+      items.push('<li><a href="#' + encodeURIComponent(suggestion.nkey) + 
+        '" data-hash="' + suggestion.key.hashCode() + '">' + suggestion.key + 
+        '</a></li>');
+    }
+    
+    if (this.resultCountLabel) {
+      this.resultCountLabel.innerText = items.length;
     }
     
     // Open/close the wrapper depending on the result set.
@@ -285,9 +300,25 @@ define(['exports', 'utilities'], function (exports, util) {
       $(this.resultWrapper).addClass('hidden');
     }
     
-    if (this.resultCountLabel) {
-      this.resultCountLabel.innerText = items.length;
-    }
+    this.iterationIndex = 0;
+    this.displayNavigationButtons();
+  }
+  
+  CSearchNavigator.prototype.displayNavigationButtons = function () {
+    // noop at the moment
+  }
+  
+  CSearchNavigator.prototype.updateSelectedSuggestion = function (term) {
+    util.CAssert.string(term);
+    
+    var hash = term.hashCode(),
+        items = $(this.resultContainer).find('li a'),
+        selectedItem;
+    
+    selectedItem = items.filter('[data-hash="' + hash + '"]');
+    
+    selectedItem.addClass('selected');
+    items.not(selectedItem).removeClass('selected');
   }
   
   exports.CSearchNavigator = CSearchNavigator;
