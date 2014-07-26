@@ -5,8 +5,10 @@
   </div>
 </div>
 
-<script type="text/javascript" src="js/js.php"></script>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/requirejs.js"></script>
 <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/elfdict.js"></script>
 
 <script type="text/javascript">
 var _gaq = _gaq || [];
