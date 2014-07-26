@@ -94,9 +94,15 @@ define(['exports', 'utilities'], function (exports, util) {
     this.searchResultId   = searchResultId;
     this.reversedSearchId = reversedSearchId;
     this.languageFilterId = languageFilterId;
+    
+    this.resultContainer  = null;
+    this.resultWrapper    = null;
+    this.resultCountLabel = null;
+    
     this.currentDigest    = 0;
     this.changeTimeout    = 0;
     this.languageId       = 0;
+    
     this.isReversed       = false;
   }
   
@@ -110,6 +116,13 @@ define(['exports', 'utilities'], function (exports, util) {
     var _this = this;
     var currentHash;
     
+    // Find all result container. References to them are retained for 
+    // performance reasons.
+    this.resultContainer  = document.getElementById(this.searchResultId);
+    this.resultWrapper    = document.getElementById(this.searchResultId + '-wrapper');
+    this.resultCountLabel = document.getElementById(this.searchResultId + '-count');
+    
+    // Attach events
     $('#' + this.searchFieldId).on('keyup', function (ev) {
       _this.beginSpringSuggestions(ev, $(this));
     });
@@ -125,6 +138,7 @@ define(['exports', 'utilities'], function (exports, util) {
     });
     
     // Free up resources no longer needed
+    this.searchResultId   = undefined;
     this.searchFieldId    = undefined;
     this.languageFilterId = undefined;
     this.reversedSearchId = undefined;
@@ -247,8 +261,7 @@ define(['exports', 'utilities'], function (exports, util) {
   CSearchNavigator.prototype.presentSuggestions = function (suggestions) {
     util.CAssert.array(suggestions);
     
-    var items = [];
-    var suggestion, i, container, wrapper;
+    var items = [], suggestion, i;
     
     for (i = 0; i < suggestions.length; i += 1) {
       suggestion = suggestions[i];
@@ -256,18 +269,20 @@ define(['exports', 'utilities'], function (exports, util) {
     }
     
     // Open/close the wrapper depending on the result set.
-    wrapper = document.getElementById(this.searchResultId + '-wrapper');
     if (items.length > 0) {
-      $(wrapper).removeClass('hidden');
+      $(this.resultWrapper).removeClass('hidden');
     
       // Wrap the items in <ul> tags and and update the result container
       items.unshift('<ul>');
       items.push('</ul>');
       
-      container = document.getElementById(this.searchResultId);
-      container.innerHTML = items.join('');
+      this.resultContainer.innerHTML = items.join('');
     } else {
-      $(wrapper).addClass('hidden');
+      $(this.resultWrapper).addClass('hidden');
+    }
+    
+    if (this.resultCountLabel) {
+      this.resultCountLabel.innerText = items.length;
     }
   }
   
