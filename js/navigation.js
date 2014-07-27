@@ -103,12 +103,16 @@ define(['exports', 'utilities'], function (exports, util) {
     this.resultContainer  = null;
     this.resultWrapper    = null;
     this.resultCountLabel = null;
+    this.buttonWrapper    = null;
+    this.buttonForward    = null;
+    this.buttonBackward   = null;
     
     this.currentDigest    = 0;
     this.changeTimeout    = 0;
     this.languageId       = 0;
     
     this.isReversed       = false;
+    this.suggestionsArray = null;
     this.iterationIndex   = 0;
   }
   
@@ -128,10 +132,25 @@ define(['exports', 'utilities'], function (exports, util) {
     this.resultContainer  = document.getElementById(this.searchResultId);
     this.resultWrapper    = document.getElementById(this.searchResultId + '-wrapper');
     this.resultCountLabel = document.getElementById(this.searchResultId + '-count');
+    this.buttonWrapper    = document.getElementById(this.searchResultId + '-navigator');
+    this.buttonForward    = document.getElementById(this.searchResultId + '-navigator-forward');
+    this.buttonBackward   = document.getElementById(this.searchResultId + '-navigator-backward');
     
     // Attach events
     $(this.searchField).on('keyup', function (ev) {
       _this.beginSpringSuggestions($(this));
+    });
+    
+    $(this.buttonForward).on('click', function (ev) {
+      ev.preventDefault();
+      _this.enableNavigationBar(1);
+      _this.navigateToSuggestion();
+    });
+    
+    $(this.buttonBackward).on('click', function (ev) {
+      ev.preventDefault();
+      _this.enableNavigationBar(-1);
+      _this.navigateToSuggestion();
     });
     
     $('#' + this.languageFilterId).on('change', function () {
@@ -279,7 +298,7 @@ define(['exports', 'utilities'], function (exports, util) {
     for (i = 0; i < suggestions.length; i += 1) {
       suggestion = suggestions[i];
       items.push('<li><a href="#' + encodeURIComponent(suggestion.nkey) + 
-        '" data-hash="' + suggestion.key.hashCode() + '">' + suggestion.key + 
+        '" data-hash="' + suggestion.nkey.hashCode() + '">' + suggestion.key + 
         '</a></li>');
     }
     
@@ -300,14 +319,84 @@ define(['exports', 'utilities'], function (exports, util) {
       $(this.resultWrapper).addClass('hidden');
     }
     
+    this.suggestionsArray = suggestions;
     this.iterationIndex = 0;
-    this.displayNavigationButtons();
+    
+    this.enableNavigationBar();
   }
   
-  CSearchNavigator.prototype.displayNavigationButtons = function () {
-    // noop at the moment
+  /**
+   * Toggles the navigation bar based on the item currently enabled. The 
+   * direction parameter is optional, and might be used to modify the current
+   * selection.
+   *
+   * @private
+   * @method enableNavigationBar
+   * @param {Number} direction  Direction modifier, either positive or negative.
+   */
+  CSearchNavigator.prototype.enableNavigationBar = function (direction) {
+    if (direction !== undefined) {
+      util.CAssert.number(direction);      
+      this.iterationIndex += direction;
+    }
+    
+    // Constraint within the boundaries of the array with suggestions
+    if (this.iterationIndex < 0) {
+      iterationIndex = 0;
+    }
+    
+    if (this.iterationIndex >= this.suggestionsArray.length) {
+      this.iterationIndex = this.suggestionsArray.length - 1;
+    }
+    
+    // Determine whether the client can go back / forth from the current position.
+    var canGoForward  = this.iterationIndex + 1 < this.suggestionsArray.length,
+        canGoBackward = this.iterationIndex > 0;
+    
+    if (!canGoForward && !canGoBackward) {
+      // Hide the navigation bar if navigation isn't available. 
+      $(this.buttonWrapper).addClass('hidden');
+    } else  {
+      $(this.buttonWrapper).removeClass('hidden');
+    }
+    
+    this.buttonForward.style.display  = canGoForward  ? '' : 'none';
+    this.buttonBackward.style.display = canGoBackward ? '' : 'none';
+    
+    var word;
+    if (canGoForward) {
+      word = this.buttonForward.querySelector('.word');
+      if (word) {
+        word.innerText = this.suggestionsArray[this.iterationIndex + 1].key;
+      }
+    }
+    
+    if (canGoBackward) {
+      word = this.buttonBackward.querySelector('.word');
+      if (word) {
+        word.innerText = this.suggestionsArray[this.iterationIndex - 1].key;
+      }
+    }
   }
   
+  /**
+   * Navigates to the suggestion item currently active.
+   *
+   * @private
+   * @method navigateToSuggestion
+   */
+  CSearchNavigator.prototype.navigateToSuggestion = function () {
+      var hash = encodeURIComponent(this.suggestionsArray[this.iterationIndex].nkey);
+      window.location.hash = '#' + hash;
+  }
+  
+  /**
+   * Selects the suggestion item currently active.
+   *
+   * @private
+   * @method updateSelectedSuggestion
+   * @param {String} term Normalized term.
+   */
   CSearchNavigator.prototype.updateSelectedSuggestion = function (term) {
     util.CAssert.string(term);
     
@@ -319,6 +408,11 @@ define(['exports', 'utilities'], function (exports, util) {
     
     selectedItem.addClass('selected');
     items.not(selectedItem).removeClass('selected');
+    
+    if (this.suggestionsArray) {
+      this.iterationIndex = selectedItem.parents('li').index();
+      this.enableNavigationBar();
+    }
   }
   
   exports.CSearchNavigator = CSearchNavigator;
