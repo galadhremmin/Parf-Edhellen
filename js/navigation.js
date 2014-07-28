@@ -106,6 +106,7 @@ define(['exports', 'utilities'], function (exports, util) {
     this.buttonWrapper    = null;
     this.buttonForward    = null;
     this.buttonBackward   = null;
+    this.titleElement     = null;
     
     this.currentDigest    = 0;
     this.changeTimeout    = 0;
@@ -114,6 +115,8 @@ define(['exports', 'utilities'], function (exports, util) {
     this.isReversed       = false;
     this.suggestionsArray = null;
     this.iterationIndex   = 0;
+    
+    this.resultVisibility = true;
   }
   
   /**
@@ -135,10 +138,13 @@ define(['exports', 'utilities'], function (exports, util) {
     this.buttonWrapper    = document.getElementById(this.searchResultId + '-navigator');
     this.buttonForward    = document.getElementById(this.searchResultId + '-navigator-forward');
     this.buttonBackward   = document.getElementById(this.searchResultId + '-navigator-backward');
+    this.titleElement     = document.getElementById(this.searchResultId + '-wrapper-toggler-title');
     
     // Attach events
     $(this.searchField).on('keyup', function (ev) {
       _this.beginSpringSuggestions($(this));
+    }).on('click', function (ev) {
+      $(this).select();
     });
     
     $(this.buttonForward).on('click', function (ev) {
@@ -151,6 +157,10 @@ define(['exports', 'utilities'], function (exports, util) {
       ev.preventDefault();
       _this.enableNavigationBar(-1);
       _this.navigateToSuggestion();
+    });
+    
+    $(this.titleElement).on('click', function () {
+      _this.toggleSearchResults();
     });
     
     $('#' + this.languageFilterId).on('change', function () {
@@ -322,6 +332,7 @@ define(['exports', 'utilities'], function (exports, util) {
     this.suggestionsArray = suggestions;
     this.iterationIndex = 0;
     
+    this.toggleSearchResults(true);
     this.enableNavigationBar();
   }
   
@@ -413,6 +424,28 @@ define(['exports', 'utilities'], function (exports, util) {
       this.iterationIndex = selectedItem.parents('li').index();
       this.enableNavigationBar();
     }
+  }
+  
+  /**
+   * Toggles the search results view.
+   *
+   * @private
+   * @method toggleSearchResults
+   * @param {Boolean} visibility 
+   */
+  CSearchNavigator.prototype.toggleSearchResults = function (visibility) {
+    if (visibility !== undefined && this.resultVisibility === visibility) {
+      return;
+    }
+    
+    var results = $(this.resultWrapper).find('.panel-body'),
+        arrows  = $(this.titleElement).find('.glyphicon');
+      
+    results.toggle();
+    arrows.toggleClass('glyphicon-minus');
+    arrows.toggleClass('glyphicon-plus');
+    
+    this.resultVisibility = !this.resultVisibility;
   }
   
   exports.CSearchNavigator = CSearchNavigator;

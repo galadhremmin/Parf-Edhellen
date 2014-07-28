@@ -11,4 +11,20 @@ require(['require', 'navigation'], function(require, nav) {
   var searchNavigator = new nav.CSearchNavigator('search-query-field', 'search-result', 'search-reverse-box', 'search-language-select');
   searchNavigator.listen();
   
+  // Look for other modules. These are defined by the data-module attribute on
+  // HTML elements. Load all modules, and invoke the load method on them.
+  var modules = $('[data-module]');
+  if (modules.length) {
+    var moduleNames = [];
+    
+    modules.each(function () {
+      moduleNames.push( $(this).data('module') );
+    });
+    
+    require(moduleNames, function () {
+      for (var i = 0; i < arguments.length; i += 1) {
+        arguments[i].load();
+      }
+    });
+  }
 });
