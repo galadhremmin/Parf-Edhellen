@@ -63,7 +63,7 @@
     </noscript>
 
     <!-- search component -->
-    <form method="get" id="search-form" action="#" onsubmit="return LANGDict.submit()">
+    <form method="get" id="search-form" action="#">
       <div class="row">
         <div class="col-md-12">
           <div class="input-group input-group-lg">

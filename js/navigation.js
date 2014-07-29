@@ -142,7 +142,15 @@ define(['exports', 'utilities'], function (exports, util) {
     
     // Attach events
     $(this.searchField).on('keyup', function (ev) {
-      _this.beginSpringSuggestions($(this));
+      _this.beginSpringSuggestions(ev);
+      return false;
+    }).on('keypress', function (ev) {
+      // Route the enter-key
+      if ((ev.keyCode || ev.which) === 13) {
+        ev.preventDefault();
+        _this.enableNavigationBar(0);
+        _this.navigateToSuggestion();
+      }
     }).on('click', function (ev) {
       $(this).select();
     });
@@ -222,7 +230,31 @@ define(['exports', 'utilities'], function (exports, util) {
    * @private
    * @method beginSpringSuggestions
    */
-  CSearchNavigator.prototype.beginSpringSuggestions = function () {        
+  CSearchNavigator.prototype.beginSpringSuggestions = function (ev) {
+    if (ev) {
+      var direction = null;
+      switch (ev.keyCode || ev.which) {
+        case 38:
+          direction = -1;
+          break;
+        case 40:
+          direction = 1;
+          break;
+        case 13:
+          direction = 0;
+          break;
+      }
+      
+      if (direction !== null) {
+        ev.preventDefault();
+        
+        this.enableNavigationBar(direction);
+        this.navigateToSuggestion();
+        
+        return false;
+      }
+    }
+    
     if (this.changeTimeout) {
       window.clearTimeout(this.changeTimeout);
     }
@@ -232,6 +264,8 @@ define(['exports', 'utilities'], function (exports, util) {
       _this.changeTimeout = 0;
       _this.endSpringSuggestions();
     }, 250);
+    
+    return true;
   }
     
   /**
@@ -303,13 +337,24 @@ define(['exports', 'utilities'], function (exports, util) {
   CSearchNavigator.prototype.presentSuggestions = function (suggestions) {
     util.CAssert.array(suggestions);
     
-    var items = [], suggestion, i;
+    var items = [], suggestion, filteredSuggestions = [], i;
     
     for (i = 0; i < suggestions.length; i += 1) {
       suggestion = suggestions[i];
+      
+      // This happens sometimes, that the normalized keys are the same. This is usually
+      // due to words being both verbs (thus ending with a hyphen) and nouns. It
+      // doesn't matter that they are filtered out, as their translation will yield
+      // both variants.
+      if (i > 0 && suggestions[i - 1].nkey === suggestions[i].nkey)  {
+        continue;
+      }
+      
       items.push('<li><a href="#' + encodeURIComponent(suggestion.nkey) + 
         '" data-hash="' + suggestion.nkey.hashCode() + '">' + suggestion.key + 
         '</a></li>');
+        
+      filteredSuggestions.push(suggestions[i]);
     }
     
     if (this.resultCountLabel) {
@@ -338,7 +383,7 @@ define(['exports', 'utilities'], function (exports, util) {
       $(this.resultWrapper).addClass('hidden');
     }
     
-    this.suggestionsArray = suggestions;
+    this.suggestionsArray = filteredSuggestions;
     this.iterationIndex = 0;
     
     this.toggleSearchResults(true);
@@ -355,6 +400,10 @@ define(['exports', 'utilities'], function (exports, util) {
    * @param {Number} direction  Direction modifier, either positive or negative.
    */
   CSearchNavigator.prototype.enableNavigationBar = function (direction) {
+    if (!this.suggestionsArray) {
+      return;
+    }
+    
     if (direction !== undefined) {
       util.CAssert.number(direction);      
       this.iterationIndex += direction;
@@ -362,7 +411,7 @@ define(['exports', 'utilities'], function (exports, util) {
     
     // Constraint within the boundaries of the array with suggestions
     if (this.iterationIndex < 0) {
-      iterationIndex = 0;
+      this.iterationIndex = 0;
     }
     
     if (this.iterationIndex >= this.suggestionsArray.length) {
@@ -406,8 +455,12 @@ define(['exports', 'utilities'], function (exports, util) {
    * @method navigateToSuggestion
    */
   CSearchNavigator.prototype.navigateToSuggestion = function () {
-      var hash = encodeURIComponent(this.suggestionsArray[this.iterationIndex].nkey);
-      window.location.hash = '#' + hash;
+    if (!this.suggestionsArray || this.suggestionsArray.length < this.iterationIndex) {
+      return;
+    }
+    
+    var hash = encodeURIComponent(this.suggestionsArray[this.iterationIndex].nkey);
+    window.location.hash = '#' + hash;
   }
   
   /**
