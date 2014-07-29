@@ -41,6 +41,10 @@ blockquote {
 a.selected {
   font-weight: bold;
 }
+#start-jumbotron  {
+  background: url(../img/backgrounds/book.jpg) fixed no-repeat left top;
+  background-size: cover;
+}
 /* 
  * Order the search suggestions into columns for the widths: >400, >750 and >970.
  * */

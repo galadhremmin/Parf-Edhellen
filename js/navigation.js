@@ -325,6 +325,15 @@ define(['exports', 'utilities'], function (exports, util) {
       items.push('</ul>');
       
       this.resultContainer.innerHTML = items.join('');
+      
+      // Hacky solution for scrolling into view ... I just can't think of a 
+      // pretty way of achieving this result.
+      $(this.resultContainer).find('a').on('click', function () {
+        var wrapper = $('#search-result-wrapper');
+        var newY = wrapper.offset().top + wrapper.height() - 50;
+        
+        $('body').animate({ scrollTop: newY + 'px' }, 500);
+      });
     } else {
       $(this.resultWrapper).addClass('hidden');
     }
