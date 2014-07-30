@@ -1,11 +1,13 @@
 <?php
   class PageContributorsController extends Controller {
-    public function __construct(TemplateEngine &$base) {
-      parent::__construct('contributors');
-      
+    public function __construct(TemplateEngine &$engine) {
+      parent::__construct('contributors', $engine);
+    }
+    
+    public function load() {
       $model = $this->getModel();
-      $base->assign('authors', $model->getAuthors());
-      $base->assign('activeAuthors', $model->getActiveAuthors());
+      $this->_engine->assign('authors', $model->getAuthors());
+      $this->_engine->assign('activeAuthors', $model->getActiveAuthors());
     }
   }
 ?>

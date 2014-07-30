@@ -52,6 +52,33 @@ define(['require', 'exports'], function (require, exports) {
   
   exports.CAssert = CAssert;
   
+  /**
+   * Checks whether the element is within the viewport. 
+   * Inspired by Dan @ StackOverflow (http://stackoverflow.com/questions/123999)
+   *
+   * @method isElementInViewport
+   * @param {String} data HTML element or JQuery element.
+   */
+  exports.isElementInViewport = function (el) {
+    if (el instanceof jQuery) {
+        el = el[0];
+    }
+
+    var rect = el.getBoundingClientRect(),
+        height = $(window).height() * 0.7, 
+        width = $(window).width();
+    
+    if (rect.top >= height) {
+      return false;
+    }
+    
+    if (rect.top < -$(el).height()) {
+      return false;
+    }
+    
+    return true;
+  }
+  
   if (String.prototype.hashCode === undefined) {
     String.prototype.hashCode = function() {
       var n = 0, t = 0;

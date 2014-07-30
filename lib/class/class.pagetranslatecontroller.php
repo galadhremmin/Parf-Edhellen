@@ -15,10 +15,13 @@
         $cacheTag = 'translation.term.'.sha1($term);
       }
     
-      parent::__construct('translate', $doCache, $cacheTag);
-      
+      parent::__construct('translate', $engine, $doCache, $cacheTag);
+    }
+    
+    public function load() {
       $model = $this->getModel();
       if ($model !== null) {
+        $engine = $this->_engine;
         $engine->assign('namespaces',   $model->getTranslations());
         $engine->assign('translations', $model->getTranslations());
         $engine->assign('indexes',      $model->getIndexes());

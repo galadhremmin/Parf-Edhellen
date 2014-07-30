@@ -5,11 +5,13 @@
   
   class PageIndexController extends Controller {
     public function __construct(TemplateEngine &$engine) {
-      parent::__construct('index');
-      
+      parent::__construct('index', $engine);
+    }
+    
+    public function load() {
       $model = $this->getModel();
       if ($model !== null) {
-        $engine->assign('languages', $model->getLanguages());
+        $this->_engine->assign('languages', $model->getLanguages());
       }
     }
   }

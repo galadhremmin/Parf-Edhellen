@@ -5,8 +5,10 @@
   
   class PageAuthenticateController extends Controller {
     public function __construct(TemplateEngine &$engine) {
-      parent::__construct('authenticate', false);
-      
+      parent::__construct('authenticate', $engine, false);
+    }
+    
+    public function load() {
       $error = null;
       $model = $this->getModel();
       
@@ -57,9 +59,10 @@
       }
 
       if ($model !== null) {
-        $engine->assign('providers', $model->getProviders());
+        $this->_engine->assign('providers', $model->getProviders());
       }
-      $engine->assign('errorMessage', $error);
+      
+      $this->_engine->assign('errorMessage', $error);
     }
   }
 ?>

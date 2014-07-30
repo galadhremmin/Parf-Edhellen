@@ -1,11 +1,13 @@
 <?php
   class PageNewsController extends Controller {
-    public function __construct(TemplateEngine &$base) {
-      parent::__construct('news', false);
-      
+    public function __construct(TemplateEngine &$engine) {
+      parent::__construct('news', $engine, false);
+    }
+    
+    public function load() {
       $model = parent::getModel();
       if ($model != null) {
-        $base->assign('activityList', $model->getActivityList());
+        $this->_engine->assign('activityList', $model->getActivityList());
       }
     }
   }

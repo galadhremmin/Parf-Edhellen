@@ -74,6 +74,13 @@ define(['exports', 'utilities'], function (exports, util) {
     var result = document.getElementById(this.containerId);
     if (result) {
       result.innerHTML = data;
+      
+      // Ensure that the result view is within the viewport, and animate the 
+      // transition into the viewport if it isn't.
+      if (!util.isElementInViewport(result)) {
+        var position = Math.floor($(result).offset().top - 40); // 40 = magic number! ;)
+        $('body,html').animate({scrollTop: position}, 500);
+      }
     }
   }
   
@@ -337,7 +344,25 @@ define(['exports', 'utilities'], function (exports, util) {
   CSearchNavigator.prototype.presentSuggestions = function (suggestions) {
     util.CAssert.array(suggestions);
     
-    var items = [], suggestion, filteredSuggestions = [], i;
+    var items = [], 
+        filteredSuggestions = [], 
+        suggestion, 
+        compatibilityMode = false, 
+        itemsPerColumn = 0,
+        columnIsClosed = true,
+        i, j;
+    
+    if (Modernizr && !Modernizr.csscolumns) {
+      compatibilityMode = true;
+      columnIsClosed = true;
+      itemsPerColumn = suggestions.length;
+      
+      if (itemsPerColumn > 3) {
+        itemsPerColumn = Math.ceil(itemsPerColumn / 3);
+      }
+      
+      this.resultContainer.style.width = '100%';
+    }
     
     for (i = 0; i < suggestions.length; i += 1) {
       suggestion = suggestions[i];
@@ -350,19 +375,38 @@ define(['exports', 'utilities'], function (exports, util) {
         continue;
       }
       
+      if (compatibilityMode && columnIsClosed) {
+        items.push('<div class="col-sm-4">');
+        columnIsClosed = false;
+      }
+      
       items.push('<li><a href="#' + encodeURIComponent(suggestion.nkey) + 
         '" data-hash="' + suggestion.nkey.hashCode() + '">' + suggestion.key + 
         '</a></li>');
+      
+      if (compatibilityMode) {
+        j = filteredSuggestions.length; 
         
+        if (j > 0 && j % itemsPerColumn === 0) {
+          items.push('</div>');
+          columnIsClosed = true;
+        }
+      }
+      
       filteredSuggestions.push(suggestions[i]);
     }
     
+    if (compatibilityMode && !columnIsClosed) {
+      items.push('</div>');
+      columnIsClosed = true;
+    }
+    
     if (this.resultCountLabel) {
-      this.resultCountLabel.innerText = items.length;
+      this.resultCountLabel.innerHTML = filteredSuggestions.length;
     }
     
     // Open/close the wrapper depending on the result set.
-    if (items.length > 0) {
+    if (filteredSuggestions.length > 0) {
       $(this.resultWrapper).removeClass('hidden');
     
       // Wrap the items in <ul> tags and and update the result container
@@ -370,15 +414,6 @@ define(['exports', 'utilities'], function (exports, util) {
       items.push('</ul>');
       
       this.resultContainer.innerHTML = items.join('');
-      
-      // Hacky solution for scrolling into view ... I just can't think of a 
-      // pretty way of achieving this result.
-      $(this.resultContainer).find('a').on('click', function () {
-        var wrapper = $('#search-result-wrapper');
-        var newY = wrapper.offset().top + wrapper.height() - 50;
-        
-        $('body').animate({ scrollTop: newY + 'px' }, 500);
-      });
     } else {
       $(this.resultWrapper).addClass('hidden');
     }
@@ -436,14 +471,14 @@ define(['exports', 'utilities'], function (exports, util) {
     if (canGoForward) {
       word = this.buttonForward.querySelector('.word');
       if (word) {
-        word.innerText = this.suggestionsArray[this.iterationIndex + 1].key;
+        word.innerHTML = this.suggestionsArray[this.iterationIndex + 1].key;
       }
     }
     
     if (canGoBackward) {
       word = this.buttonBackward.querySelector('.word');
       if (word) {
-        word.innerText = this.suggestionsArray[this.iterationIndex - 1].key;
+        word.innerHTML = this.suggestionsArray[this.iterationIndex - 1].key;
       }
     }
   }

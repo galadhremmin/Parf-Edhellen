@@ -33,6 +33,27 @@
       }
       
       $controller = new $controller($this);
+      
+      if (isset($_POST['action'])) {
+        $action = preg_replace('/[^0-9a-zA-Z]+/', '', $_POST['action']).'Action';
+        
+        if (method_exists($controller, $action)) {
+          $arguments = array();
+          foreach ($_POST as $key => $value) {
+            if ($key === 'action') {
+              continue;
+            }
+            
+            $arguments[$key] = $value;
+          }
+          
+          $controller->$action($arguments);
+        } else {
+          throw new Exception('Unrecognised action "'.$action.'".');
+        }
+      }
+      
+      $controller->load();
     
       if ($encapsulate) {
         $this->displayEncapsulated($this->_headerName, false, false);

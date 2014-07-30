@@ -5,6 +5,6 @@
   
   class PageResourcesController extends Controller {
     public function __construct(TemplateEngine &$engine) {
-      parent::__construct('resources');
+      parent::__construct('resources', $engine);
     }
   }

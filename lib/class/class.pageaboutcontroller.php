@@ -3,9 +3,9 @@
     exit;
   }
   
-  class PageAboutController {
+  class PageAboutController extends Controller {
     public function __construct($engine) {
-      
+      parent::__construct('about', $engine);
     }
   }
 ?>

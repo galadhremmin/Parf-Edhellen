@@ -4,15 +4,17 @@
   }
   
   class Controller {
-    private $_model;
     private $_timeElapsed;
+    
+    protected $_model;
+    protected $_engine;
   
-    protected function __construct($controller, $cache = true, $customCacheTag = null) {
+    protected function __construct($controllerName, TemplateEngine& $engine, $cache = true, $customCacheTag = null) {
       // this is here only for first line in the identification of performance issues
       $startTime = microtime(true);
       
       // Acquire the class name for the model passed from the super class 
-      $model = self::getModelClassName($controller);
+      $model = self::getModelClassName($controllerName);
       if (self::modelExists($model)) {
       
         if ($customCacheTag == null) {
@@ -45,7 +47,12 @@
         }
       }
       
+      $this->_engine = $engine;
       $this->_timeElapsed = microtime(true) - $startTime;
+    }
+    
+    public function load() {
+      // Noop by default
     }
     
     protected function getModel() {
@@ -56,8 +63,8 @@
       return $this->_timeElapsed;
     }
     
-    private function getModelClassName($controller) {
-      return 'Page'.ucfirst($controller).'Model';
+    private function getModelClassName($controllerName) {
+      return 'Page'.ucfirst($controllerName).'Model';
     }
     
     private function modelExists($model) {

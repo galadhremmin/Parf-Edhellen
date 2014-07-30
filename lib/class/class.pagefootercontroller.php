@@ -5,7 +5,7 @@
   
   class PageFooterController extends Controller {
     public function __construct(TemplateEngine &$engine) {
-      parent::__construct('footer');
+      parent::__construct('footer', $engine);
     }
   }
 ?>

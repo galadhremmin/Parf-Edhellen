@@ -5,20 +5,22 @@
   
   class PageHeaderController extends Controller {
     public function __construct(TemplateEngine &$engine) {
-      parent::__construct('header', false);
-      
-      $engine->assign('documentTitle', SYS_TITLE);
+      parent::__construct('header', $engine, false);
+    }
+    
+    public function load() {
+      $this->_engine->assign('documentTitle', SYS_TITLE);
       
       if (preg_match('/MSIE [0-8]+/', $_SERVER['HTTP_USER_AGENT'])) {
-        $engine->assign('pageTitle', SYS_TITLE);
+        $this->_engine->assign('pageTitle', SYS_TITLE);
       } else {
-        $engine->assign('pageTitle', '<span class="tengwar">q7Ee 4FjR¸5$</span>');
+        $this->_engine->assign('pageTitle', '<span class="tengwar">q7Ee 4FjR¸5$</span>');
       }
        
       $model = $this->getModel();     
       if ($model !== null) {
-        $engine->assign('menu', $model->getMenu());
-        $engine->assign('languages', $model->getLanguages());
+        $this->_engine->assign('menu', $model->getMenu());
+        $this->_engine->assign('languages', $model->getLanguages());
       }
     }
   }

@@ -9,11 +9,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <link href="css/global.css" rel="stylesheet">
-  <style type="text/css">
-  <!--/*<![CDATA[*/
-  /*body { background-image: url(img/backgrounds/{$background}); }*/
-  /*]]>*/-->
-  </style>
   <noscript>
     <style type="text/css">
     .tengwar { display: none; }
