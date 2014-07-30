@@ -467,20 +467,54 @@ define(['exports', 'utilities'], function (exports, util) {
     this.buttonForward.style.display  = canGoForward  ? '' : 'none';
     this.buttonBackward.style.display = canGoBackward ? '' : 'none';
     
-    var word;
+    var word, element;
     if (canGoForward) {
-      word = this.buttonForward.querySelector('.word');
-      if (word) {
-        word.innerHTML = this.suggestionsArray[this.iterationIndex + 1].key;
+      element = this.buttonForward.querySelector('.word');
+      if (element) {
+        word = this.suggestionsArray[this.iterationIndex + 1].key;
+        element.innerHTML = this.trimWordsWithEllipsis(word);
       }
     }
     
     if (canGoBackward) {
-      word = this.buttonBackward.querySelector('.word');
-      if (word) {
-        word.innerHTML = this.suggestionsArray[this.iterationIndex - 1].key;
+      element = this.buttonBackward.querySelector('.word');
+      if (element) {
+        word = this.suggestionsArray[this.iterationIndex - 1].key;
+        element.innerHTML = this.trimWordsWithEllipsis(word);
       }
     }
+  }
+  
+  /**
+   * Shortens long string with an ellipsis.
+   *
+   * @private
+   * @method trimWordsWithEllipsis
+   * @param {String} word Word(s) to shorten with an ellipsis
+   */
+  CSearchNavigator.prototype.trimWordsWithEllipsis = function (word) {
+    util.CAssert.string(word);
+    var maxLength = 24;
+    
+    if (word.length > maxLength) {
+      var words = word.split(' ');
+      var length = 0;
+      var i = 0;
+      
+      if (words.length === 1) {
+        return words.substr(0, 24) + '...';
+      }
+      
+      for (i = 0; i < words.length; i += 1) {
+        if (length + words[i].length > maxLength) {
+          return words.slice(0, i).join(' ') + ' ...';
+        }
+        
+        length += words[i].length + 1;
+      }
+    }
+    
+    return word;
   }
   
   /**
