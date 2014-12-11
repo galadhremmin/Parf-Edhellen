@@ -62,7 +62,7 @@
       <div class="row">
         <div class="col-md-12">
           <div class="input-group input-group-lg">
-            <span class="input-group-addon"><span class="glyphicon glyphicon-search"></span></span>
+            <span class="input-group-addon"><span class="glyphicon glyphicon-search" id="loading-container"></span></span>
             <input type="search" class="form-control" placeholder="your search query..." id="search-query-field" tabindex="1" accesskey="s" autocapitalize="off" autocorrect="off">
           </div>
         </div>
