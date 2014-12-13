@@ -47,10 +47,11 @@ define(['exports', 'utilities'], function (exports, util) {
     util.CAssert.jQuery(fragment);
     
     var translationID = parseInt( fragment.data('translation-id') );
-    this.beginLoadTranslation(translationID);
+    var fragmentID    = parseInt( fragment.data('fragment-id') );
+    this.beginLoadTranslation(fragmentID, translationID);
   }
   
-  CSentence.prototype.beginLoadTranslation = function (translationID) {
+  CSentence.prototype.beginLoadTranslation = function (fragmentID, translationID) {
     util.CAssert.number(translationID);
     
     // 0 isn't a valid ID
@@ -60,16 +61,54 @@ define(['exports', 'utilities'], function (exports, util) {
     
     var _this = this;
     $.get('/api/translation/' + translationID, function (data) {
-      _this.endLoadTranslation(data);
+      _this.endLoadTranslation(fragmentID, data);
     });
   }
   
-  CSentence.prototype.endLoadTranslation = function (data) {
+  CSentence.prototype.endLoadTranslation = function (fragmentID, data) {
     if (!data) {
       return;
     }
     
-    console.log(data.response);
+    // Escape if the web server failed to process the request.
+    if (data.error) {
+      (console.error || console.log).call(console, data.error);
+      return;
+    }
+    
+    // Find the dialogue, and escape if it doesn't exist.
+    var dialogue = $('#fragment-dialogue-' + fragmentID);
+    if (dialogue.length < 1) {
+      return;
+    }
+    
+    // Populate the dialogue with the information we received from the web API.
+    var t = data.response;
+    
+    // A quick little inline helper function for showing/hiding empty paragraphs.
+    var hideIfEmpty = function (s, value) {
+      if (!value || value.length < 1) {
+        s.hide();
+      } else {      
+        s.html(value).show();
+      }
+    }
+    
+    hideIfEmpty(dialogue.find('.ed-comments'), t.comments);
+    hideIfEmpty(dialogue.find('.ed-translation'), t.translation);
+    
+    dialogue.find('.ed-word').html(t.word);
+    dialogue.find('.ed-source').html(t.source);
+    dialogue.find('.ed-etymology').html(t.etymology);
+    
+    // Open the dialogue
+    var options = {
+      keyboard: true,
+      backdrop: true,
+      show: true
+    };
+    
+    dialogue.modal(options);
   }
   
   return new CSentence();
