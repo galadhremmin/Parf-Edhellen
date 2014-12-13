@@ -11,6 +11,7 @@
       $menu = array();
       
       $menu[] = new MenuItem(array('url' => 'index.page',        'text' => 'Home',         'sectionIndex' => 1));
+      $menu[] = new MenuItem(array('url' => 'sentence.page',     'text' => 'Phrases',      'sectionIndex' => 1));
       $menu[] = new MenuItem(array('url' => 'about.page',        'text' => 'About',        'sectionIndex' => 1));
       $menu[] = new MenuItem(array('url' => 'contributors.page', 'text' => 'Contributors', 'sectionIndex' => 1));
       $menu[] = new MenuItem(array('url' => 'news.page',         'text' => 'Activity',     'sectionIndex' => 1));

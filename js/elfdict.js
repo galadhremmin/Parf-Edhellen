@@ -16,13 +16,16 @@ require(['require', 'navigation'], function(require, nav) {
   var modules = $('[data-module]');
   if (modules.length) {
     var moduleNames = [];
+    var parentElements =[];
     
     modules.each(function () {
-      moduleNames.push( $(this).data('module') );
+      moduleNames.push($(this).data('module'));
+      parentElements.push($(this));
     });
     
     require(moduleNames, function () {
       for (var i = 0; i < arguments.length; i += 1) {
+        arguments[i].setElement(parentElements[i]);
         arguments[i].load();
       }
     });
