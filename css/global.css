@@ -128,3 +128,16 @@ blockquote h3 a {
   vertical-align: middle;
   width: 80%;
 }
+.ed-definition {
+  padding: 10px;
+  border-radius: 10px;
+  background: #eee;
+  font-size: 90%;
+  margin-bottom: 10px;
+}
+.ed-fragment {
+  margin-left: 10px;
+}
+.ed-navigation div:last-child {
+  text-align: right;
+}

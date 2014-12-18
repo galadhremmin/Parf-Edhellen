@@ -27,6 +27,7 @@
     protected static function getTranslation($id) {
       $t = new Translation();
       $t->load($id);
+      $t->transformContent();
       
       if ($t->index) {
         $t = null;

@@ -59,13 +59,25 @@
     
     public function create() {
       $fragments = array();
+      $previousFragment = null;
+      
       foreach ($this->fragments as $fragment) {
         if (!preg_match('/^[,\\.!\\s]$/', $fragment->fragment)) {
           $fragments[] = ' ';
         }
         
         if (is_numeric($fragment->translationID)) {
-          $html = '<a href="#" data-fragment-id="'.$fragment->fragmentID.'" data-translation-id="'.$fragment->translationID.'">'.$fragment->fragment.'</a>';
+          $html = '<a href="#" id="ed-fragment-'.$fragment->fragmentID.
+            '" data-fragment-id="'.$fragment->fragmentID.
+            '" data-translation-id="'.$fragment->translationID.
+            '">'.$fragment->fragment.'</a>';
+          
+            if ($previousFragment !== null) {
+              $previousFragment->nextFragmentID = $fragment->fragmentID;
+              $fragment->previousFragmentID = $previousFragment->fragmentID;
+            }
+
+            $previousFragment = $fragment;
         } else {        
           $html = $fragment->fragment;
         }
@@ -82,12 +94,16 @@
     public $translationID;
     public $fragment;
     public $comments;
+    public $previousFragmentID;
+    public $nextFragmentID;
     
     public function __construct($fragmentID, $fragment, $translationID, $comments) {
       $this->fragmentID = $fragmentID;
       $this->fragment = $fragment;
       $this->translationID = $translationID;
-      $this->comments = $comments;
+      $this->comments = StringWizard::createLinks($comments);
+      $this->previousFragmentID = 0;
+      $this->nextFragmentID = 0;
     }
   }
 ?>

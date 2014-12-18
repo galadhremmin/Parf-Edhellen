@@ -11,22 +11,38 @@
   {if !is_numeric($fragment->translationID)}
   {continue}
   {/if}
-  <div class="modal fade" id="fragment-dialogue-{$fragment->fragmentID}">
+  <div class="modal" id="fragment-dialogue-{$fragment->fragmentID}">
     <div class="modal-dialog">
-      <div class="modal-content">
+      <div class="modal-content"> 
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
           <h4 class="modal-title"><span class="ed-word"></span> &gt; {$fragment->fragment}</h4>
         </div>
         <div class="modal-body">
           {if !empty($fragment->comments)}
-          <p>{$fragment->comments}</p>
+          <p class="ed-fragment">{$fragment->comments}</p>
           {/if}
-          <p class="ed-translation"></p>
-          <p class="ed-comments"></p>
-          <p>
-            [<span class="ed-source"></span>]
-          </p>
+
+          <div class="ed-definition">
+            <p class="ed-translation"></p>
+            <p class="ed-comments"></p>
+            <p>
+              [<span class="ed-source"></span>]
+            </p>
+          </div>
+          
+          <div class="ed-navigation row">
+            <div class="col-xs-6 col-sm-6">
+            {if $fragment->previousFragmentID > 0}
+              <button type="button" class="btn btn-default btn-sm ed-fragment-navigation-back" data-neighbour-fragment="{$fragment->previousFragmentID}"><span class="glyphicon glyphicon-chevron-left"></span> <span class="word">previous</span></button>
+            {/if}
+            </div>
+            <div class="col-xs-6 col-sm-6">
+            {if $fragment->nextFragmentID > 0}
+              <button type="button" class="btn btn-default btn-sm ed-fragment-navigation-forward" data-neighbour-fragment="{$fragment->nextFragmentID}"><span class="glyphicon glyphicon-chevron-right"></span> <span class="word">next</span></button>
+            {/if}
+            </div>
+          </div>
         </div>
       </div>
     </div>

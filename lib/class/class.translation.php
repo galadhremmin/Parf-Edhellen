@@ -114,6 +114,11 @@
       $query->close(); 
     }
     
+    public function transformContent() {
+      $this->translation = StringWizard::createLinks($this->translation);
+      $this->comments    = StringWizard::createLinks($this->comments);
+    }
+    
     public static function getTypes() {
       if (is_array(self::$availableTypes)) {
         return self::$availableTypes;

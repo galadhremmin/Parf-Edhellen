@@ -7,6 +7,7 @@ define(['exports', 'utilities'], function (exports, util) {
    */
   var CSentence = function () { 
     this.parentElement = null;
+    this.currentDialogue = null;
   }
   
   /**
@@ -41,6 +42,11 @@ define(['exports', 'utilities'], function (exports, util) {
         _this.fragmentInteracted( $(this) );
       });
     });
+    
+    this.parentElement.find('.ed-fragment-navigation-back,.ed-fragment-navigation-forward').on('click', function (ev) {
+      ev.preventDefault();
+      _this.nextFragmentInteracted(parseInt( $(this).data('neighbour-fragment') ));
+    });
   }
   
   CSentence.prototype.fragmentInteracted = function (fragment) {
@@ -48,6 +54,16 @@ define(['exports', 'utilities'], function (exports, util) {
     
     var translationID = parseInt( fragment.data('translation-id') );
     var fragmentID    = parseInt( fragment.data('fragment-id') );
+    
+    this.beginLoadTranslation(fragmentID, translationID);
+  }
+  
+  CSentence.prototype.nextFragmentInteracted = function (fragmentID) {
+    util.CAssert.number(fragmentID);
+    
+    var fragment = $('#ed-fragment-' + fragmentID);
+    var translationID = parseInt( fragment.data('translation-id') );
+    
     this.beginLoadTranslation(fragmentID, translationID);
   }
   
@@ -68,6 +84,10 @@ define(['exports', 'utilities'], function (exports, util) {
   CSentence.prototype.endLoadTranslation = function (fragmentID, data) {
     if (!data) {
       return;
+    }
+    
+    if (this.currentDialogue && this.currentDialogue.length > 0) {
+      this.closeDialogue();
     }
     
     // Escape if the web server failed to process the request.
@@ -101,6 +121,11 @@ define(['exports', 'utilities'], function (exports, util) {
     dialogue.find('.ed-source').html(t.source);
     dialogue.find('.ed-etymology').html(t.etymology);
     
+    var _this = this;
+    dialogue.find('.ed-definition a').on('click', function () {
+      _this.closeDialogue();
+    });
+    
     // Open the dialogue
     var options = {
       keyboard: true,
@@ -109,6 +134,17 @@ define(['exports', 'utilities'], function (exports, util) {
     };
     
     dialogue.modal(options);
+    
+    this.currentDialogue = dialogue;
+  }
+  
+  CSentence.prototype.closeDialogue = function () {
+    if (!this.currentDialogue) {
+      return;
+    }
+    
+    this.currentDialogue.modal('hide');
+    this.currentDialogue = null;
   }
   
   return new CSentence();
