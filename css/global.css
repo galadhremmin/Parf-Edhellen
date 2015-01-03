@@ -9,10 +9,33 @@
   font-weight: normal;
   font-style: normal;
 }
+@font-face {
+    font-family: 'sorts_mill_goudy';
+    src: url('../fonts/sortsmillgoudy/regular/GoudyStM-webfont.eot');
+    src: url('../fonts/sortsmillgoudy/regular/GoudyStM-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/sortsmillgoudy/regular/GoudyStM-webfont.woff') format('woff'),
+         url('../fonts/sortsmillgoudy/regular/GoudyStM-webfont.ttf') format('truetype'),
+         url('../fonts/sortsmillgoudy/regular/GoudyStM-webfont.svg#sorts_mill_goudyregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'sorts_mill_goudy';
+    src: url('../fonts/sortsmillgoudy/italic/GoudyStM-Italic-webfont.eot');
+    src: url('../fonts/sortsmillgoudy/italic/GoudyStM-Italic-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/sortsmillgoudy/italic/GoudyStM-Italic-webfont.woff') format('woff'),
+         url('../fonts/sortsmillgoudy/italic/GoudyStM-Italic-webfont.ttf') format('truetype'),
+         url('../fonts/sortsmillgoudy/italic/GoudyStM-Italic-webfont.svg#sorts_mill_goudyitalic') format('svg');
+    font-weight: normal;
+    font-style: italic;
+}
 html, body {
   width: 100%;
   padding: 50px 0 0 0;
   margin: 0;
+}
+h1,h2,h3,h4,h5 {
+  font-family: sorts_mill_goudy, inherit;
 }
 body {
   background: url(../img/backgrounds/background.png) no-repeat fixed right bottom;

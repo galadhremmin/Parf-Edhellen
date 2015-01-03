@@ -44,18 +44,18 @@
                 
         // Load first data necessary for interaction 
         // Languages
-        $data = array();
+        $languages = array();
         $query = $db->connection()->query(
-          'SELECT `ID`, `Name` FROM `language` WHERE `Invented` = 1 ORDER BY `Order` ASC'
+          'SELECT `ID`, `Name`, `Tengwar` FROM `language` WHERE `Invented` = 1 ORDER BY `Order` ASC'
         );
       
         while ($row = $query->fetch_object()) {
-          $data[$row->ID] = $row->Name;
+          $languages[$row->Name] = $row;
         }
       
         $query->close();
       
-        $this->_languages = $data;
+        $this->_languages = $languages;
       
         // Grammar types
         $this->_types = Translation::getTypes();

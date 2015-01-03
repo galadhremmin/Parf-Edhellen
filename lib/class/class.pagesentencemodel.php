@@ -10,7 +10,7 @@
       $db = Database::instance();
       
       $query = $db->connection()->query(
-        'SELECT s.`SentenceID`, l.`Name` AS `Language`, s.`Description`, f.`Fragment`, f.`TranslationID`, f.`FragmentID`, f.`Comments`
+        'SELECT s.`SentenceID`, l.`Name` AS `Language`, s.`Description`, f.`Fragment`, f.`TranslationID`, f.`FragmentID`, f.`Comments`, s.`Source`
          FROM `sentence` s
            INNER JOIN `language` l ON l.`ID` = s.`LanguageID`
            INNER JOIN `sentence_fragment` f ON f.`SentenceID` = s.`SentenceID`
@@ -22,7 +22,7 @@
         
         // Create a sentence if it hasn't previously been recorded.
         if (!isset($this->_sentences[$row->SentenceID])) {
-          $sentence = new Sentence($row->SentenceID, $row->Language, $row->Description);
+          $sentence = new Sentence($row->SentenceID, $row->Language, $row->Description, $row->Source);
           $this->_sentences[$row->SentenceID] = $sentence;
         }
         
@@ -48,13 +48,15 @@
     public $fragments;
     public $sentence;
     public $description;
+    public $source;
     
-    public function __construct($id, $language, $description) {
+    public function __construct($id, $language, $description, $source) {
       $this->ID = $id;
       $this->language = $language;
       $this->fragments = array();
       $this->description = $description;
       $this->sentence = '';
+      $this->source = $source;
     }
     
     public function create() {

@@ -6,7 +6,14 @@
 <div class="row">
   {foreach from=$translations key=language item=translationsForLanguage}
   <article class="col-sm-{$maxColumnWidth} col-md-{$midColumnWidth} col-lg-{$minColumnWidth}">
-    <header><h2 rel="language-box">{$language}</h2></header>
+    <header>
+      <h2 rel="language-box">
+      {$language} 
+      {if !is_null($languages[$language]->Tengwar)}
+      <span class="tengwar">{$languages[$language]->Tengwar}</span>
+      {/if}
+      </h2>
+    </header>
     <section class="language-box" id="language-box-{$language}">
     {* Iterate through each entry for the specificed language *}
     {foreach $translationsForLanguage as $translation}

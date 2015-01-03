@@ -4,8 +4,11 @@
 
 <div data-module="sentence">
   {foreach from=$sentences item=sentence}
-  <h3>{$sentence->sentence}</h3>
-  <p>{$sentence->description}</p>
+  <blockquote>
+    <h3>{$sentence->sentence}</h3>
+    <p>{$sentence->description}</p>
+    <footer>{$sentence->language} [{$sentence->source}]</footer>
+  </blockquote>
   
   {foreach from=$sentence->fragments item=fragment}
   {if !is_numeric($fragment->translationID)}
@@ -24,7 +27,10 @@
           {/if}
 
           <div class="ed-definition">
-            <p class="ed-translation"></p>
+            <p>
+              <strong class="ed-word"></strong>
+              <span class="ed-translation"></span>
+            </p>
             <p class="ed-comments"></p>
             <p>
               [<span class="ed-source"></span>]
