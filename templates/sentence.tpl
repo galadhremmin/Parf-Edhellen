@@ -1,6 +1,6 @@
 <h2>Elvish phrases</h2>
 <p>Tolkien composed many elvish phrases and poems throughout his lifetime. Who among us wouldn't recall A Elbereth Gilthoniel from the Lord of the Rings? Much of what we know (or think we know) about the elvish languages has actually been derived from these fragments, whether from the original triology or in posthumously published documents.</p>
-<p>The list beneath contains some of the more well-known phrases in Sindarin and Quenya, including a word-by-word analysis of the sentences.</p>
+<p>The list beneath contains some of the more well-known phrases in Sindarin and Quenya, including a word-by-word analysis of the sentences. It's by no means complete, and new sentences will be added continously.</p>
 
 <div data-module="sentence">
   {foreach from=$sentences item=sentence}
