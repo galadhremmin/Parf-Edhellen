@@ -1,17 +1,20 @@
 @font-face {
-    font-family: tengwar;
-    src: url('../fonts/tengwar-kc/custom-webfont.eot');
-    src: url('../fonts/tengwar-kc/custom-webfont.eot#iefix'),
-         url('../fonts/tengwar-kc/custom-webfont.woff') format('woff'), 
-         url('../fonts/tengwar-kc/custom-webfont.ttf') format('truetype'), 
-         url('../fonts/tengwar-kc/custom-webfont.svg#TengwarAnnatarItalic') format('svg');
-    font-weight: normal;
-    font-style: normal;
+  font-family: 'tengwar_annatarregular';
+  src: url('../fonts/tengwar-kc/tngan-webfont.eot');
+  src: url('../fonts/tengwar-kc/tngan-webfont.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/tengwar-kc/tngan-webfont.woff2') format('woff2'),
+       url('../fonts/tengwar-kc/tngan-webfont.woff') format('woff'),
+       url('../fonts/tengwar-kc/tngan-webfont.ttf') format('truetype'),
+       url('../fonts/tengwar-kc/tngan-webfont.svg#tengwar_annatarregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
 }
 .tengwar {
-    font-family: tengwar;
-    font-size: 110%;
-    text-decoration: none;
+  font-family: 'tengwar_annatarregular';
+  font-size: 110%;
+  line-height: 0.8;
+  text-decoration: none;
+  font-weight: normal !important;
 }
 .tengwar.start {
   color: #ccc;

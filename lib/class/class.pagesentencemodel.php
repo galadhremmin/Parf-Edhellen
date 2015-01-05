@@ -10,7 +10,7 @@
       $db = Database::instance();
       
       $query = $db->connection()->query(
-        'SELECT s.`SentenceID`, l.`Name` AS `Language`, s.`Description`, f.`Fragment`, f.`TranslationID`, f.`FragmentID`, f.`Comments`, s.`Source`
+        'SELECT s.`SentenceID`, l.`Name` AS `Language`, s.`Description`, f.`Fragment`, f.`Tengwar`, f.`TranslationID`, f.`FragmentID`, f.`Comments`, s.`Source`
          FROM `sentence` s
            INNER JOIN `language` l ON l.`ID` = s.`LanguageID`
            INNER JOIN `sentence_fragment` f ON f.`SentenceID` = s.`SentenceID`
@@ -26,7 +26,7 @@
           $this->_sentences[$row->SentenceID] = $sentence;
         }
         
-        $this->_sentences[$row->SentenceID]->fragments[] = new SentenceFragment($row->FragmentID, $row->Fragment, $row->TranslationID, $row->Comments);
+        $this->_sentences[$row->SentenceID]->fragments[] = new SentenceFragment($row->FragmentID, $row->Fragment, $row->Tengwar, $row->TranslationID, $row->Comments);
       }
       
       // Coalesce all fragments into sentences
@@ -47,6 +47,7 @@
     public $language;
     public $fragments;
     public $sentence;
+    public $sentenceTengwar;
     public $description;
     public $source;
     
@@ -61,11 +62,18 @@
     
     public function create() {
       $fragments = array();
+      $fragmentsTengwar = array();
       $previousFragment = null;
       
       foreach ($this->fragments as $fragment) {
         if (!preg_match('/^[,\\.!\\s]$/', $fragment->fragment)) {
-          $fragments[] = ' ';
+          if (count($fragments) > 0) {
+            $fragments[] = ' ';
+          }
+          
+          if (!is_null($fragment->tengwar) && count($fragmentsTengwar) > 0) {
+            $fragmentsTengwar[] = ' ';
+          }
         }
         
         if (is_numeric($fragment->translationID)) {
@@ -85,9 +93,14 @@
         }
         
         $fragments[] = $html;
+        
+        if (!is_null($fragment->tengwar)) {
+          $fragmentsTengwar[] = $fragment->tengwar;
+        }
       }
       
       $this->sentence = implode($fragments);
+      $this->sentenceTengwar = implode($fragmentsTengwar);
     }
   }
   
@@ -98,14 +111,16 @@
     public $comments;
     public $previousFragmentID;
     public $nextFragmentID;
+    public $tengwar;
     
-    public function __construct($fragmentID, $fragment, $translationID, $comments) {
+    public function __construct($fragmentID, $fragment, $tengwar, $translationID, $comments) {
       $this->fragmentID = $fragmentID;
       $this->fragment = $fragment;
       $this->translationID = $translationID;
       $this->comments = StringWizard::createLinks($comments);
       $this->previousFragmentID = 0;
       $this->nextFragmentID = 0;
+      $this->tengwar = $tengwar;
     }
   }
 ?>

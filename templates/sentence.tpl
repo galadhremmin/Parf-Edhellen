@@ -5,7 +5,12 @@
 <div data-module="sentence">
   {foreach from=$sentences item=sentence}
   <blockquote>
-    <h3>{$sentence->sentence}</h3>
+    <h3>
+      {$sentence->sentence}
+    </h3>
+    {if !empty($sentence->sentenceTengwar)}
+    <p><span class="tengwar">{$sentence->sentenceTengwar}</span></p>
+    {/if}
     <p>{$sentence->description}</p>
     <footer>{$sentence->language} [{$sentence->source}]</footer>
   </blockquote>
@@ -19,7 +24,11 @@
       <div class="modal-content"> 
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-          <h4 class="modal-title"><span class="ed-word"></span> &gt; {$fragment->fragment}</h4>
+          <h4 class="modal-title"><span class="ed-word"></span> &gt; {$fragment->fragment}
+            {if !is_null($fragment->tengwar)}
+            <span class="tengwar right">{$fragment->tengwar}</span>
+            {/if}
+          </h4>
         </div>
         <div class="modal-body">
           {if !empty($fragment->comments)}
