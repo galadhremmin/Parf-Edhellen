@@ -9,7 +9,7 @@
     <header>
       <h2 rel="language-box">
       {$language} 
-      {if !is_null($languages[$language]->Tengwar)}
+      {if isset($languages[$language]) && !is_null($languages[$language]->Tengwar)}
       <span class="tengwar">{$languages[$language]->Tengwar}</span>
       {/if}
       </h2>
