@@ -66,7 +66,7 @@
       $previousFragment = null;
       
       foreach ($this->fragments as $fragment) {
-        if (!preg_match('/^[,\\.!\\s]$/', $fragment->fragment)) {
+        if (!preg_match('/^[,\\.!\\s\\?]$/', $fragment->fragment)) {
           if (count($fragments) > 0) {
             $fragments[] = ' ';
           }
