@@ -6,6 +6,7 @@ img/
 lib/config
 .DS_Store
 .metadata/
+browserconfig.xml
 *~
 
 lib/config/config.wordservice.php
