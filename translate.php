@@ -10,5 +10,5 @@
   }
   
   $r = new TemplateEngine();
-  $r->displayEncapsulated('translate', $encapsulate, $cache);
+  $r->displayEncapsulated('Translate', $encapsulate, $cache);
 ?>

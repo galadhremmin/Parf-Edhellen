@@ -5,13 +5,13 @@
   $servicePtr = null;
   
   try {
-    $result['response'] = ServiceHandler::processRequest($servicePtr);
+    $result['response'] = services\ServiceHandler::processRequest($servicePtr);
   } catch (Exception $e) {
     $result['succeeded'] = false;
     $result['error']     = $e->getMessage();
   }
 
-  $handler = new JSONHandler();
+  $handler = new services\handlers\JSONHandler();
   
   if ($servicePtr !== null) {
     $handler = $servicePtr->getContentHandler();
