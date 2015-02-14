@@ -18,7 +18,7 @@
       return $check === $identity[SEC_INDEX_CHECKSUM];
     }
     
-    public static function getAccountID($salted_identity = null) {
+    public static function getAccount($salted_identity = null) {
       if ($salted_identity === null) {
         $values = self::getUnserializedSessionValues();
         
@@ -29,23 +29,10 @@
         $salted_identity = $values[SEC_INDEX_IDENTITY];
       }
     
-      $db = Database::instance();
+      $account = new \data\entities\Account();
+      $account->load($salted_identity);
       
-      $query = $db->connection()->prepare(
-        'SELECT `AccountID` FROM `auth_accounts` WHERE `Identity` = ?'
-      );
-      
-      $query->bind_param('s', $salted_identity);
-      $query->execute();
-      $query->bind_result($id);
-      
-      if ($query->fetch() !== true) {
-        $id = 0;
-      }
-      
-      $query->close();
-      
-      return $id;
+      return $account;
     }
   
     public static function register(LightOpenID &$provider) {
@@ -108,12 +95,15 @@
     }
     
     private static function hash($value) {
+      // TODO: * move salt to every iteration
+      //       * use SHA-256/512 instead, or bcrypt
       if (defined('SYS_SEC_SALT')) {
         $value .= SYS_SEC_SALT;
       }
       
       if (defined('SYS_SEC_LOOP') && SYS_SEC_LOOP > 0) {
         for ($i = 0; $i < SYS_SEC_LOOP; ++$i) {
+          $tmp   = 
           $value = sha1($value);
         }
       }
@@ -122,8 +112,8 @@
     }
     
     private static function persist($salted_identity) {
-      $id = self::getAccountID($salted_identity);
-      if ($id < 1) {
+      $account = self::getAccount($salted_identity);
+      if ($account === null || !$account->validate()) {
         // no such account exists, create one
         $id = self::createAccount($salted_identity);
       }
@@ -132,31 +122,12 @@
     }
     
     private static function createAccount($salted_identity) {
-      $db = Database::instance();
+      $account = new \data\entities\Account(array(
+        'identity' => $salted_identity
+      ));
+      $account->save();
       
-      $query = $db->connection()->query(
-        'SELECT MAX(`AccountID`) + 1 AS `NewID` FROM `auth_accounts`'
-      );
-      
-      $nick = 'Account ';
-      while ($row = $query->fetch_object()) {
-        $nick .= $row->NewID;
-      }
-      
-      $query->close();
-      
-      $query = $db->connection()->prepare(
-        "INSERT INTO `auth_accounts` (`Identity`, `Nickname`, `DateRegistered`, `Configured`) VALUES (?, ?, NOW(), '0')"
-      );
-      
-      $query->bind_param('ss', $salted_identity, $nick);
-      $query->execute();
-      
-      $id = $query->insert_id;
-      
-      $query->close();
-      
-      return $id;
+      return $account->id;
     }
 
     private static function getUnserializedSessionValues() {

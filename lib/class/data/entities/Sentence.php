@@ -1,7 +1,7 @@
 <?php
   namespace data\entities;
   
-  class Sentence  {
+  class Sentence extends Entity {
     public $ID;
     public $language;
     public $fragments;
@@ -17,6 +17,15 @@
       $this->description = $description;
       $this->sentence = '';
       $this->source = $source;
+    }
+    
+    public function validate() {
+    }
+    
+    public function load($numericId) {
+    }
+    
+    public function save() {
     }
     
     public function create() {
@@ -60,6 +69,15 @@
       
       $this->sentence = implode($fragments);
       $this->sentenceTengwar = implode($fragmentsTengwar);
+    }
+    
+    public static function updateReference($id, Translation& $trans) {
+      $db = \data\Database::instance()->exclusiveConnection();
+
+      $query = $db->prepare('UPDATE `sentence_fragment` SET `TranslationID` = ? WHERE `TranslationID` = ?');
+      $query->bind_param('ii', $trans->id, $id);
+      $query->execute();
+      $query->close();
     }
   }
   

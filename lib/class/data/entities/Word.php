@@ -7,20 +7,7 @@
     public $authorID;
   
     public function __construct($data = null) {
-      if ($data !== null && is_array($data)) {
-        $fields = get_object_vars($this);
-      
-        foreach ($fields as $field => $type) {
-          if (isset($data[$field])) {
-            $value = $data[$field];
-          
-            if (!is_numeric($value) && !is_null($value))
-              $value = mb_strtolower($value, 'UTF-8');
-          
-            $this->$field = $value;
-          }
-        }
-      }
+      parent::__construct($data);
     }
     
     public function load($id) {
@@ -250,8 +237,10 @@
         $trans->tengwar, $trans->phonetic, $trans->language, $word->id, $trans->namespaceID,
         $trans->index, $accountID, $trans->owner
       );
+      
       $query->execute();
       
+      $previousTranslationId = $trans->id;
       $trans->id = $query->insert_id;
       
       $query->close();
@@ -286,6 +275,7 @@
       
       $query->close();
       
+      Sentence::updateReference($previousTranslationId, $trans);
       return $trans->index ? $trans : $word;
     }
   }

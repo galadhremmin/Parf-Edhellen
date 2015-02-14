@@ -14,17 +14,7 @@
     public $wordCount;
   
     public function __construct($data = null) {
-      if ($data !== null && is_array($data)) {
-        $fields = get_object_vars($this);
-      
-        foreach ($fields as $field => $type) {
-          if (isset($data[$field])) {
-            $value = $data[$field];
-          
-            $this->$field = $value;
-          }
-        }
-      }
+      parent::__construct($data);
     }
     
     public function validate() {

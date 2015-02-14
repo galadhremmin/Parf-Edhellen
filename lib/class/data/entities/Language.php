@@ -7,13 +7,7 @@
     public $name;
   
     public function __construct($data = null) {
-      $fields = get_object_vars($this);
-      
-      foreach ($fields as $field => $type) {
-        if (isset($data[$field])) {
-          $this->$field = $data[$field];
-        }
-      }
+      parent::__construct($data);
     }
     
     public function validate() {

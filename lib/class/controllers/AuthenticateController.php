@@ -6,13 +6,13 @@
       parent::__construct('Authenticate', $engine, false);
     }
     
-    public function load() {
+    public function load() {    
       $error = null;
       $model = $this->getModel();
       
       try {
         // Initialize the OpenID authentication class
-        $provider = new LightOpenID('elfdict.com');
+        $provider = new \auth\LightOpenID('elfdict.com');
         
         // Upon class initialization, it's acquiring a variety
         // of modes. Use these do determine subsequent behaviour.

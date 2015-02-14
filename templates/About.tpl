@@ -1,44 +1,36 @@
 <h2>About <em>Parf Edhellen</em></h2>
-<p>The collaborative dictionary dedicated to the the linguistic world of Tolkien's. Presently in <em>beta</em>-stage.</p>
+<p>The collaborative dictionary dedicated to Tolkien's amazing languages. 
 
 <a name="search"></a>
 <h3>Searching</h3>
-<p>Use the search-box to browse the dictionaries contents. As you type, suggestions are made continously 
-based on your enquiry. It is possible to use wildcards to further enhance the quality of these suggestions.</p>
+<p>Use the search field to search in the dictionaries. As you type, suggestions will appear from these, underneath the search field. Suggestions are retrieved based on your search query, and if you wish, you can use the asterisk symbol (*) where you're uncertain about the spelling, or when you simply wish to match everything. A single asterisk isn't a valid search query however!</p>
 
-<p>Special characters are normalized, which means that you that the search query <i>mir</i> will match <i><a href="#m%C3%AEr">mîr</a></i>, <i><a href="#m%C3%ADr%C3%AB">mírë</a></i>, <i><a href="#miril">miril</a></i> and so forth. </p>
+<p>Special characters are normalized into their ASCII equivalents. This means that if you search for <i>mir</i>, your query will also match <i><a href="#m%C3%AEr">mîr</a></i>, <i><a href="#m%C3%ADr%C3%AB">mírë</a></i>, <i><a href="#miril">miril</a></i> and so forth. </p>
 
-<p>A result cap is applied depending on the preciseness of your query. More exact queries are believed to yield more granular results, consequently resulting in a wider more generous result cap. This feature is chiefly in place to limit excessive queries that might impede performance.</p>
+<p>As you type, you'll notice that the list of suggestions can become really extensive. Therefore, there's a cap on how many suggestions we provide for you, depending on the preciseness of your search query. More exact queries (= multiple search terms) are permitted to yield more suggestions. This feature also exists to improve performance for everyone.</p>
 
 <p>The preciseness of your query is calculated according to the follow equation: 
-<br /><u><em>the length of the input string without modifiers and spacing</em></u> &times; 200.</p>
+<br /><u><em>the length of the search term (without white space)</em></u> &times; 200.</p>
 
 <a name="reversed"></a>
-<h3>Word-end search</h3>
-<p>This feature enables you to search for words with matching word ending. This is useful for finding rhymes or similar words.</p>
+<h3>Reversed search</h3>
+<p>If you tick this checkbox, your search query will be reversed before being passed to the search engine. This is useful when you're looking for words with a specific word ending,  perhaps with the intention to find fitting rhymes for your poetry.</p>
 
 <a href="unverified"></a>
 <h3>Unverified or debatable glosses</h3>
-<p>Sometimes, you'll encounter this symbol <span class="glyphicon glyphicon-question-sign"></span> and also a warning, calling the translation "debatable." This usually means that the gloss has 
-been imported from a source that hasn't been updated in quite some time. This is actually quite common, as publications from the Tolkien Estate come infrequently, with years apart. Dictionaries like Hiswelókë hasn't been updated for years, but it's still excellent.</p>
-<p>Can you use these words? Yes, but always try to use a more current source, if there's one. For this reason, all words from outdated, unverified or debatable sources have been pushed to the bottom of each column.</p>
+<p>Sometimes, you'll encounter the <span class="glyphicon glyphicon-question-sign"></span> symbol, accompanied with a warning. These exist to inform you that the gloss might have been imported from a source which might not have been updated in quite some time. This is actually quite common, as publications from the Tolkien Estate come infrequently, often with years apart. Dictionaries like Hiswelókë haven't been updated for years, but they're still excellent.</p>
+<p>Are these words incorrect? Probably not. Can you use them? Yes, but try to find another source which corroborates the proposed translation. In any case, all words which come from an outdated, unverified or debatable source have been pushed to the bottom of the page.</p>
 
 <a name="authentication"></a>
 <h3>Authentication</h3>
-<p><em>Parf Edhellen</em> does not maintain its own authentication database. Instead, it uses 
-<a href="http://openid.net/" target="_blank">OpenID</a> for account management. By logging in using
-OpenID, no personal information is compromised and your account names as well as passwords are maintained
-independently by each authentication provider. What this site however maintains is an unique ID that identifies
-your authenticated account.</p>
-
-<p>The first time you log in, you will be asked to specify an alias. This alias will be your public face and
-used for revision management.</p>
+<p>We don't maintain our own database with user credentials. Instead, we prefer to use federated login services through 
+<a href="http://openid.net/" target="_blank">OpenID</a>. By logging in using OpenID, no personal information is compromised, as you only prove that you're you by logging in to a common social network. So if you log into Gmail, Gmail confirms to us that you successfully logged in, and provides us with an unique key which we can use to tie user data (such as your preferred nickname) to you.</p>
 
 <a name="contributing"></a>
 <h3>Contributing</h3>
-<p>The gist of this website is the strength of aggregated expertise. Your contributions are encouraged,
-but please remember to <i>always</i> publish references backing up your claims. Moderators reserve the rights 
-to emend and delete content.</p>
+<p>Note: we're still working on a new log in experience. So sorry for the inconvenience!</p>
+
+<p>We want everyone to contribute. All sorts of contributions are encouraged, but if you intend to publish your own words onto our site, please remember to <i>always</i> include references to published sources. We reserve the right to emend and delete content we find inappropriate.</p>
 
 <p>There are two ways to contribute: by adding words and by adding glosses. Each word might have multiple
 glosses in many languages.</p>
@@ -72,7 +64,6 @@ glosses in many languages.</p>
 <a name="tengwar"></a>
 <h3>Tengwar <span class="tengwar">1Rx#6</span></h3>
 <p>It's possible to write tengwar on <em>elfdict</em> by use of a technology called &ldquo;CSS3 webfonts&rdquo;. The tengwar that you&rsquo;ll find scattered about this website have been either added by a contributor <em>or</em>, more commonly, automatically transcribed for Sindarin and Noldorin. The open-source library <a href="https://github.com/kriskowal/tengwarjs" target="_blank">tengwarjs</a> by Kris Kowal enables us to transcribe at runtime, which means that generated the tengwar markup is <em>not</em> associated with the source. The quality of the transcription might vary and all transcribed words are marked with a link to this note.</p>
-
 
 <!--<h3>Support the <em>Parf Edhellen</em>!</h3>
 <p>Donations are more than welcome! Every contribution helps me to maintain the development and hosting of <em>Parf Edhellen</em>.</p>-->

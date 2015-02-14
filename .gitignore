@@ -8,5 +8,5 @@ lib/config
 .metadata/
 browserconfig.xml
 *~
-
+test/*
 lib/config/config.wordservice.php

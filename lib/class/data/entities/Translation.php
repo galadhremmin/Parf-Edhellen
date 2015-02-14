@@ -1,7 +1,7 @@
 <?php
   namespace data\entities;
   
-  class Translation {
+  class Translation extends Entity {
   
     // Mutable columns
     public $word;
@@ -34,16 +34,7 @@
     private static $availableTypes = null;
   
     public function __construct($data = null) {
-      
-      if ($data !== null && is_array($data)) {
-        $fields = get_object_vars($this);
-        
-        foreach ($fields as $field => $type) {
-          if (isset($data[$field])) {
-            $this->$field = $data[$field];
-          }
-        }
-      }
+      parent::__construct($data);
     }
     
     public function validate() {
@@ -54,6 +45,10 @@
       }
       
       return true;
+    }
+    
+    public function save() {
+      throw new \exceptions\NotImplementedException(__METHOD__);
     }
     
     public function remove() {
@@ -72,6 +67,10 @@
       $stmt->execute();
       
       $stmt = $conn->prepare('DELETE FROM `translation` WHERE `TranslationID` = ?');
+      $stmt->bind_param('i', $this->id);
+      $stmt->execute();
+      
+      $stmt = $conn->prepare('UPDATE `sentence_fragment` SET `TranslationID` = NULL WHERE `TranslationID` = ?');
       $stmt->bind_param('i', $this->id);
       $stmt->execute();
     }

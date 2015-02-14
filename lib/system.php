@@ -2,7 +2,7 @@
   define('SYS_ACTIVE', true);
 
   include_once 'config/global.php';
-  include_once 'lib/smarty/libs/Smarty.class.php';
+  include_once ROOT.'lib/smarty/libs/Smarty.class.php';
 
   error_reporting(E_ALL | E_STRICT);
   mb_internal_encoding('UTF-8');
@@ -31,7 +31,7 @@
       
       $file = ROOT.'lib/class/'.implode('/', $pieces);
       $config = ROOT.'lib/config/config.'.$className.'.php';
-      
+
       return new ClassPath($file, $config);
     }
   }

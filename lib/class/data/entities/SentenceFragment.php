@@ -1,7 +1,7 @@
 <?php
   namespace data\entities;
   
-  class SentenceFragment {
+  class SentenceFragment extends Entity {
     public $fragmentID;
     public $translationID;
     public $fragment;
@@ -18,5 +18,14 @@
       $this->previousFragmentID = 0;
       $this->nextFragmentID = 0;
       $this->tengwar = $tengwar;
+    }
+    
+    public function validate() {
+    }
+    
+    public function load($numericId) {
+    }
+    
+    public function save() {
     }
   }
