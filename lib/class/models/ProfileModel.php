@@ -14,7 +14,7 @@
         $id = $_GET['authorID'];
       } else {
         $this->_loadedAuthenticatedAuthor = true;
-        $id = \auth\Session::getAccountID();
+        $id = \auth\Session::getAccount()->id;
       }
       
       if (!is_numeric($id) || $id < 1) {

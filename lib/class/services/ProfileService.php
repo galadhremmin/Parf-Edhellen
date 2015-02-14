@@ -26,7 +26,7 @@
       }
     
       $author = new \entities\Author($data);
-      $author->id = \auth\Session::getAccountID();
+      $author->id = \auth\Session::getAccount()->id;
       
       return $author->save();
     }

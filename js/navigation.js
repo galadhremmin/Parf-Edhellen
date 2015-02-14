@@ -529,7 +529,13 @@ define(['exports', 'utilities'], function (exports, util) {
     }
     
     var hash = encodeURIComponent(this.suggestionsArray[this.iterationIndex].nkey);
-    window.location.hash = '#' + hash;
+    
+    // ensure that the client is searching from the front-page, and not a sub-page:
+    if (window.location.pathname.length <= 1 || window.location.pathname.indexOf('/index.page') === 0) {
+      window.location.hash = '#' + hash;
+    } else {
+      window.location.href = '/index.page#' + hash;
+    }
   }
   
   /**

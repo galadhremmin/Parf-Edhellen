@@ -23,5 +23,6 @@ INSERT INTO `auth_accounts_groups` (`AccountID`, `GroupID`)
   SELECT `AccountID`, 2 FROM `auth_accounts` 
 
 ALTER TABLE  `auth_accounts` DROP  `PrivilegeGroup` ;
+ALTER TABLE  `auth_accounts` CHANGE  `Nickname`  `Nickname` VARCHAR( 32 ) CHARACTER SET utf8 COLLATE utf8_swedish_ci NULL ;
 
 insert into `version` (`number`, `date`) values (1.2, NOW())

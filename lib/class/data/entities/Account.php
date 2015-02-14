@@ -36,6 +36,10 @@
       $query->execute();
       $query->bind_result($this->id, $this->nickname, $this->configured);
       $query->fetch();
+      
+      // ensure that the bit is converted to a boolean value
+      $this->configured = $this->configured == 1;
+      
       $query->close();
       
       if (!$this->validate()) {
@@ -62,7 +66,7 @@
     
     public function save() {
       
-      if ($this->id === 0 && !empty($this->identity)) {
+      if ($this->id == 0 && !empty($this->identity)) {
         $this->create();
       }
       
@@ -72,18 +76,7 @@
       $db = \data\Database::instance();
       
       if (empty($this->nickname)) {
-        $query = $db->connection()->query(
-          'SELECT MAX(`AccountID`) + 1 AS `NewID` FROM `auth_accounts`'
-        );
-      
-        $nick = 'Account ';
-        while ($row = $query->fetch_object()) {
-          $nick .= $row->NewID;
-        }
-      
-        $query->close();
-        
-        $this->nickname = $nick;
+        $this->nickname = null;
       }
       
       $query = $db->connection()->prepare(
@@ -94,7 +87,7 @@
       $this->id = $query->insert_id;
       $query->close();
       
-      $query = $db->connection->prepare(
+      $query = $db->connection()->prepare(
         'INSERT INTO `auth_accounts_groups` (`AccountID`, `GroupID`) 
          SELECT ?, GroupID FROM `auth_groups` WHERE `name` = \'User\' LIMIT 1' // limit 1 should be unnecessary, but just in case hic sunt dracones...
       );

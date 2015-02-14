@@ -12,7 +12,7 @@
       
       try {
         // Initialize the OpenID authentication class
-        $provider = new \auth\LightOpenID('elfdict.com');
+        $provider = new \auth\LightOpenID(SYS_AUTH_DOMAIN);
         
         // Upon class initialization, it's acquiring a variety
         // of modes. Use these do determine subsequent behaviour.
@@ -45,7 +45,7 @@
           $error = 'User has canceled authentication!';
         } else {
           // user is authenticated
-          if (Session::register($provider)) {
+          if (\auth\Session::register($provider)) {
             // authentication success!
             header('Location: profile.page');
           } else {

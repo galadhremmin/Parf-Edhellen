@@ -72,7 +72,7 @@
         
         $normalizedKey = \utils\StringWizard::normalize($this->key);
         $reversedNormalizedKey = strrev($normalizedKey);
-        $accountID = Session::getAccountID();
+        $accountID = \auth\Session::getAccount()->id;
         $query->bind_param('sssi', $this->key, $normalizedKey, $reversedNormalizedKey, $accountID);
         $query->execute();
         
@@ -167,7 +167,7 @@
       }
       
       // Acquire current author
-      $accountID = \auth\Session::getAccountID();
+      $accountID = \auth\Session::getAccount()->id;
 
       // Deprecate current translation entry
       if ($trans->id > 0) {

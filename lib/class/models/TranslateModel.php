@@ -137,7 +137,7 @@
     }
     
     public function getAccountID() {
-      return \auth\Session::getAccountID();
+      return \auth\Session::getAccount()->id;
     }
   }
 ?>

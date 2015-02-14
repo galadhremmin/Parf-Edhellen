@@ -8,4 +8,5 @@
   // security salt
   define('SYS_SEC_SALT', 'salt');
   define('SYS_SEC_LOOP', 1);
-?>
+
+  define('SYS_AUTH_DOMAIN', '127.0.0.1');

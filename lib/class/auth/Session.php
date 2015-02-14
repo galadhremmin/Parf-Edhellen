@@ -28,7 +28,7 @@
         
         $salted_identity = $values[SEC_INDEX_IDENTITY];
       }
-    
+
       $account = new \data\entities\Account();
       $account->load($salted_identity);
       
@@ -113,19 +113,14 @@
     
     private static function persist($salted_identity) {
       $account = self::getAccount($salted_identity);
+
       if ($account === null || !$account->validate()) {
         // no such account exists, create one
-        $id = self::createAccount($salted_identity);
+        $account = new \data\entities\Account(array(
+          'identity' => $salted_identity
+        ));
+        $account->save();
       }
-      
-      return $id;
-    }
-    
-    private static function createAccount($salted_identity) {
-      $account = new \data\entities\Account(array(
-        'identity' => $salted_identity
-      ));
-      $account->save();
       
       return $account->id;
     }
@@ -150,7 +145,7 @@
       $time       = time();
       $remoteAddr = self::hash($_SERVER['REMOTE_ADDR']);
     
-      $stmt = Database::instance()->connection()->prepare('INSERT INTO `auth_logins` (`Date`, `IP`, `AccountID`) VALUES (?, ?, ?)');
+      $stmt = \data\Database::instance()->connection()->prepare('INSERT INTO `auth_logins` (`Date`, `IP`, `AccountID`) VALUES (?, ?, ?)');
       $stmt->bind_param('isi', $time, $remoteAddr, $id);
       $stmt->execute();
       $stmt->close();
