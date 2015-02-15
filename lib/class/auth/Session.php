@@ -24,6 +24,14 @@
       }
     }
     
+    public static function canWrite($id) {
+      $account = self::getAccount();
+      
+      if ($account === null || ($account->id != $id && !in_array('Administrators', $account->groups))) {
+        throw new \exceptions\ErrorException('Inadequate permissions.');
+      }
+    }
+    
     public static function getAccount($salted_identity = null) {
       if ($salted_identity === null) {
         $values = self::getUnserializedSessionValues();

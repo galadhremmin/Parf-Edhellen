@@ -43,6 +43,8 @@
     }
     
     public function save() {
+      \auth\Session::canWriteSelf();
+    
       if ($this->id) {
         throw new \ErrorException('Word has already been assigned an ID and consequently exists already.');
       }
@@ -52,7 +54,7 @@
       }
       
       // exclusive connections require the current account to be authenticated 
-      $db = \data\Database::instance()->exclusiveConnection();
+      $db = \data\Database::instance()->connection();
       
       $query = $db->prepare(
         'SELECT `KeyID` FROM `word` WHERE `Key` = ?'
@@ -89,7 +91,8 @@
     }
     
     public static function unregisterReference($id, $threshold = 1) {
-      $db = \data\Database::instance()->exclusiveConnection();
+      \auth\Session::canWriteSelf();
+      $db = \data\Database::instance()->connection();
       
       $query = $db->prepare('SELECT COUNT(*) FROM `keywords` k WHERE k.`WordID` = ?');
       $query->bind_param('i', $id);
@@ -148,6 +151,8 @@
     }
     
     private static function register(Translation& $trans, Word $word = null) {
+      \auth\Session::canWriteSelf();
+    
       if (!$trans->validate()) {
         throw new InvalidParameterException('translation');
       }
@@ -158,7 +163,7 @@
       }
     
       // Acquire a connection for making changes in the database.
-      $db = \data\Database::instance()->exclusiveConnection();
+      $db = \data\Database::instance()->connection();
       
       // check namespace validity
       $namespace = new \data\entities\DictionaryNamespace();

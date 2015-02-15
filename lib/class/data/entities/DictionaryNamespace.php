@@ -33,11 +33,13 @@
     }
     
     public function save() {
+      \auth\Session::canWriteSelf();
+    
       if (!$this->validate()) {
         throw new \ErrorException('Invalid DictionaryNamespace.');
       }
     
-      $db = \data\Database::instance()->exclusiveConnection();
+      $db = \data\Database::instance()->connection();
       
       $word = new Word();
       $word->create($this->identifier);

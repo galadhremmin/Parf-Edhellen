@@ -58,7 +58,7 @@
         throw new InvalidParameterException('id');
       }
       
-      $conn = \data\Database::instance()->exclusiveConnection();
+      $conn = \data\Database::instance()->connection();
       
       // TODO: Deassociate all words from the translation entry
      

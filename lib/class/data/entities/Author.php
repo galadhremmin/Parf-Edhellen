@@ -48,11 +48,13 @@
     }
     
     public function save() {
+      \auth\Session::canWrite($this->id);
+    
       if (!$this->validate()) {
         throw new \ErrorException('Invalid or insufficient parameters. Note that only the Session manager may create new accounts.');
       }
       
-      $db = \data\Database::instance()->exclusiveConnection();
+      $db = \data\Database::instance()->connection();
       
       $query = $db->prepare(
         'UPDATE `auth_accounts` SET `Nickname` = ?, `Tengwar` = ?, `Profile` = ? WHERE `AccountID` = ?'
