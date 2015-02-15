@@ -31,12 +31,4 @@
     public function connection() {
       return $this->_conn;
     }
-    
-    public function exclusiveConnection($requireLogin = true) {
-      if ($requireLogin && !Session::isValid()) {
-        throw new \ErrorException('Inadequate permissions.');
-      }
-      
-      return $this->connection();
-    }
   }

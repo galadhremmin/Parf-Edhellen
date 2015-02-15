@@ -18,12 +18,18 @@
       return $check === $identity[SEC_INDEX_CHECKSUM];
     }
     
+    public static function canWriteSelf() {
+      if (!self::isValid()) {
+        throw new \exceptions\ErrorException('Inadequate permissions.');
+      }
+    }
+    
     public static function getAccount($salted_identity = null) {
       if ($salted_identity === null) {
         $values = self::getUnserializedSessionValues();
         
         if ($values === null) {
-          return 0;
+          return null;
         }
         
         $salted_identity = $values[SEC_INDEX_IDENTITY];
@@ -72,6 +78,16 @@
       
       unset($_SESSION['identity']);
       session_destroy();
+    }
+    
+    public static function completeRegistration($nickname) {
+      self::canWriteSelf();
+      
+      $account = self::getAccount();
+      
+      $account->nickname = $nickname;
+      $account->configured = true;
+      $account->save();
     }
     
     private static function internalRegister($openIdIdentity) {

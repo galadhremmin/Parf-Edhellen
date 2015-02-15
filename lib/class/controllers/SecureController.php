@@ -2,15 +2,17 @@
   namespace controllers;
 
   class SecureController extends Controller {
+    protected $_account;
+  
     public function load() {
-      $account = \auth\Session::getAccount();
+      $this->_account = \auth\Session::getAccount();
       
-      if ($account === null || !($account instanceof \data\entities\Account)) {
+      if ($this->_account === null || !($this->_account instanceof \data\entities\Account)) {
         header('Location: authenticate.page');
         return;
       }
 
-      if ($this->requiresConfiguredAccount() && !$account->configured) {
+      if ($this->requiresConfiguredAccount() && !$this->_account->configured) {
         header('Location: authenticateComplete.page');
         return;
       }

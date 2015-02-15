@@ -9,8 +9,14 @@
     public function load() {
       parent::load();
       
-      // TODO: bind account info
-      $account = \auth\Session::getAccount();
+      if ($this->_account->configured) {
+        header('Location: profile.page');
+        return;
+      }
+            
+      if (!empty($this->_account->nickname)) {
+        $this->_engine->assign('nickname', $this->_account->nickname);
+      }
     }
     
     protected function requiresConfiguredAccount() {

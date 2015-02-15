@@ -6,6 +6,7 @@
       parent::__construct();
       
       parent::registerMainMethod('getProfile');
+      parent::registerMethod('complete', 'completeProfile');
       parent::registerMethod('edit', 'editProfile');
     }
     
@@ -18,6 +19,11 @@
       $author->load($id);
       
       return $author;
+    }
+    
+    protected static function completeProfile(&$data) {
+      \auth\Session::completeRegistration($data['nickname']);
+      return true;
     }
     
     protected static function editProfile(&$data) {
