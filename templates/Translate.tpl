@@ -108,19 +108,9 @@
       {/if}
       <hr class="visible-xs">
     </div>
-    <div class="col-sm-4">
-      <h2>Contribute</h2>
-      <div class="content">
-      {if $loggedIn == true}
-      <ul>
-        <li><a href="#" onclick="return LANGDict.showIndexForm('{addslashes($term)}')">Add keyword</a></li>
-        <li><a href="#" onclick="return LANGDict.showTranslationForm('{addslashes($term)}')">Add gloss</a></li>
-      </ul>
-      {else}
-      Please log in to access these features.
-      {/if}
-      </div>
-      {*html_checkboxes options=$languages name=languageFilter separator='<br />'*}
+    <div class="col-sm-4 hidden-xs">
+      <h2>Related books</h2>
+      <div id="related-books"></div>
     </div>
   </div>
 </div>

@@ -1,11 +1,13 @@
 <?php
   namespace models;
   
-  class HeaderModel {
+  class HeaderModel extends WrapperModel {
     private $_menu;
     private $_languages;
     
     public function __construct() {
+      parent::__construct('SYS_HEADER_ADDITIONS');
+    
       $menu = array();
       
       $menu[] = new \MenuItem(array('url' => 'index.page',        'text' => 'Home',         'sectionIndex' => 1));

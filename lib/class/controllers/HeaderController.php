@@ -19,6 +19,9 @@
       if ($model !== null) {
         $this->_engine->assign('menu', $model->getMenu());
         $this->_engine->assign('languages', $model->getLanguages());
+        
+        $additions = $model->getAdditions();
+        $this->_engine->assign('additions', $additions);
       }
     }
   }
