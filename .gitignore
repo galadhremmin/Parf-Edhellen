@@ -9,4 +9,5 @@ lib/config
 browserconfig.xml
 *~
 test/*
+ads/*
 lib/config/config.wordservice.php
