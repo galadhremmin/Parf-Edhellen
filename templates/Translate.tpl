@@ -108,7 +108,7 @@
       {/if}
       <hr class="visible-xs">
     </div>
-    <div class="col-sm-4 hidden-xs">
+    <div class="col-sm-4">
       <h2>Related books</h2>
       <div id="related-books"></div>
     </div>
