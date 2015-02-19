@@ -192,11 +192,19 @@ blockquote h3 a {
 .ed-navigation div:last-child {
   text-align: right;
 }
+#related-books-row {
+  border-top: 1px solid #ccc;
+  margin-top: 150px;
+  padding-top:5px;
+}
 #related-books {
-  max-height: 300px;
-  overflow: scroll;
+  overflow: auto;
   overflow-x: hidden;
+  max-height: 520px;
 }
 #related-books iframe {
   margin: 10px 10px 10px 0;
+}
+.adblocker {
+  display: none;
 }

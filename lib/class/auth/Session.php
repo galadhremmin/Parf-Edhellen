@@ -4,6 +4,8 @@
   session_start();
 
   class Session {  
+    private static $_accountsCache = array();
+  
     public static function isValid() {
       $identity = self::getUnserializedSessionValues();
       
@@ -42,10 +44,15 @@
         
         $salted_identity = $values[SEC_INDEX_IDENTITY];
       }
+      
+      if (isset(self::$_accountsCache[$salted_identity])) {
+        return self::$_accountsCache[$salted_identity];
+      }
 
       $account = new \data\entities\Account();
       $account->load($salted_identity);
       
+      self::$_accountsCache[$salted_identity] = $account;
       return $account;
     }
   
@@ -93,9 +100,11 @@
       
       $account = self::getAccount();
       
-      $account->nickname = $nickname;
-      $account->configured = true;
-      $account->save();
+      if (! $account->configured) {
+        $account->nickname = $nickname;
+        $account->configured = true;
+        $account->save();
+      }
     }
     
     private static function internalRegister($openIdIdentity) {

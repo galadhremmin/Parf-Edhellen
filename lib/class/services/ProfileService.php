@@ -27,13 +27,18 @@
     }
     
     protected static function editProfile(&$data) {
-      if (!\auth\Session::isValid()) {
-        throw new \ErrorException('Insufficient privileges. Please authenticate.');
-      }
+      \auth\Session::canWriteSelf();
     
-      $author = new \entities\Author($data);
-      $author->id = \auth\Session::getAccount()->id;
+      $account = \auth\Session::getAccount();
       
-      return $author->save();
+      if (isset($data['profile'])) {
+        $account->profile = $data['profile'];
+      }
+      
+      if (isset($data['tengwar'])) {
+        $account->tengwar = $data['tengwar'];
+      }
+      
+      $account->save();
     }
   }

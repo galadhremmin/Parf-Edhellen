@@ -78,8 +78,13 @@
   {/if}
 {/if}
 
-  <div id="row">
-    <div class="col-sm-4">
+  <div class="row" id="related-books-row">
+    <h2>Related books</h2>
+    <div id="related-books"></div>
+    <span class="adblocker">ElfDict uses Amazon to gather a list of books relevant for the books you're looking for. Unfortunately, we can't present these books to you because your ad-blocker regards these suggestions as ads. Sorry!</span>
+  </div>
+  <div class="row">
+    <div class="col-sm-6">
       <h2>Revisions</h2>
       <div class="content scroll-view">
       {foreach $revisions as $rev}
@@ -97,7 +102,7 @@
       </div>
       <hr class="visible-xs">
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-6">
       <h2>Keywords</h2>
       {if $indexes|@count > 0}
       {foreach $indexes as $index}
@@ -107,10 +112,6 @@
       There are no additional keywords.
       {/if}
       <hr class="visible-xs">
-    </div>
-    <div class="col-sm-4">
-      <h2>Related books</h2>
-      <div id="related-books"></div>
     </div>
   </div>
 </div>
