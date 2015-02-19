@@ -40,5 +40,6 @@
       }
       
       $account->save();
+      return $account;
     }
   }

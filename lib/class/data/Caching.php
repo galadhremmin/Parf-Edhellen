@@ -77,6 +77,10 @@
     }
     
     public function getRemainingLifetime() {
+      if (defined('SYS_NO_CACHE') && constant('SYS_NO_CACHE') === true) {
+        return 0;
+      }
+    
       $path = self::getPath();
       
       if (!file_exists($path)) {

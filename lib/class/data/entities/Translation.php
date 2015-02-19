@@ -191,7 +191,8 @@
         'SELECT w.`Key` AS `Word`, t.`TranslationID`, t.`Translation`, t.`Etymology`, 
            t.`Type`, t.`Source`, t.`Comments`, t.`Tengwar`, t.`Phonetic`,
            l.`Name` AS `Language`, t.`NamespaceID`, l.`Invented` AS `LanguageInvented`,
-           t.`EnforcedOwner`, t.`AuthorID`, a.`Nickname`, w.`NormalizedKey`, t.`Index`
+           t.`EnforcedOwner`, t.`AuthorID`, a.`Nickname`, w.`NormalizedKey`, t.`Index`,
+           t.`DateCreated`
          FROM `translation` t
          INNER JOIN `word` w ON w.`KeyID` = t.`WordID`
          INNER JOIN `language` l ON l.`ID` = t.`LanguageID`
@@ -205,7 +206,7 @@
         $word, $translationID, $translation, $etymology, $type, 
         $source, $comments, $tengwar, $phonetic, $language, 
         $namespaceID, $inventedLanguage, $owner, $authorID, 
-        $authorName, $normalizedWord, $isIndex
+        $authorName, $normalizedWord, $isIndex, $dateCreated
       );
       
       $data['translations']   = array();
@@ -241,7 +242,8 @@
             'namespaceID' => $namespaceID,
             'owner'       => $owner,
             'authorID'    => $authorID,
-            'authorName'  => $authorName
+            'authorName'  => $authorName,
+            'dateCreated' => $dateCreated
           )
         );
         

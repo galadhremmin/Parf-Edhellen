@@ -9,8 +9,8 @@
     <header>
       <h2 rel="language-box">
       {$language} 
-      {if isset($languages[$language]) && !is_null($languages[$language]->Tengwar)}
-      <span class="tengwar">{$languages[$language]->Tengwar}</span>
+      {if isset($languages[$language]) && !is_null($languages[$language]->tengwar)}
+      <span class="tengwar">{$languages[$language]->tengwar}</span>
       {/if}
       </h2>
     </header>
@@ -47,7 +47,7 @@
         {if $translation->source != null}<span class="word-source" rel="trans-source">[{$translation->source}]</span>{/if}
 
         <span class="word-etymology" rel="trans-etymology">{$translation->etymology}</span>
-        (<a href="/profile.page?authorID={$translation->authorID}" itemprop="author" rel="author" title="View profile for {$translation->authorName}.">{$translation->authorName}</a>)
+        Published {$translation->dateCreated} by <a href="/profile.page?authorID={$translation->authorID}" itemprop="author" rel="author" title="View profile for {$translation->authorName}.">{$translation->authorName}</a>
         
         {if $loggedIn == true && ($translation->owner < 1 || $translation->owner == $accountID)}
           {*<a class="feature-link" href="#" onclick="return LANGDict.deleteTranslation({$translation->id})">Delete</a>*}
@@ -82,36 +82,5 @@
     <h2>Related books</h2>
     <div id="related-books"></div>
     <span class="adblocker">ElfDict uses Amazon to gather a list of books relevant for the books you're looking for. Unfortunately, we can't present these books to you because your ad-blocker regards these suggestions as ads. Sorry!</span>
-  </div>
-  <div class="row">
-    <div class="col-sm-6">
-      <h2>Revisions</h2>
-      <div class="content scroll-view">
-      {foreach $revisions as $rev}
-        <p class="no-margin-top">
-          {$rev->DateCreated} [{$rev->TranslationID}]<br />
-          Gloss: {$rev->Key}<br />
-          Author: <a href="profile.page?authorID={$rev->AuthorID}" rel="revision-author">{$rev->AuthorName}</a><br />
-          {if $rev->Latest}
-            <em>Latest revision</em>
-          {else}
-            {if $loggedIn == true}<a href="#" onclick="return LANGDict.showTranslationForm({$rev->TranslationID})">Examine revision</a>{/if}
-          {/if}
-        </p>
-      {/foreach}
-      </div>
-      <hr class="visible-xs">
-    </div>
-    <div class="col-sm-6">
-      <h2>Keywords</h2>
-      {if $indexes|@count > 0}
-      {foreach $indexes as $index}
-        <a href="#{urlencode($index)}"><span class="keyword">{$index}</span></a>
-      {/foreach}
-      {else}
-      There are no additional keywords.
-      {/if}
-      <hr class="visible-xs">
-    </div>
   </div>
 </div>

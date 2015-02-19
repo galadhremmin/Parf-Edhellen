@@ -23,3 +23,7 @@
   margin: 20mm 0 8mm 0;
   padding: 0;
 }
+.tengwar.header {
+  float: right;
+  color: #ccc;
+}

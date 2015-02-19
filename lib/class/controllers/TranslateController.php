@@ -20,12 +20,10 @@
       $model = $this->getModel();
       if ($model !== null) {
         $engine = $this->_engine;
-        $engine->assign('namespaces',   $model->getTranslations());
+        $engine->assign('namespaces',   $model->getNamespaces());
         $engine->assign('translations', $model->getTranslations());
         $engine->assign('indexes',      $model->getIndexes());
-        $engine->assign('revisions',    $model->getRevisions());
         $engine->assign('languages',    $model->getLanguages());
-        $engine->assign('types',        $model->getTypes());
         $engine->assign('loggedIn',     $model->getLoggedIn());
         $engine->assign('term',         $model->getTerm());
         $engine->assign('wordExists',   $model->getWordExists());

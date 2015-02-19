@@ -5,6 +5,7 @@
     public $id;
     public $invented;
     public $name;
+    public $tengwar;
   
     public function __construct($data = null) {
       parent::__construct($data);
@@ -27,13 +28,11 @@
       $data = array();
       
       $res = $db->query(
-        'SELECT `ID`, `Name`, `Invented` FROM `language` ORDER BY `Order` ASC'
+        'SELECT `ID`, `Name`, `Invented`, `Tengwar` FROM `language` ORDER BY `Order` ASC'
       );
       
-      while ($language = $res->fetch_object()) {
-        $data[] = new Language(array('id'       => $language->ID, 
-                                     'name'     => $language->Name, 
-                                     'invented' => $language->Invented));
+      while ($language = $res->fetch_assoc()) {
+        $data[] = new Language($language);
       }
       
       $res->close();
