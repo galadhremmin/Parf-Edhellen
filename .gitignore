@@ -3,7 +3,7 @@ cache/
 dictionaries/
 fonts/
 img/
-lib/config
+lib/config/*.php
 .DS_Store
 .metadata/
 browserconfig.xml
