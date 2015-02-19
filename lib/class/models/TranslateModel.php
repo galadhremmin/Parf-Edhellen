@@ -5,10 +5,8 @@
     private $_term;
     private $_keywordIndexes;
     private $_translations;
-    private $_revisions;
     private $_loggedIn;
     private $_languages;
-    private $_types;
     private $_wordExists;
     private $_namespaces;
     
