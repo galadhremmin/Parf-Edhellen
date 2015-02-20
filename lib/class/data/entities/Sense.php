@@ -1,7 +1,7 @@
 <?php
   namespace data\entities;
   
-  class DictionaryNamespace extends Entity {
+  class Sense extends Entity {
     public $id;
     public $identifier;
   
@@ -29,14 +29,14 @@
     }
     
     public function validate() {
-      return !preg_match('/^[\\s]+$/', $this->identifier);
+      return !preg_match('/^[\\s]*$/', $this->identifier);
     }
     
     public function save() {
       \auth\Session::canWriteSelf();
     
       if (!$this->validate()) {
-        throw new \ErrorException('Invalid DictionaryNamespace.');
+        throw new \ErrorException('Invalid Sense.');
       }
     
       $db = \data\Database::instance()->connection();

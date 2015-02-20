@@ -1,34 +1,31 @@
-<h2>
-  Account &ldquo;{$author->nickname}&rdquo; 
-  {if $author->tengwar != null}<span class="tengwar">{$author->tengwar}</span>{/if}
-</h2>
-{if $myProfile == true && $loggedIn == true}
-<p>Thank you for logging in to <em>Parf Edhellen</em>. By authenticating yourself, an account  has been created that you might use
-to edit the content on this website. Please bear in mind that glossaries imported from recognised dictionaries cannot be edited, but 
-you might create new glossaries within the same context with your corrections.</p>
-<p>If you haven't already, please take some time to finish your profile. <em>Nai Anar siluva parmalyanna!</em></p>
+{if $myProfile == true}
+<div data-module="profile" id="profile-page">
 {/if}
+<h2>
+  {$author->nickname}
+  {if $author->tengwar != null}<span class="tengwar header">{$author->tengwar}</span>{/if}
+</h2>
+
+{if $author->profile != null}
+{$author->profile}
+{/if}
+
+{if $myProfile == true}
+<div>
+  <button type="button" id="profile-page-edit" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-edit"></span> Edit profile</button>
+</div>
+{/if}
+
+{if $myProfile == true}
+</div>
+{/if}
+
 <h3>Information</h3>
 <table class="table">
   <tr>
     <td>Date registered</td>
     <td>{$author->dateRegistered}</td>
   </tr>
-  {if $author->profile != null}
-  <tr>
-    <td>Description</td>
-    <td>{$author->profile}</td>
-  </tr>
-  {/if}
-  {if $author->tengwar != null}
-  <tr>
-    <td>Tengwar markup</td>
-    <td>{$author->tengwar}</td>
-  </tr>
-  {/if}
-</table>
-<h3>Contributions</h3>
-<table class="table">
   <tr>
     <td >New &amp; revised gloss(es)</td>
     <td>{$author->translationCount}</td>
@@ -46,22 +43,18 @@ you might create new glossaries within the same context with your corrections.</
 </table>
 {if $myProfile == true && $loggedIn == true && $accountAuthor != null}
 <h2>Edit Profile</h2>
-<form method="post" action="#" onsubmit="return LANGDict.saveProfile(this)">
+<form method="post" action="#" data-module="profile" id="profile-details">
 <table>
   <tr>
-    <td><a href="about.php#profile">Preferred nickname</a></td>
-    <td><input name="nickname" type="text" class="rounded-small" size="32" maxlength="32" value="{$accountAuthor->nickname}" /></td>
-  </tr>
-  <tr>
-    <td><a href="about.php#tengwar">Nickname in Tengwar</a></td>
-    <td><input name="tengwar" type="text" class="tengwar rounded-small" size="20" maxlength="64" value="{$accountAuthor->tengwar}" /> (optional)</td>
+    <td>Nickname in Tengwar</td>
+    <td><input id="profile-field-tengwar" type="text" class="tengwar rounded-small" size="20" maxlength="64" value="{$accountAuthor->tengwar}" /> (optional)</td>
   </tr>
   <tr>
     <td>Description (optional)</td>
   </tr>
   <tr>
     <td colspan="2">
-      <textarea name="profile" class="rounded-small" cols="60" rows="10">{$accountAuthor->profile}</textarea>
+      <textarea id="profile-field-description" class="rounded-small" cols="60" rows="10">{$accountAuthor->profile}</textarea>
     </td>
   </tr>
   <tr>

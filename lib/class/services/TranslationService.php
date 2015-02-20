@@ -37,7 +37,7 @@
     protected static function registerTranslation(&$data) {
       $values = array(
         'type'        => array_keys(Translation::getTypes()),
-        'namespaceID' => '/^[0-9]+$/',
+        'senseID'     => '/^[0-9]+$/',
         'id'          => '/^[0-9]+$/',
         'language'    => '/^[0-9]+$/',
         'word'        => null,

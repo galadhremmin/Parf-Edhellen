@@ -20,7 +20,7 @@
       $model = $this->getModel();
       if ($model !== null) {
         $engine = $this->_engine;
-        $engine->assign('namespaces',   $model->getNamespaces());
+        $engine->assign('senses',       $model->getSenses());
         $engine->assign('translations', $model->getTranslations());
         $engine->assign('indexes',      $model->getIndexes());
         $engine->assign('languages',    $model->getLanguages());

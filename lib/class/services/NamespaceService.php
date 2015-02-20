@@ -1,30 +1,30 @@
 <?php
   namespace services;
   
-  class NamespaceService extends ServiceBase {
+  class SenseService extends ServiceBase {
     public function __construct() {
       parent::__construct();
       
-      parent::registerMainMethod('getNamespace');
-      parent::registerMethod('save', 'saveNamespace');
+      parent::registerMainMethod('getSense');
+      parent::registerMethod('save', 'saveSense');
     }
     
     public function handleRequest(&$data) {
       throw new \ErrorException('Parameterless request presently unsupported.');
     }
     
-    protected static function getNamespace($id) {    
-      $namespace = new \data\entities\DictionaryNamespace();
-      $namespace->load($id);
+    protected static function getSense($id) {    
+      $sense = new \data\entities\Sense();
+      $sense->load($id);
       
-      if ($namespace->id < 1) {
+      if ($sense->id < 1) {
         return null;
       }
       
-      return $namespace;
+      return $sense;
     }
     
-    protected static function saveNamespace(&$data) {
+    protected static function saveSense(&$data) {
       if (!isset($data['identifier'])) {
         throw new \ErrorException("Missing parameter 'identifier'.");
       }
@@ -33,9 +33,9 @@
         'identifier' => preg_replace('/<|>/', '', $data['identifier'])
       );
       
-      $namespaceObj = new \data\entities\DictionaryNamespace($data);
-      $namespaceObj->save();
+      $sense = new \data\entities\Sense($data);
+      $sense->save();
       
-      return $namespaceObj;
+      return $sense;
     }
   }

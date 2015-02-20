@@ -26,14 +26,14 @@
     }
     
     protected static function saveIndex($data) {
-      if (!isset($data['namespaceID']))
-        throw new \exceptions\MissingParameterException('namespaceID');
+      if (!isset($data['senseID']))
+        throw new \exceptions\MissingParameterException('senseID');
         
       if (!isset($data['word']))
         throw new \exceptions\MissingParameterException('word');
     
-      if (!is_numeric($data['namespaceID']))
-        throw new \exceptions\InvalidParameterException('namespaceID');
+      if (!is_numeric($data['senseID']))
+        throw new \exceptions\InvalidParameterException('senseID');
       
       if (preg_match('/^[\\s]*$/', $data['word']))
         throw new \exceptions\InvalidParameterException('word');
@@ -41,8 +41,8 @@
       $t = new \data\entities\Translation($data);
       \data\entities\Word::registerIndex($t);
       
-      $namespace = new \data\entities\DictionaryNamespace();
-      return $namespace->load($t->namespaceID);
+      $sense = new \data\entities\Sense();
+      return $sense->load($t->senseID);
     }
     
     protected static function removeIndex($data) {

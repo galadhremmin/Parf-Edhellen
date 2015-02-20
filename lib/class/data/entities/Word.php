@@ -125,7 +125,7 @@
       $query = $db->connection()->prepare(
         'SELECT `TranslationID` FROM `translation` WHERE `WordID` = ? AND `NamespaceID` = ?'
       );
-      $query->bind_param('ii', $word->id, $trans->namespaceID);
+      $query->bind_param('ii', $word->id, $trans->senseID);
       $query->execute();
       $query->bind_result($id);
       
@@ -165,10 +165,10 @@
       // Acquire a connection for making changes in the database.
       $db = \data\Database::instance()->connection();
       
-      // check namespace validity
-      $namespace = new \data\entities\DictionaryNamespace();
-      if ($namespace->load($trans->namespaceID) === null) {
-        throw new InvalidParameterException('namespaceID');
+      // check sense validity
+      $sense = new \data\entities\Sense();
+      if ($sense->load($trans->senseID) === null) {
+        throw new InvalidParameterException('senseID');
       }
       
       // Acquire current author
@@ -181,7 +181,7 @@
         $query = $db->prepare('SELECT `WordID`, `NamespaceID` FROM `translation` WHERE `TranslationID` = ? AND (`EnforcedOwner` = 0 OR `EnforcedOwner` = ?)');
         $query->bind_param('ii', $trans->id, $accountID);
         $query->execute();
-        $query->bind_result($currentWordID, $currentNamespaceID);
+        $query->bind_result($currentWordID, $currentSenseID);
         $query->fetch();
         $query->close();
       
@@ -202,19 +202,19 @@
           \data\entities\Word::unregisterReference($currentWordID);
         }
         
-        // deassociate the namespace with the previous translation entry
-        if ($currentNamespaceID != $trans->namespaceID) {
+        // deassociate the sense with the previous translation entry
+        if ($currentSenseID != $trans->senseID) {
           $query = $db->prepare('SELECT COUNT(*) FROM `translation` WHERE `Latest` = 1 AND `NamespaceID` = ?');
-          $query->bind_param('i', $currentNamespaceID);
+          $query->bind_param('i', $currentSenseID);
           $query->execute();
           $query->bind_result($references);
           $query->fetch();
           $query->close();
           
-          // If there are no references, delete the namespace from active keywords table
+          // If there are no references, delete the sense from active keywords table
           if ($references < 1) {
             $query = $db->prepare('DELETE FROM `keywords` WHERE `NamespaceID` = ?');
-            $query->bind_param('i', $currentNamespaceID);
+            $query->bind_param('i', $currentSenseID);
             $query->execute();
             $query->close();
           }
@@ -239,7 +239,7 @@
       );
       $query->bind_param('sssssssiiiiii',
         $trans->translation, $trans->etymology, $trans->type, $trans->source, $trans->comments,
-        $trans->tengwar, $trans->phonetic, $trans->language, $word->id, $trans->namespaceID,
+        $trans->tengwar, $trans->phonetic, $trans->language, $word->id, $trans->senseID,
         $trans->index, $accountID, $trans->owner
       );
       

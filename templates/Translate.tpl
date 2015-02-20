@@ -62,7 +62,7 @@
 </div>
 
 {* Show a message if no such word exists *}
-{if $namespaces|@count < 1}
+{if $senses|@count < 1}
   <p><b>{$term}</b> doesn't exist in the dictionary. If you believe it is missing, please
   contribute to make <em>Parf Edhellen</em> more complete!</p>
   {if $loggedIn == true}

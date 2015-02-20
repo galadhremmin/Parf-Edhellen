@@ -8,7 +8,7 @@
     private $_loggedIn;
     private $_languages;
     private $_wordExists;
-    private $_namespaces;
+    private $_senses;
     
     public function __construct() {
       if (!isset($_REQUEST['term'])) {
@@ -28,7 +28,7 @@
       $data = \data\entities\Translation::translate($this->_term);
       
       if ($data !== null) {
-        $this->_namespaces     = $data['namespaces'];
+        $this->_senses         = $data['senses'];
         $this->_translations   = $data['translations'];
         $this->_wordExists     = true;
         $this->_keywordIndexes = array();
@@ -73,8 +73,8 @@
       return $this->_wordExists;
     } 
     
-    public function getNamespaces() {
-      return $this->_namespaces;
+    public function getSenses() {
+      return $this->_senses;
     }
     
     public function getIndexes() {

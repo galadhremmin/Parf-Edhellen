@@ -30,6 +30,9 @@ define(['exports', 'utilities'], function (exports, util) {
       case 'profile-completion':
         manager = new CProfileCompletionManager(this);
         break;
+      case 'profile-page':
+        manager = new CProfileDetailsManager(this);
+        break;
     }
     
     if (manager) {
@@ -95,6 +98,26 @@ define(['exports', 'utilities'], function (exports, util) {
     
     return ! noErrors;
   }
+  
+  var CProfileDetailsManager = function (rootManager) {
+    this.rootManager = rootManager;
+  }
+
+  CProfileDetailsManager.prototype.load = function () {
+    var _this = this;
+    
+    this.editButton = this.rootManager.parentElement.find('#profile-page-edit').on('click', function () {
+      _this.enterEditMode();
+    });
+  }
+  
+  CProfileDetailsManager.prototype.enterEditMode = function () {
+    this.editButton.hide();
+    
+    var root = this.rootManager.parentElement;
+    root.find('.tengwar.header').css({color:'red'});
+  }
+  
 
   return new CProfileManager();
 });

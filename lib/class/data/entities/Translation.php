@@ -14,7 +14,7 @@
     public $gender;
     public $phonetic;
     public $language;
-    public $namespaceID;
+    public $senseID;
     public $owner;
     
     // Semi-mutable column
@@ -100,7 +100,7 @@
       $query->execute();
       $query->bind_result(
         $this->language, $this->translation, $this->etymology, $this->type, $this->source, $this->comments,
-        $this->tengwar, $this->gender, $this->phonetic, $this->word, $this->namespaceID, $this->authorID,
+        $this->tengwar, $this->gender, $this->phonetic, $this->word, $this->senseID, $this->authorID,
         $this->dateCreated, $this->latest, $this->index, $this->wordID, $this->owner
       );
       
@@ -150,10 +150,10 @@
       $db             = \data\Database::instance();
       $normalizedTerm = \utils\StringWizard::normalize($term);
     
-      $data         = array();
-      $namespaceIDs = array();
+      $data     = array();
+      $senseIDs = array();
       
-      // Attempt to find the namespaces associated with the word. This might yield multiple
+      // Attempt to find the senses associated with the word. This might yield multiple
       // IDs, so these will be put in an array.
       $query = $db->connection()->prepare(
         'SELECT DISTINCT k.`NamespaceID`, k.`Keyword`
@@ -169,21 +169,21 @@
       
       $query->bind_param('ss', $normalizedTerm, $normalizedTerm);
       $query->execute();
-      $query->bind_result($namespaceID, $identifier);
+      $query->bind_result($senseID, $identifier);
       
-      $data['namespaces'] = array();
+      $data['senses'] = array();
       while ($query->fetch()) {
-        $namespaceIDs[] = $namespaceID;
-        $data['namespaces'][$namespaceID] = $identifier;
+        $senseIDs[] = $senseID;
+        $data['senses'][$senseID] = $identifier;
       }
       
       $query->close();
       
-      if (count($namespaceIDs) < 1) {
+      if (count($senseIDs) < 1) {
         return null;
       }
       
-      $namespaceIDs = implode(',', $namespaceIDs);
+      $senseIDs = implode(',', $senseIDs);
 
       // Find all translations for the words specified. The array of IDs is used
       // now as a means to identify the words themselves.
@@ -197,7 +197,7 @@
          INNER JOIN `word` w ON w.`KeyID` = t.`WordID`
          INNER JOIN `language` l ON l.`ID` = t.`LanguageID`
          LEFT JOIN `auth_accounts` a ON a.`AccountID` = t.`AuthorID`
-         WHERE t.`NamespaceID` IN('.$namespaceIDs.') AND t.`Latest` = 1
+         WHERE t.`NamespaceID` IN('.$senseIDs.') AND t.`Latest` = 1
          ORDER BY t.`NamespaceID` ASC, l.`Name` DESC, w.`Key` ASC'
       );
       
@@ -205,7 +205,7 @@
       $query->bind_result(
         $word, $translationID, $translation, $etymology, $type, 
         $source, $comments, $tengwar, $phonetic, $language, 
-        $namespaceID, $inventedLanguage, $owner, $authorID, 
+        $senseID, $inventedLanguage, $owner, $authorID, 
         $authorName, $normalizedWord, $isIndex, $dateCreated
       );
       
@@ -239,7 +239,7 @@
             'source'      => \utils\StringWizard::preventXSS($source),
             'comments'    => empty($comments) ? null : \utils\StringWizard::createLinks($comments),
             'language'    => $language,
-            'namespaceID' => $namespaceID,
+            'senseID'     => $senseID,
             'owner'       => $owner,
             'authorID'    => $authorID,
             'authorName'  => $authorName,
