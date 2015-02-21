@@ -85,7 +85,7 @@ define(['exports'], function (exports) {
   CEditableInlineElement.prototype.setValue = function (value) {
     if (this.editElement) {
       this.editElement.value = value;
-    } else {
+    } else if (this.getValue() !== value) {
       this.originalElement.setAttribute('data-editing-value', value);
       $(this.originalElement).text(value);
       

@@ -52,7 +52,7 @@
         '/_([^_]*)_/' => array('tag' => 'em'),
         '/~([^~]*)~/' => array('tag' => 'u'),
         '/\\`([^\\`]+)\\`/' => array('tag' => 'strong'),
-        '/\\[\\[([^\\]]+)\\]\\]/' => array('tagStart' => 'a href="#{{1:\\utils\\StringWizard\\createLink}}"', 'tagEnd' => 'a')
+        '/\\[\\[([^\\]]+)\\]\\]/' => array('tagStart' => 'a href="#{{1:\\utils\\StringWizard::createLink}}"', 'tagEnd' => 'a')
       );   
       
       foreach ($regs as $reg => $data) {
@@ -68,7 +68,7 @@
               $tagStart = $data['tagStart'];
               
               $subMatches = null;
-              if (preg_match_all('/\\{\\{([0-9]+)\:?([a-zA-Z]+)?\\}\\}/', $tagStart, $subMatches)) {
+              if (preg_match_all('/\\{\\{([0-9]+)\:?([a-zA-Z\\\\:]+)?\\}\\}/', $tagStart, $subMatches)) {
                 $subMatches_c = count($subMatches[0]);
                 
                 for ($j = 0; $j < $subMatches_c; ++$j) {

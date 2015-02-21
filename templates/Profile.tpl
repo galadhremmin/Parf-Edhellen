@@ -35,29 +35,3 @@
   </tr>
   {/if}
 </table>
-{*
-{if $myProfile == true && $loggedIn == true && $accountAuthor != null}
-<h2>Edit Profile</h2>
-<form method="post" action="#" data-module="profile" id="profile-details">
-<table>
-  <tr>
-    <td>Nickname in Tengwar</td>
-    <td><input id="profile-field-tengwar" type="text" class="tengwar rounded-small" size="20" maxlength="64" value="{$accountAuthor->tengwar}" /> (optional)</td>
-  </tr>
-  <tr>
-    <td>Description (optional)</td>
-  </tr>
-  <tr>
-    <td colspan="2">
-      <textarea id="profile-field-description" class="rounded-small" cols="60" rows="10">{$accountAuthor->profile}</textarea>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="2" class="center">
-      <input name="action" type="submit" value="Save" class="rounded" />
-    </td>
-  </tr>
-</table>
-</form>
-{/if}
-*}
