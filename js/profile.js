@@ -1,4 +1,4 @@
-define(['exports', 'utilities'], function (exports, util) {
+define(['exports', 'utilities', 'widgets/editableInlineElement'], function (exports, util, CEditableInlineElement) {
   
   var CProfileManager = function () {
     this.parentElement = null;
@@ -106,18 +106,29 @@ define(['exports', 'utilities'], function (exports, util) {
   CProfileDetailsManager.prototype.load = function () {
     var _this = this;
     
-    this.editButton = this.rootManager.parentElement.find('#profile-page-edit').on('click', function () {
-      _this.enterEditMode();
+    this.rootManager.parentElement.find('.editable').each(function () {
+      var element = $(this);
+      
+      element.addClass('active');
+      CEditableInlineElement.install(element, function (value) { 
+        _this.saveChanges(this.getAttribute('data-editing-propety'), value);
+      });
     });
   }
   
-  CProfileDetailsManager.prototype.enterEditMode = function () {
-    this.editButton.hide();
+  CProfileDetailsManager.prototype.saveChanges = function(property, value) {
+    var data = {};
+    data[property] = value;
     
-    var root = this.rootManager.parentElement;
-    root.find('.tengwar.header').css({color:'red'});
+    $.ajax({
+      url: '/api/profile/edit',
+      data: data
+    }).done(function (data) {
+      console.log('CProfileDetailsManager: successfully saved ' + property);
+    }).fail(function () {
+      console.log('CProfileDetailsManager: failed to save ' + property);
+    });
   }
-  
 
   return new CProfileManager();
 });

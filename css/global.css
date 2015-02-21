@@ -208,3 +208,29 @@ blockquote h3 a {
 .adblocker {
   display: none;
 }
+#profile-page-edit {
+  float: right;
+}
+.editable {
+  box-sizing: border-box;
+  border: 2px solid transparent;
+  border-radius: 10px;
+}
+.editable.active {
+  transition: border-color 0.5s;
+  -webkit-transition: border-color 0.5s;
+  -moz-transition: border-color 0.5s;
+  padding: 5px;
+}
+.editable.active:hover {
+  border-color: #608ca5;
+  cursor: text;
+}
+.editing {
+  box-sizing: border-box;
+  width: 100%;
+}
+.editing.tengwar {
+  float: right;
+  width: 30%;
+}

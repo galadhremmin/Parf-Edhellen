@@ -3,17 +3,11 @@
 {/if}
 <h2>
   {$author->nickname}
-  {if $author->tengwar != null}<span class="tengwar header">{$author->tengwar}</span>{/if}
+  {if $author->tengwar != null}<span class="tengwar header editable" data-editing-type="text" data-editing-class="tengwar" data-editing-propety="tengwar">{$author->tengwar}</span>{/if}
 </h2>
 
 {if $author->profile != null}
-{$author->profile}
-{/if}
-
-{if $myProfile == true}
-<div>
-  <button type="button" id="profile-page-edit" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-edit"></span> Edit profile</button>
-</div>
+<div class="editable" data-editing-type="textarea" data-editing-propety="profile">{$author->profile}</div>
 {/if}
 
 {if $myProfile == true}
@@ -41,6 +35,7 @@
   </tr>
   {/if}
 </table>
+{*
 {if $myProfile == true && $loggedIn == true && $accountAuthor != null}
 <h2>Edit Profile</h2>
 <form method="post" action="#" data-module="profile" id="profile-details">
@@ -65,3 +60,4 @@
 </table>
 </form>
 {/if}
+*}
