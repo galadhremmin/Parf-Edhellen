@@ -31,6 +31,12 @@ define(['require', 'exports'], function (require, exports) {
     });
   }
 
+  CAssert.element = function () {
+    assertInternal(arguments, function (param) {
+      return param && param instanceof Element;
+    });
+  }
+
   function assertInternal(params, typeOrFunction) {
     var i = 0, actualType;
     

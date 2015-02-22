@@ -124,13 +124,9 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
       url: '/api/profile/edit',
       data: data
     }).done(function (data) {
-      console.log('CProfileDetailsManager: successfully saved ' + property);
-      
-      if (value.indexOf('[') > -1 || value.indexOf('_') > -1) {
-        window.location.reload();
-      }
+      window.location.reload();
     }).fail(function () {
-      console.log('CProfileDetailsManager: failed to save ' + property);
+      console.log('CProfileDetailsManager: failed to save ' + property + '.');
     });
   }
 

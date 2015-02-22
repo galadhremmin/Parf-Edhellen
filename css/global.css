@@ -31,8 +31,9 @@
 }
 html, body {
   width: 100%;
-  padding: 50px 0 0 0;
   margin: 0;
+  font-size: 15px;
+  padding: 50px 0 0 0;
 }
 h1,h2,h3,h4,h5 {
   font-family: sorts_mill_goudy, inherit;
@@ -42,7 +43,7 @@ body {
   overflow-y: scroll;
 }
 blockquote {
-  color:#333333;
+  color: #333333;
 }
 /* 
  * Order the search suggestions into columns for the widths: >400, >750 and >970.
@@ -72,11 +73,17 @@ blockquote {
     color: black;
   }
 }
+#search-query-loading {
+  -webkit-transition: -webkit-transform 1s;
+  -moz-transition: -moz-transform 1s;
+  -o-transition: -o-transform 1s;
+  transition: transform 1s;
+}
 .loading {
-  margin-top: 30px;
-  padding-left: 50px;
-  line-height: 36px;
-  background: url(../img/loading.gif) no-repeat left center;
+  -webkit-transform:rotate(360deg);
+  -moz-transform:rotate(360deg); 
+  -o-transform:rotate(360deg);
+  transform:rotate(360deg);
 }
 #search-reverse-box-wrapper,
 #search-language-select {
@@ -233,4 +240,7 @@ blockquote h3 a {
 .editing.tengwar {
   float: right;
   width: 30%;
+}
+.alert {
+  font-size: 1rem;
 }

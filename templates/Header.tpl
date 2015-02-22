@@ -51,8 +51,8 @@
   <div class="container">
     <!-- scripting disabled warning -->
     <noscript>
-      <div id="noscript">
-        <strong>Ai! Lá polin saca i quettar!</strong>
+      <div id="noscript" class="alert alert-danger">
+        <strong><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Ai! Lá polin saca i quettar!</strong>
         <p><em>ElfDict</em> requires javascript to function properly. Please enable Javascript.</p>
         <p><a href="http://support.google.com/bin/answer.py?hl=en&amp;answer=23852" target="_blank">Show me how I enable Javascript</a>.</p>
       </div>
@@ -63,7 +63,7 @@
       <div class="row">
         <div class="col-md-12">
           <div class="input-group input-group-lg">
-            <span class="input-group-addon"><span class="glyphicon glyphicon-search" id="loading-container"></span></span>
+            <span class="input-group-addon"><span class="glyphicon glyphicon-search" id="search-query-field-loading" data-loading-class="glyphicon glyphicon-refresh loading"></span></span>
             <input type="search" class="form-control" placeholder="your search query..." id="search-query-field" tabindex="1" accesskey="s" autocapitalize="off" autocorrect="off">
           </div>
         </div>

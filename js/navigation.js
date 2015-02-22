@@ -11,6 +11,7 @@ define(['exports', 'utilities'], function (exports, util) {
     
     this.currentTerm = undefined;
     this.containerId = containerId;
+    this.loader      = CLoadingIndicator.shared('search-query-field-loading');
   }
   
   /**
@@ -42,8 +43,11 @@ define(['exports', 'utilities'], function (exports, util) {
   CNavigator.prototype.navigate = function (hash) {
     util.CAssert.string(hash);
     
+    console.log('CNavigator: new navigation request for "' + hash + '".');
+    
     var term = $.trim(hash);
     if (term.length < 1) {
+      console.log('CNavigator: invalid term. Cancelling.');
       return;
     }
     
@@ -51,12 +55,20 @@ define(['exports', 'utilities'], function (exports, util) {
       term = decodeURIComponent(term);
     }
     
+    this.loader.loading();
+    
     var _this = this;
-    $.get('translate.php', { term: term, ajax: true }, function (data) {
+    $.get('translate.php', { term: term, ajax: true }).done(function (data) {
+      console.log('CNavigator: successfully retrieved term "' + term + '".');
+      
       _this.navigated(data);
       _this.currentTerm = term;
       
       $(window).trigger('navigator.navigated', [term]);
+    }).fail(function (ex) {
+      console.log('CNavigator: failed to retrieve "' + term + '".', ex);
+    }).always(function () {
+      _this.loader.loaded();
     });
   }
   
@@ -72,15 +84,19 @@ define(['exports', 'utilities'], function (exports, util) {
     util.CAssert.string(data);
     
     var result = document.getElementById(this.containerId);
-    if (result) {
-      result.innerHTML = data;
-      
-      // Ensure that the result view is within the viewport, and animate the 
-      // transition into the viewport if it isn't.
-      if (!util.isElementInViewport(result)) {
-        var position = Math.floor($(result).offset().top - 40); // 40 = magic number! ;)
-        $('body,html').animate({scrollTop: position}, 500);
-      }
+    if (!result) {
+      console.log('CNavigator: failed to present the result. Can\'t find container "' + this.containerId + '"');
+      return;
+    }
+    
+    result.innerHTML = data;
+    console.log('CNavigator: inserted result into "' + this.containerId + '".');
+    
+    // Ensure that the result view is within the viewport, and animate the 
+    // transition into the viewport if it isn't.
+    if (!util.isElementInViewport(result)) {
+      var position = Math.floor($(result).offset().top - 40); // 40 = magic number! ;)
+      $('body,html').animate({scrollTop: position}, 500);
     }
   }
   
@@ -98,13 +114,13 @@ define(['exports', 'utilities'], function (exports, util) {
    * @param {String} languageFilterId ID for a select box with languages.
    */
   var CSearchNavigator = function (searchFieldId, searchResultId, 
-    reversedSearchId, languageFilterId) {
-    util.CAssert.string(searchFieldId, searchResultId, reversedSearchId);
+    reversedSearchId, languageFilterId, loadingIndicatorId) {
+    util.CAssert.string(searchFieldId, searchResultId);
     
-    this.searchFieldId    = searchFieldId;
-    this.searchResultId   = searchResultId;
-    this.reversedSearchId = reversedSearchId;
-    this.languageFilterId = languageFilterId;
+    this.searchFieldId      = searchFieldId;
+    this.searchResultId     = searchResultId;
+    this.reversedSearchId   = reversedSearchId;
+    this.languageFilterId   = languageFilterId;
     
     this.searchField      = null;
     this.resultContainer  = null;
@@ -146,6 +162,7 @@ define(['exports', 'utilities'], function (exports, util) {
     this.buttonForward    = document.getElementById(this.searchResultId + '-navigator-forward');
     this.buttonBackward   = document.getElementById(this.searchResultId + '-navigator-backward');
     this.titleElement     = document.getElementById(this.searchResultId + '-wrapper-toggler-title');
+    this.loader           = CLoadingIndicator.shared(this.searchFieldId + '-loading');
     
     // Attach events
     $(this.searchField).on('keyup', function (ev) {
@@ -209,7 +226,7 @@ define(['exports', 'utilities'], function (exports, util) {
   CSearchNavigator.prototype.changeLanguage = function (id) {
     util.CAssert.number(id);
     this.language = id;
-    
+        
     // Search conditions have changed! Request new suggestions.
     this.endSpringSuggestions();
   }
@@ -318,18 +335,20 @@ define(['exports', 'utilities'], function (exports, util) {
       'language-filter': this.language || 0
     };
     
-    var _this = this;
+    this.loader.loading();
     
+    var _this = this;
     $.ajax({
       url: 'api/word/search',
       data: requestData,
       dataType: 'json',
-      type: 'post',
-      success: function(data) {
-        if (data.succeeded) {
-          _this.presentSuggestions(data.response.words);
-        }
+      type: 'post'
+    }).done(function(data) {
+      if (data.succeeded) {
+        _this.presentSuggestions(data.response.words);
       }
+    }).always(function () {
+      _this.loader.loaded();
     });
   }
   
@@ -583,6 +602,86 @@ define(['exports', 'utilities'], function (exports, util) {
     arrows.toggleClass('glyphicon-plus');
     
     this.resultVisibility = !this.resultVisibility;
+  }
+  
+  /**
+   * Creates a new loading indicator, which uses CSS3 to perform the animation.
+   *
+   * @class CLoadingIndicator
+   * @constructor
+   * @param {Element} element
+   */
+  var CLoadingIndicator = function (element) {
+    util.CAssert.element(element);
+  
+    this.element      = element;
+    this.isLoading    = false;
+    this.loadingCount = 0;
+  }
+  
+  /**
+   * Retrieves a shared loader for the specified element.
+   *
+   * @public
+   * @static
+   * @method shared
+   * @param {string} elementId
+   */
+  CLoadingIndicator.shared = function (elementId) {
+    if (!this.sharedRefs) {
+      this.sharedRefs = {};
+    }
+    
+    if (this.sharedRefs[elementId]) {
+      return this.sharedRefs[elementId];
+    }
+    
+    return (this.sharedRefs[elementId] = new CLoadingIndicator(document.getElementById(elementId)));
+  }
+  
+
+  /**
+   * Instructs the loader that a loading operation has begun.
+   *
+   * @public
+   * @method loading
+   */
+  CLoadingIndicator.prototype.loading = function () {
+    this.loadingCount += 1;
+    this.trigger();
+  }
+  
+
+  /**
+   * Instructs the loader that a loading operation has just completed.
+   *
+   * @public
+   * @method loaded
+   */
+  CLoadingIndicator.prototype.loaded = function () {
+    this.loadingCount = Math.max(this.loadingCount - 1, 0);
+    this.trigger();
+  }
+  
+  /**
+   * Triggers the loading animation based on the state of the loader.
+   *
+   * @private
+   * @method trigger
+   */
+  CLoadingIndicator.prototype.trigger = function () {
+    if (this.loadingCount < 1) {
+      if (this.isLoading) {
+        this.element.className = this.originalClassName;
+        this.isLoading = false; 
+      }
+    } else {
+     if (!this.isLoading) {
+      this.originalClassName = this.element.className;
+      this.element.className = this.element.getAttribute('data-loading-class') || 'loading';
+      this.isLoading = true;
+     } 
+    }
   }
   
   exports.CSearchNavigator = CSearchNavigator;

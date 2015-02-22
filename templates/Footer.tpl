@@ -9,7 +9,7 @@
 <script type="text/javascript" src="js/compatibility/modernizr.js"></script>
 <script type="text/javascript" src="js/requirejs.js"></script>
 <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="js/elfdict.js"></script>
+<script type="text/javascript" src="js/elfdict.js" async defer></script>
 
 <!--[if lte IE 8]>
 <script src="js/compatibility/media-queries-ie8.js" type="text/javascript"></script>
