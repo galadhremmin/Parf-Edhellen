@@ -311,6 +311,7 @@ define(['exports', 'utilities'], function (exports, util) {
     
     term = $.trim(value);
     if (term.length < 1) {
+      $(this.resultWrapper).addClass('hidden');
       return;
     }
     
@@ -426,16 +427,19 @@ define(['exports', 'utilities'], function (exports, util) {
     
     // Open/close the wrapper depending on the result set.
     if (filteredSuggestions.length > 0) {
-      $(this.resultWrapper).removeClass('hidden');
-    
       // Wrap the items in <ul> tags and and update the result container
       items.unshift('<ul>');
       items.push('</ul>');
-      
-      this.resultContainer.innerHTML = items.join('');
     } else {
-      $(this.resultWrapper).addClass('hidden');
+      
     }
+    
+    this.resultContainer.innerHTML = items.join('');
+    
+    // display the list of suggestions
+    $(this.resultWrapper).removeClass('hidden');
+    $(this.resultWrapper).find('.results-panel')[items.length ? 'removeClass' : 'addClass']('hidden');
+    $(this.resultWrapper).find('.results-empty')[items.length ? 'addClass' : 'removeClass']('hidden');
     
     this.suggestionsArray = filteredSuggestions;
     this.iterationIndex = 0;
