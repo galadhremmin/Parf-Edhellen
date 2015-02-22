@@ -11,7 +11,7 @@ define(['exports', 'utilities'], function (exports, util) {
     
     this.currentTerm = undefined;
     this.containerId = containerId;
-    this.loader      = CLoadingIndicator.shared('search-query-field-loading');
+    this.loader      = util.CLoadingIndicator.shared('search-query-field-loading');
   }
   
   /**
@@ -162,7 +162,7 @@ define(['exports', 'utilities'], function (exports, util) {
     this.buttonForward    = document.getElementById(this.searchResultId + '-navigator-forward');
     this.buttonBackward   = document.getElementById(this.searchResultId + '-navigator-backward');
     this.titleElement     = document.getElementById(this.searchResultId + '-wrapper-toggler-title');
-    this.loader           = CLoadingIndicator.shared(this.searchFieldId + '-loading');
+    this.loader           = util.CLoadingIndicator.shared(this.searchFieldId + '-loading');
     
     // Attach events
     $(this.searchField).on('keyup', function (ev) {
@@ -602,86 +602,6 @@ define(['exports', 'utilities'], function (exports, util) {
     arrows.toggleClass('glyphicon-plus');
     
     this.resultVisibility = !this.resultVisibility;
-  }
-  
-  /**
-   * Creates a new loading indicator, which uses CSS3 to perform the animation.
-   *
-   * @class CLoadingIndicator
-   * @constructor
-   * @param {Element} element
-   */
-  var CLoadingIndicator = function (element) {
-    util.CAssert.element(element);
-  
-    this.element      = element;
-    this.isLoading    = false;
-    this.loadingCount = 0;
-  }
-  
-  /**
-   * Retrieves a shared loader for the specified element.
-   *
-   * @public
-   * @static
-   * @method shared
-   * @param {string} elementId
-   */
-  CLoadingIndicator.shared = function (elementId) {
-    if (!this.sharedRefs) {
-      this.sharedRefs = {};
-    }
-    
-    if (this.sharedRefs[elementId]) {
-      return this.sharedRefs[elementId];
-    }
-    
-    return (this.sharedRefs[elementId] = new CLoadingIndicator(document.getElementById(elementId)));
-  }
-  
-
-  /**
-   * Instructs the loader that a loading operation has begun.
-   *
-   * @public
-   * @method loading
-   */
-  CLoadingIndicator.prototype.loading = function () {
-    this.loadingCount += 1;
-    this.trigger();
-  }
-  
-
-  /**
-   * Instructs the loader that a loading operation has just completed.
-   *
-   * @public
-   * @method loaded
-   */
-  CLoadingIndicator.prototype.loaded = function () {
-    this.loadingCount = Math.max(this.loadingCount - 1, 0);
-    this.trigger();
-  }
-  
-  /**
-   * Triggers the loading animation based on the state of the loader.
-   *
-   * @private
-   * @method trigger
-   */
-  CLoadingIndicator.prototype.trigger = function () {
-    if (this.loadingCount < 1) {
-      if (this.isLoading) {
-        this.element.className = this.originalClassName;
-        this.isLoading = false; 
-      }
-    } else {
-     if (!this.isLoading) {
-      this.originalClassName = this.element.className;
-      this.element.className = this.element.getAttribute('data-loading-class') || 'loading';
-      this.isLoading = true;
-     } 
-    }
   }
   
   exports.CSearchNavigator = CSearchNavigator;

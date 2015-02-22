@@ -59,6 +59,88 @@ define(['require', 'exports'], function (require, exports) {
   exports.CAssert = CAssert;
   
   /**
+   * Creates a new loading indicator, which uses CSS3 to perform the animation.
+   *
+   * @class CLoadingIndicator
+   * @constructor
+   * @param {Element} element
+   */
+  var CLoadingIndicator = function (element) {
+    CAssert.element(element);
+  
+    this.element      = element;
+    this.isLoading    = false;
+    this.loadingCount = 0;
+  }
+  
+  /**
+   * Retrieves a shared loader for the specified element.
+   *
+   * @public
+   * @static
+   * @method shared
+   * @param {string} elementId
+   */
+  CLoadingIndicator.shared = function (elementId) {
+    if (!this.sharedRefs) {
+      this.sharedRefs = {};
+    }
+    
+    if (this.sharedRefs[elementId]) {
+      return this.sharedRefs[elementId];
+    }
+    
+    return (this.sharedRefs[elementId] = new CLoadingIndicator(document.getElementById(elementId)));
+  }
+  
+
+  /**
+   * Instructs the loader that a loading operation has begun.
+   *
+   * @public
+   * @method loading
+   */
+  CLoadingIndicator.prototype.loading = function () {
+    this.loadingCount += 1;
+    this.trigger();
+  }
+  
+
+  /**
+   * Instructs the loader that a loading operation has just completed.
+   *
+   * @public
+   * @method loaded
+   */
+  CLoadingIndicator.prototype.loaded = function () {
+    this.loadingCount = Math.max(this.loadingCount - 1, 0);
+    this.trigger();
+  }
+  
+  /**
+   * Triggers the loading animation based on the state of the loader.
+   *
+   * @private
+   * @method trigger
+   */
+  CLoadingIndicator.prototype.trigger = function () {
+    if (this.loadingCount < 1) {
+      if (this.isLoading) {
+        this.element.className = this.originalClassName;
+        this.isLoading = false; 
+      }
+    } else {
+     if (!this.isLoading) {
+      this.originalClassName = this.element.className;
+      this.element.className = this.element.getAttribute('data-loading-class') || 'loading';
+      this.isLoading = true;
+     } 
+    }
+  }
+  
+  exports.CLoadingIndicator = CLoadingIndicator;
+  
+  /**
    * Checks whether the element is within the viewport. 
    * Inspired by Dan @ StackOverflow (http://stackoverflow.com/questions/123999)
    *
