@@ -50,9 +50,6 @@
         $authorForAccount->profile = \utils\StringWizard::preventXSS($author->profile);
       }
       
-      // Replace _markup_ with <em>html</em>.
-      $author->profile = \utils\StringWizard::createLinks($author->profile);
-      
       $this->_author = $author;
       $this->_authorForAccount = $authorForAccount;
     }

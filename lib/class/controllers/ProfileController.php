@@ -15,6 +15,7 @@
         $engine->assign('loggedIn',      $model->getLoggedIn());
         $engine->assign('myProfile',     $model->getLoadedAuthenticatedAuthor());
         $engine->assign('author',        $model->getAuthor());
+        $engine->assign('profileHtml',   \utils\StringWizard::createLinks($model->getAuthor()->profile));
         $engine->assign('accountAuthor', $model->getAuthorForAccount());
       }
     }

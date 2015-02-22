@@ -7,7 +7,15 @@
 </h2>
 
 {if $author->profile != null}
-<div class="editable" data-editing-type="textarea" data-editing-propety="profile">{$author->profile}</div>
+  {if $myProfile == true}
+  <div class="editable" data-editing-type="textarea" data-editing-propety="profile" data-editing-value="{htmlentities($author->profile)}">
+  {/if}
+  
+  {$profileHtml}
+  
+  {if $myProfile == true}
+  </div>
+  {/if}
 {/if}
 
 {if $myProfile == true}

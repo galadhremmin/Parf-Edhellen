@@ -48,11 +48,6 @@
 
         <span class="word-etymology" rel="trans-etymology">{$translation->etymology}</span>
         Published {$translation->dateCreated} by <a href="/profile.page?authorID={$translation->authorID}" itemprop="author" rel="author" title="View profile for {$translation->authorName}.">{$translation->authorName}</a>
-        
-        {if $loggedIn == true && ($translation->owner < 1 || $translation->owner == $accountID)}
-          {*<a class="feature-link" href="#" onclick="return LANGDict.deleteTranslation({$translation->id})">Delete</a>*}
-          <a class="feature-link" href="#" onclick="return LANGDict.showTranslationForm({$translation->id})">Revise</a>
-        {/if}
       </footer>
     </blockquote>
     {/foreach}
@@ -63,11 +58,10 @@
 
 {* Show a message if no such word exists *}
 {if $senses|@count < 1}
-  <p><b>{$term}</b> doesn't exist in the dictionary. If you believe it is missing, please
-  contribute to make <em>Parf Edhellen</em> more complete!</p>
-  {if $loggedIn == true}
-  <p class="center"><input type="button" class="rounded-small" value="Create Sense" onclick="return LANGDict.showForm(0)" /></p>
-  {/if}
+<div class="row">
+  <h3>Forsooth! I can't find what you're looking for!</h3>
+  <p>The word <em>{$term}</em> hasn't been recorded for any of the languages.</p>
+</div>
 {elseif $translations == null}
   <p>Unfortunately, no one has yet translated <b>{$term}</b>. If you believe you know the
   translation, please make <em>Parf Edhellen</em> more complete by contributing.</p>
