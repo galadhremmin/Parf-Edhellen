@@ -32,14 +32,14 @@
         <ul class="nav navbar-nav">
         {foreach $menu as $item}
           {if $item->sectionIndex == 1}
-          <li{if $item->active} class="active"{/if}><a href="{$item->url}"{if $item->onclick != null} onclick="{$item->onclick}"{/if}>{$item->text}</a></li>
+          <li{if $item->active} class="active"{/if}><a href="{$item->url[0]}"{if $item->onclick != null} onclick="{$item->onclick}"{/if}>{$item->text}</a></li>
           {/if}
         {/foreach}
         </ul>
         <ul class="nav navbar-nav navbar-right">
         {foreach $menu as $item}
           {if $item->sectionIndex == 2}
-          <li><a href="{$item->url}"{if $item->active} class="active"{/if}{if $item->onclick != null} onclick="{$item->onclick}"{/if}>{$item->text}</a></li>
+          <li{if $item->active} class="active"{/if}><a href="{$item->url[0]}"{if $item->onclick != null} onclick="{$item->onclick}"{/if}>{$item->text}</a></li>
           {/if}
         {/foreach}
           <li><a href="#" onclick="return LANGAnim.scrollTop();"><span class="glyphicon glyphicon-chevron-up"></span> To top</a></li>

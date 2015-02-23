@@ -51,11 +51,11 @@ blockquote {
  * Order the search suggestions into columns for the widths: >400, >750 and >970.
  * */
 @media (min-width: 765px) {
-  .navbar-default .navbar-nav>li>a:hover {
+  .navbar-default .navbar-nav > li > a:hover {
     background-color: white;
     color: black;
   }
-  .navbar-default .navbar-nav>.active>a {
+  .navbar-default .navbar-nav > li.active > a {
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     background-color: white;
@@ -65,7 +65,7 @@ blockquote {
     margin-bottom: -10px;
     padding-top: 7px;
   }
-  .navbar-default .navbar-nav>.active>a:hover {
+  .navbar-default .navbar-nav > li.active > a:hover {
     background-color: white;
     color: black;
   }
