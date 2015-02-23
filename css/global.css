@@ -38,10 +38,12 @@ html, body {
 h1,h2,h3,h4,h5 {
   font-family: sorts_mill_goudy, inherit;
 }
+
 body {
   background: url(../img/backgrounds/background.png) no-repeat fixed right bottom;
   overflow-y: scroll;
 }
+
 blockquote {
   color: #333333;
 }
@@ -49,14 +51,9 @@ blockquote {
  * Order the search suggestions into columns for the widths: >400, >750 and >970.
  * */
 @media (min-width: 765px) {
-  .navbar {
-    background: url(../img/background.jpg);
-    -webkit-box-shadow: inset 0px -2px 12px -2px rgba(0,0,0,0.75);
-    -moz-box-shadow: inset 0px -2px 12px -2px rgba(0,0,0,0.75);
-    box-shadow: inset 0px -2px 12px -2px rgba(0,0,0,0.75);
-  }
   .navbar-default .navbar-nav>li>a:hover {
-    background-color: #4f7992;
+    background-color: white;
+    color: black;
   }
   .navbar-default .navbar-nav>.active>a {
     border-top-left-radius: 10px;
@@ -99,10 +96,12 @@ blockquote {
 a.selected {
   font-weight: bold;
 }
+/*
 #start-jumbotron  {
   background: url(../img/backgrounds/book.jpg) fixed no-repeat left top;
   background-size: cover;
 }
+*/
 /* 
  * Order the search suggestions into columns for the widths: >400, >750 and >970.
  * */
