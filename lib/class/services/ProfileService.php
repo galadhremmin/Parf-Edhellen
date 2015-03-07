@@ -15,10 +15,8 @@
     }
     
     protected static function getProfile($id) {
-      $author = new \data\entities\Account();
-      $author->load($id);
-      
-      return $author;
+      $credentials =& \auth\Credentials::request(new \auth\BasicAccessRequest());
+      return $credentials->account();
     }
     
     protected static function completeProfile(&$data) {

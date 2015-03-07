@@ -26,6 +26,8 @@
     }
     
     protected static function saveIndex($data) {
+      \auth\Credentials::request(new \auth\BasicAccessRequest());
+    
       if (!isset($data['senseID']))
         throw new \exceptions\MissingParameterException('senseID');
         
@@ -46,6 +48,8 @@
     }
     
     protected static function removeIndex($data) {
+      \auth\Credentials::request(new \auth\BasicAccessRequest());
+    
       if (!isset($data['id']))
         throw new MissingParameterException('id');
       

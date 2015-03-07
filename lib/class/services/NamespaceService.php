@@ -25,6 +25,8 @@
     }
     
     protected static function saveSense(&$data) {
+      \auth\Credentials::request(new \auth\BasicAccessRequest());
+    
       if (!isset($data['identifier'])) {
         throw new \ErrorException("Missing parameter 'identifier'.");
       }

@@ -35,6 +35,8 @@
     }
     
     protected static function registerTranslation(&$data) {
+      \auth\Credentials::request(new \auth\BasicAccessRequest());
+    
       $values = array(
         'type'        => array_keys(Translation::getTypes()),
         'senseID'     => '/^[0-9]+$/',

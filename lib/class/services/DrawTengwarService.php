@@ -20,6 +20,8 @@
     }
     
     protected static function render(&$input) {
+      return null; // temporarily disabled
+    
       if (!isset($input['code'])) {
         return null;
       }
