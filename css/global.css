@@ -33,7 +33,7 @@ html, body {
   width: 100%;
   margin: 0;
   padding: 50px 0 0 0;
-  font-size: 12px;
+  font-size: 14px;
 }
 h1,h2,h3,h4,h5 {
   font-family: sorts_mill_goudy, inherit;
@@ -68,7 +68,7 @@ body {
 /* Larger than mobile */
 @media (min-width: 400px) {
   html, body {
-    font-size: 13px;
+    font-size: 14px;
   }
 }
 
@@ -82,7 +82,7 @@ body {
 /* Larger than tablet */
 @media (min-width: 750px) {
   html, body {
-    font-size: 16px;
+    font-size: 15px;
   }
 }
 
