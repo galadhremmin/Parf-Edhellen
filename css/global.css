@@ -92,7 +92,7 @@ body {
 /* Larger than Desktop HD */
 @media (min-width: 1200px) {
   html, body {
-    font-size: 22px;
+    font-size: 16px;
   }
   .container {
     width: 90%;
@@ -126,17 +126,46 @@ blockquote {
   }
 }
 #search-query-loading {
-  -webkit-transition: -webkit-transform 1s;
-  -moz-transition: -moz-transform 1s;
-  -o-transition: -o-transform 1s;
-  transition: transform 1s;
+
 }
 .loading {
-  -webkit-transform:rotate(360deg);
-  -moz-transform:rotate(360deg); 
-  -o-transform:rotate(360deg);
-  transform:rotate(360deg);
+  -webkit-animation: rotating 1s linear infinite;
+  -moz-animation: rotating 1s linear infinite;
+  -ms-animation: rotating 1s linear infinite;
+  -o-animation: rotating 1s linear infinite;
+  animation: rotating 1s linear infinite;
 }
+/* Rotation begin */
+
+@-webkit-keyframes rotating /* Safari and Chrome */ {
+  from {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes rotating {
+  from {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+
+/* Rotation end */
+
 #search-reverse-box-wrapper,
 #search-language-select {
   float: right;
