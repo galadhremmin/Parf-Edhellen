@@ -5,7 +5,8 @@
     protected $_account;
   
     public function load() {
-      $this->_account = \auth\Session::getAccount();
+      $credentials =& \auth\Credentials::request(new \auth\BasicAccessRequest());
+      $this->_account =& $credentials->account();
       
       if ($this->_account === null || !($this->_account instanceof \data\entities\Account)) {
         header('Location: authenticate.page');
@@ -22,4 +23,4 @@
       return true;
     }
   }
-  
+

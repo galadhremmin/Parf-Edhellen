@@ -45,11 +45,16 @@
           $error = 'User has canceled authentication!';
         } else {
           // user is authenticated
-          if (\auth\Session::register($provider)) {
-            // authentication success!
-            header('Location: profile.page');
-          } else {
-            $error = 'Unfortunately, authentication seems to have failed.';
+          $result = $provider->validate();
+          if ($result) {
+            $credentials = \auth\Credentials::load($provider->identity, true);
+          
+            if ($result && $credentials->account()->validate()){
+              // authentication success!
+              header('Location: profile.page');
+            } else {
+              $error = 'Unfortunately, authentication seems to have failed.';
+            }
           }
         }
       } catch(ErrorException $e) {

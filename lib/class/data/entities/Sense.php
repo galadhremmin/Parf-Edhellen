@@ -33,8 +33,6 @@
     }
     
     public function save() {
-      \auth\Session::canWriteSelf();
-    
       if (!$this->validate()) {
         throw new \ErrorException('Invalid Sense.');
       }

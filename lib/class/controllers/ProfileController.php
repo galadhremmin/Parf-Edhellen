@@ -7,16 +7,17 @@
     }
     
     public function load() {
-      parent::load();
-    
       $model = $this->getModel();
+      if ($model->hasLoadedAuthenticatedAuthor()) {
+        parent::load();
+      }
+      
       if ($model !== null) {
         $engine = $this->_engine;
         $engine->assign('loggedIn',      $model->getLoggedIn());
-        $engine->assign('myProfile',     $model->getLoadedAuthenticatedAuthor());
+        $engine->assign('myProfile',     $model->hasLoadedAuthenticatedAuthor());
         $engine->assign('author',        $model->getAuthor());
         $engine->assign('profileHtml',   \utils\StringWizard::createLinks($model->getAuthor()->profile));
-        $engine->assign('accountAuthor', $model->getAuthorForAccount());
       }
     }
   }

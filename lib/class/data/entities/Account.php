@@ -71,16 +71,26 @@
       }
       
       $query->close();
+      
+      $this->identity = $salted_identity;
     }
     
     public function save() {
       
-      if ($this->id == 0 && !empty($this->identity)) {
-        $this->create();
-      } else {
-        $this->saveChanges();
+      if ($this->id == 0 && ! empty($this->identity)) {
+        $account = new Account();
+        $account->load($this->identity);
+      
+        if ($account->id == 0) {
+          $this->create();
+        } else {
+          $this->id = $account->id;
+        }
       }
       
+      if ($this->id != 0) {
+        $this->saveChanges();
+      }
     }
 
     private function create() {
@@ -100,7 +110,7 @@
       
       $query = $db->connection()->prepare(
         'INSERT INTO `auth_accounts_groups` (`AccountID`, `GroupID`) 
-         SELECT ?, GroupID FROM `auth_groups` WHERE `name` = \'User\' LIMIT 1' // limit 1 should be unnecessary, but just in case hic sunt dracones...
+         SELECT ?, ID FROM `auth_groups` WHERE `name` = \'Users\' LIMIT 1' // limit 1 should be unnecessary, but just in case hic sunt dracones...
       );
       $query->bind_param('i', $this->id);
       $query->execute();
@@ -108,17 +118,14 @@
     }
     
     private function saveChanges() {
-      \auth\Session::canWriteSelf();
-    
-      $db      = \data\Database::instance()->connection();
-      $account = \auth\Session::getAccount();
+      $db = \data\Database::instance()->connection();
       
-      if (!is_numeric($account->id)) {
+      if (!is_numeric($this->id) || $this->id == 0) {
         return;
       }
       
       // it's unfortunately necessary to use the query function here, because mysqli::fetch_assoc() isn't supported by earlier versions of mysqli.
-      $result = $db->query('SELECT `Nickname`, `Configured`, `Tengwar`, `Profile` FROM `auth_accounts` WHERE `AccountID` = '.$account->id);
+      $result = $db->query('SELECT `Nickname`, `Configured`, `Tengwar`, `Profile` FROM `auth_accounts` WHERE `AccountID` = '.$this->id);
       $values = $result->fetch_assoc();
       $result->close();
       
@@ -152,7 +159,7 @@
         foreach ($discrepancies as $key => $value) {
           $params[] = & $discrepancies[$key]; // call_user_func requires references, so...
         }
-        $params[] = & $account->id;
+        $params[] = & $this->id;
         
         call_user_func_array(array($query, 'bind_param'), $params);
         

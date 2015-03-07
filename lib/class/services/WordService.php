@@ -49,7 +49,7 @@
       
       if ($preciseness > 0) {
         $executionStart = microtime(true);
-        if (\auth\Session::isValid() || !self::populateFromCache($input, $data)) {
+        if (\auth\Credentials::current()->account() !== null || !self::populateFromCache($input, $data)) {
           self::populateFromDatabase($input, $preciseness, $data);
           $data['cached'] = false;
         }

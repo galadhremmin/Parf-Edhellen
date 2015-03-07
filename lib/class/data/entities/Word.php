@@ -43,8 +43,6 @@
     }
     
     public function save() {
-      \auth\Session::canWriteSelf();
-    
       if ($this->id) {
         throw new \ErrorException('Word has already been assigned an ID and consequently exists already.');
       }
@@ -74,7 +72,7 @@
         
         $normalizedKey = \utils\StringWizard::normalize($this->key);
         $reversedNormalizedKey = strrev($normalizedKey);
-        $accountID = \auth\Session::getAccount()->id;
+        $accountID = $this->authorID;
         $query->bind_param('sssi', $this->key, $normalizedKey, $reversedNormalizedKey, $accountID);
         $query->execute();
         
@@ -91,7 +89,6 @@
     }
     
     public static function unregisterReference($id, $threshold = 1) {
-      \auth\Session::canWriteSelf();
       $db = \data\Database::instance()->connection();
       
       $query = $db->prepare('SELECT COUNT(*) FROM `keywords` k WHERE k.`WordID` = ?');
@@ -151,8 +148,6 @@
     }
     
     private static function register(Translation& $trans, Word $word = null) {
-      \auth\Session::canWriteSelf();
-    
       if (!$trans->validate()) {
         throw new InvalidParameterException('translation');
       }
@@ -172,7 +167,7 @@
       }
       
       // Acquire current author
-      $accountID = \auth\Session::getAccount()->id;
+      $accountID = $this->accountID;
 
       // Deprecate current translation entry
       if ($trans->id > 0) {

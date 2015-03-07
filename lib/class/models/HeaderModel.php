@@ -18,7 +18,7 @@
       // $menu[] = new MenuItem(array('url' => 'contributors.page', 'text' => 'Contributors', 'sectionIndex' => 1));
       // $menu[] = new MenuItem(array('url' => 'news.page',         'text' => 'Activity',     'sectionIndex' => 1));
       
-      if (\auth\Session::isValid()) {
+      if (\auth\Credentials::permitted(new \auth\BasicAccessRequest())) {
         $menu[] = new \MenuItem(array('url' => 'profile.page',            'text' => 'Profile', 'sectionIndex' => 2));
         $menu[] = new \MenuItem(array('url' => 'exec/deauthenticate.php', 'text' => 'Log out', 'sectionIndex' => 2));
       } else {

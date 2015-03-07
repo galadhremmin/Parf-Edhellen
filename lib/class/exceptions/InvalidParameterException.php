@@ -1,9 +1,7 @@
 <?php
-  if (!defined('SYS_ACTIVE')) {
-    exit;
-  }
+  namespace exceptions;
   
-  class InvalidParameterException extends ErrorException {
+  class InvalidParameterException extends \ErrorException {
     public function __construct($paramName) {
       parent::__construct('Invalid parameter "'.$paramName.'".');
     }

@@ -72,8 +72,6 @@
     }
     
     public static function updateReference($id, Translation& $trans) {
-      \auth\Session::canWriteSelf();
-      
       $db = \data\Database::instance()->connection();
 
       $query = $db->prepare('UPDATE `sentence_fragment` SET `TranslationID` = ? WHERE `TranslationID` = ?');

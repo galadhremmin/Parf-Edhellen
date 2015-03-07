@@ -5,23 +5,30 @@
     private $_loggedIn;
     private $_loadedAuthenticatedAuthor;
     private $_author;
-    private $_authorForAccount;
   
     public function __construct() {
-      $id = 0;      
+      try {
+        $credentials = \auth\Credentials::request(new \auth\BasicAccessRequest());
+      } catch (\exceptions\InadequatePermissionsException $ex) {
+        $credentials = null;
+      }
+    
+      $id = 0;
       if (isset($_GET['authorID'])) {
         $this->_loadedAuthenticatedAuthor = false;
         $id = $_GET['authorID'];
       } else {
         $this->_loadedAuthenticatedAuthor = true;
-        $id = \auth\Session::getAccount()->id;
+        $id = $credentials !== null 
+          ? $credentials->account()->id 
+          : 0;
       }
       
-      if (!is_numeric($id) || $id < 1) {
+      if (! is_numeric($id) || $id < 1) {
         return;
       }
       
-      $this->_loggedIn = \auth\Session::isValid();
+      $this->_loggedIn = $credentials !== null;
       
       //
       // $author is the public face, and all its values will be appropriately
@@ -42,31 +49,18 @@
       $author->nickname = \utils\StringWizard::preventXSS($author->nickname);
       $author->tengwar  = \utils\StringWizard::preventXSS($author->tengwar);
       
-      // If the user is logged in, there will also be a form where the user
-      // can change his/her own profile. Thus, create a where the dictionary
-      // markup isn't replaced by HTML.
-      if ($this->_loggedIn) {
-        $authorForAccount = clone $author;
-        $authorForAccount->profile = \utils\StringWizard::preventXSS($author->profile);
-      }
-      
       $this->_author = $author;
-      $this->_authorForAccount = $authorForAccount;
     }
     
     public function getLoggedIn() {
       return $this->_loggedIn;
     }
     
-    public function getLoadedAuthenticatedAuthor() {
+    public function hasLoadedAuthenticatedAuthor() {
       return $this->_loadedAuthenticatedAuthor;
     }
     
     public function getAuthor() {
       return $this->_author;
-    }
-    
-    public function getAuthorForAccount() {
-      return $this->_authorForAccount;
     }
   }

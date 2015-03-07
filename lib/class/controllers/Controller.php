@@ -19,23 +19,30 @@
       }
     
       if (\ClassInitializer::resolvePath($model)->exists()) {
+        // Check if the user is logged in - cache is disabled for them
+        $login = \auth\Credentials::permitted(new \auth\BasicAccessRequest());
+        
         // very slow caching - there is no reason to continually refresh these unless
         // changes are made unless the client is logged in (where the client might see
-        // things otherwise unavaiable)
-        $c = new \data\Caching(60 /* hourly */, $customCacheTag);
+        // things otherwise unavailable)
+        $c = null;
+        if ($cache && ! $login) { 
+          $c = new \data\Caching(60 /* hourly */, $customCacheTag);
+        } else {
+          $cache = false;
+        }
         
-        if (!$cache || ($cache && (\auth\Session::isValid() || $c->hasExpired()))) {
-          
+        if (!$cache || ($c !== null && $c->hasExpired())) {
           // Initiate an instance of the model class
           $this->_model = new $model();
           
           // Preserve the state if the client is not logged in as it is universal for
           // everyone.
-          if ($cache && !\auth\Session::isValid()) {
+          if ($c !== null) {
             $c->save(serialize($this->_model));
           }
           
-        } else {
+        } else if ($cache) {
           // Autoload the model to ensure that it is known to the PHP context as the 
           // serializer deserializes the cache data
           __autoload($model);

@@ -10,8 +10,9 @@
   
   try {
     $r->displayEncapsulated($template);
+  } catch (\exceptions\InadequatePermissionsException $ex) {
+    $r->displayEncapsulated('Error401');
   } catch (Exception $e) {
-    echo $e;
-    $r->displayEncapsulated('Error');
+    $r->displayEncapsulated('Error500');
   }
 ?>

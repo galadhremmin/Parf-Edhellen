@@ -14,7 +14,7 @@
       throw new \ErrorException('Parameterless request presently unsupported.');
     }
     
-    protected static function translate(&$input) {
+    protected static function translate(&$input) {    
       if (!isset($input['term'])) {
         throw new Exception("Missing parameter 'term'.");
       }

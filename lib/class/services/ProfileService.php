@@ -22,14 +22,18 @@
     }
     
     protected static function completeProfile(&$data) {
-      \auth\Session::completeRegistration($data['nickname']);
+      $credentials =& \auth\Credentials::request(new BasicAccessRequest());
+      
+      $author = $credentials->author();
+      $author->nickname = $data['nickname'];
+      $author->complete();
+      
       return true;
     }
     
     protected static function editProfile(&$data) {
-      \auth\Session::canWriteSelf();
-    
-      $account = \auth\Session::getAccount();
+      $credentials =& \auth\Credentials::request(new BasicAccessRequest());
+      $account     =& $credentials->account();
       
       if (isset($data['profile'])) {
         $account->profile = $data['profile'];

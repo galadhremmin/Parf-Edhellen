@@ -1,7 +1,7 @@
 <?php
-  include_once '../lib/system.php';
-  
-  Session::unregister();
+  session_start();
+  session_destroy();
+  session_regenerate_id(true);
   
   header('Location: ../index.php');
-?>
+  

@@ -48,10 +48,8 @@
     }
     
     public function save() {
-      \auth\Session::canWrite($this->id);
-    
       if (!$this->validate()) {
-        throw new \ErrorException('Invalid or insufficient parameters. Note that only the Session manager may create new accounts.');
+        throw new \ErrorException('Invalid or insufficient parameters.');
       }
       
       $db = \data\Database::instance()->connection();
@@ -65,6 +63,13 @@
       $query->close();
       
       return $this;
+    }
+    
+    public function complete() {
+      if (! $account->configured) {
+        $account->configured = true;
+        $account->save();
+      }
     }
   }
   

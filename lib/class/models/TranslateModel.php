@@ -50,7 +50,7 @@
       }
       
       // Has the current user authenticated herself?
-      $this->_loggedIn = \auth\Session::isValid();
+      $this->_loggedIn = \auth\Credentials::permitted(new \auth\BasicAccessRequest());
     }
     
     public function getTerm() {
@@ -82,11 +82,11 @@
     }
     
     public function getAccountID() {
-      $account = \auth\Session::getAccount();
-      if ($account === null) {
+      if (! $this->_loggedIn) {
         return 0;
       }
-      return $account->id;
+      
+      return \auth\Credentials::current()->account()->id;
     }
   }
 ?>
