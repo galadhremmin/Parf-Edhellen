@@ -1,6 +1,0 @@
-Usage: /roll [number-of-sides]
-Rolls a die and presents the result for everyone in the chat to see. The result message is considered an information message (c.f. /help clear).
-
-A die got 6 sides by default, but you can choose an arbitrary number that would befit your requirements. If you want to roll a d20, type:
-
-/roll 20

@@ -1,4 +1,0 @@
-Usage: /nick your-desired-nick
-Assigns a nick to your profile. If you are using "localstorage" as a persistance method (c.f. /help persistMethod) it'll be permanently associated with you. Multiple players with the same nicks might connect to the same world. 
-
-If you change your nick while in a world, your messages remain unaltered, but your subsequent messages will be posted under your new nick.  

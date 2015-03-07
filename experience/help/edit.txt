@@ -1,2 +1,0 @@
-Usage: /edit
-Enables or disables the edit state for world masters. A world master might change all messages at will by clicking on the message in the window view, and pressing enter once to confirm the changes. By emptying the message, it's flagged for deletion. 
