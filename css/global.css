@@ -32,16 +32,71 @@
 html, body {
   width: 100%;
   margin: 0;
-  font-size: 15px;
   padding: 50px 0 0 0;
+  font-size: 12px;
 }
 h1,h2,h3,h4,h5 {
   font-family: sorts_mill_goudy, inherit;
 }
-
+h1 {
+  font-size: 3rem;
+}
+h2 {
+  font-size: 2.1rem;
+}
+h3 {
+  font-size: 1.8rem;
+}
+h4 {
+  font-size: 1.5rem;
+}
+h5, h6 {
+  font-size: 1.2rem;
+}
+.jumbotron p {
+  font-size: 1.2rem;
+}
+.navbar {
+  font-size: 0.9rem;
+}
 body {
   background: url(../img/backgrounds/background.png) no-repeat fixed right bottom;
   overflow-y: scroll;
+}
+/* Mobile first queries */
+
+/* Larger than mobile */
+@media (min-width: 400px) {
+  html, body {
+    font-size: 13px;
+  }
+}
+
+/* Larger than phablet */
+@media (min-width: 550px) {
+  html, body {
+    font-size: 14px;
+  }
+}
+
+/* Larger than tablet */
+@media (min-width: 750px) {
+  html, body {
+    font-size: 16px;
+  }
+}
+
+/* Larger than desktop */
+@media (min-width: 1000px) {}
+
+/* Larger than Desktop HD */
+@media (min-width: 1200px) {
+  html, body {
+    font-size: 22px;
+  }
+  .container {
+    width: 90%;
+  }
 }
 
 blockquote {

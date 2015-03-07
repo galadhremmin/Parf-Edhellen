@@ -11,6 +11,10 @@
     public $configured;
     public $groups;
     
+    public $dateRegistered;
+    public $translationCount;
+    public $wordCount;
+    
     public function __construct($data = null) {
       parent::__construct($data);
       
@@ -20,6 +24,11 @@
       $this->profile = null;
       $this->configured = 0;
       $this->groups = array();
+      
+      // Additional, optional parameters
+      $this->dateRegistered = date('Y-m-d h:i');
+      $this->translationCount = 0;
+      $this->wordCount = 0;
     }
     
     public function validate() {
@@ -31,19 +40,25 @@
     }
     
     public function load($salted_identity, $completeLoad = false) {
-      if ($completeLoad) {
-        throw new \exceptions\NotImplementedException('Complete loading mode in '.__METHOD__);
-      }
-    
       $db = \data\Database::instance();
       
-      $query = $db->connection()->prepare(
-        'SELECT `AccountID`, `Nickname`, `Configured` FROM `auth_accounts` WHERE `Identity` = ?'
-      );
+      if (is_numeric($salted_identity)) {
+        $query = $db->connection()->prepare(
+          'SELECT `AccountID`, `Nickname`, `Configured`, `Identity` FROM `auth_accounts` WHERE `AccountID` = ?'
+        );
+        
+        $query->bind_param('i', $salted_identity);
       
-      $query->bind_param('s', $salted_identity);
+      } else {
+        $query = $db->connection()->prepare(
+          'SELECT `AccountID`, `Nickname`, `Configured`, `Identity` FROM `auth_accounts` WHERE `Identity` = ?'
+        );
+        
+        $query->bind_param('s', $salted_identity);
+      }
+      
       $query->execute();
-      $query->bind_result($this->id, $this->nickname, $this->configured);
+      $query->bind_result($this->id, $this->nickname, $this->configured, $identity);
       $query->fetch();
       
       // ensure that the bit is converted to a boolean value
@@ -52,7 +67,22 @@
       $query->close();
       
       if (!$this->validate()) {
+        $this->identity = $salted_identity;
         return;
+      }
+      
+      if ($completeLoad) {
+        $query = $db->connection()->prepare(
+          'SELECT `DateRegistered` FROM `auth_accounts` WHERE `AccountID` = ?'
+        );
+        $query->bind_param('i', $this->id);
+        $query->execute();
+        $query->bind_result($this->dateRegistered);
+        $query->fetch();
+        $query->close();
+        
+        $this->wordCount        = Sense::countByAccount($this);
+        $this->translationCount = Translation::countByAccount($this);
       }
       
       $query = $db->connection()->prepare(
@@ -72,7 +102,7 @@
       
       $query->close();
       
-      $this->identity = $salted_identity;
+      $this->identity = $identity;
     }
     
     public function save() {
@@ -165,6 +195,13 @@
         
         $query->execute();
         $query->close();
+      }
+    }
+    
+    public function complete() {
+      if (! $this->configured) {
+        $this->configured = true;
+        $this->save();
       }
     }
     

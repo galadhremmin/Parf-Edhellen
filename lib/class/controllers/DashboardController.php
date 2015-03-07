@@ -1,9 +1,9 @@
 <?php
   namespace controllers;
   
-  class AboutController extends Controller {
+  class DashboardController extends SecureController {
     public function __construct(\TemplateEngine $engine) {
-      parent::__construct('About', $engine);
+      parent::__construct('Dashboard', $engine);
     }
   }
   

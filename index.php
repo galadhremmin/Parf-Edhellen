@@ -13,6 +13,10 @@
   } catch (\exceptions\InadequatePermissionsException $ex) {
     $r->displayEncapsulated('Error401');
   } catch (Exception $e) {
-    $r->displayEncapsulated('Error500');
+    if (DEBUG) {
+      echo '<pre>'.$e.'</pre>';
+    } else {
+      $r->displayEncapsulated('Error500');
+    }
   }
 ?>

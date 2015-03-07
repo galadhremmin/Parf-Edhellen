@@ -42,7 +42,6 @@
           <li{if $item->active} class="active"{/if}><a href="{$item->url[0]}"{if $item->onclick != null} onclick="{$item->onclick}"{/if}>{$item->text}</a></li>
           {/if}
         {/foreach}
-          <li><a href="#" onclick="return LANGAnim.scrollTop();"><span class="glyphicon glyphicon-chevron-up"></span> To top</a></li>
         </ul>
       </div><!--/.nav-collapse -->
     </div><!--/.container-fluid -->

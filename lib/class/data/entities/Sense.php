@@ -4,6 +4,31 @@
   class Sense extends Entity {
     public $id;
     public $identifier;
+    
+    public static function countByAccount(Account &$account) {
+      $db = \data\Database::instance()->connection();
+      $query = null;
+      try {
+        $query = $db->prepare(
+          'SELECT COUNT(*) AS `count` FROM `word` w 
+             LEFT JOIN `namespace` n ON n.`IdentifierID` = w.`KeyID`
+             WHERE w.`AuthorID` = ?'
+        );
+        $query->bind_param('i', $account->id);
+        $query->execute();
+        $query->bind_result($count);
+        
+        if ($query->fetch()) {
+          return $count;
+        }
+      } finally {
+        if ($query instanceof \mysqli_stmt) {
+          $query->close();
+        }
+      }
+      
+      return 0;
+    }
   
     public function __construct($data = null) {
       parent::__construct($data);

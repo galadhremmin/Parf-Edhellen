@@ -32,6 +32,30 @@
     // Static comntainer for type lists. This is meant to speed up bulk loading by reducing
     // database access.
     private static $availableTypes = null;
+    
+    public static function countByAccount(Account &$account) {
+      $db = \data\Database::instance()->connection();
+      $query = null;
+      try {
+        $query = $db->prepare(
+          'SELECT COUNT(*) AS `count` FROM `translation` t 
+             WHERE t.`AuthorID` = ? AND t.`Latest` = \'1\''
+        );
+        $query->bind_param('i', $account->id);
+        $query->execute();
+        $query->bind_result($count);
+        
+        if ($query->fetch()) {
+          return $count;
+        }
+      } finally {
+        if ($query instanceof \mysqli_stmt) {
+          $query->close();
+        }
+      }
+      
+      return 0;
+    }
   
     public function __construct($data = null) {
       parent::__construct($data);

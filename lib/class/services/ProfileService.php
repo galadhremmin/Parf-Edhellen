@@ -15,16 +15,16 @@
     }
     
     protected static function getProfile($id) {
-      $author = new \data\entities\Author();
+      $author = new \data\entities\Account();
       $author->load($id);
       
       return $author;
     }
     
     protected static function completeProfile(&$data) {
-      $credentials =& \auth\Credentials::request(new BasicAccessRequest());
+      $credentials =& \auth\Credentials::request(new \auth\BasicAccessRequest());
       
-      $author = $credentials->author();
+      $author = $credentials->account();
       $author->nickname = $data['nickname'];
       $author->complete();
       
@@ -32,7 +32,7 @@
     }
     
     protected static function editProfile(&$data) {
-      $credentials =& \auth\Credentials::request(new BasicAccessRequest());
+      $credentials =& \auth\Credentials::request(new \auth\BasicAccessRequest());
       $account     =& $credentials->account();
       
       if (isset($data['profile'])) {
@@ -47,3 +47,4 @@
       return $account;
     }
   }
+  

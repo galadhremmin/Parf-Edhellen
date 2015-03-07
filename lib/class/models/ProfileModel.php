@@ -38,11 +38,11 @@
       // invoke createLinks as this would yield HTML instead of its appropriate 
       // markup.
       //
-      $author           = new \data\entities\Author();
+      $author           = new \data\entities\Account();
       $authorForAccount = null;
      
       // Attempt to load the author by its ID
-      $author->load($id);
+      $author->load($id, true);
      
       // Examine all necessary values before they are passed on to the
       // view for presentation
