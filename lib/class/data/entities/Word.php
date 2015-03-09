@@ -145,8 +145,7 @@
       return self::register($trans);
     }
     
-    public static function getWordClasses()
-    {
+    public static function getWordClasses() {
       $classes = array();
       $query = null;
       

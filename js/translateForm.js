@@ -133,7 +133,7 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
     
     var _this = this;
     this.listElement.find('button').on('click', function () {
-      _this.removeTag($(this).parent('li').index());
+      _this.removeTag( $(this).parent('li').index() );
     });
   }
   
