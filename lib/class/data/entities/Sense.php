@@ -1,7 +1,7 @@
 <?php
   namespace data\entities;
   
-  class Sense extends Entity {
+  class Sense extends OwnableEntity {
     public $id;
     public $identifier;
     
@@ -28,10 +28,6 @@
       }
       
       return 0;
-    }
-  
-    public function __construct($data = null) {
-      parent::__construct($data);
     }
   
     public function load($id) {
@@ -104,3 +100,4 @@
       return $this;
     }
   }
+

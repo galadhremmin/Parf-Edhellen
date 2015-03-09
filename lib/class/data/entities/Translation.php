@@ -1,7 +1,7 @@
 <?php
   namespace data\entities;
   
-  class Translation extends Entity {
+  class Translation extends OwnableEntity {
   
     // Mutable columns
     public $word;

@@ -1,7 +1,7 @@
 <?php
   namespace data\entities;
 
-  class Word extends Entity {
+  class Word extends OwnableEntity {
     public $id;
     public $key;
     public $authorID;
@@ -51,60 +51,58 @@
         throw new \ErrorException('Invalid or malformed Word-object.');
       }
       
+      $credentials =& \auth\Credentials::request(new WordAccessRequest($this, \auth\AccessRight::CREATE));
+      
       // exclusive connections require the current account to be authenticated 
       $db = \data\Database::instance()->connection();
       
-      $query = $db->prepare(
-        'SELECT `KeyID` FROM `word` WHERE `Key` = ?'
-      );
-      
-      $query->bind_param('s', $this->key);
-      $query->execute();
-      $query->bind_result($this->id);
-      
-      // doesn't exist
-      if ($query->fetch() !== true) {
-        $query->close();
-        
+      $query  = null;
+      $exists = false;
+      try {
         $query = $db->prepare(
-          'INSERT INTO `word` (`Key`, `NormalizedKey`, `ReversedNormalizedKey`, `AuthorID`) VALUES (?, ?, ?, ?)'
+          'SELECT `KeyID` FROM `word` WHERE `Key` = ?'
         );
         
-        $normalizedKey = \utils\StringWizard::normalize($this->key);
-        $reversedNormalizedKey = strrev($normalizedKey);
-        $accountID = $this->authorID;
-        $query->bind_param('sssi', $this->key, $normalizedKey, $reversedNormalizedKey, $accountID);
+        $query->bind_param('s', $this->key);
         $query->execute();
+        $query->bind_result($this->id);
         
-        $this->id = $query->insert_id;
+        $exists = ($query->fetch() === true);
+      } finally {
+        if ($query !== null) {
+          $query->close();
+        }
+      }
+      
+      // doesn't exist
+      if (! $exists) {        
+        $this->authorID = $credentials->account()->id;
         
-        $query->close();
+        $query = null;
+        try {
+          $query = $db->prepare(
+            'INSERT INTO `word` (`Key`, `NormalizedKey`, `ReversedNormalizedKey`, `AuthorID`) VALUES (?, ?, ?, ?)'
+          );
+          
+          $normalizedKey = \utils\StringWizard::normalize($this->key);
+          $reversedNormalizedKey = strrev($normalizedKey);
+          $accountID = $this->authorID;
+          
+          $query->bind_param('sssi', $this->key, $normalizedKey, $reversedNormalizedKey, $accountID);
+          $query->execute();
+          
+          $this->id = $query->insert_id;
+        } finally {
+          if ($query !== null) {
+            $query->close();
+          }
+        }
+        
       } else {
-        $query->close();
-        
         $this->load($this->id);
       }
       
       return $this;
-    }
-    
-    public static function unregisterReference($id, $threshold = 1) {
-      $db = \data\Database::instance()->connection();
-      
-      $query = $db->prepare('SELECT COUNT(*) FROM `keywords` k WHERE k.`WordID` = ?');
-      $query->bind_param('i', $id);
-      $query->execute();
-      $query->bind_result($count);
-      
-      if ($query->fetch() && $count < $threshold) {
-        $query->close();
-        
-        $query = $db->prepare('DELETE FROM `word` WHERE `KeyID` = ?');
-        $query->bind_param('i', $id);
-        $query->execute();
-      }
-      
-      $query->close();
     }
     
     public static function registerIndex(Translation& $trans) {
@@ -147,7 +145,36 @@
       return self::register($trans);
     }
     
-    private static function register(Translation& $trans, Word $word = null) {
+    public static function getWordClasses()
+    {
+      $classes = array();
+      $query = null;
+      
+      try {
+        $query = \data\Database::instance()->connection()->query(
+          'SELECT `GrammarTypeID`, `Name` FROM `grammar_type` ORDER BY `Name` ASC'
+        );
+        
+        while ($row = $query->fetch_assoc()) {
+          $classes[$row['GrammarTypeID']] = $row['Name'];
+        }
+        
+      } finally {
+        if ($query !== null) {
+          $query->close();
+        }
+      }
+      
+      return $classes;
+    }
+    
+    public static function getWordGenders() {
+      return array(
+        'none', 'masculine', 'feminine', 'neuter'
+      );
+    }
+    
+    private static function register(Translation& $trans, Word $word = null) {    
       if (!$trans->validate()) {
         throw new InvalidParameterException('translation');
       }
@@ -166,8 +193,11 @@
         throw new InvalidParameterException('senseID');
       }
       
+      $credentials =& \auth\Credentials::request(new WordAccessRequest($this, \auth\AccessRight::CREATE));
+      
       // Acquire current author
-      $accountID = $this->accountID;
+      $this->accountID = $credentials->account()->id;
+      $accountID = $this->accountID; // this is only necessary for the MySQLi
 
       // Deprecate current translation entry
       if ($trans->id > 0) {
@@ -277,5 +307,24 @@
       
       Sentence::updateReference($previousTranslationId, $trans);
       return $trans->index ? $trans : $word;
+    }
+    
+    private static function unregisterReference($id, $threshold = 1) {
+      $db = \data\Database::instance()->connection();
+      
+      $query = $db->prepare('SELECT COUNT(*) FROM `keywords` k WHERE k.`WordID` = ?');
+      $query->bind_param('i', $id);
+      $query->execute();
+      $query->bind_result($count);
+      
+      if ($query->fetch() && $count < $threshold) {
+        $query->close();
+        
+        $query = $db->prepare('DELETE FROM `word` WHERE `KeyID` = ?');
+        $query->bind_param('i', $id);
+        $query->execute();
+      }
+      
+      $query->close();
     }
   }

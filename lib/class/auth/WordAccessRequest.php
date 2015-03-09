@@ -16,7 +16,7 @@
       $group   = 'Users';
       
       $rights = array(
-        AccessRight::CREATE,
+        // AccessRight::CREATE, <-- included in Users.
         AccessRight::MODIFY,
         AccessRight::DELETE,
         AccessRight::ALL

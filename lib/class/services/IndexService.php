@@ -26,8 +26,9 @@
     }
     
     protected static function saveIndex($data) {
-      \auth\Credentials::request(new \auth\BasicAccessRequest());
-    
+      $credentials =& \auth\Credentials::request(new \auth\BasicAccessRequest());
+      $account =& $credentials->account();
+      
       if (!isset($data['senseID']))
         throw new \exceptions\MissingParameterException('senseID');
         
@@ -39,6 +40,8 @@
       
       if (preg_match('/^[\\s]*$/', $data['word']))
         throw new \exceptions\InvalidParameterException('word');
+      
+      $data['authorID'] = $account->id;
       
       $t = new \data\entities\Translation($data);
       \data\entities\Word::registerIndex($t);

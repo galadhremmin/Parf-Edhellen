@@ -28,11 +28,16 @@
       $data = array();
       
       $res = $db->query(
-        'SELECT `ID`, `Name`, `Invented`, `Tengwar` FROM `language` ORDER BY `Order` ASC'
+        'SELECT `ID`, `Name`, `Invented`, `Tengwar` FROM `language` ORDER BY `Invented` DESC, `Name` ASC'
       );
       
-      while ($language = $res->fetch_assoc()) {
-        $data[] = new Language($language);
+      while ($row = $res->fetch_assoc()) {
+        $data[] = new Language(array(
+          'id'       => $row['ID'],
+          'name'     => $row['Name'],
+          'invented' => $row['Invented'],
+          'tengwar'  => $row['Tengwar']
+        ));
       }
       
       $res->close();
@@ -43,9 +48,9 @@
     public static function getLanguageArray($excludeRealLanguages = true) {
       $originalData = self::getAllLanguages();
       $data = array();
-      
+
       foreach ($originalData as $language) {
-        if ($excludeRealLanguages && !$language->invented) {
+        if ($excludeRealLanguages && ! $language->invented) {
           continue;
         }
         

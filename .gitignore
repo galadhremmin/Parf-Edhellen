@@ -11,3 +11,4 @@ browserconfig.xml
 test/*
 ads/*
 lib/config/config.wordservice.php
+.idea

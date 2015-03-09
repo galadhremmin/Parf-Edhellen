@@ -4,14 +4,13 @@
 <div class="row">
   
   <div class="col-sm-6">
-    <h3>Senses</h3>
+    <h3>Translations</h3>
     <p></p>
     <button type="button" class="btn btn-sm"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Create</button>
   </div>
   <div class="col-sm-6">
-    <h3>Translations</h3>
+    <h3>Favourites</h3>
     <p></p>
-    <button type="button" class="btn btn-sm"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Create</button>
   </div>
   
 </div>

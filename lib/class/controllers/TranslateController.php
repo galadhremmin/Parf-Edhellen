@@ -39,7 +39,7 @@
       if (!is_array($translations)) {
         return;
       }
-      
+
       $numberOfLanguages = count(array_keys($translations));
         
       $max = 12;
