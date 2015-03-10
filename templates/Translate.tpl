@@ -71,8 +71,8 @@
     </p>
   {/if}
 {/if}
-
-  <div class="row" id="related-books-row">
+  <hr>
+  <div id="related-books-row">
     <h2>Related books</h2>
     <div id="related-books"></div>
     <span class="adblocker">ElfDict uses Amazon to gather a list of books relevant for the books you're looking for. Unfortunately, we can't present these books to you because your ad-blocker regards these suggestions as ads. Sorry!</span>

@@ -47,7 +47,7 @@
     </div><!--/.container-fluid -->
   </div>
 
-  <div class="container">
+  <div class="container" id="site-container">
     <!-- scripting disabled warning -->
     <noscript>
       <div id="noscript" class="alert alert-danger">
@@ -95,7 +95,7 @@
       </div>
       <div class="panel-body results-empty hidden">
         <div class="row">
-          <div class="col-xs-12"">
+          <div class="col-xs-12">
             Unfortunately, we were unable to find any words matching your search query. Have you tried a synonym, or perhaps even an antonym?
           </div>
         </div>

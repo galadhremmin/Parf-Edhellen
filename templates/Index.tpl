@@ -1,10 +1,11 @@
-<div class="jumbotron" id="start-jumbotron">
-  
-  <h1>Welcome!</h1>
-  <p>Parf Edhellen&mdash;an <em>Elvish Book</em>&mdash; is a free dictionary service, consisting of imported glosses from <em>Hiswelókë Sindarin Dictionary</em>, 
-  <em>Ardalambion Quenya Wordlists</em> and <a href="about.page?browseTo=wordlist">much, much more</a>. Please enter your search terms in the search field above to begin your journey.</p>
-
+<div class="jumbotron">
+<h1>Mae govannen!</h1>
+<p>Parf Edhellen&mdash;an <em>Elvish Book</em>&mdash; is a free dictionary service, consisting of imported glosses from <em>Hiswelókë Sindarin Dictionary</em>, 
+<em>Ardalambion Quenya Wordlists</em> and <a href="about.page?browseTo=wordlist">much, much more</a>. Please enter your search terms in the search field above to begin your journey.</p>
 </div>
+
+<hr>
+
 
 <div class="row">
   <div class="col-xs-12 col-sm-4">
@@ -33,3 +34,5 @@
     </blockquote>
   </div>
 </div>
+
+
