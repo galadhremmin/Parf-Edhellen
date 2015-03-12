@@ -6,7 +6,7 @@
       parent::__construct();
       
       parent::registerMainMethod('getTranslation');
-      parent::registerMethod('register', 'registerTranslation');
+      parent::registerMethod('save', 'registerTranslation');
       parent::registerMethod('translate', 'translate');
     }
     

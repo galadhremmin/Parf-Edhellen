@@ -6,7 +6,7 @@
   <div class="col-sm-6">
     <h3>Translations</h3>
     <p></p>
-    <button type="button" class="btn btn-sm"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Create</button>
+    <a href="/translateForm.page" role="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Create</a>
   </div>
   <div class="col-sm-6">
     <h3>Favourites</h3>

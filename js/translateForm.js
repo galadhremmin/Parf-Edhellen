@@ -17,7 +17,7 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
   CTranslateForm.prototype.setElement = function (element)  {
     util.CAssert.jQuery(element);
     
-    this.parentElement = element;
+    this.parentElement = element.get(0);
     this.listElement   = element.find('#ed-translate-indexes-rendered');
     this.dataSource    = element.find('#ed-translate-indexes');
     this.editElement   = element.find('#ed-translate-index');
@@ -31,6 +31,12 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
       // empty current value and restore focus
       _this.editElement.val('');
       _this.editElement.focus();
+    });
+    
+    element.find('input[type="submit"]').on('click', function (ev) {
+      ev.preventDefault();
+      
+      _this.saveTranslation();
     });
     
     this.editElement.on('keydown', function (ev) {
@@ -57,6 +63,57 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
     }
     
     this.renderTags();
+  }
+  
+  CTranslateForm.prototype.saveTranslation = function () {
+    // Retrieve all information from the form.
+    var sucker = new util.CFormSucker(this.parentElement, 'ed-translate-');
+    var data = sucker.suck();
+    
+    // Remove unused properties
+    delete data.index;
+    
+    // Perform validation on the data input.
+    var errors = [];
+    
+    console.log(data);
+
+    if (! data.language) {
+      errors.push('language');
+    }
+    
+    if (! data.word || data.word.length < 1) {
+      errors.push('word');
+    }
+    
+    if (! data.translation || data.translation.length < 1) {
+      errors.push('translation');
+    }
+    
+    if (! data.source || data.source.length < 3) {
+      errors.push('source');
+    }
+    
+    if (errors.length) {
+      // Display error messages next to the fields.
+      for (var i = 0; i < errors.length; i += 1) {
+        $('.ed-error-' + errors[i]).show();
+      }
+      
+      console.log('CTranslateForm: there were errors with: ' + errors.join(', ') + '. Validation failed.');
+      
+      return;
+    }
+    
+    // Pass the values to the web service for persistance.
+    $.ajax({
+      url: '/api/translation/save',
+      data: data
+    }).done(function (data) {
+      console.log(data);
+    }).fail(function () {
+      console.log('CTranslateForm: failed to save ' + property + '.');
+    });
   }
   
   CTranslateForm.prototype.getTags = function () {

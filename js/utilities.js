@@ -140,6 +140,55 @@ define(['require', 'exports'], function (require, exports) {
   
   exports.CLoadingIndicator = CLoadingIndicator;
   
+  var CFormSucker = function (formElement, prefix) {
+    this.formElement = formElement;
+    this.prefix      = prefix || null;
+  }
+  
+  /**
+   * Retrieves ("sucks") the information out from all child elements.
+   *
+   * @public
+   * @method suck
+   */
+  CFormSucker.prototype.suck = function () {
+    var elements = this.formElement.querySelectorAll('input,textarea,select');
+    var data = {};
+    var element;
+    var value;
+    var name;
+    
+    for (var i = 0; i < elements.length; i += 1) {
+      element = elements[i];
+      name    = element.id || element.name || 0;
+      
+      if (! name) {
+        continue;
+      }
+      
+      // If a prefix is defined, remove it from the name of the element.
+      if (this.prefix && name.length > this.prefix.length && 
+          name.substr(0, this.prefix.length) === this.prefix) {
+        name = name.substr(this.prefix.length);
+      }
+      
+      // Retrieve the value for the selected option, or retrieve the element's
+      // value, if it's not a select element. 
+      value = element.options !== undefined ? 
+        element.options[element.selectedIndex].value : element.value;
+      
+      if (value.length && ! isNaN(value) && isFinite(value)) {
+        value = parseInt(value);
+      } 
+      
+      data[name] = value;
+    }
+    
+    return data;
+  }
+  
+  exports.CFormSucker = CFormSucker;
+  
   /**
    * Checks whether the element is within the viewport. 
    * Inspired by Dan @ StackOverflow (http://stackoverflow.com/questions/123999)
