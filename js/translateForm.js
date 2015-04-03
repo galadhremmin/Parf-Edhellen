@@ -94,13 +94,25 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
       errors.push('source');
     }
     
-    if (errors.length) {
-      // Display error messages next to the fields.
-      for (var i = 0; i < errors.length; i += 1) {
-        $('.ed-error-' + errors[i]).show();
-      }
+    for (var key in data) {
+      var group = $('#ed-translate-' + key).parents('.form-group');
       
-      console.log('CTranslateForm: there were errors with: ' + errors.join(', ') + '. Validation failed.');
+      if ($.inArray(key, errors) > -1) {
+        // Display error messages next to the fields.
+        group.addClass('has-error');
+      } else {
+        // Remove possible errors
+        group.removeClass('has-error');
+      }
+    }
+      
+    if (errors.length) {
+      // Display the error alert, and scroll to it.
+      var y, alert = $('#ed-translate-error-alert');
+      alert.removeClass('hidden');
+      
+      y = alert.offset().top - alert.outerHeight(true);
+      window.scrollTo(0, y);
       
       return;
     }

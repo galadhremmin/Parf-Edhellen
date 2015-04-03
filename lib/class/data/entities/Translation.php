@@ -135,6 +135,38 @@
       $query->close(); 
     }
     
+    public function getIndexes() {
+      $normalizedTerm = \utils\StringWizard::normalize($this->word);
+
+      $db = \data\Database::instance();
+      $query = $db->connection()->prepare(
+        'SELECT DISTINCT
+          t.`TranslationID`, t.`WordID`, w.`Key`
+         FROM `translation` t 
+         LEFT JOIN `word` w ON w.`KeyID` = t.`WordID`
+         WHERE t.`NamespaceID` = ? AND t.`Index` = \'1\'
+         ORDER BY w.`Key` ASC'
+      );
+      $query->bind_param('i', $this->senseID);
+      $query->execute();
+      $query->bind_result(
+        $indexID, $wordID, $word
+      );
+
+      $indexes = array();
+      while ($query->fetch()) {
+        $indexes[] = array(
+          'ID'     => $indexID,
+          'wordID' => $wordID,
+          'word'   => $word
+        );
+      }
+      
+      $query->close();
+      
+      return $indexes; 
+    }
+    
     public function transformContent() {
       $this->translation = \utils\StringWizard::createLinks($this->translation);
       $this->comments    = \utils\StringWizard::createLinks($this->comments);
@@ -174,34 +206,9 @@
       $db             = \data\Database::instance();
       $normalizedTerm = \utils\StringWizard::normalize($term);
     
-      $data     = array();
-      $senseIDs = array();
-      
-      // Attempt to find the senses associated with the word. This might yield multiple
-      // IDs, so these will be put in an array.
-      $query = $db->connection()->prepare(
-        'SELECT DISTINCT k.`NamespaceID`, k.`Keyword`
-           FROM `keywords` k
-           WHERE k.`NormalizedKeyword` = ? AND k.`NamespaceID` IS NOT NULL
-           UNION (
-            SELECT t.`NamespaceID` , k.`Keyword`
-              FROM `keywords` k
-                INNER JOIN `translation` t ON t.`TranslationID` = k.`TranslationID`
-              WHERE k.`TranslationID` IS NOT NULL AND k.`NormalizedKeyword` = ?
-          )'
-      );
-      
-      $query->bind_param('ss', $normalizedTerm, $normalizedTerm);
-      $query->execute();
-      $query->bind_result($senseID, $identifier);
-      
-      $data['senses'] = array();
-      while ($query->fetch()) {
-        $senseIDs[] = $senseID;
-        $data['senses'][$senseID] = $identifier;
-      }
-      
-      $query->close();
+      $senses   = self::findSensesByTerm($normalizedTerm);
+      $data     = array('senses' => $senses);
+      $senseIDs = array_keys($senses);
       
       if (count($senseIDs) < 1) {
         return null;
@@ -282,6 +289,36 @@
         usort($data['translations'][$language], '\\utils\\TranslationComparer::compare');
 
       return $data;
+    }
+    
+    private static function findSensesByTerm($normalizedTerm) {
+      $senses = array();
+      
+      // Attempt to find the senses associated with the word. This might yield multiple
+      // IDs, so these will be put in an array.
+      $db    = \data\Database::instance();
+      $query = $db->connection()->prepare(
+        'SELECT DISTINCT k.`NamespaceID`, k.`Keyword`
+           FROM `keywords` k
+           WHERE k.`NormalizedKeyword` = ? AND k.`NamespaceID` IS NOT NULL
+           UNION (
+            SELECT t.`NamespaceID` , k.`Keyword`
+              FROM `keywords` k
+                INNER JOIN `translation` t ON t.`TranslationID` = k.`TranslationID`
+              WHERE k.`TranslationID` IS NOT NULL AND k.`NormalizedKeyword` = ?
+          )'
+      );
+      
+      $query->bind_param('ss', $normalizedTerm, $normalizedTerm);
+      $query->execute();
+      $query->bind_result($senseID, $identifier);
+      
+      while ($query->fetch()) {
+        $senses[$senseID] = $identifier;
+      }
+      
+      $query->close();
+      return $senses;
     }
     
     private static function calculateRating(Translation & $translation, $term) {

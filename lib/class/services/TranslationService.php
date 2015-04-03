@@ -14,14 +14,6 @@
       throw new \ErrorException('Parameterless request presently unsupported.');
     }
     
-    protected static function translate(&$input) {    
-      if (!isset($input['term'])) {
-        throw new Exception("Missing parameter 'term'.");
-      }
-      
-      return \data\entities\Translation::translate($input['term'], null);
-    }
-    
     protected static function getTranslation($id) {
       $t = new \data\entities\Translation();
       $t->load($id);
@@ -70,5 +62,13 @@
     
       $translationObj = new \data\entities\Translation($values);
       return \data\entities\Word::registerTranslation($translationObj);
+    }
+    
+    protected static function translate(&$input) {    
+      if (!isset($input['term'])) {
+        throw new Exception("Missing parameter 'term'.");
+      }
+      
+      return \data\entities\Translation::translate($input['term'], null);
     }
   }
