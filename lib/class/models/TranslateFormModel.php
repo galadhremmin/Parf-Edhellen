@@ -9,7 +9,7 @@
     
     public function __construct() {
       $this->_languages   = \data\entities\Language::getLanguageArray(true);
-      $this->_wordClasses = \data\entities\Word::getWordClasses();
+      $this->_wordClasses = \data\entities\Translation::getTypes();
       $this->_wordGenders = \data\entities\Word::getWordGenders();
       $this->_original    = new \data\entities\Translation();
       

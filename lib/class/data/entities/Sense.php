@@ -31,6 +31,13 @@
     }
   
     public function load($id) {
+      if ($id === 0) {
+        $this->id = 0;
+        $this->identifier = null;
+        
+        return $this;
+      }
+    
       $db = \data\Database::instance()->connection();
       $query = $db->prepare(
         'SELECT w.`Key` FROM `namespace` n

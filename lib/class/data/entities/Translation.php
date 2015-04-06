@@ -58,13 +58,20 @@
     }
   
     public function __construct($data = null) {
+      $this->id = 0;
+      $this->senseID = 0;
+      $this->type = 'unset';
+      $this->gender = 'none';
+      $this->word = null;
+    
       parent::__construct($data);
     }
     
     public function validate() {
       if (preg_match('/^\\s*$/', $this->word) || 
           preg_match('/^\\s*$/', $this->translation) || 
-          (!$this->index && $this->language < 1)) {
+          (!$this->index && $this->language < 1) || 
+           $this->senseID == 0) {
         return false;
       }
       
@@ -79,7 +86,7 @@
       throw new Exception('Not implemented exception');
     
       if ($this->id < 1) {
-        throw new InvalidParameterException('id');
+        throw new \exceptions\InvalidParameterException('id');
       }
       
       $conn = \data\Database::instance()->connection();
@@ -106,7 +113,7 @@
       }
       
       if ($id < 1) {
-        throw new InvalidParameterException('id');
+        throw new \exceptions\InvalidParameterException('id');
       }
       
       $db = \data\Database::instance();

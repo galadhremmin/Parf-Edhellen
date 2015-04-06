@@ -57,18 +57,18 @@
     
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h3 class="panel-title">Indexing</h3>
+      <h3 class="panel-title">Senses &mdash; associated indexes</h3>
     </div>
     <div class="panel-body">
       <div class="form-group">
-        <label for="ed-translate-index" class="col-sm-2 control-label">Tags</label>
+        <label for="ed-translate-index" class="col-sm-2 control-label">Senses</label>
         <div class="col-sm-10">
           <div class="input-group">
             <input type="text" class="form-control" id="ed-translate-index">
             <div class="input-group-btn">
               <button type="submit" class="btn btn-sm btn-default" id="ed-translate-index-add">
                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                Add tag
+                Add sense
               </button>
             </div>
           </div>    
@@ -114,5 +114,7 @@
     <input type="button" class="btn btn-default" type="button" value="Cancel">
     <input type="submit" class="btn btn-default" type="submit" value="Save">
   </div>
+  <input type="hidden" id="ed-translate-phonetic" value="{htmlentities($orig_phonetic)}" />
   <input type="hidden" id="ed-translate-id" value="{$id}" />
+  <input type="hidden" id="ed-translate-senseID" value="{$senseID}" />
 </form>

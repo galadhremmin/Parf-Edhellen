@@ -31,7 +31,7 @@
     }
     
     public function validate() {
-      return $this->key != null && !preg_match('/^\\s*$/', $this->key) && 
+      return  $this->key != null && !preg_match('/^\\s*$/', $this->key) && 
              ($this->id === null || is_numeric($this->id));
     }
     
@@ -51,7 +51,7 @@
         throw new \ErrorException('Invalid or malformed Word-object.');
       }
       
-      $credentials =& \auth\Credentials::request(new WordAccessRequest($this, \auth\AccessRight::CREATE));
+      $credentials =& \auth\Credentials::request(new \auth\WordAccessRequest($this, \auth\AccessRight::CREATE));
       
       // exclusive connections require the current account to be authenticated 
       $db = \data\Database::instance()->connection();
@@ -173,13 +173,17 @@
       );
     }
     
-    private static function register(Translation& $trans, Word $word = null) {    
+    private static function register(Translation& $trans, Word $word = null) {
       if (!$trans->validate()) {
-        throw new InvalidParameterException('translation');
+        throw new \exceptions\InvalidParameterException('translation');
       }
+      
+      $credentials =& \auth\Credentials::request(new \auth\TranslationAccessRequest($trans->id));
       
       if ($word === null) {
         $word = new \data\entities\Word();
+        \auth\Credentials::request(new \auth\WordAccessRequest($word, \auth\AccessRight::CREATE));
+       
         $word->create($trans->word);
       }
     
@@ -189,20 +193,17 @@
       // check sense validity
       $sense = new \data\entities\Sense();
       if ($sense->load($trans->senseID) === null) {
-        throw new InvalidParameterException('senseID');
+        throw new \exceptions\InvalidParameterException('senseID');
       }
       
-      $credentials =& \auth\Credentials::request(new WordAccessRequest($this, \auth\AccessRight::CREATE));
-      
       // Acquire current author
-      $this->accountID = $credentials->account()->id;
-      $accountID = $this->accountID; // this is only necessary for the MySQLi
+      $accountID = $credentials->account()->id; // this is only necessary for the MySQLi
 
       // Deprecate current translation entry
       if ($trans->id > 0) {
         // Indexes doesn't use words, hence this functionality applies only
         // to translations.
-        $query = $db->prepare('SELECT `WordID`, `NamespaceID` FROM `translation` WHERE `TranslationID` = ? AND (`EnforcedOwner` = 0 OR `EnforcedOwner` = ?)');
+        $query = $db->prepare('SELECT `WordID`, `NamespaceID` FROM `translation` WHERE `TranslationID` = ? AND `EnforcedOwner` IN(0, ?)');
         $query->bind_param('ii', $trans->id, $accountID);
         $query->execute();
         $query->bind_result($currentWordID, $currentSenseID);

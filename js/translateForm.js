@@ -75,8 +75,6 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
     
     // Perform validation on the data input.
     var errors = [];
-    
-    console.log(data);
 
     if (! data.language) {
       errors.push('language');
@@ -117,14 +115,24 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
       return;
     }
     
+    // Make sure to pass zero to the service
+    if (! data.id) {
+      data.id = 0;
+    }
+    
+    if (! data.senseID) {
+      data.senseID = 0;
+    }
+    
     // Pass the values to the web service for persistance.
     $.ajax({
       url: '/api/translation/save',
-      data: data
+      data: data,
+      method: 'post'
     }).done(function (data) {
       console.log(data);
     }).fail(function () {
-      console.log('CTranslateForm: failed to save ' + property + '.');
+      console.log('CTranslateForm: failed to save ' + JSON.stringify(data) + '.');
     });
   }
   

@@ -12,3 +12,7 @@ test/*
 ads/*
 lib/config/config.wordservice.php
 .idea
+.buildpath
+.project
+.settings
+phpinfo.php

@@ -3,7 +3,7 @@
   
   abstract class Entity {
   
-    protected function __construct($data = null) {
+    public function __construct($data = null) {
       if ($data !== null && is_array($data)) {
         $fields = get_object_vars($this);
       

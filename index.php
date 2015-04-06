@@ -19,4 +19,3 @@
       $r->displayEncapsulated('Error500');
     }
   }
-?>

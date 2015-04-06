@@ -40,10 +40,18 @@
         throw new \ErrorException('Empty, invalid or corrupt data source.');
       }
 
+      // de-jsonify the data source
+      foreach ($dataSource as $key => $value) {
+        $tmp = json_decode($value);
+        if ($tmp !== null) {
+          $dataSource[$key] = $tmp;
+        }
+      }
+
       try {
         $serviceRefl = new \ReflectionClass($service);
 
-        if (!$serviceRefl->isSubclassOf('\\services\\ServiceBase')) {
+        if (! $serviceRefl->isSubclassOf('\\services\\ServiceBase')) {
           throw new Exception('');
         }
 
@@ -51,7 +59,7 @@
           throw new \ErrorException('Unsupported method '.$method.' in '.$service);
         }
 
-        $servicePtr = new $service();
+        $servicePtr = $serviceRefl->newInstance();
         return $servicePtr->$method($dataSource, $param);
       } catch (ErrorException $e) {
         throw $e;

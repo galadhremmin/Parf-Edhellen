@@ -17,6 +17,7 @@
         
         $original =& $model->getOriginal();
         $this->_engine->assign('id',                $original->id);
+        $this->_engine->assign('senseID',           $original->senseID);
         $this->_engine->assign('orig_language',     $original->language);
         $this->_engine->assign('orig_word',         $original->word);
         $this->_engine->assign('orig_translation',  $original->translation);
@@ -26,6 +27,7 @@
         $this->_engine->assign('orig_tengwar',      $original->tengwar);
         $this->_engine->assign('orig_type',         $original->type);
         $this->_engine->assign('orig_gender',       $original->gender);
+        $this->_engine->assign('orig_phonetic',     $original->phonetic);
         
         $indexRefs = $original->getIndexes();
         $indexes   = array();
