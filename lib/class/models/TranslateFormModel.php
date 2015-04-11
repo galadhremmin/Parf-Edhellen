@@ -13,8 +13,8 @@
       $this->_wordGenders = \data\entities\Word::getWordGenders();
       $this->_original    = new \data\entities\Translation();
       
-      if (isset($_GET['translationID'])) {
-        $id = (integer) $_GET['translationID'];
+      if (isset($_GET['translationID']) && is_numeric($_GET['translationID'])) {
+        $id = intval($_GET['translationID']);
         $this->_original->load($id);
       }
     }

@@ -15,7 +15,7 @@
     }
     
     protected static function getIndex($id) {
-      $index = new ent::Translation();
+      $index = new \data\entities\Translation();
       $index->load($id);
       
       if (!$index->index) {

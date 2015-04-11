@@ -205,6 +205,10 @@
       }
     }
     
+    public function isAdministrator() {
+    	return in_array('Administrators', $this->groups);
+    }
+    
     private function isNicknameUnique() {
       $db = \data\Database::instance()->connection();
       

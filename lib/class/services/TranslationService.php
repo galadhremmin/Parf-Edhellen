@@ -80,7 +80,7 @@
       
       // register translations
       $translationObj = new \data\entities\Translation($values);
-      $result = \data\entities\Word::registerTranslation($translationObj);
+      $result = $translationObj->save();
       
       // Register indexes
       if (isset($data['indexes']) && is_array($data['indexes'])) {
@@ -91,7 +91,7 @@
             'senseID'  => $ns->id
           ));
           
-          \data\entities\Word::registerIndex($index);
+          $index->saveIndex();
         }
       }
       

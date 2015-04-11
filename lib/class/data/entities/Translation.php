@@ -63,6 +63,7 @@
       $this->type = 'unset';
       $this->gender = 'none';
       $this->word = null;
+      $this->index = false;
     
       parent::__construct($data);
     }
@@ -70,7 +71,7 @@
     public function validate() {
       if (preg_match('/^\\s*$/', $this->word) || 
           preg_match('/^\\s*$/', $this->translation) || 
-          (!$this->index && $this->language < 1) || 
+          (!$this->index && $this->language == 0) || 
            $this->senseID == 0) {
         return false;
       }
@@ -79,7 +80,156 @@
     }
     
     public function save() {
-      throw new \exceptions\NotImplementedException(__METHOD__);
+    	if (!$this->validate()) {
+    		throw new \exceptions\InvalidParameterException('translation');
+    	}
+    	
+    	$credentials =& \auth\Credentials::request(new \auth\TranslationAccessRequest($this->id));
+
+    	// Create or load the word associated with this translation.
+      $word = new \data\entities\Word();
+      $word->create($this->word);
+    	
+    	// Acquire a connection for making changes in the database.
+    	$db = \data\Database::instance()->connection();
+    	
+    	// check sense validity
+    	$sense = new \data\entities\Sense();
+    	if ($sense->load($this->senseID) === null) {
+    		throw new \exceptions\InvalidParameterException('senseID');
+    	}
+    	
+    	if ($this->index && $this->loadIndex($sense, $word)) {
+    		return $this;
+    	}
+    	
+    	// Acquire current author
+    	$accountID = $credentials->account()->id; // this is only necessary for the MySQLi
+    	
+    	// Deprecate current translation entry
+    	if ($this->id > 0) {
+    		// Indexes doesn't use words, hence this functionality applies only
+    		// to translations.
+    		$query = $db->prepare('SELECT `WordID`, `NamespaceID` FROM `translation` WHERE `TranslationID` = ? AND `EnforcedOwner` IN(0, ?)');
+    		$query->bind_param('ii', $this->id, $accountID);
+    		$query->execute();
+    		$query->bind_result($currentWordID, $currentSenseID);
+    		$query->fetch();
+    		$query->close();
+    	
+    		// remove all keywords to the (now) deprecated translation entry - the keywords table
+    		// shall only contain current, up-to-date definitions.
+    		$query = $db->prepare('DELETE FROM `keywords` WHERE `TranslationID` = ?');
+    		$query->bind_param('i', $this->id);
+    		$query->execute();
+    		$query->close();
+    	
+    		// deassociate the word with the previous translation entry
+    		if ($currentWordID != $word->id) {
+    			\data\entities\Word::unregisterReference($currentWordID);
+    		}
+    	
+    		// deassociate the sense with the previous translation entry
+    		if ($currentSenseID != $this->senseID) {
+    			$query = $db->prepare('SELECT COUNT(*) FROM `translation` WHERE `Latest` = 1 AND `NamespaceID` = ?');
+    			$query->bind_param('i', $currentSenseID);
+    			$query->execute();
+    			$query->bind_result($references);
+    			$query->fetch();
+    			$query->close();
+    	
+    			// If there are no references, delete the sense from active keywords table
+    			if ($references < 1) {
+    				$query = $db->prepare('DELETE FROM `keywords` WHERE `NamespaceID` = ?');
+    				$query->bind_param('i', $currentSenseID);
+    				$query->execute();
+    				$query->close();
+    			}
+    		}
+    	}
+    	
+    	if ($accountID < 1) {
+    		throw new \ErrorException('Invalid log in state.');
+    	}
+    	
+    	// Make sure that translations without enforced owners are always set to null.
+    	if ($this->owner == null || !is_numeric($this->owner)) {
+    		$this->owner = 0;
+    	}
+    	
+    	// Insert the row
+    	$query = $db->prepare(
+    			"INSERT INTO `translation` (`Translation`, `Etymology`, `Type`, `Source`, `Comments`,
+        `Tengwar`, `Phonetic`, `LanguageID`, `WordID`, `NamespaceID`, `Index`, `AuthorID`,
+        `EnforcedOwner`, `Latest`, `DateCreated`)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '1', NOW())"
+    	);
+    	$query->bind_param('sssssssiiiiii',
+    			$this->translation, $this->etymology, $this->type, $this->source, $this->comments,
+    			$this->tengwar, $this->phonetic, $this->language, $word->id, $this->senseID,
+    			$this->index, $accountID, $this->owner
+    	);
+    	
+    	$query->execute();
+    	
+    	$previousTranslationId = $this->id;
+    	$this->id = $query->insert_id;
+    	
+    	$query->close();
+    	
+    	if ($this->id == 0) {
+    		// failed!
+    		throw new \ErrorException('Failed to create translation entry for '.$this->word.'. Failure '.$db->errno.': '.$db->error);
+    	}
+    	
+    	// update the keywords table with the new results - but in order to do this, we'll need to normalize
+    	// the input strings to make sure to avoid collisions
+    	$nword    = \utils\StringWizard::normalize($word->key);
+    	$nkeyword = \utils\StringWizard::normalize($this->translation);
+    	
+    	// insert reference
+    	$insert = array('key' => $word->key, 'nkey' => $nword, 'transID' => $this->id, 'wordID' => $word->id);
+    	
+    	// The word key is always associated with this translation entry
+    	$query = $db->prepare('INSERT INTO `keywords` (`Keyword`, `NormalizedKeyword`, `TranslationID`, `WordID`) VALUES(?,?,?,?)');
+    	$query->bind_param('ssii', $insert['key'], $insert['nkey'], $insert['transID'], $insert['wordID']);
+    	$query->execute();
+    	
+    	// The translation field might contain information interesting in regards to its relevance. If this information
+    	// is not equal to the word already associated with the new entry, add the it as well.
+    	if ($nword !== $nkeyword && !preg_match('/^\\s*$/', $nkeyword)) {
+    		$keywordObj = new \data\entities\Word();
+    		$keywordObj->create($this->translation);
+    	
+    		$insert['key']     = $this->translation;
+    		$insert['nkey']    = $nkeyword;
+    		$insert['transID'] = $this->id;
+    		$insert['wordID']  = $keywordObj->id;
+    	
+    		$query->bind_param('ssii', $insert['key'], $insert['nkey'], $insert['transID'], $insert['wordID']);
+    		$query->execute();
+    	}
+    	
+    	$query->close();
+    	
+    	// Deprecated previous translation
+    	if ($previousTranslationId > 0) {
+    		$query = $db->prepare('UPDATE `translation` SET `Latest` = \'0\', `ParentTranslationID` = ? WHERE `TranslationID` = ?');
+    		$query->bind_param('ii', $this->id, $previousTranslationId);
+    		$query->execute();
+    		$query->close();
+    	}
+    	
+    	Sentence::updateReference($previousTranslationId, $this);
+    	return $this;
+    }
+
+    public function saveIndex() {
+    	$this->translation = 'index';
+    	$this->index = true;
+    	$this->save();
+    	
+    	return $this;
     }
     
     public function remove() {
@@ -142,6 +292,52 @@
       $query->close(); 
     }
     
+    /**
+     * Attempts to load the index for the specified sense and word. Assigns $id, and returns true on success.
+     * @param Sense $sense
+     * @param Word $word
+     * @throws \exceptions\InvalidParameterException
+     * @return boolean
+     */
+    public function loadIndex(Sense &$sense, Word &$word) {
+
+    	if ($sense == null || $sense->id == 0) {
+    		throw new \exceptions\InvalidParameterException('sense');
+    	}
+    	
+    	if ($word == null || $word->id == 0) {
+    		throw new \exceptions\InvalidParameterException('word');
+    	}
+    	
+    	$db = \data\Database::instance()->connection();
+    	$query = null;
+    	$translationID = 0;
+    	
+    	try {
+	    	$query = $db->prepare('SELECT `TranslationID` FROM `translation`
+	    			                   WHERE `Latest` = \'1\' AND `Index` = \'1\' AND `WordID` = ? AND `NamespaceID` = ?');
+	    	$query->bind_param('ii', $word->id, $sense->id);
+	    	$query->execute();
+	    	$query->bind_result($translationID);
+	    	$query->fetch();
+    	} finally {
+    		$query->close();
+    	}
+    	
+    	if ($translationID != 0) {
+    		$this->id = $translationID;
+    		$this->index = true; 
+    		return true;
+    	}
+    	
+    	return false;
+    }
+    
+    /**
+     * Retrieves an array of all indexes associated with the senses this translation is tied to.
+     * Every index is represented by an associative array, with the elements ID, wordID and word.  
+     * @return array
+     */
     public function getIndexes() {
       $normalizedTerm = \utils\StringWizard::normalize($this->word);
 
@@ -174,9 +370,23 @@
       return $indexes; 
     }
     
+    /**
+     * Transforms all longer strings into their HTML equivalents.
+     */
     public function transformContent() {
       $this->translation = \utils\StringWizard::createLinks($this->translation);
       $this->comments    = \utils\StringWizard::createLinks($this->comments);
+    }
+    
+    /**
+     * Disassociates this instance of the translation from its current owner. No changes are committed to the database.
+     */
+    public function disassociate() {
+    	$this->id = 0;
+    	$this->owner = 0;
+    	$this->authorID = 0;
+    	$this->authorName = null;
+    	$this->dateCreated = null;
     }
     
     public static function getTypes() {

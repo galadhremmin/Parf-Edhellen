@@ -5,6 +5,7 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
     this.listElement   = null;
     this.dataSource    = null;
     this.editElement   = null;
+    this.loading       = false;
   };
   
   /**
@@ -66,6 +67,11 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
   }
   
   CTranslateForm.prototype.saveTranslation = function () {
+    // Kill repetitive button clicks..
+    if (this.loading) {
+      return;
+    }
+    
     // Retrieve all information from the form.
     var sucker = new util.CFormSucker(this.parentElement, 'ed-translate-');
     var data = sucker.suck();
@@ -124,15 +130,22 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
       data.senseID = 0;
     }
     
+    this.loading = true;
     // Pass the values to the web service for persistance.
     $.ajax({
       url: '/api/translation/save',
       data: data,
       method: 'post'
     }).done(function (data) {
-      console.log(data);
+      if (! data.succeeded) {
+        this.loading = false;
+        return;
+      }
+      
+      window.location.href = '/dashboard.page?highlight=translation-' + data.response.id;
     }).fail(function () {
       console.log('CTranslateForm: failed to save ' + JSON.stringify(data) + '.');
+      this.loading = false;
     });
   }
   

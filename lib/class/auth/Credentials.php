@@ -8,6 +8,10 @@
     private static $_currentCredentials = null;
     private $_account;
 
+    /**
+     * Retrieves the current credentials.
+     * @return \auth\Credentials
+     */
     public static function &current() {
       // Retrieve the token stored in the session.
       $token       = self::getToken();
@@ -21,6 +25,13 @@
       return $credentials;
     }
     
+    /**
+     * Attempts to retrieve the credentials for the specified token, and assign it to the session container.
+     * If $create is set to true, a new account will be created for the specified token, if none exist. 
+     * @param string $token
+     * @param boolean $create
+     * @return \auth\Credentials
+     */
     public static function &load($token, $create = false) {
       if ($create) {
         // Preserve compatibility with existing accounts by using legacy hashing.
@@ -33,6 +44,13 @@
       return $credentials;
     }
     
+    /**
+     * Requires that the credentials are authorized to the specified access request.
+     * Returns the credentials if the credentials are authorized, and throws an exception if they're not.
+     * @param IAccessRequest $access
+     * @throws \exceptions\InadequatePermissionsException
+     * @return \auth\Credentials
+     */
     public static function &request(IAccessRequest $access) {
       // Pass the current credentials to the access request.
       if (! self::permitted($access)) {
@@ -42,18 +60,32 @@
       return self::current();
     }
     
+    /**
+     * Determines if the credentials are authorized to the specified access request.
+     * Returns true if the credentials are authorized, and false if they're not.
+     * @param IAccessRequest $access
+     * @return boolean
+     */
     public static function permitted(IAccessRequest $access) {
       // Pass the current credentials to the access request.
       $credentials =& self::current();
       return $access->request($credentials);
     }
 
+    /**
+     * Retrieves the last authenticated token from the session.
+     * @return string
+     */
     private static function getToken() {
       return isset($_SESSION[self::SESSION_VARS_KEY]) 
         ? (string) $_SESSION[self::SESSION_VARS_KEY] 
         : null;
     }
     
+    /**
+     * Assigns the specified token to the session.
+     * @param string $token
+     */
     private static function setToken($token) {
       $previousToken = self::getToken();
       $_SESSION[self::SESSION_VARS_KEY] = $token;
@@ -94,10 +126,18 @@
       $this->_account = $account;
     }
     
+    /**
+     * Returns an array of user groups associated with the account in possession of the credentials.
+     * @return array
+     */
     public function &groups() {
       return $this->_account->groups;
     }
     
+    /**
+     * Returns the account associated with the credentials.
+     * @return \data\entities\Account
+     */
     public function &account() {
       return $this->_account;
     } 

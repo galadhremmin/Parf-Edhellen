@@ -1,4 +1,4 @@
-<h2>{$title}</h2>
+<h2>{$operation}&nbsp;definition</h2>
 <p>Test.</p>
 
 <form class="form-horizontal" data-module="translateForm" action="#" method="post">
