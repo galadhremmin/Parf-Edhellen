@@ -7,11 +7,11 @@
     }
     
     public function load() {
-    	parent::load();
-    	
+      parent::load();
+      
       $model = $this->getModel();
       if ($model === null) {
-      	throw new \exceptions\NotImplementedException(__METHOD__);
+        throw new \exceptions\NotImplementedException(__METHOD__);
       }
       
       $this->bind($model);
@@ -26,7 +26,7 @@
       
       // Check whether the current user is permitted to perform changes tot his translation entry.
       if (! \auth\Credentials::permitted(new \auth\TranslationAccessRequest($original->id))) {
-      	$original->disassociate();
+        $original->disassociate();
       }
       
       $this->_engine->assign('id',                $original->id);
@@ -45,9 +45,9 @@
       $indexRefs = $original->getIndexes();
       $indexes   = array();
       foreach ($indexRefs as $indexRef) {
-      	if (!in_array($indexRef['word'], $indexes)) {
-        	$indexes[] = $indexRef['word'];
-      	}
+        if (!in_array($indexRef['word'], $indexes)) {
+          $indexes[] = $indexRef['word'];
+        }
       }
         
       $this->_engine->assign('orig_indexes', json_encode($indexes));

@@ -206,7 +206,7 @@
     }
     
     public function isAdministrator() {
-    	return in_array('Administrators', $this->groups);
+      return in_array('Administrators', $this->groups);
     }
     
     private function isNicknameUnique() {

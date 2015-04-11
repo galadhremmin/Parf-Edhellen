@@ -15,7 +15,7 @@
     }
     
     public function request(Credentials &$credentials) {
-    	// perform basic authorization to ensure the user is logged in.
+      // perform basic authorization to ensure the user is logged in.
       if (! parent::request($credentials) || ! is_numeric($this->_translationID)) {
         return false;
       }
@@ -28,29 +28,29 @@
       // Administrators always has access rights.
       $account =& $credentials->account();
       if ($account->isAdministrator()) {
-      	return true;
+        return true;
       }
 
       $query = null;
       $owner = 0;
       
       try {
-	      $db = \data\Database::instance();
-	      $query = $db->connection()->prepare(
-	        'SELECT `EnforcedOwner` FROM `translation` WHERE `TranslationID` = ?'
-	      );
-	      $query->bind_param('i', $this->_translationID);
-	      $query->execute();
-	      $query->bind_result($owner);
-	      $query->fetch();
-	      
+        $db = \data\Database::instance();
+        $query = $db->connection()->prepare(
+          'SELECT `EnforcedOwner` FROM `translation` WHERE `TranslationID` = ?'
+        );
+        $query->bind_param('i', $this->_translationID);
+        $query->execute();
+        $query->bind_result($owner);
+        $query->fetch();
+        
       } catch (\Exception $ex) {
-      	// assume something's seriously wrong and deny access if an exception is thrown. 
-      	return false;
+        // assume something's seriously wrong and deny access if an exception is thrown. 
+        return false;
       } finally {
-      	if ($query !== null) {
-      		$query->close();
-      	}
+        if ($query !== null) {
+          $query->close();
+        }
       }
       
       return ($owner == 0 || $owner == $account->id);
