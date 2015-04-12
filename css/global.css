@@ -252,3 +252,10 @@ blockquote h3 a {
 .alert {
   font-size: 1rem;
 }
+.ed-favourite-button {
+	opacity: 0.3;
+	transition: opacity 0.5s;
+}
+.ed-favourite-button:hover {
+  opacity: 1;
+}

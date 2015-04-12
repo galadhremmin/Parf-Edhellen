@@ -8,6 +8,7 @@
       parent::registerMainMethod('getProfile');
       parent::registerMethod('complete', 'completeProfile');
       parent::registerMethod('edit', 'editProfile');
+      parent::registerMethod('favourite', 'favourite');
     }
     
     public function handleRequest(&$data) {
@@ -19,7 +20,7 @@
       return $credentials->account();
     }
     
-    protected static function completeProfile(&$data) {
+    protected static function completeProfile(array &$data) {
       $credentials =& \auth\Credentials::request(new \auth\BasicAccessRequest());
       
       $author = $credentials->account();
@@ -29,7 +30,7 @@
       return true;
     }
     
-    protected static function editProfile(&$data) {
+    protected static function editProfile(array &$data) {
       $credentials =& \auth\Credentials::request(new \auth\BasicAccessRequest());
       $account     =& $credentials->account();
       
@@ -43,6 +44,27 @@
       
       $account->save();
       return $account;
+    }
+    
+    protected static function favourite(array &$data) {
+      $credentials =& \auth\Credentials::request(new \auth\BasicAccessRequest());
+      
+      if (!isset($data['translationID'])) {
+        throw new \exceptions\MissingParameterException('translationID');
+      }
+      
+      if (!isset($data['add'])) {
+        throw new \exceptions\MissingParameterException('add');
+      }
+
+      if (!is_numeric($data['translationID'])) {
+        throw new \exceptions\InvalidParameterException('translationID');
+      }
+
+      $id  = intval($data['translationID']);
+      $add = boolval($data['add']);
+      
+      return $id;
     }
   }
   

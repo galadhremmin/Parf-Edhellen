@@ -12,6 +12,7 @@ define(['exports', 'utilities'], function (exports, util) {
     this.currentTerm = undefined;
     this.containerId = containerId;
     this.loader      = util.CLoadingIndicator.shared('search-query-field-loading');
+    this.onNavigated = null;
   }
   
   /**
@@ -97,6 +98,10 @@ define(['exports', 'utilities'], function (exports, util) {
     if (!util.isElementInViewport(result)) {
       var position = Math.floor($(result).offset().top - 40); // 40 = magic number! ;)
       $('body,html').animate({scrollTop: position}, 500);
+    }
+    
+    if (typeof this.onNavigated === 'function') {
+      this.onNavigated.call(this);
     }
   }
   

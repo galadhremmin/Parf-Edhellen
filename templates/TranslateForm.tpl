@@ -111,7 +111,7 @@
     </div>
   </div>
   <div class="text-right">
-    <input type="button" class="btn btn-default" type="button" value="Cancel">
+    <input type="button" class="btn btn-default btn-cancel" type="button" value="Cancel">
     <input type="submit" class="btn btn-default" type="submit" value="Save">
   </div>
   <input type="hidden" id="ed-translate-phonetic" value="{htmlentities($orig_phonetic)}" />

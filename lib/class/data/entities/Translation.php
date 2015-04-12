@@ -57,6 +57,166 @@
       return 0;
     }
   
+    /**
+     * Retrieves an array with translations associated with the specified account.
+     * @param Account $account
+     * @return array of \data\entities\Translation
+     */
+    public static function getByAccount(Account &$account, $offset = 0, $max = 30) {
+      $db = \data\Database::instance()->connection();
+      $translations = array();
+      
+      $query = null;
+      try {
+       $query =  $db->prepare(
+           'SELECT t.`TranslationID`, w.`Key`, t.`LanguageID`, t.`Translation`, t.`DateCreated` FROM `translation` t
+              INNER JOIN `word` w ON w.`KeyID` = t.`WordID`
+              INNER JOIN `language` l ON l.`ID` = t.`LanguageID`
+            WHERE t.`AuthorID` = ? AND t.`Latest` = \'1\' AND t.`Index` = \'0\' AND l.`Invented` = \'1\'
+            ORDER BY t.`DateCreated` DESC
+            LIMIT ?, ?');
+       $query->bind_param('iii', $account->id, $offset, $max);
+       $query->execute();
+       $query->bind_result($id, $word, $language, $translation, $creationDate);
+       
+       while ($query->fetch()) {
+         $translations[] = new Translation(array(
+            'id'          => $id,
+            'word'        => $word,
+            'language'    => $language,
+            'owner'       => $account->id,
+            'translation' => $translation,
+            'dateCreated' => new \DateTime($creationDate)
+         ));
+       }
+      } finally {
+        if ($query !== null) { 
+          $query->close();
+        }
+      }
+      
+      return $translations;
+    }
+
+    public static function getTypes() {
+      if (is_array(self::$availableTypes)) {
+        return self::$availableTypes;
+      }
+    
+      $db = \data\Database::instance();
+    
+      $data = array();
+      $query = $db->connection()->query(
+          "SHOW COLUMNS FROM `translation` WHERE `Field` = 'Type'"
+      );
+    
+      while ($row = $query->fetch_object()) {
+        $values = null;
+        if (preg_match_all('/\'([a-zA-Z\\/\\|]+)\'/', $row->Type, $values)) {
+          foreach ($values[1] as $value) {
+            $data[$value] = str_replace(array('/', '|'), array('. and ', '. or '), $value).'.';
+          }
+    
+          ksort($data);
+        }
+      }
+    
+      $query->close();
+    
+      // Save the results, for quicker access next time.
+      self::$availableTypes = $data;
+      return $data;
+    }
+    
+    public static function translate($term, $languageFilter = null) {
+      $db             = \data\Database::instance();
+      $normalizedTerm = \utils\StringWizard::normalize($term);
+    
+      $senses   = self::findSensesByTerm($normalizedTerm);
+      $data     = array('senses' => $senses);
+      $senseIDs = array_keys($senses);
+    
+      if (count($senseIDs) < 1) {
+        return null;
+      }
+    
+      $senseIDs = implode(',', $senseIDs);
+    
+      // Find all translations for the words specified. The array of IDs is used
+      // now as a means to identify the words themselves.
+      $query = $db->connection()->prepare(
+          'SELECT w.`Key` AS `Word`, t.`TranslationID`, t.`Translation`, t.`Etymology`,
+           t.`Type`, t.`Source`, t.`Comments`, t.`Tengwar`, t.`Phonetic`,
+           l.`Name` AS `Language`, t.`NamespaceID`, l.`Invented` AS `LanguageInvented`,
+           t.`EnforcedOwner`, t.`AuthorID`, a.`Nickname`, w.`NormalizedKey`, t.`Index`,
+           t.`DateCreated`
+         FROM `translation` t
+         INNER JOIN `word` w ON w.`KeyID` = t.`WordID`
+         INNER JOIN `language` l ON l.`ID` = t.`LanguageID`
+         LEFT JOIN `auth_accounts` a ON a.`AccountID` = t.`AuthorID`
+         WHERE t.`NamespaceID` IN('.$senseIDs.') AND t.`Latest` = 1
+         ORDER BY t.`NamespaceID` ASC, l.`Name` DESC, w.`Key` ASC'
+      );
+    
+      $query->execute();
+      $query->bind_result(
+          $word, $translationID, $translation, $etymology, $type,
+          $source, $comments, $tengwar, $phonetic, $language,
+          $senseID, $inventedLanguage, $owner, $authorID,
+          $authorName, $normalizedWord, $isIndex, $dateCreated
+      );
+    
+      $data['translations']   = array();
+      $data['keywordIndexes'] = array();
+    
+      while ($query->fetch()) {
+    
+        if ($isIndex == 1) {
+    
+          $ptr =& $data['keywordIndexes'];
+    
+        } else {
+    
+          if (!isset($data['translations'][$language]))
+            $data['translations'][$language] = array();
+    
+          $ptr =& $data['translations'][$language];
+        }
+    
+        // Order affected associative array by language
+        $translation = new Translation(
+            array(
+                'word'        => $word,
+                'id'          => $translationID,
+                'translation' => \utils\StringWizard::createLinks($translation),
+                'etymology'   => \utils\StringWizard::createLinks($etymology),
+                'type'        => $type,
+                'tengwar'     => \utils\StringWizard::preventXSS($tengwar),
+                'phonetic'    => \utils\StringWizard::preventXSS($phonetic),
+                'source'      => \utils\StringWizard::preventXSS($source),
+                'comments'    => empty($comments) ? null : \utils\StringWizard::createLinks($comments),
+                'language'    => $language,
+                'senseID'     => $senseID,
+                'owner'       => $owner,
+                'authorID'    => $authorID,
+                'authorName'  => $authorName,
+                'dateCreated' => $dateCreated
+            )
+        );
+    
+        self::calculateRating($translation, $normalizedTerm);
+    
+        $ptr[] = $translation;
+      }
+    
+      $query->close();
+    
+      foreach (array_keys($data['translations']) as $language)
+        usort($data['translations'][$language], '\\utils\\TranslationComparer::compare');
+    
+      return $data;
+    }
+    
     public function __construct($data = null) {
       $this->id = 0;
       $this->senseID = 0;
@@ -387,125 +547,6 @@
       $this->authorID = 0;
       $this->authorName = null;
       $this->dateCreated = null;
-    }
-    
-    public static function getTypes() {
-      if (is_array(self::$availableTypes)) {
-        return self::$availableTypes;
-      }
-    
-      $db = \data\Database::instance();
-    
-      $data = array();
-      $query = $db->connection()->query(
-        "SHOW COLUMNS FROM `translation` WHERE `Field` = 'Type'"
-      );
-      
-      while ($row = $query->fetch_object()) {
-        $values = null;
-        if (preg_match_all('/\'([a-zA-Z\\/\\|]+)\'/', $row->Type, $values)) {
-          foreach ($values[1] as $value) {
-            $data[$value] = str_replace(array('/', '|'), array('. and ', '. or '), $value).'.';
-          }
-          
-          ksort($data);
-        }
-      }
-      
-      $query->close();
-
-      // Save the results, for quicker access next time.
-      self::$availableTypes = $data;
-      return $data;
-    }
-    
-    public static function translate($term, $languageFilter = null) {
-      $db             = \data\Database::instance();
-      $normalizedTerm = \utils\StringWizard::normalize($term);
-    
-      $senses   = self::findSensesByTerm($normalizedTerm);
-      $data     = array('senses' => $senses);
-      $senseIDs = array_keys($senses);
-      
-      if (count($senseIDs) < 1) {
-        return null;
-      }
-      
-      $senseIDs = implode(',', $senseIDs);
-
-      // Find all translations for the words specified. The array of IDs is used
-      // now as a means to identify the words themselves.
-      $query = $db->connection()->prepare(
-        'SELECT w.`Key` AS `Word`, t.`TranslationID`, t.`Translation`, t.`Etymology`, 
-           t.`Type`, t.`Source`, t.`Comments`, t.`Tengwar`, t.`Phonetic`,
-           l.`Name` AS `Language`, t.`NamespaceID`, l.`Invented` AS `LanguageInvented`,
-           t.`EnforcedOwner`, t.`AuthorID`, a.`Nickname`, w.`NormalizedKey`, t.`Index`,
-           t.`DateCreated`
-         FROM `translation` t
-         INNER JOIN `word` w ON w.`KeyID` = t.`WordID`
-         INNER JOIN `language` l ON l.`ID` = t.`LanguageID`
-         LEFT JOIN `auth_accounts` a ON a.`AccountID` = t.`AuthorID`
-         WHERE t.`NamespaceID` IN('.$senseIDs.') AND t.`Latest` = 1
-         ORDER BY t.`NamespaceID` ASC, l.`Name` DESC, w.`Key` ASC'
-      );
-      
-      $query->execute();
-      $query->bind_result(
-        $word, $translationID, $translation, $etymology, $type, 
-        $source, $comments, $tengwar, $phonetic, $language, 
-        $senseID, $inventedLanguage, $owner, $authorID, 
-        $authorName, $normalizedWord, $isIndex, $dateCreated
-      );
-      
-      $data['translations']   = array();
-      $data['keywordIndexes'] = array();
-      
-      while ($query->fetch()) {
-      
-        if ($isIndex == 1) {
-          
-          $ptr =& $data['keywordIndexes'];
-        
-        } else {
-          
-          if (!isset($data['translations'][$language]))
-            $data['translations'][$language] = array();
-          
-          $ptr =& $data['translations'][$language];
-        }
-        
-        // Order affected associative array by language
-        $translation = new Translation(
-          array(
-            'word'        => $word,
-            'id'          => $translationID,
-            'translation' => \utils\StringWizard::createLinks($translation),
-            'etymology'   => \utils\StringWizard::createLinks($etymology),
-            'type'        => $type,
-            'tengwar'     => \utils\StringWizard::preventXSS($tengwar),
-            'phonetic'    => \utils\StringWizard::preventXSS($phonetic),
-            'source'      => \utils\StringWizard::preventXSS($source),
-            'comments'    => empty($comments) ? null : \utils\StringWizard::createLinks($comments),
-            'language'    => $language,
-            'senseID'     => $senseID,
-            'owner'       => $owner,
-            'authorID'    => $authorID,
-            'authorName'  => $authorName,
-            'dateCreated' => $dateCreated
-          )
-        );
-        
-        self::calculateRating($translation, $normalizedTerm);
-        
-        $ptr[] = $translation;
-      }
-      
-      $query->close();
-      
-      foreach (array_keys($data['translations']) as $language)
-        usort($data['translations'][$language], '\\utils\\TranslationComparer::compare');
-
-      return $data;
     }
     
     private static function findSensesByTerm($normalizedTerm) {

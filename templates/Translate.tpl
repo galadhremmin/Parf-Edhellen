@@ -1,4 +1,8 @@
-<div id="translation-entry">
+<div id="translation-entry"
+{if $loggedIn}
+data-module="translation"
+{/if}
+>
 {* iterate through all translations where the key of the array defines the associated language. The counter 
    uniquely identifies each translation entry, so that the user might levelage this information while navigating
    the results *}
@@ -23,6 +27,9 @@
         <a href="about.page?browseTo=unverified" title="This gloss originated from an outdated, unverified or debatable source."><span class="glyphicon glyphicon-question-sign"></span></a>
         {/if}
         {$translation->word}
+        {if $loggedIn}
+        <a href="#" class="ed-favourite-button" data-translation-id="{$translation->id}" title="Add to favourites."><span class="glyphicon glyphicon-star-empty pull-right " aria-hidden="true"></span></a>
+        {/if}
       </h3> 
       {if $translation->tengwar != null}
       &#32;<span class="tengwar">{$translation->tengwar}</span>

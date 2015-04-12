@@ -40,6 +40,10 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
       _this.saveTranslation();
     });
     
+    element.find('.btn-cancel').on('click', function (ev) {
+      window.location.href = '/dashboard.page';
+    });
+    
     this.editElement.on('keydown', function (ev) {
       // enter key?
       if (ev.which === 13) {
