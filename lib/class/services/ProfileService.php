@@ -64,6 +64,18 @@
       $id  = intval($data['translationID']);
       $add = boolval($data['add']);
       
+      $translation = new \data\entities\Translation();
+      $translation->load($id);
+      
+      if ($translation->validate()) {
+        $favourite = new \data\entities\Favourite(array(
+          'translation' => $translation,
+          'accountID'   => $credentials->account()->id
+        ));
+        
+        $favourite->save();
+      }
+      
       return $id;
     }
   }

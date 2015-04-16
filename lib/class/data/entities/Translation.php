@@ -128,6 +128,52 @@
       return $data;
     }
     
+    public static function translateSingle($id) {
+      $db = \data\Database::instance();
+      
+      $translation = new \data\entities\Translation();
+      $translation->load($id);
+      
+      // Does it really exist?
+      if (! $translation->validate()) {
+        return null;
+      }
+      
+      // Don't allow people to find indexes
+      if ($translation->index) {
+        return null;
+      }
+    
+      // prepare for the web
+      $translation->transformContent();
+    
+      // retrieve the sense 
+      $sense = new Sense();
+      $sense->load($translation->senseID);
+      
+      if (! $sense->validate()) {
+        return null;
+      }
+      
+      // load language
+      $language = new Language();
+      $language->load($translation->language);
+      
+      if (! $language->validate()) {
+        return null;
+      }
+      
+      // emulate the output from the multiple-yield translation method
+      $data = array(
+          'senses'         => array($sense->id => $sense->identifier),
+          'translations'   => array($language->name => array($translation)),
+          'keywordIndexes' => array(),
+          'translation'    => $translation
+      );
+      
+      return $data;
+    }
+    
     public static function translate($term, $languageFilter = null) {
       $db             = \data\Database::instance();
       $normalizedTerm = \utils\StringWizard::normalize($term);
@@ -431,9 +477,10 @@
         'SELECT 
           t.`LanguageID`, t.`Translation`, t.`Etymology`, t.`Type`, t.`Source`, t.`Comments`, 
           t.`Tengwar`, t.`Gender`, t.`Phonetic`, w.`Key`, t.`NamespaceID`, t.`AuthorID`,
-          t.`DateCreated`, t.`Latest`, t.`Index`, t.`WordID`, t.`EnforcedOwner`
+          t.`DateCreated`, t.`Latest`, t.`Index`, t.`WordID`, t.`EnforcedOwner`, a.`Nickname`
          FROM `translation` t 
-         LEFT JOIN `word` w ON w.`KeyID` = t.`WordID`
+           LEFT JOIN `word` w ON w.`KeyID` = t.`WordID`
+           INNER JOIN `auth_accounts` a ON a.`AccountID` = t.`AuthorID`
          WHERE t.`TranslationID` = ?'
       );
 
@@ -442,7 +489,7 @@
       $query->bind_result(
         $this->language, $this->translation, $this->etymology, $this->type, $this->source, $this->comments,
         $this->tengwar, $this->gender, $this->phonetic, $this->word, $this->senseID, $this->authorID,
-        $this->dateCreated, $this->latest, $this->index, $this->wordID, $this->owner
+        $this->dateCreated, $this->latest, $this->index, $this->wordID, $this->owner, $this->authorName
       );
       
       if ($query->fetch()) {

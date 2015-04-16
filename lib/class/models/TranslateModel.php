@@ -21,12 +21,23 @@
         $this->_term = stripslashes($this->_term);
       }
 
-      // Search term, without specila characters.
-      $this->_term = \utils\StringWizard::normalize($this->_term);
-
       // Retrieve translation data for the specified term
-      $data = \data\entities\Translation::translate($this->_term);
-      
+      $matches = null;
+      if (preg_match('/^translationID=([0-9]+)$/', $this->_term, $matches)) {
+        // A specified translation has been requested, so attempt to retrieve it.
+        $translationID = intval($matches[1]);
+        
+        $data = \data\entities\Translation::translateSingle($translationID);
+        if ($data !== null) {
+          $this->_term = $data['translation']->word;
+        }
+      } else {
+        // Perform a broad translation search on the term specified.
+        // Remove special characters.
+        $this->_term = \utils\StringWizard::normalize($this->_term);
+        $data = \data\entities\Translation::translate($this->_term);
+      }
+       
       if ($data !== null) {
         $this->_senses         = $data['senses'];
         $this->_translations   = $data['translations'];

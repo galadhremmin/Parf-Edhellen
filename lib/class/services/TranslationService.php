@@ -99,10 +99,10 @@
     }
     
     protected static function translate(&$input) {    
-      if (!isset($input['term'])) {
+      if (!isset($input['term']) || !is_string($input['term'])) {
         throw new \Exception("Missing parameter 'term'.");
       }
-      
+
       return \data\entities\Translation::translate($input['term'], null);
     }
   }

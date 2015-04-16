@@ -42,6 +42,14 @@
   <div class="col-sm-6">
     <h3>Favourites</h3>
     <p></p>
+    <ul class="list-group">
+      {foreach $favourites as $favourite}
+      <li class="list-group-item" id="translation-{$favourite->id}">
+        <a href="/index.page#translationID={urlencode($favourite->translation->id)}">{$favourite->translation->word}</a>
+        <span class="label label-default pull-right">{date_format($favourite->dateCreated, 'Y-m-d H:i')}</span>
+      </li>
+      {/foreach}
+    </ul>
   </div>
   
 </div>

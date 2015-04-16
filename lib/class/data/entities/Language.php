@@ -15,7 +15,30 @@
       return true;
     }
     
-    public function load($numericId) {
+    public function load($id) {
+      if (!is_numeric($id)) {
+        return $this;
+      }
+      
+      $query = null;
+      $db = \data\Database::instance()->connection();
+      try {
+        
+        $query = $db->prepare('SELECT `Name`, `Invented`, `Tengwar` FROM `language` WHERE `ID` = ?');
+        $query->bind_param('i', $id);
+        $query->execute();
+        $query->bind_result($this->name, $this->invented, $this->tengwar);
+        
+        if ($query->fetch()) {
+          $this->id = $id;
+        }
+        
+      } finally {
+        if ($query !== null) {
+          $query->close();
+        }
+      }
+      
       return $this;
     }
     
