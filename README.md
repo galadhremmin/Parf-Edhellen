@@ -13,3 +13,7 @@ Coding style
 The source code is provided as-is. The code does not, in any shape or form, reflect best coding practices; it's a non-profit hobby project of mine.
 
 Maintained by Leonard Wickmark.
+
+License
+-------
+ElfDict (Parf Edhellen; elfdict.com) is licensed in accordance to [BY-NC 4.0](http://creativecommons.org/licenses/by-nc/4.0/).
