@@ -16,4 +16,4 @@ Maintained by Leonard Wickmark.
 
 License
 -------
-ElfDict (Parf Edhellen; elfdict.com) is licensed in accordance to [BY-NC 4.0](http://creativecommons.org/licenses/by-nc/4.0/).
+ElfDict (Parf Edhellen; elfdict.com) is licensed in accordance by [BY-NC 4.0](http://creativecommons.org/licenses/by-nc/4.0/).
