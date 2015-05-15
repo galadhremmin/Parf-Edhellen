@@ -15,16 +15,13 @@
      * @return \auth\Credentials
      */
     public static function &current() {
-      // Retrieve the token stored in the session.
-      $token       = self::getToken();
-      $credentials = self::$_currentCredentials;
-      
-      if ($credentials === null) {
+      if (self::$_currentCredentials == null) {
         // Use the information to create an instance of the credentials class.
-        $credentials = self::load($token);
+        $token = self::getToken();
+        self::load($token);
       }
       
-      return $credentials;
+      return self::$_currentCredentials;
     }
     
     /**
@@ -60,9 +57,8 @@
           $account->updateToken($token);
         }
         
-        return self::load($account->identity);
+        return self::load($tmpToken);
       }
-      $accounts = null;
 
       $account = new \data\entities\Account(array(
           'email'      => $email,

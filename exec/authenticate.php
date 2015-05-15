@@ -26,8 +26,13 @@
   $profile = $authProvider->getUserProfile();
   
   // Authenticate the profile
+  $nickname = trim( $profile->firstName.' '.$profile->lastName );
+  if (empty($nickname)) {
+    $nickname = null;
+  }
+  
   $token       = new \auth\AccessToken($provider->id, $profile->identifier);
-  $credentials = \auth\Credentials::authenticate($provider->id, $profile->email, $token, $profile->firstName.' '.$profile->lastName);
+  $credentials = \auth\Credentials::authenticate($provider->id, $profile->email, $token, $nickname);
   
   // Test authentication status
   if (! $credentials->permitted(new \auth\BasicAccessRequest())) {

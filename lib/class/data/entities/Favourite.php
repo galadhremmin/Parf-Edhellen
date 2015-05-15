@@ -17,7 +17,7 @@
       
       try {
         if ($IDsOnly) {
-          $query = $db->prepare('SELECT `ID` FROM favourite` WHERE `AccountID` = ?');
+          $query = $db->prepare('SELECT `ID` FROM `favourite` WHERE `AccountID` = ?');
           $query->bind_param('i', $account->id);
           $query->execute();
           $query->bind_result($id);
@@ -48,9 +48,7 @@
           }
         }
       } finally {
-        if ($query !== null) {
-          $query->close();
-        }
+        $query = null;
       }
       
       return $favourites;

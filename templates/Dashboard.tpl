@@ -8,6 +8,9 @@
 	    <h3>Translations</h3>
 	    <p></p>
 	    <ul class="list-group">
+	      {if count($translations) < 1}
+	      You have published no translations.
+	      {else}
 	      {foreach $translations as $translation}
 	      <li class="list-group-item" id="translation-{$translation->id}">
 	        <a href="/translateForm.page?translationID={$translation->id}">{$translation->word}</a>
@@ -16,6 +19,7 @@
 	        <span class="label label-default pull-right">{date_format($translation->dateCreated, 'Y-m-d H:i')}</span>
 	      </li>
 	      {/foreach}
+	      {/if}
 	    </ul>
 	    <!--
 	    <nav>
@@ -44,12 +48,16 @@
 	    <h3>Favourites</h3>
 	    <p></p>
 	    <ul class="list-group">
+	      {if count($favourites) < 1}
+	      You have no favourites.
+	      {else}
 	      {foreach $favourites as $favourite}
 	      <li class="list-group-item" id="favourite-{$favourite->id}">
 	        <a href="/index.page#translationID={urlencode($favourite->translation->id)}">{$favourite->translation->word}</a>
 	        <a class="pull-right favourite-delete" href="#" data-favourite-id="{$favourite->id}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
 	      </li>
 	      {/foreach}
+	      {/if}
 	    </ul>
 	  </div>
 	  
