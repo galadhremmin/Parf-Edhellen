@@ -5,7 +5,7 @@
 <form method="get" action="#" data-module="profile" id="profile-completion">
   <div class="input-group">
     <span class="input-group-addon" id="sizing-addon2"><span class="glyphicon glyphicon-user" aria-hidden="true"></span></span>
-    <input type="text" class="form-control" placeholder="Your name..." id="preferred-nickname">
+    <input type="text" class="form-control" placeholder="Your nickname..." id="preferred-nickname" value="{$nickname}">
     <span class="input-group-btn">
       <button class="btn btn-default" type="submit">Save &amp; Proceed</button>
     </span>

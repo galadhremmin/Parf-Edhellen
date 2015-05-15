@@ -311,17 +311,22 @@
       
       // Acquire current author
       $accountID = $credentials->account()->id; // this is only necessary for the MySQLi
+      $eldestTranslationID = null;
       
       // Deprecate current translation entry
       if ($this->id > 0) {
         // Indexes doesn't use words, hence this functionality applies only
         // to translations.
-        $query = $db->prepare('SELECT `WordID`, `NamespaceID` FROM `translation` WHERE `TranslationID` = ? AND `EnforcedOwner` IN(0, ?)');
+        $query = $db->prepare('SELECT `WordID`, `NamespaceID`, `EldestTranslationID` FROM `translation` WHERE `TranslationID` = ? AND `EnforcedOwner` IN(0, ?)');
         $query->bind_param('ii', $this->id, $accountID);
         $query->execute();
-        $query->bind_result($currentWordID, $currentSenseID);
+        $query->bind_result($currentWordID, $currentSenseID, $eldestTranslationID);
         $query->fetch();
         $query->close();
+        
+        if (! $eldestTranslationID) {
+          $eldestTranslationID = $this->id;
+        }
       
         // remove all keywords to the (now) deprecated translation entry - the keywords table
         // shall only contain current, up-to-date definitions.
@@ -367,13 +372,13 @@
       $query = $db->prepare(
           "INSERT INTO `translation` (`Translation`, `Etymology`, `Type`, `Source`, `Comments`,
         `Tengwar`, `Phonetic`, `LanguageID`, `WordID`, `NamespaceID`, `Index`, `AuthorID`,
-        `EnforcedOwner`, `Latest`, `DateCreated`)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '1', NOW())"
+        `EnforcedOwner`, `EldestTranslationID`, `Latest`, `DateCreated`)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '1', NOW())"
       );
-      $query->bind_param('sssssssiiiiii',
+      $query->bind_param('sssssssiiiiiii',
           $this->translation, $this->etymology, $this->type, $this->source, $this->comments,
           $this->tengwar, $this->phonetic, $this->language, $word->id, $this->senseID,
-          $this->index, $accountID, $this->owner
+          $this->index, $accountID, $this->owner, $eldestTranslationID
       );
       
       $query->execute();

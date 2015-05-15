@@ -10,14 +10,42 @@
     public $profile;
     public $configured;
     public $groups;
+    public $email;
+    public $providerID;
     
     public $dateRegistered;
     public $translationCount;
     public $wordCount;
     
-    public function __construct($data = null) {
-      parent::__construct($data);
+    public static function getAccountForProviderAndEmail($providerID, $email) {
       
+      $account = null;
+      $query = null;
+      try {
+        $query = \data\Database::instance()->connection()->prepare(
+            'SELECT `AccountID`, `Nickname`, `Configured`, `Identity` FROM `auth_accounts` WHERE `Email` = ? AND  `ProviderID` = ?'
+        );
+        $query->bind_param('si', $email, $providerID);
+        $query->execute();
+        $query->bind_result($accountID, $nickname, $configured, $identity);
+                
+        if ($query->fetch()) {
+          $account = new Account(array(
+             'id'          => $accountID,
+              'nickname'   => $nickname,
+              'configured' => $configured,
+              'identity'   => $identity
+          ));
+        }
+        
+      } finally {
+        $query = null;
+      }
+      
+      return $account;
+    }
+    
+    public function __construct($data = null) {      
       $this->id = 0;
       $this->nickname = null;
       $this->tengwar = null;
@@ -29,6 +57,8 @@
       $this->dateRegistered = date('Y-m-d h:i');
       $this->translationCount = 0;
       $this->wordCount = 0;
+      
+      parent::__construct($data);
     }
     
     public function validate() {
@@ -39,70 +69,103 @@
       return true;
     }
     
-    public function load($salted_identity, $completeLoad = false) {
+    public function load($token, $completeLoad = false) {
       $db = \data\Database::instance();
+      $query = null;
       
-      if (is_numeric($salted_identity)) {
-        $query = $db->connection()->prepare(
-          'SELECT `AccountID`, `Nickname`, `Configured`, `Identity` FROM `auth_accounts` WHERE `AccountID` = ?'
-        );
+      if (is_numeric($token)) {
+        try {
+          $query = $db->connection()->prepare(
+            'SELECT `AccountID`, `Nickname`, `Configured`, `Identity` FROM `auth_accounts` WHERE `AccountID` = ?'
+          );
+          
+          $query->bind_param('i', $token);
         
-        $query->bind_param('i', $salted_identity);
-      
-      } else {
-        $query = $db->connection()->prepare(
-          'SELECT `AccountID`, `Nickname`, `Configured`, `Identity` FROM `auth_accounts` WHERE `Identity` = ?'
-        );
+          $query->execute();
+          $query->bind_result($this->id, $this->nickname, $this->configured, $identity);
+          $query->fetch();
         
-        $query->bind_param('s', $salted_identity);
-      }
+          // ensure that the bit is converted to a boolean value
+          $this->configured = $this->configured == 1;
+        } finally {
+          $query = null;
+        }
+
+        if (! $this->validate()) {
+          throw new \exceptions\InvalidParameterException('token');
+        }
       
-      $query->execute();
-      $query->bind_result($this->id, $this->nickname, $this->configured, $identity);
-      $query->fetch();
-      
-      // ensure that the bit is converted to a boolean value
-      $this->configured = $this->configured == 1;
-      
-      $query->close();
-      
-      if (!$this->validate()) {
-        $this->identity = $salted_identity;
+      } else if ($token instanceof \auth\AccessToken) {
+        
+        try {
+          $query = $db->connection()->prepare(
+            'SELECT `AccountID`, `Nickname`, `Configured` FROM `auth_accounts` WHERE Identity = ?'
+          );
+          
+          $query->bind_param('s', $token->hashedToken);
+          $query->execute();
+          $query->bind_result($accountID, $nickname, $configured);
+          
+          if ($query->fetch()) {
+            $this->id         = $accountID;
+            $this->nickname   = $nickname;
+            $this->configured = $configured == 1;
+            $this->identity   = $token->hashedToken;
+          }
+        } finally {
+          $query = null;
+        }
+
+        if (! $this->validate()) {
+          $this->id = 0;
+          return;
+        }
+        
+      } else if (is_string($token)) {
+        $token = \auth\AccessToken::fromHash($token);
+        $this->load($token, $completeLoad);
         return;
+      } else {
+        throw new \exceptions\InvalidParameterException('token');
       }
       
       if ($completeLoad) {
+        try {
+          $query = $db->connection()->prepare(
+            'SELECT `DateRegistered` FROM `auth_accounts` WHERE `AccountID` = ?'
+          );
+          $query->bind_param('i', $this->id);
+          $query->execute();
+          $query->bind_result($this->dateRegistered);
+          $query->fetch();
+          $query->close();
+          
+          $this->wordCount        = Sense::countByAccount($this);
+          $this->translationCount = Translation::countByAccount($this);
+        } finally {
+          $query = null;
+        }
+      }
+      
+      try {
         $query = $db->connection()->prepare(
-          'SELECT `DateRegistered` FROM `auth_accounts` WHERE `AccountID` = ?'
+          'SELECT g.`name` FROM `auth_accounts_groups` rel
+             INNER JOIN `auth_groups` g ON g.`ID` = rel.`GroupID`
+           WHERE rel.`AccountID` = ?'
         );
+        
         $query->bind_param('i', $this->id);
         $query->execute();
-        $query->bind_result($this->dateRegistered);
-        $query->fetch();
-        $query->close();
+        $query->bind_result($groupName);
         
-        $this->wordCount        = Sense::countByAccount($this);
-        $this->translationCount = Translation::countByAccount($this);
+        $this->groups = array();
+        while ($query->fetch()) {
+          $this->groups[] = $groupName;
+        }
+        
+      } finally {
+        $query = null;
       }
-      
-      $query = $db->connection()->prepare(
-        'SELECT g.`name` FROM `auth_accounts_groups` rel
-           INNER JOIN `auth_groups` g ON g.`ID` = rel.`GroupID`
-         WHERE rel.`AccountID` = ?'
-      );
-      
-      $query->bind_param('i', $this->id);
-      $query->execute();
-      $query->bind_result($groupName);
-      
-      $this->groups = array();
-      while ($query->fetch()) {
-        $this->groups[] = $groupName;
-      }
-      
-      $query->close();
-      
-      $this->identity = $identity;
     }
     
     public function save() {
@@ -122,6 +185,25 @@
         $this->saveChanges();
       }
     }
+    
+    public function updateToken(\auth\AccessToken &$token) {
+      if (! $this->validate()) {
+        throw new \exceptions\ValidationException(__CLASS__);
+      }
+      
+      $db = \data\Database::instance();
+      
+      $query = null;
+      try {
+        $query = $db->connection()->prepare(
+            'UPDATE `auth_accounts` SET `Identity` = ? WHERE `AccountID` = ?'
+        );
+        $query->bind_param('si', $token->hashedToken, $this->id);
+        $query->execute();
+      } finally {
+        $query = null;
+      }
+    }
 
     private function create() {
       $db = \data\Database::instance();
@@ -130,21 +212,32 @@
         $this->nickname = null;
       }
       
-      $query = $db->connection()->prepare(
-        "INSERT INTO `auth_accounts` (`Identity`, `Nickname`, `DateRegistered`, `Configured`) VALUES (?, ?, NOW(), '0')"
-      );
-      $query->bind_param('ss', $this->identity, $this->nickname);
-      $query->execute();
-      $this->id = $query->insert_id;
-      $query->close();
+      $query = null;
+      try {
+        $query = $db->connection()->prepare(
+          "INSERT INTO `auth_accounts` (`Identity`, `Nickname`, `Email`, `ProviderID`, `DateRegistered`, `Configured`) VALUES (?, ?, ?, ?, NOW(), '0')"
+        );
+        $query->bind_param('sssi', $this->identity, $this->nickname, $this->email, $this->providerID);
+        $query->execute();
+        $this->id = $query->insert_id;
+      } finally {
+        $query = null;
+      }
       
-      $query = $db->connection()->prepare(
-        'INSERT INTO `auth_accounts_groups` (`AccountID`, `GroupID`) 
-         SELECT ?, ID FROM `auth_groups` WHERE `name` = \'Users\' LIMIT 1' // limit 1 should be unnecessary, but just in case hic sunt dracones...
-      );
-      $query->bind_param('i', $this->id);
-      $query->execute();
-      $query->close();
+      if ($this->id === 0) {
+        throw new \Exception('Failed to create Account.');
+      }
+      
+      try {
+        $query = $db->connection()->prepare(
+          'INSERT INTO `auth_accounts_groups` (`AccountID`, `GroupID`) 
+           SELECT ?, ID FROM `auth_groups` WHERE `name` = \'Users\' LIMIT 1' // limit 1 should be unnecessary, but just in case hic sunt dracones...
+        );
+        $query->bind_param('i', $this->id);
+        $query->execute();
+      } finally {
+        $query = null;
+      }
     }
     
     private function saveChanges() {

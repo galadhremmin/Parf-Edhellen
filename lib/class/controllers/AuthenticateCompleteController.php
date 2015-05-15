@@ -14,8 +14,10 @@
         return;
       }
             
-      if (!empty($this->_account->nickname)) {
+      if (! empty($this->_account->nickname)) {
         $this->_engine->assign('nickname', $this->_account->nickname);
+      } else {
+        $this->_engine->assign('nickname', '');
       }
     }
     

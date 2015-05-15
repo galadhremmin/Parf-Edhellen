@@ -47,7 +47,7 @@ define(['exports', 'utilities'], function (exports, util) {
     console.log('CNavigator: new navigation request for "' + hash + '".');
     
     var term = $.trim(hash);
-    if (term.length < 1) {
+    if (term.length < 1 || term.indexOf('=') > -1) {
       console.log('CNavigator: invalid term. Cancelling.');
       return;
     }

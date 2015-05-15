@@ -9,31 +9,43 @@
     public $translation;
     public $dateCreated;
     
-    public static function getByAccount(Account &$account) {
+    public static function getByAccount(Account &$account, $IDsOnly = false) {
       
       $db = \data\Database::instance()->connection();
       $query = null;
       $favourites = array();
       
       try {
-        $query = $db->prepare('SELECT f.`ID`, w.`Key`, t.`TranslationID`, f.`DateCreated` FROM `favourite` f 
-            INNER JOIN `translation` t ON t.`TranslationID` = f.`TranslationID`
-            INNER JOIN `word` w ON w.`KeyID` = t.`WordID` 
-            WHERE f.`AccountID` = ?
-            ORDER BY w.`Key` ASC');
-        $query->bind_param('i', $account->id);
-        $query->execute();
-        $query->bind_result($id, $word, $translationID, $dateCreated);
-        
-        while ($row = $query->fetch()) {
-          $favourites[] = new Favourite(array(
-              'accountID'   => $account->id,
-              'id'          => $id,
-              'dateCreated' => new \DateTime($dateCreated),
-              'translation' => new Translation(
-                  array('id' => $translationID, 'word' => $word)
-              )
-          ));
+        if ($IDsOnly) {
+          $query = $db->prepare('SELECT `ID` FROM favourite` WHERE `AccountID` = ?');
+          $query->bind_param('i', $account->id);
+          $query->execute();
+          $query->bind_result($id);
+          
+          while ($row = $query->fetch()) {
+            $favourites[] = intval($id);
+          }
+          
+        } else {
+          $query = $db->prepare('SELECT f.`ID`, w.`Key`, t.`TranslationID`, f.`DateCreated` FROM `favourite` f 
+              INNER JOIN `translation` t ON t.`TranslationID` = f.`TranslationID`
+              INNER JOIN `word` w ON w.`KeyID` = t.`WordID` 
+              WHERE f.`AccountID` = ?
+              ORDER BY w.`Key` ASC');
+          $query->bind_param('i', $account->id);
+          $query->execute();
+          $query->bind_result($id, $word, $translationID, $dateCreated);
+          
+          while ($row = $query->fetch()) {
+            $favourites[] = new Favourite(array(
+                'accountID'   => $account->id,
+                'id'          => $id,
+                'dateCreated' => new \DateTime($dateCreated),
+                'translation' => new Translation(
+                    array('id' => $translationID, 'word' => $word)
+                )
+            ));
+          }
         }
       } finally {
         if ($query !== null) {
@@ -42,6 +54,12 @@
       }
       
       return $favourites;
+    }
+    
+    public function invalidate() {
+      $this->accountID = 0;
+      $this->dateCreated = null;
+      $this->id = 0;
     }
     
     public function validate() {
@@ -111,6 +129,29 @@
       
       } finally {
         if ($query !== null) {
+          $query->close();
+        }
+      }
+    }
+    
+    public function remove() {
+      if (!$this->validate()) {
+        throw new \exceptions\ValidationException(__CLASS__);
+      }
+      
+      $db = \data\Database::instance()->connection();
+      $query = null;
+      
+      try {
+                
+        $query = $db->prepare('DELETE FROM `favourite` WHERE `AccountID` = ? AND `TranslationID` = ?');
+        $query->bind_param('ii', $this->accountID, $this->translation->id);
+        $query->execute();
+        
+        $this->invalidate();
+        
+      } finally {
+        if ($query !== null) { 
           $query->close();
         }
       }

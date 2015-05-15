@@ -48,6 +48,7 @@
     
     protected static function favourite(array &$data) {
       $credentials =& \auth\Credentials::request(new \auth\BasicAccessRequest());
+      $account     =& $credentials->account();
       
       if (!isset($data['translationID'])) {
         throw new \exceptions\MissingParameterException('translationID');
@@ -70,10 +71,14 @@
       if ($translation->validate()) {
         $favourite = new \data\entities\Favourite(array(
           'translation' => $translation,
-          'accountID'   => $credentials->account()->id
+          'accountID'   => $account->id
         ));
         
-        $favourite->save();
+        if ($add) {
+          $favourite->save();
+        } else {
+          $favourite->remove();
+        }
       }
       
       return $id;

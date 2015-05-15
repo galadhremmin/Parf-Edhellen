@@ -2,8 +2,9 @@
   include_once 'lib/system.php';
 
   $template = 'Index';
-  if (isset($_GET['template']) && preg_match('/^[a-z]+[a-zA-Z]*$/', $_GET['template'])) {
-    $template = ucfirst( $_GET['template'] );
+  if (isset($_GET['template']) && preg_match('/^[a-z\-]+$/', $_GET['template'])) {
+    $parts = explode('-', $_GET['template']);
+    $template = implode('', array_map('ucfirst', $parts));
   }
 
   $r = new TemplateEngine();
@@ -19,3 +20,4 @@
       $r->displayEncapsulated('Error500');
     }
   }
+  

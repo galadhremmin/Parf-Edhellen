@@ -28,6 +28,7 @@
         $engine->assign('term',         $model->getTerm());
         $engine->assign('wordExists',   $model->getWordExists());
         $engine->assign('accountID',    $model->getAccountID());
+        $engine->assign('favourites',   $model->getFavourites());
         $engine->assign('timeElapsed',  $this->getTimeElapsed());
         
         $this->assignColumnWidths($model, $engine);

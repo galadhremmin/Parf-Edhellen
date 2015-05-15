@@ -5,18 +5,12 @@
     private $_providers;
   
     public function __construct() {
-      $db = \data\Database::instance();
-      
-      $query = $db->connection()->query(
-        'SELECT `ProviderID`, `Name`, `Logo`, `URL` FROM `auth_providers` ORDER BY `Name` ASC'
-      );
-      
+      $providers = \data\entities\AuthProvider::getAllProviders();
       $this->_providers = array();
-      while ($row = $query->fetch_object()) {
-        $this->_providers[$row->ProviderID] = $row;
-      }
       
-      $query->close();
+      foreach ($providers as $provider) {
+        $this->_providers[$provider->id] = $provider;
+      }
     }
     
     public function getProviders() {

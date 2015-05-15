@@ -14,7 +14,7 @@
       }
 
       if ($this->requiresConfiguredAccount() && !$this->_account->configured) {
-        header('Location: authenticateComplete.page');
+        header('Location: authenticate-complete.page');
         return;
       }
     }

@@ -1,7 +1,9 @@
 <?php
   namespace auth;
   
-  session_start();
+  if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+  }
   
   class Credentials {
     const SESSION_VARS_KEY = '_edc';
@@ -17,7 +19,7 @@
       $token       = self::getToken();
       $credentials = self::$_currentCredentials;
       
-      if ($credentials === null || $credentials->account()->identity !== $token) {
+      if ($credentials === null) {
         // Use the information to create an instance of the credentials class.
         $credentials = self::load($token);
       }
@@ -32,16 +34,50 @@
      * @param boolean $create
      * @return \auth\Credentials
      */
-    public static function &load($token, $create = false) {
-      if ($create) {
-        // Preserve compatibility with existing accounts by using legacy hashing.
-        $token = Hashing::legacyHash($token);
-      }
-      
-      $credentials = new Credentials($token, $create);
+    public static function &load($token) {      
+      $credentials = new Credentials($token);
       self::$_currentCredentials = $credentials;
 
+      if ($credentials->account()->validate()) {
+        self::setToken($token);
+      }
+      
       return $credentials;
+    }
+    
+    /**
+     * 
+     * @param integer $providerID
+     * @param string $email
+     * @param AccessToken $token
+     */
+    public static function authenticate($providerID, $email, $token, $nickname = null) {
+      $account = \data\entities\Account::getAccountForProviderAndEmail($providerID, $email);
+      if ($account !== null) {
+        $tmpToken = AccessToken::fromHash($account->identity);
+        
+        if ($tmpToken->shouldRehash() || ! $tmpToken->matches($token)) {
+          $account->updateToken($token);
+        }
+        
+        return self::load($account->identity);
+      }
+      $accounts = null;
+
+      $account = new \data\entities\Account(array(
+          'email'      => $email,
+          'identity'   => $token->hashedToken,
+          'providerID' => $token->providerID,
+          'nickname'   => $nickname
+      ));
+      
+      $account->save();
+      
+      if (! $account->validate()) {
+        throw new \exceptions\ValidationException(__CLASS__);
+      }
+      
+      return self::load($token);
     }
     
     /**
@@ -74,11 +110,11 @@
 
     /**
      * Retrieves the last authenticated token from the session.
-     * @return string
+     * @return AccessToken
      */
     private static function getToken() {
       return isset($_SESSION[self::SESSION_VARS_KEY]) 
-        ? (string) $_SESSION[self::SESSION_VARS_KEY] 
+        ? AccessToken::fromHash($_SESSION[self::SESSION_VARS_KEY]) 
         : null;
     }
     
@@ -87,40 +123,20 @@
      * @param string $token
      */
     private static function setToken($token) {
-      $previousToken = self::getToken();
-      $_SESSION[self::SESSION_VARS_KEY] = $token;
+      if (! ($token instanceof AccessToken)) {
+        throw new \exceptions\InvalidParameterException('token');
+      }
+      
+      $_SESSION[self::SESSION_VARS_KEY] = $token->hashedToken;
     }
     
-    protected function __construct($token, $create = false) {
+    protected function __construct($token) {
       $account = new \data\entities\Account();
       
       // Partially populate the account with data from the database.
-      if (null !== $token) {        
+      if ($token instanceof AccessToken) {
         // Attempt to load the account associated with the token.
         $account->load($token);
-        
-        // If the account fails validation after being loaded, it probably doesn't
-        // exist for the specified token. Create a new account in that case.
-        if ($create && ! $account->validate()) {
-          $account->identity = $token;
-          $account->save();
-        }
-        
-        // Record the login attempt.
-        $previousToken = self::getToken();
-        if ($previousToken !== $token) {
-          $time       = time();
-          $remoteAddr = Hashing::legacyHash($_SERVER['REMOTE_ADDR']);
-        
-          $stmt = \data\Database::instance()->connection()->prepare(
-            'INSERT INTO `auth_logins` (`Date`, `IP`, `AccountID`) VALUES (?, ?, ?)'
-          );
-          $stmt->bind_param('isi', $time, $remoteAddr, $account->id);
-          $stmt->execute();
-          $stmt->close();
-        }
-        
-        self::setToken($token);
       }
       
       $this->_account = $account;

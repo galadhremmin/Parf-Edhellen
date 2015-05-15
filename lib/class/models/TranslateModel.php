@@ -62,6 +62,11 @@
       
       // Has the current user authenticated herself?
       $this->_loggedIn = \auth\Credentials::permitted(new \auth\BasicAccessRequest());
+      $this->_favourites = array();
+      if ($this->_loggedIn) {
+        $account &= \auth\Credentials::current()->account();
+        $this->_favourites = \data\entities\Favourite::getByAccount($account, true);
+      }
     }
     
     public function getTerm() {
@@ -98,6 +103,10 @@
       }
       
       return \auth\Credentials::current()->account()->id;
+    }
+    
+    public function getFavourites() {
+      return $this->_favourites;
     }
   }
 ?>
