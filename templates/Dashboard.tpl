@@ -69,10 +69,22 @@
 	    <h3>Comments <span class="badge">40</span></h3>
 	    <p></p>
 	  </div>
+    {if null !== $reviews}
 	  <div class="col-sm-6">
-	    <h3>Statistics</h3>
-	
+	    <h3>Pending reviews</h3>
+      <ul class="list-group">
+        {if count($reviews) < 1}
+          No pending reviews
+        {else}
+          {foreach $reviews as $review}
+            <li class="list-group-item" id="review-{$review->reviewID}">
+              <a href="/review.page?reviewID={$review->reviewID}">{$review->word}</a>
+              <span class="label label-default pull-right">{date_format($review->dateCreated, 'Y-m-d H:i')}</span>
+            </li>
+          {/foreach}
+        {/if}
+      </ul>
 	  </div>
-	  
+	  {/if}
 	</div>
 </div>

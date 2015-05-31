@@ -13,6 +13,7 @@
       if ($model !== null) {
         $this->_engine->assign('translations', $model->getTranslations());
         $this->_engine->assign('favourites', $model->getFavourites());
+        $this->_engine->assign('reviews', $model->getReviews());
       }
     }
   }

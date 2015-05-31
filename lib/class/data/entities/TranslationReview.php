@@ -47,6 +47,38 @@
      */
     public $justification;
 
+    public static function getPendingReviews($from = -1, $to = -1) {
+      if (! is_numeric($from) || ! is_numeric($to)) {
+        throw new \exceptions\InvalidParameterException('pagination offsets');
+      } else {
+        $from = intval($from);
+        $to   = intval($to);
+      }
+
+      $db = \data\Database::instance()->connection();
+      $reviews = array();
+
+      $stmt = $db->query("SELECT `ReviewID`, `AuthorID`, `LanguageID`, `DateCreated`, `Word`
+        FROM  `translation_review` WHERE `Approved` = b'0'
+        ORDER BY `DateCreated` ASC".
+        (($from > -1 && $to > $from) ? ' LIMIT '.$from.', '.$to : '')
+      );
+      while ($row = $stmt->fetch_assoc()) {
+        $reviews[] = new TranslationReview(array(
+          'reviewID'    => $row['ReviewID'],
+          'authorID'    => $row['AuthorID'],
+          'languageID'  => $row['LanguageID'],
+          'dateCreated' => ElfyDateTime::parse($row['DateCreated']),
+          'word'        => $row['Word']
+        ));
+      }
+
+      $stmt->free();
+      $stmt = null;
+
+      return $reviews;
+    }
+
     public function __construct($data = null) {
       if ($data instanceof Translation) {
         // Convert the Translation object to an initialization array which the parent
@@ -62,7 +94,7 @@
           'approved'      => false,
           'justification' => null
         );
-      } else if (is_array($data)) {
+      } else if (is_array($data) && ! isset($data['reviewID'])) {
         // Convert the service request data array to an initializion array which the parent
         // constructor understands. Assume that validation has already been performed...
         // this is a bit hacky..! :(

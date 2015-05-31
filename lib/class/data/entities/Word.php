@@ -133,7 +133,7 @@
       );
     }
     
-    private static function unregisterReference($id, $threshold = 1) {
+    public static function unregisterReference($id, $threshold = 1) {
       $db = \data\Database::instance()->connection();
       
       $query = $db->prepare('SELECT COUNT(*) FROM `keywords` k WHERE k.`WordID` = ?');
