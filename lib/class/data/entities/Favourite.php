@@ -40,7 +40,7 @@
             $favourites[] = new Favourite(array(
                 'accountID'   => $account->id,
                 'id'          => $id,
-                'dateCreated' => new \DateTime($dateCreated),
+                'dateCreated' => \utils\ElfyDateTime::parse($dateCreated),
                 'translation' => new Translation(
                     array('id' => $translationID, 'word' => $word)
                 )
@@ -121,7 +121,7 @@
               'word' => $word
           ));
           
-          $this->dateCreated = new \DateTime($dateCreated);
+          $this->dateCreated = \utils\ElfyDateTime::parse($dateCreated);
         }
         
       

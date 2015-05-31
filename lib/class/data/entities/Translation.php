@@ -284,14 +284,32 @@
       
       return true;
     }
-    
+
+    /**
+     * @return $this|Translation|TranslationReview
+     * @throws \ErrorException
+     * @throws \exceptions\InvalidParameterException
+     */
     public function save() {
       if (!$this->validate()) {
         throw new \exceptions\InvalidParameterException('translation');
       }
-      
-      $credentials =& \auth\Credentials::request(new \auth\TranslationAccessRequest($this->id));
 
+      // Request permission to save the changes to the translation entry
+      $request = new \auth\TranslationAccessRequest($this->id);
+      $credentials =& \auth\Credentials::request($request);
+
+      return $this->saveInternal($credentials);
+    }
+
+    /**
+     * Saves the translation to the translation table.
+     * @param \auth\Credentials $credentials
+     * @return $this
+     * @throws \ErrorException
+     * @throws \exceptions\InvalidParameterException
+     */
+    private function saveInternal(\auth\Credentials $credentials) {
       // Create or load the word associated with this translation.
       $word = new \data\entities\Word();
       $word->create($this->word);

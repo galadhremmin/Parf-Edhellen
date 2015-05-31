@@ -13,7 +13,7 @@
 	      {else}
 	      {foreach $translations as $translation}
 	      <li class="list-group-item" id="translation-{$translation->id}">
-	        <a href="/translateForm.page?translationID={$translation->id}">{$translation->word}</a>
+	        <a href="/translate-form.page?translationID={$translation->id}">{$translation->word}</a>
 	        &mdash;
 	        {$translation->translation}
 	        <span class="label label-default pull-right">{date_format($translation->dateCreated, 'Y-m-d H:i')}</span>
@@ -42,7 +42,7 @@
 	      </ul>
 	    </nav>
 	    -->
-	    <a href="/translateForm.page" role="button" class="btn btn-default btn-sm pull-right"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Create</a>
+	    <a href="/translate-form.page" role="button" class="btn btn-default btn-sm pull-right"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Create</a>
 	  </div>
 	  <div class="col-sm-6">
 	    <h3>Favourites</h3>

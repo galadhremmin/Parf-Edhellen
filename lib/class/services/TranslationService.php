@@ -67,8 +67,17 @@
       }
       
       // request access to the specified translation
-      \auth\Credentials::request(new \auth\TranslationAccessRequest($values['id']));
-    
+      $request = new \auth\TranslationAccessRequest($values['id']);
+      try {
+        \auth\Credentials::request($request);
+      } catch (\exceptions\InadequatePermissionsException $ex) {
+        // The changes must be reviewed... submit a review request
+        if ($request->requiresReview()) {
+          $review = new \data\entities\TranslationReview($data);
+          return $review->save();
+        }
+      }
+
       // Create a sense, if one isn't specified. Base the sense on the gloss.
       $ns = new \data\entities\Sense(); 
       $ns->load($values['senseID']);
