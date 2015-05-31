@@ -122,8 +122,8 @@
       );
       if ($stmt->fetch()) {
         $this->data = unserialize($data);
-        $this->dateCreated = new DateTime($dateCreated);
-        $this->reviewed = new DateTime($reviewed);
+        $this->dateCreated = ElfyDateTime::parse($dateCreated);
+        $this->reviewed = ElfyDateTime::parse($reviewed);
         $this->approved = ($approved == 1);
         $this->reviewID = $numericId;
       } else {
