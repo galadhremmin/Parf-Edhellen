@@ -71,8 +71,8 @@
       try {
         \auth\Credentials::request($request);
       } catch (\exceptions\InadequatePermissionsException $ex) {
-        // The changes must be reviewed... submit a review request
         if ($request->requiresReview()) {
+          // The changes must be reviewed... submit a review request
           $review = new \data\entities\TranslationReview($data);
           return $review->save();
         }

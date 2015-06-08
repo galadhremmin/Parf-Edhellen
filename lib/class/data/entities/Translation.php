@@ -62,20 +62,22 @@
      * @param Account $account
      * @return array of \data\entities\Translation
      */
-    public static function getByAccount(Account &$account, $offset = 0, $max = 30) {
+    public static function getByAccount(Account &$account, $offset = -1, $max = -1) {
       $db = \data\Database::instance()->connection();
       $translations = array();
       
       $query = null;
       try {
        $query =  $db->prepare(
+         \data\SqlHelper::paginate(
            'SELECT t.`TranslationID`, w.`Key`, t.`LanguageID`, t.`Translation`, t.`DateCreated` FROM `translation` t
               INNER JOIN `word` w ON w.`KeyID` = t.`WordID`
               INNER JOIN `language` l ON l.`ID` = t.`LanguageID`
             WHERE t.`AuthorID` = ? AND t.`Latest` = \'1\' AND t.`Index` = \'0\' AND l.`Invented` = \'1\'
-            ORDER BY t.`DateCreated` DESC
-            LIMIT ?, ?');
-       $query->bind_param('iii', $account->id, $offset, $max);
+            ORDER BY t.`DateCreated` DESC', $offset, $max
+         )
+       );
+       $query->bind_param('i', $account->id);
        $query->execute();
        $query->bind_result($id, $word, $language, $translation, $creationDate);
        

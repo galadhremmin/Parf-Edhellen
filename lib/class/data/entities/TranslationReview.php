@@ -58,11 +58,14 @@
       $db = \data\Database::instance()->connection();
       $reviews = array();
 
-      $stmt = $db->query("SELECT `ReviewID`, `AuthorID`, `LanguageID`, `DateCreated`, `Word`
-        FROM  `translation_review` WHERE `Approved` = b'0'
-        ORDER BY `DateCreated` ASC".
-        (($from > -1 && $to > $from) ? ' LIMIT '.$from.', '.$to : '')
+      $stmt = $db->query(
+        \data\SqlHelper::paginate(
+          "SELECT `ReviewID`, `AuthorID`, `LanguageID`, `DateCreated`, `Word`
+           FROM  `translation_review` WHERE `Approved` = b'0'
+           ORDER BY `DateCreated` ASC", $from, $to
+        )
       );
+
       while ($row = $stmt->fetch_assoc()) {
         $reviews[] = new TranslationReview(array(
           'reviewID'    => $row['ReviewID'],
@@ -215,5 +218,9 @@
       }
 
       return $this;
+    }
+
+    public function approve() {
+      $db = \data\Database::instance()->connection();
     }
   }

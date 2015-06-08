@@ -17,10 +17,18 @@
         header('Location: authenticate-complete.page');
         return;
       }
+
+      if ($this->requiresAdministratorAccount() && ! $this->_account->isAdministrator()) {
+        throw new \exceptions\InadequatePermissionsException();
+      }
     }
     
     protected function requiresConfiguredAccount() {
       return true;
+    }
+
+    protected function requiresAdministratorAccount() {
+      return false;
     }
   }
 
