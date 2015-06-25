@@ -1,13 +1,14 @@
 <?php
   namespace controllers;
 
-
   class ReviewController extends SecureController {
     public function __construct(\TemplateEngine &$engine) {
       parent::__construct('Review', $engine);
     }
 
     public function load() {
+      parent::load();
+
       $model = $this->getModel();
 
       if ($model !== null) {

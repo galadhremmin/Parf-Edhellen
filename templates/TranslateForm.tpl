@@ -111,10 +111,17 @@
     </div>
   </div>
   <div class="text-right">
-    <input type="button" class="btn btn-default btn-cancel" type="button" value="Cancel">
-    <input type="submit" class="btn btn-default" type="submit" value="Save">
+    <input type="button" class="btn btn-default btn-cancel" value="Cancel">
+    {if $reviewID !== null}
+      <input type="button" class="btn btn-default" id="ed-translate-reject" value="Reject">
+    {/if}
+    <input type="submit" class="btn btn-default" id="ed-translate-submit" value="{if $reviewID === null}Save{else}Approve{/if}" data-type="{if $reviewID === null}translation{else}review{/if}">
   </div>
   <input type="hidden" id="ed-translate-phonetic" value="{htmlentities($orig_phonetic)}" />
+  {if $reviewID === null}
   <input type="hidden" id="ed-translate-id" value="{$id}" />
+  {else}
+    <input type="hidden" id="ed-translate-reviewID" value="{$reviewID}" />
+  {/if}
   <input type="hidden" id="ed-translate-senseID" value="{$senseID}" />
 </form>

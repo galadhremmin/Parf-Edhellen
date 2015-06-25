@@ -1,13 +1,5 @@
 <?php
-  /**
- * Created by PhpStorm.
- * User: zanathel
- * Date: 6/8/15
- * Time: 8:42 PM
- */
-
   namespace models;
-
 
   class ReviewModel {
     private $_review;

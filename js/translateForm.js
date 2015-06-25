@@ -34,10 +34,30 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
       _this.editElement.focus();
     });
     
-    element.find('input[type="submit"]').on('click', function (ev) {
+    element.find('#ed-translate-submit').on('click', function (ev) {
       ev.preventDefault();
-      
-      _this.saveTranslation();
+
+      if ($(this).data('type') === 'translation') {
+        _this.saveTranslation();
+      } else {
+        _this.saveReview(true);
+      }
+    });
+
+    element.find('#ed-translate-reject').on('click', function (ev) {
+      ev.preventDefault();
+      var justification = '';
+      while (/^\s*$/.test(justification)) {
+        justification = prompt('Please justify your decision to reject this contribution:', '');
+
+        if (!justification) {
+          return;
+        }
+      }
+
+      if (confirm('You reject this contribution because:\n'+justification+'\n\nIs this OK?')) {
+        _this.saveReview(false, justification);
+      }
     });
     
     element.find('.btn-cancel').on('click', function (ev) {
@@ -55,7 +75,7 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
         _this.editElement.val('');
       }
     });
-  }
+  };
 
   /**
    * Select, initializes and runs the form for this context.
@@ -68,43 +88,43 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
     }
     
     this.renderTags();
-  }
-  
-  CTranslateForm.prototype.saveTranslation = function () {
-    // Kill repetitive button clicks..
-    if (this.loading) {
-      return;
-    }
-    
+  };
+
+  CTranslateForm.prototype.getAndValidateData = function () {
     // Retrieve all information from the form.
     var sucker = new util.CFormSucker(this.parentElement, 'ed-translate-');
     var data = sucker.suck();
-    
+
     // Remove unused properties
     delete data.index;
-    
+    delete data.submit;
+
+    if (data.reject !== undefined) {
+      delete data.reject;
+    }
+
     // Perform validation on the data input.
     var errors = [];
 
     if (! data.language) {
       errors.push('language');
     }
-    
+
     if (! data.word || data.word.length < 1) {
       errors.push('word');
     }
-    
+
     if (! data.translation || data.translation.length < 1) {
       errors.push('translation');
     }
-    
+
     if (! data.source || data.source.length < 3) {
       errors.push('source');
     }
-    
+
     for (var key in data) {
       var group = $('#ed-translate-' + key).parents('.form-group');
-      
+
       if ($.inArray(key, errors) > -1) {
         // Display error messages next to the fields.
         group.addClass('has-error');
@@ -113,28 +133,45 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
         group.removeClass('has-error');
       }
     }
-      
+
     if (errors.length) {
       // Display the error alert, and scroll to it.
       var y, alert = $('#ed-translate-error-alert');
       alert.removeClass('hidden');
-      
+
       y = alert.offset().top - alert.outerHeight(true);
       window.scrollTo(0, y);
-      
-      return;
+
+      return null;
     }
-    
+
     // Make sure to pass zero to the service
     if (! data.id) {
       data.id = 0;
     }
-    
+
     if (! data.senseID) {
       data.senseID = 0;
     }
-    
-    this.loading = true;
+
+    return data;
+  };
+  
+  CTranslateForm.prototype.saveTranslation = function () {
+    // Kill repetitive button clicks..
+    if (this.loading) {
+      return;
+    }
+
+    // Retrieve and validate the user input
+    var data = this.getAndValidateData();
+    if (!data) {
+      return;
+    }
+
+    var _this = this;
+    _this.loading = true;
+
     // Pass the values to the web service for persistance.
     $.ajax({
       url: '/api/translation/save',
@@ -142,16 +179,52 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
       method: 'post'
     }).done(function (data) {
       if (! data.succeeded) {
-        this.loading = false;
+        _this.loading = false;
         return;
       }
       
       window.location.href = '/dashboard.page?highlight=translation-' + data.response.id;
     }).fail(function () {
       console.log('CTranslateForm: failed to save ' + JSON.stringify(data) + '.');
-      this.loading = false;
+      _this.loading = false;
     });
-  }
+  };
+
+  CTranslateForm.prototype.saveReview = function (approved, justification) {
+    if (this.loading) {
+      return;
+    }
+
+    if (! approved && (!justification || /^\s*$/.test(justification))) {
+      throw 'Please justify your rejection';
+    }
+
+    // Retrieve and validate the user input
+    var data = this.getAndValidateData();
+    if (!data) {
+      return;
+    }
+
+    var _this = this;
+    _this.loading = true;
+
+    // Pass the values to the web service for persistance.
+    $.ajax({
+      url: '/api/translation/saveReview',
+      data: data,
+      method: 'post'
+    }).done(function (data) {
+      if (! data.succeeded) {
+        _this.loading = false;
+        return;
+      }
+
+      window.location.href = '/dashboard.page';
+    }).fail(function () {
+      console.log('CTranslateForm: failed to save review ' + JSON.stringify(data) + '.');
+      _this.loading = false;
+    });
+  };
   
   CTranslateForm.prototype.getTags = function () {
     var tags = [];
@@ -162,7 +235,7 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
     }
     
     return tags;
-  }
+  };
   
   CTranslateForm.prototype.addTag = function (tag) {
     util.CAssert.string(tag);
@@ -191,7 +264,7 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
     
     // re-render the list of tags available
     this.renderTags();
-  }
+  };
   
   CTranslateForm.prototype.removeTag = function (index) {
     util.CAssert.number(index);
@@ -229,7 +302,7 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
     this.listElement.find('button').on('click', function () {
       _this.removeTag( $(this).parent('li').index() );
     });
-  }
+  };
   
   return new CTranslateForm();
 });

@@ -21,6 +21,7 @@
       $this->_engine->assign('inventedLanguages', $model->getLanguages());
       $this->_engine->assign('wordClasses',       $model->getWordClasses());
       $this->_engine->assign('wordGenders',       $model->getWordGenders());
+      $this->_engine->assign('reviewID',          $model->getReviewID());
         
       $original =& $model->getOriginal();
       
@@ -41,16 +42,7 @@
       $this->_engine->assign('orig_type',         $original->type);
       $this->_engine->assign('orig_gender',       $original->gender);
       $this->_engine->assign('orig_phonetic',     $original->phonetic);
-        
-      $indexRefs = $original->getIndexes();
-      $indexes   = array();
-      foreach ($indexRefs as $indexRef) {
-        if (!in_array($indexRef['word'], $indexes)) {
-          $indexes[] = $indexRef['word'];
-        }
-      }
-        
-      $this->_engine->assign('orig_indexes', json_encode($indexes));
-      $this->_engine->assign('operation', ($original->id > 0 ? 'Edit' : 'Add'));
+      $this->_engine->assign('orig_indexes',      json_encode($model->getIndexes()));
+      $this->_engine->assign('operation',        ($original->id > 0 ? 'Edit' : 'Add'));
     }
   }

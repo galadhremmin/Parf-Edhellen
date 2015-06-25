@@ -8,6 +8,7 @@
       parent::registerMainMethod('getTranslation');
       parent::registerMethod('save', 'registerTranslation');
       parent::registerMethod('translate', 'translate');
+      parent::registerMethod('saveReview', 'saveReview');
     }
     
     public function handleRequest(&$data) {
@@ -27,44 +28,7 @@
     }
     
     protected static function registerTranslation(&$data) {
-         
-      // retrieve values. The key maps to the REQUEST variables expected, and the 
-      // value defines what sort of values to be expect.
-      $values = array(
-        'type'        => array_keys(\data\entities\Translation::getTypes()),
-        'senseID'     => '/^[0-9]+$/',
-        'id'          => '/^[0-9]+$/',
-        'language'    => '/^[0-9]+$/',
-        'word'        => null,
-        'translation' => null,
-        'etymology'   => null,
-        'source'      => null,
-        'comments'    => null,
-        'tengwar'     => null,
-        'phonetic'    => null
-      );
-     
-      foreach ($values as $key => $validation) {
-        if (!isset($data[$key])) {
-          throw new \Exception('Missing parameter: '.$key);
-        }
-      
-        $value = $data[$key];
-      
-        if ($validation !== null) {
-          if ((is_array($validation) && !in_array($value, $validation)) ||
-              (is_string($validation) && !preg_match($validation, $value))) {
-            
-            if (is_array($validation)) {
-              $validationValues = implode(', ', $validation);
-            }
-              
-            throw new \Exception('Malformed parameter: '.$key.'. Received "'.$value.'", expected '.$validationValues);
-          }
-        }
-      
-        $values[$key] = stripslashes($value);
-      }
+      $values = self::getValues($data);
       
       // request access to the specified translation
       $request = new \auth\TranslationAccessRequest($values['id']);
@@ -113,5 +77,55 @@
       }
 
       return \data\entities\Translation::translate($input['term'], null);
+    }
+
+    protected static function saveReview(&$input) {
+      $values = self::getValues($data);
+
+      // TODO
+
+      return false;
+    }
+
+    private static function getValues(&$data) {
+      // retrieve values. The key maps to the REQUEST variables expected, and the
+      // value defines what sort of values to be expect.
+      $values = array(
+        'type'        => array_keys(\data\entities\Translation::getTypes()),
+        'senseID'     => '/^[0-9]+$/',
+        'id'          => '/^[0-9]+$/',
+        'language'    => '/^[0-9]+$/',
+        'word'        => null,
+        'translation' => null,
+        'etymology'   => null,
+        'source'      => null,
+        'comments'    => null,
+        'tengwar'     => null,
+        'phonetic'    => null
+      );
+
+      foreach ($values as $key => $validation) {
+        if (!isset($data[$key])) {
+          throw new \Exception('Missing parameter: '.$key);
+        }
+
+        $value = $data[$key];
+
+        if ($validation !== null) {
+          if ((is_array($validation) && !in_array($value, $validation)) ||
+            (is_string($validation) && !preg_match($validation, $value))) {
+
+            if (is_array($validation)) {
+              $validationValues = implode(', ', $validation);
+            }
+
+            throw new \Exception('Malformed parameter: '.$key.'. Received "'.$value.'", expected '.$validationValues);
+          }
+        }
+
+        $values[$key] = stripslashes($value);
+      }
+
+      return $values;
     }
   }
