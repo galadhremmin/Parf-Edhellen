@@ -9,6 +9,7 @@
     const SESSION_VARS_KEY = '_edc';
     private static $_currentCredentials = null;
     private $_account;
+    private $_copy;
 
     /**
      * Retrieves the current credentials.
@@ -23,13 +24,12 @@
       
       return self::$_currentCredentials;
     }
-    
+
     /**
      * Attempts to retrieve the credentials for the specified token, and assign it to the session container.
-     * If $create is set to true, a new account will be created for the specified token, if none exist. 
      * @param string $token
-     * @param boolean $create
-     * @return \auth\Credentials
+     * @return Credentials
+     * @throws \exceptions\InvalidParameterException
      */
     public static function &load($token) {      
       $credentials = new Credentials($token);
@@ -41,12 +41,25 @@
       
       return $credentials;
     }
-    
+
+    public static function copyFor($accountID) {
+      $account = \data\entities\Account::getAccountForID($accountID);
+      if ($account === null) {
+        return;
+      }
+
+      $cred = new Credentials($account);
+      return $cred;
+    }
+
     /**
-     * 
+     * Authenticates the e-mail address with the provider by saving it to the accounts table.
      * @param integer $providerID
      * @param string $email
      * @param AccessToken $token
+     * @param null $nickname
+     * @return Credentials
+     * @throws \exceptions\ValidationException
      */
     public static function authenticate($providerID, $email, $token, $nickname = null) {
       $account = \data\entities\Account::getAccountForProviderAndEmail($providerID, $email);
@@ -113,10 +126,11 @@
         ? AccessToken::fromHash($_SESSION[self::SESSION_VARS_KEY]) 
         : null;
     }
-    
+
     /**
      * Assigns the specified token to the session.
      * @param string $token
+     * @throws \exceptions\InvalidParameterException
      */
     private static function setToken($token) {
       if (! ($token instanceof AccessToken)) {
@@ -126,13 +140,15 @@
       $_SESSION[self::SESSION_VARS_KEY] = $token->hashedToken;
     }
     
-    protected function __construct($token) {
+    protected function __construct($data) {
       $account = new \data\entities\Account();
       
       // Partially populate the account with data from the database.
-      if ($token instanceof AccessToken) {
+      if ($data instanceof AccessToken) {
         // Attempt to load the account associated with the token.
-        $account->load($token);
+        $account->load($data);
+      } else if ($data instanceof \data\entities\Account) {
+        $account = $data;
       }
       
       $this->_account = $account;
@@ -152,6 +168,6 @@
      */
     public function &account() {
       return $this->_account;
-    } 
+    }
   }
 

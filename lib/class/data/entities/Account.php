@@ -44,6 +44,34 @@
       
       return $account;
     }
+
+    public static function getAccountForID($accountID) {
+
+      $account = null;
+      $query = null;
+      try {
+        $query = \data\Database::instance()->connection()->prepare(
+          'SELECT `Nickname`, `Configured`, `Identity` FROM `auth_accounts` WHERE `AccountID` = ?'
+        );
+        $query->bind_param('i', $accountID);
+        $query->execute();
+        $query->bind_result($nickname, $configured, $identity);
+
+        if ($query->fetch()) {
+          $account = new Account(array(
+            'id'         => $accountID,
+            'nickname'   => $nickname,
+            'configured' => $configured,
+            'identity'   => $identity
+          ));
+        }
+
+      } finally {
+        $query = null;
+      }
+
+      return $account;
+    }
     
     public function __construct($data = null) {      
       $this->id = 0;

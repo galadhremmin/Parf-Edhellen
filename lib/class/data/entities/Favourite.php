@@ -17,7 +17,7 @@
       
       try {
         if ($IDsOnly) {
-          $query = $db->prepare('SELECT `ID` FROM `favourite` WHERE `AccountID` = ?');
+          $query = $db->prepare('SELECT `TranslationID` FROM `favourite` WHERE `AccountID` = ?');
           $query->bind_param('i', $account->id);
           $query->execute();
           $query->bind_result($id);
@@ -85,11 +85,23 @@
       $query = null;
       
       try {
-        
-        $query = $db->prepare('REPLACE INTO `favourite` (`AccountID`, `TranslationID`, `DateCreated`) VALUES (?, ?, NOW())');
+        $query = $db->prepare('SELECT `ID` FROM `favourite` WHERE `AccountID` =  ? AND `TranslationID` = ?');
         $query->bind_param('ii', $this->accountID, $this->translation->id);
         $query->execute();
-        
+        $query->bind_result($this->id);
+
+        if ($query->fetch()) {
+          $query->free_result();
+          $query = null;
+
+        } else {
+          $query->free_result();
+          $query = null;
+
+          $query = $db->prepare('INSERT INTO `favourite` (`AccountID`, `TranslationID`, `DateCreated`) VALUES (?, ?, NOW())');
+          $query->bind_param('ii', $this->accountID, $this->translation->id);
+          $query->execute();
+        }
       } finally {
         if ($query !== null) {
           $query->close();
@@ -107,7 +119,7 @@
       
       try {
       
-        $query = $db->prepare('SELECT f.`ID` f.`AccountID`, f.`TranslationID`, f.`DateCreated`, w.`Key` FROM `favourite` f
+        $query = $db->prepare('SELECT f.`ID`, f.`AccountID`, f.`TranslationID`, f.`DateCreated`, w.`Key` FROM `favourite` f
             INNER JOIN `translation` t ON t.`TranslationID` = f.`TranslationID` 
             INNER JOIN `word` w ON w.`KeyID` = t.`WordID`
             WHERE f.`ID` = ?');

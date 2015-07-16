@@ -208,7 +208,7 @@
         $stmt = null;
       } else {
         $stmt = $db->prepare(
-          'UPDATE `translation_review` SET `Data` = ?, `Reviewed` = ?, `ReviewedBy` = ?, `Approved` = ?, `Justification = ?
+          'UPDATE `translation_review` SET `Data` = ?, `Reviewed` = ?, `ReviewedBy` = ?, `Approved` = ?, `Justification` = ?
            WHERE `ReviewID` = ?'
         );
 
@@ -221,6 +221,11 @@
     }
 
     public function approve() {
-      $db = \data\Database::instance()->connection();
+      $this->approved = true;
+      $this->reviewedBy = \auth\Credentials::current()->account()->id;
+      $this->justification = 'OK';
+      $this->reviewed = ElfyDateTime::now();
+
+      $this->save();
     }
   }

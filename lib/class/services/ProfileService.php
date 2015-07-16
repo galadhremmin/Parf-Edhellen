@@ -64,23 +64,24 @@
 
       $id  = intval($data['translationID']);
       $add = boolval($data['add']);
-      
-      $translation = new \data\entities\Translation();
-      $translation->load($id);
-      
-      if ($translation->validate()) {
-        $favourite = new \data\entities\Favourite(array(
-          'translation' => $translation,
-          'accountID'   => $account->id
-        ));
-        
-        if ($add) {
+
+      if ($add) {
+        $translation = new \data\entities\Translation();
+        $translation->load($id);
+        if ($translation->validate()) {
+          $favourite = new \data\entities\Favourite(array(
+            'translation' => $translation,
+            'accountID' => $account->id
+          ));
+
           $favourite->save();
-        } else {
-          $favourite->remove();
         }
+      } else {
+        $favourite = new \data\entities\Favourite();
+        $favourite->load($id);
+        $favourite->remove();
       }
-      
+
       return $id;
     }
   }

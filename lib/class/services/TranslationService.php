@@ -28,10 +28,8 @@
     }
     
     protected static function registerTranslation(&$data) {
-      $values = self::getValues($data);
-      
       // request access to the specified translation
-      $request = new \auth\TranslationAccessRequest($values['id']);
+      $request = new \auth\TranslationAccessRequest($data['id']);
       try {
         \auth\Credentials::request($request);
       } catch (\exceptions\InadequatePermissionsException $ex) {
@@ -42,32 +40,7 @@
         }
       }
 
-      // Create a sense, if one isn't specified. Base the sense on the gloss.
-      $ns = new \data\entities\Sense(); 
-      $ns->load($values['senseID']);
-      if ($ns->id == 0) {
-        $ns->identifier = $values['translation'];
-        $ns->save();
-        $values['senseID'] = $ns->id;
-      }
-      
-      // register translations
-      $translationObj = new \data\entities\Translation($values);
-      $result = $translationObj->save();
-      
-      // Register indexes
-      if (isset($data['indexes']) && is_array($data['indexes'])) {
-        foreach ($data['indexes'] as $indexWord) {
-          $index = new \data\entities\Translation(array(
-            'word'     => $indexWord,
-            'language' => $translationObj->language,
-            'senseID'  => $ns->id
-          ));
-          
-          $index->saveIndex();
-        }
-      }
-      
+      $result = self::saveTranslation($data);
       return $result;
     }
     
@@ -80,11 +53,83 @@
     }
 
     protected static function saveReview(&$input) {
-      $values = self::getValues($data);
+      if (!isset($input['reviewID']) || !is_numeric($input['reviewID'])) {
+        return;
+      }
 
-      // TODO
+      $reviewID = intval($input['reviewID']);
+      $approved = $input['reviewApproved'] == 1;
+      $justific = isset($input['justification']) ? $input['justification'] : null;
+
+      // Check for permissions to make changes to the review
+      \auth\Credentials::request(new \auth\TranslationReviewAccessRequest($reviewID));
+
+      // Attempt to load the review
+      $review = new \data\entities\TranslationReview();
+      $review->load($reviewID);
+
+      if (! $review->validate()) {
+        // Load failed -- quit!
+        return;
+      }
+
+      if ($approved) {
+        self::saveTranslation($review);
+        $review->approve();
+      } else {
+
+      }
 
       return false;
+    }
+
+    public static function saveTranslation($source) {
+
+      $review = false;
+      if ($source instanceof \data\entities\TranslationReview) {
+        $data = $source->data;
+        $review = true;
+      } else if (is_array($source)) {
+        $data = $source;
+      } else {
+        throw new Exception('Unrecognised source.');
+      }
+
+      $values = self::getValues($data);
+
+      // Create a sense, if one isn't specified. Base the sense on the gloss.
+      $ns = new \data\entities\Sense();
+      $ns->load($values['senseID']);
+      if ($ns->id == 0) {
+        $ns->identifier = $values['translation'];
+        $ns->save();
+        $values['senseID'] = $ns->id;
+      }
+
+      // register translations
+      $translationObj = new \data\entities\Translation($values);
+
+      if ($review) {
+        $cred = \auth\Credentials::copyFor($source->authorID);
+        $result = $translationObj->transfer($cred);
+      } else {
+        $result = $translationObj->save();
+      }
+
+      // Register indexes
+      if (isset($data['indexes']) && is_array($data['indexes'])) {
+        foreach ($data['indexes'] as $indexWord) {
+          $index = new \data\entities\Translation(array(
+            'word'     => $indexWord,
+            'language' => $translationObj->language,
+            'senseID'  => $ns->id
+          ));
+
+          $index->saveIndex();
+        }
+      }
+
+      return $result;
     }
 
     private static function getValues(&$data) {

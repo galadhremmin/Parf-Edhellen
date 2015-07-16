@@ -205,6 +205,9 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
       return;
     }
 
+    data.reviewApproved = approved ? 'true' : 'false';
+    data.reviewJustification = justification;
+
     var _this = this;
     _this.loading = true;
 

@@ -288,6 +288,7 @@
     }
 
     /**
+     * Saves the translation to the database. The translation entry is associated with the current user.
      * @return $this|Translation|TranslationReview
      * @throws \ErrorException
      * @throws \exceptions\InvalidParameterException
@@ -301,6 +302,17 @@
       $request = new \auth\TranslationAccessRequest($this->id);
       $credentials =& \auth\Credentials::request($request);
 
+      return $this->saveInternal($credentials);
+    }
+
+    /**
+     * Transfers the translation to the specified user.
+     * @param \auth\Credentials $credentials
+     * @return Translation
+     * @throws \ErrorException
+     * @throws \exceptions\InvalidParameterException
+     */
+    public function transfer(\auth\Credentials $credentials) {
       return $this->saveInternal($credentials);
     }
 

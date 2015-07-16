@@ -3,47 +3,10 @@
 	<p>Test.</p>
 	
 	<div class="row">
-	  
-	  <div class="col-sm-6">
-	    <h3>Translations</h3>
-	    <p></p>
-	    <ul class="list-group">
-	      {if count($translations) < 1}
-	      You have published no translations.
-	      {else}
-	      {foreach $translations as $translation}
-	      <li class="list-group-item" id="translation-{$translation->id}">
-	        <a href="/translate-form.page?translationID={$translation->id}">{$translation->word}</a>
-	        &mdash;
-	        {$translation->translation}
-	        <span class="label label-default pull-right">{date_format($translation->dateCreated, 'Y-m-d H:i')}</span>
-	      </li>
-	      {/foreach}
-	      {/if}
-	    </ul>
-	    <!--
-	    <nav>
-	      <ul class="pagination">
-	        <li>
-	          <a href="#" aria-label="Previous">
-	            <span aria-hidden="true">&laquo;</span>
-	          </a>
-	        </li>
-	        <li><a href="#">1</a></li>
-	        <li><a href="#">2</a></li>
-	        <li><a href="#">3</a></li>
-	        <li><a href="#">4</a></li>
-	        <li><a href="#">5</a></li>
-	        <li>
-	          <a href="#" aria-label="Next">
-	            <span aria-hidden="true">&raquo;</span>
-	          </a>
-	        </li>
-	      </ul>
-	    </nav>
-	    -->
-	    <a href="/translate-form.page" role="button" class="btn btn-default btn-sm pull-right"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Create</a>
-	  </div>
+    <div class="col-sm-6">
+      <h3>Flashcards</h3>
+      <p>Coming soon!</p>
+    </div>
 	  <div class="col-sm-6">
 	    <h3>Favourites</h3>
 	    <p></p>
@@ -64,11 +27,48 @@
 	</div>
 	
 	<div class="row">
-	  
-	  <div class="col-sm-6">
-	    <h3>Comments <span class="badge">40</span></h3>
-	    <p></p>
-	  </div>
+
+    <div class="col-sm-6">
+      <h3>Translations</h3>
+      <p></p>
+      <ul class="list-group">
+        {if count($translations) < 1}
+          You have published no translations.
+        {else}
+          {foreach $translations as $translation}
+            <li class="list-group-item" id="translation-{$translation->id}">
+              <a href="/translate-form.page?translationID={$translation->id}">{$translation->word}</a>
+              &mdash;
+              {$translation->translation}
+              <span class="label label-default pull-right">{date_format($translation->dateCreated, 'Y-m-d H:i')}</span>
+            </li>
+          {/foreach}
+        {/if}
+      </ul>
+      <!--
+      <nav>
+        <ul class="pagination">
+          <li>
+            <a href="#" aria-label="Previous">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          <li><a href="#">1</a></li>
+          <li><a href="#">2</a></li>
+          <li><a href="#">3</a></li>
+          <li><a href="#">4</a></li>
+          <li><a href="#">5</a></li>
+          <li>
+            <a href="#" aria-label="Next">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+      -->
+      <a href="/translate-form.page" role="button" class="btn btn-default btn-sm pull-right"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Create</a>
+    </div>
+
     {if null !== $reviews}
 	  <div class="col-sm-6">
 	    <h3>Pending reviews</h3>
@@ -78,7 +78,7 @@
         {else}
           {foreach $reviews as $review}
             <li class="list-group-item" id="review-{$review->reviewID}">
-              <a href="/review.page?reviewID={$review->reviewID}">{$review->word}</a>
+              <a href="/translate-form.page?reviewID={$review->reviewID}">{$review->word}</a>
               <span class="label label-default pull-right">{date_format($review->dateCreated, 'Y-m-d H:i')}</span>
             </li>
           {/foreach}
