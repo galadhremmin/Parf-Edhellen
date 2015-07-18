@@ -30,9 +30,8 @@
     
     protected static function registerTranslation(&$data) {
 
-      // Not everyone are permitted to make changes to the dictionary. Request therefore the
-      // permissions for the current credentials. If permissions can't be obtained, save the
-      // request as a review item instead, if the current set of credentials are eligible.
+      // Only administrators are permitted to make changes to the dictionary. Everybody else
+      // must create a review item instead.
       $request = new \auth\TranslationAccessRequest($data['id']);
       try {
         \auth\Credentials::request($request);
