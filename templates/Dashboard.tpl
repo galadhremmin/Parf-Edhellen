@@ -15,16 +15,13 @@
 	<p>Test.</p>
 	
 	<div class="row">
-    <div class="col-sm-6">
-      <h3>Flashcards</h3>
-      <p>Coming soon!</p>
-    </div>
+
 	  <div class="col-sm-6">
 	    <h3>Favourites</h3>
 	    <p></p>
 	    <ul class="list-group">
 	      {if count($favourites) < 1}
-	      You have no favourites.
+	      You have no favourite words just yet.
 	      {else}
 	      {foreach $favourites as $favourite}
 	      <li class="list-group-item" id="favourite-{$favourite->id}">
@@ -35,7 +32,10 @@
 	      {/if}
 	    </ul>
 	  </div>
-	  
+    <div class="col-sm-6">
+      <h3>Flashcards</h3>
+      <ul class="list-group">Coming soon!</ul>
+    </div>
 	</div>
 	
 	<div class="row">
@@ -45,11 +45,11 @@
       <p></p>
       <ul class="list-group">
         {if count($translations) < 1}
-          You have published no translations.
+          There are no items in this list.
         {else}
           {foreach $translations as $translation}
             <li class="list-group-item" id="translation-{$translation->id}">
-              <span style="width:70%;overflow:hidden;text-overflow: ellipsis;display:inline-block;white-space:nowrap;">
+              <span class="ed-dashboard-li-text">
                 <a href="/index.page#translationID={$translation->id}">{$translation->word}</a>
                 &mdash;
                 {$translation->translation}
@@ -88,7 +88,7 @@
 	    <h3>Contributions</h3>
       <ul class="list-group">
         {if count($reviews) < 1}
-          No pending reviews
+          There are no contributions awaiting to be reviewed by an administrator at this time.
         {else}
           {foreach $reviews as $review}
             <li class="list-group-item" id="review-{$review->reviewID}">

@@ -3,19 +3,17 @@
 {/if}
 <h2>
   {$author->nickname}
-  {if $author->tengwar != null}<span class="tengwar header editable" data-editing-type="text" data-editing-class="tengwar" data-editing-propety="tengwar">{$author->tengwar}</span>{/if}
+  <span class="tengwar header editable" data-editing-type="text" data-editing-class="tengwar" data-editing-propety="tengwar">{$author->tengwar}</span>
 </h2>
 
-{if $author->profile != null}
-  {if $myProfile == true}
-  <div class="editable" data-editing-type="textarea" data-editing-propety="profile" data-editing-value="{htmlentities($author->profile)}">
-  {/if}
-  
-  {$profileHtml}
-  
-  {if $myProfile == true}
-  </div>
-  {/if}
+{if $myProfile == true}
+<div class="editable" data-editing-type="textarea" data-editing-propety="profile" data-editing-value="{htmlentities($author->profile)}">
+{/if}
+
+{$profileHtml}
+
+{if $myProfile == true}
+</div>
 {/if}
 
 {if $myProfile == true}

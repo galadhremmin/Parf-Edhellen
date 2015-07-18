@@ -160,11 +160,11 @@
       if ($completeLoad) {
         try {
           $query = $db->connection()->prepare(
-            'SELECT `DateRegistered` FROM `auth_accounts` WHERE `AccountID` = ?'
+            'SELECT `DateRegistered`, `Tengwar`, `Profile` FROM `auth_accounts` WHERE `AccountID` = ?'
           );
           $query->bind_param('i', $this->id);
           $query->execute();
-          $query->bind_result($this->dateRegistered);
+          $query->bind_result($this->dateRegistered, $this->tengwar, $this->profile);
           $query->fetch();
           $query->close();
           

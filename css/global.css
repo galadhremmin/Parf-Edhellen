@@ -253,9 +253,16 @@ blockquote h3 a {
   font-size: 1rem;
 }
 .ed-favourite-button {
-	opacity: 0.3;
-	transition: opacity 0.5s;
+    opacity: 0.3;
+    transition: opacity 0.5s;
 }
 .ed-favourite-button:hover {
-  opacity: 1;
+    opacity: 1;
+}
+.ed-dashboard-li-text {
+    width:70%;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    display:inline-block;
+    white-space:nowrap;
 }

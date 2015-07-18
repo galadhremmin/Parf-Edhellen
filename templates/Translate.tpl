@@ -69,14 +69,6 @@ data-module="translation"
   <h3>Forsooth! I can't find what you're looking for!</h3>
   <p>The word <em>{$term}</em> hasn't been recorded for any of the languages.</p>
 </div>
-{elseif $translations == null}
-  <p>Unfortunately, no one has yet translated <b>{$term}</b>. If you believe you know the
-  translation, please make <em>Parf Edhellen</em> more complete by contributing.</p>
-  {if $loggedIn == true}
-    <p class="center">
-      <input type="button" class="rounded-small" value="Add Gloss for {$term}" onclick="LANGDict.showTranslationForm('{addslashes($term)}')" />
-    </p>
-  {/if}
 {/if}
   <hr>
   <div id="related-books-row">

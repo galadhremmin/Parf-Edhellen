@@ -48,6 +48,14 @@
       // view for presentation
       $author->nickname = \utils\StringWizard::preventXSS($author->nickname);
       $author->tengwar  = \utils\StringWizard::preventXSS($author->tengwar);
+
+      if (empty($author->tengwar)) {
+        $author->tengwar = '5,Y'; // noss
+      }
+
+      if (empty($author->profile)) {
+        $author->profile = $author->nickname . ' hasn\'t written anything on this space.';
+      }
       
       $this->_author = $author;
     }

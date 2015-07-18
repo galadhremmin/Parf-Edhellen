@@ -64,7 +64,7 @@
           $this->_indexes = $indexes;
 
           // If there's a justification, retrieve it.
-          $this->_justification = $review->justification or '';
+          $this->_justification = $review->justification;
           $this->_resubmission  = ($review->approved === false);
 
           // Append a dot in case the justification message lacks proper interpunctuation ;)

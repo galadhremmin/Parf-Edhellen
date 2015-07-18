@@ -556,7 +556,16 @@ define(['exports', 'utilities'], function (exports, util) {
       return;
     }
     
-    var hash = encodeURIComponent(this.suggestionsArray[this.iterationIndex].nkey);
+    var hash = null;
+    if (this.suggestionsArray && this.suggestionsArray.length) {
+      if (this.iterationIndex < 0) {
+        this.iterationIndex = 0;
+      }
+
+      hash = encodeURIComponent(this.suggestionsArray[this.iterationIndex].nkey);
+    } else {
+      hash = encodeURIComponent( $(this.searchField).val() );
+    }
     
     // ensure that the client is searching from the front-page, and not a sub-page:
     if (window.location.pathname.length <= 1 || window.location.pathname.indexOf('/index.page') === 0) {
