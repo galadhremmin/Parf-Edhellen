@@ -108,9 +108,31 @@
         }
       }
     }
+
+    public function loadForTranslation($id) {
+      if (! is_numeric($id)) {
+        return;
+      }
+
+      $credentials = \auth\Credentials::request(new \auth\BasicAccessRequest());
+      $accountID = $credentials->account()->id;
+
+      $db = \data\Database::instance()->connection();
+      $query = $db->prepare('SELECT `ID` FROM `favourite` WHERE `TranslationID` = ? AND `AccountID` = ?');
+      $query->bind_param('ii', $id, $accountID);
+      $query->execute();
+      $query->bind_result($this->id);
+
+      if ($query->fetch()) {
+        $query->free_result();
+        $query = null;
+
+        $this->load($this->id);
+      }
+    }
     
     public function load($id) {
-      if (!is_numeric($id)) {
+      if (! is_numeric($id)) {
         return;
       }
       

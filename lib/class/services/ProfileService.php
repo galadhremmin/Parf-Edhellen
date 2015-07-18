@@ -78,11 +78,11 @@
         }
       } else {
         $favourite = new \data\entities\Favourite();
-        $favourite->load($id);
+        $favourite->loadForTranslation($id);
         $favourite->remove();
       }
 
-      return $id;
+      return array('id' => $id, 'add' => $add);
     }
   }
   

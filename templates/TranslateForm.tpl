@@ -2,6 +2,13 @@
 <p>Test.</p>
 
 <form class="form-horizontal" data-module="translateForm" action="#" method="post">
+  {if !empty($justification)}
+    <div class="alert alert-info">
+      <strong>Tirio i thíw hin!</strong> Your submission was rejected because: {$justification}
+      <p>Please make sure that you've addressed this issue before reapplying.</p>
+    </div>
+  {/if}
+
   <div class="alert alert-danger hidden" role="alert" id="ed-translate-error-alert">
     <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
     There were validation errors. Please review the highlighted fields below.
@@ -112,11 +119,17 @@
   </div>
   <div class="text-right">
     <input type="button" class="btn btn-default btn-cancel" value="Cancel">
-    {if $reviewID !== null}
-      <input type="button" class="btn btn-default" id="ed-translate-reject" value="Reject">
+    {if $mode === 'create'}
+      <input type="submit" class="btn btn-primary" id="ed-translate-submit" value="Submit for review" data-type="translation">
+    {elseif $mode === 'review'}
+      <input type="button" class="btn btn-danger" id="ed-translate-delete" value="Delete">
+      <input type="button" class="btn btn-warning" id="ed-translate-reject" value="Reject">
+      <input type="submit" class="btn btn-success" id="ed-translate-submit" value="Approve" data-type="review">
+    {else}
+      <input type="submit" class="btn btn-primary" id="ed-translate-submit" value="Update submission" data-type="review-update">
     {/if}
-    <input type="submit" class="btn btn-default" id="ed-translate-submit" value="{if $reviewID === null}Save{else}Approve{/if}" data-type="{if $reviewID === null}translation{else}review{/if}">
   </div>
+
   <input type="hidden" id="ed-translate-phonetic" value="{htmlentities($orig_phonetic)}" />
   {if $reviewID === null}
   <input type="hidden" id="ed-translate-id" value="{$id}" />

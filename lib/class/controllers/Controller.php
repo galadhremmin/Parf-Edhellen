@@ -32,7 +32,7 @@
           $cache = false;
         }
         
-        if (!$cache || ($c !== null && $c->hasExpired())) {
+        if (! $cache || ($c !== null && $c->hasExpired())) {
           // Initiate an instance of the model class
           $this->_model = new $model();
           

@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `translation_review` (
   `Data` text COLLATE utf8_swedish_ci NOT NULL,
   `Reviewed` datetime NULL,
   `ReviewedBy` int(6) unsigned DEFAULT NULL,
-  `Approved` bit(1) DEFAULT b'0',
+  `Approved` bit(1) NULL,
   `Justification` text NULL,
   PRIMARY KEY (`ReviewID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci AUTO_INCREMENT=1 ;

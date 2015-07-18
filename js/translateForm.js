@@ -37,10 +37,16 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
     element.find('#ed-translate-submit').on('click', function (ev) {
       ev.preventDefault();
 
-      if ($(this).data('type') === 'translation') {
-        _this.saveTranslation();
-      } else {
-        _this.saveReview(true);
+      switch ($(this).data('type')) {
+        case 'translation':
+          _this.saveTranslation();
+          break;
+        case 'review':
+          _this.saveReview(true);
+          break;
+        case 'review-update':
+          _this.saveReview();
+          break;
       }
     });
 
@@ -58,6 +64,11 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
       if (confirm('You reject this contribution because:\n'+justification+'\n\nIs this OK?')) {
         _this.saveReview(false, justification);
       }
+    });
+
+    element.find('#ed-translate-delete').on('click', function (ev) {
+      ev.preventDefault();
+      _this.deleteReview();
     });
     
     element.find('.btn-cancel').on('click', function (ev) {
@@ -183,7 +194,7 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
         return;
       }
       
-      window.location.href = '/dashboard.page?highlight=translation-' + data.response.id;
+      window.location.href = '/dashboard.page?highlight=translation-' + data.response.id + '&message=review-created';
     }).fail(function () {
       console.log('CTranslateForm: failed to save ' + JSON.stringify(data) + '.');
       _this.loading = false;
@@ -195,18 +206,26 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
       return;
     }
 
-    if (! approved && (!justification || /^\s*$/.test(justification))) {
-      throw 'Please justify your rejection';
-    }
-
     // Retrieve and validate the user input
     var data = this.getAndValidateData();
     if (!data) {
       return;
     }
 
-    data.reviewApproved = approved ? 'true' : 'false';
-    data.reviewJustification = justification;
+    var approval = (approved === true || approved === false);
+    if (approval) {
+
+      if (! approved && (!justification || /^\s*$/.test(justification))) {
+        throw 'Please justify your rejection';
+      }
+
+      // approve of reject the review item
+      data.reviewApproved = approved ? 'true' : 'false';
+      data.reviewJustification = justification;
+    } else {
+      // just update the information of the review item
+      data.reviewUpdate = true;
+    }
 
     var _this = this;
     _this.loading = true;
@@ -222,12 +241,37 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
         return;
       }
 
-      window.location.href = '/dashboard.page';
+      if (approval) {
+        window.location.href = '/dashboard.page?message=review-' + (approved ? 'approved' : 'rejected');
+      } else {
+        window.location.href = '/dashboard.page?message=review-updated';
+      }
     }).fail(function () {
       console.log('CTranslateForm: failed to save review ' + JSON.stringify(data) + '.');
       _this.loading = false;
     });
   };
+
+  CTranslateForm.prototype.deleteReview = function () {
+    var data = this.getAndValidateData();
+
+    if (isNaN(data.reviewID)) {
+      console.error('Review ID doesn\'t exist?!');
+      return;
+    }
+
+    if (!confirm('Would you really like to delete review item ' + data.reviewID + '?\n\nThis action is irreversible.')) {
+      return;
+    }
+
+    $.ajax({
+      url: '/api/translation/deleteReview',
+      data: { reviewID: data.reviewID },
+      method: 'post'
+    }).done(function () {
+      window.location.href = '/dashboard.page?message=review-deleted';
+    });
+  }
   
   CTranslateForm.prototype.getTags = function () {
     var tags = [];
@@ -235,6 +279,7 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
     try {
       tags = JSON.parse( this.dataSource.val() );
     } catch (ex) {
+      tags = [];
     }
     
     return tags;

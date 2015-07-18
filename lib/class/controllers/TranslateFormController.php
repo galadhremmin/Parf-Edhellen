@@ -3,7 +3,7 @@
   
   class TranslateFormController extends SecureController {
     public function __construct(\TemplateEngine &$engine) {
-      parent::__construct('TranslateForm', $engine);
+      parent::__construct('TranslateForm', $engine, false);
     }
     
     public function load() {
@@ -44,5 +44,17 @@
       $this->_engine->assign('orig_phonetic',     $original->phonetic);
       $this->_engine->assign('orig_indexes',      json_encode($model->getIndexes()));
       $this->_engine->assign('operation',        ($original->id > 0 ? 'Edit' : 'Add'));
+      $this->_engine->assign('justification',     $model->getJustification());
+
+      $mode = 'create';
+      if ($model->getReviewID() !== null) {
+        if (\auth\Credentials::current()->account()->isAdministrator()) {
+          $mode = 'review';
+        } else if (! $model->isResubmission()) {
+          $mode = 'edit';
+        }
+      }
+
+      $this->_engine->assign('mode', $mode);
     }
   }

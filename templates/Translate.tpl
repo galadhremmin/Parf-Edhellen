@@ -28,7 +28,7 @@ data-module="translation"
         {/if}
         {$translation->word}
         {if $loggedIn}
-        <a href="#" class="ed-favourite-button" data-translation-id="{$translation->id}" title="Add to favourites."><span class="glyphicon glyphicon-star{if !in_array($translation->id, $favourites)}-empty{/if} pull-right" aria-hidden="true"></span></a>
+        <a href="#" class="ed-favourite-button" data-translation-id="{$translation->id}" title="Add to favourites."><span class="glyphicon glyphicon-heart{if !in_array($translation->id, $favourites)}-empty{/if} pull-right" aria-hidden="true"></span></a>
         {/if}
       </h3> 
       {if $translation->tengwar != null}

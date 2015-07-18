@@ -47,6 +47,38 @@
      */
     public $justification;
 
+    public static function getByAccount(Account $account) {
+      $db = \data\Database::instance()->connection();
+      $reviews = array();
+
+      $stmt = $db->prepare(
+        "SELECT `ReviewID`, `LanguageID`, `DateCreated`, `Word`, `Approved`, `Justification`
+         FROM  `translation_review` WHERE `AuthorID` = ?
+         ORDER BY `DateCreated` DESC"
+      );
+
+      $stmt->bind_param('i', $account->id);
+      $stmt->execute();
+      $stmt->bind_result($id, $languageID, $datedCreated, $word, $approved, $justification);
+
+      while ($stmt->fetch()) {
+        $reviews[] = new TranslationReview(array(
+          'reviewID'      => $id,
+          'authorID'      => $account->id,
+          'languageID'    => $languageID,
+          'dateCreated'   => ElfyDateTime::parse($datedCreated),
+          'word'          => $word,
+          'approved'      => ($approved === null ? null : ($approved === 1)),
+          'justification' => $justification
+        ));
+      }
+
+      $stmt->free_result();
+      $stmt = null;
+
+      return $reviews;
+    }
+
     public static function getPendingReviews($from = -1, $to = -1) {
       if (! is_numeric($from) || ! is_numeric($to)) {
         throw new \exceptions\InvalidParameterException('pagination offsets');
@@ -61,7 +93,7 @@
       $stmt = $db->query(
         \data\SqlHelper::paginate(
           "SELECT `ReviewID`, `AuthorID`, `LanguageID`, `DateCreated`, `Word`
-           FROM  `translation_review` WHERE `Approved` = b'0'
+           FROM  `translation_review` WHERE `Approved` IS NULL
            ORDER BY `DateCreated` ASC", $from, $to
         )
       );
@@ -82,7 +114,10 @@
       return $reviews;
     }
 
-    public function __construct($data = null) {
+    public function __construct($data = null, $rawRequest = false) {
+      // Always set default approved to null by default.
+      $this->approved = null;
+
       if ($data instanceof Translation) {
         // Convert the Translation object to an initialization array which the parent
         // constructor understands.
@@ -97,10 +132,9 @@
           'approved'      => false,
           'justification' => null
         );
-      } else if (is_array($data) && ! isset($data['reviewID'])) {
+      } else if (is_array($data) && $rawRequest) {
         // Convert the service request data array to an initializion array which the parent
         // constructor understands. Assume that validation has already been performed...
-        // this is a bit hacky..! :(
         $data = array(
           'reviewID'      => 0,
           'languageID'    => $data['language'],
@@ -159,7 +193,7 @@
         $this->data = unserialize($data);
         $this->dateCreated = ElfyDateTime::parse($dateCreated);
         $this->reviewed = ElfyDateTime::parse($reviewed);
-        $this->approved = ($approved == 1);
+        $this->approved = ($approved === null ? null : ($approved === 1));
         $this->reviewID = $numericId;
       } else {
         $this->reviewID = 0;
@@ -181,11 +215,12 @@
       $this->validate();
 
       // only administrators might change existing reviews
-      \auth\Credentials::request(new \auth\TranslationReviewAccessRequest($this->reviewID));
+      \auth\Credentials::request(new \auth\BasicAccessRequest());
+      $fullAccess = \auth\Credentials::permitted(new \auth\TranslationReviewAccessRequest($this->reviewID));
 
       // prepare some variables which require formatting before being inserted to the SQL query
       $data        = serialize($this->data);
-      $approved    = $this->approved ? 1 : 0;
+      $approved    = $this->approved ? 1 : ($this->approved === null ? null : 0);
       $dateCreated = ElfyDateTime::toLongDateString( ElfyDateTime::parseOrToday($this->dateCreated) );
       $reviewed    = ElfyDateTime::parse($this->reviewed);
       if ($reviewed !== null) {
@@ -198,21 +233,30 @@
         $stmt = $db->prepare(
           'INSERT INTO `translation_review`
           (`AuthorID`,  `LanguageID`, `DateCreated`, `Word`, `Data`, `Reviewed`, `ReviewedBy`, `Approved`, `Justification`)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
+          VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?)'
         );
 
-        $stmt->bind_param('iissssiis', $this->authorID, $this->languageID, $dateCreated, $this->word, $data, $reviewed,
-          $this->reviewedBy, $approved, $this->justification);
+        $stmt->bind_param('iissssis', $this->authorID, $this->languageID, $dateCreated, $this->word, $data, $reviewed,
+          $this->reviewedBy, $this->justification);
         $stmt->execute();
         $this->reviewID = $stmt->insert_id;
         $stmt = null;
-      } else {
+      } else if ($fullAccess) {
         $stmt = $db->prepare(
           'UPDATE `translation_review` SET `Data` = ?, `Reviewed` = ?, `ReviewedBy` = ?, `Approved` = ?, `Justification` = ?
            WHERE `ReviewID` = ?'
         );
 
         $stmt->bind_param('ssiisi', $data, $reviewed, $this->reviewedBy, $approved, $this->justification, $this->reviewID);
+        $stmt->execute();
+        $stmt = null;
+      } else {
+        $stmt = $db->prepare(
+          'UPDATE `translation_review` SET `Data` = ?
+           WHERE `ReviewID` = ? AND `Approved` IS NULL'
+        );
+
+        $stmt->bind_param('si', $data, $this->reviewID);
         $stmt->execute();
         $stmt = null;
       }
@@ -223,9 +267,28 @@
     public function approve() {
       $this->approved = true;
       $this->reviewedBy = \auth\Credentials::current()->account()->id;
-      $this->justification = 'OK';
+      $this->reviewed = ElfyDateTime::now();
+
+      if (empty($this->justification)) {
+        $this->justification = 'OK';
+      }
+
+      $this->save();
+    }
+
+    public function reject() {
+      $this->approved = false;
+      $this->reviewedBy = \auth\Credentials::current()->account()->id;
       $this->reviewed = ElfyDateTime::now();
 
       $this->save();
+    }
+
+    public function delete() {
+      $db = \data\Database::instance()->connection();
+      $stmt = $db->prepare('DELETE FROM `translation_review` WHERE `ReviewID` = ?');
+      $stmt->bind_param('i', $this->reviewID);
+      $stmt->execute();
+      $stmt = null;
     }
   }

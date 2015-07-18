@@ -1,4 +1,16 @@
 <div data-module="dashboard">
+  {if $message === 'review-updated'}
+    <div class="alert alert-success" role="alert"><strong>Mae goren!</strong> Your suggestion has been successfully updated and resubmitted for review.</div>
+  {elseif $message === 'review-created'}
+    <div class="alert alert-info" role="alert"><strong>Mae goren!</strong> Your suggestion has been successfully submitted for review.</div>
+  {elseif $message === 'review-rejected'}
+    <div class="alert alert-info" role="alert"><strong>Alae i thíw egyl!</strong> The review item has been successfully rejected.</div>
+  {elseif $message === 'review-approved'}
+    <div class="alert alert-success" role="alert"><strong>Mae goren!</strong> The review item has been successfully approved.</div>
+  {elseif $message === 'review-deleted'}
+    <div class="alert alert-info" role="alert"><strong>Alae!</strong> The review item is no more.</div>
+  {/if}
+
 	<h2>Dashboard</h2>
 	<p>Test.</p>
 	
@@ -29,7 +41,7 @@
 	<div class="row">
 
     <div class="col-sm-6">
-      <h3>Translations</h3>
+      <h3>Approved entries</h3>
       <p></p>
       <ul class="list-group">
         {if count($translations) < 1}
@@ -37,9 +49,11 @@
         {else}
           {foreach $translations as $translation}
             <li class="list-group-item" id="translation-{$translation->id}">
-              <a href="/translate-form.page?translationID={$translation->id}">{$translation->word}</a>
-              &mdash;
-              {$translation->translation}
+              <span style="width:70%;overflow:hidden;text-overflow: ellipsis;display:inline-block;white-space:nowrap;">
+                <a href="/index.page#translationID={$translation->id}">{$translation->word}</a>
+                &mdash;
+                {$translation->translation}
+              </span>
               <span class="label label-default pull-right">{date_format($translation->dateCreated, 'Y-m-d H:i')}</span>
             </li>
           {/foreach}
@@ -66,19 +80,28 @@
         </ul>
       </nav>
       -->
-      <a href="/translate-form.page" role="button" class="btn btn-default btn-sm pull-right"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Create</a>
+      <a href="/translate-form.page " role="button" class="btn btn-default btn-sm pull-right"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Create</a>
     </div>
 
     {if null !== $reviews}
 	  <div class="col-sm-6">
-	    <h3>Pending reviews</h3>
+	    <h3>Contributions</h3>
       <ul class="list-group">
         {if count($reviews) < 1}
           No pending reviews
         {else}
           {foreach $reviews as $review}
             <li class="list-group-item" id="review-{$review->reviewID}">
-              <a href="/translate-form.page?reviewID={$review->reviewID}">{$review->word}</a>
+              {if $review->approved === true}
+                {$review->word}
+                <span class="label label-success pull-right">Approved</span>
+              {elseif $review->approved === false}
+                <s>{$review->word}</s>
+                <a href="/translate-form.page?reviewID={$review->reviewID}">Correct and submit again</a>
+                <span class="label label-danger pull-right" title="{htmlentities($review->justification)}">Rejected</span>
+              {else}
+                <a href="/translate-form.page?reviewID={$review->reviewID}">{$review->word}</a>
+              {/if}
               <span class="label label-default pull-right">{date_format($review->dateCreated, 'Y-m-d H:i')}</span>
             </li>
           {/foreach}

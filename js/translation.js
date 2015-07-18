@@ -27,7 +27,17 @@ define(['exports', 'utilities'], function (exports, util) {
     var _this = this;
     this.parentElement.find('.ed-favourite-button').on('click', function (ev) {
       ev.preventDefault();
-      _this.favourite($(this).data('translation-id'), true);
+      var glyph = $(this).find('span');
+
+      _this.favourite($(this).data('translation-id'), ! glyph.hasClass('glyphicon-heart')).then(function (added) {
+        if (added) {
+          glyph.addClass('glyphicon-heart');
+          glyph.removeClass('glyphicon-heart-empty');
+        } else {
+          glyph.addClass('glyphicon-heart-empty');
+          glyph.removeClass('glyphicon-heart');
+        }
+      });
     });
   }
   
@@ -35,11 +45,11 @@ define(['exports', 'utilities'], function (exports, util) {
     util.CAssert.number(id);
     util.CAssert.boolean(add);
     
-    $.ajax({
+    return $.ajax({
       url: '/api/profile/favourite',
       data: { translationID: id, add: add }
-    }).done(function (data) {
-      console.log(data);
+    }).then(function (data) {
+      return data.response.add;
     });
   }
 
