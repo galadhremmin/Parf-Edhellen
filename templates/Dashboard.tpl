@@ -11,14 +11,17 @@
     <div class="alert alert-info" role="alert"><strong>Alae!</strong> The review item is no more.</div>
   {/if}
 
-	<h2>Dashboard</h2>
-	<p>Test.</p>
-	
+	<h2>Dashboard <span class="tengwar header">82# 5`C e3G</span></h2>
+	<p>This is your dashboard&mdash;the hub of your activity within <em>Parf Edhellen</em>. It's still under development, so new features will appear with time.</p>
+
 	<div class="row">
 
 	  <div class="col-sm-6">
 	    <h3>Favourites</h3>
-	    <p></p>
+	    <p>
+        These are the words you've marked as favourites while browsing the dictionary.
+        You mark words as favourites by clicking the <span class="glyphicon glyphicon-heart" aria-hidden="true"></span> next to the word.
+      </p>
 	    <ul class="list-group">
 	      {if count($favourites) < 1}
 	      You have no favourite words just yet.
@@ -34,15 +37,18 @@
 	  </div>
     <div class="col-sm-6">
       <h3>Flashcards</h3>
-      <ul class="list-group">Coming soon!</ul>
+      <p>
+        Flashcards help you improve your vocabulary! Jog your memory by translating English words into Sindarin and Quenya. Coming soon.
+      </p>
+      <!--<ul class="list-group">Coming soon!</ul>-->
     </div>
 	</div>
 	
 	<div class="row">
 
     <div class="col-sm-6">
-      <h3>Approved entries</h3>
-      <p></p>
+      <h3>Words</h3>
+      <p>The list beneath contains words you've authored, and an administrator has approved.</p>
       <ul class="list-group">
         {if count($translations) < 1}
           There are no items in this list.
@@ -80,15 +86,18 @@
         </ul>
       </nav>
       -->
-      <a href="/translate-form.page " role="button" class="btn btn-default btn-sm pull-right"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Create</a>
+      <a href="/translate-form.page " role="button" class="btn btn-default btn-sm pull-right"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Add word</a>
     </div>
 
     {if null !== $reviews}
 	  <div class="col-sm-6">
 	    <h3>Contributions</h3>
+      <p>
+        The status of your contributions is shown beneath, as well as your history on <em>Parf Edhellen</em>.
+      </p>
       <ul class="list-group">
         {if count($reviews) < 1}
-          There are no contributions awaiting to be reviewed by an administrator at this time.
+          There are no glosses awaiting to be reviewed by an administrator at this time.
         {else}
           {foreach $reviews as $review}
             <li class="list-group-item" id="review-{$review->reviewID}">

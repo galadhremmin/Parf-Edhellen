@@ -10,7 +10,7 @@
       parent::load();
       
       if ($this->_account->configured) {
-        header('Location: profile.page');
+        header('Location: profile.page?message=auth-existing');
         return;
       }
             

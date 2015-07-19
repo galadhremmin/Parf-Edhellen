@@ -77,7 +77,7 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
       data: { nickname: nick }
     }).done(function (data) {
       if (data.succeeded) {
-        window.location.href = '/profile.page';
+        window.location.href = '/profile.page?message=auth-new';
         return;
       }
       

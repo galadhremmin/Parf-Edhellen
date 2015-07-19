@@ -1,3 +1,9 @@
+{if $message === 'auth-existing'}
+  <div class="alert alert-success" role="alert"><strong>Mae govannen!</strong> You've now successfully logged in. Beneath is your profile, which you can edit to your heart's content. <a href="/about.page#profile">More information</a></div>
+{elseif $message === 'auth-new'}
+  <div class="alert alert-success" role="alert"><strong>Mae govannen!</strong> You've now successfully logged in, and welcome to <em>Parf Edhellen</em>! Beneath is your profile, which you can edit to your heart's content. You can also go into <a href="/dashboard.page">your dashboard</a> and review the status of your contributions.</div>
+{/if}
+
 {if $myProfile == true}
 <div data-module="profile" id="profile-page">
 {/if}

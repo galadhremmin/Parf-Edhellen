@@ -1,10 +1,14 @@
-<h2>{$operation}&nbsp;definition</h2>
-<p>Test.</p>
+<h2>{$operation}&nbsp;word</h2>
+<p>
+  <strong>Note!</strong>
+  Please try to be as thorough as possible. The more information you provide, the higher the chances are that your word will
+  be moved into the dictionary. If your word is a neologism, please make sure to point that out under <em>comments</em>.
+</p>
 
 <form class="form-horizontal" data-module="translateForm" action="#" method="post">
   {if !empty($justification)}
     <div class="alert alert-info">
-      <strong>Tirio i thíw hin!</strong> Your submission was rejected because: {$justification}
+      <strong>Tiro i thíw hin!</strong> Your submission was rejected because: {$justification}
       <p>Please make sure that you've addressed this issue before reapplying.</p>
     </div>
   {/if}
@@ -16,7 +20,7 @@
 
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h3 class="panel-title">Word information</h3>
+      <h3 class="panel-title">Basic information</h3>
     </div>
     <div class="panel-body">
       <div class="form-group">

@@ -18,6 +18,14 @@
         $engine->assign('myProfile',     $model->hasLoadedAuthenticatedAuthor());
         $engine->assign('author',        $model->getAuthor());
         $engine->assign('profileHtml',   \utils\StringWizard::createLinks($model->getAuthor()->profile));
+
+        if (isset($_GET['message'])) {
+          $message = preg_replace('[^a-zA-Z\\-]', '', $_GET['message']);
+        } else {
+          $message = '';
+        }
+
+        $engine->assign('message', $message);
       }
     }
   }
