@@ -55,7 +55,12 @@ data-module="translation"
       <footer>
         {if $translation->source != null}<span class="word-source" rel="trans-source">[{$translation->source}]</span>{/if}
 
-        <span class="word-etymology" rel="trans-etymology">{$translation->etymology}</span>
+        {if !empty($translation->etymology)}
+        <span class="word-etymology" rel="trans-etymology">{$translation->etymology}.</span>
+        {/if}
+        {if $translation->group->id}
+          Group: {$translation->group->name}.
+        {/if}
         Published {$translation->dateCreated} by <a href="/profile.page?authorID={$translation->authorID}" itemprop="author" rel="author" title="View profile for {$translation->authorName}.">{$translation->authorName}</a>
       </footer>
     </blockquote>

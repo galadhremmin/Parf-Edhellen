@@ -1,15 +1,14 @@
 <div class="jumbotron">
 <h1>Mae govannen!</h1>
 <p>Parf Edhellen&mdash;an <em>Elvish Book</em>&mdash; is a free dictionary service, consisting of imported glosses from <em>Hiswelókë Sindarin Dictionary</em>, 
-<em>Ardalambion Quenya Wordlists</em> and <a href="about.page?browseTo=wordlist">much, much more</a>. Please enter your search terms in the search field above to begin your journey.</p>
+<em>Ardalambion Quenya Wordlists</em> and <a href="about.page?browseTo=wordlist">many, many more</a>. Please enter your search query in the search field above to begin your journey.</p>
 </div>
 
 <hr>
 
-
 <div class="row">
   <div class="col-xs-12 col-sm-4">
-    <p>My name is Leonard (also known as Aldaleon in the <a href="http://www.forodrim.org/daeron/md_home.html" target="_blank">Mellonath Daeron</a>) and I maintain this service. If you want to get in touch with me, you'll find me on <a href="https://twitter.com/parmaeldo" target="_blank">Twitter</a> and <a href="https://plus.google.com/106247498497256333269?rel=author" target="_blank" rel="author">Google+</a>. Give me a few days, and I'll get back to you.</p>
+    <p>My name is Leonard (also known as Aldaleon in the <a href="http://www.forodrim.org/daeron/md_home.html" target="_blank">Mellonath Daeron</a>) and I maintain this service. If you want to get in touch with me, you'll find me on <a href="https://twitter.com/parmaeldo" target="_blank">Twitter</a>. Give me a few days, and I'll get back to you.</p>
     <hr class="visible-xs">
   </div>
   <div class="col-xs-12 col-sm-4">
@@ -34,5 +33,3 @@
     </blockquote>
   </div>
 </div>
-
-

@@ -1,13 +1,14 @@
 <h2>Log in</h2>
 {$errorMessage}
 <form action="/exec/authenticate.php" method="get">
-  <p>Please select an OpenID-provider to use for authenticating yourself. Please note that these providers are only
-  used as a means for authentication, and that none of your disclosed personal information will be used.</p>
-  
-  <p>{foreach from=$providers item=provider}
-  <input id="provider-{$provider->id}" type="radio" name="provider" value="{$provider->id}" />
-  <label for="provider-{$provider->id}" class="openid-provider" style="background-image:url(img/openid-providers/{$provider->logo})">{$provider->name}</label>
-  {/foreach}</p>
+  <p>
+    Please click on one of the services below to log in. They'll confirm that you're the one you say you are.
+    You'll have to enter your username and password, but once you've logged in, we won't access your personal information (apart from your name and e-mail address).
+  </p>
 
-  <input type="submit" value="Authenticate" />
+  <div class="well">
+    {foreach from=$providers item=provider}
+    <input class="auth-provider" type="image" src="/img/openid-providers/{$provider->logo}" id="provider-{$provider->id}" name="provider" value="{$provider->id}" />
+    {/foreach}
+  </div>
 </form>
