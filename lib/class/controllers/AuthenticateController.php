@@ -6,14 +6,12 @@
       parent::__construct('Authenticate', $engine, false);
     }
     
-    public function load() {    
-      $error = null;
+    public function load() {
       $model = $this->getModel();
       
       if ($model !== null) {
         $this->_engine->assign('providers', $model->getProviders());
+        $this->_engine->assign('message', $model->getMessage());
       }
-      
-      $this->_engine->assign('errorMessage', $error);
     }
   }

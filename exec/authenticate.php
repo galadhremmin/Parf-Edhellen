@@ -18,9 +18,14 @@
   }
   
   // Perform the authentication with the idP
-  require ROOT.'/lib/hybridauth/Hybrid/Auth.php';
-  $auth = new \Hybrid_Auth(ROOT.'/lib/config/config.HybridAuth.php');
-  $authProvider = $auth->authenticate($provider->url);
+  try {
+    require ROOT . '/lib/hybridauth/Hybrid/Auth.php';
+    $auth = new \Hybrid_Auth(ROOT . '/lib/config/config.HybridAuth.php');
+    $authProvider = $auth->authenticate($provider->url);
+  } catch (\Exception $ex) {
+    header('Location: ../authenticate.page?message=' . base64_encode($ex->getMessage()));
+    exit;
+  }
 
   // Request user profile information from the authentication format
   $profile = $authProvider->getUserProfile();
