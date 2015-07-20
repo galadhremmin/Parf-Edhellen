@@ -23,7 +23,7 @@
       );
       
       foreach ($rights as $right) {
-        if ($this->_access & $right === $right && $this->_word->owner !== $account->id) {
+        if (($this->_access & $right) === $right && $this->_word->owner !== $account->id) {
           $group = 'Administrators';
           break;
         }

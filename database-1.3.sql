@@ -27,4 +27,32 @@ ALTER TABLE  `auth_accounts` CHANGE  `Identity`  `Identity` VARCHAR( 255 ) CHARA
 ALTER TABLE  `auth_accounts` ADD  `Email` nvarchar(255) NULL AFTER  `AccountID` ;
 ALTER TABLE  `auth_accounts` ADD  `ProviderID` INT UNSIGNED NULL AFTER  `Email` ;
 
+CREATE TABLE IF NOT EXISTS `translation_group` (
+  `TranslationGroupID` int(11) NOT NULL AUTO_INCREMENT,
+  `Name` varchar(128) COLLATE utf8_swedish_ci NOT NULL,
+  `Canon` bit(1) NOT NULL DEFAULT b'0',
+  PRIMARY KEY (`TranslationGroupID`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci AUTO_INCREMENT=1 ;
+
+ALTER TABLE `translation` ADD `TranslationGroupID` INT(11) NULL AFTER `LanguageID`;
+ALTER TABLE `translation` ADD `Deleted` BIT(1) DEFAULT B'0' AFTER `Latest`;
+
+INSERT INTO `translation_group` (`TranslationGroupID`, `Name`, `Canon`)
+  VALUES (1, 'Verified and confirmed', b'1'),
+         (2, 'Neologism', b'0'),
+         (10, 'Quettaparma Quenyallo', b'1'),
+         (20, 'Parviphith', b'0'),
+         (30, 'Hiswelókë''s Sindarin Dictionary', b'1'),
+         (40, 'Parma Eldalamberon 17 Sindarin Corpus', b'1'),
+         (50, 'Mellonath Daeron', b'1'),
+         (60, 'Tolkiendil Compound Sindarin Names', b'1'),
+         (70, 'Eldamo', b'1');
+
+UPDATE `translation` SET `TranslationGroupID` = 10 WHERE `EnforcedOwner` = 2;
+UPDATE `translation` SET `TranslationGroupID` = 20 WHERE `EnforcedOwner` = 25;
+UPDATE `translation` SET `TranslationGroupID` = 30 WHERE `EnforcedOwner` = 1;
+UPDATE `translation` SET `TranslationGroupID` = 40 WHERE `EnforcedOwner` = 3 AND `LanguageID` = 1 AND `DateCreated` >= '2012-04-23 00:00' AND `DateCreated` < '2012-04-24 00:00';
+UPDATE `translation` SET `TranslationGroupID` = 50 WHERE `EnforcedOwner` = 3 AND `DateCreated` >= '2012-03-18 00:00' AND `DateCreated` < '2012-03-19 00:00';
+UPDATE `translation` SET `TranslationGroupID` = 60 WHERE `EnforcedOwner` = 30;
+
 insert into `version` (`number`, `date`) values (1.3, NOW());

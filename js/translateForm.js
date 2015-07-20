@@ -193,8 +193,12 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
         _this.loading = false;
         return;
       }
-      
-      window.location.href = '/dashboard.page?highlight=translation-' + data.response.id + '&message=review-created';
+
+      if (data.response.reviewID) {
+        window.location.href = '/dashboard.page?highlight=translation-' + data.response.id + '&message=review-created';
+      } else {
+        window.location.href = '/index.page#translationID=' + data.response.id;
+      }
     }).fail(function () {
       console.log('CTranslateForm: failed to save ' + JSON.stringify(data) + '.');
       _this.loading = false;

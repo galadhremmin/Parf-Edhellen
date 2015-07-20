@@ -1,7 +1,13 @@
 Parf Edhellen
 ==============
-This is the source code for [elfdict.com](http://www.elfdict.com). Proprietary elements, such as ads and images, aren't included here. If you are interested in contributing, please get in touch with [galadhremmin](https://github.com/galadhremmin). All form of help is appreciated! 
+This is the source code for [elfdict.com](http://www.elfdict.com), a non-profit, free dictionary online for Tolkien's languages. Maintained by Leonard Wickmark.
 
+Want to help out?
+-----------------
+If you are interested in helping out, please get in touch with [galadhremmin](https://github.com/galadhremmin).
+You can also help us by donating. Please visit [elfdict.com](http://www.elfdict.com) for more information.
+
+I'd like to thank JetBrains for supporting ElfDict by giving us their excellent PHPStorm for free.
 
 Coding style
 ------------
@@ -11,8 +17,6 @@ Coding style
 * Always a single space between statements, brackets and paranthesis.
 
 The source code is provided as-is. The code does not, in any shape or form, reflect best coding practices; it's a non-profit hobby project of mine.
-
-Maintained by Leonard Wickmark.
 
 License
 -------

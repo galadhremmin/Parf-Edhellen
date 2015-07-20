@@ -6,7 +6,6 @@
       parent::__construct();
       
       parent::registerMainMethod('getSense');
-      parent::registerMethod('save', 'saveSense');
     }
     
     public function handleRequest(&$data) {
@@ -20,23 +19,6 @@
       if ($sense->id < 1) {
         return null;
       }
-      
-      return $sense;
-    }
-    
-    protected static function saveSense(&$data) {
-      \auth\Credentials::request(new \auth\BasicAccessRequest());
-    
-      if (!isset($data['identifier'])) {
-        throw new \ErrorException("Missing parameter 'identifier'.");
-      }
-
-      $data = array(
-        'identifier' => preg_replace('/<|>/', '', $data['identifier'])
-      );
-      
-      $sense = new \data\entities\Sense($data);
-      $sense->save();
       
       return $sense;
     }

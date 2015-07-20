@@ -119,6 +119,17 @@
           </select>
         </div>
       </div>
+      {if $groups|@count > 0}
+      <div class="form-group">
+        <label for="ed-translate-groupID" class="col-sm-2 control-label">Group</label>
+        <div class="col-sm-10">
+          <select class="form-control" id="ed-translate-groupID">
+            <option value="0">Select one ...</option>
+            {html_options options=$groups selected=$orig_group}
+          </select>
+        </div>
+      </div>
+      {/if}
     </div>
   </div>
   <div class="text-right">

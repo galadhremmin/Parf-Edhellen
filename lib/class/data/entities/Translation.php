@@ -15,7 +15,7 @@
     public $phonetic;
     public $language;
     public $senseID;
-    public $owner;
+    public $group;
     
     // Semi-mutable column
     public $index;
@@ -39,7 +39,7 @@
       try {
         $query = $db->prepare(
           'SELECT COUNT(*) AS `count` FROM `translation` t 
-             WHERE t.`AuthorID` = ? AND t.`Latest` = \'1\''
+             WHERE t.`AuthorID` = ? AND t.`Latest` = \'1\' AND t.`Deleted` = b\'0\''
         );
         $query->bind_param('i', $account->id);
         $query->execute();
@@ -68,29 +68,34 @@
       
       $query = null;
       try {
-       $query =  $db->prepare(
+        $query =  $db->prepare(
          \data\SqlHelper::paginate(
-           'SELECT t.`TranslationID`, w.`Key`, t.`LanguageID`, t.`Translation`, t.`DateCreated` FROM `translation` t
+           'SELECT t.`TranslationID`, w.`Key`, t.`LanguageID`, t.`Translation`, t.`DateCreated`,
+                   tg.`TranslationGroupID`, tg.`Name` AS `TranslationGroup`, tg.`Canon`
+            FROM `translation` t
               INNER JOIN `word` w ON w.`KeyID` = t.`WordID`
               INNER JOIN `language` l ON l.`ID` = t.`LanguageID`
+              LEFT JOIN `translation_group` tg ON tg.`TranslationGroupID` = t.`TranslationGroupID`
             WHERE t.`AuthorID` = ? AND t.`Latest` = \'1\' AND t.`Index` = \'0\' AND l.`Invented` = \'1\'
+                  AND t.`Deleted` = b\'0\'
             ORDER BY t.`DateCreated` DESC', $offset, $max
          )
-       );
-       $query->bind_param('i', $account->id);
-       $query->execute();
-       $query->bind_result($id, $word, $language, $translation, $creationDate);
-       
-       while ($query->fetch()) {
-         $translations[] = new Translation(array(
+        );
+        $query->bind_param('i', $account->id);
+        $query->execute();
+        $query->bind_result($id, $word, $language, $translation, $creationDate, $groupID, $groupName, $canon);
+
+        while ($query->fetch()) {
+          $translations[] = new Translation(array(
             'id'          => $id,
             'word'        => $word,
             'language'    => $language,
             'owner'       => $account->id,
             'translation' => $translation,
-            'dateCreated' => new \DateTime($creationDate)
-         ));
-       }
+            'dateCreated' => new \DateTime($creationDate),
+            'group'       => new TranslationGroup(array('id' => $groupID, 'name' => $groupName, 'canon' => $canon))
+          ));
+        }
       } finally {
         if ($query !== null) { 
           $query->close();
@@ -196,22 +201,23 @@
           'SELECT w.`Key` AS `Word`, t.`TranslationID`, t.`Translation`, t.`Etymology`,
            t.`Type`, t.`Source`, t.`Comments`, t.`Tengwar`, t.`Phonetic`,
            l.`Name` AS `Language`, t.`NamespaceID`, l.`Invented` AS `LanguageInvented`,
-           t.`EnforcedOwner`, t.`AuthorID`, a.`Nickname`, w.`NormalizedKey`, t.`Index`,
-           t.`DateCreated`
+           t.`AuthorID`, a.`Nickname`, w.`NormalizedKey`, t.`Index`,
+           t.`DateCreated`, tg.`TranslationGroupID`, tg.`Name` AS `TranslationGroup`,
+           tg.`Canon`
          FROM `translation` t
          INNER JOIN `word` w ON w.`KeyID` = t.`WordID`
          INNER JOIN `language` l ON l.`ID` = t.`LanguageID`
          LEFT JOIN `auth_accounts` a ON a.`AccountID` = t.`AuthorID`
-         WHERE t.`NamespaceID` IN('.$senseIDs.') AND t.`Latest` = 1
+         LEFT JOIN `translation_group` tg ON tg.`TranslationGroupID` = t.`TranslationGroupID`
+         WHERE t.`NamespaceID` IN('.$senseIDs.') AND t.`Latest` = 1 AND t.`Deleted` = b\'0\'
          ORDER BY t.`NamespaceID` ASC, l.`Name` DESC, w.`Key` ASC'
       );
     
       $query->execute();
       $query->bind_result(
-          $word, $translationID, $translation, $etymology, $type,
-          $source, $comments, $tengwar, $phonetic, $language,
-          $senseID, $inventedLanguage, $owner, $authorID,
-          $authorName, $normalizedWord, $isIndex, $dateCreated
+          $word, $translationID, $translation, $etymology, $type, $source, $comments, $tengwar,
+          $phonetic, $language, $senseID, $inventedLanguage, $authorID, $authorName,
+          $normalizedWord, $isIndex, $dateCreated, $groupID, $groupName, $canon
       );
     
       $data['translations']   = array();
@@ -245,10 +251,10 @@
                 'comments'    => empty($comments) ? null : \utils\StringWizard::createLinks($comments),
                 'language'    => $language,
                 'senseID'     => $senseID,
-                'owner'       => $owner,
                 'authorID'    => $authorID,
                 'authorName'  => $authorName,
-                'dateCreated' => $dateCreated
+                'dateCreated' => $dateCreated,
+                'group'       => new TranslationGroup(array('id' => $groupID, 'name' => $groupName, 'canon' => $canon))
             )
         );
     
@@ -272,7 +278,8 @@
       $this->gender = 'none';
       $this->word = null;
       $this->index = false;
-    
+      $this->group = TranslationGroup::emptyGroup();
+
       parent::__construct($data);
     }
     
@@ -340,21 +347,22 @@
       if ($this->index && $this->loadIndex($sense, $word)) {
         return $this;
       }
-      
+
       // Acquire current author
       $accountID = $credentials->account()->id; // this is only necessary for the MySQLi
       $eldestTranslationID = null;
-      
+
       // Deprecate current translation entry
       if ($this->id > 0) {
         // Indexes doesn't use words, hence this functionality applies only
         // to translations.
-        $query = $db->prepare('SELECT `WordID`, `NamespaceID`, `EldestTranslationID` FROM `translation` WHERE `TranslationID` = ? AND `EnforcedOwner` IN(0, ?)');
-        $query->bind_param('ii', $this->id, $accountID);
+        $query = $db->prepare('SELECT `WordID`, `NamespaceID`, `EldestTranslationID` FROM `translation` WHERE `TranslationID` = ?');
+        $query->bind_param('i', $this->id);
         $query->execute();
         $query->bind_result($currentWordID, $currentSenseID, $eldestTranslationID);
         $query->fetch();
-        $query->close();
+        $query->free_result();
+        $query = null;
         
         if (! $eldestTranslationID) {
           $eldestTranslationID = $this->id;
@@ -365,7 +373,7 @@
         $query = $db->prepare('DELETE FROM `keywords` WHERE `TranslationID` = ?');
         $query->bind_param('i', $this->id);
         $query->execute();
-        $query->close();
+        $query = null;
       
         // deassociate the word with the previous translation entry
         if ($currentWordID != $word->id) {
@@ -379,14 +387,15 @@
           $query->execute();
           $query->bind_result($references);
           $query->fetch();
-          $query->close();
+          $query->free_result();
+          $query = null;
       
           // If there are no references, delete the sense from active keywords table
           if ($references < 1) {
             $query = $db->prepare('DELETE FROM `keywords` WHERE `NamespaceID` = ?');
             $query->bind_param('i', $currentSenseID);
             $query->execute();
-            $query->close();
+            $query = null;
           }
         }
       }
@@ -395,22 +404,17 @@
         throw new \ErrorException('Invalid log in state.');
       }
       
-      // Make sure that translations without enforced owners are always set to null.
-      if ($this->owner == null || !is_numeric($this->owner)) {
-        $this->owner = 0;
-      }
-      
       // Insert the row
       $query = $db->prepare(
-          "INSERT INTO `translation` (`Translation`, `Etymology`, `Type`, `Source`, `Comments`,
-        `Tengwar`, `Phonetic`, `LanguageID`, `WordID`, `NamespaceID`, `Index`, `AuthorID`,
-        `EnforcedOwner`, `EldestTranslationID`, `Latest`, `DateCreated`)
+          "INSERT INTO `translation` (`TranslationGroupID`, `Translation`, `Etymology`, `Type`, `Source`, `Comments`,
+        `Tengwar`, `Phonetic`, `LanguageID`, `WordID`, `NamespaceID`, `Index`, `AuthorID`, `EldestTranslationID`,
+        `Latest`, `DateCreated`)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '1', NOW())"
       );
-      $query->bind_param('sssssssiiiiiii',
-          $this->translation, $this->etymology, $this->type, $this->source, $this->comments,
-          $this->tengwar, $this->phonetic, $this->language, $word->id, $this->senseID,
-          $this->index, $accountID, $this->owner, $eldestTranslationID
+      $query->bind_param('isssssssiiiiii',
+        $this->group->id, $this->translation, $this->etymology, $this->type, $this->source, $this->comments,
+        $this->tengwar, $this->phonetic, $this->language, $word->id, $this->senseID, $this->index, $accountID,
+        $eldestTranslationID
       );
       
       $query->execute();
@@ -418,7 +422,7 @@
       $previousTranslationId = $this->id;
       $this->id = $query->insert_id;
       
-      $query->close();
+      $query = null;
       
       if ($this->id == 0) {
         // failed!
@@ -453,14 +457,14 @@
         $query->execute();
       }
       
-      $query->close();
+      $query = null;
       
       // Deprecated previous translation
       if ($previousTranslationId > 0) {
         $query = $db->prepare('UPDATE `translation` SET `Latest` = \'0\', `ParentTranslationID` = ? WHERE `TranslationID` = ?');
         $query->bind_param('ii', $this->id, $previousTranslationId);
         $query->execute();
-        $query->close();
+        $query = null;
       }
       
       Sentence::updateReference($previousTranslationId, $this);
@@ -476,25 +480,17 @@
     }
     
     public function remove() {
-      throw new Exception('Not implemented exception');
-    
       if ($this->id < 1) {
-        throw new \exceptions\InvalidParameterException('id');
+        throw new \exceptions\MissingParameterException('id');
       }
       
       $conn = \data\Database::instance()->connection();
-      
-      // TODO: Deassociate all words from the translation entry
-     
+
       $stmt = $conn->prepare('DELETE FROM `keywords` WHERE `TranslationID` = ?');
       $stmt->bind_param('i', $this->id);
       $stmt->execute();
       
-      $stmt = $conn->prepare('DELETE FROM `translation` WHERE `TranslationID` = ?');
-      $stmt->bind_param('i', $this->id);
-      $stmt->execute();
-      
-      $stmt = $conn->prepare('UPDATE `sentence_fragment` SET `TranslationID` = NULL WHERE `TranslationID` = ?');
+      $stmt = $conn->prepare('UPDATE `translation` SET `Deleted` = b\'1\' WHERE `TranslationID` = ?');
       $stmt->bind_param('i', $this->id);
       $stmt->execute();
     }
@@ -514,9 +510,11 @@
         'SELECT 
           t.`LanguageID`, t.`Translation`, t.`Etymology`, t.`Type`, t.`Source`, t.`Comments`, 
           t.`Tengwar`, t.`Gender`, t.`Phonetic`, w.`Key`, t.`NamespaceID`, t.`AuthorID`,
-          t.`DateCreated`, t.`Latest`, t.`Index`, t.`WordID`, t.`EnforcedOwner`, a.`Nickname`
+          t.`DateCreated`, t.`Latest`, t.`Index`, t.`WordID`, a.`Nickname`,
+          tg.`TranslationGroupID`, tg.`Name` AS `TranslationGroup`, tg.`Canon`
          FROM `translation` t 
            LEFT JOIN `word` w ON w.`KeyID` = t.`WordID`
+           LEFT JOIN `translation_group` tg ON tg.`TranslationGroupID` = t.`TranslationGroupID`
            INNER JOIN `auth_accounts` a ON a.`AccountID` = t.`AuthorID`
          WHERE t.`TranslationID` = ?'
       );
@@ -526,11 +524,13 @@
       $query->bind_result(
         $this->language, $this->translation, $this->etymology, $this->type, $this->source, $this->comments,
         $this->tengwar, $this->gender, $this->phonetic, $this->word, $this->senseID, $this->authorID,
-        $this->dateCreated, $this->latest, $this->index, $this->wordID, $this->owner, $this->authorName
+        $this->dateCreated, $this->latest, $this->index, $this->wordID, $this->authorName,
+        $groupID, $groupName, $canon
       );
       
       if ($query->fetch()) {
         $this->id = $id;
+        $this->group = new TranslationGroup(array('id' => $groupID, 'name' => $groupName, 'canon' => $canon));
       }
       
       $query->close(); 
@@ -627,7 +627,6 @@
      */
     public function disassociate() {
       $this->id = 0;
-      $this->owner = 0;
       $this->authorID = 0;
       $this->authorName = null;
       $this->dateCreated = null;
@@ -712,7 +711,7 @@
       }
       
       // Bump all unverified translations to a trailing position
-      if ($translation->owner === 0) {
+      if (! $translation->group->canon) {
         $rating = -110000 + $rating;
       }
       

@@ -10,6 +10,7 @@
     private $_indexes;
     private $_justification;
     private $_resubmission;
+    private $_groups;
     
     public function __construct() {
       $this->_languages     = \data\entities\Language::getLanguageArray(true);
@@ -19,6 +20,9 @@
       $this->_reviewID      = null;
       $this->_resubmission  = false;
       $this->_justification = '';
+      $this->_groups        = array();
+
+      $account = \auth\Credentials::current()->account();
 
       if (isset($_GET['translationID']) && is_numeric($_GET['translationID'])) {
         $id = intval($_GET['translationID']);
@@ -35,12 +39,15 @@
         }
       }
 
+      if ($account->isAdministrator()) {
+        $this->_groups = \data\entities\TranslationGroup::getAllGroups();
+      }
+
       if (isset($_GET['reviewID']) && is_numeric($_GET['reviewID'])) {
         $id = intval($_GET['reviewID']);
         $review = new \data\entities\TranslationReview();
         $review->load($id);
 
-        $account = \auth\Credentials::current()->account();
         if ($review->reviewID !== 0 && ($account->isAdministrator() || $account->id == $review->authorID) &&
             $review->approved !== true) {
           // Feed the original values with the review data
@@ -54,6 +61,12 @@
           $this->_original->type        = $review->data['type'];
           $this->_original->phonetic    = $review->data['phonetic'];
           $this->_original->gender      = $review->data['gender'];
+
+          // Groups are only assignable by administrators while reviewing the item. Treat therefore
+          // the parameter groupID as optional.
+          if (isset($review->data['groupID'])) {
+            $this->_original->group->id = $review->data['groupID'];
+          }
 
           // Retrieve indexers, and if none exist, create a blank array to indicate an empty set.
           $indexes = $review->data['indexes'];
@@ -112,5 +125,13 @@
 
     public function isResubmission() {
       return $this->_resubmission;
+    }
+
+    public function isAdministrator() {
+      return \auth\Credentials::current()->account()->isAdministrator();
+    }
+
+    public function getGroups() {
+      return $this->_groups;
     }
   }

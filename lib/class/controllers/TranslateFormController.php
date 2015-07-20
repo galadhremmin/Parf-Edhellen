@@ -22,6 +22,7 @@
       $this->_engine->assign('wordClasses',       $model->getWordClasses());
       $this->_engine->assign('wordGenders',       $model->getWordGenders());
       $this->_engine->assign('reviewID',          $model->getReviewID());
+      $this->_engine->assign('groups',            $model->getGroups());
         
       $original =& $model->getOriginal();
       
@@ -42,17 +43,20 @@
       $this->_engine->assign('orig_type',         $original->type);
       $this->_engine->assign('orig_gender',       $original->gender);
       $this->_engine->assign('orig_phonetic',     $original->phonetic);
+      $this->_engine->assign('orig_group',        $original->group->id);
       $this->_engine->assign('orig_indexes',      json_encode($model->getIndexes()));
       $this->_engine->assign('operation',        ($original->id > 0 ? 'Edit' : 'Add'));
       $this->_engine->assign('justification',     $model->getJustification());
+      $this->_engine->assign('isAdmin',           $model->isAdministrator());
 
-      $mode = 'create';
       if ($model->getReviewID() !== null) {
-        if (\auth\Credentials::current()->account()->isAdministrator()) {
+        if ($model->isAdministrator()) {
           $mode = 'review';
         } else if (! $model->isResubmission()) {
           $mode = 'edit';
         }
+      } else {
+        $mode = 'create';
       }
 
       $this->_engine->assign('mode', $mode);

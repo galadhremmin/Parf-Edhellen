@@ -30,6 +30,7 @@
         $engine->assign('accountID',    $model->getAccountID());
         $engine->assign('favourites',   $model->getFavourites());
         $engine->assign('timeElapsed',  $this->getTimeElapsed());
+        $engine->assign('isAdmin',      $model->isAdministrator());
         
         $this->assignColumnWidths($model, $engine);
       }

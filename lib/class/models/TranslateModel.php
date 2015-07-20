@@ -104,6 +104,10 @@
       
       return \auth\Credentials::current()->account()->id;
     }
+
+    public function isAdministrator() {
+      return \auth\Credentials::current()->account()->isAdministrator();
+    }
     
     public function getFavourites() {
       return $this->_favourites;

@@ -1,12 +1,15 @@
 <?php
   namespace services;
   
+  use data\entities\TranslationGroup;
+
   class TranslationService extends ServiceBase {
     public function __construct() {
       parent::__construct();
       
       parent::registerMainMethod('getTranslation');
       parent::registerMethod('save', 'registerTranslation');
+      parent::registerMethod('delete', 'deleteTranslation');
       parent::registerMethod('translate', 'translate');
       parent::registerMethod('saveReview', 'saveReview');
       parent::registerMethod('deleteReview', 'deleteReview');
@@ -52,6 +55,19 @@
       // administrators of the site, unless the default access right sets have been modified.
       $result = self::saveTranslation($data);
       return $result;
+    }
+
+    public static function deleteTranslation(&$input) {
+      if (!isset($input['translationID']) || !is_numeric($input['translationID']))  {
+        throw new \exceptions\InvalidArgumentException('translationID');
+      }
+
+      $translationID = intval($input['translationID']);
+      \auth\Credentials::request(new \auth\ModifyExistingTranslationAccessRequest($translationID));
+
+      $tran = new \data\entities\Translation();
+      $tran->load($translationID);
+      $tran->remove();
     }
     
     protected static function translate(&$input) {    
@@ -235,6 +251,14 @@
         }
 
         $values[$key] = stripslashes($value);
+      }
+
+      // Retrieve group, if it exists.
+      if (isset($data['groupID']) && \auth\Credentials::current()->account()->isAdministrator()) {
+        $id = intval($data['groupID']);
+        if ($id > 0) {
+          $values['group'] = new TranslationGroup(array('id' => $id));
+        }
       }
 
       return $values;

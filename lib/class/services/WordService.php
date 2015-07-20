@@ -2,7 +2,7 @@
   namespace services;
   
   class WordService extends ServiceBase {
-    const CACHE_LIFESPAN_MINUTES = 43200; // cache for a month (60 * 24 * 30)
+    const CACHE_LIFESPAN_MINUTES = 480; // cache for eight hours (60 * 8)
 
     public function __construct() {
       parent::__construct();
@@ -94,7 +94,7 @@
           "SELECT DISTINCT w.`Key`, w.`NormalizedKey`
             FROM `translation` t 
               INNER JOIN `word` w ON w.`KeyID` = t.`WordID`
-            WHERE t.`Latest` = 1 AND t.`LanguageID` = ? AND w.`".$column."` LIKE ?
+            WHERE t.`Latest` = 1 AND t.`Deleted` = b\'0\' AND t.`LanguageID` = ? AND w.`".$column."` LIKE ?
             ORDER BY w.`Key` ASC"
         );
         

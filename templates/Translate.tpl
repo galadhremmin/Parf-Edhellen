@@ -21,31 +21,33 @@ data-module="translation"
     <section class="language-box" id="language-box-{$language}">
     {* Iterate through each entry for the specificed language *}
     {foreach $translationsForLanguage as $translation}
-    <blockquote itemscope="itemscope" itemtype="http://schema.org/Article" id="translation-block-{counter}" {if $translation->owner < 1}class="contribution"{/if}>
+    <blockquote itemscope="itemscope" itemtype="http://schema.org/Article" id="translation-block-{counter}" {if !$translation->group->canon}class="contribution"{/if}>
       <h3 rel="trans-word" class="trans-word" itemprop="about">
-        {if $translation->owner === 0}
-        <a href="about.page?browseTo=unverified" title="This gloss originated from an outdated, unverified or debatable source."><span class="glyphicon glyphicon-question-sign"></span></a>
+        {if !$translation->group->canon}
+        <a href="about.page?browseTo=unverified" title="Unverified or debatable content."><span class="glyphicon glyphicon-question-sign"></span></a>
         {/if}
         {$translation->word}
         {if $loggedIn}
-        <a href="#" class="ed-favourite-button" data-translation-id="{$translation->id}" title="Add to favourites."><span class="glyphicon glyphicon-heart{if !in_array($translation->id, $favourites)}-empty{/if} pull-right" aria-hidden="true"></span></a>
+          {if $isAdmin}
+            <a href="#" class="ed-delete-button" data-translation-id="{$translation->id}" title="Delete this item"><span class="glyphicon glyphicon-trash pull-right" aria-hidden="true"></span></a>
+            <a href="translate-form.page?translationID={$translation->id}" title="Edit this item"><span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span></a>
+          {/if}
+          <a href="#" class="ed-favourite-button" data-translation-id="{$translation->id}" title="Add to favourites"><span class="glyphicon glyphicon-heart{if !in_array($translation->id, $favourites)}-empty{/if} pull-right" aria-hidden="true"></span></a>
         {/if}
       </h3> 
       {if $translation->tengwar != null}
       &#32;<span class="tengwar">{$translation->tengwar}</span>
       {elseif $language eq 'Noldorin' or $language eq 'Sindarin'}
-      <!--&#32;<a class="tengwar" href="about.page?browseTo=tengwar">{strip_tags($translation->word)}</a> -->
       {/if}
       {if $translation->type != 'unset'}<span class="word-type" rel="trans-type">{$translation->type}.</span>{/if}
       <span rel="trans-translation" itemprop="keywords">{$translation->translation}</span>
 
       <p class="word-comments" rel="trans-comments" itemprop="articleBody">{$translation->comments}</p>
 
-      {if $translation->owner === 0}
+      {if !$translation->group->canon}
       <section class="alert alert-warning" itemprop="comment">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        Unverified or debatable content. Added by 
-        <a href="/profile.page?authorID={$translation->authorID}" itemprop="author" rel="author" title="View profile for {$translation->authorName}.">{$translation->authorName}</a>.
+        Unverified or debatable content.
       </section>
       {/if}
 

@@ -39,7 +39,23 @@ define(['exports', 'utilities'], function (exports, util) {
         }
       });
     });
-  }
+
+    this.parentElement.find('.ed-delete-button').on('click', function (ev) {
+      ev.preventDefault();
+
+      if (! confirm('Are you sure you want to delete this item?')) {
+        return;
+      }
+
+      var id = $(this).data('translation-id');
+      var block = $(this).parents('blockquote');
+      _this.deleteTranslation(id).then(function (data) {
+        if (data.succeeded === 'true') {
+          block.fadeOut();
+        }
+      });
+    })
+  };
   
   CTranslationView.prototype.favourite = function (id, add) {
     util.CAssert.number(id);
@@ -47,11 +63,22 @@ define(['exports', 'utilities'], function (exports, util) {
     
     return $.ajax({
       url: '/api/profile/favourite',
-      data: { translationID: id, add: add }
+      data: { translationID: id, add: add },
+      method: 'post'
     }).then(function (data) {
       return data.response.add;
     });
-  }
+  };
+
+  CTranslationView.prototype.deleteTranslation = function (id) {
+    util.CAssert.number(id);
+
+    return $.ajax({
+      url: '/api/translation/delete',
+      data: {translationID: id},
+      method: 'post'
+    });
+  };
 
   return new CTranslationView();
 });
