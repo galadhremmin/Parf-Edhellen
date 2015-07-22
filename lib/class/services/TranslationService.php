@@ -188,6 +188,8 @@
       // Save these as well. The current set of credentials are assumed to be the author
       // of these indexes.
       if (isset($data['indexes']) && is_array($data['indexes'])) {
+        $indexesToRemove = $ns->getIndexes();
+
         foreach ($data['indexes'] as $indexWord) {
           $index = new \data\entities\Translation(array(
             'word'     => $indexWord,
@@ -196,6 +198,22 @@
           ));
 
           $index->saveIndex();
+
+          if (is_array($indexesToRemove)) {
+            // Remove the index which was just added from the list of indexes to be removed.
+            for ($i = 0; $i < count($indexesToRemove); $i += 1) {
+              if ($index->id == $indexesToRemove[$i]->id) {
+                // Found! Remove the index from its position.
+                array_splice($indexesToRemove, $i, 1);
+                break;
+              }
+            }
+          }
+        }
+
+        // The remaining indexes must be removed, as they are no longer associated with the sense.
+        foreach ($indexesToRemove as $index) {
+          $index->remove();
         }
       }
 

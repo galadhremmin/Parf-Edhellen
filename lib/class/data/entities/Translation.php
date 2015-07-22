@@ -483,14 +483,20 @@
       if ($this->id < 1) {
         throw new \exceptions\MissingParameterException('id');
       }
-      
+
       $conn = \data\Database::instance()->connection();
 
       $stmt = $conn->prepare('DELETE FROM `keywords` WHERE `TranslationID` = ?');
       $stmt->bind_param('i', $this->id);
       $stmt->execute();
-      
-      $stmt = $conn->prepare('UPDATE `translation` SET `Deleted` = b\'1\' WHERE `TranslationID` = ?');
+
+      // Mark translation entries as deleted.
+      $stmt = $conn->prepare('UPDATE `translation` SET `Deleted` = b\'1\' WHERE `TranslationID` = ? AND `Index` = \'0\'');
+      $stmt->bind_param('i', $this->id);
+      $stmt->execute();
+
+      // Delete indexes permanently.
+      $stmt = $conn->prepare('DELETE FROM `translation` WHERE `TranslationID` = ? AND `Index` = \'1\'');
       $stmt->bind_param('i', $this->id);
       $stmt->execute();
     }
@@ -583,35 +589,19 @@
      * @return array
      */
     public function getIndexes() {
-      $normalizedTerm = \utils\StringWizard::normalize($this->word);
+      $sense = new Sense(array('id' => $this->senseID));
+      $indexes = $sense->getIndexes();
 
-      $db = \data\Database::instance();
-      $query = $db->connection()->prepare(
-        'SELECT DISTINCT
-          t.`TranslationID`, t.`WordID`, w.`Key`
-         FROM `translation` t 
-         LEFT JOIN `word` w ON w.`KeyID` = t.`WordID`
-         WHERE t.`NamespaceID` = ? AND t.`Index` = \'1\'
-         ORDER BY w.`Key` ASC'
-      );
-      $query->bind_param('i', $this->senseID);
-      $query->execute();
-      $query->bind_result(
-        $indexID, $wordID, $word
-      );
-
-      $indexes = array();
-      while ($query->fetch()) {
-        $indexes[] = array(
-          'ID'     => $indexID,
-          'wordID' => $wordID,
-          'word'   => $word
+      $items = array();
+      foreach ($indexes as $index) {
+        $items[] = array(
+          'ID'     => $index->id,
+          'wordID' => $index->wordID,
+          'word'   => $index->word
         );
       }
-      
-      $query->close();
-      
-      return $indexes; 
+
+      return $items;
     }
     
     /**

@@ -106,5 +106,41 @@
       
       return $this;
     }
+
+    /**
+     * Retrieves the indexes associated with the sense.
+     * @return array
+     */
+    public function getIndexes() {
+      $db = \data\Database::instance();
+      $query = $db->connection()->prepare(
+        'SELECT DISTINCT
+          t.`TranslationID`, t.`WordID`, w.`Key`
+         FROM `translation` t
+         LEFT JOIN `word` w ON w.`KeyID` = t.`WordID`
+         WHERE t.`NamespaceID` = ? AND t.`Index` = \'1\'
+         ORDER BY w.`Key` ASC'
+      );
+      $query->bind_param('i', $this->id);
+      $query->execute();
+      $query->bind_result(
+        $indexID, $wordID, $word
+      );
+
+      $indexes = array();
+      while ($query->fetch()) {
+        $indexes[] = new Translation(array(
+          'id'     => $indexID,
+          'wordID' => $wordID,
+          'word'   => $word,
+          'index'  => true
+        ));
+      }
+
+      $query->free_result();
+      $query = null;
+
+      return $indexes;
+    }
   }
 
