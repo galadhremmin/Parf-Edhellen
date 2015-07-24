@@ -17,6 +17,7 @@
     public $senseID;
     public $group;
     public $externalID;
+    public $uncertain;
     
     // Semi-mutable column
     public $index;
@@ -204,7 +205,7 @@
            l.`Name` AS `Language`, t.`NamespaceID`, l.`Invented` AS `LanguageInvented`,
            t.`AuthorID`, a.`Nickname`, w.`NormalizedKey`, t.`Index`,
            t.`DateCreated`, tg.`TranslationGroupID`, tg.`Name` AS `TranslationGroup`,
-           tg.`Canon`
+           tg.`Canon`, t.`Uncertain`
          FROM `translation` t
          INNER JOIN `word` w ON w.`KeyID` = t.`WordID`
          INNER JOIN `language` l ON l.`ID` = t.`LanguageID`
@@ -219,7 +220,7 @@
       $query->bind_result(
           $word, $translationID, $translation, $etymology, $type, $source, $comments, $tengwar,
           $phonetic, $language, $senseID, $inventedLanguage, $authorID, $authorName,
-          $normalizedWord, $isIndex, $dateCreated, $groupID, $groupName, $canon
+          $normalizedWord, $isIndex, $dateCreated, $groupID, $groupName, $canon, $uncertain
       );
     
       $data['translations']   = array();
@@ -256,7 +257,8 @@
                 'authorID'    => $authorID,
                 'authorName'  => $authorName,
                 'dateCreated' => $dateCreated,
-                'group'       => new TranslationGroup(array('id' => $groupID, 'name' => $groupName, 'canon' => $canon))
+                'group'       => new TranslationGroup(array('id' => $groupID, 'name' => $groupName, 'canon' => $canon)),
+                'uncertain'   => $uncertain
             )
         );
     
@@ -282,6 +284,7 @@
       $this->index = false;
       $this->externalID = null;
       $this->group = TranslationGroup::emptyGroup();
+      $this->uncertain = false;
 
       parent::__construct($data);
     }
@@ -423,13 +426,13 @@
       $query = $db->prepare(
           "INSERT INTO `translation` (`TranslationGroupID`, `Translation`, `Etymology`, `Type`, `Source`, `Comments`,
         `Tengwar`, `Phonetic`, `LanguageID`, `WordID`, `NamespaceID`, `Index`, `AuthorID`, `EldestTranslationID`,
-        `ExternalID`, `Latest`, `DateCreated`)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '1', NOW())"
+        `ExternalID`, `Uncertain`, `Latest`, `DateCreated`)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '1', NOW())"
       );
-      $query->bind_param('isssssssiiiiiis',
+      $query->bind_param('isssssssiiiiiisi',
         $this->group->id, $this->translation, $this->etymology, $this->type, $this->source, $this->comments,
         $this->tengwar, $this->phonetic, $this->language, $word->id, $this->senseID, $this->index, $accountID,
-        $eldestTranslationID, $this->externalID
+        $eldestTranslationID, $this->externalID, $this->uncertain
       );
       
       $query->execute();
@@ -532,7 +535,7 @@
           t.`LanguageID`, t.`Translation`, t.`Etymology`, t.`Type`, t.`Source`, t.`Comments`, 
           t.`Tengwar`, t.`Gender`, t.`Phonetic`, w.`Key`, t.`NamespaceID`, t.`AuthorID`,
           t.`DateCreated`, t.`Latest`, t.`Index`, t.`WordID`, a.`Nickname`,
-          tg.`TranslationGroupID`, tg.`Name` AS `TranslationGroup`, tg.`Canon`
+          tg.`TranslationGroupID`, tg.`Name` AS `TranslationGroup`, tg.`Canon`, t.`Uncertain`
          FROM `translation` t 
            LEFT JOIN `word` w ON w.`KeyID` = t.`WordID`
            LEFT JOIN `translation_group` tg ON tg.`TranslationGroupID` = t.`TranslationGroupID`
@@ -546,7 +549,7 @@
         $this->language, $this->translation, $this->etymology, $this->type, $this->source, $this->comments,
         $this->tengwar, $this->gender, $this->phonetic, $this->word, $this->senseID, $this->authorID,
         $this->dateCreated, $this->latest, $this->index, $this->wordID, $this->authorName,
-        $groupID, $groupName, $canon
+        $groupID, $groupName, $canon, $this->uncertain
       );
       
       if ($query->fetch()) {

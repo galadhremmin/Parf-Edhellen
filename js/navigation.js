@@ -13,6 +13,7 @@ define(['exports', 'utilities'], function (exports, util) {
     this.containerId = containerId;
     this.loader      = util.CLoadingIndicator.shared('search-query-field-loading');
     this.onNavigated = null;
+    this.languageId  = 0;
   }
   
   /**
@@ -30,7 +31,12 @@ define(['exports', 'utilities'], function (exports, util) {
       
       _this.navigate(String(window.location.hash).substr(1));
     });
-    
+
+    $(window).on('navigator.language', function (ev, languageId) {
+      _this.languageId = languageId;
+      _this.navigate(String(window.location.hash).substr(1)); // reload!
+    });
+
     this.navigate(String(window.location.hash).substr(1));
   }
   
@@ -57,9 +63,14 @@ define(['exports', 'utilities'], function (exports, util) {
     }
     
     this.loader.loading();
-    
+
+    var data = { term: term, ajax: true };
+    if (this.languageId) {
+      data.languageId = this.languageId;
+    }
+
     var _this = this;
-    $.get('translate.php', { term: term, ajax: true }).done(function (data) {
+    $.get('translate.php', data).done(function (data) {
       console.log('CNavigator: successfully retrieved term "' + term + '".');
       
       _this.navigated(data);
@@ -234,6 +245,9 @@ define(['exports', 'utilities'], function (exports, util) {
         
     // Search conditions have changed! Request new suggestions.
     this.endSpringSuggestions();
+
+    // Inform potential listeners that language has changed
+    $(window).trigger('navigator.language', [id]);
   }
   
   /**

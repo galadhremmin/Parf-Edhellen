@@ -6,7 +6,7 @@
   }
   
   class Credentials {
-    const SESSION_VARS_KEY = '_edc';
+    const SESSION_VARS_KEY = '_ed_c';
     private static $_currentCredentials = null;
     private $_account;
     private $_copy;

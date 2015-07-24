@@ -23,7 +23,7 @@ data-module="translation"
     {foreach $translationsForLanguage as $translation}
     <blockquote itemscope="itemscope" itemtype="http://schema.org/Article" id="translation-block-{counter}" {if !$translation->group->canon}class="contribution"{/if}>
       <h3 rel="trans-word" class="trans-word" itemprop="about">
-        {if !$translation->group->canon}
+        {if !$translation->group->canon || $translation->uncertain}
         <a href="about.page?browseTo=unverified" title="Unverified or debatable content."><span class="glyphicon glyphicon-question-sign"></span></a>
         {/if}
         {$translation->word}

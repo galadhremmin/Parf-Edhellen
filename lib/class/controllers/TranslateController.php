@@ -8,9 +8,13 @@
       
       if (isset($_REQUEST['term'])) {
         $term = $_REQUEST['term'];
+        $language = 0;
+        if (isset($_REQUEST['languageId'])) {
+          $language = intval($_REQUEST['languageId']);
+        }
         
         $doCache = true;
-        $cacheTag = 'translation.term.'.sha1($term);
+        $cacheTag = 'translation.term.'.sha1($term).'.'.$language;
       }
     
       parent::__construct('Translate', $engine, $doCache, $cacheTag);

@@ -43,6 +43,7 @@
       $this->_engine->assign('orig_type',         $original->type);
       $this->_engine->assign('orig_gender',       $original->gender);
       $this->_engine->assign('orig_phonetic',     $original->phonetic);
+      $this->_engine->assign('orig_uncertain',    $original->uncertain);
       $this->_engine->assign('orig_group',        $original->group->id);
       $this->_engine->assign('orig_indexes',      json_encode($model->getIndexes()));
       $this->_engine->assign('operation',        ($original->id > 0 ? 'Edit' : 'Add'));

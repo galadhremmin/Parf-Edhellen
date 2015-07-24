@@ -106,6 +106,11 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
     var sucker = new util.CFormSucker(this.parentElement, 'ed-translate-');
     var data = sucker.suck();
 
+    // Uncertain is a checkbox, so it needs to be handled if it isn't checked
+    if (data.uncertain !== 1) {
+      data.uncertain = 0;
+    }
+
     // Remove unused properties
     delete data.index;
     delete data.submit;
@@ -282,6 +287,9 @@ define(['exports', 'utilities', 'widgets/editableInlineElement'], function (expo
     
     try {
       tags = JSON.parse( this.dataSource.val() );
+      if (! $.isArray(tags)) {
+        tags =[];
+      }
     } catch (ex) {
       tags = [];
     }

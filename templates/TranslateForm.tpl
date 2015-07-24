@@ -130,6 +130,15 @@
         </div>
       </div>
       {/if}
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" id="ed-translate-uncertain" value="1"{if $orig_uncertain} checked{/if}> Uncertain
+            </label>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div class="text-right">

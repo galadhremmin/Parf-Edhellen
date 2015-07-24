@@ -240,6 +240,7 @@
         'senseID'     => '/^[0-9]+$/',
         'id'          => '/^[0-9]+$/',
         'language'    => '/^[0-9]+$/',
+        'uncertain'   => '/^[01]$/',
         'word'        => null,
         'translation' => null,
         'etymology'   => null,
@@ -262,6 +263,8 @@
 
             if (is_array($validation)) {
               $validationValues = implode(', ', $validation);
+            } else {
+              $validationValues = $validation;
             }
 
             throw new \Exception('Malformed parameter: '.$key.'. Received "'.$value.'", expected '.$validationValues);

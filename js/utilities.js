@@ -165,7 +165,12 @@ define(['require', 'exports'], function (require, exports) {
       if (! name) {
         continue;
       }
-      
+
+      // Checkboxes and radio boxes must be checked
+      if (/^radio|checkbox$/i.test(element.type) && true !== element.checked) {
+        continue;
+      }
+
       // If a prefix is defined, remove it from the name of the element.
       if (this.prefix && name.length > this.prefix.length && 
           name.substr(0, this.prefix.length) === this.prefix) {

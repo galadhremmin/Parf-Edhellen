@@ -23,6 +23,7 @@
 
       // Retrieve translation data for the specified term
       $matches = null;
+      $single = false;
       if (preg_match('/^translationID=([0-9]+)$/', $this->_term, $matches)) {
         // A specified translation has been requested, so attempt to retrieve it.
         $translationID = intval($matches[1]);
@@ -30,6 +31,7 @@
         $data = \data\entities\Translation::translateSingle($translationID);
         if ($data !== null) {
           $this->_term = $data['translation']->word;
+          $single = true;
         }
       } else {
         // Perform a broad translation search on the term specified.
@@ -66,6 +68,27 @@
       if ($this->_loggedIn) {
         $account = \auth\Credentials::current()->account();
         $this->_favourites = \data\entities\Favourite::getByAccount($account, true);
+      }
+
+      if (! $single && isset($_REQUEST['languageId'])) {
+        $languageId = intval($_REQUEST['languageId']);
+        if ($languageId > 0) {
+          $selectedLanguage = new \data\entities\Language();
+          $selectedLanguage->load($languageId);
+
+          if ($selectedLanguage->id) {
+            $filteredTranslations = array();
+            foreach ($this->_translations as $name => $translations) {
+              if ($name === $selectedLanguage->name) {
+                $filteredTranslations[$name] = $translations;
+              }
+            }
+
+            if (count($filteredTranslations)) {
+              $this->_translations = $filteredTranslations;
+            }
+          }
+        }
       }
     }
     
