@@ -59,14 +59,19 @@
      * @param AccessToken $token
      * @param null $nickname
      * @return Credentials
+     * @throws \Exception
      * @throws \exceptions\ValidationException
      */
     public static function authenticate($providerID, $email, $token, $nickname = null) {
       $account = \data\entities\Account::getAccountForProviderAndEmail($providerID, $email);
       if ($account !== null) {
         $tmpToken = AccessToken::fromHash($account->identity);
-        
-        if ($tmpToken->shouldRehash() || ! $tmpToken->matches($token)) {
+
+        if (! $tmpToken->matches($token)) {
+          throw new \Exception('Token mismatch.');
+        }
+
+        if ($tmpToken->shouldRehash()) {
           $account->updateToken($token);
         }
         
