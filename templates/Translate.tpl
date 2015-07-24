@@ -42,7 +42,7 @@ data-module="translation"
       {if $translation->type != 'unset'}<span class="word-type" rel="trans-type">{$translation->type}.</span>{/if}
       <span rel="trans-translation" itemprop="keywords">{$translation->translation}</span>
 
-      <p class="word-comments" rel="trans-comments" itemprop="articleBody">{$translation->comments}</p>
+      <p class="word-comments" rel="trans-comments" itemprop="articleBody">{nl2br(trim($translation->comments))}</p>
 
       {if !$translation->group->canon}
       <section class="alert alert-warning" itemprop="comment">

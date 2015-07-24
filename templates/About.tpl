@@ -44,8 +44,10 @@ glosses in many languages.</p>
 
 <a name="wordlist"></a>
 <h3>Credits &amp; Sources</h3>
-<p>The following excellent word lists have been successfully imported.</p>
+<p>The following excellent dictionaries have been successfully imported:</p>
 <dl>
+  <dt><a href="http://www.eldamo.org" target="_blank">Eldamo</a></dt>
+  <dd><em>Eldamo</em> is perhaps the best, most comprehensive, authoritative source for Tolkien's languages to date.</dd>
   <dt><a href="http://folk.uib.no/hnohf/wordlists.htm" target="_blank">Quettaparma Quenyallo</a></dt>
   <dd>The best Quenya lexicon maintained by <em>Helge Fauskanger</em>, presented alongside his excellent course work material on Ardalambion.</dd>
   <dt><a href="http://folk.uib.no/hnohf" target="_blank">Parviphith</a></dt>

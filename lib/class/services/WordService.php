@@ -94,7 +94,7 @@
           "SELECT DISTINCT w.`Key`, w.`NormalizedKey`
             FROM `translation` t 
               INNER JOIN `word` w ON w.`KeyID` = t.`WordID`
-            WHERE t.`Latest` = 1 AND t.`Deleted` = b\'0\' AND t.`LanguageID` = ? AND w.`".$column."` LIKE ?
+            WHERE t.`Latest` = '1' AND t.`Deleted` = b'0' AND t.`LanguageID` = ? AND w.`".$column."` LIKE ?
             ORDER BY w.`Key` ASC"
         );
         

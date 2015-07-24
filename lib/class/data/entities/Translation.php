@@ -16,6 +16,7 @@
     public $language;
     public $senseID;
     public $group;
+    public $externalID;
     
     // Semi-mutable column
     public $index;
@@ -210,7 +211,8 @@
          LEFT JOIN `auth_accounts` a ON a.`AccountID` = t.`AuthorID`
          LEFT JOIN `translation_group` tg ON tg.`TranslationGroupID` = t.`TranslationGroupID`
          WHERE t.`NamespaceID` IN('.$senseIDs.') AND t.`Latest` = 1 AND t.`Deleted` = b\'0\'
-         ORDER BY t.`NamespaceID` ASC, l.`Name` DESC, w.`Key` ASC'
+         ORDER BY l.`Order` ASC, t.`NamespaceID` ASC, l.`Name`
+         DESC, w.`Key` ASC'
       );
     
       $query->execute();
@@ -278,6 +280,7 @@
       $this->gender = 'none';
       $this->word = null;
       $this->index = false;
+      $this->externalID = null;
       $this->group = TranslationGroup::emptyGroup();
 
       parent::__construct($data);
@@ -331,6 +334,10 @@
      * @throws \exceptions\InvalidParameterException
      */
     private function saveInternal(\auth\Credentials $credentials) {
+      if ($this->externalID !== null && empty($this->externalID)) {
+        $this->externalID = null;
+      }
+
       // Create or load the word associated with this translation.
       $word = new \data\entities\Word();
       $word->create($this->word);
@@ -366,6 +373,14 @@
         
         if (! $eldestTranslationID) {
           $eldestTranslationID = $this->id;
+        }
+
+        // ExternalID is unique, so deprecate previous row with the specified ID by setting it to NULL.
+        if (null !== $this->externalID) {
+          $query = $db->prepare('UPDATE `translation` SET `ExternalID` = NULL WHERE `TranslationID` = ?');
+          $query->bind_param('i', $this->id);
+          $query->execute();
+          $query = null;
         }
       
         // remove all keywords to the (now) deprecated translation entry - the keywords table
@@ -408,20 +423,20 @@
       $query = $db->prepare(
           "INSERT INTO `translation` (`TranslationGroupID`, `Translation`, `Etymology`, `Type`, `Source`, `Comments`,
         `Tengwar`, `Phonetic`, `LanguageID`, `WordID`, `NamespaceID`, `Index`, `AuthorID`, `EldestTranslationID`,
-        `Latest`, `DateCreated`)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '1', NOW())"
+        `ExternalID`, `Latest`, `DateCreated`)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, '1', NOW())"
       );
-      $query->bind_param('isssssssiiiiii',
+      $query->bind_param('isssssssiiiiiis',
         $this->group->id, $this->translation, $this->etymology, $this->type, $this->source, $this->comments,
         $this->tengwar, $this->phonetic, $this->language, $word->id, $this->senseID, $this->index, $accountID,
-        $eldestTranslationID
+        $eldestTranslationID, $this->externalID
       );
       
       $query->execute();
       
       $previousTranslationId = $this->id;
       $this->id = $query->insert_id;
-      
+
       $query = null;
       
       if ($this->id == 0) {
@@ -539,7 +554,32 @@
         $this->group = new TranslationGroup(array('id' => $groupID, 'name' => $groupName, 'canon' => $canon));
       }
       
-      $query->close(); 
+      $query->free_result();
+      $query = null;
+    }
+
+    public function loadIDForExternalID() {
+      if (empty($this->externalID)) {
+        return;
+      }
+
+      $query = \data\Database::instance()->connection()->prepare(
+        'SELECT `TranslationID`, `NamespaceID` FROM `translation` WHERE `ExternalID` = ?'
+      );
+
+      try {
+        $query->bind_param('s', $this->externalID);
+        $query->execute();
+        $query->bind_result($this->id, $this->senseID);
+        if ($query->fetch()) {
+          return true;
+        }
+      } finally {
+        $query->free_result();
+        $query = null;
+      }
+
+      return false;
     }
     
     /**

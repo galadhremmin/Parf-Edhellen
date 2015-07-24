@@ -21,4 +21,10 @@ INSERT INTO `language`
   (85, 'Qenya', 85, '1', 'zR5Ì#'),
   (90, 'Doriathrin', 90, '1', NULL);
 
+ALTER TABLE  `translation` CHANGE  `EnforcedOwner`  `ExternalID` VARCHAR( 128 ) NULL DEFAULT NULL ;
+UPDATE `translation` SET `ExternalID` = NULL;
+ALTER TABLE  `translation` ADD INDEX (  `ExternalID` ) ;
+
+ALTER TABLE  `translation` CHANGE  `Etymology`  `Etymology` VARCHAR( 512 ) CHARACTER SET utf8 COLLATE utf8_swedish_ci NULL DEFAULT NULL ;
+
 insert into `version` (`number`, `date`) values (1.4, NOW());

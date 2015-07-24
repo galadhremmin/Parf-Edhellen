@@ -11,3 +11,9 @@ RewriteRule ^([a-z\-]+)\.page$                                   /index.php?temp
 # i.e.  http://www.example.com/foo/ to https://www.example.com/foo/
 # The leading slash is made optional so that this will work either in httpd.conf or .htaccess context
 # RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R,L]
+
+# Force to www
+RewriteCond %{HTTP_HOST} !^$
+RewriteCond %{HTTP_HOST} !^www\. [NC]
+RewriteCond %{HTTPS}s ^on(s)|
+RewriteRule ^ http%1://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,L]

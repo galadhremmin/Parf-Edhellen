@@ -61,7 +61,7 @@
     }
     
     public function save() {
-      if (!$this->validate()) {
+      if (! $this->validate()) {
         throw new \ErrorException('Invalid Sense.');
       }
     
@@ -80,8 +80,6 @@
       $query->bind_result($this->id);
       
       if ($query->fetch() !== true) {
-        $query->close();
-        
         $query = $db->prepare(
           'INSERT INTO `namespace` (`IdentifierID`) VALUES (?)'
         );
@@ -89,21 +87,22 @@
         $query->execute();
         
         $this->id = $db->insert_id;
-        
-        $query->close();
+        $query = null;
         
         // Create a keywords entry
-        $nkey = StringWizard::normalize($word->key);
+        $nkey = \utils\StringWizard::normalize($word->key);
         $rnkey = strrev($nkey);
         $query = $db->prepare(
           'INSERT INTO `keywords` (`Keyword`, `NormalizedKeyword`, `ReversedNormalizedKeyword`, `NamespaceID`, `WordID`) VALUES (?,?,?,?,?)'
         );
         $query->bind_param('sssii', $word->key, $nkey, $rnkey, $this->id, $word->id);
         $query->execute();
+        $query = null;
+      } else {
+        $query->free_result();
+        $query = null;
       }
-      
-      $query->close();
-      
+
       return $this;
     }
 
