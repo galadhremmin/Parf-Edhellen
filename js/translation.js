@@ -54,6 +54,18 @@ define(['exports', 'utilities'], function (exports, util) {
           block.fadeOut();
         }
       });
+    });
+
+    this.parentElement.find('.ed-ref').on('click', function (ev) {
+      ev.preventDefault();
+
+      var url = $(this).prop('href');
+      var pos = url.indexOf('#');
+      if (pos === -1) {
+        return;
+      }
+
+      $(window).trigger('navigator.navigate', [ url.substr(pos + 1) ]);
     })
   };
   

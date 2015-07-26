@@ -7,6 +7,7 @@
     public $id;
     public $name;
     public $canon;
+    public $externalLinkFormat;
 
     public static function emptyGroup() {
       return new TranslationGroup(array('id' => null));
@@ -28,6 +29,9 @@
     }
 
     public function __construct($data = null) {
+      $this->externalLinkFormat = null;
+      $this->name = null;
+
       parent::__construct($data);
 
       if ($this->id === null) {

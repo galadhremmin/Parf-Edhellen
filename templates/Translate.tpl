@@ -1,7 +1,5 @@
 <div id="translation-entry"
-{if $loggedIn}
 data-module="translation"
-{/if}
 >
 {* iterate through all translations where the key of the array defines the associated language. The counter 
    uniquely identifies each translation entry, so that the user might levelage this information while navigating
@@ -33,6 +31,10 @@ data-module="translation"
             <a href="translate-form.page?translationID={$translation->id}" title="Edit this item"><span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span></a>
           {/if}
           <a href="#" class="ed-favourite-button" data-translation-id="{$translation->id}" title="Add to favourites"><span class="glyphicon glyphicon-heart{if !in_array($translation->id, $favourites)}-empty{/if} pull-right" aria-hidden="true"></span></a>
+        {/if}
+        {if $translation->group->externalLinkFormat !== null && $translation->externalID !== null}
+          {assign var="externalLink" value=$translation->group->externalLinkFormat}
+          <a href="{str_replace('{ExternalID}', $translation->externalID, $externalLink)}" class="ed-external-link-button" title="Open on {$translation->group->name} (new tab/window)" target="_blank"><span class="glyphicon glyphicon-globe pull-right" aria-hidden="true"></span></a>
         {/if}
       </h3> 
       {if $translation->tengwar != null}

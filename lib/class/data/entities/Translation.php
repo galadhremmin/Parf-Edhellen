@@ -205,7 +205,7 @@
            l.`Name` AS `Language`, t.`NamespaceID`, l.`Invented` AS `LanguageInvented`,
            t.`AuthorID`, a.`Nickname`, w.`NormalizedKey`, t.`Index`,
            t.`DateCreated`, tg.`TranslationGroupID`, tg.`Name` AS `TranslationGroup`,
-           tg.`Canon`, t.`Uncertain`
+           tg.`Canon`, tg.`ExternalLinkFormat`, t.`Uncertain`, t.`ExternalID`
          FROM `translation` t
          INNER JOIN `word` w ON w.`KeyID` = t.`WordID`
          INNER JOIN `language` l ON l.`ID` = t.`LanguageID`
@@ -220,7 +220,8 @@
       $query->bind_result(
           $word, $translationID, $translation, $etymology, $type, $source, $comments, $tengwar,
           $phonetic, $language, $senseID, $inventedLanguage, $authorID, $authorName,
-          $normalizedWord, $isIndex, $dateCreated, $groupID, $groupName, $canon, $uncertain
+          $normalizedWord, $isIndex, $dateCreated, $groupID, $groupName, $canon, $linkFormat,
+          $uncertain, $externalID
       );
     
       $data['translations']   = array();
@@ -257,8 +258,9 @@
                 'authorID'    => $authorID,
                 'authorName'  => $authorName,
                 'dateCreated' => $dateCreated,
-                'group'       => new TranslationGroup(array('id' => $groupID, 'name' => $groupName, 'canon' => $canon)),
-                'uncertain'   => $uncertain
+                'group'       => new TranslationGroup(array('id' => $groupID, 'name' => $groupName, 'canon' => $canon, 'externalLinkFormat' => $linkFormat)),
+                'uncertain'   => $uncertain,
+                'externalID'  => $externalID
             )
         );
     
@@ -535,7 +537,8 @@
           t.`LanguageID`, t.`Translation`, t.`Etymology`, t.`Type`, t.`Source`, t.`Comments`, 
           t.`Tengwar`, t.`Gender`, t.`Phonetic`, w.`Key`, t.`NamespaceID`, t.`AuthorID`,
           t.`DateCreated`, t.`Latest`, t.`Index`, t.`WordID`, a.`Nickname`,
-          tg.`TranslationGroupID`, tg.`Name` AS `TranslationGroup`, tg.`Canon`, t.`Uncertain`
+          tg.`TranslationGroupID`, tg.`Name` AS `TranslationGroup`, tg.`Canon`, tg.`ExternalLinkFormat`,
+          t.`Uncertain`
          FROM `translation` t 
            LEFT JOIN `word` w ON w.`KeyID` = t.`WordID`
            LEFT JOIN `translation_group` tg ON tg.`TranslationGroupID` = t.`TranslationGroupID`
@@ -549,12 +552,12 @@
         $this->language, $this->translation, $this->etymology, $this->type, $this->source, $this->comments,
         $this->tengwar, $this->gender, $this->phonetic, $this->word, $this->senseID, $this->authorID,
         $this->dateCreated, $this->latest, $this->index, $this->wordID, $this->authorName,
-        $groupID, $groupName, $canon, $this->uncertain
+        $groupID, $groupName, $canon, $externalLinkFormat, $this->uncertain
       );
       
       if ($query->fetch()) {
         $this->id = $id;
-        $this->group = new TranslationGroup(array('id' => $groupID, 'name' => $groupName, 'canon' => $canon));
+        $this->group = new TranslationGroup(array('id' => $groupID, 'name' => $groupName, 'canon' => $canon, 'externalLinkFormat' => $externalLinkFormat));
       }
       
       $query->free_result();

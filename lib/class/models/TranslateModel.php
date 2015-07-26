@@ -11,6 +11,8 @@
     private $_senses;
     
     public function __construct() {
+      $this->_translations = array();
+
       if (!isset($_REQUEST['term'])) {
         return;
       }

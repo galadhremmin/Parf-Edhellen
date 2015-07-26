@@ -34,8 +34,12 @@ define(['exports', 'utilities'], function (exports, util) {
 
     $(window).on('navigator.language', function (ev, languageId) {
       _this.languageId = languageId;
-      _this.navigate(String(window.location.hash).substr(1)); // reload!
+      _this.navigate(String(window.location.hash).substr(1), true); // reload!
     });
+
+    $(window).on('navigator.navigate', function (ev, hash) {
+      _this.navigate(hash, false, 0); // reload!
+    })
 
     this.navigate(String(window.location.hash).substr(1));
   }
@@ -46,9 +50,15 @@ define(['exports', 'utilities'], function (exports, util) {
    *
    * @method navigate
    * @param {String} hash Hash argument in its raw form (location.hash).
+   * @param {Boolean} disableScroll Optional parameter to disable scrolling.
+   * @param {Number} overrideLanguage Optional parameter to temporarily override language.
    */
-  CNavigator.prototype.navigate = function (hash) {
+  CNavigator.prototype.navigate = function (hash, disableScroll, overrideLanguage) {
     util.CAssert.string(hash);
+
+    if (this.currentTerm === hash) {
+      return;
+    }
     
     console.log('CNavigator: new navigation request for "' + hash + '".');
     
@@ -65,7 +75,9 @@ define(['exports', 'utilities'], function (exports, util) {
     this.loader.loading();
 
     var data = { term: term, ajax: true };
-    if (this.languageId) {
+    if (overrideLanguage !== undefined) {
+      data.languageId = overrideLanguage;
+    } else if (this.languageId) {
       data.languageId = this.languageId;
     }
 
@@ -73,8 +85,13 @@ define(['exports', 'utilities'], function (exports, util) {
     $.get('translate.php', data).done(function (data) {
       console.log('CNavigator: successfully retrieved term "' + term + '".');
       
-      _this.navigated(data);
+      _this.navigated(data, disableScroll);
       _this.currentTerm = term;
+
+      // In some cases, the hash might not be set.
+      if (window.location.hash !== '#' + term) {
+        window.location.hash = '#' + term;
+      }
       
       $(window).trigger('navigator.navigated', [term]);
     }).fail(function (ex) {
@@ -92,7 +109,7 @@ define(['exports', 'utilities'], function (exports, util) {
    * @method navigate
    * @param {String} data Data from the AJAX request.
    */
-  CNavigator.prototype.navigated = function (data) {
+  CNavigator.prototype.navigated = function (data, disableScroll) {
     util.CAssert.string(data);
     
     var result = document.getElementById(this.containerId);
@@ -106,7 +123,7 @@ define(['exports', 'utilities'], function (exports, util) {
     
     // Ensure that the result view is within the viewport, and animate the 
     // transition into the viewport if it isn't.
-    if (!util.isElementInViewport(result)) {
+    if (! disableScroll && ! util.isElementInViewport(result)) {
       var position = Math.floor($(result).offset().top - 40); // 40 = magic number! ;)
       $('body,html').animate({scrollTop: position}, 500);
     }
