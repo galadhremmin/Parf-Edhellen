@@ -368,16 +368,21 @@
       if ($this->id > 0) {
         // Indexes doesn't use words, hence this functionality applies only
         // to translations.
-        $query = $db->prepare('SELECT `WordID`, `NamespaceID`, `EldestTranslationID` FROM `translation` WHERE `TranslationID` = ?');
+        $query = $db->prepare('SELECT `WordID`, `NamespaceID`, `EldestTranslationID`, `ExternalID` FROM `translation` WHERE `TranslationID` = ?');
         $query->bind_param('i', $this->id);
         $query->execute();
-        $query->bind_result($currentWordID, $currentSenseID, $eldestTranslationID);
+        $query->bind_result($currentWordID, $currentSenseID, $eldestTranslationID, $externalID);
         $query->fetch();
         $query->free_result();
         $query = null;
         
         if (! $eldestTranslationID) {
           $eldestTranslationID = $this->id;
+        }
+
+        // Always inherit external IDs from the item to deprecate
+        if ($externalID !== null) {
+          $this->externalID = $externalID;
         }
 
         // ExternalID is unique, so deprecate previous row with the specified ID by setting it to NULL.
@@ -538,7 +543,7 @@
           t.`Tengwar`, t.`Gender`, t.`Phonetic`, w.`Key`, t.`NamespaceID`, t.`AuthorID`,
           t.`DateCreated`, t.`Latest`, t.`Index`, t.`WordID`, a.`Nickname`,
           tg.`TranslationGroupID`, tg.`Name` AS `TranslationGroup`, tg.`Canon`, tg.`ExternalLinkFormat`,
-          t.`Uncertain`
+          t.`Uncertain`, t.`ExternalID`
          FROM `translation` t 
            LEFT JOIN `word` w ON w.`KeyID` = t.`WordID`
            LEFT JOIN `translation_group` tg ON tg.`TranslationGroupID` = t.`TranslationGroupID`
@@ -552,7 +557,7 @@
         $this->language, $this->translation, $this->etymology, $this->type, $this->source, $this->comments,
         $this->tengwar, $this->gender, $this->phonetic, $this->word, $this->senseID, $this->authorID,
         $this->dateCreated, $this->latest, $this->index, $this->wordID, $this->authorName,
-        $groupID, $groupName, $canon, $externalLinkFormat, $this->uncertain
+        $groupID, $groupName, $canon, $externalLinkFormat, $this->uncertain, $this->externalID
       );
       
       if ($query->fetch()) {
