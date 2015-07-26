@@ -23,6 +23,12 @@ body {
   
   overflow-y: scroll;
 }
+.navbar-brand {
+  overflow: hidden;
+  text-indent: -9999px;
+  width: 140px;
+  background: url(/img/logo-horizontal.png) no-repeat center center;
+}
 #site-container  {
   background: rgba(255, 255, 255, 0.95);
   border: 0.5em solid white;

@@ -19,9 +19,10 @@
       $menu[] = new \MenuItem(array('url'          => 'about.page',
                                     'text'         => 'About',
                                     'sectionIndex' => 1));
+      /*
       $menu[] = new \MenuItem(array('url'          => 'resources.page',
                                     'text'         => 'Resources',
-                                    'sectionIndex' => 1));
+                                    'sectionIndex' => 1));*/
       
       if (\auth\Credentials::permitted(new \auth\BasicAccessRequest())) {
         $menu[] = new \MenuItem(array('url'          => 'dashboard.page',
