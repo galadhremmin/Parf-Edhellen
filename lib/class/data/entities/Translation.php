@@ -491,20 +491,23 @@
         // If the gloss is prefixed with _a_, _an_ or _to_, save also a keyword with the the article/infinitive marker removed.
         if (preg_match('/^(a|an|to)\\s+/', $this->translation)) {
           $pos = strpos($this->translation, ' ');
-          $keyword  = substr($this->translation, $pos + 1);
-          $nkeyword = \utils\StringWizard::normalize($keyword);
+          $keyword  = trim ( substr($this->translation, $pos + 1) );
 
-          $keywordObj = new \data\entities\Word();
-          $keywordObj->create($keyword);
+          if (! empty($keyword)) { // in case of the user adding _to _ (or something similar to that)
+            $nkeyword = \utils\StringWizard::normalize($keyword);
 
-          $insert['key']     = $keyword;
-          $insert['nkey']    = $nkeyword;
-          $insert['revnkey'] = strrev($nkeyword);
-          $insert['transID'] = $this->id;
-          $insert['wordID']  = $keywordObj->id;
+            $keywordObj = new \data\entities\Word();
+            $keywordObj->create($keyword);
 
-          $query->bind_param('sssii', $insert['key'], $insert['nkey'], $insert['revnkey'], $insert['transID'], $insert['wordID']);
-          $query->execute();
+            $insert['key'] = $keyword;
+            $insert['nkey'] = $nkeyword;
+            $insert['revnkey'] = strrev($nkeyword);
+            $insert['transID'] = $this->id;
+            $insert['wordID'] = $keywordObj->id;
+
+            $query->bind_param('sssii', $insert['key'], $insert['nkey'], $insert['revnkey'], $insert['transID'], $insert['wordID']);
+            $query->execute();
+          }
         }
       }
       
