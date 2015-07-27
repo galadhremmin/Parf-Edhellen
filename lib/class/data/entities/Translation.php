@@ -460,11 +460,17 @@
       $nkeyword = \utils\StringWizard::normalize($this->translation);
       
       // insert reference
-      $insert = array('key' => $word->key, 'nkey' => $nword, 'transID' => $this->id, 'wordID' => $word->id);
+      $insert = array(
+        'key'     => $word->key,
+        'nkey'    => $nword,
+        'transID' => $this->id,
+        'wordID'  => $word->id,
+        'revnkey' => strrev($nword)
+      );
       
       // The word key is always associated with this translation entry
-      $query = $db->prepare('INSERT INTO `keywords` (`Keyword`, `NormalizedKeyword`, `TranslationID`, `WordID`) VALUES(?,?,?,?)');
-      $query->bind_param('ssii', $insert['key'], $insert['nkey'], $insert['transID'], $insert['wordID']);
+      $query = $db->prepare('INSERT INTO `keywords` (`Keyword`, `NormalizedKeyword`, `ReversedNormalizedKeyword`, `TranslationID`, `WordID`) VALUES(?,?,?,?,?)');
+      $query->bind_param('sssii', $insert['key'], $insert['nkey'], $insert['revnkey'], $insert['transID'], $insert['wordID']);
       $query->execute();
       
       // The translation field might contain information interesting in regards to its relevance. If this information
@@ -475,11 +481,31 @@
       
         $insert['key']     = $this->translation;
         $insert['nkey']    = $nkeyword;
+        $insert['revnkey'] = strrev($nkeyword);
         $insert['transID'] = $this->id;
         $insert['wordID']  = $keywordObj->id;
       
-        $query->bind_param('ssii', $insert['key'], $insert['nkey'], $insert['transID'], $insert['wordID']);
+        $query->bind_param('sssii', $insert['key'], $insert['nkey'], $insert['revnkey'], $insert['transID'], $insert['wordID']);
         $query->execute();
+
+        // If the gloss is prefixed with _a_, _an_ or _to_, save also a keyword with the the article/infinitive marker removed.
+        if (preg_match('/^(a|an|to)\\s+/', $this->translation)) {
+          $pos = strpos($this->translation, ' ');
+          $keyword  = substr($this->translation, $pos + 1);
+          $nkeyword = \utils\StringWizard::normalize($keyword);
+
+          $keywordObj = new \data\entities\Word();
+          $keywordObj->create($keyword);
+
+          $insert['key']     = $keyword;
+          $insert['nkey']    = $nkeyword;
+          $insert['revnkey'] = strrev($nkeyword);
+          $insert['transID'] = $this->id;
+          $insert['wordID']  = $keywordObj->id;
+
+          $query->bind_param('sssii', $insert['key'], $insert['nkey'], $insert['revnkey'], $insert['transID'], $insert['wordID']);
+          $query->execute();
+        }
       }
       
       $query = null;
