@@ -79,10 +79,5 @@ data-module="translation"
   <p>The word <em>{$term}</em> hasn't been recorded for any of the languages.</p>
 </div>
 {/if}
-  <hr>
-  <div id="related-books-row">
-    <h2>Related books</h2>
-    <div id="related-books"></div>
-    <span class="adblocker">ElfDict uses Amazon to gather a list of books relevant for the books you're looking for. Unfortunately, we can't present these books to you because your ad-blocker regards these suggestions as ads. Sorry!</span>
-  </div>
+
 </div>
