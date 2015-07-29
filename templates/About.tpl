@@ -3,37 +3,34 @@
 
 <a name="search"></a>
 <h3>Searching</h3>
-<p>Use the search field to search in the dictionaries. As you type, suggestions will appear from these, underneath the search field. Suggestions are retrieved based on your search query, and if you wish, you can use the asterisk symbol (*) where you're uncertain about the spelling, or when you simply wish to match everything. A single asterisk isn't a valid search query however!</p>
+<p>Use the search field to browse the dictionary. As you type, the dictionary will present suggestions underneath the search field based on what you type. You can use the asterisk symbol (*) to match everything, which can be useful if you're unsure about the spelling of the word you're looking for. A single asterisk won't yield the entire library, however.</p>
 
-<p>Special characters are normalized into their ASCII equivalents. This means that if you search for <i>mir</i>, your query will also match <i><a href="#m%C3%AEr">mîr</a></i>, <i><a href="#m%C3%ADr%C3%AB">mírë</a></i>, <i><a href="#miril">miril</a></i> and so forth. </p>
+<p>Words with special letters, like letters with umlauts and accents, are matched against their their ASCII equivalents. This means that if you search for <i>mir</i>, the dictionary will suggest <i><a href="#m%C3%AEr">mîr</a></i>, <i><a href="#m%C3%ADr%C3%AB">mírë</a></i>, <i><a href="#miril">miril</a></i> etc. </p>
 
-<p>As you type, you'll notice that the list of suggestions can become really extensive. Therefore, there's a cap on how many suggestions we provide for you, depending on the preciseness of your search query. More exact queries (= multiple search terms) are permitted to yield more suggestions. This feature also exists to improve performance for everyone.</p>
+<p>As you type, you'll notice that the list of suggestions can become really long, but there is a cap on how many suggestions you can view at once, depending on the preciseness of your search query. More exact queries (= more letters) are permitted to yield a longer list of suggestions. This feature also exists to improve performance for everyone.</p>
 
 <p>The preciseness of your query is calculated according to the follow equation: 
 <br /><u><em>the length of the search term (without white space)</em></u> &times; 200.</p>
 
 <a name="reversed"></a>
 <h3>Reversed search</h3>
-<p>If you tick this checkbox, your search query will be reversed before being passed to the search engine. This is useful when you're looking for words with a specific word ending,  perhaps with the intention to find fitting rhymes for your poetry.</p>
+<p>If you tick the checkbox &quot;reversed search,&quot; matching will be performed backwards. This is useful when you're looking for words with a specific word ending, perhaps with the intention to find fitting rhymes for your poetry.</p>
 
 <a href="unverified"></a>
 <h3>Unverified or debatable glosses</h3>
-<p>Sometimes, you'll encounter the <span class="glyphicon glyphicon-question-sign"></span> symbol, accompanied with a warning. These exist to inform you that the gloss might have been imported from a source which might not have been updated in quite some time. This is actually quite common, as publications from the Tolkien Estate come infrequently, often with years apart. Dictionaries like Hiswelókë haven't been updated for years, but they're still excellent.</p>
-<p>Are these words incorrect? Probably not. Can you use them? Yes, but try to find another source which corroborates the proposed translation. In any case, all words which come from an outdated, unverified or debatable source have been pushed to the bottom of the page.</p>
+<p>Sometimes, you'll encounter the <span class="glyphicon glyphicon-question-sign"></span> symbol, usually in conjunction with a warning. These exist to inform you that the gloss might originate from a source which might not have been updated in quite some time. This is unfortunately fairly common because linguistic material on Tolkien's languages are slowly disseminated to the community. Dictionaries like Hiswelókë haven't been updated for years, but they're still excellent.</p>
+<p>Would it be a mistake to use words from an outdated source? Probably not. We would recommend you to try to find another source which agrees with the proposed translation. Notwithstanding, all words which come from outdated, unverified or debatable sources have been pushed to the bottom of the page.</p>
 
 <a name="authentication"></a>
 <h3>Authentication</h3>
-<p>We don't maintain our own database with user credentials. Instead, we prefer to use federated login services through 
-<a href="http://openid.net/" target="_blank">OpenID</a>. By logging in using OpenID, no personal information is compromised, as you only prove that you're you by logging in to a common social network. So if you log into Gmail, Gmail confirms to us that you successfully logged in, and provides us with an unique key which we can use to tie user data (such as your preferred nickname) to you.</p>
+<p>We don't hold usernames and passwords. Instead, we trust Facebook, Google, Twitter and more to do that for us, as we are satisfied as long as they would vouch for you. Therefore, no personal information (apart from your e-mail address in some situation) isn't compromised in the event of a breach. So logging in is simple: choose which community/provider you would like to confirm your identity with, and log in there. Once you've logged in, and given <em>Parf Edhellen</em> permission to read basic information from your user profile, you'll be sent back to elfdict.com, where you'll be asked to choose a nickname for yourself.</p>
+<p>To identify you in the future, elfdict.com saves your e-mail address and an unique identifier (a long, random-looking string of letters) which your provider gave to us.</p>
 
 <a name="contributing"></a>
 <h3>Contributing</h3>
-<p>Note: we're still working on a new log in experience. So sorry for the inconvenience!</p>
-
 <p>We want everyone to contribute. All sorts of contributions are encouraged, but if you intend to publish your own words onto our site, please remember to <i>always</i> include references to published sources. We reserve the right to emend and delete content we find inappropriate.</p>
 
-<p>There are two ways to contribute: by adding words and by adding glosses. Each word might have multiple
-glosses in many languages.</p>
+<p>There are two ways to contribute: by making donations, and by creating content. In order to create content, you'll need to log in first. Once you've logged in, you'll be able to create translations and (in the future) sentences through your dashboard.</p>
 
 <p>Syntax:<br />
 <span class="span-column">[[maen]]</span> <a href="index.php#maen">maen</a><br /> 
@@ -62,10 +59,6 @@ glosses in many languages.</p>
   <dd><em>Tolkiendil</em> provides a consolidated list of Sindarin names examined and translated. <em>Parf Edhellen</em> is happy to house their excellent work.</dd>
 </dl>
 <p>Thank you for your excellent work! It is the quintessence of Parf Edhellen's success!</p>
-
-<a name="tengwar"></a>
-<h3>Tengwar <span class="tengwar">1Rx#6</span></h3>
-<p>It's possible to write tengwar on <em>elfdict</em> by use of a technology called &ldquo;CSS3 webfonts&rdquo;. The tengwar that you&rsquo;ll find scattered about this website have been either added by a contributor <em>or</em>, more commonly, automatically transcribed for Sindarin and Noldorin. The open-source library <a href="https://github.com/kriskowal/tengwarjs" target="_blank">tengwarjs</a> by Kris Kowal enables us to transcribe at runtime, which means that generated the tengwar markup is <em>not</em> associated with the source. The quality of the transcription might vary and all transcribed words are marked with a link to this note.</p>
 
 <!--<h3>Support the <em>Parf Edhellen</em>!</h3>
 <p>Donations are more than welcome! Every contribution helps me to maintain the development and hosting of <em>Parf Edhellen</em>.</p>-->
