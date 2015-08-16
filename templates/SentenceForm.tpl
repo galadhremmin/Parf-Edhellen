@@ -43,7 +43,7 @@
       <h3 class="panel-title">Detailed information</h3>
     </header>
     <div class="panel-body">
-      <div class="container-fluid">
+      <div class="container-fluid ed-sentence-fragments">
         <div class="row ed-sentence-template">
           <div class="col-sm-2 no-padding"><span class="ed-sentence-[[index]]-fragment">[[fragment]]</span></div>
           <div class="col-sm-10">

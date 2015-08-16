@@ -269,3 +269,11 @@ blockquote h3 a {
 .no-padding {
   padding-left: 0;
 }
+.ed-sentence-fragments > .row:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+.ed-sentence-fragments > .row {
+  border-top: 2px solid #dddddd;
+  padding-top: 25px;
+}

@@ -17,7 +17,9 @@
       if (isset($_REQUEST['SentenceID'])) {
         $id = intval($_REQUEST['SentenceID']);
         $this->_sentence->load($id);
-      } else {
+      }
+
+      if (! $this->_sentence->ID) {
         $this->_sentence->language = new Language();
       }
     }
