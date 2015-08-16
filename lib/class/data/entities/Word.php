@@ -60,7 +60,7 @@
       $exists = false;
       try {
         $query = $db->prepare(
-          'SELECT `KeyID` FROM `word` WHERE `Key` = ?'
+          'SELECT `KeyID` FROM `word` WHERE BINARY `Key` = ?'
         );
         
         $query->bind_param('s', $this->key);

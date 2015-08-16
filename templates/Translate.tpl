@@ -20,11 +20,12 @@ data-module="translation"
     {* Iterate through each entry for the specificed language *}
     {foreach $translationsForLanguage as $translation}
     <blockquote itemscope="itemscope" itemtype="http://schema.org/Article" id="translation-block-{counter}" {if !$translation->group->canon}class="contribution"{/if}>
-      <h3 rel="trans-word" class="trans-word" itemprop="about">
+      <img class="hidden" itemprop="image" src="http://www.elfdict.com/img/favicons/mstile-310x310.png"> {* Please Google... *}
+      <h3 rel="trans-word" class="trans-word">
         {if !$translation->group->canon || $translation->uncertain}
         <a href="about.page?browseTo=unverified" title="Unverified or debatable content."><span class="glyphicon glyphicon-question-sign"></span></a>
         {/if}
-        {$translation->word}
+        <span itemprop="headline">{$translation->word}</span>
         {if $loggedIn}
           {if $isAdmin}
             <a href="#" class="ed-delete-button" data-translation-id="{$translation->id}" title="Delete this item"><span class="glyphicon glyphicon-trash pull-right" aria-hidden="true"></span></a>
@@ -61,9 +62,9 @@ data-module="translation"
         <span class="word-etymology" rel="trans-etymology">{$translation->etymology}.</span>
         {/if}
         {if $translation->group->id}
-          Group: {$translation->group->name}.
+          Group: <span itemprop="sourceOrganization">{$translation->group->name}</span>.
         {/if}
-        Published {$translation->dateCreated} by <a href="/profile.page?authorID={$translation->authorID}" itemprop="author" rel="author" title="View profile for {$translation->authorName}.">{$translation->authorName}</a>
+        Published <span itemprop="datePublished">{$translation->dateCreated}</span> by <a href="/profile.page?authorID={$translation->authorID}" itemprop="author" rel="author" title="View profile for {$translation->authorName}.">{$translation->authorName}</a>
       </footer>
     </blockquote>
     {/foreach}
