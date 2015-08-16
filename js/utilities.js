@@ -5,37 +5,37 @@ define(['require', 'exports'], function (require, exports) {
 
   CAssert.string = function () {
     assertInternal(arguments, 'string');
-  }
+  };
 
   CAssert.number = function () {
     assertInternal(arguments, 'number');
-  }
+  };
 
   CAssert.boolean = function () {
     assertInternal(arguments, 'boolean');
-  }
+  };
 
   CAssert.array = function () {
     assertInternal(arguments, 'array');
-  }
+  };
   
   CAssert.event = function () {
     assertInternal(arguments, function (param) {
       return param instanceof jQuery.Event;
     });
-  }
+  };
   
   CAssert.jQuery = function () {
     assertInternal(arguments, function (param) {
       return param instanceof jQuery;
     });
-  }
+  };
 
   CAssert.element = function () {
     assertInternal(arguments, function (param) {
       return param && param instanceof Element;
     });
-  }
+  };
 
   function assertInternal(params, typeOrFunction) {
     var i = 0, actualType;
@@ -57,6 +57,69 @@ define(['require', 'exports'], function (require, exports) {
   }
   
   exports.CAssert = CAssert;
+
+  /**
+   * Replaces [[tokens]] with object properties.
+   *
+   * @class CTokenReplacer
+   * @constructor
+   * @param {String} template
+   * @param {Object} dataSource
+   */
+  var CTokenReplacer = function (template, dataSource) {
+    this.template   = template;
+    this.dataSource = dataSource;
+  };
+
+  /**
+   * Assigns the template to the HTML template specified.
+   * @param template
+   */
+  CTokenReplacer.prototype.setTemplate = function (template) {
+    this.template = template;
+  }
+
+  /**
+   * Assigns the data source to the object specified.
+   * @param {Object} dataSource
+   */
+  CTokenReplacer.prototype.setDataSource = function (dataSource) {
+    this.dataSource = dataSource;
+  };
+
+  /**
+   * Replaces the tokens within the specified template, and returns its resulting string.
+   * @returns {String|*}
+   */
+  CTokenReplacer.prototype.replace = function () {
+    var tokenReg = /\[\[([a-zA-Z0-9_]+)\]\]/g;
+    var result = this.template;
+    var match;
+    var value;
+
+    while (match = tokenReg.exec(result)) {
+      value = this.getValue(match[1], '');
+      result = result.replace(match[0], value);
+    }
+
+    return result;
+  };
+
+  /**
+   * Gets the value for the specified property name from the data source
+   * @param key
+   * @returns {*}
+   */
+  CTokenReplacer.prototype.getValue = function (propetyName, valueIfUndefined) {
+    var value = this.dataSource[propetyName];
+    if (valueIfUndefined !== undefined && value === undefined) {
+      return valueIfUndefined;
+    }
+
+    return value;
+  };
+
+  exports.CTokenReplacer = CTokenReplacer;
   
   /**
    * Creates a new loading indicator, which uses CSS3 to perform the animation.
@@ -71,7 +134,7 @@ define(['require', 'exports'], function (require, exports) {
     this.element      = element;
     this.isLoading    = false;
     this.loadingCount = 0;
-  }
+  };
   
   /**
    * Retrieves a shared loader for the specified element.
@@ -91,7 +154,7 @@ define(['require', 'exports'], function (require, exports) {
     }
     
     return (this.sharedRefs[elementId] = new CLoadingIndicator(document.getElementById(elementId)));
-  }
+  };
   
 
   /**
@@ -103,7 +166,7 @@ define(['require', 'exports'], function (require, exports) {
   CLoadingIndicator.prototype.loading = function () {
     this.loadingCount += 1;
     this.trigger();
-  }
+  };
   
 
   /**
@@ -115,7 +178,7 @@ define(['require', 'exports'], function (require, exports) {
   CLoadingIndicator.prototype.loaded = function () {
     this.loadingCount = Math.max(this.loadingCount - 1, 0);
     this.trigger();
-  }
+  };
   
   /**
    * Triggers the loading animation based on the state of the loader.
@@ -136,14 +199,14 @@ define(['require', 'exports'], function (require, exports) {
       this.isLoading = true;
      } 
     }
-  }
+  };
   
   exports.CLoadingIndicator = CLoadingIndicator;
   
   var CFormSucker = function (formElement, prefix) {
     this.formElement = formElement;
     this.prefix      = prefix || null;
-  }
+  };
   
   /**
    * Retrieves ("sucks") the information out from all child elements.
@@ -190,7 +253,7 @@ define(['require', 'exports'], function (require, exports) {
     }
     
     return data;
-  }
+  };
   
   exports.CFormSucker = CFormSucker;
   
@@ -219,7 +282,7 @@ define(['require', 'exports'], function (require, exports) {
     }
     
     return true;
-  }
+  };
   
   if (String.prototype.hashCode === undefined) {
     String.prototype.hashCode = function() {

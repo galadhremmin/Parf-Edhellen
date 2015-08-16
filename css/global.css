@@ -18,7 +18,7 @@ html, body {
   font-size: 14px;
 }
 body {
-  background: url(../img/backgrounds/background-1.jpg) fixed;
+  background: url(../img/backgrounds/background-flowers.jpg) fixed;
   background-size: cover;
   
   overflow-y: scroll;
@@ -240,29 +240,32 @@ blockquote h3 a {
   font-size: 1rem;
 }
 .trans-word a {
-    opacity: 0.3;
-    transition: opacity 0.5s;
+  opacity: 0.3;
+  transition: opacity 0.5s;
 }
 .trans-word a:hover {
-    opacity: 1;
+  opacity: 1;
 }
 .ed-dashboard-li-text {
-    width:70%;
-    overflow:hidden;
-    text-overflow: ellipsis;
-    display:inline-block;
-    white-space:nowrap;
+  width:70%;
+  overflow:hidden;
+  text-overflow: ellipsis;
+  display:inline-block;
+  white-space:nowrap;
 }
 .auth-provider img {
-    border: 2px solid transparent;
-    border-radius: 5px;
-    padding: 0;
-    margin-right: 20px;
+  border: 2px solid transparent;
+  border-radius: 5px;
+  padding: 0;
+  margin-right: 20px;
 }
 .auth-provider:hover img {
-    border-color: #f3f3f3;
-    -webkit-box-shadow: 0px 0px 16px 0px rgba(117, 117, 117, 0.75);
-    -moz-box-shadow:    0px 0px 16px 0px rgba(117, 117, 117, 0.75);
-    -ms-box-shadow:     0px 0px 16px 0px rgba(117, 117, 117, 0.75);
-    box-shadow:         0px 0px 16px 0px rgba(117, 117, 117, 0.75);
+  border-color: #f3f3f3;
+  -webkit-box-shadow: 0px 0px 16px 0px rgba(117, 117, 117, 0.75);
+  -moz-box-shadow:    0px 0px 16px 0px rgba(117, 117, 117, 0.75);
+  -ms-box-shadow:     0px 0px 16px 0px rgba(117, 117, 117, 0.75);
+  box-shadow:         0px 0px 16px 0px rgba(117, 117, 117, 0.75);
+}
+.no-padding {
+  padding-left: 0;
 }

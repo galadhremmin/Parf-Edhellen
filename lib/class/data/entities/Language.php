@@ -45,6 +45,10 @@
     public function save() {
       return $this;
     }
+
+    public function __toString() {
+      return (string) $this->name;
+    }
     
     public static function getAllLanguages() {
       $db = \data\Database::instance()->connection();

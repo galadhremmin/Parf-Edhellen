@@ -20,7 +20,11 @@
         
         // Create a sentence if it hasn't previously been recorded.
         if (!isset($this->_sentences[$row->SentenceID])) {
-          $sentence = new \data\entities\Sentence($row->SentenceID, $row->Language, $row->Description, $row->Source);
+          $sentence = new \data\entities\Sentence(array(
+            'ID'          => $row->SentenceID,
+            'language'    => $row->Language,
+            'description' => $row->Description,
+            'source'      => $row->Source));
           $this->_sentences[$row->SentenceID] = $sentence;
         }
         

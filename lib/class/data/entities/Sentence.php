@@ -10,19 +10,56 @@
     public $description;
     public $source;
     
-    public function __construct($id, $language, $description, $source) {
-      $this->ID = $id;
-      $this->language = $language;
+    public function __construct($data = array()) {
       $this->fragments = array();
-      $this->description = $description;
       $this->sentence = '';
-      $this->source = $source;
+
+      parent::__construct($data);
     }
     
     public function validate() {
     }
     
     public function load($numericId) {
+      $db = \data\Database::instance();
+
+      $stmt = $db->connection()->prepare(
+        'SELECT s.`SentenceID`, s.`Source`, s.`Description`, l.`Name` AS `Language`, s.`LanguageID`,
+                f.`Fragment`, f.`Tengwar`, f.`TranslationID`, f.`FragmentID`,
+                f.`Comments`
+         FROM `sentence` s
+           INNER JOIN `language` l ON l.`ID` = s.`LanguageID`
+           INNER JOIN `sentence_fragment` f ON f.`SentenceID` = s.`SentenceID`
+         WHERE s.`SentenceID` = ?'
+      );
+      $stmt->bind_param('i', $numericId);
+      $stmt->execute();
+      $stmt->bind_result(
+        $id, $source, $description, $languageName, $languageID,
+        $fragment, $fragmentTengwar, $fragmentTranslationID, $fragmentID, $fragmentComments
+      );
+
+      $initialized = false;
+      $sentenceFragments = array();
+      while ($stmt->fetch()) {
+        if (! $initialized) {
+          $this->ID          = $id;
+          $this->language    = new Language(array('id' => $languageID, 'name' => $languageName));
+          $this->description = $description;
+          $this->source      = $source;
+          $this->fragments   = array();
+
+          $initialized = true;
+        }
+
+        $this->fragments[] = new SentenceFragment($fragmentID, $fragment, $fragmentTengwar, $fragmentTranslationID, $fragmentComments);
+        $sentenceFragments[] = $fragment;
+      }
+
+      $this->sentence = implode(' ', $sentenceFragments);
+
+      $stmt->free_result();
+      $stmt = null;
     }
     
     public function save() {
