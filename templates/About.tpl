@@ -82,4 +82,5 @@
   used as the background image.</p>
 
 <h3>Helping out</h3>
-<p>Please read more about ways to donate to <em>Parf Edhellen</em> on <a href="/donations.page">the donations page</a>.</p>
+<p>Please read more about ways to donate to <em>Parf Edhellen</em> on <a href="/donations.page">the donations page</a>. You can also
+follow the project on <a href="https://www.github.com/galadhremmin/Parf-Edhellen" target="_blank">Github</a>.</p>
