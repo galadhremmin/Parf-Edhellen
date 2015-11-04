@@ -9,7 +9,9 @@
     public function load() {
       $model = $this->getModel();
       if ($model !== null) {
-        $this->_engine->assign('languages', $model->getLanguages());
+        $this->_engine->assign('reviews', $model->getReviews());
+        $this->_engine->assign('sentence', $model->getSentence());
+        $this->_engine->assign('loggedIn', $model->getIsLoggedIn());
       }
     }
   }

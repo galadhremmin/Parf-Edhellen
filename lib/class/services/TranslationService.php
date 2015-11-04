@@ -127,9 +127,9 @@
         }
 
         if ($approved) {
-          self::saveTranslation($review);
+          $translation = self::saveTranslation($review);
           $review->justification = $justific;
-          $review->approve();
+          $review->approve($translation->id);
         } else {
           $review->justification = $justific;
           $review->reject();

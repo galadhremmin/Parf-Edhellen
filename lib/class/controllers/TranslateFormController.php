@@ -55,6 +55,8 @@
           $mode = 'review';
         } else if (! $model->isResubmission()) {
           $mode = 'edit';
+        } else {
+          $mode = 'update';
         }
       } else {
         $mode = 'create';

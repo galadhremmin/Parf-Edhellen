@@ -8,26 +8,37 @@
 
 <div class="row">
   <div class="col-xs-12 col-sm-4">
-    <p>My name is Leonard (also known as <em>Aldaleon</em> of the <a href="http://www.forodrim.org/daeron/md_home.html" target="_blank">Mellonath Daeron</a>)
+    <h4>About me</h4>
+    <p>My name is Leonard (also known as <em>Aldaleon</em> of the Mellonath Daeron)
       and I develop and maintain this elvish dictionary. If you want to get in touch with me, please tweet me at
-      <a href="https://twitter.com/parmaeldo" target="_blank">@parmaeldo on Twitter</a>. Give me a few days, and I'll
-      get back to you.</p>
+      <a href="https://twitter.com/parmaeldo" target="_blank">@parmaeldo on Twitter</a>.</p>
+    <p>Please consider donating.
+      For more information, please go to our <a href="/donations.page">donation page</a>.</p>
     <hr class="visible-xs">
   </div>
   <div class="col-xs-12 col-sm-4">
-    <p>Would you like to help out? You can donate to cover <em>Parf Edhellen</em>'s hosting fees.
-      <a href="/donations.page">Go to our donation page to learn more</a>.</p>
+    <h4>Community activity</h4>
+    <ul class="list-group">
+    {foreach $reviews as $review}
+      <li class="list-group-item">
+        {date_format($review->dateCreated, 'Y-m-d H:i')}
+        <a href="/index.page#translationID={$review->translationID}">{$review->word}</a>
+        by <a href="/profile.page?authorID={$review->authorID}">{$review->authorName}</a>
+      </li>
+    {/foreach}
+    </ul>
     <hr class="visible-xs">
   </div>
   <div class="col-xs-12 col-sm-4">
+    <h4>Random elvishness</h4>
     <blockquote>
       <p class="tengwar">
-      `VjR5 8~BjE jU&amp;t$5" `Nt$4%`VjyY
+      {$sentence->sentenceTengwar}
       </p>
       <p>
-        Elen síla lúmenn' omentielvo.
+        {$sentence->sentence}
       </p>
-      <footer>J.R.R. Tolkien</footer>
+      <footer>{$sentence->language} [{$sentence->source}]</footer>
     </blockquote>
   </div>
 </div>

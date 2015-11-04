@@ -15,6 +15,10 @@
      */
     public $authorID;
     /**
+     * @var The name of the author
+     */
+    public $authorName;
+    /**
      * @var Numeric ID for the language.
      */
     public $languageID;
@@ -46,6 +50,10 @@
      * @var Short message from the administrator justifying the verdict. Feedback.
      */
     public $justification;
+    /**
+     * @var Unique identifier for the translation entity which this review item created upon being approved.
+     */
+    public $translationID;
 
     public static function getByAccount(Account $account) {
       $db = \data\Database::instance()->connection();
@@ -114,6 +122,44 @@
       return $reviews;
     }
 
+    public static function getLatestReviewsApproved($max = 10) {
+      if (!is_numeric($max)) {
+        throw new \exceptions\InvalidParameterException('max');
+      }
+
+      $db = \data\Database::instance()->connection();
+      $reviews = array();
+
+      $stmt = $db->query(
+        \data\SqlHelper::paginate(
+          "SELECT t.`AuthorID`, t.`LanguageID`, t.`DateCreated`, t.`Word`, t.`TranslationID`, a.`Nickname`
+           FROM  `translation_review` t
+             INNER JOIN `translation` t0 ON
+              (t0.`TranslationID` = t.`TranslationID` OR t0.`EldestTranslationID` = t.`TranslationID`)
+              AND t0.`Deleted` = '0' AND t0.`Latest` = '1'
+             INNER JOIN `auth_accounts` a ON a.`AccountID` = t.`AuthorID`
+           WHERE t.`Approved` = b'1'
+           ORDER BY t.`DateCreated` DESC", 0, $max
+        )
+      );
+
+      while ($row = $stmt->fetch_assoc()) {
+        $reviews[] = new TranslationReview(array(
+          'authorID'      => $row['AuthorID'],
+          'languageID'    => $row['LanguageID'],
+          'dateCreated'   => ElfyDateTime::parse($row['DateCreated']),
+          'word'          => $row['Word'],
+          'translationID' => $row['TranslationID'],
+          'authorName'    => $row['Nickname']
+        ));
+      }
+
+      $stmt->free();
+      $stmt = null;
+
+      return $reviews;
+    }
+
     public function __construct($data = null, $rawRequest = false) {
       // Always set default approved to null by default.
       $this->approved = null;
@@ -130,7 +176,8 @@
           'reviewed'      => null,
           'reviewedBy'    => null,
           'approved'      => false,
-          'justification' => null
+          'justification' => null,
+          'translationID' => null
         );
       } else if (is_array($data) && $rawRequest) {
         // Convert the service request data array to an initializion array which the parent
@@ -144,7 +191,8 @@
           'reviewed'      => null,
           'reviewedBy'    => null,
           'approved'      => false,
-          'justification' => null
+          'justification' => null,
+          'translationID' => null
         );
       }
 
@@ -180,14 +228,15 @@
       $db = \data\Database::instance()->connection();
 
       $stmt = $db->prepare(
-        'SELECT `AuthorID`, `LanguageID`, `DateCreated`, `Word`, `Data`, `Reviewed`, `ReviewedBy`, `Approved`, `Justification`
+        'SELECT `AuthorID`, `LanguageID`, `DateCreated`, `Word`, `Data`, `Reviewed`, `ReviewedBy`, `Approved`, `Justification`,
+           `TranslationID`
            FROM `translation_review`
            WHERE `ReviewID` = ?');
       $stmt->bind_param('i', $numericId);
       $stmt->execute();
       $stmt->bind_result(
         $this->authorID, $this->languageID, $dateCreated, $this->word, $data,
-        $reviewed, $this->reviewedBy, $approved, $this->justification
+        $reviewed, $this->reviewedBy, $approved, $this->justification, $this->translationID
       );
       if ($stmt->fetch()) {
         $this->data = unserialize($data);
@@ -236,18 +285,20 @@
           VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?)'
         );
 
-        $stmt->bind_param('iissssis', $this->authorID, $this->languageID, $dateCreated, $this->word, $data, $reviewed,
-          $this->reviewedBy, $this->justification);
+        $stmt->bind_param('iissssisi', $this->authorID, $this->languageID, $dateCreated, $this->word, $data, $reviewed,
+          $this->reviewedBy, $this->justification, $this->translationID);
         $stmt->execute();
         $this->reviewID = $stmt->insert_id;
         $stmt = null;
       } else if ($fullAccess) {
         $stmt = $db->prepare(
-          'UPDATE `translation_review` SET `Data` = ?, `Reviewed` = ?, `ReviewedBy` = ?, `Approved` = ?, `Justification` = ?
+          'UPDATE `translation_review` SET `Data` = ?, `Reviewed` = ?, `ReviewedBy` = ?, `Approved` = ?, `Justification` = ?,
+                  `TranslationID` = ?
            WHERE `ReviewID` = ?'
         );
 
-        $stmt->bind_param('ssiisi', $data, $reviewed, $this->reviewedBy, $approved, $this->justification, $this->reviewID);
+        $stmt->bind_param('ssiisii', $data, $reviewed, $this->reviewedBy, $approved, $this->justification,  $this->translationID,
+          $this->reviewID);
         $stmt->execute();
         $stmt = null;
       } else {
@@ -264,10 +315,11 @@
       return $this;
     }
 
-    public function approve() {
+    public function approve($translationID) {
       $this->approved = true;
       $this->reviewedBy = \auth\Credentials::current()->account()->id;
       $this->reviewed = ElfyDateTime::now();
+      $this->translationID = $translationID;
 
       if (empty($this->justification)) {
         $this->justification = 'OK';

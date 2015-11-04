@@ -299,3 +299,10 @@ blockquote h3 a {
   text-align: center;
   float: right;
 }
+
+@media (max-width: 400px) {
+  .donation-box {
+    float: none;
+    max-width: none;
+  }
+}
