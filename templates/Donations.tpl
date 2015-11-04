@@ -1,6 +1,6 @@
 <h2>Thank you!</h2>
-<p><em>Parf Edhellen</em> is fortunate enough to have fans who now and then donate to the project. Their donations has
-  helped me afford literature and has helped me pay for the site's upkeep. As some fans have shown their continued
+<p><em>Parf Edhellen</em> is fortunate enough to have fans who now and then donate to the project. Their donations have
+  helped me afford literature and have helped me pay for the site's continued upkeep. As some fans have shown their continued
   support by making recurring donations, I thought I'd mention these people here.</p>
 <p>This site's annual hosting fee is 3 736 SEK (roughly $440 2015-11-04). This fee includes TLS-certificate. Thanks to your
 donations, I was able to purchase <a href="http://www.eldalamberon.com/parma22.html" target="_blank">Parma Eldalamberon
