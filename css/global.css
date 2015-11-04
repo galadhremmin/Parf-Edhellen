@@ -277,3 +277,25 @@ blockquote h3 a {
   border-top: 2px solid #dddddd;
   padding-top: 25px;
 }
+.donations {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+.donations li {
+  padding: 5px 0 5px 0;
+}
+.donations .currency {
+  font-weight: bold;
+}
+.donations .date {
+  font-style: italic;
+}
+.donation-box {
+  border: none;
+  background: #eee;
+  border-radius: 10px;
+  max-width:230px;
+  text-align: center;
+  float: right;
+}

@@ -8,17 +8,15 @@
 
 <div class="row">
   <div class="col-xs-12 col-sm-4">
-    <p>My name is Leonard (also known as Aldaleon in the <a href="http://www.forodrim.org/daeron/md_home.html" target="_blank">Mellonath Daeron</a>) and I maintain this service. If you want to get in touch with me, you'll find me on <a href="https://twitter.com/parmaeldo" target="_blank">Twitter</a>. Give me a few days, and I'll get back to you.</p>
+    <p>My name is Leonard (also known as <em>Aldaleon</em> of the <a href="http://www.forodrim.org/daeron/md_home.html" target="_blank">Mellonath Daeron</a>)
+      and I develop and maintain this elvish dictionary. If you want to get in touch with me, please tweet me at
+      <a href="https://twitter.com/parmaeldo" target="_blank">@parmaeldo on Twitter</a>. Give me a few days, and I'll
+      get back to you.</p>
     <hr class="visible-xs">
   </div>
   <div class="col-xs-12 col-sm-4">
-    <p>Maintaining this service is not free, so if you're interested in donating for its continued existence, please click the button to the right. Every contribution is thoroughly appreciated!</p>
-    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-      <input type="hidden" name="cmd" value="_s-xclick">
-      <input type="hidden" name="hosted_button_id" value="AGN4A2LX2TYDG">
-      <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-      <img alt="" border="0" src="https://www.paypalobjects.com/sv_SE/i/scr/pixel.gif" width="1" height="1">
-    </form>
+    <p>Would you like to help out? You can donate to cover <em>Parf Edhellen</em>'s hosting fees.
+      <a href="/donations.page">Go to our donation page to learn more</a>.</p>
     <hr class="visible-xs">
   </div>
   <div class="col-xs-12 col-sm-4">
