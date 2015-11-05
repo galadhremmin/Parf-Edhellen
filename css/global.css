@@ -306,3 +306,8 @@ blockquote h3 a {
     max-width: none;
   }
 }
+.daily-sentence {
+  padding: 5px 0 0 0;
+  margin: 0;
+  border: none;
+}

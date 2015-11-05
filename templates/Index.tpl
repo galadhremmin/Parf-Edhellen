@@ -31,13 +31,12 @@
   </div>
   <div class="col-xs-12 col-sm-4">
     <h4>Random elvishness</h4>
-    <blockquote>
+    <blockquote class="daily-sentence">
       <p class="tengwar">
       {$sentence->sentenceTengwar}
       </p>
-      <p>
-        {$sentence->sentence}
-      </p>
+      <p><em>{$sentence->sentence}</em></p>
+      <p>{$sentence->description}</p>
       <footer>{$sentence->language} [{$sentence->source}]</footer>
     </blockquote>
   </div>
