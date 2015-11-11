@@ -1,7 +1,9 @@
 <div class="jumbotron">
-<h1>Mae govannen!</h1>
-<p>Parf Edhellen&mdash;an <em>Elvish Book</em>&mdash; is a free dictionary service, consisting of imported glosses from <em>Hiswelókë Sindarin Dictionary</em>, 
-<em>Ardalambion Quenya Wordlists</em> and <a href="about.page?browseTo=wordlist">many, many more</a>. Please enter your search query in the search field above to begin your journey.</p>
+  <h1>Mae govannen!</h1>
+  <p>
+    Parf Edhellen&mdash;an <em>Elvish Book</em>&mdash;is a free online dictionary for Tolkien's languages.
+    It consists of glosses imported from <em>Hiswelókë Sindarin Dictionary</em>, <em>Ardalambion's dictionary</em> and
+    <a href="about.page?browseTo=wordlist">many others</a>. Use the text field above to begin your journey.</p>
 </div>
 
 <hr>

@@ -682,6 +682,8 @@ define(['exports', 'utilities'], function (exports, util) {
       } else {
         window.location.href = '/index.page#!w=' + hash;
       }
+    } else {
+      $(window).trigger('navigator.history', [window.location.protocol + '//' + window.location.host + '/w/' + hash]);
     }
   };
   

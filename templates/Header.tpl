@@ -57,13 +57,18 @@
       </div>
     </noscript>
 
+    <div class="alert alert-info">
+      <strong><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Ai! Sinye nati!</strong>
+      <p><em>Parf Edhellen</em> has recently been updated. You might have to clear your browser cache.</p>
+    </div>
+
     <!-- search component -->
     <form method="get" id="search-form" action="#">
       <div class="row">
         <div class="col-md-12">
           <div class="input-group input-group-lg">
             <span class="input-group-addon"><span class="glyphicon glyphicon-search" id="search-query-field-loading" data-loading-class="glyphicon glyphicon-refresh loading"></span></span>
-            <input type="search" class="form-control" placeholder="your search query..." id="search-query-field" tabindex="1" accesskey="s" autocapitalize="off" autocorrect="off">
+            <input type="search" class="form-control" placeholder="What are you looking for?" id="search-query-field" tabindex="1" accesskey="s" autocapitalize="off" autocorrect="off">
           </div>
         </div>
       </div>
