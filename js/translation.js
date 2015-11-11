@@ -60,12 +60,7 @@ define(['exports', 'utilities'], function (exports, util) {
       ev.preventDefault();
 
       var url = $(this).prop('href');
-      var pos = url.indexOf('#');
-      if (pos === -1) {
-        return;
-      }
-
-      $(window).trigger('navigator.navigate', [ url.substr(pos + 1) ]);
+      $(window).trigger('navigator.navigate', [ url ]);
     })
   };
   

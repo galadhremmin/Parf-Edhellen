@@ -40,13 +40,16 @@ define(['exports', 'utilities'], function (exports, util) {
       });
     }
 
-    $(window).on('navigator.history', function (ev, address) {
-      window.history.pushState('', null, address);
-      _this.process(false);
-    });
-
-    $(window).on('navigator.navigate', function (ev, hash) {
-      _this.navigate(hash, false, 0); // reload!
+    $(window).on('navigator.navigate', function (ev, address) {
+      if (CNavigator.usesHistoryManipulation()) {
+        window.history.pushState('', null, address);
+        _this.process(false);
+      } else {
+        // The address is received, so retrieve the hash
+        var pos = address.lastIndexOf('/') + 1;
+        var hash = decodeURIComponent(address).substr(pos);
+        _this.navigate(hash, false, 0); // reload!
+      }
     });
 
     $(window).on('navigator.language', function (ev, languageId) {
@@ -553,7 +556,7 @@ define(['exports', 'utilities'], function (exports, util) {
     if (manip) {
       $(this.resultContainer).find('li > a').on('click', function (ev) {
         ev.preventDefault();
-        $(window).trigger('navigator.history', [this.href]);
+        $(window).trigger('navigator.navigate', [this.href]);
       });
     }
 
@@ -686,7 +689,7 @@ define(['exports', 'utilities'], function (exports, util) {
         window.location.href = '/index.page#!w=' + hash;
       }
     } else {
-      $(window).trigger('navigator.history', [window.location.protocol + '//' + window.location.host + '/w/' + hash]);
+      $(window).trigger('navigator.navigate', [window.location.protocol + '//' + window.location.host + '/w/' + hash]);
     }
   };
   

@@ -52,7 +52,7 @@
         '/_([^_]*)_/' => array('tag' => 'em'),
         '/~([^~]*)~/' => array('tag' => 'u'),
         '/\\`([^\\`]+)\\`/' => array('tag' => 'strong'),
-        '/\\[\\[([^\\]]+)\\]\\]/' => array('tagStart' => 'a href="#{{1:\\utils\\StringWizard::createLink}}" class="ed-ref"', 'tagEnd' => 'a')
+        '/\\[\\[([^\\]]+)\\]\\]/' => array('tagStart' => 'a href="/w/{{1:\\utils\\StringWizard::createLink}}" class="ed-ref"', 'tagEnd' => 'a')
       );   
       
       foreach ($regs as $reg => $data) {
