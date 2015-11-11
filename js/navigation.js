@@ -29,7 +29,7 @@ define(['exports', 'utilities'], function (exports, util) {
   CNavigator.prototype.listen = function ()  {
     var _this = this;
 
-    if (CNavigator.usesHistoryManipulation) {
+    if (CNavigator.usesHistoryManipulation()) {
       $(window).on('popstate', function (ev) {
         if (!_this.process(false)) {
           window.location.reload();
@@ -69,7 +69,7 @@ define(['exports', 'utilities'], function (exports, util) {
     var term = undefined;
 
     if (hash.length < 1) {
-      if (CNavigator.usesHistoryManipulation) {
+      if (CNavigator.usesHistoryManipulation()) {
         var parts = /\/w\/([^\/]+)$/.exec(newAddress || window.location.href);
         if (parts && parts.length >= 2) {
           return decodeURIComponent(parts[1]);
@@ -154,7 +154,7 @@ define(['exports', 'utilities'], function (exports, util) {
       _this.currentTerm = term;
 
       // In some cases, the hash might not be set.
-      if (CNavigator.usesHistoryManipulation) {
+      if (CNavigator.usesHistoryManipulation()) {
         window.history.replaceState(null, '', window.location.protocol + '//' + window.location.host + '/w/' + encodeURIComponent(term));
       } else if (window.location.hash !== '#!w=' + term) {
         window.location.hash = '#!w=' + term;
@@ -475,7 +475,7 @@ define(['exports', 'utilities'], function (exports, util) {
         columnIsClosed = true,
         i, j,
         url,
-        manip = CNavigator.usesHistoryManipulation;
+        manip = CNavigator.usesHistoryManipulation();
     
     if (Modernizr && !Modernizr.csscolumns) {
       compatibilityMode = true;
@@ -676,7 +676,7 @@ define(['exports', 'utilities'], function (exports, util) {
     }
     
     // ensure that the client is searching from the front-page, and not a sub-page:
-    if (!CNavigator.usesHistoryManipulation) {
+    if (!CNavigator.usesHistoryManipulation()) {
       if (window.location.pathname.length <= 1 || window.location.pathname.indexOf('/index.page') === 0) {
         window.location.hash = '#!w=' + hash;
       } else {
