@@ -147,7 +147,7 @@ define(['exports', 'utilities'], function (exports, util) {
     }
 
     var _this = this;
-    $.get('translate.php', data).done(function (data) {
+    $.get('/translate.php', data).done(function (data) {
       console.log('CNavigator: successfully retrieved term "' + term + '".');
       
       _this.navigated(data, disableScroll);
