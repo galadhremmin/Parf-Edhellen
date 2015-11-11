@@ -9,12 +9,16 @@ define(['exports', 'utilities'], function (exports, util) {
   var CNavigator = function (containerId) { 
     util.CAssert.string(containerId);
     
-    this.currentTerm = undefined;
-    this.containerId = containerId;
-    this.loader      = util.CLoadingIndicator.shared('search-query-field-loading');
-    this.onNavigated = null;
-    this.languageId  = 0;
-  }
+    this.currentTerm     = undefined;
+    this.containerId     = containerId;
+    this.loader          = util.CLoadingIndicator.shared('search-query-field-loading');
+    this.onNavigated     = null;
+    this.languageId      = 0;
+  };
+
+  CNavigator.usesHistoryManipulation = function () {
+    return (typeof window.history.replaceState === 'function')
+  };
   
   /**
    * Binds the hash change event to the window, and processes existing
@@ -24,37 +28,59 @@ define(['exports', 'utilities'], function (exports, util) {
    */
   CNavigator.prototype.listen = function ()  {
     var _this = this;
-    var currentHash;
-    
-    $(window).on('hashchange', function (ev) {
-      ev.preventDefault();
-      _this.processHashbang(false);
-    });
 
-    $(window).on('navigator.language', function (ev, languageId) {
-      _this.languageId = languageId;
-      _this.processHashbang(true);
+    if (CNavigator.usesHistoryManipulation) {
+      $(window).on('popstate', function (ev) {
+        if (!_this.process(false)) {
+          window.location.reload();
+        }
+      });
+    } else {
+      $(window).on('hashchange', function (ev) {
+        ev.preventDefault();
+        _this.process(false);
+      });
+    }
+
+    $(window).on('navigator.history', function (ev, address) {
+      window.history.pushState('', null, address);
+      _this.process(false);
     });
 
     $(window).on('navigator.navigate', function (ev, hash) {
       _this.navigate(hash, false, 0); // reload!
-    })
+    });
 
-    var term = this.getTerm();
-    if (term) {
-      this.navigate(term);
-    }
+    $(window).on('navigator.language', function (ev, languageId) {
+      _this.languageId = languageId;
+      _this.process(true);
+    });
+
+    this.process(false);
   };
 
-  CNavigator.prototype.getTerm = function () {
+  /**
+   * Retrieves the current term.
+   * @param {String} newAddress Optional address to process. If left undefined, the current address is examined.
+   * @returns {String} current term, or undefined if none exists
+   */
+  CNavigator.prototype.getTerm = function (newAddress) {
     var hash = String(window.location.hash).substr(1);
+    var term = undefined;
+
     if (hash.length < 1) {
-      return undefined;
+      if (CNavigator.usesHistoryManipulation) {
+        var parts = /\/w\/([^\/]+)$/.exec(newAddress || window.location.href);
+        if (parts && parts.length >= 2) {
+          return decodeURIComponent(parts[1]);
+        }
+      }
+
+      return term;
     }
 
-    var term = undefined;
     var hashbang = /[!&]w=([^&]+)/.exec(hash);
-    if (hashbang.length >= 2) {
+    if (hashbang && hashbang.length >= 2) {
       term = hashbang[1]; // retrieve the value of the key-value pair.
     }
 
@@ -66,14 +92,22 @@ define(['exports', 'utilities'], function (exports, util) {
     return term;
   };
 
-  CNavigator.prototype.processHashbang = function(reload) {
+  /**
+   * Processes hashbangs and manipulation of history.
+   * @param reload whether to reload the page on navigation
+   * @param address optional parameter which specifies the address to process
+   * @returns {Boolean} returns true if the current state was processed
+   */
+  CNavigator.prototype.process = function (reload, address) {
     util.CAssert.boolean(reload);
 
-    var term = this.getTerm();
+    var term = this.getTerm(address);
     if (term) {
       this.navigate(term, reload); // reload!
     }
-  }
+
+    return !!term;
+  };
   
   /**
    * Navigates to the specified hash. This method is invoked when the
@@ -120,7 +154,9 @@ define(['exports', 'utilities'], function (exports, util) {
       _this.currentTerm = term;
 
       // In some cases, the hash might not be set.
-      if (window.location.hash !== '#!w=' + term) {
+      if (CNavigator.usesHistoryManipulation) {
+        window.history.replaceState(null, '', window.location.protocol + '//' + window.location.host + '/w/' + encodeURIComponent(term));
+      } else if (window.location.hash !== '#!w=' + term) {
         window.location.hash = '#!w=' + term;
       }
       
@@ -130,7 +166,7 @@ define(['exports', 'utilities'], function (exports, util) {
     }).always(function () {
       _this.loader.loaded();
     });
-  }
+  };
   
   /**
    * Handles the specified data string once it has been successfully 
@@ -162,7 +198,7 @@ define(['exports', 'utilities'], function (exports, util) {
     if (typeof this.onNavigated === 'function') {
       this.onNavigated.call(this);
     }
-  }
+  };
   
   exports.CNavigator = CNavigator;
   
@@ -204,7 +240,7 @@ define(['exports', 'utilities'], function (exports, util) {
     this.iterationIndex   = 0;
     
     this.resultVisibility = true;
-  }
+  };
   
   /**
    * Binds the change event to the search field, and processes existing
@@ -278,7 +314,7 @@ define(['exports', 'utilities'], function (exports, util) {
     this.searchFieldId    = undefined;
     this.languageFilterId = undefined;
     this.reversedSearchId = undefined;
-  }
+  };
   
   /**
    * Event handler for language selection.
@@ -296,7 +332,7 @@ define(['exports', 'utilities'], function (exports, util) {
 
     // Inform potential listeners that language has changed
     $(window).trigger('navigator.language', [id]);
-  }
+  };
   
   /**
    * Event handler for reversed search selection.
@@ -311,7 +347,7 @@ define(['exports', 'utilities'], function (exports, util) {
     
     // Search conditions have changed! Request new suggestions.
     this.endSpringSuggestions();
-  }
+  };
   
   /**
    * Invokes the mehod endSpringSuggestions asynchronously, and erases previous
@@ -357,7 +393,7 @@ define(['exports', 'utilities'], function (exports, util) {
     }, 250);
     
     return true;
-  }
+  };
     
   /**
    * Invokes springSuggestions provided that the element's value digest differ
@@ -384,7 +420,7 @@ define(['exports', 'utilities'], function (exports, util) {
     
     this.requestSuggestions(term);
     this.currentDigest = digest;
-  }
+  };
    
   /**
    * Retrieves suggestions for the specified term through an AJAX request to 
@@ -407,7 +443,7 @@ define(['exports', 'utilities'], function (exports, util) {
     
     var _this = this;
     $.ajax({
-      url: 'api/word/search',
+      url: '/api/word/search',
       data: requestData,
       dataType: 'json',
       type: 'post'
@@ -418,7 +454,7 @@ define(['exports', 'utilities'], function (exports, util) {
     }).always(function () {
       _this.loader.loaded();
     });
-  }
+  };
   
   /**
    * Presents the provided array with suggestions. This method assumes that the 
@@ -437,7 +473,9 @@ define(['exports', 'utilities'], function (exports, util) {
         compatibilityMode = false, 
         itemsPerColumn = 0,
         columnIsClosed = true,
-        i, j;
+        i, j,
+        url,
+        manip = CNavigator.usesHistoryManipulation;
     
     if (Modernizr && !Modernizr.csscolumns) {
       compatibilityMode = true;
@@ -466,9 +504,9 @@ define(['exports', 'utilities'], function (exports, util) {
         items.push('<div class="col-sm-4">');
         columnIsClosed = false;
       }
-      
-      items.push('<li><a href="#!w=' + encodeURIComponent(suggestion.nkey) +
-        '" data-hash="' + suggestion.nkey.hashCode() + '">' + suggestion.key + 
+
+      url = (manip ? '/w/' : '#!w=') + encodeURIComponent(suggestion.nkey);
+      items.push('<li><a href="' + url + '" data-hash="' + suggestion.nkey.hashCode() + '">' + suggestion.key +
         '</a></li>');
       
       if (compatibilityMode) {
@@ -507,13 +545,21 @@ define(['exports', 'utilities'], function (exports, util) {
     $(this.resultWrapper).removeClass('hidden');
     $(this.resultWrapper).find('.results-panel')[items.length ? 'removeClass' : 'addClass']('hidden');
     $(this.resultWrapper).find('.results-empty')[items.length ? 'addClass' : 'removeClass']('hidden');
-    
+
+    // intercept links as they're clicked if history manipulation mode is active
+    if (manip) {
+      $(this.resultContainer).find('li > a').on('click', function (ev) {
+        ev.preventDefault();
+        $(window).trigger('navigator.history', [this.href]);
+      });
+    }
+
     this.suggestionsArray = filteredSuggestions;
     this.iterationIndex = 0;
     
     this.toggleSearchResults(true);
     this.enableNavigationBar();
-  }
+  };
   
   /**
    * Toggles the navigation bar based on the item currently enabled. The 
@@ -573,7 +619,7 @@ define(['exports', 'utilities'], function (exports, util) {
         element.innerHTML = this.trimWordsWithEllipsis(word);
       }
     }
-  }
+  };
   
   /**
    * Shortens long string with an ellipsis.
@@ -605,7 +651,7 @@ define(['exports', 'utilities'], function (exports, util) {
     }
     
     return word;
-  }
+  };
   
   /**
    * Navigates to the suggestion item currently active.
@@ -630,12 +676,14 @@ define(['exports', 'utilities'], function (exports, util) {
     }
     
     // ensure that the client is searching from the front-page, and not a sub-page:
-    if (window.location.pathname.length <= 1 || window.location.pathname.indexOf('/index.page') === 0) {
-      window.location.hash = '#!w=' + hash;
-    } else {
-      window.location.href = '/index.page#!w=' + hash;
+    if (!CNavigator.usesHistoryManipulation) {
+      if (window.location.pathname.length <= 1 || window.location.pathname.indexOf('/index.page') === 0) {
+        window.location.hash = '#!w=' + hash;
+      } else {
+        window.location.href = '/index.page#!w=' + hash;
+      }
     }
-  }
+  };
   
   /**
    * Selects the suggestion item currently active.
@@ -660,7 +708,7 @@ define(['exports', 'utilities'], function (exports, util) {
       this.iterationIndex = selectedItem.parents('li').index();
       this.enableNavigationBar();
     }
-  }
+  };
   
   /**
    * Toggles the search results view.
@@ -682,7 +730,7 @@ define(['exports', 'utilities'], function (exports, util) {
     arrows.toggleClass('glyphicon-plus');
     
     this.resultVisibility = !this.resultVisibility;
-  }
+  };
   
   exports.CSearchNavigator = CSearchNavigator;
 });

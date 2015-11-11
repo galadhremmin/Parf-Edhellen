@@ -1,4 +1,4 @@
-<h2>Thank you!</h2>
+<h2>Thank you! <span class="glyphicon glyphicon-heart" aria-hidden="true"></span></h2>
 <p><em>Parf Edhellen</em> is fortunate enough to have fans who now and then donate to the project. Their donations have
   helped me afford literature and have helped me pay for the site's continued upkeep. As some fans have shown their continued
   support by making recurring donations, I thought I'd mention these people here.</p>
@@ -22,6 +22,7 @@ donations, I was able to purchase <a href="http://www.eldalamberon.com/parma22.h
 
 <h3>Donations 2015</h3>
 <ol class="donations">
+  <li><span class="date">7ᵗʰ Nov '15</span>: <span class="currency">38,14</span> by <span class="person">Yannick B</span>.</li>
   <li><span class="date">3ʳᵈ Nov '15</span>: <span class="currency">$23,72</span> by <span class="person">Joanne M</span>.</li>
   <li><span class="date">31ˢᵗ Oct '15</span>: <span class="currency">$18,92</span> by <span class="person">Joanne M</span>.</li>
   <li><span class="date">30ᵗʰ Orc '15</span>: <span class="currency">$1,14</span> by <span class="person">Lilla E</span>.</li>

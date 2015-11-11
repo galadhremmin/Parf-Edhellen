@@ -10,32 +10,32 @@
     
       $menu = array();
       
-      $menu[] = new \MenuItem(array('url'          => array('index.page', ''),
+      $menu[] = new \MenuItem(array('url'          => array('/index.page', ''),
                                     'text'         => 'Home',
                                     'sectionIndex' => 1));
-      $menu[] = new \MenuItem(array('url'          => 'sentence.page',
+      $menu[] = new \MenuItem(array('url'          => '/sentence.page',
                                     'text'         => 'Phrases',
                                     'sectionIndex' => 1));
-      $menu[] = new \MenuItem(array('url'          => 'about.page',
+      $menu[] = new \MenuItem(array('url'          => '/about.page',
                                     'text'         => 'About',
                                     'sectionIndex' => 1));
 
-      $menu[] = new \MenuItem(array('url'          => 'donations.page',
+      $menu[] = new \MenuItem(array('url'          => '/donations.page',
                                     'text'         => 'Donations',
                                     'sectionIndex' => 1));
       
       if (\auth\Credentials::permitted(new \auth\BasicAccessRequest())) {
-        $menu[] = new \MenuItem(array('url'          => 'dashboard.page',
+        $menu[] = new \MenuItem(array('url'          => '/dashboard.page',
                                       'text'         => 'Dashboard', 
                                       'sectionIndex' => 2));
-        $menu[] = new \MenuItem(array('url'          => 'profile.page',
+        $menu[] = new \MenuItem(array('url'          => '/profile.page',
                                       'text'         => 'Profile', 
                                       'sectionIndex' => 2));
-        $menu[] = new \MenuItem(array('url'          => 'exec/deauthenticate.php',
+        $menu[] = new \MenuItem(array('url'          => '/exec/deauthenticate.php',
                                       'text'         => 'Log out',
                                       'sectionIndex' => 2));
       } else {
-        $menu[] = new \MenuItem(array('url'          => 'authenticate.page',
+        $menu[] = new \MenuItem(array('url'          => '/authenticate.page',
                                       'text'         => 'Log in',
                                       'sectionIndex' => 2));
       }

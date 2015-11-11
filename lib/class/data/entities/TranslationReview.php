@@ -285,7 +285,7 @@
           VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?)'
         );
 
-        $stmt->bind_param('iissssisi', $this->authorID, $this->languageID, $dateCreated, $this->word, $data, $reviewed,
+        $stmt->bind_param('iissssis', $this->authorID, $this->languageID, $dateCreated, $this->word, $data, $reviewed,
           $this->reviewedBy, $this->justification);
         $stmt->execute();
         $this->reviewID = $stmt->insert_id;

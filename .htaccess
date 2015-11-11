@@ -2,7 +2,9 @@ Options +FollowSymLinks -MultiViews
 RewriteEngine on
 
 RewriteRule ^api\/([A-Za-z0-9\-]+)\/?([0-9=a-zA-Z%]+)?\/?$     /api.php?service=$1&param=$2 [QSA,L]
-RewriteRule ^([a-z\-]+)\.page$                                   /index.php?template=$1 [QSA,L]
+RewriteRule ^([a-z\-]+)\.page$                                 /index.php?template=$1 [QSA,L]
+RewriteRule ^w/([^\/]+)$                                       /translate.php?term=$1&ajax=false [QSA,L]
+RewriteRule ^wt/([0-9]+)$                                      /translate.php?term=translationID\%3D$1&ajax=false [QSA,L]
 
 # This checks to make sure the connection is not already HTTPS
 # RewriteCond %{HTTPS} !=on

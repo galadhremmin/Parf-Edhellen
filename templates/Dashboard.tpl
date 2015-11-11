@@ -28,7 +28,7 @@
 	      {else}
 	      {foreach $favourites as $favourite}
 	      <li class="list-group-item" id="favourite-{$favourite->id}">
-	        <a href="/index.page#translationID={urlencode($favourite->translation->id)}">{$favourite->translation->word}</a>
+	        <a href="/wt/{$favourite->translation->id}">{$favourite->translation->word}</a>
 	        <a class="pull-right favourite-delete" href="#" data-favourite-id="{$favourite->id}"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
 	      </li>
 	      {/foreach}
@@ -56,7 +56,7 @@
           {foreach $translations as $translation}
             <li class="list-group-item" id="translation-{$translation->id}">
               <span class="ed-dashboard-li-text">
-                <a href="/index.page#translationID={$translation->id}">{$translation->word}</a>
+                <a href="/wt/{$translation->id}">{$translation->word}</a>
                 &mdash;
                 {$translation->translation}
               </span>

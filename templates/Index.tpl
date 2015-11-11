@@ -22,7 +22,7 @@
     {foreach $reviews as $review}
       <li class="list-group-item">
         {date_format($review->dateCreated, 'Y-m-d H:i')}
-        <a href="/index.page#translationID={$review->translationID}">{$review->word}</a>
+        <a href="/wt/{$review->translationID}">{$review->word}</a>
         by <a href="/profile.page?authorID={$review->authorID}">{$review->authorName}</a>
       </li>
     {/foreach}

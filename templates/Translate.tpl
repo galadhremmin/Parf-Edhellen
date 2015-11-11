@@ -20,7 +20,7 @@ data-module="translation"
     {* Iterate through each entry for the specificed language *}
     {foreach $translationsForLanguage as $translation}
     <blockquote itemscope="itemscope" itemtype="http://schema.org/Article" id="translation-block-{counter}" {if !$translation->group->canon}class="contribution"{/if}>
-      <img class="hidden" itemprop="image" src="http://www.elfdict.com/img/favicons/mstile-310x310.png"> {* Please Google... *}
+      <img class="hidden" itemprop="image" src="https://www.elfdict.com/img/favicons/mstile-310x310.png"> {* Please Google... *}
       <h3 rel="trans-word" class="trans-word">
         {if !$translation->group->canon || $translation->uncertain}
         <a href="about.page?browseTo=unverified" title="Unverified or debatable content."><span class="glyphicon glyphicon-question-sign"></span></a>
@@ -29,8 +29,8 @@ data-module="translation"
         {if $loggedIn}
           {if $isAdmin}
             <a href="#" class="ed-delete-button" data-translation-id="{$translation->id}" title="Delete this item"><span class="glyphicon glyphicon-trash pull-right" aria-hidden="true"></span></a>
-            <a href="translate-form.page?translationID={$translation->id}" title="Edit this item"><span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span></a>
           {/if}
+          <a href="/translate-form.page?translationID={$translation->id}" title="Edit this item"><span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span></a>
           <a href="#" class="ed-favourite-button" data-translation-id="{$translation->id}" title="Add to favourites"><span class="glyphicon glyphicon-heart{if !in_array($translation->id, $favourites)}-empty{/if} pull-right" aria-hidden="true"></span></a>
         {/if}
         {if $translation->group->externalLinkFormat !== null && $translation->externalID !== null}
@@ -47,12 +47,14 @@ data-module="translation"
 
       <p class="word-comments" rel="trans-comments" itemprop="articleBody">{nl2br(trim($translation->comments))}</p>
 
+      {*
       {if !$translation->group->canon}
       <section class="alert alert-warning" itemprop="comment">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
         Unverified or debatable content.
       </section>
       {/if}
+      *}
 
       {* Only bother with references if such are defined, as they are put within brackets *}
       <footer>

@@ -102,7 +102,7 @@
       
       $str = preg_replace(
         '/&gt;&gt;([^\\0\\n\\r]+)/', 
-        '<div><img src="img/hand.png" alt="See also" border="0" /> \\1</div>', 
+        '<div><img src="/img/hand.png" alt="See also" border="0" /> \\1</div>',
         $str
       );
       
