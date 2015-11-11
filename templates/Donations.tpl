@@ -22,31 +22,31 @@ donations, I was able to purchase <a href="http://www.eldalamberon.com/parma22.h
 
 <h3>Donations 2015</h3>
 <ol class="donations">
-  <li><span class="date">7ᵗʰ Nov '15</span>: <span class="currency">38,14</span> by <span class="person">Yannick B</span>.</li>
-  <li><span class="date">3ʳᵈ Nov '15</span>: <span class="currency">$23,72</span> by <span class="person">Joanne M</span>.</li>
-  <li><span class="date">31ˢᵗ Oct '15</span>: <span class="currency">$18,92</span> by <span class="person">Joanne M</span>.</li>
-  <li><span class="date">30ᵗʰ Orc '15</span>: <span class="currency">$1,14</span> by <span class="person">Lilla E</span>.</li>
-  <li><span class="date">30ᵗʰ Sep '15</span>: <span class="currency">$1,14</span> by <span class="person">Lilla E</span>.</li>
-  <li><span class="date">23ʳᵈ Sep '15</span>: <span class="currency">$9,31</span> by <span class="person">Eleanor S</span>.</li>
-  <li><span class="date">23ʳᵈ Sep '15</span>: <span class="currency">$46,79</span> by <span class="person">Jean Paul C</span>.</li>
-  <li><span class="date">30ᵗʰ Aug '15</span>: <span class="currency">$1,14</span> by <span class="person">Lilla E</span>.</li>
-  <li><span class="date">12ᵗʰ Aug '15</span>: <span class="currency">$18,92</span> by <span class="person">Joanne M</span>.</li>
-  <li><span class="date">30ᵗʰ Jun '15</span>: <span class="currency">$1,14</span> by <span class="person">Lilla E</span>.</li>
+  <li><span class="date">7ᵗʰ Nov '15</span>: <span class="currency">$40,00</span> by <span class="person">Yannick B</span>.</li>
+  <li><span class="date">3ʳᵈ Nov '15</span>: <span class="currency">$25,00</span> by <span class="person">Joanne M</span>.</li>
+  <li><span class="date">31ˢᵗ Oct '15</span>: <span class="currency">$20,00</span> by <span class="person">Joanne M</span>.</li>
+  <li><span class="date">30ᵗʰ Orc '15</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
+  <li><span class="date">30ᵗʰ Sep '15</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
+  <li><span class="date">23ʳᵈ Sep '15</span>: <span class="currency">$10,00</span> by <span class="person">Eleanor S</span>.</li>
+  <li><span class="date">23ʳᵈ Sep '15</span>: <span class="currency">$49,00</span> by <span class="person">Jean Paul C</span>.</li>
+  <li><span class="date">30ᵗʰ Aug '15</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
+  <li><span class="date">12ᵗʰ Aug '15</span>: <span class="currency">$20,00</span> by <span class="person">Joanne M</span>.</li>
+  <li><span class="date">30ᵗʰ Jun '15</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
   <li><span class="date">7ᵗʰ May '15</span>: <span class="currency">$18,92</span> by <span class="person">Joanne M</span>.</li>
-  <li><span class="date">30ᵗʰ May '15</span>: <span class="currency">$1,14</span> by <span class="person">Lilla E</span>.</li>
-  <li><span class="date">9ᵗʰ May '15</span>: <span class="currency">$18,92</span> by <span class="person">Joanne M</span>.</li>
-  <li><span class="date">25ᵗʰ Apr '15</span>: <span class="currency">$1,38</span> by <span class="person">Lilla E</span>.</li>
-  <li><span class="date">24ᵗʰ Mar '15</span>: <span class="currency">$20,08</span> by <span class="person">Jean Paul C</span>.</li>
-  <li><span class="date">18ᵗʰ Jan '15</span>: <span class="currency">$7,39</span> by <span class="person">Birgit K</span>.</li>
-  <li><span class="date">4ᵗʰ Jan '15</span>: <span class="currency">$19,88</span> by <span class="person">Jean Paul C</span>.</li>
-  <li><span class="date">4ᵗʰ Jan '15</span>: <span class="currency">$9,31</span> by <span class="person">Sarah C</span>.</li>
+  <li><span class="date">30ᵗʰ May '15</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
+  <li><span class="date">9ᵗʰ May '15</span>: <span class="currency">$20,00</span> by <span class="person">Joanne M</span>.</li>
+  <li><span class="date">25ᵗʰ Apr '15</span>: <span class="currency">$1,75</span> by <span class="person">Lilla E</span>.</li>
+  <li><span class="date">24ᵗʰ Mar '15</span>: <span class="currency">$21,21</span> by <span class="person">Jean Paul C</span>.</li>
+  <li><span class="date">18ᵗʰ Jan '15</span>: <span class="currency">$8,00</span> by <span class="person">Birgit K</span>.</li>
+  <li><span class="date">4ᵗʰ Jan '15</span>: <span class="currency">$21,00</span> by <span class="person">Jean Paul C</span>.</li>
+  <li><span class="date">4ᵗʰ Jan '15</span>: <span class="currency">$10,00</span> by <span class="person">Sarah C</span>.</li>
 </ol>
 
 <h3>Donations 2014</h3>
 <ol class="donations">
-  <li><span class="date">30ᵗʰ Dec '14</span>: <span class="currency">$4,50</span> by <span class="person">Tracee C</span>.</li>
-  <li><span class="date">13ᵗʰ Dec '14</span>: <span class="currency">$1,14</span> by <span class="person">Lilla E</span>.</li>
-  <li><span class="date">28ᵗʰ Aug '14</span>: <span class="currency">$4,50</span> by <span class="person">Alexandra N</span>.</li>
+  <li><span class="date">30ᵗʰ Dec '14</span>: <span class="currency">$5,00</span> by <span class="person">Tracee C</span>.</li>
+  <li><span class="date">13ᵗʰ Dec '14</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
+  <li><span class="date">28ᵗʰ Aug '14</span>: <span class="currency">$5,00</span> by <span class="person">Alexandra N</span>.</li>
   <li><span class="date">26ᵗʰ Aug '14</span>: <span class="currency">€30</span> by <span class="person">Nicola N</span>.</li>
-  <li><span class="date">31ˢᵗ Mar '14</span>: <span class="currency">$0,66</span> by <span class="person">Marcus L</span>.</li>
+  <li><span class="date">31ˢᵗ Mar '14</span>: <span class="currency">$1,00</span> by <span class="person">Marcus L</span>.</li>
 </ol>
