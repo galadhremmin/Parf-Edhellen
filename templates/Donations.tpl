@@ -1,4 +1,4 @@
-<h2>Thank you! <span class="glyphicon glyphicon-heart" aria-hidden="true"></span></h2>
+<h2>Thank you! <span class="glyphicon glyphicon-heart beating" aria-hidden="true"></span></h2>
 <p><em>Parf Edhellen</em> is fortunate enough to have fans who now and then donate to the project. Their donations have
   helped me afford literature and have helped me pay for the site's continued upkeep. As some fans have shown their continued
   support by making recurring donations, I thought I'd mention these people here.</p>

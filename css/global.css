@@ -311,3 +311,25 @@ blockquote h3 a {
   margin: 0;
   border: none;
 }
+.beating {
+  color: red;
+  font-size: 90%;
+  animation: heartbeat 3s infinite;
+  animation-direction: alternate;
+  animation-timing-function: linear;
+}
+@keyframes heartbeat {
+  0% {
+    transform: scale(0.85);
+  }
+  30% {
+    transform: scale(1);
+    color: crimson;
+  }
+  60% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
