@@ -28,20 +28,51 @@ define(['exports', 'utilities'], function (exports, util) {
     
     $(window).on('hashchange', function (ev) {
       ev.preventDefault();
-      
-      _this.navigate(String(window.location.hash).substr(1));
+      _this.processHashbang(false);
     });
 
     $(window).on('navigator.language', function (ev, languageId) {
       _this.languageId = languageId;
-      _this.navigate(String(window.location.hash).substr(1), true); // reload!
+      _this.processHashbang(true);
     });
 
     $(window).on('navigator.navigate', function (ev, hash) {
       _this.navigate(hash, false, 0); // reload!
     })
 
-    this.navigate(String(window.location.hash).substr(1));
+    var term = this.getTerm();
+    if (term) {
+      this.navigate(term);
+    }
+  };
+
+  CNavigator.prototype.getTerm = function () {
+    var hash = String(window.location.hash).substr(1);
+    if (hash.length < 1) {
+      return undefined;
+    }
+
+    var term = undefined;
+    var hashbang = /[!&]w=([^&]+)/.exec(hash);
+    if (hashbang.length >= 2) {
+      term = hashbang[1]; // retrieve the value of the key-value pair.
+    }
+
+    if (!term) {
+      // attempt to retrieve the word by the deprecated method.
+      term = hash;
+    }
+
+    return term;
+  };
+
+  CNavigator.prototype.processHashbang = function(reload) {
+    util.CAssert.boolean(reload);
+
+    var term = this.getTerm();
+    if (term) {
+      this.navigate(term, true); // reload!
+    }
   }
   
   /**
@@ -89,8 +120,8 @@ define(['exports', 'utilities'], function (exports, util) {
       _this.currentTerm = term;
 
       // In some cases, the hash might not be set.
-      if (window.location.hash !== '#' + term) {
-        window.location.hash = '#' + term;
+      if (window.location.hash !== '#!w=' + term) {
+        window.location.hash = '#!w=' + term;
       }
       
       $(window).trigger('navigator.navigated', [term]);
@@ -436,7 +467,7 @@ define(['exports', 'utilities'], function (exports, util) {
         columnIsClosed = false;
       }
       
-      items.push('<li><a href="#' + encodeURIComponent(suggestion.nkey) + 
+      items.push('<li><a href="#!w=' + encodeURIComponent(suggestion.nkey) +
         '" data-hash="' + suggestion.nkey.hashCode() + '">' + suggestion.key + 
         '</a></li>');
       
@@ -600,9 +631,9 @@ define(['exports', 'utilities'], function (exports, util) {
     
     // ensure that the client is searching from the front-page, and not a sub-page:
     if (window.location.pathname.length <= 1 || window.location.pathname.indexOf('/index.page') === 0) {
-      window.location.hash = '#' + hash;
+      window.location.hash = '#!w=' + hash;
     } else {
-      window.location.href = '/index.page#' + hash;
+      window.location.href = '/index.page#!w=' + hash;
     }
   }
   

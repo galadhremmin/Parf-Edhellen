@@ -53,7 +53,7 @@
       <div id="noscript" class="alert alert-danger">
         <strong><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Ai! Lá polin saca i quettar!</strong>
         <p><em>ElfDict</em> requires javascript to function properly. Please enable Javascript.</p>
-        <p><a href="http://support.google.com/bin/answer.py?hl=en&amp;answer=23852" target="_blank">Show me how I enable Javascript</a>.</p>
+        <p><a href="https://support.google.com/bin/answer.py?hl=en&amp;answer=23852" target="_blank">Show me how I enable Javascript</a>.</p>
       </div>
     </noscript>
 

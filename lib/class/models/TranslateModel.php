@@ -9,6 +9,7 @@
     private $_languages;
     private $_wordExists;
     private $_senses;
+    private $_favourites;
     
     public function __construct() {
       $this->_translations = array();
@@ -19,7 +20,7 @@
       
       $this->_term = $_REQUEST['term'];
       
-      if (get_magic_quotes_gpc()) {
+      if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc()) {
         $this->_term = stripslashes($this->_term);
       }
 
