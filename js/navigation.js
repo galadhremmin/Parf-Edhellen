@@ -31,9 +31,7 @@ define(['exports', 'utilities'], function (exports, util) {
 
     if (CNavigator.usesHistoryManipulation()) {
       $(window).on('popstate', function (ev) {
-        if (!_this.process(false)) {
-          window.location.reload();
-        }
+        _this.process(false);
       });
     } else {
       $(window).on('hashchange', function (ev) {
@@ -72,21 +70,26 @@ define(['exports', 'utilities'], function (exports, util) {
       if (CNavigator.usesHistoryManipulation()) {
         var parts = /\/w\/([^\/]+)$/.exec(newAddress || window.location.href);
         if (parts && parts.length >= 2) {
-          return decodeURIComponent(parts[1]);
+          term = decodeURIComponent(parts[1]);
         }
       }
-
-      return term;
     }
 
-    var hashbang = /[!&]w=([^&]+)/.exec(hash);
-    if (hashbang && hashbang.length >= 2) {
-      term = hashbang[1]; // retrieve the value of the key-value pair.
+    if (!term) {
+      var hashbang = /[!&]w=([^&]+)/.exec(hash);
+      if (hashbang && hashbang.length >= 2) {
+        term = hashbang[1]; // retrieve the value of the key-value pair.
+      }
     }
 
     if (!term) {
       // attempt to retrieve the word by the deprecated method.
       term = hash;
+    }
+
+    // Validate the term to be sure it's just not random spaces
+    if (term && /^\s*$/.test(term)) {
+      return undefined;
     }
 
     return term;
@@ -103,7 +106,7 @@ define(['exports', 'utilities'], function (exports, util) {
 
     var term = this.getTerm(address);
     if (term) {
-      this.navigate(term, reload); // reload!
+      this.navigate(term, reload);
     }
 
     return !!term;
