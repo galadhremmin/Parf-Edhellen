@@ -71,7 +71,7 @@ define(['exports', 'utilities'], function (exports, util) {
 
     var term = this.getTerm();
     if (term) {
-      this.navigate(term, true); // reload!
+      this.navigate(term, reload); // reload!
     }
   }
   
