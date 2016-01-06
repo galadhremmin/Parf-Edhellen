@@ -57,10 +57,12 @@
       </div>
     </noscript>
 
+    {*
     <div class="alert alert-info">
       <strong><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Ai! Sinye nati!</strong>
       <p><em>Parf Edhellen</em> has recently been updated. You might have to clear your browser cache.</p>
     </div>
+    *}
 
     <!-- search component -->
     <form method="get" id="search-form" action="#">

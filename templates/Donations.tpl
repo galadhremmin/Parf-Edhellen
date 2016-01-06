@@ -20,9 +20,16 @@ donations, I was able to purchase <a href="http://www.eldalamberon.com/parma22.h
 </form>
 </blockquote>
 
+<h3>Donations 2016</h3>
+<ol class="donations">
+  <li><span class="date">3ʳᵈ Jan '16</span>: <span class="currency">$25,00</span> by <span class="person">Joanne M</span>.</li>
+</ol>
+
 <h3>Donations 2015</h3>
 <ol class="donations">
-  <li><span class="date">7ᵗʰ Nov '15</span>: <span class="currency">$40,00</span> by <span class="person">Yannick B</span>.</li>
+  <li><span class="date">30ᵗʰ Dec '15</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
+  <li><span class="date">1ˢᵗ Dec '15</span>: <span class="currency">$25,00</span> by <span class="person">Joanne M</span>.</li>
+  <li><span class="date">30ᵗʰ Nov '15</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
   <li><span class="date">3ʳᵈ Nov '15</span>: <span class="currency">$25,00</span> by <span class="person">Joanne M</span>.</li>
   <li><span class="date">31ˢᵗ Oct '15</span>: <span class="currency">$20,00</span> by <span class="person">Joanne M</span>.</li>
   <li><span class="date">30ᵗʰ Orc '15</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>

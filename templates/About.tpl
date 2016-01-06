@@ -63,7 +63,7 @@
   Please note that discrepancies from the source material can arise while importing.</p>
 <dl>
   <dt><a href="http://www.eldamo.org" target="_blank">Eldamo</a></dt>
-  <dd><em>Eldamo</em> is perhaps the best, most comprehensive source for Tolkien's languages to date. Maintained by Paul Strack. v. 0.4.8.</dd>
+  <dd><em>Eldamo</em> is perhaps the best, most comprehensive source for Tolkien's languages to date. Maintained by Paul Strack. v. 0.5.</dd>
   <dt><a href="http://folk.uib.no/hnohf/wordlists.htm" target="_blank">Quettaparma Quenyallo</a></dt>
   <dd>The best Quenya lexicon maintained by <em>Helge Fauskanger</em>, presented alongside his excellent course work material on Ardalambion.</dd>
   <dt><a href="http://folk.uib.no/hnohf" target="_blank">Parviphith</a></dt>
@@ -78,7 +78,7 @@
   <dd><em>Tolkiendil</em> provides a consolidated list of Sindarin names examined and translated. <em>Parf Edhellen</em> is happy to house their excellent work.</dd>
 </dl>
 <p></p>
-<p><a href="https://stocksnap.io/author/302" target="_blank">Davic Marcu on stocksnap.io</a> is the author of the incredible autumn-themed photograph
+<p><a href="https://stocksnap.io/author/370" target="_blank">Jay Mantri on stocksnap.io</a> is the author of the incredible autumn-themed photograph
   used as the background image.</p>
 
 <h3>Helping out</h3>
