@@ -343,4 +343,24 @@
       $stmt->execute();
       $stmt = null;
     }
+
+    public function absorbChanges(array& $input) {
+      $keys = array_keys($this->data);
+
+      foreach ($keys as $key) {
+        // Ignore keys that don't exist, or values which are unset.
+        if (!isset($input[$key])) {
+          continue;
+        }
+
+        if ($input[$key] === 0) {
+          continue;
+        }
+
+        // Compare both values and absorb changes
+        if ($this->data[$key] != $input[$key]) {
+          $this->data[$key] = $input[$key];
+        }
+      }
+    }
   }

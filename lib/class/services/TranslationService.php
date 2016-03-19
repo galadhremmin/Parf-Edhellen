@@ -126,6 +126,8 @@
           return false;
         }
 
+        $review->absorbChanges($input);
+
         if ($approved) {
           $translation = self::saveTranslation($review);
           $review->justification = $justific;
