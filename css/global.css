@@ -34,6 +34,7 @@ body {
   border: 0.5em solid white;
   padding-top: 1em;
   box-shadow: 0 0 1em #333;
+  border-radius: 2px;
 }
 h1,h2,h3,h4,h5 {
   font-family: 'Noto Serif', serif;
