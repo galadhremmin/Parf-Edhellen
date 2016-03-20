@@ -4,7 +4,7 @@
   support by making recurring donations, I thought I'd mention these people here.</p>
 <p>This site's annual hosting fee is 3 736 SEK (roughly $440 2015-11-04). This fee includes TLS-certificate. Thanks to your
 donations, I was able to purchase <a href="http://www.eldalamberon.com/parma22.html" target="_blank">Parma Eldalamberon
-    issue 22</a> this year.</p>
+    issue 22</a> last year.</p>
 <p>You all have my <em>heartfelt thanks</em> for helping and supporting me in this work!</p>
 
 <blockquote class="donation-box">
@@ -22,6 +22,10 @@ donations, I was able to purchase <a href="http://www.eldalamberon.com/parma22.h
 
 <h3>Donations 2016</h3>
 <ol class="donations">
+  <li><span class="date">6ᵗʰ Mar '16</span>: <span class="currency">$25,00</span> by <span class="person">Joanne M</span>.</li>
+  <li><span class="date">1ˢᵗ Mar '16</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
+  <li><span class="date">18ᵗʰ Feb '16</span>: <span class="currency">$25,00</span> by <span class="person">Joanne M</span>.</li>
+  <li><span class="date">30ᵗʰ Jan '16</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
   <li><span class="date">3ʳᵈ Jan '16</span>: <span class="currency">$25,00</span> by <span class="person">Joanne M</span>.</li>
 </ol>
 

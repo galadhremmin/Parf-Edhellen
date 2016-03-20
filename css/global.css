@@ -35,6 +35,11 @@ body {
   padding-top: 1em;
   box-shadow: 0 0 1em #333;
   border-radius: 2px;
+  transition: transform 0.5s;
+  position: relative;
+}
+#site-container.pushed-down {
+  transform: translateY(calc(100vh - 150px));
 }
 h1,h2,h3,h4,h5 {
   font-family: 'Noto Serif', serif;

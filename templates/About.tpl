@@ -78,8 +78,8 @@
   <dd><em>Tolkiendil</em> provides a consolidated list of Sindarin names examined and translated. <em>Parf Edhellen</em> is happy to house their excellent work.</dd>
 </dl>
 <p></p>
-<p><a href="https://stocksnap.io/author/370" target="_blank">Jay Mantri on stocksnap.io</a> is the author of the incredible autumn-themed photograph
-  used as the background image.</p>
+<p><a href="https://unsplash.com/jmacpherson" target="_blank">Jamie MacPherson</a> is the author of the incredible winter-themed photograph
+  used for the background.</p>
 
 <h3>Helping out</h3>
 <p>Please read more about ways to donate to <em>Parf Edhellen</em> on <a href="/donations.page">the donations page</a>. You can also

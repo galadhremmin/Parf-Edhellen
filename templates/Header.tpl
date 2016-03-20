@@ -35,6 +35,7 @@
           <li{if $item->active} class="active"{/if}><a href="{$item->url[0]}"{if $item->onclick != null} onclick="{$item->onclick}"{/if}>{$item->text}</a></li>
           {/if}
         {/foreach}
+          <li><a href="#" class="hidden-xs" id="push-down-link" title="View/hide the background image"><span class="glyphicon glyphicon-camera"></span></a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
         {foreach $menu as $item}

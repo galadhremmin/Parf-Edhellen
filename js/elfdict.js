@@ -36,6 +36,11 @@ require(['require', 'navigation'], function(require, nav) {
   
   var searchNavigator = new nav.CSearchNavigator('search-query-field', 'search-result', 'search-reverse-box', 'search-language-select');
   searchNavigator.listen();
+
+  $('#push-down-link').on('click', function (ev) {
+    ev.preventDefault();
+    $('#site-container').toggleClass('pushed-down');
+  });
   
   // Initialize all existing modules
   loadModules($('body'));
