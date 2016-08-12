@@ -21,7 +21,22 @@ donations, I was able to purchase <a href="http://www.eldalamberon.com/parma22.h
 </blockquote>
 
 <h3>Donations 2016</h3>
+<p>Parf Edhellen is entirely supported by its donors this year. <strong>Thank you for your support!</strong></p>
 <ol class="donations">
+  <li><span class="date">12ᵗʰ Aug '16</span>: <span class="currency">$20,00</span> by <span class="person">Fong E</span>.</li>
+  <li><span class="date">30ᵗʰ Jul '16</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
+  <li><span class="date">29ᵗʰ Jul '16</span>: <span class="currency">$25,00</span> by <span class="person">Joanne M</span>.</li>
+  <li><span class="date">19ᵗʰ Jul '16</span>: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
+  <li><span class="date">19ᵗʰ Jul '16</span>: <span class="currency">$10,00</span> by <span class="person">Gilles S</span>.</li>
+  <li><span class="date">1ˢᵗ Jul '16</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
+  <li><span class="date">22ⁿᵈ Jun '16</span>: <span class="currency">$21,00</span> by <span class="person">Jean Paul C</span>.</li>
+  <li><span class="date">19ᵗʰ Jun '16</span>: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
+  <li><span class="date">10ᵗʰ Jun '16</span>: <span class="currency">$25,00</span> by <span class="person">Joanne M</span>.</li>
+  <li><span class="date">30ᵗʰ May '16</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
+  <li><span class="date">24ᵗʰ May '16</span>: <span class="currency">$100,00</span> by <span class="person">Robert K</span>.</li>
+  <li><span class="date">19ᵗʰ May '16</span>: <span class="currency">$1,50</span> by <span class="person">Cory Y</span>.</li>
+  <li><span class="date">30ᵗʰ Apr '16</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
+  <li><span class="date">14ᵗʰ Apr '16</span>: <span class="currency">$25,00</span> by <span class="person">Joanne M</span>.</li>
   <li><span class="date">6ᵗʰ Mar '16</span>: <span class="currency">$25,00</span> by <span class="person">Joanne M</span>.</li>
   <li><span class="date">1ˢᵗ Mar '16</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
   <li><span class="date">18ᵗʰ Feb '16</span>: <span class="currency">$25,00</span> by <span class="person">Joanne M</span>.</li>

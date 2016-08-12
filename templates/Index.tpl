@@ -11,8 +11,8 @@
 <div class="row">
   <div class="col-xs-12 col-sm-4">
     <h4>About me</h4>
-    <p>My name is Leonard (also known as <em>Aldaleon</em> of the Mellonath Daeron)
-      and I develop and maintain this elvish dictionary. If you want to get in touch with me, please tweet me at
+    <p>My name is Leonard and I develop and maintain this elvish dictionary.
+      If you want to get in touch with me, please tweet me at
       <a href="https://twitter.com/parmaeldo" target="_blank">@parmaeldo on Twitter</a>.</p>
     <p>Please consider donating.
       For more information, please go to our <a href="/donations.page">donation page</a>.</p>
