@@ -600,11 +600,11 @@
 
     public function loadIDForExternalID() {
       if (empty($this->externalID)) {
-        return;
+        return false;
       }
 
       $query = \data\Database::instance()->connection()->prepare(
-        'SELECT `TranslationID`, `NamespaceID` FROM `translation` WHERE `ExternalID` = ?'
+        'SELECT `TranslationID`, `NamespaceID` FROM `translation` WHERE `ExternalID` = ? AND `Latest` = \'1\''
       );
 
       try {
