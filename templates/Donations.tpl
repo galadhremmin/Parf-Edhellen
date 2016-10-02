@@ -21,8 +21,18 @@ donations, I was able to purchase <a href="http://www.eldalamberon.com/parma22.h
 </blockquote>
 
 <h3>Donations 2016</h3>
-<p>Parf Edhellen is entirely supported by its donors this year. <strong>Thank you for your support!</strong></p>
+<p>Parf Edhellen is entirely supported by donations this year. <strong>Thank you everyone for your continued support!</strong></p>
 <ol class="donations">
+  <li><span class="date">30ᵗʰ Sep '16</span>: <span class="currency">$21,00</span> by <span class="person">Jean Paul C</span>.</li>
+  <li><span class="date">25ᵗʰ Sep '16</span>: <span class="currency">$50,00</span> by <span class="person">Joanne M</span>.</li>
+  <li><span class="date">19ᵗʰ Sep '16</span>: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
+  <li><span class="date">14ᵗʰ Sep '16</span>: <span class="currency">$25,00</span> by <span class="person">Joanne M</span>.</li>
+  <li><span class="date">1ˢᵗ Sep '16</span>: <span class="currency">$20,00</span> by <span class="person">Almárë</span>.</li>
+  <li><span class="date">30ᵗʰ Aug '16</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
+  <li><span class="date">30ᵗʰ Aug '16</span>: <span class="currency">$10,00</span> by <span class="person">Sophie C</span>.</li>
+  <li><span class="date">19ᵗʰ Aug '16</span>: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
+  <li><span class="date">17ᵗʰ Aug '16</span>: <span class="currency">$25,00</span> by <span class="person">Joanne M</span>.</li>
+  <li><span class="date">15ᵗʰ Aug '16</span>: <span class="currency">$25,00</span> by <span class="person">Joanne M</span>.</li>
   <li><span class="date">12ᵗʰ Aug '16</span>: <span class="currency">$20,00</span> by <span class="person">Fong E</span>.</li>
   <li><span class="date">30ᵗʰ Jul '16</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
   <li><span class="date">29ᵗʰ Jul '16</span>: <span class="currency">$25,00</span> by <span class="person">Joanne M</span>.</li>

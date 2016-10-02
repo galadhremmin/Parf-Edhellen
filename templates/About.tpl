@@ -78,8 +78,7 @@
   <dd><em>Tolkiendil</em> provides a consolidated list of Sindarin names examined and translated. <em>Parf Edhellen</em> is happy to house their excellent work.</dd>
 </dl>
 <p></p>
-<p><a href="https://unsplash.com/jmacpherson" target="_blank">Jamie MacPherson</a> is the author of the incredible winter-themed photograph
-  used for the background.</p>
+<p><a href="https://unsplash.com/@dr_snap" target="_blank">Yoal Desurmont</a> is the author of the lovely photograph.</p>
 
 <h3>Helping out</h3>
 <p>Please read more about ways to donate to <em>Parf Edhellen</em> on <a href="/donations.page">the donations page</a>. You can also

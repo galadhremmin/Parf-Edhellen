@@ -6,9 +6,8 @@
       // Disable construction
     }
   
-    public static function preventXSS($str) {
-      // might not be sufficient. Implement more rigorous testing
-      return str_replace(array('>', '<'), array('&gt;', '&lt;'), $str); //preg_replace('/<[^>]+>/', '', $str);
+    public static function preventXSS($str, $encoding = 'UTF-8') {
+      return htmlspecialchars($str, ENT_QUOTES | ENT_HTML401, $encoding);
     }
     
     public static function normalize($str) {

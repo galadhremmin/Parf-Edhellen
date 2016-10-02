@@ -18,7 +18,7 @@ html, body {
   font-size: 14px;
 }
 body {
-  background: url(../img/backgrounds/winter.jpg) fixed;
+  background: url(../img/backgrounds/summer.jpg) fixed;
   background-size: cover;
   
   overflow-y: scroll;
