@@ -515,7 +515,7 @@
       
       // Deprecated previous translation
       if ($previousTranslationId > 0) {
-        $query = $db->prepare('UPDATE `translation` SET `Latest` = \'0\', `ParentTranslationID` = ? WHERE `TranslationID` = ?');
+        $query = $db->prepare('UPDATE `translation` SET `Latest` = \'0\', `ChildTranslationID` = ? WHERE `TranslationID` = ?');
         $query->bind_param('ii', $this->id, $previousTranslationId);
         $query->execute();
         $query = null;
