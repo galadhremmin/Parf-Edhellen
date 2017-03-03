@@ -109,7 +109,7 @@
                 <a href="/translate-form.page?reviewID={$review->reviewID}">Correct and submit again</a>
                 <span class="label label-danger pull-right" title="{htmlentities($review->justification)}">Rejected</span>
               {else}
-                <a href="/translate-form.page?reviewID={$review->reviewID}">{$review->word}</a>
+                <a href="/translate-form.page?reviewID={$review->reviewID}">{$review->word}</a> <em>by</em> <a href="/profile.page?authorID={$review->authorID}">{$review->authorName}</a>
               {/if}
               <span class="label label-default pull-right">{date_format($review->dateCreated, 'Y-m-d H:i')}</span>
             </li>

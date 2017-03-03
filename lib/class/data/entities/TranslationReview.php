@@ -100,9 +100,11 @@
 
       $stmt = $db->query(
         \data\SqlHelper::paginate(
-          "SELECT `ReviewID`, `AuthorID`, `LanguageID`, `DateCreated`, `Word`
-           FROM  `translation_review` WHERE `Approved` IS NULL
-           ORDER BY `DateCreated` ASC", $from, $to
+          "SELECT t.`ReviewID`, t.`AuthorID`, t.`LanguageID`, t.`DateCreated`, t.`Word`, a.`Nickname`
+           FROM  `translation_review` t 
+             INNER JOIN `auth_accounts` a ON a.`AccountID` = t.`AuthorID`
+           WHERE t.`Approved` IS NULL
+           ORDER BY t.`DateCreated` ASC", $from, $to
         )
       );
 
@@ -112,7 +114,8 @@
           'authorID'    => $row['AuthorID'],
           'languageID'  => $row['LanguageID'],
           'dateCreated' => ElfyDateTime::parse($row['DateCreated']),
-          'word'        => $row['Word']
+          'word'        => $row['Word'],
+          'authorName'  => $row['Nickname']
         ));
       }
 
@@ -132,12 +135,13 @@
 
       $stmt = $db->query(
         \data\SqlHelper::paginate(
-          "SELECT t.`AuthorID`, t.`LanguageID`, t.`DateCreated`, t.`Word`, t.`TranslationID`, a.`Nickname`
+          "SELECT t.`AuthorID`, t.`LanguageID`, t.`DateCreated`, w.`Key` as `Word`, t0.`TranslationID`, a.`Nickname`
            FROM  `translation_review` t
              INNER JOIN `translation` t0 ON
               (t0.`TranslationID` = t.`TranslationID` OR t0.`EldestTranslationID` = t.`TranslationID`)
               AND t0.`Deleted` = '0' AND t0.`Latest` = '1'
              INNER JOIN `auth_accounts` a ON a.`AccountID` = t.`AuthorID`
+             INNER JOIN `word` w ON w.`KeyID` = t0.`WordID`
            WHERE t.`Approved` = b'1'
            ORDER BY t.`DateCreated` DESC", 0, $max
         )
