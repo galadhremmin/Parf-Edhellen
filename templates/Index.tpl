@@ -2,8 +2,8 @@
   <h1>Mae govannen!</h1>
   <p>
     Parf Edhellen&mdash;an <em>Elvish Book</em>&mdash;is a free online dictionary for Tolkien's languages.
-    It consists of glosses imported from <em>Hiswelókë Sindarin Dictionary</em>, <em>Ardalambion's dictionary</em> and
-    <a href="about.page?browseTo=wordlist">many others</a>. Use the text field above to begin your journey.</p>
+    It consists of glosses imported from <em>Ardalambion</em>, <em>Eldamo</em>, <em>Hiswelókë</em> and
+    <a href="about.page?browseTo=wordlist">many others</a>.</p>
 </div>
 
 <hr>
@@ -14,8 +14,6 @@
     <p>My name is Leonard and I develop and maintain this elvish dictionary.
       If you want to get in touch with me, please tweet me at
       <a href="https://twitter.com/parmaeldo" target="_blank">@parmaeldo on Twitter</a>.</p>
-    <p>Please consider donating.
-      For more information, please go to our <a href="/donations.page">donation page</a>.</p>
     <hr class="visible-xs">
   </div>
   <div class="col-xs-12 col-sm-4">

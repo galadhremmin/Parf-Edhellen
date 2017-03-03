@@ -42,14 +42,6 @@
   permission to access basic information about you, you'll be sent back to here, where you'll be asked to choose a nickname for yourself.</p>
 <p>To identify yourself in the future, <em>Parf Edhellen</em> saves an unique token associated with your e-mail address.</p>
 
-<a name="contributing"></a>
-<h3>Contributing</h3>
-<p>You're welcome and encouraged to contribute! In fact, all sorts of contributions are encouraged, but if you intend to publish
-  your own words or phrases, please remember to include references to published sources. Once submitted, I reserve
-  the right to amend and delete content I find inappropriate.</p>
-
-<p>There are two ways to contribute: by making donations, and by creating content. In order to create content, you'll need to log in first. Once you've logged in, you'll be able to create translations and (in the future) sentences through your dashboard.</p>
-
 <p>Syntax:<br />
 <span class="span-column">[[maen]]</span> <a href="index.php#maen">maen</a><br /> 
 <span class="span-column">_mae_</span> <em>mae</em><br />
@@ -79,7 +71,3 @@
 </dl>
 <p></p>
 <p><a href="https://unsplash.com/@dr_snap" target="_blank">Yoal Desurmont</a> is the author of the lovely photograph.</p>
-
-<h3>Helping out</h3>
-<p>Please read more about ways to donate to <em>Parf Edhellen</em> on <a href="/donations.page">the donations page</a>. You can also
-follow the project on <a href="https://www.github.com/galadhremmin/Parf-Edhellen" target="_blank">Github</a>.</p>

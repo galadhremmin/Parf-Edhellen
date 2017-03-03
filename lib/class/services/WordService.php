@@ -36,7 +36,7 @@
       } else {
         settype($input['language-filter'], 'integer');
       }
-      
+
       $term        = (string) $input['term'];
       $reversed    = false;
       $preciseness = 0;
