@@ -70,4 +70,5 @@
   <dd><em>Tolkiendil</em> provides a consolidated list of Sindarin names examined and translated. <em>Parf Edhellen</em> is happy to house their excellent work.</dd>
 </dl>
 <p></p>
-<p><a href="https://unsplash.com/@dr_snap" target="_blank">Yoal Desurmont</a> is the author of the lovely photograph.</p>
+<p><a href="https://unsplash.com/@teddykelley" target="_blank">Teddy Kelley</a> is the author of the amazing photograph used for the background.</p>
+
