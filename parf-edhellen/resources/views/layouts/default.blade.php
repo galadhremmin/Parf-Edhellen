@@ -28,7 +28,6 @@
       </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
-        
         </ul>
       </div><!--/.nav-collapse -->
     </div><!--/.container-fluid -->
@@ -56,7 +55,9 @@
       </div>
       <div class="row" id="search-params-wrapper">
         <select id="search-language-select">
-          
+          @foreach ($allLanguages as $language)
+            <option value="{{$language->ID}}">{{$language->Name}}</option>
+          @endforeach
         </select>
         <div class="checkbox input-sm" id="search-reverse-box-wrapper">
           <label>
