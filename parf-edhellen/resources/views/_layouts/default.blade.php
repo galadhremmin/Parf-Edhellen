@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ config('app.locale') }}">
 <head>
-  <title>@yield('title')</title>
+  <title>@yield('title') - Parf Edhellen</title>
   <meta charset="UTF-8">
   <meta name="keywords" content="sindarin, quenya, noldorin, quendya, elvish, tolkien, nandorin, ilkorin, black speech, westron">
   <meta name="description" content="Parf Edhellen is one of the most comprehensive elvish dictionaries on the Internet, housing thousands of elvish names, words and phrases.">
@@ -28,6 +28,10 @@
       </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
+          <li class="{{ active('') }}"><a href="/">Home</a></li>
+          <li class="{{ active('phrases') }}"><a href="{{ route('phrases') }}">Phrases</a></li>
+          <li class="{{ active('about') }}"><a href="{{ route('about') }}">About</a></li>
+          <li class="{{ active('about.donations') }}"><a href="{{ route('about.donations') }}">Donations</a></li>
         </ul>
       </div><!--/.nav-collapse -->
     </div><!--/.container-fluid -->

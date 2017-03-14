@@ -11,6 +11,7 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [ 'uses' => 'HomeController@index' ]);
+Route::get('/about', [ 'uses' => 'AboutController@index' ])->name('about');
+Route::get('/about/donations', [ 'uses' => 'AboutController@donations' ])->name('about.donations');
+Route::get('/phrases', [ 'uses' => 'PhrasesController@index' ])->name('phrases');

@@ -17,9 +17,8 @@ class LayoutDataLoader
      */
     public function handle($request, Closure $next)
     {
-
-        View::composer('layouts.default', function ($view)  {
-          $languages = Language::all()->sortBy('Name');
+        View::composer('_layouts.default', function ($view)  {
+          $languages = Language::all()->sortBy('Order');
            $view->with('allLanguages', $languages);
         });
 

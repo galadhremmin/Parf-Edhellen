@@ -177,6 +177,10 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        /*
+         * Custom Service Providers ...
+         */
+        Watson\Active\ActiveServiceProvider::class, // https://packagist.org/packages/watson/active
     ],
 
     /*
