@@ -2,5 +2,7 @@
 
 @section('title', 'Phrases')
 @section('body')
-Phrases!
+
+Coming soon!
+
 @endsection

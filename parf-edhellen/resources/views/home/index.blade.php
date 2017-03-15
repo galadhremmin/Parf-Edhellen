@@ -24,13 +24,13 @@
   <div class="col-xs-12 col-sm-4">
     <h4>Community activity</h4>
     <ul class="list-group">
-    {foreach $reviews as $review}
+    @foreach($reviews as $review)
       <li class="list-group-item">
-        {date_format($review->dateCreated, 'Y-m-d H:i')}
-        <a href="/wt/{$review->translationID}">{$review->word}</a>
-        by <a href="/profile.page?authorID={$review->authorID}">{$review->authorName}</a>
+        {{ $review->DateCreated->format('Y-m-d H:i') }}
+        <a href="/wt/{{ $review->TranslationID }}">{{ $review->Word }}</a>
+        by <a href="/profile.page?authorID={{ $review->AuthorID }}">{{ $review->AuthorName }}</a>
       </li>
-    {/foreach}
+    @endforeach
     </ul>
     <hr class="visible-xs">
   </div>
@@ -38,11 +38,15 @@
     <h4>Random elvishness</h4>
     <blockquote class="daily-sentence">
       <p class="tengwar">
-      {$sentence->sentenceTengwar}
+      @foreach ($sentence->fragments as $fragment){{ ($fragment->isPunctuationOrWhitespace() ? '' : ' ') . $fragment->Tengwar }}@endforeach
       </p>
-      <p><em>{$sentence->sentence}</em></p>
-      <p>{$sentence->description}</p>
-      <footer>{$sentence->language} [{$sentence->source}]</footer>
+      <p>
+        <em>
+        @foreach ($sentence->fragments as $fragment){{ ($fragment->isPunctuationOrWhitespace() ? '' : ' ') . $fragment->Fragment }}@endforeach
+        </em>
+      </p>
+      <p>{{$sentence->Description}}</p>
+      <footer>{{$sentence->language->Name}} [{{$sentence->Source}}]</footer>
     </blockquote>
   </div>
 </div>

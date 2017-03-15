@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Language;
+use App\Models\Language;
 use Closure;
 use View;
 
