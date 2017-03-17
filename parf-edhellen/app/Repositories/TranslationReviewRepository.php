@@ -7,13 +7,8 @@
     use App\Models\Translation;
     use App\Models\TranslationReview;
 
-    class TranslationReviewRepository extends RepositoryBase
+    class TranslationReviewRepository
     {
-        public function __construct(TranslationReview $model)
-        {
-            $this->model = $model;
-        }
-
         public function getRecentlyApproved($numberOfRecords = 10)
         {
             $entities = DB::table('translation_review as tr')

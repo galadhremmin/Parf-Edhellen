@@ -1,4 +1,4 @@
-<article class="col-sm-{$maxColumnWidth} col-md-{$midColumnWidth} col-lg-{$minColumnWidth}">
+<article class="col-sm-{{ $columnsMax }} col-md-{{ $columnsMid }} col-lg-{{ $columnsMin }}">
     <header>
       <h2 rel="language-box">
       {{ $language->Name }}
@@ -7,7 +7,7 @@
     </header>
     <section class="language-box" id="language-box-{{ $language->ID }}">
     @foreach ($glosses as $gloss)
-      @include('book._gloss', [ 'gloss' => $gloss ])
+      @include('book._gloss', [ 'gloss' => $gloss, 'language' => $language ])
     @endforeach
     </section>
   </article>

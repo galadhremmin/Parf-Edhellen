@@ -1,12 +1,12 @@
 <blockquote itemscope="itemscope" itemtype="http://schema.org/Article" id="translation-block-{{ $gloss->TranslationID }}" 
-  @if ($gloss->group != null && !$gloss->group->Canon) 
+  @if (!$gloss->Canon)
       class="contribution" 
   @endif>
   <h3 rel="trans-word" class="trans-word">
-    @if (($gloss->group != null && !$gloss->group->Canon) || $gloss->Uncertain)
+    @if ((!$gloss->Canon) || $gloss->Uncertain)
     <a href="about.page?browseTo=unverified" title="Unverified or debatable content."><span class="glyphicon glyphicon-question-sign"></span></a>
     @endif
-    <span itemprop="headline">{{ $gloss->word->Key }}</span>
+    <span itemprop="headline">{{ $gloss->Word }}</span>
     <!--
     {if $loggedIn}
         {if $isAdmin}
@@ -16,8 +16,8 @@
         <a href="#" class="ed-favourite-button" data-translation-id="{$translation->id}" title="Add to favourites"><span class="glyphicon glyphicon-heart{if !in_array($translation->id, $favourites)}-empty{/if} pull-right" aria-hidden="true"></span></a>
     {/if}
     -->
-    @if ($gloss->group != null && $gloss->group->ExternalLinkFormat != null && $gloss->ExternalID !== null)
-      <a href="{{ str_replace('{ExternalID}', $gloss->ExternalID, $gloss->group->ExternalLinkFormat) }}" class="ed-external-link-button" title="Open on {$gloss->group->Name} (new tab/window)" target="_blank"><span class="glyphicon glyphicon-globe pull-right" aria-hidden="true"></span></a>
+    @if ($gloss->ExternalLinkFormat != null && $gloss->ExternalID !== null)
+      <a href="{{ str_replace('{ExternalID}', $gloss->ExternalID, $gloss->ExternalLinkFormat) }}" class="ed-external-link-button" title="Open on {$gloss->group->Name} (new tab/window)" target="_blank"><span class="glyphicon glyphicon-globe pull-right" aria-hidden="true"></span></a>
     @endif
   </h3> 
   @if ($gloss->Tengwar != null)
@@ -39,11 +39,11 @@
         <span class="word-etymology" rel="trans-etymology">{{ $gloss->Etymology }}.</span>
     @endif
   
-    @if ($gloss->group != null)
-        Group: <span itemprop="sourceOrganization">{{ $gloss->group->ID }}</span>.
+    @if ($gloss->TranslationGroupID != null)
+        Group: <span itemprop="sourceOrganization">{{ $gloss->TranslationGroup }}</span>.
     @endif
   
     Published <span itemprop="datePublished">{{ $gloss->DateCreated }}</span> by 
-    <a href="/profile.page?authorID={{ $gloss->AuthorID }}" itemprop="author" rel="author" title="View profile for {{ $gloss->author->Nickname }}.">{{ $gloss->author->Nickname }}</a>
+    <a href="/profile.page?authorID={{ $gloss->AuthorID }}" itemprop="author" rel="author" title="View profile for {{ $gloss->AuthorName }}.">{{ $gloss->AuthorName }}</a>
   </footer>
 </blockquote>
