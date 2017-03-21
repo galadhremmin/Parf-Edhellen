@@ -94,13 +94,8 @@
       </div>
     </div>
     
-    <div class="row hidden" id="search-result-navigator">
-      <nav>
-        <ul class="pager">
-          <li class="previous" id="search-result-navigator-backward"><a href="#"><span aria-hidden="true">&larr;</span> <span class="word">Previous word</span></a></li>
-          <li class="next" id="search-result-navigator-forward"><a href="#"><span class="word">Next word</span> <span aria-hidden="true">&rarr;</span></a></li>
-        </ul>
-      </nav>
+    <div class="row" id="search-result-navigator">
+      
     </div>
     
     <!-- begin content -->
@@ -113,13 +108,7 @@
     </div>
   </div>
 
-  <!--
-  <script type="text/javascript" src="/js/jquery.js"></script>
-  <script type="text/javascript" src="/js/compatibility/modernizr.js"></script>
-  <script type="text/javascript" src="/js/requirejs.js"></script>
-  <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="/js/elfdict.js" async defer></script>
-  -->
+  <script type="text/javascript" src="/js/global.js"></script>
   <!--[if lte IE 8]>
   <script src="/js/compatibility/media-queries-ie8.js" type="text/javascript"></script>
   <![endif]-->

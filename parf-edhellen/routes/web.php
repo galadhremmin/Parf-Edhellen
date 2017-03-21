@@ -20,3 +20,10 @@ Route::get('/phrases',  [ 'uses' => 'PhrasesController@index' ])->name('phrases'
 
 Route::get('/w/{word}', [ 'uses' => 'BookController@pageForWord' ]);
 Route::get('/wt/{id}',  [ 'uses' => 'BookController@pageForTranslationId' ])->where([ 'id' => '[0-9]+' ]);
+
+Route::group([ 
+        'namespace' => 'Api',
+        'prefix'    => 'api/v1'
+    ], function () {
+    Route::post('book/find', [ 'uses' => 'BookApiController@find' ]);
+});
