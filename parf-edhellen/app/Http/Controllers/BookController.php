@@ -114,21 +114,21 @@ class BookController extends Controller
     /**
      * Estimates how relevant the specified translation object is based on the search term.
      * @param $translation
-     * @param $term
+     * @param $word
      */
-    private static function calculateRating($translation, $term) {
+    private static function calculateRating($translation, $word) {
         $rating = 0;
 
         // First, check if the gloss contains the search term by looking for its
         // position within the word property, albeit normalized.
         $n = StringHelper::normalize($translation->Word);
-        $pos = strpos($n, $term);
+        $pos = strpos($n, $word);
 
         if ($pos !== false) {
             // The "cleaner" the match, the better
             $rating = 100000 + ($pos * -1) * 10;
 
-            if ($pos === 0 && $n == $term) {
+            if ($pos === 0 && $n == $word) {
                 $rating *= 2;
             }
         }
@@ -137,12 +137,12 @@ class BookController extends Controller
         // this is the most common case.
         if ($rating === 0) {
             $n = StringHelper::normalize($translation->Translation);
-            $pos = strpos($n, $term);
+            $pos = strpos($n, $word);
 
             if ($pos !== false) {
                 $rating = 10000 + ($pos * -1) * 10;
 
-                if ($pos === 0 && $n == $term) {
+                if ($pos === 0 && $n == $word) {
                     $rating *= 2;
                 }
             }
@@ -152,7 +152,7 @@ class BookController extends Controller
         // this is an uncommon match.
         if ($rating === 0 && $translation->Comments !== null) {
             $n = StringHelper::normalize($translation->Comments);
-            $pos = strpos($n, $term);
+            $pos = strpos($n, $word);
 
             if ($pos !== false) {
                 $rating = 1000;

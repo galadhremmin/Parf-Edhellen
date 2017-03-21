@@ -10,19 +10,20 @@ class BookApiController extends Controller
 {
 
     public function find(Request $request) {
-        $term = $request->input('term');
+        $word = $request->input('word');
+        $reversed = $request->input('reversed') === true;
 
-        if (strpos($term, '*') !== false) {
-            $term = str_replace('*', '%', $term);
+        if (strpos($word, '*') !== false) {
+            $word = str_replace('*', '%', $word);
         } else {
-            $term .= '%';
+            $word .= '%';
         }
 
-        $words = Keyword::findByTerm($term)
+        $keywords = Keyword::findByWord($word, $reversed)
             ->select('Keyword as k', 'NormalizedKeyword as nk')
             ->get();
 
-        return $words;
+        return $keywords;
     }
 
 }

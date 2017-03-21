@@ -48,28 +48,10 @@
     </noscript>
 
     <!-- search component -->
-    <form method="get" id="search-form" action="#">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="input-group input-group-lg">
-            <span class="input-group-addon"><span class="glyphicon glyphicon-search" id="search-query-field-loading" data-loading-class="glyphicon glyphicon-refresh loading"></span></span>
-            <input type="search" class="form-control" placeholder="What are you looking for?" id="search-query-field" tabindex="1" accesskey="s" autocapitalize="off" autocorrect="off">
-          </div>
-        </div>
-      </div>
-      <div class="row" id="search-params-wrapper">
-        <select id="search-language-select">
-          @foreach ($allLanguages as $language)
-            <option value="{{$language->ID}}">{{$language->Name}}</option>
-          @endforeach
-        </select>
-        <div class="checkbox input-sm" id="search-reverse-box-wrapper">
-          <label>
-            <input type="checkbox" id="search-reverse-box" value="1"> Reverse search 
-          </label>
-        </div>
-      </div>
-    </form>
+    <div id="search-component"></div>
+    <!--<script>
+      @(json_encode($allLanguages))
+    </script>-->
 
     <div id="search-result-wrapper" class="panel panel-default hidden">
       <div class="panel-heading">

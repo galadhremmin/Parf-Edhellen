@@ -9,9 +9,9 @@ class Keyword extends Model
     protected $table = 'keywords';
     protected $primaryKey = 'RelationID';
 
-    public function scopeFindByTerm($query, string $term, $reversed = false) {
+    public function scopeFindByWord($query, string $word, $reversed = false) {
         $query->distinct()
-            ->where($reversed ? 'ReversedNormalizedKeyword' : 'NormalizedKeyword', 'like', $term)
+            ->where($reversed ? 'ReversedNormalizedKeyword' : 'NormalizedKeyword', 'like', $word)
             ->orderBy('Keyword', 'asc');
     }
 }

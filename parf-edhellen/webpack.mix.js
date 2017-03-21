@@ -12,6 +12,6 @@ const { mix } = require('laravel-mix');
  */
 mix.react([
   //'node_modules/axios/dist/axios.js',
-  'resources/assets/js/search.jsx'
+  'resources/assets/js/search/index.jsx'
 ], 'public/js/global.js');
 mix.sass('resources/assets/sass/app.scss', 'public/css');

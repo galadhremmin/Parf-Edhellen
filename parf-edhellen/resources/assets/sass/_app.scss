@@ -66,17 +66,18 @@ blockquote {
 
 /* Rotation end */
 
-#search-reverse-box-wrapper,
-#search-language-select {
+.search-reverse-box-wrapper,
+.search-language-select {
   float: right;
 }
-#search-language-select {
+.search-language-select {
   margin-top: 15px;
   margin-right: 15px;
 }
-#search-result-wrapper-toggler-title {
+.search-result-wrapper-toggler-title {
   cursor: pointer;
 }
+
 a.selected {
   font-weight: bold;
 }
@@ -89,7 +90,7 @@ a.selected {
  * Order the search suggestions into columns for the widths: >400, >750 and >970.
  * */
 @media (min-width: 971px) {
-  #search-result {
+  ul.search-result {
     -webkit-column-count: 4;
     -moz-column-count: 4;
     -ms-column-count: 4;
@@ -97,7 +98,7 @@ a.selected {
   }
 }
 @media (max-width: 970px) and (min-width: 751px) {
-  #search-result {
+  ul.search-result {
     -webkit-column-count: 3;
     -moz-column-count: 3;
     -ms-column-count: 3;
@@ -105,14 +106,14 @@ a.selected {
   }
 }
 @media (max-width: 750px) and (min-width: 401px) {
-  #search-result {
+  ul.search-result {
     -webkit-column-count: 2;
     -moz-column-count: 2;
     -ms-column-count: 2;
     column-count: 2;
   }
 }
-#search-result ul {
+ul.search-result {
   list-style-type: none;
 }
 blockquote {
