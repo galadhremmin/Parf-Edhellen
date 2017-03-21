@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Helpers\StringHelper;
 use App\Models\Language;
 use App\Repositories\TranslationRepository;
@@ -15,20 +16,20 @@ class BookController extends Controller
         $this->_translationRepository = $translationRepository;
     }
 
-    public function pageForWord($word)
+    public function pageForWord(Request $request, $word)
     {
         $translations = $this->_translationRepository->getWordTranslations($word);
         $model = $this->adapt($translations->toArray(), $word);
 
-        return view('book.page', $model);
+        return view($request->ajax() ? 'book._page' : 'book.page', $model);
     }
 
-    public function pageForTranslationId($id)
+    public function pageForTranslationId(Request $request, $id)
     {
         $translation = $this->_translationRepository->getTranslation($id);
         $model = $this->adapt([ $translation ]);
 
-        return view('book.page', $model);
+        return view($request->ajax() ? 'book._page' : 'book.page', $model);
     }
 
     /**

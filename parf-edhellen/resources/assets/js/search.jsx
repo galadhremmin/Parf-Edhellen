@@ -7,9 +7,27 @@ class EDSearchItem extends React.Component {
     super(props);
   }
 
+  navigate(ev) {
+    ev.preventDefault();
+
+    const title = `${this.props.k} - Parf Edhellen`;
+    window.history.pushState(null, title, address);
+
+    const address = ev.target.href;
+    axios.get(address, {
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest' // this is important for the controller!
+      }
+    }).then(this.loadPage.bind(this));
+  }
+
+  loadPage(resp) {
+    document.getElementById('result').innerHTML = resp.data; // XSS vulnerability
+  }
+
   render() {
     return <li>
-      <a href={'/w/' + encodeURIComponent(this.props.item.nk)}>
+      <a href={'/w/' + encodeURIComponent(this.props.item.nk)} onClick={this.navigate.bind(this)}>
         {this.props.item.k}
       </a>
     </li>;
@@ -40,13 +58,10 @@ class EDSearchTool extends React.Component {
   search(term) {
     axios.post('/api/v1/book/find', { term: term }).then(resp => {
       this.setState({
-        result: resp.data
+        result: resp.data,
+        term: term,
+        searchDelay: 0
       });
-    })
-
-    this.setState({
-      term: term,
-      searchDelay: 0
     });
   }
 
