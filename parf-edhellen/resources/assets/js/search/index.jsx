@@ -11,12 +11,14 @@ const store = createStore(EDSearchResults, undefined /* <- preloaded state */,
     applyMiddleware(thunkMiddleware)
 );
 
-ReactDOM.render(
-    <Provider store={store}>
-        <div>
-            <EDSearchToolsApp />
-            <EDSearchResultApp />
-        </div>
-    </Provider>,
-    document.getElementById('search-component')
-);
+window.addEventListener('load', function () {
+    ReactDOM.render(
+        <Provider store={store}>
+            <div>
+                <EDSearchToolsApp />
+                <EDSearchResultApp />
+            </div>
+        </Provider>,
+        document.getElementById('search-component')
+    );
+});

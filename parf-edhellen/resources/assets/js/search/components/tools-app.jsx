@@ -13,6 +13,16 @@ class EDSearchToolsApp extends React.Component {
         this.throttle = 0;
     }
 
+    componentDidMount() {
+        const languageNode = document.getElementById('ed-preloaded-languages');
+        this.setState({
+            languages: [{
+                ID: 0,
+                Name: 'All languages'
+            }, ...(JSON.parse(languageNode.textContent))]
+        });
+    }
+
     searchKeyUp(ev) {
         let direction = ev.which === 40
             ? 1
@@ -35,6 +45,14 @@ class EDSearchToolsApp extends React.Component {
     reverseChange(ev) {
         this.setState({
             isReversed: ev.target.checked
+        });
+
+        this.search();
+    }
+
+    languageChange(ev) {
+        this.setState({
+            language: ev.target.value
         });
 
         this.search();
@@ -82,9 +100,10 @@ class EDSearchToolsApp extends React.Component {
                 </div>
             </div>
             <div className="row">
-                <select>
-
-                </select>
+                {this.state.languages ? (
+                <select onChange={this.languageChange.bind(this)}>
+                    {this.state.languages.map(l => <option value={l.ID} key={l.ID}>{l.Name}</option>)}
+                </select>) : ''}
                 <div className="checkbox input-sm search-reverse-box-wrapper">
                     <label>
                         <input type="checkbox" name="isReversed"

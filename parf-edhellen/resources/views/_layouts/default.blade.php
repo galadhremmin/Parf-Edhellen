@@ -49,9 +49,6 @@
 
     <!-- search component -->
     <div id="search-component"></div>
-    <!--<script>
-      @(json_encode($allLanguages))
-    </script>-->
 
     <div id="search-result-wrapper" class="panel panel-default hidden">
       <div class="panel-heading">
@@ -90,7 +87,8 @@
     </div>
   </div>
 
-  <script type="text/javascript" src="/js/global.js"></script>
+  <script type="application/json" id="ed-preloaded-languages">{!! $allLanguages !!}</script>
+  <script type="text/javascript" src="/js/global.js" async></script>
   <!--[if lte IE 8]>
   <script src="/js/compatibility/media-queries-ie8.js" type="text/javascript"></script>
   <![endif]-->
