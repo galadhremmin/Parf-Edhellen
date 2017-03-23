@@ -9,11 +9,13 @@ class SentenceFragment extends Model
     protected $table = 'sentence_fragment';
     protected $primaryKey = 'FragmentID';
 
-    public function sentence() {
+    public function sentence() 
+    {
         return $this->belongsTo(Sentence::class, 'SentenceID', 'FragmentID');
     }
 
-    public function isPunctuationOrWhitespace() {
+    public function isPunctuationOrWhitespace() 
+    {
         return preg_match('/^[,\\.!\\?\\s]$/', $this->Fragment);
     }
 }

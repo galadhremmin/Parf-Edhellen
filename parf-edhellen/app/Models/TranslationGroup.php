@@ -9,7 +9,8 @@ class TranslationGroup extends Model
     protected $table = 'translation_group';
     protected $primaryKey = 'TranslationGroupID';
 
-    public function translations() {
+    public function translations() 
+    {
         return $this->belongsTo(Translation::class, 'TranslationGroupID', 'TranslationGroupID');
     }
 }

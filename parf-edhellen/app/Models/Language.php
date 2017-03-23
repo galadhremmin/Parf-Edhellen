@@ -9,11 +9,13 @@ class Language extends Model
     protected $table = 'language';
     protected $primaryKey = 'ID';
 
-    public function scopeInvented($query) {
+    public function scopeInvented($query) 
+    {
         return $query->where('Invented', '=', 1);
     }
 
-    public function scopeOrderByPriority($query, $direction = 'asc') {
+    public function scopeOrderByPriority($query, $direction = 'asc') 
+    {
         return $query->orderBy('Order', $direction);
     }
 }

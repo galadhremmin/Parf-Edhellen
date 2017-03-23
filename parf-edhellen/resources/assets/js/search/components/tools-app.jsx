@@ -8,7 +8,8 @@ class EDSearchToolsApp extends React.Component {
         super(props);
         this.state = {
             isReversed: false,
-            word: ''
+            word: '',
+            languageId: 0
         };
         this.throttle = 0;
     }
@@ -52,19 +53,23 @@ class EDSearchToolsApp extends React.Component {
 
     languageChange(ev) {
         this.setState({
-            language: ev.target.value
+            languageId: parseInt(ev.target.value, /* radix: */ 10)
         });
 
         this.search();
     }
 
     search() {
+        if (/^\s*$/.test(this.state.word)) {
+            return; // empty search result
+        }
+
         if (this.throttle) {
             window.clearTimeout(this.throttle);
         }
 
         this.throttle = window.setTimeout(() => {
-            this.props.dispatch(fetchResults(this.state.word, this.state.isReversed));
+            this.props.dispatch(fetchResults(this.state.word, this.state.isReversed, this.state.languageId));
             this.throttle = 0;
         }, 500);
     }
@@ -101,7 +106,7 @@ class EDSearchToolsApp extends React.Component {
             </div>
             <div className="row">
                 {this.state.languages ? (
-                <select onChange={this.languageChange.bind(this)}>
+                <select className="search-language-select" onChange={this.languageChange.bind(this)}>
                     {this.state.languages.map(l => <option value={l.ID} key={l.ID}>{l.Name}</option>)}
                 </select>) : ''}
                 <div className="checkbox input-sm search-reverse-box-wrapper">

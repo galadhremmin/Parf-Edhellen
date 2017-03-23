@@ -10,12 +10,13 @@ class HomeController extends Controller
 {
     private $_reviewRepository;
 
-    public function __construct(TranslationReviewRepository $translationReviewRepository)
+    public function __construct(TranslationReviewRepository $translationReviewRepository) 
     {
         $this->_reviewRepository = $translationReviewRepository;
     }
 
-    public function index() {
+    public function index() 
+    {
         $sentence = Sentence::inRandomOrder()->first();
         $reviews  = $this->_reviewRepository->getRecentlyApproved();
         $data = [

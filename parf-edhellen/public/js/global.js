@@ -7576,14 +7576,17 @@ function setSelection(index) {
     };
 }
 
-function fetchResults(word, reversed) {
+function fetchResults(word) {
+    var reversed = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+    var languageId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
     if (!word || /^\s$/.test(word)) {
         return;
     }
 
     return function (dispatch) {
         dispatch(requestResults());
-        __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/api/v1/book/find', { word: word, reversed: reversed }).then(function (resp) {
+        __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post('/api/v1/book/find', { word: word, reversed: reversed, languageId: languageId }).then(function (resp) {
             var results = resp.data.map(function (r) {
                 return {
                     word: r.k,
@@ -12348,7 +12351,8 @@ var EDSearchToolsApp = function (_React$Component) {
 
         _this.state = {
             isReversed: false,
-            word: ''
+            word: '',
+            languageId: 0
         };
         _this.throttle = 0;
         return _this;
@@ -12397,7 +12401,7 @@ var EDSearchToolsApp = function (_React$Component) {
         key: 'languageChange',
         value: function languageChange(ev) {
             this.setState({
-                language: ev.target.value
+                languageId: parseInt(ev.target.value, /* radix: */10)
             });
 
             this.search();
@@ -12407,12 +12411,16 @@ var EDSearchToolsApp = function (_React$Component) {
         value: function search() {
             var _this2 = this;
 
+            if (/^\s*$/.test(this.state.word)) {
+                return; // empty search result
+            }
+
             if (this.throttle) {
                 window.clearTimeout(this.throttle);
             }
 
             this.throttle = window.setTimeout(function () {
-                _this2.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["c" /* fetchResults */])(_this2.state.word, _this2.state.isReversed));
+                _this2.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["c" /* fetchResults */])(_this2.state.word, _this2.state.isReversed, _this2.state.languageId));
                 _this2.throttle = 0;
             }, 500);
         }
@@ -12467,7 +12475,7 @@ var EDSearchToolsApp = function (_React$Component) {
                     { className: 'row' },
                     this.state.languages ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'select',
-                        { onChange: this.languageChange.bind(this) },
+                        { className: 'search-language-select', onChange: this.languageChange.bind(this) },
                         this.state.languages.map(function (l) {
                             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                                 'option',

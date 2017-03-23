@@ -50,14 +50,14 @@ export function setSelection(index) {
     };
 }
 
-export function fetchResults(word, reversed) {
+export function fetchResults(word, reversed = false, languageId = 0) {
     if (!word || /^\s$/.test(word)) {
         return;
     }
 
     return dispatch => {
         dispatch(requestResults());
-        axios.post('/api/v1/book/find', { word, reversed }).then(resp => {
+        axios.post('/api/v1/book/find', { word, reversed, languageId }).then(resp => {
             const results = resp.data.map(r => ({
                 word: r.k,
                 normalizedWord: r.nk

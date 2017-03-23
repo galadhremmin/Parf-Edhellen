@@ -39,7 +39,8 @@ class BookController extends Controller
      * @param string|null $word
      * @return array
      */
-    private function adapt(array $translations, string $word = null) {
+    private function adapt(array $translations, string $word = null) 
+    {
         $numberOfTranslations = count($translations) ;
 
         // * Optimize by dealing with some edge cases first
@@ -116,7 +117,8 @@ class BookController extends Controller
      * @param $translation
      * @param $word
      */
-    private static function calculateRating($translation, $word) {
+    private static function calculateRating($translation, $word) 
+    {
         $rating = 0;
 
         // First, check if the gloss contains the search term by looking for its
@@ -172,8 +174,8 @@ class BookController extends Controller
         $translation->Rating = $rating;
     }
 
-
-    private function assignColumnWidths(array $model, $numberOfLanguages) {
+    private function assignColumnWidths(array $model, $numberOfLanguages) 
+    {
         $max = 12;
         $mid = $numberOfLanguages > 1 ? 6 : $max;
         $min = $numberOfLanguages > 2 ? 4 : $mid;

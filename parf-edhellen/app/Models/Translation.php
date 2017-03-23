@@ -10,19 +10,23 @@ class Translation extends Model
     protected $primaryKey = 'TranslationID';
     protected $dates = [ 'DateCreated' ];
 
-    public function author() {
+    public function author() 
+    {
         return $this->hasOne(Author::class, 'AccountID', 'AuthorID');
     }
 
-    public function group() {
+    public function group() 
+    {
         return $this->hasOne(TranslationGroup::class, 'TranslationGroupID', 'TranslationGroupID');
     }
     
-    public function language() {
+    public function language() 
+    {
         return $this->hasOne(Language::class, 'ID', 'LanguageID');
     }
 
-    public function word() {
+    public function word() 
+    {
         return $this->hasOne(Word::class, 'KeyID', 'WordID');
     }
 }

@@ -4,25 +4,24 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Keyword;
+use App\Repositories\TranslationRepository;
 
 class BookApiController extends Controller 
 {
+    private $_translationRepository;
 
-    public function find(Request $request) {
-        $word = $request->input('word');
-        $reversed = $request->input('reversed') === true;
+    public function __construct(TranslationRepository $translationRepository)
+    {
+        $this->_translationRepository = $translationRepository;
+    }
 
-        if (strpos($word, '*') !== false) {
-            $word = str_replace('*', '%', $word);
-        } else {
-            $word .= '%';
-        }
+    public function find(Request $request)
+    {
+        $word       = $request->input('word');
+        $reversed   = $request->input('reversed') === true;
+        $languageId = intval($request->input('languageId'));
 
-        $keywords = Keyword::findByWord($word, $reversed)
-            ->select('Keyword as k', 'NormalizedKeyword as nk')
-            ->get();
-
+        $keywords = $this->_translationRepository->getKeywordsForLanguage($word, $reversed, $languageId);
         return $keywords;
     }
 

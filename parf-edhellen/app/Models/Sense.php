@@ -10,7 +10,8 @@ class Sense extends Model
     protected $table = 'namespace';
     protected $primaryKey = 'NamespaceID';
 
-    public function word() {
+    public function word() 
+    {
         return $this->hasOne(Word::class, 'KeyID', 'IdentifierID');
     }
 }
