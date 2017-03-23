@@ -6,10 +6,15 @@ Version 1.7 is in production.
 
 Want to help out?
 -----------------
+
 If you are interested in helping out, please get in touch with [galadhremmin](https://github.com/galadhremmin).
 You can also help us by donating. Please visit [elfdict.com](http://www.elfdict.com) for more information.
 
 I'd like to thank JetBrains for supporting ElfDict by giving us their excellent PHPStorm for free.
+
+> 
+> Note! We are currently transitioning to the Laravel framework. All such work is done in the parf-edhellen directory.
+>
 
 Coding style
 ------------
