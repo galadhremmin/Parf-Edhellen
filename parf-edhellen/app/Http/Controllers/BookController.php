@@ -16,7 +16,7 @@ class BookController extends Controller
         $this->_translationRepository = $translationRepository;
     }
 
-    public function pageForWord(Request $request, $word)
+    public function pageForWord(Request $request, string $word)
     {
         $translations = $this->_translationRepository->getWordTranslations($word);
         $model = $this->adapt($translations->toArray(), $word);
@@ -24,7 +24,7 @@ class BookController extends Controller
         return view($request->ajax() ? 'book._page' : 'book.page', $model);
     }
 
-    public function pageForTranslationId(Request $request, $id)
+    public function pageForTranslationId(Request $request, int $id)
     {
         $translation = $this->_translationRepository->getTranslation($id);
         $model = $this->adapt([ $translation ]);
@@ -51,7 +51,7 @@ class BookController extends Controller
 
         //    - Just one translation result.
         if ($numberOfTranslations === 1) {
-            return $this->assignColumnWidths([
+            return self::assignColumnWidths([
                 'sections' => [
                     [
                         // Load the language by examining the first (and only) element of the array
@@ -69,7 +69,7 @@ class BookController extends Controller
         $gloss2LanguageMap = [];
         foreach ($translations as $translation) {
             if ($word !== null) {
-                $this->calculateRating($translation, $word);
+                self::calculateRating($translation, $word);
             }
 
             if (!isset($gloss2LanguageMap[$translation->LanguageID])) {
@@ -109,7 +109,7 @@ class BookController extends Controller
             ];
         }
 
-        return $this->assignColumnWidths([ 'sections' => $sections ], count($allLanguages));
+        return self::assignColumnWidths([ 'sections' => $sections ], count($allLanguages));
     }
 
     /**
@@ -117,7 +117,7 @@ class BookController extends Controller
      * @param $translation
      * @param $word
      */
-    private static function calculateRating($translation, $word) 
+    private static function calculateRating($translation, string $word) 
     {
         $rating = 0;
 
@@ -174,7 +174,7 @@ class BookController extends Controller
         $translation->Rating = $rating;
     }
 
-    private function assignColumnWidths(array $model, $numberOfLanguages) 
+    private static function assignColumnWidths(array $model, int $numberOfLanguages) 
     {
         $max = 12;
         $mid = $numberOfLanguages > 1 ? 6 : $max;

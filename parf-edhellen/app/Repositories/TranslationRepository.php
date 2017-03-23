@@ -34,7 +34,7 @@ class TranslationRepository
         return $keywords;
     }
 
-    public function getWordTranslations($word) 
+    public function getWordTranslations(string $word) 
     {
         self::formatWord($word);
 
@@ -44,10 +44,8 @@ class TranslationRepository
             ->get();
     }
 
-    public function getTranslation($id) 
+    public function getTranslation(int $id) 
     {
-        $id = intval($id);
-
         return self::createTranslationQuery()
             ->where('t.TranslationID', '=', $id)
             ->first();
@@ -70,7 +68,7 @@ class TranslationRepository
                 'tg.Name as TranslationGroup', 'tg.Canon', 'tg.ExternalLinkFormat', 't.Uncertain', 't.ExternalID');
     }
 
-    protected static function getSensesForWord($word) 
+    protected static function getSensesForWord(string $word) 
     {
         $q = DB::table('keywords as k')
             ->join('translation as t', 'k.TranslationID', '=', 't.TranslationID')
