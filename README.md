@@ -27,4 +27,4 @@ The source code is provided as-is. The code does not, in any shape or form, refl
 
 License
 -------
-ElfDict (Parf Edhellen; elfdict.com) is licensed in accordance by [BY-NC 4.0](http://creativecommons.org/licenses/by-nc/4.0/).
+ElfDict (Parf Edhellen; elfdict.com) is licensed in accordance with [BY-NC 4.0](http://creativecommons.org/licenses/by-nc/4.0/).
