@@ -27,6 +27,7 @@ class TranslationRepository
                 ->get();
         } else {
             $keywords = Keyword::findByWord($word, $reversed)
+                ->where('IsActive', '=', 1)
                 ->select('Keyword as k', 'NormalizedKeyword as nk')
                 ->get();
         }
@@ -40,7 +41,7 @@ class TranslationRepository
 
         $senses = self::getSensesForWord($word);
         return self::createTranslationQuery()
-            ->whereIn('t.NamespaceID', $senses)
+            ->whereIn('t.SenseID', $senses)
             ->get();
     }
 
@@ -51,44 +52,39 @@ class TranslationRepository
             ->first();
     }
 
-    protected static function createTranslationQuery() 
+    protected static function createTranslationQuery($latest = true) 
     {
         return DB::table('translation as t')
             ->join('word as w', 't.WordID', 'w.KeyID')
             ->leftJoin('auth_accounts as a', 't.AuthorID', 'a.AccountID')
             ->leftJoin('translation_group as tg', 't.TranslationGroupID', 'tg.TranslationGroupID')
             ->where([
-                ['t.Latest', '=', 1],
-                ['t.Deleted', '=', 0]
+                ['t.Latest', '=', $latest ? 1 : 0],
+                ['t.Deleted', '=', 0],
+                ['t.Index', '=', 0]
             ])
             ->select(
                 'w.Key as Word', 't.TranslationID', 't.Translation', 't.Etymology', 't.Type', 't.Source',
                 't.Comments', 't.Tengwar', 't.Phonetic', 't.NamespaceID', 't.LanguageID', 't.AuthorID',
                 'a.Nickname as AuthorName', 'w.NormalizedKey', 't.Index', 't.DateCreated', 't.TranslationGroupID',
-                'tg.Name as TranslationGroup', 'tg.Canon', 'tg.ExternalLinkFormat', 't.Uncertain', 't.ExternalID');
+                'tg.Name as TranslationGroup', 'tg.Canon', 'tg.ExternalLinkFormat', 't.Uncertain', 't.ExternalID',
+                't.Latest');
     }
 
     protected static function getSensesForWord(string $word) 
     {
-        $q = DB::table('keywords as k')
-            ->join('translation as t', 'k.TranslationID', '=', 't.TranslationID')
-            ->where([
-                ['k.NormalizedKeyword', 'like', $word],
-                ['t.Deleted', '=', 0]
-            ])
-            ->whereNotNull('k.TranslationID')
-            ->select('t.NamespaceID');
-
         $rows = DB::table('keywords')
-            ->where('NormalizedKeyword', 'like', $word)
-            ->whereNotNull('NamespaceID')
-            ->select('NamespaceID')
-            ->union($q)
+            ->where([
+                ['IsActive', '=', 1],
+                ['NormalizedKeyword', 'like', $word]
+            ])
+            ->whereNotNull('SenseID')
+            ->select('SenseID')
             ->get();
 
         $ids = array();
         foreach ($rows as $row)
-            $ids[] = $row->NamespaceID;
+            $ids[] = $row->SenseID;
 
         return $ids;
     }

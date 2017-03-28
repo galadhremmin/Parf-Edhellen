@@ -46,12 +46,16 @@ class BookController extends Controller
         // * Optimize by dealing with some edge cases first
         //    - No translation results
         if ($numberOfTranslations < 1) {
-            return [ 'sections' => [] ];
+            return [ 
+                'word' => $word,
+                'sections' => [] 
+            ];
         }
 
         //    - Just one translation result.
         if ($numberOfTranslations === 1) {
             return self::assignColumnWidths([
+                'word' => $word,
                 'sections' => [
                     [
                         // Load the language by examining the first (and only) element of the array
@@ -109,7 +113,10 @@ class BookController extends Controller
             ];
         }
 
-        return self::assignColumnWidths([ 'sections' => $sections ], count($allLanguages));
+        return self::assignColumnWidths([ 
+            'word' => $word,
+            'sections' => $sections 
+        ], count($allLanguages));
     }
 
     /**

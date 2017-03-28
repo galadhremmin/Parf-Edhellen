@@ -3,10 +3,12 @@
       class="contribution" 
   @endif>
   <h3 rel="trans-word" class="trans-word">
-    @if ((!$gloss->Canon) || $gloss->Uncertain)
+    @if ((!$gloss->Canon || $gloss->Uncertain) && $gloss->Latest)
     <a href="about.page?browseTo=unverified" title="Unverified or debatable content."><span class="glyphicon glyphicon-question-sign"></span></a>
     @endif
-    <span itemprop="headline">{{ $gloss->Word }}</span>
+    <span itemprop="headline">
+      {{ $gloss->Word }}
+    </span>
     <!--
     {if $loggedIn}
         {if $isAdmin}

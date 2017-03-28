@@ -98,6 +98,10 @@ class EDSearchToolsApp extends React.Component {
                                placeholder="What are you looking for?"
                                tabIndex="1"
                                name="word"
+                               autoComplete="off"
+                               autoCapitalize="off"
+                               autoFocus="true"
+                               role="presentation"
                                value={this.state.word}
                                onKeyUp={this.searchKeyUp.bind(this)}
                                onChange={this.wordChange.bind(this)} />
