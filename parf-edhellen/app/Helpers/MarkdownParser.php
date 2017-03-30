@@ -63,7 +63,5 @@ class MarkdownParser extends \Parsedown
                 ]
             ];
         }
-        else
-            print_r($Excerpt);
     }
 }

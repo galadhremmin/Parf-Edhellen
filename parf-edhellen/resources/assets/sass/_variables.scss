@@ -2,13 +2,6 @@
 // Body
 $body-bg: #f5f8fa;
 
-// Borders
-$laravel-border-color: darken($body-bg, 10%);
-$list-group-border: $laravel-border-color;
-$navbar-default-border: $laravel-border-color;
-$panel-default-border: $laravel-border-color;
-$panel-inner-border: $laravel-border-color;
-
 // Brands
 $brand-primary: #3097D1;
 $brand-info: #8eb4cb;
@@ -21,10 +14,15 @@ $icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
 $font-family-sans-serif: "Noto Serif", Georgia, sans-serif;
 $font-size-base: 14px;
 $line-height-base: 1.6;
-$text-color: #636b6f;
+$text-color: #202020;
 
 // Navbar
-$navbar-default-bg: #fff;
+$navbar-default-bg: #333;
+$navbar-default-link-color: white;
+$navbar-default-link-hover-color: white;
+$navbar-default-link-active-color: white;
+$navbar-default-link-active-bg: #272727;
+$navbar-default-link-hover-bg: #272727;
 
 // Buttons
 $btn-default-color: $text-color;
