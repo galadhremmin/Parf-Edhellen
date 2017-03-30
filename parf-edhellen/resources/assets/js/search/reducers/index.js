@@ -48,7 +48,9 @@ export const EDSearchResults = (state = {
 
         case SET_SELECTION:
             return Object.assign({}, state, {
-                itemIndex: Math.max(0, Math.min(state.items.length - 1, action.index))
+                itemIndex: state.index === -1
+                    ? -1
+                    : Math.max(0, Math.min(state.items.length - 1, action.index))
             });
 
         default:

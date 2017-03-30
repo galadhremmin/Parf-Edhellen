@@ -7528,7 +7528,7 @@ module.exports = function bind(fn, thisArg) {
 /* unused harmony export requestNavigation */
 /* unused harmony export receiveNavigation */
 /* harmony export (immutable) */ __webpack_exports__["b"] = advanceSelection;
-/* unused harmony export setSelection */
+/* harmony export (immutable) */ __webpack_exports__["d"] = setSelection;
 /* harmony export (immutable) */ __webpack_exports__["c"] = fetchResults;
 /* harmony export (immutable) */ __webpack_exports__["a"] = beginNavigation;
 
@@ -7683,7 +7683,7 @@ var EDSearchResults = function EDSearchResults() {
 
         case SET_SELECTION:
             return Object.assign({}, state, {
-                itemIndex: Math.max(0, Math.min(state.items.length - 1, action.index))
+                itemIndex: state.index === -1 ? -1 : Math.max(0, Math.min(state.items.length - 1, action.index))
             });
 
         default:
@@ -11287,8 +11287,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_redux_thunk__ = __webpack_require__(241);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_redux_thunk___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_redux_thunk__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__reducers__ = __webpack_require__(64);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_tools_app__ = __webpack_require__(124);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_results_app__ = __webpack_require__(123);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_search_bar_app__ = __webpack_require__(258);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_search_results_app__ = __webpack_require__(259);
 
 
 
@@ -11308,8 +11308,8 @@ window.addEventListener('load', function () {
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             'div',
             null,
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_6__components_tools_app__["a" /* default */], null),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_7__components_results_app__["a" /* default */], null)
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_6__components_search_bar_app__["a" /* default */], null),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_7__components_search_results_app__["a" /* default */], null)
         )
     ), document.getElementById('search-component'));
 });
@@ -12162,373 +12162,8 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 123 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_redux__ = __webpack_require__(51);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions__ = __webpack_require__(63);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_classnames__ = __webpack_require__(65);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_classnames__);
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-
-
-
-
-
-var EDSearchItem = function (_React$Component) {
-    _inherits(EDSearchItem, _React$Component);
-
-    function EDSearchItem() {
-        _classCallCheck(this, EDSearchItem);
-
-        return _possibleConstructorReturn(this, (EDSearchItem.__proto__ || Object.getPrototypeOf(EDSearchItem)).apply(this, arguments));
-    }
-
-    _createClass(EDSearchItem, [{
-        key: 'navigate',
-        value: function navigate(ev) {
-            ev.preventDefault();
-            this.props.onNavigate(this.props.index, this.props.item.word, this.props.item.normalizedWord);
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var cssClass = __WEBPACK_IMPORTED_MODULE_3_classnames___default()({ 'selected': this.props.active });
-            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                'li',
-                null,
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'a',
-                    { href: '#', className: cssClass, onClick: this.navigate.bind(this) },
-                    this.props.item.word
-                )
-            );
-        }
-    }]);
-
-    return EDSearchItem;
-}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
-
-var EDSearchResultApp = function (_React$Component2) {
-    _inherits(EDSearchResultApp, _React$Component2);
-
-    function EDSearchResultApp() {
-        _classCallCheck(this, EDSearchResultApp);
-
-        return _possibleConstructorReturn(this, (EDSearchResultApp.__proto__ || Object.getPrototypeOf(EDSearchResultApp)).apply(this, arguments));
-    }
-
-    _createClass(EDSearchResultApp, [{
-        key: 'navigate',
-        value: function navigate(index, word, normalizedWord) {
-            this.props.dispatch(setSelection(index));
-        }
-    }, {
-        key: 'componentWillReceiveProps',
-        value: function componentWillReceiveProps(props) {
-            if (props.activeIndex > -1 && props.activeIndex !== this.loadedIndex) {
-                this.loadedIndex = props.activeIndex;
-
-                var item = props.items[this.loadedIndex];
-                props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__actions__["a" /* beginNavigation */])(item.word, item.normalizedWord, this.loadedIndex));
-
-                console.log(props.activeIndex);
-            }
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var _this3 = this;
-
-            if (this.props.items === undefined) {
-                return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', null);
-            }
-
-            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                'div',
-                { className: 'panel panel-default search-result-wrapper' },
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'div',
-                    { className: 'panel-heading' },
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'h3',
-                        { className: 'panel-title search-result-wrapper-toggler-title' },
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { className: 'glyphicon glyphicon-minus' }),
-                        'Matching words (',
-                        this.props.items.length,
-                        ')'
-                    )
-                ),
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'div',
-                    { className: __WEBPACK_IMPORTED_MODULE_3_classnames___default()('panel-body', 'results-panel', { 'hidden': this.props.items.length < 1 }) },
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'div',
-                        { className: 'row' },
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'div',
-                            { className: 'col-xs-12' },
-                            'These words match your search query. Click on the one most relevant to you, or simply press enter to expand the first item in the list.'
-                        )
-                    ),
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'div',
-                        { className: 'row' },
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'ul',
-                            { className: 'search-result' },
-                            this.props.items.map(function (item, i) {
-                                return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(EDSearchItem, { key: i, active: i === _this3.props.activeIndex,
-                                    item: item, index: i,
-                                    onNavigate: _this3.navigate.bind(_this3) });
-                            })
-                        )
-                    )
-                ),
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'div',
-                    { className: __WEBPACK_IMPORTED_MODULE_3_classnames___default()('panel-body', 'results-empty', { 'hidden': this.props.items.length > 0 }) },
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'div',
-                        { className: 'row' },
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'div',
-                            { className: 'col-xs-12' },
-                            'Unfortunately, we were unable to find any words matching your search query. Have you tried a synonym, or perhaps even an antonym?'
-                        )
-                    )
-                )
-            );
-        }
-    }]);
-
-    return EDSearchResultApp;
-}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
-
-;
-
-var mapStateToProps = function mapStateToProps(state) {
-    return {
-        items: state.items,
-        loading: state.loading,
-        activeIndex: state.itemIndex
-    };
-};
-
-/* harmony default export */ __webpack_exports__["a"] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_react_redux__["b" /* connect */])(mapStateToProps)(EDSearchResultApp);
-
-/***/ }),
-/* 124 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_redux__ = __webpack_require__(51);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames__ = __webpack_require__(65);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_classnames__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__actions__ = __webpack_require__(63);
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-
-
-
-
-
-var EDSearchToolsApp = function (_React$Component) {
-    _inherits(EDSearchToolsApp, _React$Component);
-
-    function EDSearchToolsApp(props) {
-        _classCallCheck(this, EDSearchToolsApp);
-
-        var _this = _possibleConstructorReturn(this, (EDSearchToolsApp.__proto__ || Object.getPrototypeOf(EDSearchToolsApp)).call(this, props));
-
-        _this.state = {
-            isReversed: false,
-            word: '',
-            languageId: 0
-        };
-        _this.throttle = 0;
-        return _this;
-    }
-
-    _createClass(EDSearchToolsApp, [{
-        key: 'componentDidMount',
-        value: function componentDidMount() {
-            var languageNode = document.getElementById('ed-preloaded-languages');
-            this.setState({
-                languages: [{
-                    ID: 0,
-                    Name: 'All languages'
-                }].concat(_toConsumableArray(JSON.parse(languageNode.textContent)))
-            });
-        }
-    }, {
-        key: 'searchKeyUp',
-        value: function searchKeyUp(ev) {
-            var direction = ev.which === 40 ? 1 : ev.which === 38 ? -1 : undefined;
-
-            if (direction !== undefined) {
-                ev.preventDefault();
-                this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["b" /* advanceSelection */])(direction));
-            }
-        }
-    }, {
-        key: 'wordChange',
-        value: function wordChange(ev) {
-            this.setState({
-                word: ev.target.value
-            });
-
-            this.search();
-        }
-    }, {
-        key: 'reverseChange',
-        value: function reverseChange(ev) {
-            this.setState({
-                isReversed: ev.target.checked
-            });
-
-            this.search();
-        }
-    }, {
-        key: 'languageChange',
-        value: function languageChange(ev) {
-            this.setState({
-                languageId: parseInt(ev.target.value, /* radix: */10)
-            });
-
-            this.search();
-        }
-    }, {
-        key: 'search',
-        value: function search() {
-            var _this2 = this;
-
-            if (/^\s*$/.test(this.state.word)) {
-                return; // empty search result
-            }
-
-            if (this.throttle) {
-                window.clearTimeout(this.throttle);
-            }
-
-            this.throttle = window.setTimeout(function () {
-                _this2.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["c" /* fetchResults */])(_this2.state.word, _this2.state.isReversed, _this2.state.languageId));
-                _this2.throttle = 0;
-            }, 500);
-        }
-    }, {
-        key: 'navigate',
-        value: function navigate(ev) {
-            // Override default behaviour
-            ev.preventDefault();
-
-            // Dispatch a navigation request
-            this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["a" /* beginNavigation */])(this.state.word, undefined));
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var fieldClasses = __WEBPACK_IMPORTED_MODULE_2_classnames___default()('form-control', { 'disabled': this.props.loading });
-            var statusClasses = __WEBPACK_IMPORTED_MODULE_2_classnames___default()('glyphicon', this.props.loading ? 'glyphicon-refresh loading' : 'glyphicon-search');
-
-            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                'form',
-                { onSubmit: this.navigate.bind(this) },
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'div',
-                    { className: 'row' },
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'div',
-                        { className: 'col-md-12' },
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'div',
-                            { className: 'input-group input-group-lg' },
-                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                'span',
-                                { className: 'input-group-addon' },
-                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                    'span',
-                                    { className: statusClasses },
-                                    ' '
-                                )
-                            ),
-                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'search', className: fieldClasses,
-                                placeholder: 'What are you looking for?',
-                                tabIndex: '1',
-                                name: 'word',
-                                autoComplete: 'off',
-                                autoCapitalize: 'off',
-                                autoFocus: 'true',
-                                role: 'presentation',
-                                value: this.state.word,
-                                onKeyUp: this.searchKeyUp.bind(this),
-                                onChange: this.wordChange.bind(this) })
-                        )
-                    )
-                ),
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'div',
-                    { className: 'row' },
-                    this.state.languages ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'select',
-                        { className: 'search-language-select', onChange: this.languageChange.bind(this) },
-                        this.state.languages.map(function (l) {
-                            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                'option',
-                                { value: l.ID, key: l.ID },
-                                l.Name
-                            );
-                        })
-                    ) : '',
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'div',
-                        { className: 'checkbox input-sm search-reverse-box-wrapper' },
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'label',
-                            null,
-                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'checkbox', name: 'isReversed',
-                                checked: this.state.isReversed,
-                                onChange: this.reverseChange.bind(this) }),
-                            ' Reverse search'
-                        )
-                    )
-                )
-            );
-        }
-    }]);
-
-    return EDSearchToolsApp;
-}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
-
-var mapStateToProps = function mapStateToProps(state) {
-    return {
-        loading: state.loading
-    };
-};
-
-/* harmony default export */ __webpack_exports__["a"] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_react_redux__["b" /* connect */])(mapStateToProps)(EDSearchToolsApp);
-
-/***/ }),
+/* 123 */,
+/* 124 */,
 /* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -26070,6 +25705,384 @@ module.exports = function(module) {
 __webpack_require__(103);
 module.exports = __webpack_require__(104);
 
+
+/***/ }),
+/* 250 */,
+/* 251 */,
+/* 252 */,
+/* 253 */,
+/* 254 */,
+/* 255 */,
+/* 256 */,
+/* 257 */,
+/* 258 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_redux__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames__ = __webpack_require__(65);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_classnames__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__actions__ = __webpack_require__(63);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+
+
+
+var EDSearchBarApp = function (_React$Component) {
+    _inherits(EDSearchBarApp, _React$Component);
+
+    function EDSearchBarApp(props) {
+        _classCallCheck(this, EDSearchBarApp);
+
+        var _this = _possibleConstructorReturn(this, (EDSearchBarApp.__proto__ || Object.getPrototypeOf(EDSearchBarApp)).call(this, props));
+
+        _this.state = {
+            isReversed: false,
+            word: '',
+            languageId: 0
+        };
+        _this.throttle = 0;
+        return _this;
+    }
+
+    _createClass(EDSearchBarApp, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            var languageNode = document.getElementById('ed-preloaded-languages');
+            this.setState({
+                languages: [{
+                    ID: 0,
+                    Name: 'All languages'
+                }].concat(_toConsumableArray(JSON.parse(languageNode.textContent)))
+            });
+        }
+    }, {
+        key: 'searchKeyDown',
+        value: function searchKeyDown(ev) {
+            var direction = ev.which === 40 ? 1 : ev.which === 38 ? -1 : undefined;
+
+            if (direction !== undefined) {
+                ev.preventDefault();
+                this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["b" /* advanceSelection */])(direction));
+            }
+        }
+    }, {
+        key: 'wordChange',
+        value: function wordChange(ev) {
+            this.setState({
+                word: ev.target.value
+            });
+
+            this.search();
+        }
+    }, {
+        key: 'reverseChange',
+        value: function reverseChange(ev) {
+            this.setState({
+                isReversed: ev.target.checked
+            });
+
+            this.search();
+        }
+    }, {
+        key: 'languageChange',
+        value: function languageChange(ev) {
+            this.setState({
+                languageId: parseInt(ev.target.value, /* radix: */10)
+            });
+
+            this.search();
+        }
+    }, {
+        key: 'search',
+        value: function search() {
+            var _this2 = this;
+
+            if (/^\s*$/.test(this.state.word)) {
+                return; // empty search result
+            }
+
+            if (this.throttle) {
+                window.clearTimeout(this.throttle);
+            }
+
+            this.throttle = window.setTimeout(function () {
+                _this2.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["c" /* fetchResults */])(_this2.state.word, _this2.state.isReversed, _this2.state.languageId));
+                _this2.throttle = 0;
+            }, 500);
+        }
+    }, {
+        key: 'navigate',
+        value: function navigate(ev) {
+            // Override default behaviour
+            ev.preventDefault();
+
+            // Dispatch a navigation request
+            if (!this.props.loading) {
+                this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["d" /* setSelection */])(0));
+            }
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var fieldClasses = __WEBPACK_IMPORTED_MODULE_2_classnames___default()('form-control', { 'disabled': this.props.loading });
+            var statusClasses = __WEBPACK_IMPORTED_MODULE_2_classnames___default()('glyphicon', this.props.loading ? 'glyphicon-refresh loading' : 'glyphicon-search');
+
+            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'form',
+                { onSubmit: this.navigate.bind(this) },
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    { className: 'row' },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: 'col-md-12' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'div',
+                            { className: 'input-group input-group-lg' },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'span',
+                                { className: 'input-group-addon' },
+                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                    'span',
+                                    { className: statusClasses },
+                                    ' '
+                                )
+                            ),
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'search', className: fieldClasses,
+                                placeholder: 'What are you looking for?',
+                                tabIndex: '1',
+                                name: 'word',
+                                autoComplete: 'off',
+                                autoCapitalize: 'off',
+                                autoFocus: 'true',
+                                role: 'presentation',
+                                value: this.state.word,
+                                onKeyDown: this.searchKeyDown.bind(this),
+                                onChange: this.wordChange.bind(this) })
+                        )
+                    )
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    { className: 'row' },
+                    this.state.languages ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'select',
+                        { className: 'search-language-select', onChange: this.languageChange.bind(this) },
+                        this.state.languages.map(function (l) {
+                            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'option',
+                                { value: l.ID, key: l.ID },
+                                l.Name
+                            );
+                        })
+                    ) : '',
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: 'checkbox input-sm search-reverse-box-wrapper' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'label',
+                            null,
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'checkbox', name: 'isReversed',
+                                checked: this.state.isReversed,
+                                onChange: this.reverseChange.bind(this) }),
+                            ' Reverse search'
+                        )
+                    )
+                )
+            );
+        }
+    }]);
+
+    return EDSearchBarApp;
+}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
+
+var mapStateToProps = function mapStateToProps(state) {
+    return {
+        loading: state.loading
+    };
+};
+
+/* harmony default export */ __webpack_exports__["a"] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_react_redux__["b" /* connect */])(mapStateToProps)(EDSearchBarApp);
+
+/***/ }),
+/* 259 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_redux__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions__ = __webpack_require__(63);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_classnames__ = __webpack_require__(65);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_classnames__);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+
+
+
+var EDSearchResultsApp = function (_React$Component) {
+    _inherits(EDSearchResultsApp, _React$Component);
+
+    function EDSearchResultsApp() {
+        _classCallCheck(this, EDSearchResultsApp);
+
+        return _possibleConstructorReturn(this, (EDSearchResultsApp.__proto__ || Object.getPrototypeOf(EDSearchResultsApp)).apply(this, arguments));
+    }
+
+    _createClass(EDSearchResultsApp, [{
+        key: 'navigate',
+        value: function navigate(index, word, normalizedWord) {
+            this.props.dispatch(setSelection(index));
+        }
+    }, {
+        key: 'componentWillReceiveProps',
+        value: function componentWillReceiveProps(props) {
+            if (props.activeIndex === undefined || props.activeIndex < 0) {
+                return;
+            }
+
+            var item = props.items[props.activeIndex];
+            if (item.word === this.loadedWord) {
+                return;
+            }
+
+            this.loadedWord = item.word;
+            props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__actions__["a" /* beginNavigation */])(item.word, item.normalizedWord, this.loadedIndex));
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _this2 = this;
+
+            if (this.props.items === undefined) {
+                return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', null);
+            }
+
+            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'div',
+                { className: 'panel panel-default search-result-wrapper' },
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    { className: 'panel-heading' },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'h3',
+                        { className: 'panel-title search-result-wrapper-toggler-title' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { className: 'glyphicon glyphicon-minus' }),
+                        'Matching words (',
+                        this.props.items.length,
+                        ')'
+                    )
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    { className: __WEBPACK_IMPORTED_MODULE_3_classnames___default()('panel-body', 'results-panel', { 'hidden': this.props.items.length < 1 }) },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: 'row' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'div',
+                            { className: 'col-xs-12' },
+                            'These words match your search query. Click on the one most relevant to you, or simply press enter to expand the first item in the list.'
+                        )
+                    ),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: 'row' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'ul',
+                            { className: 'search-result' },
+                            this.props.items.map(function (item, i) {
+                                return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(EDSearchItem, { key: i, active: i === _this2.props.activeIndex,
+                                    item: item, index: i,
+                                    onNavigate: _this2.navigate.bind(_this2) });
+                            })
+                        )
+                    )
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    { className: __WEBPACK_IMPORTED_MODULE_3_classnames___default()('panel-body', 'results-empty', { 'hidden': this.props.items.length > 0 }) },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: 'row' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'div',
+                            { className: 'col-xs-12' },
+                            'Unfortunately, we were unable to find any words matching your search query. Have you tried a synonym, or perhaps even an antonym?'
+                        )
+                    )
+                )
+            );
+        }
+    }]);
+
+    return EDSearchResultsApp;
+}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
+
+var EDSearchItem = function (_React$Component2) {
+    _inherits(EDSearchItem, _React$Component2);
+
+    function EDSearchItem() {
+        _classCallCheck(this, EDSearchItem);
+
+        return _possibleConstructorReturn(this, (EDSearchItem.__proto__ || Object.getPrototypeOf(EDSearchItem)).apply(this, arguments));
+    }
+
+    _createClass(EDSearchItem, [{
+        key: 'navigate',
+        value: function navigate(ev) {
+            ev.preventDefault();
+            this.props.onNavigate(this.props.index, this.props.item.word, this.props.item.normalizedWord);
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var cssClass = __WEBPACK_IMPORTED_MODULE_3_classnames___default()({ 'selected': this.props.active });
+            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'li',
+                null,
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'a',
+                    { href: '#', className: cssClass, onClick: this.navigate.bind(this) },
+                    this.props.item.word
+                )
+            );
+        }
+    }]);
+
+    return EDSearchItem;
+}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
+
+var mapStateToProps = function mapStateToProps(state) {
+    return {
+        items: state.items,
+        loading: state.loading,
+        activeIndex: state.itemIndex
+    };
+};
+
+/* harmony default export */ __webpack_exports__["a"] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_react_redux__["b" /* connect */])(mapStateToProps)(EDSearchResultsApp);
 
 /***/ })
 /******/ ]);

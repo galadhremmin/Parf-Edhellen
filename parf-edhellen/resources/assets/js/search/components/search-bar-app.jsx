@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { fetchResults, beginNavigation, advanceSelection } from '../actions';
+import { fetchResults, setSelection, advanceSelection } from '../actions';
 
-class EDSearchToolsApp extends React.Component {
+class EDSearchBarApp extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -24,7 +24,7 @@ class EDSearchToolsApp extends React.Component {
         });
     }
 
-    searchKeyUp(ev) {
+    searchKeyDown(ev) {
         let direction = ev.which === 40
             ? 1
             : (ev.which === 38 ? -1 : undefined);
@@ -79,7 +79,9 @@ class EDSearchToolsApp extends React.Component {
         ev.preventDefault();
 
         // Dispatch a navigation request
-        this.props.dispatch(beginNavigation(this.state.word, undefined));
+        if (!this.props.loading) {
+            this.props.dispatch(setSelection(0));
+        }
     }
 
     render() {
@@ -103,7 +105,7 @@ class EDSearchToolsApp extends React.Component {
                                autoFocus="true"
                                role="presentation"
                                value={this.state.word}
-                               onKeyUp={this.searchKeyUp.bind(this)}
+                               onKeyDown={this.searchKeyDown.bind(this)}
                                onChange={this.wordChange.bind(this)} />
                     </div>
                 </div>
@@ -131,4 +133,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps)(EDSearchToolsApp);
+export default connect(mapStateToProps)(EDSearchBarApp);

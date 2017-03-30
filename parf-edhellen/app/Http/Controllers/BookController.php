@@ -21,7 +21,7 @@ class BookController extends Controller
         $ajax = $request->ajax();
 
         $translations = $this->_translationRepository->getWordTranslations($word);
-        $model = $this->adapt($translations->toArray(), $word, $ajax);
+        $model = $this->adapt($translations->toArray(), $word, false); // returning HTML, thus is ajax always false
 
         return view($ajax ? 'book._page' : 'book.page', $model);
     }
@@ -31,7 +31,7 @@ class BookController extends Controller
         $ajax = $request->ajax();
 
         $translation = $this->_translationRepository->getTranslation($id);
-        $model = $this->adapt([ $translation ], null, $ajax);
+        $model = $this->adapt([ $translation ], null, false); // returning HTML, thus is ajax always false
 
         return view($ajax ? 'book._page' : 'book.page', $model);
     }

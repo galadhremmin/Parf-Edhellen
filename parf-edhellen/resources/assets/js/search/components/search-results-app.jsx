@@ -3,36 +3,23 @@ import { connect } from 'react-redux';
 import { beginNavigation } from '../actions';
 import classNames from 'classnames';
 
-class EDSearchItem extends React.Component {
-    navigate(ev) {
-        ev.preventDefault();
-        this.props.onNavigate(this.props.index, this.props.item.word, this.props.item.normalizedWord);
-    }
-
-    render() {
-        const cssClass = classNames({ 'selected': this.props.active });
-        return <li>
-            <a href="#" className={cssClass} onClick={this.navigate.bind(this)}>
-                {this.props.item.word}
-            </a>
-        </li>;
-    }
-}
-
-class EDSearchResultApp extends React.Component {
+class EDSearchResultsApp extends React.Component {
     navigate(index, word, normalizedWord) {
         this.props.dispatch(setSelection(index));
     }
 
     componentWillReceiveProps(props) {
-        if (props.activeIndex > -1 && props.activeIndex !== this.loadedIndex) {
-            this.loadedIndex = props.activeIndex;
-
-            const item = props.items[this.loadedIndex];
-            props.dispatch(beginNavigation(item.word, item.normalizedWord, this.loadedIndex));
-
-            console.log(props.activeIndex);
+        if (props.activeIndex === undefined || props.activeIndex < 0) {
+            return;
         }
+
+        const item = props.items[props.activeIndex];
+        if (item.word === this.loadedWord) {
+            return;
+        }
+
+        this.loadedWord = item.word;
+        props.dispatch(beginNavigation(item.word, item.normalizedWord, this.loadedIndex));
     }
 
     render() {
@@ -74,7 +61,23 @@ class EDSearchResultApp extends React.Component {
             </div>
         );
     }
-};
+}
+
+class EDSearchItem extends React.Component {
+    navigate(ev) {
+        ev.preventDefault();
+        this.props.onNavigate(this.props.index, this.props.item.word, this.props.item.normalizedWord);
+    }
+
+    render() {
+        const cssClass = classNames({ 'selected': this.props.active });
+        return <li>
+            <a href="#" className={cssClass} onClick={this.navigate.bind(this)}>
+                {this.props.item.word}
+            </a>
+        </li>;
+    }
+}
 
 const mapStateToProps = (state) => {
     return {
@@ -84,4 +87,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps)(EDSearchResultApp);
+export default connect(mapStateToProps)(EDSearchResultsApp);
