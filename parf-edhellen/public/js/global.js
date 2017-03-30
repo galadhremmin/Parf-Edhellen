@@ -5127,7 +5127,7 @@ function isPlainObject(value) {
     funcToString.call(Ctor) == objectCtorString;
 }
 
-/* harmony default export */ __webpack_exports__["a"] = (isPlainObject);
+/* harmony default export */ __webpack_exports__["a"] = isPlainObject;
 
 
 /***/ }),
@@ -7600,7 +7600,7 @@ function fetchResults(word) {
 }
 
 function beginNavigation(word, normalizedWord, index) {
-    // TODO: TEMPORARY! Must be replaced with a React component that is not vulnerable to XSS ...
+    // TODO: TEMPORARY! Must be replaced with a React components that are not vulnerable to XSS ...
 
     var address = '/w/' + encodeURIComponent(normalizedWord || word);
     var title = word + ' - Parf Edhellen';
@@ -7643,7 +7643,7 @@ var EDSearchResults = function EDSearchResults() {
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
         loading: false,
         items: undefined,
-        itemIndex: 0,
+        itemIndex: -1,
         word: undefined,
         normalizedWord: undefined
     };
@@ -7668,7 +7668,7 @@ var EDSearchResults = function EDSearchResults() {
             return Object.assign({}, state, {
                 items: action.items,
                 loading: false,
-                itemIndex: 0
+                itemIndex: -1
             });
 
         case RECEIVE_NAVIGATION:
@@ -7678,7 +7678,7 @@ var EDSearchResults = function EDSearchResults() {
 
         case ADVANCE_SELECTION:
             return Object.assign({}, state, {
-                itemIndex: action.direction < 0 ? state.itemIndex < 1 ? state.items.length - 1 : state.itemIndex - 1 : state.itemIndex - 1 === state.items.length ? 0 : state.itemIndex + 1
+                itemIndex: action.direction < 0 ? state.itemIndex < 1 ? state.items.length - 1 : state.itemIndex - 1 : state.itemIndex + 1 === state.items.length ? 0 : state.itemIndex + 1
             });
 
         case SET_SELECTION:
@@ -7923,7 +7923,7 @@ module.exports = getActiveElement;
 /** Built-in value references. */
 var Symbol = __WEBPACK_IMPORTED_MODULE_0__root_js__["a" /* default */].Symbol;
 
-/* harmony default export */ __webpack_exports__["a"] = (Symbol);
+/* harmony default export */ __webpack_exports__["a"] = Symbol;
 
 
 /***/ }),
@@ -12231,7 +12231,19 @@ var EDSearchResultApp = function (_React$Component2) {
     _createClass(EDSearchResultApp, [{
         key: 'navigate',
         value: function navigate(index, word, normalizedWord) {
-            this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__actions__["a" /* beginNavigation */])(word, normalizedWord, index));
+            this.props.dispatch(setSelection(index));
+        }
+    }, {
+        key: 'componentWillReceiveProps',
+        value: function componentWillReceiveProps(props) {
+            if (props.activeIndex > -1 && props.activeIndex !== this.loadedIndex) {
+                this.loadedIndex = props.activeIndex;
+
+                var item = props.items[this.loadedIndex];
+                props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__actions__["a" /* beginNavigation */])(item.word, item.normalizedWord, this.loadedIndex));
+
+                console.log(props.activeIndex);
+            }
         }
     }, {
         key: 'render',
@@ -12313,7 +12325,7 @@ var mapStateToProps = function mapStateToProps(state) {
     };
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_react_redux__["b" /* connect */])(mapStateToProps)(EDSearchResultApp));
+/* harmony default export */ __webpack_exports__["a"] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_react_redux__["b" /* connect */])(mapStateToProps)(EDSearchResultApp);
 
 /***/ }),
 /* 124 */
@@ -12464,6 +12476,10 @@ var EDSearchToolsApp = function (_React$Component) {
                                 placeholder: 'What are you looking for?',
                                 tabIndex: '1',
                                 name: 'word',
+                                autoComplete: 'off',
+                                autoCapitalize: 'off',
+                                autoFocus: 'true',
+                                role: 'presentation',
                                 value: this.state.word,
                                 onKeyUp: this.searchKeyUp.bind(this),
                                 onChange: this.wordChange.bind(this) })
@@ -12510,7 +12526,7 @@ var mapStateToProps = function mapStateToProps(state) {
     };
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_react_redux__["b" /* connect */])(mapStateToProps)(EDSearchToolsApp));
+/* harmony default export */ __webpack_exports__["a"] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_react_redux__["b" /* connect */])(mapStateToProps)(EDSearchToolsApp);
 
 /***/ }),
 /* 125 */
@@ -13402,7 +13418,7 @@ function baseGetTag(value) {
     : __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__objectToString_js__["a" /* default */])(value);
 }
 
-/* harmony default export */ __webpack_exports__["a"] = (baseGetTag);
+/* harmony default export */ __webpack_exports__["a"] = baseGetTag;
 
 
 /***/ }),
@@ -13413,7 +13429,7 @@ function baseGetTag(value) {
 /* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
 var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
 
-/* harmony default export */ __webpack_exports__["a"] = (freeGlobal);
+/* harmony default export */ __webpack_exports__["a"] = freeGlobal;
 
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(102)))
 
@@ -13428,7 +13444,7 @@ var freeGlobal = typeof global == 'object' && global && global.Object === Object
 /** Built-in value references. */
 var getPrototype = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__overArg_js__["a" /* default */])(Object.getPrototypeOf, Object);
 
-/* harmony default export */ __webpack_exports__["a"] = (getPrototype);
+/* harmony default export */ __webpack_exports__["a"] = getPrototype;
 
 
 /***/ }),
@@ -13482,7 +13498,7 @@ function getRawTag(value) {
   return result;
 }
 
-/* harmony default export */ __webpack_exports__["a"] = (getRawTag);
+/* harmony default export */ __webpack_exports__["a"] = getRawTag;
 
 
 /***/ }),
@@ -13511,7 +13527,7 @@ function objectToString(value) {
   return nativeObjectToString.call(value);
 }
 
-/* harmony default export */ __webpack_exports__["a"] = (objectToString);
+/* harmony default export */ __webpack_exports__["a"] = objectToString;
 
 
 /***/ }),
@@ -13533,7 +13549,7 @@ function overArg(func, transform) {
   };
 }
 
-/* harmony default export */ __webpack_exports__["a"] = (overArg);
+/* harmony default export */ __webpack_exports__["a"] = overArg;
 
 
 /***/ }),
@@ -13550,7 +13566,7 @@ var freeSelf = typeof self == 'object' && self && self.Object === Object && self
 /** Used as a reference to the global object. */
 var root = __WEBPACK_IMPORTED_MODULE_0__freeGlobal_js__["a" /* default */] || freeSelf || Function('return this')();
 
-/* harmony default export */ __webpack_exports__["a"] = (root);
+/* harmony default export */ __webpack_exports__["a"] = root;
 
 
 /***/ }),
@@ -13586,7 +13602,7 @@ function isObjectLike(value) {
   return value != null && typeof value == 'object';
 }
 
-/* harmony default export */ __webpack_exports__["a"] = (isObjectLike);
+/* harmony default export */ __webpack_exports__["a"] = isObjectLike;
 
 
 /***/ }),
@@ -23183,7 +23199,7 @@ function createConnect() {
   };
 }
 
-/* harmony default export */ __webpack_exports__["a"] = (createConnect());
+/* harmony default export */ __webpack_exports__["a"] = createConnect();
 
 /***/ }),
 /* 223 */
@@ -23214,7 +23230,7 @@ function whenMapDispatchToPropsIsObject(mapDispatchToProps) {
   }) : undefined;
 }
 
-/* harmony default export */ __webpack_exports__["a"] = ([whenMapDispatchToPropsIsFunction, whenMapDispatchToPropsIsMissing, whenMapDispatchToPropsIsObject]);
+/* harmony default export */ __webpack_exports__["a"] = [whenMapDispatchToPropsIsFunction, whenMapDispatchToPropsIsMissing, whenMapDispatchToPropsIsObject];
 
 /***/ }),
 /* 224 */
@@ -23236,7 +23252,7 @@ function whenMapStateToPropsIsMissing(mapStateToProps) {
   }) : undefined;
 }
 
-/* harmony default export */ __webpack_exports__["a"] = ([whenMapStateToPropsIsFunction, whenMapStateToPropsIsMissing]);
+/* harmony default export */ __webpack_exports__["a"] = [whenMapStateToPropsIsFunction, whenMapStateToPropsIsMissing];
 
 /***/ }),
 /* 225 */
@@ -23292,7 +23308,7 @@ function whenMergePropsIsOmitted(mergeProps) {
   } : undefined;
 }
 
-/* harmony default export */ __webpack_exports__["a"] = ([whenMergePropsIsFunction, whenMergePropsIsOmitted]);
+/* harmony default export */ __webpack_exports__["a"] = [whenMergePropsIsFunction, whenMergePropsIsOmitted];
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(0)))
 
 /***/ }),

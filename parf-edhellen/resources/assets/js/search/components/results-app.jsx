@@ -21,7 +21,18 @@ class EDSearchItem extends React.Component {
 
 class EDSearchResultApp extends React.Component {
     navigate(index, word, normalizedWord) {
-        this.props.dispatch(beginNavigation(word, normalizedWord, index));
+        this.props.dispatch(setSelection(index));
+    }
+
+    componentWillReceiveProps(props) {
+        if (props.activeIndex > -1 && props.activeIndex !== this.loadedIndex) {
+            this.loadedIndex = props.activeIndex;
+
+            const item = props.items[this.loadedIndex];
+            props.dispatch(beginNavigation(item.word, item.normalizedWord, this.loadedIndex));
+
+            console.log(props.activeIndex);
+        }
     }
 
     render() {

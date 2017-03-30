@@ -69,7 +69,7 @@ export function fetchResults(word, reversed = false, languageId = 0) {
 }
 
 export function beginNavigation(word, normalizedWord, index) {
-    // TODO: TEMPORARY! Must be replaced with a React component that is not vulnerable to XSS ...
+    // TODO: TEMPORARY! Must be replaced with a React components that are not vulnerable to XSS ...
 
     const address = '/w/' + encodeURIComponent(normalizedWord || word);
     const title = `${word} - Parf Edhellen`;

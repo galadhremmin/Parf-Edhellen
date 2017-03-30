@@ -8,7 +8,7 @@ export const SET_SELECTION      = 'EDSR_SET_SELECTION';
 export const EDSearchResults = (state = {
     loading: false,
     items: undefined,
-    itemIndex: 0,
+    itemIndex: -1,
     word: undefined,
     normalizedWord: undefined
 }, action) => {
@@ -31,7 +31,7 @@ export const EDSearchResults = (state = {
             return Object.assign({}, state, {
                 items: action.items,
                 loading: false,
-                itemIndex: 0
+                itemIndex: -1
             });
 
         case RECEIVE_NAVIGATION:
@@ -43,7 +43,7 @@ export const EDSearchResults = (state = {
             return Object.assign({}, state, {
                 itemIndex: action.direction < 0
                     ? (state.itemIndex < 1   ? state.items.length - 1 : state.itemIndex - 1)
-                    : (state.itemIndex - 1 === state.items.length ? 0 : state.itemIndex + 1)
+                    : (state.itemIndex + 1 === state.items.length ? 0 : state.itemIndex + 1)
             });
 
         case SET_SELECTION:

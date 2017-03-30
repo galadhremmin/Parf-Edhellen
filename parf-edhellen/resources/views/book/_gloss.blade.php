@@ -30,7 +30,7 @@
   @endif
   <span rel="trans-translation" itemprop="keywords">{{ $gloss->Translation }}</span>
 
-  <p class="word-comments" rel="trans-comments" itemprop="articleBody">{{ nl2br(trim($gloss->Comments)) }}</p>
+  <p class="word-comments" rel="trans-comments" itemprop="articleBody">{!! $gloss->Comments !!}</p>
 
   <footer>
     @if (!empty($gloss->Source))

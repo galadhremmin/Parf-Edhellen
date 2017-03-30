@@ -1,8 +1,17 @@
+update keywords set creationdate = now() where creationdate < '1970-01-01 00:00:00';
+
 create table if not exists `sense` (
   `SenseID` int not null,
   `Description` text collate utf8_swedish_ci,
   primary key(`SenseID`)
 );
+
+-- Add foreign key to keywords and translation
+alter table `keywords` add `SenseID` int null;
+alter table `keywords` add `IsSense` bit null null default 0;
+alter table `keywords` add `IsActive` bit null null default 1;
+alter table `translation` add `SenseID` int null;
+alter table `translation` add index `idx_senseID` (`SenseID`);
 
 -- Trim whitespace
 update `word` set 
@@ -30,13 +39,6 @@ update `translation` as t
 delete t from `translation` as t 
   where t.`Latest` = 0 and not exists(select 1 from word where `KeyID` = t.`WordID`);
 
--- Add foreign key to keywords and translation
-alter table `keywords` add `SenseID` int null;
-alter table `keywords` add `IsSense` bit null null default 0;
-alter table `keywords` add `IsActive` bit null null default 1;
-alter table `translation` add `SenseID` int null;
-alter table `translation` add index `idx_senseID` (`SenseID`);
-
 -- Transition from indexes to keywords
 insert into `keywords` (`IsActive`, `IsSense`, `SenseID`, `WordID`, `Keyword`, `NormalizedKeyword`, `ReversedNormalizedKeyword`)
   select distinct 
@@ -52,5 +54,9 @@ insert into `keywords` (`IsActive`, `IsSense`, `SenseID`, `WordID`, `Keyword`, `
     coalesce((select 1 from `translation` as t where t.`Latest` = 1 and t.`Deleted` = 0 and t.`SenseID` = s.`SenseID` limit 1), 0), 1, s.`SenseID`, w.`KeyID`, w.`Key`, w.`NormalizedKey`, w.`ReversedNormalizedKey`
   from `sense` as s
     inner join `word` as w on w.`KeyID` = s.`SenseID`;
+
+-- Transition existing definitions to markdown format
+update translation set comments = replace(comments, '~', '**');
+update translation set comments = replace(comments, '`', '**');
 
 insert into `version` (`number`, `date`) values (1.8, NOW());

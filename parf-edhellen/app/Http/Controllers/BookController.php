@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Helpers\StringHelper;
+use App\Helpers\{StringHelper, MarkdownParser};
 use App\Models\Language;
 use App\Repositories\TranslationRepository;
 
@@ -18,18 +18,22 @@ class BookController extends Controller
 
     public function pageForWord(Request $request, string $word)
     {
-        $translations = $this->_translationRepository->getWordTranslations($word);
-        $model = $this->adapt($translations->toArray(), $word);
+        $ajax = $request->ajax();
 
-        return view($request->ajax() ? 'book._page' : 'book.page', $model);
+        $translations = $this->_translationRepository->getWordTranslations($word);
+        $model = $this->adapt($translations->toArray(), $word, $ajax);
+
+        return view($ajax ? 'book._page' : 'book.page', $model);
     }
 
     public function pageForTranslationId(Request $request, int $id)
     {
-        $translation = $this->_translationRepository->getTranslation($id);
-        $model = $this->adapt([ $translation ]);
+        $ajax = $request->ajax();
 
-        return view($request->ajax() ? 'book._page' : 'book.page', $model);
+        $translation = $this->_translationRepository->getTranslation($id);
+        $model = $this->adapt([ $translation ], null, $ajax);
+
+        return view($ajax ? 'book._page' : 'book.page', $model);
     }
 
     /**
@@ -39,9 +43,9 @@ class BookController extends Controller
      * @param string|null $word
      * @return array
      */
-    private function adapt(array $translations, string $word = null) 
+    private function adapt(array $translations, string $word = null, $ajax = false)
     {
-        $numberOfTranslations = count($translations) ;
+        $numberOfTranslations = count($translations);
 
         // * Optimize by dealing with some edge cases first
         //    - No translation results
@@ -50,6 +54,17 @@ class BookController extends Controller
                 'word' => $word,
                 'sections' => [] 
             ];
+        }
+
+        // brief interlude - convert markdown to HTML for non-ajax request.
+        if (!$ajax) {
+            $markdownParser = new MarkdownParser();
+
+            foreach ($translations as $translation) {
+                if (!empty($translation->Comments)) {
+                    $translation->Comments = $markdownParser->text($translation->Comments);
+                }
+            }
         }
 
         //    - Just one translation result.
