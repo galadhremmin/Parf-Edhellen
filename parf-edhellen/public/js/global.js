@@ -7527,10 +7527,10 @@ module.exports = function bind(fn, thisArg) {
 /* unused harmony export receiveResults */
 /* unused harmony export requestNavigation */
 /* unused harmony export receiveNavigation */
-/* harmony export (immutable) */ __webpack_exports__["b"] = advanceSelection;
-/* harmony export (immutable) */ __webpack_exports__["d"] = setSelection;
-/* harmony export (immutable) */ __webpack_exports__["c"] = fetchResults;
-/* harmony export (immutable) */ __webpack_exports__["a"] = beginNavigation;
+/* harmony export (immutable) */ __webpack_exports__["c"] = advanceSelection;
+/* harmony export (immutable) */ __webpack_exports__["a"] = setSelection;
+/* harmony export (immutable) */ __webpack_exports__["d"] = fetchResults;
+/* harmony export (immutable) */ __webpack_exports__["b"] = beginNavigation;
 
 
 
@@ -25775,7 +25775,7 @@ var EDSearchBarApp = function (_React$Component) {
 
             if (direction !== undefined) {
                 ev.preventDefault();
-                this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["b" /* advanceSelection */])(direction));
+                this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["c" /* advanceSelection */])(direction));
             }
         }
     }, {
@@ -25819,7 +25819,7 @@ var EDSearchBarApp = function (_React$Component) {
             }
 
             this.throttle = window.setTimeout(function () {
-                _this2.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["c" /* fetchResults */])(_this2.state.word, _this2.state.isReversed, _this2.state.languageId));
+                _this2.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["d" /* fetchResults */])(_this2.state.word, _this2.state.isReversed, _this2.state.languageId));
                 _this2.throttle = 0;
             }, 500);
         }
@@ -25831,7 +25831,7 @@ var EDSearchBarApp = function (_React$Component) {
 
             // Dispatch a navigation request
             if (!this.props.loading) {
-                this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["d" /* setSelection */])(0));
+                this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["a" /* setSelection */])(0));
             }
         }
     }, {
@@ -25953,7 +25953,7 @@ var EDSearchResultsApp = function (_React$Component) {
     _createClass(EDSearchResultsApp, [{
         key: 'navigate',
         value: function navigate(index, word, normalizedWord) {
-            this.props.dispatch(setSelection(index));
+            this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__actions__["a" /* setSelection */])(index));
         }
     }, {
         key: 'componentWillReceiveProps',
@@ -25968,7 +25968,7 @@ var EDSearchResultsApp = function (_React$Component) {
             }
 
             this.loadedWord = item.word;
-            props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__actions__["a" /* beginNavigation */])(item.word, item.normalizedWord, this.loadedIndex));
+            props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__actions__["b" /* beginNavigation */])(item.word, item.normalizedWord, this.loadedIndex));
         }
     }, {
         key: 'render',

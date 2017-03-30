@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { beginNavigation } from '../actions';
+import { setSelection, beginNavigation } from '../actions';
 import classNames from 'classnames';
 
 class EDSearchResultsApp extends React.Component {
