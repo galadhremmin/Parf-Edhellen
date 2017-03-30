@@ -17,7 +17,9 @@ body {
   overflow: hidden;
   text-indent: -9999px;
   width: 140px;
-  background: url(/img/logo-horizontal.png) no-repeat center center;
+  background: url(/img/logotype.svg) no-repeat center center;
+  background-size: 140px 45px;
+  margin-right: 10px;
 }
 #site-container  {
   background: rgba(255, 255, 255, 0.95);
