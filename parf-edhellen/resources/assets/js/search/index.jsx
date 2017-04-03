@@ -3,11 +3,11 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import { EDSearchResults } from './reducers';
-import EDSearchBarApp from './components/search-bar-app';
-import EDSearchResultsApp from './components/search-results-app';
+import { EDSearchResultsReducer } from './reducers';
+import EDSearchBar from './components/search-bar';
+import EDSearchResults from './components/search-results';
 
-const store = createStore(EDSearchResults, undefined /* <- preloaded state */,
+const store = createStore(EDSearchResultsReducer, undefined /* <- preloaded state */,
     applyMiddleware(thunkMiddleware)
 );
 
@@ -15,8 +15,8 @@ window.addEventListener('load', function () {
     ReactDOM.render(
         <Provider store={store}>
             <div>
-                <EDSearchBarApp />
-                <EDSearchResultsApp />
+                <EDSearchBar />
+                <EDSearchResults />
             </div>
         </Provider>,
         document.getElementById('search-component')

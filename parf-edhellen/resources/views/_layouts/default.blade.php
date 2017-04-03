@@ -50,33 +50,6 @@
     <!-- search component -->
     <div id="search-component"></div>
 
-    <div id="search-result-wrapper" class="panel panel-default hidden">
-      <div class="panel-heading">
-        <h3 class="panel-title" id="search-result-wrapper-toggler-title"><span id="search-result-wrapper-toggler" class="glyphicon glyphicon-minus"></span> Matching words (<span id="search-result-count"></span>)</h3>
-      </div>
-      <div class="panel-body results-panel hidden">
-        <div class="row">
-          <div class="col-xs-12" id="search-result-description">
-            These words match your search query. Click on the one most relevant to you, or simply press enter to expand the first item in the list.
-          </div>
-        </div>
-        <div class="row">
-          <div id="search-result"></div>
-        </div>
-      </div>
-      <div class="panel-body results-empty hidden">
-        <div class="row">
-          <div class="col-xs-12">
-            Unfortunately, we were unable to find any words matching your search query. Have you tried a synonym, or perhaps even an antonym?
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="row" id="search-result-navigator">
-      
-    </div>
-    
     <!-- begin content -->
     <div id="result">
       @yield('body')

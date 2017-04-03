@@ -7528,9 +7528,9 @@ module.exports = function bind(fn, thisArg) {
 /* unused harmony export requestNavigation */
 /* unused harmony export receiveNavigation */
 /* harmony export (immutable) */ __webpack_exports__["c"] = advanceSelection;
-/* harmony export (immutable) */ __webpack_exports__["a"] = setSelection;
+/* harmony export (immutable) */ __webpack_exports__["b"] = setSelection;
 /* harmony export (immutable) */ __webpack_exports__["d"] = fetchResults;
-/* harmony export (immutable) */ __webpack_exports__["b"] = beginNavigation;
+/* harmony export (immutable) */ __webpack_exports__["a"] = beginNavigation;
 
 
 
@@ -7631,7 +7631,7 @@ function beginNavigation(word, normalizedWord, index) {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return RECEIVE_NAVIGATION; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return ADVANCE_SELECTION; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return SET_SELECTION; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return EDSearchResults; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return EDSearchResultsReducer; });
 var REQUEST_RESULTS = 'EDSR_REQUEST_RESULTS';
 var REQUEST_NAVIGATION = 'EDSR_REQUEST_NAVIGATION';
 var RECEIVE_RESULTS = 'EDSR_RECEIVE_RESULTS';
@@ -7639,7 +7639,7 @@ var RECEIVE_NAVIGATION = 'EDSR_RECEIVE_NAVIGATION';
 var ADVANCE_SELECTION = 'EDSR_ADVANCE_SELECTION';
 var SET_SELECTION = 'EDSR_SET_SELECTION';
 
-var EDSearchResults = function EDSearchResults() {
+var EDSearchResultsReducer = function EDSearchResultsReducer() {
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
         loading: false,
         items: undefined,
@@ -11287,8 +11287,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_redux_thunk__ = __webpack_require__(241);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_redux_thunk___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_redux_thunk__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__reducers__ = __webpack_require__(64);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_search_bar_app__ = __webpack_require__(258);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_search_results_app__ = __webpack_require__(259);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_search_bar__ = __webpack_require__(258);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_search_results__ = __webpack_require__(259);
 
 
 
@@ -11298,7 +11298,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 
-var store = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3_redux__["a" /* createStore */])(__WEBPACK_IMPORTED_MODULE_5__reducers__["a" /* EDSearchResults */], undefined /* <- preloaded state */
+var store = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3_redux__["a" /* createStore */])(__WEBPACK_IMPORTED_MODULE_5__reducers__["a" /* EDSearchResultsReducer */], undefined /* <- preloaded state */
 , __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3_redux__["b" /* applyMiddleware */])(__WEBPACK_IMPORTED_MODULE_4_redux_thunk___default.a));
 
 window.addEventListener('load', function () {
@@ -11308,8 +11308,8 @@ window.addEventListener('load', function () {
         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
             'div',
             null,
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_6__components_search_bar_app__["a" /* default */], null),
-            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_7__components_search_results_app__["a" /* default */], null)
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_6__components_search_bar__["a" /* default */], null),
+            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_7__components_search_results__["a" /* default */], null)
         )
     ), document.getElementById('search-component'));
 });
@@ -25740,13 +25740,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 
 
-var EDSearchBarApp = function (_React$Component) {
-    _inherits(EDSearchBarApp, _React$Component);
+var EDSearchBar = function (_React$Component) {
+    _inherits(EDSearchBar, _React$Component);
 
-    function EDSearchBarApp(props) {
-        _classCallCheck(this, EDSearchBarApp);
+    function EDSearchBar(props) {
+        _classCallCheck(this, EDSearchBar);
 
-        var _this = _possibleConstructorReturn(this, (EDSearchBarApp.__proto__ || Object.getPrototypeOf(EDSearchBarApp)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (EDSearchBar.__proto__ || Object.getPrototypeOf(EDSearchBar)).call(this, props));
 
         _this.state = {
             isReversed: false,
@@ -25757,7 +25757,7 @@ var EDSearchBarApp = function (_React$Component) {
         return _this;
     }
 
-    _createClass(EDSearchBarApp, [{
+    _createClass(EDSearchBar, [{
         key: 'componentDidMount',
         value: function componentDidMount() {
             var languageNode = document.getElementById('ed-preloaded-languages');
@@ -25831,7 +25831,7 @@ var EDSearchBarApp = function (_React$Component) {
 
             // Dispatch a navigation request
             if (!this.props.loading) {
-                this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["a" /* setSelection */])(0));
+                this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["b" /* setSelection */])(0));
             }
         }
     }, {
@@ -25906,7 +25906,7 @@ var EDSearchBarApp = function (_React$Component) {
         }
     }]);
 
-    return EDSearchBarApp;
+    return EDSearchBar;
 }(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
 
 var mapStateToProps = function mapStateToProps(state) {
@@ -25915,7 +25915,7 @@ var mapStateToProps = function mapStateToProps(state) {
     };
 };
 
-/* harmony default export */ __webpack_exports__["a"] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_react_redux__["b" /* connect */])(mapStateToProps)(EDSearchBarApp);
+/* harmony default export */ __webpack_exports__["a"] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_react_redux__["b" /* connect */])(mapStateToProps)(EDSearchBar);
 
 /***/ }),
 /* 259 */
@@ -25941,21 +25941,16 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 
 
-var EDSearchResultsApp = function (_React$Component) {
-    _inherits(EDSearchResultsApp, _React$Component);
+var EDSearchResults = function (_React$Component) {
+    _inherits(EDSearchResults, _React$Component);
 
-    function EDSearchResultsApp() {
-        _classCallCheck(this, EDSearchResultsApp);
+    function EDSearchResults() {
+        _classCallCheck(this, EDSearchResults);
 
-        return _possibleConstructorReturn(this, (EDSearchResultsApp.__proto__ || Object.getPrototypeOf(EDSearchResultsApp)).apply(this, arguments));
+        return _possibleConstructorReturn(this, (EDSearchResults.__proto__ || Object.getPrototypeOf(EDSearchResults)).apply(this, arguments));
     }
 
-    _createClass(EDSearchResultsApp, [{
-        key: 'navigate',
-        value: function navigate(index, word, normalizedWord) {
-            this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__actions__["a" /* setSelection */])(index));
-        }
-    }, {
+    _createClass(EDSearchResults, [{
         key: 'componentWillReceiveProps',
         value: function componentWillReceiveProps(props) {
             if (props.activeIndex === undefined || props.activeIndex < 0) {
@@ -25968,68 +25963,134 @@ var EDSearchResultsApp = function (_React$Component) {
             }
 
             this.loadedWord = item.word;
-            props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__actions__["b" /* beginNavigation */])(item.word, item.normalizedWord, this.loadedIndex));
+            props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__actions__["a" /* beginNavigation */])(item.word, item.normalizedWord, this.loadedIndex));
+        }
+    }, {
+        key: 'navigate',
+        value: function navigate(index, word, normalizedWord) {
+            this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__actions__["b" /* setSelection */])(index));
+        }
+    }, {
+        key: 'onNavigate',
+        value: function onNavigate(ev, index) {
+            ev.preventDefault();
+            this.navigate(index);
         }
     }, {
         key: 'render',
         value: function render() {
             var _this2 = this;
 
-            if (this.props.items === undefined) {
-                return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', null);
+            if (!Array.isArray(this.props.items)) {
+                return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    null,
+                    JSON.stringify(this.props)
+                );
+            }
+
+            var previousIndex = this.props.activeIndex - 1;
+            var nextIndex = this.props.activeIndex + 1;
+
+            if (previousIndex < 0) {
+                previousIndex = this.props.items.length - 1;
+            }
+
+            if (nextIndex >= this.props.items.length - 1) {
+                nextIndex = 0;
             }
 
             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'div',
-                { className: 'panel panel-default search-result-wrapper' },
+                null,
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'div',
-                    { className: 'panel-heading' },
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'h3',
-                        { className: 'panel-title search-result-wrapper-toggler-title' },
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { className: 'glyphicon glyphicon-minus' }),
-                        'Matching words (',
-                        this.props.items.length,
-                        ')'
-                    )
-                ),
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'div',
-                    { className: __WEBPACK_IMPORTED_MODULE_3_classnames___default()('panel-body', 'results-panel', { 'hidden': this.props.items.length < 1 }) },
+                    { className: 'panel panel-default search-result-wrapper' },
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'div',
-                        { className: 'row' },
+                        { className: 'panel-heading' },
                         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'div',
-                            { className: 'col-xs-12' },
-                            'These words match your search query. Click on the one most relevant to you, or simply press enter to expand the first item in the list.'
+                            'h3',
+                            { className: 'panel-title search-result-wrapper-toggler-title' },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { className: 'glyphicon glyphicon-minus' }),
+                            'Matching words (',
+                            this.props.items.length,
+                            ')'
                         )
                     ),
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'div',
-                        { className: 'row' },
+                        { className: __WEBPACK_IMPORTED_MODULE_3_classnames___default()('panel-body', 'results-panel', { 'hidden': this.props.items.length < 1 }) },
                         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'ul',
-                            { className: 'search-result' },
-                            this.props.items.map(function (item, i) {
-                                return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(EDSearchItem, { key: i, active: i === _this2.props.activeIndex,
-                                    item: item, index: i,
-                                    onNavigate: _this2.navigate.bind(_this2) });
-                            })
+                            'div',
+                            { className: 'row' },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'div',
+                                { className: 'col-xs-12' },
+                                'These words match your search query. Click on the one most relevant to you, or simply press enter to expand the first item in the list.'
+                            )
+                        ),
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'div',
+                            { className: 'row' },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'ul',
+                                { className: 'search-result' },
+                                this.props.items.map(function (item, i) {
+                                    return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(EDSearchItem, { key: i, active: i === _this2.props.activeIndex,
+                                        item: item, index: i,
+                                        onNavigate: _this2.navigate.bind(_this2) });
+                                })
+                            )
+                        )
+                    ),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: __WEBPACK_IMPORTED_MODULE_3_classnames___default()('panel-body', 'results-empty', { 'hidden': this.props.items.length > 0 }) },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'div',
+                            { className: 'row' },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'div',
+                                { className: 'col-xs-12' },
+                                'Unfortunately, we were unable to find any words matching your search query. Have you tried a synonym, or perhaps even an antonym?'
+                            )
                         )
                     )
                 ),
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'div',
-                    { className: __WEBPACK_IMPORTED_MODULE_3_classnames___default()('panel-body', 'results-empty', { 'hidden': this.props.items.length > 0 }) },
+                    { className: __WEBPACK_IMPORTED_MODULE_3_classnames___default()('row', 'search-result-navigator', { 'hidden': this.props.items.length < 1 }) },
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'div',
-                        { className: 'row' },
+                        'nav',
+                        null,
                         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'div',
-                            { className: 'col-xs-12' },
-                            'Unfortunately, we were unable to find any words matching your search query. Have you tried a synonym, or perhaps even an antonym?'
+                            'ul',
+                            { className: 'pager' },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'li',
+                                { className: 'previous' },
+                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                    'a',
+                                    { href: '#', onClick: function onClick(ev) {
+                                            return _this2.onNavigate(ev, previousIndex);
+                                        } },
+                                    '\u2190 ',
+                                    this.props.items[previousIndex].word
+                                )
+                            ),
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'li',
+                                { className: 'next' },
+                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                    'a',
+                                    { href: '#', onClick: function onClick(ev) {
+                                            return _this2.onNavigate(ev, nextIndex);
+                                        } },
+                                    this.props.items[nextIndex].word,
+                                    ' \u2192'
+                                )
+                            )
                         )
                     )
                 )
@@ -26037,7 +26098,7 @@ var EDSearchResultsApp = function (_React$Component) {
         }
     }]);
 
-    return EDSearchResultsApp;
+    return EDSearchResults;
 }(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
 
 var EDSearchItem = function (_React$Component2) {
@@ -26082,7 +26143,7 @@ var mapStateToProps = function mapStateToProps(state) {
     };
 };
 
-/* harmony default export */ __webpack_exports__["a"] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_react_redux__["b" /* connect */])(mapStateToProps)(EDSearchResultsApp);
+/* harmony default export */ __webpack_exports__["a"] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_react_redux__["b" /* connect */])(mapStateToProps)(EDSearchResults);
 
 /***/ })
 /******/ ]);

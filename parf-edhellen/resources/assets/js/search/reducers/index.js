@@ -5,7 +5,7 @@ export const RECEIVE_NAVIGATION = 'EDSR_RECEIVE_NAVIGATION';
 export const ADVANCE_SELECTION  = 'EDSR_ADVANCE_SELECTION';
 export const SET_SELECTION      = 'EDSR_SET_SELECTION';
 
-export const EDSearchResults = (state = {
+export const EDSearchResultsReducer = (state = {
     loading: false,
     items: undefined,
     itemIndex: -1,

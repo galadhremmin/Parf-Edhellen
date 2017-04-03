@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { fetchResults, setSelection, advanceSelection } from '../actions';
 
-class EDSearchBarApp extends React.Component {
+class EDSearchBar extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -89,7 +89,7 @@ class EDSearchBarApp extends React.Component {
         const statusClasses = classNames('glyphicon', this.props.loading
             ? 'glyphicon-refresh loading' : 'glyphicon-search');
 
-        return <form onSubmit={this.navigate.bind(this)}>
+        return (<form onSubmit={this.navigate.bind(this)}>
             <div className="row">
                 <div className="col-md-12">
                     <div className="input-group input-group-lg">
@@ -123,7 +123,7 @@ class EDSearchBarApp extends React.Component {
                     </label>
                 </div>
             </div>
-        </form>;
+        </form>);
     }
 }
 
@@ -133,4 +133,4 @@ const mapStateToProps = (state) => {
     };
 };
 
-export default connect(mapStateToProps)(EDSearchBarApp);
+export default connect(mapStateToProps)(EDSearchBar);
