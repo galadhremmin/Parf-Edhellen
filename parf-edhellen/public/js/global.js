@@ -5127,7 +5127,7 @@ function isPlainObject(value) {
     funcToString.call(Ctor) == objectCtorString;
 }
 
-/* harmony default export */ __webpack_exports__["a"] = isPlainObject;
+/* harmony default export */ __webpack_exports__["a"] = (isPlainObject);
 
 
 /***/ }),
@@ -7923,7 +7923,7 @@ module.exports = getActiveElement;
 /** Built-in value references. */
 var Symbol = __WEBPACK_IMPORTED_MODULE_0__root_js__["a" /* default */].Symbol;
 
-/* harmony default export */ __webpack_exports__["a"] = Symbol;
+/* harmony default export */ __webpack_exports__["a"] = (Symbol);
 
 
 /***/ }),
@@ -11287,8 +11287,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_redux_thunk__ = __webpack_require__(241);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_redux_thunk___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_redux_thunk__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__reducers__ = __webpack_require__(64);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_search_bar__ = __webpack_require__(258);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_search_results__ = __webpack_require__(259);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_search_bar__ = __webpack_require__(123);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_search_results__ = __webpack_require__(124);
 
 
 
@@ -12162,8 +12162,433 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 123 */,
-/* 124 */,
+/* 123 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_redux__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames__ = __webpack_require__(65);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_classnames__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__actions__ = __webpack_require__(63);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+
+
+
+var EDSearchBar = function (_React$Component) {
+    _inherits(EDSearchBar, _React$Component);
+
+    function EDSearchBar(props) {
+        _classCallCheck(this, EDSearchBar);
+
+        var _this = _possibleConstructorReturn(this, (EDSearchBar.__proto__ || Object.getPrototypeOf(EDSearchBar)).call(this, props));
+
+        _this.state = {
+            isReversed: false,
+            word: '',
+            languageId: 0
+        };
+        _this.throttle = 0;
+        return _this;
+    }
+
+    _createClass(EDSearchBar, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            var languageNode = document.getElementById('ed-preloaded-languages');
+            this.setState({
+                languages: [{
+                    ID: 0,
+                    Name: 'All languages'
+                }].concat(_toConsumableArray(JSON.parse(languageNode.textContent)))
+            });
+        }
+    }, {
+        key: 'searchKeyDown',
+        value: function searchKeyDown(ev) {
+            var direction = ev.which === 40 ? 1 : ev.which === 38 ? -1 : undefined;
+
+            if (direction !== undefined) {
+                ev.preventDefault();
+                this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["c" /* advanceSelection */])(direction));
+            }
+        }
+    }, {
+        key: 'wordChange',
+        value: function wordChange(ev) {
+            this.setState({
+                word: ev.target.value
+            });
+
+            this.search();
+        }
+    }, {
+        key: 'reverseChange',
+        value: function reverseChange(ev) {
+            this.setState({
+                isReversed: ev.target.checked
+            });
+
+            this.search();
+        }
+    }, {
+        key: 'languageChange',
+        value: function languageChange(ev) {
+            this.setState({
+                languageId: parseInt(ev.target.value, /* radix: */10)
+            });
+
+            this.search();
+        }
+    }, {
+        key: 'search',
+        value: function search() {
+            var _this2 = this;
+
+            if (/^\s*$/.test(this.state.word)) {
+                return; // empty search result
+            }
+
+            if (this.throttle) {
+                window.clearTimeout(this.throttle);
+            }
+
+            this.throttle = window.setTimeout(function () {
+                _this2.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["d" /* fetchResults */])(_this2.state.word, _this2.state.isReversed, _this2.state.languageId));
+                _this2.throttle = 0;
+            }, 500);
+        }
+    }, {
+        key: 'navigate',
+        value: function navigate(ev) {
+            // Override default behaviour
+            ev.preventDefault();
+
+            // Dispatch a navigation request
+            if (!this.props.loading) {
+                this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["b" /* setSelection */])(0));
+            }
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var fieldClasses = __WEBPACK_IMPORTED_MODULE_2_classnames___default()('form-control', { 'disabled': this.props.loading });
+            var statusClasses = __WEBPACK_IMPORTED_MODULE_2_classnames___default()('glyphicon', this.props.loading ? 'glyphicon-refresh loading' : 'glyphicon-search');
+
+            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'form',
+                { onSubmit: this.navigate.bind(this) },
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    { className: 'row' },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: 'col-md-12' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'div',
+                            { className: 'input-group input-group-lg' },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'span',
+                                { className: 'input-group-addon' },
+                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                    'span',
+                                    { className: statusClasses },
+                                    ' '
+                                )
+                            ),
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'search', className: fieldClasses,
+                                placeholder: 'What are you looking for?',
+                                tabIndex: '1',
+                                name: 'word',
+                                autoComplete: 'off',
+                                autoCapitalize: 'off',
+                                autoFocus: 'true',
+                                role: 'presentation',
+                                value: this.state.word,
+                                onKeyDown: this.searchKeyDown.bind(this),
+                                onChange: this.wordChange.bind(this) })
+                        )
+                    )
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    { className: 'row' },
+                    this.state.languages ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'select',
+                        { className: 'search-language-select', onChange: this.languageChange.bind(this) },
+                        this.state.languages.map(function (l) {
+                            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'option',
+                                { value: l.ID, key: l.ID },
+                                l.Name
+                            );
+                        })
+                    ) : '',
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: 'checkbox input-sm search-reverse-box-wrapper' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'label',
+                            null,
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'checkbox', name: 'isReversed',
+                                checked: this.state.isReversed,
+                                onChange: this.reverseChange.bind(this) }),
+                            ' Reverse search'
+                        )
+                    )
+                )
+            );
+        }
+    }]);
+
+    return EDSearchBar;
+}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
+
+var mapStateToProps = function mapStateToProps(state) {
+    return {
+        loading: state.loading
+    };
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_react_redux__["b" /* connect */])(mapStateToProps)(EDSearchBar));
+
+/***/ }),
+/* 124 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_redux__ = __webpack_require__(51);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions__ = __webpack_require__(63);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_classnames__ = __webpack_require__(65);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_classnames__);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+
+
+
+var EDSearchResults = function (_React$Component) {
+    _inherits(EDSearchResults, _React$Component);
+
+    function EDSearchResults() {
+        _classCallCheck(this, EDSearchResults);
+
+        return _possibleConstructorReturn(this, (EDSearchResults.__proto__ || Object.getPrototypeOf(EDSearchResults)).apply(this, arguments));
+    }
+
+    _createClass(EDSearchResults, [{
+        key: 'componentWillReceiveProps',
+        value: function componentWillReceiveProps(props) {
+            if (props.activeIndex === undefined || props.activeIndex < 0) {
+                return;
+            }
+
+            var item = props.items[props.activeIndex];
+            if (item.word === this.loadedWord) {
+                return;
+            }
+
+            this.loadedWord = item.word;
+            props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__actions__["a" /* beginNavigation */])(item.word, item.normalizedWord, this.loadedIndex));
+        }
+    }, {
+        key: 'navigate',
+        value: function navigate(index, word, normalizedWord) {
+            this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__actions__["b" /* setSelection */])(index));
+        }
+    }, {
+        key: 'onNavigate',
+        value: function onNavigate(ev, index) {
+            ev.preventDefault();
+            this.navigate(index);
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _this2 = this;
+
+            if (!Array.isArray(this.props.items)) {
+                return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', null);
+            }
+
+            var previousIndex = this.props.activeIndex - 1;
+            var nextIndex = this.props.activeIndex + 1;
+
+            if (previousIndex < 0) {
+                previousIndex = this.props.items.length - 1;
+            }
+
+            if (nextIndex >= this.props.items.length - 1) {
+                nextIndex = 0;
+            }
+
+            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'div',
+                null,
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    { className: 'panel panel-default search-result-wrapper' },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: 'panel-heading' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'h3',
+                            { className: 'panel-title search-result-wrapper-toggler-title' },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { className: 'glyphicon glyphicon-minus' }),
+                            'Matching words (',
+                            this.props.items.length,
+                            ')'
+                        )
+                    ),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: __WEBPACK_IMPORTED_MODULE_3_classnames___default()('panel-body', 'results-panel', { 'hidden': this.props.items.length < 1 }) },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'div',
+                            { className: 'row' },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'div',
+                                { className: 'col-xs-12' },
+                                'These words match your search query. Click on the one most relevant to you, or simply press enter to expand the first item in the list.'
+                            )
+                        ),
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'div',
+                            { className: 'row' },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'ul',
+                                { className: 'search-result' },
+                                this.props.items.map(function (item, i) {
+                                    return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(EDSearchItem, { key: i, active: i === _this2.props.activeIndex,
+                                        item: item, index: i,
+                                        onNavigate: _this2.navigate.bind(_this2) });
+                                })
+                            )
+                        )
+                    ),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        { className: __WEBPACK_IMPORTED_MODULE_3_classnames___default()('panel-body', 'results-empty', { 'hidden': this.props.items.length > 0 }) },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'div',
+                            { className: 'row' },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'div',
+                                { className: 'col-xs-12' },
+                                'Unfortunately, we were unable to find any words matching your search query. Have you tried a synonym, or perhaps even an antonym?'
+                            )
+                        )
+                    )
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    { className: __WEBPACK_IMPORTED_MODULE_3_classnames___default()('row', 'search-result-navigator', { 'hidden': this.props.items.length < 1 }) },
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'nav',
+                        null,
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'ul',
+                            { className: 'pager' },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'li',
+                                { className: 'previous' },
+                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                    'a',
+                                    { href: '#', onClick: function onClick(ev) {
+                                            return _this2.onNavigate(ev, previousIndex);
+                                        } },
+                                    '\u2190 ',
+                                    this.props.items[previousIndex].word
+                                )
+                            ),
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'li',
+                                { className: 'next' },
+                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                    'a',
+                                    { href: '#', onClick: function onClick(ev) {
+                                            return _this2.onNavigate(ev, nextIndex);
+                                        } },
+                                    this.props.items[nextIndex].word,
+                                    ' \u2192'
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+        }
+    }]);
+
+    return EDSearchResults;
+}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
+
+var EDSearchItem = function (_React$Component2) {
+    _inherits(EDSearchItem, _React$Component2);
+
+    function EDSearchItem() {
+        _classCallCheck(this, EDSearchItem);
+
+        return _possibleConstructorReturn(this, (EDSearchItem.__proto__ || Object.getPrototypeOf(EDSearchItem)).apply(this, arguments));
+    }
+
+    _createClass(EDSearchItem, [{
+        key: 'navigate',
+        value: function navigate(ev) {
+            ev.preventDefault();
+            this.props.onNavigate(this.props.index, this.props.item.word, this.props.item.normalizedWord);
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var cssClass = __WEBPACK_IMPORTED_MODULE_3_classnames___default()({ 'selected': this.props.active });
+            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'li',
+                null,
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'a',
+                    { href: '#', className: cssClass, onClick: this.navigate.bind(this) },
+                    this.props.item.word
+                )
+            );
+        }
+    }]);
+
+    return EDSearchItem;
+}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
+
+var mapStateToProps = function mapStateToProps(state) {
+    return {
+        items: state.items,
+        loading: state.loading,
+        activeIndex: state.itemIndex
+    };
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_react_redux__["b" /* connect */])(mapStateToProps)(EDSearchResults));
+
+/***/ }),
 /* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -13053,7 +13478,7 @@ function baseGetTag(value) {
     : __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__objectToString_js__["a" /* default */])(value);
 }
 
-/* harmony default export */ __webpack_exports__["a"] = baseGetTag;
+/* harmony default export */ __webpack_exports__["a"] = (baseGetTag);
 
 
 /***/ }),
@@ -13064,7 +13489,7 @@ function baseGetTag(value) {
 /* WEBPACK VAR INJECTION */(function(global) {/** Detect free variable `global` from Node.js. */
 var freeGlobal = typeof global == 'object' && global && global.Object === Object && global;
 
-/* harmony default export */ __webpack_exports__["a"] = freeGlobal;
+/* harmony default export */ __webpack_exports__["a"] = (freeGlobal);
 
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(102)))
 
@@ -13079,7 +13504,7 @@ var freeGlobal = typeof global == 'object' && global && global.Object === Object
 /** Built-in value references. */
 var getPrototype = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__overArg_js__["a" /* default */])(Object.getPrototypeOf, Object);
 
-/* harmony default export */ __webpack_exports__["a"] = getPrototype;
+/* harmony default export */ __webpack_exports__["a"] = (getPrototype);
 
 
 /***/ }),
@@ -13133,7 +13558,7 @@ function getRawTag(value) {
   return result;
 }
 
-/* harmony default export */ __webpack_exports__["a"] = getRawTag;
+/* harmony default export */ __webpack_exports__["a"] = (getRawTag);
 
 
 /***/ }),
@@ -13162,7 +13587,7 @@ function objectToString(value) {
   return nativeObjectToString.call(value);
 }
 
-/* harmony default export */ __webpack_exports__["a"] = objectToString;
+/* harmony default export */ __webpack_exports__["a"] = (objectToString);
 
 
 /***/ }),
@@ -13184,7 +13609,7 @@ function overArg(func, transform) {
   };
 }
 
-/* harmony default export */ __webpack_exports__["a"] = overArg;
+/* harmony default export */ __webpack_exports__["a"] = (overArg);
 
 
 /***/ }),
@@ -13201,7 +13626,7 @@ var freeSelf = typeof self == 'object' && self && self.Object === Object && self
 /** Used as a reference to the global object. */
 var root = __WEBPACK_IMPORTED_MODULE_0__freeGlobal_js__["a" /* default */] || freeSelf || Function('return this')();
 
-/* harmony default export */ __webpack_exports__["a"] = root;
+/* harmony default export */ __webpack_exports__["a"] = (root);
 
 
 /***/ }),
@@ -13237,7 +13662,7 @@ function isObjectLike(value) {
   return value != null && typeof value == 'object';
 }
 
-/* harmony default export */ __webpack_exports__["a"] = isObjectLike;
+/* harmony default export */ __webpack_exports__["a"] = (isObjectLike);
 
 
 /***/ }),
@@ -22834,7 +23259,7 @@ function createConnect() {
   };
 }
 
-/* harmony default export */ __webpack_exports__["a"] = createConnect();
+/* harmony default export */ __webpack_exports__["a"] = (createConnect());
 
 /***/ }),
 /* 223 */
@@ -22865,7 +23290,7 @@ function whenMapDispatchToPropsIsObject(mapDispatchToProps) {
   }) : undefined;
 }
 
-/* harmony default export */ __webpack_exports__["a"] = [whenMapDispatchToPropsIsFunction, whenMapDispatchToPropsIsMissing, whenMapDispatchToPropsIsObject];
+/* harmony default export */ __webpack_exports__["a"] = ([whenMapDispatchToPropsIsFunction, whenMapDispatchToPropsIsMissing, whenMapDispatchToPropsIsObject]);
 
 /***/ }),
 /* 224 */
@@ -22887,7 +23312,7 @@ function whenMapStateToPropsIsMissing(mapStateToProps) {
   }) : undefined;
 }
 
-/* harmony default export */ __webpack_exports__["a"] = [whenMapStateToPropsIsFunction, whenMapStateToPropsIsMissing];
+/* harmony default export */ __webpack_exports__["a"] = ([whenMapStateToPropsIsFunction, whenMapStateToPropsIsMissing]);
 
 /***/ }),
 /* 225 */
@@ -22943,7 +23368,7 @@ function whenMergePropsIsOmitted(mergeProps) {
   } : undefined;
 }
 
-/* harmony default export */ __webpack_exports__["a"] = [whenMergePropsIsFunction, whenMergePropsIsOmitted];
+/* harmony default export */ __webpack_exports__["a"] = ([whenMergePropsIsFunction, whenMergePropsIsOmitted]);
 /* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(0)))
 
 /***/ }),
@@ -25705,445 +26130,6 @@ module.exports = function(module) {
 __webpack_require__(103);
 module.exports = __webpack_require__(104);
 
-
-/***/ }),
-/* 250 */,
-/* 251 */,
-/* 252 */,
-/* 253 */,
-/* 254 */,
-/* 255 */,
-/* 256 */,
-/* 257 */,
-/* 258 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_redux__ = __webpack_require__(51);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames__ = __webpack_require__(65);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_classnames__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__actions__ = __webpack_require__(63);
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-
-
-
-
-
-var EDSearchBar = function (_React$Component) {
-    _inherits(EDSearchBar, _React$Component);
-
-    function EDSearchBar(props) {
-        _classCallCheck(this, EDSearchBar);
-
-        var _this = _possibleConstructorReturn(this, (EDSearchBar.__proto__ || Object.getPrototypeOf(EDSearchBar)).call(this, props));
-
-        _this.state = {
-            isReversed: false,
-            word: '',
-            languageId: 0
-        };
-        _this.throttle = 0;
-        return _this;
-    }
-
-    _createClass(EDSearchBar, [{
-        key: 'componentDidMount',
-        value: function componentDidMount() {
-            var languageNode = document.getElementById('ed-preloaded-languages');
-            this.setState({
-                languages: [{
-                    ID: 0,
-                    Name: 'All languages'
-                }].concat(_toConsumableArray(JSON.parse(languageNode.textContent)))
-            });
-        }
-    }, {
-        key: 'searchKeyDown',
-        value: function searchKeyDown(ev) {
-            var direction = ev.which === 40 ? 1 : ev.which === 38 ? -1 : undefined;
-
-            if (direction !== undefined) {
-                ev.preventDefault();
-                this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["c" /* advanceSelection */])(direction));
-            }
-        }
-    }, {
-        key: 'wordChange',
-        value: function wordChange(ev) {
-            this.setState({
-                word: ev.target.value
-            });
-
-            this.search();
-        }
-    }, {
-        key: 'reverseChange',
-        value: function reverseChange(ev) {
-            this.setState({
-                isReversed: ev.target.checked
-            });
-
-            this.search();
-        }
-    }, {
-        key: 'languageChange',
-        value: function languageChange(ev) {
-            this.setState({
-                languageId: parseInt(ev.target.value, /* radix: */10)
-            });
-
-            this.search();
-        }
-    }, {
-        key: 'search',
-        value: function search() {
-            var _this2 = this;
-
-            if (/^\s*$/.test(this.state.word)) {
-                return; // empty search result
-            }
-
-            if (this.throttle) {
-                window.clearTimeout(this.throttle);
-            }
-
-            this.throttle = window.setTimeout(function () {
-                _this2.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["d" /* fetchResults */])(_this2.state.word, _this2.state.isReversed, _this2.state.languageId));
-                _this2.throttle = 0;
-            }, 500);
-        }
-    }, {
-        key: 'navigate',
-        value: function navigate(ev) {
-            // Override default behaviour
-            ev.preventDefault();
-
-            // Dispatch a navigation request
-            if (!this.props.loading) {
-                this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["b" /* setSelection */])(0));
-            }
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var fieldClasses = __WEBPACK_IMPORTED_MODULE_2_classnames___default()('form-control', { 'disabled': this.props.loading });
-            var statusClasses = __WEBPACK_IMPORTED_MODULE_2_classnames___default()('glyphicon', this.props.loading ? 'glyphicon-refresh loading' : 'glyphicon-search');
-
-            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                'form',
-                { onSubmit: this.navigate.bind(this) },
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'div',
-                    { className: 'row' },
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'div',
-                        { className: 'col-md-12' },
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'div',
-                            { className: 'input-group input-group-lg' },
-                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                'span',
-                                { className: 'input-group-addon' },
-                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                    'span',
-                                    { className: statusClasses },
-                                    ' '
-                                )
-                            ),
-                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'search', className: fieldClasses,
-                                placeholder: 'What are you looking for?',
-                                tabIndex: '1',
-                                name: 'word',
-                                autoComplete: 'off',
-                                autoCapitalize: 'off',
-                                autoFocus: 'true',
-                                role: 'presentation',
-                                value: this.state.word,
-                                onKeyDown: this.searchKeyDown.bind(this),
-                                onChange: this.wordChange.bind(this) })
-                        )
-                    )
-                ),
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'div',
-                    { className: 'row' },
-                    this.state.languages ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'select',
-                        { className: 'search-language-select', onChange: this.languageChange.bind(this) },
-                        this.state.languages.map(function (l) {
-                            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                'option',
-                                { value: l.ID, key: l.ID },
-                                l.Name
-                            );
-                        })
-                    ) : '',
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'div',
-                        { className: 'checkbox input-sm search-reverse-box-wrapper' },
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'label',
-                            null,
-                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'checkbox', name: 'isReversed',
-                                checked: this.state.isReversed,
-                                onChange: this.reverseChange.bind(this) }),
-                            ' Reverse search'
-                        )
-                    )
-                )
-            );
-        }
-    }]);
-
-    return EDSearchBar;
-}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
-
-var mapStateToProps = function mapStateToProps(state) {
-    return {
-        loading: state.loading
-    };
-};
-
-/* harmony default export */ __webpack_exports__["a"] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_react_redux__["b" /* connect */])(mapStateToProps)(EDSearchBar);
-
-/***/ }),
-/* 259 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_redux__ = __webpack_require__(51);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions__ = __webpack_require__(63);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_classnames__ = __webpack_require__(65);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_classnames__);
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-
-
-
-
-
-var EDSearchResults = function (_React$Component) {
-    _inherits(EDSearchResults, _React$Component);
-
-    function EDSearchResults() {
-        _classCallCheck(this, EDSearchResults);
-
-        return _possibleConstructorReturn(this, (EDSearchResults.__proto__ || Object.getPrototypeOf(EDSearchResults)).apply(this, arguments));
-    }
-
-    _createClass(EDSearchResults, [{
-        key: 'componentWillReceiveProps',
-        value: function componentWillReceiveProps(props) {
-            if (props.activeIndex === undefined || props.activeIndex < 0) {
-                return;
-            }
-
-            var item = props.items[props.activeIndex];
-            if (item.word === this.loadedWord) {
-                return;
-            }
-
-            this.loadedWord = item.word;
-            props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__actions__["a" /* beginNavigation */])(item.word, item.normalizedWord, this.loadedIndex));
-        }
-    }, {
-        key: 'navigate',
-        value: function navigate(index, word, normalizedWord) {
-            this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__actions__["b" /* setSelection */])(index));
-        }
-    }, {
-        key: 'onNavigate',
-        value: function onNavigate(ev, index) {
-            ev.preventDefault();
-            this.navigate(index);
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var _this2 = this;
-
-            if (!Array.isArray(this.props.items)) {
-                return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'div',
-                    null,
-                    JSON.stringify(this.props)
-                );
-            }
-
-            var previousIndex = this.props.activeIndex - 1;
-            var nextIndex = this.props.activeIndex + 1;
-
-            if (previousIndex < 0) {
-                previousIndex = this.props.items.length - 1;
-            }
-
-            if (nextIndex >= this.props.items.length - 1) {
-                nextIndex = 0;
-            }
-
-            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                'div',
-                null,
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'div',
-                    { className: 'panel panel-default search-result-wrapper' },
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'div',
-                        { className: 'panel-heading' },
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'h3',
-                            { className: 'panel-title search-result-wrapper-toggler-title' },
-                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { className: 'glyphicon glyphicon-minus' }),
-                            'Matching words (',
-                            this.props.items.length,
-                            ')'
-                        )
-                    ),
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'div',
-                        { className: __WEBPACK_IMPORTED_MODULE_3_classnames___default()('panel-body', 'results-panel', { 'hidden': this.props.items.length < 1 }) },
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'div',
-                            { className: 'row' },
-                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                'div',
-                                { className: 'col-xs-12' },
-                                'These words match your search query. Click on the one most relevant to you, or simply press enter to expand the first item in the list.'
-                            )
-                        ),
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'div',
-                            { className: 'row' },
-                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                'ul',
-                                { className: 'search-result' },
-                                this.props.items.map(function (item, i) {
-                                    return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(EDSearchItem, { key: i, active: i === _this2.props.activeIndex,
-                                        item: item, index: i,
-                                        onNavigate: _this2.navigate.bind(_this2) });
-                                })
-                            )
-                        )
-                    ),
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'div',
-                        { className: __WEBPACK_IMPORTED_MODULE_3_classnames___default()('panel-body', 'results-empty', { 'hidden': this.props.items.length > 0 }) },
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'div',
-                            { className: 'row' },
-                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                'div',
-                                { className: 'col-xs-12' },
-                                'Unfortunately, we were unable to find any words matching your search query. Have you tried a synonym, or perhaps even an antonym?'
-                            )
-                        )
-                    )
-                ),
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'div',
-                    { className: __WEBPACK_IMPORTED_MODULE_3_classnames___default()('row', 'search-result-navigator', { 'hidden': this.props.items.length < 1 }) },
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'nav',
-                        null,
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'ul',
-                            { className: 'pager' },
-                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                'li',
-                                { className: 'previous' },
-                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                    'a',
-                                    { href: '#', onClick: function onClick(ev) {
-                                            return _this2.onNavigate(ev, previousIndex);
-                                        } },
-                                    '\u2190 ',
-                                    this.props.items[previousIndex].word
-                                )
-                            ),
-                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                'li',
-                                { className: 'next' },
-                                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                                    'a',
-                                    { href: '#', onClick: function onClick(ev) {
-                                            return _this2.onNavigate(ev, nextIndex);
-                                        } },
-                                    this.props.items[nextIndex].word,
-                                    ' \u2192'
-                                )
-                            )
-                        )
-                    )
-                )
-            );
-        }
-    }]);
-
-    return EDSearchResults;
-}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
-
-var EDSearchItem = function (_React$Component2) {
-    _inherits(EDSearchItem, _React$Component2);
-
-    function EDSearchItem() {
-        _classCallCheck(this, EDSearchItem);
-
-        return _possibleConstructorReturn(this, (EDSearchItem.__proto__ || Object.getPrototypeOf(EDSearchItem)).apply(this, arguments));
-    }
-
-    _createClass(EDSearchItem, [{
-        key: 'navigate',
-        value: function navigate(ev) {
-            ev.preventDefault();
-            this.props.onNavigate(this.props.index, this.props.item.word, this.props.item.normalizedWord);
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var cssClass = __WEBPACK_IMPORTED_MODULE_3_classnames___default()({ 'selected': this.props.active });
-            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                'li',
-                null,
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'a',
-                    { href: '#', className: cssClass, onClick: this.navigate.bind(this) },
-                    this.props.item.word
-                )
-            );
-        }
-    }]);
-
-    return EDSearchItem;
-}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
-
-var mapStateToProps = function mapStateToProps(state) {
-    return {
-        items: state.items,
-        loading: state.loading,
-        activeIndex: state.itemIndex
-    };
-};
-
-/* harmony default export */ __webpack_exports__["a"] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_react_redux__["b" /* connect */])(mapStateToProps)(EDSearchResults);
 
 /***/ })
 /******/ ]);

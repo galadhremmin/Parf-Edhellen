@@ -27,7 +27,6 @@ class TranslationRepository
                 ->get();
         } else {
             $keywords = Keyword::findByWord($word, $reversed)
-                ->where('IsActive', '=', 1)
                 ->select('Keyword as k', 'NormalizedKeyword as nk')
                 ->get();
         }
@@ -74,11 +73,7 @@ class TranslationRepository
     protected static function getSensesForWord(string $word) 
     {
         $rows = DB::table('keywords')
-            ->where([
-                ['IsActive', '=', 1],
-                ['NormalizedKeyword', 'like', $word]
-            ])
-            ->whereNotNull('SenseID')
+            ->where('NormalizedKeyword', 'like', $word)
             ->select('SenseID')
             ->get();
 

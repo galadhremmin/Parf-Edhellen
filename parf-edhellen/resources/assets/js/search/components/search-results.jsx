@@ -30,7 +30,7 @@ class EDSearchResults extends React.Component {
 
     render() {
         if (!Array.isArray(this.props.items)) {
-            return <div>{JSON.stringify(this.props)}</div>;
+            return <div></div>;
         }
 
         let previousIndex = this.props.activeIndex - 1;

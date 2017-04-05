@@ -8,8 +8,7 @@ create table if not exists `sense` (
 
 -- Add foreign key to keywords and translation
 alter table `keywords` add `SenseID` int null;
-alter table `keywords` add `IsSense` bit null null default 0;
-alter table `keywords` add `IsActive` bit null null default 1;
+alter table `keywords` add `IsSense` bit not null default 0;
 alter table `translation` add `SenseID` int null;
 alter table `translation` add index `idx_senseID` (`SenseID`);
 
@@ -40,20 +39,32 @@ delete t from `translation` as t
   where t.`Latest` = 0 and not exists(select 1 from word where `KeyID` = t.`WordID`);
 
 -- Transition from indexes to keywords
-insert into `keywords` (`IsActive`, `IsSense`, `SenseID`, `WordID`, `Keyword`, `NormalizedKeyword`, `ReversedNormalizedKeyword`)
+insert into `keywords` (`IsSense`, `SenseID`, `WordID`, `Keyword`, `NormalizedKeyword`, `ReversedNormalizedKeyword`)
   select distinct 
-    1, 0, n.`IdentifierID`, w.`KeyID`, w.`Key`, w.`NormalizedKey`, w.`ReversedNormalizedKey`
+    0, n.`IdentifierID`, w.`KeyID`, w.`Key`, w.`NormalizedKey`, w.`ReversedNormalizedKey`
   from `translation` as t
     inner join `word` as w on w.`KeyID` = t.`WordID`
     inner join `namespace` as n on n.`NamespaceID` = t.`NamespaceID`
   where t.`Deleted` = 0 and t.`Index` = 1 and w.`KeyID` <> n.`IdentifierID`;
 
 -- Add keywords to senses
-insert into `keywords` (`IsActive`, `IsSense`, `SenseID`, `WordID`, `Keyword`, `NormalizedKeyword`, `ReversedNormalizedKeyword`)
+insert into `keywords` (`IsSense`, `SenseID`, `WordID`, `Keyword`, `NormalizedKeyword`, `ReversedNormalizedKeyword`)
   select distinct
-    coalesce((select 1 from `translation` as t where t.`Latest` = 1 and t.`Deleted` = 0 and t.`SenseID` = s.`SenseID` limit 1), 0), 1, s.`SenseID`, w.`KeyID`, w.`Key`, w.`NormalizedKey`, w.`ReversedNormalizedKey`
+    1, s.`SenseID`, w.`KeyID`, w.`Key`, w.`NormalizedKey`, w.`ReversedNormalizedKey`
   from `sense` as s
-    inner join `word` as w on w.`KeyID` = s.`SenseID`;
+    inner join `word` as w on w.`KeyID` = s.`SenseID`
+  where exists (
+    select 1 from `translation` as t where t.`Latest` = 1 and t.`Deleted` = 0 and t.`SenseID` = s.`SenseID` limit 1
+  );
+
+insert into `keywords` (`IsSense`, `SenseID`, `TranslationID`, `WordID`, `Keyword`, `NormalizedKeyword`, `ReversedNormalizedKeyword`)
+  select distinct
+    0, t.`SenseID`, t.`TranslationID`, t.`WordID`, w.`Key`, w.`NormalizedKey`, w.`ReversedNormalizedKey`
+  from `translation` as t
+    inner join `word` as w on w.`KeyID` = t.`WordID`
+  where t.`Latest` = 1 and t.`Deleted` = 0 and not exists(
+    select 1 from `keywords` as k where k.`SenseID` = t.`SenseID` and k.`Keyword` = w.`Key` and k.`WordID` = w.`KeyID` limit 1
+  );
 
 -- Transition existing definitions to markdown format
 update translation set comments = replace(comments, '~', '**');
