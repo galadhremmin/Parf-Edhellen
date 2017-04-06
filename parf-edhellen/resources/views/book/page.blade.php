@@ -1,6 +1,6 @@
 @extends('_layouts.default')
 
-@section('title', 'About')
+@section('title', $word)
 
 @section('body')
 @include('book._page', $sections)

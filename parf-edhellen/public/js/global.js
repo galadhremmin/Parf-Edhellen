@@ -7599,12 +7599,19 @@ function fetchResults(word) {
     };
 }
 
-function beginNavigation(word, normalizedWord, index) {
+function beginNavigation(word, normalizedWord, index, modifyState) {
     // TODO: TEMPORARY! Must be replaced with a React components that are not vulnerable to XSS ...
+    if (modifyState === undefined) {
+        modifyState = true;
+    }
 
     var address = '/w/' + encodeURIComponent(normalizedWord || word);
     var title = word + ' - Parf Edhellen';
-    window.history.pushState(null, title, address);
+
+    if (modifyState) {
+        window.history.pushState(null, title, address);
+    }
+    document.title = title; // because most browsers doesn't change the document title when pushing state
 
     return function (dispatch) {
         dispatch(requestNavigation(word, normalizedWord || undefined, index || undefined));
@@ -12388,16 +12395,33 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 
 
+/**
+ * Represents a collection of search results.
+ */
+
 var EDSearchResults = function (_React$Component) {
     _inherits(EDSearchResults, _React$Component);
 
     function EDSearchResults() {
         _classCallCheck(this, EDSearchResults);
 
-        return _possibleConstructorReturn(this, (EDSearchResults.__proto__ || Object.getPrototypeOf(EDSearchResults)).apply(this, arguments));
+        var _this = _possibleConstructorReturn(this, (EDSearchResults.__proto__ || Object.getPrototypeOf(EDSearchResults)).call(this));
+
+        _this.popStateHandler = _this.onPopState.bind(_this);
+        return _this;
     }
 
     _createClass(EDSearchResults, [{
+        key: 'componentWillMount',
+        value: function componentWillMount() {
+            window.addEventListener('popstate', this.popStateHandler);
+        }
+    }, {
+        key: 'componentWillUnmount',
+        value: function componentWillUnmount() {
+            window.removeEventListener(this.popStateHandler);
+        }
+    }, {
         key: 'componentWillReceiveProps',
         value: function componentWillReceiveProps(props) {
             if (props.activeIndex === undefined || props.activeIndex < 0) {
@@ -12422,6 +12446,41 @@ var EDSearchResults = function (_React$Component) {
         value: function onNavigate(ev, index) {
             ev.preventDefault();
             this.navigate(index);
+        }
+
+        /**
+         * This is an unfortunate hack which implements default behavior for the forward and back buttons.
+         * This method should be connected to the _popstate_ window event. It examines the URL of the previous
+         * (or forward) state and determines whether the word (if found) exists within the current search
+         * result set. If it is present, it navigates to the word, and dispatches a navigation signal.
+         * 
+         * @param {*} ev 
+         */
+
+    }, {
+        key: 'onPopState',
+        value: function onPopState(ev) {
+            // The path name should be /w/<word>
+            var path = location.pathname;
+            if (path.substr(0, 3) !== '/w/') {
+                return; // the browser is going somewhere else, so do nothing.
+            }
+
+            // retrieve the word and attempt to locate it within the search result set.
+            var normalizedWord = decodeURIComponent(path.substr(3));
+            var index = this.props.items ? this.props.items.findIndex(function (i) {
+                return i.normalizedWord === normalizedWord;
+            }) : -1;
+
+            if (index > -1) {
+                // Since the word exists in the search result set, update the current selection.
+                // Make sure to update the _loadedWord_ property first, to cancel default behaviour
+                // implemented in the _componentWillReceiveProps_ method.
+                this.loadedWord = this.props.items[index].word;
+                this.navigate(index);
+            }
+
+            this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__actions__["a" /* beginNavigation */])(normalizedWord, undefined, undefined, false));
         }
     }, {
         key: 'render',
@@ -12543,6 +12602,11 @@ var EDSearchResults = function (_React$Component) {
 
     return EDSearchResults;
 }(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
+
+/**
+ * Represents a single search result item.
+ */
+
 
 var EDSearchItem = function (_React$Component2) {
     _inherits(EDSearchItem, _React$Component2);

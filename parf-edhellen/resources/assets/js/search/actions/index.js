@@ -68,12 +68,19 @@ export function fetchResults(word, reversed = false, languageId = 0) {
     }
 }
 
-export function beginNavigation(word, normalizedWord, index) {
+export function beginNavigation(word, normalizedWord, index, modifyState) {
     // TODO: TEMPORARY! Must be replaced with a React components that are not vulnerable to XSS ...
+    if (modifyState === undefined) {
+        modifyState = true;
+    }
 
     const address = '/w/' + encodeURIComponent(normalizedWord || word);
     const title = `${word} - Parf Edhellen`;
-    window.history.pushState(null, title, address);
+
+    if (modifyState) {
+        window.history.pushState(null, title, address);
+    }
+    document.title = title; // because most browsers doesn't change the document title when pushing state
 
     return dispatch => {
         dispatch(requestNavigation(word, normalizedWord || undefined, index || undefined));
