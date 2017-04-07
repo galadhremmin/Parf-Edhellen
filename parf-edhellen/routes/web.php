@@ -13,17 +13,15 @@
 
 Route::get('/', [ 'uses' => 'HomeController@index' ]);
 
-Route::get('/about',           [ 'uses' => 'AboutController@index' ])->name('about');
-Route::get('/about/donations', [ 'uses' => 'AboutController@donations' ])->name('about.donations');
+Route::get('/about',                    [ 'uses' => 'AboutController@index'     ])->name('about');
+Route::get('/about/donations',          [ 'uses' => 'AboutController@donations' ])->name('about.donations');
+Route::get('/user/{userId}/{nickname}', [ 'uses' => 'UserController@index'      ])->name('user.profile');
 
-Route::get('/phrases',  [ 'uses' => 'PhrasesController@index' ])->name('phrases');
+Route::get('/phrases',                  [ 'uses' => 'PhrasesController@index'   ])->name('phrases');
 
-Route::get('/w/{word}', [ 'uses' => 'BookController@pageForWord' ]);
-Route::get('/wt/{id}',  [ 'uses' => 'BookController@pageForTranslationId' ])->where([ 'id' => '[0-9]+' ]);
+Route::get('/w/{word}',                 [ 'uses' => 'BookController@pageForWord' ]);
+Route::get('/wt/{id}',                  [ 'uses' => 'BookController@pageForTranslationId' ])->where([ 'id' => '[0-9]+' ]);
 
-Route::group([ 
-        'namespace' => 'Api',
-        'prefix'    => 'api/v1'
-    ], function () {
+Route::group([ 'namespace' => 'Api\v1', 'prefix' => 'api/v1' ], function () {
     Route::post('book/find', [ 'uses' => 'BookApiController@find' ]);
 });

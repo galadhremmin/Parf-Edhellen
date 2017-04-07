@@ -3,7 +3,23 @@ import { connect } from 'react-redux';
 import { setSelection, beginNavigation } from '../actions';
 import classNames from 'classnames';
 
+/**
+ * Represents a collection of search results.
+ */
 class EDSearchResults extends React.Component {
+    constructor() {
+        super();
+
+        this.popStateHandler = this.onPopState.bind(this);
+    }
+
+    componentWillMount() {
+        window.addEventListener('popstate', this.popStateHandler);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener(this.popStateHandler);
+    }
 
     componentWillReceiveProps(props) {
         if (props.activeIndex === undefined || props.activeIndex < 0) {
@@ -28,9 +44,41 @@ class EDSearchResults extends React.Component {
         this.navigate(index);
     }
 
+    /**
+     * This is an unfortunate hack which implements default behavior for the forward and back buttons.
+     * This method should be connected to the _popstate_ window event. It examines the URL of the previous
+     * (or forward) state and determines whether the word (if found) exists within the current search
+     * result set. If it is present, it navigates to the word, and dispatches a navigation signal.
+     * 
+     * @param {*} ev 
+     */
+    onPopState(ev) {
+        // The path name should be /w/<word>
+        const path = location.pathname;
+        if (path.substr(0, 3) !== '/w/') {
+            return; // the browser is going somewhere else, so do nothing.
+        }
+
+        // retrieve the word and attempt to locate it within the search result set.
+        const normalizedWord = decodeURIComponent(path.substr(3));
+        const index = this.props.items
+            ? this.props.items.findIndex(i => i.normalizedWord === normalizedWord)
+            : -1;
+
+        if (index > -1) {
+            // Since the word exists in the search result set, update the current selection.
+            // Make sure to update the _loadedWord_ property first, to cancel default behaviour
+            // implemented in the _componentWillReceiveProps_ method.
+            this.loadedWord = this.props.items[index].word;
+            this.navigate(index);
+        } 
+        
+        this.props.dispatch(beginNavigation(normalizedWord, undefined, undefined, false));
+    }
+
     render() {
         if (!Array.isArray(this.props.items)) {
-            return <div>{JSON.stringify(this.props)}</div>;
+            return <div></div>;
         }
 
         let previousIndex = this.props.activeIndex - 1;
@@ -90,6 +138,9 @@ class EDSearchResults extends React.Component {
     }
 }
 
+/**
+ * Represents a single search result item.
+ */
 class EDSearchItem extends React.Component {
     navigate(ev) {
         ev.preventDefault();
