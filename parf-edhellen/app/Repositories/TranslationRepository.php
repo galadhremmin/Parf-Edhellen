@@ -23,16 +23,16 @@ class TranslationRepository
                     [ $reversed ? 'w.ReversedNormalizedKey' : 'w.NormalizedKey', 'like', $word ]
                 ])
                 ->orderBy('w.Key')
-                ->select('w.Key as k', 'w.NormalizedKey as nk')
-                ->get();
+                ->select('w.Key as k', 'w.NormalizedKey as nk');
         } else {
             $keywords = Keyword::findByWord($word, $reversed)
                 ->where('IsActive', '=', 1)
-                ->select('Keyword as k', 'NormalizedKeyword as nk')
-                ->get();
+                ->select('Keyword as k', 'NormalizedKeyword as nk');
         }
 
-        return $keywords;
+        return $keywords
+            ->limit(100)
+            ->get();
     }
 
     public function getWordTranslations(string $word) 
