@@ -28,7 +28,7 @@
       <li class="list-group-item">
         {{ $review->DateCreated->format('Y-m-d H:i') }}
         <a href="/wt/{{ $review->TranslationID }}">{{ $review->Word }}</a>
-        by <a href="/profile.page?authorID={{ $review->AuthorID }}">{{ $review->AuthorName }}</a>
+        by <a href="/user/{{ $review->AuthorID }}/{{ App\Helpers\StringHelper::normalizeForUrl($review->AuthorName) }}">{{ $review->AuthorName }}</a>
       </li>
     @endforeach
     </ul>

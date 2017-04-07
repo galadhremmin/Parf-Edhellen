@@ -6,11 +6,11 @@
       // Disable construction
     }
   
-    public static function preventXSS($str, $encoding = 'UTF-8') {
+    public static function preventXSS(string $str, $encoding = 'UTF-8') {
       return htmlspecialchars($str, ENT_QUOTES | ENT_HTML401, $encoding);
     }
     
-    public static function normalize($str) {
+    public static function normalize(string $str) {
       $currentLocale = setlocale(LC_ALL, 0);
       
       // This is necessary for the iconv-normalization to function properly
@@ -22,6 +22,11 @@
       setlocale(LC_ALL, $currentLocale);
       
       return trim(mb_convert_case($normalizedStr, MB_CASE_LOWER, 'utf-8'));
+    }
+
+    public static function normalizeForUrl(string $str) {
+      $str = self::normalize($str);
+      return str_replace(' ', '_', $str);
     }
     
     // Replaces all [[textual content]] with anchors <a href="#textual+content">textual content</a>
