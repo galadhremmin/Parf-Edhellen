@@ -1,4 +1,6 @@
-<blockquote itemscope="itemscope" itemtype="http://schema.org/Article" id="translation-block-{{ $gloss->TranslationID }}" 
+@inject('link', 'App\Helpers\LinkHelper')
+
+<blockquote itemscope="itemscope" itemtype="http://schema.org/Article" id="translation-block-{{ $gloss->TranslationID }}"
   @if (!$gloss->Canon)
       class="contribution" 
   @endif>
@@ -11,11 +13,11 @@
     </span>
     <!--
     {if $loggedIn}
-        {if $isAdmin}
-        <a href="#" class="ed-delete-button" data-translation-id="{$translation->id}" title="Delete this item"><span class="glyphicon glyphicon-trash pull-right" aria-hidden="true"></span></a>
-        {/if}
-        <a href="/translate-form.page?translationID={$translation->id}" title="Edit this item"><span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span></a>
-        <a href="#" class="ed-favourite-button" data-translation-id="{$translation->id}" title="Add to favourites"><span class="glyphicon glyphicon-heart{if !in_array($translation->id, $favourites)}-empty{/if} pull-right" aria-hidden="true"></span></a>
+      {if $isAdmin}
+      <a href="#" class="ed-delete-button" data-translation-id="{$translation->id}" title="Delete this item"><span class="glyphicon glyphicon-trash pull-right" aria-hidden="true"></span></a>
+      {/if}
+      <a href="/translate-form.page?translationID={$translation->id}" title="Edit this item"><span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span></a>
+      <a href="#" class="ed-favourite-button" data-translation-id="{$translation->id}" title="Add to favourites"><span class="glyphicon glyphicon-heart{if !in_array($translation->id, $favourites)}-empty{/if} pull-right" aria-hidden="true"></span></a>
     {/if}
     -->
     @if ($gloss->ExternalLinkFormat != null && $gloss->ExternalID !== null)
@@ -34,18 +36,18 @@
 
   <footer>
     @if (!empty($gloss->Source))
-        <span class="word-source" rel="trans-source">[{{ $gloss->Source }}]</span>
+      <span class="word-source" rel="trans-source">[{{ $gloss->Source }}]</span>
     @endif
   
     @if (!empty($gloss->Etymology))
-        <span class="word-etymology" rel="trans-etymology">{{ $gloss->Etymology }}.</span>
+      <span class="word-etymology" rel="trans-etymology">{{ $gloss->Etymology }}.</span>
     @endif
   
     @if ($gloss->TranslationGroupID != null)
-        Group: <span itemprop="sourceOrganization">{{ $gloss->TranslationGroup }}</span>.
+      Group: <span itemprop="sourceOrganization">{{ $gloss->TranslationGroup }}</span>.
     @endif
   
     Published <span itemprop="datePublished">{{ $gloss->DateCreated }}</span> by 
-    <a href="/profile.page?authorID={{ $gloss->AuthorID }}" itemprop="author" rel="author" title="View profile for {{ $gloss->AuthorName }}.">{{ $gloss->AuthorName }}</a>
+    <a href="{{ $link->author($gloss->AuthorID, $gloss->AuthorName) }}" itemprop="author" rel="author" title="View profile for {{ $gloss->AuthorName }}.">{{ $gloss->AuthorName }}</a>
   </footer>
 </blockquote>

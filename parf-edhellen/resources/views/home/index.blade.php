@@ -1,3 +1,4 @@
+@inject('link', 'App\Helpers\LinkHelper')
 @extends('_layouts.default')
 
 @section('title', 'Welcome!')
@@ -8,7 +9,7 @@
   <p>
     Parf Edhellen&mdash;an <em>Elvish Book</em>&mdash;is a free online dictionary for Tolkien's languages.
     It consists of glosses imported from <em>Ardalambion</em>, <em>Eldamo</em>, <em>Hiswelókë</em> and
-    <a href="about.page?browseTo=wordlist">many others</a>.</p>
+    <a href="{{ route('about') }}">many others</a>.</p>
 </div>
 
 <hr>
@@ -27,8 +28,8 @@
     @foreach($reviews as $review)
       <li class="list-group-item">
         {{ $review->DateCreated->format('Y-m-d H:i') }}
-        <a href="/wt/{{ $review->TranslationID }}">{{ $review->Word }}</a>
-        by <a href="/user/{{ $review->AuthorID }}/{{ App\Helpers\StringHelper::normalizeForUrl($review->AuthorName) }}">{{ $review->AuthorName }}</a>
+        <a href="{{ $link->translation($review->TranslationID) }}">{{ $review->Word }}</a>
+        by <a href="{{ $link->author($review->AuthorID, $review->AuthorName) }}">{{ $review->AuthorName }}</a>
       </li>
     @endforeach
     </ul>
