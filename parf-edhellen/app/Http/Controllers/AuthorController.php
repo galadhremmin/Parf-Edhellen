@@ -23,6 +23,7 @@ class AuthorController extends Controller
 
         if ($author) {
             $markdownParser = new MarkdownParser();
+
             $profile = $markdownParser->parse($author->Profile ?? '');
             $stats   = $this->_statisticsRepository->getStatisticsForAuthor($author);
         }
@@ -31,6 +32,15 @@ class AuthorController extends Controller
             'author'  => $author,
             'profile' => $profile,
             'stats'   => $stats
+        ]);
+    }
+
+    public function edit() 
+    {
+        $author = []; // Author::find($id);
+
+        return view('author.edit-profile', [
+            'author' => $author
         ]);
     }
 }

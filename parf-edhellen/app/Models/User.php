@@ -9,13 +9,15 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+    protected $table = 'auth_accounts';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'Nickname', 'Email', 'Identity', 'Identity', 'DateRegistered', 'ProviderID', 'Configured'
     ];
 
     /**
@@ -24,6 +26,26 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'Identity', 'ProviderID', 'Identity', 'Configured'
     ];
+
+    /**
+     * Disable automatic timestamps.
+     */
+    public $timestamps = false;
+
+    public function getAuthIdentifierName()
+    {
+        return 'AccountID';
+    }
+
+    public function getAuthIdentifier()
+    {
+        return $this->AccountID;
+    }
+
+    public function getAuthPassword()
+    {
+        return null;
+    }
 }

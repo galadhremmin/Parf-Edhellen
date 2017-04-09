@@ -6,15 +6,15 @@
   @if ($author === null)
     This is not the droid you are looking for.
   @else
-    <div class="clearfix">
-      <div style="width:100px;height:100px;background-color:red;border-radius:50px;float:left;"></div>
+    <header class="clearfix">
+      <div class="ed-profile-picture"></div>
       <h1>
         {{ $author->Nickname }}
-        @if (!empty($author->Tengwar))
-          <span class="tengwar">{{ $author->Tengwar }}</span>
-        @endif
       </h1>
-    </div>
+      @if (!empty($author->Tengwar))
+      <h2 class="tengwar">{{ $author->Tengwar }}</h2>
+      @endif
+    </header>
 
     <div class="row">
       <div class="col-md-8 col-sm-12">
@@ -53,6 +53,3 @@
     </div>
   @endif
 @endsection
-
-
-

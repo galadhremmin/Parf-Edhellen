@@ -70,4 +70,7 @@ insert into `keywords` (`IsSense`, `SenseID`, `TranslationID`, `WordID`, `Keywor
 update translation set comments = replace(comments, '~', '**');
 update translation set comments = replace(comments, '`', '**');
 
+-- Transition providers from Hybridauth to Laravel Socialite
+update `auth_providers` set `Name` = lower(`Name`), `URL` = lower(`URL`);
+
 insert into `version` (`number`, `date`) values (1.8, NOW());

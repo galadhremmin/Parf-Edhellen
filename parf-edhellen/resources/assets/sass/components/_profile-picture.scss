@@ -1,0 +1,13 @@
+.ed-profile-picture {
+  float: right;
+  width: 100px;
+  height: 100px;
+  border-radius: 50px;
+  background-image: url(/img/anonymous-profile-picture.png);
+  background-size: cover;
+  border: 2px solid white;
+  margin-bottom: 20px;
+  -webkit-box-shadow: 0px 0px 5px 0px rgba(50, 50, 50, 0.75);
+  -moz-box-shadow:    0px 0px 5px 0px rgba(50, 50, 50, 0.75);
+  box-shadow:         0px 0px 5px 0px rgba(50, 50, 50, 0.75);
+}

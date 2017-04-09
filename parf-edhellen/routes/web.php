@@ -13,16 +13,27 @@
 
 Route::get('/', [ 'uses' => 'HomeController@index' ]);
 
+// Common pages
 Route::get('/about',                  [ 'uses' => 'AboutController@index'     ])->name('about');
 Route::get('/about/donations',        [ 'uses' => 'AboutController@donations' ])->name('about.donations');
 Route::get('/author/{id}/{nickname}', [ 'uses' => 'AuthorController@index'    ])->name('author.profile');
-
 Route::get('/phrases',                [ 'uses' => 'PhrasesController@index'   ])->name('phrases');
 
+// Dictionary
 Route::get('/w/{word}',               [ 'uses' => 'BookController@pageForWord' ]);
 Route::get('/wt/{id}',                [ 'uses' => 'BookController@pageForTranslationId' ])
     ->where([ 'id' => '[0-9]+' ])->name('translation.ref');
 
+// User accounts
+Route::group([ 'middleware' => 'auth' ], function () {
+    Route::get('/author/edit', [ 'uses' => 'AuthorController@edit' ])->name('author.edit-profile');
+});
+
+// Authentication
+Route::get('/federated-auth/redirect/{providerName}', 'SocialAuthController@redirect');
+Route::get('/federated-auth/callback/{providerName}', 'SocialAuthController@callback');
+
+// API
 Route::group([ 'namespace' => 'Api\v1', 'prefix' => 'api/v1' ], function () {
     Route::post('book/find', [ 'uses' => 'BookApiController@find' ]);
 });
