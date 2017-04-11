@@ -14,10 +14,11 @@
 Route::get('/', [ 'uses' => 'HomeController@index' ]);
 
 // Common pages
-Route::get('/about',                  [ 'uses' => 'AboutController@index'     ])->name('about');
-Route::get('/about/donations',        [ 'uses' => 'AboutController@donations' ])->name('about.donations');
-Route::get('/author/{id}/{nickname}', [ 'uses' => 'AuthorController@index'    ])->name('author.profile');
-Route::get('/phrases',                [ 'uses' => 'PhrasesController@index'   ])->name('phrases');
+Route::get('/about',                    [ 'uses' => 'AboutController@index'     ])->name('about');
+Route::get('/about/donations',          [ 'uses' => 'AboutController@donations' ])->name('about.donations');
+Route::get('/phrases',                  [ 'uses' => 'PhrasesController@index'   ])->name('phrases');
+Route::get('/author/{id?}/{nickname?}', [ 'uses' => 'AuthorController@index'    ])
+    ->where([ 'id' => '[0-9]+' ])->name('author.profile');
 
 // Dictionary
 Route::get('/w/{word}',               [ 'uses' => 'BookController@pageForWord' ]);
@@ -26,11 +27,13 @@ Route::get('/wt/{id}',                [ 'uses' => 'BookController@pageForTransla
 
 // User accounts
 Route::group([ 'middleware' => 'auth' ], function () {
-    Route::get('/author/edit', [ 'uses' => 'AuthorController@edit' ])->name('author.edit-profile');
+    Route::get('/dashboard',         [ 'uses' => 'DashboardController@index' ])->name('dashboard');
+    Route::get('/author/edit/{id?}', [ 'uses' => 'AuthorController@edit' ])->name('author.edit-profile');
 });
 
 // Authentication
-Route::get('/federated-auth/redirect/{providerName}', 'SocialAuthController@redirect');
+Route::get('/login', 'SocialAuthController@login')->name('login');
+Route::get('/federated-auth/redirect/{providerName}', 'SocialAuthController@redirect')->name('auth.redirect');
 Route::get('/federated-auth/callback/{providerName}', 'SocialAuthController@callback');
 
 // API

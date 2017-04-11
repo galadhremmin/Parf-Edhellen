@@ -5,6 +5,7 @@ use App\Models\Author;
 use App\Repositories\StatisticsRepository;
 use Illuminate\Http\Request;
 use App\Helpers\MarkdownParser;
+use Illuminate\Support\Facades\Auth;
 
 class AuthorController extends Controller
 {
@@ -15,8 +16,12 @@ class AuthorController extends Controller
         $this->_statisticsRepository = $statisticsRepository;
     }
 
-    public function index(Request $request, int $id, string $nickname)
+    public function index(Request $request, $id = null, $nickname = '')
     {
+        if (!is_numeric($id)) {
+            $id = $this->getUserId($request);
+        }
+
         $author  = Author::find($id);
         $profile = '';
         $stats   = null;
@@ -35,12 +40,25 @@ class AuthorController extends Controller
         ]);
     }
 
-    public function edit() 
+    public function edit(Request $request, $id = 0)
     {
-        $author = []; // Author::find($id);
+        if (!is_numeric($id)) {
+            $id = $this->getUserId($request);
+        }
+
+        $author = Author::find($id);
 
         return view('author.edit-profile', [
             'author' => $author
         ]);
+    }
+
+    private function getUserId(Request $request) {
+        if (!Auth::check()) {
+            return 0;
+        }
+
+        $user = $request->user();
+        return $user->AccountID;
     }
 }

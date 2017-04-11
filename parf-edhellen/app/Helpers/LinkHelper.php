@@ -2,9 +2,11 @@
 
 namespace App\Helpers;
 
+use data\entities\AuthProvider;
+
 class LinkHelper
 {
-    public function author($authorId, $authorName)
+    public function author(int $authorId, string $authorName)
     {
         return route('author.profile', [
             'id' => $authorId,
@@ -12,10 +14,16 @@ class LinkHelper
         ]);
     }
 
-    public function translation($translationId)
+    public function translation(int $translationId)
     {
         return route('translation.ref', [
             'id' => $translationId
+        ]);
+    }
+    
+    public function authRedirect(string $url) {
+        return route('auth.redirect', [
+            'providerName' => $url
         ]);
     }
 }

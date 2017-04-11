@@ -9,6 +9,7 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+    protected $primaryKey = 'AccountID';
     protected $table = 'auth_accounts';
 
     /**
@@ -36,7 +37,7 @@ class User extends Authenticatable
 
     public function getAuthIdentifierName()
     {
-        return 'AccountID';
+        return $this->primaryKey;
     }
 
     public function getAuthIdentifier()

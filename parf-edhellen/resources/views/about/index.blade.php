@@ -3,11 +3,11 @@
 @section('title', 'About')
 @section('body')
 
-<h2>About <span class="tengwar" title="Parf Edhellen">q7Er 4$j$¸5$</span></h2>
+<h1>About <span class="tengwar" title="Parf Edhellen">q7Er 4$j$¸5$</span></h1>
 <p>The collaborative dictionary dedicated to Tolkien's amazing languages. 
 
 <a name="search"></a>
-<h3>Searching</h3>
+<h2>Searching</h2>
 <p>Use the search field above to browse the dictionary. As you type, the dictionary will present suggestions underneath based on what you type.
   You can use the asterisk symbol (*) to match everything or individual letters, which can be useful if you're unsure about spelling. A single
   asterisk won't yield the entire library, however, because the precision of your query is considered too low.</p>
@@ -24,12 +24,12 @@
 <br /><u><em>the length of the search term (without white space)</em></u> &times; 200.</p>
 
 <a name="reversed"></a>
-<h3>Reversed search</h3>
+<h2>Reversed search</h2>
 <p>If you tick the checkbox &quot;reversed search,&quot; <em>Parf Edhellen</em> will match your query in reverse. This is useful if you're
   looking for words with a specific word ending, perhaps with the intention to find fitting rhymes for your poetry.</p>
 
 <a href="unverified"></a>
-<h3>Unverified or debatable glosses</h3>
+<h2>Unverified or debatable glosses</h2>
 <p>You'll sometimes encounter the <span class="glyphicon glyphicon-question-sign"></span> symbol, usually together with a warning. These
   exist to inform you that the gloss originate from a source which might be outdated or questionable. This is unfortunately fairly common
   because linguistic material on Tolkien's languages are only sporadically made available to the community; initiatives have the time to arise
@@ -39,7 +39,7 @@
   the proposed translation.</p>
 
 <a name="authentication"></a>
-<h3>Logging in</h3>
+<h2>Logging in</h2>
 <p>We don't manage your credentials; we trust Facebook, Google, Twitter to do that for us. So when you log in, these services simply vouch for you,
   and give us a token which uniquely identifies you in their systems. Therefore you share no personal information with <em>Parf Edhellen</em>
   (apart from your e-mail address) and thus cannot lose your information in the event of a breach.</p>
@@ -55,7 +55,7 @@
 <span class="span-column">&gt;&gt;</span> <img src="img/hand.png" alt="" border="0" /></p>
 
 <a name="wordlist"></a>
-<h3>Credits &amp; Sources</h3>
+<h2>Credits &amp; Sources</h2>
 <p><em>Parf Edhellen</em> imported its definition from the excellent dictionaries listed below.
   Please note that discrepancies from the source material can arise while importing.</p>
 <dl>
@@ -76,7 +76,5 @@
 </dl>
 <p></p>
 <p><a href="https://unsplash.com/@teddykelley" target="_blank">Teddy Kelley</a> is the author of the amazing photograph used for the background.</p>
-
-
 
 @endsection

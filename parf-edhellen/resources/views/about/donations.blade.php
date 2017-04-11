@@ -3,7 +3,7 @@
 @section('title', 'Donations')
 @section('body')
 
-<h2>Thank you! <span class="glyphicon glyphicon-heart beating" aria-hidden="true"></span></h2>
+<h1>Thank you! <span class="glyphicon glyphicon-heart beating" aria-hidden="true"></span></h1>
 <p><em>Parf Edhellen</em> is fortunate enough to have fans who now and then donate to the project. Their donations have
   helped me afford literature and have helped me pay for the site's continued upkeep. As some fans have shown their continued
   support by making recurring donations, I thought I'd mention these people here.</p>
@@ -13,7 +13,7 @@ donations, I was able to purchase <a href="http://www.eldalamberon.com/parma22.h
 <p>You all have my <em>heartfelt thanks</em> for helping and supporting me in this work!</p>
 
 <blockquote class="donation-box">
-<h3>Would you like to help?</h3>
+<h2>Would you like to help?</h2>
 <p>Please donate to the <em>Parf Edhellen</em> project, or help me keep the database up-to-date by logging in and making
   contributions.</p>
 <p>You donate by clicking the button below.</p>
@@ -25,7 +25,7 @@ donations, I was able to purchase <a href="http://www.eldalamberon.com/parma22.h
 </form>
 </blockquote>
 
-<h3>Donations 2017</h3>
+<h2>Donations 2017</h2>
 <ol class="donations">
   <li><span class="date">1ˢᵗ Mar '17</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
   <li><span class="date">19ᵗʰ Feb '17</span>: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
@@ -34,7 +34,7 @@ donations, I was able to purchase <a href="http://www.eldalamberon.com/parma22.h
   <li><span class="date">9ᵗʰ Jan '17</span>: <span class="currency">$25,00</span> by <span class="person">Joanne M</span>.</li>
 </ol>
 
-<h3>Donations 2016</h3>
+<h2>Donations 2016</h2>
 <p>Parf Edhellen is entirely supported by donations this year. <strong>Thank you everyone for your continued support!</strong></p>
 <ol class="donations">
   <li><span class="date">30ᵗʰ Dec '16</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
@@ -77,7 +77,7 @@ donations, I was able to purchase <a href="http://www.eldalamberon.com/parma22.h
   <li><span class="date">3ʳᵈ Jan '16</span>: <span class="currency">$25,00</span> by <span class="person">Joanne M</span>.</li>
 </ol>
 
-<h3>Donations 2015</h3>
+<h2>Donations 2015</h2>
 <ol class="donations">
   <li><span class="date">30ᵗʰ Dec '15</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
   <li><span class="date">1ˢᵗ Dec '15</span>: <span class="currency">$25,00</span> by <span class="person">Joanne M</span>.</li>
@@ -101,7 +101,7 @@ donations, I was able to purchase <a href="http://www.eldalamberon.com/parma22.h
   <li><span class="date">4ᵗʰ Jan '15</span>: <span class="currency">$10,00</span> by <span class="person">Sarah C</span>.</li>
 </ol>
 
-<h3>Donations 2014</h3>
+<h2>Donations 2014</h2>
 <ol class="donations">
   <li><span class="date">30ᵗʰ Dec '14</span>: <span class="currency">$5,00</span> by <span class="person">Tracee C</span>.</li>
   <li><span class="date">13ᵗʰ Dec '14</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>

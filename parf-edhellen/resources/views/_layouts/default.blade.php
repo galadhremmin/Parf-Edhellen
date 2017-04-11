@@ -32,6 +32,9 @@
           <li class="{{ active('phrases') }}"><a href="{{ route('phrases') }}">Phrases</a></li>
           <li class="{{ active('about') }}"><a href="{{ route('about') }}">About</a></li>
           <li class="{{ active('about.donations') }}"><a href="{{ route('about.donations') }}">Donations</a></li>
+          @if (Auth::check())
+          <li class="{{ active('dashboard') }}"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+          @endif
         </ul>
       </div><!--/.nav-collapse -->
     </div><!--/.container-fluid -->

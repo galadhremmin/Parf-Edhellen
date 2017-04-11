@@ -26,6 +26,10 @@
           come forth and reveal themselves.
         </p>
       @endif
+
+      @if (Auth::user()->AccountID === $author->AccountID)
+        <a href="{{ route('author.edit-profile') }}" class="btn btn-primary">Edit profile</a>
+      @endif
       </div>
       <div class="col-md-4 col-sm-12">
         <h2>Statistics</h2>

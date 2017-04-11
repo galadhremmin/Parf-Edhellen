@@ -10,6 +10,12 @@ use Socialite;
 
 class SocialAuthController extends Controller
 {
+    public function login()
+    {
+        $providers = AuthProvider::all();
+        return view('authentication.login', [ 'providers' => $providers ]);
+    }
+
     public function redirect(Request $request, string $providerName)
     {
         $provider = self::getProvider($providerName);
@@ -39,7 +45,7 @@ class SocialAuthController extends Controller
         }
 
         auth()->login($user);
-        return $request->user();
+        return redirect()->route('dashboard', [ 'loggedIn' => true ]);
     }
 
     public static function getProvider(string $providerName) {
