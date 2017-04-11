@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\AuthProvider;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Socialite;
 
 class SocialAuthController extends Controller
@@ -14,6 +15,12 @@ class SocialAuthController extends Controller
     {
         $providers = AuthProvider::all();
         return view('authentication.login', [ 'providers' => $providers ]);
+    }
+
+    public function logout()
+    {
+        Auth::logout();
+        return redirect()->to('/');
     }
 
     public function redirect(Request $request, string $providerName)

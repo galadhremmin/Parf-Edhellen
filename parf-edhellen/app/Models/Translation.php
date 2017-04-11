@@ -10,6 +10,11 @@ class Translation extends Model
     protected $primaryKey = 'TranslationID';
     protected $dates = [ 'DateCreated' ];
 
+    /**
+     * Disable automatic timestamps.
+     */
+    public $timestamps = false;
+
     public function author() 
     {
         return $this->hasOne(Author::class, 'AccountID', 'AuthorID');

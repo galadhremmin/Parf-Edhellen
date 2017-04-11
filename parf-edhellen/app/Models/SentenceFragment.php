@@ -9,6 +9,11 @@ class SentenceFragment extends Model
     protected $table = 'sentence_fragment';
     protected $primaryKey = 'FragmentID';
 
+    /**
+     * Disable automatic timestamps.
+     */
+    public $timestamps = false;
+
     public function sentence() 
     {
         return $this->belongsTo(Sentence::class, 'SentenceID', 'FragmentID');

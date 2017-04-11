@@ -73,4 +73,7 @@ update translation set comments = replace(comments, '`', '**');
 -- Transition providers from Hybridauth to Laravel Socialite
 update `auth_providers` set `URL` = lower(`URL`);
 
+-- Remember tokens are required by Laravel
+alter table `auth_accounts` add `RememberToken` varchar(100)  collate utf8_swedish_ci null;
+
 insert into `version` (`number`, `date`) values (1.8, NOW());

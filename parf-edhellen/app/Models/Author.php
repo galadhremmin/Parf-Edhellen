@@ -8,4 +8,9 @@ class Author extends Model
 {
     protected $table = 'auth_accounts';
     protected $primaryKey = 'AccountID';
+
+    /**
+     * Disable automatic timestamps.
+     */
+    public $timestamps = false;
 }

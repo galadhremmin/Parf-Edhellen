@@ -18,11 +18,7 @@ class AuthorController extends Controller
 
     public function index(Request $request, $id = null, $nickname = '')
     {
-        if (!is_numeric($id)) {
-            $id = $this->getUserId($request);
-        }
-
-        $author  = Author::find($id);
+        $author  = $this->getAuthor($request, $id);
         $profile = '';
         $stats   = null;
 
@@ -40,25 +36,47 @@ class AuthorController extends Controller
         ]);
     }
 
-    public function edit(Request $request, $id = 0)
+    public function edit(Request $request, $id = null)
     {
-        if (!is_numeric($id)) {
-            $id = $this->getUserId($request);
-        }
-
-        $author = Author::find($id);
+        $author = $this->getAuthor($request, $id);
 
         return view('author.edit-profile', [
             'author' => $author
         ]);
     }
 
-    private function getUserId(Request $request) {
-        if (!Auth::check()) {
-            return 0;
+    public function update(Request $request, $id = null)
+    {
+        $author = $this->getAuthor($request, $id);
+        if ($author === null) {
+            return response('', 404);
         }
 
-        $user = $request->user();
-        return $user->AccountID;
+        $this->validate($request, [
+            'nickname' => 'bail|required|unique:auth_accounts,Nickname,' . $author->AccountID . ',AccountID|min:3|max:32'
+        ]);
+
+        $author->Nickname = $request->input('nickname');
+        $author->Tengwar  = $request->input('tengwar');
+        $author->Profile  = $request->input('profile');
+
+        $author->save();
+
+        return redirect()->route('author.profile');
+    }
+
+    private function getAuthor(Request $request, $id)
+    {
+        if (!is_numeric($id)) {
+
+            if (!Auth::check()) {
+                return null;
+            }
+
+            $user = $request->user();
+            $id = $user->AccountID;
+        }
+
+        return Author::find($id);
     }
 }

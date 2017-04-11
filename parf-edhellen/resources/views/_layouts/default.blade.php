@@ -32,8 +32,13 @@
           <li class="{{ active('phrases') }}"><a href="{{ route('phrases') }}">Phrases</a></li>
           <li class="{{ active('about') }}"><a href="{{ route('about') }}">About</a></li>
           <li class="{{ active('about.donations') }}"><a href="{{ route('about.donations') }}">Donations</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
           @if (Auth::check())
           <li class="{{ active('dashboard') }}"><a href="{{ route('dashboard') }}">Dashboard</a></li>
+          <li><a href="{{ route('logout') }}">Log out</a></li>
+          @else
+          <li class="{{ active('login') }}"><a href="{{ route('login') }}">Log in</a></li>
           @endif
         </ul>
       </div><!--/.nav-collapse -->

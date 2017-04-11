@@ -9,6 +9,11 @@ class Language extends Model
     protected $table = 'language';
     protected $primaryKey = 'ID';
 
+    /**
+     * Disable automatic timestamps.
+     */
+    public $timestamps = false;
+
     public function scopeInvented($query) 
     {
         return $query->where('Invented', '=', 1);

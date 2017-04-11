@@ -49,4 +49,14 @@ class User extends Authenticatable
     {
         return null;
     }
+
+    public function getRememberTokenName()
+    {
+        return 'RememberToken';
+    }
+
+    public function getRememberToken()
+    {
+        return $this->RememberToken;
+    }
 }

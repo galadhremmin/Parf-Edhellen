@@ -8,4 +8,9 @@ class Word extends Model
 {
     protected $table = 'word';
     protected $primaryKey = 'KeyID';
+
+    /**
+     * Disable automatic timestamps.
+     */
+    public $timestamps = false;
 }

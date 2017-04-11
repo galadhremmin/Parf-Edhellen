@@ -9,6 +9,11 @@ class Keyword extends Model
     protected $table = 'keywords';
     protected $primaryKey = 'RelationID';
 
+    /**
+     * Disable automatic timestamps.
+     */
+    public $timestamps = false;
+
     public function scopeFindByWord($query, string $word, $reversed = false) 
     {
         $query->distinct()
