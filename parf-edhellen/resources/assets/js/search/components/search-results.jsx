@@ -125,7 +125,8 @@ class EDSearchResults extends React.Component {
                         </div>
                     </div>
                 </div>
-                <div className={classNames('row', 'search-result-navigator', {'hidden': this.props.items.length < 1})}>
+                {this.props.items.length > 0 ? (
+                <div className="row search-result-navigator">
                     <nav>
                         <ul className="pager">
                             <li className="previous"><a href="#" onClick={ev => this.onNavigate(ev, previousIndex)}>← {this.props.items[previousIndex].word}</a></li>
@@ -133,6 +134,7 @@ class EDSearchResults extends React.Component {
                         </ul>
                     </nav>
                 </div>
+                ) : ''}
             </div>
         );
     }

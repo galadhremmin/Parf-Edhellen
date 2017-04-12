@@ -12560,9 +12560,9 @@ var EDSearchResults = function (_React$Component) {
                         )
                     )
                 ),
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                this.props.items.length > 0 ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'div',
-                    { className: __WEBPACK_IMPORTED_MODULE_3_classnames___default()('row', 'search-result-navigator', { 'hidden': this.props.items.length < 1 }) },
+                    { className: 'row search-result-navigator' },
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'nav',
                         null,
@@ -12595,7 +12595,7 @@ var EDSearchResults = function (_React$Component) {
                             )
                         )
                     )
-                )
+                ) : ''
             );
         }
     }]);
