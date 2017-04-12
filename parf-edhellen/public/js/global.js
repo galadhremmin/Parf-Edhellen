@@ -12560,7 +12560,7 @@ var EDSearchResults = function (_React$Component) {
                         )
                     )
                 ),
-                this.props.items.length > 0 ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                this.props.items.length > 1 ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'div',
                     { className: 'row search-result-navigator' },
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(

@@ -125,7 +125,7 @@ class EDSearchResults extends React.Component {
                         </div>
                     </div>
                 </div>
-                {this.props.items.length > 0 ? (
+                {this.props.items.length > 1 ? (
                 <div className="row search-result-navigator">
                     <nav>
                         <ul className="pager">
