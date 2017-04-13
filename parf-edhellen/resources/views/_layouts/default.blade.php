@@ -59,9 +59,7 @@
     <div id="search-component"></div>
 
     <!-- begin content -->
-    <div id="result">
-      @yield('body')
-    </div>
+    @yield('body')
     <div class="row">
       <p class="disclaimer">Black Speech, Nandorin, Noldorin, Quendya, Quenya, Sindarin, Telerin are languages conceived by Tolkien and they do not belong to us; we neither can nor do claim affiliation 
     with <a href="http://www.middleearth.com/" target="_blank">Middle-earth Enterprises</a> nor <a href="http://www.tolkienestate.com/" target="_blank">Tolkien Estate</a>.</p>
@@ -69,9 +67,9 @@
   </div>
 
   <script type="application/json" id="ed-preloaded-languages">{!! $allLanguages !!}</script>
+  <script type="text/javascript" src="/js/manifest.js"></script>
+  <script type="text/javascript" src="/js/vendor.js"></script>
   <script type="text/javascript" src="/js/global.js" async></script>
-  <!--[if lte IE 8]>
-  <script src="/js/compatibility/media-queries-ie8.js" type="text/javascript"></script>
-  <![endif]-->
+  @yield('scripts')
   </body>
 </html>

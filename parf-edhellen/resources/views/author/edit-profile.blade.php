@@ -33,7 +33,7 @@
       <div class="form-group">
         <label for="ed-author-profile" class="col-sm-2 control-label">Description</label>
         <div class="col-sm-10">
-          
+          <textarea name="profile" class="ed-markdown-editor" rows="15">{{ $author->Profile }}</textarea>
         </div>
       </div>
       <div class="form-group">
@@ -45,4 +45,8 @@
       <input type="hidden" name="_token" value="{{ csrf_token() }}">
     </form>
   @endif
+@endsection
+
+@section('scripts')
+  <script type="text/javascript" src="/js/author.js" async></script>
 @endsection

@@ -16,3 +16,4 @@ lib/config/config.wordservice.php
 .project
 .settings
 phpinfo.php
+*.log

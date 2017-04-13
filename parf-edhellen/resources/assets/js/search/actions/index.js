@@ -30,9 +30,10 @@ export function requestNavigation(word, normalizedWord, index) {
     };
 }
 
-export function receiveNavigation(data) {
+export function receiveNavigation(bookData) {
     return {
-        type: RECEIVE_NAVIGATION
+        type: RECEIVE_NAVIGATION,
+        bookData
     };
 }
 
@@ -69,12 +70,13 @@ export function fetchResults(word, reversed = false, languageId = 0) {
 }
 
 export function beginNavigation(word, normalizedWord, index, modifyState) {
-    // TODO: TEMPORARY! Must be replaced with a React components that are not vulnerable to XSS ...
     if (modifyState === undefined) {
         modifyState = true;
     }
 
-    const address = '/w/' + encodeURIComponent(normalizedWord || word);
+    const uriEncodedWord = encodeURIComponent(normalizedWord || word);
+    const apiAddress = '/api/v1/book/translate/' + uriEncodedWord;
+    const address = '/w/' + uriEncodedWord;
     const title = `${word} - Parf Edhellen`;
 
     if (modifyState) {
@@ -85,13 +87,20 @@ export function beginNavigation(word, normalizedWord, index, modifyState) {
     return dispatch => {
         dispatch(requestNavigation(word, normalizedWord || undefined, index || undefined));
 
-        axios.get(address, {
+        axios.get(apiAddress, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest' // this is important for the controller!
             }
         }).then(resp => {
-            document.getElementById('result').innerHTML = resp.data; // Warning... vulnerable to XSS!
             dispatch(receiveNavigation(resp.data));
+
+            // Find elements which is requested to be deleted upon receiving the navigation commmand
+            const elementsToDelete = document.querySelectorAll('.ed-remove-when-navigating');
+            if (elementsToDelete.length > 0) {
+                for (let element of elementsToDelete) {
+                    element.parentNode.removeChild(element);
+                }
+            }
         });
     };
 }

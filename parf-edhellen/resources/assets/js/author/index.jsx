@@ -1,22 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import EDMarkdownEditor from '../_shared/components/markdown-editor';
 
-class MarkdownEditor extends React.Component, OnInit  {
-  
-  componentWillMount() {
-    console.log('Hello world!');
-  }
+window.addEventListener('load', function () {
+    const textareas = document.querySelectorAll('textarea.ed-markdown-editor');
 
-  render() {
-    return (
-      <div>
-        <ul class="nav nav-tabs">
-          <li role="presentation" class="active"><a href="#">Edit</a></li>
-          <li role="presentation"><a href="#">Preview</a></li>
-        </ul>
-        <textarea class="form-control" id="ed-author-profile" name="profile" rows="15"></textarea>
-      </div>
-    );
-  }
-}
-
+    for (let textarea of textareas) {
+        ReactDOM.render(
+            <EDMarkdownEditor value={'Hello world'} componentName={textarea.name} value={textarea.value}
+                rows={textarea.rows} />,
+            textarea.parentNode
+        );
+    }
+});

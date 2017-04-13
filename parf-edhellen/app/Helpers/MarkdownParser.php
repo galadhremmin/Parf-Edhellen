@@ -5,12 +5,13 @@ namespace App\Helpers;
 class MarkdownParser extends \Parsedown
 {
 
-    function __construct()
+    function __construct($disabledBlockTypes = [])
     {
         $this->InlineTypes['['][] = 'Reference';
         $this->InlineTypes['>']   = ['SeeAlso'];
 
-        unset($this->BlockTypes['>']); // blockquote isn't supported!
+        foreach ($disabledBlockTypes as $disabledBlockType)
+            unset($this->BlockTypes[$disabledBlockType]);
     }
 
     /**

@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { setSelection, beginNavigation } from '../actions';
 import classNames from 'classnames';
+import { Parser as HtmlToReactParser } from 'html-to-react';
 
 /**
  * Represents a collection of search results.
@@ -92,6 +93,8 @@ class EDSearchResults extends React.Component {
             nextIndex = 0;
         }
 
+        console.log(this.props.bookData);
+
         return (
             <div>
                 <div className="panel panel-default search-result-wrapper">
@@ -135,6 +138,26 @@ class EDSearchResults extends React.Component {
                     </nav>
                 </div>
                 ) : ''}
+                {this.props.bookData ? (
+                    <div className="search-result-presenter">
+                        {this.props.bookData.sections.length < 1 ? (
+                            <div class="row">
+                                <h3>Forsooth! I can't find what you're looking for!</h3>
+                                <p>The word <em>{{ $word }}</em> hasn't been recorded for any of the languages.</p>
+                            </div>
+                        ) : (
+                            <div className="row">
+                                {this.props.bookData.sections.map(
+                                    s => <EDBookSection section={s}
+                                                        key={s.language.ID}
+                                                        columnsMax={this.props.bookData.columnsMax}
+                                                        columnsMid={this.props.bookData.columnsMid}
+                                                        columnsMin={this.props.bookData.columnsMin}/>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                ): ''}
             </div>
         );
     }
@@ -159,11 +182,96 @@ class EDSearchItem extends React.Component {
     }
 }
 
+/**
+ * Represents a single section of the book. A section is usually dedicated to a language.
+ */
+class EDBookSection extends React.Component {
+    render() {
+        const className = `col-sm-${this.props.columnsMax} col-md-${this.props.columnsMid} col-lg-${this.props.columnsMin}`;
+        const language = this.props.section.language;
+
+        return <article className={className}>
+                <header>
+                    <h2 rel="language-box">
+                        { language.Name }
+                        &nbsp;
+                        <span className="tengwar">{ language.Tengwar }</span>
+                    </h2>
+                </header>
+                <section className="language-box" id={`language-box-${ language.ID }`}>
+                    {this.props.section.glosses.map(
+                        g => <EDBookGloss gloss={g} language={language} key={g.TranslationID} />
+                    )}
+                </section>
+            </article>;
+    }
+}
+
+class EDBookGloss extends React.Component {
+    render() {
+        const gloss = this.props.gloss;
+        const id = `translation-block-${gloss.TranslationID}`;
+
+        let comments = null;
+        if (gloss.Comments) {
+            const parser = new HtmlToReactParser();
+            comments = parser.parse(gloss.Comments);
+        }
+
+        return (
+            <blockquote itemscope="itemscope" itemtype="http://schema.org/Article" id={id} className={classNames({ 'contribution': !gloss.Canon })}>
+            <h3 rel="trans-word" className="trans-word">
+            {(!gloss.Canon || gloss.Uncertain) && gloss.Latest ?
+                <a href="/about" title="Unverified or debatable content.">
+                    <span className="glyphicon glyphicon-question-sign" />
+                </a> : '' }
+            {' '}
+            <span itemprop="headline">
+              {gloss.Word}
+            </span>
+            {gloss.ExternalLinkFormat && gloss.ExternalID ?
+                <a href={gloss.ExternalLinkFormat.replace(/\{ExternalID\}/g, gloss.ExternalID)}
+                   className="ed-external-link-button"
+                   title={`Open on ${gloss.TranslationGroup} (new tab/window)`}
+                   target="_blank">
+                    <span class="glyphicon glyphicon-globe pull-right" />
+                </a> : ''}
+        </h3>
+        <p>
+            {gloss.Tengwar ? <span className="tengwar">{gloss.Tengwar}</span> : ''}
+            {' '}
+            {gloss.Type != 'unset' ? <span className="word-type" rel="trans-type">{gloss.Type}.</span> : ''}
+            {' '}
+            <span rel="trans-translation" itemprop="keywords">{gloss.Translation}</span>
+        </p>
+
+        {comments}
+
+        <footer>
+            {gloss.Source ? <span className="word-source" rel="trans-source">[{gloss.Source}]</span> : ''}
+            {' '}
+            {gloss.Etymology ?
+                <span className="word-etymology" rel="trans-etymology">{gloss.Etymology}.</span> : ''}
+            {' '}
+            {gloss.TranslationGroupID ?
+                (<span>Group: <span itemprop="sourceOrganization">{gloss.TranslationGroup}.</span></span>) : ''}
+            {' Published: '}
+            <span itemprop="datePublished">{gloss.DateCreated}</span>
+            {' by '}
+            <a href={gloss.AuthorURL} itemprop="author" rel="author" title={`View profile for ${gloss.AuthorName}.`}>
+                {gloss.AuthorName}
+            </a>
+        </footer>
+    </blockquote>);
+    }
+}
+
 const mapStateToProps = (state) => {
     return {
         items: state.items,
         loading: state.loading,
-        activeIndex: state.itemIndex
+        activeIndex: state.itemIndex,
+        bookData: state.bookData
     };
 };
 

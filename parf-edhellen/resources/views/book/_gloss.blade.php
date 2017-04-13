@@ -21,7 +21,7 @@
     {/if}
     -->
     @if ($gloss->ExternalLinkFormat != null && $gloss->ExternalID !== null)
-      <a href="{{ str_replace('{ExternalID}', $gloss->ExternalID, $gloss->ExternalLinkFormat) }}" class="ed-external-link-button" title="Open on {$gloss->group->Name} (new tab/window)" target="_blank"><span class="glyphicon glyphicon-globe pull-right" aria-hidden="true"></span></a>
+      <a href="{{ str_replace('{ExternalID}', $gloss->ExternalID, $gloss->ExternalLinkFormat) }}" class="ed-external-link-button" title="Open on {{ $gloss->TranslationGroup }} (new tab/window)" target="_blank"><span class="glyphicon glyphicon-globe pull-right" aria-hidden="true"></span></a>
     @endif
   </h3> 
   @if ($gloss->Tengwar != null)

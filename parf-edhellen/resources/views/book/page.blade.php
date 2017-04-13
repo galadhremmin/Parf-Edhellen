@@ -3,5 +3,7 @@
 @section('title', $word)
 
 @section('body')
-@include('book._page', $sections)
+<div class="ed-remove-when-navigating">
+    @include('book._page', $sections)
+</div>
 @endsection

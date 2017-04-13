@@ -1,9 +1,13 @@
 // Variables
 @import "_variables";
 
+// Fonts
+@import "_fonts";
+
 // Bootstrap
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 @import "_tengwar";
 @import "_app";
 
+@import "components/_search";
 @import "components/_profile-picture";
