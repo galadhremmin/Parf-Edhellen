@@ -532,6 +532,8 @@ var mapStateToProps = function mapStateToProps(state) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_classnames__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_html_to_react__ = __webpack_require__(329);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_html_to_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_html_to_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__search_item__ = __webpack_require__(379);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__book_section__ = __webpack_require__(380);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -539,6 +541,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
 
 
 
@@ -692,7 +696,7 @@ var EDSearchResults = function (_React$Component) {
                                 'ul',
                                 { className: 'search-result' },
                                 this.props.items.map(function (item, i) {
-                                    return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(EDSearchItem, { key: i, active: i === _this2.props.activeIndex,
+                                    return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_5__search_item__["a" /* default */], { key: i, active: i === _this2.props.activeIndex,
                                         item: item, index: i,
                                         onNavigate: _this2.navigate.bind(_this2) });
                                 })
@@ -775,7 +779,7 @@ var EDSearchResults = function (_React$Component) {
                         'div',
                         { className: 'row' },
                         this.props.bookData.sections.map(function (s) {
-                            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(EDBookSection, { section: s,
+                            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_6__book_section__["a" /* default */], { section: s,
                                 key: s.language.ID,
                                 columnsMax: _this2.props.bookData.columnsMax,
                                 columnsMid: _this2.props.bookData.columnsMid,
@@ -788,216 +792,6 @@ var EDSearchResults = function (_React$Component) {
     }]);
 
     return EDSearchResults;
-}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
-
-/**
- * Represents a single search result item.
- */
-
-
-var EDSearchItem = function (_React$Component2) {
-    _inherits(EDSearchItem, _React$Component2);
-
-    function EDSearchItem() {
-        _classCallCheck(this, EDSearchItem);
-
-        return _possibleConstructorReturn(this, (EDSearchItem.__proto__ || Object.getPrototypeOf(EDSearchItem)).apply(this, arguments));
-    }
-
-    _createClass(EDSearchItem, [{
-        key: 'navigate',
-        value: function navigate(ev) {
-            ev.preventDefault();
-            this.props.onNavigate(this.props.index, this.props.item.word, this.props.item.normalizedWord);
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var cssClass = __WEBPACK_IMPORTED_MODULE_3_classnames___default()({ 'selected': this.props.active });
-            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                'li',
-                null,
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'a',
-                    { href: '#', className: cssClass, onClick: this.navigate.bind(this) },
-                    this.props.item.word
-                )
-            );
-        }
-    }]);
-
-    return EDSearchItem;
-}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
-
-/**
- * Represents a single section of the book. A section is usually dedicated to a language.
- */
-
-
-var EDBookSection = function (_React$Component3) {
-    _inherits(EDBookSection, _React$Component3);
-
-    function EDBookSection() {
-        _classCallCheck(this, EDBookSection);
-
-        return _possibleConstructorReturn(this, (EDBookSection.__proto__ || Object.getPrototypeOf(EDBookSection)).apply(this, arguments));
-    }
-
-    _createClass(EDBookSection, [{
-        key: 'render',
-        value: function render() {
-            var className = 'col-sm-' + this.props.columnsMax + ' col-md-' + this.props.columnsMid + ' col-lg-' + this.props.columnsMin;
-            var language = this.props.section.language;
-
-            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                'article',
-                { className: className },
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'header',
-                    null,
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'h2',
-                        { rel: 'language-box' },
-                        language.Name,
-                        '\xA0',
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'span',
-                            { className: 'tengwar' },
-                            language.Tengwar
-                        )
-                    )
-                ),
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'section',
-                    { className: 'language-box', id: 'language-box-' + language.ID },
-                    this.props.section.glosses.map(function (g) {
-                        return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(EDBookGloss, { gloss: g, language: language, key: g.TranslationID });
-                    })
-                )
-            );
-        }
-    }]);
-
-    return EDBookSection;
-}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
-
-var EDBookGloss = function (_React$Component4) {
-    _inherits(EDBookGloss, _React$Component4);
-
-    function EDBookGloss() {
-        _classCallCheck(this, EDBookGloss);
-
-        return _possibleConstructorReturn(this, (EDBookGloss.__proto__ || Object.getPrototypeOf(EDBookGloss)).apply(this, arguments));
-    }
-
-    _createClass(EDBookGloss, [{
-        key: 'render',
-        value: function render() {
-            var gloss = this.props.gloss;
-            var id = 'translation-block-' + gloss.TranslationID;
-
-            var comments = null;
-            if (gloss.Comments) {
-                var parser = new __WEBPACK_IMPORTED_MODULE_4_html_to_react__["Parser"]();
-                comments = parser.parse(gloss.Comments);
-            }
-
-            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                'blockquote',
-                { itemscope: 'itemscope', itemtype: 'http://schema.org/Article', id: id, className: __WEBPACK_IMPORTED_MODULE_3_classnames___default()({ 'contribution': !gloss.Canon }) },
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'h3',
-                    { rel: 'trans-word', className: 'trans-word' },
-                    (!gloss.Canon || gloss.Uncertain) && gloss.Latest ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'a',
-                        { href: '/about', title: 'Unverified or debatable content.' },
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { className: 'glyphicon glyphicon-question-sign' })
-                    ) : '',
-                    ' ',
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'span',
-                        { itemprop: 'headline' },
-                        gloss.Word
-                    ),
-                    gloss.ExternalLinkFormat && gloss.ExternalID ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'a',
-                        { href: gloss.ExternalLinkFormat.replace(/\{ExternalID\}/g, gloss.ExternalID),
-                            className: 'ed-external-link-button',
-                            title: 'Open on ' + gloss.TranslationGroup + ' (new tab/window)',
-                            target: '_blank' },
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { 'class': 'glyphicon glyphicon-globe pull-right' })
-                    ) : ''
-                ),
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'p',
-                    null,
-                    gloss.Tengwar ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'span',
-                        { className: 'tengwar' },
-                        gloss.Tengwar
-                    ) : '',
-                    ' ',
-                    gloss.Type != 'unset' ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'span',
-                        { className: 'word-type', rel: 'trans-type' },
-                        gloss.Type,
-                        '.'
-                    ) : '',
-                    ' ',
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'span',
-                        { rel: 'trans-translation', itemprop: 'keywords' },
-                        gloss.Translation
-                    )
-                ),
-                comments,
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'footer',
-                    null,
-                    gloss.Source ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'span',
-                        { className: 'word-source', rel: 'trans-source' },
-                        '[',
-                        gloss.Source,
-                        ']'
-                    ) : '',
-                    ' ',
-                    gloss.Etymology ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'span',
-                        { className: 'word-etymology', rel: 'trans-etymology' },
-                        gloss.Etymology,
-                        '.'
-                    ) : '',
-                    ' ',
-                    gloss.TranslationGroupID ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'span',
-                        null,
-                        'Group: ',
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'span',
-                            { itemprop: 'sourceOrganization' },
-                            gloss.TranslationGroup,
-                            '.'
-                        )
-                    ) : '',
-                    ' Published: ',
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'span',
-                        { itemprop: 'datePublished' },
-                        gloss.DateCreated
-                    ),
-                    ' by ',
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'a',
-                        { href: gloss.AuthorURL, itemprop: 'author', rel: 'author', title: 'View profile for ' + gloss.AuthorName + '.' },
-                        gloss.AuthorName
-                    )
-                )
-            );
-        }
-    }]);
-
-    return EDBookGloss;
 }(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
 
 var mapStateToProps = function mapStateToProps(state) {
@@ -17437,6 +17231,286 @@ function config (name) {
 /***/ (function(module, exports) {
 
 /* (ignored) */
+
+/***/ }),
+/* 379 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_classnames__);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+
+/**
+ * Represents a single search result item.
+ */
+
+var EDSearchItem = function (_React$Component) {
+    _inherits(EDSearchItem, _React$Component);
+
+    function EDSearchItem() {
+        _classCallCheck(this, EDSearchItem);
+
+        return _possibleConstructorReturn(this, (EDSearchItem.__proto__ || Object.getPrototypeOf(EDSearchItem)).apply(this, arguments));
+    }
+
+    _createClass(EDSearchItem, [{
+        key: 'navigate',
+        value: function navigate(ev) {
+            ev.preventDefault();
+            this.props.onNavigate(this.props.index, this.props.item.word, this.props.item.normalizedWord);
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var cssClass = __WEBPACK_IMPORTED_MODULE_1_classnames___default()({ 'selected': this.props.active });
+            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'li',
+                null,
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'a',
+                    { href: '#', className: cssClass, onClick: this.navigate.bind(this) },
+                    this.props.item.word
+                )
+            );
+        }
+    }]);
+
+    return EDSearchItem;
+}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
+
+/* harmony default export */ __webpack_exports__["a"] = EDSearchItem;
+
+/***/ }),
+/* 380 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__book_gloss__ = __webpack_require__(381);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+
+/**
+ * Represents a single section of the book. A section is usually dedicated to a language.
+ */
+
+var EDBookSection = function (_React$Component) {
+    _inherits(EDBookSection, _React$Component);
+
+    function EDBookSection() {
+        _classCallCheck(this, EDBookSection);
+
+        return _possibleConstructorReturn(this, (EDBookSection.__proto__ || Object.getPrototypeOf(EDBookSection)).apply(this, arguments));
+    }
+
+    _createClass(EDBookSection, [{
+        key: 'render',
+        value: function render() {
+            var className = 'col-sm-' + this.props.columnsMax + ' col-md-' + this.props.columnsMid + ' col-lg-' + this.props.columnsMin;
+            var language = this.props.section.language;
+
+            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'article',
+                { className: className },
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'header',
+                    null,
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'h2',
+                        { rel: 'language-box' },
+                        language.Name,
+                        '\xA0',
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'span',
+                            { className: 'tengwar' },
+                            language.Tengwar
+                        )
+                    )
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'section',
+                    { className: 'language-box', id: 'language-box-' + language.ID },
+                    this.props.section.glosses.map(function (g) {
+                        return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__book_gloss__["a" /* default */], { gloss: g, language: language, key: g.TranslationID });
+                    })
+                )
+            );
+        }
+    }]);
+
+    return EDBookSection;
+}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
+
+/* harmony default export */ __webpack_exports__["a"] = EDBookSection;
+
+/***/ }),
+/* 381 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(13);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_classnames__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_html_to_react__ = __webpack_require__(329);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_html_to_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_html_to_react__);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+
+
+/**
+ * Represents a single gloss. A gloss is also called a 'translation' and is reserved for invented languages.
+ */
+
+var EDBookGloss = function (_React$Component) {
+    _inherits(EDBookGloss, _React$Component);
+
+    function EDBookGloss() {
+        _classCallCheck(this, EDBookGloss);
+
+        return _possibleConstructorReturn(this, (EDBookGloss.__proto__ || Object.getPrototypeOf(EDBookGloss)).apply(this, arguments));
+    }
+
+    _createClass(EDBookGloss, [{
+        key: 'render',
+        value: function render() {
+            var gloss = this.props.gloss;
+            var id = 'translation-block-' + gloss.TranslationID;
+
+            var comments = null;
+            if (gloss.Comments) {
+                var parser = new __WEBPACK_IMPORTED_MODULE_2_html_to_react__["Parser"]();
+                comments = parser.parse(gloss.Comments);
+            }
+
+            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'blockquote',
+                { itemscope: 'itemscope', itemtype: 'http://schema.org/Article', id: id, className: __WEBPACK_IMPORTED_MODULE_1_classnames___default()({ 'contribution': !gloss.Canon }) },
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'h3',
+                    { rel: 'trans-word', className: 'trans-word' },
+                    (!gloss.Canon || gloss.Uncertain) && gloss.Latest ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'a',
+                        { href: '/about', title: 'Unverified or debatable content.' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { className: 'glyphicon glyphicon-question-sign' })
+                    ) : '',
+                    ' ',
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'span',
+                        { itemprop: 'headline' },
+                        gloss.Word
+                    ),
+                    gloss.ExternalLinkFormat && gloss.ExternalID ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'a',
+                        { href: gloss.ExternalLinkFormat.replace(/\{ExternalID\}/g, gloss.ExternalID),
+                            className: 'ed-external-link-button',
+                            title: 'Open on ' + gloss.TranslationGroup + ' (new tab/window)',
+                            target: '_blank' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { 'class': 'glyphicon glyphicon-globe pull-right' })
+                    ) : ''
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'p',
+                    null,
+                    gloss.Tengwar ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'span',
+                        { className: 'tengwar' },
+                        gloss.Tengwar
+                    ) : '',
+                    ' ',
+                    gloss.Type != 'unset' ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'span',
+                        { className: 'word-type', rel: 'trans-type' },
+                        gloss.Type,
+                        '.'
+                    ) : '',
+                    ' ',
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'span',
+                        { rel: 'trans-translation', itemprop: 'keywords' },
+                        gloss.Translation
+                    )
+                ),
+                comments,
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'footer',
+                    null,
+                    gloss.Source ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'span',
+                        { className: 'word-source', rel: 'trans-source' },
+                        '[',
+                        gloss.Source,
+                        ']'
+                    ) : '',
+                    ' ',
+                    gloss.Etymology ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'span',
+                        { className: 'word-etymology', rel: 'trans-etymology' },
+                        gloss.Etymology,
+                        '.'
+                    ) : '',
+                    ' ',
+                    gloss.TranslationGroupID ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'span',
+                        null,
+                        'Group: ',
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'span',
+                            { itemprop: 'sourceOrganization' },
+                            gloss.TranslationGroup,
+                            '.'
+                        )
+                    ) : '',
+                    ' Published: ',
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'span',
+                        { itemprop: 'datePublished' },
+                        gloss.DateCreated
+                    ),
+                    ' by ',
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'a',
+                        { href: gloss.AuthorURL, itemprop: 'author', rel: 'author', title: 'View profile for ' + gloss.AuthorName + '.' },
+                        gloss.AuthorName
+                    )
+                )
+            );
+        }
+    }]);
+
+    return EDBookGloss;
+}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
+
+/* harmony default export */ __webpack_exports__["a"] = EDBookGloss;
 
 /***/ })
 ]),[252]);
