@@ -7,7 +7,7 @@ window.addEventListener('load', function () {
 
     for (let textarea of textareas) {
         ReactDOM.render(
-            <EDMarkdownEditor value={'Hello world'} componentName={textarea.name} value={textarea.value}
+            <EDMarkdownEditor componentName={textarea.name} value={textarea.value}
                 rows={textarea.rows} />,
             textarea.parentNode
         );
