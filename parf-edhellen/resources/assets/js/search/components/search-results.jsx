@@ -94,8 +94,6 @@ class EDSearchResults extends React.Component {
             nextIndex = 0;
         }
 
-        console.log(this.props.bookData);
-
         return (
             <div>
                 <div className="panel panel-default search-result-wrapper">
@@ -144,7 +142,7 @@ class EDSearchResults extends React.Component {
                         {this.props.bookData.sections.length < 1 ? (
                             <div class="row">
                                 <h3>Forsooth! I can't find what you're looking for!</h3>
-                                <p>The word <em>{{ $word }}</em> hasn't been recorded for any of the languages.</p>
+                                <p>The word <em>{this.props.bookData.word}</em> hasn't been recorded for any of the languages.</p>
                             </div>
                         ) : (
                             <div className="row">
