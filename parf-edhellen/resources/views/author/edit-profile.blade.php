@@ -31,15 +31,15 @@
         </div>
       </div>
       <div class="form-group">
-        <label for="ed-author-profile" class="col-sm-2 control-label">Tengwar</label>
+        <label for="ed-author-profile" class="col-sm-2 control-label">Description</label>
         <div class="col-sm-10">
-          <textarea class="form-control" id="ed-author-profile" name="profile" rows="15">{{ $author->Profile ?? '' }}</textarea>
+          
         </div>
       </div>
       <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
-          <a href="{{ route('') }}" class="btn btn-primary">Update</a>
-          <button type="button" class="btn btn-default">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update</button>
+          <a href="{{ route('author.profile', [ 'id' => $author->AccountID ]) }}" class="btn btn-default">Cancel</a>
         </div>
       </div>
       <input type="hidden" name="_token" value="{{ csrf_token() }}">
