@@ -78,4 +78,11 @@ update `auth_providers` set `URL` = lower(`URL`);
 -- Remember tokens are required by Laravel
 alter table `auth_accounts` add `RememberToken` varchar(100)  collate utf8_swedish_ci null;
 
+-- Adding neologisms to the sentence table
+alter table `sentence` add `Neologism` bit default 0;
+alter table `sentence` add `Approved` bit  default 0;
+alter table `sentence` add `AuthorID` int null;
+
+update `sentence` set `Approved` = 1;
+
 insert into `version` (`number`, `date`) values (1.8, NOW());

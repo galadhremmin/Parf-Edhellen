@@ -16,9 +16,13 @@ Route::get('/', [ 'uses' => 'HomeController@index' ]);
 // Common pages
 Route::get('/about',                    [ 'uses' => 'AboutController@index'     ])->name('about');
 Route::get('/about/donations',          [ 'uses' => 'AboutController@donations' ])->name('about.donations');
-Route::get('/phrases',                  [ 'uses' => 'PhrasesController@index'   ])->name('phrases');
-Route::get('/author/{id?}/{nickname?}', [ 'uses' => 'AuthorController@index'    ])
-    ->where([ 'id' => '[0-9]+' ])->name('author.profile');
+Route::get('/author',                   [ 'uses' => 'AuthorController@index'    ])->name('author.my-profile');
+Route::get('/author/{id}-{nickname?}',  [ 'uses' => 'AuthorController@index'    ])
+    ->where([ 'id' => '[0-9]+', 'nickname' => '[a-z_0-9]+' ])->name('author.profile');
+
+// Phrases
+Route::get('/phrases',                     [ 'uses' => 'PhrasesController@index'      ])->name('phrases');
+Route::get('/phrases/{langId}-{langName}', [ 'uses' => 'PhrasesController@byLanguage' ])->name('phrases.language');
 
 // Dictionary
 Route::get('/w/{word}',               [ 'uses' => 'BookController@pageForWord' ]);

@@ -41,10 +41,10 @@ class EDSearchResults extends React.Component {
         }
 
         this.loadedWord = item.word;
-        props.dispatch(beginNavigation(item.word, item.normalizedWord, this.loadedIndex));
+        props.dispatch(beginNavigation(item.word, item.normalizedWord, props.activeIndex));
     }
 
-    navigate(index, word, normalizedWord) {
+    navigate(index) {
         this.props.dispatch(setSelection(index));
         this.gotoResults();
     }
@@ -65,6 +65,32 @@ class EDSearchResults extends React.Component {
             behavior: 'smooth',
             block: 'start'
         }), 500);
+    }
+
+    gotoReference(normalizedWord, urlChanged) {
+        // Should we consider the URL as changed? This is the case when the back-button
+        // in the browser is pressed. When this method however is manually triggered,
+        // this may not be the case.
+        if (urlChanged === undefined) {
+            urlChanged = true;
+        }
+
+        let index = this.props.items
+            ? this.props.items.findIndex(i => i.normalizedWord === normalizedWord)
+            : -1;
+
+        if (index > -1) {
+            // Since the word exists in the search result set, update the current selection.
+            // Make sure to update the _loadedWord_ property first, to cancel default behaviour
+            // implemented in the _componentWillReceiveProps_ method.
+            this.loadedWord = this.props.items[index].word;
+            this.navigate(index);
+        } else {
+            // The word does not exist in the current result set.
+            index = undefined;
+        }
+
+        this.props.dispatch(beginNavigation(normalizedWord, undefined, index, !urlChanged));
     }
 
     onNavigate(ev, index) {
@@ -89,19 +115,7 @@ class EDSearchResults extends React.Component {
 
         // retrieve the word and attempt to locate it within the search result set.
         const normalizedWord = decodeURIComponent(path.substr(3));
-        const index = this.props.items
-            ? this.props.items.findIndex(i => i.normalizedWord === normalizedWord)
-            : -1;
-
-        if (index > -1) {
-            // Since the word exists in the search result set, update the current selection.
-            // Make sure to update the _loadedWord_ property first, to cancel default behaviour
-            // implemented in the _componentWillReceiveProps_ method.
-            this.loadedWord = this.props.items[index].word;
-            this.navigate(index);
-        } 
-        
-        this.props.dispatch(beginNavigation(normalizedWord, undefined, undefined, false));
+        this.gotoReference(normalizedWord);
     }
 
     onPanelClick(ev) {
@@ -112,11 +126,11 @@ class EDSearchResults extends React.Component {
         });
     }
 
-    render() {
-        if (!Array.isArray(this.props.items)) {
-            return <div></div>;
-        }
+    onReferenceLinkClick(ev) {
+        this.gotoReference(ev.word, false);
+    }
 
+    renderSearchResults() {
         let previousIndex = this.props.activeIndex - 1;
         let nextIndex = this.props.activeIndex + 1;
 
@@ -128,47 +142,46 @@ class EDSearchResults extends React.Component {
             nextIndex = 0;
         }
 
-        return (
-            <div>
-                <div className="panel panel-default search-result-wrapper">
-                    <div className="panel-heading" onClick={this.onPanelClick.bind(this)}>
-                        <h3 className="panel-title search-result-wrapper-toggler-title">
-                            <span className={classNames('glyphicon', { 'glyphicon-minus': this.state.itemsOpened },
-                                { 'glyphicon-plus': !this.state.itemsOpened })} />
-                            {` Matching words`}
-                        </h3>
-                    </div>
-                    <div className={classNames('panel-body', 'results-panel',
-                        {'hidden': this.props.items.length < 1 || !this.state.itemsOpened})}>
-                        <div className="row">
-                            <div className="col-xs-12">
-                                These words match <em>{this.props.wordSearch}</em>. Click on the one most relevant to you,
-                                or simply press enter to expand the first item in the list.
-                            </div>
-                        </div>
-                        <div className="row">
-                            <ul className="search-result">
-                                {this.props.items.map((item, i) =>
-                                    <EDSearchItem key={i} active={i === this.props.activeIndex}
-                                                  item={item} index={i}
-                                                  onNavigate={this.navigate.bind(this)} />)}
-                            </ul>
+        return (<section>
+            <div className="panel panel-default search-result-wrapper">
+                <div className="panel-heading" onClick={this.onPanelClick.bind(this)}>
+                    <h3 className="panel-title search-result-wrapper-toggler-title">
+                                <span className={classNames('glyphicon', { 'glyphicon-minus': this.state.itemsOpened },
+                                    { 'glyphicon-plus': !this.state.itemsOpened })} />
+                        {` Matching words`}
+                    </h3>
+                </div>
+                <div className={classNames('panel-body', 'results-panel',
+                            {'hidden': this.props.items.length < 1 || !this.state.itemsOpened})}>
+                    <div className="row">
+                        <div className="col-xs-12">
+                            These words match <em>{this.props.wordSearch}</em>. Click on the one most relevant to you,
+                            or simply press enter to expand the first item in the list.
                         </div>
                     </div>
-                    <div className={classNames('panel-body', 'results-empty',
-                        {'hidden': this.props.items.length > 0})}>
-                        <div className="row">
-                            <div className="col-xs-12">
-                                Unfortunately, we were unable to find any words matching <em>{this.props.wordSearch}</em>.
-                                Have you tried a synonym, or perhaps even an antonym?
-                            </div>
-                        </div>
-                    </div>
-                    <div className={classNames('panel-body', { 'hidden': this.state.itemsOpened })}>
-                        {`${this.props.items.length} matching words. Click on the title to expand.`}
+                    <div className="row">
+                        <ul className="search-result">
+                            {this.props.items.map((item, i) =>
+                                <EDSearchItem key={i} active={i === this.props.activeIndex}
+                                              item={item} index={i}
+                                              onNavigate={this.navigate.bind(this)} />)}
+                        </ul>
                     </div>
                 </div>
-                {this.props.items.length > 1 ? (
+                <div className={classNames('panel-body', 'results-empty',
+                            {'hidden': this.props.items.length > 0})}>
+                    <div className="row">
+                        <div className="col-xs-12">
+                            Unfortunately, we were unable to find any words matching <em>{this.props.wordSearch}</em>.
+                            Have you tried a synonym, or perhaps even an antonym?
+                        </div>
+                    </div>
+                </div>
+                <div className={classNames('panel-body', { 'hidden': this.state.itemsOpened })}>
+                    {`${this.props.items.length} matching words. Click on the title to expand.`}
+                </div>
+            </div>
+            {this.props.items.length > 1 ? (
                 <div className="row search-result-navigator">
                     <nav>
                         <ul className="pager">
@@ -177,27 +190,50 @@ class EDSearchResults extends React.Component {
                         </ul>
                     </nav>
                 </div>
-                ) : ''}
-                {this.props.bookData ? (
-                    <div className="search-result-presenter">
-                        {this.props.bookData.sections.length < 1 ? (
-                            <div class="row">
-                                <h3>Forsooth! I can't find what you're looking for!</h3>
-                                <p>The word <em>{this.props.bookData.word}</em> hasn't been recorded for any of the languages.</p>
-                            </div>
-                        ) : (
-                            <div className="row">
-                                {this.props.bookData.sections.map(
-                                    s => <EDBookSection section={s}
-                                                        key={s.language.ID}
-                                                        columnsMax={this.props.bookData.columnsMax}
-                                                        columnsMid={this.props.bookData.columnsMid}
-                                                        columnsMin={this.props.bookData.columnsMin}/>
-                                )}
-                            </div>
+            ) : ''}
+        </section>);
+    }
+
+    renderBook() {
+        return (<section>
+            <div className="search-result-presenter">
+                {this.props.bookData.sections.length < 1 ? (
+                    <div class="row">
+                        <h3>Forsooth! I can't find what you're looking for!</h3>
+                        <p>The word <em>{this.props.bookData.word}</em> hasn't been recorded for any of the languages.</p>
+                    </div>
+                ) : (
+                    <div className="row">
+                        {this.props.bookData.sections.map(
+                            s => <EDBookSection section={s}
+                                                key={s.language.ID}
+                                                columnsMax={this.props.bookData.columnsMax}
+                                                columnsMid={this.props.bookData.columnsMid}
+                                                columnsMin={this.props.bookData.columnsMin}
+                                                onReferenceLinkClick={this.onReferenceLinkClick.bind(this)}/>
                         )}
                     </div>
-                ): ''}
+                )}
+            </div>
+        </section>);
+    }
+
+    render() {
+
+        let searchResults = null;
+        if (Array.isArray(this.props.items)) {
+            searchResults = this.renderSearchResults();
+        }
+
+        let book = null;
+        if (this.props.bookData) {
+            book = this.renderBook();
+        }
+
+        return (
+            <div>
+                {searchResults ? searchResults : ''}
+                {book ? book : ''}
             </div>
         );
     }

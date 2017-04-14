@@ -23,4 +23,12 @@ class Sentence extends Model
     {
         return $this->hasOne(Language::class, 'ID', 'LanguageID');
     }
+    
+    public function scopeNeologisms($query) {
+        $query->where('Neologism', 1);
+    }
+
+    public function scopeApproved($query) {
+        $query->where('Approved', 1);
+    }
 }

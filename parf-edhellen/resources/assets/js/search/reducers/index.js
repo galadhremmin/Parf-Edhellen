@@ -23,11 +23,19 @@ export const EDSearchResultsReducer = (state = {
             });
 
         case REQUEST_NAVIGATION:
+            // perform an index check -- if the action does not specify
+            // an index within the current result set, reset the result set
+            // as we can assume that the client has navigated somewhere else
+            // (to an entirely different word)
+            const index = action.index === undefined ? -1 : action.index;
+            const items = index > -1 ? state.items : undefined;
+
             return Object.assign({}, state, {
                 loading: true,
                 word: action.word,
                 normalizedWord: action.normalizedWord,
-                itemIndex: action.index || state.itemIndex
+                itemIndex: index,
+                items
             });
 
         case RECEIVE_RESULTS:

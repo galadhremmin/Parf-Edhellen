@@ -13,7 +13,7 @@
         </div>
         <div class="panel-body">
           <ul>
-            <li><a href="{{ route('author.profile') }}">Profile</a></li>
+            <li><a href="{{ route('author.my-profile') }}">Profile</a></li>
           </ul>
         </div>
       </div>

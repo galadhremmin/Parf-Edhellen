@@ -29,7 +29,11 @@ class MarkdownParser extends \Parsedown
         if (!preg_match("/\\[\\[([^\\]]+)\\]\\]/", $context, $matches))
             return;
 
+        // escape/encode special characters as their HTML equivalent
         $word = htmlspecialchars($matches[1], ENT_QUOTES | ENT_HTML5);
+        // remove footnotes, in case they were accidently imported
+        $word = str_replace(['¹', '²', '³'], '', $word);
+
         return [
             'extent' => strlen($matches[0]),
             'element' => [
@@ -38,7 +42,9 @@ class MarkdownParser extends \Parsedown
                 'text' => $word,
                 'attributes' => [
                     'href' => '/w/' . urlencode($word),
-                    'title' => 'Navigate to '.$word.'.'
+                    'title' => 'Navigate to '.$word.'.',
+                    'class' => 'ed-word-reference',
+                    'data-word' => StringHelper::normalize($word)
                 ]
             ]
         ];

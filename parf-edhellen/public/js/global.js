@@ -1,6 +1,76 @@
 webpackJsonp([1,3],{
 
 /***/ 151:
+/***/ (function(module, exports) {
+
+(function () {
+    var onButtonClick = function onButtonClick(ev) {
+        ev.preventDefault();
+
+        var targets = document.querySelectorAll(ev.target.dataset.target);
+        var className = ev.target.dataset.toggle;
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+            for (var _iterator = targets[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                var target = _step.value;
+
+                if (target.classList.contains(className)) {
+                    target.classList.remove(className);
+                } else {
+                    target.classList.add(className);
+                }
+            }
+        } catch (err) {
+            _didIteratorError = true;
+            _iteratorError = err;
+        } finally {
+            try {
+                if (!_iteratorNormalCompletion && _iterator.return) {
+                    _iterator.return();
+                }
+            } finally {
+                if (_didIteratorError) {
+                    throw _iteratorError;
+                }
+            }
+        }
+    };
+
+    var buttons = document.querySelectorAll('.navbar-toggle');
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
+
+    try {
+        for (var _iterator2 = buttons[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            var button = _step2.value;
+
+            button.addEventListener('click', function (ev) {
+                return onButtonClick(ev);
+            });
+        }
+    } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                _iterator2.return();
+            }
+        } finally {
+            if (_didIteratorError2) {
+                throw _iteratorError2;
+            }
+        }
+    }
+})();
+
+/***/ }),
+
+/***/ 152:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11,11 +81,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react_dom__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_redux__ = __webpack_require__(38);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_redux__ = __webpack_require__(50);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_redux_thunk__ = __webpack_require__(353);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_redux_thunk__ = __webpack_require__(354);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_redux_thunk___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_redux_thunk__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__reducers__ = __webpack_require__(94);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_search_bar__ = __webpack_require__(173);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_search_results__ = __webpack_require__(175);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_search_bar__ = __webpack_require__(174);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__components_search_results__ = __webpack_require__(176);
 
 
 
@@ -43,14 +113,14 @@ window.addEventListener('load', function () {
 
 /***/ }),
 
-/***/ 152:
+/***/ 153:
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
 
-/***/ 171:
+/***/ 172:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -86,6 +156,66 @@ var EDBookGloss = function (_React$Component) {
     }
 
     _createClass(EDBookGloss, [{
+        key: 'processHtml',
+        value: function processHtml(html) {
+            var _this2 = this;
+
+            var definitions = new __WEBPACK_IMPORTED_MODULE_2_html_to_react__["ProcessNodeDefinitions"](__WEBPACK_IMPORTED_MODULE_0_react___default.a);
+            var instructions = [
+            // Special behaviour for <a> as they are reference links.
+            {
+                shouldProcessNode: function shouldProcessNode(node) {
+                    return node.name === 'a';
+                },
+                processNode: function processNode(node, children) {
+                    var nodeElements = definitions.processDefaultNode(node, children);
+                    if (node.attribs.class !== 'ed-word-reference') {
+                        return nodeElements;
+                    }
+
+                    // Replace reference links with a link that is aware of
+                    // the component, and can intercept click attempts.
+                    var href = node.attribs.href;
+                    var title = node.attribs.title;
+                    var word = node.attribs['data-word'];
+                    var childElements = nodeElements.props.children;
+
+                    return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'a',
+                        { href: href,
+                            onClick: function onClick(ev) {
+                                return _this2.onReferenceLinkClick(ev, word);
+                            },
+                            title: title },
+                        childElements
+                    );
+                }
+            },
+            // Default behaviour for all else.
+            {
+                shouldProcessNode: function shouldProcessNode(node) {
+                    return true;
+                },
+                processNode: definitions.processDefaultNode
+            }];
+
+            var parser = new __WEBPACK_IMPORTED_MODULE_2_html_to_react__["Parser"]();
+            return parser.parseWithInstructions(html, function (n) {
+                return true;
+            }, instructions);
+        }
+    }, {
+        key: 'onReferenceLinkClick',
+        value: function onReferenceLinkClick(ev, word) {
+            ev.preventDefault();
+
+            if (this.props.onReferenceLinkClick) {
+                this.props.onReferenceLinkClick({
+                    word: word
+                });
+            }
+        }
+    }, {
         key: 'render',
         value: function render() {
             var gloss = this.props.gloss;
@@ -93,13 +223,12 @@ var EDBookGloss = function (_React$Component) {
 
             var comments = null;
             if (gloss.Comments) {
-                var parser = new __WEBPACK_IMPORTED_MODULE_2_html_to_react__["Parser"]();
-                comments = parser.parse(gloss.Comments);
+                comments = this.processHtml(gloss.Comments);
             }
 
             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                 'blockquote',
-                { itemscope: 'itemscope', itemtype: 'http://schema.org/Article', id: id, className: __WEBPACK_IMPORTED_MODULE_1_classnames___default()({ 'contribution': !gloss.Canon }) },
+                { itemScope: 'itemscope', itemType: 'http://schema.org/Article', id: id, className: __WEBPACK_IMPORTED_MODULE_1_classnames___default()({ 'contribution': !gloss.Canon }) },
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'h3',
                     { rel: 'trans-word', className: 'trans-word' },
@@ -111,7 +240,7 @@ var EDBookGloss = function (_React$Component) {
                     ' ',
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'span',
-                        { itemprop: 'headline' },
+                        { itemProp: 'headline' },
                         gloss.Word
                     ),
                     gloss.ExternalLinkFormat && gloss.ExternalID ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -120,7 +249,7 @@ var EDBookGloss = function (_React$Component) {
                             className: 'ed-external-link-button',
                             title: 'Open on ' + gloss.TranslationGroup + ' (new tab/window)',
                             target: '_blank' },
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { 'class': 'glyphicon glyphicon-globe pull-right' })
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { className: 'glyphicon glyphicon-globe pull-right' })
                     ) : ''
                 ),
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -141,7 +270,7 @@ var EDBookGloss = function (_React$Component) {
                     ' ',
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'span',
-                        { rel: 'trans-translation', itemprop: 'keywords' },
+                        { rel: 'trans-translation', itemProp: 'keywords' },
                         gloss.Translation
                     )
                 ),
@@ -170,7 +299,7 @@ var EDBookGloss = function (_React$Component) {
                         'Group: ',
                         __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                             'span',
-                            { itemprop: 'sourceOrganization' },
+                            { itemProp: 'sourceOrganization' },
                             gloss.TranslationGroup,
                             '.'
                         )
@@ -178,13 +307,13 @@ var EDBookGloss = function (_React$Component) {
                     ' Published: ',
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'span',
-                        { itemprop: 'datePublished' },
+                        { itemProp: 'datePublished' },
                         gloss.DateCreated
                     ),
                     ' by ',
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'a',
-                        { href: gloss.AuthorURL, itemprop: 'author', rel: 'author', title: 'View profile for ' + gloss.AuthorName + '.' },
+                        { href: gloss.AuthorURL, itemProp: 'author', rel: 'author', title: 'View profile for ' + gloss.AuthorName + '.' },
                         gloss.AuthorName
                     )
                 )
@@ -199,13 +328,13 @@ var EDBookGloss = function (_React$Component) {
 
 /***/ }),
 
-/***/ 172:
+/***/ 173:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(7);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__book_gloss__ = __webpack_require__(171);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__book_gloss__ = __webpack_require__(172);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -231,8 +360,17 @@ var EDBookSection = function (_React$Component) {
     }
 
     _createClass(EDBookSection, [{
+        key: 'onReferenceLinkClick',
+        value: function onReferenceLinkClick(ev) {
+            if (this.props.onReferenceLinkClick) {
+                this.props.onReferenceLinkClick(ev);
+            }
+        }
+    }, {
         key: 'render',
         value: function render() {
+            var _this2 = this;
+
             var className = 'col-sm-' + this.props.columnsMax + ' col-md-' + this.props.columnsMid + ' col-lg-' + this.props.columnsMin;
             var language = this.props.section.language;
 
@@ -258,7 +396,10 @@ var EDBookSection = function (_React$Component) {
                     'section',
                     { className: 'language-box', id: 'language-box-' + language.ID },
                     this.props.section.glosses.map(function (g) {
-                        return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__book_gloss__["a" /* default */], { gloss: g, language: language, key: g.TranslationID });
+                        return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_1__book_gloss__["a" /* default */], { gloss: g,
+                            language: language,
+                            key: g.TranslationID,
+                            onReferenceLinkClick: _this2.onReferenceLinkClick.bind(_this2) });
                     })
                 )
             );
@@ -272,7 +413,7 @@ var EDBookSection = function (_React$Component) {
 
 /***/ }),
 
-/***/ 173:
+/***/ 174:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -476,7 +617,7 @@ var mapStateToProps = function mapStateToProps(state) {
 
 /***/ }),
 
-/***/ 174:
+/***/ 175:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -537,7 +678,7 @@ var EDSearchItem = function (_React$Component) {
 
 /***/ }),
 
-/***/ 175:
+/***/ 176:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -547,8 +688,8 @@ var EDSearchItem = function (_React$Component) {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions__ = __webpack_require__(93);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_classnames__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_classnames__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__search_item__ = __webpack_require__(174);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__book_section__ = __webpack_require__(172);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__search_item__ = __webpack_require__(175);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__book_section__ = __webpack_require__(173);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -612,11 +753,11 @@ var EDSearchResults = function (_React$Component) {
             }
 
             this.loadedWord = item.word;
-            props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__actions__["a" /* beginNavigation */])(item.word, item.normalizedWord, this.loadedIndex));
+            props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__actions__["a" /* beginNavigation */])(item.word, item.normalizedWord, props.activeIndex));
         }
     }, {
         key: 'navigate',
-        value: function navigate(index, word, normalizedWord) {
+        value: function navigate(index) {
             this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__actions__["b" /* setSelection */])(index));
             this.gotoResults();
         }
@@ -640,6 +781,33 @@ var EDSearchResults = function (_React$Component) {
                     block: 'start'
                 });
             }, 500);
+        }
+    }, {
+        key: 'gotoReference',
+        value: function gotoReference(normalizedWord, urlChanged) {
+            // Should we consider the URL as changed? This is the case when the back-button
+            // in the browser is pressed. When this method however is manually triggered,
+            // this may not be the case.
+            if (urlChanged === undefined) {
+                urlChanged = true;
+            }
+
+            var index = this.props.items ? this.props.items.findIndex(function (i) {
+                return i.normalizedWord === normalizedWord;
+            }) : -1;
+
+            if (index > -1) {
+                // Since the word exists in the search result set, update the current selection.
+                // Make sure to update the _loadedWord_ property first, to cancel default behaviour
+                // implemented in the _componentWillReceiveProps_ method.
+                this.loadedWord = this.props.items[index].word;
+                this.navigate(index);
+            } else {
+                // The word does not exist in the current result set.
+                index = undefined;
+            }
+
+            this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__actions__["a" /* beginNavigation */])(normalizedWord, undefined, index, !urlChanged));
         }
     }, {
         key: 'onNavigate',
@@ -668,19 +836,7 @@ var EDSearchResults = function (_React$Component) {
 
             // retrieve the word and attempt to locate it within the search result set.
             var normalizedWord = decodeURIComponent(path.substr(3));
-            var index = this.props.items ? this.props.items.findIndex(function (i) {
-                return i.normalizedWord === normalizedWord;
-            }) : -1;
-
-            if (index > -1) {
-                // Since the word exists in the search result set, update the current selection.
-                // Make sure to update the _loadedWord_ property first, to cancel default behaviour
-                // implemented in the _componentWillReceiveProps_ method.
-                this.loadedWord = this.props.items[index].word;
-                this.navigate(index);
-            }
-
-            this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__actions__["a" /* beginNavigation */])(normalizedWord, undefined, undefined, false));
+            this.gotoReference(normalizedWord);
         }
     }, {
         key: 'onPanelClick',
@@ -692,13 +848,14 @@ var EDSearchResults = function (_React$Component) {
             });
         }
     }, {
-        key: 'render',
-        value: function render() {
+        key: 'onReferenceLinkClick',
+        value: function onReferenceLinkClick(ev) {
+            this.gotoReference(ev.word, false);
+        }
+    }, {
+        key: 'renderSearchResults',
+        value: function renderSearchResults() {
             var _this2 = this;
-
-            if (!Array.isArray(this.props.items)) {
-                return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', null);
-            }
 
             var previousIndex = this.props.activeIndex - 1;
             var nextIndex = this.props.activeIndex + 1;
@@ -712,7 +869,7 @@ var EDSearchResults = function (_React$Component) {
             }
 
             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                'div',
+                'section',
                 null,
                 __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'div',
@@ -819,8 +976,18 @@ var EDSearchResults = function (_React$Component) {
                             )
                         )
                     )
-                ) : '',
-                this.props.bookData ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                ) : ''
+            );
+        }
+    }, {
+        key: 'renderBook',
+        value: function renderBook() {
+            var _this3 = this;
+
+            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'section',
+                null,
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                     'div',
                     { className: 'search-result-presenter' },
                     this.props.bookData.sections.length < 1 ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
@@ -848,12 +1015,34 @@ var EDSearchResults = function (_React$Component) {
                         this.props.bookData.sections.map(function (s) {
                             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_5__book_section__["a" /* default */], { section: s,
                                 key: s.language.ID,
-                                columnsMax: _this2.props.bookData.columnsMax,
-                                columnsMid: _this2.props.bookData.columnsMid,
-                                columnsMin: _this2.props.bookData.columnsMin });
+                                columnsMax: _this3.props.bookData.columnsMax,
+                                columnsMid: _this3.props.bookData.columnsMid,
+                                columnsMin: _this3.props.bookData.columnsMin,
+                                onReferenceLinkClick: _this3.onReferenceLinkClick.bind(_this3) });
                         })
                     )
-                ) : ''
+                )
+            );
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+
+            var searchResults = null;
+            if (Array.isArray(this.props.items)) {
+                searchResults = this.renderSearchResults();
+            }
+
+            var book = null;
+            if (this.props.bookData) {
+                book = this.renderBook();
+            }
+
+            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'div',
+                null,
+                searchResults ? searchResults : '',
+                book ? book : ''
             );
         }
     }]);
@@ -875,7 +1064,7 @@ var mapStateToProps = function mapStateToProps(state) {
 
 /***/ }),
 
-/***/ 353:
+/***/ 354:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -905,11 +1094,12 @@ exports['default'] = thunk;
 
 /***/ }),
 
-/***/ 372:
+/***/ 373:
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(151);
-module.exports = __webpack_require__(152);
+__webpack_require__(152);
+module.exports = __webpack_require__(153);
 
 
 /***/ }),
@@ -1004,18 +1194,26 @@ function beginNavigation(word, normalizedWord, index, modifyState) {
         modifyState = true;
     }
 
+    if (!index && index !== 0) {
+        index = undefined;
+    }
+
     var uriEncodedWord = encodeURIComponent(normalizedWord || word);
     var apiAddress = '/api/v1/book/translate';
     var address = '/w/' + uriEncodedWord;
     var title = word + ' - Parf Edhellen';
 
+    // When navigating using the browser's back and forward buttons,
+    // the state needn't be modified.
     if (modifyState) {
         window.history.pushState(null, title, address);
     }
-    document.title = title; // because most browsers doesn't change the document title when pushing state
+
+    // because most browsers doesn't change the document title when pushing state
+    document.title = title;
 
     return function (dispatch) {
-        dispatch(requestNavigation(word, normalizedWord || undefined, index || undefined));
+        dispatch(requestNavigation(word, normalizedWord || undefined, index));
 
         __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post(apiAddress, { word: normalizedWord || word }).then(function (resp) {
             dispatch(receiveNavigation(resp.data));
@@ -1093,11 +1291,19 @@ var EDSearchResultsReducer = function EDSearchResultsReducer() {
             });
 
         case REQUEST_NAVIGATION:
+            // perform an index check -- if the action does not specify
+            // an index within the current result set, reset the result set
+            // as we can assume that the client has navigated somewhere else
+            // (to an entirely different word)
+            var index = action.index === undefined ? -1 : action.index;
+            var items = index > -1 ? state.items : undefined;
+
             return Object.assign({}, state, {
                 loading: true,
                 word: action.word,
                 normalizedWord: action.normalizedWord,
-                itemIndex: action.index || state.itemIndex
+                itemIndex: index,
+                items: items
             });
 
         case RECEIVE_RESULTS:
@@ -1130,4 +1336,4 @@ var EDSearchResultsReducer = function EDSearchResultsReducer() {
 
 /***/ })
 
-},[372]);
+},[373]);

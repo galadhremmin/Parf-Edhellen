@@ -26,4 +26,13 @@ class LinkHelper
             'providerName' => $url
         ]);
     }
+    
+    public function phraseByLanguage(int $languageId, string $languageName) {
+        $languageName = urlencode(strtolower($languageName));
+
+        return route('phrases.language', [
+            'langId'   => $languageId,
+            'langName' => $languageName
+        ]);
+    }
 }

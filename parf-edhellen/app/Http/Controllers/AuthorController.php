@@ -62,7 +62,7 @@ class AuthorController extends Controller
 
         $author->save();
 
-        return redirect()->route('author.profile');
+        return redirect()->route('author.my-profile');
     }
 
     private function getAuthor(Request $request, $id)

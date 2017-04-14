@@ -75,18 +75,26 @@ export function beginNavigation(word, normalizedWord, index, modifyState) {
         modifyState = true;
     }
 
+    if (!index && index !== 0) {
+        index = undefined;
+    }
+
     const uriEncodedWord = encodeURIComponent(normalizedWord || word);
     const apiAddress = '/api/v1/book/translate';
     const address = '/w/' + uriEncodedWord;
     const title = `${word} - Parf Edhellen`;
 
+    // When navigating using the browser's back and forward buttons,
+    // the state needn't be modified.
     if (modifyState) {
         window.history.pushState(null, title, address);
     }
-    document.title = title; // because most browsers doesn't change the document title when pushing state
+
+    // because most browsers doesn't change the document title when pushing state
+    document.title = title;
 
     return dispatch => {
-        dispatch(requestNavigation(word, normalizedWord || undefined, index || undefined));
+        dispatch(requestNavigation(word, normalizedWord || undefined, index));
 
         axios.post(apiAddress, { word: normalizedWord || word }).then(resp => {
             dispatch(receiveNavigation(resp.data));
