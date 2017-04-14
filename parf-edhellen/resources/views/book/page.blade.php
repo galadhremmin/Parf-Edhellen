@@ -4,6 +4,6 @@
 
 @section('body')
 <div class="ed-remove-when-navigating">
-    @include('book._page', $sections)
+  @include('book._page', $sections)
 </div>
 @endsection

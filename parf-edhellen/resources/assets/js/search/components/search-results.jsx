@@ -26,6 +26,10 @@ class EDSearchResults extends React.Component {
         window.removeEventListener(this.popStateHandler);
     }
 
+    /**
+     * Active index has changed?
+     * @param props
+     */
     componentWillReceiveProps(props) {
         if (props.activeIndex === undefined || props.activeIndex < 0) {
             return;
@@ -42,6 +46,25 @@ class EDSearchResults extends React.Component {
 
     navigate(index, word, normalizedWord) {
         this.props.dispatch(setSelection(index));
+        this.gotoResults();
+    }
+
+    gotoResults() {
+        // Is the results view within the viewport?
+        const results = document.getElementsByClassName('search-result-presenter');
+        if (results.length < 1) {
+            return; // doesn't exist - no results?
+        }
+
+        if (undefined === results[0].scrollIntoView) {
+            return; // Lacking browser support!
+        }
+
+        const element = results[0];
+        window.setTimeout(() => element.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        }), 500);
     }
 
     onNavigate(ev, index) {

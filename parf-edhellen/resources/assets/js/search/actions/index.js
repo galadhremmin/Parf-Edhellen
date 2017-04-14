@@ -76,7 +76,7 @@ export function beginNavigation(word, normalizedWord, index, modifyState) {
     }
 
     const uriEncodedWord = encodeURIComponent(normalizedWord || word);
-    const apiAddress = '/api/v1/book/translate/' + uriEncodedWord;
+    const apiAddress = '/api/v1/book/translate';
     const address = '/w/' + uriEncodedWord;
     const title = `${word} - Parf Edhellen`;
 
@@ -88,11 +88,7 @@ export function beginNavigation(word, normalizedWord, index, modifyState) {
     return dispatch => {
         dispatch(requestNavigation(word, normalizedWord || undefined, index || undefined));
 
-        axios.get(apiAddress, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest' // this is important for the controller!
-            }
-        }).then(resp => {
+        axios.post(apiAddress, { word: normalizedWord || word }).then(resp => {
             dispatch(receiveNavigation(resp.data));
 
             // Find elements which is requested to be deleted upon receiving the navigation commmand

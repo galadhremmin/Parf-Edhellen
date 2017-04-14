@@ -28,8 +28,13 @@ class BookApiController extends Controller
         return $keywords;
     }
 
-    public function translate(Request $request, string $word)
+    public function translate(Request $request)
     {
+        $this->validate($request, [
+            'word' => 'required|max:255'
+        ]);
+
+        $word = $request->input('word');
         $translations = $this->_translationRepository->getWordTranslations($word);
         $model = $this->_adapter->adaptTranslations($translations, $word);
 

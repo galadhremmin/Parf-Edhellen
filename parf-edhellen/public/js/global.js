@@ -593,6 +593,12 @@ var EDSearchResults = function (_React$Component) {
         value: function componentWillUnmount() {
             window.removeEventListener(this.popStateHandler);
         }
+
+        /**
+         * Active index has changed?
+         * @param props
+         */
+
     }, {
         key: 'componentWillReceiveProps',
         value: function componentWillReceiveProps(props) {
@@ -612,6 +618,28 @@ var EDSearchResults = function (_React$Component) {
         key: 'navigate',
         value: function navigate(index, word, normalizedWord) {
             this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__actions__["b" /* setSelection */])(index));
+            this.gotoResults();
+        }
+    }, {
+        key: 'gotoResults',
+        value: function gotoResults() {
+            // Is the results view within the viewport?
+            var results = document.getElementsByClassName('search-result-presenter');
+            if (results.length < 1) {
+                return; // doesn't exist - no results?
+            }
+
+            if (undefined === results[0].scrollIntoView) {
+                return; // Lacking browser support!
+            }
+
+            var element = results[0];
+            window.setTimeout(function () {
+                return element.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }, 500);
         }
     }, {
         key: 'onNavigate',
@@ -977,7 +1005,7 @@ function beginNavigation(word, normalizedWord, index, modifyState) {
     }
 
     var uriEncodedWord = encodeURIComponent(normalizedWord || word);
-    var apiAddress = '/api/v1/book/translate/' + uriEncodedWord;
+    var apiAddress = '/api/v1/book/translate';
     var address = '/w/' + uriEncodedWord;
     var title = word + ' - Parf Edhellen';
 
@@ -989,11 +1017,7 @@ function beginNavigation(word, normalizedWord, index, modifyState) {
     return function (dispatch) {
         dispatch(requestNavigation(word, normalizedWord || undefined, index || undefined));
 
-        __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get(apiAddress, {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest' // this is important for the controller!
-            }
-        }).then(function (resp) {
+        __WEBPACK_IMPORTED_MODULE_0_axios___default.a.post(apiAddress, { word: normalizedWord || word }).then(function (resp) {
             dispatch(receiveNavigation(resp.data));
 
             // Find elements which is requested to be deleted upon receiving the navigation commmand

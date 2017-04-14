@@ -11,18 +11,6 @@
     <span itemprop="headline">
       {{ $gloss->Word }}
     </span>
-    <!--
-    {if $loggedIn}
-      {if $isAdmin}
-      <a href="#" class="ed-delete-button" data-translation-id="{$translation->id}" title="Delete this item"><span class="glyphicon glyphicon-trash pull-right" aria-hidden="true"></span></a>
-      {/if}
-      <a href="/translate-form.page?translationID={$translation->id}" title="Edit this item"><span class="glyphicon glyphicon-pencil pull-right" aria-hidden="true"></span></a>
-      <a href="#" class="ed-favourite-button" data-translation-id="{$translation->id}" title="Add to favourites"><span class="glyphicon glyphicon-heart{if !in_array($translation->id, $favourites)}-empty{/if} pull-right" aria-hidden="true"></span></a>
-    {/if}
-    -->
-    @if ($gloss->ExternalLinkFormat != null && $gloss->ExternalID !== null)
-      <a href="{{ str_replace('{ExternalID}', $gloss->ExternalID, $gloss->ExternalLinkFormat) }}" class="ed-external-link-button" title="Open on {{ $gloss->TranslationGroup }} (new tab/window)" target="_blank"><span class="glyphicon glyphicon-globe pull-right" aria-hidden="true"></span></a>
-    @endif
   </h3> 
   @if ($gloss->Tengwar != null)
   &#32;<span class="tengwar">{{ $gloss->Tengwar }}</span>
