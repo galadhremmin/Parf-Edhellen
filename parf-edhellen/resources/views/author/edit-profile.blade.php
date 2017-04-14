@@ -48,5 +48,5 @@
 @endsection
 
 @section('scripts')
-  <script type="text/javascript" src="/js/author.js" async></script>
+  <script type="text/javascript" src="/js/markdown.js" async></script>
 @endsection

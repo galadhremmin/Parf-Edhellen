@@ -17,7 +17,13 @@ class EDMarkdownEditor extends React.Component {
         };
     }
 
-    openTab(ev, tab) {
+    applyHtml(resp) {
+        this.setState({
+            html: resp.data.html
+        });
+    }
+
+    onOpenTab(ev, tab) {
         ev.preventDefault();
 
         // Is the tab currently opened?
@@ -37,12 +43,6 @@ class EDMarkdownEditor extends React.Component {
         }
     }
 
-    applyHtml(resp) {
-        this.setState({
-            html: resp.data.html
-        });
-    }
-
     onValueChange(ev) {
         this.setState({
             value: ev.target.value
@@ -52,7 +52,7 @@ class EDMarkdownEditor extends React.Component {
     render() {
         let html = null;
         
-        if (this.state.html) {
+        if (this.state.currentTab === MDMarkdownPreviewTab && this.state.html) {
             var parser = new HtmlToReactParser();
             html = parser.parse(this.state.html);
         }
@@ -62,24 +62,29 @@ class EDMarkdownEditor extends React.Component {
                 <ul className="nav nav-tabs">
                     <li role="presentation"
                         className={classNames({'active': this.state.currentTab === MDMarkdownEditTab})}>
-                        <a href="#" onClick={e => this.openTab(e, MDMarkdownEditTab)}>Edit</a>
+                        <a href="#" onClick={e => this.onOpenTab(e, MDMarkdownEditTab)}>Edit</a>
                     </li>
                     <li role="presentation"
                         className={classNames({'active': this.state.currentTab === MDMarkdownPreviewTab})}>
-                        <a href="#" onClick={e => this.openTab(e, MDMarkdownPreviewTab)}>Preview</a>
+                        <a href="#" onClick={e => this.onOpenTab(e, MDMarkdownPreviewTab)}>Preview</a>
                     </li>
                 </ul>
-                {this.state.currentTab === MDMarkdownEditTab ? (
+                <div className={classNames({ 'hidden': this.state.currentTab !== MDMarkdownEditTab })}>
                     <textarea className="form-control"
                           name={this.props.componentName}
                           rows={this.props.rows}
                           value={this.state.value}
-                          onChange={this.onValueChange.bind(this)}/>
-                ) : (
-                    html ? html : (
-                        <div>Interpreting ...</div>
-                    )
-                )}
+                          onChange={this.onValueChange.bind(this)} />
+                    <small className="pull-right">
+                        {' Supports Markdown. '}
+                        <a href="https://en.wikipedia.org/wiki/Markdown" target="_blank">
+                            Read more (opens a new window)
+                        </a>.
+                    </small>
+                </div>
+                <div className={classNames({ 'hidden': this.state.currentTab !== MDMarkdownPreviewTab })}>
+                    {html ? html : <p>Interpreting ...</p>}
+                </div>
             </div>
         );
     }

@@ -10,6 +10,7 @@ export const EDSearchResultsReducer = (state = {
     items: undefined,
     itemIndex: -1,
     word: undefined,
+    wordSearch: undefined,
     normalizedWord: undefined,
     bookData: undefined
 }, action) => {
@@ -17,7 +18,8 @@ export const EDSearchResultsReducer = (state = {
 
         case REQUEST_RESULTS:
             return Object.assign({}, state, {
-                loading: true
+                loading: true,
+                wordSearch: action.wordSearch
             });
 
         case REQUEST_NAVIGATION:

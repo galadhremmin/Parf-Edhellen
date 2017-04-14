@@ -38,6 +38,8 @@ update `translation` as t
 delete t from `translation` as t 
   where t.`Latest` = 0 and not exists(select 1 from word where `KeyID` = t.`WordID`);
 
+truncate `keywords`;
+
 -- Transition from indexes to keywords
 insert into `keywords` (`IsSense`, `SenseID`, `WordID`, `Keyword`, `NormalizedKeyword`, `ReversedNormalizedKeyword`)
   select distinct 

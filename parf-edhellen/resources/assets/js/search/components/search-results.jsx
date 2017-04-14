@@ -12,6 +12,9 @@ class EDSearchResults extends React.Component {
     constructor() {
         super();
 
+        this.state = {
+            itemsOpened: true
+        };
         this.popStateHandler = this.onPopState.bind(this);
     }
 
@@ -78,6 +81,14 @@ class EDSearchResults extends React.Component {
         this.props.dispatch(beginNavigation(normalizedWord, undefined, undefined, false));
     }
 
+    onPanelClick(ev) {
+        ev.preventDefault();
+
+        this.setState({
+            itemsOpened: !this.state.itemsOpened
+        });
+    }
+
     render() {
         if (!Array.isArray(this.props.items)) {
             return <div></div>;
@@ -97,16 +108,18 @@ class EDSearchResults extends React.Component {
         return (
             <div>
                 <div className="panel panel-default search-result-wrapper">
-                    <div className="panel-heading">
+                    <div className="panel-heading" onClick={this.onPanelClick.bind(this)}>
                         <h3 className="panel-title search-result-wrapper-toggler-title">
-                            <span className="glyphicon glyphicon-minus"></span>
-                            Matching words ({this.props.items.length})
+                            <span className={classNames('glyphicon', { 'glyphicon-minus': this.state.itemsOpened },
+                                { 'glyphicon-plus': !this.state.itemsOpened })} />
+                            {` Matching words`}
                         </h3>
                     </div>
-                    <div className={classNames('panel-body', 'results-panel', {'hidden': this.props.items.length < 1})}>
+                    <div className={classNames('panel-body', 'results-panel',
+                        {'hidden': this.props.items.length < 1 || !this.state.itemsOpened})}>
                         <div className="row">
                             <div className="col-xs-12">
-                                These words match your search query. Click on the one most relevant to you,
+                                These words match <em>{this.props.wordSearch}</em>. Click on the one most relevant to you,
                                 or simply press enter to expand the first item in the list.
                             </div>
                         </div>
@@ -119,12 +132,17 @@ class EDSearchResults extends React.Component {
                             </ul>
                         </div>
                     </div>
-                    <div className={classNames('panel-body', 'results-empty', {'hidden': this.props.items.length > 0})}>
+                    <div className={classNames('panel-body', 'results-empty',
+                        {'hidden': this.props.items.length > 0})}>
                         <div className="row">
                             <div className="col-xs-12">
-                                Unfortunately, we were unable to find any words matching your search query. Have you tried a synonym, or perhaps even an antonym?
+                                Unfortunately, we were unable to find any words matching <em>{this.props.wordSearch}</em>.
+                                Have you tried a synonym, or perhaps even an antonym?
                             </div>
                         </div>
+                    </div>
+                    <div className={classNames('panel-body', { 'hidden': this.state.itemsOpened })}>
+                        {`${this.props.items.length} matching words. Click on the title to expand.`}
                     </div>
                 </div>
                 {this.props.items.length > 1 ? (
@@ -167,7 +185,8 @@ const mapStateToProps = (state) => {
         items: state.items,
         loading: state.loading,
         activeIndex: state.itemIndex,
-        bookData: state.bookData
+        bookData: state.bookData,
+        wordSearch: state.wordSearch
     };
 };
 

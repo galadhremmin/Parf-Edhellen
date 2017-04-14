@@ -23,7 +23,7 @@ mix.react([
 ], 'public/js/global.js');
 
 mix.js([
-    'resources/assets/js/author/index.jsx'
-], 'public/js/author.js');
+    'resources/assets/js/markdown/index.jsx'
+], 'public/js/markdown.js');
 
 mix.sass('resources/assets/sass/app.scss', 'public/css');

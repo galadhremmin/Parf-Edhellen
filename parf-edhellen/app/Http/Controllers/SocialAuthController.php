@@ -40,10 +40,12 @@ class SocialAuthController extends Controller
             ])->first();
 
         if (! $user) {
+            $nickname = self::getNextAvailableNickname($providerUser->getName());
+
             $user = User::create([
-                'Email'         => $providerUser->getEmail(),
-                'Nickname'      => $providerUser->getName(),
-                'Identity'      => $providerUser->getId(),
+                'Email'          => $providerUser->getEmail(),
+                'Identity'       => $providerUser->getId(),
+                'Nickname'       => $nickname,
                 
                 'DateRegistered' => Carbon::now(),
                 'ProviderID'     => $provider->ProviderID,
@@ -66,5 +68,19 @@ class SocialAuthController extends Controller
         }
 
         return $provider;
+    }
+
+    private static function getNextAvailableNickname(string $nickname) {
+        $i = 1;
+        $tmp = $nickname;
+
+        do {
+            if (User::where('Nickname', '=', $tmp)->count() < 1) {
+                return $tmp;
+            }
+
+            $tmp = $nickname . ' ' . $i;
+            $i = $i + 1;
+        } while (true);
     }
 }

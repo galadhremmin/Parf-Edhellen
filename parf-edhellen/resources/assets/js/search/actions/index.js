@@ -8,9 +8,10 @@ import {
     SET_SELECTION
 } from '../reducers';
 
-export function requestResults() {
+export function requestResults(wordSearch) {
     return {
-        type: REQUEST_RESULTS
+        type: REQUEST_RESULTS,
+        wordSearch
     };
 }
 
@@ -57,7 +58,7 @@ export function fetchResults(word, reversed = false, languageId = 0) {
     }
 
     return dispatch => {
-        dispatch(requestResults());
+        dispatch(requestResults(word));
         axios.post('/api/v1/book/find', { word, reversed, languageId }).then(resp => {
             const results = resp.data.map(r => ({
                 word: r.k,
