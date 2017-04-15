@@ -65,8 +65,8 @@ class MarkdownParser extends \Parsedown
 
         // escape/encode special characters as their HTML equivalent
         $word = htmlspecialchars($word, ENT_QUOTES | ENT_HTML5);
-        
-        // remove footnotes, in case they were accidently imported
+
+        // remove footnotes, in case they were  imported by accident
         $word = str_replace(['¹', '²', '³'], '', $word);
 
         return [

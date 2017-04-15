@@ -27,7 +27,7 @@
         </p>
       @endif
 
-      @if (Auth::user()->AccountID === $author->AccountID)
+      @if (Auth::check() && Auth::user()->AccountID === $author->AccountID)
         <a href="{{ route('author.edit-profile') }}" class="btn btn-primary">Edit profile</a>
       @endif
       </div>
