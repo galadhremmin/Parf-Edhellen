@@ -23,7 +23,8 @@ class TranslationRepository
                     [ $reversed ? 'w.ReversedNormalizedKey' : 'w.NormalizedKey', 'like', $word ]
                 ])
                 ->orderBy('w.Key')
-                ->select('w.Key as k', 'w.NormalizedKey as nk');
+                ->select('w.Key as k', 'w.NormalizedKey as nk')
+                ->distinct();
         } else {
             $keywords = Keyword::findByWord($word, $reversed)
                 ->select('Keyword as k', 'NormalizedKeyword as nk');
@@ -41,7 +42,8 @@ class TranslationRepository
         $senses = self::getSensesForWord($word);
         return self::createTranslationQuery()
             ->whereIn('t.SenseID', $senses)
-            ->get();
+            ->get()
+            ->toArray();
     }
 
     public function getTranslation(int $id) 

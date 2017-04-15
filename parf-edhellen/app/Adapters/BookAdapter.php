@@ -16,7 +16,7 @@ class BookAdapter
      * @param string|null $word
      * @return array
      */
-    public function adaptTranslations(Collection $translations, string $word = null)
+    public function adaptTranslations(array $translations, string $word = null)
     {
         $numberOfTranslations = count($translations);
 

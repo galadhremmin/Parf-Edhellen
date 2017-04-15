@@ -21,21 +21,56 @@ class MarkdownParser extends \Parsedown
      */
     protected function inlineReference($Excerpt)
     {
-        $context = $Excerpt['context'];
-        if (empty($context))
-            return;
+        $tagBegin = '[';
+        $tagEnd   = ']';
 
-        $matches = null;
-        if (!preg_match("/\\[\\[([^\\]]+)\\]\\]/", $context, $matches))
+        $word = '';
+        $text = $Excerpt['text'];
+        $length = strlen($text);
+
+        // Examine the excerpt for reference tags. Regular expressions
+        // isn't necessary in this case, as a simple iterative examination will
+        // suffice, assuming that the Markdown parser has identified the correct
+        // start tag.
+        if ($length < 1) {
             return;
+        }
+
+        for ($i = 0; $i < $length; $i += 1) {
+            if ($i < 2 && $text[$i] !== $tagBegin) {
+                return; // erroneous
+            }
+
+            if ($i >= 2) {
+
+                if ($text[$i] === $tagEnd) {
+                    if ($i + 1 < $length && $text[$i + 1] === $tagEnd) {
+                        break;
+                    }
+
+                    return; // erroneous
+                } else {
+                    $word .= $text[$i];
+                }
+            }
+        }
+
+        if (empty($word)) {
+            return;
+        }
+
+        // Calculate the extent of the change, which would be the word, including
+        // the start and end tags.
+        $wordLength = strlen($tagBegin.$tagBegin . $word . $tagEnd.$tagEnd);
 
         // escape/encode special characters as their HTML equivalent
-        $word = htmlspecialchars($matches[1], ENT_QUOTES | ENT_HTML5);
+        $word = htmlspecialchars($word, ENT_QUOTES | ENT_HTML5);
+        
         // remove footnotes, in case they were accidently imported
         $word = str_replace(['¹', '²', '³'], '', $word);
 
         return [
-            'extent' => strlen($matches[0]),
+            'extent' => $wordLength,
             'element' => [
                 'name' => 'a',
                 'handler' => 'line',
