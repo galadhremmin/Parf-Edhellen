@@ -51,13 +51,13 @@ class EDSearchResults extends React.Component {
 
     gotoResults() {
         // Is the results view within the viewport?
-        const results = document.getElementsByClassName('search-result-presenter');
+        let results = document.getElementsByClassName('search-result-navigator');
         if (results.length < 1) {
-            return; // doesn't exist - no results?
+            results = document.getElementsByClassName('search-result-presenter');
         }
 
-        if (undefined === results[0].scrollIntoView) {
-            return; // Lacking browser support!
+        if (results.length < 1 || undefined === results[0].scrollIntoView) {
+            return ; // bail, as something's weird
         }
 
         const element = results[0];
