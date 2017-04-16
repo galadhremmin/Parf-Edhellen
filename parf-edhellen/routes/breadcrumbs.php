@@ -1,10 +1,16 @@
 <?php
 
+// Home
+Breadcrumbs::register('home', function($breadcrumbs)
+{
+    $breadcrumbs->push('Home', route('home'));
+});
 
-// Phrases (Home)
+// Phrases
 Breadcrumbs::register('sentences', function($breadcrumbs)
 {
-    $breadcrumbs->push('Home', route('sentences'));
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('Phrases', route('sentences'));
 });
 
 // Phrases > [Language]

@@ -6,8 +6,10 @@
 
 // Bootstrap
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+@import "node_modules/spinkit/scss/spinners/5-pulse";
 @import "_tengwar";
 @import "_app";
 
 @import "components/_search";
 @import "components/_profile-picture";
+@import "components/_fragment-navigator";

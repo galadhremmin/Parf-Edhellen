@@ -1,0 +1,16 @@
+.ed-fragment-navigator {
+
+  a:hover, a:active, a:visited, a {
+    text-decoration: none;
+  }
+
+  .tengwar > span.active, a.active {
+    color: $brand-success;
+    text-shadow: 1px 0px 1px $gray-lighter;
+  }
+
+  .ed-elvish-fragments, .ed-tengwar-fragments {
+    font-size: 150%;
+    text-align: center;
+  }
+}

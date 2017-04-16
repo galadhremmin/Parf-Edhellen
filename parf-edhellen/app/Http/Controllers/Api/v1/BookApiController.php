@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use App\Models\Translation;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Repositories\TranslationRepository;
@@ -39,5 +40,15 @@ class BookApiController extends Controller
         $model = $this->_adapter->adaptTranslations($translations, $word);
 
         return $model;
+    }
+
+    public function get(Request $request, int $translationId)
+    {
+        $translation = $this->_translationRepository->getTranslation($translationId);
+        if (! $translation) {
+            return response(null, 500);
+        }
+
+        return $this->_adapter->adaptTranslations([$translation]);
     }
 }

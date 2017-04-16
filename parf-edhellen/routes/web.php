@@ -13,7 +13,7 @@ $urlSeoReg = '[a-z_0-9]+';
 |
 */
 
-Route::get('/', [ 'uses' => 'HomeController@index' ]);
+Route::get('/', [ 'uses' => 'HomeController@index' ])->name('home');
 
 // Common pages
 Route::get('/about',                    [ 'uses' => 'AboutController@index'     ])->name('about');
@@ -51,7 +51,8 @@ Route::get('/federated-auth/callback/{providerName}', 'SocialAuthController@call
 
 // API
 Route::group([ 'namespace' => 'Api\v1', 'prefix' => 'api/v1' ], function () {
-    Route::post('book/translate',   [ 'uses' => 'BookApiController@translate' ]);
-    Route::post('book/find',        [ 'uses' => 'BookApiController@find' ]);
-    Route::post('utility/markdown', [ 'uses' => 'UtilityApiController@parseMarkdown' ]);
+    Route::get('book/translate/{translationId}', [ 'uses' => 'BookApiController@get' ]);
+    Route::post('book/translate',                [ 'uses' => 'BookApiController@translate' ]);
+    Route::post('book/find',                     [ 'uses' => 'BookApiController@find' ]);
+    Route::post('utility/markdown',              [ 'uses' => 'UtilityApiController@parseMarkdown' ]);
 });

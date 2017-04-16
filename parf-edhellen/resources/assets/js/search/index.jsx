@@ -19,6 +19,6 @@ window.addEventListener('load', function () {
                 <EDSearchResults />
             </div>
         </Provider>,
-        document.getElementById('search-component')
+        document.getElementById('ed-search-component')
     );
 });

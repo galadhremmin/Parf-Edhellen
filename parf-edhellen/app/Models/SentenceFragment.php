@@ -19,6 +19,11 @@ class SentenceFragment extends Model
         return $this->belongsTo(Sentence::class, 'SentenceID', 'FragmentID');
     }
 
+    public function grammarType()
+    {
+        return $this->hasOne(GrammarType::class, 'GrammarTypeID', 'GrammarTypeID');
+    }
+
     public function isPunctuationOrWhitespace() 
     {
         return preg_match('/^[,\\.!\\?\\s]$/', $this->Fragment);

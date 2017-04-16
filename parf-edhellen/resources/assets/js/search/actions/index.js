@@ -59,7 +59,7 @@ export function fetchResults(word, reversed = false, languageId = 0) {
 
     return dispatch => {
         dispatch(requestResults(word));
-        axios.post('/api/v1/book/find', { word, reversed, languageId }).then(resp => {
+        axios.post(window.EDConfig.api('/book/find'), { word, reversed, languageId }).then(resp => {
             const results = resp.data.map(r => ({
                 word: r.k,
                 normalizedWord: r.nk
@@ -80,7 +80,7 @@ export function beginNavigation(word, normalizedWord, index, modifyState) {
     }
 
     const uriEncodedWord = encodeURIComponent(normalizedWord || word);
-    const apiAddress = '/api/v1/book/translate';
+    const apiAddress = window.EDConfig.api('/book/translate');
     const address = '/w/' + uriEncodedWord;
     const title = `${word} - Parf Edhellen`;
 

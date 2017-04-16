@@ -19,6 +19,7 @@ mix.extract([
 ]);
 
 mix.react([
+    'resources/assets/js/_shared/config.js',
     'resources/assets/js/navigation.js',
     'resources/assets/js/search/index.jsx'
 ], 'public/js/global.js');
@@ -26,5 +27,9 @@ mix.react([
 mix.js([
     'resources/assets/js/markdown/index.jsx'
 ], 'public/js/markdown.js');
+
+mix.js([
+    'resources/assets/js/sentence/index.jsx'
+], 'public/js/sentence.js');
 
 mix.sass('resources/assets/sass/app.scss', 'public/css');

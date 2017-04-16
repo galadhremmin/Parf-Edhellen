@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\Sentence;
 use Illuminate\Support\Facades\DB;
 
 class SentenceRepository
@@ -26,7 +27,7 @@ class SentenceRepository
             ->where('s.Approved', 1)
             ->select('s.SentenceID', 's.Description', 's.Source', 's.Neologism', 's.AuthorID',
                 'a.Nickname as AuthorName', 's.Name')
-            ->get()
-            ->toArray();
+            ->get();
     }
+
 }

@@ -13,13 +13,13 @@
     </header>
 
     @if (!empty($sentence->Description))
-    <div class="lead">
+    <p>
         {{ $sentence->Description }}
-    </div>
+    </p>
     @endif
 
     <div id="ed-fragment-navigator"></div>
-    <script type="application/json" id="ed-preload-fragments">{!! $sentence->fragments !!}</script>
+    <script type="application/json" id="ed-preload-fragments">{!! $fragments !!}</script>
 
     {{ $sentence->LongDescription }}
 
@@ -31,4 +31,8 @@
             </a>
         @endif
     </footer>
+@endsection
+
+@section('scripts')
+    <script type="text/javascript" src="/js/sentence.js" async></script>
 @endsection

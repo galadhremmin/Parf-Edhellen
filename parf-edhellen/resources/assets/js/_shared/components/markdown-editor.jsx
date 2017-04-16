@@ -38,7 +38,7 @@ class EDMarkdownEditor extends React.Component {
 
         // Let the server render the Markdown code
         if (tab === MDMarkdownPreviewTab && !/^\s*$/.test(this.state.value)) {
-            axios.post('/api/v1/utility/markdown', { markdown: this.state.value })
+            axios.post(window.EDConfig.api('/utility/markdown'), { markdown: this.state.value })
                 .then(this.applyHtml.bind(this));
         }
     }

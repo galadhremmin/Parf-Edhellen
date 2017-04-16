@@ -86,6 +86,9 @@ alter table `sentence` add `Name` varchar(128) null;
 alter table `sentence` add `LongDescription` longtext null;
 alter table `sentence` add `DateCreated` datetime default now();
 
+replace into `grammar_type` (`GrammarTypeID`, `Name`, `Order`) values (99, 'Unknown', 99);
+alter table `sentence_fragment` add `GrammarTypeID` int null; -- Defaults to unset
+
 update `sentence` set `Approved` = 1;
 update `sentence` as s
   set s.`Name` = replace(replace(replace((

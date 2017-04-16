@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Adapters\SentenceAdapter;
 use App\Models\Language;
 use App\Models\Sentence;
 use App\Repositories\SentenceRepository;
@@ -9,10 +10,12 @@ use Illuminate\Http\Request;
 class SentenceController extends Controller
 {
     private $_sentenceRepository;
+    private $_adapter;
 
-    public function __construct(SentenceRepository $sentenceRepository)
+    public function __construct(SentenceRepository $sentenceRepository, SentenceAdapter $adapter)
     {
         $this->_sentenceRepository = $sentenceRepository;
+        $this->_adapter = $adapter;
     }
 
     public function index() 
@@ -44,12 +47,14 @@ class SentenceController extends Controller
     public function bySentence(Request $request, int $langId, string $languageName,
                                int $sentId, string $sentName)
     {
-        $sentence = Sentence::find($sentId);
-        $language = Language::find($langId);
+        $sentence  = Sentence::find($sentId);
+        $language  = Language::find($langId);
+        $fragments = $this->_adapter->adaptFragments($sentence->Fragments);
 
         return view('sentences.sentence', [
-            'sentence' => $sentence,
-            'language' => $language
+            'sentence'  => $sentence,
+            'language'  => $language,
+            'fragments' => $fragments
         ]);
     }
 }

@@ -56,7 +56,7 @@
     </noscript>
 
     <!-- search component -->
-    <div id="search-component"></div>
+    <div id="ed-search-component"></div>
 
     <!-- begin content -->
     @yield('body')
