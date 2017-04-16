@@ -1,7 +1,8 @@
 #search-component {
   .search-result-presenter {
-    border-bottom: 2px solid $gray-lighter;
+    border-bottom: 10px solid $gray-lighter;
     margin-bottom: 20px;
+    box-shadow: 0 5px 10px -10px #333;
   }
 
   .search-reverse-box-wrapper,
