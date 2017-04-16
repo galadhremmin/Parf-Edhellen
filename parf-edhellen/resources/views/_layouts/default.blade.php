@@ -29,7 +29,7 @@
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
           <li class="{{ active('') }}"><a href="/">Home</a></li>
-          <li class="{{ active('phrases') }}"><a href="{{ route('phrases') }}">Phrases</a></li>
+          <li class="{{ active(['sentences', 'sentences.language', 'sentences.sentence']) }}"><a href="{{ route('sentences') }}">Phrases</a></li>
           <li class="{{ active('about') }}"><a href="{{ route('about') }}">About</a></li>
           <li class="{{ active('about.donations') }}"><a href="{{ route('about.donations') }}">Donations</a></li>
         </ul>

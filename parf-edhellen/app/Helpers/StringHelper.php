@@ -26,7 +26,14 @@
 
     public static function normalizeForUrl(string $str) {
       $str = self::normalize($str);
-      return str_replace(' ', '_', $str);
+
+      // Replace white space with underscore
+      $str = str_replace(' ', '_', $str);
+
+      // Remove all non-alphabetic and non-numeric characters
+      $str = preg_replace('/[^0-9a-z_]/', '', $str);
+
+      return $str;
     }
     
     // Replaces all [[textual content]] with anchors <a href="#textual+content">textual content</a>

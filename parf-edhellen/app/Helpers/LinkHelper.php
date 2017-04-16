@@ -21,18 +21,33 @@ class LinkHelper
         ]);
     }
     
-    public function authRedirect(string $url) {
+    public function authRedirect(string $url)
+    {
         return route('auth.redirect', [
             'providerName' => $url
         ]);
     }
     
-    public function phraseByLanguage(int $languageId, string $languageName) {
-        $languageName = urlencode(strtolower($languageName));
+    public function sentenceByLanguage(int $languageId, string $languageName)
+    {
+        $languageName = StringHelper::normalizeForUrl($languageName);
 
-        return route('phrases.language', [
+        return route('sentences.language', [
             'langId'   => $languageId,
             'langName' => $languageName
+        ]);
+    }
+
+    public function sentence(int $languageId, string $languageName, int $sentenceId, string $sentenceName)
+    {
+        $languageName = StringHelper::normalizeForUrl($languageName);
+        $sentenceName = StringHelper::normalizeForUrl($sentenceName);
+
+        return route('sentences.sentence', [
+            'langId'   => $languageId,
+            'langName' => $languageName,
+            'sentId'   => $sentenceId,
+            'sentName' => $sentenceName
         ]);
     }
 }

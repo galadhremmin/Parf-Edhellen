@@ -181,7 +181,8 @@ return [
          * Custom Service Providers ...
          */
         Watson\Active\ActiveServiceProvider::class, // https://packagist.org/packages/watson/active
-        Laravel\Socialite\SocialiteServiceProvider::class
+        Laravel\Socialite\SocialiteServiceProvider::class,
+        DaveJamesMiller\Breadcrumbs\ServiceProvider::class // https://laravel-breadcrumbs.readthedocs.io
     ],
 
     /*
@@ -230,8 +231,8 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'Socialite' => Laravel\Socialite\Facades\Socialite::class
-
+        'Socialite' => Laravel\Socialite\Facades\Socialite::class,
+        'Breadcrumbs' => DaveJamesMiller\Breadcrumbs\Facade::class,
     ],
 
 ];

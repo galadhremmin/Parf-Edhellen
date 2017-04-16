@@ -18,4 +18,15 @@ class SentenceRepository
             ->distinct()
             ->get();
     }
+
+    public function getByLanguage(int $languageId)
+    {
+        return DB::table('sentence as s')
+            ->leftJoin('auth_accounts as a', 's.AuthorID', '=', 'a.AccountID')
+            ->where('s.Approved', 1)
+            ->select('s.SentenceID', 's.Description', 's.Source', 's.Neologism', 's.AuthorID',
+                'a.Nickname as AuthorName', 's.Name')
+            ->get()
+            ->toArray();
+    }
 }

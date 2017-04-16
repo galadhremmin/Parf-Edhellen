@@ -13,8 +13,8 @@
   asterisk won't yield the entire library, however, because the precision of your query is considered too low.</p>
 
 <p>Words with special letters, like letters with umlauts and accents, are matched against their their ASCII letters. This means that if you
-  search for <i>mîr</i>, the dictionary will suggest <i><a href="#m%C3%AEr">mîr</a></i>, <i><a href="#m%C3%ADr%C3%AB">mírë</a></i>,
-  <i><a href="#miril">miril</a></i> etc.</p>
+  search for <i>mîr</i>, the dictionary will suggest <i><a href="/w/mir">mîr</a></i>, <i><a href="/w/mire">mírë</a></i>,
+  <i><a href="/w/miril">miril</a></i> etc.</p>
 
 <p>As you type, you'll notice that the list of suggestions beneath can become really long, but there is a cap on how many suggestions you can
   view at one time, depending on the preciseness of your search query. More exact queries (= more letters) are permitted to yield a longer
@@ -48,7 +48,7 @@
 <p>To identify yourself in the future, <em>Parf Edhellen</em> saves an unique token associated with your e-mail address.</p>
 
 <p>Syntax:<br />
-<span class="span-column">[[maen]]</span> <a href="index.php#maen">maen</a><br /> 
+<span class="span-column">[[maen]]</span> <a href="/w/maen">maen</a><br />
 <span class="span-column">_mae_</span> <em>mae</em><br />
 <span class="span-column">~minno~</span> <u>minno</u><br />  
 <span class="span-column">`idhron`</span> <strong>idhron</strong><br /> 

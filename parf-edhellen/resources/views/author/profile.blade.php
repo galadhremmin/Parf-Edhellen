@@ -44,7 +44,7 @@
               <td>{{ $stats['noOfTranslations'] }}</td>
             </tr>
             <tr>
-              <th>Sentences</th>
+              <th>Phrases</th>
               <td>{{ $stats['noOfSentences'] }}</td>
             </tr>
             <tr>

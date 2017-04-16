@@ -36,19 +36,8 @@
     <hr class="visible-xs">
   </div>
   <div class="col-xs-12 col-sm-4">
-    <h4>Random elvishness</h4>
-    <blockquote class="daily-sentence">
-      <p class="tengwar">
-      @foreach ($sentence->fragments as $fragment){{ ($fragment->isPunctuationOrWhitespace() ? '' : ' ') . $fragment->Tengwar }}@endforeach
-      </p>
-      <p>
-        <em>
-        @foreach ($sentence->fragments as $fragment){{ ($fragment->isPunctuationOrWhitespace() ? '' : ' ') . $fragment->Fragment }}@endforeach
-        </em>
-      </p>
-      <p>{{$sentence->Description}}</p>
-      <footer>{{$sentence->language->Name}} [{{$sentence->Source}}]</footer>
-    </blockquote>
+    <h4>Random phrase</h4>
+    @include('sentences._random', [ 'sentence' => $sentence ])
   </div>
 </div>
 

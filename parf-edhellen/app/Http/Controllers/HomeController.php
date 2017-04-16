@@ -17,7 +17,7 @@ class HomeController extends Controller
 
     public function index() 
     {
-        $sentence = Sentence::inRandomOrder()->first();
+        $sentence = Sentence::approved()->inRandomOrder()->first();
         $reviews  = $this->_reviewRepository->getRecentlyApproved();
         $data = [
             'sentence' => $sentence,

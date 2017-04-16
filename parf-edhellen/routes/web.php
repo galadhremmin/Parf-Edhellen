@@ -1,5 +1,7 @@
 <?php
 
+$urlSeoReg = '[a-z_0-9]+';
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -18,11 +20,15 @@ Route::get('/about',                    [ 'uses' => 'AboutController@index'     
 Route::get('/about/donations',          [ 'uses' => 'AboutController@donations' ])->name('about.donations');
 Route::get('/author',                   [ 'uses' => 'AuthorController@index'    ])->name('author.my-profile');
 Route::get('/author/{id}-{nickname?}',  [ 'uses' => 'AuthorController@index'    ])
-    ->where([ 'id' => '[0-9]+', 'nickname' => '[a-z_0-9]+' ])->name('author.profile');
+    ->where([ 'id' => '[0-9]+', 'nickname' => $urlSeoReg ])->name('author.profile');
 
 // Phrases
-Route::get('/phrases',                     [ 'uses' => 'PhrasesController@index'      ])->name('phrases');
-Route::get('/phrases/{langId}-{langName}', [ 'uses' => 'PhrasesController@byLanguage' ])->name('phrases.language');
+Route::get('/phrases',                                         [ 'uses' => 'SentenceController@index'      ])
+    ->name('sentences');
+Route::get('/phrases/{langId}-{langName}',                     [ 'uses' => 'SentenceController@byLanguage' ])
+    ->where(['langName' => $urlSeoReg])->name('sentences.language');
+Route::get('/phrases/{langId}-{langName}/{sentId}-{sentName}', [ 'uses' => 'SentenceController@bySentence' ])
+    ->name('sentences.sentence');
 
 // Dictionary
 Route::get('/w/{word}',               [ 'uses' => 'BookController@pageForWord' ]);
@@ -39,7 +45,8 @@ Route::group([ 'middleware' => 'auth' ], function () {
 // Authentication
 Route::get('/login', 'SocialAuthController@login')->name('login');
 Route::get('/logout', 'SocialAuthController@logout')->name('logout');
-Route::get('/federated-auth/redirect/{providerName}', 'SocialAuthController@redirect')->name('auth.redirect');
+Route::get('/federated-auth/redirect/{providerName}', 'SocialAuthController@redirect')
+    ->name('auth.redirect');
 Route::get('/federated-auth/callback/{providerName}', 'SocialAuthController@callback');
 
 // API

@@ -2,7 +2,8 @@
 
 namespace App\Repositories;
 
-use Illuminate\Support\Facades\DB;
+use App\Models\Sentence;
+use App\Models\Word;
 use App\Models\Translation;
 use App\Models\Author;
 
@@ -10,18 +11,17 @@ class StatisticsRepository
 {
     public function getStatisticsForAuthor(Author $author)
     {
-        $noOfWords = DB::table('word')
-            ->where('AuthorID', '=', $author->AccountID)
+        $noOfWords = Word::where('AuthorID', '=', $author->AccountID)
             ->count();
 
-        $noOfTranslations = DB::table('translation')
-            ->where([
-                ['AuthorID', '=', $author->AccountID],
-                ['Deleted',  '=', 0]
-            ])
+        $noOfTranslations = Translation::notDeleted()
+            ->where('AuthorID', $author->AccountID)
             ->count();
 
-        $noOfSentences = 0;
+        $noOfSentences = Sentence::approved()
+            ->where('AuthorID', $author->AccountID)
+            ->count();
+
         $noOfThanks = 0;
 
         return [

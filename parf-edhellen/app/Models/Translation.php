@@ -34,4 +34,14 @@ class Translation extends Model
     {
         return $this->hasOne(Word::class, 'KeyID', 'WordID');
     }
+
+    public function scopeNotDeleted($query)
+    {
+        $query->where('Deleted', 0);
+    }
+
+    public function scopeLatest($query)
+    {
+        $query->where('Latest', 1);
+    }
 }

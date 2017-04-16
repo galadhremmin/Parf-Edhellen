@@ -82,7 +82,19 @@ alter table `auth_accounts` add `RememberToken` varchar(100)  collate utf8_swedi
 alter table `sentence` add `Neologism` bit default 0;
 alter table `sentence` add `Approved` bit  default 0;
 alter table `sentence` add `AuthorID` int null;
+alter table `sentence` add `Name` varchar(128) null;
+alter table `sentence` add `LongDescription` longtext null;
+alter table `sentence` add `DateCreated` datetime default now();
 
 update `sentence` set `Approved` = 1;
+update `sentence` as s
+  set s.`Name` = replace(replace(replace((
+    select group_concat(f.`Fragment` separator ' ')
+    from `sentence_fragment` as f
+    where f.`SentenceID` = s.`SentenceID`
+    group by f.`SentenceID`
+  ), ' ,', ','), ' !', '!'), ' .', '.');
+
+alter table `sentence` modify `Name` varchar(128) not null;
 
 insert into `version` (`number`, `date`) values (1.8, NOW());

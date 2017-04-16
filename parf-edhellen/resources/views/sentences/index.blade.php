@@ -4,7 +4,9 @@
 @section('title', 'Phrases')
 @section('body')
 
-  <h1>Phrases <span class="tengwar" aria-hidden="true">zF4$jR6</span></h1>
+  {!! Breadcrumbs::render('sentences') !!}
+
+  @include('sentences._header')
   <p>
     Studying attested phrases is a great way of learn Tolkien's languages.
     We currently have {{ $numberOfSentences }} phrases in our database, and
@@ -19,7 +21,7 @@
         <div class="panel-body">
           <ul>
           @foreach ($languages as $language)
-            <li><a href="{{ $link->phraseByLanguage($language->ID, $language->Name) }}">{{ $language->Name }}</a></li>
+            <li><a href="{{ $link->sentenceByLanguage($language->ID, $language->Name) }}">{{ $language->Name }}</a></li>
           @endforeach
           </ul>
         </div>
@@ -28,14 +30,10 @@
     <div class="col-sm-6">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h2 class="panel-title">Recent submissions</h2>
+          <h2 class="panel-title">Random phrase</h2>
         </div>
         <div class="panel-body">
-          <ul>
-            @foreach ($languages as $language)
-            <li>{{ $language->Name }}</li>
-            @endforeach
-          </ul>
+          @include('sentences._random', [ 'sentence' => $randomSentence ])
         </div>
       </div>
     </div>
