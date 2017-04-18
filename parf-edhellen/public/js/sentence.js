@@ -1,20 +1,20 @@
-webpackJsonp([2,4],{
+webpackJsonp([2],{
 
-/***/ 156:
+/***/ 131:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react_dom__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_redux__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_redux__ = __webpack_require__(41);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_redux_thunk__ = __webpack_require__(86);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_redux__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_redux__ = __webpack_require__(34);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_redux_thunk__ = __webpack_require__(72);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_redux_thunk___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_redux_thunk__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__reducers__ = __webpack_require__(96);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_fragment_explorer__ = __webpack_require__(182);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__reducers__ = __webpack_require__(81);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_fragment_explorer__ = __webpack_require__(156);
 
 
 
@@ -36,15 +36,463 @@ window.addEventListener('load', function () {
 
 /***/ }),
 
-/***/ 176:
+/***/ 155:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(32);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__reducers__ = __webpack_require__(81);
+/* harmony export (immutable) */ __webpack_exports__["a"] = selectFragment;
+
+
+
+function selectFragment(fragmentId, translationId) {
+    return function (dispatch) {
+        dispatch({
+            type: __WEBPACK_IMPORTED_MODULE_1__reducers__["b" /* REQUEST_FRAGMENT */],
+            fragmentId: fragmentId
+        });
+
+        var start = new Date().getTime();
+        __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get(window.EDConfig.api('/book/translate/' + translationId)).then(function (resp) {
+            // Enable the animation to play at least 800 milliseconds.
+            var animationDelay = -Math.min(0, new Date().getTime() - start - 800);
+
+            window.setTimeout(function () {
+                dispatch({
+                    type: __WEBPACK_IMPORTED_MODULE_1__reducers__["c" /* RECEIVE_FRAGMENT */],
+                    bookData: resp.data,
+                    translationId: translationId
+                });
+            }, animationDelay);
+        });
+    };
+}
+
+/***/ }),
+
+/***/ 156:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_classnames__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_html_to_react__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_redux__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__actions__ = __webpack_require__(155);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__fragment__ = __webpack_require__(157);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__tengwar_fragment__ = __webpack_require__(158);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__search_components_book_gloss__ = __webpack_require__(43);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_html_to_react__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_html_to_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7_html_to_react__);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+
+
+
+
+
+
+
+var EDFragmentExplorer = function (_React$Component) {
+    _inherits(EDFragmentExplorer, _React$Component);
+
+    function EDFragmentExplorer(props) {
+        _classCallCheck(this, EDFragmentExplorer);
+
+        var _this = _possibleConstructorReturn(this, (EDFragmentExplorer.__proto__ || Object.getPrototypeOf(EDFragmentExplorer)).call(this, props));
+
+        _this.state = {
+            fragmentIndex: 0
+        };
+        return _this;
+    }
+
+    /**
+     * Component has mounted and initial state retrieved from the server should be applied.
+     */
+
+
+    _createClass(EDFragmentExplorer, [{
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            var fragmentIndex = 0;
+            // Does the shebang specify the fragment ID?
+            if (/^#![0-9]+$/.test(window.location.hash)) {
+                var fragmentId = parseInt(String(window.location.hash).substr(2), 10);
+                if (fragmentId) {
+                    fragmentIndex = Math.max(this.props.fragments.findIndex(function (f) {
+                        return f.id === fragmentId;
+                    }), 0);
+                }
+            }
+
+            // A little hack for causing the first fragment to be highlighted
+            this.onNavigate({}, fragmentIndex);
+        }
+
+        /**
+         * Retrieves the fragment index for the next fragment, or returns the current fragment index
+         * if none exists.
+         */
+
+    }, {
+        key: 'nextFragmentIndex',
+        value: function nextFragmentIndex() {
+            for (var i = this.state.fragmentIndex + 1; i < this.props.fragments.length; i += 1) {
+                var fragment = this.props.fragments[i];
+
+                if (!fragment.interpunctuation) {
+                    return i;
+                }
+            }
+
+            return this.state.fragmentIndex;
+        }
+
+        /**
+         * Retrieves the fragment index for the previous fragment, or returns the current fragment index
+         * if none exists.
+         */
+
+    }, {
+        key: 'previousFragmentIndex',
+        value: function previousFragmentIndex() {
+            for (var i = this.state.fragmentIndex - 1; i > -1; i -= 1) {
+                var fragment = this.props.fragments[i];
+
+                if (!fragment.interpunctuation) {
+                    return i;
+                }
+            }
+
+            return this.state.fragmentIndex;
+        }
+
+        /**
+         * Event handler for the onFragmentClick event.
+         * 
+         * @param {*} ev 
+         */
+
+    }, {
+        key: 'onFragmentClick',
+        value: function onFragmentClick(ev) {
+            if (ev.preventDefault) {
+                ev.preventDefault();
+            }
+
+            var fragmentIndex = this.props.fragments.findIndex(function (f) {
+                return f.id === ev.id;
+            });
+            if (fragmentIndex === -1) {
+                return;
+            }
+
+            this.setState({
+                fragmentIndex: fragmentIndex
+            });
+            window.location.hash = '!' + ev.id;
+
+            this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["a" /* selectFragment */])(ev.id, ev.translationId));
+        }
+
+        /**
+         * Navigates to the specified fragment index by receiving it from the array of fragments, and
+         * dispatching a select fragment signal.
+         * 
+         * @param {*} ev 
+         * @param {*} fragmentIndex 
+         */
+
+    }, {
+        key: 'onNavigate',
+        value: function onNavigate(ev, fragmentIndex) {
+            if (ev.preventDefault) {
+                ev.preventDefault();
+            }
+
+            var fragment = this.props.fragments[fragmentIndex];
+            this.onFragmentClick({
+                id: fragment.id,
+                translationId: fragment.translationId
+            });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _this2 = this;
+
+            var section = null;
+            var fragment = null;
+            var parser = null;
+
+            if (!this.props.loading && this.props.bookData && this.props.bookData.sections.length > 0) {
+                // Comments may contain HTML because it's parsed by the server as markdown. The HtmlToReact parser will
+                // examine the HTML and turn it into React components.
+                section = this.props.bookData.sections[0];
+                fragment = this.props.fragments.find(function (f) {
+                    return f.id === _this2.props.fragmentId;
+                });
+                parser = new __WEBPACK_IMPORTED_MODULE_7_html_to_react__["Parser"]();
+            }
+
+            var previousIndex = this.previousFragmentIndex();
+            var nextIndex = this.nextFragmentIndex();
+
+            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'div',
+                { className: 'well ed-fragment-navigator' },
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'p',
+                    { className: 'tengwar ed-tengwar-fragments' },
+                    this.props.fragments.map(function (f) {
+                        return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_5__tengwar_fragment__["a" /* default */], { fragment: f,
+                            key: 'tng' + f.id,
+                            selected: f.id === _this2.props.fragmentId });
+                    })
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'p',
+                    { className: 'ed-elvish-fragments' },
+                    this.props.fragments.map(function (f) {
+                        return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__fragment__["a" /* default */], { fragment: f,
+                            key: 'frg' + f.id,
+                            selected: f.id === _this2.props.fragmentId,
+                            onClick: _this2.onFragmentClick.bind(_this2) });
+                    })
+                ),
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'nav',
+                    null,
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'ul',
+                        { className: 'pager' },
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'li',
+                            { className: __WEBPACK_IMPORTED_MODULE_1_classnames___default()('previous', { 'hidden': previousIndex === this.state.fragmentIndex }) },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'a',
+                                { href: '#', onClick: function onClick(ev) {
+                                        return _this2.onNavigate(ev, previousIndex);
+                                    } },
+                                '\u2190 ',
+                                this.props.fragments[previousIndex].fragment
+                            )
+                        ),
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'li',
+                            { className: __WEBPACK_IMPORTED_MODULE_1_classnames___default()('next', { 'hidden': nextIndex === this.state.fragmentIndex }) },
+                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'a',
+                                { href: '#', onClick: function onClick(ev) {
+                                        return _this2.onNavigate(ev, nextIndex);
+                                    } },
+                                this.props.fragments[nextIndex].fragment,
+                                ' \u2192'
+                            )
+                        )
+                    )
+                ),
+                this.props.loading ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', { className: 'sk-spinner sk-spinner-pulse' }) : section ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'div',
+                    null,
+                    fragment.grammarType ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        null,
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'em',
+                            null,
+                            fragment.grammarType
+                        )
+                    ) : '',
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        null,
+                        fragment.comments ? parser.parse(fragment.comments) : ''
+                    ),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('hr', null),
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'div',
+                        null,
+                        section.glosses.map(function (g) {
+                            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_6__search_components_book_gloss__["a" /* default */], { gloss: g,
+                                language: section.language,
+                                key: g.TranslationID });
+                        })
+                    )
+                ) : ''
+            );
+        }
+    }]);
+
+    return EDFragmentExplorer;
+}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
+
+var mapStateToProps = function mapStateToProps(state) {
+    return {
+        fragments: state.fragments,
+        fragmentId: state.fragmentId,
+        bookData: state.bookData,
+        loading: state.loading
+    };
+};
+
+/* harmony default export */ __webpack_exports__["a"] = (__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2_react_redux__["connect"])(mapStateToProps)(EDFragmentExplorer));
+
+/***/ }),
+
+/***/ 157:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_classnames__);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+
+var EDFragment = function (_React$Component) {
+    _inherits(EDFragment, _React$Component);
+
+    function EDFragment() {
+        _classCallCheck(this, EDFragment);
+
+        return _possibleConstructorReturn(this, (EDFragment.__proto__ || Object.getPrototypeOf(EDFragment)).apply(this, arguments));
+    }
+
+    _createClass(EDFragment, [{
+        key: 'onFragmentClick',
+        value: function onFragmentClick(ev) {
+            ev.preventDefault();
+
+            if (this.props.onClick) {
+                this.props.onClick({
+                    id: this.props.fragment.id,
+                    url: ev.target.href,
+                    translationId: this.props.fragment.translationId
+                });
+            }
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var f = this.props.fragment;
+
+            if (f.interpunctuation) {
+                return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'span',
+                    null,
+                    f.fragment
+                );
+            }
+
+            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'span',
+                null,
+                ' ',
+                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    'a',
+                    { className: __WEBPACK_IMPORTED_MODULE_1_classnames___default()({ 'active': this.props.selected }),
+                        href: '/wt/' + f.translationId,
+                        onClick: this.onFragmentClick.bind(this) },
+                    f.fragment
+                )
+            );
+        }
+    }]);
+
+    return EDFragment;
+}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
+
+/* harmony default export */ __webpack_exports__["a"] = (EDFragment);
+
+/***/ }),
+
+/***/ 158:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_classnames__);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+
+
+
+var EDTengwarFragment = function (_React$Component) {
+    _inherits(EDTengwarFragment, _React$Component);
+
+    function EDTengwarFragment() {
+        _classCallCheck(this, EDTengwarFragment);
+
+        return _possibleConstructorReturn(this, (EDTengwarFragment.__proto__ || Object.getPrototypeOf(EDTengwarFragment)).apply(this, arguments));
+    }
+
+    _createClass(EDTengwarFragment, [{
+        key: 'render',
+        value: function render() {
+            var f = this.props.fragment;
+
+            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                'span',
+                { className: __WEBPACK_IMPORTED_MODULE_1_classnames___default()({ 'active': this.props.selected }) },
+                (f.interpunctuation ? '' : ' ') + f.tengwar
+            );
+        }
+    }]);
+
+    return EDTengwarFragment;
+}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
+
+/* harmony default export */ __webpack_exports__["a"] = (EDTengwarFragment);
+
+/***/ }),
+
+/***/ 332:
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(131);
+
+
+/***/ }),
+
+/***/ 43:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_classnames__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_html_to_react__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_html_to_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_html_to_react__);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -240,312 +688,11 @@ var EDBookGloss = function (_React$Component) {
     return EDBookGloss;
 }(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
 
-/* harmony default export */ __webpack_exports__["a"] = EDBookGloss;
+/* harmony default export */ __webpack_exports__["a"] = (EDBookGloss);
 
 /***/ }),
 
-/***/ 181:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(39);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__reducers__ = __webpack_require__(96);
-/* harmony export (immutable) */ __webpack_exports__["a"] = selectFragment;
-
-
-
-function selectFragment(fragmentId, translationId) {
-    return function (dispatch) {
-        dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__reducers__["b" /* REQUEST_FRAGMENT */],
-            fragmentId: fragmentId
-        });
-
-        var start = new Date().getTime();
-        __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get(window.EDConfig.api('/book/translate/' + translationId)).then(function (resp) {
-            // Enable the animation to play at least 800 milliseconds.
-            var animationDelay = -Math.min(0, new Date().getTime() - start - 800);
-
-            window.setTimeout(function () {
-                dispatch({
-                    type: __WEBPACK_IMPORTED_MODULE_1__reducers__["c" /* RECEIVE_FRAGMENT */],
-                    bookData: resp.data,
-                    translationId: translationId
-                });
-            }, animationDelay);
-        });
-    };
-}
-
-/***/ }),
-
-/***/ 182:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_redux__ = __webpack_require__(26);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__actions__ = __webpack_require__(181);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__fragment__ = __webpack_require__(183);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__tengwar_fragment__ = __webpack_require__(184);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__search_components_book_gloss__ = __webpack_require__(176);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_html_to_react__ = __webpack_require__(50);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_html_to_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_html_to_react__);
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-
-
-
-
-
-
-
-
-var EDFragmentExplorer = function (_React$Component) {
-    _inherits(EDFragmentExplorer, _React$Component);
-
-    function EDFragmentExplorer(props) {
-        _classCallCheck(this, EDFragmentExplorer);
-
-        return _possibleConstructorReturn(this, (EDFragmentExplorer.__proto__ || Object.getPrototypeOf(EDFragmentExplorer)).call(this, props));
-    }
-
-    _createClass(EDFragmentExplorer, [{
-        key: 'componentDidMount',
-        value: function componentDidMount() {}
-    }, {
-        key: 'onFragmentClick',
-        value: function onFragmentClick(ev) {
-            this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2__actions__["a" /* selectFragment */])(ev.id, ev.translationId));
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var _this2 = this;
-
-            var section = null;
-            var fragment = null;
-            var parser = null;
-
-            if (!this.props.loading && this.props.bookData && this.props.bookData.sections.length > 0) {
-                section = this.props.bookData.sections[0];
-                fragment = this.props.fragments.find(function (f) {
-                    return f.id === _this2.props.fragmentId;
-                });
-                parser = new __WEBPACK_IMPORTED_MODULE_6_html_to_react__["Parser"]();
-            }
-
-            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                'div',
-                { className: 'well ed-fragment-navigator' },
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'p',
-                    { className: 'tengwar ed-tengwar-fragments' },
-                    this.props.fragments.map(function (f) {
-                        return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__tengwar_fragment__["a" /* default */], { fragment: f,
-                            key: 'tng' + f.id,
-                            selected: f.id === _this2.props.fragmentId });
-                    })
-                ),
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'p',
-                    { className: 'ed-elvish-fragments' },
-                    this.props.fragments.map(function (f) {
-                        return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_3__fragment__["a" /* default */], { fragment: f,
-                            key: 'frg' + f.id,
-                            selected: f.id === _this2.props.fragmentId,
-                            onClick: _this2.onFragmentClick.bind(_this2) });
-                    })
-                ),
-                this.props.loading ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', { className: 'sk-spinner sk-spinner-pulse' }) : section ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'div',
-                    null,
-                    fragment.grammarType ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'div',
-                        null,
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                            'em',
-                            null,
-                            fragment.grammarType
-                        )
-                    ) : '',
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'div',
-                        null,
-                        fragment.comments ? parser.parse(fragment.comments) : ''
-                    ),
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('hr', null),
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                        'div',
-                        null,
-                        section.glosses.map(function (g) {
-                            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_5__search_components_book_gloss__["a" /* default */], { gloss: g,
-                                language: section.language,
-                                key: g.TranslationID });
-                        })
-                    )
-                ) : ''
-            );
-        }
-    }]);
-
-    return EDFragmentExplorer;
-}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
-
-var mapStateToProps = function mapStateToProps(state) {
-    return {
-        fragments: state.fragments,
-        fragmentId: state.fragmentId,
-        bookData: state.bookData,
-        loading: state.loading
-    };
-};
-
-/* harmony default export */ __webpack_exports__["a"] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_1_react_redux__["connect"])(mapStateToProps)(EDFragmentExplorer);
-
-/***/ }),
-
-/***/ 183:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_classnames__);
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-
-
-
-var EDFragment = function (_React$Component) {
-    _inherits(EDFragment, _React$Component);
-
-    function EDFragment() {
-        _classCallCheck(this, EDFragment);
-
-        return _possibleConstructorReturn(this, (EDFragment.__proto__ || Object.getPrototypeOf(EDFragment)).apply(this, arguments));
-    }
-
-    _createClass(EDFragment, [{
-        key: 'onFragmentClick',
-        value: function onFragmentClick(ev) {
-            ev.preventDefault();
-
-            if (this.props.onClick) {
-                this.props.onClick({
-                    id: this.props.fragment.id,
-                    url: ev.target.href,
-                    translationId: this.props.fragment.translateId
-                });
-            }
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var f = this.props.fragment;
-
-            if (f.interpunctuation) {
-                return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'span',
-                    null,
-                    f.fragment
-                );
-            }
-
-            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                'span',
-                null,
-                ' ',
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                    'a',
-                    { className: __WEBPACK_IMPORTED_MODULE_1_classnames___default()({ 'active': this.props.selected }),
-                        href: '/wt/' + f.translateId,
-                        onClick: this.onFragmentClick.bind(this) },
-                    f.fragment
-                )
-            );
-        }
-    }]);
-
-    return EDFragment;
-}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
-
-/* harmony default export */ __webpack_exports__["a"] = EDFragment;
-
-/***/ }),
-
-/***/ 184:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_classnames__);
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-
-
-
-var EDTengwarFragment = function (_React$Component) {
-    _inherits(EDTengwarFragment, _React$Component);
-
-    function EDTengwarFragment() {
-        _classCallCheck(this, EDTengwarFragment);
-
-        return _possibleConstructorReturn(this, (EDTengwarFragment.__proto__ || Object.getPrototypeOf(EDTengwarFragment)).apply(this, arguments));
-    }
-
-    _createClass(EDTengwarFragment, [{
-        key: 'render',
-        value: function render() {
-            var f = this.props.fragment;
-
-            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-                'span',
-                { className: __WEBPACK_IMPORTED_MODULE_1_classnames___default()({ 'active': this.props.selected }) },
-                (f.interpunctuation ? '' : ' ') + f.tengwar
-            );
-        }
-    }]);
-
-    return EDTengwarFragment;
-}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
-
-/* harmony default export */ __webpack_exports__["a"] = EDTengwarFragment;
-
-/***/ }),
-
-/***/ 381:
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(156);
-
-
-/***/ }),
-
-/***/ 86:
+/***/ 72:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -575,7 +722,7 @@ exports['default'] = thunk;
 
 /***/ }),
 
-/***/ 96:
+/***/ 81:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -613,8 +760,8 @@ var EDSentenceReducer = function EDSentenceReducer() {
     }
 };
 
-/* harmony default export */ __webpack_exports__["a"] = EDSentenceReducer;
+/* harmony default export */ __webpack_exports__["a"] = (EDSentenceReducer);
 
 /***/ })
 
-},[381]);
+},[332]);

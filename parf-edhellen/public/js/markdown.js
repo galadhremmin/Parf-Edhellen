@@ -1,15 +1,15 @@
-webpackJsonp([3,4],{
+webpackJsonp([3],{
 
-/***/ 153:
+/***/ 128:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom__ = __webpack_require__(40);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom__ = __webpack_require__(33);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react_dom__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shared_components_markdown_editor__ = __webpack_require__(175);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__shared_components_markdown_editor__ = __webpack_require__(150);
 
 
 
@@ -47,17 +47,17 @@ window.addEventListener('load', function () {
 
 /***/ }),
 
-/***/ 175:
+/***/ 150:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_axios__ = __webpack_require__(39);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_axios__ = __webpack_require__(32);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_axios__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames__ = __webpack_require__(16);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames__ = __webpack_require__(12);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_classnames__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_html_to_react__ = __webpack_require__(50);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_html_to_react__ = __webpack_require__(26);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_html_to_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_html_to_react__);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -114,7 +114,7 @@ var EDMarkdownEditor = function (_React$Component) {
 
             // Let the server render the Markdown code
             if (tab === MDMarkdownPreviewTab && !/^\s*$/.test(this.state.value)) {
-                __WEBPACK_IMPORTED_MODULE_1_axios___default.a.post('/api/v1/utility/markdown', { markdown: this.state.value }).then(this.applyHtml.bind(this));
+                __WEBPACK_IMPORTED_MODULE_1_axios___default.a.post(window.EDConfig.api('/utility/markdown'), { markdown: this.state.value }).then(this.applyHtml.bind(this));
             }
         }
     }, {
@@ -208,16 +208,16 @@ EDMarkdownEditor.defaultProps = {
     componentName: 'markdownBody'
 };
 
-/* harmony default export */ __webpack_exports__["a"] = EDMarkdownEditor;
+/* harmony default export */ __webpack_exports__["a"] = (EDMarkdownEditor);
 
 /***/ }),
 
-/***/ 380:
+/***/ 331:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(153);
+module.exports = __webpack_require__(128);
 
 
 /***/ })
 
-},[380]);
+},[331]);

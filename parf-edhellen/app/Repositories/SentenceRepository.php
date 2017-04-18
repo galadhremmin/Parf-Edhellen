@@ -25,6 +25,7 @@ class SentenceRepository
         return DB::table('sentence as s')
             ->leftJoin('auth_accounts as a', 's.AuthorID', '=', 'a.AccountID')
             ->where('s.Approved', 1)
+            ->where('s.LanguageID', $languageId)
             ->select('s.SentenceID', 's.Description', 's.Source', 's.Neologism', 's.AuthorID',
                 'a.Nickname as AuthorName', 's.Name')
             ->get();

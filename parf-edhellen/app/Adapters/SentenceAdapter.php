@@ -25,7 +25,7 @@ class SentenceAdapter
                 'fragment'         => $fragment->Fragment,
                 'tengwar'          => $fragment->Tengwar,
                 'interpunctuation' => $fragment->isPunctuationOrWhitespace(),
-                'translateId'      => $fragment->TranslationID,
+                'translationId'    => $fragment->TranslationID,
                 'grammarType'      => $fragment->GrammarTypeID ? $fragment->grammarType->Name : null,
                 'comments'         => !empty($fragment->Comments)
                     ? $markdownParser->parse($fragment->Comments)

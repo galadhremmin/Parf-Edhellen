@@ -34,6 +34,12 @@
         </div>
         <div class="panel-body">
           @include('sentences._random', [ 'sentence' => $randomSentence ])
+          @include('sentences._readmore', [ 
+            'languageId'     => $randomSentence->LanguageID,
+            'languageName'   => $randomSentence->language->Name,
+            'sentenceId'     => $randomSentence->SentenceID,
+            'sentenceName'   => $randomSentence->Name
+          ])
         </div>
       </div>
     </div>
