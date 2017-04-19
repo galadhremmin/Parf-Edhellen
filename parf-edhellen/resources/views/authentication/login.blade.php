@@ -14,9 +14,13 @@
     passport, where your country provides the identity!
   </p>
 
-  <ul>
+  <ul class="list-group">
     @foreach ($providers as $provider)
-    <li><a href="{{ $link->authRedirect($provider->URL) }}">{{ $provider->Name }}</a></li>
+    <li class="list-group-item">
+      <a href="{{ $link->authRedirect($provider->URL) }}" title="{{ $provider->Name }}">
+        <img src="/img/openid-providers/{{ $provider->Name }}.gif" alt="{{ $provider->Name }}">
+      </a>
+    </li>
     @endforeach
   </ul>
 @endsection

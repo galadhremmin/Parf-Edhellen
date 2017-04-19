@@ -35,11 +35,10 @@ class TranslationRepository
 
     public function getWordTranslations(string $word) 
     {
-        self::formatWord($word);
-
         $senses = self::getSensesForWord($word);
         return self::createTranslationQuery()
             ->whereIn('t.SenseID', $senses)
+            ->orderBy('Word')
             ->get()
             ->toArray();
     }
@@ -73,8 +72,9 @@ class TranslationRepository
     protected static function getSensesForWord(string $word) 
     {
         $rows = DB::table('keywords')
-            ->where('NormalizedKeyword', 'like', $word)
+            ->where('NormalizedKeyword', '=', $word)
             ->select('SenseID')
+            ->distinct()
             ->get();
 
         $ids = array();
