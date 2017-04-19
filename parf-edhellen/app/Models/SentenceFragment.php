@@ -16,12 +16,17 @@ class SentenceFragment extends Model
 
     public function sentence() 
     {
-        return $this->belongsTo(Sentence::class, 'SentenceID', 'FragmentID');
+        return $this->belongsTo(Sentence::class, 'SentenceID', 'SentenceID');
     }
 
-    public function grammarType()
+    public function speech()
     {
-        return $this->hasOne(GrammarType::class, 'GrammarTypeID', 'GrammarTypeID');
+        return $this->hasOne(Speech::class, 'SpeechID', 'SpeechID');
+    }
+
+    public function inflection() 
+    {
+        return $this->hasOne(Inflection::class, 'InflectionID', 'InflectionID');
     }
 
     public function isPunctuationOrWhitespace() 

@@ -4,6 +4,9 @@
 @section('title', 'Welcome!')
 @section('body')
   <h1>Dashboard</h1>
+  
+  {!! Breadcrumbs::render('dashboard') !!}
+
   <div class="row">
     <div class="col-md-6">
 
@@ -23,7 +26,7 @@
 
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h2 class="panel-title">Contributions</h2>
+          <h2 class="panel-title">Community</h2>
         </div>
         <div class="panel-body">
         </div>
@@ -32,4 +35,20 @@
     </div>
 
   </div>
+  @if ($user->memberOf('Administrators'))
+  <div class="row">
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h2 class="panel-title">Administration</h2>
+        </div>
+        <div class="panel-body">
+          <ul>
+            <li><a href="{{ route('speech.index') }}">Type of speeches</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  @endif
 @endsection

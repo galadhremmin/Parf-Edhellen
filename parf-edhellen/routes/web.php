@@ -40,6 +40,9 @@ Route::group([ 'middleware' => 'auth' ], function () {
     Route::get('/dashboard',          [ 'uses' => 'DashboardController@index' ])->name('dashboard');
     Route::get('/author/edit/{id?}',  [ 'uses' => 'AuthorController@edit' ])->name('author.edit-profile');
     Route::post('/author/edit/{id?}', [ 'uses' => 'AuthorController@update' ])->name('author.update-profile');
+
+    Route::resource('speech', 'SpeechController');
+    Route::resource('inflection', 'InflectionController');
 });
 
 // Authentication

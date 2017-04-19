@@ -82,22 +82,35 @@ alter table `auth_accounts` add `RememberToken` varchar(100)  collate utf8_swedi
 alter table `sentence` add `Neologism` bit default 0;
 alter table `sentence` add `Approved` bit  default 0;
 alter table `sentence` add `AuthorID` int null;
-alter table `sentence` add `Name` varchar(128) null;
 alter table `sentence` add `LongDescription` longtext null;
 alter table `sentence` add `DateCreated` datetime default now();
+alter table `sentence` add `Name` varchar(128) null;
 
-replace into `grammar_type` (`GrammarTypeID`, `Name`, `Order`) values (99, 'Unknown', 99);
-alter table `sentence_fragment` add `GrammarTypeID` int null; -- Defaults to unset
-
-update `sentence` set `Approved` = 1;
 update `sentence` as s
-  set s.`Name` = replace(replace(replace((
-    select group_concat(f.`Fragment` separator ' ')
-    from `sentence_fragment` as f
-    where f.`SentenceID` = s.`SentenceID`
-    group by f.`SentenceID`
-  ), ' ,', ','), ' !', '!'), ' .', '.');
+  set 
+    s.`Approved` = 1, 
+    s.`Name` = replace(replace(replace((
+      select group_concat(f.`Fragment` separator ' ')
+      from `sentence_fragment` as f
+      where f.`SentenceID` = s.`SentenceID`
+      group by f.`SentenceID`
+    ), ' ,', ','), ' !', '!'), ' .', '.');
 
 alter table `sentence` modify `Name` varchar(128) not null;
+
+rename table `grammar_type` to `speech`;
+alter table `speech` change `GrammarTypeID` `SpeechID` int;
+replace into `speech` (`SpeechID`, `Name`, `Order`) values (99, 'Unknown', 99);
+alter table `sentence_fragment` add `SpeechID` int null; -- Defaults to unset
+alter table `sentence_fragment` add `InflectionID` int null; -- Defaults to unset (which is appropriate since it is only applicable to verbs)
+
+alter table `inflection` drop `WordID`;
+alter table `inflection` drop `TranslationID`;
+alter table `inflection` drop `Comments`;
+alter table `inflection` drop `Phonetic`;
+alter table `inflection` drop `Source`;
+alter table `inflection` drop `Mutation`;
+alter table `inflection` change `GrammarTypeID` `SpeechID` int;
+alter table `inflection` add `Name` varchar(32) not null;
 
 insert into `version` (`number`, `date`) values (1.8, NOW());

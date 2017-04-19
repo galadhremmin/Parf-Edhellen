@@ -11,6 +11,7 @@ class User extends Authenticatable
 
     protected $primaryKey = 'AccountID';
     protected $table = 'auth_accounts';
+    protected $groups = [];
 
     /**
      * The attributes that are mass assignable.
@@ -34,6 +35,18 @@ class User extends Authenticatable
      * Disable automatic timestamps.
      */
     public $timestamps = false;
+
+    public function memberOf(string $groupName) 
+    {
+        if (isset($groups[$groupName])) {
+            return $groups[$groupName];
+        }
+
+        $memberStatus = UserGroup::forUser($this)->where('Name', $groupName)->count() > 0;;
+        $groups[$groupName] = $memberStatus;
+
+        return $memberStatus;
+    }
 
     public function getAuthIdentifierName()
     {

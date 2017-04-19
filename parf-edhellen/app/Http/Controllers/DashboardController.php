@@ -8,12 +8,8 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $user = Auth::user();
-        $g = UserGroup::forUser($user)->get();
-        return $g;
-
-        return view('dashboard.index');
+        return view('dashboard.index', ['user' => $request->user()]);
     }
 }
