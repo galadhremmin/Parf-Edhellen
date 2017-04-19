@@ -23,7 +23,7 @@
 
   {{ $sentence->LongDescription }}
 
-  <footer>
+  <footer class="sentence-footer">
     Published {{ $sentence->DateCreated }}
     @if ($sentence->AuthorID)
     by 
