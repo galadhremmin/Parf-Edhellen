@@ -15,15 +15,19 @@ class EDSearchResults extends React.Component {
         this.state = {
             itemsOpened: true
         };
+
         this.popStateHandler = this.onPopState.bind(this);
+        this.messageHandler  = this.onWindowMessage.bind(this);
     }
 
     componentWillMount() {
         window.addEventListener('popstate', this.popStateHandler);
+        window.addEventListener('message', this.messageHandler, false);
     }
 
     componentWillUnmount() {
         window.removeEventListener(this.popStateHandler);
+        window.removeEventListener(this.messageHandler);
     }
 
     /**
@@ -128,6 +132,24 @@ class EDSearchResults extends React.Component {
 
     onReferenceLinkClick(ev) {
         this.gotoReference(ev.word, false);
+    }
+
+    /**
+     * Receives a window message and deals with known messages.
+     * @param {*} ev 
+     */
+    onWindowMessage(ev) {
+        const domain = ev.origin || ev.originalEvent.origin;
+        if (domain !== window.EDConfig.messageDomain) {
+            return;
+        }
+
+        const data = ev.data;
+        switch (data.source) {
+            case window.EDConfig.messageNavigateName:
+                this.gotoReference(data.payload.word, false);
+                break;
+        }
     }
 
     renderSearchResults() {

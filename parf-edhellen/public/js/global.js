@@ -5,12 +5,10 @@ webpackJsonp([1],{
 
 (function () {
 
-    if (window.EDConfig !== undefined) {
-        throw 'EDConfig is already defined';
-    }
-
     var config = {
         apiPathName: '/api/v1', // path to API w/o trailing slash!
+        messageDomain: window.location.origin,
+        messageNavigateName: 'ednavigate',
 
         /**
          * Convenience method for generating API paths
@@ -18,9 +16,19 @@ webpackJsonp([1],{
          */
         api: function api(path) {
             return config.apiPathName + (path[0] !== '/' ? '/' : '') + path;
+        },
+
+        /**
+         * Convenience method for generating window messages
+         */
+        message: function message(source, payload) {
+            return window.postMessage({ source: source, payload: payload }, config.messageDomain);
         }
     };
 
+    if (window.EDConfig !== undefined) {
+        throw 'EDConfig is already defined';
+    }
     window.EDConfig = config;
 })();
 
@@ -414,7 +422,7 @@ var EDSearchBar = function (_React$Component) {
                             __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'checkbox', name: 'isReversed',
                                 checked: this.state.isReversed,
                                 onChange: this.reverseChange.bind(this) }),
-                            ' Reverse search'
+                            ' Reversed'
                         )
                     )
                 )
@@ -538,7 +546,9 @@ var EDSearchResults = function (_React$Component) {
         _this.state = {
             itemsOpened: true
         };
+
         _this.popStateHandler = _this.onPopState.bind(_this);
+        _this.messageHandler = _this.onWindowMessage.bind(_this);
         return _this;
     }
 
@@ -546,11 +556,13 @@ var EDSearchResults = function (_React$Component) {
         key: 'componentWillMount',
         value: function componentWillMount() {
             window.addEventListener('popstate', this.popStateHandler);
+            window.addEventListener('message', this.messageHandler, false);
         }
     }, {
         key: 'componentWillUnmount',
         value: function componentWillUnmount() {
             window.removeEventListener(this.popStateHandler);
+            window.removeEventListener(this.messageHandler);
         }
 
         /**
@@ -669,6 +681,27 @@ var EDSearchResults = function (_React$Component) {
         key: 'onReferenceLinkClick',
         value: function onReferenceLinkClick(ev) {
             this.gotoReference(ev.word, false);
+        }
+
+        /**
+         * Receives a window message and deals with known messages.
+         * @param {*} ev 
+         */
+
+    }, {
+        key: 'onWindowMessage',
+        value: function onWindowMessage(ev) {
+            var domain = ev.origin || ev.originalEvent.origin;
+            if (domain !== window.EDConfig.messageDomain) {
+                return;
+            }
+
+            var data = ev.data;
+            switch (data.source) {
+                case window.EDConfig.messageNavigateName:
+                    this.gotoReference(data.payload.word, false);
+                    break;
+            }
         }
     }, {
         key: 'renderSearchResults',

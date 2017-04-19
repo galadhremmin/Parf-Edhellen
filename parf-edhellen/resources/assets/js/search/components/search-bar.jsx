@@ -119,7 +119,7 @@ class EDSearchBar extends React.Component {
                     <label>
                         <input type="checkbox" name="isReversed"
                                checked={this.state.isReversed}
-                               onChange={this.reverseChange.bind(this)} /> Reverse search
+                               onChange={this.reverseChange.bind(this)} /> Reversed
                     </label>
                 </div>
             </div>

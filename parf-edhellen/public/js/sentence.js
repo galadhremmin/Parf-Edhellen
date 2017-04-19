@@ -228,6 +228,17 @@ var EDFragmentExplorer = function (_React$Component) {
                 translationId: fragment.translationId
             });
         }
+
+        /**
+         * Dispatches a window message to the search result component, requesting a search.
+         * @param {*} data 
+         */
+
+    }, {
+        key: 'onReferenceLinkClick',
+        value: function onReferenceLinkClick(data) {
+            window.EDConfig.message(window.EDConfig.messageNavigateName, data);
+        }
     }, {
         key: 'render',
         value: function render() {
@@ -328,7 +339,8 @@ var EDFragmentExplorer = function (_React$Component) {
                         section.glosses.map(function (g) {
                             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_6__search_components_book_gloss__["a" /* default */], { gloss: g,
                                 language: section.language,
-                                key: g.TranslationID });
+                                key: g.TranslationID,
+                                onReferenceLinkClick: _this2.onReferenceLinkClick.bind(_this2) });
                         })
                     )
                 ) : ''

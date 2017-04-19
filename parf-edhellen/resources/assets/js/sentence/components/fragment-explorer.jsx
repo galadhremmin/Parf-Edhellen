@@ -106,6 +106,14 @@ class EDFragmentExplorer extends React.Component {
         })
     }
 
+    /**
+     * Dispatches a window message to the search result component, requesting a search.
+     * @param {*} data 
+     */
+    onReferenceLinkClick(data) {
+        window.EDConfig.message(window.EDConfig.messageNavigateName, data);
+    }
+
     render() {
         let section = null;
         let fragment = null;
@@ -153,7 +161,8 @@ class EDFragmentExplorer extends React.Component {
                 <div>
                     {section.glosses.map(g => <EDBookGloss gloss={g}
                                                            language={section.language}
-                                                           key={g.TranslationID} />)}
+                                                           key={g.TranslationID} 
+                                                           onReferenceLinkClick={this.onReferenceLinkClick.bind(this)} />)}
                 </div>
             </div>) : '')}
         </div>;
