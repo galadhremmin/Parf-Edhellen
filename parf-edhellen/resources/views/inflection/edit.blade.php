@@ -4,11 +4,11 @@
 @section('body')
 
 <h1>{{$inflection->Name}}</h1>
-{!! Breadcrumbs::render('inflection.edit', $inflection->speech, $inflection) !!}
+{!! Breadcrumbs::render('inflection.edit', $inflection) !!}
 
 <p>
-  This inflection is associated with <em>{{ $inflection->speech->Name }}</em>. There are 
-  {{ $inflection->sentenceFragments()->count() }} sentence fragments which refer to it.
+  There are {{ $inflection->sentenceFragmentAssociations()->count() }} sentence fragments which has
+  this inflection.
 </p>
 
 @include('_shared._errors', [ 'errors' => $errors ])
@@ -19,8 +19,12 @@
     <input type="text" class="form-control" value="{{ $inflection->Name }}" id="ed-inflection-name" name="name">
   </div>
   <div class="form-group">
+    <label for="ed-inflection-group-name" class="control-label">Group</label>
+    <input type="text" class="form-control" value="{{ $inflection->Group }}" id="ed-inflection-group-name" name="group">
+  </div>
+  <div class="form-group">
     <button type="submit" class="btn btn-primary">Save</button>
-    <a href="{{ route('speech.edit', [ 'id' => $inflection->SpeechID ]) }}" class="btn btn-default">Cancel</a>
+    <a href="{{ route('inflection.index') }}" class="btn btn-default">Cancel</a>
   </div>
   {{ csrf_field() }}
   {{ method_field('PUT') }}

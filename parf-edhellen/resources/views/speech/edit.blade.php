@@ -12,19 +12,6 @@
 
 @include('_shared._errors', [ 'errors' => $errors ])
 
-<h2>Inflections</h2>
-@if (count($speech->inflections) < 1)
-<p><em>No known inflections.</em></p>
-@else
-<ul>
-  @foreach ($speech->inflections as $inflection)
-  <li><a href="{{ route('inflection.edit', [ 'inflection' => $inflection->InflectionID]) }}">{{ $inflection->Name }}</a></li>
-  @endforeach
-</ul>
-@endif
-<a class="btn btn-primary" href="{{ route('inflection.create', [ 'speech' => $speech->SpeechID ]) }}">Add inflection</a>
-<hr>
-
 <form method="post" action="{{ route('speech.update', [ 'speech' => $speech->SpeechID ]) }}">
   <div class="form-group">
     <label for="ed-speech-name" class="control-label">Name</label>

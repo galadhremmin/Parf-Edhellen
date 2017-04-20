@@ -6,7 +6,9 @@ Breadcrumbs::register('home', function($breadcrumbs)
     $breadcrumbs->push('Home', route('home'));
 });
 
+// //////////////////////////////////////////////////////////////////////////////////////////////
 // Phrases
+
 Breadcrumbs::register('sentences', function($breadcrumbs)
 {
     $breadcrumbs->parent('home');
@@ -32,21 +34,25 @@ Breadcrumbs::register('sentences.sentence', function($breadcrumbs, int $langId, 
     $breadcrumbs->push($sentenceName, $link->sentence($langId, $langName, $sentenceId, $sentenceName));
 });
 
+// //////////////////////////////////////////////////////////////////////////////////////////////
 // Dashboard
+
 Breadcrumbs::register('dashboard', function ($breadcrumbs)
 {
     $breadcrumbs->parent('home');
     $breadcrumbs->push('Dashboard', route('dashboard'));
 });
 
+// //////////////////////////////////////////////////////////////////////////////////////////////
 // Dashboard > Speech
+
 Breadcrumbs::register('speech.index', function ($breadcrumbs)
 {
     $breadcrumbs->parent('dashboard');
     $breadcrumbs->push('Type of speeches', route('speech.index'));
 });
 
-// Dashboard > Speech > Create
+// Dashboard > Speech > Add speech
 Breadcrumbs::register('speech.create', function ($breadcrumbs)
 {
     $breadcrumbs->parent('speech.index');
@@ -60,16 +66,27 @@ Breadcrumbs::register('speech.edit', function ($breadcrumbs, App\Models\Speech $
     $breadcrumbs->push('Speech: '.$speech->Name, route('speech.edit', [ 'id' => $speech->SpeechID ]));
 });
 
-// Dashboard > Speech > [Speech name] > Create inflection
-Breadcrumbs::register('inflection.create', function ($breadcrumbs, App\Models\Speech $speech)
+// //////////////////////////////////////////////////////////////////////////////////////////////
+// Dashboard > Inflections
+
+Breadcrumbs::register('inflection.index', function ($breadcrumbs)
 {
-    $breadcrumbs->parent('speech.edit', $speech);
+    $breadcrumbs->parent('dashboard');
+    $breadcrumbs->push('Inflections', route('inflection.index'));
+});
+
+// Dashboard > Inflections > Add inflection
+Breadcrumbs::register('inflection.create', function ($breadcrumbs)
+{
+    $breadcrumbs->parent('inflection.index');
     $breadcrumbs->push('Add inflection', route('inflection.create'));
 });
 
-// Dashboard > Speech > [Speech name] > [Inflection]
-Breadcrumbs::register('inflection.edit', function ($breadcrumbs, App\Models\Speech $speech, App\Models\Inflection $inflection)
+// Dashboard > Inflections > Edit [Inflection]
+Breadcrumbs::register('inflection.edit', function ($breadcrumbs, App\Models\Inflection $inflection)
 {
-    $breadcrumbs->parent('speech.edit', $speech);
-    $breadcrumbs->push('Inflection: '.$inflection->Name, route('speech.edit', [ 'id' => $speech->SpeechID ]));
+    $breadcrumbs->parent('inflection.index');
+    $breadcrumbs->push('Inflection: '.$inflection->Name, route('inflection.edit', [
+        'id' => $inflection->InflectionID
+    ]));
 });

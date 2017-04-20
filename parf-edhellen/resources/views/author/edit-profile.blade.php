@@ -1,3 +1,4 @@
+@inject('link', 'App\Helpers\LinkHelper')
 @extends('_layouts.default')
 
 @section('title', $author ? 'Edit ' . $author->Nickname : 'Missing account')
@@ -31,7 +32,7 @@
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
         <button type="submit" class="btn btn-primary">Update</button>
-        <a href="{{ route('author.profile', [ 'id' => $author->AccountID ]) }}" class="btn btn-default">Cancel</a>
+        <a href="{{ $link->author($author->AccountID, $author->Nickname) }}" class="btn btn-default">Cancel</a>
       </div>
     </div>
     {{ csrf_field() }}

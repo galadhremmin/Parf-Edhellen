@@ -3,7 +3,7 @@
 @section('title', 'Type of speeches - Administration')
 @section('body')
 
-<h1>Speech</h1>
+<h1>Types of speech</h1>
 {!! Breadcrumbs::render('speech.index') !!}
 
 <p>Click on a type of speech beneath to edit it.</p>

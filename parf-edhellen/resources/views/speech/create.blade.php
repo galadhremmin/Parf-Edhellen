@@ -1,6 +1,6 @@
 @extends('_layouts.default')
 
-@section('title', 'Create type of speech - Administration')
+@section('title', 'Add type of speech - Administration')
 @section('body')
 
 <h1>Add type of speech</h1>

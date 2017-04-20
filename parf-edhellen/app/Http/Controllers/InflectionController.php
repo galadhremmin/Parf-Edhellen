@@ -10,11 +10,15 @@ use Illuminate\Support\Facades\Auth;
 
 class InflectionController extends Controller
 {
+    public function index(Request $request)
+    {
+        $inflections = Inflection::all()->groupBy('Group')->sortBy('Name');
+        return view('inflection.index', ['inflections' => $inflections]);
+    }
+
     public function create(Request $request)
     {
-        $speechId = intval($request->input('speech'));
-        $speech   = Speech::findOrFail($speechId);
-        return view('inflection.create', [ 'speech' => $speech ]);
+        return view('inflection.create');
     }
 
     public function edit(Request $request, int $id) 
@@ -28,11 +32,11 @@ class InflectionController extends Controller
         $this->validateRequest($request);
         
         $inflection = new Inflection;
-        $inflection->SpeechID = intval($request->input('speechId'));
-        $inflection->Name = $request->input('name');
+        $inflection->Name  = $request->input('name');
+        $inflection->Group = $request->input('group');
         $inflection->save();
 
-        return redirect()->route('speech.edit', [ 'id' => $inflection->SpeechID ]);
+        return redirect()->route('inflection.index');
     }
 
     public function update(Request $request, int $id)
@@ -40,37 +44,32 @@ class InflectionController extends Controller
         $this->validateRequest($request, $id);
 
         $inflection = Inflection::findOrFail($id);
-        $inflection->Name = $request->input('name');
+        $inflection->Name  = $request->input('name');
+        $inflection->Group = $request->input('group');
         $inflection->save();
 
-        return redirect()->route('speech.edit', [ 'id' => $inflection->SpeechID ]);
+        return redirect()->route('inflection.index');
     }
 
     public function destroy(Request $request, int $id) 
     {
         $inflection = Inflection::findOrFail($id);
-        $speechId = $inflection->SpeechID;
         
-        foreach ($inflection->sentenceFragments as $fragment) {
-            $fragment->InflectionID = null;
-            $fragment->save();
+        foreach ($inflection->sentenceFragmentAssociations as $association) {
+            $association->delete();
         }
 
         $inflection->delete();
 
-        return redirect()->route('speech.edit', [ 'id' => $speechId ]);
+        return redirect()->route('inflection.index');
     }
 
     protected function validateRequest(Request $request, int $id = 0)
     {
         $rules = [
-            'name' => 'required|min:1|max:32|unique:inflection,Name'.($id === 0 ? '' : ','.$id.',InflectionID')
+            'name'  => 'required|min:1|max:64|unique:inflection,Name'.($id === 0 ? '' : ','.$id.',InflectionID'),
+            'group' => 'required|min:1|max:64'
         ];
-
-        // New entities must have a valid speech
-        if ($id === 0) {
-            $rules['speechId'] = 'required|numeric|exists:speech,SpeechID';
-        }
 
         $this->validate($request, $rules);
     } 

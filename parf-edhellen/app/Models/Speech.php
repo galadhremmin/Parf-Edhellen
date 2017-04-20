@@ -13,11 +13,6 @@ class Speech extends Model
      */
     public $timestamps = false;
 
-    public function inflections() 
-    {
-        return $this->hasMany(Inflection::class, 'SpeechID', 'SpeechID');
-    }
-
     public function sentenceFragments()
     {
         return $this->hasMany(SentenceFragment::class, 'SpeechID', 'SpeechID');

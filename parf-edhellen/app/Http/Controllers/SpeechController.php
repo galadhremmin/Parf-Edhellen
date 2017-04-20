@@ -11,17 +11,15 @@ use Illuminate\Support\Facades\Auth;
 class SpeechController extends Controller
 {
     protected $_speechAdapter;
-    protected $_inflectionController;
 
-    public function __construct(SpeechAdapter $adapter, InflectionController $inflectionController) 
+    public function __construct(SpeechAdapter $adapter) 
     {
         $this->_speechAdapter = $adapter;
-        $this->_inflectionController = $inflectionController;
     }
 
     public function index(Request $request)
     {
-        $speeches = Speech::all();
+        $speeches = Speech::all()->sortBy('Name');
         return view('speech.index', ['speeches' => $speeches]);
     }
 
@@ -63,10 +61,6 @@ class SpeechController extends Controller
     public function destroy(Request $request, int $id) 
     {
         $speech = Speech::findOrFail($id);
-        
-        foreach ($speech->inflections as $inflection) {
-            $this->_inflectionController->destroy($request, $inflection->InflectionID);
-        }
 
         foreach ($speech->sentenceFragments as $fragment) {
             $fragment->SpeechID = null;

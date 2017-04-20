@@ -24,9 +24,9 @@ class SentenceFragment extends Model
         return $this->hasOne(Speech::class, 'SpeechID', 'SpeechID');
     }
 
-    public function inflection() 
+    public function inflectionAssociations()
     {
-        return $this->hasOne(Inflection::class, 'InflectionID', 'InflectionID');
+        return $this->hasMany(SentenceFragmentInflectionAssoc::class, 'FragmentID', 'FragmentID');
     }
 
     public function isPunctuationOrWhitespace() 

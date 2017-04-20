@@ -1,10 +1,10 @@
 @extends('_layouts.default')
 
-@section('title', 'Create inflection - Administration')
+@section('title', 'Add inflection - Administration')
 @section('body')
 
 <h1>Add inflection</h1>
-{!! Breadcrumbs::render('inflection.create', $speech) !!}
+{!! Breadcrumbs::render('inflection.create') !!}
 
 @include('_shared._errors', [ 'errors' => $errors ])
 
@@ -14,10 +14,13 @@
     <input type="text" class="form-control" id="ed-inflection-name" name="name">
   </div>
   <div class="form-group">
+    <label for="ed-inflection-group-name" class="control-label">Group</label>
+    <input type="text" class="form-control" id="ed-inflection-group-name" name="group">
+  </div>
+  <div class="form-group">
     <button type="submit" class="btn btn-primary">Save</button>
-    <a href="{{ route('speech.edit', [ 'id' => $speech->SpeechID ]) }}" class="btn btn-default">Cancel</a>
+    <a href="{{ route('inflection.index') }}" class="btn btn-default">Cancel</a>
   </div>
   {{ csrf_field() }}
-  <input type="hidden" name="speechId" value="{{ $speech->SpeechID }}">
 </form>
 @endsection

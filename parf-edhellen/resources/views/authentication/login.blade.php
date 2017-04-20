@@ -18,7 +18,7 @@
     @foreach ($providers as $provider)
     <li class="list-group-item">
       <a href="{{ $link->authRedirect($provider->URL) }}" title="{{ $provider->Name }}">
-        <img src="/img/openid-providers/{{ $provider->Name }}.gif" alt="{{ $provider->Name }}">
+        <img src="/img/openid-providers/{{ $provider->Logo }}" alt="{{ $provider->Name }}">
       </a>
     </li>
     @endforeach

@@ -45,6 +45,7 @@
         <div class="panel-body">
           <ul>
             <li><a href="{{ route('speech.index') }}">Type of speeches</a></li>
+            <li><a href="{{ route('inflection.index') }}">Inflections</a></li>
           </ul>
         </div>
       </div>

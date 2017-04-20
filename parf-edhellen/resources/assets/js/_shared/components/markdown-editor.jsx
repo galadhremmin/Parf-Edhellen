@@ -65,7 +65,10 @@ class EDMarkdownEditor extends React.Component {
                         <a href="#" onClick={e => this.onOpenTab(e, MDMarkdownEditTab)}>Edit</a>
                     </li>
                     <li role="presentation"
-                        className={classNames({'active': this.state.currentTab === MDMarkdownPreviewTab})}>
+                        className={classNames({
+                            'active': this.state.currentTab === MDMarkdownPreviewTab,
+                            'disabled': !this.state.value
+                         })}>
                         <a href="#" onClick={e => this.onOpenTab(e, MDMarkdownPreviewTab)}>Preview</a>
                     </li>
                 </ul>

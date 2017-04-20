@@ -13,13 +13,8 @@ class Inflection extends Model
      */
     public $timestamps = false;
 
-    public function speech() 
+public function sentenceFragmentAssociations()
     {
-        return $this->belongsTo(Speech::class, 'SpeechID', 'SpeechID');
-    }
-
-    public function sentenceFragments() 
-    {
-        return $this->hasMany(SentenceFragment::class, 'InflectionID', 'InflectionID');
+        return $this->hasMany(SentenceFragmentInflectionAssoc::class, 'InflectionID', 'InflectionID');
     }
 }

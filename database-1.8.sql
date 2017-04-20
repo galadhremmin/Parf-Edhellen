@@ -6,6 +6,15 @@ create table if not exists `sense` (
   primary key(`SenseID`)
 );
 
+create table if not exists `sentence_fragment_inflection` (
+  `id` int not null auto_increment,
+  `FragmentID` int not null,
+  `InflectionID` int not null,
+  primary key (`id`)
+);
+
+alter table `sentence_fragment_inflection` add index `ix_fragment_id`(`FragmentID`);
+
 -- Add foreign key to keywords and translation
 alter table `keywords` add `SenseID` int null;
 alter table `keywords` add `IsSense` bit not null default 0;
@@ -99,10 +108,10 @@ update `sentence` as s
 alter table `sentence` modify `Name` varchar(128) not null;
 
 rename table `grammar_type` to `speech`;
-alter table `speech` change `GrammarTypeID` `SpeechID` int;
+alter table `speech` drop `GrammarTypeID`;
+alter table `speech` add `SpeechID` int not null primary key auto_increment;
 replace into `speech` (`SpeechID`, `Name`, `Order`) values (99, 'Unknown', 99);
 alter table `sentence_fragment` add `SpeechID` int null; -- Defaults to unset
-alter table `sentence_fragment` add `InflectionID` int null; -- Defaults to unset (which is appropriate since it is only applicable to verbs)
 
 alter table `inflection` drop `WordID`;
 alter table `inflection` drop `TranslationID`;
@@ -110,7 +119,196 @@ alter table `inflection` drop `Comments`;
 alter table `inflection` drop `Phonetic`;
 alter table `inflection` drop `Source`;
 alter table `inflection` drop `Mutation`;
-alter table `inflection` change `GrammarTypeID` `SpeechID` int;
-alter table `inflection` add `Name` varchar(32) not null;
+alter table `inflection` drop `GrammarTypeID`;
+alter table `inflection` add `Name` varchar(64) not null;
+alter table `inflection` add `Group` varchar(64) not null;
+
+truncate table `speech`;
+insert into `speech` (`Name`, `Order`) values
+  ('adjective', 0),
+  ('adverb', 0),
+  ('affix', 0),
+  ('definite article', 0),
+  ('cardinal', 0),
+  ('collective name', 0),
+  ('collective noun', 0),
+  ('family name', 0),
+  ('feminine name', 0),
+  ('fraction', 0),
+  ('infix', 0),
+  ('interjection', 0),
+  ('masculine name', 0),
+  ('noun', 0),
+  ('ordinal', 0),
+  ('particle', 0),
+  ('phoneme', 0),
+  ('place name', 0),
+  ('prefix', 0),
+  ('preposition', 0),
+  ('pronoun', 0),
+  ('proper name', 0),
+  ('radical', 0),
+  ('root', 0),
+  ('suffix', 0),
+  ('verb', 0);
+
+truncate table `inflection`;
+insert into `inflection` (`Group`, `Name`) values
+  ('Inflections for number', 'singular'),
+  ('Inflections for number', 'dual'),
+  ('Inflections for number', 'plural'),
+  ('Inflections for number', 'partitive plural'),
+  ('Inflections for number', 'class plural'),
+  ('Inflections for number', 'draft dual'),
+  ('Inflections for number', 'draft plural'),
+
+  ('Basic verb tenses', 'infinitive'),
+  ('Basic verb tenses', 'aorist'),
+  ('Basic verb tenses', 'present'),
+  ('Basic verb tenses', 'past'),
+  ('Basic verb tenses', 'strong past'),
+  ('Basic verb tenses', 'perfect'),
+  ('Basic verb tenses', 'strong perfect'),
+  ('Basic verb tenses', 'future'),
+  ('Basic verb tenses', 'gerund'),
+
+  -- Complex (derived from Eldamo.org)
+  ('Complex verb tenses', 'particular infinitive'),
+  ('Complex verb tenses', 'consuetudinal past'),
+  ('Complex verb tenses', 'present imperfect'),
+  ('Complex verb tenses', 'present perfect'),
+  ('Complex verb tenses', 'past continuous'),
+  ('Complex verb tenses', 'past imperfect'),
+  ('Complex verb tenses', 'past perfect'),
+  ('Complex verb tenses', 'past future'),
+  ('Complex verb tenses', 'past future perfect'),
+  ('Complex verb tenses', 'long perfect'),
+  ('Complex verb tenses', 'pluperfect'),
+  ('Complex verb tenses', 'future imperfect'),
+  ('Complex verb tenses', 'future perfect'),
+  ('Complex verb tenses', 'continuative present'),
+  ('Complex verb tenses', 'continuative past'),
+  ('Complex verb tenses', 'draft perfect'),
+
+  -- obscure verb tenses (derived from Eldamo.org)
+  ('Obscure verb tenses', 'stative'),
+  ('Obscure verb tenses', 'stative past'),
+  ('Obscure verb tenses', 'stative future'),
+
+  -- Verbal moods
+  ('Verbal moods', 'imperative'),
+  ('Verbal moods', 'suffixed imperative'),
+  ('Verbal moods', 'subjunctive'),
+  ('Verbal moods', 'impersonal'),
+  ('Verbal moods', 'passive'),
+  ('Verbal moods', 'reflexive'),
+
+  ('Verbal participles', 'active participle'),
+  ('Verbal participles', 'passive participle'),
+  ('Verbal participles', 'imperfect participle'),
+  ('Verbal participles', 'imperfect passive participle'),
+  ('Verbal participles', 'perfect participle'),
+  ('Verbal participles', 'perfect passive participle'),
+  ('Verbal participles', 'perfective participle'),
+  ('Verbal participles', 'future participle'),
+  ('Verbal participles', 'future passive participle'),
+  ('Verbal participles', 'reflexive participle'),
+
+  ('Object inflections', 'with singular object'),
+  ('Object inflections', 'with dual object'),
+  ('Object inflections', 'with plural object'),
+  ('Object inflections', 'with remote singular object'),
+  ('Object inflections', 'with remote plural object'),
+  ('Object inflections', 'with 1st singular object'),
+  ('Object inflections', 'with 2nd plural object'),
+  ('Object inflections', 'with 1st singular dative'),
+
+  ('Subject inflections', '1st singular'),
+  ('Subject inflections', '1st dual exclusive'),
+  ('Subject inflections', '1st dual inclusive'),
+  ('Subject inflections', '1st plural'),
+  ('Subject inflections', '1st plural exclusive'),
+  ('Subject inflections', '1st plural inclusive'),
+  ('Subject inflections', '2nd singular'),
+  ('Subject inflections', '2nd singular familiar'),
+  ('Subject inflections', '2nd singular polite'),
+  ('Subject inflections', '2nd singular honorific'),
+  ('Subject inflections', '2nd dual'),
+  ('Subject inflections', '2nd dual polite'),
+  ('Subject inflections', '2nd dual honorific'),
+  ('Subject inflections', '2nd plural'),
+  ('Subject inflections', '2nd plural polite'),
+  ('Subject inflections', '2nd plural honorific'),
+  ('Subject inflections', '3rd singular'),
+  ('Subject inflections', '3rd singular feminine'),
+  ('Subject inflections', '3rd singular masculine'),
+  ('Subject inflections', '3rd singular neuter'),
+  ('Subject inflections', '3rd singular reflexive'),
+  ('Subject inflections', '3rd dual'),
+  ('Subject inflections', '3rd plural'),
+  ('Subject inflections', '3rd plural feminine'),
+  ('Subject inflections', '3rd plural masculine'),
+  ('Subject inflections', '3rd plural neuter'),
+  ('Subject inflections', '3rd plural reflexive'),
+
+  ('Prepositional inflections', '1st singular preposition'),
+  ('Prepositional inflections', '1st dual preposition'),
+  ('Prepositional inflections', '1st plural exclusive preposition'),
+  ('Prepositional inflections', '1st plural inclusive preposition'),
+  ('Prepositional inflections', '2nd singular preposition'),
+  ('Prepositional inflections', '2nd singular familiar preposition'),
+  ('Prepositional inflections', '2nd singular polite preposition'),
+  ('Prepositional inflections', '2nd plural preposition'),
+  ('Prepositional inflections', '3rd singular preposition'),
+  ('Prepositional inflections', '3rd singular inanimate preposition'),
+  ('Prepositional inflections', '3rd singular honorific preposition'),
+  ('Prepositional inflections', '3rd plural preposition'),
+  ('Prepositional inflections', '3rd plural honorific preposition'),
+  ('Prepositional inflections', 'definite preposition'),
+  ('Prepositional inflections', 'definite plural preposition'),
+
+  ('Possessive inflections', '1st singular possessive'),
+  ('Possessive inflections', '1st plural exclusive possessive'),
+  ('Possessive inflections', '1st plural inclusive possessive'),
+  ('Possessive inflections', '2nd singular polite possessive'),
+  ('Possessive inflections', '2nd dual possessive'),
+  ('Possessive inflections', '2nd plural possessive'),
+  ('Possessive inflections', '3rd singular possessive'),
+  ('Possessive inflections', '3rd plural possessive'),
+
+  ('Cases', 'accusative'),
+  ('Cases', 'ablative'),
+  ('Cases', 'allative'),
+  ('Cases', 'dative'),
+  ('Cases', 'genitive'),
+  ('Cases', 'instrumental'),
+  ('Cases', 'locative'),
+  ('Cases', 'possessive'),
+
+  ('Obscure cases', 's-case'),
+  ('Obscure cases', 'old genitive'),
+  ('Obscure cases', 'similative'),
+  ('Obscure cases', 'partitive'),
+  ('Obscure cases', 'objective'),
+  ('Obscure cases', 'subjective'),
+  ('Obscure cases', 'agental formation'),
+
+  ('Comparative inflections', 'augmentative'),
+  ('Comparative inflections', 'comparative'),
+  ('Comparative inflections', 'diminutive'),
+  ('Comparative inflections', 'intensive'),
+  ('Comparative inflections', 'superlative'),
+  ('Comparative inflections', 'diminutive superlative'),
+
+  ('Mutations', 'soft mutation'),
+  ('Mutations', 'nasal mutation'),
+  ('Mutations', 'liquid mutation'),
+  ('Mutations', 'stop mutation'),
+  ('Mutations', 'mixed mutation'),
+  ('Mutations', 'sibilant mutation'),
+
+  ('Mutations', 'stem'),
+  ('Mutations', 'assimilated'),
+  ('Mutations', 'patronymic');
 
 insert into `version` (`number`, `date`) values (1.8, NOW());
