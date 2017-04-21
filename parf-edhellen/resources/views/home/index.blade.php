@@ -37,7 +37,7 @@
   </div>
   <div class="col-xs-12 col-sm-4">
     <h4>Random phrase</h4>
-    @include('sentences._random', [ 'sentence' => $sentence ])
+    @include('sentence.public._random', [ 'sentence' => $sentence ])
   </div>
 </div>
 

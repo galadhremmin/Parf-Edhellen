@@ -28,11 +28,11 @@ class LinkHelper
         ]);
     }
     
-    public function sentenceByLanguage(int $languageId, string $languageName)
+    public function sentencesByLanguage(int $languageId, string $languageName)
     {
         $languageName = StringHelper::normalizeForUrl($languageName);
 
-        return route('sentences.language', [
+        return route('sentence.public.language', [
             'langId'   => $languageId,
             'langName' => $languageName
         ]);
@@ -43,7 +43,7 @@ class LinkHelper
         $languageName = StringHelper::normalizeForUrl($languageName);
         $sentenceName = StringHelper::normalizeForUrl($sentenceName);
 
-        return route('sentences.sentence', [
+        return route('sentence.public.sentence', [
             'langId'   => $languageId,
             'langName' => $languageName,
             'sentId'   => $sentenceId,

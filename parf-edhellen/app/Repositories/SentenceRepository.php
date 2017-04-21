@@ -20,6 +20,10 @@ class SentenceRepository
             ->get();
     }
 
+    /**
+     * Gets sentences for the specified language.
+     * @return mixed
+     */
     public function getByLanguage(int $languageId)
     {
         return DB::table('sentence as s')
@@ -31,4 +35,5 @@ class SentenceRepository
             ->get();
     }
 
+    
 }

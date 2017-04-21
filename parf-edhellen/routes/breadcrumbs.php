@@ -9,28 +9,28 @@ Breadcrumbs::register('home', function($breadcrumbs)
 // //////////////////////////////////////////////////////////////////////////////////////////////
 // Phrases
 
-Breadcrumbs::register('sentences', function($breadcrumbs)
+Breadcrumbs::register('sentence.public', function($breadcrumbs)
 {
     $breadcrumbs->parent('home');
-    $breadcrumbs->push('Phrases', route('sentences'));
+    $breadcrumbs->push('Phrases', route('sentence.public'));
 });
 
 // Phrases > [Language]
-Breadcrumbs::register('sentences.language', function($breadcrumbs, int $langId, string $langName)
+Breadcrumbs::register('sentence.public.language', function($breadcrumbs, int $langId, string $langName)
 {
     $link = new \App\Helpers\LinkHelper();
 
-    $breadcrumbs->parent('sentences');
-    $breadcrumbs->push($langName, $link->sentenceByLanguage($langId, $langName));
+    $breadcrumbs->parent('sentence.public');
+    $breadcrumbs->push($langName, $link->sentencesByLanguage($langId, $langName));
 });
 
 // Phrases > [Language] > [Phrase]
-Breadcrumbs::register('sentences.sentence', function($breadcrumbs, int $langId, string $langName,
+Breadcrumbs::register('sentence.public.sentence', function($breadcrumbs, int $langId, string $langName,
                                                  int $sentenceId, string $sentenceName)
 {
     $link = new \App\Helpers\LinkHelper();
 
-    $breadcrumbs->parent('sentences.language', $langId, $langName);
+    $breadcrumbs->parent('sentence.public.language', $langId, $langName);
     $breadcrumbs->push($sentenceName, $link->sentence($langId, $langName, $sentenceId, $sentenceName));
 });
 
@@ -89,4 +89,13 @@ Breadcrumbs::register('inflection.edit', function ($breadcrumbs, App\Models\Infl
     $breadcrumbs->push('Inflection: '.$inflection->Name, route('inflection.edit', [
         'id' => $inflection->InflectionID
     ]));
+});
+
+// //////////////////////////////////////////////////////////////////////////////////////////////
+// Dashboard > Phrases
+
+Breadcrumbs::register('sentence.index', function ($breadcrumbs)
+{
+    $breadcrumbs->parent('dashboard');
+    $breadcrumbs->push('Phrases', route('sentence.index'));
 });

@@ -23,12 +23,13 @@ Route::get('/author/{id}-{nickname?}',  [ 'uses' => 'AuthorController@index'    
     ->where([ 'id' => '[0-9]+', 'nickname' => $urlSeoReg ])->name('author.profile');
 
 // Phrases
-Route::get('/phrases',                                         [ 'uses' => 'SentenceController@index'      ])
-    ->name('sentences');
-Route::get('/phrases/{langId}-{langName}',                     [ 'uses' => 'SentenceController@byLanguage' ])
-    ->where(['langName' => $urlSeoReg])->name('sentences.language');
+Route::get('/phrases',                     [ 'uses' => 'SentenceController@index'      ])
+    ->name('sentence.public');
+Route::get('/phrases/{langId}-{langName}', [ 'uses' => 'SentenceController@byLanguage' ])
+    ->where(['langName' => $urlSeoReg])
+    ->name('sentence.public.language');
 Route::get('/phrases/{langId}-{langName}/{sentId}-{sentName}', [ 'uses' => 'SentenceController@bySentence' ])
-    ->name('sentences.sentence');
+    ->name('sentence.public.sentence');
 
 // Dictionary
 Route::get('/w/{word}',               [ 'uses' => 'BookController@pageForWord' ]);
@@ -40,9 +41,13 @@ Route::group([ 'middleware' => 'auth' ], function () {
     Route::get('/dashboard',          [ 'uses' => 'DashboardController@index' ])->name('dashboard');
     Route::get('/author/edit/{id?}',  [ 'uses' => 'AuthorController@edit' ])->name('author.edit-profile');
     Route::post('/author/edit/{id?}', [ 'uses' => 'AuthorController@update' ])->name('author.update-profile');
+});
 
+// Resources
+Route::group([ 'namespace' => 'Resources', 'prefix' => 'admin' ], function () {
     Route::resource('speech', 'SpeechController');
     Route::resource('inflection', 'InflectionController');
+    Route::resource('sentence', 'SentenceController');
 });
 
 // Authentication

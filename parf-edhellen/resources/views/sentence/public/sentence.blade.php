@@ -4,11 +4,11 @@
 @section('title', 'Phrases')
 @section('body')
 
-  {!! Breadcrumbs::render('sentences.sentence', $language->ID, $language->Name,
+  {!! Breadcrumbs::render('sentence.public.sentence', $language->ID, $language->Name,
       $sentence->SentenceID, $sentence->Name) !!}
 
   <header>
-    @include('sentences._header')
+    @include('sentence.public._header')
     <h2>{{ $sentence->Name }}</h2>
   </header>
 

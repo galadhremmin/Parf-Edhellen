@@ -4,10 +4,10 @@
 @section('title', 'Phrases')
 @section('body')
 
-  {!! Breadcrumbs::render('sentences.language', $language->ID, $language->Name) !!}
+  {!! Breadcrumbs::render('sentence.public.language', $language->ID, $language->Name) !!}
 
   <header>
-      @include('sentences._header')
+      @include('sentence.public._header')
       <h2>{{ $language->Name }} <span class="tengwar" aria-hidden="true">{{ $language->Tengwar }}</span></h2>
   </header>
   @foreach ($sentences as $sentence)
@@ -18,7 +18,7 @@
     @endif
     <footer>{{ $sentence->Source }}</footer>
     
-    @include('sentences._readmore', [ 
+    @include('sentence.public._readmore', [ 
       'languageId'     => $language->ID,
       'languageName'   => $language->Name,
       'sentenceId'     => $sentence->SentenceID,
