@@ -75,6 +75,7 @@ class EDMarkdownEditor extends React.Component {
                 <div className={classNames({ 'hidden': this.state.currentTab !== MDMarkdownEditTab })}>
                     <textarea className="form-control"
                           name={this.props.componentName}
+                          id={this.props.componentId}
                           rows={this.props.rows}
                           value={this.state.value}
                           onChange={this.onValueChange.bind(this)} />

@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import EDMarkdownEditor from '../../_shared/components/markdown-editor';
 
 class EDSentenceForm extends React.Component {
 
@@ -25,6 +26,14 @@ class EDSentenceForm extends React.Component {
                         .filter(l => l.is_invented)
                         .map(l => <option value={l.id} key={l.id}>{l.name}</option>)}
                 </select>
+            </div>
+            <div className="form-group">
+                <label htmlFor="ed-sentence-description" className="control-label">Summary</label>
+                <textarea id="ed-sentence-description" className="form-control" name="description"></textarea>
+            </div>
+            <div className="form-group">
+                <label htmlFor="ed-sentence-long-description" className="control-label">Description</label>
+                <EDMarkdownEditor componentId="ed-sentence-long-description" componentName="long-description" />
             </div>
         </form>;
     }

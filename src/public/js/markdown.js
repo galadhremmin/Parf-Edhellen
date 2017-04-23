@@ -25,7 +25,7 @@ window.addEventListener('load', function () {
         for (var _iterator = textareas[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
             var textarea = _step.value;
 
-            __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__shared_components_markdown_editor__["a" /* default */], { componentName: textarea.name,
+            __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_2__shared_components_markdown_editor__["b" /* default */], { componentName: textarea.name,
                 value: textarea.value,
                 rows: textarea.rows }), textarea.parentNode);
         }
@@ -175,6 +175,7 @@ var EDMarkdownEditor = function (_React$Component) {
                     { className: __WEBPACK_IMPORTED_MODULE_2_classnames___default()({ 'hidden': this.state.currentTab !== MDMarkdownEditTab }) },
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('textarea', { className: 'form-control',
                         name: this.props.componentName,
+                        id: this.props.componentId,
                         rows: this.props.rows,
                         value: this.state.value,
                         onChange: this.onValueChange.bind(this) }),
@@ -211,7 +212,7 @@ EDMarkdownEditor.defaultProps = {
     componentName: 'markdownBody'
 };
 
-/* harmony default export */ __webpack_exports__["a"] = EDMarkdownEditor;
+/* harmony default export */ __webpack_exports__["b"] = EDMarkdownEditor;
 
 /***/ }),
 
