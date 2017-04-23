@@ -13,14 +13,14 @@
 
 @include('_shared._errors', [ 'errors' => $errors ])
 
-<form method="post" action="{{ route('inflection.update', [ 'id' => $inflection->InflectionID ]) }}">
+<form method="post" action="{{ route('inflection.update', [ 'id' => $inflection->id ]) }}">
   <div class="form-group">
     <label for="ed-inflection-name" class="control-label">Name</label>
-    <input type="text" class="form-control" value="{{ $inflection->Name }}" id="ed-inflection-name" name="name">
+    <input type="text" class="form-control" value="{{ $inflection->name }}" id="ed-inflection-name" name="name">
   </div>
   <div class="form-group">
     <label for="ed-inflection-group-name" class="control-label">Group</label>
-    <input type="text" class="form-control" value="{{ $inflection->Group }}" id="ed-inflection-group-name" name="group">
+    <input type="text" class="form-control" value="{{ $inflection->group_name }}" id="ed-inflection-group-name" name="group">
   </div>
   <div class="form-group">
     <button type="submit" class="btn btn-primary">Save</button>
@@ -30,7 +30,7 @@
   {{ method_field('PUT') }}
 </form>
 <hr>
-<form method="post" action="{{ route('inflection.destroy', [ 'id' => $inflection->InflectionID ]) }}">
+<form method="post" action="{{ route('inflection.destroy', [ 'id' => $inflection->id ]) }}">
   <p>Alternatively, you can <button type="submit" class="link-button">delete the inflection</button>.</p>
   {{ csrf_field() }}
   {{ method_field('DELETE') }}

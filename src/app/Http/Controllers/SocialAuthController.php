@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Models\AuthProvider;
+use App\Models\AuthorizationProvider;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Socialite;
@@ -13,7 +13,7 @@ class SocialAuthController extends Controller
 {
     public function login()
     {
-        $providers = AuthProvider::all();
+        $providers = AuthorizationProvider::all();
         return view('authentication.login', [ 'providers' => $providers ]);
     }
 
@@ -26,30 +26,29 @@ class SocialAuthController extends Controller
     public function redirect(Request $request, string $providerName)
     {
         $provider = self::getProvider($providerName);
-        return Socialite::driver($provider->URL)->redirect();   
+        return Socialite::driver($provider->name_identifier)->redirect();   
     }   
 
     public function callback(Request $request, string $providerName)
     {
         $provider = self::getProvider($providerName);
-        $providerUser = Socialite::driver($provider->URL)->user(); 
+        $providerUser = Socialite::driver($provider->name_identifier)->user(); 
 
         $user = User::where([
-                [ 'Email', '=', $providerUser->getEmail() ],
-                [ 'ProviderID', '=', $provider->ProviderID ]
+                [ 'email', '=', $providerUser->getEmail() ],
+                [ 'authorization_provider_id', '=', $provider->id ]
             ])->first();
 
         if (! $user) {
             $nickname = self::getNextAvailableNickname($providerUser->getName());
 
             $user = User::create([
-                'Email'          => $providerUser->getEmail(),
-                'Identity'       => $providerUser->getId(),
-                'Nickname'       => $nickname,
+                'email'          => $providerUser->getEmail(),
+                'identity'       => $providerUser->getId(),
+                'nickname'       => $nickname,
+                'is_configured'  => 0,
                 
-                'DateRegistered' => Carbon::now(),
-                'ProviderID'     => $provider->ProviderID,
-                'Configured'     => 0
+                'authorization_provider_id'  => $provider->id
             ]);
         }
 
@@ -62,7 +61,7 @@ class SocialAuthController extends Controller
             throw new \UnexpectedValueException('Missing an identity provider.');
         }
 
-        $provider = AuthProvider::where('Name', '=', $providerName)->first();
+        $provider = AuthorizationProvider::where('name_identifier', $providerName)->first();
         if (! $provider) {
             throw new \UnexpectedValueException('The identity provider "' . $providerName . '" does not exist!');
         }
@@ -75,7 +74,7 @@ class SocialAuthController extends Controller
         $tmp = $nickname;
 
         do {
-            if (User::where('Nickname', '=', $tmp)->count() < 1) {
+            if (User::where('nickname', '=', $tmp)->count() < 1) {
                 return $tmp;
             }
 

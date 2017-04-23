@@ -6,27 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class SentenceFragment extends Model
 {
-    protected $table = 'sentence_fragment';
-    protected $primaryKey = 'FragmentID';
-
-    /**
-     * Disable automatic timestamps.
-     */
-    public $timestamps = false;
-
     public function sentence() 
     {
-        return $this->belongsTo(Sentence::class, 'SentenceID', 'SentenceID');
+        return $this->belongsTo(Sentence::class);
     }
 
     public function speech()
     {
-        return $this->hasOne(Speech::class, 'SpeechID', 'SpeechID');
+        return $this->hasOne(Speech::class);
     }
 
     public function inflectionAssociations()
     {
-        return $this->hasMany(SentenceFragmentInflectionAssoc::class, 'FragmentID', 'FragmentID');
+        return $this->hasMany(SentenceFragmentInflectionAssoc::class);
     }
 
     public function isPunctuationOrWhitespace() 

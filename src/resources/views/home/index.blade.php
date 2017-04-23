@@ -27,9 +27,9 @@
     <ul class="list-group">
     @foreach($reviews as $review)
       <li class="list-group-item">
-        {{ $review->DateCreated->format('Y-m-d H:i') }}
-        <a href="{{ $link->translation($review->TranslationID) }}">{{ $review->Word }}</a>
-        by <a href="{{ $link->author($review->AuthorID, $review->AuthorName) }}">{{ $review->AuthorName }}</a>
+        {{ $review->created_at }}
+        <a href="{{ $link->translation($review->translation_id) }}">{{ $review->word }}</a>
+        by <a href="{{ $link->author($review->account_id, $review->account_name) }}">{{ $review->account_name }}</a>
       </li>
     @endforeach
     </ul>

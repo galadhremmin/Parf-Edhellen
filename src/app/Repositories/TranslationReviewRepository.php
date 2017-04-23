@@ -11,23 +11,20 @@
     {
         public function getRecentlyApproved($numberOfRecords = 10)
         {
-            $entities = DB::table('translation_review as tr')
-                ->join('translation as t', function ($join) {
-                    $join->on('tr.TranslationID', '=', 't.TranslationID')
-                        ->orOn('tr.TranslationID', '=', 't.EldestTranslationID');
+            $entities = DB::table('translation_reviews as tr')
+                ->join('translations as t', function ($join) {
+                    $join->on('tr.translation_id', '=', 't.id')
+                        ->orOn('tr.translation_id', '=', 't.origin_translation_id');
                 })
-                ->join('auth_accounts', 'tr.AuthorID', '=', 'auth_accounts.AccountID')
-                ->join('word', 't.WordID', '=', 'word.KeyID')
-                ->where('tr.Approved', 1)
-                ->where('t.Deleted', 0)
-                ->where('t.Latest', 1)
-                ->orderBy('tr.DateCreated', 'desc')
+                ->join('accounts', 'tr.account_id', '=', 'accounts.id')
+                ->join('words', 't.word_id', '=', 'words.id')
+                ->where('tr.is_approved', 1)
+                ->where('t.is_deleted', 0)
+                ->where('t.is_latest', 1)
+                ->orderBy('tr.created_at', 'desc')
                 ->limit($numberOfRecords)
-                ->select('tr.AuthorID', 't.LanguageID', 't.DateCreated', 'Key as Word', 't.TranslationID', 'Nickname as AuthorName')
+                ->select('tr.account_id', 't.language_id', 't.created_at', 'words.word', 't.id as translation_id', 'Nickname as account_name')
                 ->get();
-
-            foreach ($entities as $entity)
-                $entity->DateCreated = Carbon::createFromFormat('Y-m-d H:i:s', $entity->DateCreated);
 
             return $entities;
         }

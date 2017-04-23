@@ -53,55 +53,55 @@ class EDBookGloss extends React.Component {
 
     render() {
         const gloss = this.props.gloss;
-        const id = `translation-block-${gloss.TranslationID}`;
+        const id = `translation-block-${gloss.id}`;
 
         let comments = null;
-        if (gloss.Comments) {
-            comments = this.processHtml(gloss.Comments);
+        if (gloss.comments) {
+            comments = this.processHtml(gloss.comments);
         }
 
         return (
-            <blockquote itemScope="itemscope" itemType="http://schema.org/Article" id={id} className={classNames({ 'contribution': !gloss.Canon })}>
+            <blockquote itemScope="itemscope" itemType="http://schema.org/Article" id={id} className={classNames({ 'contribution': !gloss.is_canon })}>
                 <h3 rel="trans-word" className="trans-word">
-                    {(!gloss.Canon || gloss.Uncertain) && gloss.Latest ?
+                    {!gloss.is_canon || gloss.is_uncertain || !gloss.is_latest ?
                         <a href="/about" title="Unverified or debatable content.">
                             <span className="glyphicon glyphicon-question-sign" />
                         </a> : '' }
                     {' '}
             <span itemProp="headline">
-              {gloss.Word}
+              {gloss.word}
             </span>
-                    {gloss.ExternalLinkFormat && gloss.ExternalID ?
-                        <a href={gloss.ExternalLinkFormat.replace(/\{ExternalID\}/g, gloss.ExternalID)}
+                    {gloss.external_link_format && gloss.external_id ?
+                        <a href={gloss.external_link_format.replace(/\{ExternalID\}/g, gloss.external_id)}
                            className="ed-external-link-button"
-                           title={`Open on ${gloss.TranslationGroup} (new tab/window)`}
+                           title={`Open on ${gloss.translation_group_name} (new tab/window)`}
                            target="_blank">
                             <span className="glyphicon glyphicon-globe pull-right" />
                         </a> : ''}
                 </h3>
                 <p>
-                    {gloss.Tengwar ? <span className="tengwar">{gloss.Tengwar}</span> : ''}
+                    {gloss.tengwar ? <span className="tengwar">{gloss.tengwar}</span> : ''}
                     {' '}
-                    {gloss.Type != 'unset' ? <span className="word-type" rel="trans-type">{gloss.Type}.</span> : ''}
+                    {gloss.type != 'unset' ? <span className="word-type" rel="trans-type">{gloss.type}.</span> : ''}
                     {' '}
-                    <span rel="trans-translation" itemProp="keywords">{gloss.Translation}</span>
+                    <span rel="trans-translation" itemProp="keywords">{gloss.translation}</span>
                 </p>
 
                 {comments}
 
                 <footer>
-                    {gloss.Source ? <span className="word-source" rel="trans-source">[{gloss.Source}]</span> : ''}
+                    {gloss.source ? <span className="word-source" rel="trans-source">[{gloss.source}]</span> : ''}
                     {' '}
                     {gloss.Etymology ?
-                        <span className="word-etymology" rel="trans-etymology">{gloss.Etymology}.</span> : ''}
+                        <span className="word-etymology" rel="trans-etymology">{gloss.etymology}.</span> : ''}
                     {' '}
-                    {gloss.TranslationGroupID ?
-                        (<span>Group: <span itemProp="sourceOrganization">{gloss.TranslationGroup}.</span></span>) : ''}
+                    {gloss.translation_group_id ?
+                        (<span>Group: <span itemProp="sourceOrganization">{gloss.translation_group_name}.</span></span>) : ''}
                     {' Published: '}
-                    <span itemProp="datePublished">{gloss.DateCreated}</span>
+                    <span itemProp="datePublished">{gloss.created_at}</span>
                     {' by '}
-                    <a href={gloss.AuthorURL} itemProp="author" rel="author" title={`View profile for ${gloss.AuthorName}.`}>
-                        {gloss.AuthorName}
+                    <a href={gloss.account_url} itemProp="author" rel="author" title={`View profile for ${gloss.account_name}.`}>
+                        {gloss.account_name}
                     </a>
                 </footer>
             </blockquote>);

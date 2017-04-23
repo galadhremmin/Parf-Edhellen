@@ -6,46 +6,34 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sentence extends Model
 {
-    protected $table = 'sentence';
-    protected $primaryKey = 'SentenceID';
-
-    protected $maps = [
-        'sentence_id' => 'SentenceID'
-    ];
-
-    /**
-     * Disable automatic timestamps.
-     */
-    public $timestamps = false;
-
     public function fragments() 
     {
-        return $this->hasMany(SentenceFragment::class, 'SentenceID', 'SentenceID')
-            ->orderBy('Order');
+        return $this->hasMany(SentenceFragment::class)
+            ->orderBy('order');
     }
 
     public function language() 
     {
-        return $this->hasOne(Language::class, 'ID', 'LanguageID');
+        return $this->belongsTo(Language::class);
     }
 
-    public function author()
+    public function account()
     {
-        return $this->hasOne(Author::class, 'AccountID', 'AuthorID');
+        return $this->hasOne(Account::class);
     }
     
     public function scopeNeologisms($query)
     {
-        $query->where('Neologism', 1);
+        $query->where('is_neologism', 1);
     }
 
     public function scopeApproved($query)
     {
-        $query->where('Approved', 1);
+        $query->where('is_approved', 1);
     }
 
     public function scopeByLanguage($query, int $langId)
     {
-        $query->where('LanguageID', $langId);
+        $query->where('language_id', $langId);
     }
 }

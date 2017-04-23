@@ -1,6 +1,6 @@
 @extends('_layouts.default')
 
-@section('title', $author ? $author->Nickname : 'Missing account')
+@section('title', $author ? $author->nickname : 'Missing account')
 
 @section('body')
   @if ($author === null)
@@ -9,10 +9,10 @@
     <header class="clearfix">
       <div class="ed-profile-picture"></div>
       <h1>
-        {{ $author->Nickname }}
+        {{ $author->nickname }}
       </h1>
-      @if (!empty($author->Tengwar))
-      <h2 class="tengwar">{{ $author->Tengwar }}</h2>
+      @if (!empty($author->tengwar))
+      <h2 class="tengwar">{{ $author->tengwar }}</h2>
       @endif
     </header>
 
@@ -22,12 +22,12 @@
         {!! $profile !!}
       @else
         <p>
-          {{ $author->Nickname }} is but a rumour in the wind. Perhaps one day they might
+          {{ $author->nickname }} is but a rumour in the wind. Perhaps one day they might
           come forth and reveal themselves.
         </p>
       @endif
 
-      @if (Auth::check() && Auth::user()->AccountID === $author->AccountID)
+      @if (Auth::check() && Auth::user()->id === $author->id)
         <a href="{{ route('author.edit-profile') }}" class="btn btn-primary">Edit profile</a>
       @endif
       </div>

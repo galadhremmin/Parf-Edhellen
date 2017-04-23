@@ -13,9 +13,9 @@ class SentenceRepository
      */
     public function getLanguages()
     {
-        return DB::table('language as l')
-            ->join('sentence as s', 'l.ID', '=', 's.LanguageID')
-            ->select('l.Name', 'l.ID')
+        return DB::table('languages as l')
+            ->join('sentences as s', 'l.id', '=', 's.language_id')
+            ->select('l.name', 'l.id')
             ->distinct()
             ->get();
     }
@@ -26,24 +26,24 @@ class SentenceRepository
      */
     public function getByLanguage(int $languageId)
     {
-        return DB::table('sentence as s')
-            ->leftJoin('auth_accounts as a', 's.AuthorID', '=', 'a.AccountID')
-            ->where('s.Approved', 1)
-            ->where('s.LanguageID', $languageId)
-            ->select('s.SentenceID', 's.Description', 's.Source', 's.Neologism', 's.AuthorID',
-                'a.Nickname as AuthorName', 's.Name')
+        return DB::table('sentences as s')
+            ->leftJoin('accounts as a', 's.account_id', '=', 'a.id')
+            ->where('s.is_approved', 1)
+            ->where('s.language_id', $languageId)
+            ->select('s.id', 's.description', 's.source', 's.is_neologism', 's.account_id',
+                'a.nickname as account_name', 's.name')
             ->get();
     }
 
     public function getAllGroupedByLanguage()
     {
-        return DB::table('sentence as s')
-            ->join('language as l', 's.LanguageID', 'l.ID')
-            ->leftJoin('auth_accounts as a', 's.AuthorID', '=', 'a.AccountID')
-            ->where('s.Approved', 1)
-            ->select('s.SentenceID', 's.Description', 's.Source', 's.Neologism', 's.AuthorID',
-                'a.Nickname as AuthorName', 's.Name', 'l.Name as LanguageName')
+        return DB::table('sentences as s')
+            ->join('languages as l', 's.language_id', 'l.id')
+            ->leftJoin('accounts as a', 's.account_id', '=', 'a.id')
+            ->where('s.is_approved', 1)
+            ->select('s.id', 's.description', 's.source', 's.is_neologism', 's.account_id',
+                'a.nickname as account_name', 's.name', 'l.name as language_name')
             ->get()
-            ->groupBy('LanguageName');
+            ->groupBy('language_name');
     }
 }

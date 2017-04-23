@@ -20,7 +20,7 @@ class SpeechController extends Controller
 
     public function index(Request $request)
     {
-        $speeches = Speech::all()->sortBy('Name');
+        $speeches = Speech::all()->sortBy('name');
         return view('speech.index', ['speeches' => $speeches]);
     }
 
@@ -40,11 +40,10 @@ class SpeechController extends Controller
         $this->validateRequest($request);
 
         $speech = new Speech;
-        $speech->Name = $request->input('name');
-
+        $speech->name = $request->input('name');
         $speech->save();
 
-        return redirect()->route('speech.edit', [ 'id' => $speech->SpeechID ]);
+        return redirect()->route('speech.index');
     }
 
     public function update(Request $request, int $id)
@@ -56,7 +55,7 @@ class SpeechController extends Controller
         
         $speech->save();
 
-        return redirect()->route('speech.edit', [ 'id' => $speech->SpeechID ]);
+        return redirect()->route('speech.index');
     } 
 
     public function destroy(Request $request, int $id) 
@@ -64,7 +63,7 @@ class SpeechController extends Controller
         $speech = Speech::findOrFail($id);
 
         foreach ($speech->sentenceFragments as $fragment) {
-            $fragment->SpeechID = null;
+            $fragment->speech_id = null;
             $fragment->save();
         }
 
@@ -76,7 +75,7 @@ class SpeechController extends Controller
     protected function validateRequest(Request $request, int $id = 0)
     {
         $this->validate($request, [
-            'name' => 'required|min:1|max:32|unique:speech,Name'.($id === 0 ? '' : ','.$id.',SpeechID')
+            'name' => 'required|min:1|max:32|unique:speech,name'.($id === 0 ? '' : ','.$id.',id')
         ]);
     } 
 }

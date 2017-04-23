@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Models\Author;
+use App\Models\Account;
 use App\Repositories\StatisticsRepository;
 use Illuminate\Http\Request;
 use App\Helpers\MarkdownParser;
@@ -18,14 +18,14 @@ class AuthorController extends Controller
 
     public function index(Request $request, $id = null, $nickname = '')
     {
-        $author  = $this->getAuthor($request, $id);
+        $author  = $this->getAccount($request, $id);
         $profile = '';
         $stats   = null;
 
         if ($author) {
             $markdownParser = new MarkdownParser();
 
-            $profile = $markdownParser->parse($author->Profile ?? '');
+            $profile = $markdownParser->parse($author->profile ?? '');
             $stats   = $this->_statisticsRepository->getStatisticsForAuthor($author);
         }
 
@@ -38,7 +38,7 @@ class AuthorController extends Controller
 
     public function edit(Request $request, $id = null)
     {
-        $author = $this->getAuthor($request, $id);
+        $author = $this->getAccount($request, $id);
 
         return view('author.edit-profile', [
             'author' => $author
@@ -47,25 +47,24 @@ class AuthorController extends Controller
 
     public function update(Request $request, $id = null)
     {
-        $author = $this->getAuthor($request, $id);
+        $author = $this->getAccount($request, $id);
         if ($author === null) {
             return response('', 404);
         }
 
         $this->validate($request, [
-            'nickname' => 'bail|required|unique:auth_accounts,Nickname,' . $author->AccountID . ',AccountID|min:3|max:32'
+            'nickname' => 'bail|required|unique:account,nickname,' . $author->id . ',id|min:3|max:32'
         ]);
 
-        $author->Nickname = $request->input('nickname');
-        $author->Tengwar  = $request->input('tengwar');
-        $author->Profile  = $request->input('profile');
-
+        $author->nickname = $request->input('nickname');
+        $author->tengwar  = $request->input('tengwar');
+        $author->profile  = $request->input('profile');
         $author->save();
 
         return redirect()->route('author.my-profile');
     }
 
-    private function getAuthor(Request $request, $id)
+    private function getAccount(Request $request, $id)
     {
         if (!is_numeric($id)) {
 
@@ -74,9 +73,9 @@ class AuthorController extends Controller
             }
 
             $user = $request->user();
-            $id = $user->AccountID;
+            $id = $user->id;
         }
 
-        return Author::find($id);
+        return Account::find($id);
     }
 }

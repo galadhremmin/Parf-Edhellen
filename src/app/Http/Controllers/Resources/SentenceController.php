@@ -43,10 +43,7 @@ class SentenceController extends Controller
     {
         $this->validateRequest($request);
         
-        $inflection = new Inflection;
-        $inflection->Name  = $request->input('name');
-        $inflection->Group = $request->input('group');
-        $inflection->save();
+        // 
 
         return redirect()->route('sentence.index');
     }
@@ -56,7 +53,7 @@ class SentenceController extends Controller
         $this->validateRequest($request, $id);
 
         $sentence = Sentence::findOrFail($id);
-        $sentence->Name  = $request->input('name');
+        $sentence->name  = $request->input('name');
         $sentence->save();
 
         return redirect()->route('sentence.index');
@@ -78,8 +75,7 @@ class SentenceController extends Controller
     protected function validateRequest(Request $request, int $id = 0)
     {
         $rules = [
-            'name'  => 'required|min:1|max:64|unique:inflection,Name'.($id === 0 ? '' : ','.$id.',InflectionID'),
-            'group' => 'required|min:1|max:64'
+            'name'  => 'required|min:1|max:64|unique:sentence,name'.($id === 0 ? '' : ','.$id.',id')
         ];
 
         $this->validate($request, $rules);

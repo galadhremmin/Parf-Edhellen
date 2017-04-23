@@ -5,21 +5,21 @@ namespace App\Repositories;
 use App\Models\Sentence;
 use App\Models\Word;
 use App\Models\Translation;
-use App\Models\Author;
+use App\Models\Account;
 
 class StatisticsRepository
 {
-    public function getStatisticsForAuthor(Author $author)
+    public function getStatisticsForAccount(Account $account)
     {
-        $noOfWords = Word::where('AuthorID', '=', $author->AccountID)
+        $noOfWords = Word::where('account_id', '=', $account->id)
             ->count();
 
         $noOfTranslations = Translation::notDeleted()
-            ->where('AuthorID', $author->AccountID)
+            ->where('account_id', $account->id)
             ->count();
 
         $noOfSentences = Sentence::approved()
-            ->where('AuthorID', $author->AccountID)
+            ->where('account_id', $account->id)
             ->count();
 
         $noOfThanks = 0;

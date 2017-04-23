@@ -6,12 +6,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class TranslationReview extends Model
 {
-    protected $table = 'translation_review';
-    protected $primaryKey = 'TranslationID';
-    protected $dates = [ 'DateCreated', 'Reviewed' ];
-
-    /**
-     * Disable automatic timestamps.
-     */
-    public $timestamps = false;
+    protected $dates = [ 'date_reviewed' ];
 }

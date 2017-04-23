@@ -113,7 +113,7 @@ class EDSearchBar extends React.Component {
             <div className="row">
                 {this.state.languages ? (
                 <select className="search-language-select" onChange={this.languageChange.bind(this)}>
-                    {this.state.languages.map(l => <option value={l.ID} key={l.ID}>{l.Name}</option>)}
+                    {this.state.languages.map(l => <option value={l.id} key={l.id}>{l.name}</option>)}
                 </select>) : ''}
                 <div className="checkbox input-sm search-reverse-box-wrapper">
                     <label>

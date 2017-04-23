@@ -21,14 +21,14 @@ class SentenceAdapter
 
         foreach ($fragments as $fragment) {
             $result->push([
-                'id'               => $fragment->FragmentID,
-                'fragment'         => $fragment->Fragment,
-                'tengwar'          => $fragment->Tengwar,
+                'id'               => $fragment->id,
+                'fragment'         => $fragment->fragment,
+                'tengwar'          => $fragment->tengwar,
                 'interpunctuation' => $fragment->isPunctuationOrWhitespace(),
-                'translationId'    => $fragment->TranslationID,
-                'grammarType'      => $fragment->GrammarTypeID ? $fragment->grammarType->Name : null,
-                'comments'         => !empty($fragment->Comments)
-                    ? $markdownParser->parse($fragment->Comments)
+                'translationId'    => $fragment->translation_id,
+                'speech'           => $fragment->speech_id ? $fragment->speech->name : null,
+                'comments'         => !empty($fragment->comments)
+                    ? $markdownParser->parse($fragment->comments)
                     : null
             ]);
         }

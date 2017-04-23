@@ -21,7 +21,7 @@
         <div class="panel-body">
           <ul>
           @foreach ($languages as $language)
-            <li><a href="{{ $link->sentencesByLanguage($language->ID, $language->Name) }}">{{ $language->Name }}</a></li>
+            <li><a href="{{ $link->sentencesByLanguage($language->id, $language->name) }}">{{ $language->name }}</a></li>
           @endforeach
           </ul>
         </div>
@@ -35,10 +35,10 @@
         <div class="panel-body">
           @include('sentence.public._random', [ 'sentence' => $randomSentence ])
           @include('sentence.public._readmore', [ 
-            'languageId'     => $randomSentence->LanguageID,
-            'languageName'   => $randomSentence->language->Name,
-            'sentenceId'     => $randomSentence->SentenceID,
-            'sentenceName'   => $randomSentence->Name
+            'languageId'     => $randomSentence->language_id,
+            'languageName'   => $randomSentence->language->name,
+            'sentenceId'     => $randomSentence->id,
+            'sentenceName'   => $randomSentence->name
           ])
         </div>
       </div>

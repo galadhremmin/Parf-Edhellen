@@ -35,15 +35,15 @@ class BookAdapter
         $authorUrls = [];
 
         foreach ($translations as $translation) {
-            if (!empty($translation->Comments)) {
-                $translation->Comments = $markdownParser->text($translation->Comments);
+            if (!empty($translation->comments)) {
+                $translation->comments = $markdownParser->text($translation->comments);
             }
 
-            if (!isset($authorUrls[$translation->AuthorID])) {
-                $authorUrls[$translation->AuthorID] = $linker->author($translation->AuthorID, $translation->AuthorName);
+            if (!isset($authorUrls[$translation->account_id])) {
+                $authorUrls[$translation->account_id] = $linker->author($translation->account_id, $translation->account_name);
             }
 
-            $translation->AuthorURL = $authorUrls[$translation->AuthorID];
+            $translation->account_url = $authorUrls[$translation->account_id];
         }
 
         //    - Just one translation result.
@@ -53,7 +53,7 @@ class BookAdapter
                 'sections' => [
                     [
                         // Load the language by examining the first (and only) element of the array
-                        'language' => Language::findOrFail($translations[0]->LanguageID),
+                        'language' => Language::findOrFail($translations[0]->language_id),
                         'glosses' => $translations
                     ]
                 ]
@@ -70,10 +70,10 @@ class BookAdapter
                 self::calculateRating($translation, $word);
             }
 
-            if (!isset($gloss2LanguageMap[$translation->LanguageID])) {
-                $gloss2LanguageMap[$translation->LanguageID] = [ $translation ];
+            if (!isset($gloss2LanguageMap[$translation->language_id])) {
+                $gloss2LanguageMap[$translation->language_id] = [ $translation ];
             } else {
-                $gloss2LanguageMap[$translation->LanguageID][] = $translation;
+                $gloss2LanguageMap[$translation->language_id][] = $translation;
             }
 
         }
@@ -82,7 +82,7 @@ class BookAdapter
         $languageIds = array_keys($gloss2LanguageMap);
 
         // Load the languages and order them by priority. The priority is configured by the Order field in the database.
-        $allLanguages = Language::whereIn('ID', $languageIds)
+        $allLanguages = Language::whereIn('id', $languageIds)
             ->orderByPriority()
             ->get();
 
@@ -91,14 +91,14 @@ class BookAdapter
         $sections = [];
         foreach ($allLanguages as $language) {
 
-            if (!isset($gloss2LanguageMap[$language->ID])) {
+            if (!isset($gloss2LanguageMap[$language->id])) {
                 continue;
             }
 
             // Sort the translations based on their previously calculated rating.
-            $glosses = $gloss2LanguageMap[$language->ID];
+            $glosses = $gloss2LanguageMap[$language->id];
             usort($glosses, function ($a, $b) {
-                return $a->Rating > $b->Rating ? -1 : ($a->Rating === $b->Rating ? 0 : 1);
+                return $a->rating > $b->rating ? -1 : ($a->rating === $b->rating ? 0 : 1);
             });
 
             $sections[] = [
@@ -124,7 +124,7 @@ class BookAdapter
 
         // First, check if the gloss contains the search term by looking for its
         // position within the word property, albeit normalized.
-        $n = StringHelper::normalize($translation->Word);
+        $n = StringHelper::normalize($translation->word);
         $pos = strpos($n, $word);
 
         if ($pos !== false) {
@@ -139,7 +139,7 @@ class BookAdapter
         // If the previous check failed, check for the translations field. Statistically,
         // this is the most common case.
         if ($rating === 0) {
-            $n = StringHelper::normalize($translation->Translation);
+            $n = StringHelper::normalize($translation->translation);
             $pos = strpos($n, $word);
 
             if ($pos !== false) {
@@ -153,8 +153,8 @@ class BookAdapter
 
         // If the previous check failed, check within the comments field. Statistically,
         // this is an uncommon match.
-        if ($rating === 0 && $translation->Comments !== null) {
-            $n = StringHelper::normalize($translation->Comments);
+        if ($rating === 0 && $translation->comments !== null) {
+            $n = StringHelper::normalize($translation->comments);
             $pos = strpos($n, $word);
 
             if ($pos !== false) {
@@ -168,11 +168,11 @@ class BookAdapter
         }
 
         // Bump all unverified translations to a trailing position
-        if (! $translation->Canon) {
+        if (! $translation->is_canon) {
             $rating = -110000 + $rating;
         }
 
-        $translation->Rating = $rating;
+        $translation->rating = $rating;
     }
 
     private static function assignColumnWidths(array $model, int $numberOfLanguages)

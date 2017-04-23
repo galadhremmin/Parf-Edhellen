@@ -6,42 +6,33 @@ use Illuminate\Database\Eloquent\Model;
 
 class Translation extends Model
 {
-    protected $table = 'translation';
-    protected $primaryKey = 'TranslationID';
-    protected $dates = [ 'DateCreated' ];
-
-    /**
-     * Disable automatic timestamps.
-     */
-    public $timestamps = false;
-
     public function author() 
     {
-        return $this->hasOne(Author::class, 'AccountID', 'AuthorID');
+        return $this->hasOne(Author::class);
     }
 
     public function group() 
     {
-        return $this->hasOne(TranslationGroup::class, 'TranslationGroupID', 'TranslationGroupID');
+        return $this->hasOne(TranslationGroup::class);
     }
     
     public function language() 
     {
-        return $this->hasOne(Language::class, 'ID', 'LanguageID');
+        return $this->hasOne(Language::class);
     }
 
     public function word() 
     {
-        return $this->hasOne(Word::class, 'KeyID', 'WordID');
+        return $this->hasOne(Word::class);
     }
 
     public function scopeNotDeleted($query)
     {
-        $query->where('Deleted', 0);
+        $query->where('is_deleted', 0);
     }
 
     public function scopeLatest($query)
     {
-        $query->where('Latest', 1);
+        $query->where('is_latest', 1);
     }
 }

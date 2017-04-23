@@ -18,16 +18,16 @@ class EDBookSection extends React.Component {
         return <article className={className}>
             <header>
                 <h2 rel="language-box">
-                    { language.Name }
+                    { language.name }
                     &nbsp;
-                    <span className="tengwar">{ language.Tengwar }</span>
+                    <span className="tengwar">{ language.tengwar }</span>
                 </h2>
             </header>
-            <section className="language-box" id={`language-box-${ language.ID }`}>
+            <section className="language-box" id={`language-box-${ language.id }`}>
                 {this.props.section.glosses.map(
                     g => <EDBookGloss gloss={g}
                                       language={language}
-                                      key={g.TranslationID}
+                                      key={g.id}
                                       onReferenceLinkClick={this.onReferenceLinkClick.bind(this)} />
                 )}
             </section>

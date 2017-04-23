@@ -5,12 +5,10 @@ namespace App\Models;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends Authenticatable
+class Account extends Authenticatable
 {
     use Notifiable;
 
-    protected $primaryKey = 'AccountID';
-    protected $table = 'auth_accounts';
     protected $groups = [];
 
     /**
@@ -19,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'Nickname', 'Email', 'Identity', 'Identity', 'DateRegistered', 'ProviderID', 'Configured'
+        'nickname', 'email', 'identity', 'authorization_provider_id', 'created_at', 'provider_id', 'is_configured'
     ];
 
     /**
@@ -28,13 +26,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'Identity', 'ProviderID', 'Identity', 'Configured'
+        'identity', 'authorization_provider_id', 'is_configured'
     ];
-
-    /**
-     * Disable automatic timestamps.
-     */
-    public $timestamps = false;
 
     public function memberOf(string $groupName) 
     {
@@ -42,7 +35,7 @@ class User extends Authenticatable
             return $groups[$groupName];
         }
 
-        $memberStatus = UserGroup::forUser($this)->where('Name', $groupName)->count() > 0;;
+        $memberStatus = UserGroup::forUser($this)->where('name', $groupName)->count() > 0;;
         $groups[$groupName] = $memberStatus;
 
         return $memberStatus;
@@ -50,12 +43,12 @@ class User extends Authenticatable
 
     public function getAuthIdentifierName()
     {
-        return $this->primaryKey;
+        return 'id';
     }
 
     public function getAuthIdentifier()
     {
-        return $this->AccountID;
+        return $this->id;
     }
 
     public function getAuthPassword()
@@ -65,11 +58,11 @@ class User extends Authenticatable
 
     public function getRememberTokenName()
     {
-        return 'RememberToken';
+        return 'remember_token';
     }
 
     public function getRememberToken()
     {
-        return $this->RememberToken;
+        return $this->remember_token;
     }
 }

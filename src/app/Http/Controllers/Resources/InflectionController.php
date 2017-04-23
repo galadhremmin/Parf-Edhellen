@@ -13,7 +13,7 @@ class InflectionController extends Controller
 {
     public function index(Request $request)
     {
-        $inflections = Inflection::all()->groupBy('Group')->sortBy('Name');
+        $inflections = Inflection::all()->groupBy('group_name')->sortBy('name');
         return view('inflection.index', ['inflections' => $inflections]);
     }
 
@@ -33,8 +33,8 @@ class InflectionController extends Controller
         $this->validateRequest($request);
         
         $inflection = new Inflection;
-        $inflection->Name  = $request->input('name');
-        $inflection->Group = $request->input('group');
+        $inflection->name       = $request->input('name');
+        $inflection->group_name = $request->input('group');
         $inflection->save();
 
         return redirect()->route('inflection.index');
@@ -45,8 +45,8 @@ class InflectionController extends Controller
         $this->validateRequest($request, $id);
 
         $inflection = Inflection::findOrFail($id);
-        $inflection->Name  = $request->input('name');
-        $inflection->Group = $request->input('group');
+        $inflection->name       = $request->input('name');
+        $inflection->group_name = $request->input('group');
         $inflection->save();
 
         return redirect()->route('inflection.index');
@@ -68,7 +68,7 @@ class InflectionController extends Controller
     protected function validateRequest(Request $request, int $id = 0)
     {
         $rules = [
-            'name'  => 'required|min:1|max:64|unique:inflection,Name'.($id === 0 ? '' : ','.$id.',InflectionID'),
+            'name'  => 'required|min:1|max:64|unique:inflection,name'.($id === 0 ? '' : ','.$id.',id'),
             'group' => 'required|min:1|max:64'
         ];
 

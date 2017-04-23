@@ -12,20 +12,20 @@ class TranslationRepository
         self::formatWord($word);
 
         if ($languageId > 0) {
-            $keywords = DB::table('translation as t')
-                ->join('word as w', 't.WordID', '=', 'w.KeyID')
+            $keywords = DB::table('translations as t')
+                ->join('words as w', 't.word_id', '=', 'w.id')
                 ->where([
-                    [ 't.Latest', '=', 1 ],
-                    [ 't.Deleted', '=', 0 ],
-                    [ 't.LanguageID', '=', $languageId ],
-                    [ $reversed ? 'w.ReversedNormalizedKey' : 'w.NormalizedKey', 'like', $word ]
+                    [ 't.is_latest', '=', 1 ],
+                    [ 't.is_deleted', '=', 0 ],
+                    [ 't.language_id', '=', $languageId ],
+                    [ $reversed ? 'w.reversed_normalized_word' : 'w.normalized_word', 'like', $word ]
                 ])
-                ->orderBy('w.Key')
-                ->select('w.Key as k', 'w.NormalizedKey as nk')
+                ->orderBy('w.word')
+                ->select('w.word as k', 'w.normalized_word as nk')
                 ->distinct();
         } else {
             $keywords = Keyword::findByWord($word, $reversed)
-                ->select('Keyword as k', 'NormalizedKeyword as nk');
+                ->select('keywords as k', 'normalized_keyword as nk');
         }
 
         return $keywords
@@ -37,8 +37,8 @@ class TranslationRepository
     {
         $senses = self::getSensesForWord($word);
         return self::createTranslationQuery()
-            ->whereIn('t.SenseID', $senses)
-            ->orderBy('Word')
+            ->whereIn('t.sense_id', $senses)
+            ->orderBy('word')
             ->get()
             ->toArray();
     }
@@ -46,34 +46,34 @@ class TranslationRepository
     public function getTranslation(int $id) 
     {
         return self::createTranslationQuery()
-            ->where('t.TranslationID', '=', $id)
+            ->where('t.id', $id)
             ->first();
     }
 
     protected static function createTranslationQuery($latest = true) 
     {
-        return DB::table('translation as t')
-            ->join('word as w', 't.WordID', 'w.KeyID')
-            ->leftJoin('auth_accounts as a', 't.AuthorID', 'a.AccountID')
-            ->leftJoin('translation_group as tg', 't.TranslationGroupID', 'tg.TranslationGroupID')
+        return DB::table('translations as t')
+            ->join('words as w', 't.word_id', 'w.id')
+            ->leftJoin('accounts as a', 't.account_id', 'a.id')
+            ->leftJoin('translation_groups as tg', 't.translation_group_id', 'tg.id')
             ->where([
-                ['t.Latest', '=', $latest ? 1 : 0],
-                ['t.Deleted', '=', 0],
-                ['t.Index', '=', 0]
+                ['t.is_latest', '=', $latest ? 1 : 0],
+                ['t.is_deleted', '=', 0],
+                ['t.is_index', '=', 0]
             ])
             ->select(
-                'w.Key as Word', 't.TranslationID', 't.Translation', 't.Etymology', 't.Type', 't.Source',
-                't.Comments', 't.Tengwar', 't.Phonetic', 't.NamespaceID', 't.LanguageID', 't.AuthorID',
-                'a.Nickname as AuthorName', 'w.NormalizedKey', 't.Index', 't.DateCreated', 't.TranslationGroupID',
-                'tg.Name as TranslationGroup', 'tg.Canon', 'tg.ExternalLinkFormat', 't.Uncertain', 't.ExternalID',
-                't.Latest');
+                'w.word', 't.id', 't.translation', 't.etymology', 't.type', 't.source',
+                't.comments', 't.tengwar', 't.phonetic', 't.language_id', 't.account_id',
+                'a.nickname as account_name', 'w.normalized_word', 't.is_index', 't.created_at', 't.translation_group_id',
+                'tg.name as translation_group_name', 'tg.is_canon', 'tg.external_link_format', 't.is_uncertain', 't.external_id',
+                't.is_latest');
     }
 
     protected static function getSensesForWord(string $word) 
     {
         $rows = DB::table('keywords')
-            ->where('NormalizedKeyword', '=', $word)
-            ->select('SenseID')
+            ->where('normalized_keyword', $word)
+            ->select('sense_id')
             ->distinct()
             ->get();
 

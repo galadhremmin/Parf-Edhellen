@@ -13,7 +13,7 @@
 @else
 <ul>
   @foreach ($speeches as $s)
-  <li><a href="{{ route('speech.edit', ['speech' => $s->SpeechID]) }}">{{$s->Name}}</a></li>
+  <li><a href="{{ route('speech.edit', ['speech' => $s->id]) }}">{{$s->name}}</a></li>
   @endforeach
 </ul>
 <a class="btn btn-primary" href="{{ route('speech.create') }}">Add type of speech</a>

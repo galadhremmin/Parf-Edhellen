@@ -15,7 +15,7 @@
     <h2>{{ $languageName }}</h2>
     <ul>
       @foreach ($sentencesForLanguage as $sentence)
-      <li><a href="{{ route('sentence.edit', ['id' => $sentence->SentenceID]) }}">{{ $sentence->Name }}</a></li>
+      <li><a href="{{ route('sentence.edit', ['id' => $sentence->id]) }}">{{ $sentence->name }}</a></li>
       @endforeach
     </ul>
   @endforeach
