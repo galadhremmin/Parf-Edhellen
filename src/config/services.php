@@ -14,31 +14,22 @@ return [
     |
     */
 
-    'mailgun' => [
-        'domain' => env('MAILGUN_DOMAIN'),
-        'secret' => env('MAILGUN_SECRET'),
-    ],
-
-    'ses' => [
-        'key' => env('SES_KEY'),
-        'secret' => env('SES_SECRET'),
-        'region' => 'us-east-1',
-    ],
-
-    'sparkpost' => [
-        'secret' => env('SPARKPOST_SECRET'),
-    ],
-
-    'stripe' => [
-        'model' => App\User::class,
-        'key' => env('STRIPE_KEY'),
-        'secret' => env('STRIPE_SECRET'),
-    ],
-
     'facebook' => [
         'client_id' => env('AUTH_FACEBOOK_APP_ID'),
         'client_secret' => env('AUTH_FACEBOOK_APP_SECRET'),
         'redirect' => env('AUTH_FACEBOOK_REDIRECT'),
+    ],
+
+    'google' => [
+        'client_id' => env('AUTH_GOOGLE_APP_ID'),
+        'client_secret' => env('AUTH_GOOGLE_APP_SECRET'),
+        'redirect' => env('AUTH_GOOGLE_REDIRECT'),
+    ],
+
+    'twitter' => [
+        'client_id' => env('AUTH_TWITTER_APP_ID'),
+        'client_secret' => env('AUTH_TWITTER_APP_SECRET'),
+        'redirect' => env('AUTH_TWITTER_REDIRECT'),
     ]
 
 ];
