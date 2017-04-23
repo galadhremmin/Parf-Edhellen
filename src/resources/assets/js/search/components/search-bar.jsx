@@ -20,7 +20,7 @@ class EDSearchBar extends React.Component {
             languages: [{
                 id: 0,
                 name: 'All languages'
-            }, ...(JSON.parse(languageNode.textContent))]
+            }, ...window.EDConfig.languages()]
         });
     }
 
@@ -113,7 +113,13 @@ class EDSearchBar extends React.Component {
             <div className="row">
                 {this.state.languages ? (
                 <select className="search-language-select" onChange={this.languageChange.bind(this)}>
-                    {this.state.languages.map(l => <option value={l.id} key={l.id}>{l.name}</option>)}
+                    {this.state.languages.filter(l => !l.id).map(l => <option value={l.id} key={l.id}>{l.name}</option>)}
+                    <optgroup label="Fictional languages">
+                        {this.state.languages.filter(l => l.is_invented && l.id).map(l => <option value={l.id} key={l.id}>{l.name}</option>)}
+                    </optgroup>
+                    <optgroup label="Real-world languages">
+                        {this.state.languages.filter(l => !l.is_invented && l.id).map(l => <option value={l.id} key={l.id}>{l.name}</option>)}
+                    </optgroup>
                 </select>) : ''}
                 <div className="checkbox input-sm search-reverse-box-wrapper">
                     <label>

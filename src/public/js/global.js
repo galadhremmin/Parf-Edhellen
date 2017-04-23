@@ -236,32 +236,40 @@ var EDSearchResultsReducer = function EDSearchResultsReducer() {
 /***/ (function(module, exports) {
 
 (function () {
+  var config = {
+    apiPathName: '/api/v1', // path to API w/o trailing slash!
+    messageDomain: window.location.origin,
+    messageNavigateName: 'ednavigate',
 
-    var config = {
-        apiPathName: '/api/v1', // path to API w/o trailing slash!
-        messageDomain: window.location.origin,
-        messageNavigateName: 'ednavigate',
+    /**
+     * Gets all languages
+     */
+    languages: function languages() {
+      return _languages;
+    },
 
-        /**
-         * Convenience method for generating API paths
-         * @param path
-         */
-        api: function api(path) {
-            return config.apiPathName + (path[0] !== '/' ? '/' : '') + path;
-        },
+    /**
+     * Convenience method for generating API paths
+     * @param path
+     */
+    api: function api(path) {
+      return config.apiPathName + (path[0] !== '/' ? '/' : '') + path;
+    },
 
-        /**
-         * Convenience method for generating window messages
-         */
-        message: function message(source, payload) {
-            return window.postMessage({ source: source, payload: payload }, config.messageDomain);
-        }
-    };
-
-    if (window.EDConfig !== undefined) {
-        throw 'EDConfig is already defined';
+    /**
+     * Convenience method for generating window messages
+     */
+    message: function message(source, payload) {
+      return window.postMessage({ source: source, payload: payload }, config.messageDomain);
     }
-    window.EDConfig = config;
+  };
+
+  var _languages = JSON.parse(document.getElementById('ed-preloaded-languages').textContent);
+
+  if (window.EDConfig !== undefined) {
+    throw 'EDConfig is already defined';
+  }
+  window.EDConfig = config;
 })();
 
 /***/ }),
@@ -521,7 +529,7 @@ var EDSearchBar = function (_React$Component) {
                 languages: [{
                     id: 0,
                     name: 'All languages'
-                }].concat(_toConsumableArray(JSON.parse(languageNode.textContent)))
+                }].concat(_toConsumableArray(window.EDConfig.languages()))
             });
         }
     }, {
@@ -637,13 +645,41 @@ var EDSearchBar = function (_React$Component) {
                     this.state.languages ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'select',
                         { className: 'search-language-select', onChange: this.languageChange.bind(this) },
-                        this.state.languages.map(function (l) {
+                        this.state.languages.filter(function (l) {
+                            return !l.id;
+                        }).map(function (l) {
                             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                                 'option',
                                 { value: l.id, key: l.id },
                                 l.name
                             );
-                        })
+                        }),
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'optgroup',
+                            { label: 'Fictional languages' },
+                            this.state.languages.filter(function (l) {
+                                return l.is_invented && l.id;
+                            }).map(function (l) {
+                                return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                    'option',
+                                    { value: l.id, key: l.id },
+                                    l.name
+                                );
+                            })
+                        ),
+                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            'optgroup',
+                            { label: 'Real-world languages' },
+                            this.state.languages.filter(function (l) {
+                                return !l.is_invented && l.id;
+                            }).map(function (l) {
+                                return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                    'option',
+                                    { value: l.id, key: l.id },
+                                    l.name
+                                );
+                            })
+                        )
                     ) : '',
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'div',

@@ -2,7 +2,8 @@ export const SET_FRAGMENTS = 'ED_SET_FRAGMENTS';
 export const SET_FRAGMENT_DATA = 'ED_SET_FRAGMENT_DATA';
 
 const EDSentenceAdminReducer = (state = {
-    fragments: []
+    fragments: [],
+    languages: window.EDConfig.languages()
 }, action) => {
     switch (action.type) {
         case SET_FRAGMENTS:

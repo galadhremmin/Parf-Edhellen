@@ -7,9 +7,6 @@
 {!! Breadcrumbs::render('sentence.create') !!}
 
 <div id="ed-sentence-form"></div>
-<script type="application/json" id="ed-sentence-languages">
-{{ $languages }}
-</script>
 
 @endsection
 

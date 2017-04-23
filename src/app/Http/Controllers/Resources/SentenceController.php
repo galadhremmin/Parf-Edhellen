@@ -26,10 +26,7 @@ class SentenceController extends Controller
 
     public function create(Request $request)
     {
-        $languages = Language::invented()->get();
-        return view('sentence.create', [
-            'languages' => $languages
-        ]);
+        return view('sentence.create');
     }
 
     public function edit(Request $request, int $id) 

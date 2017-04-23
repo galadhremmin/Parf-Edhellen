@@ -86,7 +86,7 @@ var EDSentenceForm = function (_React$Component) {
                     { className: 'form-group' },
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'label',
-                        { 'for': 'ed-sentence-name', className: 'control-label' },
+                        { htmlFor: 'ed-sentence-name', className: 'control-label' },
                         'Name'
                     ),
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'text', className: 'form-control', id: 'ed-sentence-name', name: 'name' })
@@ -96,7 +96,7 @@ var EDSentenceForm = function (_React$Component) {
                     { className: 'form-group' },
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'label',
-                        { 'for': 'ed-sentence-source', className: 'control-label' },
+                        { htmlFor: 'ed-sentence-source', className: 'control-label' },
                         'Source'
                     ),
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('input', { type: 'text', className: 'form-control', id: 'ed-sentence-source', name: 'source' })
@@ -106,10 +106,22 @@ var EDSentenceForm = function (_React$Component) {
                     { className: 'form-group' },
                     __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
                         'label',
-                        { 'for': 'ed-sentence-language', className: 'control-label' },
+                        { htmlFor: 'ed-sentence-language', className: 'control-label' },
                         'Language'
                     ),
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('select', { className: 'form-control', id: 'ed-sentence-language' })
+                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        'select',
+                        { className: 'form-control', id: 'ed-sentence-language' },
+                        this.props.languages.filter(function (l) {
+                            return l.is_invented;
+                        }).map(function (l) {
+                            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                                'option',
+                                { value: l.id, key: l.id },
+                                l.name
+                            );
+                        })
+                    )
                 )
             );
         }
@@ -118,9 +130,13 @@ var EDSentenceForm = function (_React$Component) {
     return EDSentenceForm;
 }(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
 
-var mapStateToProps = function mapStateToProps(state) {};
+var mapStateToProps = function mapStateToProps(state) {
+    return {
+        languages: state.languages
+    };
+};
 
-/* harmony default export */ __webpack_exports__["a"] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2_react_redux__["connect"])()(EDSentenceForm);
+/* harmony default export */ __webpack_exports__["a"] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2_react_redux__["connect"])(mapStateToProps)(EDSentenceForm);
 
 /***/ }),
 
@@ -135,7 +151,8 @@ var SET_FRAGMENT_DATA = 'ED_SET_FRAGMENT_DATA';
 
 var EDSentenceAdminReducer = function EDSentenceAdminReducer() {
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-        fragments: []
+        fragments: [],
+        languages: window.EDConfig.languages()
     };
     var action = arguments[1];
 
