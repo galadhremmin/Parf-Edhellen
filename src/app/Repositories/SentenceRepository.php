@@ -1,0 +1,49 @@
+<?php
+
+namespace App\Repositories;
+
+use App\Models\Sentence;
+use Illuminate\Support\Facades\DB;
+
+class SentenceRepository
+{
+    /**
+     * Gets the languages for all available sentences.
+     * @return mixed
+     */
+    public function getLanguages()
+    {
+        return DB::table('language as l')
+            ->join('sentence as s', 'l.ID', '=', 's.LanguageID')
+            ->select('l.Name', 'l.ID')
+            ->distinct()
+            ->get();
+    }
+
+    /**
+     * Gets sentences for the specified language.
+     * @return mixed
+     */
+    public function getByLanguage(int $languageId)
+    {
+        return DB::table('sentence as s')
+            ->leftJoin('auth_accounts as a', 's.AuthorID', '=', 'a.AccountID')
+            ->where('s.Approved', 1)
+            ->where('s.LanguageID', $languageId)
+            ->select('s.SentenceID', 's.Description', 's.Source', 's.Neologism', 's.AuthorID',
+                'a.Nickname as AuthorName', 's.Name')
+            ->get();
+    }
+
+    public function getAllGroupedByLanguage()
+    {
+        return DB::table('sentence as s')
+            ->join('language as l', 's.LanguageID', 'l.ID')
+            ->leftJoin('auth_accounts as a', 's.AuthorID', '=', 'a.AccountID')
+            ->where('s.Approved', 1)
+            ->select('s.SentenceID', 's.Description', 's.Source', 's.Neologism', 's.AuthorID',
+                'a.Nickname as AuthorName', 's.Name', 'l.Name as LanguageName')
+            ->get()
+            ->groupBy('LanguageName');
+    }
+}

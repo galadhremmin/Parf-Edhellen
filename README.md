@@ -13,7 +13,7 @@ You can also help us by donating. Please visit [elfdict.com](http://www.elfdict.
 I'd like to thank JetBrains for supporting ElfDict by giving us their excellent PHPStorm for free.
 
 > 
-> Note! We are currently transitioning to the Laravel framework. All such work is done in the parf-edhellen directory.
+> Note! We are currently transitioning to the Laravel framework. All such work is done in the src directory.
 >
 
 Coding style

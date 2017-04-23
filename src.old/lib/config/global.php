@@ -1,0 +1,1 @@
+/var/www/Parf-Edhellen-config/global.php
