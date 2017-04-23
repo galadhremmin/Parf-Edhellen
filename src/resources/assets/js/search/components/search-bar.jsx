@@ -18,8 +18,8 @@ class EDSearchBar extends React.Component {
         const languageNode = document.getElementById('ed-preloaded-languages');
         this.setState({
             languages: [{
-                ID: 0,
-                Name: 'All languages'
+                id: 0,
+                name: 'All languages'
             }, ...(JSON.parse(languageNode.textContent))]
         });
     }

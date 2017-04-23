@@ -172,8 +172,8 @@ RENAME TABLE `translation_review` TO `translation_reviews`;
 ALTER TABLE `word` CHANGE `KeyID` `id` INT(8) UNSIGNED NOT NULL AUTO_INCREMENT, 
     CHANGE `Key` `word` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_swedish_ci NOT NULL, 
     CHANGE `AuthorID` `account_id` INT(5) UNSIGNED NOT NULL, 
-    CHANGE `NormalizedKey` `normalized_key` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_swedish_ci NULL DEFAULT NULL, 
-    CHANGE `ReversedNormalizedKey` `reversed_normalized_key` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_swedish_ci NULL DEFAULT NULL;
+    CHANGE `NormalizedKey` `normalized_word` VARCHAR(64) CHARACTER SET utf8 COLLATE utf8_swedish_ci NULL DEFAULT NULL, 
+    CHANGE `ReversedNormalizedKey` `reversed_normalized_word` VARCHAR(255) CHARACTER SET utf8 COLLATE utf8_swedish_ci NULL DEFAULT NULL;
 ALTER TABLE `word` ADD `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ADD `updated_at` DATETIME NULL;
 RENAME TABLE `word` TO `words`;

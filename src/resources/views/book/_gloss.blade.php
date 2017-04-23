@@ -36,7 +36,7 @@
     @endif
   
     Published <span itemprop="datePublished">{{ $gloss->created_at }}</span> by 
-    <a href="{{ $link->author($gloss->AuthorID, $gloss->acccount_name) }}" itemprop="author" rel="author" title="View profile for {{ $gloss->account_name }}.">
+    <a href="{{ $link->author($gloss->account_id, $gloss->account_name) }}" itemprop="author" rel="author" title="View profile for {{ $gloss->account_name }}.">
       {{ $gloss->account_name }}
     </a>
   </footer>

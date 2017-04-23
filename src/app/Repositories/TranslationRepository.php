@@ -25,7 +25,7 @@ class TranslationRepository
                 ->distinct();
         } else {
             $keywords = Keyword::findByWord($word, $reversed)
-                ->select('keywords as k', 'normalized_keyword as nk');
+                ->select('keyword as k', 'normalized_keyword as nk');
         }
 
         return $keywords
@@ -79,7 +79,7 @@ class TranslationRepository
 
         $ids = array();
         foreach ($rows as $row)
-            $ids[] = $row->SenseID;
+            $ids[] = $row->sense_id;
 
         return $ids;
     }

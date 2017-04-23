@@ -519,8 +519,8 @@ var EDSearchBar = function (_React$Component) {
             var languageNode = document.getElementById('ed-preloaded-languages');
             this.setState({
                 languages: [{
-                    ID: 0,
-                    Name: 'All languages'
+                    id: 0,
+                    name: 'All languages'
                 }].concat(_toConsumableArray(JSON.parse(languageNode.textContent)))
             });
         }
@@ -1097,7 +1097,7 @@ var EDSearchResults = function (_React$Component) {
                         { className: 'row' },
                         this.props.bookData.sections.map(function (s) {
                             return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_5__book_section__["a" /* default */], { section: s,
-                                key: s.language.ID,
+                                key: s.language.id,
                                 columnsMax: _this3.props.bookData.columnsMax,
                                 columnsMid: _this3.props.bookData.columnsMid,
                                 columnsMin: _this3.props.bookData.columnsMin,

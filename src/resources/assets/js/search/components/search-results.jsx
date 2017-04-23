@@ -228,7 +228,7 @@ class EDSearchResults extends React.Component {
                     <div className="row">
                         {this.props.bookData.sections.map(
                             s => <EDBookSection section={s}
-                                                key={s.language.ID}
+                                                key={s.language.id}
                                                 columnsMax={this.props.bookData.columnsMax}
                                                 columnsMid={this.props.bookData.columnsMid}
                                                 columnsMin={this.props.bookData.columnsMin}
