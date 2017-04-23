@@ -75,7 +75,7 @@ class SentenceController extends Controller
     protected function validateRequest(Request $request, int $id = 0)
     {
         $rules = [
-            'name'  => 'required|min:1|max:64|unique:sentence,name'.($id === 0 ? '' : ','.$id.',id')
+            'name'  => 'required|min:1|max:64|unique:sentences,name'.($id === 0 ? '' : ','.$id.',id')
         ];
 
         $this->validate($request, $rules);

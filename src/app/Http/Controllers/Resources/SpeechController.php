@@ -75,7 +75,7 @@ class SpeechController extends Controller
     protected function validateRequest(Request $request, int $id = 0)
     {
         $this->validate($request, [
-            'name' => 'required|min:1|max:32|unique:speech,name'.($id === 0 ? '' : ','.$id.',id')
+            'name' => 'required|min:1|max:32|unique:speeches,name'.($id === 0 ? '' : ','.$id.',id')
         ]);
     } 
 }

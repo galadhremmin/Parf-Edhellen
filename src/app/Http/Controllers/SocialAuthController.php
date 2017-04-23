@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\AuthorizationProvider;
-use App\Models\User;
+use App\Models\Account;
 use Illuminate\Support\Facades\Auth;
 use Socialite;
 
@@ -34,7 +34,7 @@ class SocialAuthController extends Controller
         $provider = self::getProvider($providerName);
         $providerUser = Socialite::driver($provider->name_identifier)->user(); 
 
-        $user = User::where([
+        $user = Account::where([
                 [ 'email', '=', $providerUser->getEmail() ],
                 [ 'authorization_provider_id', '=', $provider->id ]
             ])->first();
@@ -42,7 +42,7 @@ class SocialAuthController extends Controller
         if (! $user) {
             $nickname = self::getNextAvailableNickname($providerUser->getName());
 
-            $user = User::create([
+            $user = Account::create([
                 'email'          => $providerUser->getEmail(),
                 'identity'       => $providerUser->getId(),
                 'nickname'       => $nickname,
@@ -74,7 +74,7 @@ class SocialAuthController extends Controller
         $tmp = $nickname;
 
         do {
-            if (User::where('nickname', '=', $tmp)->count() < 1) {
+            if (Account::where('nickname', '=', $tmp)->count() < 1) {
                 return $tmp;
             }
 

@@ -68,7 +68,7 @@ class InflectionController extends Controller
     protected function validateRequest(Request $request, int $id = 0)
     {
         $rules = [
-            'name'  => 'required|min:1|max:64|unique:inflection,name'.($id === 0 ? '' : ','.$id.',id'),
+            'name'  => 'required|min:1|max:64|unique:inflections,name'.($id === 0 ? '' : ','.$id.',id'),
             'group' => 'required|min:1|max:64'
         ];
 

@@ -35,7 +35,7 @@ class Account extends Authenticatable
             return $groups[$groupName];
         }
 
-        $memberStatus = UserGroup::forUser($this)->where('name', $groupName)->count() > 0;;
+        $memberStatus = Role::forAccount($this)->where('name', $groupName)->count() > 0;;
         $groups[$groupName] = $memberStatus;
 
         return $memberStatus;
