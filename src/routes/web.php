@@ -48,6 +48,8 @@ Route::group([ 'namespace' => 'Resources', 'prefix' => 'admin' ], function () {
     Route::resource('speech', 'SpeechController');
     Route::resource('inflection', 'InflectionController');
     Route::resource('sentence', 'SentenceController');
+
+    Route::post('sentence/validate', 'SentenceController@validatePayload');
 });
 
 // Authentication

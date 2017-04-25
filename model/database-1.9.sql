@@ -108,7 +108,7 @@ ALTER TABLE `sentence_fragment` ADD `created_at` DATETIME NOT NULL DEFAULT CURRE
 RENAME TABLE `sentence_fragment` TO `sentence_fragments`;
 
 ALTER TABLE `sentence_fragment_inflection` CHANGE `id` `id` INT(11) NOT NULL AUTO_INCREMENT, 
-    CHANGE `FragmentID` `fragment_id` INT(11) NOT NULL, 
+    CHANGE `FragmentID` `sentence_fragment_id` INT(11) NOT NULL, 
     CHANGE `InflectionID` `inflection_id` INT(11) NOT NULL;
 ALTER TABLE `sentence_fragment_inflection` ADD `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ADD `updated_at` DATETIME NULL;

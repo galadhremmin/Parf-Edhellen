@@ -18,11 +18,11 @@ class SentenceFragment extends Model
 
     public function inflectionAssociations()
     {
-        return $this->hasMany(SentenceFragmentInflectionAssoc::class);
+        return $this->hasMany(SentenceFragmentInflectionRel::class);
     }
 
     public function isPunctuationOrWhitespace() 
     {
-        return preg_match('/^[,\\.!\\?\\s]$/', $this->fragment);
+        return preg_match('/^[,\\.!\\?\\s\\r\\n]$/', $this->fragment);
     }
 }

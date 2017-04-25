@@ -15,7 +15,8 @@ mix.extract([
     'react-redux', 'redux',
     'html-to-react',
     'axios',
-    'classnames'
+    'classnames',
+    'smoothscroll-polyfill'
 ]);
 
 mix.react([

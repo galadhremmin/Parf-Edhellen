@@ -49,7 +49,7 @@ class SentenceController extends Controller
     {
         $sentence  = Sentence::find($sentId);
         $language  = Language::find($langId);
-        $fragments = $this->_adapter->adaptFragments($sentence->Fragments);
+        $fragments = $this->_adapter->adaptFragments($sentence->fragments);
 
         return view('sentence.public.sentence', [
             'sentence'  => $sentence,

@@ -1,13 +1,16 @@
 webpackJsonp([2,5],{
 
-/***/ 107:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ 109:
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return REQUEST_FRAGMENT; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return RECEIVE_FRAGMENT; });
-var REQUEST_FRAGMENT = 'EDSR_REQUEST_FRAGMENT';
-var RECEIVE_FRAGMENT = 'EDSR_RECEIVE_FRAGMENT';
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var REQUEST_FRAGMENT = exports.REQUEST_FRAGMENT = 'EDSR_REQUEST_FRAGMENT';
+var RECEIVE_FRAGMENT = exports.RECEIVE_FRAGMENT = 'EDSR_RECEIVE_FRAGMENT';
 
 var EDSentenceReducer = function EDSentenceReducer() {
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
@@ -38,72 +41,89 @@ var EDSentenceReducer = function EDSentenceReducer() {
     }
 };
 
-/* harmony default export */ __webpack_exports__["a"] = EDSentenceReducer;
+exports.default = EDSentenceReducer;
 
 /***/ }),
 
-/***/ 173:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ 175:
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom__ = __webpack_require__(34);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_react_dom___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_react_dom__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_redux__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_redux__ = __webpack_require__(35);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_redux_thunk__ = __webpack_require__(47);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_redux_thunk___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_redux_thunk__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__reducers__ = __webpack_require__(107);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__components_fragment_explorer__ = __webpack_require__(198);
 
 
+var _react = __webpack_require__(3);
 
+var _react2 = _interopRequireDefault(_react);
 
+var _reactDom = __webpack_require__(35);
 
+var _reactDom2 = _interopRequireDefault(_reactDom);
 
+var _reactRedux = __webpack_require__(19);
 
+var _redux = __webpack_require__(36);
 
-var store = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3_redux__["createStore"])(__WEBPACK_IMPORTED_MODULE_5__reducers__["a" /* default */], undefined /* <- preloaded state */
-, __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3_redux__["applyMiddleware"])(__WEBPACK_IMPORTED_MODULE_4_redux_thunk___default.a));
+var _reduxThunk = __webpack_require__(48);
+
+var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
+
+var _reducers = __webpack_require__(109);
+
+var _reducers2 = _interopRequireDefault(_reducers);
+
+var _fragmentExplorer = __webpack_require__(203);
+
+var _fragmentExplorer2 = _interopRequireDefault(_fragmentExplorer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var store = (0, _redux.createStore)(_reducers2.default, undefined /* <- preloaded state */
+, (0, _redux.applyMiddleware)(_reduxThunk2.default));
 
 window.addEventListener('load', function () {
-    __WEBPACK_IMPORTED_MODULE_1_react_dom___default.a.render(__WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
-        __WEBPACK_IMPORTED_MODULE_2_react_redux__["Provider"],
+    _reactDom2.default.render(_react2.default.createElement(
+        _reactRedux.Provider,
         { store: store },
-        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_6__components_fragment_explorer__["a" /* default */], null)
+        _react2.default.createElement(_fragmentExplorer2.default, null)
     ), document.getElementById('ed-fragment-navigator'));
 });
 
 /***/ }),
 
-/***/ 197:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ 200:
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios__ = __webpack_require__(48);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_axios___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_axios__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__reducers__ = __webpack_require__(107);
-/* harmony export (immutable) */ __webpack_exports__["a"] = selectFragment;
 
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.selectFragment = selectFragment;
+
+var _axios = __webpack_require__(30);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _reducers = __webpack_require__(109);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function selectFragment(fragmentId, translationId) {
     return function (dispatch) {
         dispatch({
-            type: __WEBPACK_IMPORTED_MODULE_1__reducers__["b" /* REQUEST_FRAGMENT */],
+            type: _reducers.REQUEST_FRAGMENT,
             fragmentId: fragmentId
         });
 
         var start = new Date().getTime();
-        __WEBPACK_IMPORTED_MODULE_0_axios___default.a.get(window.EDConfig.api('/book/translate/' + translationId)).then(function (resp) {
+        _axios2.default.get(window.EDConfig.api('/book/translate/' + translationId)).then(function (resp) {
             // Enable the animation to play at least 800 milliseconds.
             var animationDelay = -Math.min(0, new Date().getTime() - start - 800);
 
             window.setTimeout(function () {
                 dispatch({
-                    type: __WEBPACK_IMPORTED_MODULE_1__reducers__["c" /* RECEIVE_FRAGMENT */],
+                    type: _reducers.RECEIVE_FRAGMENT,
                     bookData: resp.data,
                     translationId: translationId
                 });
@@ -114,37 +134,51 @@ function selectFragment(fragmentId, translationId) {
 
 /***/ }),
 
-/***/ 198:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ 203:
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_classnames__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_react_redux__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__actions__ = __webpack_require__(197);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__fragment__ = __webpack_require__(199);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__tengwar_fragment__ = __webpack_require__(201);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__search_components_book_gloss__ = __webpack_require__(58);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_html_to_react__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_html_to_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7_html_to_react__);
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(3);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _classnames = __webpack_require__(9);
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
+var _reactRedux = __webpack_require__(19);
+
+var _actions = __webpack_require__(200);
+
+var _fragment = __webpack_require__(204);
+
+var _fragment2 = _interopRequireDefault(_fragment);
+
+var _tengwarFragment = __webpack_require__(205);
+
+var _tengwarFragment2 = _interopRequireDefault(_tengwarFragment);
+
+var _bookGloss = __webpack_require__(60);
+
+var _bookGloss2 = _interopRequireDefault(_bookGloss);
+
+var _htmlToReact = __webpack_require__(31);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-
-
-
-
-
-
-
-
 
 var EDFragmentExplorer = function (_React$Component) {
     _inherits(EDFragmentExplorer, _React$Component);
@@ -246,7 +280,7 @@ var EDFragmentExplorer = function (_React$Component) {
             });
             window.location.hash = '!' + ev.id;
 
-            this.props.dispatch(__webpack_require__.i(__WEBPACK_IMPORTED_MODULE_3__actions__["a" /* selectFragment */])(ev.id, ev.translationId));
+            this.props.dispatch((0, _actions.selectFragment)(ev.id, ev.translation_id));
         }
 
         /**
@@ -267,7 +301,7 @@ var EDFragmentExplorer = function (_React$Component) {
             var fragment = this.props.fragments[fragmentIndex];
             this.onFragmentClick({
                 id: fragment.id,
-                translationId: fragment.translationId
+                translation_id: fragment.translation_id
             });
         }
 
@@ -297,44 +331,44 @@ var EDFragmentExplorer = function (_React$Component) {
                 fragment = this.props.fragments.find(function (f) {
                     return f.id === _this2.props.fragmentId;
                 });
-                parser = new __WEBPACK_IMPORTED_MODULE_7_html_to_react__["Parser"]();
+                parser = new _htmlToReact.Parser();
             }
 
             var previousIndex = this.previousFragmentIndex();
             var nextIndex = this.nextFragmentIndex();
 
-            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            return _react2.default.createElement(
                 'div',
                 { className: 'well ed-fragment-navigator' },
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                _react2.default.createElement(
                     'p',
                     { className: 'tengwar ed-tengwar-fragments' },
                     this.props.fragments.map(function (f) {
-                        return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_5__tengwar_fragment__["a" /* default */], { fragment: f,
+                        return _react2.default.createElement(_tengwarFragment2.default, { fragment: f,
                             key: 'tng' + f.id,
                             selected: f.id === _this2.props.fragmentId });
                     })
                 ),
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                _react2.default.createElement(
                     'p',
                     { className: 'ed-elvish-fragments' },
                     this.props.fragments.map(function (f) {
-                        return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_4__fragment__["a" /* default */], { fragment: f,
+                        return _react2.default.createElement(_fragment2.default, { fragment: f,
                             key: 'frg' + f.id,
                             selected: f.id === _this2.props.fragmentId,
                             onClick: _this2.onFragmentClick.bind(_this2) });
                     })
                 ),
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                _react2.default.createElement(
                     'nav',
                     null,
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    _react2.default.createElement(
                         'ul',
                         { className: 'pager' },
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        _react2.default.createElement(
                             'li',
-                            { className: __WEBPACK_IMPORTED_MODULE_1_classnames___default()('previous', { 'hidden': previousIndex === this.state.fragmentIndex }) },
-                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            { className: (0, _classnames2.default)('previous', { 'hidden': previousIndex === this.state.fragmentIndex }) },
+                            _react2.default.createElement(
                                 'a',
                                 { href: '#', onClick: function onClick(ev) {
                                         return _this2.onNavigate(ev, previousIndex);
@@ -343,10 +377,10 @@ var EDFragmentExplorer = function (_React$Component) {
                                 this.props.fragments[previousIndex].fragment
                             )
                         ),
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        _react2.default.createElement(
                             'li',
-                            { className: __WEBPACK_IMPORTED_MODULE_1_classnames___default()('next', { 'hidden': nextIndex === this.state.fragmentIndex }) },
-                            __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                            { className: (0, _classnames2.default)('next', { 'hidden': nextIndex === this.state.fragmentIndex }) },
+                            _react2.default.createElement(
                                 'a',
                                 { href: '#', onClick: function onClick(ev) {
                                         return _this2.onNavigate(ev, nextIndex);
@@ -357,31 +391,31 @@ var EDFragmentExplorer = function (_React$Component) {
                         )
                     )
                 ),
-                this.props.loading ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('div', { className: 'sk-spinner sk-spinner-pulse' }) : section ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                this.props.loading ? _react2.default.createElement('div', { className: 'sk-spinner sk-spinner-pulse' }) : section ? _react2.default.createElement(
                     'div',
                     null,
-                    fragment.grammarType ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    fragment.grammarType ? _react2.default.createElement(
                         'div',
                         null,
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        _react2.default.createElement(
                             'em',
                             null,
                             fragment.grammarType
                         )
                     ) : '',
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    _react2.default.createElement(
                         'div',
                         null,
                         fragment.comments ? parser.parse(fragment.comments) : ''
                     ),
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('hr', null),
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    _react2.default.createElement('hr', null),
+                    _react2.default.createElement(
                         'div',
                         null,
                         section.glosses.map(function (g) {
-                            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(__WEBPACK_IMPORTED_MODULE_6__search_components_book_gloss__["a" /* default */], { gloss: g,
+                            return _react2.default.createElement(_bookGloss2.default, { gloss: g,
                                 language: section.language,
-                                key: g.TranslationID,
+                                key: g.id,
                                 onReferenceLinkClick: _this2.onReferenceLinkClick.bind(_this2) });
                         })
                     )
@@ -391,7 +425,7 @@ var EDFragmentExplorer = function (_React$Component) {
     }]);
 
     return EDFragmentExplorer;
-}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
+}(_react2.default.Component);
 
 var mapStateToProps = function mapStateToProps(state) {
     return {
@@ -402,28 +436,37 @@ var mapStateToProps = function mapStateToProps(state) {
     };
 };
 
-/* harmony default export */ __webpack_exports__["a"] = __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_2_react_redux__["connect"])(mapStateToProps)(EDFragmentExplorer);
+exports.default = (0, _reactRedux.connect)(mapStateToProps)(EDFragmentExplorer);
 
 /***/ }),
 
-/***/ 199:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ 204:
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_classnames__);
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(3);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _classnames = __webpack_require__(9);
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-
-
 
 var EDFragment = function (_React$Component) {
     _inherits(EDFragment, _React$Component);
@@ -443,7 +486,7 @@ var EDFragment = function (_React$Component) {
                 this.props.onClick({
                     id: this.props.fragment.id,
                     url: ev.target.href,
-                    translationId: this.props.fragment.translationId
+                    translation_id: this.props.fragment.translation_id
                 });
             }
         }
@@ -453,21 +496,21 @@ var EDFragment = function (_React$Component) {
             var f = this.props.fragment;
 
             if (f.interpunctuation) {
-                return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                return _react2.default.createElement(
                     'span',
                     null,
                     f.fragment
                 );
             }
 
-            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            return _react2.default.createElement(
                 'span',
                 null,
                 ' ',
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                _react2.default.createElement(
                     'a',
-                    { className: __WEBPACK_IMPORTED_MODULE_1_classnames___default()({ 'active': this.props.selected }),
-                        href: '/wt/' + f.translationId,
+                    { className: (0, _classnames2.default)({ 'active': this.props.selected }),
+                        href: '/wt/' + f.translation_id,
                         onClick: this.onFragmentClick.bind(this) },
                     f.fragment
                 )
@@ -476,30 +519,39 @@ var EDFragment = function (_React$Component) {
     }]);
 
     return EDFragment;
-}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
+}(_react2.default.Component);
 
-/* harmony default export */ __webpack_exports__["a"] = EDFragment;
+exports.default = EDFragment;
 
 /***/ }),
 
-/***/ 201:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ 205:
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_classnames__);
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(3);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _classnames = __webpack_require__(9);
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-
-
 
 var EDTengwarFragment = function (_React$Component) {
     _inherits(EDTengwarFragment, _React$Component);
@@ -515,30 +567,30 @@ var EDTengwarFragment = function (_React$Component) {
         value: function render() {
             var f = this.props.fragment;
 
-            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            return _react2.default.createElement(
                 'span',
-                { className: __WEBPACK_IMPORTED_MODULE_1_classnames___default()({ 'active': this.props.selected }) },
+                { className: (0, _classnames2.default)({ 'active': this.props.selected }) },
                 (f.interpunctuation ? '' : ' ') + f.tengwar
             );
         }
     }]);
 
     return EDTengwarFragment;
-}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
+}(_react2.default.Component);
 
-/* harmony default export */ __webpack_exports__["a"] = EDTengwarFragment;
+exports.default = EDTengwarFragment;
 
 /***/ }),
 
-/***/ 426:
+/***/ 430:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(173);
+module.exports = __webpack_require__(175);
 
 
 /***/ }),
 
-/***/ 47:
+/***/ 48:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -568,17 +620,29 @@ exports['default'] = thunk;
 
 /***/ }),
 
-/***/ 58:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ 60:
+/***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_react__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames__ = __webpack_require__(14);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_classnames___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_classnames__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_html_to_react__ = __webpack_require__(33);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_html_to_react___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_html_to_react__);
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(3);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _classnames = __webpack_require__(9);
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
+var _htmlToReact = __webpack_require__(31);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -586,14 +650,9 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-
-
-
-
 /**
  * Represents a single gloss. A gloss is also called a 'translation' and is reserved for invented languages.
  */
-
 var EDBookGloss = function (_React$Component) {
     _inherits(EDBookGloss, _React$Component);
 
@@ -608,7 +667,7 @@ var EDBookGloss = function (_React$Component) {
         value: function processHtml(html) {
             var _this2 = this;
 
-            var definitions = new __WEBPACK_IMPORTED_MODULE_2_html_to_react__["ProcessNodeDefinitions"](__WEBPACK_IMPORTED_MODULE_0_react___default.a);
+            var definitions = new _htmlToReact.ProcessNodeDefinitions(_react2.default);
             var instructions = [
             // Special behaviour for <a> as they are reference links.
             {
@@ -628,7 +687,7 @@ var EDBookGloss = function (_React$Component) {
                     var word = node.attribs['data-word'];
                     var childElements = nodeElements.props.children;
 
-                    return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    return _react2.default.createElement(
                         'a',
                         { href: href,
                             onClick: function onClick(ev) {
@@ -647,7 +706,7 @@ var EDBookGloss = function (_React$Component) {
                 processNode: definitions.processDefaultNode
             }];
 
-            var parser = new __WEBPACK_IMPORTED_MODULE_2_html_to_react__["Parser"]();
+            var parser = new _htmlToReact.Parser();
             return parser.parseWithInstructions(html, function (n) {
                 return true;
             }, instructions);
@@ -674,59 +733,59 @@ var EDBookGloss = function (_React$Component) {
                 comments = this.processHtml(gloss.comments);
             }
 
-            return __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+            return _react2.default.createElement(
                 'blockquote',
-                { itemScope: 'itemscope', itemType: 'http://schema.org/Article', id: id, className: __WEBPACK_IMPORTED_MODULE_1_classnames___default()({ 'contribution': !gloss.is_canon }) },
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                { itemScope: 'itemscope', itemType: 'http://schema.org/Article', id: id, className: (0, _classnames2.default)({ 'contribution': !gloss.is_canon }) },
+                _react2.default.createElement(
                     'h3',
                     { rel: 'trans-word', className: 'trans-word' },
-                    !gloss.is_canon || gloss.is_uncertain || !gloss.is_latest ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    !gloss.is_canon || gloss.is_uncertain || !gloss.is_latest ? _react2.default.createElement(
                         'a',
                         { href: '/about', title: 'Unverified or debatable content.' },
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { className: 'glyphicon glyphicon-question-sign' })
+                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-question-sign' })
                     ) : '',
                     ' ',
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    _react2.default.createElement(
                         'span',
                         { itemProp: 'headline' },
                         gloss.word
                     ),
-                    gloss.external_link_format && gloss.external_id ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    gloss.external_link_format && gloss.external_id ? _react2.default.createElement(
                         'a',
                         { href: gloss.external_link_format.replace(/\{ExternalID\}/g, gloss.external_id),
                             className: 'ed-external-link-button',
                             title: 'Open on ' + gloss.translation_group_name + ' (new tab/window)',
                             target: '_blank' },
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement('span', { className: 'glyphicon glyphicon-globe pull-right' })
+                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-globe pull-right' })
                     ) : ''
                 ),
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                _react2.default.createElement(
                     'p',
                     null,
-                    gloss.tengwar ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    gloss.tengwar ? _react2.default.createElement(
                         'span',
                         { className: 'tengwar' },
                         gloss.tengwar
                     ) : '',
                     ' ',
-                    gloss.type != 'unset' ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    gloss.type != 'unset' ? _react2.default.createElement(
                         'span',
                         { className: 'word-type', rel: 'trans-type' },
                         gloss.type,
                         '.'
                     ) : '',
                     ' ',
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    _react2.default.createElement(
                         'span',
                         { rel: 'trans-translation', itemProp: 'keywords' },
                         gloss.translation
                     )
                 ),
                 comments,
-                __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                _react2.default.createElement(
                     'footer',
                     null,
-                    gloss.source ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    gloss.source ? _react2.default.createElement(
                         'span',
                         { className: 'word-source', rel: 'trans-source' },
                         '[',
@@ -734,18 +793,18 @@ var EDBookGloss = function (_React$Component) {
                         ']'
                     ) : '',
                     ' ',
-                    gloss.Etymology ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    gloss.Etymology ? _react2.default.createElement(
                         'span',
                         { className: 'word-etymology', rel: 'trans-etymology' },
                         gloss.etymology,
                         '.'
                     ) : '',
                     ' ',
-                    gloss.translation_group_id ? __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    gloss.translation_group_id ? _react2.default.createElement(
                         'span',
                         null,
                         'Group: ',
-                        __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                        _react2.default.createElement(
                             'span',
                             { itemProp: 'sourceOrganization' },
                             gloss.translation_group_name,
@@ -753,13 +812,13 @@ var EDBookGloss = function (_React$Component) {
                         )
                     ) : '',
                     ' Published: ',
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    _react2.default.createElement(
                         'span',
                         { itemProp: 'datePublished' },
                         gloss.created_at
                     ),
                     ' by ',
-                    __WEBPACK_IMPORTED_MODULE_0_react___default.a.createElement(
+                    _react2.default.createElement(
                         'a',
                         { href: gloss.account_url, itemProp: 'author', rel: 'author', title: 'View profile for ' + gloss.account_name + '.' },
                         gloss.account_name
@@ -770,10 +829,10 @@ var EDBookGloss = function (_React$Component) {
     }]);
 
     return EDBookGloss;
-}(__WEBPACK_IMPORTED_MODULE_0_react___default.a.Component);
+}(_react2.default.Component);
 
-/* harmony default export */ __webpack_exports__["a"] = EDBookGloss;
+exports.default = EDBookGloss;
 
 /***/ })
 
-},[426]);
+},[430]);

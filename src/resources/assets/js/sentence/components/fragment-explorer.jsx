@@ -84,7 +84,7 @@ class EDFragmentExplorer extends React.Component {
         });
         window.location.hash = `!${ev.id}`;
 
-        this.props.dispatch(selectFragment(ev.id, ev.translationId));
+        this.props.dispatch(selectFragment(ev.id, ev.translation_id));
     }
 
     /**
@@ -102,7 +102,7 @@ class EDFragmentExplorer extends React.Component {
         const fragment = this.props.fragments[fragmentIndex];
         this.onFragmentClick({
             id: fragment.id,
-            translationId: fragment.translationId
+            translation_id: fragment.translation_id
         })
     }
 
@@ -145,10 +145,10 @@ class EDFragmentExplorer extends React.Component {
             <nav>
                 <ul className="pager">
                     <li className={classNames('previous', { 'hidden': previousIndex === this.state.fragmentIndex })}>
-                        <a href="#" onClick={ev => this.onNavigate(ev, previousIndex)}>← {this.props.fragments[previousIndex].fragment}</a>
+                        <a href="#" onClick={ev => this.onNavigate(ev, previousIndex)}>&larr; {this.props.fragments[previousIndex].fragment}</a>
                     </li>
                     <li className={classNames('next', { 'hidden': nextIndex === this.state.fragmentIndex })}>
-                        <a href="#" onClick={ev => this.onNavigate(ev, nextIndex)}>{this.props.fragments[nextIndex].fragment} →</a>
+                        <a href="#" onClick={ev => this.onNavigate(ev, nextIndex)}>{this.props.fragments[nextIndex].fragment} &rarr;</a>
                     </li>
                 </ul>
             </nav>
@@ -161,7 +161,7 @@ class EDFragmentExplorer extends React.Component {
                 <div>
                     {section.glosses.map(g => <EDBookGloss gloss={g}
                                                            language={section.language}
-                                                           key={g.TranslationID} 
+                                                           key={g.id} 
                                                            onReferenceLinkClick={this.onReferenceLinkClick.bind(this)} />)}
                 </div>
             </div>) : '')}

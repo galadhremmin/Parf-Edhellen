@@ -3,7 +3,7 @@
 @section('title', 'Add sentence - Administration')
 @section('body')
 
-<h1>Phrases</h1>
+<h1>Add phrase</h1>
 {!! Breadcrumbs::render('sentence.create') !!}
 
 <div id="ed-sentence-form"></div>

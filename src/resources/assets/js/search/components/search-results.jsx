@@ -60,7 +60,7 @@ class EDSearchResults extends React.Component {
             results = document.getElementsByClassName('search-result-presenter');
         }
 
-        if (results.length < 1 || undefined === results[0].scrollIntoView) {
+        if (results.length < 1) {
             return ; // bail, as something's weird
         }
 
@@ -207,8 +207,8 @@ class EDSearchResults extends React.Component {
                 <div className="row search-result-navigator">
                     <nav>
                         <ul className="pager">
-                            <li className="previous"><a href="#" onClick={ev => this.onNavigate(ev, previousIndex)}>← {this.props.items[previousIndex].word}</a></li>
-                            <li className="next"><a href="#" onClick={ev => this.onNavigate(ev, nextIndex)}>{this.props.items[nextIndex].word} →</a></li>
+                            <li className="previous"><a href="#" onClick={ev => this.onNavigate(ev, previousIndex)}>&larr; {this.props.items[previousIndex].word}</a></li>
+                            <li className="next"><a href="#" onClick={ev => this.onNavigate(ev, nextIndex)}>{this.props.items[nextIndex].word} &rarr;</a></li>
                         </ul>
                     </nav>
                 </div>

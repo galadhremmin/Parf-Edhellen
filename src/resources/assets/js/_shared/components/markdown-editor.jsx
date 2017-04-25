@@ -31,22 +31,39 @@ class EDMarkdownEditor extends React.Component {
             return;
         }
 
+        // Let the server render the Markdown code
+        if (tab === MDMarkdownPreviewTab) {
+            if (/^\s*$/.test(this.state.value)) {
+                return;
+            }
+
+            // Apply dimensions to the markup container to avoid pushing the client
+            // up a notch while switching tabs.
+            const boundingRect =  this.textArea.getBoundingClientRect();
+            this.markupContainer.style.minHeight = boundingRect.height + 'px';
+
+            // Let the server parse the markdown
+            axios.post(window.EDConfig.api('/utility/markdown'), { markdown: this.state.value })
+                .then(this.applyHtml.bind(this));
+        }
+
         this.setState({
             html: null,
             currentTab: tab
         });
-
-        // Let the server render the Markdown code
-        if (tab === MDMarkdownPreviewTab && !/^\s*$/.test(this.state.value)) {
-            axios.post(window.EDConfig.api('/utility/markdown'), { markdown: this.state.value })
-                .then(this.applyHtml.bind(this));
-        }
     }
 
     onValueChange(ev) {
         this.setState({
             value: ev.target.value
         });
+
+        if (typeof this.props.onChange === 'function') {
+            // Remove the synthetic event from the pool and allow references to the event to be retained by user code. 
+            // See https://facebook.github.io/react/docs/events.html
+            ev.persist();
+            window.setTimeout(() => this.props.onChange(ev), 0);
+        }
     }
 
     render() {
@@ -58,7 +75,7 @@ class EDMarkdownEditor extends React.Component {
         }
 
         return (
-            <div>
+            <div className="clearfix">
                 <ul className="nav nav-tabs">
                     <li role="presentation"
                         className={classNames({'active': this.state.currentTab === MDMarkdownEditTab})}>
@@ -78,7 +95,8 @@ class EDMarkdownEditor extends React.Component {
                           id={this.props.componentId}
                           rows={this.props.rows}
                           value={this.state.value}
-                          onChange={this.onValueChange.bind(this)} />
+                          onChange={this.onValueChange.bind(this)}
+                          ref={textarea => this.textArea = textarea} />
                     <small className="pull-right">
                         {' Supports Markdown. '}
                         <a href="https://en.wikipedia.org/wiki/Markdown" target="_blank">
@@ -86,7 +104,8 @@ class EDMarkdownEditor extends React.Component {
                         </a>.
                     </small>
                 </div>
-                <div className={classNames({ 'hidden': this.state.currentTab !== MDMarkdownPreviewTab })}>
+                <div className={classNames({ 'hidden': this.state.currentTab !== MDMarkdownPreviewTab })} 
+                    ref={container => this.markupContainer = container}>
                     {html ? html : <p>Interpreting ...</p>}
                 </div>
             </div>

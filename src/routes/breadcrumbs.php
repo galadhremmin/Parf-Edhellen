@@ -105,3 +105,11 @@ Breadcrumbs::register('sentence.create', function ($breadcrumbs)
     $breadcrumbs->parent('sentence.index');
     $breadcrumbs->push('Add phrase', route('sentence.create'));
 });
+
+Breadcrumbs::register('sentence.edit', function ($breadcrumbs, App\Models\Sentence $sentence)
+{
+    $breadcrumbs->parent('sentence.index');
+    $breadcrumbs->push('Edit phrase', route('sentence.edit', [
+        'id' => $sentence->id
+    ]));
+});
