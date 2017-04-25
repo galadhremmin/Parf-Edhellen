@@ -241,8 +241,6 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
-
 var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
@@ -294,12 +292,21 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
         }
 
         _this.state = {
-            phrase: phrase
+            phrase: phrase,
+            fragments: props.fragments || []
         };
         return _this;
     }
 
     _createClass(EDFragmentForm, [{
+        key: 'createFragment',
+        value: function createFragment(fragment, interpunctuation) {
+            return {
+                fragment: fragment,
+                interpunctuation: interpunctuation
+            };
+        }
+    }, {
         key: 'onPreviousClick',
         value: function onPreviousClick(ev) {
             ev.preventDefault();
@@ -308,9 +315,74 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
     }, {
         key: 'onPhraseChange',
         value: function onPhraseChange(ev) {
-            _get(EDFragmentForm.prototype.__proto__ || Object.getPrototypeOf(EDFragmentForm.prototype), 'onChange', this).call(this, ev);
+            var _this2 = this;
 
-            console.log('phrase');
+            ev.preventDefault();
+
+            var currentFragments = this.state.fragments || [];
+            var newFragments = this.state.phrase.replace(/\r\n/g, "\n").split(' ').map(function (f) {
+                return _this2.createFragment(f);
+            });
+
+            for (var i = 0; i < newFragments.length; i += 1) {
+                var data = newFragments[i];
+                if (data.interpunctuation) {
+                    continue;
+                }
+
+                // Find interpunctuation and new line fragments, and remove them from the actual
+                // word fragment. These should be registered as fragments of their own.
+                for (var fi = 0; fi < data.fragment.length; fi += 1) {
+                    if (!/^[,\.!\?\s]$/.test(data.fragment[fi])) {
+                        continue;
+                    }
+
+                    // Should the fragment be inserted in front of the current fragment or after it?
+                    // This is determined by looking at the cursor's position (_fi_). If it is at
+                    // in its initial position (= 0) then the interpunctutation fragment should be
+                    // placed in front of it, otherwise after. 
+                    var insertAt = i === 0 ? i : i + 1;
+                    newFragments.splice(insertAt, 0, this.createFragment(data.fragment[fi], true));
+
+                    // are there more of the fragment after the interpunctuation?
+                    if (fi + 1 < data.fragment.length) {
+                        newFragments.splice(insertAt + 1, 0, this.createFragment(data.fragment.substr(fi + 1)));
+                    }
+
+                    if (fi > 0) {
+                        data.fragment = data.fragment.substr(0, fi);
+
+                        i -= 1;
+                    } else {
+                        newFragments.splice(i, 1);
+
+                        i -= 2;
+                    }
+
+                    break;
+                }
+            }
+
+            var _loop = function _loop(_i) {
+                var data = newFragments[_i];
+                var lowerFragment = data.fragment.toLocaleLowerCase();
+                var existingFragment = currentFragments.find(function (f) {
+                    return f.fragment.toLocaleLowerCase() === lowerFragment;
+                }) || undefined;
+
+                if (existingFragment !== undefined) {
+                    // overwrite the fragment with the existing fragment, as it might contain more data
+                    newFragments[_i] = existingFragment;
+                }
+            };
+
+            for (var _i = 0; _i < newFragments.length; _i += 1) {
+                _loop(_i);
+            }
+
+            this.setState({
+                fragments: newFragments
+            });
         }
     }, {
         key: 'onSubmit',
@@ -324,7 +396,7 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                 _react2.default.createElement(
                     'p',
                     null,
-                    'This is the second step of a total of three steps. Here you will write down your phrase and attach grammatical meaning and analysis to words of your choosing. Please try to be as thorough as possible as it will make our database more useful.'
+                    'This is the second step of a total of three steps. Here you will write down your phrase and attach grammatical meaning and analysis to words of your choosing. Please try to be as thorough as possible as it will make the database more useful for everyone.'
                 ),
                 _react2.default.createElement(
                     'div',
@@ -335,7 +407,33 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                         'Phrase'
                     ),
                     _react2.default.createElement('textarea', { id: 'ed-sentence-phrase', className: 'form-control', name: 'phrase', rows: '8',
-                        value: this.state.phrase, onChange: this.onPhraseChange.bind(this) })
+                        value: this.state.phrase, onChange: this.onChange.bind(this) })
+                ),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'text-right' },
+                    _react2.default.createElement(
+                        'button',
+                        { className: 'btn btn-primary', onClick: this.onPhraseChange.bind(this) },
+                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-refresh' }),
+                        ' Update phrase'
+                    )
+                ),
+                _react2.default.createElement(
+                    'p',
+                    null,
+                    _react2.default.createElement(
+                        'strong',
+                        null,
+                        'Word definitions'
+                    )
+                ),
+                _react2.default.createElement(
+                    'p',
+                    null,
+                    this.state.fragments.map(function (f, i) {
+                        return _react2.default.createElement(EDFragment, { key: i, fragment: f });
+                    })
                 ),
                 _react2.default.createElement(
                     'nav',
@@ -369,6 +467,31 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
 
     return EDFragmentForm;
 }(_form.EDStatefulFormComponent);
+
+var EDFragment = function EDFragment(props) {
+    if (props.fragment.interpunctuation) {
+        if (/^[\n]+$/.test(props.fragment.fragment)) {
+            return _react2.default.createElement('br', null);
+        }
+
+        return _react2.default.createElement(
+            'span',
+            null,
+            props.fragment.fragment
+        );
+    }
+
+    return _react2.default.createElement(
+        'span',
+        null,
+        ' ',
+        _react2.default.createElement(
+            'a',
+            { href: '#' },
+            props.fragment.fragment
+        )
+    );
+};
 
 var mapStateToProps = function mapStateToProps(state) {
     return {
