@@ -50,6 +50,17 @@ class TranslationRepository
             ->first();
     }
 
+    public function suggest(string $word, int $languageId) 
+    {
+        return self::createTranslationQuery()
+            ->where([
+                ['w.normalized_word', '=', $word],
+                ['t.language_id', '=', $languageId]
+            ])
+            ->get()
+            ->toArray();
+    }
+
     protected static function createTranslationQuery($latest = true) 
     {
         return DB::table('translations as t')

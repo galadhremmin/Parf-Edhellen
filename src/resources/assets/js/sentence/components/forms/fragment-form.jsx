@@ -2,6 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
+import axios from 'axios';
 import { polyfill as enableSmoothScrolling } from 'smoothscroll-polyfill';
 import { EDStatefulFormComponent } from '../../../_shared/form';
 import EDMarkdownEditor from '../../../_shared/components/markdown-editor';
@@ -103,6 +104,10 @@ class EDFragmentForm extends EDStatefulFormComponent {
         });
     }
 
+    onFragmentClick(data) {
+        axios.post(window.EDConfig.api('/book/suggest'), { word: data.fragment, language_id: this.props.languageId });
+    }
+
     onSubmit() {
         
     }
@@ -127,7 +132,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
                 <strong>Word definitions</strong>
             </p>
             <p>
-                {this.state.fragments.map((f, i) => <EDFragment key={i} fragment={f} />)}
+                {this.state.fragments.map((f, i) => <EDFragment key={i} fragment={f} onClick={this.onFragmentClick.bind(this)} />)}
             </p>
             <nav>
                 <ul className="pager">
@@ -139,21 +144,34 @@ class EDFragmentForm extends EDStatefulFormComponent {
     }
 }
 
-const EDFragment = props => {
-    if (props.fragment.interpunctuation) {
-        if (/^[\n]+$/.test(props.fragment.fragment)) {
-            return <br />;
+class EDFragment extends React.Component {
+    onFragmentClick(ev) {
+        ev.preventDefault();
+        
+        if (this.props.onClick) {
+            window.setTimeout(() => this.props.onClick(this.props.fragment), 0);
         }
-
-        return <span>{props.fragment.fragment}</span>;
     }
 
-    return <span>{' '}<a href="#">{props.fragment.fragment}</a></span>;
+    render() {
+        const data = this.props.fragment;
+
+        if (data.interpunctuation) {
+            if (/^[\n]+$/.test(data.fragment)) {
+                return <br />;
+            }
+
+            return <span>{data.fragment}</span>;
+        }
+
+        return <span>{' '}<a href="#" onClick={this.onFragmentClick.bind(this)}>{data.fragment}</a></span>;
+    }
 }
 
 const mapStateToProps = state => {
     return {
         languages: state.languages,
+        languageId: state.language_id,
         fragments: state.fragments
     };
 };

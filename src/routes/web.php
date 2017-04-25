@@ -63,6 +63,7 @@ Route::get('/federated-auth/callback/{providerName}', 'SocialAuthController@call
 Route::group([ 'namespace' => 'Api\v1', 'prefix' => 'api/v1' ], function () {
     Route::get('book/translate/{translationId}', [ 'uses' => 'BookApiController@get' ]);
     Route::post('book/translate',                [ 'uses' => 'BookApiController@translate' ]);
+    Route::post('book/suggest',                  [ 'uses' => 'BookApiController@suggest' ]);
     Route::post('book/find',                     [ 'uses' => 'BookApiController@find' ]);
     Route::post('utility/markdown',              [ 'uses' => 'UtilityApiController@parseMarkdown' ]);
 });

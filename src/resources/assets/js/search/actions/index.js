@@ -59,7 +59,11 @@ export function fetchResults(word, reversed = false, languageId = 0) {
 
     return dispatch => {
         dispatch(requestResults(word));
-        axios.post(window.EDConfig.api('/book/find'), { word, reversed, languageId }).then(resp => {
+        axios.post(window.EDConfig.api('/book/find'), { 
+            word, 
+            reversed, 
+            language_id: languageId 
+        }).then(resp => {
             const results = resp.data.map(r => ({
                 word: r.k,
                 normalizedWord: r.nk

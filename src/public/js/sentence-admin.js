@@ -253,6 +253,10 @@ var _reactRedux = __webpack_require__(19);
 
 var _reactRouter = __webpack_require__(8);
 
+var _axios = __webpack_require__(30);
+
+var _axios2 = _interopRequireDefault(_axios);
+
 var _smoothscrollPolyfill = __webpack_require__(57);
 
 var _form = __webpack_require__(195);
@@ -385,11 +389,18 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
             });
         }
     }, {
+        key: 'onFragmentClick',
+        value: function onFragmentClick(data) {
+            _axios2.default.post(window.EDConfig.api('/book/suggest'), { word: data.fragment, language_id: this.props.languageId });
+        }
+    }, {
         key: 'onSubmit',
         value: function onSubmit() {}
     }, {
         key: 'render',
         value: function render() {
+            var _this3 = this;
+
             return _react2.default.createElement(
                 'form',
                 { onSubmit: this.onSubmit.bind(this) },
@@ -432,7 +443,7 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                     'p',
                     null,
                     this.state.fragments.map(function (f, i) {
-                        return _react2.default.createElement(EDFragment, { key: i, fragment: f });
+                        return _react2.default.createElement(EDFragment, { key: i, fragment: f, onClick: _this3.onFragmentClick.bind(_this3) });
                     })
                 ),
                 _react2.default.createElement(
@@ -468,34 +479,65 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
     return EDFragmentForm;
 }(_form.EDStatefulFormComponent);
 
-var EDFragment = function EDFragment(props) {
-    if (props.fragment.interpunctuation) {
-        if (/^[\n]+$/.test(props.fragment.fragment)) {
-            return _react2.default.createElement('br', null);
-        }
+var EDFragment = function (_React$Component) {
+    _inherits(EDFragment, _React$Component);
 
-        return _react2.default.createElement(
-            'span',
-            null,
-            props.fragment.fragment
-        );
+    function EDFragment() {
+        _classCallCheck(this, EDFragment);
+
+        return _possibleConstructorReturn(this, (EDFragment.__proto__ || Object.getPrototypeOf(EDFragment)).apply(this, arguments));
     }
 
-    return _react2.default.createElement(
-        'span',
-        null,
-        ' ',
-        _react2.default.createElement(
-            'a',
-            { href: '#' },
-            props.fragment.fragment
-        )
-    );
-};
+    _createClass(EDFragment, [{
+        key: 'onFragmentClick',
+        value: function onFragmentClick(ev) {
+            var _this5 = this;
+
+            ev.preventDefault();
+
+            if (this.props.onClick) {
+                window.setTimeout(function () {
+                    return _this5.props.onClick(_this5.props.fragment);
+                }, 0);
+            }
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var data = this.props.fragment;
+
+            if (data.interpunctuation) {
+                if (/^[\n]+$/.test(data.fragment)) {
+                    return _react2.default.createElement('br', null);
+                }
+
+                return _react2.default.createElement(
+                    'span',
+                    null,
+                    data.fragment
+                );
+            }
+
+            return _react2.default.createElement(
+                'span',
+                null,
+                ' ',
+                _react2.default.createElement(
+                    'a',
+                    { href: '#', onClick: this.onFragmentClick.bind(this) },
+                    data.fragment
+                )
+            );
+        }
+    }]);
+
+    return EDFragment;
+}(_react2.default.Component);
 
 var mapStateToProps = function mapStateToProps(state) {
     return {
         languages: state.languages,
+        languageId: state.language_id,
         fragments: state.fragments
     };
 };

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Repositories\TranslationRepository;
 use App\Adapters\BookAdapter;
+use App\Helpers\StringHelper;
 
 class BookApiController extends Controller 
 {
@@ -21,12 +22,32 @@ class BookApiController extends Controller
 
     public function find(Request $request)
     {
-        $word       = $request->input('word');
+        $this->validate($request, [
+            'word'        => 'required',
+            'reversed'    => 'boolean',
+            'language_id' => 'numeric'
+        ]);
+
+        $word       = StringHelper::normalize( $request->input('word') );
         $reversed   = $request->input('reversed') === true;
-        $languageId = intval($request->input('languageId'));
+        $languageId = intval($request->input('language_id'));
 
         $keywords = $this->_translationRepository->getKeywordsForLanguage($word, $reversed, $languageId);
         return $keywords;
+    }
+
+    public function suggest(Request $request) 
+    {
+        $this->validate($request, [
+            'word'        => 'required',
+            'language_id' => 'numeric'
+        ]);
+
+        $word = StringHelper::normalize( $request->input('word') );
+        $languageId = intval($request->input('language_id'));
+
+        $translations = $this->_translationRepository->suggest($word, $languageId); 
+        return $translations;
     }
 
     public function translate(Request $request)
@@ -35,7 +56,7 @@ class BookApiController extends Controller
             'word' => 'required|max:255'
         ]);
 
-        $word = $request->input('word');
+        $word = StringHelper::normalize( $request->input('word') );
         $translations = $this->_translationRepository->getWordTranslations($word);
         $model = $this->_adapter->adaptTranslations($translations, $word);
 

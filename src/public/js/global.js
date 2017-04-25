@@ -80,7 +80,11 @@ function fetchResults(word) {
 
     return function (dispatch) {
         dispatch(requestResults(word));
-        _axios2.default.post(window.EDConfig.api('/book/find'), { word: word, reversed: reversed, languageId: languageId }).then(function (resp) {
+        _axios2.default.post(window.EDConfig.api('/book/find'), {
+            word: word,
+            reversed: reversed,
+            language_id: languageId
+        }).then(function (resp) {
             var results = resp.data.map(function (r) {
                 return {
                     word: r.k,
