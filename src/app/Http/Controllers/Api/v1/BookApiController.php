@@ -39,14 +39,14 @@ class BookApiController extends Controller
     public function suggest(Request $request) 
     {
         $this->validate($request, [
-            'word'        => 'required',
+            'words'       => 'required|array',
             'language_id' => 'numeric'
         ]);
 
-        $word = StringHelper::normalize( $request->input('word') );
+        $words = $request->input('words');
         $languageId = intval($request->input('language_id'));
-
-        $translations = $this->_translationRepository->suggest($word, $languageId); 
+        
+        $translations = $this->_translationRepository->suggest($words, $languageId); 
         return $translations;
     }
 

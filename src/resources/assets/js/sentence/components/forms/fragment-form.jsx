@@ -88,6 +88,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
             }
         }
 
+        const words = [];
         for (let i = 0; i < newFragments.length; i += 1) {
             const data = newFragments[i];
             const lowerFragment = data.fragment.toLocaleLowerCase();
@@ -97,15 +98,26 @@ class EDFragmentForm extends EDStatefulFormComponent {
                 // overwrite the fragment with the existing fragment, as it might contain more data
                 newFragments[i] = existingFragment; 
             }
+
+            if (!newFragments[i].interpunctuation) {
+                words.push(newFragments[i].fragment);
+            }
         }
 
         this.setState({
             fragments: newFragments
         });
+
+        if (words.length > 0) {
+            axios.post(window.EDConfig.api('/book/suggest'), { 
+                words, 
+                language_id: this.props.languageId 
+            });
+        }
     }
 
     onFragmentClick(data) {
-        axios.post(window.EDConfig.api('/book/suggest'), { word: data.fragment, language_id: this.props.languageId });
+        
     }
 
     onSubmit() {
@@ -137,7 +149,9 @@ class EDFragmentForm extends EDStatefulFormComponent {
             <nav>
                 <ul className="pager">
                     <li className="previous"><a href="#" onClick={this.onPreviousClick.bind(this)}>&larr; Previous step</a></li>
-                    <li className="next"><a href="#" onClick={this.onSubmit.bind(this)}>Next step &rarr;</a></li>
+                    <li className="next">
+                        <a href="#" onClick={this.onSubmit.bind(this)}>Next step &rarr;</a>
+                    </li>
                 </ul>
             </nav>
         </form>;

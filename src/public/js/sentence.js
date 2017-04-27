@@ -1,51 +1,6 @@
-webpackJsonp([2,5],{
+webpackJsonp([3],{
 
-/***/ 109:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-var REQUEST_FRAGMENT = exports.REQUEST_FRAGMENT = 'EDSR_REQUEST_FRAGMENT';
-var RECEIVE_FRAGMENT = exports.RECEIVE_FRAGMENT = 'EDSR_RECEIVE_FRAGMENT';
-
-var EDSentenceReducer = function EDSentenceReducer() {
-    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-        fragments: JSON.parse(document.getElementById('ed-preload-fragments').textContent),
-        fragmentId: undefined,
-        bookData: undefined,
-        loading: false
-    };
-    var action = arguments[1];
-
-    switch (action.type) {
-
-        case REQUEST_FRAGMENT:
-            return Object.assign({}, state, {
-                fragmentId: action.fragmentId,
-                loading: true
-            });
-
-        case RECEIVE_FRAGMENT:
-            return Object.assign({}, state, {
-                translationId: action.translationId,
-                bookData: action.bookData,
-                loading: false
-            });
-
-        default:
-            return state;
-    }
-};
-
-exports.default = EDSentenceReducer;
-
-/***/ }),
-
-/***/ 175:
+/***/ 152:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -55,23 +10,23 @@ var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(35);
+var _reactDom = __webpack_require__(31);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _reactRedux = __webpack_require__(19);
+var _reactRedux = __webpack_require__(18);
 
-var _redux = __webpack_require__(36);
+var _redux = __webpack_require__(32);
 
-var _reduxThunk = __webpack_require__(48);
+var _reduxThunk = __webpack_require__(40);
 
 var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-var _reducers = __webpack_require__(109);
+var _reducers = __webpack_require__(93);
 
 var _reducers2 = _interopRequireDefault(_reducers);
 
-var _fragmentExplorer = __webpack_require__(203);
+var _fragmentExplorer = __webpack_require__(179);
 
 var _fragmentExplorer2 = _interopRequireDefault(_fragmentExplorer);
 
@@ -90,7 +45,7 @@ window.addEventListener('load', function () {
 
 /***/ }),
 
-/***/ 200:
+/***/ 176:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -101,11 +56,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.selectFragment = selectFragment;
 
-var _axios = __webpack_require__(30);
+var _axios = __webpack_require__(21);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _reducers = __webpack_require__(109);
+var _reducers = __webpack_require__(93);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -134,7 +89,7 @@ function selectFragment(fragmentId, translationId) {
 
 /***/ }),
 
-/***/ 203:
+/***/ 179:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -150,27 +105,27 @@ var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _classnames = __webpack_require__(9);
+var _classnames = __webpack_require__(10);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _reactRedux = __webpack_require__(19);
+var _reactRedux = __webpack_require__(18);
 
-var _actions = __webpack_require__(200);
+var _actions = __webpack_require__(176);
 
-var _fragment = __webpack_require__(204);
+var _fragment = __webpack_require__(180);
 
 var _fragment2 = _interopRequireDefault(_fragment);
 
-var _tengwarFragment = __webpack_require__(205);
+var _tengwarFragment = __webpack_require__(181);
 
 var _tengwarFragment2 = _interopRequireDefault(_tengwarFragment);
 
-var _bookGloss = __webpack_require__(60);
+var _bookGloss = __webpack_require__(52);
 
 var _bookGloss2 = _interopRequireDefault(_bookGloss);
 
-var _htmlToReact = __webpack_require__(31);
+var _htmlToReact = __webpack_require__(27);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -440,7 +395,7 @@ exports.default = (0, _reactRedux.connect)(mapStateToProps)(EDFragmentExplorer);
 
 /***/ }),
 
-/***/ 204:
+/***/ 180:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -456,7 +411,7 @@ var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _classnames = __webpack_require__(9);
+var _classnames = __webpack_require__(10);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -525,7 +480,7 @@ exports.default = EDFragment;
 
 /***/ }),
 
-/***/ 205:
+/***/ 181:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -541,7 +496,7 @@ var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _classnames = __webpack_require__(9);
+var _classnames = __webpack_require__(10);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -582,15 +537,15 @@ exports.default = EDTengwarFragment;
 
 /***/ }),
 
-/***/ 430:
+/***/ 383:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(175);
+module.exports = __webpack_require__(152);
 
 
 /***/ }),
 
-/***/ 48:
+/***/ 40:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -620,7 +575,7 @@ exports['default'] = thunk;
 
 /***/ }),
 
-/***/ 60:
+/***/ 52:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -636,11 +591,11 @@ var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _classnames = __webpack_require__(9);
+var _classnames = __webpack_require__(10);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _htmlToReact = __webpack_require__(31);
+var _htmlToReact = __webpack_require__(27);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -833,6 +788,51 @@ var EDBookGloss = function (_React$Component) {
 
 exports.default = EDBookGloss;
 
+/***/ }),
+
+/***/ 93:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var REQUEST_FRAGMENT = exports.REQUEST_FRAGMENT = 'EDSR_REQUEST_FRAGMENT';
+var RECEIVE_FRAGMENT = exports.RECEIVE_FRAGMENT = 'EDSR_RECEIVE_FRAGMENT';
+
+var EDSentenceReducer = function EDSentenceReducer() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+        fragments: JSON.parse(document.getElementById('ed-preload-fragments').textContent),
+        fragmentId: undefined,
+        bookData: undefined,
+        loading: false
+    };
+    var action = arguments[1];
+
+    switch (action.type) {
+
+        case REQUEST_FRAGMENT:
+            return Object.assign({}, state, {
+                fragmentId: action.fragmentId,
+                loading: true
+            });
+
+        case RECEIVE_FRAGMENT:
+            return Object.assign({}, state, {
+                translationId: action.translationId,
+                bookData: action.bookData,
+                loading: false
+            });
+
+        default:
+            return state;
+    }
+};
+
+exports.default = EDSentenceReducer;
+
 /***/ })
 
-},[430]);
+},[383]);

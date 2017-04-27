@@ -36,11 +36,12 @@ class EDSearchBar extends React.Component {
     }
 
     wordChange(ev) {
+        const word = ev.target.value;
         this.setState({
-            word: ev.target.value
+            word
         });
 
-        this.search();
+        this.search(word);
     }
 
     reverseChange(ev) {
@@ -59,8 +60,12 @@ class EDSearchBar extends React.Component {
         this.search();
     }
 
-    search() {
-        if (/^\s*$/.test(this.state.word)) {
+    search(word) {
+        if (word === undefined) {
+            word = this.state.word;
+        }
+
+        if (/^\s*$/.test(word)) {
             return; // empty search result
         }
 
@@ -69,7 +74,7 @@ class EDSearchBar extends React.Component {
         }
 
         this.throttle = window.setTimeout(() => {
-            this.props.dispatch(fetchResults(this.state.word, this.state.isReversed, this.state.languageId));
+            this.props.dispatch(fetchResults(word, this.state.isReversed, this.state.languageId));
             this.throttle = 0;
         }, 500);
     }

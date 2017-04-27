@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use Illuminate\Support\Facades\DB;
 use App\Models\Keyword;
+use App\Helpers\StringHelper;
 
 class TranslationRepository
 {
@@ -50,15 +51,60 @@ class TranslationRepository
             ->first();
     }
 
-    public function suggest(string $word, int $languageId) 
+    public function suggest(array $words, int $languageId) 
     {
-        return self::createTranslationQuery()
+        // Transform all words to lower case and remove doublettes.
+        $words = array_unique(array_map(function ($s) {
+            return mb_strtolower($s, 'utf-8');
+        }, $words));
+
+        // Create an array containing words in their ASCII form. These
+        // will be used to query the database with.
+        $normalizedWords = array_unique(array_map(function ($s) {
+            return StringHelper::normalize($s);
+        }, $words));
+
+        // Initialize the grouped suggestions hash array with an empty array
+        // per word. An empty array will tell the caller that no suggestions
+        // were found.
+        $groupedSuggestions = [];
+        foreach ($words as $word) {
+            $groupedSuggestions[$word] = [];
+        }
+
+        // Retrieve suggestions, and only look among attested and verified
+        // sources.
+        $suggestions = self::createTranslationQuery()
             ->where([
-                ['w.normalized_word', '=', $word],
-                ['t.language_id', '=', $languageId]
+                ['t.language_id', '=', $languageId],
+                ['t.is_uncertain', '=', 0],
+                ['tg.is_canon', '=', 1]
             ])
+            ->whereIn('w.normalized_word', $normalizedWords)
             ->get()
             ->toArray();
+
+        if (count($suggestions) > 0) {
+            foreach ($words as $word) {
+                // Try to find direct matches first, i.e. á => á.
+                $matchingSuggestions = array_filter($suggestions, function($s) use($word) {
+                    return $s->word === $word;
+                });
+
+                if (count($matchingSuggestions) < 1) {
+                    // If no direct matches were found, normalize the word and try again, i.e. a => a
+                    $normalizedWord = StringHelper::normalize($word);
+
+                    $matchingSuggestions = array_filter($suggestions, function ($s) use ($normalizedWord) {
+                        return $s->normalized_word === $normalizedWord;
+                    });
+                }
+
+                $groupedSuggestions[$word] = $matchingSuggestions;
+            }
+        }
+
+        return $groupedSuggestions;
     }
 
     protected static function createTranslationQuery($latest = true) 

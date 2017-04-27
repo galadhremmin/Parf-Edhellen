@@ -13,15 +13,22 @@
     public static function normalize(string $str) {
       $currentLocale = setlocale(LC_ALL, 0);
       
-      // This is necessary for the iconv-normalization to function properly
-      setlocale(LC_ALL, 'de_DE.UTF8');
+      // This is necessary for the iconv-transliteration to function properly
+      // Note: this ought to be unnecessary because a unicode locale should be
+      // specified as application default.
+      // setlocale(LC_ALL, 'sv_SE.UTF-8');
       
+      // Transcribe á > ´a, ê > ^e etc.
       $normalizedStr = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $str);
-      
+      // Switch case to lower case and trim whitespace 
+      $normalizedStr = trim(mb_strtolower($normalizedStr, 'utf-8'));
+      // Remove everything not alphanumeric.
+      $normalizedStr = preg_replace('/[^-\\w\\s]+/', '', $normalizedStr); 
+
       // restore the locale
-      setlocale(LC_ALL, $currentLocale);
+      // setlocale(LC_ALL, $currentLocale);
       
-      return trim(mb_convert_case($normalizedStr, MB_CASE_LOWER, 'utf-8'));
+      return $normalizedStr;
     }
 
     public static function normalizeForUrl(string $str) {

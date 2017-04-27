@@ -1,6 +1,6 @@
-webpackJsonp([3,5],{
+webpackJsonp([2],{
 
-/***/ 174:
+/***/ 151:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12,31 +12,31 @@ var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(35);
+var _reactDom = __webpack_require__(31);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _reactRouterDom = __webpack_require__(101);
+var _reactRouterDom = __webpack_require__(83);
 
-var _reactRedux = __webpack_require__(19);
+var _reactRedux = __webpack_require__(18);
 
-var _redux = __webpack_require__(36);
+var _redux = __webpack_require__(32);
 
-var _reduxThunk = __webpack_require__(48);
+var _reduxThunk = __webpack_require__(40);
 
 var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-var _admin = __webpack_require__(206);
+var _admin = __webpack_require__(182);
 
 var _admin2 = _interopRequireDefault(_admin);
 
-var _sessionStorageState = __webpack_require__(440);
+var _sessionStorageState = __webpack_require__(171);
 
-var _sentenceForm = __webpack_require__(202);
+var _sentenceForm = __webpack_require__(178);
 
 var _sentenceForm2 = _interopRequireDefault(_sentenceForm);
 
-var _fragmentForm = __webpack_require__(201);
+var _fragmentForm = __webpack_require__(177);
 
 var _fragmentForm2 = _interopRequireDefault(_fragmentForm);
 
@@ -87,7 +87,7 @@ window.addEventListener('load', function () {
 
 /***/ }),
 
-/***/ 194:
+/***/ 171:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -96,140 +96,31 @@ window.addEventListener('load', function () {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+var loadState = exports.loadState = function loadState(prefix) {
+    try {
+        var serializedState = sessionStorage.getItem(prefix + '-state');
+        if (!serializedState) {
+            return undefined;
+        }
 
-var _react = __webpack_require__(3);
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var EDErrorList = function EDErrorList(props) {
-    var errors = props.errors;
-
-    if (!Array.isArray(errors)) {
-        return _react2.default.createElement("div", { className: "zero-errors" });
+        return JSON.parse(serializedState);
+    } catch (err) {
+        return undefined;
     }
-
-    return _react2.default.createElement(
-        "div",
-        { className: "alert alert-danger" },
-        _react2.default.createElement(
-            "ul",
-            null,
-            errors.map(function (error, i) {
-                return _react2.default.createElement(
-                    "li",
-                    { key: i },
-                    error
-                );
-            })
-        )
-    );
 };
 
-exports.default = EDErrorList;
-
-/***/ }),
-
-/***/ 195:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.EDStatefulFormComponent = undefined;
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(3);
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-/**
- * Provides functionality to sync form components with component state.
- */
-var EDStatefulFormComponent = exports.EDStatefulFormComponent = function (_React$Component) {
-    _inherits(EDStatefulFormComponent, _React$Component);
-
-    function EDStatefulFormComponent() {
-        _classCallCheck(this, EDStatefulFormComponent);
-
-        return _possibleConstructorReturn(this, (EDStatefulFormComponent.__proto__ || Object.getPrototypeOf(EDStatefulFormComponent)).apply(this, arguments));
+var saveState = exports.saveState = function saveState(prefix, state) {
+    try {
+        var serializedState = JSON.stringify(state);
+        sessionStorage.setItem(prefix + '-state', serializedState);
+    } catch (err) {
+        // avoid saving state
     }
-
-    _createClass(EDStatefulFormComponent, [{
-        key: 'onChange',
-
-
-        /**
-         * Handles form components' onChange-event.
-         * @param {Event} ev 
-         * @param {number|date|undefined} dataType 
-         */
-        value: function onChange(ev, dataType) {
-            var target = ev.target;
-            var name = target.name;
-            var type = target.nodeName.toUpperCase();
-
-            var value = undefined;
-
-            if (type === 'INPUT') {
-                switch (target.type.toUpperCase()) {
-                    case 'CHECKBOX':
-                    case 'RADIO':
-                        value = target.checked ? value || true : undefined;
-                        break;
-                    case 'NUMBER':
-                    case 'RANGE':
-                        value = parseInt(target.value, 10);
-                        break;
-                    default:
-                        value = target.value;
-                }
-            } else if (type === 'SELECT') {
-                value = target.options[target.selectedIndex].value;
-            } else {
-                value = target.value;
-            }
-
-            if (value === undefined) {
-                return;
-            }
-
-            if (dataType !== undefined) {
-                switch (dataType) {
-                    case 'number':
-                        value = parseInt(value, 10);
-                        break;
-                    case 'date':
-                        value = Date.parse(value);
-                        break;
-                }
-            }
-
-            this.setState(_defineProperty({}, name, value));
-        }
-    }]);
-
-    return EDStatefulFormComponent;
-}(_react2.default.Component);
+};
 
 /***/ }),
 
-/***/ 201:
+/***/ 177:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -245,27 +136,27 @@ var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _classnames = __webpack_require__(9);
+var _classnames = __webpack_require__(10);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _reactRedux = __webpack_require__(19);
+var _reactRedux = __webpack_require__(18);
 
-var _reactRouter = __webpack_require__(8);
+var _reactRouter = __webpack_require__(9);
 
-var _axios = __webpack_require__(30);
+var _axios = __webpack_require__(21);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _smoothscrollPolyfill = __webpack_require__(57);
+var _smoothscrollPolyfill = __webpack_require__(41);
 
-var _form = __webpack_require__(195);
+var _form = __webpack_require__(90);
 
-var _markdownEditor = __webpack_require__(59);
+var _markdownEditor = __webpack_require__(42);
 
 var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 
-var _errorList = __webpack_require__(194);
+var _errorList = __webpack_require__(89);
 
 var _errorList2 = _interopRequireDefault(_errorList);
 
@@ -367,6 +258,8 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                 }
             }
 
+            var words = [];
+
             var _loop = function _loop(_i) {
                 var data = newFragments[_i];
                 var lowerFragment = data.fragment.toLocaleLowerCase();
@@ -378,6 +271,10 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                     // overwrite the fragment with the existing fragment, as it might contain more data
                     newFragments[_i] = existingFragment;
                 }
+
+                if (!newFragments[_i].interpunctuation) {
+                    words.push(newFragments[_i].fragment);
+                }
             };
 
             for (var _i = 0; _i < newFragments.length; _i += 1) {
@@ -387,12 +284,17 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
             this.setState({
                 fragments: newFragments
             });
+
+            if (words.length > 0) {
+                _axios2.default.post(window.EDConfig.api('/book/suggest'), {
+                    words: words,
+                    language_id: this.props.languageId
+                });
+            }
         }
     }, {
         key: 'onFragmentClick',
-        value: function onFragmentClick(data) {
-            _axios2.default.post(window.EDConfig.api('/book/suggest'), { word: data.fragment, language_id: this.props.languageId });
-        }
+        value: function onFragmentClick(data) {}
     }, {
         key: 'onSubmit',
         value: function onSubmit() {}
@@ -546,7 +448,7 @@ exports.default = (0, _reactRouter.withRouter)((0, _reactRedux.connect)(mapState
 
 /***/ }),
 
-/***/ 202:
+/***/ 178:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -564,27 +466,27 @@ var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _classnames = __webpack_require__(9);
+var _classnames = __webpack_require__(10);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _reactRedux = __webpack_require__(19);
+var _reactRedux = __webpack_require__(18);
 
-var _reactRouter = __webpack_require__(8);
+var _reactRouter = __webpack_require__(9);
 
-var _axios = __webpack_require__(30);
+var _axios = __webpack_require__(21);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _smoothscrollPolyfill = __webpack_require__(57);
+var _smoothscrollPolyfill = __webpack_require__(41);
 
-var _form = __webpack_require__(195);
+var _form = __webpack_require__(90);
 
-var _markdownEditor = __webpack_require__(59);
+var _markdownEditor = __webpack_require__(42);
 
 var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 
-var _errorList = __webpack_require__(194);
+var _errorList = __webpack_require__(89);
 
 var _errorList2 = _interopRequireDefault(_errorList);
 
@@ -834,7 +736,7 @@ exports.default = (0, _reactRouter.withRouter)((0, _reactRedux.connect)(mapState
 
 /***/ }),
 
-/***/ 206:
+/***/ 182:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -875,48 +777,15 @@ exports.default = EDSentenceAdminReducer;
 
 /***/ }),
 
-/***/ 429:
+/***/ 382:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(174);
+module.exports = __webpack_require__(151);
 
 
 /***/ }),
 
-/***/ 440:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-var loadState = exports.loadState = function loadState(prefix) {
-    try {
-        var serializedState = sessionStorage.getItem(prefix + '-state');
-        if (!serializedState) {
-            return undefined;
-        }
-
-        return JSON.parse(serializedState);
-    } catch (err) {
-        return undefined;
-    }
-};
-
-var saveState = exports.saveState = function saveState(prefix, state) {
-    try {
-        var serializedState = JSON.stringify(state);
-        sessionStorage.setItem(prefix + '-state', serializedState);
-    } catch (err) {
-        // avoid saving state
-    }
-};
-
-/***/ }),
-
-/***/ 48:
+/***/ 40:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -946,7 +815,7 @@ exports['default'] = thunk;
 
 /***/ }),
 
-/***/ 59:
+/***/ 42:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -962,15 +831,15 @@ var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _axios = __webpack_require__(30);
+var _axios = __webpack_require__(21);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _classnames = __webpack_require__(9);
+var _classnames = __webpack_require__(10);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _htmlToReact = __webpack_require__(31);
+var _htmlToReact = __webpack_require__(27);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1149,6 +1018,148 @@ EDMarkdownEditor.defaultProps = {
 
 exports.default = EDMarkdownEditor;
 
+/***/ }),
+
+/***/ 89:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = __webpack_require__(3);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var EDErrorList = function EDErrorList(props) {
+    var errors = props.errors;
+
+    if (!Array.isArray(errors)) {
+        return _react2.default.createElement("div", { className: "zero-errors" });
+    }
+
+    return _react2.default.createElement(
+        "div",
+        { className: "alert alert-danger" },
+        _react2.default.createElement(
+            "ul",
+            null,
+            errors.map(function (error, i) {
+                return _react2.default.createElement(
+                    "li",
+                    { key: i },
+                    error
+                );
+            })
+        )
+    );
+};
+
+exports.default = EDErrorList;
+
+/***/ }),
+
+/***/ 90:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.EDStatefulFormComponent = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(3);
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * Provides functionality to sync form components with component state.
+ */
+var EDStatefulFormComponent = exports.EDStatefulFormComponent = function (_React$Component) {
+    _inherits(EDStatefulFormComponent, _React$Component);
+
+    function EDStatefulFormComponent() {
+        _classCallCheck(this, EDStatefulFormComponent);
+
+        return _possibleConstructorReturn(this, (EDStatefulFormComponent.__proto__ || Object.getPrototypeOf(EDStatefulFormComponent)).apply(this, arguments));
+    }
+
+    _createClass(EDStatefulFormComponent, [{
+        key: 'onChange',
+
+
+        /**
+         * Handles form components' onChange-event.
+         * @param {Event} ev 
+         * @param {number|date|undefined} dataType 
+         */
+        value: function onChange(ev, dataType) {
+            var target = ev.target;
+            var name = target.name;
+            var type = target.nodeName.toUpperCase();
+
+            var value = undefined;
+
+            if (type === 'INPUT') {
+                switch (target.type.toUpperCase()) {
+                    case 'CHECKBOX':
+                    case 'RADIO':
+                        value = target.checked ? value || true : undefined;
+                        break;
+                    case 'NUMBER':
+                    case 'RANGE':
+                        value = parseInt(target.value, 10);
+                        break;
+                    default:
+                        value = target.value;
+                }
+            } else if (type === 'SELECT') {
+                value = target.options[target.selectedIndex].value;
+            } else {
+                value = target.value;
+            }
+
+            if (value === undefined) {
+                return;
+            }
+
+            if (dataType !== undefined) {
+                switch (dataType) {
+                    case 'number':
+                        value = parseInt(value, 10);
+                        break;
+                    case 'date':
+                        value = Date.parse(value);
+                        break;
+                }
+            }
+
+            this.setState(_defineProperty({}, name, value));
+        }
+    }]);
+
+    return EDStatefulFormComponent;
+}(_react2.default.Component);
+
 /***/ })
 
-},[429]);
+},[382]);
