@@ -5,6 +5,7 @@ import {
     REQUEST_SUGGESTIONS,
     RECEIVE_SUGGESTIONS,
     SET_FRAGMENTS,
+    SET_SENTENCE_DATA,
     SET_FRAGMENT_DATA
 } from '../reducers/admin';
 
@@ -26,13 +27,20 @@ export const requestSuggestions = (words, language_id) => {
     }
 };
 
-export const setFragments = (fragments) => {
+export const setFragments = fragments => {
     return {
         type: SET_FRAGMENTS,
         fragments
     };
 };
 
-export const setFragmentData = (fragment) => {
+export const setSentenceData = data => {
+    return {
+        type: SET_SENTENCE_DATA,
+        data
+    };
+}
+
+export const setFragmentData = fragment => {
 
 };

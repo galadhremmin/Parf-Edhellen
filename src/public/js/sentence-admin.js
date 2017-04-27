@@ -9,10 +9,75 @@ webpackJsonp([3,5],{
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.setFragmentData = exports.setSentenceData = exports.setFragments = exports.requestSuggestions = undefined;
+
+var _axios = __webpack_require__(31);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _edConfig = __webpack_require__(15);
+
+var _edConfig2 = _interopRequireDefault(_edConfig);
+
+var _edPromise = __webpack_require__(62);
+
+var _admin = __webpack_require__(115);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var requestSuggestions = exports.requestSuggestions = function requestSuggestions(words, language_id) {
+    return function (dispatch) {
+        dispatch({
+            type: _admin.REQUEST_SUGGESTIONS
+        });
+
+        (0, _edPromise.deferredResolve)(_axios2.default.post(_edConfig2.default.api('/book/suggest'), {
+            words: words,
+            language_id: language_id
+        }), 800).then(function (resp) {
+            dispatch({
+                type: _admin.RECEIVE_SUGGESTIONS,
+                suggestions: resp.data
+            });
+        });
+    };
+};
+
+var setFragments = exports.setFragments = function setFragments(fragments) {
+    return {
+        type: _admin.SET_FRAGMENTS,
+        fragments: fragments
+    };
+};
+
+var setSentenceData = exports.setSentenceData = function setSentenceData(data) {
+    return {
+        type: _admin.SET_SENTENCE_DATA,
+        data: data
+    };
+};
+
+var setFragmentData = exports.setFragmentData = function setFragmentData(fragment) {};
+
+/***/ }),
+
+/***/ 115:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 var REQUEST_SUGGESTIONS = exports.REQUEST_SUGGESTIONS = 'ED_REQUEST_SUGGESTIONS';
 var RECEIVE_SUGGESTIONS = exports.RECEIVE_SUGGESTIONS = 'ED_RECEIVE_SUGGESTIONS';
 var SET_FRAGMENTS = exports.SET_FRAGMENTS = 'ED_SET_FRAGMENTS';
 var SET_FRAGMENT_DATA = exports.SET_FRAGMENT_DATA = 'ED_SET_FRAGMENT_DATA';
+var SET_SENTENCE_DATA = exports.SET_SENTENCE_DATA = 'ED_SET_SENTENCE_DATA';
 
 var EDSentenceAdminReducer = function EDSentenceAdminReducer() {
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
@@ -31,22 +96,26 @@ var EDSentenceAdminReducer = function EDSentenceAdminReducer() {
 
     switch (action.type) {
         case REQUEST_SUGGESTIONS:
-            return Object.assign({}, state, {
+            return _extends({}, state, {
                 loading: true
             });
             break;
 
         case RECEIVE_SUGGESTIONS:
-            return Object.assign({}, state, {
+            return _extends({}, state, {
                 suggestions: action.suggestions,
                 loading: false
             });
             break;
 
         case SET_FRAGMENTS:
-            return Object.assign({}, state, {
+            return _extends({}, state, {
                 fragments: action.fragments
             });
+            break;
+
+        case SET_SENTENCE_DATA:
+            return _extends({}, state, action.data);
             break;
 
         case SET_FRAGMENT_DATA:
@@ -61,7 +130,7 @@ exports.default = EDSentenceAdminReducer;
 
 /***/ }),
 
-/***/ 179:
+/***/ 180:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -91,17 +160,17 @@ var _edConfig = __webpack_require__(15);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _admin = __webpack_require__(114);
+var _admin = __webpack_require__(115);
 
 var _admin2 = _interopRequireDefault(_admin);
 
 var _edSessionStorageState = __webpack_require__(105);
 
-var _sentenceForm = __webpack_require__(206);
+var _sentenceForm = __webpack_require__(207);
 
 var _sentenceForm2 = _interopRequireDefault(_sentenceForm);
 
-var _fragmentForm = __webpack_require__(205);
+var _fragmentForm = __webpack_require__(206);
 
 var _fragmentForm2 = _interopRequireDefault(_fragmentForm);
 
@@ -152,61 +221,7 @@ window.addEventListener('load', function () {
 
 /***/ }),
 
-/***/ 203:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.setFragmentData = exports.setFragments = exports.requestSuggestions = undefined;
-
-var _axios = __webpack_require__(31);
-
-var _axios2 = _interopRequireDefault(_axios);
-
-var _edConfig = __webpack_require__(15);
-
-var _edConfig2 = _interopRequireDefault(_edConfig);
-
-var _edPromise = __webpack_require__(62);
-
-var _admin = __webpack_require__(114);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var requestSuggestions = exports.requestSuggestions = function requestSuggestions(words, language_id) {
-    return function (dispatch) {
-        dispatch({
-            type: _admin.REQUEST_SUGGESTIONS
-        });
-
-        (0, _edPromise.deferredResolve)(_axios2.default.post(_edConfig2.default.api('/book/suggest'), {
-            words: words,
-            language_id: language_id
-        }), 800).then(function (resp) {
-            dispatch({
-                type: _admin.RECEIVE_SUGGESTIONS,
-                suggestions: resp.data
-            });
-        });
-    };
-};
-
-var setFragments = exports.setFragments = function setFragments(fragments) {
-    return {
-        type: _admin.SET_FRAGMENTS,
-        fragments: fragments
-    };
-};
-
-var setFragmentData = exports.setFragmentData = function setFragmentData(fragment) {};
-
-/***/ }),
-
-/***/ 205:
+/***/ 206:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -219,6 +234,8 @@ Object.defineProperty(exports, "__esModule", {
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
 var _react = __webpack_require__(3);
 
@@ -234,7 +251,7 @@ var _reactRouter = __webpack_require__(8);
 
 var _smoothscrollPolyfill = __webpack_require__(51);
 
-var _admin = __webpack_require__(203);
+var _admin = __webpack_require__(114);
 
 var _edForm = __webpack_require__(61);
 
@@ -273,7 +290,8 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
         }
 
         _this.state = {
-            phrase: phrase
+            phrase: phrase,
+            editFragmentIndex: -1
         };
         return _this;
     }
@@ -366,15 +384,26 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                 _loop(_i);
             }
 
+            // We can't be editing a fragment.
+            this.setState({
+                editFragmentIndex: -1
+            });
+
+            // Make the fragments permanent (in the client) by dispatching the fragments to the Redux component.
             this.props.dispatch((0, _admin.setFragments)(newFragments));
 
             if (words.length > 0) {
+                // Request suggestions from the server.
                 this.props.dispatch((0, _admin.requestSuggestions)(words, this.props.languageId));
             }
         }
     }, {
         key: 'onFragmentClick',
-        value: function onFragmentClick(data) {}
+        value: function onFragmentClick(data) {
+            this.setState({
+                editingFragment: data
+            });
+        }
     }, {
         key: 'onSubmit',
         value: function onSubmit() {}
@@ -382,6 +411,9 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
         key: 'render',
         value: function render() {
             var _this3 = this;
+
+            var editingFragment = this.state.editingFragment;
+            var fragmentIndex = editingFragment ? this.props.fragments.indexOf(editingFragment) : -1;
 
             return _react2.default.createElement(
                 'form',
@@ -443,9 +475,27 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                     'p',
                     null,
                     this.props.fragments.map(function (f, i) {
-                        return _react2.default.createElement(EDFragment, { key: i, fragment: f, onClick: _this3.onFragmentClick.bind(_this3) });
+                        return _react2.default.createElement(EDFragment, { key: i,
+                            fragment: f,
+                            selected: i === fragmentIndex,
+                            onClick: _this3.onFragmentClick.bind(_this3) });
                     })
                 ),
+                editingFragment ? _react2.default.createElement(
+                    'div',
+                    { className: 'well' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'form-group' },
+                        _react2.default.createElement(
+                            'label',
+                            { htmlFor: 'ed-sentence-fragment-comments', className: 'control-label' },
+                            'Comments'
+                        ),
+                        _react2.default.createElement(_markdownEditor2.default, { componentId: 'ed-sentence-fragment-comments', componentName: 'editingFragment.comments',
+                            value: editingFragment.comments, onChange: _get(EDFragmentForm.prototype.__proto__ || Object.getPrototypeOf(EDFragmentForm.prototype), 'onChange', this).bind(this), rows: 4 })
+                    )
+                ) : '',
                 _react2.default.createElement(
                     'nav',
                     null,
@@ -505,6 +555,7 @@ var EDFragment = function (_React$Component) {
         key: 'render',
         value: function render() {
             var data = this.props.fragment;
+            var selected = this.props.selected;
 
             if (data.interpunctuation) {
                 if (/^[\n]+$/.test(data.fragment)) {
@@ -525,7 +576,17 @@ var EDFragment = function (_React$Component) {
                 _react2.default.createElement(
                     'a',
                     { href: '#', onClick: this.onFragmentClick.bind(this),
-                        className: (0, _classnames2.default)('label', 'ed-sentence-fragment', { 'label-success': !!data.translation_id, 'label-danger': !data.translation_id }) },
+                        className: (0, _classnames2.default)('label', 'ed-sentence-fragment', {
+                            'label-success': !!data.translation_id && !selected,
+                            'label-danger': !data.translation_id && !selected,
+                            'label-primary': selected
+                        }) },
+                    selected ? _react2.default.createElement(
+                        'span',
+                        null,
+                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-pencil' }),
+                        ' '
+                    ) : '',
                     data.fragment
                 )
             );
@@ -548,7 +609,7 @@ exports.default = (0, _reactRouter.withRouter)((0, _reactRedux.connect)(mapState
 
 /***/ }),
 
-/***/ 206:
+/***/ 207:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -579,6 +640,8 @@ var _axios = __webpack_require__(31);
 var _axios2 = _interopRequireDefault(_axios);
 
 var _smoothscrollPolyfill = __webpack_require__(51);
+
+var _admin = __webpack_require__(114);
 
 var _edForm = __webpack_require__(61);
 
@@ -636,6 +699,8 @@ var EDSentenceForm = function (_EDStatefulFormCompon) {
     }, {
         key: 'onSubmit',
         value: function onSubmit(ev) {
+            var _this2 = this;
+
             ev.preventDefault();
 
             var state = this.state;
@@ -648,21 +713,28 @@ var EDSentenceForm = function (_EDStatefulFormCompon) {
                 long_description: state.long_description
             };
 
-            _axios2.default.post('/admin/sentence/validate', payload).then(this.onValidateSuccess.bind(this), this.onValidateFail.bind(this));
+            _axios2.default.post('/admin/sentence/validate', payload).then(function (request) {
+                return _this2.onValidateSuccess(request, payload);
+            }, function (request) {
+                return _this2.onValidateFail(request, payload);
+            });
         }
     }, {
         key: 'onValidateSuccess',
-        value: function onValidateSuccess() {
+        value: function onValidateSuccess(request, payload) {
             this.setState({
                 errors: undefined
             });
+
+            // Make the changes permanent (in the client) by dispatching them on to Redux.
+            this.props.dispatch((0, _admin.setSentenceData)(payload));
 
             // Move forward to the next step
             this.props.history.goForward();
         }
     }, {
         key: 'onValidateFail',
-        value: function onValidateFail(request) {
+        value: function onValidateFail(request, payload) {
             // Laravel returns 422 when the request fails validation. In the event that
             // we received an alternate status code, bail, as we do not know what that payload
             // contains.
@@ -715,7 +787,7 @@ var EDSentenceForm = function (_EDStatefulFormCompon) {
     }, {
         key: 'render',
         value: function render() {
-            var _this2 = this;
+            var _this3 = this;
 
             return _react2.default.createElement(
                 'form',
@@ -760,7 +832,7 @@ var EDSentenceForm = function (_EDStatefulFormCompon) {
                         'select',
                         { className: 'form-control', id: 'ed-sentence-language', name: 'language_id',
                             onChange: function onChange(ev) {
-                                return _get(EDSentenceForm.prototype.__proto__ || Object.getPrototypeOf(EDSentenceForm.prototype), 'onChange', _this2).call(_this2, ev, 'number');
+                                return _get(EDSentenceForm.prototype.__proto__ || Object.getPrototypeOf(EDSentenceForm.prototype), 'onChange', _this3).call(_this3, ev, 'number');
                             }, value: this.state.language_id },
                         _react2.default.createElement('option', { value: '0' }),
                         this.props.languages.filter(function (l) {
@@ -794,7 +866,7 @@ var EDSentenceForm = function (_EDStatefulFormCompon) {
                         'Description'
                     ),
                     _react2.default.createElement(_markdownEditor2.default, { componentId: 'ed-sentence-long-description', componentName: 'long_description',
-                        value: this.state.longDescription, onChange: _get(EDSentenceForm.prototype.__proto__ || Object.getPrototypeOf(EDSentenceForm.prototype), 'onChange', this).bind(this) })
+                        value: this.state.long_description, onChange: _get(EDSentenceForm.prototype.__proto__ || Object.getPrototypeOf(EDSentenceForm.prototype), 'onChange', this).bind(this) })
                 ),
                 _react2.default.createElement(
                     'nav',
@@ -836,10 +908,10 @@ exports.default = (0, _reactRouter.withRouter)((0, _reactRedux.connect)(mapState
 
 /***/ }),
 
-/***/ 432:
+/***/ 433:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(179);
+module.exports = __webpack_require__(180);
 
 
 /***/ }),
@@ -874,4 +946,4 @@ exports['default'] = thunk;
 
 /***/ })
 
-},[432]);
+},[433]);

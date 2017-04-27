@@ -12,9 +12,9 @@ export class EDStatefulFormComponent extends React.Component {
      */
     onChange(ev, dataType) {
         const target = ev.target;
-        const name = target.name;
         const type = target.nodeName.toUpperCase();
-        
+
+        let name = target.name;
         let value = undefined;
 
         if (type === 'INPUT') {
@@ -50,6 +50,22 @@ export class EDStatefulFormComponent extends React.Component {
                     break;
             }
         }
+
+        // look for dots in the name. If they exists, the name is actually a path:
+        if (name.indexOf('.') > -1) {
+            const parts = name.split('.');
+            name = parts[0];
+            
+            let affectedObject = this.state[name] || {};
+            for (let i = 1; i < parts.length - 1; i += 1) {
+                letffectedObject[parts[i]] = affectedObject[parts[i]] || {};
+
+                affectedObject = affectedObject[parts[i]];
+            }
+
+            affectedObject[parts[parts.length - 1]] = value;
+            value = affectedObject;
+        } 
 
         this.setState({
             [name]: value

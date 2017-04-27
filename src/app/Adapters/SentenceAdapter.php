@@ -14,7 +14,7 @@ use Illuminate\Support\Collection;
 
 class SentenceAdapter
 {
-    public function adaptFragments(Collection $fragments)
+    public function adaptFragments(Collection $fragments, $transformMarkdownToHtml = true)
     {
         $result = new Collection();
         $markdownParser = new MarkdownParser();
@@ -28,7 +28,7 @@ class SentenceAdapter
                 'translation_id'   => $fragment->translation_id,
                 'speech'           => $fragment->speech_id ? $fragment->speech->name : null,
                 'comments'         => !empty($fragment->comments)
-                    ? $markdownParser->parse($fragment->comments)
+                    ? ($transformMarkdownToHtml ? $markdownParser->parse($fragment->comments) : $fragment->comments)
                     : null,
                 'inflections'      => []
             ];

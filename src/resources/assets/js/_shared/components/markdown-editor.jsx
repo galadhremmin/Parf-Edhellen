@@ -13,9 +13,19 @@ class EDMarkdownEditor extends React.Component {
         super(props);
 
         this.state = {
-            value: this.props.value || '',
+            value: props.value || '',
             currentTab: MDMarkdownEditTab
         };
+    }
+
+    componentWillReceiveProps(props) {
+        // check if the value prop has changed, as it is the one property which
+        // will most likely be affected by Redux.
+        if (this.state.value !== props.value) {
+            this.setState({
+                value: props.value || ''
+            });
+        }
     }
 
     applyHtml(resp) {

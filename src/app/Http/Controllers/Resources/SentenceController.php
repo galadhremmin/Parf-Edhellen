@@ -35,7 +35,7 @@ class SentenceController extends Controller
     public function edit(Request $request, int $id) 
     {
         $sentence = Sentence::findOrFail($id);
-        $fragments = $this->_sentenceAdapter->adaptFragments($sentence->fragments);
+        $fragments = $this->_sentenceAdapter->adaptFragments($sentence->fragments, false);
 
         return view('sentence.edit', ['sentence' => $sentence, 'fragments' => $fragments]);
     }

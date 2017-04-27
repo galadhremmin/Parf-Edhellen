@@ -29,6 +29,7 @@
     "redux": "^3.6.0",
     "redux-thunk": "^2.2.0",
     "smoothscroll-polyfill": "github:iamdustan/smoothscroll",
-    "spinkit": "^1.2.5"
+    "spinkit": "^1.2.5",
+    "tengwar": "^1.2.3"
   }
 }

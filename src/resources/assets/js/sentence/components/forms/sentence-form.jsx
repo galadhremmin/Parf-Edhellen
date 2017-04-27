@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import axios from 'axios';
 import { polyfill as enableSmoothScrolling } from 'smoothscroll-polyfill';
+import { setSentenceData } from '../../actions/admin';
 import { EDStatefulFormComponent } from 'ed-form';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
 import EDErrorList from 'ed-components/error-list';
@@ -50,19 +51,23 @@ class EDSentenceForm extends EDStatefulFormComponent {
         };
 
         axios.post('/admin/sentence/validate', payload)
-            .then(this.onValidateSuccess.bind(this), this.onValidateFail.bind(this));
+            .then(request => this.onValidateSuccess(request, payload),
+                  request => this.onValidateFail(request, payload));
     }
 
-    onValidateSuccess() {
+    onValidateSuccess(request, payload) {
         this.setState({
             errors: undefined
         });
+
+        // Make the changes permanent (in the client) by dispatching them on to Redux.
+        this.props.dispatch(setSentenceData(payload));
 
         // Move forward to the next step
         this.props.history.goForward();
     }
 
-    onValidateFail(request) {
+    onValidateFail(request, payload) {
         // Laravel returns 422 when the request fails validation. In the event that
         // we received an alternate status code, bail, as we do not know what that payload
         // contains.
@@ -129,7 +134,7 @@ class EDSentenceForm extends EDStatefulFormComponent {
             <div className="form-group">
                 <label htmlFor="ed-sentence-long-description" className="control-label">Description</label>
                 <EDMarkdownEditor componentId="ed-sentence-long-description" componentName="long_description" 
-                    value={this.state.longDescription} onChange={super.onChange.bind(this)} />
+                    value={this.state.long_description} onChange={super.onChange.bind(this)} />
             </div>
             <nav>
                 <ul className="pager">

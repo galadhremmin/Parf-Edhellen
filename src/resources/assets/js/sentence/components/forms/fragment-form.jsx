@@ -23,7 +23,8 @@ class EDFragmentForm extends EDStatefulFormComponent {
         }
 
         this.state = {
-            phrase
+            phrase,
+            editFragmentIndex: -1
         };
     }
 
@@ -103,15 +104,24 @@ class EDFragmentForm extends EDStatefulFormComponent {
             }
         }
 
+        // We can't be editing a fragment.
+        this.setState({
+            editFragmentIndex: -1
+        });
+
+        // Make the fragments permanent (in the client) by dispatching the fragments to the Redux component.
         this.props.dispatch(setFragments(newFragments));
 
         if (words.length > 0) {
+            // Request suggestions from the server.
             this.props.dispatch(requestSuggestions(words, this.props.languageId));
         }
     }
 
     onFragmentClick(data) {
-        
+        this.setState({
+            editingFragment: data
+        });
     }
 
     onSubmit() {
@@ -119,6 +129,9 @@ class EDFragmentForm extends EDStatefulFormComponent {
     }
  
     render() {
+        const editingFragment = this.state.editingFragment;
+        const fragmentIndex = editingFragment ? this.props.fragments.indexOf(editingFragment) : -1;
+
         return <form onSubmit={this.onSubmit.bind(this)}>
             <p>
                 This is the second step of a total of three steps. Here you will write down your phrase
@@ -148,9 +161,21 @@ class EDFragmentForm extends EDStatefulFormComponent {
                 </div>
             : 
                 <p>
-                    {this.props.fragments.map((f, i) => <EDFragment key={i} fragment={f} onClick={this.onFragmentClick.bind(this)} />)}
+                    {this.props.fragments.map((f, i) => <EDFragment key={i} 
+                        fragment={f} 
+                        selected={i === fragmentIndex}
+                        onClick={this.onFragmentClick.bind(this)} />)}
                 </p>
             }
+            {editingFragment ? 
+                <div className="well">
+                    <div className="form-group">
+                        <label htmlFor="ed-sentence-fragment-comments" className="control-label">Comments</label>
+                        <EDMarkdownEditor componentId="ed-sentence-fragment-comments" componentName="editingFragment.comments" 
+                            value={editingFragment.comments} onChange={super.onChange.bind(this)} rows={4} />
+                    </div>
+                </div>
+            : ''}
             <nav>
                 <ul className="pager">
                     <li className="previous"><a href="#" onClick={this.onPreviousClick.bind(this)}>&larr; Previous step</a></li>
@@ -174,6 +199,7 @@ class EDFragment extends React.Component {
 
     render() {
         const data = this.props.fragment;
+        const selected = this.props.selected;
 
         if (data.interpunctuation) {
             if (/^[\n]+$/.test(data.fragment)) {
@@ -184,7 +210,12 @@ class EDFragment extends React.Component {
         }
 
         return <span>{' '}<a href="#" onClick={this.onFragmentClick.bind(this)}
-            className={classNames('label', 'ed-sentence-fragment', { 'label-success': !! data.translation_id, 'label-danger': ! data.translation_id })}>
+            className={classNames('label', 'ed-sentence-fragment', { 
+                'label-success': !! data.translation_id && !selected, 
+                'label-danger': ! data.translation_id && !selected,
+                'label-primary': selected
+            })}>
+                {selected ? <span><span className="glyphicon glyphicon-pencil"></span>&#32;</span> : ''}
                 {data.fragment}
             </a>
         </span>;
