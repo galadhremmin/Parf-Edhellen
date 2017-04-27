@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import EDMarkdownEditor from '../_shared/components/markdown-editor';
+import EDMarkdownEditor from 'ed-components/markdown-editor';
 
 window.addEventListener('load', function () {
     const textareas = document.querySelectorAll('textarea.ed-markdown-editor');

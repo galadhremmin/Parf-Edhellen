@@ -4,8 +4,9 @@ import { MemoryRouter as Router, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
+import EDConfig from 'ed-config';
 import EDSentenceAdminReducer from './reducers/admin';
-import { saveState, loadState } from '../_shared/session-storage-state';
+import { saveState, loadState } from 'ed-session-storage-state';
 import EDSentenceForm from './components/forms/sentence-form';
 import EDFragmentForm from './components/forms/fragment-form';
 
@@ -22,7 +23,7 @@ window.addEventListener('load', function () {
         preloadedState = {
             ...sentenceData,
             fragments: fragmentData,
-            languages: window.EDConfig.languages()
+            languages: EDConfig.languages()
         };
     } else {
         preloadedState = loadState('sentence');

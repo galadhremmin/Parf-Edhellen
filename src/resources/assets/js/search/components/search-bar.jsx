@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
+import EDConfig from 'ed-config';
 import { fetchResults, setSelection, advanceSelection } from '../actions';
 
 class EDSearchBar extends React.Component {
@@ -20,7 +21,7 @@ class EDSearchBar extends React.Component {
             languages: [{
                 id: 0,
                 name: 'All languages'
-            }, ...window.EDConfig.languages()]
+            }, ...EDConfig.languages()]
         });
     }
 

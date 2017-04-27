@@ -1,4 +1,5 @@
 const { mix } = require('laravel-mix');
+const path = require('path');
 
 /*
  |--------------------------------------------------------------------------
@@ -10,13 +11,35 @@ const { mix } = require('laravel-mix');
  | file for the application as well as bundling up all the JS files.
  |
  */
+mix.webpackConfig({
+    resolve: {
+        alias: {
+            'ed-shared': path.resolve(__dirname, 'resources/assets/js/_shared/'),
+
+            'ed-components/error-list': 'ed-shared/components/error-list.jsx',
+            'ed-components/markdown-editor': 'ed-shared/components/markdown-editor.jsx',
+
+            'ed-config': 'ed-shared/config.js',
+            'ed-form': 'ed-shared/form.js',
+            'ed-promise': 'ed-shared/promise.js',
+            'ed-session-storage-state': 'ed-shared/session-storage-state.js',
+        }
+    }
+});
+
 mix.extract([
     'react', 'react-dom', 'react-router-dom',
     'react-redux', 'redux',
     'html-to-react',
     'axios',
     'classnames',
-    'smoothscroll-polyfill'
+    'smoothscroll-polyfill',
+    'ed-components/error-list',
+    'ed-components/markdown-editor',
+    'ed-config',
+    'ed-form',
+    'ed-promise',
+    'ed-session-storage-state'
 ]);
 
 mix.react([

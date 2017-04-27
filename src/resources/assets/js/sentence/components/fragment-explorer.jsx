@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
+import EDConfig from 'ed-config';
 import { selectFragment } from '../actions';
 import EDFragment from './fragment';
 import EDTengwarFragment from './tengwar-fragment';
@@ -111,7 +112,7 @@ class EDFragmentExplorer extends React.Component {
      * @param {*} data 
      */
     onReferenceLinkClick(data) {
-        window.EDConfig.message(window.EDConfig.messageNavigateName, data);
+        EDConfig.message(EDConfig.messageNavigateName, data);
     }
 
     render() {

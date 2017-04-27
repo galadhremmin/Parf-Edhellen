@@ -1,10 +1,12 @@
 import axios from 'axios';
+import EDConfig from 'ed-config';
+import { deferredResolve } from 'ed-promise';
 import {
     REQUEST_FRAGMENT,
     RECEIVE_FRAGMENT
 } from '../reducers';
 
-export function selectFragment(fragmentId, translationId) {
+export const selectFragment = (fragmentId, translationId) => {
     return dispatch => {
         dispatch({
             type: REQUEST_FRAGMENT,
@@ -12,19 +14,13 @@ export function selectFragment(fragmentId, translationId) {
         });
 
         const start = new Date().getTime();
-        axios.get(window.EDConfig.api(`/book/translate/${translationId}`))
+        deferredResolve(axios.get(EDConfig.api(`/book/translate/${translationId}`)), 800)
             .then(resp => {
-                // Enable the animation to play at least 800 milliseconds.
-                const animationDelay = -Math.min(0, (new Date().getTime() - start) - 800);
-
-                window.setTimeout(() => {
-                    dispatch({
-                        type: RECEIVE_FRAGMENT,
-                        bookData: resp.data,
-                        translationId
-                    });
-                }, animationDelay);
+                dispatch({
+                    type: RECEIVE_FRAGMENT,
+                    bookData: resp.data,
+                    translationId
+                });
             });
     };
-}
-
+};

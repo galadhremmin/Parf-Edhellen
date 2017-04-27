@@ -1,4 +1,5 @@
 import axios from 'axios';
+import EDConfig from 'ed-config';
 import {
     REQUEST_RESULTS,
     REQUEST_NAVIGATION,
@@ -59,7 +60,7 @@ export function fetchResults(word, reversed = false, languageId = 0) {
 
     return dispatch => {
         dispatch(requestResults(word));
-        axios.post(window.EDConfig.api('/book/find'), { 
+        axios.post(EDConfig.api('/book/find'), { 
             word, 
             reversed, 
             language_id: languageId 
@@ -84,7 +85,7 @@ export function beginNavigation(word, normalizedWord, index, modifyState) {
     }
 
     const uriEncodedWord = encodeURIComponent(normalizedWord || word);
-    const apiAddress = window.EDConfig.api('/book/translate');
+    const apiAddress = EDConfig.api('/book/translate');
     const address = '/w/' + uriEncodedWord;
     const title = `${word} - Parf Edhellen`;
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { setSelection, beginNavigation } from '../actions';
 import classNames from 'classnames';
+import EDConfig from 'ed-config';
 import EDSearchItem from './search-item';
 import EDBookSection from './book-section';
 
@@ -140,13 +141,13 @@ class EDSearchResults extends React.Component {
      */
     onWindowMessage(ev) {
         const domain = ev.origin || ev.originalEvent.origin;
-        if (domain !== window.EDConfig.messageDomain) {
+        if (domain !== EDConfig.messageDomain) {
             return;
         }
 
         const data = ev.data;
         switch (data.source) {
-            case window.EDConfig.messageNavigateName:
+            case EDConfig.messageNavigateName:
                 this.gotoReference(data.payload.word, false);
                 break;
         }

@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import axios from 'axios';
 import { polyfill as enableSmoothScrolling } from 'smoothscroll-polyfill';
-import { EDStatefulFormComponent } from '../../../_shared/form';
-import EDMarkdownEditor from '../../../_shared/components/markdown-editor';
-import EDErrorList from '../../../_shared/components/error-list';
+import { EDStatefulFormComponent } from 'ed-form';
+import EDMarkdownEditor from 'ed-components/markdown-editor';
+import EDErrorList from 'ed-components/error-list';
 
 class EDSentenceForm extends EDStatefulFormComponent {
 

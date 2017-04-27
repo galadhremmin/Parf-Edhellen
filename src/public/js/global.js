@@ -1,51 +1,252 @@
-webpackJsonp([1],{
+webpackJsonp([1,5],{
 
-/***/ 147:
+/***/ 112:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-(function () {
-  var config = {
-    apiPathName: '/api/v1', // path to API w/o trailing slash!
-    messageDomain: window.location.origin,
-    messageNavigateName: 'ednavigate',
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.requestResults = requestResults;
+exports.receiveResults = receiveResults;
+exports.requestNavigation = requestNavigation;
+exports.receiveNavigation = receiveNavigation;
+exports.advanceSelection = advanceSelection;
+exports.setSelection = setSelection;
+exports.fetchResults = fetchResults;
+exports.beginNavigation = beginNavigation;
 
-    /**
-     * Gets all languages
-     */
-    languages: function languages() {
-      return _languages;
-    },
+var _axios = __webpack_require__(31);
 
-    /**
-     * Convenience method for generating API paths
-     * @param path
-     */
-    api: function api(path) {
-      return config.apiPathName + (path[0] !== '/' ? '/' : '') + path;
-    },
+var _axios2 = _interopRequireDefault(_axios);
 
-    /**
-     * Convenience method for generating window messages
-     */
-    message: function message(source, payload) {
-      return window.postMessage({ source: source, payload: payload }, config.messageDomain);
+var _edConfig = __webpack_require__(15);
+
+var _edConfig2 = _interopRequireDefault(_edConfig);
+
+var _reducers = __webpack_require__(113);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function requestResults(wordSearch) {
+    return {
+        type: _reducers.REQUEST_RESULTS,
+        wordSearch: wordSearch
+    };
+}
+
+function receiveResults(results) {
+    return {
+        type: _reducers.RECEIVE_RESULTS,
+        items: results
+    };
+}
+
+function requestNavigation(word, normalizedWord, index) {
+    return {
+        type: _reducers.REQUEST_NAVIGATION,
+        word: word,
+        normalizedWord: normalizedWord,
+        index: index
+    };
+}
+
+function receiveNavigation(bookData) {
+    return {
+        type: _reducers.RECEIVE_NAVIGATION,
+        bookData: bookData
+    };
+}
+
+function advanceSelection(direction) {
+    return {
+        type: _reducers.ADVANCE_SELECTION,
+        direction: direction > 0 ? 1 : -1
+    };
+}
+
+function setSelection(index) {
+    return {
+        type: _reducers.SET_SELECTION,
+        index: index
+    };
+}
+
+function fetchResults(word) {
+    var reversed = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+    var languageId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
+    if (!word || /^\s$/.test(word)) {
+        return;
     }
-  };
 
-  var _languages = JSON.parse(document.getElementById('ed-preloaded-languages').textContent);
+    return function (dispatch) {
+        dispatch(requestResults(word));
+        _axios2.default.post(_edConfig2.default.api('/book/find'), {
+            word: word,
+            reversed: reversed,
+            language_id: languageId
+        }).then(function (resp) {
+            var results = resp.data.map(function (r) {
+                return {
+                    word: r.k,
+                    normalizedWord: r.nk
+                };
+            });
 
-  if (window.EDConfig !== undefined) {
-    throw 'EDConfig is already defined';
-  }
-  window.EDConfig = config;
-})();
+            dispatch(receiveResults(results));
+        });
+    };
+}
+
+function beginNavigation(word, normalizedWord, index, modifyState) {
+    if (modifyState === undefined) {
+        modifyState = true;
+    }
+
+    if (!index && index !== 0) {
+        index = undefined;
+    }
+
+    var uriEncodedWord = encodeURIComponent(normalizedWord || word);
+    var apiAddress = _edConfig2.default.api('/book/translate');
+    var address = '/w/' + uriEncodedWord;
+    var title = word + ' - Parf Edhellen';
+
+    // When navigating using the browser's back and forward buttons,
+    // the state needn't be modified.
+    if (modifyState) {
+        window.history.pushState(null, title, address);
+    }
+
+    // because most browsers doesn't change the document title when pushing state
+    document.title = title;
+
+    return function (dispatch) {
+        dispatch(requestNavigation(word, normalizedWord || undefined, index));
+
+        _axios2.default.post(apiAddress, { word: normalizedWord || word }).then(function (resp) {
+            dispatch(receiveNavigation(resp.data));
+
+            // Find elements which is requested to be deleted upon receiving the navigation commmand
+            var elementsToDelete = document.querySelectorAll('.ed-remove-when-navigating');
+            if (elementsToDelete.length > 0) {
+                var _iteratorNormalCompletion = true;
+                var _didIteratorError = false;
+                var _iteratorError = undefined;
+
+                try {
+                    for (var _iterator = elementsToDelete[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                        var element = _step.value;
+
+                        element.parentNode.removeChild(element);
+                    }
+                } catch (err) {
+                    _didIteratorError = true;
+                    _iteratorError = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion && _iterator.return) {
+                            _iterator.return();
+                        }
+                    } finally {
+                        if (_didIteratorError) {
+                            throw _iteratorError;
+                        }
+                    }
+                }
+            }
+        });
+    };
+}
 
 /***/ }),
 
-/***/ 149:
+/***/ 113:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var REQUEST_RESULTS = exports.REQUEST_RESULTS = 'EDSR_REQUEST_RESULTS';
+var REQUEST_NAVIGATION = exports.REQUEST_NAVIGATION = 'EDSR_REQUEST_NAVIGATION';
+var RECEIVE_RESULTS = exports.RECEIVE_RESULTS = 'EDSR_RECEIVE_RESULTS';
+var RECEIVE_NAVIGATION = exports.RECEIVE_NAVIGATION = 'EDSR_RECEIVE_NAVIGATION';
+var ADVANCE_SELECTION = exports.ADVANCE_SELECTION = 'EDSR_ADVANCE_SELECTION';
+var SET_SELECTION = exports.SET_SELECTION = 'EDSR_SET_SELECTION';
+
+var EDSearchResultsReducer = exports.EDSearchResultsReducer = function EDSearchResultsReducer() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+        loading: false,
+        items: undefined,
+        itemIndex: -1,
+        word: undefined,
+        wordSearch: undefined,
+        normalizedWord: undefined,
+        bookData: undefined
+    };
+    var action = arguments[1];
+
+    switch (action.type) {
+
+        case REQUEST_RESULTS:
+            return Object.assign({}, state, {
+                loading: true,
+                wordSearch: action.wordSearch
+            });
+
+        case REQUEST_NAVIGATION:
+            // perform an index check -- if the action does not specify
+            // an index within the current result set, reset the result set
+            // as we can assume that the client has navigated somewhere else
+            // (to an entirely different word)
+            var index = action.index === undefined ? -1 : action.index;
+            var items = index > -1 ? state.items : undefined;
+
+            return Object.assign({}, state, {
+                loading: true,
+                word: action.word,
+                normalizedWord: action.normalizedWord,
+                itemIndex: index,
+                items: items
+            });
+
+        case RECEIVE_RESULTS:
+            return Object.assign({}, state, {
+                items: action.items,
+                loading: false,
+                itemIndex: -1
+            });
+
+        case RECEIVE_NAVIGATION:
+            return Object.assign({}, state, {
+                bookData: action.bookData,
+                loading: false
+            });
+
+        case ADVANCE_SELECTION:
+            return Object.assign({}, state, {
+                itemIndex: action.direction < 0 ? state.itemIndex < 1 ? state.items.length - 1 : state.itemIndex - 1 : state.itemIndex + 1 === state.items.length ? 0 : state.itemIndex + 1
+            });
+
+        case SET_SELECTION:
+            return Object.assign({}, state, {
+                itemIndex: state.index === -1 ? -1 : Math.max(0, Math.min(state.items.length - 1, action.index))
+            });
+
+        default:
+            return state;
+    }
+};
+
+/***/ }),
+
+/***/ 177:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -118,7 +319,7 @@ webpackJsonp([1],{
 
 /***/ }),
 
-/***/ 150:
+/***/ 178:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -128,27 +329,27 @@ var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(31);
+var _reactDom = __webpack_require__(36);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _reactRedux = __webpack_require__(18);
+var _reactRedux = __webpack_require__(20);
 
-var _redux = __webpack_require__(32);
+var _redux = __webpack_require__(37);
 
-var _reduxThunk = __webpack_require__(40);
+var _reduxThunk = __webpack_require__(49);
 
 var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-var _smoothscrollPolyfill = __webpack_require__(41);
+var _smoothscrollPolyfill = __webpack_require__(51);
 
-var _reducers = __webpack_require__(92);
+var _reducers = __webpack_require__(113);
 
-var _searchBar = __webpack_require__(173);
+var _searchBar = __webpack_require__(200);
 
 var _searchBar2 = _interopRequireDefault(_searchBar);
 
-var _searchResults = __webpack_require__(175);
+var _searchResults = __webpack_require__(202);
 
 var _searchResults2 = _interopRequireDefault(_searchResults);
 
@@ -174,14 +375,14 @@ window.addEventListener('load', function () {
 
 /***/ }),
 
-/***/ 153:
+/***/ 181:
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
 
-/***/ 172:
+/***/ 199:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -197,7 +398,7 @@ var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _bookGloss = __webpack_require__(52);
+var _bookGloss = __webpack_require__(64);
 
 var _bookGloss2 = _interopRequireDefault(_bookGloss);
 
@@ -275,7 +476,7 @@ exports.default = EDBookSection;
 
 /***/ }),
 
-/***/ 173:
+/***/ 200:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -291,13 +492,17 @@ var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactRedux = __webpack_require__(18);
+var _reactRedux = __webpack_require__(20);
 
-var _classnames = __webpack_require__(10);
+var _classnames = __webpack_require__(11);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _actions = __webpack_require__(91);
+var _edConfig = __webpack_require__(15);
+
+var _edConfig2 = _interopRequireDefault(_edConfig);
+
+var _actions = __webpack_require__(112);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -334,7 +539,7 @@ var EDSearchBar = function (_React$Component) {
                 languages: [{
                     id: 0,
                     name: 'All languages'
-                }].concat(_toConsumableArray(window.EDConfig.languages()))
+                }].concat(_toConsumableArray(_edConfig2.default.languages()))
             });
         }
     }, {
@@ -521,7 +726,7 @@ exports.default = (0, _reactRedux.connect)(mapStateToProps)(EDSearchBar);
 
 /***/ }),
 
-/***/ 174:
+/***/ 201:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -537,7 +742,7 @@ var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _classnames = __webpack_require__(10);
+var _classnames = __webpack_require__(11);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -590,7 +795,7 @@ exports.default = EDSearchItem;
 
 /***/ }),
 
-/***/ 175:
+/***/ 202:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -606,19 +811,23 @@ var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactRedux = __webpack_require__(18);
+var _reactRedux = __webpack_require__(20);
 
-var _actions = __webpack_require__(91);
+var _actions = __webpack_require__(112);
 
-var _classnames = __webpack_require__(10);
+var _classnames = __webpack_require__(11);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _searchItem = __webpack_require__(174);
+var _edConfig = __webpack_require__(15);
+
+var _edConfig2 = _interopRequireDefault(_edConfig);
+
+var _searchItem = __webpack_require__(201);
 
 var _searchItem2 = _interopRequireDefault(_searchItem);
 
-var _bookSection = __webpack_require__(172);
+var _bookSection = __webpack_require__(199);
 
 var _bookSection2 = _interopRequireDefault(_bookSection);
 
@@ -790,13 +999,13 @@ var EDSearchResults = function (_React$Component) {
         key: 'onWindowMessage',
         value: function onWindowMessage(ev) {
             var domain = ev.origin || ev.originalEvent.origin;
-            if (domain !== window.EDConfig.messageDomain) {
+            if (domain !== _edConfig2.default.messageDomain) {
                 return;
             }
 
             var data = ev.data;
             switch (data.source) {
-                case window.EDConfig.messageNavigateName:
+                case _edConfig2.default.messageNavigateName:
                     this.gotoReference(data.payload.word, false);
                     break;
             }
@@ -1013,18 +1222,18 @@ exports.default = (0, _reactRedux.connect)(mapStateToProps)(EDSearchResults);
 
 /***/ }),
 
-/***/ 380:
+/***/ 430:
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(147);
-__webpack_require__(149);
-__webpack_require__(150);
-module.exports = __webpack_require__(153);
+__webpack_require__(15);
+__webpack_require__(177);
+__webpack_require__(178);
+module.exports = __webpack_require__(181);
 
 
 /***/ }),
 
-/***/ 40:
+/***/ 49:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1054,7 +1263,7 @@ exports['default'] = thunk;
 
 /***/ }),
 
-/***/ 52:
+/***/ 64:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1070,11 +1279,11 @@ var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _classnames = __webpack_require__(10);
+var _classnames = __webpack_require__(11);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _htmlToReact = __webpack_require__(27);
+var _htmlToReact = __webpack_require__(35);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1267,248 +1476,6 @@ var EDBookGloss = function (_React$Component) {
 
 exports.default = EDBookGloss;
 
-/***/ }),
-
-/***/ 91:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.requestResults = requestResults;
-exports.receiveResults = receiveResults;
-exports.requestNavigation = requestNavigation;
-exports.receiveNavigation = receiveNavigation;
-exports.advanceSelection = advanceSelection;
-exports.setSelection = setSelection;
-exports.fetchResults = fetchResults;
-exports.beginNavigation = beginNavigation;
-
-var _axios = __webpack_require__(21);
-
-var _axios2 = _interopRequireDefault(_axios);
-
-var _reducers = __webpack_require__(92);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function requestResults(wordSearch) {
-    return {
-        type: _reducers.REQUEST_RESULTS,
-        wordSearch: wordSearch
-    };
-}
-
-function receiveResults(results) {
-    return {
-        type: _reducers.RECEIVE_RESULTS,
-        items: results
-    };
-}
-
-function requestNavigation(word, normalizedWord, index) {
-    return {
-        type: _reducers.REQUEST_NAVIGATION,
-        word: word,
-        normalizedWord: normalizedWord,
-        index: index
-    };
-}
-
-function receiveNavigation(bookData) {
-    return {
-        type: _reducers.RECEIVE_NAVIGATION,
-        bookData: bookData
-    };
-}
-
-function advanceSelection(direction) {
-    return {
-        type: _reducers.ADVANCE_SELECTION,
-        direction: direction > 0 ? 1 : -1
-    };
-}
-
-function setSelection(index) {
-    return {
-        type: _reducers.SET_SELECTION,
-        index: index
-    };
-}
-
-function fetchResults(word) {
-    var reversed = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-    var languageId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-
-    if (!word || /^\s$/.test(word)) {
-        return;
-    }
-
-    return function (dispatch) {
-        dispatch(requestResults(word));
-        _axios2.default.post(window.EDConfig.api('/book/find'), {
-            word: word,
-            reversed: reversed,
-            language_id: languageId
-        }).then(function (resp) {
-            var results = resp.data.map(function (r) {
-                return {
-                    word: r.k,
-                    normalizedWord: r.nk
-                };
-            });
-
-            dispatch(receiveResults(results));
-        });
-    };
-}
-
-function beginNavigation(word, normalizedWord, index, modifyState) {
-    if (modifyState === undefined) {
-        modifyState = true;
-    }
-
-    if (!index && index !== 0) {
-        index = undefined;
-    }
-
-    var uriEncodedWord = encodeURIComponent(normalizedWord || word);
-    var apiAddress = window.EDConfig.api('/book/translate');
-    var address = '/w/' + uriEncodedWord;
-    var title = word + ' - Parf Edhellen';
-
-    // When navigating using the browser's back and forward buttons,
-    // the state needn't be modified.
-    if (modifyState) {
-        window.history.pushState(null, title, address);
-    }
-
-    // because most browsers doesn't change the document title when pushing state
-    document.title = title;
-
-    return function (dispatch) {
-        dispatch(requestNavigation(word, normalizedWord || undefined, index));
-
-        _axios2.default.post(apiAddress, { word: normalizedWord || word }).then(function (resp) {
-            dispatch(receiveNavigation(resp.data));
-
-            // Find elements which is requested to be deleted upon receiving the navigation commmand
-            var elementsToDelete = document.querySelectorAll('.ed-remove-when-navigating');
-            if (elementsToDelete.length > 0) {
-                var _iteratorNormalCompletion = true;
-                var _didIteratorError = false;
-                var _iteratorError = undefined;
-
-                try {
-                    for (var _iterator = elementsToDelete[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                        var element = _step.value;
-
-                        element.parentNode.removeChild(element);
-                    }
-                } catch (err) {
-                    _didIteratorError = true;
-                    _iteratorError = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion && _iterator.return) {
-                            _iterator.return();
-                        }
-                    } finally {
-                        if (_didIteratorError) {
-                            throw _iteratorError;
-                        }
-                    }
-                }
-            }
-        });
-    };
-}
-
-/***/ }),
-
-/***/ 92:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-var REQUEST_RESULTS = exports.REQUEST_RESULTS = 'EDSR_REQUEST_RESULTS';
-var REQUEST_NAVIGATION = exports.REQUEST_NAVIGATION = 'EDSR_REQUEST_NAVIGATION';
-var RECEIVE_RESULTS = exports.RECEIVE_RESULTS = 'EDSR_RECEIVE_RESULTS';
-var RECEIVE_NAVIGATION = exports.RECEIVE_NAVIGATION = 'EDSR_RECEIVE_NAVIGATION';
-var ADVANCE_SELECTION = exports.ADVANCE_SELECTION = 'EDSR_ADVANCE_SELECTION';
-var SET_SELECTION = exports.SET_SELECTION = 'EDSR_SET_SELECTION';
-
-var EDSearchResultsReducer = exports.EDSearchResultsReducer = function EDSearchResultsReducer() {
-    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-        loading: false,
-        items: undefined,
-        itemIndex: -1,
-        word: undefined,
-        wordSearch: undefined,
-        normalizedWord: undefined,
-        bookData: undefined
-    };
-    var action = arguments[1];
-
-    switch (action.type) {
-
-        case REQUEST_RESULTS:
-            return Object.assign({}, state, {
-                loading: true,
-                wordSearch: action.wordSearch
-            });
-
-        case REQUEST_NAVIGATION:
-            // perform an index check -- if the action does not specify
-            // an index within the current result set, reset the result set
-            // as we can assume that the client has navigated somewhere else
-            // (to an entirely different word)
-            var index = action.index === undefined ? -1 : action.index;
-            var items = index > -1 ? state.items : undefined;
-
-            return Object.assign({}, state, {
-                loading: true,
-                word: action.word,
-                normalizedWord: action.normalizedWord,
-                itemIndex: index,
-                items: items
-            });
-
-        case RECEIVE_RESULTS:
-            return Object.assign({}, state, {
-                items: action.items,
-                loading: false,
-                itemIndex: -1
-            });
-
-        case RECEIVE_NAVIGATION:
-            return Object.assign({}, state, {
-                bookData: action.bookData,
-                loading: false
-            });
-
-        case ADVANCE_SELECTION:
-            return Object.assign({}, state, {
-                itemIndex: action.direction < 0 ? state.itemIndex < 1 ? state.items.length - 1 : state.itemIndex - 1 : state.itemIndex + 1 === state.items.length ? 0 : state.itemIndex + 1
-            });
-
-        case SET_SELECTION:
-            return Object.assign({}, state, {
-                itemIndex: state.index === -1 ? -1 : Math.max(0, Math.min(state.items.length - 1, action.index))
-            });
-
-        default:
-            return state;
-    }
-};
-
 /***/ })
 
-},[380]);
+},[430]);

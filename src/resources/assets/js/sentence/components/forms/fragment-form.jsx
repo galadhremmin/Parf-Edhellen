@@ -2,11 +2,11 @@ import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import axios from 'axios';
 import { polyfill as enableSmoothScrolling } from 'smoothscroll-polyfill';
-import { EDStatefulFormComponent } from '../../../_shared/form';
-import EDMarkdownEditor from '../../../_shared/components/markdown-editor';
-import EDErrorList from '../../../_shared/components/error-list';
+import { requestSuggestions, setFragments, setFragmentData } from '../../actions/admin';
+import { EDStatefulFormComponent } from 'ed-form';
+import EDMarkdownEditor from 'ed-components/markdown-editor';
+import EDErrorList from 'ed-components/error-list';
 
 class EDFragmentForm extends EDStatefulFormComponent {
     constructor(props) {
@@ -23,8 +23,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
         }
 
         this.state = {
-            phrase: phrase,
-            fragments: props.fragments || []
+            phrase
         };
     }
 
@@ -43,7 +42,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
     onPhraseChange(ev) {
         ev.preventDefault();
 
-        const currentFragments = this.state.fragments || [];
+        const currentFragments = this.props.fragments || [];
         const newFragments = this.state.phrase
             .replace(/\r\n/g, "\n")
             .split(' ')
@@ -66,7 +65,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
                 // This is determined by looking at the cursor's position (_fi_). If it is at
                 // in its initial position (= 0) then the interpunctutation fragment should be
                 // placed in front of it, otherwise after. 
-                const insertAt = i === 0 ? i : i + 1;
+                const insertAt = fi === 0 ? i : i + 1;
                 newFragments.splice(insertAt, 0, this.createFragment(data.fragment[fi], true));
 
                 // are there more of the fragment after the interpunctuation?
@@ -96,7 +95,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
 
             if (existingFragment !== undefined) {
                 // overwrite the fragment with the existing fragment, as it might contain more data
-                newFragments[i] = existingFragment; 
+                newFragments[i] = { ...existingFragment, fragment: data.fragment }; 
             }
 
             if (!newFragments[i].interpunctuation) {
@@ -104,15 +103,10 @@ class EDFragmentForm extends EDStatefulFormComponent {
             }
         }
 
-        this.setState({
-            fragments: newFragments
-        });
+        this.props.dispatch(setFragments(newFragments));
 
         if (words.length > 0) {
-            axios.post(window.EDConfig.api('/book/suggest'), { 
-                words, 
-                language_id: this.props.languageId 
-            });
+            this.props.dispatch(requestSuggestions(words, this.props.languageId));
         }
     }
 
@@ -144,8 +138,19 @@ class EDFragmentForm extends EDStatefulFormComponent {
                 <strong>Word definitions</strong>
             </p>
             <p>
-                {this.state.fragments.map((f, i) => <EDFragment key={i} fragment={f} onClick={this.onFragmentClick.bind(this)} />)}
+                Green words are linked to words in the dictionary, whereas red words are not. Please link all
+                words before proceeding to the next step.
             </p>
+            {this.props.loading ? 
+                <div>
+                    <div className="sk-spinner sk-spinner-pulse"></div>
+                    <p className="text-center"><em>Loading suggestions ...</em></p>
+                </div>
+            : 
+                <p>
+                    {this.props.fragments.map((f, i) => <EDFragment key={i} fragment={f} onClick={this.onFragmentClick.bind(this)} />)}
+                </p>
+            }
             <nav>
                 <ul className="pager">
                     <li className="previous"><a href="#" onClick={this.onPreviousClick.bind(this)}>&larr; Previous step</a></li>
@@ -178,7 +183,11 @@ class EDFragment extends React.Component {
             return <span>{data.fragment}</span>;
         }
 
-        return <span>{' '}<a href="#" onClick={this.onFragmentClick.bind(this)}>{data.fragment}</a></span>;
+        return <span>{' '}<a href="#" onClick={this.onFragmentClick.bind(this)}
+            className={classNames('label', 'ed-sentence-fragment', { 'label-success': !! data.translation_id, 'label-danger': ! data.translation_id })}>
+                {data.fragment}
+            </a>
+        </span>;
     }
 }
 
@@ -186,7 +195,8 @@ const mapStateToProps = state => {
     return {
         languages: state.languages,
         languageId: state.language_id,
-        fragments: state.fragments
+        fragments: state.fragments,
+        loading: state.loading
     };
 };
 
