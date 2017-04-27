@@ -1,16 +1,15 @@
-
 @font-face {
-  font-family: 'TengwarAnnatar';
-  src: url('/fonts/tengwar/tngan-webfont.eot');
-  src: local('?'), url('/fonts/tengwar/tngan-webfont.woff') format('woff'), 
-     url('/fonts/tengwar/tngan-webfont.ttf') format('truetype'), 
-     url('/fonts/tengwar/tngan-webfont.svg#webfontdJVhvyy6') format('svg');
-  font-weight: normal;
-  font-style: normal;
+    font-family: 'Tengwar Parmaite';
+    src: url('../fonts/tengwar/tengwarparmaitem-webfont.eot');
+    src: url('../fonts/tengwar/tengwarparmaitem-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/tengwar/tengwarparmaitem-webfont.woff2') format('woff2'),
+         url('../fonts/tengwar/tengwarparmaitem-webfont.woff') format('woff'),
+         url('../fonts/tengwar/tengwarparmaitem-webfont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }
-
 .tengwar {
-  font-family: 'TengwarAnnatar';
+  font-family: 'Tengwar Parmaite';
   font-size: 110%;
   line-height: 0.8;
   text-decoration: none;

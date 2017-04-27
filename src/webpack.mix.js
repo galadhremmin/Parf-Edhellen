@@ -34,6 +34,7 @@ mix.extract([
     'axios',
     'classnames',
     'smoothscroll-polyfill',
+    'tengwar',
     'ed-components/error-list',
     'ed-components/markdown-editor',
     'ed-config',
@@ -60,4 +61,5 @@ mix.js([
     'resources/assets/js/sentence/admin.jsx'
 ], 'public/js/sentence-admin.js');
 
+//mix.copy('node_modules/tengwar/tengwar-parmaite.*', 'public/fonts/tengwar');
 mix.sass('resources/assets/sass/app.scss', 'public/css');
