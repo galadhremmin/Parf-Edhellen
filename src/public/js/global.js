@@ -1,6 +1,6 @@
 webpackJsonp([1,5],{
 
-/***/ 112:
+/***/ 117:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26,7 +26,7 @@ var _edConfig = __webpack_require__(15);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _reducers = __webpack_require__(113);
+var _reducers = __webpack_require__(118);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -164,7 +164,7 @@ function beginNavigation(word, normalizedWord, index, modifyState) {
 
 /***/ }),
 
-/***/ 113:
+/***/ 118:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -246,7 +246,7 @@ var EDSearchResultsReducer = exports.EDSearchResultsReducer = function EDSearchR
 
 /***/ }),
 
-/***/ 178:
+/***/ 191:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -319,7 +319,7 @@ var EDSearchResultsReducer = exports.EDSearchResultsReducer = function EDSearchR
 
 /***/ }),
 
-/***/ 179:
+/***/ 192:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -341,15 +341,15 @@ var _reduxThunk = __webpack_require__(49);
 
 var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-var _smoothscrollPolyfill = __webpack_require__(51);
+var _smoothscrollPolyfill = __webpack_require__(52);
 
-var _reducers = __webpack_require__(113);
+var _reducers = __webpack_require__(118);
 
-var _searchBar = __webpack_require__(202);
+var _searchBar = __webpack_require__(214);
 
 var _searchBar2 = _interopRequireDefault(_searchBar);
 
-var _searchResults = __webpack_require__(204);
+var _searchResults = __webpack_require__(216);
 
 var _searchResults2 = _interopRequireDefault(_searchResults);
 
@@ -375,14 +375,14 @@ window.addEventListener('load', function () {
 
 /***/ }),
 
-/***/ 182:
+/***/ 195:
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
 
-/***/ 201:
+/***/ 213:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -398,7 +398,7 @@ var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _bookGloss = __webpack_require__(64);
+var _bookGloss = __webpack_require__(65);
 
 var _bookGloss2 = _interopRequireDefault(_bookGloss);
 
@@ -476,7 +476,7 @@ exports.default = EDBookSection;
 
 /***/ }),
 
-/***/ 202:
+/***/ 214:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -502,7 +502,7 @@ var _edConfig = __webpack_require__(15);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _actions = __webpack_require__(112);
+var _actions = __webpack_require__(117);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -726,7 +726,7 @@ exports.default = (0, _reactRedux.connect)(mapStateToProps)(EDSearchBar);
 
 /***/ }),
 
-/***/ 203:
+/***/ 215:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -795,7 +795,7 @@ exports.default = EDSearchItem;
 
 /***/ }),
 
-/***/ 204:
+/***/ 216:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -813,7 +813,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRedux = __webpack_require__(20);
 
-var _actions = __webpack_require__(112);
+var _actions = __webpack_require__(117);
 
 var _classnames = __webpack_require__(11);
 
@@ -823,11 +823,11 @@ var _edConfig = __webpack_require__(15);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _searchItem = __webpack_require__(203);
+var _searchItem = __webpack_require__(215);
 
 var _searchItem2 = _interopRequireDefault(_searchItem);
 
-var _bookSection = __webpack_require__(201);
+var _bookSection = __webpack_require__(213);
 
 var _bookSection2 = _interopRequireDefault(_bookSection);
 
@@ -1222,13 +1222,13 @@ exports.default = (0, _reactRedux.connect)(mapStateToProps)(EDSearchResults);
 
 /***/ }),
 
-/***/ 431:
+/***/ 445:
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(15);
-__webpack_require__(178);
-__webpack_require__(179);
-module.exports = __webpack_require__(182);
+__webpack_require__(191);
+__webpack_require__(192);
+module.exports = __webpack_require__(195);
 
 
 /***/ }),
@@ -1263,7 +1263,7 @@ exports['default'] = thunk;
 
 /***/ }),
 
-/***/ 64:
+/***/ 65:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1478,4 +1478,4 @@ exports.default = EDBookGloss;
 
 /***/ })
 
-},[431]);
+},[445]);

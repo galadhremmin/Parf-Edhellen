@@ -1,0 +1,1 @@
+alter table `languages` add `tengwar_mode` varchar(16) null;

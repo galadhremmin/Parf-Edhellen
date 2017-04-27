@@ -22,15 +22,19 @@ class EDMarkdownEditor extends React.Component {
         // check if the value prop has changed, as it is the one property which
         // will most likely be affected by Redux.
         if (this.state.value !== props.value) {
-            this.setState({
-                value: props.value || ''
-            });
+            this.setValue(props.value || '');
         }
     }
 
     applyHtml(resp) {
         this.setState({
             html: resp.data.html
+        });
+    }
+
+    setValue(value) {
+        this.setState({
+            value
         });
     }
 
@@ -65,9 +69,7 @@ class EDMarkdownEditor extends React.Component {
     }
 
     onValueChange(ev) {
-        this.setState({
-            value: ev.target.value
-        });
+        this.setValue(ev.target.value);
 
         if (typeof this.props.onChange === 'function') {
             // Remove the synthetic event from the pool and allow references to the event to be retained by user code. 

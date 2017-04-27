@@ -34,7 +34,9 @@ mix.extract([
     'axios',
     'classnames',
     'smoothscroll-polyfill',
-    'tengwar',
+    'tengwar/general-use',
+    'tengwar/classical',
+    'tengwar/tengwar-parmaite',
     'ed-components/error-list',
     'ed-components/markdown-editor',
     'ed-config',
@@ -61,5 +63,5 @@ mix.js([
     'resources/assets/js/sentence/admin.jsx'
 ], 'public/js/sentence-admin.js');
 
-//mix.copy('node_modules/tengwar/tengwar-parmaite.*', 'public/fonts/tengwar');
+//mix.copy('node_modules/tengwar/tengwar-parmaite.*', 'public/fonts/tengwar'); <~~ the parmaite font kit is/will be corrupted!
 mix.sass('resources/assets/sass/app.scss', 'public/css');

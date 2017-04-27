@@ -1,6 +1,6 @@
 webpackJsonp([3,5],{
 
-/***/ 114:
+/***/ 119:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19,9 +19,9 @@ var _edConfig = __webpack_require__(15);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _edPromise = __webpack_require__(62);
+var _edPromise = __webpack_require__(63);
 
-var _admin = __webpack_require__(115);
+var _admin = __webpack_require__(120);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -61,7 +61,7 @@ var setFragmentData = exports.setFragmentData = function setFragmentData(fragmen
 
 /***/ }),
 
-/***/ 115:
+/***/ 120:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -130,7 +130,7 @@ exports.default = EDSentenceAdminReducer;
 
 /***/ }),
 
-/***/ 180:
+/***/ 193:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -146,7 +146,7 @@ var _reactDom = __webpack_require__(36);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _reactRouterDom = __webpack_require__(106);
+var _reactRouterDom = __webpack_require__(108);
 
 var _reactRedux = __webpack_require__(20);
 
@@ -160,17 +160,17 @@ var _edConfig = __webpack_require__(15);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _admin = __webpack_require__(115);
+var _admin = __webpack_require__(120);
 
 var _admin2 = _interopRequireDefault(_admin);
 
-var _edSessionStorageState = __webpack_require__(105);
+var _edSessionStorageState = __webpack_require__(107);
 
-var _sentenceForm = __webpack_require__(207);
+var _sentenceForm = __webpack_require__(219);
 
 var _sentenceForm2 = _interopRequireDefault(_sentenceForm);
 
-var _fragmentForm = __webpack_require__(206);
+var _fragmentForm = __webpack_require__(218);
 
 var _fragmentForm2 = _interopRequireDefault(_fragmentForm);
 
@@ -221,7 +221,7 @@ window.addEventListener('load', function () {
 
 /***/ }),
 
-/***/ 206:
+/***/ 218:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -235,8 +235,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
-
 var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
@@ -249,17 +247,25 @@ var _reactRedux = __webpack_require__(20);
 
 var _reactRouter = __webpack_require__(8);
 
-var _smoothscrollPolyfill = __webpack_require__(51);
+var _smoothscrollPolyfill = __webpack_require__(52);
 
-var _admin = __webpack_require__(114);
+var _generalUse = __webpack_require__(110);
 
-var _edForm = __webpack_require__(61);
+var _classical = __webpack_require__(109);
 
-var _markdownEditor = __webpack_require__(50);
+var _tengwarParmaite = __webpack_require__(111);
+
+var _tengwarParmaite2 = _interopRequireDefault(_tengwarParmaite);
+
+var _admin = __webpack_require__(119);
+
+var _edForm = __webpack_require__(62);
+
+var _markdownEditor = __webpack_require__(51);
 
 var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 
-var _errorList = __webpack_require__(60);
+var _errorList = __webpack_require__(61);
 
 var _errorList2 = _interopRequireDefault(_errorList);
 
@@ -291,7 +297,7 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
 
         _this.state = {
             phrase: phrase,
-            editFragmentIndex: -1
+            editingFragmentIndex: -1
         };
         return _this;
     }
@@ -386,7 +392,7 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
 
             // We can't be editing a fragment.
             this.setState({
-                editFragmentIndex: -1
+                editingFragmentIndex: -1
             });
 
             // Make the fragments permanent (in the client) by dispatching the fragments to the Redux component.
@@ -394,15 +400,57 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
 
             if (words.length > 0) {
                 // Request suggestions from the server.
-                this.props.dispatch((0, _admin.requestSuggestions)(words, this.props.languageId));
+                this.props.dispatch((0, _admin.requestSuggestions)(words, this.props.language_id));
             }
         }
     }, {
         key: 'onFragmentClick',
         value: function onFragmentClick(data) {
             this.setState({
-                editingFragment: data
+                editingFragmentIndex: this.props.fragments.indexOf(data)
             });
+
+            this.tengwarInput.value = data.tengwar || '';
+            this.commentsInput.setValue(data.comments || '');
+        }
+    }, {
+        key: 'onTranscribeClick',
+        value: function onTranscribeClick(ev) {
+            var _this3 = this;
+
+            ev.preventDefault();
+
+            var language = this.props.languages.find(function (l) {
+                return l.id === _this3.props.language_id;
+            });
+
+            var options = null;
+            var transcriber = null;
+
+            switch (language.tengwar_mode) {
+                case 'general-use':
+                    options = (0, _generalUse.makeOptions)({
+                        font: _tengwarParmaite2.default
+                    });
+                    transcriber = _generalUse.transcribe;
+                    break;
+                case 'classical':
+                    options = (0, _classical.makeOptions)({
+                        font: _tengwarParmaite2.default
+                    });
+                    transcriber = _classical.transcribe;
+                    break;
+                default:
+                    // unsupported!
+                    return;
+            }
+
+            var data = this.props.fragments[this.state.editingFragmentIndex];
+            var transcription = transcriber(data.fragment, options);
+
+            if (transcription) {
+                this.tengwarInput.value = transcription;
+            }
         }
     }, {
         key: 'onSubmit',
@@ -410,10 +458,7 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
     }, {
         key: 'render',
         value: function render() {
-            var _this3 = this;
-
-            var editingFragment = this.state.editingFragment;
-            var fragmentIndex = editingFragment ? this.props.fragments.indexOf(editingFragment) : -1;
+            var _this4 = this;
 
             return _react2.default.createElement(
                 'form',
@@ -477,13 +522,39 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                     this.props.fragments.map(function (f, i) {
                         return _react2.default.createElement(EDFragment, { key: i,
                             fragment: f,
-                            selected: i === fragmentIndex,
-                            onClick: _this3.onFragmentClick.bind(_this3) });
+                            selected: i === _this4.state.editingFragmentIndex,
+                            onClick: _this4.onFragmentClick.bind(_this4) });
                     })
                 ),
-                editingFragment ? _react2.default.createElement(
+                this.state.editingFragmentIndex > -1 ? _react2.default.createElement(
                     'div',
                     { className: 'well' },
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'form-group' },
+                        _react2.default.createElement(
+                            'label',
+                            { htmlFor: 'ed-sentence-fragment-tengwar', className: 'control-label' },
+                            'Tengwar'
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'input-group' },
+                            _react2.default.createElement('input', { id: 'ed-sentence-fragment-tengwar', className: 'form-control tengwar', type: 'text',
+                                ref: function ref(input) {
+                                    return _this4.tengwarInput = input;
+                                } }),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'input-group-addon' },
+                                _react2.default.createElement(
+                                    'a',
+                                    { href: '#', onClick: this.onTranscribeClick.bind(this) },
+                                    'Automatic transcription'
+                                )
+                            )
+                        )
+                    ),
                     _react2.default.createElement(
                         'div',
                         { className: 'form-group' },
@@ -492,8 +563,9 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                             { htmlFor: 'ed-sentence-fragment-comments', className: 'control-label' },
                             'Comments'
                         ),
-                        _react2.default.createElement(_markdownEditor2.default, { componentId: 'ed-sentence-fragment-comments', componentName: 'editingFragment.comments',
-                            value: editingFragment.comments, onChange: _get(EDFragmentForm.prototype.__proto__ || Object.getPrototypeOf(EDFragmentForm.prototype), 'onChange', this).bind(this), rows: 4 })
+                        _react2.default.createElement(_markdownEditor2.default, { componentId: 'ed-sentence-fragment-comments', ref: function ref(input) {
+                                return _this4.commentsInput = input;
+                            }, rows: 4 })
                     )
                 ) : '',
                 _react2.default.createElement(
@@ -541,13 +613,13 @@ var EDFragment = function (_React$Component) {
     _createClass(EDFragment, [{
         key: 'onFragmentClick',
         value: function onFragmentClick(ev) {
-            var _this5 = this;
+            var _this6 = this;
 
             ev.preventDefault();
 
             if (this.props.onClick) {
                 window.setTimeout(function () {
-                    return _this5.props.onClick(_this5.props.fragment);
+                    return _this6.props.onClick(_this6.props.fragment);
                 }, 0);
             }
         }
@@ -599,7 +671,7 @@ var EDFragment = function (_React$Component) {
 var mapStateToProps = function mapStateToProps(state) {
     return {
         languages: state.languages,
-        languageId: state.language_id,
+        language_id: state.language_id,
         fragments: state.fragments,
         loading: state.loading
     };
@@ -609,7 +681,7 @@ exports.default = (0, _reactRouter.withRouter)((0, _reactRedux.connect)(mapState
 
 /***/ }),
 
-/***/ 207:
+/***/ 219:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -639,17 +711,17 @@ var _axios = __webpack_require__(31);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _smoothscrollPolyfill = __webpack_require__(51);
+var _smoothscrollPolyfill = __webpack_require__(52);
 
-var _admin = __webpack_require__(114);
+var _admin = __webpack_require__(119);
 
-var _edForm = __webpack_require__(61);
+var _edForm = __webpack_require__(62);
 
-var _markdownEditor = __webpack_require__(50);
+var _markdownEditor = __webpack_require__(51);
 
 var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 
-var _errorList = __webpack_require__(60);
+var _errorList = __webpack_require__(61);
 
 var _errorList2 = _interopRequireDefault(_errorList);
 
@@ -908,10 +980,10 @@ exports.default = (0, _reactRouter.withRouter)((0, _reactRedux.connect)(mapState
 
 /***/ }),
 
-/***/ 433:
+/***/ 447:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(180);
+module.exports = __webpack_require__(193);
 
 
 /***/ }),
@@ -946,4 +1018,4 @@ exports['default'] = thunk;
 
 /***/ })
 
-},[433]);
+},[447]);

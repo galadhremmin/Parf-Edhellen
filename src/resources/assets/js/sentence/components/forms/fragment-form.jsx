@@ -3,6 +3,9 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { polyfill as enableSmoothScrolling } from 'smoothscroll-polyfill';
+import { transcribe as transcribeGeneralUse, makeOptions as makeOptionsForGeneralUse } from 'tengwar/general-use';
+import { transcribe as transcribeClassical, makeOptions as makeOptionsForClassical } from 'tengwar/classical';
+import TengwarParmaite from 'tengwar/tengwar-parmaite';
 import { requestSuggestions, setFragments, setFragmentData } from '../../actions/admin';
 import { EDStatefulFormComponent } from 'ed-form';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
@@ -24,7 +27,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
 
         this.state = {
             phrase,
-            editFragmentIndex: -1
+            editingFragmentIndex: -1
         };
     }
 
@@ -106,7 +109,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
 
         // We can't be editing a fragment.
         this.setState({
-            editFragmentIndex: -1
+            editingFragmentIndex: -1
         });
 
         // Make the fragments permanent (in the client) by dispatching the fragments to the Redux component.
@@ -114,14 +117,51 @@ class EDFragmentForm extends EDStatefulFormComponent {
 
         if (words.length > 0) {
             // Request suggestions from the server.
-            this.props.dispatch(requestSuggestions(words, this.props.languageId));
+            this.props.dispatch(requestSuggestions(words, this.props.language_id));
         }
     }
 
     onFragmentClick(data) {
         this.setState({
-            editingFragment: data
+            editingFragmentIndex: this.props.fragments.indexOf(data)
         });
+
+        this.tengwarInput.value = data.tengwar || '';
+        this.commentsInput.setValue(data.comments || '');
+    }
+
+    onTranscribeClick(ev) {
+        ev.preventDefault();
+
+        const language = this.props.languages.find(l => l.id === this.props.language_id);
+
+        let options = null;
+        let transcriber = null;
+
+        switch (language.tengwar_mode) {
+            case 'general-use':
+                options = makeOptionsForGeneralUse({
+                    font: TengwarParmaite
+                });
+                transcriber = transcribeGeneralUse;
+                break;
+            case 'classical':
+                options = makeOptionsForClassical({
+                    font: TengwarParmaite
+                });
+                transcriber = transcribeClassical;
+                break;
+            default:
+                // unsupported!
+                return;
+        }
+
+        const data = this.props.fragments[this.state.editingFragmentIndex];
+        const transcription = transcriber(data.fragment, options);
+
+        if (transcription) {
+            this.tengwarInput.value = transcription;
+        }
     }
 
     onSubmit() {
@@ -129,9 +169,6 @@ class EDFragmentForm extends EDStatefulFormComponent {
     }
  
     render() {
-        const editingFragment = this.state.editingFragment;
-        const fragmentIndex = editingFragment ? this.props.fragments.indexOf(editingFragment) : -1;
-
         return <form onSubmit={this.onSubmit.bind(this)}>
             <p>
                 This is the second step of a total of three steps. Here you will write down your phrase
@@ -163,16 +200,23 @@ class EDFragmentForm extends EDStatefulFormComponent {
                 <p>
                     {this.props.fragments.map((f, i) => <EDFragment key={i} 
                         fragment={f} 
-                        selected={i === fragmentIndex}
+                        selected={i === this.state.editingFragmentIndex}
                         onClick={this.onFragmentClick.bind(this)} />)}
                 </p>
             }
-            {editingFragment ? 
+            {this.state.editingFragmentIndex > -1 ? 
                 <div className="well">
                     <div className="form-group">
+                        <label htmlFor="ed-sentence-fragment-tengwar" className="control-label">Tengwar</label>
+                        <div className="input-group">
+                            <input id="ed-sentence-fragment-tengwar" className="form-control tengwar" type="text" 
+                                ref={input => this.tengwarInput = input} />
+                            <div className="input-group-addon"><a href="#" onClick={this.onTranscribeClick.bind(this)}>Automatic transcription</a></div>
+                        </div>
+                    </div>
+                    <div className="form-group">
                         <label htmlFor="ed-sentence-fragment-comments" className="control-label">Comments</label>
-                        <EDMarkdownEditor componentId="ed-sentence-fragment-comments" componentName="editingFragment.comments" 
-                            value={editingFragment.comments} onChange={super.onChange.bind(this)} rows={4} />
+                        <EDMarkdownEditor componentId="ed-sentence-fragment-comments" ref={input => this.commentsInput = input} rows={4} />
                     </div>
                 </div>
             : ''}
@@ -225,7 +269,7 @@ class EDFragment extends React.Component {
 const mapStateToProps = state => {
     return {
         languages: state.languages,
-        languageId: state.language_id,
+        language_id: state.language_id,
         fragments: state.fragments,
         loading: state.loading
     };
