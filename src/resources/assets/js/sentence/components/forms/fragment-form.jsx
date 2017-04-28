@@ -3,11 +3,9 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { polyfill as enableSmoothScrolling } from 'smoothscroll-polyfill';
-import { transcribe as transcribeGeneralUse, makeOptions as makeOptionsForGeneralUse } from 'tengwar/general-use';
-import { transcribe as transcribeClassical, makeOptions as makeOptionsForClassical } from 'tengwar/classical';
-import TengwarParmaite from 'tengwar/tengwar-parmaite';
 import { requestSuggestions, setFragments, setFragmentData } from '../../actions/admin';
 import { EDStatefulFormComponent } from 'ed-form';
+import { transcribe } from '../../../_shared/tengwar';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
 import EDErrorList from 'ed-components/error-list';
 
@@ -134,31 +132,9 @@ class EDFragmentForm extends EDStatefulFormComponent {
         ev.preventDefault();
 
         const language = this.props.languages.find(l => l.id === this.props.language_id);
-
-        let options = null;
-        let transcriber = null;
-
-        switch (language.tengwar_mode) {
-            case 'general-use':
-                options = makeOptionsForGeneralUse({
-                    font: TengwarParmaite
-                });
-                transcriber = transcribeGeneralUse;
-                break;
-            case 'classical':
-                options = makeOptionsForClassical({
-                    font: TengwarParmaite
-                });
-                transcriber = transcribeClassical;
-                break;
-            default:
-                // unsupported!
-                return;
-        }
-
         const data = this.props.fragments[this.state.editingFragmentIndex];
-        const transcription = transcriber(data.fragment, options);
 
+        let transcription = transcribe(data.fragment, language.tengwar_mode, false);
         if (transcription) {
             this.tengwarInput.value = transcription;
         }
@@ -211,7 +187,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
                         <div className="input-group">
                             <input id="ed-sentence-fragment-tengwar" className="form-control tengwar" type="text" 
                                 ref={input => this.tengwarInput = input} />
-                            <div className="input-group-addon"><a href="#" onClick={this.onTranscribeClick.bind(this)}>Automatic transcription</a></div>
+                            <div className="input-group-addon"><a href="#" onClick={this.onTranscribeClick.bind(this)}>Transcribe</a></div>
                         </div>
                     </div>
                     <div className="form-group">

@@ -14,15 +14,15 @@ const path = require('path');
 mix.webpackConfig({
     resolve: {
         alias: {
-            'ed-shared': path.resolve(__dirname, 'resources/assets/js/_shared/'),
+            'elfdict': path.resolve(__dirname, 'resources/assets/js/_ed/'),
 
-            'ed-components/error-list': 'ed-shared/components/error-list.jsx',
-            'ed-components/markdown-editor': 'ed-shared/components/markdown-editor.jsx',
+            'ed-components/error-list': 'elfdict/components/error-list.jsx',
+            'ed-components/markdown-editor': 'elfdict/components/markdown-editor.jsx',
 
-            'ed-config': 'ed-shared/config.js',
-            'ed-form': 'ed-shared/form.js',
-            'ed-promise': 'ed-shared/promise.js',
-            'ed-session-storage-state': 'ed-shared/session-storage-state.js',
+            'ed-config': 'elfdict/config.js',
+            'ed-form': 'elfdict/form.js',
+            'ed-promise': 'elfdict/promise.js',
+            'ed-session-storage-state': 'elfdict/session-storage-state.js',
         }
     }
 });
@@ -46,7 +46,6 @@ mix.extract([
 ]);
 
 mix.react([
-    'resources/assets/js/_shared/config.js',
     'resources/assets/js/navigation.js',
     'resources/assets/js/search/index.jsx'
 ], 'public/js/global.js');

@@ -1,6 +1,6 @@
-webpackJsonp([2,5],{
+webpackJsonp([2],{
 
-/***/ 121:
+/***/ 104:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45,7 +45,7 @@ exports.default = EDSentenceReducer;
 
 /***/ }),
 
-/***/ 194:
+/***/ 170:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -55,23 +55,23 @@ var _react = __webpack_require__(3);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(36);
+var _reactDom = __webpack_require__(32);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _reactRedux = __webpack_require__(20);
+var _reactRedux = __webpack_require__(19);
 
-var _redux = __webpack_require__(37);
+var _redux = __webpack_require__(33);
 
-var _reduxThunk = __webpack_require__(49);
+var _reduxThunk = __webpack_require__(41);
 
 var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-var _reducers = __webpack_require__(121);
+var _reducers = __webpack_require__(104);
 
 var _reducers2 = _interopRequireDefault(_reducers);
 
-var _fragmentExplorer = __webpack_require__(220);
+var _fragmentExplorer = __webpack_require__(197);
 
 var _fragmentExplorer2 = _interopRequireDefault(_fragmentExplorer);
 
@@ -90,7 +90,7 @@ window.addEventListener('load', function () {
 
 /***/ }),
 
-/***/ 217:
+/***/ 194:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -101,17 +101,17 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.selectFragment = undefined;
 
-var _axios = __webpack_require__(31);
+var _axios = __webpack_require__(27);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _edConfig = __webpack_require__(15);
+var _edConfig = __webpack_require__(18);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _edPromise = __webpack_require__(63);
+var _edPromise = __webpack_require__(55);
 
-var _reducers = __webpack_require__(121);
+var _reducers = __webpack_require__(104);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -135,7 +135,7 @@ var selectFragment = exports.selectFragment = function selectFragment(fragmentId
 
 /***/ }),
 
-/***/ 220:
+/***/ 197:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -155,27 +155,27 @@ var _classnames = __webpack_require__(11);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _reactRedux = __webpack_require__(20);
+var _reactRedux = __webpack_require__(19);
 
-var _edConfig = __webpack_require__(15);
+var _edConfig = __webpack_require__(18);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _actions = __webpack_require__(217);
+var _actions = __webpack_require__(194);
 
-var _fragment = __webpack_require__(221);
+var _fragment = __webpack_require__(198);
 
 var _fragment2 = _interopRequireDefault(_fragment);
 
-var _tengwarFragment = __webpack_require__(222);
+var _tengwarFragment = __webpack_require__(199);
 
 var _tengwarFragment2 = _interopRequireDefault(_tengwarFragment);
 
-var _bookGloss = __webpack_require__(65);
+var _bookGloss = __webpack_require__(57);
 
 var _bookGloss2 = _interopRequireDefault(_bookGloss);
 
-var _htmlToReact = __webpack_require__(35);
+var _htmlToReact = __webpack_require__(31);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -445,7 +445,7 @@ exports.default = (0, _reactRedux.connect)(mapStateToProps)(EDFragmentExplorer);
 
 /***/ }),
 
-/***/ 221:
+/***/ 198:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -530,7 +530,7 @@ exports.default = EDFragment;
 
 /***/ }),
 
-/***/ 222:
+/***/ 199:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -587,15 +587,15 @@ exports.default = EDTengwarFragment;
 
 /***/ }),
 
-/***/ 448:
+/***/ 402:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(194);
+module.exports = __webpack_require__(170);
 
 
 /***/ }),
 
-/***/ 49:
+/***/ 41:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -625,7 +625,7 @@ exports['default'] = thunk;
 
 /***/ }),
 
-/***/ 65:
+/***/ 57:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -645,7 +645,7 @@ var _classnames = __webpack_require__(11);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _htmlToReact = __webpack_require__(35);
+var _htmlToReact = __webpack_require__(31);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -840,4 +840,4 @@ exports.default = EDBookGloss;
 
 /***/ })
 
-},[448]);
+},[402]);
