@@ -1,50 +1,36 @@
-import he from 'he';
-import { transcribe as transcribeGeneralUse, makeOptions as makeOptionsForGeneralUse } from 'tengwar/general-use';
-import { transcribe as transcribeClassical, makeOptions as makeOptionsForClassical } from 'tengwar/classical';
-import TengwarParmaite from 'tengwar/tengwar-parmaite';
+
 
 /**
  * Transcribes the specified text body to tengwar using the parmaite font.
  * @param {string} text 
  * @param {string} mode 
- * @param {Boolean} [html=true]
  */
-export const transcribe = (text, mode, html) => {
-    if (html === undefined) {
-      html = true;
+export const transcribe = (text, mode) => {
+    if (!window.EDTengwarInitialized || !window.EDTengwarInitialized.hasOwnProperty(mode)) {
+        Glaemscribe.resource_manager.load_modes(mode);
+
+        let initialized = window.EDTengwarInitialized || {};
+        initialized[mode] = true;
+
+        window.EDTengwarInitialized = initialized;
+    }
+
+    const trascriber = Glaemscribe.resource_manager.loaded_modes[mode];
+    const charset = Glaemscribe.resource_manager.loaded_charsets['tengwar_ds_parmaite'];
+    if (!trascriber) {
+        return undefined;
     }
     
-    let options = null;
-    let transcriber = null;
-
-    switch (mode) {
-        case 'general-use':
-            options = makeOptionsForGeneralUse();
-            transcriber = transcribeGeneralUse;
-            break;
-        case 'classical':
-            options = makeOptionsForClassical();
-            transcriber = transcribeClassical;
-            break;
-        default:
-            // unsupported!
-            return undefined;
+    // Transcribe using Glaemscribe transcriber for the specified mode
+    // The result is an array with three elements: 
+    // 0th element: whether the transcription was successful (true/false)
+    // 1th element: transcription result
+    // 2th element: debug data
+    const result = trascriber.transcribe(text, charset);
+    if (!result[0]) {
+        return undefined; // failed!
     }
 
-    options.font = TengwarParmaite;
-    options.plain = !html;
-    options.block = false;
-
-    let transcription = transcriber(text, options);
-    if (!transcription) {
-      return undefined;
-    }
-
-    // Decode HTML entities. 
-    // See https://github.com/kriskowal/tengwarjs/issues/10
-    if (!html) {
-      transcription = he.decode(transcription);
-    }
-
-    return transcription;
+    // Return the transcription results
+    return result[1].trim();
 };

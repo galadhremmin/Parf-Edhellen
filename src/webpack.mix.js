@@ -22,7 +22,7 @@ mix.webpackConfig({
             'ed-config': 'elfdict/config.js',
             'ed-form': 'elfdict/form.js',
             'ed-promise': 'elfdict/promise.js',
-            'ed-session-storage-state': 'elfdict/session-storage-state.js',
+            'ed-session-storage-state': 'elfdict/session-storage-state.js'
         }
     }
 });
@@ -35,9 +35,6 @@ mix.extract([
     'axios',
     'classnames',
     'smoothscroll-polyfill',
-    'tengwar/general-use',
-    'tengwar/classical',
-    'tengwar/tengwar-parmaite',
     'ed-components/error-list',
     'ed-components/markdown-editor',
     'ed-config',
@@ -50,6 +47,18 @@ mix.react([
     'resources/assets/js/navigation.js',
     'resources/assets/js/search/index.jsx'
 ], 'public/js/global.js');
+
+mix.combine([
+    'resources/assets/js/_shared/glaemscribe/glaemscribe.js',
+    'resources/assets/js/_shared/glaemscribe/charsets/tengwar_ds_parmaite.cst.js',
+    'resources/assets/js/_shared/glaemscribe/modes/adunaic.glaem.js',
+    'resources/assets/js/_shared/glaemscribe/modes/blackspeech.glaem.js',
+    'resources/assets/js/_shared/glaemscribe/modes/quenya.glaem.js',
+    'resources/assets/js/_shared/glaemscribe/modes/sindarin-beleriand.glaem.js',
+    'resources/assets/js/_shared/glaemscribe/modes/sindarin.glaem.js',
+    'resources/assets/js/_shared/glaemscribe/modes/telerin.glaem.js',
+    'resources/assets/js/_shared/glaemscribe/modes/westron.glaem.js',
+], 'public/js/glaemscribe.js');
 
 mix.js([
     'resources/assets/js/markdown/index.jsx'
