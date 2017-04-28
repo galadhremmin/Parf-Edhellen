@@ -51,7 +51,7 @@ class TranslationRepository
             ->first();
     }
 
-    public function suggest(array $words, int $languageId) 
+    public function suggest(array $words, int $languageId, $inexact = false) 
     {
         // Transform all words to lower case and remove doublettes.
         $words = array_unique(array_map(function ($s) {
@@ -60,8 +60,12 @@ class TranslationRepository
 
         // Create an array containing words in their ASCII form. These
         // will be used to query the database with.
-        $normalizedWords = array_unique(array_map(function ($s) {
-            return StringHelper::normalize($s);
+        $normalizedWords = array_unique(array_map(function ($s) use($inexact) {
+            $w = StringHelper::normalize($s);
+            if ($inexact) {
+                $w .= '%';
+            }
+            return $w;
         }, $words));
 
         // Initialize the grouped suggestions hash array with an empty array
@@ -74,15 +78,26 @@ class TranslationRepository
 
         // Retrieve suggestions, and only look among attested and verified
         // sources.
-        $suggestions = self::createTranslationQuery()
+        $query = self::createTranslationQuery()
             ->where([
                 ['t.language_id', '=', $languageId],
                 ['t.is_uncertain', '=', 0],
                 ['tg.is_canon', '=', 1]
-            ])
-            ->whereIn('w.normalized_word', $normalizedWords)
-            ->get()
-            ->toArray();
+            ]);
+        
+        if ($inexact) {
+            $query->where(function ($query) use ($normalizedWords) {
+                foreach ($normalizedWords as $word) {
+                    $query->orWhere('w.normalized_word', 'like', $word);
+                }
+            });
+
+            return $query->toSql();
+        } else {
+            $query = $query->whereIn('w.normalized_word', $normalizedWords);
+        }
+
+        $suggestions = $query->get()->toArray();
 
         if (count($suggestions) > 0) {
             foreach ($words as $word) {
@@ -122,8 +137,8 @@ class TranslationRepository
                 'w.word', 't.id', 't.translation', 't.etymology', 't.type', 't.source',
                 't.comments', 't.tengwar', 't.phonetic', 't.language_id', 't.account_id',
                 'a.nickname as account_name', 'w.normalized_word', 't.is_index', 't.created_at', 't.translation_group_id',
-                'tg.name as translation_group_name', 'tg.is_canon', 'tg.external_link_format', 't.is_uncertain', 't.external_id',
-                't.is_latest');
+                'tg.name as translation_group_name', 'tg.is_canon', 'tg.external_link_format', 't.is_uncertain', 
+                't.external_id', 't.is_latest');
     }
 
     protected static function getSensesForWord(string $word) 

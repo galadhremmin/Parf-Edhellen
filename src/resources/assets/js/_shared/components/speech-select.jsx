@@ -15,19 +15,31 @@ class EDSpeechSelect extends React.Component {
 
     componentWillMount() {
         axios.get(EDConfig.api('speech'))
-            .then(resp => this.setTypesOfSpeech(resp.data));
+            .then(resp => this.setLoadedTypesOfSpeech(resp.data));
     }
 
-    setTypesOfSpeech(typesOfSpeech) {
+    setLoadedTypesOfSpeech(typesOfSpeech) {
         this.setState({
           typesOfSpeech
         });
     }
 
+    /**
+     * Sets the type of speech currently selected. The object must be retrieved
+     * from the server to be considered valid.
+     * @param {Object} value 
+     */
     setValue(value) {
         this.setState({
             value
         });
+    }
+
+    /**
+     * Gets the component's current value.
+     */
+    getValue() {
+        return this.state.value;
     }
 
     onSpeechChange(ev) {

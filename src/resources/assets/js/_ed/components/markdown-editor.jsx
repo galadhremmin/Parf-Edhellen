@@ -32,10 +32,21 @@ class EDMarkdownEditor extends React.Component {
         });
     }
 
+    /**
+     * Sets the component's current value.
+     * @param {string} value 
+     */
     setValue(value) {
         this.setState({
             value
         });
+    }
+
+    /**
+     * Gets the component's current value.
+     */
+    getValue() {
+        return this.state.value;
     }
 
     onOpenTab(ev, tab) {

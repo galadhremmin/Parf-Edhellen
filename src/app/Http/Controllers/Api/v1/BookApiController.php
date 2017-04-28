@@ -41,13 +41,15 @@ class BookApiController extends Controller
     {
         $this->validate($request, [
             'words'       => 'required|array',
-            'language_id' => 'numeric'
+            'language_id' => 'numeric',
+            'inexact'     => 'boolean'
         ]);
 
         $words = $request->input('words');
         $languageId = intval($request->input('language_id'));
+        $inexact = boolval($request->input('inexact'));
         
-        $translations = $this->_translationRepository->suggest($words, $languageId); 
+        $translations = $this->_translationRepository->suggest($words, $languageId, $inexact); 
         return $translations;
     }
 

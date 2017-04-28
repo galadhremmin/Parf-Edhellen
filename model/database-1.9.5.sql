@@ -1,4 +1,4 @@
-alter table `languages` add `tengwar_mode` varchar(16) null;
+alter table `languages` add `tengwar_mode` varchar(32) null;
 
 update `languages` set `tengwar_mode` = 'quenya' 
     where `name` in ('Quenya', 'Qenya', 'Ancient quenya');
@@ -14,3 +14,4 @@ update `languages` set `tengwar_mode` = 'westron'
     where `name` in ('Westron');
 update `languages` set `tengwar_mode` = 'blackspeech'  
     where `name` in ('Black speech');
+

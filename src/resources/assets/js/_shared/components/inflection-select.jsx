@@ -19,7 +19,42 @@ class EDInflectionSelect extends React.Component {
 
     componentWillMount() {
         axios.get(EDConfig.api('inflection'))
-            .then(resp => this.setInflections(resp.data));
+            .then(resp => this.setLoadedInflections(resp.data));
+    }
+
+    setLoadedInflections(inflections) {
+        const groupNames = Object.keys(inflections);
+
+        groupNames.forEach(groupName => {
+            inflections[groupName].forEach(inflection => {
+                inflection.name = inflection.name.toLocaleLowerCase();
+            });
+        });
+
+        this.setState({
+          inflections,
+          groupNames
+        });
+    }
+
+    /**
+     * Sets the selected inflections. These should be retrieved from the server
+     * to be considered valid.
+     * 
+     * @param {Object[]} inflections 
+     */
+    setValue(selectedInflections) {
+        this.setState({
+            selectedInflections,
+            value: ''
+        });
+    }
+
+    /**
+     * Gets an array containing the inflections currently selected.
+     */
+    getValue() {
+        return this.state.selectedInflections || [];
     }
 
     getSuggestions(data) {
@@ -61,48 +96,6 @@ class EDInflectionSelect extends React.Component {
         );
     }
 
-    setInflections(inflections) {
-        const groupNames = Object.keys(inflections);
-
-        groupNames.forEach(groupName => {
-            inflections[groupName].forEach(inflection => {
-                inflection.name = inflection.name.toLocaleLowerCase();
-            });
-        });
-
-        this.setState({
-          inflections,
-          groupNames
-        });
-    }
-
-    setValue(value) {
-        this.setState({
-            value
-        });
-    }
-
-    onSuggestionSelect(ev, data) {
-        ev.preventDefault();
-
-        this.setState({
-            selectedInflections: [ ...this.state.selectedInflections, data.suggestion ],
-            value: ''
-        });
-    }
-
-    onSuggestionsFetchRequest(value) {
-        this.setState({
-            suggestions: this.getSuggestions(value)
-        });
-    }
-
-    onSuggestionsClearRequest() {
-        this.setState({
-            suggestions: []
-        });
-    }
-
     onInflectionChange(ev, data) {
         this.setState({
             value: data.newValue
@@ -112,6 +105,23 @@ class EDInflectionSelect extends React.Component {
     onRemoveInflectionClick(ev, inflection) {
         this.setState({
             selectedInflections: this.state.selectedInflections.filter(i => i.id !== inflection.id)
+        });
+    }
+
+    onSuggestionSelect(ev, data) {
+        ev.preventDefault();
+        this.setValue([ ...this.state.selectedInflections, data.suggestion ]);
+    }
+
+    onSuggestionsFetchRequest(data) {
+        this.setState({
+            suggestions: this.getSuggestions(data)
+        });
+    }
+
+    onSuggestionsClearRequest() {
+        this.setState({
+            suggestions: []
         });
     }
 

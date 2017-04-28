@@ -10,6 +10,7 @@ import EDMarkdownEditor from 'ed-components/markdown-editor';
 import EDErrorList from 'ed-components/error-list';
 import EDSpeechSelect from '../../../_shared/components/speech-select';
 import EDInflectionSelect from '../../../_shared/components/inflection-select';
+import EDWordSelect from '../../../_shared/components/word-select';
 
 class EDFragmentForm extends EDStatefulFormComponent {
     constructor(props) {
@@ -192,25 +193,37 @@ class EDFragmentForm extends EDStatefulFormComponent {
             {this.state.editingFragmentIndex > -1 ? 
                 <div className="well">
                     <EDErrorList errors={this.state.errors} />
+
+                    <div className="form-group">
+                        <label htmlFor="ed-sentence-fragment-word" className="control-label">Word</label>
+                        <EDWordSelect componentId="ed-sentence-fragment-word" languageId={this.props.language_id}
+                            suggestions={this.props.suggestions}
+                            ref={input => this.wordInput = input} />
+                    </div>
                     <div className="form-group">
                         <label htmlFor="ed-sentence-fragment-tengwar" className="control-label">Tengwar</label>
                         <div className="input-group">
                             <input id="ed-sentence-fragment-tengwar" className="form-control tengwar" type="text" 
                                 ref={input => this.tengwarInput = input} />
-                            <div className="input-group-addon"><a href="#" onClick={this.onTranscribeClick.bind(this)}>Transcribe</a></div>
+                            <div className="input-group-addon">
+                                <a href="#" onClick={this.onTranscribeClick.bind(this)}>Transcribe</a>
+                            </div>
                         </div>
                     </div>
                     <div className="form-group">
                         <label htmlFor="ed-sentence-fragment-speech" className="control-label">Type of speech</label>
-                        <EDSpeechSelect componentId="ed-sentence-fragment-speech" ref={input => this.speechInput = input} />
+                        <EDSpeechSelect componentId="ed-sentence-fragment-speech" 
+                            ref={input => this.speechInput = input} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="ed-sentence-fragment-inflections" className="control-label">Inflection(s)</label>
-                        <EDInflectionSelect componentId="ed-sentence-fragment-inflections" ref={input => this.inflectionInput = input} />
+                        <EDInflectionSelect componentId="ed-sentence-fragment-inflections" 
+                            ref={input => this.inflectionInput = input} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="ed-sentence-fragment-comments" className="control-label">Comments</label>
-                        <EDMarkdownEditor componentId="ed-sentence-fragment-comments" rows={4} ref={input => this.commentsInput = input} />
+                        <EDMarkdownEditor componentId="ed-sentence-fragment-comments" rows={4} 
+                            ref={input => this.commentsInput = input} />
                     </div>
                 </div>
             : ''}
@@ -265,6 +278,7 @@ const mapStateToProps = state => {
         languages: state.languages,
         language_id: state.language_id,
         fragments: state.fragments,
+        suggestions: state.suggestions,
         loading: state.loading
     };
 };

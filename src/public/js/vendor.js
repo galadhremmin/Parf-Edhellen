@@ -6728,12 +6728,28 @@ var EDMarkdownEditor = function (_React$Component) {
                 html: resp.data.html
             });
         }
+
+        /**
+         * Sets the component's current value.
+         * @param {string} value 
+         */
+
     }, {
         key: 'setValue',
         value: function setValue(value) {
             this.setState({
                 value: value
             });
+        }
+
+        /**
+         * Gets the component's current value.
+         */
+
+    }, {
+        key: 'getValue',
+        value: function getValue() {
+            return this.state.value;
         }
     }, {
         key: 'onOpenTab',
