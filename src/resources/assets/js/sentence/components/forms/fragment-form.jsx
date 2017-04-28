@@ -8,6 +8,8 @@ import { EDStatefulFormComponent } from 'ed-form';
 import { transcribe } from '../../../_shared/tengwar';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
 import EDErrorList from 'ed-components/error-list';
+import EDSpeechSelect from '../../../_shared/components/speech-select';
+import EDInflectionSelect from '../../../_shared/components/inflection-select';
 
 class EDFragmentForm extends EDStatefulFormComponent {
     constructor(props) {
@@ -135,13 +137,20 @@ class EDFragmentForm extends EDStatefulFormComponent {
         const data = this.props.fragments[this.state.editingFragmentIndex];
 
         let transcription = transcribe(data.fragment, language.tengwar_mode, false);
+        let errors = undefined;
         if (transcription) {
             this.tengwarInput.value = transcription;
+        } else {
+            errors = [`Unfortunately, the transcription service does not support ${language.name}.`];
         }
+
+        this.setState({
+            errors
+        });
     }
 
-    onSubmit() {
-        
+    onSubmit(ev) {
+        ev.preventDefault();
     }
  
     render() {
@@ -182,6 +191,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
             }
             {this.state.editingFragmentIndex > -1 ? 
                 <div className="well">
+                    <EDErrorList errors={this.state.errors} />
                     <div className="form-group">
                         <label htmlFor="ed-sentence-fragment-tengwar" className="control-label">Tengwar</label>
                         <div className="input-group">
@@ -191,8 +201,16 @@ class EDFragmentForm extends EDStatefulFormComponent {
                         </div>
                     </div>
                     <div className="form-group">
+                        <label htmlFor="ed-sentence-fragment-speech" className="control-label">Type of speech</label>
+                        <EDSpeechSelect componentId="ed-sentence-fragment-speech" ref={input => this.speechInput = input} />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="ed-sentence-fragment-inflections" className="control-label">Inflection(s)</label>
+                        <EDInflectionSelect componentId="ed-sentence-fragment-inflections" ref={input => this.inflectionInput = input} />
+                    </div>
+                    <div className="form-group">
                         <label htmlFor="ed-sentence-fragment-comments" className="control-label">Comments</label>
-                        <EDMarkdownEditor componentId="ed-sentence-fragment-comments" ref={input => this.commentsInput = input} rows={4} />
+                        <EDMarkdownEditor componentId="ed-sentence-fragment-comments" rows={4} ref={input => this.commentsInput = input} />
                     </div>
                 </div>
             : ''}

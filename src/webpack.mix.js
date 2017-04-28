@@ -30,6 +30,7 @@ mix.webpackConfig({
 mix.extract([
     'react', 'react-dom', 'react-router-dom',
     'react-redux', 'redux',
+    'react-autosuggest',
     'html-to-react',
     'axios',
     'classnames',

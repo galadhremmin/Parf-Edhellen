@@ -36,7 +36,16 @@ window.addEventListener('load', function () {
 
     if (creating) {
         store.subscribe(() => {
-            saveState('sentence', store.getState());
+            const state = store.getState();
+            saveState('sentence', {
+                name: state.name,
+                source: state.source,
+                language_id: state.language_id,
+                description: state.description,
+                long_description: state.long_description,
+                fragments: state.fragments,
+                id: state.id,
+            });
         });
     }
 

@@ -21,7 +21,7 @@ class EDMarkdownEditor extends React.Component {
     componentWillReceiveProps(props) {
         // check if the value prop has changed, as it is the one property which
         // will most likely be affected by Redux.
-        if (this.state.value !== props.value) {
+        if (props.value !== undefined && this.state.value !== props.value) {
             this.setValue(props.value || '');
         }
     }
@@ -72,10 +72,7 @@ class EDMarkdownEditor extends React.Component {
         this.setValue(ev.target.value);
 
         if (typeof this.props.onChange === 'function') {
-            // Remove the synthetic event from the pool and allow references to the event to be retained by user code. 
-            // See https://facebook.github.io/react/docs/events.html
-            ev.persist();
-            window.setTimeout(() => this.props.onChange(ev), 0);
+            this.props.onChange(ev);
         }
     }
 
@@ -128,7 +125,8 @@ class EDMarkdownEditor extends React.Component {
 
 EDMarkdownEditor.defaultProps = {
     rows: 15,
-    componentName: 'markdownBody'
+    componentName: 'markdownBody',
+    componentId: 'markdownBody'
 };
 
 export default EDMarkdownEditor;

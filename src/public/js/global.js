@@ -1,6 +1,6 @@
 webpackJsonp([1],{
 
-/***/ 100:
+/***/ 102:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18,15 +18,15 @@ exports.setSelection = setSelection;
 exports.fetchResults = fetchResults;
 exports.beginNavigation = beginNavigation;
 
-var _axios = __webpack_require__(27);
+var _axios = __webpack_require__(21);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _edConfig = __webpack_require__(18);
+var _edConfig = __webpack_require__(15);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _reducers = __webpack_require__(101);
+var _reducers = __webpack_require__(103);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -164,7 +164,7 @@ function beginNavigation(word, normalizedWord, index, modifyState) {
 
 /***/ }),
 
-/***/ 101:
+/***/ 103:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -246,7 +246,7 @@ var EDSearchResultsReducer = exports.EDSearchResultsReducer = function EDSearchR
 
 /***/ }),
 
-/***/ 167:
+/***/ 169:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -319,13 +319,13 @@ var EDSearchResultsReducer = exports.EDSearchResultsReducer = function EDSearchR
 
 /***/ }),
 
-/***/ 168:
+/***/ 170:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _react = __webpack_require__(3);
+var _react = __webpack_require__(2);
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -343,13 +343,13 @@ var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
 var _smoothscrollPolyfill = __webpack_require__(44);
 
-var _reducers = __webpack_require__(101);
+var _reducers = __webpack_require__(103);
 
-var _searchBar = __webpack_require__(191);
+var _searchBar = __webpack_require__(195);
 
 var _searchBar2 = _interopRequireDefault(_searchBar);
 
-var _searchResults = __webpack_require__(193);
+var _searchResults = __webpack_require__(197);
 
 var _searchResults2 = _interopRequireDefault(_searchResults);
 
@@ -375,14 +375,14 @@ window.addEventListener('load', function () {
 
 /***/ }),
 
-/***/ 171:
+/***/ 173:
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
 
-/***/ 190:
+/***/ 194:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -394,7 +394,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(3);
+var _react = __webpack_require__(2);
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -476,7 +476,7 @@ exports.default = EDBookSection;
 
 /***/ }),
 
-/***/ 191:
+/***/ 195:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -488,21 +488,21 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(3);
+var _react = __webpack_require__(2);
 
 var _react2 = _interopRequireDefault(_react);
 
 var _reactRedux = __webpack_require__(19);
 
-var _classnames = __webpack_require__(11);
+var _classnames = __webpack_require__(9);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _edConfig = __webpack_require__(18);
+var _edConfig = __webpack_require__(15);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _actions = __webpack_require__(100);
+var _actions = __webpack_require__(102);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -726,7 +726,7 @@ exports.default = (0, _reactRedux.connect)(mapStateToProps)(EDSearchBar);
 
 /***/ }),
 
-/***/ 192:
+/***/ 196:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -738,11 +738,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(3);
+var _react = __webpack_require__(2);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _classnames = __webpack_require__(11);
+var _classnames = __webpack_require__(9);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -795,7 +795,7 @@ exports.default = EDSearchItem;
 
 /***/ }),
 
-/***/ 193:
+/***/ 197:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -807,27 +807,27 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(3);
+var _react = __webpack_require__(2);
 
 var _react2 = _interopRequireDefault(_react);
 
 var _reactRedux = __webpack_require__(19);
 
-var _actions = __webpack_require__(100);
+var _actions = __webpack_require__(102);
 
-var _classnames = __webpack_require__(11);
+var _classnames = __webpack_require__(9);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _edConfig = __webpack_require__(18);
+var _edConfig = __webpack_require__(15);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _searchItem = __webpack_require__(192);
+var _searchItem = __webpack_require__(196);
 
 var _searchItem2 = _interopRequireDefault(_searchItem);
 
-var _bookSection = __webpack_require__(190);
+var _bookSection = __webpack_require__(194);
 
 var _bookSection2 = _interopRequireDefault(_bookSection);
 
@@ -1222,16 +1222,6 @@ exports.default = (0, _reactRedux.connect)(mapStateToProps)(EDSearchResults);
 
 /***/ }),
 
-/***/ 400:
-/***/ (function(module, exports, __webpack_require__) {
-
-__webpack_require__(167);
-__webpack_require__(168);
-module.exports = __webpack_require__(171);
-
-
-/***/ }),
-
 /***/ 41:
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1262,6 +1252,16 @@ exports['default'] = thunk;
 
 /***/ }),
 
+/***/ 415:
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(169);
+__webpack_require__(170);
+module.exports = __webpack_require__(173);
+
+
+/***/ }),
+
 /***/ 57:
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1274,11 +1274,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(3);
+var _react = __webpack_require__(2);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _classnames = __webpack_require__(11);
+var _classnames = __webpack_require__(9);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -1477,4 +1477,4 @@ exports.default = EDBookGloss;
 
 /***/ })
 
-},[400]);
+},[415]);

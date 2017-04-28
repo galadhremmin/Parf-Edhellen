@@ -65,5 +65,10 @@ Route::group([ 'namespace' => 'Api\v1', 'prefix' => 'api/v1' ], function () {
     Route::post('book/translate',                [ 'uses' => 'BookApiController@translate' ]);
     Route::post('book/suggest',                  [ 'uses' => 'BookApiController@suggest' ]);
     Route::post('book/find',                     [ 'uses' => 'BookApiController@find' ]);
+
+    Route::get('speech/{id?}',                   [ 'uses' => 'SpeechApiController@index' ]);
+
+    Route::get('inflection/{id?}',               [ 'uses' => 'InflectionApiController@index' ]);
+
     Route::post('utility/markdown',              [ 'uses' => 'UtilityApiController@parseMarkdown' ]);
 });

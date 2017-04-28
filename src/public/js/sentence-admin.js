@@ -1,6 +1,6 @@
-webpackJsonp([3],{
+webpackJsonp([2],{
 
-/***/ 102:
+/***/ 104:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11,17 +11,17 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.setFragmentData = exports.setSentenceData = exports.setFragments = exports.requestSuggestions = undefined;
 
-var _axios = __webpack_require__(27);
+var _axios = __webpack_require__(21);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _edConfig = __webpack_require__(18);
+var _edConfig = __webpack_require__(15);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
 var _edPromise = __webpack_require__(55);
 
-var _admin = __webpack_require__(103);
+var _admin = __webpack_require__(105);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -61,7 +61,7 @@ var setFragmentData = exports.setFragmentData = function setFragmentData(fragmen
 
 /***/ }),
 
-/***/ 103:
+/***/ 105:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -130,7 +130,7 @@ exports.default = EDSentenceAdminReducer;
 
 /***/ }),
 
-/***/ 169:
+/***/ 171:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -138,7 +138,7 @@ exports.default = EDSentenceAdminReducer;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _react = __webpack_require__(3);
+var _react = __webpack_require__(2);
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -146,7 +146,7 @@ var _reactDom = __webpack_require__(32);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _reactRouterDom = __webpack_require__(91);
+var _reactRouterDom = __webpack_require__(93);
 
 var _reactRedux = __webpack_require__(19);
 
@@ -156,21 +156,21 @@ var _reduxThunk = __webpack_require__(41);
 
 var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-var _edConfig = __webpack_require__(18);
+var _edConfig = __webpack_require__(15);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _admin = __webpack_require__(103);
+var _admin = __webpack_require__(105);
 
 var _admin2 = _interopRequireDefault(_admin);
 
-var _edSessionStorageState = __webpack_require__(90);
+var _edSessionStorageState = __webpack_require__(91);
 
-var _sentenceForm = __webpack_require__(196);
+var _sentenceForm = __webpack_require__(200);
 
 var _sentenceForm2 = _interopRequireDefault(_sentenceForm);
 
-var _fragmentForm = __webpack_require__(195);
+var _fragmentForm = __webpack_require__(199);
 
 var _fragmentForm2 = _interopRequireDefault(_fragmentForm);
 
@@ -199,7 +199,16 @@ window.addEventListener('load', function () {
 
     if (creating) {
         store.subscribe(function () {
-            (0, _edSessionStorageState.saveState)('sentence', store.getState());
+            var state = store.getState();
+            (0, _edSessionStorageState.saveState)('sentence', {
+                name: state.name,
+                source: state.source,
+                language_id: state.language_id,
+                description: state.description,
+                long_description: state.long_description,
+                fragments: state.fragments,
+                id: state.id
+            });
         });
     }
 
@@ -221,7 +230,398 @@ window.addEventListener('load', function () {
 
 /***/ }),
 
-/***/ 189:
+/***/ 191:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(2);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _axios = __webpack_require__(21);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _classnames = __webpack_require__(9);
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
+var _edConfig = __webpack_require__(15);
+
+var _edConfig2 = _interopRequireDefault(_edConfig);
+
+var _reactAutosuggest = __webpack_require__(92);
+
+var _reactAutosuggest2 = _interopRequireDefault(_reactAutosuggest);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var EDInflectionSelect = function (_React$Component) {
+    _inherits(EDInflectionSelect, _React$Component);
+
+    function EDInflectionSelect(props) {
+        _classCallCheck(this, EDInflectionSelect);
+
+        var _this = _possibleConstructorReturn(this, (EDInflectionSelect.__proto__ || Object.getPrototypeOf(EDInflectionSelect)).call(this, props));
+
+        _this.state = {
+            inflections: [],
+            selectedInflections: [],
+            groupNames: [],
+            value: props.value || '',
+            suggestions: []
+        };
+        return _this;
+    }
+
+    _createClass(EDInflectionSelect, [{
+        key: 'componentWillMount',
+        value: function componentWillMount() {
+            var _this2 = this;
+
+            _axios2.default.get(_edConfig2.default.api('inflection')).then(function (resp) {
+                return _this2.setInflections(resp.data);
+            });
+        }
+    }, {
+        key: 'getSuggestions',
+        value: function getSuggestions(data) {
+            var _this3 = this;
+
+            var name = data.value.toLocaleLowerCase();
+
+            var sections = [];
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = this.state.groupNames[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var groupName = _step.value;
+
+                    var inflections = this.state.inflections[groupName].filter(function (i) {
+                        return i.name.length >= name.length && i.name.substr(0, name.length) === name && _this3.state.selectedInflections.indexOf(i) === -1;
+                    } // isn't selected!
+                    );
+
+                    if (inflections.length > 0) {
+                        sections.push({
+                            inflections: inflections,
+                            groupName: groupName
+                        });
+                    }
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            return sections;
+        }
+    }, {
+        key: 'getSuggestionValue',
+        value: function getSuggestionValue(suggestion) {
+            return suggestion.name;
+        }
+    }, {
+        key: 'getSectionSuggestions',
+        value: function getSectionSuggestions(section) {
+            return section.inflections;
+        }
+    }, {
+        key: 'renderSuggestion',
+        value: function renderSuggestion(suggestion) {
+            return _react2.default.createElement(
+                'span',
+                null,
+                suggestion.name
+            );
+        }
+    }, {
+        key: 'renderSectionTitle',
+        value: function renderSectionTitle(section) {
+            return _react2.default.createElement(
+                'strong',
+                null,
+                section.groupName
+            );
+        }
+    }, {
+        key: 'setInflections',
+        value: function setInflections(inflections) {
+            var groupNames = Object.keys(inflections);
+
+            groupNames.forEach(function (groupName) {
+                inflections[groupName].forEach(function (inflection) {
+                    inflection.name = inflection.name.toLocaleLowerCase();
+                });
+            });
+
+            this.setState({
+                inflections: inflections,
+                groupNames: groupNames
+            });
+        }
+    }, {
+        key: 'setValue',
+        value: function setValue(value) {
+            this.setState({
+                value: value
+            });
+        }
+    }, {
+        key: 'onSuggestionSelect',
+        value: function onSuggestionSelect(ev, data) {
+            ev.preventDefault();
+
+            this.setState({
+                selectedInflections: [].concat(_toConsumableArray(this.state.selectedInflections), [data.suggestion]),
+                value: ''
+            });
+        }
+    }, {
+        key: 'onSuggestionsFetchRequest',
+        value: function onSuggestionsFetchRequest(value) {
+            this.setState({
+                suggestions: this.getSuggestions(value)
+            });
+        }
+    }, {
+        key: 'onSuggestionsClearRequest',
+        value: function onSuggestionsClearRequest() {
+            this.setState({
+                suggestions: []
+            });
+        }
+    }, {
+        key: 'onInflectionChange',
+        value: function onInflectionChange(ev, data) {
+            this.setState({
+                value: data.newValue
+            });
+        }
+    }, {
+        key: 'onRemoveInflectionClick',
+        value: function onRemoveInflectionClick(ev, inflection) {
+            this.setState({
+                selectedInflections: this.state.selectedInflections.filter(function (i) {
+                    return i.id !== inflection.id;
+                })
+            });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _this4 = this;
+
+            var inputProps = {
+                placeholder: 'Search for an inflection',
+                value: this.state.value,
+                onChange: this.onInflectionChange.bind(this)
+            };
+
+            return _react2.default.createElement(
+                'div',
+                { className: 'ed-inflection-select' },
+                _react2.default.createElement(
+                    'div',
+                    null,
+                    _react2.default.createElement(_reactAutosuggest2.default, {
+                        alwaysRenderSuggestions: false // set to _true_ to view all.
+                        , multiSection: true,
+                        suggestions: this.state.suggestions,
+                        onSuggestionsFetchRequested: this.onSuggestionsFetchRequest.bind(this),
+                        onSuggestionsClearRequested: this.onSuggestionsClearRequest.bind(this),
+                        onSuggestionSelected: this.onSuggestionSelect.bind(this),
+                        getSuggestionValue: this.getSuggestionValue.bind(this),
+                        renderSuggestion: this.renderSuggestion.bind(this),
+                        renderSectionTitle: this.renderSectionTitle.bind(this),
+                        getSectionSuggestions: this.getSectionSuggestions.bind(this),
+                        inputProps: inputProps })
+                ),
+                _react2.default.createElement(
+                    'div',
+                    null,
+                    this.state.selectedInflections.map(function (i) {
+                        return _react2.default.createElement(
+                            'span',
+                            { key: i.id },
+                            _react2.default.createElement(
+                                'a',
+                                { className: 'label label-default selected-inflection',
+                                    onClick: function onClick(e) {
+                                        return _this4.onRemoveInflectionClick(e, i);
+                                    },
+                                    title: 'Press on the label (' + i.name + ') to remove it.' },
+                                i.name
+                            ),
+                            ' '
+                        );
+                    })
+                )
+            );
+        }
+    }]);
+
+    return EDInflectionSelect;
+}(_react2.default.Component);
+
+EDInflectionSelect.defaultProps = {
+    componentName: 'inflection',
+    componentId: undefined,
+    value: 0
+};
+
+exports.default = EDInflectionSelect;
+
+/***/ }),
+
+/***/ 192:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(2);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _axios = __webpack_require__(21);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _classnames = __webpack_require__(9);
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
+var _edConfig = __webpack_require__(15);
+
+var _edConfig2 = _interopRequireDefault(_edConfig);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var EDSpeechSelect = function (_React$Component) {
+    _inherits(EDSpeechSelect, _React$Component);
+
+    function EDSpeechSelect(props) {
+        _classCallCheck(this, EDSpeechSelect);
+
+        var _this = _possibleConstructorReturn(this, (EDSpeechSelect.__proto__ || Object.getPrototypeOf(EDSpeechSelect)).call(this, props));
+
+        _this.state = {
+            typesOfSpeech: [],
+            value: props.value || 0
+        };
+        return _this;
+    }
+
+    _createClass(EDSpeechSelect, [{
+        key: 'componentWillMount',
+        value: function componentWillMount() {
+            var _this2 = this;
+
+            _axios2.default.get(_edConfig2.default.api('speech')).then(function (resp) {
+                return _this2.setTypesOfSpeech(resp.data);
+            });
+        }
+    }, {
+        key: 'setTypesOfSpeech',
+        value: function setTypesOfSpeech(typesOfSpeech) {
+            this.setState({
+                typesOfSpeech: typesOfSpeech
+            });
+        }
+    }, {
+        key: 'setValue',
+        value: function setValue(value) {
+            this.setState({
+                value: value
+            });
+        }
+    }, {
+        key: 'onSpeechChange',
+        value: function onSpeechChange(ev) {
+            this.setValue(parseInt(ev.target.value, 10));
+
+            if (typeof this.props.onChange === 'function') {
+                this.props.onChange(ev);
+            }
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var typesOfSpeech = this.state.typesOfSpeech || [];
+            return _react2.default.createElement(
+                'select',
+                { onChange: this.onSpeechChange.bind(this),
+                    name: this.props.componentName,
+                    id: this.props.componentId,
+                    value: this.state.value,
+                    className: (0, _classnames2.default)('form-control', { 'disabled': this.state.typesOfSpeech.length < 1 }) },
+                _react2.default.createElement('option', { value: 0 }),
+                this.state.typesOfSpeech.map(function (s) {
+                    return _react2.default.createElement(
+                        'option',
+                        { key: s.id, value: s.id },
+                        s.name
+                    );
+                })
+            );
+        }
+    }]);
+
+    return EDSpeechSelect;
+}(_react2.default.Component);
+
+EDSpeechSelect.defaultProps = {
+    componentName: 'speech',
+    componentId: undefined,
+    value: 0
+};
+
+exports.default = EDSpeechSelect;
+
+/***/ }),
+
+/***/ 193:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -232,15 +632,15 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.transcribe = undefined;
 
-var _he = __webpack_require__(227);
+var _he = __webpack_require__(231);
 
 var _he2 = _interopRequireDefault(_he);
 
-var _generalUse = __webpack_require__(93);
+var _generalUse = __webpack_require__(95);
 
-var _classical = __webpack_require__(92);
+var _classical = __webpack_require__(94);
 
-var _tengwarParmaite = __webpack_require__(94);
+var _tengwarParmaite = __webpack_require__(96);
 
 var _tengwarParmaite2 = _interopRequireDefault(_tengwarParmaite);
 
@@ -294,7 +694,7 @@ var transcribe = exports.transcribe = function transcribe(text, mode, html) {
 
 /***/ }),
 
-/***/ 195:
+/***/ 199:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -308,25 +708,25 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(3);
+var _react = __webpack_require__(2);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _classnames = __webpack_require__(11);
+var _classnames = __webpack_require__(9);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
 var _reactRedux = __webpack_require__(19);
 
-var _reactRouter = __webpack_require__(9);
+var _reactRouter = __webpack_require__(10);
 
 var _smoothscrollPolyfill = __webpack_require__(44);
 
-var _admin = __webpack_require__(102);
+var _admin = __webpack_require__(104);
 
 var _edForm = __webpack_require__(54);
 
-var _tengwar = __webpack_require__(189);
+var _tengwar = __webpack_require__(193);
 
 var _markdownEditor = __webpack_require__(43);
 
@@ -335,6 +735,14 @@ var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 var _errorList = __webpack_require__(53);
 
 var _errorList2 = _interopRequireDefault(_errorList);
+
+var _speechSelect = __webpack_require__(192);
+
+var _speechSelect2 = _interopRequireDefault(_speechSelect);
+
+var _inflectionSelect = __webpack_require__(191);
+
+var _inflectionSelect2 = _interopRequireDefault(_inflectionSelect);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -493,13 +901,22 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
             var data = this.props.fragments[this.state.editingFragmentIndex];
 
             var transcription = (0, _tengwar.transcribe)(data.fragment, language.tengwar_mode, false);
+            var errors = undefined;
             if (transcription) {
                 this.tengwarInput.value = transcription;
+            } else {
+                errors = ['Unfortunately, the transcription service does not support ' + language.name + '.'];
             }
+
+            this.setState({
+                errors: errors
+            });
         }
     }, {
         key: 'onSubmit',
-        value: function onSubmit() {}
+        value: function onSubmit(ev) {
+            ev.preventDefault();
+        }
     }, {
         key: 'render',
         value: function render() {
@@ -574,6 +991,7 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                 this.state.editingFragmentIndex > -1 ? _react2.default.createElement(
                     'div',
                     { className: 'well' },
+                    _react2.default.createElement(_errorList2.default, { errors: this.state.errors }),
                     _react2.default.createElement(
                         'div',
                         { className: 'form-group' },
@@ -605,12 +1023,36 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                         { className: 'form-group' },
                         _react2.default.createElement(
                             'label',
+                            { htmlFor: 'ed-sentence-fragment-speech', className: 'control-label' },
+                            'Type of speech'
+                        ),
+                        _react2.default.createElement(_speechSelect2.default, { componentId: 'ed-sentence-fragment-speech', ref: function ref(input) {
+                                return _this4.speechInput = input;
+                            } })
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'form-group' },
+                        _react2.default.createElement(
+                            'label',
+                            { htmlFor: 'ed-sentence-fragment-inflections', className: 'control-label' },
+                            'Inflection(s)'
+                        ),
+                        _react2.default.createElement(_inflectionSelect2.default, { componentId: 'ed-sentence-fragment-inflections', ref: function ref(input) {
+                                return _this4.inflectionInput = input;
+                            } })
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'form-group' },
+                        _react2.default.createElement(
+                            'label',
                             { htmlFor: 'ed-sentence-fragment-comments', className: 'control-label' },
                             'Comments'
                         ),
-                        _react2.default.createElement(_markdownEditor2.default, { componentId: 'ed-sentence-fragment-comments', ref: function ref(input) {
+                        _react2.default.createElement(_markdownEditor2.default, { componentId: 'ed-sentence-fragment-comments', rows: 4, ref: function ref(input) {
                                 return _this4.commentsInput = input;
-                            }, rows: 4 })
+                            } })
                     )
                 ) : '',
                 _react2.default.createElement(
@@ -726,7 +1168,7 @@ exports.default = (0, _reactRouter.withRouter)((0, _reactRedux.connect)(mapState
 
 /***/ }),
 
-/***/ 196:
+/***/ 200:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -740,25 +1182,25 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _react = __webpack_require__(3);
+var _react = __webpack_require__(2);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _classnames = __webpack_require__(11);
+var _classnames = __webpack_require__(9);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
 var _reactRedux = __webpack_require__(19);
 
-var _reactRouter = __webpack_require__(9);
+var _reactRouter = __webpack_require__(10);
 
-var _axios = __webpack_require__(27);
+var _axios = __webpack_require__(21);
 
 var _axios2 = _interopRequireDefault(_axios);
 
 var _smoothscrollPolyfill = __webpack_require__(44);
 
-var _admin = __webpack_require__(102);
+var _admin = __webpack_require__(104);
 
 var _edForm = __webpack_require__(54);
 
@@ -1025,7 +1467,7 @@ exports.default = (0, _reactRouter.withRouter)((0, _reactRedux.connect)(mapState
 
 /***/ }),
 
-/***/ 227:
+/***/ 231:
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(module, global) {var __WEBPACK_AMD_DEFINE_RESULT__;/*! https://mths.be/he v1.1.1 by @mathias | MIT license */
@@ -1370,15 +1812,7 @@ exports.default = (0, _reactRouter.withRouter)((0, _reactRedux.connect)(mapState
 
 }(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(165)(module), __webpack_require__(89)))
-
-/***/ }),
-
-/***/ 401:
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(169);
-
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(167)(module), __webpack_require__(90)))
 
 /***/ }),
 
@@ -1410,6 +1844,14 @@ thunk.withExtraArgument = createThunkMiddleware;
 
 exports['default'] = thunk;
 
+/***/ }),
+
+/***/ 416:
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(171);
+
+
 /***/ })
 
-},[401]);
+},[416]);

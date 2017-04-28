@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Api\v1;
 
-use App\Models\Translation;
 use Illuminate\Http\Request;
+
+use App\Models\Translation;
 use App\Http\Controllers\Controller;
 use App\Repositories\TranslationRepository;
 use App\Adapters\BookAdapter;
