@@ -16,9 +16,10 @@ class EDWordSelect extends React.Component {
     }
 
     componentWillReceiveProps(props) {
-        if (props.suggestions !== undefined) {
+        if (Array.isArray(props.suggestions)) {
             this.setState({
-                suggestions: props.suggestions
+                suggestions: props.suggestions,
+                suggestionsFor: undefined
             });
         }
     }
@@ -53,8 +54,10 @@ class EDWordSelect extends React.Component {
     }
 
     onSuggestionsFetchRequest(data) {
+        const word = data.value;
+
         // already fetching suggestions?
-        if (this.loading) {
+        if (this.loading || /^\s*$/.test(word) || this.state.suggestionsFor === word) {
             return;
         }
 
@@ -64,7 +67,6 @@ class EDWordSelect extends React.Component {
             this.searchDelay = 0;
         }
 
-        const word = data.value;
         this.searchDelay = window.setTimeout(() => {
             this.searchDelay = 0;
             this.loading = true;
@@ -76,8 +78,10 @@ class EDWordSelect extends React.Component {
                 inexact: true
             }).then(resp => {
                 this.setState({
-                    suggestions: resp.data
+                    suggestions: resp.data[word] || [],
+                    suggestionsFor: word
                 });
+
                 this.loading = false;
             });
 
@@ -86,27 +90,57 @@ class EDWordSelect extends React.Component {
 
     onSuggestionsClearRequest() {
         this.setState({
-            suggestions: this.props.suggestions === this.state.suggestions
+            suggestions: !Array.isArray(this.props.suggestions) ||
+                this.props.suggestions === this.state.suggestions
                 ? [] : this.props.suggestions
         });
     }
 
-    onSuggestionSelect() {
-        console.log(arguments);
+    onSuggestionSelect(ev, data) {
+        ev.preventDefault();
+        this.setState({
+            value: data.suggestion || undefined
+        })
     }
 
     getSuggestionValue(suggestion) {
         return suggestion.word;
     }
 
+    renderInput(inputProps) {
+        const valid = !!this.state.value;
+        return <div className={classNames('input-group', { 'has-warning': !valid, 'has-success': valid })}>
+            <input {...inputProps} />
+            <div className="input-group-addon">
+                <span className={classNames('glyphicon', { 'glyphicon-ok': valid, 'glyphicon-exclamation-sign': !valid })} />
+            </div>
+        </div>;
+    }
+
     renderSuggestion(suggestion) {
-        return <span>{suggestion.word} &mdash; {suggestion.translation}</span>
+        return <div title={suggestion.comments}>
+            <strong>{suggestion.word}</strong>
+            {': '}
+            {suggestion.type ? <em>{`${suggestion.type} `}</em> : ''}
+            {suggestion.translation}
+            {' '}
+            [{suggestion.source}]<br />
+            <small>
+                {'by '}
+                <em>{suggestion.account_name}</em> 
+                {' '}
+                {suggestion.translation_group_name 
+                    ? <span>(<em>{suggestion.translation_group_name}</em>)</span> : ''}
+            </small>
+        </div>
     }
 
     render() {
         const inputProps = {
             placeholder: 'Search for a suitable translation',
             value: this.state.word,
+            name: this.props.componentName,
+            id: this.props.componentId,
             onChange: this.onWordChange.bind(this)
         };
 
@@ -120,6 +154,7 @@ class EDWordSelect extends React.Component {
                     onSuggestionsClearRequested={this.onSuggestionsClearRequest.bind(this)}
                     onSuggestionSelected={this.onSuggestionSelect.bind(this)}
                     getSuggestionValue={this.getSuggestionValue.bind(this)}
+                    renderInputComponent={this.renderInput.bind(this)}
                     renderSuggestion={this.renderSuggestion.bind(this)}
                     inputProps={inputProps} />
             </div>

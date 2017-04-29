@@ -129,6 +129,8 @@ class EDInflectionSelect extends React.Component {
         const inputProps = {
             placeholder: 'Search for an inflection',
             value: this.state.value,
+            name: this.props.componentName,
+            id: this.props.componentId,
             onChange: this.onInflectionChange.bind(this)
         };
 

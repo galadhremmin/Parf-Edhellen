@@ -49,8 +49,7 @@ class BookApiController extends Controller
         $languageId = intval($request->input('language_id'));
         $inexact = boolval($request->input('inexact'));
         
-        $translations = $this->_translationRepository->suggest($words, $languageId, $inexact); 
-        return $translations;
+        return $this->_translationRepository->suggest($words, $languageId, $inexact); 
     }
 
     public function translate(Request $request)

@@ -29,7 +29,7 @@
   border-bottom-right-radius: $border-radius-large;
   border: 1px solid $dropdown-border;
   border-top: none;
-  z-index: 2;
+  z-index: 100;
 }
 
 .react-autosuggest__suggestions-list {

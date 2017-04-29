@@ -76,42 +76,49 @@ class TranslationRepository
             $groupedSuggestions[$word] = [];
         }
 
-        // Retrieve suggestions, and only look among attested and verified
-        // sources.
+        $numberOfNormalizedWords = count($normalizedWords);
+        if ($numberOfNormalizedWords < 1) {
+            return $groupedSuggestions;
+        }
+
         $query = self::createTranslationQuery()
             ->where([
-                ['t.language_id', '=', $languageId],
-                ['t.is_uncertain', '=', 0],
-                ['tg.is_canon', '=', 1]
+                ['t.language_id', '=', $languageId]
             ]);
         
         if ($inexact) {
             $query->where(function ($query) use ($normalizedWords) {
-                foreach ($normalizedWords as $word) {
-                    $query->orWhere('w.normalized_word', 'like', $word);
+                foreach ($normalizedWords as $normalizedWord) {
+                    $query->orWhere('w.normalized_word', 'like', $normalizedWord);
                 }
             });
-
-            return $query->toSql();
         } else {
             $query = $query->whereIn('w.normalized_word', $normalizedWords);
         }
 
-        $suggestions = $query->get()->toArray();
-
+        $suggestions = $query
+            ->orderBy('w.normalized_word')
+            ->limit($numberOfNormalizedWords*10)
+            ->get()
+            ->toArray();
+        
         if (count($suggestions) > 0) {
             foreach ($words as $word) {
+                $lengthOfWord = strlen($word);
+                
                 // Try to find direct matches first, i.e. á => á.
-                $matchingSuggestions = array_filter($suggestions, function($s) use($word) {
-                    return $s->word === $word;
+                $matchingSuggestions = array_filter($suggestions, function($s) use($word, $lengthOfWord) {
+                    return strlen($s->word) >= $lengthOfWord && substr($word, 0, $lengthOfWord) === $word;
                 });
 
                 if (count($matchingSuggestions) < 1) {
                     // If no direct matches were found, normalize the word and try again, i.e. a => a
                     $normalizedWord = StringHelper::normalize($word);
+                    $lengthOfWord = strlen($normalizedWord);
 
-                    $matchingSuggestions = array_filter($suggestions, function ($s) use ($normalizedWord) {
-                        return $s->normalized_word === $normalizedWord;
+                    $matchingSuggestions = array_filter($suggestions, function ($s) use ($normalizedWord, $lengthOfWord) {
+                        return strlen($s->normalized_word) >= $lengthOfWord && 
+                            substr($s->normalized_word, 0, $lengthOfWord) === $normalizedWord;
                     });
                 }
 
