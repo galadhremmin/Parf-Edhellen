@@ -27,6 +27,7 @@ class SentenceAdapter
                 'interpunctuation' => $fragment->isPunctuationOrWhitespace(),
                 'translation_id'   => $fragment->translation_id,
                 'speech'           => $fragment->speech_id ? $fragment->speech->name : null,
+                'speech_id'        => $fragment->speech_id,
                 'comments'         => !empty($fragment->comments)
                     ? ($transformMarkdownToHtml ? $markdownParser->parse($fragment->comments) : $fragment->comments)
                     : null,

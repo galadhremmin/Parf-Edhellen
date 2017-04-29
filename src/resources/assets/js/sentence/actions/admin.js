@@ -1,31 +1,8 @@
-import axios from 'axios';
-import EDConfig from 'ed-config';
-import { deferredResolve } from 'ed-promise';
 import { 
-    REQUEST_SUGGESTIONS,
-    RECEIVE_SUGGESTIONS,
     SET_FRAGMENTS,
     SET_SENTENCE_DATA,
     SET_FRAGMENT_DATA
 } from '../reducers/admin';
-
-export const requestSuggestions = (words, language_id) => {
-    return dispatch => {
-        dispatch({
-            type: REQUEST_SUGGESTIONS
-        });
-
-        deferredResolve(axios.post(EDConfig.api('/book/suggest'), { 
-            words, 
-            language_id
-        }), 800).then(resp => {
-            dispatch({
-                type: RECEIVE_SUGGESTIONS,
-                suggestions: resp.data
-            });
-        });
-    }
-};
 
 export const setFragments = fragments => {
     return {
@@ -41,6 +18,15 @@ export const setSentenceData = data => {
     };
 }
 
-export const setFragmentData = fragment => {
-
+/**
+ * Updates the fragments at the specified indexes with the specified data.
+ * @param {Number[]} fragmentIndex 
+ * @param {Object} data 
+ */
+export const setFragmentData = (indexes, data) => {
+    return {
+        type: SET_FRAGMENT_DATA,
+        indexes,
+        data
+    };
 };

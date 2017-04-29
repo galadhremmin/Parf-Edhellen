@@ -30,6 +30,10 @@ class EDSpeechSelect extends React.Component {
      * @param {Object} value 
      */
     setValue(value) {
+        if (!value) {
+            value = 0;
+        }
+
         this.setState({
             value
         });

@@ -4,13 +4,13 @@ import classNames from 'classnames';
 import EDConfig from 'ed-config';
 import Autosuggest from 'react-autosuggest';
 
-class EDWordSelect extends React.Component {
+class EDTranslationSelect extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
             suggestions: props.suggestions || [],
-            value: props.value || null,
+            value: props.value || undefined,
             word: ''
         };
     }
@@ -26,11 +26,12 @@ class EDWordSelect extends React.Component {
 
     /**
      * Sets the word currently selected.
-     * @param {Object} value 
+     * @param {Object} value - Translation object
      */
     setValue(value) {
         this.setState({
-            value
+            value,
+            word: value ? value.word : ''
         });
     }
 
@@ -43,7 +44,9 @@ class EDWordSelect extends React.Component {
 
     onWordChange(ev, data) {
         this.setState({
-            word: data.newValue
+            word: data.newValue,
+            value: this.state.value && this.state.value.word === data.newValue
+                ? this.state.value : undefined
         });
 
         //this.setValue(data.newValue);
@@ -54,7 +57,7 @@ class EDWordSelect extends React.Component {
     }
 
     onSuggestionsFetchRequest(data) {
-        const word = data.value;
+        const word = (data.value || '').toLocaleLowerCase();
 
         // already fetching suggestions?
         if (this.loading || /^\s*$/.test(word) || this.state.suggestionsFor === word) {
@@ -162,11 +165,11 @@ class EDWordSelect extends React.Component {
     }
 }
 
-EDWordSelect.defaultProps = {
+EDTranslationSelect.defaultProps = {
     componentName: 'word',
     componentId: undefined,
     value: 0,
     languageId: 0
 };
 
-export default EDWordSelect;
+export default EDTranslationSelect;

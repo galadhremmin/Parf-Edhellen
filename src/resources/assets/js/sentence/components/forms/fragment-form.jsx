@@ -1,16 +1,18 @@
 import React from 'react';
 import classNames from 'classnames';
+import axios from 'axios';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { polyfill as enableSmoothScrolling } from 'smoothscroll-polyfill';
 import { requestSuggestions, setFragments, setFragmentData } from '../../actions/admin';
+import EDConfig from 'ed-config';
 import { EDStatefulFormComponent } from 'ed-form';
 import { transcribe } from '../../../_shared/tengwar';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
 import EDErrorList from 'ed-components/error-list';
 import EDSpeechSelect from '../../../_shared/components/speech-select';
 import EDInflectionSelect from '../../../_shared/components/inflection-select';
-import EDWordSelect from '../../../_shared/components/word-select';
+import EDTranslationSelect from '../../../_shared/components/translation-select';
 
 class EDFragmentForm extends EDStatefulFormComponent {
     constructor(props) {
@@ -83,7 +85,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
 
                     i -= 1;
                 } else {
-                    newFragments.splice(i, 1);
+                    newFragments.splice(insertAt + 1, 1);
 
                     i -= 2;
                 }
@@ -115,20 +117,35 @@ class EDFragmentForm extends EDStatefulFormComponent {
 
         // Make the fragments permanent (in the client) by dispatching the fragments to the Redux component.
         this.props.dispatch(setFragments(newFragments));
-
-        if (words.length > 0) {
-            // Request suggestions from the server.
-            this.props.dispatch(requestSuggestions(words, this.props.language_id));
-        }
     }
 
     onFragmentClick(data) {
-        this.setState({
-            editingFragmentIndex: this.props.fragments.indexOf(data)
-        });
+        let promise;
+        if (data.translation_id) {
+            promise = axios.get(EDConfig.api(`book/translate/${data.translation_id}`))
+                .then(resp => { 
+                    if (!resp.data.sections || !resp.data.sections.length ||
+                        !resp.data.sections[0].glosses || resp.data.sections[0].glosses.length < 1) {
+                        return undefined;
+                    }
 
-        this.tengwarInput.value = data.tengwar || '';
-        this.commentsInput.setValue(data.comments || '');
+                    return resp.data.sections[0].glosses[0];
+                });
+        } else {
+            promise = Promise.resolve(undefined);
+        }
+
+        promise.then(translation => {
+            this.setState({
+                editingFragmentIndex: this.props.fragments.indexOf(data)
+            });
+
+            this.translationInput.setValue(translation);
+            this.speechInput.setValue(data.speech_id);
+            this.inflectionInput.setValue(data.inflections ? data.inflections : []);
+            this.tengwarInput.value = data.tengwar || '';
+            this.commentsInput.setValue(data.comments || '');
+        });
     }
 
     onTranscribeClick(ev) {
@@ -147,6 +164,40 @@ class EDFragmentForm extends EDStatefulFormComponent {
 
         this.setState({
             errors
+        });
+    }
+
+    onFragmentSaveClick(ev) {
+        ev.preventDefault();
+
+        const fragment = this.props.fragments[this.state.editingFragmentIndex];
+        const translation = this.translationInput.getValue();
+        const inflections = this.inflectionInput.getValue();
+        const speech_id = this.speechInput.getValue();
+        const comments = this.commentsInput.getValue();
+        const tengwar = this.tengwarInput.value;
+
+        const fragmentData = {
+            translation_id: translation ? translation.id : undefined,
+            speech_id,
+            inflections,
+            comments,
+            tengwar
+        };
+
+        let indexes = this.applyToSimilarCheckbox.checked 
+            ? this.props.fragments.reduce((accumulator, f, i) => {
+                if (f.fragment !== fragment.fragment) {
+                    return accumulator;
+                }
+
+                return [...accumulator, i];
+            }, []) : [ this.state.editingFragmentIndex ];
+
+        this.props.dispatch(setFragmentData(indexes, fragmentData));
+
+        this.setState({
+            editingFragmentIndex: -1
         });
     }
 
@@ -177,56 +228,68 @@ class EDFragmentForm extends EDStatefulFormComponent {
                 Green words are linked to words in the dictionary, whereas red words are not. Please link all
                 words before proceeding to the next step.
             </p>
-            {this.props.loading ? 
-                <div>
-                    <div className="sk-spinner sk-spinner-pulse"></div>
-                    <p className="text-center"><em>Loading suggestions ...</em></p>
-                </div>
-            : 
-                <p>
-                    {this.props.fragments.map((f, i) => <EDFragment key={i} 
-                        fragment={f} 
-                        selected={i === this.state.editingFragmentIndex}
-                        onClick={this.onFragmentClick.bind(this)} />)}
-                </p>
-            }
-            {this.state.editingFragmentIndex > -1 ? 
-                <div className="well">
-                    <EDErrorList errors={this.state.errors} />
+            <p>
+                {this.props.fragments.map((f, i) => <EDFragment key={i} 
+                    fragment={f} 
+                    selected={i === this.state.editingFragmentIndex}
+                    onClick={this.onFragmentClick.bind(this)} />)}
+            </p>
+            {this.state.editingFragmentIndex > -1 ?
+                (this.props.loading ? (
+                    <div>
+                        <div className="sk-spinner sk-spinner-pulse"></div>
+                        <p className="text-center"><em>Loading ...</em></p>
+                    </div> 
+                ) : (
+                    <div className="well">
+                        <EDErrorList errors={this.state.errors} />
 
-                    <div className="form-group">
-                        <label htmlFor="ed-sentence-fragment-word" className="control-label">Word</label>
-                        <EDWordSelect componentId="ed-sentence-fragment-word" languageId={this.props.language_id}
-                            suggestions={this.props.suggestions}
-                            ref={input => this.wordInput = input} />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="ed-sentence-fragment-tengwar" className="control-label">Tengwar</label>
-                        <div className="input-group">
-                            <input id="ed-sentence-fragment-tengwar" className="form-control tengwar" type="text" 
-                                ref={input => this.tengwarInput = input} />
-                            <div className="input-group-addon">
-                                <a href="#" onClick={this.onTranscribeClick.bind(this)}>Transcribe</a>
+                        <div className="form-group">
+                            <label htmlFor="ed-sentence-fragment-word" className="control-label">Word</label>
+                            <EDTranslationSelect componentId="ed-sentence-fragment-word" languageId={this.props.language_id}
+                                suggestions={this.props.suggestions 
+                                    ? this.props.suggestions[this.props.fragments[this.state.editingFragmentIndex].fragment]
+                                    : []}
+                                ref={input => this.translationInput = input} />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="ed-sentence-fragment-tengwar" className="control-label">Tengwar</label>
+                            <div className="input-group">
+                                <input id="ed-sentence-fragment-tengwar" className="form-control tengwar" type="text" 
+                                    ref={input => this.tengwarInput = input} />
+                                <div className="input-group-addon">
+                                    <a href="#" onClick={this.onTranscribeClick.bind(this)}>Transcribe</a>
+                                </div>
                             </div>
                         </div>
+                        <div className="form-group">
+                            <label htmlFor="ed-sentence-fragment-speech" className="control-label">Type of speech</label>
+                            <EDSpeechSelect componentId="ed-sentence-fragment-speech" 
+                                ref={input => this.speechInput = input} />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="ed-sentence-fragment-inflections" className="control-label">Inflection(s)</label>
+                            <EDInflectionSelect componentId="ed-sentence-fragment-inflections" 
+                                ref={input => this.inflectionInput = input} />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="ed-sentence-fragment-comments" className="control-label">Comments</label>
+                            <EDMarkdownEditor componentId="ed-sentence-fragment-comments" rows={4} 
+                                ref={input => this.commentsInput = input} />
+                        </div>
+                        <div className="form-group">
+                            <div className="checkbox">
+                                <label>
+                                    <input type="checkbox" ref={input => this.applyToSimilarCheckbox = input} />
+                                    {' Apply changes to similar words.'}
+                                </label>
+                            </div>
+                        </div>
+                        <div className="text-right">
+                            <button className="btn btn-primary" onClick={this.onFragmentSaveClick.bind(this)}>Update</button>
+                        </div>
                     </div>
-                    <div className="form-group">
-                        <label htmlFor="ed-sentence-fragment-speech" className="control-label">Type of speech</label>
-                        <EDSpeechSelect componentId="ed-sentence-fragment-speech" 
-                            ref={input => this.speechInput = input} />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="ed-sentence-fragment-inflections" className="control-label">Inflection(s)</label>
-                        <EDInflectionSelect componentId="ed-sentence-fragment-inflections" 
-                            ref={input => this.inflectionInput = input} />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="ed-sentence-fragment-comments" className="control-label">Comments</label>
-                        <EDMarkdownEditor componentId="ed-sentence-fragment-comments" rows={4} 
-                            ref={input => this.commentsInput = input} />
-                    </div>
-                </div>
-            : ''}
+                )) : ''}
             <nav>
                 <ul className="pager">
                     <li className="previous"><a href="#" onClick={this.onPreviousClick.bind(this)}>&larr; Previous step</a></li>
