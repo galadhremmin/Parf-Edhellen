@@ -398,7 +398,7 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _bookGloss = __webpack_require__(65);
+var _bookGloss = __webpack_require__(64);
 
 var _bookGloss2 = _interopRequireDefault(_bookGloss);
 
@@ -1262,7 +1262,7 @@ exports['default'] = thunk;
 
 /***/ }),
 
-/***/ 65:
+/***/ 64:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

@@ -41,6 +41,12 @@ class EDFragmentForm extends EDStatefulFormComponent {
         };
     }
 
+    editFragment(fragmentIndex) {
+        this.setState({
+            editingFragmentIndex: fragmentIndex
+        });
+    }
+
     onPreviousClick(ev) {
         ev.preventDefault();
         this.props.history.goBack();
@@ -111,9 +117,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
         }
 
         // We can't be editing a fragment.
-        this.setState({
-            editingFragmentIndex: -1
-        });
+        this.editFragment(-1);
 
         // Make the fragments permanent (in the client) by dispatching the fragments to the Redux component.
         this.props.dispatch(setFragments(newFragments));
@@ -136,9 +140,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
         }
 
         promise.then(translation => {
-            this.setState({
-                editingFragmentIndex: this.props.fragments.indexOf(data)
-            });
+            this.editFragment(this.props.fragments.indexOf(data));
 
             this.translationInput.setValue(translation);
             this.speechInput.setValue(data.speech_id);
@@ -196,9 +198,12 @@ class EDFragmentForm extends EDStatefulFormComponent {
 
         this.props.dispatch(setFragmentData(indexes, fragmentData));
 
-        this.setState({
-            editingFragmentIndex: -1
-        });
+        this.editFragment(-1);
+    }
+
+    onFragmentCancel(ev) {
+        ev.preventDefault();
+        this.editFragment(-1);
     }
 
     onSubmit(ev) {
@@ -286,7 +291,10 @@ class EDFragmentForm extends EDStatefulFormComponent {
                             </div>
                         </div>
                         <div className="text-right">
-                            <button className="btn btn-primary" onClick={this.onFragmentSaveClick.bind(this)}>Update</button>
+                            <div className="btn-group">
+                                <button className="btn btn-default" onClick={this.onFragmentCancel.bind(this)}>Cancel</button>
+                                <button className="btn btn-primary" onClick={this.onFragmentSaveClick.bind(this)}>Update</button>
+                            </div>
                         </div>
                     </div>
                 )) : ''}

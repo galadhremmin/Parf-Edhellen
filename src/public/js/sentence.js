@@ -109,7 +109,7 @@ var _edConfig = __webpack_require__(13);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _edPromise = __webpack_require__(62);
+var _edPromise = __webpack_require__(106);
 
 var _reducers = __webpack_require__(118);
 
@@ -171,7 +171,7 @@ var _tengwarFragment = __webpack_require__(215);
 
 var _tengwarFragment2 = _interopRequireDefault(_tengwarFragment);
 
-var _bookGloss = __webpack_require__(65);
+var _bookGloss = __webpack_require__(64);
 
 var _bookGloss2 = _interopRequireDefault(_bookGloss);
 
@@ -625,7 +625,7 @@ exports['default'] = thunk;
 
 /***/ }),
 
-/***/ 65:
+/***/ 64:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

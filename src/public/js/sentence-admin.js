@@ -239,7 +239,7 @@ var _edConfig = __webpack_require__(13);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _reactAutosuggest = __webpack_require__(63);
+var _reactAutosuggest = __webpack_require__(62);
 
 var _reactAutosuggest2 = _interopRequireDefault(_reactAutosuggest);
 
@@ -640,6 +640,276 @@ exports.default = EDSpeechSelect;
 
 /***/ }),
 
+/***/ 204:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _axios = __webpack_require__(20);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _classnames = __webpack_require__(9);
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
+var _edConfig = __webpack_require__(13);
+
+var _edConfig2 = _interopRequireDefault(_edConfig);
+
+var _reactAutosuggest = __webpack_require__(62);
+
+var _reactAutosuggest2 = _interopRequireDefault(_reactAutosuggest);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var EDTranslationSelect = function (_React$Component) {
+    _inherits(EDTranslationSelect, _React$Component);
+
+    function EDTranslationSelect(props) {
+        _classCallCheck(this, EDTranslationSelect);
+
+        var _this = _possibleConstructorReturn(this, (EDTranslationSelect.__proto__ || Object.getPrototypeOf(EDTranslationSelect)).call(this, props));
+
+        _this.state = {
+            suggestions: props.suggestions || [],
+            value: props.value || undefined,
+            word: ''
+        };
+        return _this;
+    }
+
+    _createClass(EDTranslationSelect, [{
+        key: 'componentWillReceiveProps',
+        value: function componentWillReceiveProps(props) {
+            if (Array.isArray(props.suggestions)) {
+                this.setState({
+                    suggestions: props.suggestions,
+                    suggestionsFor: undefined
+                });
+            }
+        }
+
+        /**
+         * Sets the word currently selected.
+         * @param {Object} value - Translation object
+         */
+
+    }, {
+        key: 'setValue',
+        value: function setValue(value) {
+            this.setState({
+                value: value,
+                word: value ? value.word : ''
+            });
+        }
+
+        /**
+         * Gets the word currently selected.
+         */
+
+    }, {
+        key: 'getValue',
+        value: function getValue() {
+            return this.state.value;
+        }
+    }, {
+        key: 'onWordChange',
+        value: function onWordChange(ev, data) {
+            this.setState({
+                word: data.newValue,
+                value: this.state.value && this.state.value.word === data.newValue ? this.state.value : undefined
+            });
+
+            //this.setValue(data.newValue);
+
+            if (typeof this.props.onChange === 'function') {
+                this.props.onChange(ev);
+            }
+        }
+    }, {
+        key: 'onSuggestionsFetchRequest',
+        value: function onSuggestionsFetchRequest(data) {
+            var _this2 = this;
+
+            var word = (data.value || '').toLocaleLowerCase();
+
+            // already fetching suggestions?
+            if (this.loading || /^\s*$/.test(word) || this.state.suggestionsFor === word) {
+                return;
+            }
+
+            // Throttle search requests, to prevent them from occurring too often.
+            if (this.searchDelay) {
+                window.clearTimeout(this.searchDelay);
+                this.searchDelay = 0;
+            }
+
+            this.searchDelay = window.setTimeout(function () {
+                _this2.searchDelay = 0;
+                _this2.loading = true;
+
+                // Retrieve suggestions for the specified word.
+                _axios2.default.post(_edConfig2.default.api('book/suggest'), {
+                    words: [word],
+                    language_id: _this2.props.languageId,
+                    inexact: true
+                }).then(function (resp) {
+                    _this2.setState({
+                        suggestions: resp.data[word] || [],
+                        suggestionsFor: word
+                    });
+
+                    _this2.loading = false;
+                });
+            }, 800);
+        }
+    }, {
+        key: 'onSuggestionsClearRequest',
+        value: function onSuggestionsClearRequest() {
+            this.setState({
+                suggestions: !Array.isArray(this.props.suggestions) || this.props.suggestions === this.state.suggestions ? [] : this.props.suggestions
+            });
+        }
+    }, {
+        key: 'onSuggestionSelect',
+        value: function onSuggestionSelect(ev, data) {
+            ev.preventDefault();
+            this.setState({
+                value: data.suggestion || undefined
+            });
+        }
+    }, {
+        key: 'getSuggestionValue',
+        value: function getSuggestionValue(suggestion) {
+            return suggestion.word;
+        }
+    }, {
+        key: 'renderInput',
+        value: function renderInput(inputProps) {
+            var valid = !!this.state.value;
+            return _react2.default.createElement(
+                'div',
+                { className: (0, _classnames2.default)('input-group', { 'has-warning': !valid, 'has-success': valid }) },
+                _react2.default.createElement('input', inputProps),
+                _react2.default.createElement(
+                    'div',
+                    { className: 'input-group-addon' },
+                    _react2.default.createElement('span', { className: (0, _classnames2.default)('glyphicon', { 'glyphicon-ok': valid, 'glyphicon-exclamation-sign': !valid }) })
+                )
+            );
+        }
+    }, {
+        key: 'renderSuggestion',
+        value: function renderSuggestion(suggestion) {
+            return _react2.default.createElement(
+                'div',
+                { title: suggestion.comments },
+                _react2.default.createElement(
+                    'strong',
+                    null,
+                    suggestion.word
+                ),
+                ': ',
+                suggestion.type ? _react2.default.createElement(
+                    'em',
+                    null,
+                    suggestion.type + ' '
+                ) : '',
+                suggestion.translation,
+                ' ',
+                '[',
+                suggestion.source,
+                ']',
+                _react2.default.createElement('br', null),
+                _react2.default.createElement(
+                    'small',
+                    null,
+                    'by ',
+                    _react2.default.createElement(
+                        'em',
+                        null,
+                        suggestion.account_name
+                    ),
+                    ' ',
+                    suggestion.translation_group_name ? _react2.default.createElement(
+                        'span',
+                        null,
+                        '(',
+                        _react2.default.createElement(
+                            'em',
+                            null,
+                            suggestion.translation_group_name
+                        ),
+                        ')'
+                    ) : ''
+                )
+            );
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var inputProps = {
+                placeholder: 'Search for a suitable translation',
+                value: this.state.word,
+                name: this.props.componentName,
+                id: this.props.componentId,
+                onChange: this.onWordChange.bind(this)
+            };
+
+            return _react2.default.createElement(
+                'div',
+                null,
+                _react2.default.createElement(
+                    'div',
+                    null,
+                    _react2.default.createElement(_reactAutosuggest2.default, {
+                        alwaysRenderSuggestions: false,
+                        multiSection: false,
+                        suggestions: this.state.suggestions,
+                        onSuggestionsFetchRequested: this.onSuggestionsFetchRequest.bind(this),
+                        onSuggestionsClearRequested: this.onSuggestionsClearRequest.bind(this),
+                        onSuggestionSelected: this.onSuggestionSelect.bind(this),
+                        getSuggestionValue: this.getSuggestionValue.bind(this),
+                        renderInputComponent: this.renderInput.bind(this),
+                        renderSuggestion: this.renderSuggestion.bind(this),
+                        inputProps: inputProps })
+                )
+            );
+        }
+    }]);
+
+    return EDTranslationSelect;
+}(_react2.default.Component);
+
+EDTranslationSelect.defaultProps = {
+    componentName: 'word',
+    componentId: undefined,
+    value: 0,
+    languageId: 0
+};
+
+exports.default = EDTranslationSelect;
+
+/***/ }),
+
 /***/ 205:
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -746,7 +1016,7 @@ var _inflectionSelect = __webpack_require__(202);
 
 var _inflectionSelect2 = _interopRequireDefault(_inflectionSelect);
 
-var _translationSelect = __webpack_require__(464);
+var _translationSelect = __webpack_require__(204);
 
 var _translationSelect2 = _interopRequireDefault(_translationSelect);
 
@@ -792,6 +1062,13 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                 fragment: fragment,
                 interpunctuation: interpunctuation
             };
+        }
+    }, {
+        key: 'editFragment',
+        value: function editFragment(fragmentIndex) {
+            this.setState({
+                editingFragmentIndex: fragmentIndex
+            });
         }
     }, {
         key: 'onPreviousClick',
@@ -874,9 +1151,7 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
             }
 
             // We can't be editing a fragment.
-            this.setState({
-                editingFragmentIndex: -1
-            });
+            this.editFragment(-1);
 
             // Make the fragments permanent (in the client) by dispatching the fragments to the Redux component.
             this.props.dispatch((0, _admin.setFragments)(newFragments));
@@ -900,9 +1175,7 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
             }
 
             promise.then(function (translation) {
-                _this3.setState({
-                    editingFragmentIndex: _this3.props.fragments.indexOf(data)
-                });
+                _this3.editFragment(_this3.props.fragments.indexOf(data));
 
                 _this3.translationInput.setValue(translation);
                 _this3.speechInput.setValue(data.speech_id);
@@ -965,9 +1238,13 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
 
             this.props.dispatch((0, _admin.setFragmentData)(indexes, fragmentData));
 
-            this.setState({
-                editingFragmentIndex: -1
-            });
+            this.editFragment(-1);
+        }
+    }, {
+        key: 'onFragmentCancel',
+        value: function onFragmentCancel(ev) {
+            ev.preventDefault();
+            this.editFragment(-1);
         }
     }, {
         key: 'onSubmit',
@@ -1148,9 +1425,18 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                         'div',
                         { className: 'text-right' },
                         _react2.default.createElement(
-                            'button',
-                            { className: 'btn btn-primary', onClick: this.onFragmentSaveClick.bind(this) },
-                            'Update'
+                            'div',
+                            { className: 'btn-group' },
+                            _react2.default.createElement(
+                                'button',
+                                { className: 'btn btn-default', onClick: this.onFragmentCancel.bind(this) },
+                                'Cancel'
+                            ),
+                            _react2.default.createElement(
+                                'button',
+                                { className: 'btn btn-primary', onClick: this.onFragmentSaveClick.bind(this) },
+                                'Update'
+                            )
                         )
                     )
                 ) : '',
@@ -1572,276 +1858,6 @@ exports.default = (0, _reactRouter.withRouter)((0, _reactRedux.connect)(mapState
 
 module.exports = __webpack_require__(182);
 
-
-/***/ }),
-
-/***/ 464:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(1);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _axios = __webpack_require__(20);
-
-var _axios2 = _interopRequireDefault(_axios);
-
-var _classnames = __webpack_require__(9);
-
-var _classnames2 = _interopRequireDefault(_classnames);
-
-var _edConfig = __webpack_require__(13);
-
-var _edConfig2 = _interopRequireDefault(_edConfig);
-
-var _reactAutosuggest = __webpack_require__(63);
-
-var _reactAutosuggest2 = _interopRequireDefault(_reactAutosuggest);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var EDTranslationSelect = function (_React$Component) {
-    _inherits(EDTranslationSelect, _React$Component);
-
-    function EDTranslationSelect(props) {
-        _classCallCheck(this, EDTranslationSelect);
-
-        var _this = _possibleConstructorReturn(this, (EDTranslationSelect.__proto__ || Object.getPrototypeOf(EDTranslationSelect)).call(this, props));
-
-        _this.state = {
-            suggestions: props.suggestions || [],
-            value: props.value || undefined,
-            word: ''
-        };
-        return _this;
-    }
-
-    _createClass(EDTranslationSelect, [{
-        key: 'componentWillReceiveProps',
-        value: function componentWillReceiveProps(props) {
-            if (Array.isArray(props.suggestions)) {
-                this.setState({
-                    suggestions: props.suggestions,
-                    suggestionsFor: undefined
-                });
-            }
-        }
-
-        /**
-         * Sets the word currently selected.
-         * @param {Object} value - Translation object
-         */
-
-    }, {
-        key: 'setValue',
-        value: function setValue(value) {
-            this.setState({
-                value: value,
-                word: value ? value.word : ''
-            });
-        }
-
-        /**
-         * Gets the word currently selected.
-         */
-
-    }, {
-        key: 'getValue',
-        value: function getValue() {
-            return this.state.value;
-        }
-    }, {
-        key: 'onWordChange',
-        value: function onWordChange(ev, data) {
-            this.setState({
-                word: data.newValue,
-                value: this.state.value && this.state.value.word === data.newValue ? this.state.value : undefined
-            });
-
-            //this.setValue(data.newValue);
-
-            if (typeof this.props.onChange === 'function') {
-                this.props.onChange(ev);
-            }
-        }
-    }, {
-        key: 'onSuggestionsFetchRequest',
-        value: function onSuggestionsFetchRequest(data) {
-            var _this2 = this;
-
-            var word = (data.value || '').toLocaleLowerCase();
-
-            // already fetching suggestions?
-            if (this.loading || /^\s*$/.test(word) || this.state.suggestionsFor === word) {
-                return;
-            }
-
-            // Throttle search requests, to prevent them from occurring too often.
-            if (this.searchDelay) {
-                window.clearTimeout(this.searchDelay);
-                this.searchDelay = 0;
-            }
-
-            this.searchDelay = window.setTimeout(function () {
-                _this2.searchDelay = 0;
-                _this2.loading = true;
-
-                // Retrieve suggestions for the specified word.
-                _axios2.default.post(_edConfig2.default.api('book/suggest'), {
-                    words: [word],
-                    language_id: _this2.props.languageId,
-                    inexact: true
-                }).then(function (resp) {
-                    _this2.setState({
-                        suggestions: resp.data[word] || [],
-                        suggestionsFor: word
-                    });
-
-                    _this2.loading = false;
-                });
-            }, 800);
-        }
-    }, {
-        key: 'onSuggestionsClearRequest',
-        value: function onSuggestionsClearRequest() {
-            this.setState({
-                suggestions: !Array.isArray(this.props.suggestions) || this.props.suggestions === this.state.suggestions ? [] : this.props.suggestions
-            });
-        }
-    }, {
-        key: 'onSuggestionSelect',
-        value: function onSuggestionSelect(ev, data) {
-            ev.preventDefault();
-            this.setState({
-                value: data.suggestion || undefined
-            });
-        }
-    }, {
-        key: 'getSuggestionValue',
-        value: function getSuggestionValue(suggestion) {
-            return suggestion.word;
-        }
-    }, {
-        key: 'renderInput',
-        value: function renderInput(inputProps) {
-            var valid = !!this.state.value;
-            return _react2.default.createElement(
-                'div',
-                { className: (0, _classnames2.default)('input-group', { 'has-warning': !valid, 'has-success': valid }) },
-                _react2.default.createElement('input', inputProps),
-                _react2.default.createElement(
-                    'div',
-                    { className: 'input-group-addon' },
-                    _react2.default.createElement('span', { className: (0, _classnames2.default)('glyphicon', { 'glyphicon-ok': valid, 'glyphicon-exclamation-sign': !valid }) })
-                )
-            );
-        }
-    }, {
-        key: 'renderSuggestion',
-        value: function renderSuggestion(suggestion) {
-            return _react2.default.createElement(
-                'div',
-                { title: suggestion.comments },
-                _react2.default.createElement(
-                    'strong',
-                    null,
-                    suggestion.word
-                ),
-                ': ',
-                suggestion.type ? _react2.default.createElement(
-                    'em',
-                    null,
-                    suggestion.type + ' '
-                ) : '',
-                suggestion.translation,
-                ' ',
-                '[',
-                suggestion.source,
-                ']',
-                _react2.default.createElement('br', null),
-                _react2.default.createElement(
-                    'small',
-                    null,
-                    'by ',
-                    _react2.default.createElement(
-                        'em',
-                        null,
-                        suggestion.account_name
-                    ),
-                    ' ',
-                    suggestion.translation_group_name ? _react2.default.createElement(
-                        'span',
-                        null,
-                        '(',
-                        _react2.default.createElement(
-                            'em',
-                            null,
-                            suggestion.translation_group_name
-                        ),
-                        ')'
-                    ) : ''
-                )
-            );
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var inputProps = {
-                placeholder: 'Search for a suitable translation',
-                value: this.state.word,
-                name: this.props.componentName,
-                id: this.props.componentId,
-                onChange: this.onWordChange.bind(this)
-            };
-
-            return _react2.default.createElement(
-                'div',
-                null,
-                _react2.default.createElement(
-                    'div',
-                    null,
-                    _react2.default.createElement(_reactAutosuggest2.default, {
-                        alwaysRenderSuggestions: false,
-                        multiSection: false,
-                        suggestions: this.state.suggestions,
-                        onSuggestionsFetchRequested: this.onSuggestionsFetchRequest.bind(this),
-                        onSuggestionsClearRequested: this.onSuggestionsClearRequest.bind(this),
-                        onSuggestionSelected: this.onSuggestionSelect.bind(this),
-                        getSuggestionValue: this.getSuggestionValue.bind(this),
-                        renderInputComponent: this.renderInput.bind(this),
-                        renderSuggestion: this.renderSuggestion.bind(this),
-                        inputProps: inputProps })
-                )
-            );
-        }
-    }]);
-
-    return EDTranslationSelect;
-}(_react2.default.Component);
-
-EDTranslationSelect.defaultProps = {
-    componentName: 'word',
-    componentId: undefined,
-    value: 0,
-    languageId: 0
-};
-
-exports.default = EDTranslationSelect;
 
 /***/ }),
 
