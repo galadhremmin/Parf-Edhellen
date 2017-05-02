@@ -30,7 +30,8 @@ class EDFragmentForm extends EDStatefulFormComponent {
 
         this.state = {
             phrase,
-            editingFragmentIndex: -1
+            editingFragmentIndex: -1,
+            erroneousIndexes: []
         };
     }
 
@@ -41,10 +42,63 @@ class EDFragmentForm extends EDStatefulFormComponent {
         };
     }
 
-    editFragment(fragmentIndex) {
+    editFragment(fragmentIndex, additionalParams) {
+        if (additionalParams === undefined) {
+            additionalParams = {};
+        }
+
+        if (fragmentIndex < -1 || fragmentIndex >= this.props.fragments.length) {
+            fragmentIndex = -1;
+        }
+        
+        if (fragmentIndex > -1) {
+            const data = this.props.fragments[fragmentIndex];
+            
+            let promise;
+            if (data.translation_id) {
+                promise = axios.get(EDConfig.api(`book/translate/${data.translation_id}`))
+                    .then(resp => { 
+                        if (!resp.data.sections || !resp.data.sections.length ||
+                            !resp.data.sections[0].glosses || resp.data.sections[0].glosses.length < 1) {
+                            return undefined;
+                        }
+
+                        return resp.data.sections[0].glosses[0];
+                    });
+            } else {
+                promise = Promise.resolve(undefined);
+            }
+
+            promise.then(translation => {
+                this.translationInput.setValue(translation);
+                this.speechInput.setValue(data.speech_id);
+                this.inflectionInput.setValue(data.inflections ? data.inflections : []);
+                this.tengwarInput.value = data.tengwar || '';
+                this.commentsInput.setValue(data.comments || '');
+            });
+        }
+
         this.setState({
+            ...additionalParams,
             editingFragmentIndex: fragmentIndex
         });
+    }
+
+    scrollToForm() {
+        // add a little delay because it's actually useful in this situation
+        window.setTimeout(() => {
+            document.querySelector('.fragment-admin-form').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }, 250);
+    }
+
+    submit() {
+        // validate all fragments
+        const fragments = this.props.fragments;
+        axios.post('/admin/sentence/validate-fragment', { fragments })
+            .then(this.onFragmentsValid.bind(this), this.onFragmentsInvalid.bind(this));
     }
 
     onPreviousClick(ev) {
@@ -117,37 +171,18 @@ class EDFragmentForm extends EDStatefulFormComponent {
         }
 
         // We can't be editing a fragment.
-        this.editFragment(-1);
+        this.editFragment(-1, {
+            errors: undefined,
+            erroneousIndexes: []
+        });
 
         // Make the fragments permanent (in the client) by dispatching the fragments to the Redux component.
         this.props.dispatch(setFragments(newFragments));
     }
 
     onFragmentClick(data) {
-        let promise;
-        if (data.translation_id) {
-            promise = axios.get(EDConfig.api(`book/translate/${data.translation_id}`))
-                .then(resp => { 
-                    if (!resp.data.sections || !resp.data.sections.length ||
-                        !resp.data.sections[0].glosses || resp.data.sections[0].glosses.length < 1) {
-                        return undefined;
-                    }
-
-                    return resp.data.sections[0].glosses[0];
-                });
-        } else {
-            promise = Promise.resolve(undefined);
-        }
-
-        promise.then(translation => {
-            this.editFragment(this.props.fragments.indexOf(data));
-
-            this.translationInput.setValue(translation);
-            this.speechInput.setValue(data.speech_id);
-            this.inflectionInput.setValue(data.inflections ? data.inflections : []);
-            this.tengwarInput.value = data.tengwar || '';
-            this.commentsInput.setValue(data.comments || '');
-        });
+        const fragmentIndex = this.props.fragments.indexOf(data);
+        this.editFragment(fragmentIndex);
     }
 
     onTranscribeClick(ev) {
@@ -157,16 +192,14 @@ class EDFragmentForm extends EDStatefulFormComponent {
         const data = this.props.fragments[this.state.editingFragmentIndex];
 
         let transcription = transcribe(data.fragment, language.tengwar_mode, false);
-        let errors = undefined;
         if (transcription) {
             this.tengwarInput.value = transcription;
         } else {
             errors = [`Unfortunately, the transcription service does not support ${language.name}.`];
+            this.setState({
+                errors
+            });
         }
-
-        this.setState({
-            errors
-        });
     }
 
     onFragmentSaveClick(ev) {
@@ -187,34 +220,110 @@ class EDFragmentForm extends EDStatefulFormComponent {
             tengwar
         };
 
+        // If the 'apply to similar words' checkbox is checked, make an array
+        // with the indexes of all fragments similar to the one currently being
+        // edited. By using the reduce function, the fragments array is reduced
+        // to an array with indexes. It works like a filter and adapter at the 
+        // same time.
         let indexes = this.applyToSimilarCheckbox.checked 
             ? this.props.fragments.reduce((accumulator, f, i) => {
                 if (f.fragment !== fragment.fragment) {
-                    return accumulator;
+                    return accumulator; // the fragments are dissimilar.
                 }
 
-                return [...accumulator, i];
-            }, []) : [ this.state.editingFragmentIndex ];
+                return [...accumulator, i]; // fragments are similar = add the index
+            }, [])  
+            // If the checkbox isn't checked, just update the fragment currently being edited.
+            : [ this.state.editingFragmentIndex ]; 
 
         this.props.dispatch(setFragmentData(indexes, fragmentData));
 
-        let nextIndex = this.state.editingFragmentIndex + 1;
-        while (nextIndex < this.props.fragments.length) {
-            fragmentData = this.props.fragments[nextIndex];
-            if (!fragmentData.interpunctuation) {
-                break;
-            }
-            nextIndex += 1;
-        } 
+        if (this.state.erroneousIndexes.length === 0) {
+            // go to the next fragment in the collection, but skip over interpunuctations.
+            let nextIndex = this.state.editingFragmentIndex + 1;
+            while (nextIndex < this.props.fragments.length) {
+                fragmentData = this.props.fragments[nextIndex];
 
-        if (nextIndex < this.props.fragments.length) {
-            this.onFragmentClick(this.props.fragments[nextIndex]);
-            document.querySelector('.fragment-admin-form').scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+                if (!fragmentData.interpunctuation) {
+                    break;
+                }
+
+                // interpuncutations -- skip
+                nextIndex += 1;
+            } 
+
+            if (nextIndex < this.props.fragments.length) {
+                // the next index lies within the bounds of the array. Execute in a new
+                // thread to leave the event handler.
+                window.setTimeout(() => {
+                    this.editFragment(nextIndex);
+                    this.scrollToForm(); // for mobile devices
+                }, 0);
+
+            } else {
+                // if the next index is outside the bounds of the array ...
+                this.editFragment(-1); // ... consider editing done - close the dialogue!
+            }
         } else {
-            this.editFragment(-1); // done - close the dialogue!
+            // submit the form continously when there are erroneous indexes, 
+            // as it suggests that the client has been trying to subbmit the form
+            // previously but got denied because of a server-side validation error.
+            // 
+            // By submitting the form, the server side will re-evaluate the content
+            // with the new data supplied by the client.
+            //
+            // Execute the submission on a new thread.
+            window.setTimeout(() => {
+                this.submit();
+            }, 0);
+        }
+    }
+
+    onFragmentsValid(response) {
+        this.setState({
+            errors: undefined,
+            erroneousIndexes: []
+        });
+
+        this.props.history.goForward();
+    }
+
+    onFragmentsInvalid(result) {
+        if (result.response.status !== EDConfig.apiValidationErrorStatusCode) {
+            return ; // unknown error code
+        }
+
+        let errors = [];
+        let erroneousIndexes = [];
+        for (let erroneousElementName in result.response.data) {
+            const parts = /^fragments.([0-9]+).([a-zA-Z0-9_]+)/.exec(erroneousElementName);
+            if (parts.length < 3) {
+                continue; // unsupported response format
+            }
+
+            const index = parseInt(parts[1], 10);
+            const missing = parts[2];
+
+            if (index < 0 || index >= this.props.fragments.length) {
+                continue; // mismatch server/client, probably due to lagging synchronization
+            }
+
+            if (erroneousIndexes.indexOf(index) === -1) {
+                erroneousIndexes.push(index);
+            }
+
+            const fragmentData = this.props.fragments[index];
+            errors.push(`${fragmentData.fragment} (${index + 1}-th word) is missing or has an invalid ${missing}.`);
+        }
+
+        if (erroneousIndexes.length > 0) {
+            this.setState({
+                errors,
+                erroneousIndexes
+            });
+
+            this.editFragment(erroneousIndexes[0]);
+            this.scrollToForm();
         }
     }
 
@@ -225,6 +334,9 @@ class EDFragmentForm extends EDStatefulFormComponent {
 
     onSubmit(ev) {
         ev.preventDefault();
+        if (this.state.erroneousIndexes.length === 0) {
+            this.submit();
+        }
     }
  
     render() {
@@ -254,10 +366,11 @@ class EDFragmentForm extends EDStatefulFormComponent {
                 {this.props.fragments.map((f, i) => <EDFragment key={i} 
                     fragment={f} 
                     selected={i === this.state.editingFragmentIndex}
+                    erroneous={this.state.erroneousIndexes.indexOf(i) > -1}
                     onClick={this.onFragmentClick.bind(this)} />)}
             </p>
             <div className="fragment-admin-form">
-            {this.state.editingFragmentIndex > -1 ?
+                {this.state.editingFragmentIndex > -1 ?
                 (this.props.loading ? (
                     <div>
                         <div className="sk-spinner sk-spinner-pulse"></div>
@@ -266,7 +379,6 @@ class EDFragmentForm extends EDStatefulFormComponent {
                 ) : (
                     <div className="well">
                         <EDErrorList errors={this.state.errors} />
-
                         <div className="form-group">
                             <label htmlFor="ed-sentence-fragment-word" className="control-label">Word</label>
                             <EDTranslationSelect componentId="ed-sentence-fragment-word" languageId={this.props.language_id}
@@ -320,7 +432,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
             <nav>
                 <ul className="pager">
                     <li className="previous"><a href="#" onClick={this.onPreviousClick.bind(this)}>&larr; Previous step</a></li>
-                    <li className="next">
+                    <li className={classNames('next', { 'disabled': this.state.erroneousIndexes.length > 0 })}>
                         <a href="#" onClick={this.onSubmit.bind(this)}>Next step &rarr;</a>
                     </li>
                 </ul>
@@ -341,6 +453,7 @@ class EDFragment extends React.Component {
     render() {
         const data = this.props.fragment;
         const selected = this.props.selected;
+        const erroneous = this.props.erroneous;
 
         if (data.interpunctuation) {
             if (/^[\n]+$/.test(data.fragment)) {
@@ -352,16 +465,25 @@ class EDFragment extends React.Component {
 
         return <span>{' '}<a href="#" onClick={this.onFragmentClick.bind(this)}
             className={classNames('label', 'ed-sentence-fragment', { 
-                'label-success': !! data.translation_id && !selected, 
+                'label-success': !! data.translation_id && !selected && !erroneous, 
+                'label-warning': erroneous,
                 'label-danger': ! data.translation_id && !selected,
                 'label-primary': selected
             })}>
-                {selected ? <span><span className="glyphicon glyphicon-pencil"></span>&#32;</span> : ''}
+                {selected 
+                    ? <span><span className="glyphicon glyphicon-pencil"></span>&#32;</span> 
+                    : (erroneous ? <span><span className="glyphicon glyphicon-warning-sign"></span>&#32;</span> : '')}
                 {data.fragment}
             </a>
         </span>;
     }
 }
+
+EDFragment.defaultProps = {
+    selected: false,
+    erroneous: false,
+    fragment: {}
+};
 
 const mapStateToProps = state => {
     return {

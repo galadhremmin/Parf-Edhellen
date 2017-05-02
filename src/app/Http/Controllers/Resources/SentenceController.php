@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Resources;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
+
 use App\Models\{Language, Sentence};
 use App\Repositories\SentenceRepository;
 use App\Adapters\SentenceAdapter;
-
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class SentenceController extends Controller
 {
@@ -79,6 +80,12 @@ class SentenceController extends Controller
         return response(null, 200);
     }
 
+    public function validateFragments(Request $request) 
+    {
+        $this->validateFragmentsInRequest($request);
+        return response(null, 200);
+    }
+
     protected function validateRequest(Request $request, int $id = 0)
     {
         $rules = [
@@ -90,4 +97,33 @@ class SentenceController extends Controller
 
         $this->validate($request, $rules);
     } 
+
+    protected function validateFragmentsInRequest(Request $request)
+    {
+        $rules = [
+            'fragments' => 'required|array'
+        ];
+        $this->validate($request, $rules);
+
+        $rules = [];
+        $fragments = $request->input('fragments');
+        $numberOfFragments = count($fragments);
+
+        for ($i = 0; $i < $numberOfFragments; $i += 1) {
+            $prefix = 'fragments.'.$i.'.';
+            
+            $rules[$prefix.'translation_id'] = 'required|exists:translations,id';
+            $rules[$prefix.'speech_id'] = 'required|exists:speeches,id';
+            $rules[$prefix.'tengwar'] = 'required|max:128';
+            $rules[$prefix.'fragment'] = 'required|max:48';
+
+            $inflections = $fragments[$i]['inflections'];
+            $numberOfInflections = count($inflections);
+
+            for ($j = 0; $j < $numberOfInflections; $j += 1) {
+                $rules[$prefix.'inflections.'.$j.'.id'] = 'required|exists:inflections,id';
+            }
+        }
+        $this->validate($request, $rules);
+    }
 }

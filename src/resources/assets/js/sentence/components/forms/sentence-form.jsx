@@ -71,7 +71,7 @@ class EDSentenceForm extends EDStatefulFormComponent {
         // Laravel returns 422 when the request fails validation. In the event that
         // we received an alternate status code, bail, as we do not know what that payload
         // contains.
-        if (request.response.status !== 422) {
+        if (request.response.status !== EDConfig.apiValidationErrorStatusCode) {
             return; 
         }
 

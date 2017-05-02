@@ -1,6 +1,119 @@
-webpackJsonp([2],{
+webpackJsonp([2,5],{
 
-/***/ 157:
+/***/ 116:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.setFragmentData = exports.setSentenceData = exports.setFragments = undefined;
+
+var _admin = __webpack_require__(117);
+
+var setFragments = exports.setFragments = function setFragments(fragments) {
+    return {
+        type: _admin.SET_FRAGMENTS,
+        fragments: fragments
+    };
+};
+
+var setSentenceData = exports.setSentenceData = function setSentenceData(data) {
+    return {
+        type: _admin.SET_SENTENCE_DATA,
+        data: data
+    };
+};
+
+/**
+ * Updates the fragments at the specified indexes with the specified data.
+ * @param {Number[]} fragmentIndex 
+ * @param {Object} data 
+ */
+var setFragmentData = exports.setFragmentData = function setFragmentData(indexes, data) {
+    return {
+        type: _admin.SET_FRAGMENT_DATA,
+        indexes: indexes,
+        data: data
+    };
+};
+
+/***/ }),
+
+/***/ 117:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var SET_FRAGMENTS = exports.SET_FRAGMENTS = 'ED_SET_FRAGMENTS';
+var SET_FRAGMENT_DATA = exports.SET_FRAGMENT_DATA = 'ED_SET_FRAGMENT_DATA';
+var SET_SENTENCE_DATA = exports.SET_SENTENCE_DATA = 'ED_SET_SENTENCE_DATA';
+
+var EDSentenceAdminReducer = function EDSentenceAdminReducer() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+        name: '',
+        source: '',
+        language_id: undefined,
+        description: '',
+        long_description: '',
+        fragments: [],
+        id: 0,
+        languages: window.EDConfig.languages(),
+        loading: false,
+        suggestions: undefined
+    };
+    var action = arguments[1];
+
+    switch (action.type) {
+        case SET_FRAGMENTS:
+            return _extends({}, state, {
+                fragments: action.fragments
+            });
+            break;
+
+        case SET_SENTENCE_DATA:
+            return _extends({}, state, action.data);
+            break;
+
+        case SET_FRAGMENT_DATA:
+            return _extends({}, state, {
+                fragments: state.fragments.map(function (f, index) {
+                    if (action.indexes.indexOf(index) === -1) {
+                        return f;
+                    }
+
+                    var newFragment = Object.assign({}, f, {
+                        translation_id: action.data.translation_id,
+                        speech_id: action.data.speech_id,
+                        comments: action.data.comments,
+                        tengwar: action.data.tengwar,
+                        inflections: action.data.inflections.map(function (inflection) {
+                            return Object.assign({}, inflection);
+                        })
+                    });
+
+                    return newFragment;
+                })
+            });
+        default:
+            return state;
+    }
+};
+
+exports.default = EDSentenceAdminReducer;
+
+/***/ }),
+
+/***/ 182:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8,39 +121,39 @@ webpackJsonp([2],{
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
-var _react = __webpack_require__(2);
+var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(32);
+var _reactDom = __webpack_require__(36);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _reactRouterDom = __webpack_require__(90);
+var _reactRouterDom = __webpack_require__(108);
 
-var _reactRedux = __webpack_require__(20);
+var _reactRedux = __webpack_require__(21);
 
-var _redux = __webpack_require__(33);
+var _redux = __webpack_require__(37);
 
-var _reduxThunk = __webpack_require__(41);
+var _reduxThunk = __webpack_require__(49);
 
 var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-var _edConfig = __webpack_require__(12);
+var _edConfig = __webpack_require__(13);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _admin = __webpack_require__(99);
+var _admin = __webpack_require__(117);
 
 var _admin2 = _interopRequireDefault(_admin);
 
-var _edSessionStorageState = __webpack_require__(89);
+var _edSessionStorageState = __webpack_require__(107);
 
-var _sentenceForm = __webpack_require__(187);
+var _sentenceForm = __webpack_require__(212);
 
 var _sentenceForm2 = _interopRequireDefault(_sentenceForm);
 
-var _fragmentForm = __webpack_require__(186);
+var _fragmentForm = __webpack_require__(211);
 
 var _fragmentForm2 = _interopRequireDefault(_fragmentForm);
 
@@ -100,7 +213,7 @@ window.addEventListener('load', function () {
 
 /***/ }),
 
-/***/ 177:
+/***/ 202:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -112,11 +225,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(2);
+var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _axios = __webpack_require__(19);
+var _axios = __webpack_require__(20);
 
 var _axios2 = _interopRequireDefault(_axios);
 
@@ -124,11 +237,11 @@ var _classnames = __webpack_require__(9);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _edConfig = __webpack_require__(12);
+var _edConfig = __webpack_require__(13);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _reactAutosuggest = __webpack_require__(54);
+var _reactAutosuggest = __webpack_require__(62);
 
 var _reactAutosuggest2 = _interopRequireDefault(_reactAutosuggest);
 
@@ -389,7 +502,7 @@ exports.default = EDInflectionSelect;
 
 /***/ }),
 
-/***/ 178:
+/***/ 203:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -401,11 +514,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(2);
+var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _axios = __webpack_require__(19);
+var _axios = __webpack_require__(20);
 
 var _axios2 = _interopRequireDefault(_axios);
 
@@ -413,7 +526,7 @@ var _classnames = __webpack_require__(9);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _edConfig = __webpack_require__(12);
+var _edConfig = __webpack_require__(13);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
@@ -529,7 +642,7 @@ exports.default = EDSpeechSelect;
 
 /***/ }),
 
-/***/ 179:
+/***/ 204:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -541,11 +654,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(2);
+var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _axios = __webpack_require__(19);
+var _axios = __webpack_require__(20);
 
 var _axios2 = _interopRequireDefault(_axios);
 
@@ -553,11 +666,11 @@ var _classnames = __webpack_require__(9);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _edConfig = __webpack_require__(12);
+var _edConfig = __webpack_require__(13);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _reactAutosuggest = __webpack_require__(54);
+var _reactAutosuggest = __webpack_require__(62);
 
 var _reactAutosuggest2 = _interopRequireDefault(_reactAutosuggest);
 
@@ -799,7 +912,7 @@ exports.default = EDTranslationSelect;
 
 /***/ }),
 
-/***/ 180:
+/***/ 205:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -847,7 +960,7 @@ var transcribe = exports.transcribe = function transcribe(text, mode) {
 
 /***/ }),
 
-/***/ 186:
+/***/ 211:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -861,7 +974,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(2);
+var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -869,43 +982,43 @@ var _classnames = __webpack_require__(9);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _axios = __webpack_require__(19);
+var _axios = __webpack_require__(20);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _reactRedux = __webpack_require__(20);
+var _reactRedux = __webpack_require__(21);
 
 var _reactRouter = __webpack_require__(10);
 
-var _smoothscrollPolyfill = __webpack_require__(43);
+var _smoothscrollPolyfill = __webpack_require__(51);
 
-var _admin = __webpack_require__(98);
+var _admin = __webpack_require__(116);
 
-var _edConfig = __webpack_require__(12);
+var _edConfig = __webpack_require__(13);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _edForm = __webpack_require__(53);
+var _edForm = __webpack_require__(61);
 
-var _tengwar = __webpack_require__(180);
+var _tengwar = __webpack_require__(205);
 
-var _markdownEditor = __webpack_require__(42);
+var _markdownEditor = __webpack_require__(50);
 
 var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 
-var _errorList = __webpack_require__(52);
+var _errorList = __webpack_require__(60);
 
 var _errorList2 = _interopRequireDefault(_errorList);
 
-var _speechSelect = __webpack_require__(178);
+var _speechSelect = __webpack_require__(203);
 
 var _speechSelect2 = _interopRequireDefault(_speechSelect);
 
-var _inflectionSelect = __webpack_require__(177);
+var _inflectionSelect = __webpack_require__(202);
 
 var _inflectionSelect2 = _interopRequireDefault(_inflectionSelect);
 
-var _translationSelect = __webpack_require__(179);
+var _translationSelect = __webpack_require__(204);
 
 var _translationSelect2 = _interopRequireDefault(_translationSelect);
 
@@ -939,7 +1052,8 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
 
         _this.state = {
             phrase: phrase,
-            editingFragmentIndex: -1
+            editingFragmentIndex: -1,
+            erroneousIndexes: []
         };
         return _this;
     }
@@ -954,10 +1068,63 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
         }
     }, {
         key: 'editFragment',
-        value: function editFragment(fragmentIndex) {
-            this.setState({
+        value: function editFragment(fragmentIndex, additionalParams) {
+            var _this2 = this;
+
+            if (additionalParams === undefined) {
+                additionalParams = {};
+            }
+
+            if (fragmentIndex < -1 || fragmentIndex >= this.props.fragments.length) {
+                fragmentIndex = -1;
+            }
+
+            if (fragmentIndex > -1) {
+                var data = this.props.fragments[fragmentIndex];
+
+                var promise = void 0;
+                if (data.translation_id) {
+                    promise = _axios2.default.get(_edConfig2.default.api('book/translate/' + data.translation_id)).then(function (resp) {
+                        if (!resp.data.sections || !resp.data.sections.length || !resp.data.sections[0].glosses || resp.data.sections[0].glosses.length < 1) {
+                            return undefined;
+                        }
+
+                        return resp.data.sections[0].glosses[0];
+                    });
+                } else {
+                    promise = Promise.resolve(undefined);
+                }
+
+                promise.then(function (translation) {
+                    _this2.translationInput.setValue(translation);
+                    _this2.speechInput.setValue(data.speech_id);
+                    _this2.inflectionInput.setValue(data.inflections ? data.inflections : []);
+                    _this2.tengwarInput.value = data.tengwar || '';
+                    _this2.commentsInput.setValue(data.comments || '');
+                });
+            }
+
+            this.setState(_extends({}, additionalParams, {
                 editingFragmentIndex: fragmentIndex
-            });
+            }));
+        }
+    }, {
+        key: 'scrollToForm',
+        value: function scrollToForm() {
+            // add a little delay because it's actually useful in this situation
+            window.setTimeout(function () {
+                document.querySelector('.fragment-admin-form').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }, 250);
+        }
+    }, {
+        key: 'submit',
+        value: function submit() {
+            // validate all fragments
+            var fragments = this.props.fragments;
+            _axios2.default.post('/admin/sentence/validate-fragment', { fragments: fragments }).then(this.onFragmentsValid.bind(this), this.onFragmentsInvalid.bind(this));
         }
     }, {
         key: 'onPreviousClick',
@@ -968,13 +1135,13 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
     }, {
         key: 'onPhraseChange',
         value: function onPhraseChange(ev) {
-            var _this2 = this;
+            var _this3 = this;
 
             ev.preventDefault();
 
             var currentFragments = this.props.fragments || [];
             var newFragments = this.state.phrase.replace(/\r\n/g, "\n").split(' ').map(function (f) {
-                return _this2.createFragment(f);
+                return _this3.createFragment(f);
             });
 
             for (var i = 0; i < newFragments.length; i += 1) {
@@ -1040,7 +1207,10 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
             }
 
             // We can't be editing a fragment.
-            this.editFragment(-1);
+            this.editFragment(-1, {
+                errors: undefined,
+                erroneousIndexes: []
+            });
 
             // Make the fragments permanent (in the client) by dispatching the fragments to the Redux component.
             this.props.dispatch((0, _admin.setFragments)(newFragments));
@@ -1048,30 +1218,8 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
     }, {
         key: 'onFragmentClick',
         value: function onFragmentClick(data) {
-            var _this3 = this;
-
-            var promise = void 0;
-            if (data.translation_id) {
-                promise = _axios2.default.get(_edConfig2.default.api('book/translate/' + data.translation_id)).then(function (resp) {
-                    if (!resp.data.sections || !resp.data.sections.length || !resp.data.sections[0].glosses || resp.data.sections[0].glosses.length < 1) {
-                        return undefined;
-                    }
-
-                    return resp.data.sections[0].glosses[0];
-                });
-            } else {
-                promise = Promise.resolve(undefined);
-            }
-
-            promise.then(function (translation) {
-                _this3.editFragment(_this3.props.fragments.indexOf(data));
-
-                _this3.translationInput.setValue(translation);
-                _this3.speechInput.setValue(data.speech_id);
-                _this3.inflectionInput.setValue(data.inflections ? data.inflections : []);
-                _this3.tengwarInput.value = data.tengwar || '';
-                _this3.commentsInput.setValue(data.comments || '');
-            });
+            var fragmentIndex = this.props.fragments.indexOf(data);
+            this.editFragment(fragmentIndex);
         }
     }, {
         key: 'onTranscribeClick',
@@ -1086,20 +1234,20 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
             var data = this.props.fragments[this.state.editingFragmentIndex];
 
             var transcription = (0, _tengwar.transcribe)(data.fragment, language.tengwar_mode, false);
-            var errors = undefined;
             if (transcription) {
                 this.tengwarInput.value = transcription;
             } else {
                 errors = ['Unfortunately, the transcription service does not support ' + language.name + '.'];
+                this.setState({
+                    errors: errors
+                });
             }
-
-            this.setState({
-                errors: errors
-            });
         }
     }, {
         key: 'onFragmentSaveClick',
         value: function onFragmentSaveClick(ev) {
+            var _this5 = this;
+
             ev.preventDefault();
 
             var fragment = this.props.fragments[this.state.editingFragmentIndex];
@@ -1117,33 +1265,110 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                 tengwar: tengwar
             };
 
+            // If the 'apply to similar words' checkbox is checked, make an array
+            // with the indexes of all fragments similar to the one currently being
+            // edited. By using the reduce function, the fragments array is reduced
+            // to an array with indexes. It works like a filter and adapter at the 
+            // same time.
             var indexes = this.applyToSimilarCheckbox.checked ? this.props.fragments.reduce(function (accumulator, f, i) {
                 if (f.fragment !== fragment.fragment) {
-                    return accumulator;
+                    return accumulator; // the fragments are dissimilar.
                 }
 
-                return [].concat(_toConsumableArray(accumulator), [i]);
-            }, []) : [this.state.editingFragmentIndex];
+                return [].concat(_toConsumableArray(accumulator), [i]); // fragments are similar = add the index
+            }, [])
+            // If the checkbox isn't checked, just update the fragment currently being edited.
+            : [this.state.editingFragmentIndex];
 
             this.props.dispatch((0, _admin.setFragmentData)(indexes, fragmentData));
 
-            var nextIndex = this.state.editingFragmentIndex + 1;
-            while (nextIndex < this.props.fragments.length) {
-                fragmentData = this.props.fragments[nextIndex];
-                if (!fragmentData.interpunctuation) {
-                    break;
+            if (this.state.erroneousIndexes.length === 0) {
+                // go to the next fragment in the collection, but skip over interpunuctations.
+                var nextIndex = this.state.editingFragmentIndex + 1;
+                while (nextIndex < this.props.fragments.length) {
+                    fragmentData = this.props.fragments[nextIndex];
+
+                    if (!fragmentData.interpunctuation) {
+                        break;
+                    }
+
+                    // interpuncutations -- skip
+                    nextIndex += 1;
                 }
-                nextIndex += 1;
+
+                if (nextIndex < this.props.fragments.length) {
+                    // the next index lies within the bounds of the array. Execute in a new
+                    // thread to leave the event handler.
+                    window.setTimeout(function () {
+                        _this5.editFragment(nextIndex);
+                        _this5.scrollToForm(); // for mobile devices
+                    }, 0);
+                } else {
+                    // if the next index is outside the bounds of the array ...
+                    this.editFragment(-1); // ... consider editing done - close the dialogue!
+                }
+            } else {
+                // submit the form continously when there are erroneous indexes, 
+                // as it suggests that the client has been trying to subbmit the form
+                // previously but got denied because of a server-side validation error.
+                // 
+                // By submitting the form, the server side will re-evaluate the content
+                // with the new data supplied by the client.
+                //
+                // Execute the submission on a new thread.
+                window.setTimeout(function () {
+                    _this5.submit();
+                }, 0);
+            }
+        }
+    }, {
+        key: 'onFragmentsValid',
+        value: function onFragmentsValid(response) {
+            this.setState({
+                errors: undefined,
+                erroneousIndexes: []
+            });
+
+            this.props.history.goForward();
+        }
+    }, {
+        key: 'onFragmentsInvalid',
+        value: function onFragmentsInvalid(result) {
+            if (result.response.status !== _edConfig2.default.apiValidationErrorStatusCode) {
+                return; // unknown error code
             }
 
-            if (nextIndex < this.props.fragments.length) {
-                this.onFragmentClick(this.props.fragments[nextIndex]);
-                document.querySelector('.fragment-admin-form').scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
+            var errors = [];
+            var erroneousIndexes = [];
+            for (var erroneousElementName in result.response.data) {
+                var parts = /^fragments.([0-9]+).([a-zA-Z0-9_]+)/.exec(erroneousElementName);
+                if (parts.length < 3) {
+                    continue; // unsupported response format
+                }
+
+                var index = parseInt(parts[1], 10);
+                var missing = parts[2];
+
+                if (index < 0 || index >= this.props.fragments.length) {
+                    continue; // mismatch server/client, probably due to lagging synchronization
+                }
+
+                if (erroneousIndexes.indexOf(index) === -1) {
+                    erroneousIndexes.push(index);
+                }
+
+                var fragmentData = this.props.fragments[index];
+                errors.push(fragmentData.fragment + ' (' + (index + 1) + '-th word) is missing or has an invalid ' + missing + '.');
+            }
+
+            if (erroneousIndexes.length > 0) {
+                this.setState({
+                    errors: errors,
+                    erroneousIndexes: erroneousIndexes
                 });
-            } else {
-                this.editFragment(-1); // done - close the dialogue!
+
+                this.editFragment(erroneousIndexes[0]);
+                this.scrollToForm();
             }
         }
     }, {
@@ -1156,11 +1381,14 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
         key: 'onSubmit',
         value: function onSubmit(ev) {
             ev.preventDefault();
+            if (this.state.erroneousIndexes.length === 0) {
+                this.submit();
+            }
         }
     }, {
         key: 'render',
         value: function render() {
-            var _this5 = this;
+            var _this6 = this;
 
             return _react2.default.createElement(
                 'form',
@@ -1211,8 +1439,9 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                     this.props.fragments.map(function (f, i) {
                         return _react2.default.createElement(EDFragment, { key: i,
                             fragment: f,
-                            selected: i === _this5.state.editingFragmentIndex,
-                            onClick: _this5.onFragmentClick.bind(_this5) });
+                            selected: i === _this6.state.editingFragmentIndex,
+                            erroneous: _this6.state.erroneousIndexes.indexOf(i) > -1,
+                            onClick: _this6.onFragmentClick.bind(_this6) });
                     })
                 ),
                 _react2.default.createElement(
@@ -1246,7 +1475,7 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                             _react2.default.createElement(_translationSelect2.default, { componentId: 'ed-sentence-fragment-word', languageId: this.props.language_id,
                                 suggestions: this.props.suggestions ? this.props.suggestions[this.props.fragments[this.state.editingFragmentIndex].fragment] : [],
                                 ref: function ref(input) {
-                                    return _this5.translationInput = input;
+                                    return _this6.translationInput = input;
                                 } })
                         ),
                         _react2.default.createElement(
@@ -1262,7 +1491,7 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                                 { className: 'input-group' },
                                 _react2.default.createElement('input', { id: 'ed-sentence-fragment-tengwar', className: 'form-control tengwar', type: 'text',
                                     ref: function ref(input) {
-                                        return _this5.tengwarInput = input;
+                                        return _this6.tengwarInput = input;
                                     } }),
                                 _react2.default.createElement(
                                     'div',
@@ -1285,7 +1514,7 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                             ),
                             _react2.default.createElement(_speechSelect2.default, { componentId: 'ed-sentence-fragment-speech',
                                 ref: function ref(input) {
-                                    return _this5.speechInput = input;
+                                    return _this6.speechInput = input;
                                 } })
                         ),
                         _react2.default.createElement(
@@ -1298,7 +1527,7 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                             ),
                             _react2.default.createElement(_inflectionSelect2.default, { componentId: 'ed-sentence-fragment-inflections',
                                 ref: function ref(input) {
-                                    return _this5.inflectionInput = input;
+                                    return _this6.inflectionInput = input;
                                 } })
                         ),
                         _react2.default.createElement(
@@ -1311,7 +1540,7 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                             ),
                             _react2.default.createElement(_markdownEditor2.default, { componentId: 'ed-sentence-fragment-comments', rows: 4,
                                 ref: function ref(input) {
-                                    return _this5.commentsInput = input;
+                                    return _this6.commentsInput = input;
                                 } })
                         ),
                         _react2.default.createElement(
@@ -1324,7 +1553,7 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                                     'label',
                                     null,
                                     _react2.default.createElement('input', { type: 'checkbox', ref: function ref(input) {
-                                            return _this5.applyToSimilarCheckbox = input;
+                                            return _this6.applyToSimilarCheckbox = input;
                                         } }),
                                     ' Apply changes to similar words.'
                                 )
@@ -1367,7 +1596,7 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                         ),
                         _react2.default.createElement(
                             'li',
-                            { className: 'next' },
+                            { className: (0, _classnames2.default)('next', { 'disabled': this.state.erroneousIndexes.length > 0 }) },
                             _react2.default.createElement(
                                 'a',
                                 { href: '#', onClick: this.onSubmit.bind(this) },
@@ -1395,13 +1624,13 @@ var EDFragment = function (_React$Component) {
     _createClass(EDFragment, [{
         key: 'onFragmentClick',
         value: function onFragmentClick(ev) {
-            var _this7 = this;
+            var _this8 = this;
 
             ev.preventDefault();
 
             if (this.props.onClick) {
                 window.setTimeout(function () {
-                    return _this7.props.onClick(_this7.props.fragment);
+                    return _this8.props.onClick(_this8.props.fragment);
                 }, 0);
             }
         }
@@ -1410,6 +1639,7 @@ var EDFragment = function (_React$Component) {
         value: function render() {
             var data = this.props.fragment;
             var selected = this.props.selected;
+            var erroneous = this.props.erroneous;
 
             if (data.interpunctuation) {
                 if (/^[\n]+$/.test(data.fragment)) {
@@ -1431,7 +1661,8 @@ var EDFragment = function (_React$Component) {
                     'a',
                     { href: '#', onClick: this.onFragmentClick.bind(this),
                         className: (0, _classnames2.default)('label', 'ed-sentence-fragment', {
-                            'label-success': !!data.translation_id && !selected,
+                            'label-success': !!data.translation_id && !selected && !erroneous,
+                            'label-warning': erroneous,
                             'label-danger': !data.translation_id && !selected,
                             'label-primary': selected
                         }) },
@@ -1439,6 +1670,11 @@ var EDFragment = function (_React$Component) {
                         'span',
                         null,
                         _react2.default.createElement('span', { className: 'glyphicon glyphicon-pencil' }),
+                        ' '
+                    ) : erroneous ? _react2.default.createElement(
+                        'span',
+                        null,
+                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-warning-sign' }),
                         ' '
                     ) : '',
                     data.fragment
@@ -1449,6 +1685,12 @@ var EDFragment = function (_React$Component) {
 
     return EDFragment;
 }(_react2.default.Component);
+
+EDFragment.defaultProps = {
+    selected: false,
+    erroneous: false,
+    fragment: {}
+};
 
 var mapStateToProps = function mapStateToProps(state) {
     return {
@@ -1464,7 +1706,7 @@ exports.default = (0, _reactRouter.withRouter)((0, _reactRedux.connect)(mapState
 
 /***/ }),
 
-/***/ 187:
+/***/ 212:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1478,7 +1720,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _react = __webpack_require__(2);
+var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -1486,25 +1728,25 @@ var _classnames = __webpack_require__(9);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _reactRedux = __webpack_require__(20);
+var _reactRedux = __webpack_require__(21);
 
 var _reactRouter = __webpack_require__(10);
 
-var _axios = __webpack_require__(19);
+var _axios = __webpack_require__(20);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _smoothscrollPolyfill = __webpack_require__(43);
+var _smoothscrollPolyfill = __webpack_require__(51);
 
-var _admin = __webpack_require__(98);
+var _admin = __webpack_require__(116);
 
-var _edForm = __webpack_require__(53);
+var _edForm = __webpack_require__(61);
 
-var _markdownEditor = __webpack_require__(42);
+var _markdownEditor = __webpack_require__(50);
 
 var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 
-var _errorList = __webpack_require__(52);
+var _errorList = __webpack_require__(60);
 
 var _errorList2 = _interopRequireDefault(_errorList);
 
@@ -1593,7 +1835,7 @@ var EDSentenceForm = function (_EDStatefulFormCompon) {
             // Laravel returns 422 when the request fails validation. In the event that
             // we received an alternate status code, bail, as we do not know what that payload
             // contains.
-            if (request.response.status !== 422) {
+            if (request.response.status !== EDConfig.apiValidationErrorStatusCode) {
                 return;
             }
 
@@ -1763,15 +2005,15 @@ exports.default = (0, _reactRouter.withRouter)((0, _reactRedux.connect)(mapState
 
 /***/ }),
 
-/***/ 401:
+/***/ 449:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(157);
+module.exports = __webpack_require__(182);
 
 
 /***/ }),
 
-/***/ 41:
+/***/ 49:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1799,117 +2041,6 @@ thunk.withExtraArgument = createThunkMiddleware;
 
 exports['default'] = thunk;
 
-/***/ }),
-
-/***/ 98:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.setFragmentData = exports.setSentenceData = exports.setFragments = undefined;
-
-var _admin = __webpack_require__(99);
-
-var setFragments = exports.setFragments = function setFragments(fragments) {
-    return {
-        type: _admin.SET_FRAGMENTS,
-        fragments: fragments
-    };
-};
-
-var setSentenceData = exports.setSentenceData = function setSentenceData(data) {
-    return {
-        type: _admin.SET_SENTENCE_DATA,
-        data: data
-    };
-};
-
-/**
- * Updates the fragments at the specified indexes with the specified data.
- * @param {Number[]} fragmentIndex 
- * @param {Object} data 
- */
-var setFragmentData = exports.setFragmentData = function setFragmentData(indexes, data) {
-    return {
-        type: _admin.SET_FRAGMENT_DATA,
-        indexes: indexes,
-        data: data
-    };
-};
-
-/***/ }),
-
-/***/ 99:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-var SET_FRAGMENTS = exports.SET_FRAGMENTS = 'ED_SET_FRAGMENTS';
-var SET_FRAGMENT_DATA = exports.SET_FRAGMENT_DATA = 'ED_SET_FRAGMENT_DATA';
-var SET_SENTENCE_DATA = exports.SET_SENTENCE_DATA = 'ED_SET_SENTENCE_DATA';
-
-var EDSentenceAdminReducer = function EDSentenceAdminReducer() {
-    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-        name: '',
-        source: '',
-        language_id: undefined,
-        description: '',
-        long_description: '',
-        fragments: [],
-        id: 0,
-        languages: window.EDConfig.languages(),
-        loading: false,
-        suggestions: undefined
-    };
-    var action = arguments[1];
-
-    switch (action.type) {
-        case SET_FRAGMENTS:
-            return _extends({}, state, {
-                fragments: action.fragments
-            });
-            break;
-
-        case SET_SENTENCE_DATA:
-            return _extends({}, state, action.data);
-            break;
-
-        case SET_FRAGMENT_DATA:
-            return _extends({}, state, {
-                fragments: state.fragments.map(function (f, index) {
-                    if (action.indexes.indexOf(index) === -1) {
-                        return f;
-                    }
-
-                    f.translation_id = action.data.translation_id;
-                    f.speech_id = action.data.speech_id;
-                    f.comments = action.data.comments;
-                    f.tengwar = action.data.tengwar;
-                    f.inflections = action.data.inflections.map(function (inflection) {
-                        return Object.assign({}, inflection);
-                    });
-
-                    return f;
-                })
-            });
-        default:
-            return state;
-    }
-};
-
-exports.default = EDSentenceAdminReducer;
-
 /***/ })
 
-},[401]);
+},[449]);

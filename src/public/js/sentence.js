@@ -1,6 +1,6 @@
-webpackJsonp([3],{
+webpackJsonp([3,5],{
 
-/***/ 100:
+/***/ 118:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45,33 +45,33 @@ exports.default = EDSentenceReducer;
 
 /***/ }),
 
-/***/ 158:
+/***/ 183:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _react = __webpack_require__(2);
+var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(32);
+var _reactDom = __webpack_require__(36);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _reactRedux = __webpack_require__(20);
+var _reactRedux = __webpack_require__(21);
 
-var _redux = __webpack_require__(33);
+var _redux = __webpack_require__(37);
 
-var _reduxThunk = __webpack_require__(41);
+var _reduxThunk = __webpack_require__(49);
 
 var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-var _reducers = __webpack_require__(100);
+var _reducers = __webpack_require__(118);
 
 var _reducers2 = _interopRequireDefault(_reducers);
 
-var _fragmentExplorer = __webpack_require__(188);
+var _fragmentExplorer = __webpack_require__(213);
 
 var _fragmentExplorer2 = _interopRequireDefault(_fragmentExplorer);
 
@@ -90,7 +90,7 @@ window.addEventListener('load', function () {
 
 /***/ }),
 
-/***/ 185:
+/***/ 210:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -101,17 +101,17 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.selectFragment = undefined;
 
-var _axios = __webpack_require__(19);
+var _axios = __webpack_require__(20);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _edConfig = __webpack_require__(12);
+var _edConfig = __webpack_require__(13);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _edPromise = __webpack_require__(88);
+var _edPromise = __webpack_require__(106);
 
-var _reducers = __webpack_require__(100);
+var _reducers = __webpack_require__(118);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -135,7 +135,7 @@ var selectFragment = exports.selectFragment = function selectFragment(fragmentId
 
 /***/ }),
 
-/***/ 188:
+/***/ 213:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -147,7 +147,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(2);
+var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -155,27 +155,27 @@ var _classnames = __webpack_require__(9);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _reactRedux = __webpack_require__(20);
+var _reactRedux = __webpack_require__(21);
 
-var _edConfig = __webpack_require__(12);
+var _edConfig = __webpack_require__(13);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _actions = __webpack_require__(185);
+var _actions = __webpack_require__(210);
 
-var _fragment = __webpack_require__(189);
+var _fragment = __webpack_require__(214);
 
 var _fragment2 = _interopRequireDefault(_fragment);
 
-var _tengwarFragment = __webpack_require__(190);
+var _tengwarFragment = __webpack_require__(215);
 
 var _tengwarFragment2 = _interopRequireDefault(_tengwarFragment);
 
-var _bookGloss = __webpack_require__(56);
+var _bookGloss = __webpack_require__(64);
 
 var _bookGloss2 = _interopRequireDefault(_bookGloss);
 
-var _htmlToReact = __webpack_require__(31);
+var _htmlToReact = __webpack_require__(35);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -445,7 +445,7 @@ exports.default = (0, _reactRedux.connect)(mapStateToProps)(EDFragmentExplorer);
 
 /***/ }),
 
-/***/ 189:
+/***/ 214:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -457,7 +457,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(2);
+var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -530,7 +530,7 @@ exports.default = EDFragment;
 
 /***/ }),
 
-/***/ 190:
+/***/ 215:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -542,7 +542,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(2);
+var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -587,15 +587,15 @@ exports.default = EDTengwarFragment;
 
 /***/ }),
 
-/***/ 402:
+/***/ 450:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(158);
+module.exports = __webpack_require__(183);
 
 
 /***/ }),
 
-/***/ 41:
+/***/ 49:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -625,7 +625,7 @@ exports['default'] = thunk;
 
 /***/ }),
 
-/***/ 56:
+/***/ 64:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -637,7 +637,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(2);
+var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -645,7 +645,7 @@ var _classnames = __webpack_require__(9);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _htmlToReact = __webpack_require__(31);
+var _htmlToReact = __webpack_require__(35);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -840,4 +840,4 @@ exports.default = EDBookGloss;
 
 /***/ })
 
-},[402]);
+},[450]);

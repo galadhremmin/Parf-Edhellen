@@ -50,6 +50,7 @@ Route::group([ 'namespace' => 'Resources', 'prefix' => 'admin' ], function () {
     Route::resource('sentence', 'SentenceController');
 
     Route::post('sentence/validate', 'SentenceController@validatePayload');
+    Route::post('sentence/validate-fragment', 'SentenceController@validateFragments');
 });
 
 // Authentication

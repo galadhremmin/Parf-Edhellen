@@ -1,5 +1,7 @@
 const EDConfig = {
     apiPathName: '/api/v1', // path to API w/o trailing slash!
+    apiValidationErrorStatusCode: 422,
+    
     messageDomain: window.location.origin,
     messageNavigateName: 'ednavigate',
 
