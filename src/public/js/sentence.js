@@ -283,7 +283,9 @@ var EDFragmentExplorer = function (_React$Component) {
             this.setState({
                 fragmentIndex: fragmentIndex
             });
-            window.location.hash = '!' + ev.id;
+            if (this.props.stateInUrl) {
+                window.location.hash = '!' + ev.id;
+            }
 
             this.props.dispatch((0, _actions.selectFragment)(ev.id, ev.translation_id));
         }
@@ -439,6 +441,10 @@ var mapStateToProps = function mapStateToProps(state) {
         bookData: state.bookData,
         loading: state.loading
     };
+};
+
+EDFragmentExplorer.defaultProps = {
+    stateInUrl: true
 };
 
 exports.default = (0, _reactRedux.connect)(mapStateToProps)(EDFragmentExplorer);

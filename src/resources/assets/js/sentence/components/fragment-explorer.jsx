@@ -83,8 +83,10 @@ class EDFragmentExplorer extends React.Component {
         this.setState({
             fragmentIndex
         });
-        window.location.hash = `!${ev.id}`;
-
+        if (this.props.stateInUrl) {
+            window.location.hash = `!${ev.id}`;
+        }
+    
         this.props.dispatch(selectFragment(ev.id, ev.translation_id));
     }
 
@@ -178,5 +180,9 @@ const mapStateToProps = (state) => {
         loading: state.loading
     };
 };
+
+EDFragmentExplorer.defaultProps = {
+    stateInUrl: true
+}
 
 export default connect(mapStateToProps)(EDFragmentExplorer);

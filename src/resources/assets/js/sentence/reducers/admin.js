@@ -37,14 +37,15 @@ const EDSentenceAdminReducer = (state = {
                         return f;
                     } 
 
-                    const newFragment = Object.assign({}, f, {
+                    const newFragment = {
+                        ...f,
                         translation_id: action.data.translation_id,
                         speech_id:      action.data.speech_id,
                         comments:       action.data.comments,
                         tengwar:        action.data.tengwar,
                         inflections:    action.data.inflections
                             .map(inflection => Object.assign({}, inflection))
-                    });
+                    };
 
                     return newFragment;
                 })

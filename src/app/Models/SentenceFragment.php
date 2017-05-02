@@ -13,7 +13,7 @@ class SentenceFragment extends Model
 
     public function speech()
     {
-        return $this->hasOne(Speech::class);
+        return $this->belongsTo(Speech::class);
     }
 
     public function inflectionAssociations()

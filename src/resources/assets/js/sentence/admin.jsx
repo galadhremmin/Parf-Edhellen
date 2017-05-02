@@ -9,6 +9,7 @@ import EDSentenceAdminReducer from './reducers/admin';
 import { saveState, loadState } from 'ed-session-storage-state';
 import EDSentenceForm from './components/forms/sentence-form';
 import EDFragmentForm from './components/forms/fragment-form';
+import EDPreviewForm from './components/forms/preview-form';
 
 window.addEventListener('load', function () {
     const sentenceDataContainer = document.getElementById('ed-preloaded-sentence');
@@ -51,10 +52,11 @@ window.addEventListener('load', function () {
 
     ReactDOM.render(
         <Provider store={store}>
-            <Router initialEntries={['/form', '/fragments']} initialIndex={0}>
+            <Router initialEntries={['/form', '/fragments', '/preview']} initialIndex={0}>
                 <div>
                     <Route path="/form" component={EDSentenceForm} />
                     <Route path="/fragments" component={EDFragmentForm} />
+                    <Route path="/preview" component={EDPreviewForm} />
                 </div>
             </Router>
         </Provider>,
