@@ -17,26 +17,61 @@ class EDPreviewForm extends React.Component {
         super(props);
 
         this.state = {
-            longDescription: undefined
+            longDescription: undefined,
+            loading: true
         };
-
-        this.previewStore = createStore(EDSentenceReducer, { 
-            fragments: props.fragments 
-        }, applyMiddleware(thunkMiddleware));
     }
 
     componentWillMount() {
+        const markdowns = {};
+
         const longDescription = this.props.sentenceLongDescription;
         if (longDescription && !/^\s*$/.test(longDescription)) {
-            axios.post(EDConfig.api('utility/markdown'), { markdown: longDescription})
-                .then(this.onLongDescriptionReceive.bind(this));
+            markdowns['long_description'] = longDescription;
+        }
+
+        for (let i = 0; i < this.props.fragments.length; i += 1) {
+            const data = this.props.fragments[i];
+
+            if (!/^\s*$/.test(data.comments)) {
+                markdowns['fragment-' + i] = data.comments;
+            }
+        }
+
+        if (Object.keys(markdowns).length > 0) {
+            axios.post(EDConfig.api('utility/markdown'), { markdowns })
+                .then(this.onHtmlReceive.bind(this));
+        } else {
+            this.createStore(this.props.fragments);
         }
     }
 
-    onLongDescriptionReceive(resp) {
+    createStore(fragments) {
+        this.previewStore = createStore(EDSentenceReducer, { fragments }, 
+            applyMiddleware(thunkMiddleware));
+
         this.setState({
-            longDescription: resp.data.html
+            loading: false
         });
+    }
+
+    onHtmlReceive(resp) {
+        // dirty deep copy to ensure loss of all references!
+        const fragments = JSON.parse(JSON.stringify(this.props.fragments)); 
+        const keys = Object.keys(resp.data);
+
+        for (let key of keys) {
+            if (key === 'long_description') {
+                this.setState({
+                    longDescription: resp.data[key]
+                });
+            } else if (key.substr(0, 9) === 'fragment-') {
+                const index = parseInt(key.substr(9), 10);
+                fragments[index].comments = resp.data[key];
+            }
+        }
+
+        this.createStore(fragments);
     }
 
     onPreviousClick(ev) {
@@ -46,6 +81,31 @@ class EDPreviewForm extends React.Component {
 
     onSubmit(ev) {
         ev.preventDefault();
+
+        const props = this.props;
+        const payload = {
+            id:               props.sentenceId,
+            source:           props.sentenceSource,
+            language_id:      props.sentenceLanguageId,
+            description:      props.sentenceDescription,
+            long_description: props.sentenceLongDescription,
+            fragments:        props.fragments
+        };
+
+        if (payload.id) {
+            // TODO: update
+        } else {
+            axios.post('/admin/sentence/store', payload)
+                .then(onCreateResponse.bind(this), onFailResponse.bind(this));
+        }
+    }
+
+    onCreateResponse(response) {
+
+    }
+
+    onFailResponse(response) {
+        // what to do here?? display errors?
     }
  
     render() {
@@ -59,10 +119,12 @@ class EDPreviewForm extends React.Component {
             <div className="well">
                 <h2>{this.props.sentenceName}</h2>
                 <p>{this.props.sentenceDescription}</p>
-                <Provider store={this.previewStore}>
-                    <EDFragmentExplorer stateInUrl={false} />
-                </Provider>
-                <div>{longDescription ? longDescription : ''}</div>
+                {this.state.loading 
+                    ? <div className="sk-spinner sk-spinner-pulse"></div>
+                    : <Provider store={this.previewStore}>
+                        <EDFragmentExplorer stateInUrl={false} />
+                    </Provider>}
+                {longDescription ? <div className="ed-fragment-long-description">{longDescription}</div> : ''}
             </div>
             <nav>
                 <ul className="pager">
@@ -85,8 +147,10 @@ const mapStateToProps = state => {
         fragments: state.fragments,
         sentenceName: state.name,
         sentenceSource: state.source,
+        sentenceLanguageId: state.language_id,
         sentenceDescription: state.description,
-        sentenceLongDescription: state.long_description
+        sentenceLongDescription: state.long_description,
+        sentenceId: state.id
     };
 };
 

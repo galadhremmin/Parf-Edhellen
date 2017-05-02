@@ -133,7 +133,7 @@ class EDSentenceForm extends EDStatefulFormComponent {
             </div>
             <div className="form-group">
                 <label htmlFor="ed-sentence-long-description" className="control-label">Description</label>
-                <EDMarkdownEditor componentId="ed-sentence-long-description" componentName="long_description" 
+                <EDMarkdownEditor componentId="ed-sentence-long-description" componentName="long_description" rows={8}
                     value={this.state.long_description} onChange={super.onChange.bind(this)} />
             </div>
             <nav>

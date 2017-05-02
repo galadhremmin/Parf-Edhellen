@@ -1,6 +1,6 @@
-webpackJsonp([2,5],{
+webpackJsonp([1,5],{
 
-/***/ 116:
+/***/ 121:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11,7 +11,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.setFragmentData = exports.setSentenceData = exports.setFragments = undefined;
 
-var _admin = __webpack_require__(117);
+var _admin = __webpack_require__(122);
 
 var setFragments = exports.setFragments = function setFragments(fragments) {
     return {
@@ -42,7 +42,7 @@ var setFragmentData = exports.setFragmentData = function setFragmentData(indexes
 
 /***/ }),
 
-/***/ 117:
+/***/ 122:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -113,52 +113,7 @@ exports.default = EDSentenceAdminReducer;
 
 /***/ }),
 
-/***/ 118:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-var REQUEST_FRAGMENT = exports.REQUEST_FRAGMENT = 'EDSR_REQUEST_FRAGMENT';
-var RECEIVE_FRAGMENT = exports.RECEIVE_FRAGMENT = 'EDSR_RECEIVE_FRAGMENT';
-
-var EDSentenceReducer = function EDSentenceReducer() {
-    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-        fragments: JSON.parse(document.getElementById('ed-preload-fragments').textContent),
-        fragmentId: undefined,
-        bookData: undefined,
-        loading: false
-    };
-    var action = arguments[1];
-
-    switch (action.type) {
-
-        case REQUEST_FRAGMENT:
-            return Object.assign({}, state, {
-                fragmentId: action.fragmentId,
-                loading: true
-            });
-
-        case RECEIVE_FRAGMENT:
-            return Object.assign({}, state, {
-                translationId: action.translationId,
-                bookData: action.bookData,
-                loading: false
-            });
-
-        default:
-            return state;
-    }
-};
-
-exports.default = EDSentenceReducer;
-
-/***/ }),
-
-/***/ 182:
+/***/ 186:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -170,39 +125,39 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(36);
+var _reactDom = __webpack_require__(37);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _reactRouterDom = __webpack_require__(108);
+var _reactRouterDom = __webpack_require__(113);
 
-var _reactRedux = __webpack_require__(21);
+var _reactRedux = __webpack_require__(17);
 
-var _redux = __webpack_require__(37);
+var _redux = __webpack_require__(33);
 
-var _reduxThunk = __webpack_require__(49);
+var _reduxThunk = __webpack_require__(38);
 
 var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-var _edConfig = __webpack_require__(13);
+var _edConfig = __webpack_require__(10);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _admin = __webpack_require__(117);
+var _admin = __webpack_require__(122);
 
 var _admin2 = _interopRequireDefault(_admin);
 
-var _edSessionStorageState = __webpack_require__(107);
+var _edSessionStorageState = __webpack_require__(112);
 
-var _sentenceForm = __webpack_require__(212);
+var _sentenceForm = __webpack_require__(216);
 
 var _sentenceForm2 = _interopRequireDefault(_sentenceForm);
 
-var _fragmentForm = __webpack_require__(211);
+var _fragmentForm = __webpack_require__(214);
 
 var _fragmentForm2 = _interopRequireDefault(_fragmentForm);
 
-var _previewForm = __webpack_require__(464);
+var _previewForm = __webpack_require__(215);
 
 var _previewForm2 = _interopRequireDefault(_previewForm);
 
@@ -263,7 +218,7 @@ window.addEventListener('load', function () {
 
 /***/ }),
 
-/***/ 202:
+/***/ 206:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -279,19 +234,19 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _axios = __webpack_require__(20);
+var _axios = __webpack_require__(16);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _classnames = __webpack_require__(9);
+var _classnames = __webpack_require__(6);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _edConfig = __webpack_require__(13);
+var _edConfig = __webpack_require__(10);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _reactAutosuggest = __webpack_require__(62);
+var _reactAutosuggest = __webpack_require__(65);
 
 var _reactAutosuggest2 = _interopRequireDefault(_reactAutosuggest);
 
@@ -552,7 +507,7 @@ exports.default = EDInflectionSelect;
 
 /***/ }),
 
-/***/ 203:
+/***/ 207:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -568,15 +523,15 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _axios = __webpack_require__(20);
+var _axios = __webpack_require__(16);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _classnames = __webpack_require__(9);
+var _classnames = __webpack_require__(6);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _edConfig = __webpack_require__(13);
+var _edConfig = __webpack_require__(10);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
@@ -692,7 +647,7 @@ exports.default = EDSpeechSelect;
 
 /***/ }),
 
-/***/ 204:
+/***/ 208:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -708,19 +663,19 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _axios = __webpack_require__(20);
+var _axios = __webpack_require__(16);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _classnames = __webpack_require__(9);
+var _classnames = __webpack_require__(6);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _edConfig = __webpack_require__(13);
+var _edConfig = __webpack_require__(10);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _reactAutosuggest = __webpack_require__(62);
+var _reactAutosuggest = __webpack_require__(65);
 
 var _reactAutosuggest2 = _interopRequireDefault(_reactAutosuggest);
 
@@ -962,7 +917,7 @@ exports.default = EDTranslationSelect;
 
 /***/ }),
 
-/***/ 205:
+/***/ 209:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1010,52 +965,7 @@ var transcribe = exports.transcribe = function transcribe(text, mode) {
 
 /***/ }),
 
-/***/ 210:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.selectFragment = undefined;
-
-var _axios = __webpack_require__(20);
-
-var _axios2 = _interopRequireDefault(_axios);
-
-var _edConfig = __webpack_require__(13);
-
-var _edConfig2 = _interopRequireDefault(_edConfig);
-
-var _edPromise = __webpack_require__(106);
-
-var _reducers = __webpack_require__(118);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var selectFragment = exports.selectFragment = function selectFragment(fragmentId, translationId) {
-    return function (dispatch) {
-        dispatch({
-            type: _reducers.REQUEST_FRAGMENT,
-            fragmentId: fragmentId
-        });
-
-        var start = new Date().getTime();
-        (0, _edPromise.deferredResolve)(_axios2.default.get(_edConfig2.default.api('/book/translate/' + translationId)), 800).then(function (resp) {
-            dispatch({
-                type: _reducers.RECEIVE_FRAGMENT,
-                bookData: resp.data,
-                translationId: translationId
-            });
-        });
-    };
-};
-
-/***/ }),
-
-/***/ 211:
+/***/ 214:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1073,47 +983,47 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _classnames = __webpack_require__(9);
+var _classnames = __webpack_require__(6);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _axios = __webpack_require__(20);
+var _axios = __webpack_require__(16);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _reactRedux = __webpack_require__(21);
+var _reactRedux = __webpack_require__(17);
 
-var _reactRouter = __webpack_require__(10);
+var _reactRouter = __webpack_require__(11);
 
-var _smoothscrollPolyfill = __webpack_require__(51);
+var _smoothscrollPolyfill = __webpack_require__(54);
 
-var _admin = __webpack_require__(116);
+var _admin = __webpack_require__(121);
 
-var _edConfig = __webpack_require__(13);
+var _edConfig = __webpack_require__(10);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _edForm = __webpack_require__(61);
+var _edForm = __webpack_require__(63);
 
-var _tengwar = __webpack_require__(205);
+var _tengwar = __webpack_require__(209);
 
-var _markdownEditor = __webpack_require__(50);
+var _markdownEditor = __webpack_require__(53);
 
 var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 
-var _errorList = __webpack_require__(60);
+var _errorList = __webpack_require__(52);
 
 var _errorList2 = _interopRequireDefault(_errorList);
 
-var _speechSelect = __webpack_require__(203);
+var _speechSelect = __webpack_require__(207);
 
 var _speechSelect2 = _interopRequireDefault(_speechSelect);
 
-var _inflectionSelect = __webpack_require__(202);
+var _inflectionSelect = __webpack_require__(206);
 
 var _inflectionSelect2 = _interopRequireDefault(_inflectionSelect);
 
-var _translationSelect = __webpack_require__(204);
+var _translationSelect = __webpack_require__(208);
 
 var _translationSelect2 = _interopRequireDefault(_translationSelect);
 
@@ -1801,7 +1711,277 @@ exports.default = (0, _reactRouter.withRouter)((0, _reactRedux.connect)(mapState
 
 /***/ }),
 
-/***/ 212:
+/***/ 215:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactRouter = __webpack_require__(11);
+
+var _redux = __webpack_require__(33);
+
+var _reactRedux = __webpack_require__(17);
+
+var _reduxThunk = __webpack_require__(38);
+
+var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
+
+var _classnames = __webpack_require__(6);
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
+var _axios = __webpack_require__(16);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _htmlToReact = __webpack_require__(23);
+
+var _edConfig = __webpack_require__(10);
+
+var _edConfig2 = _interopRequireDefault(_edConfig);
+
+var _errorList = __webpack_require__(52);
+
+var _errorList2 = _interopRequireDefault(_errorList);
+
+var _reducers = __webpack_require__(40);
+
+var _reducers2 = _interopRequireDefault(_reducers);
+
+var _fragmentExplorer = __webpack_require__(68);
+
+var _fragmentExplorer2 = _interopRequireDefault(_fragmentExplorer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var EDPreviewForm = function (_React$Component) {
+    _inherits(EDPreviewForm, _React$Component);
+
+    function EDPreviewForm(props) {
+        _classCallCheck(this, EDPreviewForm);
+
+        var _this = _possibleConstructorReturn(this, (EDPreviewForm.__proto__ || Object.getPrototypeOf(EDPreviewForm)).call(this, props));
+
+        _this.state = {
+            longDescription: undefined,
+            loading: true
+        };
+        return _this;
+    }
+
+    _createClass(EDPreviewForm, [{
+        key: 'componentWillMount',
+        value: function componentWillMount() {
+            var markdowns = {};
+
+            var longDescription = this.props.sentenceLongDescription;
+            if (longDescription && !/^\s*$/.test(longDescription)) {
+                markdowns['long_description'] = longDescription;
+            }
+
+            for (var i = 0; i < this.props.fragments.length; i += 1) {
+                var data = this.props.fragments[i];
+
+                if (!/^\s*$/.test(data.comments)) {
+                    markdowns['fragment-' + i] = data.comments;
+                }
+            }
+
+            if (Object.keys(markdowns).length > 0) {
+                _axios2.default.post(_edConfig2.default.api('utility/markdown'), { markdowns: markdowns }).then(this.onHtmlReceive.bind(this));
+            } else {
+                this.createStore(this.props.fragments);
+            }
+        }
+    }, {
+        key: 'createStore',
+        value: function createStore(fragments) {
+            this.previewStore = (0, _redux.createStore)(_reducers2.default, { fragments: fragments }, (0, _redux.applyMiddleware)(_reduxThunk2.default));
+
+            this.setState({
+                loading: false
+            });
+        }
+    }, {
+        key: 'onHtmlReceive',
+        value: function onHtmlReceive(resp) {
+            // dirty deep copy to ensure loss of all references!
+            var fragments = JSON.parse(JSON.stringify(this.props.fragments));
+            var keys = Object.keys(resp.data);
+
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = keys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var key = _step.value;
+
+                    if (key === 'long_description') {
+                        this.setState({
+                            longDescription: resp.data[key]
+                        });
+                    } else if (key.substr(0, 9) === 'fragment-') {
+                        var index = parseInt(key.substr(9), 10);
+                        fragments[index].comments = resp.data[key];
+                    }
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            this.createStore(fragments);
+        }
+    }, {
+        key: 'onPreviousClick',
+        value: function onPreviousClick(ev) {
+            ev.preventDefault();
+            this.props.history.goBack();
+        }
+    }, {
+        key: 'onSubmit',
+        value: function onSubmit(ev) {
+            ev.preventDefault();
+
+            var props = this.props;
+            var payload = {
+                id: props.sentenceId,
+                source: props.sentenceSource,
+                language_id: props.sentenceLanguageId,
+                description: props.sentenceDescription,
+                long_description: props.sentenceLongDescription,
+                fragments: props.fragments
+            };
+
+            if (payload.id) {
+                // TODO: update
+            } else {
+                _axios2.default.post('/admin/sentence/store', payload).then(onCreateResponse.bind(this), onFailResponse.bind(this));
+            }
+        }
+    }, {
+        key: 'onCreateResponse',
+        value: function onCreateResponse(response) {}
+    }, {
+        key: 'onFailResponse',
+        value: function onFailResponse(response) {
+            // what to do here?? display errors?
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var longDescription = undefined;
+            if (this.state.longDescription) {
+                var parser = new _htmlToReact.Parser();
+                longDescription = parser.parse(this.state.longDescription);
+            }
+
+            return _react2.default.createElement(
+                'div',
+                null,
+                _react2.default.createElement(
+                    'div',
+                    { className: 'well' },
+                    _react2.default.createElement(
+                        'h2',
+                        null,
+                        this.props.sentenceName
+                    ),
+                    _react2.default.createElement(
+                        'p',
+                        null,
+                        this.props.sentenceDescription
+                    ),
+                    this.state.loading ? _react2.default.createElement('div', { className: 'sk-spinner sk-spinner-pulse' }) : _react2.default.createElement(
+                        _reactRedux.Provider,
+                        { store: this.previewStore },
+                        _react2.default.createElement(_fragmentExplorer2.default, { stateInUrl: false })
+                    ),
+                    longDescription ? _react2.default.createElement(
+                        'div',
+                        { className: 'ed-fragment-long-description' },
+                        longDescription
+                    ) : ''
+                ),
+                _react2.default.createElement(
+                    'nav',
+                    null,
+                    _react2.default.createElement(
+                        'ul',
+                        { className: 'pager' },
+                        _react2.default.createElement(
+                            'li',
+                            { className: 'previous' },
+                            _react2.default.createElement(
+                                'a',
+                                { href: '#', onClick: this.onPreviousClick.bind(this) },
+                                '\u2190 Previous step'
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'li',
+                            { className: 'next' },
+                            _react2.default.createElement(
+                                'a',
+                                { href: '#', onClick: this.onSubmit.bind(this) },
+                                'Confirm and save \xA0 \xA0',
+                                _react2.default.createElement('span', { className: 'glyphicon glyphicon-save' })
+                            )
+                        )
+                    )
+                )
+            );
+        }
+    }]);
+
+    return EDPreviewForm;
+}(_react2.default.Component);
+
+var mapStateToProps = function mapStateToProps(state) {
+    return {
+        fragments: state.fragments,
+        sentenceName: state.name,
+        sentenceSource: state.source,
+        sentenceLanguageId: state.language_id,
+        sentenceDescription: state.description,
+        sentenceLongDescription: state.long_description,
+        sentenceId: state.id
+    };
+};
+
+exports.default = (0, _reactRouter.withRouter)((0, _reactRedux.connect)(mapStateToProps)(EDPreviewForm));
+
+/***/ }),
+
+/***/ 216:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1819,29 +1999,29 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _classnames = __webpack_require__(9);
+var _classnames = __webpack_require__(6);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _reactRedux = __webpack_require__(21);
+var _reactRedux = __webpack_require__(17);
 
-var _reactRouter = __webpack_require__(10);
+var _reactRouter = __webpack_require__(11);
 
-var _axios = __webpack_require__(20);
+var _axios = __webpack_require__(16);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _smoothscrollPolyfill = __webpack_require__(51);
+var _smoothscrollPolyfill = __webpack_require__(54);
 
-var _admin = __webpack_require__(116);
+var _admin = __webpack_require__(121);
 
-var _edForm = __webpack_require__(61);
+var _edForm = __webpack_require__(63);
 
-var _markdownEditor = __webpack_require__(50);
+var _markdownEditor = __webpack_require__(53);
 
 var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 
-var _errorList = __webpack_require__(60);
+var _errorList = __webpack_require__(52);
 
 var _errorList2 = _interopRequireDefault(_errorList);
 
@@ -2057,7 +2237,7 @@ var EDSentenceForm = function (_EDStatefulFormCompon) {
                         { htmlFor: 'ed-sentence-long-description', className: 'control-label' },
                         'Description'
                     ),
-                    _react2.default.createElement(_markdownEditor2.default, { componentId: 'ed-sentence-long-description', componentName: 'long_description',
+                    _react2.default.createElement(_markdownEditor2.default, { componentId: 'ed-sentence-long-description', componentName: 'long_description', rows: 8,
                         value: this.state.long_description, onChange: _get(EDSentenceForm.prototype.__proto__ || Object.getPrototypeOf(EDSentenceForm.prototype), 'onChange', this).bind(this) })
                 ),
                 _react2.default.createElement(
@@ -2100,7 +2280,7 @@ exports.default = (0, _reactRouter.withRouter)((0, _reactRedux.connect)(mapState
 
 /***/ }),
 
-/***/ 213:
+/***/ 39:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2116,31 +2296,344 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _classnames = __webpack_require__(9);
+var _classnames = __webpack_require__(6);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _reactRedux = __webpack_require__(21);
+var _htmlToReact = __webpack_require__(23);
 
-var _edConfig = __webpack_require__(13);
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * Represents a single gloss. A gloss is also called a 'translation' and is reserved for invented languages.
+ */
+var EDBookGloss = function (_React$Component) {
+    _inherits(EDBookGloss, _React$Component);
+
+    function EDBookGloss() {
+        _classCallCheck(this, EDBookGloss);
+
+        return _possibleConstructorReturn(this, (EDBookGloss.__proto__ || Object.getPrototypeOf(EDBookGloss)).apply(this, arguments));
+    }
+
+    _createClass(EDBookGloss, [{
+        key: 'processHtml',
+        value: function processHtml(html) {
+            var _this2 = this;
+
+            var definitions = new _htmlToReact.ProcessNodeDefinitions(_react2.default);
+            var instructions = [
+            // Special behaviour for <a> as they are reference links.
+            {
+                shouldProcessNode: function shouldProcessNode(node) {
+                    return node.name === 'a';
+                },
+                processNode: function processNode(node, children) {
+                    var nodeElements = definitions.processDefaultNode(node, children);
+                    if (node.attribs.class !== 'ed-word-reference') {
+                        return nodeElements;
+                    }
+
+                    // Replace reference links with a link that is aware of
+                    // the component, and can intercept click attempts.
+                    var href = node.attribs.href;
+                    var title = node.attribs.title;
+                    var word = node.attribs['data-word'];
+                    var childElements = nodeElements.props.children;
+
+                    return _react2.default.createElement(
+                        'a',
+                        { href: href,
+                            onClick: function onClick(ev) {
+                                return _this2.onReferenceLinkClick(ev, word);
+                            },
+                            title: title },
+                        childElements
+                    );
+                }
+            },
+            // Default behaviour for all else.
+            {
+                shouldProcessNode: function shouldProcessNode(node) {
+                    return true;
+                },
+                processNode: definitions.processDefaultNode
+            }];
+
+            var parser = new _htmlToReact.Parser();
+            return parser.parseWithInstructions(html, function (n) {
+                return true;
+            }, instructions);
+        }
+    }, {
+        key: 'onReferenceLinkClick',
+        value: function onReferenceLinkClick(ev, word) {
+            ev.preventDefault();
+
+            if (this.props.onReferenceLinkClick) {
+                this.props.onReferenceLinkClick({
+                    word: word
+                });
+            }
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var gloss = this.props.gloss;
+            var id = 'translation-block-' + gloss.id;
+
+            var comments = null;
+            if (gloss.comments) {
+                comments = this.processHtml(gloss.comments);
+            }
+
+            return _react2.default.createElement(
+                'blockquote',
+                { itemScope: 'itemscope', itemType: 'http://schema.org/Article', id: id, className: (0, _classnames2.default)({ 'contribution': !gloss.is_canon }) },
+                _react2.default.createElement(
+                    'h3',
+                    { rel: 'trans-word', className: 'trans-word' },
+                    !gloss.is_canon || gloss.is_uncertain || !gloss.is_latest ? _react2.default.createElement(
+                        'a',
+                        { href: '/about', title: 'Unverified or debatable content.' },
+                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-question-sign' })
+                    ) : '',
+                    ' ',
+                    _react2.default.createElement(
+                        'span',
+                        { itemProp: 'headline' },
+                        gloss.word
+                    ),
+                    gloss.external_link_format && gloss.external_id ? _react2.default.createElement(
+                        'a',
+                        { href: gloss.external_link_format.replace(/\{ExternalID\}/g, gloss.external_id),
+                            className: 'ed-external-link-button',
+                            title: 'Open on ' + gloss.translation_group_name + ' (new tab/window)',
+                            target: '_blank' },
+                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-globe pull-right' })
+                    ) : ''
+                ),
+                _react2.default.createElement(
+                    'p',
+                    null,
+                    gloss.tengwar ? _react2.default.createElement(
+                        'span',
+                        { className: 'tengwar' },
+                        gloss.tengwar
+                    ) : '',
+                    ' ',
+                    gloss.type != 'unset' ? _react2.default.createElement(
+                        'span',
+                        { className: 'word-type', rel: 'trans-type' },
+                        gloss.type,
+                        '.'
+                    ) : '',
+                    ' ',
+                    _react2.default.createElement(
+                        'span',
+                        { rel: 'trans-translation', itemProp: 'keywords' },
+                        gloss.translation
+                    )
+                ),
+                comments,
+                _react2.default.createElement(
+                    'footer',
+                    null,
+                    gloss.source ? _react2.default.createElement(
+                        'span',
+                        { className: 'word-source', rel: 'trans-source' },
+                        '[',
+                        gloss.source,
+                        ']'
+                    ) : '',
+                    ' ',
+                    gloss.Etymology ? _react2.default.createElement(
+                        'span',
+                        { className: 'word-etymology', rel: 'trans-etymology' },
+                        gloss.etymology,
+                        '.'
+                    ) : '',
+                    ' ',
+                    gloss.translation_group_id ? _react2.default.createElement(
+                        'span',
+                        null,
+                        'Group: ',
+                        _react2.default.createElement(
+                            'span',
+                            { itemProp: 'sourceOrganization' },
+                            gloss.translation_group_name,
+                            '.'
+                        )
+                    ) : '',
+                    ' Published: ',
+                    _react2.default.createElement(
+                        'span',
+                        { itemProp: 'datePublished' },
+                        gloss.created_at
+                    ),
+                    ' by ',
+                    _react2.default.createElement(
+                        'a',
+                        { href: gloss.account_url, itemProp: 'author', rel: 'author', title: 'View profile for ' + gloss.account_name + '.' },
+                        gloss.account_name
+                    )
+                )
+            );
+        }
+    }]);
+
+    return EDBookGloss;
+}(_react2.default.Component);
+
+exports.default = EDBookGloss;
+
+/***/ }),
+
+/***/ 40:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var REQUEST_FRAGMENT = exports.REQUEST_FRAGMENT = 'EDSR_REQUEST_FRAGMENT';
+var RECEIVE_FRAGMENT = exports.RECEIVE_FRAGMENT = 'EDSR_RECEIVE_FRAGMENT';
+
+var EDSentenceReducer = function EDSentenceReducer() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+        fragments: JSON.parse(document.getElementById('ed-preload-fragments').textContent),
+        fragmentId: undefined,
+        bookData: undefined,
+        loading: false
+    };
+    var action = arguments[1];
+
+    switch (action.type) {
+
+        case REQUEST_FRAGMENT:
+            return Object.assign({}, state, {
+                fragmentId: action.fragmentId,
+                loading: true
+            });
+
+        case RECEIVE_FRAGMENT:
+            return Object.assign({}, state, {
+                translationId: action.translationId,
+                bookData: action.bookData,
+                loading: false
+            });
+
+        default:
+            return state;
+    }
+};
+
+exports.default = EDSentenceReducer;
+
+/***/ }),
+
+/***/ 450:
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(186);
+
+
+/***/ }),
+
+/***/ 67:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.selectFragment = undefined;
+
+var _axios = __webpack_require__(16);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _edConfig = __webpack_require__(10);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _actions = __webpack_require__(210);
+var _edPromise = __webpack_require__(64);
 
-var _fragment = __webpack_require__(214);
+var _reducers = __webpack_require__(40);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var selectFragment = exports.selectFragment = function selectFragment(fragmentId, translationId) {
+    return function (dispatch) {
+        dispatch({
+            type: _reducers.REQUEST_FRAGMENT,
+            fragmentId: fragmentId
+        });
+
+        var start = new Date().getTime();
+        (0, _edPromise.deferredResolve)(_axios2.default.get(_edConfig2.default.api('/book/translate/' + translationId)), 800).then(function (resp) {
+            dispatch({
+                type: _reducers.RECEIVE_FRAGMENT,
+                bookData: resp.data,
+                translationId: translationId
+            });
+        });
+    };
+};
+
+/***/ }),
+
+/***/ 68:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(1);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _classnames = __webpack_require__(6);
+
+var _classnames2 = _interopRequireDefault(_classnames);
+
+var _reactRedux = __webpack_require__(17);
+
+var _edConfig = __webpack_require__(10);
+
+var _edConfig2 = _interopRequireDefault(_edConfig);
+
+var _actions = __webpack_require__(67);
+
+var _fragment = __webpack_require__(69);
 
 var _fragment2 = _interopRequireDefault(_fragment);
 
-var _tengwarFragment = __webpack_require__(215);
+var _tengwarFragment = __webpack_require__(70);
 
 var _tengwarFragment2 = _interopRequireDefault(_tengwarFragment);
 
-var _bookGloss = __webpack_require__(64);
+var _bookGloss = __webpack_require__(39);
 
 var _bookGloss2 = _interopRequireDefault(_bookGloss);
 
-var _htmlToReact = __webpack_require__(35);
+var _htmlToReact = __webpack_require__(23);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2416,7 +2909,7 @@ exports.default = (0, _reactRedux.connect)(mapStateToProps)(EDFragmentExplorer);
 
 /***/ }),
 
-/***/ 214:
+/***/ 69:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2432,7 +2925,7 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _classnames = __webpack_require__(9);
+var _classnames = __webpack_require__(6);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -2501,7 +2994,7 @@ exports.default = EDFragment;
 
 /***/ }),
 
-/***/ 215:
+/***/ 70:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2517,7 +3010,7 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _classnames = __webpack_require__(9);
+var _classnames = __webpack_require__(6);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
@@ -2556,447 +3049,6 @@ var EDTengwarFragment = function (_React$Component) {
 
 exports.default = EDTengwarFragment;
 
-/***/ }),
-
-/***/ 449:
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(182);
-
-
-/***/ }),
-
-/***/ 464:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(1);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _reactRouter = __webpack_require__(10);
-
-var _redux = __webpack_require__(37);
-
-var _reactRedux = __webpack_require__(21);
-
-var _reduxThunk = __webpack_require__(49);
-
-var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
-
-var _classnames = __webpack_require__(9);
-
-var _classnames2 = _interopRequireDefault(_classnames);
-
-var _axios = __webpack_require__(20);
-
-var _axios2 = _interopRequireDefault(_axios);
-
-var _htmlToReact = __webpack_require__(35);
-
-var _edConfig = __webpack_require__(13);
-
-var _edConfig2 = _interopRequireDefault(_edConfig);
-
-var _errorList = __webpack_require__(60);
-
-var _errorList2 = _interopRequireDefault(_errorList);
-
-var _reducers = __webpack_require__(118);
-
-var _reducers2 = _interopRequireDefault(_reducers);
-
-var _fragmentExplorer = __webpack_require__(213);
-
-var _fragmentExplorer2 = _interopRequireDefault(_fragmentExplorer);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var EDPreviewForm = function (_React$Component) {
-    _inherits(EDPreviewForm, _React$Component);
-
-    function EDPreviewForm(props) {
-        _classCallCheck(this, EDPreviewForm);
-
-        var _this = _possibleConstructorReturn(this, (EDPreviewForm.__proto__ || Object.getPrototypeOf(EDPreviewForm)).call(this, props));
-
-        _this.state = {
-            longDescription: undefined
-        };
-
-        _this.previewStore = (0, _redux.createStore)(_reducers2.default, {
-            fragments: props.fragments
-        }, (0, _redux.applyMiddleware)(_reduxThunk2.default));
-        return _this;
-    }
-
-    _createClass(EDPreviewForm, [{
-        key: 'componentWillMount',
-        value: function componentWillMount() {
-            var longDescription = this.props.sentenceLongDescription;
-            if (longDescription && !/^\s*$/.test(longDescription)) {
-                _axios2.default.post(_edConfig2.default.api('utility/markdown'), { markdown: longDescription }).then(this.onLongDescriptionReceive.bind(this));
-            }
-        }
-    }, {
-        key: 'onLongDescriptionReceive',
-        value: function onLongDescriptionReceive(resp) {
-            this.setState({
-                longDescription: resp.data.html
-            });
-        }
-    }, {
-        key: 'onPreviousClick',
-        value: function onPreviousClick(ev) {
-            ev.preventDefault();
-            this.props.history.goBack();
-        }
-    }, {
-        key: 'onSubmit',
-        value: function onSubmit(ev) {
-            ev.preventDefault();
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var longDescription = undefined;
-            if (this.state.longDescription) {
-                var parser = new _htmlToReact.Parser();
-                longDescription = parser.parse(this.state.longDescription);
-            }
-
-            return _react2.default.createElement(
-                'div',
-                null,
-                _react2.default.createElement(
-                    'div',
-                    { className: 'well' },
-                    _react2.default.createElement(
-                        'h2',
-                        null,
-                        this.props.sentenceName
-                    ),
-                    _react2.default.createElement(
-                        'p',
-                        null,
-                        this.props.sentenceDescription
-                    ),
-                    _react2.default.createElement(
-                        _reactRedux.Provider,
-                        { store: this.previewStore },
-                        _react2.default.createElement(_fragmentExplorer2.default, { stateInUrl: false })
-                    ),
-                    _react2.default.createElement(
-                        'div',
-                        null,
-                        longDescription ? longDescription : ''
-                    )
-                ),
-                _react2.default.createElement(
-                    'nav',
-                    null,
-                    _react2.default.createElement(
-                        'ul',
-                        { className: 'pager' },
-                        _react2.default.createElement(
-                            'li',
-                            { className: 'previous' },
-                            _react2.default.createElement(
-                                'a',
-                                { href: '#', onClick: this.onPreviousClick.bind(this) },
-                                '\u2190 Previous step'
-                            )
-                        ),
-                        _react2.default.createElement(
-                            'li',
-                            { className: 'next' },
-                            _react2.default.createElement(
-                                'a',
-                                { href: '#', onClick: this.onSubmit.bind(this) },
-                                'Confirm and save \xA0 \xA0',
-                                _react2.default.createElement('span', { className: 'glyphicon glyphicon-save' })
-                            )
-                        )
-                    )
-                )
-            );
-        }
-    }]);
-
-    return EDPreviewForm;
-}(_react2.default.Component);
-
-var mapStateToProps = function mapStateToProps(state) {
-    return {
-        fragments: state.fragments,
-        sentenceName: state.name,
-        sentenceSource: state.source,
-        sentenceDescription: state.description,
-        sentenceLongDescription: state.long_description
-    };
-};
-
-exports.default = (0, _reactRouter.withRouter)((0, _reactRedux.connect)(mapStateToProps)(EDPreviewForm));
-
-/***/ }),
-
-/***/ 49:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = true;
-function createThunkMiddleware(extraArgument) {
-  return function (_ref) {
-    var dispatch = _ref.dispatch,
-        getState = _ref.getState;
-    return function (next) {
-      return function (action) {
-        if (typeof action === 'function') {
-          return action(dispatch, getState, extraArgument);
-        }
-
-        return next(action);
-      };
-    };
-  };
-}
-
-var thunk = createThunkMiddleware();
-thunk.withExtraArgument = createThunkMiddleware;
-
-exports['default'] = thunk;
-
-/***/ }),
-
-/***/ 64:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(1);
-
-var _react2 = _interopRequireDefault(_react);
-
-var _classnames = __webpack_require__(9);
-
-var _classnames2 = _interopRequireDefault(_classnames);
-
-var _htmlToReact = __webpack_require__(35);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-/**
- * Represents a single gloss. A gloss is also called a 'translation' and is reserved for invented languages.
- */
-var EDBookGloss = function (_React$Component) {
-    _inherits(EDBookGloss, _React$Component);
-
-    function EDBookGloss() {
-        _classCallCheck(this, EDBookGloss);
-
-        return _possibleConstructorReturn(this, (EDBookGloss.__proto__ || Object.getPrototypeOf(EDBookGloss)).apply(this, arguments));
-    }
-
-    _createClass(EDBookGloss, [{
-        key: 'processHtml',
-        value: function processHtml(html) {
-            var _this2 = this;
-
-            var definitions = new _htmlToReact.ProcessNodeDefinitions(_react2.default);
-            var instructions = [
-            // Special behaviour for <a> as they are reference links.
-            {
-                shouldProcessNode: function shouldProcessNode(node) {
-                    return node.name === 'a';
-                },
-                processNode: function processNode(node, children) {
-                    var nodeElements = definitions.processDefaultNode(node, children);
-                    if (node.attribs.class !== 'ed-word-reference') {
-                        return nodeElements;
-                    }
-
-                    // Replace reference links with a link that is aware of
-                    // the component, and can intercept click attempts.
-                    var href = node.attribs.href;
-                    var title = node.attribs.title;
-                    var word = node.attribs['data-word'];
-                    var childElements = nodeElements.props.children;
-
-                    return _react2.default.createElement(
-                        'a',
-                        { href: href,
-                            onClick: function onClick(ev) {
-                                return _this2.onReferenceLinkClick(ev, word);
-                            },
-                            title: title },
-                        childElements
-                    );
-                }
-            },
-            // Default behaviour for all else.
-            {
-                shouldProcessNode: function shouldProcessNode(node) {
-                    return true;
-                },
-                processNode: definitions.processDefaultNode
-            }];
-
-            var parser = new _htmlToReact.Parser();
-            return parser.parseWithInstructions(html, function (n) {
-                return true;
-            }, instructions);
-        }
-    }, {
-        key: 'onReferenceLinkClick',
-        value: function onReferenceLinkClick(ev, word) {
-            ev.preventDefault();
-
-            if (this.props.onReferenceLinkClick) {
-                this.props.onReferenceLinkClick({
-                    word: word
-                });
-            }
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var gloss = this.props.gloss;
-            var id = 'translation-block-' + gloss.id;
-
-            var comments = null;
-            if (gloss.comments) {
-                comments = this.processHtml(gloss.comments);
-            }
-
-            return _react2.default.createElement(
-                'blockquote',
-                { itemScope: 'itemscope', itemType: 'http://schema.org/Article', id: id, className: (0, _classnames2.default)({ 'contribution': !gloss.is_canon }) },
-                _react2.default.createElement(
-                    'h3',
-                    { rel: 'trans-word', className: 'trans-word' },
-                    !gloss.is_canon || gloss.is_uncertain || !gloss.is_latest ? _react2.default.createElement(
-                        'a',
-                        { href: '/about', title: 'Unverified or debatable content.' },
-                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-question-sign' })
-                    ) : '',
-                    ' ',
-                    _react2.default.createElement(
-                        'span',
-                        { itemProp: 'headline' },
-                        gloss.word
-                    ),
-                    gloss.external_link_format && gloss.external_id ? _react2.default.createElement(
-                        'a',
-                        { href: gloss.external_link_format.replace(/\{ExternalID\}/g, gloss.external_id),
-                            className: 'ed-external-link-button',
-                            title: 'Open on ' + gloss.translation_group_name + ' (new tab/window)',
-                            target: '_blank' },
-                        _react2.default.createElement('span', { className: 'glyphicon glyphicon-globe pull-right' })
-                    ) : ''
-                ),
-                _react2.default.createElement(
-                    'p',
-                    null,
-                    gloss.tengwar ? _react2.default.createElement(
-                        'span',
-                        { className: 'tengwar' },
-                        gloss.tengwar
-                    ) : '',
-                    ' ',
-                    gloss.type != 'unset' ? _react2.default.createElement(
-                        'span',
-                        { className: 'word-type', rel: 'trans-type' },
-                        gloss.type,
-                        '.'
-                    ) : '',
-                    ' ',
-                    _react2.default.createElement(
-                        'span',
-                        { rel: 'trans-translation', itemProp: 'keywords' },
-                        gloss.translation
-                    )
-                ),
-                comments,
-                _react2.default.createElement(
-                    'footer',
-                    null,
-                    gloss.source ? _react2.default.createElement(
-                        'span',
-                        { className: 'word-source', rel: 'trans-source' },
-                        '[',
-                        gloss.source,
-                        ']'
-                    ) : '',
-                    ' ',
-                    gloss.Etymology ? _react2.default.createElement(
-                        'span',
-                        { className: 'word-etymology', rel: 'trans-etymology' },
-                        gloss.etymology,
-                        '.'
-                    ) : '',
-                    ' ',
-                    gloss.translation_group_id ? _react2.default.createElement(
-                        'span',
-                        null,
-                        'Group: ',
-                        _react2.default.createElement(
-                            'span',
-                            { itemProp: 'sourceOrganization' },
-                            gloss.translation_group_name,
-                            '.'
-                        )
-                    ) : '',
-                    ' Published: ',
-                    _react2.default.createElement(
-                        'span',
-                        { itemProp: 'datePublished' },
-                        gloss.created_at
-                    ),
-                    ' by ',
-                    _react2.default.createElement(
-                        'a',
-                        { href: gloss.account_url, itemProp: 'author', rel: 'author', title: 'View profile for ' + gloss.account_name + '.' },
-                        gloss.account_name
-                    )
-                )
-            );
-        }
-    }]);
-
-    return EDBookGloss;
-}(_react2.default.Component);
-
-exports.default = EDBookGloss;
-
 /***/ })
 
-},[449]);
+},[450]);

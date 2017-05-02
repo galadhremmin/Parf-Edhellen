@@ -12,12 +12,24 @@ class UtilityApiController extends Controller
     public function parseMarkdown(Request $request)
     {
         $this->validate($request, [
-            'markdown' => 'required'
+            'markdown'  => 'sometimes|required|string',
+            'markdowns' => 'sometimes|required|array'
         ]);
 
-        $markdown = $request->input('markdown');
         $parser = new MarkdownParser();
 
-        return [ 'html' => $parser->parse($markdown) ];
+        $markdown = $request->input('markdown');
+        if ($markdown)
+            return [ 'html' => $parser->parse($markdown) ];
+        
+        $markdowns = $request->input('markdowns');
+        $keys = array_keys($markdowns);
+        $html = [];
+
+        foreach ($keys as $key) {
+            $html[$key] = $parser->parse($markdowns[$key]);
+        }
+
+        return $html;
     }
 }

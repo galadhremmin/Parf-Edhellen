@@ -1,8 +1,8 @@
 {
   "/js/vendor.js": "/js/vendor.js",
+  "/js/sentence-admin.js": "/js/sentence-admin.js",
   "/js/global.js": "/js/global.js",
   "/css/app.css": "/css/app.css",
-  "/js/sentence-admin.js": "/js/sentence-admin.js",
   "/js/sentence.js": "/js/sentence.js",
   "/js/markdown.js": "/js/markdown.js",
   "/js/manifest.js": "/js/manifest.js",
