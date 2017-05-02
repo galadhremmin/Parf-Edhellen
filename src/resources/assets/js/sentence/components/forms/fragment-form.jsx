@@ -179,7 +179,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
         const comments = this.commentsInput.getValue();
         const tengwar = this.tengwarInput.value;
 
-        const fragmentData = {
+        let fragmentData = {
             translation_id: translation ? translation.id : undefined,
             speech_id,
             inflections,
@@ -198,7 +198,24 @@ class EDFragmentForm extends EDStatefulFormComponent {
 
         this.props.dispatch(setFragmentData(indexes, fragmentData));
 
-        this.editFragment(-1);
+        let nextIndex = this.state.editingFragmentIndex + 1;
+        while (nextIndex < this.props.fragments.length) {
+            fragmentData = this.props.fragments[nextIndex];
+            if (!fragmentData.interpunctuation) {
+                break;
+            }
+            nextIndex += 1;
+        } 
+
+        if (nextIndex < this.props.fragments.length) {
+            this.onFragmentClick(this.props.fragments[nextIndex]);
+            document.querySelector('.fragment-admin-form').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        } else {
+            this.editFragment(-1); // done - close the dialogue!
+        }
     }
 
     onFragmentCancel(ev) {
@@ -239,6 +256,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
                     selected={i === this.state.editingFragmentIndex}
                     onClick={this.onFragmentClick.bind(this)} />)}
             </p>
+            <div className="fragment-admin-form">
             {this.state.editingFragmentIndex > -1 ?
                 (this.props.loading ? (
                     <div>
@@ -293,11 +311,12 @@ class EDFragmentForm extends EDStatefulFormComponent {
                         <div className="text-right">
                             <div className="btn-group">
                                 <button className="btn btn-default" onClick={this.onFragmentCancel.bind(this)}>Cancel</button>
-                                <button className="btn btn-primary" onClick={this.onFragmentSaveClick.bind(this)}>Update</button>
+                                <button className="btn btn-primary" onClick={this.onFragmentSaveClick.bind(this)}>Save and go forward</button>
                             </div>
                         </div>
                     </div>
                 )) : ''}
+            </div>
             <nav>
                 <ul className="pager">
                     <li className="previous"><a href="#" onClick={this.onPreviousClick.bind(this)}>&larr; Previous step</a></li>

@@ -1,252 +1,6 @@
-webpackJsonp([1,5],{
+webpackJsonp([1],{
 
-/***/ 114:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.requestResults = requestResults;
-exports.receiveResults = receiveResults;
-exports.requestNavigation = requestNavigation;
-exports.receiveNavigation = receiveNavigation;
-exports.advanceSelection = advanceSelection;
-exports.setSelection = setSelection;
-exports.fetchResults = fetchResults;
-exports.beginNavigation = beginNavigation;
-
-var _axios = __webpack_require__(20);
-
-var _axios2 = _interopRequireDefault(_axios);
-
-var _edConfig = __webpack_require__(13);
-
-var _edConfig2 = _interopRequireDefault(_edConfig);
-
-var _reducers = __webpack_require__(115);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function requestResults(wordSearch) {
-    return {
-        type: _reducers.REQUEST_RESULTS,
-        wordSearch: wordSearch
-    };
-}
-
-function receiveResults(results) {
-    return {
-        type: _reducers.RECEIVE_RESULTS,
-        items: results
-    };
-}
-
-function requestNavigation(word, normalizedWord, index) {
-    return {
-        type: _reducers.REQUEST_NAVIGATION,
-        word: word,
-        normalizedWord: normalizedWord,
-        index: index
-    };
-}
-
-function receiveNavigation(bookData) {
-    return {
-        type: _reducers.RECEIVE_NAVIGATION,
-        bookData: bookData
-    };
-}
-
-function advanceSelection(direction) {
-    return {
-        type: _reducers.ADVANCE_SELECTION,
-        direction: direction > 0 ? 1 : -1
-    };
-}
-
-function setSelection(index) {
-    return {
-        type: _reducers.SET_SELECTION,
-        index: index
-    };
-}
-
-function fetchResults(word) {
-    var reversed = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-    var languageId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
-
-    if (!word || /^\s$/.test(word)) {
-        return;
-    }
-
-    return function (dispatch) {
-        dispatch(requestResults(word));
-        _axios2.default.post(_edConfig2.default.api('/book/find'), {
-            word: word,
-            reversed: reversed,
-            language_id: languageId
-        }).then(function (resp) {
-            var results = resp.data.map(function (r) {
-                return {
-                    word: r.k,
-                    normalizedWord: r.nk
-                };
-            });
-
-            dispatch(receiveResults(results));
-        });
-    };
-}
-
-function beginNavigation(word, normalizedWord, index, modifyState) {
-    if (modifyState === undefined) {
-        modifyState = true;
-    }
-
-    if (!index && index !== 0) {
-        index = undefined;
-    }
-
-    var uriEncodedWord = encodeURIComponent(normalizedWord || word);
-    var apiAddress = _edConfig2.default.api('/book/translate');
-    var address = '/w/' + uriEncodedWord;
-    var title = word + ' - Parf Edhellen';
-
-    // When navigating using the browser's back and forward buttons,
-    // the state needn't be modified.
-    if (modifyState) {
-        window.history.pushState(null, title, address);
-    }
-
-    // because most browsers doesn't change the document title when pushing state
-    document.title = title;
-
-    return function (dispatch) {
-        dispatch(requestNavigation(word, normalizedWord || undefined, index));
-
-        _axios2.default.post(apiAddress, { word: normalizedWord || word }).then(function (resp) {
-            dispatch(receiveNavigation(resp.data));
-
-            // Find elements which is requested to be deleted upon receiving the navigation commmand
-            var elementsToDelete = document.querySelectorAll('.ed-remove-when-navigating');
-            if (elementsToDelete.length > 0) {
-                var _iteratorNormalCompletion = true;
-                var _didIteratorError = false;
-                var _iteratorError = undefined;
-
-                try {
-                    for (var _iterator = elementsToDelete[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                        var element = _step.value;
-
-                        element.parentNode.removeChild(element);
-                    }
-                } catch (err) {
-                    _didIteratorError = true;
-                    _iteratorError = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion && _iterator.return) {
-                            _iterator.return();
-                        }
-                    } finally {
-                        if (_didIteratorError) {
-                            throw _iteratorError;
-                        }
-                    }
-                }
-            }
-        });
-    };
-}
-
-/***/ }),
-
-/***/ 115:
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-var REQUEST_RESULTS = exports.REQUEST_RESULTS = 'EDSR_REQUEST_RESULTS';
-var REQUEST_NAVIGATION = exports.REQUEST_NAVIGATION = 'EDSR_REQUEST_NAVIGATION';
-var RECEIVE_RESULTS = exports.RECEIVE_RESULTS = 'EDSR_RECEIVE_RESULTS';
-var RECEIVE_NAVIGATION = exports.RECEIVE_NAVIGATION = 'EDSR_RECEIVE_NAVIGATION';
-var ADVANCE_SELECTION = exports.ADVANCE_SELECTION = 'EDSR_ADVANCE_SELECTION';
-var SET_SELECTION = exports.SET_SELECTION = 'EDSR_SET_SELECTION';
-
-var EDSearchResultsReducer = exports.EDSearchResultsReducer = function EDSearchResultsReducer() {
-    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
-        loading: false,
-        items: undefined,
-        itemIndex: -1,
-        word: undefined,
-        wordSearch: undefined,
-        normalizedWord: undefined,
-        bookData: undefined
-    };
-    var action = arguments[1];
-
-    switch (action.type) {
-
-        case REQUEST_RESULTS:
-            return Object.assign({}, state, {
-                loading: true,
-                wordSearch: action.wordSearch
-            });
-
-        case REQUEST_NAVIGATION:
-            // perform an index check -- if the action does not specify
-            // an index within the current result set, reset the result set
-            // as we can assume that the client has navigated somewhere else
-            // (to an entirely different word)
-            var index = action.index === undefined ? -1 : action.index;
-            var items = index > -1 ? state.items : undefined;
-
-            return Object.assign({}, state, {
-                loading: true,
-                word: action.word,
-                normalizedWord: action.normalizedWord,
-                itemIndex: index,
-                items: items
-            });
-
-        case RECEIVE_RESULTS:
-            return Object.assign({}, state, {
-                items: action.items,
-                loading: false,
-                itemIndex: -1
-            });
-
-        case RECEIVE_NAVIGATION:
-            return Object.assign({}, state, {
-                bookData: action.bookData,
-                loading: false
-            });
-
-        case ADVANCE_SELECTION:
-            return Object.assign({}, state, {
-                itemIndex: action.direction < 0 ? state.itemIndex < 1 ? state.items.length - 1 : state.itemIndex - 1 : state.itemIndex + 1 === state.items.length ? 0 : state.itemIndex + 1
-            });
-
-        case SET_SELECTION:
-            return Object.assign({}, state, {
-                itemIndex: state.index === -1 ? -1 : Math.max(0, Math.min(state.items.length - 1, action.index))
-            });
-
-        default:
-            return state;
-    }
-};
-
-/***/ }),
-
-/***/ 180:
+/***/ 155:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -319,37 +73,37 @@ var EDSearchResultsReducer = exports.EDSearchResultsReducer = function EDSearchR
 
 /***/ }),
 
-/***/ 181:
+/***/ 156:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(2);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(36);
+var _reactDom = __webpack_require__(32);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _reactRedux = __webpack_require__(21);
+var _reactRedux = __webpack_require__(20);
 
-var _redux = __webpack_require__(37);
+var _redux = __webpack_require__(33);
 
-var _reduxThunk = __webpack_require__(49);
+var _reduxThunk = __webpack_require__(41);
 
 var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-var _smoothscrollPolyfill = __webpack_require__(51);
+var _smoothscrollPolyfill = __webpack_require__(43);
 
-var _reducers = __webpack_require__(115);
+var _reducers = __webpack_require__(97);
 
-var _searchBar = __webpack_require__(207);
+var _searchBar = __webpack_require__(182);
 
 var _searchBar2 = _interopRequireDefault(_searchBar);
 
-var _searchResults = __webpack_require__(209);
+var _searchResults = __webpack_require__(184);
 
 var _searchResults2 = _interopRequireDefault(_searchResults);
 
@@ -375,14 +129,14 @@ window.addEventListener('load', function () {
 
 /***/ }),
 
-/***/ 184:
+/***/ 159:
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
 
-/***/ 206:
+/***/ 181:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -394,11 +148,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(2);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _bookGloss = __webpack_require__(64);
+var _bookGloss = __webpack_require__(56);
 
 var _bookGloss2 = _interopRequireDefault(_bookGloss);
 
@@ -476,7 +230,7 @@ exports.default = EDBookSection;
 
 /***/ }),
 
-/***/ 207:
+/***/ 182:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -488,21 +242,21 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(2);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactRedux = __webpack_require__(21);
+var _reactRedux = __webpack_require__(20);
 
 var _classnames = __webpack_require__(9);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _edConfig = __webpack_require__(13);
+var _edConfig = __webpack_require__(12);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _actions = __webpack_require__(114);
+var _actions = __webpack_require__(96);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -726,7 +480,7 @@ exports.default = (0, _reactRedux.connect)(mapStateToProps)(EDSearchBar);
 
 /***/ }),
 
-/***/ 208:
+/***/ 183:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -738,7 +492,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(2);
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -795,7 +549,7 @@ exports.default = EDSearchItem;
 
 /***/ }),
 
-/***/ 209:
+/***/ 184:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -807,27 +561,27 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(2);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactRedux = __webpack_require__(21);
+var _reactRedux = __webpack_require__(20);
 
-var _actions = __webpack_require__(114);
+var _actions = __webpack_require__(96);
 
 var _classnames = __webpack_require__(9);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _edConfig = __webpack_require__(13);
+var _edConfig = __webpack_require__(12);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _searchItem = __webpack_require__(208);
+var _searchItem = __webpack_require__(183);
 
 var _searchItem2 = _interopRequireDefault(_searchItem);
 
-var _bookSection = __webpack_require__(206);
+var _bookSection = __webpack_require__(181);
 
 var _bookSection2 = _interopRequireDefault(_bookSection);
 
@@ -1222,17 +976,17 @@ exports.default = (0, _reactRedux.connect)(mapStateToProps)(EDSearchResults);
 
 /***/ }),
 
-/***/ 448:
+/***/ 400:
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(180);
-__webpack_require__(181);
-module.exports = __webpack_require__(184);
+__webpack_require__(155);
+__webpack_require__(156);
+module.exports = __webpack_require__(159);
 
 
 /***/ }),
 
-/***/ 49:
+/***/ 41:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1262,7 +1016,7 @@ exports['default'] = thunk;
 
 /***/ }),
 
-/***/ 64:
+/***/ 56:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1274,7 +1028,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _react = __webpack_require__(1);
+var _react = __webpack_require__(2);
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -1282,7 +1036,7 @@ var _classnames = __webpack_require__(9);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _htmlToReact = __webpack_require__(35);
+var _htmlToReact = __webpack_require__(31);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1475,6 +1229,252 @@ var EDBookGloss = function (_React$Component) {
 
 exports.default = EDBookGloss;
 
+/***/ }),
+
+/***/ 96:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.requestResults = requestResults;
+exports.receiveResults = receiveResults;
+exports.requestNavigation = requestNavigation;
+exports.receiveNavigation = receiveNavigation;
+exports.advanceSelection = advanceSelection;
+exports.setSelection = setSelection;
+exports.fetchResults = fetchResults;
+exports.beginNavigation = beginNavigation;
+
+var _axios = __webpack_require__(19);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _edConfig = __webpack_require__(12);
+
+var _edConfig2 = _interopRequireDefault(_edConfig);
+
+var _reducers = __webpack_require__(97);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function requestResults(wordSearch) {
+    return {
+        type: _reducers.REQUEST_RESULTS,
+        wordSearch: wordSearch
+    };
+}
+
+function receiveResults(results) {
+    return {
+        type: _reducers.RECEIVE_RESULTS,
+        items: results
+    };
+}
+
+function requestNavigation(word, normalizedWord, index) {
+    return {
+        type: _reducers.REQUEST_NAVIGATION,
+        word: word,
+        normalizedWord: normalizedWord,
+        index: index
+    };
+}
+
+function receiveNavigation(bookData) {
+    return {
+        type: _reducers.RECEIVE_NAVIGATION,
+        bookData: bookData
+    };
+}
+
+function advanceSelection(direction) {
+    return {
+        type: _reducers.ADVANCE_SELECTION,
+        direction: direction > 0 ? 1 : -1
+    };
+}
+
+function setSelection(index) {
+    return {
+        type: _reducers.SET_SELECTION,
+        index: index
+    };
+}
+
+function fetchResults(word) {
+    var reversed = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+    var languageId = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+
+    if (!word || /^\s$/.test(word)) {
+        return;
+    }
+
+    return function (dispatch) {
+        dispatch(requestResults(word));
+        _axios2.default.post(_edConfig2.default.api('/book/find'), {
+            word: word,
+            reversed: reversed,
+            language_id: languageId
+        }).then(function (resp) {
+            var results = resp.data.map(function (r) {
+                return {
+                    word: r.k,
+                    normalizedWord: r.nk
+                };
+            });
+
+            dispatch(receiveResults(results));
+        });
+    };
+}
+
+function beginNavigation(word, normalizedWord, index, modifyState) {
+    if (modifyState === undefined) {
+        modifyState = true;
+    }
+
+    if (!index && index !== 0) {
+        index = undefined;
+    }
+
+    var uriEncodedWord = encodeURIComponent(normalizedWord || word);
+    var apiAddress = _edConfig2.default.api('/book/translate');
+    var address = '/w/' + uriEncodedWord;
+    var title = word + ' - Parf Edhellen';
+
+    // When navigating using the browser's back and forward buttons,
+    // the state needn't be modified.
+    if (modifyState) {
+        window.history.pushState(null, title, address);
+    }
+
+    // because most browsers doesn't change the document title when pushing state
+    document.title = title;
+
+    return function (dispatch) {
+        dispatch(requestNavigation(word, normalizedWord || undefined, index));
+
+        _axios2.default.post(apiAddress, { word: normalizedWord || word }).then(function (resp) {
+            dispatch(receiveNavigation(resp.data));
+
+            // Find elements which is requested to be deleted upon receiving the navigation commmand
+            var elementsToDelete = document.querySelectorAll('.ed-remove-when-navigating');
+            if (elementsToDelete.length > 0) {
+                var _iteratorNormalCompletion = true;
+                var _didIteratorError = false;
+                var _iteratorError = undefined;
+
+                try {
+                    for (var _iterator = elementsToDelete[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                        var element = _step.value;
+
+                        element.parentNode.removeChild(element);
+                    }
+                } catch (err) {
+                    _didIteratorError = true;
+                    _iteratorError = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion && _iterator.return) {
+                            _iterator.return();
+                        }
+                    } finally {
+                        if (_didIteratorError) {
+                            throw _iteratorError;
+                        }
+                    }
+                }
+            }
+        });
+    };
+}
+
+/***/ }),
+
+/***/ 97:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var REQUEST_RESULTS = exports.REQUEST_RESULTS = 'EDSR_REQUEST_RESULTS';
+var REQUEST_NAVIGATION = exports.REQUEST_NAVIGATION = 'EDSR_REQUEST_NAVIGATION';
+var RECEIVE_RESULTS = exports.RECEIVE_RESULTS = 'EDSR_RECEIVE_RESULTS';
+var RECEIVE_NAVIGATION = exports.RECEIVE_NAVIGATION = 'EDSR_RECEIVE_NAVIGATION';
+var ADVANCE_SELECTION = exports.ADVANCE_SELECTION = 'EDSR_ADVANCE_SELECTION';
+var SET_SELECTION = exports.SET_SELECTION = 'EDSR_SET_SELECTION';
+
+var EDSearchResultsReducer = exports.EDSearchResultsReducer = function EDSearchResultsReducer() {
+    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {
+        loading: false,
+        items: undefined,
+        itemIndex: -1,
+        word: undefined,
+        wordSearch: undefined,
+        normalizedWord: undefined,
+        bookData: undefined
+    };
+    var action = arguments[1];
+
+    switch (action.type) {
+
+        case REQUEST_RESULTS:
+            return Object.assign({}, state, {
+                loading: true,
+                wordSearch: action.wordSearch
+            });
+
+        case REQUEST_NAVIGATION:
+            // perform an index check -- if the action does not specify
+            // an index within the current result set, reset the result set
+            // as we can assume that the client has navigated somewhere else
+            // (to an entirely different word)
+            var index = action.index === undefined ? -1 : action.index;
+            var items = index > -1 ? state.items : undefined;
+
+            return Object.assign({}, state, {
+                loading: true,
+                word: action.word,
+                normalizedWord: action.normalizedWord,
+                itemIndex: index,
+                items: items
+            });
+
+        case RECEIVE_RESULTS:
+            return Object.assign({}, state, {
+                items: action.items,
+                loading: false,
+                itemIndex: -1
+            });
+
+        case RECEIVE_NAVIGATION:
+            return Object.assign({}, state, {
+                bookData: action.bookData,
+                loading: false
+            });
+
+        case ADVANCE_SELECTION:
+            return Object.assign({}, state, {
+                itemIndex: action.direction < 0 ? state.itemIndex < 1 ? state.items.length - 1 : state.itemIndex - 1 : state.itemIndex + 1 === state.items.length ? 0 : state.itemIndex + 1
+            });
+
+        case SET_SELECTION:
+            return Object.assign({}, state, {
+                itemIndex: state.index === -1 ? -1 : Math.max(0, Math.min(state.items.length - 1, action.index))
+            });
+
+        default:
+            return state;
+    }
+};
+
 /***/ })
 
-},[448]);
+},[400]);
