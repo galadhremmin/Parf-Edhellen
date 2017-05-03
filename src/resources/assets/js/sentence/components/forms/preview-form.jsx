@@ -96,18 +96,18 @@ class EDPreviewForm extends React.Component {
 
         if (payload.id) {
             axios.put(`/admin/sentence/${payload.id}`, payload)
-                .then(onCreateResponse.bind(this), onFailResponse.bind(this));
+                .then(this.onSavedResponse.bind(this), this.onFailedResponse.bind(this));
         } else {
             axios.post('/admin/sentence', payload)
-                .then(onCreateResponse.bind(this), onFailResponse.bind(this));
+                .then(this.onSavedResponse.bind(this), this.onFailedResponse.bind(this));
         }
     }
 
-    onCreateResponse(response) {
+    onSavedResponse(response) {
 
     }
 
-    onFailResponse(response) {
+    onFailedResponse(response) {
         // what to do here?? display errors?
     }
  

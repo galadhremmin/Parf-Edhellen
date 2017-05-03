@@ -1,6 +1,6 @@
-webpackJsonp([1],{
+webpackJsonp([1,5],{
 
-/***/ 103:
+/***/ 121:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11,7 +11,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.setFragmentData = exports.setSentenceData = exports.setFragments = undefined;
 
-var _admin = __webpack_require__(104);
+var _admin = __webpack_require__(122);
 
 var setFragments = exports.setFragments = function setFragments(fragments) {
     return {
@@ -42,7 +42,7 @@ var setFragmentData = exports.setFragmentData = function setFragmentData(indexes
 
 /***/ }),
 
-/***/ 104:
+/***/ 122:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -114,7 +114,7 @@ exports.default = EDSentenceAdminReducer;
 
 /***/ }),
 
-/***/ 161:
+/***/ 186:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -126,17 +126,17 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(33);
+var _reactDom = __webpack_require__(37);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _reactRouterDom = __webpack_require__(95);
+var _reactRouterDom = __webpack_require__(113);
 
 var _reactRedux = __webpack_require__(17);
 
-var _redux = __webpack_require__(29);
+var _redux = __webpack_require__(33);
 
-var _reduxThunk = __webpack_require__(34);
+var _reduxThunk = __webpack_require__(38);
 
 var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
@@ -144,21 +144,21 @@ var _edConfig = __webpack_require__(10);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _admin = __webpack_require__(104);
+var _admin = __webpack_require__(122);
 
 var _admin2 = _interopRequireDefault(_admin);
 
-var _edSessionStorageState = __webpack_require__(94);
+var _edSessionStorageState = __webpack_require__(112);
 
-var _sentenceForm = __webpack_require__(191);
+var _sentenceForm = __webpack_require__(216);
 
 var _sentenceForm2 = _interopRequireDefault(_sentenceForm);
 
-var _fragmentForm = __webpack_require__(189);
+var _fragmentForm = __webpack_require__(214);
 
 var _fragmentForm2 = _interopRequireDefault(_fragmentForm);
 
-var _previewForm = __webpack_require__(190);
+var _previewForm = __webpack_require__(215);
 
 var _previewForm2 = _interopRequireDefault(_previewForm);
 
@@ -219,7 +219,7 @@ window.addEventListener('load', function () {
 
 /***/ }),
 
-/***/ 181:
+/***/ 206:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -247,7 +247,7 @@ var _edConfig = __webpack_require__(10);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _reactAutosuggest = __webpack_require__(57);
+var _reactAutosuggest = __webpack_require__(65);
 
 var _reactAutosuggest2 = _interopRequireDefault(_reactAutosuggest);
 
@@ -508,7 +508,7 @@ exports.default = EDInflectionSelect;
 
 /***/ }),
 
-/***/ 182:
+/***/ 207:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -648,7 +648,7 @@ exports.default = EDSpeechSelect;
 
 /***/ }),
 
-/***/ 183:
+/***/ 208:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -676,7 +676,7 @@ var _edConfig = __webpack_require__(10);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _reactAutosuggest = __webpack_require__(57);
+var _reactAutosuggest = __webpack_require__(65);
 
 var _reactAutosuggest2 = _interopRequireDefault(_reactAutosuggest);
 
@@ -918,7 +918,7 @@ exports.default = EDTranslationSelect;
 
 /***/ }),
 
-/***/ 184:
+/***/ 209:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -966,7 +966,7 @@ var transcribe = exports.transcribe = function transcribe(text, mode) {
 
 /***/ }),
 
-/***/ 189:
+/***/ 214:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -996,35 +996,35 @@ var _reactRedux = __webpack_require__(17);
 
 var _reactRouter = __webpack_require__(11);
 
-var _smoothscrollPolyfill = __webpack_require__(46);
+var _smoothscrollPolyfill = __webpack_require__(54);
 
-var _admin = __webpack_require__(103);
+var _admin = __webpack_require__(121);
 
 var _edConfig = __webpack_require__(10);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _edForm = __webpack_require__(55);
+var _edForm = __webpack_require__(63);
 
-var _tengwar = __webpack_require__(184);
+var _tengwar = __webpack_require__(209);
 
-var _markdownEditor = __webpack_require__(45);
+var _markdownEditor = __webpack_require__(53);
 
 var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 
-var _errorList = __webpack_require__(44);
+var _errorList = __webpack_require__(52);
 
 var _errorList2 = _interopRequireDefault(_errorList);
 
-var _speechSelect = __webpack_require__(182);
+var _speechSelect = __webpack_require__(207);
 
 var _speechSelect2 = _interopRequireDefault(_speechSelect);
 
-var _inflectionSelect = __webpack_require__(181);
+var _inflectionSelect = __webpack_require__(206);
 
 var _inflectionSelect2 = _interopRequireDefault(_inflectionSelect);
 
-var _translationSelect = __webpack_require__(183);
+var _translationSelect = __webpack_require__(208);
 
 var _translationSelect2 = _interopRequireDefault(_translationSelect);
 
@@ -1712,7 +1712,7 @@ exports.default = (0, _reactRouter.withRouter)((0, _reactRedux.connect)(mapState
 
 /***/ }),
 
-/***/ 190:
+/***/ 215:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1730,11 +1730,11 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRouter = __webpack_require__(11);
 
-var _redux = __webpack_require__(29);
+var _redux = __webpack_require__(33);
 
 var _reactRedux = __webpack_require__(17);
 
-var _reduxThunk = __webpack_require__(34);
+var _reduxThunk = __webpack_require__(38);
 
 var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
@@ -1746,21 +1746,21 @@ var _axios = __webpack_require__(16);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _htmlToReact = __webpack_require__(22);
+var _htmlToReact = __webpack_require__(23);
 
 var _edConfig = __webpack_require__(10);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _errorList = __webpack_require__(44);
+var _errorList = __webpack_require__(52);
 
 var _errorList2 = _interopRequireDefault(_errorList);
 
-var _reducers = __webpack_require__(36);
+var _reducers = __webpack_require__(40);
 
 var _reducers2 = _interopRequireDefault(_reducers);
 
-var _fragmentExplorer = __webpack_require__(60);
+var _fragmentExplorer = __webpack_require__(68);
 
 var _fragmentExplorer2 = _interopRequireDefault(_fragmentExplorer);
 
@@ -1885,17 +1885,17 @@ var EDPreviewForm = function (_React$Component) {
             };
 
             if (payload.id) {
-                _axios2.default.put('/admin/sentence/' + payload.id, payload).then(onCreateResponse.bind(this), onFailResponse.bind(this));
+                _axios2.default.put('/admin/sentence/' + payload.id, payload).then(this.onSavedResponse.bind(this), this.onFailedResponse.bind(this));
             } else {
-                _axios2.default.post('/admin/sentence', payload).then(onCreateResponse.bind(this), onFailResponse.bind(this));
+                _axios2.default.post('/admin/sentence', payload).then(this.onSavedResponse.bind(this), this.onFailedResponse.bind(this));
             }
         }
     }, {
-        key: 'onCreateResponse',
-        value: function onCreateResponse(response) {}
+        key: 'onSavedResponse',
+        value: function onSavedResponse(response) {}
     }, {
-        key: 'onFailResponse',
-        value: function onFailResponse(response) {
+        key: 'onFailedResponse',
+        value: function onFailedResponse(response) {
             // what to do here?? display errors?
         }
     }, {
@@ -1985,7 +1985,7 @@ exports.default = (0, _reactRouter.withRouter)((0, _reactRedux.connect)(mapState
 
 /***/ }),
 
-/***/ 191:
+/***/ 216:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2015,17 +2015,21 @@ var _axios = __webpack_require__(16);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _smoothscrollPolyfill = __webpack_require__(46);
+var _smoothscrollPolyfill = __webpack_require__(54);
 
-var _admin = __webpack_require__(103);
+var _admin = __webpack_require__(121);
 
-var _edForm = __webpack_require__(55);
+var _edConfig = __webpack_require__(10);
 
-var _markdownEditor = __webpack_require__(45);
+var _edConfig2 = _interopRequireDefault(_edConfig);
+
+var _edForm = __webpack_require__(63);
+
+var _markdownEditor = __webpack_require__(53);
 
 var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 
-var _errorList = __webpack_require__(44);
+var _errorList = __webpack_require__(52);
 
 var _errorList2 = _interopRequireDefault(_errorList);
 
@@ -2117,7 +2121,7 @@ var EDSentenceForm = function (_EDStatefulFormCompon) {
             // Laravel returns 422 when the request fails validation. In the event that
             // we received an alternate status code, bail, as we do not know what that payload
             // contains.
-            if (request.response.status !== EDConfig.apiValidationErrorStatusCode) {
+            if (request.response.status !== _edConfig2.default.apiValidationErrorStatusCode) {
                 return;
             }
 
@@ -2299,7 +2303,7 @@ exports.default = (0, _reactRouter.withRouter)((0, _reactRedux.connect)(mapState
 
 /***/ }),
 
-/***/ 35:
+/***/ 39:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2319,7 +2323,7 @@ var _classnames = __webpack_require__(6);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _htmlToReact = __webpack_require__(22);
+var _htmlToReact = __webpack_require__(23);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2514,7 +2518,7 @@ exports.default = EDBookGloss;
 
 /***/ }),
 
-/***/ 36:
+/***/ 40:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2559,15 +2563,15 @@ exports.default = EDSentenceReducer;
 
 /***/ }),
 
-/***/ 402:
+/***/ 450:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(161);
+module.exports = __webpack_require__(186);
 
 
 /***/ }),
 
-/***/ 59:
+/***/ 67:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2586,9 +2590,9 @@ var _edConfig = __webpack_require__(10);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _edPromise = __webpack_require__(56);
+var _edPromise = __webpack_require__(64);
 
-var _reducers = __webpack_require__(36);
+var _reducers = __webpack_require__(40);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2612,7 +2616,7 @@ var selectFragment = exports.selectFragment = function selectFragment(fragmentId
 
 /***/ }),
 
-/***/ 60:
+/***/ 68:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2638,21 +2642,21 @@ var _edConfig = __webpack_require__(10);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _actions = __webpack_require__(59);
+var _actions = __webpack_require__(67);
 
-var _fragment = __webpack_require__(61);
+var _fragment = __webpack_require__(69);
 
 var _fragment2 = _interopRequireDefault(_fragment);
 
-var _tengwarFragment = __webpack_require__(62);
+var _tengwarFragment = __webpack_require__(70);
 
 var _tengwarFragment2 = _interopRequireDefault(_tengwarFragment);
 
-var _bookGloss = __webpack_require__(35);
+var _bookGloss = __webpack_require__(39);
 
 var _bookGloss2 = _interopRequireDefault(_bookGloss);
 
-var _htmlToReact = __webpack_require__(22);
+var _htmlToReact = __webpack_require__(23);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2928,7 +2932,7 @@ exports.default = (0, _reactRedux.connect)(mapStateToProps)(EDFragmentExplorer);
 
 /***/ }),
 
-/***/ 61:
+/***/ 69:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3013,7 +3017,7 @@ exports.default = EDFragment;
 
 /***/ }),
 
-/***/ 62:
+/***/ 70:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3070,4 +3074,4 @@ exports.default = EDTengwarFragment;
 
 /***/ })
 
-},[402]);
+},[450]);

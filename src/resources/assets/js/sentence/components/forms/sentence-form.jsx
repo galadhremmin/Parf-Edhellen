@@ -5,6 +5,7 @@ import { withRouter } from 'react-router';
 import axios from 'axios';
 import { polyfill as enableSmoothScrolling } from 'smoothscroll-polyfill';
 import { setSentenceData } from '../../actions/admin';
+import EDConfig from 'ed-config';
 import { EDStatefulFormComponent } from 'ed-form';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
 import EDErrorList from 'ed-components/error-list';

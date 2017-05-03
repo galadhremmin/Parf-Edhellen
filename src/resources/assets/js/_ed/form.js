@@ -18,18 +18,21 @@ export class EDStatefulFormComponent extends React.Component {
         let value = undefined;
 
         if (type === 'INPUT') {
-            switch (target.type.toUpperCase()) {
-                case 'CHECKBOX':
-                case 'RADIO':
-                    value = target.checked ? value || true : undefined;
-                    break;
-                case 'NUMBER':
-                case 'RANGE':
-                    value = parseInt(target.value, 10);
-                    break;
-                default:
-                    value = target.value;
+
+            value = target.value;
+
+            if (/^true$/i.test(value)) {
+                value = true;
+            } else if (/^false$/.test(value)) {
+                value = false;
+            } else if (/^[0-9]+$/.test(value)) {
+                value = parseInt(value, 10);
             }
+
+            if (/^checkbox|radio$/i.test(target.type)) {
+                value = target.checked ? value || true : ((value === true) ? false : null);
+            }
+
         } else if (type === 'SELECT') {
             value = target.options[target.selectedIndex].value;
         } else {

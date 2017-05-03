@@ -115,7 +115,7 @@ class SentenceController extends Controller
             foreach ($fragmentData['inflections'] as $inflection) {
                 $inflectionRel = new SentenceFragmentInflectionRel;
 
-                $inflectionRel->inflection_id        = $inflection->id;
+                $inflectionRel->inflection_id        = $inflection['id'];
                 $inflectionRel->sentence_fragment_id = $fragment->id;
 
                 $inflectionRel->save(); 
