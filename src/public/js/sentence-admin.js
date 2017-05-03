@@ -1,6 +1,6 @@
-webpackJsonp([1,5],{
+webpackJsonp([1],{
 
-/***/ 121:
+/***/ 103:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11,7 +11,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.setFragmentData = exports.setSentenceData = exports.setFragments = undefined;
 
-var _admin = __webpack_require__(122);
+var _admin = __webpack_require__(104);
 
 var setFragments = exports.setFragments = function setFragments(fragments) {
     return {
@@ -42,7 +42,7 @@ var setFragmentData = exports.setFragmentData = function setFragmentData(indexes
 
 /***/ }),
 
-/***/ 122:
+/***/ 104:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -65,6 +65,7 @@ var EDSentenceAdminReducer = function EDSentenceAdminReducer() {
         language_id: undefined,
         description: '',
         long_description: '',
+        is_neologism: false,
         fragments: [],
         id: 0,
         languages: window.EDConfig.languages(),
@@ -113,7 +114,7 @@ exports.default = EDSentenceAdminReducer;
 
 /***/ }),
 
-/***/ 186:
+/***/ 161:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -125,17 +126,17 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(37);
+var _reactDom = __webpack_require__(33);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _reactRouterDom = __webpack_require__(113);
+var _reactRouterDom = __webpack_require__(95);
 
 var _reactRedux = __webpack_require__(17);
 
-var _redux = __webpack_require__(33);
+var _redux = __webpack_require__(29);
 
-var _reduxThunk = __webpack_require__(38);
+var _reduxThunk = __webpack_require__(34);
 
 var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
@@ -143,21 +144,21 @@ var _edConfig = __webpack_require__(10);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _admin = __webpack_require__(122);
+var _admin = __webpack_require__(104);
 
 var _admin2 = _interopRequireDefault(_admin);
 
-var _edSessionStorageState = __webpack_require__(112);
+var _edSessionStorageState = __webpack_require__(94);
 
-var _sentenceForm = __webpack_require__(216);
+var _sentenceForm = __webpack_require__(191);
 
 var _sentenceForm2 = _interopRequireDefault(_sentenceForm);
 
-var _fragmentForm = __webpack_require__(214);
+var _fragmentForm = __webpack_require__(189);
 
 var _fragmentForm2 = _interopRequireDefault(_fragmentForm);
 
-var _previewForm = __webpack_require__(215);
+var _previewForm = __webpack_require__(190);
 
 var _previewForm2 = _interopRequireDefault(_previewForm);
 
@@ -218,7 +219,7 @@ window.addEventListener('load', function () {
 
 /***/ }),
 
-/***/ 206:
+/***/ 181:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -246,7 +247,7 @@ var _edConfig = __webpack_require__(10);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _reactAutosuggest = __webpack_require__(65);
+var _reactAutosuggest = __webpack_require__(57);
 
 var _reactAutosuggest2 = _interopRequireDefault(_reactAutosuggest);
 
@@ -507,7 +508,7 @@ exports.default = EDInflectionSelect;
 
 /***/ }),
 
-/***/ 207:
+/***/ 182:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -647,7 +648,7 @@ exports.default = EDSpeechSelect;
 
 /***/ }),
 
-/***/ 208:
+/***/ 183:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -675,7 +676,7 @@ var _edConfig = __webpack_require__(10);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _reactAutosuggest = __webpack_require__(65);
+var _reactAutosuggest = __webpack_require__(57);
 
 var _reactAutosuggest2 = _interopRequireDefault(_reactAutosuggest);
 
@@ -917,7 +918,7 @@ exports.default = EDTranslationSelect;
 
 /***/ }),
 
-/***/ 209:
+/***/ 184:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -965,7 +966,7 @@ var transcribe = exports.transcribe = function transcribe(text, mode) {
 
 /***/ }),
 
-/***/ 214:
+/***/ 189:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -995,35 +996,35 @@ var _reactRedux = __webpack_require__(17);
 
 var _reactRouter = __webpack_require__(11);
 
-var _smoothscrollPolyfill = __webpack_require__(54);
+var _smoothscrollPolyfill = __webpack_require__(46);
 
-var _admin = __webpack_require__(121);
+var _admin = __webpack_require__(103);
 
 var _edConfig = __webpack_require__(10);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _edForm = __webpack_require__(63);
+var _edForm = __webpack_require__(55);
 
-var _tengwar = __webpack_require__(209);
+var _tengwar = __webpack_require__(184);
 
-var _markdownEditor = __webpack_require__(53);
+var _markdownEditor = __webpack_require__(45);
 
 var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 
-var _errorList = __webpack_require__(52);
+var _errorList = __webpack_require__(44);
 
 var _errorList2 = _interopRequireDefault(_errorList);
 
-var _speechSelect = __webpack_require__(207);
+var _speechSelect = __webpack_require__(182);
 
 var _speechSelect2 = _interopRequireDefault(_speechSelect);
 
-var _inflectionSelect = __webpack_require__(206);
+var _inflectionSelect = __webpack_require__(181);
 
 var _inflectionSelect2 = _interopRequireDefault(_inflectionSelect);
 
-var _translationSelect = __webpack_require__(208);
+var _translationSelect = __webpack_require__(183);
 
 var _translationSelect2 = _interopRequireDefault(_translationSelect);
 
@@ -1711,7 +1712,7 @@ exports.default = (0, _reactRouter.withRouter)((0, _reactRedux.connect)(mapState
 
 /***/ }),
 
-/***/ 215:
+/***/ 190:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1729,11 +1730,11 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRouter = __webpack_require__(11);
 
-var _redux = __webpack_require__(33);
+var _redux = __webpack_require__(29);
 
 var _reactRedux = __webpack_require__(17);
 
-var _reduxThunk = __webpack_require__(38);
+var _reduxThunk = __webpack_require__(34);
 
 var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
@@ -1745,21 +1746,21 @@ var _axios = __webpack_require__(16);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _htmlToReact = __webpack_require__(23);
+var _htmlToReact = __webpack_require__(22);
 
 var _edConfig = __webpack_require__(10);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _errorList = __webpack_require__(52);
+var _errorList = __webpack_require__(44);
 
 var _errorList2 = _interopRequireDefault(_errorList);
 
-var _reducers = __webpack_require__(40);
+var _reducers = __webpack_require__(36);
 
 var _reducers2 = _interopRequireDefault(_reducers);
 
-var _fragmentExplorer = __webpack_require__(68);
+var _fragmentExplorer = __webpack_require__(60);
 
 var _fragmentExplorer2 = _interopRequireDefault(_fragmentExplorer);
 
@@ -1874,17 +1875,19 @@ var EDPreviewForm = function (_React$Component) {
             var props = this.props;
             var payload = {
                 id: props.sentenceId,
+                name: props.sentenceName,
                 source: props.sentenceSource,
                 language_id: props.sentenceLanguageId,
                 description: props.sentenceDescription,
                 long_description: props.sentenceLongDescription,
+                is_neologism: props.sentenceIsNeologism,
                 fragments: props.fragments
             };
 
             if (payload.id) {
-                // TODO: update
+                _axios2.default.put('/admin/sentence/' + payload.id, payload).then(onCreateResponse.bind(this), onFailResponse.bind(this));
             } else {
-                _axios2.default.post('/admin/sentence/store', payload).then(onCreateResponse.bind(this), onFailResponse.bind(this));
+                _axios2.default.post('/admin/sentence', payload).then(onCreateResponse.bind(this), onFailResponse.bind(this));
             }
         }
     }, {
@@ -1973,6 +1976,7 @@ var mapStateToProps = function mapStateToProps(state) {
         sentenceLanguageId: state.language_id,
         sentenceDescription: state.description,
         sentenceLongDescription: state.long_description,
+        sentenceIsNeologism: state.is_neologism,
         sentenceId: state.id
     };
 };
@@ -1981,7 +1985,7 @@ exports.default = (0, _reactRouter.withRouter)((0, _reactRedux.connect)(mapState
 
 /***/ }),
 
-/***/ 216:
+/***/ 191:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2011,17 +2015,17 @@ var _axios = __webpack_require__(16);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _smoothscrollPolyfill = __webpack_require__(54);
+var _smoothscrollPolyfill = __webpack_require__(46);
 
-var _admin = __webpack_require__(121);
+var _admin = __webpack_require__(103);
 
-var _edForm = __webpack_require__(63);
+var _edForm = __webpack_require__(55);
 
-var _markdownEditor = __webpack_require__(53);
+var _markdownEditor = __webpack_require__(45);
 
 var _markdownEditor2 = _interopRequireDefault(_markdownEditor);
 
-var _errorList = __webpack_require__(52);
+var _errorList = __webpack_require__(44);
 
 var _errorList2 = _interopRequireDefault(_errorList);
 
@@ -2047,6 +2051,7 @@ var EDSentenceForm = function (_EDStatefulFormCompon) {
             name: '',
             source: '',
             language_id: 0,
+            is_neologism: false,
             description: '',
             long_description: '',
             errors: undefined
@@ -2065,7 +2070,8 @@ var EDSentenceForm = function (_EDStatefulFormCompon) {
                 source: this.props.sentenceSource,
                 language_id: this.props.sentenceLanguageId,
                 description: this.props.sentenceDescription,
-                long_description: this.props.sentenceLongDescription
+                long_description: this.props.sentenceLongDescription,
+                is_neologism: this.props.sentenceIsNeologism
             });
         }
     }, {
@@ -2082,7 +2088,8 @@ var EDSentenceForm = function (_EDStatefulFormCompon) {
                 source: state.source,
                 language_id: state.language_id,
                 description: state.description,
-                long_description: state.long_description
+                long_description: state.long_description,
+                is_neologism: state.is_neologism
             };
 
             _axios2.default.post('/admin/sentence/validate', payload).then(function (request) {
@@ -2231,6 +2238,17 @@ var EDSentenceForm = function (_EDStatefulFormCompon) {
                 ),
                 _react2.default.createElement(
                     'div',
+                    { className: 'checkbox' },
+                    _react2.default.createElement(
+                        'label',
+                        null,
+                        _react2.default.createElement('input', { type: 'checkbox', checked: this.state.is_neologism, name: 'is_neologism',
+                            value: true, onChange: _get(EDSentenceForm.prototype.__proto__ || Object.getPrototypeOf(EDSentenceForm.prototype), 'onChange', this).bind(this) }),
+                        'Neologism'
+                    )
+                ),
+                _react2.default.createElement(
+                    'div',
                     { className: 'form-group' },
                     _react2.default.createElement(
                         'label',
@@ -2272,6 +2290,7 @@ var mapStateToProps = function mapStateToProps(state) {
         sentenceLanguageId: state.language_id,
         sentenceDescription: state.description,
         sentenceLongDescription: state.long_description,
+        sentenceIsNeologism: state.is_neologism,
         sentenceId: state.id
     };
 };
@@ -2280,7 +2299,7 @@ exports.default = (0, _reactRouter.withRouter)((0, _reactRedux.connect)(mapState
 
 /***/ }),
 
-/***/ 39:
+/***/ 35:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2300,7 +2319,7 @@ var _classnames = __webpack_require__(6);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _htmlToReact = __webpack_require__(23);
+var _htmlToReact = __webpack_require__(22);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2495,7 +2514,7 @@ exports.default = EDBookGloss;
 
 /***/ }),
 
-/***/ 40:
+/***/ 36:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2540,15 +2559,15 @@ exports.default = EDSentenceReducer;
 
 /***/ }),
 
-/***/ 450:
+/***/ 402:
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(186);
+module.exports = __webpack_require__(161);
 
 
 /***/ }),
 
-/***/ 67:
+/***/ 59:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2567,9 +2586,9 @@ var _edConfig = __webpack_require__(10);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _edPromise = __webpack_require__(64);
+var _edPromise = __webpack_require__(56);
 
-var _reducers = __webpack_require__(40);
+var _reducers = __webpack_require__(36);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2593,7 +2612,7 @@ var selectFragment = exports.selectFragment = function selectFragment(fragmentId
 
 /***/ }),
 
-/***/ 68:
+/***/ 60:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2619,21 +2638,21 @@ var _edConfig = __webpack_require__(10);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _actions = __webpack_require__(67);
+var _actions = __webpack_require__(59);
 
-var _fragment = __webpack_require__(69);
+var _fragment = __webpack_require__(61);
 
 var _fragment2 = _interopRequireDefault(_fragment);
 
-var _tengwarFragment = __webpack_require__(70);
+var _tengwarFragment = __webpack_require__(62);
 
 var _tengwarFragment2 = _interopRequireDefault(_tengwarFragment);
 
-var _bookGloss = __webpack_require__(39);
+var _bookGloss = __webpack_require__(35);
 
 var _bookGloss2 = _interopRequireDefault(_bookGloss);
 
-var _htmlToReact = __webpack_require__(23);
+var _htmlToReact = __webpack_require__(22);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2909,7 +2928,7 @@ exports.default = (0, _reactRedux.connect)(mapStateToProps)(EDFragmentExplorer);
 
 /***/ }),
 
-/***/ 69:
+/***/ 61:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2994,7 +3013,7 @@ exports.default = EDFragment;
 
 /***/ }),
 
-/***/ 70:
+/***/ 62:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3051,4 +3070,4 @@ exports.default = EDTengwarFragment;
 
 /***/ })
 
-},[450]);
+},[402]);

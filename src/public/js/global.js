@@ -1,6 +1,6 @@
-webpackJsonp([2,5],{
+webpackJsonp([2],{
 
-/***/ 119:
+/***/ 101:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26,7 +26,7 @@ var _edConfig = __webpack_require__(10);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _reducers = __webpack_require__(120);
+var _reducers = __webpack_require__(102);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -164,7 +164,7 @@ function beginNavigation(word, normalizedWord, index, modifyState) {
 
 /***/ }),
 
-/***/ 120:
+/***/ 102:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -246,7 +246,7 @@ var EDSearchResultsReducer = exports.EDSearchResultsReducer = function EDSearchR
 
 /***/ }),
 
-/***/ 184:
+/***/ 159:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -319,7 +319,7 @@ var EDSearchResultsReducer = exports.EDSearchResultsReducer = function EDSearchR
 
 /***/ }),
 
-/***/ 185:
+/***/ 160:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -329,27 +329,27 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactDom = __webpack_require__(37);
+var _reactDom = __webpack_require__(33);
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
 var _reactRedux = __webpack_require__(17);
 
-var _redux = __webpack_require__(33);
+var _redux = __webpack_require__(29);
 
-var _reduxThunk = __webpack_require__(38);
+var _reduxThunk = __webpack_require__(34);
 
 var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-var _smoothscrollPolyfill = __webpack_require__(54);
+var _smoothscrollPolyfill = __webpack_require__(46);
 
-var _reducers = __webpack_require__(120);
+var _reducers = __webpack_require__(102);
 
-var _searchBar = __webpack_require__(211);
+var _searchBar = __webpack_require__(186);
 
 var _searchBar2 = _interopRequireDefault(_searchBar);
 
-var _searchResults = __webpack_require__(213);
+var _searchResults = __webpack_require__(188);
 
 var _searchResults2 = _interopRequireDefault(_searchResults);
 
@@ -375,14 +375,14 @@ window.addEventListener('load', function () {
 
 /***/ }),
 
-/***/ 188:
+/***/ 163:
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
 
-/***/ 210:
+/***/ 185:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -398,7 +398,7 @@ var _react = __webpack_require__(1);
 
 var _react2 = _interopRequireDefault(_react);
 
-var _bookGloss = __webpack_require__(39);
+var _bookGloss = __webpack_require__(35);
 
 var _bookGloss2 = _interopRequireDefault(_bookGloss);
 
@@ -476,7 +476,7 @@ exports.default = EDBookSection;
 
 /***/ }),
 
-/***/ 211:
+/***/ 186:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -502,7 +502,7 @@ var _edConfig = __webpack_require__(10);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _actions = __webpack_require__(119);
+var _actions = __webpack_require__(101);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -726,7 +726,7 @@ exports.default = (0, _reactRedux.connect)(mapStateToProps)(EDSearchBar);
 
 /***/ }),
 
-/***/ 212:
+/***/ 187:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -795,7 +795,7 @@ exports.default = EDSearchItem;
 
 /***/ }),
 
-/***/ 213:
+/***/ 188:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -813,7 +813,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRedux = __webpack_require__(17);
 
-var _actions = __webpack_require__(119);
+var _actions = __webpack_require__(101);
 
 var _classnames = __webpack_require__(6);
 
@@ -823,11 +823,11 @@ var _edConfig = __webpack_require__(10);
 
 var _edConfig2 = _interopRequireDefault(_edConfig);
 
-var _searchItem = __webpack_require__(212);
+var _searchItem = __webpack_require__(187);
 
 var _searchItem2 = _interopRequireDefault(_searchItem);
 
-var _bookSection = __webpack_require__(210);
+var _bookSection = __webpack_require__(185);
 
 var _bookSection2 = _interopRequireDefault(_bookSection);
 
@@ -1222,7 +1222,7 @@ exports.default = (0, _reactRedux.connect)(mapStateToProps)(EDSearchResults);
 
 /***/ }),
 
-/***/ 39:
+/***/ 35:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1242,7 +1242,7 @@ var _classnames = __webpack_require__(6);
 
 var _classnames2 = _interopRequireDefault(_classnames);
 
-var _htmlToReact = __webpack_require__(23);
+var _htmlToReact = __webpack_require__(22);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1437,14 +1437,14 @@ exports.default = EDBookGloss;
 
 /***/ }),
 
-/***/ 449:
+/***/ 401:
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(184);
-__webpack_require__(185);
-module.exports = __webpack_require__(188);
+__webpack_require__(159);
+__webpack_require__(160);
+module.exports = __webpack_require__(163);
 
 
 /***/ })
 
-},[449]);
+},[401]);

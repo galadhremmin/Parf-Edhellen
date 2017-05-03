@@ -18,6 +18,7 @@ class EDSentenceForm extends EDStatefulFormComponent {
             name: '',
             source: '',
             language_id: 0,
+            is_neologism: false,
             description: '',
             long_description: '',
             errors: undefined
@@ -33,7 +34,8 @@ class EDSentenceForm extends EDStatefulFormComponent {
             source: this.props.sentenceSource,
             language_id: this.props.sentenceLanguageId,
             description: this.props.sentenceDescription,
-            long_description: this.props.sentenceLongDescription
+            long_description: this.props.sentenceLongDescription,
+            is_neologism: this.props.sentenceIsNeologism
         });
     }
 
@@ -47,7 +49,8 @@ class EDSentenceForm extends EDStatefulFormComponent {
             source: state.source,
             language_id: state.language_id,
             description: state.description,
-            long_description: state.long_description
+            long_description: state.long_description,
+            is_neologism: state.is_neologism
         };
 
         axios.post('/admin/sentence/validate', payload)
@@ -131,6 +134,13 @@ class EDSentenceForm extends EDStatefulFormComponent {
                 <textarea id="ed-sentence-description" className="form-control" name="description" 
                     value={this.state.description} onChange={super.onChange.bind(this)}></textarea>
             </div>
+            <div className="checkbox">
+                <label>
+                    <input type="checkbox" checked={this.state.is_neologism} name="is_neologism"
+                        value={true} onChange={super.onChange.bind(this)} />
+                        Neologism
+                </label>
+            </div>
             <div className="form-group">
                 <label htmlFor="ed-sentence-long-description" className="control-label">Description</label>
                 <EDMarkdownEditor componentId="ed-sentence-long-description" componentName="long_description" rows={8}
@@ -153,6 +163,7 @@ const mapStateToProps = state => {
         sentenceLanguageId: state.language_id,
         sentenceDescription: state.description,
         sentenceLongDescription: state.long_description,
+        sentenceIsNeologism: state.is_neologism,
         sentenceId: state.id
     };
 };

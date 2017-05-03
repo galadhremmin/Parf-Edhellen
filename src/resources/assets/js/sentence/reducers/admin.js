@@ -8,6 +8,7 @@ const EDSentenceAdminReducer = (state = {
     language_id: undefined,
     description: '',
     long_description: '',
+    is_neologism: false,
     fragments: [],
     id: 0,
     languages: window.EDConfig.languages(),

@@ -85,17 +85,20 @@ class EDPreviewForm extends React.Component {
         const props = this.props;
         const payload = {
             id:               props.sentenceId,
+            name:             props.sentenceName,
             source:           props.sentenceSource,
             language_id:      props.sentenceLanguageId,
             description:      props.sentenceDescription,
             long_description: props.sentenceLongDescription,
+            is_neologism:     props.sentenceIsNeologism,
             fragments:        props.fragments
         };
 
         if (payload.id) {
-            // TODO: update
+            axios.put(`/admin/sentence/${payload.id}`, payload)
+                .then(onCreateResponse.bind(this), onFailResponse.bind(this));
         } else {
-            axios.post('/admin/sentence/store', payload)
+            axios.post('/admin/sentence', payload)
                 .then(onCreateResponse.bind(this), onFailResponse.bind(this));
         }
     }
@@ -150,6 +153,7 @@ const mapStateToProps = state => {
         sentenceLanguageId: state.language_id,
         sentenceDescription: state.description,
         sentenceLongDescription: state.long_description,
+        sentenceIsNeologism: state.is_neologism,
         sentenceId: state.id
     };
 };

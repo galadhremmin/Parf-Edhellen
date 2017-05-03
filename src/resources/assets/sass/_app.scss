@@ -20,6 +20,11 @@ body {
   background-size: 140px 45px;
   margin-right: 10px;
 }
+@media (max-width: $screen-md-min) {
+  .navbar-brand {
+    margin-left: $panel-body-padding + $font-size-base*0.5; /* due to 0.5em border */
+  }
+}
 #site-container  {
   background: rgba(255, 255, 255, 0.95);
   border: 0.5em solid white;
