@@ -33,7 +33,7 @@ class EDPreviewForm extends React.Component {
         for (let i = 0; i < this.props.fragments.length; i += 1) {
             const data = this.props.fragments[i];
 
-            if (!/^\s*$/.test(data.comments)) {
+            if (! data.interpunctuation && !/^\s*$/.test(data.comments)) {
                 markdowns['fragment-' + i] = data.comments;
             }
         }
@@ -84,7 +84,7 @@ class EDPreviewForm extends React.Component {
 
         const props = this.props;
         const payload = {
-            id:               props.sentenceId,
+            id:               props.sentenceId || undefined,
             name:             props.sentenceName,
             source:           props.sentenceSource,
             language_id:      props.sentenceLanguageId,

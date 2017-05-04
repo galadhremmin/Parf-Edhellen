@@ -57,6 +57,21 @@ class EDInflectionSelect extends React.Component {
         return this.state.selectedInflections || [];
     }
 
+    /**
+     * Gives focus to the component's input element.
+     */
+    focus() {
+        const id = this.props.componentId;
+        if (! id) {
+            return;
+        }
+
+        const element = document.getElementById(id);
+        if (element) {
+            element.focus();
+        }
+    }
+
     getSuggestions(data) {
         const name = data.value.toLocaleLowerCase();
 

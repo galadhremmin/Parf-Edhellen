@@ -28,6 +28,10 @@ window.addEventListener('load', function () {
         };
     } else {
         preloadedState = loadState('sentence');
+        if (preloadedState) {
+            preloadedState.languages = EDConfig.languages();
+        }
+        
         creating = true;
     }
 
@@ -45,6 +49,7 @@ window.addEventListener('load', function () {
                 description: state.description,
                 long_description: state.long_description,
                 fragments: state.fragments,
+                is_neologism: state.is_neologism,
                 id: state.id,
             });
         });

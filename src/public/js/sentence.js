@@ -417,7 +417,8 @@ var EDFragmentExplorer = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (EDFragmentExplorer.__proto__ || Object.getPrototypeOf(EDFragmentExplorer)).call(this, props));
 
         _this.state = {
-            fragmentIndex: 0
+            fragmentIndex: 0,
+            fragmentLines: []
         };
         return _this;
     }
@@ -443,6 +444,48 @@ var EDFragmentExplorer = function (_React$Component) {
 
             // A little hack for causing the first fragment to be highlighted
             this.onNavigate({}, fragmentIndex);
+        }
+
+        /**
+         * Receives fragments and splits them into lines.
+         * @param {*} props 
+         */
+
+    }, {
+        key: 'componentWillReceiveProps',
+        value: function componentWillReceiveProps(props) {
+            var _this2 = this;
+
+            if (Array.isArray(props.fragments)) {
+                (function () {
+                    var fragmentLines = [];
+                    var lastIndex = 0;
+                    var fakeId = -1;
+
+                    // Look for line breaks and slice the array by those fragments
+                    for (var i = 0; i < props.fragments.length; i += 1) {
+                        var fragment = props.fragments[i];
+
+                        if (fragment.is_linebreak || i + 1 === props.fragments.length) {
+                            var fragments = props.fragments.slice(lastIndex, i + 1 === props.fragments.length ? i + 1 : i);
+                            // generate fake IDs if they don't exist.
+                            fragments.forEach(function (f) {
+                                if (!f.id) {
+                                    f.id = fakeId;
+                                }
+                                fakeId -= 1;
+                            });
+
+                            fragmentLines.push(fragments);
+                            lastIndex = i + 1;
+                        }
+                    }
+
+                    _this2.setState({
+                        fragmentLines: fragmentLines
+                    });
+                })();
+            }
         }
 
         /**
@@ -548,7 +591,7 @@ var EDFragmentExplorer = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var _this2 = this;
+            var _this3 = this;
 
             var section = null;
             var fragment = null;
@@ -559,7 +602,7 @@ var EDFragmentExplorer = function (_React$Component) {
                 // examine the HTML and turn it into React components.
                 section = this.props.bookData.sections[0];
                 fragment = this.props.fragments.find(function (f) {
-                    return f.id === _this2.props.fragmentId;
+                    return f.id === _this3.props.fragmentId;
                 });
                 parser = new _htmlToReact.Parser();
             }
@@ -570,25 +613,29 @@ var EDFragmentExplorer = function (_React$Component) {
             return _react2.default.createElement(
                 'div',
                 { className: 'well ed-fragment-navigator' },
-                _react2.default.createElement(
-                    'p',
-                    { className: 'tengwar ed-tengwar-fragments' },
-                    this.props.fragments.map(function (f) {
-                        return _react2.default.createElement(_tengwarFragment2.default, { fragment: f,
-                            key: 'tng' + f.id,
-                            selected: f.id === _this2.props.fragmentId });
-                    })
-                ),
-                _react2.default.createElement(
-                    'p',
-                    { className: 'ed-elvish-fragments' },
-                    this.props.fragments.map(function (f) {
-                        return _react2.default.createElement(_fragment2.default, { fragment: f,
-                            key: 'frg' + f.id,
-                            selected: f.id === _this2.props.fragmentId,
-                            onClick: _this2.onFragmentClick.bind(_this2) });
-                    })
-                ),
+                this.state.fragmentLines.map(function (fragments, fi) {
+                    return _react2.default.createElement(
+                        'p',
+                        { className: 'tengwar ed-tengwar-fragments', key: 'tngc' + fi },
+                        fragments.map(function (f, i) {
+                            return _react2.default.createElement(_tengwarFragment2.default, { fragment: f,
+                                key: 'tng' + fi + '.' + f.id,
+                                selected: f.id === _this3.props.fragmentId });
+                        })
+                    );
+                }),
+                this.state.fragmentLines.map(function (fragments, fi) {
+                    return _react2.default.createElement(
+                        'p',
+                        { className: 'ed-elvish-fragments', key: 'frgc' + fi },
+                        fragments.map(function (f, i) {
+                            return _react2.default.createElement(_fragment2.default, { fragment: f,
+                                key: 'frg' + fi + '.' + f.id,
+                                selected: f.id === _this3.props.fragmentId,
+                                onClick: _this3.onFragmentClick.bind(_this3) });
+                        })
+                    );
+                }),
                 _react2.default.createElement(
                     'nav',
                     null,
@@ -601,7 +648,7 @@ var EDFragmentExplorer = function (_React$Component) {
                             _react2.default.createElement(
                                 'a',
                                 { href: '#', onClick: function onClick(ev) {
-                                        return _this2.onNavigate(ev, previousIndex);
+                                        return _this3.onNavigate(ev, previousIndex);
                                     } },
                                 '\u2190 ',
                                 this.props.fragments[previousIndex].fragment
@@ -613,7 +660,7 @@ var EDFragmentExplorer = function (_React$Component) {
                             _react2.default.createElement(
                                 'a',
                                 { href: '#', onClick: function onClick(ev) {
-                                        return _this2.onNavigate(ev, nextIndex);
+                                        return _this3.onNavigate(ev, nextIndex);
                                     } },
                                 this.props.fragments[nextIndex].fragment,
                                 ' \u2192'
@@ -646,7 +693,7 @@ var EDFragmentExplorer = function (_React$Component) {
                             return _react2.default.createElement(_bookGloss2.default, { gloss: g,
                                 language: section.language,
                                 key: g.id,
-                                onReferenceLinkClick: _this2.onReferenceLinkClick.bind(_this2) });
+                                onReferenceLinkClick: _this3.onReferenceLinkClick.bind(_this3) });
                         })
                     )
                 ) : ''

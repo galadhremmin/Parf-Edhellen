@@ -45,7 +45,7 @@ class EDSentenceForm extends EDStatefulFormComponent {
 
         const state = this.state;
         const payload = {
-            id: state.id,
+            id: state.id || undefined,
             name: state.name,
             source: state.source,
             language_id: state.language_id,

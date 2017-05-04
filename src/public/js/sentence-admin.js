@@ -51,8 +51,15 @@ var setFragmentData = exports.setFragmentData = function setFragmentData(indexes
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.SET_SENTENCE_DATA = exports.SET_FRAGMENT_DATA = exports.SET_FRAGMENTS = undefined;
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+var _edConfig = __webpack_require__(10);
+
+var _edConfig2 = _interopRequireDefault(_edConfig);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var SET_FRAGMENTS = exports.SET_FRAGMENTS = 'ED_SET_FRAGMENTS';
 var SET_FRAGMENT_DATA = exports.SET_FRAGMENT_DATA = 'ED_SET_FRAGMENT_DATA';
@@ -68,7 +75,7 @@ var EDSentenceAdminReducer = function EDSentenceAdminReducer() {
         is_neologism: false,
         fragments: [],
         id: 0,
-        languages: window.EDConfig.languages(),
+        languages: _edConfig2.default.languages(),
         loading: false,
         suggestions: undefined
     };
@@ -97,6 +104,7 @@ var EDSentenceAdminReducer = function EDSentenceAdminReducer() {
                         speech_id: action.data.speech_id,
                         comments: action.data.comments,
                         tengwar: action.data.tengwar,
+                        is_linebreak: action.data.is_linebreak,
                         inflections: action.data.inflections.map(function (inflection) {
                             return Object.assign({}, inflection);
                         })
@@ -180,6 +188,10 @@ window.addEventListener('load', function () {
         });
     } else {
         preloadedState = (0, _edSessionStorageState.loadState)('sentence');
+        if (preloadedState) {
+            preloadedState.languages = _edConfig2.default.languages();
+        }
+
         creating = true;
     }
 
@@ -195,6 +207,7 @@ window.addEventListener('load', function () {
                 description: state.description,
                 long_description: state.long_description,
                 fragments: state.fragments,
+                is_neologism: state.is_neologism,
                 id: state.id
             });
         });
@@ -329,6 +342,24 @@ var EDInflectionSelect = function (_React$Component) {
         key: 'getValue',
         value: function getValue() {
             return this.state.selectedInflections || [];
+        }
+
+        /**
+         * Gives focus to the component's input element.
+         */
+
+    }, {
+        key: 'focus',
+        value: function focus() {
+            var id = this.props.componentId;
+            if (!id) {
+                return;
+            }
+
+            var element = document.getElementById(id);
+            if (element) {
+                element.focus();
+            }
         }
     }, {
         key: 'getSuggestions',
@@ -603,6 +634,16 @@ var EDSpeechSelect = function (_React$Component) {
         value: function getValue() {
             return this.state.value;
         }
+
+        /**
+         * Gives focus to the component's input element.
+         */
+
+    }, {
+        key: 'focus',
+        value: function focus() {
+            this.selectInput.focus();
+        }
     }, {
         key: 'onSpeechChange',
         value: function onSpeechChange(ev) {
@@ -615,6 +656,8 @@ var EDSpeechSelect = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
+            var _this3 = this;
+
             var typesOfSpeech = this.state.typesOfSpeech || [];
             return _react2.default.createElement(
                 'select',
@@ -622,6 +665,9 @@ var EDSpeechSelect = function (_React$Component) {
                     name: this.props.componentName,
                     id: this.props.componentId,
                     value: this.state.value,
+                    ref: function ref(input) {
+                        return _this3.selectInput = input;
+                    },
                     className: (0, _classnames2.default)('form-control', { 'disabled': this.state.typesOfSpeech.length < 1 }) },
                 _react2.default.createElement('option', { value: 0 }),
                 this.state.typesOfSpeech.map(function (s) {
@@ -737,6 +783,24 @@ var EDTranslationSelect = function (_React$Component) {
         key: 'getValue',
         value: function getValue() {
             return this.state.value;
+        }
+
+        /**
+         * Gives focus to the component's input element.
+         */
+
+    }, {
+        key: 'focus',
+        value: function focus() {
+            var id = this.props.componentId;
+            if (!id) {
+                return;
+            }
+
+            var element = document.getElementById(id);
+            if (element) {
+                element.focus();
+            }
         }
     }, {
         key: 'onWordChange',
@@ -1067,9 +1131,21 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
     _createClass(EDFragmentForm, [{
         key: 'createFragment',
         value: function createFragment(fragment, interpunctuation) {
+            var tengwar = undefined;
+
+            // Transcribe interpunctuations automatically. The _quenya_ setting
+            // is used for all interpunctuations as they are essentially the same
+            // across languages.
+            var is_linebreak = /^\n$/.test(fragment);
+            if (interpunctuation && !is_linebreak) {
+                tengwar = (0, _tengwar.transcribe)(fragment, 'quenya');
+            }
+
             return {
                 fragment: fragment,
-                interpunctuation: interpunctuation
+                interpunctuation: interpunctuation,
+                tengwar: tengwar,
+                is_linebreak: is_linebreak
             };
         }
     }, {
@@ -1085,10 +1161,10 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                 fragmentIndex = -1;
             }
 
+            var promise = Promise.resolve(undefined);
             if (fragmentIndex > -1) {
                 var data = this.props.fragments[fragmentIndex];
 
-                var promise = void 0;
                 if (data.translation_id) {
                     promise = _axios2.default.get(_edConfig2.default.api('book/translate/' + data.translation_id)).then(function (resp) {
                         if (!resp.data.sections || !resp.data.sections.length || !resp.data.sections[0].glosses || resp.data.sections[0].glosses.length < 1) {
@@ -1097,8 +1173,6 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
 
                         return resp.data.sections[0].glosses[0];
                     });
-                } else {
-                    promise = Promise.resolve(undefined);
                 }
 
                 promise.then(function (translation) {
@@ -1113,6 +1187,8 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
             this.setState(_extends({}, additionalParams, {
                 editingFragmentIndex: fragmentIndex
             }));
+
+            return promise;
         }
     }, {
         key: 'scrollToForm',
@@ -1141,58 +1217,84 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
     }, {
         key: 'onPhraseChange',
         value: function onPhraseChange(ev) {
-            var _this3 = this;
-
             ev.preventDefault();
 
             var currentFragments = this.props.fragments || [];
-            var newFragments = this.state.phrase.replace(/\r\n/g, "\n").split(' ').map(function (f) {
-                return _this3.createFragment(f);
-            });
+            var newFragments = [];
 
-            for (var i = 0; i < newFragments.length; i += 1) {
-                var data = newFragments[i];
-                if (data.interpunctuation) {
-                    continue;
+            // Split the phrase into fragments
+            {
+                var phrase = this.state.phrase.replace(/\r\n/g, "\n");
+
+                var buffer = '';
+                var flush = false;
+                var additionalFragment = undefined;
+
+                var interpunctuationReg = /^[,\.!\?\n]$/;
+
+                var _iteratorNormalCompletion = true;
+                var _didIteratorError = false;
+                var _iteratorError = undefined;
+
+                try {
+                    for (var _iterator = phrase[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                        var c = _step.value;
+
+
+                        // space?
+                        if (c === ' ') {
+                            flush = true;
+                        }
+
+                        // is it an interpunctuation character or a new line?
+                        else if (interpunctuationReg.test(c)) {
+                                additionalFragment = this.createFragment(c, true);
+                                flush = true;
+                            }
+
+                            // add regular characters to buffer
+                            else {
+                                    buffer += c;
+                                }
+
+                        if (flush) {
+                            if (buffer.length > 0) {
+                                newFragments.push(this.createFragment(buffer, false));
+                                buffer = '';
+                            }
+
+                            if (additionalFragment) {
+                                newFragments.push(additionalFragment);
+                                additionalFragment = undefined;
+                            }
+
+                            flush = false;
+                        }
+                    }
+                } catch (err) {
+                    _didIteratorError = true;
+                    _iteratorError = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion && _iterator.return) {
+                            _iterator.return();
+                        }
+                    } finally {
+                        if (_didIteratorError) {
+                            throw _iteratorError;
+                        }
+                    }
                 }
 
-                // Find interpunctuation and new line fragments, and remove them from the actual
-                // word fragment. These should be registered as fragments of their own.
-                for (var fi = 0; fi < data.fragment.length; fi += 1) {
-                    if (!/^[,\.!\?\s]$/.test(data.fragment[fi])) {
-                        continue;
-                    }
-
-                    // Should the fragment be inserted in front of the current fragment or after it?
-                    // This is determined by looking at the cursor's position (_fi_). If it is at
-                    // in its initial position (= 0) then the interpunctutation fragment should be
-                    // placed in front of it, otherwise after. 
-                    var insertAt = fi === 0 ? i : i + 1;
-                    newFragments.splice(insertAt, 0, this.createFragment(data.fragment[fi], true));
-
-                    // are there more of the fragment after the interpunctuation?
-                    if (fi + 1 < data.fragment.length) {
-                        newFragments.splice(insertAt + 1, 0, this.createFragment(data.fragment.substr(fi + 1)));
-                    }
-
-                    if (fi > 0) {
-                        data.fragment = data.fragment.substr(0, fi);
-
-                        i -= 1;
-                    } else {
-                        newFragments.splice(insertAt + 1, 1);
-
-                        i -= 2;
-                    }
-
-                    break;
+                if (buffer.length > 0) {
+                    newFragments.push(buffer, false);
                 }
             }
 
             var words = [];
 
-            var _loop = function _loop(_i) {
-                var data = newFragments[_i];
+            var _loop = function _loop(i) {
+                var data = newFragments[i];
                 var lowerFragment = data.fragment.toLocaleLowerCase();
                 var existingFragment = currentFragments.find(function (f) {
                     return f.fragment.toLocaleLowerCase() === lowerFragment;
@@ -1200,16 +1302,19 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
 
                 if (existingFragment !== undefined) {
                     // overwrite the fragment with the existing fragment, as it might contain more data
-                    newFragments[_i] = _extends({}, existingFragment, { fragment: data.fragment });
+                    newFragments[i] = _extends({}, existingFragment, {
+                        fragment: data.fragment,
+                        is_linebreak: data.is_linebreak
+                    });
                 }
 
-                if (!newFragments[_i].interpunctuation) {
-                    words.push(newFragments[_i].fragment);
+                if (!newFragments[i].interpunctuation) {
+                    words.push(newFragments[i].fragment);
                 }
             };
 
-            for (var _i = 0; _i < newFragments.length; _i += 1) {
-                _loop(_i);
+            for (var i = 0; i < newFragments.length; i += 1) {
+                _loop(i);
             }
 
             // We can't be editing a fragment.
@@ -1230,16 +1335,20 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
     }, {
         key: 'onTranscribeClick',
         value: function onTranscribeClick(ev) {
-            var _this4 = this;
+            var _this3 = this;
 
             ev.preventDefault();
 
             var language = this.props.languages.find(function (l) {
-                return l.id === _this4.props.language_id;
+                return l.id === _this3.props.language_id;
             });
             var data = this.props.fragments[this.state.editingFragmentIndex];
 
-            var transcription = (0, _tengwar.transcribe)(data.fragment, language.tengwar_mode, false);
+            var transcription = null;
+            if (language.tengwar_mode) {
+                transcription = (0, _tengwar.transcribe)(data.fragment, language.tengwar_mode, false);
+            }
+
             if (transcription) {
                 this.tengwarInput.value = transcription;
             } else {
@@ -1252,23 +1361,24 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
     }, {
         key: 'onFragmentSaveClick',
         value: function onFragmentSaveClick(ev) {
-            var _this5 = this;
+            var _this4 = this;
 
             ev.preventDefault();
 
             var fragment = this.props.fragments[this.state.editingFragmentIndex];
             var translation = this.translationInput.getValue();
-            var inflections = this.inflectionInput.getValue();
+            var inflections = this.inflectionInput.getValue() || [];
             var speech_id = this.speechInput.getValue();
             var comments = this.commentsInput.getValue();
             var tengwar = this.tengwarInput.value;
 
             var fragmentData = {
-                translation_id: translation ? translation.id : undefined,
                 speech_id: speech_id,
                 inflections: inflections,
                 comments: comments,
-                tengwar: tengwar
+                tengwar: tengwar,
+                translation_id: translation ? translation.id : undefined,
+                is_linebreak: fragment.is_linebreak
             };
 
             // If the 'apply to similar words' checkbox is checked, make an array
@@ -1306,8 +1416,10 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                     // the next index lies within the bounds of the array. Execute in a new
                     // thread to leave the event handler.
                     window.setTimeout(function () {
-                        _this5.editFragment(nextIndex);
-                        _this5.scrollToForm(); // for mobile devices
+                        _this4.editFragment(nextIndex).then(function () {
+                            _this4.translationInput.focus();
+                        });
+                        _this4.scrollToForm(); // for mobile devices
                     }, 0);
                 } else {
                     // if the next index is outside the bounds of the array ...
@@ -1323,7 +1435,7 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                 //
                 // Execute the submission on a new thread.
                 window.setTimeout(function () {
-                    _this5.submit();
+                    _this4.submit();
                 }, 0);
             }
         }
@@ -1394,7 +1506,7 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
     }, {
         key: 'render',
         value: function render() {
-            var _this6 = this;
+            var _this5 = this;
 
             return _react2.default.createElement(
                 'form',
@@ -1445,9 +1557,9 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                     this.props.fragments.map(function (f, i) {
                         return _react2.default.createElement(EDFragment, { key: i,
                             fragment: f,
-                            selected: i === _this6.state.editingFragmentIndex,
-                            erroneous: _this6.state.erroneousIndexes.indexOf(i) > -1,
-                            onClick: _this6.onFragmentClick.bind(_this6) });
+                            selected: i === _this5.state.editingFragmentIndex,
+                            erroneous: _this5.state.erroneousIndexes.indexOf(i) > -1,
+                            onClick: _this5.onFragmentClick.bind(_this5) });
                     })
                 ),
                 _react2.default.createElement(
@@ -1481,7 +1593,7 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                             _react2.default.createElement(_translationSelect2.default, { componentId: 'ed-sentence-fragment-word', languageId: this.props.language_id,
                                 suggestions: this.props.suggestions ? this.props.suggestions[this.props.fragments[this.state.editingFragmentIndex].fragment] : [],
                                 ref: function ref(input) {
-                                    return _this6.translationInput = input;
+                                    return _this5.translationInput = input;
                                 } })
                         ),
                         _react2.default.createElement(
@@ -1497,7 +1609,7 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                                 { className: 'input-group' },
                                 _react2.default.createElement('input', { id: 'ed-sentence-fragment-tengwar', className: 'form-control tengwar', type: 'text',
                                     ref: function ref(input) {
-                                        return _this6.tengwarInput = input;
+                                        return _this5.tengwarInput = input;
                                     } }),
                                 _react2.default.createElement(
                                     'div',
@@ -1520,7 +1632,7 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                             ),
                             _react2.default.createElement(_speechSelect2.default, { componentId: 'ed-sentence-fragment-speech',
                                 ref: function ref(input) {
-                                    return _this6.speechInput = input;
+                                    return _this5.speechInput = input;
                                 } })
                         ),
                         _react2.default.createElement(
@@ -1533,7 +1645,7 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                             ),
                             _react2.default.createElement(_inflectionSelect2.default, { componentId: 'ed-sentence-fragment-inflections',
                                 ref: function ref(input) {
-                                    return _this6.inflectionInput = input;
+                                    return _this5.inflectionInput = input;
                                 } })
                         ),
                         _react2.default.createElement(
@@ -1546,7 +1658,7 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                             ),
                             _react2.default.createElement(_markdownEditor2.default, { componentId: 'ed-sentence-fragment-comments', rows: 4,
                                 ref: function ref(input) {
-                                    return _this6.commentsInput = input;
+                                    return _this5.commentsInput = input;
                                 } })
                         ),
                         _react2.default.createElement(
@@ -1559,7 +1671,7 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
                                     'label',
                                     null,
                                     _react2.default.createElement('input', { type: 'checkbox', ref: function ref(input) {
-                                            return _this6.applyToSimilarCheckbox = input;
+                                            return _this5.applyToSimilarCheckbox = input;
                                         } }),
                                     ' Apply changes to similar words.'
                                 )
@@ -1630,13 +1742,13 @@ var EDFragment = function (_React$Component) {
     _createClass(EDFragment, [{
         key: 'onFragmentClick',
         value: function onFragmentClick(ev) {
-            var _this8 = this;
+            var _this7 = this;
 
             ev.preventDefault();
 
             if (this.props.onClick) {
                 window.setTimeout(function () {
-                    return _this8.props.onClick(_this8.props.fragment);
+                    return _this7.props.onClick(_this7.props.fragment);
                 }, 0);
             }
         }
@@ -1800,7 +1912,7 @@ var EDPreviewForm = function (_React$Component) {
             for (var i = 0; i < this.props.fragments.length; i += 1) {
                 var data = this.props.fragments[i];
 
-                if (!/^\s*$/.test(data.comments)) {
+                if (!data.interpunctuation && !/^\s*$/.test(data.comments)) {
                     markdowns['fragment-' + i] = data.comments;
                 }
             }
@@ -1874,7 +1986,7 @@ var EDPreviewForm = function (_React$Component) {
 
             var props = this.props;
             var payload = {
-                id: props.sentenceId,
+                id: props.sentenceId || undefined,
                 name: props.sentenceName,
                 source: props.sentenceSource,
                 language_id: props.sentenceLanguageId,
@@ -2089,7 +2201,7 @@ var EDSentenceForm = function (_EDStatefulFormCompon) {
 
             var state = this.state;
             var payload = {
-                id: state.id,
+                id: state.id || undefined,
                 name: state.name,
                 source: state.source,
                 language_id: state.language_id,
@@ -2677,7 +2789,8 @@ var EDFragmentExplorer = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (EDFragmentExplorer.__proto__ || Object.getPrototypeOf(EDFragmentExplorer)).call(this, props));
 
         _this.state = {
-            fragmentIndex: 0
+            fragmentIndex: 0,
+            fragmentLines: []
         };
         return _this;
     }
@@ -2703,6 +2816,48 @@ var EDFragmentExplorer = function (_React$Component) {
 
             // A little hack for causing the first fragment to be highlighted
             this.onNavigate({}, fragmentIndex);
+        }
+
+        /**
+         * Receives fragments and splits them into lines.
+         * @param {*} props 
+         */
+
+    }, {
+        key: 'componentWillReceiveProps',
+        value: function componentWillReceiveProps(props) {
+            var _this2 = this;
+
+            if (Array.isArray(props.fragments)) {
+                (function () {
+                    var fragmentLines = [];
+                    var lastIndex = 0;
+                    var fakeId = -1;
+
+                    // Look for line breaks and slice the array by those fragments
+                    for (var i = 0; i < props.fragments.length; i += 1) {
+                        var fragment = props.fragments[i];
+
+                        if (fragment.is_linebreak || i + 1 === props.fragments.length) {
+                            var fragments = props.fragments.slice(lastIndex, i + 1 === props.fragments.length ? i + 1 : i);
+                            // generate fake IDs if they don't exist.
+                            fragments.forEach(function (f) {
+                                if (!f.id) {
+                                    f.id = fakeId;
+                                }
+                                fakeId -= 1;
+                            });
+
+                            fragmentLines.push(fragments);
+                            lastIndex = i + 1;
+                        }
+                    }
+
+                    _this2.setState({
+                        fragmentLines: fragmentLines
+                    });
+                })();
+            }
         }
 
         /**
@@ -2808,7 +2963,7 @@ var EDFragmentExplorer = function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
-            var _this2 = this;
+            var _this3 = this;
 
             var section = null;
             var fragment = null;
@@ -2819,7 +2974,7 @@ var EDFragmentExplorer = function (_React$Component) {
                 // examine the HTML and turn it into React components.
                 section = this.props.bookData.sections[0];
                 fragment = this.props.fragments.find(function (f) {
-                    return f.id === _this2.props.fragmentId;
+                    return f.id === _this3.props.fragmentId;
                 });
                 parser = new _htmlToReact.Parser();
             }
@@ -2830,25 +2985,29 @@ var EDFragmentExplorer = function (_React$Component) {
             return _react2.default.createElement(
                 'div',
                 { className: 'well ed-fragment-navigator' },
-                _react2.default.createElement(
-                    'p',
-                    { className: 'tengwar ed-tengwar-fragments' },
-                    this.props.fragments.map(function (f) {
-                        return _react2.default.createElement(_tengwarFragment2.default, { fragment: f,
-                            key: 'tng' + f.id,
-                            selected: f.id === _this2.props.fragmentId });
-                    })
-                ),
-                _react2.default.createElement(
-                    'p',
-                    { className: 'ed-elvish-fragments' },
-                    this.props.fragments.map(function (f) {
-                        return _react2.default.createElement(_fragment2.default, { fragment: f,
-                            key: 'frg' + f.id,
-                            selected: f.id === _this2.props.fragmentId,
-                            onClick: _this2.onFragmentClick.bind(_this2) });
-                    })
-                ),
+                this.state.fragmentLines.map(function (fragments, fi) {
+                    return _react2.default.createElement(
+                        'p',
+                        { className: 'tengwar ed-tengwar-fragments', key: 'tngc' + fi },
+                        fragments.map(function (f, i) {
+                            return _react2.default.createElement(_tengwarFragment2.default, { fragment: f,
+                                key: 'tng' + fi + '.' + f.id,
+                                selected: f.id === _this3.props.fragmentId });
+                        })
+                    );
+                }),
+                this.state.fragmentLines.map(function (fragments, fi) {
+                    return _react2.default.createElement(
+                        'p',
+                        { className: 'ed-elvish-fragments', key: 'frgc' + fi },
+                        fragments.map(function (f, i) {
+                            return _react2.default.createElement(_fragment2.default, { fragment: f,
+                                key: 'frg' + fi + '.' + f.id,
+                                selected: f.id === _this3.props.fragmentId,
+                                onClick: _this3.onFragmentClick.bind(_this3) });
+                        })
+                    );
+                }),
                 _react2.default.createElement(
                     'nav',
                     null,
@@ -2861,7 +3020,7 @@ var EDFragmentExplorer = function (_React$Component) {
                             _react2.default.createElement(
                                 'a',
                                 { href: '#', onClick: function onClick(ev) {
-                                        return _this2.onNavigate(ev, previousIndex);
+                                        return _this3.onNavigate(ev, previousIndex);
                                     } },
                                 '\u2190 ',
                                 this.props.fragments[previousIndex].fragment
@@ -2873,7 +3032,7 @@ var EDFragmentExplorer = function (_React$Component) {
                             _react2.default.createElement(
                                 'a',
                                 { href: '#', onClick: function onClick(ev) {
-                                        return _this2.onNavigate(ev, nextIndex);
+                                        return _this3.onNavigate(ev, nextIndex);
                                     } },
                                 this.props.fragments[nextIndex].fragment,
                                 ' \u2192'
@@ -2906,7 +3065,7 @@ var EDFragmentExplorer = function (_React$Component) {
                             return _react2.default.createElement(_bookGloss2.default, { gloss: g,
                                 language: section.language,
                                 key: g.id,
-                                onReferenceLinkClick: _this2.onReferenceLinkClick.bind(_this2) });
+                                onReferenceLinkClick: _this3.onReferenceLinkClick.bind(_this3) });
                         })
                     )
                 ) : ''

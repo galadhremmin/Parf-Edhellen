@@ -46,6 +46,13 @@ class EDSpeechSelect extends React.Component {
         return this.state.value;
     }
 
+    /**
+     * Gives focus to the component's input element.
+     */
+    focus() {
+        this.selectInput.focus();
+    }
+
     onSpeechChange(ev) {
         this.setValue(parseInt(ev.target.value, 10));
 
@@ -60,6 +67,7 @@ class EDSpeechSelect extends React.Component {
             name={this.props.componentName} 
             id={this.props.componentId}
             value={this.state.value}
+            ref={input => this.selectInput = input}
             className={classNames('form-control', { 'disabled': this.state.typesOfSpeech.length < 1 })}>
                 <option value={0}></option>
                 {this.state.typesOfSpeech.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}

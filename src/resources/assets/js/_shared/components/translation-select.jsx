@@ -42,6 +42,21 @@ class EDTranslationSelect extends React.Component {
         return this.state.value;
     }
 
+    /**
+     * Gives focus to the component's input element.
+     */
+    focus() {
+        const id = this.props.componentId;
+        if (! id) {
+            return;
+        }
+
+        const element = document.getElementById(id);
+        if (element) {
+            element.focus();
+        }
+    }
+
     onWordChange(ev, data) {
         this.setState({
             word: data.newValue,

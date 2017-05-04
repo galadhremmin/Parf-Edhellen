@@ -36,9 +36,21 @@ class EDFragmentForm extends EDStatefulFormComponent {
     }
 
     createFragment(fragment, interpunctuation) {
+        let tengwar = undefined;
+
+        // Transcribe interpunctuations automatically. The _quenya_ setting
+        // is used for all interpunctuations as they are essentially the same
+        // across languages.
+        const is_linebreak = /^\n$/.test(fragment);
+        if (interpunctuation && ! is_linebreak) {
+            tengwar = transcribe(fragment, 'quenya');
+        }
+
         return {
             fragment,
-            interpunctuation
+            interpunctuation,
+            tengwar,
+            is_linebreak
         };
     }
 
@@ -51,10 +63,10 @@ class EDFragmentForm extends EDStatefulFormComponent {
             fragmentIndex = -1;
         }
         
+        let promise = Promise.resolve(undefined);
         if (fragmentIndex > -1) {
             const data = this.props.fragments[fragmentIndex];
             
-            let promise;
             if (data.translation_id) {
                 promise = axios.get(EDConfig.api(`book/translate/${data.translation_id}`))
                     .then(resp => { 
@@ -65,8 +77,6 @@ class EDFragmentForm extends EDStatefulFormComponent {
 
                         return resp.data.sections[0].glosses[0];
                     });
-            } else {
-                promise = Promise.resolve(undefined);
             }
 
             promise.then(translation => {
@@ -82,6 +92,8 @@ class EDFragmentForm extends EDStatefulFormComponent {
             ...additionalParams,
             editingFragmentIndex: fragmentIndex
         });
+
+        return promise;
     }
 
     scrollToForm() {
@@ -110,47 +122,54 @@ class EDFragmentForm extends EDStatefulFormComponent {
         ev.preventDefault();
 
         const currentFragments = this.props.fragments || [];
-        const newFragments = this.state.phrase
-            .replace(/\r\n/g, "\n")
-            .split(' ')
-            .map(f => this.createFragment(f));
+        const newFragments = [];
 
-        for (let i = 0; i < newFragments.length; i += 1) {
-            const data = newFragments[i];
-            if (data.interpunctuation) {
-                continue;
+        // Split the phrase into fragments
+        {   
+            const phrase = this.state.phrase
+                .replace(/\r\n/g, "\n");
+
+            let buffer = '';
+            let flush = false;
+            let additionalFragment = undefined;
+
+            const interpunctuationReg = /^[,\.!\?\n]$/;
+
+            for (let c of phrase) {
+
+                // space?
+                if (c === ' ') {
+                    flush = true;
+                }
+
+                // is it an interpunctuation character or a new line?
+                else if (interpunctuationReg.test(c)) {
+                    additionalFragment = this.createFragment(c, true);
+                    flush = true;
+                } 
+
+                // add regular characters to buffer
+                else {
+                    buffer += c;
+                }
+
+                if (flush) {
+                    if (buffer.length > 0) {
+                        newFragments.push(this.createFragment(buffer, false));
+                        buffer = '';
+                    }
+
+                    if (additionalFragment) {
+                        newFragments.push(additionalFragment);
+                        additionalFragment = undefined;
+                    }
+
+                    flush = false;
+                }
             }
 
-            // Find interpunctuation and new line fragments, and remove them from the actual
-            // word fragment. These should be registered as fragments of their own.
-            for (let fi = 0; fi < data.fragment.length; fi += 1) {
-                if (!/^[,\.!\?\s]$/.test(data.fragment[fi])) {
-                    continue;
-                }
-
-                // Should the fragment be inserted in front of the current fragment or after it?
-                // This is determined by looking at the cursor's position (_fi_). If it is at
-                // in its initial position (= 0) then the interpunctutation fragment should be
-                // placed in front of it, otherwise after. 
-                const insertAt = fi === 0 ? i : i + 1;
-                newFragments.splice(insertAt, 0, this.createFragment(data.fragment[fi], true));
-
-                // are there more of the fragment after the interpunctuation?
-                if (fi + 1 < data.fragment.length) {
-                    newFragments.splice(insertAt + 1, 0, this.createFragment(data.fragment.substr(fi + 1)));
-                } 
-                
-                if (fi > 0) {
-                    data.fragment = data.fragment.substr(0, fi);
-
-                    i -= 1;
-                } else {
-                    newFragments.splice(insertAt + 1, 1);
-
-                    i -= 2;
-                }
-
-                break;
+            if (buffer.length > 0) {
+                newFragments.push(buffer, false);
             }
         }
 
@@ -162,7 +181,11 @@ class EDFragmentForm extends EDStatefulFormComponent {
 
             if (existingFragment !== undefined) {
                 // overwrite the fragment with the existing fragment, as it might contain more data
-                newFragments[i] = { ...existingFragment, fragment: data.fragment }; 
+                newFragments[i] = { 
+                    ...existingFragment, 
+                    fragment: data.fragment,
+                    is_linebreak: data.is_linebreak
+                }; 
             }
 
             if (!newFragments[i].interpunctuation) {
@@ -191,7 +214,11 @@ class EDFragmentForm extends EDStatefulFormComponent {
         const language = this.props.languages.find(l => l.id === this.props.language_id);
         const data = this.props.fragments[this.state.editingFragmentIndex];
 
-        let transcription = transcribe(data.fragment, language.tengwar_mode, false);
+        let transcription = null;
+        if (language.tengwar_mode) {
+            transcription = transcribe(data.fragment, language.tengwar_mode, false);
+        }
+
         if (transcription) {
             this.tengwarInput.value = transcription;
         } else {
@@ -207,17 +234,18 @@ class EDFragmentForm extends EDStatefulFormComponent {
 
         const fragment = this.props.fragments[this.state.editingFragmentIndex];
         const translation = this.translationInput.getValue();
-        const inflections = this.inflectionInput.getValue();
+        const inflections = this.inflectionInput.getValue() || [];
         const speech_id = this.speechInput.getValue();
         const comments = this.commentsInput.getValue();
         const tengwar = this.tengwarInput.value;
 
         let fragmentData = {
-            translation_id: translation ? translation.id : undefined,
             speech_id,
             inflections,
             comments,
-            tengwar
+            tengwar,
+            translation_id: translation ? translation.id : undefined,
+            is_linebreak: fragment.is_linebreak
         };
 
         // If the 'apply to similar words' checkbox is checked, make an array
@@ -256,7 +284,9 @@ class EDFragmentForm extends EDStatefulFormComponent {
                 // the next index lies within the bounds of the array. Execute in a new
                 // thread to leave the event handler.
                 window.setTimeout(() => {
-                    this.editFragment(nextIndex);
+                    this.editFragment(nextIndex).then(() => {
+                        this.translationInput.focus();
+                    });
                     this.scrollToForm(); // for mobile devices
                 }, 0);
 

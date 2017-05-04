@@ -1,3 +1,5 @@
+import EDConfig from 'ed-config';
+
 export const SET_FRAGMENTS = 'ED_SET_FRAGMENTS';
 export const SET_FRAGMENT_DATA = 'ED_SET_FRAGMENT_DATA';
 export const SET_SENTENCE_DATA = 'ED_SET_SENTENCE_DATA';
@@ -11,7 +13,7 @@ const EDSentenceAdminReducer = (state = {
     is_neologism: false,
     fragments: [],
     id: 0,
-    languages: window.EDConfig.languages(),
+    languages: EDConfig.languages(),
     loading: false,
     suggestions: undefined
 }, action) => {
@@ -44,6 +46,7 @@ const EDSentenceAdminReducer = (state = {
                         speech_id:      action.data.speech_id,
                         comments:       action.data.comments,
                         tengwar:        action.data.tengwar,
+                        is_linebreak:   action.data.is_linebreak,
                         inflections:    action.data.inflections
                             .map(inflection => Object.assign({}, inflection))
                     };

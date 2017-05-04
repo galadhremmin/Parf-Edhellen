@@ -102,23 +102,34 @@ class SentenceController extends Controller
         foreach ($request->input('fragments') as $fragmentData) {
             $fragment = new SentenceFragment;
 
-            $fragment->fragment         = $fragmentData['fragment'];
-            $fragment->tengwar          = $fragmentData['tengwar'];
-            $fragment->comments         = $fragmentData['comments'] ?? ''; // cannot be NULL
-            $fragment->speech_id        = intval($fragmentData['speech_id']);
-            $fragment->translation_id   = intval($fragmentData['translation_id']);
-            $fragment->order            = $order;
-            $fragment->sentence_id      = $sentence->id;
+            $fragment->is_linebreak = boolval($fragmentData['is_linebreak']);
+
+            if (! $fragment->is_linebreak) {
+                $fragment->fragment = $fragmentData['fragment'];
+                $fragment->tengwar  = $fragmentData['tengwar'];
+                $fragment->comments = $fragmentData['comments'] ?? ''; // cannot be NULL
+
+                if (! $fragment->isPunctuationOrWhitespace()) {
+                    $fragment->speech_id      = intval($fragmentData['speech_id']);
+                    $fragment->translation_id = intval($fragmentData['translation_id']);
+                    $fragment->is_linebreak   = false;
+                } 
+            }
+
+            $fragment->order       = $order;
+            $fragment->sentence_id = $sentence->id;
 
             $fragment->save();
 
-            foreach ($fragmentData['inflections'] as $inflection) {
-                $inflectionRel = new SentenceFragmentInflectionRel;
+            if (! $fragment->isPunctuationOrWhitespace() && isset($fragmentData['inflections'])) {
+                foreach ($fragmentData['inflections'] as $inflection) {
+                    $inflectionRel = new SentenceFragmentInflectionRel;
 
-                $inflectionRel->inflection_id        = $inflection['id'];
-                $inflectionRel->sentence_fragment_id = $fragment->id;
+                    $inflectionRel->inflection_id        = $inflection['id'];
+                    $inflectionRel->sentence_fragment_id = $fragment->id;
 
-                $inflectionRel->save(); 
+                    $inflectionRel->save(); 
+                }
             }
 
             $order += 10;
@@ -152,14 +163,49 @@ class SentenceController extends Controller
 
     protected function validateFragmentsInRequest(Request $request)
     {
+        // This is unfortunately a multi-tiered validation process, as its validation
+        // rules are heavily dependant on the request data payload.
+        //
+        // step 1: Ensure that there is a parameter called _fragments_.
         $rules = [
-            'fragments'                    => 'required|array',
-            'fragments.*.translation_id'   => 'required|numeric|exists:translations,id',
-            'fragments.*.speech_id'        => 'required|numeric|exists:speeches,id',
-            'fragments.*.tengwar'          => 'required|string|max:128',
-            'fragments.*.fragment'         => 'required|string|max:48',
-            'fragments.*.inflections.*.id' => 'required|numeric|exists:inflections,id'
+            'fragments'                => 'required|array',
+            'fragments.*.is_linebreak' => 'required|boolean'
         ];
+        $this->validate($request, $rules);
+
+        // Step 2: construct a new set of rules dependant on the payload
+        $rules = [];
+        $fragments = $request->input('fragments');
+        $numberOfFragments = count($fragments);
+    
+        for ($i = 0; $i < $numberOfFragments; $i += 1) {
+            $prefix = 'fragments.'.$i.'.';
+
+            // Line breaks are treated in a very restricted manner and therefore requires minimum
+            // validation. 
+            if ($fragments[$i]['is_linebreak']) {
+                continue;
+            }
+
+            $rules[$prefix.'fragment'] = 'required|max:48';
+
+            // Apply additional validation to non-interpunctuation fragments. Create
+            // an instance of the SentenceFragment class to access the _isPunctuationOrWhitespace_
+            // method
+            $fragment = new SentenceFragment;
+            $fragment->fragment = $fragments[$i]['fragment'];
+
+            if (! $fragment->isPunctuationOrWhitespace()) {
+                $rules[$prefix.'tengwar']          = 'required|max:128';
+                $rules[$prefix.'translation_id']   = 'required|exists:translations,id';
+                $rules[$prefix.'speech_id']        = 'required|exists:speeches,id';
+
+                // inflections are optional, but when present, have to be declared as an array
+                $rules[$prefix.'inflections']      = 'sometimes|array';
+                $rules[$prefix.'inflections.*.id'] = 'sometimes|exists:inflections,id';
+            }
+        }
+
         $this->validate($request, $rules);
     }
 }
