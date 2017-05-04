@@ -467,7 +467,8 @@ var EDFragmentExplorer = function (_React$Component) {
                         var fragment = props.fragments[i];
 
                         if (fragment.is_linebreak || i + 1 === props.fragments.length) {
-                            var fragments = props.fragments.slice(lastIndex, i + 1 === props.fragments.length ? i + 1 : i);
+                            var fragments = props.fragments.slice(lastIndex, i + 1 === props.fragments.length ? i + 1 // at the end, make sure to also include the last fragment.
+                            : i);
                             // generate fake IDs if they don't exist.
                             fragments.forEach(function (f) {
                                 if (!f.id) {
@@ -477,7 +478,7 @@ var EDFragmentExplorer = function (_React$Component) {
                             });
 
                             fragmentLines.push(fragments);
-                            lastIndex = i + 1;
+                            lastIndex = i + 1; // +1 to skip the line break fragment.
                         }
                     }
 
@@ -624,6 +625,7 @@ var EDFragmentExplorer = function (_React$Component) {
                         })
                     );
                 }),
+                _react2.default.createElement('hr', null),
                 this.state.fragmentLines.map(function (fragments, fi) {
                     return _react2.default.createElement(
                         'p',
@@ -671,21 +673,6 @@ var EDFragmentExplorer = function (_React$Component) {
                 this.props.loading ? _react2.default.createElement('div', { className: 'sk-spinner sk-spinner-pulse' }) : section ? _react2.default.createElement(
                     'div',
                     null,
-                    fragment.grammarType ? _react2.default.createElement(
-                        'div',
-                        null,
-                        _react2.default.createElement(
-                            'em',
-                            null,
-                            fragment.grammarType
-                        )
-                    ) : '',
-                    _react2.default.createElement(
-                        'div',
-                        null,
-                        fragment.comments ? parser.parse(fragment.comments) : ''
-                    ),
-                    _react2.default.createElement('hr', null),
                     _react2.default.createElement(
                         'div',
                         null,
@@ -695,6 +682,34 @@ var EDFragmentExplorer = function (_React$Component) {
                                 key: g.id,
                                 onReferenceLinkClick: _this3.onReferenceLinkClick.bind(_this3) });
                         })
+                    ),
+                    _react2.default.createElement('hr', null),
+                    _react2.default.createElement(
+                        'div',
+                        null,
+                        _react2.default.createElement(
+                            'span',
+                            { className: 'label label-success ed-inflection' },
+                            fragment.speech
+                        ),
+                        ' ',
+                        fragment.inflections.map(function (infl, i) {
+                            return _react2.default.createElement(
+                                'span',
+                                { key: 'infl' + fragment.id + '-' + i },
+                                _react2.default.createElement(
+                                    'span',
+                                    { className: 'label label-success ed-inflection' },
+                                    infl.name
+                                ),
+                                '\xA0'
+                            );
+                        })
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        null,
+                        fragment.comments ? parser.parse(fragment.comments) : ''
                     )
                 ) : ''
             );

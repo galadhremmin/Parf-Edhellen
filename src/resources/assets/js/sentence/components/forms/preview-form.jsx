@@ -18,7 +18,8 @@ class EDPreviewForm extends React.Component {
 
         this.state = {
             longDescription: undefined,
-            loading: true
+            loading: true,
+            errors: undefined
         };
     }
 
@@ -103,12 +104,21 @@ class EDPreviewForm extends React.Component {
         }
     }
 
-    onSavedResponse(response) {
-        window.location.href = '/';
+    onSavedResponse(request) {
+        window.location.href = request.data.url;
     }
 
-    onFailedResponse(response) {
-        // what to do here?? display errors?
+    onFailedResponse(request) {
+        let errors;
+        if (request.response.status !== EDConfig.apiValidationErrorStatusCode) {
+            errors = ['Failed to save your phrase due to a server error.']; 
+        } else {
+            errors = ['Your phrase cannot be saved because validation fails. Please go to the previous steps and try again.'];
+        }
+
+        this.setState({
+            errors
+        });
     }
  
     render() {
@@ -119,6 +129,7 @@ class EDPreviewForm extends React.Component {
         }
         
         return <div> 
+            <EDErrorList errors={this.state.errors} />
             <div className="well">
                 <h2>{this.props.sentenceName}</h2>
                 <p>{this.props.sentenceDescription}</p>

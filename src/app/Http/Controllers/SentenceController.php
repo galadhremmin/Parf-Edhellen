@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Adapters\SentenceAdapter;
 use App\Models\Language;
 use App\Models\Sentence;
+use App\Helpers\MarkdownParser;
 use App\Repositories\SentenceRepository;
 use Illuminate\Http\Request;
 
@@ -49,7 +50,11 @@ class SentenceController extends Controller
     {
         $sentence  = Sentence::find($sentId);
         $language  = Language::find($langId);
+        
         $fragments = $this->_adapter->adaptFragments($sentence->fragments);
+
+        $parser = new MarkdownParser();
+        $sentence->long_description = $parser->parse($sentence->long_description);
 
         return view('sentence.public.sentence', [
             'sentence'  => $sentence,

@@ -20,12 +20,27 @@ class EDFragmentForm extends EDStatefulFormComponent {
 
         // Reconstruct the phrase from the sentence fragments. Only one rule needs to 
         // be observed: add a space in front of the fragment, unless it contains a
-        // interpunctuation character.
+        // interpunctuation character or is the beginning of a new line.
         let phrase = '';
         if (Array.isArray(props.fragments)) {
-            phrase = props.fragments.map(
-                (f, i) => (i === 0 || f.interpunctuation ? '' : ' ') + f.fragment)
-                .join('');
+            let parts = [];
+
+            for (let i = 0; i < props.fragments.length; i += 1) {
+                const f = props.fragments[i];
+
+                if (f.is_linebreak) {
+                    parts.push('\n');
+                    continue;
+                }
+
+                if (!f.interpunctuation && i > 0 && parts[parts.length - 1] !== '\n') {
+                    parts.push(' ');
+                }
+
+                parts.push(f.fragment);                
+            }
+            
+            phrase = parts.join('');
         }
 
         this.state = {
@@ -485,11 +500,11 @@ class EDFragment extends React.Component {
         const selected = this.props.selected;
         const erroneous = this.props.erroneous;
 
-        if (data.interpunctuation) {
-            if (/^[\n]+$/.test(data.fragment)) {
-                return <br />;
-            }
+        if (data.is_linebreak) {
+            return <br />;
+        }
 
+        if (data.interpunctuation) {
             return <span>{data.fragment}</span>;
         }
 

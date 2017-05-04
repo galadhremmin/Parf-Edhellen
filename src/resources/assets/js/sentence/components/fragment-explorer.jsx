@@ -51,7 +51,7 @@ class EDFragmentExplorer extends React.Component {
                 if (fragment.is_linebreak || i + 1 === props.fragments.length) {
                     const fragments = props.fragments.slice(lastIndex, 
                         i + 1 === props.fragments.length
-                            ? i + 1
+                            ? i + 1 // at the end, make sure to also include the last fragment.
                             : i);
                     // generate fake IDs if they don't exist.
                     fragments.forEach(f => {
@@ -62,7 +62,7 @@ class EDFragmentExplorer extends React.Component {
                     });
 
                     fragmentLines.push(fragments);
-                    lastIndex = i + 1;
+                    lastIndex = i + 1; // +1 to skip the line break fragment.
                 }
             }
 
@@ -180,6 +180,7 @@ class EDFragmentExplorer extends React.Component {
                                                                 selected={f.id === this.props.fragmentId} />)}
                 </p>
             )}
+            <hr />
             {this.state.fragmentLines.map((fragments, fi) => 
                 <p className="ed-elvish-fragments" key={`frgc${fi}`}>
                     { fragments.map((f, i) => <EDFragment fragment={f}
@@ -201,16 +202,26 @@ class EDFragmentExplorer extends React.Component {
             {this.props.loading
                 ? <div className="sk-spinner sk-spinner-pulse"></div>
                 : (section ? (<div>
-                {fragment.grammarType ? <div><em>{fragment.grammarType}</em></div> : ''}
-                <div>{fragment.comments ? parser.parse(fragment.comments) : ''}</div>
-                <hr />
-                <div>
-                    {section.glosses.map(g => <EDBookGloss gloss={g}
-                                                           language={section.language}
-                                                           key={g.id} 
-                                                           onReferenceLinkClick={this.onReferenceLinkClick.bind(this)} />)}
+                    <div>
+                        {section.glosses.map(g => <EDBookGloss gloss={g}
+                                                            language={section.language}
+                                                            key={g.id} 
+                                                            onReferenceLinkClick={this.onReferenceLinkClick.bind(this)} />)}
+                    </div>
+                    <hr />
+                    <div>
+                        <span className="label label-success ed-inflection">{fragment.speech}</span>
+                        {' '}
+                        {fragment.inflections.map((infl, i) => 
+                            <span key={`infl${fragment.id}-${i}`}>
+                                <span className="label label-success ed-inflection">{infl.name}</span>
+                                &nbsp;
+                            </span>
+                        )}
+                    </div>
+                    <div>{fragment.comments ? parser.parse(fragment.comments) : ''}</div>
                 </div>
-            </div>) : '')}
+            ) : '')}
         </div>;
     }
 }

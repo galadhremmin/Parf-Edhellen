@@ -21,7 +21,7 @@
   <div id="ed-fragment-navigator"></div>
   <script type="application/json" id="ed-preload-fragments">{!! $fragments !!}</script>
 
-  {{ $sentence->long_description }}
+  {!! $sentence->long_description !!}
 
   <footer class="sentence-footer">
     Published {{ $sentence->created_at }}

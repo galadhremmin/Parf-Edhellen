@@ -1110,14 +1110,29 @@ var EDFragmentForm = function (_EDStatefulFormCompon) {
 
         // Reconstruct the phrase from the sentence fragments. Only one rule needs to 
         // be observed: add a space in front of the fragment, unless it contains a
-        // interpunctuation character.
+        // interpunctuation character or is the beginning of a new line.
         var _this = _possibleConstructorReturn(this, (EDFragmentForm.__proto__ || Object.getPrototypeOf(EDFragmentForm)).call(this, props));
 
         var phrase = '';
         if (Array.isArray(props.fragments)) {
-            phrase = props.fragments.map(function (f, i) {
-                return (i === 0 || f.interpunctuation ? '' : ' ') + f.fragment;
-            }).join('');
+            var parts = [];
+
+            for (var i = 0; i < props.fragments.length; i += 1) {
+                var f = props.fragments[i];
+
+                if (f.is_linebreak) {
+                    parts.push('\n');
+                    continue;
+                }
+
+                if (!f.interpunctuation && i > 0 && parts[parts.length - 1] !== '\n') {
+                    parts.push(' ');
+                }
+
+                parts.push(f.fragment);
+            }
+
+            phrase = parts.join('');
         }
 
         _this.state = {
@@ -1759,11 +1774,11 @@ var EDFragment = function (_React$Component) {
             var selected = this.props.selected;
             var erroneous = this.props.erroneous;
 
-            if (data.interpunctuation) {
-                if (/^[\n]+$/.test(data.fragment)) {
-                    return _react2.default.createElement('br', null);
-                }
+            if (data.is_linebreak) {
+                return _react2.default.createElement('br', null);
+            }
 
+            if (data.interpunctuation) {
                 return _react2.default.createElement(
                     'span',
                     null,
@@ -1894,7 +1909,8 @@ var EDPreviewForm = function (_React$Component) {
 
         _this.state = {
             longDescription: undefined,
-            loading: true
+            loading: true,
+            errors: undefined
         };
         return _this;
     }
@@ -2004,13 +2020,22 @@ var EDPreviewForm = function (_React$Component) {
         }
     }, {
         key: 'onSavedResponse',
-        value: function onSavedResponse(response) {
-            window.location.href = '/';
+        value: function onSavedResponse(request) {
+            window.location.href = request.data.url;
         }
     }, {
         key: 'onFailedResponse',
-        value: function onFailedResponse(response) {
-            // what to do here?? display errors?
+        value: function onFailedResponse(request) {
+            var errors = void 0;
+            if (request.response.status !== _edConfig2.default.apiValidationErrorStatusCode) {
+                errors = ['Failed to save your phrase due to a server error.'];
+            } else {
+                errors = ['Your phrase cannot be saved because validation fails. Please go to the previous steps and try again.'];
+            }
+
+            this.setState({
+                errors: errors
+            });
         }
     }, {
         key: 'render',
@@ -2024,6 +2049,7 @@ var EDPreviewForm = function (_React$Component) {
             return _react2.default.createElement(
                 'div',
                 null,
+                _react2.default.createElement(_errorList2.default, { errors: this.state.errors }),
                 _react2.default.createElement(
                     'div',
                     { className: 'well' },
@@ -2839,7 +2865,8 @@ var EDFragmentExplorer = function (_React$Component) {
                         var fragment = props.fragments[i];
 
                         if (fragment.is_linebreak || i + 1 === props.fragments.length) {
-                            var fragments = props.fragments.slice(lastIndex, i + 1 === props.fragments.length ? i + 1 : i);
+                            var fragments = props.fragments.slice(lastIndex, i + 1 === props.fragments.length ? i + 1 // at the end, make sure to also include the last fragment.
+                            : i);
                             // generate fake IDs if they don't exist.
                             fragments.forEach(function (f) {
                                 if (!f.id) {
@@ -2849,7 +2876,7 @@ var EDFragmentExplorer = function (_React$Component) {
                             });
 
                             fragmentLines.push(fragments);
-                            lastIndex = i + 1;
+                            lastIndex = i + 1; // +1 to skip the line break fragment.
                         }
                     }
 
@@ -2996,6 +3023,7 @@ var EDFragmentExplorer = function (_React$Component) {
                         })
                     );
                 }),
+                _react2.default.createElement('hr', null),
                 this.state.fragmentLines.map(function (fragments, fi) {
                     return _react2.default.createElement(
                         'p',
@@ -3043,21 +3071,6 @@ var EDFragmentExplorer = function (_React$Component) {
                 this.props.loading ? _react2.default.createElement('div', { className: 'sk-spinner sk-spinner-pulse' }) : section ? _react2.default.createElement(
                     'div',
                     null,
-                    fragment.grammarType ? _react2.default.createElement(
-                        'div',
-                        null,
-                        _react2.default.createElement(
-                            'em',
-                            null,
-                            fragment.grammarType
-                        )
-                    ) : '',
-                    _react2.default.createElement(
-                        'div',
-                        null,
-                        fragment.comments ? parser.parse(fragment.comments) : ''
-                    ),
-                    _react2.default.createElement('hr', null),
                     _react2.default.createElement(
                         'div',
                         null,
@@ -3067,6 +3080,34 @@ var EDFragmentExplorer = function (_React$Component) {
                                 key: g.id,
                                 onReferenceLinkClick: _this3.onReferenceLinkClick.bind(_this3) });
                         })
+                    ),
+                    _react2.default.createElement('hr', null),
+                    _react2.default.createElement(
+                        'div',
+                        null,
+                        _react2.default.createElement(
+                            'span',
+                            { className: 'label label-success ed-inflection' },
+                            fragment.speech
+                        ),
+                        ' ',
+                        fragment.inflections.map(function (infl, i) {
+                            return _react2.default.createElement(
+                                'span',
+                                { key: 'infl' + fragment.id + '-' + i },
+                                _react2.default.createElement(
+                                    'span',
+                                    { className: 'label label-success ed-inflection' },
+                                    infl.name
+                                ),
+                                '\xA0'
+                            );
+                        })
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        null,
+                        fragment.comments ? parser.parse(fragment.comments) : ''
                     )
                 ) : ''
             );

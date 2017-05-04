@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 use App\Models\{Language, Sentence, SentenceFragment, SentenceFragmentInflectionRel};
 use App\Repositories\SentenceRepository;
 use App\Adapters\SentenceAdapter;
+use App\Helpers\LinkHelper;
 use App\Http\Controllers\Controller;
 
 class SentenceController extends Controller
@@ -43,24 +44,42 @@ class SentenceController extends Controller
 
     public function store(Request $request)
     {
-        $this->validateRequest($request, $id);
+        $this->validateRequest($request);
         $this->validateFragmentsInRequest($request);
 
         $sentence = new Sentence;
         $this->saveSentence($sentence, $request);
 
-        return $sentence;
+        $link = new LinkHelper();
+        return [
+            'sentence' => $sentence, 
+            'url'      => $link->sentence(
+                $sentence->language->id, 
+                $sentence->language->name,
+                $sentence->id,
+                $sentence->name
+            )
+        ];
     }
 
     public function update(Request $request, int $id)
     {
         $this->validateRequest($request, $id);
         $this->validateFragmentsInRequest($request);
-
+        
         $sentence = Sentence::findOrFail($id);
         $this->saveSentence($sentence, $request);
 
-        return $sentence;
+        $link = new LinkHelper();
+        return [
+            'sentence' => $sentence, 
+            'url'      => $link->sentence(
+                $sentence->language->id, 
+                $sentence->language->name,
+                $sentence->id,
+                $sentence->name
+            )
+        ];
     }
 
     public function destroy(Request $request, int $id) 
@@ -114,6 +133,9 @@ class SentenceController extends Controller
                     $fragment->translation_id = intval($fragmentData['translation_id']);
                     $fragment->is_linebreak   = false;
                 } 
+            } else {
+                $fragment->fragment = '\\n';
+                $fragment->comments = '';
             }
 
             $fragment->order       = $order;

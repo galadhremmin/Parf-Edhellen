@@ -9,8 +9,22 @@
     text-shadow: 1px 0px 1px $gray-lighter;
   }
 
-  .ed-elvish-fragments, .ed-tengwar-fragments {
+  .ed-tengwar-fragments {
+    font-size: 250%;
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  .ed-elvish-fragments {
     font-size: 150%;
     text-align: center;
+  }
+
+  .ed-inflection {
+    font-size: inherit;
+  }
+
+  blockquote h3 {
+    margin-top: 0;
   }
 }

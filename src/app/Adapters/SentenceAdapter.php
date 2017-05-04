@@ -26,6 +26,7 @@ class SentenceAdapter
                 'tengwar'          => $fragment->tengwar,
                 'interpunctuation' => $fragment->isPunctuationOrWhitespace(),
                 'translation_id'   => $fragment->translation_id,
+                'is_linebreak'     => $fragment->is_linebreak,
                 'speech'           => $fragment->speech_id ? $fragment->speech->name : null,
                 'speech_id'        => $fragment->speech_id,
                 'comments'         => !empty($fragment->comments)
