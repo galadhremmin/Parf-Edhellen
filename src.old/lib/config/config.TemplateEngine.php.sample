@@ -1,6 +1,0 @@
-<?php
-  define('SYS_HEADER_ADDITIONS', '');
-  define('SYS_FOOTER_ADDITIONS', '');
-  
-  include_once ROOT.'lib/smarty/libs/Smarty.class.php';
-

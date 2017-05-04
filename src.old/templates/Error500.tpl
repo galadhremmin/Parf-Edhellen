@@ -1,2 +1,0 @@
-<h2>Nae! I dass nîn darannen!</h2>
-An error has unfortunately occurred. The page you are looking for probably doesn't exist, or the command you sought to execute was halted due to an unrecoverable error.
