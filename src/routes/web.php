@@ -43,16 +43,6 @@ Route::group([ 'middleware' => 'auth' ], function () {
     Route::post('/author/edit/{id?}', [ 'uses' => 'AuthorController@update' ])->name('author.update-profile');
 });
 
-// Resources
-Route::group([ 'namespace' => 'Resources', 'prefix' => 'admin' ], function () {
-    Route::resource('speech', 'SpeechController');
-    Route::resource('inflection', 'InflectionController');
-    Route::resource('sentence', 'SentenceController');
-
-    Route::post('sentence/validate', 'SentenceController@validatePayload');
-    Route::post('sentence/validate-fragment', 'SentenceController@validateFragments');
-});
-
 // Authentication
 Route::get('/login', 'SocialAuthController@login')->name('login');
 Route::get('/logout', 'SocialAuthController@logout')->name('logout');
@@ -60,8 +50,28 @@ Route::get('/federated-auth/redirect/{providerName}', 'SocialAuthController@redi
     ->name('auth.redirect');
 Route::get('/federated-auth/callback/{providerName}', 'SocialAuthController@callback');
 
+// Resources
+Route::group([ 
+        'namespace'  => 'Resources', 
+        'prefix'     => 'admin', 
+        'middleware' => ['auth', 'auth.require-role:Administrators'] 
+    ], function () {
+
+    Route::resource('speech', 'SpeechController');
+    Route::resource('inflection', 'InflectionController');
+    Route::resource('sentence', 'SentenceController');
+
+    Route::post('sentence/validate', 'SentenceController@validatePayload');
+    Route::post('sentence/validate-fragment', 'SentenceController@validateFragments');
+
+});
+
 // API
-Route::group([ 'namespace' => 'Api\v1', 'prefix' => 'api/v1' ], function () {
+Route::group([ 
+        'namespace' => 'Api\v1', 
+        'prefix'    => 'api/v1' 
+    ], function () {
+
     Route::get('book/translate/{translationId}', [ 'uses' => 'BookApiController@get' ]);
     Route::post('book/translate',                [ 'uses' => 'BookApiController@translate' ]);
     Route::post('book/suggest',                  [ 'uses' => 'BookApiController@suggest' ]);
@@ -72,4 +82,5 @@ Route::group([ 'namespace' => 'Api\v1', 'prefix' => 'api/v1' ], function () {
     Route::get('inflection/{id?}',               [ 'uses' => 'InflectionApiController@index' ]);
 
     Route::post('utility/markdown',              [ 'uses' => 'UtilityApiController@parseMarkdown' ]);
+
 });

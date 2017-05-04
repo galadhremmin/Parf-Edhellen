@@ -1,0 +1,12 @@
+.profile-header {
+  @extend .clearfix;
+  .tengwar {
+    font-size: 260%;
+    display: block;
+    margin-top: 20px;
+    color: #333;
+  }
+  h1 {
+    margin-top: 12px;
+  }
+}

@@ -1892,7 +1892,9 @@ var EDPreviewForm = function (_React$Component) {
         }
     }, {
         key: 'onSavedResponse',
-        value: function onSavedResponse(response) {}
+        value: function onSavedResponse(response) {
+            window.location.href = '/';
+        }
     }, {
         key: 'onFailedResponse',
         value: function onFailedResponse(response) {

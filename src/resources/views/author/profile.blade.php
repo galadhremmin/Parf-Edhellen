@@ -6,14 +6,14 @@
   @if ($author === null)
     This is not the droid you are looking for.
   @else
-    <header class="clearfix">
+    <header class="profile-header">
       <div class="ed-profile-picture"></div>
+      @if (!empty($author->tengwar))
+      <span aria-hidden="true" class="tengwar">{{ $author->tengwar }}</span>
+      @endif
       <h1>
         {{ $author->nickname }}
       </h1>
-      @if (!empty($author->tengwar))
-      <h2 class="tengwar">{{ $author->tengwar }}</h2>
-      @endif
     </header>
 
     <div class="row">

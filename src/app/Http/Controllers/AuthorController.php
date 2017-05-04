@@ -26,7 +26,7 @@ class AuthorController extends Controller
             $markdownParser = new MarkdownParser();
 
             $profile = $markdownParser->parse($author->profile ?? '');
-            $stats   = $this->_statisticsRepository->getStatisticsForAuthor($author);
+            $stats   = $this->_statisticsRepository->getStatisticsForAccount($author);
         }
 
         return view('author.profile', [
