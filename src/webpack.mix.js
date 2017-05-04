@@ -61,6 +61,10 @@ mix.combine([
 ], 'public/js/glaemscribe.js');
 
 mix.js([
+    'node_modules/babel-polyfill/dist/polyfill.js'
+], 'public/js/ie.js');
+
+mix.js([
     'resources/assets/js/markdown/index.jsx'
 ], 'public/js/markdown.js');
 
