@@ -138,7 +138,7 @@ ALTER TABLE `translation` CHANGE `TranslationID` `id` INT(8) UNSIGNED NOT NULL A
     CHANGE `Tengwar` `tengwar` VARCHAR(128) CHARACTER SET utf8 COLLATE utf8_swedish_ci NULL DEFAULT NULL, 
     CHANGE `Gender` `gender` ENUM('masc','fem','none') CHARACTER SET utf8 COLLATE utf8_swedish_ci NOT NULL DEFAULT 'none', 
     CHANGE `Phonetic` `phonetic` VARCHAR(128) CHARACTER SET utf8 COLLATE utf8_swedish_ci NULL DEFAULT NULL, 
-    CHANGE `ParentTranslationID` `parent_translation_id` INT(10) UNSIGNED NULL DEFAULT NULL, 
+    CHANGE `ChildTranslationID` `child_translation_id` INT(10) UNSIGNED NULL DEFAULT NULL, 
     CHANGE `EldestTranslationID` `origin_translation_id` INT(10) UNSIGNED NULL DEFAULT NULL, 
     CHANGE `NamespaceID` `namespace_id` INT(11) NOT NULL, 
     CHANGE `Index` `is_index` TINYINT(1) NOT NULL DEFAULT '0', 

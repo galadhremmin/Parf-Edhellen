@@ -17,3 +17,4 @@ lib/config/config.wordservice.php
 .settings
 phpinfo.php
 *.log
+src/resources/views/_shared/_ga*

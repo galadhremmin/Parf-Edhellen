@@ -98,6 +98,10 @@ export function beginNavigation(word, normalizedWord, index, modifyState) {
     // because most browsers doesn't change the document title when pushing state
     document.title = title;
 
+    // Inform indirect listeners about the navigation
+    const event = new CustomEvent('ednavigate', { detail: { address, word } });
+    window.dispatchEvent(event);
+
     return dispatch => {
         dispatch(requestNavigation(word, normalizedWord || undefined, index));
 

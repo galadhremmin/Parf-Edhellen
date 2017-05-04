@@ -71,5 +71,8 @@
   <script type="text/javascript" src="/js/vendor.js"></script>
   <script type="text/javascript" src="/js/global.js" async></script>
   @yield('scripts')
+  @if (!empty(env('ED_FOOTER_INCLUDE')))
+    @include(env('ED_FOOTER_INCLUDE'))
+  @endif
   </body>
 </html>
