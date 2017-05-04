@@ -2,74 +2,70 @@
 
 namespace App\Http\Controllers\Resources;
 
-use App\Models\Speech;
+use App\Models\Translation;
 use App\Adapters\SpeechAdapter;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class SpeechController extends Controller
+class TranslationController extends Controller
 {
-    protected $_speechAdapter;
+    /*
+    protected $_translationAdapter;
 
     public function __construct(SpeechAdapter $adapter) 
     {
-        $this->_speechAdapter = $adapter;
+        $this->_translationAdapter = $adapter;
     }
+    */
 
     public function index(Request $request)
     {
-        $speeches = Speech::all()->sortBy('name');
-        return view('speech.index', ['speeches' => $speeches]);
+        return view('translation.index');
     }
 
     public function create(Request $request)
     {
-        return view('speech.create');
+        return view('translation.create');
     }
 
     public function edit(Request $request, int $id) 
     {
-        $speech = Speech::findOrFail($id);
-        return view('speech.edit', ['speech' => $speech]);
+        $translation = Translation::findOrFail($id);
+        return view('translation.edit', ['translation' => $translation]);
     }
 
     public function store(Request $request)
     {
         $this->validateRequest($request);
 
-        $speech = new Speech;
-        $speech->name = $request->input('name');
-        $speech->save();
+        $translation = new Translation;
+        $translation->translation = $request->input('translation');
+        $translation->save();
 
-        return redirect()->route('speech.index');
+        return redirect()->route('translation.index');
     }
 
     public function update(Request $request, int $id)
     {
         $this->validateRequest($request, $id);
 
-        $speech = Speech::findOrFail($id);
-        $speech->name = $request->input('name');
-        
-        $speech->save();
+        $translation = Translation::findOrFail($id);
+        $translation->translation = $request->input('translation');
+        $translation->save();
 
-        return redirect()->route('speech.index');
+        return redirect()->route('translation.index');
     } 
 
     public function destroy(Request $request, int $id) 
     {
-        $speech = Speech::findOrFail($id);
-
-        foreach ($speech->sentenceFragments as $fragment) {
-            $fragment->speech_id = null;
-            $fragment->save();
-        }
-
+        $speech = Translation::findOrFail($id);
+        /*
         $speech->delete();
 
         return redirect()->route('speech.index');
+        */
     }
 
     protected function validateRequest(Request $request, int $id = 0)

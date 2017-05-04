@@ -10,7 +10,7 @@ class TranslationRepository
 {
     public function getKeywordsForLanguage(string $word, $reversed = false, $languageId = 0) 
     {
-        self::formatWord($word);
+        $word = self::formatWord($word);
 
         if ($languageId > 0) {
             $keywords = DB::table('translations as t')
@@ -163,12 +163,12 @@ class TranslationRepository
         return $ids;
     }
 
-    protected static function formatWord(string& $word) 
+    protected static function formatWord(string $word) 
     {
         if (strpos($word, '*') !== false) {
-            $word = str_replace('*', '%', $word);
-        } else {
-            $word .= '%';
-        }
+            return str_replace('*', '%', $word);
+        } 
+        
+        return $word.'%';
     }
 }

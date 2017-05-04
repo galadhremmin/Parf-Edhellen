@@ -15,3 +15,5 @@ update `languages` set `tengwar_mode` = 'westron'
 update `languages` set `tengwar_mode` = 'blackspeech'  
     where `name` in ('Black speech');
 
+alter table `sentence_fragments` add `is_linebreak` smallint(1) not null default 0;
+
