@@ -61,7 +61,8 @@ mix.combine([
 ], 'public/js/glaemscribe.js');
 
 mix.js([
-    'node_modules/babel-polyfill/dist/polyfill.js'
+    'node_modules/babel-polyfill/dist/polyfill.js',
+    'resources/assets/js/_ie/polyfills.js',
 ], 'public/js/ie.js');
 
 mix.js([
