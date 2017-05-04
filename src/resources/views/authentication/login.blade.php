@@ -8,19 +8,30 @@
   <p>
     Greetings traveller! Would you like to join our community? You are more than welcome to do!
   </p>
+  <blockquote>
+    We are not interested in your personal information. We use these
+    services to <em>confirm your identity</em>. That is all. The only information we save is 
+    your e-mail address, which we will be kept secret in our database.
+  </blockquote>
   <p>
-    We believe in protecting your privacy, so we have decided against storing user names and passwords.
-    Instead, we rely on third party identity providers to assert your identity. It works a bit like a
-    passport, where your country provides the identity!
+    We believe in protecting your privacy, and this solution enables us to create accounts without 
+    storing sensitive information, like passwords. These third party identity providers 
+    (as they are called) assert your identity by confirming that you have an account with them. 
+    It works a bit like a passport, where your country provides the identity!
   </p>
 
-  <ul class="list-group">
-    @foreach ($providers as $provider)
-    <li class="list-group-item">
-      <a href="{{ $link->authRedirect($provider->name_identifier) }}" title="{{ $provider->name }}">
-        <img src="/img/openid-providers/{{ $provider->logo_file_name }}" alt="{{ $provider->name }}">
-      </a>
-    </li>
-    @endforeach
-  </ul>
+  <hr>
+
+  @foreach ($providers as $provider)
+  <a href="{{ $link->authRedirect($provider->name_identifier) }}" 
+    style="background-image:url(/img/openid-providers/{{ $provider->logo_file_name }})"
+    title="Log in using {{ $provider->name }}." 
+    class="ed-authorize-idp">
+    {{ $provider->name }}
+  </a>
+  @endforeach
+
+  <hr>
+
+  Do you miss your community? If you would contact <em>@parmaeldo</em> on Twitter, I'll see what I can do!
 @endsection
