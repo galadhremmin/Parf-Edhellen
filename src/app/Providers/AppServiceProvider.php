@@ -24,5 +24,8 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         //
+        $this->mergeConfigFrom(
+            __DIR__.'/../../config/ed.php', 'ed'
+        );
     }
 }
