@@ -53,7 +53,7 @@ class AuthorController extends Controller
         }
 
         $this->validate($request, [
-            'nickname' => 'bail|required|unique:account,nickname,' . $author->id . ',id|min:3|max:32'
+            'nickname' => 'bail|required|unique:accounts,nickname,' . $author->id . ',id|min:3|max:32'
         ]);
 
         $author->nickname = $request->input('nickname');
