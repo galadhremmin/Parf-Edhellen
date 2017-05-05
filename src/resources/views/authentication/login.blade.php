@@ -11,7 +11,7 @@
   <blockquote>
     We are not interested in your personal information. We use these
     services to <em>confirm your identity</em>. That is all. The only information we save is 
-    your e-mail address, which we will be kept secret in our database.
+    your e-mail address, which is kept secret in our database.
   </blockquote>
   <p>
     We believe in protecting your privacy, and this solution enables us to create accounts without 
