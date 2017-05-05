@@ -16,4 +16,5 @@ src/public/img
 src/public/fonts
 src/bootstrap/cache
 src/storage
+src/public/google*.html
 
