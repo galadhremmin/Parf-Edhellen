@@ -108,7 +108,21 @@ class EDFragmentForm extends EDStatefulFormComponent {
             editingFragmentIndex: fragmentIndex
         });
 
-        return promise;
+        return promise.then(() => {
+            // Select the first component with an invalid value
+            if (! this.translationInput.getValue()) {
+                this.translationInput.focus();
+            }
+            else if (! this.tengwarInput.value) {
+                this.tengwarInput.focus();
+            }
+            else if (! this.speechInput.getValue()) {
+                this.speechInput.focus();
+            } 
+            else if (this.inflectionInput.getValue().length < 1) {
+                this.inflectionInput.focus();
+            }
+        });
     }
 
     scrollToForm() {
@@ -184,7 +198,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
             }
 
             if (buffer.length > 0) {
-                newFragments.push(buffer, false);
+                newFragments.push(this.createFragment(buffer, false));
             }
         }
 
@@ -299,9 +313,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
                 // the next index lies within the bounds of the array. Execute in a new
                 // thread to leave the event handler.
                 window.setTimeout(() => {
-                    this.editFragment(nextIndex).then(() => {
-                        this.translationInput.focus();
-                    });
+                    this.editFragment(nextIndex);
                     this.scrollToForm(); // for mobile devices
                 }, 0);
 

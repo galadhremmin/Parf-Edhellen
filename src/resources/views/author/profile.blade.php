@@ -7,7 +7,7 @@
     This is not the droid you are looking for.
   @else
     <header class="profile-header">
-      <div class="ed-profile-picture"></div>
+      <div class="ed-profile-picture" {!! $avatar ? 'style="background-image:url('.$avatar.')"' : '' !!}></div>
       @if (!empty($author->tengwar))
       <span aria-hidden="true" class="tengwar">{{ $author->tengwar }}</span>
       @endif
