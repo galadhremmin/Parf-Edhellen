@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use \Illuminate\Auth\AuthenticationException;
 use \Illuminate\Contracts\Foundation\Application;
+use \Illuminate\Http\Request;
 use Closure;
 
 class EnsureHttpsAndWww
