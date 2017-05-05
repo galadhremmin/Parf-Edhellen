@@ -4,6 +4,29 @@ This is the source code for [elfdict.com](http://www.elfdict.com), a non-profit,
 
 Version 1.9.5 is in production.
 
+Configuration
+-------------
+Installation is relatively easy:
+1. Shut down your web server
+2. Configure your web server to serve the _src/public_ directory. 
+3. Make _src/storage_ writeable.
+4. Review the application's _.env_ configuration
+5. Compile stylesheets and JavaScript assets.
+6. Cache sysconfig and routing configuration.
+7. Create a symlink to the storage directory (for avatars)
+
+> Always make sure to follow Laravel's guidelines and best practices before moving the app into production.
+
+```
+chmod -R o+w project/storage # step 3
+cp .env.example .env         # step 4
+vim .env                     # step 4
+npm run production           # step 5
+php artisan config:cache     # step 6 
+php artisan route:cache      # step 6
+php artisan storage:link     # step 7
+```
+
 Want to help out?
 -----------------
 
