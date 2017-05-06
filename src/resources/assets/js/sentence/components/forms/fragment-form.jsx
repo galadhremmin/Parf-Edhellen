@@ -100,6 +100,20 @@ class EDFragmentForm extends EDStatefulFormComponent {
                 this.inflectionInput.setValue(data.inflections ? data.inflections : []);
                 this.tengwarInput.value = data.tengwar || '';
                 this.commentsInput.setValue(data.comments || '');
+            }).then(() => {
+                // Select the first component with an invalid value
+                if (! this.translationInput.getValue()) {
+                    this.translationInput.focus();
+                }
+                else if (! this.tengwarInput.value) {
+                    this.tengwarInput.focus();
+                }
+                else if (! this.speechInput.getValue()) {
+                    this.speechInput.focus();
+                } 
+                else if (this.inflectionInput.getValue().length < 1) {
+                    this.inflectionInput.focus();
+                }
             });
         }
 
@@ -108,21 +122,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
             editingFragmentIndex: fragmentIndex
         });
 
-        return promise.then(() => {
-            // Select the first component with an invalid value
-            if (! this.translationInput.getValue()) {
-                this.translationInput.focus();
-            }
-            else if (! this.tengwarInput.value) {
-                this.tengwarInput.focus();
-            }
-            else if (! this.speechInput.getValue()) {
-                this.speechInput.focus();
-            } 
-            else if (this.inflectionInput.getValue().length < 1) {
-                this.inflectionInput.focus();
-            }
-        });
+        return promise;
     }
 
     scrollToForm() {
@@ -354,8 +354,9 @@ class EDFragmentForm extends EDStatefulFormComponent {
         let erroneousIndexes = [];
         for (let erroneousElementName in result.response.data) {
             const parts = /^fragments.([0-9]+).([a-zA-Z0-9_]+)/.exec(erroneousElementName);
-            if (parts.length < 3) {
-                continue; // unsupported response format
+            if (parts === null) {
+                errors = [...errors, ...result.response.data[erroneousElementName]];
+                continue;
             }
 
             const index = parseInt(parts[1], 10);
@@ -373,7 +374,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
             errors.push(`${fragmentData.fragment} (${index + 1}-th word) is missing or has an invalid ${missing}.`);
         }
 
-        if (erroneousIndexes.length > 0) {
+        if (errors.length > 0) {
             this.setState({
                 errors,
                 erroneousIndexes
@@ -404,6 +405,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
 
                 Please try to be as thorough as possible as it will make the database more useful for everyone.
             </p>
+            <EDErrorList errors={this.state.errors} />
             <div className="form-group">
                 <label htmlFor="ed-sentence-phrase" className="control-label">Phrase</label>
                 <textarea id="ed-sentence-phrase" className="form-control" name="phrase" rows="8" 
@@ -435,7 +437,6 @@ class EDFragmentForm extends EDStatefulFormComponent {
                     </div> 
                 ) : (
                     <div className="well">
-                        <EDErrorList errors={this.state.errors} />
                         <div className="form-group">
                             <label htmlFor="ed-sentence-fragment-word" className="control-label">Word</label>
                             <EDTranslationSelect componentId="ed-sentence-fragment-word" languageId={this.props.language_id}

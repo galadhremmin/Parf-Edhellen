@@ -19,7 +19,8 @@ export const EDSearchResultsReducer = (state = {
         case REQUEST_RESULTS:
             return Object.assign({}, state, {
                 loading: true,
-                wordSearch: action.wordSearch
+                wordSearch: action.wordSearch,
+                itemIndex: -1
             });
 
         case REQUEST_NAVIGATION:
@@ -60,7 +61,7 @@ export const EDSearchResultsReducer = (state = {
 
         case SET_SELECTION:
             return Object.assign({}, state, {
-                itemIndex: state.index === -1
+                itemIndex: state.index === -1 || !Array.isArray(state.items)
                     ? -1
                     : Math.max(0, Math.min(state.items.length - 1, action.index))
             });

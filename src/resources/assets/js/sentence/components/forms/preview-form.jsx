@@ -24,6 +24,8 @@ class EDPreviewForm extends React.Component {
     }
 
     componentWillMount() {
+        // build a request object for the markdown parser, which is passed to the 
+        // server, before the store is established.
         const markdowns = {};
 
         const longDescription = this.props.sentenceLongDescription;
