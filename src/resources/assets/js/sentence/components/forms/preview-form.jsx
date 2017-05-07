@@ -24,6 +24,14 @@ class EDPreviewForm extends React.Component {
     }
 
     componentWillMount() {
+        // dirty deep copy to ensure loss of all references!
+        const fragments = JSON.parse(JSON.stringify(this.props.fragments)); 
+
+        // generate fake IDs
+        fragments.forEach((f, i) => {
+            f.id = -i - 1;
+        });
+
         // build a request object for the markdown parser, which is passed to the 
         // server, before the store is established.
         const markdowns = {};
@@ -33,8 +41,9 @@ class EDPreviewForm extends React.Component {
             markdowns['long_description'] = longDescription;
         }
 
-        for (let i = 0; i < this.props.fragments.length; i += 1) {
-            const data = this.props.fragments[i];
+        // identify fragments by index.
+        for (let i = 0; i < fragments.length; i += 1) {
+            const data = fragments[i];
 
             if (! data.interpunctuation && !/^\s*$/.test(data.comments)) {
                 markdowns['fragment-' + i] = data.comments;
@@ -43,9 +52,9 @@ class EDPreviewForm extends React.Component {
 
         if (Object.keys(markdowns).length > 0) {
             axios.post(EDConfig.api('utility/markdown'), { markdowns })
-                .then(this.onHtmlReceive.bind(this));
+                .then(resp => this.onHtmlReceive(resp, fragments));
         } else {
-            this.createStore(this.props.fragments);
+            this.createStore(fragments);
         }
     }
 
@@ -58,19 +67,17 @@ class EDPreviewForm extends React.Component {
         });
     }
 
-    onHtmlReceive(resp) {
-        // dirty deep copy to ensure loss of all references!
-        const fragments = JSON.parse(JSON.stringify(this.props.fragments)); 
-        const keys = Object.keys(resp.data);
+    onHtmlReceive(response, fragments) {
+        const keys = Object.keys(response.data);
 
         for (let key of keys) {
             if (key === 'long_description') {
                 this.setState({
-                    longDescription: resp.data[key]
+                    longDescription: response.data[key]
                 });
             } else if (key.substr(0, 9) === 'fragment-') {
                 const index = parseInt(key.substr(9), 10);
-                fragments[index].comments = resp.data[key];
+                fragments[index].comments = response.data[key];
             }
         }
 

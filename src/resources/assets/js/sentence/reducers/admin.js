@@ -44,6 +44,7 @@ const EDSentenceAdminReducer = (state = {
                         ...f,
                         translation_id: action.data.translation_id,
                         speech_id:      action.data.speech_id,
+                        speech:         action.data.speech,
                         comments:       action.data.comments,
                         tengwar:        action.data.tengwar,
                         is_linebreak:   action.data.is_linebreak,

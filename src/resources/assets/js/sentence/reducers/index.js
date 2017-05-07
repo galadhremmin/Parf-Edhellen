@@ -10,17 +10,19 @@ const EDSentenceReducer = (state = {
     switch (action.type) {
 
         case REQUEST_FRAGMENT:
-            return Object.assign({}, state, {
+            return {
+                ...state,
                 fragmentId: action.fragmentId,
                 loading: true
-            });
+            };
 
         case RECEIVE_FRAGMENT:
-            return Object.assign({}, state, {
+            return {
+                ...state,
                 translationId: action.translationId,
                 bookData: action.bookData,
                 loading: false
-            });
+            };
 
         default:
             return state;

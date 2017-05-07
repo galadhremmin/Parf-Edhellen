@@ -265,11 +265,13 @@ class EDFragmentForm extends EDStatefulFormComponent {
         const translation = this.translationInput.getValue();
         const inflections = this.inflectionInput.getValue() || [];
         const speech_id = this.speechInput.getValue();
+        const speech = this.speechInput.getText();
         const comments = this.commentsInput.getValue();
         const tengwar = this.tengwarInput.value;
 
         let fragmentData = {
             speech_id,
+            speech,
             inflections,
             comments,
             tengwar,

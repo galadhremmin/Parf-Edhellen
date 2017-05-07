@@ -13,7 +13,9 @@ class EDFragmentExplorer extends React.Component {
         super(props);
         this.state = {
             fragmentIndex: 0,
-            fragmentLines: []
+            fragmentLines: Array.isArray(props.fragments)
+                ? this.createFragmentLines(props.fragments, false) 
+                : []
         };
     }
 
@@ -40,36 +42,40 @@ class EDFragmentExplorer extends React.Component {
      */
     componentWillReceiveProps(props) {
         if (Array.isArray(props.fragments)) {
-            let fragmentLines = [];
-            let lastIndex = 0;
-            let fakeId = -1;
+            this.createFragmentLines(props.fragments);
+        }
+    }
 
-            // Look for line breaks and slice the array by those fragments
-            for (let i = 0; i < props.fragments.length; i += 1) {
-                const fragment = props.fragments[i];
+    /**
+     * Receives an array of fragments and divides it into fragment lines, which in turn is rendered.
+     * @param {Object[]} fragments 
+     * @param {boolean} updateState
+     */
+    createFragmentLines(fragments, updateState = true) {
+        let fragmentLines = [];
+        let lastIndex = 0;
 
-                if (fragment.is_linebreak || i + 1 === props.fragments.length) {
-                    const fragments = props.fragments.slice(lastIndex, 
-                        i + 1 === props.fragments.length
-                            ? i + 1 // at the end, make sure to also include the last fragment.
-                            : i);
-                    // generate fake IDs if they don't exist.
-                    fragments.forEach(f => {
-                        if (! f.id) {
-                            f.id = fakeId;
-                        }
-                        fakeId -= 1;
-                    });
+        // Look for line breaks and slice the array by those fragments
+        for (let i = 0; i < fragments.length; i += 1) {
+            const fragment = fragments[i];
 
-                    fragmentLines.push(fragments);
-                    lastIndex = i + 1; // +1 to skip the line break fragment.
-                }
+            if (fragment.is_linebreak || i + 1 === fragments.length) {
+                const fragmentsForLine = fragments.slice(lastIndex, 
+                    i + 1 === fragments.length
+                        ? i + 1 // at the end, make sure to also include the last fragment.
+                        : i);
+                fragmentLines.push(fragmentsForLine);
+                lastIndex = i + 1; // +1 to skip the line break fragment.
             }
+        }
 
+        if (updateState) {
             this.setState({
                 fragmentLines
             });
         }
+
+        return fragmentLines;
     }
 
     /**
@@ -173,22 +179,29 @@ class EDFragmentExplorer extends React.Component {
         const nextIndex = this.nextFragmentIndex();
 
         return <div className="well ed-fragment-navigator">
-            {this.state.fragmentLines.map((fragments, fi) => 
-                <p className="tengwar ed-tengwar-fragments" key={`tngc${fi}`}>
-                    {fragments.map((f, i) => <EDTengwarFragment fragment={f}
-                                                                key={`tng${fi}.${f.id}`}
-                                                                selected={f.id === this.props.fragmentId} />)}
-                </p>
-            )}
-            <hr />
-            {this.state.fragmentLines.map((fragments, fi) => 
-                <p className="ed-elvish-fragments" key={`frgc${fi}`}>
-                    { fragments.map((f, i) => <EDFragment fragment={f}
-                                                          key={`frg${fi}.${f.id}`} 
-                                                          selected={f.id === this.props.fragmentId}
-                                                          onClick={this.onFragmentClick.bind(this)} />) }
-                </p>
-            )}
+            <div className="row">
+                <div className="col-md-12 col-lg-6">
+                {this.state.fragmentLines.map((fragments, fi) => 
+                    <p className="tengwar ed-tengwar-fragments" key={`tngc${fi}`}>
+                        {fragments.map((f, i) => <EDTengwarFragment fragment={f}
+                                                                    key={`tng${fi}.${f.id}`}
+                                                                    selected={f.id === this.props.fragmentId} />)}
+                    </p>
+                )}
+                </div>
+                <hr className="hidden-lg" />
+                <div className="col-md-12 col-lg-6">
+                {this.state.fragmentLines.map((fragments, fi) => 
+                    <p className="ed-elvish-fragments" key={`frgc${fi}`}>
+                        { fragments.map((f, i) => <EDFragment fragment={f}
+                                                            key={`frg${fi}.${f.id}`} 
+                                                            selected={f.id === this.props.fragmentId}
+                                                            onClick={this.onFragmentClick.bind(this)} />) }
+                    </p>
+                )}
+                </div>
+            </div>
+            <hr className="hidden-xs hidden-sm hidden-md" />
             <nav>
                 <ul className="pager">
                     <li className={classNames('previous', { 'hidden': previousIndex === this.state.fragmentIndex })}>

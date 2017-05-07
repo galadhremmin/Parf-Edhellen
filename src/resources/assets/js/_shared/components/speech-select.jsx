@@ -47,6 +47,13 @@ class EDSpeechSelect extends React.Component {
     }
 
     /**
+     * Gets current visual value.
+     */
+    getText() {
+        return this.selectInput.options[this.selectInput.selectedIndex].textContent;
+    }
+
+    /**
      * Gives focus to the component's input element.
      */
     focus() {

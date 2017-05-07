@@ -43,6 +43,13 @@ class EDTranslationSelect extends React.Component {
     }
 
     /**
+     * Gets current visual value.
+     */
+    getText() {
+        return this.state.word;
+    }
+
+    /**
      * Gives focus to the component's input element.
      */
     focus() {

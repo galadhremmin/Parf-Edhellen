@@ -58,6 +58,13 @@ class EDInflectionSelect extends React.Component {
     }
 
     /**
+     * Gets current visual value.
+     */
+    getText() {
+        return this.state.selectedInflections.map(i => i.name);
+    }
+
+    /**
      * Gives focus to the component's input element.
      */
     focus() {
