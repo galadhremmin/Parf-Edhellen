@@ -69,7 +69,7 @@ Route::group([
 // API
 Route::group([ 
         'namespace' => 'Api\v1', 
-        'prefix'    => 'api/v1' 
+        'prefix'    => 'api/v1'
     ], function () {
 
     Route::get('book/translate/{translationId}', [ 'uses' => 'BookApiController@get' ]);
@@ -83,4 +83,15 @@ Route::group([
 
     Route::post('utility/markdown',              [ 'uses' => 'UtilityApiController@parseMarkdown' ]);
 
+});
+
+// API for administrators
+Route::group([ 
+        'namespace' => 'Api\v1', 
+        'prefix'    => 'api/v1',
+        'middleware' => ['auth', 'auth.require-role:Administrators']
+    ], function () {
+    Route::get('account',       [ 'uses' => 'AccountApiController@index' ]);
+    Route::get('account/{id}',  [ 'uses' => 'AccountApiController@getAccount' ]);
+    Route::post('account/find', [ 'uses' => 'AccountApiController@findAccount' ]);
 });

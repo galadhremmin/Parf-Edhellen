@@ -4,45 +4,46 @@ import classNames from 'classnames';
 import EDConfig from 'ed-config';
 import Autosuggest from 'react-autosuggest';
 
-class EDTranslationSelect extends React.Component {
+class EDAccountSelect extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            suggestions: props.suggestions || [],
-            value: props.value || undefined,
-            word: ''
+            suggestions: [],
+            nickname: '',
+            value: props.value || 0,
+            selectedNickname: undefined
         };
     }
 
-    componentWillReceiveProps(props) {
-        if (Array.isArray(props.suggestions)) {
-            this.setState({
-                suggestions: props.suggestions,
-                suggestionsFor: undefined
-            });
-        }
-    }
-
     /**
-     * Sets the word currently selected.
-     * @param {Object} value - Translation object
+     * Sets the account currently selected.
+     * @param {Object|number} account - Account object
      */
-    setValue(value) {
-        const originalValue = this.state.value;
+    setValue(account) {
+        if (! account) {
+            this.setState({
+                value: 0,
+                selectedNickname: undefined,
+                nickname: ''
+            });
+        } else if (typeof account === 'number' && isFinite(account)) {
+             axios.get(EDConfig.api(`account/${account}`))
+                .then(resp => this.setValue(resp.data))
+                .catch(resp => this.setValue(undefined));
+        } else {
+            this.setState({
+                value: account.id,
+                nickname: account.nickname,
+                selectedNickname: account.nickname
+            });
 
-        this.setState({
-            value,
-            word: value ? value.word : ''
-        });
-
-        if (originalValue !== value) {
             this.triggerChange();
         }
     }
 
     /**
-     * Gets the word currently selected.
+     * Gets the id for the account currently selected.
      */
     getValue() {
         return this.state.value;
@@ -52,7 +53,7 @@ class EDTranslationSelect extends React.Component {
      * Gets current visual value.
      */
     getText() {
-        return this.state.word;
+        return this.state.selectedNickname;
     }
 
     /**
@@ -70,25 +71,19 @@ class EDTranslationSelect extends React.Component {
         }
     }
 
-    onWordChange(ev, data) {
-        const value = this.state.value && this.state.value.word === data.newValue
-                ? this.state.value : undefined;
-
+    onNicknameChange(ev, data) {
         this.setState({
-            word: data.newValue,
-            value
+            nickname: data.newValue,
+            value: this.state.selectedNickname === data.newValue
+                ? this.state.value : undefined
         });
-
-        if (value !== this.state.value) {
-            this.triggerChange();
-        }
     }
 
     onSuggestionsFetchRequest(data) {
-        const word = (data.value || '').toLocaleLowerCase();
+        const nickname = (data.value || '').toLocaleLowerCase();
 
         // already fetching suggestions?
-        if (this.loading || /^\s*$/.test(word) || this.state.suggestionsFor === word) {
+        if (this.loading || /^\s*$/.test(nickname) || this.state.suggestionsFor === nickname) {
             return;
         }
 
@@ -103,14 +98,11 @@ class EDTranslationSelect extends React.Component {
             this.loading = true;
 
             // Retrieve suggestions for the specified word.
-            axios.post(EDConfig.api('book/suggest'), {
-                words: [ word ], 
-                language_id: this.props.languageId,
-                inexact: true
-            }).then(resp => {
+            axios.post(EDConfig.api('account/find'), { nickname, max: 10 })
+            .then(resp => {
                 this.setState({
-                    suggestions: resp.data[word] || [],
-                    suggestionsFor: word
+                    suggestions: resp.data,
+                    suggestionsFor: nickname
                 });
 
                 this.loading = false;
@@ -121,19 +113,17 @@ class EDTranslationSelect extends React.Component {
 
     onSuggestionsClearRequest() {
         this.setState({
-            suggestions: !Array.isArray(this.props.suggestions) ||
-                this.props.suggestions === this.state.suggestions
-                ? [] : this.props.suggestions
+            suggestions: []
         });
     }
 
     onSuggestionSelect(ev, data) {
         ev.preventDefault();
-        this.setValue(data.suggestion  || undefined);
+        this.setValue(data.suggestion || undefined);
     }
 
     getSuggestionValue(suggestion) {
-        return suggestion.word;
+        return `${suggestion.nickname}`;
     }
 
     triggerChange() {
@@ -141,7 +131,7 @@ class EDTranslationSelect extends React.Component {
             window.setTimeout(() => {
                 this.props.onChange({
                     target: this,
-                    value: this.state.value 
+                    value: this.state.value
                 });
             }, 0);
         }
@@ -158,30 +148,16 @@ class EDTranslationSelect extends React.Component {
     }
 
     renderSuggestion(suggestion) {
-        return <div title={suggestion.comments}>
-            <strong>{suggestion.word}</strong>
-            {': '}
-            {suggestion.type ? <em>{`${suggestion.type} `}</em> : ''}
-            {suggestion.translation}
-            {' '}
-            [{suggestion.source}]<br />
-            <small>
-                {'by '}
-                <em>{suggestion.account_name}</em> 
-                {' '}
-                {suggestion.translation_group_name 
-                    ? <span>(<em>{suggestion.translation_group_name}</em>)</span> : ''}
-            </small>
-        </div>
+        return <div>{suggestion.nickname} [{suggestion.id}]</div>;
     }
 
     render() {
         const inputProps = {
-            placeholder: 'Search for a suitable translation',
-            value: this.state.word,
+            placeholder: 'Search for an account',
+            value: this.state.nickname,
             name: this.props.componentName,
             id: this.props.componentId,
-            onChange: this.onWordChange.bind(this)
+            onChange: this.onNicknameChange.bind(this)
         };
 
         return <div>
@@ -202,11 +178,10 @@ class EDTranslationSelect extends React.Component {
     }
 }
 
-EDTranslationSelect.defaultProps = {
-    componentName: 'word',
+EDAccountSelect.defaultProps = {
+    componentName: 'account',
     componentId: undefined,
-    value: 0,
-    languageId: 0
+    value: 0
 };
 
-export default EDTranslationSelect;
+export default EDAccountSelect;

@@ -9,6 +9,7 @@ import EDConfig from 'ed-config';
 import { EDStatefulFormComponent } from 'ed-form';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
 import EDErrorList from 'ed-components/error-list';
+import EDAccountSelect from '../../../_shared/components/account-select';
 
 class EDSentenceForm extends EDStatefulFormComponent {
 
@@ -16,12 +17,15 @@ class EDSentenceForm extends EDStatefulFormComponent {
         super(props);
 
         this.state = {
+            id: 0,
+            account_id: 0,
             name: '',
             source: '',
             language_id: 0,
             is_neologism: false,
             description: '',
             long_description: '',
+            account: undefined,
             errors: undefined
         };
 
@@ -36,7 +40,8 @@ class EDSentenceForm extends EDStatefulFormComponent {
             language_id: this.props.sentenceLanguageId,
             description: this.props.sentenceDescription,
             long_description: this.props.sentenceLongDescription,
-            is_neologism: this.props.sentenceIsNeologism
+            is_neologism: this.props.sentenceIsNeologism,
+            account_id: this.props.sentenceAccountId
         });
     }
 
@@ -51,7 +56,8 @@ class EDSentenceForm extends EDStatefulFormComponent {
             language_id: state.language_id,
             description: state.description,
             long_description: state.long_description,
-            is_neologism: state.is_neologism
+            is_neologism: state.is_neologism,
+            account_id: state.account_id
         };
 
         axios.post('/admin/sentence/validate', payload)
@@ -121,6 +127,11 @@ class EDSentenceForm extends EDStatefulFormComponent {
                     value={this.state.source} onChange={super.onChange.bind(this)} />
             </div>
             <div className="form-group">
+                <label htmlFor="ed-sentence-account" className="control-label">Account</label>
+                <EDAccountSelect componentId="ed-sentence-account" componentName="account_id" 
+                    value={this.state.account_id} onChange={super.onChange.bind(this)} />
+            </div>
+            <div className="form-group">
                 <label htmlFor="ed-sentence-language" className="control-label">Language</label>
                 <select className="form-control" id="ed-sentence-language" name="language_id" 
                     onChange={ev => super.onChange(ev, 'number')} value={this.state.language_id}>
@@ -165,6 +176,7 @@ const mapStateToProps = state => {
         sentenceDescription: state.description,
         sentenceLongDescription: state.long_description,
         sentenceIsNeologism: state.is_neologism,
+        sentenceAccountId: state.account_id,
         sentenceId: state.id
     };
 };

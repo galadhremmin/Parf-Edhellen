@@ -32,8 +32,8 @@ class EDInflectionSelect extends React.Component {
         });
 
         this.setState({
-          inflections,
-          groupNames
+            inflections,
+            groupNames
         });
     }
 
@@ -48,6 +48,8 @@ class EDInflectionSelect extends React.Component {
             selectedInflections,
             value: ''
         });
+
+        this.triggerChange();
     }
 
     /**
@@ -118,6 +120,17 @@ class EDInflectionSelect extends React.Component {
         );
     }
 
+    triggerChange() {
+        if (typeof this.props.onChange === 'function') {
+            window.setTimeout( () => {
+                this.props.onChange({
+                    target: this,
+                    value: this.state.selectedInflections
+                });
+            }, 0);
+        }
+    }
+
     onInflectionChange(ev, data) {
         this.setState({
             value: data.newValue
@@ -125,9 +138,7 @@ class EDInflectionSelect extends React.Component {
     }
 
     onRemoveInflectionClick(ev, inflection) {
-        this.setState({
-            selectedInflections: this.state.selectedInflections.filter(i => i.id !== inflection.id)
-        });
+        this.setValue(this.state.selectedInflections.filter(i => i.id !== inflection.id));
     }
 
     onSuggestionSelect(ev, data) {

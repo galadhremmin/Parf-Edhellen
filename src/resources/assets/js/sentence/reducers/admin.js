@@ -5,6 +5,8 @@ export const SET_FRAGMENT_DATA = 'ED_SET_FRAGMENT_DATA';
 export const SET_SENTENCE_DATA = 'ED_SET_SENTENCE_DATA';
 
 const EDSentenceAdminReducer = (state = {
+    id: 0,
+    account_id: 0,
     name: '',
     source: '',
     language_id: undefined,
@@ -12,7 +14,6 @@ const EDSentenceAdminReducer = (state = {
     long_description: '',
     is_neologism: false,
     fragments: [],
-    id: 0,
     languages: EDConfig.languages(),
     loading: false,
     suggestions: undefined

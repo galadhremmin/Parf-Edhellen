@@ -112,6 +112,7 @@ class SentenceController extends Controller
         $sentence->long_description = $request->input('long_description') ?? null;
         $sentence->language_id      = intval($request->input('language_id'));
         $sentence->is_neologism     = intval($request->input('is_neologism'));
+        $sentence->account_id       = intval($request->input('account_id'));
         $sentence->is_approved      = 1; // always approved by administrators
 
         $sentence->save();
@@ -177,7 +178,8 @@ class SentenceController extends Controller
             'language_id'  => 'required|numeric|exists:languages,id',
             'source'       => 'required|min:3|max:64',
             'id'           => 'sometimes|required|numeric|exists:sentences,id',
-            'is_neologism' => 'required|boolean'
+            'is_neologism' => 'required|boolean',
+            'account_id'   => 'required|numeric|exists:accounts,id'
         ];
 
         $this->validate($request, $rules);

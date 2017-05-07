@@ -37,6 +37,8 @@ class EDSpeechSelect extends React.Component {
         this.setState({
             value
         });
+
+        this.triggerChange();
     }
 
     /**
@@ -62,9 +64,16 @@ class EDSpeechSelect extends React.Component {
 
     onSpeechChange(ev) {
         this.setValue(parseInt(ev.target.value, 10));
+    }
 
+    triggerChange() {
         if (typeof this.props.onChange === 'function') {
-            this.props.onChange(ev);
+            window.setTimeout(() => {
+                this.props.onChange({ 
+                    target: this,
+                    value: this.state.value 
+                });
+            }, 0);
         }
     }
 
