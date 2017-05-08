@@ -16,7 +16,12 @@
     @if(!empty($sentence->description))
     <p>{{ $sentence->description }}</p>
     @endif
-    <footer>{{ $sentence->source }}</footer>
+    <footer>
+      {{ $sentence->source }}
+      @if ($sentence->account_id)
+      by <a href="{{ $link->author($sentence->account_id, $sentence->account_name) }}">{{ $sentence->account_name }}</a>.
+      @endif
+    </footer>
     
     @include('sentence.public._readmore', [ 
       'languageId'     => $language->id,
