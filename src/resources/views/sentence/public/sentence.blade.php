@@ -34,7 +34,10 @@
 
   <footer class="sentence-footer">
     Source [{{ $sentence->source }}]. 
-    Published {{ $sentence->created_at }}
+    Published <em title="{{ $sentence->created_at }}">{{ $sentence->created_at->format('Y-m-d') }}</em>
+    @if ($sentence->updated_at)
+    and edited <em title="{{ $sentence->updated_at }}">{{ $sentence->updated_at->format('Y-m-d H:i') }}</em>
+    @endif
     @if ($sentence->account_id)
     by 
     <a href="{{ $link->author($sentence->account_id, $sentence->account->nickname) }}">
