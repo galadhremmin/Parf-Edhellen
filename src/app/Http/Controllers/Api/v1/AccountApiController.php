@@ -32,10 +32,12 @@ class AccountApiController extends Controller
 
         $query = null;
         if (is_numeric($nickname)) {
-            $query = Account::where('id', intval($nickname));
+            $query = Account::where('id', intval($nickname))
+                ->select('id', 'nickname');
         }
 
         $queryByNickname = Account::where('nickname', 'like', $nickname.'%')
+            ->select('id', 'nickname')
             ->orderBy('nickname');
 
         if (! $query) {

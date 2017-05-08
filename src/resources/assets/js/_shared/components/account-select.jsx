@@ -16,6 +16,12 @@ class EDAccountSelect extends React.Component {
         };
     }
 
+    componentWillReceiveProps(props) {
+        if (props.value) {
+            this.setValue(props.value);
+        }
+    }
+
     /**
      * Sets the account currently selected.
      * @param {Object|number} account - Account object
@@ -28,9 +34,11 @@ class EDAccountSelect extends React.Component {
                 nickname: ''
             });
         } else if (typeof account === 'number' && isFinite(account)) {
-             axios.get(EDConfig.api(`account/${account}`))
-                .then(resp => this.setValue(resp.data))
-                .catch(resp => this.setValue(undefined));
+            if (this.state.value != account) {
+                axios.get(EDConfig.api(`account/${account}`))
+                    .then(resp => this.setValue(resp.data))
+                    .catch(resp => this.setValue(undefined));
+            }
         } else {
             this.setState({
                 value: account.id,

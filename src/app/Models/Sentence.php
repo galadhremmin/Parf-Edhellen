@@ -19,7 +19,7 @@ class Sentence extends Model
 
     public function account()
     {
-        return $this->hasOne(Account::class);
+        return $this->belongsTo(Account::class);
     }
     
     public function scopeNeologisms($query)

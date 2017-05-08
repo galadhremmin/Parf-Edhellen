@@ -95,6 +95,7 @@ class EDPreviewForm extends React.Component {
         const props = this.props;
         const payload = {
             id:               props.sentenceId || undefined,
+            account_id:       props.sentenceAccountId,
             name:             props.sentenceName,
             source:           props.sentenceSource,
             language_id:      props.sentenceLanguageId,
@@ -174,6 +175,7 @@ const mapStateToProps = state => {
         sentenceDescription: state.description,
         sentenceLongDescription: state.long_description,
         sentenceIsNeologism: state.is_neologism,
+        sentenceAccountId: state.account_id,
         sentenceId: state.id
     };
 };

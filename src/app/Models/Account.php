@@ -41,6 +41,10 @@ class Account extends Authenticatable
         return $memberStatus;
     }
 
+    public function isAdministrator() {
+        return $this->memberOf('Administrators');
+    }
+
     public function getAuthIdentifierName()
     {
         return 'id';

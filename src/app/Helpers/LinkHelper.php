@@ -8,9 +8,16 @@ class LinkHelper
 {
     public function author(int $authorId, string $authorName)
     {
+        $nickname = StringHelper::normalizeForUrl($authorName);
+        if (empty($nickname)) {
+            return route('author.profile-without-nickname', [
+                'id' => $authorId
+            ]);
+        }
+
         return route('author.profile', [
             'id' => $authorId,
-            'nickname' => StringHelper::normalizeForUrl($authorName)
+            'nickname' => $nickname
         ]);
     }
 

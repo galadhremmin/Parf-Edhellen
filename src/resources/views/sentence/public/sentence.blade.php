@@ -23,12 +23,22 @@
 
   {!! $sentence->long_description !!}
 
+  @if (Auth::check() && Auth::user()->isAdministrator())
+  <p class="text-right">
+    <a href="{{ route('sentence.edit', [ 'id' => $sentence->id ]) }}" class="btn btn-default">
+      <span class="glyphicon glyphicon-edit"></span>
+      Edit phrase
+    </a>
+  </p>
+  @endif  
+
   <footer class="sentence-footer">
+    Source [{{ $sentence->source }}]. 
     Published {{ $sentence->created_at }}
-    @if ($sentence->author_id)
+    @if ($sentence->account_id)
     by 
-    <a href="{{ $link->author($sentence->author_id, $sentence->author->nickname) }}">
-      {{ $sentence->author->nickname }}
+    <a href="{{ $link->author($sentence->account_id, $sentence->account->nickname) }}">
+      {{ $sentence->account->nickname }}
     </a>
     @endif
   </footer>

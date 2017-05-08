@@ -111,8 +111,8 @@ class SentenceController extends Controller
         $sentence->description      = $request->input('description');
         $sentence->long_description = $request->input('long_description') ?? null;
         $sentence->language_id      = intval($request->input('language_id'));
-        $sentence->is_neologism     = intval($request->input('is_neologism'));
         $sentence->account_id       = intval($request->input('account_id'));
+        $sentence->is_neologism     = intval($request->input('is_neologism'));
         $sentence->is_approved      = 1; // always approved by administrators
 
         $sentence->save();
