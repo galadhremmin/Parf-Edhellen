@@ -6,6 +6,10 @@
 
   {!! Breadcrumbs::render('sentence.public.sentence', $language->id, $language->name,
       $sentence->id, $sentence->name) !!}
+  
+  @if ($sentence->is_neologism)
+    @include('_shared._neologism', ['account' => $sentence->account])
+  @endif
 
   <header>
     @include('sentence.public._header')

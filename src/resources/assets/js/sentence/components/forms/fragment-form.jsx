@@ -162,7 +162,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
             let flush = false;
             let additionalFragment = undefined;
 
-            const interpunctuationReg = /^[,\.!\?\n]$/;
+            const interpunctuationReg = /^[·,\.!\?\n\-]$/;
 
             for (let c of phrase) {
 

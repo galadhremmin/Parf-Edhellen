@@ -23,6 +23,11 @@ class SentenceFragment extends Model
 
     public function isPunctuationOrWhitespace() 
     {
-        return $this->is_linebreak || preg_match('/^[,\\.!\\?\\n\\s]$/', $this->fragment);
+        return $this->is_linebreak || preg_match('/^[·,\\.!\\?\\n\\s\\-]$/u', $this->fragment);
+    }
+
+    public function isDot() 
+    {
+        return preg_match('/^[·\\-]$/u', $this->fragment);
     }
 }

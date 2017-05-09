@@ -32,13 +32,12 @@ class AuthorController extends Controller
             $stats   = $this->_statisticsRepository->getStatisticsForAccount($author);
         }
 
-        $filePath = 'avatars/'.$author->id.'.png';
         return view('author.profile', [
             'author'  => $author,
             'profile' => $profile,
             'stats'   => $stats,
-            'avatar'  => Storage::disk('local')->exists('public/'.$filePath) 
-                ? Storage::url($filePath)
+            'avatar'  => $author->has_avatar
+                ? Storage::url('avatars/'.$author->id.'.png')
                 : null
         ]);
     }
@@ -61,7 +60,7 @@ class AuthorController extends Controller
 
         $this->validate($request, [
             'nickname' => 'bail|required|unique:accounts,nickname,' . $author->id . ',id|min:3|max:32',
-            'avatar'   => 'image'
+            'avatar'   => 'sometimes|image'
         ]);
         
         if ($request->hasFile('avatar')) {
@@ -82,21 +81,45 @@ class AuthorController extends Controller
                 $newWidth  = ceil($width * $factor);
                 $newHeight = ceil($height * $factor);
 
-                $avatar   = imagecreatetruecolor($newWidth, $newHeight);
-                $original = imagecreatefromstring(file_get_contents($file->path()));
+                try {
+                    // Read the original image into memory, and scale it to its destination size + 1.
+                    // The extra 'bleed' is used to remedy a scaling bug in PHP which results in a black
+                    // border in the lower as well as the right corner of the image.
+                    $original = imagecreatefromstring(file_get_contents($file->path()));
+                    $avatar   = imagescale($original, $newWidth + 1, $newHeight + 1, IMG_BICUBIC);
 
-                imagecopyresized($avatar, $original, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+                    // Having scaled the image (using the bicubic algorithm), remove the 'bleed' and 
+                    // compose the final avatar.
+                    $finalAvatar = imagecreatetruecolor($newWidth, $newHeight);
+                    imagecopyresized($finalAvatar, $avatar, 0, 0, 0, 0, $newWidth, $newHeight, $newWidth, $newWidth);
 
-                ob_start();
-                imagepng($avatar);
-                $avatarAsString = ob_get_clean();
+                    // Turn the avatar into a string. There is no known save into memory option in GD
+                    // at the time when this was developed, thus use the output buffer to achive the
+                    // same effect.
+                    ob_start();
+                    imagepng($finalAvatar);
+                    $avatarAsString = ob_get_clean();
 
-                Storage::disk('local')->put('public/avatars/'.$author->id.'.png', $avatarAsString);
+                    Storage::disk('local')->put('public/avatars/'.$author->id.'.png', $avatarAsString);
+                    
+                    $author->has_avatar = true;
+                } catch (Exception $ex) {
+                    // Images can't be processed, so bail
+                    $author->has_avatar = false;
+                } finally {
+                    // Ensure to always free up memory.
+                    if (is_resource($original)) {
+                        imagedestroy($original);
+                    }
+                    
+                    if (is_resource($avatar)) {
+                        imagedestroy($avatar);
+                    }
 
-                imagedestroy($original);
-                imagedestroy($avatar);
-
-                $author->has_avatar = true;
+                    if (is_resource($finalAvatar)) {
+                        imagedestroy($finalAvatar);
+                    }
+                }
             }
 
             unlink($file->path());

@@ -184,6 +184,7 @@ class EDFragmentExplorer extends React.Component {
                 {this.state.fragmentLines.map((fragments, fi) => 
                     <p className="tengwar ed-tengwar-fragments" key={`tngc${fi}`}>
                         {fragments.map((f, i) => <EDTengwarFragment fragment={f}
+                                                                    previousFragment={i > 0 ? fragments[i - 1] : undefined}
                                                                     key={`tng${fi}.${f.id}`}
                                                                     selected={f.id === this.props.fragmentId} />)}
                     </p>
@@ -194,9 +195,10 @@ class EDFragmentExplorer extends React.Component {
                 {this.state.fragmentLines.map((fragments, fi) => 
                     <p className="ed-elvish-fragments" key={`frgc${fi}`}>
                         { fragments.map((f, i) => <EDFragment fragment={f}
-                                                            key={`frg${fi}.${f.id}`} 
-                                                            selected={f.id === this.props.fragmentId}
-                                                            onClick={this.onFragmentClick.bind(this)} />) }
+                                                              previousFragment={i > 0 ? fragments[i - 1] : undefined}
+                                                              key={`frg${fi}.${f.id}`} 
+                                                              selected={f.id === this.props.fragmentId}
+                                                              onClick={this.onFragmentClick.bind(this)} />) }
                     </p>
                 )}
                 </div>

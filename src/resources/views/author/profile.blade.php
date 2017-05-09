@@ -28,7 +28,12 @@
       @endif
 
       @if (Auth::check() && Auth::user()->id === $author->id)
-        <a href="{{ route('author.edit-profile') }}" class="btn btn-primary">Edit profile</a>
+        <div class="text-right">
+          <a href="{{ route('author.edit-profile') }}" class="btn btn-default">
+            <span class="glyphicon glyphicon-edit"></span>
+            Edit profile
+          </a>
+        </div>
       @endif
       </div>
       <div class="col-md-4 col-sm-12">

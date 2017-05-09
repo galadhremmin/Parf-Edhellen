@@ -22,10 +22,11 @@ class SentenceAdapter
         foreach ($fragments as $fragment) {
             $data = [
                 'id'               => $fragment->id,
+                'translation_id'   => $fragment->translation_id,
                 'fragment'         => $fragment->fragment,
                 'tengwar'          => $fragment->tengwar,
                 'interpunctuation' => $fragment->isPunctuationOrWhitespace(),
-                'translation_id'   => $fragment->translation_id,
+                'is_dot'           => $fragment->isDot(),
                 'is_linebreak'     => $fragment->is_linebreak,
                 'speech'           => $fragment->speech_id ? $fragment->speech->name : null,
                 'speech_id'        => $fragment->speech_id,
