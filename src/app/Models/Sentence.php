@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sentence extends Model
 {
-    public function fragments() 
+    public function sentence_fragments() 
     {
         return $this->hasMany(SentenceFragment::class)
             ->orderBy('order');

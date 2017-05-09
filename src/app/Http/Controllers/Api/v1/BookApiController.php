@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use Illuminate\Http\Request;
 
-use App\Models\Translation;
+use App\Models\{ Translation, Word };
 use App\Http\Controllers\Controller;
 use App\Repositories\TranslationRepository;
 use App\Adapters\BookAdapter;
@@ -19,6 +19,30 @@ class BookApiController extends Controller
     {
         $this->_translationRepository = $translationRepository;
         $this->_adapter = $adapter;
+    }
+
+    public function getWord(Request $request, int $id)
+    {
+        $word = Word::find($id);
+        if (! $word) {
+            return response(null, 404);
+        }
+
+        return $word;
+    }
+
+    public function findWord(Request $request) 
+    {
+        $this->validate($request, [
+            'word' => 'required|string|max:64'
+        ]);
+
+        $normalizedWord = StringHelper::normalize( $request->input('word') );
+        $words = Word::where('normalized_word', 'like', $normalizedWord.'%')
+            ->select('id', 'word')
+            ->get();
+
+        return $words;
     }
 
     public function find(Request $request)
@@ -69,7 +93,7 @@ class BookApiController extends Controller
     {
         $translation = $this->_translationRepository->getTranslation($translationId);
         if (! $translation) {
-            return response(null, 500);
+            return response(null, 404);
         }
 
         return $this->_adapter->adaptTranslations([$translation]);

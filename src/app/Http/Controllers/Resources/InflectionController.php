@@ -56,7 +56,7 @@ class InflectionController extends Controller
     {
         $inflection = Inflection::findOrFail($id);
         
-        foreach ($inflection->sentenceFragmentAssociations as $association) {
+        foreach ($inflection->sentence_fragment_associations as $association) {
             $association->delete();
         }
 

@@ -7,7 +7,7 @@
 {!! Breadcrumbs::render('inflection.edit', $inflection) !!}
 
 <p>
-  There are {{ $inflection->sentenceFragmentAssociations()->count() }} sentence fragments which has
+  There are {{ $inflection->sentence_fragment_associations()->count() }} sentence fragments which has
   this inflection.
 </p>
 

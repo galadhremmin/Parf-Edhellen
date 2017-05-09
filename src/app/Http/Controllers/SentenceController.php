@@ -51,7 +51,7 @@ class SentenceController extends Controller
         $sentence  = Sentence::find($sentId);
         $language  = Language::find($langId);
         
-        $fragments = $this->_adapter->adaptFragments($sentence->fragments);
+        $fragments = $this->_adapter->adaptFragments($sentence->sentence_fragments);
 
         $parser = new MarkdownParser();
         $sentence->long_description = $parser->parse($sentence->long_description);

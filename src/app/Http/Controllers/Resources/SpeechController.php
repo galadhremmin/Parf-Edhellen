@@ -62,7 +62,7 @@ class SpeechController extends Controller
     {
         $speech = Speech::findOrFail($id);
 
-        foreach ($speech->sentenceFragments as $fragment) {
+        foreach ($speech->sentence_fragment as $fragment) {
             $fragment->speech_id = null;
             $fragment->save();
         }

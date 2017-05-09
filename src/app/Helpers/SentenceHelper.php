@@ -7,8 +7,8 @@ use data\entities\SentenceFragment;
 
 class SentenceHelper
 {
-    public const TENGWAR = 0;
-    public const FRAGMENT = 1;
+    const TENGWAR = 0;
+    const FRAGMENT = 1;
 
     public function combine(Collection $fragments, int $type)
     {

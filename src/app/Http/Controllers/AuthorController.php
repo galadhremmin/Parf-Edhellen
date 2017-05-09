@@ -36,7 +36,7 @@ class AuthorController extends Controller
             'author'  => $author,
             'profile' => $profile,
             'stats'   => $stats,
-            'avatar'  => $author->has_avatar
+            'avatar'  => $author && $author->has_avatar
                 ? Storage::url('avatars/'.$author->id.'.png')
                 : null
         ]);

@@ -62,6 +62,7 @@ Route::group([
     Route::resource('speech', 'SpeechController');
     Route::resource('inflection', 'InflectionController');
     Route::resource('sentence', 'SentenceController');
+    Route::resource('translation', 'TranslationController');
 
     Route::post('sentence/validate', 'SentenceController@validatePayload');
     Route::post('sentence/validate-fragment', 'SentenceController@validateFragments');
@@ -93,7 +94,11 @@ Route::group([
         'prefix'    => 'api/v1',
         'middleware' => ['auth', 'auth.require-role:Administrators']
     ], function () {
-    Route::get('account',       [ 'uses' => 'AccountApiController@index' ]);
-    Route::get('account/{id}',  [ 'uses' => 'AccountApiController@getAccount' ]);
-    Route::post('account/find', [ 'uses' => 'AccountApiController@findAccount' ]);
+
+    Route::get('account',        [ 'uses' => 'AccountApiController@index' ]);
+    Route::get('account/{id}',   [ 'uses' => 'AccountApiController@getAccount' ]);
+    Route::post('account/find',  [ 'uses' => 'AccountApiController@findAccount' ]);
+
+    Route::get('book/word/{id}',  [ 'uses' => 'BookApiController@getWord' ]);
+    Route::post('book/word/find', [ 'uses' => 'BookApiController@findWord' ]);
 });

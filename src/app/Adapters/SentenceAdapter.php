@@ -38,7 +38,7 @@ class SentenceAdapter
 
             // Todo: optimise this to reduce queries to the database and remove model awareness
             // as it's just dirty in this context!
-            $inflections = $fragment->inflectionAssociations()
+            $inflections = $fragment->inflection_associations()
                 ->join('inflections', 'inflections.id', 'inflection_id')
                 ->where('sentence_fragment_id', $fragment->id)
                 ->select('inflections.id', 'inflections.name')

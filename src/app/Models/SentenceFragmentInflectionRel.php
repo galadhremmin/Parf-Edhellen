@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SentenceFragmentInflectionRel extends Model
 {
-    public function sentenceFragment()
+    public function sentence_fragment()
     {
         return $this->belongsTo(SentenceFragment::class);
     }

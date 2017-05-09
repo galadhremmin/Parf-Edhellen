@@ -16,7 +16,7 @@ class SentenceFragment extends Model
         return $this->belongsTo(Speech::class);
     }
 
-    public function inflectionAssociations()
+    public function inflection_associations()
     {
         return $this->hasMany(SentenceFragmentInflectionRel::class);
     }

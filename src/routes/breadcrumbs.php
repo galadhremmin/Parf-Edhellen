@@ -109,7 +109,31 @@ Breadcrumbs::register('sentence.create', function ($breadcrumbs)
 Breadcrumbs::register('sentence.edit', function ($breadcrumbs, App\Models\Sentence $sentence)
 {
     $breadcrumbs->parent('sentence.index');
-    $breadcrumbs->push('Edit phrase', route('sentence.edit', [
+    $breadcrumbs->push('Edit phrase (' . $sentence->name . ')', route('sentence.edit', [
         'id' => $sentence->id
+    ]));
+});
+
+
+// //////////////////////////////////////////////////////////////////////////////////////////////
+// Dashboard > Glosses
+
+Breadcrumbs::register('translation.index', function ($breadcrumbs)
+{
+    $breadcrumbs->parent('dashboard');
+    $breadcrumbs->push('Glosses', route('translation.index'));
+});
+
+Breadcrumbs::register('translation.create', function ($breadcrumbs)
+{
+    $breadcrumbs->parent('translation.index');
+    $breadcrumbs->push('Add gloss', route('translation.create'));
+});
+
+Breadcrumbs::register('translation.edit', function ($breadcrumbs, App\Models\Translation $translation)
+{
+    $breadcrumbs->parent('translation.index');
+    $breadcrumbs->push('Edit gloss (' . $translation->word->word . ')', route('translation.edit', [
+        'id' => $translation->id
     ]));
 });

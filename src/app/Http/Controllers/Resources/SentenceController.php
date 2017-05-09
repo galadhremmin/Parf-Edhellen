@@ -37,7 +37,7 @@ class SentenceController extends Controller
     public function edit(Request $request, int $id) 
     {
         $sentence = Sentence::findOrFail($id);
-        $fragments = $this->_sentenceAdapter->adaptFragments($sentence->fragments, false);
+        $fragments = $this->_sentenceAdapter->adaptFragments($sentence->sentence_fragments, false);
 
         return view('sentence.edit', ['sentence' => $sentence, 'fragments' => $fragments]);
     }
@@ -161,8 +161,8 @@ class SentenceController extends Controller
 
     protected function destroyFragments(Sentence $sentence) 
     {
-        foreach ($sentence->fragments as $fragment) {
-            foreach ($fragment->inflectionAssociations as $inflectionRel) {
+        foreach ($sentence->sentence_fragments as $fragment) {
+            foreach ($fragment->inflection_associations as $inflectionRel) {
                 $inflectionRel->delete();
             }
             

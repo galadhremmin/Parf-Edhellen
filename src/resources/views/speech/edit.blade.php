@@ -6,7 +6,7 @@
 <h1>{{$speech->Name}}</h1>
 {!! Breadcrumbs::render('speech.edit', $speech) !!}
 <p>
-  This type of speech has the ID {{$speech->id}}. There are {{$speech->sentenceFragments()->count()}} 
+  This type of speech has the ID {{$speech->id}}. There are {{$speech->sentence_fragments()->count()}} 
   sentence fragments which refer to it.
 </p>
 

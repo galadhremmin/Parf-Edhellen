@@ -32,7 +32,8 @@ class TranslationController extends Controller
 
     public function edit(Request $request, int $id) 
     {
-        $translation = Translation::findOrFail($id);
+        $translation = Translation::with('word', 'translation_group', 'sense', 'keywords')
+            ->findOrFail($id);
         return view('translation.edit', ['translation' => $translation]);
     }
 
@@ -71,7 +72,7 @@ class TranslationController extends Controller
     protected function validateRequest(Request $request, int $id = 0)
     {
         $this->validate($request, [
-            'name' => 'required|min:1|max:32|unique:speeches,name'.($id === 0 ? '' : ','.$id.',id')
+            'word' => 'required|min:1|max:32|unique:speeches,name'.($id === 0 ? '' : ','.$id.',id')
         ]);
     } 
 }

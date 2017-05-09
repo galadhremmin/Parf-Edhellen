@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Inflection extends Model
 {
-    public function sentenceFragmentAssociations()
+    public function sentence_fragment_associations()
     {
         return $this->hasMany(SentenceFragmentInflectionRel::class);
     }
