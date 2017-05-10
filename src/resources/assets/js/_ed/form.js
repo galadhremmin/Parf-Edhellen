@@ -67,7 +67,7 @@ export class EDStatefulFormComponent extends React.Component {
     onReactChange(ev, target) {
         return { 
             name: target.props.componentName || target.props.componentId, 
-            value: target.getValue() 
+            value: ev.hasOwnProperty('value') ? ev.value : target.getValue() 
         };
     }
     

@@ -141,7 +141,7 @@ class EDTranslationSelect extends React.Component {
             window.setTimeout(() => {
                 this.props.onChange({
                     target: this,
-                    value: this.state.value 
+                    value: this.getValue()
                 });
             }, 0);
         }
@@ -149,8 +149,13 @@ class EDTranslationSelect extends React.Component {
 
     renderInput(inputProps) {
         const valid = !!this.state.value;
+        const props = { 
+            ...inputProps, 
+            className: `form-control ${inputProps.className}`
+        };
+
         return <div className={classNames('input-group', { 'has-warning': !valid, 'has-success': valid })}>
-            <input {...inputProps} />
+            <input {...props} />
             <div className="input-group-addon">
                 <span className={classNames('glyphicon', { 'glyphicon-ok': valid, 'glyphicon-exclamation-sign': !valid })} />
             </div>

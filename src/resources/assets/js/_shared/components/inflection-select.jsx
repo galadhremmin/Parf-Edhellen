@@ -125,7 +125,7 @@ class EDInflectionSelect extends React.Component {
             window.setTimeout( () => {
                 this.props.onChange({
                     target: this,
-                    value: this.state.selectedInflections
+                    value: this.getValue()
                 });
             }, 0);
         }

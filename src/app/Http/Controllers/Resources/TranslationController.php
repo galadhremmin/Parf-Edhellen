@@ -32,8 +32,9 @@ class TranslationController extends Controller
 
     public function edit(Request $request, int $id) 
     {
-        $translation = Translation::with('word', 'translation_group', 'sense', 'keywords')
-            ->findOrFail($id);
+        $translation = Translation::with(
+            'word', 'translation_group', 'sense', 'sense.word', 'sense.keywords', 'keywords'
+        ) ->findOrFail($id);
         return view('translation.edit', ['translation' => $translation]);
     }
 

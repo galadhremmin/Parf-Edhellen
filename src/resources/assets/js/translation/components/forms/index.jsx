@@ -7,6 +7,7 @@ import EDConfig from 'ed-config';
 import { EDStatefulFormComponent } from 'ed-form';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
 import EDErrorList from 'ed-components/error-list';
+import EDWordSelect from '../../../_shared/components/word-select';
 import EDAccountSelect from '../../../_shared/components/account-select';
 
 class EDTranslationForm extends EDStatefulFormComponent {
@@ -23,6 +24,8 @@ class EDTranslationForm extends EDStatefulFormComponent {
             translation: '',
             source: '',
             comments: '',
+            sense: undefined,
+            keywords: [],
             is_uncertain: false
         };
 
@@ -37,6 +40,8 @@ class EDTranslationForm extends EDStatefulFormComponent {
             language_id:   props.translationLanguageId,
             word_id:       props.translationWordId,
             word:          props.translationWord,
+            sense:         props.translationSense,
+            keywords:      props.translationSense.keywords,
             translation:   props.translation,
             source:        props.transationSource,
             comments:      props.translationComments,
@@ -118,6 +123,16 @@ class EDTranslationForm extends EDStatefulFormComponent {
                     value={this.state.translation} onChange={super.onChange.bind(this)} />
             </div>
             <div className="form-group">
+                <label htmlFor="ed-translation-sense" className="control-label">Sense</label>
+                <EDWordSelect multiple={false} componentName="sense" isSense={true}
+                    value={this.state.sense} onChange={super.onChange.bind(this)} />
+            </div>
+            <div className="form-group">
+                <label htmlFor="ed-translation-sense" className="control-label">Keywords</label>
+                <EDWordSelect multiple={true} componentName="keywords" isSense={false}
+                    value={this.state.keywords} onChange={super.onChange.bind(this)} />
+            </div>
+            <div className="form-group">
                 <label htmlFor="ed-translation-source" className="control-label">Source</label>
                 <input type="text" className="form-control" id="ed-translation-source" name="source" 
                     value={this.state.source} onChange={super.onChange.bind(this)} />
@@ -164,6 +179,7 @@ const mapStateToProps = state => {
         translationLanguageId: state.language_id,
         translationWordId:     state.word_id,
         translationWord:       state.word.word,
+        translationSense:      state.sense,
         translation:           state.translation,
         transationSource:      state.source,
         translationComments:   state.comments,

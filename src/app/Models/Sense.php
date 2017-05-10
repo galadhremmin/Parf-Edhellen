@@ -9,6 +9,11 @@ class Sense extends Model
 {
     public function word() 
     {
-        return $this->hasOne(Word::class, 'id', 'id');
+        return $this->belongsTo(Word::class, 'id', 'id');
+    }
+
+    public function keywords() 
+    {
+        return $this->hasMany(Keyword::class);
     }
 }

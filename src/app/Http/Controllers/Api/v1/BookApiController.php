@@ -34,15 +34,20 @@ class BookApiController extends Controller
     public function findWord(Request $request) 
     {
         $this->validate($request, [
-            'word' => 'required|string|max:64'
+            'word' => 'required|string|max:64',
+            'max'  => 'sometimes|numeric|min:1'
         ]);
 
         $normalizedWord = StringHelper::normalize( $request->input('word') );
-        $words = Word::where('normalized_word', 'like', $normalizedWord.'%')
-            ->select('id', 'word')
-            ->get();
+        $max = intval( $request->input('max') );
 
-        return $words;
+        $query = Word::where('normalized_word', 'like', $normalizedWord.'%');
+
+        if ($request->has('max')) {
+            $query = $query->take($request->input('max'));
+        }
+
+        return $query->select('id', 'word')->get();
     }
 
     public function find(Request $request)

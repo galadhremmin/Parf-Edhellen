@@ -9,10 +9,48 @@ class EDWordSelect extends React.Component {
         super(props);
 
         this.state = {
-            value: props.value || [],
+            value: this.convertStateValue(props.value),
             word: '',
             suggestions: []
         };
+    }
+
+    componentWillReceiveProps(props) {
+        if (props.value) {
+            this.setValue(props.value);
+        }
+    }
+
+    /**
+     * Determines whether the component is in multiple selection state.
+     */
+    isMultiple() {
+        return this.props.multiple;
+    }
+
+    /**
+     * Determines whether the component is configured to handle senses.
+     */
+    isSense() {
+        return this.props.isSense;
+    }
+
+    /**
+     * Converts the specified _value_ to a value compatible with local component state.
+     * @param {Object} value
+     */
+    convertStateValue(value) {
+        if (! value) {
+            value = [];
+        } else if (! Array.isArray(value)) {
+            value = [ value ];
+        }
+
+        if (this.isSense()) {
+            value = value.map(v => typeof v.word === 'object' ? v.word : v);
+        }
+
+        return value;
     }
 
     /**
@@ -22,26 +60,49 @@ class EDWordSelect extends React.Component {
      * @param {Object[]} inflections 
      */
     setValue(words) {
-        this.setState({
-            word: '',
-            value: Array.isArray(words) ? words : [words]
-        });
+        let value;
+        const originalValue = this.state.value;
 
-        this.triggerChange();
+        if (! words) {
+            value = [];
+        } else if (this.isMultiple()) {
+            value = [ ...(this.state.value), ...(this.convertStateValue(words)) ];
+        } else {
+            value = this.convertStateValue(words);
+        }
+
+        if (originalValue.length !== value.length ||
+            originalValue.some(v => value.indexOf(v) === -1)) {
+
+            this.setState({
+                word: this.isMultiple() ? '' : (value.length > 0 ? value[0].word : ''),
+                value
+            });
+
+            this.triggerChange();
+        }
     }
 
     /**
      * Gets an array containing the inflections currently selected.
      */
     getValue() {
-        return this.state.value || [];
+        let values = this.isSense()
+            ? this.state.value.map(v => ({
+                id: v.id,
+                word: v
+            })) : this.state.value;
+
+        return this.isMultiple()
+            ? values
+            : (values.length > 0 ? values[0] : undefined);
     }
 
     /**
      * Gets current visual value.
      */
     getText() {
-        return this.state.value.map(i => i.word);
+        return this.state.value.map(s => s.word);
     }
 
     /**
@@ -60,7 +121,28 @@ class EDWordSelect extends React.Component {
     }
 
     getSuggestionValue(suggestion) {
-        return suggestion.id;
+        return suggestion.word;
+    }
+
+    renderInput(inputProps) {
+        const valid = this.state.value.length > 0;
+        const props = { 
+            ...inputProps, 
+            className: `form-control ${inputProps.className}`
+        };
+
+        if (this.isMultiple()) {
+            return <div className={classNames({ 'has-warning': !valid, 'has-success': valid })}>
+                <input {...props} />
+            </div>;
+        }
+
+        return <div className={classNames('input-group', { 'has-warning': !valid, 'has-success': valid })}>
+            <input {...props} />
+            <div className="input-group-addon">
+                <span className={classNames('glyphicon', { 'glyphicon-ok': valid, 'glyphicon-exclamation-sign': !valid })} />
+            </div>
+        </div>;
     }
 
     renderSuggestion(suggestion) {
@@ -72,7 +154,7 @@ class EDWordSelect extends React.Component {
             window.setTimeout( () => {
                 this.props.onChange({
                     target: this,
-                    value: this.state.value
+                    value: this.getValue()
                 });
             }, 0);
         }
@@ -80,7 +162,7 @@ class EDWordSelect extends React.Component {
 
     onWordChange(ev, data) {
         this.setState({
-            value: data.newValue
+            word: data.newValue
         });
     }
 
@@ -90,15 +172,41 @@ class EDWordSelect extends React.Component {
 
     onSuggestionSelect(ev, data) {
         ev.preventDefault();
-        this.setValue([ ...this.state.value, data.suggestion ]);
+        this.setValue(data.suggestion);
     }
 
     onSuggestionsFetchRequest(data) {
-        // TODO!
+        const word = (data.value || '').toLocaleLowerCase();
 
-        this.setState({
-            suggestions: this.getSuggestions(data)
-        });
+        // already fetching suggestions?
+        if (this.loading || /^\s*$/.test(word) || this.state.suggestionsFor === word) {
+            return;
+        }
+
+        // Throttle search requests, to prevent them from occurring too often.
+        if (this.searchDelay) {
+            window.clearTimeout(this.searchDelay);
+            this.searchDelay = 0;
+        }
+
+        this.searchDelay = window.setTimeout(() => {
+            this.searchDelay = 0;
+            this.loading = true;
+
+            // Retrieve suggestions for the specified word.
+            axios.post(EDConfig.api('book/word/find'), {
+                word,
+                max: 10
+            }).then(resp => {
+                this.setState({
+                    suggestions: resp.data,
+                    suggestionsFor: word
+                });
+
+                this.loading = false;
+            });
+
+        }, 800);
     }
 
     onSuggestionsClearRequest() {
@@ -110,7 +218,7 @@ class EDWordSelect extends React.Component {
     render() {
         const inputProps = {
             placeholder: 'Search for a word',
-            value: this.state.value,
+            value: this.state.word,
             name: this.props.componentName,
             id: this.props.componentId,
             onChange: this.onWordChange.bind(this)
@@ -125,21 +233,23 @@ class EDWordSelect extends React.Component {
                     onSuggestionsClearRequested={this.onSuggestionsClearRequest.bind(this)}
                     onSuggestionSelected={this.onSuggestionSelect.bind(this)}
                     getSuggestionValue={this.getSuggestionValue.bind(this)}
+                    renderInputComponent={this.renderInput.bind(this)}
                     renderSuggestion={this.renderSuggestion.bind(this)}
                     inputProps={inputProps} />
             </div>
+            {this.isMultiple() ? 
             <div>
-                {this.state.selectedInflections.map(i => 
-                    <span key={i.id}>
+                {this.state.value.map((w, i) => 
+                    <span key={i}>
                         <a className="label label-default selected-inflection" 
-                           onClick={e => this.onRemoveWordClick(e, i)}
-                           title={`Press on the label (${i.name}) to remove it.`}>
-                           {i.name}
+                           onClick={e => this.onRemoveWordClick(e, w)}
+                           title={`Press on the label (${w.word}) to remove it.`}>
+                           {w.word}
                         </a>
                         {' '}
                     </span>
                 )}
-            </div>
+            </div> : ''}
         </div>;
     }
 }
@@ -147,7 +257,9 @@ class EDWordSelect extends React.Component {
 EDWordSelect.defaultProps = {
     componentName: 'word',
     componentId: undefined,
-    value: []
+    value: [],
+    multiple: false,
+    isSense: false
 };
 
 export default EDWordSelect;

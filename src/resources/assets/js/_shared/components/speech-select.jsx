@@ -71,7 +71,7 @@ class EDSpeechSelect extends React.Component {
             window.setTimeout(() => {
                 this.props.onChange({ 
                     target: this,
-                    value: this.state.value 
+                    value: this.getValue()
                 });
             }, 0);
         }
