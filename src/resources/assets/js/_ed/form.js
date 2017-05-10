@@ -87,16 +87,14 @@ export class EDStatefulFormComponent extends React.Component {
 
             value = target.value;
 
-            if (/^true$/i.test(value)) {
+            if (/^on|off|true|false$/i.test(value)) {
                 value = true;
-            } else if (/^false$/.test(value)) {
-                value = false;
             } else if (/^[0-9]+$/.test(value)) {
                 value = parseInt(value, 10);
             }
 
             if (/^checkbox|radio$/i.test(target.type)) {
-                value = target.checked ? value || true : ((value === true) ? false : null);
+                value = target.checked ? value : ((value === true) ? false : null);
             }
 
         } else if (type === 'SELECT') {

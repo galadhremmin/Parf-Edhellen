@@ -4,7 +4,9 @@ namespace App\Adapters;
 use App\Helpers\{
     LinkHelper, StringHelper, MarkdownParser
 };
-use App\Models\Language;
+use App\Models\{
+    Language, Translation
+};
 use Illuminate\Support\Collection;
 
 class BookAdapter

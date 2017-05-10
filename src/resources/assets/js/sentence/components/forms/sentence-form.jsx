@@ -128,7 +128,7 @@ class EDSentenceForm extends EDStatefulFormComponent {
             </div>
             <div className="form-group">
                 <label htmlFor="ed-sentence-account" className="control-label">Account</label>
-                <EDAccountSelect componentId="ed-sentence-account" componentName="account_id" 
+                <EDAccountSelect componentId="ed-sentence-account" componentName="account_id" required={true}
                     value={this.state.account_id} onChange={super.onChange.bind(this)} />
             </div>
             <div className="form-group">

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Resources;
 
 use App\Models\Translation;
-use App\Adapters\SpeechAdapter;
+use App\Adapters\BookAdapter;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -11,14 +11,12 @@ use Illuminate\Support\Facades\Auth;
 
 class TranslationController extends Controller
 {
-    /*
-    protected $_translationAdapter;
+    protected $_bookAdapter;
 
-    public function __construct(SpeechAdapter $adapter) 
+    public function __construct(BookAdapter $adapter) 
     {
-        $this->_translationAdapter = $adapter;
+        $this->_bookAdapter = $adapter;
     }
-    */
 
     public function index(Request $request)
     {
@@ -32,32 +30,48 @@ class TranslationController extends Controller
 
     public function edit(Request $request, int $id) 
     {
-        $translation = Translation::with(
-            'word', 'translation_group', 'sense', 'sense.word', 'sense.keywords', 'keywords'
-        ) ->findOrFail($id);
-        return view('translation.edit', ['translation' => $translation]);
+        // Eagerly load the translation.
+        $translation = Translation::with('word', 'translation_group', 'sense', 'sense.word')
+            ->findOrFail($id);
+
+        // Retrieve the words associated with the gloss' set of keywords. This is achieved by
+        // joining with the _words_ table. The result is assigned to _keywords, which starts with
+        // an underscore.
+        $translation->_keywords = $translation->sense
+            ->keywords()
+            ->join('words', 'words.id', 'keywords.word_id')
+            ->select('words.id', 'words.word')
+            ->get();
+
+        return view('translation.edit', [
+            'translation' => $translation
+        ]);
     }
 
     public function store(Request $request)
     {
         $this->validateRequest($request);
 
+        /*
         $translation = new Translation;
         $translation->translation = $request->input('translation');
         $translation->save();
+        */
 
-        return redirect()->route('translation.index');
+        return response(null, 201);
     }
 
     public function update(Request $request, int $id)
     {
         $this->validateRequest($request, $id);
 
+        /*
         $translation = Translation::findOrFail($id);
         $translation->translation = $request->input('translation');
         $translation->save();
+        */
 
-        return redirect()->route('translation.index');
+        return response(null, 200);
     } 
 
     public function destroy(Request $request, int $id) 
@@ -70,10 +84,21 @@ class TranslationController extends Controller
         */
     }
 
-    protected function validateRequest(Request $request, int $id = 0)
+    protected function validateRequest(Request $request, $id = 0)
     {
         $this->validate($request, [
-            'word' => 'required|min:1|max:32|unique:speeches,name'.($id === 0 ? '' : ','.$id.',id')
+            'id'              => 'sometimes|required|numeric|exists:translations,id',
+            'account_id'      => 'required|numeric|exists:accounts,id',
+            'language_id'     => 'required|numeric|exists:languages,id',
+            'word'            => 'required|string|min:1|max:64',
+            'translation'     => 'required|string|min:1|max:255',
+            'source'          => 'required|string|min:3',
+            'is_uncertain'    => 'required|boolean',
+            'is_rejected'     => 'required|boolean',
+            'keywords'        => 'sometimes|array',
+            'keywords.*.word' => 'sometimes|string|min:1|max:64',
+
+            'translation_group_id' => 'sometimes|numeric|exists:translation_groups,id'
         ]);
     } 
 }

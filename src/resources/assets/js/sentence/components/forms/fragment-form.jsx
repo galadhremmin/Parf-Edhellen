@@ -445,6 +445,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
                                 suggestions={this.props.suggestions 
                                     ? this.props.suggestions[this.props.fragments[this.state.editingFragmentIndex].fragment]
                                     : []}
+                                required={true}
                                 ref={input => this.translationInput = input} />
                         </div>
                         <div className="form-group">

@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import axios from 'axios';
 import { polyfill as enableSmoothScrolling } from 'smoothscroll-polyfill';
 import EDConfig from 'ed-config';
+import { requestTranslationGroups } from '../../actions/admin';
 import { EDStatefulFormComponent } from 'ed-form';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
 import EDErrorList from 'ed-components/error-list';
@@ -20,48 +21,53 @@ class EDTranslationForm extends EDStatefulFormComponent {
             account_id: 0,
             language_id: 0,
             word_id: 0,
+            translation_group_id: 0,
             word: '',
             translation: '',
             source: '',
             comments: '',
             sense: undefined,
             keywords: [],
-            is_uncertain: false
+            is_uncertain: false,
+            is_rejected: false
         };
 
         enableSmoothScrolling();
     }
 
+    componentWillMount() {
+        this.props.dispatch(requestTranslationGroups());
+    }
+
     componentDidMount() {
         const props = this.props;
         this.setState({
-            id:            props.translationId,
-            account_id:    props.translationAccountId,
-            language_id:   props.translationLanguageId,
-            word_id:       props.translationWordId,
-            word:          props.translationWord,
-            sense:         props.translationSense,
-            keywords:      props.translationSense.keywords,
-            translation:   props.translation,
-            source:        props.transationSource,
-            comments:      props.translationComments,
-            is_uncertain:  props.translationUncertain
+            id:                   props.translationId || 0,
+            account_id:           props.translationAccountId || 0,
+            language_id:          props.translationLanguageId || 0,
+            word_id:              props.translationWordId || 0 ,
+            translation_group_id: props.translationGroupId || 0,
+            sense:                props.translationSense,
+            keywords:             props.translationKeywords,
+            translation:          props.translation,
+            source:               props.transationSource,
+            comments:             props.translationComments,
+            is_uncertain:         props.translationUncertain,
+            is_rejected:          props.translationRejected,
+            word:                 props.translationWord ? props.translationWord.word : undefined,
         })
     }
 
     onSubmit(ev) {
         ev.preventDefault();
 
-        const state = this.state;
-        const payload = {
-            id: state.id
-        };
+        const payload = this.state;
 
         let promise;
         if (payload.id) {
-            promise = axios.put(`/admin/translate/${payload.id}`, payload);
+            promise = axios.put(`/admin/translation/${payload.id}`, payload);
         } else {
-            promise = axios.post('/admin/translate', payload);
+            promise = axios.post('/admin/translation', payload);
         }
 
         promise.then(request => this.onValidateSuccess(request, payload),
@@ -107,29 +113,33 @@ class EDTranslationForm extends EDStatefulFormComponent {
     }
  
     render() {
+        if (this.props.loading) {
+            return <div className="sk-spinner sk-spinner-pulse"></div>;
+        }
+
         return <form onSubmit={this.onSubmit.bind(this)}>
             <EDErrorList errors={this.state.errors} />
             <p>
                 Please be as thorough as possible.
             </p>
             <div className="form-group">
-                <label htmlFor="ed-translation-gloss" className="control-label">Gloss</label>
-                <input type="text" className="form-control" id="ed-translation-gloss" name="word" 
+                <label htmlFor="ed-translation-word" className="control-label">Word</label>
+                <input type="text" className="form-control" id="ed-translation-word" name="word" 
                     value={this.state.word} onChange={super.onChange.bind(this)} />
             </div>
             <div className="form-group">
-                <label htmlFor="ed-translation-translation" className="control-label">Translation</label>
+                <label htmlFor="ed-translation-translation" className="control-label">Gloss</label>
                 <input type="text" className="form-control" id="ed-translation-translation" name="translation" 
                     value={this.state.translation} onChange={super.onChange.bind(this)} />
             </div>
             <div className="form-group">
                 <label htmlFor="ed-translation-sense" className="control-label">Sense</label>
-                <EDWordSelect multiple={false} componentName="sense" isSense={true}
+                <EDWordSelect multiple={false} componentName="sense" isSense={true} required={true}
                     value={this.state.sense} onChange={super.onChange.bind(this)} />
             </div>
             <div className="form-group">
                 <label htmlFor="ed-translation-sense" className="control-label">Keywords</label>
-                <EDWordSelect multiple={true} componentName="keywords" isSense={false}
+                <EDWordSelect multiple={true} componentName="keywords" isSense={false} canCreateNew={true}
                     value={this.state.keywords} onChange={super.onChange.bind(this)} />
             </div>
             <div className="form-group">
@@ -138,9 +148,17 @@ class EDTranslationForm extends EDStatefulFormComponent {
                     value={this.state.source} onChange={super.onChange.bind(this)} />
             </div>
             <div className="form-group">
+                <label htmlFor="ed-translation-group" className="control-label">Group</label>
+                <select name="translation_group_id" id="ed-translation-group" className="form-control"
+                    value={this.state.translation_group_id} onChange={super.onChange.bind(this)}>
+                    <option value="0"></option>
+                    {this.props.groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+                </select>
+            </div>
+            <div className="form-group">
                 <label htmlFor="ed-translation-account" className="control-label">Account</label>
                 <EDAccountSelect componentId="ed-translation-account" componentName="account_id" 
-                    value={this.state.account_id} onChange={super.onChange.bind(this)} />
+                    value={this.state.account_id} onChange={super.onChange.bind(this)} required={true} />
             </div>
             <div className="form-group">
                 <label htmlFor="ed-translation-language" className="control-label">Language</label>
@@ -156,7 +174,14 @@ class EDTranslationForm extends EDStatefulFormComponent {
                 <label>
                     <input type="checkbox" name="is_uncertain"
                         checked={this.state.is_uncertain} onChange={super.onChange.bind(this)} />
-                        Uncertain
+                        Uncertain or a neologism
+                </label>
+            </div>
+            <div className="checkbox">
+                <label>
+                    <input type="checkbox" name="is_rejected"
+                        checked={this.state.is_rejected} onChange={super.onChange.bind(this)} />
+                        Rejected
                 </label>
             </div>
             <div className="form-group">
@@ -172,19 +197,29 @@ class EDTranslationForm extends EDStatefulFormComponent {
         </form>;
     }
 }
+
+EDTranslationForm.defaultProps = {
+    loading: true
+};
+
 const mapStateToProps = state => {
     return {
         translationId:         state.id,
         translationAccountId:  state.account_id,
         translationLanguageId: state.language_id,
         translationWordId:     state.word_id,
-        translationWord:       state.word.word,
+        translationWord:       state.word,
         translationSense:      state.sense,
         translation:           state.translation,
         transationSource:      state.source,
         translationComments:   state.comments,
         translationUncertain:  state.is_uncertain,
-        languages:             state.languages
+        translationRejected:   state.is_rejected,
+        translationKeywords:   state._keywords,
+        translationGroupId:    state.translation_group_id,
+        languages:             state.languages,
+        groups:                state.groups,
+        loading:               state.loading,
     };
 };
 

@@ -154,10 +154,10 @@ class EDTranslationSelect extends React.Component {
             className: `form-control ${inputProps.className}`
         };
 
-        return <div className={classNames('input-group', { 'has-warning': !valid, 'has-success': valid })}>
+        return <div className={classNames('input-group', { 'has-warning': !valid && this.props.required, 'has-success': valid })}>
             <input {...props} />
             <div className="input-group-addon">
-                <span className={classNames('glyphicon', { 'glyphicon-ok': valid, 'glyphicon-exclamation-sign': !valid })} />
+                <span className={classNames('glyphicon', { 'glyphicon-exclamation-sign': !valid && this.props.required, 'glyphicon-ok': valid })} />
             </div>
         </div>;
     }
@@ -192,6 +192,7 @@ class EDTranslationSelect extends React.Component {
         return <div>
             <div>
                 <Autosuggest 
+                    id={`${this.props.componentId || this.props.componentName}-translation-selection`}
                     alwaysRenderSuggestions={false} 
                     multiSection={false}
                     suggestions={this.state.suggestions}
@@ -211,7 +212,8 @@ EDTranslationSelect.defaultProps = {
     componentName: 'word',
     componentId: undefined,
     value: 0,
-    languageId: 0
+    languageId: 0,
+    required: false
 };
 
 export default EDTranslationSelect;

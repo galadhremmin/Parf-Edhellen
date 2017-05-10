@@ -30,7 +30,7 @@
 
 <a href="unverified"></a>
 <h2>Unverified or debatable glosses</h2>
-<p>You'll sometimes encounter the <span class="glyphicon glyphicon-question-sign"></span> symbol, usually together with a warning. These
+<p>You'll sometimes encounter the <span class="glyphicon glyphicon-asterisk"></span> symbol, usually together with a warning. These
   exist to inform you that the gloss originate from a source which might be outdated or questionable. This is unfortunately fairly common
   because linguistic material on Tolkien's languages are only sporadically made available to the community; initiatives have the time to arise
   and wither between publications. Hiswelókë, which haven't been updated for years, is nonetheless still excellent, and one of the prominent

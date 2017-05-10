@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use Illuminate\Http\Request;
 
-use App\Models\{ Translation, Word };
+use App\Models\{ Translation, TranslationGroup, Word };
 use App\Http\Controllers\Controller;
 use App\Repositories\TranslationRepository;
 use App\Adapters\BookAdapter;
@@ -21,6 +21,13 @@ class BookApiController extends Controller
         $this->_adapter = $adapter;
     }
 
+    /**
+     * HTTP GET. Gets the word which corresponds to the specified ID. 
+     *
+     * @param Request $request
+     * @param int $id
+     * @return void
+     */
     public function getWord(Request $request, int $id)
     {
         $word = Word::find($id);
@@ -31,6 +38,23 @@ class BookApiController extends Controller
         return $word;
     }
 
+    /**
+     * HTTP GET. Gets all available translation groups.
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function getGroups(Request $request)
+    {
+        return TranslationGroup::orderBy('name')->get();
+    }
+
+    /**
+     * HTTP POST. Performs a forward search among words for the specified word parameter.
+     *
+     * @param Request $request
+     * @return void
+     */
     public function findWord(Request $request) 
     {
         $this->validate($request, [
@@ -50,6 +74,12 @@ class BookApiController extends Controller
         return $query->select('id', 'word')->get();
     }
 
+    /**
+     * HTTP POST. Finds keywords for the specified word.
+     *
+     * @param Request $request
+     * @return void
+     */
     public function find(Request $request)
     {
         $this->validate($request, [
@@ -66,6 +96,12 @@ class BookApiController extends Controller
         return $keywords;
     }
 
+    /**
+     * HTTP POST. Suggests glosses for the specified array of words. 
+     *
+     * @param Request $request
+     * @return void
+     */
     public function suggest(Request $request) 
     {
         $this->validate($request, [
@@ -81,6 +117,12 @@ class BookApiController extends Controller
         return $this->_translationRepository->suggest($words, $languageId, $inexact); 
     }
 
+    /**
+     * HTTP POST. Translates the specified word.
+     *
+     * @param Request $request
+     * @return void
+     */
     public function translate(Request $request)
     {
         $this->validate($request, [
@@ -94,6 +136,13 @@ class BookApiController extends Controller
         return $model;
     }
 
+    /**
+     * HTTP GET. Gets the gloss corresponding to the specified ID.
+     *
+     * @param Request $request
+     * @param int $translationId
+     * @return void
+     */
     public function get(Request $request, int $translationId)
     {
         $translation = $this->_translationRepository->getTranslation($translationId);

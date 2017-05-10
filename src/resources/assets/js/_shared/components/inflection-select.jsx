@@ -170,6 +170,7 @@ class EDInflectionSelect extends React.Component {
         return <div className="ed-inflection-select">
             <div>
                 <Autosuggest 
+                    id={`${this.props.componentId || this.props.componentName}-inflection-selection`}
                     alwaysRenderSuggestions={false} // set to _true_ to view all.
                     multiSection={true}
                     suggestions={this.state.suggestions}

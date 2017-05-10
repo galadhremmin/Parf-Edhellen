@@ -99,6 +99,7 @@ Route::group([
     Route::get('account/{id}',   [ 'uses' => 'AccountApiController@getAccount' ]);
     Route::post('account/find',  [ 'uses' => 'AccountApiController@findAccount' ]);
 
-    Route::get('book/word/{id}',  [ 'uses' => 'BookApiController@getWord' ]);
-    Route::post('book/word/find', [ 'uses' => 'BookApiController@findWord' ]);
+    Route::get('book/word/{id}',  [ 'uses' => 'BookApiController@getWord'   ]);
+    Route::get('book/group',      [ 'uses' => 'BookApiController@getGroups' ]);
+    Route::post('book/word/find', [ 'uses' => 'BookApiController@findWord'  ]);
 });

@@ -65,14 +65,12 @@ class EDWordSelect extends React.Component {
 
         if (! words) {
             value = [];
-        } else if (this.isMultiple()) {
-            value = [ ...(this.state.value), ...(this.convertStateValue(words)) ];
         } else {
             value = this.convertStateValue(words);
         }
 
         if (originalValue.length !== value.length ||
-            originalValue.some(v => value.indexOf(v) === -1)) {
+            originalValue.some(v => ! value.some(v0 => v0.id === v.id))) {
 
             this.setState({
                 word: this.isMultiple() ? '' : (value.length > 0 ? value[0].word : ''),
@@ -132,15 +130,15 @@ class EDWordSelect extends React.Component {
         };
 
         if (this.isMultiple()) {
-            return <div className={classNames({ 'has-warning': !valid, 'has-success': valid })}>
+            return <div className={classNames({ 'has-warning': !valid && this.props.required, 'has-success': valid })}>
                 <input {...props} />
             </div>;
         }
 
-        return <div className={classNames('input-group', { 'has-warning': !valid, 'has-success': valid })}>
+        return <div className={classNames('input-group', { 'has-warning': !valid && this.props.required, 'has-success': valid })}>
             <input {...props} />
             <div className="input-group-addon">
-                <span className={classNames('glyphicon', { 'glyphicon-ok': valid, 'glyphicon-exclamation-sign': !valid })} />
+                <span className={classNames('glyphicon', { 'glyphicon-exclamation-sign': !valid && this.props.required, 'glyphicon-ok': valid })} />
             </div>
         </div>;
     }
@@ -166,13 +164,22 @@ class EDWordSelect extends React.Component {
         });
     }
 
-    onRemoveWordClick(ev, word) {
-        this.setValue(this.state.value.filter(i => i.id !== word.id));
+    onRemoveWordClick(ev, indexToRemove) {
+        this.setValue(this.state.value.filter((v, i) => i !== indexToRemove));
     }
 
     onSuggestionSelect(ev, data) {
         ev.preventDefault();
-        this.setValue(data.suggestion);
+
+        let suggestion = data.suggestion._isNew === true && data.suggestion.hasOwnProperty('_word')
+            ? { id: 0, word: data.suggestion._word }
+            : data.suggestion;
+
+        const value = this.isMultiple()
+            ? [ ...(this.state.value), suggestion ]
+            : suggestion;
+
+        this.setValue(value);
     }
 
     onSuggestionsFetchRequest(data) {
@@ -198,8 +205,16 @@ class EDWordSelect extends React.Component {
                 word,
                 max: 10
             }).then(resp => {
+                let suggestions = resp.data;
+                
+                // If the _canCreateNew_ property is set to true, and none of the suggestions is a direct match to the
+                // search query, present the author with the option to add a new word.
+                if (this.props.canCreateNew && ! suggestions.some(s => s.word === word)) {
+                    suggestions = [ { id: 0, word: `Add word "${word}"`, _isNew: true, _word: word } , ...suggestions];
+                }
+
                 this.setState({
-                    suggestions: resp.data,
+                    suggestions,
                     suggestionsFor: word
                 });
 
@@ -227,6 +242,7 @@ class EDWordSelect extends React.Component {
         return <div className="ed-word-select">
             <div>
                 <Autosuggest 
+                    id={`${this.props.componentId || this.props.componentName}-word-selection`}
                     alwaysRenderSuggestions={false} // set to _true_ to view all.
                     suggestions={this.state.suggestions}
                     onSuggestionsFetchRequested={this.onSuggestionsFetchRequest.bind(this)}
@@ -241,8 +257,8 @@ class EDWordSelect extends React.Component {
             <div>
                 {this.state.value.map((w, i) => 
                     <span key={i}>
-                        <a className="label label-default selected-inflection" 
-                           onClick={e => this.onRemoveWordClick(e, w)}
+                        <a className="label label-default selected-word" 
+                           onClick={e => this.onRemoveWordClick(e, i)}
                            title={`Press on the label (${w.word}) to remove it.`}>
                            {w.word}
                         </a>
@@ -259,7 +275,9 @@ EDWordSelect.defaultProps = {
     componentId: undefined,
     value: [],
     multiple: false,
-    isSense: false
+    isSense: false,
+    canCreateNew: false,
+    required: false
 };
 
 export default EDWordSelect;
