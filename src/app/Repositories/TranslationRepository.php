@@ -152,7 +152,6 @@ class TranslationRepository
                 ->getLatestVersion();
 
             $translation = $translation->replicate();
-            $translation->parent_translation_id = $originalTranslation->id;
             $translation->origin_translation_id = $originalTranslation->origin_translation_id ?: $originalTranslation->id;
 
             // 5. If the sense has changed, check whether the previous sense should be excluded from
@@ -173,6 +172,7 @@ class TranslationRepository
 
         // 7. Update existing associations to the new entity.
         if ($originalTranslation !== null) {
+            $originalTranslation->child_translation_id = $translation->id;
             $originalTranslation->is_latest = 0;
             $originalTranslation->save();
 
