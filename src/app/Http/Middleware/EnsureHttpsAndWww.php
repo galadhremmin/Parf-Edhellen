@@ -18,7 +18,9 @@ class EnsureHttpsAndWww
         $appUrl = config('app.url');
         $parts = parse_url($appUrl);
 
-        $this->_appUrl        = $appUrl;
+        $urlLength = strlen($appUrl);
+        $this->_appUrl        = $urlLength > 0 && $appUrl[$urlLength - 1] === '/' 
+            ? substr($appUrl, 0, $urlLength - 1) : $appUrl;
         $this->_expects       = $parts['scheme'] . '://' . $parts['host'];
         $this->_expectsLength = strlen($this->_expects);
         $this->_isSecure      = $parts['scheme'] === 'https';
