@@ -25,6 +25,7 @@ class TranslationController extends Controller
     public function index(Request $request)
     {
         $latestTranslations = Translation::latest()
+            ->notDeleted()
             ->notIndex()
             ->orderBy('id', 'desc')
             ->take(10)
