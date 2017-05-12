@@ -1,9 +1,15 @@
-h3.trans-word a {
-    float: right;
-    margin-left: 5px;
-}
-h3.trans-word .rejected {
-    text-decoration: line-through;
+h3.trans-word { 
+    a {
+        float: right;
+        margin-left: 5px;
+
+        &.neologism {
+            float: none;
+        }
+    }
+    .rejected {
+        text-decoration: line-through;
+    }
 }
 .word-type {
     font-style: italic;
@@ -12,5 +18,5 @@ h3.trans-word .rejected {
     display: none;
 }
 .ed-admin .ed-admin-tool {
-    display: block;
+    display: inline-block;
 }

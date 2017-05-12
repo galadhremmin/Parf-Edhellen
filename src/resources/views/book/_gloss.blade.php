@@ -6,7 +6,9 @@
   @endif>
   <h3 rel="trans-word" class="trans-word">
     @if (!$gloss->is_canon || $gloss->is_uncertain || !$gloss->is_latest)
-    <a href="/about" title="Unattested, unverified or debatable content."><span class="glyphicon glyphicon-asterisk"></span></a>
+    <a href="/about" title="Unattested, unverified or debatable content." class="neologism">
+      <span class="glyphicon glyphicon-asterisk"></span>
+    </a>
     @endif
     <span itemprop="headline" class="{{ $gloss->is_rejected ? 'rejected' : '' }}">
       {{ $gloss->word }}

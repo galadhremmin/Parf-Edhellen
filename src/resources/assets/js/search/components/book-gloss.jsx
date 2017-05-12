@@ -64,7 +64,7 @@ class EDBookGloss extends React.Component {
             <blockquote itemScope="itemscope" itemType="http://schema.org/Article" id={id} className={classNames({ 'contribution': !gloss.is_canon })}>
                 <h3 rel="trans-word" className="trans-word">
                     {!gloss.is_canon || gloss.is_uncertain || !gloss.is_latest ?
-                        <a href="/about" title="Unattested, unverified or debatable content.">
+                        <a href="/about" title="Unattested, unverified or debatable content." className="neologism">
                             <span className="glyphicon glyphicon-asterisk" />
                         </a> : '' }
                     {' '}
