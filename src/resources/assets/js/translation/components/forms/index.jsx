@@ -52,15 +52,15 @@ class EDTranslationForm extends EDStatefulFormComponent {
             word_id:              props.translationWordId || 0 ,
             speech_id:            props.translationSpeechId || 0,
             translation_group_id: props.translationGroupId || 0,
-            sense:                props.translationSense,
-            keywords:             props.translationKeywords,
-            translation:          props.translation,
-            source:               props.transationSource,
-            comments:             props.translationComments,
-            is_uncertain:         props.translationUncertain,
-            is_rejected:          props.translationRejected,
+            sense:                props.translationSense || '',
+            keywords:             props.translationKeywords || [],
+            translation:          props.translation || '',
+            source:               props.transationSource || '',
+            comments:             props.translationComments || '',
+            is_uncertain:         props.translationUncertain || 0,
+            is_rejected:          props.translationRejected || 0,
             tengwar:              props.translationTengwar || '',
-            word:                 props.translationWord ? props.translationWord.word : undefined, 
+            word:                 props.translationWord ? props.translationWord.word : '', 
         })
     }
 
@@ -71,6 +71,7 @@ class EDTranslationForm extends EDStatefulFormComponent {
         const payload = {
             ...state,
             // optional parameters beneath
+            id:                   state.id || undefined,
             tengwar:              state.tengwar.length > 0 ? state.tengwar : undefined,
             translation_group_id: state.translation_group_id || undefined,
         };

@@ -167,7 +167,11 @@ class TranslationRepository
         }
 
         // 6. Save changes as a _new_ row.
+        $translation->word_id  = $word->id;
+        $translation->sense_id = $sense->id;
         $translation->is_latest = 1;
+        $translation->is_deleted = 0;
+        $translation->is_index = 0;
         $translation->save();
 
         // 7. Update existing associations to the new entity.

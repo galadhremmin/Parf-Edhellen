@@ -80,6 +80,7 @@ class TranslationController extends Controller
         $translation = new Translation;
         $translation = $this->saveTranslation($translation, $request);
 
+        $link = new LinkHelper();
         return response([
             'id'  => $translation->id,
             'url' => $link->translation($translation->id)
