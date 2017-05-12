@@ -50,9 +50,10 @@ CREATE TABLE `accounts` (
   `profile` text COLLATE utf8_swedish_ci,
   `remember_token` varchar(100) COLLATE utf8_swedish_ci DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
+  `has_avatar` smallint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `Identity` (`identity`)
-) ENGINE=MyISAM AUTO_INCREMENT=490 DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=505 DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -130,7 +131,7 @@ CREATE TABLE `keywords` (
   UNIQUE KEY `WordNamespaceRelation` (`keyword`,`namespace_id_deprecated`),
   UNIQUE KEY `WordTranslationRelation` (`keyword`,`translation_id`),
   KEY `WordID` (`word_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=55162 DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=55164 DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -151,21 +152,6 @@ CREATE TABLE `languages` (
   `tengwar_mode` varchar(32) COLLATE utf8_swedish_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=92 DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `namespace`
---
-
-DROP TABLE IF EXISTS `namespace`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `namespace` (
-  `NamespaceID` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `IdentifierID` int(8) NOT NULL,
-  PRIMARY KEY (`NamespaceID`),
-  KEY `IdentifierIDIndex` (`IdentifierID`)
-) ENGINE=MyISAM AUTO_INCREMENT=36827 DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -216,7 +202,7 @@ CREATE TABLE `sentence_fragment_inflection_rels` (
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `ix_fragment_id` (`sentence_fragment_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=163 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -239,7 +225,7 @@ CREATE TABLE `sentence_fragments` (
   `updated_at` datetime DEFAULT NULL,
   `is_linebreak` smallint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=55 DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=325 DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -262,7 +248,7 @@ CREATE TABLE `sentences` (
   `name` varchar(128) COLLATE utf8_swedish_ci NOT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -279,7 +265,7 @@ CREATE TABLE `speeches` (
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=27 DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=39 DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -338,7 +324,6 @@ CREATE TABLE `translations` (
   `translation` varchar(255) COLLATE utf8_swedish_ci NOT NULL,
   `is_uncertain` tinyint(1) DEFAULT '0',
   `etymology` varchar(512) COLLATE utf8_swedish_ci DEFAULT NULL,
-  `type` enum('n','ger','pref','adj','n/adj','prep','prep/conj','conj','pron','v','interj','adv','aux','v/impers','adj/num','art','der','adj|adv','art/pron','suff','theon','topon','gen','name','unset','part','participle','interrog') COLLATE utf8_swedish_ci DEFAULT NULL,
   `source` text COLLATE utf8_swedish_ci,
   `comments` text COLLATE utf8_swedish_ci,
   `word_id` int(8) unsigned NOT NULL,
@@ -347,22 +332,21 @@ CREATE TABLE `translations` (
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `account_id` int(6) unsigned NOT NULL,
   `tengwar` varchar(128) COLLATE utf8_swedish_ci DEFAULT NULL,
-  `gender` enum('masc','fem','none') COLLATE utf8_swedish_ci NOT NULL DEFAULT 'none',
   `phonetic` varchar(128) COLLATE utf8_swedish_ci DEFAULT NULL,
   `child_translation_id` int(10) unsigned DEFAULT NULL,
   `origin_translation_id` int(10) unsigned DEFAULT NULL,
-  `namespace_id` int(11) NOT NULL,
   `is_index` tinyint(1) NOT NULL DEFAULT '0',
   `external_id` varchar(128) COLLATE utf8_swedish_ci DEFAULT NULL,
   `sense_id` int(11) DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
+  `is_rejected` smallint(1) NOT NULL DEFAULT '0',
+  `speech_id` smallint(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `NamespaceIDIndex` (`namespace_id`),
   KEY `WordIDIndex` (`word_id`),
   KEY `LanguageIDIndex` (`language_id`),
   KEY `ExternalID_2` (`external_id`),
   KEY `idx_senseID` (`sense_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=250734 DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=250735 DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -408,4 +392,4 @@ CREATE TABLE `words` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-05-04 21:37:14
+-- Dump completed on 2017-05-12 22:25:02
