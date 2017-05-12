@@ -120,6 +120,7 @@ class TranslationController extends Controller
             
         $translation->translation  = $request->input('translation');
         $translation->source       = $request->input('source');
+        $translation->comments     = $request->input('comments');
 
         $translation->translation_group_id = $request->has('translation_group_id') 
             ? intval($request->input('translation_group_id'))

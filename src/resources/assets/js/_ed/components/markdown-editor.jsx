@@ -37,9 +37,14 @@ class EDMarkdownEditor extends React.Component {
      * @param {string} value 
      */
     setValue(value) {
+        const originalValue = this.state.value;
         this.setState({
             value
         });
+
+        if (originalValue !== value) {
+            this.triggerChange();
+        }
     }
 
     /**
@@ -47,6 +52,17 @@ class EDMarkdownEditor extends React.Component {
      */
     getValue() {
         return this.state.value;
+    }
+
+    triggerChange() {
+        if (typeof this.props.onChange === 'function') {
+            window.setTimeout(() => {
+                this.props.onChange({
+                    target: this,
+                    value: this.getValue()
+                });
+            }, 0);
+        }
     }
 
     onOpenTab(ev, tab) {
@@ -81,10 +97,6 @@ class EDMarkdownEditor extends React.Component {
 
     onValueChange(ev) {
         this.setValue(ev.target.value);
-
-        if (typeof this.props.onChange === 'function') {
-            this.props.onChange(ev);
-        }
     }
 
     render() {
