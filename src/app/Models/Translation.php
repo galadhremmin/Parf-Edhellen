@@ -56,6 +56,11 @@ class Translation extends Model
         $query->where('is_deleted', 0);
     }
 
+    public function scopeNotIndex($query)
+    {
+        $query->where('is_index', 0);
+    }
+
     public function scopeLatest($query)
     {
         $query->where('is_latest', 1);
