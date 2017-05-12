@@ -9,10 +9,9 @@ class EDInflectionSelect extends React.Component {
         super(props);
 
         this.state = {
+            ...(this.createStateForValue(props.value)),
             inflections: [],
-            selectedInflections: [],
             groupNames: [],
-            value: props.value || '',
             suggestions: []
         };
     }
@@ -20,6 +19,23 @@ class EDInflectionSelect extends React.Component {
     componentWillMount() {
         axios.get(EDConfig.api('inflection'))
             .then(resp => this.setLoadedInflections(resp.data));
+    }
+
+    componentWillReceiveProps(props) {
+        if (props.value) {
+            this.setValue(props.value);
+        }
+    }
+
+    createStateForValue(selectedInflections) {
+        if (! selectedInflections) {
+            selectedInflections = [];
+        }
+
+        return {
+            selectedInflections,
+            value: ''
+        };
     }
 
     setLoadedInflections(inflections) {
@@ -44,11 +60,7 @@ class EDInflectionSelect extends React.Component {
      * @param {Object[]} inflections 
      */
     setValue(selectedInflections) {
-        this.setState({
-            selectedInflections,
-            value: ''
-        });
-
+        this.setState(this.createStateForValue(selectedInflections));
         this.triggerChange();
     }
 

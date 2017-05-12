@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class SentenceFragment extends Model
 {
+    protected $fillable = [ 'translation_id' ];
+    
     public function sentence() 
     {
         return $this->belongsTo(Sentence::class);

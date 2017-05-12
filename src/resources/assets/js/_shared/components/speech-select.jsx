@@ -8,14 +8,24 @@ class EDSpeechSelect extends React.Component {
         super(props);
 
         this.state = {
-            typesOfSpeech: [],
-            value: props.value || 0
+            ...(this.createStateForValue(props.value)),
+            typesOfSpeech: []
         };
     }
 
     componentWillMount() {
         axios.get(EDConfig.api('speech'))
             .then(resp => this.setLoadedTypesOfSpeech(resp.data));
+    }
+
+    createStateForValue(value) {
+        if (!value) {
+            value = 0;
+        }
+
+        return {
+            value
+        };
     }
 
     setLoadedTypesOfSpeech(typesOfSpeech) {
@@ -30,15 +40,12 @@ class EDSpeechSelect extends React.Component {
      * @param {Object} value 
      */
     setValue(value) {
-        if (!value) {
-            value = 0;
+        const originalValue = this.state.value;
+        this.setState(this.createStateForValue(value));
+
+        if (originalValue !== value) {
+            this.triggerChange();
         }
-
-        this.setState({
-            value
-        });
-
-        this.triggerChange();
     }
 
     /**

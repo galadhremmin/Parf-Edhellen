@@ -7,9 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sense extends Model
 {
+    protected $fillable = [ 'id' ];
+
     public function word() 
     {
         return $this->belongsTo(Word::class, 'id', 'id');
+    }
+
+    public function translations() 
+    {
+        return $this->hasMany(Translation::class);
     }
 
     public function keywords() 

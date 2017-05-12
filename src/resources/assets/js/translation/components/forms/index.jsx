@@ -10,6 +10,8 @@ import EDMarkdownEditor from 'ed-components/markdown-editor';
 import EDErrorList from 'ed-components/error-list';
 import EDWordSelect from '../../../_shared/components/word-select';
 import EDAccountSelect from '../../../_shared/components/account-select';
+import EDSpeechSelect from '../../../_shared/components/speech-select';
+import EDTengwarInput from '../../../_shared/components/tengwar-input';
 
 class EDTranslationForm extends EDStatefulFormComponent {
 
@@ -22,9 +24,11 @@ class EDTranslationForm extends EDStatefulFormComponent {
             language_id: 0,
             word_id: 0,
             translation_group_id: 0,
+            speech_id: 0,
             word: '',
             translation: '',
             source: '',
+            tengwar: '',
             comments: '',
             sense: undefined,
             keywords: [],
@@ -46,6 +50,7 @@ class EDTranslationForm extends EDStatefulFormComponent {
             account_id:           props.translationAccountId || 0,
             language_id:          props.translationLanguageId || 0,
             word_id:              props.translationWordId || 0 ,
+            speech_id:            props.translationSpeechId || 0,
             translation_group_id: props.translationGroupId || 0,
             sense:                props.translationSense,
             keywords:             props.translationKeywords,
@@ -54,14 +59,21 @@ class EDTranslationForm extends EDStatefulFormComponent {
             comments:             props.translationComments,
             is_uncertain:         props.translationUncertain,
             is_rejected:          props.translationRejected,
-            word:                 props.translationWord ? props.translationWord.word : undefined,
+            tengwar:              props.translationTengwar || '',
+            word:                 props.translationWord ? props.translationWord.word : undefined, 
         })
     }
 
     onSubmit(ev) {
         ev.preventDefault();
 
-        const payload = this.state;
+        const state = this.state;
+        const payload = {
+            ...state,
+            // optional parameters beneath
+            tengwar:              state.tengwar.length > 0 ? state.tengwar : undefined,
+            translation_group_id: state.translation_group_id || undefined,
+        };
 
         let promise;
         if (payload.id) {
@@ -117,6 +129,8 @@ class EDTranslationForm extends EDStatefulFormComponent {
             return <div className="sk-spinner sk-spinner-pulse"></div>;
         }
 
+        const language = this.props.languages.find(l => l.id === this.state.language_id);
+
         return <form onSubmit={this.onSubmit.bind(this)}>
             <EDErrorList errors={this.state.errors} />
             <p>
@@ -128,19 +142,32 @@ class EDTranslationForm extends EDStatefulFormComponent {
                     value={this.state.word} onChange={super.onChange.bind(this)} />
             </div>
             <div className="form-group">
+                <label htmlFor="ed-translation-tengwar" className="control-label">Tengwar</label>
+                <EDTengwarInput componentId="ed-translation-tengwar" componentName="tengwar" 
+                    tengwarMode={language ? language.tengwar_mode : undefined} transcriptionSubject={this.state.word}
+                    value={this.state.tengwar} onChange={super.onChange.bind(this)} />
+            </div>
+            <div className="form-group">
                 <label htmlFor="ed-translation-translation" className="control-label">Gloss</label>
                 <input type="text" className="form-control" id="ed-translation-translation" name="translation" 
                     value={this.state.translation} onChange={super.onChange.bind(this)} />
             </div>
             <div className="form-group">
                 <label htmlFor="ed-translation-sense" className="control-label">Sense</label>
-                <EDWordSelect multiple={false} componentName="sense" isSense={true} required={true}
+                <EDWordSelect multiple={false} componentId="ed-translation-sense" componentName="sense" 
+                    isSense={true} required={true} canCreateNew={true}
                     value={this.state.sense} onChange={super.onChange.bind(this)} />
             </div>
             <div className="form-group">
-                <label htmlFor="ed-translation-sense" className="control-label">Keywords</label>
-                <EDWordSelect multiple={true} componentName="keywords" isSense={false} canCreateNew={true}
+                <label htmlFor="ed-translation-keywords" className="control-label">Keywords</label>
+                <EDWordSelect multiple={true} componentId="ed-translation-keywords" componentName="keywords" 
+                    isSense={false} canCreateNew={true}
                     value={this.state.keywords} onChange={super.onChange.bind(this)} />
+            </div>
+            <div className="form-group">
+                <label htmlFor="ed-translation-speech" className="control-label">Type of speech</label>
+                <EDSpeechSelect componentId="ed-translation-speech" componentName="speech_id"
+                    value={this.state.speech_id} onChange={super.onChange.bind(this)} />
             </div>
             <div className="form-group">
                 <label htmlFor="ed-translation-source" className="control-label">Source</label>
@@ -191,7 +218,13 @@ class EDTranslationForm extends EDStatefulFormComponent {
             </div>
             <nav>
                 <ul className="pager">
-                    <li className="next"><a href="#" onClick={this.onSubmit.bind(this)}>Next step &rarr;</a></li>
+                    <li className="next">
+                        <a href="#" onClick={this.onSubmit.bind(this)}>
+                            Confirm and save
+                            &nbsp;
+                            &nbsp;
+                            <span className="glyphicon glyphicon-save"></span></a>
+                    </li>
                 </ul>
             </nav>
         </form>;
@@ -208,7 +241,9 @@ const mapStateToProps = state => {
         translationAccountId:  state.account_id,
         translationLanguageId: state.language_id,
         translationWordId:     state.word_id,
+        translationSpeechId:   state.speech_id,
         translationWord:       state.word,
+        translationTengwar:    state.tengwar,
         translationSense:      state.sense,
         translation:           state.translation,
         transationSource:      state.source,

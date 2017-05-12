@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use Illuminate\Support\Facades\DB;
-use App\Models\Keyword;
+use App\Models\{ Keyword, Translation, Sense, Word };
 use App\Helpers\StringHelper;
 
 class TranslationRepository
@@ -129,19 +129,143 @@ class TranslationRepository
         return $groupedSuggestions;
     }
 
+    public function saveTranslation(string $wordString, string $senseString, Translation $translation, array $keywords)
+    {
+        // 1. Turn all words should be lower case.
+        $wordString  = StringHelper::toLower($wordString);
+        $senseString = StringHelper::toLower($senseString);
+        $glossString = StringHelper::toLower($translation->translation);
+
+        // 2. Retrieve existing or create a new word entity for the sense and the word.
+        $word      = $this->createWord($wordString, $translation->account_id);
+        $glossWord = $this->createWord($glossString, $translation->account_id);
+        $senseWord = $this->createWord($senseString, $translation->account_id);
+
+        // 3. Load sense or create it if it doesn't exist. A sense is 1:1 mapped with
+        // words, and therefore doesn't have its own incrementing identifier.
+        $sense = Sense::firstOrCreate([ 'id' => $senseWord->id ]);
+
+        // 4. Load the original translation and update the translation's origin and parent columns.
+        $originalTranslation = null;
+        if ($translation->id) {
+            $originalTranslation = Translation::findOrFail($translation->id)
+                ->getLatestVersion();
+
+            $translation = $translation->replicate();
+            $translation->parent_translation_id = $originalTranslation->id;
+            $translation->origin_translation_id = $originalTranslation->origin_translation_id ?: $originalTranslation->id;
+
+            // 5. If the sense has changed, check whether the previous sense should be excluded from
+            // the keywords table, which should only contain keywords to current senses.
+            if ($originalTranslation->sense_id !== $sense->id) {
+                $originalSense = Sense::findOrFail($originalTranslation->sense_id);
+                // is the original translation the only one associated with this sense?
+                if ($originalSense->translations()->count() === 1) {
+                    // delete the sense's keywords as the sense is no longer in use.
+                    $originalSense->keywords()->delete();
+                }
+            }
+        }
+
+        // 6. Save changes as a _new_ row.
+        $translation->save();
+
+        // 7. Update existing associations to the new entity.
+        if ($originalTranslation !== null) {
+            $originalTranslation->is_latest = 0;
+            $originalTranslation->save();
+
+            $originalTranslation->sentence_fragments()->update([
+                'translation_id' => $translation->id
+            ]);
+            $originalTranslation->translation_reviews()->update([
+                'translation_id' => $translation->id
+            ]);
+            $originalTranslation->favourites()->update([
+                'translation_id' => $translation->id
+            ]);
+        }
+        
+        // 8. Process keywords -- filter through the keywords and remove keywords that
+        // match the gloss and the translation's word, as these are managed separately.
+        $keywords = array_filter($keywords, function ($w) use($wordString, $glossString) {
+            return $w !== $wordString && $w !== $glossString;
+        });
+
+        // 9. Remove existing keywords
+        if ($originalTranslation !== null) {
+            $originalTranslation->keywords()->delete();
+        }
+
+        // 10. save gloss and word as keywords on the translation
+        $this->createKeyword($word, $sense, $translation);
+        $this->createKeyword($glossWord, $sense, $translation);
+
+        // 11. Register keywords on the sense
+        $sense->keywords()->whereNull('translation_id')->delete();
+        foreach ($keywords as $keyword) {
+            $keywordWord = $this->createWord($keyword, $translation->account_id);
+
+            if ($sense->keywords()->where('word_id', $keywordWord->id)->count() < 1) {
+                $this->createKeyword($keywordWord, $sense, null);
+            }
+        }
+    }
+
+    public function createWord(string $wordString, int $accountId)
+    {
+        $wordString = mb_strtolower(trim($wordString), 'utf-8');
+        $word = Word::where('word', $wordString)->first(); 
+
+        if (! $word) {
+            $normalizedWordString = StringHelper::normalize($wordString);
+            
+            $word = new Word;
+            $word->word                     = $wordString;
+            $word->normalized_word          = $normalizedWordString;
+            $word->reversed_normalized_word = strrev($normalizedWordString); 
+            $word->account_id               = $accountId;
+
+            $word->save();
+        }
+
+        return $word; 
+    }
+
+    public function createKeyword(Word $word, Sense $sense, Translation $translation = null)
+    {
+        $keyword = new Keyword;
+
+        $keyword->keyword                     = $word->word;
+        $keyword->normalized_keyword          = $word->normalized_word;
+        $keyword->reversed_normalized_keyword = $word->reversed_normalized_word;
+        $keyword->word_id                     = $word->id;
+        $keyword->sense_id                    = $sense->id;
+
+        if ($translation) {
+            $keyword->translation_id = $translation->id;
+            $keyword->is_sense       = 0;
+        } else {
+            $keyword->is_sense       = 1;
+        }
+
+        $keyword->save();
+    }
+
     protected static function createTranslationQuery($latest = true) 
     {
         return DB::table('translations as t')
             ->join('words as w', 't.word_id', 'w.id')
             ->leftJoin('accounts as a', 't.account_id', 'a.id')
             ->leftJoin('translation_groups as tg', 't.translation_group_id', 'tg.id')
+            ->leftJoin('speeches as s', 't.speech_id', 's.id')
             ->where([
                 ['t.is_latest', '=', $latest ? 1 : 0],
                 ['t.is_deleted', '=', 0],
                 ['t.is_index', '=', 0]
             ])
             ->select(
-                'w.word', 't.id', 't.translation', 't.etymology', 't.type', 't.source',
+                'w.word', 't.id', 't.translation', 't.etymology', 's.name as type', 't.source',
                 't.comments', 't.tengwar', 't.phonetic', 't.language_id', 't.account_id',
                 'a.nickname as account_name', 'w.normalized_word', 't.is_index', 't.created_at', 't.translation_group_id',
                 'tg.name as translation_group_name', 'tg.is_canon', 'tg.external_link_format', 't.is_uncertain', 

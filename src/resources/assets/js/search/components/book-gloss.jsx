@@ -82,7 +82,7 @@ class EDBookGloss extends React.Component {
                 <p>
                     {gloss.tengwar ? <span className="tengwar">{gloss.tengwar}</span> : ''}
                     {' '}
-                    {gloss.type != 'unset' ? <span className="word-type" rel="trans-type">{gloss.type}.</span> : ''}
+                    {gloss.type ? <span className="word-type" rel="trans-type">{gloss.type}.</span> : ''}
                     {' '}
                     <span rel="trans-translation" itemProp="keywords">{gloss.translation}</span>
                 </p>
@@ -92,7 +92,7 @@ class EDBookGloss extends React.Component {
                 <footer>
                     {gloss.source ? <span className="word-source" rel="trans-source">[{gloss.source}]</span> : ''}
                     {' '}
-                    {gloss.Etymology ?
+                    {gloss.etymology ?
                         <span className="word-etymology" rel="trans-etymology">{gloss.etymology}.</span> : ''}
                     {' '}
                     {gloss.translation_group_id ?

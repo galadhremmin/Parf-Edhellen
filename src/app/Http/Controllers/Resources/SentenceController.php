@@ -86,7 +86,7 @@ class SentenceController extends Controller
     {
         $sentence = Sentence::findOrFail($id);
         
-        $this->destroyFragments($sentence);
+        $this->_sentenceRepository->destroyFragments($sentence);
         $sentence->delete();
 
         return redirect()->route('sentence.index');
@@ -115,10 +115,10 @@ class SentenceController extends Controller
         $sentence->is_neologism     = intval($request->input('is_neologism'));
         $sentence->is_approved      = 1; // always approved by administrators
 
-        $sentence->save();
-
-        $this->destroyFragments($sentence);
         $order = 0;
+        $fragments = [];
+        $inflections = [];
+
         foreach ($request->input('fragments') as $fragmentData) {
             $fragment = new SentenceFragment;
 
@@ -139,11 +139,12 @@ class SentenceController extends Controller
                 $fragment->comments = '';
             }
 
-            $fragment->order       = $order;
+            $fragment->order       = count($fragments) * 10;
             $fragment->sentence_id = $sentence->id;
 
-            $fragment->save();
+            $fragments[] = $fragment;
 
+            $inflectionsForFragment = [];
             if (! $fragment->isPunctuationOrWhitespace() && isset($fragmentData['inflections'])) {
                 foreach ($fragmentData['inflections'] as $inflection) {
                     $inflectionRel = new SentenceFragmentInflectionRel;
@@ -151,23 +152,14 @@ class SentenceController extends Controller
                     $inflectionRel->inflection_id        = $inflection['id'];
                     $inflectionRel->sentence_fragment_id = $fragment->id;
 
-                    $inflectionRel->save(); 
+                    $inflectionsForFragment[] = $inflectionRel;
                 }
             }
 
-            $order += 10;
+            $inflections[] = $inflectionsForFragment;
         }
-    }
 
-    protected function destroyFragments(Sentence $sentence) 
-    {
-        foreach ($sentence->sentence_fragments as $fragment) {
-            foreach ($fragment->inflection_associations as $inflectionRel) {
-                $inflectionRel->delete();
-            }
-            
-            $fragment->delete();
-        }
+        $this->_sentenceRepository->saveSentence($sentence, $fragments, $inflections);
     }
 
     protected function validateRequest(Request $request, int $id = 0)

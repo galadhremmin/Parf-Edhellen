@@ -9,9 +9,8 @@ class EDTranslationSelect extends React.Component {
         super(props);
 
         this.state = {
-            suggestions: props.suggestions || [],
-            value: props.value || undefined,
-            word: ''
+            ...(this.createStateForValue(props.value)),
+            suggestions: props.suggestions || []
         };
     }
 
@@ -24,17 +23,20 @@ class EDTranslationSelect extends React.Component {
         }
     }
 
+    createStateForValue(value) {
+        return {
+            value,
+            word: value ? value.word : ''
+        };
+    }
+
     /**
      * Sets the word currently selected.
      * @param {Object} value - Translation object
      */
     setValue(value) {
         const originalValue = this.state.value;
-
-        this.setState({
-            value,
-            word: value ? value.word : ''
-        });
+        this.setState(this.createStateForValue(value));
 
         if (originalValue !== value) {
             this.triggerChange();

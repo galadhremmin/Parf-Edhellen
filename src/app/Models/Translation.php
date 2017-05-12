@@ -26,14 +26,29 @@ class Translation extends Model
         return $this->belongsTo(Language::class);
     }
 
+    public function word() 
+    {
+        return $this->belongsTo(Word::class);
+    }
+
     public function keywords() 
     {
         return $this->hasMany(Keyword::class);
     }
 
-    public function word() 
+    public function sentence_fragments() 
     {
-        return $this->belongsTo(Word::class);
+        return $this->hasMany(SentenceFragment::class);
+    }
+
+    public function translation_reviews() 
+    {
+        return $this->hasMany(TranslationReview::class);
+    }
+
+    public function favourites() 
+    {
+        return $this->hasMany(Favourite::class);
     }
 
     public function scopeNotDeleted($query)
@@ -44,5 +59,15 @@ class Translation extends Model
     public function scopeLatest($query)
     {
         $query->where('is_latest', 1);
+    }
+
+    public function getLatestVersion() 
+    {
+        return $this->is_latest 
+            ? $this
+            : Translation::where([
+                [ 'origin_translation_id', '=', $this->origin_translation_id ?: $this->id ],
+                [ 'is_latest', '=', 1]
+            ])->first();
     }
 }

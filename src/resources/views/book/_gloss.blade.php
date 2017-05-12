@@ -15,7 +15,7 @@
   @if ($gloss->tengwar != null)
   &#32;<span class="tengwar">{{ $gloss->tengwar }}</span>
   @endif
-  @if ($gloss->type != 'unset')
+  @if ($gloss->type)
     <span class="word-type" rel="trans-type">{{ $gloss->type }}.</span>
   @endif
   <span rel="trans-translation" itemprop="keywords">{{ $gloss->translation }}</span>

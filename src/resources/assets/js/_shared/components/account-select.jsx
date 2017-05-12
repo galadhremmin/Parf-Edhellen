@@ -9,10 +9,8 @@ class EDAccountSelect extends React.Component {
         super(props);
 
         this.state = {
-            suggestions: [],
-            nickname: '',
-            value: props.value || 0,
-            selectedNickname: undefined
+            ...(this.createStateForValue(props.value)),
+            suggestions: []
         };
     }
 
@@ -22,30 +20,48 @@ class EDAccountSelect extends React.Component {
         }
     }
 
+    createStateForValue(account) {
+        const isId = typeof account === 'number' && isFinite(account) && account !== 0; 
+
+        if (! account || isId) {
+            if (isId) {
+                const changed = this.state === undefined || (this.state !== undefined && this.state.value != account);
+
+                if (! changed) {
+                    return {
+                        value: account
+                    };
+                }
+
+                axios.get(EDConfig.api(`account/${account}`))
+                    .then(resp => this.setValue(resp.data))
+                    .catch(resp => this.setValue(undefined));
+            }
+
+            return {
+                value: 0,
+                selectedNickname: undefined,
+                nickname: ''
+            };
+        }
+
+        return {
+            value: account.id,
+            nickname: account.nickname || '',
+            selectedNickname: account.nickname
+        };
+    }
+
     /**
      * Sets the account currently selected.
      * @param {Object|number} account - Account object
      */
     setValue(account) {
-        if (! account) {
-            this.setState({
-                value: 0,
-                selectedNickname: undefined,
-                nickname: ''
-            });
-        } else if (typeof account === 'number' && isFinite(account)) {
-            if (this.state.value != account) {
-                axios.get(EDConfig.api(`account/${account}`))
-                    .then(resp => this.setValue(resp.data))
-                    .catch(resp => this.setValue(undefined));
-            }
-        } else {
-            this.setState({
-                value: account.id,
-                nickname: account.nickname,
-                selectedNickname: account.nickname
-            });
-
+        const originalValue = this.state.value;
+        const state = this.createStateForValue(account);
+        this.setState(state);
+        
+        if (originalValue !== state.value) {
             this.triggerChange();
         }
     }

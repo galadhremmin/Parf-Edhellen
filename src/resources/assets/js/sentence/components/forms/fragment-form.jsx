@@ -7,12 +7,12 @@ import { polyfill as enableSmoothScrolling } from 'smoothscroll-polyfill';
 import { requestSuggestions, setFragments, setFragmentData } from '../../actions/admin';
 import EDConfig from 'ed-config';
 import { EDStatefulFormComponent } from 'ed-form';
-import { transcribe } from '../../../_shared/tengwar';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
 import EDErrorList from 'ed-components/error-list';
 import EDSpeechSelect from '../../../_shared/components/speech-select';
 import EDInflectionSelect from '../../../_shared/components/inflection-select';
 import EDTranslationSelect from '../../../_shared/components/translation-select';
+import EDTengwarInput from '../../../_shared/components/tengwar-input';
 
 class EDFragmentForm extends EDStatefulFormComponent {
     constructor(props) {
@@ -98,14 +98,16 @@ class EDFragmentForm extends EDStatefulFormComponent {
                 this.translationInput.setValue(translation);
                 this.speechInput.setValue(data.speech_id);
                 this.inflectionInput.setValue(data.inflections ? data.inflections : []);
-                this.tengwarInput.value = data.tengwar || '';
                 this.commentsInput.setValue(data.comments || '');
+                this.tengwarInput.setValue(data.tengwar);
+                this.tengwarInput.setSubject(data.fragment);
+
             }).then(() => {
                 // Select the first component with an invalid value
                 if (! this.translationInput.getValue()) {
                     this.translationInput.focus();
                 }
-                else if (! this.tengwarInput.value) {
+                else if (! this.tengwarInput.getValue()) {
                     this.tengwarInput.focus();
                 }
                 else if (! this.speechInput.getValue()) {
@@ -237,27 +239,6 @@ class EDFragmentForm extends EDStatefulFormComponent {
         this.editFragment(fragmentIndex);
     }
 
-    onTranscribeClick(ev) {
-        ev.preventDefault();
-
-        const language = this.props.languages.find(l => l.id === this.props.language_id);
-        const data = this.props.fragments[this.state.editingFragmentIndex];
-
-        let transcription = null;
-        if (language.tengwar_mode) {
-            transcription = transcribe(data.fragment, language.tengwar_mode, false);
-        }
-
-        if (transcription) {
-            this.tengwarInput.value = transcription;
-        } else {
-            errors = [`Unfortunately, the transcription service does not support ${language.name}.`];
-            this.setState({
-                errors
-            });
-        }
-    }
-
     onFragmentSaveClick(ev) {
         ev.preventDefault();
 
@@ -267,7 +248,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
         const speech_id = this.speechInput.getValue();
         const speech = this.speechInput.getText();
         const comments = this.commentsInput.getValue();
-        const tengwar = this.tengwarInput.value;
+        const tengwar = this.tengwarInput.getValue();
 
         let fragmentData = {
             speech_id,
@@ -400,6 +381,8 @@ class EDFragmentForm extends EDStatefulFormComponent {
     }
  
     render() {
+        const language = this.props.languages.find(l => l.id === this.props.language_id);
+
         return <form onSubmit={this.onSubmit.bind(this)}>
             <p>
                 This is the second step of a total of three steps. Here you will write down your phrase
@@ -450,13 +433,8 @@ class EDFragmentForm extends EDStatefulFormComponent {
                         </div>
                         <div className="form-group">
                             <label htmlFor="ed-sentence-fragment-tengwar" className="control-label">Tengwar</label>
-                            <div className="input-group">
-                                <input id="ed-sentence-fragment-tengwar" className="form-control tengwar" type="text" 
-                                    ref={input => this.tengwarInput = input} />
-                                <div className="input-group-addon">
-                                    <a href="#" onClick={this.onTranscribeClick.bind(this)}>Transcribe</a>
-                                </div>
-                            </div>
+                            <EDTengwarInput componentId="ed-sentence-fragment-tengwar" tengwarMode={language.tengwar_mode}
+                                ref={input => this.tengwarInput = input} />
                         </div>
                         <div className="form-group">
                             <label htmlFor="ed-sentence-fragment-speech" className="control-label">Type of speech</label>

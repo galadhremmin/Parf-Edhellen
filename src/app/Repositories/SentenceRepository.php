@@ -46,4 +46,36 @@ class SentenceRepository
             ->get()
             ->groupBy('language_name');
     }
+
+    public function saveSentence(Sentence $sentence, array $fragments, array $inflections) 
+    {
+        $numberOfFragments = count($fragments);
+        if ($numberOfFragments !== count($inflections)) {
+            throw new Exception('The number of fragments must match the number of inflections.');
+        }
+
+        $sentence->save();
+
+        $this->destroyFragments($sentence);
+        
+        for ($i = 0; $i < $numberOfFragments; $i += 1) {
+            $fragment = $fragments[$i];
+            $fragment->sentence_id = $sentence->id;
+            $fragment->save();
+
+            for ($j = 0; $j < count($inflections[$i]); $j += 1) {
+                $inflectionRel = $inflections[$i][$j];
+                $inflectionRel->sentence_fragment_id = $fragment->id;
+                $inflectionRel->save(); 
+            }
+        }
+    }
+
+    public function destroyFragments(Sentence $sentence) 
+    {
+        foreach ($sentence->sentence_fragments as $fragment) {
+            $fragment->inflection_associations()->delete();
+            $fragment->delete();
+        }
+    }
 }

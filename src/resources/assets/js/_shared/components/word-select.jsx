@@ -9,8 +9,7 @@ class EDWordSelect extends React.Component {
         super(props);
 
         this.state = {
-            value: this.convertStateValue(props.value),
-            word: '',
+            ...(this.createStateForValue(props.value)),
             suggestions: []
         };
     }
@@ -39,7 +38,7 @@ class EDWordSelect extends React.Component {
      * Converts the specified _value_ to a value compatible with local component state.
      * @param {Object} value
      */
-    convertStateValue(value) {
+    createStateForValue(value) {
         if (! value) {
             value = [];
         } else if (! Array.isArray(value)) {
@@ -50,7 +49,10 @@ class EDWordSelect extends React.Component {
             value = value.map(v => typeof v.word === 'object' ? v.word : v);
         }
 
-        return value;
+        return { 
+            value,
+            word: this.isMultiple() ? '' : (value.length > 0 ? value[0].word : '')
+        };
     }
 
     /**
@@ -60,23 +62,13 @@ class EDWordSelect extends React.Component {
      * @param {Object[]} inflections 
      */
     setValue(words) {
-        let value;
         const originalValue = this.state.value;
-
-        if (! words) {
-            value = [];
-        } else {
-            value = this.convertStateValue(words);
-        }
+        const state = this.createStateForValue(words);
+        const value = state.value;
 
         if (originalValue.length !== value.length ||
             originalValue.some(v => ! value.some(v0 => v0.id === v.id))) {
-
-            this.setState({
-                word: this.isMultiple() ? '' : (value.length > 0 ? value[0].word : ''),
-                value
-            });
-
+            this.setState(state);
             this.triggerChange();
         }
     }
