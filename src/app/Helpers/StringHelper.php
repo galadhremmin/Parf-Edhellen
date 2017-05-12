@@ -32,7 +32,7 @@
           // Switch case to lower case and trim whitespace 
           $normalizedStr = self::toLower($normalizedStr);
           // Remove everything not alphanumeric.
-          $normalizedStr = preg_replace('/[^\\-\\w\\s\\*\\(\\),\\.\\?;!]+/', '', $normalizedStr); 
+          $normalizedStr = preg_replace('/[^\\-\\w\\s\\*\\(\\),\\.\\?;!\\/\\(\\)]+/', '', $normalizedStr); 
 
           // restore the locale
           // setlocale(LC_ALL, $currentLocale);

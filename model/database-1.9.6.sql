@@ -57,11 +57,12 @@ UPDATE `translations` SET `speech_id` = (
 UPDATE `translations` SET `speech_id` = (
     SELECT `id` FROM `speeches` WHERE `name` = 'fraction'
 ) WHERE `type` = 'adj/num' AND `speech_id` IS NULL AND (`translation` LIKE 'one %th' OR `translation` = 'one (first of a series)');
+UPDATE `translations` SET `speech_id` = (
+    SELECT `id` FROM `speeches` WHERE `name` = 'ordinal'
+) WHERE `type` = 'adj/num' AND `speech_id` IS NULL;
 UPDATE `translations` SET `speech_id` = (UPDATE `translations` SET `speech_id` = (
     SELECT `id` FROM `speeches` WHERE `name` = 'conjugation'
 ) WHERE `type` = 'conj';
-    SELECT `id` FROM `speeches` WHERE `name` = 'ordinal'
-) WHERE `type` = 'adj/num' AND `speech_id` IS NULL;
 UPDATE `translations` SET `speech_id` = (
     SELECT `id` FROM `speeches` WHERE `name` = 'article'
 ) WHERE `type` = 'art';
