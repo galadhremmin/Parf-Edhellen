@@ -168,6 +168,7 @@ class TranslationRepository
         }
 
         // 6. Save changes as a _new_ row.
+        $translation->is_latest = 1;
         $translation->save();
 
         // 7. Update existing associations to the new entity.
@@ -210,6 +211,8 @@ class TranslationRepository
                 $this->createKeyword($keywordWord, $sense, null);
             }
         }
+
+        return $translation;
     }
 
     public function createWord(string $wordString, int $accountId)
@@ -269,7 +272,7 @@ class TranslationRepository
                 't.comments', 't.tengwar', 't.phonetic', 't.language_id', 't.account_id',
                 'a.nickname as account_name', 'w.normalized_word', 't.is_index', 't.created_at', 't.translation_group_id',
                 'tg.name as translation_group_name', 'tg.is_canon', 'tg.external_link_format', 't.is_uncertain', 
-                't.external_id', 't.is_latest');
+                't.external_id', 't.is_latest', 't.is_rejected');
     }
 
     protected static function getSensesForWord(string $word) 

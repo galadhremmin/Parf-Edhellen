@@ -52,6 +52,7 @@
           <ul>
             <li><a href="{{ route('speech.index') }}">Type of speeches</a></li>
             <li><a href="{{ route('inflection.index') }}">Inflections</a></li>
+            <li><a href="{{ route('translation.index') }}">Words</a></li>
             <li><a href="{{ route('sentence.index') }}">Phrases</a></li>
           </ul>
         </div>

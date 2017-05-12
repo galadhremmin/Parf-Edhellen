@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Resources;
 use App\Models\{ Translation, Keyword, Word };
 use App\Adapters\BookAdapter;
 use App\Repositories\TranslationRepository;
-use App\Helpers\StringHelper;
+use App\Helpers\{ LinkHelper, StringHelper };
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -24,7 +24,15 @@ class TranslationController extends Controller
 
     public function index(Request $request)
     {
-        return view('translation.index');
+        $latestTranslations = Translation::latest()
+            ->orderBy('id', 'desc')
+            ->take(10)
+            ->with('word', 'account')
+            ->get();
+
+        return view('translation.index', [ 
+            'latestTranslations' => $latestTranslations
+        ]);
     }
 
     public function create(Request $request)
@@ -51,6 +59,10 @@ class TranslationController extends Controller
         $translation->_keywords = $translation->sense
             ->keywords()
             ->join('words', 'words.id', 'keywords.word_id')
+            ->where(function ($query) use($id) {
+                $query->whereNull('translation_id')
+                    ->orWhere('translation_id', $id);
+            })
             ->select('words.id', 'words.word')
             ->get();
 
@@ -64,9 +76,12 @@ class TranslationController extends Controller
         $this->validateRequest($request);
 
         $translation = new Translation;
-        $this->saveTranslation($translation, $request);
+        $translation = $this->saveTranslation($translation, $request);
 
-        return response(null, 201);
+        return response([
+            'id'  => $translation->id,
+            'url' => $link->translation($translation->id)
+        ], 201);
     }
 
     public function update(Request $request, int $id)
@@ -74,19 +89,18 @@ class TranslationController extends Controller
         $this->validateRequest($request, $id);
 
         $translation = Translation::findOrFail($id);
-        return $this->saveTranslation($translation, $request);
+        $translation = $this->saveTranslation($translation, $request);
 
-        return response(null, 200);
+        $link = new LinkHelper();
+        return response([
+            'id'  => $translation->id,
+            'url' => $link->translation($translation->id)
+        ], 200);
     } 
 
     public function destroy(Request $request, int $id) 
     {
-        $speech = Translation::findOrFail($id);
-        /*
-        $speech->delete();
-
-        return redirect()->route('speech.index');
-        */
+        // Not supported yet
     }
 
     protected function saveTranslation(Translation $translation, Request $request)

@@ -17,13 +17,17 @@ class LayoutDataLoader
      */
     public function handle($request, Closure $next)
     {
-        View::composer('_layouts.default', function ($view)  {
+        View::composer('_layouts.default', function ($view) use ($request)  {
             $entities = Language::all()->sortBy('order')->toArray();
             $langages = [];
             foreach ($entities as $entity) {
                 $languages[] = $entity;
             }
+
             $view->with('allLanguages', json_encode($languages));
+
+            $user = $request->user();
+            $view->with('admin', $user && $user->isAdministrator());
         });
 
         return $next($request);

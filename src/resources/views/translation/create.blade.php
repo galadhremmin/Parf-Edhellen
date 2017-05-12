@@ -1,16 +1,12 @@
 @extends('_layouts.default')
 
-@section('title', $translation->word->word.' - Administration')
+@section('title', 'Add word - Administration')
 @section('body')
 
-<h1>Edit word</h1>
-{!! Breadcrumbs::render('translation.edit', $translation) !!}
+<h1>Add word</h1>
+{!! Breadcrumbs::render('translation.create') !!}
 
 <div id="ed-translation-form"></div>
-
-<script type="application/json" id="ed-preloaded-translation">
-{!! $translation !!}
-</script>
 
 @endsection
 

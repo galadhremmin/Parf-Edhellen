@@ -1,3 +1,16 @@
+h3.trans-word a {
+    float: right;
+    margin-left: 5px;
+}
+h3.trans-word .rejected {
+    text-decoration: line-through;
+}
 .word-type {
     font-style: italic;
+}
+.ed-admin-tool {
+    display: none;
+}
+.ed-admin .ed-admin-tool {
+    display: block;
 }

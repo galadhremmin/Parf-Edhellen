@@ -121,19 +121,19 @@ Breadcrumbs::register('sentence.edit', function ($breadcrumbs, App\Models\Senten
 Breadcrumbs::register('translation.index', function ($breadcrumbs)
 {
     $breadcrumbs->parent('dashboard');
-    $breadcrumbs->push('Glosses', route('translation.index'));
+    $breadcrumbs->push('Words', route('translation.index'));
 });
 
 Breadcrumbs::register('translation.create', function ($breadcrumbs)
 {
     $breadcrumbs->parent('translation.index');
-    $breadcrumbs->push('Add gloss', route('translation.create'));
+    $breadcrumbs->push('Add word', route('translation.create'));
 });
 
 Breadcrumbs::register('translation.edit', function ($breadcrumbs, App\Models\Translation $translation)
 {
     $breadcrumbs->parent('translation.index');
-    $breadcrumbs->push('Edit gloss (' . $translation->word->word . ')', route('translation.edit', [
+    $breadcrumbs->push('Edit word (' . $translation->word->word . ')', route('translation.edit', [
         'id' => $translation->id
     ]));
 });

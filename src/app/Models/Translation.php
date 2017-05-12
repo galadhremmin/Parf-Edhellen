@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Translation extends Model
 {
-    public function author() 
+    public function account() 
     {
-        return $this->belongsTo(Author::class);
+        return $this->belongsTo(Account::class);
     }
 
     public function sense() 

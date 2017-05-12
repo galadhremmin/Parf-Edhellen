@@ -68,16 +68,18 @@ class EDBookGloss extends React.Component {
                             <span className="glyphicon glyphicon-asterisk" />
                         </a> : '' }
                     {' '}
-            <span itemProp="headline">
-              {gloss.word}
-            </span>
+                    <span itemProp="headline" className={classNames({'rejected': gloss.is_rejected})}>
+                    {gloss.word}
+                    </span>
                     {gloss.external_link_format && gloss.external_id ?
                         <a href={gloss.external_link_format.replace(/\{ExternalID\}/g, gloss.external_id)}
-                           className="ed-external-link-button"
-                           title={`Open on ${gloss.translation_group_name} (new tab/window)`}
-                           target="_blank">
-                            <span className="glyphicon glyphicon-globe pull-right" />
+                            title={`Open on ${gloss.translation_group_name} (new tab/window)`}
+                            target="_blank">
+                            <span className="glyphicon glyphicon-globe" />
                         </a> : ''}
+                    <a href={`/admin/translation/${gloss.id}/edit`} className="ed-admin-tool">
+                        <span className="glyphicon glyphicon-edit" />
+                    </a>
                 </h3>
                 <p>
                     {gloss.tengwar ? <span className="tengwar">{gloss.tengwar}</span> : ''}
@@ -102,7 +104,7 @@ class EDBookGloss extends React.Component {
                     {' by '}
                     <a href={gloss.account_url} itemProp="author" rel="author" title={`View profile for ${gloss.account_name}.`}>
                         {gloss.account_name}
-                    </a>
+                    </a>.
                 </footer>
             </blockquote>);
     }

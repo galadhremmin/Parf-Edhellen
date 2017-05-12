@@ -5,7 +5,7 @@ use App\Helpers\{
     LinkHelper, StringHelper, MarkdownParser
 };
 use App\Models\{
-    Language, Translation
+    Language, Translation, Account
 };
 use Illuminate\Support\Collection;
 

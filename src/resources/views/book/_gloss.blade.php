@@ -8,9 +8,12 @@
     @if (!$gloss->is_canon || $gloss->is_uncertain || !$gloss->is_latest)
     <a href="/about" title="Unattested, unverified or debatable content."><span class="glyphicon glyphicon-asterisk"></span></a>
     @endif
-    <span itemprop="headline">
+    <span itemprop="headline" class="{{ $gloss->is_rejected ? 'rejected' : '' }}">
       {{ $gloss->word }}
     </span>
+    <a href="{{ route('translation.edit', [ 'id' => $gloss->id ]) }}" class="ed-admin-tool" aria-hidden="true">
+        <span class="glyphicon glyphicon-edit" />
+    </a>
   </h3> 
   @if ($gloss->tengwar != null)
   &#32;<span class="tengwar">{{ $gloss->tengwar }}</span>

@@ -91,7 +91,7 @@ class EDTranslationForm extends EDStatefulFormComponent {
             errors: undefined
         });
 
-        // success!
+        window.location.href = request.data.url;
     }
 
     onValidateFail(request, payload) {
@@ -134,7 +134,14 @@ class EDTranslationForm extends EDStatefulFormComponent {
         return <form onSubmit={this.onSubmit.bind(this)}>
             <EDErrorList errors={this.state.errors} />
             <p>
-                Please be as thorough as possible.
+                <span className="glyphicon glyphicon-info-sign" />{' '}
+                The <em>gloss</em> is the English translation of the <em>word</em>, whereas the <em>sense</em>{' '}
+                is a logical grouping for the word, and should also be in English. A typical sense for the word "elm" {' '}
+                would be "tree". Keywords are additional words associated with the sense. Make sure you understand {' '}
+                all these fields before saving your changes.
+            </p>
+            <p>
+                Please be as thorough as possible, and make sure to <em>always include sources!</em>
             </p>
             <div className="form-group">
                 <label htmlFor="ed-translation-word" className="control-label">Word</label>
@@ -216,8 +223,20 @@ class EDTranslationForm extends EDStatefulFormComponent {
                 <EDMarkdownEditor componentId="ed-translation-comments" componentName="comments" rows={8}
                     value={this.state.comments} onChange={super.onChange.bind(this)} />
             </div>
+            <p className="alert alert-info">
+                <strong>Important!</strong> Please <em>only</em> confirm your changes <em>if they are worth saving,</em>{' '}
+                because a lot of things happen under the hood when  you press that button. To undo your changes, please press the {' '}
+                <em>cancel</em>-button or reload the page. 
+            </p>
             <nav>
                 <ul className="pager">
+                    <li className="previous">
+                        <a href="/admin/translation">
+                            <span className="glyphicon glyphicon-remove"></span>
+                            {' '}
+                            Cancel
+                        </a>
+                    </li>
                     <li className="next">
                         <a href="#" onClick={this.onSubmit.bind(this)}>
                             Confirm and save
