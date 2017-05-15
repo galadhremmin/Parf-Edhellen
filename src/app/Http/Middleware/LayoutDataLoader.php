@@ -27,7 +27,7 @@ class LayoutDataLoader
             $view->with('allLanguages', json_encode($languages));
 
             $user = $request->user();
-            $view->with('admin', $user && $user->isAdministrator());
+            $view->with('admin', ! $user ? null : $user->isAdministrator());
         });
 
         return $next($request);

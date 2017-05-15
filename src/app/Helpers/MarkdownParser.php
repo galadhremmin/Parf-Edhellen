@@ -10,6 +10,9 @@ class MarkdownParser extends \Parsedown
         $this->InlineTypes['['][] = 'Reference';
         $this->InlineTypes['>']   = ['SeeAlso'];
 
+        // escapes markup (HTML)
+        $this->setMarkupEscaped(true);
+
         foreach ($disabledBlockTypes as $disabledBlockType)
             unset($this->BlockTypes[$disabledBlockType]);
     }

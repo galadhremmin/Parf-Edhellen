@@ -91,6 +91,42 @@ class EDBookGloss extends React.Component {
 
                 {comments}
 
+                {gloss.inflections ?
+                <div>
+                    <table className="table table-striped table-hover table-condensed">
+                        <caption>Inflections</caption>
+                        <thead>
+                            <tr>
+                                <th>Word</th>
+                                <th>Inflection</th>
+                                <th>Source</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {Object.keys(gloss.inflections).map(sentenceId => {
+                                const inflections = gloss.inflections[sentenceId];
+
+                                return <tr key={sentenceId}>
+                                    <td>{inflections[0].word}</td>
+                                    <td>
+                                        <em>{inflections[0].speech}</em>
+                                        {inflections.filter(inf => !! inf.inflection).map(
+                                            (inf, i) => <span key={`${sentenceId}-${i}`}>
+                                                {` ${inf.inflection}`}
+                                            </span>
+                                        )}
+                                    </td>
+                                    <td>
+                                        <a href={inflections[0].sentence_url} title={`Go to ${inflections[0].sentence_name}.`}>
+                                            {inflections[0].sentence_name}
+                                        </a>
+                                    </td>
+                                </tr>;
+                            })}
+                        </tbody>
+                    </table>
+                </div> : ''}
+
                 <footer>
                     {gloss.source ? <span className="word-source" rel="trans-source">[{gloss.source}]</span> : ''}
                     {' '}

@@ -13,16 +13,16 @@ class TranslationRepository
         $word = self::formatWord($word);
 
         if ($languageId > 0) {
-            $keywords = DB::table('translations as t')
-                ->join('words as w', 't.word_id', '=', 'w.id')
+            $keywords = DB::table('keywords as k')
+                ->join('translations as t', 'k.sense_id', 't.sense_id')
                 ->where([
                     [ 't.is_latest', '=', 1 ],
                     [ 't.is_deleted', '=', 0 ],
                     [ 't.language_id', '=', $languageId ],
-                    [ $reversed ? 'w.reversed_normalized_word' : 'w.normalized_word', 'like', $word ]
+                    [ $reversed ? 'k.reversed_normalized_keyword' : 'k.normalized_keyword', 'like', $word ]
                 ])
-                ->orderBy('w.word')
-                ->select('w.word as k', 'w.normalized_word as nk')
+                ->orderBy('k.keyword')
+                ->select('k.keyword as k', 'k.normalized_keyword as nk')
                 ->distinct();
         } else {
             $keywords = Keyword::findByWord($word, $reversed)
@@ -34,10 +34,10 @@ class TranslationRepository
             ->get();
     }
 
-    public function getWordTranslations(string $word) 
+    public function getWordTranslations(string $word, int $languageId = 0) 
     {
         $senses = self::getSensesForWord($word);
-        return self::createTranslationQuery()
+        return self::createTranslationQuery($languageId)
             ->whereIn('t.sense_id', $senses)
             ->orderBy('word')
             ->get()
@@ -81,10 +81,7 @@ class TranslationRepository
             return $groupedSuggestions;
         }
 
-        $query = self::createTranslationQuery()
-            ->where([
-                ['t.language_id', '=', $languageId]
-            ]);
+        $query = self::createTranslationQuery($languageId);
         
         if ($inexact) {
             $query->where(function ($query) use ($normalizedWords) {
@@ -259,19 +256,26 @@ class TranslationRepository
         $keyword->save();
     }
 
-    protected static function createTranslationQuery($latest = true) 
+    protected static function createTranslationQuery($languageId = 0) 
     {
-        return DB::table('translations as t')
+        $q = DB::table('translations as t')
             ->join('words as w', 't.word_id', 'w.id')
             ->leftJoin('accounts as a', 't.account_id', 'a.id')
             ->leftJoin('translation_groups as tg', 't.translation_group_id', 'tg.id')
             ->leftJoin('speeches as s', 't.speech_id', 's.id')
             ->where([
-                ['t.is_latest', '=', $latest ? 1 : 0],
+                ['t.is_latest', '=', 1],
                 ['t.is_deleted', '=', 0],
                 ['t.is_index', '=', 0]
-            ])
-            ->select(
+            ]);
+
+        if ($languageId !== 0) {
+            $q = $q->where([
+                ['t.language_id', '=', $languageId]
+            ]);
+        }
+
+        return $q->select(
                 'w.word', 't.id', 't.translation', 't.etymology', 's.name as type', 't.source',
                 't.comments', 't.tengwar', 't.phonetic', 't.language_id', 't.account_id',
                 'a.nickname as account_name', 'w.normalized_word', 't.is_index', 't.created_at', 't.translation_group_id',

@@ -12,7 +12,9 @@ export const EDSearchResultsReducer = (state = {
     word: undefined,
     wordSearch: undefined,
     normalizedWord: undefined,
-    bookData: undefined
+    bookData: undefined,
+    reversed: false,
+    languageId: 0
 }, action) => {
     switch (action.type) {
 
@@ -20,6 +22,8 @@ export const EDSearchResultsReducer = (state = {
             return Object.assign({}, state, {
                 loading: true,
                 wordSearch: action.wordSearch,
+                reversed: action.reversed,
+                languageId: action.languageId,
                 itemIndex: -1
             });
 

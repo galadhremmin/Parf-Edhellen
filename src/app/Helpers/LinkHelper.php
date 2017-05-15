@@ -45,16 +45,23 @@ class LinkHelper
         ]);
     }
 
-    public function sentence(int $languageId, string $languageName, int $sentenceId, string $sentenceName)
+    public function sentence(int $languageId, string $languageName, int $sentenceId, string $sentenceName,
+        int $sentenceFragmentId = 0)
     {
         $languageName = StringHelper::normalizeForUrl($languageName);
         $sentenceName = StringHelper::normalizeForUrl($sentenceName);
 
-        return route('sentence.public.sentence', [
+        $url = route('sentence.public.sentence', [
             'langId'   => $languageId,
             'langName' => $languageName,
             'sentId'   => $sentenceId,
             'sentName' => $sentenceName
         ]);
+
+        if ($sentenceFragmentId !== 0) {
+            $url .= '#!'.$sentenceFragmentId;
+        }
+
+        return $url;
     }
 }

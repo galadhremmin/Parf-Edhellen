@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\Sentence;
+use App\Models\{ Sentence, SentenceFragment };
 use Illuminate\Support\Facades\DB;
 
 class SentenceRepository
@@ -45,6 +45,31 @@ class SentenceRepository
                 'a.nickname as account_name', 's.name', 'l.name as language_name')
             ->get()
             ->groupBy('language_name');
+    }
+
+    /**
+     * Gets inflections for the specified IDs. Returns an associative array
+     * keyed with the sentence fragment associated with the inflection.
+     *
+     * @param number[] $ids
+     * @return array
+     */
+    public function getInflectionsForTranslations(array $ids)
+    {
+        return DB::table('sentence_fragments as sf')
+            ->join('speeches as sp', 'sf.speech_id', 'sp.id')
+            ->join('sentences as s', 'sf.sentence_id', 's.id')
+            ->join('languages as l', 's.language_id', 'l.id')
+            ->leftJoin('sentence_fragment_inflection_rels as r', 'sf.id', 'r.sentence_fragment_id')
+            ->leftJoin('inflections as i', 'r.inflection_id', 'i.id')
+            ->whereIn('sf.translation_id', $ids)
+            ->select('sf.translation_id', 'sf.fragment as word', 'i.name as inflection', 'sp.name as speech', 
+                'sf.sentence_id', 'sf.id as sentence_fragment_id', 's.name as sentence_name', 'l.name as language_name',
+                'l.id as language_id')
+            ->orderBy('sf.fragment')
+            ->get()
+            ->groupBy('sentence_fragment_id')
+            ->toArray();
     }
 
     public function saveSentence(Sentence $sentence, array $fragments, array $inflections) 

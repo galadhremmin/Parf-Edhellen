@@ -18,7 +18,7 @@ class BookAdapter
      * @param string|null $word
      * @return array
      */
-    public function adaptTranslations(array $translations, string $word = null)
+    public function adaptTranslations(array $translations, string $word = null, array $inflections = [])
     {
         $numberOfTranslations = count($translations);
 
@@ -50,13 +50,15 @@ class BookAdapter
 
         //    - Just one translation result.
         if ($numberOfTranslations === 1) {
+            $translation = $translations[0];
+
             return self::assignColumnWidths([
                 'word' => $word,
                 'sections' => [
                     [
                         // Load the language by examining the first (and only) element of the array
-                        'language' => Language::findOrFail($translations[0]->language_id),
-                        'glosses' => $translations
+                        'language' => Language::findOrFail($translation->language_id),
+                        'glosses'  => [ self::adaptTranslation($translation, $inflections, $linker) ]
                     ]
                 ]
             ], 1);
@@ -71,6 +73,9 @@ class BookAdapter
             if ($word !== null) {
                 self::calculateRating($translation, $word);
             }
+
+            // adapt translation for the view
+            $translation = self::adaptTranslation($translation, $inflections, $linker);
 
             if (!isset($gloss2LanguageMap[$translation->language_id])) {
                 $gloss2LanguageMap[$translation->language_id] = [ $translation ];
@@ -115,12 +120,45 @@ class BookAdapter
         ], count($allLanguages));
     }
 
+    private static function adaptTranslation(\stdClass $translation, array $inflections, LinkHelper $linker) 
+    {
+        // Filter among the inflections, looking for references to the specified translation.
+        // The array is associative two-dimensional with the sentence fragment ID as the key, and an array containing
+        // the  inflections associated with the fragment.
+        $inflectionsForTranslation = array_filter($inflections, function ($i) use($translation) {
+            return $i[0]->translation_id === $translation->id;
+        });
+        $translation->inflections = count($inflectionsForTranslation) > 0 
+            ? $inflectionsForTranslation : null;
+
+        // Create links upon the first element of each sentence fragment.
+        if ($translation->inflections !== null) {
+            foreach ($translation->inflections as $sentenceFragmentId => $inflectionsForFragment) {
+
+                // The [0] restricts the URL to the first element in the array. 
+                if (! isset($inflectionsForFragment[0]->sentence_url)) {
+                    // Use the linker to generate the URL
+                    $inflectionsForFragment[0]->sentence_url = $linker->sentence(
+                        $inflectionsForFragment[0]->language_id, 
+                        $inflectionsForFragment[0]->language_name, 
+                        $inflectionsForFragment[0]->sentence_id, 
+                        $inflectionsForFragment[0]->sentence_name,
+                        $sentenceFragmentId
+                    );
+                }
+                
+            }
+        }
+
+        return $translation;
+    }
+
     /**
      * Estimates how relevant the specified translation object is based on the search term.
      * @param $translation
      * @param $word
      */
-    private static function calculateRating($translation, string $word)
+    private static function calculateRating(\stdClass $translation, string $word)
     {
         $rating = 0;
 

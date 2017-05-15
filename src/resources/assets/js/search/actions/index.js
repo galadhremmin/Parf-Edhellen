@@ -9,10 +9,12 @@ import {
     SET_SELECTION
 } from '../reducers';
 
-export function requestResults(wordSearch) {
+export function requestResults(wordSearch, reversed, languageId) {
     return {
         type: REQUEST_RESULTS,
-        wordSearch
+        wordSearch,
+        reversed,
+        languageId
     };
 }
 
@@ -53,17 +55,17 @@ export function setSelection(index) {
     };
 }
 
-export function fetchResults(word, reversed = false, languageId = 0) {
+export function fetchResults(word, reversed = false, language_id = 0) {
     if (!word || /^\s$/.test(word)) {
         return;
     }
 
     return dispatch => {
-        dispatch(requestResults(word));
+        dispatch(requestResults(word, reversed, language_id));
         axios.post(EDConfig.api('/book/find'), { 
             word, 
             reversed, 
-            language_id: languageId 
+            language_id 
         }).then(resp => {
             const results = resp.data.map(r => ({
                 word: r.k,
@@ -98,14 +100,22 @@ export function beginNavigation(word, normalizedWord, index, modifyState) {
     // because most browsers doesn't change the document title when pushing state
     document.title = title;
 
-    // Inform indirect listeners about the navigation
-    const event = new CustomEvent('ednavigate', { detail: { address, word } });
-    window.dispatchEvent(event);
+    return (dispatch, getState) => {
 
-    return dispatch => {
+        // Retrieve language filter configuration
+        const language_id = getState().languageId || undefined;
+
+        // Inform indirect listeners about the navigation
+        const event = new CustomEvent('ednavigate', { detail: { address, word, language_id } });
+        window.dispatchEvent(event);
+
         dispatch(requestNavigation(word, normalizedWord || undefined, index));
 
-        axios.post(apiAddress, { word: normalizedWord || word }).then(resp => {
+        axios.post(apiAddress, { 
+            word: normalizedWord || word, 
+            language_id,
+            inflections: true 
+        }).then(resp => {
             dispatch(receiveNavigation(resp.data));
 
             // Find elements which is requested to be deleted upon receiving the navigation commmand

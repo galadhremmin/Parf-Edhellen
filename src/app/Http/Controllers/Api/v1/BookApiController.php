@@ -6,18 +6,21 @@ use Illuminate\Http\Request;
 
 use App\Models\{ Translation, TranslationGroup, Word };
 use App\Http\Controllers\Controller;
-use App\Repositories\TranslationRepository;
+use App\Repositories\{ TranslationRepository, SentenceRepository };
 use App\Adapters\BookAdapter;
 use App\Helpers\StringHelper;
 
 class BookApiController extends Controller 
 {
     private $_translationRepository;
+    private $_sentenceRepository;
     private $_adapter;
 
-    public function __construct(TranslationRepository $translationRepository, BookAdapter $adapter)
+    public function __construct(TranslationRepository $translationRepository, 
+        SentenceRepository $sentenceRepository, BookAdapter $adapter)
     {
         $this->_translationRepository = $translationRepository;
+        $this->_sentenceRepository = $sentenceRepository;
         $this->_adapter = $adapter;
     }
 
@@ -126,13 +129,22 @@ class BookApiController extends Controller
     public function translate(Request $request)
     {
         $this->validate($request, [
-            'word' => 'required|max:255'
+            'word'        => 'required|max:255',
+            'language_id' => 'sometimes|required|exists:languages,id',
+            'inflections' => 'sometimes|boolean'
         ]);
 
         $word = StringHelper::normalize( $request->input('word') );
-        $translations = $this->_translationRepository->getWordTranslations($word);
-        $model = $this->_adapter->adaptTranslations($translations, $word);
+        $languageId = $request->has('language_id') ? intval($request->input('language_id')) : 0;
+        
+        $translations = $this->_translationRepository->getWordTranslations($word, $languageId);
 
+        $inflections = $request->has('inflections') && $request->input('inflections')
+            ? $this->_sentenceRepository->getInflectionsForTranslations(array_map(function ($v) {
+                return $v->id;
+            }, $translations)) : [];
+
+        $model = $this->_adapter->adaptTranslations($translations, $word, $inflections);
         return $model;
     }
 

@@ -13,6 +13,7 @@ class EDSearchBar extends React.Component {
             languageId: 0
         };
         this.throttle = 0;
+        this.keyhook = this.onGlobalKeyPress.bind(this);
     }
 
     componentDidMount() {
@@ -23,6 +24,12 @@ class EDSearchBar extends React.Component {
                 name: 'All languages'
             }, ...EDConfig.languages()]
         });
+
+        window.addEventListener('keydown', this.keyhook);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('keydown', this.keyhook);
     }
 
     searchKeyDown(ev) {
@@ -90,6 +97,22 @@ class EDSearchBar extends React.Component {
         }
     }
 
+    /**
+     * Listens to the client pressing _s_ within the context of the window. When it happens,
+     * the focus of the client's attention is drawn to the input field.
+     */
+    onGlobalKeyPress(ev) {
+        if (ev.ctrlKey || ev.metaKey || ev.shiftKey || ev.which !== 83 /* = s */ ||
+            // ensure that the target is the body, as in no child elements. This is important
+            // as the keyhook will also intercept key presses within text fields etcetera.
+            ev.target !== document.body) { 
+            return;
+        }
+
+        this.inputField.focus();
+        ev.preventDefault();
+    }
+
     render() {
         const fieldClasses = classNames('form-control', { 'disabled': this.props.loading });
         const statusClasses = classNames('glyphicon', this.props.loading
@@ -103,12 +126,14 @@ class EDSearchBar extends React.Component {
                             <span className={statusClasses}>&#32;</span>
                         </span>
                         <input type="search" className={fieldClasses}
+                               ref={input => this.inputField = input}
                                placeholder="What are you looking for?"
-                               tabIndex="1"
+                               tabIndex={1}
+                               accessKey="s"
                                name="word"
                                autoComplete="off"
                                autoCapitalize="off"
-                               autoFocus="true"
+                               autoFocus={true}
                                role="presentation"
                                value={this.state.word}
                                onKeyDown={this.searchKeyDown.bind(this)}

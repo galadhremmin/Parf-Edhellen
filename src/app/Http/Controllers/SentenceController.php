@@ -48,8 +48,8 @@ class SentenceController extends Controller
     public function bySentence(Request $request, int $langId, string $languageName,
                                int $sentId, string $sentName)
     {
-        $sentence  = Sentence::find($sentId);
-        $language  = Language::find($langId);
+        $sentence  = Sentence::findOrFail($sentId);
+        $language  = Language::findOrFail($langId);
         
         $fragments = $this->_adapter->adaptFragments($sentence->sentence_fragments);
 

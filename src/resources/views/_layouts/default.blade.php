@@ -8,8 +8,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link href="/css/app.css" rel="stylesheet">
+  @if (!empty(config('ed.header_view')))
+    @include(config('ed.header_view'))
+  @endif
 </head>
-<body class="{{ $admin ? 'ed-admin' : '' }}">
+<body class="{{ $admin ? 'ed-admin' : ($admin === false ? 'ed-user' : 'ed-anonymous') }}">
   <div class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
       <div class="navbar-header">
