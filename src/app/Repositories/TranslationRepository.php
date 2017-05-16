@@ -94,8 +94,8 @@ class TranslationRepository
         }
 
         $suggestions = $query
-            ->orderBy('w.normalized_word')
-            ->limit($numberOfNormalizedWords*10)
+            ->orderBy(DB::raw('CHAR_LENGTH(w.normalized_word)'))
+            ->limit($numberOfNormalizedWords*15)
             ->get()
             ->toArray();
         
