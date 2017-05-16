@@ -9,6 +9,7 @@ import EDConfig from 'ed-config';
 import { EDStatefulFormComponent } from 'ed-form';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
 import EDErrorList from 'ed-components/error-list';
+import { transcribe } from '../../../_shared/tengwar';
 import EDSpeechSelect from '../../../_shared/components/speech-select';
 import EDInflectionSelect from '../../../_shared/components/inflection-select';
 import EDTranslationSelect from '../../../_shared/components/translation-select';
