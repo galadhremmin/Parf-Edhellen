@@ -63,10 +63,9 @@ class EDBookGloss extends React.Component {
         return (
             <blockquote itemScope="itemscope" itemType="http://schema.org/Article" id={id} className={classNames({ 'contribution': !gloss.is_canon })}>
                 <h3 rel="trans-word" className="trans-word">
-                    {!gloss.is_canon || gloss.is_uncertain || !gloss.is_latest ?
-                        <a href="/about" title="Unattested, unverified or debatable content." className="neologism">
-                            <span className="glyphicon glyphicon-asterisk" />
-                        </a> : '' }
+                    {!gloss.is_canon || gloss.is_uncertain || !gloss.is_latest 
+                        ? <a href="/about" title="Unattested, unverified or debatable content." className="neologism"><span className="glyphicon glyphicon-asterisk" /></a> 
+                        : '' }
                     {' '}
                     <span itemProp="headline" className={classNames({'rejected': gloss.is_rejected})}>
                     {gloss.word}
@@ -105,11 +104,12 @@ class EDBookGloss extends React.Component {
                         <tbody>
                             {Object.keys(gloss.inflections).map(sentenceId => {
                                 const inflections = gloss.inflections[sentenceId];
+                                const firstInflection = inflections[0];
 
                                 return <tr key={sentenceId}>
-                                    <td>{inflections[0].word}</td>
+                                    <td>{firstInflection.word}</td>
                                     <td>
-                                        <em>{inflections[0].speech}</em>
+                                        <em>{firstInflection.speech}</em>
                                         {inflections.filter(inf => !! inf.inflection).map(
                                             (inf, i) => <span key={`${sentenceId}-${i}`}>
                                                 {` ${inf.inflection}`}
@@ -117,8 +117,8 @@ class EDBookGloss extends React.Component {
                                         )}
                                     </td>
                                     <td>
-                                        <a href={inflections[0].sentence_url} title={`Go to ${inflections[0].sentence_name}.`}>
-                                            {inflections[0].sentence_name}
+                                        <a href={firstInflection.sentence_url} title={`Go to ${firstInflection.sentence_name}.`}>
+                                            {firstInflection.sentence_name}
                                         </a>
                                     </td>
                                 </tr>;

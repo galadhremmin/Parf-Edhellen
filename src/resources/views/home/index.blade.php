@@ -5,24 +5,37 @@
 @section('body')
 
 <div class="jumbotron">
-  <h1>Mae govannen!</h1>
+  <h1 title="Well met!">Mae govannen!</h1>
   <p>
-    Parf Edhellen&mdash;an <em>Elvish Book</em>&mdash;is a free online dictionary for Tolkien's languages.
-    It consists of glosses imported from <em>Ardalambion</em>, <em>Eldamo</em>, <em>Hiswelókë</em> and
-    <a href="{{ route('about') }}">many others</a>.</p>
+    This is a Elvish Book, <em>Parf Edhellen</em>, and it is dedicated to Tolkien's languages.
 </div>
 
 <hr>
 
 <div class="row">
-  <div class="col-xs-12 col-sm-4">
-    <h4>About me</h4>
-    <p>My name is Leonard and I develop and maintain this elvish dictionary.
-      If you want to get in touch with me, please tweet me at
-      <a href="https://twitter.com/parmaeldo" target="_blank">@parmaeldo on Twitter</a>.</p>
+  <div class="col-xs-12 col-sm-6 col-md-4">
+    <h4>About</h4>
+    <p>
+      This website is dedicated to Tolkien's languages, with an emphasis on 
+      the elvish languages of his legendarium. Our dictionary consists of
+      imported glosses from a variety of quality dictionaries. You can read 
+      more <a href="{{ route('about') }}">on our about page</a>.
+    </p>
+    <p>
+      <em>Parf Edhellen</em> is a non-profit, non-commercial endeavor. It is 
+      developed and maintained by Leonard. Please contact us on Twitter if you 
+      would like to get in touch,
+      <a href="https://twitter.com/parmaeldo" target="_blank">@parmaeldo</a>.
+      If you are a developer, you can also follow the project on 
+      <a href="https://github.com/galadhremmin/Parf-Edhellen" target="_blank">Github</a>.
+    </p>
     <hr class="visible-xs">
   </div>
-  <div class="col-xs-12 col-sm-4">
+  <div class="col-xs-12 col-sm-6 col-md-4">
+    <h4>Random phrase</h4>
+    @include('sentence.public._random', [ 'sentence' => $sentence ])
+  </div>
+  <div class="hidden-xs hidden-sm col-md-4">
     <h4>Community activity</h4>
     <ul class="list-group">
     @foreach($reviews as $review)
@@ -34,10 +47,6 @@
     @endforeach
     </ul>
     <hr class="visible-xs">
-  </div>
-  <div class="col-xs-12 col-sm-4">
-    <h4>Random phrase</h4>
-    @include('sentence.public._random', [ 'sentence' => $sentence ])
   </div>
 </div>
 
