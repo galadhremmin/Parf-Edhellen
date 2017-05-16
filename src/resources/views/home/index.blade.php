@@ -7,7 +7,7 @@
 <div class="jumbotron">
   <h1 title="Well met!">Mae govannen!</h1>
   <p>
-    This is a Elvish Book, <em>Parf Edhellen</em>, and it is dedicated to Tolkien's languages.
+    This is an Elvish Book, <em>Parf Edhellen</em>, dedicated to Tolkien's languages.
 </div>
 
 <hr>
