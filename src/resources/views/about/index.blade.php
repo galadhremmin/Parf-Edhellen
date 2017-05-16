@@ -75,6 +75,10 @@
   <dd><em>Tolkiendil</em> provides a consolidated list of Sindarin names examined and translated. <em>Parf Edhellen</em> is happy to house their excellent work.</dd>
 </dl>
 <p></p>
-<p>We use <em>Glaemscribe</em> by <em>Benjamin Babut</em> for transcriptions.</p>
+<p>
+  We use <em>Glaemscribe</em> by <a href="https://www.jrrvf.com/glaemscrafu/english/glaemscribe.html" target="_blank">Benjamin Babut</a> for transcriptions. 
+  <a href="https://pixabay.com/en/users/Mysticsartdesign-322497/">Mystic Art Design</a> photoshopped the jumbotron's background, and the photograph of the 
+  roots used for the background was taken by <a href="https://pixabay.com/en/users/tpsdave-12019/" target="_blank">tpsdave</a>.
+</p>
 
 @endsection
