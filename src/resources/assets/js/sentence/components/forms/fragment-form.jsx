@@ -209,7 +209,12 @@ class EDFragmentForm extends EDStatefulFormComponent {
         for (let i = 0; i < newFragments.length; i += 1) {
             const data = newFragments[i];
             const lowerFragment = data.fragment.toLocaleLowerCase();
-            const existingFragment = currentFragments.find(f => f.fragment.toLocaleLowerCase() === lowerFragment) || undefined;
+
+            // find existing fragments among the fragments already present in the collection
+            const existingFragment = 
+                (this.props.fragments && this.props.fragments.length > i && this.props.fragments[i].fragment.toLowerCase() === lowerFragment
+                    ? this.props.fragments[i] : undefined) || currentFragments.find(f => f.fragment.toLocaleLowerCase() === lowerFragment) || 
+                    undefined;
 
             if (existingFragment !== undefined) {
                 // overwrite the fragment with the existing fragment, as it might contain more data
@@ -268,7 +273,8 @@ class EDFragmentForm extends EDStatefulFormComponent {
         // same time.
         let indexes = this.applyToSimilarCheckbox.checked 
             ? this.props.fragments.reduce((accumulator, f, i) => {
-                if (f.fragment !== fragment.fragment) {
+                // Only modify identical fragments that does _not_ have a translation already associated with it
+                if (f.fragment.toLocaleLowerCase() !== fragment.fragment.toLocaleLowerCase() || f.translation_id) {
                     return accumulator; // the fragments are dissimilar.
                 }
 
