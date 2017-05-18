@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Resources;
 
-use App\Models\{ Translation, Keyword, Word };
+use App\Models\{ Translation, Keyword, Word, Language };
 use App\Adapters\BookAdapter;
 use App\Repositories\TranslationRepository;
 use App\Helpers\{ LinkHelper, StringHelper };
@@ -32,8 +32,29 @@ class TranslationController extends Controller
             ->with('word', 'account')
             ->get();
 
+        $languages = Language::invented()
+            ->orderBy('name')
+            ->select('name', 'id')
+            ->get();
+
         return view('translation.index', [ 
-            'latestTranslations' => $latestTranslations
+            'latestTranslations' => $latestTranslations,
+            'languages' => $languages
+        ]);
+    }
+
+    public function listForLanguage(Request $request, int $id)
+    {
+        $language = Language::findOrFail($id);
+        $translations = $this->_translationRepository->getTranslationListForLanguage($language->id);
+        
+        if (! $language->is_invented) {
+            return redirect()->route('translation.index');
+        }
+
+        return view('translation.list', [
+            'language' => $language,
+            'translations' => $translations
         ]);
     }
 

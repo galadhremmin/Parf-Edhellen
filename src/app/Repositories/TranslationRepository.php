@@ -51,6 +51,23 @@ class TranslationRepository
             ->first();
     }
 
+    public function getTranslationListForLanguage(int $languageId)
+    {
+        $translations = Translation::where('language_id', $languageId)
+            ->join('words as w', 'word_id', 'w.id')
+            ->join('accounts as u', 'translations.account_id', 'u.id')
+            ->leftJoin('speeches as s', 'speech_id', 's.id')
+            ->notIndex()
+            ->notDeleted()
+            ->latest()
+            ->select('translations.id', 'translation', 'w.word', 'source', 'u.nickname as account_name', 
+                'translations.account_id', 'is_rejected', 's.name as speech')
+            ->orderBy('w.word')
+            ->get();
+        
+        return $translations;
+    }
+
     public function suggest(array $words, int $languageId, $inexact = false) 
     {
         // Transform all words to lower case and remove doublettes.

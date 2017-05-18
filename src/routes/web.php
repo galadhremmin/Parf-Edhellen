@@ -67,6 +67,7 @@ Route::group([
     Route::post('sentence/validate', 'SentenceController@validatePayload');
     Route::post('sentence/validate-fragment', 'SentenceController@validateFragments');
 
+    Route::get('translation/list/{id}', 'TranslationController@listForLanguage')->name('translation.list');
 });
 
 // API
