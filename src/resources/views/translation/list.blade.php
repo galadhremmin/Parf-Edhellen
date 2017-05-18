@@ -20,10 +20,16 @@
       @if (! empty($t->source))
       [<span class="text-info">{{ $t->source }}</span>]
       @else
-      [<em class="text-danger">Source missing</em>]
+      [<strong class="text-danger">SOURCE MISSING</strong>]
       @endif
       by 
       <a href="{{ $link->author($t->account_id, $t->account_name) }}">{{ $t->account_name }}</a>
+      in 
+      @if (! empty($t->sense))
+      <strong>{{ $t->sense }}</strong>
+      @else
+      <strong class="text-danger">SENSE MISSING</strong>
+      @endif
       |
       #<a href="{{ $link->translation($t->id) }}">{{ $t->id }}</a>
     </li>

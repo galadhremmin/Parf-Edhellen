@@ -57,11 +57,12 @@ class TranslationRepository
             ->join('words as w', 'word_id', 'w.id')
             ->join('accounts as u', 'translations.account_id', 'u.id')
             ->leftJoin('speeches as s', 'speech_id', 's.id')
+            ->leftJoin('words as ws', 'sense_id', 'ws.id')
             ->notIndex()
             ->notDeleted()
             ->latest()
             ->select('translations.id', 'translation', 'w.word', 'source', 'u.nickname as account_name', 
-                'translations.account_id', 'is_rejected', 's.name as speech')
+                'translations.account_id', 'is_rejected', 's.name as speech', 'ws.word as sense')
             ->orderBy('w.word')
             ->get();
         
