@@ -24,14 +24,12 @@ const EDSentenceAdminReducer = (state = {
                 ...state,
                 fragments: action.fragments
             };
-            break;
 
         case SET_SENTENCE_DATA:
             return {
                 ...state,
                 ...action.data
             };
-            break;
 
         case SET_FRAGMENT_DATA:
             return {

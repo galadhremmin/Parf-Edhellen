@@ -8,7 +8,7 @@ const EDConfig = {
     /**
      * Gets all languages
      */
-    languages: () => languages, 
+    languages: () => languages,     
 
     /**
      * Convenience method for generating API paths
