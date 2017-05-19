@@ -124,7 +124,14 @@ class TranslationController extends Controller
 
     public function destroy(Request $request, int $id) 
     {
-        // Not supported yet
+        $this->validate($request, [
+            'replacementId' => 'required|exists:translations,id'
+        ]);
+
+        $ok = $this->_translationRepository->deleteTranslationWithId($id);
+        return $ok
+            ? response(null, 204)
+            : response(null, 500);
     }
 
     protected function saveTranslation(Translation $translation, Request $request)

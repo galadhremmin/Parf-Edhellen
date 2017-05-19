@@ -66,6 +66,31 @@ class Translation extends Model
         $query->where('is_latest', 1);
     }
 
+    public function getParent()
+    {
+        return Translation::where('child_translation_id', $this->id)
+            ->get();
+    }
+
+    public function getOrigin()
+    {
+        if (! $this->origin_translation_id) {
+            return $this;
+        }
+
+        return Translation::where('origin_translation_id', $this->id)
+            ->get();
+    }
+
+    public function getChild()
+    {
+        if (! $this->child_translation_id) {
+            return null;
+        }
+
+        return Translation::find($this->child_translation_id);
+    }
+
     public function getLatestVersion() 
     {
         return $this->is_latest 

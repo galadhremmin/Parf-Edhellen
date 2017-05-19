@@ -95,13 +95,13 @@ class SentenceController extends Controller
     public function validatePayload(Request $request)
     {
         $this->validateRequest($request, $request->input('id') ?? 0);
-        return response(null, 200);
+        return response(null, 204);
     }
 
     public function validateFragments(Request $request) 
     {
         $this->validateFragmentsInRequest($request);
-        return response(null, 200);
+        return response(null, 204);
     }
 
     protected function saveSentence(Sentence $sentence, Request $request) 
