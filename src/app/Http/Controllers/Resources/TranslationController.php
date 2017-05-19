@@ -125,7 +125,8 @@ class TranslationController extends Controller
     public function destroy(Request $request, int $id) 
     {
         $this->validate($request, [
-            'replacement_id' => 'required|exists:translations,id'
+            'id'             => 'required|numeric|exists:translations,id',
+            'replacement_id' => 'required|numeric|exists:translations,id'
         ]);
 
         $replacementId = intval($request->input('replacement_id'));
