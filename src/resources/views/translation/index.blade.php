@@ -17,6 +17,14 @@
         <div class="panel-body">
           <ul>
             <li><a href="{{ route('translation.create') }}">Add word</a></li>
+            <li>
+              List by language:
+              <ul>
+                @foreach ($languages as $language)
+                <li><a href="{{ route('translation.list', [ 'id' => $language->id ]) }}">{{ $language->name }}</a></li>
+                @endforeach
+              </ul>
+            </li>
           </ul>
         </div>
       </div>
@@ -45,6 +53,5 @@
       </div>
 
     </div>
-
   </div>
 @endsection

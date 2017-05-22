@@ -137,3 +137,12 @@ Breadcrumbs::register('translation.edit', function ($breadcrumbs, App\Models\Tra
         'id' => $translation->id
     ]));
 });
+
+Breadcrumbs::register('translation.list', function ($breadcrumbs, App\Models\Language $language)
+{
+    $breadcrumbs->parent('translation.index');
+    $breadcrumbs->push('List words in ' . $language->name, route('translation.list', [
+        'id' => $language->id
+    ]));
+});
+

@@ -51,6 +51,24 @@ class TranslationRepository
             ->first();
     }
 
+    public function getTranslationListForLanguage(int $languageId)
+    {
+        $translations = Translation::where('language_id', $languageId)
+            ->join('words as w', 'word_id', 'w.id')
+            ->join('accounts as u', 'translations.account_id', 'u.id')
+            ->leftJoin('speeches as s', 'speech_id', 's.id')
+            ->leftJoin('words as ws', 'sense_id', 'ws.id')
+            ->notIndex()
+            ->notDeleted()
+            ->latest()
+            ->select('translations.id', 'translation', 'w.word', 'source', 'u.nickname as account_name', 
+                'translations.account_id', 'is_rejected', 's.name as speech', 'ws.word as sense')
+            ->orderBy('w.word')
+            ->get();
+        
+        return $translations;
+    }
+
     public function suggest(array $words, int $languageId, $inexact = false) 
     {
         // Transform all words to lower case and remove doublettes.
@@ -216,7 +234,49 @@ class TranslationRepository
         return $translation;
     }
 
-    public function createWord(string $wordString, int $accountId)
+    public function deleteTranslationWithId(int $id, int $replaceId)
+    {
+        $translation = Translation::findOrFail($id);
+
+        // Deleted translations or deprecated (replaced) translations cannot be deleted.
+        if ($translation->is_deleted || ! $translation->is_latest) {
+            return false;
+        }
+
+        // Only indexes can be permanently deleted (DELETE).
+        $permanentDeletion = $translation->is_index;
+
+        if ($permanentDeletion) {
+            // Delete all indexes in their entirety.
+            $t = $translation->getOrigin();
+            while ($t) {
+                $child = $t->getChild();
+                $this->deleteTranslation($t, 0);
+                $t = $child;
+            }
+        } else {
+            $this->deleteTranslation($translation, $replaceId);
+        }
+
+        return true;
+    }
+
+    protected static function getSensesForWord(string $word) 
+    {
+        $rows = DB::table('keywords')
+            ->where('normalized_keyword', $word)
+            ->select('sense_id')
+            ->distinct()
+            ->get();
+
+        $ids = array();
+        foreach ($rows as $row)
+            $ids[] = $row->sense_id;
+
+        return $ids;
+    }
+
+    protected function createWord(string $wordString, int $accountId)
     {
         $wordString = mb_strtolower(trim($wordString), 'utf-8');
         $word = Word::where('word', $wordString)->first(); 
@@ -236,7 +296,7 @@ class TranslationRepository
         return $word; 
     }
 
-    public function createKeyword(Word $word, Sense $sense, Translation $translation = null)
+    protected function createKeyword(Word $word, Sense $sense, Translation $translation = null)
     {
         $keyword = new Keyword;
 
@@ -283,19 +343,22 @@ class TranslationRepository
                 't.external_id', 't.is_latest', 't.is_rejected');
     }
 
-    protected static function getSensesForWord(string $word) 
+    protected function deleteTranslation(Translation $t, int $replaceId) 
     {
-        $rows = DB::table('keywords')
-            ->where('normalized_keyword', $word)
-            ->select('sense_id')
-            ->distinct()
-            ->get();
+        $t->keywords()->delete();
 
-        $ids = array();
-        foreach ($rows as $row)
-            $ids[] = $row->sense_id;
+        if (! $t->is_index) {
+            $t->sentence_fragments()->update([
+                'translation_id' => $replaceId
+            ]);
+            
+            $t->favourites()->update([
+                'translation_id' => $replaceId
+            ]);
+        }
 
-        return $ids;
+        $t->is_deleted = true;
+        $t->save();
     }
 
     protected static function formatWord(string $word) 
