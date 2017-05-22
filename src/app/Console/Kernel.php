@@ -13,7 +13,8 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\RefreshKeywordsCommand::class
+        // Commands\RefreshKeywordsCommand::class,
+        Commands\ImportEldamoCommand::class,
     ];
 
     /**
@@ -24,8 +25,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        /*
         $schedule->command('keywords')
                   ->weekly();
+        */
     }
 
     /**
