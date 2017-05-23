@@ -10,6 +10,19 @@ const EDConfig = {
      */
     languages: () => languages,     
 
+    languageById: id => {
+        const categories = Object.keys(languages);
+        for (let category of categories) {
+            for (let language of languages[category]) {
+                if (language.id === id) {
+                    return language;
+                }
+            }
+        }
+
+        return  undefined;
+    },
+
     /**
      * Convenience method for generating API paths
      * @param path

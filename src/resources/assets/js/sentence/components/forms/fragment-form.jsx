@@ -388,7 +388,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
     }
  
     render() {
-        const language = this.props.languages.find(l => l.id === this.props.language_id);
+        const language = EDConfig.languageById(this.props.language_id);
 
         return <form onSubmit={this.onSubmit.bind(this)}>
             <p>

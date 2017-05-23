@@ -18,6 +18,23 @@ class MarkdownParser extends \Parsedown
     }
 
     /**
+     * Adds bootstrap classes to the table element.
+     * 
+     */
+    protected function blockTable($Line, array $Block = null)
+    {
+        $table = parent::blockTable($Line, $Block);
+        
+        if (! isset($table['element']['attributes'])) {
+            $table['element']['attributes'] = [];
+        }
+
+        $table['element']['attributes']['class'] = "table table-condensed table-striped table-hover";
+
+        return $table;
+    }
+
+    /**
      * Implements [[references]]
      * @param $Excerpt
      * @return array|void

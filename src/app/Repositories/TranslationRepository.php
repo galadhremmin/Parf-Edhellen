@@ -144,7 +144,7 @@ class TranslationRepository
         return $groupedSuggestions;
     }
 
-    public function saveTranslation(string $wordString, string $senseString, Translation $translation, array $keywords)
+    public function saveTranslation(string $wordString, string $senseString, Translation $translation, array $keywords, $resetKeywords = true)
     {
         // 1. Turn all words should be lower case.
         $wordString  = StringHelper::toLower($wordString);
@@ -172,9 +172,9 @@ class TranslationRepository
             // 5. If the sense has changed, check whether the previous sense should be excluded from
             // the keywords table, which should only contain keywords to current senses.
             if ($originalTranslation->sense_id !== $sense->id) {
-                $originalSense = Sense::findOrFail($originalTranslation->sense_id);
+                $originalSense = Sense::find($originalTranslation->sense_id);
                 // is the original translation the only one associated with this sense?
-                if ($originalSense->translations()->count() === 1) {
+                if ($originalSense !== null && $originalSense->translations()->count() === 1) {
                     // delete the sense's keywords as the sense is no longer in use.
                     $originalSense->keywords()->delete();
                 }
@@ -205,24 +205,32 @@ class TranslationRepository
                 'translation_id' => $translation->id
             ]);
         }
+
+        // 8. Remove existing keywords
+        if ($originalTranslation !== null) {
+            $originalTranslation->keywords()->delete();
+        }
+
+        // 9. save gloss and word as keywords on the translation
+        $this->createKeyword($word, $sense, $translation);
+        if ($wordString !== $glossString) { // this is sometimes possible (most often with names)
+            $this->createKeyword($glossWord, $sense, $translation);
+        }
+
+        // 10. Register keywords on the sense
         
-        // 8. Process keywords -- filter through the keywords and remove keywords that
+        // 10a. Process keywords -- filter through the keywords and remove keywords that
         // match the gloss and the translation's word, as these are managed separately.
         $keywords = array_filter($keywords, function ($w) use($wordString, $glossString) {
             return $w !== $wordString && $w !== $glossString;
         });
 
-        // 9. Remove existing keywords
-        if ($originalTranslation !== null) {
-            $originalTranslation->keywords()->delete();
+        // 10b. Delete existing keywords associated with the sense.
+        if ($resetKeywords) {
+            $sense->keywords()->whereNull('translation_id')->delete();
         }
 
-        // 10. save gloss and word as keywords on the translation
-        $this->createKeyword($word, $sense, $translation);
-        $this->createKeyword($glossWord, $sense, $translation);
-
-        // 11. Register keywords on the sense
-        $sense->keywords()->whereNull('translation_id')->delete();
+        // 10c. Recreate the keywords for the sense.
         foreach ($keywords as $keyword) {
             $keywordWord = $this->createWord($keyword, $translation->account_id);
 

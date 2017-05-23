@@ -18,11 +18,11 @@ class LayoutDataLoader
     public function handle($request, Closure $next)
     {
         View::composer('_layouts.default', function ($view) use ($request)  {
-            $entities = Language::all()->sortBy('order')->toArray();
-            $langages = [];
-            foreach ($entities as $entity) {
-                $languages[] = $entity;
-            }
+            $languages = Language::all()
+                ->sortBy('order')
+                ->sortBy('name')
+                ->groupBy('category')
+                ->toArray();
 
             $view->with('allLanguages', json_encode($languages));
 

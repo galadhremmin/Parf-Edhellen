@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import EDConfig from 'ed-config';
+import EDLanguageSelect from 'ed-components/language-select';
 import { fetchResults, setSelection, advanceSelection } from '../actions';
 
 class EDSearchBar extends React.Component {
@@ -19,10 +20,7 @@ class EDSearchBar extends React.Component {
     componentDidMount() {
         const languageNode = document.getElementById('ed-preloaded-languages');
         this.setState({
-            languages: [{
-                id: 0,
-                name: 'All languages'
-            }, ...EDConfig.languages()]
+            languages: EDConfig.languages()
         });
 
         window.addEventListener('keydown', this.keyhook);
@@ -142,16 +140,7 @@ class EDSearchBar extends React.Component {
                 </div>
             </div>
             <div className="row">
-                {this.state.languages ? (
-                <select className="search-language-select" onChange={this.languageChange.bind(this)}>
-                    {this.state.languages.filter(l => !l.id).map(l => <option value={l.id} key={l.id}>{l.name}</option>)}
-                    <optgroup label="Fictional languages">
-                        {this.state.languages.filter(l => l.is_invented && l.id).map(l => <option value={l.id} key={l.id}>{l.name}</option>)}
-                    </optgroup>
-                    <optgroup label="Real-world languages">
-                        {this.state.languages.filter(l => !l.is_invented && l.id).map(l => <option value={l.id} key={l.id}>{l.name}</option>)}
-                    </optgroup>
-                </select>) : ''}
+                {this.state.languages ? <EDLanguageSelect className="search-language-select" onChange={this.languageChange.bind(this)} /> : ''}
                 <div className="checkbox input-sm search-reverse-box-wrapper">
                     <label>
                         <input type="checkbox" name="isReversed"

@@ -7,6 +7,7 @@ import EDConfig from 'ed-config';
 import { requestTranslationGroups } from '../../actions/admin';
 import { EDStatefulFormComponent } from 'ed-form';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
+import EDLanguageSelect from 'ed-components/language-select';
 import EDErrorList from 'ed-components/error-list';
 import EDWordSelect from '../../../_shared/components/word-select';
 import EDAccountSelect from '../../../_shared/components/account-select';
@@ -130,7 +131,7 @@ class EDTranslationForm extends EDStatefulFormComponent {
             return <div className="sk-spinner sk-spinner-pulse"></div>;
         }
 
-        const language = this.props.languages.find(l => l.id === this.state.language_id);
+        const language = EDConfig.languageById(this.state.language_id);
 
         return <form onSubmit={this.onSubmit.bind(this)}>
             <EDErrorList errors={this.state.errors} />
@@ -197,13 +198,8 @@ class EDTranslationForm extends EDStatefulFormComponent {
             </div>
             <div className="form-group">
                 <label htmlFor="ed-translation-language" className="control-label">Language</label>
-                <select className="form-control" id="ed-translation-language" name="language_id" 
-                    onChange={ev => super.onChange(ev, 'number')} value={this.state.language_id}>
-                    <option value="0"></option>
-                    {this.props.languages
-                        .filter(l => l.is_invented)
-                        .map(l => <option value={l.id} key={l.id}>{l.name}</option>)}
-                </select>
+                <EDLanguageSelect className="form-control" componentId="ed-translation-language" componentName="language_id" 
+                    onChange={ev => super.onChange(ev, 'number')} value={this.state.language_id} />
             </div>
             <div className="checkbox">
                 <label>

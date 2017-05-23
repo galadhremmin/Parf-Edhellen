@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Language extends Model
 {
-    protected $hidden = ['created_at', 'updated_at', 'order'];
+    protected $hidden = ['created_at', 'updated_at', 'order', 'category'];
 
     public function scopeInvented($query) 
     {

@@ -18,6 +18,7 @@ mix.webpackConfig({
 
             'ed-components/error-list': 'elfdict/components/error-list.jsx',
             'ed-components/markdown-editor': 'elfdict/components/markdown-editor.jsx',
+            'ed-components/language-select': 'elfdict/components/language-select.jsx',
 
             'ed-config': 'elfdict/config.js',
             'ed-form': 'elfdict/form.js',
@@ -37,6 +38,7 @@ mix.extract([
     'smoothscroll-polyfill',
     'ed-components/error-list',
     'ed-components/markdown-editor',
+    'ed-components/language-select',
     'ed-config',
     'ed-form',
     'ed-promise',

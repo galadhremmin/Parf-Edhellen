@@ -7,6 +7,7 @@ import { polyfill as enableSmoothScrolling } from 'smoothscroll-polyfill';
 import { setSentenceData } from '../../actions/admin';
 import EDConfig from 'ed-config';
 import { EDStatefulFormComponent } from 'ed-form';
+import EDLanguageSelect from 'ed-components/language-select';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
 import EDErrorList from 'ed-components/error-list';
 import EDAccountSelect from '../../../_shared/components/account-select';
@@ -133,13 +134,8 @@ class EDSentenceForm extends EDStatefulFormComponent {
             </div>
             <div className="form-group">
                 <label htmlFor="ed-sentence-language" className="control-label">Language</label>
-                <select className="form-control" id="ed-sentence-language" name="language_id" 
-                    onChange={ev => super.onChange(ev, 'number')} value={this.state.language_id}>
-                    <option value="0"></option>
-                    {this.props.languages
-                        .filter(l => l.is_invented)
-                        .map(l => <option value={l.id} key={l.id}>{l.name}</option>)}
-                </select>
+                <EDLanguageSelect className="form-control" componentId="ed-sentence-language" componentName="language_id"
+                    onChange={ev => super.onChange(ev, 'number')} value={this.state.language_id} />
             </div>
             <div className="form-group">
                 <label htmlFor="ed-sentence-description" className="control-label">Summary</label>
