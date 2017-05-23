@@ -13,7 +13,7 @@ class Language extends Model
         return $query->where('is_invented', 1);
     }
 
-    public function scopeOrderByPriority($query, $direction = 'asc') 
+    public function scopeOrderByPriority($query, $direction = 'desc') 
     {
         return $query->orderBy('order', $direction);
     }

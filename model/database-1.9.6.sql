@@ -1,4 +1,7 @@
 ALTER TABLE `languages` ADD `category` varchar(64) NULL;
+ALTER TABLE `words` MODIFY `word` varchar(128) NOT NULL;
+ALTER TABLE `words` MODIFY `normalized_word` varchar(128) NOT NULL;
+ALTER TABLE `words` MODIFY `reversed_normalized_word` varchar(128) NOT NULL;
 
 UPDATE `languages` SET `category` = 'Late Period (1950-1973)' 
     WHERE `id` IN(1, 2, 5, 6, 7, 8, 9, 10, 11, 12, 20, 25, 30, 35,
@@ -29,5 +32,9 @@ UPDATE `languages` SET `order` = 10 WHERE `category` = 'Real-world languages';
 UPDATE `languages` SET `order` = 20 WHERE `category` = 'Early Period (1910-1930)';
 UPDATE `languages` SET `order` = 30 WHERE `category` = 'Middle Period (1930-1950)';
 UPDATE `languages` SET `order` = 40 WHERE `category` = 'Late Period (1950-1973)';
+
+UPDATE `languages` SET `order` = 41 WHERE `name` = 'Quenya';
+UPDATE `languages` SET `order` = 42 WHERE `name` = 'Sindarin';
+UPDATE `languages` SET `order` = 43 WHERE `name` = 'Telerin';
 
 INSERT INTO `version` (`number`, `date`) VALUES (1.96, NOW());
