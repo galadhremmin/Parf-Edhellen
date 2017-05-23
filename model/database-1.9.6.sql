@@ -29,3 +29,5 @@ UPDATE `languages` SET `order` = 10 WHERE `category` = 'Real-world languages';
 UPDATE `languages` SET `order` = 20 WHERE `category` = 'Early Period (1910-1930)';
 UPDATE `languages` SET `order` = 30 WHERE `category` = 'Middle Period (1930-1950)';
 UPDATE `languages` SET `order` = 40 WHERE `category` = 'Late Period (1950-1973)';
+
+INSERT INTO `version` (`number`, `date`) VALUES (1.9.6, NOW());
