@@ -116,7 +116,7 @@ class MarkdownParser extends \Parsedown
     protected function inlineSeeAlso($Excerpt)
     {
         $text = $Excerpt['text'];
-        if ($text[0] === '>' && $text[1] === '>')
+        if (strlen($text) >= 2 && $text[0] === '>' && $text[1] === '>')
         {
             return [
                 'extent' => 2,
