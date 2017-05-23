@@ -24,6 +24,10 @@ class MarkdownParser extends \Parsedown
     protected function blockTable($Line, array $Block = null)
     {
         $table = parent::blockTable($Line, $Block);
+
+        if (! $table || ! isset($table['element'])) {
+            return $table;
+        }
         
         if (! isset($table['element']['attributes'])) {
             $table['element']['attributes'] = [];
