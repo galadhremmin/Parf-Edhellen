@@ -340,7 +340,8 @@ class TranslationRepository
         if ($languageId !== 0) {
             $q = $q->where('t.language_id', $languageId);
         } else {
-            $q = $q->where('t.is_unusual', 0);
+            $q = $q->join('language as l', 't.language_id', 'l.id')
+                ->where('l.is_unusual', 0);
         }
 
         return $q->select(

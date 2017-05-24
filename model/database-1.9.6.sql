@@ -1,4 +1,5 @@
 ALTER TABLE `languages` ADD `category` varchar(64) NULL;
+ALTER TABLE `languages` ADD `is_unusual` smallint(1) NOT NULL DEFAULT 0;
 ALTER TABLE `words` MODIFY `word` varchar(128) NOT NULL;
 ALTER TABLE `words` MODIFY `normalized_word` varchar(128) NOT NULL;
 ALTER TABLE `words` MODIFY `reversed_normalized_word` varchar(128) NOT NULL;
@@ -36,5 +37,7 @@ UPDATE `languages` SET `order` = 40 WHERE `category` = 'Late Period (1950-1973)'
 UPDATE `languages` SET `order` = 49 WHERE `name` = 'Quenya';
 UPDATE `languages` SET `order` = 48 WHERE `name` = 'Sindarin';
 UPDATE `languages` SET `order` = 41 WHERE `name` = 'Telerin';
+
+UPDATE `languages` SET `is_unusual` = 1 WHERE `id` NOT IN(1,2,4,5,6,7,9,10,11);
 
 INSERT INTO `version` (`number`, `date`) VALUES (1.96, NOW());
