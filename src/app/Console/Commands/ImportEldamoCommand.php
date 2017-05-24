@@ -404,21 +404,6 @@ class ImportEldamoCommand extends Command
 
     private static function removeNumbers($word)
     {
-        $w = '';
-
-        $numberOfCharacters = strlen($word);
-        for ($i = 0; $i < $numberOfCharacters; $i += 1) {
-            $c = $word[$i];
-
-            if ($c === '¹' ||
-                $c === '²' ||
-                $c === '³') {
-                continue;
-            }
-
-            $w .= $c;
-        }
-
-        return $w;
+        return preg_replace('/[¹²³]$/u', '', $word);
     }
 }
