@@ -213,7 +213,7 @@ class TranslationRepository
 
         // 9. save gloss and word as keywords on the translation
         $this->createKeyword($word, $sense, $translation);
-        if ($wordString !== $glossString) { // this is sometimes possible (most often with names)
+        if ($word->word !== $glossWord->word) { // this is sometimes possible (most often with names)
             $this->createKeyword($glossWord, $sense, $translation);
         }
 
