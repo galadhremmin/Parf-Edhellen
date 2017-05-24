@@ -328,7 +328,7 @@ class ImportEldamoCommand extends Command
                     }
                 }
 
-                $i -= max(0, count($matches));
+                $i -= min($i, count($matches));
             }
 
             $previous = null;
@@ -367,8 +367,8 @@ class ImportEldamoCommand extends Command
         if (count($t->elementIn)) {
             $comments[] = '   ';
             $comments[] = 'Element in: '.implode(', ',
-                array_map(function ($c) use($t) {
-                    return ($c->language ? '_'.strtoupper($t->language).'._ ' : '').'[['.self::removeNumbers($c->word).']]'.
+                array_map(function ($c) {
+                    return ($c->language ? '_'.strtoupper($c->language).'._ ' : '').'[['.self::removeNumbers($c->word).']]'.
                     (empty($c->gloss) ? ' “'.$c->gloss.'”' : '');
                 }, $t->elementIn)
             );
