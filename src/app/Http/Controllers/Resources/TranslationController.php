@@ -79,15 +79,17 @@ class TranslationController extends Controller
         // Retrieve the words associated with the gloss' set of keywords. This is achieved by
         // joining with the _words_ table. The result is assigned to _keywords, which starts with
         // an underscore.
-        $translation->_keywords = $translation->sense
-            ->keywords()
-            ->join('words', 'words.id', 'keywords.word_id')
-            ->where(function ($query) use($id) {
-                $query->whereNull('translation_id')
-                    ->orWhere('translation_id', $id);
-            })
-            ->select('words.id', 'words.word')
-            ->get();
+        $translation->_keywords = $translation->sense 
+            ? $translation->sense
+                ->keywords()
+                ->join('words', 'words.id', 'keywords.word_id')
+                ->where(function ($query) use($id) {
+                    $query->whereNull('translation_id')
+                        ->orWhere('translation_id', $id);
+                })
+                ->select('words.id', 'words.word')
+                ->get()
+            : [];
 
         return view('translation.edit', [
             'translation' => $translation
