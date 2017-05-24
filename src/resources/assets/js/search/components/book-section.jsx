@@ -18,6 +18,7 @@ class EDBookSection extends React.Component {
         return <article className={className}>
             <header>
                 <h2 rel="language-box">
+                    { language.is_unusual ? '† ' : '' }
                     { language.name }
                     &nbsp;
                     <span className="tengwar">{ language.tengwar }</span>

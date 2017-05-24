@@ -227,15 +227,37 @@ class EDSearchResults extends React.Component {
                         <p>The word <em>{this.props.bookData.word}</em> hasn't been recorded for any of the languages.</p>
                     </div>
                 ) : (
-                    <div className="row">
-                        {this.props.bookData.sections.map(
-                            s => <EDBookSection section={s}
-                                                key={s.language.id}
-                                                columnsMax={this.props.bookData.columnsMax}
-                                                columnsMid={this.props.bookData.columnsMid}
-                                                columnsMin={this.props.bookData.columnsMin}
-                                                onReferenceLinkClick={this.onReferenceLinkClick.bind(this)}/>
-                        )}
+                    <div>
+                        <section className="row">
+                            {this.props.bookData.sections.filter(s => ! s.language.is_unusual).map(
+                                s => <EDBookSection section={s}
+                                                    key={s.language.id}
+                                                    columnsMax={this.props.bookData.columnsMax}
+                                                    columnsMid={this.props.bookData.columnsMid}
+                                                    columnsMin={this.props.bookData.columnsMin}
+                                                    onReferenceLinkClick={this.onReferenceLinkClick.bind(this)}/>
+                            )}
+                        </section>
+                        {this.props.bookData.sections.some(s => s.language.is_unusual) ? (
+                            <section className="row">
+                                <hr />
+                                <div className="col-xs-12">
+                                    <p>
+                                        <strong>Beware, older languages below!</strong> {' '}
+                                        The languages below were invented during Tolkien's earlier period and should be used with caution. {' '}
+                                        Remember to never, ever mix words from different languages!
+                                    </p>
+                                </div>
+                                {this.props.bookData.sections.filter(s => s.language.is_unusual).map(
+                                    s => <EDBookSection section={s}
+                                                        key={s.language.id}
+                                                        columnsMax={this.props.bookData.columnsMax}
+                                                        columnsMid={this.props.bookData.columnsMid}
+                                                        columnsMin={this.props.bookData.columnsMin}
+                                                        onReferenceLinkClick={this.onReferenceLinkClick.bind(this)}/>
+                                )}
+                            </section>
+                        ) : ''}
                     </div>
                 )}
             </div>
