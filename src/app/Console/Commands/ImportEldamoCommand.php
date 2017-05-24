@@ -328,7 +328,7 @@ class ImportEldamoCommand extends Command
                     }
                 }
 
-                $i -= count($matches);
+                $i -= max(0, count($matches));
             }
 
             $previous = null;
