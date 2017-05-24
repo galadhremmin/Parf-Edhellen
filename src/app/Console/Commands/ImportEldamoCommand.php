@@ -368,7 +368,7 @@ class ImportEldamoCommand extends Command
             $comments[] = '   ';
             $comments[] = 'Element in: '.implode(', ',
                 array_map(function ($c) use($t) {
-                    return ($c->language ? '_'.strtoupper($t->language).'._ ' : '').'[['.self::removeNumbers($c->word).']] '.
+                    return ($c->language ? '_'.strtoupper($t->language).'._ ' : '').'[['.self::removeNumbers($c->word).']]'.
                     (empty($c->gloss) ? ' “'.$c->gloss.'”' : '');
                 }, $t->elementIn)
             );
@@ -404,6 +404,21 @@ class ImportEldamoCommand extends Command
 
     private static function removeNumbers($word)
     {
-        return trim($word, '¹²³');
+        $w = '';
+
+        $numberOfCharacters = strlen($word);
+        for ($i = 0; $i < $numberOfCharacters; $i += 1) {
+            $c = $word[$i];
+
+            if ($c === '¹' ||
+                $c === '²' ||
+                $c === '³') {
+                continue;
+            }
+
+            $w .= $c;
+        }
+
+        return $w;
     }
 }
