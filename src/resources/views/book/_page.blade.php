@@ -5,10 +5,33 @@
 </div>
 @else
 <div id="translation-entry" data-module="translation">
-  <div class="row">
-    @foreach ($sections as $language)
-      @include('book._language', $language)
-    @endforeach
+  <div>
+    <section class="row">
+      <?php $c = 0; ?>
+      @foreach ($sections as $data)
+        @if (! $data['language']->is_unusual)
+          @include('book._language', $data)
+          <?php $c += 1; ?>
+        @endif
+      @endforeach
+    </section>
+    @if (count($sections) > $c) 
+    <section class="row">
+      <hr />
+      <div class="col-xs-12">
+          <p>
+              <strong>Beware, older languages below!</strong>
+              The languages below were invented during Tolkien's earlier period and should be used with caution.
+              Remember to never, ever mix words from different languages!
+          </p>
+      </div>
+      @foreach ($sections as $data)
+        @if ($data['language']->is_unusual)
+          @include('book._language', $data)
+        @endif
+      @endforeach
+    </section>
+    @endif
   </div>
 </div>
 @endif

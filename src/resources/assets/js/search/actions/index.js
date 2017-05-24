@@ -89,7 +89,8 @@ export function beginNavigation(word, normalizedWord, index, modifyState) {
     const uriEncodedWord = encodeURIComponent(normalizedWord || word);
     const apiAddress = EDConfig.api('/book/translate');
     const address = '/w/' + uriEncodedWord;
-    const title = `${word} - Parf Edhellen`;
+    const capitalTitle = word.split(' ').map(w => w.substr(0, 1).toLocaleUpperCase() + w.substr(1)).join(' ');
+    const title = `${capitalTitle} - Parf Edhellen`;
 
     // When navigating using the browser's back and forward buttons,
     // the state needn't be modified.

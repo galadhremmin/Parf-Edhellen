@@ -1,6 +1,6 @@
 @extends('_layouts.default')
 
-@section('title', $word)
+@section('title', ucfirst($word))
 
 @section('body')
 <div class="ed-remove-when-navigating">
