@@ -67,9 +67,7 @@
   <script type="application/json" id="ed-preloaded-languages">{!! $allLanguages !!}</script>
   <script type="text/javascript" src="/js/manifest.js"></script>
   <script type="text/javascript" src="/js/vendor.js"></script>
-  @if (isset($_SERVER['HTTP_USER_AGENT']) && preg_match("/(?i)msie|trident|edge/",$_SERVER['HTTP_USER_AGENT'])) 
   <script type="text/javascript" src="/js/ie.js"></script>
-  @endif
   <script type="text/javascript" src="/js/global.js" async></script>
   @yield('scripts')
   @if (!empty(config('ed.footer_view')))
