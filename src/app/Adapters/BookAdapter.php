@@ -219,7 +219,7 @@ class BookAdapter
     {
         $max = 12;
         $mid = $numberOfLanguages > 1 ? 6 : $max;
-        $min = $numberOfLanguages > 2 ? 4 : $mid;
+        $min = $numberOfLanguages > 2 ? 6 : $mid;
 
         $model['columnsMax'] = $max;
         $model['columnsMid'] = $mid;
