@@ -218,7 +218,7 @@ class ImportEldamoCommand extends Command
 
         $c = 1;
         foreach ($data as $t) {
-            if ($t->gloss[0] == $t->word && substr($t->speech, -4) !== 'name') {
+            if (count($t->gloss) < 1 || ($t->gloss[0] == $t->word && substr($t->speech, -4) !== 'name')) {
                 $this->line('Ignoring due to lacking gloss: '.$t->word.' '.$t->id);
                 continue;
             }
