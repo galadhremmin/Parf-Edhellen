@@ -156,13 +156,13 @@ class EDSearchResults extends React.Component {
 
     renderSearchResults() {
         let previousIndex = this.props.activeIndex - 1;
-        let nextIndex = this.props.activeIndex + 1;
+        let nextIndex = Math.max(0, this.props.activeIndex) + 1;
 
         if (previousIndex < 0) {
             previousIndex = this.props.items.length - 1;
         }
 
-        if (nextIndex >= this.props.items.length - 1) {
+        if (nextIndex === this.props.items.length) {
             nextIndex = 0;
         }
 
