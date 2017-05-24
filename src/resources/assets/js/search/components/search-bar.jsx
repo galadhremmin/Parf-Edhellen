@@ -60,7 +60,7 @@ class EDSearchBar extends React.Component {
 
     languageChange(ev) {
         this.setState({
-            languageId: parseInt(ev.target.value, /* radix: */ 10)
+            languageId: parseInt(ev.value, /* radix: */ 10)
         });
 
         this.search();
