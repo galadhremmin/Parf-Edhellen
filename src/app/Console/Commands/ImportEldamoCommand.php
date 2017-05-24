@@ -238,9 +238,11 @@ class ImportEldamoCommand extends Command
                 $ot->account_id = $existing->account_id;
             }
 
-            $word = $t->word;
-            $sense = $t->category ?: $t->gloss[0];
-            $keywords = array_slice($t->gloss, 1);
+            $word = self::removeNumbers($t->word);
+            $sense = self::removeNumbers($t->category ?: $t->gloss[0]);
+            $keywords = array_map(function ($v) {
+                return self::removeNumbers($v);
+            }, array_slice($t->gloss, 1));
             
             $ot->is_uncertain = $t->mark === '?' ||
                                 $t->mark === '*' ||
@@ -256,7 +258,7 @@ class ImportEldamoCommand extends Command
             $ot->language_id  = $languageMap[$t->language] ?: null;
             $ot->speech_id    = $speechMap[$t->speech] ?: null;
 
-            $this->createComments($ot, $t, $keywords);
+            self::createComments($ot, $t, $keywords);
 
             if (! $ot->language_id) {
                 $this->line($word.': ignoring '.$t->id.'.');
@@ -271,7 +273,7 @@ class ImportEldamoCommand extends Command
         }
     }
 
-    function createComments(Translation $ot, \stdClass $t, array $keywords)
+    private static function createComments(Translation $ot, \stdClass $t, array $keywords)
     {
         $comments = [];
 
@@ -299,13 +301,46 @@ class ImportEldamoCommand extends Command
                 '----|-----|------'
             ];
 
+            // TODO: this is a bit precarious in the original data file -- apparently there are situations where there
+            //       are multiple references to the same word, resulting in doublettes. This code is a temporary solution
+            //       for cleaning those up:
+            for ($i = 0; $i < count($t->elements); $i += 1) {
+                $element = $t->elements[$i];
+
+                $matches = array_filter($t->elements, function ($v, $k) use($element) {
+                    
+                    // same object -- ignore that one (obv.)
+                    if ($element === $v) {
+                        return false;
+                    }
+
+                    return $element->word === $v->word &&
+                        $element->gloss === $v->gloss;
+                }, ARRAY_FILTER_USE_BOTH);
+
+                foreach ($matches as $match) {
+                    $element->source = empty($element->source)
+                        ? $match->source : '|'.$match->source;
+
+                    $pos = array_search($match, $t->elements);
+                    if ($pos !== false) {
+                        array_splice($t->elements, $pos, 1);
+                    }
+                }
+
+                $i -= count($matches);
+            }
+
+            $previous = null;
             foreach ($t->elements as $element) {
-                if (empty($element->source)) {
+                if ($previous == $element->word) {
                     continue;
                 }
 
-                $table[] = $element->word.'|'.$element->gloss.' |'.
-                    implode('; ', explode('|', $element->source));
+                $table[] = '[['.self::removeNumbers($element->word).']]|'.(! empty($element->gloss) ? $element->gloss : '-').'|'.
+                    ($element->source ? implode('; ', explode('|', $element->source)) : '-');
+
+                $previous = $element->word;
             }
 
             $comments[] = implode("\n", $table);
@@ -322,7 +357,7 @@ class ImportEldamoCommand extends Command
             ];
 
             foreach ($t->inflections as $inflection) {
-                $table[] = $inflection->word.'|'.$inflection->form.'|'.
+                $table[] = self::removeNumbers($inflection->word).'|'.$inflection->form.'|'.
                     implode('; ', explode('|', $inflection->source));
             }
 
@@ -331,15 +366,15 @@ class ImportEldamoCommand extends Command
 
         if (count($t->elementIn)) {
             $comments[] = '   ';
-            $comments[] = '*Element In*';
-
-            $comments = array_merge($comments,
+            $comments[] = 'Element in: '.implode(', ',
                 array_map(function ($c) use($t) {
-                    return '* '.($c->language ? '_'.strtoupper($t->language).'._ ' : '').'[['.$c->word.']] '.(empty($c->gloss) ? ' “'.$c->gloss.'”' : '');
+                    return ($c->language ? '_'.strtoupper($t->language).'._ ' : '').'[['.self::removeNumbers($c->word).']] '.
+                    (empty($c->gloss) ? ' “'.$c->gloss.'”' : '');
                 }, $t->elementIn)
             );
         }
 
+        /* Temporarily disabled because the data source "gloss" is erroneous at this time
         if (count($t->related)) {
             $comments[] = '   ';
             $comments[] = '*Related*';
@@ -362,7 +397,13 @@ class ImportEldamoCommand extends Command
                 }, $t->cognates)
             );
         }
+        */
 
         $ot->comments = implode("   \n", $comments);
+    }
+
+    private static function removeNumbers($word)
+    {
+        return trim($word, '¹²³');
     }
 }
