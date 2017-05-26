@@ -202,10 +202,10 @@ class TranslationRepository
         }
 
         if (! $translation->word_id)
-            throw new \Exception('Invalid word "'.$wordString.'".');
+            throw new \Exception('Invalid word "'.$wordString.'" ('.$word->id.'). Object: '.print_r($translation));
 
         if (! $translation->sense_id)
-            throw new \Exception('Invalid sense "'.$senseString.'".');
+            throw new \Exception('Invalid sense "'.$senseString.'" ('.$sense->id.'). Object: '.print_r($translation));
 
         // 7. Save changes as a _new_ row.
         if ($changed) {
