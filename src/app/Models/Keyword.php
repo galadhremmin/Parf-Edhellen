@@ -10,7 +10,6 @@ class Keyword extends Model
     {
         $query->distinct()
             ->where($reversed ? 'reversed_normalized_keyword' : 'normalized_keyword', 'like', $word)
-            ->whereNotNull('sense_id')
-            ->orderBy('keyword', 'asc');
+            ->whereNotNull('sense_id');
     }
 }

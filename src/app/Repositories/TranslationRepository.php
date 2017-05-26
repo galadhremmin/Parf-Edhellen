@@ -13,7 +13,7 @@ class TranslationRepository
         $word = self::formatWord($word);
 
         if ($languageId > 0) {
-            $keywords = DB::table('keywords as k')
+            $query = DB::table('keywords as k')
                 ->join('translations as t', 'k.sense_id', 't.sense_id')
                 ->where([
                     [ 't.is_latest', '=', 1 ],
@@ -21,17 +21,19 @@ class TranslationRepository
                     [ 't.language_id', '=', $languageId ],
                     [ $reversed ? 'k.reversed_normalized_keyword' : 'k.normalized_keyword', 'like', $word ]
                 ])
-                ->orderBy('k.keyword')
                 ->select('k.keyword as k', 'k.normalized_keyword as nk')
                 ->distinct();
         } else {
-            $keywords = Keyword::findByWord($word, $reversed)
+            $query = Keyword::findByWord($word, $reversed)
                 ->select('keyword as k', 'normalized_keyword as nk');
         }
 
-        return $keywords
+        $keywords = $query
+            ->orderBy(DB::raw('CHAR_LENGTH(k)'), 'asc')
             ->limit(100)
             ->get();
+
+        return $keywords;
     }
 
     public function getWordTranslations(string $word, int $languageId = 0) 
