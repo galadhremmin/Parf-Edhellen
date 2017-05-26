@@ -153,84 +153,110 @@ class TranslationRepository
 
         // 2. Retrieve existing or create a new word entity for the sense and the word.
         $word      = $this->createWord($wordString, $translation->account_id);
-        $glossWord = $this->createWord($glossString, $translation->account_id);
         $senseWord = $this->createWord($senseString, $translation->account_id);
+        $glossWord = $this->createWord($glossString, $translation->account_id);
 
         // 3. Load sense or create it if it doesn't exist. A sense is 1:1 mapped with
         // words, and therefore doesn't have its own incrementing identifier.
-        $sense = Sense::firstOrCreate([ 'id' => $senseWord->id ]);
+        $sense = $this->createSense($senseWord);
+
+        $translation->word_id  = $word->id;
+        $translation->sense_id = $sense->id;
 
         // 4. Load the original translation and update the translation's origin and parent columns.
+        $changed = true;
         $originalTranslation = null;
         if ($translation->id) {
             $originalTranslation = Translation::findOrFail($translation->id)
                 ->getLatestVersion();
 
-            $translation = $translation->replicate();
-            $translation->origin_translation_id = $originalTranslation->origin_translation_id ?: $originalTranslation->id;
+            // 5. were there changes made?
+            $newAttributes = $translation->attributesToArray();
+            $oldAttributes = $originalTranslation->attributesToArray();
 
-            // 5. If the sense has changed, check whether the previous sense should be excluded from
-            // the keywords table, which should only contain keywords to current senses.
-            if ($originalTranslation->sense_id !== $sense->id) {
-                $originalSense = Sense::find($originalTranslation->sense_id);
-                // is the original translation the only one associated with this sense?
-                if ($originalSense !== null && $originalSense->translations()->count() === 1) {
-                    // delete the sense's keywords as the sense is no longer in use.
-                    $originalSense->keywords()->delete();
+            $changed = false;
+            foreach ($newAttributes as $key => $value) {
+                // avoid perfect equality (===/!==) because the value in the DB
+                // can diverge from the one passed from the view.
+                if ($oldAttributes[$key] != $value) {
+                    $changed = true;
+                    break;
+                }
+            }
+
+            if ($changed) {
+                $translation = $translation->replicate();
+                $translation->origin_translation_id = $originalTranslation->origin_translation_id ?: $originalTranslation->id;
+
+                // 6. If the sense has changed, check whether the previous sense should be excluded from
+                // the keywords table, which should only contain keywords to current senses.
+                if ($originalTranslation->sense_id !== $sense->id) {
+                    $originalSense = Sense::find($originalTranslation->sense_id);
+                    // is the original translation the only one associated with this sense?
+                    if ($originalSense !== null && $originalSense->translations()->count() === 1) {
+                        // delete the sense's keywords as the sense is no longer in use.
+                        $originalSense->keywords()->delete();
+                    }
                 }
             }
         }
 
-        // 6. Save changes as a _new_ row.
-        $translation->word_id  = $word->id;
-        $translation->sense_id = $sense->id;
-        $translation->is_latest = 1;
-        $translation->is_deleted = 0;
-        $translation->is_index = 0;
-        $translation->save();
+        if (! $translation->word_id)
+            throw new Exception('Invalid word "'.$wordString.'".');
 
-        // 7. Update existing associations to the new entity.
-        if ($originalTranslation !== null) {
-            $originalTranslation->child_translation_id = $translation->id;
-            $originalTranslation->is_latest = 0;
-            $originalTranslation->save();
+        if (! $translation->sense_id)
+            throw new Exception('Invalid sense "'.$senseString.'".');
 
-            $originalTranslation->sentence_fragments()->update([
-                'translation_id' => $translation->id
-            ]);
-            $originalTranslation->translation_reviews()->update([
-                'translation_id' => $translation->id
-            ]);
-            $originalTranslation->favourites()->update([
-                'translation_id' => $translation->id
-            ]);
+        // 7. Save changes as a _new_ row.
+        if ($changed) {
+            $translation->is_latest = 1;
+            $translation->is_deleted = 0;
+            $translation->is_index = 0;
+            $translation->save();
+
+            // 8. Update existing associations to the new entity.
+            if ($originalTranslation !== null) {
+                $originalTranslation->child_translation_id = $translation->id;
+                $originalTranslation->is_latest = 0;
+                $originalTranslation->save();
+
+                $originalTranslation->sentence_fragments()->update([
+                    'translation_id' => $translation->id
+                ]);
+                $originalTranslation->translation_reviews()->update([
+                    'translation_id' => $translation->id
+                ]);
+                $originalTranslation->favourites()->update([
+                    'translation_id' => $translation->id
+                ]);
+            }
         }
 
-        // 8. Remove existing keywords
+        // 9. Remove existing keywords
         if ($originalTranslation !== null) {
             $originalTranslation->keywords()->delete();
         }
 
-        // 9. save gloss and word as keywords on the translation
+        // 10. save gloss and word as keywords on the translation
         $this->createKeyword($word, $sense, $translation);
-        if ($word->word !== $glossWord->word) { // this is sometimes possible (most often with names)
+        if ($word->id !== $glossWord->id) { // this is sometimes possible (most often with names)
             $this->createKeyword($glossWord, $sense, $translation);
         }
 
-        // 10. Register keywords on the sense
+        // 11. Register keywords on the sense
         
-        // 10a. Process keywords -- filter through the keywords and remove keywords that
+        // 11a. Process keywords -- filter through the keywords and remove keywords that
         // match the gloss and the translation's word, as these are managed separately.
         $keywords = array_filter($keywords, function ($w) use($wordString, $glossString) {
             return $w !== $wordString && $w !== $glossString;
         });
 
-        // 10b. Delete existing keywords associated with the sense.
+        // 11b. Delete existing keywords associated with the sense.
         if ($resetKeywords) {
             $sense->keywords()->whereNull('translation_id')->delete();
         }
 
-        // 10c. Recreate the keywords for the sense.
+        // 11c. Recreate the keywords for the sense.
         foreach ($keywords as $keyword) {
             $keywordWord = $this->createWord($keyword, $translation->account_id);
 
@@ -287,7 +313,7 @@ class TranslationRepository
     protected function createWord(string $wordString, int $accountId)
     {
         $wordString = mb_strtolower(trim($wordString), 'utf-8');
-        $word = Word::where('word', $wordString)->first(); 
+        $word = Word::whereRaw('BINARY word = ?', [ $wordString ])->first(); 
 
         if (! $word) {
             $normalizedWordString = StringHelper::normalize($wordString);
@@ -302,6 +328,21 @@ class TranslationRepository
         }
 
         return $word; 
+    }
+
+    protected function createSense(Word $senseWord)
+    {
+        $sense = Sense::find($senseWord->id);
+        
+        if (! $sense) {
+            $sense = new Sense;
+            $sense->id = $senseWord->id;
+            $sense->description = $senseWord->word;
+
+            $sense->save();
+        }
+
+        return $sense;
     }
 
     protected function createKeyword(Word $word, Sense $sense, Translation $translation = null)

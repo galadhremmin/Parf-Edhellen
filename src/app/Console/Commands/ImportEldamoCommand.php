@@ -266,9 +266,9 @@ class ImportEldamoCommand extends Command
             }
 
             $this->line($c.' '.$t->language.' '.$t->word.': '.($found ? $ot->id : 'new'));
+            $t = $repository->saveTranslation($word, $sense, $ot, $keywords, false);
+            $this->line('     -> '.$t->id);
 
-            $repository->saveTranslation($word, $sense, $ot, $keywords, false);
-  
             $c += 1;
         }
     }
@@ -352,12 +352,13 @@ class ImportEldamoCommand extends Command
             $comments[] = '   '; // necessary before tables.
 
             $table = [
-                'Word|Form|Source',
-                '----|----|------'
+                'Word|Form|Gloss|Source',
+                '----|----|-----|------'
             ];
 
             foreach ($t->inflections as $inflection) {
                 $table[] = self::removeNumbers($inflection->word).'|'.$inflection->form.'|'.
+                    (! empty($inflection->gloss) ? $inflection->gloss : '-').'|'.
                     implode('; ', explode('|', $inflection->source));
             }
 

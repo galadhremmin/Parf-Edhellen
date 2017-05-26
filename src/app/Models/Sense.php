@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Sense extends Model
 {
-    protected $fillable = [ 'id' ];
+    protected $fillable = [ 'id', 'description' ];
 
     public function word() 
     {
