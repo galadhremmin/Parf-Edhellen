@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Sense extends Model
 {
     protected $fillable = [ 'id', 'description' ];
+    public $incrementing = false;
 
     public function word() 
     {
