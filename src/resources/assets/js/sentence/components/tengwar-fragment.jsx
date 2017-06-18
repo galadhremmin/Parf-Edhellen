@@ -6,6 +6,10 @@ class EDTengwarFragment extends React.Component {
         const f = this.props.fragment;
         const previousF = this.props.previousFragment;
 
+        if (f.tengwar === null || t.tengwar === undefined) {
+            return <span className="null-tengwa"></span>;
+        }
+
         return <span className={classNames({'active': this.props.selected})}>
             { (f.interpunctuation 
                 ? '' 
