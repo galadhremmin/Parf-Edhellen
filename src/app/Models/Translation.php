@@ -66,6 +66,13 @@ class Translation extends Model
         $query->where('is_latest', 1);
     }
 
+    public function scopeActive($query) 
+    {
+        $this->scopeNotDeleted($query);
+        $this->scopeNotIndex($query);
+        $this->scopeLatest($query);
+    }
+
     public function getParent()
     {
         return Translation::where('child_translation_id', $this->id)

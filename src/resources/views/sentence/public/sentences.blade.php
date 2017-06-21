@@ -30,5 +30,6 @@
       'sentenceName'   => $sentence->name
     ])
   </blockquote>
+  <hr />
   @endforeach
 @endsection

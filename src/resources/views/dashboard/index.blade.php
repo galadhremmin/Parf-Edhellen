@@ -35,6 +35,9 @@
           <h2 class="panel-title">Community</h2>
         </div>
         <div class="panel-body">
+          <ul>
+            <li><a href="{{ route('flashcard') }}">Flashcards</a></li>
+          </ul>
         </div>
       </div>
 

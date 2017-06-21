@@ -41,6 +41,14 @@ Route::get('/wt/{id}',                [ 'uses' => 'BookController@pageForTransla
 // User accounts
 Route::group([ 'middleware' => 'auth' ], function () {
     Route::get('/dashboard',          [ 'uses' => 'DashboardController@index' ])->name('dashboard');
+
+    // Flashcards
+    Route::get('/dashboard/flashcard',       [ 'uses' => 'FlashcardController@index' ])->name('flashcard');
+    Route::get('/dashboard/flashcard/{id}',  [ 'uses' => 'FlashcardController@cards' ])
+        ->where([ 'id' => '[0-9]+' ])->name('flashcard.cards');
+    Route::post('/dashboard/flashcard/card', [ 'uses' => 'FlashcardController@card' ])->name('flashcard.card');
+
+    // User profile
     Route::get('/author/edit/{id?}',  [ 'uses' => 'AuthorController@edit' ])->name('author.edit-profile');
     Route::post('/author/edit/{id?}', [ 'uses' => 'AuthorController@update' ])->name('author.update-profile');
 });

@@ -146,3 +146,18 @@ Breadcrumbs::register('translation.list', function ($breadcrumbs, App\Models\Lan
     ]));
 });
 
+
+// //////////////////////////////////////////////////////////////////////////////////////////////
+// Dashboard > Flashcards
+
+Breadcrumbs::register('flashcard', function ($breadcrumbs)
+{
+    $breadcrumbs->parent('dashboard');
+    $breadcrumbs->push('Flashcards', route('flashcard'));
+});
+
+Breadcrumbs::register('flashcard.cards', function ($breadcrumbs, App\Models\Flashcard $flashcard)
+{
+    $breadcrumbs->parent('flashcard');
+    $breadcrumbs->push('Flashcard for '.$flashcard->language->name, route('flashcard.cards', ['id' => $flashcard->id]));
+});

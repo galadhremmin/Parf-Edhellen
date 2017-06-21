@@ -11,6 +11,7 @@
   @if (!empty(config('ed.header_view')))
     @include(config('ed.header_view'))
   @endif
+  @yield('styles')
 </head>
 <body class="{{ $admin ? 'ed-admin' : ($admin === false ? 'ed-user' : 'ed-anonymous') }}">
   <div class="navbar navbar-default navbar-fixed-top" role="navigation">
