@@ -86,4 +86,15 @@
 	.text-success, .text-danger {
 		margin-top: 20px;
 	}
+
+	.comments {
+		text-align: left;
+		max-height: 200px;
+		overflow: hidden;
+		overflow-y: scroll;
+
+		> p {
+			text-align: left;
+		}
+	}
 }

@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import EDConfig from 'ed-config';
 import { getCard, testCard } from '../actions';
 import { transcribe } from '../../_shared/tengwar';
+import { Parser as HtmlToReactParser } from 'html-to-react';
 
 class EDFlashcards extends React.Component {
     constructor(props) {
@@ -40,6 +41,12 @@ class EDFlashcards extends React.Component {
         const tengwarTranscription = tengwarMode && this.props.word
             ? transcribe(this.props.word, tengwarMode)
             : undefined;
+
+        let comments = undefined;
+        if (this.props.translation && this.props.translation.comments) {
+            const parser = new HtmlToReactParser();
+            comments = parser.parse(this.props.translation.comments);
+        }
 
         return <article className={classNames('flip-container', { 'flipped': this.props.flip })}>
             <div className="flipper">
@@ -79,7 +86,7 @@ class EDFlashcards extends React.Component {
                         <p>
                             <span className="gloss">{ this.props.translation.translation }</span>
                         </p>
-                        { this.props.comments ? <p>{this.props.comments}</p> : '' }
+                        { comments ? <div className="comments">{ comments }</div> : '' }
                         { this.props.translation.source ? <span className="source">[{this.props.translation.source}]</span> : '' }
                         { this.props.correct ? 
                             <p className="text-success">
