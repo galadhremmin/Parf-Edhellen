@@ -47,6 +47,7 @@ Route::group([ 'middleware' => 'auth' ], function () {
     Route::get('/dashboard/flashcard/{id}',  [ 'uses' => 'FlashcardController@cards' ])
         ->where([ 'id' => '[0-9]+' ])->name('flashcard.cards');
     Route::post('/dashboard/flashcard/card', [ 'uses' => 'FlashcardController@card' ])->name('flashcard.card');
+    Route::post('/dashboard/flashcard/test', [ 'uses' => 'FlashcardController@test' ])->name('flashcard.test');
 
     // User profile
     Route::get('/author/edit/{id?}',  [ 'uses' => 'AuthorController@edit' ])->name('author.edit-profile');

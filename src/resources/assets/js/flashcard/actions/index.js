@@ -24,17 +24,20 @@ export const getCard = (flashcardId) => (dispatch, getState) => {
     });
 };
 
-export const testCard = (option) => (dispatch, getState) => {
+export const testCard = (flashcardId, option) => (dispatch, getState) => {
     dispatch({
         type: ED_TEST_CARD
     });
 
-    deferredResolve(axios.get(EDConfig.api(`/book/translate/${getState().translation_id}`)), 800).then(resp => {
-        const translation = resp.data.sections[0].glosses[0];
+    deferredResolve(axios.post('/dashboard/flashcard/test', {
+        flashcard_id: flashcardId,
+        translation_id: getState().translation_id,
+        translation: option
+    }), 800).then(resp => {
         dispatch({
             type: ED_RECEIVE_TRANSLATION,
-            correct: translation.translation === option,
-            translation,
+            correct: resp.data.correct,
+            translation: resp.data.translation
         });
     });
 };

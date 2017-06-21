@@ -10,6 +10,12 @@
        data-flashcard-id="{{ $flashcard->id }}" 
        data-language-tengwar-mode="{{ $flashcard->language->tengwar_mode }}"></div>
 
+  <hr />
+  <p>
+    Your answers are saved automatically so you can review your performance later.
+    Good luck!
+  </p>
+      
 @endsection
 @section('styles')
   <link href="/css/app.flashcard.css" rel="stylesheet">

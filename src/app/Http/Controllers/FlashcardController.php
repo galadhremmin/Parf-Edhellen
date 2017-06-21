@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Flashcard, Language, Translation};
+use App\Models\{Flashcard, FlashcardResult, Language, Translation};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -78,5 +78,38 @@ class FlashcardController extends Controller
             'options'        => $options,
             'translation_id' => $translation->id 
          ];
+    }
+
+    public function test(Request $request)
+    {
+        $this->validate($request, [
+            'flashcard_id'   => 'numeric|exists:flashcards,id',
+            'translation_id' => 'numeric|exists:translations,id',
+            'translation'    => 'string'
+        ]);
+
+        $translationId = intval( $request->input('translation_id') );
+        $translation = Translation::where('id', $translationId)
+            ->select('translation', 'source')
+            ->firstOrFail();
+
+        $offeredGloss = $request->input('translation');
+        $ok = strcmp($translation->translation, $offeredGloss) === 0;
+
+        $result = new FlashcardResult;
+
+        $result->flashcard_id   = intval( $request->input('flashcard_id') );
+        $result->account_id     = $request->user()->id;
+        $result->translation_id = $translationId;
+        $result->expected       = $translation->translation;
+        $result->actual         = $offeredGloss;
+        $result->correct        = $ok;
+
+        $result->save();
+
+        return [
+            'correct'     => $ok,
+            'translation' => $translation
+        ];
     }
 }

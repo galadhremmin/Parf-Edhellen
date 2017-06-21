@@ -35,13 +35,19 @@ const EDFlashcardReducer = (state = {
           };
 
         case ED_RECEIVE_TRANSLATION:
+            // truncate the not list to 100 elements, for those who _really_ into doing flashcards in one go.
+            let notList = action.correct ? [...(state.previous_list), state.translation_id] : state.previous_list;
+            if (notList.length > 100) {
+                notList = notList.slice(notList.length - 100);
+            }
+
             return {
                 ...state,
                 loading: false,
                 flip: true,
                 translation: action.translation,
                 correct: action.correct,
-                previous_list: action.correct ? [...(state.previous_list), state.translation_id] : state.previous_list
+                previous_list: notList
             };
 
         default:

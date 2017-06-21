@@ -27,7 +27,7 @@ class EDFlashcards extends React.Component {
 
     onOptionClick(ev, option) {
         ev.preventDefault();
-        this.props.dispatch(testCard(option));
+        this.props.dispatch(testCard(this.props.flashcardId, option));
     }
 
     onNextCardClick(ev) {
