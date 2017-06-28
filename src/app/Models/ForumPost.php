@@ -5,5 +5,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class ForumPost extends Model
 {
-    protected $fillable = [ 'topi', 'account_id', 'content' ];
+    protected $fillable = [ 'topic', 'account_id', 'content' ];
 }
