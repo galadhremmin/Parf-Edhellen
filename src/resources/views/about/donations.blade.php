@@ -27,6 +27,20 @@ donations, I was able to purchase <a href="http://www.eldalamberon.com/parma22.h
 
 <h2>Donations 2017</h2>
 <ol class="donations">
+  <li><span class="date">30ᵗʰ Jun '17</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
+  <li><span class="date">27ᵗʰ Jun '17</span>: <span class="currency">$10,00</span> by <span class="person">Birgit K</span>.</li>
+  <li><span class="date">23ʳᵈ Jun '17</span>: <span class="currency">$21,00</span> by <span class="person">Jean Paul C</span>.</li>
+  <li><span class="date">20ᵗʰ Jun '17</span>: <span class="currency">$15,00</span> by <span class="person">Jennifer S</span>.</li>
+  <li><span class="date">19ᵗʰ Jun '17</span>: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
+  <li><span class="date">20ᵗʰ Jun '17</span>: <span class="currency">$21,00</span> by <span class="person">Jean Paul C</span>.</li>
+  <li><span class="date">30ᵗʰ May '17</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
+  <li><span class="date">19ᵗʰ May '17</span>: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
+  <li><span class="date">3ʳᵈ May '17</span>: <span class="currency">$25,00</span> by <span class="person">Joanne M</span>.</li>
+  <li><span class="date">1ˢᵗ May '17</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
+  <li><span class="date">19ᵗʰ Apr '17</span>: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
+  <li><span class="date">30ᵗʰ Mar '17</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
+  <li><span class="date">27ᵗʰ Mar '17</span>: <span class="currency">$25,00</span> by <span class="person">Joanne M</span>.</li>
+  <li><span class="date">19ᵗʰ Mar '17</span>: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
   <li><span class="date">1ˢᵗ Mar '17</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
   <li><span class="date">19ᵗʰ Feb '17</span>: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
   <li><span class="date">30ᵗʰ Jan '17</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
