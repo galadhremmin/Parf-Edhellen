@@ -1,96 +1,99 @@
 <?php
-  namespace App\Helpers;
-  
-  class StringHelper 
-  {
-      private function __construct() 
-      {
-          // Disable construction
-      }
-    
-      public static function preventXSS(string $str, $encoding = 'UTF-8') 
-      {
-          return htmlspecialchars($str, ENT_QUOTES | ENT_HTML401, $encoding);
-      }
-      
-      public static function toLower(string $str) 
-      {
-          return trim(mb_strtolower($str, 'utf-8'));
-      }
-      
-      public static function normalize(string $str) 
-      {          
-          $str = self::toLower($str);
-          $str = preg_replace('/[¹²³’†#\\*\\{\\}\\[\\]]|\\s*\\([^\\)]+\\)/u', '', $str);
-          $str = strtr($str, [
-              'ë' => 'e',
-              'θ' => 'th',
-              'ʃ' => 'sh',
-              'χ' => 'ch',
-              'ƀ' => 'v',
-              'ǝ' => 'schwa',
-              'ʒ' => 'zh',
-              'ŋ' => 'ng',
-              'ñ' => 'ng',
-              '‽' => '?'
-          ]);
+namespace App\Helpers;
 
-          // Do not switch locale, as the appropriate locale should be configured
-          // in application configuration.
-          //
-          // $currentLocale = setlocale(LC_ALL, 0);
-          // This is necessary for the iconv-transliteration to function properly
-          // Note: this ought to be unnecessary because a unicode locale should be
-          // specified as application default.
-          // setlocale(LC_ALL, 'sv_SE.UTF-8');
+class StringHelper 
+{
+    private static $_normalizationTable = [
+        'θ' => 'th',
+        'ʃ' => 'sh',
+        'χ' => 'ch',
+        'ƀ' => 'v',
+        'ǝ' => 'schwa',
+        'ʒ' => 'zh',
+        'ŋ' => 'ng',
+        'ñ' => 'ng',
+        'ë' => 'e',
+        '(' => '-',
+        ')' => '-',
+        ' ' => '_'
+    ];
 
-          // Transcribe á > ´a, ê > ^e etc.
-          $str = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $str);
-          $numberOfCharacters = strlen($str);
+    private static $_accentsNormalizationTable = [
+        'é' => 'ee',
+        'ê' => 'eee',
+        'ý' => 'yy',
+        'ŷ' => 'yyy',
+        'ú' => 'uu',
+        'û' => 'uuu',
+        'í' => 'ii',
+        'î' => 'iii',
+        'ó' => 'oo',
+        'ô' => 'ooo',
+        'á' => 'aa',
+        'â' => 'aaa',
+    ];
 
-          $normalizedStr = '';
-          $repeat = 0;
-          for ($i = 0; $i < $numberOfCharacters; $i += 1) {
-              $c = $str[$i];
+    private function __construct() 
+    {
+        // Disable construction
+    }
 
-              switch ($c) {
-                  case '^':
-                      $repeat = 3;
-                      break;
-                  case "'":
-                      $repeat = 2;
-                      break;
-                  default:
-                      if ($repeat > 0) {
-                          $c = str_pad($c, $repeat, $c);
-                          $repeat = 0;
-                      }
+    public static function preventXSS(string $str, $encoding = 'UTF-8') 
+    {
+        return htmlspecialchars($str, ENT_QUOTES | ENT_HTML401, $encoding);
+    }
 
-                      $normalizedStr .= $c;
-              }
-          }
+    public static function toLower(string $str) 
+    {
+        return trim(mb_strtolower($str, 'utf-8'));
+    }
 
-          // restore the locale
-          // setlocale(LC_ALL, $currentLocale);
-          
-          return $normalizedStr;
-      }
+    public static function normalize(string $str, $accentsMatter = true) 
+    {          
+        $str = self::toLower($str);
+        $str = preg_replace('/[¹²³’‽†#\\*\\{\\}\\[\\]]|/u', '', $str);
 
-      public static function normalizeForUrl(string $str) 
-      {
-          $str = self::normalize($str);
+        if ($accentsMatter) {
+            $normalizationTable = array_merge(self::$_normalizationTable, self::$_accentsNormalizationTable);
+        } else {
+            $normalizationTable = self::$_normalizationTable;
+        }
 
-          // Replace white space with underscore
-          $str = str_replace(' ', '_', $str);
+        $str = strtr($str, $normalizationTable);
 
-          // Remove all non-alphabetic and non-numeric characters
-          $str = preg_replace('/[^0-9a-z_]/', '', $str);
+        // Do not switch locale, as the appropriate locale should be configured
+        // in application configuration.
+        //
+        // $currentLocale = setlocale(LC_ALL, 0);
+        // This is necessary for the iconv-transliteration to function properly
+        // Note: this ought to be unnecessary because a unicode locale should be
+        // specified as application default.
+        // setlocale(LC_ALL, 'en_UK.UTF-8');
 
-          return $str;
-      }
-    
-      public static function createLink($s) 
-      {
-          return rawurlencode($s);
-      }
-  }
+        // Transcribe á > ´a, ê > ^e etc.
+        $str = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $str);
+
+        // restore the locale
+        // setlocale(LC_ALL, $currentLocale);
+
+        return trim($str);
+    }
+
+    public static function normalizeForUrl(string $str) 
+    {
+        $str = self::normalize($str);
+
+        // Replace white space with underscore
+        $str = str_replace(' ', '_', $str);
+
+        // Remove all non-alphabetic and non-numeric characters
+        $str = preg_replace('/[^0-9a-z_]/', '', $str);
+
+        return $str;
+    }
+
+    public static function createLink($s) 
+    {
+        return rawurlencode($s);
+    }
+}

@@ -15,51 +15,30 @@ class ForumApiController extends Controller
     }
 
     /**
-     * HTTP POST. Creates a new forum post for a translation.
+     * HTTP POST. Creates a new forum post.
      *
      * @param Request $request
      * @return response 201 on success
      */
-    public function postForTranslation(Request $request)
+    public function store(Request $request)
     {
-        $this->validate($request, [
-            'content'        => 'required|string',
-            'translation_id' => 'required|exists:translations,id'
-        ]);
+        $this->validateRequest($request);
 
-        $topic = 't_' . $request->input('translation_id');
-        $post  = $this->createPost($request, $topic);
+        // TODO
 
         return response($post, 201);
     }
 
-    /**
-     * HTTP POST. Creates a new forum post for a sentence.
-     *
-     * @param Request $request
-     * @return response 201 on success
-     */
-    public function postForSentence(Request $request)
+    private function validateRequest(Request $request) 
     {
         $this->validate($request, [
-            'content'     => 'required|string',
-            'sentence_id' => 'required|exists:sentences,id'
+            'content'    => 'required|string',
+            'context_id' => 'required|exists:forum_contexts,id',
+            'entity_id'  => 'required|numeric'
         ]);
 
-        $topic = 's_' . $request->input('sentence_id');
-        $post  = $this->createPost($request, $topic);
+        $entityId = intval($request->input('entity_id'));
+
         
-        return response($post, 201);
-    }
-
-    private function createPost(Request $request, string $topic)
-    {
-        $post = ForumPost::create([
-            'topic'      => $topic,
-            'content'    => $request->input('content'),
-            'account_id' => $request->user()->id
-        ]);
-
-        return $post;
     }
 }

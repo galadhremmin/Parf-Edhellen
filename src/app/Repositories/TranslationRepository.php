@@ -19,7 +19,7 @@ class TranslationRepository
                     [ 't.is_latest', '=', 1 ],
                     [ 't.is_deleted', '=', 0 ],
                     [ 't.language_id', '=', $languageId ],
-                    [ $reversed ? 'k.reversed_normalized_keyword' : 'k.normalized_keyword', 'like', $word ]
+                    [ $reversed ? 'k.reversed_normalized_keyword_unaccented' : 'k.normalized_keyword_unaccented', 'like', $word ]
                 ])
                 ->select('k.keyword as k', 'k.normalized_keyword as nk')
                 ->distinct();
@@ -60,9 +60,7 @@ class TranslationRepository
             ->join('accounts as u', 'translations.account_id', 'u.id')
             ->leftJoin('speeches as s', 'speech_id', 's.id')
             ->leftJoin('words as ws', 'sense_id', 'ws.id')
-            ->notIndex()
-            ->notDeleted()
-            ->latest()
+            ->active()
             ->select('translations.id', 'translation', 'w.word', 'source', 'u.nickname as account_name', 
                 'translations.account_id', 'is_rejected', 's.name as speech', 'ws.word as sense')
             ->orderBy('w.word')

@@ -91,7 +91,7 @@ class BookApiController extends Controller
             'language_id' => 'numeric'
         ]);
 
-        $word       = StringHelper::normalize( $request->input('word') );
+        $word       = StringHelper::normalize( $request->input('word'), /* accentsMatter: */ false );
         $reversed   = $request->input('reversed') === true;
         $languageId = intval($request->input('language_id'));
 

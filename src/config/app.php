@@ -77,7 +77,7 @@ return [
     |
     */
 
-    'locale' => 'sv_SE', // important for normalization
+    'locale' => 'sv_SE.UTF-8', // important for normalization
 
     /*
     |--------------------------------------------------------------------------
@@ -90,7 +90,7 @@ return [
     |
     */
 
-    'fallback_locale' => 'en',
+    'fallback_locale' => 'de_DE.UTF-8', 
 
     /*
     |--------------------------------------------------------------------------
