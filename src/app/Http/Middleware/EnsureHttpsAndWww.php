@@ -40,7 +40,7 @@ class EnsureHttpsAndWww
         $urlPart = substr($request->fullUrl(), 0, $this->_expectsLength);
 
         if ($urlPart !== $this->_expects) {
-            $correctUrl = $this->_appUrl.'/'.$request->path();
+            $correctUrl = $this->_appUrl.$request->path();
 
             if (!$this->_isSecure) {
                 return redirect()->to($correctUrl);
