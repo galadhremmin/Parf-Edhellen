@@ -77,7 +77,7 @@ return [
     |
     */
 
-    'locale' => 'sv_SE',
+    'locale' => 'sv_SE', // important for normalization
 
     /*
     |--------------------------------------------------------------------------

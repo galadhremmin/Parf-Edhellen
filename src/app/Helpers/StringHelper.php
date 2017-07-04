@@ -19,21 +19,57 @@
       }
       
       public static function normalize(string $str) 
-      {
-          $currentLocale = setlocale(LC_ALL, 0);
-          
+      {          
+          $str = self::toLower($str);
+          $str = preg_replace('/[¹²³’\\†#*\\{\\}\\[\\]]|\\s*\\([^\\)]+\\)/u', '', $str);
+          $str = strtr($str, [
+              'ë' => 'e',
+              'θ' => 'th',
+              'ʃ' => 'sh',
+              'χ' => 'ch',
+              'ƀ' => 'v',
+              'ǝ' => 'schwa',
+              'ʒ' => 'zh',
+              'ŋ' => 'ng',
+              'ñ' => 'ng',
+              '‽' => '?'
+          ]);
+
+          // Do not switch locale, as the appropriate locale should be configured
+          // in application configuration.
+          //
+          // $currentLocale = setlocale(LC_ALL, 0);
           // This is necessary for the iconv-transliteration to function properly
           // Note: this ought to be unnecessary because a unicode locale should be
           // specified as application default.
           // setlocale(LC_ALL, 'sv_SE.UTF-8');
-          
-          // Transcribe á > ´a, ê > ^e etc.
-          $normalizedStr = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $str);
-          // Switch case to lower case and trim whitespace 
-          $normalizedStr = self::toLower($normalizedStr);
-          // Remove everything not alphanumeric.
-          $normalizedStr = preg_replace('/[^\\-\\w\\s\\*\\(\\),\\.\\?;!\\/\\(\\)]+/', '', $normalizedStr); 
 
+          // Transcribe á > ´a, ê > ^e etc.
+          $str = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $str);
+          $numberOfCharacters = strlen($str);
+
+          $normalizedStr = '';
+          $repeat = 0;
+          for ($i = 0; $i < $numberOfCharacters; $i += 1) {
+              $c = $str[$i];
+
+              switch ($c) {
+                  case '^':
+                      $repeat = 3;
+                      break;
+                  case "'":
+                      $repeat = 2;
+                      break;
+                  default:
+                      if ($repeat > 0) {
+                          $c = str_pad($c, $repeat, $c);
+                          $repeat = 0;
+                      }
+
+                      $normalizedStr .= $c;
+              }
+          }
+          
           // restore the locale
           // setlocale(LC_ALL, $currentLocale);
           
