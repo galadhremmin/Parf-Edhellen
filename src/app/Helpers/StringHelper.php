@@ -21,7 +21,7 @@
       public static function normalize(string $str) 
       {          
           $str = self::toLower($str);
-          $str = preg_replace('/[¹²³’\\†#*\\{\\}\\[\\]]|\\s*\\([^\\)]+\\)/u', '', $str);
+          $str = preg_replace('/[¹²³’†#\\*\\{\\}\\[\\]]|\\s*\\([^\\)]+\\)/u', '', $str);
           $str = strtr($str, [
               'ë' => 'e',
               'θ' => 'th',
@@ -69,7 +69,7 @@
                       $normalizedStr .= $c;
               }
           }
-          
+
           // restore the locale
           // setlocale(LC_ALL, $currentLocale);
           
