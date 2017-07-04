@@ -350,10 +350,19 @@ class TranslationRepository
         $keyword = new Keyword;
 
         $keyword->keyword                     = $word->word;
-        $keyword->normalized_keyword          = $word->normalized_word;
-        $keyword->reversed_normalized_keyword = $word->reversed_normalized_word;
         $keyword->word_id                     = $word->id;
         $keyword->sense_id                    = $sense->id;
+
+        // Normalized keywords are primarily used for direct references, where accents do matter. A direct reference
+        // can be miiir which would match _mîr_ according to the default normalization scheme. See StringHelper for more
+        // information.
+        $keyword->normalized_keyword          = $word->normalized_word;
+        $keyword->reversed_normalized_keyword = $word->reversed_normalized_word;
+
+        // Unaccented keywords' columns are used for searching, because _mir_ should find _mir_, _mír_, _mîr_ etc.
+        $normalizedUnaccented = StringHelper::normalize($word->word, false);
+        $keyword->normalized_keyword_unaccented          = $normalizedUnaccented;
+        $keyword->reversed_normalized_keyword_unaccented = strrev($normalizedUnaccented);
 
         if ($translation) {
             $keyword->translation_id = $translation->id;
