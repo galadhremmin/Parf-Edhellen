@@ -8,11 +8,11 @@ CREATE TABLE `forum_contexts` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 
 INSERT INTO `forum_contexts` (`id`, `name`)
-  VALUES (1, 'Forum');
+  VALUES (1, 'forum');
 INSERT INTO `forum_contexts` (`id`, `name`)
-  VALUES (2, 'Translations');
+  VALUES (2, 'translation');
 INSERT INTO `forum_contexts` (`id`, `name`)
-  VALUES (3, 'Sentences');
+  VALUES (3, 'sentence');
 
 DROP TABLE IF EXISTS `forum_posts`;
 CREATE TABLE `forum_posts` (

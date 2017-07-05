@@ -354,7 +354,7 @@ class TranslationRepository
         $keyword->sense_id                    = $sense->id;
 
         // Normalized keywords are primarily used for direct references, where accents do matter. A direct reference
-        // can be miiir which would match _mîr_ according to the default normalization scheme. See StringHelper for more
+        // can be _miiir_ which would match _mîr_ according to the default normalization scheme. See StringHelper for more
         // information.
         $keyword->normalized_keyword          = $word->normalized_word;
         $keyword->reversed_normalized_keyword = $word->reversed_normalized_word;

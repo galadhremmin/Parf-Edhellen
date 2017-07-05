@@ -51,7 +51,7 @@ class StringHelper
     public static function normalize(string $str, $accentsMatter = true) 
     {          
         $str = self::toLower($str);
-        $str = preg_replace('/[¹²³’‽†#\\*\\{\\}\\[\\]]|/u', '', $str);
+        $str = preg_replace('/[¹²³’‽†#\\*\\{\\}\\[\\]]/u', '', $str);
 
         if ($accentsMatter) {
             $normalizationTable = array_merge(self::$_normalizationTable, self::$_accentsNormalizationTable);

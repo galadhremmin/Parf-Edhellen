@@ -96,6 +96,9 @@ Route::group([
 
     Route::post('utility/markdown',              [ 'uses' => 'UtilityApiController@parseMarkdown' ]);
 
+    Route::resource('forum', 'ForumApiController', ['only' => [
+        'index', 'store'
+    ]]);
 });
 
 // API for administrators
