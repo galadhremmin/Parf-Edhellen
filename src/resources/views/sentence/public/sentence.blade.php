@@ -50,7 +50,7 @@
     @endif
   </footer>
   <hr>
-  <div id="ed-comments" data-entity-id="{{ $sentence->id }}" data-context="sentence" data-account-id="{{ Auth::user()->id }}"></div>
+  <div id="ed-comments" data-entity-id="{{ $sentence->id }}" data-context="sentence" data-account-id="{{ Auth::check() ? Auth::user()->id : '0' }}"></div>
 @endsection
 
 @section('scripts')

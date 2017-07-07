@@ -3,6 +3,7 @@ import axios from 'axios';
 import EDConfig from 'ed-config';
 import classNames from 'classnames';
 import { EDStatefulFormComponent } from 'ed-form';
+import { Parser as HtmlToReactParser } from 'html-to-react';
 
 class EDComments extends EDStatefulFormComponent {
     constructor(props) {
@@ -52,6 +53,11 @@ class EDComments extends EDStatefulFormComponent {
     onLikeClick(ev, postId, liked) {
         ev.preventDefault();
 
+        if (! this.props.accountId) {
+            this.onUnauthenticated(ev.target);
+            return;
+        }
+
         if (! liked) {
             axios.post(EDConfig.api(`/forum/like/${postId}`)).then(this.onLiked.bind(this, postId));
         } else {
@@ -87,7 +93,13 @@ class EDComments extends EDStatefulFormComponent {
         }
     }
 
+    onUnauthenticated(target) {
+        
+    }
+
     render() {
+        const parser = new HtmlToReactParser();
+
         return <div>
             <div>
                 { this.state.posts.map(c => <div key={c.id} className="forum-post">
@@ -106,19 +118,22 @@ class EDComments extends EDStatefulFormComponent {
 
                             <span className="pull-right">
                                 {! c.number_of_likes ? '' : `${c.number_of_likes} `}
-                                <a href="#" onClick={ev => this.onLikeClick(ev, c.id, c.likes.length > 0)}>
-                                    <span className={classNames('glyphicon', 'glyphicon-thumbs-up', { 'like-not-liked': c.likes.length === 0, 'like-liked': c.likes.length > 0 })} />
+                                <a href="#" onClick={ev => this.onLikeClick(ev, c.id, this.props.accountId && c.likes.length > 0)}>
+                                    <span className={classNames('glyphicon', 'glyphicon-thumbs-up', { 
+                                        'like-not-liked': ! this.props.accountId || c.likes.length === 0, 
+                                        'like-liked': this.props.accountId && c.likes.length > 0 
+                                    })} />
                                 </a>
                             </span>
                         </div>
                         <div className="post-body">
-                            { c.content }
+                            { parser.parse(c.content) }
                         </div>
                     </div>
                 </div>) }
             </div>
             <hr />
-            <div>
+            { this.props.accountId ? <div>
                 <form onSubmit={this.onSubmit.bind(this)}>
                     <div className="form-group">
                         <textarea className="form-control" placeholder="Your comments ..." name="comments" value={this.state.comments}
@@ -128,7 +143,9 @@ class EDComments extends EDStatefulFormComponent {
                         <button type="submit" className="btn btn-primary">Publish comments</button>
                     </div>
                 </form>
-            </div>
+            </div> : <div className="alert alert-info">
+                Please log in.
+            </div> }
         </div>;
     }
 }
