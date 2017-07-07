@@ -97,8 +97,23 @@ Route::group([
     Route::post('utility/markdown',              [ 'uses' => 'UtilityApiController@parseMarkdown' ]);
 
     Route::resource('forum', 'ForumApiController', ['only' => [
-        'index', 'store'
+        'index'
     ]]);
+});
+
+// API
+Route::group([ 
+        'namespace'  => 'Api\v1', 
+        'prefix'     => 'api/v1',
+        'middleware' => 'auth'
+    ], function () {
+    
+    Route::resource('forum', 'ForumApiController', ['only' => [
+        'store'
+    ]]);
+
+    Route::post('forum/like/{id}',   [ 'uses' => 'ForumApiController@storeLike'   ]);
+    Route::delete('forum/like/{id}', [ 'uses' => 'ForumApiController@destroyLike' ]);
 });
 
 // API for administrators

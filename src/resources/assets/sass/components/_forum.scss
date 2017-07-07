@@ -1,0 +1,65 @@
+$ed-forum-post-profile-width: 120px;
+
+.forum-post {
+    display: table;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: $line-height-computed;
+    padding-top: $line-height-computed;
+    border-top: 1px solid $gray-lighter;
+
+    &:first-child {
+        margin-top: 0;
+        padding-top: 0;
+        border-top: none;
+    }
+
+    .post-profile-picture {
+        display: table-cell;
+        width: $ed-forum-post-profile-width;
+        text-align: center;
+        font-size: 85%;
+
+        img {
+            width: $ed-forum-post-profile-width/2; 
+            height: $ed-forum-post-profile-width/2;
+            border-radius: $ed-forum-post-profile-width/4;
+        }
+    }
+
+    .post-content {
+        display: table-cell;
+        vertical-align: top;
+        overflow: hidden;
+
+        .post-body {
+            white-space: pre-wrap;
+        }
+    }
+
+    a {
+        text-decoration: none;
+
+        .like-not-liked {
+            color: $gray-light;
+        }
+
+        .like-liked {
+            color: $brand-success;
+        }
+    }
+}
+
+@media (max-width: 540px) {
+    .forum-post .post-profile-picture {
+        font-size: 70%;
+        font-family: Helvetica, Arial, sans-serif;
+        width: $ed-forum-post-profile-width*0.7;
+
+        img {
+            width: $ed-forum-post-profile-width*0.7*0.5; 
+            height: $ed-forum-post-profile-width*0.7*0.5;
+            border-radius: $ed-forum-post-profile-width*0.7*0.5*0.5;
+        }
+    }
+}

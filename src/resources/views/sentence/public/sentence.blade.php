@@ -49,8 +49,11 @@
     </a>
     @endif
   </footer>
+  <hr>
+  <div id="ed-comments" data-entity-id="{{ $sentence->id }}" data-context="sentence" data-account-id="{{ Auth::user()->id }}"></div>
 @endsection
 
 @section('scripts')
   <script type="text/javascript" src="/js/sentence.js" async></script>
+  <script type="text/javascript" src="/js/comment.js" async></script>
 @endsection

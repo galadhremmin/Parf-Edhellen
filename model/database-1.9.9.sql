@@ -19,7 +19,7 @@ CREATE TABLE `forum_posts` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `context_id` int(10) unsigned NOT NULL,
   `entity_id` int(10) unsigned NOT NULL,
-  `parent_form_post_id` int(10) unsigned NOT NULL,
+  `parent_form_post_id` int(10) unsigned NULL,
   `number_of_likes` int(10) unsigned NOT NULL DEFAULT 0,
   `account_id` int(5) unsigned NOT NULL,
   `content` text COLLATE utf8_swedish_ci,

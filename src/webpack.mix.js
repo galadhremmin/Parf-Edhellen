@@ -80,6 +80,10 @@ mix.js([
 ], 'public/js/sentence-admin.js');
 
 mix.js([
+    'resources/assets/js/comment/index.jsx'
+], 'public/js/comment.js');
+
+mix.js([
     'resources/assets/js/translation/admin.jsx'
 ], 'public/js/translation-admin.js');
 

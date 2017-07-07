@@ -135,7 +135,7 @@ class TranslationController extends Controller
         $ok = $this->_translationRepository->deleteTranslationWithId($id, $replacementId);
         return $ok
             ? response(null, 204)
-            : response(null, 500);
+            : response(null, 400);
     }
 
     protected function saveTranslation(Translation $translation, Request $request)
