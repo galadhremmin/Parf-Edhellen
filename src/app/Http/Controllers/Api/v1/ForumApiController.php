@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Models\{ ForumPost, ForumContext, Translation, Sentence };
 use App\Http\Controllers\Controller;
-use App\Helpers\StringHelper;
+use App\Helpers\{ StringHelper, MarkdownParser };
 
 class ForumApiController extends Controller 
 {
@@ -21,9 +21,16 @@ class ForumApiController extends Controller
             return response(null, 404);
         }
 
-        return ForumPost::where('context_id', $data['id'])
+        $posts = ForumPost::where('context_id', $data['id'])
             ->where('entity_id', $data['entity']->id)
             ->get();
+
+        $parser = new MarkdownParser();
+        foreach ($posts as $post) {
+            $post->content = $parser->parse($post->content);
+        }
+
+        return $posts;
     }
 
     /**
