@@ -109,7 +109,7 @@ Route::group([
     ], function () {
     
     Route::resource('forum', 'ForumApiController', ['only' => [
-        'store'
+        'edit', 'store', 'update', 'destroy'
     ]]);
 
     Route::post('forum/like/{id}',   [ 'uses' => 'ForumApiController@storeLike'   ]);

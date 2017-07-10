@@ -39,7 +39,10 @@ class ForumApiController extends Controller
 
         $posts = ForumPost::where('context_id', $context['id'])
             ->with($loadingOptions)
-            ->where('entity_id', $context['entity']->id)
+            ->where([
+                ['entity_id', $context['entity']->id],
+                ['is_hidden', 0]
+            ])
             ->orderBy('created_at', 'asc')
             ->get();
 
@@ -52,7 +55,26 @@ class ForumApiController extends Controller
     }
 
     /**
+     * HTTP GET. Retrieves forum post's data for editing purposes.
+     *           Caller must be authenticated.
+     *
+     * @param Request $request
+     * @return response 201 on success
+     */
+    public function edit(Request $request, int $id)
+    {
+        $post = ForumPost::findOrFail($id);
+        
+        if (! $this->userCanAccess($request->user(), $post)) {
+            return response(null, 401);
+        }
+
+        return $post;
+    }
+
+    /**
      * HTTP POST. Creates a new forum post.
+     *            Caller must be authenticated.
      *
      * @param Request $request
      * @return response 201 on success
@@ -87,9 +109,60 @@ class ForumApiController extends Controller
 
         return response(null, 201);
     }
+   
+    /**
+     * HTTP PUT. Updates an existing forum post.
+     *           Caller must be authenticated.
+     *
+     * @param Request $request
+     * @return response 201 on success
+     */
+    public function update(Request $request, int $id)
+    {
+        $this->validate($request, [
+            'comments' => 'required|string'
+        ]);
+
+        $post = ForumPost::findOrFail($id);
+        if (! $this->userCanAccess($request->user(), $post)) {
+            return response(null, 401);
+        }
+
+        $post->content = $request->input('comments');
+        $post->save();
+
+        return response(null, 200);
+    }
+
+    /**
+     * HTTP DELETE. Deletes a forum post.
+     *              Caller must be authenticated.
+     *
+     * @param Request $request
+     * @return response 201 on success
+     */
+    public function destroy(Request $request, int $id)
+    {
+        $post = ForumPost::findOrFail($id);
+        if (! $this->userCanAccess($request->user(), $post)) {
+            return response(null, 401);
+        }
+
+        $related = ForumPost::where('parent_forum_post_id', $post->id)->count();
+        if ($related > 0) {
+            $post->is_deleted = 1;
+            $post->is_hidden = 0;
+        } else {
+            $post->is_deleted = 1;
+            $post->is_hidden = 1;
+        }
+
+        $post->save();
+    }
 
     /**
      * HTTP POST. Likes a forum post.
+     *            Caller must be authenticated.
      *
      * @param Request $request
      * @return response 201 on success
@@ -117,7 +190,8 @@ class ForumApiController extends Controller
     }
 
     /**
-     * HTTP POST. Un-like a forum post. This is not the same thing as disliking a post.
+     * HTTP DELETE. Un-like a forum post. This is not the same thing as disliking a post.
+     *              Caller must be authenticated.
      *
      * @param Request $request
      * @return response 201 on success
@@ -172,5 +246,11 @@ class ForumApiController extends Controller
             'id'     => $context->id,
             'entity' => $entity
         ];
+    }
+
+    private function userCanAccess($user, $post) 
+    {
+        return $user->isAdministrator() || 
+               $post->account_id !== $user->id;
     }
 }

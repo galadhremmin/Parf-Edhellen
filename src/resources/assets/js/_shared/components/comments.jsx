@@ -4,6 +4,7 @@ import EDConfig from 'ed-config';
 import classNames from 'classnames';
 import { EDStatefulFormComponent } from 'ed-form';
 import { Parser as HtmlToReactParser } from 'html-to-react';
+import { polyfill as enableSmoothScrolling } from 'smoothscroll-polyfill';
 
 class EDComments extends EDStatefulFormComponent {
     constructor(props) {
@@ -11,8 +12,11 @@ class EDComments extends EDStatefulFormComponent {
 
         this.state = {
             comments: '',
-            posts: []
+            posts: [],
+            post_id: 0
         };
+
+        enableSmoothScrolling();
     }
 
     componentDidMount() {
@@ -26,6 +30,10 @@ class EDComments extends EDStatefulFormComponent {
 
         const url = EDConfig.api(`/forum?context=${this.props.context}&entity_id=${this.props.entityId}`);
         axios.get(url).then(this.onLoaded.bind(this));
+    }
+
+    login() {
+        window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
     }
 
     onLoaded(response) {
@@ -43,7 +51,18 @@ class EDComments extends EDStatefulFormComponent {
             entity_id: this.props.entityId
         };
         
-        axios.post(EDConfig.api('/forum'), data).then(this.onSubmitted.bind(this));
+        const promise = this.state.post_id === 0
+            ? axios.post(EDConfig.api('/forum'), data)
+            : axios.put(EDConfig.api(`/forum/${this.state.post_id}`), data);
+
+        promise.then(this.onSubmitted.bind(this))
+            .then(() => {
+                // empty the text field once the comments were saved.
+                this.setState({
+                    comments: '',
+                    post_id: 0
+                });
+            })
     }
 
     onSubmitted(response) {
@@ -94,7 +113,59 @@ class EDComments extends EDStatefulFormComponent {
     }
 
     onUnauthenticated(target) {
-        
+        const messageContainer = document.getElementById('forum-log-in-box');
+        if (! messageContainer) {
+            this.login();
+        }
+
+        target.classList.add('unauthorized-animation');
+
+        window.setTimeout(() => {
+            messageContainer.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+
+            messageContainer.classList.add('unauthorized-animation');
+        }, 500);
+    }
+
+    onLoginClick(ev) {
+        ev.preventDefault();
+        this.login();
+    }
+
+    onEditPost(post, ev) {
+        ev.preventDefault();
+
+        axios.get(EDConfig.api(`/forum/${post.id}/edit`))
+            .then(this.onEditPostDataReceived.bind(this));
+    }
+
+    onEditPostDataReceived(resp) {
+        this.setState({
+            comments: resp.data.content,
+            post_id: resp.data.id
+        });
+    }
+
+    onPostEdited(id, response) {
+        this.load();
+    }
+
+    onDeletePost(post, ev) {
+        ev.preventDefault();
+
+        if (! confirm('Are you sure you want to delete your post?')) {
+            return;
+        }
+
+        axios.delete(EDConfig.api(`/forum/${post.id}`))
+            .then(this.onPostDeleted.bind(this));
+    }
+
+    onPostDeleted() {
+        this.load();
     }
 
     render() {
@@ -115,20 +186,30 @@ class EDComments extends EDStatefulFormComponent {
                             {c.account.tengwar ? <span className="tengwar">{c.account.tengwar}</span> : ''}
                             { ' · ' }
                             <span className="date">{ c.created_at }</span>
-
                             <span className="pull-right">
-                                {! c.number_of_likes ? '' : `${c.number_of_likes} `}
-                                <a href="#" onClick={ev => this.onLikeClick(ev, c.id, this.props.accountId && c.likes.length > 0)}>
+                                {c.is_deleted || ! c.number_of_likes ? '' : `${c.number_of_likes} `}
+                                {! c.is_deleted 
+                                    ? <a href="#" onClick={ev => this.onLikeClick(ev, c.id, this.props.accountId && c.likes.length > 0)}>
                                     <span className={classNames('glyphicon', 'glyphicon-thumbs-up', { 
                                         'like-not-liked': ! this.props.accountId || c.likes.length === 0, 
                                         'like-liked': this.props.accountId && c.likes.length > 0 
                                     })} />
-                                </a>
+                                    </a>
+                                : ''}
                             </span>
                         </div>
                         <div className="post-body">
-                            { parser.parse(c.content) }
+                            { !c.is_deleted 
+                                ? parser.parse(c.content)
+                                : <em>{c.account.nickname} has redacted this post.</em>
+                            }
                         </div>
+                        { ! c.is_deleted && this.props.accountId === c.account_id ?
+                        <div className="small pull-right">
+                            <a href="#" onClick={this.onDeletePost.bind(this, c)}>Delete</a>
+                            { ' · ' }
+                            <a href="#" onClick={this.onEditPost.bind(this, c)}>Edit</a>
+                        </div> : '' }
                     </div>
                 </div>) }
             </div>
@@ -136,15 +217,30 @@ class EDComments extends EDStatefulFormComponent {
             { this.props.accountId ? <div>
                 <form onSubmit={this.onSubmit.bind(this)}>
                     <div className="form-group">
-                        <textarea className="form-control" placeholder="Your comments ..." name="comments" value={this.state.comments}
+                        <textarea className="form-control" placeholder="Your comments ..." name="comments" value={this.state.comments} required={true}
                             onChange={super.onChange.bind(this)} />
                     </div>
                     <div className="form-group text-right">
-                        <button type="submit" className="btn btn-primary">Publish comments</button>
+                        <button type="submit" className="btn btn-primary">
+                            <span className="glyphicon glyphicon-send" />
+                            {' '}
+                            Post
+                        </button>
                     </div>
                 </form>
-            </div> : <div className="alert alert-info">
-                Please log in.
+            </div> : <div className="alert alert-info" id="forum-log-in-box">
+                <strong>
+                    <span className="glyphicon glyphicon-info-sign" />
+                    {' '}
+                    { ! Array.isArray(this.state.posts) || this.state.posts.length < 1
+                        ? 'Would you like to be the first to comment?'
+                        : 'Would you like to share your thoughts on the discussion?' 
+                    }
+                </strong>
+                {' '}
+                <a href="#" onClick={this.onLoginClick.bind(this)}>
+                    Log in and create your profile
+                </a>.
             </div> }
         </div>;
     }
