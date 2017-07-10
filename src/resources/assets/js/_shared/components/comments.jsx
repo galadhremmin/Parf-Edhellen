@@ -153,6 +153,13 @@ class EDComments extends EDStatefulFormComponent {
         this.load();
     }
 
+    onDiscardChanges() {
+        this.setState({
+            post_id: 0,
+            comments: ''
+        });
+    }
+
     onDeletePost(post, ev) {
         ev.preventDefault();
 
@@ -169,7 +176,10 @@ class EDComments extends EDStatefulFormComponent {
     }
 
     render() {
-        const parser = new HtmlToReactParser();
+        let parser = null;
+        if (this.state.posts.length > 0) {
+            parser = new HtmlToReactParser();
+        }
 
         return <div>
             <div>
@@ -182,10 +192,12 @@ class EDComments extends EDStatefulFormComponent {
                     <div className="post-content">
                         <div className="post-tools">
                             <a href={`/author/${c.account_id}`} title={`Visit ${c.account.nickname}'s profile`} className="nickname">{c.account.nickname}</a>
-                            { ' ' }
+                            {' '}
                             {c.account.tengwar ? <span className="tengwar">{c.account.tengwar}</span> : ''}
-                            { ' · ' }
+                            {' · '}
                             <span className="date">{ c.created_at }</span>
+                            {' '}
+                            <span className="post-id">#{c.id}</span>
                             <span className="pull-right">
                                 {c.is_deleted || ! c.number_of_likes ? '' : `${c.number_of_likes} `}
                                 {! c.is_deleted 
@@ -215,16 +227,24 @@ class EDComments extends EDStatefulFormComponent {
             </div>
             <hr />
             { this.props.accountId ? <div>
+                {this.state.post_id ? <p><span className="glyphicon glyphicon-info-sign" /> Editing your comment ({this.state.post_id}):</p> : ''}
                 <form onSubmit={this.onSubmit.bind(this)}>
                     <div className="form-group">
                         <textarea className="form-control" placeholder="Your comments ..." name="comments" value={this.state.comments} required={true}
                             onChange={super.onChange.bind(this)} />
                     </div>
                     <div className="form-group text-right">
+                        {this.state.post_id 
+                            ? <button type="button" className="btn btn-default" onClick={this.onDiscardChanges.bind(this)}>
+                            <span className="glyphicon glyphicon-remove" />
+                            {' '}
+                            Discard changes
+                        </button> : ''}
+                        {' '}
                         <button type="submit" className="btn btn-primary">
                             <span className="glyphicon glyphicon-send" />
                             {' '}
-                            Post
+                            {this.state.post_id ? 'Save changes' : 'Post'}
                         </button>
                     </div>
                 </form>

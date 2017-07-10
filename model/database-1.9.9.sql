@@ -17,7 +17,7 @@ INSERT INTO `forum_contexts` (`id`, `name`)
 DROP TABLE IF EXISTS `forum_posts`;
 CREATE TABLE `forum_posts` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `context_id` int(10) unsigned NOT NULL,
+  `forum_context_id` int(10) unsigned NOT NULL,
   `entity_id` int(10) unsigned NOT NULL,
   `parent_forum_post_id` int(10) unsigned NULL,
   `number_of_likes` int(10) unsigned NOT NULL DEFAULT 0,
@@ -28,7 +28,7 @@ CREATE TABLE `forum_posts` (
   `updated_at` datetime DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  INDEX `ContextEntity` (`context_id`, `entity_id`)
+  INDEX `ContextEntity` (`forum_context_id`, `entity_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 
 DROP TABLE IF EXISTS `forum_post_likes`;

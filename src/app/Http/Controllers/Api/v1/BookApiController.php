@@ -4,21 +4,23 @@ namespace App\Http\Controllers\Api\v1;
 
 use Illuminate\Http\Request;
 
-use App\Models\{ Translation, TranslationGroup, Word };
+use App\Models\{ Translation, TranslationGroup, Word, ForumContext };
 use App\Http\Controllers\Controller;
-use App\Repositories\{ TranslationRepository, SentenceRepository };
+use App\Repositories\{ ForumRepository, TranslationRepository, SentenceRepository };
 use App\Adapters\BookAdapter;
 use App\Helpers\StringHelper;
 
 class BookApiController extends Controller 
 {
-    private $_translationRepository;
-    private $_sentenceRepository;
-    private $_adapter;
+    protected $_forumRepository;
+    protected $_translationRepository;
+    protected $_sentenceRepository;
+    protected $_adapter;
 
-    public function __construct(TranslationRepository $translationRepository, 
+    public function __construct(ForumRepository $forumRepository, TranslationRepository $translationRepository,
         SentenceRepository $sentenceRepository, BookAdapter $adapter)
     {
+        $this->_forumRepository = $forumRepository;
         $this->_translationRepository = $translationRepository;
         $this->_sentenceRepository = $sentenceRepository;
         $this->_adapter = $adapter;
@@ -138,13 +140,15 @@ class BookApiController extends Controller
         $languageId = $request->has('language_id') ? intval($request->input('language_id')) : 0;
         
         $translations = $this->_translationRepository->getWordTranslations($word, $languageId);
+        $translationIds = array_map(function ($v) {
+                return $v->id;
+            }, $translations);
 
         $inflections = $request->has('inflections') && $request->input('inflections')
-            ? $this->_sentenceRepository->getInflectionsForTranslations(array_map(function ($v) {
-                return $v->id;
-            }, $translations)) : [];
+            ? $this->_sentenceRepository->getInflectionsForTranslations($translationIds) : [];
 
-        $model = $this->_adapter->adaptTranslations($translations, $word, $inflections);
+        $comments = $this->_forumRepository->getCommentCountForEntities(ForumContext::CONTEXT_TRANSLATION, $translationIds);
+        $model = $this->_adapter->adaptTranslations($translations, $inflections, $comments, $word);
         return $model;
     }
 
@@ -162,6 +166,7 @@ class BookApiController extends Controller
             return response(null, 404);
         }
 
-        return $this->_adapter->adaptTranslations([$translation]);
+        $comments = $this->_forumRepository->getCommentCountForEntities(ForumContext::CONTEXT_TRANSLATION, [$translationId]);
+        return $this->_adapter->adaptTranslations([$translation], [/* no inflections */], $comments);
     }
 }

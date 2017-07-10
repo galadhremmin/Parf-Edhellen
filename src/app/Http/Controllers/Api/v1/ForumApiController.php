@@ -6,12 +6,16 @@ use Illuminate\Http\Request;
 
 use App\Models\{ ForumPost, ForumPostLike, ForumContext, Translation, Sentence };
 use App\Http\Controllers\Controller;
+use App\Repositories\ForumRepository;
 use App\Helpers\{ StringHelper, MarkdownParser };
 
 class ForumApiController extends Controller 
 {
-    public function __construct()
+    protected $_repository;
+
+    public function __construct(ForumRepository $repository)
     {
+        $this->_repository = $repository;
     }
 
     public function index(Request $request)
@@ -37,7 +41,7 @@ class ForumApiController extends Controller
             };
         }
 
-        $posts = ForumPost::where('context_id', $context['id'])
+        $posts = ForumPost::where('forum_context_id', $context['id'])
             ->with($loadingOptions)
             ->where([
                 ['entity_id', $context['entity']->id],
@@ -59,7 +63,7 @@ class ForumApiController extends Controller
      *           Caller must be authenticated.
      *
      * @param Request $request
-     * @return response 201 on success
+     * @return response 200 on success
      */
     public function edit(Request $request, int $id)
     {
@@ -99,7 +103,7 @@ class ForumApiController extends Controller
         }
 
         ForumPost::create([
-            'context_id'          => $context['id'],
+            'forum_context_id'    => $context['id'],
             'entity_id'           => $context['entity']->id,
             'account_id'          => $request->user()->id,
             'content'             => $comments,
@@ -166,7 +170,7 @@ class ForumApiController extends Controller
      *            Caller must be authenticated.
      *
      * @param Request $request
-     * @return response 201 on success
+     * @return response 201 or 204 on success
      */
     public function storeLike(Request $request, int $id)
     {
@@ -195,7 +199,7 @@ class ForumApiController extends Controller
      *              Caller must be authenticated.
      *
      * @param Request $request
-     * @return response 201 on success
+     * @return response 201 or 204 on success
      */
     public function destroyLike(Request $request, int $id)
     {
@@ -220,33 +224,10 @@ class ForumApiController extends Controller
             'entity_id' => 'required|numeric'
         ]);
 
-        // Retrieve the context
-        $context = ForumContext::where('name', $request->input('context'))
-            ->select('id')
-            ->firstOrFail();
+        $contextName = $request->input('context');
+        $entityId = intval($request->input('entity_id'));
 
-        $id = intval($request->input('entity_id'));
-        $entity = null;
-
-        switch ($context->id) {
-            case ForumContext::CONTEXT_TRANSLATION:
-                $entity = Translation::active()
-                    ->where('id', $id)
-                    ->firstOrFail();
-                break;
-            
-            case ForumContext::CONTEXT_SENTENCE:
-                $entity = Sentence::findOrFail($id);
-                break;
-
-            default:
-                return null;
-        }
-
-        return [
-            'id'     => $context->id,
-            'entity' => $entity
-        ];
+        return $this->_repository->getContext($contextName, $entityId);
     }
 
     private function userCanAccess($user, $post) 

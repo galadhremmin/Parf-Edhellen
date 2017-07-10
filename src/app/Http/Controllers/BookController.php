@@ -20,7 +20,7 @@ class BookController extends Controller
     public function pageForWord(Request $request, string $word)
     {
         $translations = $this->_translationRepository->getWordTranslations($word);
-        $model = $this->_adapter->adaptTranslations($translations, $word);
+        $model = $this->_adapter->adaptTranslations($translations, [], [], $word);
 
         return view('book.page', $model);
     }
@@ -28,10 +28,9 @@ class BookController extends Controller
     public function pageForTranslationId(Request $request, int $id)
     {
         $translation = $this->_translationRepository->getTranslation($id);
-        $model = $this->_adapter->adaptTranslations([ $translation ], null);
+        $model = $this->_adapter->adaptTranslations([ $translation ]);
 
         return view('book.page', $model);
     }
 
 }
-

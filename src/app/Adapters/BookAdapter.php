@@ -18,7 +18,7 @@ class BookAdapter
      * @param string|null $word
      * @return array
      */
-    public function adaptTranslations(array $translations, string $word = null, array $inflections = [])
+    public function adaptTranslations(array $translations, array $inflections = [], array $commentsById = [], string $word = null)
     {
         $numberOfTranslations = count($translations);
 
@@ -58,7 +58,7 @@ class BookAdapter
                     [
                         // Load the language by examining the first (and only) element of the array
                         'language' => Language::findOrFail($translation->language_id),
-                        'glosses'  => [ self::adaptTranslation($translation, $inflections, $linker) ]
+                        'glosses'  => [ self::adaptTranslation($translation, $inflections, $commentsById, $linker) ]
                     ]
                 ]
             ], 1);
@@ -75,7 +75,7 @@ class BookAdapter
             }
 
             // adapt translation for the view
-            $translation = self::adaptTranslation($translation, $inflections, $linker);
+            $translation = self::adaptTranslation($translation, $inflections, $commentsById, $linker);
 
             if (!isset($gloss2LanguageMap[$translation->language_id])) {
                 $gloss2LanguageMap[$translation->language_id] = [ $translation ];
@@ -120,7 +120,7 @@ class BookAdapter
         ], count($allLanguages));
     }
 
-    private static function adaptTranslation(\stdClass $translation, array $inflections, LinkHelper $linker) 
+    private static function adaptTranslation(\stdClass $translation, array $inflections, array $commentsById, LinkHelper $linker) 
     {
         // Filter among the inflections, looking for references to the specified translation.
         // The array is associative two-dimensional with the sentence fragment ID as the key, and an array containing
@@ -130,6 +130,7 @@ class BookAdapter
         });
         $translation->inflections = count($inflectionsForTranslation) > 0 
             ? $inflectionsForTranslation : null;
+        $translation->comment_count = isset($commentsById[$translation->id]) ? $commentsById[$translation->id] : 0;
 
         // Create links upon the first element of each sentence fragment.
         if ($translation->inflections !== null) {
