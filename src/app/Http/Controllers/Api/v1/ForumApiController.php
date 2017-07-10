@@ -115,7 +115,7 @@ class ForumApiController extends Controller
      *           Caller must be authenticated.
      *
      * @param Request $request
-     * @return response 201 on success
+     * @return response 200 on success
      */
     public function update(Request $request, int $id)
     {
@@ -139,7 +139,7 @@ class ForumApiController extends Controller
      *              Caller must be authenticated.
      *
      * @param Request $request
-     * @return response 201 on success
+     * @return response 204 on success
      */
     public function destroy(Request $request, int $id)
     {
@@ -158,6 +158,7 @@ class ForumApiController extends Controller
         }
 
         $post->save();
+        return response(null, 204);
     }
 
     /**
