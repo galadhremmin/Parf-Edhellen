@@ -4,17 +4,21 @@ namespace App\Http\Controllers\Api\v1;
 
 use Illuminate\Http\Request;
 
-use App\Models\{ AuditTrail, ForumPost, ForumPostLike, ForumContext, Translation, Sentence };
 use App\Http\Controllers\Controller;
-use App\Repositories\ForumRepository;
-use App\Helpers\{ StringHelper, MarkdownParser };
+use App\Models\{ AuditTrail, ForumPost, ForumPostLike, ForumContext, Translation, Sentence };
+use App\Repositories\{ AuditTrailRepository, ForumRepository };
+use App\Helpers\{ LinkHelper, MarkdownParser, StringHelper };
 
 class ForumApiController extends Controller 
 {
+    protected $_auditTrail;
+    protected $_link;
     protected $_repository;
 
-    public function __construct(ForumRepository $repository)
+    public function __construct(AuditTrailRepository $auditTrail, LinkHelper $link, ForumRepository $repository)
     {
+        $this->_auditTrail = $auditTrail;
+        $this->_link       = $link;
         $this->_repository = $repository;
     }
 
@@ -56,6 +60,36 @@ class ForumApiController extends Controller
         }
 
         return $posts;
+    }
+
+    public function show(Request $request, int $id)
+    {
+        $post = ForumPost::findOrFail($id);
+        $url = null;
+
+        switch ($post->forum_context_id) {
+            case ForumContext::CONTEXT_FORUM:
+                // Unsupported at the moment
+                break;
+            case ForumContext::CONTEXT_TRANSLATION:
+                $url = $this->_link->translation($post->entity_id);
+                break;
+            case ForumContext::CONTEXT_SENTENCE:
+                $sentence = Sentence::findOrFail($post->entity_id);
+                $url = $this->_link->sentence($sentence->language_id, $sentence->language->name, 
+                    $sentence->id, $sentence->name);
+                break;
+            case ForumContext::CONTEXT_ACCOUNT:
+                $url = $this->_link->author($post->entity_id, '');
+                break;
+        }
+
+        if ($url === null) {
+            return response(null, 400);
+        }
+
+        $url .= '?forum_post_id='.$id;
+        return redirect($url);
     }
 
     /**
@@ -113,12 +147,7 @@ class ForumApiController extends Controller
         ]);
 
         // Register an audit trail
-        AuditTrail::create([
-            'account_id'        => $account->id,
-            'entity_id'         => $post->id,
-            'entity_context_id' => AuditTrail::CONTEXT_COMMENT,
-            'action_id'         => AuditTrail::ACTION_COMMENT_ADD
-        ]);
+        $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_ADD, $account->id, $post);
 
         return response(null, 201);
     }
@@ -146,12 +175,7 @@ class ForumApiController extends Controller
         $post->save();
 
         // Register an audit trail
-        AuditTrail::create([
-            'account_id'        => $account->id,
-            'entity_id'         => $post->id,
-            'entity_context_id' => AuditTrail::CONTEXT_COMMENT,
-            'action_id'         => AuditTrail::ACTION_COMMENT_EDIT
-        ]);
+        $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_EDIT, $account->id, $post);
 
         return response(null, 200);
     }
@@ -207,12 +231,7 @@ class ForumApiController extends Controller
             $post->save();
 
             // Register an audit trail
-            AuditTrail::create([
-                'account_id'        => $userId,
-                'entity_id'         => $post->id,
-                'entity_context_id' => AuditTrail::CONTEXT_COMMENT,
-                'action_id'         => AuditTrail::ACTION_COMMENT_LIKE
-            ]);
+            $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_LIKE, $userId, $post);
 
             $statusCode = 201; // OK, like saved
         }

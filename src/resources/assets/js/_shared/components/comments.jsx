@@ -10,10 +10,17 @@ class EDComments extends EDStatefulFormComponent {
     constructor(props) {
         super(props);
 
+        let jump_post_id = 0;
+        if (window.location.search) {
+            let match = /&?forum_post_id=([0-9]+)/.exec(location.search.substr(1));
+            jump_post_id = parseInt(match[1], 10);
+        }
+
         this.state = {
             comments: '',
             posts: [],
-            post_id: 0
+            post_id: 0,
+            jump_post_id
         };
 
         enableSmoothScrolling();
@@ -21,6 +28,10 @@ class EDComments extends EDStatefulFormComponent {
 
     componentDidMount() {
         this.load();
+    }
+
+    login() {
+        window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
     }
 
     load(offset, parentPostId) {
@@ -32,14 +43,25 @@ class EDComments extends EDStatefulFormComponent {
         axios.get(url).then(this.onLoaded.bind(this));
     }
 
-    login() {
-        window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
-    }
-
     onLoaded(response) {
+        const jumpPostId = this.state.jump_post_id;
+
         this.setState({
-            posts: response.data
+            posts: response.data,
+            jump_post_id: 0
         });
+
+        if (jumpPostId) {
+            window.setTimeout(() => {
+                const id = `forum-post-${jumpPostId}`;
+                const postContainer = document.getElementById(id);
+
+                postContainer.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }, 500);
+        }
     }
 
     onSubmit(ev) {
@@ -183,7 +205,7 @@ class EDComments extends EDStatefulFormComponent {
 
         return <div>
             <div>
-                { this.state.posts.map(c => <div key={c.id} className="forum-post">
+                { this.state.posts.map(c => <div key={c.id} className="forum-post" id={`forum-post-${c.id}`}>
                     <div className="post-profile-picture">
                         <a href={`/author/${c.account_id}`} title={`Visit ${c.account.nickname}'s profile`}>
                             <img src={c.account.has_avatar ? `/storage/avatars/${c.account_id}.png` : '/img/anonymous-profile-picture.png'} />

@@ -7,6 +7,13 @@ use Illuminate\Support\Facades\DB;
 
 class SentenceRepository
 {
+    protected $_auditTrail;
+
+    public function __construct(AuditTrailRepository $auditTrail)
+    {
+        $this->_auditTrail = $auditTrail;
+    }
+
     /**
      * Gets the languages for all available sentences.
      * @return mixed
@@ -97,14 +104,10 @@ class SentenceRepository
         }
 
         // Register an audit trail
-        AuditTrail::create([
-            'account_id'        => $sentence->account_id,
-            'entity_id'         => $sentence->id,
-            'entity_context_id' => AuditTrail::CONTEXT_SENTENCE,
-            'action_id'         => $changed 
+        $action = $changed 
                 ? AuditTrail::ACTION_SENTENCE_EDIT 
-                : AuditTrail::ACTION_SENTENCE_ADD
-        ]);
+                : AuditTrail::ACTION_SENTENCE_ADD;
+        $this->_auditTrail->store($action, $sentence->account_id, $sentence);
     }
 
     public function destroyFragments(Sentence $sentence) 

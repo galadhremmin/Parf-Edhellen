@@ -5,11 +5,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class AuditTrail extends Model
 {
-    const CONTEXT_TRANSLATION         = 10;
-    const CONTEXT_SENTENCE            = 20;
-    const CONTEXT_PROFILE             = 30;
-    const CONTEXT_COMMENT             = 40;
-
     const ACTION_TRANSLATION_ADD      = 10;
     const ACTION_TRANSLATION_EDIT     = 20;
     const ACTION_TRANSLATION_RESERVED = 30;
@@ -26,16 +21,29 @@ class AuditTrail extends Model
     const ACTION_COMMENT_EDIT         = 41;
     const ACTION_COMMENT_LIKE         = 42;
 
+    const ACTION_FLASHCARD_FIRST_CARD = 50;
+    const ACTION_FLASHCARD_CARD_10    = 51;
+    const ACTION_FLASHCARD_CARD_50    = 52;
+    const ACTION_FLASHCARD_CARD_100   = 53;
+    const ACTION_FLASHCARD_CARD_200   = 54;
+    const ACTION_FLASHCARD_CARD_500   = 55;
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'account_id', 'entity_context_id', 'entity_id', 'action_id'
+        'account_id', 'entity_type', 'entity_id', 'action_id'
     ];
 
-    public function account() {
+    public function account() 
+    {
         return $this->belongsTo(Account::class);
+    }
+
+    public function entity() 
+    {
+        return $this->morphTo();
     }
 }

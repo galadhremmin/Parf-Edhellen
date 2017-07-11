@@ -2,14 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Flashcard, FlashcardResult, Language, Translation};
+use App\Models\{AuditTrail, Flashcard, FlashcardResult, Language, Translation};
 use App\Helpers\MarkdownParser;
+use App\Repositories\AuditTrailRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class FlashcardController extends Controller
 {
+    protected $_auditTrail;
+
+    public function __construct(AuditTrailRepository $auditTrail) 
+    {
+        $this->_auditTrail = $auditTrail;
+    }
+
     public function index(Request $request)
     {
         $flashcards = Flashcard::all()
@@ -138,10 +146,12 @@ class FlashcardController extends Controller
         $offeredGloss = $request->input('translation');
         $ok = strcmp($translation->translation, $offeredGloss) === 0;
 
+        $account = $request->user();
+
         $result = new FlashcardResult;
 
         $result->flashcard_id   = intval( $request->input('flashcard_id') );
-        $result->account_id     = $request->user()->id;
+        $result->account_id     = $account->id;
         $result->translation_id = $translationId;
         $result->expected       = $translation->translation;
         $result->actual         = $offeredGloss;
@@ -153,6 +163,34 @@ class FlashcardController extends Controller
         if (! empty($translation->comments)) {
             $parser = new MarkdownParser();
             $translation->comments = $parser->parse($translation->comments);
+        }
+
+        // Record the progress
+        $numberOfCards = FlashcardResult::where('account_id', $result->account_id)->count();
+        $qualifyingAction = 0;
+        switch ($numberOfCards) {
+            case 1:
+                $qualifyingAction = AuditTrail::ACTION_FLASHCARD_FIRST_CARD;
+                break;
+            case 10:
+                $qualifyingAction = AuditTrail::ACTION_FLASHCARD_CARD_10;
+                break;
+            case 50:
+                $qualifyingAction = AuditTrail::ACTION_FLASHCARD_CARD_50;
+                break;
+            case 100:
+                $qualifyingAction = AuditTrail::ACTION_FLASHCARD_CARD_100;
+                break;
+            case 200:
+                $qualifyingAction = AuditTrail::ACTION_FLASHCARD_CARD_200;
+                break;
+            case 500:
+                $qualifyingAction = AuditTrail::ACTION_FLASHCARD_CARD_500;
+                break;
+        }
+
+        if ($qualifyingAction !== 0) {
+            $this->_auditTrail->store($qualifyingAction, $account->id, $result);
         }
 
         return [

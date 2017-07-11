@@ -7,15 +7,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 use App\Models\{ Account, AuditTrail };
-use App\Repositories\StatisticsRepository;
+use App\Repositories\{ AuditTrailRepository, StatisticsRepository };
 use App\Helpers\MarkdownParser;
 
 class AuthorController extends Controller
 {
-    private $_statisticsRepository;
+    protected $_auditTrail;
+    protected $_statisticsRepository;
 
-    public function __construct(StatisticsRepository $statisticsRepository)
+    public function __construct(AuditTrailRepository $auditTrail, StatisticsRepository $statisticsRepository)
     {
+        $this->_auditTrail           = $auditTrail;
         $this->_statisticsRepository = $statisticsRepository;
     }
 
@@ -124,13 +126,8 @@ class AuthorController extends Controller
 
             unlink($file->path());
 
-            // Register an audit trail
-            AuditTrail::create([
-                'account_id'        => $author->id,
-                'entity_id'         => $author->id,
-                'entity_context_id' => AuditTrail::CONTEXT_PROFILE,
-                'action_id'         => AuditTrail::ACTION_PROFILE_EDIT_AVATAR
-            ]);
+            // Register an audit trail for the changed avatar
+            $this->_auditTrail->store(AuditTrail::ACTION_PROFILE_EDIT_AVATAR, $author->id, $author);
         }
 
         $author->nickname = $request->input('nickname');
@@ -138,13 +135,8 @@ class AuthorController extends Controller
         $author->profile  = $request->input('profile');
         $author->save();
 
-        // Register an audit trail
-        AuditTrail::create([
-            'account_id'        => $author->id,
-            'entity_id'         => $author->id,
-            'entity_context_id' => AuditTrail::CONTEXT_PROFILE,
-            'action_id'         => AuditTrail::ACTION_PROFILE_EDIT
-        ]);
+        // Register an audit trail for the changed profile
+        $this->_auditTrail->store(AuditTrail::ACTION_PROFILE_EDIT, $author->id, $author);
 
         return redirect()->route('author.my-profile');
     }

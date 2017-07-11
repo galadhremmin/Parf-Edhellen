@@ -2,15 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Models\AuthorizationProvider;
-use App\Models\Account;
 use Illuminate\Support\Facades\Auth;
+
 use Socialite;
+use Carbon\Carbon;
+
+use App\Models\{ Account, AuthorizationProvider, AuditTrail };
+use App\Repositories\AuditTrailRepository;
 
 class SocialAuthController extends Controller
 {
+    protected $_auditTrail;
+
+    public function __construct(AuditTrailRepository $auditTrail) 
+    {
+        $this->_auditTrail = $auditTrail;
+    }
+
     public function login()
     {
         $providers = AuthorizationProvider::all();
@@ -51,13 +60,8 @@ class SocialAuthController extends Controller
                 'authorization_provider_id'  => $provider->id
             ]);
 
-            // Register an audit trail
-            AuditTrail::create([
-                'account_id'        => $user->id,
-                'entity_id'         => $user->id,
-                'entity_context_id' => AuditTrail::CONTEXT_PROFILE,
-                'action_id'         => AuditTrail::ACTION_PROFILE_FIRST_TIME
-            ]);
+            // Register an audit trail for the user logging in for the first time.
+            $this->_auditTrail->store(AuditTrail::ACTION_PROFILE_FIRST_TIME, $user->id, $user);
         }
 
         auth()->login($user);

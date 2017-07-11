@@ -8,6 +8,13 @@ use App\Helpers\StringHelper;
 
 class TranslationRepository
 {
+    protected $_auditTrail;
+
+    public function __construct(AuditTrailRepository $auditTrail)
+    {
+        $this->_auditTrail = $auditTrail;
+    }
+
     public function getKeywordsForLanguage(string $word, $reversed = false, $languageId = 0) 
     {
         $word = self::formatWord($word);
@@ -266,14 +273,10 @@ class TranslationRepository
         }
 
         // 12. Register an audit trail
-        AuditTrail::create([
-            'account_id'        => $translation->account_id,
-            'entity_id'         => $translation->id,
-            'entity_context_id' => AuditTrail::CONTEXT_TRANSLATION,
-            'action_id'         => $changed 
+        $action = $changed 
                 ? AuditTrail::ACTION_TRANSLATION_EDIT 
-                : AuditTrail::ACTION_TRANSLATION_ADD
-        ]);
+                : AuditTrail::ACTION_TRANSLATION_ADD;
+        $this->_auditTrail->store($action, $translation->account_id, $translation);
 
         return $translation;
     }

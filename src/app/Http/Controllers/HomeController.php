@@ -4,28 +4,23 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\{ Sentence, AuditTrail };
-use App\Repositories\TranslationReviewRepository;
+use App\Repositories\{ AuditTrailRepository, TranslationReviewRepository };
 
 class HomeController extends Controller
 {
-    private $_reviewRepository;
+    protected $_auditTrail;
+    protected $_reviewRepository;
 
-    public function __construct(TranslationReviewRepository $translationReviewRepository) 
+    public function __construct(AuditTrailRepository $auditTrail, TranslationReviewRepository $translationReviewRepository) 
     {
+        $this->_auditTrail       = $auditTrail;
         $this->_reviewRepository = $translationReviewRepository;
     }
 
     public function index() 
     {
         $sentence    = Sentence::approved()->inRandomOrder()->first();
-        $auditTrails = AuditTrail::orderBy('id', 'desc')
-            ->with([
-                'account' => function ($query) {
-                    $query->select('id', 'nickname');
-                }
-            ])
-            ->take(10)
-            ->get();
+        $auditTrails = $this->_auditTrail->get(10);
 
         $data = [
             'sentence'    => $sentence,

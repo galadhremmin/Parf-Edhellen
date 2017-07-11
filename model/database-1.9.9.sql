@@ -48,8 +48,8 @@ DROP TABLE IF EXISTS `audit_trails`;
 CREATE TABLE `audit_trails` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `account_id` int(5) unsigned NOT NULL,
-  `entity_context_id` int(10) unsigned NOT NULL,
-  `entity_id` int(10) unsigned NOT NULL,
+  `entity_type` varchar(16) NOT NULL COLLATE utf8_swedish_ci ,
+  `entity_id` int(10) unsigned NULL,
   `action_id` int(10) unsigned NOT NULL,
   `updated_at` datetime DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
