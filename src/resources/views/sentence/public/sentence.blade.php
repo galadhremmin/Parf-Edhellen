@@ -50,7 +50,10 @@
     @endif
   </footer>
   <hr>
-  <div id="ed-comments" data-entity-id="{{ $sentence->id }}" data-context="sentence" data-account-id="{{ Auth::check() ? Auth::user()->id : '0' }}"></div>
+  @include('_shared._comments', [
+    'entity_id' => $sentence->id,
+    'context'   => 'sentence'
+  ])
 @endsection
 
 @section('scripts')

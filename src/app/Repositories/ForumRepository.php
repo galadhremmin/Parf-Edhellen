@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\{ ForumContext, ForumPost, ForumPostLike, Translation, Sentence };
+use App\Models\{ Account, ForumContext, ForumPost, ForumPostLike, Translation, Sentence };
 use Illuminate\Support\Facades\DB;
 
 class ForumRepository
@@ -41,6 +41,10 @@ class ForumRepository
             
             case ForumContext::CONTEXT_SENTENCE:
                 $entity = Sentence::findOrFail($id);
+                break;
+
+            case ForumContext::CONTEXT_ACCOUNT:
+                $entity = Account::findOrFail($id);
                 break;
 
             default:

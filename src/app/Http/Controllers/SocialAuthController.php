@@ -50,6 +50,14 @@ class SocialAuthController extends Controller
                 
                 'authorization_provider_id'  => $provider->id
             ]);
+
+            // Register an audit trail
+            AuditTrail::create([
+                'account_id'        => $user->id,
+                'entity_id'         => $user->id,
+                'entity_context_id' => AuditTrail::CONTEXT_PROFILE,
+                'action_id'         => AuditTrail::ACTION_PROFILE_FIRST_TIME
+            ]);
         }
 
         auth()->login($user);

@@ -46,6 +46,14 @@ class RefreshNormalizationCommand extends Command
      */
     public function handle()
     {
+        $this->handleWords();
+        $this->handleKeywords();
+
+        $this->info('All normalizations have been updated. Minimum time: '.$this->_minTime.' ms, maximum time: '.$this->_maxTime.' ms.');
+    }
+
+    private function handleWords() 
+    {
         $words = Word::get();
         foreach ($words as $word) {
             $time = microtime(true);
@@ -58,6 +66,11 @@ class RefreshNormalizationCommand extends Command
             $word->save();
         }
 
+        unset($words);
+    }
+
+    private function handleKeywords() 
+    {
         $keywords = Keyword::get();
         foreach ($keywords as $keyword) {
             $time = microtime(true);
@@ -76,7 +89,7 @@ class RefreshNormalizationCommand extends Command
             $keyword->save();
         }
 
-        $this->info('All normalizations have been updated. Minimum time: '.$this->_minTime.' ms, maximum time: '.$this->_maxTime.' ms.');
+        unset($keywords);
     }
 
     private function log(string $before, string $new, int $time) 

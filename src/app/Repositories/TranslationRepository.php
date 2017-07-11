@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use Illuminate\Support\Facades\DB;
-use App\Models\{ Keyword, Translation, Sense, Word };
+use App\Models\{ AuditTrail, Keyword, Translation, Sense, Word };
 use App\Helpers\StringHelper;
 
 class TranslationRepository
@@ -264,6 +264,16 @@ class TranslationRepository
                 $this->createKeyword($keywordWord, $sense, null);
             }
         }
+
+        // 12. Register an audit trail
+        AuditTrail::create([
+            'account_id'        => $translation->account_id,
+            'entity_id'         => $translation->id,
+            'entity_context_id' => AuditTrail::CONTEXT_TRANSLATION,
+            'action_id'         => $changed 
+                ? AuditTrail::ACTION_TRANSLATION_EDIT 
+                : AuditTrail::ACTION_TRANSLATION_ADD
+        ]);
 
         return $translation;
     }

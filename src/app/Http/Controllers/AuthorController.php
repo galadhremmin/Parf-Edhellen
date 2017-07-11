@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-use App\Models\Account;
+use App\Models\{ Account, AuditTrail };
 use App\Repositories\StatisticsRepository;
 use App\Helpers\MarkdownParser;
 
@@ -123,12 +123,28 @@ class AuthorController extends Controller
             }
 
             unlink($file->path());
+
+            // Register an audit trail
+            AuditTrail::create([
+                'account_id'        => $author->id,
+                'entity_id'         => $author->id,
+                'entity_context_id' => AuditTrail::CONTEXT_PROFILE,
+                'action_id'         => AuditTrail::ACTION_PROFILE_EDIT_AVATAR
+            ]);
         }
 
         $author->nickname = $request->input('nickname');
         $author->tengwar  = $request->input('tengwar');
         $author->profile  = $request->input('profile');
         $author->save();
+
+        // Register an audit trail
+        AuditTrail::create([
+            'account_id'        => $author->id,
+            'entity_id'         => $author->id,
+            'entity_context_id' => AuditTrail::CONTEXT_PROFILE,
+            'action_id'         => AuditTrail::ACTION_PROFILE_EDIT
+        ]);
 
         return redirect()->route('author.my-profile');
     }

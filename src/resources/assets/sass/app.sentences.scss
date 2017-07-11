@@ -1,0 +1,29 @@
+header {
+  h2 {
+    /* It just looks better this way... */
+    margin-top: 5px;
+  }
+
+}
+blockquote {
+
+  &:hover {
+    background: #eee;
+    border-radius: 5px;
+  }
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 7px; /* it looks better with 7px */
+    font-size: 140%;
+  }
+
+  p:last-child {
+    margin-bottom: 5px;
+  }
+
+  > a.sentence-link {
+    color: inherit;
+    text-decoration: none;
+  }
+}

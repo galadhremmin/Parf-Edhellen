@@ -61,4 +61,13 @@
       </div>
     </div>
   @endif
+  <hr>
+  @include('_shared._comments', [
+    'entity_id' => $author->id,
+    'context'   => 'account'
+  ])
+@endsection
+
+@section('scripts')
+  <script type="text/javascript" src="/js/comment.js" async></script>
 @endsection

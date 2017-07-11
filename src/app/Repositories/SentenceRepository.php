@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\{ Sentence, SentenceFragment };
+use App\Models\{ AuditTrail, Sentence, SentenceFragment };
 use Illuminate\Support\Facades\DB;
 
 class SentenceRepository
@@ -32,6 +32,7 @@ class SentenceRepository
             ->where('s.language_id', $languageId)
             ->select('s.id', 's.description', 's.source', 's.is_neologism', 's.account_id',
                 'a.nickname as account_name', 's.name')
+            ->orderBy('s.name')
             ->get();
     }
 
@@ -74,13 +75,13 @@ class SentenceRepository
 
     public function saveSentence(Sentence $sentence, array $fragments, array $inflections) 
     {
+        $changed = $sentence->id !== 0;
         $numberOfFragments = count($fragments);
         if ($numberOfFragments !== count($inflections)) {
             throw new Exception('The number of fragments must match the number of inflections.');
         }
 
         $sentence->save();
-
         $this->destroyFragments($sentence);
         
         for ($i = 0; $i < $numberOfFragments; $i += 1) {
@@ -94,6 +95,16 @@ class SentenceRepository
                 $inflectionRel->save(); 
             }
         }
+
+        // Register an audit trail
+        AuditTrail::create([
+            'account_id'        => $sentence->account_id,
+            'entity_id'         => $sentence->id,
+            'entity_context_id' => AuditTrail::CONTEXT_SENTENCE,
+            'action_id'         => $changed 
+                ? AuditTrail::ACTION_SENTENCE_EDIT 
+                : AuditTrail::ACTION_SENTENCE_ADD
+        ]);
     }
 
     public function destroyFragments(Sentence $sentence) 

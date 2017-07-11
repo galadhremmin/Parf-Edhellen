@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use Illuminate\Http\Request;
 
-use App\Models\{ ForumPost, ForumPostLike, ForumContext, Translation, Sentence };
+use App\Models\{ AuditTrail, ForumPost, ForumPostLike, ForumContext, Translation, Sentence };
 use App\Http\Controllers\Controller;
 use App\Repositories\ForumRepository;
 use App\Helpers\{ StringHelper, MarkdownParser };
@@ -102,13 +102,22 @@ class ForumApiController extends Controller
             $parentEntityId = $request->input('parent_form_post_id');
         }
 
-        ForumPost::create([
+        $account = $request->user();
+        $post = ForumPost::create([
             'forum_context_id'    => $context['id'],
             'entity_id'           => $context['entity']->id,
-            'account_id'          => $request->user()->id,
+            'account_id'          => $account->id,
             'content'             => $comments,
             'parent_form_post_id' => $parentEntityId,
             'number_of_likes'     => 0
+        ]);
+
+        // Register an audit trail
+        AuditTrail::create([
+            'account_id'        => $account->id,
+            'entity_id'         => $post->id,
+            'entity_context_id' => AuditTrail::CONTEXT_COMMENT,
+            'action_id'         => AuditTrail::ACTION_COMMENT_ADD
         ]);
 
         return response(null, 201);
@@ -127,13 +136,22 @@ class ForumApiController extends Controller
             'comments' => 'required|string'
         ]);
 
+        $account = $request->user();
         $post = ForumPost::findOrFail($id);
-        if (! $this->userCanAccess($request->user(), $post)) {
+        if (! $this->userCanAccess($account, $post)) {
             return response(null, 401);
         }
 
         $post->content = $request->input('comments');
         $post->save();
+
+        // Register an audit trail
+        AuditTrail::create([
+            'account_id'        => $account->id,
+            'entity_id'         => $post->id,
+            'entity_context_id' => AuditTrail::CONTEXT_COMMENT,
+            'action_id'         => AuditTrail::ACTION_COMMENT_EDIT
+        ]);
 
         return response(null, 200);
     }
@@ -187,6 +205,14 @@ class ForumApiController extends Controller
 
             $post->number_of_likes += 1;
             $post->save();
+
+            // Register an audit trail
+            AuditTrail::create([
+                'account_id'        => $userId,
+                'entity_id'         => $post->id,
+                'entity_context_id' => AuditTrail::CONTEXT_COMMENT,
+                'action_id'         => AuditTrail::ACTION_COMMENT_LIKE
+            ]);
 
             $statusCode = 201; // OK, like saved
         }

@@ -13,6 +13,8 @@ INSERT INTO `forum_contexts` (`id`, `name`)
   VALUES (2, 'translation');
 INSERT INTO `forum_contexts` (`id`, `name`)
   VALUES (3, 'sentence');
+INSERT INTO `forum_contexts` (`id`, `name`)
+  VALUES (4, 'account');
 
 DROP TABLE IF EXISTS `forum_posts`;
 CREATE TABLE `forum_posts` (
@@ -40,6 +42,18 @@ CREATE TABLE `forum_post_likes` (
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `AccountForumPost` (`forum_post_id`, `account_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
+
+DROP TABLE IF EXISTS `audit_trails`;
+CREATE TABLE `audit_trails` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `account_id` int(5) unsigned NOT NULL,
+  `entity_context_id` int(10) unsigned NOT NULL,
+  `entity_id` int(10) unsigned NOT NULL,
+  `action_id` int(10) unsigned NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 
 ALTER TABLE `account_role_rels` MODIFY `account_id` int(5) unsigned NOT NULL;

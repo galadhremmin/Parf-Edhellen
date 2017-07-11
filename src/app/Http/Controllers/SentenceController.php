@@ -36,11 +36,14 @@ class SentenceController extends Controller
 
     public function byLanguage(Request $request, int $langId)
     {
-        $sentences = $this->_sentenceRepository->getByLanguage($langId);
+        $sentences = $this->_sentenceRepository->getByLanguage($langId)
+            ->groupBy('is_neologism')
+            ->toArray();
         $language = Language::find($langId);
-        
+
         return view('sentence.public.sentences', [
-            'sentences'    => $sentences,
+            'sentences'    => array_key_exists(0, $sentences) ? $sentences[0] : [],
+            'neologisms'   => array_key_exists(1, $sentences) ? $sentences[1] : [],
             'language'     => $language
         ]);
     }

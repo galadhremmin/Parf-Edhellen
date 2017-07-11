@@ -38,11 +38,11 @@
   <div class="hidden-xs hidden-sm col-md-4">
     <h4>Community activity</h4>
     <ul class="list-group">
-    @foreach($reviews as $review)
+    @foreach($auditTrails as $a)
       <li class="list-group-item">
-        {{ $review->created_at }}
-        <a href="{{ $link->translation($review->translation_id) }}">{{ $review->word }}</a>
-        by <a href="{{ $link->author($review->account_id, $review->account_name) }}">{{ $review->account_name }}</a>
+        {{ $a->created_at }}
+        <a href="{{ $link->author($a->account_id, $a->account->nickname) }}">{{ $a->account->nickname }}</a>
+        TODO
       </li>
     @endforeach
     </ul>

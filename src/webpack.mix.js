@@ -94,3 +94,4 @@ mix.js([
 //mix.copy('node_modules/tengwar/tengwar-parmaite.*', 'public/fonts/tengwar'); <~~ the parmaite font kit is/will be corrupted!
 mix.sass('resources/assets/sass/app.scss', 'public/css');
 mix.sass('resources/assets/sass/app.flashcard.scss', 'public/css');
+mix.sass('resources/assets/sass/app.sentences.scss', 'public/css');

@@ -225,8 +225,8 @@ class EDComments extends EDStatefulFormComponent {
                     </div>
                 </div>) }
             </div>
-            <hr />
             { this.props.accountId ? <div>
+                <hr />
                 {this.state.post_id ? <p><span className="glyphicon glyphicon-info-sign" /> Editing your comment ({this.state.post_id}):</p> : ''}
                 <form onSubmit={this.onSubmit.bind(this)}>
                     <div className="form-group">
@@ -259,7 +259,7 @@ class EDComments extends EDStatefulFormComponent {
                 </strong>
                 {' '}
                 <a href="#" onClick={this.onLoginClick.bind(this)}>
-                    Log in and create your profile
+                    Log in to create a profile
                 </a>.
             </div> }
         </div>;
