@@ -247,8 +247,8 @@ class EDComments extends EDStatefulFormComponent {
                     </div>
                 </div>) }
             </div>
+            { this.state.posts.length > 0 ? <hr /> : '' }
             { this.props.accountId ? <div>
-                <hr />
                 {this.state.post_id ? <p><span className="glyphicon glyphicon-info-sign" /> Editing your comment ({this.state.post_id}):</p> : ''}
                 <form onSubmit={this.onSubmit.bind(this)}>
                     <div className="form-group">
