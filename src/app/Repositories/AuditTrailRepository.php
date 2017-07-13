@@ -89,8 +89,8 @@ class AuditTrailRepository
                     case AuditTrail::ACTION_COMMENT_ADD:
                         $message = 'wrote';
                         break;
-                    case AuditTrail::ACTION_PROFILE_EDIT:
-                        $message = 'edited';
+                    case AuditTrail::ACTION_COMMENT_EDIT:
+                        $message = 'modified';
                         break;
                     case AuditTrail::ACTION_COMMENT_LIKE:
                         $message = 'liked';
