@@ -16,7 +16,7 @@ class RefreshNormalizationCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'ed-normalization:refresh';
+    protected $signature = 'ed-normalization:refresh {context}';
 
     /**
      * The console command description.
@@ -46,8 +46,14 @@ class RefreshNormalizationCommand extends Command
      */
     public function handle()
     {
-        $this->handleWords();
-        $this->handleKeywords();
+        switch ($this->argument('context')) {
+            case 'words':
+                $this->handleWords();
+                break;
+            case 'keywords':
+                $this->handleKeywords();
+                break;
+        }
 
         $this->info('All normalizations have been updated. Minimum time: '.$this->_minTime.' ms, maximum time: '.$this->_maxTime.' ms.');
     }
