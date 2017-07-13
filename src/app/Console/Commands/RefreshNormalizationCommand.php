@@ -77,23 +77,30 @@ class RefreshNormalizationCommand extends Command
 
     private function handleKeywords() 
     {
-        $keywords = Keyword::get();
-        foreach ($keywords as $keyword) {
-            $time = microtime(true);
-            $normalizedWord = StringHelper::normalize($keyword->keyword);
-            $this->log($keyword->keyword, $normalizedWord, $time);
+        $n = 0;
 
-            $time = microtime(true);
-            $normalizedWordUnaccented = StringHelper::normalize($keyword->keyword, /* accentsMatter: */ false);
-            $this->log($keyword->keyword, $normalizedWord, $time);
+        do {
+            $keywords = Keyword::skip($n)->take(1000)->get();
 
-            $keyword->normalized_keyword = $normalizedWord;
-            $keyword->reversed_normalized_keyword = strrev($normalizedWord);
-            $keyword->normalized_keyword_unaccented = $normalizedWordUnaccented;
-            $keyword->reversed_normalized_keyword_unaccented = strrev($normalizedWordUnaccented);
+            foreach ($keywords as $keyword) {
+                $time = microtime(true);
+                $normalizedWord = StringHelper::normalize($keyword->keyword);
+                $this->log($keyword->keyword, $normalizedWord, $time);
 
-            $keyword->save();
-        }
+                $time = microtime(true);
+                $normalizedWordUnaccented = StringHelper::normalize($keyword->keyword, /* accentsMatter: */ false);
+                $this->log($keyword->keyword, $normalizedWord, $time);
+
+                $keyword->normalized_keyword = $normalizedWord;
+                $keyword->reversed_normalized_keyword = strrev($normalizedWord);
+                $keyword->normalized_keyword_unaccented = $normalizedWordUnaccented;
+                $keyword->reversed_normalized_keyword_unaccented = strrev($normalizedWordUnaccented);
+
+                $keyword->save();
+            }
+
+            $n += $keywords->count();
+        } while ($keywords->count());
 
         unset($keywords);
     }
