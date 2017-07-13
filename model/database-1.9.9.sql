@@ -57,7 +57,7 @@ CREATE TABLE `audit_trails` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 
 ALTER TABLE `account_role_rels` MODIFY `account_id` int(5) unsigned NOT NULL;
-ALTER TABLE `sentences` MODIFY `account_id` int(5) unsigned NOT NULL;
+ALTER TABLE `sentences` MODIFY `account_id` int(5) unsigned NULL;
 ALTER TABLE `translation_reviews` MODIFY `account_id` int(5) unsigned NOT NULL;
 ALTER TABLE `translations` MODIFY `account_id` int(5) unsigned NOT NULL;
 
