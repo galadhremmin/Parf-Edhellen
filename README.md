@@ -2,29 +2,30 @@ Parf Edhellen
 ==============
 This is the source code for [elfdict.com](http://www.elfdict.com), a non-profit, free dictionary online for Tolkien's languages. Maintained by Leonard Wickmark. Follow me on twitter at [@parmaeldo](https://twitter.com/parmaeldo).
 
-Version 1.9.7 is in production.
+Version 1.9.9 is in production.
 
 Configuration
 -------------
 Installation is relatively easy:
-1. Shut down your web server
-2. Configure your web server to serve the _src/public_ directory. 
-3. Make _src/storage_ writeable.
-4. Review the application's _.env_ configuration
-5. Compile stylesheets and JavaScript assets.
-6. Cache sysconfig and routing configuration.
-7. Create a symlink to the storage directory (for avatars)
+1. Configure the database using the model files. Execute the script files in ascending order, starting with _schema.sql_
+2. Shut down your web server
+3. Configure your web server to serve the _src/public_ directory. 
+4. Make _src/storage_ writeable.
+5. Review the application's _.env_ configuration
+6. Compile stylesheets and JavaScript assets.
+7. Cache sysconfig and routing configuration.
+8. Create a symlink to the storage directory (for avatars)
 
 > Always make sure to follow Laravel's guidelines and best practices before moving the app into production.
 
 ```
-chmod -R o+w project/storage # step 3
-cp .env.example .env         # step 4
-vim .env                     # step 4
-npm run production           # step 5
-php artisan config:cache     # step 6 
-php artisan route:cache      # step 6
-php artisan storage:link     # step 7
+chmod -R o+w project/storage # step 4
+cp .env.example .env         # step 5
+vim .env                     # step 5
+npm run production           # step 6
+php artisan config:cache     # step 7 
+php artisan route:cache      # step 7
+php artisan storage:link     # step 8
 ```
 
 Want to help out?
