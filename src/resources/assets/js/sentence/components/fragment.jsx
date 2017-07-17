@@ -23,7 +23,7 @@ class EDFragment extends React.Component {
         }
 
         return <span>
-            {previousF && previousF.is_dot ? '' : ' '}
+            {previousF && previousFs.is_dot ? '' : ' '}
             <a className={classNames({'active': this.props.selected})}
                      href={`/wt/${f.translation_id}`}
                      onClick={this.onFragmentClick.bind(this)}>{f.fragment}</a>

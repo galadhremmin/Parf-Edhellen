@@ -95,6 +95,7 @@ Route::group([
     Route::get('inflection/{id?}',               [ 'uses' => 'InflectionApiController@index' ]);
 
     Route::post('utility/markdown',              [ 'uses' => 'UtilityApiController@parseMarkdown' ]);
+    Route::post('utility/error',                 [ 'uses' => 'UtilityApiController@logError' ]);
 
     Route::resource('forum', 'ForumApiController', ['only' => [
         'index', 'show'

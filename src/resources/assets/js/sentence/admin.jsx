@@ -68,5 +68,3 @@ window.addEventListener('load', function () {
         document.getElementById('ed-sentence-form')
     );
 });
-
-
