@@ -94,12 +94,19 @@ Route::group([
 
     Route::get('inflection/{id?}',               [ 'uses' => 'InflectionApiController@index' ]);
 
-    Route::post('utility/markdown',              [ 'uses' => 'UtilityApiController@parseMarkdown' ]);
-    Route::post('utility/error',                 [ 'uses' => 'UtilityApiController@logError' ]);
-
     Route::resource('forum', 'ForumApiController', ['only' => [
         'index', 'show'
     ]]);
+});
+
+Route::group([ 
+        'namespace'  => 'Api\v1', 
+        'prefix'     => 'api/v1',
+        'middleware' => 'throttle'
+    ], function () {
+
+    Route::post('utility/markdown',              [ 'uses' => 'UtilityApiController@parseMarkdown' ]);
+    Route::post('utility/error',                 [ 'uses' => 'UtilityApiController@logError' ]);
 });
 
 // API
