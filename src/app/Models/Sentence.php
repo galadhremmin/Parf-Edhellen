@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Sentence extends Model
+class Sentence extends ModelBase
 {
     public function sentence_fragments() 
     {

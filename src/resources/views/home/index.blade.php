@@ -35,7 +35,7 @@
     <h4>Random phrase</h4>
     @include('sentence.public._random', [ 'sentence' => $sentence ])
   </div>
-  <div class="hidden-xs hidden-sm col-md-4">
+  <div class="col-xs-12 col-sm-6 col-md-4">
     <h4>Community activity</h4>
     <ul class="list-group">
     @foreach($auditTrails as $a)

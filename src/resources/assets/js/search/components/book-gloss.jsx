@@ -68,17 +68,22 @@ class EDBookGloss extends React.Component {
                         : '' }
                     {' '}
                     <span itemProp="headline" className={classNames({'rejected': gloss.is_rejected})}>
-                    {gloss.word}
+                        {gloss.word}
                     </span>
-                    {gloss.external_link_format && gloss.external_id ?
+                    {! this.props.disableTools ? <a href={`/wt/${gloss.id}/versions`} className="ed-comments-no" title="See all versions and read comments">
+                        <span className="glyphicon glyphicon-comment" />{' '}
+                        <span className="no">{gloss.comment_count}</span>
+                    </a> : ''}
+                    {! this.props.disableTools && gloss.external_link_format && gloss.external_id ?
                         <a href={gloss.external_link_format.replace(/\{ExternalID\}/g, gloss.external_id)}
                             title={`Open on ${gloss.translation_group_name} (new tab/window)`}
                             target="_blank">
                             <span className="glyphicon glyphicon-globe" />
                         </a> : ''}
+                    {! this.props.disableTools ?
                     <a href={`/admin/translation/${gloss.id}/edit`} className="ed-admin-tool">
                         <span className="glyphicon glyphicon-edit" />
-                    </a>
+                    </a> : '' }
                 </h3>
                 <p>
                     {gloss.tengwar ? <span className="tengwar">{gloss.tengwar}</span> : ''}
@@ -136,7 +141,7 @@ class EDBookGloss extends React.Component {
                     {gloss.translation_group_id ?
                         (<span>Group: <span itemProp="sourceOrganization">{gloss.translation_group_name}.</span></span>) : ''}
                     {' Published: '}
-                    <span itemProp="datePublished">{gloss.created_at}</span>
+                    <span itemProp="datePublished">{new Date(gloss.created_at).toLocaleString()}</span>
                     {' by '}
                     <a href={gloss.account_url} itemProp="author" rel="author" title={`View profile for ${gloss.account_name}.`}>
                         {gloss.account_name}
@@ -145,5 +150,9 @@ class EDBookGloss extends React.Component {
             </blockquote>);
     }
 }
+
+EDBookGloss.defaultProps = {
+    disableTools: false
+};
 
 export default EDBookGloss;

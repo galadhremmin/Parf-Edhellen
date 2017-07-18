@@ -12,7 +12,10 @@ class SystemErrorController extends Controller
 {
     public function index(Request $request)
     {
-        $errors = SystemError::get()->orderBy('id', 'desc');
+        $errors = SystemError::take(1000)
+            ->orderBy('id', 'desc')
+            ->get();
+            
         return view('system-error.index', ['errors' => $errors]);
     }
 }

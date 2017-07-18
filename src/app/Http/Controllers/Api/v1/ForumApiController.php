@@ -72,7 +72,7 @@ class ForumApiController extends Controller
                 // Unsupported at the moment
                 break;
             case ForumContext::CONTEXT_TRANSLATION:
-                $url = $this->_link->translation($post->entity_id);
+                $url = $this->_link->translationVersions($post->entity_id);
                 break;
             case ForumContext::CONTEXT_SENTENCE:
                 $sentence = Sentence::findOrFail($post->entity_id);

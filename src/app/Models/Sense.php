@@ -2,10 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Model;
-
-class Sense extends Model
+class Sense extends ModelBase
 {
     protected $fillable = [ 'id', 'description' ];
     public $incrementing = false;

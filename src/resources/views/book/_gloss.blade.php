@@ -13,9 +13,15 @@
     <span itemprop="headline" class="{{ $gloss->is_rejected ? 'rejected' : '' }}">
       {{ $gloss->word }}
     </span>
-    <a href="{{ route('translation.edit', [ 'id' => $gloss->id ]) }}" class="ed-admin-tool" aria-hidden="true">
-        <span class="glyphicon glyphicon-edit" />
+    @if (! isset($disable_tools) || ! $disable_tools)
+    <a href="{{ $link->translationVersions($gloss->id) }}" class="ed-comments-no">
+      <span class="glyphicon glyphicon-comment"></span>
+      <span class="no">{{ $gloss->comment_count }}</span>
     </a>
+    <a href="{{ route('translation.edit', [ 'id' => $gloss->id ]) }}" class="ed-admin-tool" aria-hidden="true">
+      <span class="glyphicon glyphicon-edit"></span>
+    </a>
+    @endif
   </h3> 
   @if ($gloss->tengwar != null)
   &#32;<span class="tengwar">{{ $gloss->tengwar }}</span>
@@ -40,7 +46,7 @@
       Group: <span itemprop="sourceOrganization">{{ $gloss->translation_group_name }}</span>.
     @endif
   
-    Published <span itemprop="datePublished">{{ $gloss->created_at }}</span> by 
+    Published <span itemprop="datePublished">{{ $gloss->created_at->format('Y-m-d H:i') }}</span> by 
     <a href="{{ $link->author($gloss->account_id, $gloss->account_name) }}" itemprop="author" rel="author" title="View profile for {{ $gloss->account_name }}.">
       {{ $gloss->account_name }}
     </a>

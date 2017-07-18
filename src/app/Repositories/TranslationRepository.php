@@ -76,6 +76,34 @@ class TranslationRepository
         return $translations;
     }
 
+    public function getVersions(int $id)
+    {
+        $translation = Translation::select()
+            ->where('id', $id)
+            ->select('id', 'origin_translation_id')
+            ->first();
+
+        if ($translation === null) {
+            return [];  
+        }
+
+        return self::createTranslationQuery(0, false)
+            ->where(function ($query) use($translation) {
+
+                if ($translation->origin_translation_id) {
+                    $query->where('t.id', $translation->origin_translation_id)
+                        ->orWhere('t.origin_translation_id', $translation->origin_translation_id);
+                } else {
+                    $query->where('t.id', $translation->id)
+                        ->orWhere('t.origin_translation_id', $translation->id);
+                }
+                
+            })
+            ->orderBy('t.id', 'asc')
+            ->get()
+            ->toArray();
+    }
+
     public function suggest(array $words, int $languageId, $inexact = false) 
     {
         // Transform all words to lower case and remove doublettes.
@@ -387,18 +415,23 @@ class TranslationRepository
         $keyword->save();
     }
 
-    protected static function createTranslationQuery($languageId = 0) 
+    protected static function createTranslationQuery($languageId = 0, $latest = true) 
     {
+        $filters = [
+            ['t.is_deleted', '=', 0],
+            ['t.is_index', '=', 0]
+        ];
+
+        if ($latest) {
+            $filters[] = ['t.is_latest', '=', 1];
+        }
+
         $q = DB::table('translations as t')
             ->join('words as w', 't.word_id', 'w.id')
             ->leftJoin('accounts as a', 't.account_id', 'a.id')
             ->leftJoin('translation_groups as tg', 't.translation_group_id', 'tg.id')
             ->leftJoin('speeches as s', 't.speech_id', 's.id')
-            ->where([
-                ['t.is_latest', '=', 1],
-                ['t.is_deleted', '=', 0],
-                ['t.is_index', '=', 0]
-            ]);
+            ->where($filters);
 
         if ($languageId !== 0) {
             $q = $q->where('t.language_id', $languageId);
@@ -409,7 +442,7 @@ class TranslationRepository
                 't.comments', 't.tengwar', 't.phonetic', 't.language_id', 't.account_id',
                 'a.nickname as account_name', 'w.normalized_word', 't.is_index', 't.created_at', 't.translation_group_id',
                 'tg.name as translation_group_name', 'tg.is_canon', 'tg.external_link_format', 't.is_uncertain', 
-                't.external_id', 't.is_latest', 't.is_rejected');
+                't.external_id', 't.is_latest', 't.is_rejected', 't.origin_translation_id');
     }
 
     protected function deleteTranslation(Translation $t, int $replaceId) 

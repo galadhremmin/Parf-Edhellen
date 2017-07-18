@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-class TranslationGroup extends Model
+class TranslationGroup extends ModelBase
 {
     public function translations() 
     {

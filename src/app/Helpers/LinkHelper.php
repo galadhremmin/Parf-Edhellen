@@ -27,6 +27,13 @@ class LinkHelper
             'id' => $translationId
         ]);
     }
+
+    public function translationVersions(int $translationId)
+    {
+        return route('translation.ref.version', [
+            'id' => $translationId
+        ]);
+    }
     
     public function authRedirect(string $url)
     {

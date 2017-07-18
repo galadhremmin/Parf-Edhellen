@@ -1,9 +1,8 @@
 <?php
 
 namespace App\Models;
-use Illuminate\Database\Eloquent\Model;
 
-class ForumContext extends Model
+class ForumContext extends ModelBase
 {
     const CONTEXT_FORUM       = 1;
     const CONTEXT_TRANSLATION = 2;

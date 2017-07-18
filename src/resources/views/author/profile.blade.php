@@ -64,7 +64,8 @@
   <hr>
   @include('_shared._comments', [
     'entity_id' => $author->id,
-    'context'   => 'account'
+    'context'   => 'account',
+    'enabled'   => true
   ])
 @endsection
 

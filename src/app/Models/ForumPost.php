@@ -1,9 +1,8 @@
 <?php
 
 namespace App\Models;
-use Illuminate\Database\Eloquent\Model;
 
-class ForumPost extends Model
+class ForumPost extends ModelBase
 {
     protected $fillable = [ 'forum_context_id', 'entity_id', 'parent_forum_post_id', 'number_of_likes', 'account_id', 'content' ];
     

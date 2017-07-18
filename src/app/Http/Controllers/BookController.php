@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ForumContext;
 use App\Adapters\BookAdapter;
+use App\Repositories\{ForumRepository, TranslationRepository};
+
 use Illuminate\Http\Request;
-use App\Repositories\TranslationRepository;
 
 class BookController extends Controller
 {
-    private $_translationRepository;
-    private $_adapter;
+    protected $_forumRepository;
+    protected $_translationRepository;
+    protected $_adapter;
 
-    public function __construct(TranslationRepository $translationRepository, BookAdapter $adapter)
+    public function __construct(ForumRepository $forumRepository, TranslationRepository $translationRepository, BookAdapter $adapter)
     {
+        $this->_forumRepository = $forumRepository;
         $this->_translationRepository = $translationRepository;
         $this->_adapter = $adapter;
     }
@@ -20,17 +24,34 @@ class BookController extends Controller
     public function pageForWord(Request $request, string $word)
     {
         $translations = $this->_translationRepository->getWordTranslations($word);
-        $model = $this->_adapter->adaptTranslations($translations, [], [], $word);
+        
+        $translationIds = array_map(function ($t) {
+            return $t->id;
+        }, $translations);
+        $comments = $this->_forumRepository->getCommentCountForEntities(ForumContext::CONTEXT_TRANSLATION, $translationIds);
 
+        $model = $this->_adapter->adaptTranslations($translations, [], $comments, $word, true, false);
         return view('book.page', $model);
     }
 
     public function pageForTranslationId(Request $request, int $id)
     {
         $translation = $this->_translationRepository->getTranslation($id);
-        $model = $this->_adapter->adaptTranslations([ $translation ]);
+        $comments = $this->_forumRepository->getCommentCountForEntities(ForumContext::CONTEXT_TRANSLATION, [$id]);
 
+        $model = $this->_adapter->adaptTranslations([ $translation ], [], $comments, null, true, false);
         return view('book.page', $model);
+    }
+
+    public function versions(Request $request, int $id)
+    {
+        $translations = $this->_translationRepository->getVersions($id);
+        $model = $this->_adapter->adaptTranslations($translations, [], [], null, false, false);
+
+        return view('book.version', [
+            'word'      => $translations[0]->word,
+            'versions'  => $model['sections'][0]['glosses']
+        ]);
     }
 
 }

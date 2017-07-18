@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-class Keyword extends Model
+class Keyword extends ModelBase
 {
     public function scopeFindByWord($query, string $word, $reversed = false) 
     {

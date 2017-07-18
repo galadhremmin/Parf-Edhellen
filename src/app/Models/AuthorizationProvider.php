@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-class AuthorizationProvider extends Model
+class AuthorizationProvider extends ModelBase
 {
     
 }

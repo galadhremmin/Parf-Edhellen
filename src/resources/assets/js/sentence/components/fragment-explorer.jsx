@@ -221,6 +221,7 @@ class EDFragmentExplorer extends React.Component {
                         {section.glosses.map(g => <EDBookGloss gloss={g}
                                                             language={section.language}
                                                             key={g.id} 
+                                                            disableTools={true}
                                                             onReferenceLinkClick={this.onReferenceLinkClick.bind(this)} />)}
                     </div>
                     <hr />

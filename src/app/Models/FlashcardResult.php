@@ -1,9 +1,8 @@
 <?php
 
 namespace App\Models;
-use Illuminate\Database\Eloquent\Model;
 
-class FlashcardResult extends Model
+class FlashcardResult extends ModelBase
 {
     public function flashcard() 
     {

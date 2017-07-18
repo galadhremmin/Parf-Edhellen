@@ -247,8 +247,8 @@ class EDComments extends EDStatefulFormComponent {
                     </div>
                 </div>) }
             </div>
-            { this.state.posts.length > 0 ? <hr /> : '' }
-            { this.props.accountId ? <div>
+            { this.state.posts.length > 0 && this.props.enabled ? <hr /> : '' }
+            { this.props.accountId && this.props.enabled ? <div>
                 {this.state.post_id ? <p><span className="glyphicon glyphicon-info-sign" /> Editing your comment ({this.state.post_id}):</p> : ''}
                 <form onSubmit={this.onSubmit.bind(this)}>
                     <div className="form-group">
@@ -270,20 +270,22 @@ class EDComments extends EDStatefulFormComponent {
                         </button>
                     </div>
                 </form>
-            </div> : <div className="alert alert-info" id="forum-log-in-box">
-                <strong>
-                    <span className="glyphicon glyphicon-info-sign" />
+            </div> : (this.props.enabled 
+                ? <div className="alert alert-info" id="forum-log-in-box">
+                    <strong>
+                        <span className="glyphicon glyphicon-info-sign" />
+                        {' '}
+                        { ! Array.isArray(this.state.posts) || this.state.posts.length < 1
+                            ? 'Would you like to be the first to comment?'
+                            : 'Would you like to share your thoughts on the discussion?' 
+                        }
+                    </strong>
                     {' '}
-                    { ! Array.isArray(this.state.posts) || this.state.posts.length < 1
-                        ? 'Would you like to be the first to comment?'
-                        : 'Would you like to share your thoughts on the discussion?' 
-                    }
-                </strong>
-                {' '}
-                <a href="#" onClick={this.onLoginClick.bind(this)}>
-                    Log in to create a profile
-                </a>.
-            </div> }
+                    <a href="#" onClick={this.onLoginClick.bind(this)}>
+                        Log in to create a profile
+                    </a>.
+                </div> 
+                : '') }
         </div>;
     }
 }
@@ -291,7 +293,8 @@ class EDComments extends EDStatefulFormComponent {
 EDComments.defaultProps = {
     context: '',
     entityId: 0,
-    accountId: 0
+    accountId: 0,
+    enabled: true
 };
 
 export default EDComments;

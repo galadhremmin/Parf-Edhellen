@@ -37,6 +37,8 @@ Route::get('/phrases/{langId}-{langName}/{sentId}-{sentName}', [ 'uses' => 'Sent
 Route::get('/w/{word}',               [ 'uses' => 'BookController@pageForWord' ]);
 Route::get('/wt/{id}',                [ 'uses' => 'BookController@pageForTranslationId' ])
     ->where([ 'id' => '[0-9]+' ])->name('translation.ref');
+Route::get('/wt/{id}/versions',       [ 'uses' => 'BookController@versions' ])
+    ->where([ 'id' => '[0-9]+' ])->name('translation.ref.version');
 
 // User accounts
 Route::group([ 'middleware' => 'auth' ], function () {

@@ -20,3 +20,14 @@ h3.trans-word {
 .ed-admin .ed-admin-tool {
     display: inline-block;
 }
+.ed-comments-no {
+    &:hover, &:active, &:visited {
+        text-decoration: none;
+    }
+
+    > .no {
+        font-size: 80%;
+        line-height: 24px;
+        vertical-align: top;
+    }
+}

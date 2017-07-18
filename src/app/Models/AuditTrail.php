@@ -1,9 +1,8 @@
 <?php
 
 namespace App\Models;
-use Illuminate\Database\Eloquent\Model;
 
-class AuditTrail extends Model
+class AuditTrail extends ModelBase
 {
     const ACTION_TRANSLATION_ADD      = 10;
     const ACTION_TRANSLATION_EDIT     = 20;

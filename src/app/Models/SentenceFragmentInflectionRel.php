@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-class SentenceFragmentInflectionRel extends Model
+class SentenceFragmentInflectionRel extends ModelBase
 {
     public function sentence_fragment()
     {

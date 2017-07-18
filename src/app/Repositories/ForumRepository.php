@@ -33,10 +33,7 @@ class ForumRepository
 
         switch ($context->id) {
             case ForumContext::CONTEXT_TRANSLATION:
-                $entity = Translation::active()
-                    ->where('id', $id)
-                    ->firstOrFail()
-                    ->getOrigin();
+                $entity = Translation::findOrFail($id);
                 break;
             
             case ForumContext::CONTEXT_SENTENCE:

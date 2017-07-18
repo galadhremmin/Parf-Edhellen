@@ -1,9 +1,8 @@
 <?php
 
 namespace App\Models;
-use Illuminate\Database\Eloquent\Model;
 
-class Inflection extends Model
+class Inflection extends ModelBase
 {
     public function sentence_fragment_associations()
     {

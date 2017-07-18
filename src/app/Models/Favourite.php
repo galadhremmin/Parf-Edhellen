@@ -1,9 +1,8 @@
 <?php
 
 namespace App\Models;
-use Illuminate\Database\Eloquent\Model;
 
-class Favourite extends Model
+class Favourite extends ModelBase
 {
     protected $fillable = [ 'translation_id' ];
 }

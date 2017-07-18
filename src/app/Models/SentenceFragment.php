@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-class SentenceFragment extends Model
+class SentenceFragment extends ModelBase
 {
     protected $fillable = [ 'translation_id' ];
     

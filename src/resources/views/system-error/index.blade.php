@@ -8,6 +8,32 @@
 
 <p>Click on a type of speech beneath to edit it.</p>
 
-YOLO
+@if (count($errors) < 1)
+  <p>
+    <em>There are presently no errors registered by the logging service.</em>
+  </p>
+@else
+  <table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>URL</th>
+      <th>Error</th>
+    </tr>
+  </thead>
+  <tbody>
+  @foreach ($errors as $error)
+    <tr>
+      <td>{{ $error->created_at }}</td>
+      <td>{{ $error->url }}</td>
+      <td>
+        {{ $error->message }}
+        {{ $error->error }}
+      </td>
+    </tr>
+  @endforeach
+  </tbody>
+  </table>
+@endif
 
 @endsection

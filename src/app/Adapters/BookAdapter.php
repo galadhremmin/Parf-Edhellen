@@ -8,6 +8,7 @@ use App\Models\{
     Language, Translation, Account
 };
 use Illuminate\Support\Collection;
+use Carbon\Carbon;
 
 class BookAdapter
 {
@@ -15,10 +16,15 @@ class BookAdapter
      * Transforms the specified translations array to a view model.
      *
      * @param array $translations
-     * @param string|null $word
-     * @return array
+     * @param array $inflections - an assocative array mapping translations with inflections (optional)
+     * @param mixed $commentsById - an associative array mapping translations with number of comments (optional)
+     * @param string|null $word - the search query yielding the specified list of translations (optional)
+     * @param bool $groupByLanguage - declares whether the translations should be sectioned up by language  (optional)
+     * @param bool $atomDate - ATOM format dates? (option)
+     * @return mixed - return value is determined by $groupByLanguage
      */
-    public function adaptTranslations(array $translations, array $inflections = [], array $commentsById = [], string $word = null)
+    public function adaptTranslations(array $translations, array $inflections = [], array $commentsById = [], string $word = null, 
+        bool $groupByLanguage = true, bool $atomDate = true)
     {
         $numberOfTranslations = count($translations);
 
@@ -51,76 +57,96 @@ class BookAdapter
         //    - Just one translation result.
         if ($numberOfTranslations === 1) {
             $translation = $translations[0];
+            $language = Language::findOrFail($translation->language_id);
 
             return self::assignColumnWidths([
                 'word' => $word,
                 'sections' => [
                     [
                         // Load the language by examining the first (and only) element of the array
-                        'language' => Language::findOrFail($translation->language_id),
-                        'glosses'  => [ self::adaptTranslation($translation, $inflections, $commentsById, $linker) ]
+                        'language' => $language,
+                        'glosses'  => [ self::adaptTranslation($translation, new Collection([$language]), $inflections, $commentsById, $atomDate, $linker) ]
                     ]
                 ]
             ], 1);
         }
 
         // * Multiple translations (possibly across multiple languages)
-
-        // Create a translation to language map which will be used later to associate the translations to their
-        // languages. This is a necessary grouping operation due to the sort operation performed later on.
-        $gloss2LanguageMap = [];
+        // Retrieve all applicable languages
+        $languageIds = [];
+        $gloss2LanguageMap = $groupByLanguage ? [] : [[]];
         foreach ($translations as $translation) {
-            if ($word !== null) {
-                self::calculateRating($translation, $word);
+            if (! in_array($translation->language_id, $languageIds)) {
+                $languageIds[] = $translation->language_id;
+
+                if ($groupByLanguage) {
+                    $gloss2LanguageMap[$translation->language_id] = [];
+                }
             }
-
-            // adapt translation for the view
-            $translation = self::adaptTranslation($translation, $inflections, $commentsById, $linker);
-
-            if (!isset($gloss2LanguageMap[$translation->language_id])) {
-                $gloss2LanguageMap[$translation->language_id] = [ $translation ];
-            } else {
-                $gloss2LanguageMap[$translation->language_id][] = $translation;
-            }
-
         }
-
-        // Retrieve distinct language IDs which we need to load.
-        $languageIds = array_keys($gloss2LanguageMap);
 
         // Load the languages and order them by priority. The priority is configured by the Order field in the database.
         $allLanguages = Language::whereIn('id', $languageIds)
             ->orderByPriority()
             ->get();
 
-        // Create a section array component for each language in the same order as the languages were retrieved from
-        // the database
-        $sections = [];
-        foreach ($allLanguages as $language) {
-
-            if (!isset($gloss2LanguageMap[$language->id])) {
-                continue;
+        // Create a translation to language map which will be used later to associate the translations to their
+        // languages. This is a necessary grouping operation due to the sort operation performed later on.
+        foreach ($translations as $translation) {
+            if ($word !== null) {
+                self::calculateRating($translation, $word);
             }
 
-            // Sort the translations based on their previously calculated rating.
-            $glosses = $gloss2LanguageMap[$language->id];
-            usort($glosses, function ($a, $b) {
-                return $a->rating > $b->rating ? -1 : ($a->rating === $b->rating ? 0 : 1);
-            });
-
-            $sections[] = [
-                'language' => $language,
-                'glosses' => $glosses
-            ];
+            // adapt translation for the view
+            $gloss2LanguageMap[$groupByLanguage ? $translation->language_id : 0][] = 
+                self::adaptTranslation($translation, $allLanguages, $inflections, $commentsById, $atomDate, $linker);
         }
 
-        return self::assignColumnWidths([
-            'word' => $word,
-            'sections' => $sections
-        ], count($allLanguages));
+        // Create a section array component for each language in the same order as the languages were retrieved from
+        // the database
+        if ($groupByLanguage) {
+            $sections = [];
+            foreach ($allLanguages as $language) {
+
+                if (! array_key_exists($language->id, $gloss2LanguageMap)) {
+                    continue;
+                }
+
+                $glosses = $gloss2LanguageMap[$language->id];
+
+                // Sort the translations based on their previously calculated rating.
+                if ($word !== null) {
+                    usort($glosses, function ($a, $b) {
+                        return $a->rating > $b->rating ? -1 : ($a->rating === $b->rating ? 0 : 1);
+                    });
+                }
+
+                $sections[] = [
+                    'language' => $language,
+                    'glosses' => $glosses
+                ];
+            }
+
+            return self::assignColumnWidths([
+                'word' => $word,
+                'sections' => $sections,
+                'languages' => null
+            ], count($allLanguages));
+
+        } 
+
+        return [
+            'word'    => $word,
+            'sections' => [[ // <-- this is deliberate
+                'language' => null,
+                'glosses'  => $gloss2LanguageMap[0]
+            ]],
+            'languages' => $allLanguages
+        ];
     }
 
-    private static function adaptTranslation(\stdClass $translation, array $inflections, array $commentsById, LinkHelper $linker) 
+    private static function adaptTranslation(\stdClass $translation, Collection $languages, array $inflections, array $commentsById, 
+        bool $atomDate, LinkHelper $linker) 
     {
         // Filter among the inflections, looking for references to the specified translation.
         // The array is associative two-dimensional with the sentence fragment ID as the key, and an array containing
@@ -131,6 +157,17 @@ class BookAdapter
         $translation->inflections = count($inflectionsForTranslation) > 0 
             ? $inflectionsForTranslation : null;
         $translation->comment_count = isset($commentsById[$translation->id]) ? $commentsById[$translation->id] : 0;
+
+        // Retrieve language reference to the specified translation
+        $translation->language = $languages->first(function ($l) use($translation) {
+            return $l->id === $translation->language_id;
+        }); // <-- infer success
+
+        // Convert dates
+        $translation->created_at = Carbon::parse($translation->created_at);
+        if ($atomDate) {
+            $translation->created_at = $translation->created_at->toAtomString();
+        }
 
         // Create links upon the first element of each sentence fragment.
         if ($translation->inflections !== null) {

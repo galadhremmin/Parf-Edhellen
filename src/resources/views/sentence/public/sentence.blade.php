@@ -52,7 +52,8 @@
   <hr>
   @include('_shared._comments', [
     'entity_id' => $sentence->id,
-    'context'   => 'sentence'
+    'context'   => 'sentence',
+    'enabled'   => true
   ])
 @endsection
 
