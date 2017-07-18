@@ -46,6 +46,7 @@ mix.extract([
 ]);
 
 mix.react([
+    'resources/assets/js/_shared/error.js',
     'resources/assets/js/navigation.js',
     'resources/assets/js/search/index.jsx'
 ], 'public/js/global.js');

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Helpers\MarkdownParser;
 use App\Http\Controllers\Controller;
+use App\Models\SystemError;
 
 class UtilityApiController extends Controller
 {
@@ -31,5 +32,26 @@ class UtilityApiController extends Controller
         }
 
         return $html;
+    }
+
+    public function logError(Request $request) 
+    {
+        $this->validate($request, [
+            'message' => 'string|required',
+            'url'     => 'string|required'
+        ]);
+
+        $user = $request->user();
+
+        SystemError::create([
+            'message'    => $request->input('message'),
+            'url'        => $request->input('url'),
+            'error'      => $request->has('error') 
+                ? $request->input('error') 
+                : null,
+            'account_id' => $user !== null
+                ? $user->id 
+                : null
+        ]);
     }
 }
