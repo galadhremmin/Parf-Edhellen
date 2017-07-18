@@ -10,7 +10,7 @@ import EDConfig from 'ed-config';
 
         if (string.indexOf(disqualified) === -1) {
             const payload = {
-                message,
+                message: `${message} (${navigator.appName} ${navigator.appVersion})`,
                 url: window.location.href,
                 error: error ? error.stack : null
             };
