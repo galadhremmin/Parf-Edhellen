@@ -46,6 +46,7 @@ class UtilityApiController extends Controller
         SystemError::create([
             'message'    => $request->input('message'),
             'url'        => $request->input('url'),
+            'ip'         => $_SERVER['REMOTE_ADDR'],
             'error'      => $request->has('error') 
                 ? $request->input('error') 
                 : null,

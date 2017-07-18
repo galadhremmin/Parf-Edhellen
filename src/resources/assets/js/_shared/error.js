@@ -6,13 +6,13 @@ import EDConfig from 'ed-config';
 
     window.onerror = function (message, url, lineNo, columnNo, error) {
         const string = message.toLowerCase();
-        const substring = "script error";
+        const disqualified = "script error";
 
-        if (string.indexOf(substring) === -1){
+        if (string.indexOf(disqualified) === -1) {
             const payload = {
                 message,
-                url,
-                error: error ? JSON.stringify(error) : null
+                url: window.location.href,
+                error: error ? error.stack : null
             };
 
             axios.post(EDConfig.api('utility/error'), payload);
