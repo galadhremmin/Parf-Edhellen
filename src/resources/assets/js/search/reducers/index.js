@@ -57,6 +57,10 @@ export const EDSearchResultsReducer = (state = {
             });
 
         case ADVANCE_SELECTION:
+            if (! Array.isArray(state.items)) {
+                return state;
+            }
+
             return Object.assign({}, state, {
                 itemIndex: action.direction < 0
                     ? (state.itemIndex < 1   ? state.items.length - 1 : state.itemIndex - 1)
@@ -65,7 +69,7 @@ export const EDSearchResultsReducer = (state = {
 
         case SET_SELECTION:
             return Object.assign({}, state, {
-                itemIndex: state.index === -1 || !Array.isArray(state.items)
+                itemIndex: state.index === -1 || ! Array.isArray(state.items)
                     ? -1
                     : Math.max(0, Math.min(state.items.length - 1, action.index))
             });
