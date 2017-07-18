@@ -18,8 +18,6 @@ window.addEventListener('load', function () {
         );
     };
 
-    const commentContainers = document.getElementsByClassName('ed-comments-container');
-    for (let commentContainer of commentContainers) {
-        init(commentContainer);
-    }
+    Array.prototype.slice.call(document.getElementsByClassName('ed-comments-container'))
+        .forEach(init.bind(this));
 });
