@@ -6,8 +6,6 @@
 <h1>System errors</h1>
 {!! Breadcrumbs::render('system-error.index') !!}
 
-<p>Click on a type of speech beneath to edit it.</p>
-
 @if (count($errors) < 1)
   <p>
     <em>There are presently no errors registered by the logging service.</em>
