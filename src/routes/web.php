@@ -72,6 +72,9 @@ Route::group([
     Route::resource('inflection', 'InflectionController');
     Route::resource('sentence', 'SentenceController');
     Route::resource('translation', 'TranslationController');
+    Route::resource('system-error', 'SystemErrorController', ['only' => [
+        'index'
+    ]]);
 
     Route::post('sentence/validate', 'SentenceController@validatePayload');
     Route::post('sentence/validate-fragment', 'SentenceController@validateFragments');
