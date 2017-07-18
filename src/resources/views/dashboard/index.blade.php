@@ -58,6 +58,10 @@
             <li><a href="{{ route('translation.index') }}">Words</a></li>
             <li><a href="{{ route('sentence.index') }}">Phrases</a></li>
           </ul>
+          <hr>
+          <ul>
+            <li><a href="{{ route('system-error.index') }}">System errors</a></li>
+          </ul>
         </div>
       </div>
     </div>

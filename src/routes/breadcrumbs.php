@@ -114,7 +114,6 @@ Breadcrumbs::register('sentence.edit', function ($breadcrumbs, App\Models\Senten
     ]));
 });
 
-
 // //////////////////////////////////////////////////////////////////////////////////////////////
 // Dashboard > Glosses
 
@@ -146,7 +145,6 @@ Breadcrumbs::register('translation.list', function ($breadcrumbs, App\Models\Lan
     ]));
 });
 
-
 // //////////////////////////////////////////////////////////////////////////////////////////////
 // Dashboard > Flashcards
 
@@ -160,4 +158,13 @@ Breadcrumbs::register('flashcard.cards', function ($breadcrumbs, App\Models\Flas
 {
     $breadcrumbs->parent('flashcard');
     $breadcrumbs->push('Flashcard for '.$flashcard->language->name, route('flashcard.cards', ['id' => $flashcard->id]));
+});
+
+// //////////////////////////////////////////////////////////////////////////////////////////////
+// Dashboard > System errors
+
+Breadcrumbs::register('system-error.index', function ($breadcrumbs)
+{
+    $breadcrumbs->parent('dashboard');
+    $breadcrumbs->push('List system errors', route('system-error.index'));
 });
