@@ -301,7 +301,7 @@ class TranslationRepository
         }
 
         // 12. Register an audit trail
-        $action = $changed 
+        $action = $changed && $originalTranslation !== null
                 ? AuditTrail::ACTION_TRANSLATION_EDIT 
                 : AuditTrail::ACTION_TRANSLATION_ADD;
         $this->_auditTrail->store($action, $translation->account_id, $translation);

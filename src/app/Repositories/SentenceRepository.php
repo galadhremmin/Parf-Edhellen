@@ -82,7 +82,7 @@ class SentenceRepository
 
     public function saveSentence(Sentence $sentence, array $fragments, array $inflections) 
     {
-        $changed = $sentence->id !== 0;
+        $changed = !! $sentence->id;
         $numberOfFragments = count($fragments);
         if ($numberOfFragments !== count($inflections)) {
             throw new Exception('The number of fragments must match the number of inflections.');
