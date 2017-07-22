@@ -48,10 +48,14 @@ class StringHelper
         return trim(mb_strtolower($str, 'utf-8'));
     }
 
-    public static function normalize(string $str, $accentsMatter = true) 
+    public static function normalize(string $str, $accentsMatter = true, $retainWildcard = false) 
     {          
         $str = self::toLower($str);
-        $str = preg_replace('/[¹²³’‽†#\\*\\{\\}\\[\\]]/u', '', $str);
+        $str = preg_replace('/[¹²³’‽†#\\{\\}\\[\\]]/u', '', $str);
+
+        if (! $retainWildcard) {
+            $str = str_replace('*', '', $str);
+        }
 
         if ($accentsMatter) {
             $normalizationTable = array_merge(self::$_normalizationTable, self::$_accentsNormalizationTable);
