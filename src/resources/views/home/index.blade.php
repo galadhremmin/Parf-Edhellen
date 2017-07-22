@@ -46,7 +46,6 @@
       </li>
     @endforeach
     </ul>
-    <hr class="visible-xs">
   </div>
 </div>
 
