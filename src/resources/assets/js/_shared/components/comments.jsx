@@ -253,7 +253,7 @@ class EDComments extends EDStatefulFormComponent {
                 <form onSubmit={this.onSubmit.bind(this)}>
                     <div className="form-group">
                         <textarea className="form-control" placeholder="Your comments ..." name="comments" value={this.state.comments} required={true}
-                            onChange={super.onChange.bind(this)} />
+                            onChange={super.onChange.bind(this)} rows={5} />
                     </div>
                     <div className="form-group text-right">
                         {this.state.post_id 
