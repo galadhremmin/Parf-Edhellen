@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Resources;
 
 use App\Models\Speech;
-use App\Adapters\SpeechAdapter;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -11,13 +10,6 @@ use Illuminate\Support\Facades\Auth;
 
 class SpeechController extends Controller
 {
-    protected $_speechAdapter;
-
-    public function __construct(SpeechAdapter $adapter) 
-    {
-        $this->_speechAdapter = $adapter;
-    }
-
     public function index(Request $request)
     {
         $speeches = Speech::all()->sortBy('name');

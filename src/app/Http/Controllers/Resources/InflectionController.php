@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Resources;
 
 use App\Models\{ Inflection, Speech };
-use App\Adapters\SpeechAdapter;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
