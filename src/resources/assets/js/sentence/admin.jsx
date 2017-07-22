@@ -26,7 +26,7 @@ window.addEventListener('load', function () {
             fragments: fragmentData,
             languages: EDConfig.languages()
         };
-    } else {
+    } /* else {    <-- todo
         preloadedState = loadState('sentence');
         if (preloadedState) {
             preloadedState.languages = EDConfig.languages();
@@ -34,11 +34,13 @@ window.addEventListener('load', function () {
         
         creating = true;
     }
+    */
 
     const store = createStore(EDSentenceAdminReducer, preloadedState,
         applyMiddleware(thunkMiddleware)
     );
 
+    /*
     if (creating) {
         store.subscribe(() => {
             const state = store.getState();
@@ -49,11 +51,11 @@ window.addEventListener('load', function () {
                 description: state.description,
                 long_description: state.long_description,
                 fragments: state.fragments,
-                is_neologism: state.is_neologism,
-                id: state.id,
+                is_neologism: state.is_neologism
             });
         });
     }
+    */
 
     ReactDOM.render(
         <Provider store={store}>
