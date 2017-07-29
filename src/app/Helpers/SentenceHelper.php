@@ -7,48 +7,30 @@ use data\entities\SentenceFragment;
 
 class SentenceHelper
 {
-    const TENGWAR = 0;
-    const FRAGMENT = 1;
-
-    public function combine(Collection $fragments, int $type)
+    public function combine(array $fragments, array $sentenceMappings)
     {
-        $str = [];
+        $parts = [];
+        $first = true;
 
-        $numberOfFragments = $fragments->count();
-        for ($i = 0; $i < $numberOfFragments; $i += 1) {
-            $fragment = $fragments[$i];
-            $previousFragment = $i > 0 ? $fragments[$i - 1] : null;
-
-            if ($fragment->is_linebreak) {
-                $str[] = "\n";
-                continue;
+        foreach ($sentenceMappings as $lineMapping) {
+            if (! $first) {
+                $parts[] = "\n";
+            } else {
+                $first = false;
             }
-            
-            if (! $fragment->isPunctuationOrWhitespace() && 
-                ! $fragment->isDot() && 
-                ($previousFragment === null || 
-                ($previousFragment !== null && ! $previousFragment->isDot()))) {
-                $str[] = ' ';
-            }
-            
-            if ($type === self::TENGWAR) {
-                $str[] = $fragment->tengwar;
 
-            } else if ($type === self::FRAGMENT) {
-                $str[] = $fragment->fragment;
+            foreach ($lineMapping as $mapping) {
+                if (is_array($mapping)) {
+                    $parts[] = count($mapping) < 2 
+                        ? $fragments[$mapping[0]]['fragment']
+                        : $mapping[1];
+                } else {
+                    $parts[] = $mapping;
+                }
             }
         }
 
-        return implode('', $str);
-    }
-
-    public function combineTengwar(Collection $fragments) 
-    {
-        return $this->combine($fragments, self::TENGWAR);
-    }
-
-    public function combineFragments(Collection $fragments) 
-    {
-        return $this->combine($fragments, self::FRAGMENT);
+        $str = implode('', $parts);
+        return $str;
     }
 }

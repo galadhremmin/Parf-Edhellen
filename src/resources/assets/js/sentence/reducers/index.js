@@ -2,7 +2,9 @@ export const REQUEST_FRAGMENT = 'EDSR_REQUEST_FRAGMENT';
 export const RECEIVE_FRAGMENT  = 'EDSR_RECEIVE_FRAGMENT';
 
 const EDSentenceReducer = (state = {
-    fragments: JSON.parse(document.getElementById('ed-preload-fragments').textContent),
+    fragments: [],
+    latin: [],
+    tengwar: [],
     fragmentId: undefined,
     bookData: undefined,
     loading: false

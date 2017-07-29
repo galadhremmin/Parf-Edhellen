@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import EDConfig from 'ed-config';
 import { selectFragment } from '../actions';
 import EDFragment from './fragment';
-import EDTengwarFragment from './tengwar-fragment';
 import EDBookGloss from '../../search/components/book-gloss';
 import { Parser as HtmlToReactParser } from 'html-to-react';
 
@@ -12,10 +11,7 @@ class EDFragmentExplorer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            fragmentIndex: 0,
-            fragmentLines: Array.isArray(props.fragments)
-                ? this.createFragmentLines(props.fragments, false) 
-                : []
+            fragmentIndex: 0
         };
     }
 
@@ -37,48 +33,6 @@ class EDFragmentExplorer extends React.Component {
     }
 
     /**
-     * Receives fragments and splits them into lines.
-     * @param {*} props 
-     */
-    componentWillReceiveProps(props) {
-        if (Array.isArray(props.fragments)) {
-            this.createFragmentLines(props.fragments);
-        }
-    }
-
-    /**
-     * Receives an array of fragments and divides it into fragment lines, which in turn is rendered.
-     * @param {Object[]} fragments 
-     * @param {boolean} updateState
-     */
-    createFragmentLines(fragments, updateState = true) {
-        let fragmentLines = [];
-        let lastIndex = 0;
-
-        // Look for line breaks and slice the array by those fragments
-        for (let i = 0; i < fragments.length; i += 1) {
-            const fragment = fragments[i];
-
-            if (fragment.is_linebreak || i + 1 === fragments.length) {
-                const fragmentsForLine = fragments.slice(lastIndex, 
-                    i + 1 === fragments.length
-                        ? i + 1 // at the end, make sure to also include the last fragment.
-                        : i);
-                fragmentLines.push(fragmentsForLine);
-                lastIndex = i + 1; // +1 to skip the line break fragment.
-            }
-        }
-
-        if (updateState) {
-            this.setState({
-                fragmentLines
-            });
-        }
-
-        return fragmentLines;
-    }
-
-    /**
      * Retrieves the fragment index for the next fragment, or returns the current fragment index
      * if none exists.
      */
@@ -86,7 +40,7 @@ class EDFragmentExplorer extends React.Component {
         for (let i = this.state.fragmentIndex + 1; i < this.props.fragments.length; i += 1) {
             const fragment = this.props.fragments[i];
 
-            if (!fragment.interpunctuation) {
+            if (! fragment.type) {
                 return i;
             }
         }
@@ -102,7 +56,7 @@ class EDFragmentExplorer extends React.Component {
         for (let i = this.state.fragmentIndex - 1; i > -1; i -= 1) {
             const fragment = this.props.fragments[i];
 
-            if (!fragment.interpunctuation) {
+            if (! fragment.type) {
                 return i;
             }
         }
@@ -162,6 +116,27 @@ class EDFragmentExplorer extends React.Component {
         EDConfig.message(EDConfig.messageNavigateName, data);
     }
 
+    renderFragment(paragraphIndex, mapping, fragmentIndex) {
+        let fragment = undefined;
+        let text = undefined;
+
+        if (Array.isArray(mapping)) {
+            fragment = this.props.fragments[mapping[0]];
+
+            if (mapping.length > 1) {
+                text = mapping[1];
+            }
+        } else {
+            text = mapping;
+        }
+
+        return <EDFragment fragment={fragment}
+                           text={text}
+                           key={`p${paragraphIndex}.f${fragmentIndex}`}
+                           selected={fragment && fragment.id === this.props.fragmentId}
+                           onClick={this.onFragmentClick.bind(this)} />;
+    }
+
     render() {
         let section = null;
         let fragment = null;
@@ -181,24 +156,17 @@ class EDFragmentExplorer extends React.Component {
         return <div className="well ed-fragment-navigator">
             <div className="row">
                 <div className="col-md-12 col-lg-6">
-                {this.state.fragmentLines.map((fragments, fi) => 
-                    <p className="tengwar ed-tengwar-fragments" key={`tngc${fi}`}>
-                        {fragments.map((f, i) => <EDTengwarFragment fragment={f}
-                                                                    previousFragment={i > 0 ? fragments[i - 1] : undefined}
-                                                                    key={`tng${fi}.${f.id}`}
-                                                                    selected={f.id === this.props.fragmentId} />)}
+                {this.props.tengwar.map((paragraph, fi) => 
+                    <p className="tengwar ed-tengwar-fragments" key={`p${fi}`}>
+                        {paragraph.map(this.renderFragment.bind(this, fi))}
                     </p>
                 )}
                 </div>
                 <hr className="hidden-lg" />
                 <div className="col-md-12 col-lg-6">
-                {this.state.fragmentLines.map((fragments, fi) => 
-                    <p className="ed-elvish-fragments" key={`frgc${fi}`}>
-                        { fragments.map((f, i) => <EDFragment fragment={f}
-                                                              previousFragment={i > 0 ? fragments[i - 1] : undefined}
-                                                              key={`frg${fi}.${f.id}`} 
-                                                              selected={f.id === this.props.fragmentId}
-                                                              onClick={this.onFragmentClick.bind(this)} />) }
+                {this.props.latin.map((paragraph, fi) => 
+                    <p className="ed-elvish-fragments" key={`p${fi}`}>
+                        {paragraph.map(this.renderFragment.bind(this, fi))}
                     </p>
                 )}
                 </div>
@@ -245,6 +213,8 @@ class EDFragmentExplorer extends React.Component {
 const mapStateToProps = (state) => {
     return {
         fragments: state.fragments,
+        latin: state.latin,
+        tengwar: state.tengwar,
         fragmentId: state.fragmentId,
         bookData: state.bookData,
         loading: state.loading

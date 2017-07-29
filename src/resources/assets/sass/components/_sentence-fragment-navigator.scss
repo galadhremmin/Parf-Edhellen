@@ -2,6 +2,7 @@
 
   a:hover, a:active, a:visited, a {
     text-decoration: none;
+    color: inherit;
   }
 
   .tengwar > span.active, a.active {

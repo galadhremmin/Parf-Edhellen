@@ -33,7 +33,10 @@
           <h2 class="panel-title">Random phrase</h2>
         </div>
         <div class="panel-body">
-          @include('sentence.public._random', [ 'sentence' => $randomSentence ])
+          @include('sentence.public._random', [ 
+            'sentence'     => $randomSentence,
+            'sentenceData' => $randomSentenceData
+          ])
         </div>
       </div>
     </div>

@@ -3,11 +3,11 @@
 
 <blockquote class="daily-sentence">
   <p class="tengwar tengwar-lg">
-    {{ $combiner->combineTengwar($sentence->sentence_fragments) }}
+    {{ $combiner->combine($sentenceData['fragments'], $sentenceData['tengwar']) }}
   </p>
   <p>
     <em>
-    {{ $combiner->combineFragments($sentence->sentence_fragments) }}
+    {{ $combiner->combine($sentenceData['fragments'], $sentenceData['latin']) }}
     </em>
   </p>
   <p>{{$sentence->description}}</p>

@@ -6,11 +6,17 @@ import thunkMiddleware from 'redux-thunk';
 import EDSentenceReducer from './reducers';
 import EDFragmentExplorer from './components/fragment-explorer';
 
-const store = createStore(EDSentenceReducer, undefined /* <- preloaded state */,
-    applyMiddleware(thunkMiddleware)
-);
-
 window.addEventListener('load', function () {
+    const data = JSON.parse( document.getElementById('ed-preload-sentence-data').textContent );
+
+    const store = createStore(EDSentenceReducer, {
+            fragments: data.fragments,
+            latin: data.latin,
+            tengwar: data.tengwar
+        },
+        applyMiddleware(thunkMiddleware)
+    );
+
     ReactDOM.render(
         <Provider store={store}>
             <div>

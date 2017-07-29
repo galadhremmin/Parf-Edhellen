@@ -24,13 +24,15 @@ class SentenceController extends Controller
         $numberOfSentences  = Sentence::approved()->count();
         $numberOfNeologisms = Sentence::approved()->neologisms()->count();
         $randomSentence     = Sentence::approved()->inRandomOrder()->first();
+        $randomSentenceData = $this->_adapter->adaptFragments($randomSentence->sentence_fragments);
         $languages          = $this->_sentenceRepository->getLanguages();
 
         return view('sentence.public.index', [
             'numberOfSentences'  => $numberOfSentences,
             'numberOfNeologisms' => $numberOfNeologisms,
             'languages'          => $languages,
-            'randomSentence'     => $randomSentence
+            'randomSentence'     => $randomSentence,
+            'randomSentenceData' => $randomSentenceData
         ]);
     }
 
@@ -54,15 +56,15 @@ class SentenceController extends Controller
         $sentence  = Sentence::findOrFail($sentId);
         $language  = Language::findOrFail($langId);
         
-        $fragments = $this->_adapter->adaptFragments($sentence->sentence_fragments);
+        $data = $this->_adapter->adaptFragments($sentence->sentence_fragments);
 
         $parser = new MarkdownParser();
         $sentence->long_description = $parser->parse($sentence->long_description);
 
         return view('sentence.public.sentence', [
-            'sentence'  => $sentence,
-            'language'  => $language,
-            'fragments' => $fragments
+            'sentence'     => $sentence,
+            'sentenceData' => $data,
+            'language'     => $language
         ]);
     }
 }

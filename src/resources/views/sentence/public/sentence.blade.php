@@ -23,7 +23,7 @@
   @endif
 
   <div id="ed-fragment-navigator"></div>
-  <script type="application/json" id="ed-preload-fragments">{!! $fragments !!}</script>
+  <script type="application/json" id="ed-preload-sentence-data">{!! json_encode($sentenceData) !!}</script>
 
   {!! $sentence->long_description !!}
 
