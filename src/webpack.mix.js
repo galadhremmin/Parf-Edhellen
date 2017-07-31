@@ -52,15 +52,15 @@ mix.react([
 ], 'public/js/global.js');
 
 mix.combine([
-    'resources/assets/js/_shared/glaemscribe/glaemscribe.js',
-    'resources/assets/js/_shared/glaemscribe/charsets/tengwar_ds_parmaite.cst.js',
-    'resources/assets/js/_shared/glaemscribe/modes/adunaic.glaem.js',
-    'resources/assets/js/_shared/glaemscribe/modes/blackspeech.glaem.js',
-    'resources/assets/js/_shared/glaemscribe/modes/quenya.glaem.js',
-    'resources/assets/js/_shared/glaemscribe/modes/sindarin-beleriand.glaem.js',
-    'resources/assets/js/_shared/glaemscribe/modes/sindarin.glaem.js',
-    'resources/assets/js/_shared/glaemscribe/modes/telerin.glaem.js',
-    'resources/assets/js/_shared/glaemscribe/modes/westron.glaem.js',
+    'node_modules/glaemscribe/js/glaemscribe.js',
+    'node_modules/glaemscribe/js/charsets/tengwar_ds_annatar.cst.js',
+    'node_modules/glaemscribe/js/modes/adunaic.glaem.js',
+    'node_modules/glaemscribe/js/modes/blackspeech.glaem.js',
+    'node_modules/glaemscribe/js/modes/quenya.glaem.js',
+    'node_modules/glaemscribe/js/modes/sindarin-beleriand.glaem.js',
+    'node_modules/glaemscribe/js/modes/sindarin.glaem.js',
+    'node_modules/glaemscribe/js/modes/telerin.glaem.js',
+    'node_modules/glaemscribe/js/modes/westron.glaem.js',
 ], 'public/js/glaemscribe.js');
 
 mix.js([

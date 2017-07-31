@@ -22,11 +22,27 @@ class TengwarSentenceBuilder extends SentenceBuilder
 
     protected function handleFragment($fragment, int $fragmentIndex, $previousFragment, array $sentence)
     {
-        if (count($sentence) < 1 || $this->isConnection($previousFragment)) {
+        if (count($sentence) < 1 || (
+            $this->isConnection($previousFragment) ||
+            $this->isParanthesisStart($previousFragment))) {
             return [[$fragmentIndex, $fragment['tengwar']]];
         }
 
         return [' ', [$fragmentIndex, $fragment['tengwar']]];
+    }
+    
+    protected function handleParanthesisStart($fragment, int $fragmentIndex, $previousFragment, array $sentence)
+    {
+        if (count($sentence) < 1 || $this->isParanthesisStart($previousFragment)) {
+            return [$fragment['tengwar']];
+        }
+
+        return [' ', $fragment['tengwar']];
+    }
+
+    protected function handleParanthesisEnd($fragment, int $fragmentIndex, $previousFragment, array $sentence)
+    {
+        return [$fragment['tengwar']];
     }
 
     protected function finalizeSentence(array& $sentence)

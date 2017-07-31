@@ -12,7 +12,7 @@
 {!! $sentence !!}
 </script>
 <script type="application/json" id="ed-preloaded-sentence-fragments">
-{!! $fragments !!}
+{!! json_encode($sentenceData) !!}
 </script>
 
 @endsection

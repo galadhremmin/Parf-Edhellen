@@ -42,12 +42,31 @@ class SentenceAdapter
             $fragments[] = $data;
         }
 
-        $latinBuilder = new LatinSentenceBuilder($fragments);
-        $tengwarBuilder = new TengwarSentenceBuilder($fragments);
-        return [
-            'fragments' => $fragments,
-            'latin'     => $latinBuilder->build(),
-            'tengwar'   => $tengwarBuilder->build()
+        $result = [
+            'fragments' => $fragments
         ];
+
+        $sentences = $this->adaptFragmentsToSentences($fragments);
+        foreach ($sentences as $name => $paragraphs) {
+            $result[$name] = $paragraphs;
+        }
+
+        return $result;
+    }
+
+    public function adaptFragmentsToSentences(array $adaptedFragments, string $builderName = null) {
+        $result = [];
+
+        $sentenceBuilders = config('ed.required_sentence_builders');
+        foreach ($sentenceBuilders as $name => $class) {
+            if ($builderName !== null && $name !== $builderName) {
+                continue;
+            }
+
+            $builder = new $class($adaptedFragments);
+            $result[$name] = $builder->build();
+        }
+
+        return $result;
     }
 }

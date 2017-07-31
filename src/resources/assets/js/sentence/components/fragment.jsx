@@ -18,14 +18,22 @@ class EDFragment extends React.Component {
     }
 
     render() {
+        // string fragments, like white space?
         if (! this.props.fragment) {
             return <span>{this.props.text || ''}</span>;
         }
 
-        return <a className={classNames({'active': this.props.selected})}
+        const text = this.props.text || this.props.fragment.fragment;
+
+        // interpunctuation, or other markers?
+        if (this.props.fragment.type) {
+            return <span>{text}</span>;
+        }
+
+        return <a className={classNames({'active': this.props.selected, 'text-danger': this.props.erroneous})}
                   href={`/wt/${this.props.fragment.translation_id}`}
                   onClick={this.onFragmentClick.bind(this)}>
-                  {this.props.text ? this.props.text : this.props.fragment.fragment}
+                  {text}
                </a>;
     }
 
@@ -39,6 +47,7 @@ EDFragment.defaultProps = {
     fragment: null,
     text: undefined,
     selected: false,
+    erroneous: false,
     onClick: null
 };
 

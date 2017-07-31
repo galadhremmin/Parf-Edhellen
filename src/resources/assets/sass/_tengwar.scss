@@ -1,15 +1,14 @@
 @font-face {
-    font-family: 'Tengwar Parmaite';
-    src: url('../fonts/tengwar/tengwarparmaitem-webfont.eot');
-    src: url('../fonts/tengwar/tengwarparmaitem-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/tengwar/tengwarparmaitem-webfont.woff2') format('woff2'),
-         url('../fonts/tengwar/tengwarparmaitem-webfont.woff') format('woff'),
-         url('../fonts/tengwar/tengwarparmaitem-webfont.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
+  font-family: 'Tengwar-Annatar';
+  src:url('../fonts/tengwar/Tengwar-Annatar.ttf.woff') format('woff'),
+      url('../fonts/tengwar/Tengwar-Annatar.ttf.svg#Tengwar-Annatar') format('svg'),
+      url('../fonts/tengwar/Tengwar-Annatar.ttf.eot'),
+      url('../fonts/tengwar/Tengwar-Annatar.ttf.eot?#iefix') format('embedded-opentype'); 
+  font-weight: normal;
+  font-style: normal;
 }
 .tengwar {
-  font-family: 'Tengwar Parmaite';
+  font-family: 'Tengwar-Annatar';
   font-size: 110%;
   line-height: 0.8;
   text-decoration: none;
@@ -23,12 +22,12 @@
   padding: 0;
 }
 .tengwar-lg {
-  font-size: 185%;
+  font-size: 150%;
 }
 .tengwar.header {
   float: right;
   color: #ccc;
 }
 input.tengwar {
-  font-size: 200%;
+  font-size: 150%;
 }

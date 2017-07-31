@@ -188,6 +188,10 @@ class TranslationController extends Controller
 
             'translation_group_id' => 'sometimes|numeric|exists:translation_groups,id',
             'tengwar'              => 'sometimes|string|min:1|max:128'
+        ], [
+            'account_id.exists'  => 'Author is required.',
+            'language_id.exists' => 'Language is required.',
+            'speech_id.exists'   => 'Speech is required.'
         ]);
     } 
 }

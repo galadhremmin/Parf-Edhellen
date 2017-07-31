@@ -15,9 +15,9 @@ export const transcribe = (text, mode) => {
         window.EDTengwarInitialized = initialized;
     }
 
-    const trascriber = Glaemscribe.resource_manager.loaded_modes[mode];
-    const charset = Glaemscribe.resource_manager.loaded_charsets['tengwar_ds_parmaite'];
-    if (!trascriber) {
+    const transcriber = Glaemscribe.resource_manager.loaded_modes[mode];
+    const charset = Glaemscribe.resource_manager.loaded_charsets['tengwar_ds_annatar'];
+    if (!transcriber) {
         return undefined;
     }
     
@@ -26,7 +26,7 @@ export const transcribe = (text, mode) => {
     // 0th element: whether the transcription was successful (true/false)
     // 1th element: transcription result
     // 2th element: debug data
-    const result = trascriber.transcribe(text, charset);
+    const result = transcriber.transcribe(text, charset);
     if (!result[0]) {
         return undefined; // failed!
     }

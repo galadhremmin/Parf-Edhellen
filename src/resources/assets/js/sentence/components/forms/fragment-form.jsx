@@ -4,7 +4,7 @@ import axios from 'axios';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { polyfill as enableSmoothScrolling } from 'smoothscroll-polyfill';
-import { requestSuggestions, setFragments, setFragmentData } from '../../actions/admin';
+import { requestSuggestions, setFragments, setFragmentData, confirmFragments } from '../../actions/admin';
 import EDConfig from 'ed-config';
 import { EDStatefulFormComponent } from 'ed-form';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
@@ -19,26 +19,24 @@ class EDFragmentForm extends EDStatefulFormComponent {
     constructor(props) {
         super(props);
 
-        // Reconstruct the phrase from the sentence fragments. Only one rule needs to 
-        // be observed: add a space in front of the fragment, unless it contains a
-        // interpunctuation character or is the beginning of a new line.
+        // Reconstruct the phrase from the latin sentence. Reconstruction adheres to the format
+        // defined by the SentenceBuilder class.
         let phrase = '';
-        if (Array.isArray(props.fragments)) {
-            let parts = [];
+        if (Array.isArray(props.latin)) {
+            const parts = [];
 
-            for (let i = 0; i < props.fragments.length; i += 1) {
-                const f = props.fragments[i];
-
-                if (f.is_linebreak) {
+            for (let i = 0; i < props.latin.length; i += 1) {
+                if (i > 0) {
                     parts.push('\n');
-                    continue;
                 }
 
-                if (!f.interpunctuation && i > 0 && parts[parts.length - 1] !== '\n') {
-                    parts.push(' ');
+                for (let mapping of props.latin[i]) {
+                    parts.push(
+                        Array.isArray(mapping) ? (
+                            mapping.length > 1 ? mapping[1] : props.fragments[mapping[0]].fragment
+                        ) : mapping
+                    );
                 }
-
-                parts.push(f.fragment);                
             }
             
             phrase = parts.join('');
@@ -51,22 +49,29 @@ class EDFragmentForm extends EDStatefulFormComponent {
         };
     }
 
-    createFragment(fragment, interpunctuation) {
+    createFragment(fragment, type, doTranscribe) {
         let tengwar = undefined;
 
-        // Transcribe interpunctuations automatically. The _quenya_ setting
-        // is used for all interpunctuations as they are essentially the same
-        // across languages.
-        const is_linebreak = /^\n$/.test(fragment);
-        if (interpunctuation && ! is_linebreak) {
-            tengwar = transcribe(fragment, 'quenya');
+        if (doTranscribe) {
+            const language = EDConfig.languageById(this.props.language_id);
+            let mode = language.tengwar_mode;
+
+            // Transcribe interpunctuations automatically. The _quenya_ setting
+            // is used for interpunctuations as they are essentially the same
+            // across languages.
+            if (type && ! mode) {
+                mode = 'quenya';
+            }
+
+            if (mode) {
+                tengwar = transcribe(fragment, mode);
+            }
         }
 
         return {
             fragment,
-            interpunctuation,
-            tengwar,
-            is_linebreak
+            type,
+            tengwar
         };
     }
 
@@ -165,7 +170,11 @@ class EDFragmentForm extends EDStatefulFormComponent {
             let flush = false;
             let additionalFragment = undefined;
 
-            const interpunctuationReg = /^[·,\.!\?\n\-]$/;
+            const newlines          = "\n";
+            const interpunctuations = ',.!?';
+            const connections       = '-·';
+            const openParanthesis   = '([';
+            const closeParanthesis  = ')]';
 
             for (let c of phrase) {
 
@@ -174,11 +183,35 @@ class EDFragmentForm extends EDStatefulFormComponent {
                     flush = true;
                 }
 
-                // is it an interpunctuation character or a new line?
-                else if (interpunctuationReg.test(c)) {
-                    additionalFragment = this.createFragment(c, true);
+                // is it an interpunctuation character?
+                else if (interpunctuations.indexOf(c) > -1) {
+                    additionalFragment = this.createFragment(c, 31, true);
                     flush = true;
-                } 
+                }
+
+                // ... a new line?
+                else if (newlines.indexOf(c) > -1) {
+                    additionalFragment = this.createFragment(c, 10);
+                    flush = true;
+                }
+
+                // ... or a word connexion?
+                else if (connections.indexOf(c) > -1) {
+                    additionalFragment = this.createFragment(c, 45);
+                    flush = true;
+                }
+
+                // ... or open paranthesis?
+                else if (openParanthesis.indexOf(c) > -1) {
+                    additionalFragment = this.createFragment(c, 40, true);
+                    flush = true;
+                }
+
+                // ... or close paranthesis?
+                else if (closeParanthesis.indexOf(c) > -1) {
+                    additionalFragment = this.createFragment(c, 41, true);
+                    flush = true;
+                }
 
                 // add regular characters to buffer
                 else {
@@ -187,7 +220,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
 
                 if (flush) {
                     if (buffer.length > 0) {
-                        newFragments.push(this.createFragment(buffer, false));
+                        newFragments.push(this.createFragment(buffer, 0, true));
                         buffer = '';
                     }
 
@@ -201,11 +234,10 @@ class EDFragmentForm extends EDStatefulFormComponent {
             }
 
             if (buffer.length > 0) {
-                newFragments.push(this.createFragment(buffer, false));
+                newFragments.push(this.createFragment(buffer, 0, true));
             }
         }
-
-        const words = [];
+        
         for (let i = 0; i < newFragments.length; i += 1) {
             const data = newFragments[i];
             const lowerFragment = data.fragment.toLocaleLowerCase();
@@ -221,12 +253,8 @@ class EDFragmentForm extends EDStatefulFormComponent {
                 newFragments[i] = { 
                     ...existingFragment, 
                     fragment: data.fragment,
-                    is_linebreak: data.is_linebreak
+                    type: data.type
                 }; 
-            }
-
-            if (!newFragments[i].interpunctuation) {
-                words.push(newFragments[i].fragment);
             }
         }
 
@@ -249,6 +277,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
         ev.preventDefault();
 
         const fragment = this.props.fragments[this.state.editingFragmentIndex];
+        
         const translation = this.translationInput.getValue();
         const inflections = this.inflectionInput.getValue() || [];
         const speech_id = this.speechInput.getValue();
@@ -263,7 +292,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
             comments,
             tengwar,
             translation_id: translation ? translation.id : undefined,
-            is_linebreak: fragment.is_linebreak
+            type: fragment.type
         };
 
         // If the 'apply to similar words' checkbox is checked, make an array
@@ -291,7 +320,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
             while (nextIndex < this.props.fragments.length) {
                 fragmentData = this.props.fragments[nextIndex];
 
-                if (!fragmentData.interpunctuation) {
+                if (! fragmentData.type) {
                     break;
                 }
 
@@ -332,6 +361,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
             erroneousIndexes: []
         });
 
+        this.props.dispatch(confirmFragments());
         this.props.history.goForward();
     }
 
@@ -413,13 +443,16 @@ class EDFragmentForm extends EDStatefulFormComponent {
                 Green words are linked to words in the dictionary, whereas red words are not. Please link all
                 words before proceeding to the next step.
             </p>
-            <p>
-                {this.props.fragments.map((f, i) => <EDFragment key={i} 
-                    fragment={f} 
-                    selected={i === this.state.editingFragmentIndex}
-                    erroneous={this.state.erroneousIndexes.indexOf(i) > -1}
-                    onClick={this.onFragmentClick.bind(this)} />)}
-            </p>
+            {this.props.latin.map((line, lineIndex) => <p key={`p${lineIndex}`}>
+                {line.map((mapping, fragmentIndex) => {
+                return <EDEditableFragment key={`pf${fragmentIndex}`} 
+                                           fragments={this.props.fragments} 
+                                           mapping={mapping}
+                                           selected={fragmentIndex === this.state.editingFragmentIndex}
+                                           erroneous={this.state.erroneousIndexes.indexOf(fragmentIndex) > -1}
+                                           onClick={this.onFragmentClick.bind(this)} />
+                })}
+            </p>)}
             <div className="fragment-admin-form">
                 {this.state.editingFragmentIndex > -1 ?
                 (this.props.loading ? (
@@ -487,48 +520,54 @@ class EDFragmentForm extends EDStatefulFormComponent {
     }
 }
 
-class EDFragment extends React.Component {
+class EDEditableFragment extends React.Component {
     onFragmentClick(ev) {
         ev.preventDefault();
         
         if (this.props.onClick) {
-            window.setTimeout(() => this.props.onClick(this.props.fragment), 0);
+            window.setTimeout(() => this.props.onClick(this.props.fragments[this.props.mapping[0]]), 0);
         }
     }
 
     render() {
-        const data = this.props.fragment;
+        const mapping = this.props.mapping;
         const selected = this.props.selected;
         const erroneous = this.props.erroneous;
 
-        if (data.is_linebreak) {
-            return <br />;
+        if (! Array.isArray(mapping)) {
+            return <span>{mapping}</span>;
         }
 
-        if (data.interpunctuation) {
-            return <span>{data.fragment}</span>;
+        const fragment = this.props.fragments[mapping[0]];
+        let text = undefined;
+        if (mapping.length > 1) {
+            text = mapping[1];
         }
 
-        return <span>{' '}<a href="#" onClick={this.onFragmentClick.bind(this)}
+        if (fragment.type) {
+            return <span>{text || fragment.fragment}</span>;
+        }
+
+        return <a href="#" onClick={this.onFragmentClick.bind(this)}
             className={classNames('label', 'ed-sentence-fragment', { 
-                'label-success': !! data.translation_id && !selected && !erroneous, 
+                'label-success': !! fragment.translation_id && !selected && !erroneous, 
                 'label-warning': erroneous,
-                'label-danger': ! data.translation_id && !selected,
+                'label-danger': ! fragment.translation_id && !selected,
                 'label-primary': selected
             })}>
                 {selected 
                     ? <span><span className="glyphicon glyphicon-pencil"></span>&#32;</span> 
                     : (erroneous ? <span><span className="glyphicon glyphicon-warning-sign"></span>&#32;</span> : '')}
-                {data.fragment}
-            </a>
-        </span>;
+                {text || fragment.fragment}
+            </a>;
     }
 }
 
-EDFragment.defaultProps = {
+EDEditableFragment.defaultProps = {
     selected: false,
     erroneous: false,
-    fragment: {}
+    fragments: {},
+    mapping: []
 };
 
 const mapStateToProps = state => {
@@ -536,6 +575,7 @@ const mapStateToProps = state => {
         languages: state.languages,
         language_id: state.language_id,
         fragments: state.fragments,
+        latin: state.latin,
         suggestions: state.suggestions,
         loading: state.loading
     };

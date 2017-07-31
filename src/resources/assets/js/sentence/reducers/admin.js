@@ -1,8 +1,9 @@
 import EDConfig from 'ed-config';
 
-export const SET_FRAGMENTS = 'ED_SET_FRAGMENTS';
+export const SET_FRAGMENTS     = 'ED_SET_FRAGMENTS'; 
 export const SET_FRAGMENT_DATA = 'ED_SET_FRAGMENT_DATA';
 export const SET_SENTENCE_DATA = 'ED_SET_SENTENCE_DATA';
+export const SET_TENGWAR       = 'ED_SET_TENGWAR';
 
 const EDSentenceAdminReducer = (state = {
     id: 0,
@@ -14,6 +15,7 @@ const EDSentenceAdminReducer = (state = {
     long_description: '',
     is_neologism: false,
     fragments: [],
+    latin: [],
     languages: EDConfig.languages(),
     loading: false,
     suggestions: undefined
@@ -22,7 +24,8 @@ const EDSentenceAdminReducer = (state = {
         case SET_FRAGMENTS:
             return {
                 ...state,
-                fragments: action.fragments
+                fragments: action.fragments,
+                latin: action.latin
             };
 
         case SET_SENTENCE_DATA:
@@ -46,7 +49,7 @@ const EDSentenceAdminReducer = (state = {
                         speech:         action.data.speech,
                         comments:       action.data.comments,
                         tengwar:        action.data.tengwar,
-                        is_linebreak:   action.data.is_linebreak,
+                        type:           action.data.type,
                         inflections:    action.data.inflections
                             .map(inflection => Object.assign({}, inflection))
                     };
@@ -54,6 +57,13 @@ const EDSentenceAdminReducer = (state = {
                     return newFragment;
                 })
             };
+
+        case SET_TENGWAR:
+            return {
+                ...state,
+                tengwar: action.tengwar
+            };
+
         default:
             return state;
     }

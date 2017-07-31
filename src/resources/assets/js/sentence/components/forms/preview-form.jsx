@@ -59,7 +59,13 @@ class EDPreviewForm extends React.Component {
     }
 
     createStore(fragments) {
-        this.previewStore = createStore(EDSentenceReducer, { fragments }, 
+        const state = { 
+            fragments,
+            latin: this.props.latin,
+            tengwar: this.props.tengwar
+        };
+        
+        this.previewStore = createStore(EDSentenceReducer, state, 
             applyMiddleware(thunkMiddleware));
 
         this.setState({
@@ -169,6 +175,8 @@ class EDPreviewForm extends React.Component {
 const mapStateToProps = state => {
     return {
         fragments: state.fragments,
+        latin: state.latin,
+        tengwar: state.tengwar,
         sentenceName: state.name,
         sentenceSource: state.source,
         sentenceLanguageId: state.language_id,

@@ -80,6 +80,7 @@ Route::group([
 
     Route::post('sentence/validate', 'SentenceController@validatePayload');
     Route::post('sentence/validate-fragment', 'SentenceController@validateFragments');
+    Route::post('sentence/parse-fragment/{name}', 'SentenceController@parseFragments');
 
     Route::get('translation/list/{id}', 'TranslationController@listForLanguage')->name('translation.list');
 });

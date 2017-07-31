@@ -23,7 +23,9 @@ window.addEventListener('load', function () {
 
         preloadedState = {
             ...sentenceData,
-            fragments: fragmentData,
+            fragments: fragmentData.fragments,
+            latin: fragmentData.latin,
+            tengwar: fragmentData.tengwar,
             languages: EDConfig.languages()
         };
     } /* else {    <-- todo
