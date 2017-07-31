@@ -483,7 +483,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
                                            fragments={this.props.fragments} 
                                            mapping={mapping}
                                            index={fragmentIndex}
-                                           selected={fragmentIndex === this.state.editIndex}
+                                           selected={Array.isArray(mapping) && mapping[0] === this.state.editIndex}
                                            erroneous={this.state.erroneousIndexes.indexOf(fragmentIndex) > -1}
                                            onClick={this.onFragmentClick.bind(this)} />
                 })}
@@ -500,9 +500,6 @@ class EDFragmentForm extends EDStatefulFormComponent {
                         {! this.state.editIsExcluded ? <div className="form-group">
                             <label htmlFor="ed-sentence-fragment-word" className="control-label">Word</label>
                             <EDTranslationSelect componentId="ed-sentence-fragment-word" languageId={this.props.language_id}
-                                suggestions={this.props.suggestions 
-                                    ? this.props.suggestions[this.props.fragments[this.state.editIndex].fragment]
-                                    : []}
                                 required={true}
                                 ref={input => this.translationInput = input} />
                         </div> : ''}
@@ -656,7 +653,6 @@ const mapStateToProps = state => {
         language_id: state.language_id,
         fragments: state.fragments,
         latin: state.latin,
-        suggestions: state.suggestions,
         loading: state.loading
     };
 };

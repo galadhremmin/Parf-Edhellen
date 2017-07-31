@@ -17,8 +17,7 @@ const EDSentenceAdminReducer = (state = {
     fragments: [],
     latin: [],
     languages: EDConfig.languages(),
-    loading: false,
-    suggestions: undefined
+    loading: false
 }, action) => {
     switch (action.type) {
         case SET_FRAGMENTS:
