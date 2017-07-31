@@ -21,26 +21,23 @@ class LatinSentenceBuilder extends SentenceBuilder
 
     protected function handleFragment($fragment, int $fragmentIndex, $previousFragment, array $sentence)
     {
-        if (count($sentence) < 1) {
-            return [[$fragmentIndex]];
-        }
-        
-        if ($previousFragment !== null && (
-            $this->isConnection($previousFragment) || 
-            $this->isParanthesisStart($previousFragment))) {
-            return [[$fragmentIndex]];
-        }
+        return $this->fragment($fragment, [$fragmentIndex], $fragmentIndex, $previousFragment, $sentence);
+    }
 
-        return [' ', [$fragmentIndex]];
+    protected function handleExcluded($fragment, int $fragmentIndex, $previousFragment, array $sentence)
+    {
+        return $this->fragment($fragment, $fragment['fragment'], $fragmentIndex, $previousFragment, $sentence);
     }
     
     protected function handleParanthesisStart($fragment, int $fragmentIndex, $previousFragment, array $sentence)
     {
+        $f = $fragment['fragment'];
+
         if (count($sentence) < 1 || $this->isParanthesisStart($previousFragment)) {
-            return [$fragment['fragment']];
+            return [$f];
         }
 
-        return [' ', $fragment['fragment']];
+        return [' ', $f];
     }
 
     protected function handleParanthesisEnd($fragment, int $fragmentIndex, $previousFragment, array $sentence)
@@ -51,5 +48,20 @@ class LatinSentenceBuilder extends SentenceBuilder
     protected function finalizeSentence(array& $sentence)
     {
         // Noop
+    }
+
+    private function fragment($fragment, $mappingValue, int $fragmentIndex, $previousFragment, array $sentence)
+    {
+        if (count($sentence) < 1) {
+            return [$mappingValue];
+        }
+        
+        if ($previousFragment !== null && (
+            $this->isConnection($previousFragment) || 
+            $this->isParanthesisStart($previousFragment))) {
+            return [$mappingValue];
+        }
+
+        return [' ', $mappingValue];
     }
 }

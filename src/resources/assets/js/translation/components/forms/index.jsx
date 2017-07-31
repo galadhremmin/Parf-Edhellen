@@ -131,7 +131,7 @@ class EDTranslationForm extends EDStatefulFormComponent {
             return <div className="sk-spinner sk-spinner-pulse"></div>;
         }
 
-        const language = EDConfig.languageById(this.state.language_id);
+        const language = EDConfig.findLanguage(this.state.language_id);
 
         return <form onSubmit={this.onSubmit.bind(this)}>
             <EDErrorList errors={this.state.errors} />

@@ -7,7 +7,11 @@ import {
 import axios from 'axios';
 
 export const setFragments = fragments => {
-    return dispatch => {
+    return (dispatch, getState) => {
+        if (fragments === undefined) {
+            fragments = getState().fragments;
+        }
+
         axios.post('/admin/sentence/parse-fragment/latin', { fragments }).then(response => {
             dispatch({
                 type: SET_FRAGMENTS,

@@ -19,7 +19,7 @@ class EDFragmentExplorer extends React.Component {
      * Component has mounted and initial state retrieved from the server should be applied.
      */
     componentDidMount() {
-        let fragmentIndex = 0;
+        let fragmentIndex = this.nextFragmentIndex(-1);
         // Does the shebang specify the fragment ID?
         if (/^#![0-9]+$/.test(window.location.hash)) {
             const fragmentId = parseInt(String(window.location.hash).substr(2), 10);
@@ -36,8 +36,8 @@ class EDFragmentExplorer extends React.Component {
      * Retrieves the fragment index for the next fragment, or returns the current fragment index
      * if none exists.
      */
-    nextFragmentIndex() {
-        for (let i = this.state.fragmentIndex + 1; i < this.props.fragments.length; i += 1) {
+    nextFragmentIndex(rootIndex = this.state.fragmentIndex) {
+        for (let i = rootIndex + 1; i < this.props.fragments.length; i += 1) {
             const fragment = this.props.fragments[i];
 
             if (! fragment.type) {

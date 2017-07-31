@@ -4,6 +4,9 @@ import classNames from 'classnames';
 import EDConfig from 'ed-config';
 import Autosuggest from 'react-autosuggest';
 
+const EDLanguageProtocolQualifier = ' lang:';
+const EDLanguageProtocolReg = /lang:([A-Za-z\u0080-\u00FF\s]+)$/;
+
 class EDTranslationSelect extends React.Component {
     constructor(props) {
         super(props);
@@ -87,7 +90,24 @@ class EDTranslationSelect extends React.Component {
     }
 
     onSuggestionsFetchRequest(data) {
-        const word = (data.value || '').toLocaleLowerCase();
+        var languageId = this.props.languageId;
+        let word = (data.value || '').toLocaleLowerCase();
+
+        // is the lang: protocol used to switch languages?
+        if (word.indexOf(EDLanguageProtocolQualifier) > 0) {
+            const match = EDLanguageProtocolReg.exec(word);
+            if (match) {
+                // protocol in place --- remove the additional data from the word
+                word = word.substr(0, match.index).trim();
+
+                // override the language of choice -- no optimization (hash tables etc.) is deemed necessary because
+                // this is an admin & power-user device.
+                const language = EDConfig.findLanguage(match[1], 'name', (a, b) => a.toLocaleLowerCase() === b);
+                if (language) {
+                    languageId = language.id;
+                }
+            }
+        }
 
         // already fetching suggestions?
         if (this.loading || /^\s*$/.test(word) || this.state.suggestionsFor === word) {
@@ -107,7 +127,7 @@ class EDTranslationSelect extends React.Component {
             // Retrieve suggestions for the specified word.
             axios.post(EDConfig.api('book/suggest'), {
                 words: [ word ], 
-                language_id: this.props.languageId,
+                language_id: languageId,
                 inexact: true
             }).then(resp => {
                 this.setState({

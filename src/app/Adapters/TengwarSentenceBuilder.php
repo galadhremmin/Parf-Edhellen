@@ -22,13 +22,12 @@ class TengwarSentenceBuilder extends SentenceBuilder
 
     protected function handleFragment($fragment, int $fragmentIndex, $previousFragment, array $sentence)
     {
-        if (count($sentence) < 1 || (
-            $this->isConnection($previousFragment) ||
-            $this->isParanthesisStart($previousFragment))) {
-            return [[$fragmentIndex, $fragment['tengwar']]];
-        }
+        return $this->fragment($fragment, [$fragmentIndex, $fragment['tengwar']], $fragmentIndex, $previousFragment, $sentence);
+    }
 
-        return [' ', [$fragmentIndex, $fragment['tengwar']]];
+    protected function handleExcluded($fragment, int $fragmentIndex, $previousFragment, array $sentence)
+    {
+        return $this->fragment($fragment, $fragment['tengwar'], $fragmentIndex, $previousFragment, $sentence);
     }
     
     protected function handleParanthesisStart($fragment, int $fragmentIndex, $previousFragment, array $sentence)
@@ -48,5 +47,16 @@ class TengwarSentenceBuilder extends SentenceBuilder
     protected function finalizeSentence(array& $sentence)
     {
         // Noop
+    }
+
+    private function fragment($fragment, $mappingValue, int $fragmentIndex, $previousFragment, array $sentence)
+    {
+        if (count($sentence) < 1 || (
+            $this->isConnection($previousFragment) ||
+            $this->isParanthesisStart($previousFragment))) {
+            return [$mappingValue];
+        }
+
+        return [' ', $mappingValue];
     }
 }

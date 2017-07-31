@@ -77,6 +77,9 @@ abstract class SentenceBuilder
             else if ($this->isParanthesisEnd($fragment)) {
                 $fragments = $this->handleParanthesisEnd($fragment, $i, $previousFragment, $sentence);
             
+            } else if ($this->isExcluded($fragment)) {
+                $fragments = $this->handleExcluded($fragment, $i, $previousFragment, $sentence);
+
             } else {
                 $fragments = $this->handleFragment($fragment, $i, $previousFragment, $sentence);
 
@@ -152,9 +155,19 @@ abstract class SentenceBuilder
         return $fragment['type'] === 41;
     }
 
+    protected function isExcluded($fragment)
+    {
+        if (is_string($fragment)) {
+            return false;
+        }
+
+        return $fragment['type'] === 24;
+    }
+
     protected abstract function handleInterpunctuation($fragment, int $fragmentIndex, $previousFragment, array $sentence);
     protected abstract function handleConnection($fragment, int $fragmentIndex, $previousFragment, array $sentence);
     protected abstract function handleFragment($fragment, int $fragmentIndex, $previousFragment, array $sentence);
+    protected abstract function handleExcluded($fragment, int $fragmentIndex, $previousFragment, array $sentence);
     protected abstract function handleParanthesisStart($fragment, int $fragmentIndex, $previousFragment, array $sentence);
     protected abstract function handleParanthesisEnd($fragment, int $fragmentIndex, $previousFragment, array $sentence);
     protected abstract function finalizeSentence(array& $sentence);

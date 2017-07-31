@@ -214,9 +214,9 @@ class SentenceController extends Controller
             }
 
             $rules[$prefix.'fragment'] = 'required|max:48';
+            $rules[$prefix.'tengwar']  = 'required|max:128';
 
             if (! $fragments[$i]['type']) {
-                $rules[$prefix.'tengwar']          = 'required|max:128';
                 $rules[$prefix.'translation_id']   = 'required|exists:translations,id';
                 $rules[$prefix.'speech_id']        = 'required|exists:speeches,id';
 

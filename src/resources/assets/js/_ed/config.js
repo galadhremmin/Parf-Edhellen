@@ -8,19 +8,22 @@ const EDConfig = {
     /**
      * Gets all languages
      */
-    languages: () => languages,     
+    languages: () => languages,
 
-    languageById: id => {
+    findLanguage: (v, key = 'id', cmpFunc = (a, b) => a === b) => {
         const categories = Object.keys(languages);
-        for (let category of categories) {
-            for (let language of languages[category]) {
-                if (language.id === id) {
-                    return language;
+
+        for (let i = categories.length - 1; i >= 0; i -= 1) {
+            const subLanguages = languages[categories[i]];
+
+            for (let j = subLanguages.length - 1; j >= 0; j -= 1) {
+                if (cmpFunc(subLanguages[j][key], v)) {
+                    return subLanguages[j];
                 }
             }
         }
 
-        return  undefined;
+        return undefined;
     },
 
     /**
