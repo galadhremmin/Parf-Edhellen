@@ -20,8 +20,26 @@ class SocialAuthController extends Controller
         $this->_auditTrail = $auditTrail;
     }
 
-    public function login()
+    public function login(Request $request)
     {
+        if ($request->has('redirect')) {
+            $url = parse_url($request->input('redirect'));
+
+            if ($url !== false && array_key_exists('path', $url)) {
+                $path = $url['path'];
+
+                if (isset($url['query'])) {
+                    $path .= $url['path'];
+                }
+
+                if (isset($url['fragment'])) {
+                    $path .= $url['fragment'];
+                }
+
+                $request->session()->put('auth.redirect', $path);
+            }
+        }
+
         $providers = AuthorizationProvider::all();
         return view('authentication.login', [ 'providers' => $providers ]);
     }
@@ -68,6 +86,12 @@ class SocialAuthController extends Controller
         }
 
         auth()->login($user);
+
+        if ($request->session()->has('auth.redirect')) {
+            $path = $request->session()->pull('auth.redirect');
+            return redirect($path);
+        }
+        
         return redirect()->route('dashboard', [ 'loggedIn' => true ]);
     }
 
