@@ -79,9 +79,7 @@ class StringHelper
 
         // Mac OS X Server requires some extra 'love' because it uses a different version of iconv
         // than the rest. It transcribes é -> 'e, ê -> ^e, ë -> "e etc.
-        if (PHP_OS === 'Darwin') {
-            $str = preg_replace('/[\'^"]/', '', $str);
-        }
+        $str = preg_replace('/[\'^"]/', '', $str);
 
         // restore the locale
         // setlocale(LC_ALL, $currentLocale);
