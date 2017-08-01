@@ -31,15 +31,25 @@ class AuditTrailRepository
 
     public function get(int $numberOfRows)
     {
-        $actions = AuditTrail::orderBy('id', 'desc')
+        $query = AuditTrail::orderBy('id', 'desc')
             ->with([
                 'account' => function ($query) {
                     $query->select('id', 'nickname');
                 },
                 'entity' => function () {}
-            ])
-            ->take(10)
-            ->get();
+            ]);
+        
+        $take = 50;
+        if (! Auth::check() || ! Auth::user()->isAdministrator()) {
+            // Put audit trail actions here that only administrators should see.
+            $query = $query->whereNotIn('action_id', [
+                AuditTrail::ACTION_PROFILE_AUTHENTICATED
+            ]);
+
+            $take = 10;
+        }
+        
+        $actions = $query->take($take)->get();
 
         $trail = [];
         foreach ($actions as $action) {
@@ -82,6 +92,9 @@ class AuditTrailRepository
                         break;
                     case AuditTrail::ACTION_PROFILE_EDIT_AVATAR:
                         $message = 'changed their avatar';
+                        break;
+                    case AuditTrail::ACTION_PROFILE_AUTHENTICATED:
+                        $message = 'logged in';
                         break;
                 }
 
