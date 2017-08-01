@@ -33,7 +33,7 @@ class SocialAuthController extends Controller
                 }
 
                 if (isset($url['fragment'])) {
-                    $path .= $url['fragment'];
+                    $path .= '#'.$url['fragment'];
                 }
 
                 $request->session()->put('auth.redirect', $path);
