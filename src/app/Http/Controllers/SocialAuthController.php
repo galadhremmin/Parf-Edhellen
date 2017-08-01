@@ -25,7 +25,7 @@ class SocialAuthController extends Controller
         if ($request->has('redirect')) {
             $url = parse_url($request->input('redirect'));
 
-            if ($url !== false && array_key_exists('path', $url)) {
+            if ($url !== false && isset($url['path'])) {
                 $path = $url['path'];
 
                 if (isset($url['query'])) {
