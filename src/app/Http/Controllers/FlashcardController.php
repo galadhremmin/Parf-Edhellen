@@ -190,7 +190,7 @@ class FlashcardController extends Controller
         }
 
         if ($qualifyingAction !== 0) {
-            $this->_auditTrail->store($qualifyingAction, $account->id, $result);
+            $this->_auditTrail->store($qualifyingAction, $result);
         }
 
         return [

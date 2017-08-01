@@ -107,7 +107,7 @@ class SentenceRepository
         $action = $changed 
                 ? AuditTrail::ACTION_SENTENCE_EDIT 
                 : AuditTrail::ACTION_SENTENCE_ADD;
-        $this->_auditTrail->store($action, $sentence->account_id, $sentence);
+        $this->_auditTrail->store($action, $sentence);
     }
 
     public function destroyFragments(Sentence $sentence) 

@@ -127,7 +127,7 @@ class AuthorController extends Controller
             unlink($file->path());
 
             // Register an audit trail for the changed avatar
-            $this->_auditTrail->store(AuditTrail::ACTION_PROFILE_EDIT_AVATAR, $author->id, $author);
+            $this->_auditTrail->store(AuditTrail::ACTION_PROFILE_EDIT_AVATAR, $author);
         }
 
         $author->nickname = $request->input('nickname');
@@ -136,7 +136,7 @@ class AuthorController extends Controller
         $author->save();
 
         // Register an audit trail for the changed profile
-        $this->_auditTrail->store(AuditTrail::ACTION_PROFILE_EDIT, $author->id, $author);
+        $this->_auditTrail->store(AuditTrail::ACTION_PROFILE_EDIT, $author);
 
         return redirect()->route('author.my-profile');
     }

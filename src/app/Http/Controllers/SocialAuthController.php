@@ -61,7 +61,10 @@ class SocialAuthController extends Controller
             ]);
 
             // Register an audit trail for the user logging in for the first time.
-            $this->_auditTrail->store(AuditTrail::ACTION_PROFILE_FIRST_TIME, $user->id, $user);
+            $this->_auditTrail->store(AuditTrail::ACTION_PROFILE_FIRST_TIME, $user, $user->id);
+        } else {
+            // Register an audit trail for the user logging in.
+            $this->_auditTrail->store(AuditTrail::ACTION_PROFILE_AUTHENTICATED, $user, $user->id);
         }
 
         auth()->login($user);

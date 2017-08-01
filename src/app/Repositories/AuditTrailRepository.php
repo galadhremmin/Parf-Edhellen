@@ -4,7 +4,8 @@ namespace App\Repositories;
 
 use App\Helpers\LinkHelper;
 use App\Models\{ Account, AuditTrail, Favourite, FlashcardResult, ForumContext, ForumPost, Sentence, Translation };
-use Illuminate\Support\Facades\DB;
+
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 class AuditTrailRepository
@@ -121,6 +122,11 @@ class AuditTrailRepository
                 }
             }
 
+            // Some messages might be deliberately hidden or not yet supported -- skip them
+            if ($message === null) {
+                continue;
+            }
+
             $trail[] = [
                 'account_id'   => $action->account_id,
                 'account_name' => $action->account->nickname,
@@ -133,8 +139,18 @@ class AuditTrailRepository
         return $trail;
     }
 
-    public function store(int $action, int $accountId, $entity)
+    public function store(int $action, $entity, int $userId = 0)
     {
+        if ($userId === 0) {
+            // Is the user authenticated?
+            if (! Auth::check()) {
+                return;
+            }
+
+            $userId = Auth::user()->id;
+        }
+
+        // Retrieve the associated morph map key based on the specified entity.
         $typeName = null;
         $map = Relation::morphMap();
         foreach ($map as $name => $className) {
@@ -149,7 +165,7 @@ class AuditTrailRepository
         }
 
         AuditTrail::create([
-            'account_id'  => $accountId,
+            'account_id'  => $userId,
             'entity_id'   => $entity->id,
             'entity_type' => $typeName,
             'action_id'   => $action

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\v1;
 
 use Illuminate\Http\Request;
 
-use App\Models\{ Translation, TranslationGroup, Word, ForumContext };
+use App\Models\{ Translation, TranslationGroup, Word, ForumContext, Keyword };
 use App\Http\Controllers\Controller;
 use App\Repositories\{ ForumRepository, TranslationRepository, SentenceRepository };
 use App\Adapters\BookAdapter;

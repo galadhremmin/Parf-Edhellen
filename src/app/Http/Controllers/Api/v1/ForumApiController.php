@@ -147,7 +147,7 @@ class ForumApiController extends Controller
         ]);
 
         // Register an audit trail
-        $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_ADD, $account->id, $post);
+        $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_ADD, $post);
 
         return response(null, 201);
     }
@@ -175,7 +175,7 @@ class ForumApiController extends Controller
         $post->save();
 
         // Register an audit trail
-        $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_EDIT, $account->id, $post);
+        $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_EDIT, $post);
 
         return response(null, 200);
     }
@@ -231,7 +231,7 @@ class ForumApiController extends Controller
             $post->save();
 
             // Register an audit trail
-            $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_LIKE, $userId, $post);
+            $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_LIKE, $post);
 
             $statusCode = 201; // OK, like saved
         }

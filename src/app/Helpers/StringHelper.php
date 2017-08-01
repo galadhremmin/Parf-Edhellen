@@ -74,8 +74,14 @@ class StringHelper
         // specified as application default.
         // setlocale(LC_ALL, 'en_UK.UTF-8');
 
-        // Transcribe á > ´a, ê > ^e etc.
+        // Transcribe á, ê, é etc.
         $str = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $str);
+
+        // Mac OS X Server requires some extra 'love' because it uses a different version of iconv
+        // than the rest. It transcribes é -> 'e, ê -> ^e, ë -> "e etc.
+        if (PHP_OS === 'Darwin') {
+            $str = preg_replace('/[\'^"]/', '', $str);
+        }
 
         // restore the locale
         // setlocale(LC_ALL, $currentLocale);
