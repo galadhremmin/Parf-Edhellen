@@ -29,7 +29,7 @@ class SocialAuthController extends Controller
                 $path = $url['path'];
 
                 if (isset($url['query'])) {
-                    $path .= $url['path'];
+                    $path .= $url['query'];
                 }
 
                 if (isset($url['fragment'])) {
