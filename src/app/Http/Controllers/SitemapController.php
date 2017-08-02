@@ -83,7 +83,7 @@ class SitemapController extends Controller
 
         foreach ($translations as $translation) {
             $this->addNode($xml,
-                $this->_domain.'/w/'.$translation->normalized_word,
+                $this->_domain.'/w/'.urlencode($translation->normalized_word),
                 'monthly',
                 $translation->updated_at ?: $translation->created_at
             );
