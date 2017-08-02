@@ -17,5 +17,5 @@ return [
     ],
 
     // Sitemap for unlocking sitemap view 
-    'sitemap-key' => 'test'
+    'sitemap-key' => env('ED_SITEMAP_KEY', '')
 ];
