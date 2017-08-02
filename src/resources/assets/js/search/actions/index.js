@@ -100,8 +100,8 @@ export function beginNavigation(word, normalizedWord, index, modifyState) {
         } else {
             // If pushState isn't supported, do not even pretend to try to load react components for search results 
             // for this deprecated browser.
-            window.location.href = address;
-            return;
+            window.setTimeout(() => window.location.href = address, 0);
+            return () => {};
         }
     }
 
