@@ -14,7 +14,7 @@
     };
 
     const buttons = document.querySelectorAll('.navbar-toggle');
-    for (let button of buttons) {
-        button.addEventListener('click', ev => onButtonClick(ev));
+    for (var i = 0; i < buttons.length; i += 1) {
+        buttons.item(i).addEventListener('click', ev => onButtonClick(ev));
     }
 })();
