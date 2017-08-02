@@ -94,8 +94,15 @@ export function beginNavigation(word, normalizedWord, index, modifyState) {
 
     // When navigating using the browser's back and forward buttons,
     // the state needn't be modified.
-    if (modifyState && window.history.pushState !== undefined) {
-        window.history.pushState(null, title, address);
+    if (modifyState) {
+        if (window.history.pushState !== undefined) {
+            window.history.pushState(null, title, address);
+        } else {
+            // If pushState isn't supported, do not even pretend to try to load react components for search results 
+            // for this deprecated browser.
+            window.location.href = address;
+            return;
+        }
     }
 
     // because most browsers doesn't change the document title when pushing state
