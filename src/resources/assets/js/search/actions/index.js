@@ -94,7 +94,7 @@ export function beginNavigation(word, normalizedWord, index, modifyState) {
 
     // When navigating using the browser's back and forward buttons,
     // the state needn't be modified.
-    if (modifyState) {
+    if (modifyState && window.history.pushState !== undefined) {
         window.history.pushState(null, title, address);
     }
 
