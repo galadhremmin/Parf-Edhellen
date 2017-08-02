@@ -40,7 +40,7 @@ class SitemapController extends Controller
         foreach ($translations as $translation) {
             $xml .= '<url>'.
             '<loc>'.$domain.'/w/'.$translation->normalized_word.'</loc>'.
-            '<lastmod>'.($translation->updated_at ?: $translation->created_at).'</lastmod>'.
+            '<lastmod>'.($translation->updated_at ?: $translation->created_at)->format('Y-m-d').'</lastmod>'.
             '<changefreq>monthly</changefreq>'.
             '</url>';
         }
@@ -48,7 +48,7 @@ class SitemapController extends Controller
         foreach ($sentences as $sentence) {
             $xml .= '<url>'.
             '<loc>'.$this->_linkHelper->sentence($sentence->language_id, $sentence->language->name, $sentence->id, $sentence->name).'</loc>'.
-            '<lastmod>'.($sentence->updated_at ?: $sentence->created_at).'</lastmod>'.
+            '<lastmod>'.($sentence->updated_at ?: $sentence->created_at)->format('Y-m-d').'</lastmod>'.
             '<changefreq>monthly</changefreq>'.
             '</url>';
         }
