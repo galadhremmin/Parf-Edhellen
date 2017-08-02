@@ -14,5 +14,8 @@ return [
     'required_sentence_builders' => [
         'latin'   => App\Adapters\LatinSentenceBuilder::class,
         'tengwar' => App\Adapters\TengwarSentenceBuilder::class
-    ]
+    ],
+
+    // Sitemap for unlocking sitemap view 
+    'sitemap-key' => 'test'
 ];
