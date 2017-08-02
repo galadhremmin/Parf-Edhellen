@@ -64,7 +64,7 @@ Route::get('/federated-auth/redirect/{providerName}', 'SocialAuthController@redi
 Route::get('/federated-auth/callback/{providerName}', 'SocialAuthController@callback');
 
 // Sitemap
-Route::get('sitemap', 'SitemapController@index');
+Route::get('sitemap/{context}', 'SitemapController@index');
 
 // Resources
 Route::group([ 

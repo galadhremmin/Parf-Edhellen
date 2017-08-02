@@ -10,52 +10,118 @@ use Illuminate\Http\Request;
 
 class SitemapController extends Controller
 {
+    private $_linkHelper;
+    private $_domain;
+
     public function __construct(LinkHelper $linkHelper)
     {
         $this->_linkHelper = $linkHelper;
+        $this->_domain = config('app.url');
     }
 
-    public function index(Request $request)
+    public function index(Request $request, string $context)
     {
         if (! $request->has('key') || $request->input('key') !== config('ed.sitemap-key')) {
             return response(null, 401);
         }
 
-        $domain = config('app.url');
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n".
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'."\n";
 
-        $xml = '<?xml version="1.0" encoding="UTF-8"?>'.
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">'.
-            '<url>'.
-            '<loc>'.$domain.'</loc>'.
-            '<changefreq>weekly</changefreq>'.
-            '</url>';
+        switch ($context) {
+            case 'pages':
+                $this->addPages($xml);
+                break;
+            case 'translations': 
+                {
+                    $this->validate($request, [
+                        'from'    => 'required|numeric|min:0',
+                        'to'      => 'required|numeric|min:0'
+                    ]);
+
+                    $from    = $request->input('from');
+                    $to      = $request->input('to');
+
+                    $this->addTranslations($xml, $from, $to);
+                }
+                break;
+            case 'sentences':
+                $this->addSentences($xml);
+                break;
+        }
+
+        $xml .= '</urlset>'."\n";
+
+        return response($xml)
+            ->header('Content-Type', 'text/xml; charset=utf-8');
+    }
+
+    private function addPages(string& $xml)
+    {
+        $routeNames = ['home', 'about', 'about.donations'];
+
+        foreach ($routeNames as $routeName) {
+            $xml .= '<url>'.
+                '<loc>'.route($routeName).'</loc>'.
+                '<changefreq>weekly</changefreq>'.
+                '</url>';
+        }
+    }
+
+    private function addTranslations(string& $xml, int $from, int $to) 
+    {
+        if ($from > $to || $to - $from > 50000) {
+            return;
+        }
 
         $translations = Translation::join('words', 'words.id', 'translations.word_id')
             ->select('words.normalized_word', 'translations.updated_at', 'translations.created_at')
             ->distinct()
+            ->skip($from)
+            ->take($to - $from)
             ->get();
 
-        $sentences = Sentence::with('language')->get();
-
         foreach ($translations as $translation) {
-            $xml .= '<url>'.
-            '<loc>'.$domain.'/w/'.$translation->normalized_word.'</loc>'.
-            '<lastmod>'.($translation->updated_at ?: $translation->created_at)->format('Y-m-d').'</lastmod>'.
-            '<changefreq>monthly</changefreq>'.
-            '</url>';
+            $this->addNode($xml,
+                $this->_domain.'/w/'.$translation->normalized_word,
+                'monthly',
+                $translation->updated_at ?: $translation->created_at
+            );
         }
+    }
+
+    private function addSentences(string& $xml)
+    {
+        $this->addNode($xml, route('sentence.public'));
+
+        $sentences = Sentence::with('language')
+            ->orderBy('language_id')
+            ->get();
+
+        $languages = [];
 
         foreach ($sentences as $sentence) {
-            $xml .= '<url>'.
-            '<loc>'.$this->_linkHelper->sentence($sentence->language_id, $sentence->language->name, $sentence->id, $sentence->name).'</loc>'.
-            '<lastmod>'.($sentence->updated_at ?: $sentence->created_at)->format('Y-m-d').'</lastmod>'.
-            '<changefreq>monthly</changefreq>'.
-            '</url>';
+            if (! array_key_exists($sentence->language_id, $languages)) {
+                $languages[$sentence->language_id] = true;
+
+                $this->addNode($xml,
+                    $this->_linkHelper->sentencesByLanguage($sentence->language_id, $sentence->language->name)
+                );
+            }
+
+            $this->addNode($xml, 
+                $this->_linkHelper->sentence($sentence->language_id, $sentence->language->name, $sentence->id, $sentence->name),
+                'monthly',
+                $sentence->updated_at ?: $sentence->created_at
+            );
         }
+    }
 
-        $xml .= '</urlset>';
-
-        return response($xml)
-            ->header('Content-Type', 'text/xml; charset=utf-8');
+    private function addNode(string& $xml, string $location, string $changeFrequency = 'monthly', \Carbon\Carbon $lastModified = null) {
+        $xml .= '<url>'.
+            '<loc>'.$location.'</loc>'.
+            ($lastModified !== null ? '<lastmod>'.$lastModified->format('Y-m-d').'</lastmod>' : '').
+            '<changefreq>'.$changeFrequency.'</changefreq>'.
+            '</url>';
     }
 }
