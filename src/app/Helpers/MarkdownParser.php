@@ -18,6 +18,25 @@ class MarkdownParser extends \Parsedown
     }
 
     /**
+     * Overrides the original elements method, which combines all elements into a HTML string.
+     * This method is overridden to remove excessive new lines being inserted before every element. 
+     *
+     * @param array $Elements
+     * @return void
+     */
+    protected function elements(array $Elements)
+    {
+        $markup = '';
+
+        foreach ($Elements as $Element)
+        {
+            $markup .= $this->element($Element);
+        }
+
+        return $markup;
+    }
+
+    /**
      * Adds bootstrap classes to the table element.
      * 
      */
