@@ -78,16 +78,15 @@ class EDFragmentExplorer extends React.Component {
      * @param {Event} ev 
      */
     onWindowScroll(ev) {
-        if (! this.fragmentContainer || ! this.selectedFragment) {
+        if (! this.fragmentContainer) {
             return;
         }
 
-        const fragmentRect = this.selectedFragment.getBoundingClientRect();
         const containerRect = this.fragmentContainer.getBoundingClientRect();
         const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-
+        
         const overlay = (viewportHeight - containerRect.bottom < viewportHeight * 0.3) && // Details (not overlay) inferred to require at least 30 % of available height 
-            fragmentRect.top <= viewportHeight * 0.4; // restrict overlay until the fragment is visible, which is relevant on smaller devices
+            containerRect.top <= viewportHeight * 0.4; // restrict overlay until the fragment is visible, which is relevant on smaller devices
         const change = this.state.detailsAsOverlay !== overlay;
 
         if (! change) {
@@ -151,7 +150,7 @@ class EDFragmentExplorer extends React.Component {
         EDConfig.message(EDConfig.messageNavigateName, data);
     }
 
-    renderFragment(paragraphIndex, mapSelected, mapping, fragmentIndex) {
+    renderFragment(paragraphIndex, mapping, fragmentIndex) {
         let fragment = undefined;
         let text = undefined;
 
@@ -170,7 +169,6 @@ class EDFragmentExplorer extends React.Component {
                            text={text}
                            key={`p${paragraphIndex}.f${fragmentIndex}`}
                            selected={selected}
-                           ref={elem => selected && mapSelected ? (this.selectedFragment = ReactDOM.findDOMNode(elem)) : undefined }
                            onClick={this.onFragmentClick.bind(this)} />;
     }
 
@@ -195,7 +193,7 @@ class EDFragmentExplorer extends React.Component {
                 <div className="col-md-12 col-lg-6">
                 {this.props.tengwar.map((paragraph, fi) => 
                     <p className="tengwar ed-tengwar-fragments" key={`p${fi}`}>
-                        {paragraph.map(this.renderFragment.bind(this, fi, true))}
+                        {paragraph.map(this.renderFragment.bind(this, fi))}
                     </p>
                 )}
                 </div>
@@ -203,7 +201,7 @@ class EDFragmentExplorer extends React.Component {
                 <div className="col-md-12 col-lg-6">
                 {this.props.latin.map((paragraph, fi) => 
                     <p className="ed-elvish-fragments" key={`p${fi}`}>
-                        {paragraph.map(this.renderFragment.bind(this, fi, false))}
+                        {paragraph.map(this.renderFragment.bind(this, fi))}
                     </p>
                 )}
                 </div>
@@ -216,6 +214,10 @@ class EDFragmentExplorer extends React.Component {
                         <li className={classNames('previous', { 'hidden': previousIndex === this.state.fragmentIndex })}>
                             <a href="#" onClick={ev => this.onNavigate(ev, previousIndex)}>&larr; {this.props.fragments[previousIndex].fragment}</a>
                         </li>
+                        {fragment ? 
+                        <li>
+                            <strong>{fragment.fragment}</strong>
+                        </li> : ''}
                         <li className={classNames('next', { 'hidden': nextIndex === this.state.fragmentIndex })}>
                             <a href="#" onClick={ev => this.onNavigate(ev, nextIndex)}>{this.props.fragments[nextIndex].fragment} &rarr;</a>
                         </li>
@@ -226,14 +228,6 @@ class EDFragmentExplorer extends React.Component {
                     : (section ? (<div ref={elem => this.fragmentDetails = elem}>
                         <div>{fragment.comments ? parser.parse(fragment.comments) : ''}</div>
                         <div>
-                            {section.glosses.map(g => <EDBookGloss gloss={g}
-                                                                language={section.language}
-                                                                key={g.id} 
-                                                                disableTools={true}
-                                                                onReferenceLinkClick={this.onReferenceLinkClick.bind(this)} />)}
-                        </div>
-                        <hr />
-                        <div>
                             <span className="label label-success ed-inflection">{fragment.speech}</span>
                             {' '}
                             {fragment.inflections.map((infl, i) => 
@@ -242,6 +236,13 @@ class EDFragmentExplorer extends React.Component {
                                     &nbsp;
                                 </span>
                             )}
+                        </div>
+                        <div>
+                            {section.glosses.map(g => <EDBookGloss gloss={g}
+                                                                language={section.language}
+                                                                key={g.id} 
+                                                                disableTools={true}
+                                                                onReferenceLinkClick={this.onReferenceLinkClick.bind(this)} />)}
                         </div>
                     </div>
                 ) : '')}
