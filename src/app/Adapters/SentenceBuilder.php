@@ -8,6 +8,13 @@ abstract class SentenceBuilder
     protected $_fragments;
     protected $_numberOfFragments;
 
+    const TYPE_CODE_NEWLINE           = 10;
+    const TYPE_CODE_EXCLUDE           = 24;
+    const TYPE_CODE_INTERPUNCTUATION  = 31;
+    const TYPE_CODE_OPEN_PARANTHESIS  = 40;
+    const TYPE_CODE_CLOSE_PARANTHESIS = 41;
+    const TYPE_CODE_WORD_CONNEXION    = 45;
+
     public function __construct(array $fragments) 
     {
         $this->_fragments = $fragments;
@@ -116,7 +123,7 @@ abstract class SentenceBuilder
             return false;
         }
 
-        return $fragment['type'] === 10;
+        return $fragment['type'] === self::TYPE_CODE_NEWLINE;
     }
 
     protected function isInterpunctuation($fragment)
@@ -125,7 +132,7 @@ abstract class SentenceBuilder
             return false;
         }
 
-        return $fragment['type'] === 31;
+        return $fragment['type'] === self::TYPE_CODE_INTERPUNCTUATION;
     }
 
     protected function isConnection($fragment)
@@ -134,7 +141,7 @@ abstract class SentenceBuilder
             return false;
         }
 
-        return $fragment['type'] === 45;
+        return $fragment['type'] === self::TYPE_CODE_WORD_CONNEXION;
     }
 
     protected function isParanthesisStart($fragment) 
@@ -143,7 +150,7 @@ abstract class SentenceBuilder
             return false;
         }
 
-        return $fragment['type'] === 40;
+        return $fragment['type'] === self::TYPE_CODE_OPEN_PARANTHESIS;
     }
 
     protected function isParanthesisEnd($fragment) 
@@ -152,7 +159,7 @@ abstract class SentenceBuilder
             return false;
         }
 
-        return $fragment['type'] === 41;
+        return $fragment['type'] === self::TYPE_CODE_CLOSE_PARANTHESIS;
     }
 
     protected function isExcluded($fragment)
@@ -161,7 +168,7 @@ abstract class SentenceBuilder
             return false;
         }
 
-        return $fragment['type'] === 24;
+        return $fragment['type'] === self::TYPE_CODE_EXCLUDE;
     }
 
     protected abstract function handleInterpunctuation($fragment, int $fragmentIndex, $previousFragment, array $sentence);

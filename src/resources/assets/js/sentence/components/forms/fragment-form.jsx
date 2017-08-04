@@ -196,7 +196,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
             let additionalFragment = undefined;
 
             const newlines          = "\n";
-            const interpunctuations = ',.!?';
+            const interpunctuations = ',.!?;';
             const connections       = '-·';
             const openParanthesis   = '([';
             const closeParanthesis  = ')]';
@@ -439,6 +439,24 @@ class EDFragmentForm extends EDStatefulFormComponent {
         }
     }
 
+    onTranslationSelected(ev) {
+        if (! ev.value) {
+            return;
+        }
+
+        const type = ev.value.type;
+        if (! type || this.speechInput.getValue()) {
+            return;
+        }
+
+        const speechId = this.speechInput.getValueForText(type);
+        if (! speechId) {
+            return;
+        }
+
+        this.speechInput.setValue(speechId);
+    }
+
     onFragmentCancel(ev) {
         ev.preventDefault();
         this.editFragment(-1);
@@ -499,9 +517,11 @@ class EDFragmentForm extends EDStatefulFormComponent {
                     <div className="well">
                         {! this.state.editIsExcluded ? <div className="form-group">
                             <label htmlFor="ed-sentence-fragment-word" className="control-label">Word</label>
-                            <EDTranslationSelect componentId="ed-sentence-fragment-word" languageId={this.props.language_id}
+                            <EDTranslationSelect componentId="ed-sentence-fragment-word" 
+                                languageId={this.props.language_id}
                                 required={true}
-                                ref={input => this.translationInput = input} />
+                                ref={input => this.translationInput = input}
+                                onChange={this.onTranslationSelected.bind(this)} />
                         </div> : ''}
                         <div className="form-group">
                             <label htmlFor="ed-sentence-fragment-tengwar" className="control-label">Tengwar</label>

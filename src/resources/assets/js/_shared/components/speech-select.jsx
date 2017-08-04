@@ -19,7 +19,7 @@ class EDSpeechSelect extends React.Component {
     }
 
     createStateForValue(value) {
-        if (!value) {
+        if (! value) {
             value = 0;
         }
 
@@ -60,6 +60,15 @@ class EDSpeechSelect extends React.Component {
      */
     getText() {
         return this.selectInput.options[this.selectInput.selectedIndex].textContent;
+    }
+
+    /**
+     * Attempts to find the ID of the speech belonging with the specified name.
+     * @param {String} text 
+     */
+    getValueForText(name) {
+        const speech = this.state.typesOfSpeech.find(s => s.name === name);
+        return speech ? speech.id : undefined;
     }
 
     /**

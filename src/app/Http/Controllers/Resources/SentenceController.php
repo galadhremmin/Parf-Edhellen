@@ -8,7 +8,7 @@ use Illuminate\Validation\Rule;
 
 use App\Models\{Language, Sentence, SentenceFragment, SentenceFragmentInflectionRel};
 use App\Repositories\SentenceRepository;
-use App\Adapters\{LatinSentenceBuilder, SentenceAdapter};
+use App\Adapters\{SentenceBuilder, LatinSentenceBuilder, SentenceAdapter};
 use App\Helpers\{LinkHelper};
 use App\Http\Controllers\Controller;
 
@@ -209,14 +209,14 @@ class SentenceController extends Controller
 
             // Line breaks are treated in a very restricted manner and therefore requires minimum
             // validation. 
-            if ($fragments[$i]['type'] === 10) {
+            if ($fragments[$i]['type'] === SentenceBuilder::TYPE_CODE_NEWLINE) {
                 continue;
             }
 
             $rules[$prefix.'fragment'] = 'required|max:48';
-            $rules[$prefix.'tengwar']  = 'required|max:128';
 
             if (! $fragments[$i]['type']) {
+                $rules[$prefix.'tengwar']          = 'required|max:128';
                 $rules[$prefix.'translation_id']   = 'required|exists:translations,id';
                 $rules[$prefix.'speech_id']        = 'required|exists:speeches,id';
 
