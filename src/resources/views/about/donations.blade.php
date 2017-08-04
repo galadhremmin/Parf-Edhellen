@@ -26,7 +26,11 @@ donations, I was able to purchase <a href="http://www.eldalamberon.com/parma22.h
 </blockquote>
 
 <h2>Donations 2017</h2>
+<p>Parf Edhellen is entirely supported by donations this year. <strong>Thank you everyone for your continued support!</strong></p>
 <ol class="donations">
+  <li><span class="date">30ᵗʰ Jul '17</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
+  <li><span class="date">24ᵗʰ Jul '17</span>: <span class="currency">$100,00</span> by <span class="person">Robert K</span>.</li>
+  <li><span class="date">19ᵗʰ Jul '17</span>: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
   <li><span class="date">30ᵗʰ Jun '17</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
   <li><span class="date">27ᵗʰ Jun '17</span>: <span class="currency">$10,00</span> by <span class="person">Birgit K</span>.</li>
   <li><span class="date">23ʳᵈ Jun '17</span>: <span class="currency">$21,00</span> by <span class="person">Jean Paul C</span>.</li>

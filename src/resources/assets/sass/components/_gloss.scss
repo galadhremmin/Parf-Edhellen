@@ -31,3 +31,12 @@ h3.trans-word {
         vertical-align: top;
     }
 }
+.word-footer {
+    max-width: 100%;
+    text-overflow: ellipsis;
+    display: block;
+    overflow: hidden;
+}
+blockquote.gloss {
+    overflow: hidden;
+}
