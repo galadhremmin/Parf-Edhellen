@@ -143,13 +143,18 @@ class SentenceController extends Controller
             if (isset($fragmentData['tengwar'])) {
                 $fragment->tengwar  = $fragmentData['tengwar'];
             }
-            
+
             if (! $fragment->type) {
                 $fragment->comments       = $fragmentData['comments'] ?? ''; // cannot be NULL
                 $fragment->speech_id      = intval($fragmentData['speech_id']);
                 $fragment->translation_id = intval($fragmentData['translation_id']);
             } else {
                 $fragment->comments = '';
+
+                // Certain types of fragments does not have a textual body, and should therefore be an empty string.
+                if (empty($fragment->fragment)) {
+                    $fragment->fragment = '';
+                }
             }
 
             $fragment->order       = count($fragments) * 10;
