@@ -28,4 +28,44 @@
   blockquote h3 {
     margin-top: 0;
   }
+
+  .ed-fragment-details {
+    small.text-info {
+      display: none;
+    }
+    
+    &.overlay {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      max-height: 30vh;
+      width: 100vw;
+      background: white;
+      z-index: 100;
+      padding: $padding-small-vertical $padding-base-horizontal;
+      box-sizing: border-box;
+      overflow-y: scroll;
+      box-shadow: 0px 0px 5px 0px rgba(50, 50, 50, 0.75);
+
+      small.text-info {
+        display: block;
+        text-align: center;
+        font-size: 10px;
+        color: $gray;
+        position: absolute;
+        left: 0;
+        top: $padding-small-vertical;
+        width: 100%;
+        font-family: sans-serif;
+      }
+
+      hr {
+        margin: $padding-small-vertical 0;
+      }
+
+      @media (max-width: 400px) {
+        max-height: 40vh;
+      }
+    }
+  }
 }

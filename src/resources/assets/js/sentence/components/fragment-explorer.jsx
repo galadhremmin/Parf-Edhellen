@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import EDConfig from 'ed-config';
@@ -11,8 +12,16 @@ class EDFragmentExplorer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            fragmentIndex: 0
+            fragmentIndex: 0,
+            detailsAsOverlay: false
         };
+    }
+
+    /**
+     * Component will mount, which is an opening for event hooks
+     */
+    componentWillMount() {
+        window.addEventListener('scroll', this.onWindowScroll.bind(this));
     }
 
     /**
@@ -62,6 +71,32 @@ class EDFragmentExplorer extends React.Component {
         }
 
         return this.state.fragmentIndex;
+    }
+
+    /**
+     * Scrolling event triggered by the window.
+     * @param {Event} ev 
+     */
+    onWindowScroll(ev) {
+        if (! this.fragmentContainer || ! this.selectedFragment) {
+            return;
+        }
+
+        const fragmentRect = this.selectedFragment.getBoundingClientRect();
+        const containerRect = this.fragmentContainer.getBoundingClientRect();
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+        const overlay = (viewportHeight - containerRect.bottom < viewportHeight * 0.3) && // Details (not overlay) inferred to require at least 30 % of available height 
+            fragmentRect.top <= viewportHeight * 0.4; // restrict overlay until the fragment is visible, which is relevant on smaller devices
+        const change = this.state.detailsAsOverlay !== overlay;
+
+        if (! change) {
+            return;
+        }
+
+        this.setState({
+            detailsAsOverlay: overlay
+        });
     }
 
     /**
@@ -116,7 +151,7 @@ class EDFragmentExplorer extends React.Component {
         EDConfig.message(EDConfig.messageNavigateName, data);
     }
 
-    renderFragment(paragraphIndex, mapping, fragmentIndex) {
+    renderFragment(paragraphIndex, mapSelected, mapping, fragmentIndex) {
         let fragment = undefined;
         let text = undefined;
 
@@ -130,10 +165,12 @@ class EDFragmentExplorer extends React.Component {
             text = mapping;
         }
 
+        const selected = fragment && fragment.id === this.props.fragmentId;
         return <EDFragment fragment={fragment}
                            text={text}
                            key={`p${paragraphIndex}.f${fragmentIndex}`}
-                           selected={fragment && fragment.id === this.props.fragmentId}
+                           selected={selected}
+                           ref={elem => selected && mapSelected ? (this.selectedFragment = ReactDOM.findDOMNode(elem)) : undefined }
                            onClick={this.onFragmentClick.bind(this)} />;
     }
 
@@ -154,11 +191,11 @@ class EDFragmentExplorer extends React.Component {
         const nextIndex = this.nextFragmentIndex();
 
         return <div className="well ed-fragment-navigator">
-            <div className="row">
+            <div className="row" ref={elem => this.fragmentContainer = elem}>
                 <div className="col-md-12 col-lg-6">
                 {this.props.tengwar.map((paragraph, fi) => 
                     <p className="tengwar ed-tengwar-fragments" key={`p${fi}`}>
-                        {paragraph.map(this.renderFragment.bind(this, fi))}
+                        {paragraph.map(this.renderFragment.bind(this, fi, true))}
                     </p>
                 )}
                 </div>
@@ -166,46 +203,49 @@ class EDFragmentExplorer extends React.Component {
                 <div className="col-md-12 col-lg-6">
                 {this.props.latin.map((paragraph, fi) => 
                     <p className="ed-elvish-fragments" key={`p${fi}`}>
-                        {paragraph.map(this.renderFragment.bind(this, fi))}
+                        {paragraph.map(this.renderFragment.bind(this, fi, false))}
                     </p>
                 )}
                 </div>
             </div>
             <hr className="hidden-xs hidden-sm hidden-md" />
-            <nav>
-                <ul className="pager">
-                    <li className={classNames('previous', { 'hidden': previousIndex === this.state.fragmentIndex })}>
-                        <a href="#" onClick={ev => this.onNavigate(ev, previousIndex)}>&larr; {this.props.fragments[previousIndex].fragment}</a>
-                    </li>
-                    <li className={classNames('next', { 'hidden': nextIndex === this.state.fragmentIndex })}>
-                        <a href="#" onClick={ev => this.onNavigate(ev, nextIndex)}>{this.props.fragments[nextIndex].fragment} &rarr;</a>
-                    </li>
-                </ul>
-            </nav>
-            {this.props.loading
-                ? <div className="sk-spinner sk-spinner-pulse"></div>
-                : (section ? (<div>
-                    <div>
-                        {section.glosses.map(g => <EDBookGloss gloss={g}
-                                                            language={section.language}
-                                                            key={g.id} 
-                                                            disableTools={true}
-                                                            onReferenceLinkClick={this.onReferenceLinkClick.bind(this)} />)}
+            <div className={classNames('ed-fragment-details', { 'overlay': this.state.detailsAsOverlay })}>
+                <small className="text-info">This is a floating overlay. You can scroll within.</small>
+                <nav>
+                    <ul className="pager">
+                        <li className={classNames('previous', { 'hidden': previousIndex === this.state.fragmentIndex })}>
+                            <a href="#" onClick={ev => this.onNavigate(ev, previousIndex)}>&larr; {this.props.fragments[previousIndex].fragment}</a>
+                        </li>
+                        <li className={classNames('next', { 'hidden': nextIndex === this.state.fragmentIndex })}>
+                            <a href="#" onClick={ev => this.onNavigate(ev, nextIndex)}>{this.props.fragments[nextIndex].fragment} &rarr;</a>
+                        </li>
+                    </ul>
+                </nav>
+                {this.props.loading
+                    ? <div className="sk-spinner sk-spinner-pulse"></div>
+                    : (section ? (<div ref={elem => this.fragmentDetails = elem}>
+                        <div>{fragment.comments ? parser.parse(fragment.comments) : ''}</div>
+                        <div>
+                            {section.glosses.map(g => <EDBookGloss gloss={g}
+                                                                language={section.language}
+                                                                key={g.id} 
+                                                                disableTools={true}
+                                                                onReferenceLinkClick={this.onReferenceLinkClick.bind(this)} />)}
+                        </div>
+                        <hr />
+                        <div>
+                            <span className="label label-success ed-inflection">{fragment.speech}</span>
+                            {' '}
+                            {fragment.inflections.map((infl, i) => 
+                                <span key={`infl${fragment.id}-${i}`}>
+                                    <span className="label label-success ed-inflection">{infl.name}</span>
+                                    &nbsp;
+                                </span>
+                            )}
+                        </div>
                     </div>
-                    <hr />
-                    <div>
-                        <span className="label label-success ed-inflection">{fragment.speech}</span>
-                        {' '}
-                        {fragment.inflections.map((infl, i) => 
-                            <span key={`infl${fragment.id}-${i}`}>
-                                <span className="label label-success ed-inflection">{infl.name}</span>
-                                &nbsp;
-                            </span>
-                        )}
-                    </div>
-                    <div>{fragment.comments ? parser.parse(fragment.comments) : ''}</div>
-                </div>
-            ) : '')}
+                ) : '')}
+            </div>
         </div>;
     }
 }
