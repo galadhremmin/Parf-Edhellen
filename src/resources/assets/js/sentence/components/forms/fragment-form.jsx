@@ -516,7 +516,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
                 ) : (
                     <div className="well">
                         {! this.state.editIsExcluded ? <div className="form-group">
-                            <label htmlFor="ed-sentence-fragment-word" className="control-label">Word</label>
+                            <label htmlFor="ed-sentence-fragment-word" className="control-label">Word (<em>{this.props.fragments[this.state.editIndex].fragment}</em> uninflected)</label>
                             <EDTranslationSelect componentId="ed-sentence-fragment-word" 
                                 languageId={this.props.language_id}
                                 required={true}
