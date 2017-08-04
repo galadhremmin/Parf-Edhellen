@@ -139,8 +139,11 @@ class SentenceController extends Controller
 
             $fragment->type     = intval($fragmentData['type']);
             $fragment->fragment = $fragmentData['fragment'];
-            $fragment->tengwar  = $fragmentData['tengwar'];
 
+            if (isset($fragmentData['tengwar'])) {
+                $fragment->tengwar  = $fragmentData['tengwar'];
+            }
+            
             if (! $fragment->type) {
                 $fragment->comments       = $fragmentData['comments'] ?? ''; // cannot be NULL
                 $fragment->speech_id      = intval($fragmentData['speech_id']);
