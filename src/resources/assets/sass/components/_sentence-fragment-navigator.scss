@@ -1,13 +1,15 @@
 .ed-fragment-navigator {
 
-  a:hover, a:active, a:visited, a {
-    text-decoration: none;
-    color: inherit;
-  }
+  .ed-tengwar-fragments, .ed-elvish-fragments {
+    a:hover, a:active, a:visited, a {
+      text-decoration: none;
+      color: inherit;
+    }
 
-  .tengwar > span.active, a.active {
-    color: $brand-success;
-    text-shadow: 1px 0px 1px $gray-lighter;
+    .tengwar > span.active, a.active {
+      color: $brand-success;
+      text-shadow: 1px 0px 1px $gray-lighter;
+    }
   }
 
   .ed-tengwar-fragments {
