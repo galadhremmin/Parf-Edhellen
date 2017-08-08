@@ -22,15 +22,11 @@ export const setFragments = fragments => {
     }
 };
 
-export const confirmFragments = () => {
-    return (dispatch, getState) => {
-        axios.post('/admin/sentence/parse-fragment/tengwar', { fragments: getState().fragments }).then(response => {
-            dispatch({
-                type: SET_TENGWAR,
-                tengwar: response.data
-            });
-        });
-    }
+export const setTengwar = tengwar => {
+    return {
+        type: SET_TENGWAR,
+        tengwar
+    };
 };
 
 export const setSentenceData = data => {

@@ -394,9 +394,11 @@ class EDFragmentForm extends EDStatefulFormComponent {
             errors: undefined,
             erroneousIndexes: []
         });
-
-        this.props.dispatch(confirmFragments());
-        this.props.history.goForward();
+        
+        axios.post('/admin/sentence/parse-fragment/tengwar', { fragments: this.props.fragments }).then(response => {
+            this.props.dispatch(setTengwar(response.data));
+            this.props.history.goForward();
+        });
     }
 
     onFragmentsInvalid(result) {
