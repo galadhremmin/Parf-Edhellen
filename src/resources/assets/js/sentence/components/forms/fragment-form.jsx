@@ -4,7 +4,7 @@ import axios from 'axios';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { polyfill as enableSmoothScrolling } from 'smoothscroll-polyfill';
-import { requestSuggestions, setFragments, setFragmentData, confirmFragments } from '../../actions/admin';
+import { requestSuggestions, setFragments, setFragmentData, setTengwar } from '../../actions/admin';
 import EDConfig from 'ed-config';
 import { EDStatefulFormComponent } from 'ed-form';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
@@ -394,7 +394,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
             errors: undefined,
             erroneousIndexes: []
         });
-        
+
         axios.post('/admin/sentence/parse-fragment/tengwar', { fragments: this.props.fragments }).then(response => {
             this.props.dispatch(setTengwar(response.data));
             this.props.history.goForward();
