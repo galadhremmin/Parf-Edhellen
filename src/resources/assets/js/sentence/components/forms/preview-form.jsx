@@ -37,7 +37,7 @@ class EDPreviewForm extends React.Component {
         const markdowns = {};
 
         const longDescription = this.props.sentenceLongDescription;
-        if (longDescription && !/^\s*$/.test(longDescription)) {
+        if (longDescription && longDescription && !/^\s*$/.test(longDescription)) {
             markdowns['long_description'] = longDescription;
         }
 
@@ -45,7 +45,7 @@ class EDPreviewForm extends React.Component {
         for (let i = 0; i < fragments.length; i += 1) {
             const data = fragments[i];
 
-            if (! data.interpunctuation && !/^\s*$/.test(data.comments)) {
+            if (! data.interpunctuation && data.comments && !/^\s*$/.test(data.comments)) {
                 markdowns['fragment-' + i] = data.comments;
             }
         }
