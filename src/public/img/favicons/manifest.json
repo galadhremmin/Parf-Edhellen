@@ -1,5 +1,5 @@
 {
-	"name": "My app",
+	"name": "Parf Edhellen",
 	"icons": [
 		{
 			"src": "\/img\/favicons\/android-chrome-36x36.png",
@@ -37,5 +37,7 @@
 			"type": "image\/png",
 			"density": "4.0"
 		}
-	]
+	],
+  "background_color": "#FFFFFF",
+  "theme_color": "#333333"
 }

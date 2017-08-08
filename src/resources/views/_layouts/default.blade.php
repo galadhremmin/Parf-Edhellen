@@ -8,6 +8,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link href="/css/app.css" rel="stylesheet">
+  <meta name="theme-color" value="#333333">
+  <link rel="apple-touch-icon-precomposed" href="/img/favicons/apple-touch-icon-precomposed.png">
+  <link rel="icon" type="image/png" href="/img/favicons/favicon-194x194.png">
+  <link rel="manifest" href="/img/favicons/manifest.json">
   @if (!empty(config('ed.header_view')))
     @include(config('ed.header_view'))
   @endif
