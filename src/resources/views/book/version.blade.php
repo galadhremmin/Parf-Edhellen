@@ -7,10 +7,10 @@
   <h2>Versions of <em>{{ ucfirst($word) }}</em></h2>
   <p>
     All previous versions including the latest version of this word are available below.
-    Comments are inserted between the versions, in an ascending, chronological order.  
+    Comments are inserted between the versions, in descending, chronological order.  
   </p>
   <p>
-    <span class="glyphicon glyphicon-info-sign"></span> You can comment on the latest version by scrolling to the bottom of the page.
+    <span class="glyphicon glyphicon-info-sign"></span> You can comment on the latest version below.
   </p>
   @foreach ($versions as $v)
     <h3>

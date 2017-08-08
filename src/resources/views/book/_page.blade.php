@@ -10,7 +10,11 @@
       <?php $c = 0; ?>
       @foreach ($sections as $data)
         @if (! $data['language']->is_unusual)
-          @include('book._language', $data)
+          @include('book._language', [
+            'language' => $data['language'],
+            'glosses'  => $data['glosses'],
+            'single'   => $single
+          ])
           <?php $c += 1; ?>
         @endif
       @endforeach
@@ -27,7 +31,11 @@
       </div>
       @foreach ($sections as $data)
         @if ($data['language']->is_unusual)
-          @include('book._language', $data)
+          @include('book._language', [
+            'language' => $data['language'],
+            'glosses'  => $data['glosses'],
+            'single'   => $single
+          ])
         @endif
       @endforeach
     </section>

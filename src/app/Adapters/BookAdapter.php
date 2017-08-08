@@ -67,7 +67,8 @@ class BookAdapter
                         'language' => $language,
                         'glosses'  => [ self::adaptTranslation($translation, new Collection([$language]), $inflections, $commentsById, $atomDate, $linker) ]
                     ]
-                ]
+                ],
+                'single' => true
             ], 1);
         }
 
@@ -130,7 +131,8 @@ class BookAdapter
             return self::assignColumnWidths([
                 'word' => $word,
                 'sections' => $sections,
-                'languages' => null
+                'languages' => null,
+                'single' => false
             ], count($allLanguages));
 
         } 
@@ -141,7 +143,8 @@ class BookAdapter
                 'language' => null,
                 'glosses'  => $gloss2LanguageMap[0]
             ]],
-            'languages' => $allLanguages
+            'languages' => $allLanguages,
+            'single'    => false
         ];
     }
 

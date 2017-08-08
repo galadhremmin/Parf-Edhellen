@@ -74,12 +74,9 @@ class EDBookGloss extends React.Component {
                         <span className="glyphicon glyphicon-comment" />{' '}
                         <span className="no">{gloss.comment_count}</span>
                     </a> : ''}
-                    {! this.props.disableTools && gloss.external_link_format && gloss.external_id ?
-                        <a href={gloss.external_link_format.replace(/\{ExternalID\}/g, gloss.external_id)}
-                            title={`Open on ${gloss.translation_group_name} (new tab/window)`}
-                            target="_blank">
-                            <span className="glyphicon glyphicon-globe" />
-                        </a> : ''}
+                    {! this.props.disableTools ? <a href={`/wt/${gloss.id}`} className="translation-link">
+                        <span className="glyphicon glyphicon-share"></span>
+                    </a> : ''}
                     {! this.props.disableTools ?
                     <a href={`/admin/translation/${gloss.id}/edit`} className="ed-admin-tool">
                         <span className="glyphicon glyphicon-edit" />
@@ -137,6 +134,18 @@ class EDBookGloss extends React.Component {
                     {' '}
                     {gloss.etymology ?
                         <span className="word-etymology" rel="trans-etymology">{gloss.etymology}.</span> : ''}
+                    {' '}
+                    {gloss.external_link_format && gloss.external_id ?
+                        <span>
+                            <a href={gloss.external_link_format.replace(/\{ExternalID\}/g, gloss.external_id)}
+                                title={`Goes to ${gloss.translation_group_name} in new tab or window.`}
+                                target="_blank">
+                                <span className="glyphicon glyphicon-globe" />
+                                {' '}
+                                Source
+                            </a>.
+                        </span>
+                        : ''}
                     {' '}
                     {gloss.translation_group_id ?
                         (<span>Group: <span itemProp="sourceOrganization">{gloss.translation_group_name}.</span></span>) : ''}

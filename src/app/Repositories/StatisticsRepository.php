@@ -2,10 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\Sentence;
-use App\Models\Word;
-use App\Models\Translation;
-use App\Models\Account;
+use App\Models\{ Account, ForumPostLike, Sentence, Translation, Word };
 
 class StatisticsRepository
 {
@@ -22,7 +19,8 @@ class StatisticsRepository
             ->where('account_id', $account->id)
             ->count();
 
-        $noOfThanks = 0;
+        $noOfThanks = ForumPostLike::where('account_id', $account->id)
+            ->count();
 
         return [
             'noOfWords'        => $noOfWords,

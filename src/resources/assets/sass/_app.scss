@@ -62,9 +62,8 @@ h1,h2,h3,h4,h5 {
 header h2.tengwar {
   font-size: 140%;
 }
-
-blockquote {
-  color: #333333;
+.clear-left {
+  clear: left;
 }
 .loading {
   -webkit-animation: rotating 1s linear infinite;

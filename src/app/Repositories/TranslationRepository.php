@@ -99,7 +99,7 @@ class TranslationRepository
                 }
                 
             })
-            ->orderBy('t.id', 'asc')
+            ->orderBy('t.id', 'desc')
             ->get()
             ->toArray();
     }

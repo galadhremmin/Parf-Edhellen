@@ -20,6 +20,9 @@
       <span class="glyphicon glyphicon-comment"></span>
       <span class="no">{{ $gloss->comment_count }}</span>
     </a>
+    <a href="{{ $link->translation($gloss->id) }}" class="translation-link">
+      <span class="glyphicon glyphicon-share"></span>
+    </a>
     <a href="{{ route('translation.edit', [ 'id' => $gloss->id ]) }}" class="ed-admin-tool" aria-hidden="true">
       <span class="glyphicon glyphicon-edit"></span>
     </a>
