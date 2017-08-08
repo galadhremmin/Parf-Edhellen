@@ -39,7 +39,7 @@ class BookController extends Controller
         $translation = $this->_translationRepository->getTranslation($id);
         $comments = $this->_forumRepository->getCommentCountForEntities(ForumContext::CONTEXT_TRANSLATION, [$id]);
 
-        $model = $this->_adapter->adaptTranslations([ $translation ], [], $comments, null, true, false);
+        $model = $this->_adapter->adaptTranslations([ $translation ], [], $comments, $translation->word, true, false);
         return view('book.page', $model);
     }
 
