@@ -1,42 +1,46 @@
-h3.trans-word { 
-    a {
-        float: right;
-        margin-left: 5px;
+blockquote.gloss {
+  overflow: hidden;
+  border-left-color: #dedede;
 
-        &.neologism {
-            float: none;
-        }
+  h3.trans-word { 
+    margin-top: 0;
+    
+    a {
+      float: right;
+      margin-left: 5px;
+
+      &.neologism {
+        float: none;
+      }
     }
     .rejected {
-        text-decoration: line-through;
+      text-decoration: line-through;
     }
-}
-.word-type {
+  }
+  .word-type {
     font-style: italic;
-}
-.ed-admin-tool {
+  }
+  .ed-admin-tool {
     display: none;
-}
-.ed-admin .ed-admin-tool {
+  }
+  .ed-admin .ed-admin-tool {
     display: inline-block;
-}
-.ed-comments-no {
+  }
+  .ed-comments-no {
     &:hover, &:active, &:visited {
-        text-decoration: none;
+      text-decoration: none;
     }
 
     > .no {
-        font-size: 80%;
-        line-height: 24px;
-        vertical-align: top;
+      font-size: 80%;
+      line-height: 24px;
+      vertical-align: top;
     }
-}
-.word-footer {
+  }
+  .word-footer {
     max-width: 100%;
     text-overflow: ellipsis;
     display: block;
     overflow: hidden;
-}
-blockquote.gloss {
-    overflow: hidden;
+  }
 }

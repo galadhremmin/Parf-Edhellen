@@ -12,6 +12,11 @@ body {
   
   overflow-y: scroll;
 }
+@media (orientation: landscape) {
+  body {
+    padding-top: $navbar-margin-bottom;
+  }
+}
 blockquote footer {
     font-size: 85%;
     font-family: Helvetica, Arial, sans-serif;
