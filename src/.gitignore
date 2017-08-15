@@ -9,4 +9,5 @@ Homestead.json
 Homestead.yaml
 .env
 *.lock
+package-lock.json
 
