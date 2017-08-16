@@ -33,7 +33,8 @@ class BookAdapter
         if ($numberOfTranslations < 1) {
             return [
                 'word' => $word,
-                'sections' => []
+                'sections' => [],
+                'single' => false
             ];
         }
 
