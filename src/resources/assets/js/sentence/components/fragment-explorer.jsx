@@ -96,6 +96,13 @@ class EDFragmentExplorer extends React.Component {
         this.setState({
             detailsAsOverlay: overlay
         });
+
+        // Add padding to the bottom of the document body to accomodate for the height of the overlay
+        if (overlay) {
+            document.body.classList.add('ed-fragment-details-overlaid');
+        } else {
+            document.body.classList.remove('ed-fragment-details-overlaid');
+        }
     }
 
     /**
