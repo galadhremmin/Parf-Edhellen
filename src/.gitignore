@@ -10,4 +10,4 @@ Homestead.yaml
 .env
 *.lock
 package-lock.json
-
+BingSiteAuth.xml
