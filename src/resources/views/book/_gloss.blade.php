@@ -53,7 +53,7 @@
   
     Published <span itemprop="datePublished">{{ $gloss->created_at->format('Y-m-d H:i') }}</span> by 
     <a href="{{ $link->author($gloss->account_id, $gloss->account_name) }}" itemprop="author" rel="author" title="View profile for {{ $gloss->account_name }}.">
-      {{ $gloss->account_name }}
+      <span itemprop="name">{{ $gloss->account_name }}</span>
     </a>
   </footer>
 </blockquote>
