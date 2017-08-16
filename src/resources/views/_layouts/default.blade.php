@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html lang="{{ config('app.locale') }}">
+<html lang="{{ config('ed.view_locale') }}" prefix="og: http://ogp.me/ns#">
 <head>
-  <title>@yield('title') - Parf Edhellen</title>
+  <title>@yield('title') - {{ config('ed.title') }}</title>
   <meta charset="UTF-8">
+  <meta property="og:title" content="@yield('title') - {{ config('ed.title') }}">
+  <meta property="og:description" content="{{ config('ed.description') }}">
+  <meta property="og:locale" content="{{ config('ed.view_locale') }}">
+  <meta name="description" content="{{ config('ed.description') }}">
   <meta name="keywords" content="sindarin, quenya, noldorin, quendya, elvish, tolkien, nandorin, ilkorin, black speech, westron">
-  <meta name="description" content="Parf Edhellen is one of the most comprehensive elvish dictionaries on the Internet, housing thousands of elvish names, words and phrases.">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <link href="/css/app.css" rel="stylesheet">

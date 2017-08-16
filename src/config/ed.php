@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'title'       => env('ED_SITE_TITLE'),
+    'description' => env('ED_SITE_DESCRIPTION'),
+    'view_locale' => env('ED_SITE_VIEW_LOCALE'),
+
     // optional header. Should refer to a blade file.
     'header_view' => env('ED_HEADER_INCLUDE', ''),
 
