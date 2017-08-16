@@ -74,7 +74,8 @@ class SitemapController extends Controller
             return;
         }
 
-        $translations = Translation::join('words', 'words.id', 'translations.word_id')
+        $translations = Translation::active()
+            ->join('words', 'words.id', 'translations.word_id')
             ->select('words.normalized_word', 'translations.updated_at', 'translations.created_at')
             ->distinct()
             ->skip($from)
