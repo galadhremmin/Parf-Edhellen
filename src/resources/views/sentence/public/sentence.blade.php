@@ -1,7 +1,7 @@
 @inject('link', 'App\Helpers\LinkHelper')
 @extends('_layouts.default')
 
-@section('title', 'Phrases')
+@section('title', $sentence->name . ' (' . $language->name.')')
 @section('body')
 
   {!! Breadcrumbs::render('sentence.public.sentence', $language->id, $language->name,
