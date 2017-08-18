@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use App\Models\SystemError;
 
 class Handler extends ExceptionHandler
 {
@@ -32,6 +33,19 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
+        $request = request();
+        $user = $request->user();
+
+        SystemError::create([
+            'message'    => get_class($exception).(! empty($exception->getMessage()) ? ': '.$exception->getMessage() : ''),
+            'url'        => $request->fullUrl(),
+            'ip'         => $_SERVER['REMOTE_ADDR'],
+            'error'      => $exception->getTraceAsString(),
+            'account_id' => $user !== null
+                ? $user->id 
+                : null
+        ]);
+
         parent::report($exception);
     }
 
