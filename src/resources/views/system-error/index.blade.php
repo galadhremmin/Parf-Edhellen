@@ -18,22 +18,23 @@
         <th>Date</th>
         <th>URL</th>
         <th>User</th>
-        <th>Error</th>
       </tr>
     </thead>
-    <tbody>
     @foreach ($errors as $error)
+    <tbody>
       <tr>
         <td>{{ $error->created_at }}</td>
         <td>{{ $error->url }}</td>
         <td>{{ $error->account_id }} ({{ $error->ip }})</td>
-        <td>
+      </tr>
+      <tr>
+        <td colspan="3">
           {{ $error->message }}
           {{ $error->error }}
         </td>
       </tr>
-    @endforeach
     </tbody>
+    @endforeach
     </table>
   </div>
 @endif

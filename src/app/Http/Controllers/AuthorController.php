@@ -143,16 +143,15 @@ class AuthorController extends Controller
 
     private function getAccount(Request $request, $id)
     {
-        if (!is_numeric($id)) {
+        if (! is_numeric($id)) {
+            $id = 0;
 
-            if (!Auth::check()) {
-                return null;
+            if (Auth::check()) {
+                $user = $request->user();
+                $id = $user->id;
             }
-
-            $user = $request->user();
-            $id = $user->id;
         }
 
-        return Account::find($id);
+        return Account::findOrFail($id);
     }
 }
