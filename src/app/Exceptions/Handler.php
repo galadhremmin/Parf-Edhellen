@@ -40,7 +40,9 @@ class Handler extends ExceptionHandler
             'message'    => get_class($exception).(! empty($exception->getMessage()) ? ': '.$exception->getMessage() : ''),
             'url'        => $request->fullUrl(),
             'ip'         => array_key_exists('REMOTE_ADDR', $_SERVER) ? $_SERVER['REMOTE_ADDR'] : null,
-            'error'      => $exception->getTraceAsString(),
+            'error'      => $this->shouldReport($exception)
+                ? $exception->getTraceAsString()
+                : null,
             'account_id' => $user !== null
                 ? $user->id 
                 : null
