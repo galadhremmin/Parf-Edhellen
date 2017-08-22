@@ -37,24 +37,28 @@
       @endif
       </div>
       <div class="col-md-4 col-sm-12">
-        <h2>Statistics</h2>
+        <h2 class="hidden-md hidden-lg">Statistics</h2>
         <table class="table striped">
           <tbody>
             <tr>
               <th>Words</th>
-              <td>{{ $stats['noOfWords'] }}</td>
+              <td class="text-right">{{ $stats['noOfWords'] }}</td>
             </tr>
             <tr>
               <th>Translations</th>
-              <td>{{ $stats['noOfTranslations'] }}</td>
+              <td class="text-right">{{ $stats['noOfTranslations'] }}</td>
             </tr>
             <tr>
               <th>Phrases</th>
-              <td>{{ $stats['noOfSentences'] }}</td>
+              <td class="text-right">{{ $stats['noOfSentences'] }}</td>
             </tr>
             <tr>
               <th><span class="glyphicon glyphicon-thumbs-up"></span> Thanks</th>
-              <td>{{ $stats['noOfThanks'] }}</td>
+              <td class="text-right">{{ $stats['noOfThanks'] }}</td>
+            </tr>
+            <tr>
+              <th><span class="glyphicon glyphicon-tag"></span> Flashcards</th>
+              <td class="text-right">{{ $stats['noOfFlashcards'] }}</td>
             </tr>
           </tbody>
         </table>

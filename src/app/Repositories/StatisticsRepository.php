@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\{ Account, ForumPostLike, Sentence, Translation, Word };
+use App\Models\{ Account, ForumPostLike, Sentence, Translation, Word, FlashcardResult };
 
 class StatisticsRepository
 {
@@ -22,11 +22,15 @@ class StatisticsRepository
         $noOfThanks = ForumPostLike::where('account_id', $account->id)
             ->count();
 
+        $noOfFlashcards = FlashcardResult::where('account_id', $account->id)
+            ->count();
+
         return [
             'noOfWords'        => $noOfWords,
             'noOfTranslations' => $noOfTranslations,
             'noOfSentences'    => $noOfSentences,
-            'noOfThanks'       => $noOfThanks
+            'noOfThanks'       => $noOfThanks,
+            'noOfFlashcards'   => $noOfFlashcards
         ];
     }
 }
