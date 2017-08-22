@@ -37,6 +37,10 @@ class BookController extends Controller
     public function pageForTranslationId(Request $request, int $id)
     {
         $translation = $this->_translationRepository->getTranslation($id);
+        if ($translation === null) {
+            abort(404);
+        }
+
         $comments = $this->_forumRepository->getCommentCountForEntities(ForumContext::CONTEXT_TRANSLATION, [$id]);
 
         $model = $this->_adapter->adaptTranslations([ $translation ], [], $comments, $translation->word, true, false);
@@ -46,6 +50,10 @@ class BookController extends Controller
     public function versions(Request $request, int $id)
     {
         $translations = $this->_translationRepository->getVersions($id);
+        if (count($translations) < 1) {
+            abort(404);
+        }
+
         $model = $this->_adapter->adaptTranslations($translations, [], [], null, false, false);
 
         return view('book.version', [

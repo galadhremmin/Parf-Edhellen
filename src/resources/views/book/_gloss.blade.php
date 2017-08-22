@@ -23,9 +23,12 @@
     <a href="{{ $link->translation($gloss->id) }}" class="translation-link">
       <span class="glyphicon glyphicon-share"></span>
     </a>
+  
+    @if (Auth::check())
     <a href="{{ route('translation.edit', [ 'id' => $gloss->id ]) }}" class="ed-admin-tool" aria-hidden="true" rel="nofollow">
       <span class="glyphicon glyphicon-edit"></span>
     </a>
+    @endif
     @endif
   </h3>
 

@@ -5,6 +5,8 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\DB;
+
 use App\Models\SystemError;
 
 class Handler extends ExceptionHandler
@@ -33,20 +35,25 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
-        $request = request();
-        $user = $request->user();
+        $databaseException = $exception instanceof \PDOException;
 
-        SystemError::create([
-            'message'    => get_class($exception).(! empty($exception->getMessage()) ? ': '.$exception->getMessage() : ''),
-            'url'        => $request->fullUrl(),
-            'ip'         => array_key_exists('REMOTE_ADDR', $_SERVER) ? $_SERVER['REMOTE_ADDR'] : null,
-            'error'      => $this->shouldReport($exception)
-                ? $exception->getTraceAsString()
-                : null,
-            'account_id' => $user !== null
-                ? $user->id 
-                : null
-        ]);
+        // make sure that it is possible to establish a database connection
+        if (! ($databaseException && $exception->getCode() === 2002)) {
+            $request = request();
+            $user = $request->user();
+
+            SystemError::create([
+                'message'    => get_class($exception).(! empty($exception->getMessage()) ? ': '.$exception->getMessage() : ''),
+                'url'        => $request->fullUrl(),
+                'ip'         => array_key_exists('REMOTE_ADDR', $_SERVER) ? $_SERVER['REMOTE_ADDR'] : null,
+                'error'      => $this->shouldReport($exception)
+                    ? $exception->getTraceAsString()
+                    : null,
+                'account_id' => $user !== null
+                    ? $user->id 
+                    : null
+            ]);
+        }
 
         parent::report($exception);
     }
