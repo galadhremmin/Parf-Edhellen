@@ -20,12 +20,6 @@ blockquote.gloss {
   .word-type {
     font-style: italic;
   }
-  .ed-admin-tool {
-    display: none;
-  }
-  .ed-admin .ed-admin-tool {
-    display: inline-block;
-  }
   .ed-comments-no {
     &:hover, &:active, &:visited {
       text-decoration: none;
@@ -43,4 +37,10 @@ blockquote.gloss {
     display: block;
     overflow: hidden;
   }
+}
+.ed-admin-tool {
+  display: none;
+}
+body.ed-admin .ed-admin-tool {
+  display: inline-block;
 }
