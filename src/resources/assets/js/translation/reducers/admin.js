@@ -16,13 +16,14 @@ const EDTranslationAdminReducer = (state = {
     speech_id: 0,
     translation_group_id: 0,
     comments: '',
+    notes: '',
     sense: undefined,
-    _keywords: [],
     is_uncertain: false,
     is_rejected: false,
     languages: EDConfig.languages(),
     groups: undefined,
-    loading: true
+    loading: true,
+    _keywords: []
 }, action) => {
     switch (action.type) {
         case ED_SET_TRANSLATION_DATA:

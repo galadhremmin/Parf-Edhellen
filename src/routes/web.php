@@ -66,17 +66,36 @@ Route::get('/federated-auth/callback/{providerName}', 'SocialAuthController@call
 // Sitemap
 Route::get('sitemap/{context}', 'SitemapController@index');
 
-// Resources
+// Restricted resources
+Route::group([ 
+    'namespace'  => 'Resources', 
+    'prefix'     => 'contribution', 
+    'middleware' => ['auth']
+], function () {
+
+    // Contribute
+    Route::resource('translation-review', 'TranslationReviewController');
+});
+
+// Admin resources
 Route::group([ 
         'namespace'  => 'Resources', 
         'prefix'     => 'admin', 
         'middleware' => ['auth', 'auth.require-role:Administrators'] 
     ], function () {
 
-    Route::resource('speech', 'SpeechController');
-    Route::resource('inflection', 'InflectionController');
-    Route::resource('sentence', 'SentenceController');
-    Route::resource('translation', 'TranslationController');
+    Route::resource('inflection', 'InflectionController', [
+        'except' => ['show']
+    ]);
+    Route::resource('sentence', 'SentenceController', [
+        'except' => ['show']
+    ]);
+    Route::resource('speech', 'SpeechController', [
+        'except' => ['show']
+    ]);
+    Route::resource('translation', 'TranslationController', [
+        'except' => ['show']
+    ]);
     Route::resource('system-error', 'SystemErrorController', ['only' => [
         'index'
     ]]);
@@ -88,7 +107,7 @@ Route::group([
     Route::get('translation/list/{id}', 'TranslationController@listForLanguage')->name('translation.list');
 });
 
-// API
+// Public unrestricted API
 Route::group([ 
         'namespace' => 'Api\v1', 
         'prefix'    => 'api/v1'
@@ -108,6 +127,7 @@ Route::group([
     ]]);
 });
 
+// Public, throttled API
 Route::group([ 
         'namespace'  => 'Api\v1', 
         'prefix'     => 'api/v1',
@@ -118,7 +138,7 @@ Route::group([
     Route::post('utility/error',                 [ 'uses' => 'UtilityApiController@logError' ]);
 });
 
-// API
+// Restricted API
 Route::group([ 
         'namespace'  => 'Api\v1', 
         'prefix'     => 'api/v1',
@@ -133,7 +153,7 @@ Route::group([
     Route::delete('forum/like/{id}', [ 'uses' => 'ForumApiController@destroyLike' ]);
 });
 
-// API for administrators
+// Admin API
 Route::group([ 
         'namespace' => 'Api\v1', 
         'prefix'    => 'api/v1',

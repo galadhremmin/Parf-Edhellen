@@ -25,10 +25,15 @@ window.addEventListener('load', function () {
         applyMiddleware(thunkMiddleware)
     );
 
+    const container = document.getElementById('ed-translation-form');
+    const admin = container.dataset['admin'] === undefined
+        ? true
+        : /true/i.test(container.dataset['admin']);
+
     ReactDOM.render(
         <Provider store={store}>
-            <EDTranslationForm />
+            <EDTranslationForm admin={admin} />
         </Provider>,
-        document.getElementById('ed-translation-form')
+        container
     );
 });

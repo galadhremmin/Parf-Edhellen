@@ -146,6 +146,32 @@ Breadcrumbs::register('translation.list', function ($breadcrumbs, App\Models\Lan
 });
 
 // //////////////////////////////////////////////////////////////////////////////////////////////
+// Dashboard > Contributions
+Breadcrumbs::register('translation-review.index', function ($breadcrumbs)
+{
+    $breadcrumbs->parent('dashboard');
+    $breadcrumbs->push('Contributions', route('translation-review.index'));
+});
+
+Breadcrumbs::register('translation-review.create', function ($breadcrumbs)
+{
+    $breadcrumbs->parent('translation-review.index');
+    $breadcrumbs->push('Contribute', route('translation-review.create'));
+});
+
+Breadcrumbs::register('translation-review.edit', function ($breadcrumbs, int $id)
+{
+    $breadcrumbs->parent('translation-review.index');
+    $breadcrumbs->push('Contribute', route('translation-review.edit', ['id' => $id]));
+});
+
+Breadcrumbs::register('translation-review.show', function ($breadcrumbs, int $id)
+{
+    $breadcrumbs->parent('translation-review.index');
+    $breadcrumbs->push('Contribution #'.$id, route('translation-review.show', ['id' => $id]));
+});
+
+// //////////////////////////////////////////////////////////////////////////////////////////////
 // Dashboard > Flashcards
 
 Breadcrumbs::register('flashcard', function ($breadcrumbs)
