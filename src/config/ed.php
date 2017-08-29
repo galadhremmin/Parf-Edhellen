@@ -21,5 +21,8 @@ return [
     ],
 
     // Sitemap for unlocking sitemap view 
-    'sitemap-key' => env('ED_SITEMAP_KEY', '')
+    'sitemap-key' => env('ED_SITEMAP_KEY', ''),
+
+    // Logging to database?
+    'system_errors_logging' => env('ED_SYSTEM_ERRORS_LOGGING', false)
 ];

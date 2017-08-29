@@ -91,7 +91,7 @@ return [
     | such as APC or Memcached. Laravel makes it easy to dig right in.
     |
     */
-
+    /*
     'redis' => [
 
         'client' => 'predis',
@@ -104,5 +104,6 @@ return [
         ],
 
     ],
+    */
 
 ];

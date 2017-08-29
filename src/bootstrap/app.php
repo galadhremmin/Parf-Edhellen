@@ -38,7 +38,14 @@ $app->singleton(
 
 $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
-    App\Exceptions\Handler::class
+    function ($app) {
+        // DB logging isn't by design enabled in CLI
+        $handlerType = ! $app->runningInConsole() && config('ed.system_errors_logging') 
+            ? App\Exceptions\DBHandler::class
+            : App\Exceptions\Handler::class;
+
+        return $app->make($handlerType);
+    }
 );
 
 /*
