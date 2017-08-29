@@ -4,6 +4,8 @@ namespace App\Models;
 
 class Sentence extends ModelBase
 {
+    use Traits\HasAccountTrait;
+    
     public function sentence_fragments() 
     {
         return $this->hasMany(SentenceFragment::class)

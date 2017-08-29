@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use DateTimeInterface;
 
 abstract class ModelBase extends Model
 {
@@ -11,4 +12,15 @@ abstract class ModelBase extends Model
         'updated_at'
         // 'deleted_at' <-- presently not supported
     ];
+    
+    /**
+     * Prepare a date for array / JSON serialization.
+     *
+     * @param  \DateTimeInterface  $date
+     * @return string
+     */
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->toAtomString();
+    }
 }

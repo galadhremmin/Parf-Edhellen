@@ -18,38 +18,43 @@
 
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h2 class="panel-title">About you</h2>
+          <h2 class="panel-title"><span class="glyphicon glyphicon-user"></span> About you</h2>
         </div>
         <div class="panel-body">
           <ul>
-            <li><a href="{{ route('author.my-profile') }}">Profile</a></li>
+            <li><a href="{{ route('author.my-profile') }}">Your profile</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h2 class="panel-title"><span class="glyphicon glyphicon-globe"></span> Community</h2>
+        </div>
+        <div class="panel-body">
+          <ul>
+            <li>
+              <a href="{{ route('flashcard') }}">Flashcards</a>
+              @if ($noOfFlashcards)
+              <span class="badge badge-info">{{ $noOfFlashcards }}</span>
+              @endif
+            </li>
+            <li>
+              <a href="{{ route('translation-review.index') }}">Contributions</a>
+              @if ($noOfContributions)
+              <span class="badge badge-info">{{ $noOfContributions }}</span>
+              @endif
+            </li>
           </ul>
         </div>
       </div>
 
     </div>
     <div class="col-md-6">
-
+      @if ($user->isAdministrator())
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h2 class="panel-title">Community</h2>
-        </div>
-        <div class="panel-body">
-          <ul>
-            <li><a href="{{ route('flashcard') }}">Flashcards</a></li>
-          </ul>
-        </div>
-      </div>
-
-    </div>
-
-  </div>
-  @if ($user->memberOf('Administrators'))
-  <div class="row">
-    <div class="col-md-6">
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h2 class="panel-title">Administration</h2>
+          <h2 class="panel-title"><span class="glyphicon glyphicon-cog"></span> Administration</h2>
         </div>
         <div class="panel-body">
           <ul>
@@ -64,7 +69,8 @@
           </ul>
         </div>
       </div>
+      @endif
     </div>
+
   </div>
-  @endif
 @endsection

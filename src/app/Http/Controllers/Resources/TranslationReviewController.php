@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Resources;
 
+use App\Adapters\BookAdapter;
 use App\Models\{ Translation, TranslationReview, Keyword, Word, Language };
 
 use App\Http\Controllers\Controller;
@@ -10,9 +11,21 @@ use Illuminate\Support\Facades\Auth;
 
 class TranslationReviewController extends TranslationControllerBase
 {
+    protected $_bookAdapter;
+
+    public function __construct(BookAdapter $adapter) 
+    {
+        $this->_bookAdapter = $adapter;
+    }
+
     public function index(Request $request)
     {
-        return view('translation-review.index');
+        $reviews = TranslationReview::forAccount($request->user()->id)
+            ->get();
+
+        return view('translation-review.index', [
+            'reviews' => $reviews
+        ]);
     }
 
     public function show(Request $request, $id) 
@@ -30,9 +43,10 @@ class TranslationReviewController extends TranslationControllerBase
         $translation->account_name = $review->account->nickname;
         $translation->type         = $translation->speech->name;
 
-        return view('translation-review.show', [
+        $translationData = $this->_bookAdapter->adaptTranslations([$translation]);
+
+        return view('translation-review.show', $translationData + [
             'review'      => $review,
-            'translation' => $translation,
             'keywords'    => $keywords
         ]);
     }
@@ -57,7 +71,7 @@ class TranslationReviewController extends TranslationControllerBase
 
         $review = new TranslationReview;
         $review->account_id = $request->user()->id;
-        $review->is_approved = 0;
+        $review->is_approved = null;
 
         $this->saveReview($review, $request);
 
@@ -97,9 +111,9 @@ class TranslationReviewController extends TranslationControllerBase
     protected function saveReview(TranslationReview $review, Request $request)
     {
         $translation = new Translation;
-        list('word' => $word, 'sense' => $sense, 'keywords' => $keywords) = 
-            $this->mapTranslation($translation, $request);
-        
+        $map = $this->mapTranslation($translation, $request);
+        extract($map);
+
         $review->language_id = $translation->language_id;
         $review->word        = $word;
         $review->sense       = $sense;

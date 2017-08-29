@@ -140,8 +140,8 @@ class TranslationController extends TranslationControllerBase
 
     protected function saveTranslation(Translation $translation, Request $request)
     {
-        list('word' => $word, 'sense' => $sense, 'keywords' => $keywords) = 
-            $this->mapTranslation($translation, $request);
+        $map = $this->mapTranslation($translation, $request);
+        extract($map);
 
         return $this->_translationRepository->saveTranslation($word, $sense, $translation, $keywords);
     }

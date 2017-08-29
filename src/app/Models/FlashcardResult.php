@@ -4,6 +4,8 @@ namespace App\Models;
 
 class FlashcardResult extends ModelBase
 {
+    use Traits\HasAccountTrait;
+    
     public function flashcard() 
     {
         return $this->belongsTo(Flashcard::class);

@@ -149,7 +149,7 @@ class BookAdapter
         ];
     }
 
-    private static function adaptTranslation(\stdClass $translation, Collection $languages, array $inflections, array $commentsById, 
+    private static function adaptTranslation($translation, Collection $languages, array $inflections, array $commentsById, 
         bool $atomDate, LinkHelper $linker) 
     {
         // Filter among the inflections, looking for references to the specified translation.
@@ -168,9 +168,14 @@ class BookAdapter
         }); // <-- infer success
 
         // Convert dates
-        $translation->created_at = Carbon::parse($translation->created_at);
-        if ($atomDate) {
-            $translation->created_at = $translation->created_at->toAtomString();
+        if (! ($translation->created_at instanceof Carbon)) {
+            $date = Carbon::parse($translation->created_at);
+            
+            if ($atomDate) {
+                $translation->created_at = $date->toAtomString();
+            } else {
+                $translation->created_at = $date;
+            }
         }
 
         // Create links upon the first element of each sentence fragment.
@@ -200,7 +205,7 @@ class BookAdapter
      * @param $translation
      * @param $word
      */
-    private static function calculateRating(\stdClass $translation, string $word)
+    private static function calculateRating($translation, string $word)
     {
         $rating = 0;
 

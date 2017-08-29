@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class TranslationReview extends ModelBase
 {
+    use Traits\HasAccountTrait;
+
     protected $fillable = [ 'translation_id' ];
     protected $dates = [
         'created_at',

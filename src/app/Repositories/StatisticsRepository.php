@@ -8,21 +8,21 @@ class StatisticsRepository
 {
     public function getStatisticsForAccount(Account $account)
     {
-        $noOfWords = Word::where('account_id', '=', $account->id)
+        $noOfWords = Word::forAccount($account->id)
             ->count();
 
         $noOfTranslations = Translation::notDeleted()
-            ->where('account_id', $account->id)
+            ->forAccount($account->id)
             ->count();
 
         $noOfSentences = Sentence::approved()
-            ->where('account_id', $account->id)
+            ->forAccount($account->id)
             ->count();
 
-        $noOfThanks = ForumPostLike::where('account_id', $account->id)
+        $noOfThanks = ForumPostLike::forAccount($account->id)
             ->count();
 
-        $noOfFlashcards = FlashcardResult::where('account_id', $account->id)
+        $noOfFlashcards = FlashcardResult::forAccount($account->id)
             ->count();
 
         return [

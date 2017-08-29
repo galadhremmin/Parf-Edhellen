@@ -104,7 +104,7 @@ class EDTranslationForm extends EDStatefulFormComponent {
             errors: undefined
         });
 
-        //window.location.href = request.data.url;
+        window.location.href = request.data.url;
     }
 
     onValidateFail(request, payload) {
