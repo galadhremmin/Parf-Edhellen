@@ -1,7 +1,8 @@
 import {
     ED_SET_TRANSLATION_DATA, 
     ED_REQUEST_TRANSLATION_GROUPS,
-    ED_RECEIVE_TRANSLATION_GROUPS
+    ED_RECEIVE_TRANSLATION_GROUPS,
+    ED_COMPONENT_IS_READY
 } from '../reducers/admin';
 import axios from 'axios';
 import EDConfig from 'ed-config';
@@ -28,3 +29,7 @@ export const requestTranslationGroups = () => (dispatch, getState) => {
         });
     });
 };
+
+export const componentIsReady = () => ({
+    type: ED_COMPONENT_IS_READY
+});

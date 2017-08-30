@@ -162,7 +162,7 @@ Breadcrumbs::register('translation-review.create', function ($breadcrumbs)
 Breadcrumbs::register('translation-review.edit', function ($breadcrumbs, int $id)
 {
     $breadcrumbs->parent('translation-review.index');
-    $breadcrumbs->push('Contribute', route('translation-review.edit', ['id' => $id]));
+    $breadcrumbs->push('Change contribution', route('translation-review.edit', ['id' => $id]));
 });
 
 Breadcrumbs::register('translation-review.show', function ($breadcrumbs, int $id)
@@ -175,6 +175,24 @@ Breadcrumbs::register('translation-review.list', function ($breadcrumbs)
 {
     $breadcrumbs->parent('dashboard');
     $breadcrumbs->push('Administration of contributions', route('translation-review.list'));
+});
+
+Breadcrumbs::register('translation-review.confirm-destroy', function ($breadcrumbs, int $id)
+{
+    $breadcrumbs->parent('translation-review.show', $id);
+    $breadcrumbs->push('Confirm deletion', route('translation-review.confirm-destroy', ['id' => $id]));
+});
+
+Breadcrumbs::register('translation-review.confirm-reject', function ($breadcrumbs, int $id)
+{
+    $breadcrumbs->parent('translation-review.show', $id);
+    $breadcrumbs->push('Confirm rejection', route('translation-review.confirm-reject', ['id' => $id]));
+});
+
+Breadcrumbs::register('translation-review.confirm-approve', function ($breadcrumbs, int $id)
+{
+    $breadcrumbs->parent('translation-review.show', $id);
+    $breadcrumbs->push('Approved!', route('translation-review.confirm-approve', ['id' => $id]));
 });
 
 // //////////////////////////////////////////////////////////////////////////////////////////////

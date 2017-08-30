@@ -69,12 +69,13 @@ Route::get('sitemap/{context}', 'SitemapController@index');
 // Restricted resources
 Route::group([ 
     'namespace'  => 'Resources', 
-    'prefix'     => 'contribution', 
+    'prefix'     => 'dashboard', 
     'middleware' => ['auth']
 ], function () {
 
     // Contribute
     Route::resource('translation-review', 'TranslationReviewController');
+    Route::get('translation-review/{id}/destroy', 'TranslationReviewController@confirmDestroy')->name('translation-review.confirm-destroy');
 });
 
 // Admin resources
@@ -105,7 +106,11 @@ Route::group([
     Route::post('sentence/parse-fragment/{name}', 'SentenceController@parseFragments');
 
     Route::get('translation/list/{id}', 'TranslationController@listForLanguage')->name('translation.list');
+
     Route::get('translation-review/list', 'TranslationReviewController@list')->name('translation-review.list');
+    Route::get('translation-review/{id}/reject', 'TranslationReviewController@confirmReject')->name('translation-review.confirm-reject');
+    Route::get('translation-review/{id}/approve', 'TranslationReviewController@confirmApprove')->name('translation-review.confirm-approve');
+    
 });
 
 // Public unrestricted API

@@ -3,6 +3,7 @@ import EDConfig from 'ed-config';
 export const ED_SET_TRANSLATION_DATA = 'ED_SET_TRANSLATION_DATA';
 export const ED_REQUEST_TRANSLATION_GROUPS = 'ED_REQUEST_TRANSLATION_GROUPS';
 export const ED_RECEIVE_TRANSLATION_GROUPS = 'ED_RECEIVE_TRANSLATION_GROUPS';
+export const ED_COMPONENT_IS_READY         = 'ED_COMPONENT_IS_READY';
 
 const EDTranslationAdminReducer = (state = {
     id: 0,
@@ -41,6 +42,12 @@ const EDTranslationAdminReducer = (state = {
             return {
                 ...state,
                 groups: action.groups,
+                loading: false
+            };
+        
+        case ED_COMPONENT_IS_READY:
+            return {
+                ...state,
                 loading: false
             };
 

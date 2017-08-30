@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import axios from 'axios';
 import { polyfill as enableSmoothScrolling } from 'smoothscroll-polyfill';
 import EDConfig from 'ed-config';
-import { requestTranslationGroups } from '../../actions/admin';
+import { requestTranslationGroups, componentIsReady } from '../../actions/admin';
 import { EDStatefulFormComponent } from 'ed-form';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
 import EDLanguageSelect from 'ed-components/language-select';
@@ -42,7 +42,10 @@ class EDTranslationForm extends EDStatefulFormComponent {
     }
 
     componentWillMount() {
-        this.props.dispatch(requestTranslationGroups());
+        this.props.dispatch(this.props.admin
+            ? requestTranslationGroups() // admin view requires information from the server
+            : componentIsReady()
+        );
     }
 
     componentDidMount() {
@@ -247,7 +250,7 @@ class EDTranslationForm extends EDStatefulFormComponent {
             <nav>
                 <ul className="pager">
                     <li className="previous">
-                        <a href="/admin/translation">
+                        <a href={this.props.admin ? '/admin/translation' : '/dashboard/translation-review'}>
                             <span className="glyphicon glyphicon-remove"></span>
                             {' '}
                             Cancel

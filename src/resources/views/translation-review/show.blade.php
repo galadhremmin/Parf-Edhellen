@@ -45,15 +45,22 @@
     @endforeach
   </div>
 
-  @if (@Auth::user()->isAdministrator() && $review->is_approved === null)
   <div class="text-right">
     <div class="btn-group" role="group">
-      <a href="{{ route('translation-review.list') }}" class="btn btn-default">Cancel</a>
-      <a href="#"l class="btn btn-danger"><span class="glyphicon glyphicon-remove-sign"></span> Delete</a>
-      <a href="#" class="btn btn-warning"><span class="glyphicon glyphicon-minus-sign"></span> Reject</a>
-      <a href="#" class="btn btn-success"><span class="glyphicon glyphicon-ok-sign"></span> Approve</a>
+      <a href="{{ route(Auth::user()->isAdministrator() ? 'translation-review.list' : 'translation-review.index') }}" class="btn btn-default">Show all</a> 
+      <a href="{{ route('translation-review.edit', ['id' => $review->id]) }}" class="btn btn-default">Change</a> 
+      @if ($review->is_approved === null)
+      <a href="{{ route('translation-review.confirm-destroy', ['id' => $review->id]) }}" class="btn btn-danger"><span class="glyphicon glyphicon-remove-sign"></span> Delete</a>
+      @endif
+      @if (Auth::user()->isAdministrator() && $review->is_approved === null)
+      <a href="{{ route('translation-review.confirm-reject', ['id' => $review->id]) }}" class="btn btn-warning">
+        <span class="glyphicon glyphicon-minus-sign"></span> Reject
+      </a>
+      <a href="{{ route('translation-review.confirm-approve', ['id' => $review->id]) }}" class="btn btn-success">
+        <span class="glyphicon glyphicon-ok-sign"></span> Approve
+      </a>
+      @endif
     </div>
   </div>
-  @endif
 
 @endsection

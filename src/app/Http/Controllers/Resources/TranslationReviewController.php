@@ -44,6 +44,8 @@ class TranslationReviewController extends TranslationControllerBase
     public function show(Request $request, $id) 
     {
         $review = TranslationReview::findOrFail($id);
+        $this->requestPermission($request, $review);
+
         $keywords = json_decode($review->keywords);
 
         $translationData = json_decode($review->payload, true) + [ 
@@ -72,8 +74,39 @@ class TranslationReviewController extends TranslationControllerBase
     public function edit(Request $request, int $id) 
     {
         $review = TranslationReview::findOrFail($id);
+        $this->requestPermission($request, $review);
 
          return view('translation-review.edit', [
+            'review' => $review
+        ]);
+    }
+
+    public function confirmDestroy(Request $request, int $id)
+    {
+        $review = TranslationReview::findOrFail($id);
+        $this->requestPermission($request, $review);
+
+        return view('translation-review.confirm-destroy', [
+            'review' => $review
+        ]);
+    }
+
+    public function confirmReject(Request $request, int $id)
+    {
+        $review = TranslationReview::findOrFail($id);
+        $this->requestPermission($request, $review);
+
+        return view('translation-review.confirm-reject', [
+            'review' => $review
+        ]);
+    }
+
+    public function confirmApprove(Request $request, int $id)
+    {
+        $review = TranslationReview::findOrFail($id);
+        $this->requestPermission($request, $review);
+
+        return view('translation-review.confirm-approve', [
             'review' => $review
         ]);
     }
@@ -99,6 +132,8 @@ class TranslationReviewController extends TranslationControllerBase
         $this->validateRequest($request, $id, true);
 
         $review = TranslationReview::findOrFail($id);
+        $this->requestPermission($request, $review);
+        
         $this->saveReview($review, $request);
 
         return response([
@@ -109,22 +144,37 @@ class TranslationReviewController extends TranslationControllerBase
 
     public function destroy(Request $request, int $id) 
     {
-        $this->validate($request, [
-            'id'             => 'required|numeric|exists:translations,id',
-            'replacement_id' => 'required|numeric|exists:translations,id'
-        ]);
+        $review = TranslationReview::findOrFail($id);
+        $this->requestPermission($request, $review);
 
-        $replacementId = intval($request->input('replacement_id'));
-        $ok = $this->_translationRepository->deleteTranslationWithId($id, $replacementId);
-        return $ok
-            ? response(null, 204)
-            : response(null, 400);
+        $review->delete();
+        
+        return $request->user()->isAdministrator()
+            ? redirect()->route('translation-review.list')
+            : redirect()->route('translation-review.index');
+    }
+
+    protected function requestPermission(Request $request, TranslationReview $model)
+    {
+        $user = $request->user();
+
+        if ($user->isAdministrator()) {
+            return;
+        }
+
+        if ($user->id === $model->account_id) {
+            return;
+        }
+
+        abort(401);
     }
 
     protected function saveReview(TranslationReview $review, Request $request)
     {
         $translation = new Translation;
         $map = $this->mapTranslation($translation, $request);
+        
+        $translation->account_id = $review->account_id;
         extract($map);
 
         $review->language_id = $translation->language_id;
