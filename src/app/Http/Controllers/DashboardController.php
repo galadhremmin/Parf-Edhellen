@@ -14,11 +14,15 @@ class DashboardController extends Controller
 
         $noOfFlashcards = FlashcardResult::forAccount($user->id)->count();
         $noOfContributions = TranslationReview::forAccount($user->id)->count();
+        $noOfPendingContributions = $user->isAdministrator()
+            ? TranslationReview::whereNull('is_approved')->count()
+            : 0;
 
         return view('dashboard.index', [
             'user' => $request->user(),
             'noOfFlashcards' => $noOfFlashcards,
-            'noOfContributions' => $noOfContributions
+            'noOfContributions' => $noOfContributions,
+            'noOfPendingContributions' => $noOfPendingContributions
         ]);
     }
 }

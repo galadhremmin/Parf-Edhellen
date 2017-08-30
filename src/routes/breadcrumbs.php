@@ -171,6 +171,12 @@ Breadcrumbs::register('translation-review.show', function ($breadcrumbs, int $id
     $breadcrumbs->push('Contribution #'.$id, route('translation-review.show', ['id' => $id]));
 });
 
+Breadcrumbs::register('translation-review.list', function ($breadcrumbs)
+{
+    $breadcrumbs->parent('dashboard');
+    $breadcrumbs->push('Administration of contributions', route('translation-review.list'));
+});
+
 // //////////////////////////////////////////////////////////////////////////////////////////////
 // Dashboard > Flashcards
 

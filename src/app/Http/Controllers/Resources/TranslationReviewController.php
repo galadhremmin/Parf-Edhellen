@@ -27,6 +27,19 @@ class TranslationReviewController extends TranslationControllerBase
             'reviews' => $reviews
         ]);
     }
+    
+    public function list(Request $request)
+    {
+        $pendingReviews  = TranslationReview::whereNull('is_approved')->get();
+        $rejectedReviews = TranslationReview::where('is_approved', 0)->get();
+        $approvedReviews = TranslationReview::where('is_approved', 1)->get();
+
+        return view('translation-review.list', [
+            'approvedReviews' => $approvedReviews,
+            'rejectedReviews' => $rejectedReviews,
+            'pendingReviews'  => $pendingReviews
+        ]);
+    }
 
     public function show(Request $request, $id) 
     {

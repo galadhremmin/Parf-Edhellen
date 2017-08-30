@@ -36,13 +36,13 @@
             <li>
               <a href="{{ route('flashcard') }}">Flashcards</a>
               @if ($noOfFlashcards)
-              <span class="badge badge-info">{{ $noOfFlashcards }}</span>
+              <span class="label label-info">{{ $noOfFlashcards }}</span>
               @endif
             </li>
             <li>
               <a href="{{ route('translation-review.index') }}">Contributions</a>
               @if ($noOfContributions)
-              <span class="badge badge-info">{{ $noOfContributions }}</span>
+              <span class="label label-info">{{ $noOfContributions }}</span>
               @endif
             </li>
           </ul>
@@ -58,10 +58,16 @@
         </div>
         <div class="panel-body">
           <ul>
-            <li><a href="{{ route('speech.index') }}">Type of speeches</a></li>
+            <li>
+              <a href="{{ route('translation-review.list') }}">Contributions</a>
+              @if ($noOfPendingContributions > 0)
+              <span class="label label-info">{{ $noOfPendingContributions }}</span>
+              @endif
+            </li>
             <li><a href="{{ route('inflection.index') }}">Inflections</a></li>
-            <li><a href="{{ route('translation.index') }}">Words</a></li>
+            <li><a href="{{ route('speech.index') }}">Type of speeches</a></li>
             <li><a href="{{ route('sentence.index') }}">Phrases</a></li>
+            <li><a href="{{ route('translation.index') }}">Words</a></li>
           </ul>
           <hr>
           <ul>

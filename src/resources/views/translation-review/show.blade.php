@@ -45,10 +45,15 @@
     @endforeach
   </div>
 
-  @if (@Auth::user()->isAdministrator())
-  
-  @else
-    
+  @if (@Auth::user()->isAdministrator() && $review->is_approved === null)
+  <div class="text-right">
+    <div class="btn-group" role="group">
+      <a href="{{ route('translation-review.list') }}" class="btn btn-default">Cancel</a>
+      <a href="#"l class="btn btn-danger"><span class="glyphicon glyphicon-remove-sign"></span> Delete</a>
+      <a href="#" class="btn btn-warning"><span class="glyphicon glyphicon-minus-sign"></span> Reject</a>
+      <a href="#" class="btn btn-success"><span class="glyphicon glyphicon-ok-sign"></span> Approve</a>
+    </div>
+  </div>
   @endif
 
 @endsection

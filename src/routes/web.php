@@ -105,6 +105,7 @@ Route::group([
     Route::post('sentence/parse-fragment/{name}', 'SentenceController@parseFragments');
 
     Route::get('translation/list/{id}', 'TranslationController@listForLanguage')->name('translation.list');
+    Route::get('translation-review/list', 'TranslationReviewController@list')->name('translation-review.list');
 });
 
 // Public unrestricted API
