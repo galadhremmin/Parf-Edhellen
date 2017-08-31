@@ -92,9 +92,9 @@ class EDTranslationForm extends EDStatefulFormComponent {
             }
         } else {
             if (payload.id) {
-                promise = axios.put(`/contribution/translation-review/${payload.id}`, payload);
+                promise = axios.put(`/dashboard/translation-review/${payload.id}`, payload);
             } else {
-                promise = axios.post('/contribution/translation-review', payload);
+                promise = axios.post('/dashboard/translation-review', payload);
             }
         }
 

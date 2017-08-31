@@ -21,4 +21,10 @@ class Sense extends ModelBase
     {
         return $this->hasMany(Keyword::class);
     }
+
+    public function scopeForString($query, string $word)
+    {
+        $query->join('words', 'senses.id', 'words.id')
+            ->where('words.word', $word);
+    }
 }

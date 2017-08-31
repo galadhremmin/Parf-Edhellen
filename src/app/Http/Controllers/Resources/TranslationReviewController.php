@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Resources;
 
 use App\Adapters\BookAdapter;
-use App\Models\{ Translation, TranslationReview, Keyword, Word, Language };
-
+use App\Models\{ Translation, TranslationReview, Word, Sense };
 use App\Http\Controllers\Controller;
+
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -73,11 +74,36 @@ class TranslationReviewController extends TranslationControllerBase
 
     public function edit(Request $request, int $id) 
     {
+        // retrieve the review
         $review = TranslationReview::findOrFail($id);
         $this->requestPermission($request, $review);
 
+        // retrieve word and sense based on the information specified in the review object. If the word does not exist in 
+        // the database, create a new instance of the model for the word.
+        $word = Word::forString($review->word)->firstOrNew(['word' => $review->word]);
+        $sense = Sense::forString($review->word)->firstOrNew([]);
+        if (! $sense->id) {
+            // _word_ is actually a navigation property.
+            $sense->word = Word::forString($review->sense)->firstOrNew(['word' => $review->sense]);
+        }
+
+        // Convert keyword strings to Word objects
+        $keywords = array_map(function ($k) {
+            return new Word([ 'word' => $k ]);
+        }, json_decode($review->keywords));
+
+        // extend the payload with information necessary for the form.
+        $payloadData = json_decode($review->payload, true) + [ 
+            'id' => $id,
+            'word'  => $word,
+            'sense' => $sense,
+            '_keywords' => $keywords,
+            'notes' => $review->notes
+        ];
+
          return view('translation-review.edit', [
-            'review' => $review
+            'review' => $review, 
+            'payload' => json_encode($payloadData)
         ]);
     }
 
@@ -140,6 +166,22 @@ class TranslationReviewController extends TranslationControllerBase
             'id'  => $review->id,
             'url' => route('translation-review.show', ['id' => $review->id])
         ], 200);
+    } 
+
+    public function updateReject(Request $request, int $id)
+    {
+        $review = TranslationReview::findOrFail($id);
+        $this->requestPermission($request, $review);
+
+        $review->is_approved = 0;
+        $review->date_reviewed = Carbon::now();
+        $review->reviewed_by_account_id = $request->user()->id;
+        $review->justification = $request->has('justification')
+            ? $request->input('justification')
+            : null;
+        $review->save();
+
+        return redirect()->route('translation-review.show', ['id' => $review->id]);
     } 
 
     public function destroy(Request $request, int $id) 
