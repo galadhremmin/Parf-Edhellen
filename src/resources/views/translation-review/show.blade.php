@@ -60,33 +60,34 @@
   @endif
 
   @if (! $review->is_approved)
-  <form method="post" action="{{ route('translation-review.approve', ['id' => $review->id]) }}">
-    {{ csrf_field() }}
-    {{ method_field('PUT') }}
-    <div class="text-right">
-      <div class="btn-group" role="group">
-        @if ($review->is_approved === null)
-        <a href="{{ route('translation-review.confirm-destroy', ['id' => $review->id]) }}" class="btn btn-danger"><span class="glyphicon glyphicon-remove-sign"></span> Delete</a>
-        @endif
-        @if (Auth::user()->isAdministrator() && $review->is_approved === null)
-        <a href="{{ route('translation-review.confirm-reject', ['id' => $review->id]) }}" class="btn btn-warning">
-          <span class="glyphicon glyphicon-minus-sign"></span> Reject
-        </a>
-        <button type="submit" class="btn btn-success">
-          <span class="glyphicon glyphicon-ok-sign"></span> Approve
-        </button>
-        @endif
-      </div>
-    </div>
-  </form>
+    @if (Auth::user()->isAdministrator())
+      @if ($review->is_approved === null)
+        <form method="post" action="{{ route('translation-review.approve', ['id' => $review->id]) }}">
+          {{ csrf_field() }}
+          {{ method_field('PUT') }}
+          <div class="text-right">
+            <div class="btn-group" role="group">
+              <a href="{{ route('translation-review.confirm-reject', ['id' => $review->id]) }}" class="btn btn-warning">
+                <span class="glyphicon glyphicon-minus-sign"></span> Reject
+              </a>
+              <button type="submit" class="btn btn-success">
+                <span class="glyphicon glyphicon-ok-sign"></span> Approve
+              </button>
+            </div>
+          </div>
+        </form>
+      @endif
+    @endif
 
-  <hr>
+    <hr>
 
-  You can also <a href="{{ route('translation-review.edit', ['id' => $review->id]) }}">change the submission</a>. If your submission was
-  rejected, it will be resubmitted for review. If it hasn't been reviewed by an administrator yet, the administrator will review the latest version of your submission.
+    You can <a href="{{ route('translation-review.edit', ['id' => $review->id]) }}">change the submission</a> or 
+    <a href="{{ route('translation-review.confirm-destroy', ['id' => $review->id]) }}">delete the submission</a>. 
+    If you edit a rejected submission, it will be resubmitted for review; if you edit a pending submission, 
+    an administrator will review the latest version of your submission.
   @else
   <hr>
-  You can also <a href="{{ $link->translation($review->translation_id) }}">visit the gloss in the dictionary</a>.
+  You can <a href="{{ $link->translation($review->translation_id) }}">visit the gloss in the dictionary</a>.
   @endif
 
 @endsection

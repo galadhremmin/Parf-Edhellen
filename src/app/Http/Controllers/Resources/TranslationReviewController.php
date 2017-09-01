@@ -11,6 +11,12 @@ use Illuminate\Support\Facades\Auth;
 
 class TranslationReviewController extends TranslationControllerBase
 {
+    /**
+     * HTTP GET. Landing page for the current user.
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\View
+     */
     public function index(Request $request)
     {
         $reviews = TranslationReview::forAccount($request->user()->id)
@@ -22,6 +28,12 @@ class TranslationReviewController extends TranslationControllerBase
         ]);
     }
     
+    /**
+     * HTTP GET. Page for administrators where all reviews are listed.
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\View
+     */
     public function list(Request $request)
     {
         $pendingReviews  = TranslationReview::whereNull('is_approved')
@@ -38,7 +50,14 @@ class TranslationReviewController extends TranslationControllerBase
         ]);
     }
 
-    public function show(Request $request, $id) 
+    /**
+     * HTTP GET. Presents a the specified translation review.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function show(Request $request, int $id) 
     {
         $review = TranslationReview::findOrFail($id);
         $this->requestPermission($request, $review);
@@ -63,11 +82,24 @@ class TranslationReviewController extends TranslationControllerBase
         ]);
     }
 
+    /**
+     * HTTP GET. Presents a form for creating a translation review.
+     *
+     * @param Request $request
+     * @return \Illuminate\Contracts\View\View
+     */
     public function create(Request $request)
     {
         return view('translation-review.create');
     }
 
+    /**
+     * HTTP GET. Presents a form for re-submitting a rejected translation review, or editing one pending review.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Contracts\View\View
+     */
     public function edit(Request $request, int $id) 
     {
         // retrieve the review
@@ -103,6 +135,13 @@ class TranslationReviewController extends TranslationControllerBase
         ]);
     }
 
+    /**
+     * HTTP GET. Confirm dialogue for deleting a specified submission. 
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Contracts\View\View
+     */
     public function confirmDestroy(Request $request, int $id)
     {
         $review = TranslationReview::findOrFail($id);
@@ -113,6 +152,13 @@ class TranslationReviewController extends TranslationControllerBase
         ]);
     }
 
+    /**
+     * HTTP GET. Confirm dialogue for rejecting a specified submission.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Contracts\View\View
+     */
     public function confirmReject(Request $request, int $id)
     {
         $review = TranslationReview::findOrFail($id);
@@ -123,6 +169,12 @@ class TranslationReviewController extends TranslationControllerBase
         ]);
     }
 
+    /**
+     * HTTP POST. Creates a translation review.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\Response 
+     */
     public function store(Request $request)
     {
         $this->validateRequest($request, 0, true);
@@ -139,6 +191,14 @@ class TranslationReviewController extends TranslationControllerBase
         ], 201);
     }
 
+    /**
+     * HTTP PUT. Updates a specified translation review, or creates a new review in the event that
+     * the specified review was previously rejected.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\Response 
+     */
     public function update(Request $request, int $id)
     {
         $this->validateRequest($request, $id, true);
@@ -166,6 +226,13 @@ class TranslationReviewController extends TranslationControllerBase
         ], 200);
     } 
 
+    /**
+     * HTTP PUT. Rejects a specified translation review.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\Response 
+     */
     public function updateReject(Request $request, int $id)
     {
         $review = TranslationReview::findOrFail($id);
@@ -182,6 +249,13 @@ class TranslationReviewController extends TranslationControllerBase
         return redirect()->route('translation-review.show', ['id' => $review->id]);
     } 
 
+    /**
+     * HTTP PUT. Approves a specified translation review.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\Response 
+     */
     public function updateApprove(Request $request, int $id)
     {
         $review = TranslationReview::findOrFail($id);
@@ -203,6 +277,13 @@ class TranslationReviewController extends TranslationControllerBase
         return redirect()->route('translation-review.show', ['id' => $review->id]);
     }
 
+    /**
+     * HTTP DELETE. Deletes a specified translation review.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\Response 
+     */
     public function destroy(Request $request, int $id) 
     {
         $review = TranslationReview::findOrFail($id);
@@ -215,6 +296,14 @@ class TranslationReviewController extends TranslationControllerBase
             : redirect()->route('translation-review.index');
     }
 
+    /**
+     * Requests persmission for the specified translation review based on the information associated with
+     * the specified request.
+     *
+     * @param Request $request
+     * @param TranslationReview $model
+     * @return void
+     */
     protected function requestPermission(Request $request, TranslationReview $model)
     {
         $user = $request->user();
@@ -230,6 +319,13 @@ class TranslationReviewController extends TranslationControllerBase
         abort(401);
     }
 
+    /**
+     * Updates the specified translation review based on the infromation provided by the request.
+     *
+     * @param TranslationReview $review
+     * @param Request $request
+     * @return void
+     */
     protected function saveReview(TranslationReview $review, Request $request)
     {
         $translation = new Translation;

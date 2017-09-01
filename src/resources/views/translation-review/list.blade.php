@@ -18,31 +18,40 @@
           @if (count($pendingReviews) < 1)
           <em>You have no contributions awaiting to be reviewed.</em>
           @else
-          <table class="table table-striped table-hover">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Word</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach ($pendingReviews as $review)
-              <tr>
-                <td>{{ $review->created_at->format('Y-m-d H:i') }}</td>
-                <td>
-                  <a href="{{ route('translation-review.show', ['id' => $review->id]) }}">{{ $review->word }} ({{ $review->sense }})</a></td>
-                <td>
-                  <a href="{{ $link->author($review->account_id, $review->account->nickname) }}">{{ $review->account->nickname }}</a>
-                </td>
-              </tr>
-              @endforeach
-            </tbody>
-          </table>
+            @include('translation-review._table', [
+              'reviews' => $pendingReviews
+            ])
           @endif
         </div>
       </div>
-
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h2 class="panel-title"><span class="glyphicon glyphicon-ok"></span> Approved contributions</h2>
+        </div>
+        <div class="panel-body">
+          @if (count($approvedReviews) < 1)
+          <em>There are presently no approved contributions.</em>
+          @else
+            @include('translation-review._table', [
+              'reviews' => $approvedReviews
+            ])
+          @endif
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h2 class="panel-title"><span class="glyphicon glyphicon-remove"></span> Rejected contributions</h2>
+        </div>
+        <div class="panel-body">
+          @if (count($rejectedReviews) < 1)
+          <em>There are presently no rejected contributions.</em>
+          @else
+            @include('translation-review._table', [
+              'reviews' => $rejectedReviews
+            ])
+          @endif
+        </div>
+      </div>
     </div>
   </div>
 
