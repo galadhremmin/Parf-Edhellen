@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Resources;
 
-use App\Adapters\BookAdapter;
 use App\Models\{ Translation, TranslationReview, Word, Sense };
 use App\Http\Controllers\Controller;
 
@@ -12,16 +11,10 @@ use Illuminate\Support\Facades\Auth;
 
 class TranslationReviewController extends TranslationControllerBase
 {
-    protected $_bookAdapter;
-
-    public function __construct(BookAdapter $adapter) 
-    {
-        $this->_bookAdapter = $adapter;
-    }
-
     public function index(Request $request)
     {
         $reviews = TranslationReview::forAccount($request->user()->id)
+            ->orderBy('id', 'desc')
             ->get();
 
         return view('translation-review.index', [
@@ -31,9 +24,12 @@ class TranslationReviewController extends TranslationControllerBase
     
     public function list(Request $request)
     {
-        $pendingReviews  = TranslationReview::whereNull('is_approved')->get();
-        $rejectedReviews = TranslationReview::where('is_approved', 0)->get();
-        $approvedReviews = TranslationReview::where('is_approved', 1)->get();
+        $pendingReviews  = TranslationReview::whereNull('is_approved')
+            ->orderBy('id', 'asc')->get();
+        $rejectedReviews = TranslationReview::where('is_approved', 0)
+            ->orderBy('id', 'asc')->get();
+        $approvedReviews = TranslationReview::where('is_approved', 1)
+            ->orderBy('id', 'asc')->get();
 
         return view('translation-review.list', [
             'approvedReviews' => $approvedReviews,
@@ -127,16 +123,6 @@ class TranslationReviewController extends TranslationControllerBase
         ]);
     }
 
-    public function confirmApprove(Request $request, int $id)
-    {
-        $review = TranslationReview::findOrFail($id);
-        $this->requestPermission($request, $review);
-
-        return view('translation-review.confirm-approve', [
-            'review' => $review
-        ]);
-    }
-
     public function store(Request $request)
     {
         $this->validateRequest($request, 0, true);
@@ -160,6 +146,18 @@ class TranslationReviewController extends TranslationControllerBase
         $review = TranslationReview::findOrFail($id);
         $this->requestPermission($request, $review);
         
+        if ($review->is_approved === 1) {
+            abort(400);
+        }
+
+        if ($review->is_approved === 0) {
+            $review = $review->replicate();
+            $review->is_approved = null;
+            $review->date_reviewed = null;
+            $review->reviewed_by_account_id = null;
+            $review->justification = null;
+        }
+
         $this->saveReview($review, $request);
 
         return response([
@@ -183,6 +181,27 @@ class TranslationReviewController extends TranslationControllerBase
 
         return redirect()->route('translation-review.show', ['id' => $review->id]);
     } 
+
+    public function updateApprove(Request $request, int $id)
+    {
+        $review = TranslationReview::findOrFail($id);
+        $this->requestPermission($request, $review);
+
+        $translationData = json_decode($review->payload, true) + [
+            'account_id' => $review->account_id
+        ];
+        $translation = new Translation($translationData);
+        $keywords = json_decode($review->keywords, true);
+        $this->_translationRepository->saveTranslation($review->word, $review->sense, $translation, $keywords);
+
+        $review->is_approved = 1;
+        $review->date_reviewed = Carbon::now();
+        $review->reviewed_by_account_id = $request->user()->id;
+        $review->translation_id = $translation->id;
+        $review->save();
+
+        return redirect()->route('translation-review.show', ['id' => $review->id]);
+    }
 
     public function destroy(Request $request, int $id) 
     {

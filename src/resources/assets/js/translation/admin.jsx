@@ -29,10 +29,11 @@ window.addEventListener('load', function () {
     const admin = container.dataset['admin'] === undefined
         ? true
         : /true/i.test(container.dataset['admin']);
+    const confirmButtonText = container.dataset['confirmButtonText'] || undefined;
 
     ReactDOM.render(
         <Provider store={store}>
-            <EDTranslationForm admin={admin} />
+            <EDTranslationForm admin={admin} confirmButtonText={confirmButtonText} />
         </Provider>,
         container
     );

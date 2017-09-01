@@ -258,7 +258,7 @@ class EDTranslationForm extends EDStatefulFormComponent {
                     </li>
                     <li className="next">
                         <a href="#" onClick={this.onSubmit.bind(this)}>
-                            Confirm and save
+                            {this.props.confirmButtonText}
                             &nbsp;
                             &nbsp;
                             <span className="glyphicon glyphicon-save"></span></a>
@@ -271,7 +271,8 @@ class EDTranslationForm extends EDStatefulFormComponent {
 
 EDTranslationForm.defaultProps = {
     loading: true,
-    admin: false
+    admin: false,
+    confirmButtonText: 'Confirm and save'
 };
 
 const mapStateToProps = state => {

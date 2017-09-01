@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Resources;
 
 use App\Models\{ Translation, Keyword, Word, Language };
+use App\Adapters\BookAdapter;
+use App\Repositories\TranslationRepository;
 use App\Helpers\StringHelper;
 
 use App\Http\Controllers\Controller;
@@ -10,6 +12,15 @@ use Illuminate\Http\Request;
 
 class TranslationControllerBase extends Controller
 {
+    protected $_bookAdapter;
+    protected $_translationRepository;
+
+    public function __construct(BookAdapter $adapter, TranslationRepository $translationRepository) 
+    {
+        $this->_bookAdapter = $adapter;
+        $this->_translationRepository = $translationRepository;
+    }
+
     protected function mapTranslation(Translation $translation, Request $request)
     {
         $word  = $request->input('word');

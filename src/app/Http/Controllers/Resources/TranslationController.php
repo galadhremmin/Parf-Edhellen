@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Resources;
 
 use App\Models\{ Translation, Keyword, Word, Language };
-use App\Adapters\BookAdapter;
-use App\Repositories\TranslationRepository;
 use App\Helpers\{ LinkHelper, StringHelper };
 
 use App\Http\Controllers\Controller;
@@ -13,15 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 class TranslationController extends TranslationControllerBase
 {
-    protected $_bookAdapter;
-    protected $_translationRepository;
-
-    public function __construct(BookAdapter $adapter, TranslationRepository $translationRepository) 
-    {
-        $this->_bookAdapter = $adapter;
-        $this->_translationRepository = $translationRepository;
-    }
-
     public function index(Request $request)
     {
         $latestTranslations = Translation::latest()

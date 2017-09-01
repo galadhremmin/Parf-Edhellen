@@ -109,7 +109,7 @@ Route::group([
 
     Route::get('translation-review/list', 'TranslationReviewController@list')->name('translation-review.list');
     Route::get('translation-review/{id}/reject', 'TranslationReviewController@confirmReject')->name('translation-review.confirm-reject');
-    Route::get('translation-review/{id}/approve', 'TranslationReviewController@confirmApprove')->name('translation-review.confirm-approve');
+    Route::put('translation-review/{id}/approve', 'TranslationReviewController@updateApprove')->name('translation-review.approve');
     Route::put('translation-review/{id}/reject', 'TranslationReviewController@updateReject')->name('translation-review.reject');
     
 });
