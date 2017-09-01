@@ -111,6 +111,7 @@ class MarkdownParser extends \Parsedown
 
         // remove footnotes, in case they were  imported by accident
         $word = str_replace(['¹', '²', '³'], '', $word);
+        $normalizedWord = StringHelper::normalize($word);
 
         return [
             'extent' => $wordLength,
@@ -119,10 +120,10 @@ class MarkdownParser extends \Parsedown
                 'handler' => 'line',
                 'text' => $word,
                 'attributes' => [
-                    'href' => '/w/' . urlencode($word),
+                    'href' => '/w/' . urlencode($normalizedWord),
                     'title' => 'Navigate to '.$word.'.',
                     'class' => 'ed-word-reference',
-                    'data-word' => StringHelper::normalize($word)
+                    'data-word' => $normalizedWord
                 ]
             ]
         ];
