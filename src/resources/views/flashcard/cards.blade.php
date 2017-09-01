@@ -24,4 +24,3 @@
   <script type="text/javascript" src="/js/glaemscribe.js" async></script>
   <script type="text/javascript" src="/js/flashcard.js" async></script>
 @endsection
-
