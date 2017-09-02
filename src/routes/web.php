@@ -158,6 +158,9 @@ Route::group([
 
     Route::post('forum/like/{id}',   [ 'uses' => 'ForumApiController@storeLike'   ]);
     Route::delete('forum/like/{id}', [ 'uses' => 'ForumApiController@destroyLike' ]);
+
+    Route::get('book/word/{id}',  [ 'uses' => 'BookApiController@getWord'   ]);
+    Route::post('book/word/find', [ 'uses' => 'BookApiController@findWord'  ]);
 });
 
 // Admin API
@@ -171,7 +174,5 @@ Route::group([
     Route::get('account/{id}',   [ 'uses' => 'AccountApiController@getAccount' ]);
     Route::post('account/find',  [ 'uses' => 'AccountApiController@findAccount' ]);
 
-    Route::get('book/word/{id}',  [ 'uses' => 'BookApiController@getWord'   ]);
     Route::get('book/group',      [ 'uses' => 'BookApiController@getGroups' ]);
-    Route::post('book/word/find', [ 'uses' => 'BookApiController@findWord'  ]);
 });
