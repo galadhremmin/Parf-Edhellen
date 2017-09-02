@@ -21,8 +21,13 @@
           <h2 class="panel-title"><span class="glyphicon glyphicon-user"></span> About you</h2>
         </div>
         <div class="panel-body">
-          <ul>
-            <li><a href="{{ route('author.my-profile') }}">Your profile</a></li>
+          <ul class="pill-nav">
+            <li>
+              <a href="{{ route('author.my-profile') }}">
+                <span class="glyphicon glyphicon-user"></span>
+                Your profile
+              </a>
+            </li>
           </ul>
         </div>
       </div>
@@ -32,18 +37,26 @@
           <h2 class="panel-title"><span class="glyphicon glyphicon-globe"></span> Community</h2>
         </div>
         <div class="panel-body">
-          <ul>
+          <ul class="pill-nav">
             <li>
-              <a href="{{ route('flashcard') }}">Flashcards</a>
-              @if ($noOfFlashcards)
-              <span class="label label-info">{{ $noOfFlashcards }}</span>
-              @endif
+              <a href="{{ route('flashcard') }}">
+                <span class="glyphicon glyphicon-tags"></span>
+                Flashcards
+
+                @if ($noOfFlashcards)
+                <span class="label label-info">{{ $noOfFlashcards }}</span>
+                @endif
+              </a>
             </li>
             <li>
-              <a href="{{ route('translation-review.index') }}">Contributions</a>
-              @if ($noOfContributions)
-              <span class="label label-info">{{ $noOfContributions }}</span>
-              @endif
+              <a href="{{ route('translation-review.index') }}">
+              <span class="glyphicon glyphicon-globe"></span>
+
+                Contributions
+                @if ($noOfContributions)
+                <span class="label label-info">{{ $noOfContributions }}</span>
+                @endif
+              </a>
             </li>
           </ul>
         </div>

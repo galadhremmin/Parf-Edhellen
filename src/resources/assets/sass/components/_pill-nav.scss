@@ -1,0 +1,29 @@
+ul.pill-nav {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+
+    li {
+        display: inline-block;
+        border: 1px solid $gray-lighter;
+        border-radius: $border-radius-base;
+
+        a {
+            display: block;
+            padding: 10px 5px 5px 5px;
+            text-align: center;
+            color: inherit;
+
+            &:hover, &:active {
+                text-decoration: none;
+                color: $link-color;
+            }
+
+            .glyphicon {
+                font-size: 200%;
+                display: block;
+                margin-bottom: $line-height-computed;
+            } 
+        }
+    }
+}

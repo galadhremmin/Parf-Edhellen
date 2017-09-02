@@ -20,12 +20,12 @@ class EDTengwarInput extends React.Component {
         let state = {};
         let change = false;
 
-        if (props.tengwarMode) {
+        if (props.tengwarMode !== undefined) {
             state.mode = props.tengwarMode;
             change = true;
         }
 
-        if (props.transcriptionSubject) {
+        if (props.transcriptionSubject !== undefined) {
             state.subject = props.transcriptionSubject;
             change = true;
         }
