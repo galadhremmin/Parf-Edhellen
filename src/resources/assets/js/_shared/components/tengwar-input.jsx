@@ -120,6 +120,7 @@ class EDTengwarInput extends React.Component {
         const mode = this.state.mode;
         const subject = this.state.subject;
         if (! mode || ! subject) {
+            alert('Please make sure that you have selected a language supported by the transcriber.');
             return;
         }
 

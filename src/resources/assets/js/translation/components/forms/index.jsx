@@ -160,6 +160,11 @@ class EDTranslationForm extends EDStatefulFormComponent {
                 Please be as thorough as possible, and make sure to <em>always include sources!</em>
             </p>
             <div className="form-group">
+                <label htmlFor="ed-translation-language" className="control-label">Language</label>
+                <EDLanguageSelect className="form-control" componentId="ed-translation-language" componentName="language_id" 
+                    onChange={ev => super.onChange(ev, 'number')} value={this.state.language_id} />
+            </div>
+            <div className="form-group">
                 <label htmlFor="ed-translation-word" className="control-label">Word</label>
                 <input type="text" className="form-control" id="ed-translation-word" name="word" 
                     value={this.state.word} onChange={super.onChange.bind(this)} />
@@ -212,11 +217,6 @@ class EDTranslationForm extends EDStatefulFormComponent {
                 <EDAccountSelect componentId="ed-translation-account" componentName="account_id" 
                     value={this.state.account_id} onChange={super.onChange.bind(this)} required={true} />
             </div> : ''}
-            <div className="form-group">
-                <label htmlFor="ed-translation-language" className="control-label">Language</label>
-                <EDLanguageSelect className="form-control" componentId="ed-translation-language" componentName="language_id" 
-                    onChange={ev => super.onChange(ev, 'number')} value={this.state.language_id} />
-            </div>
             <div className="checkbox">
                 <label>
                     <input type="checkbox" name="is_uncertain"

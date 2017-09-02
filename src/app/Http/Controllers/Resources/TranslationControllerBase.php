@@ -82,9 +82,11 @@ class TranslationControllerBase extends Controller
         }
 
         $this->validate($request, $rules, [
-            'account_id.exists'  => 'Author is required.',
-            'language_id.exists' => 'Language is required.',
-            'speech_id.exists'   => 'Speech is required.'
+            'exists'  => ':attribute is required.',
+            'min' => ':attribute is too short.',
+            'max' => ':attribute is too long.',
+            'required' => ':attribute is required.',
+            'sense.word.word.required' => 'sense is required.'
         ]);
     } 
 }

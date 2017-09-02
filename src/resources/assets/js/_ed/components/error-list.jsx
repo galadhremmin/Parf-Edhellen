@@ -8,6 +8,8 @@ const EDErrorList = props => {
     }
 
     return <div className="alert alert-danger">
+        <strong>Nae!</strong> The server was not able to process your request. Please fix the following
+        errors in order to proceed:
         <ul>
             {errors.map((error, i) => <li key={i}>{error}</li>)}
         </ul>
