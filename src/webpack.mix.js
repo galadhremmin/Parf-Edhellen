@@ -92,6 +92,10 @@ mix.js([
     'resources/assets/js/flashcard/index.jsx'
 ], 'public/js/flashcard.js');
 
+mix.js([
+    'resources/assets/js/system-errors/index.jsx'
+], 'public/js/system-errors-admin.js');
+
 //mix.copy('node_modules/tengwar/tengwar-parmaite.*', 'public/fonts/tengwar'); <~~ the parmaite font kit is/will be corrupted!
 mix.sass('resources/assets/sass/app.scss', 'public/css');
 mix.sass('resources/assets/sass/app.flashcard.scss', 'public/css');

@@ -11,32 +11,15 @@
     <em>There are presently no errors registered by the logging service.</em>
   </p>
 @else
-  <div class="table-responsive">
-    <table class="table table-striped table-hover">
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>URL</th>
-        <th>User</th>
-      </tr>
-    </thead>
-    @foreach ($errors as $error)
-    <tbody>
-      <tr>
-        <td>{{ $error->created_at }}</td>
-        <td>{{ $error->url }}</td>
-        <td>{{ $error->account_id }} ({{ $error->ip }})</td>
-      </tr>
-      <tr>
-        <td colspan="3">
-          {{ $error->message }}
-          {{ $error->error }}
-        </td>
-      </tr>
-    </tbody>
-    @endforeach
-    </table>
-  </div>
+  <div id="ed-errors"></div>
 @endif
 
+<script type="application/json" id="ed-preloaded-errors">
+{!! json_encode($errors) !!}
+</script>
+
+@endsection
+
+@section('scripts')
+  <script type="text/javascript" src="/js/system-errors-admin.js" async></script>
 @endsection
