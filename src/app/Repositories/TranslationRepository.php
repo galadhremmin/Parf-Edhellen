@@ -301,10 +301,13 @@ class TranslationRepository
         }
 
         // 12. Register an audit trail
-        $action = $originalTranslation !== null
-                ? AuditTrail::ACTION_TRANSLATION_EDIT 
-                : AuditTrail::ACTION_TRANSLATION_ADD;
-        $this->_auditTrail->store($action, $translation);
+        $action = ($originalTranslation === null)
+            ? AuditTrail::ACTION_TRANSLATION_ADD 
+            : AuditTrail::ACTION_TRANSLATION_EDIT;
+        $userId = ($action === AuditTrail::ACTION_TRANSLATION_ADD)
+            ?  $translation->account_id
+            : 0; // use the user currently logged in
+        $this->_auditTrail->store($action, $translation, $userId);
 
         return $translation;
     }
