@@ -125,14 +125,13 @@ class TranslationController extends TranslationControllerBase
     public function destroy(Request $request, int $id) 
     {
         $this->validate($request, [
-            'id'             => 'required|numeric|exists:translations,id',
             'replacement_id' => 'sometimes|numeric|exists:translations,id'
         ]);
 
         $replacementId = $request->has('replacement_id') 
             ? intval($request->input('replacement_id'))
             : null;
-            
+
         $ok = $this->_translationRepository->deleteTranslationWithId($id, $replacementId);
         return $ok
             ? response(null, 204)

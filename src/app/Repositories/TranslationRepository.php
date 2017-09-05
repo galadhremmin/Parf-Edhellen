@@ -312,7 +312,7 @@ class TranslationRepository
         return $translation;
     }
 
-    public function deleteTranslationWithId(int $id, int $replaceId)
+    public function deleteTranslationWithId(int $id, int $replaceId = null)
     {
         $translation = Translation::findOrFail($id);
 
@@ -329,7 +329,7 @@ class TranslationRepository
             $t = $translation->getOrigin();
             while ($t) {
                 $child = $t->getChild();
-                $this->deleteTranslation($t, 0);
+                $this->deleteTranslation($t);
                 $t = $child;
             }
         } else {
@@ -448,9 +448,14 @@ class TranslationRepository
                 't.external_id', 't.is_latest', 't.is_rejected', 't.origin_translation_id');
     }
 
-    protected function deleteTranslation(Translation $t, int $replaceId) 
+    protected function deleteTranslation(Translation $t, int $replaceId = null) 
     {
         $t->keywords()->delete();
+        
+        // delete the sense if the specified translation is the only translation with that sense.
+        if ($t->sense->translations()->count() === 1 /* = $t */) {
+            $t->sense->keywords()->delete();
+        }
 
         if (! $t->is_index) {
             $t->sentence_fragments()->update([

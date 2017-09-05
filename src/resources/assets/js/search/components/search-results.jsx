@@ -36,8 +36,8 @@ class EDSearchResults extends React.Component {
      * @param props
      */
     componentWillReceiveProps(props) {
-    if (props.activeIndex === undefined || props.activeIndex < 0 || 
-        !Array.isArray(props.items) || props.items.length < 1) {
+        if (props.activeIndex === undefined || props.activeIndex < 0 || 
+            !Array.isArray(props.items) || props.items.length < 1) {
             return;
         }
 

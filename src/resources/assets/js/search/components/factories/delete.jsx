@@ -30,11 +30,7 @@ class DeleteComponentFactory extends ComponentFactory {
 
     onSubmit(gloss) {
         axios.delete(`/admin/translation/${gloss.id}` + (this.replacementGloss ? `?replacement_id=${this.replacementGloss.id}` : ''))
-            .then(this.onDeleted.bind(this))
-    }
-
-    onDeleted(resp) {
-        
+            .then(this.done.bind(this, gloss), this.failed.bind(this, gloss))
     }
 }
 

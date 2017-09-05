@@ -16,7 +16,8 @@ class EDBookGloss extends React.Component {
         this.state = {
             isAdmin,
             inAdminMode: false,
-            adminComponentFactory: null
+            adminComponentFactory: undefined,
+            isDeleted: false
         };
     }
     
@@ -55,6 +56,13 @@ class EDBookGloss extends React.Component {
     }
 
     openAdminTools(componentFactory) {
+        // ensure that the current user is in admin mode. This is just a weak check, deliberately
+        // easy to override. It is intended to protect clients from accidently triggering views
+        // that cannot be populated by data from the server.
+        if (! this.state.isAdmin) {
+            return; 
+        }
+
         if (! componentFactory) {
             throw 'Unspecified component method.';
         }
@@ -62,8 +70,6 @@ class EDBookGloss extends React.Component {
         if (! (componentFactory instanceof ComponentFactory)) {
             throw 'Unsupported component factory.';
         }
-
-        componentFactory.onDone = result => this.onCloseAdminMode(result);
 
         this.setState({
             inAdminMode: true,
@@ -84,7 +90,26 @@ class EDBookGloss extends React.Component {
     onDelete(gloss, ev) {
         ev.preventDefault();
         const factory = new DeleteComponentFactory(gloss);
+        factory.onDone = this.onDeleteSuccess.bind(this);
+        factory.onFailed = this.onDeleteFailed.bind(this);
+
         this.openAdminTools(factory);
+    }
+
+    onDeleteSuccess(gloss) {
+        if (gloss.id !== this.props.gloss.id) {
+            return;
+        }
+
+        this.setState({
+            isDeleted: true
+        });
+
+        this.onCloseAdminMode();
+    }
+
+    onDeleteFailed(gloss) {
+        this.onCloseAdminMode();
     }
 
     onCloseAdminMode() {
@@ -96,8 +121,11 @@ class EDBookGloss extends React.Component {
 
     render() {
         const gloss = this.props.gloss;
+        if (this.state.isDeleted) {
+            return <div />;
+        }
+
         const renderedGloss = this.renderGloss(gloss);
-        
         if (! this.state.isAdmin) {
             return renderedGloss;
         }
