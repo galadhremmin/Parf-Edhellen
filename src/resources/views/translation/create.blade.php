@@ -1,9 +1,9 @@
 @extends('_layouts.default')
 
-@section('title', 'Add word - Administration')
+@section('title', 'Add gloss - Administration')
 @section('body')
 
-<h1>Add word</h1>
+<h1>Add gloss</h1>
 {!! Breadcrumbs::render('translation.create') !!}
 
 <div id="ed-translation-form"></div>

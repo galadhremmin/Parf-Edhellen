@@ -24,6 +24,10 @@ class EDTranslationSelect extends React.Component {
                 suggestionsFor: undefined
             });
         }
+
+        if (props.value !== undefined && this.getValue() !== (props.value || undefined)) {
+            this.setState(this.createStateForValue(props.value));
+        }
     }
 
     createStateForValue(value) {
@@ -179,7 +183,7 @@ class EDTranslationSelect extends React.Component {
         return <div className={classNames('input-group', { 'has-warning': !valid && this.props.required, 'has-success': valid })}>
             <input {...props} />
             <div className="input-group-addon">
-                <span className={classNames('glyphicon', { 'glyphicon-exclamation-sign': !valid && this.props.required, 'glyphicon-ok': valid })} />
+                <span className={classNames('glyphicon', { 'glyphicon-exclamation-sign': !valid, 'glyphicon-ok': valid })} />
             </div>
         </div>;
     }

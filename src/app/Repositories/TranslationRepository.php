@@ -460,6 +460,10 @@ class TranslationRepository
             $t->favourites()->update([
                 'translation_id' => $replaceId
             ]);
+
+            $t->translation_reviews()->update([
+                'translation_id' => null
+            ]);
         }
 
         $t->is_deleted = true;

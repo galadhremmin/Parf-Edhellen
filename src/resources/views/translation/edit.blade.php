@@ -1,9 +1,9 @@
 @extends('_layouts.default')
 
-@section('title', $translation->word->word.' - Administration')
+@section('title', 'Edit '.$translation->word->word.' - Administration')
 @section('body')
 
-<h1>Edit word</h1>
+<h1>Edit gloss {{ $translation->word->word }}</h1>
 {!! Breadcrumbs::render('translation.edit', $translation) !!}
 
 <div id="ed-translation-form"></div>

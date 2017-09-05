@@ -20,7 +20,7 @@ import {
 import { transcribe } from '../../../_shared/tengwar';
 import EDSpeechSelect from '../../../_shared/components/speech-select';
 import EDInflectionSelect from '../../../_shared/components/inflection-select';
-import EDTranslationSelect from '../../../_shared/components/translation-select';
+import EDTranslationSelect from 'ed-components/translation-select';
 import EDTengwarInput from '../../../_shared/components/tengwar-input';
 
 class EDFragmentForm extends EDStatefulFormComponent {

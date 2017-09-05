@@ -115,24 +115,24 @@ Breadcrumbs::register('sentence.edit', function ($breadcrumbs, App\Models\Senten
 });
 
 // //////////////////////////////////////////////////////////////////////////////////////////////
-// Dashboard > Glosses
+// Dashboard > Glossary
 
 Breadcrumbs::register('translation.index', function ($breadcrumbs)
 {
     $breadcrumbs->parent('dashboard');
-    $breadcrumbs->push('Words', route('translation.index'));
+    $breadcrumbs->push('Glossary', route('translation.index'));
 });
 
 Breadcrumbs::register('translation.create', function ($breadcrumbs)
 {
     $breadcrumbs->parent('translation.index');
-    $breadcrumbs->push('Add word', route('translation.create'));
+    $breadcrumbs->push('Add gloss', route('translation.create'));
 });
 
 Breadcrumbs::register('translation.edit', function ($breadcrumbs, App\Models\Translation $translation)
 {
     $breadcrumbs->parent('translation.index');
-    $breadcrumbs->push('Edit word (' . $translation->word->word . ')', route('translation.edit', [
+    $breadcrumbs->push('Edit gloss (' . $translation->word->word . ')', route('translation.edit', [
         'id' => $translation->id
     ]));
 });
@@ -140,9 +140,15 @@ Breadcrumbs::register('translation.edit', function ($breadcrumbs, App\Models\Tra
 Breadcrumbs::register('translation.list', function ($breadcrumbs, App\Models\Language $language)
 {
     $breadcrumbs->parent('translation.index');
-    $breadcrumbs->push('List words in ' . $language->name, route('translation.list', [
+    $breadcrumbs->push('Glossary for ' . $language->name, route('translation.list', [
         'id' => $language->id
     ]));
+});
+
+Breadcrumbs::register('translation.confirm-delete', function ($breadcrumbs, App\Models\Translation $translation)
+{
+    $breadcrumbs->parent('translation.index');
+    $breadcrumbs->push('Delete gloss ' . $translation->word->word);
 });
 
 // //////////////////////////////////////////////////////////////////////////////////////////////

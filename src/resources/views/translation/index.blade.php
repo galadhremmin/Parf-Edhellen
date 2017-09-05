@@ -1,9 +1,9 @@
 @inject('link', 'App\Helpers\LinkHelper')
 @extends('_layouts.default')
 
-@section('title', 'Words')
+@section('title', 'Glossary')
 @section('body')
-  <h1>Words</h1>
+  <h1>Glossary</h1>
   
   {!! Breadcrumbs::render('translation.index') !!}
 
@@ -16,9 +16,9 @@
         </div>
         <div class="panel-body">
           <ul>
-            <li><a href="{{ route('translation.create') }}">Add word</a></li>
+            <li><a href="{{ route('translation.create') }}">Add gloss</a></li>
             <li>
-              List by language:
+              Glossaries by language:
               <ul>
                 @foreach ($languages as $language)
                 <li><a href="{{ route('translation.list', [ 'id' => $language->id ]) }}">{{ $language->name }}</a></li>

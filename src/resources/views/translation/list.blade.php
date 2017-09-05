@@ -1,9 +1,9 @@
 @inject('link', 'App\Helpers\LinkHelper')
 @extends('_layouts.default')
 
-@section('title', 'Words in '.$language->name)
+@section('title', 'Glossary for '.$language->name)
 @section('body')
-  <h1>Words in {{ $language->name }}</h1>
+  <h1>Glossary for {{ $language->name }}</h1>
   
   {!! Breadcrumbs::render('translation.list', $language) !!}
 

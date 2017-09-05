@@ -9,7 +9,11 @@ class ForumRepository
 {
     public function getCommentCountForEntities(int $contextId, array $ids)
     {
-        $result = ForumPost::where('forum_context_id', $contextId)
+        $result = ForumPost::where([
+                ['forum_context_id', $contextId],
+                ['is_hidden', 0],
+                ['is_deleted', 0]
+            ])
             ->whereIn('entity_id', $ids)
             ->groupBy('entity_id')
             ->select('entity_id', DB::raw('count(*) as count'))
