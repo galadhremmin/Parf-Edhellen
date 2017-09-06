@@ -73,9 +73,9 @@
   </div>
 
   <script type="application/json" id="ed-preloaded-languages">{!! $allLanguages !!}</script>
-  <script type="text/javascript" src="/js/ie.js"></script>
   <script type="text/javascript" src="/js/manifest.js"></script>
   <script type="text/javascript" src="/js/vendor.js"></script>
+  <script type="text/javascript" src="/js/ie.js"></script>
   @if (Auth::check())
     @if (Auth::user()->isAdministrator())
     <script type="text/javascript" src="/js/global-plugins-admin.js"></script>
