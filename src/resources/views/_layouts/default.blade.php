@@ -77,6 +77,13 @@
   <script type="text/javascript" src="/js/vendor.js"></script>
   <script type="text/javascript" src="/js/ie.js"></script>
   <script type="text/javascript" src="/js/global.js" async></script>
+  @if (Auth::check())
+    @if (Auth::user()->isAdministrator())
+    <script type="text/javascript" src="/js/global-plugins-admin.js" async></script>
+    @else
+    <script type="text/javascript" src="/js/global-plugins-restricted.js" async></script>
+    @endif
+  @endif
   @yield('scripts')
   @if (!empty(config('ed.footer_view')))
     @include(config('ed.footer_view'))

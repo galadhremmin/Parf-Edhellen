@@ -29,7 +29,7 @@ class AuditTrailRepository
         ]);
     }
 
-    public function get(int $numberOfRows)
+    public function get(int $noOfRows, int $skipNoOfRows = 0, $previousItem = null)
     {
         $query = AuditTrail::orderBy('id', 'desc')
             ->with([
@@ -39,17 +39,14 @@ class AuditTrailRepository
                 'entity' => function () {}
             ]);
         
-        $take = 50;
         if (! Auth::check() || ! Auth::user()->isAdministrator()) {
             // Put audit trail actions here that only administrators should see.
             $query = $query->whereNotIn('action_id', [
                 AuditTrail::ACTION_PROFILE_AUTHENTICATED
             ]);
-
-            $take = 10;
         }
         
-        $actions = $query->take($take)->get();
+        $actions = $query->skip($skipNoOfRows)->take($noOfRows)->get();
 
         $trail = [];
         foreach ($actions as $action) {
@@ -140,16 +137,43 @@ class AuditTrailRepository
                 continue;
             }
 
-            $trail[] = [
+            $item = [
                 'account_id'   => $action->account_id,
                 'account_name' => $action->account->nickname,
                 'created_at'   => $action->created_at,
                 'message'      => $message,
                 'entity'       => $entity
             ];
+
+            // merge equivalent audit trail items to avoid spamming the log with the same message.
+            if ($previousItem !== null && 
+                $previousItem['account_id'] === $item['account_id'] &&
+                $previousItem['message'] === $item['message']) {
+
+                // choose the latest item
+                $trailLength = count($trail);
+                if ($trailLength < 1 || $previousItem['created_at'] > $item['created_at']) {
+                    // TODO: when $trailLength < 1, the $previousItem originated from the 'parent' invocation of this method, so we need to
+                    // TODO: figure out how to replace the $previousItem with the $item, in order to ensure that the _latest_ item is selected.
+                    //
+                    // ^ -- this is not done at the moment.
+                    continue;
+                }
+
+                $trail[$trailLength - 1] = $item;
+            } else {
+                $trail[] = $item;
+            }
+
+            $previousItem = $item;
         }
 
-        return $trail;
+        // count the number of missing items to the list and attempt to populate the list
+        // with remaining items.
+        $noOfMergers = count($actions) - count($trail); 
+        return $noOfMergers > 0 
+            ? array_merge($trail, $this->get($noOfMergers, $skipNoOfRows + $noOfRows, $previousItem))
+            : $trail;
     }
 
     public function store(int $action, $entity, int $userId = 0)

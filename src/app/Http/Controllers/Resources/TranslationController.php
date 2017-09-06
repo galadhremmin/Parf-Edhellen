@@ -80,9 +80,11 @@ class TranslationController extends TranslationControllerBase
                 ->get()
             : [];
 
-        return view('translation.edit', [
-            'translation' => $translation
-        ]);
+        return $request->ajax() 
+            ? $translation
+            : view('translation.edit', [
+                'translation' => $translation
+            ]);
     }
 
     public function store(Request $request)

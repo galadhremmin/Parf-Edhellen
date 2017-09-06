@@ -41,6 +41,9 @@
   <hr class="hidden-md hidden-lg clear-left">
   <div class="col-xs-12 col-sm-6 col-md-4">
     <h4>Community activity</h4>
+    <p>
+      Shows the {{count($auditTrails)}} most recent activities.
+    </p>
     <ul class="list-group">
     @foreach($auditTrails as $a)
       <li class="list-group-item">

@@ -35,9 +35,19 @@ const EDConfig = {
     /**
      * Convenience method for generating window messages
      */
-    message: (source, payload) => window.postMessage({ source, payload }, EDConfig.messageDomain)
+    message: (source, payload) => window.postMessage({ source, payload }, EDConfig.messageDomain),
+
+    pluginsFor: (context) => plugins.hasOwnProperty(context) ? plugins[context] : [],
+
+    /**
+     * Associates the specified array of plugins with the context name given.
+     * @param context - name of plugin context
+     * @param arrayOfPluginComponents - array of React components
+     */
+    addPlugins: (context, arrayOfPluginComponents) => plugins[context] = [...(EDConfig.pluginsFor(context)), ...arrayOfPluginComponents]
 };
 
 const languages = JSON.parse(document.getElementById('ed-preloaded-languages').textContent);
+const plugins = {};
 
 export default EDConfig;

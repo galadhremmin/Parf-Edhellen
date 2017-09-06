@@ -16,6 +16,7 @@ mix.webpackConfig({
         alias: {
             'elfdict': path.resolve(__dirname, 'resources/assets/js/_ed/'),
 
+            'ed-components/dialog': 'elfdict/components/dialog.jsx',
             'ed-components/error-list': 'elfdict/components/error-list.jsx',
             'ed-components/markdown-editor': 'elfdict/components/markdown-editor.jsx',
             'ed-components/language-select': 'elfdict/components/language-select.jsx',
@@ -37,10 +38,13 @@ mix.extract([
     'axios',
     'classnames',
     'smoothscroll-polyfill',
+    /* These components are excuded from _vendor.js_ as they are limited to restricted visitors 
+    'ed-components/dialog',
     'ed-components/error-list',
-    'ed-components/markdown-editor',
-    'ed-components/language-select',
     'ed-components/translation-select',
+    'ed-components/markdown-editor',
+    */
+    'ed-components/language-select',
     'ed-config',
     'ed-form',
     'ed-promise',
@@ -52,6 +56,14 @@ mix.react([
     'resources/assets/js/navigation.js',
     'resources/assets/js/search/index.jsx'
 ], 'public/js/global.js');
+
+mix.react([
+    'resources/assets/js/_plugins-restricted/index.jsx'
+], 'public/js/global-plugins-restricted.js');
+
+mix.react([
+    'resources/assets/js/_plugins-admin/index.jsx'
+], 'public/js/global-plugins-admin.js');
 
 mix.combine([
     'node_modules/glaemscribe/js/glaemscribe.js',

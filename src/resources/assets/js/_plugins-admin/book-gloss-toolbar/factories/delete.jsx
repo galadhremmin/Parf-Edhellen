@@ -1,10 +1,10 @@
 import React from 'react';
 import axios from 'axios';
 import EDConfig from 'ed-config';
-import ComponentFactory from './component-factory';
+import { EDComponentFactory } from 'ed-components/dialog';
 import EDTranslationSelect from 'ed-components/translation-select';
 
-class DeleteComponentFactory extends ComponentFactory {
+class EDDeleteComponentFactory extends EDComponentFactory {
     get titleComponent() {
         return props => <span>
             <span className="glyphicon glyphicon-trash" />
@@ -20,7 +20,7 @@ class DeleteComponentFactory extends ComponentFactory {
     get footerComponent() {
         return props => <div>
             <button className="btn btn-default" onClick={this.onSubmit.bind(this, props.gloss)}>Delete</button>
-            <button className="btn btn-primary" onClick={this.done.bind(this)}>Cancel</button>
+            <button className="btn btn-primary" onClick={this.done.bind(this, props.gloss)}>Cancel</button>
         </div>;
     }
 
@@ -83,4 +83,4 @@ class BodyComponent extends React.Component {
     }
 }
 
-export default DeleteComponentFactory;
+export default EDDeleteComponentFactory;

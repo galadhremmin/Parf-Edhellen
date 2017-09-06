@@ -1,4 +1,35 @@
-class ComponentFactory {
+import React from 'react';
+import { Modal } from 'react-bootstrap';
+
+export const EDDialog = props => {
+    const factory = props.componentFactory;
+    
+    // no component factory = nothing to render
+    if (! factory) {
+        return null;
+    }
+
+    if (! (factory instanceof EDComponentFactory)) {
+        throw 'Component factory is not an instance of EDComponentFactory.';
+    }
+
+    const TitleComponent  = factory ? factory.titleComponent  : undefined;
+    const BodyComponent   = factory ? factory.bodyComponent   : undefined;
+    const FooterComponent = factory ? factory.footerComponent : undefined;
+
+    const modalProps = props.modalProps || {};
+    const componentProps = props.componentProps || {};
+
+    return <Modal {...modalProps}>
+        {TitleComponent ? <Modal.Header closeButton>
+            <Modal.Title><TitleComponent {...componentProps} /></Modal.Title>
+        </Modal.Header> : undefined}
+        {BodyComponent ? <Modal.Body><BodyComponent {...componentProps} /></Modal.Body> : undefined}
+        {FooterComponent ? <Modal.Footer><FooterComponent {...componentProps} /></Modal.Footer> : undefined}
+    </Modal>;
+};
+
+export class EDComponentFactory {
     /**
      * Callback for when the component is done interacting with the client.
      */
@@ -54,5 +85,3 @@ class ComponentFactory {
         }
     }
 }
-
-export default ComponentFactory;
