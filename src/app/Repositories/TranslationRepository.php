@@ -53,11 +53,19 @@ class TranslationRepository
             ->toArray();
     }
 
+    /**
+     * Gets the latest version of the translation specified by the ID.
+     *
+     * @param int $id
+     * @return void
+     */
     public function getTranslation(int $id) 
     {
-        return self::createTranslationQuery()
+        $translation = self::createTranslationQuery(0, false)
             ->where('t.id', $id)
             ->first();
+
+        return $translation->getLatestVersion();
     }
 
     public function getTranslationListForLanguage(int $languageId)

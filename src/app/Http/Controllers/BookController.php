@@ -23,6 +23,10 @@ class BookController extends Controller
     public function pageForTranslationId(Request $request, int $id)
     {
         $model = $this->getTranslation($id);
+        if (! $model) {
+            abort(404);
+        }
+
         return view('book.page', [
             'payload' => $model
         ]);
