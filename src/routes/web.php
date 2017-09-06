@@ -75,6 +75,7 @@ Route::group([
 
     // Contribute
     Route::resource('translation-review', 'TranslationReviewController');
+    Route::get('translation-review/{id}/destroy', 'TranslationReviewController@confirmDestroy')->name('translation-review.confirm-destroy');
 });
 
 // Admin resources
@@ -110,7 +111,6 @@ Route::group([
     Route::get('translation-review/{id}/reject', 'TranslationReviewController@confirmReject')->name('translation-review.confirm-reject');
     Route::put('translation-review/{id}/approve', 'TranslationReviewController@updateApprove')->name('translation-review.approve');
     Route::put('translation-review/{id}/reject', 'TranslationReviewController@updateReject')->name('translation-review.reject');
-    Route::get('translation-review/{id}/destroy', 'TranslationReviewController@confirmDestroy')->name('translation-review.confirm-destroy');
     
 });
 
