@@ -42,7 +42,7 @@
   <div class="col-xs-12 col-sm-6 col-md-4">
     <h4>Community activity</h4>
     <p>
-      Shows the {{count($auditTrails)}} most recent activities.
+      The {{count($auditTrails)}} most recent activities.
     </p>
     <ul class="list-group">
     @foreach($auditTrails as $a)

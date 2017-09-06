@@ -8,12 +8,20 @@ import { EDSearchResultsReducer } from './reducers';
 import EDSearchBar from './components/search-bar';
 import EDSearchResults from './components/search-results';
 
-const store = createStore(EDSearchResultsReducer, undefined /* <- preloaded state */,
-    applyMiddleware(thunkMiddleware)
-);
-
 window.addEventListener('load', function () {
     enableSmoothScrolling();
+
+    const stateContainer = document.getElementById('ed-preloaded-book');
+    let preloadedState = undefined;
+    if (stateContainer) {
+        preloadedState = {
+            bookData: JSON.parse(stateContainer.textContent)
+        };
+    }
+    
+    const store = createStore(EDSearchResultsReducer, preloadedState,
+        applyMiddleware(thunkMiddleware)
+    );
 
     ReactDOM.render(
         <Provider store={store}>

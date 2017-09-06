@@ -3,4 +3,3 @@
   data-context="{{ $context }}" 
   data-account-id="{{ Auth::check() ? Auth::user()->id : '0' }}"
   data-post-enabled="{{ $enabled ? 'true' : 'false' }}"></div>
-  

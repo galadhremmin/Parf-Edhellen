@@ -1,14 +1,11 @@
 @extends('_layouts.default')
 
-@section('title', ucfirst($word))
+@section('title', ucfirst($payload['word']))
 
 @section('body')
-<div class="ed-remove-when-navigating">
-  @include('book._page', [
-    'sections' => $sections,
-    'single'   => $single
-  ])
-</div>
+<script type="application/json" id="ed-preloaded-book">
+{!! json_encode($payload) !!}
+</script>
 @endsection
 
 @section('scripts')

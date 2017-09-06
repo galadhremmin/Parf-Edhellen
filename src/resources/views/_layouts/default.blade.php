@@ -73,17 +73,17 @@
   </div>
 
   <script type="application/json" id="ed-preloaded-languages">{!! $allLanguages !!}</script>
+  <script type="text/javascript" src="/js/ie.js"></script>
   <script type="text/javascript" src="/js/manifest.js"></script>
   <script type="text/javascript" src="/js/vendor.js"></script>
-  <script type="text/javascript" src="/js/ie.js"></script>
-  <script type="text/javascript" src="/js/global.js" async></script>
   @if (Auth::check())
     @if (Auth::user()->isAdministrator())
-    <script type="text/javascript" src="/js/global-plugins-admin.js" async></script>
+    <script type="text/javascript" src="/js/global-plugins-admin.js"></script>
     @else
-    <script type="text/javascript" src="/js/global-plugins-restricted.js" async></script>
+    <script type="text/javascript" src="/js/global-plugins-restricted.js"></script>
     @endif
   @endif
+  <script type="text/javascript" src="/js/global.js" async></script>
   @yield('scripts')
   @if (!empty(config('ed.footer_view')))
     @include(config('ed.footer_view'))
