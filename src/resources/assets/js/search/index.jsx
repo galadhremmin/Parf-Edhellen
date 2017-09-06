@@ -32,4 +32,10 @@ window.addEventListener('load', function () {
         </Provider>,
         document.getElementById('ed-search-component')
     );
+
+    // SEO: delete content specifically only present for bots
+    const seoContent = document.getElementById('ed-book-for-bots');
+    if (seoContent) {
+        seoContent.parentNode.removeChild(seoContent);
+    }
 });
