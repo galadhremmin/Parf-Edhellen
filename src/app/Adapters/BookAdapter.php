@@ -29,8 +29,10 @@ class BookAdapter
         $numberOfTranslations = count($translations);
 
         // Reverses phonetic approximations  
-        $word = StringHelper::reverseNormalization($word);
-
+        if ($word !== null) {
+            $word = StringHelper::reverseNormalization($word);
+        }
+        
         // * Optimize by dealing with some edge cases first
         //    - No translation results
         if ($numberOfTranslations < 1) {
