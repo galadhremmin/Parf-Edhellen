@@ -65,7 +65,7 @@ class TranslationRepository
             ->where('t.id', $id)
             ->first();
 
-        return $translation->getLatestVersion();
+        return $translation;
     }
 
     public function getTranslationListForLanguage(int $languageId)
