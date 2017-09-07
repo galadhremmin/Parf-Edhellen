@@ -149,7 +149,8 @@ class AuditTrailRepository
             // merge equivalent audit trail items to avoid spamming the log with the same message.
             if ($previousItem !== null && 
                 $previousItem['account_id'] === $item['account_id'] &&
-                $previousItem['message'] === $item['message']) {
+                $previousItem['message'] === $item['message'] &&
+                $previousItem['entity'] === $item['entity']) {
 
                 // choose the latest item
                 $trailLength = count($trail);
