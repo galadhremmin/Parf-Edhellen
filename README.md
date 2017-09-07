@@ -1,11 +1,9 @@
-Parf Edhellen
-==============
+# Parf Edhellen
 This is the source code for [elfdict.com](http://www.elfdict.com), a non-profit, free dictionary online for Tolkien's languages. Maintained by Leonard Wickmark. Follow me on twitter at [@parmaeldo](https://twitter.com/parmaeldo).
 
-Version 1.9.9.3 is in production.
+Version 1.9.9.4 is in production.
 
-Configuration
--------------
+## Configuration
 Installation is relatively easy:
 1. Configure the database using the model files. Execute the script files in ascending order, starting with _schema.sql_
 2. Shut down your web server
@@ -28,16 +26,31 @@ php artisan route:cache      # step 7
 php artisan storage:link     # step 8
 ```
 
-Want to help out?
------------------
-
+## Want to help out?
 If you are interested in helping out, please get in touch with [galadhremmin](https://github.com/galadhremmin).
 You can also help us by donating. Please visit [elfdict.com](http://www.elfdict.com) for more information.
 
 I'd like to thank JetBrains for supporting ElfDict by giving us their excellent PHPStorm for free.
 
-Coding style
-------------
+## Documentation
+### Audit trail
+The audit trail consists of activities. Activities are specified as constants within the _App\Models\AuditTrail_ class, and utilised throughout the application. The _App\Repositories\AuditTrailRepository_ contains the necessary functionality for converting activities (which are integers) into human-readable strings.
+
+_Note_: audit trail model objects with the property _is_admin_ set to 1 (= true) can only be seen by administrators.
+
+### Cookies
+The following cookie names are used by the application:
+
+| Cookie name | Description |
+|-------------|-------------|
+| ed-usermode | Administrators can give a cookie with this name the value _incognito_ to hide their activity. | 
+
+### System errors
+The schema _system_errors_ contain information about client-side as well as server-side exceptions. Common exceptions (404 Page not found, 401 Unauthorized, etc.) are separated from the rest by the _is_common_ column. 
+
+Uncaught client-side exceptions are caught by the _onerror_ event, passed to a web API, and logged. Refer to the API documentation for more information.
+
+# Coding style
 * \t must be replaced with four spaces for JavaScript and PHP, else two spaces.
 * PHP is written in camelCase with exception for classes and interfaces, which are capitalized.
 * SQL is written in upper case.
@@ -69,6 +82,5 @@ Coding style
 
 The source code is provided as-is. The code does not, in any shape or form, reflect best coding practices; it's a non-profit hobby project of mine.
 
-License
--------
+# License
 ElfDict (Parf Edhellen; elfdict.com) is licensed in accordance with [AGPL](https://tldrlegal.com/license/gnu-affero-general-public-license-v3-(agpl-3.0)).
