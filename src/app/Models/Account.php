@@ -96,8 +96,8 @@ class Account extends Authenticatable
     {
         $request = request();
         if ($request !== null) {
-            $cookie = Cookie::make('ed-usermode', $v ? 'incognito' : 'visible', 0, '/', 
-                $request->getHttpHost(), isset($_SERVER['HTTPS']) /* = secure */, true /* = HTTP only */);
+            $cookie = Cookie::make('ed-usermode', $v ? 'incognito' : 'visible', 60*24, null, null, 
+                isset($_SERVER['HTTPS']) /* = secure */, true /* = HTTP only */);
             Cookie::queue($cookie);
         }
     }
