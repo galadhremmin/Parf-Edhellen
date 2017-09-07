@@ -71,6 +71,11 @@ class Account extends Authenticatable
         return $this->remember_token;
     }
     
+    /**
+     * Determines whether the client has specifically requested to operate in incognito mode.
+     *
+     * @return boolean
+     */
     public function isIncognito() 
     {
         if (! $this->isAdministrator()) {
@@ -81,10 +86,18 @@ class Account extends Authenticatable
         return $request !== null && $request->cookie('ed-usermode') === 'incognito';
     }
 
+    /**
+     * Registers a cookie specifying whether the client requests to operate in an incognito mode.
+     *
+     * @param bool $v - whether to go incognito or not (=false).
+     * @return void
+     */
     public function setIncognito(bool $v)
     {
-        if (isset($_SERVER)) {
-            $cookie = Cookie::make('ed-usermode', $v ? 'incognito' : 'visible', 0, '/', '', isset($_SERVER['HTTPS']) /* = secure */, true /* = HTTP only */);
+        $request = request();
+        if ($request !== null) {
+            $cookie = Cookie::make('ed-usermode', $v ? 'incognito' : 'visible', 0, '/', 
+                $request->getHttpHost(), isset($_SERVER['HTTPS']) /* = secure */, true /* = HTTP only */);
             Cookie::queue($cookie);
         }
     }
