@@ -5,3 +5,6 @@ UPDATE `system_errors` SET `is_common` = 1
     WHERE `message` LIKE 'Illuminate\\\\Auth\\\\AuthenticationException%' OR
           `message` LIKE 'Illuminate\\\\Session\\\\TokenMismatchException%' OR
           `message` LIKE 'Symfony\\\\Component\\\\HttpKernel\\\\Exception\\\\NotFoundHttpException%';
+
+
+INSERT INTO `version` (`number`, `date`) VALUES (1.995, NOW());
