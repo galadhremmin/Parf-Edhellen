@@ -204,13 +204,18 @@ class AuditTrailRepository
 
         // check whether the specified user is an administrator
         $request = request();
+        $admin = false;
+        if ($request !== null) {
+            $user = $request->user();
+            $admin = $user !== null && $user->isIncognito();
+        }
 
         AuditTrail::create([
             'account_id'  => $userId,
             'entity_id'   => $entity->id,
             'entity_type' => $typeName,
             'action_id'   => $action,
-            'is_admin'    => $request !== null && $request->user()->isIncognito()
+            'is_admin'    => $admin
         ]);
     }
 }
