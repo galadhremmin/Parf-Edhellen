@@ -23,12 +23,14 @@ class DBHandler extends Handler
         if (! ($databaseException && $exception->getCode() === 2002)) {
             $request = request();
             $user = $request->user();
+            $common = $this->shouldReport($exception);
 
             SystemError::create([
                 'message'    => get_class($exception).(! empty($exception->getMessage()) ? ': '.$exception->getMessage() : ''),
                 'url'        => $request->fullUrl(),
                 'ip'         => array_key_exists('REMOTE_ADDR', $_SERVER) ? $_SERVER['REMOTE_ADDR'] : null,
-                'error'      => $this->shouldReport($exception)
+                'is_common'  => $common,
+                'error'      => $common
                     ? $exception->getTraceAsString()
                     : null,
                 'account_id' => $user !== null

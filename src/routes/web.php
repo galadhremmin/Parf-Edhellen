@@ -56,6 +56,14 @@ Route::group([ 'middleware' => 'auth' ], function () {
     Route::post('/author/edit/{id?}', [ 'uses' => 'AuthorController@update' ])->name('author.update-profile');
 });
 
+Route::group([ 
+    'prefix'     => 'admin', 
+    'middleware' => ['auth', 'auth.require-role:Administrators']  
+], function () {
+
+    Route::get('user/incognito', 'DashboardController@setIncognito')->name('dashboard.incognito');
+});
+
 // Authentication
 Route::get('/login', 'SocialAuthController@login')->name('login');
 Route::get('/logout', 'SocialAuthController@logout')->name('logout');

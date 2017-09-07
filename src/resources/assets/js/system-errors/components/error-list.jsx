@@ -38,7 +38,9 @@ class EDSystemErrorList extends React.Component {
             openErrorId: 0,
             exceptions: exceptionStrings,
             selectedExceptions: exceptionStrings.filter(
-                ex => ex !== 'Illuminate\\Auth\\AuthenticationException')
+                ex => ex !== 'Illuminate\\Auth\\AuthenticationException'   &&
+                      ex !== 'Illuminate\\Session\\TokenMismatchException' &&
+                      ex !== 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException')
         };
     }
 

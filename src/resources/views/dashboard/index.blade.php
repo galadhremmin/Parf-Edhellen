@@ -1,7 +1,7 @@
 @inject('link', 'App\Helpers\LinkHelper')
 @extends('_layouts.default')
 
-@section('title', 'Welcome!')
+@section('title', 'Welcome '.$user->nickname.'!')
 @section('body')
   <h1>Dashboard</h1>
   
@@ -18,7 +18,7 @@
 
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h2 class="panel-title"><span class="glyphicon glyphicon-user"></span> About you</h2>
+          <h2 class="panel-title"><span class="glyphicon glyphicon-user"></span> About &ldquo;{{ $user->nickname }}&rdquo;</h2>
         </div>
         <div class="panel-body">
           <ul class="pill-nav">
@@ -28,6 +28,23 @@
                 Your profile
               </a>
             </li>
+            @if ($user->isAdministrator())
+              @if ($incognito)
+              <li>
+                <a href="{{ route('dashboard.incognito', ['incognito' => false]) }}">
+                  <span class="glyphicon glyphicon-eye-open"></span>
+                  Be visible
+                </a>
+              </li>
+              @else
+              <li>
+                <a href="{{ route('dashboard.incognito', ['incognito' => true]) }}">
+                  <span class="glyphicon glyphicon-eye-close"></span>
+                  Go incognito
+                </a>
+              </li>
+              @endif
+            @endif
           </ul>
         </div>
       </div>

@@ -41,9 +41,10 @@ class AuditTrailRepository
         
         if (! Auth::check() || ! Auth::user()->isAdministrator()) {
             // Put audit trail actions here that only administrators should see.
-            $query = $query->whereNotIn('action_id', [
-                AuditTrail::ACTION_PROFILE_AUTHENTICATED
-            ]);
+            $query = $query->where('is_admin', 0)
+                ->whereNotIn('action_id', [
+                    AuditTrail::ACTION_PROFILE_AUTHENTICATED
+                ]);
         }
         
         $actions = $query->skip($skipNoOfRows)->take($noOfRows)->get();
@@ -201,11 +202,15 @@ class AuditTrailRepository
             throw new \Exception(get_class($entity).' is not supported.');
         }
 
+        // check whether the specified user is an administrator
+        $request = request();
+
         AuditTrail::create([
             'account_id'  => $userId,
             'entity_id'   => $entity->id,
             'entity_type' => $typeName,
-            'action_id'   => $action
+            'action_id'   => $action,
+            'is_admin'    => $request !== null && $request->user()->isIncognito()
         ]);
     }
 }

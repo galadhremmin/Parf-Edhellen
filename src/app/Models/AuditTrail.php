@@ -34,7 +34,7 @@ class AuditTrail extends ModelBase
      * @var array
      */
     protected $fillable = [
-        'account_id', 'entity_type', 'entity_id', 'action_id'
+        'account_id', 'entity_type', 'entity_id', 'action_id', 'is_admin'
     ];
 
     public function account() 

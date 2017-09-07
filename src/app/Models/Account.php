@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -68,5 +69,23 @@ class Account extends Authenticatable
     public function getRememberToken()
     {
         return $this->remember_token;
+    }
+    
+    public function isIncognito() 
+    {
+        if (! $this->isAdministrator()) {
+            return false;
+        }
+
+        $request = request();
+        return $request !== null && $request->cookie('ed-usermode') === 'incognito';
+    }
+
+    public function setIncognito(bool $v)
+    {
+        if (isset($_SERVER)) {
+            $cookie = Cookie::make('ed-usermode', $v ? 'incognito' : 'visible', 0, '', 'localhost', isset($_SERVER['HTTPS']) /* = secure */, true /* = HTTP only */);
+            Cookie::queue($cookie);
+        }
     }
 }

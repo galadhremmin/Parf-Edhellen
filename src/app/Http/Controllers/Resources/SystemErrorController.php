@@ -12,7 +12,8 @@ class SystemErrorController extends Controller
 {
     public function index(Request $request)
     {
-        $errors = SystemError::take(1000)
+        $errors = SystemError::where('is_common', 0) // TODO: implement switching functionality [0/1]
+            ->take(1000)
             ->orderBy('id', 'desc')
             ->get();
             
