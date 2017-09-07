@@ -84,7 +84,7 @@ class Account extends Authenticatable
     public function setIncognito(bool $v)
     {
         if (isset($_SERVER)) {
-            $cookie = Cookie::make('ed-usermode', $v ? 'incognito' : 'visible', 0, '', 'localhost', isset($_SERVER['HTTPS']) /* = secure */, true /* = HTTP only */);
+            $cookie = Cookie::make('ed-usermode', $v ? 'incognito' : 'visible', 0, '/', '', isset($_SERVER['HTTPS']) /* = secure */, true /* = HTTP only */);
             Cookie::queue($cookie);
         }
     }
