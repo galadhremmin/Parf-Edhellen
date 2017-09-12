@@ -19,8 +19,7 @@ class Keyword extends ModelBase
             $filter[] = ['is_old', 0];
         }
 
-        $query->distinct()
-            ->where($filter)
+        $query->where($filter)
             ->whereNotNull('sense_id');
     }
 }

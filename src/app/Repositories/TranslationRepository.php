@@ -34,17 +34,17 @@ class TranslationRepository
             $query = DB::table('keywords as k')
                 ->join('translations as t', 'k.sense_id', 't.sense_id')
                 ->where($filter)
-                ->select('k.keyword as k', 'k.normalized_keyword as nk')
-                ->distinct();
+                ->select('k.keyword as k', 'k.normalized_keyword as nk');
         } else {
             $query = Keyword::findByWord($word, $reversed, $includeOld)
                 ->select('keyword as k', 'normalized_keyword as nk');
         }
 
         $keywords = $query
-            ->orderBy($reversed ? 'reversed_normalized_keyword_unaccented_length' : 'normalized_keyword_unaccented_length', 'asc')
-            ->orderBy($reversed ? 'reversed_normalized_keyword' : 'normalized_keyword', 'asc')
+            ->orderBy($reversed ? 'k.reversed_normalized_keyword_unaccented_length' : 'k.normalized_keyword_unaccented_length', 'asc')
+            ->orderBy($reversed ? 'k.reversed_normalized_keyword' : 'k.normalized_keyword', 'asc')
             ->limit(100)
+            ->distinct()
             ->get();
 
         return $keywords;
