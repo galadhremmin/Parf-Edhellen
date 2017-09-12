@@ -79,15 +79,17 @@ class BookApiController extends Controller
     {
         $this->validate($request, [
             'word'        => 'required',
+            'include_old' => 'required|boolean',
             'reversed'    => 'boolean',
-            'language_id' => 'numeric'
+            'language_id' => 'numeric',
         ]);
 
         $word       = StringHelper::normalize( $request->input('word'), /* accentsMatter: */ false, /* retainWildcard: */ true );
+        $includeOld = boolval($request->input('include_old'));
         $reversed   = $request->input('reversed') === true;
         $languageId = intval($request->input('language_id'));
 
-        $keywords = $this->_translationRepository->getKeywordsForLanguage($word, $reversed, $languageId);
+        $keywords = $this->_translationRepository->getKeywordsForLanguage($word, $reversed, $languageId, $includeOld);
         return $keywords;
     }
 
@@ -123,14 +125,16 @@ class BookApiController extends Controller
         $this->validate($request, [
             'word'        => 'required|max:255',
             'language_id' => 'sometimes|required|exists:languages,id',
+            'include_old' => 'sometimes|required|boolean',
             'inflections' => 'sometimes|boolean'
         ]);
 
         $word = StringHelper::normalize( $request->input('word') );
         $languageId = $request->has('language_id') ? intval($request->input('language_id')) : 0;
+        $includeOld = $request->has('include_old') ? boolval($request->input('include_old')) : true;
         $inflections = $request->has('inflections') && $request->input('inflections');
 
-        return $this->doTranslate($word, $languageId, $inflections);
+        return $this->doTranslate($word, $languageId, $inflections, $includeOld);
     }
 
     /**

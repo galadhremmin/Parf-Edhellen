@@ -14,18 +14,21 @@ export const EDSearchResultsReducer = (state = {
     normalizedWord: undefined,
     bookData: undefined,
     reversed: false,
+    includeOld: false,
     languageId: 0
 }, action) => {
     switch (action.type) {
 
         case REQUEST_RESULTS:
-            return Object.assign({}, state, {
+            return {
+                ...state,
                 loading: true,
                 wordSearch: action.wordSearch,
                 reversed: action.reversed,
                 languageId: action.languageId,
+                includeOld: action.includeOld,
                 itemIndex: -1
-            });
+            };
 
         case REQUEST_NAVIGATION:
             // perform an index check -- if the action does not specify
@@ -35,44 +38,49 @@ export const EDSearchResultsReducer = (state = {
             const index = action.index === undefined ? -1 : action.index;
             const items = index > -1 ? state.items : undefined;
 
-            return Object.assign({}, state, {
+            return {
+                ...state,
                 loading: true,
                 word: action.word,
                 normalizedWord: action.normalizedWord,
                 itemIndex: index,
                 items
-            });
+            };
 
         case RECEIVE_RESULTS:
-            return Object.assign({}, state, {
+            return {
+                ...state,
                 items: action.items,
                 loading: false,
                 itemIndex: -1
-            });
+            };
 
         case RECEIVE_NAVIGATION:
-            return Object.assign({}, state, {
+            return {
+                ...state,
                 bookData: action.bookData,
                 loading: false
-            });
+            };
 
         case ADVANCE_SELECTION:
             if (! Array.isArray(state.items)) {
                 return state;
             }
 
-            return Object.assign({}, state, {
+            return {
+                ...state,
                 itemIndex: action.direction < 0
                     ? (state.itemIndex < 1   ? state.items.length - 1 : state.itemIndex - 1)
                     : (state.itemIndex + 1 === state.items.length ? 0 : state.itemIndex + 1)
-            });
+            };
 
         case SET_SELECTION:
-            return Object.assign({}, state, {
+            return {
+                ...state,
                 itemIndex: state.index === -1 || ! Array.isArray(state.items)
                     ? -1
                     : Math.max(0, Math.min(state.items.length - 1, action.index))
-            });
+            };
 
         default:
             return state;

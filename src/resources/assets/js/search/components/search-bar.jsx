@@ -11,7 +11,8 @@ class EDSearchBar extends React.Component {
         this.state = {
             isReversed: false,
             word: '',
-            languageId: 0
+            languageId: 0,
+            includeOld: true
         };
         this.throttle = 0;
         this.keyhook = this.onGlobalKeyPress.bind(this);
@@ -30,42 +31,6 @@ class EDSearchBar extends React.Component {
         window.removeEventListener('keydown', this.keyhook);
     }
 
-    searchKeyDown(ev) {
-        let direction = ev.which === 40
-            ? 1
-            : (ev.which === 38 ? -1 : undefined);
-
-        if (direction !== undefined) {
-            ev.preventDefault();
-            this.props.dispatch(advanceSelection(direction));
-        }
-    }
-
-    wordChange(ev) {
-        const word = ev.target.value;
-        this.setState({
-            word
-        });
-
-        this.search(word);
-    }
-
-    reverseChange(ev) {
-        this.setState({
-            isReversed: ev.target.checked
-        });
-
-        this.search();
-    }
-
-    languageChange(ev) {
-        this.setState({
-            languageId: parseInt(ev.value, /* radix: */ 10)
-        });
-
-        this.search();
-    }
-
     search(word) {
         if (word === undefined) {
             word = this.state.word;
@@ -80,7 +45,7 @@ class EDSearchBar extends React.Component {
         }
 
         this.throttle = window.setTimeout(() => {
-            this.props.dispatch(fetchResults(word, this.state.isReversed, this.state.languageId));
+            this.props.dispatch(fetchResults(word, this.state.isReversed, this.state.languageId, this.state.includeOld));
             this.throttle = 0;
         }, 500);
     }
@@ -93,6 +58,50 @@ class EDSearchBar extends React.Component {
         if (!this.props.loading) {
             this.props.dispatch(setSelection(0));
         }
+    }
+
+    onSearchKeyDown(ev) {
+        let direction = ev.which === 40
+            ? 1
+            : (ev.which === 38 ? -1 : undefined);
+
+        if (direction !== undefined) {
+            ev.preventDefault();
+            this.props.dispatch(advanceSelection(direction));
+        }
+    }
+
+    onWordChange(ev) {
+        const word = ev.target.value;
+        this.setState({
+            word
+        });
+
+        this.search(word);
+    }
+
+    onReverseChange(ev) {
+        this.setState({
+            isReversed: ev.target.checked
+        });
+
+        this.search();
+    }
+
+    onLanguageChange(ev) {
+        this.setState({
+            languageId: parseInt(ev.value, /* radix: */ 10)
+        });
+
+        this.search();
+    }
+
+    onIncludeOldChange(ev) {
+        this.setState( {
+            includeOld: ev.target.checked
+        });
+
+        this.search();
     }
 
     /**
@@ -134,19 +143,24 @@ class EDSearchBar extends React.Component {
                                autoFocus={true}
                                role="presentation"
                                value={this.state.word}
-                               onKeyDown={this.searchKeyDown.bind(this)}
-                               onChange={this.wordChange.bind(this)} />
+                               onKeyDown={this.onSearchKeyDown.bind(this)}
+                               onChange={this.onWordChange.bind(this)} />
                     </div>
                 </div>
             </div>
             <div className="row">
-                {this.state.languages ? <EDLanguageSelect className="search-language-select" onChange={this.languageChange.bind(this)} /> : ''}
-                <div className="checkbox input-sm search-reverse-box-wrapper">
-                    <label>
+                <div className="search-language-select">
+                    <label className="inline input-sm">
                         <input type="checkbox" name="isReversed"
-                               checked={this.state.isReversed}
-                               onChange={this.reverseChange.bind(this)} /> Reversed
+                            checked={this.state.isReversed}
+                            onChange={this.onReverseChange.bind(this)} /> Reversed
                     </label>
+                    <label className="inline input-sm">
+                        <input type="checkbox" name="excludeOld"
+                            checked={this.state.includeOld}
+                            onChange={this.onIncludeOldChange.bind(this)} /> Old sources
+                    </label>
+                    {this.state.languages ? <EDLanguageSelect onChange={this.onLanguageChange.bind(this)} /> : ''}
                 </div>
             </div>
         </form>);

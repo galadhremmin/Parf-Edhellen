@@ -23,9 +23,9 @@ trait CanTranslateTrait
         $this->_sentenceRepository = $sentenceRepository;
     }
 
-    public function translate(string $word, int $languageId = 0, bool $includeInflections = true)
+    public function translate(string $word, int $languageId = 0, bool $includeInflections = true, bool $includeOld = true)
     {
-        $translations = $this->_translationRepository->getWordTranslations($word, $languageId);
+        $translations = $this->_translationRepository->getWordTranslations($word, $languageId, $includeOld);
         $translationIds = array_map(function ($v) {
                 return $v->id;
             }, $translations);
