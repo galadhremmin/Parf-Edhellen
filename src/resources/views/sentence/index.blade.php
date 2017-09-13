@@ -8,6 +8,8 @@
 
 <p>Click on a phrase beneath to edit it.</p>
 
+<a class="btn btn-primary" href="{{ route('sentence.create') }}">Add phrase</a>
+
 @if (count($sentences) < 1)
 <em>No known phrases.</em> 
 @else
@@ -19,7 +21,6 @@
       @endforeach
     </ul>
   @endforeach
-<a class="btn btn-primary" href="{{ route('sentence.create') }}">Add phrase</a>
 @endif
 
 @endsection

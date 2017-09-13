@@ -109,6 +109,7 @@ Route::group([
         'index'
     ]]);
 
+    Route::get('sentence/confirm-destroy/{id}', 'SentenceController@confirmDestroy')->name('sentence.confirm-destroy');
     Route::post('sentence/validate', 'SentenceController@validatePayload');
     Route::post('sentence/validate-fragment', 'SentenceController@validateFragments');
     Route::post('sentence/parse-fragment/{name}', 'SentenceController@parseFragments');

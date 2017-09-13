@@ -45,6 +45,14 @@ class SentenceController extends Controller
         ]);
     }
 
+    public function confirmDestroy(Request $request, int $id)
+    {
+        $sentence = Sentence::findOrFail($id);
+        return view('sentence.confirm-destroy', [
+            'sentence' => $sentence
+        ]);
+    }
+
     public function store(Request $request)
     {
         $this->validateRequest($request);

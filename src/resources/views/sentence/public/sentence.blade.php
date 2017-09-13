@@ -29,6 +29,10 @@
 
   @if (Auth::check() && Auth::user()->isAdministrator())
   <p class="text-right">
+    <a href="{{ route('sentence.confirm-destroy', [ 'id' => $sentence->id ]) }}" class="btn btn-default">
+      <span class="glyphicon glyphicon-trash"></span>
+      Delete
+    </a>
     <a href="{{ route('sentence.edit', [ 'id' => $sentence->id ]) }}" class="btn btn-default">
       <span class="glyphicon glyphicon-edit"></span>
       Edit phrase

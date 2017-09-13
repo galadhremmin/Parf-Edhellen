@@ -114,6 +114,14 @@ Breadcrumbs::register('sentence.edit', function ($breadcrumbs, App\Models\Senten
     ]));
 });
 
+Breadcrumbs::register('sentence.confirm-destroy', function ($breadcrumbs, App\Models\Sentence $sentence)
+{
+    $breadcrumbs->parent('sentence.index');
+    $breadcrumbs->push('Delete phrase (' . $sentence->name . ')', route('sentence.confirm-destroy', [
+        'id' => $sentence->id
+    ]));
+});
+
 // //////////////////////////////////////////////////////////////////////////////////////////////
 // Dashboard > Glossary
 

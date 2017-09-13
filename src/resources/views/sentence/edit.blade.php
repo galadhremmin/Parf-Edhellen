@@ -8,6 +8,10 @@
 
 <div id="ed-sentence-form"></div>
 
+<hr>
+
+Alternatively, you can <a href="{{ route('sentence.confirm-destroy', ['id' => $sentence->id]) }}">delete the phrase</a>.
+
 <script type="application/json" id="ed-preloaded-sentence">
 {!! $sentence !!}
 </script>
