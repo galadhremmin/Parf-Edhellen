@@ -24,9 +24,11 @@ class HomeController extends Controller
     public function index() 
     {
         $randomSentence = Sentence::approved()->inRandomOrder()->first();
-        $data = $this->_sentenceAdapter->adaptFragments($randomSentence->sentence_fragments, false);
-        $auditTrails = $this->_auditTrail->get(10);
+        $data = $randomSentence 
+            ? $this->_sentenceAdapter->adaptFragments($randomSentence->sentence_fragments, false) 
+            : null;
 
+        $auditTrails = $this->_auditTrail->get(10);
         $data = [
             'sentence'         => $randomSentence,
             'sentenceData'     => $data,

@@ -31,6 +31,7 @@
     </p>
     <hr class="visible-xs">
   </div>
+  @if ($sentence)
   <div class="col-xs-12 col-sm-6 col-md-4">
     <h4>Random phrase</h4>
     @include('sentence.public._random', [ 
@@ -38,6 +39,7 @@
       'sentenceData' => $sentenceData
     ])
   </div>
+  @endif
   <hr class="hidden-md hidden-lg clear-left">
   <div class="col-xs-12 col-sm-6 col-md-4">
     <h4>Community activity</h4>
