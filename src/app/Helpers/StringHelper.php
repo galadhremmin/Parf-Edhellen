@@ -128,6 +128,9 @@ class StringHelper
             }
         }
 
+        // remove underline slugs 
+        $str = str_replace('_', ' ', $str);
+        
         return strtr($str, $reversed);
     }
 
