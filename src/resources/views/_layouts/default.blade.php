@@ -30,7 +30,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="/">Parf Edhellen</a>
+        <a class="navbar-brand" href="/">{{ config('ed.title') }}</a>
       </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
