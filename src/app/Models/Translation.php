@@ -9,7 +9,7 @@ class Translation extends ModelBase
     protected $fillable = [ 
         'account_id', 'language_id', 'word_id', 'speech_id', 'translation_group_id', 'sense', 
         'translation', 'source', 'comments', 'notes', 'is_uncertain', 'is_rejected', 'tengwar',
-        'word'
+        'word', 'external_id'
     ];
 
     public function account() 
