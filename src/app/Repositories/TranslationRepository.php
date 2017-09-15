@@ -194,7 +194,7 @@ class TranslationRepository
         return $groupedSuggestions;
     }
 
-    public function saveTranslation(string $wordString, string $senseString, Translation $translation, array $keywords, $resetKeywords = true)
+    public function saveTranslation(string $wordString, string $senseString, Translation $translation, array $keywords, $resetKeywords = true, bool & $changed = null)
     {
         // 1. Turn all words should be lower case.
         $wordString  = StringHelper::toLower($wordString);
