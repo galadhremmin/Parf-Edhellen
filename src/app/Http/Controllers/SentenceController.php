@@ -24,7 +24,9 @@ class SentenceController extends Controller
         $numberOfSentences  = Sentence::approved()->count();
         $numberOfNeologisms = Sentence::approved()->neologisms()->count();
         $randomSentence     = Sentence::approved()->inRandomOrder()->first();
-        $randomSentenceData = $this->_adapter->adaptFragments($randomSentence->sentence_fragments);
+        $randomSentenceData = $randomSentence 
+            ? $this->_adapter->adaptFragments($randomSentence->sentence_fragments)
+            : null;
         $languages          = $this->_sentenceRepository->getLanguages();
 
         return view('sentence.public.index', [
