@@ -70,7 +70,7 @@ class FlashcardController extends Controller
         return view('flashcard.cards', ['flashcard' => $flashcard]);
     }
 
-    public function card(Request $request)
+    public function card(Request $request, int $n = 0)
     {
         $this->validate($request, [
             'id'    => 'numeric|exists:flashcards,id',
@@ -105,6 +105,16 @@ class FlashcardController extends Controller
         
         // retrieve the random translation or fail (if none exists!)
         $translation = $q->firstOrFail();
+
+        // ignore untranslated words
+        if (mb_strtolower($translation->translation) === mb_strtolower($translation->word->word)) {
+            // maximum 10 levels of recursion
+            if ($n > 10) {
+                abort(404);
+            }
+
+            return $this->card($request, $n + 1);
+        }
 
         // Compile a list of options
         $options = [$translation->translation];
