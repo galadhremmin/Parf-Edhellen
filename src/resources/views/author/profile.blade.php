@@ -45,7 +45,7 @@
               <td class="text-right">{{ $stats['noOfWords'] }}</td>
             </tr>
             <tr>
-              <th>Translations</th>
+              <th>Glosses</th>
               <td class="text-right">{{ $stats['noOfTranslations'] }}</td>
             </tr>
             <tr>

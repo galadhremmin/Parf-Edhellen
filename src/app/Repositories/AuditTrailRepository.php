@@ -183,10 +183,16 @@ class AuditTrailRepository
         if ($userId === 0) {
             // Is the user authenticated?
             if (! Auth::check()) {
-                return;
-            }
+                if (property_exists($entity, 'account_id')) {
+                    $userId = $entity->account_id;
+                }
 
-            $userId = Auth::user()->id;
+                if (! $userId) {
+                    return;
+                }
+            } else {
+                $userId = Auth::user()->id;
+            }
         }
 
         // Retrieve the associated morph map key based on the specified entity.
