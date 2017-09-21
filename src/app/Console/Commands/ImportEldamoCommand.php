@@ -27,6 +27,7 @@ class ImportEldamoCommand extends Command
 
     public function __construct(TranslationRepository $translationRepository)
     {
+        parent::__construct();
         $this->_translationRepository = $translationRepository;
     }
 
