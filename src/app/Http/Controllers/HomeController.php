@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\{ Sentence, AuditTrail };
 use App\Adapters\SentenceAdapter;
-use App\Repositories\{ AuditTrailRepository, TranslationReviewRepository };
+use App\Repositories\TranslationReviewRepository;
+use App\Repositories\Interfaces\IAuditTrailRepository;
 
 class HomeController extends Controller
 {
@@ -13,7 +14,7 @@ class HomeController extends Controller
     protected $_sentenceAdapter;
     protected $_reviewRepository;
 
-    public function __construct(AuditTrailRepository $auditTrail, SentenceAdapter $sentenceAdapter, 
+    public function __construct(IAuditTrailRepository $auditTrail, SentenceAdapter $sentenceAdapter, 
         TranslationReviewRepository $translationReviewRepository) 
     {
         $this->_auditTrail       = $auditTrail;

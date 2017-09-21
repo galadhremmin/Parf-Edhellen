@@ -9,7 +9,7 @@ class SentenceRepository
 {
     protected $_auditTrail;
 
-    public function __construct(AuditTrailRepository $auditTrail)
+    public function __construct(Interfaces\IAuditTrailRepository $auditTrail)
     {
         $this->_auditTrail = $auditTrail;
     }

@@ -69,9 +69,8 @@ class TranslationController extends TranslationControllerBase
         // joining with the _words_ table. The result is assigned to _keywords, which starts with
         // an underscore.
         $translation->_keywords = $translation->sense 
-            ? $translation->sense
-                ->keywords()
-                ->join('words', 'words.id', 'keywords.word_id')
+            ? Keyword::join('words', 'words.id', 'keywords.word_id')
+                ->where('sense_id', $translation->sense_id)
                 ->where(function ($query) use($id) {
                     $query->whereNull('translation_id')
                         ->orWhere('translation_id', $id);

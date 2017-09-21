@@ -10,7 +10,7 @@ class TranslationRepository
 {
     protected $_auditTrail;
 
-    public function __construct(AuditTrailRepository $auditTrail)
+    public function __construct(Interfaces\IAuditTrailRepository $auditTrail)
     {
         $this->_auditTrail = $auditTrail;
     }
@@ -217,8 +217,8 @@ class TranslationRepository
         $changed = true;
         $originalTranslation = null;
         if ($translation->id) {
-            $originalTranslation = Translation::findOrFail($translation->id)
-                ->getLatestVersion();
+            $originalTranslation = Translation::with('sense', 'word', 'keywords')
+                ->findOrFail($translation->id)->getLatestVersion();
 
             // 5. were there changes made?
             $newAttributes = $translation->attributesToArray();
@@ -281,48 +281,75 @@ class TranslationRepository
                 ]);
             }
         }
-
-        // 9. Remove existing keywords
-        if ($originalTranslation !== null) {
-            $originalTranslation->keywords()->delete();
-        }
-
-        // 10. save gloss and word as keywords on the translation
-        $this->createKeyword($word, $sense, $translation);
-        if ($word->id !== $glossWord->id) { // this is sometimes possible (most often with names)
-            $this->createKeyword($glossWord, $sense, $translation);
-        }
-
-        // 11. Register keywords on the sense
         
-        // 11a. Process keywords -- filter through the keywords and remove keywords that
+        // 9. Process keywords -- filter through the keywords and remove keywords that
         // match the gloss and the translation's word, as these are managed separately.
         $keywords = array_filter($keywords, function ($w) use($wordString, $glossString) {
             return $w !== $wordString && $w !== $glossString;
         });
 
-        // 11b. Delete existing keywords associated with the sense.
-        if ($resetKeywords) {
-            $sense->keywords()->whereNull('translation_id')->delete();
-        }
+        // 10. Remove existing keywords, if they have changed
+        $keywordsChanged = true;
+        if ($originalTranslation !== null) {
+            
+            // transform original keyword entities to an array of strings.
+            $originalKeywords = $originalTranslation->keywords->map(function ($k) {
+                    return $k->keyword;
+                })->union(
+                    $originalTranslation->sense->keywords()
+                        ->whereNull('translation_id')
+                        ->get()
+                        ->map(function ($k) {
+                            return $k->keyword;
+                        })
+                )
+                ->toArray();
+            $originalKeywords = array_keys($originalKeywords);
+        
+            // if the difference between the keywords and the original keywords aren't just the word and
+            // gloss (as expected due to the filter above), an actual change has been recorded.
+            $keywordsChanged = !! array_diff(array_diff($originalKeywords, $keywords), [ $wordString, $glossString ]);
 
-        // 11c. Recreate the keywords for the sense.
-        foreach ($keywords as $keyword) {
-            $keywordWord = $this->createWord($keyword, $translation->account_id);
-
-            if ($sense->keywords()->where('word_id', $keywordWord->id)->count() < 1) {
-                $this->createKeyword($keywordWord, $sense, null);
+            if ($keywordsChanged) {
+                $originalTranslation->keywords()->delete();
             }
         }
 
-        // 12. Register an audit trail
-        $action = ($originalTranslation === null)
-            ? AuditTrail::ACTION_TRANSLATION_ADD 
-            : AuditTrail::ACTION_TRANSLATION_EDIT;
-        $userId = ($action === AuditTrail::ACTION_TRANSLATION_ADD)
-            ? $translation->account_id
-            : 0; // use the user currently logged in
-        $this->_auditTrail->store($action, $translation, $userId);
+        // 11. save gloss and word as keywords on the translation, if changed.
+        if ($keywordsChanged) {
+            $this->createKeyword($word, $sense, $translation);
+            if ($word->id !== $glossWord->id) { // this is sometimes possible (most often with names)
+                $this->createKeyword($glossWord, $sense, $translation);
+            }
+        }
+
+        // 12. Register keywords on the sense, if changed.
+        if ($keywordsChanged) {
+            // 12a. Delete existing keywords associated with the sense.
+            if ($resetKeywords) {
+                $sense->keywords()->whereNull('translation_id')->delete();
+            }
+
+            // 12b. Recreate the keywords for the sense.
+            foreach ($keywords as $keyword) {
+                $keywordWord = $this->createWord($keyword, $translation->account_id);
+
+                if ($sense->keywords()->where('word_id', $keywordWord->id)->count() < 1) {
+                    $this->createKeyword($keywordWord, $sense, null);
+                }
+            }
+        }
+
+        // 13. Register an audit trail
+        if ($changed || $keywordsChanged || $originalTranslation === null) {
+            $action = ($originalTranslation === null)
+                ? AuditTrail::ACTION_TRANSLATION_ADD  
+                : AuditTrail::ACTION_TRANSLATION_EDIT;
+            $userId = ($action === AuditTrail::ACTION_TRANSLATION_ADD)
+                ? $translation->account_id
+                : 0; // use the user currently logged in
+            $this->_auditTrail->store($action, $translation, $userId);
+        }
 
         return $translation;
     }

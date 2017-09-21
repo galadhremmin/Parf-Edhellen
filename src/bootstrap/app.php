@@ -37,6 +37,18 @@ $app->singleton(
 );
 
 $app->singleton(
+    App\Repositories\Interfaces\IAuditTrailRepository::class,
+    function ($app) {
+        
+        $handlerType = ! $app->runningInConsole()  
+            ? App\Repositories\AuditTrailRepository::class
+            : App\Repositories\Noop\NoopAuditTrailRepository::class;
+
+        return $app->make($handlerType);
+    }
+);
+
+$app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
     function ($app) {
         // DB logging isn't by design enabled in CLI

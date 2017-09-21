@@ -8,7 +8,7 @@ use App\Models\{ Account, AuditTrail, Favourite, FlashcardResult, ForumContext, 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
-class AuditTrailRepository
+class AuditTrailRepository implements Interfaces\IAuditTrailRepository
 {
     protected $_link;
 
@@ -17,7 +17,7 @@ class AuditTrailRepository
         $this->_link = $link;
     }
 
-    public static function mapMorps() 
+    public function mapMorphs() 
     {
         Relation::morphMap([
             'account'     => Account::class,

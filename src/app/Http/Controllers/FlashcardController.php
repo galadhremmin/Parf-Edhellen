@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\{AuditTrail, Flashcard, FlashcardResult, Language, Translation};
 use App\Helpers\MarkdownParser;
-use App\Repositories\AuditTrailRepository;
+use App\Repositories\Interfaces\IAuditTrailRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +13,7 @@ class FlashcardController extends Controller
 {
     protected $_auditTrail;
 
-    public function __construct(AuditTrailRepository $auditTrail) 
+    public function __construct(IAuditTrailRepository $auditTrail) 
     {
         $this->_auditTrail = $auditTrail;
     }

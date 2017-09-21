@@ -9,13 +9,13 @@ use Socialite;
 use Carbon\Carbon;
 
 use App\Models\{ Account, AuthorizationProvider, AuditTrail };
-use App\Repositories\AuditTrailRepository;
+use App\Repositories\Interfaces\IAuditTrailRepository;
 
 class SocialAuthController extends Controller
 {
     protected $_auditTrail;
 
-    public function __construct(AuditTrailRepository $auditTrail) 
+    public function __construct(IAuditTrailRepository $auditTrail) 
     {
         $this->_auditTrail = $auditTrail;
     }

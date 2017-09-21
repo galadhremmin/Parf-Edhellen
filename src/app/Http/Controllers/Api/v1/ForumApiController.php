@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
 use App\Models\{ AuditTrail, ForumPost, ForumPostLike, ForumContext, Translation, Sentence };
-use App\Repositories\{ AuditTrailRepository, ForumRepository };
+use App\Repositories\ForumRepository;
+use App\Repositories\Interfaces\IAuditTrailRepository;
 use App\Helpers\{ LinkHelper, MarkdownParser, StringHelper };
 
 class ForumApiController extends Controller 
@@ -15,7 +16,7 @@ class ForumApiController extends Controller
     protected $_link;
     protected $_repository;
 
-    public function __construct(AuditTrailRepository $auditTrail, LinkHelper $link, ForumRepository $repository)
+    public function __construct(IAuditTrailRepository $auditTrail, LinkHelper $link, ForumRepository $repository)
     {
         $this->_auditTrail = $auditTrail;
         $this->_link       = $link;

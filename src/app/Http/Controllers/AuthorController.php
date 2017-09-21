@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 use App\Models\{ Account, AuditTrail };
-use App\Repositories\{ AuditTrailRepository, StatisticsRepository };
+use App\Repositories\StatisticsRepository;
+use App\Repositories\Interfaces\IAuditTrailRepository;
 use App\Helpers\MarkdownParser;
 
 class AuthorController extends Controller
@@ -15,7 +16,7 @@ class AuthorController extends Controller
     protected $_auditTrail;
     protected $_statisticsRepository;
 
-    public function __construct(AuditTrailRepository $auditTrail, StatisticsRepository $statisticsRepository)
+    public function __construct(IAuditTrailRepository $auditTrail, StatisticsRepository $statisticsRepository)
     {
         $this->_auditTrail           = $auditTrail;
         $this->_statisticsRepository = $statisticsRepository;
