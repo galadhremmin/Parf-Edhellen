@@ -304,7 +304,7 @@ class TranslationRepository
                         })
                 )
                 ->toArray();
-            $originalKeywords = array_keys($originalKeywords);
+            $originalKeywords = array_unique($originalKeywords);
         
             // if the difference between the keywords and the original keywords aren't just the word and
             // gloss (as expected due to the filter above), an actual change has been recorded.
