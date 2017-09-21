@@ -23,6 +23,13 @@ class ImportEldamoCommand extends Command
      */
     protected $description = 'Imports definitions from eldamo.json. Transform the XML data source to JSON using EDEldamoParser.exe.';
 
+    protected $_translationRepository;
+
+    public function __construct(TranslationRepository $translationRepository)
+    {
+        $this->_translationRepository = $translationRepository;
+    }
+
     /**
      * Execute the console command.
      *
@@ -45,8 +52,6 @@ class ImportEldamoCommand extends Command
             $this->error('The JSON file must be saved using UTF-8 encoding (without BOM).');
             return;
         }
-
-        $repository = new TranslationRepository();
 
         $speechMap = [
             '?'        => '?',
@@ -266,7 +271,7 @@ class ImportEldamoCommand extends Command
             }
 
             $this->line($c.' '.$t->language.' '.$t->word.': '.($found ? $ot->id : 'new'));
-            $t = $repository->saveTranslation($word, $sense, $ot, $keywords, false);
+            $t = $this->_translationRepository->saveTranslation($word, $sense, $ot, $keywords, false);
             $this->line('     -> '.$t->id);
 
             $c += 1;
