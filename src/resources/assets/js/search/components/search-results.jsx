@@ -272,7 +272,10 @@ class EDSearchResults extends React.Component {
         }
 
         let book = null;
-        if (this.props.bookData) {
+        if (this.props.loading) {
+            book = <div className="sk-spinner sk-spinner-pulse" />;
+            
+        } else if (this.props.bookData) {
             book = this.renderBook();
         }
 
