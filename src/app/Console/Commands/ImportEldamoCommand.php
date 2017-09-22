@@ -214,6 +214,8 @@ class ImportEldamoCommand extends Command
 
         // Find the Eldamo translation group
         $eldamo = TranslationGroup::where('name', 'Eldamo')->firstOrFail();
+
+        $this->line('Data source: '.$path);
         $this->line('Eldamo ID: '.$eldamo->id.'.');
         $this->line('Updating '.count($data).' words.');
 
