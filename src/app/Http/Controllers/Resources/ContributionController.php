@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers\Resources;
 
-use App\Models\{ Translation, Contribution, Word, Sense };
+use App\Models\Initialization\Morphs;
+use App\Models\{ Translation, Contribution, Word, Sense, Sentence };
 use App\Http\Controllers\Controller;
 
 use Carbon\Carbon;
@@ -110,6 +111,20 @@ class ContributionController extends TranslationControllerBase
             abort(400, $review->word.' is already approved.');
         }
 
+        $modelName = Morphs::getMorphedModel($review->type);
+        if ($modelName === Translation::class) {
+            return $this->editTranslation($request, $review);
+        }
+        
+        if ($modelName === Sentence::class) {
+            return $this->editSentence($request, $review);
+        }
+
+        abort(404, 'Payload unrecognised.');
+    }
+
+    private function editTranslation(Request $request, Contribution $review)
+    {
         // retrieve word and sense based on the information specified in the review object. If the word does not exist in 
         // the database, create a new instance of the model for the word.
         $word = Word::forString($review->word)->firstOrNew(['word' => $review->word]);
@@ -126,7 +141,7 @@ class ContributionController extends TranslationControllerBase
 
         // extend the payload with information necessary for the form.
         $payloadData = json_decode($review->payload, true) + [ 
-            'id' => $id,
+            'id' => $review->id,
             'word'  => $word,
             'sense' => $sense,
             '_keywords' => $keywords,
@@ -137,6 +152,11 @@ class ContributionController extends TranslationControllerBase
             'review' => $review, 
             'payload' => json_encode($payloadData)
         ]);
+    }
+
+    private function editSentence(Request $request, Contribution $review)
+    {
+
     }
 
     /**
@@ -338,6 +358,7 @@ class ContributionController extends TranslationControllerBase
         $translation->account_id = $review->account_id;
         extract($map);
 
+        $review->type        = Morphs::getAlias($translation);
         $review->language_id = $translation->language_id;
         $review->word        = $word;
         $review->sense       = $sense;

@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
-use App\Repositories\Interfaces\IAuditTrailRepository;
+use App\Models\Initialization\Morphs;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->app->make(IAuditTrailRepository::class)->mapMorphs();
+        Morphs::map();
 
         // @markdown method injection
         Blade::directive('markdown', function (string $data) {

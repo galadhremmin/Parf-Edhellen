@@ -15,7 +15,8 @@ CREATE INDEX `TranslationsGroupId` ON `translations` (`translation_group_id`);
 -- WIP!
 
 ALTER TABLE `translation_reviews` ADD `sentence_id` int(11) NULL;
-ALTER TABLE `translation_reviews` ADD `type` varchar(16) NOT NULL DEFAULT 'translation';
+ALTER TABLE `translation_reviews` ADD `type` varchar(16) NOT NULL;
+UPDATE `translation_reviews` SET `type` = 'translation';
 
 RENAME TABLE `translation_reviews` TO `contributions`;
 

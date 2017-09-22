@@ -3,10 +3,10 @@
 namespace App\Repositories;
 
 use App\Helpers\LinkHelper;
-use App\Models\{ Account, AuditTrail, Favourite, FlashcardResult, ForumContext, ForumPost, Sentence, Translation };
+use App\Models\{ Account, AuditTrail, FlashcardResult, ForumPost, Sentence, Translation };
+use App\Models\Initialization\Morphs;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Relations\Relation;
 
 class AuditTrailRepository implements Interfaces\IAuditTrailRepository
 {
@@ -15,18 +15,6 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
     public function __construct(LinkHelper $link)
     {
         $this->_link = $link;
-    }
-
-    public function mapMorphs() 
-    {
-        Relation::morphMap([
-            'account'     => Account::class,
-            'favourite'   => Favourite::class,
-            'forum'       => ForumPost::class,
-            'sentence'    => Sentence::class,
-            'translation' => Translation::class,
-            'flashcard'   => FlashcardResult::class
-        ]);
     }
 
     public function get(int $noOfRows, int $skipNoOfRows = 0, $previousItem = null)
@@ -196,15 +184,7 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
         }
 
         // Retrieve the associated morph map key based on the specified entity.
-        $typeName = null;
-        $map = Relation::morphMap();
-        foreach ($map as $name => $className) {
-            if (is_a($entity, $className)) {
-                $typeName = $name;
-                break;
-            }
-        }
-
+        $typeName = Morphs::getAlias($entity);
         if ($typeName === null) {
             throw new \Exception(get_class($entity).' is not supported.');
         }
