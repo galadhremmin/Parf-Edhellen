@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import EDConfig from 'ed-config';
 import EDSearchItem from './search-item';
 import EDBookSection from './book-section';
+import EDComments from '../../_shared/components/comments';
 
 /**
  * Represents a collection of search results.
@@ -257,7 +258,14 @@ class EDSearchResults extends React.Component {
                                                         onReferenceLinkClick={this.onReferenceLinkClick.bind(this)}/>
                                 )}
                             </section>
-                        ) : ''}
+                        ) : undefined}
+                        {this.props.bookData.sections.length > 0 && this.props.bookData.single ? <div>
+                            <hr />
+                            <EDComments context={'translation'} 
+                                        entityId={this.props.bookData.sections[0].glosses[0].id} 
+                                        accountId={EDConfig.userId()} 
+                                        enabled={true} />
+                        </div> : undefined}
                     </div>
                 )}
             </div>

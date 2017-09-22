@@ -10,6 +10,8 @@ const EDConfig = {
      */
     languages: () => languages,
 
+    userId: () => parseInt(document.body.dataset['userId'], 10),
+
     findLanguage: (v, key = 'id', cmpFunc = (a, b) => a === b) => {
         const categories = Object.keys(languages);
 

@@ -20,7 +20,7 @@
   @endif
   @yield('styles')
 </head>
-<body class="{{ $admin ? 'ed-admin' : ($admin === false ? 'ed-user' : 'ed-anonymous') }}">
+<body class="{{ $isAdmin ? 'ed-admin' : ($isAdmin === false ? 'ed-user' : 'ed-anonymous') }}" data-user-id="{{ $user ? $user->id : '0' }}">
   <div class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
       <div class="navbar-header">
@@ -40,7 +40,7 @@
           <li class="{{ active('about.donations') }}"><a href="{{ route('about.donations') }}">Donations</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-          @if (Auth::check())
+          @if ($user)
           <li class="{{ active('dashboard') }}"><a href="{{ route('dashboard') }}">Dashboard</a></li>
           <li><a href="{{ route('logout') }}">Log out</a></li>
           @else
@@ -76,8 +76,8 @@
   <script type="text/javascript" src="/js/manifest.js"></script>
   <script type="text/javascript" src="/js/vendor.js"></script>
   <script type="text/javascript" src="/js/ie.js"></script>
-  @if (Auth::check())
-    @if (Auth::user()->isAdministrator())
+  @if ($user)
+    @if ($isAdmin)
     <script type="text/javascript" src="/js/global-plugins-admin.js"></script>
     @else
     <script type="text/javascript" src="/js/global-plugins-restricted.js"></script>
