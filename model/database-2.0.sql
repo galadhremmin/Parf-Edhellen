@@ -10,6 +10,7 @@ CREATE INDEX `KeywordsTranslationId` ON `keywords` (`translation_id`);
 CREATE INDEX `KeywordsSenseId` ON `keywords` (`sense_id`);
 
 CREATE INDEX `TranslationsIsLatest` ON `translations` (`is_latest`, `is_deleted`);
+CREATE INDEX `TranslationsGroupId` ON `translations` (`translation_group_id`);
 
 -- WIP!
 
