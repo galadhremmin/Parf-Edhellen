@@ -60,7 +60,7 @@
               </a>
             </li>
             <li>
-              <a href="{{ route('translation-review.index') }}">
+              <a href="{{ route('contribution.index') }}">
               <span class="glyphicon glyphicon-globe"></span>
 
                 Contributions
@@ -83,7 +83,7 @@
         <div class="panel-body">
           <ul>
             <li>
-              <a href="{{ route('translation-review.list') }}">Contributions</a>
+              <a href="{{ route('contribution.list') }}">Contributions</a>
               @if ($noOfPendingContributions > 0)
               <span class="label label-info">{{ $noOfPendingContributions }}</span>
               @endif

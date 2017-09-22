@@ -16,7 +16,7 @@
         @endif
       </td>
       <td>
-        <a href="{{ route('translation-review.show', ['id' => $review->id]) }}">{{ $review->word }} ({{ $review->sense }})</a>
+        <a href="{{ route('contribution.show', ['id' => $review->id]) }}">{{ $review->word }} ({{ $review->sense }})</a>
       </td>
       <td>
         <a href="{{ $link->author($review->account_id, $review->account->nickname) }}">{{ $review->account->nickname }}</a>

@@ -83,6 +83,8 @@ class ForumApiController extends Controller
             case ForumContext::CONTEXT_ACCOUNT:
                 $url = $this->_link->author($post->entity_id, '');
                 break;
+            case ForumContext::CONTEXT_CONTRIBUTION:
+                $url = route('contribution.show', ['id' => $post->entity_id]);
         }
 
         if ($url === null) {
@@ -148,7 +150,7 @@ class ForumApiController extends Controller
         ]);
 
         // Register an audit trail
-        $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_ADD, $post);
+        $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_ADD, $post, /* user id = */ 0, $context['is_elevated']);
 
         return response(null, 201);
     }
@@ -176,7 +178,7 @@ class ForumApiController extends Controller
         $post->save();
 
         // Register an audit trail
-        $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_EDIT, $post);
+        $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_EDIT, $post, /* user id = */ 0, $post->forum_context->is_elevated);
 
         return response(null, 200);
     }
@@ -232,7 +234,7 @@ class ForumApiController extends Controller
             $post->save();
 
             // Register an audit trail
-            $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_LIKE, $post);
+            $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_LIKE, $post, /* user id = */ 0, $post->forum_context->is_elevated);
 
             $statusCode = 201; // OK, like saved
         }

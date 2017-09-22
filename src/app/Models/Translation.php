@@ -52,9 +52,9 @@ class Translation extends ModelBase
         return $this->hasMany(SentenceFragment::class);
     }
 
-    public function translation_reviews() 
+    public function contributions() 
     {
-        return $this->hasMany(TranslationReview::class);
+        return $this->hasMany(Contribution::class);
     }
 
     public function favourites() 

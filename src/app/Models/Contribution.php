@@ -4,11 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TranslationReview extends ModelBase
+class Contribution extends ModelBase
 {
     use Traits\HasAccountTrait;
 
-    protected $fillable = [ 'translation_id' ];
+    protected $fillable = [ 
+        'account_id', 
+        'language_id', 
+        'translation_id',
+        'sentence_id',
+        'word',
+        'payload', 
+        'keywords', 
+        'notes',
+        'sense',
+        'type' 
+    ];
     protected $dates = [
         'created_at',
         'updated_at',

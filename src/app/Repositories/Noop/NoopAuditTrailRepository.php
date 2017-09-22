@@ -25,7 +25,7 @@ class NoopAuditTrailRepository implements IAuditTrailRepository
         // Noop
     }
 
-    public function store(int $action, $entity, int $userId = 0)
+    public function store(int $action, $entity, int $userId = 0, bool $is_elevated = null)
     {
         // Noop
     }

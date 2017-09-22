@@ -4,7 +4,7 @@
 @section('body')
   <h1>Change contribution #{{ $review->id }}</h1>
   
-  {!! Breadcrumbs::render('translation-review.edit', $review->id) !!}
+  {!! Breadcrumbs::render('contribution.edit', $review->id) !!}
   <div id="ed-translation-form" data-admin="false" data-confirm-button-text="{{ $review->is_approved === null ? 'Save changes' : 'Resubmit for review' }}"></div>
 
   <script type="application/json" id="ed-preloaded-translation">

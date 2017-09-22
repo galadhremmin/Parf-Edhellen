@@ -5,7 +5,7 @@
 @section('body')
   <h1>Confirm deletion of #{{ $review->id }}</h1>
   
-  {!! Breadcrumbs::render('translation-review.confirm-destroy', $review->id) !!}
+  {!! Breadcrumbs::render('contribution.confirm-destroy', $review->id) !!}
 
   <p>
     Are you sure you want to delete <strong>{{ $review->word }}</strong> ({{ $review->sense }}) which 
@@ -17,13 +17,13 @@
     @endif
   </p>
 
-  <form method="post" action="{{ route('translation-review.destroy', ['id' => $review->id]) }}">
+  <form method="post" action="{{ route('contribution.destroy', ['id' => $review->id]) }}">
     {{ csrf_field() }}
     {{ method_field('DELETE') }}
 
     <div class="text-right">
       <div class="btn-group" role="group">
-        <a href="{{ route('translation-review.show', ['id' => $review->id]) }}" class="btn btn-default">Cancel deletion</a>
+        <a href="{{ route('contribution.show', ['id' => $review->id]) }}" class="btn btn-default">Cancel deletion</a>
         <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-remove-sign"></span> Delete</button>
       </div>
     </div>

@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\{ Account, ForumContext, ForumPost, ForumPostLike, Translation, Sentence };
+use App\Models\{ Account, Contribution, ForumContext, ForumPost, ForumPostLike, Translation, Sentence };
 use Illuminate\Support\Facades\DB;
 
 class ForumRepository
@@ -31,7 +31,7 @@ class ForumRepository
     {
         // Retrieve the context
         $context = ForumContext::where('name', $contextName)
-            ->select('id')
+            ->select('id', 'is_elevated')
             ->firstOrFail();
         $entity = null;
 
@@ -48,13 +48,18 @@ class ForumRepository
                 $entity = Account::findOrFail($id);
                 break;
 
+            case ForumContext::CONTEXT_CONTRIBUTION:
+                $entity = Contribution::findOrFail($id);
+                break;
+                
             default:
                 return null;
         }
 
         return [
-            'id'     => $context->id,
-            'entity' => $entity
+            'id'          => $context->id,
+            'is_elevated' => $context->is_elevated,
+            'entity'      => $entity
         ];
     }
 }

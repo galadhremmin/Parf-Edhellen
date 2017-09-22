@@ -178,7 +178,7 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
             : $trail;
     }
 
-    public function store(int $action, $entity, int $userId = 0)
+    public function store(int $action, $entity, int $userId = 0, bool $is_elevated = null)
     {
         if ($userId === 0) {
             // Is the user authenticated?
@@ -209,12 +209,18 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
             throw new \Exception(get_class($entity).' is not supported.');
         }
 
-        // check whether the specified user is an administrator
-        $request = request();
-        $admin = false;
-        if ($request !== null) {
-            $user = $request->user();
-            $admin = $user !== null && $user->isIncognito();
+        if ($is_elevated === null) {
+            // check whether the specified user is an administrator
+            $request = request();
+            $is_elevated = false;
+            if ($request !== null) {
+                $user = $request->user();
+                $is_elevated = $user !== null && $user->isIncognito();
+            }
+        }
+        
+        if ($is_elevated === null) {
+            $is_elevated = false;
         }
 
         AuditTrail::create([
@@ -222,7 +228,7 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
             'entity_id'   => $entity->id,
             'entity_type' => $typeName,
             'action_id'   => $action,
-            'is_admin'    => $admin
+            'is_admin'    => $is_elevated
         ]);
     }
 }

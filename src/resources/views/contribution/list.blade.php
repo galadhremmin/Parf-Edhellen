@@ -5,7 +5,7 @@
 @section('body')
   <h1>Contributions</h1>
   
-  {!! Breadcrumbs::render('translation-review.list') !!}
+  {!! Breadcrumbs::render('contribution.list') !!}
   
 
   <div class="row">
@@ -18,7 +18,7 @@
           @if (count($pendingReviews) < 1)
           <em>You have no contributions awaiting to be reviewed.</em>
           @else
-            @include('translation-review._table', [
+            @include('contribution._table', [
               'reviews' => $pendingReviews
             ])
           @endif
@@ -32,7 +32,7 @@
           @if (count($approvedReviews) < 1)
           <em>There are presently no approved contributions.</em>
           @else
-            @include('translation-review._table', [
+            @include('contribution._table', [
               'reviews' => $approvedReviews
             ])
           @endif
@@ -46,7 +46,7 @@
           @if (count($rejectedReviews) < 1)
           <em>There are presently no rejected contributions.</em>
           @else
-            @include('translation-review._table', [
+            @include('contribution._table', [
               'reviews' => $rejectedReviews
             ])
           @endif

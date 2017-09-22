@@ -74,7 +74,7 @@ class TranslationControllerBase extends Controller
         ];
 
         if ($review) {
-            $rules['id']                   = 'sometimes|required|numeric|exists:translation_reviews,id';
+            $rules['id']                   = 'sometimes|required|numeric|exists:contributions,id';
         } else {
             $rules['account_id']           = 'required|numeric|exists:accounts,id';
             $rules['id']                   = 'sometimes|required|numeric|exists:translations,id';

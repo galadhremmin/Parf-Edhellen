@@ -5,7 +5,7 @@
 @section('body')
   <h1>Reject contribution #{{ $review->id }}</h1>
   
-  {!! Breadcrumbs::render('translation-review.confirm-reject', $review->id) !!}
+  {!! Breadcrumbs::render('contribution.confirm-reject', $review->id) !!}
 
   <p>
     Are you sure you want to reject <strong>{{ $review->word }}</strong> ({{ $review->sense }}) which 
@@ -13,7 +13,7 @@
     <a href="{{ $link->author($review->account_id, $review->account->nickname) }}">{{ $review->account->nickname }}</a>?
   </p>
 
-  <form method="post" action="{{ route('translation-review.reject', ['id' => $review->id]) }}">
+  <form method="post" action="{{ route('contribution.reject', ['id' => $review->id]) }}">
     {{ csrf_field() }}
     {{ method_field('PUT') }}
 
@@ -24,7 +24,7 @@
 
     <div class="text-right">
       <div class="btn-group" role="group">
-        <a href="{{ route('translation-review.show', ['id' => $review->id]) }}" class="btn btn-default">Cancel rejection</a>
+        <a href="{{ route('contribution.show', ['id' => $review->id]) }}" class="btn btn-default">Cancel rejection</a>
         <button type="submit" class="btn btn-warning"><span class="glyphicon glyphicon-minus-sign"></span> Reject</button>
       </div>
     </div>

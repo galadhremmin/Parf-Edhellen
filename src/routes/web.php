@@ -82,8 +82,8 @@ Route::group([
 ], function () {
 
     // Contribute
-    Route::resource('translation-review', 'TranslationReviewController');
-    Route::get('translation-review/{id}/destroy', 'TranslationReviewController@confirmDestroy')->name('translation-review.confirm-destroy');
+    Route::resource('contribution', 'ContributionController');
+    Route::get('contribution/{id}/destroy', 'ContributionController@confirmDestroy')->name('contribution.confirm-destroy');
 });
 
 // Admin resources
@@ -116,10 +116,10 @@ Route::group([
 
     Route::get('translation/list/{id}', 'TranslationController@listForLanguage')->name('translation.list');
 
-    Route::get('translation-review/list', 'TranslationReviewController@list')->name('translation-review.list');
-    Route::get('translation-review/{id}/reject', 'TranslationReviewController@confirmReject')->name('translation-review.confirm-reject');
-    Route::put('translation-review/{id}/approve', 'TranslationReviewController@updateApprove')->name('translation-review.approve');
-    Route::put('translation-review/{id}/reject', 'TranslationReviewController@updateReject')->name('translation-review.reject');
+    Route::get('contribution/list', 'ContributionController@list')->name('contribution.list');
+    Route::get('contribution/{id}/reject', 'ContributionController@confirmReject')->name('contribution.confirm-reject');
+    Route::put('contribution/{id}/approve', 'ContributionController@updateApprove')->name('contribution.approve');
+    Route::put('contribution/{id}/reject', 'ContributionController@updateReject')->name('contribution.reject');
     
 });
 

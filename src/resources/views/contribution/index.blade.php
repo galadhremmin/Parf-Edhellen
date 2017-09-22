@@ -4,7 +4,7 @@
 @section('body')
   <h1>Contributions</h1>
   
-  {!! Breadcrumbs::render('translation-review.index') !!}
+  {!! Breadcrumbs::render('contribution.index') !!}
 
   <div class="row">
     <div class="col-md-6">
@@ -15,7 +15,7 @@
         </div>
         <div class="panel-body">
           <ul>
-            <li><a href="{{ route('translation-review.create') }}">Add word</a></li>
+            <li><a href="{{ route('contribution.create') }}">Add word</a></li>
           </ul>
         </div>
       </div>
@@ -42,7 +42,7 @@
               <tr>
                 <td>{{ $review->created_at->format('Y-m-d H:i') }}</td>
                 <td>
-                  <a href="{{ route('translation-review.show', ['id' => $review->id]) }}">{{ $review->word }} ({{ $review->sense }})</a></td>
+                  <a href="{{ route('contribution.show', ['id' => $review->id]) }}">{{ $review->word }} ({{ $review->sense }})</a></td>
                 <td>
                   @if ($review->is_approved === null)
                   <span class="text-info">pending</span>

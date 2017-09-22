@@ -4,14 +4,13 @@
 
     use Carbon\Carbon;
     use Illuminate\Support\Facades\DB;
-    use App\Models\Translation;
-    use App\Models\TranslationReview;
+    use App\Models\Contribution;
 
-    class TranslationReviewRepository
+    class ContributionRepository
     {
         public function getRecentlyApproved($numberOfRecords = 10)
         {
-            $entities = DB::table('translation_reviews as tr')
+            $entities = DB::table('contributions as tr')
                 ->join('translations as t', function ($join) {
                     $join->on('tr.translation_id', '=', 't.id')
                         ->orOn('tr.translation_id', '=', 't.origin_translation_id');

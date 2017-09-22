@@ -5,7 +5,7 @@
 @section('body')
   <h1>Contribution #{{ $review->id }}</h1>
   
-  {!! Breadcrumbs::render('translation-review.show', $review->id) !!}
+  {!! Breadcrumbs::render('contribution.show', $review->id) !!}
 
   @if (! $review->date_reviewed)
   <div class="alert alert-info">
@@ -62,12 +62,12 @@
   @if (! $review->is_approved)
     @if (Auth::user()->isAdministrator())
       @if ($review->is_approved === null)
-        <form method="post" action="{{ route('translation-review.approve', ['id' => $review->id]) }}">
+        <form method="post" action="{{ route('contribution.approve', ['id' => $review->id]) }}">
           {{ csrf_field() }}
           {{ method_field('PUT') }}
           <div class="text-right">
             <div class="btn-group" role="group">
-              <a href="{{ route('translation-review.confirm-reject', ['id' => $review->id]) }}" class="btn btn-warning">
+              <a href="{{ route('contribution.confirm-reject', ['id' => $review->id]) }}" class="btn btn-warning">
                 <span class="glyphicon glyphicon-minus-sign"></span> Reject
               </a>
               <button type="submit" class="btn btn-success">
@@ -81,13 +81,23 @@
 
     <hr>
 
-    You can <a href="{{ route('translation-review.edit', ['id' => $review->id]) }}">change the submission</a> or 
-    <a href="{{ route('translation-review.confirm-destroy', ['id' => $review->id]) }}">delete the submission</a>. 
+    You can <a href="{{ route('contribution.edit', ['id' => $review->id]) }}">change the submission</a> or 
+    <a href="{{ route('contribution.confirm-destroy', ['id' => $review->id]) }}">delete the submission</a>. 
     If you edit a rejected submission, it will be resubmitted for review; if you edit a pending submission, 
     an administrator will review the latest version of your submission.
   @else
   <hr>
   You can <a href="{{ $link->translation($review->translation_id) }}">visit the gloss in the dictionary</a>.
   @endif
+  <hr>
+  @include('_shared._comments', [
+    'entity_id' => $review->id,
+    'context'   => 'contribution',
+    'enabled'   => true
+  ])
 
+@endsection
+
+@section('scripts')
+  <script type="text/javascript" src="/js/comment.js" async></script>
 @endsection

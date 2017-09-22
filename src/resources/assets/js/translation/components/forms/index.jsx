@@ -92,9 +92,9 @@ class EDTranslationForm extends EDStatefulFormComponent {
             }
         } else {
             if (payload.id) {
-                promise = axios.put(`/dashboard/translation-review/${payload.id}`, payload);
+                promise = axios.put(`/dashboard/contribution/${payload.id}`, payload);
             } else {
-                promise = axios.post('/dashboard/translation-review', payload);
+                promise = axios.post('/dashboard/contribution', payload);
             }
         }
 
@@ -250,7 +250,7 @@ class EDTranslationForm extends EDStatefulFormComponent {
             <nav>
                 <ul className="pager">
                     <li className="previous">
-                        <a href={this.props.admin ? '/admin/translation' : '/dashboard/translation-review'}>
+                        <a href={this.props.admin ? '/admin/translation' : '/dashboard/contribution'}>
                             <span className="glyphicon glyphicon-remove"></span>
                             {' '}
                             Cancel
