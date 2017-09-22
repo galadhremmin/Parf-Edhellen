@@ -220,7 +220,7 @@ class ImportEldamoCommand extends Command
         $this->line('Updating '.count($data).' words.');
 
         // Find the user account for an existing translation from Eldamo. 
-        $existing = $account = Translation::where('translation_group_id', $eldamo->id)
+        $existing = Translation::where('translation_group_id', $eldamo->id)
             ->select('account_id')
             ->firstOrFail();
 

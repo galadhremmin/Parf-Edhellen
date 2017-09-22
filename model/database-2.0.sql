@@ -11,4 +11,6 @@ CREATE INDEX `KeywordsSenseId` ON `keywords` (`sense_id`);
 
 CREATE INDEX `TranslationsIsLatest` ON `translations` (`is_latest`, `is_deleted`);
 
-INSERT INTO `version` (`number`, `date`) VALUES (1.996, NOW());
+-- WIP!
+
+INSERT INTO `version` (`number`, `date`) VALUES (2.0, NOW());
