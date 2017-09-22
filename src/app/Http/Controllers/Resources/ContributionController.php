@@ -113,7 +113,7 @@ class ContributionController extends TranslationControllerBase
         // retrieve word and sense based on the information specified in the review object. If the word does not exist in 
         // the database, create a new instance of the model for the word.
         $word = Word::forString($review->word)->firstOrNew(['word' => $review->word]);
-        $sense = Sense::forString($review->word)->firstOrNew([]);
+        $sense = Sense::forString($review->sense)->firstOrNew([]);
         if (! $sense->id) {
             // _word_ is actually a navigation property.
             $sense->word = Word::forString($review->sense)->firstOrNew(['word' => $review->sense]);
