@@ -4,7 +4,7 @@ namespace App\Models;
 
 class Translation extends ModelBase
 {
-    use Traits\HasAccountTrait;
+    use Traits\HasAccount;
     
     protected $fillable = [ 
         'account_id', 'language_id', 'word_id', 'speech_id', 'translation_group_id', 'sense', 

@@ -4,7 +4,7 @@ namespace App\Models;
 
 class Sentence extends ModelBase
 {
-    use Traits\HasAccountTrait;
+    use Traits\HasAccount;
     
     public function sentence_fragments() 
     {

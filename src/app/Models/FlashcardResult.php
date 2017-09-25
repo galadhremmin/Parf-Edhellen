@@ -4,7 +4,7 @@ namespace App\Models;
 
 class FlashcardResult extends ModelBase
 {
-    use Traits\HasAccountTrait;
+    use Traits\HasAccount;
     
     public function flashcard() 
     {

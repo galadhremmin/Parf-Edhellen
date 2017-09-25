@@ -1,5 +1,6 @@
 import EDConfig from 'ed-config';
 
+export const SET_IS_ADMIN      = 'ED_IS_ADMIN';
 export const SET_FRAGMENTS     = 'ED_SET_FRAGMENTS'; 
 export const SET_FRAGMENT_DATA = 'ED_SET_FRAGMENT_DATA';
 export const SET_SENTENCE_DATA = 'ED_SET_SENTENCE_DATA';
@@ -17,9 +18,17 @@ const EDSentenceAdminReducer = (state = {
     fragments: [],
     latin: [],
     languages: EDConfig.languages(),
-    loading: false
+    loading: false,
+    is_admin: true,
+    notes: ''
 }, action) => {
     switch (action.type) {
+        case SET_IS_ADMIN:
+            return {
+                ...state,
+                is_admin: action.is_admin
+            };
+
         case SET_FRAGMENTS:
             return {
                 ...state,

@@ -15,7 +15,8 @@
         </div>
         <div class="panel-body">
           <ul>
-            <li><a href="{{ route('contribution.create') }}">Add word</a></li>
+            <li><a href="{{ route('contribution.create', ['morph' => 'translation']) }}">Add gloss</a></li>
+            <li><a href="{{ route('contribution.create', ['morph' => 'sentence']) }}">Add phrase</a></li>
           </ul>
         </div>
       </div>

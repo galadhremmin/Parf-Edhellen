@@ -77,7 +77,8 @@ class EDTranslationForm extends EDStatefulFormComponent {
         const payload = {
             ...state,
             id:      state.id || undefined,
-            tengwar: state.tengwar.length > 0 ? state.tengwar : undefined
+            tengwar: state.tengwar.length > 0 ? state.tengwar : undefined,
+            morph: 'translation'
         };
 
         let promise;

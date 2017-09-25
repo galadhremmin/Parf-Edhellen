@@ -4,7 +4,7 @@
 @section('body')
   <h1>Contribute</h1>
   
-  {!! Breadcrumbs::render('contribution.create') !!}
+  {!! Breadcrumbs::render('contribution.create', 'translation') !!}
   <div id="ed-translation-form" data-admin="false"></div>
 
 @endsection

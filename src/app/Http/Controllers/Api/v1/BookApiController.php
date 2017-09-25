@@ -4,16 +4,25 @@ namespace App\Http\Controllers\Api\v1;
 
 use Illuminate\Http\Request;
 
-use App\Traits\{ CanTranslateTrait, CanGetTranslationTrait };
-use App\Models\{ Translation, TranslationGroup, Word, ForumContext, Keyword };
 use App\Http\Controllers\Controller;
 use App\Helpers\StringHelper;
+use App\Models\{ 
+    ForumContext,
+    Keyword,
+    Translation, 
+    TranslationGroup, 
+    Word
+};
+use App\Http\Controllers\Traits\{
+    CanTranslate, 
+    CanGetTranslation 
+};
 
 class BookApiController extends Controller 
 {
-    use CanTranslateTrait, CanGetTranslationTrait { 
-        CanTranslateTrait::__construct insteadof CanGetTranslationTrait;
-        CanTranslateTrait::translate as protected doTranslate; 
+    use CanTranslate, CanGetTranslation { 
+        CanTranslate::__construct insteadof CanGetTranslation;
+        CanTranslate::translate as protected doTranslate; 
     }
 
     /**

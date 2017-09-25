@@ -4,7 +4,7 @@ namespace App\Models;
 
 class Word extends ModelBase
 {
-    use Traits\HasAccountTrait;
+    use Traits\HasAccount;
 
     protected $fillable = ['account_id', 'word', 'normalized_word', 'reversed_normalized_word'];
 

@@ -2,15 +2,41 @@
 
 namespace App\Http\Controllers\Resources;
 
-use App\Models\{ Translation, Keyword, Word, Language };
-use App\Helpers\{ LinkHelper, StringHelper };
-
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class TranslationController extends TranslationControllerBase
+use App\Adapters\BookAdapter;
+use App\Repositories\TranslationRepository;
+use App\Models\{ 
+    Translation, 
+    Keyword, 
+    Word, 
+    Language 
+};
+use App\Helpers\{ 
+    LinkHelper, 
+    StringHelper 
+};
+use App\Http\Controllers\Traits\{
+    CanValidateTranslation, 
+    CanMapTranslation 
+};
+
+class TranslationController extends Controller
 {
+    use CanMapTranslation,
+        CanValidateTranslation;
+
+    protected $_bookAdapter;
+    protected $_translationRepository;
+
+    public function __construct(BookAdapter $adapter, TranslationRepository $translationRepository) 
+    {
+        $this->_bookAdapter = $adapter;
+        $this->_translationRepository = $translationRepository;
+    }
+
     public function index(Request $request)
     {
         $latestTranslations = Translation::latest()
@@ -88,7 +114,7 @@ class TranslationController extends TranslationControllerBase
 
     public function store(Request $request)
     {
-        $this->validateRequest($request);
+        $this->validateTranslationInRequest($request);
 
         $translation = new Translation;
         $translation = $this->saveTranslation($translation, $request);
@@ -102,7 +128,7 @@ class TranslationController extends TranslationControllerBase
 
     public function update(Request $request, int $id)
     {
-        $this->validateRequest($request, $id);
+        $this->validateTranslationInRequest($request, $id);
 
         $translation = Translation::findOrFail($id);
         $translation = $this->saveTranslation($translation, $request);

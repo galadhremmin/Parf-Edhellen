@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "axios": "^0.15.3",
-    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-react": "^6.23.0",
     "bootstrap-sass": "^3.3.7",
     "jquery": "^3.1.1",
@@ -20,16 +20,16 @@
     "lodash": "^4.17.4"
   },
   "dependencies": {
-    "babel-polyfill": "^6.23.0",
+    "babel-polyfill": "^6.26.0",
     "classnames": "^2.2.5",
     "glaemscribe": "^1.1.7",
     "html-to-react": "^1.2.11",
     "react": "^15.6.1",
     "react-autosuggest": "^9.3.2",
-    "react-bootstrap": "^0.31.2",
+    "react-bootstrap": "^0.31.3",
     "react-dom": "^15.6.1",
     "react-redux": "^5.0.6",
-    "react-router-dom": "^4.1.2",
+    "react-router-dom": "^4.2.2",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
     "smoothscroll-polyfill": "github:iamdustan/smoothscroll",

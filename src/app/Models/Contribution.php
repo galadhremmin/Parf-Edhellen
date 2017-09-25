@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Contribution extends ModelBase
 {
-    use Traits\HasAccountTrait;
+    use Traits\HasAccount;
 
     protected $fillable = [ 
         'account_id', 

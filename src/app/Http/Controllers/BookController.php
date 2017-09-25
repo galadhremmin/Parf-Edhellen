@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Traits\{ CanTranslateTrait, CanGetTranslationTrait };
+use App\Http\Controllers\Traits\{
+    CanTranslate, 
+    CanGetTranslation
+};
 
 class BookController extends Controller
 {
-    use CanTranslateTrait, CanGetTranslationTrait {
-        CanTranslateTrait::__construct insteadof CanGetTranslationTrait;
+    use CanTranslate, CanGetTranslation {
+        CanTranslate::__construct insteadof CanGetTranslation;
     }
 
     public function pageForWord(Request $request, string $word)

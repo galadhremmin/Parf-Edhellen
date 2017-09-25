@@ -6,14 +6,17 @@ import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import EDConfig from 'ed-config';
 import EDSentenceAdminReducer from './reducers/admin';
+import { SET_IS_ADMIN } from './reducers/admin';
 import { saveState, loadState } from 'ed-session-storage-state';
 import EDSentenceForm from './components/forms/sentence-form';
 import EDFragmentForm from './components/forms/fragment-form';
 import EDPreviewForm from './components/forms/preview-form';
 
 window.addEventListener('load', function () {
+    const formContainer = document.getElementById('ed-sentence-form');
     const sentenceDataContainer = document.getElementById('ed-preloaded-sentence');
     const fragmentDataContainer = document.getElementById('ed-preloaded-sentence-fragments');
+    const is_admin = /true/i.test(formContainer.dataset['admin'] || 'true');
 
     let preloadedState = undefined;
     let creating = false;
@@ -26,38 +29,25 @@ window.addEventListener('load', function () {
             fragments: fragmentData.fragments,
             latin: fragmentData.latin,
             tengwar: fragmentData.tengwar,
-            languages: EDConfig.languages()
+            languages: EDConfig.languages(),
+            is_admin
         };
-    } /* else {    <-- todo
-        preloadedState = loadState('sentence');
-        if (preloadedState) {
-            preloadedState.languages = EDConfig.languages();
-        }
-        
-        creating = true;
     }
-    */
-
+    
     const store = createStore(EDSentenceAdminReducer, preloadedState,
         applyMiddleware(thunkMiddleware)
     );
 
-    /*
-    if (creating) {
-        store.subscribe(() => {
-            const state = store.getState();
-            saveState('sentence', {
-                name: state.name,
-                source: state.source,
-                language_id: state.language_id,
-                description: state.description,
-                long_description: state.long_description,
-                fragments: state.fragments,
-                is_neologism: state.is_neologism
-            });
-        });
-    }
-    */
+    // An unfortunate necessity as preloadedState (which is passed as initial state)
+    // completely overrides _all_ state, and it is not possible to know what the initial
+    // state for the other properties will be. Therefore, dispatch a SET_IS_ADMIN command
+    // to the store with the appropriate state.
+    //
+    // This should be carried out before the store is passed through to the Provider.
+    store.dispatch({
+        type: SET_IS_ADMIN,
+        is_admin
+    });
 
     ReactDOM.render(
         <Provider store={store}>
@@ -69,6 +59,6 @@ window.addEventListener('load', function () {
                 </div>
             </Router>
         </Provider>,
-        document.getElementById('ed-sentence-form')
+        formContainer
     );
 });

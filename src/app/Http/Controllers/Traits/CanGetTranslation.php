@@ -1,11 +1,11 @@
 <?php
-namespace App\Traits;
+namespace App\Http\Controllers\Traits;
 
 use App\Adapters\BookAdapter;
 use App\Repositories\{ForumRepository, TranslationRepository};
 use App\Models\ForumContext;
 
-trait CanGetTranslationTrait 
+trait CanGetTranslation
 {
     protected $_bookAdapter;
     protected $_forumRepository;

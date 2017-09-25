@@ -2,7 +2,7 @@
 
 namespace App\Models\Traits;
 
-trait HasAccountTrait 
+trait HasAccount
 {
     public function scopeForAccount($query, int $accountId)
     {

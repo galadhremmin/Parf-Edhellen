@@ -4,7 +4,7 @@ namespace App\Models;
 
 class ForumPostLike extends ModelBase
 {
-    use Traits\HasAccountTrait;
+    use Traits\HasAccount;
 
     protected $fillable = [ 'forum_post_id', 'account_id' ];
 

@@ -3,11 +3,11 @@
 @section('title', 'Server error')
 @section('body')
 
-<h1>Ai! Latta quinganyava ná racína!</h1>
+<h1>Lá hanyan quettalyar!</h1>
 
 <p>
-    A server error has unfortunately resulted in an unrecoverable error. This means that the content
-    you were requesting can't be served at this time. This error has been logged and will be fixed.
+  The server did not understand your request. This usually happens when you pass erroneous data 
+  to a method.
 </p>
 <p>
     You can try to refresh the page, and if that doesn't work, try again later.

@@ -78,21 +78,21 @@ class StringHelper
         // Do not switch locale, as the appropriate locale should be configured
         // in application configuration.
         //
-        // $currentLocale = setlocale(LC_ALL, 0);
+        $currentLocale = setlocale(LC_ALL, 0);
         // This is necessary for the iconv-transliteration to function properly
         // Note: this ought to be unnecessary because a unicode locale should be
         // specified as application default.
-        // setlocale(LC_ALL, 'en_UK.UTF-8');
+        setlocale(LC_ALL, 'sv_SE.UTF-8');
 
         // Transcribe á, ê, é etc.
         $str = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $str);
 
+        // restore the locale
+        setlocale(LC_ALL, $currentLocale);
+
         // Mac OS X Server requires some extra 'love' because it uses a different version of iconv
         // than the rest. It transcribes é -> 'e, ê -> ^e, ë -> "e etc.
         $str = preg_replace('/[\'^"]/', '', $str);
-
-        // restore the locale
-        // setlocale(LC_ALL, $currentLocale);
 
         return trim($str);
     }

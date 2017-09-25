@@ -3,7 +3,15 @@
 namespace App\Repositories;
 
 use App\Helpers\LinkHelper;
-use App\Models\{ Account, AuditTrail, FlashcardResult, ForumPost, Sentence, Translation };
+use App\Models\{ 
+    Account, 
+    AuditTrail, 
+    FlashcardResult, 
+    ForumPost, 
+    ModelBase, 
+    Sentence, 
+    Translation 
+};
 use App\Models\Initialization\Morphs;
 
 use Illuminate\Support\Facades\Auth;
@@ -171,7 +179,8 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
         if ($userId === 0) {
             // Is the user authenticated?
             if (! Auth::check()) {
-                if (property_exists($entity, 'account_id')) {
+                if (($entity instanceof ModelBase && $entity->hasAttribute('account_id')) ||
+                     property_exists($entity, 'account_id')) {
                     $userId = $entity->account_id;
                 }
 

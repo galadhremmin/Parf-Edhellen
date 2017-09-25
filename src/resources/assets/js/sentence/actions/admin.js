@@ -7,12 +7,22 @@ import {
 import axios from 'axios';
 
 export const setFragments = fragments => {
+    if (fragments !== undefined && (! Array.isArray(fragments) || fragments.length < 1)) {
+        return {
+            type: SET_FRAGMENTS,
+            fragments,
+            latin: []
+        };
+    }
+
     return (dispatch, getState) => {
         if (fragments === undefined) {
             fragments = getState().fragments;
         }
 
-        axios.post('/admin/sentence/parse-fragment/latin', { fragments }).then(response => {
+        const admin = getState().is_admin;
+        axios.post(admin ? '/admin/sentence/parse-fragment/latin' 
+            : '/dashboard/contribution/sentence/parse-fragment/latin', { fragments }).then(response => {
             dispatch({
                 type: SET_FRAGMENTS,
                 fragments,

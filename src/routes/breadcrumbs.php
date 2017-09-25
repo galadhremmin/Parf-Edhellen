@@ -167,10 +167,10 @@ Breadcrumbs::register('contribution.index', function ($breadcrumbs)
     $breadcrumbs->push('Contributions', route('contribution.index'));
 });
 
-Breadcrumbs::register('contribution.create', function ($breadcrumbs)
+Breadcrumbs::register('contribution.create', function ($breadcrumbs, string $morph)
 {
     $breadcrumbs->parent('contribution.index');
-    $breadcrumbs->push('Contribute', route('contribution.create'));
+    $breadcrumbs->push('Contribute gloss', route('contribution.create', ['morph' => $morph]));
 });
 
 Breadcrumbs::register('contribution.edit', function ($breadcrumbs, int $id)

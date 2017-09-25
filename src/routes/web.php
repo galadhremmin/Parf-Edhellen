@@ -82,8 +82,22 @@ Route::group([
 ], function () {
 
     // Contribute
-    Route::resource('contribution', 'ContributionController');
-    Route::get('contribution/{id}/destroy', 'ContributionController@confirmDestroy')->name('contribution.confirm-destroy');
+    Route::resource('contribution', 'ContributionController', [
+        'except' => ['create']
+    ]);
+    Route::get('contribution/create/{morph}', 'ContributionController@create')
+        ->where(['morph' => '[a-z]+'])->name('contribution.create');
+    Route::get('contribution/{id}/destroy', 'ContributionController@confirmDestroy')
+        ->name('contribution.confirm-destroy');
+    Route::post('contribution/sentence/validate', 'ContributionController@validateSentenceInRequest')
+        ->name('contribution.sentence-validate');
+    Route::post('contribution/sentence/validate-fragment', 'ContributionController@validateFragmentsInRequest')
+        ->name('contribution.fragments-validate');
+
+    // Note: it is not a mistake to use the sentence controller in this instance. The functionality
+    //       implemented in this method is generic.
+    Route::post('contribution/sentence/parse-fragment/{name}', 'SentenceController@parseFragments')
+        ->name('contribution.parse-fragment');
 });
 
 // Admin resources

@@ -4,7 +4,7 @@ namespace App\Models;
 
 class ForumPost extends ModelBase
 {
-    use Traits\HasAccountTrait;
+    use Traits\HasAccount;
 
     protected $fillable = [ 'forum_context_id', 'entity_id', 'parent_forum_post_id', 'number_of_likes', 'account_id', 'content' ];
 

@@ -3,6 +3,10 @@ namespace App\Adapters;
 
 use App\Helpers\MarkdownParser;
 use App\Adapters\{ LatinSentenceBuilder, TengwarSentenceBuilder };
+use App\Models\{
+    ModelBase, 
+    Inflection
+};
 use Illuminate\Support\Collection;
 
 class SentenceAdapter
@@ -29,12 +33,17 @@ class SentenceAdapter
 
             // Todo: optimise this to reduce queries to the database and remove model awareness
             // as it's just dirty in this context!
-            $inflections = $fragment->inflection_associations()
-                ->join('inflections', 'inflections.id', 'inflection_id')
-                ->where('sentence_fragment_id', $fragment->id)
-                ->select('inflections.id', 'inflections.name')
-                ->get();
+            $query = null;
+            
+            if ($fragment instanceof ModelBase && $fragment->hasAttribute('_inflections')) {
+                $query = Inflection::whereIn('id', $fragment->_inflections);
+            } else {
+                $query = $fragment->inflection_associations()
+                    ->join('inflections', 'inflections.id', 'inflection_id')
+                    ->where('sentence_fragment_id', $fragment->id);
+            }
 
+            $inflections = $query->select('inflections.id', 'inflections.name')->get();
             foreach ($inflections as $inflection) {
                 $data['inflections'][] = $inflection;
             }

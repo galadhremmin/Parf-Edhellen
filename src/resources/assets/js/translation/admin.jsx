@@ -26,9 +26,7 @@ window.addEventListener('load', function () {
     );
 
     const container = document.getElementById('ed-translation-form');
-    const admin = container.dataset['admin'] === undefined
-        ? true
-        : /true/i.test(container.dataset['admin']);
+    const admin = /true/i.test(container.dataset['admin'] || 'true');
     const confirmButtonText = container.dataset['confirmButtonText'] || undefined;
 
     ReactDOM.render(

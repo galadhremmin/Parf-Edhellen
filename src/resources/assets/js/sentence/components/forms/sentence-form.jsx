@@ -27,7 +27,8 @@ class EDSentenceForm extends EDStatefulFormComponent {
             description: '',
             long_description: '',
             account: undefined,
-            errors: undefined
+            errors: undefined,
+            notes: ''
         };
 
         enableSmoothScrolling();
@@ -42,7 +43,8 @@ class EDSentenceForm extends EDStatefulFormComponent {
             description: this.props.sentenceDescription,
             long_description: this.props.sentenceLongDescription,
             is_neologism: this.props.sentenceIsNeologism,
-            account_id: this.props.sentenceAccountId
+            account_id: this.props.sentenceAccountId,
+            notes: this.props.notes
         });
     }
 
@@ -58,10 +60,12 @@ class EDSentenceForm extends EDStatefulFormComponent {
             description: state.description,
             long_description: state.long_description,
             is_neologism: state.is_neologism,
-            account_id: state.account_id
+            account_id: state.account_id || undefined,
+            notes: state.notes
         };
 
-        axios.post('/admin/sentence/validate', payload)
+        axios.post(this.props.admin ? '/admin/sentence/validate'
+            : '/dashboard/contribution/sentence/validate', payload)
             .then(request => this.onValidateSuccess(request, payload),
                   request => this.onValidateFail(request, payload));
     }
@@ -127,11 +131,12 @@ class EDSentenceForm extends EDStatefulFormComponent {
                 <input type="text" className="form-control" id="ed-sentence-source" name="source" 
                     value={this.state.source} onChange={super.onChange.bind(this)} />
             </div>
+            {this.props.admin ?
             <div className="form-group">
                 <label htmlFor="ed-sentence-account" className="control-label">Account</label>
                 <EDAccountSelect componentId="ed-sentence-account" componentName="account_id" required={true}
                     value={this.state.account_id} onChange={super.onChange.bind(this)} />
-            </div>
+            </div> : undefined}
             <div className="form-group">
                 <label htmlFor="ed-sentence-language" className="control-label">Language</label>
                 <EDLanguageSelect className="form-control" componentId="ed-sentence-language" componentName="language_id"
@@ -154,6 +159,12 @@ class EDSentenceForm extends EDStatefulFormComponent {
                 <EDMarkdownEditor componentId="ed-sentence-long-description" componentName="long_description" rows={8}
                     value={this.state.long_description} onChange={super.onChange.bind(this)} />
             </div>
+            {! this.props.admin ?
+            <div className="form-group">
+                <label htmlFor="ed-notes" className="control-label">Notes for reviewer</label>
+                <textarea className="form-control" name="notes" id="ed-notes" rows={4}
+                    value={this.state.notes} onChange={super.onChange.bind(this)} />
+            </div> : undefined}
             <nav>
                 <ul className="pager">
                     <li className="next"><a href="#" onClick={this.onSubmit.bind(this)}>Next step &rarr;</a></li>
@@ -173,7 +184,9 @@ const mapStateToProps = state => {
         sentenceLongDescription: state.long_description,
         sentenceIsNeologism: state.is_neologism,
         sentenceAccountId: state.account_id,
-        sentenceId: state.id
+        sentenceId: state.id,
+        notes: state.notes,
+        admin: state.is_admin
     };
 };
 
