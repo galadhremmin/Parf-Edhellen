@@ -52,7 +52,8 @@ class UtilityApiController extends Controller
                 : null,
             'account_id' => $user !== null
                 ? $user->id 
-                : null
+                : null,
+            'is_common'  => 0
         ]);
     }
 }
