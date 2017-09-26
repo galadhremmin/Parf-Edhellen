@@ -161,10 +161,13 @@ class EDFragmentForm extends EDStatefulFormComponent {
     scrollToForm() {
         // add a little delay because it's actually useful in this situation
         window.setTimeout(() => {
-            document.querySelector('.fragment-admin-form').scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+            const adminForm = document.querySelector('.fragment-admin-form');
+            if (adminForm) {
+                adminForm.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
         }, 250);
     }
 

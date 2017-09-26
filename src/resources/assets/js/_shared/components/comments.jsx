@@ -56,10 +56,12 @@ class EDComments extends EDStatefulFormComponent {
                 const id = `forum-post-${jumpPostId}`;
                 const postContainer = document.getElementById(id);
 
-                postContainer.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+                if (postContainer) {
+                    postContainer.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
             }, 500);
         }
     }

@@ -19,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
 
         // @markdown method injection
         Blade::directive('markdown', function (string $data) {
-            return "<?php \$md = new \App\Helpers\MarkdownParser(['>', '#']); echo \$md->parse($data); ?>";
+            return "<?php echo (new \App\Helpers\MarkdownParser)->parse($data); ?>";
         });
     }
 

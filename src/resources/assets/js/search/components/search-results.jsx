@@ -68,10 +68,10 @@ class EDSearchResults extends React.Component {
         }
 
         const element = results[0];
-        window.setTimeout(() => element.scrollIntoView({
+        window.setTimeout(() => element ? element.scrollIntoView({
             behavior: 'smooth',
             block: 'start'
-        }), 500);
+        }) : undefined, 500);
     }
 
     gotoReference(normalizedWord, urlChanged) {
