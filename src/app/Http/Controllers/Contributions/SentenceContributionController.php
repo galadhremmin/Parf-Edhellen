@@ -42,7 +42,7 @@ class SentenceContributionController extends Controller implements IContribution
     public function show(Contribution $contribution)
     {
         $payload = json_decode($contribution->payload);
-        $sentence = $payload->sentence;
+        $sentence = new Sentence((array) $payload->sentence);
         $fragmentData = $this->createFragmentDataFromPayload($payload);
 
         return view('contribution.'.$contribution->type.'.show', [

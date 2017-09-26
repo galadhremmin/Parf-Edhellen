@@ -1,6 +1,7 @@
 
 @if (Auth::user()->isAdministrator())
   @if ($review->is_approved === null)
+    <hr>
     <form method="post" action="{{ route('contribution.approve', ['id' => $review->id]) }}">
       {{ csrf_field() }}
       {{ method_field('PUT') }}
@@ -18,9 +19,11 @@
   @endif
 @endif
 
+@if (! $review->is_approved)
 <hr>
 
 You can <a href="{{ route('contribution.edit', ['id' => $review->id]) }}">change the submission</a> or 
 <a href="{{ route('contribution.confirm-destroy', ['id' => $review->id]) }}">delete the submission</a>. 
 If you edit a rejected submission, it will be resubmitted for review; if you edit a pending submission, 
 an administrator will review the latest version of your submission.
+@endif

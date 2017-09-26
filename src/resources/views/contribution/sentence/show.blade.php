@@ -20,9 +20,14 @@
 
   @markdown($sentence->long_description)
 
-  @include('contribution._notes', $review)
+  <p>
+    <span class="label label-default">{{ $sentence->language->name }}</span>
+    @if ($sentence->is_neologism)
+    <span class="label label-default">Neologism</span>
+    @endif
+  </p>
 
-  <hr>
+  @include('contribution._notes', $review)
   @include('contribution._pending-info', $review)
   <hr>
   @include('_shared._comments', [
