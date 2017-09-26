@@ -7,10 +7,11 @@
 <p><em>Parf Edhellen</em> is fortunate enough to have fans who now and then donate to the project. Their donations have
   helped me afford literature and have helped me pay for the site's continued upkeep. As some fans have shown their continued
   support by making recurring donations, I thought I'd mention these people here.</p>
-<p>This site's annual hosting fee is $80 (2017-07-17). It <em>used to be</em> 3 736 SEK (roughly $440 2015-11-04) until we changed to Amazon Lightsail and Let's Encrypt, which had a dramatic effect on our expenses. This fee includes TLS-certificate. Thanks to your
+<p>This site's annual hosting fee is $160 (2017-09-26). It <em>used to be</em> 3 736 SEK (roughly $440 2015-11-04) until we changed to Amazon Lightsail and Let's Encrypt, which had a dramatic effect on our expenses. This fee includes TLS-certificate. Thanks to your
 donations, I was able to purchase <a href="http://www.eldalamberon.com/parma22.html" target="_blank">Parma Eldalamberon
     issue 22</a>.</p>
 <p>You all have my <em>heartfelt thanks</em> for helping and supporting me in this work!</p>
+<p><em>Updated 2017-09-26.</em></p>
 
 <blockquote class="donation-box">
 <h2>Would you like to help?</h2>
@@ -28,6 +29,12 @@ donations, I was able to purchase <a href="http://www.eldalamberon.com/parma22.h
 <h2>Donations 2017</h2>
 <p>Parf Edhellen is entirely supported by donations this year. <strong>Thank you everyone for your continued support!</strong></p>
 <ol class="donations">
+  <li><span class="date">25ᵗʰ Sep '17</span>: <span class="currency">$15,00</span> by <span class="person">Marc C</span>.</li>
+  <li><span class="date">23ʳᵈ Sep '17</span>: <span class="currency">$21,00</span> by <span class="person">Jean Paul C</span>.</li>
+  <li><span class="date">22ⁿᵈ Sep '17</span>: <span class="currency">$6,00</span> by <span class="person">Birgit C</span>.</li>
+  <li><span class="date">19ᵗʰ Sep '17</span>: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
+  <li><span class="date">13ᵗʰ Sep '17</span>: <span class="currency">$5,00</span> by <span class="person">Deborah C</span>.</li>
+  <li><span class="date">19ᵗʰ Aug '17</span>: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
   <li><span class="date">30ᵗʰ Jul '17</span>: <span class="currency">$1,50</span> by <span class="person">Lilla E</span>.</li>
   <li><span class="date">24ᵗʰ Jul '17</span>: <span class="currency">$100,00</span> by <span class="person">Robert K</span>.</li>
   <li><span class="date">19ᵗʰ Jul '17</span>: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
