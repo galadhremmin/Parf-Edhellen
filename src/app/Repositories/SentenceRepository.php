@@ -108,7 +108,7 @@ class SentenceRepository
                 ? AuditTrail::ACTION_SENTENCE_EDIT 
                 : AuditTrail::ACTION_SENTENCE_ADD;
         $userId = $changed
-                ? 0
+                ? 0 // user currently logged in
                 : $sentence->account_id;
         $this->_auditTrail->store($action, $sentence, $userId);
     }

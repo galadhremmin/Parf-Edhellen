@@ -109,7 +109,7 @@ class ContributionController extends Controller
         $this->requestPermission($request, $contribution);
 
         if ($contribution->is_approved) {
-            abort(400, $contribution->word.' is already approved.');
+            $this->contributionAlreadyApproved();
         }
 
         return $this->createController($contribution->type)->edit($contribution, $request);
@@ -185,9 +185,8 @@ class ContributionController extends Controller
 
         $contribution = Contribution::findOrFail($id);
         $this->requestPermission($request, $contribution);
-        
-        if ($contribution->is_approved === 1) {
-            abort(400);
+        if ($contribution->is_approved) {
+            $this->contributionAlreadyApproved();
         }
 
         if ($contribution->is_approved === 0) {
@@ -217,6 +216,9 @@ class ContributionController extends Controller
     {
         $contribution = Contribution::findOrFail($id);
         $this->requestPermission($request, $contribution);
+        if ($contribution->is_approved) {
+            $this->contributionAlreadyApproved();
+        }
 
         $contribution->is_approved = 0;
         $contribution->date_reviewed = Carbon::now();
@@ -240,6 +242,10 @@ class ContributionController extends Controller
     {
         $contribution = Contribution::findOrFail($id);
         $this->requestPermission($request, $contribution);
+        if ($contribution->is_approved) {
+            $this->contributionAlreadyApproved();
+        }
+
         $this->createController($contribution->type)->approve($contribution, $request);
 
         $contribution->is_approved = 1;
@@ -353,6 +359,11 @@ class ContributionController extends Controller
         }
 
         $contribution->save();
+    }
+
+    protected function contributionAlreadyApproved() 
+    {
+        abort(400, 'Contribution is already approved.');
     }
 
     /**
