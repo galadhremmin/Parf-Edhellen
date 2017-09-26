@@ -77,7 +77,7 @@
 <p></p>
 <p>
   We use <em>Glaemscribe</em> by <a href="https://www.jrrvf.com/glaemscrafu/english/glaemscribe.html" target="_blank">Benjamin Babut</a> for transcriptions. 
-  <a href="https://pixabay.com/en/users/Mysticsartdesign-322497/">Mystic Art Design</a> photoshopped the jumbotron's background, and the photograph of the 
+  <a href="https://pixabay.com/en/users/ArtsyBee-462611/">ArtsyBee</a> painted the jumbotron's backgrounds, and the photograph of the 
   roots used for the background was taken by <a href="https://pixabay.com/en/users/tpsdave-12019/" target="_blank">tpsdave</a>.
 </p>
 

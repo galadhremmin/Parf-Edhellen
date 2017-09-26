@@ -4,7 +4,11 @@
 @section('title', 'Welcome!')
 @section('body')
 
+@if ($background)
+<div class="jumbotron" style="background-image:url(img/jumbotron/{{ $background }}">
+@else
 <div class="jumbotron">
+@endif
   <h1 title="Well met!">Mae govannen!</h1>
   <p>
     This is an Elvish Book, <em>Parf Edhellen</em>, dedicated to Tolkien's languages.

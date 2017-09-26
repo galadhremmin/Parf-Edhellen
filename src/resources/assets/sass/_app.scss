@@ -27,9 +27,20 @@ blockquote footer {
   background-size: cover;
   color: white;
   text-shadow: 0px 0px 15px rgba(0, 0, 0, 1);
+  box-shadow: 0px 0px 3px 0px rgba(117, 117, 117, 0.75);
 
   h1 {
     font-style: italic;
+  }
+}
+@media (min-width: 630px) and (max-width: 964px) {
+  .jumbotron {
+    background-position: center 35%;
+  }
+}
+@media (min-width: 965px) {
+  .jumbotron {
+    background-position: center 18%;
   }
 }
 .navbar-brand {
@@ -65,12 +76,6 @@ header h2.tengwar {
 }
 .clear-left {
   clear: left;
-}
-
-.jumbotron {
-    -webkit-box-shadow: 0px 0px 3px 0px rgba(117, 117, 117, 0.75);
-    -moz-box-shadow:    0px 0px 3px 0px rgba(117, 117, 117, 0.75);
-    box-shadow:         0px 0px 3px 0px rgba(117, 117, 117, 0.75);
 }
 blockquote {
   font-size: 1rem;
