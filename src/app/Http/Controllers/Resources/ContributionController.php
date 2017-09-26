@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Resources;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Support\Jsonable;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\{
     Auth,
     View
@@ -13,48 +12,19 @@ use Illuminate\Support\Facades\{
 
 use App\Http\Controllers\Controller;
 use App\Models\Initialization\Morphs;
-use App\Repositories\TranslationRepository;
-use App\Adapters\{
-    BookAdapter,
-    SentenceAdapter
-};
 use App\Models\{
     Contribution,
     Sentence,
-    SentenceFragment,
-    Sense,
-    Translation,
-    Word
+    Translation
 };
-use App\Http\Controllers\Traits\{
-    CanValidateTranslation, 
-    CanMapTranslation,
-    CanValidateSentence,
-    CanMapSentence
+use App\Http\Controllers\Contributions\{
+    IContributionController,
+    SentenceContributionController,
+    TranslationContributionController
 };
 
 class ContributionController extends Controller
 {
-    use CanMapTranslation,
-        CanValidateTranslation,
-        CanMapSentence,
-        CanValidateSentence {
-        validateSentenceInRequest as private validateSentenceInRequestImpl;
-        validateFragmentsInRequest as private validateFragmentsInRequestImpl;
-    }
-    
-    protected $_sentenceAdapter;
-    protected $_bookAdapter;
-    protected $_translationRepository;
-
-    public function __construct(BookAdapter $bookAdapter, SentenceAdapter $sentenceAdapter, 
-        TranslationRepository $translationRepository) 
-    {
-        $this->_bookAdapter = $bookAdapter;
-        $this->_sentenceAdapter = $sentenceAdapter;
-        $this->_translationRepository = $translationRepository;
-    }
-
     /**
      * HTTP GET. Landing page for the current user.
      *
@@ -63,12 +33,12 @@ class ContributionController extends Controller
      */
     public function index(Request $request)
     {
-        $reviews = Contribution::forAccount($request->user()->id)
+        $contributions = Contribution::forAccount($request->user()->id)
             ->orderBy('id', 'desc')
             ->get();
 
         return view('contribution.index', [
-            'reviews' => $reviews
+            'reviews' => $contributions
         ]);
     }
     
@@ -103,57 +73,10 @@ class ContributionController extends Controller
      */
     public function show(Request $request, int $id) 
     {
-        $review = Contribution::findOrFail($id);
-        $this->requestPermission($request, $review);
+        $contribution = Contribution::findOrFail($id);
+        $this->requestPermission($request, $contribution);
 
-        return $this->unfoldMorph($review->type, [
-            Translation::class => function () use($review) {
-                return $this->showTranslation($review);
-            },
-            Sentence::class => function() use($review) {
-                return $this->showSentence($review);
-            }
-        ]);
-    }
-
-    private function showTranslation(Contribution $review)
-    {
-        $keywords = json_decode($review->keywords);
-
-        $translationData = json_decode($review->payload, true);
-        if (! is_array($translationData)) {
-            abort(400, 'Unrecognised payload: '.$review->payload);
-        }
-
-        $translationData = $translationData + [ 
-            'word'     => $review->word,
-            'sense'    => $review->sense
-        ];
-        $translation = new Translation($translationData);
-
-        $translation->created_at   = $review->created_at;
-        $translation->account_name = $review->account->nickname;
-        $translation->type         = $translation->speech->name;
-
-        $translationData = $this->_bookAdapter->adaptTranslations([$translation]);
-
-        return view('contribution.'.$review->type.'.show', $translationData + [
-            'review'      => $review,
-            'keywords'    => $keywords
-        ]);
-    }
-
-    private function showSentence(Contribution $review)
-    {
-        $payload = json_decode($review->payload);
-        $sentence = $payload->sentence;
-        $fragmentData = $this->createFragmentDataFromPayload($payload);
-
-        return view('contribution.'.$review->type.'.show', [
-            'fragmentData' => json_encode($fragmentData),
-            'sentence' => $sentence,
-            'review'  => $review
-        ]);
+        return $this->createController($contribution->type)->show($contribution);
     }
 
     /**
@@ -182,67 +105,14 @@ class ContributionController extends Controller
     public function edit(Request $request, int $id) 
     {
         // retrieve the review
-        $review = Contribution::findOrFail($id);
-        $this->requestPermission($request, $review);
+        $contribution = Contribution::findOrFail($id);
+        $this->requestPermission($request, $contribution);
 
-        if ($review->is_approved) {
-            abort(400, $review->word.' is already approved.');
+        if ($contribution->is_approved) {
+            abort(400, $contribution->word.' is already approved.');
         }
 
-        return $this->unfoldMorph($review->type, [
-            Translation::class => function() use($request, $review) {
-                return $this->editTranslation($request, $review);
-            },
-            Sentence::class => function () use($request, $review) {
-                return $this->editSentence($request, $review);
-            }
-        ]);
-    }
-
-    private function editTranslation(Request $request, Contribution $review)
-    {
-        // retrieve word and sense based on the information specified in the review object. If the word does not exist in 
-        // the database, create a new instance of the model for the word.
-        $word = Word::forString($review->word)->firstOrNew(['word' => $review->word]);
-        $senseWord = Word::forString($review->sense)->firstOrNew([]);
-        $sense = Sense::where('id', $senseWord->id)->with('word')->firstOrNew([]);
-        if (! $sense->id) {
-            // _word_ is actually a navigation property.
-            $sense->word = Word::forString($review->sense)->firstOrNew(['word' => $review->sense]);
-        }
-
-        // Convert keyword strings to Word objects
-        $keywords = array_map(function ($k) {
-            return new Word([ 'word' => $k ]);
-        }, json_decode($review->keywords));
-
-        // extend the payload with information necessary for the form.
-        $payloadData = json_decode($review->payload, true) + [ 
-            'id' => $review->id,
-            'word'  => $word,
-            'sense' => $sense,
-            '_keywords' => $keywords,
-            'notes' => $review->notes
-        ];
-
-         return view('contribution.'.$review->type.'.edit', [
-            'review' => $review, 
-            'payload' => json_encode($payloadData)
-        ]);
-    }
-
-    private function editSentence(Request $request, Contribution $review)
-    {
-        $payload = json_decode($review->payload);
-        $sentence = $payload->sentence;
-        $sentence->notes = $review->notes ?: '';
-        $fragmentData = $this->createFragmentDataFromPayload($payload);
-
-        return view('contribution.'.$review->type.'.edit', [
-            'review' => $review,
-            'sentence' => json_encode($sentence),
-            'fragmentData' => json_encode($fragmentData)
-        ]);
+        return $this->createController($contribution->type)->edit($contribution, $request);
     }
 
     /**
@@ -254,11 +124,11 @@ class ContributionController extends Controller
      */
     public function confirmDestroy(Request $request, int $id)
     {
-        $review = Contribution::findOrFail($id);
-        $this->requestPermission($request, $review);
+        $contribution = Contribution::findOrFail($id);
+        $this->requestPermission($request, $contribution);
 
         return view('contribution.confirm-destroy', [
-            'review' => $review
+            'review' => $contribution
         ]);
     }
 
@@ -271,11 +141,11 @@ class ContributionController extends Controller
      */
     public function confirmReject(Request $request, int $id)
     {
-        $review = Contribution::findOrFail($id);
-        $this->requestPermission($request, $review);
+        $contribution = Contribution::findOrFail($id);
+        $this->requestPermission($request, $contribution);
 
         return view('contribution.confirm-reject', [
-            'review' => $review
+            'review' => $contribution
         ]);
     }
 
@@ -289,15 +159,15 @@ class ContributionController extends Controller
     {
         $this->validateRequest($request, 0);
 
-        $review = new Contribution;
-        $review->account_id = $request->user()->id;
-        $review->is_approved = null;
+        $contribution = new Contribution;
+        $contribution->account_id = $request->user()->id;
+        $contribution->is_approved = null;
 
-        $this->saveContribution($review, $request);
+        $this->saveContribution($contribution, $request);
 
         return response([
-            'id'  => $review->id,
-            'url' => route('contribution.show', ['id' => $review->id])
+            'id'  => $contribution->id,
+            'url' => route('contribution.show', ['id' => $contribution->id])
         ], 201);
     }
 
@@ -313,26 +183,26 @@ class ContributionController extends Controller
     {
         $this->validateRequest($request, $id);
 
-        $review = Contribution::findOrFail($id);
-        $this->requestPermission($request, $review);
+        $contribution = Contribution::findOrFail($id);
+        $this->requestPermission($request, $contribution);
         
-        if ($review->is_approved === 1) {
+        if ($contribution->is_approved === 1) {
             abort(400);
         }
 
-        if ($review->is_approved === 0) {
-            $review = $review->replicate();
-            $review->is_approved = null;
-            $review->date_reviewed = null;
-            $review->reviewed_by_account_id = null;
-            $review->justification = null;
+        if ($contribution->is_approved === 0) {
+            $contribution = $contribution->replicate();
+            $contribution->is_approved = null;
+            $contribution->date_reviewed = null;
+            $contribution->reviewed_by_account_id = null;
+            $contribution->justification = null;
         }
 
-        $this->saveContribution($review, $request);
+        $this->saveContribution($contribution, $request);
 
         return response([
-            'id'  => $review->id,
-            'url' => route('contribution.show', ['id' => $review->id])
+            'id'  => $contribution->id,
+            'url' => route('contribution.show', ['id' => $contribution->id])
         ], 200);
     } 
 
@@ -345,18 +215,18 @@ class ContributionController extends Controller
      */
     public function updateReject(Request $request, int $id)
     {
-        $review = Contribution::findOrFail($id);
-        $this->requestPermission($request, $review);
+        $contribution = Contribution::findOrFail($id);
+        $this->requestPermission($request, $contribution);
 
-        $review->is_approved = 0;
-        $review->date_reviewed = Carbon::now();
-        $review->reviewed_by_account_id = $request->user()->id;
-        $review->justification = $request->has('justification')
+        $contribution->is_approved = 0;
+        $contribution->date_reviewed = Carbon::now();
+        $contribution->reviewed_by_account_id = $request->user()->id;
+        $contribution->justification = $request->has('justification')
             ? $request->input('justification')
             : null;
-        $review->save();
+        $contribution->save();
 
-        return redirect()->route('contribution.show', ['id' => $review->id]);
+        return redirect()->route('contribution.show', ['id' => $contribution->id]);
     } 
 
     /**
@@ -368,23 +238,16 @@ class ContributionController extends Controller
      */
     public function updateApprove(Request $request, int $id)
     {
-        $review = Contribution::findOrFail($id);
-        $this->requestPermission($request, $review);
+        $contribution = Contribution::findOrFail($id);
+        $this->requestPermission($request, $contribution);
+        $this->createController($contribution->type)->approve($contribution, $request);
 
-        $translationData = json_decode($review->payload, true) + [
-            'account_id' => $review->account_id
-        ];
-        $translation = new Translation($translationData);
-        $keywords = json_decode($review->keywords, true);
-        $this->_translationRepository->saveTranslation($review->word, $review->sense, $translation, $keywords);
+        $contribution->is_approved = 1;
+        $contribution->date_reviewed = Carbon::now();
+        $contribution->reviewed_by_account_id = $request->user()->id;
+        $contribution->save();
 
-        $review->is_approved = 1;
-        $review->date_reviewed = Carbon::now();
-        $review->reviewed_by_account_id = $request->user()->id;
-        $review->translation_id = $translation->id;
-        $review->save();
-
-        return redirect()->route('contribution.show', ['id' => $review->id]);
+        return redirect()->route('contribution.show', ['id' => $contribution->id]);
     }
 
     /**
@@ -396,10 +259,10 @@ class ContributionController extends Controller
      */
     public function destroy(Request $request, int $id) 
     {
-        $review = Contribution::findOrFail($id);
-        $this->requestPermission($request, $review);
+        $contribution = Contribution::findOrFail($id);
+        $this->requestPermission($request, $contribution);
 
-        $review->delete();
+        $contribution->delete();
         
         return $request->user()->isAdministrator()
             ? redirect()->route('contribution.list')
@@ -407,50 +270,38 @@ class ContributionController extends Controller
     }
 
     /**
-     * HTTP POST. Validate sentence data in the request.
+     * HTTP POST. Validate a sub-step in the contribution process.
      * 
      * @param Request $request
      * @param int $id
      * @return \Illuminate\Http\Response 
      */
-    public function validateSentenceInRequest(Request $request, int $id = 0)
+    public function validateSubstep(Request $request, int $id = 0)
     {
-        $this->validateSentenceInRequestImpl($request, $id, true);
+        $substepId = $request->has('substep_id')
+            ? intval($request->input('substep_id'))
+            : 0;
+
+        $this->createController($request)->validateSubstep($request, $id, $substepId);
         return response(null, 204);
     }
 
     /**
-     * HTTP POST. Validate sentence fragments in the request.
-     * 
+     * Validates the specified request according to the morph identified
+     * by the request input parameters. The request parameter ("morph") is
+     * required.
+     *
      * @param Request $request
      * @param int $id
-     * @return \Illuminate\Http\Response 
+     * @return void
      */
-    public function validateFragmentsInRequest(Request $request)
-    {
-        $this->validateFragmentsInRequestImpl($request);
-        return response(null, 204);
-    }
-
     protected function validateRequest(Request $request, int $id)
     {
         $this->validate($request, [
             'morph' => 'required|string'
         ]);
 
-        $this->unfoldMorph($request, [
-            Translation::class => function() use($request, $id) {
-                $this->validateTranslationInRequest($request, $id, true);
-
-                return true;
-            },
-            Sentence::class => function () use($request, $id) {
-                $this->validateSentenceInRequest($request, $id);
-                $this->validateFragmentsInRequest($request);
-
-                return true;
-            }
-        ]);
+        $this->createController($request)->validateBeforeSave($request, $id);
     }
 
     /**
@@ -479,107 +330,71 @@ class ContributionController extends Controller
     /**
      * Updates the specified contribution based on the infromation provided by the request.
      *
-     * @param Contribution $review
+     * @param Contribution $contribution
      * @param Request $request
      * @return void
      */
-    protected function saveContribution(Contribution $review, Request $request)
+    protected function saveContribution(Contribution $contribution, Request $request)
     {
-        $entity = $this->unfoldMorph($request, [
-            Translation::class => function() use($review, $request) {
-                return $this->saveTranslationContribution($review, $request);
-            },
-            Sentence::class => function () use($review, $request) {
-                return $this->saveSentenceContribution($review, $request);
-            }
-        ]);
+        $entity = $this->createController($request)->populate($contribution, $request);
 
-        $review->type        = Morphs::getAlias($entity);
-        $review->language_id = $entity->language_id;
-        $review->notes       = $request->has('notes') 
+        $contribution->type        = Morphs::getAlias($entity);
+        $contribution->language_id = $entity->language_id;
+        $contribution->notes       = $request->has('notes') 
             ? $request->input('notes') 
             : null;
 
         // payloads might already be configured at this point, either by the save methods
         // or earlier in the call stack.
-        if (empty($review->payload)) {
-            $review->payload = $entity instanceof Jsonable
+        if (empty($contribution->payload)) {
+            $contribution->payload = $entity instanceof Jsonable
                 ? $entity->toJson()
                 : json_encode($entity);
         }
 
-        $review->save();
+        $contribution->save();
     }
 
-    protected function saveTranslationContribution(Contribution $review, Request $request)
-    {
-        $entity = new Translation;
-        $map = $this->mapTranslation($entity, $request);
-        extract($map);
-
-        $entity->account_id = $review->account_id;
-
-        $review->word       = $word;
-        $review->sense      = $sense;
-        $review->keywords   = json_encode($keywords);
-
-        return $entity;
-    }
-
-    protected function saveSentenceContribution(Contribution $review, Request $request)
-    {
-        $entity = new Sentence;
-        $map = $this->mapSentence($entity, $request);
-
-        $entity->account_id = $review->account_id;
-    
-        $review->payload = json_encode($map);
-        $review->word    = $entity->name;
-        $review->sense   = 'text';
-        
-        return $entity;
-    }
-
+    /**
+     * Aborts the current thread with a HTTP 400 error, since the morph cannot be identified.
+     *
+     * @param string $morph
+     * @return void
+     */
     protected function unrecognisedMorph(string $morph)
     {
         abort(400, 'Unrecognised morph "'.$morph.'".');
     }
 
-    protected function unfoldMorph($morphOrRequest, array $cases)
+    /**
+     * Invokes the closure associated with the morph's model name. The morph can be passed
+     * as a string, or it can be identified from a request's input parameters.
+     *
+     * @param [string|Request] $morphOrRequest
+     * @param array $cases
+     * @return void
+     */
+    protected function createController($morphOrRequest)
     {
-        $modelName = Morphs::getMorphedModel(($morphOrRequest instanceof Request) 
-            ? $morphOrRequest->input('morph') : $morphOrRequest
-        );
+        $morph = ($morphOrRequest instanceof Request) 
+            ? $morphOrRequest->input('morph') 
+            : $morphOrRequest;
 
-        if (! array_key_exists($modelName, $cases)) {
-            return;
-        }
-
-        return $cases[$modelName]();
-    }
-
-    private function createFragmentDataFromPayload(\stdClass $payload)
-    {
-        $fragments = new Collection();
+        $modelName = Morphs::getMorphedModel($morph);
         
-        $i = 0;
-        foreach ($payload->fragments as $fragmentData) {
-            $fragment = new SentenceFragment((array) $fragmentData);
-
-            // Generate a fake ID (descending order, starting at -10).
-            $fragment->id = ($i + 1) * -10;
-
-            // Create an array of IDs for inflections associated with this fragment.
-            $fragment->_inflections = array_map(function ($rel) {
-                return $rel->inflection_id;
-            }, $payload->inflections[$i]);
-
-            $fragments->push($fragment);
-            
-            $i += 1;
+        $controllerName = null;
+        switch ($modelName)
+        {
+            case Translation::class:
+                $controllerName = TranslationContributionController::class;
+                break;
+            case Sentence::class:
+                $controllerName = SentenceContributionController::class;
+                break;
+            default:
+                $this->unrecognisedMorph($morph);
         }
 
-        $result = $this->_sentenceAdapter->adaptFragments($fragments);
-        return $result;
+        return app()->make($controllerName);
     }
 }

@@ -61,11 +61,12 @@ class EDSentenceForm extends EDStatefulFormComponent {
             long_description: state.long_description,
             is_neologism: state.is_neologism,
             account_id: state.account_id || undefined,
-            notes: state.notes
+            notes: state.notes,
+            morph: this.props.admin ? undefined : 'sentence'
         };
 
         axios.post(this.props.admin ? '/admin/sentence/validate'
-            : '/dashboard/contribution/sentence/validate', payload)
+            : '/dashboard/contribution/substep-validate', payload)
             .then(request => this.onValidateSuccess(request, payload),
                   request => this.onValidateFail(request, payload));
     }

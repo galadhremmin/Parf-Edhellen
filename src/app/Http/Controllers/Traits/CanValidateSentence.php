@@ -14,12 +14,14 @@ trait CanValidateSentence
             'description'  => 'required|string|max:255',
             'language_id'  => 'required|numeric|exists:languages,id',
             'source'       => 'required|min:3|max:64',
-            'id'           => 'sometimes|required|numeric|exists:sentences,id',
             'is_neologism' => 'required|boolean'
         ];
 
         if (! $review) {
             $rules['account_id'] = 'sometimes|numeric|exists:accounts,id';
+            $rules['id']         = 'sometimes|required|numeric|exists:sentences,id';
+        } else {
+            $rules['id']         = 'sometimes|required|numeric|exists:contributions,id';
         }
         
         parent::validate($request, $rules);

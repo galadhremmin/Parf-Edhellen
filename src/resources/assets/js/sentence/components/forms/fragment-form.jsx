@@ -171,8 +171,11 @@ class EDFragmentForm extends EDStatefulFormComponent {
     submit() {
         // validate all fragments
         const fragments = this.props.fragments;
+        const payload = this.props.admin ? { fragments }
+            : { fragments, substep_id: 1, morph: 'sentence' };
+
         axios.post(this.props.admin ? '/admin/sentence/validate-fragment' 
-            : '/dashboard/contribution/sentence/validate-fragment', { fragments })
+            : '/dashboard/contribution/substep-validate', payload)
             .then(this.onFragmentsValid.bind(this), this.onFragmentsInvalid.bind(this));
     }
 
@@ -397,7 +400,8 @@ class EDFragmentForm extends EDStatefulFormComponent {
         });
 
         axios.post(this.props.admin ? '/admin/sentence/parse-fragment/tengwar'
-            : '/dashboard/contribution/sentence/parse-fragment/tengwar', { fragments: this.props.fragments }).then(response => {
+            : '/dashboard/contribution/sentence/parse-fragment/tengwar', 
+            { fragments: this.props.fragments }).then(response => {
             this.props.dispatch(setTengwar(response.data));
             this.props.history.goForward();
         });

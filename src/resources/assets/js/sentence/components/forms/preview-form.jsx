@@ -109,7 +109,8 @@ class EDPreviewForm extends React.Component {
             long_description: props.sentenceLongDescription,
             is_neologism:     props.sentenceIsNeologism,
             fragments:        props.fragments,
-            morph:            'sentence'
+            morph:            'sentence',
+            notes:            props.notes
         };
 
         if (payload.id) {
@@ -187,6 +188,7 @@ const mapStateToProps = state => {
         sentenceIsNeologism: state.is_neologism,
         sentenceAccountId: state.account_id,
         sentenceId: state.id,
+        notes: state.notes,
         admin: state.is_admin
     };
 };

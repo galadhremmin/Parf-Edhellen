@@ -17,15 +17,13 @@
   </header>
 
   @if (!empty($sentence->description))
-  <p>
-    {{ $sentence->description }}
-  </p>
+  @markdown($sentence->description)
   @endif
 
   <div id="ed-fragment-navigator"></div>
   <script type="application/json" id="ed-preload-sentence-data">{!! json_encode($sentenceData) !!}</script>
 
-  {!! $sentence->long_description !!}
+  @markdown($sentence->long_description)
 
   @if (Auth::check() && Auth::user()->isAdministrator())
   <p class="text-right">

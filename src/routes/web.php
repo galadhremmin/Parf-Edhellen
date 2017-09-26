@@ -89,10 +89,10 @@ Route::group([
         ->where(['morph' => '[a-z]+'])->name('contribution.create');
     Route::get('contribution/{id}/destroy', 'ContributionController@confirmDestroy')
         ->name('contribution.confirm-destroy');
-    Route::post('contribution/sentence/validate', 'ContributionController@validateSentenceInRequest')
-        ->name('contribution.sentence-validate');
-    Route::post('contribution/sentence/validate-fragment', 'ContributionController@validateFragmentsInRequest')
-        ->name('contribution.fragments-validate');
+    Route::post('contribution/substep-validate', 'ContributionController@validateSubstep')
+        ->name('contribution.substep-validate');
+    Route::post('contribution/validate', 'ContributionController@validateRequest')
+        ->name('contribution.validate');
 
     // Note: it is not a mistake to use the sentence controller in this instance. The functionality
     //       implemented in this method is generic.

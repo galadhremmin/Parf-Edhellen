@@ -12,15 +12,15 @@
   <h2>{{ $sentence->name }}</h2>
 
   @if (!empty($sentence->description))
-  <p>
-    {{ $sentence->description }}
-  </p>
+  @markdown($sentence->description)
   @endif
 
   <div id="ed-fragment-navigator"></div>
   <script type="application/json" id="ed-preload-sentence-data">{!! $fragmentData !!}</script>
 
-  {!! $sentence->long_description !!}
+  @markdown($sentence->long_description)
+
+  @include('contribution._notes', $review)
 
   <hr>
   @include('contribution._pending-info', $review)
