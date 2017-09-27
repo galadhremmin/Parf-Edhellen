@@ -24,6 +24,7 @@ class TranslationRepository
                 [ 't.is_latest', 1 ],
                 [ 't.is_deleted', 0 ],
                 [ 't.language_id', $languageId ],
+                [ 'k.word_id', '=', DB::raw('t.word_id') ],
                 [ $reversed ? 'k.reversed_normalized_keyword_unaccented' : 'k.normalized_keyword_unaccented', 'like', $word ]
             ];
 
@@ -33,6 +34,7 @@ class TranslationRepository
 
             $query = DB::table('keywords as k')
                 ->join('translations as t', 'k.sense_id', 't.sense_id')
+                ->whereNotNull('k.translation_id')
                 ->where($filter);
         } else {
             $query = Keyword::findByWord($word, $reversed, $includeOld);
