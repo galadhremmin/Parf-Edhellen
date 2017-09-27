@@ -17,16 +17,20 @@ class TranslationRepository
 
     public function getKeywordsForLanguage(string $word, $reversed = false, $languageId = 0, $includeOld = true) 
     {
-        $word = self::formatWord($word);
+        $hasWildcard = null;
+        $word = self::formatWord($word, $hasWildcard);
 
         if ($languageId > 0) {
             $filter = [
                 [ 't.is_latest', 1 ],
                 [ 't.is_deleted', 0 ],
                 [ 't.language_id', $languageId ],
-                [ 'k.word_id', '=', DB::raw('t.word_id') ],
                 [ $reversed ? 'k.reversed_normalized_keyword_unaccented' : 'k.normalized_keyword_unaccented', 'like', $word ]
             ];
+
+            if ($hasWildcard) {
+                $filter[] = [ 'k.word_id', '=', DB::raw('t.word_id') ];
+            }
 
             if (! $includeOld) {
                 $filter[] = [ 'k.is_old', 0 ];
@@ -530,12 +534,14 @@ class TranslationRepository
         $t->save();
     }
 
-    protected static function formatWord(string $word) 
+    protected static function formatWord(string $word, bool& $hasWildcard = null) 
     {
         if (strpos($word, '*') !== false) {
+            $hasWildcard = true;
             return str_replace('*', '%', $word);
         } 
         
+        $hasWildcard = false;
         return $word.'%';
     }
 }
