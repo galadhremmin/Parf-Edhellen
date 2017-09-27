@@ -9,7 +9,7 @@
   
 
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
       <div class="panel panel-default">
         <div class="panel-heading">
           <h2 class="panel-title"><span class="glyphicon glyphicon-hourglass"></span> Awaiting review</h2>

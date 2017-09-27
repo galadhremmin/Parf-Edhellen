@@ -21,8 +21,8 @@ class TranslationRepository
 
         if ($languageId > 0) {
             $filter = [
-                [ 't.is_latest', ],
-                [ 't.is_deleted', ],
+                [ 't.is_latest', 1 ],
+                [ 't.is_deleted', 0 ],
                 [ 't.language_id', $languageId ],
                 [ $reversed ? 'k.reversed_normalized_keyword_unaccented' : 'k.normalized_keyword_unaccented', 'like', $word ]
             ];
