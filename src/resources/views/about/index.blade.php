@@ -8,32 +8,21 @@
 
 <a name="search"></a>
 <h2>Searching</h2>
-<p>Use the search field above to browse the dictionary. As you type, the dictionary will present suggestions underneath based on what you type.
-  You can use the asterisk symbol (*) to match everything or individual letters, which can be useful if you're unsure about spelling. A single
-  asterisk won't yield the entire library, however, because the precision of your query is considered too low.</p>
+<p>You need to use the search field above in order to browse the dictionary. As you type, you will receive a list of senses and words that we believe match what you are looking for. A match can be direct and indirect. A direct match is a word that contains the characters you have entered, for an example <em>mi</em> yielding <em>mi, mir, mil</em> etcetera. An indirect match is often thematically relevant to what you are looking for, for an example <em>maple</em> yielding <em>trees, plants, olvar</em> (the latter of which is a Quenya word for “growing things with roots in the earth.”)</p> 
 
-<p>Words with special letters, like letters with umlauts and accents, are matched against their their ASCII letters. This means that if you
-  search for <i>mîr</i>, the dictionary will suggest <i><a href="/w/mir">mîr</a></i>, <i><a href="/w/mire">mírë</a></i>,
-  <i><a href="/w/miril">miril</a></i> etc.</p>
+<p>Wildcards are supported. You can position a wildcard character <strong>*</strong> wherever you wish the dictionary to fill. Typically, a wildcard is secretly positioned at the end of what you are typing, so if you type <em>lo</em>, you are actually looking for words which begin with those letters, such as <em>long, love, low,</em> etcetera. If you want to find words that end with <em>lo</em>, you can search for <em>*lo</em>, yielding <em>hello, solo, polo,</em> etcetera. You can achieve the same result by using the dictionary’s reversed search feature, by checking the <em>Reversed</em> checkbox underneath the search field, and searching for <em>ol</em>.</p>
 
-<p>As you type, you'll notice that the list of suggestions beneath can become really long, but there is a cap on how many suggestions you can
-  view at one time, depending on the preciseness of your search query. More exact queries (= more letters) are permitted to yield a longer
-  list of suggestions. This feature also exists to improve performance for everyone.</p>
+<p>Use wildcards to search in multiple directions, for an example <em>*en*</em> would yield <em>endeavor, envelop, generalization, sentimentality, taken,</em> ectetera.</p>
 
-<p>The preciseness of your query is calculated according to the follow equation: 
-<br /><u><em>the length of the search term (without white space)</em></u> &times; 200.</p>
+<blockquote><span class="glyphicon glyphicon-info-sign"></span> Wildcards disable thematic search when you choose a language.</blockquote>
 
-<a name="reversed"></a>
-<h2>Reversed search</h2>
-<p>If you tick the checkbox &quot;reversed search,&quot; <em>Parf Edhellen</em> will match your query in reverse. This is useful if you're
-  looking for words with a specific word ending, perhaps with the intention to find fitting rhymes for your poetry.</p>
-
+<p>By checking the <em>Old sources</em> checkbox, the dictionary will include words from dictionaries that have not been updated for several years. These words are usually not incorrect, but they would not contain information from later linguistic publications.</p>
 <a href="unverified"></a>
 <h2>Unverified or debatable glosses</h2>
 <p>You'll sometimes encounter the <span class="glyphicon glyphicon-asterisk"></span> symbol, usually together with a warning. These
   exist to inform you that the gloss originate from a source which might be outdated or questionable. This is unfortunately fairly common
   because linguistic material on Tolkien's languages are only sporadically made available to the community; initiatives have the time to arise
-  and wither between publications. Hiswelókë, which haven't been updated for years, is nonetheless still excellent, and one of the prominent
+  and gradually wither between publications. Hiswelókë, which haven't been updated for years, is nonetheless still excellent, and one of the prominent
   sources to date on the Sindarin language.</p>
 <p>Would it be a mistake to trust glosses from an outdated source? Probably not. I recommend you to try to find another source which corroborates
   the proposed translation.</p>
