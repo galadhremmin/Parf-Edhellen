@@ -301,7 +301,7 @@ class TranslationRepository
             // transform original keyword entities to an array of strings.
             $originalKeywords = $originalTranslation->keywords->map(function ($k) {
                     return $k->keyword;
-                })->union(
+                })->merge(
                     $originalTranslation->sense->keywords()
                         ->whereNull('translation_id')
                         ->get()
@@ -310,11 +310,16 @@ class TranslationRepository
                         })
                 )
                 ->toArray();
+
+            // Create an array of keywords for the original entity as well as the new entity, and sort them. 
+            // Once sorted, simple equality check can be carried out to determine whether the arrays are identical.
             $originalKeywords = array_unique($originalKeywords);
-        
-            // if the difference between the keywords and the original keywords aren't just the word and
-            // gloss (as expected due to the filter above), an actual change has been recorded.
-            $keywordsChanged = !! array_diff(array_diff($originalKeywords, $keywords), [ $wordString, $glossString ]);
+            $newKeywords = array_merge($keywords, [ $wordString, $glossString ]);
+
+            sort($originalKeywords);
+            sort($newKeywords);
+            
+            $keywordsChanged = $originalKeywords !== $newKeywords;
 
             if ($keywordsChanged) {
                 $originalTranslation->keywords()->delete();
