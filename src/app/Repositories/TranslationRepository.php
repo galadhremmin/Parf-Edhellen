@@ -279,7 +279,7 @@ class TranslationRepository
                 $originalTranslation->sentence_fragments()->update([
                     'translation_id' => $translation->id
                 ]);
-                $originalTranslation->translation_reviews()->update([
+                $originalTranslation->contributions()->update([
                     'translation_id' => $translation->id
                 ]);
                 $originalTranslation->favourites()->update([
@@ -525,7 +525,7 @@ class TranslationRepository
                 'translation_id' => $replaceId
             ]);
 
-            $t->translation_reviews()->update([
+            $t->contributions()->update([
                 'translation_id' => null
             ]);
         }
