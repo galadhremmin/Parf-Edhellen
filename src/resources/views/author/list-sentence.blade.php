@@ -22,8 +22,11 @@
         <td>{{ $sentence->created_at->format('Y-m-d H:i') }}</td>
         <td>{{ $sentence->language->name }}</td>
         <td>
+            @if ($sentence->is_neologism)
+            <span class="glyphicon glyphicon-asterisk"></span>
+            @endif
             <a href="{{ $link->sentence($sentence->language_id, $sentence->language->name, $sentence->id, $sentence->name) }}">
-                {{ $sentence->name }}
+              {{ $sentence->name }}
             </a>
         </td>
       </tr>

@@ -56,7 +56,7 @@ class AuthorController extends Controller
         $author = Account::findOrFail($id);
         $translations = Translation::active()
             ->forAccount($id)
-            ->with('word', 'sense.word', 'language')
+            ->with('word', 'sense.word', 'language', 'translation_group')
             ->orderBy('id', 'desc')
             ->limit(100)
             ->get();

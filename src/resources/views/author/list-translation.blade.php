@@ -22,7 +22,14 @@
       <tr>
         <td>{{ $translation->created_at->format('Y-m-d H:i') }}</td>
         <td>{{ $translation->language->name }}</td>
-        <td><a href="{{ $link->translation($translation->id) }}">{{ $translation->word->word }} / {{ $translation->sense->word->word }}</a></td>
+        <td>
+          @if ($translation->is_uncertain || ($translation->translation_group_id && ! $translation->translation_group->is_canon))
+          <span class="glyphicon glyphicon-asterisk"></span>
+          @endif
+          <a href="{{ $link->translation($translation->id) }}">
+            {{ $translation->word->word }} / {{ $translation->sense->word->word }}
+          </a>
+        </td>
         <td>{{ $translation->translation }}</td>
       </tr>
       @endforeach
