@@ -2,7 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{AuditTrail, Flashcard, FlashcardResult, Language, Translation};
+use App\Models\{
+    AuditTrail, 
+    Flashcard, 
+    FlashcardResult, 
+    Language, 
+    Translation
+};
 use App\Helpers\MarkdownParser;
 use App\Repositories\Interfaces\IAuditTrailRepository;
 use Illuminate\Http\Request;
@@ -68,6 +74,22 @@ class FlashcardController extends Controller
     {
         $flashcard = Flashcard::findOrFail($id);
         return view('flashcard.cards', ['flashcard' => $flashcard]);
+    }
+
+    public function list(Request $request, int $id)
+    {
+        $flashcard = Flashcard::findOrFail($id);
+        $userId = $request->user()->id;
+        $results = FlashcardResult::forAccount($userId)
+            ->where('flashcard_id', $id)
+            ->with('translation', 'translation.word')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return view('flashcard.list', [
+            'results'  => $results,
+            'flashcard' => $flashcard
+        ]);
     }
 
     public function card(Request $request, int $n = 0)

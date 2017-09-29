@@ -23,6 +23,10 @@ Route::get('/author/{id}',              [ 'uses' => 'AuthorController@index'    
     ->where([ 'id' => '[0-9]+' ])->name('author.profile-without-nickname');
 Route::get('/author/{id}-{nickname}',   [ 'uses' => 'AuthorController@index'    ])
     ->where([ 'id' => '[0-9]+', 'nickname' => $urlSeoReg ])->name('author.profile');
+Route::get('/author/{id}/translations', [ 'uses' => 'AuthorController@translations' ])
+    ->where([ 'id' => '[0-9]+' ])->name('author.translations');
+Route::get('/author/{id}/sentences', [ 'uses' => 'AuthorController@sentences' ])
+    ->where([ 'id' => '[0-9]+' ])->name('author.sentences');
 
 // Phrases
 Route::get('/phrases',                     [ 'uses' => 'SentenceController@index'      ])
@@ -48,6 +52,8 @@ Route::group([ 'middleware' => 'auth' ], function () {
     Route::get('/dashboard/flashcard',       [ 'uses' => 'FlashcardController@index' ])->name('flashcard');
     Route::get('/dashboard/flashcard/{id}',  [ 'uses' => 'FlashcardController@cards' ])
         ->where([ 'id' => '[0-9]+' ])->name('flashcard.cards');
+    Route::get('/dashboard/flashcard/{id}/results', [ 'uses' => 'FlashcardController@list' ])
+        ->where([ 'id' => '[0-9]+' ])->name('flashcard.list');
     Route::post('/dashboard/flashcard/card', [ 'uses' => 'FlashcardController@card' ])->name('flashcard.card');
     Route::post('/dashboard/flashcard/test', [ 'uses' => 'FlashcardController@test' ])->name('flashcard.test');
 

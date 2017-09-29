@@ -41,9 +41,13 @@
       @endif
     </p>
     <p class="text-right">
+      <a href="{{ route('flashcard.list', ['id' => $flashcard->id]) }}" class="btn btn-default">
+        <span class="glyphicon glyphicon-th-list"></span>
+        Review performance
+      </a>
       <a href="{{ route('flashcard.cards', ['id' => $flashcard->id]) }}" class="btn btn-primary">
         <span class="glyphicon glyphicon-circle-arrow-right"></span>
-        Compile flashcards
+        Start with {{ $flashcard->language->name }}
       </a>
     </p>
   </blockquote>

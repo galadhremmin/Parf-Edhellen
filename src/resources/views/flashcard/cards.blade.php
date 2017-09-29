@@ -12,7 +12,7 @@
 
   <hr />
   <p>
-    Your answers are saved automatically so you can review your performance later.
+    Your answers are saved automatically so you can <a href="{{ route('flashcard.list', ['id' => $flashcard->id]) }}">review your performance</a>.
     Good luck!
   </p>
       

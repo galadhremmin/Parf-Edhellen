@@ -6,11 +6,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-
-use App\Models\{ Account, AuditTrail };
 use App\Repositories\StatisticsRepository;
 use App\Repositories\Interfaces\IAuditTrailRepository;
 use App\Helpers\MarkdownParser;
+
+use App\Models\{ 
+    Account, 
+    AuditTrail,
+    Translation,
+    Sentence
+};
 
 class AuthorController extends Controller
 {
@@ -23,7 +28,7 @@ class AuthorController extends Controller
         $this->_statisticsRepository = $statisticsRepository;
     }
 
-    public function index(Request $request, $id = null, $nickname = '')
+    public function index(Request $request, int $id = null, $nickname = '')
     {
         $author  = $this->getAccount($request, $id);
         $profile = '';
@@ -46,7 +51,39 @@ class AuthorController extends Controller
         ]);
     }
 
-    public function edit(Request $request, $id = null)
+    public function translations(Request $request, int $id = null)
+    {
+        $author = Account::findOrFail($id);
+        $translations = Translation::active()
+            ->forAccount($id)
+            ->with('word', 'sense.word', 'language')
+            ->orderBy('id', 'desc')
+            ->limit(100)
+            ->get();
+        
+        return view('author.list-translation', [
+            'translations' => $translations,
+            'author'       => $author
+        ]);
+    }
+
+    public function sentences(Request $request, int $id = null)
+    {
+        $author = Account::findOrFail($id);
+        $sentences = Sentence::approved()
+            ->forAccount($id)
+            ->with('language')
+            ->orderBy('id', 'desc')
+            ->limit(100)
+            ->get();
+        
+        return view('author.list-sentence', [
+            'sentences' => $sentences,
+            'author'    => $author
+        ]);
+    }
+
+    public function edit(Request $request, int $id = null)
     {
         $author = $this->getAccount($request, $id);
 

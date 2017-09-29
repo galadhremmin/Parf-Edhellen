@@ -72,17 +72,21 @@ class ForumApiController extends Controller
             case ForumContext::CONTEXT_FORUM:
                 // Unsupported at the moment
                 break;
+
             case ForumContext::CONTEXT_TRANSLATION:
                 $url = $this->_link->translationVersions($post->entity_id);
                 break;
+
             case ForumContext::CONTEXT_SENTENCE:
                 $sentence = Sentence::findOrFail($post->entity_id);
                 $url = $this->_link->sentence($sentence->language_id, $sentence->language->name, 
                     $sentence->id, $sentence->name);
                 break;
+
             case ForumContext::CONTEXT_ACCOUNT:
                 $url = $this->_link->author($post->entity_id, '');
                 break;
+                
             case ForumContext::CONTEXT_CONTRIBUTION:
                 $url = route('contribution.show', ['id' => $post->entity_id]);
         }

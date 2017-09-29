@@ -45,11 +45,11 @@
               <td class="text-right">{{ $stats['noOfWords'] }}</td>
             </tr>
             <tr>
-              <th>Glosses</th>
+              <th><a href="{{ route('author.translations', ['id' => $author->id]) }}">Glosses</a></th>
               <td class="text-right">{{ $stats['noOfTranslations'] }}</td>
             </tr>
             <tr>
-              <th>Phrases</th>
+              <th><a href="{{ route('author.sentences', ['id' => $author->id]) }}">Phrases</a></th>
               <td class="text-right">{{ $stats['noOfSentences'] }}</td>
             </tr>
             <tr>

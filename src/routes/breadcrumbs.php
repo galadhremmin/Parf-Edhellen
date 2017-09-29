@@ -224,6 +224,12 @@ Breadcrumbs::register('flashcard.cards', function ($breadcrumbs, App\Models\Flas
     $breadcrumbs->push('Flashcard for '.$flashcard->language->name, route('flashcard.cards', ['id' => $flashcard->id]));
 });
 
+Breadcrumbs::register('flashcard.list', function ($breadcrumbs, App\Models\Flashcard $flashcard)
+{
+    $breadcrumbs->parent('flashcard');
+    $breadcrumbs->push('Results for '.$flashcard->language->name, route('flashcard.list', ['id' => $flashcard->language->id]));
+});
+
 // //////////////////////////////////////////////////////////////////////////////////////////////
 // Dashboard > System errors
 
