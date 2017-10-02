@@ -7,7 +7,8 @@ use App\Models\{
     Flashcard, 
     FlashcardResult, 
     Language, 
-    Translation
+    Translation,
+    Speech
 };
 use App\Helpers\MarkdownParser;
 use App\Repositories\Interfaces\IAuditTrailRepository;
@@ -141,10 +142,18 @@ class FlashcardController extends Controller
         // Compile a list of options
         $options = [$translation->translation];
 
-        $fakeOptions = $q->where([
-                ['id', '<>', $translation->id],
-                ['translation', '<>', $translation->translation]
-            ])
+        // group verbs w/ one another as they tend to be in the infinitive
+        // in English.
+        $filters = [
+            ['id', '<>', $translation->id],
+            ['translation', '<>', $translation->translation]
+        ];
+        $verbSpeech = Speech::where('name', 'verb')->first();
+        if ($verbSpeech && $translation->speech_id === $verbSpeech->id) {
+            $filters[] = ['speech_id', $verbSpeech->id];
+        }
+
+        $fakeOptions = $q->where($filters)
             ->select('translation')
             ->take(4)
             ->get();
