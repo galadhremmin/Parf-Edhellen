@@ -99,7 +99,7 @@ class EDBookGloss extends React.Component {
                 {! this.props.disableTools ? <a href={`/wt/${gloss.id}`} className="translation-link">
                     <span className="glyphicon glyphicon-share"></span>
                 </a> : undefined}
-                {! this.props.disableTools ? toolbarPlugins.map((PluginComponent, i) => <span key={`plugin.${i}`}>
+                {! this.props.disableTools && gloss.is_latest ? toolbarPlugins.map((PluginComponent, i) => <span key={`plugin.${i}`}>
                     <PluginComponent hostComponent={this} gloss={gloss} />
                     {' '}    
                 </span>) : undefined}

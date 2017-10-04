@@ -318,17 +318,19 @@ class TranslationRepository
         if ($originalTranslation !== null) {
             
             // transform original keyword entities to an array of strings.
-            $originalKeywords = $originalTranslation->keywords->map(function ($k) {
-                    return $k->keyword;
-                })->merge(
-                    $originalTranslation->sense->keywords()
-                        ->whereNull('translation_id')
-                        ->get()
-                        ->map(function ($k) {
-                            return $k->keyword;
-                        })
-                )
-                ->toArray();
+            $originalKeywords = array_merge(
+                
+                $originalTranslation->keywords->map(function ($k) {
+                        return $k->keyword;
+                    })->toArray(),
+
+                $originalTranslation->sense->keywords()
+                    ->whereNull('translation_id')
+                    ->get()
+                    ->map(function ($k) {
+                        return $k->keyword;
+                    })->toArray()
+            );
 
             // Create an array of keywords for the original entity as well as the new entity, and sort them. 
             // Once sorted, simple equality check can be carried out to determine whether the arrays are identical.
