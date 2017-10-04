@@ -66,12 +66,8 @@ class SentenceContributionController extends Controller implements IContribution
     public function edit(Contribution $contribution, Request $request)
     {
         $payload = json_decode($contribution->payload);
+        
         $sentence = $payload->sentence;
-
-        if (property_exists($sentence, 'id') && $sentence->id) {
-            $sentence->sentence_id = $sentence->id;
-        }
-
         $sentence->contribution_id = $contribution->id;
         $sentence->notes = $contribution->notes ?: '';
 
