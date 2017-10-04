@@ -47,21 +47,25 @@ class TranslationContributionController extends Controller implements IContribut
             abort(400, 'Unrecognised payload: '.$contribution->payload);
         }
 
+        $parentTranslation = array_key_exists('id', $translationData)
+            ? $translationData['id'] : 0;
         $translationData = $translationData + [ 
             'word'     => $contribution->word,
             'sense'    => $contribution->sense
         ];
         $translation = new Translation($translationData);
+        $translations = [$translation];
 
         $translation->created_at   = $contribution->created_at;
         $translation->account_name = $contribution->account->nickname;
         $translation->type         = $translation->speech->name;
 
-        $translationData = $this->_bookAdapter->adaptTranslations([$translation]);
-
-        return view('contribution.'.$contribution->type.'.show', $translationData + [
-            'review'      => $contribution,
-            'keywords'    => $keywords
+        $translationData = $this->_bookAdapter->adaptTranslations($translations);
+        
+        return view('contribution.translation.show', $translationData + [
+            'review'            => $contribution,
+            'keywords'          => $keywords,
+            'parentTranslation' => $parentTranslation
         ]);
     }
 
@@ -70,7 +74,7 @@ class TranslationContributionController extends Controller implements IContribut
      *
      * @param Request $request
      * @param Contribution $contribution
-     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
+     * @return array|\Illuminate\View\View|\Illuminate\Contracts\View\Factory
      */
     public function edit(Contribution $contribution, Request $request)
     {
@@ -90,18 +94,49 @@ class TranslationContributionController extends Controller implements IContribut
         }, json_decode($contribution->keywords));
 
         // extend the payload with information necessary for the form.
-        $payloadData = json_decode($contribution->payload, true) + [ 
-            'id' => $contribution->id,
+        $payload = json_decode($contribution->payload, true);
+        $payloadData = $payload + [ 
+            'contribution_id' => $contribution->id,
             'word'  => $word,
             'sense' => $sense,
             '_keywords' => $keywords,
             'notes' => $contribution->notes
         ];
 
-         return view('contribution.'.$contribution->type.'.edit', [
-            'review' => $contribution, 
-            'payload' => json_encode($payloadData)
-        ]);
+        return $request->ajax()
+            ? [
+                'review' => $contribution, 
+                'payload' => $payloadData
+            ] : view('contribution.translation.edit', [
+                'review' => $contribution, 
+                'payload' => json_encode($payloadData)
+            ]);
+    }
+    
+    /**
+     * Shows a form for a new contribution.
+     *
+     * @param Request $request
+     * @return array|\Illuminate\View\View|\Illuminate\Contracts\View\Factory
+     */
+    public function create(Request $request, int $entityId = 0)
+    {
+        $translation = null;
+
+        if ($entityId) {
+            $translation = Translation::where('id', $entityId)
+                ->with('sense', 'sense.word', 'translation_group', 'word')
+                ->firstOrFail();
+
+            $translation->_keywords = $this->_translationRepository->getKeywords($translation->sense_id, $translation->id);
+        }
+
+        return $request->ajax()
+            ? $translation
+            // create a payload model if a translation exists.
+            : view('contribution.translation.create', $translation ? [
+                'payload' => json_encode($translation)
+            ] : []);
     }
 
     public function validateSubstep(Request $request, int $id = 0, int $substepId = 0)
@@ -116,7 +151,11 @@ class TranslationContributionController extends Controller implements IContribut
 
     public function populate(Contribution $contribution, Request $request)
     {
-        $entity = new Translation;
+        // Modify an existing translation, if the request body specifies the ID of such an entity. This is optional functionality.
+        $entity = $request->has('id') 
+            ? Translation::findOrFail(intval($request->input('id'))) 
+            : new Translation;
+
         $map = $this->mapTranslation($entity, $request);
         extract($map);
 
@@ -135,11 +174,15 @@ class TranslationContributionController extends Controller implements IContribut
             'account_id' => $contribution->account_id
         ];
         $translation = new Translation($translationData);
+        // is the contribution a proposed change to an existing translation?
+        if (array_key_exists('id', $translationData)) {
+            $translation->id = intval($translationData['id']);
+        }
+
         $keywords = json_decode($contribution->keywords, true);
 
-        $this->_translationRepository->saveTranslation($contribution->word, $contribution->sense, 
-            $translation, $keywords);
-
+        $translation = $this->_translationRepository->saveTranslation(
+            $contribution->word, $contribution->sense, $translation, $keywords);
         $contribution->translation_id = $translation->id;
     }
 }

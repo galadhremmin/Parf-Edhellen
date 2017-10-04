@@ -20,7 +20,8 @@ const EDSentenceAdminReducer = (state = {
     languages: EDConfig.languages(),
     loading: false,
     is_admin: true,
-    notes: ''
+    notes: '',
+    contribution_id: undefined
 }, action) => {
     switch (action.type) {
         case SET_IS_ADMIN:

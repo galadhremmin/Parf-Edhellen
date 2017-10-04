@@ -7,7 +7,7 @@
     class="gloss"
   @endif>
   <h3 rel="trans-word" class="trans-word">
-    @if (!$gloss->is_canon || $gloss->is_uncertain || !$gloss->is_latest)
+    @if (!$gloss->is_canon || $gloss->is_uncertain)
     <a href="/about" title="Unattested, unverified or debatable content." class="neologism">
       <span class="glyphicon glyphicon-asterisk"></span>
     </a>

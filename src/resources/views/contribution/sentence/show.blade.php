@@ -9,6 +9,16 @@
 
   @include('contribution._status-alert', $review)
 
+  @if (isset($originalSentence))
+  <p>
+    <span class="glyphicon glyphicon-info-sign"></span>
+    This is a proposed modification of the phrase  
+    <a href="{{ $link->sentence($originalSentence->language_id, $originalSentence->language->name, $originalSentence->id, $originalSentence->name) }}">
+      {{ $originalSentence->name }}
+    </a>.
+  </p>
+  @endif
+
   <h2>{{ $sentence->name }}</h2>
 
   @if (!empty($sentence->description))

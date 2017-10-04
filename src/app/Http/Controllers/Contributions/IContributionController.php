@@ -25,6 +25,14 @@ interface IContributionController
     function edit(Contribution $contribution, Request $request);
 
     /**
+     * Shows a form for a new contribution.
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
+     */
+    function create(Request $request, int $entityId = 0);
+
+    /**
      * Performs partial validation of the specified request.
      *
      * @param Request $request

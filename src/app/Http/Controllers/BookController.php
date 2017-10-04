@@ -35,6 +35,16 @@ class BookController extends Controller
         ]);
     }
 
+    public function redirectToLatest(Request $request, int $id)
+    {
+        $translation = $this->getTranslationUnadapted($id, true);
+        if (! $translation) {
+            abort(404);
+        }
+
+        return redirect()->route('translation.ref', ['id' => $translation->id]);
+    }
+
     public function versions(Request $request, int $id)
     {
         $translations = $this->_translationRepository->getVersions($id);

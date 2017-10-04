@@ -10,18 +10,16 @@ trait CanValidateSentence
     public function validateSentenceInRequest(Request $request, int $id = 0, bool $review = false)
     {
         $rules = [
-            'name'         => 'required|string|min:1|max:128|unique:sentences,name'.($id === 0 ? '' : ','.$id.',id'),
-            'description'  => 'required|string|max:255',
-            'language_id'  => 'required|numeric|exists:languages,id',
-            'source'       => 'required|min:3|max:64',
-            'is_neologism' => 'required|boolean'
+            'id'              => 'sometimes|required|numeric|exists:sentences,id',
+            'name'            => 'required|string|min:1|max:128|unique:sentences,name'.($id === 0 ? '' : ','.$id.',id'),
+            'description'     => 'required|string|max:255',
+            'language_id'     => 'required|numeric|exists:languages,id',
+            'source'          => 'required|min:3|max:64',
+            'is_neologism'    => 'required|boolean'
         ];
 
         if (! $review) {
             $rules['account_id'] = 'sometimes|numeric|exists:accounts,id';
-            $rules['id']         = 'sometimes|required|numeric|exists:sentences,id';
-        } else {
-            $rules['id']         = 'sometimes|required|numeric|exists:contributions,id';
         }
         
         parent::validate($request, $rules);

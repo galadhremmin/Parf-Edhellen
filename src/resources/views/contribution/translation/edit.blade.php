@@ -7,9 +7,7 @@
   {!! Breadcrumbs::render('contribution.edit', $review->id) !!}
   <div id="ed-translation-form" data-admin="false" data-confirm-button-text="{{ $review->is_approved === null ? 'Save changes' : 'Resubmit for review' }}"></div>
 
-  <script type="application/json" id="ed-preloaded-translation">
-  {!! $payload !!}
-  </script>
+  <script type="application/json" id="ed-preloaded-translation">{!! $payload !!}</script>
 
 @endsection
 

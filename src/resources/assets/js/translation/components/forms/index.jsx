@@ -76,9 +76,9 @@ class EDTranslationForm extends EDStatefulFormComponent {
         const state = this.state;
         const payload = {
             ...state,
-            id:      state.id || undefined,
-            tengwar: state.tengwar.length > 0 ? state.tengwar : undefined,
-            morph: 'translation'
+            id:             state.id || undefined,
+            tengwar:        state.tengwar.length > 0 ? state.tengwar : undefined,
+            morph:          'translation'
         };
 
         let promise;
@@ -92,8 +92,8 @@ class EDTranslationForm extends EDStatefulFormComponent {
                 promise = axios.post('/admin/translation', payload);
             }
         } else {
-            if (payload.id) {
-                promise = axios.put(`/dashboard/contribution/${payload.id}`, payload);
+            if (this.props.contributionId) {
+                promise = axios.put(`/dashboard/contribution/${this.props.contributionId}`, payload);
             } else {
                 promise = axios.post('/dashboard/contribution', payload);
             }
@@ -294,6 +294,7 @@ const mapStateToProps = state => {
         translationRejected:   state.is_rejected,
         translationKeywords:   state._keywords,
         translationGroupId:    state.translation_group_id,
+        contributionId:        state.contribution_id,
         languages:             state.languages,
         groups:                state.groups,
         loading:               state.loading,

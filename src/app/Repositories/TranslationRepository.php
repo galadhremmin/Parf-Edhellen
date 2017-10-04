@@ -67,7 +67,7 @@ class TranslationRepository
     }
 
     /**
-     * Gets the latest version of the translation specified by the ID.
+     * Gets the version of the translation specified by the ID.
      *
      * @param int $id
      * @return void
@@ -79,6 +79,25 @@ class TranslationRepository
             ->first();
 
         return $translation;
+    }
+
+    /**
+     * Gets the ID for the latest entity associated with the specified origin.
+     *
+     * @param int $originTranslationId
+     * @return void
+     */
+    public function getLatestTranslation(int $originTranslationId)
+    {
+        $data = DB::table('translations')
+            ->where([
+                ['translations.origin_translation_id', $originTranslationId],
+                ['is_latest', 1]
+            ])
+            ->select('id')
+            ->first();
+
+        return $data->id;
     }
 
     public function getTranslationListForLanguage(int $languageId)
@@ -390,6 +409,27 @@ class TranslationRepository
         }
 
         return true;
+    }
+
+    /**
+     * Gets keywords for the specified translation.
+     *
+     * @param int $senseId
+     * @param int $id
+     * @return \stdClass
+     */
+    public function getKeywords(int $senseId, int $id)
+    {
+        $keywords = Keyword::join('words', 'words.id', 'keywords.word_id')
+                ->where('keywords.sense_id', $senseId)
+                ->where(function ($query) use($id) {
+                    $query->whereNull('keywords.translation_id')
+                        ->orWhere('keywords.translation_id', $id);
+                })
+                ->select('words.id', 'words.word')
+                ->get();
+
+        return $keywords;
     }
 
     protected static function getSensesForWord(string $word) 

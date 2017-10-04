@@ -18,6 +18,10 @@
             <li><a href="{{ route('contribution.create', ['morph' => 'translation']) }}">Add gloss</a></li>
             <li><a href="{{ route('contribution.create', ['morph' => 'sentence']) }}">Add phrase</a></li>
           </ul>
+          <p>
+            <span class="glyphicon glyphicon-info-sign"></span> You can also propose changes to the dictionary. 
+            Browse around, and click the <span class="glyphicon glyphicon-edit text-info"></span> button.
+          </p>
         </div>
       </div>
     </div>

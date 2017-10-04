@@ -7,12 +7,8 @@
   {!! Breadcrumbs::render('contribution.edit', $review->id) !!}
   <div id="ed-sentence-form" data-admin="false"></div>
 
-  <script type="application/json" id="ed-preloaded-sentence">
-  {!! $sentence !!}
-  </script>
-  <script type="application/json" id="ed-preloaded-sentence-fragments">
-  {!! $fragmentData !!}
-  </script>
+  <script type="application/json" id="ed-preloaded-sentence">{!! $sentence !!}</script>
+  <script type="application/json" id="ed-preloaded-sentence-fragments">{!! $fragmentData !!}</script>
 
 @endsection
 

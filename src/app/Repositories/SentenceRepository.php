@@ -87,7 +87,7 @@ class SentenceRepository
         if ($numberOfFragments !== count($inflections)) {
             throw new Exception('The number of fragments must match the number of inflections.');
         }
-
+        
         $sentence->save();
         $this->destroyFragments($sentence);
         

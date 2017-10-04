@@ -80,8 +80,12 @@ class EDBookGloss extends React.Component {
         const toolbarPlugins = EDConfig.pluginsFor('book-gloss-toolbar');
 
         return <blockquote itemScope="itemscope" itemType="http://schema.org/Article" id={id} className={classNames({ 'contribution': !gloss.is_canon }, 'gloss')}>
+            {! gloss.is_latest ? <p className="alert alert-danger">
+                <span className="glyphicon glyphicon-warning-sign"></span> <strong>Important!</strong> A newer version of this gloss was found in the dictionary.
+                You should <a href={`/wt/${gloss.id}/latest`}> go to the latest version instead</a>.    
+            </p> : undefined}
             <h3 rel="trans-word" className="trans-word">
-                {! gloss.is_canon || ! gloss.is_latest  || gloss.is_uncertain
+                {! gloss.is_canon || gloss.is_uncertain
                     ? <span className="glyphicon glyphicon-asterisk" title="Uncertain or possibly a neologism" />
                     : undefined}
                 {' '}

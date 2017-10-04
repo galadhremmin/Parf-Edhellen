@@ -113,12 +113,15 @@ class EDPreviewForm extends React.Component {
             notes:            props.notes
         };
 
-        if (payload.id) {
-            axios.put(this.props.admin ? `/admin/sentence/${payload.id}` 
-                : `/dashboard/contribution/${payload.id}`, payload)
+        if ((props.admin && payload.id) || (! props.admin && props.contributionId)) {
+            const url = props.admin 
+                ? `/admin/sentence/${payload.id}` 
+                : `/dashboard/contribution/${props.contributionId}`;
+
+            axios.put(url, payload)
                 .then(this.onSavedResponse.bind(this), this.onFailedResponse.bind(this));
         } else {
-            axios.post(this.props.admin ? '/admin/sentence' : '/dashboard/contribution', payload)
+            axios.post(props.admin ? '/admin/sentence' : '/dashboard/contribution', payload)
                 .then(this.onSavedResponse.bind(this), this.onFailedResponse.bind(this));
         }
     }
@@ -189,7 +192,8 @@ const mapStateToProps = state => {
         sentenceAccountId: state.account_id,
         sentenceId: state.id,
         notes: state.notes,
-        admin: state.is_admin
+        admin: state.is_admin,
+        contributionId: state.contribution_id
     };
 };
 

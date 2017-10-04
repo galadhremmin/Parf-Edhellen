@@ -175,7 +175,12 @@ class EDFragmentForm extends EDStatefulFormComponent {
         // validate all fragments
         const fragments = this.props.fragments;
         const payload = this.props.admin ? { fragments }
-            : { fragments, substep_id: 1, morph: 'sentence' };
+            : { 
+                fragments, 
+                substep_id: 1, 
+                morph: 'sentence',
+                contribution_id: this.props.contributionId || undefined
+            };
 
         axios.post(this.props.admin ? '/admin/sentence/validate-fragment' 
             : '/dashboard/contribution/substep-validate', payload)
@@ -685,7 +690,8 @@ const mapStateToProps = state => {
         fragments: state.fragments,
         latin: state.latin,
         loading: state.loading,
-        admin: state.is_admin
+        admin: state.is_admin,
+        contributionId: state.contribution_id
     };
 };
 

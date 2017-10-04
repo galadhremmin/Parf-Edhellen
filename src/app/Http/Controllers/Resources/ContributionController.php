@@ -87,12 +87,11 @@ class ContributionController extends Controller
      */
     public function create(Request $request, string $morph = null)
     {
-        $viewName = 'contribution.'.$morph.'.create';
-        if (! View::exists($viewName)) {
-            $this->unrecognisedMorph($morph);
-        }
-        
-        return view($viewName);
+        $id = $request->has('entity_id')
+            ? intval($request->input('entity_id'))
+            : 0;
+
+        return $this->createController($morph)->create($request, $id);
     }
 
     /**
@@ -157,7 +156,7 @@ class ContributionController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validateRequest($request, 0);
+        $this->validateAll($request);
 
         $contribution = new Contribution;
         $contribution->account_id = $request->user()->id;
@@ -181,7 +180,7 @@ class ContributionController extends Controller
      */
     public function update(Request $request, int $id)
     {
-        $this->validateRequest($request, $id);
+        $this->validateAll($request);
 
         $contribution = Contribution::findOrFail($id);
         $this->requestPermission($request, $contribution);
@@ -282,10 +281,16 @@ class ContributionController extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response 
      */
-    public function validateSubstep(Request $request, int $id = 0)
+    public function validateSubstep(Request $request)
     {
+        $this->validateContributionRequest($request);
+
         $substepId = $request->has('substep_id')
             ? intval($request->input('substep_id'))
+            : 0;
+        
+        $id = $request->has('id')
+            ? intval($request->input('id'))
             : 0;
 
         $this->createController($request)->validateSubstep($request, $id, $substepId);
@@ -301,13 +306,29 @@ class ContributionController extends Controller
      * @param int $id
      * @return void
      */
-    protected function validateRequest(Request $request, int $id)
+    protected function validateAll(Request $request)
+    {
+        $this->validateContributionRequest($request);
+
+        $id = $request->has('id') 
+            ? intval($request->input('id'))
+            : 0;
+        $this->createController($request)->validateBeforeSave($request, $id);
+    }
+
+    /**
+     * Validates the request to ensure that it is compatible with the requirements of a contribution
+     * request.
+     *
+     * @param Request $request
+     * @return void
+     */
+    protected function validateContributionRequest(Request $request)
     {
         $this->validate($request, [
-            'morph' => 'required|string'
+            'morph'           => 'required|string',
+            'contribution_id' => 'sometimes|required|numeric|exists:contributions,id'
         ]);
-
-        $this->createController($request)->validateBeforeSave($request, $id);
     }
 
     /**
@@ -352,7 +373,7 @@ class ContributionController extends Controller
 
         // payloads might already be configured at this point, either by the save methods
         // or earlier in the call stack.
-        if (empty($contribution->payload)) {
+        if (! $contribution->isDirty('payload')) {
             $contribution->payload = $entity instanceof Jsonable
                 ? $entity->toJson()
                 : json_encode($entity);

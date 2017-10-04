@@ -8,6 +8,7 @@ trait CanValidateTranslation
     public function validateTranslationInRequest(Request $request, $id = 0, $review = false)
     {
         $rules = [
+            'id'              => 'sometimes|required|numeric|exists:translations,id',
             'language_id'     => 'required|numeric|exists:languages,id',
             'speech_id'       => 'required|numeric|exists:speeches,id',
             'word'            => 'required|string|min:1|max:64',
@@ -21,11 +22,8 @@ trait CanValidateTranslation
             'tengwar'         => 'sometimes|string|min:1|max:128'
         ];
 
-        if ($review) {
-            $rules['id']                   = 'sometimes|required|numeric|exists:contributions,id';
-        } else {
+        if (! $review) {
             $rules['account_id']           = 'required|numeric|exists:accounts,id';
-            $rules['id']                   = 'sometimes|required|numeric|exists:translations,id';
             $rules['translation_group_id'] = 'sometimes|numeric|exists:translation_groups,id';
         }
 

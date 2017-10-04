@@ -24,7 +24,8 @@ const EDTranslationAdminReducer = (state = {
     languages: EDConfig.languages(),
     groups: undefined,
     loading: true,
-    _keywords: []
+    _keywords: [],
+    contribution_id: undefined
 }, action) => {
     switch (action.type) {
         case ED_SET_TRANSLATION_DATA:

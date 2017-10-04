@@ -62,7 +62,8 @@ class EDSentenceForm extends EDStatefulFormComponent {
             is_neologism: state.is_neologism,
             account_id: state.account_id || undefined,
             notes: state.notes,
-            morph: this.props.admin ? undefined : 'sentence'
+            morph: this.props.admin ? undefined : 'sentence',
+            contribution_id: this.props.contributionId || undefined
         };
 
         axios.post(this.props.admin ? '/admin/sentence/validate'
@@ -187,7 +188,8 @@ const mapStateToProps = state => {
         sentenceAccountId: state.account_id,
         sentenceId: state.id,
         notes: state.notes,
-        admin: state.is_admin
+        admin: state.is_admin,
+        contributionId: state.contribution_id
     };
 };
 

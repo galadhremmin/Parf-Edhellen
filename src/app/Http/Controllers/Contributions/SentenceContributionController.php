@@ -42,13 +42,17 @@ class SentenceContributionController extends Controller implements IContribution
     public function show(Contribution $contribution)
     {
         $payload = json_decode($contribution->payload);
+        $originalSentence = property_exists($payload, 'id')
+            ? Sentence::findOrFail($payload->id) : null;
+
         $sentence = new Sentence((array) $payload->sentence);
         $fragmentData = $this->createFragmentDataFromPayload($payload);
 
-        return view('contribution.'.$contribution->type.'.show', [
-            'fragmentData' => json_encode($fragmentData),
-            'sentence' => $sentence,
-            'review'  => $contribution
+        return view('contribution.sentence.show', [
+            'fragmentData'     => json_encode($fragmentData),
+            'sentence'         => $sentence,
+            'originalSentence' => $originalSentence,
+            'review'           => $contribution
         ]);
     }
 
@@ -63,15 +67,44 @@ class SentenceContributionController extends Controller implements IContribution
     {
         $payload = json_decode($contribution->payload);
         $sentence = $payload->sentence;
-        $sentence->id = $contribution->id;
+
+        if (property_exists($sentence, 'id') && $sentence->id) {
+            $sentence->sentence_id = $sentence->id;
+        }
+
+        $sentence->contribution_id = $contribution->id;
         $sentence->notes = $contribution->notes ?: '';
+
         $fragmentData = $this->createFragmentDataFromPayload($payload);
 
-        return view('contribution.'.$contribution->type.'.edit', [
+        return view('contribution.sentence.edit', [
             'review' => $contribution,
             'sentence' => json_encode($sentence),
             'fragmentData' => json_encode($fragmentData)
         ]);
+    }
+    
+    /**
+     * Shows a form for a new contribution.
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
+     */
+    public function create(Request $request, int $entityId = 0)
+    {
+        $model = [];
+
+        if ($entityId) {
+            $sentence = Sentence::findOrFail($entityId);
+            $fragmentData = $this->createFragmentDataFromPayload($sentence);
+
+            $model = [
+                'sentence'     => json_encode($sentence),
+                'fragmentData' => json_encode($fragmentData)
+            ];
+        }
+
+        return view('contribution.sentence.create', $model);
     }
 
     /**
@@ -121,7 +154,10 @@ class SentenceContributionController extends Controller implements IContribution
      */
     public function populate(Contribution $contribution, Request $request)
     {
-        $entity = new Sentence;
+        $entity = $request->has('id') 
+            ? Sentence::findOrFail( intval($request->input('id')) ) 
+            : new Sentence;
+        
         $map = $this->mapSentence($entity, $request);
 
         $entity->account_id = $contribution->account_id;
@@ -147,6 +183,13 @@ class SentenceContributionController extends Controller implements IContribution
         $map = json_decode($contribution->payload, true);
 
         $sentence = new Sentence($map['sentence']);
+
+        // Is the proposed contribution a modification of an existing sentence entity?
+        if (array_key_exists('id', $map['sentence'])) {
+            $sentence->id = intval($map['sentence']['id']);
+            // Inform the model that it in fact exists, even though it was created as a new entity.
+            $sentence->exists = true;
+        }
         
         // Transform fragments into SentenceFragment entities.
         $fragments = array_map(function ($fragment) {
@@ -168,28 +211,33 @@ class SentenceContributionController extends Controller implements IContribution
     /**
      * Transforms the specified payload into a view object, ready to be JSON-serialized.
      *
-     * @param \stdClass $payload
+     * @param \stdClass|Sentence $payload
      * @return array
      */
-    private function createFragmentDataFromPayload(\stdClass $payload)
+    private function createFragmentDataFromPayload($payload)
     {
-        $fragments = new Collection();
-        
-        $i = 0;
-        foreach ($payload->fragments as $fragmentData) {
-            $fragment = new SentenceFragment((array) $fragmentData);
+        if ($payload instanceof Sentence) {
+            $fragments = $payload->sentence_fragments;
 
-            // Generate a fake ID (descending order, starting at -10).
-            $fragment->id = ($i + 1) * -10;
-
-            // Create an array of IDs for inflections associated with this fragment.
-            $fragment->_inflections = array_map(function ($rel) {
-                return $rel->inflection_id;
-            }, $payload->inflections[$i]);
-
-            $fragments->push($fragment);
+        } else {
+            $fragments = new Collection();
             
-            $i += 1;
+            $i = 0;
+            foreach ($payload->fragments as $fragmentData) {
+                $fragment = new SentenceFragment((array) $fragmentData);
+
+                // Generate a fake ID (descending order, starting at -10).
+                $fragment->id = ($i + 1) * -10;
+
+                // Create an array of IDs for inflections associated with this fragment.
+                $fragment->_inflections = array_map(function ($rel) {
+                    return $rel->inflection_id;
+                }, $payload->inflections[$i]);
+
+                $fragments->push($fragment);
+                
+                $i += 1;
+            }
         }
 
         $result = $this->_sentenceAdapter->adaptFragments($fragments);

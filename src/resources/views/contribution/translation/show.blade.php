@@ -9,6 +9,13 @@
 
   @include('contribution._status-alert', $review)
 
+  @if ($parentTranslation)
+  <p>
+    <span class="glyphicon glyphicon-info-sign"></span>
+    This is a proposed modification of the gloss <a href="{{ $link->translation($parentTranslation) }}">{{ $parentTranslation }}</a>.
+  </p>
+  @endif
+
   <div class="well">
     @foreach ($sections as $section)
       @foreach ($section['glosses'] as $gloss)
@@ -24,7 +31,7 @@
       <span class="label label-default">{{ $keyword }}</span>
     @endforeach
   </div>
-
+  
   @include('contribution._notes', $review)
 
   @if (! $review->is_approved)
