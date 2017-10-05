@@ -103,7 +103,7 @@ class AuthorController extends Controller
             ->take($pageSize);
 
         $user = $request->user();
-        if ($user && ! $user->isAdministrator()) {
+        if (! $user || ! $user->isAdministrator()) {
             $query = $query->where('forum_context.is_elevated', 0);
         }
 
