@@ -53,6 +53,10 @@
               <td class="text-right">{{ $stats['noOfSentences'] }}</td>
             </tr>
             <tr>
+              <th><a href="{{ route('author.posts', ['id' => $author->id]) }}">Posts</a></th>
+              <td class="text-right">{{ $stats['noOfPosts'] }}</td>
+            </tr>
+            <tr>
               <th><span class="glyphicon glyphicon-thumbs-up"></span> Thanks</th>
               <td class="text-right">{{ $stats['noOfThanks'] }}</td>
             </tr>

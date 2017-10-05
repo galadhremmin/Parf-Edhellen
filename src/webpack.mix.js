@@ -114,3 +114,4 @@ mix.js([
 mix.sass('resources/assets/sass/app.scss', 'public/css');
 mix.sass('resources/assets/sass/app.flashcard.scss', 'public/css');
 mix.sass('resources/assets/sass/app.sentences.scss', 'public/css');
+mix.sass('resources/assets/sass/app.timeline.scss', 'public/css');

@@ -13,6 +13,7 @@ use App\Helpers\MarkdownParser;
 use App\Models\{ 
     Account, 
     AuditTrail,
+    ForumPost,
     Translation,
     Sentence
 };
@@ -83,7 +84,42 @@ class AuthorController extends Controller
         ]);
     }
 
-    public function edit(Request $request, int $id = null)
+    public function posts(Request $request, int $id)
+    {
+        $noOfPosts = ForumPost::forAccount($id)->count();
+        $pageSize = 10;
+        $page = $request->has('page') 
+            ? intval($request->input('page')) 
+            : 0;
+
+        $query = ForumPost::forAccount($id)
+            ->with('forum_context')
+            ->where([
+                ['is_deleted', 0],
+                ['is_hidden', 0]
+            ])
+            ->orderBy('id', 'desc')
+            ->skip($page * $pageSize)
+            ->take($pageSize);
+
+        $user = $request->user();
+        if ($user && ! $user->isAdministrator()) {
+            $query = $query->where('forum_context.is_elevated', 0);
+        }
+
+        $posts = (new \App\Adapters\AuthorAdapter)->adapt($query->get());
+        $author = Account::findOrFail($id);
+
+        return view('author.list-posts', [
+            'posts'     => $posts,
+            'noOfPosts' => $noOfPosts,
+            'noOfPages' => ceil($noOfPosts / $pageSize),
+            'page'      => $page,
+            'author'    => $author
+        ]);
+    }
+
+    public function edit(Request $request, int $id)
     {
         $author = $this->getAccount($request, $id);
 

@@ -31,25 +31,30 @@ class ForumRepository
     {
         // Retrieve the context
         $context = ForumContext::where('name', $contextName)
-            ->select('id', 'is_elevated')
+            ->select('id', 'is_elevated', 'friendly_name')
             ->firstOrFail();
         $entity = null;
+        $entityName = null;
 
         switch ($context->id) {
             case ForumContext::CONTEXT_TRANSLATION:
                 $entity = Translation::findOrFail($id);
+                $entityName = $entity->word->word;
                 break;
             
             case ForumContext::CONTEXT_SENTENCE:
                 $entity = Sentence::findOrFail($id);
+                $entityName = $entity->name;
                 break;
 
             case ForumContext::CONTEXT_ACCOUNT:
                 $entity = Account::findOrFail($id);
+                $entityName = $entity->nickname;
                 break;
 
             case ForumContext::CONTEXT_CONTRIBUTION:
                 $entity = Contribution::findOrFail($id);
+                $entityName = $entity->word;
                 break;
                 
             default:
@@ -57,9 +62,11 @@ class ForumRepository
         }
 
         return [
-            'id'          => $context->id,
-            'is_elevated' => $context->is_elevated,
-            'entity'      => $entity
+            'id'            => $context->id,
+            'is_elevated'   => $context->is_elevated,
+            'friendly_name' => $context->friendly_name,
+            'entity_name'   => $entityName,
+            'entity'        => $entity
         ];
     }
 }

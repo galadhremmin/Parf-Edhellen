@@ -27,6 +27,8 @@ Route::get('/author/{id}/translations', [ 'uses' => 'AuthorController@translatio
     ->where([ 'id' => '[0-9]+' ])->name('author.translations');
 Route::get('/author/{id}/sentences', [ 'uses' => 'AuthorController@sentences' ])
     ->where([ 'id' => '[0-9]+' ])->name('author.sentences');
+Route::get('/author/{id}/posts', [ 'uses' => 'AuthorController@posts' ])
+    ->where([ 'id' => '[0-9]+' ])->name('author.posts');
 
 // Phrases
 Route::get('/phrases',                     [ 'uses' => 'SentenceController@index'      ])

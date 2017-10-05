@@ -11,7 +11,7 @@
   <table class="table table-hover table-striped">
     <thead>
       <tr>
-        <th>Created</th>
+        <th class="hidden-xs">Created</th>
         <th>Language</th>
         <th>Word / sense</th>
         <th>Gloss</th>
@@ -20,7 +20,7 @@
     <tbody>
       @foreach ($translations as $translation)
       <tr>
-        <td>{{ $translation->created_at->format('Y-m-d H:i') }}</td>
+        <td class="hidden-xs">{{ $translation->created_at->format('Y-m-d H:i') }}</td>
         <td>{{ $translation->language->name }}</td>
         <td>
           @if ($translation->is_uncertain || ($translation->translation_group_id && ! $translation->translation_group->is_canon))

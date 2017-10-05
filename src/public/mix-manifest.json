@@ -8,6 +8,7 @@
   "/css/app.css": "/css/app.css",
   "/css/app.flashcard.css": "/css/app.flashcard.css",
   "/css/app.sentences.css": "/css/app.sentences.css",
+  "/css/app.timeline.css": "/css/app.timeline.css",
   "/js/sentence.js": "/js/sentence.js",
   "/js/flashcard.js": "/js/flashcard.js",
   "/js/system-errors-admin.js": "/js/system-errors-admin.js",

@@ -11,7 +11,7 @@
   <table class="table table-hover table-striped">
     <thead>
       <tr>
-        <th>Created</th>
+        <th class="hidden-xs">Created</th>
         <th>Language</th>
         <th>Phrase</th>
       </tr>
@@ -19,7 +19,7 @@
     <tbody>
       @foreach ($sentences as $sentence)
       <tr>
-        <td>{{ $sentence->created_at->format('Y-m-d H:i') }}</td>
+        <td class="hidden-xs">{{ $sentence->created_at->format('Y-m-d H:i') }}</td>
         <td>{{ $sentence->language->name }}</td>
         <td>
             @if ($sentence->is_neologism)

@@ -146,7 +146,9 @@ class ForumApiController extends Controller
         $account = $request->user();
         $post = ForumPost::create([
             'forum_context_id'    => $context['id'],
+            'context_name'        => $context['friendly_name'],
             'entity_id'           => $context['entity']->id,
+            'entity_name'         => $context['entity_name'],
             'account_id'          => $account->id,
             'content'             => $comments,
             'parent_form_post_id' => $parentEntityId,

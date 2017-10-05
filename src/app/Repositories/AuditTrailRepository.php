@@ -105,7 +105,7 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
                         break;
                 }
 
-                $entity = '<a href="/api/v1/forum/'.$action->entity->id.'">a comment</a>';
+                $entity = '<a href="'.route('forum.show', ['id' => $action->entity->id]).'">a comment</a>';
             } else if ($action->entity instanceof FlashcardResult) {
                 switch ($action->action_id) {
                     case AuditTrail::ACTION_FLASHCARD_FIRST_CARD:
