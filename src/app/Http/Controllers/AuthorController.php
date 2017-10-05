@@ -104,7 +104,9 @@ class AuthorController extends Controller
 
         $user = $request->user();
         if (! $user || ! $user->isAdministrator()) {
-            $query = $query->where('forum_context.is_elevated', 0);
+            $query = $query->whereHas('forum_context', function ($subQuery) {
+                $subQuery->where('is_elevated', 0);
+            });
         }
 
         $posts = (new \App\Adapters\AuthorAdapter)->adapt($query->get());
