@@ -37,7 +37,7 @@ class SentenceRouteResolver implements IRouteResolver
         }
 
         // Some sentences actually do lack an author (as they were imported). SO make sure one exists before adding 'by'.
-        return 'Phrase “'.$entity->name.'”' + ($entity->account_id ? ' by '.$entity->account->nickname : '');
+        return 'Phrase “'.$entity->name.'”' . ($entity->account_id ? ' by '.$entity->account->nickname : '');
     }
 
     public function getIconPath()
