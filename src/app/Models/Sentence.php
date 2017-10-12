@@ -21,11 +21,6 @@ class Sentence extends ModelBase
     {
         return $this->belongsTo(Language::class);
     }
-
-    public function account()
-    {
-        return $this->belongsTo(Account::class);
-    }
     
     public function scopeNeologisms($query)
     {

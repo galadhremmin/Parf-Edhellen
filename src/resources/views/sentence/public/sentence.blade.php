@@ -61,7 +61,7 @@
   <hr>
   @include('_shared._comments', [
     'entity_id' => $sentence->id,
-    'context'   => 'sentence',
+    'morph'     => 'sentence',
     'enabled'   => true
   ])
 @endsection

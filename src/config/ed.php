@@ -23,8 +23,16 @@ return [
     ],
 
     // Sitemap for unlocking sitemap view 
-    'sitemap-key' => env('ED_SITEMAP_KEY', ''),
+    'sitemap_key' => env('ED_SITEMAP_KEY', ''),
 
     // Logging to database?
-    'system_errors_logging' => env('ED_SYSTEM_ERRORS_LOGGING', false)
+    'system_errors_logging' => env('ED_SYSTEM_ERRORS_LOGGING', false),
+
+    'forum_entities' => [
+        App\Models\Account::class      => App\Http\RouteResolving\Resolvers\AccountRouteResolver::class,
+        App\Models\Contribution::class => App\Http\RouteResolving\Resolvers\ContributionRouteResolver::class,
+        App\Models\Sentence::class     => App\Http\RouteResolving\Resolvers\SentenceRouteResolver::class,
+        App\Models\Translation::class  => App\Http\RouteResolving\Resolvers\TranslationRouteResolver::class
+    ],
+    'forum_resultset_max_length' => 10
 ];

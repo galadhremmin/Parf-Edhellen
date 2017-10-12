@@ -13,8 +13,9 @@ ul.pill-nav {
             padding: 10px 5px 5px 5px;
             text-align: center;
             color: inherit;
+            position: relative;
 
-            &:hover, &:active {
+            &:hover, &:active, &:focus {
                 text-decoration: none;
                 color: $link-color;
             }
@@ -23,7 +24,15 @@ ul.pill-nav {
                 font-size: 200%;
                 display: block;
                 margin-bottom: $line-height-computed;
-            } 
+                margin-left: $line-height-computed*2;
+                margin-right: $line-height-computed*2;
+            }
+
+            .label {
+                position: absolute;
+                right: 5px;
+                top: 5px;
+            }
         }
     }
 }

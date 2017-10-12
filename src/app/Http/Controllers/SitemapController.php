@@ -21,7 +21,7 @@ class SitemapController extends Controller
 
     public function index(Request $request, string $context)
     {
-        if (! $request->has('key') || $request->input('key') !== config('ed.sitemap-key')) {
+        if (! $request->has('key') || $request->input('key') !== config('ed.sitemap_key')) {
             return response(null, 401);
         }
 

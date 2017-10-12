@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use App\Adapters\AuthorAdapter;
 use App\Repositories\StatisticsRepository;
 use App\Repositories\Interfaces\IAuditTrailRepository;
 use App\Helpers\MarkdownParser;
@@ -21,11 +22,13 @@ use App\Models\{
 class AuthorController extends Controller
 {
     protected $_auditTrail;
+    protected $_authorAdapter;
     protected $_statisticsRepository;
 
-    public function __construct(IAuditTrailRepository $auditTrail, StatisticsRepository $statisticsRepository)
+    public function __construct(IAuditTrailRepository $auditTrail, AuthorAdapter $authorAdapter, StatisticsRepository $statisticsRepository)
     {
         $this->_auditTrail           = $auditTrail;
+        $this->_authorAdapter        = $authorAdapter;
         $this->_statisticsRepository = $statisticsRepository;
     }
 
@@ -93,7 +96,7 @@ class AuthorController extends Controller
             : 0;
 
         $query = ForumPost::forAccount($id)
-            ->with('forum_context')
+            ->with('forum_thread')
             ->where([
                 ['is_deleted', 0],
                 ['is_hidden', 0]
@@ -109,7 +112,7 @@ class AuthorController extends Controller
             });
         }
 
-        $posts = (new \App\Adapters\AuthorAdapter)->adapt($query->get());
+        $posts = $this->_authorAdapter->adapt($query->get());
         $author = Account::findOrFail($id);
 
         return view('author.list-posts', [

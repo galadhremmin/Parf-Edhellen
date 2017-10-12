@@ -31,7 +31,7 @@
 
     @include('_shared._comments', [
       'entity_id' => $v->id,
-      'context'   => 'translation',
+      'morph'     => 'translation',
       'enabled'   => $v->is_latest
     ])
     <hr>

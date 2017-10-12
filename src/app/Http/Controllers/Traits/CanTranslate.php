@@ -2,8 +2,12 @@
 namespace App\Http\Controllers\Traits;
 
 use App\Adapters\BookAdapter;
-use App\Repositories\{ForumRepository, SentenceRepository, TranslationRepository};
-use App\Models\ForumContext;
+use App\Repositories\{
+    ForumRepository, 
+    SentenceRepository, 
+    TranslationRepository
+};
+use App\Models\Translation;
 
 trait CanTranslate
 {
@@ -33,7 +37,7 @@ trait CanTranslate
         $inflections = $includeInflections
             ? $this->_sentenceRepository->getInflectionsForTranslations($translationIds) 
             : [];
-        $comments = $this->_forumRepository->getCommentCountForEntities(ForumContext::CONTEXT_TRANSLATION, $translationIds);
+        $comments = $this->_forumRepository->getCommentCountForEntities(Translation::class, $translationIds);
         
         return $this->_bookAdapter->adaptTranslations($translations, $inflections, $comments, $word);
     }

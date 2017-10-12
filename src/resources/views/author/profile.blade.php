@@ -72,7 +72,7 @@
   <hr>
   @include('_shared._comments', [
     'entity_id' => $author->id,
-    'context'   => 'account',
+    'morph'     => 'account',
     'enabled'   => true
   ])
 @endsection

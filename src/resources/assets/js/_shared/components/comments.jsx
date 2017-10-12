@@ -20,35 +20,55 @@ class EDComments extends EDStatefulFormComponent {
             comments: '',
             posts: [],
             post_id: 0,
-            jump_post_id
+            jump_post_id,
+            loading: false
         };
 
         enableSmoothScrolling();
     }
 
+    componentWillMount() {
+        window.addEventListener('scroll', this.onScroll.bind(this));
+    }
+
     componentDidMount() {
-        this.load();
+        this.onScroll();
     }
 
     login() {
         window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
     }
 
-    load(offset, parentPostId) {
-        if (offset === undefined) {
-            offset = 0;
-        }
+    load(fromId, parentPostId) {
+        this.setState({
+            loading: true
+        });
 
-        const url = EDConfig.api(`/forum?context=${this.props.context}&entity_id=${this.props.entityId}`);
-        axios.get(url).then(this.onLoaded.bind(this));
+        const url = EDConfig.api(
+            `/forum?morph=${this.props.morph}&entity_id=${this.props.entityId}&order=${this.props.order}` + 
+            (fromId ? `&from_id=${fromId}` : '')
+        );
+        
+        return axios.get(url).then(this.onLoaded.bind(this));
     }
 
     onLoaded(response) {
         const jumpPostId = this.state.jump_post_id;
 
+        let posts = this.state.posts || [];
+        if (posts.length < 1 || posts[0].id === this.state.major_id) {
+            // prepend
+            posts = [...(response.data.posts), ...posts];
+        } else {
+            // append
+            posts = [...posts, ...(response.data.posts)];
+        }
+
         this.setState({
-            posts: response.data,
-            jump_post_id: 0
+            major_id: response.data.major_id,
+            posts,
+            jump_post_id: 0,
+            loading: false
         });
 
         if (jumpPostId) {
@@ -66,12 +86,44 @@ class EDComments extends EDStatefulFormComponent {
         }
     }
 
+    onScroll(ev) {
+        const scrollY = window.scrollY || window.pageYOffset;
+        const lastY = this.lastPositionY;
+
+        // Check whether the user is scrolling down, and cancel if it is not.
+        if (scrollY < lastY) {
+            return;
+        }
+
+        this.lastPositionY = scrollY;
+        if (! this.container || this.loading) {
+            return;
+        }
+
+        const contentRect = this.container.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+
+        // Check if the bottom part of the component is within the viewport
+        if (contentRect.bottom < 0 || contentRect.bottom > viewportHeight) {
+            return;
+        }
+
+        this.loading = true;
+        this.load(this.state.major_id).then(() => {
+            // pause a while before restoring the capacity to load new comments, to give the 
+            // browser some time to render, and the server some space to breathe.
+            window.setTimeout(() => {
+                this.loading = false;
+            }, 1000);
+        });
+    }
+
     onSubmit(ev) {
         ev.preventDefault();
 
         const data = {
             comments: this.state.comments,
-            context: this.props.context,
+            morph: this.props.morph,
             entity_id: this.props.entityId
         };
         
@@ -199,6 +251,51 @@ class EDComments extends EDStatefulFormComponent {
         this.load();
     }
 
+    renderTools() {
+        return <div>
+            { this.props.order === 'asc' && this.state.posts.length > 0 && this.props.enabled ? <hr /> : '' }
+            { this.props.accountId && this.props.enabled ? <div>
+                {this.state.post_id ? <p><span className="glyphicon glyphicon-info-sign" /> Editing your comment ({this.state.post_id}):</p> : ''}
+                <form onSubmit={this.onSubmit.bind(this)}>
+                    <div className="form-group">
+                        <textarea className="form-control" placeholder="Your comments ..." name="comments" value={this.state.comments} required={true}
+                            onChange={super.onChange.bind(this)} rows={5} />
+                    </div>
+                    <div className="form-group text-right">
+                        {this.state.post_id 
+                            ? <button type="button" className="btn btn-default" onClick={this.onDiscardChanges.bind(this)}>
+                            <span className="glyphicon glyphicon-remove" />
+                            {' '}
+                            Discard changes
+                        </button> : ''}
+                        {' '}
+                        <button type="submit" className="btn btn-primary">
+                            <span className="glyphicon glyphicon-send" />
+                            {' '}
+                            {this.state.post_id ? 'Save changes' : 'Post'}
+                        </button>
+                    </div>
+                </form>
+            </div> : (this.props.enabled 
+                ? <div className="alert alert-info" id="forum-log-in-box">
+                    <strong>
+                        <span className="glyphicon glyphicon-info-sign" />
+                        {' '}
+                        { ! Array.isArray(this.state.posts) || this.state.posts.length < 1
+                            ? 'Would you like to be the first to comment?'
+                            : 'Would you like to share your thoughts on the discussion?' 
+                        }
+                    </strong>
+                    {' '}
+                    <a href="#" onClick={this.onLoginClick.bind(this)}>
+                        Log in to create a profile
+                    </a>.
+                </div> 
+                : '') }
+            { this.props.order === 'desc' && this.state.posts.length > 0 && this.props.enabled ? <hr /> : '' }
+        </div>;
+    }
+
     render() {
         let parser = null;
         if (this.state.posts.length > 0) {
@@ -206,7 +303,8 @@ class EDComments extends EDStatefulFormComponent {
         }
 
         return <div>
-            <div>
+            {this.props.order === 'desc' ? this.renderTools() : undefined}
+            <div ref={container => this.container = container}>
                 { this.state.posts.map(c => <div key={c.id} className="forum-post" id={`forum-post-${c.id}`}>
                     <div className="post-profile-picture">
                         <a href={`/author/${c.account_id}`} title={`Visit ${c.account.nickname}'s profile`}>
@@ -249,53 +347,18 @@ class EDComments extends EDStatefulFormComponent {
                     </div>
                 </div>) }
             </div>
-            { this.state.posts.length > 0 && this.props.enabled ? <hr /> : '' }
-            { this.props.accountId && this.props.enabled ? <div>
-                {this.state.post_id ? <p><span className="glyphicon glyphicon-info-sign" /> Editing your comment ({this.state.post_id}):</p> : ''}
-                <form onSubmit={this.onSubmit.bind(this)}>
-                    <div className="form-group">
-                        <textarea className="form-control" placeholder="Your comments ..." name="comments" value={this.state.comments} required={true}
-                            onChange={super.onChange.bind(this)} rows={5} />
-                    </div>
-                    <div className="form-group text-right">
-                        {this.state.post_id 
-                            ? <button type="button" className="btn btn-default" onClick={this.onDiscardChanges.bind(this)}>
-                            <span className="glyphicon glyphicon-remove" />
-                            {' '}
-                            Discard changes
-                        </button> : ''}
-                        {' '}
-                        <button type="submit" className="btn btn-primary">
-                            <span className="glyphicon glyphicon-send" />
-                            {' '}
-                            {this.state.post_id ? 'Save changes' : 'Post'}
-                        </button>
-                    </div>
-                </form>
-            </div> : (this.props.enabled 
-                ? <div className="alert alert-info" id="forum-log-in-box">
-                    <strong>
-                        <span className="glyphicon glyphicon-info-sign" />
-                        {' '}
-                        { ! Array.isArray(this.state.posts) || this.state.posts.length < 1
-                            ? 'Would you like to be the first to comment?'
-                            : 'Would you like to share your thoughts on the discussion?' 
-                        }
-                    </strong>
-                    {' '}
-                    <a href="#" onClick={this.onLoginClick.bind(this)}>
-                        Log in to create a profile
-                    </a>.
-                </div> 
-                : '') }
+            {this.state.loading ? <div className="sk-spinner sk-spinner-pulse" /> : undefined}
+            {this.props.order === 'asc' ? this.renderTools() : undefined}
         </div>;
     }
 }
 
 EDComments.defaultProps = {
-    context: '',
+    morph: '',
     entityId: 0,
     accountId: 0,
+    order: 'desc',
+    majorId: 0,
     enabled: true
 };
 

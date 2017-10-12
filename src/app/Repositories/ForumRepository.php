@@ -2,21 +2,28 @@
 
 namespace App\Repositories;
 
-use App\Models\{ Account, Contribution, ForumContext, ForumPost, ForumPostLike, Translation, Sentence };
 use Illuminate\Support\Facades\DB;
+use App\Models\{ 
+    Account, 
+    Contribution, 
+    ForumThread, 
+    ForumPost, 
+    ForumPostLike, 
+    Translation, 
+    Sentence 
+};
+use App\Models\Initialization\Morphs;
 
 class ForumRepository
 {
-    public function getCommentCountForEntities(int $contextId, array $ids)
+    public function getCommentCountForEntities(string $entityClassName, array $ids)
     {
-        $result = ForumPost::where([
-                ['forum_context_id', $contextId],
-                ['is_hidden', 0],
-                ['is_deleted', 0]
-            ])
+        $morph = Morphs::getAlias($entityClassName);
+
+        $result = ForumThread::where('entity_type', $morph)
             ->whereIn('entity_id', $ids)
-            ->groupBy('entity_id')
             ->select('entity_id', DB::raw('count(*) as count'))
+            ->groupBy('entity_id')
             ->get();
 
         $groupedResult = [];
@@ -25,48 +32,5 @@ class ForumRepository
         }
 
         return $groupedResult;
-    }
-
-    public function getContext(string $contextName, int $id)
-    {
-        // Retrieve the context
-        $context = ForumContext::where('name', $contextName)
-            ->select('id', 'is_elevated', 'friendly_name')
-            ->firstOrFail();
-        $entity = null;
-        $entityName = null;
-
-        switch ($context->id) {
-            case ForumContext::CONTEXT_TRANSLATION:
-                $entity = Translation::findOrFail($id);
-                $entityName = $entity->word->word;
-                break;
-            
-            case ForumContext::CONTEXT_SENTENCE:
-                $entity = Sentence::findOrFail($id);
-                $entityName = $entity->name;
-                break;
-
-            case ForumContext::CONTEXT_ACCOUNT:
-                $entity = Account::findOrFail($id);
-                $entityName = $entity->nickname;
-                break;
-
-            case ForumContext::CONTEXT_CONTRIBUTION:
-                $entity = Contribution::findOrFail($id);
-                $entityName = $entity->word;
-                break;
-                
-            default:
-                return null;
-        }
-
-        return [
-            'id'            => $context->id,
-            'is_elevated'   => $context->is_elevated,
-            'friendly_name' => $context->friendly_name,
-            'entity_name'   => $entityName,
-            'entity'        => $entity
-        ];
     }
 }

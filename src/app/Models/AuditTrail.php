@@ -4,6 +4,8 @@ namespace App\Models;
 
 class AuditTrail extends ModelBase
 {
+    use Traits\HasAccount;
+
     const ACTION_TRANSLATION_ADD       = 10;
     const ACTION_TRANSLATION_EDIT      = 11;
     const ACTION_TRANSLATION_RESERVED  = 12;
@@ -36,11 +38,6 @@ class AuditTrail extends ModelBase
     protected $fillable = [
         'account_id', 'entity_type', 'entity_id', 'action_id', 'is_admin'
     ];
-
-    public function account() 
-    {
-        return $this->belongsTo(Account::class);
-    }
 
     public function entity() 
     {

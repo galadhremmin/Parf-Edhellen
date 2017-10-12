@@ -3,7 +3,7 @@ namespace App\Http\Controllers\Traits;
 
 use App\Adapters\BookAdapter;
 use App\Repositories\{ForumRepository, TranslationRepository};
-use App\Models\ForumContext;
+use App\Models\Translation;
 
 trait CanGetTranslation
 {
@@ -27,7 +27,7 @@ trait CanGetTranslation
             return null;
         }
 
-        $comments = $this->_forumRepository->getCommentCountForEntities(ForumContext::CONTEXT_TRANSLATION, [$translationId]);
+        $comments = $this->_forumRepository->getCommentCountForEntities(Translation::class, [$translationId]);
         return $this->_bookAdapter->adaptTranslations([$translation], [/* no inflections */], $comments, $translation->word);
     }
 

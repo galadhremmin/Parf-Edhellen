@@ -12,11 +12,6 @@ class Translation extends ModelBase
         'word', 'external_id'
     ];
 
-    public function account() 
-    {
-        return $this->belongsTo(Account::class);
-    }
-
     public function sense() 
     {
         return $this->belongsTo(Sense::class);

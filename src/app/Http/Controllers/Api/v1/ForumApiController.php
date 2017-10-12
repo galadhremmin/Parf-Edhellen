@@ -5,97 +5,116 @@ namespace App\Http\Controllers\Api\v1;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
-use App\Models\{ AuditTrail, ForumPost, ForumPostLike, ForumContext, Translation, Sentence };
 use App\Repositories\ForumRepository;
 use App\Repositories\Interfaces\IAuditTrailRepository;
-use App\Helpers\{ LinkHelper, MarkdownParser, StringHelper };
+use App\Models\Initialization\Morphs;
+use App\Http\RouteResolving\RouteResolverFactory;
+use App\Models\{ 
+    Account,
+    AuditTrail,
+    Contribution,
+    ForumPost, 
+    ForumPostLike, 
+    ForumThread, 
+    Translation, 
+    Sentence 
+};
+use App\Helpers\{ 
+    MarkdownParser, 
+    StringHelper 
+};
 
 class ForumApiController extends Controller 
 {
     protected $_auditTrail;
-    protected $_link;
     protected $_repository;
+    protected $_routeResolverFactory;
 
-    public function __construct(IAuditTrailRepository $auditTrail, LinkHelper $link, ForumRepository $repository)
+    public function __construct(IAuditTrailRepository $auditTrail, ForumRepository $repository, RouteResolverFactory $routeResolverFactory)
     {
-        $this->_auditTrail = $auditTrail;
-        $this->_link       = $link;
-        $this->_repository = $repository;
+        $this->_auditTrail           = $auditTrail;
+        $this->_repository           = $repository;
+        $this->_routeResolverFactory = $routeResolverFactory;
     }
 
     public function index(Request $request)
     {
-        $context = $this->getContext($request);
-        if (! $context) {
-            return response(null, 404);
-        }
+        $thread = $this->getOrNewForumThread($request);
+        if ($thread->id) {
+            $loadingOptions = [
+                // eager load _account_, but grab only information relevant for the view.
+                'account' => function ($query) {
+                    $query->select('id', 'nickname', 'has_avatar', 'tengwar');
+                }
+            ];
 
-        $loadingOptions = [
-            // eager load _account_, but grab only information relevant for the view.
-            'account' => function ($query) {
-                $query->select('id', 'nickname', 'has_avatar', 'tengwar');
+            $user = $request->user();
+            if ($user !== null) {
+                // has the current user liked the post? Don't care about the rest.
+                $loadingOptions['likes'] = function ($query) use ($user) {
+                    $query->where('account_id', $user->id)
+                        ->select('account_id', 'forum_post_id');  
+                };
             }
+
+            // Direction is either descending (default) or ascending.
+            // Ascending order results in the largest ID being the major ID, whereas
+            // descending order results in the smallest ID being the major ID.
+            $direction = $request->has('order')
+                ? ($request->input('order') === 'asc' ? 'asc' : 'desc')
+                : 'desc';
+            $ascending = $direction === 'asc';
+
+            // Retrieve the maximum size of the result set, and determine whether
+            // the major ID should be initialized (see above) or retrieved from the
+            // input parameters.
+            $maxLength = config('ed.forum_resultset_max_length');
+            $majorId = $request->has('from_id')
+                ? intval($request->input('from_id'))
+                : ($ascending ? 0 : PHP_INT_MAX);
+
+            $posts = $thread->forum_posts()
+                ->with($loadingOptions)
+                ->where([
+                    ['is_hidden', 0],
+                    ['id', $ascending ? '>' : '<', $majorId]
+                ])
+                ->orderBy('id', $direction)
+                ->take($maxLength)
+                ->get();
+
+            $parser = new MarkdownParser();
+            foreach ($posts as $post) {
+
+                // Determine the major ID depending on the order of the items
+                if (($ascending && $majorId < $post->id) ||
+                    (! $ascending && $majorId > $post->id)) {
+                    $majorId = $post->id;
+                }
+
+                $post->content = $parser->parse($post->content);
+            }
+        } else {
+            $posts = [];
+            $majorId = 0;
+        }
+
+        return [
+            'posts'    => $posts,
+            'major_id' => $majorId
         ];
-
-        $user = $request->user();
-        if ($user !== null) {
-            // has the current user liked the post? Don't care about the rest.
-            $loadingOptions['likes'] = function ($query) use ($user) {
-                $query->where('account_id', $user->id)
-                    ->select('account_id', 'forum_post_id');  
-            };
-        }
-
-        $posts = ForumPost::where('forum_context_id', $context['id'])
-            ->with($loadingOptions)
-            ->where([
-                ['entity_id', $context['entity']->id],
-                ['is_hidden', 0]
-            ])
-            ->orderBy('created_at', 'asc')
-            ->get();
-
-        $parser = new MarkdownParser();
-        foreach ($posts as $post) {
-            $post->content = $parser->parse($post->content);
-        }
-
-        return $posts;
     }
 
     public function show(Request $request, int $id)
     {
         $post = ForumPost::findOrFail($id);
-        $url = null;
 
-        switch ($post->forum_context_id) {
-            case ForumContext::CONTEXT_FORUM:
-                // Unsupported at the moment
-                break;
-
-            case ForumContext::CONTEXT_TRANSLATION:
-                $url = $this->_link->translationVersions($post->entity_id);
-                break;
-
-            case ForumContext::CONTEXT_SENTENCE:
-                $sentence = Sentence::findOrFail($post->entity_id);
-                $url = $this->_link->sentence($sentence->language_id, $sentence->language->name, 
-                    $sentence->id, $sentence->name);
-                break;
-
-            case ForumContext::CONTEXT_ACCOUNT:
-                $url = $this->_link->author($post->entity_id, '');
-                break;
-                
-            case ForumContext::CONTEXT_CONTRIBUTION:
-                $url = route('contribution.show', ['id' => $post->entity_id]);
+        $resolver = $this->_routeResolverFactory->create($post->forum_thread->entity_type);
+        if (! $resolver) {
+            abort(400, 'A resolver does not exist for the specified entity type "'.$post->forum_thread->entity_type.'".');
         }
 
-        if ($url === null) {
-            return response(null, 400);
-        }
-
-        $url .= '?forum_post_id='.$id;
+        $url = $resolver->resolve($post->forum_thread->entity).'?forum_post_id='.$id;
         return redirect($url);
     }
 
@@ -131,24 +150,20 @@ class ForumApiController extends Controller
             'parent_form_post_id' => 'sometimes|numeric|exists:forum_posts,id'
         ]);
 
-        $context = $this->getContext($request);
-        if (! $context) {
-            return response(null, 404);
-        }
-
         $comments = $request->input('comments');
-
         $parentEntityId = null;
         if ($request->has('parent_form_post_id')) {
             $parentEntityId = $request->input('parent_form_post_id');
         }
 
+        $thread = $this->getOrNewForumThread($request);
+        if (! $thread->id) {
+            $thread->save();
+        }
+
         $account = $request->user();
         $post = ForumPost::create([
-            'forum_context_id'    => $context['id'],
-            'context_name'        => $context['friendly_name'],
-            'entity_id'           => $context['entity']->id,
-            'entity_name'         => $context['entity_name'],
+            'forum_thread_id'     => $thread->id,
             'account_id'          => $account->id,
             'content'             => $comments,
             'parent_form_post_id' => $parentEntityId,
@@ -156,7 +171,7 @@ class ForumApiController extends Controller
         ]);
 
         // Register an audit trail
-        $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_ADD, $post, /* user id = */ 0, $context['is_elevated']);
+        $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_ADD, $post, /* user id = */ 0, $thread->roles !== null);
 
         return response(null, 201);
     }
@@ -184,7 +199,7 @@ class ForumApiController extends Controller
         $post->save();
 
         // Register an audit trail
-        $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_EDIT, $post, /* user id = */ 0, $post->forum_context->is_elevated);
+        $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_EDIT, $post, /* user id = */ 0, $post->forum_thread->roles !== null);
 
         return response(null, 200);
     }
@@ -240,7 +255,7 @@ class ForumApiController extends Controller
             $post->save();
 
             // Register an audit trail
-            $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_LIKE, $post, /* user id = */ 0, $post->forum_context->is_elevated);
+            $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_LIKE, $post, $userId, $post->forum_thread->roles !== null);
 
             $statusCode = 201; // OK, like saved
         }
@@ -271,17 +286,78 @@ class ForumApiController extends Controller
         return response(null, $statusCode);
     }
 
-    private function getContext(Request $request) 
+    /**
+     * Gets an existing forum thread or creates a new instance. A new of the thread
+     * is not saved to the database, and must therefore be saved before it can be referenced
+     * by a ForumPost entity.
+     *
+     * @param Request $request
+     * @return \App\Models\ForumThread
+     */
+    private function getOrNewForumThread(Request $request) 
     {
         $this->validate($request, [
-            'context'   => 'required|exists:forum_contexts,name',
-            'entity_id' => 'required|numeric'
+            'morph'     => 'required|string',
+            'entity_id' => 'required|numeric',
+            'subject'   => 'sometimes|required|string'
         ]);
 
-        $contextName = $request->input('context');
+        $morph = $request->input('morph');
         $entityId = intval($request->input('entity_id'));
+        
+        $thread = ForumThread::where([
+            ['entity_type', $morph],
+            ['entity_id', $entityId]
+        ])->firstOrNew([
+            'entity_type' => $morph,
+            'entity_id'   => $entityId
+        ]);
 
-        return $this->_repository->getContext($contextName, $entityId);
+        if (! $thread->id) {
+            $entityName = Morphs::getMorphedModel($morph);
+            if (! $entityName) {
+                abort(400, 'Entity '.$morph.' does not exist.');
+            }
+
+            $entity = resolve($entityName)->findOrFail($entityId);
+            if (! $entity) {
+                abort(400, 'Entity '.$morph.' with the ID '.$entityId.' does not exist.');
+            }
+
+            $resolver = $this->_routeResolverFactory->create($morph);
+            if (! $resolver) {
+                abort(400, 'The entity '.$morph.' is not supported as it lacks a IRouteResolver implementation for '.$entityName.'.');
+            }
+
+            $subject = $request->has('subject')
+                ? $request->input('subject') : '';
+            
+            if (empty($subject)) {
+                $subject = $resolver->getName($entity);
+            }
+
+            $roles = $resolver->getRoles();
+            $user = $request->user();
+            $ok = (count($roles) === 0);
+
+            if ($user !== null) {
+                foreach ($roles as $role) {
+                    if ($user->memberOf($role)) {
+                        $ok = true;
+                        break;
+                    }
+                }
+            }
+
+            if (! $ok) {
+                abort(400, 'User '.$user->id.' is not authorized to create threads for '.$morph.'.');
+            }
+
+            $thread->subject = $subject;
+            $thread->roles   = count($roles) ? implode(',', $roles) : null;
+        }
+
+        return $thread;
     }
 
     private function userCanAccess($user, $post) 

@@ -43,7 +43,7 @@
   <hr>
   @include('_shared._comments', [
     'entity_id' => $review->id,
-    'context'   => 'contribution',
+    'morph'     => 'contribution',
     'enabled'   => true
   ])
 

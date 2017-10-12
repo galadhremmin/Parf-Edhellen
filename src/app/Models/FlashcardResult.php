@@ -15,9 +15,4 @@ class FlashcardResult extends ModelBase
     {
         return $this->belongsTo(Translation::class);
     }
-
-    public function account() 
-    {
-        return $this->belongsTo(Account::class);
-    }
 }

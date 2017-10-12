@@ -3,19 +3,29 @@
 namespace App\Models\Initialization;
 
 use Illuminate\Database\Eloquent\Relations\Relation;
-use App\Models\{ Account, AuditTrail, Favourite, FlashcardResult, ForumContext, ForumPost, Sentence, Translation };
+use App\Models\{ 
+    Account, 
+    AuditTrail, 
+    Contribution,
+    Favourite, 
+    FlashcardResult, 
+    ForumPost, 
+    Sentence, 
+    Translation 
+};
 
 class Morphs 
 {
     public static function map() 
     {
         Relation::morphMap([
-            'account'     => Account::class,
-            'favourite'   => Favourite::class,
-            'forum'       => ForumPost::class,
-            'sentence'    => Sentence::class,
-            'translation' => Translation::class,
-            'flashcard'   => FlashcardResult::class
+            'account'      => Account::class,
+            'contribution' => Contribution::class,
+            'favourite'    => Favourite::class,
+            'flashcard'    => FlashcardResult::class,
+            'forum'        => ForumPost::class,
+            'sentence'     => Sentence::class,
+            'translation'  => Translation::class
         ]);
     }
 

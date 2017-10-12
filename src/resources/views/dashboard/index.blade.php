@@ -62,11 +62,17 @@
             <li>
               <a href="{{ route('contribution.index') }}">
               <span class="glyphicon glyphicon-globe"></span>
-
                 Contributions
+
                 @if ($noOfContributions)
                 <span class="label label-info">{{ $noOfContributions }}</span>
                 @endif
+              </a>
+            </li>
+            <li>
+              <a href="{{ route('author.posts', ['id' => $user->id]) }}">
+              <span class="glyphicon glyphicon-comment"></span>
+                Comments
               </a>
             </li>
           </ul>

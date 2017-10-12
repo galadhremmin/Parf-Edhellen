@@ -17,7 +17,7 @@
         @endif
         <div class="timeline-panel">
           <div class="timeline-heading">
-            <h4 class="timeline-title">{{ $post->context_name }} &ldquo;{{ $post->entity_name }}&rdquo;</h4>
+            <h4 class="timeline-title">{{ $post->subject }}</h4>
             <p>
               <small class="text-muted">
                 <i class="glyphicon glyphicon-time"></i> 
@@ -45,7 +45,7 @@
     <nav aria-label="Page navigation">
       <ul class="pagination">
         <li class="{{ $page < 1 ? 'disabled' : '' }}">
-          <a href="{{ route('author.posts', ['id' => $author->id, 'page' => 0]) }}" aria-label="Previous">
+          <a href="{{ route('author.posts', ['id' => $author->id, 'page' => max(0, $page - 1)]) }}" aria-label="Previous">
             <span aria-hidden="true">&larr;</span>
             Previous
           </a>
@@ -54,7 +54,7 @@
         <li class="{{ $page === $i ? 'active' : '' }}"><a href="{{ route('author.posts', ['id' => $author->id, 'page' => $i]) }}">{{ $i + 1 }}</a></li>
         @endfor
         <li class="{{ $page >= $noOfPages - 1 ? 'disabled' : '' }}">
-          <a href="{{ route('author.posts', ['id' => $author->id, 'page' => $noOfPages - 1]) }}" aria-label="Next">
+          <a href="{{ route('author.posts', ['id' => $author->id, 'page' => min($noOfPages - 1, $page + 1)]) }}" aria-label="Next">
             Next
             <span aria-hidden="true">&rarr;</span>
           </a>
