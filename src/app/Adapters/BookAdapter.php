@@ -39,7 +39,8 @@ class BookAdapter
             return [
                 'word' => $word,
                 'sections' => [],
-                'single' => false
+                'single' => false,
+                'sense' => []
             ];
         }
 
@@ -74,7 +75,8 @@ class BookAdapter
                         'glosses'  => [ self::adaptTranslation($translation, new Collection([$language]), $inflections, $commentsById, $atomDate, $linker) ]
                     ]
                 ],
-                'single' => true
+                'single' => true,
+                'sense' => [$translation->sense_id]
             ], 1);
         }
 
@@ -99,6 +101,8 @@ class BookAdapter
 
         // Create a translation to language map which will be used later to associate the translations to their
         // languages. This is a necessary grouping operation due to the sort operation performed later on.
+        $sense = [];
+        $noOfSense = 0;
         foreach ($translations as $translation) {
             if ($word !== null) {
                 self::calculateRating($translation, $word);
@@ -107,6 +111,29 @@ class BookAdapter
             // adapt translation for the view
             $gloss2LanguageMap[$groupByLanguage ? $translation->language_id : 0][] = 
                 self::adaptTranslation($translation, $allLanguages, $inflections, $commentsById, $atomDate, $linker);
+            
+            // Compose an array of senses in an ascending order.
+            $senseId = $translation->sense_id;
+            if ($noOfSense === 0 || $senseId > $sense[$noOfSense - 1]) {
+                $sense[] = $senseId;
+                $noOfSense += 1;
+
+            } else if ($sense[$noOfSense - 1] !== $senseId) {
+                for ($i = 0; $i < $noOfSense; $i += 1) {
+                    // leave the loop and ignore the sense if it already exists
+                    if ($sense[$i] === $senseId) {
+                        break;
+                    }
+
+                    // if the current element is greater than the sense we would like to add to the collection,
+                    // insert the sense at the current location (thus pushing the subsequent one forward).
+                    if ($sense[$i] > $senseId) {
+                        array_splice($sense, $i, 0, $senseId);
+                        $noOfSense += 1;
+                        break;
+                    }
+                }
+            }
         }
 
         // Create a section array component for each language in the same order as the languages were retrieved from
@@ -135,10 +162,11 @@ class BookAdapter
             }
 
             return self::assignColumnWidths([
-                'word' => $word,
-                'sections' => $sections,
+                'word'      => $word,
+                'sections'  => $sections,
                 'languages' => null,
-                'single' => false
+                'single'    => false,
+                'sense'     => $sense
             ], count($allLanguages));
 
         } 
@@ -150,7 +178,8 @@ class BookAdapter
                 'glosses'  => $gloss2LanguageMap[0]
             ]],
             'languages' => $allLanguages,
-            'single'    => false
+            'single'    => false,
+            'sense'     => $sense
         ];
     }
 

@@ -551,7 +551,7 @@ class TranslationRepository
                 't.comments', 't.tengwar', 't.phonetic', 't.language_id', 't.account_id',
                 'a.nickname as account_name', 'w.normalized_word', 't.is_index', 't.created_at', 't.translation_group_id',
                 'tg.name as translation_group_name', 'tg.is_canon', 'tg.external_link_format', 't.is_uncertain', 
-                't.external_id', 't.is_latest', 't.is_rejected', 't.origin_translation_id');
+                't.external_id', 't.is_latest', 't.is_rejected', 't.origin_translation_id', 't.sense_id');
     }
 
     protected function deleteTranslation(Translation $t, int $replaceId = null) 

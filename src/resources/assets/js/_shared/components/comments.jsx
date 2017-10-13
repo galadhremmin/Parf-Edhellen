@@ -32,7 +32,12 @@ class EDComments extends EDStatefulFormComponent {
     }
 
     componentDidMount() {
-        this.onScroll();
+        // Load comments if the client is specifically requesting to display them.
+        if (this.state.jump_post_id) {
+            this.load();
+        } else {
+            this.onScroll();
+        }
     }
 
     login() {
