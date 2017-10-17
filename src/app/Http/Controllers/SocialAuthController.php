@@ -67,7 +67,7 @@ class SocialAuthController extends Controller
             ])->first();
 
         if (! $user) {
-            $nickname = self::getNextAvailableNickname($providerUser->getName());
+            $nickname = self::getNextAvailableNickname($providerUser->getName() ?: 'Account');
 
             $user = Account::create([
                 'email'          => $providerUser->getEmail(),
