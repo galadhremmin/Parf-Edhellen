@@ -54,19 +54,28 @@ class EDComments extends EDStatefulFormComponent {
             (fromId ? `&from_id=${fromId}` : '')
         );
         
-        return axios.get(url).then(this.onLoaded.bind(this));
+        return axios.get(url).then(this.onLoaded.bind(this, fromId || 0));
     }
 
-    onLoaded(response) {
+    onLoaded(fromId, response) {
         const jumpPostId = this.state.jump_post_id;
 
         let posts = this.state.posts || [];
-        if (posts.length < 1 || posts[0].id === this.state.major_id) {
+        const newPosts = response.data.posts || [];
+
+        if (fromId === 0) {
+            // reload -- start over from the beginning
+            posts = newPosts;
+
+            // record the current location, as we are reloading
+            this.lastPositionY = window.scrollY || window.pageYOffset;
+
+        } else if (posts.length < 1 || posts[0].id === this.state.major_id) {
             // prepend
-            posts = [...(response.data.posts), ...posts];
+            posts = [...newPosts, ...posts];
         } else {
             // append
-            posts = [...posts, ...(response.data.posts)];
+            posts = [...posts, ...newPosts];
         }
 
         this.setState({

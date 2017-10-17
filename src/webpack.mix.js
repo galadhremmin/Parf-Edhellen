@@ -16,6 +16,7 @@ mix.webpackConfig({
         alias: {
             'elfdict': path.resolve(__dirname, 'resources/assets/js/_ed/'),
 
+            'ed-components/comments': 'elfdict/components/comments.jsx',
             'ed-components/dialog': 'elfdict/components/dialog.jsx',
             'ed-components/error-list': 'elfdict/components/error-list.jsx',
             'ed-components/markdown-editor': 'elfdict/components/markdown-editor.jsx',
@@ -45,6 +46,7 @@ mix.extract([
     'ed-components/markdown-editor',
     */
     'ed-components/language-select',
+    'ed-components/comments',
     'ed-config',
     'ed-form',
     'ed-promise',

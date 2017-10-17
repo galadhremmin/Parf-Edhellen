@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import EDComments from '../_shared/components/comments';
+import EDComments from 'ed-components/comments';
 
 window.addEventListener('load', function () {
 

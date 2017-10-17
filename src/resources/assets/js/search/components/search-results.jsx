@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import EDConfig from 'ed-config';
 import EDSearchItem from './search-item';
 import EDBookSection from './book-section';
-import EDComments from '../../_shared/components/comments';
+import EDComments from 'ed-components/comments';
 
 /**
  * Represents a collection of search results.
