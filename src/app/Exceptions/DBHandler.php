@@ -3,6 +3,9 @@
 namespace App\Exceptions;
 
 use Exception;
+
+use Illuminate\Auth\AuthenticationException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Models\SystemError;
 
 class DBHandler extends Handler
@@ -17,10 +20,11 @@ class DBHandler extends Handler
      */
     public function report(Exception $exception)
     {
-        $databaseException = $exception instanceof \PDOException;
+        $shouldIgnore = $exception instanceof AuthenticationException ||
+                        $exception instanceof NotFoundHttpException;
 
         // make sure that it is possible to establish a database connection
-        if (! ($databaseException && $exception->getCode() === 2002)) {
+        if (! $shouldIgnore) {
             $request = request();
             $user = $request->user();
             $common = $this->shouldReport($exception);

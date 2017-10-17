@@ -111,6 +111,6 @@ ALTER TABLE `forum_posts` DROP `context_name`;
 ALTER TABLE `forum_posts` DROP `entity_name`;
 ALTER TABLE `forum_posts` DROP `entity_id`;
 
-INSERT INTO `authorization_providers` (`name`, `logo_file_name`, `name_identifier`) VALUES ('Microsoft', 'microsoft.png', 'microsoft');
+INSERT INTO `authorization_providers` (`name`, `logo_file_name`, `name_identifier`) VALUES ('Microsoft', 'microsoft.png', 'live');
 
 INSERT INTO `version` (`number`, `date`) VALUES (2.2, NOW());

@@ -107,8 +107,9 @@ class AuthorController extends Controller
 
         $user = $request->user();
         if (! $user || ! $user->isAdministrator()) {
-            $query = $query->whereHas('forum_context', function ($subQuery) {
-                $subQuery->where('is_elevated', 0);
+            $query = $query->whereHas('forum_thread', function ($subQuery) {
+                $subQuery->whereNull('roles')
+                    ->orWhere('roles', '');
             });
         }
 
