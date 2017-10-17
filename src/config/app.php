@@ -181,7 +181,7 @@ return [
          * Custom Service Providers ...
          */
         Watson\Active\ActiveServiceProvider::class, // https://packagist.org/packages/watson/active
-        Laravel\Socialite\SocialiteServiceProvider::class,
+        \SocialiteProviders\Manager\ServiceProvider::class, // http://socialiteproviders.github.io/providers/microsoft-live/     
         DaveJamesMiller\Breadcrumbs\ServiceProvider::class // https://laravel-breadcrumbs.readthedocs.io
     ],
 

@@ -2,7 +2,7 @@
 
 @section('title', 'Discussion')
 @section('body')
-  <h1>Discussion</h1>
+  <h1>Discussion <span class="tengwar"></span></h1>
   
   {!! Breadcrumbs::render('flashcard') !!}
 

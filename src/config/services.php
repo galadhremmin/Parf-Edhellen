@@ -32,7 +32,7 @@ return [
         'redirect' => env('AUTH_TWITTER_REDIRECT'),
     ],
 
-    'microsoft' => [
+    'live' => [
         'client_id' => env('AUTH_MICROSOFT_APP_ID'),
         'client_secret' => env('AUTH_MICROSOFT_APP_SECRET'),
         'redirect' => env('AUTH_MICROSOFT_REDIRECT'),
