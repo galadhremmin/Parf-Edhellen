@@ -36,7 +36,7 @@
       Edit phrase
     </a>
   </p>
-  @else if (Auth::check())
+  @elseif (Auth::check())
   <p class="text-right">
     <a href="{{ route('contribution.create', [ 'morph' => 'sentence', 'entity_id' => $sentence->id ]) }}" class="btn btn-default">
       <span class="glyphicon glyphicon-edit"></span>

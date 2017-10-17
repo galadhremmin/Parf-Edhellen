@@ -10,15 +10,16 @@
   <meta name="keywords" content="sindarin, quenya, noldorin, quendya, elvish, tolkien, nandorin, ilkorin, black speech, westron">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <link href="/css/app.css" rel="stylesheet">
   <meta name="theme-color" value="#333333">
   <link rel="apple-touch-icon-precomposed" href="/img/favicons/apple-touch-icon-precomposed.png">
   <link rel="icon" type="image/png" href="/img/favicons/favicon-194x194.png">
   <link rel="manifest" href="/img/favicons/manifest.json">
+  <link href="https://fonts.googleapis.com/css?family=Lora:400,400i&amp;subset=latin-ext" rel="stylesheet">
+  <link href="/css/app.css" rel="stylesheet">
+  @yield('styles')
   @if (!empty(config('ed.header_view')))
     @include(config('ed.header_view'))
   @endif
-  @yield('styles')
 </head>
 <body class="{{ $isAdmin ? 'ed-admin' : ($isAdmin === false ? 'ed-user' : 'ed-anonymous') }}" data-user-id="{{ $user ? $user->id : '0' }}">
   <div class="navbar navbar-default navbar-fixed-top" role="navigation">

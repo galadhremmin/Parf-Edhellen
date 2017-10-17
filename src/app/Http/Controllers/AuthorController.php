@@ -124,7 +124,7 @@ class AuthorController extends Controller
         ]);
     }
 
-    public function edit(Request $request, int $id)
+    public function edit(Request $request, int $id = 0)
     {
         $author = $this->getAccount($request, $id);
 
@@ -233,7 +233,7 @@ class AuthorController extends Controller
 
     private function getAccount(Request $request, $id)
     {
-        if (! is_numeric($id)) {
+        if (! is_numeric($id) || ! $id) {
             $id = 0;
 
             if (Auth::check()) {
