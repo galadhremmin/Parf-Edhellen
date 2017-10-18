@@ -2,6 +2,7 @@
 /public/storage
 /public/hot
 /public/lab
+/public/v*
 /storage/*.key
 /vendor
 /.idea
@@ -11,3 +12,4 @@ Homestead.yaml
 *.lock
 package-lock.json
 BingSiteAuth.xml
+

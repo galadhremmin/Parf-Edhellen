@@ -18,9 +18,9 @@
       
 @endsection
 @section('styles')
-  <link href="/css/app.flashcard.css" rel="stylesheet">
+  <link href="@assetpath(/css/app.flashcard.css)" rel="stylesheet">
 @endsection
 @section('scripts')
-  <script type="text/javascript" src="/js/glaemscribe.js" async></script>
-  <script type="text/javascript" src="/js/flashcard.js" async></script>
+  <script type="text/javascript" src="/@assetpath(js/glaemscribe.js)" async></script>
+  <script type="text/javascript" src="@assetpath(/js/flashcard.js)" async></script>
 @endsection

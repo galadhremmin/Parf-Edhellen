@@ -50,5 +50,5 @@
 @endsection
 
 @section('scripts')
-  <script type="text/javascript" src="/js/comment.js" async></script>
+  <script type="text/javascript" src="@assetpath(/js/comment.js)" async></script>
 @endsection

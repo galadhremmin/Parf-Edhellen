@@ -68,5 +68,5 @@
   @endif
 @endsection
 @section('styles')
-  <link href="/css/app.timeline.css" rel="stylesheet">
+  <link href="@assetpath(/css/app.timeline.css)" rel="stylesheet">
 @endsection

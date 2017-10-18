@@ -21,6 +21,16 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('markdown', function (string $data) {
             return "<?php echo (new \App\Helpers\MarkdownParser)->parse($data); ?>";
         });
+
+        Blade::directive('assetpath', function (string $filePath) {
+            $root = '/v'.config('ed.version');
+
+            if (empty($filePath)) {
+                return $root;
+            }
+
+            return $root.($filePath[0] === '/' ? '' : '/').$filePath;
+        });
     }
 
     /**

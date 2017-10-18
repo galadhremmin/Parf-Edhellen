@@ -60,5 +60,5 @@
   @endif
 @endsection
 @section('styles')
-  <link href="/css/app.sentences.css" rel="stylesheet">
+  <link href="@assetpath(/css/app.sentences.css)" rel="stylesheet">
 @endsection

@@ -15,13 +15,13 @@
   <link rel="icon" type="image/png" href="/img/favicons/favicon-194x194.png">
   <link rel="manifest" href="/img/favicons/manifest.json">
   <link href="https://fonts.googleapis.com/css?family=Lora:400,400i&amp;subset=latin-ext" rel="stylesheet">
-  <link href="/css/app.css?v={{ config('ed.version') }}" rel="stylesheet">
+  <link href="@assetpath(/css/app.css)" rel="stylesheet">
   @yield('styles')
   @if (!empty(config('ed.header_view')))
     @include(config('ed.header_view'))
   @endif
 </head>
-<body class="{{ $isAdmin ? 'ed-admin' : ($isAdmin === false ? 'ed-user' : 'ed-anonymous') }}" data-user-id="{{ $user ? $user->id : '0' }}">
+<body class="{{ $isAdmin ? 'ed-admin' : ($isAdmin === false ? 'ed-user' : 'ed-anonymous') }}" data-user-id="{{ $user ? $user->id : '0' }}" data-v="{{ config('ed.version') }}">
   <div class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
       <div class="navbar-header">
@@ -74,17 +74,17 @@
   </div>
 
   <script type="application/json" id="ed-preloaded-languages">{!! $allLanguages !!}</script>
-  <script type="text/javascript" src="/js/manifest.js?v={{ config('ed.version') }}"></script>
-  <script type="text/javascript" src="/js/vendor.js?v={{ config('ed.version') }}"></script>
-  <script type="text/javascript" src="/js/ie.js"></script>
+  <script type="text/javascript" src="@assetpath(/js/manifest.js)"></script>
+  <script type="text/javascript" src="@assetpath(/js/vendor.js)"></script>
+  <script type="text/javascript" src="@assetpath(/js/ie.js)"></script>
   @if ($user)
     @if ($isAdmin)
-    <script type="text/javascript" src="/js/global-plugins-admin.js?v={{ config('ed.version') }}"></script>
+    <script type="text/javascript" src="@assetpath(/js/global-plugins-admin.js)"></script>
     @else
-    <script type="text/javascript" src="/js/global-plugins-restricted.js?v={{ config('ed.version') }}"></script>
+    <script type="text/javascript" src="@assetpath(/js/global-plugins-restricted.js)"></script>
     @endif
   @endif
-  <script type="text/javascript" src="/js/global.js?v={{ config('ed.version') }}" async></script>
+  <script type="text/javascript" src="@assetpath(/js/global.js)" async></script>
   @yield('scripts')
   @if (!empty(config('ed.footer_view')))
     @include(config('ed.footer_view'))

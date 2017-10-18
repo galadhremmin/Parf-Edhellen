@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Exception;
 
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Models\SystemError;
 
@@ -21,7 +22,8 @@ class DBHandler extends Handler
     public function report(Exception $exception)
     {
         $shouldIgnore = $exception instanceof AuthenticationException ||
-                        $exception instanceof NotFoundHttpException;
+                        $exception instanceof NotFoundHttpException ||
+                        $exception instanceof ValidationException;
 
         // make sure that it is possible to establish a database connection
         if (! $shouldIgnore) {

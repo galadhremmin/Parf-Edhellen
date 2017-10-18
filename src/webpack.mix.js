@@ -1,5 +1,6 @@
 const { mix } = require('laravel-mix');
 const path = require('path');
+const config = require('dotenv').config();
 
 /*
  |--------------------------------------------------------------------------
@@ -31,6 +32,8 @@ mix.webpackConfig({
     }
 });
 
+const outputDir = `public/v${process.env.ED_VERSION}`;
+
 mix.extract([
     'react', 'react-dom', 'react-router-dom',
     'react-redux', 'redux', 'redux-thunk',
@@ -51,21 +54,21 @@ mix.extract([
     'ed-form',
     'ed-promise',
     'ed-session-storage-state'
-]);
+], `${outputDir}/js/vendor.js`);
 
 mix.react([
     'resources/assets/js/_shared/error.js',
     'resources/assets/js/navigation.js',
     'resources/assets/js/search/index.jsx'
-], 'public/js/global.js');
+], `${outputDir}/js/global.js`);
 
 mix.react([
     'resources/assets/js/_plugins-restricted/index.jsx'
-], 'public/js/global-plugins-restricted.js');
+], `${outputDir}/js/global-plugins-restricted.js`);
 
 mix.react([
     'resources/assets/js/_plugins-admin/index.jsx'
-], 'public/js/global-plugins-admin.js');
+], `${outputDir}/js/global-plugins-admin.js`);
 
 mix.combine([
     'node_modules/glaemscribe/js/glaemscribe.js',
@@ -77,43 +80,42 @@ mix.combine([
     'node_modules/glaemscribe/js/modes/sindarin.glaem.js',
     'node_modules/glaemscribe/js/modes/telerin.glaem.js',
     'node_modules/glaemscribe/js/modes/westron.glaem.js',
-], 'public/js/glaemscribe.js');
+], `${outputDir}/js/glaemscribe.js`);
 
 mix.js([
     'node_modules/babel-polyfill/dist/polyfill.js',
     'resources/assets/js/_ie/polyfills.js',
-], 'public/js/ie.js');
+], `${outputDir}/js/ie.js`);
 
 mix.js([
     'resources/assets/js/markdown/index.jsx'
-], 'public/js/markdown.js');
+], `${outputDir}/js/markdown.js`);
 
 mix.js([
     'resources/assets/js/sentence/index.jsx'
-], 'public/js/sentence.js');
+], `${outputDir}/js/sentence.js`);
 
 mix.js([
     'resources/assets/js/sentence/admin.jsx'
-], 'public/js/sentence-admin.js');
+], `${outputDir}/js/sentence-admin.js`);
 
 mix.js([
     'resources/assets/js/comment/index.jsx'
-], 'public/js/comment.js');
+], `${outputDir}/js/comment.js`);
 
 mix.js([
     'resources/assets/js/translation/admin.jsx'
-], 'public/js/translation-admin.js');
+], `${outputDir}/js/translation-admin.js`);
 
 mix.js([
     'resources/assets/js/flashcard/index.jsx'
-], 'public/js/flashcard.js');
+], `${outputDir}/js/flashcard.js`);
 
 mix.js([
     'resources/assets/js/system-errors/index.jsx'
-], 'public/js/system-errors-admin.js');
+], `${outputDir}/js/system-errors-admin.js`);
 
-//mix.copy('node_modules/tengwar/tengwar-parmaite.*', 'public/fonts/tengwar'); <~~ the parmaite font kit is/will be corrupted!
-mix.sass('resources/assets/sass/app.scss', 'public/css');
-mix.sass('resources/assets/sass/app.flashcard.scss', 'public/css');
-mix.sass('resources/assets/sass/app.sentences.scss', 'public/css');
-mix.sass('resources/assets/sass/app.timeline.scss', 'public/css');
+mix.sass('resources/assets/sass/app.scss', `${outputDir}/css`);
+mix.sass('resources/assets/sass/app.flashcard.scss', `${outputDir}/css`);
+mix.sass('resources/assets/sass/app.sentences.scss', `${outputDir}/css`);
+mix.sass('resources/assets/sass/app.timeline.scss', `${outputDir}/css`);

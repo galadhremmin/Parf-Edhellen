@@ -22,6 +22,6 @@ Alternatively, you can <a href="{{ route('sentence.confirm-destroy', ['id' => $s
 @endsection
 
 @section('scripts')
-  <script type="text/javascript" src="/js/glaemscribe.js" async></script>
-  <script type="text/javascript" src="/js/sentence-admin.js" async></script>
+  <script type="text/javascript" src="@assetpath(/js/glaemscribe.js)" async></script>
+  <script type="text/javascript" src="@assetpath(/js/sentence-admin.js)" async></script>
 @endsection

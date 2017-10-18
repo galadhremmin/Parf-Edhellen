@@ -21,5 +21,5 @@
 @endsection
 
 @section('scripts')
-  <script type="text/javascript" src="/js/system-errors-admin.js" async></script>
+  <script type="text/javascript" src="@assetpath(/js/system-errors-admin.js)" async></script>
 @endsection
