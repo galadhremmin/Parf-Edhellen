@@ -4,6 +4,11 @@
 // Bootstrap
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 @import "node_modules/spinkit/scss/spinners/5-pulse";
+
+// Mixins
+@import "mixins/_fx";
+
+// Everything else
 @import "_tengwar";
 @import "_app";
 

@@ -1,0 +1,45 @@
+@import 'node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_variables';
+@import '_variables';
+@import 'mixins/_fx';
+
+.discuss-table {
+    box-sizing: border-box;
+
+    /* row */
+    .r {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 5px 0 5px 0;
+
+        &:nth-child(even) {
+            background-color: $table-bg-accent;
+        }
+
+        /* column */
+        .c { 
+            flex-basis: 0;
+            flex-grow: 1;
+            max-width: 100%;
+
+            &:first-child {
+                max-width: 80px;
+            }
+
+            /* profile picture */
+            .pp {
+                img {
+                    width: 60px;
+                    height: 60px;
+                    border-radius: 30px;
+                    @include ed-box-shadow();
+                }
+            }
+
+            /* profile information */
+            .pi {
+                font-family: $font-family-tiny;
+                font-size: 80%;
+            }
+        }
+    }
+}

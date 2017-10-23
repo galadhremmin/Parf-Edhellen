@@ -84,6 +84,13 @@ Route::get('/federated-auth/callback/{providerName}', 'SocialAuthController@call
 // Sitemap
 Route::get('sitemap/{context}', 'SitemapController@index');
 
+// Public resources
+Route::group([ 
+    'namespace'  => 'Resources'
+], function () {
+    Route::resource('discuss', 'DiscussController');
+});
+
 // Restricted resources
 Route::group([ 
     'namespace'  => 'Resources', 

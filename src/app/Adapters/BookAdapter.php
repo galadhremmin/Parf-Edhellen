@@ -241,6 +241,10 @@ class BookAdapter
      */
     private static function calculateRating($translation, string $word)
     {
+        if (empty($word)) {
+            return PHP_INT_MIN;
+        }
+
         $rating = 0;
 
         // First, check if the gloss contains the search term by looking for its

@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\{
+    Auth,
+    Storage
+};
+
 use App\Adapters\AuthorAdapter;
 use App\Repositories\StatisticsRepository;
 use App\Repositories\Interfaces\IAuditTrailRepository;
-use App\Helpers\MarkdownParser;
+use App\Helpers\{
+    MarkdownParser,
+    StorageHelper
+};
 
 use App\Models\{ 
     Account, 
@@ -24,12 +30,15 @@ class AuthorController extends Controller
     protected $_auditTrail;
     protected $_authorAdapter;
     protected $_statisticsRepository;
+    protected $_storageHelper;
 
-    public function __construct(IAuditTrailRepository $auditTrail, AuthorAdapter $authorAdapter, StatisticsRepository $statisticsRepository)
+    public function __construct(IAuditTrailRepository $auditTrail, AuthorAdapter $authorAdapter, 
+        StatisticsRepository $statisticsRepository, StorageHelper $storageHelper)
     {
         $this->_auditTrail           = $auditTrail;
         $this->_authorAdapter        = $authorAdapter;
         $this->_statisticsRepository = $statisticsRepository;
+        $this->_storageHelper        = $storageHelper;
     }
 
     public function index(Request $request, int $id = null, $nickname = '')
@@ -49,9 +58,7 @@ class AuthorController extends Controller
             'author'  => $author,
             'profile' => $profile,
             'stats'   => $stats,
-            'avatar'  => $author && $author->has_avatar
-                ? Storage::url('avatars/'.$author->id.'.png')
-                : null
+            'avatar'  => $this->_storageHelper->accountAvatar($author, false /* = _null_ if none exists */)
         ]);
     }
 

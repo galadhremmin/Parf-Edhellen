@@ -2,8 +2,6 @@
 
 namespace App\Helpers;
 
-use data\entities\AuthProvider;
-
 class LinkHelper
 {
     public function author(int $authorId, string $authorName)

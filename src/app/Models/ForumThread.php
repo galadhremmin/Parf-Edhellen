@@ -4,7 +4,12 @@ namespace App\Models;
 
 class ForumThread extends ModelBase
 {
-    protected $fillable = [ 'entity_type', 'entity_id', 'subject', 'roles' ];
+    protected $fillable = [ 
+        'entity_type', 'entity_id', 'subject', 'roles',
+        'number_of_posts', 'number_of_likes' 
+    ];
+
+    use Traits\HasAccount;
 
     public function entity() 
     {

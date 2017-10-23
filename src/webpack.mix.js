@@ -119,3 +119,4 @@ mix.sass('resources/assets/sass/app.scss', `${outputDir}/css`);
 mix.sass('resources/assets/sass/app.flashcard.scss', `${outputDir}/css`);
 mix.sass('resources/assets/sass/app.sentences.scss', `${outputDir}/css`);
 mix.sass('resources/assets/sass/app.timeline.scss', `${outputDir}/css`);
+mix.sass('resources/assets/sass/app.discuss.scss', `${outputDir}/css`);

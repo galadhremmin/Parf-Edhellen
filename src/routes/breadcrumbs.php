@@ -231,6 +231,15 @@ Breadcrumbs::register('flashcard.list', function ($breadcrumbs, App\Models\Flash
 });
 
 // //////////////////////////////////////////////////////////////////////////////////////////////
+// Forum 
+
+Breadcrumbs::register('discuss', function ($breadcrumbs)
+{
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('Discussion', route('discuss.index'));
+});
+
+// //////////////////////////////////////////////////////////////////////////////////////////////
 // Dashboard > System errors
 
 Breadcrumbs::register('system-error.index', function ($breadcrumbs)

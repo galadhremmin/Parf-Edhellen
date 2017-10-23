@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1;
 
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\ForumRepository;
@@ -157,11 +158,13 @@ class ForumApiController extends Controller
         }
 
         $thread = $this->getOrNewForumThread($request);
-        if (! $thread->id) {
-            $thread->save();
-        }
 
+        // Update the thread with information pertaining to the post just published.
         $account = $request->user();
+        $thread->account_id = $account->id;
+        $thread->number_of_posts += 1;
+        $thread->save();
+
         $post = ForumPost::create([
             'forum_thread_id'     => $thread->id,
             'account_id'          => $account->id,
@@ -190,6 +193,8 @@ class ForumApiController extends Controller
         ]);
 
         $account = $request->user();
+
+        // fetch and update the post
         $post = ForumPost::findOrFail($id);
         if (! $this->userCanAccess($account, $post)) {
             return response(null, 401);
@@ -197,6 +202,12 @@ class ForumApiController extends Controller
 
         $post->content = $request->input('comments');
         $post->save();
+
+        // update the thread's information
+        $thread = $post->forum_thread;
+        $thread->updated_at = $post->updated_at;
+        $thread->account_id = $post->account_id;
+        $thread->save();
 
         // Register an audit trail
         $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_EDIT, $post, /* user id = */ 0, $post->forum_thread->roles !== null);
@@ -218,6 +229,7 @@ class ForumApiController extends Controller
             return response(null, 401);
         }
 
+        // hide the post (does not permanently delete it)
         $related = ForumPost::where('parent_forum_post_id', $post->id)->count();
         if ($related > 0) {
             $post->is_deleted = 1;
@@ -228,6 +240,32 @@ class ForumApiController extends Controller
         }
 
         $post->save();
+
+        // update the thread
+        $thread = $post->forum_thread;
+
+        // reassign the 'latest' contributor to the thread
+        if (! $thread->number_of_posts) {
+            $thread->account_id = null;
+        } else {
+            $lastAccount = $thread->forum_posts()->where([
+                ['is_deleted', 0],
+                ['is_hidden', 0]
+            ])
+            ->orderBy('id', 'desc')
+            ->first();
+
+            $thread->account_id = $lastAccount ? $lastAccount->id : null;
+        }
+
+        // reduce number of likes and post counter
+        $thread->number_of_posts = max(0, $thread->number_of_posts - 1);
+        if ($post->number_of_likes > 0) {
+            $thread->number_of_likes = max(0, $thread->number_of_likes - $post->number_of_likes);
+        }
+
+        $thread->save();
+
         return response(null, 204);
     }
 
@@ -253,6 +291,10 @@ class ForumApiController extends Controller
 
             $post->number_of_likes += 1;
             $post->save();
+
+            $thread = $post->forum_thread;
+            $thread->number_of_likes += 1;
+            $thread->save();
 
             // Register an audit trail
             $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_LIKE, $post, $userId, $post->forum_thread->roles !== null);
@@ -280,6 +322,11 @@ class ForumApiController extends Controller
         if ($change > 0) {
             $post->number_of_likes -= $change;
             $post->save();
+
+            $thread = $post->forum_thread;
+            $thread->number_of_likes -= $change;
+            $thread->save();
+
             $statusCode = 201;
         }
 
@@ -305,10 +352,13 @@ class ForumApiController extends Controller
         $morph = $request->input('morph');
         $entityId = intval($request->input('entity_id'));
         
-        $thread = ForumThread::where([
-            ['entity_type', $morph],
-            ['entity_id', $entityId]
-        ])->firstOrNew([
+        $resolver = $this->_routeResolverFactory->create($morph);
+        if (! $resolver) {
+            abort(400, 'The entity '.$morph.' is not supported as it lacks a IRouteResolver '.
+                       'implementation for '.$entityName.'.');
+        }
+        
+        $thread = ForumThread::firstOrNew([
             'entity_type' => $morph,
             'entity_id'   => $entityId
         ]);
@@ -322,11 +372,6 @@ class ForumApiController extends Controller
             $entity = resolve($entityName)->findOrFail($entityId);
             if (! $entity) {
                 abort(400, 'Entity '.$morph.' with the ID '.$entityId.' does not exist.');
-            }
-
-            $resolver = $this->_routeResolverFactory->create($morph);
-            if (! $resolver) {
-                abort(400, 'The entity '.$morph.' is not supported as it lacks a IRouteResolver implementation for '.$entityName.'.');
             }
 
             $subject = $request->has('subject')

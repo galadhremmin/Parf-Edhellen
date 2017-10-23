@@ -3,7 +3,6 @@
 namespace App\Helpers;
 
 use Illuminate\Database\Eloquent\Collection;
-use data\entities\SentenceFragment;
 
 class SentenceHelper
 {

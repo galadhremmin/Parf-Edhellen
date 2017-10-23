@@ -31,7 +31,7 @@ class TranslationRouteResolver implements IRouteResolver
             return null;
         }
         
-        return 'Gloss “'.$entity->word.'” by '.$entity->account->nickname;
+        return 'Gloss “'.$entity->word->word.'” by '.$entity->account->nickname;
     }
 
     public function getIconPath()

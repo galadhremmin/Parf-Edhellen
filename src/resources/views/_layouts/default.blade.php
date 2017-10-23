@@ -39,6 +39,7 @@
           <li class="{{ active(['sentence.public', 'sentence.public.language', 'sentence.public.sentence']) }}"><a href="{{ route('sentence.public') }}">Phrases</a></li>
           <li class="{{ active('about') }}"><a href="{{ route('about') }}">About</a></li>
           <li class="{{ active('about.donations') }}"><a href="{{ route('about.donations') }}">Donations</a></li>
+          <li class="{{ active('discuss.index') }}"><a href="{{ route('discuss.index') }}">Discuss</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
           @if ($user)
