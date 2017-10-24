@@ -7,11 +7,18 @@ $ed-forum-post-profile-width: 120px;
     margin-top: $line-height-computed;
     padding-top: $line-height-computed;
     border-top: 1px solid $gray-lighter;
+    transition: background-color 2s, padding 2s;
 
     &:first-child {
         margin-top: 0;
         padding-top: 0;
         border-top: none;
+    }
+
+    &.highlight {
+        background-color: $alert-info-bg;
+        padding: $padding-large-vertical;
+        border-radius: $border-radius-large;
     }
 
     .post-profile-picture {
@@ -33,6 +40,27 @@ $ed-forum-post-profile-width: 120px;
         display: table-cell;
         vertical-align: top;
         overflow: hidden;
+    }
+
+    .post-tools, .post-header {
+        font-family: $font-family-tiny;
+    }
+
+    .post-header {
+        .post-no {
+            float: right;
+            font-size: $font-size-small;
+            color: $gray-light;
+        }
+    }
+
+    .post-tools {
+        font-size: $font-size-small;
+        color: $gray-light;
+
+        > .tools {
+            float: right;
+        }
     }
 
     a {

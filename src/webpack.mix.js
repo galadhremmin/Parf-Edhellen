@@ -41,6 +41,7 @@ mix.extract([
     'html-to-react',
     'axios',
     'classnames',
+    'moment',
     'smoothscroll-polyfill',
     /* These components are excuded from _vendor.js_ as they are limited to restricted visitors 
     'ed-components/dialog',

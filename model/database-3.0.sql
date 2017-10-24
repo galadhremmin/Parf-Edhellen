@@ -2,6 +2,7 @@ ALTER TABLE `forum_threads` ADD `account_id` int(5) unsigned DEFAULT NULL;
 ALTER TABLE `forum_threads` ADD `number_of_posts` int(10) unsigned DEFAULT 0;
 ALTER TABLE `forum_threads` ADD `number_of_likes` int(10) unsigned DEFAULT 0;
 ALTER TABLE `forum_threads` MODIFY COLUMN `subject` varchar(512) NOT NULL;
+ALTER TABLE `forum_threads` DROP `roles`;
 ALTER TABLE `forum_threads` ADD UNIQUE INDEX `ix_thread_entity` (`entity_id`, `entity_type`);
 
 UPDATE `forum_threads` ft

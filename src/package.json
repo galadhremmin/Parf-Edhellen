@@ -23,6 +23,7 @@
     "classnames": "^2.2.5",
     "glaemscribe": "^1.1.7",
     "html-to-react": "^1.3.0",
+    "moment": "^2.19.1",
     "react": "^16.0.0",
     "react-autosuggest": "^9.3.2",
     "react-bootstrap": "^0.31.3",

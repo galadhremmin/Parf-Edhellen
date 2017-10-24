@@ -4,20 +4,23 @@ namespace App\Http\Controllers\Resources;
 
 use Illuminate\Http\Request;
 
+use App\Http\Controllers\Controller;
+use App\Http\Discuss\ContextFactory;
+use App\Adapters\DiscussAdapter;
 use App\Models\{
     ForumThread,
     ForumPost
 };
-use App\Http\Controllers\Controller;
-use App\Repositories\Interfaces\IAuditTrailRepository;
 
 class DiscussController extends Controller
 {
-    protected $_auditTrail;
+    protected $_discussAdapter;
+    protected $_contextFactory;
 
-    public function __construct(IAuditTrailRepository $auditTrail) 
+    public function __construct(DiscussAdapter $discussAdapter, ContextFactory $contextFactory) 
     {
-        $this->_auditTrail = $auditTrail;
+        $this->_discussAdapter = $discussAdapter;
+        $this->_contextFactory = $contextFactory;
     }
 
     public function index(Request $request)
@@ -28,8 +31,19 @@ class DiscussController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        $adapted = $this->_discussAdapter->adaptThreads($threads);
         return view('discuss.index', [
-            'threads' => $threads
+            'threads' => $adapted
         ]);
+    }
+
+    public function show(Request $request, int $id)
+    {
+        $thread = ForumThread::findOrFail($id);
+        if (! $this->_contextFactory->create($thread->entity_type)->available($thread, $request->user())) {
+            abort(403);
+        }
+
+        return view('discuss.show', ['thread' => $thread]);
     }
 }

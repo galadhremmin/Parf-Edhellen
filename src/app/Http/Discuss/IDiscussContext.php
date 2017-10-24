@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Http\RouteResolving;
-use Illuminate\Database\Eloquent\Model;
+namespace App\Http\Discuss;
 
-interface IRouteResolver
+use Illuminate\Database\Eloquent\Model;
+use App\Models\Account;
+
+interface IDiscussContext
 {
     /**
-     * Gets the path URI component for the specified entity. 
+     * Gets the path URI component for the specified entity associated with the context. 
      *
      * @param Model $entity
      * @return string
@@ -17,9 +19,11 @@ interface IRouteResolver
      * Gets a list of roles that the user must have in order to successfully access the content.
      * Note: the account would qualify if it is a member in _at least_ one of the specified roles.
      *
-     * @return array
+     * @param Model|int $entity
+     * @param Account $account
+     * @return bool 
      */
-    function getRoles();
+    function available($entityOrId, Account $account = null);
 
     /**
      * Gets a friendly name for the route.

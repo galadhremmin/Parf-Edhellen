@@ -4,7 +4,44 @@
 @section('body')
 
 <h1>About <span class="tengwar" title="Parf Edhellen">q7Er 4$j$¸5$</span></h1>
-<p>The collaborative dictionary dedicated to Tolkien's amazing languages. 
+<p>Welcome to the <em>Parf Edhellen</em>, The collaborative dictionary dedicated to Tolkien's amazing languages. 
+<em>Parf Edhellen</em> means &ldquo;Elvish Book&rdquo; in Sindarin, the noble language of elves and men. But the 
+dictionary contains all elvish languages, including Telerin and Quenya, with words imported from a variety of 
+sources, all of which have been carefully compiled by researchers of Tolkien's languages.</p>
+<p>... and there is a lot! Tolkien was an amazing linguist; a skillset he employed throughout his life as he devised
+beautiful (and not so beautiful!) languages for his legendarium. If you are curious about Sauron's foul vernacular,
+you will also find his despicable language &ldquo;Black Speech&rdquo; within the dictionary.</p>
+<p><em>Parf Edhellen</em> is a non-profit, and non-commercial project developed and maintained by Leonard &ldquo;Aldaleon&rdquo;, 
+a Tolkien-fan, and language enthusiast. You can support him by contibuting to the community, and by 
+<a href="{{ route('about.donations') }}">donating towards the project</a>. All donations are thoroughly appreciated, and 
+will be used to fund the website's continued development.</p>
+
+<a name="wordlist"></a>
+<h2>Credits &amp; Sources</h2>
+<p><em>Parf Edhellen</em> imported its definition from the excellent dictionaries listed below.
+  Please note that discrepancies from the source material can arise while importing.</p>
+<dl>
+  <dt><a href="http://www.eldamo.org" target="_blank">Eldamo</a></dt>
+  <dd><em>Eldamo</em> is perhaps the best, most comprehensive data source for Tolkien's languages to date. Maintained by Paul Strack. v. 0.5.7 (updated 2017-09-21).</dd>
+  <dt><a href="http://folk.uib.no/hnohf/wordlists.htm" target="_blank">Quettaparma Quenyallo</a></dt>
+  <dd>The best Quenya lexicon maintained by <em>Helge Fauskanger</em>, presented alongside his excellent course work material on Ardalambion.</dd>
+  <dt><a href="http://folk.uib.no/hnohf" target="_blank">Parviphith</a></dt>
+  <dd>Sindarin lexicon maintained by <em>Helge Fauskanger</em>.</dd>
+  <dt><a href="http://www.jrrvf.com/hisweloke/sindar/index.html" target="_blank">Hiswelókë's Sindarin Dictionary</a></dt>
+  <dd>A dictionary project initiated by <em>Didier Willis</em> and maintained by the SinDict community, ancient, yet still legendary.</dd>
+  <dt><a href="http://lambenore.free.fr/" target="_blank">Parma Eldalamberon 17 Sindarin Corpus</a></dt>
+  <dd>A big thank-you to <em>David Giraudeau</em> for contributing with his compilation of Sindarin words from <em>Parma Eldalamberon</em> 17. You can find the original <a href="http://lambenore.free.fr/downloads/PE17_S.pdf" target="_blank">over here</a>.</dd>
+  <dt><a href="http://www.forodrim.org/daeron/md_home.html" target="_blank">Mellonath Daeron</a></dt>
+  <dd><em>Mellonath Daeron</em>'s contribution of glossaries from <em>Parma Eldalamberon</em> 18 and 19, and their continuous  feedback and encouragement.</dd>
+  <dt><a href="http://www.tolkiendil.com/langues/english/i-lam_arth/compound_sindarin_names" target="_blank">Tolkiendil Compound Sindarin Names</a></dt>
+  <dd><em>Tolkiendil</em> provides a consolidated list of Sindarin names examined and translated. <em>Parf Edhellen</em> is happy to house their excellent work.</dd>
+</dl>
+<p></p>
+<p>
+  We use <em>Glaemscribe</em> by <a href="https://www.jrrvf.com/glaemscrafu/english/glaemscribe.html" target="_blank">Benjamin Babut</a> for transcriptions. 
+  <a href="https://pixabay.com/en/users/ArtsyBee-462611/">ArtsyBee</a> painted the jumbotron's backgrounds, and the photograph of the 
+  roots used for the background was taken by <a href="https://pixabay.com/en/users/tpsdave-12019/" target="_blank">tpsdave</a>.
+</p>
 
 <a name="search"></a>
 <h2>Searching</h2>
@@ -43,31 +80,5 @@
 <span class="span-column">`idhron`</span> <strong>idhron</strong><br /> 
 <span class="span-column">&gt;&gt;</span> <img src="img/hand.png" alt="" border="0" /></p>
 
-<a name="wordlist"></a>
-<h2>Credits &amp; Sources</h2>
-<p><em>Parf Edhellen</em> imported its definition from the excellent dictionaries listed below.
-  Please note that discrepancies from the source material can arise while importing.</p>
-<dl>
-  <dt><a href="http://www.eldamo.org" target="_blank">Eldamo</a></dt>
-  <dd><em>Eldamo</em> is perhaps the best, most comprehensive data source for Tolkien's languages to date. Maintained by Paul Strack. v. 0.5.7 (updated 2017-09-21).</dd>
-  <dt><a href="http://folk.uib.no/hnohf/wordlists.htm" target="_blank">Quettaparma Quenyallo</a></dt>
-  <dd>The best Quenya lexicon maintained by <em>Helge Fauskanger</em>, presented alongside his excellent course work material on Ardalambion.</dd>
-  <dt><a href="http://folk.uib.no/hnohf" target="_blank">Parviphith</a></dt>
-  <dd>Sindarin lexicon maintained by <em>Helge Fauskanger</em>.</dd>
-  <dt><a href="http://www.jrrvf.com/hisweloke/sindar/index.html" target="_blank">Hiswelókë's Sindarin Dictionary</a></dt>
-  <dd>A dictionary project initiated by <em>Didier Willis</em> and maintained by the SinDict community, ancient, yet still legendary.</dd>
-  <dt><a href="http://lambenore.free.fr/" target="_blank">Parma Eldalamberon 17 Sindarin Corpus</a></dt>
-  <dd>A big thank-you to <em>David Giraudeau</em> for contributing with his compilation of Sindarin words from <em>Parma Eldalamberon</em> 17. You can find the original <a href="http://lambenore.free.fr/downloads/PE17_S.pdf" target="_blank">over here</a>.</dd>
-  <dt><a href="http://www.forodrim.org/daeron/md_home.html" target="_blank">Mellonath Daeron</a></dt>
-  <dd><em>Mellonath Daeron</em>'s contribution of glossaries from <em>Parma Eldalamberon</em> 18 and 19, and their continuous  feedback and encouragement.</dd>
-  <dt><a href="http://www.tolkiendil.com/langues/english/i-lam_arth/compound_sindarin_names" target="_blank">Tolkiendil Compound Sindarin Names</a></dt>
-  <dd><em>Tolkiendil</em> provides a consolidated list of Sindarin names examined and translated. <em>Parf Edhellen</em> is happy to house their excellent work.</dd>
-</dl>
-<p></p>
-<p>
-  We use <em>Glaemscribe</em> by <a href="https://www.jrrvf.com/glaemscrafu/english/glaemscribe.html" target="_blank">Benjamin Babut</a> for transcriptions. 
-  <a href="https://pixabay.com/en/users/ArtsyBee-462611/">ArtsyBee</a> painted the jumbotron's backgrounds, and the photograph of the 
-  roots used for the background was taken by <a href="https://pixabay.com/en/users/tpsdave-12019/" target="_blank">tpsdave</a>.
-</p>
 
 @endsection

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\{
     Storage
 };
 
-use App\Adapters\AuthorAdapter;
+use App\Adapters\DiscussAdapter;
 use App\Repositories\StatisticsRepository;
 use App\Repositories\Interfaces\IAuditTrailRepository;
 use App\Helpers\{
@@ -28,15 +28,15 @@ use App\Models\{
 class AuthorController extends Controller
 {
     protected $_auditTrail;
-    protected $_authorAdapter;
+    protected $_discussAdapter;
     protected $_statisticsRepository;
     protected $_storageHelper;
 
-    public function __construct(IAuditTrailRepository $auditTrail, AuthorAdapter $authorAdapter, 
+    public function __construct(IAuditTrailRepository $auditTrail, DiscussAdapter $discussAdapter, 
         StatisticsRepository $statisticsRepository, StorageHelper $storageHelper)
     {
         $this->_auditTrail           = $auditTrail;
-        $this->_authorAdapter        = $authorAdapter;
+        $this->_discussAdapter       = $discussAdapter;
         $this->_statisticsRepository = $statisticsRepository;
         $this->_storageHelper        = $storageHelper;
     }
@@ -102,7 +102,7 @@ class AuthorController extends Controller
             ? intval($request->input('page')) 
             : 0;
 
-        $query = ForumPost::forAccount($id)
+        $posts = ForumPost::forAccount($id)
             ->with('forum_thread')
             ->where([
                 ['is_deleted', 0],
@@ -110,21 +110,14 @@ class AuthorController extends Controller
             ])
             ->orderBy('id', 'desc')
             ->skip($page * $pageSize)
-            ->take($pageSize);
+            ->take($pageSize)
+            ->get();
 
-        $user = $request->user();
-        if (! $user || ! $user->isAdministrator()) {
-            $query = $query->whereHas('forum_thread', function ($subQuery) {
-                $subQuery->whereNull('roles')
-                    ->orWhere('roles', '');
-            });
-        }
-
-        $posts = $this->_authorAdapter->adapt($query->get());
+        $adapted = $this->_discussAdapter->adaptForTimeline($posts);
         $author = Account::findOrFail($id);
 
         return view('author.list-posts', [
-            'posts'     => $posts,
+            'posts'     => $adapted,
             'noOfPosts' => $noOfPosts,
             'noOfPages' => ceil($noOfPosts / $pageSize),
             'page'      => $page,

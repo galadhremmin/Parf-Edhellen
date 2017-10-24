@@ -1,0 +1,56 @@
+<?php
+
+namespace App\Http\Discuss\Contexts;
+
+use Illuminate\Database\Eloquent\Model;
+
+use App\Http\Discuss\IDiscussContext;
+use App\Models\{
+    Account,
+    Contribution
+};
+
+class ContributionContext implements IDiscussContext
+{
+    public function resolve(Model $entity)
+    {
+        if (! $entity) {
+            return null;
+        }
+
+        return route('contribution.show', ['id' => $entity->id]);
+    }
+
+    function available($entityOrId, Account $account = null)
+    {
+        if ($account === null) {
+            return false;
+        }
+
+        $accountId = 0;
+        if (is_numeric($entityOrId)) {
+            // TODO: Optimize. Somehow.
+            $accountId = Contribution::where('id', $entityOrId)
+                ->pluck('account_id');
+        } else {
+            $accountId = $entityOrId->account_id;
+        }
+
+        return $accountId === $account->id || $account->isAdministrator();
+    }
+
+    public function getName(Model $entity)
+    {
+        if (! $entity) {
+            return null;
+        }
+        
+        return 'Contribution “'.$entity->word.'” by '.$entity->account->nickname;
+    }
+
+    public function getIconPath()
+    {
+        // Refer to Bootstrap glyphicons.
+        return 'plus';
+    }
+}

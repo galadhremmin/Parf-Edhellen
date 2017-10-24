@@ -2,4 +2,7 @@
   data-entity-id="{{ $entity_id }}" 
   data-morph="{{ $morph }}" 
   data-account-id="{{ Auth::check() ? Auth::user()->id : '0' }}"
-  data-post-enabled="{{ $enabled ? 'true' : 'false' }}"></div>
+  data-post-enabled="{{ $enabled ? 'true' : 'false' }}"
+  @if (isset($order))
+  data-post-order="{{ $order }}"
+  @endif></div>

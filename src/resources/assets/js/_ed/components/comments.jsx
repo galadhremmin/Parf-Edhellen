@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import EDConfig from 'ed-config';
 import classNames from 'classnames';
+import moment from 'moment';
 import { EDStatefulFormComponent } from 'ed-form';
 import { Parser as HtmlToReactParser } from 'html-to-react';
 import { polyfill as enableSmoothScrolling } from 'smoothscroll-polyfill';
@@ -20,34 +21,52 @@ class EDComments extends EDStatefulFormComponent {
             comments: '',
             posts: [],
             post_id: 0,
-            jump_post_id,
-            loading: false
+            highlighted_post_id: jump_post_id,
+            loading: false,
+            show_reply: false,
+            jump_post_id
         };
 
         enableSmoothScrolling();
     }
 
     componentWillMount() {
-        window.addEventListener('scroll', this.onScroll.bind(this));
+        if (this.isInfiniteScroll()) {
+            window.addEventListener('scroll', this.onScroll.bind(this));
+        }
     }
 
     componentDidMount() {
         // Load comments if the client is specifically requesting to display them.
-        if (this.state.jump_post_id) {
+        if (this.state.jump_post_id || ! this.isInfiniteScroll()) {
             this.load();
         } else {
             this.onScroll();
         }
     }
 
+    isInfiniteScroll() {
+        return this.isDescendingOrder();
+    }
+
+    isDescendingOrder() {
+        return this.props.order === 'desc';
+    }
+
     login() {
         window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
     }
 
-    load(fromId, parentPostId) {
+    load(fromId = this.state.jump_post_id || 0, parentPostId) {
         this.setState({
             loading: true
         });
+
+        if (this.isInfiniteScroll() && fromId > 0 && fromId === this.state.highlighted_post_id) {
+            // retract once, as the from_id parameter will _not_ be included in the result set in
+            // infinite scroll mode, as it assumes it is already loaded.
+            fromId += 1;
+        }
 
         const url = EDConfig.api(
             `/forum?morph=${this.props.morph}&entity_id=${this.props.entityId}&order=${this.props.order}` + 
@@ -58,12 +77,17 @@ class EDComments extends EDStatefulFormComponent {
     }
 
     onLoaded(fromId, response) {
-        const jumpPostId = this.state.jump_post_id;
 
         let posts = this.state.posts || [];
         const newPosts = response.data.posts || [];
 
-        if (fromId === 0) {
+        // First, jump to the post that the client has explicitly specified,
+        // alternatively, when in ascending order, jump to the last comment 
+        // (this the comment with the largest ID).
+        const jumpPostId = this.state.jump_post_id || 
+            (! this.isInfiniteScroll() && newPosts.length ? newPosts[newPosts.length - 1].id : 0);
+
+        if (fromId === 0 || ! this.isInfiniteScroll()) {
             // reload -- start over from the beginning
             posts = newPosts;
 
@@ -80,9 +104,10 @@ class EDComments extends EDStatefulFormComponent {
 
         this.setState({
             major_id: response.data.major_id,
-            posts,
+            pages: response.data.pages,
             jump_post_id: 0,
-            loading: false
+            loading: false,
+            posts
         });
 
         if (jumpPostId) {
@@ -150,7 +175,8 @@ class EDComments extends EDStatefulFormComponent {
                 // empty the text field once the comments were saved.
                 this.setState({
                     comments: '',
-                    post_id: 0
+                    post_id: 0,
+                    show_reply: false
                 });
             })
     }
@@ -235,8 +261,16 @@ class EDComments extends EDStatefulFormComponent {
     onEditPostDataReceived(resp) {
         this.setState({
             comments: resp.data.content,
-            post_id: resp.data.id
+            post_id: resp.data.id,
+            show_reply: true
         });
+
+        if (this.textboxContainer) {
+            this.textboxContainer.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
     }
 
     onPostEdited(id, response) {
@@ -246,7 +280,8 @@ class EDComments extends EDStatefulFormComponent {
     onDiscardChanges() {
         this.setState({
             post_id: 0,
-            comments: ''
+            comments: '',
+            show_reply: false
         });
     }
 
@@ -265,10 +300,48 @@ class EDComments extends EDStatefulFormComponent {
         this.load();
     }
 
-    renderTools() {
+    onReplyClick() {
+        this.setState({
+            show_reply: true, 
+            highlighted_post_id: 0
+        });
+    }
+
+    onPaginationClick(pageNo) {
+        this.setState({
+            highlighted_post_id: 0
+        });
+
+        this.load(pageNo);
+    }
+
+    renderUnauthorized() {
+        return <div className="alert alert-info" id="forum-log-in-box">
+            <strong>
+                <span className="glyphicon glyphicon-info-sign" />
+                {' '}
+                { ! Array.isArray(this.state.posts) || this.state.posts.length < 1
+                    ? 'Would you like to be the first to comment?'
+                    : 'Would you like to share your thoughts on the discussion?' 
+                }
+            </strong>
+            {' '}
+            <a href="#" onClick={this.onLoginClick.bind(this)}>
+                Log in to create a profile
+            </a>.
+        </div> ;
+    }
+
+    renderTextbox() {
         return <div>
-            { this.props.order === 'asc' && this.state.posts.length > 0 && this.props.enabled ? <hr /> : '' }
-            { this.props.accountId && this.props.enabled ? <div>
+            <div className={classNames('text-right', {'hidden': this.state.show_reply})}>
+                <button className="btn btn-primary" onClick={this.onReplyClick.bind(this)}>
+                    <span className="glyphicon glyphicon-pencil" />
+                    {' '}
+                    Reply
+                </button>
+            </div>
+            <div className={classNames({'hidden': ! this.state.show_reply})} ref={elem => this.textboxContainer = elem}>
                 {this.state.post_id ? <p><span className="glyphicon glyphicon-info-sign" /> Editing your comment ({this.state.post_id}):</p> : ''}
                 <form onSubmit={this.onSubmit.bind(this)}>
                     <div className="form-group">
@@ -276,12 +349,11 @@ class EDComments extends EDStatefulFormComponent {
                             onChange={super.onChange.bind(this)} rows={5} />
                     </div>
                     <div className="form-group text-right">
-                        {this.state.post_id 
-                            ? <button type="button" className="btn btn-default" onClick={this.onDiscardChanges.bind(this)}>
+                        <button type="button" className="btn btn-default" onClick={this.onDiscardChanges.bind(this)}>
                             <span className="glyphicon glyphicon-remove" />
                             {' '}
-                            Discard changes
-                        </button> : ''}
+                            {this.state.post_id ? 'Discard changes' : 'Cancel' }
+                        </button> 
                         {' '}
                         <button type="submit" className="btn btn-primary">
                             <span className="glyphicon glyphicon-send" />
@@ -290,24 +362,105 @@ class EDComments extends EDStatefulFormComponent {
                         </button>
                     </div>
                 </form>
-            </div> : (this.props.enabled 
-                ? <div className="alert alert-info" id="forum-log-in-box">
-                    <strong>
-                        <span className="glyphicon glyphicon-info-sign" />
-                        {' '}
-                        { ! Array.isArray(this.state.posts) || this.state.posts.length < 1
-                            ? 'Would you like to be the first to comment?'
-                            : 'Would you like to share your thoughts on the discussion?' 
-                        }
-                    </strong>
-                    {' '}
-                    <a href="#" onClick={this.onLoginClick.bind(this)}>
-                        Log in to create a profile
-                    </a>.
-                </div> 
-                : '') }
-            { this.props.order === 'desc' && this.state.posts.length > 0 && this.props.enabled ? <hr /> : '' }
+            </div>
         </div>;
+    }
+
+    renderTools() {
+        if (! this.props.enabled) {
+            return undefined;
+        }
+
+        return <div>
+            { ! this.isInfiniteScroll() && this.state.posts.length > 0 ? <hr /> : undefined }
+            { this.props.accountId ? this.renderTextbox() : this.renderUnauthorized() }
+            { this.isInfiniteScroll() && this.state.posts.length > 0 ? <hr /> : undefined }
+        </div>;
+    }
+
+    renderPost(parser, post) {
+        return <div key={post.id} className={classNames('forum-post', 
+            {'highlight': this.state.highlighted_post_id === post.id})} id={`forum-post-${post.id}`}>
+            <div className="post-profile-picture">
+                <a href={`/author/${post.account_id}`} title={`View ${post.account.nickname}'s profile`}>
+                    <img src={post.account.has_avatar 
+                        ? `/storage/avatars/${post.account_id}.png` 
+                        : '/img/anonymous-profile-picture.png'} />
+                </a>
+            </div>
+            <div className="post-content">
+                <div className="post-header">
+                    <a href={`/author/${post.account_id}`} title={`View ${post.account.nickname}'s profile`} 
+                        className="nickname">{post.account.nickname}</a>
+                    {' '}
+                    {post.account.tengwar ? <span className="tengwar">{post.account.tengwar}</span> : undefined}
+                    {' · '}
+                    {! post.is_deleted 
+                        ? <span>
+                            {`${post.number_of_likes || '0'} `}
+                            <a href="#" onClick={ev => this.onLikeClick(ev, post.id, this.props.accountId && 
+                            post.likes.length > 0)}>
+                        <span className={classNames('glyphicon', 'glyphicon-thumbs-up', { 
+                            'like-not-liked': ! this.props.accountId || post.likes.length === 0, 
+                            'like-liked': this.props.accountId && post.likes.length > 0 
+                        })} />
+                        </a>
+                        </span>
+                    : undefined}
+                    <span className="post-no">#{post.id}</span>
+                </div>
+                <div className="post-body">
+                    { !post.is_deleted 
+                        ? parser.parse(post.content)
+                        : <em>{post.account.nickname} has redacted their comment.</em>
+                    }
+                </div>
+                <div className="post-tools">
+                    <span className="date">{ moment(post.created_at).format('LLLL') }</span>
+                    { ! post.is_deleted && this.props.accountId === post.account_id ?
+                    <span className="tools">
+                        <a href="#" onClick={this.onDeletePost.bind(this, post)}>Delete</a>
+                        { ' · ' }
+                        <a href="#" onClick={this.onEditPost.bind(this, post)}>Edit</a>
+                    </span>
+                : undefined }
+                </div> 
+            </div>
+        </div>;
+    }
+
+    renderPagination() {
+        const numberOfPages = this.state.pages; 
+        const currentPage = this.state.major_id;
+        const pages = [];
+
+        if (numberOfPages < 2) {
+            return undefined;
+        }
+
+        for (var i = 0; i < numberOfPages; i += 1) {
+            pages[i] = i + 1;
+        }
+
+        return <nav className="text-center">
+            <ul className="pagination">
+                <li className={classNames({'disabled': currentPage === 1})}>
+                    <a href="#" onClick={this.onPaginationClick.bind(this, 1)}>
+                        <span aria-hidden="true">&larr; Older</span>
+                    </a>
+                </li>
+                { pages.map(pageNo => <li key={`p${pageNo}`} className={classNames({'active': pageNo === currentPage})}>
+                    <a href="#" onClick={this.onPaginationClick.bind(this, pageNo)}>
+                        {pageNo}
+                    </a>
+                </li>)}
+                <li className={classNames({'disabled': currentPage === numberOfPages})}>
+                    <a href="#" onClick={this.onPaginationClick.bind(this, numberOfPages)}>
+                        <span aria-hidden="true">Newer &rarr;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>;
     }
 
     render() {
@@ -317,52 +470,17 @@ class EDComments extends EDStatefulFormComponent {
         }
 
         return <div>
-            {this.props.order === 'desc' ? this.renderTools() : undefined}
+            { this.isInfiniteScroll() ? this.renderTools() : undefined}
             <div ref={container => this.container = container}>
-                { this.state.posts.map(c => <div key={c.id} className="forum-post" id={`forum-post-${c.id}`}>
-                    <div className="post-profile-picture">
-                        <a href={`/author/${c.account_id}`} title={`Visit ${c.account.nickname}'s profile`}>
-                            <img src={c.account.has_avatar ? `/storage/avatars/${c.account_id}.png` : '/img/anonymous-profile-picture.png'} />
-                        </a>
-                    </div>
-                    <div className="post-content">
-                        <div className="post-tools">
-                            <a href={`/author/${c.account_id}`} title={`Visit ${c.account.nickname}'s profile`} className="nickname">{c.account.nickname}</a>
-                            {' '}
-                            {c.account.tengwar ? <span className="tengwar">{c.account.tengwar}</span> : ''}
-                            {' · '}
-                            <span className="date">{ c.created_at }</span>
-                            {' '}
-                            <span className="post-id">#{c.id}</span>
-                            <span className="pull-right">
-                                {c.is_deleted || ! c.number_of_likes ? '' : `${c.number_of_likes} `}
-                                {! c.is_deleted 
-                                    ? <a href="#" onClick={ev => this.onLikeClick(ev, c.id, this.props.accountId && c.likes.length > 0)}>
-                                    <span className={classNames('glyphicon', 'glyphicon-thumbs-up', { 
-                                        'like-not-liked': ! this.props.accountId || c.likes.length === 0, 
-                                        'like-liked': this.props.accountId && c.likes.length > 0 
-                                    })} />
-                                    </a>
-                                : ''}
-                            </span>
-                        </div>
-                        <div className="post-body">
-                            { !c.is_deleted 
-                                ? parser.parse(c.content)
-                                : <em>{c.account.nickname} has redacted this post.</em>
-                            }
-                        </div>
-                        { ! c.is_deleted && this.props.accountId === c.account_id ?
-                        <div className="small pull-right">
-                            <a href="#" onClick={this.onDeletePost.bind(this, c)}>Delete</a>
-                            { ' · ' }
-                            <a href="#" onClick={this.onEditPost.bind(this, c)}>Edit</a>
-                        </div> : '' }
-                    </div>
-                </div>) }
+                { this.state.posts.map(this.renderPost.bind(this, parser)) }
             </div>
-            {this.state.loading ? <div className="sk-spinner sk-spinner-pulse" /> : undefined}
-            {this.props.order === 'asc' ? this.renderTools() : undefined}
+            { this.state.loading ? <div className="sk-spinner sk-spinner-pulse" /> : undefined}
+            { this.isInfiniteScroll() ? undefined : 
+                <div>
+                    {this.renderPagination()}
+                    {this.renderTools()}
+                </div> 
+            }
         </div>;
     }
 }

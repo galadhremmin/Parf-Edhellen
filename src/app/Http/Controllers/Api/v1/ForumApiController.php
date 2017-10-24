@@ -9,7 +9,8 @@ use App\Http\Controllers\Controller;
 use App\Repositories\ForumRepository;
 use App\Repositories\Interfaces\IAuditTrailRepository;
 use App\Models\Initialization\Morphs;
-use App\Http\RouteResolving\RouteResolverFactory;
+use App\Http\Discuss\ContextFactory;
+use App\Adapters\DiscussAdapter;
 use App\Models\{ 
     Account,
     AuditTrail,
@@ -20,22 +21,21 @@ use App\Models\{
     Translation, 
     Sentence 
 };
-use App\Helpers\{ 
-    MarkdownParser, 
-    StringHelper 
-};
 
 class ForumApiController extends Controller 
 {
     protected $_auditTrail;
+    protected $_discussAdapter;
     protected $_repository;
-    protected $_routeResolverFactory;
+    protected $_contextFactory;
 
-    public function __construct(IAuditTrailRepository $auditTrail, ForumRepository $repository, RouteResolverFactory $routeResolverFactory)
+    public function __construct(IAuditTrailRepository $auditTrail, DiscussAdapter $discussAdapter, 
+        ForumRepository $repository, ContextFactory $contextFactory)
     {
-        $this->_auditTrail           = $auditTrail;
-        $this->_repository           = $repository;
-        $this->_routeResolverFactory = $routeResolverFactory;
+        $this->_auditTrail     = $auditTrail;
+        $this->_discussAdapter = $discussAdapter;
+        $this->_repository     = $repository;
+        $this->_contextFactory = $contextFactory;
     }
 
     public function index(Request $request)
@@ -72,37 +72,100 @@ class ForumApiController extends Controller
             $maxLength = config('ed.forum_resultset_max_length');
             $majorId = $request->has('from_id')
                 ? intval($request->input('from_id'))
-                : ($ascending ? 0 : PHP_INT_MAX);
+                : -1;
 
+            // Determine the number of 'pages' there are, which is relevant when
+            // retrieving things in an ascending order.
+            $pages = 0;
+            if ($ascending) {
+                $pages = ceil($thread->forum_posts()
+                    ->where('is_hidden', 0)
+                    ->count() / $maxLength
+                );
+            }
+
+            // composer "filters" (where-conditions for the query fetching the posts). This is a
+            // quite interesting process, as it depends entirely on the sort order:
+            //
+            // ASC (ascending):   The API offers a pagination as a means to sift through posts. The
+            //                    default state is nonetheless the _n_ latest posts, assuming that the
+            //                    client is interested in the _latest_ posts, albeit presented in an
+            //                    ascending order. The major ID, in this situation, acts as the page number.
+            //
+            // DESC (descending): The API offers an infinite scroll-like experience, where majorId is 
+            //                    always the least ID of the result set. The result set is 'paginated'
+            //                    by the client continuously sending the last, least major ID to the API.
+            // 
+            // Hidden posts are automatically excluded. Deleted posts might still be shown, which is why
+            // we are not filtering out deleted.
+            $filters = [
+                ['is_hidden', 0]
+            ];
+
+            $skip = 0;
+            if ($ascending) {
+                // load the _latest_ n posts by default, even when sorting in an ascending 
+                // order.
+                if ($majorId < 1) {
+                    $majorId = $pages; // 1:st page
+                } else if ($majorId > $pages) {
+                    // if the major ID is larger than the number of pages available,
+                    // it is likely that the the client is, in fact, requesting to
+                    // load a specific post. In that case, we must determine the page
+                    // on which the post might be found. 
+                    $requestedId = $majorId;
+                    $majorId = $pages;
+                    do {
+                        // retrieve an array of IDs within each page, until the page
+                        // with the sought-after ID is found.
+                        $ok = $thread->forum_posts()->where($filters)
+                            ->orderBy('id', 'asc')
+                            ->skip(($majorId - 1) * $maxLength)
+                            ->take($maxLength)
+                            ->pluck('id')
+                            ->search($requestedId);
+
+                        if ($ok !== false) {
+                            break;
+                        }
+
+                        $majorId -= 1;
+                    } while ($majorId > 1);
+                }
+                $skip = ($majorId - 1) * $maxLength;
+
+            } else if ($majorId > 0) {
+                $filters[] = ['id', '<', $majorId];
+            } else {
+                $majorId = PHP_INT_MAX;
+            }
+            
             $posts = $thread->forum_posts()
                 ->with($loadingOptions)
-                ->where([
-                    ['is_hidden', 0],
-                    ['id', $ascending ? '>' : '<', $majorId]
-                ])
+                ->where($filters)
                 ->orderBy('id', $direction)
+                ->skip($skip)
                 ->take($maxLength)
                 ->get();
 
-            $parser = new MarkdownParser();
             foreach ($posts as $post) {
-
                 // Determine the major ID depending on the order of the items
-                if (($ascending && $majorId < $post->id) ||
-                    (! $ascending && $majorId > $post->id)) {
+                if (! $ascending && $majorId > $post->id) {
                     $majorId = $post->id;
                 }
 
-                $post->content = $parser->parse($post->content);
+                $this->_discussAdapter->adaptPost($post);
             }
         } else {
             $posts = [];
             $majorId = 0;
+            $pages = 0;
         }
 
         return [
             'posts'    => $posts,
-            'major_id' => $majorId
+            'major_id' => $majorId,
+            'pages'    => $pages
         ];
     }
 
@@ -110,9 +173,9 @@ class ForumApiController extends Controller
     {
         $post = ForumPost::findOrFail($id);
 
-        $resolver = $this->_routeResolverFactory->create($post->forum_thread->entity_type);
+        $resolver = $this->_contextFactory->create($post->forum_thread->entity_type);
         if (! $resolver) {
-            abort(400, 'A resolver does not exist for the specified entity type "'.$post->forum_thread->entity_type.'".');
+            abort(400, 'A context cannot be resolved for the specified entity type "'.$post->forum_thread->entity_type.'".');
         }
 
         $url = $resolver->resolve($post->forum_thread->entity).'?forum_post_id='.$id;
@@ -352,9 +415,9 @@ class ForumApiController extends Controller
         $morph = $request->input('morph');
         $entityId = intval($request->input('entity_id'));
         
-        $resolver = $this->_routeResolverFactory->create($morph);
+        $resolver = $this->_contextFactory->create($morph);
         if (! $resolver) {
-            abort(400, 'The entity '.$morph.' is not supported as it lacks a IRouteResolver '.
+            abort(400, 'The entity '.$morph.' is not supported as it lacks a context '.
                        'implementation for '.$entityName.'.');
         }
         
@@ -374,32 +437,17 @@ class ForumApiController extends Controller
                 abort(400, 'Entity '.$morph.' with the ID '.$entityId.' does not exist.');
             }
 
+            // Compose a default subject for the thread
             $subject = $request->has('subject')
                 ? $request->input('subject') : '';
-            
             if (empty($subject)) {
                 $subject = $resolver->getName($entity);
             }
-
-            $roles = $resolver->getRoles();
-            $user = $request->user();
-            $ok = (count($roles) === 0);
-
-            if ($user !== null) {
-                foreach ($roles as $role) {
-                    if ($user->memberOf($role)) {
-                        $ok = true;
-                        break;
-                    }
-                }
-            }
-
-            if (! $ok) {
-                abort(400, 'User '.$user->id.' is not authorized to create threads for '.$morph.'.');
-            }
-
             $thread->subject = $subject;
-            $thread->roles   = count($roles) ? implode(',', $roles) : null;
+        }
+
+        if (! $resolver->available($thread, $request->user())) {
+            abort(403);
         }
 
         return $thread;

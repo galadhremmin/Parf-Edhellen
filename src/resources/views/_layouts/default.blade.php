@@ -22,7 +22,7 @@
   @endif
 </head>
 <body class="{{ $isAdmin ? 'ed-admin' : ($isAdmin === false ? 'ed-user' : 'ed-anonymous') }}" data-user-id="{{ $user ? $user->id : '0' }}" data-v="{{ config('ed.version') }}">
-  <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class="navbar navbar-default" role="navigation">
     <div class="container">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -36,17 +36,32 @@
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
           <li class="{{ active('') }}"><a href="/">Home</a></li>
-          <li class="{{ active(['sentence.public', 'sentence.public.language', 'sentence.public.sentence']) }}"><a href="{{ route('sentence.public') }}">Phrases</a></li>
           <li class="{{ active('about') }}"><a href="{{ route('about') }}">About</a></li>
-          <li class="{{ active('about.donations') }}"><a href="{{ route('about.donations') }}">Donations</a></li>
+          <li class="{{ active('about.donations') }} hidden-sm"><a href="{{ route('about.donations') }}">Donations</a></li>
+          <li class="{{ active(['sentence.public', 'sentence.public.language', 'sentence.public.sentence']) }}"><a href="{{ route('sentence.public') }}">Phrases</a></li>
           <li class="{{ active('discuss.index') }}"><a href="{{ route('discuss.index') }}">Discuss</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
           @if ($user)
-          <li class="{{ active('dashboard') }}"><a href="{{ route('dashboard') }}">Dashboard</a></li>
-          <li><a href="{{ route('logout') }}">Log out</a></li>
+          <li class="{{ active('dashboard') }}">
+            <a href="{{ route('dashboard') }}">
+              <span class="glyphicon glyphicon-dashboard"></span> 
+              &nbsp;Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="{{ route('logout') }}">
+              <span class="glyphicon glyphicon-log-out"></span> 
+              &nbsp;Log out
+            </a>
+          </li>
           @else
-          <li class="{{ active('login') }}"><a href="{{ route('login') }}">Log in</a></li>
+          <li class="{{ active('login') }}">
+            <a href="{{ route('login') }}">
+              <span class="glyphicon glyphicon-log-in"></span> 
+              &nbsp; Log in
+            </a>
+          </li>
           @endif
         </ul>
       </div><!--/.nav-collapse -->

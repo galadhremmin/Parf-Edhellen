@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Http\RouteResolving\Resolvers;
+namespace App\Http\Discuss\Contexts;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Http\RouteResolving\IRouteResolver;
+
+use App\Models\Account;
+use App\Http\Discuss\IDiscussContext;
 use App\Helpers\LinkHelper;
 
-class AccountRouteResolver implements IRouteResolver
+class TranslationContext implements IDiscussContext
 {
     private $_linkHelper;
 
@@ -17,16 +19,12 @@ class AccountRouteResolver implements IRouteResolver
 
     public function resolve(Model $entity)
     {
-        if (! $entity) {
-            return null;
-        }
-
-        return $this->_linkHelper->author($entity->id, $entity->nickname);
+        return $this->_linkHelper->translationVersions($entity->id);
     }
 
-    public function getRoles()
+    function available($entityOrId, Account $account = null)
     {
-        return [];
+        return true;
     }
 
     public function getName(Model $entity)
@@ -34,13 +32,13 @@ class AccountRouteResolver implements IRouteResolver
         if (! $entity) {
             return null;
         }
-
-        return 'Account “'.$entity->nickname.'”';
+        
+        return 'Gloss “'.$entity->word->word.'” by '.$entity->account->nickname;
     }
 
     public function getIconPath()
     {
         // Refer to Bootstrap glyphicons.
-        return 'user';
+        return 'book';
     }
 }

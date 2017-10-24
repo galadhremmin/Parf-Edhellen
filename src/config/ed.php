@@ -30,10 +30,10 @@ return [
     'system_errors_logging' => env('ED_SYSTEM_ERRORS_LOGGING', false),
 
     'forum_entities' => [
-        App\Models\Account::class      => App\Http\RouteResolving\Resolvers\AccountRouteResolver::class,
-        App\Models\Contribution::class => App\Http\RouteResolving\Resolvers\ContributionRouteResolver::class,
-        App\Models\Sentence::class     => App\Http\RouteResolving\Resolvers\SentenceRouteResolver::class,
-        App\Models\Translation::class  => App\Http\RouteResolving\Resolvers\TranslationRouteResolver::class
+        App\Models\Account::class      => App\Http\Discuss\Contexts\AccountContext::class,
+        App\Models\Contribution::class => App\Http\Discuss\Contexts\ContributionContext::class,
+        App\Models\Sentence::class     => App\Http\Discuss\Contexts\SentenceContext::class,
+        App\Models\Translation::class  => App\Http\Discuss\Contexts\TranslationContext::class
     ],
     'forum_resultset_max_length' => 10
 ];

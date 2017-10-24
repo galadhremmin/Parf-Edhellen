@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Facades\Cookie;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\{
+    Cache,
+    Cookie
+};
 
 class Account extends Authenticatable
 {
     use Notifiable;
-
-    protected $groups = [];
 
     /**
      * The attributes that are mass assignable.
@@ -30,19 +31,18 @@ class Account extends Authenticatable
         'identity', 'authorization_provider_id', 'is_configured'
     ];
 
-    public function memberOf(string $groupName) 
+    public function memberOf(string $roleName) 
     {
-        if (isset($groups[$groupName])) {
-            return $groups[$groupName];
-        }
-
-        $memberStatus = Role::forAccount($this)->where('name', $groupName)->count() > 0;;
-        $groups[$groupName] = $memberStatus;
-
-        return $memberStatus;
+        $user = $this;
+        $roles = Cache::remember('ed.rol.'.$user->id, 5 /* minutes */, function() use($user) {
+            return Role::forAccount($user)->pluck('name');
+        });
+        
+        return $roles->search($roleName) !== false;
     }
 
-    public function isAdministrator() {
+    public function isAdministrator() 
+    {
         return $this->memberOf('Administrators');
     }
 

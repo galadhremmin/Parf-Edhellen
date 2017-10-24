@@ -1,3 +1,4 @@
+@import 'node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_variables';
 header {
   h2 {
     /* It just looks better this way... */
@@ -8,7 +9,7 @@ header {
 blockquote {
 
   &:hover {
-    background: #eee;
+    background: $alert-info-bg;
     border-radius: 5px;
   }
 

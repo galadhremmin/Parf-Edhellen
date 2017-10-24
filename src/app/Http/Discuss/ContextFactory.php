@@ -1,23 +1,23 @@
 <?php
 
-namespace App\Http\RouteResolving;
+namespace App\Http\Discuss;
 
 use App\Models\Initialization\Morphs;
 
-class RouteResolverFactory
+class ContextFactory
 {
     private static $_cache = [];
 
     /**
-     * Creates an instance of IRouteResolver for the specified morph alias.
+     * Creates an instance of IDiscussContext for the specified morph alias.
      *
      * @param string $morph
-     * @return \App\Http\RouteResolvers\IRouteResolver
+     * @return \App\Http\Discuss\IDiscussContext
      */
     public function create(string $morph)
     {
         if (isset(self::$_cache[$morph])) {
-            $routeResolver = self::$_cache[$morph];
+            $contextName = self::$_cache[$morph];
 
         } else {
             $className = Morphs::getMorphedModel($morph);
@@ -30,9 +30,9 @@ class RouteResolverFactory
                 return null;
             }
 
-            $routeResolver = self::$_cache[$morph] = $entities[$className];
+            $contextName = self::$_cache[$morph] = $entities[$className];
         }
 
-        return resolve($routeResolver);
+        return resolve($contextName);
     }
 }

@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Http\RouteResolving\Resolvers;
+namespace App\Http\Discuss\Contexts;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Http\RouteResolving\IRouteResolver;
+
+use App\Models\Account;
+use App\Http\Discuss\IDiscussContext;
 use App\Helpers\LinkHelper;
 
-class SentenceRouteResolver implements IRouteResolver
+class SentenceContext implements IDiscussContext
 {
     private $_linkHelper;
 
@@ -25,9 +27,9 @@ class SentenceRouteResolver implements IRouteResolver
             $entity->id, $entity->name);
     }
 
-    public function getRoles()
+    function available($entityOrId, Account $account = null)
     {
-        return [];
+        return true;
     }
     
     public function getName(Model $entity)

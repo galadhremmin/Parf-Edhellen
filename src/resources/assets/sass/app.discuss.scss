@@ -9,10 +9,15 @@
     .r {
         display: flex;
         flex-wrap: wrap;
-        padding: 5px 0 5px 0;
+        padding: $padding-base-vertical;
 
         &:nth-child(even) {
             background-color: $table-bg-accent;
+        }
+        
+        &:hover {
+            background-color: $alert-info-bg;
+            border-radius: $border-radius-base;
         }
 
         /* column */
@@ -20,6 +25,10 @@
             flex-basis: 0;
             flex-grow: 1;
             max-width: 100%;
+
+            &.p2 {
+                flex-grow: 2;
+            }
 
             &:first-child {
                 max-width: 80px;

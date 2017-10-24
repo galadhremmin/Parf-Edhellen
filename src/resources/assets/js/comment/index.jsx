@@ -9,10 +9,12 @@ window.addEventListener('load', function () {
         const entityId = parseInt(container.dataset['entityId'], 10);
         const accountId = parseInt(container.dataset['accountId'], 10);
         const enabled = /^true$/i.test(container.dataset['postEnabled'] || '');
+        const order = container.dataset['postOrder'] || undefined;
 
         ReactDOM.render(
                 <div className="ed-comments">
-                    <EDComments morph={morph} entityId={entityId} accountId={accountId} enabled={enabled} />
+                    <EDComments morph={morph} entityId={entityId} accountId={accountId} enabled={enabled}
+                        order={order} />
                 </div>,
             container
         );
