@@ -11,4 +11,12 @@ UPDATE `forum_threads` ft
         ft.`account_id`      = (SELECT `account_id` FROM `forum_posts` WHERE `forum_thread_id` = ft.`id` ORDER BY `id` DESC LIMIT 1),
         ft.`updated_at`      = (SELECT `created_at` FROM `forum_posts` WHERE `forum_thread_id` = ft.`id` ORDER BY `id` DESC LIMIT 1);
 
+CREATE TABLE `forum_discussions` (
+    `id` int(16) unsigned NOT NULL AUTO_INCREMENT,
+    `account_id` int(6) unsigned NOT NULL,
+    `updated_at` datetime DEFAULT NULL,
+    `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+);
+
 INSERT INTO `version` VALUES (3.1, NOW());
