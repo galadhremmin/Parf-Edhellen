@@ -2,5 +2,5 @@
 @inject('storage', 'App\Helpers\StorageHelper')
 
 <a href="{{ $link->author($account->id, $account->nickname) }}" title="View {{ $account->nickname }}'s profile" class="pp">
-  <img src="{{ $storage->accountAvatar($account) }}">
+  <img src="{{ $storage->accountAvatar($account, true) }}">
 </a>
