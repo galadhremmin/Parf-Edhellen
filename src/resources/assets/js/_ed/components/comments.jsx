@@ -337,7 +337,7 @@ class EDComments extends EDStatefulFormComponent {
                 <button className="btn btn-primary" onClick={this.onReplyClick.bind(this)}>
                     <span className="glyphicon glyphicon-pencil" />
                     {' '}
-                    Reply
+                    Write a comment
                 </button>
             </div>
             <div className={classNames({'hidden': ! this.state.show_reply})} ref={elem => this.textboxContainer = elem}>
