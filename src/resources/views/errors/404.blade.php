@@ -1,6 +1,6 @@
 @extends('_layouts.default')
 
-@section('title', 'Server error')
+@section('title', 'Page cannot be found')
 @section('body')
 
 <h1>Mas i-víref nîn!</h1>

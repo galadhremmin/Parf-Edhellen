@@ -1,6 +1,6 @@
 @extends('_layouts.default')
 
-@section('title', 'Server error')
+@section('title', 'Permission denied')
 @section('body')
 
 <h1>Daro othol!</h1>

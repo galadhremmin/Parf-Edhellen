@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Discuss\ContextFactory;
 use App\Adapters\DiscussAdapter;
 use App\Models\Initialization\Morphs;
+use App\Events\ForumPostCreated;
 use App\Models\{
     ForumDiscussion,
     ForumThread,
@@ -42,6 +43,9 @@ class DiscussController extends Controller
     public function show(Request $request, int $id)
     {
         $thread = ForumThread::findOrFail($id);
+        if ($thread->number_of_posts < 1) {
+            abort(404, 'The thread you are looking for does not exist.');
+        }
 
         $context = $this->_contextFactory->create($thread->entity_type);
         if (! $context->available($thread, $request->user())) {
@@ -85,11 +89,13 @@ class DiscussController extends Controller
         ]);
 
         // Create a post with the user's message content
-        ForumPost::create([
+        $post = ForumPost::create([
             'account_id'      => $userId,
             'forum_thread_id' => $thread->id,
             'content'         => $request->input('content')
         ]);
+
+        event(new ForumPostCreated($post, $userId));
 
         return redirect()->route('discuss.show', ['id' => $thread->id]);
     }

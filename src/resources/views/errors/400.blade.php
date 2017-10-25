@@ -1,6 +1,6 @@
 @extends('_layouts.default')
 
-@section('title', 'Server error')
+@section('title', 'A strange request')
 @section('body')
 
 <h1>Lá hanyan quettalyar!</h1>
