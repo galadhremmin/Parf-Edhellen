@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\{
 
 use App\Http\Controllers\Controller;
 use App\Models\Initialization\Morphs;
+use App\Events\{
+    ContributionDestroyed
+};
 use App\Models\{
     Contribution,
     Sentence,
@@ -268,6 +271,8 @@ class ContributionController extends Controller
         $this->requestPermission($request, $contribution);
 
         $contribution->delete();
+
+        event(new ContributionDestroyed($contribution));
         
         return $request->user()->isAdministrator()
             ? redirect()->route('contribution.list')

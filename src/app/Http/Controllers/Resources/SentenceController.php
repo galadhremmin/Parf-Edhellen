@@ -9,6 +9,9 @@ use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
 use App\Helpers\LinkHelper;
 use App\Repositories\SentenceRepository;
+use App\Events\{
+    SentenceDestroyed
+};
 use App\Models\{
     Language, 
     Sentence, 
@@ -115,6 +118,8 @@ class SentenceController extends Controller
         
         $this->_sentenceRepository->destroyFragments($sentence);
         $sentence->delete();
+
+        event(new SentenceDestroyed($sentence));
 
         return redirect()->route('sentence.index');
     }

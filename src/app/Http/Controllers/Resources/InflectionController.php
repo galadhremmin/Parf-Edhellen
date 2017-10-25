@@ -5,8 +5,14 @@ namespace App\Http\Controllers\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-use App\Models\{ Inflection, Speech };
 use App\Http\Controllers\Controller;
+use App\Events\{
+    InflectionDestroyed
+};
+use App\Models\{ 
+    Inflection, 
+    Speech 
+};
 
 class InflectionController extends Controller
 {
@@ -60,6 +66,8 @@ class InflectionController extends Controller
         }
 
         $inflection->delete();
+
+        event(new InflectionDestroyed($inflection));
 
         return redirect()->route('inflection.index');
     }

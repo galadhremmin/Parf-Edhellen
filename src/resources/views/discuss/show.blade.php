@@ -5,8 +5,9 @@
   <h1>{{ $thread->subject }}</h1>
   
   {!! Breadcrumbs::render('discuss.show', $thread) !!}
-
-
+  
+  {!! $context->view($thread->entity) !!}
+  <hr>
   @include('_shared._comments', [
     'entity_id' => $thread->entity_id,
     'morph'     => $thread->entity_type,

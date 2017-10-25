@@ -2,6 +2,8 @@
 
 namespace App\Http\Discuss;
 
+use View;
+
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Account;
 
@@ -39,4 +41,12 @@ interface IDiscussContext
      * @return string|null
      */
     function getIconPath();
+
+    /**
+     * View for representing the specified entitity.
+     *
+     * @param Model $entity
+     * @return View
+     */
+    function view(Model $entity);
 }

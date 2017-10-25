@@ -445,7 +445,7 @@ class EDComments extends EDStatefulFormComponent {
         return <nav className="text-center">
             <ul className="pagination">
                 <li className={classNames({'disabled': currentPage === 1})}>
-                    <a href="#" onClick={this.onPaginationClick.bind(this, 1)}>
+                    <a href="#" onClick={this.onPaginationClick.bind(this, currentPage - 1)}>
                         <span aria-hidden="true">&larr; Older</span>
                     </a>
                 </li>
@@ -455,7 +455,7 @@ class EDComments extends EDStatefulFormComponent {
                     </a>
                 </li>)}
                 <li className={classNames({'disabled': currentPage === numberOfPages})}>
-                    <a href="#" onClick={this.onPaginationClick.bind(this, numberOfPages)}>
+                    <a href="#" onClick={this.onPaginationClick.bind(this, currentPage + 1)}>
                         <span aria-hidden="true">Newer &rarr;</span>
                     </a>
                 </li>

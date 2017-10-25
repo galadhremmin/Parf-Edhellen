@@ -53,4 +53,11 @@ class ContributionContext implements IDiscussContext
         // Refer to Bootstrap glyphicons.
         return 'plus';
     }
+
+    public function view(Model $entity)
+    {
+        return view('discuss.context._contribution', [
+            'contribution' => $entity
+        ]);
+    }
 }

@@ -40,10 +40,15 @@ class DiscussController extends Controller
     public function show(Request $request, int $id)
     {
         $thread = ForumThread::findOrFail($id);
-        if (! $this->_contextFactory->create($thread->entity_type)->available($thread, $request->user())) {
+
+        $context = $this->_contextFactory->create($thread->entity_type);
+        if (! $context->available($thread, $request->user())) {
             abort(403);
         }
 
-        return view('discuss.show', ['thread' => $thread]);
+        return view('discuss.show', [
+            'thread'  => $thread,
+            'context' => $context
+        ]);
     }
 }

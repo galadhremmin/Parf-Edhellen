@@ -22,6 +22,9 @@ use App\Http\Controllers\Traits\{
     CanValidateTranslation, 
     CanMapTranslation 
 };
+use App\Events\{
+    TranslationDestroyed
+};
 
 class TranslationController extends Controller
 {
@@ -147,11 +150,19 @@ class TranslationController extends Controller
             'replacement_id' => 'sometimes|numeric|exists:translations,id'
         ]);
 
+        $translation = Translation::findOrFail($id);
         $replacementId = $request->has('replacement_id') 
             ? intval($request->input('replacement_id'))
             : null;
+        $replacement = $replacementId !== null 
+            ? Translation::findOrFail($replacementId)
+            : null;
 
         $ok = $this->_translationRepository->deleteTranslationWithId($id, $replacementId);
+        if ($ok) {
+            event(new TranslationDestroyed($translation, $replacement));
+        }
+
         return $ok
             ? response(null, 204)
             : response(null, 400);

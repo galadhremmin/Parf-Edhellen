@@ -28,4 +28,11 @@ class DiscussContext implements IDiscussContext
         // Refer to Bootstrap glyphicons.
         return 'comment';
     }
+
+    public function view(Model $entity)
+    {
+        return view('discuss.context._discuss', [
+            'post' => $entity
+        ]);
+    }
 }

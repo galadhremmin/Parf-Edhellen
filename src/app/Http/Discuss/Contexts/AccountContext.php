@@ -45,4 +45,12 @@ class AccountContext implements IDiscussContext
         // Refer to Bootstrap glyphicons.
         return 'user';
     }
+
+    public function view(Model $entity)
+    {
+        return view('discuss.context._account', [
+            'account' => $entity,
+            'address' => $this->resolve($entity)
+        ]);
+    }
 }
