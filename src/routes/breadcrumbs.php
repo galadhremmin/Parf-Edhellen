@@ -245,6 +245,12 @@ Breadcrumbs::register('discuss.show', function ($breadcrumbs, $thread)
     $breadcrumbs->push($thread->subject, route('discuss.show', ['id' => $thread->id]));
 });
 
+Breadcrumbs::register('discuss.create', function ($breadcrumbs)
+{
+    $breadcrumbs->parent('discuss');
+    $breadcrumbs->push('New thread', route('discuss.create'));
+});
+
 // //////////////////////////////////////////////////////////////////////////////////////////////
 // Dashboard > System errors
 

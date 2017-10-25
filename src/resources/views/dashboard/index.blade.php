@@ -61,7 +61,7 @@
             </li>
             <li>
               <a href="{{ route('contribution.index') }}">
-              <span class="glyphicon glyphicon-globe"></span>
+              <span class="glyphicon glyphicon-book"></span>
                 Contributions
 
                 @if ($noOfContributions)

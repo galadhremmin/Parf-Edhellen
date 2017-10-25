@@ -12,6 +12,17 @@
     the conversation!
   </p>
 
+  @if (Auth::check())
+  <div class="text-right">
+    <a href="{{ route('discuss.create') }}" class="btn btn-primary">
+      <span class="glyphicon glyphicon-pencil"></span>
+      New thread
+    </a>
+  </div>
+  @endif
+
+  <hr>
+
   <div class="discuss-table">
   @foreach ($threads as $thread)
     <div class="r">

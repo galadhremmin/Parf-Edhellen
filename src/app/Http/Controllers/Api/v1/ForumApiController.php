@@ -7,13 +7,11 @@ use Carbon\Carbon;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\ForumRepository;
-use App\Repositories\Interfaces\IAuditTrailRepository;
 use App\Models\Initialization\Morphs;
 use App\Http\Discuss\ContextFactory;
 use App\Adapters\DiscussAdapter;
 use App\Models\{ 
     Account,
-    AuditTrail,
     Contribution,
     ForumPost, 
     ForumPostLike, 
@@ -21,18 +19,21 @@ use App\Models\{
     Translation, 
     Sentence 
 };
+use App\Events\{
+    ForumPostCreated,
+    ForumPostEdited,
+    ForumPostLikeCreated
+};
 
 class ForumApiController extends Controller 
 {
-    protected $_auditTrail;
     protected $_discussAdapter;
     protected $_repository;
     protected $_contextFactory;
 
-    public function __construct(IAuditTrailRepository $auditTrail, DiscussAdapter $discussAdapter, 
+    public function __construct(DiscussAdapter $discussAdapter, 
         ForumRepository $repository, ContextFactory $contextFactory)
     {
-        $this->_auditTrail     = $auditTrail;
         $this->_discussAdapter = $discussAdapter;
         $this->_repository     = $repository;
         $this->_contextFactory = $contextFactory;
@@ -237,7 +238,7 @@ class ForumApiController extends Controller
         ]);
 
         // Register an audit trail
-        $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_ADD, $post, /* user id = */ 0, $thread->roles !== null);
+        event(new ForumPostCreated($post, $account->id));
 
         return response(null, 201);
     }
@@ -273,7 +274,7 @@ class ForumApiController extends Controller
         $thread->save();
 
         // Register an audit trail
-        $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_EDIT, $post, /* user id = */ 0, $post->forum_thread->roles !== null);
+        event(new ForumPostEdited($post, $post->account_id));
 
         return response(null, 200);
     }
@@ -360,7 +361,7 @@ class ForumApiController extends Controller
             $thread->save();
 
             // Register an audit trail
-            $this->_auditTrail->store(AuditTrail::ACTION_COMMENT_LIKE, $post, $userId, $post->forum_thread->roles !== null);
+            event(new ForumPostLikeCreated($post, $userId));
 
             $statusCode = 201; // OK, like saved
         }

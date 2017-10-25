@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Discuss\Listeners;
+namespace App\Subscribers;
 
 use App\Models\Initialization\Morphs;
 use App\Models\{
@@ -17,7 +17,7 @@ use App\Events\{
     TranslationDestroyed
 };
 
-class DestroyEventSubscriber
+class DiscussEventSubscriber
 {
     /**
      * Register the listeners for the subscriber.

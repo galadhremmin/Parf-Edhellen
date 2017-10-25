@@ -3,18 +3,22 @@
 namespace App\Repositories;
 
 use Illuminate\Support\Facades\DB;
-use App\Models\{ AuditTrail, Keyword, Translation, Sense, Word };
+use Auth;
+
 use App\Helpers\StringHelper;
+use App\Events\{
+    TranslationCreated,
+    TranslationEdited
+};
+use App\Models\{ 
+    Keyword, 
+    Translation,
+    Sense, 
+    Word 
+};
 
 class TranslationRepository
 {
-    protected $_auditTrail;
-
-    public function __construct(Interfaces\IAuditTrailRepository $auditTrail)
-    {
-        $this->_auditTrail = $auditTrail;
-    }
-
     public function getKeywordsForLanguage(string $word, $reversed = false, $languageId = 0, $includeOld = true) 
     {
         $hasWildcard = null;
@@ -374,13 +378,12 @@ class TranslationRepository
 
         // 13. Register an audit trail
         if ($changed || $keywordsChanged || $originalTranslation === null) {
-            $action = ($originalTranslation === null)
-                ? AuditTrail::ACTION_TRANSLATION_ADD  
-                : AuditTrail::ACTION_TRANSLATION_EDIT;
-            $userId = ($action === AuditTrail::ACTION_TRANSLATION_ADD)
-                ? $translation->account_id
-                : 0; // use the user currently logged in
-            $this->_auditTrail->store($action, $translation, $userId);
+
+            $event = ($originalTranslation === null)
+                ? new TranslationCreated($translation, $translation->account_id) 
+                : new TranslationEdited($translation, Auth::user()->id);
+            
+            event($event);
         }
 
         return $translation;

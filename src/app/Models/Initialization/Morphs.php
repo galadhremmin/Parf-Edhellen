@@ -9,6 +9,7 @@ use App\Models\{
     Contribution,
     Favourite, 
     FlashcardResult, 
+    ForumDiscussion,
     ForumPost, 
     Sentence, 
     Translation 
@@ -25,7 +26,8 @@ class Morphs
             'flashcard'    => FlashcardResult::class,
             'forum'        => ForumPost::class,
             'sentence'     => Sentence::class,
-            'translation'  => Translation::class
+            'translation'  => Translation::class,
+            'discussion'   => ForumDiscussion::class
         ]);
     }
 

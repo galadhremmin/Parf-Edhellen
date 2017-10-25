@@ -25,7 +25,8 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $subscribe = [
-        \App\Http\Discuss\Listeners\DestroyEventSubscriber::class
+        \App\Subscribers\AuditTrailSubscriber::class,
+        \App\Subscribers\DiscussEventSubscriber::class,
     ];
 
     /**

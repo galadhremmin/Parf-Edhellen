@@ -11,15 +11,17 @@ use Illuminate\Support\Facades\{
 
 use App\Adapters\DiscussAdapter;
 use App\Repositories\StatisticsRepository;
-use App\Repositories\Interfaces\IAuditTrailRepository;
 use App\Helpers\{
     MarkdownParser,
     StorageHelper
 };
+use App\Events\{
+    AccountChanged,
+    AccountAvatarChanged
+};
 
 use App\Models\{ 
     Account, 
-    AuditTrail,
     ForumPost,
     Translation,
     Sentence
@@ -27,15 +29,13 @@ use App\Models\{
 
 class AuthorController extends Controller
 {
-    protected $_auditTrail;
     protected $_discussAdapter;
     protected $_statisticsRepository;
     protected $_storageHelper;
 
-    public function __construct(IAuditTrailRepository $auditTrail, DiscussAdapter $discussAdapter, 
+    public function __construct(DiscussAdapter $discussAdapter, 
         StatisticsRepository $statisticsRepository, StorageHelper $storageHelper)
     {
-        $this->_auditTrail           = $auditTrail;
         $this->_discussAdapter       = $discussAdapter;
         $this->_statisticsRepository = $statisticsRepository;
         $this->_storageHelper        = $storageHelper;
@@ -160,7 +160,7 @@ class AuthorController extends Controller
             $author->save();
 
             // Register an audit trail for the changed profile
-            $this->_auditTrail->store(AuditTrail::ACTION_PROFILE_EDIT, $author);
+            event(new AccountChanged($author));
         }
 
         return redirect()->route('author.my-profile');
@@ -229,7 +229,7 @@ class AuthorController extends Controller
         unlink($file->path());
 
         // Register an audit trail for the changed avatar
-        $this->_auditTrail->store(AuditTrail::ACTION_PROFILE_EDIT_AVATAR, $author);
+        event(new AccountAvatarChanged($author));
     }
 
     private function getAccount(Request $request, $id)

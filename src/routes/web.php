@@ -88,7 +88,11 @@ Route::get('sitemap/{context}', 'SitemapController@index');
 Route::group([ 
     'namespace'  => 'Resources'
 ], function () {
-    Route::resource('discuss', 'DiscussController');
+    Route::resource('discuss', 'DiscussController', [
+        'only' => [ 'index', 'show' ]
+    ]);
+    Route::get('discuss/find-thread/{id}', 'DiscussController@resolveThread')
+        ->where([ 'id' => '[0-9]+' ])->name('discuss.find-thread');
 });
 
 // Restricted resources
@@ -97,6 +101,11 @@ Route::group([
     'prefix'     => 'dashboard', 
     'middleware' => ['auth']
 ], function () {
+
+    // Discuss
+    Route::resource('discuss', 'DiscussController', [
+        'only' => [ 'create', 'store' ]
+    ]);
 
     // Contribute
     Route::resource('contribution', 'ContributionController', [
