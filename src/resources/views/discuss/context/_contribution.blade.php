@@ -1,1 +1,1 @@
-Contribution
+<p>These are the comments on <a href="{{ $address }}">{{ $contribution->account->nickname }}'s contribution &ldquo;{{$contribution->word}}&rdquo;</a></p>

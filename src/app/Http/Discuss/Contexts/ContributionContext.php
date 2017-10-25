@@ -57,7 +57,8 @@ class ContributionContext implements IDiscussContext
     public function view(Model $entity)
     {
         return view('discuss.context._contribution', [
-            'contribution' => $entity
+            'contribution' => $entity,
+            'address'      => $this->resolve($entity)
         ]);
     }
 }
