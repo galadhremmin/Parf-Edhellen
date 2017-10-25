@@ -20,7 +20,7 @@
     <tbody>
       @foreach ($translations as $translation)
       <tr>
-        <td class="hidden-xs">{{ $translation->created_at->format('Y-m-d H:i') }}</td>
+        <td class="hidden-xs date">{{ $translation->created_at }}</td>
         <td>{{ $translation->language->name }}</td>
         <td>
           @if ($translation->is_uncertain || ($translation->translation_group_id && ! $translation->translation_group->is_canon))

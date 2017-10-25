@@ -45,7 +45,7 @@
             <tbody>
               @foreach ($reviews as $review)
               <tr>
-                <td>{{ $review->created_at->format('Y-m-d H:i') }}</td>
+                <td class="date">{{ $review->created_at }}</td>
                 <td>
                   <a href="{{ route('contribution.show', ['id' => $review->id]) }}">{{ $review->word }} ({{ $review->sense }})</a></td>
                 <td>

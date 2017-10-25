@@ -10,9 +10,9 @@
     @foreach ($reviews as $review)
     <tr>
       <td>
-        {{ $review->created_at->format('Y-m-d H:i') }}
+        <span class="date">{{ $review->created_at }}</span>
         @if ($review->date_reviewed)
-        &rarr; <span title="The submission was reviewed {{ $review->date_reviewed }} by {{ $review->reviewed_by->nickname }}.">{{ $review->date_reviewed->format('Y-m-d H:i') }}</span>
+        &rarr; <span class="date" title="The submission was reviewed {{ $review->date_reviewed }} by {{ $review->reviewed_by->nickname }}.">{{ $review->date_reviewed }}</span>
         @endif
       </td>
       <td>

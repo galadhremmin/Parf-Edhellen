@@ -21,7 +21,7 @@
             <p>
               <small class="text-muted">
                 <i class="glyphicon glyphicon-time"></i> 
-                {{ $post->created_at->format('Y-m-d H:i') }}
+                <span class="date">{{ $post->created_at }}</span>
               </small>
             </p>
           </div>

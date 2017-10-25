@@ -33,7 +33,7 @@
         <a href="{{ route('discuss.show', ['id' => $thread->id]) }}">{{ $thread->subject }}</a>
         <div class="pi">
           {{ $thread->account->nickname }}
-          {{ ($thread->updated_at ?: $thread->created_at)->format('Y-m-d H:i') }}
+          <span class="date">{{ $thread->updated_at ?: $thread->created_at }}</span>
         </div>
       </div>
       <div class="c text-right">

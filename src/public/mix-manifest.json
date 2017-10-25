@@ -1,7 +1,7 @@
 {
-    "/v4/js/vendor.js": "/v4/js/vendor.js",
     "/v4/js/sentence-admin.js": "/v4/js/sentence-admin.js",
     "/v4/js/global-plugins-admin.js": "/v4/js/global-plugins-admin.js",
+    "/v4/js/vendor.js": "/v4/js/vendor.js",
     "/v4/js/global-plugins-restricted.js": "/v4/js/global-plugins-restricted.js",
     "/v4/js/translation-admin.js": "/v4/js/translation-admin.js",
     "/v4/js/global.js": "/v4/js/global.js",

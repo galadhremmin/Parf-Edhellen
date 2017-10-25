@@ -2,7 +2,6 @@ import React from 'react';
 import axios from 'axios';
 import EDConfig from 'ed-config';
 import classNames from 'classnames';
-import moment from 'moment';
 import { EDStatefulFormComponent } from 'ed-form';
 import { Parser as HtmlToReactParser } from 'html-to-react';
 import { polyfill as enableSmoothScrolling } from 'smoothscroll-polyfill';
@@ -416,7 +415,7 @@ class EDComments extends EDStatefulFormComponent {
                     }
                 </div>
                 <div className="post-tools">
-                    <span className="date">{ moment(post.created_at).format('LLLL') }</span>
+                    <span className="date">{ (new Date(post.created_at)).toLocaleString() }</span>
                     { ! post.is_deleted && this.props.accountId === post.account_id ?
                     <span className="tools">
                         <a href="#" onClick={this.onDeletePost.bind(this, post)}>Delete</a>

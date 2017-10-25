@@ -14,7 +14,7 @@
   </p>
   @foreach ($versions as $v)
     <h3>
-      {{ $v->created_at->format('Y-m-d H:i') }}
+      <span class="date">{{ $v->created_at }}</span>
       @if ($v->is_latest) 
         · <em class="text-info">Latest version</em>
       @elseif (! $v->origin_translation_id)

@@ -10,9 +10,9 @@
   <p>
     Are you sure you want to delete <strong>{{ $review->word }}</strong> ({{ $review->sense }}) which 
     @if ($review->account_id === Auth::user()->id)
-    you submitted for review {{ $review->created_at->format('Y-m-d H:i') }}?
+    you submitted for review <span class="date">{{ $review->created_at }}</span>?
     @else
-    was submitted for review {{ $review->created_at->format('Y-m-d H:i') }} by 
+    was submitted for review <span class="date">{{ $review->created_at }}</span> by 
     <a href="{{ $link->author($review->account_id, $review->account->nickname) }}">{{ $review->account->nickname }}</a>?
     @endif
   </p>

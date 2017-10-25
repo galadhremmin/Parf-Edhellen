@@ -23,7 +23,7 @@
     <tbody>
       @foreach ($results as $r)
       <tr class="{{ $r->correct ? '' : 'danger' }}">
-        <td>{{ $r->created_at->format('Y-m-d H:i') }}</td>
+        <td class="date">{{ $r->created_at }}</td>
         <td>
           <a href="{{ $link->translation($r->translation_id) }}">
             {{ $r->translation->word->word }}

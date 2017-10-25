@@ -27,7 +27,7 @@ mix.webpackConfig({
             'ed-config': 'elfdict/config.js',
             'ed-form': 'elfdict/form.js',
             'ed-promise': 'elfdict/promise.js',
-            'ed-session-storage-state': 'elfdict/session-storage-state.js'
+            'ed-session-storage-state': 'elfdict/session-storage-state.js',
         }
     }
 });
@@ -41,7 +41,6 @@ mix.extract([
     'html-to-react',
     'axios',
     'classnames',
-    'moment',
     'smoothscroll-polyfill',
     /* These components are excuded from _vendor.js_ as they are limited to restricted visitors 
     'ed-components/dialog',
@@ -60,6 +59,7 @@ mix.extract([
 mix.react([
     'resources/assets/js/_shared/error.js',
     'resources/assets/js/navigation.js',
+    'resources/assets/js/date.js',
     'resources/assets/js/search/index.jsx'
 ], `${outputDir}/js/global.js`);
 
