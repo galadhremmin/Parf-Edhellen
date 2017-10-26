@@ -10,6 +10,10 @@
     <span class="glyphicon glyphicon-info-sign"></span> This is an aggregated view of all 
     comments left by the members of our community. You are more than welcome to participate in
     the conversation!
+    @if (! Auth::check())
+    First, you need to <a href="{{ route('login') }}">log in and create a profile</a>. 
+    Once you have done that, you should be ready to go!
+    @endif
   </p>
 
   @if (Auth::check())
