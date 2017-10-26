@@ -271,6 +271,7 @@ class ForumApiController extends Controller
         $thread = $post->forum_thread;
         $thread->updated_at = $post->updated_at;
         $thread->account_id = $post->account_id;
+        $thread->timestamps = false;
         $thread->save();
 
         // Register an audit trail
@@ -328,6 +329,7 @@ class ForumApiController extends Controller
             $thread->number_of_likes = max(0, $thread->number_of_likes - $post->number_of_likes);
         }
 
+        $thread->timestamps = false;
         $thread->save();
 
         return response(null, 204);
@@ -358,6 +360,7 @@ class ForumApiController extends Controller
 
             $thread = $post->forum_thread;
             $thread->number_of_likes += 1;
+            $thread->timestamps = false;
             $thread->save();
 
             // Register an audit trail
@@ -389,6 +392,7 @@ class ForumApiController extends Controller
 
             $thread = $post->forum_thread;
             $thread->number_of_likes -= $change;
+            $thread->timestamps = false;
             $thread->save();
 
             $statusCode = 201;
