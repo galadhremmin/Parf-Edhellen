@@ -61,7 +61,7 @@ class EDComments extends EDStatefulFormComponent {
             loading: true
         });
 
-        if (this.isInfiniteScroll() && fromId > 0 && fromId === this.state.highlighted_post_id) {
+        if (this.isInfiniteScroll() && this.state.jump_post_id > 0 && fromId === this.state.highlighted_post_id) {
             // retract once, as the from_id parameter will _not_ be included in the result set in
             // infinite scroll mode, as it assumes it is already loaded.
             fromId += 1;
