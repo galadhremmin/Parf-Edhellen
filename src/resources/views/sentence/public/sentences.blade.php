@@ -35,7 +35,7 @@
   @endforeach
   @if(! empty($neologisms))
     <hr>
-    <h2><span class="glyphicon glyphicon-asterisk"></span> Neo-Sindarin</h2>
+    <h2><span class="glyphicon glyphicon-asterisk"></span> Neo-{{ mb_strtolower($language->name) }}</h2>
     <p>
       <em>The texts beneath were <strong>not composed by Tolkien</strong>!</em> They were instead
       composed by fans and students of his elvish languages. We believe the texts are of a sufficient
