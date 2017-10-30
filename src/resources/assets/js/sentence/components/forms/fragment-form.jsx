@@ -3,10 +3,10 @@ import classNames from 'classnames';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import { polyfill as enableSmoothScrolling } from 'smoothscroll-polyfill';
 import { requestSuggestions, setFragments, setFragmentData, setTengwar } from '../../actions/admin';
 import EDConfig from 'ed-config';
 import { EDStatefulFormComponent } from 'ed-form';
+import { smoothScrollIntoView } from 'ed-scrolling';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
 import EDErrorList from 'ed-components/error-list';
 import { 
@@ -163,10 +163,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
         window.setTimeout(() => {
             const adminForm = document.querySelector('.fragment-admin-form');
             if (adminForm) {
-                adminForm.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+                smoothScrollIntoView(adminForm);
             }
         }, 250);
     }

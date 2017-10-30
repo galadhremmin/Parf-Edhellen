@@ -28,6 +28,7 @@ mix.webpackConfig({
             'ed-form': 'elfdict/form.js',
             'ed-promise': 'elfdict/promise.js',
             'ed-session-storage-state': 'elfdict/session-storage-state.js',
+            'ed-scrolling': 'elfdict/scrolling.js'
         }
     }
 });
@@ -41,7 +42,6 @@ mix.extract([
     'html-to-react',
     'axios',
     'classnames',
-    'smoothscroll-polyfill',
     /* These components are excuded from _vendor.js_ as they are limited to restricted visitors 
     'ed-components/dialog',
     'ed-components/error-list',

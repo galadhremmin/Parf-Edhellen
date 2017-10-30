@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import axios from 'axios';
-import { polyfill as enableSmoothScrolling } from 'smoothscroll-polyfill';
 import EDConfig from 'ed-config';
 import { requestTranslationGroups, componentIsReady } from '../../actions/admin';
 import { EDStatefulFormComponent } from 'ed-form';
@@ -37,8 +36,6 @@ class EDTranslationForm extends EDStatefulFormComponent {
             is_uncertain: false,
             is_rejected: false
         };
-
-        enableSmoothScrolling();
     }
 
     componentWillMount() {

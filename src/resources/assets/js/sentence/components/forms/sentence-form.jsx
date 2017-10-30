@@ -3,7 +3,6 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import axios from 'axios';
-import { polyfill as enableSmoothScrolling } from 'smoothscroll-polyfill';
 import { setSentenceData } from '../../actions/admin';
 import EDConfig from 'ed-config';
 import { EDStatefulFormComponent } from 'ed-form';
@@ -30,8 +29,6 @@ class EDSentenceForm extends EDStatefulFormComponent {
             errors: undefined,
             notes: ''
         };
-
-        enableSmoothScrolling();
     }
 
     componentDidMount() {

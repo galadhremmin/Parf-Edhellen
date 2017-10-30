@@ -4,7 +4,7 @@ import EDConfig from 'ed-config';
 import classNames from 'classnames';
 import { EDStatefulFormComponent } from 'ed-form';
 import { Parser as HtmlToReactParser } from 'html-to-react';
-import { polyfill as enableSmoothScrolling } from 'smoothscroll-polyfill';
+import { smoothScrollIntoView } from 'ed-scrolling';
 
 class EDComments extends EDStatefulFormComponent {
     constructor(props) {
@@ -25,8 +25,6 @@ class EDComments extends EDStatefulFormComponent {
             show_reply: false,
             jump_post_id
         };
-
-        enableSmoothScrolling();
     }
 
     componentWillMount() {
@@ -113,13 +111,7 @@ class EDComments extends EDStatefulFormComponent {
             window.setTimeout(() => {
                 const id = `forum-post-${jumpPostId}`;
                 const postContainer = document.getElementById(id);
-
-                if (postContainer) {
-                    postContainer.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
+                smoothScrollIntoView(postContainer);
             }, 500);
         }
     }
@@ -236,11 +228,7 @@ class EDComments extends EDStatefulFormComponent {
         target.classList.add('unauthorized-animation');
 
         window.setTimeout(() => {
-            messageContainer.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-
+            smoothScrollIntoView(messageContainer);
             messageContainer.classList.add('unauthorized-animation');
         }, 500);
     }
@@ -265,10 +253,7 @@ class EDComments extends EDStatefulFormComponent {
         });
 
         if (this.textboxContainer) {
-            this.textboxContainer.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+            smoothScrollIntoView(this.textboxContainer);
         }
     }
 
