@@ -8,9 +8,9 @@ use App\Models\{
     AuditTrail, 
     FlashcardResult, 
     ForumPost, 
+    Gloss,
     ModelBase, 
-    Sentence, 
-    Translation 
+    Sentence
 };
 use App\Models\Initialization\Morphs;
 
@@ -50,17 +50,17 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
             $message = null;
             $entity = null;
 
-            if ($action->entity instanceof Translation) {
+            if ($action->entity instanceof Gloss) {
                 switch ($action->action_id) {
-                    case AuditTrail::ACTION_TRANSLATION_ADD:
+                    case AuditTrail::ACTION_GLOSS_ADD:
                         $message = 'added the gloss';
                         break;
-                    case AuditTrail::ACTION_TRANSLATION_EDIT:
+                    case AuditTrail::ACTION_GLOSS_EDIT:
                         $message = 'changed the gloss';
                         break;
                 }
 
-                $entity = '<a href="'.$this->_link->translation($action->entity->id).'">' . 
+                $entity = '<a href="'.$this->_link->gloss($action->entity->id).'">' . 
                     $action->entity->word->word . '</a>';
 
             } else if ($action->entity instanceof Sentence) {

@@ -4,7 +4,7 @@ namespace App\Models;
 
 class Keyword extends ModelBase
 {
-    protected $fillable = ['keyword', 'normalized_keyword', 'reversed_normalized_keyword', 'translation_id', 
+    protected $fillable = ['keyword', 'normalized_keyword', 'reversed_normalized_keyword', 'gloss_id', 
         'word_id', 'sense_id', 'is_sense', 'normalized_keyword_unaccented', 'reversed_normalized_keyword_unaccented',
         'normalized_keyword_length', 'reversed_normalized_keyword_length', 'normalized_keyword_unaccented_length',
         'reversed_normalized_keyword_unaccented_length'];

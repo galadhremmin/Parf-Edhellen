@@ -23,8 +23,8 @@ Route::get('/author/{id}',              [ 'uses' => 'AuthorController@index'    
     ->where([ 'id' => '[0-9]+' ])->name('author.profile-without-nickname');
 Route::get('/author/{id}-{nickname}',   [ 'uses' => 'AuthorController@index'    ])
     ->where([ 'id' => '[0-9]+', 'nickname' => $urlSeoReg ])->name('author.profile');
-Route::get('/author/{id}/translations', [ 'uses' => 'AuthorController@translations' ])
-    ->where([ 'id' => '[0-9]+' ])->name('author.translations');
+Route::get('/author/{id}/glosses', [ 'uses' => 'AuthorController@glosses' ])
+    ->where([ 'id' => '[0-9]+' ])->name('author.glosses');
 Route::get('/author/{id}/sentences', [ 'uses' => 'AuthorController@sentences' ])
     ->where([ 'id' => '[0-9]+' ])->name('author.sentences');
 Route::get('/author/{id}/posts', [ 'uses' => 'AuthorController@posts' ])
@@ -41,12 +41,12 @@ Route::get('/phrases/{langId}-{langName}/{sentId}-{sentName}', [ 'uses' => 'Sent
 
 // Dictionary
 Route::get('/w/{word}',               [ 'uses' => 'BookController@pageForWord' ]);
-Route::get('/wt/{id}',                [ 'uses' => 'BookController@pageForTranslationId' ])
-    ->where([ 'id' => '[0-9]+' ])->name('translation.ref');
+Route::get('/wt/{id}',                [ 'uses' => 'BookController@pageForGlossId' ])
+    ->where([ 'id' => '[0-9]+' ])->name('gloss.ref');
     Route::get('/wt/{id}/latest',     [ 'uses' => 'BookController@redirectToLatest' ])
-        ->where([ 'id' => '[0-9]+' ])->name('translation.ref.latest');
+        ->where([ 'id' => '[0-9]+' ])->name('gloss.ref.latest');
 Route::get('/wt/{id}/versions',       [ 'uses' => 'BookController@versions' ])
-    ->where([ 'id' => '[0-9]+' ])->name('translation.ref.version');
+    ->where([ 'id' => '[0-9]+' ])->name('gloss.ref.version');
 
 // User accounts
 Route::group([ 'middleware' => 'auth' ], function () {
@@ -142,7 +142,7 @@ Route::group([
     Route::resource('speech', 'SpeechController', [
         'except' => ['show']
     ]);
-    Route::resource('translation', 'TranslationController', [
+    Route::resource('gloss', 'GlossController', [
         'except' => ['show']
     ]);
     Route::resource('system-error', 'SystemErrorController', ['only' => [
@@ -154,7 +154,7 @@ Route::group([
     Route::post('sentence/validate-fragment', 'SentenceController@validateFragments');
     Route::post('sentence/parse-fragment/{name}', 'SentenceController@parseFragments');
 
-    Route::get('translation/list/{id}', 'TranslationController@listForLanguage')->name('translation.list');
+    Route::get('gloss/list/{id}', 'GlossController@listForLanguage')->name('gloss.list');
 
     Route::get('contribution/list', 'ContributionController@list')->name('contribution.list');
     Route::get('contribution/{id}/reject', 'ContributionController@confirmReject')->name('contribution.confirm-reject');
@@ -165,18 +165,18 @@ Route::group([
 
 // Public unrestricted API
 Route::group([ 
-        'namespace' => 'Api\v1', 
-        'prefix'    => 'api/v1'
+        'namespace' => 'Api\v2', 
+        'prefix'    => 'api/v2'
     ], function () {
 
-    Route::get('book/translate/{translationId}', [ 'uses' => 'BookApiController@get' ]);
-    Route::post('book/translate',                [ 'uses' => 'BookApiController@translate' ]);
-    Route::post('book/suggest',                  [ 'uses' => 'BookApiController@suggest' ]);
-    Route::post('book/find',                     [ 'uses' => 'BookApiController@find' ]);
+    Route::get('book/translate/{glossId}', [ 'uses' => 'BookApiController@get' ]);
+    Route::post('book/translate',          [ 'uses' => 'BookApiController@translate' ]);
+    Route::post('book/suggest',            [ 'uses' => 'BookApiController@suggest' ]);
+    Route::post('book/find',               [ 'uses' => 'BookApiController@find' ]);
 
-    Route::get('speech/{id?}',                   [ 'uses' => 'SpeechApiController@index' ]);
+    Route::get('speech/{id?}',             [ 'uses' => 'SpeechApiController@index' ]);
 
-    Route::get('inflection/{id?}',               [ 'uses' => 'InflectionApiController@index' ]);
+    Route::get('inflection/{id?}',         [ 'uses' => 'InflectionApiController@index' ]);
 
     Route::resource('forum', 'ForumApiController', ['only' => [
         'index', 'show'
@@ -185,8 +185,8 @@ Route::group([
 
 // Public, throttled API
 Route::group([ 
-        'namespace'  => 'Api\v1', 
-        'prefix'     => 'api/v1',
+        'namespace'  => 'Api\v2', 
+        'prefix'     => 'api/v2',
         'middleware' => 'throttle'
     ], function () {
 
@@ -196,8 +196,8 @@ Route::group([
 
 // Restricted API
 Route::group([ 
-        'namespace'  => 'Api\v1', 
-        'prefix'     => 'api/v1',
+        'namespace'  => 'Api\v2', 
+        'prefix'     => 'api/v2',
         'middleware' => 'auth'
     ], function () {
     
@@ -214,8 +214,8 @@ Route::group([
 
 // Admin API
 Route::group([ 
-        'namespace' => 'Api\v1', 
-        'prefix'    => 'api/v1',
+        'namespace' => 'Api\v2', 
+        'prefix'    => 'api/v2',
         'middleware' => ['auth', 'auth.require-role:Administrators']
     ], function () {
 

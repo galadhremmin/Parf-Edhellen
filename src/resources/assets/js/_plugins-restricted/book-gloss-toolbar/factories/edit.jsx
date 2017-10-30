@@ -6,8 +6,8 @@ import axios from 'axios';
 import thunkMiddleware from 'redux-thunk';
 import EDConfig from 'ed-config';
 import { EDComponentFactory } from 'ed-components/dialog';
-import EDTranslationAdminReducer from '../../../translation/reducers/admin';
-import EDTranslationForm from '../../../translation/components/forms';
+import EDGlossAdminReducer from '../../../gloss/reducers/admin';
+import EDGlossForm from '../../../gloss/components/forms';
 
 class EDEditComponentFactory extends EDComponentFactory {
     get titleComponent() {
@@ -33,7 +33,7 @@ class BodyComponent extends React.Component {
 
         this.state = {
             store: undefined,
-            url: `/dashboard/contribution/create/translation?entity_id=${props.gloss.id}`
+            url: `/dashboard/contribution/create/gloss?entity_id=${props.gloss.id}`
         };
     }
 
@@ -48,7 +48,7 @@ class BodyComponent extends React.Component {
     }
     
     onReceiveData(resp) {
-        const store = createStore(EDTranslationAdminReducer, resp.data,
+        const store = createStore(EDGlossAdminReducer, resp.data,
             applyMiddleware(thunkMiddleware)
         );
 
@@ -64,7 +64,7 @@ class BodyComponent extends React.Component {
 
         return <div>
             <Provider store={this.state.store}>
-                <EDTranslationForm admin={false} confirmButtonText={'Propose changes'} />
+                <EDGlossForm admin={false} confirmButtonText={'Propose changes'} />
             </Provider>
             <hr />
             <p>

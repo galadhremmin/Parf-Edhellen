@@ -224,7 +224,7 @@ class EDWordSelect extends React.Component {
 
     render() {
         const inputProps = {
-            placeholder: 'Search for a word',
+            placeholder: 'Search for a word.',
             value: this.state.word,
             name: this.props.componentName,
             id: this.props.componentId,

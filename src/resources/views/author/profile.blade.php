@@ -45,8 +45,8 @@
               <td class="text-right">{{ $stats['noOfWords'] }}</td>
             </tr>
             <tr>
-              <th><a href="{{ route('author.translations', ['id' => $author->id]) }}">Glosses</a></th>
-              <td class="text-right">{{ $stats['noOfTranslations'] }}</td>
+              <th><a href="{{ route('author.glosses', ['id' => $author->id]) }}">Glosses</a></th>
+              <td class="text-right">{{ $stats['noOfGlosses'] }}</td>
             </tr>
             <tr>
               <th><a href="{{ route('author.sentences', ['id' => $author->id]) }}">Phrases</a></th>

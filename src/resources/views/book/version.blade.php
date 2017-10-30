@@ -17,7 +17,7 @@
       <span class="date">{{ $v->created_at }}</span>
       @if ($v->is_latest) 
         · <em class="text-info">Latest version</em>
-      @elseif (! $v->origin_translation_id)
+      @elseif (! $v->origin_gloss_id)
         · <em class="text-info">Initial version</em>
       @endif
     </h3>
@@ -31,7 +31,7 @@
 
     @include('_shared._comments', [
       'entity_id' => $v->id,
-      'morph'     => 'translation',
+      'morph'     => 'gloss',
       'enabled'   => $v->is_latest
     ])
     <hr>

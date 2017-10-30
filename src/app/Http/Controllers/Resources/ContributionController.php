@@ -18,12 +18,12 @@ use App\Events\{
 use App\Models\{
     Contribution,
     Sentence,
-    Translation
+    Gloss
 };
 use App\Http\Controllers\Contributions\{
     IContributionController,
     SentenceContributionController,
-    TranslationContributionController
+    GlossContributionController
 };
 
 class ContributionController extends Controller
@@ -422,8 +422,8 @@ class ContributionController extends Controller
         $controllerName = null;
         switch ($modelName)
         {
-            case Translation::class:
-                $controllerName = TranslationContributionController::class;
+            case Gloss::class:
+                $controllerName = GlossContributionController::class;
                 break;
             case Sentence::class:
                 $controllerName = SentenceContributionController::class;

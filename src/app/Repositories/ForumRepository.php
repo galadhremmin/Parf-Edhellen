@@ -4,13 +4,8 @@ namespace App\Repositories;
 
 use Illuminate\Support\Facades\DB;
 use App\Models\{ 
-    Account, 
-    Contribution, 
     ForumThread, 
-    ForumPost, 
-    ForumPostLike, 
-    Translation, 
-    Sentence 
+    ForumPost
 };
 use App\Models\Initialization\Morphs;
 

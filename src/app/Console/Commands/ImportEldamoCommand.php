@@ -4,8 +4,8 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
-use App\Models\{ Language, Speech, Translation, TranslationGroup };
-use App\Repositories\TranslationRepository;
+use App\Models\{ Language, Speech, Gloss, GlossGroup };
+use App\Repositories\GlossRepository;
 
 class ImportEldamoCommand extends Command 
 {
@@ -23,12 +23,12 @@ class ImportEldamoCommand extends Command
      */
     protected $description = 'Imports definitions from eldamo.json. Transform the XML data source to JSON using EDEldamoParser.exe.';
 
-    protected $_translationRepository;
+    protected $_glossRepository;
 
-    public function __construct(TranslationRepository $translationRepository)
+    public function __construct(GlossRepository $glossRepository)
     {
         parent::__construct();
-        $this->_translationRepository = $translationRepository;
+        $this->_glossRepository = $glossRepository;
     }
 
     /**
@@ -212,15 +212,15 @@ class ImportEldamoCommand extends Command
             return;
         }
 
-        // Find the Eldamo translation group
-        $eldamo = TranslationGroup::where('name', 'Eldamo')->firstOrFail();
+        // Find the Eldamo gloss group
+        $eldamo = GlossGroup::where('name', 'Eldamo')->firstOrFail();
 
         $this->line('Data source: '.$path);
         $this->line('Eldamo ID: '.$eldamo->id.'.');
         $this->line('Updating '.count($data).' words.');
 
-        // Find the user account for an existing translation from Eldamo. 
-        $existing = Translation::where('translation_group_id', $eldamo->id)
+        // Find the user account for an existing gloss from Eldamo. 
+        $existing = Gloss::where('gloss_group_id', $eldamo->id)
             ->select('account_id')
             ->firstOrFail();
 
@@ -231,18 +231,18 @@ class ImportEldamoCommand extends Command
                 continue;
             }
 
-            $ot = Translation::latest()
+            $ot = Gloss::latest()
                 ->notIndex()
                 ->where('external_id', $t->id)
-                ->where('translation_group_id', $eldamo->id)
+                ->where('gloss_group_id', $eldamo->id)
                 ->first();
 
             $found = $ot !== null;
             
             if (! $found) {
-                $ot = new Translation;
+                $ot = new Glosswwww;
                 $ot->external_id = $t->id;
-                $ot->translation_group_id = $eldamo->id;
+                $ot->gloss_group_id = $eldamo->id;
                 $ot->account_id = $existing->account_id;
             }
 
@@ -261,7 +261,6 @@ class ImportEldamoCommand extends Command
             $ot->is_deleted   = 0;
             
             $ot->source       = implode('; ', $t->sources);
-            $ot->translation  = $t->gloss[0];
 
             $ot->language_id  = $languageMap[$t->language] ?: null;
             $ot->speech_id    = $speechMap[$t->speech] ?: null;
@@ -274,21 +273,17 @@ class ImportEldamoCommand extends Command
             }
 
             $this->line($c.' '.$t->language.' '.$t->word.': '.($found ? $ot->id : 'new'));
-            $t = $this->_translationRepository->saveTranslation($word, $sense, $ot, $keywords, false);
+            $t = $this->_glossRepository->saveGloss($word, $sense, $ot, $t->gloss, $keywords, false);
             $this->line('     -> '.$t->id);
 
             $c += 1;
         }
     }
 
-    private static function createComments(Translation $ot, \stdClass $t, array $keywords)
+    private static function createComments(Gloss $ot, \stdClass $t, array $keywords)
     {
         $comments = [];
 
-        if (count($keywords) > 0){ 
-            $comments[] = 'Also glossed as “'.implode('”, “', $keywords).'”.';
-        }
-        
         if (! empty($t->notes)) {
             $comments[] = $t->notes;
         }

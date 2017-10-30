@@ -12,7 +12,7 @@
       @if ($single)
         <hr>
         @include('_shared._comments', [
-          'morph'      => 'translation',
+          'morph'      => 'gloss',
           'entity_id'  => $gloss->id,
           'enabled'    => true
         ])

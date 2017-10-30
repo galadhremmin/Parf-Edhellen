@@ -1,6 +1,6 @@
 @inject('link', 'App\Helpers\LinkHelper')
 
-<blockquote itemscope="itemscope" itemtype="http://schema.org/Article" id="translation-block-{{ $gloss->id }}"
+<blockquote itemscope="itemscope" itemtype="http://schema.org/Article" id="gloss-block-{{ $gloss->id }}"
   @if (!$gloss->is_canon)
     class="contribution gloss" 
   @else
@@ -23,7 +23,7 @@
   @if ($gloss->type)
     <span class="word-type" rel="trans-type">{{ $gloss->type }}.</span>
   @endif
-  <span rel="trans-translation" itemprop="keywords">{{ $gloss->translation }}</span>
+  <span rel="trans-gloss" itemprop="keywords">{{ $gloss->all_translations }}</span>
   <p class="word-comments" rel="trans-comments" itemprop="articleBody">{!! $gloss->comments !!}</p>
 
   <footer class="word-footer">
@@ -35,8 +35,8 @@
       <span class="word-etymology" rel="trans-etymology">{{ $gloss->etymology }}.</span>
     @endif
   
-    @if ($gloss->translation_group_id != null)
-      Group: <span itemprop="sourceOrganization">{{ $gloss->translation_group_name }}</span>.
+    @if ($gloss->gloss_group_id != null)
+      Group: <span itemprop="sourceOrganization">{{ $gloss->gloss_group_name }}</span>.
     @endif
   
     Published <span itemprop="datePublished" class="date">{{ $gloss->created_at }}</span> by 

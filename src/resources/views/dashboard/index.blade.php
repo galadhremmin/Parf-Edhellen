@@ -97,7 +97,7 @@
             <li><a href="{{ route('inflection.index') }}">Inflections</a></li>
             <li><a href="{{ route('speech.index') }}">Type of speeches</a></li>
             <li><a href="{{ route('sentence.index') }}">Phrases</a></li>
-            <li><a href="{{ route('translation.index') }}">Glossary</a></li>
+            <li><a href="{{ route('gloss.index') }}">Glossary</a></li>
           </ul>
           <hr>
           <ul>

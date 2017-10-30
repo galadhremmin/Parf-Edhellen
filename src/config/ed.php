@@ -17,6 +17,9 @@ return [
     // maximimum avatar size
     'avatar_size'     => env('ED_MAX_AVATAR_SIZE', 100),
 
+    // maximum number of translations per gloss
+    'max_number_of_translations' => env('ED_MAX_TRANSLATIONS', 8),
+
     // applicable sentence builders
     'required_sentence_builders' => [
         'latin'   => App\Adapters\LatinSentenceBuilder::class,
@@ -34,7 +37,7 @@ return [
         App\Models\Contribution::class    => App\Http\Discuss\Contexts\ContributionContext::class,
         App\Models\ForumDiscussion::class => App\Http\Discuss\Contexts\DiscussContext::class,
         App\Models\Sentence::class        => App\Http\Discuss\Contexts\SentenceContext::class,
-        App\Models\Translation::class     => App\Http\Discuss\Contexts\TranslationContext::class
+        App\Models\Gloss::class           => App\Http\Discuss\Contexts\GlossContext::class
     ],
     'forum_resultset_max_length' => 10
 ];

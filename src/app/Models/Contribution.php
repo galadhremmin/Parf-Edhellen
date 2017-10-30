@@ -11,7 +11,7 @@ class Contribution extends ModelBase
     protected $fillable = [ 
         'account_id', 
         'language_id', 
-        'translation_id',
+        'gloss_id',
         'sentence_id',
         'word',
         'payload', 

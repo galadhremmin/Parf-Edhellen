@@ -3,21 +3,34 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use Auth;
+use Cache;
+use DB;
 
-use App\Helpers\MarkdownParser;
+use App\Adapters\BookAdapter;
+use App\Helpers\{
+    MarkdownParser,
+    StringHelper
+};
 use App\Events\FlashcardFlipped;
 use App\Models\{
     Flashcard, 
     FlashcardResult, 
     Language, 
-    Translation,
-    Speech
+    Gloss,
+    Speech,
+    Translation
 };
 
 class FlashcardController extends Controller
 {
+    private $_bookAdapter;
+
+    public function __construct(BookAdapter $bookAdapter)
+    {
+        $this->_bookAdapter = $bookAdapter;
+    }
+
     public function index(Request $request)
     {
         $flashcards = Flashcard::all()
@@ -76,7 +89,7 @@ class FlashcardController extends Controller
         $userId = $request->user()->id;
         $results = FlashcardResult::forAccount($userId)
             ->where('flashcard_id', $id)
-            ->with('translation', 'translation.word')
+            ->with('gloss', 'gloss.word')
             ->orderBy('id', 'desc')
             ->get();
 
@@ -101,15 +114,16 @@ class FlashcardController extends Controller
             $not = $request->input('not');
         }
 
-        // retrieve the flashcard for its language and translation group 
-        // which will be used to filter amongst the translations.
+        // retrieve the flashcard for its language and gloss group 
+        // which will be used to filter amongst the glosses.
         $flashcard = Flashcard::find($id);
 
-        // select a random translation
-        $q = Translation::active()
+        // select a random gloss
+        $q = Gloss::active()
+            ->with('translations')
             ->where([
                 ['language_id', $flashcard->language_id],
-                ['translation_group_id', $flashcard->translation_group_id]
+                ['gloss_group_id', $flashcard->gloss_group_id]
             ])
             ->inRandomOrder();
 
@@ -119,11 +133,15 @@ class FlashcardController extends Controller
             $q = $q->whereNotIn('id', $not);
         }
         
-        // retrieve the random translation or fail (if none exists!)
-        $translation = $q->firstOrFail();
+        // retrieve the random gloss or fail (if none exists!)
+        $gloss = $q->firstOrFail();
 
         // ignore untranslated words
-        if (mb_strtolower($translation->translation) === mb_strtolower($translation->word->word)) {
+        $lowercaseWord = StringHelper::normalize($gloss->word->word, false);
+        $translations = $gloss->translations->filter(function ($t) use ($lowercaseWord) {
+            return StringHelper::normalize($t->translation, false) !== $lowercaseWord;
+        });
+        if ($translations->count() < 1) {
             // maximum 10 levels of recursion
             if ($n > 10) {
                 abort(404);
@@ -133,23 +151,52 @@ class FlashcardController extends Controller
         }
 
         // Compile a list of options
+        $translation = $translations->random();
         $options = [$translation->translation];
+
+        // Create filter parameters for getting other (erroneous) translations
+        $filters = [ ['translation', '<>', $translation->translation] ];
 
         // group verbs w/ one another as they tend to be in the infinitive
         // in English.
-        $filters = [
-            ['id', '<>', $translation->id],
-            ['translation', '<>', $translation->translation]
-        ];
-        $verbSpeech = Speech::where('name', 'verb')->first();
-        if ($verbSpeech && $translation->speech_id === $verbSpeech->id) {
-            $filters[] = ['speech_id', $verbSpeech->id];
+        $verbSpeechId = Cache::remember('ed.speech.v', 60 /* minutes */, function () {
+            $speech = Speech::where('name', 'verb')->first();
+            return $speech ? $speech->id : -1;
+        });
+        if ($gloss->speech_id !== $verbSpeechId) {
+            $verbSpeechId = -1;
         }
 
-        $fakeOptions = $q->where($filters)
-            ->select('translation')
-            ->take(4)
-            ->get();
+        // Random selection optimization:
+        // https://stackoverflow.com/questions/1823306/mysql-alternatives-to-order-by-rand
+        //
+        // This is a terrible hack, but a performant one (at that!)
+        $fakeOptions = DB::select('SELECT 
+                t.translation
+            FROM
+                translations as t
+            JOIN (SELECT 
+                    ti.id
+                FROM
+                    translations as ti
+                JOIN glosses as g on g.id = ti.gloss_id 
+                WHERE
+                    ti.translation <> :translation AND
+                    ( :speech0 = -1 OR ( :speech1 > -1 AND :speech2 = g.speech_id) ) AND
+                    RAND() < (SELECT 
+                            (16 / COUNT(*)) * 10
+                        FROM
+                            translations
+                    )
+                ORDER BY RAND()
+                LIMIT 16    
+            ) AS t0 ON t0.id = t.id
+            LIMIT 4', [
+                'translation' => $translation->translation, 
+                'speech0' => $verbSpeechId, 
+                'speech1' => $verbSpeechId, 
+                'speech2' => $verbSpeechId
+            ]);
 
         foreach ($fakeOptions as $option) {
             $options[] = $option->translation;
@@ -158,7 +205,7 @@ class FlashcardController extends Controller
         shuffle($options);
 
         return [ 
-            'word'           => $translation->word->word,
+            'word'           => $gloss->word->word,
             'options'        => $options,
             'translation_id' => $translation->id 
          ];
@@ -169,13 +216,11 @@ class FlashcardController extends Controller
         $this->validate($request, [
             'flashcard_id'   => 'numeric|exists:flashcards,id',
             'translation_id' => 'numeric|exists:translations,id',
-            'translation'    => 'string'
+            'gloss'          => 'string'
         ]);
 
         $translationId = intval( $request->input('translation_id') );
-        $translation = Translation::where('id', $translationId)
-            ->select('translation', 'source', 'comments')
-            ->firstOrFail();
+        $translation = Translation::findOrFail($translationId);
 
         $offeredGloss = $request->input('translation');
         $ok = strcmp($translation->translation, $offeredGloss) === 0;
@@ -184,19 +229,22 @@ class FlashcardController extends Controller
 
         $result = new FlashcardResult;
 
-        $result->flashcard_id   = intval( $request->input('flashcard_id') );
-        $result->account_id     = $account->id;
-        $result->translation_id = $translationId;
-        $result->expected       = $translation->translation;
-        $result->actual         = $offeredGloss;
-        $result->correct        = $ok;
+        $result->flashcard_id = intval( $request->input('flashcard_id') );
+        $result->account_id   = $account->id;
+        $result->gloss_id     = $translation->gloss_id;
+        $result->expected     = $translation->translation;
+        $result->actual       = $offeredGloss;
+        $result->correct      = $ok;
 
         $result->save();
 
         // parse comments, as it's saved as markdown
-        if (! empty($translation->comments)) {
+        $gloss = $translation->gloss;
+        $gloss->load('translations');
+
+        if (! empty($gloss->comments)) {
             $parser = new MarkdownParser();
-            $translation->comments = $parser->parse($translation->comments);
+            $gloss->comments = $parser->parse($gloss->comments);
         }
 
         // Record the progress
@@ -204,8 +252,8 @@ class FlashcardController extends Controller
         event(new FlashcardFlipped($result, $numberOfCards));
 
         return [
-            'correct'     => $ok,
-            'translation' => $translation
+            'correct' => $ok,
+            'gloss'   => $this->_bookAdapter->adaptGloss($gloss)
         ];
     }
 }

@@ -259,7 +259,7 @@ class EDSearchResults extends React.Component {
                         ) : undefined}
                         {this.props.bookData.sections.length > 0 && this.props.bookData.single ? <div>
                             <hr />
-                            <EDComments morph={'translation'} 
+                            <EDComments morph={'gloss'} 
                                         entityId={this.props.bookData.sections[0].glosses[0].id} 
                                         accountId={EDConfig.userId()} 
                                         enabled={true} />

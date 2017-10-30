@@ -5,40 +5,40 @@ use App\Adapters\BookAdapter;
 use App\Repositories\{
     ForumRepository, 
     SentenceRepository, 
-    TranslationRepository
+    GlossRepository
 };
-use App\Models\Translation;
+use App\Models\Gloss;
 
 trait CanTranslate
 {
     protected $_bookAdapter;
     protected $_forumRepository;
-    protected $_translationRepository;
+    protected $_glossRepository;
     protected $_sentenceRepository;
 
     public function __construct(BookAdapter $bookAdapter,
         ForumRepository $forumRepository,
-        TranslationRepository $translationRepository, 
+        GlossRepository $glossRepository, 
         SentenceRepository $sentenceRepository)
     {
         $this->_bookAdapter = $bookAdapter;
         $this->_forumRepository = $forumRepository;
-        $this->_translationRepository = $translationRepository;
+        $this->_glossRepository = $glossRepository;
         $this->_sentenceRepository = $sentenceRepository;
     }
 
     public function translate(string $word, int $languageId = 0, bool $includeInflections = true, bool $includeOld = true)
     {
-        $translations = $this->_translationRepository->getWordTranslations($word, $languageId, $includeOld);
-        $translationIds = array_map(function ($v) {
-                return $v->id;
-            }, $translations);
+        $glosses = $this->_glossRepository->getWordGlosses($word, $languageId, $includeOld);
+        $glossIds = array_map(function ($v) {
+            return $v->id;
+        }, $glosses);
 
         $inflections = $includeInflections
-            ? $this->_sentenceRepository->getInflectionsForTranslations($translationIds) 
+            ? $this->_sentenceRepository->getInflectionsForGlosses($glossIds) 
             : [];
-        $comments = $this->_forumRepository->getCommentCountForEntities(Translation::class, $translationIds);
+        $comments = $this->_forumRepository->getCommentCountForEntities(Gloss::class, $glossIds);
         
-        return $this->_bookAdapter->adaptTranslations($translations, $inflections, $comments, $word);
+        return $this->_bookAdapter->adaptGlosses($glosses, $inflections, $comments, $word);
     }
 }

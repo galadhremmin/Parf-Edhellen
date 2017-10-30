@@ -6,15 +6,15 @@ use App\Models\Initialization\Morphs;
 use App\Models\{
     Contribution,
     ForumThread,
+    Gloss,
     ModelBase,
     Sentence,
-    Translation,
     SystemError
 };
 use App\Events\{
     ContributionDestroyed,
     SentenceDestroyed,
-    TranslationDestroyed
+    GlossDestroyed
 };
 
 class DiscussEventSubscriber
@@ -37,8 +37,8 @@ class DiscussEventSubscriber
         );
 
         $events->listen(
-            TranslationDestroyed::class,
-            self::class.'@onTranslationDestroyed'
+            GlossDestroyed::class,
+            self::class.'@onGlossDestroyed'
         );
     }
 
@@ -59,12 +59,12 @@ class DiscussEventSubscriber
     }
 
     /**
-     * Handle the destruction of translations.
+     * Handle the destruction of glosses.
      */
-    public function onTranslationDestroyed(TranslationDestroyed $event) 
+    public function onGlossDestroyed(GlossDestroyed $event) 
     {
-        $this->deleteThread($event->translation, 
-            $event->replacementTranslation !== null ? $event->replacementTranslation->id : 0
+        $this->deleteThread($event->gloss, 
+            $event->replacementGloss !== null ? $event->replacementGloss->id : 0
         );
     }
     

@@ -11,8 +11,8 @@ class FlashcardResult extends ModelBase
         return $this->belongsTo(Flashcard::class);
     }
 
-    public function translation() 
+    public function gloss() 
     {
-        return $this->belongsTo(Translation::class);
+        return $this->belongsTo(Gloss::class);
     }
 }

@@ -37,9 +37,9 @@ trait CanMapSentence
             }
 
             if (! $fragment->type) {
-                $fragment->comments       = $fragmentData['comments'] ?? ''; // cannot be NULL
-                $fragment->speech_id      = intval($fragmentData['speech_id']);
-                $fragment->translation_id = intval($fragmentData['translation_id']);
+                $fragment->comments  = $fragmentData['comments'] ?? ''; // cannot be NULL
+                $fragment->speech_id = intval($fragmentData['speech_id']);
+                $fragment->gloss_id  = intval($fragmentData['gloss_id']);
             } else {
                 $fragment->comments = '';
 

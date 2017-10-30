@@ -6,8 +6,8 @@ import axios from 'axios';
 import thunkMiddleware from 'redux-thunk';
 import EDConfig from 'ed-config';
 import { EDComponentFactory } from 'ed-components/dialog';
-import EDTranslationAdminReducer from '../../../translation/reducers/admin';
-import EDTranslationForm from '../../../translation/components/forms';
+import EDGlossAdminReducer from '../../../gloss/reducers/admin';
+import EDGlossForm from '../../../gloss/components/forms';
 
 class EDEditComponentFactory extends EDComponentFactory {
     get titleComponent() {
@@ -37,7 +37,7 @@ class BodyComponent extends React.Component {
     }
 
     componentWillMount() {
-        axios.get(`/admin/translation/${this.props.gloss.id}/edit`, {
+        axios.get(`/admin/gloss/${this.props.gloss.id}/edit`, {
             // It is necessary to provide these additional headers to ensure a JSON response.
             headers: {
                 'Accept': 'application/json',
@@ -47,7 +47,7 @@ class BodyComponent extends React.Component {
     }
     
     onReceiveData(resp) {
-        const store = createStore(EDTranslationAdminReducer, resp.data,
+        const store = createStore(EDGlossAdminReducer, resp.data,
             applyMiddleware(thunkMiddleware)
         );
 
@@ -63,11 +63,11 @@ class BodyComponent extends React.Component {
 
         return <div>
             <Provider store={this.state.store}>
-                <EDTranslationForm admin={true} />
+                <EDGlossForm admin={true} />
             </Provider>
             <hr />
             <p>
-                You can alternatively <a href={`/admin/translation/${this.props.gloss.id}/edit`}>edit the gloss on the dashboard</a>.
+                You can alternatively <a href={`/admin/gloss/${this.props.gloss.id}/edit`}>edit the gloss on the dashboard</a>.
             </p>
         </div>;
     }

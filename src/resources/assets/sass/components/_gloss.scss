@@ -2,7 +2,7 @@ blockquote.gloss {
   overflow: hidden;
   border-left-color: #dedede;
 
-  h3.trans-word { 
+  h3.gloss-word { 
     margin-top: 0;
     
     a {
@@ -16,6 +16,13 @@ blockquote.gloss {
     .rejected {
       text-decoration: line-through;
     }
+  }
+  .gloss-word a {
+    opacity: 0.3;
+    transition: opacity 0.5s;
+  }
+  .gloss-word a:hover {
+    opacity: 1;
   }
   .word-type {
     font-style: italic;

@@ -6,9 +6,9 @@ class AuditTrail extends ModelBase
 {
     use Traits\HasAccount;
 
-    const ACTION_TRANSLATION_ADD       = 10;
-    const ACTION_TRANSLATION_EDIT      = 11;
-    const ACTION_TRANSLATION_RESERVED  = 12;
+    const ACTION_GLOSS_ADD             = 10;
+    const ACTION_GLOSS_EDIT            = 11;
+    const ACTION_GLOSS_RESERVED        = 12;
     
     const ACTION_SENTENCE_ADD          = 20;
     const ACTION_SENTENCE_EDIT         = 21;

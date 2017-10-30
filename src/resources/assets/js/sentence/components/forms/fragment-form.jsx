@@ -20,7 +20,7 @@ import {
 import { transcribe } from '../../../_shared/tengwar';
 import EDSpeechSelect from '../../../_shared/components/speech-select';
 import EDInflectionSelect from '../../../_shared/components/inflection-select';
-import EDTranslationSelect from 'ed-components/translation-select';
+import EDGlossSelect from 'ed-components/gloss-select';
 import EDTengwarInput from '../../../_shared/components/tengwar-input';
 
 class EDFragmentForm extends EDStatefulFormComponent {
@@ -106,8 +106,8 @@ class EDFragmentForm extends EDStatefulFormComponent {
             exclude = data.type === TYPE_CODE_EXCLUDE;
             
             // In the event that the fragment is already associated with a gloss, retrieve it.
-            if (data.translation_id) {
-                promise = axios.get(EDConfig.api(`book/translate/${data.translation_id}`))
+            if (data.gloss_id) {
+                promise = axios.get(EDConfig.api(`book/translate/${data.gloss_id}`))
                     .then(resp => { 
                         if (!resp.data.sections || !resp.data.sections.length ||
                             !resp.data.sections[0].glosses || resp.data.sections[0].glosses.length < 1) {
@@ -121,9 +121,9 @@ class EDFragmentForm extends EDStatefulFormComponent {
             // Set up the form accordingly. The input elements are deliberately -not- synchronised
             // with the component's state, as the changes shouldn't be performed until the client
             // confirms them.
-            promise.then(translation => {
+            promise.then(gloss => {
                 if (! exclude) {
-                    this.translationInput.setValue(translation);
+                    this.glossInput.setValue(gloss);
                     this.speechInput.setValue(data.speech_id);
                     this.inflectionInput.setValue(data.inflections ? data.inflections : []);
                     this.commentsInput.setValue(data.comments || '');
@@ -134,8 +134,8 @@ class EDFragmentForm extends EDStatefulFormComponent {
 
             }).then(() => {
                 // Select the first component with an invalid value
-                if (! exclude && ! this.translationInput.getValue()) {
-                    this.translationInput.focus();
+                if (! exclude && ! this.glossInput.getValue()) {
+                    this.glossInput.focus();
                 }
                 else if (! this.tengwarInput.getValue()) {
                     this.tengwarInput.focus();
@@ -317,7 +317,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
         const excluded = this.state.editIsExcluded;
         const refresh = excluded !== (fragment.type === TYPE_CODE_EXCLUDE);
 
-        const translation = excluded ? null : this.translationInput.getValue();
+        const gloss = excluded       ? null : this.glossInput.getValue();
         const inflections = excluded ? []   : this.inflectionInput.getValue() || [];
         const speech_id = excluded   ? null : this.speechInput.getValue();
         const speech = excluded      ? null : this.speechInput.getText();
@@ -332,7 +332,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
             comments,
             tengwar,
             type,
-            translation_id: translation ? translation.id : undefined
+            gloss_id: gloss ? gloss.id : undefined
         };
 
         // If the 'apply to similar words' checkbox is checked, make an array
@@ -342,8 +342,8 @@ class EDFragmentForm extends EDStatefulFormComponent {
         // same time.
         let indexes = this.applyToSimilarCheckbox.checked 
             ? this.props.fragments.reduce((accumulator, f, i) => {
-                // Only modify identical fragments that does _not_ have a translation already associated with it
-                if (f.fragment.toLocaleLowerCase() !== fragment.fragment.toLocaleLowerCase() || f.translation_id) {
+                // Only modify identical fragments that does _not_ have a gloss already associated with it
+                if (f.fragment.toLocaleLowerCase() !== fragment.fragment.toLocaleLowerCase() || f.gloss_id) {
                     return accumulator; // the fragments are dissimilar.
                 }
 
@@ -452,7 +452,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
         }
     }
 
-    onTranslationSelected(ev) {
+    onGlossSelected(ev) {
         if (! ev.value) {
             return;
         }
@@ -530,11 +530,11 @@ class EDFragmentForm extends EDStatefulFormComponent {
                     <div className="well">
                         {! this.state.editIsExcluded ? <div className="form-group">
                             <label htmlFor="ed-sentence-fragment-word" className="control-label">Word (<em>{this.props.fragments[this.state.editIndex].fragment}</em> uninflected)</label>
-                            <EDTranslationSelect componentId="ed-sentence-fragment-word" 
+                            <EDGlossSelect componentId="ed-sentence-fragment-word" 
                                 languageId={this.props.language_id}
                                 required={true}
-                                ref={input => this.translationInput = input}
-                                onChange={this.onTranslationSelected.bind(this)} />
+                                ref={input => this.glossInput = input}
+                                onChange={this.onGlossSelected.bind(this)} />
                         </div> : ''}
                         <div className="form-group">
                             <label htmlFor="ed-sentence-fragment-tengwar" className="control-label">Tengwar</label>
@@ -659,9 +659,9 @@ class EDEditableFragment extends React.Component {
 
         return <a href="#" onClick={this.onFragmentClick.bind(this)}
             className={classNames('label', 'ed-sentence-fragment', { 
-                'label-success': (fragment.type === TYPE_CODE_EXCLUDE || !! fragment.translation_id) && ! selected && ! erroneous, 
+                'label-success': (fragment.type === TYPE_CODE_EXCLUDE || !! fragment.gloss_id) && ! selected && ! erroneous, 
                 'label-warning': erroneous,
-                'label-danger': ! fragment.translation_id && fragment.type !== TYPE_CODE_EXCLUDE && ! selected,
+                'label-danger': ! fragment.gloss_id && fragment.type !== TYPE_CODE_EXCLUDE && ! selected,
                 'label-primary': selected
             })}>
                 {selected 

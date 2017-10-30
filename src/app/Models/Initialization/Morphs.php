@@ -8,11 +8,11 @@ use App\Models\{
     AuditTrail, 
     Contribution,
     Favourite, 
-    FlashcardResult, 
+    FlashcardResult,
+    Gloss, 
     ForumDiscussion,
     ForumPost, 
-    Sentence, 
-    Translation 
+    Sentence 
 };
 
 class Morphs 
@@ -26,7 +26,7 @@ class Morphs
             'flashcard'    => FlashcardResult::class,
             'forum'        => ForumPost::class,
             'sentence'     => Sentence::class,
-            'translation'  => Translation::class,
+            'gloss'        => Gloss::class,
             'discussion'   => ForumDiscussion::class
         ]);
     }

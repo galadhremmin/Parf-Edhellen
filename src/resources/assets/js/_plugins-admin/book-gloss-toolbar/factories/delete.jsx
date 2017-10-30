@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import EDConfig from 'ed-config';
 import { EDComponentFactory } from 'ed-components/dialog';
-import EDTranslationSelect from 'ed-components/translation-select';
+import EDGlossSelect from 'ed-components/gloss-select';
 
 class EDDeleteComponentFactory extends EDComponentFactory {
     get titleComponent() {
@@ -29,7 +29,7 @@ class EDDeleteComponentFactory extends EDComponentFactory {
     }
 
     onSubmit(gloss) {
-        axios.delete(`/admin/translation/${gloss.id}` + (this.replacementGloss ? `?replacement_id=${this.replacementGloss.id}` : ''))
+        axios.delete(`/admin/gloss/${gloss.id}` + (this.replacementGloss ? `?replacement_id=${this.replacementGloss.id}` : ''))
             .then(this.done.bind(this, gloss), this.failed.bind(this, gloss))
     }
 }
@@ -75,8 +75,8 @@ class BodyComponent extends React.Component {
                 Remember! A gloss is not <em>permanently</em>{' '}deleted. An system administrator can restore it.
             </p>
             <div className="form-group">
-                <label htmlFor="ed-deletion-replacement">Replacement translation:</label>
-                <EDTranslationSelect componentId="ed-deletion-replacement" componentName="replacement_translation_id"
+                <label htmlFor="ed-deletion-replacement">Replacement gloss:</label>
+                <EDGlossSelect componentId="ed-deletion-replacement" componentName="replacement_gloss_id"
                     languageId={this.props.gloss.language_id} onChange={this.onReplacementSelect.bind(this)} value={this.state.gloss} />
             </div>
         </form>;

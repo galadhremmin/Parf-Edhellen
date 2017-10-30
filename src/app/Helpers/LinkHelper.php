@@ -19,17 +19,17 @@ class LinkHelper
         ]);
     }
 
-    public function translation(int $translationId)
+    public function gloss(int $glossId)
     {
-        return route('translation.ref', [
-            'id' => $translationId
+        return route('gloss.ref', [
+            'id' => $glossId
         ]);
     }
 
-    public function translationVersions(int $translationId)
+    public function glossVersions(int $glossId)
     {
-        return route('translation.ref.version', [
-            'id' => $translationId
+        return route('gloss.ref.version', [
+            'id' => $glossId
         ]);
     }
     

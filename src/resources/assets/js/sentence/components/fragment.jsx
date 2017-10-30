@@ -13,7 +13,7 @@ class EDFragment extends React.Component {
         this.props.onClick({
             id: f.id,
             url: ev.target.href,
-            translation_id: f.translation_id
+            gloss_id: f.gloss_id
         });
     }
 
@@ -31,7 +31,7 @@ class EDFragment extends React.Component {
         }
 
         return <a className={classNames({'active': this.props.selected, 'text-danger': this.props.erroneous})}
-                  href={`/wt/${this.props.fragment.translation_id}`}
+                  href={`/wt/${this.props.fragment.gloss_id}`}
                   onClick={this.onFragmentClick.bind(this)}>
                   {text}
                </a>;

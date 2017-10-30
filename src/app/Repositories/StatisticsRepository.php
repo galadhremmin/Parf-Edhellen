@@ -2,7 +2,15 @@
 
 namespace App\Repositories;
 
-use App\Models\{ Account, ForumPost, ForumPostLike, Sentence, Translation, Word, FlashcardResult };
+use App\Models\{ 
+    Account, 
+    FlashcardResult,
+    ForumPost, 
+    ForumPostLike, 
+    Gloss, 
+    Sentence, 
+    Word
+};
 
 class StatisticsRepository
 {
@@ -11,7 +19,7 @@ class StatisticsRepository
         $noOfWords = Word::forAccount($account->id)
             ->count();
 
-        $noOfTranslations = Translation::notDeleted()
+        $noOfGlosses = Gloss::notDeleted()
             ->forAccount($account->id)
             ->count();
 
@@ -29,12 +37,12 @@ class StatisticsRepository
             ->count();
 
         return [
-            'noOfWords'        => $noOfWords,
-            'noOfTranslations' => $noOfTranslations,
-            'noOfSentences'    => $noOfSentences,
-            'noOfThanks'       => $noOfThanks,
-            'noOfFlashcards'   => $noOfFlashcards,
-            'noOfPosts'        => $noOfPosts
+            'noOfWords'      => $noOfWords,
+            'noOfGlosses'    => $noOfGlosses,
+            'noOfSentences'  => $noOfSentences,
+            'noOfThanks'     => $noOfThanks,
+            'noOfFlashcards' => $noOfFlashcards,
+            'noOfPosts'      => $noOfPosts
         ];
     }
 }

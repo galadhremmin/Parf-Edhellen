@@ -41,11 +41,13 @@ class SentenceContributionController extends Controller implements IContribution
      */
     public function show(Contribution $contribution)
     {
-        $payload = json_decode($contribution->payload);
-        $originalSentence = property_exists($payload, 'id')
-            ? Sentence::findOrFail($payload->id) : null;
+        $payload = json_decode($contribution->payload, true);
+        $this->makeMapCurrent($payload);
 
-        $sentence = new Sentence((array) $payload->sentence);
+        $originalSentence = isset($payload['id'])
+            ? Sentence::findOrFail($payload['id']) : null;
+
+        $sentence = new Sentence($payload['sentence']);
         $fragmentData = $this->createFragmentDataFromPayload($payload);
 
         return view('contribution.sentence.show', [
@@ -65,11 +67,12 @@ class SentenceContributionController extends Controller implements IContribution
      */
     public function edit(Contribution $contribution, Request $request)
     {
-        $payload = json_decode($contribution->payload);
+        $payload = json_decode($contribution->payload, true);
+        $this->makeMapCurrent($payload);
         
-        $sentence = $payload->sentence;
-        $sentence->contribution_id = $contribution->id;
-        $sentence->notes = $contribution->notes ?: '';
+        $sentence = $payload['sentence'];
+        $sentence['contribution_id'] = $contribution->id;
+        $sentence['notes'] = $contribution->notes ?: '';
 
         $fragmentData = $this->createFragmentDataFromPayload($payload);
 
@@ -177,6 +180,7 @@ class SentenceContributionController extends Controller implements IContribution
     public function approve(Contribution $contribution, Request $request)
     {
         $map = json_decode($contribution->payload, true);
+        $this->makeMapCurrent($map);
 
         $sentence = new Sentence($map['sentence']);
 
@@ -219,16 +223,16 @@ class SentenceContributionController extends Controller implements IContribution
             $fragments = new Collection();
             
             $i = 0;
-            foreach ($payload->fragments as $fragmentData) {
-                $fragment = new SentenceFragment((array) $fragmentData);
+            foreach ($payload['fragments'] as $fragmentData) {
+                $fragment = new SentenceFragment($fragmentData);
 
                 // Generate a fake ID (descending order, starting at -10).
                 $fragment->id = ($i + 1) * -10;
 
                 // Create an array of IDs for inflections associated with this fragment.
                 $fragment->_inflections = array_map(function ($rel) {
-                    return $rel->inflection_id;
-                }, $payload->inflections[$i]);
+                    return $rel['inflection_id'];
+                }, $payload['inflections'][$i]);
 
                 $fragments->push($fragment);
                 
@@ -238,5 +242,49 @@ class SentenceContributionController extends Controller implements IContribution
 
         $result = $this->_sentenceAdapter->adaptFragments($fragments);
         return $result;
+    }
+
+    /**
+     * Transitions earlier payloads to a format compatible with the latest version of
+     * the API. This transition was made necessary after transitioning to version 2, when
+     * a breaking change was introduced: _translations_ was renamed _glosses_.
+     *
+     * @param array $map
+     * @return void
+     */
+    private function makeMapCurrent(array& $map)
+    {
+        if (! isset($map['fragments'])) {
+            abort(400, 'A strange payload, indeed. There are no fragments.');
+        }
+        
+        $fragments =& $map['fragments'];
+        $inflections = $map['inflections'];
+
+        if (count($fragments) !== count($inflections)) {
+            abort(400, 'The number of fragments does not match the number of available inflections.');
+        }
+
+        if (count($fragments) < 1) {
+            return;
+        }
+
+        if (array_key_exists('gloss_id', $fragments[0])) {
+            return;
+        }
+
+        $i = 0;
+        $numberOfFragments = count($fragments);
+        while ($i < $numberOfFragments) {
+            $fragment =& $fragments[$i];
+
+            // transition from API version v1 to v2.
+            if (isset($fragment['translation_id'])) {
+                $fragment['gloss_id'] = $fragment['translation_id'];
+                unset($fragment['translation_id']);
+            }
+
+            $i += 1;
+        }
     }
 }

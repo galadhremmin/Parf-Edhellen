@@ -14,8 +14,8 @@ use App\Events\{
     FlashcardFlipped,
     SentenceCreated,
     SentenceEdited,
-    TranslationCreated,
-    TranslationEdited
+    GlossCreated,
+    GlossEdited
 };
 
 class AuditTrailSubscriber
@@ -73,13 +73,13 @@ class AuditTrailSubscriber
         );
 
         $events->listen(
-            TranslationCreated::class,
-            self::class.'@onTranslationCreated'
+            GlossCreated::class,
+            self::class.'@onGlossCreated'
         );
 
         $events->listen(
-            TranslationEdited::class,
-            self::class.'@onTranslationEdited'
+            GlossEdited::class,
+            self::class.'@onGlossEdited'
         );
     }
 
@@ -178,14 +178,14 @@ class AuditTrailSubscriber
         $this->repository()->store(AuditTrail::ACTION_SENTENCE_EDIT, $event->sentence, $event->accountId);
     }
 
-    public function onTranslationCreated(TranslationCreated $event) 
+    public function onGlossCreated(GlossCreated $event) 
     {
-        $this->repository()->store(AuditTrail::ACTION_TRANSLATION_ADD, $event->translation, $event->accountId);
+        $this->repository()->store(AuditTrail::ACTION_GLOSS_ADD, $event->gloss, $event->accountId);
     }
 
-    public function onTranslationEdited(TranslationEdited $event) 
+    public function onGlossEdited(GlossEdited $event) 
     {
-        $this->repository()->store(AuditTrail::ACTION_TRANSLATION_EDIT, $event->translation, $event->accountId);
+        $this->repository()->store(AuditTrail::ACTION_GLOSS_EDIT, $event->gloss, $event->accountId);
     }
 
     private function repository()

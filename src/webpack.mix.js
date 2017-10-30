@@ -22,7 +22,7 @@ mix.webpackConfig({
             'ed-components/error-list': 'elfdict/components/error-list.jsx',
             'ed-components/markdown-editor': 'elfdict/components/markdown-editor.jsx',
             'ed-components/language-select': 'elfdict/components/language-select.jsx',
-            'ed-components/translation-select': 'elfdict/components/translation-select.jsx',
+            'ed-components/gloss-select': 'elfdict/components/gloss-select.jsx',
 
             'ed-config': 'elfdict/config.js',
             'ed-form': 'elfdict/form.js',
@@ -45,7 +45,7 @@ mix.extract([
     /* These components are excuded from _vendor.js_ as they are limited to restricted visitors 
     'ed-components/dialog',
     'ed-components/error-list',
-    'ed-components/translation-select',
+    'ed-components/gloss-select',
     'ed-components/markdown-editor',
     */
     'ed-components/language-select',
@@ -105,8 +105,8 @@ mix.js([
 ], `${outputDir}/js/comment.js`);
 
 mix.js([
-    'resources/assets/js/translation/admin.jsx'
-], `${outputDir}/js/translation-admin.js`);
+    'resources/assets/js/gloss/admin.jsx'
+], `${outputDir}/js/gloss-admin.js`);
 
 mix.js([
     'resources/assets/js/flashcard/index.jsx'

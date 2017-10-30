@@ -12,9 +12,9 @@ class Sense extends ModelBase
         return $this->belongsTo(Word::class, 'id', 'id');
     }
 
-    public function translations() 
+    public function glosses() 
     {
-        return $this->hasMany(Translation::class);
+        return $this->hasMany(Gloss::class);
     }
 
     public function keywords() 

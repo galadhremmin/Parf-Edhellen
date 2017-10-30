@@ -125,38 +125,38 @@ Breadcrumbs::register('sentence.confirm-destroy', function ($breadcrumbs, App\Mo
 // //////////////////////////////////////////////////////////////////////////////////////////////
 // Dashboard > Glossary
 
-Breadcrumbs::register('translation.index', function ($breadcrumbs)
+Breadcrumbs::register('gloss.index', function ($breadcrumbs)
 {
     $breadcrumbs->parent('dashboard');
-    $breadcrumbs->push('Glossary', route('translation.index'));
+    $breadcrumbs->push('Glossary', route('gloss.index'));
 });
 
-Breadcrumbs::register('translation.create', function ($breadcrumbs)
+Breadcrumbs::register('gloss.create', function ($breadcrumbs)
 {
-    $breadcrumbs->parent('translation.index');
-    $breadcrumbs->push('Add gloss', route('translation.create'));
+    $breadcrumbs->parent('gloss.index');
+    $breadcrumbs->push('Add gloss', route('gloss.create'));
 });
 
-Breadcrumbs::register('translation.edit', function ($breadcrumbs, App\Models\Translation $translation)
+Breadcrumbs::register('gloss.edit', function ($breadcrumbs, App\Models\Gloss $gloss)
 {
-    $breadcrumbs->parent('translation.index');
-    $breadcrumbs->push('Edit gloss (' . $translation->word->word . ')', route('translation.edit', [
-        'id' => $translation->id
+    $breadcrumbs->parent('gloss.index');
+    $breadcrumbs->push('Edit gloss (' . $gloss->word->word . ')', route('gloss.edit', [
+        'id' => $gloss->id
     ]));
 });
 
-Breadcrumbs::register('translation.list', function ($breadcrumbs, App\Models\Language $language)
+Breadcrumbs::register('gloss.list', function ($breadcrumbs, App\Models\Language $language)
 {
-    $breadcrumbs->parent('translation.index');
-    $breadcrumbs->push('Glossary for ' . $language->name, route('translation.list', [
+    $breadcrumbs->parent('gloss.index');
+    $breadcrumbs->push('Glossary for ' . $language->name, route('gloss.list', [
         'id' => $language->id
     ]));
 });
 
-Breadcrumbs::register('translation.confirm-delete', function ($breadcrumbs, App\Models\Translation $translation)
+Breadcrumbs::register('gloss.confirm-delete', function ($breadcrumbs, App\Models\Gloss $gloss)
 {
-    $breadcrumbs->parent('translation.index');
-    $breadcrumbs->push('Delete gloss ' . $translation->word->word);
+    $breadcrumbs->parent('gloss.index');
+    $breadcrumbs->push('Delete gloss ' . $gloss->word->word);
 });
 
 // //////////////////////////////////////////////////////////////////////////////////////////////

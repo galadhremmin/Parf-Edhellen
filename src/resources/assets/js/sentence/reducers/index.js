@@ -21,7 +21,7 @@ const EDSentenceReducer = (state = {
         case RECEIVE_FRAGMENT:
             return {
                 ...state,
-                translationId: action.translationId,
+                glossId: action.glossId,
                 bookData: action.bookData,
                 loading: false
             };

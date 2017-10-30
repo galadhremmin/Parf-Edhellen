@@ -2,7 +2,7 @@ import {
     ED_REQUEST_CARD, 
     ED_RECEIVE_CARD,
     ED_TEST_CARD,
-    ED_RECEIVE_TRANSLATION
+    ED_RECEIVE_GLOSS
 } from '../reducers';
 import axios from 'axios';
 import EDConfig from 'ed-config';
@@ -35,9 +35,9 @@ export const testCard = (flashcardId, option) => (dispatch, getState) => {
         translation: option
     }), 800).then(resp => {
         dispatch({
-            type: ED_RECEIVE_TRANSLATION,
+            type: ED_RECEIVE_GLOSS,
             correct: resp.data.correct,
-            translation: resp.data.translation
+            gloss: resp.data.gloss
         });
     });
 };

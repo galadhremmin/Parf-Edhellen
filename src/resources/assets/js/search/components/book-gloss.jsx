@@ -4,7 +4,7 @@ import { Parser as HtmlToReactParser, ProcessNodeDefinitions } from 'html-to-rea
 import EDConfig from 'ed-config';
 
 /**
- * Represents a single gloss. A gloss is also called a 'translation' and is reserved for invented languages.
+ * Represents a single gloss. 
  */
 class EDBookGloss extends React.Component {
     constructor(props, context) {
@@ -70,7 +70,7 @@ class EDBookGloss extends React.Component {
     }
 
     renderGloss(gloss) {
-        const id = `translation-block-${gloss.id}`;
+        const id = `gloss-block-${gloss.id}`;
 
         let comments = null;
         if (gloss.comments) {
@@ -84,7 +84,7 @@ class EDBookGloss extends React.Component {
                 <span className="glyphicon glyphicon-warning-sign"></span> <strong>Important!</strong> A newer version of this gloss was found in the dictionary.
                 You should <a href={`/wt/${gloss.id}/latest`}> go to the latest version instead</a>.    
             </p> : undefined}
-            <h3 rel="trans-word" className="trans-word">
+            <h3 rel="gloss-word" className="gloss-word">
                 {! gloss.is_canon || gloss.is_uncertain
                     ? <span className="glyphicon glyphicon-asterisk" title="Uncertain or possibly a neologism" />
                     : undefined}
@@ -96,7 +96,7 @@ class EDBookGloss extends React.Component {
                     <span className="glyphicon glyphicon-comment" />{' '}
                     <span className="no">{gloss.comment_count}</span>
                 </a> : undefined}
-                {! this.props.disableTools ? <a href={`/wt/${gloss.id}`} className="translation-link">
+                {! this.props.disableTools ? <a href={`/wt/${gloss.id}`} className="gloss-link">
                     <span className="glyphicon glyphicon-share"></span>
                 </a> : undefined}
                 {! this.props.disableTools && gloss.is_latest ? toolbarPlugins.map((PluginComponent, i) => <span key={`plugin.${i}`}>
@@ -107,9 +107,11 @@ class EDBookGloss extends React.Component {
             <p>
                 {gloss.tengwar ? <span className="tengwar">{gloss.tengwar}</span> : undefined}
                 {' '}
-                {gloss.type ? <span className="word-type" rel="trans-type">{gloss.type}.</span> : undefined}
+                {gloss.type ? <span className="word-type" rel="gloss-type">{gloss.type}.</span> : undefined}
                 {' '}
-                <span rel="trans-translation" itemProp="keywords">{gloss.translation}</span>
+                <span rel="gloss-translations" itemProp="keywords">
+                    {gloss.all_translations}
+                </span>
             </p>
 
             {comments}
@@ -152,15 +154,15 @@ class EDBookGloss extends React.Component {
             </div> : ''}
 
             <footer>
-                {gloss.source ? <span className="word-source" rel="trans-source">[{gloss.source}]</span> : ''}
+                {gloss.source ? <span className="word-source" rel="gloss-source">[{gloss.source}]</span> : ''}
                 {' '}
                 {gloss.etymology ?
-                    <span className="word-etymology" rel="trans-etymology">{gloss.etymology}.</span> : ''}
+                    <span className="word-etymology" rel="gloss-etymology">{gloss.etymology}.</span> : ''}
                 {' '}
                 {gloss.external_link_format && gloss.external_id ?
                     <span>
                         <a href={gloss.external_link_format.replace(/\{ExternalID\}/g, gloss.external_id)}
-                            title={`Goes to ${gloss.translation_group_name} in new tab or window.`}
+                            title={`Goes to ${gloss.gloss_group_name} in new tab or window.`}
                             target="_blank">
                             <span className="glyphicon glyphicon-globe" />
                             {' '}
@@ -169,8 +171,8 @@ class EDBookGloss extends React.Component {
                     </span>
                     : ''}
                 {' '}
-                {gloss.translation_group_id ?
-                    (<span>Group: <span itemProp="sourceOrganization">{gloss.translation_group_name}.</span></span>) : ''}
+                {gloss.gloss_group_id ?
+                    (<span>Group: <span itemProp="sourceOrganization">{gloss.gloss_group_name}.</span></span>) : ''}
                 {' Published: '}
                 <span itemProp="datePublished">{new Date(gloss.created_at).toLocaleString()}</span>
                 {' by '}

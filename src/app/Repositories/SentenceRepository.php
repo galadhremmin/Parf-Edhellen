@@ -64,7 +64,7 @@ class SentenceRepository
      * @param number[] $ids
      * @return array
      */
-    public function getInflectionsForTranslations(array $ids)
+    public function getInflectionsForGlosses(array $ids)
     {
         return DB::table('sentence_fragments as sf')
             ->join('speeches as sp', 'sf.speech_id', 'sp.id')
@@ -72,8 +72,8 @@ class SentenceRepository
             ->join('languages as l', 's.language_id', 'l.id')
             ->leftJoin('sentence_fragment_inflection_rels as r', 'sf.id', 'r.sentence_fragment_id')
             ->leftJoin('inflections as i', 'r.inflection_id', 'i.id')
-            ->whereIn('sf.translation_id', $ids)
-            ->select('sf.translation_id', 'sf.fragment as word', 'i.name as inflection', 'sp.name as speech', 
+            ->whereIn('sf.gloss_id', $ids)
+            ->select('sf.gloss_id', 'sf.fragment as word', 'i.name as inflection', 'sp.name as speech', 
                 'sf.sentence_id', 'sf.id as sentence_fragment_id', 's.name as sentence_name', 'l.name as language_name',
                 'l.id as language_id')
             ->orderBy('sf.fragment')

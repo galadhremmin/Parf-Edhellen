@@ -54,9 +54,9 @@ trait CanValidateSentence
             $rules[$prefix.'fragment'] = 'required|max:48';
 
             if (! $fragments[$i]['type']) {
-                $rules[$prefix.'tengwar']          = 'required|max:128';
-                $rules[$prefix.'translation_id']   = 'required|exists:translations,id';
-                $rules[$prefix.'speech_id']        = 'required|exists:speeches,id';
+                $rules[$prefix.'tengwar']   = 'required|max:128';
+                $rules[$prefix.'gloss_id']  = 'required|exists:glosses,id';
+                $rules[$prefix.'speech_id'] = 'required|exists:speeches,id';
 
                 // inflections are optional, but when present, have to be declared as an array
                 $rules[$prefix.'inflections']      = 'sometimes|array';

@@ -25,8 +25,8 @@
       <tr class="{{ $r->correct ? '' : 'danger' }}">
         <td class="date">{{ $r->created_at }}</td>
         <td>
-          <a href="{{ $link->translation($r->translation_id) }}">
-            {{ $r->translation->word->word }}
+          <a href="{{ $link->gloss($r->gloss_id) }}">
+            {{ $r->gloss->word->word }}
           </a>
         </td>
         <td>{{ $r->expected }}</td>

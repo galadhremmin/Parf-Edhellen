@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Sentence, Translation};
+use App\Models\{Sentence, Gloss};
 use App\Helpers\{LinkHelper, StringHelper};
 
 use App\Http\Controllers\Controller;
@@ -42,7 +42,7 @@ class SitemapController extends Controller
                     $from    = $request->input('from');
                     $to      = $request->input('to');
 
-                    $this->addTranslations($xml, $from, $to);
+                    $this->addGlosses($xml, $from, $to);
                 }
                 break;
             case 'sentences':
@@ -68,25 +68,25 @@ class SitemapController extends Controller
         }
     }
 
-    private function addTranslations(string& $xml, int $from, int $to) 
+    private function addGlosses(string& $xml, int $from, int $to) 
     {
         if ($from > $to || $to - $from > 50000) {
             return;
         }
 
-        $translations = Translation::active()
-            ->join('words', 'words.id', 'translations.word_id')
-            ->select('words.normalized_word', 'translations.updated_at', 'translations.created_at')
+        $glosses = Gloss::active()
+            ->join('words', 'words.id', 'glosses.word_id')
+            ->select('words.normalized_word', 'glosses.updated_at', 'glosses.created_at')
             ->distinct()
             ->skip($from)
             ->take($to - $from)
             ->get();
 
-        foreach ($translations as $translation) {
+        foreach ($glosses as $gloss) {
             $this->addNode($xml,
-                $this->_domain.'/w/'.urlencode($translation->normalized_word),
+                $this->_domain.'/w/'.urlencode($gloss->normalized_word),
                 'monthly',
-                $translation->updated_at ?: $translation->created_at
+                $gloss->updated_at ?: $gloss->created_at
             );
         }
     }

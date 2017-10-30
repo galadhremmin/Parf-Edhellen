@@ -5,13 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Traits\{
     CanTranslate, 
-    CanGetTranslation
+    CanGetGloss
 };
 
 class BookController extends Controller
 {
-    use CanTranslate, CanGetTranslation {
-        CanTranslate::__construct insteadof CanGetTranslation;
+    use CanTranslate, CanGetGloss {
+        CanTranslate::__construct insteadof CanGetGloss;
     }
 
     public function pageForWord(Request $request, string $word)
@@ -23,9 +23,9 @@ class BookController extends Controller
         ]);
     }
 
-    public function pageForTranslationId(Request $request, int $id)
+    public function pageForGlossId(Request $request, int $id)
     {
-        $model = $this->getTranslation($id);
+        $model = $this->getGloss($id);
         if (! $model) {
             abort(404);
         }
@@ -37,23 +37,23 @@ class BookController extends Controller
 
     public function redirectToLatest(Request $request, int $id)
     {
-        $translation = $this->getTranslationUnadapted($id, true);
-        if (! $translation) {
+        $gloss = $this->getGlossUnadapted($id, true);
+        if (! $gloss) {
             abort(404);
         }
 
-        return redirect()->route('translation.ref', ['id' => $translation->id]);
+        return redirect()->route('gloss.ref', ['id' => $gloss->first()->id]);
     }
 
     public function versions(Request $request, int $id)
     {
-        $translations = $this->_translationRepository->getVersions($id);
-        if (count($translations) < 1) {
+        $glosses = $this->_glossRepository->getVersions($id);
+        if (count($glosses) < 1) {
             abort(404);
         }
 
-        $word = $translations[0]->word;
-        $model = $this->_bookAdapter->adaptTranslations($translations, [], [], $word, false, false);
+        $word = $glosses[0]->word;
+        $model = $this->_bookAdapter->adaptGlosses($glosses, [], [], $word, false, false);
 
         return view('book.version', [
             'word'      => $word,

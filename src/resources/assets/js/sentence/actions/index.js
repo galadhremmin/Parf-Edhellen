@@ -6,7 +6,7 @@ import {
     RECEIVE_FRAGMENT
 } from '../reducers';
 
-export const selectFragment = (fragmentId, translationId) => {
+export const selectFragment = (fragmentId, glossId) => {
     return dispatch => {
         dispatch({
             type: REQUEST_FRAGMENT,
@@ -14,12 +14,12 @@ export const selectFragment = (fragmentId, translationId) => {
         });
 
         const start = new Date().getTime();
-        deferredResolve(axios.get(EDConfig.api(`/book/translate/${translationId}`)), 800)
+        deferredResolve(axios.get(EDConfig.api(`/book/translate/${glossId}`)), 800)
             .then(resp => {
                 dispatch({
                     type: RECEIVE_FRAGMENT,
                     bookData: resp.data,
-                    translationId
+                    glossId
                 });
             });
     };

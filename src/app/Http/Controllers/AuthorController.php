@@ -23,7 +23,7 @@ use App\Events\{
 use App\Models\{ 
     Account, 
     ForumPost,
-    Translation,
+    Gloss,
     Sentence
 };
 
@@ -62,19 +62,19 @@ class AuthorController extends Controller
         ]);
     }
 
-    public function translations(Request $request, int $id = null)
+    public function glosses(Request $request, int $id = null)
     {
         $author = Account::findOrFail($id);
-        $translations = Translation::active()
+        $glosses = Gloss::active()
             ->forAccount($id)
-            ->with('word', 'sense.word', 'language', 'translation_group')
+            ->with('word', 'sense.word', 'language', 'gloss_group', 'translations')
             ->orderBy('id', 'desc')
             ->limit(100)
             ->get();
         
-        return view('author.list-translation', [
-            'translations' => $translations,
-            'author'       => $author
+        return view('author.list-gloss', [
+            'glosses' => $glosses,
+            'author'  => $author
         ]);
     }
 
@@ -116,7 +116,7 @@ class AuthorController extends Controller
         $adapted = $this->_discussAdapter->adaptForTimeline($posts);
         $author = Account::findOrFail($id);
 
-        return view('author.list-posts', [
+        return view('author.list-post', [
             'posts'     => $adapted,
             'noOfPosts' => $noOfPosts,
             'noOfPages' => ceil($noOfPosts / $pageSize),
