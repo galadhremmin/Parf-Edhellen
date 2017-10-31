@@ -87,7 +87,7 @@ export class EDStatefulFormComponent extends React.Component {
 
             value = target.value;
 
-            if (/^on|off|true|false$/i.test(value)) {
+            if (/^(on|off|true|false)$/i.test(value)) {
                 value = true;
             } else if (/^[0-9]+$/.test(value)) {
                 value = parseInt(value, 10);

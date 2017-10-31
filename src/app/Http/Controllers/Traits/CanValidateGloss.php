@@ -30,8 +30,6 @@ trait CanValidateGloss
             $rules['gloss_group_id'] = 'sometimes|numeric|exists:gloss_groups,id';
         }
 
-        parent::validate($request, $rules, [
-            'sense.word.word.required' => 'sense is required.'
-        ]);
+        parent::validate($request, $rules);
     } 
 }

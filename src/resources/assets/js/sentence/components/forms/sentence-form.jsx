@@ -3,9 +3,10 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import axios from 'axios';
-import { setSentenceData } from '../../actions/admin';
 import EDConfig from 'ed-config';
 import { EDStatefulFormComponent } from 'ed-form';
+import { smoothScrollIntoView } from 'ed-scrolling';
+import { setSentenceData } from '../../actions/admin';
 import EDLanguageSelect from 'ed-components/language-select';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
 import EDErrorList from 'ed-components/error-list';
@@ -105,14 +106,11 @@ class EDSentenceForm extends EDStatefulFormComponent {
 
         // Scroll to the top of the page in the event that the client might have
         // scrolled too far down to notice the error messages.
-        window.scroll({
-            top: 0,
-            behavior: 'smooth'
-        });
+        smoothScrollIntoView(this.formControl);
     }
  
     render() {
-        return <form onSubmit={this.onSubmit.bind(this)}>
+        return <form onSubmit={this.onSubmit.bind(this)} ref={c => this.formControl = c}>
             <EDErrorList errors={this.state.errors} />
             <p>
                 This is the first step of three steps.

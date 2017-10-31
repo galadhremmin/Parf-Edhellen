@@ -41,6 +41,11 @@ class Account extends Authenticatable
         return $roles->search($roleName) !== false;
     }
 
+    public function forgetRoles()
+    {
+        Cache::forget('ed.rol.'.$this->id);
+    }
+
     public function isAdministrator() 
     {
         return $this->memberOf('Administrators');

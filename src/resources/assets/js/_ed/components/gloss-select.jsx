@@ -193,7 +193,7 @@ class EDGlossSelect extends React.Component {
             <strong>{suggestion.word}</strong>
             {': '}
             {suggestion.type ? <em>{`${suggestion.type} `}</em> : ''}
-            {suggestion.translations}
+            {suggestion.translation}
             {' '}
             [{suggestion.source}]<br />
             <small>

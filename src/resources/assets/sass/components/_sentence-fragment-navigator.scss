@@ -4,6 +4,7 @@
     a:hover, a:active, a:visited, a {
       text-decoration: none;
       color: inherit;
+      white-space: nowrap;
     }
 
     .tengwar > span.active, a.active {

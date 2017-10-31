@@ -98,9 +98,20 @@ return [
     */
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
+        'translations' => [
+            'required' => 'Specify at least one gloss.',
         ],
+        'language_id' => [
+            'required' => 'Language is required.',
+            'exists'   => 'The specified language does not exist.'
+        ],
+        'speech_id' => [
+            'required' => 'Type of speech is required.',
+            'exists'   => 'The specified type of speech does not exist.'
+        ],
+        'sense.word.word' => [
+            'required' => 'Sense is required.'
+        ]
     ],
 
     /*

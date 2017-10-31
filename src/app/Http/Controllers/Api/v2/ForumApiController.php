@@ -448,7 +448,7 @@ class ForumApiController extends Controller
             $thread->subject = $subject;
         }
 
-        if (! $resolver->available($thread, $request->user())) {
+        if (! $resolver->available($thread->entity_id, $request->user())) {
             abort(403);
         }
 

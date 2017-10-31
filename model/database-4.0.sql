@@ -24,13 +24,15 @@ UPDATE `audit_trails` SET `entity_type` = 'gloss'
     WHERE `entity_type` = 'translation';
 UPDATE `forum_threads` SET `entity_type` = 'gloss' 
     WHERE `entity_type` = 'translation';
+UPDATE `contributions` SET `type` = 'gloss' 
+    WHERE `type` = 'translation';
 
 ALTER TABLE `contributions` CHANGE `translation_id` `gloss_id` int(8) unsigned NULL;
 ALTER TABLE `favourites` CHANGE `translation_id` `gloss_id` int(8) unsigned NOT NULL;
 ALTER TABLE `flashcards` CHANGE `translation_group_id` `gloss_group_id` int(11) NULL;
 ALTER TABLE `flashcard_results` CHANGE `translation_id` `gloss_id` int(8) unsigned NULL;
 ALTER TABLE `keywords` CHANGE `translation_id` `gloss_id` int(8) unsigned NULL;
-ALTER TABLE `sentence_fragments` CHANGE `translation_id` `gloss_id` int(8) unsigned NOT NULL;
+ALTER TABLE `sentence_fragments` CHANGE `translation_id` `gloss_id` int(8) unsigned NULL;
 
 OPTIMIZE TABLE `audit_trails`, `contributions`, `favourites`, `forum_threads`, `flashcard_results`, 
     `keywords`, `sentence_fragments`;

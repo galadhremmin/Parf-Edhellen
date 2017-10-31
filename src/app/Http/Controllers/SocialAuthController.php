@@ -40,8 +40,13 @@ class SocialAuthController extends Controller
         return view('authentication.login', [ 'providers' => $providers ]);
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
+        $account = $request->user();
+        if ($account) {
+            $account->forgetRoles();
+        }
+
         Auth::logout();
         return redirect()->to('/');
     }

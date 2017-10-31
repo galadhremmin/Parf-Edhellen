@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Contributions;
 
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Collection;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\GlossRepository;
@@ -56,14 +57,14 @@ class GlossContributionController extends Controller implements IContributionCon
             'sense'    => $contribution->sense
         ];
         $gloss = new Gloss($glossData);
-        $glosses = [$gloss];
+        $glosses = [ $gloss ];
 
         $gloss->created_at   = $contribution->created_at;
         $gloss->account_name = $contribution->account->nickname;
         $gloss->type         = $gloss->speech->name;
 
         // Hack for assigning to the relation _translations_ without saving them to the database.
-        $gloss->setRelation('translations', $translations);
+        $gloss->setRelation('translations', new Collection($translations));
 
         $glossData = $this->_bookAdapter->adaptGlosses($glosses);
         

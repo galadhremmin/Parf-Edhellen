@@ -31,7 +31,8 @@ class ContributionContext implements IDiscussContext
         if (is_numeric($entityOrId)) {
             // TODO: Optimize. Somehow.
             $accountId = Contribution::where('id', $entityOrId)
-                ->pluck('account_id');
+                ->pluck('account_id')
+                ->first();
         } else {
             $accountId = $entityOrId->account_id;
         }

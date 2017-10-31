@@ -3,11 +3,12 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import axios from 'axios';
 import EDConfig from 'ed-config';
-import { requestGlossGroups, componentIsReady } from '../../actions/admin';
 import { EDStatefulFormComponent } from 'ed-form';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
 import EDLanguageSelect from 'ed-components/language-select';
 import EDErrorList from 'ed-components/error-list';
+import { smoothScrollIntoView } from 'ed-scrolling';
+import { requestGlossGroups, componentIsReady } from '../../actions/admin';
 import EDTranslationSelect from '../../../_shared/components/translation-select';
 import EDWordSelect from '../../../_shared/components/word-select';
 import EDAccountSelect from '../../../_shared/components/account-select';
@@ -133,10 +134,7 @@ class EDGlossForm extends EDStatefulFormComponent {
 
         // Scroll to the top of the page in the event that the client might have
         // scrolled too far down to notice the error messages.
-        window.scroll({
-            top: 0,
-            behavior: 'smooth'
-        });
+        smoothScrollIntoView(this.formControl);
     }
  
     render() {
@@ -146,7 +144,7 @@ class EDGlossForm extends EDStatefulFormComponent {
 
         const language = EDConfig.findLanguage(this.state.language_id);
 
-        return <form onSubmit={this.onSubmit.bind(this)}>
+        return <form onSubmit={this.onSubmit.bind(this)} ref={c => this.formControl = c}>
             <EDErrorList errors={this.state.errors} />
             <p>
                 <span className="glyphicon glyphicon-info-sign" />{' '}
