@@ -116,6 +116,6 @@ class Gloss extends ModelBase
             : Gloss::where([
                 [ 'origin_gloss_id', '=', $this->origin_gloss_id ?: $this->id ],
                 [ 'is_latest', '=', 1]
-            ])->first();
+            ])->first() ?: $this;
     }
 }

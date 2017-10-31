@@ -238,6 +238,10 @@ class GlossRepository
             }
         }
 
+        if (! $gloss->account_id) {
+            throw new \Exception('Invalid account ID.');
+        }
+
         // 1. Turn all words should be lower case.
         $wordString   = StringHelper::toLower($wordString);
         $senseString  = StringHelper::toLower($senseString);
@@ -255,7 +259,20 @@ class GlossRepository
 
         // 4. Load the original translation and update the translation's origin and parent columns.
         $changed = true;
+        $translationsChanged = true;
         $originalGloss = null;
+
+        if (! $gloss->id && $gloss->external_id) {
+            $existingGloss = Gloss::where('external_id', $gloss->external_id)
+                ->first();
+            
+            if ($existingGloss) {
+                $existingGloss = $existingGloss->getLatestVersion();
+                $gloss->id = $existingGloss->id;
+                unset($existingGloss);
+            }
+        }
+
         if ($gloss->id) {
             $originalGloss = Gloss::with('sense', 'translations', 'word', 'keywords')
                 ->findOrFail($gloss->id)->getLatestVersion();
@@ -266,6 +283,11 @@ class GlossRepository
 
             $changed = false;
             foreach ($newAttributes as $key => $value) {
+                // Skip dates, as they are bound to be different.
+                if ($key === 'created_at' || $key === 'updated_at') {
+                    continue;
+                }
+
                 // avoid perfect equality (===/!==) because the value in the DB
                 // can diverge from the one passed from the view.
                 if ($oldAttributes[$key] != $value) {
@@ -274,28 +296,30 @@ class GlossRepository
                 }
             }
             
-            if (! $changed) {
-                // If no other parameters have changed, iterate through the list of translations 
-                // and determine whether there are mismatching translations.
-                //
-                // Begin by checking the length of the two collections. Laravel collections are not
-                // used by the repository, but is utilised by the Eloquent ORM, thus the different
-                // syntax.
-                $changed = $originalGloss->translations->count() !== count($translations);
+            // If no other parameters have changed, iterate through the list of translations 
+            // and determine whether there are mismatching translations.
+            //
+            // Begin by checking the length of the two collections. Laravel collections are not
+            // used by the repository, but is utilised by the Eloquent ORM, thus the different
+            // syntax.
+            $translationsChanged = $originalGloss->translations->count() !== count($translations);
 
-                if (! $changed) {
-                    // If the length matches, iterate through each element and check whether they 
-                    // exist in both collections.
-                    foreach ($translations as $t) {
-                        if (! $originalGloss->translations->contains(function ($ot) use($t) {
-                            return $ot->translation === $t->translation;
-                        })) {
-                            // When not existing, the collection has changed.
-                            $changed = true;
-                            break;
-                        }
+            if (! $translationsChanged) {
+                // If the length matches, iterate through each element and check whether they 
+                // exist in both collections.
+                foreach ($translations as $t) {
+                    if (! $originalGloss->translations->contains(function ($ot) use($t) {
+                        return $ot->translation === $t->translation;
+                    })) {
+                        // When not existing, the collection has changed.
+                        $changed = true;
+                        break;
                     }
                 }
+            }
+            
+            if ($translationsChanged) {
+                $changed = true;
             }
 
             if ($changed) {
@@ -353,10 +377,10 @@ class GlossRepository
         $keywords = array_filter($keywords, function ($w) use($wordString, $translationStrings) {
             return $w !== $wordString && ! in_array($w, $translationStrings);
         });
-
+        
         // 10. Remove existing keywords, if they have changed
-        $keywordsChanged = true;
-        if ($originalGloss !== null) {
+        $keywordsChanged = $translationsChanged;
+        if ($originalGloss !== null && ! $keywordsChanged) {
             // transform original keyword entities to an array of strings.
             $originalKeywords = array_merge(
                 $originalGloss->keywords->map(function ($k) {
@@ -380,13 +404,14 @@ class GlossRepository
             sort($newKeywords);
             
             $keywordsChanged = $originalKeywords !== $newKeywords;
-            if ($keywordsChanged) {
-                $originalGloss->keywords()->delete();
-            }
         }
 
         // 11. save gloss and word as keywords on the translation, if changed.
         if ($keywordsChanged) {
+            if ($originalGloss) {
+                $originalGloss->keywords()->delete();
+            }
+
             $this->createKeyword($word, $sense, $gloss);
 
             foreach ($translationStrings as $translationString) {

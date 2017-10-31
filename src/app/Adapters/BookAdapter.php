@@ -249,11 +249,12 @@ class BookAdapter
         bool $atomDate = false, LinkHelper $linker = null) 
     {
         $isGlossEntity = $gloss instanceof Gloss;
+        $separator = config('ed.gloss_translations_separator');
 
         if ($isGlossEntity) {
-            $gloss->all_translations = $gloss->translations->implode('translation', '; ');
+            $gloss->all_translations = $gloss->translations->implode('translation', $separator);
         } else {
-            $gloss->all_translations = implode('; ', array_map(function ($t) {
+            $gloss->all_translations = implode($separator, array_map(function ($t) {
                 return $t->translation;
             }, $gloss->translations));
         }

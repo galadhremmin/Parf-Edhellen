@@ -20,6 +20,9 @@ return [
     // maximum number of translations per gloss
     'max_number_of_translations' => env('ED_MAX_TRANSLATIONS', 8),
 
+    // separator for translations
+    'gloss_translations_separator' => env('ED_GLOSS_TRANSLATIONS_SEPARATOR', '; '), 
+
     // applicable sentence builders
     'required_sentence_builders' => [
         'latin'   => App\Adapters\LatinSentenceBuilder::class,
