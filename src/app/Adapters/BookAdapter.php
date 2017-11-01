@@ -256,6 +256,7 @@ class BookAdapter
             $gloss->word                 = $entity->word->word;
             $gloss->normalized_word      = $entity->word->normalized_word;
             $gloss->type                 = $entity->speech_id ? $entity->speech->name : null;
+            $gloss->gloss_group_id       = $entity->gloss_group_id ?: null;
             $gloss->gloss_group_name     = $entity->gloss_group_id ? $entity->gloss_group->name : null;
             $gloss->external_link_format = $entity->gloss_group_id ? $entity->gloss_group->external_link_format : null;
             $gloss->translations         = $entity->translations->map(function ($t) {
