@@ -23,14 +23,14 @@
         <td class="hidden-xs date">{{ $gloss->created_at }}</td>
         <td>{{ $gloss->language->name }}</td>
         <td>
-          @if ($gloss->is_uncertain || ($gloss->gloss_group_id && ! $gloss->gloss_group->is_canon))
+          @if ($gloss->is_uncertain || ! $gloss->is_canon)
           <span class="glyphicon glyphicon-asterisk"></span>
           @endif
           <a href="{{ $link->gloss($gloss->id) }}">
-            {{ $gloss->word->word }} / {{ $gloss->sense->word->word }}
+            {{ $gloss->word }} / {{ $gloss->sense }}
           </a>
         </td>
-        <td>{{ $gloss->translations }}</td>
+        <td>{{ $gloss->all_translations }}</td>
       </tr>
       @endforeach
     </tbody>

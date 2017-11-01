@@ -9,7 +9,10 @@ use Illuminate\Support\Facades\{
     Storage
 };
 
-use App\Adapters\DiscussAdapter;
+use App\Adapters\{
+    BookAdapter,
+    DiscussAdapter
+};
 use App\Repositories\StatisticsRepository;
 use App\Helpers\{
     MarkdownParser,
@@ -29,13 +32,15 @@ use App\Models\{
 
 class AuthorController extends Controller
 {
+    protected $_bookAdapter;
     protected $_discussAdapter;
     protected $_statisticsRepository;
     protected $_storageHelper;
 
-    public function __construct(DiscussAdapter $discussAdapter, 
+    public function __construct(BookAdapter $bookAdapter, DiscussAdapter $discussAdapter, 
         StatisticsRepository $statisticsRepository, StorageHelper $storageHelper)
     {
+        $this->_bookAdapter          = $bookAdapter;
         $this->_discussAdapter       = $discussAdapter;
         $this->_statisticsRepository = $statisticsRepository;
         $this->_storageHelper        = $storageHelper;
@@ -65,15 +70,21 @@ class AuthorController extends Controller
     public function glosses(Request $request, int $id = null)
     {
         $author = Account::findOrFail($id);
-        $glosses = Gloss::active()
+        $entities = Gloss::active()
             ->forAccount($id)
             ->with('word', 'sense.word', 'language', 'gloss_group', 'translations')
             ->orderBy('id', 'desc')
             ->limit(100)
             ->get();
+
+        $glossary = $entities->map(function ($gloss) {
+            $adapted = $this->_bookAdapter->adaptGloss($gloss);
+            $adapted->sense = $gloss->sense->word->word;
+            return $adapted;
+        });
         
         return view('author.list-gloss', [
-            'glossary' => $glosses,
+            'glossary' => $glossary,
             'author'  => $author
         ]);
     }
