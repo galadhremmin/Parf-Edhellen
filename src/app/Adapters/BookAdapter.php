@@ -403,7 +403,6 @@ class BookAdapter
 
         // Bump all unverified glosses to a trailing position
         if (! $gloss->is_canon) {
-            dd($gloss);
             $rating = (1 << 31) + $rating;
         }
 
