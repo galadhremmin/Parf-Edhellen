@@ -220,10 +220,17 @@ class FlashcardController extends Controller
         ]);
 
         $translationId = intval( $request->input('translation_id') );
-        $translation = Translation::findOrFail($translationId);
+        $gloss = Translation::findOrFail($translationId)->gloss;
 
         $offeredGloss = $request->input('translation');
-        $ok = strcmp($translation->translation, $offeredGloss) === 0;
+        $ok = false;
+        
+        foreach ($gloss->translations as $translation) {
+            $ok = strcmp($translation->translation, $offeredGloss) === 0;
+            if ($ok) {
+                break;
+            }
+        }
 
         $account = $request->user();
 
