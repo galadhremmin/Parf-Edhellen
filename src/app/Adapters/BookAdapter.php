@@ -271,6 +271,10 @@ class BookAdapter
                 $gloss->speech_id
             );
 
+            if ($languages === null) {
+                $languages = new Collection([$entity->language]);
+            }
+
         } else {
             $gloss->all_translations = implode($separator, array_map(function ($t) {
                 return $t->translation;
