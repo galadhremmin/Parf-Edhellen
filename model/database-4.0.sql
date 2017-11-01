@@ -4,9 +4,9 @@ RENAME TABLE `translation_groups` TO `gloss_groups`;
 CREATE TABLE `translations`(
     `id` int(8) unsigned NOT NULL AUTO_INCREMENT,
     `gloss_id` int(8) unsigned NOT NULL,
-    `translation` varchar(255) COLLATE utf8_swedish_ci NOT NULL,
-  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` datetime DEFAULT NULL,
+    `translation` varchar(255) BINARY COLLATE utf8_swedish_ci NOT NULL,
+    `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` datetime DEFAULT NULL,
     PRIMARY KEY (`id`)
 );
 
