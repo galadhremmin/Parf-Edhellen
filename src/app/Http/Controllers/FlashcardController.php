@@ -242,11 +242,6 @@ class FlashcardController extends Controller
         $gloss = $translation->gloss;
         $gloss->load('translations');
 
-        if (! empty($gloss->comments)) {
-            $parser = new MarkdownParser();
-            $gloss->comments = $parser->parse($gloss->comments);
-        }
-
         // Record the progress
         $numberOfCards = FlashcardResult::where('account_id', $result->account_id)->count();
         event(new FlashcardFlipped($result, $numberOfCards));
