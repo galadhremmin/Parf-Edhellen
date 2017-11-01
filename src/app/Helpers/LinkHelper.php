@@ -4,9 +4,12 @@ namespace App\Helpers;
 
 class LinkHelper
 {
-    public function author(int $authorId, string $authorName)
+    public function author(int $authorId, string $authorName = null)
     {
-        $nickname = empty($authorName) ? '' : StringHelper::normalizeForUrl($authorName);
+        $nickname = $authorName === null || empty($authorName) 
+            ? '' 
+            : StringHelper::normalizeForUrl($authorName);
+        
         if (empty($nickname)) {
             return route('author.profile-without-nickname', [
                 'id' => $authorId

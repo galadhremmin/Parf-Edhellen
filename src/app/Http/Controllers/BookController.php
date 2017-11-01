@@ -12,7 +12,7 @@ class BookController extends Controller
 {
     use CanTranslate, CanGetGloss {
         CanTranslate::__construct insteadof CanGetGloss;
-    }
+    } // ;
 
     public function pageForWord(Request $request, string $word)
     {
@@ -60,5 +60,4 @@ class BookController extends Controller
             'versions'  => $model['sections'][0]['glosses']
         ]);
     }
-
 }

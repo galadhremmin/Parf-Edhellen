@@ -8,6 +8,7 @@ class Translation extends ModelBase
         'gloss_id', 'translation'
     ];
     protected $hidden = [
+        'gloss_id',
         'created_at',
         'updated_at' 
     ];

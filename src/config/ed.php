@@ -21,7 +21,7 @@ return [
     'max_number_of_translations' => env('ED_MAX_TRANSLATIONS', 8),
 
     // separator for translations
-    'gloss_translations_separator' => env('ED_GLOSS_TRANSLATIONS_SEPARATOR', '; '), 
+    'gloss_translations_separator' => env('ED_GLOSS_TRANSLATIONS_SEPARATOR', ';').' ' /* deliberate trailing space */, 
 
     // applicable sentence builders
     'required_sentence_builders' => [

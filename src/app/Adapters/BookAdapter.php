@@ -1,6 +1,10 @@
 <?php
 
 namespace App\Adapters;
+
+use Illuminate\Support\Collection;
+use Carbon\Carbon;
+
 use App\Helpers\{
     LinkHelper, StringHelper, MarkdownParser
 };
@@ -10,8 +14,6 @@ use App\Models\{
     Language,
     Translation
 };
-use Illuminate\Support\Collection;
-use Carbon\Carbon;
 
 class BookAdapter
 {
@@ -53,9 +55,7 @@ class BookAdapter
 
         // brief interlude - convert markdown to HTML and generate author URLs, 
         // and merge translations, where applicable.
-        $markdownParser = new MarkdownParser(['>', '#']);
         $linker = new LinkHelper();
-        $authorUrls = [];
         $previousGloss = null;
         $i = 0;
 
@@ -93,16 +93,6 @@ class BookAdapter
                     continue;
                 }
             }
-
-            if (!empty($gloss->comments)) {
-                $gloss->comments = $markdownParser->text($gloss->comments);
-            }
-
-            if (!isset($authorUrls[$gloss->account_id])) {
-                $authorUrls[$gloss->account_id] = $linker->author($gloss->account_id, $gloss->account_name);
-            }
-
-            $gloss->account_url = $authorUrls[$gloss->account_id];
 
             $i += 1;
         }
@@ -150,13 +140,13 @@ class BookAdapter
         $sense = [];
         $noOfSense = 0;
         foreach ($glosses as $gloss) {
+            $adapted = $this->adaptGloss($gloss, $allLanguages, $inflections, $commentsById, $atomDate, $linker);
             if ($word !== null) {
-                self::calculateRating($gloss, $word);
+                self::calculateRating($adapted, $word);
             }
 
             // adapt gloss for the view
-            $gloss2LanguageMap[$groupByLanguage ? $gloss->language_id : 0][] = 
-                $this->adaptGloss($gloss, $allLanguages, $inflections, $commentsById, $atomDate, $linker);
+            $gloss2LanguageMap[$groupByLanguage ? $gloss->language_id : 0][] = $adapted;
             
             // Compose an array of senses in an ascending order.
             $senseId = $gloss->sense_id;
@@ -248,23 +238,55 @@ class BookAdapter
     public function adaptGloss($gloss, Collection $languages = null, array $inflections = [], array $commentsById = [], 
         bool $atomDate = false, LinkHelper $linker = null) 
     {
+        if ($linker === null) {
+            $linker = new LinkHelper();
+        }
+
         $isGlossEntity = $gloss instanceof Gloss;
         $separator = config('ed.gloss_translations_separator');
 
         if ($isGlossEntity) {
-            $gloss->all_translations = $gloss->translations->implode('translation', $separator);
+            $entity = $gloss;
+
+            $gloss = (object) $gloss->attributesToArray();
+
+            $gloss->account_name         = $entity->account->nickname;
+            $gloss->is_canon             = $entity->gloss_group_id ? $entity->gloss_group->is_canon : null;
+            $gloss->all_translations     = $entity->translations->implode('translation', $separator);
+            $gloss->word                 = $entity->word->word;
+            $gloss->normalized_word      = $entity->word->normalized_word;
+            $gloss->type                 = $entity->speech_id ? $entity->speech->name : null;
+            $gloss->gloss_group_name     = $entity->gloss_group_id ? $entity->gloss_group->name : null;
+            $gloss->external_link_format = $entity->gloss_group_id ? $entity->gloss_group->external_link_format : null;
+            $gloss->translations         = $entity->translations->map(function ($t) {
+                return new Translation(['translation' => $t->translation]);
+            })->all();
+
+            unset(
+                $gloss->word_id, 
+                $gloss->is_deleted,
+                $gloss->child_gloss_id,
+                $gloss->updated_at,
+                $gloss->speech_id
+            );
+
         } else {
             $gloss->all_translations = implode($separator, array_map(function ($t) {
                 return $t->translation;
             }, $gloss->translations));
         }
 
+        if (!empty($gloss->comments)) {
+            $markdownParser = new MarkdownParser(['>', '#']);
+            $gloss->comments = $markdownParser->text($gloss->comments);
+        }
+
+        $gloss->author_url = $linker->author($gloss->account_id, $gloss->account_name);
+
         // Retrieve language reference to the specified gloss
-        if (! $isGlossEntity) {
-            $gloss->language = $languages->first(function ($l) use($gloss) {
-                return $l->id === $gloss->language_id;
-            }); // <-- infer success
-        } 
+        $gloss->language = $languages->first(function ($l) use($gloss) {
+            return $l->id === $gloss->language_id;
+        }); // <-- infer success
 
         // Convert dates
         if (! ($gloss->created_at instanceof Carbon)) {
@@ -275,6 +297,11 @@ class BookAdapter
             } else {
                 $gloss->created_at = $date;
             }
+        }
+
+        if (! property_exists($gloss, 'id')) {
+            $gloss->id = null;
+            return $gloss;
         }
 
         // Filter among the inflections, looking for references to the specified gloss.
@@ -315,10 +342,10 @@ class BookAdapter
      * @param $gloss
      * @param $word
      */
-    private static function calculateRating($gloss, string $word)
+    private static function calculateRating(\stdClass $gloss, string $word)
     {
         if (empty($word)) {
-            return PHP_INT_MIN;
+            return 1 << 31;
         }
 
         $rating = 0;
@@ -344,7 +371,7 @@ class BookAdapter
         $maxRating = 0;
         foreach ($gloss->translations as $t) {
             $n0 = StringHelper::normalize($t->translation);
-            $pos = strpos($n0, $n);
+            $pos = strpos($n0, $word);
 
             // an exact match?
             if ($pos === 0) {
@@ -355,16 +382,7 @@ class BookAdapter
                 $maxRating = max($maxRating, min(80000, 10000 + ($lengthOfN0 - $pos) * 1000));
             }
         }
-
         $rating += $maxRating;
-
-        if ($pos !== false) {
-            $rating = 10000 + ($pos * -1) * 10;
-
-            if ($pos === 0 && $n == $word) {
-                $rating *= 2;
-            }
-        }
 
         // If the previous check failed, check within the comments field. Statistically,
         // this is an uncommon match.
@@ -384,7 +402,8 @@ class BookAdapter
 
         // Bump all unverified glosses to a trailing position
         if (! $gloss->is_canon) {
-            $rating = PHP_INT_MIN + $rating;
+            dd($gloss);
+            $rating = (1 << 31) + $rating;
         }
 
         $gloss->rating = $rating;

@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Auth;
 
@@ -75,7 +76,7 @@ class GlossRepository
      * Gets the version of the gloss specified by the ID.
      *
      * @param int $id
-     * @return void
+     * @return Collection
      */
     public function getGloss(int $id) 
     {
@@ -84,6 +85,21 @@ class GlossRepository
             ->get();
 
         return $gloss;
+    }
+
+    /**
+     * Gets the version of the glosses specified by the IDs.
+     *
+     * @param int $id
+     * @return Collection
+     */
+    public function getGlosses(array $ids) 
+    {
+        $glosses = self::createGlossQuery(0, false)
+            ->whereIn('g.id', $ids)
+            ->get();
+
+        return $glosses;
     }
 
     /**
@@ -132,17 +148,11 @@ class GlossRepository
             return [];  
         }
 
+        $originId = $gloss->origin_gloss_id ?: $gloss->id;
         return self::createGlossQuery(0, false)
-            ->where(function ($query) use($gloss) {
-
-                if ($gloss->origin_gloss_id) {
-                    $query->where('g.id', $gloss->origin_gloss_id)
-                        ->orWhere('g.origin_gloss_id', $gloss->origin_gloss_id);
-                } else {
-                    $query->where('g.id', $gloss->id)
-                        ->orWhere('g.origin_gloss_id', $gloss->id);
-                }
-                
+            ->where(function ($query) use($originId) {
+                $query->where('g.id', $originId)
+                    ->orWhere('g.origin_gloss_id', $originId);
             })
             ->orderBy('g.id', 'desc')
             ->get()
@@ -254,9 +264,6 @@ class GlossRepository
         // words, and therefore doesn't have its own incrementing identifier.
         $sense = $this->createSense($senseWord);
 
-        $gloss->word_id  = $word->id;
-        $gloss->sense_id = $sense->id;
-
         // 4. Load the original translation and update the translation's origin and parent columns.
         $changed = true;
         $translationsChanged = true;
@@ -278,21 +285,25 @@ class GlossRepository
                 ->findOrFail($gloss->id)->getLatestVersion();
 
             // 5. were there changes made?
-            $newAttributes = $gloss->attributesToArray();
-            $oldAttributes = $originalGloss->attributesToArray();
+            $changed = $originalGloss->sense_id !== $sense->id ||
+                       $originalGloss->word_id !== $word->id;
+            
+            if (! $changed) {
+                $newAttributes = $gloss->attributesToArray();
+                $oldAttributes = $originalGloss->attributesToArray();
 
-            $changed = false;
-            foreach ($newAttributes as $key => $value) {
-                // Skip dates, as they are bound to be different.
-                if ($key === 'created_at' || $key === 'updated_at') {
-                    continue;
-                }
+                foreach ($newAttributes as $key => $value) {
+                    // Skip dates, as they are bound to be different.
+                    if ($key === 'created_at' || $key === 'updated_at') {
+                        continue;
+                    }
 
-                // avoid perfect equality (===/!==) because the value in the DB
-                // can diverge from the one passed from the view.
-                if ($oldAttributes[$key] != $value) {
-                    $changed = true;
-                    break;
+                    // avoid perfect equality (===/!==) because the value in the DB
+                    // can diverge from the one passed from the view.
+                    if ($oldAttributes[$key] != $value) {
+                        $changed = true;
+                        break;
+                    }
                 }
             }
             
@@ -345,6 +356,8 @@ class GlossRepository
 
         // 7. Save changes as a _new_ row.
         if ($changed) {
+            $gloss->word_id  = $word->id;
+            $gloss->sense_id = $sense->id;
             $gloss->is_latest = 1;
             $gloss->is_deleted = 0;
             $gloss->is_index = 0;
