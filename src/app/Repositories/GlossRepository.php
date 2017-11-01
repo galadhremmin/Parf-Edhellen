@@ -458,7 +458,7 @@ class GlossRepository
 
             $event = ($originalGloss === null)
                 ? new GlossCreated($gloss, $gloss->account_id) 
-                : new GlossEdited($gloss, Auth::user()->id);
+                : new GlossEdited($gloss, Auth::check() ? Auth::user()->id : $gloss->account_id);
             
             event($event);
         }

@@ -4,8 +4,15 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
-use App\Models\{ Language, Speech, Gloss, GlossGroup };
 use App\Repositories\GlossRepository;
+use App\Helpers\StringHelper;
+use App\Models\{
+    Gloss, 
+    GlossGroup,  
+    Language, 
+    Speech, 
+    Translation
+};
 
 class ImportEldamoCommand extends Command 
 {
@@ -240,7 +247,7 @@ class ImportEldamoCommand extends Command
             $found = $ot !== null;
             
             if (! $found) {
-                $ot = new Glosswwww;
+                $ot = new Gloss;
                 $ot->external_id = $t->id;
                 $ot->gloss_group_id = $eldamo->id;
                 $ot->account_id = $existing->account_id;
@@ -248,10 +255,13 @@ class ImportEldamoCommand extends Command
 
             $word = self::removeNumbers($t->word);
             $sense = self::removeNumbers($t->category ?: $t->gloss[0]);
-            $keywords = array_map(function ($v) {
-                return self::removeNumbers($v);
-            }, array_slice($t->gloss, 1));
-            
+            $keywords = []; // are automatically populated, anyway.
+            $translations = array_map(function ($v) {
+                return new Translation(['translation' => $v]);
+            }, array_unique(array_map(function ($v) {
+                return StringHelper::toLower(self::removeNumbers($v));
+            }, $t->gloss)));
+
             $ot->is_uncertain = $t->mark === '?' ||
                                 $t->mark === '*' ||
                                 $t->mark === '‽' ||
@@ -273,7 +283,7 @@ class ImportEldamoCommand extends Command
             }
 
             $this->line($c.' '.$t->language.' '.$t->word.': '.($found ? $ot->id : 'new'));
-            $t = $this->_glossRepository->saveGloss($word, $sense, $ot, $t->gloss, $keywords, false);
+            $t = $this->_glossRepository->saveGloss($word, $sense, $ot, $translations, $keywords, false);
             $this->line('     -> '.$t->id);
 
             $c += 1;
@@ -289,9 +299,15 @@ class ImportEldamoCommand extends Command
         }
 
         if (count($t->variations)) {
-            $comments[] = 'Variations of the word: '.implode(', ', array_map(function ($c) use($t) {
-                return '**'.$c->word.'**';
-            }, $t->variations)).'.';
+            $variations = array_filter($t->variations, function ($v) use($t) {
+                return StringHelper::toLower($v->word) !== StringHelper::toLower($t->word);
+            });
+
+            if (! empty($variations)) {
+                $comments[] = 'Variations of the word: '.implode(', ', array_map(function ($c) use($t) {
+                    return '**'.$c->word.'**';
+                }, $t->variations)).'.';
+            }
         }
 
         if (count($t->elements)) {
@@ -351,7 +367,7 @@ class ImportEldamoCommand extends Command
 
         if (count($t->inflections)) {
             $comments[] = '   ';
-            $comments[] = '*Inflections*';
+            $comments[] = '*Imported inflections*';
             $comments[] = '   '; // necessary before tables.
 
             $table = [
