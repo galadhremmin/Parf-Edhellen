@@ -294,10 +294,8 @@ class ContributionController extends Controller
             ? intval($request->input('substep_id'))
             : 0;
         
-        $id = $request->has('id')
-            ? intval($request->input('id'))
-            : 0;
-
+        $id = $this->getEntityId($request);
+        
         $this->createController($request)->validateSubstep($request, $id, $substepId);
         return response(null, 204);
     }
@@ -315,10 +313,19 @@ class ContributionController extends Controller
     {
         $this->validateContributionRequest($request);
 
-        $id = $request->has('id') 
-            ? intval($request->input('id'))
-            : 0;
+        $id = $this->getEntityId($request);
+
         $this->createController($request)->validateBeforeSave($request, $id);
+    }
+
+    protected function getEntityId(Request $request)
+    {
+        if (! $request->has('id')) {
+            return 0;
+        }
+
+        $entityId = intval($request->input('id'));
+        return $entityId;
     }
 
     /**

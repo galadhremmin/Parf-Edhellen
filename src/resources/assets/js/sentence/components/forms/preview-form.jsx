@@ -127,7 +127,10 @@ class EDPreviewForm extends React.Component {
     }
 
     onSavedResponse(request) {
-        window.location.href = request.data.url;
+        if (request.data.url) {
+            window.location.href = request.data.url;
+        }
+
     }
 
     onFailedResponse(request) {

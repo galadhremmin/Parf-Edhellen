@@ -25,8 +25,9 @@
 
   @markdown($sentence->long_description)
 
-  @if (Auth::check() && Auth::user()->isAdministrator())
+  @if (Auth::check())
   <p class="text-right">
+    @if (Auth::user()->isAdministrator())
     <a href="{{ route('sentence.confirm-destroy', [ 'id' => $sentence->id ]) }}" class="btn btn-default">
       <span class="glyphicon glyphicon-trash"></span>
       Delete
@@ -35,9 +36,7 @@
       <span class="glyphicon glyphicon-edit"></span>
       Edit phrase
     </a>
-  </p>
-  @elseif (Auth::check())
-  <p class="text-right">
+    @endif
     <a href="{{ route('contribution.create', [ 'morph' => 'sentence', 'entity_id' => $sentence->id ]) }}" class="btn btn-default">
       <span class="glyphicon glyphicon-edit"></span>
       Propose changes

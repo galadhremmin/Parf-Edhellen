@@ -182,15 +182,19 @@ class SentenceContributionController extends Controller implements IContribution
         $map = json_decode($contribution->payload, true);
         $this->makeMapCurrent($map);
 
-        $sentence = new Sentence($map['sentence']);
-
         // Is the proposed contribution a modification of an existing sentence entity?
-        if (array_key_exists('id', $map['sentence'])) {
-            $sentence->id = intval($map['sentence']['id']);
-            // Inform the model that it in fact exists, even though it was created as a new entity.
-            $sentence->exists = true;
+        $sentence = null;
+        if (isset($map['sentence']['id'])) {
+            $sentence = Sentence::find( intval($map['sentence']['id']) );
+            if ($sentence) {
+                $sentence->fill($map['sentence']);
+            }
         }
-        
+
+        if (! $sentence) {
+            $sentence = new Sentence($map['sentence']);
+        }
+
         // Transform fragments into SentenceFragment entities.
         $fragments = array_map(function ($fragment) {
             return new SentenceFragment($fragment);
