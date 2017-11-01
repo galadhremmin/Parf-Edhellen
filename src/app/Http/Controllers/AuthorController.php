@@ -73,7 +73,7 @@ class AuthorController extends Controller
             ->get();
         
         return view('author.list-gloss', [
-            'glosses' => $glosses,
+            'glossary' => $glosses,
             'author'  => $author
         ]);
     }
