@@ -476,6 +476,6 @@ class ForumApiController extends Controller
     private function userCanAccess($user, $post) 
     {
         return $user->isAdministrator() || 
-               $post->account_id !== $user->id;
+               $post->account_id === $user->id;
     }
 }

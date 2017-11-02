@@ -472,6 +472,9 @@ class EDComments extends EDStatefulFormComponent {
             { this.isInfiniteScroll() ? this.renderTools() : undefined}
             <div ref={container => this.container = container}>
                 { this.state.posts.map(this.renderPost.bind(this, parser)) }
+                {(! this.isInfiniteScroll() && this.state.posts.length < 1) 
+                    ? <em>There are currently no posts in this thread. You can leave it be (thus deleting it) or write a comment.</em>
+                    : undefined}
             </div>
             { this.state.loading ? <div className="sk-spinner sk-spinner-pulse" /> : undefined}
             { this.isInfiniteScroll() ? undefined : 
