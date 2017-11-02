@@ -79,7 +79,7 @@ class EDComments extends EDStatefulFormComponent {
         const hashbang = window.location.hash || '';
         const match = /!\/page\/([0-9]+)$/.exec(hashbang); 
 
-        return match.length === 2 ? parseInt(match[1], 10) : 0; 
+        return match && match.length === 2 ? parseInt(match[1], 10) : 0; 
     }
 
     onLoaded(fromId, response) {

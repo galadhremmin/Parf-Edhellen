@@ -37,7 +37,7 @@ class DBHandler extends Handler
                 'ip'         => array_key_exists('REMOTE_ADDR', $_SERVER) ? $_SERVER['REMOTE_ADDR'] : null,
                 'is_common'  => $common,
                 'error'      => $common
-                    ? $exception->getTraceAsString()
+                    ? $exception->getFile().' ('.$exception->getLine().')'."\n".$exception->getTraceAsString()
                     : null,
                 'account_id' => $user !== null
                     ? $user->id 

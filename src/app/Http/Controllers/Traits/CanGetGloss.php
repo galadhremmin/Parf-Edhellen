@@ -31,7 +31,7 @@ trait CanGetGloss
     public function getGloss(int $glossId, bool $coerceLatest = false)
     {
         $glosses = $this->getGlossUnadapted($glossId, $coerceLatest);
-        if ($glosses->count() < 1) {
+        if ($glosses === null) {
             return null;
         }
 
