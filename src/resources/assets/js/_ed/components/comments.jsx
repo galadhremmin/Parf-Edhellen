@@ -36,7 +36,7 @@ class EDComments extends EDStatefulFormComponent {
     componentDidMount() {
         // Load comments if the client is specifically requesting to display them.
         if (this.state.jump_post_id || ! this.isInfiniteScroll()) {
-            this.load();
+            this.load( this.getPage() );
         } else {
             this.onScroll();
         }
@@ -54,7 +54,7 @@ class EDComments extends EDStatefulFormComponent {
         window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
     }
 
-    load(fromId = -1, parentPostId) {
+    load(fromId = 0, parentPostId) {
         this.setState({
             loading: true
         });
@@ -69,6 +69,19 @@ class EDComments extends EDStatefulFormComponent {
         return axios.get(url).then(this.onLoaded.bind(this, fromId || 0));
     }
 
+    setPage(pageNo) {
+        if (! this.isInfiniteScroll()) {
+            window.location.hash = `#!/page/${pageNo}`; 
+        }
+    }
+
+    getPage() {
+        const hashbang = window.location.hash || '';
+        const match = /!\/page\/([0-9]+)$/.exec(hashbang); 
+
+        return match.length === 2 ? parseInt(match[1], 10) : 0; 
+    }
+
     onLoaded(fromId, response) {
 
         let posts = this.state.posts || [];
@@ -80,19 +93,23 @@ class EDComments extends EDStatefulFormComponent {
         const jumpPostId = this.state.jump_post_id || 
             (! this.isInfiniteScroll() && newPosts.length ? newPosts[newPosts.length - 1].id : 0);
 
-        if (fromId === 0 || ! this.isInfiniteScroll()) {
+        if (fromId === 0 || posts.length < 1 || ! this.isInfiniteScroll()) {
             // reload -- start over from the beginning
             posts = newPosts;
 
             // record the current location, as we are reloading
             this.lastPositionY = window.scrollY || window.pageYOffset;
 
-        } else if (posts.length < 1 || posts[0].id === this.state.major_id) {
-            // prepend
-            posts = [...newPosts, ...posts];
         } else {
-            // append
-            posts = [...posts, ...newPosts];
+            const majorId = this.state.major_id;
+            if ((this.isDescendingOrder() && majorId > response.data.major_id) ||
+                (! this.isDescendingOrder() && majorId < response.data.major_id)) {
+                // append
+                posts = [...posts, ...newPosts];
+            } else {
+                // prepend
+                posts = [...newPosts, ...posts];
+            }
         }
 
         this.setState({
@@ -110,6 +127,8 @@ class EDComments extends EDStatefulFormComponent {
                 smoothScrollIntoView(postContainer);
             }, 500);
         }
+
+        this.setPage(this.state.major_id);
     }
 
     onScroll(ev) {

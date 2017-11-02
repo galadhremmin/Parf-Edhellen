@@ -107,7 +107,7 @@ class ForumApiController extends Controller
             if ($ascending) {
                 // load the _latest_ n posts by default, even when sorting in an ascending 
                 // order.
-                $majorId = $jumpToId || $majorId;
+                $majorId = $jumpToId ?: $majorId;
                 if ($majorId < 1) {
                     $majorId = $pages; // 1:st page
                 } else if ($majorId > $pages) {
@@ -139,6 +139,7 @@ class ForumApiController extends Controller
             } else {
                 if ($jumpToId > 0) {
                     $filters[] = ['id', '>=', $jumpToId];
+                    $maxLength = 0; // TODO: implement a means to restrict the result set
                 } else if ($majorId > 0) {
                     $filters[] = ['id', '<', $majorId];
                 }

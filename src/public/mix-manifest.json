@@ -1,9 +1,9 @@
 {
     "/v8/js/sentence-admin.js": "/v8/js/sentence-admin.js",
     "/v8/js/global-plugins-admin.js": "/v8/js/global-plugins-admin.js",
-    "/v8/js/vendor.js": "/v8/js/vendor.js",
     "/v8/js/global-plugins-restricted.js": "/v8/js/global-plugins-restricted.js",
     "/v8/js/gloss-admin.js": "/v8/js/gloss-admin.js",
+    "/v8/js/vendor.js": "/v8/js/vendor.js",
     "/v8/js/global.js": "/v8/js/global.js",
     "/v8/css/app.css": "/v8/css/app.css",
     "/v8/css/app.flashcard.css": "/v8/css/app.flashcard.css",
