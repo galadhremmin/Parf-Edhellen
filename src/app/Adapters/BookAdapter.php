@@ -358,14 +358,15 @@ class BookAdapter
         // First, check if the gloss contains the search term by looking for its
         // position within the word property, albeit normalized.
         $n = StringHelper::normalize($gloss->word);
+        $nw = StringHelper::normalize($word);
         $lengthOfN = mb_strlen($n);
-        $pos = strpos($n, $word);
+        $pos = strpos($n, $nw);
 
         if ($pos !== false) {
             // The "cleaner" the match, the better
             $rating = 100000 + ($pos * -1) * 10;
 
-            if ($pos === 0 && $n == $word) {
+            if ($pos === 0 && $n === $nw) {
                 $rating *= 2;
             }
         }
@@ -376,7 +377,7 @@ class BookAdapter
         $maxRating = 0;
         foreach ($gloss->translations as $t) {
             $n0 = StringHelper::normalize($t->translation);
-            $pos = strpos($n0, $word);
+            $pos = strpos($n0, $nw);
 
             // an exact match?
             if ($pos === 0) {
@@ -392,7 +393,7 @@ class BookAdapter
         // If the previous check failed, check within the comments field. Statistically,
         // this is an uncommon match.
         if ($gloss->comments !== null) {
-            $n = StringHelper::normalize($gloss->comments);
+            $n = $gloss->comments;
             $pos = strpos($n, $word);
 
             if ($pos !== false) {
