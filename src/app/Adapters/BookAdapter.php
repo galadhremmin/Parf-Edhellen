@@ -286,7 +286,7 @@ class BookAdapter
             $gloss->comments = $markdownParser->text($gloss->comments);
         }
 
-        $gloss->author_url = $linker->author($gloss->account_id, $gloss->account_name);
+        $gloss->account_url = $linker->author($gloss->account_id, $gloss->account_name);
 
         // Retrieve language reference to the specified gloss
         $gloss->language = $languages->first(function ($l) use($gloss) {

@@ -71,6 +71,9 @@ class ForumApiController extends Controller
             $majorId = $request->has('from_id')
                 ? intval($request->input('from_id'))
                 : -1;
+            $jumpToId = $request->has('jump_to')
+                ? intval($request->input('jump_to'))
+                : 0;
 
             // Determine the number of 'pages' there are, which is relevant when
             // retrieving things in an ascending order.
@@ -104,6 +107,7 @@ class ForumApiController extends Controller
             if ($ascending) {
                 // load the _latest_ n posts by default, even when sorting in an ascending 
                 // order.
+                $majorId = $jumpToId || $majorId;
                 if ($majorId < 1) {
                     $majorId = $pages; // 1:st page
                 } else if ($majorId > $pages) {
@@ -132,19 +136,32 @@ class ForumApiController extends Controller
                 }
                 $skip = ($majorId - 1) * $maxLength;
 
-            } else if ($majorId > 0) {
-                $filters[] = ['id', '<', $majorId];
             } else {
-                $majorId = PHP_INT_MAX;
+                if ($jumpToId > 0) {
+                    $filters[] = ['id', '>=', $jumpToId];
+                } else if ($majorId > 0) {
+                    $filters[] = ['id', '<', $majorId];
+                }
+                
+                if ($majorId < 1) {
+                    $majorId = PHP_INT_MAX;
+                }
             }
             
-            $posts = $thread->forum_posts()
+            $query = $thread->forum_posts()
                 ->with($loadingOptions)
                 ->where($filters)
-                ->orderBy('id', $direction)
-                ->skip($skip)
-                ->take($maxLength)
-                ->get();
+                ->orderBy('id', $direction);
+
+            if ($skip > 0) {
+                $query = $query->skip($skip);
+            }
+
+            if ($maxLength > 0) {
+                $query = $query->take($maxLength);
+            }
+
+            $posts = $query->get();
 
             foreach ($posts as $post) {
                 // Determine the major ID depending on the order of the items

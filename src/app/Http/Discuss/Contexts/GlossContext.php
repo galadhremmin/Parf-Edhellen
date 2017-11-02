@@ -50,8 +50,8 @@ class GlossContext implements IDiscussContext
 
     public function view(Model $entity)
     {
-        $data = $this->_glossRepository->getGloss($entity->id);
-        $model = $this->_bookAdapter->adaptGlosses([$data]);
+        $data = $this->_glossRepository->getGloss($entity->id)->toArray();
+        $model = $this->_bookAdapter->adaptGlosses($data);
 
         return view('discuss.context._gloss', $model);
     }

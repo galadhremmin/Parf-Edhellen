@@ -33,9 +33,14 @@ class EDTranslationSelect extends React.Component {
      * @param {Object} value 
      */
     setValue(value) {
+
+        value = (value || '').trim();
+        if (originalValue.length < 1) {
+            return;
+        }
+
         const originalValue = this.state.value;
         const newState = this.createStateForValue(value);
-
         this.setState(newState);
 
         const originalTranslations = originalValue.map(v => v.translation);

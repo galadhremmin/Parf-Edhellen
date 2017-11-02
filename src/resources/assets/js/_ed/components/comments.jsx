@@ -54,20 +54,16 @@ class EDComments extends EDStatefulFormComponent {
         window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
     }
 
-    load(fromId = this.state.jump_post_id || 0, parentPostId) {
+    load(fromId = -1, parentPostId) {
         this.setState({
             loading: true
         });
 
-        if (this.isInfiniteScroll() && this.state.jump_post_id > 0 && fromId === this.state.highlighted_post_id) {
-            // retract once, as the from_id parameter will _not_ be included in the result set in
-            // infinite scroll mode, as it assumes it is already loaded.
-            fromId += 1;
-        }
-
+        const jumpTo = this.state.jump_post_id;
         const url = EDConfig.api(
             `/forum?morph=${this.props.morph}&entity_id=${this.props.entityId}&order=${this.props.order}` + 
-            (fromId ? `&from_id=${fromId}` : '')
+            (fromId ? `&from_id=${fromId}` : '') +
+            (jumpTo ? `&jump_to=${jumpTo}` : '')
         );
         
         return axios.get(url).then(this.onLoaded.bind(this, fromId || 0));
