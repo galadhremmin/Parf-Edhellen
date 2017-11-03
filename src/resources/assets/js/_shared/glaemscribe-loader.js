@@ -16,15 +16,22 @@ const currentScriptPath = () => {
  * Loads Glaemscribe by adding a <script> file to document head.
  */
 const loadGlaemscribe = () => {
-    // Load the Glaemscribe component, as it is a prerequisite for the plugin components.
-    if (! window.Glaemscribe) {
-        const glaemscribeScript = document.createElement('script');
-        glaemscribeScript.src = `${currentScriptPath()}glaemscribe.js`;
-        glaemscribeScript.async = true;
-        glaemscribeScript.type = 'text/javascript';
+    return new Promise((resolve, reject) => {
+        // Load the Glaemscribe component, as it is a prerequisite for the plugin components.
+        if (! window.Glaemscribe) {
+            const glaemscribeScript = document.createElement('script');
+            glaemscribeScript.src = `${currentScriptPath()}glaemscribe.js`;
+            glaemscribeScript.async = true;
+            glaemscribeScript.type = 'text/javascript';
+            glaemscribeScript.onload = () => {
+                resolve();
+            };
 
-        document.head.appendChild(glaemscribeScript);
-    }
+            document.head.appendChild(glaemscribeScript);
+        } else {
+            resolve();
+        }
+    });
 };
 
 export default loadGlaemscribe;

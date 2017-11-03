@@ -7,7 +7,7 @@ import { EDSearchResultsReducer } from './reducers';
 import EDSearchBar from './components/search-bar';
 import EDSearchResults from './components/search-results';
 
-window.addEventListener('load', function () {
+const load = () => {
     const stateContainer = document.getElementById('ed-preloaded-book');
     let preloadedState = undefined;
     if (stateContainer) {
@@ -35,4 +35,8 @@ window.addEventListener('load', function () {
     if (seoContent) {
         seoContent.parentNode.removeChild(seoContent);
     }
+};
+
+window.addEventListener('load', function () {
+    window.setTimeout(load, 0);
 });

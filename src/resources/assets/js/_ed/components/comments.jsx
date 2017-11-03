@@ -2,9 +2,11 @@ import React from 'react';
 import axios from 'axios';
 import EDConfig from 'ed-config';
 import classNames from 'classnames';
+import EDMarkdownEditor from 'ed-components/markdown-editor';
 import { EDStatefulFormComponent } from 'ed-form';
-import { Parser as HtmlToReactParser } from 'html-to-react';
+import { Parser as HtmlToReactParser, ProcessNodeDefinitions } from 'html-to-react';
 import { smoothScrollIntoView } from 'ed-scrolling';
+import { transcribe } from '../../_shared/tengwar';
 
 class EDComments extends EDStatefulFormComponent {
     constructor(props) {
@@ -86,6 +88,11 @@ class EDComments extends EDStatefulFormComponent {
 
         let posts = this.state.posts || [];
         const newPosts = response.data.posts || [];
+
+        // Skip out if there are no new posts to present.
+        if (fromId && newPosts.length) {
+            return;
+        }
 
         // First, jump to the post that the client has explicitly specified,
         // alternatively, when in ascending order, jump to the last comment 
@@ -344,8 +351,9 @@ class EDComments extends EDStatefulFormComponent {
                 {this.state.post_id ? <p><span className="glyphicon glyphicon-info-sign" /> Editing your comment ({this.state.post_id}):</p> : ''}
                 <form onSubmit={this.onSubmit.bind(this)}>
                     <div className="form-group">
-                        <textarea className="form-control" placeholder="Your comments ..." name="comments" value={this.state.comments} required={true}
-                            onChange={super.onChange.bind(this)} rows={5} />
+                        <EDMarkdownEditor componentProps={{placeholder: 'Your comments ...', required: true}} 
+                            componentId="post-comments" componentName="comments" value={this.state.comments}
+                            rows={8} onChange={super.onChange.bind(this)} />
                     </div>
                     <div className="form-group text-right">
                         <button type="button" className="btn btn-default" onClick={this.onDiscardChanges.bind(this)}>
@@ -377,7 +385,7 @@ class EDComments extends EDStatefulFormComponent {
         </div>;
     }
 
-    renderPost(parser, post) {
+    renderPost(parseHtml, post) {
         return <div key={post.id} className={classNames('forum-post', 
             {'highlight': this.state.highlighted_post_id === post.id})} id={`forum-post-${post.id}`}>
             <div className="post-profile-picture">
@@ -410,7 +418,7 @@ class EDComments extends EDStatefulFormComponent {
                 </div>
                 <div className="post-body">
                     { !post.is_deleted 
-                        ? parser.parse(post.content)
+                        ? parseHtml(post.content)
                         : <em>{post.account.nickname} has redacted their comment.</em>
                     }
                 </div>
@@ -463,15 +471,38 @@ class EDComments extends EDStatefulFormComponent {
     }
 
     render() {
-        let parser = null;
+        let parseHtml = null;
         if (this.state.posts.length > 0) {
-            parser = new HtmlToReactParser();
+            const processNodeDefinitions = new ProcessNodeDefinitions(React);
+            const processingInstructions = [
+            {
+                // Glaemscribe triggered?
+                shouldProcessNode: function (node) {
+                    return node.parent && 
+                        node.parent.name && 
+                        node.parent.name === 'span' &&
+                        node.parent.attribs['data-tengwar-transcribe'];
+                },
+                processNode: function (node, children) {
+                    const mode = node.parent.attribs['data-tengwar-mode'];
+                    return mode ? transcribe(node.data, mode) : node.data;
+                }
+            }, {
+                // Anything else
+                shouldProcessNode: function (node) {
+                    return true;
+                },
+                processNode: processNodeDefinitions.processDefaultNode
+            }];
+
+            const parser = new HtmlToReactParser();
+            parseHtml = content => parser.parseWithInstructions(content, () => true, processingInstructions);
         }
 
         return <div>
             { this.isInfiniteScroll() ? this.renderTools() : undefined}
             <div ref={container => this.container = container}>
-                { this.state.posts.map(this.renderPost.bind(this, parser)) }
+                { this.state.posts.map(this.renderPost.bind(this, parseHtml)) }
                 {(! this.isInfiniteScroll() && this.state.posts.length < 1) 
                     ? <em>There are currently no posts in this thread. You can leave it be (thus deleting it) or write a comment.</em>
                     : undefined}

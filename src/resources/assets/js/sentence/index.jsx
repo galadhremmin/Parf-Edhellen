@@ -6,7 +6,7 @@ import thunkMiddleware from 'redux-thunk';
 import EDSentenceReducer from './reducers';
 import EDFragmentExplorer from './components/fragment-explorer';
 
-window.addEventListener('load', function () {
+const load = () => {
     const data = JSON.parse( document.getElementById('ed-preload-sentence-data').textContent );
 
     const store = createStore(EDSentenceReducer, {
@@ -25,4 +25,8 @@ window.addEventListener('load', function () {
         </Provider>,
         document.getElementById('ed-fragment-navigator')
     );
+};
+
+window.addEventListener('load', function () {
+    window.setTimeout(load, 0);
 });

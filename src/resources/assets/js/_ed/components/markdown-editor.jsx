@@ -129,7 +129,8 @@ class EDMarkdownEditor extends React.Component {
                           rows={this.props.rows}
                           value={this.state.value}
                           onChange={this.onValueChange.bind(this)}
-                          ref={textarea => this.textArea = textarea} />
+                          ref={textarea => this.textArea = textarea}
+                          {...(this.props.componentProps || {})} />
                     <small className="pull-right">
                         {' Supports Markdown. '}
                         <a href="https://en.wikipedia.org/wiki/Markdown" target="_blank">
@@ -149,7 +150,8 @@ class EDMarkdownEditor extends React.Component {
 EDMarkdownEditor.defaultProps = {
     rows: 15,
     componentName: 'markdownBody',
-    componentId: 'markdownBody'
+    componentId: 'markdownBody',
+    componentProps: undefined
 };
 
 export default EDMarkdownEditor;

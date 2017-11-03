@@ -9,6 +9,9 @@ class MarkdownParser extends \Parsedown
     {
         $this->InlineTypes['['][] = 'Reference';
         $this->InlineTypes['>']   = ['SeeAlso'];
+        $this->InlineTypes['@']   = ['Transcription'];
+
+        $this->inlineMarkerList = '!"*_&[:<>`~\\@';
 
         // escapes markup (HTML)
         $this->setMarkupEscaped(true);
@@ -149,5 +152,44 @@ class MarkdownParser extends \Parsedown
                 ]
             ];
         }
+    }
+
+    protected function inlineTranscription($Excerpt)
+    {
+        $text = $Excerpt['text'];
+        $pos = strpos($text, '@', 1);
+        if ($pos === false) {
+            return;
+        }
+        $extent = $pos + 1;
+        $text = substr($text, 1, $pos - 1);
+
+        $pos = strpos($text, '|');
+        if ($pos === false) {
+            return;
+        }
+
+        $mode = trim( substr($text, 0, $pos) );
+        if (empty($mode)) {
+            return;
+        }
+
+        $body = trim( substr($text, $pos + 1) );
+        if (empty($body)) {
+            return;
+        }
+        
+        return [
+            'extent' => $extent,
+            'element' => [
+                'name' => 'span',
+                'text' => $body,
+                'attributes' => [
+                    'class' => 'tengwar',
+                    'data-tengwar-transcribe' => 'true',
+                    'data-tengwar-mode' => $mode
+                ]
+            ]
+        ];
     }
 }

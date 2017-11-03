@@ -12,7 +12,7 @@ import EDSentenceForm from './components/forms/sentence-form';
 import EDFragmentForm from './components/forms/fragment-form';
 import EDPreviewForm from './components/forms/preview-form';
 
-window.addEventListener('load', function () {
+const load = () => {
     const formContainer = document.getElementById('ed-sentence-form');
     const sentenceDataContainer = document.getElementById('ed-preloaded-sentence');
     const fragmentDataContainer = document.getElementById('ed-preloaded-sentence-fragments');
@@ -61,4 +61,8 @@ window.addEventListener('load', function () {
         </Provider>,
         formContainer
     );
+};
+
+window.addEventListener('load', function () {
+    window.setTimeout(load, 0);
 });

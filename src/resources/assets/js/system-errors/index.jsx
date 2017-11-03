@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import EDSystemErrorList from './components/error-list';
 
-window.addEventListener('load', function () {
+const load = () => {
     const container = document.getElementById('ed-errors');
     
     if (container) {
@@ -14,4 +14,8 @@ window.addEventListener('load', function () {
             container
         );
     }
+};
+
+window.addEventListener('load', function () {
+    window.setTimeout(load, 0);
 });

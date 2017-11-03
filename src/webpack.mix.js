@@ -46,8 +46,8 @@ mix.extract([
     'ed-components/dialog',
     'ed-components/error-list',
     'ed-components/gloss-select',
-    'ed-components/markdown-editor',
     */
+    'ed-components/markdown-editor',
     'ed-components/language-select',
     'ed-components/comments',
     'ed-config',

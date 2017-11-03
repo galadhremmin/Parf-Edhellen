@@ -8,7 +8,7 @@ import { saveState, loadState } from 'ed-session-storage-state';
 import EDGlossAdminReducer from './reducers/admin';
 import EDGlossForm from './components/forms';
 
-window.addEventListener('load', function () {
+const load = () => {
     let preloadedState = undefined;
 
     const glossDataContainer = document.getElementById('ed-preloaded-gloss');
@@ -35,4 +35,8 @@ window.addEventListener('load', function () {
         </Provider>,
         container
     );
+};
+
+window.addEventListener('load', function () {
+    window.setTimeout(load, 0);
 });

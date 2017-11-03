@@ -6,11 +6,11 @@ import thunkMiddleware from 'redux-thunk';
 import EDFlashcardReducer from './reducers';
 import EDFlashcards from './components/flashcards';
 
-const store = createStore(EDFlashcardReducer, undefined /* <- preloaded state */,
-    applyMiddleware(thunkMiddleware)
-);
+const load = () => {
+    const store = createStore(EDFlashcardReducer, undefined /* <- preloaded state */,
+        applyMiddleware(thunkMiddleware)
+    );
 
-window.addEventListener('load', function () {
     const container = document.getElementById('ed-flashcard-component');
     const flashcardId = parseInt(container.dataset['flashcardId'], 10);
     const tengwarMode = container.dataset['languageTengwarMode'];
@@ -23,4 +23,8 @@ window.addEventListener('load', function () {
         </Provider>,
         container
     );
+};
+
+window.addEventListener('load', function () {
+    window.setTimeout(load, 0);
 });

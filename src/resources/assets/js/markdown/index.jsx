@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
 
-window.addEventListener('load', function () {
+const load = () => {
     const textareas = document.querySelectorAll('textarea.ed-markdown-editor');
 
     for (let textarea of textareas) {
@@ -13,4 +13,8 @@ window.addEventListener('load', function () {
             textarea.parentNode
         );
     }
+};
+
+window.addEventListener('load', function () {
+    window.setTimeout(load, 0);
 });
