@@ -93,6 +93,7 @@
   <script type="text/javascript" src="@assetpath(/js/manifest.js)"></script>
   <script type="text/javascript" src="@assetpath(/js/vendor.js)"></script>
   <script type="text/javascript" src="@assetpath(/js/ie.js)"></script>
+  <script type="text/javascript" src="@assetpath(/js/glaemscribe.js)"></script>
   @if ($user)
     @if ($isAdmin)
     <script type="text/javascript" src="@assetpath(/js/global-plugins-admin.js)"></script>
