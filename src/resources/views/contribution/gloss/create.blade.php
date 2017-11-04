@@ -14,6 +14,5 @@
 @endsection
 
 @section('scripts')
-  <script type="text/javascript" src="@assetpath(/js/glaemscribe.js)" async></script>
   <script type="text/javascript" src="@assetpath(/js/gloss-admin.js)" async></script>
 @endsection

@@ -89,11 +89,6 @@ class EDComments extends EDStatefulFormComponent {
         let posts = this.state.posts || [];
         const newPosts = response.data.posts || [];
 
-        // Skip out if there are no new posts to present.
-        if (fromId && newPosts.length) {
-            return;
-        }
-
         // First, jump to the post that the client has explicitly specified,
         // alternatively, when in ascending order, jump to the last comment 
         // (this the comment with the largest ID).
