@@ -187,7 +187,18 @@ class BookAdapter
                 // Sort the glosses based on their previously calculated rating.
                 if ($word !== null) {
                     usort($glosses, function ($a, $b) {
-                        return $a->rating > $b->rating ? -1 : ($a->rating === $b->rating ? 0 : 1);
+                        if ($a->rating < 0 && $b->rating < 0) {
+                            $cmp = $a->rating < $b->rating ? -1 : ($a->rating === $b->rating ? 0 : 1);
+                        } else {
+                            $cmp = $a->rating > $b->rating ? -1 : ($a->rating === $b->rating ? 0 : 1);
+                        }
+                        
+                        if ($cmp !== 0) {
+                            return $cmp;
+                        }
+                        
+                        $cmp = strnatcmp($a->word, $b->word);
+                        return $cmp === 0 ? 0 : ($cmp < 0 ? -1 : 1);
                     });
                 }
 
@@ -347,7 +358,7 @@ class BookAdapter
      * @param $gloss
      * @param $word
      */
-    private static function calculateRating(\stdClass $gloss, string $word)
+    public static function calculateRating(\stdClass $gloss, string $word)
     {
         if (empty($word)) {
             return 1 << 31;
@@ -357,49 +368,23 @@ class BookAdapter
 
         // First, check if the gloss contains the search term by looking for its
         // position within the word property, albeit normalized.
-        $n = StringHelper::normalize($gloss->word);
+        $ngw = StringHelper::normalize($gloss->word);
         $nw = StringHelper::normalize($word);
-        $lengthOfN = mb_strlen($n);
-        $pos = strpos($n, $nw);
-
-        if ($pos !== false) {
-            // The "cleaner" the match, the better
-            $rating = 100000 + ($pos * -1) * 10;
-
-            if ($pos === 0 && $n === $nw) {
-                $rating *= 2;
-            }
-        }
+        $percent = 0;
+        similar_text($ngw, $nw, $percent);
+        $rating = $percent * 100000;
 
         // If the previous check failed, check for the glosss field. Statistically,
         // this is the most common case.
-        $pos = strpos($n, $word);
-        $maxRating = 0;
+        $maxPercent = 0;
         foreach ($gloss->translations as $t) {
-            $n0 = StringHelper::normalize($t->translation);
-            $pos = strpos($n0, $nw);
-
-            // an exact match?
-            if ($pos === 0) {
-                $maxRating = 90000;
-                break;
-            } else if ($pos > 0) {
-                $lengthOfN0 = mb_strlen($n0);
-                $maxRating = max($maxRating, min(80000, 10000 + ($lengthOfN0 - $pos) * 1000));
+            $nt = StringHelper::normalize($t->translation);
+            similar_text($nt, $nw, $percent);
+            if ($percent > $maxPercent) {
+                $maxPercent = $percent;
             }
         }
-        $rating += $maxRating;
-
-        // If the previous check failed, check within the comments field. Statistically,
-        // this is an uncommon match.
-        if ($gloss->comments !== null) {
-            $n = $gloss->comments;
-            $pos = strpos($n, $word);
-
-            if ($pos !== false) {
-                $rating += 1000;
-            }
-        }
+        $rating = max($rating, $maxPercent * 100000);
 
         // Default rating for all other cases, probably matches by keyword.
         if ($rating === 0) {
@@ -407,8 +392,8 @@ class BookAdapter
         }
 
         // Bump all unverified glosses to a trailing position
-        if (! $gloss->is_canon) {
-            $rating = (1 << 31) + $rating;
+        if (! $gloss->is_canon || $gloss->is_uncertain) {
+            $rating *= -1;
         }
 
         $gloss->rating = $rating;

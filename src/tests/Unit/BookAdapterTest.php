@@ -115,4 +115,28 @@ class BookAdapterTest extends TestCase
 
         $this->assertEquals($adaptedFromRepository, $adapted);
     }
+
+    public function testRating()
+    {
+        $glosses = [
+            'mal', 'malina', 'malda', 'nan', 'tulca', 'anat'
+        ];
+        $expected = [
+            'mal', 'malda', 'malina', 'nan', 'anat', 'tulca'
+        ];
+        $glossary = [];
+        foreach ($glosses as $gloss) {
+            extract( $this->createGloss(__FUNCTION__, $gloss) );
+            $savedGloss = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords);
+            $savedGloss->load('translations');
+            $glossary[] = $savedGloss;
+        }
+
+        $adapted = $this->_adapter->adaptGlosses($glossary, [], [], 'mal');
+        $adaptedGlossary = $adapted['sections'][0]['glosses'];
+
+        for ($i = 0; $i < count($expected); $i += 1) {
+            $this->assertEquals($expected[$i], $adaptedGlossary[$i]->word);
+        }
+    }
 }

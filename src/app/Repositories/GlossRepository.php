@@ -62,12 +62,25 @@ class GlossRepository
         return $keywords;
     }
 
+    /**
+     * Returns a list of glosses which match the specified word. This method looks for sense.
+     *
+     * @param string $word
+     * @param int $languageId
+     * @param bool $includeOld
+     * @return array
+     */
     public function getWordGlosses(string $word, int $languageId = 0, bool $includeOld = true) 
     {
+        if (empty($word)) {
+            return [];
+        }
+
         $senses = self::getSensesForWord($word);
         return self::createGlossQuery($languageId, true /* = latest */, $includeOld)
             ->whereIn('g.sense_id', $senses)
-            ->orderBy('word')
+            ->orderBy('w.word')
+            ->orderBy('t.id')
             ->get()
             ->toArray();
     }
@@ -236,6 +249,10 @@ class GlossRepository
 
     public function saveGloss(string $wordString, string $senseString, Gloss $gloss, array $translations, array $keywords, $resetKeywords = true, bool & $changed = null)
     {
+        if (! $gloss instanceof Gloss) {
+            throw new \Exception("Gloss must be an instance of the Gloss class.");
+        }
+
         foreach ($translations as $translation) {
             if (! ($translation instanceof Translation)) {
                 throw new \Exception('The array of translations must consist of instances of the Translation model.');
@@ -600,6 +617,23 @@ class GlossRepository
         $keyword->save();
     }
 
+    /**
+     * Creates a gloss query using the QueryBuilder API. The following aliases are specified:
+     * - g:  glosses
+     * - w:  words
+     * - t:  translations
+     * - a:  accounts
+     * - tg: gloss_groups
+     * - s:  speeches
+     * 
+     * The method returns a query builder object, with a SELECT instruction. You can optionally append
+     * further filters, and simply _get()_ when ready.
+     *
+     * @param integer $languageId
+     * @param boolean $latest
+     * @param boolean $includeOld
+     * @return Illuminate\Database\Eloquent\Builder
+     */
     protected static function createGlossQuery($languageId = 0, $latest = true, $includeOld = true) 
     {
         $filters = [

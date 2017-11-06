@@ -34,7 +34,7 @@ class EDTranslationSelect extends React.Component {
      */
     setValue(value) {
 
-        value = (value || '').trim();
+        value = String(value || '').trim();
         if (originalValue.length < 1) {
             return;
         }

@@ -95,7 +95,7 @@ class EDGlossSelect extends React.Component {
 
     onSuggestionsFetchRequest(data) {
         var languageId = this.props.languageId;
-        let word = (data.value || '').toLocaleLowerCase();
+        let word = String(data.value || '').toLocaleLowerCase();
 
         // is the lang: protocol used to switch languages?
         if (word.indexOf(EDLanguageProtocolQualifier) > 0) {

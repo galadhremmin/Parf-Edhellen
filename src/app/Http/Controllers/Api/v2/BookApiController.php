@@ -22,7 +22,7 @@ class BookApiController extends Controller
     use CanTranslate, CanGetGloss { 
         CanTranslate::__construct insteadof CanGetGloss;
         CanTranslate::translate as protected doTranslate; 
-    }
+    } // ;
 
     /**
      * HTTP GET. Gets the word which corresponds to the specified ID. 
@@ -131,7 +131,7 @@ class BookApiController extends Controller
     public function translate(Request $request)
     {
         $this->validate($request, [
-            'word'        => 'required|max:255',
+            'word'        => 'required|min:1|max:255',
             'language_id' => 'sometimes|required|exists:languages,id',
             'include_old' => 'sometimes|required|boolean',
             'inflections' => 'sometimes|boolean'
