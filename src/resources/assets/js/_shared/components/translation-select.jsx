@@ -14,11 +14,15 @@ class EDTranslationSelect extends React.Component {
 
     createStateForValue(value) {
         if (! Array.isArray(value)) {
-            value = []
+            if (typeof value === 'string' && value.length > 0) {
+                value = [value];
+            } else {
+                value = [];
+            }
         } 
 
         if (value.length > 0) {
-            value = value.map(v => v.hasOwnProperty('translation') ? v : { translation: String(v) });
+            value = value.map(v => v.hasOwnProperty('translation') ? v : { translation: String(v).trim() });
             this.sortValue(value);
         }
 
@@ -33,12 +37,6 @@ class EDTranslationSelect extends React.Component {
      * @param {Object} value 
      */
     setValue(value) {
-
-        value = String(value || '').trim();
-        if (originalValue.length < 1) {
-            return;
-        }
-
         const originalValue = this.state.value;
         const newState = this.createStateForValue(value);
         this.setState(newState);
@@ -100,11 +98,10 @@ class EDTranslationSelect extends React.Component {
             return;
         }
 
-        if (! confirm(`You have not added “${value}”. Would you like to add it?`)) {
-            return;
+        if (confirm(`You have not added “${value}”. Would you like to add it?`)) {
+            this.addTranslation(value);
         }
 
-        this.addTranslation(value);
         this.inputField.value = '';
     }
 
