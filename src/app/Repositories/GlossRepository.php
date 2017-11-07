@@ -392,7 +392,7 @@ class GlossRepository
         });
         
         // 10. Remove existing keywords, if they have changed
-        $keywordsChanged = $translationsChanged;
+        $keywordsChanged = $translationsChanged || $changed;
         if ($originalGloss !== null && ! $keywordsChanged) {
             // transform original keyword entities to an array of strings.
             $originalKeywords = array_merge(
@@ -434,10 +434,8 @@ class GlossRepository
                     $this->createKeyword($translationWord, $sense, $gloss);
                 }
             }
-        }
 
-        // 12. Register keywords on the sense, if changed.
-        if ($keywordsChanged) {
+            // 12. Register keywords on the sense
             // 12a. Delete existing keywords associated with the sense.
             if ($resetKeywords) {
                 $sense->keywords()->whereNull('gloss_id')->delete();

@@ -84,8 +84,9 @@ class GlossRepositoryTest extends TestCase
         
         sort($actual);
         sort($expected);
-        
+
         $this->assertEquals($expected, $actual);
+        $this->assertEquals(0, $existingGloss->keywords()->count());
 
         $actual = $savedGloss->sense->keywords()->whereNull('gloss_id')->get()
             ->map(function ($k) {
@@ -111,7 +112,7 @@ class GlossRepositoryTest extends TestCase
         $gloss1 = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, true, $changed);
         $this->assertFalse($changed);
 
-        $this->assertEquals($gloss0->id, $gloss1->getLatestVersion()->id);
+        $this->assertEquals($gloss0->id, $gloss1->id);
     }
 
     public function testShouldDelete()
