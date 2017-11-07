@@ -1,4 +1,4 @@
-window.addEventListener('load', function() {
+const load = () => {
     // Find all elements with the _date_ class, retrieve their text content
     // (which is assumed to be a valid UTC-date) and transform it into a localized
     // date format.
@@ -16,4 +16,6 @@ window.addEventListener('load', function() {
 
         dateElement.textContent = (new Date(dateString)).toLocaleString();
     }
-});
+};
+
+load();

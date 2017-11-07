@@ -1,5 +1,3 @@
-
-
 /**
  * Transcribes the specified text body to tengwar using the parmaite font.
  * @param {string} text 

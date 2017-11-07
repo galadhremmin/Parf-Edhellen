@@ -17,7 +17,7 @@ import {
     TYPE_CODE_CLOSE_PARANTHESIS,
     TYPE_CODE_WORD_CONNEXION
  } from '../../config';
-import { transcribe } from '../../../_shared/tengwar';
+import { transcribe } from 'ed-tengwar';
 import EDSpeechSelect from '../../../_shared/components/speech-select';
 import EDInflectionSelect from '../../../_shared/components/inflection-select';
 import EDGlossSelect from 'ed-components/gloss-select';

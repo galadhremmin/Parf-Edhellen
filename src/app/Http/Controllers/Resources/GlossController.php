@@ -64,8 +64,12 @@ class GlossController extends Controller
     public function listForLanguage(Request $request, int $id)
     {
         $language = Language::findOrFail($id);
-        $glosses = $this->_glossRepository->getGlossListForLanguage($language->id);
-        
+        $glosses = Gloss::active()
+            ->join('words', 'words.id', 'glosses.word_id')
+            ->orderBy('words.word', 'asc')
+            ->with('translations', 'account', 'sense.word', 'speech', 'keywords', 'word')
+            ->select('glosses.*')
+            ->paginate(30);
         return view('gloss.list', [
             'language' => $language,
             'glosses' => $glosses

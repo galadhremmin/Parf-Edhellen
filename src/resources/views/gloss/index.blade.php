@@ -38,7 +38,7 @@
         </div>
         <div class="panel-body">
             <ul>
-                @foreach ($latestGlossary as $t)
+                @foreach ($latestGlosses as $t)
                 <li>
                     <strong><a href="{{ route('gloss.edit', [ 'id' => $t->id ]) }}">{{ $t->word->word }}</a></strong>
                     by 

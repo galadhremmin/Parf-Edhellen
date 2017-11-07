@@ -96,6 +96,11 @@ class RefreshNormalizationCommand extends Command
                 $keyword->normalized_keyword_unaccented = $normalizedWordUnaccented;
                 $keyword->reversed_normalized_keyword_unaccented = strrev($normalizedWordUnaccented);
 
+                $keyword->normalized_keyword_length = mb_strlen($keyword->normalized_keyword);
+                $keyword->reversed_normalized_keyword_length = mb_strlen($keyword->reversed_normalized_keyword);
+                $keyword->normalized_keyword_unaccented_length = mb_strlen($keyword->normalized_keyword_unaccented);
+                $keyword->reversed_normalized_keyword_unaccented_length = mb_strlen($keyword->reversed_normalized_keyword_unaccented);
+
                 $keyword->save();
             }
 

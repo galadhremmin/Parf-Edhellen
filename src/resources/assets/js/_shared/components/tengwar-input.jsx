@@ -1,5 +1,5 @@
 import React from 'react';
-import { transcribe } from '../tengwar';
+import { transcribe } from 'ed-tengwar';
 import { Modal } from 'react-bootstrap';
 
 class EDTengwarInput extends React.Component {

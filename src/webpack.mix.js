@@ -28,7 +28,8 @@ mix.webpackConfig({
             'ed-form': 'elfdict/form.js',
             'ed-promise': 'elfdict/promise.js',
             'ed-session-storage-state': 'elfdict/session-storage-state.js',
-            'ed-scrolling': 'elfdict/scrolling.js'
+            'ed-scrolling': 'elfdict/scrolling.js',
+            'ed-tengwar': 'elfdict/tengwar.js'
         }
     }
 });
@@ -53,13 +54,15 @@ mix.extract([
     'ed-config',
     'ed-form',
     'ed-promise',
-    'ed-session-storage-state'
+    'ed-session-storage-state',
+    'ed-tengwar'
 ], `${outputDir}/js/vendor.js`);
 
 mix.react([
-    'resources/assets/js/_shared/error.js',
-    'resources/assets/js/navigation.js',
     'resources/assets/js/date.js',
+    'resources/assets/js/transcription.js',
+    'resources/assets/js/navigation.js',
+    'resources/assets/js/_shared/error.js',
     'resources/assets/js/search/index.jsx'
 ], `${outputDir}/js/global.js`);
 

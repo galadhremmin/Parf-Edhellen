@@ -134,23 +134,6 @@ class GlossRepository
         return $data->id;
     }
 
-    public function getGlossListForLanguage(int $languageId)
-    {
-        $glosses = Gloss::where('language_id', $languageId)
-            ->join('words as w', 'word_id', 'w.id')
-            ->join('accounts as u', 'glosses.account_id', 'u.id')
-            ->join('translations as t', 'glosses.id', 't.gloss_id')
-            ->leftJoin('speeches as s', 'speech_id', 's.id')
-            ->leftJoin('words as ws', 'sense_id', 'ws.id')
-            ->active()
-            ->select('glosses.id', 't.translation', 'w.word', 'source', 'u.nickname as account_name', 
-                'glosses.account_id', 'is_rejected', 's.name as speech', 'ws.word as sense')
-            ->orderBy('w.word')
-            ->get();
-        
-        return $glosses;
-    }
-
     public function getVersions(int $id)
     {
         $gloss = Gloss::where('id', $id)
@@ -542,7 +525,7 @@ class GlossRepository
         $ids = array();
         foreach ($rows as $row)
             $ids[] = $row->sense_id;
-
+        
         return $ids;
     }
 

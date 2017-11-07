@@ -1,4 +1,4 @@
-(function () {
+window.addEventListener('load', function() {
     const findTarget = elem => {
         while (elem) {
             if (/\bnavbar\-toggle\b/.test(elem.className)) {
@@ -33,4 +33,4 @@
             onButtonClick(ev)
         });
     }
-})();
+});

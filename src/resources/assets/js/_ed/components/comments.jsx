@@ -6,7 +6,7 @@ import EDMarkdownEditor from 'ed-components/markdown-editor';
 import { EDStatefulFormComponent } from 'ed-form';
 import { Parser as HtmlToReactParser, ProcessNodeDefinitions } from 'html-to-react';
 import { smoothScrollIntoView } from 'ed-scrolling';
-import { transcribe } from '../../_shared/tengwar';
+import { transcribe } from 'ed-tengwar';
 
 class EDComments extends EDStatefulFormComponent {
     constructor(props) {

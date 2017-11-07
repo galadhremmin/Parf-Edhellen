@@ -37,6 +37,4 @@ const load = () => {
     }
 };
 
-window.addEventListener('load', function () {
-    window.setTimeout(load, 0);
-});
+load();
