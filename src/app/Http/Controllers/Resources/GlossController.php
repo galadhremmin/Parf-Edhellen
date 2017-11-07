@@ -65,6 +65,7 @@ class GlossController extends Controller
     {
         $language = Language::findOrFail($id);
         $glosses = Gloss::active()
+            ->where('language_id', $id)
             ->join('words', 'words.id', 'glosses.word_id')
             ->orderBy('words.word', 'asc')
             ->with('translations', 'account', 'sense.word', 'speech', 'keywords', 'word')
