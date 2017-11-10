@@ -56,7 +56,9 @@ class FlashcardController extends Controller
             // Create the key if it does not exist
             if (! isset($statisticsByLanguage[$statistic->name])) {
                 $statisticsByLanguage[$statistic->name] = [
-                    'total' => 0
+                    'total' => 0,
+                    'correct' => 0,
+                    'wrong' => 0
                 ];
             }
 
