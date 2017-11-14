@@ -210,7 +210,7 @@ class ForumApiController extends Controller
         $post = ForumPost::findOrFail($id);
         
         if (! $this->userCanAccess($request->user(), $post)) {
-            return response(null, 401);
+            return response(null, 403);
         }
 
         return $post;
@@ -276,7 +276,7 @@ class ForumApiController extends Controller
         // fetch and update the post
         $post = ForumPost::findOrFail($id);
         if (! $this->userCanAccess($account, $post)) {
-            return response(null, 401);
+            return response(null, 403);
         }
 
         $post->content = $request->input('comments');
@@ -306,7 +306,7 @@ class ForumApiController extends Controller
     {
         $post = ForumPost::findOrFail($id);
         if (! $this->userCanAccess($request->user(), $post)) {
-            return response(null, 401);
+            return response(null, 403);
         }
 
         // hide the post (does not permanently delete it)

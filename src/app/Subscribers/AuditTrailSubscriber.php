@@ -88,7 +88,7 @@ class AuditTrailSubscriber
      */
     public function onForumPostCreated(ForumPostCreated $event) 
     {
-        $this->repository()->store(AuditTrail::ACTION_COMMENT_ADD, $event->post, $event->accountId, false);
+        $this->repository()->store(AuditTrail::ACTION_COMMENT_ADD, $event->post, $event->accountId);
     }
 
     /**
@@ -96,7 +96,7 @@ class AuditTrailSubscriber
      */
     public function onForumPostEdited(ForumPostEdited $event) 
     {
-        $this->repository()->store(AuditTrail::ACTION_COMMENT_EDIT, $event->post, $event->accountId, false);
+        $this->repository()->store(AuditTrail::ACTION_COMMENT_EDIT, $event->post, $event->accountId);
     }
 
     /**
@@ -117,7 +117,7 @@ class AuditTrailSubscriber
      */
     public function onForumPostLiked(ForumPostLikeCreated $event) 
     {
-        $this->repository()->store(AuditTrail::ACTION_COMMENT_LIKE, $event->post, $event->accountId, false);
+        $this->repository()->store(AuditTrail::ACTION_COMMENT_LIKE, $event->post, $event->accountId);
     }
 
     /**
