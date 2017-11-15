@@ -53,14 +53,22 @@ class SocialAuthController extends Controller
 
     public function redirect(Request $request, string $providerName)
     {
-        $provider = self::getProvider($providerName);
-        return Socialite::driver($provider->name_identifier)->redirect();   
+        try {
+            $provider = self::getProvider($providerName);
+            return Socialite::driver($provider->name_identifier)->redirect();
+        } catch(\Exception $ex) {
+            abort(500, $ex->getMessage());
+        }
     }   
 
     public function callback(Request $request, string $providerName)
     {
-        $provider = self::getProvider($providerName);
-        $providerUser = Socialite::driver($provider->name_identifier)->user(); 
+        try {
+            $provider = self::getProvider($providerName);
+            $providerUser = Socialite::driver($provider->name_identifier)->user(); 
+        } catch (\Exception $ex) {
+            abort(500, $ex->getMessage());
+        }
 
         $user = Account::where([
                 [ 'email', '=', $providerUser->getEmail() ],

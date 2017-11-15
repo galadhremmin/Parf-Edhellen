@@ -216,7 +216,7 @@ class AuthorController extends Controller
                 Storage::disk('local')->put('public/avatars/'.$author->id.'.png', $avatarAsString);
                 
                 $author->has_avatar = true;
-            } catch (Exception $ex) {
+            } catch (\Exception $ex) {
                 // Images can't be processed, so bail
                 $author->has_avatar = false;
             } finally {
