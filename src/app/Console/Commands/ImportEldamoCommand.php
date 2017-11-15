@@ -282,9 +282,16 @@ class ImportEldamoCommand extends Command
                 continue;
             }
 
-            $this->line($c.' '.$t->language.' '.$t->word.': '.($found ? $ot->id : 'new'));
-            $t = $this->_glossRepository->saveGloss($word, $sense, $ot, $translations, $keywords, false);
-            $this->line('     -> '.$t->id);
+            try {
+                $this->line($c.' '.$t->language.' '.$t->word.': '.($found ? $ot->id : 'new'));
+                $t = $this->_glossRepository->saveGloss($word, $sense, $ot, $translations, $keywords, false);
+                $this->line('     -> '.$t->id);
+            } catch (\Exception $ex) {
+                $this->error('Failed due to an exception!');
+                $this->error($ex->getMessage());
+                $this->error($ex->getTraceAsString());
+                dd([$word, $sense, $ot, $translations, $keywords]);
+            }
 
             $c += 1;
         }

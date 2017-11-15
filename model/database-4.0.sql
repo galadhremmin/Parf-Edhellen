@@ -10,8 +10,6 @@ CREATE TABLE `translations`(
     PRIMARY KEY (`id`)
 );
 
-CREATE UNIQUE INDEX `ix_gloss_translation` ON `translations` (`gloss_id`, `translation`);
-
 INSERT INTO `translations` (`gloss_id`, `translation`)
     SELECT `id`, `translation` FROM `glosses` WHERE `is_index` = 0;
 
