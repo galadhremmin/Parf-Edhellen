@@ -43,7 +43,7 @@
                     <strong><a href="{{ route('gloss.edit', [ 'id' => $t->id ]) }}">{{ $t->word->word }}</a></strong>
                     by 
                     <a href="{{ $link->author($t->account_id, $t->account->nickname) }}">{{ $t->account->nickname }}</a>
-                    <span title="{{ $t->updated_at ?: $t->created_at }}}" class="label label-default pull-right date">
+                    <span title="{{ $t->updated_at ?: $t->created_at }}" class="label label-default pull-right date">
                         {{ ($t->updated_at ?: $t->created_at) }}
                     </span>
                 </li>

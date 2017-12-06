@@ -7,6 +7,4 @@ const load = () => {
     EDConfig.addPlugins('book-gloss-toolbar', [ EDEditGlossPlugin ]);
 }
 
-window.addEventListener('load', function () {
-    window.setTimeout(load, 0);
-});
+load();
