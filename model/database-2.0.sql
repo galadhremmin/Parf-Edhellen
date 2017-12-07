@@ -87,7 +87,6 @@ INSERT INTO `forum_threads` (`entity_type`, `entity_id`, `subject`, `roles`)
 UPDATE `forum_posts` fp
     INNER JOIN `forum_threads` ft on ft.`entity_type` = 'translation' AND ft.`entity_id` = fp.`entity_id`
     SET fp.`forum_thread_id` = ft.`id`
-    WHERE ft.`entity_type` = 'translation'
     WHERE fp.`forum_context_id` = 2;
 
 UPDATE `forum_posts` fp
