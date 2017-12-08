@@ -171,6 +171,9 @@ CREATE TABLE `roles` (
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+INSERT INTO `roles` (`name`) VALUES 
+    ('Administrator'), ('User');
+
 --
 -- Table structure for table `senses`
 --
