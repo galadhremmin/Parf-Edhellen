@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 class NoopAuditTrailRepository implements IAuditTrailRepository
 {
-    public function get(int $noOfRows, int $skipNoOfRows = 0, $previousItem = null)
+    public function get(int $noOfRows, int $skipNoOfRows = 0)
     {
         // Noop
     }

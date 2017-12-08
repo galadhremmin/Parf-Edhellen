@@ -31,6 +31,22 @@ class Account extends Authenticatable
         'identity', 'authorization_provider_id', 'is_configured'
     ];
 
+    public function authorization_provider()
+    {
+        return $this->belongsTo(AuthorizationProvider::class);
+    }
+
+    public function roles()
+    {
+        return $this->hasManyThrough(
+            Role::class, AccountRoleRel::class,
+            'account_id',
+            'id',
+            'id',
+            'role_id'
+        );
+    }
+
     public function memberOf(string $roleName) 
     {
         $user = $this;
@@ -39,6 +55,29 @@ class Account extends Authenticatable
         });
         
         return $roles->search($roleName) !== false;
+    }
+
+    public function addMembershipTo(string $roleName)
+    {
+        if ($this->memberOf($roleName)) {
+            return;
+        }
+
+        $role = Role::firstOrCreate(['name' => $roleName]);
+        AccountRoleRel::create([
+            'account_id' => $this->id,
+            'role_id'    => $role->id
+        ]);
+    }
+
+    public function removeMembership(string $roleName)
+    {
+        $role = Role::where('name', $roleName)->first();
+
+        AccountRoleRel::where([
+            'account_id' => $this->id,
+            'role_id'    => $role->id
+        ])->delete();
     }
 
     public function forgetRoles()

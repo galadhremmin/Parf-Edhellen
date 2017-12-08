@@ -172,7 +172,7 @@ CREATE TABLE `roles` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 INSERT INTO `roles` (`name`) VALUES 
-    ('Administrator'), ('User');
+    ('Administrators'), ('Users');
 
 --
 -- Table structure for table `senses`

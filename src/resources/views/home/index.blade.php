@@ -50,15 +50,9 @@
     <p>
       The {{count($auditTrails)}} most recent activities.
     </p>
-    <ul class="list-group">
-    @foreach($auditTrails as $a)
-      <li class="list-group-item">
-        <span class="date">{{ $a['created_at'] }}</span>
-        <a href="{{ $link->author($a['account_id'], $a['account_name']) }}">{{ $a['account_name'] }}</a>
-        {!! $a['message'] . ($a['entity'] === null ? '.' : ' '. $a['entity'].'.') !!}
-      </li>
-    @endforeach
-    </ul>
+    @include('_shared._audit-trail', [
+      'auditTrail' => $auditTrails
+    ])
   </div>
 </div>
 

@@ -133,6 +133,9 @@ Route::group([
         'middleware' => ['auth', 'auth.require-role:Administrators'] 
     ], function () {
 
+    Route::resource('account', 'AccountController', [
+        'except' => ['show', 'create', 'store', 'update', 'destroy']
+    ]);
     Route::resource('inflection', 'InflectionController', [
         'except' => ['show']
     ]);
@@ -156,11 +159,14 @@ Route::group([
 
     Route::get('gloss/list/{id}', 'GlossController@listForLanguage')->name('gloss.list');
 
+    Route::get('account/by-role/{id}', 'AccountController@byRole')->name('account.by-role');
+    Route::delete('account/{id}/delete-membership', 'AccountController@deleteMembership')->name('account.delete-membership');
+    Route::post('account/{id}/add-membership', 'AccountController@addMembership')->name('account.add-membership');
+
     Route::get('contribution/list', 'ContributionController@list')->name('contribution.list');
     Route::get('contribution/{id}/reject', 'ContributionController@confirmReject')->name('contribution.confirm-reject');
     Route::put('contribution/{id}/approve', 'ContributionController@updateApprove')->name('contribution.approve');
     Route::put('contribution/{id}/reject', 'ContributionController@updateReject')->name('contribution.reject');
-    
 });
 
 // Public unrestricted API

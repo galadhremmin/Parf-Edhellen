@@ -88,6 +88,15 @@ class SocialAuthController extends Controller
                 'authorization_provider_id'  => $provider->id
             ]);
 
+            // Important!
+            // The first user ever created is assumed to have been created by an administrator
+            // of the website, and thus assigned the role Administrator.
+            if (Account::count() === 1) {
+                $user->addMembershipTo('Administrator');
+            }
+
+            $user->addMembershipTo('User');
+
             $first = true;
         }
 

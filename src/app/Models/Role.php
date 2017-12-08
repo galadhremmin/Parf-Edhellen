@@ -10,4 +10,15 @@ class Role extends ModelBase
             ->where('ag.account_id', $account->id)
             ->select('name', 'id');
     }
+
+    public function accounts()
+    {
+        return $this->hasManyThrough(
+            Account::class, AccountRoleRel::class,
+            'role_id',
+            'id',
+            'id',
+            'account_id'
+        );
+    }
 }

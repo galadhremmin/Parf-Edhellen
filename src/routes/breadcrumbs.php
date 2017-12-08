@@ -259,3 +259,26 @@ Breadcrumbs::register('system-error.index', function ($breadcrumbs)
     $breadcrumbs->parent('dashboard');
     $breadcrumbs->push('List system errors', route('system-error.index'));
 });
+
+// //////////////////////////////////////////////////////////////////////////////////////////////
+// Dashboard > Accounts
+
+Breadcrumbs::register('account.index', function ($breadcrumbs)
+{
+    $breadcrumbs->parent('dashboard');
+    $breadcrumbs->push('Accounts', route('account.index'));
+});
+
+Breadcrumbs::register('account.edit', function ($breadcrumbs, App\Models\Account $account)
+{
+    $breadcrumbs->parent('account.index');
+    $breadcrumbs->push('Account '.$account->nickname.' ('.$account->id.')', route('account.edit', ['id' => $account->id]));
+});
+
+Breadcrumbs::register('account.by-role', function ($breadcrumbs, App\Models\Role $role)
+{
+    $breadcrumbs->parent('account.index');
+    $breadcrumbs->push('Accounts in '.$role->name, route('account.by-role', ['id' => $role->id]));
+});
+
+

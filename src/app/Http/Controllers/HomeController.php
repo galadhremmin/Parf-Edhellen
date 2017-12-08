@@ -5,23 +5,31 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-use App\Models\{ Sentence, AuditTrail };
-use App\Adapters\SentenceAdapter;
 use App\Repositories\ContributionRepository;
 use App\Repositories\Interfaces\IAuditTrailRepository;
+use App\Models\{ 
+    AuditTrail,
+    Sentence
+};
+use App\Adapters\{
+    AuditTrailAdapter,
+    SentenceAdapter
+};
 
 class HomeController extends Controller
 {
     protected $_auditTrail;
+    protected $_auditTrailAdapter;
     protected $_sentenceAdapter;
     protected $_reviewRepository;
 
-    public function __construct(IAuditTrailRepository $auditTrail, SentenceAdapter $sentenceAdapter, 
-        ContributionRepository $ContributionRepository) 
+    public function __construct(IAuditTrailRepository $auditTrail, AuditTrailAdapter $auditTrailAdapter, 
+        SentenceAdapter $sentenceAdapter, ContributionRepository $ContributionRepository) 
     {
-        $this->_auditTrail       = $auditTrail;
-        $this->_sentenceAdapter  = $sentenceAdapter;
-        $this->_reviewRepository = $ContributionRepository;
+        $this->_auditTrail        = $auditTrail;
+        $this->_auditTrailAdapter = $auditTrailAdapter;
+        $this->_sentenceAdapter   = $sentenceAdapter;
+        $this->_reviewRepository  = $ContributionRepository;
     }
 
     public function index() 
@@ -41,7 +49,7 @@ class HomeController extends Controller
             : null;
 
         // Retrieve the 10 latest audit trail
-        $auditTrails = $this->_auditTrail->get(10);
+        $auditTrails = $this->_auditTrailAdapter->adaptAndMerge( $this->_auditTrail->get(10) );
         $data = [
             'sentence'         => $randomSentence,
             'sentenceData'     => $data,
