@@ -92,10 +92,10 @@ class SocialAuthController extends Controller
             // The first user ever created is assumed to have been created by an administrator
             // of the website, and thus assigned the role Administrator.
             if (Account::count() === 1) {
-                $user->addMembershipTo('Administrator');
+                $user->addMembershipTo('Administrators');
             }
 
-            $user->addMembershipTo('User');
+            $user->addMembershipTo('Users');
 
             $first = true;
         }
