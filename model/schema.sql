@@ -142,7 +142,7 @@ DROP TABLE IF EXISTS `languages`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `languages` (
-  `id` int(1) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(24) COLLATE utf8_swedish_ci NOT NULL,
   `order` int(2) NOT NULL,
   `is_invented` tinyint(1) NOT NULL DEFAULT '0',
@@ -299,7 +299,7 @@ DROP TABLE IF EXISTS `translation_reviews`;
 CREATE TABLE `translation_reviews` (
   `id` int(8) unsigned NOT NULL AUTO_INCREMENT,
   `account_id` int(6) unsigned NOT NULL,
-  `language_id` int(1) unsigned NOT NULL,
+  `language_id` int(11) unsigned NOT NULL,
   `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `word` varchar(64) COLLATE utf8_swedish_ci NOT NULL,
   `payload` text COLLATE utf8_swedish_ci NOT NULL,
@@ -322,7 +322,7 @@ DROP TABLE IF EXISTS `translations`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `translations` (
   `id` int(8) unsigned NOT NULL AUTO_INCREMENT,
-  `language_id` int(1) unsigned DEFAULT NULL,
+  `language_id` int(11) unsigned DEFAULT NULL,
   `translation_group_id` int(11) DEFAULT NULL,
   `translation` varchar(255) COLLATE utf8_swedish_ci NOT NULL,
   `is_uncertain` tinyint(1) DEFAULT '0',
@@ -343,7 +343,7 @@ CREATE TABLE `translations` (
   `sense_id` int(11) DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `is_rejected` smallint(1) NOT NULL DEFAULT '0',
-  `speech_id` smallint(1) DEFAULT NULL,
+  `speech_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `WordIDIndex` (`word_id`),
   KEY `LanguageIDIndex` (`language_id`),

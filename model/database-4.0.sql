@@ -36,3 +36,10 @@ OPTIMIZE TABLE `audit_trails`, `contributions`, `favourites`, `forum_threads`, `
     `keywords`, `sentence_fragments`;
 
 INSERT INTO `version` VALUES (4.0, NOW());
+
+ALTER TABLE `languages` MODIFY `id` int(11) unsigned not null AUTO_INCREMENT;
+ALTER TABLE `glosses` MODIFY `language_id` int(11) unsigned NOT NULL;
+ALTER TABLE `contributions` MODIFY `language_id` int(11) unsigned NOT NULL;
+ALTER TABLE `glosses` MODIFY `speech_id` int(11) DEFAULT NULL;
+
+INSERT INTO `version` VALUES (4.1, NOW());
