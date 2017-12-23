@@ -72,4 +72,13 @@ class LinkHelper
 
         return $url;
     }
+
+    public function forumPost(int $postId, string $subject = '') 
+    {
+        if (empty($subject)) {
+            return route('discuss.show', ['id' => $postId]);
+        }
+
+        throw new \Exception('Not implemented.');
+    }
 }

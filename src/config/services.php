@@ -38,4 +38,9 @@ return [
         'redirect' => env('AUTH_MICROSOFT_REDIRECT'),
     ],
 
+    'ses' => [
+        'key' => env('AUTH_SES_KEY'),
+        'secret' => env('AUTH_SES_SECRET'),
+        'region' => env('AUTH_SES_REGION'),  // e.g. us-east-1
+    ],
 ];
