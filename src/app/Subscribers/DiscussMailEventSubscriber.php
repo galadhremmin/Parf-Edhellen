@@ -43,12 +43,16 @@ class DiscussMailEventSubscriber
 
         $rows = ForumPost::where('forum_thread_id', $event->post->forum_thread_id)
             ->join('accounts', 'accounts.id', 'forum_posts.account_id')
-            ->select('email')
+            ->select('email', 'account_id')
             ->distinct()
             ->get();
         
+        
+
         $emails = [];
         foreach ($rows as $row) {
+
+
             if ($email !== $row->email) {
                 $emails[] = $row->email;
             }
