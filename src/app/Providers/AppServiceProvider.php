@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\{
+    Blade,
+    Schema
+};
+
 use App\Models\Initialization\Morphs;
 
 class AppServiceProvider extends ServiceProvider
@@ -15,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Schema::defaultStringLength(191);
         Morphs::map();
 
         // @markdown method injection
