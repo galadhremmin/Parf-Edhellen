@@ -47,8 +47,6 @@ class DiscussMailEventSubscriber
             ->distinct()
             ->get();
         
-        
-
         $emails = [];
         foreach ($rows as $row) {
 
@@ -63,6 +61,6 @@ class DiscussMailEventSubscriber
         }
 
         $mail = new ForumPostCreatedMail($event->post);
-        Mail::to($emails)->send($mail); // TODO: enqueue instead
+        Mail::to($emails)->queue($mail);
     }
 }
