@@ -10,6 +10,11 @@ trait HasAccount
         $query->where('account_id', $accountId);
     }
 
+    public function scopeForAccounts($query, array $accountIds)
+    {
+        $query->whereIn('account_id', $accountIds);
+    }
+
     public function account() 
     {
         return $this->belongsTo(Account::class);
