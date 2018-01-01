@@ -6,18 +6,30 @@ use Tests\TestCase;
 use Illuminate\Support\Collection;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Mail\SendQueuedMailable;
+use Illuminate\Support\Facades\Queue;
 use Auth;
+use DB;
 
+use App\Repositories\MailSettingRepository;
+use App\Models\Initialization\Morphs;
+use App\Subscribers\DiscussMailEventSubscriber;
+use App\Events\{
+    ForumPostCreated
+};
 use App\Models\{
     Account,
     MailSetting,
     MailSettingOverride,
 
     Contribution,
-    Language
+    Language,
+    ForumThread,
+    ForumPost
 };
-use App\Repositories\MailSettingRepository;
-use DB;
+use App\Mail\{
+    ForumPostCreatedMail
+};
 
 class MailSettingRepositoryTest extends TestCase
 {
@@ -126,5 +138,40 @@ class MailSettingRepositoryTest extends TestCase
         $actual = $this->_repository->qualify([$account->id], 'forum_contribution_approved', $this->_contribution);
         
         $this->assertEquals($expected, $actual);
+    }
+
+    public function testShouldNotifyPostCreated()
+    {
+        $thread = ForumThread::create([
+            'entity_type' => Morphs::getAlias($this->_contribution),
+            'entity_id'   => $this->_contribution->id,
+            'subject'     => 'Unit test',
+            'account_id'  => $this->_accountIds[0]
+        ]);
+
+        foreach ($this->_accountIds as $id) {
+            $post = ForumPost::create([
+                'forum_thread_id' => $thread->id,
+                'account_id'      => $id,
+                'content'         => 'Unit test '.$id
+            ]);
+        }
+
+        $expected = array_map(function ($a) {
+                return $a->email;
+            }, array_filter($this->_accounts, function($a) use($post) { 
+                return $a->id !== $post->account_id;
+            })
+        );
+        
+        Queue::fake();
+        
+        resolve(DiscussMailEventSubscriber::class)->onForumPostCreated(new ForumPostCreated($post, $post->account_id));
+
+        Queue::assertPushed(SendQueuedMailable::class, function ($job) use ($expected) {
+            return array_map(function ($a) {
+                return $a['address'];
+            }, $job->mailable->to) === $expected;
+        });
     }
 }

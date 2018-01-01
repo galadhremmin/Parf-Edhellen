@@ -11,6 +11,7 @@ use App\Models\{
     FlashcardResult,
     Gloss, 
     ForumDiscussion,
+    ForumThread,
     ForumPost, 
     Sentence 
 };
@@ -27,7 +28,8 @@ class Morphs
             'forum'        => ForumPost::class,
             'sentence'     => Sentence::class,
             'gloss'        => Gloss::class,
-            'discussion'   => ForumDiscussion::class
+            'discussion'   => ForumDiscussion::class,
+            'forum_thread' => ForumThread::class
         ]);
     }
 
