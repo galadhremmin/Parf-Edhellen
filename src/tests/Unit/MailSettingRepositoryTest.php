@@ -174,4 +174,23 @@ class MailSettingRepositoryTest extends TestCase
             }, $job->mailable->to) === $expected;
         });
     }
+
+    public function testSuccessfulCancellationToken()
+    {
+        $token = $this->_repository->generateCancellationToken($this->_accountIds[0], $this->_contribution);
+        $this->assertNotNull($token);
+        $this->assertNotEmpty($token);
+        
+        $expected = true;
+        $actual = $this->_repository->handleCancellationToken($token);
+        $this->assertEquals($expected, $actual);
+
+        $expected = false;
+        $actual = $this->_repository->canNotify($this->_accountIds[0], $this->_contribution);
+        $this->assertEquals($expected, $actual);
+
+        $expected = [];
+        $actual = $this->_repository->qualify([$this->_accountIds[0]], 'forum_contribution_approved', $this->_contribution);
+        $this->assertEquals($expected, $actual);
+    }
 }

@@ -17,13 +17,19 @@
   </header>
 
   @if (!empty($sentence->description))
-  @markdown($sentence->description)
+  <div class="abstract">
+    @markdown($sentence->description)
+  </div>
   @endif
 
   <div id="ed-fragment-navigator"></div>
   <script type="application/json" id="ed-preload-sentence-data">{!! json_encode($sentenceData) !!}</script>
 
-  @markdown($sentence->long_description)
+  @if (! empty($sentence->long_description))
+  <div class="long-text-body">
+    @markdown($sentence->long_description)
+  </div>
+  @endif
 
   @if (Auth::check())
   <p class="text-right">

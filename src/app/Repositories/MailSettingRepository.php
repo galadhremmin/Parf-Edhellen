@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
+use Validator;
 
 use App\Helpers\StringHelper;
 use App\Models\{ 
@@ -98,6 +98,69 @@ class MailSettingRepository
         ]);
 
         return ! $override->disabled;
+    }
+
+    /**
+     * Generates a cancellation token for the specified entity and user account.
+     *
+     * @param integer $accountId
+     * @param mixed $entity
+     * @return string
+     */
+    public function generateCancellationToken(int $accountId, $entity)
+    {
+        $morph = $this->getMorph($entity);
+        $secret = openssl_random_pseudo_bytes(128);
+        $token = [
+            's' => $secret,
+            'id' => $accountId,
+            'ea' => $morph,
+            'eid' => $entity->id  
+        ];
+
+        return encrypt($token);
+    }
+
+    /**
+     * Processes the specified token and creates a setting override for the entity
+     * it refers to.
+     *
+     * @param string $token
+     * @return boolean
+     */
+    public function handleCancellationToken(string $token)
+    {
+        $token = decrypt($token);
+        
+        if (! is_array($token)) {
+            return false;
+        }
+
+        $validator = Validator::make($token, [
+            's'   => 'required',
+            'id'  => 'required|numeric|exists:accounts,id',
+            'ea'  => 'required|string',
+            'eid' => 'required|numeric'
+        ]);
+
+        if ($validator->fails()) {
+            return false;
+        }
+
+        $modelName = Morphs::getMorphedModel($token['ea']);
+        $model = resolve($modelName)->find($token['eid']);
+
+        if (! $model) {
+            return false;
+        }
+
+        MailSettingOverride::updateOrCreate([
+            'account_id'  => $token['id'],
+            'entity_type' => $token['ea'],
+            'entity_id'   => $token['eid'],
+            'disabled'    => 1
+        ]);
+        return true;
     }
 
     /**
