@@ -9,7 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 
 use App\Models\ForumPost;
 
-class ForumPostCreatedMail extends Mailable
+class ForumPostOnProfileMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -34,9 +34,9 @@ class ForumPostCreatedMail extends Mailable
      */
     public function build()
     {
-        $this->subject(config('app.name').' - New posts notification');
+        $this->subject(config('app.name').' - New posts on your profile');
 
-        return $this->markdown('emails.forum.post-created', [
+        return $this->markdown('emails.forum.post-profile', [
             'cancellationToken' => $this->_cancellationToken,
             'post' => $this->_post
         ]);

@@ -22,6 +22,12 @@
                 Your profile
               </a>
             </li>
+              <li>
+                <a href="{{ route('mail-setting.index') }}">
+                  <span class="glyphicon glyphicon-bell"></span>
+                  Mail notifications
+                </a>
+              </li>
             @if ($user->isAdministrator())
               @if ($incognito)
               <li>

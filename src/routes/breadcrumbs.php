@@ -281,4 +281,13 @@ Breadcrumbs::register('account.by-role', function ($breadcrumbs, App\Models\Role
     $breadcrumbs->push('Accounts in '.$role->name, route('account.by-role', ['id' => $role->id]));
 });
 
+// //////////////////////////////////////////////////////////////////////////////////////////////
+// Dashboard > Mail settings
+
+Breadcrumbs::register('mail-setting.index', function ($breadcrumbs)
+{
+    $breadcrumbs->parent('dashboard');
+    $breadcrumbs->push('Mail notifications', route('mail-setting.index'));
+});
+
 

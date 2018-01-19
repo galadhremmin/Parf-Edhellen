@@ -48,6 +48,10 @@ Route::get('/wt/{id}',                [ 'uses' => 'BookController@pageForGlossId
 Route::get('/wt/{id}/versions',       [ 'uses' => 'BookController@versions' ])
     ->where([ 'id' => '[0-9]+' ])->name('gloss.ref.version');
 
+// Mail cancellation
+Route::get('/stop-notification/{token}', ['uses' => 'Resources\\MailSettingController@handleCancellationToken'])
+    ->name('mail-setting.cancellation');
+
 // User accounts
 Route::group([ 'middleware' => 'auth' ], function () {
     Route::get('/dashboard',          [ 'uses' => 'DashboardController@index' ])->name('dashboard');
@@ -101,6 +105,11 @@ Route::group([
     'prefix'     => 'dashboard', 
     'middleware' => ['auth']
 ], function () {
+
+    // Mail settings
+    Route::resource('mail-setting', 'MailSettingController', [
+        'only' => ['index', 'create', 'store', 'destroy']
+    ]);
 
     // Discuss
     Route::resource('discuss', 'DiscussController', [

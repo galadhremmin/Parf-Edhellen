@@ -15,7 +15,8 @@ use App\Events\{
     ForumPostCreated
 };
 use App\Mail\{
-    ForumPostCreatedMail
+    ForumPostCreatedMail,
+    ForumPostOnProfileMail
 };
 
 class DiscussMailEventSubscriber
@@ -46,13 +47,52 @@ class DiscussMailEventSubscriber
             ->pluck('account_id')
             ->toArray();
         
-        $emails = $this->repository()->qualify($accountIds, 'forum_post_created', $event->post->forum_thread);
-        if (! count($emails)) {
+        $entity = $event->post->forum_thread->entity;
+        if ($entity instanceof Account) {
+            // The associated entity is in fact someone's profile, which should trigger a different event.
+            // Notify the profile owner that someone has posted to their profile.
+            $notified = $this->notifyNewPostOnProfile($entity->id, $event);
+
+            // The associated profile owner should not receive two notifications.
+            if ($notified) {
+                $accountIds = array_filter($accountIds, function ($id) use($entity) {
+                    return $id !== $entity->id;
+                });
+            }
+
+        } else if ($entity->hasAttribute('account_id') && ! in_array($entity->account_id, $accountIds)) {
+            // Also inform the originator of the affected entity of the new post.
+            $accountIds[] = $entity->account_id;
+        }
+        
+        $recipients = $this->repository()->qualify($accountIds, 'forum_post_created', $event->post->forum_thread);
+        if (! $recipients->count()) {
             return;
         }
         
-        $mail = new ForumPostCreatedMail($event->post);
-        Mail::to($emails)->queue($mail);
+        foreach ($recipients as $recipient) {
+            $cancellationToken = $this->repository()->generateCancellationToken($recipient->id, $event->post->forum_thread);
+            $mail = new ForumPostCreatedMail($cancellationToken, $event->post);
+            
+            Mail::to($recipient->email)->queue($mail);
+        }
+    }
+
+    private function notifyNewPostOnProfile(int $accountId, ForumPostCreated $event)
+    {
+        $recipients = $this->repository()->qualify([$accountId], 'forum_posted_on_profile', $event->post->forum_thread);
+        if (! $recipients->count()) {
+            return false;
+        }
+        
+        foreach ($recipients as $recipient) {
+            $cancellationToken = $this->repository()->generateCancellationToken($recipient->id, $event->post->forum_thread);
+            $mail = new ForumPostOnProfileMail($cancellationToken, $event->post);
+            
+            Mail::to($recipient->email)->queue($mail);
+        }
+
+        return true;
     }
 
     private function repository()

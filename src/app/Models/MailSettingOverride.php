@@ -9,4 +9,9 @@ class MailSettingOverride extends ModelBase
     public $incrementing = false;
 
     use Traits\HasAccount;
+
+    public function entity()
+    {
+        return $this->morphTo();
+    }
 }

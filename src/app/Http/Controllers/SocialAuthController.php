@@ -100,16 +100,7 @@ class SocialAuthController extends Controller
             $first = true;
         }
 
-        auth()->login($user);
-
-        event(new AccountAuthenticated($user, $first));
-
-        if ($request->session()->has('auth.redirect')) {
-            $path = $request->session()->pull('auth.redirect');
-            return redirect($path);
-        }
-        
-        return redirect()->route('dashboard', [ 'loggedIn' => true ]);
+        return $this->doLogin($request, $user, $first);
     }
 
     public static function getProvider(string $providerName) {
@@ -125,7 +116,22 @@ class SocialAuthController extends Controller
         return $provider;
     }
 
-    private static function getNextAvailableNickname(string $nickname) {
+    private function doLogin(Request $request, Account $user, bool $first = false)
+    {
+        auth()->login($user);
+
+        event(new AccountAuthenticated($user, $first));
+
+        if ($request->session()->has('auth.redirect')) {
+            $path = $request->session()->pull('auth.redirect');
+            return redirect($path);
+        }
+        
+        return redirect()->route('dashboard', [ 'loggedIn' => true ]);
+    }
+
+    private static function getNextAvailableNickname(string $nickname) 
+    {
         $i = 1;
         $tmp = $nickname;
 

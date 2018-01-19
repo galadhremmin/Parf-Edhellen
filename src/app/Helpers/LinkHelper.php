@@ -81,4 +81,9 @@ class LinkHelper
 
         throw new \Exception('Not implemented.');
     }
+
+    public function mailCancellation(string $cancellationToken)
+    {
+        return route('mail-setting.cancellation', ['token' => $cancellationToken]);
+    }
 }

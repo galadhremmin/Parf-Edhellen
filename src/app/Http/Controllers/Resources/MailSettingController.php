@@ -11,13 +11,26 @@ use App\Models\{
     MailSetting,
     MailSettingOverride
 };
+use Lang;
 
 class MailSettingController extends Controller
 {
     public function index(Request $request)
     {
-        $inflections = Inflection::all()->groupBy('group_name')->sortBy('name');
-        return view('inflection.index', ['inflections' => $inflections]);
+        $user = $request->user();
+        $settings = MailSetting::firstOrCreate([
+            'account_id' => $user->id
+        ]);
+        $overrides = MailSettingOverride::forAccount($user)
+            ->with('entity')->get();
+        $events = $this->getEvents();
+
+        return view('mail-setting.index', [
+            'settings'  => $settings,
+            'overrides' => $overrides,
+            'events'    => $events,
+            'email'     => $user->email
+        ]);
     }
 
     public function create(Request $request)
@@ -25,34 +38,26 @@ class MailSettingController extends Controller
         return view('inflection.create');
     }
 
-    public function edit(Request $request, int $id) 
-    {
-        $inflection = Inflection::findOrFail($id);
-        return view('inflection.edit', ['inflection' => $inflection]);
-    }
-
     public function store(Request $request)
     {
-        $this->validateRequest($request);
-        
-        $inflection = new Inflection;
-        $inflection->name       = $request->input('name');
-        $inflection->group_name = $request->input('group');
-        $inflection->save();
+        $allEvents = $this->getEvents();
+        $rules = [];
 
-        return redirect()->route('inflection.index');
-    }
+        foreach ($allEvents as $event) {
+            $rules[$event] = 'sometimes|boolean';
+        }
 
-    public function update(Request $request, int $id)
-    {
-        $this->validateRequest($request, $id);
+        $events = $request->validate($rules);
+        $disabledEvents = array_diff($allEvents, array_keys($events));
+        foreach ($disabledEvents as $event) {
+            $events[$event] = 0;
+        }
 
-        $inflection = Inflection::findOrFail($id);
-        $inflection->name       = $request->input('name');
-        $inflection->group_name = $request->input('group');
-        $inflection->save();
+        MailSetting::firstOrCreate([
+            'account_id' => $request->user()->id
+        ])->update($events);
 
-        return redirect()->route('inflection.index');
+        return redirect()->route('mail-setting.index');
     }
 
     public function destroy(Request $request, int $id) 
@@ -68,15 +73,20 @@ class MailSettingController extends Controller
         event(new InflectionDestroyed($inflection));
 
         return redirect()->route('inflection.index');
+    } 
+
+    public function handleCancellationToken(Request $request, string $token)
+    {
+        return $token;
     }
 
-    protected function validateRequest(Request $request, int $id = 0)
+    private function getEvents()
     {
-        $rules = [
-            'name'  => 'required|min:1|max:64|unique:inflections,name'.($id === 0 ? '' : ','.$id.',id'),
-            'group' => 'required|min:1|max:64'
+        return [
+            'forum_post_created',
+            'forum_contribution_approved',
+            'forum_contribution_rejected',
+            'forum_posted_on_profile'
         ];
-
-        $this->validate($request, $rules);
-    } 
+    }
 }

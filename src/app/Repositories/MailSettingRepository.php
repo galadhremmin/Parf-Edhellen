@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use Illuminate\Support\Collection;
+use Hash;
 use Validator;
 
 use App\Helpers\StringHelper;
@@ -48,14 +49,16 @@ class MailSettingRepository
         }
 
         if (empty($ids)) {
-            return [];
+            return new Collection();
         }
 
         return Account::whereIn('id', $ids)
-            ->select('email')
+            ->select('id', 'email')
             ->distinct()
-            ->pluck('email')
-            ->toArray();
+            ->get()
+            ->filter(function ($v) {
+                return filter_var($v->email, FILTER_VALIDATE_EMAIL) !== false;
+            });
     }
 
     /**
@@ -93,9 +96,10 @@ class MailSettingRepository
         $override = MailSettingOverride::updateOrCreate([
             'account_id'  => $accountId,
             'entity_type' => $morph,
-            'entity_id'   => $entity->id,
-            'disabled'    => ! $notificationEnabled
+            'entity_id'   => $entity->id
         ]);
+        $override->disabled = ! $notificationEnabled;
+        $override->save();
 
         return ! $override->disabled;
     }
@@ -110,13 +114,12 @@ class MailSettingRepository
     public function generateCancellationToken(int $accountId, $entity)
     {
         $morph = $this->getMorph($entity);
-        $secret = openssl_random_pseudo_bytes(128);
         $token = [
-            's' => $secret,
             'id' => $accountId,
             'ea' => $morph,
             'eid' => $entity->id  
         ];
+        $token['x'] = Hash::make(serialize($token));
 
         return encrypt($token);
     }
@@ -137,13 +140,19 @@ class MailSettingRepository
         }
 
         $validator = Validator::make($token, [
-            's'   => 'required',
+            'x'   => 'required',
             'id'  => 'required|numeric|exists:accounts,id',
             'ea'  => 'required|string',
             'eid' => 'required|numeric'
         ]);
 
         if ($validator->fails()) {
+            return false;
+        }
+
+        $hash = $token['x'];
+        unset($token['x']);
+        if (! Hash::check(serialize($token), $hash)) {
             return false;
         }
 
@@ -154,12 +163,14 @@ class MailSettingRepository
             return false;
         }
 
-        MailSettingOverride::updateOrCreate([
+        $override = MailSettingOverride::updateOrCreate([
             'account_id'  => $token['id'],
             'entity_type' => $token['ea'],
-            'entity_id'   => $token['eid'],
-            'disabled'    => 1
+            'entity_id'   => $token['eid']
         ]);
+        $override->disabled = 1;
+        $override->save();
+
         return true;
     }
 

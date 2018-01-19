@@ -88,7 +88,9 @@ class MailSettingRepositoryTest extends TestCase
         $account = $this->_accounts[0];
 
         $expected = [$account->email];
-        $actual = $this->_repository->qualify([$account->id], 'forum_contribution_approved', $this->_contribution);
+        $actual = $this->emailCollectionToArray(
+            $this->_repository->qualify([$account->id], 'forum_contribution_approved', $this->_contribution)
+        );
         $this->assertEquals($expected, $actual);
     }
 
@@ -102,7 +104,9 @@ class MailSettingRepositoryTest extends TestCase
         ]);
         
         $expected = [];
-        $actual = $this->_repository->qualify([$account->id], 'forum_contribution_approved', $this->_contribution);
+        $actual = $this->emailCollectionToArray(
+            $this->_repository->qualify([$account->id], 'forum_contribution_approved', $this->_contribution)
+        );
         $this->assertEquals($expected, $actual);
     }
 
@@ -113,14 +117,18 @@ class MailSettingRepositoryTest extends TestCase
         $this->_repository->setNotifications($account->id, $this->_contribution, false);
         
         $expected = [];
-        $actual = $this->_repository->qualify([$account->id], 'forum_contribution_approved', $this->_contribution);
+        $actual = $this->emailCollectionToArray(
+            $this->_repository->qualify([$account->id], 'forum_contribution_approved', $this->_contribution)
+        );
         $this->assertEquals($expected, $actual);
 
         MailSetting::create([
             'account_id' => $account->id,
             'forum_contribution_approved' => 1
         ]);
-        $actual = $this->_repository->qualify([$account->id], 'forum_contribution_approved', $this->_contribution);
+        $actual = $this->emailCollectionToArray(
+            $this->_repository->qualify([$account->id], 'forum_contribution_approved', $this->_contribution)
+        );
         $this->assertEquals($expected, $actual);
     }
 
@@ -135,8 +143,24 @@ class MailSettingRepositoryTest extends TestCase
         $this->_repository->setNotifications($account->id, $this->_contribution, true);
         
         $expected = [$account->email];
-        $actual = $this->_repository->qualify([$account->id], 'forum_contribution_approved', $this->_contribution);
+        $actual = $this->emailCollectionToArray(
+            $this->_repository->qualify([$account->id], 'forum_contribution_approved', $this->_contribution)
+        );
         
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testShouldntQualifyDueToMalformedEmail()
+    {
+        $account = $this->_accounts[0];
+        $account->email = 'malformed-email';
+        $account->save();
+
+        $expected = [];
+        $actual = $this->emailCollectionToArray(
+            $this->_repository->qualify([$account->id], 'forum_contribution_approved', $this->_contribution)
+        );
+
         $this->assertEquals($expected, $actual);
     }
 
@@ -169,6 +193,34 @@ class MailSettingRepositoryTest extends TestCase
         resolve(DiscussMailEventSubscriber::class)->onForumPostCreated(new ForumPostCreated($post, $post->account_id));
 
         Queue::assertPushed(SendQueuedMailable::class, function ($job) use ($expected) {
+            return count(array_filter($job->mailable->to, function ($a) use ($expected) {
+                return in_array($a['address'], $expected);
+            })) > 0;
+        });
+    }
+
+    public function testShouldNotifyPostOnProfile()
+    {
+        $thread = ForumThread::create([
+            'entity_type' => Morphs::getAlias($this->_accounts[0]),
+            'entity_id'   => $this->_accountIds[0],
+            'subject'     => 'Unit test',
+            'account_id'  => $this->_accountIds[1]
+        ]);
+
+        $post = ForumPost::create([
+            'forum_thread_id' => $thread->id,
+            'account_id'      => $this->_accountIds[1],
+            'content'         => 'Unit test'
+        ]);
+        
+        $expected = [$this->_accounts[0]->email];
+        
+        Queue::fake();
+        
+        resolve(DiscussMailEventSubscriber::class)->onForumPostCreated(new ForumPostCreated($post, $post->account_id));
+
+        Queue::assertPushed(SendQueuedMailable::class, function ($job) use ($expected) {
             return array_map(function ($a) {
                 return $a['address'];
             }, $job->mailable->to) === $expected;
@@ -190,7 +242,14 @@ class MailSettingRepositoryTest extends TestCase
         $this->assertEquals($expected, $actual);
 
         $expected = [];
-        $actual = $this->_repository->qualify([$this->_accountIds[0]], 'forum_contribution_approved', $this->_contribution);
+        $actual = $this->emailCollectionToArray(
+            $this->_repository->qualify([$this->_accountIds[0]], 'forum_contribution_approved', $this->_contribution)
+        );
         $this->assertEquals($expected, $actual);
+    }
+    
+    private function emailCollectionToArray($collection) 
+    {
+        return $collection->pluck('email')->toArray();
     }
 }

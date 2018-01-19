@@ -8,7 +8,5 @@ class MailSetting extends ModelBase
     protected $primaryKey = 'account_id';
     public $incrementing = false;
 
-    use Traits\HasAccount;
-
-    
+    use Traits\HasAccount;    
 }
