@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Resources;
 
 use Illuminate\Http\Request;
+use Illuminate\Auth\AuthenticationException;
 
 use App\Http\Controllers\Controller;
 use App\Http\Discuss\ContextFactory;
@@ -48,7 +49,12 @@ class DiscussController extends Controller
         }
 
         $context = $this->_contextFactory->create($thread->entity_type);
-        if (! $context->available($thread, $request->user())) {
+        $user = $request->user();
+        if (! $context->available($thread, $user)) {
+            if (! $user) {
+                throw new AuthenticationException;
+            } 
+            
             abort(403);
         }
 
