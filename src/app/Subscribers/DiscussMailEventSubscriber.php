@@ -80,6 +80,11 @@ class DiscussMailEventSubscriber
 
     private function notifyNewPostOnProfile(int $accountId, ForumPostCreated $event)
     {
+        // Is the recipient the same as the sender, i.e. is the author writing on their own wall?
+        if ($accountId === $event->accountId) {
+            return true;
+        }
+
         $recipients = $this->repository()->qualify([$accountId], 'forum_posted_on_profile', $event->post->forum_thread);
         if (! $recipients->count()) {
             return false;
