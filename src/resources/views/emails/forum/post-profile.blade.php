@@ -4,7 +4,7 @@
 
 This is a notification that someone has attempted to reach out to you on your profile page.
 
-@component('mail::button', ['url' => $link->author($post->account_id)])
+@component('mail::button', ['url' => $link->forumPost($post->forum_thread_id)])
 Show {{ $post->account->nickname }}'s post
 @endcomponent
 
