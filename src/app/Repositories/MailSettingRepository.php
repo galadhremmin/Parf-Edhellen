@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Collection;
 use Hash;
 use Validator;
@@ -133,8 +134,12 @@ class MailSettingRepository
      */
     public function handleCancellationToken(string $token)
     {
-        $token = decrypt($token);
-        
+        try {
+            $token = decrypt($token);
+        } catch (DecryptException $ex) {
+            return false;
+        }
+
         if (! is_array($token)) {
             return false;
         }

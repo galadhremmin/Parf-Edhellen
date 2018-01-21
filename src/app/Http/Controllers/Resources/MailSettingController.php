@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Repositories\MailSettingRepository;
 use App\Models\{ 
     Account,
     MailSetting,
@@ -15,6 +16,13 @@ use Lang;
 
 class MailSettingController extends Controller
 {
+    private $_mailSettingRepository;
+
+    public function __construct(MailSettingRepository $mailSettingRepository)
+    {
+        $this->_mailSettingRepository = $mailSettingRepository;
+    }
+
     public function index(Request $request)
     {
         $user = $request->user();
@@ -60,24 +68,10 @@ class MailSettingController extends Controller
         return redirect()->route('mail-setting.index');
     }
 
-    public function destroy(Request $request, int $id) 
-    {
-        $inflection = Inflection::findOrFail($id);
-        
-        foreach ($inflection->sentence_fragment_associations as $association) {
-            $association->delete();
-        }
-
-        $inflection->delete();
-
-        event(new InflectionDestroyed($inflection));
-
-        return redirect()->route('inflection.index');
-    } 
-
     public function handleCancellationToken(Request $request, string $token)
     {
-        return $token;
+        $ok = is_string($token) && $this->_mailSettingRepository->handleCancellationToken($token);
+        return view($ok ? 'mail-setting.public.override-ok' : 'mail-setting.public.override-error');
     }
 
     private function getEvents()

@@ -108,7 +108,7 @@ Route::group([
 
     // Mail settings
     Route::resource('mail-setting', 'MailSettingController', [
-        'only' => ['index', 'create', 'store', 'destroy']
+        'only' => ['index', 'create', 'store']
     ]);
 
     // Discuss
