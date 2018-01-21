@@ -240,8 +240,3 @@ Route::group([
 
     Route::get('book/group',      [ 'uses' => 'BookApiController@getGroups' ]);
 });
-
-Route::get('/mail/post-created', function () {
-    $post = App\Models\ForumPost::first();
-    return new App\Mail\ForumPostCreatedMail($post);
-});
