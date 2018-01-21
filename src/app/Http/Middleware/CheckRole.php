@@ -18,7 +18,7 @@ class CheckRole
     public function handle($request, Closure $next, string $role)
     {
         if (! $request->user()->memberOf($role)) {
-            throw new AuthenticationException;
+            abort(403);
         }
 
         return $next($request);

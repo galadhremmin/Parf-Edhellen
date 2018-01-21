@@ -14,13 +14,13 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middleware = [
+        \App\Http\Middleware\EnsureHttpsAndWww::class,
         \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\CarbonLocale::class,
-        \App\Http\Middleware\LayoutDataLoader::class,
-        \App\Http\Middleware\EnsureHttpsAndWww::class,
+        \App\Http\Middleware\LayoutDataLoader::class
     ];
 
     /**
