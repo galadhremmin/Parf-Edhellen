@@ -417,12 +417,14 @@ class EDFragmentForm extends EDStatefulFormComponent {
             return ; // unknown error code
         }
 
+        const errorList = result.response.data.errors;
+
         let errors = [];
         let erroneousIndexes = [];
-        for (let erroneousElementName in result.response.data) {
+        for (let erroneousElementName in errorList) {
             const parts = /^fragments.([0-9]+).([a-zA-Z0-9_]+)/.exec(erroneousElementName);
             if (parts === null) {
-                errors = [...errors, ...result.response.data[erroneousElementName]];
+                errors = [...errors, ...errorList[erroneousElementName]];
                 continue;
             }
 

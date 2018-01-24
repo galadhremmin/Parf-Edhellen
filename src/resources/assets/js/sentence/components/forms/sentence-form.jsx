@@ -92,7 +92,7 @@ class EDSentenceForm extends EDStatefulFormComponent {
 
         // Laravel returns a dictionary with the name of the component as the key.
         // Flatten the errors array, by aggregating all validation errors. 
-        const groupedErrors = request.response.data;
+        const groupedErrors = request.response.data.errors;
         const componentNames = Object.keys(groupedErrors);
         let aggregatedErrors = [];
 
