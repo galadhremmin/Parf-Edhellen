@@ -13,8 +13,13 @@ use DB;
 
 use App\Repositories\MailSettingRepository;
 use App\Models\Initialization\Morphs;
-use App\Subscribers\DiscussMailEventSubscriber;
+use App\Subscribers\{
+    ContributionMailEventSubscriber,
+    DiscussMailEventSubscriber
+};
 use App\Events\{
+    ContributionApproved,
+    ContributionRejected,
     ForumPostCreated
 };
 use App\Models\{
@@ -28,7 +33,10 @@ use App\Models\{
     ForumPost
 };
 use App\Mail\{
-    ForumPostCreatedMail
+    ContributionApprovedMail,
+    ContributionRejectedMail,
+    ForumPostCreatedMail,
+    ForumPostOnProfileMail
 };
 
 class MailSettingRepositoryTest extends TestCase
@@ -221,6 +229,55 @@ class MailSettingRepositoryTest extends TestCase
         resolve(DiscussMailEventSubscriber::class)->onForumPostCreated(new ForumPostCreated($post, $post->account_id));
 
         Queue::assertPushed(SendQueuedMailable::class, function ($job) use ($expected) {
+            $this->assertTrue(
+                $job->mailable instanceof ForumPostCreatedMail ||
+                $job->mailable instanceof ForumPostOnProfileMail
+            );
+
+            return array_map(function ($a) {
+                return $a['address'];
+            }, $job->mailable->to) === $expected;
+        });
+    }
+
+    public function testShouldNotifyContributorOfApproval()
+    {
+        $contribution = $this->_contribution;
+        $contribution->reviewed_by_account_id = $this->_accounts[1]->id;
+        $contribution->is_approved = 1;
+        $contribution->save();
+
+        $expected = [$this->_accounts[0]->email];
+
+        Queue::fake();
+        
+        resolve(ContributionMailEventSubscriber::class)->onContributionApproved(new ContributionApproved($contribution));
+
+        Queue::assertPushed(SendQueuedMailable::class, function ($job) use ($expected) {
+            $this->assertTrue($job->mailable instanceof ContributionApprovedMail);
+
+            return array_map(function ($a) {
+                return $a['address'];
+            }, $job->mailable->to) === $expected;
+        });
+    }
+
+    public function testShouldNotifyContributorOfRejection()
+    {
+        $contribution = $this->_contribution;
+        $contribution->reviewed_by_account_id = $this->_accounts[1]->id;
+        $contribution->is_approved = 0;
+        $contribution->save();
+
+        $expected = [$this->_accounts[0]->email];
+
+        Queue::fake();
+        
+        resolve(ContributionMailEventSubscriber::class)->onContributionRejected(new ContributionRejected($contribution));
+
+        Queue::assertPushed(SendQueuedMailable::class, function ($job) use ($expected) {
+            $this->assertTrue($job->mailable instanceof ContributionRejectedMail);
+
             return array_map(function ($a) {
                 return $a['address'];
             }, $job->mailable->to) === $expected;

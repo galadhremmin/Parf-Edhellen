@@ -86,4 +86,9 @@ class LinkHelper
     {
         return route('mail-setting.cancellation', ['token' => $cancellationToken]);
     }
+
+    public function contribution(int $contributionId)
+    {
+        return route('contribution.show', ['id' => $contributionId]);
+    }
 }

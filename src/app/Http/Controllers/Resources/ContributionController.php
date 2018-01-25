@@ -13,7 +13,9 @@ use Illuminate\Support\Facades\{
 use App\Http\Controllers\Controller;
 use App\Models\Initialization\Morphs;
 use App\Events\{
-    ContributionDestroyed
+    ContributionApproved,
+    ContributionDestroyed,
+    ContributionRejected
 };
 use App\Models\{
     Contribution,
@@ -230,6 +232,8 @@ class ContributionController extends Controller
             : null;
         $contribution->save();
 
+        event(new ContributionRejected($contribution));
+
         return redirect()->route('contribution.show', ['id' => $contribution->id]);
     } 
 
@@ -254,6 +258,8 @@ class ContributionController extends Controller
         $contribution->date_reviewed = Carbon::now();
         $contribution->reviewed_by_account_id = $request->user()->id;
         $contribution->save();
+
+        event(new ContributionApproved($contribution));
 
         return redirect()->route('contribution.show', ['id' => $contribution->id]);
     }
