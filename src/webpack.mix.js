@@ -37,6 +37,7 @@ mix.webpackConfig({
 const outputDir = `public/v${process.env.ED_VERSION}`;
 
 mix.extract([
+    'core-js/es6/map', 'core-js/es6/set',
     'react', 'react-dom', 'react-router-dom',
     'react-redux', 'redux', 'redux-thunk',
     'react-autosuggest', 
