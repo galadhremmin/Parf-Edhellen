@@ -40,7 +40,7 @@ Route::get('/phrases/{langId}-{langName}/{sentId}-{sentName}', [ 'uses' => 'Sent
     ->name('sentence.public.sentence');
 
 // Dictionary
-Route::get('/w/{word}',               [ 'uses' => 'BookController@pageForWord' ]);
+Route::get('/w/{word}/{language?}',   [ 'uses' => 'BookController@pageForWord' ]);
 Route::get('/wt/{id}',                [ 'uses' => 'BookController@pageForGlossId' ])
     ->where([ 'id' => '[0-9]+' ])->name('gloss.ref');
     Route::get('/wt/{id}/latest',     [ 'uses' => 'BookController@redirectToLatest' ])

@@ -3,20 +3,23 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Language;
 use App\Http\Controllers\Traits\{
+    CanGetLanguage,
     CanTranslate, 
     CanGetGloss
 };
 
 class BookController extends Controller
 {
-    use CanTranslate, CanGetGloss {
+    use CanTranslate, CanGetGloss, CanGetLanguage {
         CanTranslate::__construct insteadof CanGetGloss;
     } // ;
 
-    public function pageForWord(Request $request, string $word)
+    public function pageForWord(Request $request, string $word, string $language = null)
     {
-        $model = $this->translate($word, 0, true);
+        $language = $this->getLanguageByShortName($language);
+        $model = $this->translate($word, $language ? $language->id : 0, true);
         
         return view('book.page', [
             'payload' => $model
