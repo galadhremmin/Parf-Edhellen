@@ -88,34 +88,34 @@ export function beginNavigation(word, normalizedWord, index, modifyState) {
         index = undefined;
     }
 
-    const uriEncodedWord = encodeURIComponent(normalizedWord || word);
-    const apiAddress = EDConfig.api('/book/translate');
-    const address = '/w/' + uriEncodedWord;
-    const capitalTitle = word.split(' ').map(w => w.substr(0, 1).toLocaleUpperCase() + w.substr(1)).join(' ');
-    const title = `${capitalTitle} - Parf Edhellen`;
-
-    // When navigating using the browser's back and forward buttons,
-    // the state needn't be modified.
-    if (modifyState) {
-        if (window.history.pushState !== undefined) {
-            window.history.pushState(null, title, address);
-        } else {
-            // If pushState isn't supported, do not even pretend to try to load react components for search results 
-            // for this deprecated browser.
-            window.setTimeout(() => window.location.href = address, 0);
-            return () => {};
-        }
-    }
-
-    // because most browsers doesn't change the document title when pushing state
-    document.title = title;
-
     return (dispatch, getState) => {
 
         // Retrieve language filter configuration
         const state = getState();
-        const language_id = state.languageId || undefined;
         const include_old = state.includeOld;
+
+        const uriEncodedWord = encodeURIComponent(normalizedWord || word);
+        const capitalTitle = word.split(' ').map(w => w.substr(0, 1).toLocaleUpperCase() + w.substr(1)).join(' ');
+        const title = `${capitalTitle} - Parf Edhellen`;
+
+        const language_id = state.languageId || undefined;
+        const language = language_id ? EDConfig.findLanguage(language_id) : undefined;
+        const address = `/w/${uriEncodedWord}` + (language ? `/${language.short_name}` : '');
+        // When navigating using the browser's back and forward buttons,
+        // the state needn't be modified.
+        if (modifyState) {
+            if (window.history.pushState !== undefined) {
+                window.history.pushState(null, title, address);
+            } else {
+                // If pushState isn't supported, do not even pretend to try to load react components for search results 
+                // for this deprecated browser.
+                window.setTimeout(() => window.location.href = address, 0);
+                return () => {};
+            }
+        }
+
+        // because most browsers doesn't change the document title when pushing state
+        document.title = title;
 
         // Inform indirect listeners about the navigation
         const event = new CustomEvent('ednavigate', { detail: { address, word, language_id } });
@@ -123,7 +123,7 @@ export function beginNavigation(word, normalizedWord, index, modifyState) {
 
         dispatch(requestNavigation(word, normalizedWord || undefined, index));
 
-        axios.post(apiAddress, { 
+        axios.post(EDConfig.api('/book/translate'), { 
             word: normalizedWord || word, 
             language_id,
             inflections: true,

@@ -192,4 +192,40 @@ class MarkdownParser extends \Parsedown
             ]
         ];
     }
+
+    protected function inlineLink($Excerpt)
+    {
+        $link = parent::inlineLink($Excerpt);
+        return $this->shortenUri($link);
+    }
+
+    protected function inlineUrl($Excerpt)
+    {
+        $link = parent::inlineUrl($Excerpt);
+        return $this->shortenUri($link);
+    }
+
+    private function shortenUri($link)
+    {
+        if (! is_array($link)) {
+            return;
+        }
+        
+        $attrs =& $link['element']['attributes'];
+        $uri   = $attrs['href'];
+        if (! filter_var($uri, FILTER_VALIDATE_URL)) {
+            return $link;
+        }
+
+        $parts = parse_url($uri);
+        $text = $parts['host'];
+        if (strlen($text) < 64 && isset($parts['path'])) {
+            $text .= $parts['path'];
+        }
+
+        $link['element']['text'] = $text;
+        $attrs['title'] = 'Goes to: '.$uri;
+        
+        return $link;
+    }
 }

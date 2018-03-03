@@ -5,7 +5,7 @@ use App\Models\Language;
 
 trait CanGetLanguage
 {
-    public function getLanguageByShortName(string $shortName)
+    public function getLanguageByShortName(string $shortName = null)
     {
         if ($shortName === null || empty($shortName)) {
             return null;
