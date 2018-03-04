@@ -20,7 +20,7 @@ class MarkdownTest extends TestCase
     public function testLongUriImplicitShortening()
     {
         $uri = 'https://www.reallylonglink.com/a/path/to/a/resource?a=ridiculously+long+query+string&with+multiple+parameters=true';
-        $expected = '<p><a href="'.$uri.'" title="Goes to: '.$uri.'">www.reallylonglink.com/a/path/to/a/resource</a></p>';
+        $expected = '<p><a href="'.$uri.'" title="Goes to: '.$uri.'">www.reallylonglink.com</a></p>';
     
         $parser = new MarkdownParser;
         $actual = $parser->parse($uri);
@@ -31,7 +31,7 @@ class MarkdownTest extends TestCase
     public function testLongUriExplicitShortening()
     {
         $uri = 'https://www.reallylonglink.com/a/path/to/a/resource?a=ridiculously+long+query+string&with+multiple+parameters=true';
-        $expected = '<p><a href="'.htmlentities($uri).'" title="Goes to: '.htmlentities($uri).'">www.reallylonglink.com/a/path/to/a/resource</a></p>';
+        $expected = '<p><a href="'.htmlentities($uri).'" title="Goes to: '.htmlentities($uri).'">www.reallylonglink.com</a></p>';
     
         $parser = new MarkdownParser;
         $actual = $parser->parse('['.$uri.']('.$uri.')');

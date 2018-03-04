@@ -218,12 +218,11 @@ class MarkdownParser extends \Parsedown
         }
 
         $parts = parse_url($uri);
-        $text = $parts['host'];
-        if (strlen($text) < 64 && isset($parts['path'])) {
-            $text .= $parts['path'];
+        if (! isset($parts['host']) || empty($parts['host'])) {
+            return $link;
         }
 
-        $link['element']['text'] = $text;
+        $link['element']['text'] = $parts['host'];
         $attrs['title'] = 'Goes to: '.$uri;
         
         return $link;
