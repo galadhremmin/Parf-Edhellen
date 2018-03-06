@@ -17,7 +17,7 @@
     But unfortunately, your contribution was rejected <span class="date">{{ $review->date_reviewed }}</span>
     by {{ $review->reviewed_by->nickname }}.
     @if (! empty($review->justification))
-    Reason: {{ $review->justification }}
+    Reason: @markdown($review->justification)
     @endif
   </p>
   <p>

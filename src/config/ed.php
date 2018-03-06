@@ -17,6 +17,12 @@ return [
     // maximimum avatar size
     'avatar_size'     => env('ED_MAX_AVATAR_SIZE', 100),
 
+    // maximum characters in the account field
+    'max_nickname_length' => env('ED_MAX_NICKNAME_LENGTH', 64),
+
+    // default account name for new accounts
+    'default_account_name' => env('ED_DEFAULT_ACCOUNT_NAME', 'Account'),
+
     // maximum number of translations per gloss
     'max_number_of_translations' => env('ED_MAX_TRANSLATIONS', 8),
 

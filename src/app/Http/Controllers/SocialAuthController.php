@@ -77,7 +77,7 @@ class SocialAuthController extends Controller
 
         $first = false;
         if (! $user) {
-            $nickname = self::getNextAvailableNickname($providerUser->getName() ?: 'Account');
+            $nickname = self::getNextAvailableNickname($providerUser->getName());
 
             $user = Account::create([
                 'email'          => $providerUser->getEmail(),
@@ -132,6 +132,17 @@ class SocialAuthController extends Controller
 
     private static function getNextAvailableNickname(string $nickname) 
     {
+        if ($nickname === null || empty($nickname)) {
+            $nickname = config('ed.default_account_name');
+        }
+
+        // reduce maximum length to accomodate for space and numbering,
+        // in the event that a user with the same nickname already exists.
+        $maxLength = config('ed.max_nickname_length') - 4;
+        if (mb_strlen($nickname) > $maxLength) {
+            $nickname = mb_substr($nickname, 0, $maxLength);
+        }
+
         $i = 1;
         $tmp = $nickname;
 

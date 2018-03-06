@@ -8,6 +8,7 @@
         "php": ">=5.6.4",
         "aws/aws-sdk-php": "~3.0",
         "davejamesmiller/laravel-breadcrumbs": "^3.0",
+        "doctrine/dbal": "^2.5",
         "erusev/parsedown": "^1.6",
         "laravel/framework": "5.5.*",
         "laravel/socialite": "^3.0",

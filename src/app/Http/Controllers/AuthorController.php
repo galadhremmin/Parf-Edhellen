@@ -153,7 +153,7 @@ class AuthorController extends Controller
         }
 
         $this->validate($request, [
-            'nickname' => 'bail|required|unique:accounts,nickname,' . $author->id . ',id|min:3|max:32',
+            'nickname' => 'bail|required|unique:accounts,nickname,' . $author->id . ',id|min:3|max:'.config('ed.max_nickname_length'),
             'avatar'   => 'sometimes|image'
         ]);
         
