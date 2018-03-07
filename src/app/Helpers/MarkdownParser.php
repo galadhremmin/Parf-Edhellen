@@ -213,7 +213,9 @@ class MarkdownParser extends \Parsedown
         
         $attrs =& $link['element']['attributes'];
         $uri   = $attrs['href'];
-        if (! filter_var($uri, FILTER_VALIDATE_URL)) {
+        $text  = $link['element']['text'];
+        if (! filter_var($uri, FILTER_VALIDATE_URL) ||
+            ! filter_var($text, FILTER_VALIDATE_URL)) {
             return $link;
         }
 

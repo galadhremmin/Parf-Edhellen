@@ -103,19 +103,6 @@ class SocialAuthController extends Controller
         return $this->doLogin($request, $user, $first);
     }
 
-    public static function getProvider(string $providerName) {
-        if (empty($providerName)) {
-            throw new \UnexpectedValueException('Missing an identity provider.');
-        }
-
-        $provider = AuthorizationProvider::where('name_identifier', $providerName)->first();
-        if (! $provider) {
-            throw new \UnexpectedValueException('The identity provider "' . $providerName . '" does not exist!');
-        }
-
-        return $provider;
-    }
-
     private function doLogin(Request $request, Account $user, bool $first = false)
     {
         auth()->login($user);
@@ -130,7 +117,20 @@ class SocialAuthController extends Controller
         return redirect()->route('dashboard', [ 'loggedIn' => true ]);
     }
 
-    private static function getNextAvailableNickname(string $nickname) 
+    public static function getProvider(string $providerName) {
+        if (empty($providerName)) {
+            throw new \UnexpectedValueException('Missing an identity provider.');
+        }
+
+        $provider = AuthorizationProvider::where('name_identifier', $providerName)->first();
+        if (! $provider) {
+            throw new \UnexpectedValueException('The identity provider "' . $providerName . '" does not exist!');
+        }
+
+        return $provider;
+    }
+
+    public static function getNextAvailableNickname(string $nickname) 
     {
         if ($nickname === null || empty($nickname)) {
             $nickname = config('ed.default_account_name');
