@@ -38,4 +38,17 @@ class MarkdownTest extends TestCase
 
         $this->assertEquals($expected, $actual);
     }
+
+    public function testUriWithDescrition()
+    {
+        $uri = 'https://www.reallylonglink.com/a/path/to/a/resource?a=ridiculously+long+query+string&with+multiple+parameters=true';
+        
+        $markdown = '[A text sample]('.$uri.')';
+        $expected = '<p><a href="'.htmlentities($uri).'">A text sample</a></p>';
+    
+        $parser = new MarkdownParser;
+        $actual = $parser->parse($markdown);
+
+        $this->assertEquals($expected, $actual);
+    }
 }

@@ -22,14 +22,14 @@
   </div>
   @endif
 
-  <div id="ed-fragment-navigator"></div>
-  <script type="application/json" id="ed-preload-sentence-data">{!! json_encode($sentenceData) !!}</script>
-
   @if (! empty($sentence->long_description))
   <div class="long-text-body">
     @markdown($sentence->long_description)
   </div>
   @endif
+
+  <div id="ed-fragment-navigator"></div>
+  <script type="application/json" id="ed-preload-sentence-data">{!! json_encode($sentenceData) !!}</script>
 
   @if (Auth::check())
   <p class="text-right">
@@ -74,4 +74,8 @@
 @section('scripts')
   <script type="text/javascript" src="@assetpath(/js/sentence.js)" async></script>
   <script type="text/javascript" src="@assetpath(/js/comment.js)" async></script>
+@endsection
+
+@section('styles')
+  <link href="@assetpath(/css/app.sentence.css)" rel="stylesheet">
 @endsection

@@ -2,6 +2,8 @@ import React from 'react';
 import classNames from 'classnames';
 import { Parser as HtmlToReactParser, ProcessNodeDefinitions } from 'html-to-react';
 import EDConfig from 'ed-config';
+import EDBookGlossDetail from './book-gloss-detail';
+import EDHtmlInjection from './html-injection';
 
 /**
  * Represents a single gloss. 
@@ -13,40 +15,6 @@ class EDBookGloss extends React.Component {
         this.state = {
             isDeleted: false
         };
-    }
-    
-    processHtml(html) {
-        const definitions = new ProcessNodeDefinitions(React);
-        const instructions = [
-            // Special behaviour for <a> as they are reference links.
-            {
-                shouldProcessNode: node => node.name === 'a',
-                processNode: (node, children) => {
-                    const nodeElements = definitions.processDefaultNode(node, children);
-                    if (node.attribs.class !== 'ed-word-reference') {
-                        return nodeElements;
-                    }
-
-                    // Replace reference links with a link that is aware of
-                    // the component, and can intercept click attempts.
-                    const href = node.attribs.href;
-                    const title = node.attribs.title;
-                    const word = node.attribs['data-word'];
-                    const childElements = nodeElements.props.children;
-
-                    return <a href={href}
-                              onClick={ev => this.onReferenceLinkClick(ev, word)}
-                              title={title}>{childElements}</a>;
-                }
-            },
-            // Default behaviour for all else.
-            {
-                shouldProcessNode: node => true,
-                processNode: definitions.processDefaultNode
-            }];
-
-        const parser = new HtmlToReactParser();
-        return parser.parseWithInstructions(html, n => true, instructions);
     }
 
     onReferenceLinkClick(ev, word) {
@@ -63,7 +31,7 @@ class EDBookGloss extends React.Component {
         const gloss = this.props.gloss;
 
         if (this.state.isDeleted) {
-            return <div />;
+            return null;
         }
 
         return this.renderGloss(gloss);
@@ -71,12 +39,6 @@ class EDBookGloss extends React.Component {
 
     renderGloss(gloss) {
         const id = `gloss-block-${gloss.id}`;
-
-        let comments = null;
-        if (gloss.comments) {
-            comments = this.processHtml(gloss.comments);
-        }
-
         const toolbarPlugins = EDConfig.pluginsFor('book-gloss-toolbar');
 
         return <blockquote itemScope="itemscope" itemType="http://schema.org/Article" id={id} className={classNames({ 'contribution': !gloss.is_canon }, 'gloss')}>
@@ -114,7 +76,8 @@ class EDBookGloss extends React.Component {
                 </span>
             </p>
 
-            {comments}
+            <EDHtmlInjection html={gloss.comments} onReferenceLinkClick={this.onReferenceLinkClick.bind(this)} />
+            {gloss.gloss_details.map(d => <EDBookGlossDetail key={d.order} detail={d} />)}
 
             {gloss.inflections ?
             <div>

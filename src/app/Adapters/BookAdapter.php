@@ -6,11 +6,15 @@ use Illuminate\Support\Collection;
 use Carbon\Carbon;
 
 use App\Helpers\{
-    LinkHelper, StringHelper, MarkdownParser
+    GlossAggregationHelper,
+    LinkHelper, 
+    StringHelper, 
+    MarkdownParser
 };
 use App\Models\{
     Account, 
     Gloss, 
+    GlossDetail,
     Language,
     Translation
 };
@@ -49,53 +53,10 @@ class BookAdapter
             ];
         }
 
-        usort($glosses, function ($a, $b) {
-            return $a->id === $b->id ? 0 : ($a->id < $b->id ? -1 : 1);
-        });
+        $aggregator = new GlossAggregationHelper;
+        $numberOfGlosses = $aggregator->aggregate($glosses);
 
-        // brief interlude - convert markdown to HTML and generate author URLs, 
-        // and merge translations, where applicable.
-        $linker = new LinkHelper();
-        $previousGloss = null;
-        $i = 0;
-
-        // NOTE: this loop assumes that the collection is in fact ordered by the 
-        //       glosses' ID.
-        while ($i < $numberOfGlosses) {
-            $gloss = $glosses[$i];
-
-            if ($gloss instanceOf Gloss) {
-                // Gloss model entities already have the 'translations' relation, and would therefore
-                // only requiring eager loading. This is not performant to be doing in the adapter, and 
-                // therefore raises an error.
-                if (! $gloss->relationLoaded('translations')) {
-                    throw new \Exception('Failed to adapt gloss '.$gloss->id.' because its relation "translations" is not loaded.');
-                }
-
-            } else {
-                if ($previousGloss === null || $previousGloss->id !== $gloss->id) {
-                    // Glosses do not match, so start over by assigning the current gloss
-                    // an array of translations.
-                    $gloss->translations = [
-                        new Translation(['translation' => $gloss->translation])
-                    ];
-                    unset($gloss->translation);
-
-                    $previousGloss = $gloss;
-
-                } else if ($previousGloss->id === $gloss->id) {
-                    $previousGloss->translations[] = new Translation([
-                        'translation' => $gloss->translation
-                    ]);
-
-                    array_splice($glosses, $i, 1);
-                    $numberOfGlosses -= 1;
-                    continue;
-                }
-            }
-
-            $i += 1;
-        }
+        $linker = new LinkHelper;
 
         //    - Just one translation result.
         if ($numberOfGlosses === 1) {
@@ -272,6 +233,13 @@ class BookAdapter
             $gloss->external_link_format = $entity->gloss_group_id ? $entity->gloss_group->external_link_format : null;
             $gloss->translations         = $entity->translations->map(function ($t) {
                 return new Translation(['translation' => $t->translation]);
+            })->all();
+            $gloss->gloss_details        = $entity->gloss_details->map(function ($t) {
+                return new GlossDetail([
+                    'category'   => $t->category,
+                    'order'      => $t->order,
+                    'text'       => $t->text
+                ]);
             })->all();
 
             unset(

@@ -22,7 +22,7 @@
     <a class="sentence-link" href="{{ $link->sentence($language->id, $language->name, $sentence->id, $sentence->name) }}">
       <h3>{{ $sentence->name }}</h3>
       @if(!empty($sentence->description))
-      <p>{{ $sentence->description }}</p>
+      @markdown($sentence->description)
       @endif
     </a>
     <footer>

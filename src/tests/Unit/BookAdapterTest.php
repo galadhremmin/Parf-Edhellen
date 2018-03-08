@@ -43,7 +43,7 @@ class BookAdapterTest extends TestCase
     public function testAdaptGloss()
     {
         extract( $this->createGloss(__FUNCTION__) );
-        $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords);
+        $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
 
         $languages   = new Collection([ $gloss->language ]);
         $inflections = [];
@@ -66,19 +66,20 @@ class BookAdapterTest extends TestCase
         extract( $this->createGloss(__FUNCTION__) );
 
         $numberOfTranslations = count($translations);
-        $gloss0 = $this->getGlossRepository()->saveGloss('1', $sense, $gloss, $translations, $keywords);
+        $numberOfDetails = count($details);
+        $gloss0 = $this->getGlossRepository()->saveGloss('1', $sense, $gloss, $translations, $keywords, $details);
         
         $gloss = $gloss->replicate();
+        $details = $this->createGlossDetails($gloss);
         $translations = $this->createTranslations();
-        $numberOfTranslations += count($translations);
         $gloss->external_id .= '-1';
-        $gloss1 = $this->getGlossRepository()->saveGloss('2', $sense, $gloss, $translations, $keywords);
+        $gloss1 = $this->getGlossRepository()->saveGloss('2', $sense, $gloss, $translations, $keywords, $details);
         
         $gloss0->refresh();
         $gloss1->refresh();
 
-        $gloss0->load('translations');        
-        $gloss1->load('translations');
+        $gloss0->load('translations', 'gloss_details');        
+        $gloss1->load('translations', 'gloss_details');
 
         $glossesFromRepository = $this->getGlossRepository()->getGlosses([$gloss0->id, $gloss1->id])
             ->toArray();
@@ -96,7 +97,7 @@ class BookAdapterTest extends TestCase
             $groupByLanguage, $atomDate);
 
         $this->assertEquals(2, count($glosses));
-        $this->assertEquals(count($glosses), count($glossesFromRepository) / $numberOfTranslations * count($glosses));
+        $this->assertEquals(count($glosses), count($glossesFromRepository) / ($numberOfTranslations * $numberOfDetails));
         $this->assertTrue($gloss0->is_latest == true);
         $this->assertTrue($gloss1->is_latest == true);
         $this->assertFalse($adapted['single']);
@@ -116,6 +117,21 @@ class BookAdapterTest extends TestCase
         $this->assertEquals($adaptedFromRepository, $adapted);
     }
 
+    public function testAdaptGlossesWithoutDetails()
+    {
+        extract( $this->createGloss(__FUNCTION__) );
+
+        $gloss = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, []);
+
+        $glossesFromRepository = $this->getGlossRepository()->getGlosses([$gloss->id])->all();
+        $adapted = $this->_adapter->adaptGlosses($glossesFromRepository, [], [], $word);
+        $adaptedGlossary = &$adapted['sections'][0]['glosses'];
+
+        $this->assertEquals(1, count($adaptedGlossary));
+        $this->assertNotNull($adaptedGlossary[0]->gloss_details);
+        $this->assertEquals(0, count($adaptedGlossary[0]->gloss_details));
+    }
+
     public function testRating()
     {
         $glosses = [
@@ -127,16 +143,79 @@ class BookAdapterTest extends TestCase
         $glossary = [];
         foreach ($glosses as $gloss) {
             extract( $this->createGloss(__FUNCTION__, $gloss) );
-            $savedGloss = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords);
-            $savedGloss->load('translations');
+            $savedGloss = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
+            $savedGloss->load('translations', 'gloss_details');
             $glossary[] = $savedGloss;
         }
 
         $adapted = $this->_adapter->adaptGlosses($glossary, [], [], 'mal');
-        $adaptedGlossary = $adapted['sections'][0]['glosses'];
+        $adaptedGlossary = &$adapted['sections'][0]['glosses'];
 
         for ($i = 0; $i < count($expected); $i += 1) {
             $this->assertEquals($expected[$i], $adaptedGlossary[$i]->word);
         }
+    }
+
+    public function testShouldGetVersions()
+    {
+        extract( $this->createGloss(__FUNCTION__) );
+        $numberOfTranslations = count($translations);
+        $numberOfDetails = count($details);
+
+        $gloss0 = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
+        
+        $gloss->is_uncertain = false;
+        $translations = $this->createTranslations();
+        $details = $this->createGlossDetails($gloss);
+        $gloss1 = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
+
+        $newWord = $word.' 1';
+        $translations = $this->createTranslations(); 
+        $details = $this->createGlossDetails($gloss);
+        $gloss2 = $this->getGlossRepository()->saveGloss($newWord, $sense, $gloss, $translations, $keywords, $details);
+
+        $translations = array_merge(
+            $this->createTranslations(),
+            [ new Translation(['translation' => 'test '.count($translations)]) ]
+        ); 
+        $details = $this->createGlossDetails($gloss);
+        $gloss3 = $this->getGlossRepository()->saveGloss($newWord, $sense, $gloss, $translations, $keywords, $details);
+
+        $gloss0->refresh();
+        $gloss1->refresh();
+        $gloss2->refresh();
+        $gloss3->refresh();
+        
+        $this->assertNull($gloss0->origin_gloss_id);
+        $this->assertNull($gloss3->child_gloss_id);
+        
+        $this->assertEquals($gloss0->id, $gloss1->origin_gloss_id);
+        $this->assertEquals($gloss0->id, $gloss2->origin_gloss_id);
+        $this->assertEquals($gloss0->id, $gloss3->origin_gloss_id);
+
+        $this->assertEquals($gloss1->id, $gloss0->child_gloss_id);
+        $this->assertEquals($gloss2->id, $gloss1->child_gloss_id);
+        $this->assertEquals($gloss3->id, $gloss2->child_gloss_id);
+
+        $this->assertEquals($gloss0->word->word, $word);
+        $this->assertEquals($gloss1->word->word, $word);
+        $this->assertEquals($gloss2->word->word, $newWord);
+        $this->assertEquals($gloss3->word->word, $newWord);
+
+        $versions = $this->getGlossRepository()->getVersions($gloss0->id); 
+        $adapted = $this->_adapter->adaptGlosses($versions, [], [], $word, false, false);
+        $glosses = & $adapted['sections'][0]['glosses'];
+
+        $this->assertEquals(4, count($glosses));
+
+        $this->assertTrue(!!$glosses[0]->is_latest);
+        $this->assertFalse(!!$glosses[1]->is_latest);
+        $this->assertFalse(!!$glosses[2]->is_latest);
+        $this->assertFalse(!!$glosses[3]->is_latest);
+
+        $this->assertEquals($gloss3->id, $glosses[0]->id);
+        $this->assertEquals($gloss2->id, $glosses[1]->id);
+        $this->assertEquals($gloss1->id, $glosses[2]->id);
+        $this->assertEquals($gloss0->id, $glosses[3]->id);
     }
 }

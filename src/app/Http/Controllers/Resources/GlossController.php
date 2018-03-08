@@ -173,6 +173,6 @@ class GlossController extends Controller
         $map = $this->mapGloss($gloss, $request);
         extract($map);
 
-        return $this->_glossRepository->saveGloss($word, $sense, $gloss, $translations, $keywords);
+        return $this->_glossRepository->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
     }
 }

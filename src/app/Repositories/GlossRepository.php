@@ -230,7 +230,7 @@ class GlossRepository
         return $groupedSuggestions;
     }
 
-    public function saveGloss(string $wordString, string $senseString, Gloss $gloss, array $translations, array $keywords, $resetKeywords = true, bool & $changed = null)
+    public function saveGloss(string $wordString, string $senseString, Gloss $gloss, array $translations, array $keywords, array $details = [], $resetKeywords = true, bool & $changed = null)
     {
         if (! $gloss instanceof Gloss) {
             throw new \Exception("Gloss must be an instance of the Gloss class.");
@@ -250,6 +250,12 @@ class GlossRepository
 
         if (! $gloss->account_id) {
             throw new \Exception('Invalid account ID.');
+        }
+
+        foreach ($details as $detail) {
+            if (! $detail->account_id) {
+                throw new \Exception('Invalid account ID for details.');
+            }
         }
 
         // 1. Turn all words should be lower case.
@@ -281,7 +287,7 @@ class GlossRepository
         }
 
         if ($gloss->id) {
-            $originalGloss = Gloss::with('sense', 'translations', 'word', 'keywords')
+            $originalGloss = Gloss::with('sense', 'translations', 'word', 'keywords', 'gloss_details')
                 ->findOrFail($gloss->id)->getLatestVersion();
 
             // 5. were there changes made?
@@ -323,7 +329,7 @@ class GlossRepository
                         return $ot->translation === $t->translation;
                     })) {
                         // When not existing, the collection has changed.
-                        $changed = true;
+                        $translationsChanged = true;
                         break;
                     }
                 }
@@ -331,6 +337,27 @@ class GlossRepository
             
             if ($translationsChanged) {
                 $changed = true;
+            }
+
+            // Gloss details changed?
+            if (! $changed) {
+                $detailsChanged = $originalGloss->gloss_details->count() !== count($details);
+                if (! $detailsChanged) {
+                    foreach ($details as $d) {
+                        if (! $originalGloss->gloss_details->contains(function ($od) use($d) {
+                            return $od->category === $d->category &&
+                                   $od->order === $d->order &&
+                                   $od->text === $d->text;
+                        })) {
+                            $detailsChanged = true;
+                            break;
+                        }
+                    }
+                }
+
+                if ($detailsChanged) {
+                    $changed = true;
+                }
             }
 
             if ($changed) {
@@ -363,6 +390,7 @@ class GlossRepository
             $gloss->is_index = 0;
             $gloss->save();
             $gloss->translations()->saveMany($translations);
+            $gloss->gloss_details()->saveMany($details);
 
             // 8. Update existing associations to the new entity.
             if ($originalGloss !== null) {
@@ -636,6 +664,7 @@ class GlossRepository
             ->leftJoin('accounts as a', 'g.account_id', 'a.id')
             ->leftJoin('gloss_groups as tg', 'g.gloss_group_id', 'tg.id')
             ->leftJoin('speeches as s', 'g.speech_id', 's.id')
+            ->leftJoin('gloss_details as gd', 'g.id', 'gd.gloss_id')
             ->where($filters);
 
         if ($languageId !== 0) {
@@ -647,7 +676,8 @@ class GlossRepository
                 'g.comments', 'g.tengwar', 'g.phonetic', 'g.language_id', 'g.account_id',
                 'a.nickname as account_name', 'w.normalized_word', 'g.is_index', 'g.created_at', 'g.gloss_group_id',
                 'tg.name as gloss_group_name', 'tg.is_canon', 'tg.external_link_format', 'g.is_uncertain', 
-                'g.external_id', 'g.is_latest', 'g.is_rejected', 'g.origin_gloss_id', 'g.sense_id');
+                'g.external_id', 'g.is_latest', 'g.is_rejected', 'g.origin_gloss_id', 'g.sense_id',
+                'gd.category as gloss_details_category', 'gd.text as gloss_details_text', 'gd.order as gloss_details_order');
     }
 
     protected function deleteGloss(Gloss $g, int $replaceId = null) 

@@ -42,6 +42,11 @@ class Gloss extends ModelBase
         return $this->belongsTo(Speech::class);
     }
 
+    public function gloss_details() 
+    {
+        return $this->hasMany(GlossDetail::class);
+    }
+
     public function keywords() 
     {
         return $this->hasMany(Keyword::class);

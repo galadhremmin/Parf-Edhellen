@@ -22,7 +22,11 @@ trait CanValidateGloss
             'keywords.*.word'            => 'sometimes|string|min:1|max:64',
             'tengwar'                    => 'sometimes|string|min:1|max:128',
             'translations.*.translation' => 'required|string|min:1|max:255',
-            'translations'               => 'required|array|min:1|max:'.$maximumNumberOfTranslations
+            'translations'               => 'required|array|min:1|max:'.$maximumNumberOfTranslations,
+            'details'                    => 'sometimes|array',
+            'details.*.category'         => 'required|string',
+            'details.*.order'            => 'required|number|min:0',
+            'details.*.text'             => 'required|text'
         ];
 
         if (! $review) {

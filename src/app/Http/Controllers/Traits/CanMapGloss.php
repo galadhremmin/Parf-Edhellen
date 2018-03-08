@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Helpers\StringHelper;
 use App\Models\{
     Gloss,
+    GlossDetail,
     Translation
 };
 
@@ -45,11 +46,23 @@ trait CanMapGloss
             ]);
         }, $request->input('translations'));
 
+        $details = $request->has('details') 
+            ? array_map(function ($d) use($gloss) {
+                return new GlossDetail([
+                    'category'   => trim($d['category']),
+                    'text'       => trim($d['text']),
+                    'order'      => intval($d['order']),
+                    'account_id' => $gloss->account_id
+                ]);
+            }, $request->input('details'))
+            : [];
+
         return [
             'word'         => $word,
             'sense'        => $sense,
             'keywords'     => $keywords,
-            'translations' => $translations
+            'translations' => $translations,
+            'details'      => $details
         ];
     }
 }

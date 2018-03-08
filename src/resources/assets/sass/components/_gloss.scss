@@ -44,6 +44,15 @@ blockquote.gloss {
     display: block;
     overflow: hidden;
   }
+  section.details {
+    padding: $padding-small-vertical 0;
+
+    header > h4 {
+      margin-top: 0;
+      font-size: inherit;
+      font-style: italic;
+    }
+  } 
 }
 .ed-admin-tool {
   display: none;
