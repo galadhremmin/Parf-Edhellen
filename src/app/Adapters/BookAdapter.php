@@ -260,9 +260,13 @@ class BookAdapter
             }, $gloss->translations));
         }
 
+        $markdownParser = new MarkdownParser(['>', '#']);
         if (!empty($gloss->comments)) {
-            $markdownParser = new MarkdownParser(['>', '#']);
             $gloss->comments = $markdownParser->text($gloss->comments);
+        }
+
+        foreach ($gloss->gloss_details as $detail) {
+            $detail->text = $markdownParser->text($detail->text);
         }
 
         $gloss->account_url = $linker->author($gloss->account_id, $gloss->account_name);

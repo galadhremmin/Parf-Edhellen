@@ -235,7 +235,7 @@ class ImportEldamoCommand extends Command
         $ignored = [];
         foreach ($data as $t) {
             $noOfTranslations = count($t->translations);
-            if ($noOfTranslations === 0 && ! empty($t->notes)) {
+            if ($noOfTranslations === 0 && (! empty($t->notes) || count($t->glossDetails) > 0)) {
                 $t->translations[] = $t->word;
             }
             
@@ -313,5 +313,6 @@ class ImportEldamoCommand extends Command
         foreach ($ignored as $t) {
             $this->line("- ".$t->id.": ".$t->word);
         }
+        $this->line(count($ignored). ' ignored.');
     }
 }
