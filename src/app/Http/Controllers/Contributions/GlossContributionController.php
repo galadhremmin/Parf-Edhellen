@@ -65,6 +65,7 @@ class GlossContributionController extends Controller implements IContributionCon
         // Hack for assigning to the relation _translations_ without saving them to the database.
         $gloss->setRelation('translations', new Collection($translations));
         $gloss->setRelation('word', new Word(['word' => $contribution->word]));
+        $gloss->setRelation('gloss_details', new Collection());
 
         $glossData = $this->_bookAdapter->adaptGlosses($glosses);
         
