@@ -314,7 +314,7 @@ class ImportEldamoCommand extends Command
             $sense = $t->translations[0];
             $word = $t->word;
 
-            $keywords = []; // are automatically populated, anyway.
+            $keywords = array_keys((array) $t->variations); // are automatically populated, anyway.
             $translations = array_map(function ($v) {
                 return new Translation(['translation' => $v]);
             }, array_unique(array_map(function ($v) {
