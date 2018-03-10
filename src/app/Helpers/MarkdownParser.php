@@ -109,6 +109,14 @@ class MarkdownParser extends \Parsedown
         // the start and end tags.
         $wordLength = strlen($tagBegin.$tagBegin . $word . $tagEnd.$tagEnd);
 
+        // Extract language, if present
+        $pos = strpos($word, '|');
+        $language = '';
+        if ($pos !== false) {
+            $language = '/'.substr($word, 0, $pos);
+            $word = substr($word, $pos + 1);
+        }
+
         // escape/encode special characters as their HTML equivalent
         $word = htmlspecialchars($word, ENT_QUOTES | ENT_HTML5);
 
@@ -123,7 +131,7 @@ class MarkdownParser extends \Parsedown
                 'handler' => 'line',
                 'text' => $word,
                 'attributes' => [
-                    'href' => '/w/' . urlencode($normalizedWord),
+                    'href' => '/w/' . urlencode($normalizedWord).$language,
                     'title' => 'Navigate to '.$word.'.',
                     'class' => 'ed-word-reference',
                     'data-word' => $normalizedWord

@@ -54,14 +54,66 @@ class ImportEldamoCommand extends Command
 
         $json = trim(file_get_contents($path));
         $data = json_decode($json);
+
+        $json = null;
         unset($json); // free memory as the json payload can be huge!
 
-        if (! $data) {
+        if (! is_array($data)) {
             $this->error('Failed to process '.$path.'. Error: '.json_last_error_msg().' ('.json_last_error().').');
             $this->error('The JSON file must be saved using UTF-8 encoding (without BOM).');
             return;
         }
 
+        $noOfItems = count($data);
+        if ($noOfItems < 1) {
+            $this->error('Data source is empty.');
+        }
+
+        // check whether the array contains IDs, or definitions
+        $sum = array_sum(array_map(function ($item) {
+            return is_numeric($item) ? 1 : 0;
+        }, $data));
+
+        if ($sum === $noOfItems) {
+            $this->deleteDeprecated($data);
+        } else {
+            $this->import($data, $path);
+        }
+    }
+
+    private function getEldamo()
+    {
+        return GlossGroup::where('name', 'Eldamo')->firstOrFail();
+    }
+
+    private function deleteDeprecated(array $ids)
+    {
+        sort($ids);
+        
+        $eldamo = $this->getEldamo();
+
+        $glosses = $eldamo->glosses()
+            ->where('is_latest', 1)
+            ->select('id', 'external_id')
+            ->get();
+
+        $deleted = [];
+        foreach ($glosses as $gloss) {
+            if (in_array($gloss->external_id, $ids)) {
+                continue;
+            }
+
+            $this->info('Deleting deprecated '.$gloss->external_id);
+
+            // $this->_glossRepository->deleteGlossWithId($gloss->id);
+            $deleted[] = $gloss->id;
+        }
+
+        $this->info('Deleted '.count($deleted).' deprecated glosses.');
+    }
+
+    private function import(array $data, string $path)
+    {
         $speechMap = [
             '?'        => '?',
             'adj'      => 'adjective',
@@ -220,7 +272,7 @@ class ImportEldamoCommand extends Command
         }
 
         // Find the Eldamo gloss group
-        $eldamo = GlossGroup::where('name', 'Eldamo')->firstOrFail();
+        $eldamo = $this->getEldamo();
 
         $this->line('Data source: '.$path);
         $this->line('Eldamo ID: '.$eldamo->id.'.');
@@ -265,7 +317,9 @@ class ImportEldamoCommand extends Command
             $keywords = []; // are automatically populated, anyway.
             $translations = array_map(function ($v) {
                 return new Translation(['translation' => $v]);
-            }, $t->translations);
+            }, array_unique(array_map(function ($v) {
+                return self::removeMark($v);
+            }, $t->translations)));
             $details = array_map(function ($d) use($ot) {
                 return new GlossDetail([
                     'category' => $d->category,
@@ -314,5 +368,20 @@ class ImportEldamoCommand extends Command
             $this->line("- ".$t->id.": ".$t->word);
         }
         $this->line(count($ignored). ' ignored.');
+    }
+
+    private static function removeMark(string $word)
+    {
+        if (mb_strlen($word) < 1) {
+            return $word;
+        }
+
+        if ($word[0] === '*' ||
+            $word[0] === '#' ||
+            $word[0] === '?') {
+            return substr($word, 1); 
+        }
+
+        return $word;
     }
 }
