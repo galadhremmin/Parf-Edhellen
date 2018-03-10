@@ -4,7 +4,7 @@ import { Parser as HtmlToReactParser, ProcessNodeDefinitions } from 'html-to-rea
 import EDConfig from 'ed-config';
 
 /**
- * Represents a single gloss detail. 
+ * Injects HTML within a gloss context. 
  */
 class EDHtmlInjection extends React.Component {
     constructor(props, context) {

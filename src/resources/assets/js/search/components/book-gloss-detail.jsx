@@ -15,6 +15,14 @@ class EDBookGlossDetail extends React.Component {
         };
     }
 
+    onReferenceLinkClick(ev) {
+        if (this.props.onReferenceLinkClick) {
+            this.props.onReferenceLinkClick({
+                word: ev.word
+            });
+        }
+    }
+
     render() {
         if (this.props.detail === null) {
             return null;
@@ -25,7 +33,7 @@ class EDBookGlossDetail extends React.Component {
                 <h4>{this.props.detail.category}</h4>
             </header>
             <div>
-                <EDHtmlInjection html={this.props.detail.text} />
+                <EDHtmlInjection html={this.props.detail.text} onReferenceLinkClick={this.onReferenceLinkClick.bind(this)} />
             </div>
         </section>;
     }

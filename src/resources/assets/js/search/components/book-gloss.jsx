@@ -75,7 +75,7 @@ class EDBookGloss extends React.Component {
             </p>
 
             <EDHtmlInjection html={gloss.comments} onReferenceLinkClick={this.onReferenceLinkClick.bind(this)} />
-            {gloss.gloss_details.map(d => <EDBookGlossDetail key={d.order} detail={d} />)}
+            {gloss.gloss_details.map(d => <EDBookGlossDetail key={d.order} detail={d} onReferenceLinkClick={this.onReferenceLinkClick.bind(this)} />)}
 
             {gloss.inflections ?
             <div>
