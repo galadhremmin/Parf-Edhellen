@@ -45,10 +45,11 @@ class EDHtmlInjection extends React.Component {
                     const href = node.attribs.href;
                     const title = node.attribs.title;
                     const word = node.attribs['data-word'];
+                    const languageShortName = node.attribs['data-language-short-name'];
                     const childElements = nodeElements.props.children;
 
                     return <a href={href}
-                              onClick={ev => this.onReferenceLinkClick(ev, word)}
+                              onClick={ev => this.onReferenceLinkClick(ev, word, languageShortName)}
                               title={title}>{childElements}</a>;
                 }
             },
@@ -62,12 +63,15 @@ class EDHtmlInjection extends React.Component {
         return parser.parseWithInstructions(html, n => true, instructions);
     }
 
-    onReferenceLinkClick(ev, word) {
+    onReferenceLinkClick(ev, word, languageShortName) {
         ev.preventDefault();
 
         if (this.props.onReferenceLinkClick) {
+            const language = EDConfig.findLanguage(languageShortName, 'short_name');
+
             this.props.onReferenceLinkClick({
-                word
+                word,
+                language
             });
         }
     }

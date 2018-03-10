@@ -19,9 +19,7 @@ class EDBookGloss extends React.Component {
 
     onReferenceLinkClick(ev) {
         if (this.props.onReferenceLinkClick) {
-            this.props.onReferenceLinkClick({
-                word: ev.word
-            });
+            this.props.onReferenceLinkClick(ev);
         }
     }
 

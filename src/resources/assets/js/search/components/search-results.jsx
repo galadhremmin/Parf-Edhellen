@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { setSelection, beginNavigation } from '../actions';
+import { setSelection, setLanguage, beginNavigation } from '../actions';
 import classNames from 'classnames';
 import EDConfig from 'ed-config';
 import { smoothScrollIntoView } from 'ed-scrolling';
@@ -72,12 +72,16 @@ class EDSearchResults extends React.Component {
         window.setTimeout(() => smoothScrollIntoView(element), 500);
     }
 
-    gotoReference(normalizedWord, urlChanged) {
+    gotoReference(normalizedWord, urlChanged, language) {
         // Should we consider the URL as changed? This is the case when the back-button
         // in the browser is pressed. When this method however is manually triggered,
         // this may not be the case.
         if (urlChanged === undefined) {
             urlChanged = true;
+        }
+
+        if (! language) {
+            language = undefined;
         }
 
         let index = this.props.items
@@ -95,6 +99,9 @@ class EDSearchResults extends React.Component {
             index = undefined;
         }
 
+        if (language) {
+            this.props.dispatch(setLanguage(language));
+        }
         this.props.dispatch(beginNavigation(normalizedWord, undefined, index, !urlChanged));
     }
 
@@ -120,7 +127,7 @@ class EDSearchResults extends React.Component {
 
         // retrieve the word and attempt to locate it within the search result set.
         const normalizedWord = decodeURIComponent(path.substr(3));
-        this.gotoReference(normalizedWord);
+        this.gotoReference(normalizedWord, true, null);
     }
 
     onPanelClick(ev) {
@@ -132,7 +139,7 @@ class EDSearchResults extends React.Component {
     }
 
     onReferenceLinkClick(ev) {
-        this.gotoReference(ev.word, false);
+        this.gotoReference(ev.word, false, ev.language || null);
     }
 
     /**
@@ -148,7 +155,7 @@ class EDSearchResults extends React.Component {
         const data = ev.data;
         switch (data.source) {
             case EDConfig.messageNavigateName:
-                this.gotoReference(data.payload.word, false);
+                this.gotoReference(data.payload.word, false, data.payload.language || null);
                 break;
         }
     }
@@ -221,7 +228,7 @@ class EDSearchResults extends React.Component {
         return (<section>
             <div className="search-result-presenter">
                 {this.props.bookData.sections.length < 1 ? (
-                    <div class="row">
+                    <div className="row">
                         <h3>Forsooth! I can't find what you're looking for!</h3>
                         <p>The word <em>{this.props.bookData.word}</em> hasn't been recorded for any of the languages.</p>
                     </div>

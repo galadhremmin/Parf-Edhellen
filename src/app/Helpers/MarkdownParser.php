@@ -113,7 +113,7 @@ class MarkdownParser extends \Parsedown
         $pos = strpos($word, '|');
         $language = '';
         if ($pos !== false) {
-            $language = '/'.substr($word, 0, $pos);
+            $language = substr($word, 0, $pos);
             $word = substr($word, $pos + 1);
         }
 
@@ -124,18 +124,24 @@ class MarkdownParser extends \Parsedown
         $word = str_replace(['¹', '²', '³'], '', $word);
         $normalizedWord = StringHelper::normalize($word);
 
+        $attrs = [
+            'href' => '/w/' . urlencode($normalizedWord),
+            'title' => 'Navigate to '.$word.'.',
+            'class' => 'ed-word-reference',
+            'data-word' => $normalizedWord
+        ];
+        if (! empty($language)) {
+            $attrs['href'] .= '/'.$language;
+            $attrs['data-language-short-name'] = $language;
+        }
+
         return [
             'extent' => $wordLength,
             'element' => [
                 'name' => 'a',
                 'handler' => 'line',
                 'text' => $word,
-                'attributes' => [
-                    'href' => '/w/' . urlencode($normalizedWord).$language,
-                    'title' => 'Navigate to '.$word.'.',
-                    'class' => 'ed-word-reference',
-                    'data-word' => $normalizedWord
-                ]
+                'attributes' => $attrs
             ]
         ];
     }

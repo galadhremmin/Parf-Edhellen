@@ -6,7 +6,8 @@ import {
     RECEIVE_RESULTS,
     RECEIVE_NAVIGATION,
     ADVANCE_SELECTION,
-    SET_SELECTION
+    SET_SELECTION,
+    SET_LANGUAGE
 } from '../reducers';
 
 export function requestResults(wordSearch, reversed, languageId, includeOld) {
@@ -53,6 +54,17 @@ export function setSelection(index) {
     return {
         type: SET_SELECTION,
         index
+    };
+}
+
+export function setLanguage(language) {
+    if (language && typeof language !== 'object') {
+        throw 'Unrecognised language ' + JSON.stringify(language) + '.';
+    }
+
+    return {
+        type: SET_LANGUAGE,
+        languageId: language ? language.id : undefined
     };
 }
 

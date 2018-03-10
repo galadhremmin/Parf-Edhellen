@@ -62,7 +62,7 @@ class StringHelper
     public static function normalize(string $str, $accentsMatter = true, $retainWildcard = false) 
     {          
         $str = self::toLower($str);
-        $str = preg_replace('/[¹²³’‽†#\\{\\}\\[\\]]/u', '', $str);
+        $str = preg_replace('/[¹²³’‽†√#\\{\\}\\[\\]]/u', '', $str);
 
         if (! $retainWildcard) {
             $str = str_replace('*', '', $str);

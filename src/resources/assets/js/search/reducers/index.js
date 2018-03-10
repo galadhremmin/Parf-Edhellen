@@ -4,6 +4,7 @@ export const RECEIVE_RESULTS    = 'EDSR_RECEIVE_RESULTS';
 export const RECEIVE_NAVIGATION = 'EDSR_RECEIVE_NAVIGATION';
 export const ADVANCE_SELECTION  = 'EDSR_ADVANCE_SELECTION';
 export const SET_SELECTION      = 'EDSR_SET_SELECTION';
+export const SET_LANGUAGE       = 'EDSR_SET_LANGUAGE';
 
 export const EDSearchResultsReducer = (state = {
     loading: false,
@@ -80,6 +81,16 @@ export const EDSearchResultsReducer = (state = {
                 itemIndex: state.index === -1 || ! Array.isArray(state.items)
                     ? -1
                     : Math.max(0, Math.min(state.items.length - 1, action.index))
+            };
+
+        case SET_LANGUAGE:
+            if (state.languageId === action.languageId) {
+                return state;
+            }
+            
+            return {
+                ...state,
+                languageId: action.languageId
             };
 
         default:
