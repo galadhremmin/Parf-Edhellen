@@ -25,9 +25,13 @@
       <tr class="{{ $r->correct ? '' : 'danger' }}">
         <td class="date">{{ $r->created_at }}</td>
         <td>
+          @if ($r->gloss) 
           <a href="{{ $link->gloss($r->gloss_id) }}">
-            {{ $r->gloss ? $r->gloss->word->word : 'Deleted gloss' }}
+            {{ $r->gloss->word->word }}
           </a>
+          @else
+          Deleted gloss
+          @endif
         </td>
         <td>{{ $r->expected }}</td>
         <td>
