@@ -26,7 +26,7 @@
         <td class="date">{{ $r->created_at }}</td>
         <td>
           <a href="{{ $link->gloss($r->gloss_id) }}">
-            {{ $r->gloss->word->word }}
+            {{ $r->gloss ? $r->gloss->word->word : 'Deleted gloss' }}
           </a>
         </td>
         <td>{{ $r->expected }}</td>
