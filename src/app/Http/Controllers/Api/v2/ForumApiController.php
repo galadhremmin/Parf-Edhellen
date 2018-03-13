@@ -187,15 +187,7 @@ class ForumApiController extends Controller
 
     public function show(Request $request, int $id)
     {
-        $post = ForumPost::findOrFail($id);
-
-        $resolver = $this->_contextFactory->create($post->forum_thread->entity_type);
-        if (! $resolver) {
-            abort(400, 'A context cannot be resolved for the specified entity type "'.$post->forum_thread->entity_type.'".');
-        }
-
-        $url = $resolver->resolve($post->forum_thread->entity).'?forum_post_id='.$id;
-        return redirect($url);
+        return redirect()->route('discuss.show', ['id' => $id]);
     }
 
     /**
