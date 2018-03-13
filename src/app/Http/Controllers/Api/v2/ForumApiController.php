@@ -187,7 +187,12 @@ class ForumApiController extends Controller
 
     public function show(Request $request, int $id)
     {
-        return redirect()->route('discuss.show', ['id' => $id]);
+        $post = ForumPost::where('id', $id)->select('forum_thread_id')->get();
+        if ($post->count() < 1) {
+            abort(404, 'The post you are looking for does not exist');
+        }
+
+        return redirect()->route('discuss.show', ['id' => $post->first()->forum_thread_id]);
     }
 
     /**
