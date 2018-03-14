@@ -20,7 +20,8 @@ Installation is relatively easy:
 chmod -R o+w project/storage # step 4
 cp .env.example .env         # step 5
 vim .env                     # step 5
-npm run production           # step 6
+php artisan key:generate      
+npm run production           # step 6
 php artisan config:cache     # step 7 
 php artisan route:cache      # step 7
 php artisan storage:link     # step 8
