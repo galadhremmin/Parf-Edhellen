@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v2;
 
 use Illuminate\Http\Request;
+use Cache;
 
 use App\Http\Controllers\Controller;
 use App\Helpers\StringHelper;
@@ -39,6 +40,19 @@ class BookApiController extends Controller
         }
 
         return $word;
+    }
+
+    public function getLanguages()
+    {
+        $languages = Cache::remember('ed.lang', 60 /* minutes */, function () {
+            return Language::all()
+                ->sortBy('order')
+                ->sortBy('name')
+                ->groupBy('category')
+                ->toArray();
+        });
+
+        return $languages;
     }
 
     /**

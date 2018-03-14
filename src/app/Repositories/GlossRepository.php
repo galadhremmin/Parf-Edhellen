@@ -194,7 +194,8 @@ class GlossRepository
             't.translation',
             'g.source',
             'a.nickname as account_name',
-            'tg.name as gloss_group_name'
+            'tg.name as gloss_group_name',
+            'g.id'
         ], false)->where('g.language_id', $languageId);
         
         if ($inexact) {

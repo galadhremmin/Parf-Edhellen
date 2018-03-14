@@ -184,6 +184,7 @@ Route::group([
         'prefix'    => 'api/v2'
     ], function () {
 
+    Route::get('book/languages',           [ 'uses' => 'BookApiController@getLanguages' ]);
     Route::get('book/translate/{glossId}', [ 'uses' => 'BookApiController@get' ]);
     Route::post('book/translate',          [ 'uses' => 'BookApiController@translate' ]);
     Route::post('book/suggest',            [ 'uses' => 'BookApiController@suggest' ]);
