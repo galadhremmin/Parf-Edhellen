@@ -1,5 +1,4 @@
-import axios from 'axios';
-import EDConfig from 'ed-config';
+import EDAPI from 'ed-api';
 
 (function () {
     const originalFunc = window.onerror;
@@ -9,13 +8,11 @@ import EDConfig from 'ed-config';
         const disqualified = "script error";
 
         if (string.indexOf(disqualified) === -1) {
-            const payload = {
-                message: `${message} (${navigator.appName} ${navigator.appVersion})`,
-                url: window.location.href,
-                error: error ? error.stack : null
-            };
-
-            axios.post(EDConfig.api('utility/error'), payload);
+            const message = `${message} (${navigator.appName} ${navigator.appVersion})`;
+            const url = window.location.href;
+            const stack = error ? error.stack : null;
+            
+            EDAPI.error(message, url, stack);
         }
 
         if (typeof originalFunc === 'function') {

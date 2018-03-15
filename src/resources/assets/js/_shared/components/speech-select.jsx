@@ -1,5 +1,5 @@
 import React from 'react';
-import axios from 'axios';
+import EDAPI from 'ed-api';
 import classNames from 'classnames';
 import EDConfig from 'ed-config';
 
@@ -14,7 +14,7 @@ class EDSpeechSelect extends React.Component {
     }
 
     componentWillMount() {
-        axios.get(EDConfig.api('speech'))
+        EDAPI.get('speech')
             .then(resp => this.setLoadedTypesOfSpeech(resp.data));
     }
 

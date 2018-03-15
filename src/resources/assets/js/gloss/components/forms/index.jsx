@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import axios from 'axios';
+import EDAPI from 'ed-api';
 import EDConfig from 'ed-config';
 import { EDStatefulFormComponent } from 'ed-form';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
@@ -86,15 +86,15 @@ class EDGlossForm extends EDStatefulFormComponent {
             payload.gloss_group_id = state.gloss_group_id || undefined;
             
             if (payload.id) {
-                promise = axios.put(`/admin/gloss/${payload.id}`, payload);
+                promise = EDAPI.put(`/admin/gloss/${payload.id}`, payload);
             } else {
-                promise = axios.post('/admin/gloss', payload);
+                promise = EDAPI.post('/admin/gloss', payload);
             }
         } else {
             if (this.props.contributionId) {
-                promise = axios.put(`/dashboard/contribution/${this.props.contributionId}`, payload);
+                promise = EDAPI.put(`/dashboard/contribution/${this.props.contributionId}`, payload);
             } else {
-                promise = axios.post('/dashboard/contribution', payload);
+                promise = EDAPI.post('/dashboard/contribution', payload);
             }
         }
 

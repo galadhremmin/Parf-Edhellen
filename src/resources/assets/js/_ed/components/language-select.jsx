@@ -1,5 +1,5 @@
 import React from 'react';
-import EDConfig from 'ed-config';
+import EDAPI from 'ed-api';
 
 class EDLanguageSelect extends React.Component {
     constructor(props) {
@@ -7,8 +7,16 @@ class EDLanguageSelect extends React.Component {
 
         this.state = {
             ...(this.createStateForValue(props.value)),
-            languages: EDConfig.languages(),
+            languages: {}
         }
+    }
+
+    componentWillMount() {
+        EDAPI.languages().then(resp => {
+            this.setState({ 
+                languages: resp.data
+            });
+        });
     }
 
     componentWillReceiveProps(props) {

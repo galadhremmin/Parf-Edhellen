@@ -4,7 +4,7 @@ import { createStore, applyMiddleware } from 'redux';
 import { Provider, connect } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 import classNames from 'classnames';
-import axios from 'axios';
+import EDAPI from 'ed-api';
 import { Parser as HtmlToReactParser } from 'html-to-react';
 import EDConfig from 'ed-config';
 import EDErrorList from 'ed-components/error-list';
@@ -51,7 +51,7 @@ class EDPreviewForm extends React.Component {
         }
 
         if (Object.keys(markdowns).length > 0) {
-            axios.post(EDConfig.api('utility/markdown'), { markdowns })
+            EDAPI.post('utility/markdown', { markdowns })
                 .then(resp => this.onHtmlReceive(resp, fragments));
         } else {
             this.createStore(fragments);
@@ -118,10 +118,10 @@ class EDPreviewForm extends React.Component {
                 ? `/admin/sentence/${payload.id}` 
                 : `/dashboard/contribution/${props.contributionId}`;
 
-            axios.put(url, payload)
+            EDAPI.put(url, payload)
                 .then(this.onSavedResponse.bind(this), this.onFailedResponse.bind(this));
         } else {
-            axios.post(props.admin ? '/admin/sentence' : '/dashboard/contribution', payload)
+            EDAPI.post(props.admin ? '/admin/sentence' : '/dashboard/contribution', payload)
                 .then(this.onSavedResponse.bind(this), this.onFailedResponse.bind(this));
         }
     }

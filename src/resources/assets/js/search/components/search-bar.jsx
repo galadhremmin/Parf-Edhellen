@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import EDConfig from 'ed-config';
+import EDAPI from 'ed-api';
 import EDLanguageSelect from 'ed-components/language-select';
 import { fetchResults, setSelection, advanceSelection } from '../actions';
 
@@ -19,9 +19,10 @@ class EDSearchBar extends React.Component {
     }
 
     componentDidMount() {
-        const languageNode = document.getElementById('ed-preloaded-languages');
-        this.setState({
-            languages: EDConfig.languages()
+        EDAPI.languages().then(resp => {
+            this.setState({
+                languages: resp.data
+            });
         });
 
         window.addEventListener('keydown', this.keyhook);

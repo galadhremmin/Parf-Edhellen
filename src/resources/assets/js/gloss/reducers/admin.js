@@ -1,5 +1,3 @@
-import EDConfig from 'ed-config';
-
 export const ED_SET_GLOSS_DATA       = 'ED_SET_GLOSS_DATA';
 export const ED_REQUEST_GLOSS_GROUPS = 'ED_REQUEST_GLOSS_GROUPS';
 export const ED_RECEIVE_GLOSS_GROUPS = 'ED_RECEIVE_GLOSS_GROUPS';
@@ -21,7 +19,7 @@ const EDGlossAdminReducer = (state = {
     sense: undefined,
     is_uncertain: false,
     is_rejected: false,
-    languages: EDConfig.languages(),
+    languages: {},
     groups: undefined,
     loading: true,
     _keywords: [],

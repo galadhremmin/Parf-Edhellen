@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
-import axios from 'axios';
+import EDAPI from 'ed-api';
 import EDConfig from 'ed-config';
 import { EDStatefulFormComponent } from 'ed-form';
 import { smoothScrollIntoView } from 'ed-scrolling';
@@ -64,7 +64,7 @@ class EDSentenceForm extends EDStatefulFormComponent {
             contribution_id: this.props.contributionId || undefined
         };
 
-        axios.post(this.props.admin ? '/admin/sentence/validate'
+        EDAPI.post(this.props.admin ? '/admin/sentence/validate'
             : '/dashboard/contribution/substep-validate', payload)
             .then(request => this.onValidateSuccess(request, payload),
                   request => this.onValidateFail(request, payload));

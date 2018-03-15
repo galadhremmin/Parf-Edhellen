@@ -3,12 +3,12 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import EDConfig from 'ed-config';
+import EDAPI from 'ed-api';
 import { saveState, loadState } from 'ed-session-storage-state';
 import EDGlossAdminReducer from './reducers/admin';
 import EDGlossForm from './components/forms';
 
-const load = () => {
+const load = (languages) => {
     let preloadedState = undefined;
 
     const glossDataContainer = document.getElementById('ed-preloaded-gloss');
@@ -17,7 +17,7 @@ const load = () => {
 
         preloadedState = {
             ...glossData,
-            languages: EDConfig.languages()    
+            languages
         };
     }
 
@@ -38,5 +38,7 @@ const load = () => {
 };
 
 window.addEventListener('load', function () {
-    window.setTimeout(load, 0);
+    EDAPI.languages().then(resp => {
+        window.setTimeout(load.bind(window, resp.data), 0);
+    });
 });

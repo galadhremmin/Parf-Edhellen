@@ -1,4 +1,4 @@
-import axios from 'axios';
+import EDAPI from 'ed-api';
 import EDConfig from 'ed-config';
 import {
     REQUEST_RESULTS,
@@ -75,7 +75,7 @@ export function fetchResults(word, reversed = false, language_id = 0, include_ol
 
     return dispatch => {
         dispatch(requestResults(word, reversed, language_id, include_old));
-        axios.post(EDConfig.api('/book/find'), { 
+        EDAPI.post('book/find', { 
             word, 
             reversed, 
             language_id,
@@ -135,7 +135,7 @@ export function beginNavigation(word, normalizedWord, index, modifyState) {
 
         dispatch(requestNavigation(word, normalizedWord || undefined, index));
 
-        axios.post(EDConfig.api('/book/translate'), { 
+        EDAPI.post('book/translate', { 
             word: normalizedWord || word, 
             language_id,
             inflections: true,

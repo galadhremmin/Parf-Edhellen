@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import axios from 'axios';
+import EDAPI from 'ed-api';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { requestSuggestions, setFragments, setFragmentData, setTengwar } from '../../actions/admin';
@@ -107,7 +107,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
             
             // In the event that the fragment is already associated with a gloss, retrieve it.
             if (data.gloss_id) {
-                promise = axios.get(EDConfig.api(`book/translate/${data.gloss_id}`))
+                promise = EDAPI.get(`book/translate/${data.gloss_id}`)
                     .then(resp => { 
                         if (!resp.data.sections || !resp.data.sections.length ||
                             !resp.data.sections[0].glosses || resp.data.sections[0].glosses.length < 1) {
@@ -179,7 +179,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
                 contribution_id: this.props.contributionId || undefined
             };
 
-        axios.post(this.props.admin ? '/admin/sentence/validate-fragment' 
+        EDAPI.post(this.props.admin ? '/admin/sentence/validate-fragment' 
             : '/dashboard/contribution/substep-validate', payload)
             .then(this.onFragmentsValid.bind(this), this.onFragmentsInvalid.bind(this));
     }
@@ -404,7 +404,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
             erroneousIndexes: []
         });
 
-        axios.post(this.props.admin ? '/admin/sentence/parse-fragment/tengwar'
+        EDAPI.post(this.props.admin ? '/admin/sentence/parse-fragment/tengwar'
             : '/dashboard/contribution/sentence/parse-fragment/tengwar', 
             { fragments: this.props.fragments }).then(response => {
             this.props.dispatch(setTengwar(response.data));

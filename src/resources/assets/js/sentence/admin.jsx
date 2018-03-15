@@ -4,7 +4,7 @@ import { MemoryRouter as Router, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import EDConfig from 'ed-config';
+import EDAPI from 'ed-api';
 import EDSentenceAdminReducer from './reducers/admin';
 import { SET_IS_ADMIN } from './reducers/admin';
 import { saveState, loadState } from 'ed-session-storage-state';
@@ -12,7 +12,7 @@ import EDSentenceForm from './components/forms/sentence-form';
 import EDFragmentForm from './components/forms/fragment-form';
 import EDPreviewForm from './components/forms/preview-form';
 
-const load = () => {
+const load = (languages) => {
     const formContainer = document.getElementById('ed-sentence-form');
     const sentenceDataContainer = document.getElementById('ed-preloaded-sentence');
     const fragmentDataContainer = document.getElementById('ed-preloaded-sentence-fragments');
@@ -29,7 +29,7 @@ const load = () => {
             fragments: fragmentData.fragments,
             latin: fragmentData.latin,
             tengwar: fragmentData.tengwar,
-            languages: EDConfig.languages(),
+            languages,
             is_admin
         };
     }
@@ -64,5 +64,7 @@ const load = () => {
 };
 
 window.addEventListener('load', function () {
-    window.setTimeout(load, 0);
+    EDAPI.languages().then(resp => {
+        window.setTimeout(load.bind(window, resp.data), 0);
+    });
 });

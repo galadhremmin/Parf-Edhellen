@@ -1,5 +1,5 @@
 import React from 'react';
-import axios from 'axios';
+import EDAPI from 'ed-api';
 import EDConfig from 'ed-config';
 import classNames from 'classnames';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
@@ -62,13 +62,11 @@ class EDComments extends EDStatefulFormComponent {
         });
 
         const jumpTo = this.state.jump_post_id;
-        const url = EDConfig.api(
-            `/forum?morph=${this.props.morph}&entity_id=${this.props.entityId}&order=${this.props.order}` + 
+        const url = `/forum?morph=${this.props.morph}&entity_id=${this.props.entityId}&order=${this.props.order}` + 
             (fromId ? `&from_id=${fromId}` : '') +
-            (jumpTo ? `&jump_to=${jumpTo}` : '')
-        );
+            (jumpTo ? `&jump_to=${jumpTo}` : '');
         
-        return axios.get(url).then(this.onLoaded.bind(this, fromId || 0));
+        return EDAPI.get(url).then(this.onLoaded.bind(this, fromId || 0));
     }
 
     setPage(pageNo) {
@@ -175,8 +173,8 @@ class EDComments extends EDStatefulFormComponent {
         };
         
         const promise = this.state.post_id === 0
-            ? axios.post(EDConfig.api('/forum'), data)
-            : axios.put(EDConfig.api(`/forum/${this.state.post_id}`), data);
+            ? EDAPI.post('/forum', data)
+            : EDAPI.put(`/forum/${this.state.post_id}`, data);
 
         promise.then(this.onSubmitted.bind(this))
             .then(() => {
@@ -202,9 +200,9 @@ class EDComments extends EDStatefulFormComponent {
         }
 
         if (! liked) {
-            axios.post(EDConfig.api(`/forum/like/${postId}`)).then(this.onLiked.bind(this, postId));
+            EDAPI.post(`/forum/like/${postId}`).then(this.onLiked.bind(this, postId));
         } else {
-            axios.delete(EDConfig.api(`/forum/like/${postId}`)).then(this.onUnliked.bind(this, postId));
+            EDAPI.delete(`/forum/like/${postId}`).then(this.onUnliked.bind(this, postId));
         }
     }
 
@@ -258,7 +256,7 @@ class EDComments extends EDStatefulFormComponent {
     onEditPost(post, ev) {
         ev.preventDefault();
 
-        axios.get(EDConfig.api(`/forum/${post.id}/edit`))
+        EDAPI.get(`/forum/${post.id}/edit`)
             .then(this.onEditPostDataReceived.bind(this));
     }
 
@@ -293,7 +291,7 @@ class EDComments extends EDStatefulFormComponent {
             return;
         }
 
-        axios.delete(EDConfig.api(`/forum/${post.id}`))
+        EDAPI.delete(`/forum/${post.id}`)
             .then(this.onPostDeleted.bind(this));
     }
 
@@ -419,7 +417,7 @@ class EDComments extends EDStatefulFormComponent {
                 </div>
                 <div className="post-tools">
                     <span className="date">{ (new Date(post.created_at)).toLocaleString() }</span>
-                    { ! post.is_deleted && this.props.accountId === post.account_id ?
+                    { ! post.is_deleted && (this.props.accountId === post.account_id || EDConfig.admin()) ?
                     <span className="tools">
                         <a href="#" onClick={this.onDeletePost.bind(this, post)}>Delete</a>
                         { ' · ' }

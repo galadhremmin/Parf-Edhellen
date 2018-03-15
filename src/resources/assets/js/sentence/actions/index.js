@@ -1,5 +1,4 @@
-import axios from 'axios';
-import EDConfig from 'ed-config';
+import EDAPI from 'ed-api';
 import { deferredResolve } from 'ed-promise';
 import {
     REQUEST_FRAGMENT,
@@ -14,7 +13,7 @@ export const selectFragment = (fragmentId, glossId) => {
         });
 
         const start = new Date().getTime();
-        deferredResolve(axios.get(EDConfig.api(`/book/translate/${glossId}`)), 800)
+        deferredResolve(EDAPI.get(`book/translate/${glossId}`), 800)
             .then(resp => {
                 dispatch({
                     type: RECEIVE_FRAGMENT,

@@ -1,5 +1,5 @@
 import React from 'react';
-import axios from 'axios';
+import EDAPI from 'ed-api';
 import classNames from 'classnames';
 import EDConfig from 'ed-config';
 import Autosuggest from 'react-autosuggest';
@@ -17,7 +17,7 @@ class EDInflectionSelect extends React.Component {
     }
 
     componentWillMount() {
-        axios.get(EDConfig.api('inflection'))
+        EDAPI.get('inflection')
             .then(resp => this.setLoadedInflections(resp.data));
     }
 

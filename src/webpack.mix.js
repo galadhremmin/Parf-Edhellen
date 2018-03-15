@@ -24,6 +24,7 @@ mix.webpackConfig({
             'ed-components/language-select': 'elfdict/components/language-select.jsx',
             'ed-components/gloss-select': 'elfdict/components/gloss-select.jsx',
 
+            'ed-api': 'elfdict/api.js',
             'ed-config': 'elfdict/config.js',
             'ed-form': 'elfdict/form.js',
             'ed-promise': 'elfdict/promise.js',

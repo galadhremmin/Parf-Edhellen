@@ -1,5 +1,5 @@
 import React from 'react';
-import axios from 'axios';
+import EDAPI from 'ed-api';
 import classNames from 'classnames';
 import EDConfig from 'ed-config';
 import Autosuggest from 'react-autosuggest';
@@ -129,7 +129,7 @@ class EDGlossSelect extends React.Component {
             this.loading = true;
 
             // Retrieve suggestions for the specified word.
-            axios.post(EDConfig.api('book/suggest'), {
+            EDAPI.post('book/suggest', {
                 words: [ word ], 
                 language_id: languageId,
                 inexact: true

@@ -4,7 +4,7 @@ import {
     SET_FRAGMENT_DATA,
     SET_TENGWAR
 } from '../reducers/admin';
-import axios from 'axios';
+import EDAPI from 'ed-api';
 
 export const setFragments = fragments => {
     if (fragments !== undefined && (! Array.isArray(fragments) || fragments.length < 1)) {
@@ -21,7 +21,7 @@ export const setFragments = fragments => {
         }
 
         const admin = getState().is_admin;
-        axios.post(admin ? '/admin/sentence/parse-fragment/latin' 
+        EDAPI.post(admin ? '/admin/sentence/parse-fragment/latin' 
             : '/dashboard/contribution/sentence/parse-fragment/latin', { fragments }).then(response => {
             dispatch({
                 type: SET_FRAGMENTS,

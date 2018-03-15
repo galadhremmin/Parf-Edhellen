@@ -1,15 +1,11 @@
 const EDConfig = {
-    apiPathName: '/api/v2', // path to API w/o trailing slash!
-    apiValidationErrorStatusCode: 422,
-    
     messageDomain: window.location.origin,
     messageNavigateName: 'ednavigate',
 
     /**
-     * Gets all languages
+     * Gets whether the current session has administrative permissions.
      */
-    languages: () => languages,
-
+    admin: () => document.body.classList.contains('ed-admin'),
     userId: () => parseInt(document.body.dataset['userId'], 10),
 
     findLanguage: (v, key = 'id', cmpFunc = (a, b) => a === b) => {
@@ -29,12 +25,6 @@ const EDConfig = {
     },
 
     /**
-     * Convenience method for generating API paths
-     * @param path
-     */
-    api: path => EDConfig.apiPathName + (path[0] !== '/' ? '/' : '') + path,
-
-    /**
      * Convenience method for generating window messages
      */
     message: (source, payload) => window.postMessage({ source, payload }, EDConfig.messageDomain),
@@ -49,7 +39,6 @@ const EDConfig = {
     addPlugins: (context, arrayOfPluginComponents) => plugins[context] = [...(EDConfig.pluginsFor(context)), ...arrayOfPluginComponents]
 };
 
-const languages = JSON.parse(document.getElementById('ed-preloaded-languages').textContent);
 const plugins = {};
 
 export default EDConfig;
