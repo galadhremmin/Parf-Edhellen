@@ -78,10 +78,14 @@ class ContributionController extends Controller
      */
     public function show(Request $request, int $id) 
     {
+        $admin = $request->has('admin')
+            ? boolval($request->input('admin'))
+            : false;
+
         $contribution = Contribution::findOrFail($id);
         $this->requestPermission($request, $contribution);
 
-        return $this->createController($contribution->type)->show($contribution);
+        return $this->createController($contribution->type)->show($contribution, $admin);
     }
 
     /**

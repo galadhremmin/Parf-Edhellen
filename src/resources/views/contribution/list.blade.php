@@ -19,7 +19,8 @@
           <em>You have no contributions awaiting to be reviewed.</em>
           @else
             @include('contribution._table', [
-              'reviews' => $pendingReviews
+              'reviews' => $pendingReviews,
+              'admin'   => true
             ])
           @endif
         </div>
@@ -33,7 +34,8 @@
           <em>There are presently no approved contributions.</em>
           @else
             @include('contribution._table', [
-              'reviews' => $approvedReviews
+              'reviews' => $approvedReviews,
+              'admin'   => true
             ])
           @endif
         </div>
@@ -47,7 +49,8 @@
           <em>There are presently no rejected contributions.</em>
           @else
             @include('contribution._table', [
-              'reviews' => $rejectedReviews
+              'reviews' => $rejectedReviews,
+              'admin'   => true
             ])
           @endif
         </div>

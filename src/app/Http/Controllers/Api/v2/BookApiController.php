@@ -11,6 +11,7 @@ use App\Models\{
     Keyword,
     Gloss, 
     GlossGroup, 
+    Language,
     Word
 };
 use App\Http\Controllers\Traits\{

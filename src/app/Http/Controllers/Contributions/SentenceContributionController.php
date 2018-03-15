@@ -37,9 +37,10 @@ class SentenceContributionController extends Controller implements IContribution
      * HTTP GET. Shows a sentence contribution.
      *
      * @param Contribution $contribution
+     * @param bool $admin is an administrator viewing other's contributions?
      * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
      */
-    public function show(Contribution $contribution)
+    public function show(Contribution $contribution, bool $admin)
     {
         $payload = json_decode($contribution->payload, true);
         $this->makeMapCurrent($payload);
@@ -54,7 +55,8 @@ class SentenceContributionController extends Controller implements IContribution
             'fragmentData'     => json_encode($fragmentData),
             'sentence'         => $sentence,
             'originalSentence' => $originalSentence,
-            'review'           => $contribution
+            'review'           => $contribution,
+            'admin'            => $admin
         ]);
     }
 

@@ -28,7 +28,7 @@ export const testCard = (flashcardId, option) => (dispatch, getState) => {
         type: ED_TEST_CARD
     });
 
-    deferredResolve(axios.post('/dashboard/flashcard/test', {
+    deferredResolve(EDAPI.post('/dashboard/flashcard/test', {
         flashcard_id: flashcardId,
         translation_id: getState().translation_id,
         translation: option

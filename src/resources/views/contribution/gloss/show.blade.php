@@ -5,7 +5,7 @@
 @section('body')
   <h1>Contribution #{{ $review->id }}</h1>
   
-  {!! Breadcrumbs::render('contribution.show', $review->id) !!}
+  {!! Breadcrumbs::render('contribution.show', $review->id, $admin) !!}
 
   @include('contribution._status-alert', $review)
 
@@ -25,6 +25,7 @@
           'disable_tools' => true
         ])
       @endforeach
+      <span class="label label-default">{{ $section['language']['name'] }}</span>
     @endforeach
 
     @foreach ($keywords as $keyword) 

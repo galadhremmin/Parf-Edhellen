@@ -11,9 +11,10 @@ interface IContributionController
      * Shows the specified contribution
      *
      * @param Contribution $contribution
+     * @param bool $admin is an administrator viewing other's contributions?
      * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
      */
-    function show(Contribution $contribution);
+    function show(Contribution $contribution, bool $admin);
 
     /**
      * Shows an editing form for the specified contribution

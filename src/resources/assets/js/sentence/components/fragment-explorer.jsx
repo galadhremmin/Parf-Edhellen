@@ -127,7 +127,9 @@ class EDFragmentExplorer extends React.Component {
             window.location.hash = `!${ev.id}`;
         }
     
-        this.props.dispatch(selectFragment(ev.id, ev.gloss_id));
+        if (ev.gloss_id) {
+            this.props.dispatch(selectFragment(ev.id, ev.gloss_id));
+        }
     }
 
     /**

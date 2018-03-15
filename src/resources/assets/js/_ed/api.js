@@ -181,6 +181,8 @@ const EDAPI = {
             errorReport.config = error.config;
             this.error('API request failed', apiMethod, JSON.stringify(errorReport));
         }
+
+        return Promise.reject('API request failed ' + apiMethod);
     }
 };
 

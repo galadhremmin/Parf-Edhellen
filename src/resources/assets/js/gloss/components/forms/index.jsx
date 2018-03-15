@@ -23,6 +23,7 @@ class EDGlossForm extends EDStatefulFormComponent {
             id: 0,
             account_id: 0,
             language_id: 0,
+            language: null,
             word_id: 0,
             gloss_group_id: 0,
             speech_id: 0,
@@ -45,6 +46,26 @@ class EDGlossForm extends EDStatefulFormComponent {
                 ? requestGlossGroups() // admin view requires information from the server
                 : componentIsReady()
             );
+
+            const props = this.props;
+            this.setState({
+                id:             props.glossId || 0,
+                account_id:     props.glossAccountId || 0,
+                language_id:    props.glossLanguageId || 0,
+                word_id:        props.glossWordId || 0 ,
+                speech_id:      props.glossSpeechId || 0,
+                gloss_group_id: props.glossGroupId || 0,
+                sense:          props.glossSense || '',
+                keywords:       props.glossKeywords || [],
+                translations:   props.glossTranslations || '',
+                source:         props.transationSource || '',
+                comments:       props.glossComments || '',
+                notes:          props.glossNotes || '',
+                is_uncertain:   props.glossUncertain || 0,
+                is_rejected:    props.glossRejected || 0,
+                tengwar:        props.glossTengwar || '',
+                word:           props.glossWord ? props.glossWord.word : '', 
+            })
         });
     }
 
@@ -56,28 +77,6 @@ class EDGlossForm extends EDStatefulFormComponent {
                 });
             });
         }
-    }
-
-    componentDidMount() {
-        const props = this.props;
-        this.setState({
-            id:             props.glossId || 0,
-            account_id:     props.glossAccountId || 0,
-            language_id:    props.glossLanguageId || 0,
-            word_id:        props.glossWordId || 0 ,
-            speech_id:      props.glossSpeechId || 0,
-            gloss_group_id: props.glossGroupId || 0,
-            sense:          props.glossSense || '',
-            keywords:       props.glossKeywords || [],
-            translations:   props.glossTranslations || '',
-            source:         props.transationSource || '',
-            comments:       props.glossComments || '',
-            notes:          props.glossNotes || '',
-            is_uncertain:   props.glossUncertain || 0,
-            is_rejected:    props.glossRejected || 0,
-            tengwar:        props.glossTengwar || '',
-            word:           props.glossWord ? props.glossWord.word : '', 
-        })
     }
 
     onSubmit(ev) {
@@ -147,6 +146,21 @@ class EDGlossForm extends EDStatefulFormComponent {
         // scrolled too far down to notice the error messages.
         smoothScrollIntoView(this.formControl);
     }
+
+    onLanguageChange(ev) {
+        const languageId = parseInt(ev.target.getValue(), 10);
+        if (languageId === this.state.language_id) {
+            return;
+        }
+        
+        EDAPI.languages(languageId)
+            .then(language => {
+                super.onChange(ev, 'number');
+                this.setState({
+                    language
+                });
+            });
+    }
  
     render() {
         if (this.props.loading) {
@@ -168,7 +182,7 @@ class EDGlossForm extends EDStatefulFormComponent {
             <div className="form-group">
                 <label htmlFor="ed-gloss-language" className="control-label">Language</label>
                 <EDLanguageSelect className="form-control" componentId="ed-gloss-language" componentName="language_id" 
-                    onChange={ev => super.onChange(ev, 'number')} value={this.state.language_id} />
+                    onChange={this.onLanguageChange.bind(this)} value={this.state.language_id} />
             </div>
             <div className="form-group">
                 <label htmlFor="ed-gloss-word" className="control-label">Word</label>

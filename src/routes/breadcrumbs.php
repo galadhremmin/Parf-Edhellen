@@ -179,9 +179,9 @@ Breadcrumbs::register('contribution.edit', function ($breadcrumbs, int $id)
     $breadcrumbs->push('Change contribution', route('contribution.edit', ['id' => $id]));
 });
 
-Breadcrumbs::register('contribution.show', function ($breadcrumbs, int $id)
+Breadcrumbs::register('contribution.show', function ($breadcrumbs, int $id, bool $admin = false)
 {
-    $breadcrumbs->parent('contribution.index');
+    $breadcrumbs->parent($admin ? 'contribution.list' : 'contribution.index');
     $breadcrumbs->push('Contribution #'.$id, route('contribution.show', ['id' => $id]));
 });
 

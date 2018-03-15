@@ -185,7 +185,8 @@ Route::group([
     ], function () {
 
     Route::get('book/languages',           [ 'uses' => 'BookApiController@getLanguages' ]);
-    Route::get('book/translate/{glossId}', [ 'uses' => 'BookApiController@get' ]);
+    Route::get('book/translate/{glossId}', [ 'uses' => 'BookApiController@get' ])
+        ->where([ 'glossId' => '[0-9]+' ]);
     Route::post('book/translate',          [ 'uses' => 'BookApiController@translate' ]);
     Route::post('book/suggest',            [ 'uses' => 'BookApiController@suggest' ]);
     Route::post('book/find',               [ 'uses' => 'BookApiController@find' ]);
@@ -221,8 +222,10 @@ Route::group([
         'edit', 'store', 'update', 'destroy'
     ]]);
 
-    Route::post('forum/like/{id}',   [ 'uses' => 'ForumApiController@storeLike'   ]);
-    Route::delete('forum/like/{id}', [ 'uses' => 'ForumApiController@destroyLike' ]);
+    Route::post('forum/like/{id}',   [ 'uses' => 'ForumApiController@storeLike'   ])
+        ->where([ 'id' => '[0-9]+' ]);
+    Route::delete('forum/like/{id}', [ 'uses' => 'ForumApiController@destroyLike' ])
+        ->where([ 'id' => '[0-9]+' ]);
 
     Route::get('book/word/{id}',  [ 'uses' => 'BookApiController@getWord'   ]);
     Route::post('book/word/find', [ 'uses' => 'BookApiController@findWord'  ]);

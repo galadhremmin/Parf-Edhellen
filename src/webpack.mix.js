@@ -58,8 +58,7 @@ mix.extract([
     'ed-promise',
     'ed-session-storage-state',
     'ed-tengwar'
-], `${outputDir}/js/vendor.js`)
-.sourceMaps();
+], `${outputDir}/js/vendor.js`);
 
 mix.react([
     'resources/assets/js/date.js',
@@ -67,18 +66,15 @@ mix.react([
     'resources/assets/js/navigation.js',
     'resources/assets/js/_shared/error.js',
     'resources/assets/js/search/index.jsx'
-], `${outputDir}/js/global.js`)
-.sourceMaps();
+], `${outputDir}/js/global.js`);
 
 mix.react([
     'resources/assets/js/_plugins-restricted/index.jsx'
-], `${outputDir}/js/global-plugins-restricted.js`)
-.sourceMaps();
+], `${outputDir}/js/global-plugins-restricted.js`);
 
 mix.react([
     'resources/assets/js/_plugins-admin/index.jsx'
-], `${outputDir}/js/global-plugins-admin.js`)
-.sourceMaps();
+], `${outputDir}/js/global-plugins-admin.js`);
 
 mix.combine([
     'node_modules/glaemscribe/js/glaemscribe.js',
@@ -90,49 +86,42 @@ mix.combine([
     'node_modules/glaemscribe/js/modes/sindarin.glaem.js',
     'node_modules/glaemscribe/js/modes/telerin.glaem.js',
     'node_modules/glaemscribe/js/modes/westron.glaem.js',
-], `${outputDir}/js/glaemscribe.js`)
-.sourceMaps();
+], `${outputDir}/js/glaemscribe.js`);
 
 mix.js([
     'node_modules/babel-polyfill/dist/polyfill.js',
     'resources/assets/js/_ie/polyfills.js',
-], `${outputDir}/js/ie.js`)
-.sourceMaps();
+], `${outputDir}/js/ie.js`);
 
 mix.js([
     'resources/assets/js/markdown/index.jsx'
-], `${outputDir}/js/markdown.js`)
-.sourceMaps();
+], `${outputDir}/js/markdown.js`);
 
 mix.js([
     'resources/assets/js/sentence/index.jsx'
-], `${outputDir}/js/sentence.js`)
-.sourceMaps();
+], `${outputDir}/js/sentence.js`);
 
 mix.js([
     'resources/assets/js/sentence/admin.jsx'
-], `${outputDir}/js/sentence-admin.js`)
-.sourceMaps();
+], `${outputDir}/js/sentence-admin.js`);
 
 mix.js([
     'resources/assets/js/comment/index.jsx'
-], `${outputDir}/js/comment.js`)
-.sourceMaps();
+], `${outputDir}/js/comment.js`);
 
 mix.js([
     'resources/assets/js/gloss/admin.jsx'
-], `${outputDir}/js/gloss-admin.js`)
-.sourceMaps();
+], `${outputDir}/js/gloss-admin.js`);
 
 mix.js([
     'resources/assets/js/flashcard/index.jsx'
-], `${outputDir}/js/flashcard.js`)
-.sourceMaps();
+], `${outputDir}/js/flashcard.js`);
 
 mix.js([
     'resources/assets/js/system-errors/index.jsx'
-], `${outputDir}/js/system-errors-admin.js`)
-.sourceMaps();
+], `${outputDir}/js/system-errors-admin.js`);
+
+// .sourceMaps();
 
 mix.sass('resources/assets/sass/app.scss', `${outputDir}/css`);
 mix.sass('resources/assets/sass/app.flashcard.scss', `${outputDir}/css`);

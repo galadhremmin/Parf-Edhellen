@@ -15,7 +15,9 @@ class EDComments extends EDStatefulFormComponent {
         let jump_post_id = 0;
         if (window.location.search) {
             let match = /&?forum_post_id=([0-9]+)/.exec(location.search.substr(1));
-            jump_post_id = parseInt(match[1], 10);
+            if (match) {
+                jump_post_id = parseInt(match[1], 10);
+            }
         }
 
         this.state = {

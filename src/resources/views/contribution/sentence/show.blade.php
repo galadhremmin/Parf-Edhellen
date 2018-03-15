@@ -5,7 +5,7 @@
 @section('body')
   <h1>Contribution #{{ $review->id }}</h1>
   
-  {!! Breadcrumbs::render('contribution.show', $review->id) !!}
+  {!! Breadcrumbs::render('contribution.show', $review->id, $admin) !!}
 
   @include('contribution._status-alert', $review)
 
