@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import EDConfig from 'ed-config';
 import { getCard, testCard } from '../actions';
 import { transcribe } from 'ed-tengwar';
 import { Parser as HtmlToReactParser } from 'html-to-react';

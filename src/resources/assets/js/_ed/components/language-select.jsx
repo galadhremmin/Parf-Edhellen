@@ -12,9 +12,9 @@ class EDLanguageSelect extends React.Component {
     }
 
     componentWillMount() {
-        EDAPI.languages().then(resp => {
+        EDAPI.languages().then(languages => {
             this.setState({ 
-                languages: resp.data
+                languages
             });
         });
     }

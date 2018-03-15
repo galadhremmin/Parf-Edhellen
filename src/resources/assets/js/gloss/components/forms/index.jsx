@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import EDAPI from 'ed-api';
-import EDConfig from 'ed-config';
 import { EDStatefulFormComponent } from 'ed-form';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
 import EDLanguageSelect from 'ed-components/language-select';
@@ -41,10 +40,22 @@ class EDGlossForm extends EDStatefulFormComponent {
     }
 
     componentWillMount() {
-        this.props.dispatch(this.props.admin
-            ? requestGlossGroups() // admin view requires information from the server
-            : componentIsReady()
-        );
+        EDAPI.languages().then(() => {
+            this.props.dispatch(this.props.admin
+                ? requestGlossGroups() // admin view requires information from the server
+                : componentIsReady()
+            );
+        });
+    }
+
+    componentWillReceiveProps(props) {
+        if (props.glossLanguageId) {
+            EDAPI.languages(props.glossLanguageId).then(language => {
+                this.setState({
+                    language 
+                });
+            });
+        }
     }
 
     componentDidMount() {
@@ -114,7 +125,7 @@ class EDGlossForm extends EDStatefulFormComponent {
         // Laravel returns 422 when the request fails validation. In the event that
         // we received an alternate status code, bail, as we do not know what that payload
         // contains.
-        if (request.response.status !== EDConfig.apiValidationErrorStatusCode) {
+        if (request.response.status !== EDAPI.apiValidationErrorStatusCode) {
             return; 
         }
 
@@ -142,8 +153,6 @@ class EDGlossForm extends EDStatefulFormComponent {
             return <div className="sk-spinner sk-spinner-pulse"></div>;
         }
 
-        const language = EDConfig.findLanguage(this.state.language_id);
-
         return <form onSubmit={this.onSubmit.bind(this)} ref={c => this.formControl = c}>
             <EDErrorList errors={this.state.errors} />
             <p>
@@ -169,7 +178,7 @@ class EDGlossForm extends EDStatefulFormComponent {
             <div className="form-group">
                 <label htmlFor="ed-gloss-tengwar" className="control-label">Tengwar</label>
                 <EDTengwarInput componentId="ed-gloss-tengwar" componentName="tengwar" 
-                    tengwarMode={language ? language.tengwar_mode : undefined} transcriptionSubject={this.state.word}
+                    tengwarMode={this.state.language ? this.state.language.tengwar_mode : undefined} transcriptionSubject={this.state.word}
                     value={this.state.tengwar} onChange={super.onChange.bind(this)} />
             </div>
             <div className="form-group">

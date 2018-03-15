@@ -1,5 +1,4 @@
 import EDAPI from 'ed-api';
-import EDConfig from 'ed-config';
 import {
     REQUEST_RESULTS,
     REQUEST_NAVIGATION,
@@ -111,45 +110,53 @@ export function beginNavigation(word, normalizedWord, index, modifyState) {
         const title = `${capitalTitle} - Parf Edhellen`;
 
         const language_id = state.languageId || undefined;
-        const language = language_id ? EDConfig.findLanguage(language_id) : undefined;
-        const address = `/w/${uriEncodedWord}` + (language ? `/${language.short_name}` : '');
-        // When navigating using the browser's back and forward buttons,
-        // the state needn't be modified.
-        if (modifyState) {
-            if (window.history.pushState !== undefined) {
-                window.history.pushState(null, title, address);
-            } else {
-                // If pushState isn't supported, do not even pretend to try to load react components for search results 
-                // for this deprecated browser.
-                window.setTimeout(() => window.location.href = address, 0);
-                return () => {};
-            }
-        }
+        const languagePromise = language_id 
+            ? EDAPI.languages(language_id)
+            : Promise.resolve(undefined);
 
-        // because most browsers doesn't change the document title when pushing state
-        document.title = title;
-
-        // Inform indirect listeners about the navigation
-        const event = new CustomEvent('ednavigate', { detail: { address, word, language_id } });
-        window.dispatchEvent(event);
-
-        dispatch(requestNavigation(word, normalizedWord || undefined, index));
-
-        EDAPI.post('book/translate', { 
-            word: normalizedWord || word, 
-            language_id,
-            inflections: true,
-            include_old
-        }).then(resp => {
-            dispatch(receiveNavigation(resp.data));
-
-            // Find elements which is requested to be deleted upon receiving the navigation commmand
-            const elementsToDelete = document.querySelectorAll('.ed-remove-when-navigating');
-            if (elementsToDelete.length > 0) {
-                for (let element of elementsToDelete) {
-                    element.parentNode.removeChild(element);
+        
+        languagePromise.then(language => {
+            
+            const address = `/w/${uriEncodedWord}` + (language ? `/${language.short_name}` : '');
+            // When navigating using the browser's back and forward buttons,
+            // the state needn't be modified.
+            if (modifyState) {
+                if (window.history.pushState !== undefined) {
+                    window.history.pushState(null, title, address);
+                } else {
+                    // If pushState isn't supported, do not even pretend to try to load react components for search results 
+                    // for this deprecated browser.
+                    window.setTimeout(() => window.location.href = address, 0);
+                    return () => {};
                 }
             }
+    
+            // because most browsers doesn't change the document title when pushing state
+            document.title = title;
+    
+            // Inform indirect listeners about the navigation
+            const event = new CustomEvent('ednavigate', { detail: { address, word, language_id } });
+            window.dispatchEvent(event);
+    
+            dispatch(requestNavigation(word, normalizedWord || undefined, index));
+    
+            EDAPI.post('book/translate', { 
+                word: normalizedWord || word, 
+                language_id,
+                inflections: true,
+                include_old
+            }).then(resp => {
+                dispatch(receiveNavigation(resp.data));
+    
+                // Find elements which is requested to be deleted upon receiving the navigation commmand
+                const elementsToDelete = document.querySelectorAll('.ed-remove-when-navigating');
+                if (elementsToDelete.length > 0) {
+                    for (let element of elementsToDelete) {
+                        element.parentNode.removeChild(element);
+                    }
+                }
+            });
+
         });
     };
 }

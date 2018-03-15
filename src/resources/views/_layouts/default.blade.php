@@ -89,7 +89,6 @@
     </div>
   </div>
 
-  <script type="application/json" id="ed-preloaded-languages">{!! $allLanguages !!}</script>
   <script type="text/javascript" src="@assetpath(/js/manifest.js)"></script>
   <script type="text/javascript" src="@assetpath(/js/vendor.js)"></script>
   <script type="text/javascript" src="@assetpath(/js/ie.js)"></script>

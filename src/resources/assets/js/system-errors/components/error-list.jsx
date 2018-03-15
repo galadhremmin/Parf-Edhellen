@@ -1,6 +1,5 @@
 import React from 'react';
 import classNames from 'classnames';
-import EDConfig from 'ed-config';
 
 class EDSystemErrorList extends React.Component {
     constructor(props, context) {

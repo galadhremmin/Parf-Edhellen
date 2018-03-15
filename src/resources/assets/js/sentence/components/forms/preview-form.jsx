@@ -6,7 +6,6 @@ import thunkMiddleware from 'redux-thunk';
 import classNames from 'classnames';
 import EDAPI from 'ed-api';
 import { Parser as HtmlToReactParser } from 'html-to-react';
-import EDConfig from 'ed-config';
 import EDErrorList from 'ed-components/error-list';
 import EDSentenceReducer from '../../reducers';
 import EDFragmentExplorer from '../fragment-explorer';
@@ -135,7 +134,7 @@ class EDPreviewForm extends React.Component {
 
     onFailedResponse(request) {
         let errors;
-        if (request.response.status !== EDConfig.apiValidationErrorStatusCode) {
+        if (request.response.status !== EDAPI.apiValidationErrorStatusCode) {
             errors = ['Failed to save your phrase due to a server error.']; 
         } else {
             errors = ['Your phrase cannot be saved because validation fails. Please go to the previous steps and try again.'];

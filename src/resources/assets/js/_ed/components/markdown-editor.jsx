@@ -1,7 +1,6 @@
 import React from 'react';
 import EDAPI from 'ed-api';
 import classNames from 'classnames';
-import EDConfig from 'ed-config';
 import { Parser as HtmlToReactParser } from 'html-to-react';
 
 const MDMarkdownEditTab = 0;

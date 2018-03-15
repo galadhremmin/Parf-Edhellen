@@ -19,12 +19,6 @@ class EDSearchBar extends React.Component {
     }
 
     componentDidMount() {
-        EDAPI.languages().then(resp => {
-            this.setState({
-                languages: resp.data
-            });
-        });
-
         window.addEventListener('keydown', this.keyhook);
     }
 
@@ -161,7 +155,7 @@ class EDSearchBar extends React.Component {
                             checked={this.state.includeOld}
                             onChange={this.onIncludeOldChange.bind(this)} /> Old sources
                     </label>
-                    {this.state.languages ? <EDLanguageSelect onChange={this.onLanguageChange.bind(this)} /> : ''}
+                    <EDLanguageSelect onChange={this.onLanguageChange.bind(this)} />
                 </div>
             </div>
         </form>);

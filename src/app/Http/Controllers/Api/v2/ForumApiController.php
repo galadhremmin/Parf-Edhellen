@@ -322,7 +322,7 @@ class ForumApiController extends Controller
         $thread = $post->forum_thread;
 
         // reassign the 'latest' contributor to the thread
-        if (! $thread->number_of_posts) {
+        if ($thread->number_of_posts < 1) {
             $thread->account_id = null;
         } else {
             $lastAccount = $thread->forum_posts()->where([
@@ -332,7 +332,7 @@ class ForumApiController extends Controller
             ->orderBy('id', 'desc')
             ->first();
 
-            $thread->account_id = $lastAccount ? $lastAccount->id : null;
+            $thread->account_id = $lastAccount ? $lastAccount->account_id : null;
         }
 
         // reduce number of likes and post counter

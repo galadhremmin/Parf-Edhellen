@@ -1,7 +1,6 @@
 import React from 'react';
 import EDAPI from 'ed-api';
 import classNames from 'classnames';
-import EDConfig from 'ed-config';
 
 class EDSpeechSelect extends React.Component {
     constructor(props) {

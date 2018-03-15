@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { Parser as HtmlToReactParser, ProcessNodeDefinitions } from 'html-to-react';
-import EDConfig from 'ed-config';
+import EDAPI from 'ed-api';
 
 /**
  * Injects HTML within a gloss context. 
@@ -67,11 +67,11 @@ class EDHtmlInjection extends React.Component {
         ev.preventDefault();
 
         if (this.props.onReferenceLinkClick) {
-            const language = EDConfig.findLanguage(languageShortName, 'short_name');
-
-            this.props.onReferenceLinkClick({
-                word,
-                language
+            EDAPI.language(languageShortName, 'short_name').then(language => {
+                this.props.onReferenceLinkClick({
+                    word,
+                    language
+                });
             });
         }
     }

@@ -4,7 +4,6 @@ import EDAPI from 'ed-api';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { requestSuggestions, setFragments, setFragmentData, setTengwar } from '../../actions/admin';
-import EDConfig from 'ed-config';
 import { EDStatefulFormComponent } from 'ed-form';
 import { smoothScrollIntoView } from 'ed-scrolling';
 import EDMarkdownEditor from 'ed-components/markdown-editor';
@@ -54,8 +53,17 @@ class EDFragmentForm extends EDStatefulFormComponent {
             phrase,
             editIndex: -1,
             editIsExcluded: false,
-            erroneousIndexes: []
+            erroneousIndexes: [],
+            language: null
         };
+    }
+
+    componentWillMount() {
+        EDAPI.languages(this.props.language_id || 0).then(language => {
+            this.setState({
+                language
+            });
+        });
     }
 
     createFragment(fragment, type, doTranscribe) {
@@ -63,7 +71,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
 
         if (doTranscribe) {
             // retrieve the mode associated with the language currently selected. 
-            const language = EDConfig.findLanguage(this.props.language_id);
+            const language = this.state.language;
             let mode = language.tengwar_mode;
 
             // Transcribe interpunctuations automatically. The _quenya_ setting
@@ -413,7 +421,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
     }
 
     onFragmentsInvalid(result) {
-        if (result.response.status !== EDConfig.apiValidationErrorStatusCode) {
+        if (result.response.status !== EDAPI.apiValidationErrorStatusCode) {
             return ; // unknown error code
         }
 
@@ -485,7 +493,9 @@ class EDFragmentForm extends EDStatefulFormComponent {
     }
  
     render() {
-        const language = EDConfig.findLanguage(this.props.language_id);
+        if (! this.state.language) {
+            return null;
+        }
 
         return <form onSubmit={this.onSubmit.bind(this)}>
             <p>
@@ -540,7 +550,7 @@ class EDFragmentForm extends EDStatefulFormComponent {
                         </div> : ''}
                         <div className="form-group">
                             <label htmlFor="ed-sentence-fragment-tengwar" className="control-label">Tengwar</label>
-                            <EDTengwarInput componentId="ed-sentence-fragment-tengwar" tengwarMode={language.tengwar_mode}
+                            <EDTengwarInput componentId="ed-sentence-fragment-tengwar" tengwarMode={this.state.language.tengwar_mode}
                                 ref={input => this.tengwarInput = input} />
                         </div>
                         {! this.state.editIsExcluded ? <div>

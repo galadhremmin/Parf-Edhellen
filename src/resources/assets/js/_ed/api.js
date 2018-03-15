@@ -8,59 +8,107 @@ const EDAPI = {
     /**
      * Execute a DELETE request.
      */
-    delete: (apiMethod) => this.consume.bind(EDAPI, axios.delete, apiMethod),
+    delete: function (apiMethod) { 
+        return this._consume(axios.delete, apiMethod);
+    },
 
     /**
      * Execute a HEAD request.
      */
-    head: (apiMethod) => this.consume.bind(EDAPI, axios.head, apiMethod),
+    head: function (apiMethod) {
+        return this._consume(axios.head, apiMethod);
+    },
 
     /**
      * Execute a GET request.
      */
-    get: (apiMethod) => this.consume.bind(EDAPI, axios.get, apiMethod),
+    get: function (apiMethod) {
+        return this._consume(axios.get, apiMethod);
+    },
 
     /**
      * Execute a POST request.
      */
-    post: (apiMethod, payload) => this.consume.bind(EDAPI, axios.delete, apiMethod, payload),
+    post: function (apiMethod, payload) {
+        return this._consume(axios.post, apiMethod, payload || {});
+    },
 
     /**
      * Execute a PUT request.
      */
-    put: (apiMethod, payload) => this.consume.bind(EDAPI, axios.put, apiMethod, payload),
+    put: function (apiMethod, payload) {
+        return this._consume(axios.put, apiMethod, payload || {});
+    },
 
     /**
      * Register the specified error.
      */
-    error: (message, url, error) => this.post(
-        this.apiErrorMethod, { message, url, error }),
-    
+    error: function (message, url, error) {
+        return this.post(this.apiErrorMethod, { message, url, error });
+    },
+
     /**
-     * Get all languages.
+     * Gets all languages.
      */
-    languages: () => {
-        let languages = window.sessionStorage.getItem('ed.languages');
-        if (languages) {
-            return Promise.resolve(JSON.parse(languages));
+    languages: function (id = undefined, key = 'id', cmpFunc = (a, b) => a === b) {
+        let promise = null;
+        
+        let languages = this._cachedLanguages;
+        if (! languages) {
+            const json = window.sessionStorage.getItem('ed.languages');
+            if (json) {
+                languages = JSON.parse(json);
+            }
+
+            if (languages) {
+                this._cachedLanguages = languages;
+            }
         }
 
-        return this.consume.bind(EDAPI, this.get, 'book/languages')
-            .then(resp => {
-                window.sessionStorage.setItem('ed.languages', JSON.stringify(resp.data));
-                return resp;
-            });
+        if (languages) {
+            promise = Promise.resolve(languages);
+        } else {
+            promise = this.get('book/languages')
+                .then(resp => {
+                    window.sessionStorage.setItem('ed.languages', JSON.stringify(resp.data));
+                    return resp.data;
+                });
+        }
+
+        return promise.then(this._filterLanguages.bind(this, id, key, cmpFunc));
+    },
+
+    _filterLanguages: function (id, key, cmpFunc, languages) {
+        if (id === undefined) {
+            return languages;
+        }
+
+        const categories = Object.keys(languages);
+
+        for (let i = categories.length - 1; i >= 0; i -= 1) {
+            const subLanguages = languages[categories[i]];
+
+            for (let j = subLanguages.length - 1; j >= 0; j -= 1) {
+                if (cmpFunc(subLanguages[j][key], id)) {
+                    return subLanguages[j];
+                }
+            }
+        }
+
+        return undefined;
     },
 
     /**
      * Combines an absolute path based on the API method path.
      */
-    absPath: path => this.apiPathName + (path[0] !== '/' ? '/' : '') + path,
+    _absPath: function (path) {
+        return path[0] === '/' ? path : this.apiPathName + '/' + path;
+    },
 
     /**
      * Default XMLHTTPRequest configuration.
      */
-    config: () => ({
+    _config: () => ({
         headers: {
             'Accept': 'application/json',
             'X-Requested-With': 'XMLHttpRequest'
@@ -70,28 +118,34 @@ const EDAPI = {
     /**
      * Executes the specified HTTP method and manages errors gracefully.
      */
-    consume: (factory, apiMethod, payload) => factory
-        .call(axios, this.absPath(apiMethod), payload || undefined)
-        .catch(this.handleError.bind(this)),
+    _consume: function (factory, apiMethod, payload) {
+        const config = this._config();
+        const hasBody = payload !== undefined;
+        return factory
+            .call(axios, this._absPath(apiMethod), 
+                hasBody ? payload : config,   
+                hasBody ? config : undefined 
+            )
+            .catch(this._handleError.bind(this, apiMethod));
+    },
 
-    handleError: (reason) => {
+    _handleError: function (apiMethod, error) {
         if (apiMethod === this.apiErrorMethod) {
             return reason;
         }
 
         let errorReport = null;
-
         if (error.response) {
-            let error = null;
+            let message = null;
             switch (error.response.status) {
                 case 419:
-                    error = 'Your browsing session has timed out. This usually happens when you leave the page open for a long time. Please refresh the page and try again.';
+                    message = 'Your browsing session has timed out. This usually happens when you leave the page open for a long time. Please refresh the page and try again.';
                     break;
                 case 401:
-                    error = 'You must log in to use this feature.';
+                    message = 'You must log in to use this feature.';
                     break;
                 case 403:
-                    error = 'You are not authorized to use this feature.';
+                    message = 'You are not authorized to use this feature.';
                     break;
                 default:
                     errorReport = {
@@ -103,8 +157,8 @@ const EDAPI = {
                     break;
             }
 
-            if (error !== null) {
-                alert(error);
+            if (message !== null) {
+                alert(message);
             }
 
         } else if (error.request) {

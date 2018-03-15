@@ -5,7 +5,6 @@ import {
     ED_RECEIVE_GLOSS
 } from '../reducers';
 import EDAPI from 'ed-api';
-import EDConfig from 'ed-config';
 import { deferredResolve } from 'ed-promise';
 
 export const getCard = (flashcardId) => (dispatch, getState) => {

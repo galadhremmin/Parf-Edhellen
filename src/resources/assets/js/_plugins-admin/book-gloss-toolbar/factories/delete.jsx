@@ -1,6 +1,5 @@
 import React from 'react';
 import EDAPI from 'ed-api';
-import EDConfig from 'ed-config';
 import { EDComponentFactory } from 'ed-components/dialog';
 import EDGlossSelect from 'ed-components/gloss-select';
 

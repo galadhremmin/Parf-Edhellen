@@ -3,7 +3,6 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import EDAPI from 'ed-api';
-import EDConfig from 'ed-config';
 import { EDStatefulFormComponent } from 'ed-form';
 import { smoothScrollIntoView } from 'ed-scrolling';
 import { setSentenceData } from '../../actions/admin';
@@ -86,7 +85,7 @@ class EDSentenceForm extends EDStatefulFormComponent {
         // Laravel returns 422 when the request fails validation. In the event that
         // we received an alternate status code, bail, as we do not know what that payload
         // contains.
-        if (request.response.status !== EDConfig.apiValidationErrorStatusCode) {
+        if (request.response.status !== EDAPI.apiValidationErrorStatusCode) {
             return; 
         }
 

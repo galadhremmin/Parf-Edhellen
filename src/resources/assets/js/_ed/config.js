@@ -8,22 +8,6 @@ const EDConfig = {
     admin: () => document.body.classList.contains('ed-admin'),
     userId: () => parseInt(document.body.dataset['userId'], 10),
 
-    findLanguage: (v, key = 'id', cmpFunc = (a, b) => a === b) => {
-        const categories = Object.keys(languages);
-
-        for (let i = categories.length - 1; i >= 0; i -= 1) {
-            const subLanguages = languages[categories[i]];
-
-            for (let j = subLanguages.length - 1; j >= 0; j -= 1) {
-                if (cmpFunc(subLanguages[j][key], v)) {
-                    return subLanguages[j];
-                }
-            }
-        }
-
-        return undefined;
-    },
-
     /**
      * Convenience method for generating window messages
      */

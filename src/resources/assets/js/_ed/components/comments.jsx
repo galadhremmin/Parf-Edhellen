@@ -62,7 +62,7 @@ class EDComments extends EDStatefulFormComponent {
         });
 
         const jumpTo = this.state.jump_post_id;
-        const url = `/forum?morph=${this.props.morph}&entity_id=${this.props.entityId}&order=${this.props.order}` + 
+        const url = `forum?morph=${this.props.morph}&entity_id=${this.props.entityId}&order=${this.props.order}` + 
             (fromId ? `&from_id=${fromId}` : '') +
             (jumpTo ? `&jump_to=${jumpTo}` : '');
         
@@ -173,8 +173,8 @@ class EDComments extends EDStatefulFormComponent {
         };
         
         const promise = this.state.post_id === 0
-            ? EDAPI.post('/forum', data)
-            : EDAPI.put(`/forum/${this.state.post_id}`, data);
+            ? EDAPI.post('forum', data)
+            : EDAPI.put(`forum/${this.state.post_id}`, data);
 
         promise.then(this.onSubmitted.bind(this))
             .then(() => {
@@ -200,9 +200,9 @@ class EDComments extends EDStatefulFormComponent {
         }
 
         if (! liked) {
-            EDAPI.post(`/forum/like/${postId}`).then(this.onLiked.bind(this, postId));
+            EDAPI.post(`forum/like/${postId}`).then(this.onLiked.bind(this, postId));
         } else {
-            EDAPI.delete(`/forum/like/${postId}`).then(this.onUnliked.bind(this, postId));
+            EDAPI.delete(`forum/like/${postId}`).then(this.onUnliked.bind(this, postId));
         }
     }
 
@@ -256,7 +256,7 @@ class EDComments extends EDStatefulFormComponent {
     onEditPost(post, ev) {
         ev.preventDefault();
 
-        EDAPI.get(`/forum/${post.id}/edit`)
+        EDAPI.get(`forum/${post.id}/edit`)
             .then(this.onEditPostDataReceived.bind(this));
     }
 
@@ -291,7 +291,7 @@ class EDComments extends EDStatefulFormComponent {
             return;
         }
 
-        EDAPI.delete(`/forum/${post.id}`)
+        EDAPI.delete(`forum/${post.id}`)
             .then(this.onPostDeleted.bind(this));
     }
 

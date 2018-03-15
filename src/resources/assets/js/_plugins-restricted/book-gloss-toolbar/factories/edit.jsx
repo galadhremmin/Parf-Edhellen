@@ -4,7 +4,6 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import EDAPI from 'ed-api';
 import thunkMiddleware from 'redux-thunk';
-import EDConfig from 'ed-config';
 import { EDComponentFactory } from 'ed-components/dialog';
 import EDGlossAdminReducer from '../../../gloss/reducers/admin';
 import EDGlossForm from '../../../gloss/components/forms';
