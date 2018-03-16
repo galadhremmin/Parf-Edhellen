@@ -108,7 +108,10 @@
           <hr>
           <ul>
             <li><a href="{{ route('account.index') }}">Accounts</a></li>
-            <li><a href="{{ route('system-error.index') }}">System errors</a></li>
+            <li>
+              <a href="{{ route('system-error.index') }}">System errors</a> 
+              <span class="label label-info">{{ $numberOfErrors }}</span>
+            </li>
           </ul>
         </div>
       </div>

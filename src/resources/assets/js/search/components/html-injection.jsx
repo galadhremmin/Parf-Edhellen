@@ -67,7 +67,7 @@ class EDHtmlInjection extends React.Component {
         ev.preventDefault();
 
         if (this.props.onReferenceLinkClick) {
-            EDAPI.language(languageShortName, 'short_name').then(language => {
+            EDAPI.languages(languageShortName || null, 'short_name').then(language => {
                 this.props.onReferenceLinkClick({
                     word,
                     language

@@ -2,9 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Account, FlashcardResult, Contribution};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
+use App\Models\{
+    Account, 
+    FlashcardResult, 
+    Contribution,
+    SystemError
+};
 
 class DashboardController extends Controller
 {
@@ -14,17 +20,23 @@ class DashboardController extends Controller
 
         $noOfFlashcards = FlashcardResult::forAccount($user->id)->count();
         $noOfContributions = Contribution::forAccount($user->id)->count();
-        $noOfPendingContributions = $user->isAdministrator()
+
+        $isAdmin = $user->isAdministrator();
+        $isIncognito = $user->isIncognito();
+        $noOfPendingContributions = $isAdmin
             ? Contribution::whereNull('is_approved')->count()
             : 0;
-        $incognito = $user->isIncognito();
+        $numberOfErrors = $isAdmin
+            ? SystemError::count()
+            : 0;
 
         return view('dashboard.index', [
-            'user' => $request->user(),
-            'noOfFlashcards' => $noOfFlashcards,
+            'user'              => $request->user(),
+            'noOfFlashcards'    => $noOfFlashcards,
             'noOfContributions' => $noOfContributions,
             'noOfPendingContributions' => $noOfPendingContributions,
-            'incognito' => $incognito
+            'incognito'         => $isIncognito,
+            'numberOfErrors'    => $numberOfErrors
         ]);
     }
 
