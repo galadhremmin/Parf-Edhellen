@@ -138,15 +138,17 @@ const EDAPI = {
         if (error.response) {
             let message = null;
             switch (error.response.status) {
-                case 419:
-                    message = 'Your browsing session has timed out. This usually happens when you leave the page open for a long time. Please refresh the page and try again.';
-                    break;
                 case 401:
                     message = 'You must log in to use this feature.';
                     break;
                 case 403:
                     message = 'You are not authorized to use this feature.';
                     break;
+                case 419:
+                    message = 'Your browsing session has timed out. This usually happens when you leave the page open for a long time. Please refresh the page and try again.';
+                    break;
+                case this.apiValidationErrorStatusCode:
+                    return Promise.reject(error); // Validation errors are pass-through.
                 default:
                     errorReport = {
                         apiMethod,
@@ -167,6 +169,7 @@ const EDAPI = {
             // http.ClientRequest in node.js
             errorReport = {
                 apiMethod,
+                request: error.request,
                 error: 'API call received no response.'
             };
         } else {
@@ -179,7 +182,7 @@ const EDAPI = {
 
         if (errorReport !== null) {
             errorReport.config = error.config;
-            this.error('API request failed', apiMethod, JSON.stringify(errorReport));
+            this.error('API request failed', apiMethod, JSON.stringify(errorReport, undefined, 2));
         }
 
         return Promise.reject('API request failed ' + apiMethod);
