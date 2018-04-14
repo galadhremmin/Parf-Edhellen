@@ -11,7 +11,7 @@
 donations, I was able to purchase <a href="http://www.eldalamberon.com/parma22.html" target="_blank">Parma Eldalamberon
     issue 22</a>.</p>
 <p>You all have my <em>heartfelt thanks</em> for helping and supporting me in this work!</p>
-<p><em>Updated 2017-09-26.</em></p>
+<p><em>Updated 2018-04-13.</em></p>
 
 <blockquote class="donation-box">
 <h2>Would you like to help?</h2>
@@ -26,9 +26,22 @@ donations, I was able to purchase <a href="http://www.eldalamberon.com/parma22.h
 </form>
 </blockquote>
 
+<h2>Donations 2018</h2>
+<ol class="donations">
+  <li>19ᵗʰ Mar '18: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
+  <li>18ᵗʰ Mar '18: <span class="currency">$1,00</span> by <span class="person">Neil H</span>.</li>
+  <li>19ᵗʰ Feb '18: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
+  <li>19ᵗʰ Jan '18: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
+  <li>12ᵗʰ Jan '18: <span class="currency">$21,00</span> by <span class="person">Jean Paul C</span>.</li>
+</ol>
+
 <h2>Donations 2017</h2>
 <p>Parf Edhellen is entirely supported by donations this year. <strong>Thank you everyone for your continued support!</strong></p>
 <ol class="donations">
+  <li>19ᵗʰ Dec '17: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
+  <li>19ᵗʰ Nov '17: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
+  <li>26ᵗʰ Oct '17: <span class="currency">$25,00</span> by <span class="person">Joanne M</span>.</li>
+  <li>19ᵗʰ Oct '17: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
   <li>25ᵗʰ Sep '17: <span class="currency">$15,00</span> by <span class="person">Marc C</span>.</li>
   <li>23ʳᵈ Sep '17: <span class="currency">$21,00</span> by <span class="person">Jean Paul C</span>.</li>
   <li>22ⁿᵈ Sep '17: <span class="currency">$6,00</span> by <span class="person">Birgit C</span>.</li>
