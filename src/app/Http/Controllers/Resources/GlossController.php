@@ -86,7 +86,7 @@ class GlossController extends Controller
     public function edit(Request $request, int $id) 
     {
         // Eagerly load the gloss.
-        $gloss = Gloss::with('word', 'gloss_group', 'sense', 'sense.word', 'translations')
+        $gloss = Gloss::with('word', 'gloss_details', 'gloss_group', 'sense', 'sense.word', 'translations')
             ->findOrFail($id)
             ->getLatestVersion();
 

@@ -23,7 +23,8 @@ const EDGlossAdminReducer = (state = {
     groups: undefined,
     loading: true,
     _keywords: [],
-    contribution_id: undefined
+    contribution_id: undefined,
+    details: []
 }, action) => {
     switch (action.type) {
         case ED_SET_GLOSS_DATA:

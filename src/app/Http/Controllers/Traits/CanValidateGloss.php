@@ -25,8 +25,8 @@ trait CanValidateGloss
             'translations'               => 'required|array|min:1|max:'.$maximumNumberOfTranslations,
             'details'                    => 'sometimes|array',
             'details.*.category'         => 'required|string',
-            'details.*.order'            => 'required|number|min:0',
-            'details.*.text'             => 'required|text'
+            'details.*.order'            => 'required|numeric|min:1',
+            'details.*.text'             => 'required|string'
         ];
 
         if (! $review) {

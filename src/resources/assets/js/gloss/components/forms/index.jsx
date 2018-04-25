@@ -3,11 +3,11 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import EDAPI from 'ed-api';
 import { EDStatefulFormComponent } from 'ed-form';
-import EDMarkdownEditor from 'ed-components/markdown-editor';
 import EDLanguageSelect from 'ed-components/language-select';
 import EDErrorList from 'ed-components/error-list';
 import { smoothScrollIntoView } from 'ed-scrolling';
 import { requestGlossGroups, componentIsReady } from '../../actions/admin';
+import EDDetailsInput from '../details-input';
 import EDTranslationSelect from '../../../_shared/components/translation-select';
 import EDWordSelect from '../../../_shared/components/word-select';
 import EDAccountSelect from '../../../_shared/components/account-select';
@@ -36,7 +36,8 @@ class EDGlossForm extends EDStatefulFormComponent {
             sense: undefined,
             keywords: [],
             is_uncertain: false,
-            is_rejected: false
+            is_rejected: false,
+            details: []
         };
     }
 
@@ -64,7 +65,8 @@ class EDGlossForm extends EDStatefulFormComponent {
                 is_uncertain:   props.glossUncertain || 0,
                 is_rejected:    props.glossRejected || 0,
                 tengwar:        props.glossTengwar || '',
-                word:           props.glossWord ? props.glossWord.word : '', 
+                details:        props.glossDetails || [],
+                word:           props.glossWord ? props.glossWord.word : ''
             })
         });
     }
@@ -161,6 +163,13 @@ class EDGlossForm extends EDStatefulFormComponent {
                 });
             });
     }
+
+    onDetailsChange(ev) {
+        this.setState({
+            details: ev.details,
+            comments: ev.abstract
+        });
+    }
  
     render() {
         if (this.props.loading) {
@@ -254,9 +263,10 @@ class EDGlossForm extends EDStatefulFormComponent {
                 </label>
             </div>
             <div className="form-group">
-                <label htmlFor="ed-gloss-comments" className="control-label">Comments</label>
-                <EDMarkdownEditor componentId="ed-gloss-comments" componentName="comments" rows={8}
-                    value={this.state.comments} onChange={super.onChange.bind(this)} />
+                <label htmlFor="ed-gloss-comments" className="control-label">Details</label>
+                <EDDetailsInput componentId="ed-gloss-comments" componentName="comments" rows={8}
+                    abstract={this.state.comments} details={this.state.details} 
+                    onChange={this.onDetailsChange.bind(this)} />
             </div>
             {! this.props.admin ?
             <div className="form-group">
@@ -315,6 +325,7 @@ const mapStateToProps = state => {
         glossRejected:     state.is_rejected,
         glossKeywords:     state._keywords,
         glossGroupId:      state.gloss_group_id,
+        glossDetails:      state.gloss_details,
         contributionId:    state.contribution_id,
         languages:         state.languages,
         groups:            state.groups,
