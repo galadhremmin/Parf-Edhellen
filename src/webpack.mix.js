@@ -43,7 +43,7 @@ mix.extract([
     'react-redux', 'redux', 'redux-thunk',
     'react-autosuggest', 
     'html-to-react',
-    'axios',
+    'axios', 'retry-axios',
     'classnames',
     /* These components are excuded from _vendor.js_ as they are limited to restricted visitors 
     'ed-components/dialog',

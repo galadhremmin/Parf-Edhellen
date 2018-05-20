@@ -1,5 +1,5 @@
 import axios from 'axios';
-import rax from 'retry-axios';
+import { attach } from 'retry-axios';
 
 const EDAPI = {
     apiPathName: '/api/v2', // path to API w/o trailing slash!
@@ -123,7 +123,7 @@ const EDAPI = {
      */
     _consume: function (factory, apiMethod, payload) {
         if (! this.isRaxed) {
-            rax.attach();
+            attach();
             this.isRaxed = true;
         }
 
@@ -134,7 +134,7 @@ const EDAPI = {
                 hasBody ? payload : config,   
                 hasBody ? config : undefined 
             )
-            .catch(this._handleError.bind(this, apiMethod, retries));
+            .catch(this._handleError.bind(this, apiMethod));
     },
 
     _handleError: function (apiMethod, error) {
