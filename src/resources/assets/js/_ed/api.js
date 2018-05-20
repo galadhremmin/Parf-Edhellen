@@ -1,9 +1,11 @@
 import axios from 'axios';
+import rax from 'retry-axios';
 
 const EDAPI = {
     apiPathName: '/api/v2', // path to API w/o trailing slash!
     apiErrorMethod: 'utility/error',
     apiValidationErrorStatusCode: 422,
+    isRaxed: false,
 
     /**
      * Execute a DELETE request.
@@ -112,13 +114,19 @@ const EDAPI = {
         headers: {
             'Accept': 'application/json',
             'X-Requested-With': 'XMLHttpRequest'
-        }
+        },
+        timeout: 2500
     }),
 
     /**
      * Executes the specified HTTP method and manages errors gracefully.
      */
     _consume: function (factory, apiMethod, payload) {
+        if (! this.isRaxed) {
+            rax.attach();
+            this.isRaxed = true;
+        }
+
         const config = this._config();
         const hasBody = payload !== undefined;
         return factory
@@ -126,7 +134,7 @@ const EDAPI = {
                 hasBody ? payload : config,   
                 hasBody ? config : undefined 
             )
-            .catch(this._handleError.bind(this, apiMethod));
+            .catch(this._handleError.bind(this, apiMethod, retries));
     },
 
     _handleError: function (apiMethod, error) {

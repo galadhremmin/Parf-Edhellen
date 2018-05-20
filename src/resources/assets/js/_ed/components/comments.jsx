@@ -72,7 +72,7 @@ class EDComments extends EDStatefulFormComponent {
     }
 
     setPage(pageNo) {
-        if (! this.isInfiniteScroll()) {
+        if (! this.isInfiniteScroll() && pageNo > 1) {
             window.location.hash = `#!/page/${pageNo}`; 
         }
     }

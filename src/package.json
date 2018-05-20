@@ -11,12 +11,13 @@
     "webpack": "node_modules/laravel-mix/setup/webpack.config.js"
   },
   "devDependencies": {
-    "axios": "^0.17.1",
+    "axios": "^0.18.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.23.0",
     "bootstrap-sass": "^3.3.7",
-    "laravel-mix": "^2.0.0"
+    "laravel-mix": "^2.0.0",
+    "retry-axios": "^0.3.2"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
@@ -31,7 +32,7 @@
     "react-overlay": "^0.1.7",
     "react-redux": "^5.0.6",
     "react-router-dom": "^4.2.2",
-    "redux": "^3.7.2",
+    "redux": "^4.0.0",
     "redux-thunk": "^2.2.0",
     "scroll-into-view": "^1.9.1",
     "spinkit": "^1.2.5"
