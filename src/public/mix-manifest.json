@@ -1,4 +1,5 @@
 {
+    "/v33/js/system-errors-admin.js": "/v33/js/system-errors-admin.js",
     "/v33/js/vendor.js": "/v33/js/vendor.js",
     "/v33/js/sentence-admin.js": "/v33/js/sentence-admin.js",
     "/v33/js/global-plugins-admin.js": "/v33/js/global-plugins-admin.js",
@@ -14,7 +15,6 @@
     "/v33/css/app.timeline.css": "/v33/css/app.timeline.css",
     "/v33/css/app.discuss.css": "/v33/css/app.discuss.css",
     "/v33/js/flashcard.js": "/v33/js/flashcard.js",
-    "/v33/js/system-errors-admin.js": "/v33/js/system-errors-admin.js",
     "/v33/js/comment.js": "/v33/js/comment.js",
     "/v33/js/markdown.js": "/v33/js/markdown.js",
     "/v33/js/manifest.js": "/v33/js/manifest.js",

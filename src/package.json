@@ -17,6 +17,7 @@
     "babel-preset-react": "^6.23.0",
     "bootstrap-sass": "^3.3.7",
     "laravel-mix": "^2.0.0",
+    "recharts": "^1.0.0-beta.10",
     "retry-axios": "^0.3.2"
   },
   "dependencies": {

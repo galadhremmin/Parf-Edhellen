@@ -45,8 +45,8 @@ const EDAPI = {
     /**
      * Register the specified error.
      */
-    error: function (message, url, error) {
-        return this.post(this.apiErrorMethod, { message, url, error });
+    error: function (message, url, error, category = 'frontend') {
+        return this.post(this.apiErrorMethod, { message, url, error, category });
     },
 
     /**
@@ -104,6 +104,11 @@ const EDAPI = {
      * Combines an absolute path based on the API method path.
      */
     _absPath: function (path) {
+        const origin = window.location.origin;
+        if (origin.length < path.length && path.substr(0, origin.length) == origin) {
+            return path;
+        }
+
         return path[0] === '/' ? path : this.apiPathName + '/' + path;
     },
 
@@ -122,6 +127,10 @@ const EDAPI = {
      * Executes the specified HTTP method and manages errors gracefully.
      */
     _consume: function (factory, apiMethod, payload) {
+        if (! apiMethod || apiMethod.length < 1) {
+            return Promise.reject(`You need to specify an API method to invoke.`);
+        }
+
         if (! this.isRaxed) {
             attach();
             this.isRaxed = true;
@@ -143,17 +152,21 @@ const EDAPI = {
         }
 
         let errorReport = null;
+        let category = undefined;
         if (error.response) {
             let message = null;
             switch (error.response.status) {
                 case 401:
                     message = 'You must log in to use this feature.';
+                    category = 'frontend-401';
                     break;
                 case 403:
                     message = 'You are not authorized to use this feature.';
+                    category = 'frontend-403';
                     break;
                 case 419:
                     message = 'Your browsing session has timed out. This usually happens when you leave the page open for a long time. Please refresh the page and try again.';
+                    category = 'frontend-419';
                     break;
                 case this.apiValidationErrorStatusCode:
                     return Promise.reject(error); // Validation errors are pass-through.
@@ -180,6 +193,7 @@ const EDAPI = {
                 request: error.request,
                 error: 'API call received no response.'
             };
+            category = 'api-noresponse';
         } else {
             // Something happened in setting up the request that triggered an Error
             errorReport = {
@@ -190,7 +204,7 @@ const EDAPI = {
 
         if (errorReport !== null) {
             errorReport.config = error.config;
-            this.error('API request failed', apiMethod, JSON.stringify(errorReport, undefined, 2));
+            this.error('API request failed', apiMethod, JSON.stringify(errorReport, undefined, 2), category);
         }
 
         return Promise.reject('API request failed ' + apiMethod);

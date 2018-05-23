@@ -7,10 +7,10 @@ const load = () => {
     
     if (container) {
         const dataContainer = document.getElementById('ed-preloaded-errors');
-        const data = JSON.parse(dataContainer.textContent);
+        const value = JSON.parse(dataContainer.textContent);
 
         ReactDOM.render(
-            <EDSystemErrorList errors={data} />,
+            <EDSystemErrorList value={value} />,
             container
         );
     }

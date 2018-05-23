@@ -10,6 +10,9 @@ use App\Models\SystemError;
 
 class UtilityApiController extends Controller
 {
+    const DEFAULT_SYSTEM_ERROR_CATEGORY = 'frontend';
+    const RESTRICTED_SYSTEM_ERROR_CATEGORIES = ['backend'];
+
     public function parseMarkdown(Request $request)
     {
         $this->validate($request, [
@@ -37,23 +40,33 @@ class UtilityApiController extends Controller
     public function logError(Request $request) 
     {
         $this->validate($request, [
-            'message' => 'string|required',
-            'url'     => 'string|required'
+            'message'  => 'string|required',
+            'url'      => 'string|required',
+            'category' => 'string'
         ]);
 
-        $user = $request->user();
+        $category = $request->has('category') ? $request->input('category') : null;
+        if ($category === null || in_array($category, self::RESTRICTED_SYSTEM_ERROR_CATEGORIES)) {
+            $category = self::DEFAULT_SYSTEM_ERROR_CATEGORY;
+        }
 
+        $user = $request->user();
         SystemError::create([
             'message'    => $request->input('message'),
             'url'        => $request->input('url'),
-            'ip'         => $_SERVER['REMOTE_ADDR'],
+            'ip'         => isset($_SERVER['REMOTE_ADDR'])
+                ? $_SERVER['REMOTE_ADDR']
+                : null,
             'error'      => $request->has('error') 
                 ? $request->input('error') 
                 : null,
             'account_id' => $user !== null
                 ? $user->id 
                 : null,
-            'is_common'  => 0
+            'is_common'  => 0,
+            'category'   => $category
         ]);
+
+        return response(null, 201);
     }
 }

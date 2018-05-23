@@ -1,23 +1,57 @@
 import React from 'react';
+import {
+    ResponsiveContainer,
+    BarChart,
+    CartesianGrid,
+    XAxis,
+    YAxis,
+    Tooltip,
+    Legend,
+    Bar
+} from 'recharts';
+import EDAPI from 'ed-api';
 import classNames from 'classnames';
 
 class EDSystemErrorList extends React.Component {
     constructor(props, context) {
         super(props, context);
+        console.log(props);
 
         this.state = {
-            ...(this.makeErrorState(props.errors))
+            ...(this.buildState(props.value))
         }
     }
 
     componentWillReceiveProps(props) {
-        if (Array.isArray(props.errors)) {
-            this.setState(this.makeErrorState(props.errors));
+        if (props.value) {
+            this.setValue(props.value);
         }
     }
 
-    makeErrorState(errors) {
+    setValue(value) {
+        this.setState(this.buildState(value));
+    }
+
+    getInitialState() {
+        return {
+            errors: [],
+            openErrorId: 0,
+            exceptions: [],
+            selectedExceptions: [],
+            hasNavigation: false,
+            nextPageUrl: null,
+            previousPageUrl: null
+        };
+    }
+
+    buildState(value) {
+        if (! value) {
+            return this.getInitialState();
+        }
+
+        // Build an array of exceptions and associate each error with a unique exception type.
         const exceptions = {};
+        const errors = value.errors.data;
 
         for (let error of errors) {
             let pos = error.message.indexOf(':');
@@ -31,6 +65,15 @@ class EDSystemErrorList extends React.Component {
 
         const exceptionStrings = Object.keys(exceptions);
         exceptionStrings.sort();
+
+        // Build chart dataset for visualizing errors per week 
+        const errorsByWeek = [];
+        for (var set of value.errorsByWeek) {
+            errorsByWeek.push({
+                x: `${set.year} - ${set.week}`,
+                errors: set.number_of_errors
+            });
+        }
         
         return {
             errors,
@@ -39,7 +82,11 @@ class EDSystemErrorList extends React.Component {
             selectedExceptions: exceptionStrings.filter(
                 ex => ex !== 'Illuminate\\Auth\\AuthenticationException'   &&
                       ex !== 'Illuminate\\Session\\TokenMismatchException' &&
-                      ex !== 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException')
+                      ex !== 'Symfony\\Component\\HttpKernel\\Exception\\NotFoundHttpException'),
+            hasNavigation: value.errors.next_page_url || value.errors.prev_page_url,
+            nextPageUrl: value.errors.next_page_url,
+            previousPageUrl: value.errors.prev_page_url,
+            errorsByWeek
         };
     }
 
@@ -67,8 +114,26 @@ class EDSystemErrorList extends React.Component {
         });
     }
 
+    onNavigation(url, ev) {
+        ev.preventDefault();
+
+        EDAPI.get(url).then(resp => {
+            this.setValue(resp.data);
+        });
+    }
+
     render() {
         return <div>
+            {this.state.errorsByWeek ? <ResponsiveContainer width="100%" aspect={4/1.5}>
+                <BarChart width={730} height={250} data={this.state.errorsByWeek}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="x" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="errors" fill="#3097D1" />
+                </BarChart>
+            </ResponsiveContainer> : null}
             <select className="form-control" multiple={true} value={this.state.selectedExceptions}
                 onChange={this.onExceptionChange.bind(this)}>
                 {this.state.exceptions.map((exception, i) => 
@@ -82,7 +147,7 @@ class EDSystemErrorList extends React.Component {
                             <th>Exception</th>
                         </tr>
                     </thead>
-                    {this.props.errors.filter(this.filterErrors.bind(this))
+                    {this.state.errors.filter(this.filterErrors.bind(this))
                         .map((error, i) => <tbody key={error.id}>
                         <tr onClick={this.onOpenError.bind(this, error.id)}>
                             <td>{error.created_at}</td>
@@ -98,18 +163,25 @@ class EDSystemErrorList extends React.Component {
                                 {error.error ?
                                 <code style={{ whiteSpace: 'pre-wrap' }}>
                                     {error.error}
-                                </code> : undefined}
+                                </code> : null}
                             </td>
-                        </tr> : undefined}
+                        </tr> : null}
                     </tbody>)}
                 </table>
             </div>
+            {this.state.hasNavigation ?
+                <nav>
+                    <ul className="pager">
+                        <li className={classNames('previous', { 'disabled': !this.state.previousPageUrl })}><a href={this.state.previousPageUrl} onClick={this.onNavigation.bind(this, this.state.previousPageUrl)}><span aria-hidden="true">&larr;</span> Older</a></li>
+                        <li className={classNames('next', { 'disabled': !this.state.nextPageUrl })}><a href={this.state.nextPageUrl} onClick={this.onNavigation.bind(this, this.state.nextPageUrl)}>Newer <span aria-hidden="true">&rarr;</span></a></li>
+                    </ul>
+                </nav> : null}
         </div>;
     }
 }
 
 EDSystemErrorList.defaultProps = {
-    errors: []
+    errors: { data: [] }
 };
 
 export default EDSystemErrorList;
