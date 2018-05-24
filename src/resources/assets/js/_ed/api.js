@@ -124,6 +124,15 @@ const EDAPI = {
     }),
 
     /**
+     * A request is retryable if it was aborted (i.e. timeout) or the axios retry library deems it idempotent. The error 
+     * logging method is not retryable.
+     */
+    _isRetryable: function (error) {
+        return error.config.url.substr(-this.apiErrorMethod.length) !== this.apiErrorMethod && 
+            (error.code === 'ECONNABORTED' || axiosRetry.isRetryableError(error));
+    },
+
+    /**
      * Executes the specified HTTP method and manages errors gracefully.
      */
     _consume: function (factory, apiMethod, payload) {
@@ -135,7 +144,7 @@ const EDAPI = {
             axiosRetry(axios, { 
                 retries: 3, 
                 retryDelay: axiosRetry.exponentialDelay,
-                retryCondition: axiosRetry.isRetryableError
+                retryCondition: this._isRetryable.bind(this)
             });
             this.isRaxed = true;
         }
