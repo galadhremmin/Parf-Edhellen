@@ -13,9 +13,12 @@ class SystemErrorController extends Controller
 {
     public function index(Request $request)
     {
-        $errorsByWeek = SystemError::select(DB::raw('count(*) as number_of_errors'), 
-            DB::raw('year(created_at) as year'), DB::raw('week(created_at) as week'))
-            ->groupBy(DB::raw('year(created_at)'), DB::raw('week(created_at)'))
+        $errorsByWeek = SystemError::select( 
+            DB::raw('year(created_at) as year'), 
+            DB::raw('week(created_at) as week'),
+            DB::raw('count(*) as number_of_errors'),
+            'category')
+            ->groupBy(DB::raw('year(created_at)'), DB::raw('week(created_at)'), 'category')
             ->get();
 
         $errors = SystemError::orderBy('id', 'desc')

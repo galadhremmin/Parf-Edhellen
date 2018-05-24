@@ -12,6 +12,8 @@ import {
 import EDAPI from 'ed-api';
 import classNames from 'classnames';
 
+const ChartColors = ["#00818a", "#404b69", "#283149", "#6c5b7c", "#c06c84", "#f67280", "#f8b595"];
+
 class EDSystemErrorList extends React.Component {
     constructor(props, context) {
         super(props, context);
@@ -40,7 +42,8 @@ class EDSystemErrorList extends React.Component {
             selectedExceptions: [],
             hasNavigation: false,
             nextPageUrl: null,
-            previousPageUrl: null
+            previousPageUrl: null,
+            errorCategories: []
         };
     }
 
@@ -67,13 +70,24 @@ class EDSystemErrorList extends React.Component {
         exceptionStrings.sort();
 
         // Build chart dataset for visualizing errors per week 
-        const errorsByWeek = [];
-        for (var set of value.errorsByWeek) {
-            errorsByWeek.push({
-                x: `${set.year} - ${set.week}`,
-                errors: set.number_of_errors
-            });
-        }
+        const errorCategories = value.errorsByWeek.reduce((arr, v) => {
+            if (arr.indexOf(v.category) === -1) {
+                arr.push(v.category);
+            }
+            return arr;
+        }, []);
+        const errorsByWeek = value.errorsByWeek.reduce((arr, set) => {
+
+            const x = `${set.year} - ${set.week}`;
+            let w = arr.find(p => p.x === x);
+            if (! w) {
+                w = { x };
+                arr.push(w);
+            }
+
+            w[set.category] = set.number_of_errors;
+            return arr;
+        }, []);
         
         return {
             errors,
@@ -86,7 +100,8 @@ class EDSystemErrorList extends React.Component {
             hasNavigation: value.errors.next_page_url || value.errors.prev_page_url,
             nextPageUrl: value.errors.next_page_url,
             previousPageUrl: value.errors.prev_page_url,
-            errorsByWeek
+            errorsByWeek,
+            errorCategories
         };
     }
 
@@ -131,7 +146,7 @@ class EDSystemErrorList extends React.Component {
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Bar dataKey="errors" fill="#3097D1" />
+                    {this.state.errorCategories.map((category, i) => <Bar key={category} dataKey={category} fill={ChartColors[i % ChartColors.length]} stackId="x" />)}
                 </BarChart>
             </ResponsiveContainer> : null}
             <select className="form-control" multiple={true} value={this.state.selectedExceptions}
@@ -144,6 +159,7 @@ class EDSystemErrorList extends React.Component {
                     <thead>
                         <tr>
                             <th>Date</th>
+                            <th>Category</th>
                             <th>Exception</th>
                         </tr>
                     </thead>
@@ -151,11 +167,12 @@ class EDSystemErrorList extends React.Component {
                         .map((error, i) => <tbody key={error.id}>
                         <tr onClick={this.onOpenError.bind(this, error.id)}>
                             <td>{error.created_at}</td>
+                            <td>{error.category}</td>
                             <td>{error.message}</td>
                         </tr>
                         {this.state.openErrorId === error.id ?
                         <tr>
-                            <td colSpan="2">
+                            <td colSpan="3">
                                 <p>
                                     <strong>URL</strong>: {error.url}<br />
                                     <strong>User</strong>: {error.account_id} ({error.ip})
