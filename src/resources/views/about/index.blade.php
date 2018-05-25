@@ -65,20 +65,18 @@ will be used to fund the website's continued development.</p>
   the proposed translation.</p>
 
 <a name="authentication"></a>
-<h2>Logging in</h2>
+<h2>Privacy statement</h2>
 <p>We don't manage your credentials; we trust Facebook, Google, Twitter to do that for us. So when you log in, these services simply vouch for you,
-  and give us a token which uniquely identifies you in their systems. Therefore you share no personal information with <em>Parf Edhellen</em>
-  (apart from your e-mail address) and thus cannot lose your information in the event of a breach.</p>
+  and give us a token which uniquely identifies you in their systems. We save this token alongside your e-mail address. We do not get nor process any
+  other personal information supplied to us by your identity provider. We do not, and we never will, share your information with anyone.</p>
 <p>Logging in is simple: choose which community which would vouch for you, and log in there. Once you've logged in, and given <em>Parf Edhellen</em>
   permission to access basic information about you, you'll be sent back to here, where you'll be asked to choose a nickname for yourself.</p>
-<p>To identify yourself in the future, <em>Parf Edhellen</em> saves an unique token associated with your e-mail address.</p>
+<h2>Cookies</h2>
+<p>We use cookies to maintain session state, which is essential for knowing whether you are logged in. We also use cookies to collect anonymous 
+information about how you use our service.</p>
 
-<p>Syntax:<br />
-<span class="span-column">[[maen]]</span> <a href="/w/maen">maen</a><br />
-<span class="span-column">_mae_</span> <em>mae</em><br />
-<span class="span-column">~minno~</span> <u>minno</u><br />  
-<span class="span-column">`idhron`</span> <strong>idhron</strong><br /> 
-<span class="span-column">&gt;&gt;</span> <img src="img/hand.png" alt="" border="0" /></p>
-
+<h2>Third parties</h2>
+<p>We use <a target="_blank" href="https://www.google.com/analytics">Google Analytics</a> and cookies to gather anonymous information about how you use our service. 
+We use this information to improve our service.</p>
 
 @endsection

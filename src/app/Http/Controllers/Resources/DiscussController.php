@@ -4,13 +4,16 @@ namespace App\Http\Controllers\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Auth\AuthenticationException;
+use Cache; 
 
 use App\Http\Controllers\Controller;
 use App\Http\Discuss\ContextFactory;
 use App\Adapters\DiscussAdapter;
 use App\Models\Initialization\Morphs;
 use App\Events\ForumPostCreated;
+use App\Repositories\StatisticsRepository;
 use App\Models\{
+    Account,
     ForumDiscussion,
     ForumThread,
     ForumPost
@@ -20,11 +23,14 @@ class DiscussController extends Controller
 {
     protected $_discussAdapter;
     protected $_contextFactory;
+    protected $_statisticsRepository;
 
-    public function __construct(DiscussAdapter $discussAdapter, ContextFactory $contextFactory) 
+    public function __construct(DiscussAdapter $discussAdapter, ContextFactory $contextFactory,
+        StatisticsRepository $statisticsRepository) 
     {
-        $this->_discussAdapter = $discussAdapter;
-        $this->_contextFactory = $contextFactory;
+        $this->_discussAdapter       = $discussAdapter;
+        $this->_contextFactory       = $contextFactory;
+        $this->_statisticsRepository = $statisticsRepository;
     }
 
     public function index(Request $request)
@@ -39,6 +45,22 @@ class DiscussController extends Controller
         return view('discuss.index', [
             'threads' => $adapted
         ]);
+    }
+
+    public function members(Request $request)
+    {
+        $cacheTtlInMinutes = 30;
+        $data = Cache::remember('discuss.members', $cacheTtlInMinutes, function () use($cacheTtlInMinutes) {
+            return array_merge(
+                $this->_statisticsRepository->getContributors(),
+                [ 
+                    'created_at' => time(), 
+                    'expires_at' => time() + $cacheTtlInMinutes * 60 
+                ]
+            );
+        });
+        
+        return view('discuss.member-list', ['data' => $data]);
     }
 
     public function show(Request $request, int $id)
