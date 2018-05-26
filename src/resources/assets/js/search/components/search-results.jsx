@@ -225,6 +225,10 @@ class EDSearchResults extends React.Component {
     }
 
     renderBook() {
+        if (! this.props.bookData.sections) {
+            return null;
+        }
+
         return (<section>
             <div className="search-result-presenter">
                 {this.props.bookData.sections.length < 1 ? (

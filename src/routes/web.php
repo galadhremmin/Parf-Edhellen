@@ -95,8 +95,10 @@ Route::group([
     Route::resource('discuss', 'DiscussController', [
         'only' => [ 'index', 'show' ]
     ]);
-    Route::get('/contributors', 'DiscussController@members')
+    Route::get('/top-contributors', 'DiscussController@topMembers')
         ->name('discuss.members');
+    Route::get('/all-contributors', 'DiscussController@allMembers')
+        ->name('discuss.member-list');
     Route::get('discuss/find-thread/{id}', 'DiscussController@resolveThread')
         ->where([ 'id' => '[0-9]+' ])->name('discuss.find-thread');
 });

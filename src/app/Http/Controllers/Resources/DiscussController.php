@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Auth\AuthenticationException;
 use Cache; 
+use Carbon\Carbon;
 
 use App\Http\Controllers\Controller;
 use App\Http\Discuss\ContextFactory;
@@ -47,20 +48,28 @@ class DiscussController extends Controller
         ]);
     }
 
-    public function members(Request $request)
+    public function topMembers(Request $request)
     {
         $cacheTtlInMinutes = 30;
-        $data = Cache::remember('discuss.members', $cacheTtlInMinutes, function () use($cacheTtlInMinutes) {
+        $data = Cache::remember('discuss.top-members', $cacheTtlInMinutes, function () use($cacheTtlInMinutes) {
             return array_merge(
                 $this->_statisticsRepository->getContributors(),
                 [ 
-                    'created_at' => time(), 
-                    'expires_at' => time() + $cacheTtlInMinutes * 60 
+                    'created_at' => Carbon::now(), 
+                    'expires_at' => Carbon::now()->addMinutes($cacheTtlInMinutes) 
                 ]
             );
         });
         
-        return view('discuss.member-list', ['data' => $data]);
+        return view('discuss.member-top-list', ['data' => $data]);
+    }
+
+    public function allMembers(Request $request)
+    {
+        $members = Account::orderBy('nickname', 'asc')
+            ->paginate(30);
+
+        return view('discuss.member-all-list', ['members' => $members]);
     }
 
     public function show(Request $request, int $id)

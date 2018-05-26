@@ -17,7 +17,6 @@ const ChartColors = ["#00818a", "#404b69", "#283149", "#6c5b7c", "#c06c84", "#f6
 class EDSystemErrorList extends React.Component {
     constructor(props, context) {
         super(props, context);
-        console.log(props);
 
         this.state = {
             ...(this.buildState(props.value))

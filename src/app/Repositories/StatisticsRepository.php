@@ -57,17 +57,42 @@ class StatisticsRepository
     public function getContributors(int $numberOfResultsPerCategory = 5)
     {
         $columns = ['id'];
-        $tables = ['glosses', 'sentences', 'contributions', 'forum_posts', 'flashcard_results'];
+        $tables = ['forum_posts', 'flashcard_results', 'sentences'];
         $data = [];
         foreach ($tables as $table) {
             $data[$table] = $this->getTopContributors($table, $columns, $numberOfResultsPerCategory);
         }
+
+        // Only count approved contributions
+        $data['contributions'] = $this->getTopContributors('contributions', $columns, $numberOfResultsPerCategory, function ($query) {
+            return $query->where('contributions.is_approved', 1);
+        });
+        
+        // Likes are saved in a rather peculiar manner and must be extracted individually.
         $data['forum_post_likes'] = $this->getTopContributorsByLikes($columns, $numberOfResultsPerCategory);
         
+        // Retrieve a list of all categories, and their total count
+        $data['categories'] = array_keys($data);
+        $data['totals'] = $this->getNumberOfEntities($data['categories']);
+
+        // Retrieve approved, latest glosses
+        $data['glosses'] = $this->getTopContributors('glosses', $columns, $numberOfResultsPerCategory, function ($query) {
+            return $query->where([
+                ['glosses.is_latest', 1],
+                ['glosses.is_deleted', 0]
+            ]);
+        });
+        $data['categories'][] = 'glosses';
+        $data['totals']['glosses'] = Gloss::active()->count();
+
+        // Retrieve newest accounts
+        $data['new_accounts'] = $this->getNewestAccounts($numberOfResultsPerCategory);
+        $data['categories'][] = 'new_accounts';
+        
         // Retrieve user accounts for the accounts specified in the aforementioned result set.
-        $accountIds = array_reduce(array_keys($data), function ($carry, $key) use($data) {
+        $accountIds = array_reduce($data['categories'], function ($carry, $key) use($data) {
             foreach ($data[$key] as $account) {
-                if (!in_array($account->id, $carry)) {
+                if (! in_array($account->id, $carry)) {
                     $carry[] = $account->id;
                 }
             }
@@ -82,6 +107,7 @@ class StatisticsRepository
                 $carry[$account->id] = $account;
                 return $carry;
             }, []); 
+        
         return $data;
     }
 
@@ -119,16 +145,22 @@ class StatisticsRepository
      * @param string $table
      * @param array $columns
      * @param integer $numberOfResults
+     * @param callable $where
      * @return array
      */
-    private function getTopContributors(string $table, array $columns, int $numberOfResults)
+    private function getTopContributors(string $table, array $columns, int $numberOfResults, callable $where = null)
     {
         $columns = $this->prefixColumnsWithTableName($columns, 'accounts');
-        return Account::select($this->addCountToColumns($columns, $table))
+        $query = Account::select($this->addCountToColumns($columns, 'number_of_items'))
             ->join($table, $table.'.account_id', '=', 'accounts.id')
             ->groupBy($columns)
-            ->orderBy(DB::raw('count(*)'), 'desc')
-            ->take($numberOfResults)
+            ->orderBy(DB::raw('count(*)'), 'desc');
+
+        if ($where !== null) {
+            $query = $where($query);
+        }
+
+        return $query->take($numberOfResults)
             ->get()
             ->all();
     }
@@ -143,7 +175,7 @@ class StatisticsRepository
     private function getTopContributorsByLikes(array $columns, int $numberOfResults)
     {
         $columns = $this->prefixColumnsWithTableName($columns, 'accounts');
-        return ForumPostLike::select($this->addCountToColumns($columns, 'forum_post_likes'))
+        return ForumPostLike::select($this->addCountToColumns($columns, 'number_of_items'))
             ->join('forum_posts', 'forum_posts.id', '=', 'forum_post_likes.forum_post_id')
             ->join('accounts', 'accounts.id', '=', 'forum_posts.account_id')
             ->groupBy($columns)
@@ -151,5 +183,36 @@ class StatisticsRepository
             ->take($numberOfResults)
             ->get()
             ->all();
+    }
+
+    /**
+     * Gets the most recently created accounts.
+     * 
+     * @param int $numberOfResults 
+     * @return array
+     */
+    private function getNewestAccounts(int $numberOfResults) 
+    {
+        return Account::orderBy('id', 'desc')
+            ->select('id')
+            ->take($numberOfResults)
+            ->get()
+            ->all();
+    }
+
+    /**
+     * Gets the number of entities within the specified tables.
+     * 
+     * @param array $tableNames
+     * @return array
+     */
+    private function getNumberOfEntities(array $tableNames)
+    {
+        $data = [];
+        foreach ($tableNames as $tableName) {
+            $data[$tableName] = DB::table($tableName)->count();
+        }
+
+        return $data;
     }
 }

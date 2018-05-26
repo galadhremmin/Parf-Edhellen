@@ -51,4 +51,20 @@
             }
         }
     }
+
+    .member-list-account {
+        font-size: 1.5em;
+
+        .profile-summary {
+            font-size: 1rem;
+        }
+    }
+
+    .member-list-number {
+        font-size: 2em; 
+
+        .total-indicator {
+            font-size: 1rem;
+        }  
+    }
 }

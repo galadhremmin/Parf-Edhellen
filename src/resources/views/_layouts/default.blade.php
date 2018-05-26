@@ -26,7 +26,7 @@
     <div class="container">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-          <span class="sr-only">Toggle navigation</span>
+          <span class="sr-only">@lang('home.menu.open')</span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
@@ -35,31 +35,37 @@
       </div>
       <div class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
-          <li class="{{ active('') }}"><a href="/">Home</a></li>
-          <li class="{{ active('about') }}"><a href="{{ route('about') }}">About</a></li>
-          <li class="{{ active('about.donations') }} hidden-sm"><a href="{{ route('about.donations') }}">Donations</a></li>
-          <li class="{{ active(['sentence.public', 'sentence.public.language', 'sentence.public.sentence']) }}"><a href="{{ route('sentence.public') }}">Phrases</a></li>
-          <li class="{{ active('discuss.index') }}"><a href="{{ route('discuss.index') }}">Discuss</a></li>
+          <li class="{{ active('') }}"><a href="/">@lang('home.title')</a></li>
+          <li class="{{ active('about') }}"><a href="{{ route('about') }}">@lang('about.title')</a></li>
+          <li class="{{ active('about.donations') }} hidden-sm"><a href="{{ route('about.donations') }}">@lang('donations.title')</a></li>
+          <li class="{{ active(['sentence.public', 'sentence.public.language', 'sentence.public.sentence']) }}"><a href="{{ route('sentence.public') }}">@lang('sentence.title')</a></li>
+          <li class="{{ active('discuss.index') }}"><a href="{{ route('discuss.index') }}">@lang('discuss.title')</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
+          <li class="{{ active('discuss.members') }}">
+            <a href="{{ route('discuss.members') }}">
+              <span class="glyphicon glyphicon-heart-empty"></span> 
+              &nbsp;@lang('discuss.member-list.title')
+            </a>
+          </li>
           @if ($user)
           <li class="{{ active('dashboard') }}">
             <a href="{{ route('dashboard') }}">
               <span class="glyphicon glyphicon-dashboard"></span> 
-              &nbsp;Dashboard
+              &nbsp;@lang('dashboard.title')
             </a>
           </li>
           <li>
             <a href="{{ route('logout') }}">
               <span class="glyphicon glyphicon-log-out"></span> 
-              &nbsp;Log out
+              &nbsp;@lang('dashboard.logout')
             </a>
           </li>
           @else
           <li class="{{ active('login') }}">
             <a href="{{ route('login') }}">
               <span class="glyphicon glyphicon-log-in"></span> 
-              &nbsp; Log in
+              &nbsp;@lang('dashboard.login')
             </a>
           </li>
           @endif
@@ -72,9 +78,9 @@
     <!-- scripting disabled warning -->
     <noscript>
       <div id="noscript" class="alert alert-danger">
-        <strong><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> Ai! Lá polin saca i quettar!</strong>
-        <p><em>ElfDict</em> requires javascript to function properly. Please enable Javascript.</p>
-        <p><a href="https://support.google.com/bin/answer.py?hl=en&amp;answer=23852" target="_blank">Show me how I enable Javascript</a>.</p>
+        <strong><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> @lang('home.noscript.title')</strong>
+        <p>@lang('home.noscript.message', ['website' => config('ed.title')])</p>
+        <p><a href="https://support.google.com/bin/answer.py?hl=en&amp;answer=23852" target="_blank">@lang('home.noscript.call-to-action')</a>.</p>
       </div>
     </noscript>
 

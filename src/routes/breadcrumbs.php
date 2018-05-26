@@ -257,6 +257,14 @@ Breadcrumbs::register('discuss.members', function ($breadcrumbs)
     $breadcrumbs->push('Contributors', route('discuss.members'));
 });
 
+Breadcrumbs::register('discuss.member-list', function ($breadcrumbs)
+{
+    $breadcrumbs->parent('discuss.members');
+    $breadcrumbs->push('All contributors', route('discuss.member-list'));
+});
+
+
+
 // //////////////////////////////////////////////////////////////////////////////////////////////
 // Dashboard > System errors
 
