@@ -51,7 +51,6 @@ class DiscussController extends Controller
     public function topMembers(Request $request)
     {
         $cacheTtlInMinutes = 30;
-        Cache::forget('discuss.top-members');
         $data = Cache::remember('discuss.top-members', $cacheTtlInMinutes, function () use($cacheTtlInMinutes) {
             return array_merge(
                 $this->_statisticsRepository->getContributors(),
