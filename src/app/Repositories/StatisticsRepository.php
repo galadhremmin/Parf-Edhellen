@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use DB;
+use Carbon\Carbon;
 use App\Models\{ 
     Account, 
     FlashcardResult,
@@ -84,6 +85,18 @@ class StatisticsRepository
         });
         $data['categories'][] = 'glosses';
         $data['totals']['glosses'] = Gloss::active()->count();
+
+        // Retrieve growth over time (grouped by day) and involve the members previously identified as parth of the growth.
+        $data['growth'] = $this->getGrowthOverTime($data['categories'], Carbon::now()->addYears(-2), Carbon::now(), 
+            // create an array [category] => [account ids]
+            array_reduce($data['categories'], function ($carry, $category) use ($data) {
+                $carry[$category] = array_unique(array_map(function ($v) {
+                    return $v->id;
+                }, $data[$category]));
+
+                return $carry;
+            }, []));
+        $data['growth']['new_accounts'] = $this->getGrowthOverTime(['accounts'], Carbon::now()->addYears(-2), Carbon::now())['accounts'];
 
         // Retrieve newest accounts
         $data['new_accounts'] = $this->getNewestAccounts($numberOfResultsPerCategory);
@@ -211,6 +224,63 @@ class StatisticsRepository
         $data = [];
         foreach ($tableNames as $tableName) {
             $data[$tableName] = DB::table($tableName)->count();
+        }
+
+        return $data;
+    }
+
+    /**
+     * Gets growth over the specified time period. Returns an array with `date` and `number_of_items`.
+     * @param array $tableNames
+     * @param Carbon $from
+     * @param Carbom $to
+     * @param array $accountsPerTable
+     * @return array
+     */
+    private function getGrowthOverTime(array $tableNames, Carbon $from, Carbon $to, array $accountsPerTable = [])
+    {
+        $data = [];
+        foreach ($tableNames as $tableName) {
+            $totalGrowth = DB::table($tableName)
+                ->select(DB::raw('COUNT(*) AS number_of_items'), DB::raw('DATE(created_at) AS date'))
+                ->groupBy(DB::raw('DATE(created_at)'))
+                ->where([
+                    ['created_at', '>=', $from],
+                    ['created_at', '<=', $to] 
+                ])
+                ->orderBy('created_at')
+                ->get();
+            
+            $accounts = isset($accountsPerTable[$tableName]) ? $accountsPerTable[$tableName] : [];
+            if (count($accounts) > 0) {
+                $growthPerAccountAndDay = DB::table($tableName)
+                    ->select(DB::raw('COUNT(*) AS number_of_items'), 'accounts.nickname', DB::raw('DATE('.$tableName.'.created_at) AS date'))
+                    ->join('accounts', 'accounts.id', $tableName.'.account_id')
+                    ->groupBy(DB::raw('DATE('.$tableName.'.created_at)'), 'accounts.nickname')
+                    ->where([
+                        [$tableName.'.created_at', '>=', $from],
+                        [$tableName.'.created_at', '<=', $to] 
+                    ])
+                    ->whereIn($tableName.'.account_id', $accounts)
+                    ->orderBy($tableName.'.created_at')
+                    ->get()
+                    ->groupBy('date');
+                
+                $totalGrowthPerDay = $totalGrowth->reduce(function ($carry, $value) {
+                    $carry[$value->date] = &$value;
+                    return $carry;
+                }, []);
+                
+                foreach ($growthPerAccountAndDay as $date => $growthByAccounts) {
+                    $contextualGrowth = &$totalGrowthPerDay[$date];
+                    foreach ($growthByAccounts as $growth) {
+                        $nickname = $growth->nickname;
+                        $contextualGrowth->$nickname = $growth->number_of_items;
+                    }
+                }
+            }
+
+            $data[$tableName] = $totalGrowth->all();
         }
 
         return $data;

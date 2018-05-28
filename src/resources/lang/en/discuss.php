@@ -10,6 +10,6 @@ return [
     'member-list.category.contributions' => 'Most contributions',
     'member-list.category.forum_posts' => 'Most forum posts',
     'member-list.category.flashcard_results' => 'Most flashcards',
-    'member-list.category.forum_post_likes' => 'Most likes',
+    'member-list.category.forum_post_likes' => 'Most likes received',
     'member-list.category.new_accounts' => 'Newest contributors'
 ];

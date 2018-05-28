@@ -121,6 +121,10 @@ mix.js([
     'resources/assets/js/system-errors/index.jsx'
 ], `${outputDir}/js/system-errors-admin.js`);
 
+mix.js([
+    'resources/assets/js/member-list/index.jsx'
+], `${outputDir}/js/member-charts.js`);
+
 // .sourceMaps();
 
 mix.sass('resources/assets/sass/app.scss', `${outputDir}/css`);

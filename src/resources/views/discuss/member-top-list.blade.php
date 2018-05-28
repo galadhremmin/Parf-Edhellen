@@ -17,6 +17,11 @@
 
   @foreach ($data['categories'] as $category)
   <h2>@lang('discuss.member-list.category.'.$category)</h2>
+  @if (isset($data['growth'][$category]))
+  <div class="ed-discuss-growth-chart" data-data="{{ json_encode($data['growth'][$category]) }}" id="ed-discuss-growth-chart-{{ $category }}">
+    @include('_shared._loading')
+  </div>
+  @endif
   <div class="discuss-table">
     @foreach ($data[$category] as $item)
       @include('discuss._member-list-item', [
@@ -41,3 +46,7 @@
 @section('styles')
 <link rel="stylesheet" href="@assetpath(css/app.discuss.css)">
 @endsection
+@section('scripts')
+  <script type="text/javascript" src="@assetpath(/js/member-charts.js)" async></script>
+@endsection
+
