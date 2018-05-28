@@ -3,7 +3,6 @@
 html, body {
   width: 100%;
   margin: 0;
-  /*padding: 50px 0 0 0;*/
   font-size: 14px;
 }
 body {
@@ -12,13 +11,6 @@ body {
   
   overflow-y: scroll;
 }
-/*
-@media (orientation: landscape) {
-  body {
-    padding-top: $navbar-margin-bottom;
-  }
-}
-*/
 blockquote footer {
     font-size: 85%;
     font-family: $font-family-tiny;
@@ -51,6 +43,11 @@ blockquote footer {
   background: url(/img/logotype.png) no-repeat center center;
   background-size: 140px 45px;
   margin-right: 10px;
+}
+@media (max-width: $screen-sm-min) {
+  .navbar {
+    margin-bottom: 0;
+  }
 }
 @media (max-width: $screen-md-min) {
   .navbar-brand {

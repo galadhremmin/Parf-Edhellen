@@ -16,13 +16,13 @@ const DatasetXAxis = 'date';
 const DatasetYAxis = 'number_of_items';
 const ReservedDatasetProperties = [DatasetXAxis, DatasetYAxis];
 
-const GrowthChart = props => <ResponsiveContainer width="100%" aspect={1/0.20}>
+const GrowthChart = props => <ResponsiveContainer width="100%" height="20%" minHeight={140}>
     <ComposedChart data={props.data}>
         <CartesianGrid strokeDasharray="3 3"/>
         <XAxis dataKey={DatasetXAxis}/>
         <YAxis/>
         <Tooltip/>
-        <Line connectNulls={true} dot={props.data.length < 100} type="monotone" dataKey={DatasetYAxis} name="Total" stroke="#8884d8" />
+        <Line connectNulls={true} dot={false} type="monotone" dataKey={DatasetYAxis} name="Total" stroke="#8884d8" />
         {props.accounts.map(account => <Bar key={account} dataKey={account} fill="#444444" />)}
     </ComposedChart>
 </ResponsiveContainer>;
