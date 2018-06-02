@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\{
     Cookie
 };
 
-class Account extends Authenticatable
+class Account extends Authenticatable implements Interfaces\IHasFriendlyName
 {
     use Notifiable;
 
@@ -45,6 +45,11 @@ class Account extends Authenticatable
             'id',
             'role_id'
         );
+    }
+
+    public function getFriendlyName() 
+    {
+        return $this->nickname;
     }
 
     public function memberOf(string $roleName) 

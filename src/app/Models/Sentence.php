@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class Sentence extends ModelBase
+class Sentence extends ModelBase implements Interfaces\IHasFriendlyName
 {
     use Traits\HasAccount;
 
@@ -35,5 +35,10 @@ class Sentence extends ModelBase
     public function scopeByLanguage($query, int $langId)
     {
         $query->where('language_id', $langId);
+    }
+
+    public function getFriendlyName() 
+    {
+        return $this->name;
     }
 }

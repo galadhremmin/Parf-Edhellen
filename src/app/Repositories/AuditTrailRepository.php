@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Helpers\LinkHelper;
+use App\Models\Interfaces\IHasFriendlyName;
 use App\Models\{ 
     Account, 
     AuditTrail, 
@@ -85,10 +86,16 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
             $is_elevated = false;
         }
 
+        $entityName = null;
+        if ($entity instanceOf IHasFriendlyName) {
+            $entityName = $entity->getFriendlyName();
+        }
+
         AuditTrail::create([
             'account_id'  => $userId,
             'entity_id'   => $entity->id,
             'entity_type' => $typeName,
+            'entity_name' => $entityName,
             'action_id'   => $action,
             'is_admin'    => $is_elevated
         ]);

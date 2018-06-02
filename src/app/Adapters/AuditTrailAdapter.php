@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Adapters;
-
+            
 use Illuminate\Support\Collection;
 use Carbon\Carbon;
 
@@ -51,8 +51,8 @@ class AuditTrailAdapter
                         break;
                 }
 
-                $entity = '<a href="'.$this->_link->gloss($action->entity->id).'">' . 
-                    $action->entity->word->word . '</a>';
+                $entity = '<a href="'.$this->_link->gloss($action->entity_id).'">' . 
+                    $action->entity_name . '</a>';
 
             } else if ($action->entity instanceof Sentence) {
                 switch ($action->action_id) {
@@ -65,7 +65,7 @@ class AuditTrailAdapter
                 }
 
                 $entity = '<a href="'.$this->_link->sentence($action->entity->language_id, $action->entity->language->name,
-                    $action->entity->id, $action->entity->name).'">' . $action->entity->name . '</a>';
+                    $action->entity->id, $action->entity->name).'">' . $action->entity_name . '</a>';
 
             } else if ($action->entity instanceof Account) {
                 switch ($action->action_id) {
@@ -96,7 +96,7 @@ class AuditTrailAdapter
                         break;
                 }
 
-                $entity = '<a href="'.route('forum.show', ['id' => $action->entity->id]).'">a comment</a>';
+                $entity = 'a comment in <a href="'.route('forum.show', ['id' => $action->entity_id]).'">'.$action->entity_name.'</a>';
             } else if ($action->entity instanceof FlashcardResult) {
                 switch ($action->action_id) {
                     case AuditTrail::ACTION_FLASHCARD_FIRST_CARD:

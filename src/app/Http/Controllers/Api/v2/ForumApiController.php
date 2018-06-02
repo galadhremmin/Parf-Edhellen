@@ -10,6 +10,7 @@ use App\Repositories\ForumRepository;
 use App\Models\Initialization\Morphs;
 use App\Http\Discuss\ContextFactory;
 use App\Adapters\DiscussAdapter;
+use App\Helpers\LinkHelper;
 use App\Models\{ 
     Account,
     ForumPost, 
@@ -187,12 +188,13 @@ class ForumApiController extends Controller
 
     public function show(Request $request, int $id)
     {
-        $post = ForumPost::where('id', $id)->select('forum_thread_id')->get();
-        if ($post->count() < 1) {
+        $post = ForumPost::where('id', $id)->select('forum_thread_id')->first();
+        if ($post === null) {
             abort(404, 'The post you are looking for does not exist');
         }
 
-        return redirect()->route('discuss.show', ['id' => $post->first()->forum_thread_id]);
+        $linker = new LinkHelper();
+        return redirect($linker->forumThread($post->forum_thread_id, $post->forum_thread->normalized_subject));
     }
 
     /**

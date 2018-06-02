@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class Gloss extends ModelBase
+class Gloss extends ModelBase implements Interfaces\IHasFriendlyName
 {
     use Traits\HasAccount;
     
@@ -122,5 +122,10 @@ class Gloss extends ModelBase
                 [ 'origin_gloss_id', '=', $this->origin_gloss_id ?: $this->id ],
                 [ 'is_latest', '=', 1]
             ])->first() ?: $this;
+    }
+
+    public function getFriendlyName() 
+    {
+        return $this->word->word;
     }
 }

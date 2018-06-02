@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-class ForumThread extends ModelBase
+class ForumThread extends ModelBase implements Interfaces\IHasFriendlyName
 {
     protected $fillable = [ 
         'entity_type', 'entity_id', 'subject', 'account_id',
-        'number_of_posts', 'number_of_likes' 
+        'number_of_posts', 'number_of_likes', 'normalized_subject'
     ];
 
     use Traits\HasAccount;
@@ -19,5 +19,10 @@ class ForumThread extends ModelBase
     public function forum_posts()
     {
         return $this->hasMany(ForumPost::class);
+    }
+
+    public function getFriendlyName() 
+    {
+        return $this->subject;
     }
 }

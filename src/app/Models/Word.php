@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class Word extends ModelBase
+class Word extends ModelBase implements Interfaces\IHasFriendlyName
 {
     use Traits\HasAccount;
 
@@ -11,5 +11,10 @@ class Word extends ModelBase
     public function scopeForString($query, string $word)
     {
         $query->where('word', $word);
+    }
+
+    public function getFriendlyName() 
+    {
+        return $this->word;
     }
 }

@@ -73,13 +73,13 @@ class LinkHelper
         return $url;
     }
 
-    public function forumPost(int $postId, string $subject = '') 
+    public function forumThread(int $threadId, string $normalizedSubject = '') 
     {
-        if (empty($subject)) {
-            return route('discuss.show', ['id' => $postId]);
+        if (empty($normalizedSubject)) {
+            return route('discuss.show', ['id' => $threadId, 'slug' => 'thread']);
         }
 
-        throw new \Exception('Not implemented.');
+        return route('discuss.show', ['id' => $threadId, 'slug' => $normalizedSubject]);
     }
 
     public function mailCancellation(string $cancellationToken)

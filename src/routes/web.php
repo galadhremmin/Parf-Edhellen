@@ -1,6 +1,7 @@
 <?php
 
-$urlSeoReg = '[a-z_0-9]+';
+$numericReg = '[0-9]+';
+$urlSeoReg = '[a-z_\-0-9]+';
 
 /*
 |--------------------------------------------------------------------------
@@ -20,15 +21,15 @@ Route::get('/about',                    [ 'uses' => 'AboutController@index'     
 Route::get('/about/donations',          [ 'uses' => 'AboutController@donations' ])->name('about.donations');
 Route::get('/author',                   [ 'uses' => 'AuthorController@index'    ])->name('author.my-profile');
 Route::get('/author/{id}',              [ 'uses' => 'AuthorController@index'    ])
-    ->where([ 'id' => '[0-9]+' ])->name('author.profile-without-nickname');
+    ->where([ 'id' => $numericReg ])->name('author.profile-without-nickname');
 Route::get('/author/{id}-{nickname}',   [ 'uses' => 'AuthorController@index'    ])
-    ->where([ 'id' => '[0-9]+', 'nickname' => $urlSeoReg ])->name('author.profile');
+    ->where([ 'id' => $numericReg, 'nickname' => $urlSeoReg ])->name('author.profile');
 Route::get('/author/{id}/glosses', [ 'uses' => 'AuthorController@glosses' ])
-    ->where([ 'id' => '[0-9]+' ])->name('author.glosses');
+    ->where([ 'id' => $numericReg ])->name('author.glosses');
 Route::get('/author/{id}/sentences', [ 'uses' => 'AuthorController@sentences' ])
-    ->where([ 'id' => '[0-9]+' ])->name('author.sentences');
+    ->where([ 'id' => $numericReg ])->name('author.sentences');
 Route::get('/author/{id}/posts', [ 'uses' => 'AuthorController@posts' ])
-    ->where([ 'id' => '[0-9]+' ])->name('author.posts');
+    ->where([ 'id' => $numericReg ])->name('author.posts');
 
 // Phrases
 Route::get('/phrases',                     [ 'uses' => 'SentenceController@index'      ])
@@ -42,26 +43,26 @@ Route::get('/phrases/{langId}-{langName}/{sentId}-{sentName}', [ 'uses' => 'Sent
 // Dictionary
 Route::get('/w/{word}/{language?}',   [ 'uses' => 'BookController@pageForWord' ]);
 Route::get('/wt/{id}',                [ 'uses' => 'BookController@pageForGlossId' ])
-    ->where([ 'id' => '[0-9]+' ])->name('gloss.ref');
+    ->where([ 'id' => $numericReg ])->name('gloss.ref');
     Route::get('/wt/{id}/latest',     [ 'uses' => 'BookController@redirectToLatest' ])
-        ->where([ 'id' => '[0-9]+' ])->name('gloss.ref.latest');
+        ->where([ 'id' => $numericReg ])->name('gloss.ref.latest');
 Route::get('/wt/{id}/versions',       [ 'uses' => 'BookController@versions' ])
-    ->where([ 'id' => '[0-9]+' ])->name('gloss.ref.version');
+    ->where([ 'id' => $numericReg ])->name('gloss.ref.version');
 
 // Mail cancellation
 Route::get('/stop-notification/{token}', ['uses' => 'Resources\\MailSettingController@handleCancellationToken'])
     ->name('mail-setting.cancellation');
 
 // User accounts
-Route::group([ 'middleware' => 'auth' ], function () {
+Route::group([ 'middleware' => 'auth' ], function () use ($numericReg) {
     Route::get('/dashboard',          [ 'uses' => 'DashboardController@index' ])->name('dashboard');
 
     // Flashcards
     Route::get('/dashboard/flashcard',       [ 'uses' => 'FlashcardController@index' ])->name('flashcard');
     Route::get('/dashboard/flashcard/{id}',  [ 'uses' => 'FlashcardController@cards' ])
-        ->where([ 'id' => '[0-9]+' ])->name('flashcard.cards');
+        ->where([ 'id' => $numericReg ])->name('flashcard.cards');
     Route::get('/dashboard/flashcard/{id}/results', [ 'uses' => 'FlashcardController@list' ])
-        ->where([ 'id' => '[0-9]+' ])->name('flashcard.list');
+        ->where([ 'id' => $numericReg ])->name('flashcard.list');
     Route::post('/dashboard/flashcard/card', [ 'uses' => 'FlashcardController@card' ])->name('flashcard.card');
     Route::post('/dashboard/flashcard/test', [ 'uses' => 'FlashcardController@test' ])->name('flashcard.test');
 
@@ -91,16 +92,18 @@ Route::get('sitemap/{context}', 'SitemapController@index');
 // Public resources
 Route::group([ 
     'namespace'  => 'Resources'
-], function () {
-    Route::resource('discuss', 'DiscussController', [
-        'only' => [ 'index', 'show' ]
-    ]);
+], function () use ($numericReg, $urlSeoReg) {
+    Route::get('discuss', 'DiscussController@index')
+        ->name('discuss.index');
+    Route::get('discuss/{id}-{slug?}', 'DiscussController@show')
+        ->where([ 'id' => $numericReg ])
+        ->name('discuss.show');
     Route::get('/top-contributors', 'DiscussController@topMembers')
         ->name('discuss.members');
     Route::get('/all-contributors', 'DiscussController@allMembers')
         ->name('discuss.member-list');
     Route::get('discuss/find-thread/{id}', 'DiscussController@resolveThread')
-        ->where([ 'id' => '[0-9]+' ])->name('discuss.find-thread');
+        ->where([ 'id' => $numericReg ])->name('discuss.find-thread');
 });
 
 // Restricted resources
@@ -186,11 +189,11 @@ Route::group([
 Route::group([ 
         'namespace' => 'Api\v2', 
         'prefix'    => 'api/v2'
-    ], function () {
+    ], function () use ($numericReg) {
 
     Route::get('book/languages',           [ 'uses' => 'BookApiController@getLanguages' ]);
     Route::get('book/translate/{glossId}', [ 'uses' => 'BookApiController@get' ])
-        ->where([ 'glossId' => '[0-9]+' ]);
+        ->where([ 'glossId' => $numericReg ]);
     Route::post('book/translate',          [ 'uses' => 'BookApiController@translate' ]);
     Route::post('book/suggest',            [ 'uses' => 'BookApiController@suggest' ]);
     Route::post('book/find',               [ 'uses' => 'BookApiController@find' ]);
@@ -220,16 +223,16 @@ Route::group([
         'namespace'  => 'Api\v2', 
         'prefix'     => 'api/v2',
         'middleware' => 'auth'
-    ], function () {
+    ], function () use ($numericReg) {
     
     Route::resource('forum', 'ForumApiController', ['only' => [
         'edit', 'store', 'update', 'destroy'
     ]]);
 
     Route::post('forum/like/{id}',   [ 'uses' => 'ForumApiController@storeLike'   ])
-        ->where([ 'id' => '[0-9]+' ]);
+        ->where([ 'id' => $numericReg ]);
     Route::delete('forum/like/{id}', [ 'uses' => 'ForumApiController@destroyLike' ])
-        ->where([ 'id' => '[0-9]+' ]);
+        ->where([ 'id' => $numericReg ]);
 
     Route::get('book/word/{id}',  [ 'uses' => 'BookApiController@getWord'   ]);
     Route::post('book/word/find', [ 'uses' => 'BookApiController@findWord'  ]);

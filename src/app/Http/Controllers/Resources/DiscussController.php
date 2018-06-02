@@ -13,6 +13,10 @@ use App\Adapters\DiscussAdapter;
 use App\Models\Initialization\Morphs;
 use App\Events\ForumPostCreated;
 use App\Repositories\StatisticsRepository;
+use App\Helpers\{
+    LinkHelper,
+    StringHelper
+};
 use App\Models\{
     Account,
     ForumDiscussion,
@@ -118,11 +122,12 @@ class DiscussController extends Controller
 
         // Create a forum thread for the previously created discussion.
         $thread = ForumThread::create([
-            'entity_type'     => $typeName,
-            'entity_id'       => $discussion->id,
-            'subject'         => $request->input('subject'),
-            'account_id'      => $userId,
-            'number_of_posts' => 1
+            'entity_type'        => $typeName,
+            'entity_id'          => $discussion->id,
+            'subject'            => $request->input('subject'),
+            'normalized_subject' => StringHelper::normalize($request->input('subject')),
+            'account_id'         => $userId,
+            'number_of_posts'    => 1
         ]);
 
         // Create a post with the user's message content
@@ -134,7 +139,8 @@ class DiscussController extends Controller
 
         event(new ForumPostCreated($post, $userId));
 
-        return redirect()->route('discuss.show', ['id' => $thread->id]);
+        $linker = new LinkHelper();
+        return redirect($linker->forumThread($thread->id, $thread->normalized_subject));
     }
 
     public function resolveThread(Request $request, int $id)
@@ -144,6 +150,7 @@ class DiscussController extends Controller
             abort(404, 'The discussion does not exist.');
         }
 
-        return redirect()->route('discuss.show', ['id' => $discuss->forum_thread->id]);
+        $linker = new LinkHelper();
+        return redirect($linker->forumThread($discuss->forum_thread->id, $discuss->forum_thread->normalized_subject));
     }
 }

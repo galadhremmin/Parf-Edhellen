@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class ForumPost extends ModelBase
+class ForumPost extends ModelBase implements Interfaces\IHasFriendlyName
 {
     use Traits\HasAccount;
 
@@ -16,5 +16,10 @@ class ForumPost extends ModelBase
     public function likes() 
     {
         return $this->hasMany(ForumPostLike::class);
+    }
+
+    public function getFriendlyName() 
+    {
+        return $this->forum_thread->subject;
     }
 }

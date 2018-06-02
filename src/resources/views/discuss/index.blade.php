@@ -1,3 +1,4 @@
+@inject('linker', 'App\Helpers\LinkHelper')
 @extends('_layouts.default')
 
 @section('title', 'Discussion')
@@ -34,7 +35,7 @@
         @include('discuss._avatar', ['account' => $thread->account])
       </div>
       <div class="c p2">
-        <a href="{{ route('discuss.show', ['id' => $thread->id]) }}">{{ $thread->subject }}</a>
+        <a href="{{ $linker->forumThread($thread->id, $thread->normalized_subject) }}">{{ $thread->subject }}</a>
         <div class="pi">
           {{ $thread->account ? $thread->account->nickname : 'nobody' }}
           <span class="date">{{ $thread->updated_at ?: $thread->created_at }}</span>

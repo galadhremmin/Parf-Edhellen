@@ -62,7 +62,7 @@ class StringHelper
     public static function normalize(string $str, $accentsMatter = true, $retainWildcard = false) 
     {          
         $str = self::toLower($str);
-        $str = preg_replace('/[¹²³’‽†√#\\{\\}\\[\\]]/u', '', $str);
+        $str = preg_replace('/[¹²³’‽†√#\\{\\}\\[\\]\+=!\.]/u', '', $str);
 
         if (! $retainWildcard) {
             $str = str_replace('*', '', $str);
@@ -93,7 +93,7 @@ class StringHelper
 
         // Mac OS X Server requires some extra 'love' because it uses a different version of iconv
         // than the rest. It transcribes é -> 'e, ê -> ^e, ë -> "e etc.
-        $str = preg_replace('/[\'^"]/', '', $str);
+        $str = preg_replace('/[\'^"\?]/', '', $str);
 
         return trim($str);
     }

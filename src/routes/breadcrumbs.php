@@ -242,7 +242,9 @@ Breadcrumbs::register('discuss', function ($breadcrumbs)
 Breadcrumbs::register('discuss.show', function ($breadcrumbs, $thread)
 {
     $breadcrumbs->parent('discuss');
-    $breadcrumbs->push($thread->subject, route('discuss.show', ['id' => $thread->id]));
+
+    $linker = new \App\Helpers\LinkHelper();
+    $breadcrumbs->push($thread->subject, $linker->forumThread($thread->id, $thread->normalized_subject));
 });
 
 Breadcrumbs::register('discuss.create', function ($breadcrumbs)

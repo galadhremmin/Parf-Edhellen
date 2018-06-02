@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Contribution extends ModelBase
+class Contribution extends ModelBase implements Interfaces\IHasFriendlyName
 {
     use Traits\HasAccount;
 
@@ -29,5 +29,10 @@ class Contribution extends ModelBase
     public function reviewed_by() 
     {
         return $this->belongsTo(Account::class, 'reviewed_by_account_id');
+    }
+
+    public function getFriendlyName() 
+    {
+        return $this->word;
     }
 }
