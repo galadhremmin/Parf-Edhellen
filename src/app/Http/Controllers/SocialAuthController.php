@@ -77,7 +77,10 @@ class SocialAuthController extends Controller
 
         $first = false;
         if (! $user) {
-            $nickname = self::getNextAvailableNickname($providerUser->getName());
+            $firstAccountThusAdmin = Account::count() === 0;
+            $nickname = $firstAccountThusAdmin 
+                ? 'Administrator' 
+                : self::getNextAvailableNickname($providerUser->getName());
 
             $user = Account::create([
                 'email'          => $providerUser->getEmail(),
@@ -91,7 +94,7 @@ class SocialAuthController extends Controller
             // Important!
             // The first user ever created is assumed to have been created by an administrator
             // of the website, and thus assigned the role Administrator.
-            if (Account::count() === 1) {
+            if ($firstAccountThusAdmin) {
                 $user->addMembershipTo('Administrators');
             }
 
