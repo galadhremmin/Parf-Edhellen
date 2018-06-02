@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // Reference: https://laravel.com/docs/master/migrations#creating-indexes
         Schema::defaultStringLength(191);
         Morphs::map();
 
