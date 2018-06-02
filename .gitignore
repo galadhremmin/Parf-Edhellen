@@ -14,6 +14,7 @@ src/public/js
 src/public/css
 src/public/img
 src/public/fonts
+src/public/mix-manifest.json
 src/bootstrap/cache
 src/storage
 src/public/google*.html
