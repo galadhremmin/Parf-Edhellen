@@ -129,7 +129,7 @@ const EDAPI = {
      */
     _isRetryable: function (error) {
         return error.config.url.substr(-this.apiErrorMethod.length) !== this.apiErrorMethod && 
-            (error.code === 'ECONNABORTED' || axiosRetry.isRetryableError(error));
+            axiosRetry.isRetryableError(error);
     },
 
     /**
@@ -201,12 +201,18 @@ const EDAPI = {
             // The request was made but no response was received
             // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
             // http.ClientRequest in node.js
+            //
+            // 180602: This type of error is non-actionable.
+            errorReport = null;
+            
+            /*
             errorReport = {
                 apiMethod,
                 request: error.request,
                 error: 'API call received no response.'
             };
             category = 'api-noresponse';
+            */
         } else {
             // Something happened in setting up the request that triggered an Error
             errorReport = {
