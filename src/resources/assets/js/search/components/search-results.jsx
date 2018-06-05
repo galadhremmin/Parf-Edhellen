@@ -126,7 +126,11 @@ class EDSearchResults extends React.Component {
         }
 
         // retrieve the word and attempt to locate it within the search result set.
-        const normalizedWord = decodeURIComponent(path.substr(3));
+        let normalizedWord = decodeURIComponent(path.substr(3));
+        let languagePos = normalizedWord.indexOf('/');
+        if (languagePos !== -1) {
+            normalizedWord = normalizedWord.substr(0, languagePos);
+        }
         this.gotoReference(normalizedWord, true, null);
     }
 

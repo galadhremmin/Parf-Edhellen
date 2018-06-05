@@ -15,13 +15,14 @@
           <h2 class="panel-title"><span class="glyphicon glyphicon-hourglass"></span> Awaiting review</h2>
         </div>
         <div class="panel-body">
-          @if (count($pendingReviews) < 1)
+          @if ($pendingReviews->isEmpty())
           <em>You have no contributions awaiting to be reviewed.</em>
           @else
             @include('contribution._table', [
               'reviews' => $pendingReviews,
               'admin'   => true
             ])
+            <div class="text-center">{{ $pendingReviews->links() }}</div>
           @endif
         </div>
       </div>
@@ -30,13 +31,14 @@
           <h2 class="panel-title"><span class="glyphicon glyphicon-ok"></span> Approved contributions</h2>
         </div>
         <div class="panel-body">
-          @if (count($approvedReviews) < 1)
+          @if ($approvedReviews->isEmpty())
           <em>There are presently no approved contributions.</em>
           @else
             @include('contribution._table', [
               'reviews' => $approvedReviews,
               'admin'   => true
             ])
+            <div class="text-center">{{ $approvedReviews->links() }}</div>
           @endif
         </div>
       </div>
@@ -45,13 +47,14 @@
           <h2 class="panel-title"><span class="glyphicon glyphicon-remove"></span> Rejected contributions</h2>
         </div>
         <div class="panel-body">
-          @if (count($rejectedReviews) < 1)
+          @if ($rejectedReviews->isEmpty())
           <em>There are presently no rejected contributions.</em>
           @else
             @include('contribution._table', [
               'reviews' => $rejectedReviews,
               'admin'   => true
             ])
+            <div class="text-center">{{ $rejectedReviews->links() }}</div>
           @endif
         </div>
       </div>

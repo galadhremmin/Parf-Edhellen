@@ -56,11 +56,11 @@ class ContributionController extends Controller
     public function list(Request $request)
     {
         $pendingReviews  = Contribution::whereNull('is_approved')
-            ->orderBy('id', 'asc')->get();
+            ->orderBy('id', 'asc')->simplePaginate(10, ['*'], 'pending');
         $rejectedReviews = Contribution::where('is_approved', 0)
-            ->orderBy('id', 'asc')->get();
+            ->orderBy('id', 'asc')->simplePaginate(10, ['*'], 'rejected');
         $approvedReviews = Contribution::where('is_approved', 1)
-            ->orderBy('id', 'asc')->get();
+            ->orderBy('id', 'asc')->simplePaginate(10, ['*'], 'approved');
 
         return view('contribution.list', [
             'approvedReviews' => $approvedReviews,
