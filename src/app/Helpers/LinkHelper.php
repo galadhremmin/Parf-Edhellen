@@ -73,9 +73,9 @@ class LinkHelper
         return $url;
     }
 
-    public function forumThread(int $threadId, string $normalizedSubject = '') 
+    public function forumThread(int $threadId, string $normalizedSubject = null) 
     {
-        if (empty($normalizedSubject)) {
+        if ($normalizedSubject === null || empty($normalizedSubject)) {
             return route('discuss.show', ['id' => $threadId, 'slug' => 'thread']);
         }
 
