@@ -80,7 +80,8 @@ $ed-forum-post-profile-width: 120px;
     .forum-post .post-profile-picture {
         font-size: 70%;
         font-family: Helvetica, Arial, sans-serif;
-        width: $ed-forum-post-profile-width*0.25;
+        width: $ed-forum-post-profile-width*0.16;
+        padding-top: 2px;
         text-align: left;
 
         img {
