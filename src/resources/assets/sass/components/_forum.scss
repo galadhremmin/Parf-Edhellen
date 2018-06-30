@@ -80,12 +80,13 @@ $ed-forum-post-profile-width: 120px;
     .forum-post .post-profile-picture {
         font-size: 70%;
         font-family: Helvetica, Arial, sans-serif;
-        width: $ed-forum-post-profile-width*0.7;
+        width: $ed-forum-post-profile-width*0.25;
+        text-align: left;
 
         img {
-            width: $ed-forum-post-profile-width*0.7*0.5; 
-            height: $ed-forum-post-profile-width*0.7*0.5;
-            border-radius: $ed-forum-post-profile-width*0.7*0.5*0.5;
+            width: $ed-forum-post-profile-width*0.25*0.5; 
+            height: $ed-forum-post-profile-width*0.25*0.5;
+            border-radius: $ed-forum-post-profile-width*0.25*0.5*0.5;
         }
     }
 }

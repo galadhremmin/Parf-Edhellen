@@ -40,7 +40,7 @@ will be used to fund the website's continued development.</p>
 <p>
   We use <em>Glaemscribe</em> by <a href="https://www.jrrvf.com/glaemscrafu/english/glaemscribe.html" target="_blank">Benjamin Babut</a> for transcriptions. 
   <a href="https://pixabay.com/en/users/ArtsyBee-462611/">ArtsyBee</a> painted the jumbotron's backgrounds, and the photograph of the 
-  roots used for the background was taken by <a href="https://pixabay.com/en/users/tpsdave-12019/" target="_blank">tpsdave</a>.
+  sea used for the background was taken by <a href="https://pixabay.com/en/users/dimitrisvetsikas1969-1857980/" target="_blank">dimitrisvetsikas1969</a>.
 </p>
 
 <a name="search"></a>

@@ -11,7 +11,7 @@
 donations, I was able to purchase <a href="http://www.eldalamberon.com/parma22.html" target="_blank">Parma Eldalamberon
     issue 22</a>.</p>
 <p>You all have my <em>heartfelt thanks</em> for helping and supporting me in this work!</p>
-<p><em>Updated 2018-04-13.</em></p>
+<p><em>Updated 2018-06-30.</em></p>
 
 <blockquote class="donation-box">
 <h2>Would you like to help?</h2>
@@ -28,6 +28,14 @@ donations, I was able to purchase <a href="http://www.eldalamberon.com/parma22.h
 
 <h2>Donations 2018</h2>
 <ol class="donations">
+  <li>29ᵗʰ Jun '18: <span class="currency">$6,00</span> by <span class="person">Birgit K</span>.</li>
+  <li>29ᵗʰ Jun '18: <span class="currency">$10,00</span> by <span class="person">Luke N</span>.</li>
+  <li>19ᵗʰ Jun '18: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
+  <li>6ᵗʰ Jun '18: <span class="currency">$10,00</span> by <span class="person">Ryan M</span>.</li>
+  <li>19ᵗʰ May '18: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
+  <li>6ᵗʰ May '18: <span class="currency">$10,00</span> by <span class="person">Ryan M</span>.</li>
+  <li>24ᵗʰ Apr '18: <span class="currency">$21,00</span> by <span class="person">Jean Paul C</span>.</li>
+  <li>19ᵗʰ Apr '18: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
   <li>19ᵗʰ Mar '18: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
   <li>18ᵗʰ Mar '18: <span class="currency">$1,00</span> by <span class="person">Neil H</span>.</li>
   <li>19ᵗʰ Feb '18: <span class="currency">$1,00</span> by <span class="person">Cory Y</span>.</li>
