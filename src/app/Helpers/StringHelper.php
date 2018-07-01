@@ -16,7 +16,8 @@ class StringHelper
         '(' => '-',
         ')' => '-',
         ' ' => '_',
-        ';' => '_or'
+        ';' => '_or',
+        '/' => '_or_'
     ];
 
     private static $_accentsNormalizationTable = [
