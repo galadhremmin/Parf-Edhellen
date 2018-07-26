@@ -22,7 +22,7 @@
   @endif
 </head>
 <body class="{{ $isAdmin ? 'ed-admin' : ($isAdmin === false ? 'ed-user' : 'ed-anonymous') }}" data-user-id="{{ $user ? $user->id : '0' }}" data-v="{{ config('ed.version') }}">
-  <div class="navbar navbar-default" role="navigation">
+  <aside class="navbar navbar-default" role="navigation">
     <div class="container">
       <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -72,9 +72,9 @@
         </ul>
       </div><!--/.nav-collapse -->
     </div><!--/.container-fluid -->
-  </div>
+  </aside>
 
-  <div class="container" id="site-container">
+  <main class="container" id="site-container">
     <!-- scripting disabled warning -->
     <noscript>
       <div id="noscript" class="alert alert-danger">
@@ -93,7 +93,7 @@
       <p class="disclaimer">Black Speech, Nandorin, Noldorin, Quendya, Quenya, Sindarin, Telerin are languages conceived by Tolkien and they do not belong to us; we neither can nor do claim affiliation 
     with <a href="http://www.middleearth.com/" target="_blank">Middle-earth Enterprises</a> nor <a href="http://www.tolkienestate.com/" target="_blank">Tolkien Estate</a>.</p>
     </div>
-  </div>
+  </main>
 
   <script type="text/javascript" src="@assetpath(/js/manifest.js)"></script>
   <script type="text/javascript" src="@assetpath(/js/vendor.js)"></script>

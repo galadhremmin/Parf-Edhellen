@@ -2,6 +2,10 @@
 @import '_variables';
 @import 'mixins/_fx';
 
+h1 {
+    word-wrap: break-word;
+}
+
 .discuss-table {
     box-sizing: border-box;
 
