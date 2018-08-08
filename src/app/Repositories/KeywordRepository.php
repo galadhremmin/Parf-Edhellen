@@ -62,7 +62,7 @@ class KeywordRepository
         $keyword->reversed_normalized_keyword_length            = mb_strlen($word->reversed_normalized_keyword);
 
         // Unaccented keywords' columns are used for searching, because _mir_ should find _mir_, _mír_, _mîr_ etc.
-        $normalizedUnaccented = StringHelper::normalize($word->word, false);
+        $normalizedUnaccented = StringHelper::normalize($keyword->keyword, false);
         $keyword->normalized_keyword_unaccented                 = $normalizedUnaccented;
         $keyword->normalized_keyword_unaccented_length          = mb_strlen($keyword->normalized_keyword_unaccented);
         $keyword->reversed_normalized_keyword_unaccented        = strrev($normalizedUnaccented);
