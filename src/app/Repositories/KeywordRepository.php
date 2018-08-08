@@ -13,22 +13,53 @@ use App\Models\{
 
 class KeywordRepository 
 {
+    public function resolve(Keyword $keyword) 
+    {
+        $actualKeyword = $this->getKeyword(
+            $keyword->word_id, 
+            $keyword->sense_id,
+            $keyword->gloss_id,
+            $keyword->sentence_fragment_id
+        );
+
+        if ($actualKeyword === null) {
+            return false;
+        }
+
+        $keyword->id = $actualKeyword->id;
+        $keyword->exists = true;
+        
+        return true;
+    }
+
+    public function getKeyword($wordId, $senseId, $glossId, $sentenceFragmentId) 
+    {
+        return Keyword::where([
+            'word_id'  => $wordId,
+            'sense_id' => $senseId,
+            'gloss_id' => $glossId, 
+            'sentence_fragment_id' => $sentenceFragmentId
+        ])->first();
+    }
+
     public function createKeyword(Word $word, Sense $sense, Gloss $gloss = null,
         SentenceFragment $inflection = null)
     {
         $keyword = new Keyword;
 
         $keyword->keyword  = $inflection ? $inflection->fragment : $word->word;
+        $keyword->word     = $word->word;
         $keyword->word_id  = $word->id;
         $keyword->sense_id = $sense->id;
 
         // Normalized keywords are primarily used for direct references, where accents do matter. A direct reference
         // can be _miiir_ which would match _mîr_ according to the default normalization scheme. See StringHelper for more
         // information.
-        $keyword->normalized_keyword                            = $word->normalized_word;
-        $keyword->normalized_keyword_length                     = mb_strlen($word->normalized_word);
-        $keyword->reversed_normalized_keyword                   = $word->reversed_normalized_word;
-        $keyword->reversed_normalized_keyword_length            = mb_strlen($word->reversed_normalized_word);
+        $normalizedAccented = StringHelper::normalize($keyword->keyword, true);
+        $keyword->normalized_keyword                            = $normalizedAccented;
+        $keyword->normalized_keyword_length                     = mb_strlen($keyword->normalized_keyword);
+        $keyword->reversed_normalized_keyword                   = strrev($normalizedAccented);
+        $keyword->reversed_normalized_keyword_length            = mb_strlen($word->reversed_normalized_keyword);
 
         // Unaccented keywords' columns are used for searching, because _mir_ should find _mir_, _mír_, _mîr_ etc.
         $normalizedUnaccented = StringHelper::normalize($word->word, false);
@@ -52,6 +83,7 @@ class KeywordRepository
             $keyword->is_sense = 1;
         }
 
+        $this->resolve($keyword);
         $keyword->save();
     }
 }
