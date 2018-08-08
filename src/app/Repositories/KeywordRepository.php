@@ -18,7 +18,7 @@ class KeywordRepository
     {
         $keyword = new Keyword;
 
-        $keyword->keyword  = $word->word;
+        $keyword->keyword  = $inflection ? $inflection->fragment : $word->word;
         $keyword->word_id  = $word->id;
         $keyword->sense_id = $sense->id;
 

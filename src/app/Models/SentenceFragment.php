@@ -8,6 +8,11 @@ class SentenceFragment extends ModelBase
         'fragment', 'tengwar', 'comments', 'speech_id', 'gloss_id', 'sentence_id',
         'order', 'is_linebreak', 'type'
     ];
+
+    public function gloss()
+    {
+        return $this->belongsTo(Gloss::class);
+    }
     
     public function sentence() 
     {
