@@ -247,7 +247,8 @@ class BookAdapter
                 $gloss->is_deleted,
                 $gloss->child_gloss_id,
                 $gloss->updated_at,
-                $gloss->speech_id
+                $gloss->speech_id,
+                $gloss->has_details
             );
 
             if ($languages === null) {
