@@ -10,12 +10,24 @@ class EDSearchItem extends React.Component {
         this.props.onNavigate(this.props.index, this.props.item.word, this.props.item.normalizedWord);
     }
 
+    format(word) {
+        return word === undefined || word === null 
+            ? null 
+            : word.toLocaleLowerCase();
+    }
+
     render() {
         const cssClass = classNames({ 'selected': this.props.active });
+        let { word, originalWord } = this.props.item;
+
+        word = this.format(word);
+        originalWord = this.format(originalWord);
+
         return <li>
             <a href="#" className={cssClass} onClick={this.navigate.bind(this)}>
-                {this.props.item.word}
+                {originalWord || word}
             </a>
+            {originalWord && originalWord !== word && ` ⇨ ${word}`}
         </li>;
     }
 }

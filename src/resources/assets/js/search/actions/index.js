@@ -82,7 +82,8 @@ export function fetchResults(word, reversed = false, language_id = 0, include_ol
         }).then(resp => {
             const results = resp.data.map(r => ({
                 word: r.k,
-                normalizedWord: r.nk
+                normalizedWord: r.nk,
+                originalWord: r.ok
             }));
 
             dispatch(receiveResults(results));
