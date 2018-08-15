@@ -206,7 +206,7 @@ class MailSettingRepository
     protected function getMorph($entity)
     {
         $morph = Morphs::getAlias($entity);
-        if (! $morph || ! $entity->hasAttribute('id')) {
+        if (! $morph || ! $entity->id) {
             throw new \Exception('Unsupported entity.');
         }
 

@@ -431,11 +431,13 @@ class ForumApiController extends Controller
      */
     public function getSubscription(Request $request, int $id) 
     {
-        $post = new ForumThread();
-        $post->id = $id;
-
         $userId = $request->user()->id;
-        $override = $this->_mailSettings->getOverride($userId, $post);
+        $override = null;
+
+        $thread = ForumThread::find($id);
+        if ($thread) {
+            $override = $this->_mailSettings->getOverride($userId, $thread->entity);
+        }
 
         return [
             'subscribed' => ($override && ! $override->disabled)
@@ -475,8 +477,8 @@ class ForumApiController extends Controller
      */
     private function saveSubscription(int $id, int $userId, bool $subscribed)
     {
-        $post = ForumThread::findOrFail($id);
-        $subscribed = $this->_mailSettings->setNotifications($userId, $post, $subscribed);
+        $thread = ForumThread::findOrFail($id);
+        $subscribed = $this->_mailSettings->setNotifications($userId, $thread->entity, $subscribed);
         return [
             'subscribed' => $subscribed
         ];

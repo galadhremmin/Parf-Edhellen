@@ -13,7 +13,7 @@ $ed-toolbar-height: 30px;
     border-bottom: 2px solid #eeeeee;
     height: $ed-toolbar-height;
     margin-bottom: 22px + $ed-toolbar-height;
-    margin-top: -$ed-toolbar-height;
+    margin-top: -$ed-toolbar-height/2;
 
     > ul {
         padding: 0;
