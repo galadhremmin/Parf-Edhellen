@@ -24,6 +24,7 @@ class EDComments extends EDStatefulFormComponent {
             comments: '',
             posts: [],
             post_id: 0,
+            thread_id: 0,
             highlighted_post_id: jump_post_id,
             loading: false,
             show_reply: false,
@@ -64,9 +65,15 @@ class EDComments extends EDStatefulFormComponent {
         });
 
         const jumpTo = this.state.jump_post_id;
-        const url = `forum?morph=${this.props.morph}&entity_id=${this.props.entityId}&order=${this.props.order}` + 
-            (fromId ? `&from_id=${fromId}` : '') +
-            (jumpTo ? `&jump_to=${jumpTo}` : '');
+        let url = `forum?morph=${this.props.morph}&entity_id=${this.props.entityId}&order=${this.props.order}`; 
+        
+        if (fromId) {
+            url += `&from_id=${fromId}`;
+        }
+        
+        if (jumpTo) {
+            url += `&jump_to=${jumpTo}`;
+        }
         
         return EDAPI.get(url).then(this.onLoaded.bind(this, fromId || 0));
     }
@@ -85,7 +92,6 @@ class EDComments extends EDStatefulFormComponent {
     }
 
     onLoaded(fromId, response) {
-
         let posts = this.state.posts || [];
         const newPosts = response.data.posts || [];
 
@@ -117,6 +123,7 @@ class EDComments extends EDStatefulFormComponent {
         this.setState({
             major_id: response.data.major_id,
             pages: response.data.pages,
+            thread_id: response.data.thread_id,
             jump_post_id: 0,
             loading: false,
             posts
@@ -131,6 +138,8 @@ class EDComments extends EDStatefulFormComponent {
         }
 
         this.setPage(this.state.major_id);
+        
+        return response.data;
     }
 
     onScroll(ev) {

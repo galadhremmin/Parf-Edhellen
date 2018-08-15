@@ -6,7 +6,8 @@ class ForumThread extends ModelBase implements Interfaces\IHasFriendlyName
 {
     protected $fillable = [ 
         'entity_type', 'entity_id', 'subject', 'account_id',
-        'number_of_posts', 'number_of_likes', 'normalized_subject'
+        'number_of_posts', 'number_of_likes', 'normalized_subject',
+        'is_sticky'
     ];
 
     use Traits\HasAccount;

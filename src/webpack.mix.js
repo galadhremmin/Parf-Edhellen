@@ -125,6 +125,10 @@ mix.js([
     'resources/assets/js/member-list/index.jsx'
 ], `${outputDir}/js/member-charts.js`);
 
+mix.js([
+    'resources/assets/js/discuss-tools/index.jsx'
+], `${outputDir}/js/discuss-tools.js`);
+
 // .sourceMaps();
 
 mix.sass('resources/assets/sass/app.scss', `${outputDir}/css`);

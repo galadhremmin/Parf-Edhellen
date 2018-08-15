@@ -63,6 +63,23 @@ class MailSettingRepository
     }
 
     /**
+     * Checks whether the specified account has a configuration override associated with the specified entity.
+     * @param integer $accountId
+     * @param App\Models\ModelBase $entity
+     * @return boolean
+     */
+    public function getOverride(int $accountId, $entity)
+    {
+        $morph = $this->getMorph($entity);
+        return MailSettingOverride::forAccount($accountId)
+            ->where([
+                'entity_type' => $morph,
+                'entity_id'   => $entity->id
+            ])
+            ->first();
+    }
+
+    /**
      * Checks whether the account can be notified about the change to the specified entity.
      *
      * @param integer $accountId

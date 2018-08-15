@@ -6,11 +6,14 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 use App\Http\Controllers\Controller;
-use App\Repositories\ForumRepository;
 use App\Models\Initialization\Morphs;
 use App\Http\Discuss\ContextFactory;
 use App\Adapters\DiscussAdapter;
 use App\Helpers\LinkHelper;
+use App\Repositories\{
+    ForumRepository,
+    MailSettingRepository
+};
 use App\Models\{ 
     Account,
     ForumPost, 
@@ -27,13 +30,17 @@ class ForumApiController extends Controller
 {
     protected $_discussAdapter;
     protected $_repository;
+    protected $_mailSettings;
     protected $_contextFactory;
 
     public function __construct(DiscussAdapter $discussAdapter, 
-        ForumRepository $repository, ContextFactory $contextFactory)
+        ForumRepository $repository, 
+        MailSettingRepository $mailSettingsRepository, 
+        ContextFactory $contextFactory)
     {
         $this->_discussAdapter = $discussAdapter;
         $this->_repository     = $repository;
+        $this->_mailSettings   = $mailSettingsRepository;
         $this->_contextFactory = $contextFactory;
     }
 
@@ -180,9 +187,10 @@ class ForumApiController extends Controller
         }
 
         return [
-            'posts'    => $posts,
-            'major_id' => $majorId,
-            'pages'    => $pages
+            'posts'     => $posts,
+            'major_id'  => $majorId,
+            'pages'     => $pages,
+            'thread_id' => $thread->id ?: null
         ];
     }
 
@@ -413,6 +421,121 @@ class ForumApiController extends Controller
         }
 
         return response(null, $statusCode);
+    }
+
+    /**
+     * HTTP GET. Gets subscription status for a specific forum thread.
+     * @param Request $request
+     * @param int $id The ID of the thread.
+     * @return array Associtative array with one boolean key `subscribed`
+     */
+    public function getSubscription(Request $request, int $id) 
+    {
+        $post = new ForumThread();
+        $post->id = $id;
+
+        $userId = $request->user()->id;
+        $override = $this->_mailSettings->getOverride($userId, $post);
+
+        return [
+            'subscribed' => ($override && ! $override->disabled)
+        ];
+    }
+
+    /**
+     * HTTP POST. Subscribes to a specific forum thread.
+     * @param Request $request
+     * @param int $id The ID of the thread.
+     * @return array Associtative array with one boolean key `subscribed`
+     */
+    public function storeSubscription(Request $request, int $id)
+    {
+        $userId = $request->user()->id;
+        return $this->saveSubscription($id, $userId, true);
+    }
+
+    /**
+     * HTTP DELETE. Unsubscribes from a specific forum thread.
+     * @param Request $request
+     * @param int $id The ID of the thread.
+     * @param int $userId 
+     * @return array Associtative array with one boolean key `subscribed`
+     */
+    public function destroySubscription(Request $request, int $id)
+    {
+        $userId = $request->user()->id;
+        return $this->saveSubscription($id, $userId, false);
+    }
+
+    /**
+     * Subscribes or unsubscribes from a specific forum thread.
+     * @param int $id The ID of the thread.
+     * @param bool $subscribed 
+     * @return array Associtative array with one boolean key `subscribed`
+     */
+    private function saveSubscription(int $id, int $userId, bool $subscribed)
+    {
+        $post = ForumThread::findOrFail($id);
+        $subscribed = $this->_mailSettings->setNotifications($userId, $post, $subscribed);
+        return [
+            'subscribed' => $subscribed
+        ];
+    }
+
+    /**
+     * HTTP GET. Gets whether the specified thread is 'sticky' (essentially, always put on top)
+     * @param Request $request
+     * @param int $id The ID of the thread.
+     * @return array Associtative array with one boolean key `sticky`
+     */
+    public function getSticky(Request $request, int $id)
+    {
+        $thread = ForumThread::where('id', $id)
+            ->select('is_sticky')
+            ->firstOrFail();
+        
+        return [
+            'sticky' => $thread->is_sticky
+        ];
+    }
+
+    /**
+     * HTTP POST. Makes the specified thread 'sticky' (essentially, always putting it on top)
+     * @param Request $request
+     * @param int $id The ID of the thread.
+     * @return array Associtative array with one boolean key `sticky`
+     */
+    public function storeSticky(Request $request, int $id)
+    {
+        return $this->saveSticky($id, true);
+    }
+
+    /**
+     * HTTP DELETE. Converts a sticky thread into a normal thread.
+     * @param Request $request
+     * @param int $id The ID of the thread.
+     * @return array Associtative array with one boolean key `sticky`
+     */
+    public function destroySticky(Request $request, int $id)
+    {
+        return $this->saveSticky($id, false);
+    }
+
+    /**
+     * Saves a thread's stickiness.
+     * @param int $id The ID of the thread.
+     * @param bool $sticky 
+     * @return array Associtative array with one boolean key `sticky`
+     */
+    private function saveSticky(int $id, bool $sticky)
+    {
+        $thread = ForumThread::findOrFail($id);
+        $thread->is_sticky = $sticky;
+        $thread->save();
+
+        return [
+            'sticky' => $thread->is_sticky
+        ];
     }
 
     /**

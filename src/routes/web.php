@@ -233,6 +233,12 @@ Route::group([
         ->where([ 'id' => $numericReg ]);
     Route::delete('forum/like/{id}', [ 'uses' => 'ForumApiController@destroyLike' ])
         ->where([ 'id' => $numericReg ]);
+    Route::get('forum/subscription/{id}',    [ 'uses' => 'ForumApiController@getSubscription'   ])
+        ->where([ 'id' => $numericReg ]);
+    Route::post('forum/subscription/{id}',   [ 'uses' => 'ForumApiController@storeSubscription'   ])
+        ->where([ 'id' => $numericReg ]);
+    Route::delete('forum/subscription/{id}', [ 'uses' => 'ForumApiController@destroySubscription' ])
+        ->where([ 'id' => $numericReg ]);
 
     Route::get('book/word/{id}',  [ 'uses' => 'BookApiController@getWord'   ]);
     Route::post('book/word/find', [ 'uses' => 'BookApiController@findWord'  ]);
@@ -243,11 +249,18 @@ Route::group([
         'namespace' => 'Api\v2', 
         'prefix'    => 'api/v2',
         'middleware' => ['auth', 'auth.require-role:Administrators']
-    ], function () {
+    ], function () use ($numericReg) {
 
     Route::get('account',        [ 'uses' => 'AccountApiController@index' ]);
     Route::get('account/{id}',   [ 'uses' => 'AccountApiController@getAccount' ]);
     Route::post('account/find',  [ 'uses' => 'AccountApiController@findAccount' ]);
 
     Route::get('book/group',      [ 'uses' => 'BookApiController@getGroups' ]);
+
+    Route::get('forum/sticky/{id}',   [ 'uses' => 'ForumApiController@getSticky'   ])
+        ->where([ 'id' => $numericReg ]);
+    Route::post('forum/sticky/{id}',   [ 'uses' => 'ForumApiController@storeSticky'   ])
+        ->where([ 'id' => $numericReg ]);
+    Route::delete('forum/sticky/{id}', [ 'uses' => 'ForumApiController@destroySticky' ])
+        ->where([ 'id' => $numericReg ]);
 });

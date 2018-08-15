@@ -42,6 +42,7 @@ class DiscussController extends Controller
     {
         $threads = ForumThread::where('number_of_posts', '>', 0)
             ->with('account')
+            ->orderBy('is_sticky', 'desc')
             ->orderBy('updated_at', 'desc')
             ->orderBy('created_at', 'desc')
             ->get();

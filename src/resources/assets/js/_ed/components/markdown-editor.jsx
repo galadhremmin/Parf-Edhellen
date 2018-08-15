@@ -155,8 +155,10 @@ class EDMarkdownEditor extends React.Component {
                     </p>
                     <table className="table table-striped">
                         <thead>
-                            <th>Syntax</th>
-                            <th>Description</th>
+                            <tr>
+                                <th>Syntax</th>
+                                <th>Description</th>
+                            </tr>
                         </thead>
                         <tbody>
                             <tr>
@@ -239,6 +241,14 @@ class EDMarkdownEditor extends React.Component {
                             <tr>
                                 <td><code>### Header</code></td>
                                 <td>3rd level header. <em>Please use with care!</em></td>
+                            </tr>
+                            <tr>
+                                <td><code>@sindarin|mae govannen!@</code></td>
+                                <td>
+                                    Transcribes <em>mae govannen</em> to <span className="tengwar">{'tlE xr^5{#5$Á'}</span> {' '}
+                                    We use Glaemscribe for transcriptions. Supported modes are: {' '}
+                                    adunaic, blackspeech, quenya, sindarin-beleriand, sindarin, telerin, and westron.
+                                </td>
                             </tr>
                         </tbody>
                     </table>
