@@ -1,7 +1,7 @@
 # Parf Edhellen
 This is the source code for [elfdict.com](http://www.elfdict.com), a non-profit, free dictionary online for Tolkien's languages. Maintained by Leonard Wickmark. Follow me on twitter at [@parmaeldo](https://twitter.com/parmaeldo).
 
-Version 25 (model 4.0) is in production.
+Version 41 (model 4.0 incl. migrations) is in production.
 
 ## Configuration
 Installation is relatively easy:
