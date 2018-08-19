@@ -16,6 +16,7 @@ class KeywordRepository
     public function resolve(Keyword $keyword) 
     {
         $actualKeyword = $this->getKeyword(
+            $keyword->keyword,
             $keyword->word_id, 
             $keyword->sense_id,
             $keyword->gloss_id,
@@ -32,9 +33,10 @@ class KeywordRepository
         return true;
     }
 
-    public function getKeyword($wordId, $senseId, $glossId, $sentenceFragmentId) 
+    public function getKeyword($keyword, $wordId, $senseId, $glossId, $sentenceFragmentId) 
     {
         return Keyword::where([
+            'keyword'  => $keyword,
             'word_id'  => $wordId,
             'sense_id' => $senseId,
             'gloss_id' => $glossId, 

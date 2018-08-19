@@ -164,7 +164,6 @@ class ImportEldamoCommand extends Command
             'suf'         => 'suffix',
             'vb'          => 'verb',
 
-            'interj particle' => 0, // not supported
             'prep adv'        => 'preposition/adverb',
             'n adj'           => 'noun/adjective',
             'adj n'           => 'noun/adjective',
@@ -179,7 +178,10 @@ class ImportEldamoCommand extends Command
             'prep pref'       => 'preposition/prefix',
             'adv interj'      => 'adverb/interjection',
             'interj adv'      => 'adverb/interjection',
-            'n vb'            => 'noun/verb'
+            'n vb'            => 'noun/verb',
+
+            'interj particle' => 0, // not supported
+            'pron adv'        => 0
         ];
 
         foreach ($speechMap as $key => $id) {
@@ -366,20 +368,18 @@ class ImportEldamoCommand extends Command
                 $ot->language_id    = $neoLanguageMap[$t->language];
                 $ot->is_uncertain   = true;
                 $ot->gloss_group_id = $neologism->id;
-            } else {
-                $ot->language_id    = $languageMap[$t->language] ?: null;
+            } else if (isset($languageMap[$t->language])) {
+                $ot->language_id    = $languageMap[$t->language];
                 $ot->gloss_group_id = $eldamo->id;
+            } else {
+                $this->line($word.': '.$t->word.' ('.$t->id.')');
+                $this->line("\tUnrecognised language: ".$t->language);
+                $ignored[] = $t;
+                continue;
             }
 
             $ot->speech_id    = $speechMap[$t->speech] ?: null;
             $ot->comments     = $t->notes;
-
-            if (! $ot->language_id) {
-                $this->line($word.': '.$t->word.' ('.$t->id.')');
-                $this->line("\tIgnored");
-                
-                continue;
-            }
 
             try {
                 $this->line($c.' '.$t->language.' '.$t->word);
@@ -395,13 +395,15 @@ class ImportEldamoCommand extends Command
                 $this->line("\tAttempting to save...");
 
                 $t = $this->_glossRepository->saveGloss($word, $sense, $ot, $translations, $keywords, $details, false);
-                
+                $t->load('word', 'sense', 'gloss_group');
+
                 $this->line("\tSuccess! ID: ".$t->id);
                 $this->line("\tInflections: ".count($inflections));
 
                 foreach ($inflections as $inflection) {
                     $this->line("\t- ".$inflection);
-                    $this->_keywordRepository->createKeyword($t->word, $t->sense, $t, $inflection);
+                    $keyword = $this->_keywordRepository->createKeyword($t->word, $t->sense, $t, $inflection);
+                    $this->line("\t\tID: ".$keyword->id);
                 }
 
             } catch (\Exception $ex) {
