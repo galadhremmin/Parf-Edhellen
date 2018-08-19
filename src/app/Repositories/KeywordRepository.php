@@ -43,11 +43,11 @@ class KeywordRepository
     }
 
     public function createKeyword(Word $word, Sense $sense, Gloss $gloss = null,
-        SentenceFragment $inflection = null)
+        string $inflection = null, int $inflectionId = 0)
     {
         $keyword = new Keyword;
 
-        $keyword->keyword  = $inflection ? $inflection->fragment : $word->word;
+        $keyword->keyword  = $inflection ? $inflection : $word->word;
         $keyword->word     = $word->word;
         $keyword->word_id  = $word->id;
         $keyword->sense_id = $sense->id;
@@ -75,8 +75,8 @@ class KeywordRepository
                 ? $gloss->gloss_group->is_old
                 : false;
             
-            if ($inflection) {
-                $keyword->sentence_fragment_id = $inflection->id;
+            if ($inflectionId) {
+                $keyword->sentence_fragment_id = $inflectionId;
             }
 
         } else {
@@ -85,5 +85,7 @@ class KeywordRepository
 
         $this->resolve($keyword);
         $keyword->save();
+
+        return $keyword;
     }
 }

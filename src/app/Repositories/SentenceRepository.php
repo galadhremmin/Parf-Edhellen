@@ -16,6 +16,13 @@ use App\Models\{
 
 class SentenceRepository
 {
+    private $_keywordRepository;
+
+    public function __construct(KeywordRepository $keywordRepository)
+    {
+        $this->_keywordRepository = $keywordRepository;
+    }
+
     /**
      * Gets the languages for all available sentences.
      * @return mixed
@@ -87,7 +94,7 @@ class SentenceRepository
         $changed = !! $sentence->id;
         $numberOfFragments = count($fragments);
         if ($numberOfFragments !== count($inflections)) {
-            throw new Exception('The number of fragments must match the number of inflections.');
+            throw new \Exception('The number of fragments must match the number of inflections.');
         }
         
         $sentence->save();
@@ -103,6 +110,9 @@ class SentenceRepository
                 $inflectionRel->sentence_fragment_id = $fragment->id;
                 $inflectionRel->save(); 
             }
+
+            $this->_keywordRepository->createKeyword($fragment->gloss->word, $fragment->gloss->sense, 
+                $fragment->gloss, $fragment->fragment, $fragment->id);
         }
 
         // Inform listeners of this change.
@@ -110,12 +120,15 @@ class SentenceRepository
                 ? new SentenceCreated($sentence, $sentence->account_id)
                 : new SentenceEdited($sentence, Auth::user()->id);
         event($event);
+
+        return $sentence;
     }
 
     public function destroyFragments(Sentence $sentence) 
     {
         foreach ($sentence->sentence_fragments as $fragment) {
             $fragment->inflection_associations()->delete();
+            $fragment->keywords()->delete();
             $fragment->delete();
         }
     }

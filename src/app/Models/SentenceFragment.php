@@ -28,4 +28,9 @@ class SentenceFragment extends ModelBase
     {
         return $this->hasMany(SentenceFragmentInflectionRel::class);
     }
+
+    public function keywords()
+    {
+        return $this->hasMany(Keyword::class);
+    }
 }

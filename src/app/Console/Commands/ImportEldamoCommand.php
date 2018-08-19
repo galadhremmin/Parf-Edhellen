@@ -4,7 +4,10 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
-use App\Repositories\GlossRepository;
+use App\Repositories\{
+    GlossRepository,
+    KeywordRepository
+};
 use App\Helpers\StringHelper;
 use App\Models\{
     Gloss, 
@@ -31,12 +34,14 @@ class ImportEldamoCommand extends Command
      */
     protected $description = 'Imports definitions from eldamo.json. Transform the XML data source to JSON using EDEldamoParser.exe.';
 
-    protected $_glossRepository;
+    private $_glossRepository;
+    private $_keywordRepository;
 
-    public function __construct(GlossRepository $glossRepository)
+    public function __construct(GlossRepository $glossRepository, KeywordRepository $keywordRepository)
     {
         parent::__construct();
         $this->_glossRepository = $glossRepository;
+        $this->_keywordRepository = $keywordRepository;
     }
 
     /**
@@ -84,6 +89,11 @@ class ImportEldamoCommand extends Command
     private function getEldamo()
     {
         return GlossGroup::where('name', 'Eldamo')->firstOrFail();
+    }
+
+    private function getNeologisms()
+    {
+        return GlossGroup::where('name', 'Neologism')->firstOrFail();
     }
 
     private function deleteDeprecated(array $ids)
@@ -245,7 +255,7 @@ class ImportEldamoCommand extends Command
             'val'  => 'valarin',
             'van'  => 'quendya', // vanyarin
             'wes'  => 'westron',
-            'wos'  => 'wose'
+            'wos'  => 'wose',
         ];
 
         $missing = [];
@@ -266,6 +276,11 @@ class ImportEldamoCommand extends Command
             $languageMap[$key] = $language->id;
         }
 
+        $neoLanguageMap = [
+            'ns' => $languageMap['s'],
+            'nq' => $languageMap['q']
+        ];
+
         if (! empty($missing)) {
             $this->error('Missing the languages: "'.implode('", "', $missing).'". Can\'t proceed.');
             return;
@@ -273,6 +288,7 @@ class ImportEldamoCommand extends Command
 
         // Find the Eldamo gloss group
         $eldamo = $this->getEldamo();
+        $neologism = $this->getNeologisms();
 
         $this->line('Data source: '.$path);
         $this->line('Eldamo ID: '.$eldamo->id.'.');
@@ -299,7 +315,7 @@ class ImportEldamoCommand extends Command
             $ot = Gloss::latest()
                 ->notIndex()
                 ->where('external_id', $t->id)
-                ->where('gloss_group_id', $eldamo->id)
+                ->whereIn('gloss_group_id', [$eldamo->id, $neologism->id])
                 ->first();
 
             $found = $ot !== null;
@@ -307,7 +323,6 @@ class ImportEldamoCommand extends Command
             if (! $found) {
                 $ot = new Gloss;
                 $ot->external_id = $t->id;
-                $ot->gloss_group_id = $eldamo->id;
                 $ot->account_id = $existing->account_id;
             }
 
@@ -315,11 +330,17 @@ class ImportEldamoCommand extends Command
             $word = $t->word;
 
             $keywords = array_keys((array) $t->variations); // are automatically populated, anyway.
+
             $translations = array_map(function ($v) {
                 return new Translation(['translation' => $v]);
             }, array_unique(array_map(function ($v) {
                 return self::removeMark($v);
             }, $t->translations)));
+
+            $inflections = array_unique(array_map(function ($v) {
+                return mb_strtolower($v->entity->word, 'utf-8');
+            }, $t->inflections));
+
             $details = array_map(function ($d) use($ot) {
                 return new GlossDetail([
                     'category' => $d->category,
@@ -327,6 +348,7 @@ class ImportEldamoCommand extends Command
                     'account_id' => $ot->account_id
                 ]);
             }, $t->glossDetails);
+
             for ($i = 1; $i <= count($details); $i += 1) {
                 $details[$i - 1]->order = $i * 10;
             }
@@ -338,24 +360,52 @@ class ImportEldamoCommand extends Command
                                 $t->mark === '#';
             $ot->is_rejected  = $t->mark === '-';
             $ot->is_deleted   = 0;
-            
             $ot->source       = implode('; ', $t->exactSources);
 
-            $ot->language_id  = $languageMap[$t->language] ?: null;
+            if (isset($neoLanguageMap[$t->language])) {
+                $ot->language_id    = $neoLanguageMap[$t->language];
+                $ot->is_uncertain   = true;
+                $ot->gloss_group_id = $neologism->id;
+            } else {
+                $ot->language_id    = $languageMap[$t->language] ?: null;
+                $ot->gloss_group_id = $eldamo->id;
+            }
+
             $ot->speech_id    = $speechMap[$t->speech] ?: null;
             $ot->comments     = $t->notes;
 
             if (! $ot->language_id) {
-                $this->line($word.': ignoring '.$t->id.'.');
+                $this->line($word.': '.$t->word.' ('.$t->id.')');
+                $this->line("\tIgnored");
+                
                 continue;
             }
 
             try {
-                $this->line($c.' '.$t->language.' '.$t->word.': '.($found ? $ot->id : 'new'));
+                $this->line($c.' '.$t->language.' '.$t->word);
+                
+                if ($found) {
+                    $this->line("\tExisting ID: ".$ot->id);
+                } else {
+                    $this->line("\tExisting ID: null");
+                }
+
+                $this->line("\tGloss group: ".$ot->gloss_group_id);
+                $this->line("\tClassification: ".($ot->is_uncertain ? 'uncertain' : 'regular'));
+                $this->line("\tAttempting to save...");
+
                 $t = $this->_glossRepository->saveGloss($word, $sense, $ot, $translations, $keywords, $details, false);
-                $this->line('     -> '.$t->id);
+                
+                $this->line("\tSuccess! ID: ".$t->id);
+                $this->line("\tInflections: ".count($inflections));
+
+                foreach ($inflections as $inflection) {
+                    $this->line("\t- ".$inflection);
+                    $this->_keywordRepository->createKeyword($t->word, $t->sense, $t, $inflection);
+                }
+
             } catch (\Exception $ex) {
-                $this->error('Failed due to an exception!');
+                $this->error("\tFailed due to an exception!");
                 $this->error($ex->getMessage());
                 $this->error($ex->getTraceAsString());
                 dd([$word, $sense, $ot, $translations, $keywords]);
