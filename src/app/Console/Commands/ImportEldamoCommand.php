@@ -378,7 +378,7 @@ class ImportEldamoCommand extends Command
                 continue;
             }
 
-            $ot->speech_id    = $speechMap[$t->speech] ?: null;
+            $ot->speech_id    = isset($speechMap[$t->speech]) ? ($speechMap[$t->speech] ?: null) : null;
             $ot->comments     = $t->notes;
 
             try {
