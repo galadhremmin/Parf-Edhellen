@@ -50,7 +50,7 @@ class GlossRepository
             }
 
             $query = DB::table('keywords as k')
-                ->join('glosses as g', 'k.gloss_id', 'g.gloss_id')
+                ->join('glosses as g', 'k.gloss_id', 'g.id')
                 ->whereNotNull('k.gloss_id')
                 ->where($filter);
         } else {
