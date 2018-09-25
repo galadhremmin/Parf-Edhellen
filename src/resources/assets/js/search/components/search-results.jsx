@@ -233,17 +233,22 @@ class EDSearchResults extends React.Component {
             return null;
         }
 
+        const single = this.props.bookData.single;
+
+        const languages = this.props.bookData.sections.filter(s => ! s.language.is_unusual);
+        const unusualLanguages = this.props.bookData.sections.filter(s => s.language.is_unusual);
+
         return (<section>
             <div className="search-result-presenter">
                 {this.props.bookData.sections.length < 1 ? (
-                    <div className="row">
+                    <div>
                         <h3>Forsooth! I can't find what you're looking for!</h3>
                         <p>The word <em>{this.props.bookData.word}</em> hasn't been recorded for any of the languages.</p>
                     </div>
                 ) : (
                     <div>
-                        <section className="row">
-                            {this.props.bookData.sections.filter(s => ! s.language.is_unusual).map(
+                        <section className={`ed-glossary ${single ? 'ed-glossary--single' : ''}`}>
+                            {languages.map(
                                 s => <EDBookSection section={s}
                                                     key={s.language.id}
                                                     columnsMax={this.props.bookData.columnsMax}
@@ -253,16 +258,14 @@ class EDSearchResults extends React.Component {
                             )}
                         </section>
                         {this.props.bookData.sections.some(s => s.language.is_unusual) ? (
-                            <section className="row">
+                            <section className={`ed-glossary ed-glossary--unusual ${single ? 'ed-glossary--single' : ''}`}>
                                 <hr />
-                                <div className="col-xs-12">
-                                    <p>
-                                        <strong>Beware, older languages below!</strong> {' '}
-                                        The languages below were invented during Tolkien's earlier period and should be used with caution. {' '}
-                                        Remember to never, ever mix words from different languages!
-                                    </p>
-                                </div>
-                                {this.props.bookData.sections.filter(s => s.language.is_unusual).map(
+                                <p>
+                                    <strong>Beware, older languages below!</strong> {' '}
+                                    The languages below were invented during Tolkien's earlier period and should be used with caution. {' '}
+                                    Remember to never, ever mix words from different languages!
+                                </p>
+                                {unusualLanguages.map(
                                     s => <EDBookSection section={s}
                                                         key={s.language.id}
                                                         columnsMax={this.props.bookData.columnsMax}
@@ -296,7 +299,9 @@ class EDSearchResults extends React.Component {
         if (this.props.loading) {
             book = <div className="sk-spinner sk-spinner-pulse" />;
             
-        } else if (this.props.bookData) {
+        } 
+        
+        if (this.props.bookData) {
             book = this.renderBook();
         }
 

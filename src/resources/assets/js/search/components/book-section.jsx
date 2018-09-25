@@ -12,19 +12,18 @@ class EDBookSection extends React.Component {
     }
 
     render() {
-        const className = `col-sm-${this.props.columnsMax} col-md-${this.props.columnsMid} col-lg-${this.props.columnsMin}`;
         const language = this.props.section.language;
 
-        return <article className={className}>
+        return <article className="ed-glossary__language">
             <header>
-                <h2 rel="language-box">
+                <h2>
                     { language.is_unusual ? '† ' : '' }
                     { language.name }
                     &nbsp;
                     <span className="tengwar">{ language.tengwar }</span>
                 </h2>
             </header>
-            <section className="language-box" id={`language-box-${ language.id }`}>
+            <section className="ed-glossary__language__words" id={`language-box-${ language.id }`}>
                 {this.props.section.glosses.map(
                     g => <EDBookGloss gloss={g}
                                       language={language}

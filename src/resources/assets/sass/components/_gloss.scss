@@ -1,59 +1,106 @@
-blockquote.gloss {
-  overflow: hidden;
-  border-left-color: #dedede;
+.ed-glossary {
+  &.ed-glossary--unusual {
 
-  h3.gloss-word { 
-    margin-top: 0;
-    
-    a {
-      float: right;
-      margin-left: 5px;
+  }
 
-      &.neologism {
-        float: none;
+  .ed-glossary__language {
+    > header {
+      text-align: center;
+
+      h2 {
+        font-size: 200%;
+      }
+      @media (max-width: $screen-sm-min) {
+        text-align: left;
       }
     }
-    .rejected {
-      text-decoration: line-through;
-    }
   }
-  .gloss-word a {
-    opacity: 0.3;
-    transition: opacity 0.5s;
-  }
-  .gloss-word a:hover {
-    opacity: 1;
-  }
-  .word-type {
-    font-style: italic;
-  }
-  .ed-comments-no {
-    &:hover, &:active, &:visited {
-      text-decoration: none;
-    }
 
-    > .no {
-      font-size: 80%;
-      line-height: 24px;
-      vertical-align: top;
-    }
-  }
-  .word-footer {
-    max-width: 100%;
-    text-overflow: ellipsis;
-    display: block;
-    overflow: hidden;
-  }
-  section.details {
-    padding: $padding-small-vertical 0;
+  .ed-glossary__language__words {
+    columns: 2;
 
-    header > h4 {
-      margin-top: 0;
-      font-size: inherit;
-      font-style: italic;
+    blockquote.gloss {
+      overflow: hidden;
+      border-left-color: #dedede;
+      break-inside: avoid;
+      page-break-inside: avoid; /* -> https://caniuse.com/#search=columns */
+
+      h3.gloss-word { 
+        margin-top: 0;
+        
+        a {
+          float: right;
+          margin-left: 5px;
+
+          &.neologism {
+            float: none;
+          }
+        }
+        .rejected {
+          text-decoration: line-through;
+        }
+      }
+      .gloss-word a {
+        opacity: 0.3;
+        transition: opacity 0.5s;
+      }
+      .gloss-word a:hover {
+        opacity: 1;
+      }
+      .word-type {
+        font-style: italic;
+      }
+      .ed-comments-no {
+        &:hover, &:active, &:visited {
+          text-decoration: none;
+        }
+
+        > .no {
+          font-size: 80%;
+          line-height: 24px;
+          vertical-align: top;
+        }
+      }
+      .word-footer {
+        max-width: 100%;
+        text-overflow: ellipsis;
+        display: block;
+        overflow: hidden;
+      }
+      section.details {
+        padding: $padding-small-vertical 0;
+
+        header > h4 {
+          margin-top: 0;
+          font-size: inherit;
+          font-style: italic;
+        }
+      } 
+    } 
+  }
+  @media (max-width: $screen-sm-min) {
+    .ed-glossary__language__words {
+      columns: auto;
     }
-  } 
+  }
+  @media (min-width: $screen-xxl-width) {
+    .ed-glossary__language__words {
+      columns: 3;
+    }
+  }
+  @media (min-width: $screen-xxxl-width) {
+    .ed-glossary__language__words {
+      columns: 4;
+    }
+  }
+
+  &.ed-glossary--single {
+    .ed-glossary__language__words {
+      columns: auto;
+    }
+  }
 }
+
 .ed-admin-tool {
   display: none;
 }

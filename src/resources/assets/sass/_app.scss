@@ -1,4 +1,5 @@
 @import "_animations";
+@import "_variables";
 
 html, body {
   width: 100%;
@@ -62,6 +63,16 @@ blockquote footer {
   transition: transform 0.5s;
   position: relative;
   @include ed-box-shadow();
+}
+@media (min-width: $screen-xxl-width) {
+  #site-container {
+    width: $screen-xxl-width - 200px;
+  }
+}
+@media (min-width: $screen-xxxl-width) {
+  #site-container {
+    width: $screen-xxxl-width - 200px;
+  }
 }
 #site-container.pushed-down {
   transform: translateY(calc(100vh - 150px));
