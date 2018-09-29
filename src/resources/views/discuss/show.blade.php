@@ -3,12 +3,12 @@
 @section('title', $thread->subject.' - Discussion')
 @section('body')
   <article>
-    <header>
-      <h1>{{ $thread->subject }}</h1>
-    </header>
     <nav class="discuss-breadcrumbs">
       {!! Breadcrumbs::render('discuss.show', $thread) !!}
     </nav>
+    <header>
+      <h1>{{ $thread->subject }}</h1>
+    </header>
     <section class="discuss-entity">
     {!! $context->view($thread->entity) !!}
     </section>

@@ -44,9 +44,8 @@ class EDBookGloss extends React.Component {
             </p> : undefined}
             <h3 rel="gloss-word" className="gloss-word">
                 {! gloss.is_canon || gloss.is_uncertain
-                    ? <span className="glyphicon glyphicon-asterisk" title="Uncertain or possibly a neologism" />
+                    ? <span className="uncertain" title="Uncertain or possibly a neologism">*</span>
                     : undefined}
-                {' '}
                 <span itemProp="headline" className={classNames({'rejected': gloss.is_rejected})}>
                     {gloss.word}
                 </span>

@@ -18,12 +18,12 @@ $line-height-base: 1.6;
 $text-color: #202020;
 
 // Navbar
-$navbar-default-bg: #333;
+$navbar-default-bg: #202020;
 $navbar-default-link-color: white;
 $navbar-default-link-hover-color: white;
-$navbar-default-link-active-color: white;
-$navbar-default-link-active-bg: #272727;
-$navbar-default-link-hover-bg: #272727;
+$navbar-default-link-active-color: $text-color;
+$navbar-default-link-active-bg: white;
+$navbar-default-link-hover-bg: #202020;
 
 // Buttons
 $btn-default-color: $text-color;

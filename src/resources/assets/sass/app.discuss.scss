@@ -48,10 +48,8 @@ $ed-toolbar-height: 30px;
         }
 
         &.sticky {
-            background: $brand-info;
+            background: $text-color;
             color: white;
-            border-radius: 5px;
-            text-shadow: 1px 1px darken($brand-info, 12%);
             a {
                 color: inherit;
             }

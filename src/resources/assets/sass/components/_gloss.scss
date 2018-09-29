@@ -4,11 +4,18 @@
   }
 
   .ed-glossary__language {
+    margin-top: 4em;
+
+    &:first-child {
+      margin-top: 0 !important;
+    }
+
     > header {
       text-align: center;
 
       h2 {
         font-size: 200%;
+        font-weight: bold;
       }
       @media (max-width: $screen-sm-min) {
         text-align: left;
@@ -20,6 +27,7 @@
     columns: 2;
 
     blockquote.gloss {
+      border-width: 1px;
       overflow: hidden;
       border-left-color: #dedede;
       break-inside: avoid;
@@ -31,21 +39,22 @@
         a {
           float: right;
           margin-left: 5px;
+          font-size: 70%;
+          line-height: 100%;
+          color: #ccc;
+
+          &:hover {
+            color: inherit;
+          }
 
           &.neologism {
             float: none;
+            content: '*';
           }
         }
         .rejected {
           text-decoration: line-through;
         }
-      }
-      .gloss-word a {
-        opacity: 0.3;
-        transition: opacity 0.5s;
-      }
-      .gloss-word a:hover {
-        opacity: 1;
       }
       .word-type {
         font-style: italic;

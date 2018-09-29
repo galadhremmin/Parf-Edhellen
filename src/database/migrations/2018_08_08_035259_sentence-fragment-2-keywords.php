@@ -53,7 +53,7 @@ class SentenceFragment2Keywords extends Migration
             $table->dropUnique('WordGlossFragmentRelation');
             $table->dropColumn('sentence_fragment_id');
             $table->dropColumn('word');
-            $table->unique(['word_id', 'id', 'gloss_id', 'sense_id'], 'WordTranslationRelation');
+            $table->unique(['word_id', 'gloss_id', 'sense_id'], 'WordTranslationRelation');
         });
     }
 }

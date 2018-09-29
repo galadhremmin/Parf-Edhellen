@@ -8,24 +8,11 @@ html, body {
 }
 body {
   overflow-y: scroll;
+  background: white;
 }
 #site-container  {
   padding-top: 1em;
   position: relative;
-}
-@media (min-width: $screen-sm-min) {
-  body {
-    background: url(/img/backgrounds/stars.jpg) fixed;
-    background-size: cover;
-  }
-
-  #site-container  {
-    background: rgba(255, 255, 255, 0.95);
-    border: 0.5em solid white;
-    padding-top: 1em;
-    border-radius: 2px;
-    @include ed-box-shadow();
-  }  
 }
 @media (min-width: $screen-xxl-width) {
   #site-container {
@@ -48,6 +35,7 @@ blockquote footer {
   padding-bottom: 1em;
   h1 {
     font-style: italic;
+    font-weight: normal;
   }
 }
 @media (min-width: 630px) and (max-width: 964px) {
@@ -58,6 +46,15 @@ blockquote footer {
 @media (min-width: 965px) {
   .jumbotron {
     background-position: center 18%;
+  }
+}
+.navbar {
+  text-transform: uppercase;
+  font-family: $font-family-tiny;
+  @media (min-width: $screen-sm-min) {
+    ul.navbar-nav > .active {
+      transform: translateY(5px);
+    }
   }
 }
 .navbar-brand {
@@ -80,6 +77,7 @@ blockquote footer {
 }
 h1,h2,h3,h4,h5 {
   font-family: $font-family-sans-serif;
+  font-weight: bold;
 }
 header h2.tengwar {
   font-size: 140%;

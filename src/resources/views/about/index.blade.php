@@ -37,7 +37,6 @@ a Tolkien-fan, and language enthusiast.
 <p></p>
 <p>
   We use <em>Glaemscribe</em> by <a href="https://www.jrrvf.com/glaemscrafu/english/glaemscribe.html" target="_blank">Benjamin Babut</a> for transcriptions. 
-  The photograph of the sea used as the background was taken by <a href="https://pixabay.com/en/users/dimitrisvetsikas1969-1857980/" target="_blank">dimitrisvetsikas1969</a>.
 </p>
 
 <a name="search"></a>

@@ -3,10 +3,10 @@
 
 @section('title', 'Discussion')
 @section('body')
-  <h1>Discussion <span class="tengwar">3D7w#3F</span></h1>
   
   {!! Breadcrumbs::render('discuss') !!}
 
+  <h1>Discussion <span class="tengwar">3D7w#3F</span></h1>
   <p>
     <span class="glyphicon glyphicon-info-sign"></span> This is an aggregated view of all 
     comments left by the members of our community. You are more than welcome to participate in
