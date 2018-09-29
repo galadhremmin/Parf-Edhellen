@@ -18,6 +18,8 @@ Route::get('/', [ 'uses' => 'HomeController@index' ])->name('home');
 
 // Common pages
 Route::get('/about',                    [ 'uses' => 'AboutController@index'     ])->name('about');
+Route::get('/about/cookies',            [ 'uses' => 'AboutController@cookies'   ])->name('about.cookies');
+Route::get('/about/privacy',            [ 'uses' => 'AboutController@privacy'   ])->name('about.privacy');
 Route::get('/author',                   [ 'uses' => 'AuthorController@index'    ])->name('author.my-profile');
 Route::get('/author/{id}',              [ 'uses' => 'AuthorController@index'    ])
     ->where([ 'id' => $numericReg ])->name('author.profile-without-nickname');

@@ -9,9 +9,14 @@ class AboutController extends Controller
     {
         return view('about.index');
     }
-
-    public function donations() 
+    
+    public function cookies() 
     {
-        return view('about.donations');
+        return view('about.cookies');
+    }
+    
+    public function privacy() 
+    {
+        return view('about.privacy');
     }
 }

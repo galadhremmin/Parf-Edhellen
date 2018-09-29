@@ -61,18 +61,14 @@ a Tolkien-fan, and language enthusiast.
   the proposed translation.</p>
 
 <a name="authentication"></a>
-<h2>Privacy statement</h2>
-<p>We don't manage your credentials; we trust Facebook, Google, Twitter to do that for us. So when you log in, these services simply vouch for you,
-  and give us a token which uniquely identifies you in their systems. We save this token alongside your e-mail address. We do not get nor process any
-  other personal information supplied to us by your identity provider. We do not, and we never will, share your information with anyone.</p>
-<p>Logging in is simple: choose which community which would vouch for you, and log in there. Once you've logged in, and given <em>Parf Edhellen</em>
-  permission to access basic information about you, you'll be sent back to here, where you'll be asked to choose a nickname for yourself.</p>
+<h2>Privacy</h2>
+<p>We collect only information about you when you log in, and even then, we only collect the very minimum we need to 
+provide you with an unique identity. We do not and never will resell your information, and we do not share your information
+with any third party. For more information, please refer to our <a href="{{ route('about.privacy') }}">Privacy Policy</a>.</p>
+
 <h2>Cookies</h2>
 <p>We use cookies to maintain session state, which is essential for knowing whether you are logged in. We also use cookies to collect anonymous 
-information about how you use our service.</p>
-
-<h2>Third parties</h2>
-<p>We use <a target="_blank" href="https://www.google.com/analytics">Google Analytics</a> and cookies to gather anonymous information about how you use our service. 
-We use this information to improve our service.</p>
+information about how you use our service. You can read more about our use of cookies (and cookies themselves) in our 
+<a href="{{ route('about.cookies') }}">Cookie Policy</a>.</p>
 
 @endsection
