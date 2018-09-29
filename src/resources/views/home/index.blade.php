@@ -4,34 +4,27 @@
 @section('title', 'Welcome!')
 @section('body')
 
-@if ($background)
-<div class="jumbotron" style="background-image:url(img/jumbotron/{{ $background }}">
-@else
-<div class="jumbotron">
-@endif
+<div class="introtron">
   <h1 title="Well met!">Mae govannen!</h1>
   <p>
-    This is an Elvish Book, <em>Parf Edhellen</em>, dedicated to Tolkien's languages.
+    Well met! You have found an elvish book, <em>Parf Edhellen</em>, dedicated
+    to the fictional languages in Tolkien's legendarium. 
+  </p>
 </div>
-
-<hr>
-
 <div class="row">
   <div class="col-xs-12 col-sm-6 col-md-4">
-    <h4>About</h4>
+    <h4>About the website</h4>
     <p>
       This website is dedicated to Tolkien's languages, with an emphasis on 
       the elvish languages of his legendarium. Our dictionary consists of
-      imported glosses from a variety of quality dictionaries. You can read 
+      imported glosses from a variety of quality dictionaries, categorised
+      and searchable by sense, conjugation and more. You can read 
       more <a href="{{ route('about') }}">on our about page</a>.
     </p>
     <p>
-      <em>Parf Edhellen</em> is a non-profit, non-commercial endeavor. It is 
-      developed and maintained by Leonard. Please contact us on Twitter if you 
-      would like to get in touch,
-      <a href="https://twitter.com/parmaeldo" target="_blank">@parmaeldo</a>.
-      If you are a developer, you can also follow the project on 
-      <a href="https://github.com/galadhremmin/Parf-Edhellen" target="_blank">Github</a>.
+      <em>Parf Edhellen</em> is entirely open source. It is 
+      developed and maintained by Leonard (<a href="https://twitter.com/parmaeldo" target="_blank">@parmaeldo</a>).
+      If you are a developer, you can follow the project on <a href="https://github.com/galadhremmin/Parf-Edhellen" target="_blank">Github</a>.
     </p>
     <hr class="visible-xs">
   </div>

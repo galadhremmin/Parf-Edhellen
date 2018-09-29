@@ -11,10 +11,8 @@ sources, all of which have been carefully compiled by researchers of Tolkien's l
 <p>... and there is a lot! Tolkien was an amazing linguist; a skillset he employed throughout his life as he devised
 beautiful (and not so beautiful!) languages for his legendarium. If you are curious about Sauron's foul vernacular,
 you will also find his despicable language &ldquo;Black Speech&rdquo; within the dictionary.</p>
-<p><em>Parf Edhellen</em> is a non-profit, and non-commercial project developed and maintained by Leonard &ldquo;Aldaleon&rdquo;, 
-a Tolkien-fan, and language enthusiast. You can support him by contibuting to the community, and by 
-<a href="{{ route('about.donations') }}">donating towards the project</a>. All donations are thoroughly appreciated, and 
-will be used to fund the website's continued development.</p>
+<p><em>Parf Edhellen</em> is open source, and actively developed and maintained by Leonard &ldquo;Aldaleon&rdquo;, 
+a Tolkien-fan, and language enthusiast.
 
 <a name="wordlist"></a>
 <h2>Credits &amp; Sources</h2>
@@ -39,8 +37,7 @@ will be used to fund the website's continued development.</p>
 <p></p>
 <p>
   We use <em>Glaemscribe</em> by <a href="https://www.jrrvf.com/glaemscrafu/english/glaemscribe.html" target="_blank">Benjamin Babut</a> for transcriptions. 
-  <a href="https://pixabay.com/en/users/ArtsyBee-462611/">ArtsyBee</a> painted the jumbotron's backgrounds, and the photograph of the 
-  sea used for the background was taken by <a href="https://pixabay.com/en/users/dimitrisvetsikas1969-1857980/" target="_blank">dimitrisvetsikas1969</a>.
+  The photograph of the sea used as the background was taken by <a href="https://pixabay.com/en/users/dimitrisvetsikas1969-1857980/" target="_blank">dimitrisvetsikas1969</a>.
 </p>
 
 <a name="search"></a>

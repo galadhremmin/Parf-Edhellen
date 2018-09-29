@@ -7,22 +7,45 @@ html, body {
   font-size: 14px;
 }
 body {
-  background: url(/img/backgrounds/stars.jpg) fixed;
-  background-size: cover;
-  
   overflow-y: scroll;
+}
+#site-container  {
+  padding-top: 1em;
+  position: relative;
+}
+@media (min-width: $screen-sm-min) {
+  body {
+    background: url(/img/backgrounds/stars.jpg) fixed;
+    background-size: cover;
+  }
+
+  #site-container  {
+    background: rgba(255, 255, 255, 0.95);
+    border: 0.5em solid white;
+    padding-top: 1em;
+    border-radius: 2px;
+    @include ed-box-shadow();
+  }  
+}
+@media (min-width: $screen-xxl-width) {
+  #site-container {
+    width: $screen-xxl-width - 200px;
+  }
+}
+@media (min-width: $screen-xxxl-width) {
+  #site-container {
+    width: $screen-xxxl-width - 200px;
+  }
 }
 blockquote footer {
     font-size: 85%;
     font-family: $font-family-tiny;
 }
-.jumbotron {
-  background: url(/img/jumbotron.jpg) no-repeat center center;
-  background-size: cover;
-  color: white;
-  text-shadow: 0px 0px 15px rgba(0, 0, 0, 1);
-  @include ed-box-shadow();
-
+.introtron {
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 1em;
+  padding-bottom: 1em;
   h1 {
     font-style: italic;
   }
@@ -54,28 +77,6 @@ blockquote footer {
   .navbar-brand {
     margin-left: $panel-body-padding + $font-size-base*0.5; /* due to 0.5em border */
   }
-}
-#site-container  {
-  background: rgba(255, 255, 255, 0.95);
-  border: 0.5em solid white;
-  padding-top: 1em;
-  border-radius: 2px;
-  transition: transform 0.5s;
-  position: relative;
-  @include ed-box-shadow();
-}
-@media (min-width: $screen-xxl-width) {
-  #site-container {
-    width: $screen-xxl-width - 200px;
-  }
-}
-@media (min-width: $screen-xxxl-width) {
-  #site-container {
-    width: $screen-xxxl-width - 200px;
-  }
-}
-#site-container.pushed-down {
-  transform: translateY(calc(100vh - 150px));
 }
 h1,h2,h3,h4,h5 {
   font-family: $font-family-sans-serif;

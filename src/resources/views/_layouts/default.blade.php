@@ -37,7 +37,6 @@
         <ul class="nav navbar-nav">
           <li class="{{ active('') }}"><a href="/">@lang('home.title')</a></li>
           <li class="{{ active('about') }}"><a href="{{ route('about') }}">@lang('about.title')</a></li>
-          <li class="{{ active('about.donations') }} hidden-sm"><a href="{{ route('about.donations') }}">@lang('donations.title')</a></li>
           <li class="{{ active(['sentence.public', 'sentence.public.language', 'sentence.public.sentence']) }}"><a href="{{ route('sentence.public') }}">@lang('sentence.title')</a></li>
           <li class="{{ active('discuss.index') }}"><a href="{{ route('discuss.index') }}">@lang('discuss.title')</a></li>
         </ul>
