@@ -28,6 +28,8 @@
   @endif
 
   <footer class="word-footer">
+    {{ $gloss->language->name }}
+
     @if (!empty($gloss->source))
       <span class="word-source" rel="trans-source">[{{ $gloss->source }}]</span>
     @endif

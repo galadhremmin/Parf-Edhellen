@@ -17,13 +17,14 @@ body {
   }
 
   > footer {
-    color: #d0d0d0;
+    color: #9b9b9b;
     font-family: $font-family-tiny;
-    background: #272727;
+    background: #202020;
     margin-top: -$footer-height;
     min-height: $footer-height;
     padding: 1em;
     box-sizing: border-box;
+    font-size: 90%;
 
     display: flex;
     > section {
@@ -40,8 +41,8 @@ body {
       font-style: italic;
     }
     a, a:active, a:hover {
-      color: #d0d0d0;
-      font-weight: bold;
+      color: #9b9b9b;
+      text-decoration: underline;
     }
     li {
       padding: 0;
