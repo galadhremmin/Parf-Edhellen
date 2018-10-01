@@ -48,5 +48,6 @@ return [
         App\Models\Sentence::class        => App\Http\Discuss\Contexts\SentenceContext::class,
         App\Models\Gloss::class           => App\Http\Discuss\Contexts\GlossContext::class
     ],
-    'forum_resultset_max_length' => 10
+    'forum_resultset_max_length' => 10,
+    'forum_thread_resultset_max_length' => 15
 ];

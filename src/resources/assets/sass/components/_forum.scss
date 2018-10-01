@@ -21,6 +21,19 @@ $ed-forum-post-profile-width: 120px;
         border-radius: $border-radius-large;
     }
 
+    .post-body {
+        p, ul, ol {
+            max-width: 600px;
+        }
+        pre {
+            max-width: max-content;
+        }
+        table {
+            width: auto;
+            min-width: 200px;
+        }
+    }
+
     .post-profile-picture {
         display: table-cell;
         width: $ed-forum-post-profile-width;

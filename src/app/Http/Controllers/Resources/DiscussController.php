@@ -40,16 +40,31 @@ class DiscussController extends Controller
 
     public function index(Request $request)
     {
+        $noOfThreadsPerPage = config('ed.forum_thread_resultset_max_length');
+        $noOfPages = ceil(ForumThread::where('number_of_posts', '>', 0)
+            ->count() / $noOfThreadsPerPage);
+        $currentPage = min($noOfPages - 1, max(0, intval($request->input('offset'))));
+
         $threads = ForumThread::where('number_of_posts', '>', 0)
             ->with('account')
             ->orderBy('is_sticky', 'desc')
             ->orderBy('updated_at', 'desc')
             ->orderBy('created_at', 'desc')
+            ->skip($currentPage * $noOfThreadsPerPage)
+            ->take($noOfThreadsPerPage)
             ->get();
+        
+        $pages = [];
+        for ($i = 0; $i < $noOfPages; $i += 1) {
+            $pages[$i] = $i + 1;
+        }
 
         $adapted = $this->_discussAdapter->adaptThreads($threads);
         return view('discuss.index', [
-            'threads' => $adapted
+            'threads' => $adapted,
+            'pages'   => $pages,
+            'currentPage' => $currentPage,
+            'noOfPages' => $noOfPages
         ]);
     }
 
