@@ -22,80 +22,93 @@
   @endif
 </head>
 <body class="{{ $isAdmin ? 'ed-admin' : ($isAdmin === false ? 'ed-user' : 'ed-anonymous') }}" data-user-id="{{ $user ? $user->id : '0' }}" data-v="{{ config('ed.version') }}">
-  <aside class="navbar navbar-default" role="navigation">
-    <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-          <span class="sr-only">@lang('home.menu.open')</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="/">{{ config('ed.title') }}</a>
-      </div>
-      <div class="navbar-collapse collapse">
-        <ul class="nav navbar-nav">
-          <li class="{{ active('home') }}"><a href="/">@lang('home.title')</a></li>
-          <li class="{{ active('about') }}"><a href="{{ route('about') }}">@lang('about.title')</a></li>
-          <li class="{{ active(['sentence.public', 'sentence.public.language', 'sentence.public.sentence']) }}"><a href="{{ route('sentence.public') }}">@lang('sentence.title')</a></li>
-          <li class="{{ active('discuss.index') }}"><a href="{{ route('discuss.index') }}">@lang('discuss.title')</a></li>
+  <div class="head-content">
+    <aside class="navbar navbar-default" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">@lang('home.menu.open')</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">{{ config('ed.title') }}</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="{{ active('home') }}"><a href="/">@lang('home.title')</a></li>
+            <li class="{{ active('about') }}"><a href="{{ route('about') }}">@lang('about.title')</a></li>
+            <li class="{{ active(['sentence.public', 'sentence.public.language', 'sentence.public.sentence']) }}"><a href="{{ route('sentence.public') }}">@lang('sentence.title')</a></li>
+            <li class="{{ active('discuss.index') }}"><a href="{{ route('discuss.index') }}">@lang('discuss.title')</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="{{ active('discuss.members') }}">
+              <a href="{{ route('discuss.members') }}">
+                <span class="glyphicon glyphicon-heart-empty"></span> 
+                &nbsp;@lang('discuss.member-list.title')
+              </a>
+            </li>
+            @if ($user)
+            <li class="{{ active('dashboard') }}">
+              <a href="{{ route('dashboard') }}">
+                <span class="glyphicon glyphicon-dashboard"></span> 
+                &nbsp;@lang('dashboard.title')
+              </a>
+            </li>
+            <li>
+              <a href="{{ route('logout') }}">
+                <span class="glyphicon glyphicon-log-out"></span> 
+                &nbsp;@lang('dashboard.logout')
+              </a>
+            </li>
+            @else
+            <li class="{{ active('login') }}">
+              <a href="{{ route('login') }}">
+                <span class="glyphicon glyphicon-log-in"></span> 
+                &nbsp;@lang('dashboard.login')
+              </a>
+            </li>
+            @endif
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div><!--/.container-fluid -->
+    </aside>
+
+    <main class="container" id="site-container">
+      <!-- scripting disabled warning -->
+      <noscript>
+        <div id="noscript" class="alert alert-danger">
+          <strong><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> @lang('home.noscript.title')</strong>
+          <p>@lang('home.noscript.message', ['website' => config('ed.title')])</p>
+          <p><a href="https://support.google.com/bin/answer.py?hl=en&amp;answer=23852" target="_blank">@lang('home.noscript.call-to-action')</a>.</p>
+        </div>
+      </noscript>
+
+      <!-- search component -->
+      <div id="ed-search-component"></div>
+
+      <!-- begin content -->
+      @yield('body')
+    </main>
+  </div>
+  <footer>
+    <section>
+      <h3>{{ config('ed.title') }}</h3>
+      <nav>
+        <ul>
+          <li><a href="{{ route('login') }}">Log in</a></li>
+          <li><a href="{{ route('about') }}">About the website</a></li>
+          <li><a href="{{ route('about.cookies') }}">Cookie policy</a></li>
+          <li><a href="{{ route('about.privacy') }}">Privacy policy</a></li>
         </ul>
-        <ul class="nav navbar-nav navbar-right">
-          <li class="{{ active('discuss.members') }}">
-            <a href="{{ route('discuss.members') }}">
-              <span class="glyphicon glyphicon-heart-empty"></span> 
-              &nbsp;@lang('discuss.member-list.title')
-            </a>
-          </li>
-          @if ($user)
-          <li class="{{ active('dashboard') }}">
-            <a href="{{ route('dashboard') }}">
-              <span class="glyphicon glyphicon-dashboard"></span> 
-              &nbsp;@lang('dashboard.title')
-            </a>
-          </li>
-          <li>
-            <a href="{{ route('logout') }}">
-              <span class="glyphicon glyphicon-log-out"></span> 
-              &nbsp;@lang('dashboard.logout')
-            </a>
-          </li>
-          @else
-          <li class="{{ active('login') }}">
-            <a href="{{ route('login') }}">
-              <span class="glyphicon glyphicon-log-in"></span> 
-              &nbsp;@lang('dashboard.login')
-            </a>
-          </li>
-          @endif
-        </ul>
-      </div><!--/.nav-collapse -->
-    </div><!--/.container-fluid -->
-  </aside>
-
-  <main class="container" id="site-container">
-    <!-- scripting disabled warning -->
-    <noscript>
-      <div id="noscript" class="alert alert-danger">
-        <strong><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> @lang('home.noscript.title')</strong>
-        <p>@lang('home.noscript.message', ['website' => config('ed.title')])</p>
-        <p><a href="https://support.google.com/bin/answer.py?hl=en&amp;answer=23852" target="_blank">@lang('home.noscript.call-to-action')</a>.</p>
-      </div>
-    </noscript>
-
-    <!-- search component -->
-    <div id="ed-search-component"></div>
-
-    <!-- begin content -->
-    @yield('body')
-    <div class="row">
-      <p class="disclaimer">
-        <a href="{{ route('about.cookies') }}">Cookie policy</a> &bull; 
-        <a href="{{ route('about.privacy') }}">Privacy policy</a> &bull;
-      Black Speech, Nandorin, Noldorin, Quendya, Quenya, Sindarin, Telerin are languages conceived by Tolkien and they do not belong to us; we neither can nor do claim affiliation 
-    with <a href="http://www.middleearth.com/" target="_blank">Middle-earth Enterprises</a> nor <a href="http://www.tolkienestate.com/" target="_blank">Tolkien Estate</a>.</p>
-    </div>
-  </main>
+      </nav>
+    </section>
+    <section>
+      Black Speech, Nandorin, Noldorin, Quendya, Quenya, Sindarin, Telerin are languages conceived by Tolkien and they do not belong to us; 
+      we neither can nor do claim affiliation with <a href="http://www.middleearth.com/" target="_blank">Middle-earth Enterprises</a> nor 
+      <a href="http://www.tolkienestate.com/" target="_blank">Tolkien Estate</a>.
+    </section>
+  </footer>
 
   <script type="text/javascript" src="@assetpath(/js/manifest.js)"></script>
   <script type="text/javascript" src="@assetpath(/js/vendor.js)"></script>

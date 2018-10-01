@@ -8,9 +8,7 @@
   @endif>
   <h3 rel="trans-word" class="trans-word">
     @if (!$gloss->is_canon || $gloss->is_uncertain)
-    <a href="/about" title="Unattested, unverified or debatable content." class="neologism">
-      <span class="glyphicon glyphicon-asterisk"></span>
-    </a>
+    <a href="/about" title="Unattested, unverified or debatable content." class="neologism">*</a>
     @endif
     <span itemprop="headline" class="{{ $gloss->is_rejected ? 'rejected' : '' }}">
       {{ $gloss->word }}
@@ -24,7 +22,10 @@
     <span class="word-type" rel="trans-type">{{ $gloss->type }}.</span>
   @endif
   <span rel="trans-gloss" itemprop="keywords">{{ $gloss->all_translations }}</span>
+
+  @if (!isset($hideComments) || !$hideComments)
   <p class="word-comments" rel="trans-comments" itemprop="articleBody">{!! $gloss->comments !!}</p>
+  @endif
 
   <footer class="word-footer">
     @if (!empty($gloss->source))

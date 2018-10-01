@@ -22,23 +22,43 @@
       more <a href="{{ route('about') }}">on our about page</a>.
     </p>
     <p>
-      <em>Parf Edhellen</em> is entirely open source. It is 
+      The dictionary contains <strong>{{ $noOfWords }}</strong> words, 
+      <strong>{{ $noOfGlosses }}</strong> active glosses and
+      <strong>{{ $noOfSentences }}</strong> phrases.
+      The community has posted <strong>{{ $noOfPosts }}</strong> comments, 
+      finished <strong>{{ $noOfFlashcards }}</strong> flashcards and 
+      given <strong>{{ $noOfThanks }}</strong> thanks. You can access more
+      statistics by going to <a href="{{ route('discuss.members') }}">Contributors</a>.
+    </p>
+    <p>
+      <em>Parf Edhellen</em> is and has been open source since its inception {{ date('Y') - 2011 }} years ago. It is 
       developed and maintained by Leonard (<a href="https://twitter.com/parmaeldo" target="_blank">@parmaeldo</a>).
       If you are a developer, you can follow the project on <a href="https://github.com/galadhremmin/Parf-Edhellen" target="_blank">Github</a>.
     </p>
-    <hr class="visible-xs">
   </div>
-  @if ($sentence)
   <div class="col-xs-12 col-sm-6 col-md-4">
-    <h4>Random phrase</h4>
+    <h4>Gloss of the hour</h4>
+    <div class="hourly-gloss">
+      @include('book._gloss', [
+        'gloss' => $gloss,
+        'hideComments' => true
+      ])
+      <p class="text-right">
+        <a href="{{ $link->gloss($gloss->id) }}" class="btn btn-default">
+          Learn more
+        </a>
+      </p>
+    </div>
+    @if ($sentence)
+    <h4>Phrase of the day</h4>
     @include('sentence.public._random', [ 
       'sentence'     => $sentence,
       'sentenceData' => $sentenceData
     ])
+    @endif
   </div>
-  @endif
   <hr class="hidden-md hidden-lg clear-left">
-  <div class="col-xs-12 col-sm-6 col-md-4">
+  <div class="col-xs-12 col-sm-12 col-md-4">
     <h4>Community activity</h4>
     <p>
       The {{count($auditTrails)}} most recent activities.

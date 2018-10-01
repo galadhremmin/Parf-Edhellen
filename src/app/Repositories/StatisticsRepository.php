@@ -16,6 +16,27 @@ use App\Models\{
 
 class StatisticsRepository
 {
+    public function getGlobalStatistics()
+    {
+        $noOfWords = Word::count();
+        $noOfGlosses = Gloss::active()
+            ->count();
+        $noOfSentences = Sentence::approved()
+            ->count();
+        $noOfThanks = ForumPostLike::count();
+        $noOfFlashcards = FlashcardResult::count();
+        $noOfPosts = ForumPost::count();
+
+        return [
+            'noOfWords'      => $noOfWords,
+            'noOfGlosses'    => $noOfGlosses,
+            'noOfSentences'  => $noOfSentences,
+            'noOfThanks'     => $noOfThanks,
+            'noOfFlashcards' => $noOfFlashcards,
+            'noOfPosts'      => $noOfPosts
+        ];
+    }
+
     public function getStatisticsForAccount(Account $account)
     {
         $noOfWords = Word::forAccount($account->id)

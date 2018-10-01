@@ -82,6 +82,14 @@ class Gloss extends ModelBase implements Interfaces\IHasFriendlyName
         $query->where('is_latest', 1);
     }
 
+    public function scopeNotUncertain($query)
+    {
+        $query->where([
+            ['is_uncertain', 0],
+            ['is_rejected', 0]
+        ]);
+    }
+
     public function scopeActive($query) 
     {
         $this->scopeNotDeleted($query);
