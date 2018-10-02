@@ -28,7 +28,9 @@
   @endif
 
   <footer class="word-footer">
+    @if (is_object($gloss->language))
     {{ $gloss->language->name }}
+    @endif
 
     @if (!empty($gloss->source))
       <span class="word-source" rel="trans-source">[{{ $gloss->source }}]</span>
