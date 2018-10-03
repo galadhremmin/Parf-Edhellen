@@ -12,7 +12,7 @@ body {
 
   .head-content {
     min-height: 100vh;
-    padding-bottom: $footer-height;
+    padding-bottom: $footer-height + 14px;
     box-sizing: border-box;
   }
 

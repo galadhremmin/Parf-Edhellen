@@ -1,5 +1,6 @@
 import React from 'react';
 import EDBookGloss from './book-gloss';
+import EDConfig from 'ed-config';
 
 /**
  * Represents a single section of the book. A section is usually dedicated to a language.
@@ -13,6 +14,7 @@ class EDBookSection extends React.Component {
 
     render() {
         const language = this.props.section.language;
+        const sectionPlugins = EDConfig.pluginsFor('book-gloss-section');
 
         return <article className="ed-glossary__language">
             <header>
@@ -31,6 +33,10 @@ class EDBookSection extends React.Component {
                                       onReferenceLinkClick={this.onReferenceLinkClick.bind(this)} />
                 )}
             </section>
+            {sectionPlugins.length > 0 && <section>
+                {sectionPlugins.map((PluginComponent, i) => <PluginComponent key={i} 
+                    hostComponent={this} language={language} glosses={this.props.section.glosses} />)}
+            </section>}
         </article>;
     }
 }
