@@ -9,7 +9,6 @@ test/*
 .project
 .settings
 *.log
-src/resources/views/_shared/_ga.*
 src/public/js
 src/public/css
 src/public/img
