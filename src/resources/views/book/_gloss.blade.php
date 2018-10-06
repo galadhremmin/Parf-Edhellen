@@ -24,7 +24,7 @@
   <span rel="trans-gloss" itemprop="keywords">{{ $gloss->all_translations }}</span>
 
   @if (!isset($hideComments) || !$hideComments)
-  <p class="word-comments" rel="trans-comments" itemprop="articleBody">{!! $gloss->comments !!}</p>
+  <div class="word-comments" rel="trans-comments" itemprop="articleBody">{!! $gloss->comments !!}</div>
   @endif
 
   <footer class="word-footer">
