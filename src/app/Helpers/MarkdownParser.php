@@ -56,8 +56,20 @@ class MarkdownParser extends \Parsedown
         }
 
         $table['element']['attributes']['class'] = "table table-condensed table-striped table-hover";
-
         return $table;
+    }
+
+    protected function blockTableComplete(array $Block = null)
+    {
+        $Block['element'] = [
+            'name' => 'div',
+            'handler' => 'element',
+            'attributes' => [
+                'class' => 'table-responsive'
+            ],
+            'text' => $Block['element']
+        ];
+        return $Block;
     }
 
     /**
