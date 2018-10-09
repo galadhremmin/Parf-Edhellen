@@ -54,18 +54,23 @@ Route::get('/wt/{id}/versions',       [ 'uses' => 'BookController@versions' ])
 Route::get('/stop-notification/{token}', ['uses' => 'Resources\\MailSettingController@handleCancellationToken'])
     ->name('mail-setting.cancellation');
 
+// Flashcards
+Route::get('/flashcard',       [ 'uses' => 'FlashcardController@index' ])
+    ->name('flashcard');
+Route::get('/flashcard/{id}',  [ 'uses' => 'FlashcardController@cards' ])
+    ->where([ 'id' => $numericReg ])->name('flashcard.cards');
+Route::post('/flashcard/card', [ 'uses' => 'FlashcardController@card' ]
+    )->name('flashcard.card');
+Route::post('/flashcard/test', [ 'uses' => 'FlashcardController@test' ])
+    ->name('flashcard.test');
+
 // User accounts
 Route::group([ 'middleware' => 'auth' ], function () use ($numericReg) {
     Route::get('/dashboard',          [ 'uses' => 'DashboardController@index' ])->name('dashboard');
 
-    // Flashcards
-    Route::get('/dashboard/flashcard',       [ 'uses' => 'FlashcardController@index' ])->name('flashcard');
-    Route::get('/dashboard/flashcard/{id}',  [ 'uses' => 'FlashcardController@cards' ])
-        ->where([ 'id' => $numericReg ])->name('flashcard.cards');
+    // Flashcard results
     Route::get('/dashboard/flashcard/{id}/results', [ 'uses' => 'FlashcardController@list' ])
         ->where([ 'id' => $numericReg ])->name('flashcard.list');
-    Route::post('/dashboard/flashcard/card', [ 'uses' => 'FlashcardController@card' ])->name('flashcard.card');
-    Route::post('/dashboard/flashcard/test', [ 'uses' => 'FlashcardController@test' ])->name('flashcard.test');
 
     // User profile
     Route::get('/author/edit/{id?}',  [ 'uses' => 'AuthorController@edit' ])->name('author.edit-profile');

@@ -12,7 +12,7 @@ export const getCard = (flashcardId) => (dispatch, getState) => {
         type: ED_REQUEST_CARD
     });
 
-    deferredResolve(EDAPI.post('/dashboard/flashcard/card', {
+    deferredResolve(EDAPI.post('/flashcard/card', {
       id: flashcardId,
       not: getState().previous_list
     }), 800).then(resp => {
@@ -28,7 +28,7 @@ export const testCard = (flashcardId, option) => (dispatch, getState) => {
         type: ED_TEST_CARD
     });
 
-    deferredResolve(EDAPI.post('/dashboard/flashcard/test', {
+    deferredResolve(EDAPI.post('/flashcard/test', {
         flashcard_id: flashcardId,
         translation_id: getState().translation_id,
         translation: option

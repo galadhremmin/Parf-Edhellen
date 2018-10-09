@@ -10,11 +10,13 @@
        data-flashcard-id="{{ $flashcard->id }}" 
        data-language-tengwar-mode="{{ $flashcard->language->tengwar_mode }}"></div>
 
+  @if ($user) 
   <hr />
   <p>
     Your answers are saved automatically so you can <a href="{{ route('flashcard.list', ['id' => $flashcard->id]) }}">review your performance</a>.
     Good luck!
   </p>
+  @endif
       
 @endsection
 @section('styles')

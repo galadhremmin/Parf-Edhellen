@@ -214,7 +214,7 @@ Breadcrumbs::register('contribution.confirm-approve', function ($breadcrumbs, in
 
 Breadcrumbs::register('flashcard', function ($breadcrumbs)
 {
-    $breadcrumbs->parent('dashboard');
+    $breadcrumbs->parent('home');
     $breadcrumbs->push('Flashcards', route('flashcard'));
 });
 

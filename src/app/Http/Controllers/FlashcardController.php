@@ -14,6 +14,7 @@ use App\Helpers\{
 };
 use App\Events\FlashcardFlipped;
 use App\Models\{
+    Account,
     Flashcard, 
     FlashcardResult, 
     Language, 
@@ -35,9 +36,22 @@ class FlashcardController extends Controller
     {
         $flashcards = Flashcard::all()
             ->sortBy('language.name');
+     
+        $user = $request->user();
+        return view('flashcard.index', [
+            'flashcards' => $flashcards, 
+            'statistics' => $this->getStatisticsByUser($user)
+        ]);
+    }
 
+    private function getStatisticsByUser($user) 
+    {
         // Retrieve flashcard history and compile a 'statistics' by language associative array. 
-        $accountId = $request->user()->id;
+        if (! $user) {
+            return null;
+        }
+
+        $accountId = $user->id;
 
         // Traverse flashcard results and count failures versus successes.
         $statistics = FlashcardResult::where('account_id', $accountId)
@@ -76,13 +90,16 @@ class FlashcardController extends Controller
         $statisticsByLanguage['_total_wrong'] = $numberOfWrongCards;
         $statisticsByLanguage['_total'] = $numberOfCorrectCards + $numberOfWrongCards;
 
-        return view('flashcard.index', ['flashcards' => $flashcards, 'statistics' => $statisticsByLanguage]);
+        return $statisticsByLanguage;
     }
 
     public function cards(Request $request, int $id)
     {
         $flashcard = Flashcard::findOrFail($id);
-        return view('flashcard.cards', ['flashcard' => $flashcard]);
+        return view('flashcard.cards', [
+            'flashcard' => $flashcard,
+            'user'      => $request->user()
+        ]);
     }
 
     public function list(Request $request, int $id)
@@ -236,24 +253,26 @@ class FlashcardController extends Controller
 
         $account = $request->user();
 
-        $result = new FlashcardResult;
+        if ($account) {
+            $result = new FlashcardResult;
 
-        $result->flashcard_id = intval( $request->input('flashcard_id') );
-        $result->account_id   = $account->id;
-        $result->gloss_id     = $translation->gloss_id;
-        $result->expected     = $translation->translation;
-        $result->actual       = $offeredGloss;
-        $result->correct      = $ok;
+            $result->flashcard_id = intval( $request->input('flashcard_id') );
+            $result->account_id   = $account->id;
+            $result->gloss_id     = $translation->gloss_id;
+            $result->expected     = $translation->translation;
+            $result->actual       = $offeredGloss;
+            $result->correct      = $ok;
 
-        $result->save();
+            $result->save();
 
-        // parse comments, as it's saved as markdown
-        $gloss = $translation->gloss;
-        $gloss->load('translations');
+            // parse comments, as it's saved as markdown
+            $gloss = $translation->gloss;
+            $gloss->load('translations');
 
-        // Record the progress
-        $numberOfCards = FlashcardResult::where('account_id', $result->account_id)->count();
-        event(new FlashcardFlipped($result, $numberOfCards));
+            // Record the progress
+            $numberOfCards = FlashcardResult::where('account_id', $result->account_id)->count();
+            event(new FlashcardFlipped($result, $numberOfCards));
+        }
 
         return [
             'correct' => $ok,
