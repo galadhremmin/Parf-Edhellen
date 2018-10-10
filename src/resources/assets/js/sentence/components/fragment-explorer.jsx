@@ -197,16 +197,8 @@ class EDFragmentExplorer extends React.Component {
         const previousIndex = this.previousFragmentIndex();
         const nextIndex = this.nextFragmentIndex();
 
-        return <div className="well ed-fragment-navigator">
+        return <div className="ed-fragment-navigator">
             <div className="row" ref={elem => this.fragmentContainer = elem}>
-                <div className="col-md-12 col-lg-6">
-                {this.props.tengwar.map((paragraph, fi) => 
-                    <p className="tengwar ed-tengwar-fragments" key={`p${fi}`}>
-                        {paragraph.map(this.renderFragment.bind(this, fi))}
-                    </p>
-                )}
-                </div>
-                <hr className="hidden-lg" />
                 <div className="col-md-12 col-lg-6">
                 {this.props.latin.map((paragraph, fi) => 
                     <p className="ed-elvish-fragments" key={`p${fi}`}>
@@ -214,8 +206,15 @@ class EDFragmentExplorer extends React.Component {
                     </p>
                 )}
                 </div>
+                <hr className="hidden-lg" />
+                <div className="col-md-12 col-lg-6">
+                {this.props.tengwar.map((paragraph, fi) => 
+                    <p className="tengwar ed-tengwar-fragments" key={`p${fi}`}>
+                        {paragraph.map(this.renderFragment.bind(this, fi))}
+                    </p>
+                )}
+                </div>
             </div>
-            <hr className="hidden-xs hidden-sm hidden-md" />
             <div className={classNames('ed-fragment-details', { 'overlay': this.state.detailsAsOverlay })}>
                 <small className="text-info">This is a floating overlay. You can scroll within.</small>
                 <nav>
@@ -236,12 +235,12 @@ class EDFragmentExplorer extends React.Component {
                     ? <div className="sk-spinner sk-spinner-pulse"></div>
                     : (section ? (<div ref={elem => this.fragmentDetails = elem}>
                         <div>{fragment.comments ? parser.parse(fragment.comments) : ''}</div>
-                        <div>
-                            <span className="label label-success ed-inflection">{fragment.speech}</span>
+                        <div className="pull-right">
+                            <span className="label label-primary ed-inflection">{fragment.speech}</span>
                             {' '}
                             {fragment.inflections.map((infl, i) => 
                                 <span key={`infl${fragment.id}-${i}`}>
-                                    <span className="label label-success ed-inflection">{infl.name}</span>
+                                    <span className="label label-default ed-inflection">{infl.name}</span>
                                     &nbsp;
                                 </span>
                             )}
@@ -251,6 +250,8 @@ class EDFragmentExplorer extends React.Component {
                                                                 language={section.language}
                                                                 key={g.id} 
                                                                 disableTools={true}
+                                                                disableDetails={true}
+                                                                disableInflections={true}
                                                                 onReferenceLinkClick={this.onReferenceLinkClick.bind(this)} />)}
                         </div>
                     </div>

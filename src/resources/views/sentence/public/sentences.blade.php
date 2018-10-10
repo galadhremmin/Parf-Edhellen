@@ -17,34 +17,37 @@
   <p>
     Click or tap on the header to learn more about them.
   </p>
-  @foreach ($sentences as $sentence)
-  <blockquote>
-    <a class="sentence-link" href="{{ $link->sentence($language->id, $language->name, $sentence->id, $sentence->name) }}">
-      <h3>{{ $sentence->name }}</h3>
-      @if(!empty($sentence->description))
-      @markdown($sentence->description)
-      @endif
-    </a>
-    <footer>
-      {{ $sentence->source }}
-      @if ($sentence->account_id)
-      by <a href="{{ $link->author($sentence->account_id, $sentence->account_name) }}">{{ $sentence->account_name }}</a>.
-      @endif
-    </footer>
-  </blockquote>
-  @endforeach
+  <div class="link-blocks">
+    @foreach ($sentences as $sentence)
+    <blockquote>
+      <a class="block-link" href="{{ $link->sentence($language->id, $language->name, $sentence->id, $sentence->name) }}">
+        <h3>{{ $sentence->name }}</h3>
+        @if(!empty($sentence->description))
+        @markdown($sentence->description)
+        @endif
+      </a>
+      <footer>
+        {{ $sentence->source }}
+        @if ($sentence->account_id)
+        by <a href="{{ $link->author($sentence->account_id, $sentence->account_name) }}">{{ $sentence->account_name }}</a>.
+        @endif
+      </footer>
+    </blockquote>
+    @endforeach
+  </div>
   @if(! empty($neologisms))
     <hr>
-    <h2><span class="glyphicon glyphicon-asterisk"></span> Neo-{{ mb_strtolower($language->name) }}</h2>
+    <h2>*Neo-{{ mb_strtolower($language->name) }}</h2>
     <p>
       <em>The texts beneath were <strong>not composed by Tolkien</strong>!</em> They were instead
       composed by fans and students of his elvish languages. We believe the texts are of a sufficient
       standard to be published on our website.
     </p>
-    @foreach ($neologisms as $sentence)
+    <div class="link-blocks">
+      @foreach ($neologisms as $sentence)
       <blockquote>
-        <a class="sentence-link" href="{{ $link->sentence($language->id, $language->name, $sentence->id, $sentence->name) }}">
-          <h3><span class="glyphicon glyphicon-asterisk"></span> {{ $sentence->name }}</h3>
+        <a class="block-link" href="{{ $link->sentence($language->id, $language->name, $sentence->id, $sentence->name) }}">
+          <h3>*{{ $sentence->name }}</h3>
           @if(!empty($sentence->description))
           <p>{{ $sentence->description }}</p>
           @endif
@@ -56,7 +59,8 @@
           @endif
         </footer>
       </blockquote>
-    @endforeach
+      @endforeach
+    </div>
   @endif
 @endsection
 @section('styles')

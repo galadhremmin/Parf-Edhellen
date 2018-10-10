@@ -1,0 +1,33 @@
+@import 'node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_variables';
+
+.link-blocks {
+    @media (min-width: $screen-sm-min) {
+      columns: 2;
+    }
+  
+    blockquote {
+      page-break-inside: avoid;
+      
+      &:hover {
+        background: $alert-info-bg;
+        border-radius: 5px;
+      }
+    
+      h3 {
+        margin-top: 0;
+        margin-bottom: 7px; /* it looks better with 7px */
+        font-size: 140%;
+      }
+    
+      p:last-child {
+        margin-bottom: 5px;
+      }
+    
+      > a.block-link {
+        color: inherit;
+        text-decoration: none;
+        display: block;
+      }
+    }
+  }
+  

@@ -1,1 +1,6 @@
-@import "components/_flashcard";
+@import 'components/_flashcard';
+@import 'components/_link-block';
+
+.alert {
+    margin-top: 2em;
+}

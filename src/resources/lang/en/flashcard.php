@@ -1,4 +1,5 @@
 <?php
+
 return [
-    'index' => 'Flashcard'
+    'title' => 'Flashcard'
 ];

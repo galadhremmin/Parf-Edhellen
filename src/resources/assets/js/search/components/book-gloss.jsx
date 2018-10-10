@@ -1,6 +1,5 @@
 import React from 'react';
 import classNames from 'classnames';
-import { Parser as HtmlToReactParser, ProcessNodeDefinitions } from 'html-to-react';
 import EDConfig from 'ed-config';
 import EDBookGlossDetail from './book-gloss-detail';
 import EDHtmlInjection from './html-injection';
@@ -72,9 +71,9 @@ class EDBookGloss extends React.Component {
             </p>
 
             <EDHtmlInjection html={gloss.comments} onReferenceLinkClick={this.onReferenceLinkClick.bind(this)} />
-            {gloss.gloss_details.map(d => <EDBookGlossDetail key={d.order} detail={d} onReferenceLinkClick={this.onReferenceLinkClick.bind(this)} />)}
+            {!this.props.disableDetails && gloss.gloss_details.map(d => <EDBookGlossDetail key={d.order} detail={d} onReferenceLinkClick={this.onReferenceLinkClick.bind(this)} />)}
 
-            {gloss.inflections ?
+            {!this.props.disableInflections && gloss.inflections ?
             <div>
                 <table className="table table-striped table-hover table-condensed">
                     <caption>Inflections</caption>
@@ -143,7 +142,9 @@ class EDBookGloss extends React.Component {
 }
 
 EDBookGloss.defaultProps = {
-    disableTools: false
+    disableTools: false,
+    disableDetails: false,
+    disableInflections: false
 };
 
 export default EDBookGloss;
