@@ -45,7 +45,7 @@
           <ul class="nav navbar-nav navbar-right">
             <li class="{{ active('discuss.members') }}">
               <a href="{{ route('discuss.members') }}">
-                &nbsp;@lang('discuss.member-list.title')
+                @lang('discuss.member-list.title')
               </a>
             </li>
             @if ($user)
