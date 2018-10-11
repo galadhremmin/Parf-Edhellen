@@ -6,19 +6,22 @@
   
   {!! Breadcrumbs::render('flashcard.cards', $flashcard) !!}
 
-  <div id="ed-flashcard-component" 
-       data-flashcard-id="{{ $flashcard->id }}" 
-       data-language-tengwar-mode="{{ $flashcard->language->tengwar_mode }}"></div>
+  <div class="flashcard-container">
+    <div id="ed-flashcard-component" 
+        data-flashcard-id="{{ $flashcard->id }}" 
+        data-language-tengwar-mode="{{ $flashcard->language->tengwar_mode }}"></div>
 
-  @if ($user) 
-  <hr />
-  <p>
-    Your answers are saved automatically so you can <a href="{{ route('flashcard.list', ['id' => $flashcard->id]) }}">review your performance</a>.
-    Good luck!
-  </p>
-  @else
-  @include('flashcard._login')
-  @endif
+    <aside>
+      @if ($user) 
+      <div class="alert alert-info">
+        Your answers are saved automatically so you can <a href="{{ route('flashcard.list', ['id' => $flashcard->id]) }}">review your performance</a>.
+        Good luck!
+      </p>
+      @else
+      @include('flashcard._login')
+      @endif
+    </aside>
+  </div>
       
 @endsection
 @section('styles')

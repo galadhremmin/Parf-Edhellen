@@ -31,7 +31,7 @@ class SentenceRepository
     {
         return DB::table('languages as l')
             ->join('sentences as s', 'l.id', '=', 's.language_id')
-            ->select('l.name', 'l.id')
+            ->select('l.name', 'l.id', 'l.description')
             ->distinct()
             ->get();
     }

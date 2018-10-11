@@ -18,7 +18,7 @@
     <blockquote>
       <a class="block-link" href="{{ $link->sentencesByLanguage($language->id, $language->name) }}">
         <h3>{{ $language->name }}</h3>
-        
+        <p>{{ $language->description }}</p>
       </a>
     </blockquote>
     @endforeach

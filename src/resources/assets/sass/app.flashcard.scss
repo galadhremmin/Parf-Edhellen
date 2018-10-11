@@ -1,6 +1,29 @@
+@import 'node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_variables';
 @import 'components/_flashcard';
 @import 'components/_link-block';
 
 .alert {
     margin-top: 2em;
+}
+
+@media (min-width: $screen-sm-min) {
+    .flashcard-container {
+        display: flex;
+
+        #ed-flashcard-component {
+            flex: 2;
+        }
+
+        > aside {
+            &:empty {
+                display: none;
+            }
+            
+            > .alert {
+                margin-top: 0;
+            }
+
+            flex: 1;
+        }
+    }
 }
