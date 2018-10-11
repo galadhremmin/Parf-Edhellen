@@ -16,7 +16,7 @@
       <div class="alert alert-info">
         Your answers are saved automatically so you can <a href="{{ route('flashcard.list', ['id' => $flashcard->id]) }}">review your performance</a>.
         Good luck!
-      </p>
+      </div>
       @else
       @include('flashcard._login')
       @endif
