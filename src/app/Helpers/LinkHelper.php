@@ -73,13 +73,19 @@ class LinkHelper
         return $url;
     }
 
-    public function forumThread(int $threadId, string $normalizedSubject = null) 
+    public function forumThread(int $threadId, string $normalizedSubject = null, $postId = null) 
     {
-        if ($normalizedSubject === null || empty($normalizedSubject)) {
-            return route('discuss.show', ['id' => $threadId, 'slug' => 'thread']);
+        $slug = $normalizedSubject === null || empty($normalizedSubject) ? 'thread' : $normalizedSubject;
+        $props = [
+            'id' => $threadId,
+            'slug' => $slug
+        ];
+
+        if (is_numeric($postId)) {
+            $props['forum_post_id'] = $postId;
         }
 
-        return route('discuss.show', ['id' => $threadId, 'slug' => $normalizedSubject]);
+        return route('discuss.show', $props);
     }
 
     public function mailCancellation(string $cancellationToken)
