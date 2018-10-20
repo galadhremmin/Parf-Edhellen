@@ -2,37 +2,40 @@
 
 import {
     inject,
-    injectable 
+    injectable,
 } from 'inversify';
 import 'reflect-metadata';
 
 import ApiConnector from './api';
-import { InjectSessionCacheFactory } from '../config';
-import { Cache } from '../utilities/cache';
 
-interface Language {
+import {
+    InjectSessionCacheFactory,
+} from '../config';
+import Cache from '../utilities/cache';
+
+interface ILanguage {
     id: number;
     name: string;
 }
 
-interface LanguageMap {
-    [period: string]: Language[];
+interface ILanguageMap {
+    [period: string]: ILanguage[];
 }
 
 @injectable()
 export default class LanguageConnector {
-    private _cache: Cache<LanguageMap>;
+    private _cache: Cache<ILanguageMap>;
 
-    constructor(private _api: ApiConnector, 
-        @inject(InjectSessionCacheFactory) cacheFactory: Newable<Cache<LanguageMap>>) {
+    constructor(private _api: ApiConnector,
+                @inject(InjectSessionCacheFactory) cacheFactory: INewable<Cache<ILanguageMap>>) {
         this._cache = new cacheFactory(() => this.load(), 'ed.languages');
     }
 
-    async load() {
-        return await this._api.get<LanguageMap>('book/languages');
+    public async load() {
+        return await this._api.get<ILanguageMap>('book/languages');
     }
 
-    async all() {
+    public async all() {
         const languages = await this._cache.get();
         return languages;
     }
@@ -40,7 +43,7 @@ export default class LanguageConnector {
     /**
      * Gets all languages.
      */
-    async find(value: any, key = 'id', cmpFunc = (a: any, b: any) => a === b): Promise<Language> {
+    public async find(value: any, key = 'id', cmpFunc = (a: any, b: any) => a === b): Promise<ILanguage> {
         const categorizedLanguages = await this.all();
         const categories = Object.keys(categorizedLanguages);
 

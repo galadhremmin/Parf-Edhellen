@@ -1,3 +1,3 @@
-interface Newable<T> {
+interface INewable<T> {
     new(...args: any): T;
 }

@@ -1,32 +1,30 @@
-export interface Loader<T> {
-    (): Promise<T>;
-}
+export type ILoader<T> = () => Promise<T>;
 
 export default class LazyLoader<T> {
     private _data: T;
 
-    constructor(private _loader: Loader<T>) {
+    constructor(private _loader: ILoader<T>) {
         this._data = null;
     }
 
     /**
      * Gets whether the value is presently alive, i.e. successfully loaded.
      */
-    get alive(): boolean {
+    public get alive(): boolean {
         return this._data !== null;
     }
 
     /**
      * Clear the instance currently kept in memory.
      */
-    clear() {
+    public clear() {
         this._data = null;
     }
 
     /**
      * Gets the value from memory, or loads (if necessary) the value from the loader.
      */
-    async get(): Promise<T> {
+    public async get(): Promise<T> {
         if (!this.alive) {
             this._data = await this.load();
         }

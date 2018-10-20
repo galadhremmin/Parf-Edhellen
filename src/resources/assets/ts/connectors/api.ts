@@ -1,24 +1,23 @@
-import axios from 'axios';
-import { 
-    AxiosInstance, 
-    AxiosPromise, 
-    AxiosResponse, 
-    AxiosError 
+import axios, {
+    AxiosError,
+    AxiosInstance,
+    AxiosPromise,
+    AxiosResponse,
 } from 'axios';
 
-interface ErrorReport {
+interface IErrorReport {
     apiMethod?: string;
-    data?: any;
-    status?: number;
-    headers?: any;
-    error?: string;
     config?: any;
+    data?: any;
+    error?: string;
+    headers?: any;
+    status?: number;
 }
 
 export default class ApiConnector {
     constructor(
-        private _apiPathName: string, 
-        private _apiErrorMethod: string, 
+        private _apiPathName: string,
+        private _apiErrorMethod: string,
         private _apiValidationErrorStatusCode: number,
         private _factory: AxiosInstance = axios) {
     }
@@ -26,90 +25,90 @@ export default class ApiConnector {
     /**
      * Execute a DELETE request.
      */
-    delete<T>(apiMethod: string) {
+    public delete<T>(apiMethod: string) {
         return this._consume<T>(apiMethod, this.deleteRaw(apiMethod));
     }
 
     /**
      * Execute a DELETE request and returns the request object.
      */
-    deleteRaw(apiMethod: string) {
+    public deleteRaw(apiMethod: string) {
         return this._createRequest(this._factory.delete, apiMethod);
     }
 
     /**
      * Execute a HEAD request.
      */
-    head<T>(apiMethod: string) {
+    public head<T>(apiMethod: string) {
         return this._consume<T>(apiMethod, this.headRaw(apiMethod));
     }
 
     /**
      * Execute a HEAD request.
      */
-    headRaw(apiMethod: string) {
+    public headRaw(apiMethod: string) {
         return this._createRequest(this._factory.head, apiMethod);
     }
 
     /**
      * Execute a GET request.
      */
-    get<T>(apiMethod: string) {
+    public get<T>(apiMethod: string) {
         return this._consume<T>(apiMethod, this.getRaw(apiMethod));
     }
 
     /**
      * Execute a GET request.
      */
-    getRaw(apiMethod: string) {
+    public getRaw(apiMethod: string) {
         return this._createRequest(this._factory.get, apiMethod);
     }
 
     /**
      * Execute a POST request.
      */
-    post<T>(apiMethod: string, payload: any) {
+    public post<T>(apiMethod: string, payload: any) {
         return this._consume<T>(apiMethod, this.postRaw(apiMethod, payload || {}));
     }
 
     /**
      * Execute a POST request.
      */
-    postRaw(apiMethod: string, payload: any) {
+    public postRaw(apiMethod: string, payload: any) {
         return this._createRequest(this._factory.post, apiMethod, payload || {});
     }
 
     /**
      * Execute a PUT request.
      */
-    put<T>(apiMethod: string, payload: any) {
+    public put<T>(apiMethod: string, payload: any) {
         return this._consume<T>(apiMethod, this.putRaw(apiMethod, payload || {}));
     }
 
     /**
      * Execute a PUT request.
      */
-    putRaw(apiMethod: string, payload: any) {
+    public putRaw(apiMethod: string, payload: any) {
         return this._createRequest(this._factory.put, apiMethod, payload || {});
     }
 
     /**
      * Register the specified error.
      */
-    error(message: string, url: string, error: string, category: string = 'frontend') { 
+    public error(message: string, url: string, error: string, category: string = 'frontend') {
         return this.post(this._apiErrorMethod, { message, url, error, category });
     }
 
     /**
      * Default XMLHTTPRequest configuration.
      */
-    get config() {
+    public get config() {
         return {
             headers: {
                 'Accept': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
+                'X-Requested-With': 'XMLHttpRequest',
             },
-            timeout: 2500
+            timeout: 2500,
         };
     }
 
@@ -119,7 +118,7 @@ export default class ApiConnector {
     private _absPath(path: string) {
         if (typeof window === 'object') {
             const origin = window.location.origin;
-            if (origin.length < path.length && path.substr(0, origin.length) == origin) {
+            if (origin.length < path.length && path.substr(0, origin.length) === origin) {
                 return path;
             }
         }
@@ -130,22 +129,22 @@ export default class ApiConnector {
     private async _consume<T>(apiMethod: string, request: AxiosPromise<AxiosResponse<T>>): Promise<T> {
         try {
             const response = await request;
-            return <any> response.data;
-        } catch(error) {
+            return response.data as any;
+        } catch (error) {
             return this._handleError(apiMethod, error);
         }
     }
 
-    private _createRequest(factory: any, apiMethod: string, payload: any = undefined): AxiosPromise<AxiosResponse> {
+    private _createRequest(factory: any, apiMethod: string, payload: any = null): AxiosPromise<AxiosResponse> {
         if (! apiMethod || apiMethod.length < 1) {
             return Promise.reject(`You need to specify an API method to invoke.`);
         }
 
         const config = this.config;
-        const hasBody = payload !== undefined;
-        return factory.call(this._factory, this._absPath(apiMethod), 
-            hasBody ? payload : config,   
-            hasBody ? config : undefined 
+        const hasBody = payload !== null;
+        return factory.call(this._factory, this._absPath(apiMethod),
+            hasBody ? payload : config,
+            hasBody ? config : undefined,
         );
     }
 
@@ -154,8 +153,8 @@ export default class ApiConnector {
             return Promise.reject(error);
         }
 
-        let errorReport: ErrorReport = null;
-        let category = undefined;
+        let errorReport: IErrorReport = null;
+        let category: string;
         if (error.response) {
             let message = null;
             switch (error.response.status) {
@@ -168,7 +167,8 @@ export default class ApiConnector {
                     category = 'frontend-403';
                     break;
                 case 419:
-                    message = 'Your browsing session has timed out. This usually happens when you leave the page open for a long time. Please refresh the page and try again.';
+                    message = 'Your browsing session has timed out. This usually happens when you leave ' +
+                        'the page open for a long time. Please refresh the page and try again.';
                     category = 'frontend-419';
                     break;
                 case this._apiValidationErrorStatusCode:
@@ -177,8 +177,8 @@ export default class ApiConnector {
                     errorReport = {
                         apiMethod,
                         data: error.response.data,
+                        headers: error.response.headers,
                         status: error.response.status,
-                        headers: error.response.headers
                     };
                     break;
             }
@@ -194,7 +194,7 @@ export default class ApiConnector {
             //
             // 180602: This type of error is non-actionable.
             errorReport = null;
-            
+
             /*
             errorReport = {
                 apiMethod,
@@ -206,8 +206,8 @@ export default class ApiConnector {
         } else {
             // Something happened in setting up the request that triggered an Error
             errorReport = {
-                apiMethod, 
-                error: 'API call failed to initialize. Error message: ' + error.message 
+                apiMethod,
+                error: 'API call failed to initialize. Error message: ' + error.message,
             };
         }
 

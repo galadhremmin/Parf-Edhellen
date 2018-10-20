@@ -1,15 +1,15 @@
 import { expect } from 'chai';
-import { Cache } from './cache';
+import Cache from './cache';
 
-interface TestObjectSpec {
+interface ITestObjectSpec {
     prop: boolean;
 }
 
 describe('utilities/cache', () => {
-    const TestObject = <TestObjectSpec> { prop: true };
+    const TestObject: ITestObjectSpec = { prop: true };
     const CacheKey = 'cache.session.unittest';
 
-    let sessionCache: TestCache<TestObjectSpec>;
+    let sessionCache: TestCache<ITestObjectSpec>;
 
     before(() => {
         sessionCache = new TestCache(() => Promise.resolve(TestObject), CacheKey);
@@ -34,16 +34,16 @@ describe('utilities/cache', () => {
  * `localStorage` and `sessionStorage` mock because they are not available in nodejs.
  */
 export class TestCache<T> extends Cache<T> {
-    storageContainer: any = {};
+    private _storageContainer: any = {};
 
     protected get storage() {
-        return <any> {
+        return {
             getItem: (key: string) => {
-                return this.storageContainer[key] || null;
+                return this._storageContainer[key] || null;
             },
             setItem: (key: string, value: any) => {
-                this.storageContainer[key] = value;
-            }
-        };
+                this._storageContainer[key] = value;
+            },
+        } as any;
     }
 }

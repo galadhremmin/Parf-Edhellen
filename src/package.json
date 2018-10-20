@@ -1,12 +1,12 @@
 {
   "private": true,
   "scripts": {
-    "dev": "node node_modules/webpack/bin/webpack.js --config webpack.config.js --mode development",
     "watch": "npm run dev -- -w",
     "watch-poll": "npm run dev -- -w --watch-poll",
-    "hot": "node node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=$npm_package_config_webpack",
     "production": "npm run dev -- -p",
-    "test": "mocha -r ts-node/register resources/assets/ts/**/*.spec.ts"
+    "test": "mocha -r ts-node/register resources/assets/ts/**/*.spec.ts",
+    "lint": "tslint resources/assets/ts/**/*.ts",
+    "dev": "node node_modules/webpack/bin/webpack.js --config webpack.config.js --mode development"
   },
   "config": {
     "webpack": "node_modules/laravel-mix/setup/webpack.config.js"
@@ -27,6 +27,7 @@
     "sinon": "^7.0.0",
     "source-map-loader": "^0.2.4",
     "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
     "typescript": "^3.1.3",
     "webpack": "^4.20.2",
     "webpack-cli": "^3.1.2"

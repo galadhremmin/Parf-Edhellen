@@ -1,29 +1,27 @@
 import { expect } from 'chai';
 
+import { TestCache } from '../utilities/cache.spec';
 import LanguageConnector from './languages';
-import {
-    TestCache
-} from '../utilities/cache.spec';
 
 const CategorizedLanguages = {
     category: [
         { id: 1, name: 'language 1' },
         { id: 2, name: 'language 2' },
-        { id: 3, name: 'language 3' }
+        { id: 3, name: 'language 3' },
     ],
     category2: [
         { id: 4, name: 'language 4' },
-        { id: 5, name: 'language 5' }
-    ]
+        { id: 5, name: 'language 5' },
+    ],
 };
 
 describe('connectors/languages', () => {
     let languages: LanguageConnector;
 
     before(() => {
-        languages = new LanguageConnector(<any> {
-            get: () => Promise.resolve(CategorizedLanguages)
-        }, TestCache);
+        languages = new LanguageConnector({
+            get: () => Promise.resolve(CategorizedLanguages),
+        } as any, TestCache);
     });
 
     it('returns categoried languages', async () => {
