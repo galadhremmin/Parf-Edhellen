@@ -1,9 +1,10 @@
-import axios, { AxiosInstance, AxiosPromise, AxiosResponse, AxiosError } from 'axios';
-import {
-    ApiExceptionCollectorMethod,
-    ApiPath,
-    ApiValidationFailedStatusCode
-} from '../config';
+import axios from 'axios';
+import { 
+    AxiosInstance, 
+    AxiosPromise, 
+    AxiosResponse, 
+    AxiosError 
+} from 'axios';
 
 interface ErrorReport {
     apiMethod?: string;
@@ -14,20 +15,12 @@ interface ErrorReport {
     config?: any;
 }
 
-export default class EDAPI {
-    private static _instance: EDAPI = null;
-    static get default() {
-        if (EDAPI._instance === null) {
-            EDAPI._instance = new EDAPI();
-        }
-
-        return EDAPI._instance;
-    }
-
-    constructor(private _factory: AxiosInstance = axios,
-        private _apiPathName: string = ApiPath, 
-        private _apiErrorMethod: string = ApiExceptionCollectorMethod, 
-        private _apiValidationErrorStatusCode: number = ApiValidationFailedStatusCode) {
+export default class ApiConnector {
+    constructor(
+        private _apiPathName: string, 
+        private _apiErrorMethod: string, 
+        private _apiValidationErrorStatusCode: number,
+        private _factory: AxiosInstance = axios) {
     }
 
     /**
@@ -97,7 +90,7 @@ export default class EDAPI {
      * Execute a PUT request.
      */
     putRaw(apiMethod: string, payload: any) {
-        return this._createRequest(apiMethod, payload || {});
+        return this._createRequest(this._factory.put, apiMethod, payload || {});
     }
 
     /**
@@ -108,21 +101,9 @@ export default class EDAPI {
     }
 
     /**
-     * Combines an absolute path based on the API method path.
-     */
-    private _absPath(path: string) {
-        const origin = window.location.origin;
-        if (origin.length < path.length && path.substr(0, origin.length) == origin) {
-            return path;
-        }
-
-        return path[0] === '/' ? path : this._apiPathName + '/' + path;
-    }
-
-    /**
      * Default XMLHTTPRequest configuration.
      */
-    private _config() {
+    get config() {
         return {
             headers: {
                 'Accept': 'application/json',
@@ -130,6 +111,20 @@ export default class EDAPI {
             },
             timeout: 2500
         };
+    }
+
+    /**
+     * Combines an absolute path based on the API method path.
+     */
+    private _absPath(path: string) {
+        if (typeof window === 'object') {
+            const origin = window.location.origin;
+            if (origin.length < path.length && path.substr(0, origin.length) == origin) {
+                return path;
+            }
+        }
+
+        return path[0] === '/' ? path : this._apiPathName + '/' + path;
     }
 
     private async _consume<T>(apiMethod: string, request: AxiosPromise<AxiosResponse<T>>): Promise<T> {
@@ -146,7 +141,7 @@ export default class EDAPI {
             return Promise.reject(`You need to specify an API method to invoke.`);
         }
 
-        const config = this._config();
+        const config = this.config;
         const hasBody = payload !== undefined;
         return factory.call(this._factory, this._absPath(apiMethod), 
             hasBody ? payload : config,   

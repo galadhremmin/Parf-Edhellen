@@ -8,7 +8,8 @@
         "jsx": "react",
         "allowSyntheticDefaultImports": true,
         "moduleResolution": "node",
-        "experimentalDecorators": true
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
     },
     "include": [
         "./resources/assets/ts/**/*"
