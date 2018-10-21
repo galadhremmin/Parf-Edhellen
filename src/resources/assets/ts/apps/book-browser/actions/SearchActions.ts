@@ -10,6 +10,7 @@ import ApiConnector from '../../../connectors/ApiConnector';
 import {
     Actions,
     ISearchActionState,
+    ISearchResultState,
 } from '../reducers/constants';
 
 @injectable()
@@ -31,10 +32,14 @@ export default class SearchActions {
                 word: r.k,
             }));
 
-            dispatch({
-                items: results,
-                type: Actions.ReceiveSearchResults,
-            });
+            dispatch(this.setSearchResults(results));
+        };
+    }
+
+    public setSearchResults(items: ISearchResultState[]) {
+        return {
+            items,
+            type: Actions.ReceiveSearchResults,
         };
     }
 }

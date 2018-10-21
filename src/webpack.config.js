@@ -1,7 +1,6 @@
 module.exports = {
   entry: {
-    index: './resources/assets/ts/index.tsx',
-    index2: './resources/assets/ts/index2.tsx'
+    index: './resources/assets/ts/index.tsx'
   },
   output: {
     filename: '[name].bundle.js',
