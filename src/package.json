@@ -4,8 +4,8 @@
     "watch": "npm run dev -- -w",
     "watch-poll": "npm run dev -- -w --watch-poll",
     "production": "npm run dev -- -p",
-    "test": "mocha -r ts-node/register resources/assets/ts/**/*.spec.ts",
-    "lint": "tslint resources/assets/ts/**/*.ts",
+    "test": "mocha -r ts-node/register \"./resources/assets/ts/**/*.spec.ts\"",
+    "lint": "tslint \"resources/assets/ts/**/*.ts\"",
     "dev": "node node_modules/webpack/bin/webpack.js --config webpack.config.js --mode development"
   },
   "config": {
@@ -16,6 +16,7 @@
     "@types/mocha": "^5.2.5",
     "@types/react": "^16.4.18",
     "@types/react-dom": "^16.0.9",
+    "@types/react-redux": "^6.0.9",
     "@types/recharts": "^1.1.0",
     "@types/sinon": "^5.0.5",
     "awesome-typescript-loader": "^5.2.1",
@@ -33,12 +34,16 @@
     "webpack-cli": "^3.1.2"
   },
   "dependencies": {
+    "axios": "^0.18.0",
+    "axios-retry": "^3.1.0",
     "babel-polyfill": "^6.26.0",
+    "bootstrap-sass": "^3.3.7",
     "classnames": "^2.2.5",
     "core-js": "^2.5.3",
     "glaemscribe": "^1.1.12",
     "html-to-react": "^1.3.0",
     "inversify": "^5.0.1",
+    "moment": "^2.22.2",
     "react": "^16.2.0",
     "react-autosuggest": "^9.3.2",
     "react-bootstrap": "^0.32.0",
@@ -46,15 +51,12 @@
     "react-overlay": "^0.1.7",
     "react-redux": "^5.0.6",
     "react-router-dom": "^4.2.2",
+    "recharts": "^1.0.0-beta.10",
     "redux": "^4.0.0",
     "redux-thunk": "^2.2.0",
     "reflect-metadata": "^0.1.12",
+    "retry-axios": "^0.3.2",
     "scroll-into-view": "^1.9.1",
-    "spinkit": "^1.2.5",
-    "bootstrap-sass": "^3.3.7",
-    "axios": "^0.18.0",
-    "axios-retry": "^3.1.0",
-    "recharts": "^1.0.0-beta.10",
-    "retry-axios": "^0.3.2"
+    "spinkit": "^1.2.5"
   }
 }

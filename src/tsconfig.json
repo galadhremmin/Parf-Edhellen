@@ -9,7 +9,18 @@
         "allowSyntheticDefaultImports": true,
         "moduleResolution": "node",
         "experimentalDecorators": true,
-        "emitDecoratorMetadata": true
+        "emitDecoratorMetadata": true,
+        "types": [
+            "react",
+            "react-dom",
+            "react-redux",
+            "redux",
+            "moment",
+            "inversify",
+            "moment",
+            "mocha",
+            "chai"
+        ]
     },
     "include": [
         "./resources/assets/ts/**/*"

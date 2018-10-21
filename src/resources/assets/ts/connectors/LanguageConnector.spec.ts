@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
-import { TestCache } from '../utilities/cache.spec';
-import LanguageConnector from './languages';
+import { TestCache } from '../utilities/Cache.spec';
+import LanguageConnector from './LanguageConnector';
 
 const CategorizedLanguages = {
     category: [
@@ -15,7 +15,7 @@ const CategorizedLanguages = {
     ],
 };
 
-describe('connectors/languages', () => {
+describe('connectors/LanguageConnector', () => {
     let languages: LanguageConnector;
 
     before(() => {

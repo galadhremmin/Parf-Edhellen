@@ -2,9 +2,9 @@ import axios from 'axios';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
-import ApiConnector from '../connectors/api';
+import ApiConnector from '../connectors/ApiConnector';
 
-describe('connectors/api', () => {
+describe('connectors/ApiConnector', () => {
     const ApiPrefix = '/api/unit-test';
     const ApiMethod = 'test/now';
     const ApiErrorMethod = 'error';

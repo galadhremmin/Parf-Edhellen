@@ -1,16 +1,16 @@
 import {
-    Container
+    Container,
 } from 'inversify';
 
-import ApiConnector from './connectors/api';
-import LanguageConnector from './connectors/languages';
-import SessionCache from './utilities/session-cache';
-import LocalCache from './utilities/local-cache';
 import * as config from './config';
 
-const container = new Container();
+import ApiConnector from './connectors/ApiConnector';
+import LanguageConnector from './connectors/LanguageConnector';
+import LocalCache from './utilities/LocalCache';
+import SessionCache from './utilities/SessionCache';
 
-const api = new ApiConnector(config.ApiPath, config.ApiExceptionCollectorMethod, 
+const container = new Container();
+const api = new ApiConnector(config.ApiPath, config.ApiExceptionCollectorMethod,
     config.ApiValidationFailedStatusCode);
 
 container.bind(ApiConnector).toConstantValue(api);

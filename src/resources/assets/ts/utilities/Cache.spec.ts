@@ -1,32 +1,32 @@
 import { expect } from 'chai';
-import Cache from './cache';
+import Cache from './Cache';
 
 interface ITestObjectSpec {
     prop: boolean;
 }
 
-describe('utilities/cache', () => {
+describe('utilities/Cache', () => {
     const TestObject: ITestObjectSpec = { prop: true };
     const CacheKey = 'cache.session.unittest';
 
-    let sessionCache: TestCache<ITestObjectSpec>;
+    let testCache: TestCache<ITestObjectSpec>;
 
     before(() => {
-        sessionCache = new TestCache(() => Promise.resolve(TestObject), CacheKey);
+        testCache = new TestCache(() => Promise.resolve(TestObject), CacheKey);
     });
 
     it('is not alive', () => {
-        expect(sessionCache.alive).to.equal(false);
+        expect(testCache.alive).to.equal(false);
     });
 
     it('loads with loader', async () => {
-        expect(await sessionCache.get()).to.equal(TestObject);
+        expect(await testCache.get()).to.equal(TestObject);
     });
 
     it('loads from store', async () => {
-        sessionCache.clear();
-        expect(await sessionCache.get()).to.not.equal(TestObject);
-        expect(await sessionCache.get()).to.deep.equal(TestObject);
+        testCache.clear();
+        expect(await testCache.get()).to.not.equal(TestObject);
+        expect(await testCache.get()).to.deep.equal(TestObject);
     });
 });
 

@@ -8,7 +8,8 @@
         "quotemark": [true, "single", "jsx-double"],
         "trailing-comma": [true, {"multiline": "always", "singleline": "never"}],
         "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore", "allow-pascal-case"],
-        "no-reference": false
+        "no-reference": false,
+        "align": false
     },
     "rulesDirectory": []
 }

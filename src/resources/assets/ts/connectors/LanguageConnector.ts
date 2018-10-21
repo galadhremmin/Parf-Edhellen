@@ -1,17 +1,19 @@
-/// <reference path="../@types/di.d.ts" />
+import 'reflect-metadata';
 
 import {
     inject,
     injectable,
 } from 'inversify';
-import 'reflect-metadata';
 
-import ApiConnector from './api';
-
+import {
+    INewable,
+} from '../_types/di';
 import {
     InjectSessionCacheFactory,
 } from '../config';
-import Cache from '../utilities/cache';
+import Cache from '../utilities/Cache';
+
+import ApiConnector from './ApiConnector';
 
 interface ILanguage {
     id: number;

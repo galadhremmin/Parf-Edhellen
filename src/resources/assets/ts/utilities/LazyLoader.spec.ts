@@ -1,7 +1,7 @@
 import { expect } from 'chai';
-import LazyLoader from './lazy-loader';
+import LazyLoader from './LazyLoader';
 
-describe('utilities/lazy-loader', () => {
+describe('utilities/LazyLoader', () => {
     let loader: LazyLoader<boolean>;
 
     before(() => {

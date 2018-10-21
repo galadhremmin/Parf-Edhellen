@@ -1,4 +1,4 @@
-import LazyLoader, { ILoader } from './lazy-loader';
+import LazyLoader, { ILoader } from './LazyLoader';
 
 export default abstract class Cache<T> extends LazyLoader<T> {
     constructor(loader: ILoader<T>, private _storageKey: string) {
