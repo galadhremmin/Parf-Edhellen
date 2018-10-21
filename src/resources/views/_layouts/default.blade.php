@@ -110,6 +110,10 @@
     </section>
   </footer>
 
+  <script type="text/javascript" src="/dist/vendors~index.bundle.js"></script>
+  <script type="text/javascript" src="/dist/index.bundle.js"></script>
+
+  <!--
   <script type="text/javascript" src="@assetpath(/js/manifest.js)"></script>
   <script type="text/javascript" src="@assetpath(/js/vendor.js)"></script>
   <script type="text/javascript" src="@assetpath(/js/ie.js)"></script>
@@ -122,6 +126,8 @@
     @endif
   @endif
   <script type="text/javascript" src="@assetpath(/js/global.js)" async></script>
+  -->
+  
   @yield('scripts')
   @if (!empty(config('ed.footer_view')))
     @include(config('ed.footer_view'))
