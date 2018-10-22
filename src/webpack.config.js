@@ -3,9 +3,10 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const AsyncChunkNames = require('webpack-async-chunk-names-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
+// Reads `.env` configuration values to `process.env`
 require('dotenv').config();
 
-const devMode = process.env.NODE_ENV !== 'production'
+const devMode = process.env.NODE_ENV !== 'production';
 const version = process.env.ED_VERSION;
 
 const outputPath = path.resolve(__dirname, `public/v${version}`);
@@ -26,10 +27,22 @@ module.exports = {
         default: false,
         vendors: false,
 
+        // vendor bundle
         vendor: {
           name: 'vendor',
           chunks: 'all', // async and sync chunks
           test: /node_modules/
+        },
+
+        // common chunks, like components that are used by at least
+        // in two separate chunks.
+        common: {
+          name: 'common',
+          minChunks: 2,
+          chunks: 'async',
+          priority: 10,
+          reuseExistingChunk: true,
+          enforce: true
         }
       }
     }
@@ -66,7 +79,7 @@ module.exports = {
       {
         test: /\.(eot|ttf|woff|woff2|svg)$/,
         use: [
-          'file-loader?name=resources/assets/fonts/[name].[ext]'
+          'file-loader?name=fonts/[name].[ext]'
         ]
       }
     ]
