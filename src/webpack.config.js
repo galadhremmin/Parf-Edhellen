@@ -1,21 +1,35 @@
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const AsyncChunkNames = require('webpack-async-chunk-names-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+
+require('dotenv').config();
+
 const devMode = process.env.NODE_ENV !== 'production'
+const version = process.env.ED_VERSION;
+
+const outputPath = path.resolve(__dirname, `public/v${version}`);
 
 module.exports = {
   entry: {
     index: './resources/assets/ts/index.tsx'
   },
   output: {
-    filename: '[name].bundle.js',
-    path: __dirname + '/public/dist'
+    filename: 'main.js',
+    path: outputPath,
+    chunkFilename: '[name].js'
   },
   optimization: {
     splitChunks: {
       cacheGroups: {
-        vendors: {
-          test: /[\\/]node_modules[\\/]/,
-          chunks: 'all', 
-          priority: 1
+        // disable Webpack 4's default cache groups.
+        default: false,
+        vendors: false,
+
+        vendor: {
+          name: 'vendor',
+          chunks: 'all', // async and sync chunks
+          test: /node_modules/
         }
       }
     }
@@ -58,11 +72,13 @@ module.exports = {
     ]
   },
   plugins: [
+    new CleanWebpackPlugin(outputPath),
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       // both options are optional
       filename: "[name].css",
       chunkFilename: "[id].css"
-    })
+    }),
+    new AsyncChunkNames()
   ],
 };
