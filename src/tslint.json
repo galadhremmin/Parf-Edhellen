@@ -10,7 +10,8 @@
         "trailing-comma": [true, {"multiline": "always", "singleline": "never"}],
         "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore", "allow-pascal-case"],
         "no-reference": false,
-        "align": false
+        "align": false,
+        "no-console": false
     },
     "rulesDirectory": []
 }

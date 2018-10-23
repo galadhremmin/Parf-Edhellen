@@ -12,7 +12,7 @@ describe('apps/book-browser/components/SearchQueryInput', () => {
 
     before(() => {
         const noop = (ev: any) => { expect(ev).to.to.exist; };
-        wrapper = mount(<SearchQueryInput name="unit-test" onChange={noop} />);
+        wrapper = mount(<SearchQueryInput name="unit-test" value={''} onChange={noop} />);
     });
 
     it('is mounted', () => {

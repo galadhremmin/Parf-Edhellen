@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
-import ApiConnector from '../../../connectors/ApiConnector';
+import BookApiConnector from '../../../connectors/backend/BookApiConnector';
 import SearchActions from '../actions/SearchActions';
 import {
     Actions,
@@ -28,8 +28,8 @@ describe('apps/book-browser/reducers/SearchReducer', () => {
     before(() => {
         sandbox = sinon.createSandbox();
 
-        const api = sinon.createStubInstance(ApiConnector);
-        api.post.callsFake(() => Promise.resolve(TestSearchResults));
+        const api = sinon.createStubInstance(BookApiConnector);
+        api.find.callsFake(() => Promise.resolve(TestSearchResults));
         actions = new SearchActions(api as any);
     });
 

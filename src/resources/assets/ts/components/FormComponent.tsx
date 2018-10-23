@@ -37,6 +37,10 @@ export const integerConverter = (value: string) => parseInt(value, 10);
 export const floatConverter = (value: string) => parseFloat(value);
 export const booleanConverter = (value: string | boolean) => value === 'on' || value === 'true' || value === true;
 
+/**
+ * Represents a form component wrapping a HTML element (backing component).
+ * `V` is the value type, `P` props type, `CP` backing component props type, `S` state type.
+ */
 export abstract class FormComponent<V = any, P = {}, CP = {}, S = {}, SS = any>
     extends React.PureComponent<P & IComponentProps<V>, S & IBackingComponentProps<V>, SS> {
 

@@ -1,11 +1,17 @@
 import LazyLoader, { ILoader } from './LazyLoader';
 
-export default abstract class Cache<T> extends LazyLoader<T> {
-    constructor(loader: ILoader<T>, private _storageKey: string) {
-        super(loader);
+export default class Cache<T> extends LazyLoader<T> {
+    public static withLocalStorage<T>(loader: ILoader<T>, storageKey: string) {
+        return new this(loader, window.localStorage, storageKey);
     }
 
-    protected abstract get storage(): Storage;
+    public static withSessionStorage<T>(loader: ILoader<T>, storageKey: string) {
+        return new this(loader, window.sessionStorage, storageKey);
+    }
+
+    constructor(loader: ILoader<T>, private _store: Storage, private _storageKey: string) {
+        super(loader);
+    }
 
     protected async load() {
         let value = this._loadFromStore();
@@ -23,7 +29,7 @@ export default abstract class Cache<T> extends LazyLoader<T> {
      * the item does not exist (or is corrupt).
      */
     private _loadFromStore(): T {
-        const json = this.storage.getItem(this._storageKey);
+        const json = this._store.getItem(this._storageKey);
         if (json !== null) {
             try {
                 const value = JSON.parse(json);
@@ -42,6 +48,6 @@ export default abstract class Cache<T> extends LazyLoader<T> {
      */
     private _saveInStore(value: T) {
         const json = JSON.stringify(value);
-        this.storage.setItem(this._storageKey, json);
+        this._store.setItem(this._storageKey, json);
     }
 }

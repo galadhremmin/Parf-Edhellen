@@ -2,7 +2,7 @@ import axios from 'axios';
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
-import ApiConnector from '../connectors/ApiConnector';
+import ApiConnector from './ApiConnector';
 
 describe('connectors/ApiConnector', () => {
     const ApiPrefix = '/api/unit-test';

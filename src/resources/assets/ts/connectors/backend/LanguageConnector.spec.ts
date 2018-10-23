@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { TestCache } from '../utilities/Cache.spec';
+import { TestCache } from '../../utilities/Cache.spec';
 import LanguageConnector from './LanguageConnector';
 
 const CategorizedLanguages = {
@@ -20,8 +20,8 @@ describe('connectors/LanguageConnector', () => {
 
     before(() => {
         languages = new LanguageConnector({
-            get: () => Promise.resolve(CategorizedLanguages),
-        } as any, TestCache);
+            languages: () => Promise.resolve(CategorizedLanguages),
+        } as any, new TestCache(null, 'ed.unit-test'));
     });
 
     it('returns categoried languages', async () => {

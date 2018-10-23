@@ -34,16 +34,19 @@ describe('utilities/Cache', () => {
  * `localStorage` and `sessionStorage` mock because they are not available in nodejs.
  */
 export class TestCache<T> extends Cache<T> {
-    private _storageContainer: any = {};
-
-    protected get storage() {
-        return {
-            getItem: (key: string) => {
-                return this._storageContainer[key] || null;
-            },
-            setItem: (key: string, value: any) => {
-                this._storageContainer[key] = value;
-            },
-        } as any;
+    constructor(loader: any, key: string) {
+        super(loader, testStore as any, key);
     }
 }
+
+const testStore = {
+    _data: {},
+
+    getItem(key: string) {
+        return this._data[key] || null;
+    },
+
+    setItem(key: string, value: any) {
+        this._data[key] = value;
+    },
+};

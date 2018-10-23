@@ -5,6 +5,12 @@ import axios, {
     AxiosResponse,
 } from 'axios';
 
+import {
+    ApiExceptionCollectorMethod,
+    ApiPath,
+    ApiValidationFailedStatusCode,
+} from '../config';
+
 interface IErrorReport {
     apiMethod?: string;
     config?: any;
@@ -16,9 +22,9 @@ interface IErrorReport {
 
 export default class ApiConnector {
     constructor(
-        private _apiPathName: string,
-        private _apiErrorMethod: string,
-        private _apiValidationErrorStatusCode: number,
+        private _apiPathName: string = ApiPath,
+        private _apiErrorMethod: string = ApiExceptionCollectorMethod,
+        private _apiValidationErrorStatusCode: number = ApiValidationFailedStatusCode,
         private _factory: AxiosInstance = axios) {
     }
 

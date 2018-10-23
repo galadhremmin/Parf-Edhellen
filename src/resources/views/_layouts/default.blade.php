@@ -110,8 +110,8 @@
     </section>
   </footer>
 
-<script type="text/javascript" src="@assetpath(/js/vendor.js)"></script>
-<script type="text/javascript" src="@assetpath(/js/main.js)"></script>
+<script type="text/javascript" src="@assetpath(vendor.js)"></script>
+<script type="text/javascript" src="@assetpath(main.js)"></script>
 
   <!--
   <script type="text/javascript" src="@assetpath(/js/manifest.js)"></script>

@@ -1,21 +1,16 @@
 import {
-    injectable,
-} from 'inversify';
-import {
     Dispatch,
 } from 'redux';
-import 'reflect-metadata';
 
-import ApiConnector from '../../../connectors/ApiConnector';
+import BookApiConnector from '../../../connectors/backend/BookApiConnector';
 import {
     Actions,
     ISearchActionState,
     ISearchResultState,
 } from '../reducers/constants';
 
-@injectable()
 export default class SearchActions {
-    constructor(private _api: ApiConnector) {
+    constructor(private _api: BookApiConnector = new BookApiConnector()) {
     }
 
     public search(args: ISearchActionState) {
@@ -25,7 +20,7 @@ export default class SearchActions {
                 ...args,
             });
 
-            const rawResults = await this._api.post<any[]>('book/find', args);
+            const rawResults = await this._api.find(args);
             const results = rawResults.map((r) => ({
                 normalizedWord: r.nk,
                 originalWord: r.ok,

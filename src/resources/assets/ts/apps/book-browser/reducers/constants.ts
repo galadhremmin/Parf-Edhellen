@@ -2,6 +2,9 @@ import {
     IReduxAction,
     IReduxActionableState,
 } from '../../../_types/redux';
+import {
+    IFindActionRequest,
+} from '../../../connectors/backend/BookApiConnector';
 
 export enum Actions {
     RequestSearchResults = 'ED_SEARCH_RESULT_REQUEST',
@@ -14,12 +17,7 @@ export interface ISearchResultState {
     word: string;
 }
 
-export interface ISearchActionState {
-    includeOld?: boolean;
-    languageId?: number;
-    query?: string;
-    reversed?: boolean;
-}
+export type ISearchActionState = IFindActionRequest;
 
 export type ISearchState = ISearchActionState & {
     itemIndex?: number;
