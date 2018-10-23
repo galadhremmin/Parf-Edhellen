@@ -8,7 +8,7 @@ import {
     ISearchActionState,
 } from '../reducers/constants';
 
-describe('apps/book-browsers/reducers/SearchReducer', () => {
+describe('apps/book-browser/reducers/SearchReducer', () => {
     const TestSearchResults = [
         {
             k: 'keyword1',

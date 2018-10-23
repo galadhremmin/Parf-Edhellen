@@ -1,1 +1,1 @@
-export * from './SearchActions';
+export { default as SearchActions } from './SearchActions';
