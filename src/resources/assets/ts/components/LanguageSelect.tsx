@@ -13,8 +13,10 @@ export default class LanguageSelect extends React.PureComponent<{}, IState> {
 
     public async componentWillMount() {
         const languageConnector = new LanguageConnector();
+        const languages = await languageConnector.all();
+
         this.setState({
-            languages: await languageConnector.all(),
+            languages,
         });
     }
 

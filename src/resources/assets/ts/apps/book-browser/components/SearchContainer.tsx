@@ -15,13 +15,13 @@ export default class SearchContainer extends React.PureComponent<{}, ISearchActi
     };
 
     public render() {
-        return <form onSubmit={this.onSubmit}>
+        return <form onSubmit={this._onSubmit}>
             <div className="row">
                 <div className="col-md-12">
                     <SearchQueryInput
                         autoFocus={true}
                         name="query"
-                        onChange={this.onQueryChange}
+                        onChange={this._onQueryChange}
                         tabIndex={1}
                         value={this.state.query}
                     />
@@ -32,14 +32,14 @@ export default class SearchContainer extends React.PureComponent<{}, ISearchActi
                     <label className="inline input-sm">
                         <input checked={this.state.reversed}
                             name="reversed"
-                            onChange={this.onReverseChange}
+                            onChange={this._onReverseChange}
                             type="checkbox"
                         /> Reversed
                     </label>
                     <label className="inline input-sm">
                         <input checked={this.state.includeOld}
                             name="excludeOld"
-                            onChange={this.onIncludeOldChange}
+                            onChange={this._onIncludeOldChange}
                             type="checkbox"
                         /> Old sources
                     </label>
@@ -49,23 +49,23 @@ export default class SearchContainer extends React.PureComponent<{}, ISearchActi
         </form>;
     }
 
-    private onQueryChange = (ev: IChangeEvent<string>) => {
+    private _onQueryChange = (ev: IChangeEvent<string>) => {
         console.log(ev.name, ev.value);
     }
 
-    private onReverseChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    private _onReverseChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
         console.log(ev);
     }
 
-    private onIncludeOldChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    private _onIncludeOldChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
         console.log(ev);
     }
 
-    private onLanguageChange = (ev: React.ChangeEvent<HTMLSelectElement>) => {
+    private _onLanguageChange = (ev: React.ChangeEvent<HTMLSelectElement>) => {
         console.log(ev);
     }
 
-    private onSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
+    private _onSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
         ev.preventDefault();
     }
 }

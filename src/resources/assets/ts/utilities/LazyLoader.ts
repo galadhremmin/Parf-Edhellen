@@ -1,9 +1,7 @@
-export type ILoader<T> = () => Promise<T>;
-
-export default class LazyLoader<T> {
+export default class LazyLoader<T, L = T> {
     private _data: T;
 
-    constructor(private _loader: ILoader<T>) {
+    constructor(private _loader: ILoader<L>) {
         this._data = null;
     }
 
@@ -31,7 +29,7 @@ export default class LazyLoader<T> {
     /**
      * Sets the loader.
      */
-    public set loader(loader: ILoader<T>) {
+    public set loader(loader: ILoader<L>) {
         this._loader = loader;
         this.loadedData = null; // reset the loaded data since the loader changed.
     }
@@ -51,7 +49,16 @@ export default class LazyLoader<T> {
      * Triggers to loader and returns its value.
      */
     protected async load(): Promise<T> {
-        return this.loader.call(this);
+        const data = await this.loader.call(this);
+        return this.adapt(data);
+    }
+
+    /**
+     * Adapts the recipient payload from `L` to `T`. Must be implemented when `L` != `L`.
+     * @param data payload from `load()`
+     */
+    protected adapt(data: L): T {
+        return data as unknown as T;
     }
 
     /**
@@ -68,3 +75,5 @@ export default class LazyLoader<T> {
         this._data = value;
     }
 }
+
+export type ILoader<T> = () => Promise<T>;

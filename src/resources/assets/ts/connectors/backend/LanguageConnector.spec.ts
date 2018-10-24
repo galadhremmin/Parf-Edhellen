@@ -15,7 +15,7 @@ const CategorizedLanguages = {
     ],
 };
 
-describe('connectors/LanguageConnector', () => {
+describe('connectors/backend/LanguageConnector', () => {
     let languages: LanguageConnector;
 
     before(() => {

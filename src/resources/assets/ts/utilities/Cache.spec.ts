@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import Cache from './Cache';
+import MemoryStorage from './MemoryStorage';
 
 interface ITestObjectSpec {
     prop: boolean;
@@ -35,18 +36,6 @@ describe('utilities/Cache', () => {
  */
 export class TestCache<T> extends Cache<T> {
     constructor(loader: any, key: string) {
-        super(loader, testStore as any, key);
+        super(loader, new MemoryStorage(), key);
     }
 }
-
-const testStore = {
-    _data: {},
-
-    getItem(key: string) {
-        return this._data[key] || null;
-    },
-
-    setItem(key: string, value: any) {
-        this._data[key] = value;
-    },
-};

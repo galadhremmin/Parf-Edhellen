@@ -2,7 +2,7 @@ import {
     LocalStorageLanguages,
 } from '../../config';
 
-import ExpiringCache from '../../utilities/ExpiringCache';
+import ExpiringCache, { IDataWithExpiration, TimeUnit } from '../../utilities/ExpiringCache';
 import LazyLoader from '../../utilities/LazyLoader';
 import BookApiConnector, {
     ILanguageEntity,
@@ -18,16 +18,20 @@ export default class LanguageConnector {
     constructor(private _api: BookApiConnector = new BookApiConnector(),
         private _cache?: LazyLoader<ILanguagesResponse>) {
         if (_cache === undefined) {
-            _cache = ExpiringCache.withLocalStorage(this.load.bind(this),
+            this._cache = ExpiringCache.withLocalStorage(this.load.bind(this),
                 LocalStorageLanguages);
-        } else {
-            // Replace the cache's loader with the internal loader.
-            _cache.loader = this.load.bind(this);
         }
     }
 
     public async load() {
-        return await this._api.languages();
+        const languages = await this._api.languages();
+        const cacheConfig: IDataWithExpiration<ILanguagesResponse> = {
+            data: languages,
+            lifetime: 1,
+            unit: TimeUnit.Days
+        };
+        
+        return cacheConfig;
     }
 
     public async all() {
