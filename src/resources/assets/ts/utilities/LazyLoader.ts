@@ -49,8 +49,12 @@ export default class LazyLoader<T, L = T> {
      * Triggers to loader and returns its value.
      */
     protected async load(): Promise<T> {
-        const data = await this.loader.call(this);
-        return this.adapt(data);
+        try {
+            const data = await this.loader.call(this);
+            return this.adapt(data);
+        } catch (e) {
+            throw new Error(e);
+        }
     }
 
     /**

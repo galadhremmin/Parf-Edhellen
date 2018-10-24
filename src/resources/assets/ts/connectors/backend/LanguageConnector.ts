@@ -28,9 +28,9 @@ export default class LanguageConnector {
         const cacheConfig: IDataWithExpiration<ILanguagesResponse> = {
             data: languages,
             lifetime: 1,
-            unit: TimeUnit.Days
+            unit: TimeUnit.Days,
         };
-        
+
         return cacheConfig;
     }
 

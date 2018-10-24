@@ -16,6 +16,15 @@ describe('utilities/LazyLoader', () => {
         expect(await loader.get()).to.equal(true);
     });
 
+    it('fails', (done) => {
+        const error = 'error';
+        const failingLoader = new LazyLoader(() => Promise.reject(error));
+
+        failingLoader.get().then(
+            () => done('an error was not thrown'),
+            () => done());
+    });
+
     it('is cleared', () => {
         loader.clear();
         expect(loader.alive).to.equal(false);

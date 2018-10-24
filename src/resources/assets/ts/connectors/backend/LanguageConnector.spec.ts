@@ -19,9 +19,8 @@ describe('connectors/backend/LanguageConnector', () => {
     let languages: LanguageConnector;
 
     before(() => {
-        languages = new LanguageConnector({
-            languages: () => Promise.resolve(CategorizedLanguages),
-        } as any, new TestCache(null, 'ed.unit-test'));
+        const cache = new TestCache<any>(() => Promise.resolve(CategorizedLanguages), 'ed.unit-test');
+        languages = new LanguageConnector(null, cache);
     });
 
     it('returns categoried languages', async () => {
