@@ -17,7 +17,6 @@
             "react-redux",
             "redux",
             "moment",
-            "inversify",
             "moment",
             "mocha",
             "chai"
