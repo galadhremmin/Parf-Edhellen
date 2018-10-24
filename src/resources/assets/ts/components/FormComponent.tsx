@@ -33,9 +33,11 @@ export interface FormComponent {
     appendComponentPropNames?: boolean;
 }
 
-export const integerConverter = (value: string) => parseInt(value, 10);
-export const floatConverter = (value: string) => parseFloat(value);
-export const booleanConverter = (value: string | boolean) => value === 'on' || value === 'true' || value === true;
+const isNull = (value: any) => value === undefined || value === null;
+export const integerConverter = (value: string) => isNull(value) ? 0 : parseInt(value, 10);
+export const floatConverter = (value: string) => isNull(value) ? 0.00 : parseFloat(value);
+export const booleanConverter = (value: string | boolean) => isNull(value) ? false 
+    : (value === 'on' || value === 'true' || value === true);
 
 /**
  * Represents a form component wrapping a HTML element (backing component).
@@ -56,6 +58,11 @@ export abstract class FormComponent<V = any, P = {}, CP = {}, S = {}, SS = any>
      * Default change event handler for backing component.
      */
     protected onChange = (ev: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        const value = this.convertValue(ev.target.value);
+        if (value === this.props.value) {
+            return;
+        }
+
         const onChangeExternal = this.props.onChange;
         if (onChangeExternal === undefined) {
             ev.preventDefault();
@@ -67,10 +74,9 @@ export abstract class FormComponent<V = any, P = {}, CP = {}, S = {}, SS = any>
             throw new Error('You have to give the component a name.');
         }
 
-        const value = ev.target.value;
         onChangeExternal({
             name,
-            value: this.convertValue(value),
+            value,
         });
     }
 

@@ -43,26 +43,38 @@ export default class SearchContainer extends React.PureComponent<{}, ISearchActi
                             type="checkbox"
                         /> Old sources
                     </label>
-                    <LanguageSelect />
+                    <LanguageSelect
+                        name="languageId"
+                        onChange={this._onLanguageChange}
+                        value={this.state.languageId}
+                    />
                 </div>
             </div>
         </form>;
     }
 
     private _onQueryChange = (ev: IChangeEvent<string>) => {
-        console.log(ev.name, ev.value);
+        this.setState({
+            query: ev.value
+        });
     }
 
     private _onReverseChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(ev);
+        this.setState({
+            reversed: ev.target.checked
+        });
     }
 
     private _onIncludeOldChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(ev);
+        this.setState({
+            includeOld: ev.target.checked
+        })
     }
 
-    private _onLanguageChange = (ev: React.ChangeEvent<HTMLSelectElement>) => {
-        console.log(ev);
+    private _onLanguageChange = (ev: IChangeEvent<number>) => {
+        this.setState({
+            languageId: ev.value
+        })
     }
 
     private _onSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
