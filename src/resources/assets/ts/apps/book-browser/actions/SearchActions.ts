@@ -2,7 +2,7 @@ import {
     Dispatch,
 } from 'redux';
 
-import BookApiConnector from '../../../connectors/backend/BookApiConnector';
+import BookApiConnector, { ILanguageEntity } from '../../../connectors/backend/BookApiConnector';
 import {
     Actions,
     ISearchActionState,

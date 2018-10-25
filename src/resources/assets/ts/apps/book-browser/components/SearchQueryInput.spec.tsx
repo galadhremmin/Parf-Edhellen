@@ -34,7 +34,7 @@ describe('apps/book-browser/components/SearchQueryInput', () => {
     });
 
     it('will notify on change', () => {
-        const expectedValue = 'a value';
+        const expectedValue = 'this is a new value which will trigger `onChange`.';
         const expectedChangeArguments = {
             name: wrapper.prop('name'),
             value: expectedValue,
@@ -44,10 +44,13 @@ describe('apps/book-browser/components/SearchQueryInput', () => {
 
         wrapper.setProps({
             onChange: changeStub,
-            value: expectedValue,
         });
 
-        input.simulate('change');
+        input.simulate('change', {
+            target: {
+                value: expectedValue,
+            },
+        });
         expect(changeStub.callCount).to.equal(1);
         expect(changeStub.firstCall.args[0]).to.deep.equal(expectedChangeArguments);
     });

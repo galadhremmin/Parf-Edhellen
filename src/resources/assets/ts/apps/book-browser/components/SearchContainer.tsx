@@ -55,26 +55,20 @@ export default class SearchContainer extends React.PureComponent<{}, ISearchActi
 
     private _onQueryChange = (ev: IChangeEvent<string>) => {
         this.setState({
-            query: ev.value
+            query: ev.value,
         });
     }
 
     private _onReverseChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({
-            reversed: ev.target.checked
-        });
+        // TODO
     }
 
     private _onIncludeOldChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({
-            includeOld: ev.target.checked
-        })
+        // TODO
     }
 
     private _onLanguageChange = (ev: IChangeEvent<number>) => {
-        this.setState({
-            languageId: ev.value
-        })
+        // TODO
     }
 
     private _onSubmit = (ev: React.FormEvent<HTMLFormElement>) => {

@@ -1,9 +1,16 @@
 import React from 'react';
 
-import { FormComponent, integerConverter } from './FormComponent';
-import LanguageConnector, { ILanguagesResponse, ILanguageEntity } from '../connectors/backend/LanguageConnector';
+import LanguageConnector, {
+    ILanguageEntity,
+    ILanguagesResponse,
+} from '../connectors/backend/LanguageConnector';
+import {
+    FormComponent,
+    integerConverter,
+} from './FormComponent';
 
 interface IProps {
+    value: number;
 }
 
 interface IState {
@@ -38,7 +45,7 @@ export default class LanguageSelect extends FormComponent<number, IProps, IProps
         const periods = Object.keys(this.state.languages);
         return <select {...props} onChange={this.onChange}>
             <option value={0}>All languages</option>
-            {periods.map(period => <LanguagePeriod key={period} period={period} languages={languages[period]} />)}
+            {periods.map((period) => <LanguagePeriod key={period} period={period} languages={languages[period]} />)}
         </select>;
     }
 
@@ -48,8 +55,9 @@ export default class LanguageSelect extends FormComponent<number, IProps, IProps
 }
 
 /**
- * Represents a single language period (such as "late period") within a `<select>` context. One period contains multiple languages.
- * @param props 
+ * Represents a single language period (such as "late period") within a `<select>` context.
+ * One period contains multiple languages.
+ * @param props
  */
 const LanguagePeriod = (props: {
     period: string;
@@ -60,13 +68,13 @@ const LanguagePeriod = (props: {
     }
 
     return <optgroup label={props.period}>
-        {props.languages.map(language => <Language key={language.id} {...language} />)}
+        {props.languages.map((language) => <Language key={language.id} {...language} />)}
     </optgroup>;
 };
 
 /**
  * Represents a single language entity within a `<select>` context.
- * @param props 
+ * @param props
  */
 const Language = (props: ILanguageEntity) => {
     return <option value={props.id}>{props.name}</option>;

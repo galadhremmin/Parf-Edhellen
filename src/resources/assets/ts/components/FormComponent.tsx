@@ -36,7 +36,7 @@ export interface FormComponent {
 const isNull = (value: any) => value === undefined || value === null;
 export const integerConverter = (value: string) => isNull(value) ? 0 : parseInt(value, 10);
 export const floatConverter = (value: string) => isNull(value) ? 0.00 : parseFloat(value);
-export const booleanConverter = (value: string | boolean) => isNull(value) ? false 
+export const booleanConverter = (value: string | boolean) => isNull(value) ? false
     : (value === 'on' || value === 'true' || value === true);
 
 /**
@@ -59,6 +59,7 @@ export abstract class FormComponent<V = any, P = {}, CP = {}, S = {}, SS = any>
      */
     protected onChange = (ev: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const value = this.convertValue(ev.target.value);
+        console.log(value);
         if (value === this.props.value) {
             return;
         }
