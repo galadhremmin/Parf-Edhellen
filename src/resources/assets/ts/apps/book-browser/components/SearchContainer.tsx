@@ -1,18 +1,27 @@
 import React from 'react';
+import {
+    connect,
+    DispatchProp,
+} from 'react-redux';
 
 import { IChangeEvent } from '../../../components/FormComponent';
 import LanguageSelect from '../../../components/LanguageSelect';
+import debounce from '../../../utilities/func/debounce';
+import { SearchActions } from '../actions';
 import { ISearchActionState } from '../reducers/constants';
 
 import SearchQueryInput from './SearchQueryInput';
 
-export default class SearchContainer extends React.PureComponent<{}, ISearchActionState> {
+export class SearchContainer extends React.PureComponent<DispatchProp, ISearchActionState> {
     public state: ISearchActionState = {
         includeOld: false,
         languageId: 0,
         query: '',
         reversed: false,
     };
+
+    private _actions = new SearchActions();
+    private _beginSearch = debounce(500, this._search);
 
     public render() {
         return <form onSubmit={this._onSubmit}>
@@ -57,21 +66,45 @@ export default class SearchContainer extends React.PureComponent<{}, ISearchActi
         this.setState({
             query: ev.value,
         });
+
+        this._beginSearch();
     }
 
     private _onReverseChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
-        // TODO
+        this.setState({
+            reversed: ev.target.checked,
+        });
+
+        this._beginSearch();
     }
 
     private _onIncludeOldChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
-        // TODO
+        this.setState({
+            includeOld: ev.target.checked,
+        });
+
+        this._beginSearch();
     }
 
     private _onLanguageChange = (ev: IChangeEvent<number>) => {
-        // TODO
+        this.setState({
+            languageId: ev.value,
+        });
+
+        this._beginSearch();
     }
 
     private _onSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
         ev.preventDefault();
     }
+
+    private _search() {
+        console.log(this.state);
+    }
 }
+
+const mapStateToProps = (state: any) => {
+    return {};
+};
+
+export default connect(mapStateToProps)(SearchContainer);

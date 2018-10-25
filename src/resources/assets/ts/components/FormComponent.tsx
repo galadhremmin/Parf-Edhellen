@@ -59,7 +59,6 @@ export abstract class FormComponent<V = any, P = {}, CP = {}, S = {}, SS = any>
      */
     protected onChange = (ev: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const value = this.convertValue(ev.target.value);
-        console.log(value);
         if (value === this.props.value) {
             return;
         }

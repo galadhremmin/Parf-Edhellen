@@ -22,11 +22,13 @@ export interface IFindActionRequest {
     reversed?: boolean;
 }
 
-export type FindActionResponse = Array<{
+export interface IFindActionEntity {
     k: string;
     nk: string;
     ok: string;
-}>;
+}
+
+export type FindActionResponse = IFindActionEntity[];
 
 export interface ILanguagesResponse {
     [period: string]: ILanguageEntity[];

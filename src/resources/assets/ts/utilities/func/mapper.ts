@@ -2,10 +2,13 @@ type ConversionTable<T1, T2> = {
     [R in keyof T2]?: (keyof T1) | ((v: T1) => T2[R]) | null;
 };
 
-const convert = <T1, T2>(table: ConversionTable<T1, T2>, subject: T1): T2 => {
-    if (subject === null ||
-        subject === undefined ||
-        (typeof subject === 'number' && (isNaN(subject) || !isFinite(subject)))) {
+const isIneligible = <T>(subject: T) => //
+    subject === null ||
+    subject === undefined ||
+    (typeof subject === 'number' && (isNaN(subject) || !isFinite(subject)));
+
+export const mapper = <T1, T2>(table: ConversionTable<T1, T2>, subject: T1): T2 => {
+    if (isIneligible(subject)) {
         return null;
     }
 
@@ -35,4 +38,10 @@ const convert = <T1, T2>(table: ConversionTable<T1, T2>, subject: T1): T2 => {
     return result as T2;
 };
 
-export default convert;
+export const mapArray = <T1, T2>(table: ConversionTable<T1, T2>, subject: T1[]): T2[] => {
+    if (isIneligible(subject)) {
+        return [];
+    }
+
+    return subject.map((s) => mapper(table, s));
+};

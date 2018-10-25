@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import convert from './convert';
+import { mapper } from './mapper';
 
 interface IOrigin {
     x?: number;
@@ -23,7 +23,7 @@ describe('utilities/func/convert', () => {
             z: false,
         };
 
-        const d = convert<IOrigin, IDestination>({
+        const d = mapper<IOrigin, IDestination>({
             a: 'x',
             b: 'y',
             c: 'z',
@@ -47,7 +47,7 @@ describe('utilities/func/convert', () => {
             z: false,
         };
 
-        const d = convert<IOrigin, IDestination>({
+        const d = mapper<IOrigin, IDestination>({
             a: (p) => Math.sqrt(p.x),
             b: undefined,
             c: null,
@@ -61,17 +61,17 @@ describe('utilities/func/convert', () => {
     });
 
     it('returns null when given null', () => {
-        const d = convert<IOrigin, IDestination>({}, null);
+        const d = mapper<IOrigin, IDestination>({}, null);
         expect(d).to.be.null;
     });
 
     it('returns null when given undefined', () => {
-        const d = convert<IOrigin, IDestination>({}, undefined);
+        const d = mapper<IOrigin, IDestination>({}, undefined);
         expect(d).to.be.null;
     });
 
     it('returns null when given NaN as a number', () => {
-        const d = convert<number, IDestination>({}, NaN);
+        const d = mapper<number, IDestination>({}, NaN);
         expect(d).to.be.null;
     });
 });

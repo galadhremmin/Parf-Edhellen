@@ -2,7 +2,12 @@ import {
     Dispatch,
 } from 'redux';
 
-import BookApiConnector, { ILanguageEntity } from '../../../connectors/backend/BookApiConnector';
+import BookApiConnector, {
+    IFindActionEntity,
+} from '../../../connectors/backend/BookApiConnector';
+import {
+    mapArray,
+} from '../../../utilities/func/mapper';
 import {
     Actions,
     ISearchActionState,
@@ -21,11 +26,11 @@ export default class SearchActions {
             });
 
             const rawResults = await this._api.find(args);
-            const results = rawResults.map((r) => ({
-                normalizedWord: r.nk,
-                originalWord: r.ok,
-                word: r.k,
-            }));
+            const results = mapArray<IFindActionEntity, ISearchResultState>({
+                normalizedWord: 'nk',
+                originalWord: 'ok',
+                word: 'k',
+            }, rawResults);
 
             dispatch(this.setSearchResults(results));
         };
