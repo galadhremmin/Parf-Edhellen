@@ -5,11 +5,9 @@ import BookApiConnector from '../../../connectors/backend/BookApiConnector';
 import SearchActions from '../actions/SearchActions';
 
 import {
-    ISearchActionState,
-} from '../_types';
-import {
     Actions,
 } from '../reducers/constants';
+import { ISearchActionState } from './SearchActions.types';
 
 describe('apps/book-browser/reducers/SearchReducer', () => {
     const TestSearchResults = [

@@ -9,12 +9,12 @@ import {
     mapArray,
 } from '../../../utilities/func/mapper';
 import {
-    ISearchActionState,
-    ISearchResultState,
-} from '../_types';
-import {
     Actions,
 } from '../reducers/constants';
+import {
+    ISearchActionState,
+    ISearchResultState,
+} from './SearchActions.types';
 
 export default class SearchActions {
     constructor(private _api: BookApiConnector = new BookApiConnector()) {

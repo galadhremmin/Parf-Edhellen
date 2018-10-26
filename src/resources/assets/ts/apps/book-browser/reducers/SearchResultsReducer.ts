@@ -1,7 +1,7 @@
 import {
     ISearchResultAction,
     ISearchResultState,
-} from '../_types';
+} from '../actions/SearchActions.types';
 import {
     Actions,
 } from './constants';

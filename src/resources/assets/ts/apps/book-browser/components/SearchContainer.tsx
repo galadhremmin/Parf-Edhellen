@@ -7,8 +7,9 @@ import {
 import { IChangeEvent } from '../../../components/FormComponent';
 import LanguageSelect from '../../../components/LanguageSelect';
 import debounce from '../../../utilities/func/debounce';
-import { ISearchActionState } from '../_types';
+
 import { SearchActions } from '../actions';
+import { ISearchActionState } from '../actions/SearchActions.types';
 
 import SearchQueryInput from './SearchQueryInput';
 

@@ -2,14 +2,10 @@ import classNames from 'classnames';
 import * as React from 'react';
 
 import { FormComponent } from '../../../components/FormComponent';
-
-interface IComponentProps {
-    autoFocus?: boolean;
-}
-
-interface IProps extends IComponentProps {
-    loading?: boolean;
-}
+import {
+    IComponentProps,
+    IProps,
+} from './SearchQueryInput.types';
 
 export default class SearchQueryInput extends FormComponent<string, IProps, IComponentProps> {
     public get componentPropNames() {
