@@ -9,9 +9,11 @@ import {
     mapArray,
 } from '../../../utilities/func/mapper';
 import {
-    Actions,
     ISearchActionState,
     ISearchResultState,
+} from '../_types';
+import {
+    Actions,
 } from '../reducers/constants';
 
 export default class SearchActions {

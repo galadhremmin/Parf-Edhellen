@@ -1,7 +1,9 @@
 import {
-    Actions,
     ISearchResultAction,
     ISearchResultState,
+} from '../_types';
+import {
+    Actions,
 } from './constants';
 
 const SearchResultsReducer = (state: ISearchResultState[] = [],

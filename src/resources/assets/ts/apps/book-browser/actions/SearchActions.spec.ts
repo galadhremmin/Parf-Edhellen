@@ -3,9 +3,12 @@ import * as sinon from 'sinon';
 
 import BookApiConnector from '../../../connectors/backend/BookApiConnector';
 import SearchActions from '../actions/SearchActions';
+
+import {
+    ISearchActionState,
+} from '../_types';
 import {
     Actions,
-    ISearchActionState,
 } from '../reducers/constants';
 
 describe('apps/book-browser/reducers/SearchReducer', () => {
