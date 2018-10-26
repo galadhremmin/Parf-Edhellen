@@ -1,24 +1,25 @@
 import React from 'react';
 import {
     connect,
-    DispatchProp,
 } from 'react-redux';
 
 import { IChangeEvent } from '../../../components/FormComponent';
 import LanguageSelect from '../../../components/LanguageSelect';
 import debounce from '../../../utilities/func/debounce';
-
 import { SearchActions } from '../actions';
-import { ISearchActionState } from '../actions/SearchActions.types';
-
 import SearchQueryInput from './SearchQueryInput';
 
-export class SearchContainer extends React.PureComponent<DispatchProp, ISearchActionState> {
-    public state: ISearchActionState = {
+import {
+    IProps,
+    IState,
+} from './SearchQueryContainer.types';
+
+export class SearchQueryContainer extends React.PureComponent<IProps, IState> {
+    public state: IState = {
         includeOld: false,
         languageId: 0,
-        query: '',
         reversed: false,
+        word: '',
     };
 
     private _actions = new SearchActions();
@@ -33,7 +34,7 @@ export class SearchContainer extends React.PureComponent<DispatchProp, ISearchAc
                         name="query"
                         onChange={this._onQueryChange}
                         tabIndex={1}
-                        value={this.state.query}
+                        value={this.state.word}
                     />
                 </div>
             </div>
@@ -65,7 +66,7 @@ export class SearchContainer extends React.PureComponent<DispatchProp, ISearchAc
 
     private _onQueryChange = (ev: IChangeEvent<string>) => {
         this.setState({
-            query: ev.value,
+            word: ev.value,
         });
 
         this._beginSearch();
@@ -100,12 +101,16 @@ export class SearchContainer extends React.PureComponent<DispatchProp, ISearchAc
     }
 
     private _search() {
-        console.log(this.state);
+        this.props.dispatch(
+            this._actions.search(this.state),
+        );
     }
 }
 
 const mapStateToProps = (state: any) => {
-    return {};
+    return {
+
+    };
 };
 
-export default connect(mapStateToProps)(SearchContainer);
+export default connect(mapStateToProps)(SearchQueryContainer);

@@ -4,7 +4,7 @@ import {
 } from '../../../_types/redux';
 import {
     IFindActionRequest,
-} from '../../../connectors/backend/BookApiConnector';
+} from '../../../connectors/backend/BookApiConnector.types';
 
 export interface ISearchResultState {
     normalizedWord: string;

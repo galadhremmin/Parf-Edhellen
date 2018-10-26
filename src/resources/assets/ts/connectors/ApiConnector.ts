@@ -10,6 +10,9 @@ import {
     ApiPath,
     ApiValidationFailedStatusCode,
 } from '../config';
+import {
+    propsToSnakeCase,
+} from '../utilities/func/snake-case';
 
 interface IErrorReport {
     apiMethod?: string;
@@ -148,6 +151,10 @@ export default class ApiConnector {
 
         const config = this.config;
         const hasBody = payload !== null;
+        if (hasBody) {
+            payload = propsToSnakeCase(payload);
+        }
+
         return factory.call(this._factory, this._absPath(apiMethod),
             hasBody ? payload : config,
             hasBody ? config : undefined,

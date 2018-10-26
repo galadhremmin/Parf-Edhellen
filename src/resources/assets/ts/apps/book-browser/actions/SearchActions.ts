@@ -2,9 +2,10 @@ import {
     Dispatch,
 } from 'redux';
 
-import BookApiConnector, {
+import BookApiConnector from '../../../connectors/backend/BookApiConnector';
+import {
     IFindActionEntity,
-} from '../../../connectors/backend/BookApiConnector';
+} from '../../../connectors/backend/BookApiConnector.types';
 import {
     mapArray,
 } from '../../../utilities/func/mapper';

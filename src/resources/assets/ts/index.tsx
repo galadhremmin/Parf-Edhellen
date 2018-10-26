@@ -3,6 +3,5 @@ import { render } from 'react-dom';
 
 import '../sass/app.scss';
 
-import SearchContainer from './apps/book-browser/components/SearchContainer';
-
-render(<SearchContainer />, document.getElementById('ed-search-component'));
+import bookBrowserApp from './apps/book-browser';
+render(bookBrowserApp, document.getElementById('ed-search-component'));

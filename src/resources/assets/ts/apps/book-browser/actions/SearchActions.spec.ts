@@ -41,7 +41,7 @@ describe('apps/book-browser/reducers/SearchReducer', () => {
     it('searches for word', async () => {
         const fakeDispatch = sandbox.spy();
 
-        const searchArgs: ISearchActionState = { query: 'hello' };
+        const searchArgs: ISearchActionState = { word: 'hello' };
         const action = actions.search(searchArgs);
         await action(fakeDispatch);
 

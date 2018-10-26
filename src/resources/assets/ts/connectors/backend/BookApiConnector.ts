@@ -1,4 +1,9 @@
 import ApiConnector from '../ApiConnector';
+import {
+    FindActionResponse,
+    IFindActionRequest,
+    ILanguagesResponse,
+} from './BookApiConnector.types';
 
 export default class BookApiConnector {
     constructor(private _api = new ApiConnector()) {
@@ -13,28 +18,4 @@ export default class BookApiConnector {
         const response = await this._api.get<ILanguagesResponse>('book/languages');
         return response;
     }
-}
-
-export interface IFindActionRequest {
-    includeOld?: boolean;
-    languageId?: number;
-    query?: string;
-    reversed?: boolean;
-}
-
-export interface IFindActionEntity {
-    k: string;
-    nk: string;
-    ok: string;
-}
-
-export type FindActionResponse = IFindActionEntity[];
-
-export interface ILanguagesResponse {
-    [period: string]: ILanguageEntity[];
-}
-
-export interface ILanguageEntity {
-    id: number;
-    name: string;
 }

@@ -1,9 +1,10 @@
 import React from 'react';
 
-import LanguageConnector, {
+import {
     ILanguageEntity,
     ILanguagesResponse,
-} from '../connectors/backend/LanguageConnector';
+} from '../connectors/backend/BookApiConnector.types';
+import LanguageConnector from '../connectors/backend/LanguageConnector';
 import {
     FormComponent,
     integerConverter,

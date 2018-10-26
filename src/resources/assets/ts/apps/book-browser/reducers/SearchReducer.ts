@@ -11,8 +11,8 @@ const SearchReducer = (state: ISearchState = {
     itemIndex: -1,
     languageId: 0,
     loading: false,
-    query: '',
     reversed: false,
+    word: '',
 }, action: ISearchAction) => {
     switch (action.type) {
         case Actions.RequestSearchResults:
@@ -23,8 +23,8 @@ const SearchReducer = (state: ISearchState = {
 
                 includeOld: action.includeOld,
                 languageId: action.languageId,
-                query: action.query,
                 reversed: action.reversed,
+                word: action.word,
             };
         case Actions.ReceiveSearchResults:
             return {

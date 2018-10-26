@@ -52,7 +52,7 @@ describe('connectors/ApiConnector', () => {
             sandbox.stub(axios, verb as any)
                 .callsFake((path, payload, config) => {
                     expect(path).to.equal(`${ApiPrefix}/${ApiMethod}`);
-                    expect(payload).to.equal(ApiPayload);
+                    expect(payload).to.deep.equal(ApiPayload);
                     expect(config).to.deep.equal(api.config);
 
                     return Promise.resolve(ApiResponse);
