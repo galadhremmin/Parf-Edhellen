@@ -26,10 +26,10 @@ const store = createStore(rootReducer, undefined,
 );
 
 const app = <Provider store={store}>
-    <div>
+    <React.Fragment>
         <SearchQueryContainer />
         <SearchResultsContainer />
-    </div>
+    </React.Fragment>
 </Provider>;
 
 // SEO: delete content specifically only present for bots

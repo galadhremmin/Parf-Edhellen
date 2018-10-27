@@ -1,21 +1,10 @@
 /* tslint:disable:interface-name */
 import React from 'react';
 
-export interface IBackingComponentProps<V> {
-    name?: string;
-    tabIndex?: number;
-    required?: boolean;
-    value?: V;
-}
-
-export interface IComponentProps<V> extends IBackingComponentProps<V> {
-    onChange?: (ev: IChangeEvent<V>) => void;
-}
-
-export interface IChangeEvent<V> {
-    name: string;
-    value: V;
-}
+import {
+    IBackingComponentProps,
+    IComponentProps,
+} from './FormComponent.types';
 
 const DefaultComponentPropNames: Array<keyof IBackingComponentProps<any>> = //
     ['name', 'value', 'required', 'tabIndex'];

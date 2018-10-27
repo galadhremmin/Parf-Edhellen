@@ -3,7 +3,7 @@ import {
     connect,
 } from 'react-redux';
 
-import { IChangeEvent } from '../../../components/FormComponent';
+import { IComponentEvent } from '../../../components/Component.types';
 import LanguageSelect from '../../../components/LanguageSelect';
 import debounce from '../../../utilities/func/debounce';
 import { SearchActions } from '../actions';
@@ -64,7 +64,7 @@ export class SearchQueryContainer extends React.PureComponent<IProps, IState> {
         </form>;
     }
 
-    private _onQueryChange = (ev: IChangeEvent<string>) => {
+    private _onQueryChange = (ev: IComponentEvent<string>) => {
         this.setState({
             word: ev.value,
         });
@@ -88,7 +88,7 @@ export class SearchQueryContainer extends React.PureComponent<IProps, IState> {
         this._beginSearch();
     }
 
-    private _onLanguageChange = (ev: IChangeEvent<number>) => {
+    private _onLanguageChange = (ev: IComponentEvent<number>) => {
         this.setState({
             languageId: ev.value,
         });
