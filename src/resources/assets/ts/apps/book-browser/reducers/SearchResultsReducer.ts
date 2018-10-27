@@ -1,17 +1,17 @@
 import {
-    ISearchResultAction,
-    ISearchResultState,
-} from '../actions/SearchActions.types';
-import {
     Actions,
 } from './constants';
+import {
+    ISearchResultReducerAction,
+    ISearchResultState,
+} from './SearchResultsReducer.types';
 
-const SearchResultsReducer = (state: ISearchResultState[] = [],
-    action: ISearchResultAction) => {
+const SearchResultsReducer = (state: ISearchResultState = [],
+    action: ISearchResultReducerAction) => {
     switch (action.type) {
         case Actions.ReceiveSearchResults:
             return [
-                ...action.items,
+                ...action.searchResults,
             ];
     }
 

@@ -7,7 +7,9 @@ import SearchActions from '../actions/SearchActions';
 import {
     Actions,
 } from '../reducers/constants';
-import { ISearchActionState } from './SearchActions.types';
+import {
+    ISearchAction,
+} from '../reducers/SearchReducer.types';
 
 describe('apps/book-browser/reducers/SearchReducer', () => {
     const TestSearchResults = [
@@ -41,7 +43,7 @@ describe('apps/book-browser/reducers/SearchReducer', () => {
     it('searches for word', async () => {
         const fakeDispatch = sandbox.spy();
 
-        const searchArgs: ISearchActionState = { word: 'hello' };
+        const searchArgs: ISearchAction = { word: 'hello' };
         const action = actions.search(searchArgs);
         await action(fakeDispatch);
 
@@ -59,6 +61,10 @@ describe('apps/book-browser/reducers/SearchReducer', () => {
             originalWord: r.ok,
             word: r.k,
         }));
-        expect(fakeDispatch.secondCall.args[0].items).to.deep.equal(items);
+        const actual = fakeDispatch.secondCall.args[0].searchResults.map((r: any) => {
+            const props = Object.keys(r).filter((prop: string) => prop !== 'id');
+            return props.reduce((map, prop) => ({ ...map, [prop]: r[prop] }), {});
+        });
+        expect(actual).to.deep.equal(items);
     });
 });

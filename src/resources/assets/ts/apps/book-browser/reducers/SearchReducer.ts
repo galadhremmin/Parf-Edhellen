@@ -1,10 +1,10 @@
 import {
-    ISearchAction,
-    ISearchState,
-} from '../actions/SearchActions.types';
-import {
     Actions,
 } from './constants';
+import {
+    ISearchReduxAction,
+    ISearchState,
+} from './SearchReducer.types';
 
 const SearchReducer = (state: ISearchState = {
     includeOld: true,
@@ -13,7 +13,7 @@ const SearchReducer = (state: ISearchState = {
     loading: false,
     reversed: false,
     word: '',
-}, action: ISearchAction) => {
+}, action: ISearchReduxAction) => {
     switch (action.type) {
         case Actions.RequestSearchResults:
             return {

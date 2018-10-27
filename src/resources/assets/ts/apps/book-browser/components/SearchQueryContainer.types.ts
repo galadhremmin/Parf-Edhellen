@@ -3,11 +3,11 @@ import {
 } from 'redux-thunk';
 
 import {
-    ISearchActionState,
-} from '../actions/SearchActions.types';
+    ISearchAction,
+} from '../reducers/SearchReducer.types';
 
 export interface IProps {
     dispatch: ThunkDispatch<any, any, any>;
 }
 
-export type IState = ISearchActionState;
+export type IState = ISearchAction;

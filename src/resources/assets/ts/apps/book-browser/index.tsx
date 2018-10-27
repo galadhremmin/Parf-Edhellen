@@ -9,6 +9,7 @@ import {
 import rootReducer from './reducers';
 
 import SearchQueryContainer from './components/SearchQueryContainer';
+import SearchResultsContainer from './components/SearchResultsContainer';
 
 /*
 const stateContainer = document.getElementById('ed-preloaded-book');
@@ -27,6 +28,7 @@ const store = createStore(rootReducer, undefined,
 const app = <Provider store={store}>
     <div>
         <SearchQueryContainer />
+        <SearchResultsContainer />
     </div>
 </Provider>;
 
