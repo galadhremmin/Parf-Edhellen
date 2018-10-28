@@ -1,25 +1,14 @@
-import {
-    Dispatch,
-} from 'redux';
+import { Dispatch } from 'redux';
 
 import BookApiConnector from '../../../connectors/backend/BookApiConnector';
-import {
-    IFindActionEntity,
-} from '../../../connectors/backend/BookApiConnector.types';
-import {
-    stringHash,
-} from '../../../utilities/func/hashing';
-import {
-    mapArray,
-} from '../../../utilities/func/mapper';
-import {
-    Actions,
-} from '../reducers/constants';
-import {
-    ISearchAction,
-} from '../reducers/SearchReducer.types';
+import { IFindActionEntity } from '../../../connectors/backend/BookApiConnector.types';
+import { stringHash } from '../../../utilities/func/hashing';
+import { mapArray } from '../../../utilities/func/mapper';
+import { Actions } from '../reducers/constants';
+import { ISearchAction } from '../reducers/SearchReducer.types';
 import {
     ISearchResult,
+    ISelectSearchResultAction,
     ISetSearchResultAction,
 } from '../reducers/SearchResultsReducer.types';
 
@@ -58,6 +47,13 @@ export default class SearchActions {
         return {
             searchResults,
             type: Actions.ReceiveSearchResults,
+        };
+    }
+
+    public selectSearchResult(searchResult: ISelectSearchResultAction) {
+        return {
+            id: searchResult.id,
+            type: Actions.SelectSearchResult,
         };
     }
 }

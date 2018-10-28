@@ -2,16 +2,19 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { IComponentEvent } from '../../../components/Component.types';
+import { SearchActions } from '../actions';
 import { ISearchResult } from '../reducers/SearchResultsReducer.types';
 import SearchResult from './SearchResult';
 import { IProps } from './SearchResultsContainer.types';
 
-class SearchResultsContainer extends React.PureComponent<IProps> {
+export class SearchResultsContainer extends React.PureComponent<IProps> {
     static get defaultProps() {
         return {
             searchResults: [],
         } as IProps;
     }
+
+    private _actions = new SearchActions();
 
     public render() {
         return <ul className="search-result">
@@ -22,8 +25,9 @@ class SearchResultsContainer extends React.PureComponent<IProps> {
     }
 
     private _onClick = (ev: IComponentEvent<ISearchResult>) => {
-        // TODO
-        console.log(ev.value);
+        this.props.dispatch(this._actions.selectSearchResult({
+            id: ev.value.id,
+        }));
     }
 }
 

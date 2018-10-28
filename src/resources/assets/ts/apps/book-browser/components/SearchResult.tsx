@@ -7,7 +7,9 @@ import {
 class SearchResult extends React.PureComponent<IProps> {
     public render() {
         const r = this.props.searchResult;
-        return <a href="#" className={undefined} onClick={this._onClick}>
+        const className = r.selected ? 'selected' : undefined;
+
+        return <a href="#" className={className} onClick={this._onClick}>
             <span>{r.originalWord || r.word}</span>
             <span>{r.originalWord && r.originalWord !== r.word && ` ⇨ ${r.word}`}</span>
         </a>;
