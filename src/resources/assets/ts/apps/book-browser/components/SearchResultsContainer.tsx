@@ -2,19 +2,21 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { IComponentEvent } from '../../../components/Component.types';
+import SharedReference from '../../../utilities/SharedReference';
 import { SearchActions } from '../actions';
 import { ISearchResult } from '../reducers/SearchResultsReducer.types';
 import SearchResult from './SearchResult';
 import { IProps } from './SearchResultsContainer.types';
 
 export class SearchResultsContainer extends React.PureComponent<IProps> {
+
     static get defaultProps() {
         return {
             searchResults: [],
         } as IProps;
     }
 
-    private _actions = new SearchActions();
+    private _actions = new SharedReference(SearchActions);
 
     public render() {
         return <ul className="search-result">
@@ -25,7 +27,7 @@ export class SearchResultsContainer extends React.PureComponent<IProps> {
     }
 
     private _onClick = (ev: IComponentEvent<ISearchResult>) => {
-        this.props.dispatch(this._actions.selectSearchResult({
+        this.props.dispatch(this._actions.value.selectSearchResult({
             id: ev.value.id,
         }));
     }

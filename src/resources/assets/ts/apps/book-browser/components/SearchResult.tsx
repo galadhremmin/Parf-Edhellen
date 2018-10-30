@@ -1,8 +1,6 @@
 import React from 'react';
 
-import {
-    IProps,
-} from './SearchResults.types';
+import { IProps } from './SearchResults.types';
 
 class SearchResult extends React.PureComponent<IProps> {
     public render() {
@@ -10,8 +8,8 @@ class SearchResult extends React.PureComponent<IProps> {
         const className = r.selected ? 'selected' : undefined;
 
         return <a href="#" className={className} onClick={this._onClick}>
-            <span>{r.originalWord || r.word}</span>
-            <span>{r.originalWord && r.originalWord !== r.word && ` ⇨ ${r.word}`}</span>
+            <span className="word">{r.originalWord || r.word}</span>
+            {r.originalWord && r.originalWord !== r.word && <span className="development">{r.word}</span>}
         </a>;
     }
 

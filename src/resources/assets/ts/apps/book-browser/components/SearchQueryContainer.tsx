@@ -6,6 +6,7 @@ import {
 import { IComponentEvent } from '../../../components/Component.types';
 import LanguageSelect from '../../../components/LanguageSelect';
 import debounce from '../../../utilities/func/debounce';
+import SharedReference from '../../../utilities/SharedReference';
 import { SearchActions } from '../actions';
 import SearchQueryInput from './SearchQueryInput';
 
@@ -22,7 +23,7 @@ export class SearchQueryContainer extends React.PureComponent<IProps, IState> {
         word: '',
     };
 
-    private _actions = new SearchActions();
+    private _actions = new SharedReference(SearchActions);
     private _beginSearch = debounce(500, this._search);
 
     public render() {
