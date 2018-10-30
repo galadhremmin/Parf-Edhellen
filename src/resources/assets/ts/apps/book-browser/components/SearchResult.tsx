@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { IProps } from './SearchResults.types';
+import { IProps } from './SearchResult._types';
 
 class SearchResult extends React.PureComponent<IProps> {
     public render() {

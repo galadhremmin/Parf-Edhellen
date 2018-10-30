@@ -5,7 +5,7 @@ import {
     ISearchResult,
     ISearchResultReducerAction,
     ISearchResultState,
-} from './SearchResultsReducer.types';
+} from './SearchResultsReducer._types';
 
 const SearchResultsReducer = (state: ISearchResultState = [],
     action: ISearchResultReducerAction) => {

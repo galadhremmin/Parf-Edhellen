@@ -3,7 +3,7 @@ import {
     FindActionResponse,
     IFindActionRequest,
     ILanguagesResponse,
-} from './BookApiConnector.types';
+} from './BookApiConnector._types';
 
 export default class BookApiConnector {
     constructor(private _api = new ApiConnector()) {

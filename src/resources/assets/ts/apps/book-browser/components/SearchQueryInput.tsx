@@ -5,7 +5,7 @@ import { FormComponent } from '../../../components/FormComponent';
 import {
     IComponentProps,
     IProps,
-} from './SearchQueryInput.types';
+} from './SearchQueryInput._types';
 
 export default class SearchQueryInput extends FormComponent<string, IProps, IComponentProps> {
     public get componentPropNames() {

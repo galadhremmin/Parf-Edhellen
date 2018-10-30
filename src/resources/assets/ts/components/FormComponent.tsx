@@ -4,7 +4,7 @@ import React from 'react';
 import {
     IBackingComponentProps,
     IComponentProps,
-} from './FormComponent.types';
+} from './FormComponent._types';
 
 const DefaultComponentPropNames: Array<keyof IBackingComponentProps<any>> = //
     ['name', 'value', 'required', 'tabIndex'];

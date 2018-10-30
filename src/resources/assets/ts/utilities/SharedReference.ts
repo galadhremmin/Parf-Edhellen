@@ -10,23 +10,33 @@ export default class SharedReference<T> {
     }
 
     private _name: string;
-    constructor(private _constructor: INewable<T>,
-        name: string = _constructor.name || null,
+
+    /**
+     * Creates a shared reference for the specified type `_type`.
+     * @param _type type constructor.
+     * @param name (optional) name used by the global key value instance store.
+     * @param prefix (optional) key prefix for the instance store.
+     */
+    constructor(private _type: INewable<T>,
+        name: string = _type.name || null,
         prefix: string = ApplicationGlobalPrefix) {
         if (name === null) {
-            throw new Error(`${_constructor.toString()} does not have a name.
+            throw new Error(`${_type.toString()} does not have a name.
                 If a name cannot be inferred, make sure to specify one.`);
         }
 
         this._name = `${prefix}.${name}`;
     }
 
-    get value(): T {
+    /**
+     * Gets the shared instance.
+     */
+    get value() {
         const container = SharedReference.container;
 
-        let instance = container[this._name];
+        let instance: T = container[this._name];
         if (instance === undefined) {
-            instance = container[this._name] = new this._constructor();
+            instance = container[this._name] = new this._type();
         }
 
         return instance;

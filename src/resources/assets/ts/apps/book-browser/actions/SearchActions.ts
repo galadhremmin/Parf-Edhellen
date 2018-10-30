@@ -1,16 +1,16 @@
 import { Dispatch } from 'redux';
 
 import BookApiConnector from '../../../connectors/backend/BookApiConnector';
-import { IFindActionEntity } from '../../../connectors/backend/BookApiConnector.types';
+import { IFindActionEntity } from '../../../connectors/backend/BookApiConnector._types';
 import { stringHash } from '../../../utilities/func/hashing';
 import { mapArray } from '../../../utilities/func/mapper';
 import { Actions } from '../reducers/constants';
-import { ISearchAction } from '../reducers/SearchReducer.types';
+import { ISearchAction } from '../reducers/SearchReducer._types';
 import {
     ISearchResult,
     ISelectSearchResultAction,
     ISetSearchResultAction,
-} from '../reducers/SearchResultsReducer.types';
+} from '../reducers/SearchResultsReducer._types';
 
 export default class SearchActions {
     constructor(private _api: BookApiConnector = new BookApiConnector()) {

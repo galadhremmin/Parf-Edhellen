@@ -3,7 +3,7 @@ import {
     connect,
 } from 'react-redux';
 
-import { IComponentEvent } from '../../../components/Component.types';
+import { IComponentEvent } from '../../../components/Component._types';
 import LanguageSelect from '../../../components/LanguageSelect';
 import debounce from '../../../utilities/func/debounce';
 import SharedReference from '../../../utilities/SharedReference';
@@ -13,7 +13,7 @@ import SearchQueryInput from './SearchQueryInput';
 import {
     IProps,
     IState,
-} from './SearchQueryContainer.types';
+} from './SearchQueryContainer._types';
 
 export class SearchQueryContainer extends React.PureComponent<IProps, IState> {
     public state: IState = {
@@ -103,7 +103,7 @@ export class SearchQueryContainer extends React.PureComponent<IProps, IState> {
 
     private _search() {
         this.props.dispatch(
-            this._actions.search(this.state),
+            this._actions.value.search(this.state),
         );
     }
 }

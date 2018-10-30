@@ -4,7 +4,7 @@ import {
 import {
     ISearchReduxAction,
     ISearchState,
-} from './SearchReducer.types';
+} from './SearchReducer._types';
 
 const SearchReducer = (state: ISearchState = {
     includeOld: true,

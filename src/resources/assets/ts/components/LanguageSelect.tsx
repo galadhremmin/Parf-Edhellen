@@ -3,7 +3,7 @@ import React from 'react';
 import {
     ILanguageEntity,
     ILanguagesResponse,
-} from '../connectors/backend/BookApiConnector.types';
+} from '../connectors/backend/BookApiConnector._types';
 import LanguageConnector from '../connectors/backend/LanguageConnector';
 import {
     FormComponent,

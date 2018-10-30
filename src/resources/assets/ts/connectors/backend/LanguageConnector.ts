@@ -8,7 +8,7 @@ import BookApiConnector from './BookApiConnector';
 import {
     ILanguageEntity,
     ILanguagesResponse,
-} from './BookApiConnector.types';
+} from './BookApiConnector._types';
 
 export default class LanguageConnector {
     constructor(private _api: BookApiConnector = new BookApiConnector(),

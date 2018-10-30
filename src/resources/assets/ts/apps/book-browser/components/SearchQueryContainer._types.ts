@@ -4,7 +4,7 @@ import {
 
 import {
     ISearchAction,
-} from '../reducers/SearchReducer.types';
+} from '../reducers/SearchReducer._types';
 
 export interface IProps {
     dispatch: ThunkDispatch<any, any, any>;
