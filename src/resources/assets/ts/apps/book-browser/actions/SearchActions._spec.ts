@@ -4,12 +4,8 @@ import * as sinon from 'sinon';
 import BookApiConnector from '../../../connectors/backend/BookApiConnector';
 import SearchActions from '../actions/SearchActions';
 
-import {
-    Actions,
-} from '../reducers/constants';
-import {
-    ISearchAction,
-} from '../reducers/SearchReducer.types';
+import { Actions } from '../reducers/constants';
+import { ISearchAction } from '../reducers/SearchReducer._types';
 
 describe('apps/book-browser/reducers/SearchReducer', () => {
     const TestSearchResults = [

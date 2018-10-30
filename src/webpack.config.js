@@ -2,6 +2,7 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const AsyncChunkNames = require('webpack-async-chunk-names-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+var WebpackNotifierPlugin = require('webpack-notifier');
 
 // Reads `.env` configuration values to `process.env`
 require('dotenv').config();
@@ -92,6 +93,7 @@ module.exports = {
       filename: "[name].css",
       chunkFilename: "[id].css"
     }),
-    new AsyncChunkNames()
+    new AsyncChunkNames(),
+    new WebpackNotifierPlugin(),
   ],
 };

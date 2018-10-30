@@ -1,12 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { IComponentEvent } from '../../../components/Component.types';
+import { IComponentEvent } from '../../../components/Component._types';
 import SharedReference from '../../../utilities/SharedReference';
 import { SearchActions } from '../actions';
-import { ISearchResult } from '../reducers/SearchResultsReducer.types';
+import { ISearchResult } from '../reducers/SearchResultsReducer._types';
 import SearchResult from './SearchResult';
-import { IProps } from './SearchResultsContainer.types';
+import { IProps } from './SearchResultsContainer._types';
 
 export class SearchResultsContainer extends React.PureComponent<IProps> {
 

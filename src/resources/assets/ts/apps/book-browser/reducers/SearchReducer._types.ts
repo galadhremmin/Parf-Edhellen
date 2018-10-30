@@ -3,7 +3,7 @@ import {
 } from '../../../_types';
 import {
     IFindActionRequest,
-} from '../../../connectors/backend/BookApiConnector.types';
+} from '../../../connectors/backend/BookApiConnector._types';
 
 export type ISearchState = IFindActionRequest & {
     itemIndex?: number;

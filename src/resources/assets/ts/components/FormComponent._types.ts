@@ -1,6 +1,6 @@
 import {
     ComponentEventHandler,
-} from './Component.types';
+} from './Component._types';
 
 export interface IBackingComponentProps<V> {
     name?: string;

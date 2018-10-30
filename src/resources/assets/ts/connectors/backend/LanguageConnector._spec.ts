@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { TestCache } from '../../utilities/Cache.spec';
+import { TestCache } from '../../utilities/Cache._spec';
 import LanguageConnector from './LanguageConnector';
 
 const CategorizedLanguages = {

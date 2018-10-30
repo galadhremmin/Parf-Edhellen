@@ -3,7 +3,7 @@ import { mount, ReactWrapper } from 'enzyme';
 import React from 'react';
 
 import '../../../utilities/Enzyme';
-import { ISearchResult } from '../reducers/SearchResultsReducer.types';
+import { ISearchResult } from '../reducers/SearchResultsReducer._types';
 import { SearchResultsContainer } from './SearchResultsContainer';
 
 describe('apps/book-browser/components/SearchResultsContainer', () => {

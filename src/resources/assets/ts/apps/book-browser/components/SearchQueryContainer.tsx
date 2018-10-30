@@ -103,7 +103,7 @@ export class SearchQueryContainer extends React.PureComponent<IProps, IState> {
 
     private _search() {
         this.props.dispatch(
-            this._actions.search(this.state),
+            this._actions.value.search(this.state),
         );
     }
 }
