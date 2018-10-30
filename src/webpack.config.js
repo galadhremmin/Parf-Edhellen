@@ -78,11 +78,15 @@ module.exports = {
         ]
       },
       {
-        test: /\.(eot|ttf|woff|woff2|svg)$/,
+        test: /\.(eot|ttf|svg)$/,
         use: [
           'file-loader?name=fonts/[name].[ext]'
         ]
-      }
+      },
+      {
+        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+        loader: 'url-loader?name=fonts/[name].[ext]&mimetype=application/font-woff'
+      },
     ]
   },
   plugins: [
