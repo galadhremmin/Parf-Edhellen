@@ -27,10 +27,34 @@ export default class SearchQueryInput extends FormComponent<string, IProps, ICom
                 autoComplete="off"
                 className={fieldClasses}
                 onChange={this.onChange}
+                onKeyDown={this._onKeyDown}
                 placeholder="What are you looking for?"
                 type="search"
                 {...componentProps}
             />
         </div>;
+    }
+
+    private _onKeyDown = (ev: React.KeyboardEvent<HTMLInputElement>) => {
+        let direction = 0;
+        switch (ev.which) {
+            case 38: // up
+                direction = -1;
+                break;
+            case 40:
+                direction = +1;
+                break;
+        }
+
+        if (!direction) {
+            return;
+        }
+
+        if (typeof this.props.onSearchResultNavigate === 'function') {
+            this.props.onSearchResultNavigate({
+                name: this.props.name,
+                value: direction,
+            });
+        }
     }
 }

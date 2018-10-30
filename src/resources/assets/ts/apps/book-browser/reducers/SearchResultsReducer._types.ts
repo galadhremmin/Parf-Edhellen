@@ -15,6 +15,9 @@ export type ISetSearchResultAction = ISearchResult[];
 export interface ISelectSearchResultAction {
     id: number;
 }
+export interface ISelectNextSearchResult {
+    direction: number;
+}
 export type ISearchResultReducerAction = IReduxAction & {
     searchResults?: ISearchResult[],
-} & ISelectSearchResultAction;
+} & ISelectSearchResultAction & ISelectNextSearchResult;

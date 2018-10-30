@@ -13,7 +13,7 @@ import SearchQueryInput from './SearchQueryInput';
 import {
     IProps,
     IState,
-} from './SearchQueryContainer._types';
+} from './SearchContainer._types';
 
 export class SearchQueryContainer extends React.PureComponent<IProps, IState> {
     public state: IState = {
@@ -34,6 +34,7 @@ export class SearchQueryContainer extends React.PureComponent<IProps, IState> {
                         autoFocus={true}
                         name="query"
                         onChange={this._onQueryChange}
+                        onSearchResultNavigate={this._onSearchResultNavigate}
                         tabIndex={1}
                         value={this.state.word}
                     />
@@ -95,6 +96,10 @@ export class SearchQueryContainer extends React.PureComponent<IProps, IState> {
         });
 
         this._beginSearch();
+    }
+
+    private _onSearchResultNavigate = (ev: IComponentEvent<number>) => {
+        this.props.dispatch(this._actions.value.selectNextResult(ev.value));
     }
 
     private _onSubmit = (ev: React.FormEvent<HTMLFormElement>) => {

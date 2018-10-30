@@ -56,4 +56,11 @@ export default class SearchActions {
             type: Actions.SelectSearchResult,
         };
     }
+
+    public selectNextResult(direction: number) {
+        return {
+            direction,
+            type: Actions.NextSearchResult,
+        };
+    }
 }

@@ -8,7 +8,7 @@ import {
 } from 'redux';
 import rootReducer from './reducers';
 
-import SearchQueryContainer from './components/SearchQueryContainer';
+import SearchContainer from './components/SearchContainer';
 import SearchResultsContainer from './components/SearchResultsContainer';
 
 /*
@@ -27,7 +27,7 @@ const store = createStore(rootReducer, undefined,
 
 const app = <Provider store={store}>
     <React.Fragment>
-        <SearchQueryContainer />
+        <SearchContainer />
         <SearchResultsContainer />
     </React.Fragment>
 </Provider>;
