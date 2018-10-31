@@ -31,9 +31,7 @@ export class SearchResultsContainer extends React.PureComponent<IProps> {
      * for the specified search result.
      */
     private _onClick = (ev: IComponentEvent<ISearchResult>) => {
-        this.props.dispatch(this._actions.value.selectSearchResult({
-            id: ev.value.id,
-        }));
+        this.props.dispatch(this._actions.value.glossary(ev.value, true));
     }
 }
 

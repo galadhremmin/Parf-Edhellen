@@ -2,13 +2,13 @@ import {
     IReduxAction,
 } from '../../../_types';
 import {
-    IFindActionRequest,
+    IFindRequest,
 } from '../../../connectors/backend/BookApiConnector._types';
 
-export type ISearchState = IFindActionRequest & {
+export type ISearchState = IFindRequest & {
     itemIndex?: number;
     loading?: boolean;
 };
 
-export type ISearchAction = IFindActionRequest;
-export type ISearchReduxAction = IReduxAction & IFindActionRequest;
+export type ISearchAction = IFindRequest;
+export type ISearchReduxAction = IReduxAction & IFindRequest;

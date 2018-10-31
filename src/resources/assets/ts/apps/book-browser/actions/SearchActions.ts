@@ -2,12 +2,17 @@ import { Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import BookApiConnector from '../../../connectors/backend/BookApiConnector';
-import { IFindEntity, ILanguageEntity } from '../../../connectors/backend/BookApiConnector._types';
+import {
+    IFindEntity,
+    IGlossaryResponse,
+    ILanguageEntity,
+} from '../../../connectors/backend/BookApiConnector._types';
 import LanguageConnector from '../../../connectors/backend/LanguageConnector';
 import { stringHash } from '../../../utilities/func/hashing';
 import { mapArray } from '../../../utilities/func/mapper';
 import { capitalize } from '../../../utilities/func/string-manipulation';
 import SharedReference from '../../../utilities/SharedReference';
+import { IRootReducer } from '../reducers';
 import { Actions } from '../reducers/constants';
 import { ISearchAction } from '../reducers/SearchReducer._types';
 import {
@@ -69,14 +74,13 @@ export default class SearchActions {
         };
     }
 
-    public glossary(searchResult: ISearchResult,
-        languageId: number = 0,
-        includeOld: boolean = false,
-        updateBrowserHistory: boolean = true) {
-
-        return async (dispatch: ThunkDispatch<any, any, any>) => {
+    public glossary(searchResult: ISearchResult, updateBrowserHistory: boolean = true) {
+        return async (dispatch: ThunkDispatch<any, any, any>, getState: () => IRootReducer) => {
             const uriEncodedWord = encodeURIComponent(searchResult.normalizedWord || searchResult.word);
             const capitalizedWord = capitalize(searchResult.word);
+
+            const includeOld = getState().search.includeOld;
+            const languageId = getState().search.languageId;
 
             let language: ILanguageEntity;
             if (languageId !== 0) {
@@ -107,20 +111,31 @@ export default class SearchActions {
             const event = new CustomEvent('ednavigate', { detail: { address, word: searchResult.word, language } });
             window.dispatchEvent(event);
 
+            dispatch(this.selectSearchResult(searchResult));
+
             const glossary = await this._api.glossary({
                 includeOld,
                 languageId,
                 word: searchResult.word,
             });
-            console.log(glossary);
+            dispatch(this.setGlossary(glossary));
 
             // Find elements which is requested to be deleted upon receiving the navigation commmand
+            /* TODO - weird location for this logic. Misplaced.
             const elementsToDelete = document.querySelectorAll('.ed-remove-when-navigating');
             if (elementsToDelete.length > 0) {
                 for (const element of elementsToDelete) {
                     element.parentNode.removeChild(element);
                 }
             }
+            */
+        };
+    }
+
+    public setGlossary(glossary: IGlossaryResponse) {
+        return {
+            glossary,
+            type: Actions.ReceiveGlossary,
         };
     }
 }

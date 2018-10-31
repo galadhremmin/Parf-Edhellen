@@ -22,6 +22,12 @@ export default class BookApiConnector {
     }
 
     public async glossary(args: IGlossaryRequest) {
+        // language_id is an optional parameter and should not be passed as
+        // an argument if it is not set.
+        if ([0, null].indexOf(args.languageId) > -1) {
+            delete args.languageId;
+        }
+
         const response = await this._api.post<IGlossaryResponse>('book/translate', args);
         return response;
     }
