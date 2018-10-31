@@ -61,7 +61,7 @@ export interface IGlossEntity {
     etymology: string;
     externalId: string;
     externalLinkFormat: string;
-    gloss_details: IGlossDetailEntity[];
+    glossDetails: IGlossDetailEntity[];
     glossGroupId: number;
     glossGroupName: string;
     id: number;
