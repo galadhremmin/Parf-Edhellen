@@ -13,6 +13,10 @@ class SearchResult extends React.PureComponent<IProps> {
         </a>;
     }
 
+    /**
+     * onClick handler for word links. Disables the default behavior and transforms the event to an event
+     * that adheres to the component's public interface.
+     */
     private _onClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
 

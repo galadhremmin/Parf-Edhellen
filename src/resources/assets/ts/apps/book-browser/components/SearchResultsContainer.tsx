@@ -26,6 +26,10 @@ export class SearchResultsContainer extends React.PureComponent<IProps> {
         </ul>;
     }
 
+    /**
+     * Event handler for the `SearchResult` component - dispatches a selection action
+     * for the specified search result.
+     */
     private _onClick = (ev: IComponentEvent<ISearchResult>) => {
         this.props.dispatch(this._actions.value.selectSearchResult({
             id: ev.value.id,

@@ -12,6 +12,7 @@ import {
 } from '../config';
 import {
     propsToSnakeCase,
+    snakeCasePropsToCamelCase,
 } from '../utilities/func/snake-case';
 
 interface IErrorReport {
@@ -138,7 +139,11 @@ export default class ApiConnector {
     private async _consume<T>(apiMethod: string, request: AxiosPromise<AxiosResponse<T>>): Promise<T> {
         try {
             const response = await request;
-            return response.data as any;
+            if (response === undefined) {
+                return undefined;
+            }
+
+            return snakeCasePropsToCamelCase(response.data);
         } catch (error) {
             return this._handleError(apiMethod, error);
         }

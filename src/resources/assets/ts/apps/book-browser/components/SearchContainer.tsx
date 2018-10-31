@@ -113,10 +113,4 @@ export class SearchQueryContainer extends React.PureComponent<IProps, IState> {
     }
 }
 
-const mapStateToProps = (state: any) => {
-    return {
-
-    };
-};
-
-export default connect(mapStateToProps)(SearchQueryContainer);
+export default connect()(SearchQueryContainer);

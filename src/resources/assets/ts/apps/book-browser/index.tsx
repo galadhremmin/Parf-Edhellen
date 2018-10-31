@@ -8,6 +8,7 @@ import {
 } from 'redux';
 import rootReducer from './reducers';
 
+import GlossaryContainer from './components/GlossaryContainer';
 import SearchContainer from './components/SearchContainer';
 import SearchResultsContainer from './components/SearchResultsContainer';
 
@@ -29,6 +30,7 @@ const app = <Provider store={store}>
     <React.Fragment>
         <SearchContainer />
         <SearchResultsContainer />
+        <GlossaryContainer />
     </React.Fragment>
 </Provider>;
 

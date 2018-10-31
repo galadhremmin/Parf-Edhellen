@@ -29,7 +29,7 @@ describe('apps/book-browser/reducers/SearchReducer', () => {
 
         const api = sinon.createStubInstance(BookApiConnector);
         api.find.callsFake(() => Promise.resolve(TestSearchResults));
-        actions = new SearchActions(api as any);
+        actions = new SearchActions(api as any, null /* LanguageConnector */);
     });
 
     afterEach(() => {

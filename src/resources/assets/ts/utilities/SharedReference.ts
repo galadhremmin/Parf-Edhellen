@@ -5,7 +5,16 @@ declare var window: Window; // compatibility with browser.
 declare var global: any; // compatibility with node.js.
 
 export default class SharedReference<T> {
-    static get container() {
+    /**
+     * Gets the instance of `T` shared across modules.
+     * @param type type `T`. Must have a constructor.
+     */
+    public static getInstance<T>(type: INewable<T>) {
+        const instance = new this(type);
+        return instance.value;
+    }
+
+    private static get container() {
         return typeof window === 'object' ? window : global;
     }
 
@@ -31,7 +40,7 @@ export default class SharedReference<T> {
     /**
      * Gets the shared instance.
      */
-    get value() {
+    public get value() {
         const container = SharedReference.container;
 
         let instance: T = container[this._name];
