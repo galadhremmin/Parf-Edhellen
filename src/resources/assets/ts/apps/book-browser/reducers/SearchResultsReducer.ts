@@ -33,9 +33,10 @@ const SearchResultsReducer = (state: ISearchResultState = [],
 
             return select(state, state[newIndex].id);
         }
-    }
 
-    return state;
+        default:
+            return state;
+    }
 };
 
 const select = (state: ISearchResultState, id: number) => //

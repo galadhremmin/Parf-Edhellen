@@ -93,15 +93,8 @@ export default class SearchActions {
 
             // When navigating using the browser's back and forward buttons,
             // the state needn't be modified.
-            if (updateBrowserHistory) {
-                if (window.history.pushState !== undefined) {
-                    window.history.pushState(null, title, address);
-                } else {
-                    // If pushState isn't supported, do not even pretend to try to load react components for
-                    // search results for this deprecated browser.
-                    window.setTimeout(() => window.location.href = address, 0);
-                    return Promise.reject('Browser does not support window.history.pushState.');
-                }
+            if (updateBrowserHistory && window.history.pushState) {
+                window.history.pushState(null, title, address);
             }
 
             // because most browsers doesn't change the document title when pushing state

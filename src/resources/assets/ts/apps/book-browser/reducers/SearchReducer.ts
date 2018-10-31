@@ -31,9 +31,9 @@ const SearchReducer = (state: ISearchState = {
                 ...state,
                 loading: false,
             };
+        default:
+            return state;
     }
-
-    return state;
 };
 
 export default SearchReducer;
