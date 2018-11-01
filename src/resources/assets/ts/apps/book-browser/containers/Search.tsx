@@ -8,14 +8,14 @@ import LanguageSelect from '../../../components/LanguageSelect';
 import debounce from '../../../utilities/func/debounce';
 import SharedReference from '../../../utilities/SharedReference';
 import { SearchActions } from '../actions';
-import SearchQueryInput from './SearchQueryInput';
+import SearchQueryInput from '../components/SearchQueryInput';
 
 import {
     IProps,
     IState,
-} from './SearchContainer._types';
+} from './Search._types';
 
-export class SearchQueryContainer extends React.PureComponent<IProps, IState> {
+export class SearchQuery extends React.PureComponent<IProps, IState> {
     public state: IState = {
         includeOld: false,
         languageId: 0,
@@ -113,4 +113,4 @@ export class SearchQueryContainer extends React.PureComponent<IProps, IState> {
     }
 }
 
-export default connect()(SearchQueryContainer);
+export default connect()(SearchQuery);

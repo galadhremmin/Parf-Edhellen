@@ -8,14 +8,14 @@ import SearchResultsReducer from './SearchResultsReducer';
 
 import { IGlossaryState } from './GlossaryReducer._types';
 import { IGlossesState } from './GlossesReducer._types';
-import { LanguagesState } from './LanguagesReducer._types';
+import { ILanguagesState } from './LanguagesReducer._types';
 import { ISearchState } from './SearchReducer._types';
 import { ISearchResultState } from './SearchResultsReducer._types';
 
 export interface IRootReducer {
     glossary: IGlossaryState;
     glosses: IGlossesState;
-    languages: LanguagesState;
+    languages: ILanguagesState;
     search: ISearchState;
     searchResults: ISearchResultState;
 }

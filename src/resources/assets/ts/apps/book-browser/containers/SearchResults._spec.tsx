@@ -4,9 +4,9 @@ import React from 'react';
 
 import '../../../utilities/Enzyme';
 import { ISearchResult } from '../reducers/SearchResultsReducer._types';
-import { SearchResultsContainer } from './SearchResultsContainer';
+import { SearchResults } from './SearchResults';
 
-describe('apps/book-browser/components/SearchResultsContainer', () => {
+describe('apps/book-browser/containers/SearchResults', () => {
     let wrapper: ReactWrapper;
     const searchResults: ISearchResult[] = [
         {
@@ -33,7 +33,7 @@ describe('apps/book-browser/components/SearchResultsContainer', () => {
     ];
 
     before(() => {
-        wrapper = mount(<SearchResultsContainer searchResults={searchResults} />);
+        wrapper = mount(<SearchResults searchResults={searchResults} />);
     });
 
     it(`was mounted with ${searchResults.length} search results`, () => {

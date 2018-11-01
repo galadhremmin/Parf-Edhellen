@@ -5,4 +5,6 @@ import { IGlossesState } from '../reducers/GlossesReducer._types';
 export interface IProps extends IGlossaryState {
     glosses: IGlossesState;
     languages: ILanguageEntity[];
+    unusualLanguages: ILanguageEntity[];
+    isEmpty: boolean;
 }

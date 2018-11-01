@@ -1,3 +1,7 @@
 import { ILanguageEntity } from '../../../connectors/backend/BookApiConnector._types';
 
-export type LanguagesState = ILanguageEntity[];
+export interface ILanguagesState {
+    common: ILanguageEntity[];
+    unusual: ILanguageEntity[];
+    isEmpty: boolean;
+}

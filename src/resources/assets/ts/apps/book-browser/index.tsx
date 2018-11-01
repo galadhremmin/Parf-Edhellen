@@ -8,9 +8,9 @@ import {
 } from 'redux';
 import rootReducer from './reducers';
 
-import GlossaryContainer from './components/GlossaryContainer';
-import SearchContainer from './components/SearchContainer';
-import SearchResultsContainer from './components/SearchResultsContainer';
+import Glossary from './containers/Glossary';
+import Search from './containers/Search';
+import SearchResults from './containers/SearchResults';
 
 /*
 const stateContainer = document.getElementById('ed-preloaded-book');
@@ -28,9 +28,9 @@ const store = createStore(rootReducer, undefined,
 
 const app = <Provider store={store}>
     <React.Fragment>
-        <SearchContainer />
-        <SearchResultsContainer />
-        <GlossaryContainer />
+        <Search />
+        <SearchResults />
+        <Glossary />
     </React.Fragment>
 </Provider>;
 
