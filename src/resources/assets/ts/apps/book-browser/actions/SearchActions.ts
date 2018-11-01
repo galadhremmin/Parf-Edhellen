@@ -112,16 +112,6 @@ export default class SearchActions {
                 languageId,
                 word: searchResult.word,
             });
-
-            // Find elements which is requested to be deleted upon receiving the navigation commmand
-            /* TODO - weird location for this logic. Misplaced.
-            const elementsToDelete = document.querySelectorAll('.ed-remove-when-navigating');
-            if (elementsToDelete.length > 0) {
-                for (const element of elementsToDelete) {
-                    element.parentNode.removeChild(element);
-                }
-            }
-            */
         };
     }
 

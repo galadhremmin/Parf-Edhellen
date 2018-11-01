@@ -17,6 +17,7 @@ export class Glossary extends React.PureComponent<IProps> {
 
     public componentWillMount() {
         this._initializePreloadedGlossary();
+        this._removeGlossaryForBots();
     }
 
     public render() {
@@ -116,6 +117,15 @@ export class Glossary extends React.PureComponent<IProps> {
             // the format is unrecognised.
             console.warn(e);
             return null;
+        }
+    }
+
+    private _removeGlossaryForBots() {
+        // has the server added a glossary intended for bots (such as Google)?
+        // remove them, if such is the case:
+        const glossaryForBots = document.getElementById('ed-book-for-bots');
+        if (glossaryForBots) {
+            glossaryForBots.parentElement.removeChild(glossaryForBots);
         }
     }
 
