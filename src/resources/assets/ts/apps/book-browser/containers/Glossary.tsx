@@ -13,8 +13,8 @@ import Language from '../components/Language';
 
 export class Glossary extends React.PureComponent<IProps> {
     private _actions = new SharedReference(SearchActions);
-    
-    componentWillMount() {
+
+    public componentWillMount() {
         this._initializePreloadedGlossary();
     }
 
@@ -94,7 +94,7 @@ export class Glossary extends React.PureComponent<IProps> {
         }
 
         this.props.dispatch(
-            this._actions.value.setGlossary(preloadedGlossary)
+            this._actions.value.setGlossary(preloadedGlossary),
         );
     }
 
@@ -111,10 +111,10 @@ export class Glossary extends React.PureComponent<IProps> {
             // Consequently, we must convert them to `camelCase` which is recognised by the view.
             return snakeCasePropsToCamelCase<any>(glossary);
         } catch (e) {
-            // We do not really care about these errors -- just silence the exception when 
-            // the format is unrecognised
+            // We do not really care about these errors -- just silence the exception when
+            // the format is unrecognised.
             console.warn(e);
-            return null; 
+            return null;
         }
     }
 }
