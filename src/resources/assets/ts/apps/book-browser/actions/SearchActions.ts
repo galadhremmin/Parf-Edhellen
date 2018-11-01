@@ -108,6 +108,7 @@ export default class SearchActions {
 
             const glossary = await this._api.glossary({
                 includeOld,
+                inflections: true,
                 languageId,
                 word: searchResult.word,
             });

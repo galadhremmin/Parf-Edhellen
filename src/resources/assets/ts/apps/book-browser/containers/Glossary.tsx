@@ -1,13 +1,23 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Spinner from '../../../components/Spinner';
 import { ILanguageEntity } from '../../../connectors/backend/BookApiConnector._types';
-import Language from '../components/Language';
+import { snakeCasePropsToCamelCase } from '../../../utilities/func/snake-case';
+import SharedReference from '../../../utilities/SharedReference';
+import { SearchActions } from '../actions';
 import { IRootReducer } from '../reducers';
 import { IProps } from './Glossary._types';
 
+import Spinner from '../../../components/Spinner';
+import Language from '../components/Language';
+
 export class Glossary extends React.PureComponent<IProps> {
+    private _actions = new SharedReference(SearchActions);
+    
+    componentWillMount() {
+        this._initializePreloadedGlossary();
+    }
+
     public render() {
         if (this.props.loading) {
             return <Spinner />;
@@ -69,6 +79,43 @@ export class Glossary extends React.PureComponent<IProps> {
                     glosses={this.props.glosses[language.id]} />,
             )}
         </section>;
+    }
+
+    /**
+     * Initializes the component with the glossary supplied to it from the server. This is
+     * a common scenario when the client reloads the browser (and consequently loses JS in-memory state).
+     * In this scenario, the server will provide the glossary for the page that was just loaded, and the
+     * JavaScript client is responsible to pick it up and use it to restore its previous in-memory state.
+     */
+    private _initializePreloadedGlossary() {
+        const preloadedGlossary = this._getPreloadedGlossary();
+        if (preloadedGlossary === null) {
+            return;
+        }
+
+        this.props.dispatch(
+            this._actions.value.setGlossary(preloadedGlossary)
+        );
+    }
+
+    private _getPreloadedGlossary() {
+        const stateContainer = document.getElementById('ed-preloaded-book');
+        if (!stateContainer) {
+            return null;
+        }
+
+        try {
+            const glossary = JSON.parse(stateContainer.textContent);
+
+            // The glossary is preloaded by the server, so its properties are `snake_case`.
+            // Consequently, we must convert them to `camelCase` which is recognised by the view.
+            return snakeCasePropsToCamelCase<any>(glossary);
+        } catch (e) {
+            // We do not really care about these errors -- just silence the exception when 
+            // the format is unrecognised
+            console.warn(e);
+            return null; 
+        }
     }
 }
 

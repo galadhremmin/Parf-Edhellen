@@ -12,16 +12,6 @@ import Glossary from './containers/Glossary';
 import Search from './containers/Search';
 import SearchResults from './containers/SearchResults';
 
-/*
-const stateContainer = document.getElementById('ed-preloaded-book');
-let preloadedState = undefined;
-if (stateContainer) {
-    preloadedState = {
-        bookData: JSON.parse(stateContainer.textContent)
-    };
-}
-*/
-
 const store = createStore(rootReducer, undefined,
     applyMiddleware(thunkMiddleware),
 );
