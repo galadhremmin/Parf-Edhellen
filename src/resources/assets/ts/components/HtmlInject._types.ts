@@ -1,11 +1,14 @@
 import { ComponentEventHandler } from './Component._types';
 
-export interface IProps {
-    html: string;
+export interface IEventProps {
     onReferenceLinkClick?: ComponentEventHandler<{
         languageShortName: string;
         word: string;
     }>;
+}
+
+export interface IProps extends IEventProps {
+    html: string;
 }
 
 export interface IState {

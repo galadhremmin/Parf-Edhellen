@@ -3,4 +3,5 @@ import { IGlossEntity } from '../../../connectors/backend/BookApiConnector._type
 
 export interface IProps extends IEventProps {
     gloss: IGlossEntity;
+    showDetails: boolean;
 }

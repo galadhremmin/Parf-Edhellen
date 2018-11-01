@@ -13,10 +13,10 @@ const Tengwar = (props: IProps) => {
     }
 
     return <Component className={className}>{text}</Component>;
-}
+};
 
 Tengwar.defaultProps = {
-    as: 'span'
+    as: 'span',
 };
 
 export default Tengwar;

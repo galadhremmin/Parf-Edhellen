@@ -66,7 +66,7 @@ export interface IGlossEntity {
     glossGroupName: string;
     id: number;
     inflections: {
-        [ sentenceFragmentId: number ]: IInflectionEntity[];
+        [ sentenceId: string ]: IInflectionEntity[];
     };
     isCanon: boolean;
     isIndex: boolean;
@@ -97,6 +97,7 @@ export interface IGlossDetailEntity {
 
 export interface IInflectionEntity {
     glossId: number;
+    inflection: string;
     languageId: number;
     languageName: string;
     sentenceFragmentId: number;

@@ -67,5 +67,10 @@ describe('apps/book-browser/containers/Glossary', () => {
         const unusualSection = wrapper.find('.ed-glossary.ed-glossary--unusual');
         expect(unusualSection).to.exist;
         expect(unusualSection.text()).to.contain('Beware, older languages below!');
+
+        // Expect there to be a `Language` component per language.
+        expect(wrapper.find('.ed-glossary__language').length).to.equal(
+            languages.unusual.length + languages.common.length,
+        );
     });
 });

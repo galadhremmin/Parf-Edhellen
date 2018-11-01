@@ -1,3 +1,4 @@
+/// <reference path="../_types/html-to-react.d.ts" />
 import {
     INode,
     Parser as HtmlToReactParser,
@@ -11,7 +12,7 @@ import {
     IState,
 } from './HtmlInject._types';
 
-export default class Markdown extends PureComponent<IProps, IState> {
+export default class HtmlInject extends PureComponent<IProps, IState> {
     public render() {
         return this._convertHtmlToReact(this.props.html) || null;
     }
@@ -25,17 +26,17 @@ export default class Markdown extends PureComponent<IProps, IState> {
         const instructions: ParserInstructions = [
             // Special behaviour for <a> as they are reference links.
             {
-                shouldProcessNode: (node) => node.name === 'a',
-                processNode: this._referenceRender.bind(this, definitions)
+                processNode: this._referenceRender.bind(this, definitions),
+                shouldProcessNode: (node: INode) => node.name === 'a',
             },
             // Default behaviour for all else.
             {
-                shouldProcessNode: (node) => true,
-                processNode: definitions.processDefaultNode
+                processNode: definitions.processDefaultNode,
+                shouldProcessNode: () => true,
             }];
 
         const parser = new HtmlToReactParser();
-        return parser.parseWithInstructions(html, n => true, instructions);
+        return parser.parseWithInstructions(html, () => true, instructions);
     }
 
     private _referenceRender(definitions: ProcessNodeDefinitions, node: INode, children: INode[]) {

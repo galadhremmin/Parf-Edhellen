@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import Spinner from '../../../components/Spinner';
 import { ILanguageEntity } from '../../../connectors/backend/BookApiConnector._types';
+import Language from '../components/Language';
 import { IRootReducer } from '../reducers';
 import { IProps } from './Glossary._types';
 
@@ -63,7 +64,10 @@ export class Glossary extends React.PureComponent<IProps> {
 
         return <section className={classNames.join(' ')}>
             {abstract}
-            {languages.map((language) => language.name)}
+            {languages.map(
+                (language) => <Language key={language.id} language={language}
+                    glosses={this.props.glosses[language.id]} />,
+            )}
         </section>;
     }
 }

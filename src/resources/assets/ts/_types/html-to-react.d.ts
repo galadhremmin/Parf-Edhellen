@@ -1,12 +1,13 @@
-declare module "html-to-react" {
+/* tslint:disable:max-classes-per-file */
+declare module 'html-to-react' {
     export class ProcessNodeDefinitions {
         constructor(react: any);
-        processDefaultNode(node: INode, children: INode[]): React.ReactElement<any>;
+        public processDefaultNode(node: INode, children: INode[]): React.ReactElement<any>;
     }
 
     export class Parser {
         constructor();
-        parseWithInstructions(html: string, include: (n: any) => boolean, instructions: any[]): React.ReactNode;
+        public parseWithInstructions(html: string, include: (n: any) => boolean, instructions: any[]): React.ReactNode;
     }
 
     export interface IParserInstruction {
