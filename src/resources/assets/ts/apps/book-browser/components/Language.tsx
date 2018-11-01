@@ -5,7 +5,7 @@ import { IProps } from './Language._types';
 
 export default class GlossaryLanguage extends React.PureComponent<IProps> {
     public render() {
-        const { glosses, language } = this.props;
+        const { glosses, language, onReferenceLinkClick } = this.props;
 
         return <article className="ed-glossary__language">
             <header>
@@ -17,7 +17,8 @@ export default class GlossaryLanguage extends React.PureComponent<IProps> {
                 </h2>
             </header>
             <section className="ed-glossary__language__words">
-                {glosses.map((gloss) => <Gloss gloss={gloss} key={gloss.id} />)}
+                {glosses.map((gloss) => <Gloss gloss={gloss} key={gloss.id}
+                    onReferenceLinkClick={onReferenceLinkClick} />)}
             </section>
             {this._renderPlugins()}
         </article>;

@@ -4,6 +4,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import BookApiConnector from '../../../connectors/backend/BookApiConnector';
 import {
     IFindEntity,
+    IGlossaryRequest,
     IGlossaryResponse,
     ILanguageEntity,
 } from '../../../connectors/backend/BookApiConnector._types';
@@ -105,14 +106,12 @@ export default class SearchActions {
             window.dispatchEvent(event);
 
             dispatch(this.selectSearchResult(searchResult));
-
-            const glossary = await this._api.glossary({
+            await this._loadGlossary(dispatch, {
                 includeOld,
                 inflections: true,
                 languageId,
                 word: searchResult.word,
             });
-            dispatch(this.setGlossary(glossary));
 
             // Find elements which is requested to be deleted upon receiving the navigation commmand
             /* TODO - weird location for this logic. Misplaced.
@@ -126,10 +125,32 @@ export default class SearchActions {
         };
     }
 
+    public loadReference(word: string, languageShortName: string) {
+        return async (dispatch: ThunkDispatch<any, any, any>, getState: () => IRootReducer) => {
+            const language = await this._languages.find(languageShortName, 'shortName');
+            let languageId = 0;
+            if (language !== null) {
+                languageId = language.id;
+            }
+
+            const state = getState();
+            await this._loadGlossary(dispatch, {
+                includeOld: state.search.includeOld,
+                languageId,
+                word,
+            });
+        };
+    }
+
     public setGlossary(glossary: IGlossaryResponse) {
         return {
             glossary,
             type: Actions.ReceiveGlossary,
         };
+    }
+
+    private async _loadGlossary(dispatch: ThunkDispatch<any, any, any>, args: IGlossaryRequest) {
+        const glossary = await this._api.glossary(args);
+        dispatch(this.setGlossary(glossary));
     }
 }

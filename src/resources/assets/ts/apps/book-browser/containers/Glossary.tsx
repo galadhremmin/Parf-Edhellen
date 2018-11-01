@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { IComponentEvent } from '../../../components/Component._types';
 import { ILanguageEntity } from '../../../connectors/backend/BookApiConnector._types';
 import { snakeCasePropsToCamelCase } from '../../../utilities/func/snake-case';
 import SharedReference from '../../../utilities/SharedReference';
@@ -76,7 +77,7 @@ export class Glossary extends React.PureComponent<IProps> {
             {abstract}
             {languages.map(
                 (language) => <Language key={language.id} language={language}
-                    glosses={this.props.glosses[language.id]} />,
+                    glosses={this.props.glosses[language.id]} onReferenceLinkClick={this._onReferenceClick} />,
             )}
         </section>;
     }
@@ -116,6 +117,15 @@ export class Glossary extends React.PureComponent<IProps> {
             console.warn(e);
             return null;
         }
+    }
+
+    private _onReferenceClick = async (ev: IComponentEvent<{
+        languageShortName: string;
+        word: string;
+    }>) => {
+        this.props.dispatch(
+            this._actions.value.loadReference(ev.value.word, ev.value.languageShortName),
+        );
     }
 }
 

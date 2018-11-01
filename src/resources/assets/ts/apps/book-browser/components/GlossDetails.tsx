@@ -11,7 +11,7 @@ const GlossDetails = (props: IProps) => {
     } = props;
 
     return <React.Fragment>
-        <HtmlInject html={gloss.comments} />
+        <HtmlInject html={gloss.comments} onReferenceLinkClick={onReferenceLinkClick} />
 
         {showDetails && gloss.glossDetails.map(
             (d) => <section className="details" key={d.order}>
