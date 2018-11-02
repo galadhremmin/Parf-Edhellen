@@ -26,7 +26,7 @@ export class Glossary extends React.PureComponent<IProps> {
         }
 
         if (this.props.isEmpty) {
-            this._renderEmptyDictionary();
+            return this._renderEmptyDictionary();
         }
 
         return this._renderDictionary();

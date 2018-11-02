@@ -69,49 +69,43 @@ export default class SearchActions {
     }
 
     public selectNextResult(direction: number) {
-        return {
-            direction,
-            type: Actions.NextSearchResult,
+        return async (dispatch: ThunkDispatch<any, any, any>, getState: () => IRootReducer) => {
+            const searchResults = getState().searchResults;
+            let selectedIndex = searchResults.findIndex((result) => result.selected) + direction;
+
+            if (selectedIndex < 0) {
+                selectedIndex = searchResults.length - 1;
+            } else if (selectedIndex >= searchResults.length) {
+                selectedIndex = 0;
+            }
+
+            const searchResult = searchResults[selectedIndex];
+            await this.glossary(searchResult)(dispatch, getState);
         };
     }
 
     public glossary(searchResult: ISearchResult, updateBrowserHistory: boolean = true) {
         return async (dispatch: ThunkDispatch<any, any, any>, getState: () => IRootReducer) => {
-            const uriEncodedWord = encodeURIComponent(searchResult.normalizedWord || searchResult.word);
-            const capitalizedWord = capitalize(searchResult.word);
 
             const includeOld = getState().search.includeOld;
             const languageId = getState().search.languageId;
 
-            let language: ILanguageEntity;
+            let language: ILanguageEntity = null;
+            let languageShortName: string = null;
             if (languageId !== 0) {
                 language = await this._languages.find(languageId);
+                languageShortName = language.shortName;
             }
-
-            // Browser specific: build the browser's new title and its new address.
-            const title = `${capitalizedWord} - Parf Edhellen`;
-            const address = `/w/${uriEncodedWord}` + (language ? `/${language.shortName}` : '');
-
-            // When navigating using the browser's back and forward buttons,
-            // the state needn't be modified.
-            if (updateBrowserHistory && window.history.pushState) {
-                window.history.pushState(null, title, address);
-            }
-
-            // because most browsers doesn't change the document title when pushing state
-            document.title = title;
-
-            // Inform indirect listeners about the navigation
-            const event = new CustomEvent('ednavigate', { detail: { address, word: searchResult.word, language } });
-            window.dispatchEvent(event);
 
             dispatch(this.selectSearchResult(searchResult));
-            await this._loadGlossary(dispatch, {
+
+            const args = {
                 includeOld,
                 inflections: true,
                 languageId,
                 word: searchResult.word,
-            });
+            };
+            await this._loadGlossary(dispatch, args, languageShortName, updateBrowserHistory);
         };
     }
 
@@ -128,7 +122,7 @@ export default class SearchActions {
                 includeOld: state.search.includeOld,
                 languageId,
                 word,
-            });
+            }, languageShortName);
         };
     }
 
@@ -139,7 +133,34 @@ export default class SearchActions {
         };
     }
 
-    private async _loadGlossary(dispatch: ThunkDispatch<any, any, any>, args: IGlossaryRequest) {
+    private async _loadGlossary(dispatch: ThunkDispatch<any, any, any>, args: IGlossaryRequest,
+        languageShortName: string = null, updateBrowserHistory: boolean = true) {
+        const uriEncodedWord = encodeURIComponent(args.word);
+        const capitalizedWord = capitalize(args.word);
+
+        // Browser specific: build the browser's new title and its new address.
+        const title = `${capitalizedWord} - Parf Edhellen`;
+        const address = `/w/${uriEncodedWord}` + (languageShortName ? `/${languageShortName}` : '');
+
+        // When navigating using the browser's back and forward buttons,
+        // the state needn't be modified.
+        if (updateBrowserHistory && window.history.pushState) {
+            window.history.pushState(null, title, address);
+        }
+
+        // because most browsers doesn't change the document title when pushing state
+        document.title = title;
+
+        // Inform indirect listeners about the navigation
+        const event = new CustomEvent('ednavigate', {
+            detail: {
+                address,
+                languageId: args.languageId,
+                word: args.word,
+            },
+        });
+        window.dispatchEvent(event);
+
         const glossary = await this._api.glossary(args);
         dispatch(this.setGlossary(glossary));
     }

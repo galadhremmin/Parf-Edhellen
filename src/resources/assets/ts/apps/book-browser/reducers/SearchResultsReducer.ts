@@ -16,37 +16,18 @@ const SearchResultsReducer = (state: ISearchResultState = [],
             ];
 
         case Actions.SelectSearchResult:
-            return select(state, action.id);
+            return state.map((r: ISearchResult) => {
+                const selected = r.id === action.id;
+                if (r.selected === selected) {
+                    return r;
+                }
 
-        case Actions.NextSearchResult: {
-            if (state.length < 2) {
-                return state;
-            }
-
-            const index = state.findIndex((r: ISearchResult) => r.selected);
-            let newIndex = index + action.direction;
-            if (newIndex < 0) {
-                newIndex = state.length - 1;
-            } else if (newIndex >= state.length) {
-                newIndex = 0;
-            }
-
-            return select(state, state[newIndex].id);
-        }
+                return { ...r, selected };
+            });
 
         default:
             return state;
     }
 };
-
-const select = (state: ISearchResultState, id: number) => //
-    state.map((r: ISearchResult) => {
-        const selected = r.id === id;
-        if (r.selected === selected) {
-            return r;
-        }
-
-        return { ...r, selected };
-    });
 
 export default SearchResultsReducer;
