@@ -7,7 +7,7 @@ import {
 const GlossaryReducer = (state: IGlossaryState = {
     loading: false,
     single: false,
-    word: null,
+    word: '',
 }, action: IGlossaryAction) => {
     switch (action.type) {
         case Actions.RequestGlossary:

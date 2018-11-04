@@ -41,7 +41,8 @@ export default class SearchQueryInput extends FormComponent<string, IProps, ICom
             case 38: // up
                 direction = -1;
                 break;
-            case 40:
+            case 13: // enter
+            case 40: // down
                 direction = +1;
                 break;
         }

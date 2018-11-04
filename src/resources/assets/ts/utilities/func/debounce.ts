@@ -1,4 +1,5 @@
-const debounce = (waitTimeInMs: number, handler: (...args: any[]) => void) => {
+/* tslint:disable:max-classes-per-file */
+const debounce = <T extends () => unknown>(waitTimeInMs: number, handler: T) => {
     let timeout: number = null;
 
     return function() {

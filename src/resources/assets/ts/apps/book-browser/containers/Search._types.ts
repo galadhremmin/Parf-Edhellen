@@ -8,6 +8,10 @@ import {
 
 export interface IProps {
     dispatch: ThunkDispatch<any, any, any>;
+    includeOld?: boolean;
+    languageId?: number;
+    reversed?: boolean;
+    word?: string;
 }
 
 export type IState = ISearchAction;

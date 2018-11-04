@@ -33,14 +33,14 @@ describe('apps/book-browser/containers/SearchResults', () => {
     ];
 
     before(() => {
-        wrapper = mount(<SearchResults searchResults={searchResults} />);
+        wrapper = mount(<SearchResults searchResults={searchResults} word={'word'}/>);
     });
 
     it(`was mounted with ${searchResults.length} search results`, () => {
         const list = wrapper.find('ul');
         expect(list).to.exist;
 
-        const items = list.find('li');
+        const items = list.find('.search-result li');
         expect(items.length).to.equal(searchResults.length);
 
         const results = items.map((item) => item.find('SearchResult').prop('searchResult'));

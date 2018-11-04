@@ -9,6 +9,7 @@ import debounce from '../../../utilities/func/debounce';
 import SharedReference from '../../../utilities/SharedReference';
 import { SearchActions } from '../actions';
 import SearchQueryInput from '../components/SearchQueryInput';
+import { IRootReducer } from '../reducers';
 
 import {
     IProps,
@@ -16,15 +17,25 @@ import {
 } from './Search._types';
 
 export class SearchQuery extends React.PureComponent<IProps, IState> {
-    public state: IState = {
-        includeOld: false,
-        languageId: 0,
-        reversed: false,
-        word: '',
-    };
 
-    private _actions = new SharedReference(SearchActions);
-    private _beginSearch = debounce(500, this._search);
+    public state: IState;
+
+    private _actions: SharedReference<SearchActions>;
+    private _beginSearch: () => void;
+
+    constructor(props: IProps) {
+        super(props);
+
+        this.state = {
+            includeOld: props.includeOld,
+            languageId: props.languageId,
+            reversed: props.reversed,
+            word: props.word,
+        };
+
+        this._actions = new SharedReference(SearchActions);
+        this._beginSearch = debounce(500, this._search);
+    }
 
     public render() {
         return <form onSubmit={this._onSubmit}>
@@ -113,4 +124,11 @@ export class SearchQuery extends React.PureComponent<IProps, IState> {
     }
 }
 
-export default connect()(SearchQuery);
+const mapStateToProps = (state: IRootReducer) => ({
+    includeOld: state.search.includeOld,
+    languageId: state.search.languageId,
+    reversed: state.search.reversed,
+    word: state.search.word,
+});
+
+export default connect(mapStateToProps)(SearchQuery);
