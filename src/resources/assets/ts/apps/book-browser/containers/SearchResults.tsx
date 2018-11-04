@@ -94,7 +94,10 @@ export class SearchResults extends React.PureComponent<IProps> {
      * for the specified search result.
      */
     private _onClick = (ev: IComponentEvent<ISearchResult>) => {
-        this.props.dispatch(this._actions.value.glossary(ev.value, true));
+        this.props.dispatch(this._actions.value.glossary({
+            searchResult: ev.value,
+            updateBrowserHistory: true,
+        }));
     }
 
     private _onNextSearchResult = (ev: React.MouseEvent<HTMLAnchorElement>) => {

@@ -21,6 +21,7 @@ import {
     ISelectSearchResultAction,
     ISetSearchResultAction,
 } from '../reducers/SearchResultsReducer._types';
+import { ILoadGlossaryAction } from './SearchActions._types';
 
 export default class SearchActions {
     constructor(private _api: BookApiConnector = SharedReference.getInstance(BookApiConnector),
@@ -71,8 +72,11 @@ export default class SearchActions {
     public selectNextResult(direction: number) {
         return async (dispatch: ThunkDispatch<any, any, any>, getState: () => IRootReducer) => {
             const searchResults = getState().searchResults;
-            let selectedIndex = searchResults.findIndex((result) => result.selected) + direction;
+            if (searchResults.length < 1) {
+                return;
+            }
 
+            let selectedIndex = searchResults.findIndex((result) => result.selected) + direction;
             if (selectedIndex < 0) {
                 selectedIndex = searchResults.length - 1;
             } else if (selectedIndex >= searchResults.length) {
@@ -80,15 +84,23 @@ export default class SearchActions {
             }
 
             const searchResult = searchResults[selectedIndex];
-            await this.glossary(searchResult)(dispatch, getState);
+            const includeOld = getState().search.includeOld;
+            const languageId = getState().search.languageId;
+
+            const args = {
+                includeOld,
+                languageId,
+                searchResult,
+                updateBrowserHistory: true,
+            };
+            await this.glossary(args)(dispatch);
         };
     }
 
-    public glossary(searchResult: ISearchResult, updateBrowserHistory: boolean = true) {
-        return async (dispatch: ThunkDispatch<any, any, any>, getState: () => IRootReducer) => {
-
-            const includeOld = getState().search.includeOld;
-            const languageId = getState().search.languageId;
+    public glossary(args: ILoadGlossaryAction) {
+        return async (dispatch: ThunkDispatch<any, any, any>) => {
+            const includeOld = args.includeOld || true;
+            const languageId = args.languageId || 0;
 
             let language: ILanguageEntity = null;
             let languageShortName: string = null;
@@ -97,15 +109,15 @@ export default class SearchActions {
                 languageShortName = language.shortName;
             }
 
-            dispatch(this.selectSearchResult(searchResult));
+            dispatch(this.selectSearchResult(args.searchResult));
 
-            const args = {
+            const request = {
                 includeOld,
                 inflections: true,
                 languageId,
-                word: searchResult.word,
+                word: args.searchResult.word,
             };
-            await this._loadGlossary(dispatch, args, languageShortName, updateBrowserHistory);
+            await this._loadGlossary(dispatch, request, languageShortName, args.updateBrowserHistory);
         };
     }
 

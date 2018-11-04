@@ -1,6 +1,10 @@
+$gloss-border-color: #dedede;
+
 .ed-glossary {
   &.ed-glossary--unusual {
-
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid $gloss-border-color;
   }
 
   .ed-glossary__language {
@@ -29,7 +33,7 @@
     blockquote.gloss {
       border-width: 1px;
       overflow: hidden;
-      border-left-color: #dedede;
+      border-left-color: $gloss-border-color;
       break-inside: avoid;
       page-break-inside: avoid; /* -> https://caniuse.com/#search=columns */
 
