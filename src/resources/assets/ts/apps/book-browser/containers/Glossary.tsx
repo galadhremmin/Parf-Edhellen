@@ -21,11 +21,17 @@ export class Glossary extends React.PureComponent<IProps> {
     }
 
     public render() {
-        if (this.props.loading) {
+        const { isEmpty, loading, word } = this.props;
+
+        if (loading) {
             return <Spinner />;
         }
 
-        if (this.props.isEmpty) {
+        if (!word || word.length < 1) {
+            return null;
+        }
+
+        if (isEmpty) {
             return this._renderEmptyDictionary();
         }
 
@@ -100,6 +106,11 @@ export class Glossary extends React.PureComponent<IProps> {
         );
     }
 
+    /**
+     * Gets the text content of an arbitrary element with the id `ed-preloaded-book` and deserializes
+     * it using the JSON serializer. The element is expected to contain a full glossary API request
+     * response.
+     */
     private _getPreloadedGlossary() {
         const stateContainer = document.getElementById('ed-preloaded-book');
         if (!stateContainer) {
@@ -120,6 +131,10 @@ export class Glossary extends React.PureComponent<IProps> {
         }
     }
 
+    /**
+     * Removes an element with the id `ed-book-for-bots` which is a partial server-side rendering
+     * of the glossary intended for search indexing purposes.
+     */
     private _removeGlossaryForBots() {
         // has the server added a glossary intended for bots (such as Google)?
         // remove them, if such is the case:
@@ -129,6 +144,9 @@ export class Glossary extends React.PureComponent<IProps> {
         }
     }
 
+    /**
+     * Default event handler for reference link clicks.
+     */
     private _onReferenceClick = async (ev: IComponentEvent<{
         languageShortName: string;
         word: string;

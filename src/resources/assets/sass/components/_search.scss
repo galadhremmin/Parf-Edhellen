@@ -59,6 +59,8 @@
   }
   ul.search-result {
     list-style-type: none;
+    padding: 0 15px 0 15px;
+    margin-bottom: 0;
 
     > li > a {
       color: inherit;

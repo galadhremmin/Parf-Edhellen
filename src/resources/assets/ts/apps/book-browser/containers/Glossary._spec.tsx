@@ -73,4 +73,10 @@ describe('apps/book-browser/containers/Glossary', () => {
             languages.unusual.length + languages.common.length,
         );
     });
+
+    it('should not render because word is empty', () => {
+        wrapper.setProps({ word: '' });
+
+        expect(wrapper.isEmptyRender()).to.be.true;
+    });
 });
