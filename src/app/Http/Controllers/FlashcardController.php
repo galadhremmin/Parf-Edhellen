@@ -201,6 +201,7 @@ class FlashcardController extends Controller
                 JOIN glosses as g on g.id = ti.gloss_id 
                 WHERE
                     ti.translation <> :translation AND
+                    ti.translation NOT IN(\'?\', \'\', \'[unglossed]\') AND
                     ( :speech0 = -1 OR ( :speech1 > -1 AND :speech2 = g.speech_id) ) AND
                     RAND() < (SELECT 
                             (16 / COUNT(*)) * 10
