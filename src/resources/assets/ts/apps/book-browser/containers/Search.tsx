@@ -21,7 +21,7 @@ export class SearchQuery extends React.PureComponent<IProps, IState> {
     public state: IState;
 
     private _actions: SharedReference<SearchActions>;
-    private _beginSearch: () => void;
+    private _beginSearch: (queryChanged: boolean) => void;
 
     constructor(props: IProps) {
         super(props);
@@ -82,7 +82,7 @@ export class SearchQuery extends React.PureComponent<IProps, IState> {
             word: ev.value,
         });
 
-        this._beginSearch();
+        this._beginSearch(/* queryChanged: */ true);
     }
 
     private _onReverseChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,7 +90,7 @@ export class SearchQuery extends React.PureComponent<IProps, IState> {
             reversed: ev.target.checked,
         });
 
-        this._beginSearch();
+        this._beginSearch(/* queryChanged: */ true);
     }
 
     private _onIncludeOldChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,7 +98,7 @@ export class SearchQuery extends React.PureComponent<IProps, IState> {
             includeOld: ev.target.checked,
         });
 
-        this._beginSearch();
+        this._beginSearch(/* queryChanged: */ false);
     }
 
     private _onLanguageChange = (ev: IComponentEvent<number>) => {
@@ -106,7 +106,7 @@ export class SearchQuery extends React.PureComponent<IProps, IState> {
             languageId: ev.value,
         });
 
-        this._beginSearch();
+        this._beginSearch(/* queryChanged: */ false);
     }
 
     private _onSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
@@ -119,14 +119,27 @@ export class SearchQuery extends React.PureComponent<IProps, IState> {
      */
     private _onSearchResultNavigate = (ev: IComponentEvent<number>) => {
         this.props.dispatch(
-            this._actions.value.selectNextResult(ev.value)
+            this._actions.value.selectNextResult(ev.value),
         );
     }
 
-    private _search() {
+    /**
+     * Performs a keyword search operation, *and* refreshes the glossary if filters
+     * changed.
+     */
+    private _search(queryChanged: boolean) {
         this.props.dispatch(
             this._actions.value.search(this.state),
         );
+
+        // If the user has only made changes to the filtering functions (such as language selection),
+        // *and* has a previous glossary already loaded, the user expects the changes to their configuration
+        // to reflect to the glossary currently loaded.
+        if (queryChanged === false && this.props.currentGlossaryWord.length > 0) {
+            this.props.dispatch(
+                this._actions.value.reloadGlossary(),
+            );
+        }
     }
 }
 

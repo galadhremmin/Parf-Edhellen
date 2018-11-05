@@ -28,6 +28,10 @@ export default class SearchActions {
         private _languages: LanguageConnector = SharedReference.getInstance(LanguageConnector)) {
     }
 
+    /**
+     * Looks for keywords for the specified search query.
+     * @param args 
+     */
     public search(args: ISearchAction) {
         return async (dispatch: Dispatch) => {
             dispatch({
@@ -55,6 +59,10 @@ export default class SearchActions {
         };
     }
 
+    /**
+     * Applies the specified array of search results.
+     * @param searchResults 
+     */
     public setSearchResults(searchResults: ISetSearchResultAction) {
         return {
             searchResults,
@@ -62,6 +70,10 @@ export default class SearchActions {
         };
     }
 
+    /**
+     * Selects the specified search result.
+     * @param searchResult 
+     */
     public selectSearchResult(searchResult: ISelectSearchResultAction) {
         return {
             id: searchResult.id,
@@ -69,10 +81,15 @@ export default class SearchActions {
         };
     }
 
+    /**
+     * Moves to the next (or previous) search result based on the specified `direction`;
+     * +1 moves forward, -1 moves backwards.
+     * @param direction 
+     */
     public selectNextResult(direction: number) {
         return async (dispatch: ThunkDispatch<any, any, any>, getState: () => IRootReducer) => {
             const searchResults = getState().searchResults;
-            if (searchResults.length < 1) {
+            if (searchResults.length < 2) {
                 return;
             }
 
@@ -97,6 +114,10 @@ export default class SearchActions {
         };
     }
 
+    /**
+     * Loads the glossary for the specified search result.
+     * @param args 
+     */
     public glossary(args: ILoadGlossaryAction) {
         return async (dispatch: ThunkDispatch<any, any, any>) => {
             const includeOld = args.includeOld || true;
@@ -123,6 +144,49 @@ export default class SearchActions {
         };
     }
 
+    /**
+     * Reloads the glossary based on current state.
+     */
+    public reloadGlossary() {
+        return async (dispatch: ThunkDispatch<any, any, any>, getState: () => IRootReducer) => {
+            const { glossary, search, searchResults } = getState();
+
+            // Do not attempt to reload an uninitiated glossary.
+            if (glossary.word.length < 1) {
+                return;
+            }
+
+            // Attempt to find the selected search result, first by looking at the `selected` property,
+            // and secondarily by comparing the values of the `word` property. Lastly, if the search
+            // result does not exist, create a fake search result (id = 0) for the glossary.
+            let searchResult = searchResults.find(r => r.selected) || null;
+            if (searchResult === null) {
+                searchResult = searchResults.find(r => r.word === glossary.word) || null;
+            }
+            if (searchResult === null) {
+                const word = glossary.word;
+                searchResult = {
+                    id: 0,
+                    normalizedWord: word,
+                    originalWord: null,
+                    selected: true,
+                    word,
+                };
+            }
+
+            await this.glossary({
+                ...search,
+                searchResult,
+                updateBrowserHistory: true,
+            })(dispatch);
+        };
+    }
+
+    /**
+     * Loads the glossary for the reference link.
+     * @param word 
+     * @param languageShortName 
+     */
     public loadReference(word: string, languageShortName: string) {
         return async (dispatch: ThunkDispatch<any, any, any>, getState: () => IRootReducer) => {
             const language = await this._languages.find(languageShortName, 'shortName');
@@ -140,6 +204,10 @@ export default class SearchActions {
         };
     }
 
+    /**
+     * Sets the specified `glossary`.
+     * @param glossary 
+     */
     public setGlossary(glossary: IGlossaryResponse) {
         return {
             glossary,

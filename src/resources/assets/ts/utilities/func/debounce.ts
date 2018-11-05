@@ -1,8 +1,9 @@
-/* tslint:disable:max-classes-per-file */
-const debounce = <T extends () => unknown>(waitTimeInMs: number, handler: T) => {
+/* tslint:disable:ban-types no-angle-bracket-type-assertion */
+
+const debounce = <T extends Function>(waitTimeInMs: number, handler: T): T => {
     let timeout: number = null;
 
-    return function() {
+    return <T> <any> function() {
         if (timeout !== null) {
             window.clearTimeout(timeout);
             timeout = null;

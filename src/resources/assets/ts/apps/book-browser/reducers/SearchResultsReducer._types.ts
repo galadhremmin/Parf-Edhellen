@@ -6,7 +6,7 @@ export interface ISearchResult {
     id: number;
     normalizedWord: string;
     originalWord: string;
-    selected: boolean;
+    selected?: boolean;
     word: string;
 }
 
