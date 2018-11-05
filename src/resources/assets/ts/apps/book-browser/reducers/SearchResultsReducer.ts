@@ -11,8 +11,7 @@ const SearchResultsReducer = (state: ISearchResultState = [],
     action: ISearchResultReducerAction) => {
     switch (action.type) {
         case Actions.ReceiveSearchResults: {
-            let searchResults = _transitionSelected(state, action.searchResults);
-
+            const searchResults = _transitionSelected(state, action.searchResults);
             return [
                 ...searchResults,
             ];
@@ -39,16 +38,16 @@ const SearchResultsReducer = (state: ISearchResultState = [],
  * @param results new state
  */
 const _transitionSelected = (state: ISearchResultState, results: ISearchResult[]) => {
-    const selected = state.find(r => r.selected) || null;
+    const selected = state.find((r) => r.selected) || null;
     if (selected !== null) {
-        const newSelected = results.find(r => r.id === selected.id) || null;
-        
+        const newSelected = results.find((r) => r.id === selected.id) || null;
+
         if (newSelected !== null) {
             newSelected.selected = true;
         }
     }
 
     return results;
-}
+};
 
 export default SearchResultsReducer;

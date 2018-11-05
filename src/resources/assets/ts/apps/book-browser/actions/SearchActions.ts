@@ -30,7 +30,7 @@ export default class SearchActions {
 
     /**
      * Looks for keywords for the specified search query.
-     * @param args 
+     * @param args
      */
     public search(args: ISearchAction) {
         return async (dispatch: Dispatch) => {
@@ -61,7 +61,7 @@ export default class SearchActions {
 
     /**
      * Applies the specified array of search results.
-     * @param searchResults 
+     * @param searchResults
      */
     public setSearchResults(searchResults: ISetSearchResultAction) {
         return {
@@ -72,7 +72,7 @@ export default class SearchActions {
 
     /**
      * Selects the specified search result.
-     * @param searchResult 
+     * @param searchResult
      */
     public selectSearchResult(searchResult: ISelectSearchResultAction) {
         return {
@@ -84,7 +84,7 @@ export default class SearchActions {
     /**
      * Moves to the next (or previous) search result based on the specified `direction`;
      * +1 moves forward, -1 moves backwards.
-     * @param direction 
+     * @param direction
      */
     public selectNextResult(direction: number) {
         return async (dispatch: ThunkDispatch<any, any, any>, getState: () => IRootReducer) => {
@@ -116,7 +116,7 @@ export default class SearchActions {
 
     /**
      * Loads the glossary for the specified search result.
-     * @param args 
+     * @param args
      */
     public glossary(args: ILoadGlossaryAction) {
         return async (dispatch: ThunkDispatch<any, any, any>) => {
@@ -159,9 +159,9 @@ export default class SearchActions {
             // Attempt to find the selected search result, first by looking at the `selected` property,
             // and secondarily by comparing the values of the `word` property. Lastly, if the search
             // result does not exist, create a fake search result (id = 0) for the glossary.
-            let searchResult = searchResults.find(r => r.selected) || null;
+            let searchResult = searchResults.find((r) => r.selected) || null;
             if (searchResult === null) {
-                searchResult = searchResults.find(r => r.word === glossary.word) || null;
+                searchResult = searchResults.find((r) => r.word === glossary.word) || null;
             }
             if (searchResult === null) {
                 const word = glossary.word;
@@ -184,8 +184,8 @@ export default class SearchActions {
 
     /**
      * Loads the glossary for the reference link.
-     * @param word 
-     * @param languageShortName 
+     * @param word
+     * @param languageShortName
      */
     public loadReference(word: string, languageShortName: string) {
         return async (dispatch: ThunkDispatch<any, any, any>, getState: () => IRootReducer) => {
@@ -206,7 +206,7 @@ export default class SearchActions {
 
     /**
      * Sets the specified `glossary`.
-     * @param glossary 
+     * @param glossary
      */
     public setGlossary(glossary: IGlossaryResponse) {
         return {
