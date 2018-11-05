@@ -41,7 +41,7 @@ export default class SearchActions {
                     const rawResults = await this._api.find(args);
 
                     results = mapArray<IFindEntity, ISearchResult>({
-                        id: (o) => stringHash(`${(o.ok || '')}.${o.k}`),
+                        id: (r) => stringHash(`${(r.ok || '')}.${r.k}`),
                         normalizedWord: 'nk',
                         originalWord: 'ok',
                         word: 'k',
@@ -101,6 +101,8 @@ export default class SearchActions {
         return async (dispatch: ThunkDispatch<any, any, any>) => {
             const includeOld = args.includeOld || true;
             const languageId = args.languageId || 0;
+            const word = args.searchResult.originalWord || //
+                args.searchResult.word;
 
             let language: ILanguageEntity = null;
             let languageShortName: string = null;
@@ -115,7 +117,7 @@ export default class SearchActions {
                 includeOld,
                 inflections: true,
                 languageId,
-                word: args.searchResult.word,
+                word,
             };
             await this._loadGlossary(dispatch, request, languageShortName, args.updateBrowserHistory);
         };

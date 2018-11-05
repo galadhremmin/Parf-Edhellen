@@ -109,12 +109,18 @@ export class SearchQuery extends React.PureComponent<IProps, IState> {
         this._beginSearch();
     }
 
-    private _onSearchResultNavigate = (ev: IComponentEvent<number>) => {
-        this.props.dispatch(this._actions.value.selectNextResult(ev.value));
-    }
-
     private _onSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
         ev.preventDefault();
+    }
+
+    /**
+     * Default event handler for navigating search results with the arrow
+     * keys and the enter key.
+     */
+    private _onSearchResultNavigate = (ev: IComponentEvent<number>) => {
+        this.props.dispatch(
+            this._actions.value.selectNextResult(ev.value)
+        );
     }
 
     private _search() {
@@ -125,6 +131,7 @@ export class SearchQuery extends React.PureComponent<IProps, IState> {
 }
 
 const mapStateToProps = (state: IRootReducer) => ({
+    currentGlossaryWord: state.glossary.word,
     includeOld: state.search.includeOld,
     languageId: state.search.languageId,
     reversed: state.search.reversed,

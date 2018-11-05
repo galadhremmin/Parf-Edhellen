@@ -7,6 +7,7 @@ import {
 } from '../reducers/SearchReducer._types';
 
 export interface IProps {
+    currentGlossaryWord: string;
     dispatch: ThunkDispatch<any, any, any>;
     includeOld?: boolean;
     languageId?: number;
