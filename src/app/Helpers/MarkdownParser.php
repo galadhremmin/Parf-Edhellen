@@ -140,7 +140,8 @@ class MarkdownParser extends \Parsedown
             'href' => '/w/' . urlencode($normalizedWord),
             'title' => 'Navigate to '.$word.'.',
             'class' => 'ed-word-reference',
-            'data-word' => $normalizedWord
+            'data-word' => $normalizedWord,
+            'data-original-word' => $word
         ];
         if (! empty($language)) {
             $attrs['href'] .= '/'.$language;
