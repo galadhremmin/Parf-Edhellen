@@ -187,7 +187,7 @@ export default class SearchActions {
      * @param word
      * @param languageShortName
      */
-    public loadReference(word: string, languageShortName: string) {
+    public loadReference(word: string, normalizedWord: string, languageShortName: string) {
         return async (dispatch: ThunkDispatch<any, any, any>, getState: () => IRootReducer) => {
             const language = await this._languages.find(languageShortName, 'shortName');
             let languageId = 0;
@@ -199,6 +199,7 @@ export default class SearchActions {
             await this._loadGlossary(dispatch, {
                 includeOld: state.search.includeOld,
                 languageId,
+                normalizedWord,
                 word,
             }, languageShortName);
         };
@@ -217,7 +218,7 @@ export default class SearchActions {
 
     private async _loadGlossary(dispatch: ThunkDispatch<any, any, any>, args: IGlossaryRequest,
         languageShortName: string = null, updateBrowserHistory: boolean = true) {
-        const uriEncodedWord = encodeURIComponent(args.word);
+        const uriEncodedWord = encodeURIComponent(args.normalizedWord);
         const capitalizedWord = capitalize(args.word);
 
         // Browser specific: build the browser's new title and its new address.

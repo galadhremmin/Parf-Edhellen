@@ -149,10 +149,11 @@ export class Glossary extends React.PureComponent<IProps> {
      */
     private _onReferenceClick = async (ev: IComponentEvent<{
         languageShortName: string;
+        normalizedWord: string;
         word: string;
     }>) => {
         this.props.dispatch(
-            this._actions.value.loadReference(ev.value.word, ev.value.languageShortName),
+            this._actions.value.loadReference(ev.value.word, ev.value.normalizedWord, ev.value.languageShortName),
         );
     }
 }

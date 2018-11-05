@@ -49,15 +49,17 @@ export default class HtmlInject extends PureComponent<IProps, IState> {
         // the component, and can intercept click attempts.
         const href = node.attribs.href;
         const title = node.attribs.title;
-        const word = node.attribs['data-word'];
+        const normalizedWord = node.attribs['data-word'];
+        const word = node.attribs['data-original-word'];
         const languageShortName = node.attribs['data-language-short-name'];
         const childElements = nodeElements.props.children;
 
-        return <a href={href} onClick={this._onReferenceLinkClick.bind(this, word, languageShortName)}
+        return <a href={href} onClick={this._onReferenceLinkClick.bind(this, word, normalizedWord, languageShortName)}
             title={title}>{childElements}</a>;
     }
 
-    private _onReferenceLinkClick(word: string, languageShortName: string, ev: React.MouseEvent<HTMLAnchorElement>) {
+    private _onReferenceLinkClick(word: string, normalizedWord: string, languageShortName: string,
+        ev: React.MouseEvent<HTMLAnchorElement>) {
         ev.preventDefault();
 
         if (typeof this.props.onReferenceLinkClick === 'function') {
@@ -65,6 +67,7 @@ export default class HtmlInject extends PureComponent<IProps, IState> {
                 name: null,
                 value: {
                     languageShortName,
+                    normalizedWord,
                     word,
                 },
             });

@@ -3,6 +3,7 @@ import { ComponentEventHandler } from './Component._types';
 export interface IEventProps {
     onReferenceLinkClick?: ComponentEventHandler<{
         languageShortName: string;
+        normalizedWord: string;
         word: string;
     }>;
 }

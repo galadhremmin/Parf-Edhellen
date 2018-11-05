@@ -17,6 +17,7 @@ export interface IGlossaryRequest {
     includeOld: boolean;
     inflections?: boolean;
     languageId?: number;
+    normalizedWord?: string;
     word: string;
 }
 
