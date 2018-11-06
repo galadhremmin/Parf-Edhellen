@@ -8,7 +8,7 @@ render(bookBrowserApp, document.getElementById('ed-search-component'));
 
 const injections = document.querySelectorAll('[data-inject-module]');
 for (let i = 0; i < injections.length; i += 1) {
-    let injection = injections.item(i);
+    const injection = injections.item(i);
 
     console.log(injection);
 }

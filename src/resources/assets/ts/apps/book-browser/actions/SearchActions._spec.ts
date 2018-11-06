@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
-import BookApiConnector from '../../../connectors/backend/BookApiConnector';
+import BookApiConnector from '@root/connectors/backend/BookApiConnector';
 import SearchActions from '../actions/SearchActions';
 
 import { Actions } from '../reducers/constants';

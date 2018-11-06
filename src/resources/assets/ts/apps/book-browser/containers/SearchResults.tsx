@@ -2,8 +2,8 @@ import classNames from 'classnames';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { IComponentEvent } from '../../../components/Component._types';
-import SharedReference from '../../../utilities/SharedReference';
+import { IComponentEvent } from '@root/components/Component._types';
+import SharedReference from '@root/utilities/SharedReference';
 import { SearchActions } from '../actions';
 import SearchResult from '../components/SearchResult';
 import { IRootReducer } from '../reducers';

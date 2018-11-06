@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { mount, ReactWrapper } from 'enzyme';
 import React from 'react';
 
-import '../../../utilities/Enzyme';
+import '@root/utilities/Enzyme';
 import { ISearchResult } from '../reducers/SearchResultsReducer._types';
 import { SearchResults } from './SearchResults';
 

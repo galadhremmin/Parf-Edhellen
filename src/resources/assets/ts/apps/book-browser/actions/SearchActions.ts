@@ -1,18 +1,18 @@
 import { Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import BookApiConnector from '../../../connectors/backend/BookApiConnector';
+import BookApiConnector from '@root/connectors/backend/BookApiConnector';
 import {
     IFindEntity,
     IGlossaryRequest,
     IGlossaryResponse,
     ILanguageEntity,
-} from '../../../connectors/backend/BookApiConnector._types';
-import LanguageConnector from '../../../connectors/backend/LanguageConnector';
-import { stringHash } from '../../../utilities/func/hashing';
-import { mapArray } from '../../../utilities/func/mapper';
-import { capitalize } from '../../../utilities/func/string-manipulation';
-import SharedReference from '../../../utilities/SharedReference';
+} from '@root/connectors/backend/BookApiConnector._types';
+import LanguageConnector from '@root/connectors/backend/LanguageConnector';
+import { stringHash } from '@root/utilities/func/hashing';
+import { mapArray } from '@root/utilities/func/mapper';
+import { capitalize } from '@root/utilities/func/string-manipulation';
+import SharedReference from '@root/utilities/SharedReference';
 import { IRootReducer } from '../reducers';
 import { Actions } from '../reducers/constants';
 import { ISearchAction } from '../reducers/SearchReducer._types';

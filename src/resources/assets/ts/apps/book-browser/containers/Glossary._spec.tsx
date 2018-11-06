@@ -5,8 +5,8 @@ import {
 } from 'enzyme';
 import React from 'react';
 
-import { IGlossaryResponse, IGlossEntity } from '../../../connectors/backend/BookApiConnector._types';
-import { snakeCasePropsToCamelCase } from '../../../utilities/func/snake-case';
+import { IGlossaryResponse, IGlossEntity } from '@root/connectors/backend/BookApiConnector._types';
+import { snakeCasePropsToCamelCase } from '@root/utilities/func/snake-case';
 import GlossaryReducer from '../reducers/GlossaryReducer';
 import { IGlossaryState } from '../reducers/GlossaryReducer._types';
 import GlossesReducer from '../reducers/GlossesReducer';
@@ -14,7 +14,7 @@ import { IGlossesState } from '../reducers/GlossesReducer._types';
 import { ILanguagesState } from '../reducers/LanguagesReducer._types';
 import { Glossary } from './Glossary';
 
-import '../../../utilities/Enzyme';
+import '@root/utilities/Enzyme';
 import { Actions } from '../reducers/constants';
 import LanguagesReducer from '../reducers/LanguagesReducer';
 

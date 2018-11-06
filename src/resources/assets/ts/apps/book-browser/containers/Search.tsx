@@ -3,10 +3,10 @@ import {
     connect,
 } from 'react-redux';
 
-import { IComponentEvent } from '../../../components/Component._types';
-import LanguageSelect from '../../../components/LanguageSelect';
-import debounce from '../../../utilities/func/debounce';
-import SharedReference from '../../../utilities/SharedReference';
+import { IComponentEvent } from '@root/components/Component._types';
+import LanguageSelect from '@root/components/LanguageSelect';
+import debounce from '@root/utilities/func/debounce';
+import SharedReference from '@root/utilities/SharedReference';
 import { SearchActions } from '../actions';
 import SearchQueryInput from '../components/SearchQueryInput';
 import { IRootReducer } from '../reducers';

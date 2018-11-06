@@ -55,7 +55,7 @@ module.exports = {
   devtool: 'source-map',
   resolve: {
     alias: {
-      '@app': sourcePath,
+      '@root': sourcePath,
     },
     extensions: [ 
       '.ts', 

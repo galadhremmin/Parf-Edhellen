@@ -1,4 +1,4 @@
-import { ComponentEventHandler } from '../../../components/Component._types';
+import { ComponentEventHandler } from '@root/components/Component._types';
 import { ISearchResult } from '../reducers/SearchResultsReducer._types';
 
 export interface IProps {

@@ -1,6 +1,6 @@
 import { ThunkDispatch } from 'redux-thunk';
 
-import { ILanguageEntity } from '../../../connectors/backend/BookApiConnector._types';
+import { ILanguageEntity } from '@root/connectors/backend/BookApiConnector._types';
 import { IGlossaryState } from '../reducers/GlossaryReducer._types';
 import { IGlossesState } from '../reducers/GlossesReducer._types';
 

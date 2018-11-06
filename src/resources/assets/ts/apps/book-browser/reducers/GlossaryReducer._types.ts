@@ -1,5 +1,5 @@
-import { IReduxAction } from '../../../_types';
-import { IGlossaryResponse } from '../../../connectors/backend/BookApiConnector._types';
+import { IReduxAction } from '@root/_types';
+import { IGlossaryResponse } from '@root/connectors/backend/BookApiConnector._types';
 
 export interface IGlossaryState {
     loading: boolean;

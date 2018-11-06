@@ -1,4 +1,4 @@
-import { IGlossEntity } from '../../../connectors/backend/BookApiConnector._types';
+import { IGlossEntity } from '@root/connectors/backend/BookApiConnector._types';
 
 export interface IProps {
     gloss: IGlossEntity;

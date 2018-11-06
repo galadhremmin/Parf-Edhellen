@@ -1,9 +1,9 @@
 import {
     IReduxAction,
-} from '../../../_types';
+} from '@root/_types';
 import {
     IFindRequest,
-} from '../../../connectors/backend/BookApiConnector._types';
+} from '@root/connectors/backend/BookApiConnector._types';
 
 export type ISearchState = IFindRequest & {
     itemIndex?: number;

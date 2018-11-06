@@ -1,4 +1,4 @@
-import { IComponentEvent } from '../../../components/Component._types';
+import { IComponentEvent } from '@root/components/Component._types';
 
 export interface IComponentProps {
     autoFocus?: boolean;

@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "baseUrl": "./resources/assets/ts",
         "outDir": "./public/build",
         "sourceMap": true,
         "noImplicitAny": true,
@@ -21,7 +22,12 @@
             "moment",
             "mocha",
             "chai"
-        ]
+        ],
+        "paths": {
+            "@root/*": [
+                "*"
+            ]
+        }
     },
     "include": [
         "./resources/assets/ts/**/*"

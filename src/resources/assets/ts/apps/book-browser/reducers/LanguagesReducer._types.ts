@@ -1,4 +1,4 @@
-import { ILanguageEntity } from '../../../connectors/backend/BookApiConnector._types';
+import { ILanguageEntity } from '@root/connectors/backend/BookApiConnector._types';
 
 export interface ILanguagesState {
     common: ILanguageEntity[];

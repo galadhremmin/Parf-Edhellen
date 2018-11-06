@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Tengwar from '../../../components/Tengwar';
+import Tengwar from '@root/components/Tengwar';
 import { IProps } from './GlossTranslations._types';
 
 const GlossTranslations = (props: IProps) => <p>

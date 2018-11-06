@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import * as React from 'react';
 
-import { FormComponent } from '../../../components/FormComponent';
+import { FormComponent } from '@root/components/FormComponent';
 import {
     IComponentProps,
     IProps,

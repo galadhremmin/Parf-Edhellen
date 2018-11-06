@@ -2,15 +2,15 @@ import React from 'react';
 import Loadable from 'react-loadable';
 import { connect } from 'react-redux';
 
-import { IComponentEvent } from '../../../components/Component._types';
-import { ILanguageEntity } from '../../../connectors/backend/BookApiConnector._types';
-import { snakeCasePropsToCamelCase } from '../../../utilities/func/snake-case';
-import SharedReference from '../../../utilities/SharedReference';
+import { IComponentEvent } from '@root/components/Component._types';
+import { ILanguageEntity } from '@root/connectors/backend/BookApiConnector._types';
+import { snakeCasePropsToCamelCase } from '@root/utilities/func/snake-case';
+import SharedReference from '@root/utilities/SharedReference';
 import { SearchActions } from '../actions';
 import { IRootReducer } from '../reducers';
 import { IProps } from './Glossary._types';
 
-import Spinner from '../../../components/Spinner';
+import Spinner from '@root/components/Spinner';
 import Language from '../components/Language';
 
 export class Glossary extends React.PureComponent<IProps> {
@@ -161,7 +161,7 @@ export class Glossary extends React.PureComponent<IProps> {
 }
 
 const FixedBouncingArrow = Loadable({
-    loader: () => import('../../../components/BouncingArrow'),
+    loader: () => import('@root/components/BouncingArrow'),
     loading: () => <span />,
 });
 

@@ -3,7 +3,7 @@ import { mount, ReactWrapper } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
 
-import '../../../utilities/Enzyme';
+import '@root/utilities/Enzyme';
 
 import SearchQueryInput from './SearchQueryInput';
 

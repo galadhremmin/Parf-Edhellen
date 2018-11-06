@@ -1,6 +1,6 @@
 import React from 'react';
 
-import HtmlInject from '../../../components/HtmlInject';
+import HtmlInject from '@root/components/HtmlInject';
 import { IProps } from './GlossDetails._types';
 
 const GlossDetails = (props: IProps) => {

@@ -1,6 +1,6 @@
 import {
     IReduxAction,
-} from '../../../_types';
+} from '@root/_types';
 
 export interface ISearchResult {
     id: number;
