@@ -17,9 +17,17 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.23.0",
     "bootstrap-sass": "^3.3.7",
+    "css-loader": "^1.0.1",
+    "dotenv": "^6.1.0",
+    "file-loader": "^2.0.0",
     "laravel-mix": "^2.0.0",
+    "node-sass": "^4.10.0",
     "recharts": "^1.0.0-beta.10",
-    "retry-axios": "^0.3.2"
+    "retry-axios": "^0.3.2",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.1",
+    "webpack": "^3.12.0",
+    "webpack-cli": "^3.1.2"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
