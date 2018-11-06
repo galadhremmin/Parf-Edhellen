@@ -1,6 +1,7 @@
 import React from 'react';
 import Loadable from 'react-loadable';
 import { connect } from 'react-redux';
+import Waypoint from 'react-waypoint';
 
 import { IComponentEvent } from '@root/components/Component._types';
 import { ILanguageEntity } from '@root/connectors/backend/BookApiConnector._types';
@@ -8,13 +9,19 @@ import { snakeCasePropsToCamelCase } from '@root/utilities/func/snake-case';
 import SharedReference from '@root/utilities/SharedReference';
 import { SearchActions } from '../actions';
 import { IRootReducer } from '../reducers';
-import { IProps } from './Glossary._types';
+import { IProps, IState } from './Glossary._types';
 
 import Spinner from '@root/components/Spinner';
 import Language from '../components/Language';
 
-export class Glossary extends React.PureComponent<IProps> {
+import './Glossary.scss';
+
+export class Glossary extends React.PureComponent<IProps, IState> {
     private _actions = new SharedReference(SearchActions);
+
+    public state: IState = {
+        notifyLoaded: true,
+    };
 
     public componentWillMount() {
         this._initializePreloadedGlossary();
@@ -48,9 +55,13 @@ export class Glossary extends React.PureComponent<IProps> {
 
     private _renderDictionary() {
         return <React.Fragment>
-            <FixedBouncingArrow />
-            {this._renderCommonLanguages()}
-            {this._renderUnusualLanguages()}
+            {this.state.notifyLoaded && <FixedBouncingArrow />}
+            <Waypoint onEnter={this._onWaypointEnter} onLeave={this._onWaypointLeave}>
+                <article>
+                    {this._renderCommonLanguages()}
+                    {this._renderUnusualLanguages()}
+                </article>
+            </Waypoint>
         </React.Fragment>;
     }
 
@@ -158,11 +169,47 @@ export class Glossary extends React.PureComponent<IProps> {
             this._actions.value.loadReference(ev.value.word, ev.value.normalizedWord, ev.value.languageShortName),
         );
     }
+
+    /**
+     * `Waypoint` default event handler for the `enter` event. It is used to track the notifier arrow,
+     * and hiding it when the user is viewing the glossary.
+     */
+    private _onWaypointEnter = () => {
+        const notifyLoaded = false;
+
+        if (this.state.notifyLoaded !== notifyLoaded) {
+            this.setState({
+                notifyLoaded,
+            });
+        }
+    };
+
+    /**
+     * `Waypoint` default event handler for the `leave` event. It is used to track the notifier arrow,
+     * and showing it when the component is below the viewport.
+     */
+    private _onWaypointLeave = (ev: Waypoint.CallbackArgs) => {
+        // `currentPosition` is the position of the element relative to the viewport.
+        const notifyLoaded = (ev.currentPosition === Waypoint.below);
+
+        if (this.state.notifyLoaded !== notifyLoaded) {
+            this.setState({
+                notifyLoaded,
+            });
+        }
+    };
 }
 
 const FixedBouncingArrow = Loadable({
     loader: () => import('@root/components/BouncingArrow'),
-    loading: () => <span />,
+    loading: () => <React.Fragment />,
+    render: (loaded, props) => {
+        const Component = loaded.default;
+
+        return <div className="ed-glossary-loaded-notifier">
+            <Component {...props} />
+        </div>;
+    },
 });
 
 const mapStateToProps = (state: IRootReducer) => ({

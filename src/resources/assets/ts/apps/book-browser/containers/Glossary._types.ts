@@ -11,3 +11,7 @@ export interface IProps extends IGlossaryState {
     unusualLanguages: ILanguageEntity[];
     isEmpty: boolean;
 }
+
+export interface IState {
+    notifyLoaded: boolean;
+}

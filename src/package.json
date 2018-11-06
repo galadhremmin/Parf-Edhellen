@@ -44,6 +44,7 @@
     "mocha": "^5.2.0",
     "node-sass": "^4.10.0",
     "react-loadable": "^5.5.0",
+    "react-waypoint": "^8.0.3",
     "sass-loader": "^7.1.0",
     "sinon": "^7.1.1",
     "source-map-loader": "^0.2.4",
