@@ -11,16 +11,19 @@ const devMode = process.env.NODE_ENV !== 'production';
 const bundleCssWithJavaScript = false;
 const version = process.env.ED_VERSION;
 
-const outputPath = path.resolve(__dirname, `public/v${version}`);
+const sourcePath = path.resolve(__dirname, 'resources/assets/ts');
+const publicPath = `/v${version}`;
+const outputPath = path.resolve(__dirname, `public/${publicPath}`);
 
 module.exports = {
   entry: {
-    index: './resources/assets/ts/index.tsx'
+    index: `${sourcePath}/index.tsx`
   },
   output: {
     filename: 'main.js',
     path: outputPath,
-    chunkFilename: '[name].js'
+    chunkFilename: '[name].js',
+    publicPath: `${publicPath}/`,
   },
   optimization: {
     splitChunks: {
@@ -51,12 +54,15 @@ module.exports = {
   },
   devtool: 'source-map',
   resolve: {
+    alias: {
+      '@app': sourcePath,
+    },
     extensions: [ 
       '.ts', 
       '.tsx', 
       '.js', 
       '.json' 
-    ]
+    ],
   },
   module: {
     rules: [

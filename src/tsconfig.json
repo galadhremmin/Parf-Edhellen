@@ -1,9 +1,10 @@
 {
     "compilerOptions": {
+        "baseUrl": "./resources/assets/ts",
         "outDir": "./public/build",
         "sourceMap": true,
         "noImplicitAny": true,
-        "module": "es6",
+        "module": "esnext",
         "target": "es6",
         "jsx": "react",
         "allowSyntheticDefaultImports": true,
@@ -14,13 +15,19 @@
         "types": [
             "react",
             "react-dom",
+            "react-loadable",
             "react-redux",
             "redux",
             "moment",
             "moment",
             "mocha",
             "chai"
-        ]
+        ],
+        "paths": {
+            "@app/*": [
+                "*"
+            ]
+        }
     },
     "include": [
         "./resources/assets/ts/**/*"

@@ -1,4 +1,5 @@
 import React from 'react';
+import Loadable from 'react-loadable';
 import { connect } from 'react-redux';
 
 import { IComponentEvent } from '../../../components/Component._types';
@@ -47,6 +48,7 @@ export class Glossary extends React.PureComponent<IProps> {
 
     private _renderDictionary() {
         return <React.Fragment>
+            <FixedBouncingArrow />
             {this._renderCommonLanguages()}
             {this._renderUnusualLanguages()}
         </React.Fragment>;
@@ -157,6 +159,11 @@ export class Glossary extends React.PureComponent<IProps> {
         );
     }
 }
+
+const FixedBouncingArrow = Loadable({
+    loader: () => import('../../../components/BouncingArrow'),
+    loading: () => <span />,
+});
 
 const mapStateToProps = (state: IRootReducer) => ({
     ...state.glossary,

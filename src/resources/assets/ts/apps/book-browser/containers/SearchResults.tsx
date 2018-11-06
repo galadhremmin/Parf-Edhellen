@@ -11,7 +11,6 @@ import { ISearchResult } from '../reducers/SearchResultsReducer._types';
 import { IProps } from './SearchResults._types';
 
 export class SearchResults extends React.PureComponent<IProps> {
-
     static get defaultProps() {
         return {
             searchResults: [],
@@ -85,8 +84,6 @@ export class SearchResults extends React.PureComponent<IProps> {
                 </nav>
             </div>
         </section>;
-
-        return ;
     }
 
     /**

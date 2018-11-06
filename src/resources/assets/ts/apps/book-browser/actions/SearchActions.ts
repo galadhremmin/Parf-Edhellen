@@ -138,6 +138,7 @@ export default class SearchActions {
                 includeOld,
                 inflections: true,
                 languageId,
+                normalizedWord: args.searchResult.normalizedWord,
                 word,
             };
             await this._loadGlossary(dispatch, request, languageShortName, args.updateBrowserHistory);
