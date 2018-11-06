@@ -24,12 +24,4 @@ const app = <Provider store={store}>
     </React.Fragment>
 </Provider>;
 
-// SEO: delete content specifically only present for bots
-/*
-const seoContent = document.getElementById('ed-book-for-bots');
-if (seoContent) {
-    seoContent.parentNode.removeChild(seoContent);
-}
-*/
-
 export default app;
