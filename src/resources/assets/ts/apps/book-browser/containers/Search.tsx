@@ -16,6 +16,8 @@ import {
     IState,
 } from './Search._types';
 
+import './Search.scss';
+
 export class SearchQuery extends React.PureComponent<IProps, IState> {
 
     public state: IState;

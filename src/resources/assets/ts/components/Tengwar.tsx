@@ -1,6 +1,8 @@
 import React from 'react';
 import { IProps } from './Tengwar._types';
 
+import './Tengwar.scss';
+
 const Tengwar = (props: IProps) => {
     const className = 'tengwar';
     const {
