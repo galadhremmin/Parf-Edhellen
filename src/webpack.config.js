@@ -8,6 +8,7 @@ var WebpackNotifierPlugin = require('webpack-notifier');
 require('dotenv').config();
 
 const devMode = process.env.NODE_ENV !== 'production';
+const bundleCssWithJavaScript = false;
 const version = process.env.ED_VERSION;
 
 const outputPath = path.resolve(__dirname, `public/v${version}`);
@@ -72,7 +73,7 @@ module.exports = {
       {
         test: /\.scss$/,
         use: [
-          devMode ? 'style-loader' : MiniCssExtractPlugin.loader, // creates style nodes from JS strings
+          bundleCssWithJavaScript ? 'style-loader' : MiniCssExtractPlugin.loader, // creates style nodes from JS strings
           "css-loader", // translates CSS into CommonJS
           "sass-loader" // compiles Sass to CSS, using Node Sass by default
         ]

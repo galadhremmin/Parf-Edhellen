@@ -15,7 +15,7 @@
   <link rel="icon" type="image/png" href="/img/favicons/favicon-194x194.png">
   <link rel="manifest" href="/img/favicons/manifest.json">
   <link href="https://fonts.googleapis.com/css?family=Lora:400,400i&amp;subset=latin-ext" rel="stylesheet">
-  <link href="@assetpath(/css/app.css)" rel="stylesheet">
+  <link href="@assetpath(/index.css)" rel="stylesheet">
   @yield('styles')
   @if (!empty(config('ed.header_view')))
     @include(config('ed.header_view'))
