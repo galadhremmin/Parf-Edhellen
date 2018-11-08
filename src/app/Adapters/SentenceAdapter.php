@@ -18,17 +18,18 @@ class SentenceAdapter
 
         foreach ($fragmentRows as $fragment) {
             $data = [
-                'id'          => $fragment->id,
-                'gloss_id'    => $fragment->gloss_id,
-                'type'        => $fragment->type,
-                'fragment'    => $fragment->fragment,
-                'tengwar'     => $fragment->tengwar,
-                'speech'      => $fragment->speech_id ? $fragment->speech->name : null,
-                'speech_id'   => $fragment->speech_id,
-                'comments'    => !empty($fragment->comments)
+                'id'              => $fragment->id,
+                'gloss_id'        => $fragment->gloss_id,
+                'type'            => $fragment->type,
+                'fragment'        => $fragment->fragment,
+                'tengwar'         => $fragment->tengwar,
+                'sentence_number' => $fragment->sentence_number,
+                'speech'          => $fragment->speech_id ? $fragment->speech->name : null,
+                'speech_id'       => $fragment->speech_id,
+                'comments'        => !empty($fragment->comments)
                     ? ($transformMarkdownToHtml ? $markdownParser->parse($fragment->comments) : $fragment->comments)
                     : null,
-                'inflections' => []
+                'inflections'     => []
             ];
 
             // Todo: optimise this to reduce queries to the database and remove model awareness

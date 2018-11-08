@@ -1,6 +1,4 @@
-import {
-    Actions,
-} from './constants';
+import Actions from './Actions';
 import { IGlossaryAction } from './GlossaryReducer._types';
 import { ILanguagesState } from './LanguagesReducer._types';
 

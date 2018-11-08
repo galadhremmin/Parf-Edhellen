@@ -211,6 +211,9 @@ Route::group([
     Route::resource('forum', 'ForumApiController', ['only' => [
         'index', 'show'
     ]]);
+    Route::resource('sentence', 'SentenceApiController', ['only' => [
+        'show'
+    ]]);
 });
 
 // Public, throttled API

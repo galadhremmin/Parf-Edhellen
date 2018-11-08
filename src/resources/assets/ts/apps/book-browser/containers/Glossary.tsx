@@ -17,11 +17,11 @@ import Language from '../components/Language';
 import './Glossary.scss';
 
 export class Glossary extends React.PureComponent<IProps, IState> {
-    private _actions = new SharedReference(SearchActions);
-
     public state: IState = {
         notifyLoaded: true,
     };
+
+    private _actions = new SharedReference(SearchActions);
 
     public componentWillMount() {
         this._initializePreloadedGlossary();
@@ -182,7 +182,7 @@ export class Glossary extends React.PureComponent<IProps, IState> {
                 notifyLoaded,
             });
         }
-    };
+    }
 
     /**
      * `Waypoint` default event handler for the `leave` event. It is used to track the notifier arrow,
@@ -197,7 +197,7 @@ export class Glossary extends React.PureComponent<IProps, IState> {
                 notifyLoaded,
             });
         }
-    };
+    }
 }
 
 const FixedBouncingArrow = Loadable({

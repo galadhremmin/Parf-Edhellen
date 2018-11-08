@@ -5,6 +5,8 @@ import {
     IGlossaryRequest,
     IGlossaryResponse,
     ILanguagesResponse,
+    ISentenceRequest,
+    ISentenceResponse,
 } from './BookApiConnector._types';
 
 export default class BookApiConnector {
@@ -12,13 +14,11 @@ export default class BookApiConnector {
     }
 
     public async find(args: IFindRequest) {
-        const response = await this._api.post<FindResponse>('book/find', args);
-        return response;
+        return await this._api.post<FindResponse>('book/find', args);
     }
 
     public async languages() {
-        const response = await this._api.get<ILanguagesResponse>('book/languages');
-        return response;
+        return await this._api.get<ILanguagesResponse>('book/languages');
     }
 
     public async glossary(args: IGlossaryRequest) {
@@ -28,7 +28,10 @@ export default class BookApiConnector {
             delete args.languageId;
         }
 
-        const response = await this._api.post<IGlossaryResponse>('book/translate', args);
-        return response;
+        return await this._api.post<IGlossaryResponse>('book/translate', args);
+    }
+
+    public async sentence(args: ISentenceRequest) {
+        return await this._api.get<ISentenceResponse>(`sentence/${args.id}`);
     }
 }

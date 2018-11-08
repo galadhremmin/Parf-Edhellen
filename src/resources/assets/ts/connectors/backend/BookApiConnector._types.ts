@@ -108,3 +108,31 @@ export interface IInflectionEntity {
     speech: string;
     word: string;
 }
+
+export interface ISentenceRequest {
+    id: number;
+}
+
+export interface ISentenceResponse {
+    fragments: ISentenceFragmentEntity[];
+    latin: Array<[number, string?] | string>;
+    tengwar: Array<[number, string?] | string>;
+}
+
+export interface ISentenceFragmentEntity {
+    comments: string;
+    fragment: string;
+    gloss_id: number;
+    id: number;
+    inflections: IInflectionEntity[];
+    sentence_number: number;
+    speech: string;
+    speech_id: number;
+    tengwar: string;
+    type: number;
+}
+
+export interface IInflectionEntity {
+    id: number;
+    name: string;
+}

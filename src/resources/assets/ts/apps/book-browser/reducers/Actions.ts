@@ -1,4 +1,4 @@
-export enum Actions {
+enum Actions {
     RequestSearchResults = 'ED_SEARCH_RESULT_REQUEST',
     ReceiveSearchResults = 'ED_SEARCH_RESULT',
 
@@ -7,3 +7,5 @@ export enum Actions {
     RequestGlossary      = 'ED_GLOSSARY_REQUEST',
     ReceiveGlossary      = 'ED_GLOSSARY',
 }
+
+export default Actions;

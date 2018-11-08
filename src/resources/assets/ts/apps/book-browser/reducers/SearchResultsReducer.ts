@@ -1,6 +1,4 @@
-import {
-    Actions,
-} from './constants';
+import Actions from './Actions';
 import {
     ISearchResult,
     ISearchResultReducerAction,
