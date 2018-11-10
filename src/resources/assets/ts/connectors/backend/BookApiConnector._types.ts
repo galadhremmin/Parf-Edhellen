@@ -115,24 +115,36 @@ export interface ISentenceRequest {
 
 export interface ISentenceResponse {
     fragments: ISentenceFragmentEntity[];
-    latin: Array<[number, string?] | string>;
-    tengwar: Array<[number, string?] | string>;
+    latin: SentenceFragmentLocalizationLineMap[];
+    tengwar: SentenceFragmentLocalizationLineMap[];
 }
 
 export interface ISentenceFragmentEntity {
     comments: string;
     fragment: string;
-    gloss_id: number;
+    glossId: number;
     id: number;
     inflections: IInflectionEntity[];
-    sentence_number: number;
+    sentenceNumber: number;
     speech: string;
-    speech_id: number;
+    speechId: number;
     tengwar: string;
-    type: number;
+    type: SentenceFragmentType;
+}
+
+export enum SentenceFragmentType {
+    NewLine           = 10,
+    Exclude           = 24,
+    Interpunctuation  = 31,
+    OpenParanthesis   = 40,
+    CloseParanthesis  = 41,
+    WordConnection    = 45,
 }
 
 export interface IInflectionEntity {
     id: number;
     name: string;
 }
+
+export type SentenceFragmentLocalizationLineMap = SentenceFragmentLocalizationMap[];
+export type SentenceFragmentLocalizationMap = [number, string?] | string;

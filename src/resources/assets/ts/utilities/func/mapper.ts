@@ -38,6 +38,11 @@ export const mapper = <T1, T2>(table: ConversionTable<T1, T2>, subject: T1): T2 
     return result as T2;
 };
 
+/**
+ * Converts an array of `T1` to an array of `T2`.
+ * @param table
+ * @param subject
+ */
 export const mapArray = <T1, T2>(table: ConversionTable<T1, T2>, subject: T1[]): T2[] => {
     if (isIneligible(subject)) {
         return [];
