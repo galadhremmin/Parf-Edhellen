@@ -11,7 +11,9 @@ use App\Events\{
 };
 use App\Models\{ 
     Sentence, 
-    SentenceFragment 
+    SentenceFragment,
+    SentenceFragmentInflectionRel,
+    Speech
 };
 
 class SentenceRepository
@@ -87,6 +89,48 @@ class SentenceRepository
             ->get()
             ->groupBy('sentence_fragment_id')
             ->toArray();
+    }
+
+    public function getSentence(int $id)
+    {
+        $sentence = Sentence::findOrFail($id);
+        $fragments = $sentence->sentence_fragments;
+        $inflections = SentenceFragmentInflectionRel::whereIn('sentence_fragment_id', $fragments->map(function ($f) {
+                return $f->id;
+            }))
+            ->join('inflections', 'inflections.id', 'inflection_id')
+            ->select('sentence_fragment_id', 'inflections.name', 'inflections.id as inflection_id')
+            ->get();
+        $translations = $sentence->sentence_translations()
+            ->select('sentence_number', 'translation')
+            ->get()
+            ->mapWithKeys(function ($item) {
+                return [$item->sentence_number => $item->translation];
+            });
+
+        $speechIds = $fragments->reduce(function ($carry, $f) {
+            if ($f->speech_id !== null && !in_array($f->speech_id, $carry)) {
+                $carry[] = $f->speech_id;
+            }
+
+            return $carry;
+        }, []);
+        $speeches = count($speechIds) < 1 ? [] : Speech::whereIn('id', $speechIds)
+            ->select('id', 'name')
+            ->get()
+            ->mapWithKeys(function ($item) {
+                return [$item->id => $item->name];
+            });
+        
+        $sentence->makeHidden(['sentence_translations', 'sentence_fragments']);
+        $fragments = $fragments->groupBy('sentence_number');
+
+        return [
+            'sentence' => $sentence,
+            'sentence_translations' => $translations,
+            'sentence_fragments' => $fragments,
+            'speeches' => $speeches
+        ];
     }
 
     public function saveSentence(Sentence $sentence, array $fragments, array $inflections) 

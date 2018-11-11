@@ -6,21 +6,23 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
 use App\Adapters\SentenceAdapter;
-use App\Models\Sentence;
+use App\Repositories\SentenceRepository;
+use DB;
 
 class SentenceApiController extends Controller 
 {
     private $_adapter;
+    private $_repository;
 
-    public function __construct(SentenceAdapter $adapter)
+    public function __construct(SentenceAdapter $adapter,
+        SentenceRepository $repository)
     {
         $this->_adapter = $adapter;
+        $this->_repository = $repository;
     }
 
     public function show(Request $request, int $id)
     {
-        $sentence = Sentence::findOrFail($id);
-        $data = $this->_adapter->adaptFragments($sentence->sentence_fragments);
-        return $data;
+        return $this->_repository->getSentence($id);
     }
 }

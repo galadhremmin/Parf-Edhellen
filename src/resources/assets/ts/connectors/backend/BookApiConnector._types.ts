@@ -117,6 +117,7 @@ export interface ISentenceResponse {
     fragments: ISentenceFragmentEntity[];
     latin: SentenceFragmentLocalizationLineMap[];
     tengwar: SentenceFragmentLocalizationLineMap[];
+    translations: ISentenceTranslation[];
 }
 
 export interface ISentenceFragmentEntity {
@@ -148,3 +149,8 @@ export interface IInflectionEntity {
 
 export type SentenceFragmentLocalizationLineMap = SentenceFragmentLocalizationMap[];
 export type SentenceFragmentLocalizationMap = [number, string?] | string;
+
+export interface ISentenceTranslation {
+    sentenceNumber: number;
+    translation: string;
+}
