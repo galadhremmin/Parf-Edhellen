@@ -4,11 +4,11 @@ import { mapArray } from '@root/utilities/func/mapper';
 import Actions from './Actions';
 import {
     FragmentsReducerState,
-    IFragmentsReducerAction,
     IFragmentsReducerState,
 } from './FragmentsReducer._types';
+import { ISentenceReducerAction } from './SentenceReducer._types';
 
-const FragmentsReducer = (state: FragmentsReducerState = [], action: IFragmentsReducerAction) => {
+const FragmentsReducer = (state: FragmentsReducerState = [], action: ISentenceReducerAction) => {
     switch (action.type) {
         case Actions.ReceiveSentence:
             return mapArray<ISentenceFragmentEntity, IFragmentsReducerState>({
@@ -19,7 +19,7 @@ const FragmentsReducer = (state: FragmentsReducerState = [], action: IFragmentsR
                 speech: 'speech',
                 speechId: 'speechId',
                 type: 'type',
-            }, action.sentence.fragments);
+            }, action.sentence.sentenceFragments);
         default:
             return state;
     }

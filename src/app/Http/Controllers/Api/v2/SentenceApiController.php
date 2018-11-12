@@ -23,6 +23,11 @@ class SentenceApiController extends Controller
 
     public function show(Request $request, int $id)
     {
-        return $this->_repository->getSentence($id);
+        $sentence = $this->_repository->getSentence($id);
+        $sentence['sentence_transformations'] = $this->_adapter->buildSentences(
+            $sentence['sentence_fragments']
+        );
+
+        return $sentence;
     }
 }

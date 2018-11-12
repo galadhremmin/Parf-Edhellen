@@ -114,10 +114,32 @@ export interface ISentenceRequest {
 }
 
 export interface ISentenceResponse {
-    fragments: ISentenceFragmentEntity[];
-    latin: SentenceFragmentLocalizationLineMap[];
-    tengwar: SentenceFragmentLocalizationLineMap[];
-    translations: ISentenceTranslation[];
+    sentence: ISentenceEntity;
+    sentenceFragments: ISentenceFragmentEntity[];
+    sentenceTranslations: ISentenceTranslationMap;
+    sentenceTransformations: ISentenceTransformationMap;
+    speeches: ISpeechMap;
+}
+
+export interface ISentenceEntity {
+    account: IAccountEntity;
+    createdAt: string;
+    description: string;
+    id: number;
+    isApproved: boolean;
+    isNeologism: boolean;
+    language: ILanguageEntity;
+    longDescription: string;
+    name: string;
+    source: string;
+    updatedAt: string;
+}
+
+export interface IAccountEntity {
+    hasAvatar: boolean;
+    id: number;
+    nickname: string;
+    tengwar: string;
 }
 
 export interface ISentenceFragmentEntity {
@@ -147,10 +169,17 @@ export interface IInflectionEntity {
     name: string;
 }
 
-export type SentenceFragmentLocalizationLineMap = SentenceFragmentLocalizationMap[];
+export interface ISentenceTranslationMap {
+    [sentenceNumber: string]: string;
+}
+
+export interface ISentenceTransformationMap {
+    [name: string]: SentenceLocalizedTransformationMap[];
+}
+
+export type SentenceLocalizedTransformationMap = SentenceFragmentLocalizationMap[];
 export type SentenceFragmentLocalizationMap = [number, string?] | string;
 
-export interface ISentenceTranslation {
-    sentenceNumber: number;
-    translation: string;
+export interface ISpeechMap {
+    [speechId: string]: string;
 }

@@ -34,10 +34,6 @@ class SentenceTranslations extends Migration
         $sentence_id = 0;
         $arr = [];
         foreach ($fragments as $fragment) {
-            if ($fragment->type === 10) { // ignore new lines
-                continue;
-            }
-
             if ($sentence_id !== $fragment->sentence_id) {
                 $sentence_id = $fragment->sentence_id;
                 $sentence_number = 10;

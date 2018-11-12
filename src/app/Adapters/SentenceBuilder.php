@@ -6,6 +6,9 @@ use Illuminate\Support\Collection;
 abstract class SentenceBuilder
 {
     protected $_fragments;
+    protected $_sentenceNumbers;
+    protected $_numberOfSentences;
+    protected $_maxFragmentIndexPerSentence;
     protected $_numberOfFragments;
 
     const TYPE_CODE_NEWLINE           = 10;
@@ -15,7 +18,7 @@ abstract class SentenceBuilder
     const TYPE_CODE_CLOSE_PARANTHESIS = 41;
     const TYPE_CODE_WORD_CONNEXION    = 45;
 
-    public function __construct(array $fragments) 
+    public function __construct(array $fragments)
     {
         $this->_fragments = $fragments;
         $this->_numberOfFragments = count($fragments);
@@ -108,7 +111,7 @@ abstract class SentenceBuilder
         return $sentences;
     }
 
-    protected function getFragment(int $index) 
+    public function getFragment(int $index) 
     {
         if ($index < 0 || $index >= $this->_numberOfFragments) {
             return null;
@@ -117,7 +120,7 @@ abstract class SentenceBuilder
         return $this->_fragments[$index];
     }
 
-    protected function isLineBreak($fragment) 
+    public function isLineBreak($fragment) 
     {
         if (is_string($fragment)) {
             return false;
@@ -126,7 +129,7 @@ abstract class SentenceBuilder
         return $fragment['type'] === self::TYPE_CODE_NEWLINE;
     }
 
-    protected function isInterpunctuation($fragment)
+    public function isInterpunctuation($fragment)
     {
         if (is_string($fragment)) {
             return false;
@@ -135,7 +138,7 @@ abstract class SentenceBuilder
         return $fragment['type'] === self::TYPE_CODE_INTERPUNCTUATION;
     }
 
-    protected function isConnection($fragment)
+    public function isConnection($fragment)
     {
         if (is_string($fragment)) {
             return false;
@@ -144,7 +147,7 @@ abstract class SentenceBuilder
         return $fragment['type'] === self::TYPE_CODE_WORD_CONNEXION;
     }
 
-    protected function isParanthesisStart($fragment) 
+    public function isParanthesisStart($fragment) 
     {
         if (is_string($fragment)) {
             return false;
@@ -153,7 +156,7 @@ abstract class SentenceBuilder
         return $fragment['type'] === self::TYPE_CODE_OPEN_PARANTHESIS;
     }
 
-    protected function isParanthesisEnd($fragment) 
+    public function isParanthesisEnd($fragment) 
     {
         if (is_string($fragment)) {
             return false;
@@ -162,7 +165,7 @@ abstract class SentenceBuilder
         return $fragment['type'] === self::TYPE_CODE_CLOSE_PARANTHESIS;
     }
 
-    protected function isExcluded($fragment)
+    public function isExcluded($fragment)
     {
         if (is_string($fragment)) {
             return false;

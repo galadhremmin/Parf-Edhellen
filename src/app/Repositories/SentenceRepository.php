@@ -93,14 +93,19 @@ class SentenceRepository
 
     public function getSentence(int $id)
     {
-        $sentence = Sentence::findOrFail($id);
+        $sentence = Sentence::findOrFail($id)
+            ->load('account', 'language');
+
         $fragments = $sentence->sentence_fragments;
-        $inflections = SentenceFragmentInflectionRel::whereIn('sentence_fragment_id', $fragments->map(function ($f) {
-                return $f->id;
-            }))
+        $fragmentIds = $fragments->map(function ($f) {
+            return $f->id;
+        });
+
+        $inflections = SentenceFragmentInflectionRel::whereIn('sentence_fragment_id', $fragmentIds)
             ->join('inflections', 'inflections.id', 'inflection_id')
             ->select('sentence_fragment_id', 'inflections.name', 'inflections.id as inflection_id')
             ->get();
+
         $translations = $sentence->sentence_translations()
             ->select('sentence_number', 'translation')
             ->get()
@@ -121,15 +126,14 @@ class SentenceRepository
             ->mapWithKeys(function ($item) {
                 return [$item->id => $item->name];
             });
-        
-        $sentence->makeHidden(['sentence_translations', 'sentence_fragments']);
-        $fragments = $fragments->groupBy('sentence_number');
+
+        $sentence->makeHidden(['account_id', 'language_id', 'sentence_translations', 'sentence_fragments']);
 
         return [
-            'sentence' => $sentence,
-            'sentence_translations' => $translations,
-            'sentence_fragments' => $fragments,
-            'speeches' => $speeches
+            'sentence' => $sentence->toArray(),
+            'sentence_translations' => $translations->toArray(),
+            'sentence_fragments' => $fragments->toArray(),
+            'speeches' => $speeches->toArray()
         ];
     }
 

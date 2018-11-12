@@ -1,14 +1,13 @@
 import convert from '../utilities/LocalizedFragmentConverter';
 import Actions from './Actions';
-import {
-    IFragmentsReducerAction,
-    LocalizedFragmentsReducerState,
-} from './FragmentsReducer._types';
+import { LocalizedFragmentsReducerState } from './FragmentsReducer._types';
+import { ISentenceReducerAction } from './SentenceReducer._types';
 
-const LatinFragmentsReducer = (state: LocalizedFragmentsReducerState = [], action: IFragmentsReducerAction) => {
+const TransformerName = 'latin';
+const LatinFragmentsReducer = (state: LocalizedFragmentsReducerState = [], action: ISentenceReducerAction) => {
     switch (action.type) {
         case Actions.ReceiveSentence:
-            return convert(action.sentence.latin, action.sentence.fragments);
+            return convert(action.sentence.sentenceTransformations[TransformerName], action.sentence.sentenceFragments);
         default:
             return state;
     }

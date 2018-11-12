@@ -1,6 +1,4 @@
-import { IReduxAction } from '@root/_types/redux';
 import {
-    ISentenceResponse,
     SentenceFragmentType,
 } from '@root/connectors/backend/BookApiConnector._types';
 
@@ -21,8 +19,3 @@ export interface ILocalizedFragmentsReducerState {
 
 export type FragmentsReducerState = IFragmentsReducerState[];
 export type LocalizedFragmentsReducerState = ILocalizedFragmentsReducerState[];
-
-export interface IFragmentsReducerAction extends IReduxAction {
-    id: number;
-    sentence: ISentenceResponse;
-}
