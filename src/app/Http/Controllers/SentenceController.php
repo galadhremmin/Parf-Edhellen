@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Adapters\SentenceAdapter;
+
 use App\Models\Language;
 use App\Models\Sentence;
 use App\Helpers\MarkdownParser;
@@ -11,30 +11,26 @@ use Illuminate\Http\Request;
 class SentenceController extends Controller
 {
     private $_sentenceRepository;
-    private $_adapter;
 
-    public function __construct(SentenceRepository $sentenceRepository, SentenceAdapter $adapter)
+    public function __construct(SentenceRepository $sentenceRepository)
     {
         $this->_sentenceRepository = $sentenceRepository;
-        $this->_adapter = $adapter;
     }
 
     public function index() 
     {
         $numberOfSentences  = Sentence::approved()->count();
         $numberOfNeologisms = Sentence::approved()->neologisms()->count();
-        $randomSentence     = Sentence::approved()->inRandomOrder()->first();
-        $randomSentenceData = $randomSentence 
-            ? $this->_adapter->adaptFragments($randomSentence->sentence_fragments)
-            : null;
+        $randomSentence     = Sentence::approved()->inRandomOrder()->select('id')->first();
+
+        $randomSentence     = $this->_sentenceRepository->getSentence($randomSentence->id);
         $languages          = $this->_sentenceRepository->getLanguages();
 
         return view('sentence.public.index', [
             'numberOfSentences'  => $numberOfSentences,
             'numberOfNeologisms' => $numberOfNeologisms,
             'languages'          => $languages,
-            'randomSentence'     => $randomSentence,
-            'randomSentenceData' => $randomSentenceData
+            'randomSentence'     => $randomSentence
         ]);
     }
 
@@ -55,15 +51,12 @@ class SentenceController extends Controller
     public function bySentence(Request $request, int $langId, string $languageName,
                                int $sentId, string $sentName)
     {
-        $sentence  = Sentence::findOrFail($sentId);
-        $language  = Language::findOrFail($langId);
-        
-        $data = $this->_adapter->adaptFragments($sentence->sentence_fragments);
+        $sentence = $this->_sentenceRepository->getSentence($sentId);
+        $language = Language::findOrFail($langId);
         
         return view('sentence.public.sentence', [
-            'sentence'     => $sentence,
-            'sentenceData' => $data,
-            'language'     => $language
+            'sentence' => $sentence,
+            'language' => $language
         ]);
     }
 }

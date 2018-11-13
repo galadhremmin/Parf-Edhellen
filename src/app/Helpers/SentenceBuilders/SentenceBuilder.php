@@ -1,5 +1,5 @@
 <?php
-namespace App\Adapters;
+namespace App\Helpers\SentenceBuilders;
 
 use Illuminate\Support\Collection;
 
@@ -18,7 +18,7 @@ abstract class SentenceBuilder
     const TYPE_CODE_CLOSE_PARANTHESIS = 41;
     const TYPE_CODE_WORD_CONNEXION    = 45;
 
-    public function __construct(array $fragments)
+    public function __construct(Collection $fragments)
     {
         $this->_fragments = $fragments;
         $this->_numberOfFragments = count($fragments);

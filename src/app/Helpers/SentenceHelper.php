@@ -6,7 +6,23 @@ use Illuminate\Database\Eloquent\Collection;
 
 class SentenceHelper
 {
-    public function combine(array $fragments, array $sentenceMappings)
+    public function buildSentences(Collection $adaptedFragments, string $builderName = null) {
+        $result = [];
+
+        $sentenceBuilders = config('ed.required_sentence_builders');
+        foreach ($sentenceBuilders as $name => $class) {
+            if ($builderName !== null && $name !== $builderName) {
+                continue;
+            }
+
+            $builder = new $class($adaptedFragments);
+            $result[$name] = $builder->build();
+        }
+
+        return $result;
+    }
+
+    public function combine(Collection $fragments, array $sentenceMappings)
     {
         $parts = [];
         $first = true;

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\{
 
 use App\Repositories\{
     ContributionRepository,
+    SentenceRepository,
     StatisticsRepository
 };
 use App\Repositories\Interfaces\IAuditTrailRepository;
@@ -20,7 +21,6 @@ use App\Models\{
 };
 use App\Adapters\{
     AuditTrailAdapter,
-    SentenceAdapter,
     BookAdapter
 };
 
@@ -28,18 +28,18 @@ class HomeController extends Controller
 {
     protected $_auditTrail;
     protected $_auditTrailAdapter;
-    protected $_sentenceAdapter;
+    protected $_sentenceRepository;
     protected $_bookAdapter;
     protected $_reviewRepository;
     protected $_statisticsRepository;
 
     public function __construct(IAuditTrailRepository $auditTrail, AuditTrailAdapter $auditTrailAdapter, StatisticsRepository $statisticsRepository,
-        BookAdapter $bookAdapter, SentenceAdapter $sentenceAdapter, ContributionRepository $contributionRepository) 
+        BookAdapter $bookAdapter, SentenceRepository $sentenceRepository, ContributionRepository $contributionRepository) 
     {
         $this->_auditTrail           = $auditTrail;
         $this->_auditTrailAdapter    = $auditTrailAdapter;
         $this->_bookAdapter          = $bookAdapter;
-        $this->_sentenceAdapter      = $sentenceAdapter;
+        $this->_sentenceRepository   = $sentenceRepository;
         $this->_reviewRepository     = $contributionRepository;
         $this->_statisticsRepository = $statisticsRepository;
     }
@@ -56,13 +56,10 @@ class HomeController extends Controller
 
         // Retrieve a random sentence to be featured.
         $randomSentence = Cache::remember('ed.home.sentence', 60 * 24 /* minutes */, function () {
-            $sentence = Sentence::approved()->inRandomOrder()->first();
-            
+            $sentence = Sentence::approved()->inRandomOrder()
+                ->select('id')->first();
             return [
-                'sentence'     => $sentence,
-                'sentenceData' => $sentence 
-                    ? $this->_sentenceAdapter->adaptFragments($sentence->sentence_fragments, false) 
-                    : null
+                'sentence' => $this->_sentenceRepository->getSentence($sentence->id)
             ];
         });
 

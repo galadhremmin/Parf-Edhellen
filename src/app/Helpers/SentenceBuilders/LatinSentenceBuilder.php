@@ -1,47 +1,47 @@
 <?php
+namespace App\Helpers\SentenceBuilders;
 
-namespace App\Adapters;
-
-class TengwarSentenceBuilder extends SentenceBuilder
+class LatinSentenceBuilder extends SentenceBuilder
 {
     public function getName()
     {
-        return 'tengwar';
+        return 'latin';
     }
 
     protected function handleInterpunctuation($fragment, int $fragmentIndex, $previousFragment, array $sentence)
     {
-        $fragment = $this->getFragment($fragmentIndex);
-        return [' ', [$fragmentIndex, $fragment['tengwar']]];
+        return [[$fragmentIndex]];
     }
 
     protected function handleConnection($fragment, int $fragmentIndex, $previousFragment, array $sentence)
     {
-        return [];
+        return [$fragment['fragment']];
     }
 
     protected function handleFragment($fragment, int $fragmentIndex, $previousFragment, array $sentence)
     {
-        return $this->fragment($fragment, [$fragmentIndex, $fragment['tengwar']], $fragmentIndex, $previousFragment, $sentence);
+        return $this->fragment($fragment, [$fragmentIndex], $fragmentIndex, $previousFragment, $sentence);
     }
 
     protected function handleExcluded($fragment, int $fragmentIndex, $previousFragment, array $sentence)
     {
-        return $this->fragment($fragment, $fragment['tengwar'], $fragmentIndex, $previousFragment, $sentence);
+        return $this->fragment($fragment, $fragment['fragment'], $fragmentIndex, $previousFragment, $sentence);
     }
     
     protected function handleParanthesisStart($fragment, int $fragmentIndex, $previousFragment, array $sentence)
     {
+        $f = $fragment['fragment'];
+
         if (count($sentence) < 1 || $this->isParanthesisStart($previousFragment)) {
-            return [$fragment['tengwar']];
+            return [$f];
         }
 
-        return [' ', $fragment['tengwar']];
+        return [' ', $f];
     }
 
     protected function handleParanthesisEnd($fragment, int $fragmentIndex, $previousFragment, array $sentence)
     {
-        return [$fragment['tengwar']];
+        return [$fragment['fragment']];
     }
 
     protected function finalizeSentence(array& $sentence)
@@ -51,8 +51,12 @@ class TengwarSentenceBuilder extends SentenceBuilder
 
     private function fragment($fragment, $mappingValue, int $fragmentIndex, $previousFragment, array $sentence)
     {
-        if (count($sentence) < 1 || (
-            $this->isConnection($previousFragment) ||
+        if (count($sentence) < 1) {
+            return [$mappingValue];
+        }
+        
+        if ($previousFragment !== null && (
+            $this->isConnection($previousFragment) || 
             $this->isParanthesisStart($previousFragment))) {
             return [$mappingValue];
         }

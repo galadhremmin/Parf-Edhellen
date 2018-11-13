@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 use App\Http\Controllers\Controller;
-use App\Helpers\LinkHelper;
 use App\Repositories\SentenceRepository;
 use App\Events\{
     SentenceDestroyed
@@ -18,14 +17,13 @@ use App\Models\{
     SentenceFragment, 
     SentenceFragmentInflectionRel
 };
-use App\Adapters\{
-    SentenceBuilder, 
-    LatinSentenceBuilder, 
-    SentenceAdapter
-};
 use App\Http\Controllers\Traits\{
     CanMapSentence, 
     CanValidateSentence
+};
+use App\Helpers\{
+    LinkHelper,
+    SentenceHelper
 };
 
 class SentenceController extends Controller
@@ -34,12 +32,10 @@ class SentenceController extends Controller
         CanValidateSentence;
 
     protected $_sentenceRepository;
-    protected $_sentenceAdapter;
 
-    public function __construct(SentenceRepository $sentenceRepository, SentenceAdapter $sentenceAdapter)
+    public function __construct(SentenceRepository $sentenceRepository)
     {
         $this->_sentenceRepository = $sentenceRepository;
-        $this->_sentenceAdapter = $sentenceAdapter;
     }
 
     public function index(Request $request)
@@ -55,12 +51,10 @@ class SentenceController extends Controller
 
     public function edit(Request $request, int $id) 
     {
-        $sentence = Sentence::findOrFail($id);
-        $data = $this->_sentenceAdapter->adaptFragments($sentence->sentence_fragments, false);
+        $sentence = $this->_sentenceRepository->getSentence($id);
 
         return view('sentence.edit', [
-            'sentence'     => $sentence, 
-            'sentenceData' => $data
+            'sentence' => $sentence
         ]);
     }
 
@@ -143,7 +137,7 @@ class SentenceController extends Controller
         ]);
 
         $fragments = $request->input('fragments');
-        $sentences = $this->_sentenceAdapter->adaptFragmentsToSentences($fragments, $name);
+        $sentences = resolve(SentenceHelper::class)->buildSentences($fragments, $name);
 
         return $sentences[$name];
     }

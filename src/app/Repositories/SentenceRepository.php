@@ -15,6 +15,7 @@ use App\Models\{
     SentenceFragmentInflectionRel,
     Speech
 };
+use App\Helpers\SentenceHelper;
 
 class SentenceRepository
 {
@@ -130,10 +131,11 @@ class SentenceRepository
         $sentence->makeHidden(['account_id', 'language_id', 'sentence_translations', 'sentence_fragments']);
 
         return [
-            'sentence' => $sentence->toArray(),
-            'sentence_translations' => $translations->toArray(),
-            'sentence_fragments' => $fragments->toArray(),
-            'speeches' => $speeches->toArray()
+            'sentence' => $sentence,
+            'sentence_fragments' => $fragments,
+            'sentence_translations' => $translations,
+            'sentence_transformations' => resolve(SentenceHelper::class)->buildSentences($fragments),
+            'speeches' => $speeches
         ];
     }
 

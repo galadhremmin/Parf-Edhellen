@@ -1,49 +1,48 @@
 @inject('link', 'App\Helpers\LinkHelper')
 @extends('_layouts.default')
 
-@section('title', $sentence->name . ' (' . $language->name.')')
+@section('title', $sentence['sentence']->name . ' (' . $language->name.')')
 @section('body')
 
   {!! Breadcrumbs::render('sentence.public.sentence', $language->id, $language->name,
-      $sentence->id, $sentence->name) !!}
+      $sentence['sentence']->id, $sentence['sentence']->name) !!}
   
-  @if ($sentence->is_neologism)
-    @include('_shared._neologism', ['account' => $sentence->account])
+  @if ($sentence['sentence']->is_neologism)
+    @include('_shared._neologism', ['account' => $sentence['sentence']->account])
   @endif
 
   <header>
     @include('sentence.public._header')
-    <h2>{{ $sentence->name }}</h2>
+    <h2>{{ $sentence['sentence']->name }}</h2>
   </header>
 
-  @if (!empty($sentence->description))
+  @if (!empty($sentence['sentence']->description))
   <div class="abstract">
-    @markdown($sentence->description)
+    @markdown($sentence['sentence']->description)
   </div>
   @endif
 
-  @if (! empty($sentence->long_description))
+  @if (! empty($sentence['sentence']->long_description))
   <div class="long-text-body">
-    @markdown($sentence->long_description)
+    @markdown($sentence['sentence']->long_description)
   </div>
   @endif
 
-  <div id="ed-fragment-navigator"></div>
-  <script type="application/json" id="ed-preload-sentence-data">{!! json_encode($sentenceData) !!}</script>
+  <div id="ed-fragment-navigator" data-inject-module="sentence" data-inject-prop-sentence="{!! json_encode($sentence) !!}"></div>
 
   @if (Auth::check())
   <p class="text-right">
     @if (Auth::user()->isAdministrator())
-    <a href="{{ route('sentence.confirm-destroy', [ 'id' => $sentence->id ]) }}" class="btn btn-default">
+    <a href="{{ route('sentence.confirm-destroy', [ 'id' => $sentence['sentence']->id ]) }}" class="btn btn-default">
       <span class="glyphicon glyphicon-trash"></span>
       Delete
     </a>
-    <a href="{{ route('sentence.edit', [ 'id' => $sentence->id ]) }}" class="btn btn-default">
+    <a href="{{ route('sentence.edit', [ 'id' => $sentence['sentence']->id ]) }}" class="btn btn-default">
       <span class="glyphicon glyphicon-edit"></span>
       Edit phrase
     </a>
     @endif
-    <a href="{{ route('contribution.create', [ 'morph' => 'sentence', 'entity_id' => $sentence->id ]) }}" class="btn btn-default">
+    <a href="{{ route('contribution.create', [ 'morph' => 'sentence', 'entity_id' => $sentence['sentence']->id ]) }}" class="btn btn-default">
       <span class="glyphicon glyphicon-edit"></span>
       Propose changes
     </a>
@@ -51,21 +50,21 @@
   @endif  
 
   <footer class="sentence-footer">
-    Source [{{ $sentence->source }}]. 
-    Published <em title="{{ $sentence->created_at }}" class="date">{{ $sentence->created_at }}</em>
-    @if ($sentence->updated_at)
-    and edited <em title="{{ $sentence->updated_at }}" class="date">{{ $sentence->updated_at }}</em>
+    Source [{{ $sentence['sentence']->source }}]. 
+    Published <em title="{{ $sentence['sentence']->created_at }}" class="date">{{ $sentence['sentence']->created_at }}</em>
+    @if ($sentence['sentence']->updated_at)
+    and edited <em title="{{ $sentence['sentence']->updated_at }}" class="date">{{ $sentence['sentence']->updated_at }}</em>
     @endif
-    @if ($sentence->account_id)
+    @if ($sentence['sentence']->account)
     by 
-    <a href="{{ $link->author($sentence->account_id, $sentence->account->nickname) }}">
-      {{ $sentence->account->nickname }}
+    <a href="{{ $link->author($sentence['sentence']->account->id, $sentence['sentence']->account->nickname) }}">
+      {{ $sentence['sentence']->account->nickname }}
     </a>
     @endif
   </footer>
   <hr>
   @include('_shared._comments', [
-    'entity_id' => $sentence->id,
+    'entity_id' => $sentence['sentence']->id,
     'morph'     => 'sentence',
     'enabled'   => true
   ])

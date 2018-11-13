@@ -12,16 +12,18 @@ import Glossary from './containers/Glossary';
 import Search from './containers/Search';
 import SearchResults from './containers/SearchResults';
 
-const store = createStore(rootReducer, undefined,
-    applyMiddleware(thunkMiddleware),
-);
+const Inject = () => {
+    const store = createStore(rootReducer, undefined,
+        applyMiddleware(thunkMiddleware),
+    );
+    
+    return <Provider store={store}>
+        <React.Fragment>
+            <Search />
+            <SearchResults />
+            <Glossary />
+        </React.Fragment>
+    </Provider>;
+};
 
-const app = <Provider store={store}>
-    <React.Fragment>
-        <Search />
-        <SearchResults />
-        <Glossary />
-    </React.Fragment>
-</Provider>;
-
-export default app;
+export default Inject;

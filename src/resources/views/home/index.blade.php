@@ -52,8 +52,7 @@
     @if ($sentence)
     <h4>Phrase of the day</h4>
     @include('sentence.public._random', [ 
-      'sentence'     => $sentence,
-      'sentenceData' => $sentenceData
+      'sentence' => $sentence
     ])
     @endif
   </div>
