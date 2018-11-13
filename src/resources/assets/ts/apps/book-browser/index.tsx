@@ -16,7 +16,7 @@ const Inject = () => {
     const store = createStore(rootReducer, undefined,
         applyMiddleware(thunkMiddleware),
     );
-    
+
     return <Provider store={store}>
         <React.Fragment>
             <Search />

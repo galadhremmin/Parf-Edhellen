@@ -104,7 +104,7 @@ module.exports = {
       filename: "[name].css",
       chunkFilename: "[id].css"
     }),
-    new AsyncChunkNames(),
+    //new AsyncChunkNames(),
     new WebpackNotifierPlugin(),
   ],
 };
