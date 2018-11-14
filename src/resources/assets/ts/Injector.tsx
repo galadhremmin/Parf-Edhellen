@@ -26,7 +26,7 @@ const InjectPropAttributeName = 'injectProp';
 const load = (element: HTMLElement, moduleName: string, props: any) => {
     const Component = Loadable({
         loader: () => import(`./apps/${moduleName}/index.tsx`),
-        loading: (props: LoadingComponentProps) => props.pastDelay ? <Spinner /> : null,
+        loading: (p: LoadingComponentProps) => p.pastDelay ? <Spinner /> : null,
     });
 
     render(<Component {...props} />, element);

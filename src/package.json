@@ -67,6 +67,7 @@
     "bootstrap-sass": "^3.3.7",
     "classnames": "^2.2.6",
     "core-js": "^2.5.7",
+    "fast-equals": "^1.6.1",
     "glaemscribe": "^1.1.14",
     "html-to-react": "^1.3.3",
     "moment": "^2.22.2",

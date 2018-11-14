@@ -28,7 +28,7 @@
   </div>
   @endif
 
-  <div id="ed-fragment-navigator" data-inject-module="sentence" data-inject-prop-sentence="{{ json_encode($sentence) }}"></div>
+  <div id="ed-fragment-navigator" data-inject-module="sentence-inspector" data-inject-prop-sentence="{{ json_encode($sentence) }}"></div>
 
   @if (Auth::check())
   <p class="text-right">

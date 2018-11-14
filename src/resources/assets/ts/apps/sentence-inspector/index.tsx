@@ -1,15 +1,18 @@
 import React from 'react';
+import { Provider } from 'react-redux';
 import {
     applyMiddleware,
     createStore,
 } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import { Provider } from 'react-redux';
 
 import { SentenceActions } from './actions';
+import { IProps } from './index._types';
 import rootReducer from './reducers';
 
-const Inject = (props: any) => {
+import SentenceInspector from './containers/SentenceInspector';
+
+const Inject = (props: IProps) => {
     const store = createStore(rootReducer, undefined,
         applyMiddleware(thunkMiddleware),
     );
@@ -20,7 +23,7 @@ const Inject = (props: any) => {
     }
 
     return <Provider store={store}>
-        <pre>test</pre>
+        <SentenceInspector />
     </Provider>;
 };
 

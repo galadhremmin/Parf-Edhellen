@@ -15,6 +15,7 @@ export interface IFragmentsReducerState {
 export interface ILocalizedFragmentsReducerState {
     id: number;
     fragment: string;
+    sentenceNumber: number;
 }
 
 export type FragmentsReducerState = IFragmentsReducerState[];
