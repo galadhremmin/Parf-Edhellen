@@ -1,6 +1,3 @@
-export interface ITranslationState {
-    sentenceNumber: number;
-    fragment: string;
-}
+import { ITextState } from './FragmentsReducer._types';
 
-export type TranslationsState = ITranslationState[];
+export type TranslationsState = ITextState;

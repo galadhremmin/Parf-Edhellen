@@ -1,13 +1,16 @@
-import convert from '../utilities/LocalizedFragmentConverter';
+import convert from '../utilities/TextConverter';
 import Actions from './Actions';
-import { LocalizedFragmentsReducerState } from './FragmentsReducer._types';
+import { ITextState } from './FragmentsReducer._types';
 import { ISentenceReducerAction } from './SentenceReducer._types';
 
 const TransformerName = 'tengwar';
-const TengwarFragmentsReducer = (state: LocalizedFragmentsReducerState = [], action: ISentenceReducerAction) => {
+const TengwarFragmentsReducer = (state: ITextState = {
+    paragraphs: [],
+    transformerName: TransformerName,
+}, action: ISentenceReducerAction) => {
     switch (action.type) {
         case Actions.ReceiveSentence:
-            return convert(action.sentence.sentenceTransformations[TransformerName], action.sentence.sentenceFragments);
+            return convert(TransformerName, action.sentence.sentenceTransformations[TransformerName], action.sentence.sentenceFragments);
         default:
             return state;
     }

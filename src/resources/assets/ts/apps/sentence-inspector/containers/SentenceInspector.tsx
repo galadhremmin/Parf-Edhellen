@@ -8,7 +8,7 @@ import {
     IState,
 } from './SentenceInspector._types';
 
-import SentenceInspectorView from '../components/SentenceInspectorView';
+import TextInspectorView from '../components/TextInspectorView';
 
 /*
     insert into sentence_translations (sentence_id, sentence_number, translation)
@@ -30,10 +30,10 @@ export class SentenceInspector extends React.PureComponent<IProps, IState> {
             translations,
         } = props;
 
-        const leftHand = translations.length > 0
+        const leftHand = translations.paragraphs.length > 0
             ? [tengwarFragments, latinFragments]
             : [latinFragments];
-        const rightHand = translations.length > 0
+        const rightHand = translations.paragraphs.length > 0
             ? [translations]
             : [tengwarFragments];
 
@@ -67,10 +67,10 @@ export class SentenceInspector extends React.PureComponent<IProps, IState> {
 
         return <div>
             <section>
-                <SentenceInspectorView sentences={leftHand} {...selection} />
+                <TextInspectorView texts={leftHand} {...selection} />
             </section>
             <section>
-                <SentenceInspectorView sentences={rightHand} {...selection} />
+                <TextInspectorView texts={rightHand} {...selection} />
             </section>
         </div>;
     }

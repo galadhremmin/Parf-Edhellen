@@ -3,21 +3,21 @@ import { expect } from 'chai';
 
 import {
     ISentenceFragmentEntity,
-    SentenceLocalizedTransformationMap
+    TextTransformation,
 } from '@root/connectors/backend/BookApiConnector._types';
 
-import convert from './LocalizedFragmentConverter';
+import convert from './TextConverter';
 
-describe('apps/sentence/utilities/LocalizedFragmentConverter', () => {
+describe('apps/sentence/utilities/TextConverter', () => {
     const Fragments: ISentenceFragmentEntity[] = JSON.parse(`[{"id":3242,"gloss_id":366116,"type":0,"fragment":"A","tengwar":"\`C","speech":"interjection","speech_id":12,"comments":null,"inflections":[]},{"id":3243,"gloss_id":336024,"type":0,"fragment":"T\u00farin","tengwar":"1~M7T5","speech":"masculine name","speech_id":13,"comments":"","inflections":[]},{"id":3244,"gloss_id":369112,"type":0,"fragment":"Turambar","tengwar":"1U7Ew#6","speech":"masculine name","speech_id":13,"comments":null,"inflections":[]},{"id":3245,"gloss_id":115037,"type":0,"fragment":"tur\u00fan\u2019","tengwar":"1U7~M5","speech":"verb","speech_id":26,"comments":"","inflections":[{"id":43,"name":"passive participle"}]},{"id":3246,"gloss_id":103246,"type":0,"fragment":"ambartanen","tengwar":"\`Cw#61E5$5","speech":"noun","speech_id":14,"comments":"","inflections":[{"id":115,"name":"instrumental"}]},{"id":3247,"gloss_id":null,"type":31,"fragment":"!","tengwar":"\u00c1","speech":null,"speech_id":null,"comments":null,"inflections":[]}]`);
-    const LatinMap: SentenceLocalizedTransformationMap[] = JSON.parse(`[[[0]," ",[1]," ",[2]," ",[3]," ",[4],[5]]]`);
-    const TengwarMap: SentenceLocalizedTransformationMap[] = JSON.parse(`[[[0,"\`C"]," ",[1,"1~M7T5"]," ",[2,"1U7Ew#6"]," ",[3,"1U7~M5"]," ",[4,"\`Cw#61E5$5"]," ",[5,"\u00c1"]]]`);
+    const LatinMap: TextTransformation = JSON.parse(`[[[0]," ",[1]," ",[2]," ",[3]," ",[4],[5]]]`);
+    const TengwarMap: TextTransformation = JSON.parse(`[[[0,"\`C"]," ",[1,"1~M7T5"]," ",[2,"1U7Ew#6"]," ",[3,"1U7~M5"]," ",[4,"\`Cw#61E5$5"]," ",[5,"\u00c1"]]]`);
 
     it('supports simple map without substitutions', () => {
-        const map = convert(LatinMap, Fragments);
+        const map = convert('latin', LatinMap, Fragments);
 
-        expect(map.length).to.equal(1);
-        expect(map[0].length).to.equal(10);
+        expect(map.paragraphs.length).to.equal(1);
+        expect(map.paragraphs[0].length).to.equal(10);
         
         const expectedIds = [
             Fragments[0].id,
@@ -31,7 +31,7 @@ describe('apps/sentence/utilities/LocalizedFragmentConverter', () => {
             Fragments[4].id,
             Fragments[5].id,
         ];
-        expect(map[0].map(v => v.id)).to.deep.equal(expectedIds);
+        expect(map.paragraphs[0].map((v) => v.id)).to.deep.equal(expectedIds);
 
         const expectedFragments = [
             Fragments[0].fragment,
@@ -45,14 +45,14 @@ describe('apps/sentence/utilities/LocalizedFragmentConverter', () => {
             Fragments[4].fragment,
             Fragments[5].fragment,
         ];
-        expect(map[0].map(v => v.fragment)).to.deep.equal(expectedFragments);
+        expect(map.paragraphs[0].map((v) => v.fragment)).to.deep.equal(expectedFragments);
     });
 
     it('supports map with substitutions', () => {
-        const map = convert(TengwarMap, Fragments);
+        const map = convert('tengwar', TengwarMap, Fragments);
 
-        expect(map.length).to.equal(1);
-        expect(map[0].length).to.equal(11);
+        expect(map.paragraphs.length).to.equal(1);
+        expect(map.paragraphs[0].length).to.equal(11);
         
         const expectedIds = [
             Fragments[0].id,
@@ -67,7 +67,7 @@ describe('apps/sentence/utilities/LocalizedFragmentConverter', () => {
             -1,
             Fragments[5].id,
         ];
-        expect(map[0].map(v => v.id)).to.deep.equal(expectedIds);
+        expect(map.paragraphs[0].map((v) => v.id)).to.deep.equal(expectedIds);
 
         const expectedFragments = [
             '\`C',
@@ -82,6 +82,6 @@ describe('apps/sentence/utilities/LocalizedFragmentConverter', () => {
             ' ',
             '\u00c1'
         ];
-        expect(map[0].map(v => v.fragment)).to.deep.equal(expectedFragments);
+        expect(map.paragraphs[0].map((v) => v.fragment)).to.deep.equal(expectedFragments);
     });
 });

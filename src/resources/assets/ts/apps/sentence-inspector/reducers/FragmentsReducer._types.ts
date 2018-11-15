@@ -12,11 +12,16 @@ export interface IFragmentsReducerState {
     type: SentenceFragmentType;
 }
 
-export interface ILocalizedFragmentsReducerState {
+export type FragmentsReducerState = IFragmentsReducerState[];
+
+export interface IFragmentInSentenceState {
     id: number;
     fragment: string;
     sentenceNumber: number;
 }
 
-export type FragmentsReducerState = IFragmentsReducerState[];
-export type LocalizedFragmentsReducerState = ILocalizedFragmentsReducerState[];
+export type ParagraphState = IFragmentInSentenceState[];
+export interface ITextState {
+    paragraphs: ParagraphState[];
+    transformerName: string;
+}

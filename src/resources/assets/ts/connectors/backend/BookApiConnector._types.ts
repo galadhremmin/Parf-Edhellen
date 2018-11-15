@@ -117,7 +117,7 @@ export interface ISentenceResponse {
     sentence: ISentenceEntity;
     sentenceFragments: ISentenceFragmentEntity[];
     sentenceTranslations: ISentenceTranslationMap;
-    sentenceTransformations: ISentenceTransformationMap;
+    sentenceTransformations: TextTransformationsMap;
     speeches: ISpeechMap;
 }
 
@@ -173,12 +173,13 @@ export interface ISentenceTranslationMap {
     [sentenceNumber: string]: string;
 }
 
-export interface ISentenceTransformationMap {
-    [name: string]: SentenceLocalizedTransformationMap[];
+export interface TextTransformationsMap {
+    [transformationName: string]: TextTransformation;
 }
 
-export type SentenceLocalizedTransformationMap = SentenceFragmentLocalizationMap[];
-export type SentenceFragmentLocalizationMap = [number, string?] | string;
+export type TextTransformation = ParagraphTransformation[];
+export type ParagraphTransformation = FragmentTransformation[];
+export type FragmentTransformation = [number, string?] | string;
 
 export interface ISpeechMap {
     [speechId: string]: string;

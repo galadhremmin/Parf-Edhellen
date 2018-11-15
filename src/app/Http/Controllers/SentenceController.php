@@ -17,7 +17,7 @@ class SentenceController extends Controller
         $this->_sentenceRepository = $sentenceRepository;
     }
 
-    public function index() 
+    public function index()
     {
         $numberOfSentences  = Sentence::approved()->count();
         $numberOfNeologisms = Sentence::approved()->neologisms()->count();

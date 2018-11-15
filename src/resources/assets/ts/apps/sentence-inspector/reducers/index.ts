@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 
 import {
     FragmentsReducerState,
-    LocalizedFragmentsReducerState,
+    ITextState,
 } from './FragmentsReducer._types';
 import { ISelectionReducerState } from './SelectionReducer._types';
 import { ISentenceReducerState } from './SentenceReducer._types';
@@ -17,10 +17,10 @@ import TranslationsReducer from './TranslationsReducer';
 
 export interface IRootReducer {
     fragments: FragmentsReducerState;
-    latinFragments: LocalizedFragmentsReducerState;
+    latinFragments: ITextState;
     selection: ISelectionReducerState;
     sentence: ISentenceReducerState;
-    tengwarFragments: LocalizedFragmentsReducerState;
+    tengwarFragments: ITextState;
     translations: TranslationsState;
 }
 

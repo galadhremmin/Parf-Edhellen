@@ -1,19 +1,19 @@
 import {
     FragmentsReducerState,
-    LocalizedFragmentsReducerState,
+    ITextState,
 } from '../reducers/FragmentsReducer._types';
 import { ISelectionReducerState } from '../reducers/SelectionReducer._types';
 import { TranslationsState } from '../reducers/TranslationsReducer._types';
 
 export interface IProps {
     fragments: FragmentsReducerState;
-    latinFragments: LocalizedFragmentsReducerState;
+    latinFragments: ITextState;
     selection: ISelectionReducerState;
-    tengwarFragments: LocalizedFragmentsReducerState;
+    tengwarFragments: ITextState;
     translations: TranslationsState;
 }
 
 export interface IState {
-    leftHand: LocalizedFragmentsReducerState[];
-    rightHand: LocalizedFragmentsReducerState[];
+    leftHand: ITextState[];
+    rightHand: ITextState[];
 }
