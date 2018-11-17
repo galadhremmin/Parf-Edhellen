@@ -20,12 +20,19 @@ const convert = (transformerName: string, textTransformation: TextTransformation
     }
 
     for (const paragraphMap of textTransformation) {
+        let currentSentenceNumber = 0;
         const state = mapArray<FragmentTransformation, IFragmentInSentenceState>({
             fragment: (v) => typeof v === 'string'
                 ? v : v[1] !== undefined ? v[1] : fragments[v[0]].fragment,
             id: (v) => typeof v === 'string'
                 ? -1 : fragments[v[0]].id,
-            sentenceNumber: (v) => typeof v === 'string' ? 0 : fragments[v[0]].sentenceNumber,
+            sentenceNumber: (v) => {
+                if (Array.isArray(v)) {
+                    currentSentenceNumber = fragments[v[0]].sentenceNumber; 
+                }
+
+                return currentSentenceNumber;
+            },
         }, paragraphMap);
 
         text.paragraphs.push(state);

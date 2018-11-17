@@ -58,18 +58,24 @@ abstract class SentenceBuilder
     public function build()
     {
         $line = 0;
-        $sentences = [];
+        $paragraphs = [];
         $sentence = [];
         $previousFragment = null;
 
         for ($i = 0; $i < $this->_numberOfFragments; $i += 1) {
             $fragment = $this->getFragment($i);
+            $nextFragment = $this->getFragment($i + 1);
             $fragments = null;
 
-            if ($this->isLineBreak($fragment)) {
-                $this->finalizeSentence($sentence);
+            if ($nextFragment != null && $nextFragment->paragraph_number !== $fragment->paragraph_number) {
+                if (! $this->isLineBreak($fragment)) {
+                    $fragments = $this->handleFragment($fragment, $i, $previousFragment, $sentence);
+                    $this->applyFragments($sentence, $fragments);
+                }
+                
+                $this->finalizeParagraph($sentence);
 
-                $sentences[] = $sentence;
+                $paragraphs[] = $sentence;
                 $sentence = [];
 
             } else if ($this->isInterpunctuation($fragment)) {
@@ -96,19 +102,17 @@ abstract class SentenceBuilder
             }
 
             if ($fragments !== null) {
-                foreach ($fragments as $newFragment) {
-                    $sentence[] = $newFragment;
-                }
+                $this->applyFragments($sentence, $fragments);
             }
 
             $previousFragment = $fragment;
         }
 
         if (count($sentence)) {
-            $sentences[] = $sentence;
+            $paragraphs[] = $sentence;
         }
 
-        return $sentences;
+        return $paragraphs;
     }
 
     public function getFragment(int $index) 
@@ -174,11 +178,17 @@ abstract class SentenceBuilder
         return $fragment['type'] === self::TYPE_CODE_EXCLUDE;
     }
 
+    public function applyFragments(array &$sentence, array $fragments) {
+        foreach ($fragments as $newFragment) {
+            $sentence[] = $newFragment;
+        }
+    } 
+
     protected abstract function handleInterpunctuation($fragment, int $fragmentIndex, $previousFragment, array $sentence);
     protected abstract function handleConnection($fragment, int $fragmentIndex, $previousFragment, array $sentence);
     protected abstract function handleFragment($fragment, int $fragmentIndex, $previousFragment, array $sentence);
     protected abstract function handleExcluded($fragment, int $fragmentIndex, $previousFragment, array $sentence);
     protected abstract function handleParanthesisStart($fragment, int $fragmentIndex, $previousFragment, array $sentence);
     protected abstract function handleParanthesisEnd($fragment, int $fragmentIndex, $previousFragment, array $sentence);
-    protected abstract function finalizeSentence(array& $sentence);
+    protected abstract function finalizeParagraph(array& $sentence);
 }

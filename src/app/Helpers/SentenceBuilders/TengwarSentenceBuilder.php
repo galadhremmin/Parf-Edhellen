@@ -43,7 +43,7 @@ class TengwarSentenceBuilder extends SentenceBuilder
         return [$fragment['tengwar']];
     }
 
-    protected function finalizeSentence(array& $sentence)
+    protected function finalizeParagraph(array& $sentence)
     {
         // Noop
     }

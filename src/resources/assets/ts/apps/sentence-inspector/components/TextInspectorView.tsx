@@ -2,11 +2,13 @@ import React from 'react';
 
 import {
     ParagraphState,
-    IFragmentInSentenceState,
 } from '../reducers/FragmentsReducer._types';
 import {
     IProps,
 } from './TextInspectorView._types';
+
+import Fragment from './Fragment';
+import Paragraph from './Paragraph';
 
 export default class TextInspectorView extends React.PureComponent<IProps> {
     public render() {
@@ -31,7 +33,6 @@ export default class TextInspectorView extends React.PureComponent<IProps> {
             }
 
             text.push(paragraphs);
-
             paragraphNumber += 1;
         }
 
@@ -42,13 +43,8 @@ export default class TextInspectorView extends React.PureComponent<IProps> {
         if (paragraph === undefined) {
             return null;
         }
-
-        return <div key={key} className={`paragraph paragraph--${transformerName}`}>
-            {paragraph.map((fragment, i) => this._renderFragment(fragment, i))}
-        </div>;
-    }
-
-    private _renderFragment(fragment: IFragmentInSentenceState, key: number) {
-        return <span key={key}>{fragment.fragment}</span>;
+        return <Paragraph transformerName={transformerName} key={key}>
+            {paragraph.map((fragment, i) => <Fragment fragment={fragment} key={i} />)}
+        </Paragraph>;
     }
 }

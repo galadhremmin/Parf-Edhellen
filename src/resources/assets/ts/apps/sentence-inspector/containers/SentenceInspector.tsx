@@ -10,6 +10,8 @@ import {
 
 import TextInspectorView from '../components/TextInspectorView';
 
+import './SentenceInspector.scss';
+
 /*
     insert into sentence_translations (sentence_id, sentence_number, translation)
     values (29, 10, 'Hymn of the elves from Rivendell');
@@ -65,7 +67,7 @@ export class SentenceInspector extends React.PureComponent<IProps, IState> {
             rightHand,
         } = this.state;
 
-        return <div>
+        return <div className="sentence-inspector">
             <section>
                 <TextInspectorView texts={leftHand} {...selection} />
             </section>

@@ -44,7 +44,7 @@ class LatinSentenceBuilder extends SentenceBuilder
         return [$fragment['fragment']];
     }
 
-    protected function finalizeSentence(array& $sentence)
+    protected function finalizeParagraph(array& $sentence)
     {
         // Noop
     }

@@ -32,17 +32,28 @@ class SentenceTranslations extends Migration
             ->get();
         
         $sentence_id = 0;
+        $sentence_increment = 10;
         $arr = [];
         foreach ($fragments as $fragment) {
             if ($sentence_id !== $fragment->sentence_id) {
                 $sentence_id = $fragment->sentence_id;
                 $sentence_number = 10;
+                $newSentence = false;
+            } else if ($fragment->type === 10) {
+                if ($newSentence) {
+                    $fragment->sentence_number = $sentence_number - $sentence_increment;
+                }
             }
 
-            $fragment->sentence_number = $sentence_number;
+            if ($fragment->sentence_number === null) {
+                $fragment->sentence_number = $sentence_number;
+            }
 
             if (preg_match('/^[\.\?!]{1}$/', $fragment->fragment)) {
-                $sentence_number += 10;
+                $sentence_number += $sentence_increment;
+                $newSentence = true;
+            } else {
+                $newSentence = false;
             }
 
             $fragment->save();
