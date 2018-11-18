@@ -1,58 +1,25 @@
-import { deepEqual } from 'fast-equals';
 import React from 'react';
 import { connect } from 'react-redux';
 
 import { IRootReducer } from '../reducers';
-import {
-    IProps,
-    IState,
-} from './SentenceInspector._types';
+import { IProps } from './SentenceInspector._types';
 
+import { SentenceActions } from '../actions';
+import { IProps as IFragmentInspectorProps } from '../components/FragmentInspector._types';
+import FragmentInspector from '../components/FragmentInspector';
 import TextInspectorView from '../components/TextInspectorView';
+import { IFragmentInSentenceState } from '../reducers/FragmentsReducer._types';
 
 import './SentenceInspector.scss';
 
-/*
-    insert into sentence_translations (sentence_id, sentence_number, translation)
-    values (29, 10, 'Hymn of the elves from Rivendell');
-*/
-export class SentenceInspector extends React.PureComponent<IProps, IState> {
-    /**
-     * Builds `leftHand` and `rightHand` state variables based on the corresponding
-     * properties passed to the component. The `leftHand` view will consist of tengwar
-     * *and* latin transforms when the phrase has a translation, whereas it will only
-     * contain the latin transform when there is no translation.
-     * @param props new properties
-     * @param state existing state
-     */
-    public static getDerivedStateFromProps(props: IProps, state: IState) {
-        const {
-            latinFragments,
-            tengwarFragments,
-            translations,
-        } = props;
+export class SentenceInspector extends React.PureComponent<IProps> {
+    private _actions = new SentenceActions();
 
-        const leftHand = translations.paragraphs.length > 0
-            ? [tengwarFragments, latinFragments]
-            : [latinFragments];
-        const rightHand = translations.paragraphs.length > 0
-            ? [translations]
-            : [tengwarFragments];
-
-        if (deepEqual(leftHand, state.leftHand) && deepEqual(rightHand, state.rightHand)) {
-            return null;
-        }
-
-        return {
-            leftHand,
-            rightHand,
-        };
+    onFragmentClick = (fragment: IFragmentInSentenceState) => {
+        this.props.dispatch(
+            this._actions.selectFragment(fragment),
+        );
     }
-
-    public state: IState = {
-        leftHand: null,
-        rightHand: null,
-    };
 
     public render() {
         return this._render();
@@ -61,20 +28,30 @@ export class SentenceInspector extends React.PureComponent<IProps, IState> {
     private _render() {
         const {
             selection,
+            latinFragments,
+            tengwarFragments,
+            translations
         } = this.props;
-        const {
-            leftHand,
-            rightHand,
-        } = this.state;
+
+        const texts = [
+            latinFragments,
+            tengwarFragments,
+        ];
+        if (translations.paragraphs.length > 0) {
+            texts.push(translations);
+        }
 
         return <div className="sentence-inspector">
-            <section>
-                <TextInspectorView texts={leftHand} {...selection} />
-            </section>
-            <section>
-                <TextInspectorView texts={rightHand} {...selection} />
-            </section>
+            <TextInspectorView {...selection}
+                fragmentInspector={this._renderInspector}
+                texts={texts}
+                onFragmentClick={this.onFragmentClick}
+            />
         </div>;
+    }
+
+    private _renderInspector(props: IFragmentInspectorProps) {
+        return <FragmentInspector {...props} />;
     }
 }
 

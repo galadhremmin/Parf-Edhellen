@@ -1,14 +1,16 @@
 import React from 'react';
 
 import {
-    ParagraphState,
+    ITextState, IFragmentInSentenceState,
 } from '../reducers/FragmentsReducer._types';
 import {
     IProps,
+    IRenderArgs,
 } from './TextInspectorView._types';
 
 import Fragment from './Fragment';
 import Paragraph from './Paragraph';
+import ParagraphGroup from './ParagraphGroup';
 
 export default class TextInspectorView extends React.PureComponent<IProps> {
     public render() {
@@ -20,31 +22,87 @@ export default class TextInspectorView extends React.PureComponent<IProps> {
             return null;
         }
 
-        const text = [];
+        return this._renderParagraphGroups(texts);
+    }
+
+    private _renderParagraphGroups(texts: ITextState[]) {
+        const {
+            fragmentId,
+            fragmentInspector: FragmentInspector,
+        } = this.props;
+
+        const groups = [];
+
         let paragraphNumber = 0;
         while (true) {
-            const paragraphs = texts.map(
-                    (text, i) => this._renderParagraph(text.paragraphs[paragraphNumber], i, text.transformerName)
-                )
-                .filter((paragraph) => paragraph != null);
+            const args: IRenderArgs = {
+                fragmentSelected: false,
+                paragraphNumber,
+            };
+            const paragraphs = this._renderParagraphs(texts, args);
 
             if (paragraphs.length === 0) {
                 break;
             }
 
-            text.push(paragraphs);
+            groups.push(<ParagraphGroup selected={args.fragmentSelected} key={paragraphNumber}>
+                {paragraphs}
+            </ParagraphGroup>);
+
+            if (args.fragmentSelected) {
+                groups.push(<FragmentInspector key="inspect" fragmentId={fragmentId} />);
+            }
+
             paragraphNumber += 1;
         }
 
-        return text;
+        return groups;
+    }
+    
+    private _renderParagraphs(texts: ITextState[], args: IRenderArgs) {
+        return texts.reduce((paragraphs, text, key) => {
+            const component = this._renderParagraph(text, key, args);
+
+            if (component !== null) {
+                paragraphs.push(component);
+            }
+
+            return paragraphs;
+        }, []);
     }
 
-    private _renderParagraph(paragraph: ParagraphState, key: number, transformerName: string) {
+    private _renderParagraph(text: ITextState, key: number, args: IRenderArgs) {
+        const {
+            paragraphNumber,
+        } = args;
+
+        const paragraph = text.paragraphs[paragraphNumber];
+
         if (paragraph === undefined) {
             return null;
         }
-        return <Paragraph transformerName={transformerName} key={key}>
-            {paragraph.map((fragment, i) => <Fragment fragment={fragment} key={i} />)}
+
+        return <Paragraph key={key} transformerName={text.transformerName} paragraphNumber={paragraphNumber}>
+            {paragraph.map((fragment, key) => this._renderFragment(fragment, key, args))}
         </Paragraph>;
+    }
+
+    private _renderFragment(fragment: IFragmentInSentenceState, key: number, args: IRenderArgs) {
+        const {
+            fragmentId,
+            onFragmentClick,
+        } = this.props;
+
+        const selected = fragment.id === fragmentId;
+        if (selected) {
+            args.fragmentSelected = selected;
+        }
+
+        return <Fragment
+            key={key}
+            fragment={fragment}
+            onClick={onFragmentClick}
+            selected={selected}
+        />;
     }
 }

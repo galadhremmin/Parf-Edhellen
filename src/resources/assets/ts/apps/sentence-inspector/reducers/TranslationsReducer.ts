@@ -11,11 +11,15 @@ const TranslationFragmentsReducer = (state: TranslationsState = {
             return {
                 ...state,
                 paragraphs: Object.keys(action.sentence.sentenceTranslations) //
-                    .map((sentenceNumber) => [{
-                        fragment: action.sentence.sentenceTranslations[sentenceNumber],
-                        sentenceNumber: parseInt(sentenceNumber, 10),
-                    }]),
-            }
+                    .map((paragraphNumber) => {
+                        const paragraph = action.sentence.sentenceTranslations[paragraphNumber];
+
+                        return [{
+                            fragment: paragraph.translation,
+                            sentenceNumber: paragraph.sentenceNumber,
+                        }];
+                    }),
+            };
         default:
             return state;
     }

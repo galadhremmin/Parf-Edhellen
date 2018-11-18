@@ -1,16 +1,19 @@
 import Actions from './Actions';
-import { ISelectionReducerState } from './SelectionReducer._types';
-import { ISentenceReducerAction } from './SentenceReducer._types';
+import {
+    ISelectionReducerAction,
+    ISelectionReducerState,
+} from './SelectionReducer._types';
 
 const SelectionReducer = (state: ISelectionReducerState = {
     fragmentId: 0,
     sentenceNumber: 0,
-}, action: ISentenceReducerAction) => {
+}, action: ISelectionReducerAction) => {
     switch (action.type) {
         case Actions.SelectFragment:
             return {
                 ...state,
-                fragmentId: action.id,
+                fragmentId: action.fragmentId,
+                sentenceNumber: action.sentenceNumber,
             };
         default:
             return state;

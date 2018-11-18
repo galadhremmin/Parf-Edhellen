@@ -7,6 +7,6 @@ import {
 export type ISentenceReducerState = ISentenceEntity;
 
 export interface ISentenceReducerAction extends IReduxAction {
-    id: number;
-    sentence: ISentenceResponse;
+    id?: number;
+    sentence?: ISentenceResponse;
 }

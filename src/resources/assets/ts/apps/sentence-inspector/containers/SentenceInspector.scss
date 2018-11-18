@@ -1,7 +1,33 @@
 .sentence-inspector {
-    display: flex;
-    
-    > section {
-        flex: 1;
+    font-size: 1.6rem;
+
+    > .p-group {
+        display: flex;
+        transition: 0.5s padding;
+
+        &.selected {
+            background: #eee;
+            border: 1px solid #ccc;
+            padding: 0.4em 0 0.4em 0.2em;
+            border-radius: 0.2em;
+        }
+
+        > .p-group__p {
+            flex: 1;
+            line-height: 1.8;
+
+            &.english {
+                font-style: italic;
+            }
+
+            > a {
+                color: inherit;
+                text-decoration: none;
+
+                &.selected {
+                    font-weight: bold;
+                }
+            }
+        }
     }
 }

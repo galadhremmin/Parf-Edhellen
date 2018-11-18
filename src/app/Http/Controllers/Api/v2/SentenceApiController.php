@@ -11,13 +11,10 @@ use DB;
 
 class SentenceApiController extends Controller 
 {
-    private $_adapter;
     private $_repository;
 
-    public function __construct(SentenceAdapter $adapter,
-        SentenceRepository $repository)
+    public function __construct(SentenceRepository $repository)
     {
-        $this->_adapter = $adapter;
         $this->_repository = $repository;
     }
 

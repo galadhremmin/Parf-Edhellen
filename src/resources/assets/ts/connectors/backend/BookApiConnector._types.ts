@@ -117,42 +117,42 @@ export interface ISentenceResponse {
     sentence: ISentenceEntity;
     sentenceFragments: ISentenceFragmentEntity[];
     sentenceTranslations: ISentenceTranslationMap;
-    sentenceTransformations: TextTransformationsMap;
+    sentenceTransformations: ITextTransformationsMap;
     speeches: ISpeechMap;
 }
 
 export interface ISentenceEntity {
-    account: IAccountEntity;
-    createdAt: string;
-    description: string;
+    account?: IAccountEntity;
+    createdAt?: string;
+    description?: string;
     id: number;
-    isApproved: boolean;
-    isNeologism: boolean;
-    language: ILanguageEntity;
-    longDescription: string;
-    name: string;
-    source: string;
-    updatedAt: string;
+    isApproved?: boolean;
+    isNeologism?: boolean;
+    language?: ILanguageEntity;
+    longDescription?: string;
+    name?: string;
+    source?: string;
+    updatedAt?: string;
 }
 
 export interface IAccountEntity {
-    hasAvatar: boolean;
+    hasAvatar?: boolean;
     id: number;
     nickname: string;
-    tengwar: string;
+    tengwar?: string;
 }
 
 export interface ISentenceFragmentEntity {
-    comments: string;
-    fragment: string;
-    glossId: number;
+    comments?: string;
+    fragment?: string;
+    glossId?: number;
     id: number;
-    inflections: IInflectionEntity[];
+    inflections?: IInflectionEntity[];
     sentenceNumber: number;
-    speech: string;
-    speechId: number;
-    tengwar: string;
-    type: SentenceFragmentType;
+    speech?: string;
+    speechId?: number;
+    tengwar?: string;
+    type?: SentenceFragmentType;
 }
 
 export enum SentenceFragmentType {
@@ -170,14 +170,21 @@ export interface IInflectionEntity {
 }
 
 export interface ISentenceTranslationMap {
-    [sentenceNumber: string]: string;
+    [paragraphNumber: string]: ISentenceTranslation;
 }
 
-export interface TextTransformationsMap {
-    [transformationName: string]: TextTransformation;
+export interface ISentenceTranslation {
+    sentenceNumber: number;
+    translation: string;
 }
 
-export type TextTransformation = ParagraphTransformation[];
+export interface ITextTransformationsMap {
+    [transformationName: string]: ITextTransformation;
+}
+
+export interface ITextTransformation {
+    [paragraphNumber: string]: ParagraphTransformation;
+}
 export type ParagraphTransformation = FragmentTransformation[];
 export type FragmentTransformation = [number, string?] | string;
 

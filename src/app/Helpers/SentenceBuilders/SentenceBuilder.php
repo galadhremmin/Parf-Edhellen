@@ -57,7 +57,6 @@ abstract class SentenceBuilder
      */
     public function build()
     {
-        $line = 0;
         $paragraphs = [];
         $sentence = [];
         $previousFragment = null;
@@ -68,6 +67,7 @@ abstract class SentenceBuilder
             $fragments = null;
 
             if ($nextFragment != null && $nextFragment->paragraph_number !== $fragment->paragraph_number) {
+
                 if (! $this->isLineBreak($fragment)) {
                     $fragments = $this->handleFragment($fragment, $i, $previousFragment, $sentence);
                     $this->applyFragments($sentence, $fragments);
@@ -75,7 +75,7 @@ abstract class SentenceBuilder
                 
                 $this->finalizeParagraph($sentence);
 
-                $paragraphs[] = $sentence;
+                $paragraphs[$fragment->paragraph_number] = $sentence;
                 $sentence = [];
 
             } else if ($this->isInterpunctuation($fragment)) {
@@ -109,7 +109,7 @@ abstract class SentenceBuilder
         }
 
         if (count($sentence)) {
-            $paragraphs[] = $sentence;
+            $paragraphs[$previousFragment->paragraph_number] = $sentence;
         }
 
         return $paragraphs;

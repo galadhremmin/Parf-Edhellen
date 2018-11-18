@@ -22,7 +22,13 @@ class SentenceParagraphs extends Migration
         });
 
         Schema::table('sentence_translations', function (Blueprint $table) {
-            $table->integer('paragraph_number')->nullable();
+            $table->dropPrimary();
+
+            $table->integer('sentence_id')->nullable(false)->change();
+            $table->integer('sentence_number')->nullable(false)->change();
+            $table->integer('paragraph_number')->nullable(false);
+
+            $table->primary(['sentence_id', 'sentence_number', 'paragraph_number'], 'pk');
         });
 
         $fragments = SentenceFragment::orderBy('sentence_id', 'asc')
@@ -59,7 +65,9 @@ class SentenceParagraphs extends Migration
         });
 
         Schema::table('sentence_translations', function (Blueprint $table) {
+            $table->dropPrimary('pk');
             $table->dropColumn('paragraph_number');
+            $table->primary(['sentence_id', 'sentence_number']);
         });
     }
 }

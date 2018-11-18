@@ -10,7 +10,8 @@ const TengwarFragmentsReducer = (state: ITextState = {
 }, action: ISentenceReducerAction) => {
     switch (action.type) {
         case Actions.ReceiveSentence:
-            return convert(TransformerName, action.sentence.sentenceTransformations[TransformerName], action.sentence.sentenceFragments);
+            return convert(TransformerName, action.sentence.sentenceTransformations[TransformerName], //
+                action.sentence.sentenceFragments);
         default:
             return state;
     }

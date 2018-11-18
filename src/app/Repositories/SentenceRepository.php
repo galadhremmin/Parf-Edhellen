@@ -108,10 +108,13 @@ class SentenceRepository
             ->get();
 
         $translations = $sentence->sentence_translations()
-            ->select('sentence_number', 'translation')
+            ->select('sentence_number', 'paragraph_number', 'translation')
             ->get()
-            ->mapWithKeys(function ($item) {
-                return [$item->sentence_number => $item->translation];
+            ->transform(function ($item) {
+                $item->makeHidden('paragraph_number');
+                return $item;
+            })->mapWithKeys(function ($item) {
+                return [ $item->paragraph_number => $item ];
             });
 
         $speechIds = $fragments->reduce(function ($carry, $f) {
