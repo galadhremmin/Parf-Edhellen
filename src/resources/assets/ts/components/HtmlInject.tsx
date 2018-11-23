@@ -8,6 +8,9 @@ import {
 import React, { PureComponent } from 'react';
 
 import {
+    fireEvent,
+} from './Component';
+import {
     IProps,
     IState,
 } from './HtmlInject._types';
@@ -62,15 +65,10 @@ export default class HtmlInject extends PureComponent<IProps, IState> {
         ev: React.MouseEvent<HTMLAnchorElement>) {
         ev.preventDefault();
 
-        if (typeof this.props.onReferenceLinkClick === 'function') {
-            this.props.onReferenceLinkClick({
-                name: null,
-                value: {
-                    languageShortName,
-                    normalizedWord,
-                    word,
-                },
-            });
-        }
+        fireEvent(this, this.props.onReferenceLinkClick, {
+            languageShortName,
+            normalizedWord,
+            word,
+        });
     }
 }

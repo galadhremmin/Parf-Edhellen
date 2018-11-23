@@ -9,6 +9,6 @@ export interface IBackingComponentProps<V> {
     value?: V;
 }
 
-export interface IComponentProps<V> extends IBackingComponentProps<V> {
+export interface IComponentProps<V = any> extends IBackingComponentProps<V> {
     onChange?: ComponentEventHandler<V>;
 }

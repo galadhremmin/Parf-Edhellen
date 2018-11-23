@@ -2,6 +2,9 @@
 import React from 'react';
 
 import {
+    fireEvent,
+} from './Component';
+import {
     IBackingComponentProps,
     IComponentProps,
 } from './FormComponent._types';
@@ -52,21 +55,9 @@ export abstract class FormComponent<V = any, P = {}, CP = {}, S = {}, SS = any>
             return;
         }
 
-        const onChangeExternal = this.props.onChange;
-        if (onChangeExternal === undefined) {
+        if (!fireEvent(this, this.props.onChange, value)) {
             ev.preventDefault();
-            return;
         }
-
-        const name = this.props.name;
-        if (name === undefined) {
-            throw new Error('You have to give the component a name.');
-        }
-
-        onChangeExternal({
-            name,
-            value,
-        });
     }
 
     /**

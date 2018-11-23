@@ -14,8 +14,8 @@ export default class FragmentInspector extends React.PureComponent<IProps> {
 
             <nav aria-label="Fragment navigator">
                 <ul className="pager">
-                    <li className="previous"><a href="#previous">&larr; Previous</a></li>
-                    <li className="next"><a href="#next">Next &rarr;</a></li>
+                    <li className="previous"><a href="#previous" onClick={this._onPreviousClick}>&larr; Previous</a></li>
+                    <li className="next"><a href="#next" onClick={this._onNextClick}>Next &rarr;</a></li>
                 </ul>
             </nav>
         </aside>;
@@ -35,4 +35,13 @@ export default class FragmentInspector extends React.PureComponent<IProps> {
     private _renderUnknownFragment() {
         return <span>Unknown fragment...</span>;
     }
+
+    private _onPreviousClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
+        ev.preventDefault();
+
+    };
+
+    private _onNextClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
+        ev.preventDefault();
+    };
 }

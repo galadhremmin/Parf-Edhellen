@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { fireEvent } from '@root/components/Component';
 import { IProps } from './SearchResult._types';
 
 class SearchResult extends React.PureComponent<IProps> {
@@ -20,12 +21,7 @@ class SearchResult extends React.PureComponent<IProps> {
     private _onClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
 
-        const onClick = this.props.onClick;
-        if (typeof onClick === 'function') {
-            onClick({
-                value: this.props.searchResult,
-            });
-        }
+        fireEvent(this, this.props.onClick, this.props.searchResult);
     }
 }
 
