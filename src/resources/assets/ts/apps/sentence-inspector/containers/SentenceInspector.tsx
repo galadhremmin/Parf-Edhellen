@@ -50,8 +50,9 @@ export class SentenceInspector extends React.PureComponent<IProps> {
         </div>;
     }
 
-    private _renderInspector(props: IFragmentInspectorProps) {
-        return <FragmentInspector {...props} />;
+    private _renderInspector = (props: IFragmentInspectorProps) => {
+        const fragment = this.props.fragments.find(f => f.id === props.fragmentId);
+        return <FragmentInspector {...props} fragment={fragment} />;
     }
 }
 

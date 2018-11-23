@@ -4,6 +4,7 @@ import {
 
 export interface IFragmentsReducerState {
     comments: string;
+    fragment: string;
     glossId: number;
     id: number;
     sentenceNumber: number;

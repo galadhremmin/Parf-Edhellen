@@ -73,7 +73,6 @@
     "moment": "^2.22.2",
     "react": "^16.6.0",
     "react-autosuggest": "^9.4.2",
-    "react-bootstrap": "^0.32.4",
     "react-dom": "^16.6.0",
     "react-overlay": "^0.1.7",
     "react-redux": "^5.1.0",

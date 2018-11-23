@@ -13,6 +13,7 @@ const FragmentsReducer = (state: FragmentsReducerState = [], action: ISentenceRe
         case Actions.ReceiveSentence:
             return mapArray<ISentenceFragmentEntity, IFragmentsReducerState>({
                 comments: 'comments',
+                fragment: 'fragment',
                 glossId: 'glossId',
                 id: 'id',
                 sentenceNumber: 'sentenceNumber',
