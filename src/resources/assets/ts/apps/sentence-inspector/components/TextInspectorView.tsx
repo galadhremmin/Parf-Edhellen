@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {
-    ITextState, IFragmentInSentenceState,
+    IFragmentInSentenceState,
+    ITextState,
 } from '../reducers/FragmentsReducer._types';
 import {
     IProps,
@@ -58,7 +59,7 @@ export default class TextInspectorView extends React.PureComponent<IProps> {
 
         return groups;
     }
-    
+
     private _renderParagraphs(texts: ITextState[], args: IRenderArgs) {
         return texts.reduce((paragraphs, text, key) => {
             const component = this._renderParagraph(text, key, args);
@@ -83,11 +84,11 @@ export default class TextInspectorView extends React.PureComponent<IProps> {
         }
 
         return <Paragraph key={key} transformerName={text.transformerName} paragraphNumber={paragraphNumber}>
-            {paragraph.map((fragment, key) => this._renderFragment(fragment, key, args))}
+            {paragraph.map((fragment) => this._renderFragment(fragment, args))}
         </Paragraph>;
     }
 
-    private _renderFragment(fragment: IFragmentInSentenceState, key: number, args: IRenderArgs) {
+    private _renderFragment(fragment: IFragmentInSentenceState, args: IRenderArgs) {
         const {
             fragmentId,
             onFragmentClick,
@@ -99,7 +100,7 @@ export default class TextInspectorView extends React.PureComponent<IProps> {
         }
 
         return <Fragment
-            key={key}
+            key={fragmentId}
             fragment={fragment}
             onClick={onFragmentClick}
             selected={selected}

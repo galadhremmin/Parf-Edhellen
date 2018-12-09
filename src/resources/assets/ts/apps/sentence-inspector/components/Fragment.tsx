@@ -2,7 +2,7 @@ import React from 'react';
 import { IProps } from './Fragment._types';
 
 class Fragments extends React.PureComponent<IProps> {
-    public render() { 
+    public render() {
         const {
             fragment,
             selected,
@@ -15,7 +15,7 @@ class Fragments extends React.PureComponent<IProps> {
                 {fragment.fragment}
             </a>;
         }
-    
+
         return <span>{fragment.fragment}</span>;
     }
 

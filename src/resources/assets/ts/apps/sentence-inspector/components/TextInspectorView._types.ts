@@ -1,10 +1,10 @@
 import { Factory } from 'react';
 
-import { IProps as IFragmentInspectorProps } from './FragmentInspector._types';
 import {
     IFragmentInSentenceState,
     ITextState,
 } from '../reducers/FragmentsReducer._types';
+import { IProps as IFragmentInspectorProps } from './FragmentInspector._types';
 
 export interface IProps {
     fragmentInspector: Factory<IFragmentInspectorProps>;

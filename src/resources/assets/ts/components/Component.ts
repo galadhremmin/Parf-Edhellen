@@ -8,7 +8,7 @@ import {
 export const fireEvent = <V>(component: IDefaultComponent, ev: ComponentEventHandler<V>, value: V) => {
     const {
         id,
-        name
+        name,
     } = component.props;
 
     if (typeof ev !== 'function') {

@@ -7,8 +7,8 @@ import { IRootReducer } from '../reducers';
 import { IProps } from './SentenceInspector._types';
 
 import { SentenceActions } from '../actions';
-import { IProps as IFragmentInspectorProps } from '../components/FragmentInspector._types';
 import FragmentInspector from '../components/FragmentInspector';
+import { IProps as IFragmentInspectorProps } from '../components/FragmentInspector._types';
 import TextInspectorView from '../components/TextInspectorView';
 import { IFragmentInSentenceState } from '../reducers/FragmentsReducer._types';
 
@@ -26,7 +26,7 @@ export class SentenceInspector extends React.PureComponent<IProps> {
             selection,
             latinFragments,
             tengwarFragments,
-            translations
+            translations,
         } = this.props;
 
         const texts = [
@@ -47,7 +47,7 @@ export class SentenceInspector extends React.PureComponent<IProps> {
     }
 
     private _renderInspector = (props: IFragmentInspectorProps) => {
-        const fragment = this.props.fragments.find(f => f.id === props.fragmentId);
+        const fragment = this.props.fragments.find((f) => f.id === props.fragmentId);
         return <FragmentInspector {...props}
             fragment={fragment}
             onNextFragmentClick={this._onNextFragmentClick}
@@ -62,11 +62,11 @@ export class SentenceInspector extends React.PureComponent<IProps> {
     }
 
     private _onNextFragmentClick = (ev: IComponentEvent<number>) => {
-
+        console.log(ev);
     }
 
     private _onPreviousFragmentClick = (ev: IComponentEvent<number>) => {
-
+        console.log(ev);
     }
 }
 

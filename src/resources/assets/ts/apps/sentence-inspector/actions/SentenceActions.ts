@@ -1,4 +1,7 @@
-import { ISentenceResponse, ISentenceFragmentEntity } from '@root/connectors/backend/BookApiConnector._types';
+import {
+    ISentenceFragmentEntity,
+    ISentenceResponse,
+} from '@root/connectors/backend/BookApiConnector._types';
 import Actions from '../reducers/Actions';
 
 export default class SentenceActions {
@@ -18,6 +21,6 @@ export default class SentenceActions {
             fragmentId: fragment.id,
             sentenceNumber: fragment.sentenceNumber,
             type: Actions.SelectFragment,
-        }
+        };
     }
 }

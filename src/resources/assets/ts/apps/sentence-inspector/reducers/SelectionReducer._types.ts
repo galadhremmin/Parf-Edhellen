@@ -1,4 +1,4 @@
-import { IReduxAction } from "@root/_types";
+import { IReduxAction } from '@root/_types';
 
 export interface ISelectionReducerState {
     fragmentId: number;
