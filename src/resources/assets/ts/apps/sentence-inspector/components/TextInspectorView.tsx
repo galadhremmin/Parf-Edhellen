@@ -100,7 +100,7 @@ export default class TextInspectorView extends React.PureComponent<IProps> {
         }
 
         return <Fragment
-            key={fragmentId}
+            key={fragment.id}
             fragment={fragment}
             onClick={onFragmentClick}
             selected={selected}
