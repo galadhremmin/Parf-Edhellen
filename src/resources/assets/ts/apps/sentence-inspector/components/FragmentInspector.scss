@@ -1,0 +1,13 @@
+.fragment-inspector {
+    background: #eee;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-bottom-left-radius: 0.2em;
+    border-bottom-right-radius: 0.2em;
+
+    article > header {
+        h1 {
+            display: none;
+        }
+    }
+}

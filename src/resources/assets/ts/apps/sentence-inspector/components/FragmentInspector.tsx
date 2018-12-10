@@ -10,6 +10,8 @@ import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 
 import { IProps } from './FragmentInspector._types';
 
+import './FragmentInspector.scss';
+
 export default class FragmentInspector extends React.PureComponent<IProps> {
     private _globalEvents = new GlobalEventConnector();
 

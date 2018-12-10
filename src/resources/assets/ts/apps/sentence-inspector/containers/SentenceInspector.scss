@@ -1,23 +1,28 @@
+@import "../../../_scss/_variables";
+
 .sentence-inspector {
     font-size: 1.6rem;
 
     > .p-group {
-        display: flex;
+        padding-bottom: 1em;
         transition: 0.5s padding;
 
         &.selected {
             background: #eee;
             border: 1px solid #ccc;
             padding: 0.4em 0 0.4em 0.2em;
-            border-radius: 0.2em;
+            border-bottom: none;
+            border-top-left-radius: 0.2em;
+            border-top-right-radius: 0.2em;
         }
 
         > .p-group__p {
-            flex: 1;
             line-height: 1.8;
 
             &.english {
                 font-style: italic;
+                font-size: 0.8em;
+                line-height: 1.2;
             }
 
             > a {
@@ -26,6 +31,22 @@
 
                 &.selected {
                     font-weight: bold;
+                }
+            }
+        }
+    }
+
+    @media (min-width: $screen-md-min) {
+        > .p-group {
+            display: flex;
+            padding-bottom: 0;
+
+            > .p-group__p {
+                flex: 1;
+
+                &.english {
+                    font-size: inherit;
+                    line-height: inherit;
                 }
             }
         }
