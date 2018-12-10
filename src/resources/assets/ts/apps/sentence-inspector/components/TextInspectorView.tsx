@@ -51,7 +51,7 @@ export default class TextInspectorView extends React.PureComponent<IProps> {
             </ParagraphGroup>);
 
             if (args.fragmentSelected) {
-                groups.push(<FragmentInspector key="inspect" fragmentId={fragmentId} />);
+                groups.push(<FragmentInspector key="inspector" fragmentId={fragmentId} />);
             }
 
             paragraphNumber += 1;
@@ -84,11 +84,11 @@ export default class TextInspectorView extends React.PureComponent<IProps> {
         }
 
         return <Paragraph key={key} transformerName={text.transformerName} paragraphNumber={paragraphNumber}>
-            {paragraph.map((fragment) => this._renderFragment(fragment, args))}
+            {paragraph.map((fragment, i) => this._renderFragment(fragment, i, args))}
         </Paragraph>;
     }
 
-    private _renderFragment(fragment: IFragmentInSentenceState, args: IRenderArgs) {
+    private _renderFragment(fragment: IFragmentInSentenceState, key: number, args: IRenderArgs) {
         const {
             fragmentId,
             onFragmentClick,
@@ -100,7 +100,7 @@ export default class TextInspectorView extends React.PureComponent<IProps> {
         }
 
         return <Fragment
-            key={fragment.id}
+            key={key}
             fragment={fragment}
             onClick={onFragmentClick}
             selected={selected}
