@@ -5,7 +5,7 @@ import {
 import {
     EventListenerOrName,
     IEventMap,
-} from './GlobalEventConnector._spec';
+} from './GlobalEventConnector._types';
 
 export default class GlobalEventConnector {
     /**
@@ -18,6 +18,16 @@ export default class GlobalEventConnector {
      * event *and* `GlobalEventConnector` instance.
      */
     private _listeners: IEventMap = {};
+
+    /**
+     * Gets a copy of all listeners with the event as the key.
+     */
+    public get listeners() {
+        return Object.keys(this._listeners).reduce((carry, key) => ({
+            ...carry,
+            [key]: this._listeners[key],
+        }), {}) as IEventMap;
+    }
 
     /**
      * Associates the specified listener function with the `loadGlossary` event.
@@ -52,7 +62,7 @@ export default class GlobalEventConnector {
      * @param eventName event name string.
      * @param detail object with details or `null`.
      */
-    public fire<T>(eventName: EventListenerOrName, detail: T) {
+    public fire<T>(eventName: EventListenerOrName, detail: T = null) {
         if (typeof eventName !== 'string') {
             throw new Error(`Event name must be a string (not ${typeof eventName}).`);
         }
