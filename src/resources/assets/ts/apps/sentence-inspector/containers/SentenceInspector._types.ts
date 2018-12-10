@@ -1,6 +1,10 @@
 import { ThunkDispatch } from 'redux-thunk';
+
+import { IGlossEntity } from '@root/connectors/backend/BookApiConnector._types';
+
 import {
     FragmentsReducerState,
+    IFragmentsReducerState,
     ITextState,
 } from '../reducers/FragmentsReducer._types';
 import { ISelectionReducerState } from '../reducers/SelectionReducer._types';
@@ -13,4 +17,9 @@ export interface IProps {
     selection: ISelectionReducerState;
     tengwarFragments: ITextState;
     translations: TranslationsState;
+}
+
+export interface IState {
+    fragment: IFragmentsReducerState;
+    gloss: IGlossEntity;
 }

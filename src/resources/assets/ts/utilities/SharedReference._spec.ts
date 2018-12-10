@@ -1,3 +1,4 @@
+/* tslint:disable:max-classes-per-file */
 import { expect } from 'chai';
 import { ApplicationGlobalPrefix } from '../config';
 import SharedReference from './SharedReference';
@@ -16,6 +17,10 @@ class TestClass {
     }
 }
 
+class TestClass2 {
+    public static shared = false;
+}
+
 describe('utilities/SharedReference', () => {
     it('is instantiated and part of window', () => {
         const expectedGlobalName = `${ApplicationGlobalPrefix}.TestClass`;
@@ -30,5 +35,11 @@ describe('utilities/SharedReference', () => {
             const ref = new SharedReference(TestClass);
             expect(ref.value.count).to.equal(1);
         }
+    });
+
+    it('should fail initialization', () => {
+        expect(() => {
+            const ref = new SharedReference(TestClass2);
+        }).to.throw(`Type TestClass2 is configured to disallow shared references.`);
     });
 });

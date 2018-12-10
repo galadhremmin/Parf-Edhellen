@@ -156,6 +156,7 @@ export interface ISentenceFragmentEntity {
 }
 
 export enum SentenceFragmentType {
+    Word              = 0,
     NewLine           = 10,
     Exclude           = 24,
     Interpunctuation  = 31,

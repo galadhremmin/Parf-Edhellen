@@ -4,15 +4,17 @@ import { connect } from 'react-redux';
 import Waypoint from 'react-waypoint';
 
 import { IComponentEvent } from '@root/components/Component._types';
+import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
+import Spinner from '@root/components/Spinner';
 import { ILanguageEntity } from '@root/connectors/backend/BookApiConnector._types';
+import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import { snakeCasePropsToCamelCase } from '@root/utilities/func/snake-case';
 import SharedReference from '@root/utilities/SharedReference';
+
 import { SearchActions } from '../actions';
+import Language from '../components/Language';
 import { IRootReducer } from '../reducers';
 import { IProps, IState } from './Glossary._types';
-
-import Spinner from '@root/components/Spinner';
-import Language from '../components/Language';
 
 import './Glossary.scss';
 
@@ -22,10 +24,19 @@ export class Glossary extends React.PureComponent<IProps, IState> {
     };
 
     private _actions = new SharedReference(SearchActions);
+    private _globalEvents = new GlobalEventConnector();
 
     public componentWillMount() {
         this._initializePreloadedGlossary();
         this._removeGlossaryForBots();
+
+        // Subscribe to the global event `loadReference` which occurs when the customer clicks
+        // a reference link in any component not associated with the Glossary app.
+        this._globalEvents.loadReference = this._onGlobalListenerReferenceLoad;
+    }
+
+    public componentWillUnmount() {
+        this._globalEvents.disconnect();
     }
 
     public render() {
@@ -160,11 +171,7 @@ export class Glossary extends React.PureComponent<IProps, IState> {
     /**
      * Default event handler for reference link clicks.
      */
-    private _onReferenceClick = async (ev: IComponentEvent<{
-        languageShortName: string;
-        normalizedWord: string;
-        word: string;
-    }>) => {
+    private _onReferenceClick = async (ev: IComponentEvent<IReferenceLinkClickDetails>) => {
         this.props.dispatch(
             this._actions.value.loadReference(ev.value.word, ev.value.normalizedWord, ev.value.languageShortName),
         );
@@ -197,6 +204,15 @@ export class Glossary extends React.PureComponent<IProps, IState> {
                 notifyLoaded,
             });
         }
+    }
+
+    /**
+     * Default event handler for the global event `referenceClick`.
+     */
+    private _onGlobalListenerReferenceLoad = (ev: CustomEvent) => {
+        this._onReferenceClick({
+            value: ev.detail,
+        });
     }
 }
 

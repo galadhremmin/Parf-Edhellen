@@ -2,9 +2,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { IComponentEvent } from '@root/components/Component._types';
+import BookApiConnector from '@root/connectors/backend/BookApiConnector';
+import SharedReference from '@root/utilities/SharedReference';
 
 import { IRootReducer } from '../reducers';
-import { IProps } from './SentenceInspector._types';
+import {
+    IProps,
+    IState,
+} from './SentenceInspector._types';
 
 import { SentenceActions } from '../actions';
 import FragmentInspector from '../components/FragmentInspector';
@@ -14,8 +19,14 @@ import { IFragmentInSentenceState } from '../reducers/FragmentsReducer._types';
 
 import './SentenceInspector.scss';
 
-export class SentenceInspector extends React.PureComponent<IProps> {
+export class SentenceInspector extends React.PureComponent<IProps, IState> {
+    public state: IState = {
+        fragment: null,
+        gloss: null,
+    };
+
     private _actions = new SentenceActions();
+    private _api = new SharedReference(BookApiConnector);
 
     public render() {
         return this._render();
@@ -47,26 +58,39 @@ export class SentenceInspector extends React.PureComponent<IProps> {
     }
 
     private _renderInspector = (props: IFragmentInspectorProps) => {
-        const fragment = this.props.fragments.find((f) => f.id === props.fragmentId);
+        const {
+            fragment,
+            gloss,
+        } = this.state;
+
         return <FragmentInspector {...props}
             fragment={fragment}
-            onNextFragmentClick={this._onNextFragmentClick}
-            onPreviousFragmentClick={this._onPreviousFragmentClick}
+            gloss={gloss}
+            onFragmentMoveClick={this._onFragmentMoveClick}
         />;
     }
 
-    private _onFragmentClick = (fragment: IFragmentInSentenceState) => {
+    private _onFragmentClick = (args: IFragmentInSentenceState) => {
+        this._selectFragment(args.id);
+    }
+
+    private _onFragmentMoveClick = (ev: IComponentEvent<number>) => {
+        this._selectFragment(ev.value);
+    }
+
+    private async _selectFragment(id: number) {
+        const fragment = this.props.fragments.find((f) => f.id === id);
+        const details = await this._api.value.gloss(fragment.glossId);
+        const gloss = details.sections[0].glosses[0];
+
+        this.setState({
+            fragment,
+            gloss,
+        });
+
         this.props.dispatch(
             this._actions.selectFragment(fragment),
         );
-    }
-
-    private _onNextFragmentClick = (ev: IComponentEvent<number>) => {
-        console.log(ev);
-    }
-
-    private _onPreviousFragmentClick = (ev: IComponentEvent<number>) => {
-        console.log(ev);
     }
 }
 

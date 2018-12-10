@@ -4,3 +4,6 @@ export const ApiValidationFailedStatusCode = 422;
 
 export const ApplicationGlobalPrefix = 'ed';
 export const LocalStorageLanguages = 'ed.languages';
+
+export const GlobalEventLoadGlossary = 'ednavigate';
+export const GlobalEventLoadReference = 'edref';

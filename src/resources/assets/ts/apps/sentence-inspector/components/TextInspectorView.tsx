@@ -51,7 +51,7 @@ export default class TextInspectorView extends React.PureComponent<IProps> {
             </ParagraphGroup>);
 
             if (args.fragmentSelected) {
-                groups.push(<FragmentInspector key="inspector" fragmentId={fragmentId} />);
+                groups.push(<FragmentInspector key="inspector" fragmentId={fragmentId} gloss={null} />);
             }
 
             paragraphNumber += 1;

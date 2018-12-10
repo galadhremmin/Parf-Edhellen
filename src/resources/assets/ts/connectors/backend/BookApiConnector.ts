@@ -17,8 +17,8 @@ export default class BookApiConnector {
         return await this._api.post<FindResponse>('book/find', args);
     }
 
-    public async languages() {
-        return await this._api.get<ILanguagesResponse>('book/languages');
+    public async gloss(id: number) {
+        return await this._api.get<IGlossaryResponse>(`book/translate/${id}`);
     }
 
     public async glossary(args: IGlossaryRequest) {
@@ -29,6 +29,10 @@ export default class BookApiConnector {
         }
 
         return await this._api.post<IGlossaryResponse>('book/translate', args);
+    }
+
+    public async languages() {
+        return await this._api.get<ILanguagesResponse>('book/languages');
     }
 
     public async sentence(args: ISentenceRequest) {

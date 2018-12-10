@@ -1,5 +1,5 @@
 type ConversionTable<T1, T2> = {
-    [R in keyof T2]?: (keyof T1) | ((v: T1) => T2[R]) | null;
+    [R in keyof T2]?: (keyof T1) | ((v: T1, index?: number) => T2[R]) | null;
 };
 
 const isIneligible = <T>(subject: T) => //
@@ -7,7 +7,7 @@ const isIneligible = <T>(subject: T) => //
     subject === undefined ||
     (typeof subject === 'number' && (isNaN(subject) || !isFinite(subject)));
 
-export const mapper = <T1, T2>(table: ConversionTable<T1, T2>, subject: T1): T2 => {
+export const mapper = <T1, T2>(table: ConversionTable<T1, T2>, subject: T1, resolverArgs: any[] = []): T2 => {
     if (isIneligible(subject)) {
         return null;
     }
@@ -21,7 +21,7 @@ export const mapper = <T1, T2>(table: ConversionTable<T1, T2>, subject: T1): T2 
 
         switch (typeof resolver) {
             case 'function':
-                value = resolver(subject);
+                value = resolver.apply(this, [ subject, ...resolverArgs ]);
                 break;
             case 'string':
                 value = (subject as any)[resolver];
@@ -48,5 +48,5 @@ export const mapArray = <T1, T2>(table: ConversionTable<T1, T2>, subject: T1[]):
         return [];
     }
 
-    return subject.map((s) => mapper(table, s));
+    return subject.map((s, i) => mapper(table, s, [i]));
 };

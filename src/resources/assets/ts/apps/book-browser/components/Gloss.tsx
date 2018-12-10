@@ -11,8 +11,16 @@ import GlossTranslations from './GlossTranslations';
 import OldVersionAlert from './OldVersionAlert';
 
 export default class Gloss extends React.PureComponent<IProps> {
+    public static defaultProps = {
+        toolbar: true,
+    };
+
     public render() {
-        const { gloss, onReferenceLinkClick } = this.props;
+        const {
+            gloss,
+            onReferenceLinkClick,
+            toolbar,
+        } = this.props;
 
         const id = `gloss-block-${gloss.id}`;
         const className = classNames({ contribution: !gloss.isCanon }, 'gloss');
@@ -20,7 +28,7 @@ export default class Gloss extends React.PureComponent<IProps> {
 
         return <blockquote itemScope={true} itemType="http://schema.org/Article" id={id} className={className}>
             <OldVersionAlert gloss={gloss} />
-            <GlossTitle gloss={gloss} />
+            <GlossTitle gloss={gloss} toolbar={toolbar} />
             <GlossTranslations gloss={gloss} />
             <GlossDetails gloss={gloss} showDetails={true} onReferenceLinkClick={onReferenceLinkClick} />
             <GlossInflections gloss={gloss} />

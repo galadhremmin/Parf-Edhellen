@@ -1,11 +1,13 @@
 import { ComponentEventHandler } from './Component._types';
 
+export interface IReferenceLinkClickDetails {
+    languageShortName: string;
+    normalizedWord: string;
+    word: string;
+}
+
 export interface IEventProps {
-    onReferenceLinkClick?: ComponentEventHandler<{
-        languageShortName: string;
-        normalizedWord: string;
-        word: string;
-    }>;
+    onReferenceLinkClick?: ComponentEventHandler<IReferenceLinkClickDetails>;
 }
 
 export interface IProps extends IEventProps {

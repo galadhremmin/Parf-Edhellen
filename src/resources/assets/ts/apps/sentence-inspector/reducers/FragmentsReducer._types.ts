@@ -7,6 +7,8 @@ export interface IFragmentsReducerState {
     fragment: string;
     glossId: number;
     id: number;
+    nextFragmentId: number;
+    previousFragmentId: number;
     sentenceNumber: number;
     speechId: number;
     speech: string;

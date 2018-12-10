@@ -9,10 +9,12 @@ import {
     ILanguageEntity,
 } from '@root/connectors/backend/BookApiConnector._types';
 import LanguageConnector from '@root/connectors/backend/LanguageConnector';
+import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import { stringHash } from '@root/utilities/func/hashing';
 import { mapArray } from '@root/utilities/func/mapper';
 import { capitalize } from '@root/utilities/func/string-manipulation';
 import SharedReference from '@root/utilities/SharedReference';
+
 import { IRootReducer } from '../reducers';
 import Actions from '../reducers/Actions';
 import { ISearchAction } from '../reducers/SearchReducer._types';
@@ -25,7 +27,8 @@ import { ILoadGlossaryAction } from './SearchActions._types';
 
 export default class SearchActions {
     constructor(private _api: BookApiConnector = SharedReference.getInstance(BookApiConnector),
-        private _languages: LanguageConnector = SharedReference.getInstance(LanguageConnector)) {
+        private _languages: LanguageConnector = SharedReference.getInstance(LanguageConnector),
+        private _globalEvents = new GlobalEventConnector()) {
     }
 
     /**
@@ -236,14 +239,13 @@ export default class SearchActions {
         document.title = title;
 
         // Inform indirect listeners about the navigation
-        const event = new CustomEvent('ednavigate', {
+        this._globalEvents.fire(this._globalEvents.loadGlossary, {
             detail: {
                 address,
                 languageId: args.languageId,
                 word: args.word,
             },
         });
-        window.dispatchEvent(event);
 
         const glossary = await this._api.glossary(args);
         dispatch(this.setGlossary(glossary));

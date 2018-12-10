@@ -2,6 +2,7 @@ import {
     ISentenceFragmentEntity,
     ISentenceResponse,
 } from '@root/connectors/backend/BookApiConnector._types';
+
 import Actions from '../reducers/Actions';
 
 export default class SentenceActions {

@@ -34,6 +34,10 @@ export default class SharedReference<T> {
                 If a name cannot be inferred, make sure to specify one.`);
         }
 
+        if (_type.shared === false) {
+            throw new Error(`Type ${name} is configured to disallow shared references.`);
+        }
+
         this._name = `${prefix}.${name}`;
     }
 
