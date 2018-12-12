@@ -1,13 +1,38 @@
+@import '../../../_scss/variables';
+
 .fragment-inspector {
     background: #eee;
     border: 1px solid #ccc;
     border-top: none;
     border-bottom-left-radius: 0.2em;
     border-bottom-right-radius: 0.2em;
+    padding: 0 $line-height-computed 0 $line-height-computed;
 
-    article > header {
-        h1 {
+    article {
+        max-width: 600px;
+        margin: 0 auto;
+
+        > header h1 {
             display: none;
+        }
+
+        > section {
+            &.abstract {
+                font-style: italic;
+                font-size: 1rem;
+            }
+
+            > blockquote {
+                padding: 0;
+                border: none;
+            }
+        }
+    }
+
+    nav {
+        font-size: 1rem;
+        > ul {
+            margin-top: 0;
         }
     }
 }

@@ -10,7 +10,13 @@ $brand-danger: #bf5329;
 
 // Typography
 $icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
-$font-family-sans-serif: 'Lora', Georgia, serif;
+
+// Default body font:
+// - Iowan Old Style: preferred serif font on iOS
+// - Georgia: compatible with everything except Linux
+// - Bitstream Charter, Charis SIL, Utopia, URW Bookman L: Linux compatibility
+// - serif: fallback
+$font-family-sans-serif: "Iowan Old Style", Georgia, "Bitstream Charter", "Charis SIL", Utopia, "URW Bookman L", serif;
 $font-family-tiny: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 $font-size-base: 14px;
 $line-height-base: 1.6;

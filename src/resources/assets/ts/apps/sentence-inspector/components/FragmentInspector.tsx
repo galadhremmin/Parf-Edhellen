@@ -21,8 +21,6 @@ export default class FragmentInspector extends React.PureComponent<IProps> {
         } = this.props;
 
         return <aside className="fragment-inspector">
-            {fragment ? this._renderFragment(fragment) : this._renderUnknownFragment()}
-
             <nav aria-label="Fragment navigator">
                 <ul className="pager">
                     <li className="previous">
@@ -33,6 +31,7 @@ export default class FragmentInspector extends React.PureComponent<IProps> {
                     </li>
                 </ul>
             </nav>
+            {fragment ? this._renderFragment(fragment) : this._renderUnknownFragment()}
         </aside>;
     }
 
