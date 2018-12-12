@@ -15,5 +15,6 @@ export interface IProps extends IEventProps {
 }
 
 export interface IState {
-    htmlHashCode: number;
+    elements: React.ReactNode;
+    lastHtml: string;
 }

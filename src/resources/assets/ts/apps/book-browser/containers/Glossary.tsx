@@ -26,7 +26,7 @@ export class Glossary extends React.PureComponent<IProps, IState> {
     private _actions = new SharedReference(SearchActions);
     private _globalEvents = new GlobalEventConnector();
 
-    public componentWillMount() {
+    public componentDidMount() {
         this._initializePreloadedGlossary();
         this._removeGlossaryForBots();
 

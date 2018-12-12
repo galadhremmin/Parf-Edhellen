@@ -26,7 +26,7 @@ export default class LanguageSelect extends FormComponent<number, IProps, IProps
         languages: null,
     };
 
-    public async componentWillMount() {
+    public async componentDidMount() {
         const languageConnector = new LanguageConnector();
         const languages = await languageConnector.all();
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import Loadable from 'react-loadable';
+import classNames from 'classnames';
 
 import { fireEvent } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
@@ -23,11 +24,17 @@ export default class FragmentInspector extends React.PureComponent<IProps> {
         return <aside className="fragment-inspector">
             <nav aria-label="Fragment navigator">
                 <ul className="pager">
-                    <li className="previous">
-                        <a href="#previous" onClick={this._onPreviousClick}>&larr; Previous</a>
+                    <li className={classNames('previous', { 'disabled': !fragment.previousFragmentId })}>
+                        <a href="#previous"
+                            onClick={this._onPreviousClick}>
+                            &larr; Previous
+                        </a>
                     </li>
-                    <li className="next">
-                        <a href="#next" onClick={this._onNextClick}>Next &rarr;</a>
+                    <li className={classNames('next', { 'disabled': !fragment.nextFragmentId })}>
+                        <a href="#next" 
+                            onClick={this._onNextClick}>
+                            Next &rarr;
+                        </a>
                     </li>
                 </ul>
             </nav>
@@ -62,7 +69,10 @@ export default class FragmentInspector extends React.PureComponent<IProps> {
         } = this.props;
 
         ev.preventDefault();
-        fireEvent(this, onFragmentMoveClick, fragment.previousFragmentId);
+
+        if (fragment.previousFragmentId) {
+            fireEvent(this, onFragmentMoveClick, fragment.previousFragmentId);
+        }
     }
 
     private _onNextClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
@@ -72,7 +82,10 @@ export default class FragmentInspector extends React.PureComponent<IProps> {
         } = this.props;
 
         ev.preventDefault();
-        fireEvent(this, onFragmentMoveClick, fragment.nextFragmentId);
+
+        if (fragment.nextFragmentId) {
+            fireEvent(this, onFragmentMoveClick, fragment.nextFragmentId);
+        }
     }
 
     private _onReferenceLinkClick = (ev: IComponentEvent<IReferenceLinkClickDetails>) => {

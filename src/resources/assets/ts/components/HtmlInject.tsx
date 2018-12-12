@@ -16,8 +16,34 @@ import {
 } from './HtmlInject._types';
 
 export default class HtmlInject extends PureComponent<IProps, IState> {
+    public state: IState = {
+        elements: null,
+        lastHtml: null,
+    };
+
+    static getDerivedStateFromProps(nextProps: IProps, prevState: IState) {
+        if (nextProps.html !== prevState.lastHtml) {
+            return {
+                lastHtml: null,
+            } as IState;
+        }
+
+        return null;
+    }
+
+    public componentDidUpdate() {
+        if (this.state.lastHtml === null) {
+            const elements = this._convertHtmlToReact(this.props.html);
+
+            this.setState({
+                elements,
+                lastHtml: this.props.html,
+            });
+        }
+    }
+
     public render() {
-        return this._convertHtmlToReact(this.props.html) || null;
+        return this.state.elements;
     }
 
     private _convertHtmlToReact(html: string) {

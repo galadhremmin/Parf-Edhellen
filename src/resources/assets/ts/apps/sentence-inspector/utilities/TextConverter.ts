@@ -40,6 +40,7 @@ const convert = (transformerName: string, textTransformation: ITextTransformatio
                 if (Array.isArray(v)) {
                     currentSentenceNumber = fragments[v[0]].sentenceNumber;
                 }
+
                 return currentSentenceNumber;
             },
         }, textTransformation[paragraphNumber]);

@@ -11,7 +11,7 @@ import { ISentenceReducerAction } from './SentenceReducer._types';
 const findNextFragmentId = (fragment: ISentenceFragmentEntity, fragments: ISentenceFragmentEntity[],
     index: number, direction: number) => {
     if (fragment.glossId === null ||
-        index === 0 ||
+        index < 0 ||
         index >= fragments.length) {
         return null;
     }

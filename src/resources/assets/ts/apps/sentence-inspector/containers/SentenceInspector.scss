@@ -7,15 +7,6 @@
         padding-bottom: 1em;
         transition: 0.5s padding;
 
-        &.selected {
-            background: #eee;
-            border: 1px solid #ccc;
-            padding: $line-height-computed $line-height-computed 0 $line-height-computed;
-            border-bottom: none;
-            border-top-left-radius: 0.2em;
-            border-top-right-radius: 0.2em;
-        }
-
         > .p-group__p {
             text-align: center;
             line-height: 1.8;
