@@ -20,7 +20,7 @@ export default class SentenceActions {
         }
 
         if (typeof window === 'object') {
-            window.location.hash = `#!${fragment.id}`;
+            window.location.hash = `#!${fragment.sentenceNumber}/${fragment.id}`;
         }
 
         return {

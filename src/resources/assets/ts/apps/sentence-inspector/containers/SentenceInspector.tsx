@@ -28,6 +28,16 @@ export class SentenceInspector extends React.PureComponent<IProps, IState> {
     private _actions = new SentenceActions();
     private _api = new SharedReference(BookApiConnector);
 
+    public componentDidMount() {
+        const { 
+            fragmentId
+        } = this.props.selection;
+
+        if (fragmentId) {
+            this._selectFragment(fragmentId);
+        }
+    }
+
     public render() {
         const {
             selection,

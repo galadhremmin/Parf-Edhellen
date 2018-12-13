@@ -31,19 +31,28 @@ export default class HtmlInject extends PureComponent<IProps, IState> {
         lastHtml: null,
     };
 
+    public componentDidMount() {
+        this._inject();
+    }
+
     public componentDidUpdate() {
         if (this.state.lastHtml === null) {
-            const elements = this._convertHtmlToReact(this.props.html);
-
-            this.setState({
-                elements,
-                lastHtml: this.props.html,
-            });
+            this._inject();
         }
     }
 
     public render() {
         return this.state.elements;
+    }
+
+    private _inject() {
+        const html = this.props.html;
+        const elements = this._convertHtmlToReact(html);
+
+        this.setState({
+            elements,
+            lastHtml: html,
+        });
     }
 
     private _convertHtmlToReact(html: string) {

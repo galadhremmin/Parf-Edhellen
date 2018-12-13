@@ -25,13 +25,13 @@ export default class FragmentInspector extends React.PureComponent<IProps> {
         return <aside className="fragment-inspector">
             <nav aria-label="Fragment navigator">
                 <ul className="pager">
-                    <li className={classNames('previous', { disabled: !fragment.previousFragmentId })}>
+                    <li className={classNames('previous', { disabled: !fragment || !fragment.previousFragmentId })}>
                         <a href="#previous"
                             onClick={this._onPreviousClick}>
                             &larr; Previous
                         </a>
                     </li>
-                    <li className={classNames('next', { disabled: !fragment.nextFragmentId })}>
+                    <li className={classNames('next', { disabled: !fragment || !fragment.nextFragmentId })}>
                         <a href="#next"
                             onClick={this._onNextClick}>
                             Next &rarr;
