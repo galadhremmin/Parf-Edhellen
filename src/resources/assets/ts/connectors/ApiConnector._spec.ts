@@ -88,7 +88,7 @@ describe('connectors/ApiConnector', () => {
                 expect(payload.url).to.equal(ApiMethod);
                 expect(payload.error).to.be('string');
 
-                return Promise.resolve(ApiResponse);
+                return Promise.resolve(ApiResponse) as Promise<any>;
             });
 
         api.get(ApiMethod)
@@ -105,7 +105,7 @@ describe('connectors/ApiConnector', () => {
             .callsFake((method, payload) => {
                 expect(method).to.equal(`${ApiPrefix}/${ApiErrorMethod}`);
                 expect(payload).to.deep.equal({ message, url, error, category });
-                return Promise.resolve(ApiResponse);
+                return Promise.resolve(ApiResponse) as Promise<any>;
             });
 
         const result = await api.error(message, url, error, category);

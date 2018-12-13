@@ -1,10 +1,11 @@
+import classNames from 'classnames';
 import React from 'react';
 import Loadable from 'react-loadable';
-import classNames from 'classnames';
 
 import { fireEvent } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
 import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
+import Markdown from '@root/components/Markdown';
 import Spinner from '@root/components/Spinner';
 import { ISentenceFragmentEntity } from '@root/connectors/backend/BookApiConnector._types';
 import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
@@ -24,14 +25,14 @@ export default class FragmentInspector extends React.PureComponent<IProps> {
         return <aside className="fragment-inspector">
             <nav aria-label="Fragment navigator">
                 <ul className="pager">
-                    <li className={classNames('previous', { 'disabled': !fragment.previousFragmentId })}>
+                    <li className={classNames('previous', { disabled: !fragment.previousFragmentId })}>
                         <a href="#previous"
                             onClick={this._onPreviousClick}>
                             &larr; Previous
                         </a>
                     </li>
-                    <li className={classNames('next', { 'disabled': !fragment.nextFragmentId })}>
-                        <a href="#next" 
+                    <li className={classNames('next', { disabled: !fragment.nextFragmentId })}>
+                        <a href="#next"
                             onClick={this._onNextClick}>
                             Next &rarr;
                         </a>
@@ -47,9 +48,9 @@ export default class FragmentInspector extends React.PureComponent<IProps> {
             <header>
                 <h1>{fragment.fragment}</h1>
             </header>
-            <section className="abstract">
-                {fragment.comments}
-            </section>
+            {fragment.comments && <section className="abstract">
+                <Markdown text={fragment.comments} parse={true} />
+            </section>}
             <section>
                 <GlossInspector gloss={this.props.gloss}
                     onReferenceLinkClick={this._onReferenceLinkClick}

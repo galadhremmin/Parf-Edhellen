@@ -16,12 +16,7 @@ import {
 } from './HtmlInject._types';
 
 export default class HtmlInject extends PureComponent<IProps, IState> {
-    public state: IState = {
-        elements: null,
-        lastHtml: null,
-    };
-
-    static getDerivedStateFromProps(nextProps: IProps, prevState: IState) {
+    public static getDerivedStateFromProps(nextProps: IProps, prevState: IState) {
         if (nextProps.html !== prevState.lastHtml) {
             return {
                 lastHtml: null,
@@ -30,6 +25,11 @@ export default class HtmlInject extends PureComponent<IProps, IState> {
 
         return null;
     }
+
+    public state: IState = {
+        elements: null,
+        lastHtml: null,
+    };
 
     public componentDidUpdate() {
         if (this.state.lastHtml === null) {

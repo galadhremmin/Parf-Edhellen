@@ -5,10 +5,8 @@ import './Tengwar.scss';
 
 const Tengwar = (props: IProps) => {
     const className = 'tengwar';
-    const {
-        as: Component,
-        text,
-    } = props;
+    const Component = props.as as any;
+    const text = props.text;
 
     if (!text) {
         return null;
