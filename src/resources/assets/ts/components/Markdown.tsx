@@ -2,11 +2,11 @@ import React from 'react';
 
 import UtilityApiConnector from '../connectors/backend/UtilityApiConnector';
 import SharedReference from '../utilities/SharedReference';
+import HtmlInject from './HtmlInject';
 import {
     IProps,
     IState,
 } from './Markdown._types';
-import HtmlInject from './HtmlInject';
 
 export default class Markdown extends React.PureComponent<IProps, IState> {
     public static getDerivedStateFromProps(nextProps: IProps, prevState: IState) {

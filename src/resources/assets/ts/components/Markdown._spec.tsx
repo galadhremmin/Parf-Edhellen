@@ -68,7 +68,18 @@ describe('components/Markdown', () => {
         });
 
         window.setTimeout(() => {
-            expect(wrapper.text()).to.equal(HtmlText);
+            wrapper.update();
+
+            expect(wrapper.children().length).to.equal(1);
+
+            let c = wrapper.childAt(0).find('i');
+            expect(c.length).to.equal(1);
+            expect(c.first().text()).to.equal('text');
+
+            c = wrapper.childAt(0).find('b');
+            expect(c.length).to.equal(1);
+            expect(c.first().text()).to.equal('bold');
+
             done();
         }, 0);
     });

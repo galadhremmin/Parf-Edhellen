@@ -29,8 +29,8 @@ export class SentenceInspector extends React.PureComponent<IProps, IState> {
     private _api = new SharedReference(BookApiConnector);
 
     public componentDidMount() {
-        const { 
-            fragmentId
+        const {
+            fragmentId,
         } = this.props.selection;
 
         if (fragmentId) {
