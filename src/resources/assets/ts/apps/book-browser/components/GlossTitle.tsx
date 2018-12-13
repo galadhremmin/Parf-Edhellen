@@ -20,6 +20,16 @@ const GlossTitle = (props: IProps) => {
         <span itemProp="headline" className={className}>
             {gloss.word}
         </span>
+        {gloss.inflectedWord && <span className="gloss-word__inflection">
+            {gloss.inflectedWord.word}
+            <span className="gloss-word__inflection__name">
+                {gloss.inflectedWord.speech}
+            </span>
+            {gloss.inflectedWord.inflections && gloss.inflectedWord.inflections.map(
+                (inflection) => <span key={inflection.inflectionId} className="gloss-word__inflection__name">
+                    {inflection.name}
+                </span>)}
+        </span>}
         {toolbar && <React.Fragment>
             <NumberOfComments gloss={gloss} />
             <GlossAbsoluteLink gloss={gloss} />

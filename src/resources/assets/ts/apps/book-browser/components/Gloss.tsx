@@ -10,6 +10,8 @@ import GlossTitle from './GlossTitle';
 import GlossTranslations from './GlossTranslations';
 import OldVersionAlert from './OldVersionAlert';
 
+import './Gloss.scss';
+
 export default class Gloss extends React.PureComponent<IProps> {
     public static defaultProps = {
         toolbar: true,

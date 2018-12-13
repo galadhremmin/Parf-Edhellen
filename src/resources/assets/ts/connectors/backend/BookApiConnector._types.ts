@@ -66,6 +66,7 @@ export interface IGlossEntity {
     glossGroupId: number;
     glossGroupName: string;
     id: number;
+    inflectedWord?: IWordInflection;
     inflections: {
         [ sentenceId: string ]: IInflectionEntity[];
     };
@@ -96,6 +97,12 @@ export interface IGlossDetailEntity {
     text: string;
 }
 
+export interface IWordInflection {
+    inflections: ISentenceFragmentInflection[];
+    speech: string;
+    word: string;
+}
+
 export interface IInflectionEntity {
     glossId: number;
     inflection: string;
@@ -114,11 +121,21 @@ export interface ISentenceRequest {
 }
 
 export interface ISentenceResponse {
+    inflections: ISentenceFragmentInflectionMap;
     sentence: ISentenceEntity;
     sentenceFragments: ISentenceFragmentEntity[];
     sentenceTranslations: ISentenceTranslationMap;
     sentenceTransformations: ITextTransformationsMap;
     speeches: ISpeechMap;
+}
+
+export interface ISentenceFragmentInflectionMap {
+    [sentenceFragmentId: number]: ISentenceFragmentInflection[];
+}
+
+export interface ISentenceFragmentInflection {
+    inflectionId: number;
+    name: string;
 }
 
 export interface ISentenceEntity {
@@ -147,7 +164,6 @@ export interface ISentenceFragmentEntity {
     fragment?: string;
     glossId?: number;
     id: number;
-    inflections?: IInflectionEntity[];
     sentenceNumber: number;
     speech?: string;
     speechId?: number;

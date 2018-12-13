@@ -7,12 +7,18 @@ export interface IFragmentsReducerState {
     fragment: string;
     glossId: number;
     id: number;
+    inflections: IFragmentInflection[];
     nextFragmentId: number;
     previousFragmentId: number;
     sentenceNumber: number;
     speechId: number;
     speech: string;
     type: SentenceFragmentType;
+}
+
+export interface IFragmentInflection {
+    inflectionId: number;
+    name: string;
 }
 
 export type FragmentsReducerState = IFragmentsReducerState[];

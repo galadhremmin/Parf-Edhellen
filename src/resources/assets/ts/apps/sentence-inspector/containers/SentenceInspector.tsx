@@ -29,10 +29,6 @@ export class SentenceInspector extends React.PureComponent<IProps, IState> {
     private _api = new SharedReference(BookApiConnector);
 
     public render() {
-        return this._render();
-    }
-
-    private _render() {
         const {
             selection,
             latinFragments,
@@ -82,6 +78,12 @@ export class SentenceInspector extends React.PureComponent<IProps, IState> {
         const fragment = this.props.fragments.find((f) => f.id === id);
         const details = await this._api.value.gloss(fragment.glossId);
         const gloss = details.sections[0].glosses[0];
+
+        gloss.inflectedWord = {
+            inflections: fragment.inflections,
+            speech: fragment.speech,
+            word: fragment.fragment,
+        };
 
         this.setState({
             fragment,

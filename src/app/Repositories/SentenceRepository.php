@@ -105,7 +105,8 @@ class SentenceRepository
         $inflections = SentenceFragmentInflectionRel::whereIn('sentence_fragment_id', $fragmentIds)
             ->join('inflections', 'inflections.id', 'inflection_id')
             ->select('sentence_fragment_id', 'inflections.name', 'inflections.id as inflection_id')
-            ->get();
+            ->get()
+            ->groupBy('sentence_fragment_id');
 
         $translations = $sentence->sentence_translations()
             ->select('sentence_number', 'paragraph_number', 'translation')
@@ -134,6 +135,7 @@ class SentenceRepository
         $sentence->makeHidden(['account_id', 'language_id', 'sentence_translations', 'sentence_fragments']);
 
         return [
+            'inflections' => $inflections,
             'sentence' => $sentence,
             'sentence_fragments' => $fragments,
             'sentence_translations' => $translations,

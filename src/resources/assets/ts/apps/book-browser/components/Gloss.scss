@@ -1,0 +1,76 @@
+@import '../../../_scss/_variables';
+
+$gloss-border-color: #dedede;
+
+blockquote.gloss {
+  border-width: 1px;
+  overflow: hidden;
+  border-left-color: $gloss-border-color;
+  break-inside: avoid;
+  page-break-inside: avoid; /* -> https://caniuse.com/#search=columns */
+
+  h3.gloss-word { 
+    margin-top: 0;
+    
+    .gloss-word__inflection {
+      &::before {
+        content: ' > ';
+      }
+      .gloss-word__inflection__name {
+        margin-left: 0.5em;
+        font-style: italic;
+        font-size: 1rem;
+        font-weight: normal;
+      }
+    }
+
+    a {
+      float: right;
+      margin-left: 5px;
+      font-size: 70%;
+      line-height: 100%;
+      color: #ccc;
+
+      &:hover {
+        color: inherit;
+      }
+
+      &.neologism {
+        float: none;
+        content: '*';
+      }
+    }
+    .rejected {
+      text-decoration: line-through;
+    }
+  }
+  .word-type {
+    font-style: italic;
+  }
+  .ed-comments-no {
+    &:hover, &:active, &:visited {
+      text-decoration: none;
+    }
+
+    > .no {
+      font-size: 80%;
+      line-height: 24px;
+      vertical-align: top;
+    }
+  }
+  .word-footer {
+    max-width: 100%;
+    text-overflow: ellipsis;
+    display: block;
+    overflow: hidden;
+  }
+  section.details {
+    padding: $padding-small-vertical 0;
+
+    header > h4 {
+      margin-top: 0;
+      font-size: inherit;
+      font-style: italic;
+    }
+  }
+}

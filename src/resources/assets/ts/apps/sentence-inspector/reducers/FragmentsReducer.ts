@@ -34,10 +34,11 @@ const FragmentsReducer = (state: FragmentsReducerState = [], action: ISentenceRe
                 fragment: 'fragment',
                 glossId: 'glossId',
                 id: 'id',
+                inflections: (v) => action.sentence.inflections[v.id],
                 nextFragmentId: (v, i) => findNextFragmentId(v, fragments, i, 1),
                 previousFragmentId: (v, i) => findNextFragmentId(v, fragments, i, -1),
                 sentenceNumber: 'sentenceNumber',
-                speech: 'speech',
+                speech: (v) => action.sentence.speeches[v.speechId],
                 speechId: 'speechId',
                 type: 'type',
             }, fragments);
