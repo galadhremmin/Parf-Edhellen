@@ -16,13 +16,30 @@ import './FragmentInspector.scss';
 
 export default class FragmentInspector extends React.PureComponent<IProps> {
     private _globalEvents = new GlobalEventConnector();
+    private _rootRef = React.createRef<HTMLElement>();
+
+    /**
+     * Jump to the component when it mounts, as it is expected to only be
+     * mounted when the customer is interested in its content.
+     */
+    public componentDidMount() {
+        this._jumpToComponent();
+    }
+
+    /**
+     * Jump to the component when it re-renders, as the customer is expecting
+     * to see its content.
+     */
+    public componentDidUpdate() {
+        this._jumpToComponent();
+    }
 
     public render() {
         const {
             fragment,
         } = this.props;
 
-        return <aside className="fragment-inspector">
+        return <aside className="fragment-inspector" ref={this._rootRef}>
             <nav aria-label="Fragment navigator">
                 <ul className="pager">
                     <li className={classNames('previous', { disabled: !fragment || !fragment.previousFragmentId })}>
@@ -64,33 +81,46 @@ export default class FragmentInspector extends React.PureComponent<IProps> {
     }
 
     private _onPreviousClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
-        const {
-            fragment,
-            onFragmentMoveClick,
-        } = this.props;
-
         ev.preventDefault();
-
-        if (fragment.previousFragmentId) {
-            fireEvent(this, onFragmentMoveClick, fragment.previousFragmentId);
-        }
+        this._selectFragment(this.props.fragment.previousFragmentId);
     }
 
     private _onNextClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
-        const {
-            fragment,
-            onFragmentMoveClick,
-        } = this.props;
-
         ev.preventDefault();
-
-        if (fragment.nextFragmentId) {
-            fireEvent(this, onFragmentMoveClick, fragment.nextFragmentId);
-        }
+        this._selectFragment(this.props.fragment.nextFragmentId);
     }
 
     private _onReferenceLinkClick = (ev: IComponentEvent<IReferenceLinkClickDetails>) => {
         this._globalEvents.fire(this._globalEvents.loadReference, ev.value);
+    }
+
+    private _selectFragment(id: number) {
+        const {
+            onFragmentMoveClick,
+        } = this.props;
+
+        if (id && onFragmentMoveClick) {
+            fireEvent(this, onFragmentMoveClick, id);
+        }
+    }
+
+    private _jumpToComponent() {
+        const {
+            current: component,
+        } = this._rootRef;
+
+        if (component) {
+            // TODO: we should not use `previousElementSibling` here as it 'leaks' out
+            // of the component. The reason for this behavior is this: the inspector
+            // is injected /after/ the paragraph currently selected. So the previous
+            // sibling is always the selected text.
+            const sibling = component.previousElementSibling;
+            if (sibling) {
+                sibling.scrollIntoView({
+                    block: 'start',
+                });
+            }
+        }
     }
 }
 
