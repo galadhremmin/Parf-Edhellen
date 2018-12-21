@@ -7,3 +7,5 @@ export const LocalStorageLanguages = 'ed.languages';
 
 export const GlobalEventLoadGlossary = 'ednavigate';
 export const GlobalEventLoadReference = 'edref';
+
+export const DefaultGlaemscribeCharacterSet = 'tengwar_ds_annatar';

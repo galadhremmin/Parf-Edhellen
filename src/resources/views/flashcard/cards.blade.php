@@ -8,8 +8,9 @@
 
   <div class="flashcard-container">
     <div id="ed-flashcard-component" 
-        data-flashcard-id="{{ $flashcard->id }}" 
-        data-language-tengwar-mode="{{ $flashcard->language->tengwar_mode }}"></div>
+      data-inject-module="flashcards"
+      data-inject-prop-flashcard-id="{{ $flashcard->id }}"
+      data-inject-prop-tengwar-mode="{{ $flashcard->language->tengwar_mode }}"></div>
 
     <aside>
       @if ($user) 

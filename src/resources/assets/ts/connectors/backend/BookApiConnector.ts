@@ -1,3 +1,4 @@
+import SharedReference from '../../utilities/SharedReference';
 import ApiConnector from '../ApiConnector';
 import {
     FindResponse,
@@ -10,15 +11,15 @@ import {
 } from './BookApiConnector._types';
 
 export default class BookApiConnector {
-    constructor(private _api = new ApiConnector()) {
+    constructor(private _api = new SharedReference(ApiConnector)) {
     }
 
     public async find(args: IFindRequest) {
-        return await this._api.post<FindResponse>('book/find', args);
+        return await this._api.value.post<FindResponse>('book/find', args);
     }
 
     public async gloss(id: number) {
-        return await this._api.get<IGlossaryResponse>(`book/translate/${id}`);
+        return await this._api.value.get<IGlossaryResponse>(`book/translate/${id}`);
     }
 
     public async glossary(args: IGlossaryRequest) {
@@ -28,14 +29,14 @@ export default class BookApiConnector {
             delete args.languageId;
         }
 
-        return await this._api.post<IGlossaryResponse>('book/translate', args);
+        return await this._api.value.post<IGlossaryResponse>('book/translate', args);
     }
 
     public async languages() {
-        return await this._api.get<ILanguagesResponse>('book/languages');
+        return await this._api.value.get<ILanguagesResponse>('book/languages');
     }
 
     public async sentence(args: ISentenceRequest) {
-        return await this._api.get<ISentenceResponse>(`sentence/${args.id}`);
+        return await this._api.value.get<ISentenceResponse>(`sentence/${args.id}`);
     }
 }

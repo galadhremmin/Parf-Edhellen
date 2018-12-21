@@ -1,8 +1,9 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const AsyncChunkNames = require('webpack-async-chunk-names-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-var WebpackNotifierPlugin = require('webpack-notifier');
+const WebpackNotifierPlugin = require('webpack-notifier');
+
+// const AsyncChunkNames = require('webpack-async-chunk-names-plugin');
 
 // Reads `.env` configuration values to `process.env`
 require('dotenv').config();
@@ -36,7 +37,7 @@ module.exports = {
         vendor: {
           name: 'vendor',
           chunks: 'all', // async and sync chunks
-          test: /node_modules/
+          test: /node_modules/,
         },
 
         // common chunks, like components that are used by at least
@@ -47,7 +48,7 @@ module.exports = {
           chunks: 'async',
           priority: 10,
           reuseExistingChunk: true,
-          enforce: true
+          enforce: true,
         }
       }
     }
@@ -66,6 +67,21 @@ module.exports = {
   },
   module: {
     rules: [
+      {
+        test: require.resolve('glaemscribe/js/glaemscribe.min.js'),
+        /* this is a much more elegant approach, but it will need additional effort to work with Glaemscribe's
+        resource manager, as *.glaem.js files expects Glaemscribe to be a global variable.
+        loaders: [
+          'imports-loader?this=>window',
+          'exports-loader?Glaemscribe',
+        ],
+        */
+        use: 'script-loader',
+      },
+      {
+        test: /\.(glaem|cst)\.js$/,
+        use: 'script-loader',
+      },
       { 
         test: /\.tsx?$/, 
         loader: 'awesome-typescript-loader' 
@@ -104,7 +120,7 @@ module.exports = {
       filename: "[name].css",
       chunkFilename: "[id].css"
     }),
-    //new AsyncChunkNames(),
+    // new AsyncChunkNames(),
     new WebpackNotifierPlugin(),
   ],
 };
