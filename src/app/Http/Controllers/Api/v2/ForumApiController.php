@@ -16,6 +16,7 @@ use App\Repositories\{
 };
 use App\Models\{ 
     Account,
+    ForumGroup,
     ForumPost, 
     ForumPostLike, 
     ForumThread
@@ -45,6 +46,12 @@ class ForumApiController extends Controller
     }
 
     public function index(Request $request)
+    {
+        return ForumGroup::orderBy('name')
+            ->get();
+    }
+
+    public function group(Request $request) 
     {
         $thread = $this->getOrNewForumThread($request);
         if ($thread->id) {
