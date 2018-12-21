@@ -9,6 +9,7 @@ use App\Models\{
     Account,
     Contribution,
     Gloss,
+    ForumDiscussion,
     ForumGroup,
     ForumThread,
     Sentence,
@@ -60,6 +61,7 @@ class ForumGroups extends Migration
 
         $p4 = new ForumGroup([
             'name' => 'Discussion',
+            'role' => Morphs::getAlias(ForumDiscussion::class)
         ]);
         $p4->save();
 
