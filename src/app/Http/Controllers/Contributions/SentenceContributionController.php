@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Collection;
 
 use App\Repositories\SentenceRepository;
-use App\Adapters\SentenceAdapter;
 use App\Models\{
     Contribution,
     Sentence,
@@ -24,12 +23,10 @@ class SentenceContributionController extends Controller implements IContribution
     use CanValidateSentence, 
         CanMapSentence;
 
-    private $_sentenceAdapter;
     private $_sentenceRepository;
 
-    public function __construct(SentenceAdapter $sentenceAdapter, SentenceRepository $sentenceRepository)
+    public function __construct(SentenceRepository $sentenceRepository)
     {
-        $this->_sentenceAdapter = $sentenceAdapter;
         $this->_sentenceRepository = $sentenceRepository;
     }
 

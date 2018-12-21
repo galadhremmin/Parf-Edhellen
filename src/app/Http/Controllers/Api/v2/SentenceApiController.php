@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\v2;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
-use App\Adapters\SentenceAdapter;
 use App\Repositories\SentenceRepository;
 use DB;
 
