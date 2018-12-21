@@ -95,11 +95,11 @@ export default class Flashcards extends React.Component<IProps, IState> {
             </div>}
             {gloss.source && <span className="source">[{gloss.source}]</span>}
             {correct ? <p className="text-success">
-                <span className="glyphicon glyphicon-ok"></span> 
+                <span className="glyphicon glyphicon-ok" />
                 {' '}
                 That's right! Good job!
             </p> : <p className="text-danger">
-                <span className="glyphicon glyphicon-remove"></span>
+                <span className="glyphicon glyphicon-remove" />
                 {' '}
                 Wrong - better luck next time!
             </p>}
@@ -174,7 +174,8 @@ export default class Flashcards extends React.Component<IProps, IState> {
     private _onOptionClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
 
-        const option = (ev.target as HTMLAnchorElement).dataset['option'];
+        const optionKey = 'option';
+        const option = (ev.target as HTMLAnchorElement).dataset[optionKey];
         this._testOption(option);
     }
 

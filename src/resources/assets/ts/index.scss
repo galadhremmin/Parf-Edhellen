@@ -3,6 +3,8 @@
 @import "./_scss/_fx";
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 
+@import "./_scss/_link-block";
+
 html, body {
   width: 100%;
   margin: 0;
@@ -326,4 +328,3 @@ blockquote h3 a {
 .search-result-navigator ul.pager {
   margin: 0;
 }
-
