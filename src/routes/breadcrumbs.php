@@ -239,12 +239,20 @@ Breadcrumbs::register('discuss', function ($breadcrumbs)
     $breadcrumbs->push('Discussion', route('discuss.index'));
 });
 
-Breadcrumbs::register('discuss.show', function ($breadcrumbs, $thread)
+Breadcrumbs::register('discuss.group', function ($breadcrumbs, App\Models\ForumGroup $group)
 {
     $breadcrumbs->parent('discuss');
 
     $linker = new \App\Helpers\LinkHelper();
-    $breadcrumbs->push($thread->subject, $linker->forumThread($thread->id, $thread->normalized_subject));
+    $breadcrumbs->push($group->name, $linker->forumGroup($group->id, $group->name));
+});
+
+Breadcrumbs::register('discuss.show', function ($breadcrumbs, App\Models\ForumGroup $group, App\Models\ForumThread $thread)
+{
+    $breadcrumbs->parent('discuss.group', $group);
+
+    $linker = new \App\Helpers\LinkHelper();
+    $breadcrumbs->push($thread->subject, $linker->forumThread($group->id, $group->name, $thread->id, $thread->normalized_subject));
 });
 
 Breadcrumbs::register('discuss.create', function ($breadcrumbs)

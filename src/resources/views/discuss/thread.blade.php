@@ -4,7 +4,7 @@
 @section('body')
   <article>
     <nav class="discuss-breadcrumbs">
-      {!! Breadcrumbs::render('discuss.show', $thread) !!}
+      {!! Breadcrumbs::render('discuss.show', $group, $thread) !!}
     </nav>
     <header>
       <h1>{{ $thread->subject }}</h1>
@@ -24,9 +24,7 @@
   </article>
 @endsection
 @section('styles')
-<link rel="stylesheet" href="@assetpath(css/app.discuss.css)">
+<link rel="stylesheet" href="@assetpath(style-discuss.css)">
 @endsection
 @section('scripts')
-  <script type="text/javascript" src="@assetpath(/js/comment.js)" async></script>
-  <script type="text/javascript" src="@assetpath(/js/discuss-tools.js)" async></script>
 @endsection

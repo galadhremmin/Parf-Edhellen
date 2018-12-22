@@ -20,6 +20,7 @@ use App\Helpers\{
 use App\Models\{
     Account,
     ForumDiscussion,
+    ForumGroup,
     ForumThread,
     ForumPost
 };
@@ -40,12 +41,24 @@ class DiscussController extends Controller
 
     public function index(Request $request)
     {
+        return $this->groups($request);
+    }
+
+    public function groups(Request $request)
+    {
+        return view('discuss.groups', [
+            'groups' => ForumGroup::orderBy('name')->get()
+        ]);
+    }
+
+    public function group(Request $request, int $id)
+    {
+        $group = ForumGroup::findOrFail($id);
         $noOfThreadsPerPage = config('ed.forum_thread_resultset_max_length');
-        $noOfPages = ceil(ForumThread::where('number_of_posts', '>', 0)
-            ->count() / $noOfThreadsPerPage);
+        $noOfPages = ceil(ForumThread::inGroup($id)->count() / $noOfThreadsPerPage);
         $currentPage = min($noOfPages - 1, max(0, intval($request->input('offset'))));
 
-        $threads = ForumThread::where('number_of_posts', '>', 0)
+        $threads = ForumThread::inGroup($id)
             ->with('account')
             ->orderBy('is_sticky', 'desc')
             ->orderBy('updated_at', 'desc')
@@ -60,7 +73,8 @@ class DiscussController extends Controller
         }
 
         $adapted = $this->_discussAdapter->adaptThreads($threads);
-        return view('discuss.index', [
+        return view('discuss.group', [
+            'group'   => $group,
             'threads' => $adapted,
             'pages'   => $pages,
             'currentPage' => $currentPage,
@@ -92,9 +106,11 @@ class DiscussController extends Controller
         return view('discuss.member-all-list', ['members' => $members]);
     }
 
-    public function show(Request $request, int $id)
+    public function show(Request $request, int $groupId, string $groupSlug, int $id)
     {
+        $group  = ForumGroup::findOrFail($groupId);
         $thread = ForumThread::findOrFail($id);
+
         if ($thread->number_of_posts < 1) {
             abort(404, 'The thread you are looking for does not exist.');
         }
@@ -109,7 +125,8 @@ class DiscussController extends Controller
             abort(403);
         }
 
-        return view('discuss.show', [
+        return view('discuss.thread', [
+            'group'   => $group,
             'thread'  => $thread,
             'context' => $context
         ]);

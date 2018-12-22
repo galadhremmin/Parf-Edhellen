@@ -65,8 +65,8 @@ class SentenceParagraphs extends Migration
         });
 
         Schema::table('sentence_translations', function (Blueprint $table) {
-            $table->dropPrimary('pk');
             $table->dropColumn('paragraph_number');
+            $table->dropPrimary('pk');
             $table->primary(['sentence_id', 'sentence_number']);
         });
     }

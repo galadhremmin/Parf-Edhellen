@@ -18,10 +18,11 @@ const outputPath = path.resolve(__dirname, `public/${publicPath}`);
 
 module.exports = {
   entry: {
-    index: `${sourcePath}/index.tsx`
+    index: `${sourcePath}/index.tsx`,
+    'style-discuss': `${sourcePath}/apps/discuss/index.scss`
   },
   output: {
-    filename: 'main.js',
+    filename: '[name].js',
     path: outputPath,
     chunkFilename: '[name].js',
     publicPath: `${publicPath}/`,

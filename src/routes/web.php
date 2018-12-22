@@ -101,8 +101,11 @@ Route::group([
 ], function () use ($numericReg, $urlSeoReg) {
     Route::get('discuss', 'DiscussController@index')
         ->name('discuss.index');
-    Route::get('discuss/{id}-{slug?}', 'DiscussController@show')
+    Route::get('discuss/{id}-{slug?}', 'DiscussController@group')
         ->where([ 'id' => $numericReg ])
+        ->name('discuss.group');
+    Route::get('discuss/{groupId}-{groupSlug?}/{id}-{slug?}', 'DiscussController@show')
+        ->where([ 'groupId' => $numericReg, 'id' => $numericReg ])
         ->name('discuss.show');
     Route::get('/top-contributors', 'DiscussController@topMembers')
         ->name('discuss.members');

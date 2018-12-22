@@ -26,4 +26,12 @@ class ForumThread extends ModelBase implements Interfaces\IHasFriendlyName
     {
         return $this->subject;
     }
+
+    public function scopeInGroup($query, int $id)
+    {
+        $query->where([
+            ['number_of_posts', '>', 0],
+            ['forum_group_id', $id]
+        ]);
+    }
 }

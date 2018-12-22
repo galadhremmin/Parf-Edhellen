@@ -44,9 +44,8 @@
 
 @endsection
 @section('styles')
-<link rel="stylesheet" href="@assetpath(css/app.discuss.css)">
+<link rel="stylesheet" href="@assetpath(style-discuss.css)">
 @endsection
 @section('scripts')
-  <script type="text/javascript" src="@assetpath(/js/member-charts.js)" async></script>
 @endsection
 

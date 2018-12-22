@@ -27,6 +27,7 @@ class ForumGroups extends Migration
         Schema::create('forum_groups', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            $table->text('description');
             $table->string('role')->nullable();
             $table->timestamps();
         });
@@ -36,31 +37,36 @@ class ForumGroups extends Migration
         });
 
         $p0 = new ForumGroup([
+            'description' => 'Discussions and comments on peoples\' profiles.',
             'name' => 'Profiles',
             'role' => Morphs::getAlias(Account::class)
         ]);
         $p0->save();
 
         $p1 = new ForumGroup([
+            'description' => 'Feedback on approved, rejected and pending contributions.',
             'name' => 'Contributions',
             'role' => Morphs::getAlias(Contribution::class)
         ]);
         $p1->save();
 
         $p2 = new ForumGroup([
+            'description' => 'Discussions about glosses in the dictionary, including approved contributions to the glossary.',
             'name' => 'Glossary',
             'role' => Morphs::getAlias(Gloss::class)
         ]);
         $p2->save();
 
         $p3 = new ForumGroup([
+            'description' => 'Discussions about phrases composed by Tolkien and the community.',
             'name' => 'Phrases',
             'role' => Morphs::getAlias(Sentence::class)
         ]);
         $p3->save();
 
         $p4 = new ForumGroup([
-            'name' => 'Discussion',
+            'description' => 'Discussions about everything else, with no clear association to a specific part of the dictionary.',
+            'name' => 'Miscellaneous & more',
             'role' => Morphs::getAlias(ForumDiscussion::class)
         ]);
         $p4->save();

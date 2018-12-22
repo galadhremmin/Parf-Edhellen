@@ -72,13 +72,23 @@ class LinkHelper
 
         return $url;
     }
+    
+    public function forumGroup(int $groupId, string $groupName)
+    {
+        return route('discuss.group', [
+            'id' => $groupId,
+            'slug' => StringHelper::normalizeForUrl($groupName)
+        ]);
+    }
 
-    public function forumThread(int $threadId, string $normalizedSubject = null, $postId = null) 
+    public function forumThread(int $groupId, string $groupName, int $threadId, string $normalizedSubject = null, $postId = null) 
     {
         $slug = $normalizedSubject === null || empty($normalizedSubject) ? 'thread' : $normalizedSubject;
         $props = [
             'id' => $threadId,
-            'slug' => $slug
+            'slug' => $slug,
+            'groupId' => $groupId,
+            'groupSlug' => StringHelper::normalizeForUrl($groupName),
         ];
 
         if (is_numeric($postId)) {

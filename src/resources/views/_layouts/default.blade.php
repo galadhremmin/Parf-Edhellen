@@ -110,23 +110,8 @@
     </section>
   </footer>
 
-<script type="text/javascript" src="@assetpath(vendor.js)"></script>
-<script type="text/javascript" src="@assetpath(main.js)"></script>
-
-  <!--
-  <script type="text/javascript" src="@assetpath(/js/manifest.js)"></script>
-  <script type="text/javascript" src="@assetpath(/js/vendor.js)"></script>
-  <script type="text/javascript" src="@assetpath(/js/ie.js)"></script>
-  <script type="text/javascript" src="@assetpath(/js/glaemscribe.js)"></script>
-  @if ($user)
-    @if ($isAdmin)
-    <script type="text/javascript" src="@assetpath(/js/global-plugins-admin.js)"></script>
-    @else
-    <script type="text/javascript" src="@assetpath(/js/global-plugins-restricted.js)"></script>
-    @endif
-  @endif
-  <script type="text/javascript" src="@assetpath(/js/global.js)" async></script>
-  -->
+  <script type="text/javascript" src="@assetpath(vendor.js)"></script>
+  <script type="text/javascript" src="@assetpath(index.js)"></script>
   
   @yield('scripts')
   @if (!empty(config('ed.footer_view')))
