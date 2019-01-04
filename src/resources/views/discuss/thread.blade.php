@@ -14,6 +14,11 @@
     </section>
     <aside id="discuss-toolbar" data-thread-id="{{ $thread->id }}"></aside>
     <section class="discuss-body">
+      @foreach ($preloadedPosts['posts'] as $post)
+        @include('discuss._post', $post)
+      @endforeach
+      @include('discuss._pagination', $preloadedPosts)
+      <pre>{{ json_encode([$preloadedPosts], JSON_PRETTY_PRINT) }}</pre>
       @include('_shared._comments', [
         'entity_id' => $thread->entity_id,
         'morph'     => $thread->entity_type,

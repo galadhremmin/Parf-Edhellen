@@ -12,7 +12,10 @@ use App\Http\Discuss\ContextFactory;
 use App\Adapters\DiscussAdapter;
 use App\Models\Initialization\Morphs;
 use App\Events\ForumPostCreated;
-use App\Repositories\StatisticsRepository;
+use App\Repositories\{
+    DiscussRepository,
+    StatisticsRepository
+};
 use App\Helpers\{
     LinkHelper,
     StringHelper
@@ -29,12 +32,14 @@ class DiscussController extends Controller
 {
     protected $_discussAdapter;
     protected $_contextFactory;
+    protected $_discussRepository;
     protected $_statisticsRepository;
 
     public function __construct(DiscussAdapter $discussAdapter, ContextFactory $contextFactory,
-        StatisticsRepository $statisticsRepository) 
+        DiscussRepository $discussRepository, StatisticsRepository $statisticsRepository) 
     {
         $this->_discussAdapter       = $discussAdapter;
+        $this->_discussRepository    = $discussRepository;
         $this->_contextFactory       = $contextFactory;
         $this->_statisticsRepository = $statisticsRepository;
     }
@@ -46,39 +51,30 @@ class DiscussController extends Controller
 
     public function groups(Request $request)
     {
-        return view('discuss.groups', [
-            'groups' => ForumGroup::orderBy('name')->get()
-        ]);
+        $model = $this->_discussRepository->getGroups();
+        return view('discuss.groups', $model);
     }
 
     public function group(Request $request, int $id)
     {
-        $group = ForumGroup::findOrFail($id);
-        $noOfThreadsPerPage = config('ed.forum_thread_resultset_max_length');
-        $noOfPages = ceil(ForumThread::inGroup($id)->count() / $noOfThreadsPerPage);
-        $currentPage = min($noOfPages - 1, max(0, intval($request->input('offset'))));
+        $currentPage = max(0, intval($request->input('offset')));
 
-        $threads = ForumThread::inGroup($id)
-            ->with('account')
-            ->orderBy('is_sticky', 'desc')
-            ->orderBy('updated_at', 'desc')
-            ->orderBy('created_at', 'desc')
-            ->skip($currentPage * $noOfThreadsPerPage)
-            ->take($noOfThreadsPerPage)
-            ->get();
+        $groupData = $this->_discussRepository->getGroup($id);
+        $model = $this->_discussRepository->getThreadsInGroup($groupData['group'], $request->user(), $currentPage);
         
-        $pages = [];
-        for ($i = 0; $i < $noOfPages; $i += 1) {
-            $pages[$i] = $i + 1;
-        }
+        return view('discuss.group', $model);
+    }
 
-        $adapted = $this->_discussAdapter->adaptThreads($threads);
-        return view('discuss.group', [
-            'group'   => $group,
-            'threads' => $adapted,
-            'pages'   => $pages,
-            'currentPage' => $currentPage,
-            'noOfPages' => $noOfPages
+    public function show(Request $request, int $groupId, string $groupSlug, int $id)
+    {
+        $currentPage = max(0, intval($request->get('offset')));
+
+        $groupData = $this->_discussRepository->getGroup($groupId);
+        $threadData = $this->_discussRepository->getThread($id);
+        $posts = $this->_discussRepository->getPostsInThread($threadData['thread'], $request->user(), 'asc', $currentPage);
+
+        return view('discuss.thread', $threadData + $groupData + [
+            'preloadedPosts' => $posts
         ]);
     }
 
@@ -104,32 +100,6 @@ class DiscussController extends Controller
             ->paginate(30);
 
         return view('discuss.member-all-list', ['members' => $members]);
-    }
-
-    public function show(Request $request, int $groupId, string $groupSlug, int $id)
-    {
-        $group  = ForumGroup::findOrFail($groupId);
-        $thread = ForumThread::findOrFail($id);
-
-        if ($thread->number_of_posts < 1) {
-            abort(404, 'The thread you are looking for does not exist.');
-        }
-
-        $context = $this->_contextFactory->create($thread->entity_type);
-        $user = $request->user();
-        if (! $context->available($thread, $user)) {
-            if (! $user) {
-                throw new AuthenticationException;
-            } 
-            
-            abort(403);
-        }
-
-        return view('discuss.thread', [
-            'group'   => $group,
-            'thread'  => $thread,
-            'context' => $context
-        ]);
     }
 
     public function create(Request $request)

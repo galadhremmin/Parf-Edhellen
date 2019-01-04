@@ -18,20 +18,6 @@ class DiscussAdapter
         $this->_contextFactory = $contextFactory;
     }
 
-    public function adaptThreads(Collection $threads)
-    {
-        $user = Auth::user();
-        $contextFactory = $this->_contextFactory;
-
-        // remove threads that the user is not authorised to see.
-        $adapted = $threads->filter(function ($thread) use($user, $contextFactory) {
-            $context = $contextFactory->create($thread->entity_type);
-            return $context !== null && $context->available($thread->entity_id, $user);
-        });
-
-        return $adapted;
-    }
-
     public function adaptPost(ForumPost $post)
     {
         $parser = new MarkdownParser();

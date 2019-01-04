@@ -17,6 +17,11 @@ class ForumThread extends ModelBase implements Interfaces\IHasFriendlyName
         return $this->morphTo();
     }
 
+    public function forum_group()
+    {
+        return $this->belongsTo(ForumGroup::class);
+    }
+
     public function forum_posts()
     {
         return $this->hasMany(ForumPost::class);

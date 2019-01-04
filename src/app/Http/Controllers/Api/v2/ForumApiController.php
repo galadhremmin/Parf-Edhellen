@@ -209,7 +209,13 @@ class ForumApiController extends Controller
         }
 
         $linker = new LinkHelper();
-        return redirect($linker->forumThread($post->forum_thread_id, $post->forum_thread->normalized_subject, $id));
+        $path = $linker->forumThread(
+            $post->forum_thread->forum_group_id, $post->forum_thread->forum_group->name,
+            $post->forum_thread_id, $post->forum_thread->normalized_subject,
+            $id
+        );
+
+        return redirect($path);
     }
 
     /**

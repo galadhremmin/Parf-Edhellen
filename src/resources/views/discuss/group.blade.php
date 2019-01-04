@@ -29,6 +29,12 @@
   <hr>
 
   <div class="discuss-table">
+  @if (count($threads) < 1)
+  <p>
+    <span class="glyphicon glyphicon-info-sign"></span>
+    There are currently no threads associated with this subject.
+  </p>
+  @else
   @foreach ($threads as $thread)
     <div class="r {{ $thread->is_sticky ? 'sticky' : '' }}">
       <div class="c">
@@ -52,25 +58,14 @@
       </div>
     </div>
   @endforeach
+  @endif
   </div>
 
-  @if (count($pages) > 0)
-  <nav class="text-center">
-    <ul class="pagination">
-      <li class="{{ $currentPage - 1 <= 0 ? 'disabled' : '' }}">
-        <a href="?offset={{ $currentPage - 1 }}"><span aria-hidden="true">← Older</span></a>
-      </li>
-      @foreach ($pages as $pageIndex => $pageNumber)
-      <li class="{{ $pageIndex == $currentPage ? 'active' : '' }}">
-        <a href="?offset={{ $pageIndex }}">{{$pageNumber}}</a>
-      </li>
-      @endforeach
-      <li class="{{ $currentPage + 1 >= $noOfPages ? 'disabled' : '' }}">
-        <a href="?offset={{$currentPage + 1}}"><span aria-hidden="true">Newer →</span></a>
-      </li>
-    </ul>
-  </nav>
-  @endif
+  @include('discuss._pagination', [
+    'pages' => $pages,
+    'current_page' => $current_page,
+    'no_of_pages' => $no_of_pages
+  ])
 
 @endsection
 @section('styles')

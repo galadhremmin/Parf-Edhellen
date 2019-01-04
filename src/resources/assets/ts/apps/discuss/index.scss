@@ -1,11 +1,12 @@
 @import '../../_scss/_variables';
 @import '../../_scss/fx';
 
+$ed-toolbar-height: 30px;
+$ed-forum-post-profile-width: 120px;
+
 h1 {
     word-wrap: break-word;
 }
-
-$ed-toolbar-height: 30px;
 
 #discuss-toolbar {
     text-align: right;
@@ -100,5 +101,110 @@ $ed-toolbar-height: 30px;
         .total-indicator {
             font-size: 1rem;
         }  
+    }
+}
+
+.forum-post {
+    display: table;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: $line-height-computed;
+    padding-top: $line-height-computed;
+    border-top: 1px solid $gray-lighter;
+    transition: background-color 2s, padding 2s;
+
+    &:first-child {
+        margin-top: 0;
+        padding-top: 0;
+        border-top: none;
+    }
+
+    &.highlight {
+        background-color: $alert-info-bg;
+        padding: $padding-large-vertical;
+        border-radius: $border-radius-large;
+    }
+
+    .post-body {
+        p, ul, ol {
+            max-width: 600px;
+        }
+        pre {
+            max-width: max-content;
+        }
+        table {
+            width: auto;
+            min-width: 200px;
+        }
+    }
+
+    .post-profile-picture {
+        display: table-cell;
+        width: $ed-forum-post-profile-width;
+        text-align: center;
+        font-size: 85%;
+
+        img {
+            width: $ed-forum-post-profile-width/2; 
+            height: $ed-forum-post-profile-width/2;
+            border-radius: $ed-forum-post-profile-width/4;
+            border: 2px solid white;
+            @include ed-box-shadow();
+        }
+    }
+
+    .post-content {
+        display: table-cell;
+        vertical-align: top;
+        overflow: hidden;
+    }
+
+    .post-tools, .post-header {
+        font-family: $font-family-tiny;
+    }
+
+    .post-header {
+        .post-no {
+            float: right;
+            font-size: $font-size-small;
+            color: $gray-light;
+        }
+    }
+
+    .post-tools {
+        font-size: $font-size-small;
+        color: $gray-light;
+
+        > .tools {
+            float: right;
+        }
+    }
+
+    a {
+        text-decoration: none;
+
+        .like-not-liked {
+            color: $gray-light;
+        }
+
+        .like-liked {
+            color: $brand-success;
+        }
+    }
+}
+
+@media (max-width: 540px) {
+    .forum-post .post-profile-picture {
+        font-size: 70%;
+        font-family: Helvetica, Arial, sans-serif;
+        width: $ed-forum-post-profile-width*0.16;
+        padding-top: 2px;
+        text-align: left;
+
+        img {
+            width: $ed-forum-post-profile-width*0.25*0.5; 
+            height: $ed-forum-post-profile-width*0.25*0.5;
+            border-radius: $ed-forum-post-profile-width*0.25*0.5*0.5;
+        }
     }
 }
