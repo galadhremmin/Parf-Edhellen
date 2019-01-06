@@ -13,18 +13,11 @@
     {!! $context->view($thread->entity) !!}
     </section>
     <aside id="discuss-toolbar" data-thread-id="{{ $thread->id }}"></aside>
-    <section class="discuss-body">
+    <section class="discuss-body" data-discuss="{{ htmlentities(json_encode($preloadedPosts), ENT_QUOTES) }}">
       @foreach ($preloadedPosts['posts'] as $post)
         @include('discuss._post', $post)
       @endforeach
       @include('discuss._pagination', $preloadedPosts)
-      <pre>{{ json_encode([$preloadedPosts], JSON_PRETTY_PRINT) }}</pre>
-      @include('_shared._comments', [
-        'entity_id' => $thread->entity_id,
-        'morph'     => $thread->entity_type,
-        'enabled'   => true,
-        'order'     => 'asc'
-      ])
     </section>
   </article>
 @endsection
@@ -32,4 +25,5 @@
 <link rel="stylesheet" href="@assetpath(style-discuss.css)">
 @endsection
 @section('scripts')
+
 @endsection

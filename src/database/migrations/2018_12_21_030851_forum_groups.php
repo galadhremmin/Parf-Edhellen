@@ -12,7 +12,7 @@ use App\Models\{
     ForumDiscussion,
     ForumGroup,
     ForumThread,
-    Sentence,
+    Sentence
 };
 
 class ForumGroups extends Migration

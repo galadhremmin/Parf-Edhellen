@@ -11,7 +11,7 @@
       <a href="?offset={{ $page_number }}">{{ $page_number }}</a>
     </li>
     @endforeach
-    @if ($current_page + 1 < $no_of_pages)
+    @if ($current_page < $no_of_pages)
     <li>
       <a href="?offset={{$current_page + 1}}"><span aria-hidden="true">Newer →</span></a>
     </li>

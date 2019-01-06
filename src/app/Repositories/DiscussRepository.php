@@ -201,12 +201,6 @@ class DiscussRepository
 
         $skip = 0;
         if ($ascending) {
-            // load the _latest_ n posts by default, even when sorting in an ascending 
-            // order.
-            if ($majorId === 0) {
-                $majorId = $noOfPages; // last page
-            }
-            
             if ($jumpToId !== 0) {
                 // if the the client is, in fact, requesting to oad a specific post, we 
                 // must determine the page on which the post can be found.
