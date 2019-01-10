@@ -177,6 +177,13 @@ h1 {
 
         > .tools {
             float: right;
+
+            > a {
+                &:first-child {
+                    margin-left: 0;
+                }
+                margin-left: 0.2em;
+            }
         }
     }
 

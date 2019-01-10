@@ -9,3 +9,9 @@ export const GlobalEventLoadGlossary = 'ednavigate';
 export const GlobalEventLoadReference = 'edref';
 
 export const DefaultGlaemscribeCharacterSet = 'tengwar_ds_annatar';
+
+export enum SecurityRole {
+    Anonymous = 'ed-anonymous',
+    User = 'ed-user',
+    Administrator = 'ed-admin',
+}
