@@ -1,5 +1,8 @@
 import { expect } from 'chai';
-import { capitalize } from './string-manipulation';
+import {
+    capitalize,
+    isEmptyString,
+} from './string-manipulation';
 
 describe('utilities/func/string-manipulation', () => {
     it('capitalizes one word', () => {
@@ -26,5 +29,14 @@ describe('utilities/func/string-manipulation', () => {
 
         const actual = capitalize(input);
         expect(actual).to.equal(expected);
+    });
+
+    it('identifies empty strings', () => {
+        const s = [ '', null, undefined, '    ', '    b ' ];
+        const e = [ true, true, true, true, false ];
+
+        for (let i = 0; i < s.length; i += 1) {
+            expect(isEmptyString(s[i]), `"${s[i]}" did not yield ${e[i]}.`).to.equal(e[i]);
+        }
     });
 });

@@ -1,9 +1,10 @@
 import React from 'react';
-import SharedReference from '@root/utilities/SharedReference';
+
 import {
     RoleManager,
     SecurityRole,
 } from '@root/security';
+import SharedReference from '@root/utilities/SharedReference';
 
 import DeletePost from '../components/DeletePost';
 import EditPost from '../components/EditPost';
@@ -20,7 +21,7 @@ export default class Toolbar extends React.PureComponent<IProps> {
         const toolbar = this._getEligibleToolbarComponents(accountId);
 
         return <React.Fragment>
-            {toolbar.map((Component, i) => <Component key={i} 
+            {toolbar.map((Component, i) => <Component key={i}
                 accountId={accountId}
                 postId={postId}
             />)}

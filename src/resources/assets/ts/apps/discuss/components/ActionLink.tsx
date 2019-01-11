@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { fireEvent } from '@root/components/Component';
 import { IProps } from './ActionLink._types';
 

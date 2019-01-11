@@ -20,10 +20,6 @@
         </div>
         <div class="post-tools">
             <span class="date">{{ $post->created_at }}</span>
-            <span class="tools"
-                data-inject-module="discuss-post-tools"
-                data-inject-prop-account-id="{{ $post->account_id }}"
-                data-inject-prop-post-id="{{ $post->id }}"></span>
         </div> 
     </div>
 </div>
