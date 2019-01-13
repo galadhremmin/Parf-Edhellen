@@ -17,7 +17,7 @@
              data-inject-module="discuss"
              data-inject-prop-entity-type="{{ $thread->entity_type }}"
              data-inject-prop-entity-id="{{ $thread->entity_id }}"
-             data-inject-prop-posts="{{ htmlentities(json_encode($preloadedPosts), ENT_QUOTES) }}">
+             data-inject-prop-discuss-data="{{ htmlentities(json_encode($preloadedPosts), ENT_QUOTES) }}">
       @foreach ($preloadedPosts['posts'] as $post)
         @include('discuss._post', $post)
       @endforeach

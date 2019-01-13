@@ -1,7 +1,15 @@
 import React from 'react';
 
-export default class Discuss extends React.PureComponent<any> {
+import { IProps } from '../index._types';
+import Post from '../components/Post';
+
+export default class Discuss extends React.PureComponent<IProps> {
     public render() {
-        return <span>{JSON.stringify(this.props)}</span>;
+        const data = this.props.discussData;
+        if (!data || ! Array.isArray(data.posts)) {
+            return null;
+        }
+
+        return data.posts.map((post) => <Post post={post} key={post.id} />);
     }
 }
