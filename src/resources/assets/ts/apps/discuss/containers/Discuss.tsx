@@ -1,9 +1,9 @@
 import React from 'react';
 
 import Pagination from '@root/components/Pagination';
+import Post from '../components/Post';
 
 import { IProps } from '../index._types';
-import Post from '../components/Post';
 
 export default class Discuss extends React.PureComponent<IProps> {
     public render() {

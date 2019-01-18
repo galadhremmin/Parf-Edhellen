@@ -1,7 +1,7 @@
 import React from 'react';
 import { IProps } from './Pagination._types';
 
-const createLink = (pageNumber: string | number, parameterName: string = 'offset') => 
+const createLink = (pageNumber: string | number, parameterName: string = 'offset') =>
     `?${parameterName}=${pageNumber}`;
 
 const Pagination = (props: IProps) => {
@@ -19,7 +19,7 @@ const Pagination = (props: IProps) => {
                     Older
                 </a>
             </li>}
-            {props.pages.map((pageNumber) => <li key={pageNumber} 
+            {props.pages.map((pageNumber) => <li key={pageNumber}
                 className={props.currentPage === pageNumber ? 'active' : ''}>
                 <a href={createLink(pageNumber, parameterName)}>
                     {pageNumber}
@@ -33,10 +33,13 @@ const Pagination = (props: IProps) => {
             </li>}
         </ul>
     </nav>;
-}
+};
 
 Pagination.defaultProps = {
-    pageQueryParameterName: 'offset'
+    currentPage: 1,
+    noOfPages: 1,
+    pageQueryParameterName: 'offset',
+    pages: null,
 } as Partial<IProps>;
 
 export default Pagination;
