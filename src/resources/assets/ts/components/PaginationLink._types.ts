@@ -1,9 +1,10 @@
+import { ReactNode } from 'react';
+
 import { ComponentEventHandler } from './Component._types';
 
 export interface IProps {
-    currentPage: number;
-    noOfPages: number;
+    children?: ReactNode;
     onClick?: ComponentEventHandler<number>;
-    pageQueryParameterName?: string;
-    pages: Array<string | number>;
+    pageNumber: string | number;
+    parameterName?: string;
 }

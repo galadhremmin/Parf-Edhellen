@@ -219,6 +219,17 @@ Route::group([
     ]]);
 });
 
+// Public unrestricted API for discuss
+Route::group([ 
+    'namespace' => 'Api\v2', 
+    'prefix'    => 'api/v2/discuss'
+], function () use ($numericReg) {
+    Route::get('group',           [ 'uses' => 'DiscussApiController@groups' ]);
+    Route::get('group/{groupId}', [ 'uses' => 'DiscussApiController@groupAndThreads' ]);
+    Route::get('thread', [ 'uses' => 'DiscussApiController@latestThreads' ]);
+    Route::get('thread/{threadId}', [ 'uses' => 'DiscussApiController@thread' ]);
+});
+
 // Public, throttled API
 Route::group([ 
         'namespace'  => 'Api\v2', 

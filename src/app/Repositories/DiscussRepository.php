@@ -273,6 +273,17 @@ class DiscussRepository
         ];
     }
 
+    public function getLatestThreads()
+    {
+        $threads = ForumThread::orderBy('updated_at', 'desc')
+            ->take(10)
+            ->get();
+
+        return [
+            'threads' => $threads
+        ];
+    }
+
     /**
      * Updates the reference to point to the account associated with the request, if the current reference is `null`.
      *

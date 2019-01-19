@@ -8,10 +8,9 @@ use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use App\Models\Initialization\Morphs;
 use App\Http\Discuss\ContextFactory;
-use App\Adapters\DiscussAdapter;
 use App\Helpers\LinkHelper;
 use App\Repositories\{
-    ForumRepository,
+    DiscussRepository,
     MailSettingRepository
 };
 use App\Models\{ 
@@ -29,179 +28,30 @@ use App\Events\{
 
 class ForumApiController extends Controller 
 {
-    protected $_discussAdapter;
-    protected $_repository;
+    protected $_discussRepository;
     protected $_mailSettings;
     protected $_contextFactory;
 
-    public function __construct(DiscussAdapter $discussAdapter, 
-        ForumRepository $repository, 
+    public function __construct(DiscussRepository $discussRepository,
         MailSettingRepository $mailSettingsRepository, 
         ContextFactory $contextFactory)
     {
-        $this->_discussAdapter = $discussAdapter;
-        $this->_repository     = $repository;
-        $this->_mailSettings   = $mailSettingsRepository;
-        $this->_contextFactory = $contextFactory;
+        $this->_discussRepository = $discussRepository;
+        $this->_mailSettings      = $mailSettingsRepository;
+        $this->_contextFactory    = $contextFactory;
     }
 
     public function index(Request $request)
     {
-        return ForumGroup::orderBy('name')
-            ->get();
-    }
-
-    public function group(Request $request) 
-    {
-        $thread = $this->getOrNewForumThread($request);
-        if ($thread->id) {
-            $loadingOptions = [
-                // eager load _account_, but grab only information relevant for the view.
-                'account' => function ($query) {
-                    $query->select('id', 'nickname', 'has_avatar', 'tengwar');
-                }
-            ];
-
-            $user = $request->user();
-            if ($user !== null) {
-                // has the current user liked the post? Don't care about the rest.
-                $loadingOptions['likes'] = function ($query) use ($user) {
-                    $query->where('account_id', $user->id)
-                        ->select('account_id', 'forum_post_id');  
-                };
-            }
-
-            // Direction is either descending (default) or ascending.
-            // Ascending order results in the largest ID being the major ID, whereas
-            // descending order results in the smallest ID being the major ID.
-            $direction = $request->has('order')
-                ? ($request->input('order') === 'asc' ? 'asc' : 'desc')
-                : 'desc';
-            $ascending = $direction === 'asc';
-
-            // Retrieve the maximum size of the result set, and determine whether
-            // the major ID should be initialized (see above) or retrieved from the
-            // input parameters.
-            $maxLength = config('ed.forum_resultset_max_length');
-            $majorId = $request->has('from_id')
-                ? intval($request->input('from_id'))
-                : -1;
-            $jumpToId = $request->has('jump_to')
-                ? intval($request->input('jump_to'))
-                : 0;
-
-            // Determine the number of 'pages' there are, which is relevant when
-            // retrieving things in an ascending order.
-            $pages = 0;
-            if ($ascending) {
-                $pages = ceil($thread->forum_posts()
-                    ->where('is_hidden', 0)
-                    ->count() / $maxLength
-                );
-            }
-
-            // composer "filters" (where-conditions for the query fetching the posts). This is a
-            // quite interesting process, as it depends entirely on the sort order:
-            //
-            // ASC (ascending):   The API offers a pagination as a means to sift through posts. The
-            //                    default state is nonetheless the _n_ latest posts, assuming that the
-            //                    client is interested in the _latest_ posts, albeit presented in an
-            //                    ascending order. The major ID, in this situation, acts as the page number.
-            //
-            // DESC (descending): The API offers an infinite scroll-like experience, where majorId is 
-            //                    always the least ID of the result set. The result set is 'paginated'
-            //                    by the client continuously sending the last, least major ID to the API.
-            // 
-            // Hidden posts are automatically excluded. Deleted posts might still be shown, which is why
-            // we are not filtering out deleted.
-            $filters = [
-                ['is_hidden', 0]
-            ];
-
-            $skip = 0;
-            if ($ascending) {
-                // load the _latest_ n posts by default, even when sorting in an ascending 
-                // order.
-                $majorId = $jumpToId ?: $majorId;
-                if ($majorId < 1) {
-                    $majorId = $pages; // 1:st page
-                } else if ($majorId > $pages) {
-                    // if the major ID is larger than the number of pages available,
-                    // it is likely that the the client is, in fact, requesting to
-                    // load a specific post. In that case, we must determine the page
-                    // on which the post might be found. 
-                    $requestedId = $majorId;
-                    $majorId = $pages;
-                    do {
-                        // retrieve an array of IDs within each page, until the page
-                        // with the sought-after ID is found.
-                        $ok = $thread->forum_posts()->where($filters)
-                            ->orderBy('id', 'asc')
-                            ->skip(($majorId - 1) * $maxLength)
-                            ->take($maxLength)
-                            ->pluck('id')
-                            ->search($requestedId);
-
-                        if ($ok !== false) {
-                            break;
-                        }
-
-                        $majorId -= 1;
-                    } while ($majorId > 1);
-                }
-                $skip = ($majorId - 1) * $maxLength;
-
-            } else {
-                if ($jumpToId > 0) {
-                    $filters[] = ['id', '>=', $jumpToId];
-                    $maxLength = 0; // TODO: implement a means to restrict the result set
-                } else if ($majorId > 0) {
-                    $filters[] = ['id', '<', $majorId];
-                }
-                
-                if ($majorId < 1) {
-                    $majorId = PHP_INT_MAX;
-                }
-            }
-            
-            $query = $thread->forum_posts()
-                ->with($loadingOptions)
-                ->where($filters)
-                ->orderBy('id', $direction);
-
-            if ($skip > 0) {
-                $query = $query->skip($skip);
-            }
-
-            if ($maxLength > 0) {
-                $query = $query->take($maxLength);
-            }
-
-            $posts = $query->get();
-
-            foreach ($posts as $post) {
-                // Determine the major ID depending on the order of the items
-                if (! $ascending && $majorId > $post->id) {
-                    $majorId = $post->id;
-                }
-
-                $this->_discussAdapter->adaptPost($post);
-            }
-        } else {
-            $posts = [];
-            $majorId = 0;
-            $pages = 0;
-        }
-
-        return [
-            'posts'     => $posts,
-            'major_id'  => $majorId,
-            'pages'     => $pages,
-            'thread_id' => $thread->id ?: null
-        ];
+        return $this->_discussRepository->getGroups();
     }
 
     public function show(Request $request, int $id)
+    {
+        return $this->_discussRepository->getGroup($id);
+    }
+
+    public function threadForPost(Request $request, int $id)
     {
         $post = ForumPost::where('id', $id)->select('forum_thread_id')->first();
         if ($post === null) {

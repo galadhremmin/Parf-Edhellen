@@ -1,35 +1,42 @@
 import React from 'react';
-import { IProps } from './Pagination._types';
 
-const createLink = (pageNumber: string | number, parameterName: string = 'offset') =>
-    `?${parameterName}=${pageNumber}`;
+import { IProps } from './Pagination._types';
+import PaginationLink from './PaginationLink';
 
 const Pagination = (props: IProps) => {
-    if (props.noOfPages < 2) {
+    const {
+        currentPage,
+        noOfPages,
+        onClick,
+        pages,
+    } = props;
+
+    if (noOfPages < 2) {
         return null;
     }
 
-    const parameterName = props.pageQueryParameterName;
-
     return <nav className="text-center">
         <ul className="pagination">
-            {props.currentPage > 1 && <li>
-                <a href={createLink(props.currentPage - 1, parameterName)}>
+            {currentPage > 1 && <li>
+                <PaginationLink pageNumber={currentPage - 1}
+                    onClick={onClick}>
                     <span aria-hidden="true">← </span>
                     Older
-                </a>
+                </PaginationLink>
             </li>}
-            {props.pages.map((pageNumber) => <li key={pageNumber}
-                className={props.currentPage === pageNumber ? 'active' : ''}>
-                <a href={createLink(pageNumber, parameterName)}>
+            {pages.map((pageNumber) => <li key={pageNumber}
+                className={currentPage === pageNumber ? 'active' : ''}>
+                <PaginationLink pageNumber={pageNumber}
+                    onClick={onClick}>
                     {pageNumber}
-                </a>
+                </PaginationLink>
             </li>)}
-            {props.currentPage < props.noOfPages && <li>
-                <a href={createLink(props.currentPage + 1, parameterName)}>
+            {currentPage < noOfPages && <li>
+                <PaginationLink pageNumber={currentPage + 1}
+                    onClick={onClick}>
                     Newer
                     <span aria-hidden="true"> →</span>
-                </a>
+                </PaginationLink>
             </li>}
         </ul>
     </nav>;
