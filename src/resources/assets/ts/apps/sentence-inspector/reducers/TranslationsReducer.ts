@@ -1,4 +1,4 @@
-import Actions from './Actions';
+import { Actions } from '../actions';
 import { ISentenceReducerAction } from './SentenceReducer._types';
 import { TranslationsState } from './TranslationsReducer._types';
 

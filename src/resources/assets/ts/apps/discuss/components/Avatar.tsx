@@ -8,7 +8,7 @@ const Avatar = (props: IProps) => {
 
     return <ProfileLink account={account}>
         <img src={account.hasAvatar
-            ? `/storage/avatars/${account.id}.png`
+            ? account.avatarPath
             : `/img/anonymous-profile-picture.png`}
         />
     </ProfileLink>;

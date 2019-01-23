@@ -25,6 +25,5 @@ export default class Discuss extends React.PureComponent<IProps> {
 
     private _onNavigateToPage = (ev: IComponentEvent<number>) => {
         const pageNumber = ev.value;
-        
     }
 }

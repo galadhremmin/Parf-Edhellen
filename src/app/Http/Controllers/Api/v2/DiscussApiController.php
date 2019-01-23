@@ -10,6 +10,8 @@ use App\Repositories\DiscussRepository;
 
 class DiscussApiController extends Controller 
 {
+    const DEFAULT_SORT_BY_DATE_ORDER = 'asc';
+
     protected $_discussRepository;
 
     public function __construct(DiscussRepository $discussRepository)
@@ -24,7 +26,11 @@ class DiscussApiController extends Controller
 
     public function groupAndThreads(Request $request, int $groupId)
     {
-        return $this->_discussRepository->getThreadsInGroup($groupId, $request->user());
+        $group = $this->_discussRepository->getGroup($groupId);
+        $page = $this->getPage($request);
+        $user = $request->user();
+
+        return $this->_discussRepository->getThreadsInGroup($group['group'], $user, $page);
     }
 
     public function latestThreads(Request $request)
@@ -34,13 +40,23 @@ class DiscussApiController extends Controller
 
     public function thread(Request $request, int $threadId)
     {
+        $thread = $this->_discussRepository->getThread($threadId);
+        $page = $this->getPage($request);
+        $user = $request->user();
+
+        $posts = $this->_discussRepository->getPostsInThread($thread['thread'], $user,
+            self::DEFAULT_SORT_BY_DATE_ORDER, $page);
+        return $thread + $posts;
+    }
+
+    private function getPage(Request $request)
+    {
         $params = $request->validate([
-            'major_id' => 'sometimes|numeric'
+            'offset' => 'sometimes|numeric'
         ]);
 
-        $thread = $this->_discussRepository->getThread($threadId);
-        $posts = $this->_discussRepository->getPostsInThread($thread['thread'], $request->user(), 
-            'asc', isset($params['major_id']) ? $params['major_id'] : 0);
-        return $thread + $posts;
+        return isset($params['offset'])
+            ? $params['offset'] 
+            : 0;
     }
 }

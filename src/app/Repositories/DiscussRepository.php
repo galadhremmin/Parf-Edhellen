@@ -71,21 +71,22 @@ class DiscussRepository
 
         $noOfThreadsPerPage = config('ed.forum_thread_resultset_max_length');
         $noOfPages = ceil(ForumThread::inGroup($group->id)->count() / $noOfThreadsPerPage);
-        $currentPage = min($noOfPages - 1, max(0, intval($pageNumber)));
+        $currentPage = min($noOfPages, max(1, intval($pageNumber)));
 
         $threads = ForumThread::inGroup($group->id)
             ->with('account')
             ->orderBy('is_sticky', 'desc')
             ->orderBy('updated_at', 'desc')
             ->orderBy('created_at', 'desc')
-            ->skip($currentPage * $noOfThreadsPerPage)
+            ->skip(($currentPage - 1) * $noOfThreadsPerPage)
             ->take($noOfThreadsPerPage)
             ->get();
-        
+
         // Filter out threads that the user is not authorized to see.
         $threads = $threads->filter(function ($thread) use($account) {
             return $this->checkThreadAuthorization($thread, $account);
         });
+        $this->_discussAdapter->adaptThreads($threads);
 
         $pages = $this->createPageArray($noOfPages);
 
@@ -127,12 +128,12 @@ class DiscussRepository
      * @param ForumThread $thread
      * @param Account $account
      * @param string $direction
-     * @param integer $majorId
+     * @param integer $pageNumber
      * @param integer $jumpToId
      * @return array
      */
     public function getPostsInThread(ForumThread $thread, Account $account = null, $direction = 'desc',
-        int $majorId = 0, int $jumpToId = 0)
+        int $pageNumber = 0, int $jumpToId = 0)
     {
         $this->resolveUser($account);
         if (! $this->checkThreadAuthorization($thread, $account)) {
@@ -189,7 +190,7 @@ class DiscussRepository
         //                    client is interested in the _latest_ posts, albeit presented in an
         //                    ascending order. The major ID, in this situation, acts as the page number.
         //
-        // DESC (descending): The API offers an infinite scroll-like experience, where majorId is 
+        // DESC (descending): The API offers an infinite scroll-like experience, where pageNumber is 
         //                    always the least ID of the result set. The result set is 'paginated'
         //                    by the client continuously sending the last, least major ID to the API.
         // 
@@ -204,13 +205,13 @@ class DiscussRepository
             if ($jumpToId !== 0) {
                 // if the the client is, in fact, requesting to oad a specific post, we 
                 // must determine the page on which the post can be found.
-                $majorId = $noOfPages;
+                $pageNumber = $noOfPages;
                 do {
                     // retrieve an array of IDs within each page, until the page
                     // with the sought-after ID is found.
                     $ok = $thread->forum_posts()->where($filters)
                         ->orderBy('id', 'asc')
-                        ->skip(($majorId - 1) * $maxLength)
+                        ->skip(($pageNumber - 1) * $maxLength)
                         ->take($maxLength)
                         ->pluck('id')
                         ->search($jumpToId);
@@ -219,22 +220,22 @@ class DiscussRepository
                         break;
                     }
 
-                    $majorId -= 1;
-                } while ($majorId > 1);
+                    $pageNumber -= 1;
+                } while ($pageNumber > 1);
             }
 
-            $skip = ($majorId - 1) * $maxLength;
+            $skip = ($pageNumber - 1) * $maxLength;
 
         } else {
             if ($jumpToId !== 0) {
                 $filters[] = ['id', '>=', $jumpToId];
                 $maxLength = 0; // TODO: implement a means to restrict the result set
-            } else if ($majorId !== 0) {
-                $filters[] = ['id', '<', $majorId];
+            } else if ($pageNumber !== 0) {
+                $filters[] = ['id', '<', $pageNumber];
             }
             
-            if ($majorId === 0) {
-                $majorId = PHP_INT_MAX;
+            if ($pageNumber === 0) {
+                $pageNumber = PHP_INT_MAX;
             }
         }
         
@@ -252,32 +253,28 @@ class DiscussRepository
         }
 
         $posts = $query->get();
-
-        foreach ($posts as $post) {
-            // Determine the major ID depending on the order of the items
-            if (! $ascending && $majorId > $post->id) {
-                $majorId = $post->id;
-            }
-
-            $this->_discussAdapter->adaptPost($post);
-        }
+        $this->_discussAdapter->adaptPosts($posts);
 
         $pages = $this->createPageArray($noOfPages);
 
         return [
             'posts'        => $posts,
-            'current_page' => $majorId,
+            'current_page' => $pageNumber,
             'pages'        => $pages,
             'no_of_pages'  => $noOfPages,
             'thread_id'    => $thread->id ?: null
         ];
     }
 
+    /**
+     * Gets the latest threads in Discuss, regardless of groups.
+     */
     public function getLatestThreads()
     {
         $threads = ForumThread::orderBy('updated_at', 'desc')
             ->take(10)
             ->get();
+        $this->_discussAdapter->adaptThreads($threads);
 
         return [
             'threads' => $threads

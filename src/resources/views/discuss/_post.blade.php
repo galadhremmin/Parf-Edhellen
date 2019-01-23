@@ -1,7 +1,7 @@
 <div class="forum-post" id="forum-post-{{ $post->id }}">
     <div class="post-profile-picture">
         <a href="/author/{{ $post->account_id }}" title="View {{$post->account->nickname}}'s profile">
-            <img src="{{ $post->account->has_avatar ? "/storage/avatars/".$post->account_id.".png" : "/img/anonymous-profile-picture.png"}}" />
+            <img src="{{ $post->account->has_avatar ? $post->account->avatar_path : "/img/anonymous-profile-picture.png"}}" />
         </a>
     </div>
     <div class="post-content">

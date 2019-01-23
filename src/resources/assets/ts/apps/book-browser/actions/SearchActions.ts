@@ -16,8 +16,9 @@ import { capitalize } from '@root/utilities/func/string-manipulation';
 import SharedReference from '@root/utilities/SharedReference';
 
 import { IRootReducer } from '../reducers';
-import Actions from '../reducers/Actions';
 import { ISearchAction } from '../reducers/SearchReducer._types';
+import Actions from './Actions';
+
 import {
     ISearchResult,
     ISelectSearchResultAction,

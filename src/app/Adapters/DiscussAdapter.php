@@ -7,7 +7,11 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Http\Discuss\ContextFactory;
 use App\Helpers\MarkdownParser;
-use App\Models\ForumPost;
+use App\Models\{
+    Account,
+    ForumPost,
+    ForumThread
+};
 
 class DiscussAdapter
 {
@@ -18,12 +22,40 @@ class DiscussAdapter
         $this->_contextFactory = $contextFactory;
     }
 
+    public function adaptAccount(Account $account)
+    {
+        if ($account->has_avatar) {
+            $account->setAttribute('avatar_path', sprintf('/storage/avatars/%d.png', $account->id));
+        }
+    }
+
     public function adaptPost(ForumPost $post)
     {
+        $this->adaptAccount($post->account);
+
         $parser = new MarkdownParser();
         $post->content = $parser->parse($post->content);
 
         return $post;
+    }
+
+    public function adaptPosts(Collection $posts)
+    {
+        $posts->map(function ($post) {
+            $this->adaptPost($post);
+        });
+    }
+
+    public function adaptThread(ForumThread $thread)
+    {
+        $this->adaptAccount($thread->account);
+    }
+
+    public function adaptThreads(Collection $threads)
+    {
+        $threads->map(function ($thread) {
+            $this->adaptThread($thread);
+        });
     }
 
     public function adaptForTimeline(Collection $posts)

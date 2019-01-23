@@ -153,6 +153,7 @@ export interface ISentenceEntity {
 }
 
 export interface IAccountEntity {
+    avatarPath: string;
     hasAvatar?: boolean;
     id: number;
     nickname: string;

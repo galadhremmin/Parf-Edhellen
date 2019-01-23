@@ -15,7 +15,7 @@ import { ILanguagesState } from '../reducers/LanguagesReducer._types';
 import { Glossary } from './Glossary';
 
 import '@root/utilities/Enzyme';
-import Actions from '../reducers/Actions';
+import { Actions } from '../actions';
 import LanguagesReducer from '../reducers/LanguagesReducer';
 
 // Define node `require` for synchronous file loading

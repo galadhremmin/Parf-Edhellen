@@ -1,7 +1,7 @@
 import { ISentenceFragmentEntity } from '@root/connectors/backend/BookApiConnector._types';
 import { mapArray } from '@root/utilities/func/mapper';
 
-import Actions from './Actions';
+import { Actions } from '../actions';
 import {
     FragmentsReducerState,
     IFragmentsReducerState,

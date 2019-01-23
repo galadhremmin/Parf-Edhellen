@@ -1,5 +1,5 @@
+import { Actions } from '../actions';
 import convert from '../utilities/TextConverter';
-import Actions from './Actions';
 import { ITextState } from './FragmentsReducer._types';
 import { ISentenceReducerAction } from './SentenceReducer._types';
 
