@@ -1,15 +1,17 @@
 import { Actions } from '../actions';
 import {
     IPostsReducerAction,
-    IState,
+    IPostsState,
 } from './PostsReducer._types';
 
-const PostsReducer = (state: IState = [], action: IPostsReducerAction) => {
+const PostsReducer = (state: IPostsState = [], action: IPostsReducerAction) => {
     switch (action.type) {
-        case Actions.ReceiveThread:
+        case Actions.RequestThread:
             return [];
         case Actions.ReceiveThread:
-            return [ ...action.threadData.posts ];
+            return [
+                ...action.threadData.posts,
+            ];
         default:
             return state;
     }

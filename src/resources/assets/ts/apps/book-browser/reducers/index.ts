@@ -1,31 +1,21 @@
 import { combineReducers } from 'redux';
 
-import GlossaryReducer from './GlossaryReducer';
-import GlossesReducer from './GlossesReducer';
-import LanguagesReducer from './LanguagesReducer';
-import SearchReducer from './SearchReducer';
-import SearchResultsReducer from './SearchResultsReducer';
+import { DeriveRootReducer } from '@root/_types';
 
-import { IGlossaryState } from './GlossaryReducer._types';
-import { IGlossesState } from './GlossesReducer._types';
-import { ILanguagesState } from './LanguagesReducer._types';
-import { ISearchState } from './SearchReducer._types';
-import { ISearchResultState } from './SearchResultsReducer._types';
+import { default as glossary } from './GlossaryReducer';
+import { default as glosses } from './GlossesReducer';
+import { default as languages } from './LanguagesReducer';
+import { default as search } from './SearchReducer';
+import { default as searchResults } from './SearchResultsReducer';
 
-export interface IRootReducer {
-    glossary: IGlossaryState;
-    glosses: IGlossesState;
-    languages: ILanguagesState;
-    search: ISearchState;
-    searchResults: ISearchResultState;
-}
+const reducers = {
+    glossary,
+    glosses,
+    languages,
+    search,
+    searchResults,
+};
 
-const rootReducer = combineReducers({
-    glossary: GlossaryReducer,
-    glosses: GlossesReducer,
-    languages: LanguagesReducer,
-    search: SearchReducer,
-    searchResults: SearchResultsReducer,
-});
+export type RootReducer = DeriveRootReducer<typeof reducers>;
 
-export default rootReducer;
+export default combineReducers(reducers);

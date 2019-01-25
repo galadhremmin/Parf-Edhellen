@@ -15,7 +15,7 @@ import { mapArray } from '@root/utilities/func/mapper';
 import { capitalize } from '@root/utilities/func/string-manipulation';
 import SharedReference from '@root/utilities/SharedReference';
 
-import { IRootReducer } from '../reducers';
+import { RootReducer } from '../reducers';
 import { ISearchAction } from '../reducers/SearchReducer._types';
 import Actions from './Actions';
 
@@ -91,7 +91,7 @@ export default class SearchActions {
      * @param direction
      */
     public selectNextResult(direction: number) {
-        return async (dispatch: ThunkDispatch<any, any, any>, getState: () => IRootReducer) => {
+        return async (dispatch: ThunkDispatch<any, any, any>, getState: () => RootReducer) => {
             const searchResults = getState().searchResults;
             if (searchResults.length < 2) {
                 return;
@@ -153,7 +153,7 @@ export default class SearchActions {
      * Reloads the glossary based on current state.
      */
     public reloadGlossary() {
-        return async (dispatch: ThunkDispatch<any, any, any>, getState: () => IRootReducer) => {
+        return async (dispatch: ThunkDispatch<any, any, any>, getState: () => RootReducer) => {
             const { glossary, search, searchResults } = getState();
 
             // Do not attempt to reload an uninitiated glossary.
@@ -193,7 +193,7 @@ export default class SearchActions {
      * @param languageShortName
      */
     public loadReference(word: string, normalizedWord: string, languageShortName: string) {
-        return async (dispatch: ThunkDispatch<any, any, any>, getState: () => IRootReducer) => {
+        return async (dispatch: ThunkDispatch<any, any, any>, getState: () => RootReducer) => {
             const language = await this._languages.find(languageShortName, 'shortName');
             let languageId = 0;
             if (language !== null) {

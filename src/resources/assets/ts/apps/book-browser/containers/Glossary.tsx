@@ -13,7 +13,7 @@ import SharedReference from '@root/utilities/SharedReference';
 
 import { SearchActions } from '../actions';
 import Language from '../components/Language';
-import { IRootReducer } from '../reducers';
+import { RootReducer } from '../reducers';
 import { IProps, IState } from './Glossary._types';
 
 import './Glossary.scss';
@@ -228,7 +228,7 @@ const FixedBouncingArrow = Loadable({
     },
 });
 
-const mapStateToProps = (state: IRootReducer) => ({
+const mapStateToProps = (state: RootReducer) => ({
     ...state.glossary,
 
     glosses: state.glosses,

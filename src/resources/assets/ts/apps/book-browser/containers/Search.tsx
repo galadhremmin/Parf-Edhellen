@@ -9,7 +9,7 @@ import debounce from '@root/utilities/func/debounce';
 import SharedReference from '@root/utilities/SharedReference';
 import { SearchActions } from '../actions';
 import SearchQueryInput from '../components/SearchQueryInput';
-import { IRootReducer } from '../reducers';
+import { RootReducer } from '../reducers';
 
 import {
     IProps,
@@ -145,7 +145,7 @@ export class SearchQuery extends React.PureComponent<IProps, IState> {
     }
 }
 
-const mapStateToProps = (state: IRootReducer) => ({
+const mapStateToProps = (state: RootReducer) => ({
     currentGlossaryWord: state.glossary.word,
     includeOld: state.search.includeOld,
     languageId: state.search.languageId,

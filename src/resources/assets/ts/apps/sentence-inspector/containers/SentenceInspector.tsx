@@ -5,7 +5,7 @@ import { IComponentEvent } from '@root/components/Component._types';
 import BookApiConnector from '@root/connectors/backend/BookApiConnector';
 import SharedReference from '@root/utilities/SharedReference';
 
-import { IRootReducer } from '../reducers';
+import { RootReducer } from '../reducers';
 import {
     IProps,
     IState,
@@ -106,7 +106,7 @@ export class SentenceInspector extends React.PureComponent<IProps, IState> {
     }
 }
 
-const mapStateToProps = (props: IRootReducer) => ({
+const mapStateToProps = (props: RootReducer) => ({
     fragments: props.fragments,
     latinFragments: props.latinFragments,
     selection: props.selection,

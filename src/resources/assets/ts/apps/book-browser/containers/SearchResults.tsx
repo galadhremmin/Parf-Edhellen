@@ -6,7 +6,7 @@ import { IComponentEvent } from '@root/components/Component._types';
 import SharedReference from '@root/utilities/SharedReference';
 import { SearchActions } from '../actions';
 import SearchResult from '../components/SearchResult';
-import { IRootReducer } from '../reducers';
+import { RootReducer } from '../reducers';
 import { ISearchResult } from '../reducers/SearchResultsReducer._types';
 import { IProps } from './SearchResults._types';
 
@@ -108,7 +108,7 @@ export class SearchResults extends React.PureComponent<IProps> {
     }
 }
 
-const mapStateToProps = (state: IRootReducer) => ({
+const mapStateToProps = (state: RootReducer) => ({
     searchResults: state.searchResults,
     word: state.search.word,
 });

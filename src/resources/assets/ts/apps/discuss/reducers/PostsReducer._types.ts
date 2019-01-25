@@ -1,17 +1,5 @@
-import {
-    IReduxAction,
-} from '@root/_types';
+import { IPostEntity } from '@root/connectors/backend/DiscussApiConnector._types';
+import { IThreadReducerAction } from './ThreadReducer._types';
 
-import {
-    IPostEntity,
-    IThreadRequest,
-    IThreadResponse,
-} from '@root/connectors/backend/DiscussApiConnector._types';
-
-export type IThreadAction = IThreadRequest;
-
-export type IState = IPostEntity[];
-
-export interface IPostsReducerAction extends IReduxAction {
-    threadData: IThreadResponse;
-}
+export type IPostsState = IPostEntity[];
+export type IPostsReducerAction = IThreadReducerAction;

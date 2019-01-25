@@ -3,7 +3,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import DiscussApiConnector from '@root/connectors/backend/DiscussApiConnector';
 import SharedReference from '@root/utilities/SharedReference';
 
-import { IThreadAction } from '../reducers/PostsReducer._types';
+import { IThreadAction } from '../reducers/ThreadReducer._types';
 import Actions from './Actions';
 
 export default class DiscussActions {
@@ -18,7 +18,7 @@ export default class DiscussActions {
 
             const thread = await this._api.value.thread(args);
             dispatch({
-                thread,
+                threadData: thread,
                 type: Actions.ReceiveThread,
             });
         };
