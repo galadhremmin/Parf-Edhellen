@@ -49,6 +49,11 @@ class DiscussApiController extends Controller
         return $thread + $posts;
     }
 
+    public function resolveThread(Request $request, string $entityType, int $entityId)
+    {
+        return [ $entityType => $entityId ];
+    }
+
     private function getPage(Request $request)
     {
         $params = $request->validate([

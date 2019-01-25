@@ -15,9 +15,11 @@
     <aside id="discuss-toolbar" data-thread-id="{{ $thread->id }}"></aside>
     <section class="discuss-body" 
              data-inject-module="discuss"
-             data-inject-prop-entity-type="{{ $thread->entity_type }}"
-             data-inject-prop-entity-id="{{ $thread->entity_id }}"
-             data-inject-prop-discuss-data="{{ htmlentities(json_encode($preloadedPosts), ENT_QUOTES) }}">
+             data-inject-prop-current-page="@json($preloadedPosts['current_page'])"
+             data-inject-prop-no-of-pages="@json($preloadedPosts['no_of_pages'])"
+             data-inject-prop-pages="@json($preloadedPosts['pages'])"
+             data-inject-prop-posts="@json($preloadedPosts['posts'])"
+             data-inject-prop-thread="@json($thread)">
       @foreach ($preloadedPosts['posts'] as $post)
         @include('discuss._post', $post)
       @endforeach

@@ -5,5 +5,5 @@ export interface IProps {
     noOfPages: number;
     onClick?: ComponentEventHandler<number>;
     pageQueryParameterName?: string;
-    pages: Array<string | number>;
+    pages?: Array<string | number>;
 }

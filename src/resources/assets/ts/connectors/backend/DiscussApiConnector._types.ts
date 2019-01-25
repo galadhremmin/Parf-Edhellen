@@ -1,6 +1,8 @@
 import { IAccountEntity } from './BookApiConnector._types';
 
 export interface IThreadRequest {
+    entityId?: number;
+    entityType: string;
     id: number;
     offset?: number;
 }

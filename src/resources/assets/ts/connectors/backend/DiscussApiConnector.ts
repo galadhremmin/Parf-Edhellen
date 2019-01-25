@@ -11,11 +11,13 @@ export default class FlashcardApiConnector {
 
     public thread(args: IThreadRequest) {
         return this._api.value.get<IThreadResponse>(
-            this._makePath(`thread/${args.id}?offset=${args.offset || 0}`),
+            this._makePath('thread/' +
+                args.id || `resolve/${args.entityType}/${args.entityId}`,
+            ) + `?offset=${args.offset || 0}`,
         );
     }
 
     private _makePath(path: string) {
-        return `/discuss/${path}`;
+        return `discuss/${path}`;
     }
 }

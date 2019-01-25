@@ -225,9 +225,16 @@ Route::group([
     'prefix'    => 'api/v2/discuss'
 ], function () use ($numericReg) {
     Route::get('group',           [ 'uses' => 'DiscussApiController@groups' ]);
-    Route::get('group/{groupId}', [ 'uses' => 'DiscussApiController@groupAndThreads' ]);
+    Route::get('group/{groupId}', [ 'uses' => 'DiscussApiController@groupAndThreads' ])
+        ->where([ 'groupId' => $numericReg ]);
     Route::get('thread', [ 'uses' => 'DiscussApiController@latestThreads' ]);
-    Route::get('thread/{threadId}', [ 'uses' => 'DiscussApiController@thread' ]);
+    Route::get('thread/{threadId}', [ 'uses' => 'DiscussApiController@thread' ])
+        ->where([ 'threadId' => $numericReg ]);
+    Route::get('thread/resolve/{entityType}/{entityId}', [ 'uses' => 'DiscussApiController@resolveThread' ])
+        ->where([
+            'entityType' => '[a-z]+',
+            'entityId' => $numericReg
+        ]);
 });
 
 // Public, throttled API

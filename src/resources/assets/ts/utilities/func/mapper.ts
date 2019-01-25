@@ -1,5 +1,5 @@
-type ConversionTable<T1, T2> = {
-    [R in keyof T2]?: (keyof T1) | ((v: T1, index?: number) => T2[R]) | null;
+type ConversionTable<S, D> = {
+    [R in keyof D]?: (keyof S) | ((v: S, index?: number) => D[R]) | null;
 };
 
 const isIneligible = <T>(subject: T) => //
@@ -7,7 +7,13 @@ const isIneligible = <T>(subject: T) => //
     subject === undefined ||
     (typeof subject === 'number' && (isNaN(subject) || !isFinite(subject)));
 
-export const mapper = <T1, T2>(table: ConversionTable<T1, T2>, subject: T1, resolverArgs: any[] = []): T2 => {
+/**
+ * Converts an entity `S` to `D` with optional resolver arguments.
+ * @param table source to destination value map
+ * @param subject source entity
+ * @param resolverArgs optional arguments to pass to the resolver function in the conversion table.
+ */
+export const mapper = <S, D>(table: ConversionTable<S, D>, subject: S, resolverArgs: any[] = []): D => {
     if (isIneligible(subject)) {
         return null;
     }
@@ -35,15 +41,15 @@ export const mapper = <T1, T2>(table: ConversionTable<T1, T2>, subject: T1, reso
         }
     }
 
-    return result as T2;
+    return result as D;
 };
 
 /**
- * Converts an array of `T1` to an array of `T2`.
+ * Converts an array of `S` to an array of `D`.
  * @param table
  * @param subject
  */
-export const mapArray = <T1, T2>(table: ConversionTable<T1, T2>, subject: T1[]): T2[] => {
+export const mapArray = <S, D>(table: ConversionTable<S, D>, subject: S[]): D[] => {
     if (isIneligible(subject)) {
         return [];
     }
