@@ -24,7 +24,7 @@ export class Discuss extends React.PureComponent<IProps> {
         }
 
         return <React.Fragment>
-            {posts.map((post) => <Post post={post} key={post.id} />)};
+            {posts.map((post) => <Post post={post} key={post.id} />)}
             <Pagination currentPage={currentPage}
                 noOfPages={noOfPages}
                 onClick={this._onNavigateToPage}
@@ -63,7 +63,7 @@ const mapDispatchToProps = (dispatch: any) => ({
         entityType: ev.value.thread.entityType,
         id: ev.value.thread.id,
         offset: ev.value.pageNumber,
-    }))
+    })),
 } as Partial<IProps>);
 
 export default connect(mapStateToProps, mapDispatchToProps)(Discuss);

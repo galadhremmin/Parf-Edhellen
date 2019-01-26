@@ -20,6 +20,7 @@
   @if (!empty(config('ed.header_view')))
     @include(config('ed.header_view'))
   @endif
+  <noscript><style type="text/css">.noscript--hidden{display:none;}</style></noscript>
 </head>
 <body class="{{ $isAdmin ? 'ed-admin' : ($isAdmin === false ? 'ed-user' : 'ed-anonymous') }}" data-account-id="{{ $user ? $user->id : '0' }}" data-v="{{ config('ed.version') }}">
   <div class="head-content">

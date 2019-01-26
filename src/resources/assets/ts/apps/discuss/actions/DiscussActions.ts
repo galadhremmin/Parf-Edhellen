@@ -1,6 +1,7 @@
 import { ThunkDispatch } from 'redux-thunk';
 
 import DiscussApiConnector from '@root/connectors/backend/DiscussApiConnector';
+import BrowserHistory from '@root/utilities/BrowserHistory';
 import SharedReference from '@root/utilities/SharedReference';
 
 import { IThreadAction } from '../reducers/ThreadReducer._types';
@@ -15,6 +16,8 @@ export default class DiscussActions {
             dispatch({
                 type: Actions.RequestThread,
             });
+
+            BrowserHistory.default.push(`?offset=${args.offset}`);
 
             const thread = await this._api.value.thread(args);
             dispatch({
