@@ -6,7 +6,7 @@
   
   {!! Breadcrumbs::render('discuss.group', $group) !!}
 
-  <h1><em>Discussion about</em> {{ $group->name }}</h1>
+  <h1>Discussion about {{ $group->name }}</h1>
   <p>
     <span class="glyphicon glyphicon-info-sign"></span> This is an aggregated view of all 
     comments left by the members of our community. You are more than welcome to participate in
