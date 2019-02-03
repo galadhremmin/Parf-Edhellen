@@ -1,7 +1,5 @@
 <?php
 
-require 'constants.php';
-
 // Public resources
 Route::group([ 
     'namespace'  => 'Resources'

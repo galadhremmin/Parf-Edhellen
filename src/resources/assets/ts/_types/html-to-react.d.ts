@@ -16,6 +16,7 @@ declare module 'html-to-react' {
     }
 
     export interface INode {
+        data: string;
         type: string;
         name: string;
         attribs: {

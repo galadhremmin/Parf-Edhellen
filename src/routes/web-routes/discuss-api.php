@@ -1,11 +1,9 @@
 <?php
 
-require 'constants.php';
-
 // Public unrestricted API for discuss
 Route::group([ 
-    'namespace' => 'Api\v2', 
-    'prefix'    => 'api/v2/discuss'
+    'namespace' => API_NAMESPACE, 
+    'prefix'    => API_PATH.'/discuss'
 ], function () {
     Route::get('group',           [ 'uses' => 'DiscussApiController@groups' ]);
     Route::get('group/{groupId}', [ 'uses' => 'DiscussApiController@groupAndThreads' ])

@@ -6,7 +6,9 @@ import {
     ProcessNodeDefinitions,
 } from 'html-to-react';
 import React, { PureComponent } from 'react';
+import Loadable from 'react-loadable';
 
+import { isEmptyString } from '@root/utilities/func/string-manipulation';
 import {
     fireEvent,
 } from './Component';
@@ -67,6 +69,11 @@ export default class HtmlInject extends PureComponent<IProps, IState> {
                 processNode: this._referenceRender.bind(this, definitions),
                 shouldProcessNode: (node: INode) => node.name === 'a',
             },
+            // Special behavior for transcription nodes
+            {
+                processNode: this._transcriptionRender.bind(this, definitions),
+                shouldProcessNode: (node: INode) => node.name === 'span',
+            },
             // Default behaviour for all else.
             {
                 processNode: definitions.processDefaultNode,
@@ -94,6 +101,22 @@ export default class HtmlInject extends PureComponent<IProps, IState> {
 
         return <a href={href} onClick={this._onReferenceLinkClick.bind(this, word, normalizedWord, languageShortName)}
             title={title}>{childElements}</a>;
+    }
+
+    private _transcriptionRender(definitions: ProcessNodeDefinitions, node: INode, children: INode[]) {
+        const transcribe = node.attribs['data-tengwar-transcribe'] === 'true';
+        const mode = node.attribs['data-tengwar-mode'] as string;
+        if (! transcribe || isEmptyString(mode)) {
+            return definitions.processDefaultNode(node, children);
+        }
+
+        const Component = Loadable({
+            loader: () => import('./Tengwar'),
+            loading: () => <span>&#128220;</span>,
+            render: (loaded, props) => <loaded.default {...props} />,
+        });
+
+        return <Component text={node.children[0].data} transcribe={true} mode={mode.toLowerCase()} />;
     }
 
     private _onReferenceLinkClick(word: string, normalizedWord: string, languageShortName: string,
