@@ -21,5 +21,4 @@ export const enum Tab {
 
 export interface IState {
     currentTab: Tab;
-    value: string;
 }

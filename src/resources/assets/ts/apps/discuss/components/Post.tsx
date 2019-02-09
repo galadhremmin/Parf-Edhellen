@@ -4,6 +4,7 @@ import HtmlInject from '@root/components/HtmlInject';
 import Avatar from './Avatar';
 import ProfileLink from './ProfileLink';
 
+import { IPostEntity } from '@root/connectors/backend/DiscussApiConnector._types';
 import { IProps } from './Post._types';
 
 export default class Post extends React.PureComponent<IProps> {
@@ -22,14 +23,18 @@ export default class Post extends React.PureComponent<IProps> {
                     <span className="post-no">#{post.id}</span>
                 </div>
                 <div className="post-body">
-                    {post.isDeleted
-                        ? <em>{post.account.nickname} has redacted their post.</em>
-                        : <HtmlInject html={post.content} />}
+                    {this._renderContent(post)}
                 </div>
                 <div className="post-tools">
                     <span className="date">{post.createdAt}</span>
                 </div>
             </div>
         </div>;
+    }
+
+    private _renderContent(post: IPostEntity) {
+        return post.isDeleted
+            ? <em>{post.account.nickname} has redacted their post.</em>
+            : <HtmlInject html={post.content} />;
     }
 }

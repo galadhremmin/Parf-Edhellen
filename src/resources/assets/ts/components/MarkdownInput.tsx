@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React from 'react';
 
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
+import { fireEvent } from './Component';
 import Markdown from './Markdown';
 import {
     IProps,
@@ -20,29 +21,18 @@ export default class MarkdownInput extends React.PureComponent<IProps, IState> {
 
     public state = {
         currentTab: Tab.EditTab,
-        value: '',
     };
-
-    public componentDidMount() {
-        const {
-            value,
-        } = this.props;
-
-        this.setState({
-            value,
-        });
-    }
 
     public render() {
         const {
             id,
             name,
             rows,
+            value,
         } = this.props;
 
         const {
             currentTab,
-            value,
         } = this.state;
 
         return <div className="clearfix">
@@ -73,8 +63,10 @@ export default class MarkdownInput extends React.PureComponent<IProps, IState> {
 
     private _renderTabs() {
         const {
-            currentTab,
             value,
+        } = this.props;
+        const {
+            currentTab,
         } = this.state;
 
         return <ul className="nav nav-tabs">
@@ -218,9 +210,11 @@ export default class MarkdownInput extends React.PureComponent<IProps, IState> {
     }
 
     private _onMarkdownChange = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
-        this.setState({
-            value: ev.target.value,
-        });
+        const {
+            onChange,
+        } = this.props;
+
+        fireEvent(this, onChange, ev.target.value);
     }
 
     private _onOpenTab = (tab: Tab) => (ev: React.MouseEvent<HTMLAnchorElement>) => {

@@ -6,7 +6,6 @@ import { IComponentEvent } from '@root/components/Component._types';
 import Pagination from '@root/components/Pagination';
 
 import DiscussActions from '../actions/DiscussActions';
-import Form from '../components/Form';
 import Post from '../components/Post';
 import { IProps } from '../index._types';
 import { RootReducer } from '../reducers';
@@ -31,7 +30,6 @@ export class Discuss extends React.PureComponent<IProps> {
                 onClick={this._onNavigateToPage}
                 pages={pages}
             />
-            <Form />
         </React.Fragment>;
     }
 
