@@ -4,7 +4,7 @@ import {
     IDefaultComponent,
 } from './Component._types';
 
-export const fireEvent = <V>(component: IDefaultComponent, ev: ComponentEventHandler<V>, value: V,
+export const fireEvent = <V>(component: IDefaultComponent, ev: ComponentEventHandler<V>, value: V = undefined,
     async: boolean = false) => {
     if (component === undefined) {
         throw new Error('Component reference is undefined.');
@@ -40,5 +40,5 @@ export const fireEvent = <V>(component: IDefaultComponent, ev: ComponentEventHan
     return true;
 };
 
-export const fireEventAsync = <V>(component: IDefaultComponent, ev: ComponentEventHandler<V>, value: V) =>
+export const fireEventAsync = <V>(component: IDefaultComponent, ev: ComponentEventHandler<V>, value: V = undefined) =>
     fireEvent(component, ev, value, true);

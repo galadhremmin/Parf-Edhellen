@@ -34,7 +34,7 @@ function RespondButton(props: IProps) {
 
     const onRespondClick = useCallback((ev: React.MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
-        fireEvent(null, onClick, undefined);
+        fireEvent(null, onClick);
     }, [ onClick ]);
 
     switch (getRoleManager().value.currentRole) {

@@ -1,7 +1,9 @@
 import React, {
+    useCallback,
     useState,
 } from 'react';
 
+import { fireEventAsync } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
 import MarkdownInput from '@root/components/MarkdownInput';
 
@@ -13,14 +15,28 @@ function Form(props: IProps) {
     const [ content, setContent ] = useState(() => props.content);
     const [ subject, setSubject ] = useState(() => props.subject);
 
-    const updateContent = (e: IComponentEvent<string>) => setContent(e.value);
-    const updateSubject = (e: React.ChangeEvent<HTMLInputElement>) => setSubject(e.target.value);
-
     const {
         subjectEnabled,
+        onCancel,
+        onSubmit,
     } = props;
 
-    return <form method="post" action="/dashboard/discuss">
+    const onContentChange = useCallback(
+        (e: IComponentEvent<string>) => setContent(e.value),
+        [ setContent ]);
+    const onSubjectChange = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => setSubject(e.target.value),
+        [ setSubject ]);
+    const onCancelClick = useCallback((e: React.MouseEvent) => {
+        e.preventDefault();
+        fireEventAsync(null, onCancel);
+    }, [ onCancel ]);
+    const onSubmitForm = useCallback((ev: React.FormEvent) => {
+        ev.preventDefault();
+        fireEventAsync(null, onSubmit);
+    }, [ onSubmit ]);
+
+    return <form method="get" action="/#intercepted-action" onSubmit={onSubmitForm}>
         {subjectEnabled && <div className="form-group">
             <label htmlFor="ed-discuss-subject" className="control-label">Subject</label>
             <input type="text"
@@ -28,7 +44,7 @@ function Form(props: IProps) {
                 id="ed-discuss-subject"
                 name="subject"
                 value={subject}
-                onChange={updateSubject}
+                onChange={onSubjectChange}
             />
         </div>}
         <div className="form-group">
@@ -38,11 +54,11 @@ function Form(props: IProps) {
                         name="content"
                         rows={8}
                         value={content}
-                        onChange={updateContent}
+                        onChange={onContentChange}
             />
         </div>
         <div className="form-group text-right">
-            <a href="/discuss" className="btn btn-default">Cancel</a>
+            <button className="btn btn-default" onClick={onCancelClick}>Cancel</button>
             <button type="submit" className="btn btn-primary">
                 <span className="glyphicon glyphicon-pencil"></span>
                 Save
@@ -55,6 +71,9 @@ Form.defaultProps = {
     content: '',
     subject: '',
     subjectEnabled: true,
+
+    onCancel: null,
+    onSubmit: null,
 } as Partial<IProps>;
 
 export default Form;
