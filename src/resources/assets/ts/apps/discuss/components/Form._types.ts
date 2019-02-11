@@ -1,4 +1,4 @@
-import { ComponentEventHandler } from "@root/components/Component._types";
+import { ComponentEventHandler } from '@root/components/Component._types';
 
 export interface IFormOutput {
     content: string;

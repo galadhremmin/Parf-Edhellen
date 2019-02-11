@@ -8,6 +8,11 @@ import {
 import SharedReference from '@root/utilities/SharedReference';
 import { IProps } from './RespondButton._types';
 
+const onAuthenticateClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
+    ev.preventDefault();
+    window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+};
+
 function RespondButton(props: IProps) {
     const {
         onClick,
@@ -15,29 +20,24 @@ function RespondButton(props: IProps) {
 
     // This is the singleton pattern for hooks from React's documentation
     // https://reactjs.org/docs/hooks-faq.html#how-to-create-expensive-objects-lazily
-    const roleManagerRef = useRef<SharedReference<RoleManager>>(null);
+    const roleManagerRef = useRef<RoleManager>(null);
     const getRoleManager = () => {
         let roleManager = roleManagerRef.current;
         if (roleManager !== null) {
             return roleManager;
         }
 
-        roleManager = new SharedReference(RoleManager);
+        roleManager = SharedReference.getInstance(RoleManager);
         roleManagerRef.current = roleManager;
         return roleManager;
     };
-
-    const onAuthenticateClick = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
-        ev.preventDefault();
-        window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
-    }, [ onClick ]);
 
     const onRespondClick = useCallback((ev: React.MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
         fireEvent(null, onClick);
     }, [ onClick ]);
 
-    switch (getRoleManager().value.currentRole) {
+    switch (getRoleManager().currentRole) {
         case SecurityRole.Anonymous:
             return <div className="alert alert-info" id="forum-log-in-box">
                 <strong>
