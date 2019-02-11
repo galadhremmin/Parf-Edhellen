@@ -1,28 +1,44 @@
-import React from 'react';
 import {
     ComponentEventHandler,
     IComponentEvent,
     IDefaultComponent,
 } from './Component._types';
 
-export const fireEvent = <V>(component: IDefaultComponent, ev: ComponentEventHandler<V>, value: V) => {
-    const {
-        id,
-        name,
-    } = component.props;
+export const fireEvent = <V>(component: IDefaultComponent, ev: ComponentEventHandler<V>, value: V,
+    async: boolean = false) => {
+    if (component === undefined) {
+        throw new Error('Component reference is undefined.');
+    }
+
+    let name: string = null;
+    if (component !== null) {
+        const {
+            id: componentId,
+            name: componentName,
+        } = component.props;
+
+        name = componentName || componentId || (component as any).displayName || null;
+    }
 
     if (typeof ev !== 'function') {
         return false;
     }
 
     const args: IComponentEvent<V> = {
-        name: name || id || (component as any).displayName || null,
+        name,
         value,
     };
 
-    window.setTimeout(() => {
+    if (async) {
+        window.setTimeout(() => {
+            ev(args);
+        }, 0);
+    } else {
         ev(args);
-    }, 0);
+    }
 
     return true;
 };
+
+export const fireEventAsync = <V>(component: IDefaultComponent, ev: ComponentEventHandler<V>, value: V) =>
+    fireEvent(component, ev, value, true);

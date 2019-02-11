@@ -1,4 +1,9 @@
-import React from 'react';
+import React, {
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import { connect } from 'react-redux';
 
 import { fireEvent } from '@root/components/Component';
@@ -6,48 +11,68 @@ import { IComponentEvent } from '@root/components/Component._types';
 import Pagination from '@root/components/Pagination';
 
 import DiscussActions from '../actions/DiscussActions';
+import Form from '../components/Form';
 import Post from '../components/Post';
+import RespondButton from '../components/RespondButton';
 import { IProps } from '../index._types';
 import { RootReducer } from '../reducers';
 
-export class Discuss extends React.PureComponent<IProps> {
-    public render() {
-        const {
-            currentPage,
-            noOfPages,
-            pages,
-            posts,
-        } = this.props;
+function Discuss(props: IProps) {
+    const [ newPostView, setNewPostView ] = useState(false);
+    const postRef = useRef(null);
 
-        if (! Array.isArray(posts)) {
-            return null;
+    const {
+        currentPage,
+        noOfPages,
+        onPageChange,
+        pages,
+        posts,
+        thread,
+    } = props;
+
+    useEffect(() => {
+        // If the customer wants to respond to the thread, ensure that the component scrolls
+        // into view.
+        if (newPostView) {
+            postRef.current.scrollIntoView({
+                block: 'start',
+            });
         }
+    });
 
-        return <React.Fragment>
-            {posts.map((post) => <Post post={post} key={post.id} />)}
-            <Pagination currentPage={currentPage}
-                noOfPages={noOfPages}
-                onClick={this._onNavigateToPage}
-                pages={pages}
-            />
-        </React.Fragment>;
-    }
+    const onPaginate = useCallback((ev: IComponentEvent<number>) => {
+        if (ev.value !== currentPage) {
+            // Cancel editing mode
+            setNewPostView(false);
 
-    private _onNavigateToPage = (ev: IComponentEvent<number>) => {
-        const pageNumber = ev.value;
-        const {
-            currentPage,
-            onPageChange,
-            thread,
-        } = this.props;
-
-        if (pageNumber !== currentPage) {
-            fireEvent(this, onPageChange, {
-                pageNumber,
+            // The component is `null` because `this` reference is finicky for functional components.
+            fireEvent(/* component:*/ null, onPageChange, {
+                pageNumber: ev.value,
                 thread,
             });
         }
-    }
+    }, [ currentPage, onPageChange ]);
+
+    // Event handler for the "Respond" buttons.
+    const changeNewPostView = useCallback(() => {
+        setNewPostView(! newPostView);
+    }, [ setNewPostView ]);
+
+    return <>
+        {posts.map((post) => <Post post={post} key={post.id} />)}
+        <Pagination currentPage={currentPage}
+            noOfPages={noOfPages}
+            onClick={onPaginate}
+            pages={pages}
+        />
+        <aside ref={postRef}>
+            {newPostView
+                ? <>
+                    <Form subjectEnabled={false} />
+                </>
+                : <RespondButton onClick={changeNewPostView} />}
+        </aside>
+    </>;
 }
 
 const mapStateToProps = (state: RootReducer) => ({

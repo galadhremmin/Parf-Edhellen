@@ -55,7 +55,7 @@ export abstract class FormComponent<V = any, P = {}, CP = {}, S = {}, SS = any>
             return;
         }
 
-        if (!fireEvent(this, this.props.onChange, value)) {
+        if (! fireEvent(this, this.props.onChange, value)) {
             ev.preventDefault();
         }
     }

@@ -33,7 +33,7 @@ describe('apps/book-browser/components/SearchQueryInput', () => {
         }
     });
 
-    it('will notify on change', (done) => {
+    it('will notify on change', () => {
         const expectedValue = 'this is a new value which will trigger `onChange`.';
         const expectedChangeArguments = {
             name: wrapper.prop('name'),
@@ -52,12 +52,7 @@ describe('apps/book-browser/components/SearchQueryInput', () => {
             },
         });
 
-        // `input` relies on `fireEvent` which is asynchronous, hence the timeout.
-        window.setTimeout(() => {
-            expect(changeStub.callCount).to.equal(1);
-            expect(changeStub.firstCall.args[0]).to.deep.equal(expectedChangeArguments);
-
-            done();
-        }, 10);
+        expect(changeStub.callCount).to.equal(1);
+        expect(changeStub.firstCall.args[0]).to.deep.equal(expectedChangeArguments);
     });
 });

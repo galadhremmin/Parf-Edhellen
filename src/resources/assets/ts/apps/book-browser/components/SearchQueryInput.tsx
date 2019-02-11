@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 
-import { fireEvent } from '@root/components/Component';
+import { fireEventAsync } from '@root/components/Component';
 import { FormComponent } from '@root/components/FormComponent';
 import {
     IComponentProps,
@@ -52,6 +52,6 @@ export default class SearchQueryInput extends FormComponent<string, IProps, ICom
             return;
         }
 
-        fireEvent(this, this.props.onSearchResultNavigate, direction);
+        fireEventAsync(this, this.props.onSearchResultNavigate, direction);
     }
 }

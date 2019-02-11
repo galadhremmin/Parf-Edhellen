@@ -224,6 +224,7 @@ class DiscussRepository
                 } while ($pageNumber > 1);
             }
 
+            $pageNumber = max(1, $pageNumber);
             $skip = ($pageNumber - 1) * $maxLength;
 
         } else {

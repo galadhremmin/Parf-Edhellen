@@ -21,4 +21,5 @@ export const enum Tab {
 
 export interface IState {
     currentTab: Tab;
+    enter2Paragraph: boolean;
 }

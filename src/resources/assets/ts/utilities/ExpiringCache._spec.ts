@@ -1,9 +1,11 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import '../utilities/Enzyme';
+import { ApplicationGlobalPrefix } from '@root/config';
 import ExpiringCache, { IDataWithExpiration, TimeUnit } from './ExpiringCache';
 import MemoryStorage from './MemoryStorage';
+
+import '../utilities/Enzyme';
 
 interface ITestData {
     x: number;
@@ -30,7 +32,7 @@ describe('utilities/ExpiringCache', () => {
             lifetime: expectedLifetime,
             unit: expectedTimeUnit,
         };
-        const expectedKey = 'unit-test';
+        const expectedKey = `${ApplicationGlobalPrefix}.unit-test`;
 
         sandbox.useFakeTimers(0);
 
@@ -49,7 +51,7 @@ describe('utilities/ExpiringCache', () => {
     it('expires', async () => {
         const expiredData = { x: 0 };
         const expectedData = { x: 1 };
-        const expectedKey = 'unit-test';
+        const expectedKey = `${ApplicationGlobalPrefix}.unit-test`;
         const beginningOfTime = 1000;
         const expiredJson = JSON.stringify({
             d: expiredData,

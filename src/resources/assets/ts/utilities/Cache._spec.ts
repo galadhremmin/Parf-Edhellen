@@ -1,4 +1,6 @@
 import { expect } from 'chai';
+
+import { ApplicationGlobalPrefix } from '@root/config';
 import Cache from './Cache';
 import MemoryStorage from './MemoryStorage';
 
@@ -16,6 +18,10 @@ describe('utilities/Cache', () => {
         testCache = new TestCache(() => Promise.resolve(TestObject), CacheKey);
     });
 
+    beforeEach(() => {
+        testCache.clear();
+    });
+
     it('is not alive', () => {
         expect(testCache.alive).to.equal(false);
     });
@@ -25,9 +31,14 @@ describe('utilities/Cache', () => {
     });
 
     it('loads from store', async () => {
-        testCache.clear();
         expect(await testCache.get()).to.not.equal(TestObject);
         expect(await testCache.get()).to.deep.equal(TestObject);
+    });
+
+    it(`prepends application global prefix "${ApplicationGlobalPrefix}"`, async () => {
+        await testCache.get();
+        const value = testCache.underlyingStore.getItem(`${ApplicationGlobalPrefix}.${CacheKey}`);
+        expect(value).to.deep.equal(JSON.stringify(TestObject));
     });
 });
 
@@ -35,7 +46,12 @@ describe('utilities/Cache', () => {
  * `localStorage` and `sessionStorage` mock because they are not available in nodejs.
  */
 export class TestCache<T> extends Cache<T> {
+    public underlyingStore: MemoryStorage;
+
     constructor(loader: any, key: string) {
-        super(loader, new MemoryStorage(), key);
+        const store = new MemoryStorage();
+        super(loader, store, key);
+
+        this.underlyingStore = store;
     }
 }

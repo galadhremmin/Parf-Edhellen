@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 
+import Cache from '@root/utilities/Cache';
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
 import { fireEvent } from './Component';
 import Markdown from './Markdown';
@@ -21,13 +22,27 @@ export default class MarkdownInput extends React.PureComponent<IProps, IState> {
 
     public state = {
         currentTab: Tab.EditTab,
+        enter2Paragraph: true,
     };
+
+    private _enter2ParagraphSetting = Cache.withLocalStorage<boolean>(
+        () => Promise.resolve(true), 'components.MarkdownInput.e2p');
+
+    public async componentDidMount() {
+        const {
+            enter2Paragraph: current,
+        } = this.state;
+
+        const actual = await this._enter2ParagraphSetting.get();
+        if (current !== actual) {
+            this.setState({
+                enter2Paragraph: actual,
+            });
+        }
+    }
 
     public render() {
         const {
-            id,
-            name,
-            rows,
             value,
         } = this.props;
 
@@ -37,27 +52,10 @@ export default class MarkdownInput extends React.PureComponent<IProps, IState> {
 
         return <div className="clearfix">
             {this._renderTabs()}
-            <div className={classNames({ hidden: currentTab !== Tab.EditTab })}>
-                <textarea className="form-control"
-                          name={name}
-                          id={id}
-                          rows={rows}
-                          value={value}
-                          onChange={this._onMarkdownChange}
-                />
-                <small className="pull-right">
-                    {' Supports Markdown. '}
-                    <a href="https://en.wikipedia.org/wiki/Markdown" target="_blank">
-                        Read more (opens a new window)
-                    </a>.
-                </small>
-            </div>
-            <div className={classNames({ hidden: this.state.currentTab !== Tab.SyntaxTab })}>
-                {this._renderInfo()}
-            </div>
-            <div className={classNames({ hidden: currentTab !== Tab.PreviewTab })}>
-                {currentTab === Tab.PreviewTab && <Markdown parse={true} text={value} />}
-            </div>
+
+            {currentTab === Tab.EditTab && this._renderEditView()}
+            {currentTab === Tab.SyntaxTab && this._renderSyntaxView()}
+            {currentTab === Tab.PreviewTab && <Markdown parse={true} text={value} />}
         </div>;
     }
 
@@ -90,8 +88,44 @@ export default class MarkdownInput extends React.PureComponent<IProps, IState> {
         </ul>;
     }
 
-    private _renderInfo() {
-        return <React.Fragment>
+    private _renderEditView() {
+        const {
+            id,
+            name,
+            rows,
+            value,
+        } = this.props;
+
+        const {
+            enter2Paragraph,
+        } = this.state;
+
+        return <>
+            <textarea className="form-control"
+                    name={name}
+                    id={id}
+                    rows={rows}
+                    value={value}
+                    onChange={this._onMarkdownChange}
+                    onKeyDown={this._onMarkdownKeyDown}
+            />
+            <div className="checkbox text-right">
+                <label>
+                    <input type="checkbox" checked={enter2Paragraph} onChange={this._onEnter2ParagraphChange} />
+                    Enter key inserts a paragraph (&para;)
+                </label>
+            </div>
+            <small className="pull-right">
+                {' Supports Markdown. '}
+                <a href="https://en.wikipedia.org/wiki/Markdown" target="_blank">
+                    Read more (opens a new window)
+                </a>.
+            </small>
+        </>;
+    }
+
+    private _renderSyntaxView() {
+        return <>
             <p>
                 Markdown is a lightweight markup language with plain text formatting syntax.
                 It is designed to make it easy for you to apply formatting to your text with
@@ -206,15 +240,15 @@ export default class MarkdownInput extends React.PureComponent<IProps, IState> {
                     can be found on Wikipedia
                 </a>.
             </p>
-        </React.Fragment>;
+        </>;
     }
 
-    private _onMarkdownChange = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
+    private _triggerChange(value: string) {
         const {
             onChange,
         } = this.props;
 
-        fireEvent(this, onChange, ev.target.value);
+        fireEvent(this, onChange, value);
     }
 
     private _onOpenTab = (tab: Tab) => (ev: React.MouseEvent<HTMLAnchorElement>) => {
@@ -231,6 +265,41 @@ export default class MarkdownInput extends React.PureComponent<IProps, IState> {
 
         this.setState({
             currentTab: tab,
+        });
+    }
+
+    private _onMarkdownChange = (ev: React.ChangeEvent<HTMLTextAreaElement>) => {
+        this._triggerChange(ev.target.value);
+    }
+
+    private _onMarkdownKeyDown = (ev: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        const {
+            enter2Paragraph,
+        } = this.state;
+
+        // special behavior for enter key: insert paragraph, unless shift key is pressed
+        if (enter2Paragraph === false || ev.shiftKey) {
+            return;
+        }
+
+        const target = (ev.target as HTMLTextAreaElement);
+        const pos = target.selectionStart;
+
+        if (ev.which === 13 && pos !== undefined) {
+            ev.preventDefault();
+            ev.stopPropagation();
+
+            const value = target.value.substr(0, pos) + `\n\n` + target.value.substr(pos + 1);
+            this._triggerChange(value);
+        }
+    }
+
+    private _onEnter2ParagraphChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+        const enter2Paragraph = ev.target.checked;
+
+        this._enter2ParagraphSetting.set(enter2Paragraph);
+        this.setState({
+            enter2Paragraph,
         });
     }
 }

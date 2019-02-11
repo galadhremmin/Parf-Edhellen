@@ -217,7 +217,7 @@ export class Glossary extends React.PureComponent<IProps, IState> {
 }
 
 const FixedBouncingArrow = Loadable({
-    loader: () => import('@root/components/BouncingArrow'),
+    loader: async () => await import('@root/components/BouncingArrow'),
     loading: () => <React.Fragment />,
     render: (loaded, props) => {
         const Component = loaded.default;

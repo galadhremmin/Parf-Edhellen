@@ -1,3 +1,6 @@
+import { ApplicationGlobalPrefix } from '@root/config';
+
+import { isEmptyString } from './func/string-manipulation';
 import LazyLoader, { ILoader } from './LazyLoader';
 
 export default class Cache<T, L = T> extends LazyLoader<T, L> {
@@ -9,8 +12,26 @@ export default class Cache<T, L = T> extends LazyLoader<T, L> {
         return new this<T, L>(loader, window.sessionStorage, storageKey);
     }
 
-    constructor(loader: ILoader<L>, private _store: Storage, private _storageKey: string) {
+    private _storageKey: string;
+
+    constructor(loader: ILoader<L>, private _store: Storage, storageKey: string) {
         super(loader);
+
+        if (isEmptyString(storageKey)) {
+            throw new Error(`You must specify a storage key.`);
+        }
+
+        const prefix = `${ApplicationGlobalPrefix}.`;
+        if (! storageKey.startsWith(prefix)) {
+            storageKey = `${prefix}${storageKey}`;
+        }
+
+        this._storageKey = storageKey;
+    }
+
+    public set(value: T) {
+        this.loadedData = value;
+        this.saveInStore(value);
     }
 
     protected async load() {

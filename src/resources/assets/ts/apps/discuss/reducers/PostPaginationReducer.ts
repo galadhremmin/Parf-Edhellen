@@ -13,7 +13,7 @@ const PostPaginationReducer = (state: IPostPaginationState = {
     switch (action.type) {
         case Actions.ReceiveThread:
             return mapper<typeof action.threadData, IPostPaginationState>({
-                currentPage: 'currentPage',
+                currentPage: (v) => Math.max(1, v.currentPage),
                 noOfPages: 'noOfPages',
                 pages: 'pages',
             }, action.threadData);
