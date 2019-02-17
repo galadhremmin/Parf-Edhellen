@@ -2,10 +2,13 @@
 
 namespace App\Repositories;
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Auth;
+use Exception;
 
 use App\Adapters\DiscussAdapter;
 use App\Http\Discuss\ContextFactory;
+use App\Models\Initialization\Morphs;
 use App\Models\{
     Account,
     ForumGroup,
@@ -280,6 +283,42 @@ class DiscussRepository
         return [
             'threads' => $threads
         ];
+    }
+
+    public function resolveThread(string $entityName, int $id, $createIfNotExists = false, Account $account = null)
+    {
+        $context = $this->_contextFactory->create($entityName);
+        if ($context === null) {
+            throw new Exception(sprintf('Unsupported discuss entity "%s" with ID %d.', $entityName, $id));
+        }
+
+        if (! $context->available($id)) {
+            throw new AuthenticationException;
+        }
+
+        $data = [
+            'entity_type' => $entityName,
+            'entity_id'   => $id
+        ];
+        $thread = ForumThread::where($data)->first();
+
+        if ($thread === null) {
+            if (! $createIfNotExists) {
+                return null;
+            }
+
+            $this->resolveUser($account);
+            if ($account === null) {
+                return null;
+            }
+
+            $thread = ForumThread::create($data + [
+                'account_id'     => $account->id,
+                'forum_group_id' => 0 // TODO
+            ]);
+        }
+
+        return $thread;
     }
 
     /**

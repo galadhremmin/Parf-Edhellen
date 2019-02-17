@@ -4,9 +4,12 @@ namespace App\Http\Discuss\Contexts;
 
 use Illuminate\Database\Eloquent\Model;
 
-use App\Models\Account;
 use App\Http\Discuss\IDiscussContext;
 use App\Helpers\LinkHelper;
+use App\Models\{
+    Account,
+    Sentence
+};
 use App\Repositories\SentenceRepository;
 
 class SentenceContext implements IDiscussContext
@@ -30,7 +33,12 @@ class SentenceContext implements IDiscussContext
             $entity->id, $entity->name);
     }
 
-    function available($entityOrId, Account $account = null)
+    public function resolveById(int $entityId, Account $account = null)
+    {
+        return Sentence::find($entityId);
+    }
+
+    public function available($entityOrId, Account $account = null)
     {
         return true;
     }

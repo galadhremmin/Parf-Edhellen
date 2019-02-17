@@ -96,7 +96,13 @@ class AuditTrailAdapter
                         break;
                 }
 
-                $entity = 'a comment in <a href="'.route('forum.show', ['id' => $action->entity_id]).'">'.$action->entity_name.'</a>';
+                $entity = 'a comment in <a href="'.
+                    route('discuss.resolve', [
+                        'entityType' => $action->entity_type,
+                        'entityId' => $action->entity_id
+                    ]).'">'.
+                    $action->entity_name.
+                '</a>';
             } else if ($action->entity instanceof FlashcardResult) {
                 switch ($action->action_id) {
                     case AuditTrail::ACTION_FLASHCARD_FIRST_CARD:

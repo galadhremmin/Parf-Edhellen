@@ -1,19 +1,28 @@
 import SharedReference from '../../utilities/SharedReference';
 import ApiConnector from '../ApiConnector';
 import {
+    ICreateRequest,
+    ICreateResponse,
     IThreadRequest,
     IThreadResponse,
 } from './DiscussApiConnector._types';
 
-export default class FlashcardApiConnector {
+export default class DiscussApiConnector {
     constructor(private _api = new SharedReference(ApiConnector)) {
     }
 
-    public thread(args: IThreadRequest) {
+    public thread(payload: IThreadRequest) {
         return this._api.value.get<IThreadResponse>(
             this._makePath('thread/' +
-                args.id || `resolve/${args.entityType}/${args.entityId}`,
-            ) + `?offset=${args.offset || 0}`,
+                payload.id || `resolve/${payload.entityType}/${payload.entityId}`,
+            ) + `?offset=${payload.offset || 0}`,
+        );
+    }
+
+    public create(payload: ICreateRequest) {
+        return this._api.value.post<ICreateResponse>(
+            this._makePath('store'),
+            payload,
         );
     }
 

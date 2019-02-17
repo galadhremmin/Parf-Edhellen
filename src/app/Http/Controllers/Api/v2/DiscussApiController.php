@@ -54,6 +54,55 @@ class DiscussApiController extends Controller
         return [ $entityType => $entityId ];
     }
 
+    /**
+     * HTTP POST. Creates a new forum post.
+     *            Caller must be authenticated.
+     *
+     * @param Request $request
+     * @return response 201 on success
+     */
+    public function store(Request $request)
+    {
+        $data = (object) $this->validate($request, [
+            'content'             => 'required|string',
+            'entity_id'           => 'sometimes|number',
+            'entity_type'         => 'sometimes|string',
+            'forum_group_id'      => 'sometimes|number|exists:forum_groups,id',
+            'is_sticky'           => 'sometimes|boolean',
+            'parent_form_post_id' => 'sometimes|numeric|exists:forum_posts,id',
+            'subject'             => 'sometimes|string'
+        ]);
+
+        dd($data);
+
+        $comments = $request->input('comments');
+        $parentEntityId = null;
+        if ($request->has('parent_form_post_id')) {
+            $parentEntityId = $request->input('parent_form_post_id');
+        }
+
+        $thread = $this->getOrNewForumThread($request);
+
+        // Update the thread with information pertaining to the post just published.
+        $account = $request->user();
+        $thread->account_id = $account->id;
+        $thread->number_of_posts += 1;
+        $thread->save();
+
+        $post = ForumPost::create([
+            'forum_thread_id'     => $thread->id,
+            'account_id'          => $account->id,
+            'content'             => $comments,
+            'parent_form_post_id' => $parentEntityId,
+            'number_of_likes'     => 0
+        ]);
+
+        // Register an audit trail
+        event(new ForumPostCreated($post, $account->id));
+
+        return response(null, 201);
+    }
+
     private function getPage(Request $request)
     {
         $params = $request->validate([

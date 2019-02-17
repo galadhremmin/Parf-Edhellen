@@ -4,8 +4,11 @@ namespace App\Http\Discuss\Contexts;
 
 use Illuminate\Database\Eloquent\Model;
 
-use App\Models\Account;
 use App\Http\Discuss\IDiscussContext;
+use App\Models\{
+    Account,
+    ForumDiscussion
+};
 
 class DiscussContext implements IDiscussContext
 {
@@ -14,7 +17,17 @@ class DiscussContext implements IDiscussContext
         return route('discuss.find-thread', ['id' => $entity->id]);
     }
 
-    function available($entityOrId, Account $account = null)
+    public function resolveById(int $entityId, Account $account = null)
+    {
+        $thread = ForumDiscussion::find($entityId);
+        if ($thread === null) {
+            $thread = new ForumDiscussion;
+        }
+
+        return $thread;
+    }
+
+    public function available($entityOrId, Account $account = null)
     {
         return true;
     }

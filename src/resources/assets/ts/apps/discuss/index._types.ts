@@ -11,6 +11,7 @@ export interface IProps {
     noOfPages?: number;
     pages?: Array<string | number>;
     onPageChange?: ComponentEventHandler<IPageChangeEvent>;
+    onPostSubmit?: ComponentEventHandler<any>;
     posts?: IPostEntity[];
     thread?: IThreadEntity;
 }

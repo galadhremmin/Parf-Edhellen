@@ -51,12 +51,16 @@ function Discuss(props: IProps) {
                 thread,
             });
         }
-    }, [ currentPage, onPageChange ]);
+    }, [ currentPage, thread, onPageChange ]);
 
     // Event handler for the "Respond" buttons.
-    const changeNewPostView = useCallback(() => {
+    const onNewPostViewChange = useCallback(() => {
         setNewPostView(! newPostView);
-    }, [ setNewPostView ]);
+    }, [ newPostView, setNewPostView ]);
+
+    const onPostSubmit = useCallback((ev: IComponentEvent<any>) => {
+        
+    }, [ thread ]);
 
     return <>
         {posts.map((post) => <Post post={post} key={post.id} />)}
@@ -67,10 +71,11 @@ function Discuss(props: IProps) {
         />
         <aside ref={postRef}>
             {newPostView
-                ? <>
-                    <Form subjectEnabled={false} />
-                </>
-                : <RespondButton onClick={changeNewPostView} />}
+                ? <Form subjectEnabled={false} 
+                        onCancel={onNewPostViewChange}
+                        onSubmit={onPostSubmit}
+                  />
+                : <RespondButton onClick={onNewPostViewChange} />}
         </aside>
     </>;
 }

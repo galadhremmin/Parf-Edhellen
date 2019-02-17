@@ -17,6 +17,20 @@ export interface IThreadResponse {
     threadId: number;
 }
 
+export interface ICreateRequest {
+    content: string;
+    entityId?: number;
+    entityType?: number;
+    forumGroupId?: number;
+    isSticky?: boolean;
+    parentFormPostId?: number;
+    subject: string;
+}
+
+export interface ICreateResponse {
+    notSureYet: never;
+}
+
 export interface IThreadEntity {
     accountId: number;
     createdAt: string;

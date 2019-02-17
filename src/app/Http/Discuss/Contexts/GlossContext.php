@@ -6,8 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 use App\Adapters\BookAdapter;
 use App\Repositories\GlossRepository;
-use App\Models\Account;
 use App\Http\Discuss\IDiscussContext;
+use App\Models\{
+    Account,
+    Gloss
+};
 use App\Helpers\LinkHelper;
 
 class GlossContext implements IDiscussContext
@@ -28,7 +31,12 @@ class GlossContext implements IDiscussContext
         return $this->_linkHelper->glossVersions($entity->id);
     }
 
-    function available($entityOrId, Account $account = null)
+    public function resolveById(int $entityId, Account $account = null)
+    {
+        return Gloss::find($entityId);
+    }
+
+    public function available($entityOrId, Account $account = null)
     {
         return true;
     }

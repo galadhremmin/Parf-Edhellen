@@ -15,5 +15,8 @@ Route::group([
         ->where([
             'entityType' => '[a-z]+',
             'entityId' => REGULAR_EXPRESSION_NUMERIC
-        ]);
+        ])
+        ->name('discuss.resolve');
+    
+    Route::post('store', [ 'uses' => 'DiscussApiController@store' ]);
 });

@@ -5,7 +5,10 @@ namespace App\Http\Discuss;
 use View;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Account;
+use App\Models\{
+    Account,
+    ModelBase
+};
 
 interface IDiscussContext
 {
@@ -16,6 +19,14 @@ interface IDiscussContext
      * @return string
      */
     function resolve(Model $entity);
+
+    /**
+     * Gets the ModelBase for the specified entity associated with the context. 
+     *
+     * @param int $entityId
+     * @return ModelBase
+     */
+    function resolveById(int $entityId, Account $account = null);
 
     /**
      * Gets a list of roles that the user must have in order to successfully access the content.
