@@ -6,7 +6,11 @@ use Tests\TestCase;
 use Illuminate\Support\Collection;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+
 use Auth;
+use DB;
+
+use Tests\Unit\Traits\CanCreateGloss;
 
 use App\Repositories\DiscussRepository;
 use App\Models\{
@@ -46,9 +50,12 @@ class DiscussRepositoryTest extends TestCase
 
     public function testGetThreadForEntityShouldBeNew()
     {
+        extract( $this->createGloss(__FUNCTION__) );
+        $gloss = $this->getRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
 
-
-        $thread = $this->_repository->getThreadForEntity('gloss', 1, true);
-        $this->assertTrue($thread instanceof ForumThread);
+        $thread = $this->_repository->getThreadForEntity('gloss', $gloss->id, true);
+        $this->assertTrue(is_array($thread));
+        $this->assertTrue(isset($thread['thread']));
+        $this->assertTrue($thread['thread'] instanceof ForumThread);
     }
 }

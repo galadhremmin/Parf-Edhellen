@@ -324,7 +324,7 @@ class DiscussRepository
             }
 
             $group = $this->getForumGroupByEntity($entityType);
-            $thread = ForumThread::create([
+            $thread = new ForumThread([
                 'account_id'     => $account->id,
                 'entity_id'      => $entity->id,
                 'entity_type'    => $entityType,
