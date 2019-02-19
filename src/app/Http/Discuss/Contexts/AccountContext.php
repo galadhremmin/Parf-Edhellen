@@ -26,7 +26,7 @@ class AccountContext implements IDiscussContext
         return $this->_linkHelper->author($entity->id, $entity->nickname);
     }
 
-    public function resolveById(int $entityId, Account $account = null)
+    public function resolveById(int $entityId)
     {
         return Account::find($entityId);
     }

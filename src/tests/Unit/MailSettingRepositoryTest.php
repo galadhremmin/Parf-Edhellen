@@ -30,6 +30,7 @@ use App\Models\{
     Contribution,
     Language,
     ForumThread,
+    ForumGroup,
     ForumPost
 };
 use App\Mail\{
@@ -175,10 +176,11 @@ class MailSettingRepositoryTest extends TestCase
     public function testShouldNotifyPostCreated()
     {
         $thread = ForumThread::create([
-            'entity_type' => Morphs::getAlias($this->_contribution),
-            'entity_id'   => $this->_contribution->id,
-            'subject'     => 'Unit test',
-            'account_id'  => $this->_accountIds[0]
+            'entity_type'    => Morphs::getAlias($this->_contribution),
+            'entity_id'      => $this->_contribution->id,
+            'subject'        => 'Unit test',
+            'account_id'     => $this->_accountIds[0],
+            'forum_group_id' => ForumGroup::first()->id
         ]);
 
         foreach ($this->_accountIds as $id) {
@@ -210,10 +212,11 @@ class MailSettingRepositoryTest extends TestCase
     public function testShouldNotifyPostOnProfile()
     {
         $thread = ForumThread::create([
-            'entity_type' => Morphs::getAlias($this->_accounts[0]),
-            'entity_id'   => $this->_accountIds[0],
-            'subject'     => 'Unit test',
-            'account_id'  => $this->_accountIds[1]
+            'entity_type'    => Morphs::getAlias($this->_accounts[0]),
+            'entity_id'      => $this->_accountIds[0],
+            'subject'        => 'Unit test',
+            'account_id'     => $this->_accountIds[1],
+            'forum_group_id' => ForumGroup::first()->id
         ]);
 
         $post = ForumPost::create([

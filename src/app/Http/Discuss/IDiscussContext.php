@@ -26,7 +26,7 @@ interface IDiscussContext
      * @param int $entityId
      * @return ModelBase
      */
-    function resolveById(int $entityId, Account $account = null);
+    function resolveById(int $entityId);
 
     /**
      * Gets a list of roles that the user must have in order to successfully access the content.

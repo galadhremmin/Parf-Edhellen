@@ -25,7 +25,7 @@ class KeywordRepositoryTest extends TestCase
     protected function setUp() 
     {
         parent::setUp();
-        $this->setUpGlosses();      
+        $this->setUpGlosses();
     }
 
     protected function tearDown()

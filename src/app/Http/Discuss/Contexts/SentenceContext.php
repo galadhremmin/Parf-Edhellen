@@ -33,7 +33,7 @@ class SentenceContext implements IDiscussContext
             $entity->id, $entity->name);
     }
 
-    public function resolveById(int $entityId, Account $account = null)
+    public function resolveById(int $entityId)
     {
         return Sentence::find($entityId);
     }

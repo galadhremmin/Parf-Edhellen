@@ -31,7 +31,7 @@ class GlossContext implements IDiscussContext
         return $this->_linkHelper->glossVersions($entity->id);
     }
 
-    public function resolveById(int $entityId, Account $account = null)
+    public function resolveById(int $entityId)
     {
         return Gloss::find($entityId);
     }

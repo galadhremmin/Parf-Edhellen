@@ -11,6 +11,7 @@ use App\Http\Discuss\ContextFactory;
 use App\Models\Initialization\Morphs;
 use App\Models\{
     Account,
+    ForumDiscussion,
     ForumGroup,
     ForumThread,
     ForumPost
@@ -285,11 +286,11 @@ class DiscussRepository
         ];
     }
 
-    public function resolveThread(string $entityName, int $id, $createIfNotExists = false, Account $account = null)
+    public function getThreadForEntity(string $entityType, int $id, $createIfNotExists = false, Account $account = null)
     {
-        $context = $this->_contextFactory->create($entityName);
+        $context = $this->_contextFactory->create($entityType);
         if ($context === null) {
-            throw new Exception(sprintf('Unsupported discuss entity "%s" with ID %d.', $entityName, $id));
+            throw new Exception(sprintf('Unsupported discuss entity "%s" with ID %d.', $entityType, $id));
         }
 
         if (! $context->available($id)) {
@@ -297,7 +298,7 @@ class DiscussRepository
         }
 
         $data = [
-            'entity_type' => $entityName,
+            'entity_type' => $entityType,
             'entity_id'   => $id
         ];
         $thread = ForumThread::where($data)->first();
@@ -312,13 +313,48 @@ class DiscussRepository
                 return null;
             }
 
-            $thread = ForumThread::create($data + [
+            $entity = $context->resolveById($id);
+            if ($entity === null) {
+                return null;
+            }
+
+            if ($entity->id === 0) {
+                $entity->account_id = $account->id;
+                $entity->save();
+            }
+
+            $group = $this->getForumGroupByEntity($entityType);
+            $thread = ForumThread::create([
                 'account_id'     => $account->id,
-                'forum_group_id' => 0 // TODO
+                'entity_id'      => $entity->id,
+                'entity_type'    => $entityType,
+                'forum_group_id' => $group->id
             ]);
         }
 
-        return $thread;
+        return [
+            'thread' => $thread
+        ];
+    }
+
+    public function getForumGroupByEntity(string $entityType)
+    {
+        $group = ForumGroup::where('role', $entityType)
+                ->first();
+
+        // If no forum group is associated with the specified entity, then defer to the default
+        // 'catch all' entity, `ForumDiscussion`.
+        if ($group === null) {
+            $discussionMorph = Morphs::getAlias(ForumDiscussion::class);
+            $group = ForumGroup::where('role', $discussionMorph)
+                ->first();
+
+            if ($group === null) {
+                throw new Exception(sprint('No forum group is configured for %s.', $discussionMorph));
+            }
+        }
+
+        return $group;
     }
 
     /**

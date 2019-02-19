@@ -17,7 +17,7 @@ class DiscussContext implements IDiscussContext
         return route('discuss.find-thread', ['id' => $entity->id]);
     }
 
-    public function resolveById(int $entityId, Account $account = null)
+    public function resolveById(int $entityId)
     {
         $thread = ForumDiscussion::find($entityId);
         if ($thread === null) {

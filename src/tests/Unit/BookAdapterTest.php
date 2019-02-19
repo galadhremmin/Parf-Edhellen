@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Auth;
+use Route;
 
 use Tests\Unit\Traits\CanCreateGloss;
 use App\Adapters\BookAdapter;

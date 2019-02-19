@@ -16,22 +16,22 @@ $urlSeoReg = '[a-z_\-0-9]+';
 
 require_once 'constants.php';
 
-require_once 'web-routes/authentication.php';
-require_once 'web-routes/common.php';
-require_once 'web-routes/dashboard-admin.php';
-require_once 'web-routes/dashboard-user.php';
-require_once 'web-routes/dictionary.php';
-require_once 'web-routes/flashcards.php';
-require_once 'web-routes/phrases.php';
+require 'web-routes/authentication.php';
+require 'web-routes/common.php';
+require 'web-routes/dashboard-admin.php';
+require 'web-routes/dashboard-user.php';
+require 'web-routes/dictionary.php';
+require 'web-routes/flashcards.php';
+require 'web-routes/phrases.php';
 
-require_once 'web-routes/api-admin.php';
-require_once 'web-routes/api-public.php';
-require_once 'web-routes/api-user.php';
-require_once 'web-routes/discuss-api.php';
+require 'web-routes/api-admin.php';
+require 'web-routes/api-public.php';
+require 'web-routes/api-user.php';
+require 'web-routes/discuss-api.php';
 
-require_once 'web-routes/resources-admin.php';
-require_once 'web-routes/resources-user.php';
-require_once 'web-routes/resources.php';
+require 'web-routes/resources-admin.php';
+require 'web-routes/resources-user.php';
+require 'web-routes/resources.php';
 
 // Mail cancellation
 Route::get('/stop-notification/{token}', ['uses' => 'Resources\\MailSettingController@handleCancellationToken'])
