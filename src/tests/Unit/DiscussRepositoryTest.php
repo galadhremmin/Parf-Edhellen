@@ -14,6 +14,7 @@ use Tests\Unit\Traits\CanCreateGloss;
 
 use App\Repositories\DiscussRepository;
 use App\Models\{
+    ForumGroup,
     ForumThread
 };
 
@@ -56,6 +57,16 @@ class DiscussRepositoryTest extends TestCase
         $thread = $this->_repository->getThreadForEntity('gloss', $gloss->id, true);
         $this->assertTrue(is_array($thread));
         $this->assertTrue(isset($thread['thread']));
-        $this->assertTrue($thread['thread'] instanceof ForumThread);
+
+        $t = $thread['thread'];
+        $this->assertTrue($t instanceof ForumThread);
+        $this->assertEquals(
+            $t->forum_group_id, 
+            ForumGroup::where('role', 'gloss')->first()->id
+        );
+        $this->assertEquals(
+            $t->id, 
+            0
+        );
     }
 }
