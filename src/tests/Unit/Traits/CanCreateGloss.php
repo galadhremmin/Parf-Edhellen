@@ -68,7 +68,7 @@ trait CanCreateGloss
      * @param string $word
      * @param string $sense
      * @param string $method
-     * @return void
+     * @return array
      */
     protected function createGloss(string $method = __FUNCTION__, string $word = 'test-word')
     {

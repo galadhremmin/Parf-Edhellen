@@ -74,7 +74,7 @@ class DiscussRepository
         $this->resolveUser($account);
 
         $noOfThreadsPerPage = config('ed.forum_thread_resultset_max_length');
-        $noOfPages = ceil(ForumThread::inGroup($group->id)->count() / $noOfThreadsPerPage);
+        $noOfPages = intval(ceil(ForumThread::inGroup($group->id)->count() / $noOfThreadsPerPage));
         $currentPage = min($noOfPages, max(1, intval($pageNumber)));
 
         $threads = ForumThread::inGroup($group->id)
@@ -286,6 +286,9 @@ class DiscussRepository
         ];
     }
 
+    /**
+     * Gets a thread entity (either existing thread or a new instance of a thread) associated with the specified entity.
+     */
     public function getThreadForEntity(string $entityType, int $id, $createIfNotExists = false, Account $account = null)
     {
         $context = $this->_contextFactory->create($entityType);
@@ -323,12 +326,12 @@ class DiscussRepository
                 $entity->save();
             }
 
-            $group = $this->getForumGroupByEntity($entityType);
+            $defaultGroup = $this->getDefaultForumGroupByEntity($entityType);
             $thread = new ForumThread([
                 'account_id'     => $account->id,
                 'entity_id'      => $entity->id,
                 'entity_type'    => $entityType,
-                'forum_group_id' => $group->id
+                'forum_group_id' => $defaultGroup->id
             ]);
         }
 
@@ -337,7 +340,12 @@ class DiscussRepository
         ];
     }
 
-    public function getForumGroupByEntity(string $entityType)
+    /**
+     * Gets the default forum group associated with the specified entity type.
+     * @param string $entityType entity type ("morph")
+     * @return ForumGroup
+     */
+    public function getDefaultForumGroupByEntity(string $entityType)
     {
         $group = ForumGroup::where('role', $entityType)
                 ->first();

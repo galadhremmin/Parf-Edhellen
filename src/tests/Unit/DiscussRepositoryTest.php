@@ -10,7 +10,9 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Auth;
 use DB;
 
-use Tests\Unit\Traits\CanCreateGloss;
+use Tests\Unit\Traits\{
+    CanCreateGloss
+};
 
 use App\Repositories\DiscussRepository;
 use App\Models\{
@@ -24,7 +26,7 @@ class DiscussRepositoryTest extends TestCase
         CanCreateGloss::setUp as setUpGlosses;
         CanCreateGloss::tearDown as tearDownGlosses;
     } // ; <-- remedies Visual Studio Code colouring bug
-
+    
     private $_repository;
 
     protected function setUp() 
@@ -60,6 +62,9 @@ class DiscussRepositoryTest extends TestCase
 
         $t = $thread['thread'];
         $this->assertTrue($t instanceof ForumThread);
+        $this->assertEquals($t->entity_type, 'gloss');
+        $this->assertEquals($t->entity_id, $gloss->id);
+        $this->assertEquals($t->account_id, Auth::user()->id);
         $this->assertEquals(
             $t->forum_group_id, 
             ForumGroup::where('role', 'gloss')->first()->id
