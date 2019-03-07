@@ -60,7 +60,7 @@ class DiscussRepositoryTest extends TestCase
         $this->assertTrue(is_array($thread));
         $this->assertTrue(isset($thread['thread']));
 
-        $t = $thread['thread'];
+        $t = &$thread['thread'];
         $this->assertTrue($t instanceof ForumThread);
         $this->assertEquals($t->entity_type, 'gloss');
         $this->assertEquals($t->entity_id, $gloss->id);
@@ -72,6 +72,35 @@ class DiscussRepositoryTest extends TestCase
         $this->assertEquals(
             $t->id, 
             0
+        );
+    }
+
+    public function testGetThreadForEntityShouldBeExisting()
+    {
+        extract( $this->createGloss(__FUNCTION__) );
+        $gloss = $this->getRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
+
+        $thread = $this->_repository->getThreadForEntity('gloss', $gloss->id, true);
+        $t = &$thread['thread'];
+        $t->subject = 'Subject';
+        $t->save();
+
+        $existingThread = $this->_repository->getThreadForEntity('gloss', $gloss->id, true);
+        $this->assertTrue(is_array($existingThread));
+        $this->assertTrue(isset($existingThread['thread']));
+
+        $t = &$existingThread['thread'];
+        $this->assertTrue($t instanceof ForumThread);
+        $this->assertEquals($t->entity_type, 'gloss');
+        $this->assertEquals($t->entity_id, $gloss->id);
+        $this->assertEquals($t->account_id, Auth::user()->id);
+        $this->assertEquals(
+            $t->forum_group_id, 
+            ForumGroup::where('role', 'gloss')->first()->id
+        );
+        $this->assertEquals(
+            $t->id,
+            $thread['thread']->id
         );
     }
 }
