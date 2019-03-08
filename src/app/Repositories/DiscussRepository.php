@@ -4,6 +4,8 @@ namespace App\Repositories;
 
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Auth;
+
+use DB;
 use Exception;
 
 use App\Adapters\DiscussAdapter;
@@ -15,6 +17,11 @@ use App\Models\{
     ForumGroup,
     ForumThread,
     ForumPost
+};
+use App\Events\{
+    ForumPostCreated,
+    ForumPostEdited,
+    ForumPostLikeCreated
 };
 
 class DiscussRepository
@@ -363,6 +370,43 @@ class DiscussRepository
         }
 
         return $group;
+    }
+
+    public function savePost(ForumPost &$originalPost, ForumThread $thread, Account $account = null)
+    {
+        $this->resolveUser($account);
+
+        if (! $this->checkThreadAuthorization($thread, $account)) {
+            return null;
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $post = ForumPost::create([
+                'account_id'          => $account->id,
+                'forum_thread_id'     => $thread->id,
+                'number_of_likes'     => 0,
+
+                'content'             => $originalPost->content,
+                'parent_form_post_id' => $originalPost->parent_form_post_id,
+            ]);
+
+            $thread->account_id = $account->id;
+            $thread->number_of_posts = $thread->forum_posts->count();
+            $thread->save();
+
+            DB::commit();
+
+            // Abandon the original post by pointing at the post we just created.
+            $originalPost = $post;
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            throw $ex;
+        }
+
+        event(new ForumPostCreated($post, $account->id));
+        return false;
     }
 
     /**

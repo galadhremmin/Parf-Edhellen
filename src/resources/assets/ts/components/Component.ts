@@ -1,23 +1,28 @@
 import {
     ComponentEventHandler,
+    ComponentOrName,
     IComponentEvent,
-    IDefaultComponent,
 } from './Component._types';
 
-export const fireEvent = <V>(component: IDefaultComponent, ev: ComponentEventHandler<V>, value: V = undefined,
+export const fireEvent = <V>(componentOrName: ComponentOrName, ev: ComponentEventHandler<V>, value: V = undefined,
     async: boolean = false) => {
-    if (component === undefined) {
+    if (componentOrName === undefined) {
         throw new Error('Component reference is undefined.');
     }
 
     let name: string = null;
-    if (component !== null) {
+    if (typeof componentOrName === 'string') {
+        if (componentOrName && componentOrName.length > 0) {
+            name = componentOrName;
+        }
+
+    } else if (componentOrName !== null) {
         const {
             id: componentId,
             name: componentName,
-        } = component.props;
+        } = componentOrName.props;
 
-        name = componentName || componentId || (component as any).displayName || null;
+        name = componentName || componentId || (componentOrName as any).displayName || null;
     }
 
     if (typeof ev !== 'function') {
@@ -40,5 +45,5 @@ export const fireEvent = <V>(component: IDefaultComponent, ev: ComponentEventHan
     return true;
 };
 
-export const fireEventAsync = <V>(component: IDefaultComponent, ev: ComponentEventHandler<V>, value: V = undefined) =>
-    fireEvent(component, ev, value, true);
+export const fireEventAsync = <V>(componentOrName: ComponentOrName, ev: ComponentEventHandler<V>, value: V = undefined) =>
+    fireEvent(componentOrName, ev, value, true);

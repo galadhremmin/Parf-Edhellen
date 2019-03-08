@@ -4,7 +4,10 @@ import DiscussApiConnector from '@root/connectors/backend/DiscussApiConnector';
 import BrowserHistory from '@root/utilities/BrowserHistory';
 import SharedReference from '@root/utilities/SharedReference';
 
-import { IThreadAction } from '../reducers/ThreadReducer._types';
+import {
+    ICreatePostAction,
+    IThreadAction,
+} from '../reducers/ThreadReducer._types';
 import Actions from './Actions';
 
 export default class DiscussActions {
@@ -24,6 +27,12 @@ export default class DiscussActions {
                 threadData: thread,
                 type: Actions.ReceiveThread,
             });
+        };
+    }
+
+    public createPost(args: ICreatePostAction) {
+        return async (dispatch: ThunkDispatch<any, any, any>) => {
+            const post = await this._api.value.create(args);
         };
     }
 }

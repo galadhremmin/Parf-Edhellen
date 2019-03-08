@@ -12,6 +12,7 @@ import Pagination from '@root/components/Pagination';
 
 import DiscussActions from '../actions/DiscussActions';
 import Form from '../components/Form';
+import { IFormOutput } from '../components/Form._types';
 import Post from '../components/Post';
 import RespondButton from '../components/RespondButton';
 import { IProps } from '../index._types';
@@ -24,11 +25,16 @@ function Discuss(props: IProps) {
     const {
         currentPage,
         noOfPages,
+        onPostSubmit,
         onPageChange,
         pages,
         posts,
         thread,
     } = props;
+
+    const {
+        id: threadId,
+    } = thread;
 
     useEffect(() => {
         // If the customer wants to respond to the thread, ensure that the component scrolls
@@ -58,9 +64,12 @@ function Discuss(props: IProps) {
         setNewPostView(! newPostView);
     }, [ newPostView, setNewPostView ]);
 
-    const onPostSubmit = useCallback((ev: IComponentEvent<any>) => {
-        
-    }, [ thread ]);
+    const onSubmit = useCallback((ev: IComponentEvent<IFormOutput>) => {
+        fireEvent(null, onPostSubmit, {
+            content: ev.value.content,
+            forumThreadId: threadId,
+        });
+    }, [ onPostSubmit, threadId ]);
 
     return <>
         {posts.map((post) => <Post post={post} key={post.id} />)}
@@ -71,9 +80,10 @@ function Discuss(props: IProps) {
         />
         <aside ref={postRef}>
             {newPostView
-                ? <Form subjectEnabled={false} 
+                ? <Form name="discussForm"
                         onCancel={onNewPostViewChange}
-                        onSubmit={onPostSubmit}
+                        onSubmit={onSubmit}
+                        subjectEnabled={false}
                   />
                 : <RespondButton onClick={onNewPostViewChange} />}
         </aside>
@@ -94,6 +104,7 @@ const mapDispatchToProps = (dispatch: any) => ({
         id: ev.value.thread.id,
         offset: ev.value.pageNumber,
     })),
+    onPostSubmit: (ev) => dispatch(actions.createPost(ev.value)),
 } as Partial<IProps>);
 
 export default connect(mapStateToProps, mapDispatchToProps)(Discuss);

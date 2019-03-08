@@ -6,6 +6,7 @@ export interface IFormOutput {
 }
 
 export interface IProps extends Partial<IFormOutput> {
+    name: string;
     subjectEnabled?: boolean;
 
     onCancel?: ComponentEventHandler<void>;

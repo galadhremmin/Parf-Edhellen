@@ -21,7 +21,7 @@ export default class DiscussApiConnector {
 
     public create(payload: ICreateRequest) {
         return this._api.value.post<ICreateResponse>(
-            this._makePath('store'),
+            this._makePath('store/post'),
             payload,
         );
     }

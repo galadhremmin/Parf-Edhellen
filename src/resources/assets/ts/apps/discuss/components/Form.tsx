@@ -8,6 +8,7 @@ import { IComponentEvent } from '@root/components/Component._types';
 import MarkdownInput from '@root/components/MarkdownInput';
 
 import {
+    IFormOutput,
     IProps,
 } from './Form._types';
 
@@ -16,9 +17,10 @@ function Form(props: IProps) {
     const [ subject, setSubject ] = useState(() => props.subject);
 
     const {
-        subjectEnabled,
+        name,
         onCancel,
         onSubmit,
+        subjectEnabled,
     } = props;
 
     const onContentChange = useCallback(
@@ -33,8 +35,13 @@ function Form(props: IProps) {
     }, [ onCancel ]);
     const onSubmitForm = useCallback((ev: React.FormEvent) => {
         ev.preventDefault();
-        fireEventAsync(null, onSubmit);
-    }, [ onSubmit ]);
+        
+        const args = {
+            content,
+            subject,
+        } as IFormOutput;
+        fireEventAsync(name, onSubmit, args);
+    }, [ content, name, onSubmit, subject ]);
 
     return <form method="get" action="/#intercepted-action" onSubmit={onSubmitForm}>
         {subjectEnabled && <div className="form-group">

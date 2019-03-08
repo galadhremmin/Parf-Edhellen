@@ -18,5 +18,5 @@ Route::group([
         ])
         ->name('discuss.resolve');
     
-    Route::post('store', [ 'uses' => 'DiscussApiController@store' ]);
+    Route::post('store/post', [ 'uses' => 'DiscussApiController@storePost' ]);
 });

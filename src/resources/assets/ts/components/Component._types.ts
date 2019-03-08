@@ -5,6 +5,8 @@ export interface IDefaultComponent {
     }> | any;
 }
 
+export type ComponentOrName = IDefaultComponent | string;
+
 /**
  * Represents a component event with `V` value type.
  */

@@ -20,11 +20,12 @@ export interface IThreadResponse {
 export interface ICreateRequest {
     content: string;
     entityId?: number;
-    entityType?: number;
+    entityType?: string;
     forumGroupId?: number;
+    forumThreadId?: number;
     isSticky?: boolean;
     parentFormPostId?: number;
-    subject: string;
+    subject?: string;
 }
 
 export interface ICreateResponse {
