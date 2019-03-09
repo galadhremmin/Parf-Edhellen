@@ -34,6 +34,7 @@ describe('components/Markdown', () => {
     it('makes the right request', (done) => {
         sandbox.stub(axios, 'post')
             .callsFake((path, data) => {
+                console.log('Requesting markdown parser');
                 expect(path).to.contain('utility/markdown');
                 expect(data).to.deep.equal({
                     markdown: MarkdownText,

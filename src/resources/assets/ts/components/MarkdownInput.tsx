@@ -67,6 +67,8 @@ export default class MarkdownInput extends React.PureComponent<IProps, IState> {
             currentTab,
         } = this.state;
 
+        const disabled = isEmptyString(value);
+
         return <ul className="nav nav-tabs">
             <li role="presentation"
                 className={classNames({active: currentTab === Tab.EditTab})}>
@@ -81,9 +83,9 @@ export default class MarkdownInput extends React.PureComponent<IProps, IState> {
             <li role="presentation"
                 className={classNames({
                     active: currentTab === Tab.PreviewTab,
-                    disabled: isEmptyString(value),
+                    disabled,
                 })}>
-                <a href="#" onClick={this._onOpenTab(Tab.PreviewTab)}>Preview</a>
+                <a href="#" onClick={this._onOpenTab(Tab.PreviewTab, disabled)}>Preview</a>
             </li>
         </ul>;
     }
@@ -251,7 +253,7 @@ export default class MarkdownInput extends React.PureComponent<IProps, IState> {
         fireEvent(this, onChange, value);
     }
 
-    private _onOpenTab = (tab: Tab) => (ev: React.MouseEvent<HTMLAnchorElement>) => {
+    private _onOpenTab = (tab: Tab, disabled: boolean = false) => (ev: React.MouseEvent<HTMLAnchorElement>) => {
         const {
             currentTab,
         } = this.state;
@@ -259,7 +261,7 @@ export default class MarkdownInput extends React.PureComponent<IProps, IState> {
         ev.preventDefault();
 
         // Is the tab currently opened?
-        if (currentTab === tab) {
+        if (currentTab === tab || disabled) {
             return;
         }
 

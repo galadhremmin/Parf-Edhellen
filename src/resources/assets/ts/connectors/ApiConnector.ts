@@ -13,6 +13,7 @@ import {
 import {
     propsToSnakeCase,
     snakeCasePropsToCamelCase,
+    toSnakeCase,
 } from '../utilities/func/snake-case';
 
 interface IErrorReport {
@@ -22,6 +23,10 @@ interface IErrorReport {
     error?: string;
     headers?: any;
     status?: number;
+}
+
+interface IQueryStringMap {
+    [key: string]: any;
 }
 
 export default class ApiConnector {
@@ -35,71 +40,71 @@ export default class ApiConnector {
     /**
      * Execute a DELETE request.
      */
-    public delete<T>(apiMethod: string) {
-        return this._consume<T>(apiMethod, this.deleteRaw(apiMethod));
+    public delete<T>(apiMethod: string, queryStringMap: IQueryStringMap = null) {
+        return this._consume<T>(apiMethod, this.deleteRaw(apiMethod, queryStringMap));
     }
 
     /**
      * Execute a DELETE request and returns the request object.
      */
-    public deleteRaw(apiMethod: string) {
-        return this._createRequest(this._factory.delete, apiMethod);
+    public deleteRaw(apiMethod: string, queryStringMap: IQueryStringMap = null) {
+        return this._createRequest(this._factory.delete, apiMethod, queryStringMap);
     }
 
     /**
      * Execute a HEAD request.
      */
-    public head<T>(apiMethod: string) {
-        return this._consume<T>(apiMethod, this.headRaw(apiMethod));
+    public head<T>(apiMethod: string, queryStringMap: IQueryStringMap = null) {
+        return this._consume<T>(apiMethod, this.headRaw(apiMethod, queryStringMap));
     }
 
     /**
      * Execute a HEAD request.
      */
-    public headRaw(apiMethod: string) {
-        return this._createRequest(this._factory.head, apiMethod);
+    public headRaw(apiMethod: string, queryStringMap: IQueryStringMap = null) {
+        return this._createRequest(this._factory.head, apiMethod, queryStringMap);
     }
 
     /**
      * Execute a GET request.
      */
-    public get<T>(apiMethod: string) {
-        return this._consume<T>(apiMethod, this.getRaw(apiMethod));
+    public get<T>(apiMethod: string, queryStringMap: IQueryStringMap = null) {
+        return this._consume<T>(apiMethod, this.getRaw(apiMethod, queryStringMap));
     }
 
     /**
      * Execute a GET request.
      */
-    public getRaw(apiMethod: string) {
-        return this._createRequest(this._factory.get, apiMethod);
+    public getRaw(apiMethod: string, queryStringMap: IQueryStringMap = null) {
+        return this._createRequest(this._factory.get, apiMethod, queryStringMap);
     }
 
     /**
      * Execute a POST request.
      */
-    public post<T>(apiMethod: string, payload: any) {
-        return this._consume<T>(apiMethod, this.postRaw(apiMethod, payload || {}));
+    public post<T>(apiMethod: string, payload: any, queryStringMap: IQueryStringMap = null) {
+        return this._consume<T>(apiMethod, this.postRaw(apiMethod, payload || {}, queryStringMap));
     }
 
     /**
      * Execute a POST request.
      */
-    public postRaw(apiMethod: string, payload: any) {
-        return this._createRequest(this._factory.post, apiMethod, payload || {});
+    public postRaw(apiMethod: string, payload: any, queryStringMap: IQueryStringMap = null) {
+        return this._createRequest(this._factory.post, apiMethod, queryStringMap, payload || {});
     }
 
     /**
      * Execute a PUT request.
      */
-    public put<T>(apiMethod: string, payload: any) {
-        return this._consume<T>(apiMethod, this.putRaw(apiMethod, payload || {}));
+    public put<T>(apiMethod: string, payload: any, queryStringMap: IQueryStringMap = null) {
+        return this._consume<T>(apiMethod, this.putRaw(apiMethod, payload || {}, queryStringMap));
     }
 
     /**
      * Execute a PUT request.
      */
-    public putRaw(apiMethod: string, payload: any) {
-        return this._createRequest(this._factory.put, apiMethod, payload || {});
+    public putRaw(apiMethod: string, payload: any, queryStringMap: IQueryStringMap = null) {
+        return this._createRequest(this._factory.put, apiMethod, queryStringMap, payload || {});
     }
 
     /**
@@ -136,6 +141,41 @@ export default class ApiConnector {
         return path[0] === '/' ? path : this._apiPathName + '/' + path;
     }
 
+    private _prepareUrl(methodName: string, queryStringMap: IQueryStringMap) {
+        let url = this._absPath(methodName);
+
+        if (queryStringMap !== null) {
+            const keyValuePairs = Object.keys(queryStringMap).reduce((carry, key) => [
+                ...carry,
+                `${toSnakeCase(key)}=${encodeURIComponent(queryStringMap[key])}`,
+            ], []);
+
+            if (keyValuePairs.length > 0) {
+                url += '?' + keyValuePairs.join('&');
+            }
+        }
+
+        return url;
+    }
+
+    private _createRequest(factory: any, apiMethod: string, queryStringMap: IQueryStringMap,
+        payload: any = null): AxiosPromise<AxiosResponse> {
+        if (! apiMethod || apiMethod.length < 1) {
+            return Promise.reject(`You need to specify an API method to invoke.`);
+        }
+
+        const config = this.config;
+        const hasBody = payload !== null;
+        if (hasBody) {
+            payload = propsToSnakeCase(payload);
+        }
+
+        return factory.call(this._factory, this._prepareUrl(apiMethod, queryStringMap),
+            hasBody ? payload : config,
+            hasBody ? config : undefined,
+        );
+    }
+
     private async _consume<T>(apiMethod: string, request: AxiosPromise<AxiosResponse<T>>): Promise<T> {
         try {
             const response = await request;
@@ -147,23 +187,6 @@ export default class ApiConnector {
         } catch (error) {
             return this._handleError(apiMethod, error);
         }
-    }
-
-    private _createRequest(factory: any, apiMethod: string, payload: any = null): AxiosPromise<AxiosResponse> {
-        if (! apiMethod || apiMethod.length < 1) {
-            return Promise.reject(`You need to specify an API method to invoke.`);
-        }
-
-        const config = this.config;
-        const hasBody = payload !== null;
-        if (hasBody) {
-            payload = propsToSnakeCase(payload);
-        }
-
-        return factory.call(this._factory, this._absPath(apiMethod),
-            hasBody ? payload : config,
-            hasBody ? config : undefined,
-        );
     }
 
     private _handleError(apiMethod: string, error: AxiosError) {

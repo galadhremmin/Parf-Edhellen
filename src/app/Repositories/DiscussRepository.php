@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 
 use DB;
 use Exception;
+use BadMethodCallException;
 
 use App\Adapters\DiscussAdapter;
 use App\Http\Discuss\ContextFactory;
@@ -239,16 +240,7 @@ class DiscussRepository
             $skip = ($pageNumber - 1) * $maxLength;
 
         } else {
-            if ($jumpToId !== 0) {
-                $filters[] = ['id', '>=', $jumpToId];
-                $maxLength = 0; // TODO: implement a means to restrict the result set
-            } else if ($pageNumber !== 0) {
-                $filters[] = ['id', '<', $pageNumber];
-            }
-            
-            if ($pageNumber === 0) {
-                $pageNumber = PHP_INT_MAX;
-            }
+            throw new BadMethodCallException(sprintf('%s is currently not supported.', $direction));
         }
         
         $query = $thread->forum_posts()
@@ -372,12 +364,19 @@ class DiscussRepository
         return $group;
     }
 
+    /**
+     * Stores the post with as a reply to the the thread.
+     * @param ForumPost $originalPost reference to the post to be stored (and ultimately stored) in the database.
+     * @param ForumThread $thread the thread that the post should be associated with
+     * @param Account $account (optional) post author
+     * @return boolean
+     */
     public function savePost(ForumPost &$originalPost, ForumThread $thread, Account $account = null)
     {
         $this->resolveUser($account);
 
         if (! $this->checkThreadAuthorization($thread, $account)) {
-            return null;
+            return false;
         }
 
         try {
@@ -406,7 +405,7 @@ class DiscussRepository
         }
 
         event(new ForumPostCreated($post, $account->id));
-        return false;
+        return true;
     }
 
     /**

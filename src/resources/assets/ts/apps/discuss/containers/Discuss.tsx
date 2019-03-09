@@ -2,34 +2,42 @@ import React, {
     useCallback,
     useEffect,
     useRef,
-    useState,
 } from 'react';
 import { connect } from 'react-redux';
 
 import { fireEvent } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
 import Pagination from '@root/components/Pagination';
+import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
 import DiscussActions from '../actions/DiscussActions';
 import Form from '../components/Form';
-import { IFormOutput } from '../components/Form._types';
+import {
+    IFormChangeData,
+    IFormOutput,
+} from '../components/Form._types';
 import Post from '../components/Post';
 import RespondButton from '../components/RespondButton';
 import { IProps } from '../index._types';
 import { RootReducer } from '../reducers';
 
 function Discuss(props: IProps) {
-    const [ newPostView, setNewPostView ] = useState(false);
-    const postRef = useRef(null);
+    const formRef = useRef(null);
 
     const {
         currentPage,
+        newPostContent,
+        newPostEnabled,
         noOfPages,
-        onPostSubmit,
-        onPageChange,
         pages,
         posts,
         thread,
+
+        onNewPostChange,
+        onNewPostCreate,
+        onNewPostSubmit,
+        onNewPostDiscard,
+        onPageChange,
     } = props;
 
     const {
@@ -39,72 +47,89 @@ function Discuss(props: IProps) {
     useEffect(() => {
         // If the customer wants to respond to the thread, ensure that the component scrolls
         // into view.
-        if (newPostView) {
-            postRef.current.scrollIntoView({
-                block: 'start',
-            });
+        if (newPostEnabled) {
+            makeVisibleInViewport(formRef.current);
         }
-    });
+    }, [ newPostEnabled, formRef ]);
 
-    const onPaginate = useCallback((ev: IComponentEvent<number>) => {
+    const _onCreateNewPost = useCallback(() => {
+        fireEvent(null, onNewPostCreate);
+    }, [ onNewPostCreate ]);
+
+    const _onDiscardNewPost = useCallback(() => {
+        fireEvent(null, onNewPostDiscard);
+    }, [ onNewPostDiscard ]);
+
+    const _onNewPostChange = useCallback((ev: IComponentEvent<IFormChangeData>) => {
+        fireEvent(null, onNewPostChange, ev.value);
+    }, [ onNewPostChange ]);
+
+    const _onNewPostSubmit = useCallback((ev: IComponentEvent<IFormOutput>) => {
+        fireEvent(null, onNewPostSubmit, {
+            content: ev.value.content,
+            forumThreadId: threadId,
+        });
+    }, [ onNewPostSubmit, threadId ]);
+
+    const _onPaginate = useCallback((ev: IComponentEvent<number>) => {
         if (ev.value !== currentPage) {
             // Cancel editing mode
-            setNewPostView(false);
+            _onDiscardNewPost();
 
             // The component is `null` because `this` reference is finicky for functional components.
-            fireEvent(/* component:*/ null, onPageChange, {
+            fireEvent(null, onPageChange, {
                 pageNumber: ev.value,
                 thread,
             });
         }
-    }, [ currentPage, thread, onPageChange ]);
-
-    // Event handler for the "Respond" buttons.
-    const onNewPostViewChange = useCallback(() => {
-        setNewPostView(! newPostView);
-    }, [ newPostView, setNewPostView ]);
-
-    const onSubmit = useCallback((ev: IComponentEvent<IFormOutput>) => {
-        fireEvent(null, onPostSubmit, {
-            content: ev.value.content,
-            forumThreadId: threadId,
-        });
-    }, [ onPostSubmit, threadId ]);
+    }, [ currentPage, thread, _onDiscardNewPost, onPageChange ]);
 
     return <>
         {posts.map((post) => <Post post={post} key={post.id} />)}
         <Pagination currentPage={currentPage}
             noOfPages={noOfPages}
-            onClick={onPaginate}
+            onClick={_onPaginate}
             pages={pages}
         />
-        <aside ref={postRef}>
-            {newPostView
+        <aside ref={formRef}>
+            {newPostEnabled
                 ? <Form name="discussForm"
-                        onCancel={onNewPostViewChange}
-                        onSubmit={onSubmit}
+                        content={newPostContent}
                         subjectEnabled={false}
+
+                        onCancel={_onDiscardNewPost}
+                        onChange={_onNewPostChange}
+                        onSubmit={_onNewPostSubmit}
                   />
-                : <RespondButton onClick={onNewPostViewChange} />}
+                : <RespondButton onClick={_onCreateNewPost} />}
         </aside>
     </>;
 }
 
 const mapStateToProps = (state: RootReducer) => ({
     ...state.pagination,
+    newPostContent: state.newPost.content,
+    newPostEnabled: state.newPost.enabled,
+    newPostLoading: state.newPost.loading,
     posts: state.posts,
     thread: state.thread,
 } as Partial<IProps>);
 
 const actions = new DiscussActions();
 const mapDispatchToProps = (dispatch: any) => ({
+    onNewPostChange: (ev) => dispatch(actions.changeNewPost({
+        propertyName: ev.value.name,
+        value: ev.value.value,
+    })),
+    onNewPostCreate: () => dispatch(actions.createNewPost()),
+    onNewPostDiscard: () => dispatch(actions.discardNewPost()),
+    onNewPostSubmit: (ev) => dispatch(actions.createPost(ev.value)),
     onPageChange: (ev) => dispatch(actions.thread({
         entityId: ev.value.thread.entityId,
         entityType: ev.value.thread.entityType,
         id: ev.value.thread.id,
         offset: ev.value.pageNumber,
     })),
-    onPostSubmit: (ev) => dispatch(actions.createPost(ev.value)),
 } as Partial<IProps>);
 
 export default connect(mapStateToProps, mapDispatchToProps)(Discuss);

@@ -45,5 +45,5 @@ export const fireEvent = <V>(componentOrName: ComponentOrName, ev: ComponentEven
     return true;
 };
 
-export const fireEventAsync = <V>(componentOrName: ComponentOrName, ev: ComponentEventHandler<V>, value: V = undefined) =>
-    fireEvent(componentOrName, ev, value, true);
+export const fireEventAsync = <V>(componentOrName: ComponentOrName, ev: ComponentEventHandler<V>,
+    value: V = undefined) => fireEvent(componentOrName, ev, value, true);

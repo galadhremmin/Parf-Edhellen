@@ -1,9 +1,11 @@
 import React, {
     useCallback,
-    useState,
 } from 'react';
 
-import { fireEventAsync } from '@root/components/Component';
+import {
+    fireEvent,
+    fireEventAsync,
+} from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
 import MarkdownInput from '@root/components/MarkdownInput';
 
@@ -13,29 +15,33 @@ import {
 } from './Form._types';
 
 function Form(props: IProps) {
-    const [ content, setContent ] = useState(() => props.content);
-    const [ subject, setSubject ] = useState(() => props.subject);
-
     const {
+        content,
         name,
         onCancel,
+        onChange,
         onSubmit,
+        subject,
         subjectEnabled,
     } = props;
 
-    const onContentChange = useCallback(
-        (e: IComponentEvent<string>) => setContent(e.value),
-        [ setContent ]);
-    const onSubjectChange = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => setSubject(e.target.value),
-        [ setSubject ]);
-    const onCancelClick = useCallback((e: React.MouseEvent) => {
+    const _onContentChange = useCallback(
+        (e: IComponentEvent<string>) => fireEvent(name, onChange, e),
+        [ name, onChange ]);
+
+    const _onSubjectChange = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => fireEvent(name, onChange, {
+            name,
+            value: e.target.value,
+        }), [ name, onChange ]);
+
+    const _onCancelClick = useCallback((e: React.MouseEvent) => {
         e.preventDefault();
         fireEventAsync(null, onCancel);
     }, [ onCancel ]);
-    const onSubmitForm = useCallback((ev: React.FormEvent) => {
+
+    const _onSubmitForm = useCallback((ev: React.FormEvent) => {
         ev.preventDefault();
-        
         const args = {
             content,
             subject,
@@ -43,7 +49,7 @@ function Form(props: IProps) {
         fireEventAsync(name, onSubmit, args);
     }, [ content, name, onSubmit, subject ]);
 
-    return <form method="get" action="/#intercepted-action" onSubmit={onSubmitForm}>
+    return <form method="get" action="/#intercepted-action" onSubmit={_onSubmitForm}>
         {subjectEnabled && <div className="form-group">
             <label htmlFor="ed-discuss-subject" className="control-label">Subject</label>
             <input type="text"
@@ -51,7 +57,7 @@ function Form(props: IProps) {
                 id="ed-discuss-subject"
                 name="subject"
                 value={subject}
-                onChange={onSubjectChange}
+                onChange={_onSubjectChange}
             />
         </div>}
         <div className="form-group">
@@ -61,11 +67,11 @@ function Form(props: IProps) {
                         name="content"
                         rows={8}
                         value={content}
-                        onChange={onContentChange}
+                        onChange={_onContentChange}
             />
         </div>
         <div className="form-group text-right">
-            <button className="btn btn-default" onClick={onCancelClick}>Cancel</button>
+            <button className="btn btn-default" onClick={_onCancelClick}>Cancel</button>
             <button type="submit" className="btn btn-primary">
                 <span className="glyphicon glyphicon-pencil"></span>
                 Save

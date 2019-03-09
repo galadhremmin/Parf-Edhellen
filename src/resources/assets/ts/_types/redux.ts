@@ -6,6 +6,6 @@ export interface IReduxAction {
 
 export type IReduxActionableState<T> = T & IReduxAction;
 
-export type DeriveRootReducer<T> = {
+export type CreateRootReducer<T> = {
     [R in keyof T]: FirstArgument<T[R]>;
 };

@@ -111,4 +111,24 @@ describe('connectors/ApiConnector', () => {
         const result = await api.error(message, url, error, category);
         expect(result).to.equal(ApiResponse.data);
     });
+
+    it('supports query strings', async (done) => {
+        const queryStringMap = {
+            n: 'hello world',
+            x: 1,
+            y: 2,
+            z: 3,
+            zyxXel: 1500,
+        };
+        const expectedQueryString = '?n=hello%20world&x=1&y=2&z=3&zyx_xel=1500';
+
+        const faker: any = (path: string) => {
+            expect(path).to.equal(`${ApiPrefix}/${ApiMethod}${expectedQueryString}`);
+            done();
+        };
+        sandbox.stub(axios, 'get')
+            .callsFake(faker);
+
+        await api.get(ApiMethod, queryStringMap);
+    });
 });

@@ -3,6 +3,7 @@ import { IAccountEntity } from './BookApiConnector._types';
 export interface IThreadRequest {
     entityId?: number;
     entityType: string;
+    forumPostId?: number;
     id: number;
     offset?: number;
 }
@@ -29,7 +30,8 @@ export interface ICreateRequest {
 }
 
 export interface ICreateResponse {
-    notSureYet: never;
+    post: IPostEntity;
+    thread: IThreadEntity;
 }
 
 export interface IThreadEntity {
@@ -55,4 +57,6 @@ export interface IPostEntity {
     isDeleted: boolean;
     numberOfLikes?: number;
     parentForumPostId: number;
+
+    _focused?: boolean;
 }

@@ -12,10 +12,19 @@ export default class DiscussApiConnector {
     }
 
     public thread(payload: IThreadRequest) {
+        const params: Partial<IThreadRequest> = {};
+        if (payload.offset !== undefined) {
+            params.offset = payload.offset;
+        }
+        if (payload.forumPostId !== undefined) {
+            params.forumPostId = payload.forumPostId;
+        }
+
         return this._api.value.get<IThreadResponse>(
             this._makePath('thread/' +
                 payload.id || `resolve/${payload.entityType}/${payload.entityId}`,
-            ) + `?offset=${payload.offset || 0}`,
+            ),
+            params,
         );
     }
 

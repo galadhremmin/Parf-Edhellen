@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 
-import { DeriveRootReducer } from '@root/_types';
+import { CreateRootReducer } from '@root/_types';
 
 import { default as glossary } from './GlossaryReducer';
 import { default as glosses } from './GlossesReducer';
@@ -16,6 +16,6 @@ const reducers = {
     searchResults,
 };
 
-export type RootReducer = DeriveRootReducer<typeof reducers>;
+export type RootReducer = CreateRootReducer<typeof reducers>;
 
 export default combineReducers(reducers);

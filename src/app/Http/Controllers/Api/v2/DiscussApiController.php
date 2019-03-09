@@ -13,6 +13,10 @@ use App\Repositories\DiscussRepository;
 class DiscussApiController extends Controller 
 {
     const DEFAULT_SORT_BY_DATE_ORDER = 'asc';
+    const PARAMETER_FORUM_POST_CONTENT = 'content';
+    const PARAMETER_FORUM_THREAD_ID = 'forum_thread_id';
+    const PARAMETER_FORUM_POST_ID = 'forum_post_id';
+    const PARAMETER_PAGE_NUMBER   = 'offset';
 
     protected $_discussRepository;
 
@@ -46,8 +50,18 @@ class DiscussApiController extends Controller
         $page = $this->getPage($request);
         $user = $request->user();
 
+        // ForumPost ID is an optional parameter that can be specified by the consumer when
+        // they want to 'jump' to a specific forum post.
+        $postId = 0;
+        $data = $request->validate([
+            self::PARAMETER_FORUM_POST_ID => 'sometimes|numeric|exists:forum_posts,id'
+        ]);
+        if (isset($data[self::PARAMETER_FORUM_POST_ID])) {
+            $postId = intval($data[self::PARAMETER_FORUM_POST_ID]);
+        }
+
         $posts = $this->_discussRepository->getPostsInThread($thread['thread'], $user,
-            self::DEFAULT_SORT_BY_DATE_ORDER, $page);
+            self::DEFAULT_SORT_BY_DATE_ORDER, $page, $postId);
         return $thread + $posts;
     }
 
@@ -65,33 +79,41 @@ class DiscussApiController extends Controller
      */
     public function storePost(Request $request)
     {
-        $data = (object) $this->validate($request, [
-            'content'             => 'required|string',
-            'forum_thread_id'     => 'required|numeric|exists:forum_threads,id',
+        $data = $this->validate($request, [
+            self::PARAMETER_FORUM_POST_CONTENT => 'required|string',
+            self::PARAMETER_FORUM_THREAD_ID    => 'required|numeric|exists:forum_threads,id',
             //'forum_group_id'      => 'sometimes|numeric|exists:forum_groups,id',
             //'is_sticky'           => 'sometimes|boolean',
             //'parent_form_post_id' => 'sometimes|numeric|exists:forum_posts,id',
             //'subject'             => 'sometimes|string'
         ]);
 
-        $threadData = $this->_discussRepository->getThread($data->forum_thread_id);
+        $threadData = $this->_discussRepository->getThread($data[self::PARAMETER_FORUM_THREAD_ID]);
+        $thread = $threadData['thread'];
 
         $post = new ForumPost([
-            'content' => $data->content,
+            self::PARAMETER_FORUM_POST_CONTENT => $data[self::PARAMETER_FORUM_POST_CONTENT]
         ]);
-        $ok = $this->_discussRepository->savePost($post, $threadData['thread'], $request->user());
+        $ok = $this->_discussRepository->savePost($post, $thread, $request->user());
+        if (! $ok) {
+            return response(null, 400);
+        }
 
-        return response(null, $ok ? 201 : 400);
+        $post->makeHidden(['forum_thread']);
+        return [
+            'post' => $post,
+            'thread' => $thread
+        ];
     }
 
     private function getPage(Request $request)
     {
         $params = $request->validate([
-            'offset' => 'sometimes|numeric'
+            self::PARAMETER_PAGE_NUMBER => 'sometimes|numeric'
         ]);
 
-        return isset($params['offset'])
-            ? $params['offset'] 
+        return isset($params[self::PARAMETER_PAGE_NUMBER])
+            ? $params[self::PARAMETER_PAGE_NUMBER] 
             : 0;
     }
 }
