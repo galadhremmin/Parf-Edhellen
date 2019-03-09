@@ -9,6 +9,7 @@ use App\Models\{
     ForumPost
 };
 use App\Repositories\DiscussRepository;
+use App\Helpers\LinkHelper;
 
 class DiscussApiController extends Controller 
 {
@@ -67,7 +68,17 @@ class DiscussApiController extends Controller
 
     public function resolveThread(Request $request, string $entityType, int $entityId)
     {
-        return [ $entityType => $entityId ];
+        $threadData = $this->_discussRepository->getThreadForEntity($entityType, $entityId);
+        if ($threadData === null) {
+            return response(null, 404);
+        }
+
+        $thread = $threadData['thread'];
+        $forumPostId = $threadData['forum_post_id'];
+        $linker = new LinkHelper();
+
+        return redirect($linker->forumThread($thread->forum_group_id, $thread->forum_group->name, 
+            $thread->id, $thread->normalized_subject, $forumPostId));
     }
 
     /**

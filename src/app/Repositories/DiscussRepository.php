@@ -318,52 +318,66 @@ class DiscussRepository
      */
     public function getThreadForEntity(string $entityType, int $id, $createIfNotExists = false, Account $account = null)
     {
-        $context = $this->_contextFactory->create($entityType);
-        if ($context === null) {
-            throw new Exception(sprintf('Unsupported discuss entity "%s" with ID %d.', $entityType, $id));
-        }
+        $forumPostId = 0;
 
-        if (! $context->available($id)) {
-            throw new AuthenticationException;
-        }
-
-        $data = [
-            'entity_type' => $entityType,
-            'entity_id'   => $id
-        ];
-        $thread = ForumThread::where($data)->first();
-
-        if ($thread === null) {
-            if (! $createIfNotExists) {
+        // if the entity is a post, the thread is available as a relation on the ForumPost entity
+        if ($entityType === Morphs::getAlias(ForumPost::class)) {
+            $post = ForumPost::find($id);
+            if ($post === null) {
                 return null;
             }
 
-            $this->resolveUser($account);
-            if ($account === null) {
-                return null;
+            $thread = $post->forum_thread;
+            $forumPostId = $post->id;
+        } else {
+            $context = $this->_contextFactory->create($entityType);
+            if ($context === null) {
+                throw new Exception(sprintf('Unsupported discuss entity "%s" with ID %d.', $entityType, $id));
             }
 
-            $entity = $context->resolveById($id);
-            if ($entity === null) {
-                return null;
+            if (! $context->available($id)) {
+                throw new AuthenticationException;
             }
 
-            if ($entity->id === 0) {
-                $entity->account_id = $account->id;
-                $entity->save();
-            }
+            $data = [
+                'entity_type' => $entityType,
+                'entity_id'   => $id
+            ];
+            $thread = ForumThread::where($data)->first();
 
-            $defaultGroup = $this->getDefaultForumGroupByEntity($entityType);
-            $thread = new ForumThread([
-                'account_id'     => $account->id,
-                'entity_id'      => $entity->id,
-                'entity_type'    => $entityType,
-                'forum_group_id' => $defaultGroup->id
-            ]);
+            if ($thread === null) {
+                if (! $createIfNotExists) {
+                    return null;
+                }
+
+                $this->resolveUser($account);
+                if ($account === null) {
+                    return null;
+                }
+
+                $entity = $context->resolveById($id);
+                if ($entity === null) {
+                    return null;
+                }
+
+                if ($entity->id === 0) {
+                    $entity->account_id = $account->id;
+                    $entity->save();
+                }
+
+                $defaultGroup = $this->getDefaultForumGroupByEntity($entityType);
+                $thread = new ForumThread([
+                    'account_id'     => $account->id,
+                    'entity_id'      => $entity->id,
+                    'entity_type'    => $entityType,
+                    'forum_group_id' => $defaultGroup->id
+                ]);
+            }
         }
 
         return [
-            'thread' => $thread
+            'thread' => $thread,
+            'forum_post_id' => $forumPostId
         ];
     }
 
