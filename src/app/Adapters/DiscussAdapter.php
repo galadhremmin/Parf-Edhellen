@@ -33,15 +33,19 @@ class DiscussAdapter
     {
         $this->adaptAccount($post->account);
 
-        $parser = new MarkdownParser();
-        $post->content = $parser->parse($post->content);
+        if ($post->is_hidden || $post->is_deleted) {
+            $post->content = null;
+        } else {
+            $parser = new MarkdownParser();
+            $post->content = $parser->parse($post->content);
+        }
 
         return $post;
     }
 
     public function adaptPosts(Collection $posts)
     {
-        $posts->map(function ($post) {
+        $posts->map(function ($post, $i) {
             $this->adaptPost($post);
         });
     }

@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import React, {
     useEffect,
     useRef,
@@ -15,7 +16,8 @@ export function Post(props: IProps) {
         post,
     } = props;
     const {
-        _focused: focused,
+        _isFocused: focused,
+        _isThreadPost: isThreadPost,
     } = props.post;
 
     const postRef = useRef(null);
@@ -26,14 +28,18 @@ export function Post(props: IProps) {
         }
     }, [ focused, postRef ]);
 
-    return <div className="forum-post" id={`forum-post-${post.id}`} ref={postRef}>
+    return <div className={classNames('forum-post', { 'forum-post--thread': isThreadPost })}
+        id={`forum-post-${post.id}`}
+        ref={postRef}>
         <div className="post-profile-picture">
             <Avatar account={post.account} />
         </div>
         <div className="post-content">
             <div className="post-header">
                 <ProfileLink account={post.account} className="nickname" />
-                <span className="post-no">#{post.id}</span>
+                <a href={`?forum_post_id=${post.id}`} className="post-no">
+                    #{post.id}
+                </a>
             </div>
             <div className="post-body">
                 {post.isDeleted

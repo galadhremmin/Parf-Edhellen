@@ -20,7 +20,9 @@ const NewPostReducer = (state: INewPostState = {
         case Actions.RequestCreatePost:
             return {
                 ...state,
+                content: '',
                 loading: true,
+                subject: '',
             };
         case Actions.ChangeNewPost:
             return {

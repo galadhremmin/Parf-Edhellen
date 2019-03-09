@@ -51,7 +51,11 @@ function RespondButton(props: IProps) {
             </div>;
 
         default:
-            return <button className="btn btn-primary" onClick={onRespondClick}>Reply</button>;
+            return <button className="btn btn-primary" onClick={onRespondClick}>
+                <span className="glyphicon glyphicon-envelope" />
+                &nbsp;
+                New reply
+            </button>;
     }
 }
 

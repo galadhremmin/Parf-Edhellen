@@ -86,12 +86,7 @@ function Discuss(props: IProps) {
 
     return <>
         {posts.map((post) => <Post post={post} key={post.id} />)}
-        <Pagination currentPage={currentPage}
-            noOfPages={noOfPages}
-            onClick={_onPaginate}
-            pages={pages}
-        />
-        <aside ref={formRef}>
+        <aside ref={formRef} className="discuss-body__toolbar--primary">
             {newPostEnabled
                 ? <Form name="discussForm"
                         content={newPostContent}
@@ -103,6 +98,11 @@ function Discuss(props: IProps) {
                   />
                 : <RespondButton onClick={_onCreateNewPost} />}
         </aside>
+        <Pagination currentPage={currentPage}
+            noOfPages={noOfPages}
+            onClick={_onPaginate}
+            pages={pages}
+        />
     </>;
 }
 

@@ -26,14 +26,6 @@ export default class DiscussActions {
             // Update the browser's current page (in the event that the client refreshes the window)
             BrowserHistory.default.push(`?offset=${threadData.currentPage}`);
 
-            // Select the forum post that the client wants to load by setting its `_focused` to `true`.
-            if (args.forumPostId !== undefined) {
-                const post = threadData.posts.find((p) => p.id === args.forumPostId);
-                if (post !== null) {
-                    post._focused = true;
-                }
-            }
-
             dispatch({
                 threadData,
                 type: Actions.ReceiveThread,

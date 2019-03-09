@@ -14,7 +14,7 @@ import {
 
 const DefaultConfigCacheFactory = () => Cache.withLocalStorage<IComponentConfig>(() => Promise.resolve({
     enter2Paragraph: true,
-}), 'components.MarkdownInput.e2p');
+}), 'components.MarkdownInput.config');
 
 export default class MarkdownInput extends React.PureComponent<IProps, IState> {
     public static defaultProps = {
@@ -46,7 +46,7 @@ export default class MarkdownInput extends React.PureComponent<IProps, IState> {
         const actual = await this._config.get();
         if (current !== actual.enter2Paragraph) {
             this.setState({
-                enter2Paragraph: actual.enter2Paragraph,
+                enter2Paragraph: actual.enter2Paragraph || true,
             });
         }
     }

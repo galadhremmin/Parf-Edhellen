@@ -11,6 +11,7 @@ import { ICreatePostAction } from './reducers/ThreadReducer._types';
 
 export interface IProps {
     currentPage?: number;
+    jumpPostId?: number;
     newPostContent?: string;
     newPostEnabled?: boolean;
     newPostLoading?: boolean;
@@ -23,6 +24,7 @@ export interface IProps {
     onPageChange?: ComponentEventHandler<IPageChangeEvent>;
     posts?: IPostEntity[];
     thread: IThreadEntity;
+    threadPostId?: number;
 }
 
 interface IPageChangeEvent {

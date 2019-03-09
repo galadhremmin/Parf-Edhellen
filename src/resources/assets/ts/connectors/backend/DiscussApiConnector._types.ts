@@ -11,11 +11,13 @@ export interface IThreadRequest {
 export interface IThreadResponse {
     context: never;
     currentPage: number;
+    jumpPostId: number;
     pages: Array<string | number>;
     noOfPages: number;
     posts: IPostEntity[];
     thread: IThreadEntity;
     threadId: number;
+    threadPostId: number;
 }
 
 export interface ICreateRequest {
@@ -58,5 +60,6 @@ export interface IPostEntity {
     numberOfLikes?: number;
     parentForumPostId: number;
 
-    _focused?: boolean;
+    _isFocused?: boolean;
+    _isThreadPost?: boolean;
 }

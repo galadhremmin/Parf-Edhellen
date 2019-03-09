@@ -24,6 +24,7 @@ use App\Events\{
     ForumPostEdited,
     ForumPostLikeCreated
 };
+use Illuminate\Database\Eloquent\Collection;
 
 class DiscussRepository
 {
@@ -236,37 +237,64 @@ class DiscussRepository
                 } while ($pageNumber > 1);
             }
 
-            $pageNumber = max(1, $pageNumber);
+            // The default page should always be the last page, as it is what the user is interested in seeing (= most recent).
+            if ($pageNumber <= 0) {
+                $pageNumber = $noOfPages;
+            }
             $skip = ($pageNumber - 1) * $maxLength;
 
         } else {
             throw new BadMethodCallException(sprintf('%s is currently not supported.', $direction));
         }
-        
-        $query = $thread->forum_posts()
+
+        // The first post in the thread is always the first element of the posts collection.
+        // Note how we deliberately do not apply filters here (i.e. is_deleted or is_hidden).
+        $firstPostInThread = $thread->forum_posts()
             ->with($loadingOptions)
-            ->where($filters)
-            ->orderBy('id', $direction);
+            ->orderBy('id', 'asc')
+            ->first();
+        $firstPostInThreadId = 0;
+        
+        // Create an empty collection in the event that the thread is empty (i.e. all posts have been deleted)
+        $posts = new Collection();
+        if ($firstPostInThread !== null) {
+            $query = $thread->forum_posts()
+                ->with($loadingOptions)
+                ->where($filters)
+                ->orderBy('id', $direction);
 
-        if ($skip > 0) {
-            $query = $query->skip($skip);
+            if ($skip > 0) {
+                $query = $query->skip($skip);
+            }
+
+            if ($maxLength > 0) {
+                $query = $query->take($maxLength);
+            }
+
+            $posts = $query->get();
+
+            // Prepend the first post in the thread to the resulting collection if it does not already exist.
+            $firstPostInThreadId = $firstPostInThread->id;
+            if (! $posts->contains(function ($post) use ($firstPostInThreadId) {
+                return $post->id === $firstPostInThreadId;
+            })) {
+                $posts->prepend($firstPostInThread);
+            }
+
+            // Adapt the posts for the view
+            $this->_discussAdapter->adaptPosts($posts);
         }
-
-        if ($maxLength > 0) {
-            $query = $query->take($maxLength);
-        }
-
-        $posts = $query->get();
-        $this->_discussAdapter->adaptPosts($posts);
 
         $pages = $this->createPageArray($noOfPages);
 
         return [
-            'posts'        => $posts,
-            'current_page' => $pageNumber,
-            'pages'        => $pages,
-            'no_of_pages'  => $noOfPages,
-            'thread_id'    => $thread->id ?: null
+            'posts'          => $posts,
+            'current_page'   => $pageNumber,
+            'pages'          => $pages,
+            'no_of_pages'    => $noOfPages,
+            'thread_id'      => $thread->id ?: null,
+            'thread_post_id' => $firstPostInThreadId,
+            'jump_post_id'   => $jumpToId
         ];
     }
 

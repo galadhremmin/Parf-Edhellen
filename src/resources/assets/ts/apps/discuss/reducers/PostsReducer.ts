@@ -9,9 +9,11 @@ const PostsReducer = (state: IPostsState = [], action: IPostsReducerAction) => {
         case Actions.RequestThread:
             return [];
         case Actions.ReceiveThread:
-            return [
-                ...action.threadData.posts,
-            ];
+            return action.threadData.posts.map((post) => {
+                post._isThreadPost = (post.id === action.threadData.threadPostId);
+                post._isFocused = (post.id === action.threadData.jumpPostId);
+                return post;
+            });
         default:
             return state;
     }

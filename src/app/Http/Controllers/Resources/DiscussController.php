@@ -68,10 +68,11 @@ class DiscussController extends Controller
     public function show(Request $request, int $groupId, string $groupSlug, int $id)
     {
         $currentPage = max(0, intval($request->get('offset')));
+        $forumPostId = intval($request->get('forum_post_id'));
 
         $groupData = $this->_discussRepository->getGroup($groupId);
         $threadData = $this->_discussRepository->getThread($id);
-        $posts = $this->_discussRepository->getPostsInThread($threadData['thread'], $request->user(), 'asc', $currentPage);
+        $posts = $this->_discussRepository->getPostsInThread($threadData['thread'], $request->user(), 'asc', $currentPage, $forumPostId);
 
         return view('discuss.thread', $threadData + $groupData + [
             'preloadedPosts' => $posts
