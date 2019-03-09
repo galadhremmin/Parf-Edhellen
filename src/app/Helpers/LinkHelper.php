@@ -81,7 +81,7 @@ class LinkHelper
         ]);
     }
 
-    public function forumThread(int $groupId, string $groupName, int $threadId, string $normalizedSubject = null, $postId = null) 
+    public function forumThread(int $groupId, string $groupName, int $threadId, string $normalizedSubject = null, $postId = 0)
     {
         $slug = $normalizedSubject === null || empty($normalizedSubject) ? 'thread' : $normalizedSubject;
         $props = [
@@ -91,7 +91,7 @@ class LinkHelper
             'groupSlug' => StringHelper::normalizeForUrl($groupName),
         ];
 
-        if (is_numeric($postId)) {
+        if ($postId !== 0) {
             $props['forum_post_id'] = $postId;
         }
 
