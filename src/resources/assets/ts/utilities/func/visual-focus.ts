@@ -1,6 +1,6 @@
 /**
  * Adjusts the viewport so that the specified DOM element's bounding box is within it and visible.
- * @param component 
+ * @param domElement
  */
 export const makeVisibleInViewport = (domElement: any) => {
     requestAnimationFrame(() => {

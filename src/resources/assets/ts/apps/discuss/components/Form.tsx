@@ -63,11 +63,12 @@ function Form(props: IProps) {
         <div className="form-group">
             <label htmlFor="ed-discuss-content" className="control-label">Message</label>
             <MarkdownInput id="ed-discuss-content"
-                        className="form-control"
-                        name="content"
-                        rows={8}
-                        value={content}
-                        onChange={_onContentChange}
+                className="form-control"
+                name="content"
+                onChange={_onContentChange}
+                required={true}
+                rows={8}
+                value={content}
             />
         </div>
         <div className="form-group text-right">

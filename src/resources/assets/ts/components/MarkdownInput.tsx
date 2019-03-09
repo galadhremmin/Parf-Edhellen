@@ -6,16 +6,23 @@ import { isEmptyString } from '@root/utilities/func/string-manipulation';
 import { fireEvent } from './Component';
 import Markdown from './Markdown';
 import {
+    IComponentConfig,
     IProps,
     IState,
     Tab,
 } from './MarkdownInput._types';
 
+const DefaultConfigCacheFactory = () => Cache.withLocalStorage<IComponentConfig>(() => Promise.resolve({
+    enter2Paragraph: true,
+}), 'components.MarkdownInput.e2p');
+
 export default class MarkdownInput extends React.PureComponent<IProps, IState> {
     public static defaultProps = {
+        configCacheFactory: DefaultConfigCacheFactory,
         id: 'markdownBody',
         name: 'markdownBody',
         props: {},
+        required: false,
         rows: 15,
         value: '',
     } as Partial<IProps>;
@@ -25,18 +32,21 @@ export default class MarkdownInput extends React.PureComponent<IProps, IState> {
         enter2Paragraph: true,
     };
 
-    private _enter2ParagraphSetting = Cache.withLocalStorage<boolean>(
-        () => Promise.resolve(true), 'components.MarkdownInput.e2p');
+    private _config: Cache<IComponentConfig>;
+
+    public componentWillMount() {
+        this._config = this.props.configCacheFactory();
+    }
 
     public async componentDidMount() {
         const {
             enter2Paragraph: current,
         } = this.state;
 
-        const actual = await this._enter2ParagraphSetting.get();
-        if (current !== actual) {
+        const actual = await this._config.get();
+        if (current !== actual.enter2Paragraph) {
             this.setState({
-                enter2Paragraph: actual,
+                enter2Paragraph: actual.enter2Paragraph,
             });
         }
     }
@@ -94,6 +104,7 @@ export default class MarkdownInput extends React.PureComponent<IProps, IState> {
         const {
             id,
             name,
+            required,
             rows,
             value,
         } = this.props;
@@ -104,12 +115,13 @@ export default class MarkdownInput extends React.PureComponent<IProps, IState> {
 
         return <>
             <textarea className="form-control"
-                    name={name}
                     id={id}
-                    rows={rows}
-                    value={value}
+                    name={name}
                     onChange={this._onMarkdownChange}
                     onKeyDown={this._onMarkdownKeyDown}
+                    required={required}
+                    rows={rows}
+                    value={value}
             />
             <div className="checkbox text-right">
                 <label>
@@ -296,10 +308,14 @@ export default class MarkdownInput extends React.PureComponent<IProps, IState> {
         }
     }
 
-    private _onEnter2ParagraphChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    private _onEnter2ParagraphChange = async (ev: React.ChangeEvent<HTMLInputElement>) => {
         const enter2Paragraph = ev.target.checked;
+        const current = await this._config.get();
 
-        this._enter2ParagraphSetting.set(enter2Paragraph);
+        this._config.set({
+            ...current,
+            enter2Paragraph,
+        });
         this.setState({
             enter2Paragraph,
         });

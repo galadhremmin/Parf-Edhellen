@@ -7,8 +7,8 @@ import HtmlInject from '@root/components/HtmlInject';
 import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
 import Avatar from './Avatar';
-import ProfileLink from './ProfileLink';
 import { IProps } from './Post._types';
+import ProfileLink from './ProfileLink';
 
 export function Post(props: IProps) {
     const {
