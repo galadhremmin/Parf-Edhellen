@@ -20,6 +20,18 @@ export interface IThreadResponse {
     threadPostId: number;
 }
 
+export interface IThreadMetadataRequest {
+    forumThreadId: number;
+    forumPostId: number[];
+}
+
+export interface IThreadMetataResponse {
+    likes: number[];
+    likesPerPost: { 
+        [postId: number]: number;
+    };
+}
+
 export interface ICreateRequest {
     content: string;
     entityId?: number;

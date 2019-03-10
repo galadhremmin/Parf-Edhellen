@@ -32,7 +32,7 @@ class AuditTrailAdapter
      * containing strings a human would be able to understand.
      *
      * @param Collection|array $actions
-     * @return void
+     * @return array
      */
     public function adapt($actions)
     {
@@ -190,7 +190,7 @@ class AuditTrailAdapter
         $noOfMergers = $noOfRows - count($trail); 
         if ($noOfMergers > 0) {
             $remainingRows = $this->_repository->get($noOfMergers, $skipNoOfRows + $noOfRows);
-            return array_merge($trail, $this->adapt($remainingRows, $skipNoOfRows + $noOfRows, $previousItem));
+            return array_merge($trail, $this->adapt($remainingRows));
         }
 
         return $trail;

@@ -18,5 +18,6 @@ Route::group([
         ])
         ->name('discuss.resolve');
     
+    Route::post('thread/metadata', [ 'uses' => 'DiscussApiController@threadMetadata' ]);
     Route::post('store/post', [ 'uses' => 'DiscussApiController@storePost' ]);
 });

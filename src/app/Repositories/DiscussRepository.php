@@ -17,7 +17,8 @@ use App\Models\{
     ForumDiscussion,
     ForumGroup,
     ForumThread,
-    ForumPost
+    ForumPost,
+    ForumPostLike
 };
 use App\Events\{
     ForumPostCreated,
@@ -31,7 +32,8 @@ class DiscussRepository
     private $_contextFactory;
     private $_discussAdapter;
 
-    public function __construct(ContextFactory $contextFactory, DiscussAdapter $discussAdapter) {
+    public function __construct(ContextFactory $contextFactory, DiscussAdapter $discussAdapter,
+        MailSettingRepository $mailSettingRepository) {
         $this->_contextFactory = $contextFactory;
         $this->_discussAdapter = $discussAdapter;
     }
@@ -448,6 +450,34 @@ class DiscussRepository
 
         event(new ForumPostCreated($post, $account->id));
         return true;
+    }
+
+    public function getMetadata(int $threadId, array $postIds, Account $account = null)
+    {
+        $this->resolveUser($account);
+
+        $allLikes = ForumPostLike::whereIn('forum_post_id', $postIds)
+            ->get();
+
+        $likedByAccount = [];
+        if ($account !== null) {
+            $likedByAccount = $allLikes->reduce(function ($carry, $l) use ($account) {
+                if ($l->account_id === $account->id) {
+                    $carry[] = $l->forum_post_id;
+                }
+
+                return $carry;
+            }, []);
+        }
+
+        $countPerPost = $allLikes->countBy(function ($l) {
+            return $l->forum_post_id;
+        });
+
+        return [
+            'likes' => $likedByAccount,
+            'likes_per_post' => $countPerPost
+        ];
     }
 
     /**

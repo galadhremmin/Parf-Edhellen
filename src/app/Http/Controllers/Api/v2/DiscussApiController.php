@@ -40,11 +40,17 @@ class DiscussApiController extends Controller
         return $this->_discussRepository->getThreadsInGroup($group['group'], $user, $page);
     }
 
+    /**
+     * Gets the latest threads based on their latest posts.
+     */
     public function latestThreads(Request $request)
     {
         return $this->_discussRepository->getLatestThreads();
     }
 
+    /**
+     * HTTP GET. Gets data for the specified thread.
+     */
     public function thread(Request $request, int $threadId)
     {
         $thread = $this->_discussRepository->getThread($threadId);
@@ -66,6 +72,9 @@ class DiscussApiController extends Controller
         return $thread + $posts;
     }
 
+    /**
+     * HTTP GET. Redirects the client to the thread associated with the specified entity.
+     */
     public function resolveThread(Request $request, string $entityType, int $entityId)
     {
         $threadData = $this->_discussRepository->getThreadForEntity($entityType, $entityId);
@@ -79,6 +88,22 @@ class DiscussApiController extends Controller
 
         return redirect($linker->forumThread($thread->forum_group_id, $thread->forum_group->name, 
             $thread->id, $thread->normalized_subject, $forumPostId));
+    }
+
+    /**
+     * HTTP POST. Retrieves metadata associated with the specified posts.
+     */
+    public function threadMetadata(Request $request)
+    {
+        $data = $request->validate([
+            'forum_thread_id' => 'required|numeric',
+            'forum_post_id.*' => 'required|numeric'
+        ]);
+        $user = $request->user();
+
+        $threadId = intval($data['forum_thread_id']);
+        $postsId = $data['forum_post_id'];
+        return $this->_discussRepository->getMetadata($threadId, $postsId);
     }
 
     /**

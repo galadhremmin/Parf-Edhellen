@@ -1,6 +1,8 @@
 import SharedReference from '../../utilities/SharedReference';
 import ApiConnector from '../ApiConnector';
 import {
+    IThreadMetadataRequest,
+    IThreadMetataResponse,
     ICreateRequest,
     ICreateResponse,
     IThreadRequest,
@@ -26,6 +28,10 @@ export default class DiscussApiConnector {
             ),
             params,
         );
+    }
+
+    public threadMetadata(payload: IThreadMetadataRequest) {
+        return this._api.value.post<IThreadMetataResponse>(this._makePath('thread/metadata'), payload);
     }
 
     public create(payload: ICreateRequest) {
