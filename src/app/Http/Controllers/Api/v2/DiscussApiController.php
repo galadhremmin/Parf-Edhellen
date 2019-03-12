@@ -54,6 +54,8 @@ class DiscussApiController extends Controller
     public function thread(Request $request, int $threadId)
     {
         $thread = $this->_discussRepository->getThread($threadId);
+        unset($thread['context']); // Do not communicate `context` to the customer
+
         $page = $this->getPage($request);
         $user = $request->user();
 

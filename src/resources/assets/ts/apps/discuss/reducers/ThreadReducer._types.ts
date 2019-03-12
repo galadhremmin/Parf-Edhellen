@@ -5,13 +5,14 @@ import {
 import {
     ICreateRequest,
     IThreadEntity,
+    IThreadMetadataRequest,
     IThreadRequest,
     IThreadResponse,
 } from '@root/connectors/backend/DiscussApiConnector._types';
-import { IFormChangeData } from '../components/Form._types';
 
 export type ICreatePostAction = ICreateRequest;
 export type IThreadAction = IThreadRequest;
+export type IThreadMetadataAction = IThreadMetadataRequest;
 
 export interface IChangePostAction {
     propertyName: string;

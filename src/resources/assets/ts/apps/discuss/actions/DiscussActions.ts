@@ -1,13 +1,22 @@
-import { ThunkDispatch } from 'redux-thunk';
+import {
+    ThunkDispatch,
+} from 'redux-thunk';
 
+import {
+    ReduxThunk,
+    ReduxThunkDispatch,
+} from '@root/_types';
 import DiscussApiConnector from '@root/connectors/backend/DiscussApiConnector';
+import { IThreadResponse } from '@root/connectors/backend/DiscussApiConnector._types';
 import BrowserHistory from '@root/utilities/BrowserHistory';
 import SharedReference from '@root/utilities/SharedReference';
 
+import { RootReducer } from '../reducers';
 import {
     IChangePostAction,
     ICreatePostAction,
     IThreadAction,
+    IThreadMetadataAction,
 } from '../reducers/ThreadReducer._types';
 import Actions from './Actions';
 
@@ -15,20 +24,49 @@ export default class DiscussActions {
     constructor(private _api = new SharedReference(DiscussApiConnector)) {
     }
 
-    public thread(args: IThreadAction) {
-        return async (dispatch: ThunkDispatch<any, any, any>) => {
+    public thread(args: IThreadAction): ReduxThunk {
+        return async (dispatch: ReduxThunkDispatch) => {
             dispatch({
                 type: Actions.RequestThread,
             });
 
             const threadData = await this._api.value.thread(args);
+            dispatch(this.setThread(threadData));
+        };
+    }
 
-            // Update the browser's current page (in the event that the client refreshes the window)
-            BrowserHistory.default.push(`?offset=${threadData.currentPage}`);
+    public setThread(threadData: IThreadResponse): ReduxThunk {
+        // Update the browser's current page (in the event that the client refreshes the window)
+        BrowserHistory.default.push(`?offset=${threadData.currentPage}`);
 
+        return async (dispatch: ReduxThunkDispatch) => {
             dispatch({
                 threadData,
                 type: Actions.ReceiveThread,
+            });
+
+            dispatch(this.threadMetadata({
+                forumPostId: threadData.posts.map((p) => p.id),
+                forumThreadId: threadData.thread.id,
+            }));
+        };
+    }
+
+    public threadMetadata(args: IThreadMetadataAction): ReduxThunk {
+        return async (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
+            // Bail if this request is already being processed.
+            if (getState().threadMetadata.loading) {
+                return;
+            }
+
+            dispatch({
+                type: Actions.RequestThreadMetadata,
+            });
+
+            const metadata = await this._api.value.threadMetadata(args);
+            dispatch({
+                metadata,
+                type: Actions.ReceiveThreadMetadata,
             });
         };
     }
@@ -52,8 +90,8 @@ export default class DiscussActions {
         };
     }
 
-    public createPost(args: ICreatePostAction) {
-        return async (dispatch: ThunkDispatch<any, any, any>) => {
+    public createPost(args: ICreatePostAction): ReduxThunk {
+        return async (dispatch: ReduxThunkDispatch) => {
             try {
                 dispatch({
                     type: Actions.RequestCreatePost,

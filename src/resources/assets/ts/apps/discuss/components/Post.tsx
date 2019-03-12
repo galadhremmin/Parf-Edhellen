@@ -28,9 +28,7 @@ export function Post(props: IProps) {
         }
     }, [ focused, postRef ]);
 
-    return <div className={classNames('forum-post', { 'forum-post--thread': isThreadPost })}
-        id={`forum-post-${post.id}`}
-        ref={postRef}>
+    return <div className={classNames('forum-post', { 'forum-post--thread': isThreadPost })} ref={postRef}>
         <div className="post-profile-picture">
             <Avatar account={post.account} />
         </div>

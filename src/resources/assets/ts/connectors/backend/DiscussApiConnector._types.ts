@@ -9,7 +9,6 @@ export interface IThreadRequest {
 }
 
 export interface IThreadResponse {
-    context: never;
     currentPage: number;
     jumpPostId: number;
     pages: Array<string | number>;
@@ -25,9 +24,9 @@ export interface IThreadMetadataRequest {
     forumPostId: number[];
 }
 
-export interface IThreadMetataResponse {
+export interface IThreadMetadataResponse {
     likes: number[];
-    likesPerPost: { 
+    likesPerPost: {
         [postId: number]: number;
     };
 }

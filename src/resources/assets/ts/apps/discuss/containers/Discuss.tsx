@@ -5,6 +5,7 @@ import React, {
 } from 'react';
 import { connect } from 'react-redux';
 
+import { ReduxThunkDispatch } from '@root/_types';
 import { fireEvent } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
 import Pagination from '@root/components/Pagination';
@@ -23,6 +24,7 @@ import { RootReducer } from '../reducers';
 
 function Discuss(props: IProps) {
     const formRef = useRef(null);
+    const paginationRef = useRef(null);
 
     const {
         currentPage,
@@ -84,6 +86,11 @@ function Discuss(props: IProps) {
         }
     }, [ currentPage, thread, _onDiscardNewPost, onPageChange ]);
 
+    const _onGotoNavigation = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
+        ev.preventDefault();
+        makeVisibleInViewport(paginationRef.current);
+    }, [ paginationRef ]);
+
     return <>
         {posts.map((post) => <Post post={post} key={post.id} />)}
         <aside ref={formRef} className="discuss-body__toolbar--primary">
@@ -98,11 +105,16 @@ function Discuss(props: IProps) {
                   />
                 : <RespondButton onClick={_onCreateNewPost} />}
         </aside>
-        <Pagination currentPage={currentPage}
-            noOfPages={noOfPages}
-            onClick={_onPaginate}
-            pages={pages}
-        />
+        <div ref={paginationRef}>
+            <Pagination currentPage={currentPage}
+                noOfPages={noOfPages}
+                onClick={_onPaginate}
+                pages={pages}
+            />
+        </div>
+        <a href="#" className="discuss-body__bottom" onClick={_onGotoNavigation}>
+            <span className="glyphicon glyphicon-chevron-down" />
+        </a>
     </>;
 }
 
@@ -116,7 +128,7 @@ const mapStateToProps = (state: RootReducer) => ({
 } as Partial<IProps>);
 
 const actions = new DiscussActions();
-const mapDispatchToProps = (dispatch: any) => ({
+const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => ({
     onNewPostChange: (ev) => dispatch(actions.changeNewPost({
         propertyName: ev.value.name,
         value: ev.value.value,

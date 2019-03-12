@@ -5,27 +5,35 @@ $ed-toolbar-height: 30px;
 $ed-forum-post-profile-width: 120px;
 $ed-device-width: 540px;
 
-.discuss-body > .sk-spinner.noscript--hidden {
-    margin-bottom: 100vh;
-}
-
-.discuss-body__toolbar--primary {
-    margin-top: 1em;
-    text-align: right;
-
-    > form {
-        text-align: initial;
-    }
-
-    @media (max-width: $ed-device-width) {
-        > .btn {
-            width: 100%;
-        }
-    }
-}
-
 h1 {
     word-wrap: break-word;
+}
+
+.discuss-body {
+    > .sk-spinner.noscript--hidden {
+        margin-bottom: 100vh;
+    }
+
+    .discuss-body__toolbar--primary {
+        margin-top: 1em;
+        text-align: right;
+
+        > form, .alert {
+            text-align: initial;
+        }
+
+        @media (max-width: $ed-device-width) {
+            > .btn {
+                width: 100%;
+            }
+        }
+    }
+
+    .discuss-body__bottom {
+        position: fixed;
+        right: 1em;
+        bottom: 1em;
+    }
 }
 
 .discuss-table {

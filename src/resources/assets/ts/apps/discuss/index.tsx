@@ -6,7 +6,8 @@ import {
 } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 
-import { Actions } from './actions';
+import { ReduxThunkDispatch } from '@root/_types';
+import DiscussActions from './actions/DiscussActions';
 import { IProps } from './index._types';
 import rootReducer from './reducers';
 
@@ -17,10 +18,11 @@ const Inject = (props: IProps) => {
         applyMiddleware(thunkMiddleware),
     );
     if (props.thread !== undefined) {
-        store.dispatch({
-            threadData: props,
-            type: Actions.ReceiveThread,
-        });
+        const actions = new DiscussActions();
+        const args: any = {
+            ...props,
+        };
+        (store.dispatch as ReduxThunkDispatch)(actions.setThread(args));
     }
 
     return <Provider store={store}>

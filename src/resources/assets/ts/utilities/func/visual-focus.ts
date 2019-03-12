@@ -3,6 +3,10 @@
  * @param domElement
  */
 export const makeVisibleInViewport = (domElement: any) => {
+    if (! domElement) {
+        return;
+    }
+
     requestAnimationFrame(() => {
         domElement.scrollIntoView({
             block: 'start',
