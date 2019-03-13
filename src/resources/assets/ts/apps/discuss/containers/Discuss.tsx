@@ -22,6 +22,8 @@ import RespondButton from '../components/RespondButton';
 import { IProps } from '../index._types';
 import { RootReducer } from '../reducers';
 
+import Toolbar from './Toolbar';
+
 function Discuss(props: IProps) {
     const formRef = useRef(null);
     const paginationRef = useRef(null);
@@ -92,7 +94,12 @@ function Discuss(props: IProps) {
     }, [ paginationRef ]);
 
     return <>
-        {posts.map((post) => <Post post={post} key={post.id} />)}
+        {posts.map(
+            (post) => <Post key={post.id}
+                            post={post}
+                            renderToolbar={Toolbar}
+                      />,
+        )}
         <aside ref={formRef} className="discuss-body__toolbar--primary">
             {newPostEnabled
                 ? <Form name="discussForm"

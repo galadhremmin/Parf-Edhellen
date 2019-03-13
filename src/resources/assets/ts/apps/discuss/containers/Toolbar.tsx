@@ -8,37 +8,31 @@ import SharedReference from '@root/utilities/SharedReference';
 
 import DeletePost from '../components/DeletePost';
 import EditPost from '../components/EditPost';
+import Likes from '../components/Likes';
 import { IProps } from './Toolbar._types';
 
-export default class Toolbar extends React.PureComponent<IProps> {
-    private _roleManager = new SharedReference(RoleManager);
+const getEligibleToolbarComponents = (postAccountId: number) => {
+    const roleManager = SharedReference.getInstance(RoleManager);
+    const role = roleManager.currentRole;
+    const accountId = roleManager.accountId;
+    const components = [];
 
-    public render() {
-        const {
-            accountId,
-            postId,
-        } = this.props;
-        const toolbar = this._getEligibleToolbarComponents(accountId);
-
-        return <React.Fragment>
-            {toolbar.map((Component, i) => <Component key={i}
-                accountId={accountId}
-                postId={postId}
-            />)}
-        </React.Fragment>;
+    if (role === SecurityRole.Administrator ||
+        accountId === postAccountId) {
+        components.push(EditPost);
+        components.push(DeletePost);
     }
 
-    private _getEligibleToolbarComponents(postAccountId: number) {
-        const role = this._roleManager.value.currentRole;
-        const accountId = this._roleManager.value.accountId;
-        const components = [];
+    components.push(Likes);
+    return components;
+};
 
-        if (role === SecurityRole.Administrator ||
-            accountId === postAccountId) {
-            components.push(EditPost);
-            components.push(DeletePost);
-        }
+function Toolbar(props: IProps) {
+    const toolbar = getEligibleToolbarComponents(props.post.account.id);
 
-        return components;
-    }
+    return <React.Fragment>
+        {toolbar.map((Component, i) => <Component key={i} {...props} />)}
+    </React.Fragment>;
 }
+
+export default Toolbar;

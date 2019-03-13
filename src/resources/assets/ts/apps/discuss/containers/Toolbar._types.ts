@@ -1,4 +1,5 @@
+import { IPostEntity } from '@root/connectors/backend/DiscussApiConnector._types';
+
 export interface IProps {
-    accountId: number;
-    postId: number;
+    post: IPostEntity;
 }

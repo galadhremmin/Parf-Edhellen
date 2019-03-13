@@ -14,6 +14,7 @@ import ProfileLink from './ProfileLink';
 export function Post(props: IProps) {
     const {
         post,
+        renderToolbar,
     } = props;
     const {
         _isFocused: focused,
@@ -46,6 +47,7 @@ export function Post(props: IProps) {
             </div>
             <div className="post-tools">
                 <span className="date">{post.createdAt}</span>
+                {renderToolbar && renderToolbar(props)}
             </div>
         </div>
     </div>;
