@@ -6,7 +6,6 @@ import {
     ProcessNodeDefinitions,
 } from 'html-to-react';
 import React, { PureComponent } from 'react';
-import Loadable from 'react-loadable';
 
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
 import {
@@ -110,13 +109,11 @@ export default class HtmlInject extends PureComponent<IProps, IState> {
             return definitions.processDefaultNode(node, children);
         }
 
-        const Component = Loadable({
-            loader: () => import('./Tengwar'),
-            loading: () => <span>&#128220;</span>,
-            render: (loaded, props) => <loaded.default {...props} />,
-        });
+        const Component = React.lazy(() => import('./Tengwar'));
 
-        return <Component text={node.children[0].data} transcribe={true} mode={mode.toLowerCase()} />;
+        return <React.Suspense fallback={<span>&#128220;</span>}>
+            <Component text={node.children[0].data} transcribe={true} mode={mode.toLowerCase()} />
+        </React.Suspense>;
     }
 
     private _onReferenceLinkClick(word: string, normalizedWord: string, languageShortName: string,

@@ -1,6 +1,5 @@
 import React from 'react';
 import { render } from 'react-dom';
-import Loadable, { LoadingComponentProps } from 'react-loadable';
 import Spinner from './components/Spinner';
 import { snakeCasePropsToCamelCase } from './utilities/func/snake-case';
 
@@ -24,12 +23,13 @@ const InjectPropAttributeName = 'injectProp';
  * @param props properties to inject to the loaded component.
  */
 const load = (element: HTMLElement, moduleName: string, props: any) => {
-    const Component = Loadable({
-        loader: async () => await import(`./apps/${moduleName}/index`),
-        loading: (p: LoadingComponentProps) => p.pastDelay ? <Spinner /> : null,
-    });
+    const Component = React.lazy(() => import(`./apps/${moduleName}/index`));
 
-    render(<Component {...props} />, element);
+    render(<React.Suspense fallback={<Spinner />}>
+        <React.StrictMode>
+            <Component {...props} />
+        </React.StrictMode>
+    </React.Suspense>, element);
 };
 
 /**

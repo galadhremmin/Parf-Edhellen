@@ -1,6 +1,5 @@
 import classNames from 'classnames';
 import React from 'react';
-import Loadable from 'react-loadable';
 
 import { fireEvent } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
@@ -69,9 +68,11 @@ export default class FragmentInspector extends React.PureComponent<IProps> {
                 <Markdown text={fragment.comments} parse={true} />
             </section>}
             <section>
-                <GlossInspector gloss={this.props.gloss}
-                    onReferenceLinkClick={this._onReferenceLinkClick}
-                    toolbar={false} />
+                <React.Suspense fallback={<Spinner />}>
+                    <GlossInspectorAsync gloss={this.props.gloss}
+                        onReferenceLinkClick={this._onReferenceLinkClick}
+                        toolbar={false} />
+                </React.Suspense>
             </section>
         </article>;
     }
@@ -124,7 +125,4 @@ export default class FragmentInspector extends React.PureComponent<IProps> {
     }
 }
 
-const GlossInspector = Loadable({
-    loader: () => import('@root/apps/book-browser/components/Gloss'),
-    loading: Spinner,
-});
+const GlossInspectorAsync = React.lazy(() => import('@root/apps/book-browser/components/Gloss'));

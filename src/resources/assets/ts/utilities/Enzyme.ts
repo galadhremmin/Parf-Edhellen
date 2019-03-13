@@ -7,4 +7,4 @@ configure({ adapter: new ReactSixteenAdapter() });
 
 // React 16.x depends on `requestAnimationFrame` but it does not exist by default on Node.
 window.requestAnimationFrame = window.requestAnimationFrame ||
-    ((callback: FrameRequestCallback) => setTimeout(callback, 0));
+    ((callback: FrameRequestCallback) => setTimeout(callback, 0) as any);

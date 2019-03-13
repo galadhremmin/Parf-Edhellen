@@ -33,9 +33,9 @@ export default class MarkdownInput extends React.PureComponent<IProps, IState> {
     };
 
     private _config: Cache<IComponentConfig>;
-
-    public componentWillMount() {
-        this._config = this.props.configCacheFactory();
+    constructor(props: IProps) {
+        super(props);
+        this._config = props.configCacheFactory();
     }
 
     public async componentDidMount() {

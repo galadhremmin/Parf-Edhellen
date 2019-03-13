@@ -1,7 +1,7 @@
 import React from 'react';
-import Loadable from 'react-loadable';
+
 import { connect } from 'react-redux';
-import Waypoint from 'react-waypoint';
+import { Waypoint } from 'react-waypoint';
 
 import { IComponentEvent } from '@root/components/Component._types';
 import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
@@ -216,17 +216,12 @@ export class Glossary extends React.PureComponent<IProps, IState> {
     }
 }
 
-const FixedBouncingArrow = Loadable({
-    loader: async () => await import('@root/components/BouncingArrow'),
-    loading: () => <React.Fragment />,
-    render: (loaded, props) => {
-        const Component = loaded.default;
-
-        return <div className="ed-glossary-loaded-notifier">
-            <Component {...props} />
-        </div>;
-    },
-});
+const BouncingArrowAsync = React.lazy(() => import('@root/components/BouncingArrow'));
+const FixedBouncingArrow = (props: any) => <React.Suspense fallback={null}>
+    <div className="ed-glossary-loaded-notifier">
+        <BouncingArrowAsync {...props} />
+    </div>
+</React.Suspense>;
 
 const mapStateToProps = (state: RootReducer) => ({
     ...state.glossary,

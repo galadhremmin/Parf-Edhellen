@@ -15,7 +15,6 @@
         "types": [
             "react",
             "react-dom",
-            "react-loadable",
             "react-redux",
             "redux",
             "moment",
