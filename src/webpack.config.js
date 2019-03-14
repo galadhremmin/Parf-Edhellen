@@ -19,6 +19,7 @@ const outputPath = path.resolve(__dirname, `public/${publicPath}`);
 module.exports = {
   entry: {
     index: `${sourcePath}/index.tsx`,
+    'style-auth': `${sourcePath}/apps/auth/index.scss`,
     'style-discuss': `${sourcePath}/apps/discuss/index.scss`
   },
   output: {

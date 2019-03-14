@@ -18,9 +18,7 @@
   @foreach ($data['categories'] as $category)
   <h2>@lang('discuss.member-list.category.'.$category)</h2>
   @if (isset($data['growth'][$category]))
-  <div class="ed-discuss-growth-chart" data-data="{{ json_encode($data['growth'][$category]) }}" id="ed-discuss-growth-chart-{{ $category }}">
-    @include('_shared._loading')
-  </div>
+  <div id="ed-discuss-growth-chart-{{ $category }}" data-inject-module="statistics-chart" data-inject-prop-data="{{ json_encode($data['growth'][$category]) }}"></div>
   @endif
   <div class="discuss-table">
     @foreach ($data[$category] as $item)
