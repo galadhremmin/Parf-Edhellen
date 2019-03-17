@@ -1,15 +1,16 @@
-import React, { useRef, useCallback } from 'react';
-import { IProps } from './Chart._types';
+import React, { useState } from 'react';
 
-const DatasetXAxis = 'date';
-const DatasetYAxis = 'numberOfItems';
-const ReservedDatasetProperties = [DatasetXAxis, DatasetYAxis];
+import {
+    IData,
+    IProps,
+} from './Chart._types';
+import GrowthChart, { ReservedDatasetProperties } from './GrowthChart';
 
-function Chart(props: IProps) {
-    const accounts = props.data.reduce(function (carry, item) {
-        Object.keys(item)
-            .filter(v => ReservedDatasetProperties.indexOf(v) === -1)
-            .forEach(account => {
+const loadAccounts = (data: IData[]) => {
+    const accounts = data.reduce((carry, item) => {
+        Object.keys(item) //
+            .filter((v: string) => ReservedDatasetProperties.indexOf(v) === -1) //
+            .forEach((account: string) => { //
                 if (carry.indexOf(account) === -1) {
                     carry.push(account);
                 }
@@ -19,7 +20,23 @@ function Chart(props: IProps) {
     }, []);
     accounts.sort();
 
-    return <span>chart</span>;
+    return accounts;
+};
+
+function Chart(props: IProps) {
+    const [ accounts, setAccounts ] = useState<string[]>(null);
+    const {
+        data,
+    } = props;
+
+    // This component does currently not support changing of the data property.
+    // it is currently only used in a context where the data property will not change, and
+    // their values are available prior to the component mounting.
+    if (accounts === null) {
+        setAccounts(loadAccounts(data));
+    }
+
+    return <GrowthChart accounts={accounts} data={data} />;
 }
 
 export default Chart;
