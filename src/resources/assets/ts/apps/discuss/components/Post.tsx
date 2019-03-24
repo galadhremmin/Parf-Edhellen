@@ -4,6 +4,7 @@ import React, {
     useRef,
 } from 'react';
 
+import DateLabel from '@root/components/DateLabel';
 import HtmlInject from '@root/components/HtmlInject';
 import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
@@ -46,7 +47,9 @@ export function Post(props: IProps) {
                     : <HtmlInject html={post.content} />}
             </div>
             <div className="post-tools">
-                <span className="date">{post.createdAt}</span>
+                <span className="date">
+                    <DateLabel dateTime={post.createdAt} />
+                </span>
                 {renderToolbar && renderToolbar(props)}
             </div>
         </div>

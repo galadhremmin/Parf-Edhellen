@@ -1,5 +1,6 @@
 import React from 'react';
 
+import DateLabel from '@root/components/DateLabel';
 import { IProps } from './GlossFooter._types';
 
 const GlossFooter = (props: IProps) => {
@@ -25,7 +26,9 @@ const GlossFooter = (props: IProps) => {
             Group: <span itemProp="sourceOrganization">{gloss.glossGroupName}.</span>
         </React.Fragment>}
         {' Published: '}
-        <span itemProp="datePublished">{new Date(gloss.createdAt).toLocaleString()}</span>
+        <span itemProp="datePublished">
+            <DateLabel dateTime={gloss.createdAt} />
+        </span>
         {' by '}
         <a href={gloss.accountUrl} itemProp="author" rel="author" title={`View profile for ${gloss.accountName}.`}>
             {gloss.accountName}
