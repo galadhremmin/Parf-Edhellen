@@ -3,6 +3,8 @@ import ApiConnector from '../ApiConnector';
 import {
     ICreateRequest,
     ICreateResponse,
+    ILikeRequest,
+    ILikeResponse,
     IThreadMetadataRequest,
     IThreadMetadataResponse,
     IThreadRequest,
@@ -37,6 +39,13 @@ export default class DiscussApiConnector {
     public create(payload: ICreateRequest) {
         return this._api.value.post<ICreateResponse>(
             this._makePath('store/post'),
+            payload,
+        );
+    }
+
+    public like(payload: ILikeRequest) {
+        return this._api.value.post<ILikeResponse>(
+            this._makePath('store/like'),
             payload,
         );
     }

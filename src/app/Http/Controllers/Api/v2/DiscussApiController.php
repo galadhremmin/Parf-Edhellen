@@ -117,9 +117,9 @@ class DiscussApiController extends Controller
      */
     public function storePost(Request $request)
     {
-        $data = $this->validate($request, [
+        $data = $request->validate([
             self::PARAMETER_FORUM_POST_CONTENT => 'required|string',
-            self::PARAMETER_FORUM_THREAD_ID    => 'required|numeric|exists:forum_threads,id',
+            self::PARAMETER_FORUM_THREAD_ID    => 'required|numeric|exists:forum_threads,id'
             //'forum_group_id'      => 'sometimes|numeric|exists:forum_groups,id',
             //'is_sticky'           => 'sometimes|boolean',
             //'parent_form_post_id' => 'sometimes|numeric|exists:forum_posts,id',
@@ -141,6 +141,22 @@ class DiscussApiController extends Controller
         return [
             'post' => $post,
             'thread' => $thread
+        ];
+    }
+
+    public function storeLike(Request $request)
+    {
+        $data = $request->validate([
+            self::PARAMETER_FORUM_POST_ID => 'required|numeric|exists:forum_posts,id'
+        ]);
+
+        $like = $this->_discussRepository->saveLike($data[self::PARAMETER_FORUM_POST_ID], $request->user());
+        if ($like === false) {
+            return response(null, 400);
+        }
+
+        return [
+            'like' => $like
         ];
     }
 

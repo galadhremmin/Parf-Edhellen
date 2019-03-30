@@ -6,9 +6,9 @@ import {
 } from '@root/security';
 import SharedReference from '@root/utilities/SharedReference';
 
-import DeletePost from '../components/DeletePost';
-import EditPost from '../components/EditPost';
-import Likes from '../components/Likes';
+import DeletePost from '../components/toolbar/DeletePost';
+import EditPost from '../components/toolbar/EditPost';
+import Likes from '../components/toolbar/Likes';
 import { IProps } from './Toolbar._types';
 
 const getEligibleToolbarComponents = (postAccountId: number) => {

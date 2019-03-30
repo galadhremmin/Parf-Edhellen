@@ -18,6 +18,7 @@ import {
     IFormOutput,
 } from '../components/Form._types';
 import Post from '../components/Post';
+import { IProps as IPostProps } from '../components/Post._types';
 import RespondButton from '../components/RespondButton';
 import { IProps } from '../index._types';
 import { RootReducer } from '../reducers';
@@ -36,6 +37,7 @@ function Discuss(props: IProps) {
         pages,
         posts,
         thread,
+        threadMetadata,
 
         onNewPostChange,
         onNewPostCreate,
@@ -93,11 +95,15 @@ function Discuss(props: IProps) {
         makeVisibleInViewport(paginationRef.current);
     }, [ paginationRef ]);
 
+    const _renderToolbar = useCallback((postProps: IPostProps) => {
+        return <Toolbar post={postProps.post} thread={thread} threadMetadata={threadMetadata} />;
+    }, [ thread, threadMetadata ]);
+
     return <>
         {posts.map(
             (post) => <Post key={post.id}
                             post={post}
-                            renderToolbar={Toolbar}
+                            renderToolbar={_renderToolbar}
                       />,
         )}
         <aside ref={formRef} className="discuss-body__toolbar--primary">
@@ -132,6 +138,7 @@ const mapStateToProps = (state: RootReducer) => ({
     newPostLoading: state.newPost.loading,
     posts: state.posts,
     thread: state.thread,
+    threadMetadata: state.threadMetadata,
 } as Partial<IProps>);
 
 const actions = new DiscussActions();

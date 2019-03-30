@@ -47,6 +47,14 @@ export interface ICreateResponse {
     thread: IThreadEntity;
 }
 
+export interface ILikeRequest {
+    forumPostId: number;
+}
+
+export interface ILikeResponse {
+    like: ILikeEntity;
+}
+
 export interface IThreadEntity {
     accountId: number;
     createdAt: string;
@@ -73,4 +81,12 @@ export interface IPostEntity {
 
     _isFocused?: boolean;
     _isThreadPost?: boolean;
+}
+
+export interface ILikeEntity {
+    accountId: number;
+    createdAt: string;
+    forumPostId: number;
+    id: number;
+    updatedAt: string;
 }

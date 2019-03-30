@@ -7,6 +7,7 @@ import {
 } from '@root/connectors/backend/DiscussApiConnector._types';
 
 import { IFormChangeData } from './components/Form._types';
+import { IThreadMetadataState } from './reducers/ThreadMetadataReducer._types';
 import { ICreatePostAction } from './reducers/ThreadReducer._types';
 
 export interface IProps {
@@ -24,6 +25,7 @@ export interface IProps {
     onPageChange?: ComponentEventHandler<IPageChangeEvent>;
     posts?: IPostEntity[];
     thread: IThreadEntity;
+    threadMetadata?: IThreadMetadataState;
     threadPostId?: number;
 }
 

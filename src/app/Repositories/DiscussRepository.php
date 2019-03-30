@@ -480,6 +480,30 @@ class DiscussRepository
         ];
     }
 
+    public function saveLike(int $postId, Account $account = null)
+    {
+        $this->resolveUser($account);
+        if ($account === null) {
+            return false;
+        }
+
+        $like = ForumPostLike::forAccount($account)
+            ->where('forum_post_id', $postId)
+            ->first();
+        
+        if ($like === null) {
+            $like = ForumPostLike::create([
+                'account_id' => $account->id,
+                'forum_post_id' => $postId
+            ]);
+        } else {
+            $like->delete();
+            $like = null;
+        }
+
+        return $like;
+    }
+
     /**
      * Updates the reference to point to the account associated with the request, if the current reference is `null`.
      *
