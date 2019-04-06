@@ -26,15 +26,15 @@ class DiscussApiController extends Controller
         $this->_discussRepository = $discussRepository;
     }
 
-    public function groups(Request $request)
+    public function getGroups(Request $request)
     {
         return $this->_discussRepository->getGroups();
     }
 
-    public function groupAndThreads(Request $request, int $groupId)
+    public function getGroupAndThreads(Request $request, int $groupId)
     {
         $group = $this->_discussRepository->getGroup($groupId);
-        $page = $this->getPage($request);
+        $page = $this->getPageFromRequest($request);
         $user = $request->user();
 
         return $this->_discussRepository->getThreadsInGroup($group['group'], $user, $page);
@@ -43,7 +43,7 @@ class DiscussApiController extends Controller
     /**
      * Gets the latest threads based on their latest posts.
      */
-    public function latestThreads(Request $request)
+    public function getLatestThreads(Request $request)
     {
         return $this->_discussRepository->getLatestThreads();
     }
@@ -51,12 +51,12 @@ class DiscussApiController extends Controller
     /**
      * HTTP GET. Gets data for the specified thread.
      */
-    public function thread(Request $request, int $threadId)
+    public function getThread(Request $request, int $threadId)
     {
         $thread = $this->_discussRepository->getThread($threadId);
         unset($thread['context']); // Do not communicate `context` to the customer
 
-        $page = $this->getPage($request);
+        $page = $this->getPageFromRequest($request);
         $user = $request->user();
 
         // ForumPost ID is an optional parameter that can be specified by the consumer when
@@ -72,6 +72,19 @@ class DiscussApiController extends Controller
         $posts = $this->_discussRepository->getPostsInThread($thread['thread'], $user,
             self::DEFAULT_SORT_BY_DATE_ORDER, $page, $postId);
         return $thread + $posts;
+    }
+
+    /**
+     * HTTP GET. Gets data for the specified post.
+     */
+    public function getPost(Request $request, int $postId)
+    {
+        $post = $this->_discussRepository->getPost($postId);
+        if ($post === null) {
+            return response(null, 404);
+        }
+
+        return $post;
     }
 
     /**
@@ -95,7 +108,7 @@ class DiscussApiController extends Controller
     /**
      * HTTP POST. Retrieves metadata associated with the specified posts.
      */
-    public function threadMetadata(Request $request)
+    public function getThreadMetadata(Request $request)
     {
         $data = $request->validate([
             'forum_thread_id' => 'required|numeric',
@@ -160,7 +173,7 @@ class DiscussApiController extends Controller
         ];
     }
 
-    private function getPage(Request $request)
+    private function getPageFromRequest(Request $request)
     {
         $params = $request->validate([
             self::PARAMETER_PAGE_NUMBER => 'sometimes|numeric'

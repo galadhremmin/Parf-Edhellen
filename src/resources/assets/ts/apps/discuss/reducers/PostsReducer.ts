@@ -14,6 +14,20 @@ const PostsReducer = (state: IPostsState = [], action: IPostsReducerAction) => {
                 post._isFocused = (post.id === action.threadData.jumpPostId);
                 return post;
             });
+        case Actions.ReceivePost: {
+            const postData = action.postData;
+            const pos = state.findIndex((p) => p.id === postData.post.id);
+
+            if (pos === -1) {
+                return state;
+            }
+
+            return [
+                ...state.slice(0, pos),
+                postData.post,
+                ...state.slice(pos + 1),
+            ];
+        }
         default:
             return state;
     }

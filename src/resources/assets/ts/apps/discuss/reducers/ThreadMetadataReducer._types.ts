@@ -5,6 +5,6 @@ export interface IThreadMetadataReducerAction extends IReduxAction {
     metadata: IThreadMetadataResponse;
 }
 
-export interface IThreadMetadataState extends IThreadMetadataResponse {
+export interface IThreadMetadataState extends Partial<IThreadMetadataResponse> {
     loading: boolean;
 }

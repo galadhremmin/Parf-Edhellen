@@ -2,6 +2,9 @@ enum Actions {
     RequestThread = 'ED_DISCUSS_THREAD_REQUEST',
     ReceiveThread = 'ED_DISCUSS_THREAD',
 
+    RequestPost = 'ED_DISCUSS_POST_REQUEST',
+    ReceivePost = 'ED_DISCUSS_POST',
+
     RequestThreadMetadata = 'ED_DISCUSS_THREAD_METADATA_REQUEST',
     ReceiveThreadMetadata = 'ED_DISCUSS_THREAD_METADATA',
 

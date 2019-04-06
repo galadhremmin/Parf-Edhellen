@@ -25,6 +25,7 @@ export interface IThreadMetadataRequest {
 }
 
 export interface IThreadMetadataResponse {
+    forumPostId: number[];
     likes: number[];
     likesPerPost: {
         [postId: number]: number;
@@ -53,6 +54,14 @@ export interface ILikeRequest {
 
 export interface ILikeResponse {
     like: ILikeEntity;
+}
+
+export interface IPostRequest {
+    forumPostId: number;
+}
+
+export interface IPostResponse {
+    post: IPostEntity;
 }
 
 export interface IThreadEntity {

@@ -38,7 +38,7 @@ export function Post(props: IProps) {
             <div className="post-header">
                 <ProfileLink account={post.account} className="nickname" />
                 <a href={`?forum_post_id=${post.id}`} className="post-no">
-                    #{post.id}
+                    {post.id}
                 </a>
             </div>
             <div className="post-body">

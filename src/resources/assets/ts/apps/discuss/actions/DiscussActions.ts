@@ -1,13 +1,12 @@
 import {
-    ThunkDispatch,
-} from 'redux-thunk';
-
-import {
     ReduxThunk,
     ReduxThunkDispatch,
 } from '@root/_types';
 import DiscussApiConnector from '@root/connectors/backend/DiscussApiConnector';
-import { IThreadResponse } from '@root/connectors/backend/DiscussApiConnector._types';
+import {
+    IPostResponse,
+    IThreadResponse,
+} from '@root/connectors/backend/DiscussApiConnector._types';
 import BrowserHistory from '@root/utilities/BrowserHistory';
 import SharedReference from '@root/utilities/SharedReference';
 
@@ -15,6 +14,7 @@ import { RootReducer } from '../reducers';
 import {
     IChangePostAction,
     ICreatePostAction,
+    IPostAction,
     IThreadAction,
     IThreadMetadataAction,
 } from '../reducers/ThreadReducer._types';
@@ -68,6 +68,24 @@ export default class DiscussActions {
                 metadata,
                 type: Actions.ReceiveThreadMetadata,
             });
+        };
+    }
+
+    public post(args: IPostAction): ReduxThunk {
+        return async (dispatch: ReduxThunkDispatch) => {
+            dispatch({
+                type: Actions.RequestPost,
+            });
+
+            const postData = await this._api.value.post(args);
+            dispatch(this.setPost(postData));
+        };
+    }
+
+    public setPost(postData: IPostResponse) {
+        return {
+            postData,
+            type: Actions.ReceivePost,
         };
     }
 

@@ -408,6 +408,25 @@ class DiscussRepository
         return $group;
     }
 
+    public function getPost(int $postId, Account $account = null)
+    {
+        $this->resolveUser($account);
+
+        $post = ForumPost::find($postId);
+        if ($post === null) {
+            return null;
+        }
+
+        if (! $this->checkThreadAuthorization($post->forum_thread, $account)) {
+            return null;
+        }
+
+        $this->_discussAdapter->adaptPost($post);
+        return [
+            'post' => $post,
+        ];
+    }
+
     /**
      * Stores the post with as a reply to the the thread.
      * @param ForumPost $originalPost reference to the post to be stored (and ultimately stored) in the database.
@@ -473,8 +492,17 @@ class DiscussRepository
         $countPerPost = $allLikes->countBy(function ($l) {
             return $l->forum_post_id;
         });
+        $countPerPostIds = $countPerPost->keys();
+        $missingPostIds = array_filter($postIds, function ($id) use($countPerPostIds) {
+            return ! $countPerPostIds->contains($id);
+        });
+
+        foreach ($missingPostIds as $postId) {
+            $countPerPost[$postId] = 0;
+        }
 
         return [
+            'forum_post_id' => $postIds,
             'likes' => $likedByAccount,
             'likes_per_post' => $countPerPost
         ];

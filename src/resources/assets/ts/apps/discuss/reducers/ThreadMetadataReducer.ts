@@ -11,13 +11,15 @@ const ThreadMetadataReducer = (state: IThreadMetadataState = {
 }, action: IThreadMetadataReducerAction) => {
     switch (action.type) {
         case Actions.ReceiveThreadMetadata:
+            const likes = action.metadata.likes.concat(
+                state.likes.filter(
+                    (id) => action.metadata.forumPostId.indexOf(id) === -1,
+                ),
+            );
+
             return {
                 // merge likes and likes per post.
-                likes: state.likes.concat(
-                    action.metadata.likes.filter(
-                        (v) => state.likes.indexOf(v) === -1,
-                    ),
-                ),
+                likes,
                 likesPerPost: {
                     ...state.likesPerPost,
                     ...action.metadata.likesPerPost,

@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import React, { useCallback } from 'react';
 
+import { fireEventAsync } from '@root/components/Component';
 import DiscussApiConnector from '@root/connectors/backend/DiscussApiConnector';
 import SharedReference from '@root/utilities/SharedReference';
 
@@ -10,19 +11,31 @@ import './Likes.scss';
 function Likes(props: IProps) {
     const {
         apiConnector,
+        onThreadMetadataChange,
         post,
+        thread,
         threadMetadata,
     } = props;
 
     const forumPostId = post.id;
+    const forumThreadId = thread.id;
     const likedByAccount = threadMetadata.likes.indexOf(forumPostId) > -1;
 
     const _onLikeClick = useCallback(async (ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
-        const like = await apiConnector.like({
-            forumPostId,
-        });
-    }, [ apiConnector, forumPostId ]);
+        try {
+            await apiConnector.like({
+                forumPostId,
+            });
+            fireEventAsync(`Likes[${forumThreadId}-${forumPostId}]`, onThreadMetadataChange, {
+                forumPostId: [ forumPostId ],
+                forumThreadId,
+            });
+        } catch (e) {
+            // failed
+            console.warn(e);
+        }
+    }, [ apiConnector, forumPostId, forumThreadId, onThreadMetadataChange ]);
 
     return <a href={`?forum_post_id=${forumPostId}`} onClick={_onLikeClick}>
         {threadMetadata.likesPerPost[forumPostId] || 0}

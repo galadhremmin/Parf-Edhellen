@@ -7,6 +7,7 @@ import {
 } from '@root/connectors/backend/DiscussApiConnector._types';
 
 import { IFormChangeData } from './components/Form._types';
+import { IThreadMetadataArgs } from './containers/Toolbar._types';
 import { IThreadMetadataState } from './reducers/ThreadMetadataReducer._types';
 import { ICreatePostAction } from './reducers/ThreadReducer._types';
 
@@ -18,6 +19,8 @@ export interface IProps {
     newPostLoading?: boolean;
     noOfPages?: number;
     pages?: Array<string | number>;
+    onExistingPostChange?: ComponentEventHandler<number>;
+    onExistingThreadMetadataChange?: ComponentEventHandler<IThreadMetadataArgs>;
     onNewPostChange?: ComponentEventHandler<IFormChangeData>;
     onNewPostCreate?: ComponentEventHandler<void>;
     onNewPostSubmit?: ComponentEventHandler<ICreatePostAction>;

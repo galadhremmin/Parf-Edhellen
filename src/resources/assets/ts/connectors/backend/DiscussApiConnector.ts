@@ -5,6 +5,8 @@ import {
     ICreateResponse,
     ILikeRequest,
     ILikeResponse,
+    IPostRequest,
+    IPostResponse,
     IThreadMetadataRequest,
     IThreadMetadataResponse,
     IThreadRequest,
@@ -33,7 +35,15 @@ export default class DiscussApiConnector {
     }
 
     public threadMetadata(payload: IThreadMetadataRequest) {
-        return this._api.value.post<IThreadMetadataResponse>(this._makePath('thread/metadata'), payload);
+        return this._api.value.post<IThreadMetadataResponse>(
+            this._makePath('thread/metadata'), payload,
+        );
+    }
+
+    public post(payload: IPostRequest) {
+        return this._api.value.get<IPostResponse>(
+            this._makePath(`post/${payload.forumPostId}`),
+        );
     }
 
     public create(payload: ICreateRequest) {

@@ -39,6 +39,8 @@ function Discuss(props: IProps) {
         thread,
         threadMetadata,
 
+        onExistingPostChange,
+        onExistingThreadMetadataChange,
         onNewPostChange,
         onNewPostCreate,
         onNewPostSubmit,
@@ -96,8 +98,13 @@ function Discuss(props: IProps) {
     }, [ paginationRef ]);
 
     const _renderToolbar = useCallback((postProps: IPostProps) => {
-        return <Toolbar post={postProps.post} thread={thread} threadMetadata={threadMetadata} />;
-    }, [ thread, threadMetadata ]);
+        return <Toolbar
+            onPostChange={onExistingPostChange}
+            onThreadMetadataChange={onExistingThreadMetadataChange}
+            post={postProps.post}
+            thread={thread}
+            threadMetadata={threadMetadata} />;
+    }, [ onExistingPostChange, onExistingThreadMetadataChange, thread, threadMetadata ]);
 
     return <>
         {posts.map(
@@ -143,6 +150,10 @@ const mapStateToProps = (state: RootReducer) => ({
 
 const actions = new DiscussActions();
 const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => ({
+    onExistingPostChange: (ev) => dispatch(actions.post({
+        forumPostId: ev.value,
+    })),
+    onExistingThreadMetadataChange: (ev) => dispatch(actions.threadMetadata(ev.value)),
     onNewPostChange: (ev) => dispatch(actions.changeNewPost({
         propertyName: ev.value.name,
         value: ev.value.value,

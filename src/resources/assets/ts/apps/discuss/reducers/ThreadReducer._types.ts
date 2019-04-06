@@ -4,6 +4,8 @@ import {
 
 import {
     ICreateRequest,
+    IPostRequest,
+    IPostResponse,
     IThreadEntity,
     IThreadMetadataRequest,
     IThreadRequest,
@@ -12,6 +14,7 @@ import {
 
 export type ICreatePostAction = ICreateRequest;
 export type IThreadAction = IThreadRequest;
+export type IPostAction = IPostRequest;
 export type IThreadMetadataAction = IThreadMetadataRequest;
 
 export interface IChangePostAction {
@@ -25,4 +28,5 @@ export interface IThreadState extends IThreadEntity {
 
 export interface IThreadReducerAction extends IReduxAction {
     threadData: IThreadResponse;
+    postData: IPostResponse;
 }
