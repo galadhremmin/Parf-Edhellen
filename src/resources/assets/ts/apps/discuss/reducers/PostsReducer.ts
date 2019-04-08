@@ -14,23 +14,39 @@ const PostsReducer = (state: IPostsState = [], action: IPostsReducerAction) => {
                 post._isFocused = (post.id === action.threadData.jumpPostId);
                 return post;
             });
-        case Actions.ReceivePost: {
-            const postData = action.postData;
-            const pos = state.findIndex((p) => p.id === postData.post.id);
-
+        case Actions.UpdatePost: {
+            const pos = getPostIndex(state, action);
             if (pos === -1) {
                 return state;
             }
 
             return [
                 ...state.slice(0, pos),
-                postData.post,
+                action.postData.post,
+                ...state.slice(pos + 1),
+            ];
+        }
+        case Actions.DeletePost: {
+            const pos = getPostIndex(state, action);
+            if (pos === -1) {
+                return state;
+            }
+
+            return [
+                ...state.slice(0, pos),
                 ...state.slice(pos + 1),
             ];
         }
         default:
             return state;
     }
+};
+
+const getPostIndex = (state: IPostsState, action: IPostsReducerAction) => {
+    const postData = action.postData;
+    const pos = state.findIndex((p) => p.id === postData.post.id);
+
+    return pos;
 };
 
 export default PostsReducer;

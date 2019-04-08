@@ -5,7 +5,8 @@ import { fireEventAsync } from '@root/components/Component';
 import DiscussApiConnector from '@root/connectors/backend/DiscussApiConnector';
 import SharedReference from '@root/utilities/SharedReference';
 
-import { IProps } from './Likes._types';
+import connectApi from './ApiConnector';
+import { IProps } from './ApiConnector._types';
 import './Likes.scss';
 
 function Likes(props: IProps) {
@@ -24,7 +25,7 @@ function Likes(props: IProps) {
     const _onLikeClick = useCallback(async (ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
         try {
-            await apiConnector.like({
+            await apiConnector.likePost({
                 forumPostId,
             });
             fireEventAsync(`Likes[${forumThreadId}-${forumPostId}]`, onThreadMetadataChange, {
@@ -46,8 +47,4 @@ function Likes(props: IProps) {
     </a>;
 }
 
-Likes.defaultProps = {
-    apiConnector: SharedReference.getInstance(DiscussApiConnector),
-} as Partial<IProps>;
-
-export default Likes;
+export default connectApi(Likes);

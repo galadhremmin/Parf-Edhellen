@@ -23,7 +23,7 @@ import RespondButton from '../components/RespondButton';
 import { IProps } from '../index._types';
 import { RootReducer } from '../reducers';
 
-import Toolbar from './Toolbar';
+import ConditionalToolbar from '../components/toolbar/ConditionalToolbar';
 
 function Discuss(props: IProps) {
     const formRef = useRef(null);
@@ -98,7 +98,7 @@ function Discuss(props: IProps) {
     }, [ paginationRef ]);
 
     const _renderToolbar = useCallback((postProps: IPostProps) => {
-        return <Toolbar
+        return <ConditionalToolbar
             onPostChange={onExistingPostChange}
             onThreadMetadataChange={onExistingThreadMetadataChange}
             post={postProps.post}

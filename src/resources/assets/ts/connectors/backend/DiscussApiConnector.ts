@@ -3,6 +3,8 @@ import ApiConnector from '../ApiConnector';
 import {
     ICreateRequest,
     ICreateResponse,
+    IDeleteRequest,
+    IDeleteResponse,
     ILikeRequest,
     ILikeResponse,
     IPostRequest,
@@ -46,14 +48,20 @@ export default class DiscussApiConnector {
         );
     }
 
-    public create(payload: ICreateRequest) {
+    public createPost(payload: ICreateRequest) {
         return this._api.value.post<ICreateResponse>(
             this._makePath('store/post'),
             payload,
         );
     }
 
-    public like(payload: ILikeRequest) {
+    public deletePost(payload: IDeleteRequest) {
+        return this._api.value.delete<IDeleteResponse>(
+            this._makePath(`post/${payload.forumPostId}`),
+        );
+    }
+
+    public likePost(payload: ILikeRequest) {
         return this._api.value.post<ILikeResponse>(
             this._makePath('store/like'),
             payload,

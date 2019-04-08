@@ -6,10 +6,11 @@ import {
 } from '@root/security';
 import SharedReference from '@root/utilities/SharedReference';
 
-import DeletePost from '../components/toolbar/DeletePost';
-import EditPost from '../components/toolbar/EditPost';
-import Likes from '../components/toolbar/Likes';
-import { IProps } from './Toolbar._types';
+import { IProps } from './index._types';
+
+import DeletePost from './DeletePost';
+import EditPost from './EditPost';
+import Likes from './Likes';
 
 const getEligibleToolbarComponents = (postAccountId: number) => {
     const roleManager = SharedReference.getInstance(RoleManager);

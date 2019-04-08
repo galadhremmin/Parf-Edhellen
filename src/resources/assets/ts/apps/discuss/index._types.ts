@@ -7,7 +7,7 @@ import {
 } from '@root/connectors/backend/DiscussApiConnector._types';
 
 import { IFormChangeData } from './components/Form._types';
-import { IThreadMetadataArgs } from './containers/Toolbar._types';
+import { IThreadMetadataArgs } from './components/toolbar/index._types';
 import { IThreadMetadataState } from './reducers/ThreadMetadataReducer._types';
 import { ICreatePostAction } from './reducers/ThreadReducer._types';
 

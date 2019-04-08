@@ -73,10 +73,6 @@ export default class DiscussActions {
 
     public post(args: IPostAction): ReduxThunk {
         return async (dispatch: ReduxThunkDispatch) => {
-            dispatch({
-                type: Actions.RequestPost,
-            });
-
             const postData = await this._api.value.post(args);
             dispatch(this.setPost(postData));
         };
@@ -85,7 +81,7 @@ export default class DiscussActions {
     public setPost(postData: IPostResponse) {
         return {
             postData,
-            type: Actions.ReceivePost,
+            type: Actions.UpdatePost,
         };
     }
 
@@ -115,7 +111,7 @@ export default class DiscussActions {
                     type: Actions.RequestCreatePost,
                 });
 
-                const postData = await this._api.value.create(args);
+                const postData = await this._api.value.createPost(args);
 
                 dispatch({
                     type: Actions.ReceiveCreatePost,

@@ -4,7 +4,7 @@ import {
     IThreadEntity,
 } from '@root/connectors/backend/DiscussApiConnector._types';
 
-import { IThreadMetadataState } from '../reducers/ThreadMetadataReducer._types';
+import { IThreadMetadataState } from '../../reducers/ThreadMetadataReducer._types';
 
 export interface IThreadMetadataArgs {
     forumPostId: number[];

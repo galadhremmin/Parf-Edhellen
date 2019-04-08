@@ -48,6 +48,14 @@ export interface ICreateResponse {
     thread: IThreadEntity;
 }
 
+export interface IDeleteRequest {
+    forumPostId: number;
+}
+
+export interface IDeleteResponse {
+    dummy: never;
+}
+
 export interface ILikeRequest {
     forumPostId: number;
 }
