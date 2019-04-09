@@ -1,0 +1,14 @@
+@import '../../../../_scss/_variables';
+
+header > .post-header--tools {
+    > a {
+        &:last-child {
+            margin-right: 0;
+        }
+
+        margin-right: 0.5em;
+        color: $gray-light;
+    }
+    
+    float: right;
+}

@@ -3,7 +3,7 @@ import {
 } from '@root/_types';
 
 import {
-    ICreateRequest,
+    ICreatePostRequest,
     IPostRequest,
     IPostResponse,
     IThreadEntity,
@@ -12,7 +12,7 @@ import {
     IThreadResponse,
 } from '@root/connectors/backend/DiscussApiConnector._types';
 
-export type ICreatePostAction = ICreateRequest;
+export type ICreatePostAction = ICreatePostRequest;
 export type IThreadAction = IThreadRequest;
 export type IPostAction = IPostRequest;
 export type IThreadMetadataAction = IThreadMetadataRequest;

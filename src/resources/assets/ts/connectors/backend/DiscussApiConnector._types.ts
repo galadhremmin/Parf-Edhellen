@@ -32,7 +32,7 @@ export interface IThreadMetadataResponse {
     };
 }
 
-export interface ICreateRequest {
+export interface ICreatePostRequest {
     content: string;
     entityId?: number;
     entityType?: string;
@@ -43,24 +43,36 @@ export interface ICreateRequest {
     subject?: string;
 }
 
-export interface ICreateResponse {
+export interface ICreatePostResponse {
     post: IPostEntity;
     thread: IThreadEntity;
 }
 
-export interface IDeleteRequest {
+export interface IDeletePostRequest {
     forumPostId: number;
 }
 
-export interface IDeleteResponse {
+export interface IDeletePostResponse {
     dummy: never;
 }
 
-export interface ILikeRequest {
+export interface IUpdatePostRequest {
+    content: string;
+    forumPostId: number;
+    isSticky?: boolean;
+    subject?: string;
+}
+
+export interface IUpdatePostResponse {
+    post: IPostEntity;
+    thread: IThreadEntity;
+}
+
+export interface ILikePostRequest {
     forumPostId: number;
 }
 
-export interface ILikeResponse {
+export interface ILikePostResponse {
     like: ILikeEntity;
 }
 

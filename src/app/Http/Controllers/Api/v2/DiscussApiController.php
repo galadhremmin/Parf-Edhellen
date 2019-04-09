@@ -157,6 +157,16 @@ class DiscussApiController extends Controller
         ];
     }
 
+    public function deletePost(Request $request, int $postId)
+    {
+        // TODO
+    }
+
+    public function updatePost(Request $request, int $postId)
+    {
+        // TODO
+    }
+
     public function storeLike(Request $request)
     {
         $data = $request->validate([

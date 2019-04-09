@@ -12,6 +12,8 @@ import DeletePost from './DeletePost';
 import EditPost from './EditPost';
 import Likes from './Likes';
 
+import './index.scss';
+
 const getEligibleToolbarComponents = (postAccountId: number) => {
     const roleManager = SharedReference.getInstance(RoleManager);
     const role = roleManager.currentRole;
@@ -31,9 +33,9 @@ const getEligibleToolbarComponents = (postAccountId: number) => {
 function Toolbar(props: IProps) {
     const toolbar = getEligibleToolbarComponents(props.post.account.id);
 
-    return <React.Fragment>
+    return <span className="post-header--tools">
         {toolbar.map((Component, i) => <Component key={i} {...props} />)}
-    </React.Fragment>;
+    </span>;
 }
 
 export default Toolbar;

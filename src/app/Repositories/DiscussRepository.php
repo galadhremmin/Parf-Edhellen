@@ -515,15 +515,22 @@ class DiscussRepository
             return false;
         }
 
+        $post = ForumPost::find($postId);
+        if ($post === null) {
+            return false;
+        }
+
         $like = ForumPostLike::forAccount($account)
-            ->where('forum_post_id', $postId)
+            ->where('forum_post_id', $post->id)
             ->first();
         
         if ($like === null) {
             $like = ForumPostLike::create([
                 'account_id' => $account->id,
-                'forum_post_id' => $postId
+                'forum_post_id' => $post->id
             ]);
+
+            event(new ForumPostLikeCreated($post, $account->id));
         } else {
             $like->delete();
             $like = null;

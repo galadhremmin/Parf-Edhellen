@@ -30,30 +30,28 @@ export function Post(props: IProps) {
         }
     }, [ focused, postRef ]);
 
-    return <div className={classNames('forum-post', { 'forum-post--thread': isThreadPost })} ref={postRef}>
+    return <section className={classNames('forum-post', { 'forum-post--thread': isThreadPost })} ref={postRef}>
         <div className="post-profile-picture">
             <Avatar account={post.account} />
         </div>
         <div className="post-content">
-            <div className="post-header">
+            <header>
                 <ProfileLink account={post.account} className="nickname" />
-                <a href={`?forum_post_id=${post.id}`} className="post-no">
-                    {post.id}
-                </a>
-            </div>
+                {renderToolbar && renderToolbar(props)}
+            </header>
             <div className="post-body">
                 {post.isDeleted
                     ? <em>{post.account.nickname} has redacted their post.</em>
                     : <HtmlInject html={post.content} />}
             </div>
-            <div className="post-tools">
-                <span className="date">
-                    <DateLabel dateTime={post.createdAt} />
-                </span>
-                {renderToolbar && renderToolbar(props)}
-            </div>
+            <footer>
+                <DateLabel dateTime={post.createdAt} />
+                <a href={`?forum_post_id=${post.id}`} className="post-no">
+                    {post.id}
+                </a>
+            </footer>
         </div>
-    </div>;
+    </section>;
 }
 
 export default Post;

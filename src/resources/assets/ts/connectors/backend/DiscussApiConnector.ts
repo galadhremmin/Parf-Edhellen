@@ -1,18 +1,20 @@
 import SharedReference from '../../utilities/SharedReference';
 import ApiConnector from '../ApiConnector';
 import {
-    ICreateRequest,
-    ICreateResponse,
-    IDeleteRequest,
-    IDeleteResponse,
-    ILikeRequest,
-    ILikeResponse,
+    ICreatePostRequest,
+    ICreatePostResponse,
+    IDeletePostRequest,
+    IDeletePostResponse,
+    ILikePostRequest,
+    ILikePostResponse,
     IPostRequest,
     IPostResponse,
     IThreadMetadataRequest,
     IThreadMetadataResponse,
     IThreadRequest,
     IThreadResponse,
+    IUpdatePostRequest,
+    IUpdatePostResponse,
 } from './DiscussApiConnector._types';
 
 export default class DiscussApiConnector {
@@ -48,22 +50,29 @@ export default class DiscussApiConnector {
         );
     }
 
-    public createPost(payload: ICreateRequest) {
-        return this._api.value.post<ICreateResponse>(
-            this._makePath('store/post'),
+    public createPost(payload: ICreatePostRequest) {
+        return this._api.value.post<ICreatePostResponse>(
+            this._makePath('post'),
             payload,
         );
     }
 
-    public deletePost(payload: IDeleteRequest) {
-        return this._api.value.delete<IDeleteResponse>(
+    public deletePost(payload: IDeletePostRequest) {
+        return this._api.value.delete<IDeletePostResponse>(
             this._makePath(`post/${payload.forumPostId}`),
         );
     }
 
-    public likePost(payload: ILikeRequest) {
-        return this._api.value.post<ILikeResponse>(
-            this._makePath('store/like'),
+    public updatePost(payload: IUpdatePostRequest) {
+        return this._api.value.put<IUpdatePostResponse>(
+            this._makePath(`post/${payload.forumPostId}`),
+            payload,
+        );
+    }
+
+    public likePost(payload: ILikePostRequest) {
+        return this._api.value.post<ILikePostResponse>(
+            this._makePath('like'),
             payload,
         );
     }

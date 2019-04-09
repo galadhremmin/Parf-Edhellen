@@ -1,4 +1,7 @@
-import React, { useCallback } from 'react';
+import React, {
+    useCallback,
+    useRef,
+} from 'react';
 import Modal from 'react-modal';
 
 import { fireEvent } from './Component';
@@ -23,9 +26,9 @@ function Dialog<V>(props: IProps<V>) {
         fireEvent('Dialog', onConfirm, value);
     }, [ onConfirm, value ]);
 
-    // TODO: We need to assign an application element. This is needed so screen readers
-    //       don't see main content when modal is opened.
-    return <Modal appElement={null}
+     // This is needed so screen readers don't see main content when modal is opened.
+     const appElement = document.querySelector('main');
+    return <Modal appElement={appElement}
         className="modal-dialog"
         isOpen={props.open}
         style={DialogStyles}>

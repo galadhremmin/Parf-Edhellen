@@ -21,6 +21,11 @@ Route::group([
         ->where([ 'postId' => REGULAR_EXPRESSION_NUMERIC ]);
 
     Route::post('thread/metadata', [ 'uses' => 'DiscussApiController@getThreadMetadata' ]);
-    Route::post('store/post', [ 'uses' => 'DiscussApiController@storePost' ]);
-    Route::post('store/like', [ 'uses' => 'DiscussApiController@storeLike' ]);
+    Route::post('like', [ 'uses' => 'DiscussApiController@storeLike' ]);
+
+    Route::post('post', [ 'uses' => 'DiscussApiController@storePost' ]);
+    Route::put('post/{postId}', [ 'uses' => 'DiscussApiController@updatePost' ])
+        ->where([ 'postId' => REGULAR_EXPRESSION_NUMERIC ]);
+    Route::delete('post/{postId}', [ 'uses' => 'DiscussApiController@deletePost' ])
+        ->where([ 'postId' => REGULAR_EXPRESSION_NUMERIC ]);
 });
