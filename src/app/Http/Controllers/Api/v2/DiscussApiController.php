@@ -14,10 +14,20 @@ use App\Helpers\LinkHelper;
 class DiscussApiController extends Controller 
 {
     const DEFAULT_SORT_BY_DATE_ORDER = 'asc';
+
+    const PARAMETER_PAGE_NUMBER = 'offset';
+    const PARAMETER_ENTITY_TYPE = 'entity_type';
+    const PARAMETER_ENTITY_ID = 'entity_id';
     const PARAMETER_FORUM_POST_CONTENT = 'content';
+    const PARAMETER_FORUM_POST_SUBJECT = 'subject';
     const PARAMETER_FORUM_THREAD_ID = 'forum_thread_id';
+    const PARAMETER_FORUM_GROUP_ID = 'forum_group_id';
     const PARAMETER_FORUM_POST_ID = 'forum_post_id';
-    const PARAMETER_PAGE_NUMBER   = 'offset';
+    
+    const PROPERTY_THREAD = 'thread';
+    const PROPERTY_THREAD_GROUP_COLLECTION = 'groups';
+    const PROPERTY_POST = 'post';
+    const PROPERTY_POST_LIKE = 'like';
 
     protected $_discussRepository;
 
@@ -29,7 +39,7 @@ class DiscussApiController extends Controller
     public function getGroups()
     {
         return [
-            'groups' => $this->_discussRepository->getGroups()
+            self::PROPERTY_THREAD_GROUP_COLLECTION => $this->_discussRepository->getGroups()
         ];
     }
 
@@ -80,13 +90,21 @@ class DiscussApiController extends Controller
      */
     public function getPost(Request $request, int $postId)
     {
-        $post = $this->_discussRepository->getPost($postId);
+        $data = $request->validate([
+            'include_deleted' => 'sometimes|boolean'
+        ]);
+
+        $includeDeleted = isset($data['include_deleted'])
+            ? boolval($data['include_deleted']) : false;
+
+        $account = $request->user();
+        $post = $this->_discussRepository->getPost($postId, $account, $includeDeleted);
         if ($post === null) {
             return response(null, 404);
         }
 
         return [
-            'post' => $post
+            self::PROPERTY_POST => $post
         ];
     }
 
@@ -114,13 +132,13 @@ class DiscussApiController extends Controller
     public function getThreadMetadata(Request $request)
     {
         $data = $request->validate([
-            'forum_thread_id' => 'required|numeric',
-            'forum_post_id.*' => 'required|numeric'
+            self::PARAMETER_FORUM_THREAD_ID => 'required|numeric',
+            self::PARAMETER_FORUM_POST_ID.'.*' => 'required|numeric'
         ]);
         $user = $request->user();
 
-        $threadId = intval($data['forum_thread_id']);
-        $postsId = $data['forum_post_id'];
+        $threadId = intval($data[self::PARAMETER_FORUM_THREAD_ID]);
+        $postsId = $data[self::PARAMETER_FORUM_POST_ID];
         return $this->_discussRepository->getThreadMetadataData($threadId, $postsId, $user);
     }
 
@@ -133,30 +151,56 @@ class DiscussApiController extends Controller
      */
     public function storePost(Request $request)
     {
+        $account = $request->user();
         $data = $request->validate([
-            self::PARAMETER_FORUM_POST_CONTENT => 'required|string',
-            self::PARAMETER_FORUM_THREAD_ID    => 'required|numeric|exists:forum_threads,id'
-            //'forum_group_id'      => 'sometimes|numeric|exists:forum_groups,id',
-            //'is_sticky'           => 'sometimes|boolean',
-            //'parent_form_post_id' => 'sometimes|numeric|exists:forum_posts,id',
-            //'subject'             => 'sometimes|string'
+            self::PARAMETER_FORUM_POST_CONTENT => 'required|string|min:1',
+            self::PARAMETER_FORUM_THREAD_ID    => 'sometimes|numeric|exists:forum_threads,id'
         ]);
 
-        $threadData = $this->_discussRepository->getThreadData($data[self::PARAMETER_FORUM_THREAD_ID]);
-        $thread = $threadData->getThread();
+        if (isset($data[self::PARAMETER_FORUM_THREAD_ID])) {
+            // update an existing thread
+            $threadId = intval($data[self::PARAMETER_FORUM_THREAD_ID]);
+            $threadData = $this->_discussRepository->getThreadData($threadId);
+            $thread = $threadData->getThread();
 
+        } else {
+            $data = $data + $request->validate([
+                self::PARAMETER_FORUM_POST_SUBJECT => 'required|string|min:3|max:512',
+                self::PARAMETER_ENTITY_TYPE        => 'required|string|min:1|max:16',
+                self::PARAMETER_ENTITY_ID          => 'required|numeric',
+                self::PARAMETER_FORUM_GROUP_ID     => 'sometimes|numeric|exists:forum_groups,id'
+            ]);
+
+            $entityType = $data[self::PARAMETER_ENTITY_TYPE];
+            $entityId   = intval($data[self::PARAMETER_ENTITY_ID]);
+
+            // create a new thread based on the entity specified in the request
+            $threadData = $this->_discussRepository->getThreadDataForEntity($entityType, $entityId, true, $account);
+            $thread = $threadData->getThread();
+
+            // the default forum group usually comes with an auto generated subject. Replace it with the 
+            // subject specified in the request.
+            $thread->subject = $data[self::PARAMETER_FORUM_POST_SUBJECT];
+
+            // the thread is assigned a default form group based on the specified entity. However, if the request
+            // specifies a specified group, it is here where it may be applied.
+            if (isset($data[self::PARAMETER_FORUM_GROUP_ID])) {
+                $thread->forum_group_id = intval($data[self::PARAMETER_FORUM_GROUP_ID]);
+            }
+        }
+        
         $post = new ForumPost([
             self::PARAMETER_FORUM_POST_CONTENT => $data[self::PARAMETER_FORUM_POST_CONTENT]
         ]);
         $ok = $this->_discussRepository->savePost($post, $thread, $request->user());
         if (! $ok) {
-            return response(null, 400);
+            return response(null, 403);
         }
 
         $post->makeHidden(['forum_thread']);
         return [
-            'post' => $post,
-            'thread' => $thread
+            self::PROPERTY_POST => $post,
+            self::PROPERTY_THREAD => $thread
         ];
     }
 
@@ -164,12 +208,10 @@ class DiscussApiController extends Controller
     {
         $account = $request->user();
 
-        $post = $this->_discussRepository->getPost($postId, $account);
+        $post = $this->_discussRepository->getPost($postId, $account, true);
         $ok = $this->_discussRepository->deletePost($post, $account);
 
-        return $ok ? [
-            'post' => $post
-        ] : response(null, 400);
+        return response(null, $ok ? 200 : 400);
     }
 
     public function updatePost(Request $request, int $postId)
@@ -189,7 +231,7 @@ class DiscussApiController extends Controller
         }
 
         return [
-            'like' => $like
+            self::PROPERTY_POST_LIKE => $like
         ];
     }
 

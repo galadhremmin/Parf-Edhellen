@@ -1,3 +1,3 @@
 export interface IProps {
-    dateTime: string;
+    dateTime: Date | string;
 }

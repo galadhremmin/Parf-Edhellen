@@ -1,7 +1,8 @@
 import React from 'react';
 
+import ProfileLink from '@root/components/ProfileLink';
+
 import { IProps } from './Avatar._types';
-import ProfileLink from './ProfileLink';
 
 const Avatar = (props: IProps) => {
     const account = props.account;

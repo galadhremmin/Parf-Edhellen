@@ -215,7 +215,8 @@ class DiscussRepository
         // Hidden posts are automatically excluded. Deleted posts might still be shown, which is why
         // we are not filtering out deleted.
         $filters = [
-            ['is_hidden', 0]
+            ['is_hidden', 0],
+            ['is_deleted', 0]
         ];
 
         $skip = 0;
@@ -467,7 +468,7 @@ class DiscussRepository
     /**
      * @return ForumPost
      */
-    public function getPost(int $postId, Account $account = null)
+    public function getPost(int $postId, Account $account = null, $includeDeleted = false)
     {
         $this->resolveAccount($account);
 
@@ -476,7 +477,12 @@ class DiscussRepository
             return null;
         }
 
-        if (! $this->checkThreadAuthorization($account, $post->forum_thread)) {
+        if ($post->is_deleted) {
+            if (! $includeDeleted || ! $this->checkPostAuthorization($account, $post)) {
+                return null;
+            }
+
+        } else if (! $this->checkThreadAuthorization($account, $post->forum_thread)) {
             return null;
         }
 
@@ -507,7 +513,10 @@ class DiscussRepository
     public function savePost(ForumPost &$originalPost, ForumThread $thread, Account $account = null)
     {
         $this->resolveAccount($account);
-        if (! $this->checkPostAuthorization($account, $originalPost, $thread)) {
+        
+        if ($originalPost->exists && ! $this->checkPostAuthorization($account, $originalPost, $thread)) {
+            return false;
+        } else if (! $originalPost->exists && ! $this->checkThreadAuthorization($account, $thread)) {
             return false;
         }
 
@@ -516,23 +525,27 @@ class DiscussRepository
 
             $this->saveThread($thread);
 
-            $post = ForumPost::create([
-                'account_id'          => $account->id,
-                'forum_thread_id'     => $thread->id,
-                'number_of_likes'     => 0,
+            if ($originalPost->exists) {
+                // update the existing post.
+                $originalPost->save();
+            } else {
+                $post = ForumPost::create([
+                    'account_id'          => $account->id,
+                    'forum_thread_id'     => $thread->id,
+                    'number_of_likes'     => 0,
 
-                'content'             => $originalPost->content,
-                'parent_form_post_id' => $originalPost->parent_form_post_id,
-            ]);
+                    'content'             => $originalPost->content,
+                    'parent_form_post_id' => $originalPost->parent_form_post_id,
+                ]);
+                
+                // Abandon the original post by pointing at the post we just created.
+                $originalPost = $post;
+            }
 
             $thread->account_id = $account->id;
-            $thread->number_of_posts = $thread->forum_posts()->count();
-            $thread->save();
+            $this->updateForumThread($thread);
 
             DB::commit();
-
-            // Abandon the original post by pointing at the post we just created.
-            $originalPost = $post;
         } catch (\Exception $ex) {
             DB::rollBack();
             throw $ex;
@@ -656,8 +669,12 @@ class DiscussRepository
         }
     }
 
-    private function checkPostAuthorization(Account $account, ForumPost $post, ForumThread $thread = $post->forum_thread)
+    private function checkPostAuthorization(?Account $account, ForumPost $post, ForumThread $thread = null)
     {
+        if ($thread === null) {
+            $thread = $post->forum_thread;
+        }
+
         if (! $this->checkThreadAuthorization($account, $thread)) {
             return false;
         }
@@ -676,12 +693,8 @@ class DiscussRepository
      * @param Account $account
      * @return bool
      */
-    private function checkThreadAuthorization(Account $account, ForumThread $thread)
+    private function checkThreadAuthorization(?Account $account, ForumThread $thread)
     {
-        if ($account === null) {
-            return false;
-        }
-
         $context = $this->_contextFactory->create($thread->entity_type);
         return $context->available($thread->entity_id, $account);
     }

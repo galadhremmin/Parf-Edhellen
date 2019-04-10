@@ -6,11 +6,11 @@ import React, {
 
 import DateLabel from '@root/components/DateLabel';
 import HtmlInject from '@root/components/HtmlInject';
+import ProfileLink from '@root/components/ProfileLink';
 import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
 import Avatar from './Avatar';
 import { IProps } from './Post._types';
-import ProfileLink from './ProfileLink';
 
 export function Post(props: IProps) {
     const {

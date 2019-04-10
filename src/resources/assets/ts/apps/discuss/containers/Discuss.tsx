@@ -152,6 +152,7 @@ const actions = new DiscussActions();
 const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => ({
     onExistingPostChange: (ev) => dispatch(actions.post({
         forumPostId: ev.value,
+        includeDeleted: true,
     })),
     onExistingThreadMetadataChange: (ev) => dispatch(actions.threadMetadata(ev.value)),
     onNewPostChange: (ev) => dispatch(actions.changeNewPost({

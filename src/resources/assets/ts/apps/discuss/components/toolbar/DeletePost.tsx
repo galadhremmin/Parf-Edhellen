@@ -7,8 +7,8 @@ import { fireEvent } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
 import DateLabel from '@root/components/DateLabel';
 import Dialog from '@root/components/Dialog';
+import ProfileLink from '@root/components/ProfileLink';
 
-import ProfileLink from '../ProfileLink';
 import ActionLink from './ActionLink';
 import connectApi from './ApiConnector';
 import { IProps } from './ApiConnector._types';
@@ -33,11 +33,16 @@ function DeletePost(props: IProps) {
 
     const _onDeleteConfirmed = useCallback(async (ev: IComponentEvent<number>) => {
         const forumPostId = ev.value;
-        await apiConnector.deletePost({
-            forumPostId,
-        });
 
-        fireEvent(`DeletePost[${forumPostId}]`, onPostChange, forumPostId);
+        try {
+            await apiConnector.deletePost({
+                forumPostId,
+            });
+
+            fireEvent(`DeletePost[${forumPostId}]`, onPostChange, forumPostId);
+        } catch (e) {
+            // TODO: handle failure
+        }
     }, [ apiConnector, onPostChange ]);
 
     return <>

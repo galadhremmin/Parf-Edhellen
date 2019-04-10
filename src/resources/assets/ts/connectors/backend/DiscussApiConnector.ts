@@ -4,7 +4,6 @@ import {
     ICreatePostRequest,
     ICreatePostResponse,
     IDeletePostRequest,
-    IDeletePostResponse,
     ILikePostRequest,
     ILikePostResponse,
     IPostRequest,
@@ -47,6 +46,9 @@ export default class DiscussApiConnector {
     public post(payload: IPostRequest) {
         return this._api.value.get<IPostResponse>(
             this._makePath(`post/${payload.forumPostId}`),
+            {
+                includeDeleted: payload.includeDeleted ? 1 : 0,
+            },
         );
     }
 
@@ -58,7 +60,7 @@ export default class DiscussApiConnector {
     }
 
     public deletePost(payload: IDeletePostRequest) {
-        return this._api.value.delete<IDeletePostResponse>(
+        return this._api.value.delete<void>(
             this._makePath(`post/${payload.forumPostId}`),
         );
     }

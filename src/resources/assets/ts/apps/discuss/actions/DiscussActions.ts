@@ -81,7 +81,9 @@ export default class DiscussActions {
     public setPost(postData: IPostResponse) {
         return {
             postData,
-            type: Actions.UpdatePost,
+            type: postData.post.isDeleted
+                ? Actions.DeletePost
+                : Actions.UpdatePost,
         };
     }
 

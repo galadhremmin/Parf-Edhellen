@@ -52,10 +52,6 @@ export interface IDeletePostRequest {
     forumPostId: number;
 }
 
-export interface IDeletePostResponse {
-    dummy: never;
-}
-
 export interface IUpdatePostRequest {
     content: string;
     forumPostId: number;
@@ -78,6 +74,7 @@ export interface ILikePostResponse {
 
 export interface IPostRequest {
     forumPostId: number;
+    includeDeleted?: boolean;
 }
 
 export interface IPostResponse {

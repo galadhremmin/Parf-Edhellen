@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { IAccountEntity } from '@root/connectors/backend/BookApiConnector._types';
+import { IAccountEntity } from '../connectors/backend/BookApiConnector._types';
 
 export interface IProps {
     account: IAccountEntity;
