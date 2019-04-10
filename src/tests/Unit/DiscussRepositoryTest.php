@@ -12,9 +12,13 @@ use Tests\Unit\Traits\{
 };
 
 use App\Repositories\DiscussRepository;
+use App\Repositories\ValueObjects\ForumThreadForEntityValue;
 use App\Models\{
+    Account,
+    ForumDiscussion,
     ForumGroup,
     ForumPost,
+    ForumPostLike,
     ForumThread
 };
 
@@ -27,7 +31,7 @@ class DiscussRepositoryTest extends TestCase
     
     private $_repository;
 
-    protected function setUp() 
+    protected function setUp(): void
     {
         parent::setUp();
         DB::beginTransaction();
@@ -36,7 +40,7 @@ class DiscussRepositoryTest extends TestCase
         $this->_repository = resolve(DiscussRepository::class);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->tearDownGlosses();
         DB::rollBack();
@@ -45,7 +49,7 @@ class DiscussRepositoryTest extends TestCase
 
     public function testGetThreadForEntityShouldBeNull()
     {
-        $thread = $this->_repository->getThreadForEntity('gloss', 1);
+        $thread = $this->_repository->getThreadDataForEntity('gloss', 1);
         $this->assertEquals(null, $thread);
     }
 
@@ -54,11 +58,10 @@ class DiscussRepositoryTest extends TestCase
         extract( $this->createGloss(__FUNCTION__) );
         $gloss = $this->getRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
 
-        $thread = $this->_repository->getThreadForEntity('gloss', $gloss->id, true);
-        $this->assertTrue(is_array($thread));
-        $this->assertTrue(isset($thread['thread']));
+        $threadData = $this->_repository->getThreadDataForEntity('gloss', $gloss->id, true);
+        $this->assertTrue($threadData instanceof ForumThreadForEntityValue);
 
-        $t = &$thread['thread'];
+        $t = $threadData->getThread();
         $this->assertTrue($t instanceof ForumThread);
         $this->assertEquals('gloss', $t->entity_type);
         $this->assertEquals($gloss->id, $t->entity_id);
@@ -78,16 +81,14 @@ class DiscussRepositoryTest extends TestCase
         extract( $this->createGloss(__FUNCTION__) );
         $gloss = $this->getRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
 
-        $thread = $this->_repository->getThreadForEntity('gloss', $gloss->id, true);
-        $t = &$thread['thread'];
+        $threadData = $this->_repository->getThreadDataForEntity('gloss', $gloss->id, true);
+        $t = $threadData->getThread();
         $t->subject = 'Subject';
-        $t->save();
 
-        $existingThread = $this->_repository->getThreadForEntity('gloss', $gloss->id, true);
-        $this->assertTrue(is_array($existingThread));
-        $this->assertTrue(isset($existingThread['thread']));
+        $existingThreadData = $this->_repository->getThreadDataForEntity('gloss', $gloss->id, true);
+        $this->assertTrue($existingThreadData instanceof ForumThreadForEntityValue);
 
-        $t = &$existingThread['thread'];
+        $t = $existingThreadData->getThread();
         $this->assertTrue($t instanceof ForumThread);
         $this->assertEquals('gloss', $t->entity_type);
         $this->assertEquals($gloss->id, $t->entity_id);
@@ -97,7 +98,7 @@ class DiscussRepositoryTest extends TestCase
             $t->forum_group_id
         );
         $this->assertEquals(
-            $thread['thread']->id,
+            $threadData->getThread()->id,
             $t->id
         );
     }
@@ -107,10 +108,9 @@ class DiscussRepositoryTest extends TestCase
         extract( $this->createGloss(__FUNCTION__) );
         $gloss = $this->getRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
 
-        $thread = $this->_repository->getThreadForEntity('gloss', $gloss->id, true);
-        $t = &$thread['thread'];
+        $threadData = $this->_repository->getThreadDataForEntity('gloss', $gloss->id, true);
+        $t = $threadData->getThread();
         $t->subject = 'Subject';
-        $t->save();
 
         $account = Auth::user();
 
@@ -126,5 +126,74 @@ class DiscussRepositoryTest extends TestCase
         }
         $this->assertEquals($t->id, $post->forum_thread_id);
         $this->assertEquals($t->number_of_posts, $t->forum_posts->count());
+    }
+
+    public function testCanSaveLikePost()
+    {
+        $account = Auth::user();
+        $post = $this->createPostForUnitTest($account);
+        $like = $this->_repository->saveLike($post->id, $account);
+
+        $post->refresh();
+
+        $this->assertTrue($like->id !== 0);
+        $this->assertEquals(1, $post->number_of_likes);
+        $this->assertEquals(1, $post->forum_thread->number_of_likes);
+    }
+
+    public function testCanToggleLikePost()
+    {
+        $account = Auth::user();
+        $post = $this->createPostForUnitTest($account);
+
+        $like = $this->_repository->saveLike($post->id, $account);
+        $this->assertTrue($like instanceof ForumPostLike);
+
+        $like = $this->_repository->saveLike($post->id, $account);
+        $this->assertNull($like);
+
+        $post->refresh();
+
+        $this->assertEquals(0, $post->number_of_likes);
+        $this->assertEquals(0, $post->forum_thread->number_of_likes);
+    }
+
+    public function testCanLikePostCountIgnoresDeletedPosts()
+    {
+        $account = Auth::user();
+        $post = $this->createPostForUnitTest($account);
+
+        $like = $this->_repository->saveLike($post->id, $account);
+        $this->assertTrue($like instanceof ForumPostLike);
+
+        $post->refresh();
+        
+        $this->assertEquals(1, $post->number_of_likes);
+        $this->assertEquals(1, $post->forum_thread->number_of_likes);
+
+        $this->_repository->deletePost($post);
+
+        $post->refresh();
+        
+        $this->assertEquals(1, $post->is_deleted);
+        $this->assertEquals(1, $post->number_of_likes);
+        $this->assertEquals(0, $post->forum_thread->number_of_likes);
+    }
+
+    private function createPostForUnitTest(Account $account)
+    {
+        $entity = ForumDiscussion::create([
+            'account_id' => $account->id
+        ]);
+
+        $threadData = $this->_repository->getThreadDataForEntity($entity, null, true);
+        $thread = $threadData->getThread();
+        $thread->subject = 'Test';
+        $post = new ForumPost([
+            'content' => 'This is a test post generated by a unit test.'
+        ]);
+
+        $this->_repository->savePost($post, $thread, $account);
+        return $post;
     }
 }

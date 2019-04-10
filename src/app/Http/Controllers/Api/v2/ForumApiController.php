@@ -48,7 +48,9 @@ class ForumApiController extends Controller
 
     public function show(Request $request, int $id)
     {
-        return $this->_discussRepository->getGroup($id);
+        return [
+            'group' => $this->_discussRepository->getGroup($id)
+        ];
     }
 
     public function threadForPost(Request $request, int $id)

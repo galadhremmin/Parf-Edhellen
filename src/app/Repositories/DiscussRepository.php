@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 use DB;
@@ -12,28 +13,34 @@ use BadMethodCallException;
 use App\Adapters\DiscussAdapter;
 use App\Http\Discuss\ContextFactory;
 use App\Models\Initialization\Morphs;
+use App\Events\{
+    ForumPostCreated,
+    ForumPostEdited,
+    ForumPostLikeCreated
+};
 use App\Models\{
     Account,
     ForumDiscussion,
     ForumGroup,
     ForumThread,
     ForumPost,
-    ForumPostLike
+    ForumPostLike,
+    ModelBase
 };
-use App\Events\{
-    ForumPostCreated,
-    ForumPostEdited,
-    ForumPostLikeCreated
+use App\Repositories\ValueObjects\{
+    ForumPostsInThreadValue,
+    ForumThreadForEntityValue,
+    ForumThreadMetadataValue,
+    ForumThreadsInGroupValue,
+    ForumThreadValue
 };
-use Illuminate\Database\Eloquent\Collection;
 
 class DiscussRepository
 {
     private $_contextFactory;
     private $_discussAdapter;
 
-    public function __construct(ContextFactory $contextFactory, DiscussAdapter $discussAdapter,
-        MailSettingRepository $mailSettingRepository) {
+    public function __construct(ContextFactory $contextFactory, DiscussAdapter $discussAdapter) {
         $this->_contextFactory = $contextFactory;
         $this->_discussAdapter = $discussAdapter;
     }
@@ -42,14 +49,12 @@ class DiscussRepository
      * Gets an associative array with the following keys:
      * * `groups`: all available groups in the system.
      * 
-     * @return array
+     * @return Collection
      */
     public function getGroups() 
     {
         $groups = ForumGroup::orderBy('name')->get();
-        return [
-            'groups' => $groups
-        ];
+        return $groups;
     }
 
     /**
@@ -57,14 +62,12 @@ class DiscussRepository
      * * `group`: the ForumGroup with the corresponding `$groupId`.
      *
      * @param integer $groupId
-     * @return array
+     * @return ForumGroup
      */
     public function getGroup(int $groupId)
     {
         $group = ForumGroup::findOrFail($groupId);
-        return [
-            'group' => $group
-        ];
+        return $group;
     }
 
     /**
@@ -78,11 +81,11 @@ class DiscussRepository
      * @param ForumGroup $group
      * @param Account $account
      * @param integer $pageNumber
-     * @return array
+     * @return ForumThreadsInGroupValue
      */
-    public function getThreadsInGroup(ForumGroup $group, Account $account = null, int $pageNumber = 0)
+    public function getThreadDataInGroup(ForumGroup $group, Account $account = null, int $pageNumber = 0)
     {
-        $this->resolveUser($account);
+        $this->resolveAccount($account);
 
         $noOfThreadsPerPage = config('ed.forum_thread_resultset_max_length');
         $noOfPages = intval(ceil(ForumThread::inGroup($group->id)->count() / $noOfThreadsPerPage));
@@ -99,19 +102,19 @@ class DiscussRepository
 
         // Filter out threads that the user is not authorized to see.
         $threads = $threads->filter(function ($thread) use($account) {
-            return $this->checkThreadAuthorization($thread, $account);
+            return $this->checkThreadAuthorization($account, $thread);
         });
         $this->_discussAdapter->adaptThreads($threads);
 
         $pages = $this->createPageArray($noOfPages);
 
-        return [
-            'current_page' => $currentPage,
-            'group' => $group,
-            'threads' => $threads,
-            'no_of_pages' => $noOfPages,
-            'pages' => $pages
-        ];
+        return new ForumThreadsInGroupValue([
+            'current_page'  => $currentPage,
+            'group'         => $group,
+            'threads'       => $threads,
+            'no_of_pages'   => $noOfPages,
+            'pages'         => $pages
+        ]);
     }
 
     /**
@@ -120,17 +123,17 @@ class DiscussRepository
      * * `thread`: the thread with the corresponding `$threadId`.
      *
      * @param integer $threadId
-     * @return array
+     * @return ForumThreadValue
      */
-    public function getThread(int $threadId)
+    public function getThreadData(int $threadId)
     {
         $thread = ForumThread::findOrFail($threadId);
         $context = $this->_contextFactory->create($thread->entity_type);
 
-        return [
+        return new ForumThreadValue([
             'context' => $context,
-            'thread' => $thread
-        ];
+            'thread'  => $thread
+        ]);
     }
 
     /**
@@ -145,13 +148,13 @@ class DiscussRepository
      * @param string $direction
      * @param integer $pageNumber
      * @param integer $jumpToId
-     * @return array
+     * @return ForumPostsInThreadValue
      */
-    public function getPostsInThread(ForumThread $thread, Account $account = null, $direction = 'desc',
+    public function getPostDataInThread(ForumThread $thread, Account $account = null, $direction = 'desc',
         int $pageNumber = 0, int $jumpToId = 0)
     {
-        $this->resolveUser($account);
-        if (! $this->checkThreadAuthorization($thread, $account)) {
+        $this->resolveAccount($account);
+        if (! $this->checkThreadAuthorization($account, $thread)) {
             if ($account === null) {
                 throw new AuthenticationException;
             }
@@ -168,7 +171,7 @@ class DiscussRepository
 
         if ($account !== null) {
             // has the current user liked the post? Don't care about the rest.
-            $loadingOptions['likes'] = function ($query) use ($account) {
+            $loadingOptions['forum_post_likes'] = function ($query) use ($account) {
                 $query->where('account_id', $account->id)
                     ->select('account_id', 'forum_post_id');  
             };
@@ -289,7 +292,7 @@ class DiscussRepository
 
         $pages = $this->createPageArray($noOfPages);
 
-        return [
+        return new ForumPostsInThreadValue([
             'posts'          => $posts,
             'current_page'   => $pageNumber,
             'pages'          => $pages,
@@ -297,11 +300,12 @@ class DiscussRepository
             'thread_id'      => $thread->id ?: null,
             'thread_post_id' => $firstPostInThreadId,
             'jump_post_id'   => $jumpToId
-        ];
+        ]);
     }
 
     /**
      * Gets the latest threads in Discuss, regardless of groups.
+     * @return Collection
      */
     public function getLatestThreads()
     {
@@ -310,16 +314,31 @@ class DiscussRepository
             ->get();
         $this->_discussAdapter->adaptThreads($threads);
 
-        return [
-            'threads' => $threads
-        ];
+        return $threads;
     }
 
     /**
      * Gets a thread entity (either existing thread or a new instance of a thread) associated with the specified entity.
+     * @param ModelBase|string $entityType
+     * @param int $id 
+     * @param boolean $createIfNotExists
+     * @param Account $account
+     * @return ForumThreadForEntityValue
      */
-    public function getThreadForEntity(string $entityType, int $id, $createIfNotExists = false, Account $account = null)
+    public function getThreadDataForEntity($entityType, int $id = null, $createIfNotExists = false, Account $account = null)
     {
+        if (is_object($entityType) && $entityType instanceof ModelBase) {
+            $id = $entityType->id;
+            $entityType = Morphs::getAlias($entityType);
+
+        } else if (! is_string($entityType)) {
+            throw new Exception(sprintf('Unsupported entity %s.', serialize($entityType)));
+        }
+
+        if (! is_numeric($id) || $id === 0) {
+            throw new Exception('$id is a required parameter.');
+        }
+
         $forumPostId = 0;
 
         // if the entity is a post, the thread is available as a relation on the ForumPost entity
@@ -352,7 +371,7 @@ class DiscussRepository
                     return null;
                 }
 
-                $this->resolveUser($account);
+                $this->resolveAccount($account);
                 if ($account === null) {
                     return null;
                 }
@@ -377,10 +396,10 @@ class DiscussRepository
             }
         }
 
-        return [
+        return new ForumThreadForEntityValue([
             'thread' => $thread,
             'forum_post_id' => $forumPostId
-        ];
+        ]);
     }
 
     /**
@@ -408,72 +427,9 @@ class DiscussRepository
         return $group;
     }
 
-    public function getPost(int $postId, Account $account = null)
+    public function getThreadMetadataData(int $threadId, array $postIds, Account $account = null)
     {
-        $this->resolveUser($account);
-
-        $post = ForumPost::find($postId);
-        if ($post === null) {
-            return null;
-        }
-
-        if (! $this->checkThreadAuthorization($post->forum_thread, $account)) {
-            return null;
-        }
-
-        $this->_discussAdapter->adaptPost($post);
-        return [
-            'post' => $post,
-        ];
-    }
-
-    /**
-     * Stores the post with as a reply to the the thread.
-     * @param ForumPost $originalPost reference to the post to be stored (and ultimately stored) in the database.
-     * @param ForumThread $thread the thread that the post should be associated with
-     * @param Account $account (optional) post author
-     * @return boolean
-     */
-    public function savePost(ForumPost &$originalPost, ForumThread $thread, Account $account = null)
-    {
-        $this->resolveUser($account);
-
-        if (! $this->checkThreadAuthorization($thread, $account)) {
-            return false;
-        }
-
-        try {
-            DB::beginTransaction();
-
-            $post = ForumPost::create([
-                'account_id'          => $account->id,
-                'forum_thread_id'     => $thread->id,
-                'number_of_likes'     => 0,
-
-                'content'             => $originalPost->content,
-                'parent_form_post_id' => $originalPost->parent_form_post_id,
-            ]);
-
-            $thread->account_id = $account->id;
-            $thread->number_of_posts = $thread->forum_posts->count();
-            $thread->save();
-
-            DB::commit();
-
-            // Abandon the original post by pointing at the post we just created.
-            $originalPost = $post;
-        } catch (\Exception $ex) {
-            DB::rollBack();
-            throw $ex;
-        }
-
-        event(new ForumPostCreated($post, $account->id));
-        return true;
-    }
-
-    public function getMetadata(int $threadId, array $postIds, Account $account = null)
-    {
-        $this->resolveUser($account);
+        $this->resolveAccount($account);
 
         $allLikes = ForumPostLike::whereIn('forum_post_id', $postIds)
             ->get();
@@ -501,16 +457,94 @@ class DiscussRepository
             $countPerPost[$postId] = 0;
         }
 
-        return [
+        return new ForumThreadMetadataValue([
             'forum_post_id' => $postIds,
             'likes' => $likedByAccount,
             'likes_per_post' => $countPerPost
-        ];
+        ]);
+    }
+
+    /**
+     * @return ForumPost
+     */
+    public function getPost(int $postId, Account $account = null)
+    {
+        $this->resolveAccount($account);
+
+        $post = ForumPost::find($postId);
+        if ($post === null) {
+            return null;
+        }
+
+        if (! $this->checkThreadAuthorization($account, $post->forum_thread)) {
+            return null;
+        }
+
+        $this->_discussAdapter->adaptPost($post);
+        return $post;
+    }
+
+    public function saveThread(ForumThread $thread)
+    {
+        if (empty($thread->subject)) {
+            throw new Exception('You must specify a subject before you can save the thread.');
+        }
+
+        if ($thread->entity === null) {
+            throw new Exception('You must associate a thread with an entity.');
+        }
+
+        $thread->save();
+    }
+
+    /**
+     * Stores the post with as a reply to the the thread.
+     * @param ForumPost $originalPost reference to the post to be stored (and ultimately stored) in the database.
+     * @param ForumThread $thread the thread that the post should be associated with
+     * @param Account $account (optional) post author
+     * @return boolean
+     */
+    public function savePost(ForumPost &$originalPost, ForumThread $thread, Account $account = null)
+    {
+        $this->resolveAccount($account);
+        if (! $this->checkPostAuthorization($account, $originalPost, $thread)) {
+            return false;
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $this->saveThread($thread);
+
+            $post = ForumPost::create([
+                'account_id'          => $account->id,
+                'forum_thread_id'     => $thread->id,
+                'number_of_likes'     => 0,
+
+                'content'             => $originalPost->content,
+                'parent_form_post_id' => $originalPost->parent_form_post_id,
+            ]);
+
+            $thread->account_id = $account->id;
+            $thread->number_of_posts = $thread->forum_posts()->count();
+            $thread->save();
+
+            DB::commit();
+
+            // Abandon the original post by pointing at the post we just created.
+            $originalPost = $post;
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            throw $ex;
+        }
+
+        event(new ForumPostCreated($post, $account->id));
+        return true;
     }
 
     public function saveLike(int $postId, Account $account = null)
     {
-        $this->resolveUser($account);
+        $this->resolveAccount($account);
         if ($account === null) {
             return false;
         }
@@ -520,23 +554,93 @@ class DiscussRepository
             return false;
         }
 
-        $like = ForumPostLike::forAccount($account)
-            ->where('forum_post_id', $post->id)
-            ->first();
-        
-        if ($like === null) {
-            $like = ForumPostLike::create([
-                'account_id' => $account->id,
-                'forum_post_id' => $post->id
-            ]);
+        $like = null;
+        try {
+            DB::beginTransaction();
 
+            $like = ForumPostLike::forAccount($account)
+                ->where('forum_post_id', $post->id)
+                ->first();
+            
+            if ($like === null) {
+                $like = ForumPostLike::create([
+                    'account_id' => $account->id,
+                    'forum_post_id' => $post->id
+                ]);
+            } else {
+                $like->delete();
+                $like = null;
+            }
+
+            // Count number of likes on a post level
+            $post->number_of_likes = $post->forum_post_likes()->count();
+            $post->save();
+
+            // Count number of likes on a thread level
+            $this->updateForumThread($post->forum_thread);
+
+            DB::commit();
+        } catch (Exception $ex) {
+            DB::rollBack();
+            throw $ex;
+        }
+
+        // notify only when a like is created.
+        if ($like !== null) {
             event(new ForumPostLikeCreated($post, $account->id));
-        } else {
-            $like->delete();
-            $like = null;
         }
 
         return $like;
+    }
+
+    public function deletePost(ForumPost $post, Account $account = null)
+    {
+        $this->resolveAccount($account);
+        if (! $this->checkPostAuthorization($account, $post)) {
+            return false;
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $post->is_deleted = 1;
+            $post->is_hidden = 0;
+            $post->save();
+
+            $this->updateForumThread($post->forum_thread);
+
+            DB::commit();
+        }
+        catch (Exception $ex) {
+            DB::rollBack();
+            throw $ex;
+        }
+
+        return true;
+    }
+
+    private function updateForumThread(ForumThread $thread)
+    {
+        $postIds = $thread->forum_posts() //
+            ->where([
+                ['is_deleted', '<>', 1],
+                ['is_hidden', '<>', 1]
+            ]) //
+            ->select('id') //
+            ->pluck('id');
+
+        $noOfPosts = $postIds->count();
+        $noOfLikes = $noOfPosts === 0 //
+            ? 0 : ForumPostLike::whereIn('forum_post_id', $postIds)->count();
+
+        // Handle deletion case - do not 'bump' the thread when people remove their posts.
+        if ($thread->number_of_posts >= $noOfPosts) {
+            $thread->timestamps = false;
+        }
+
+        $thread->number_of_posts = $noOfPosts;
+        $thread->number_of_likes = $noOfLikes;
+        $thread->save();
     }
 
     /**
@@ -545,11 +649,24 @@ class DiscussRepository
      * @param Account $account
      * @return void
      */
-    private function resolveUser(Account &$account = null)
+    private function resolveAccount(Account &$account = null)
     {
         if ($account === null) {
             $account = Auth::user();
         }
+    }
+
+    private function checkPostAuthorization(Account $account, ForumPost $post, ForumThread $thread = $post->forum_thread)
+    {
+        if (! $this->checkThreadAuthorization($account, $thread)) {
+            return false;
+        }
+
+        if ($post->id === 0) {
+            return true;
+        }
+        
+        return $post->account_id === $account->id || $account->isAdministrator();
     }
 
     /**
@@ -559,8 +676,12 @@ class DiscussRepository
      * @param Account $account
      * @return bool
      */
-    private function checkThreadAuthorization(ForumThread $thread, Account $account = null)
+    private function checkThreadAuthorization(Account $account, ForumThread $thread)
     {
+        if ($account === null) {
+            return false;
+        }
+
         $context = $this->_contextFactory->create($thread->entity_type);
         return $context->available($thread->entity_id, $account);
     }

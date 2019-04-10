@@ -26,9 +26,11 @@ class DiscussApiController extends Controller
         $this->_discussRepository = $discussRepository;
     }
 
-    public function getGroups(Request $request)
+    public function getGroups()
     {
-        return $this->_discussRepository->getGroups();
+        return [
+            'groups' => $this->_discussRepository->getGroups()
+        ];
     }
 
     public function getGroupAndThreads(Request $request, int $groupId)
@@ -37,7 +39,7 @@ class DiscussApiController extends Controller
         $page = $this->getPageFromRequest($request);
         $user = $request->user();
 
-        return $this->_discussRepository->getThreadsInGroup($group['group'], $user, $page);
+        return $this->_discussRepository->getThreadDataInGroup($group, $user, $page);
     }
 
     /**
@@ -53,8 +55,7 @@ class DiscussApiController extends Controller
      */
     public function getThread(Request $request, int $threadId)
     {
-        $thread = $this->_discussRepository->getThread($threadId);
-        unset($thread['context']); // Do not communicate `context` to the customer
+        $threadData = $this->_discussRepository->getThreadData($threadId);
 
         $page = $this->getPageFromRequest($request);
         $user = $request->user();
@@ -69,9 +70,9 @@ class DiscussApiController extends Controller
             $postId = intval($data[self::PARAMETER_FORUM_POST_ID]);
         }
 
-        $posts = $this->_discussRepository->getPostsInThread($thread['thread'], $user,
+        $postData = $this->_discussRepository->getPostDataInThread($threadData->getThread(), $user,
             self::DEFAULT_SORT_BY_DATE_ORDER, $page, $postId);
-        return $thread + $posts;
+        return $threadData->getAllValues() + $postData->getAllValues();
     }
 
     /**
@@ -84,7 +85,9 @@ class DiscussApiController extends Controller
             return response(null, 404);
         }
 
-        return $post;
+        return [
+            'post' => $post
+        ];
     }
 
     /**
@@ -92,13 +95,13 @@ class DiscussApiController extends Controller
      */
     public function resolveThread(Request $request, string $entityType, int $entityId)
     {
-        $threadData = $this->_discussRepository->getThreadForEntity($entityType, $entityId);
+        $threadData = $this->_discussRepository->getThreadDataForEntity($entityType, $entityId);
         if ($threadData === null) {
             return response(null, 404);
         }
 
-        $thread = $threadData['thread'];
-        $forumPostId = $threadData['forum_post_id'];
+        $thread = $threadData->getThread();
+        $forumPostId = $threadData->getForumPostId();
         $linker = new LinkHelper();
 
         return redirect($linker->forumThread($thread->forum_group_id, $thread->forum_group->name, 
@@ -118,7 +121,7 @@ class DiscussApiController extends Controller
 
         $threadId = intval($data['forum_thread_id']);
         $postsId = $data['forum_post_id'];
-        return $this->_discussRepository->getMetadata($threadId, $postsId);
+        return $this->_discussRepository->getThreadMetadataData($threadId, $postsId, $user);
     }
 
     /**
@@ -139,8 +142,8 @@ class DiscussApiController extends Controller
             //'subject'             => 'sometimes|string'
         ]);
 
-        $threadData = $this->_discussRepository->getThread($data[self::PARAMETER_FORUM_THREAD_ID]);
-        $thread = $threadData['thread'];
+        $threadData = $this->_discussRepository->getThreadData($data[self::PARAMETER_FORUM_THREAD_ID]);
+        $thread = $threadData->getThread();
 
         $post = new ForumPost([
             self::PARAMETER_FORUM_POST_CONTENT => $data[self::PARAMETER_FORUM_POST_CONTENT]
@@ -159,7 +162,14 @@ class DiscussApiController extends Controller
 
     public function deletePost(Request $request, int $postId)
     {
-        // TODO
+        $account = $request->user();
+
+        $post = $this->_discussRepository->getPost($postId, $account);
+        $ok = $this->_discussRepository->deletePost($post, $account);
+
+        return $ok ? [
+            'post' => $post
+        ] : response(null, 400);
     }
 
     public function updatePost(Request $request, int $postId)

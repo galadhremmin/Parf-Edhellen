@@ -51,18 +51,20 @@ class DiscussController extends Controller
 
     public function groups(Request $request)
     {
-        $model = $this->_discussRepository->getGroups();
-        return view('discuss.groups', $model);
+        $groups = $this->_discussRepository->getGroups();
+        return view('discuss.groups', [
+            'groups' => $groups
+        ]);
     }
 
     public function group(Request $request, int $id)
     {
         $currentPage = max(0, intval($request->input('offset')));
 
-        $groupData = $this->_discussRepository->getGroup($id);
-        $model = $this->_discussRepository->getThreadsInGroup($groupData['group'], $request->user(), $currentPage);
+        $group = $this->_discussRepository->getGroup($id);
+        $model = $this->_discussRepository->getThreadDataInGroup($group, $request->user(), $currentPage);
         
-        return view('discuss.group', $model);
+        return view('discuss.group', $model->getAllValues());
     }
 
     public function show(Request $request, int $groupId, string $groupSlug, int $id)
@@ -70,12 +72,14 @@ class DiscussController extends Controller
         $currentPage = max(0, intval($request->get('offset')));
         $forumPostId = intval($request->get('forum_post_id'));
 
-        $groupData = $this->_discussRepository->getGroup($groupId);
-        $threadData = $this->_discussRepository->getThread($id);
-        $posts = $this->_discussRepository->getPostsInThread($threadData['thread'], $request->user(), 'asc', $currentPage, $forumPostId);
+        $groupData = [
+            'group' => $this->_discussRepository->getGroup($groupId)
+        ];
+        $threadData = $this->_discussRepository->getThreadData($id);
+        $postData = $this->_discussRepository->getPostDataInThread($threadData->getThread(), $request->user(), 'asc', $currentPage, $forumPostId);
 
-        return view('discuss.thread', $threadData + $groupData + [
-            'preloadedPosts' => $posts
+        return view('discuss.thread', $threadData->getAllValues() + $groupData + [
+            'preloadedPosts' => $postData->getAllValues()
         ]);
     }
 

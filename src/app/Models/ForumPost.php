@@ -13,7 +13,7 @@ class ForumPost extends ModelBase implements Interfaces\IHasFriendlyName
         return $this->belongsTo(ForumThread::class);
     }
 
-    public function likes() 
+    public function forum_post_likes() 
     {
         return $this->hasMany(ForumPostLike::class);
     }

@@ -49,7 +49,7 @@ class MailSettingRepositoryTest extends TestCase
     private $_accounts;
     private $_accountIds;
 
-    public function setUp() 
+    public function setUp(): void
     {
         parent::setUp();
         $this->setUpAuth();
@@ -86,7 +86,7 @@ class MailSettingRepositoryTest extends TestCase
         $this->_repository = resolve(MailSettingRepository::class);
     }
 
-    public function tearDown() 
+    public function tearDown(): void
     {
         DB::rollBack();
         parent::tearDown();
