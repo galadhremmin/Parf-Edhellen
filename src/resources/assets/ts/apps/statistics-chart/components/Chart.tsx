@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import React, {
+    useCallback,
+    useState,
+} from 'react';
+import { Waypoint } from 'react-waypoint';
 
 import {
     IData,
     IProps,
 } from './Chart._types';
 import GrowthChart, { ReservedDatasetProperties } from './GrowthChart';
+import Spinner from '@root/components/Spinner';
 
 const loadAccounts = (data: IData[]) => {
     const accounts = data.reduce((carry, item) => {
@@ -25,9 +30,14 @@ const loadAccounts = (data: IData[]) => {
 
 function Chart(props: IProps) {
     const [ accounts, setAccounts ] = useState<string[]>(null);
+    const [ isVisible, setIsVisible ] = useState<boolean>(false);
     const {
         data,
     } = props;
+
+    const _onWaypointEnter = useCallback(() => {
+        setIsVisible(true);
+    }, [ setIsVisible ]);
 
     // This component does currently not support changing of the data property.
     // it is currently only used in a context where the data property will not change, and
@@ -36,7 +46,14 @@ function Chart(props: IProps) {
         setAccounts(loadAccounts(data));
     }
 
-    return <GrowthChart accounts={accounts} data={data} />;
+    return <Waypoint onEnter={_onWaypointEnter}>
+        <div>
+            {isVisible
+                ? <GrowthChart accounts={accounts} data={data} />
+                : <Spinner />
+            };
+        </div>
+    </Waypoint>
 }
 
 export default Chart;

@@ -187,12 +187,19 @@ class DiscussRepository
         // input parameters.
         $maxLength = config('ed.forum_resultset_max_length');
 
+        // Hidden posts are automatically excluded. Deleted posts might still be shown, which is why
+        // we are not filtering out deleted.
+        $filters = [
+            ['is_hidden', 0],
+            ['is_deleted', 0]
+        ];
+
         // Determine the number of 'pages' there are, which is relevant when
         // retrieving things in an ascending order.
         $noOfPages = 0;
         if ($ascending) {
             $noOfPages = ceil($thread->forum_posts()
-                ->where('is_hidden', 0)
+                ->where($filters)
                 ->count() / $maxLength
             );
         }
@@ -209,13 +216,6 @@ class DiscussRepository
         //                    always the least ID of the result set. The result set is 'paginated'
         //                    by the client continuously sending the last, least major ID to the API.
         // 
-        // Hidden posts are automatically excluded. Deleted posts might still be shown, which is why
-        // we are not filtering out deleted.
-        $filters = [
-            ['is_hidden', 0],
-            ['is_deleted', 0]
-        ];
-
         $skip = 0;
         if ($ascending) {
             if ($jumpToId !== 0) {
@@ -397,6 +397,24 @@ class DiscussRepository
     }
 
     /**
+     * Gets the number of posts associated with the specified entities
+     * @param string $className class mane for the corresponding entity
+     * @param array $ids IDs to the corresponding entities
+     */
+    public function getNumberOfPostsForEntities(string $className, array $ids)
+    {
+        $entityType = Morphs::getAlias($className);
+        $sum = ForumThread::whereIn('entity_id', $ids)
+            ->where('entity_type', $entityType)
+            ->select('entity_id', DB::raw('SUM(number_of_posts) as number_of_posts'))
+            ->groupBy('entity_id')
+            ->pluck('number_of_posts', /* key: */ 'entity_id')
+            ->toArray();
+
+        return $sum;
+    }
+
+    /**
      * Gets the default forum group associated with the specified entity type.
      * @param string $entityType entity type ("morph")
      * @return ForumGroup
@@ -548,7 +566,7 @@ class DiscussRepository
             throw $ex;
         }
 
-        event(new ForumPostCreated($post, $account->id));
+        event(new ForumPostCreated($originalPost, $account->id));
         return true;
     }
 

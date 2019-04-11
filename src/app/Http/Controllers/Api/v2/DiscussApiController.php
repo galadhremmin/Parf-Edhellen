@@ -236,7 +236,28 @@ class DiscussApiController extends Controller
 
     public function updatePost(Request $request, int $postId)
     {
-        // TODO
+        $account = $request->user();
+        $postData = $request->validate([
+            self::PARAMETER_FORUM_POST_CONTENT => 'required|string|min:1'
+        ]);
+        $threadData = $request->validate([
+            self::PARAMETER_FORUM_POST_SUBJECT => 'sometimes|string|min:3|max:512'
+        ]);
+
+        $post = $this->_discussRepository->getPost($postId, $account);
+        if ($post === null) {
+            return response(null, 404);
+        }
+
+        $post->fill($postData);
+
+        $thread = $post->forum_thread;
+        if (count($threadData)) {
+            $thread->fill($threadData);
+        }
+
+        $ok = $this->_discussRepository->savePost($post, $thread, $account);
+        return response(null, $ok ? 200 : 403);
     }
 
     public function storeLike(Request $request)

@@ -41,7 +41,7 @@
             <li class="{{ active('about') }}"><a href="{{ route('about') }}">@lang('about.title')</a></li>
             <li class="{{ active(['sentence.public', 'sentence.public.language', 'sentence.public.sentence']) }}"><a href="{{ route('sentence.public') }}">@lang('sentence.title')</a></li>
             <li class="{{ active(['flashcard', 'flashcard.cards']) }}"><a href="{{ route('flashcard') }}">@lang('flashcard.title')</a></li>
-            <li class="{{ active(['discuss.index', 'discuss.group', 'discuss.show', 'discuss.members', 'discuss.member-list']) }}">
+            <li class="{{ active(['discuss.index', 'discuss.group', 'discuss.show', 'discuss.member-list']) }}">
               <a href="{{ route('discuss.index') }}">@lang('discuss.title')</a>
             </li>
           </ul>

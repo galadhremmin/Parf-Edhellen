@@ -103,7 +103,7 @@ function EditPost(props: IProps) {
                 onCancel={_onDismissDialog}
                 onChange={_onFormChange}
                 onSubmit={_onSubmit}
-                subjectEnabled={post._isThreadPost}
+                subjectEnabled={post._isThreadPost === true}
                 subject={subject}
             />
         </Dialog>
