@@ -75,6 +75,7 @@ export interface ILikePostResponse {
 export interface IPostRequest {
     forumPostId: number;
     includeDeleted?: boolean;
+    markdown?: boolean;
 }
 
 export interface IPostResponse {
@@ -100,10 +101,12 @@ export interface IPostEntity {
     account: IAccountEntity;
     content: string;
     createdAt: string;
+    forumThread?: IThreadEntity;
+    forumThreadId?: number;
     id: number;
-    isDeleted: boolean;
+    isDeleted?: boolean;
     numberOfLikes?: number;
-    parentForumPostId: number;
+    parentForumPostId?: number;
 
     _isFocused?: boolean;
     _isThreadPost?: boolean;

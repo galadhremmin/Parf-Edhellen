@@ -48,6 +48,7 @@ export default class DiscussApiConnector {
             this._makePath(`post/${payload.forumPostId}`),
             {
                 includeDeleted: payload.includeDeleted ? 1 : 0,
+                markdown: payload.markdown ? 1 : 0,
             },
         );
     }

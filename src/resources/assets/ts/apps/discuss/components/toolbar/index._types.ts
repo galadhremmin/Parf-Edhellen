@@ -3,6 +3,7 @@ import {
     IPostEntity,
     IThreadEntity,
 } from '@root/connectors/backend/DiscussApiConnector._types';
+import DiscussApiConnector from '@root/connectors/backend/DiscussApiConnector';
 
 import { IThreadMetadataState } from '../../reducers/ThreadMetadataReducer._types';
 
@@ -12,6 +13,7 @@ export interface IThreadMetadataArgs {
 }
 
 export interface IProps {
+    apiConnector?: DiscussApiConnector;
     onPostChange?: ComponentEventHandler<number>;
     onThreadMetadataChange?: ComponentEventHandler<IThreadMetadataArgs>;
     post: IPostEntity;

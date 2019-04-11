@@ -10,7 +10,6 @@ use DB;
 use Exception;
 use BadMethodCallException;
 
-use App\Adapters\DiscussAdapter;
 use App\Http\Discuss\ContextFactory;
 use App\Models\Initialization\Morphs;
 use App\Events\{
@@ -38,11 +37,10 @@ use App\Repositories\ValueObjects\{
 class DiscussRepository
 {
     private $_contextFactory;
-    private $_discussAdapter;
 
-    public function __construct(ContextFactory $contextFactory, DiscussAdapter $discussAdapter) {
+    public function __construct(ContextFactory $contextFactory)
+    {
         $this->_contextFactory = $contextFactory;
-        $this->_discussAdapter = $discussAdapter;
     }
 
     /**
@@ -104,7 +102,6 @@ class DiscussRepository
         $threads = $threads->filter(function ($thread) use($account) {
             return $this->checkThreadAuthorization($account, $thread);
         });
-        $this->_discussAdapter->adaptThreads($threads);
 
         $pages = $this->createPageArray($noOfPages);
 
@@ -286,9 +283,6 @@ class DiscussRepository
             })) {
                 $posts->prepend($firstPostInThread);
             }
-
-            // Adapt the posts for the view
-            $this->_discussAdapter->adaptPosts($posts);
         }
 
         $pages = $this->createPageArray($noOfPages);
@@ -313,7 +307,6 @@ class DiscussRepository
         $threads = ForumThread::orderBy('updated_at', 'desc')
             ->take(10)
             ->get();
-        $this->_discussAdapter->adaptThreads($threads);
 
         return $threads;
     }
@@ -472,7 +465,11 @@ class DiscussRepository
     {
         $this->resolveAccount($account);
 
-        $post = ForumPost::find($postId);
+        $post = ForumPost::where([
+                ['id', $postId],
+                ['is_hidden', 0]
+            ])->first();
+
         if ($post === null) {
             return null;
         }
@@ -485,8 +482,8 @@ class DiscussRepository
         } else if (! $this->checkThreadAuthorization($account, $post->forum_thread)) {
             return null;
         }
-
-        $this->_discussAdapter->adaptPost($post);
+        
+        $post->load('account');
         return $post;
     }
 
@@ -635,6 +632,7 @@ class DiscussRepository
     private function updateForumThread(ForumThread $thread)
     {
         $postIds = $thread->forum_posts() //
+            ->orderBy('created_at', 'asc')
             ->where([
                 ['is_deleted', '<>', 1],
                 ['is_hidden', '<>', 1]
@@ -653,6 +651,18 @@ class DiscussRepository
 
         $thread->number_of_posts = $noOfPosts;
         $thread->number_of_likes = $noOfLikes;
+
+        // Make sure that `account_id` reflects the `account_id` for the last record associated with
+        // the given thread.
+        if ($noOfPosts > 0) {
+            $postId = $postIds->last();
+            $latest = ForumPost::where('id', $postId) //
+                ->select('account_id') //
+                ->pluck('account_id');
+
+            $thread->account_id = $latest->first();
+        }
+
         $thread->save();
     }
 

@@ -8,8 +8,10 @@ use App\Http\Controllers\Controller;
 use App\Models\{
     ForumPost
 };
+use App\Adapters\DiscussAdapter;
 use App\Repositories\DiscussRepository;
 use App\Helpers\LinkHelper;
+use App\Http\Controllers\Traits\CanAdaptDiscuss;
 
 class DiscussApiController extends Controller 
 {
@@ -29,10 +31,15 @@ class DiscussApiController extends Controller
     const PROPERTY_POST = 'post';
     const PROPERTY_POST_LIKE = 'like';
 
+    use CanAdaptDiscuss {
+        CanAdaptDiscuss::__construct as setupDiscussAdapter;
+    }
+
     protected $_discussRepository;
 
-    public function __construct(DiscussRepository $discussRepository)
+    public function __construct(DiscussAdapter $discussAdapter, DiscussRepository $discussRepository)
     {
+        $this->setupDiscussAdapter($discussAdapter);
         $this->_discussRepository = $discussRepository;
     }
 
@@ -49,7 +56,9 @@ class DiscussApiController extends Controller
         $page = $this->getPageFromRequest($request);
         $user = $request->user();
 
-        return $this->_discussRepository->getThreadDataInGroup($group, $user, $page);
+        return $this->adaptForumThreadsInGroup(
+            $this->_discussRepository->getThreadDataInGroup($group, $user, $page)
+        );
     }
 
     /**
@@ -57,7 +66,9 @@ class DiscussApiController extends Controller
      */
     public function getLatestThreads(Request $request)
     {
-        return $this->_discussRepository->getLatestThreads();
+        return $this->adaptForumThreads(
+            $this->_discussRepository->getLatestThreads()
+        );
     }
 
     /**
@@ -82,7 +93,11 @@ class DiscussApiController extends Controller
 
         $postData = $this->_discussRepository->getPostDataInThread($threadData->getThread(), $user,
             self::DEFAULT_SORT_BY_DATE_ORDER, $page, $postId);
-        return $threadData->getAllValues() + $postData->getAllValues();
+
+        return array_merge(
+            $this->adaptForumThread($threadData)->getAllValues(),
+            $this->adaptForumPostsInThread($postData)->getAllValues()
+        );
     }
 
     /**
@@ -91,7 +106,8 @@ class DiscussApiController extends Controller
     public function getPost(Request $request, int $postId)
     {
         $data = $request->validate([
-            'include_deleted' => 'sometimes|boolean'
+            'include_deleted' => 'sometimes|boolean',
+            'markdown' => 'sometimes|boolean'
         ]);
 
         $includeDeleted = isset($data['include_deleted'])
@@ -101,6 +117,10 @@ class DiscussApiController extends Controller
         $post = $this->_discussRepository->getPost($postId, $account, $includeDeleted);
         if ($post === null) {
             return response(null, 404);
+        }
+
+        if (! isset($data['markdown']) || boolval($data['markdown']) === false) {
+            $this->adaptForumPost($post);
         }
 
         return [

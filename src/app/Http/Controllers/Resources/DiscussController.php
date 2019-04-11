@@ -3,42 +3,38 @@
 namespace App\Http\Controllers\Resources;
 
 use Illuminate\Http\Request;
-use Illuminate\Auth\AuthenticationException;
 use Cache; 
 use Carbon\Carbon;
 
 use App\Http\Controllers\Controller;
 use App\Http\Discuss\ContextFactory;
+use App\Http\Controllers\Traits\CanAdaptDiscuss;
 use App\Adapters\DiscussAdapter;
-use App\Models\Initialization\Morphs;
-use App\Events\ForumPostCreated;
 use App\Repositories\{
     DiscussRepository,
     StatisticsRepository
 };
-use App\Helpers\{
-    LinkHelper,
-    StringHelper
-};
 use App\Models\{
-    Account,
-    ForumDiscussion,
-    ForumGroup,
-    ForumThread,
-    ForumPost
+    Account
 };
 
 class DiscussController extends Controller
 {
-    protected $_discussAdapter;
+    use CanAdaptDiscuss {
+        CanAdaptDiscuss::__construct as setupDiscussAdapter;
+    }
+
     protected $_contextFactory;
     protected $_discussRepository;
     protected $_statisticsRepository;
 
-    public function __construct(DiscussAdapter $discussAdapter, ContextFactory $contextFactory,
-        DiscussRepository $discussRepository, StatisticsRepository $statisticsRepository) 
+    public function __construct(
+        DiscussAdapter $discussAdapter,
+        ContextFactory $contextFactory,
+        DiscussRepository $discussRepository,
+        StatisticsRepository $statisticsRepository) 
     {
-        $this->_discussAdapter       = $discussAdapter;
+        $this->setupDiscussAdapter($discussAdapter);
         $this->_discussRepository    = $discussRepository;
         $this->_contextFactory       = $contextFactory;
         $this->_statisticsRepository = $statisticsRepository;
@@ -62,7 +58,9 @@ class DiscussController extends Controller
         $currentPage = max(0, intval($request->input('offset')));
 
         $group = $this->_discussRepository->getGroup($id);
-        $model = $this->_discussRepository->getThreadDataInGroup($group, $request->user(), $currentPage);
+        $model = $this->adaptForumThreadsInGroup(
+            $this->_discussRepository->getThreadDataInGroup($group, $request->user(), $currentPage)
+        );
         
         return view('discuss.group', $model->getAllValues());
     }
@@ -75,8 +73,12 @@ class DiscussController extends Controller
         $groupData = [
             'group' => $this->_discussRepository->getGroup($groupId)
         ];
-        $threadData = $this->_discussRepository->getThreadData($id);
-        $postData = $this->_discussRepository->getPostDataInThread($threadData->getThread(), $request->user(), 'asc', $currentPage, $forumPostId);
+        $threadData = $this->adaptForumThread(
+            $this->_discussRepository->getThreadData($id)
+        );
+        $postData = $this->adaptForumPostsInThread(
+            $this->_discussRepository->getPostDataInThread($threadData->getThread(), $request->user(), 'asc', $currentPage, $forumPostId)
+        );
 
         return view('discuss.thread', $threadData->getAllValues() + $groupData + [
             'preloadedPosts' => $postData->getAllValues()

@@ -62,7 +62,7 @@ function DeletePost(props: IProps) {
             <p>
                 Post ID {post.id} was authored by <strong><ProfileLink account={post.account} /></strong>{' '}
                 on <strong><DateLabel dateTime={post.createdAt} /></strong>{' '}
-                and has accrued <strong>{threadMetadata.likesPerPost[post.id]}</strong> thumbs up.
+                and has earned <strong>{threadMetadata.likesPerPost[post.id]}</strong> thumbs up.
             </p>
             <p>Are you sure you want to proceed with the deletion?</p>
         </Dialog>

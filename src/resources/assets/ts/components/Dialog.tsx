@@ -8,6 +8,7 @@ import { IProps } from './Dialog._types';
 
 function Dialog<V>(props: IProps<V>) {
     const {
+        actionBar,
         children,
         onConfirm,
         onDismiss,
@@ -41,13 +42,17 @@ function Dialog<V>(props: IProps<V>) {
             <div className="modal-body">
                 {children}
             </div>
-            <div className="modal-footer">
+            {actionBar && <div className="modal-footer">
                 <button type="button" className="btn btn-default" onClick={_onDismissDialog}>Close</button>
                 {onConfirm && <button type="button" className="btn btn-primary" onClick={_onConfirm}>OK</button>}
-            </div>
+            </div>}
         </div>
     </Modal>;
 }
+
+Dialog.defaultProps = {
+    actionBar: true,
+} as Partial<IProps<any>>;
 
 const DialogStyles = {
     content: {
@@ -55,6 +60,9 @@ const DialogStyles = {
         marginRight: '-50%',
         right: 'auto',
         transform: 'translate(-50%, 0%)',
+    },
+    overlay: {
+        zIndex: 1000,
     },
 };
 
