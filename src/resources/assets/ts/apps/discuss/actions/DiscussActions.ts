@@ -55,7 +55,9 @@ export default class DiscussActions {
     public threadMetadata(args: IThreadMetadataAction): ReduxThunk {
         return async (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
             // Bail if this request is already being processed.
-            if (getState().threadMetadata.loading) {
+            if (getState().threadMetadata.loading ||
+                args.forumPostId.length < 1 ||
+                args.forumThreadId === null) {
                 return;
             }
 

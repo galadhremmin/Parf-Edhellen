@@ -29,18 +29,14 @@
       ])
     </div>
 
-    @include('_shared._comments', [
-      'entity_id' => $v->id,
-      'morph'     => 'gloss',
-      'enabled'   => $v->is_latest
+    @include('discuss._standalone', [
+      'entity_id'   => $v->id,
+      'entity_type' => 'gloss',
+      'enabled'     => $v->is_latest
     ])
     <hr>
   @endforeach
 </div>
-@endsection
-
-@section('scripts')
-  <script type="text/javascript" src="@assetpath(/js/comment.js)" async></script>
 @endsection
 
 @section('styles')
@@ -49,4 +45,7 @@
       border: none;
     }
   </style>
+  @section('styles')
+  @include('discuss._css')
+  @endsection
 @endsection

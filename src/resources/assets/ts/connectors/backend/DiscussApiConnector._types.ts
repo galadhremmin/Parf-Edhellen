@@ -4,13 +4,13 @@ export interface IThreadRequest {
     entityId?: number;
     entityType: string;
     forumPostId?: number;
-    id: number;
+    id?: number;
     offset?: number;
 }
 
 export interface IThreadResponse {
     currentPage: number;
-    jumpPostId: number;
+    jumpPostId?: number;
     pages: Array<string | number>;
     noOfPages: number;
     posts: IPostEntity[];

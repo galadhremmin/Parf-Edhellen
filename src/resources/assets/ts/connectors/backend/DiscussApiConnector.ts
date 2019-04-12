@@ -20,18 +20,20 @@ export default class DiscussApiConnector {
     constructor(private _api = new SharedReference(ApiConnector)) {
     }
 
-    public thread(payload: IThreadRequest) {
+    public async thread(payload: IThreadRequest) {
         const params: Partial<IThreadRequest> = {};
+        
         if (payload.offset !== undefined) {
             params.offset = payload.offset;
         }
+
         if (payload.forumPostId !== undefined) {
             params.forumPostId = payload.forumPostId;
         }
 
-        return this._api.value.get<IThreadResponse>(
+        return await this._api.value.get<IThreadResponse>(
             this._makePath('thread/' +
-                payload.id || `resolve/${payload.entityType}/${payload.entityId}`,
+                (payload.id || `${payload.entityType}/${payload.entityId}`),
             ),
             params,
         );

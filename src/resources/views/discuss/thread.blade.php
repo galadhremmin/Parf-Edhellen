@@ -32,7 +32,7 @@
   </article>
 @endsection
 @section('styles')
-<link rel="stylesheet" href="@assetpath(style-discuss.css)">
+@include('discuss._css')
 @endsection
 @section('scripts')
 

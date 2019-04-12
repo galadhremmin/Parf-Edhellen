@@ -18,6 +18,7 @@ class DiscussApiController extends Controller
     const DEFAULT_SORT_BY_DATE_ORDER = 'asc';
 
     const PARAMETER_PAGE_NUMBER = 'offset';
+    const PARAMETER_CREATE = 'create';
     const PARAMETER_ENTITY_TYPE = 'entity_type';
     const PARAMETER_ENTITY_ID = 'entity_id';
     const PARAMETER_FORUM_POST_CONTENT = 'content';
@@ -100,6 +101,23 @@ class DiscussApiController extends Controller
         );
     }
 
+    public function getThreadByEntity(Request $request, string $entityType, int $entityId)
+    {
+        $threadData = $this->_discussRepository->getThreadDataForEntity($entityType, $entityId, true, $request->user());
+
+        if ($threadData->getThread()->exists) {
+            return $this->getThread($request, $threadData->getThread()->id);
+        }
+
+        return array_merge(
+            $threadData->getAllValues(),
+            [
+                // no posts are available since the thread does not actually exist.
+                'posts' => []
+            ]
+        );
+    }
+
     /**
      * HTTP GET. Gets data for the specified post.
      */
@@ -133,17 +151,29 @@ class DiscussApiController extends Controller
      */
     public function resolveThread(Request $request, string $entityType, int $entityId)
     {
-        $threadData = $this->_discussRepository->getThreadDataForEntity($entityType, $entityId);
+        $data = $request->validate([
+            self::PARAMETER_CREATE => 'sometimes|boolean',
+        ]);
+
+        $createIfNotExists = isset($data[self::PARAMETER_CREATE])
+            ? boolval($data[self::PARAMETER_CREATE]) : false;
+        $threadData = $this->_discussRepository->getThreadDataForEntity($entityType, $entityId, $createIfNotExists);
+
         if ($threadData === null) {
             return response(null, 404);
         }
 
-        $thread = $threadData->getThread();
-        $forumPostId = $threadData->getForumPostId();
-        $linker = new LinkHelper();
+        if ($request->ajax()) {
+            return $threadData;
 
-        return redirect($linker->forumThread($thread->forum_group_id, $thread->forum_group->name, 
-            $thread->id, $thread->normalized_subject, $forumPostId));
+        } else {
+            $thread = $threadData->getThread();
+            $forumPostId = $threadData->getForumPostId();
+            $linker = new LinkHelper();
+
+            return redirect($linker->forumThread($thread->forum_group_id, $thread->forum_group->name, 
+                $thread->id, $thread->normalized_subject, $forumPostId));
+        }
     }
 
     /**

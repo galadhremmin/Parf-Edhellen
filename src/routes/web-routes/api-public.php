@@ -19,9 +19,6 @@ Route::group([
     Route::get('inflection/{id?}',         [ 'uses' => 'InflectionApiController@index' ])
         ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ]);
 
-    Route::resource('forum', 'ForumApiController', ['only' => [
-        'index', 'show'
-    ]]);
     Route::resource('sentence', 'SentenceApiController', ['only' => [
         'show'
     ]]);

@@ -11,6 +11,11 @@ Route::group([
     Route::get('thread', [ 'uses' => 'DiscussApiController@getLatestThreads' ]);
     Route::get('thread/{threadId}', [ 'uses' => 'DiscussApiController@getThread' ])
         ->where([ 'threadId' => REGULAR_EXPRESSION_NUMERIC ]);
+    Route::get('thread/{entityType}/{entityId}', [ 'uses' => 'DiscussApiController@getThreadByEntity' ])
+        ->where([
+            'entityType' => '[a-z]+',
+            'threadId' => REGULAR_EXPRESSION_NUMERIC
+        ]);
     Route::get('thread/resolve/{entityType}/{entityId}', [ 'uses' => 'DiscussApiController@resolveThread' ])
         ->where([
             'entityType' => '[a-z]+',

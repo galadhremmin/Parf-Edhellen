@@ -12,6 +12,10 @@ import { IThreadMetadataState } from './reducers/ThreadMetadataReducer._types';
 import { ICreatePostAction } from './reducers/ThreadReducer._types';
 
 export interface IProps {
+    entityId?: number;
+    entityType?: string;
+    prefetched?: boolean;
+
     currentPage?: number;
     jumpPostId?: number;
     newPostContent?: string;

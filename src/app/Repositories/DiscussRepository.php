@@ -364,25 +364,24 @@ class DiscussRepository
                 if (! $createIfNotExists) {
                     return null;
                 }
-
-                $this->resolveAccount($account);
-                if ($account === null) {
-                    return null;
-                }
-
                 $entity = $context->resolveById($id);
                 if ($entity === null) {
                     return null;
                 }
 
-                if ($entity->id === 0) {
+                $this->resolveAccount($account);
+                if (! $entity->exists) {
+                    if ($account === null) {
+                        throw new AuthenticationException;
+                    }
+
                     $entity->account_id = $account->id;
                     $entity->save();
                 }
 
                 $defaultGroup = $this->getDefaultForumGroupByEntity($entityType);
                 $thread = new ForumThread([
-                    'account_id'     => $account->id,
+                    'account_id'     => $account === null ? null : $account->id,
                     'entity_id'      => $entity->id,
                     'entity_type'    => $entityType,
                     'forum_group_id' => $defaultGroup->id

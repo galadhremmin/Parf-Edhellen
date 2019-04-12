@@ -17,17 +17,39 @@ const Inject = (props: IProps) => {
     const store = createStore(rootReducer, undefined,
         applyMiddleware(thunkMiddleware),
     );
-    if (props.thread !== undefined) {
-        const actions = new DiscussActions();
-        const args: any = {
-            ...props,
-        };
-        (store.dispatch as ReduxThunkDispatch)(actions.setThread(args));
+
+    const {
+        entityId,
+        entityType,
+        prefetched,
+        thread,
+    } = props;
+
+    const dispatch = store.dispatch as ReduxThunkDispatch;
+
+    const actions = new DiscussActions();
+    if (prefetched) {
+        if (thread !== undefined) {
+            const args: any = {
+                ...props,
+            };
+            dispatch(actions.setThread(args));
+        }
+    } else {
+        dispatch(actions.thread({
+            create: true,
+            entityId,
+            entityType,
+        }));
     }
 
     return <Provider store={store}>
         <Discuss />
     </Provider>;
 };
+
+Inject.defaultProps = {
+    prefetched: true,
+} as Partial<IProps>;
 
 export default Inject;
