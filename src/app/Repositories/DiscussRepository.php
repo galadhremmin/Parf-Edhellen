@@ -307,16 +307,61 @@ class DiscussRepository
     }
 
     /**
-     * Gets the latest threads in Discuss, regardless of groups.
+     * Gets the latest threads in Discuss, regardless of groups (unless specified).
+     * @param $forumGroupId (optional) latest threads within the specified group
      * @return Collection
      */
-    public function getLatestThreads()
+    public function getLatestThreads(Account $account = null, int $forumGroupId = 0, int $take = 10)
     {
-        $threads = ForumThread::orderBy('updated_at', 'desc')
-            ->take(10)
-            ->get();
+        $this->resolveAccount($account);
 
-        return $threads;
+        $threads = ForumThread::orderBy('id', 'desc')
+            ->take($take);
+        if ($forumGroupId !== 0) {
+            $threads = $threads->where('forum_group_id', $forumGroupId);
+        }
+
+        return $threads->get();
+    }
+
+    /**
+     * Gets the latest posts in Discuss, regardless of groups (unless specified).
+     * @param $forumGroupId (optional) latest posts within the specified group
+     * @return Collection
+     */
+    public function getLatestPosts(Account $account = null, int $forumGroupId = 0, int $take = 10, int $fromId = 0)
+    {
+        $this->resolveAccount($account);
+
+        $posts = ForumPost::active()->orderBy('id', 'desc')->take($take);
+
+        if ($forumGroupId !== 0) {
+            $posts = $posts->whereHas('forum_thread', function ($q) use ($forumGroupId) {
+                $q->where('forum_group_id', $forumGroupId);
+            });
+        }
+        if ($fromId !== 0) {
+            $posts = $posts->where('id', '<', $fromId);
+        }
+
+        $allPosts = $posts->get();
+        if ($allPosts->count() === 0) {
+            return $allPosts;
+        }
+
+        $posts = $allPosts->filter(function ($post) use ($account) {
+            return $this->checkThreadAuthorization($account, $post->forum_thread);
+        });
+        
+        $numberOfMissingPosts = $take - $posts->count();
+        if ($allPosts->count() !== $posts->count() && $numberOfMissingPosts > 0) {
+            $complimentaryPosts = $this->getLatestPosts($account, $forumGroupId, $numberOfMissingPosts, $allPosts->last()->id);
+            if ($complimentaryPosts->count() > 0) {
+                $posts = $posts->union($complimentaryPosts);
+            }
+        }
+
+        return $posts;
     }
 
     /**
@@ -654,6 +699,36 @@ class DiscussRepository
         return true;
     }
 
+    private function checkPostAuthorization(?Account $account, ForumPost $post, ForumThread $thread = null)
+    {
+        if ($thread === null) {
+            $thread = $post->forum_thread;
+        }
+
+        if (! $this->checkThreadAuthorization($account, $thread)) {
+            return false;
+        }
+
+        if ($post->id === 0) {
+            return true;
+        }
+        
+        return $post->account_id === $account->id || $account->isAdministrator();
+    }
+
+    /**
+     * Determines whether the specified thread `$thread` can be accessed by `$account`.
+     *
+     * @param ForumThread $thread
+     * @param Account $account
+     * @return bool
+     */
+    private function checkThreadAuthorization(?Account $account, ForumThread $thread)
+    {
+        $context = $this->_contextFactory->create($thread->entity_type);
+        return $context->available($thread->entity_id, $account);
+    }
+
     private function updateForumThread(ForumThread $thread)
     {
         $postIds = $thread->forum_posts() //
@@ -702,36 +777,6 @@ class DiscussRepository
         if ($account === null) {
             $account = Auth::user();
         }
-    }
-
-    private function checkPostAuthorization(?Account $account, ForumPost $post, ForumThread $thread = null)
-    {
-        if ($thread === null) {
-            $thread = $post->forum_thread;
-        }
-
-        if (! $this->checkThreadAuthorization($account, $thread)) {
-            return false;
-        }
-
-        if ($post->id === 0) {
-            return true;
-        }
-        
-        return $post->account_id === $account->id || $account->isAdministrator();
-    }
-
-    /**
-     * Determines whether the specified thread `$thread` can be accessed by `$account`.
-     *
-     * @param ForumThread $thread
-     * @param Account $account
-     * @return bool
-     */
-    private function checkThreadAuthorization(?Account $account, ForumThread $thread)
-    {
-        $context = $this->_contextFactory->create($thread->entity_type);
-        return $context->available($thread->entity_id, $account);
     }
 
     /**

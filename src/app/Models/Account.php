@@ -55,7 +55,7 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName
     public function memberOf(string $roleName) 
     {
         $user = $this;
-        $roles = Cache::remember('ed.rol.'.$user->id, 5 /* minutes */, function() use($user) {
+        $roles = Cache::remember('ed.rol.'.$user->id, 5 * 60 /* seconds */, function() use($user) {
             return Role::forAccount($user)->pluck('name');
         });
         

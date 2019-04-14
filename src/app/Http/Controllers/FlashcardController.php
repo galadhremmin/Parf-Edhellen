@@ -178,7 +178,7 @@ class FlashcardController extends Controller
 
         // group verbs w/ one another as they tend to be in the infinitive
         // in English.
-        $verbSpeechId = Cache::remember('ed.speech.v', 60 /* minutes */, function () {
+        $verbSpeechId = Cache::remember('ed.speech.v', 60 * 60 /* seconds */, function () {
             $speech = Speech::where('name', 'verb')->first();
             return $speech ? $speech->id : -1;
         });

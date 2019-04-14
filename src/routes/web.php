@@ -25,9 +25,10 @@ require 'web-routes/flashcards.php';
 require 'web-routes/phrases.php';
 
 require 'web-routes/api-admin.php';
+require 'web-routes/api-discuss-feed.php';
+require 'web-routes/api-discuss.php';
 require 'web-routes/api-public.php';
 require 'web-routes/api-user.php';
-require 'web-routes/discuss-api.php';
 
 require 'web-routes/resources-admin.php';
 require 'web-routes/resources-user.php';
