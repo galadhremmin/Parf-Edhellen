@@ -4,12 +4,13 @@ import React, {
 } from 'react';
 import { Waypoint } from 'react-waypoint';
 
+import Spinner from '@root/components/Spinner';
+
 import {
     IData,
     IProps,
 } from './Chart._types';
 import GrowthChart, { ReservedDatasetProperties } from './GrowthChart';
-import Spinner from '@root/components/Spinner';
 
 const loadAccounts = (data: IData[]) => {
     const accounts = data.reduce((carry, item) => {
@@ -53,7 +54,7 @@ function Chart(props: IProps) {
                 : <Spinner />
             }
         </div>
-    </Waypoint>
+    </Waypoint>;
 }
 
 export default Chart;

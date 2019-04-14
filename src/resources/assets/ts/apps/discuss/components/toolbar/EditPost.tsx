@@ -61,7 +61,8 @@ function EditPost(props: IProps) {
                 setSubject(value);
                 break;
             default:
-                console.warn(`EditPost._onFormChange: Unrecognised signal ${name}.`)
+                console.warn(`EditPost._onFormChange: Unrecognised signal ${name}.`);
+                break;
         }
 
     }, [ setContent, setSubject ]);
@@ -69,19 +70,19 @@ function EditPost(props: IProps) {
     const _onSubmit = useCallback(async () => {
         try {
             await apiConnector.updatePost({
-                forumPostId,
                 content,
+                forumPostId,
                 subject,
             });
 
             fireEventAsync(`EditPost[${forumPostId}]`, onPostChange, forumPostId);
             setIsOpen(false);
-        } catch(e) {
+        } catch (e) {
             // TODO handle failure
         }
     }, [
         apiConnector, forumPostId, onPostChange, setIsOpen,
-        content, subject
+        content, subject,
     ]);
 
     return <>

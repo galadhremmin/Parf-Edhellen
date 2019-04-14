@@ -1,9 +1,9 @@
 import { ComponentEventHandler } from '@root/components/Component._types';
+import DiscussApiConnector from '@root/connectors/backend/DiscussApiConnector';
 import {
     IPostEntity,
     IThreadEntity,
 } from '@root/connectors/backend/DiscussApiConnector._types';
-import DiscussApiConnector from '@root/connectors/backend/DiscussApiConnector';
 
 import { IThreadMetadataState } from '../../reducers/ThreadMetadataReducer._types';
 

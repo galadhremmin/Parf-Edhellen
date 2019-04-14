@@ -22,7 +22,7 @@ export default class DiscussApiConnector {
 
     public async thread(payload: IThreadRequest) {
         const params: Partial<IThreadRequest> = {};
-        
+
         if (payload.offset !== undefined) {
             params.offset = payload.offset;
         }
