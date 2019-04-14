@@ -17,6 +17,11 @@
       color: inherit;
       text-decoration: none;
       display: block;
+
+      .label {
+        float: right;
+        font-family: $font-family-tiny;
+      }
     }
   
     h3 {

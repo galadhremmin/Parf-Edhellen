@@ -27,6 +27,7 @@ use App\Models\{
     ModelBase
 };
 use App\Repositories\ValueObjects\{
+    ForumGroupsValue,
     ForumPostsInThreadValue,
     ForumThreadForEntityValue,
     ForumThreadMetadataValue,
@@ -52,7 +53,14 @@ class DiscussRepository
     public function getGroups() 
     {
         $groups = ForumGroup::orderBy('name')->get();
-        return $groups;
+        $numberOfThreads = ForumThread::groupBy('forum_group_id')
+            ->select('forum_group_id', DB::raw('count(*) as count'))
+            ->pluck('count', 'forum_group_id');
+
+        return new ForumGroupsValue([
+            'groups' => $groups,
+            'number_of_threads' => $numberOfThreads
+        ]);
     }
 
     /**

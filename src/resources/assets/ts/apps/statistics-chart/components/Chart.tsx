@@ -51,7 +51,7 @@ function Chart(props: IProps) {
             {isVisible
                 ? <GrowthChart accounts={accounts} data={data} />
                 : <Spinner />
-            };
+            }
         </div>
     </Waypoint>
 }

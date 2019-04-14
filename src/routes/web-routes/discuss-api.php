@@ -20,8 +20,7 @@ Route::group([
         ->where([
             'entityType' => '[a-z]+',
             'entityId' => REGULAR_EXPRESSION_NUMERIC
-        ])
-        ->name('discuss.resolve');
+        ])->name('discuss.resolve');
     Route::get('post/{postId}', [ 'uses' => 'DiscussApiController@getPost' ])
         ->where([ 'postId' => REGULAR_EXPRESSION_NUMERIC ]);
 

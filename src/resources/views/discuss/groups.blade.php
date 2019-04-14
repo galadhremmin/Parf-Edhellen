@@ -13,6 +13,7 @@
   @foreach ($groups as $group)
   <blockquote>
     <a class="block-link" href="{{ $linker->forumGroup($group->id, $group->name) }}">
+      <span class="label label-default">{{ $number_of_threads[$group->id] }}</span>
       <h3>{{ $group->name }}</h3>
       <p>{{ $group->description }}</p>
     </a>

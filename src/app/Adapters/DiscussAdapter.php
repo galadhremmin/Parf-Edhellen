@@ -87,7 +87,10 @@ class DiscussAdapter
             $iconPath = $context->getIconPath();
             $adapted[] = (object) [
                 'id'              => $post->id,
+                'forum_group_id'  => $post->forum_thread->forum_group_id,
+                'forum_thread_id' => $post->forum_thread_id,
                 'subject'         => $post->forum_thread->subject,
+                'subject_path'    => $post->forum_thread->normalized_subject,
                 'icon'            => $iconPath,
                 'created_at'      => $post->updated_at ?: $post->created_at,
                 'content'         => $post->content,

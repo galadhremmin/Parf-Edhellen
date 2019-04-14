@@ -46,9 +46,7 @@ class DiscussApiController extends Controller
 
     public function getGroups()
     {
-        return [
-            self::PROPERTY_THREAD_GROUP_COLLECTION => $this->_discussRepository->getGroups()
-        ];
+        return $this->_discussRepository->getGroups();
     }
 
     public function getGroupAndThreads(Request $request, int $groupId)
