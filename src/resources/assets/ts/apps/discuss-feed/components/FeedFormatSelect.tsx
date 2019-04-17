@@ -13,9 +13,9 @@ function FeedFormatSelect(props: IProps) {
         value,
     } = props;
 
-    const values = Object.keys(FeedFormat).map((text) => ({ 
+    const values = Object.keys(FeedFormat).map((text) => ({
         text,
-        value: FeedFormat[text as any]
+        value: FeedFormat[text as any],
     }));
 
     const _onChange = useCallback((ev: React.ChangeEvent<HTMLSelectElement>) => {

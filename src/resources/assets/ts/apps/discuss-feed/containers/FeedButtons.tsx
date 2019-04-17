@@ -6,11 +6,11 @@ import React, {
 import { IComponentEvent } from '@root/components/Component._types';
 import Dialog from '@root/components/Dialog';
 import { LearnMoreWebFeedUrl } from '@root/config';
+import { createFeedUrl } from '@root/connectors/FeedApiConnector';
 import { FeedFormat } from '@root/connectors/FeedApiConnector._types';
 
-import { IProps } from '../index._types';
 import FeedFormatSelect from '../components/FeedFormatSelect';
-import { createFeedUrl } from '@root/connectors/FeedApiConnector';
+import { IProps } from '../index._types';
 
 import './FeedButtons.scss';
 
@@ -19,6 +19,10 @@ const onFeedUrlFocus = (ev: React.FocusEvent<HTMLInputElement>) => {
 };
 
 function Feeds(props: IProps) {
+    const {
+        feedUrlFactory,
+    } = props;
+
     const [ isOpen, setIsOpen ] = useState(false);
     const [ feedType, setFeedType ] = useState(FeedFormat.RSS);
 
@@ -35,7 +39,7 @@ function Feeds(props: IProps) {
         setFeedType(ev.value);
     }, [ setFeedType ]);
 
-    const feedUrl = createFeedUrl('discuss', 'posts', props.groupId, feedType);
+    const feedUrl = feedUrlFactory('discuss', 'posts', props.groupId, feedType);
     return <div className="discuss-feed-buttons">
         <button className="btn btn-sm btn-default" onClick={_onOpen}>
             <span className="glyphicon glyphicon-bell" />
@@ -70,5 +74,9 @@ function Feeds(props: IProps) {
         </Dialog>
     </div>;
 }
+
+Feeds.defaultProps = {
+    feedUrlFactory: createFeedUrl,
+} as Partial<IProps>;
 
 export default Feeds;
