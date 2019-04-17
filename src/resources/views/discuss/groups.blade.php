@@ -7,7 +7,6 @@
 {!! Breadcrumbs::render('discuss') !!}
 
 <h1>Discussion <span class="tengwar">3D7w#3F</span></h1>
-<p></p>
 
 <div class="link-blocks">
   @foreach ($groups as $group)
@@ -20,6 +19,8 @@
   </blockquote>
   @endforeach
 </div>
+
+<div data-inject-module="discuss-feed"></div>
 
 @endsection
 @section('styles')

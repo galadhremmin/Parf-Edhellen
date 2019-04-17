@@ -1,8 +1,10 @@
 import classNames from 'classnames';
 import React from 'react';
 
+import { LearnMoreMarkdownUrl } from '@root/config';
 import Cache from '@root/utilities/Cache';
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
+
 import { fireEvent } from './Component';
 import Markdown from './Markdown';
 import {
@@ -131,7 +133,7 @@ export default class MarkdownInput extends React.PureComponent<IProps, IState> {
             </div>
             <small className="pull-right">
                 {' Supports Markdown. '}
-                <a href="https://en.wikipedia.org/wiki/Markdown" target="_blank">
+                <a href={LearnMoreMarkdownUrl} target="_blank">
                     Read more (opens a new window)
                 </a>.
             </small>
@@ -250,7 +252,7 @@ export default class MarkdownInput extends React.PureComponent<IProps, IState> {
             <p>
                 More information about Markdown
                 {' '}
-                <a href="https://en.wikipedia.org/wiki/Markdown" target="_blank">
+                <a href={LearnMoreMarkdownUrl} target="_blank">
                     can be found on Wikipedia
                 </a>.
             </p>

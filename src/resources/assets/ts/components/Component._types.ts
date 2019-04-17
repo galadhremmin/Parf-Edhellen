@@ -1,8 +1,10 @@
+export interface IComponentProps {
+    id?: string;
+    name?: string;
+}
+
 export interface IDefaultComponent {
-    props: Readonly<{
-        id?: string;
-        name?: string;
-    }> | any;
+    props: Readonly<IComponentProps> | any;
 }
 
 export type ComponentOrName = IDefaultComponent | string;

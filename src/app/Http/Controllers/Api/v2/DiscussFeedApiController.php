@@ -28,27 +28,21 @@ class DiscussFeedApiController extends Controller
 
     public function getPosts(Request $request)
     {
-        $account = $request->user();
-        $accountId = $account !== null ? $account->id : 0;
-
-        return Cache::remember(sprintf('ed.feed.discs.p.%d.%s', $accountId, $this->getFormat($request)), 
-            5 * 60 /* seconds */, function () use($request, $account) {
-            $threads = $this->_discussRepository->getLatestPosts($account);
-            return $this->formatResponse($request, $threads, 'Latest posts');
+        $posts = $this->caching($request, 'ed.feed.d.ps', function ($account) {
+            return $this->_discussRepository->getLatestPosts($account);
         });
+
+        return $this->formatResponse($request, $posts, 'Latest posts');
     }
 
     public function getPostsInGroup(Request $request, int $forumGroupId)
     {
-        $account = $request->user();
-        $accountId = $account !== null ? $account->id : 0;
-
         $group = $this->_discussRepository->getGroup($forumGroupId);
-        return Cache::remember(sprintf('ed.feed.disc.ps.%d.%s.%d', $accountId, $this->getFormat($request), $group->id), 
-            5 * 60 /* seconds */, function () use($request, $group, $account) {
-            $threads = $this->_discussRepository->getLatestPosts($account, $group->id);
-            return $this->formatResponse($request, $threads, sprintf('Latest posts in %s', $group->name));
+        $posts = $this->caching($request, 'ed.feed.d.p.'.$group->id, function ($account) use($group) {
+            return  $this->_discussRepository->getLatestPosts($account, $group->id);
         });
+
+        return $this->formatResponse($request, $posts, sprintf('Latest posts in %s', $group->name));
     }
 
     private function getFormat(Request $request)
@@ -63,6 +57,19 @@ class DiscussFeedApiController extends Controller
         }
     }
 
+    private function caching(Request $request, string $cacheKey, \Closure $func)
+    {
+        $account = $request->user();
+        if ($account === null) {
+            return $func($account);
+        }
+
+        $format = $this->getFormat($request);
+        return Cache::remember($cacheKey.'.'.$format, 5 * 60, function () use($account, $func) {
+            return $func($account);
+        });
+    }
+
     private function formatResponse(Request $request, Collection $data, string $title)
     {
         $websiteUrl = config('app.url');
@@ -73,6 +80,7 @@ class DiscussFeedApiController extends Controller
         switch ($this->getFormat($request))
         {
             case 'rss':
+                $contentType = 'application/rss+xml; charset=utf-8';
                 $formatter = new RssFeedAdapter($title, $websiteUrl, $feedUrl, $title);
                 $domain = parse_url(config('app.url'))['host'];
                 $itemFormatter = function ($d) use($domain) {
@@ -90,7 +98,8 @@ class DiscussFeedApiController extends Controller
                 };
                 break;
             case 'json':
-            default: 
+            default:
+                $contentType = 'application/json; charset=utf-8';
                 $formatter = new JsonFeedAdapter($title, $websiteUrl, $feedUrl);
                 $itemFormatter = function ($d) {
                     // Please refer to `JsonFeedAdapter` for expected properties.
@@ -112,6 +121,7 @@ class DiscussFeedApiController extends Controller
                 break;
         }
 
-        return $formatter->adapt($data, $itemFormatter);
+        return response($formatter->adapt($data, $itemFormatter))
+            ->header('Content-Type', $contentType);
     }
 }

@@ -329,7 +329,7 @@ class DiscussRepository
      * @param $forumGroupId (optional) latest posts within the specified group
      * @return Collection
      */
-    public function getLatestPosts(Account $account = null, int $forumGroupId = 0, int $take = 10, int $fromId = 0)
+    public function getLatestPosts(Account $account = null, int $forumGroupId = 0, int $take = 20, int $fromId = 0)
     {
         $this->resolveAccount($account);
 
