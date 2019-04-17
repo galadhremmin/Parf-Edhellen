@@ -60,7 +60,7 @@ class DiscussFeedApiController extends Controller
     private function caching(Request $request, string $cacheKey, \Closure $func)
     {
         $account = $request->user();
-        if ($account === null) {
+        if ($account !== null) {
             return $func($account);
         }
 
