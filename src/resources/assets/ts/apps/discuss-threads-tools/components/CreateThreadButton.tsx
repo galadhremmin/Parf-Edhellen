@@ -4,11 +4,15 @@ import React, {
 } from 'react';
 
 import Form from '@root/apps/discuss/components/Form';
+import {
+    IFormChangeData,
+    IFormOutput,
+} from '@root/apps/discuss/components/Form._types';
+import UnauthenticatedAlert from '@root/apps/discuss/components/UnauthenticatedAlert';
 import { fireEvent } from '@root/components/Component';
-import ValidationErrorAlert from '@root/components/ValidationErrorAlert';
-import { IFormChangeData, IFormOutput } from '@root/apps/discuss/components/Form._types';
 import { IComponentEvent } from '@root/components/Component._types';
 import Dialog from '@root/components/Dialog';
+import ValidationErrorAlert from '@root/components/ValidationErrorAlert';
 import { IProps } from './CreateThreadButton._types';
 
 function CreateThreadButton(props: IProps) {
@@ -35,7 +39,7 @@ function CreateThreadButton(props: IProps) {
     const _onChange = useCallback((ev: IComponentEvent<IFormChangeData>) => {
         const {
             name,
-            value
+            value,
         } = ev.value;
 
         switch (name) {
@@ -77,7 +81,7 @@ function CreateThreadButton(props: IProps) {
                         onCancel={_onDismiss}
                         onChange={_onChange}
                         onSubmit={_onSubmit}
-                  /> : null}
+                  /> : <UnauthenticatedAlert />}
         </Dialog>
     </>;
 }

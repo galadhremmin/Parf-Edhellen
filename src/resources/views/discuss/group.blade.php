@@ -8,7 +8,7 @@
 
   <h1>Discussion about {{ $group->name }}</h1>
   
-  <div data-inject-module="discuss-threads-tools" data-inject-prop-group-id="{{ $group->id }}" data-inject-prop-group-name="{{ $group->name }}"></div>
+  <div class="discuss-thread-tools" data-inject-module="discuss-threads-tools" data-inject-prop-group-id="{{ $group->id }}" data-inject-prop-group-name="{{ $group->name }}"></div>
 
   <hr>
 

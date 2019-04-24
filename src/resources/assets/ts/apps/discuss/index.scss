@@ -10,6 +10,11 @@ h1 {
     word-wrap: break-word;
 }
 
+.discuss-thread-tools {
+    height: 37px;
+    overflow: hidden;
+}
+
 .discuss-body {
     > .sk-spinner.noscript--hidden {
         margin-bottom: 100vh;

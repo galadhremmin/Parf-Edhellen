@@ -41,7 +41,7 @@ function Toolbar(props: IProps) {
         }
     }, [ apiConnector, setError ]);
 
-    return <div className="text-right">
+    return <div className="text-center">
         <CreateThreadButton error={error}
                             enabled={roleManager.currentRole !== SecurityRole.Anonymous}
                             groupId={props.groupId}
@@ -52,7 +52,7 @@ function Toolbar(props: IProps) {
 
 Toolbar.defaultProps = {
     apiConnector: SharedReference.getInstance(DiscussApiConnector),
-    roleManager: SharedReference.getInstance(RoleManager)
+    roleManager: SharedReference.getInstance(RoleManager),
 } as Partial<IProps>;
 
 export default Toolbar;

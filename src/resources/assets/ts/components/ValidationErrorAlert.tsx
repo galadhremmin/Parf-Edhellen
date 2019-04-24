@@ -13,7 +13,9 @@ const ValidationErrorAlert = (props: IProps) => {
     }
 
     if (error.errors.size < 1) {
-        <StaticAlert type="warning">{error.errorMessage}</StaticAlert>;
+        return <StaticAlert type="warning">
+            {error.errorMessage}
+        </StaticAlert>;
     }
 
     const errors = [];

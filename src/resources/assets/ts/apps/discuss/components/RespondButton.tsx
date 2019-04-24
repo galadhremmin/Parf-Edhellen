@@ -7,11 +7,7 @@ import {
 } from '@root/security';
 import SharedReference from '@root/utilities/SharedReference';
 import { IProps } from './RespondButton._types';
-
-const onAuthenticateClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
-    ev.preventDefault();
-    window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
-};
+import UnauthenticatedAlert from './UnauthenticatedAlert';
 
 function RespondButton(props: IProps) {
     const {
@@ -39,16 +35,7 @@ function RespondButton(props: IProps) {
 
     switch (getRoleManager().currentRole) {
         case SecurityRole.Anonymous:
-            return <div className="alert alert-info" id="forum-log-in-box">
-                <strong>
-                    <span className="glyphicon glyphicon-info-sign" />
-                    {' Would you like to share your thoughts on the discussion?'}
-                </strong>
-                {' '}
-                <a href="#" onClick={onAuthenticateClick}>
-                    Log in to create a profile
-                </a>.
-            </div>;
+            return <UnauthenticatedAlert />;
 
         default:
             return <button className="btn btn-primary" onClick={onRespondClick}>
