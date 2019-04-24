@@ -60,7 +60,7 @@ class ForumApiController extends Controller
             abort(404, 'The post you are looking for does not exist');
         }
 
-        $linker = new LinkHelper();
+        $linker = resolve(LinkHelper::class);
         $path = $linker->forumThread(
             $post->forum_thread->forum_group_id, $post->forum_thread->forum_group->name,
             $post->forum_thread_id, $post->forum_thread->normalized_subject,

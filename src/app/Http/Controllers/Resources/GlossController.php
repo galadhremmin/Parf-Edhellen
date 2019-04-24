@@ -115,7 +115,7 @@ class GlossController extends Controller
         $gloss = new Gloss;
         $gloss = $this->saveGloss($gloss, $request);
 
-        $link = new LinkHelper();
+        $link = resolve(LinkHelper::class);
         return response([
             'id'  => $gloss->id,
             'url' => $link->gloss($gloss->id)
@@ -129,7 +129,7 @@ class GlossController extends Controller
         $gloss = Gloss::findOrFail($id);
         $gloss = $this->saveGloss($gloss, $request);
 
-        $link = new LinkHelper();
+        $link = resolve(LinkHelper::class);
         return response([
             'id'  => $gloss->id,
             'url' => $link->gloss($gloss->id)

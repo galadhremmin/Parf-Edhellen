@@ -15,6 +15,7 @@ import {
     snakeCasePropsToCamelCase,
     toSnakeCase,
 } from '../utilities/func/snake-case';
+import ValidationError from './ValidationError';
 
 interface IErrorReport {
     apiMethod?: string;
@@ -213,7 +214,10 @@ export default class ApiConnector {
                     category = 'frontend-419';
                     break;
                 case this._apiValidationErrorStatusCode:
-                    return Promise.reject(error); // Validation errors are pass-through.
+                    return Promise.reject(new ValidationError(
+                        error.response.data.message,
+                        error.response.data.errors,
+                    )); // Validation errors are pass-through.
                 default:
                     errorReport = {
                         apiMethod,

@@ -31,7 +31,7 @@ function Form(props: IProps) {
 
     const _onSubjectChange = useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => fireEvent(name, onChange, {
-            name,
+            name: 'subject',
             value: e.target.value,
         }), [ name, onChange ]);
 
@@ -56,6 +56,7 @@ function Form(props: IProps) {
                 className="form-control"
                 id="ed-discuss-subject"
                 name="subject"
+                required={true}
                 value={subject}
                 onChange={_onSubjectChange}
             />

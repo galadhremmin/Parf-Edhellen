@@ -31,6 +31,7 @@ class DiscussApiController extends Controller
     const PROPERTY_THREAD_GROUP_COLLECTION = 'groups';
     const PROPERTY_POST = 'post';
     const PROPERTY_POST_LIKE = 'like';
+    const PROPERTY_POST_URL = 'postUrl';
 
     use CanAdaptDiscuss {
         CanAdaptDiscuss::__construct as setupDiscussAdapter;
@@ -167,7 +168,7 @@ class DiscussApiController extends Controller
         } else {
             $thread = $threadData->getThread();
             $forumPostId = $threadData->getForumPostId();
-            $linker = new LinkHelper();
+            $linker = resolve(LinkHelper::class);
 
             return redirect($linker->forumThread($thread->forum_group_id, $thread->forum_group->name, 
                 $thread->id, $thread->normalized_subject, $forumPostId));
@@ -215,12 +216,15 @@ class DiscussApiController extends Controller
             $data = $data + $request->validate([
                 self::PARAMETER_FORUM_POST_SUBJECT => 'required|string|min:3|max:512',
                 self::PARAMETER_ENTITY_TYPE        => 'required|string|min:1|max:16',
-                self::PARAMETER_ENTITY_ID          => 'required|numeric',
+                self::PARAMETER_ENTITY_ID          => 'sometimes|numeric',
                 self::PARAMETER_FORUM_GROUP_ID     => 'sometimes|numeric|exists:forum_groups,id'
             ]);
 
             $entityType = $data[self::PARAMETER_ENTITY_TYPE];
-            $entityId   = intval($data[self::PARAMETER_ENTITY_ID]);
+            $entityId = 0;
+            if (isset($data[self::PARAMETER_ENTITY_ID])) {
+                $entityId = intval($data[self::PARAMETER_ENTITY_ID]);
+            }
 
             // create a new thread based on the entity specified in the request
             $threadData = $this->_discussRepository->getThreadDataForEntity($entityType, $entityId, true, $account);
@@ -245,9 +249,19 @@ class DiscussApiController extends Controller
             return response(null, 403);
         }
 
+        $linkHelper = resolve(LinkHelper::class);
+        $postUrl = $linkHelper->forumThread(
+            $thread->forum_group_id,
+            $thread->forum_group->name,
+            $thread->id,
+            $thread->normalized_subject,
+            $post->id
+        );
+
         $post->makeHidden(['forum_thread']);
         return [
             self::PROPERTY_POST => $post,
+            self::PROPERTY_POST_URL => $postUrl,
             self::PROPERTY_THREAD => $thread
         ];
     }

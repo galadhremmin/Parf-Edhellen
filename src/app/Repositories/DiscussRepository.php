@@ -12,6 +12,7 @@ use BadMethodCallException;
 
 use App\Http\Discuss\ContextFactory;
 use App\Models\Initialization\Morphs;
+use App\Helpers\StringHelper;
 use App\Events\{
     ForumPostCreated,
     ForumPostEdited,
@@ -382,10 +383,6 @@ class DiscussRepository
             throw new Exception(sprintf('Unsupported entity %s.', serialize($entityType)));
         }
 
-        if (! is_numeric($id) || $id === 0) {
-            throw new Exception('$id is a required parameter.');
-        }
-
         $forumPostId = 0;
 
         // if the entity is a post, the thread is available as a relation on the ForumPost entity
@@ -417,6 +414,7 @@ class DiscussRepository
                 if (! $createIfNotExists) {
                     return null;
                 }
+
                 $entity = $context->resolveById($id);
                 if ($entity === null) {
                     return null;
@@ -567,6 +565,7 @@ class DiscussRepository
             throw new Exception('You must associate a thread with an entity.');
         }
 
+        $thread->normalized_subject = StringHelper::normalize($thread->subject);
         $thread->save();
     }
 

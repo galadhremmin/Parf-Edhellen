@@ -37,7 +37,8 @@ export default class DiscussActions {
 
     public setThread(threadData: IThreadResponse): ReduxThunk {
         // Update the browser's current page (in the event that the client refreshes the window)
-        BrowserHistory.default.push(`?offset=${threadData.currentPage}`);
+        const browserHistory = SharedReference.getInstance(BrowserHistory);
+        browserHistory.push(`?offset=${threadData.currentPage}`);
 
         return async (dispatch: ReduxThunkDispatch) => {
             dispatch({

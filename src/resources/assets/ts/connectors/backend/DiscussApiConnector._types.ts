@@ -45,6 +45,7 @@ export interface ICreatePostRequest {
 
 export interface ICreatePostResponse {
     post: IPostEntity;
+    postUrl: string;
     thread: IThreadEntity;
 }
 

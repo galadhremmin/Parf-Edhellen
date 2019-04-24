@@ -37,7 +37,6 @@ const Inject = (props: IProps) => {
         }
     } else {
         dispatch(actions.thread({
-            create: true,
             entityId,
             entityType,
         }));

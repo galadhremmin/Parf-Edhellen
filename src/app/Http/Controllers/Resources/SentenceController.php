@@ -74,7 +74,7 @@ class SentenceController extends Controller
         $sentence = new Sentence;
         $this->saveSentence($sentence, $request);
 
-        $link = new LinkHelper();
+        $link = resolve(LinkHelper::class);
         return [
             'sentence' => $sentence, 
             'url'      => $link->sentence(
@@ -94,7 +94,7 @@ class SentenceController extends Controller
         $sentence = Sentence::findOrFail($id);
         $this->saveSentence($sentence, $request);
 
-        $link = new LinkHelper();
+        $link = resolve(LinkHelper::class);
         return [
             'sentence' => $sentence, 
             'url'      => $link->sentence(

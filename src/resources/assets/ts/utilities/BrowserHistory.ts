@@ -25,6 +25,13 @@ export default class BrowserHistory {
         }
     }
 
+    public redirect(urlComponents: UrlComponents) {
+        const url = this._createUrl(urlComponents);
+        if (url !== null) {
+            window.location.href = url;
+        }
+    }
+
     private _assertOkay() {
         const history = this._history;
         return history && typeof history.pushState === 'function';

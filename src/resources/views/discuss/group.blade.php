@@ -8,14 +8,7 @@
 
   <h1>Discussion about {{ $group->name }}</h1>
   
-  @if (Auth::check())
-  <div class="text-right">
-    <a href="{{ route('discuss.create') }}" class="btn btn-primary">
-      <span class="glyphicon glyphicon-pencil"></span>
-      New thread
-    </a>
-  </div>
-  @endif
+  <div data-inject-module="discuss-threads-tools" data-inject-prop-group-id="{{ $group->id }}" data-inject-prop-group-name="{{ $group->name }}"></div>
 
   <hr>
 

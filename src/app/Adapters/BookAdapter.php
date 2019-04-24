@@ -56,7 +56,7 @@ class BookAdapter
         $aggregator = new GlossAggregationHelper;
         $numberOfGlosses = $aggregator->aggregate($glosses);
 
-        $linker = new LinkHelper;
+        $linker = resolve(LinkHelper::class);
 
         //    - Just one translation result.
         if ($numberOfGlosses === 1) {
@@ -211,7 +211,7 @@ class BookAdapter
         bool $atomDate = false, LinkHelper $linker = null) 
     {
         if ($linker === null) {
-            $linker = new LinkHelper();
+            $linker = resolve(LinkHelper::class);
         }
 
         $isGlossEntity = $gloss instanceof Gloss;
