@@ -213,11 +213,12 @@ class DiscussApiController extends Controller
             $thread = $threadData->getThread();
 
         } else {
+            $subjectRule = 'sometimes|string|min:3|max:512';
             $data = $data + $request->validate([
-                self::PARAMETER_FORUM_POST_SUBJECT => 'required|string|min:3|max:512',
                 self::PARAMETER_ENTITY_TYPE        => 'required|string|min:1|max:16',
                 self::PARAMETER_ENTITY_ID          => 'sometimes|numeric',
-                self::PARAMETER_FORUM_GROUP_ID     => 'sometimes|numeric|exists:forum_groups,id'
+                self::PARAMETER_FORUM_GROUP_ID     => 'sometimes|numeric|exists:forum_groups,id',
+                self::PARAMETER_FORUM_POST_SUBJECT => $subjectRule
             ]);
 
             $entityType = $data[self::PARAMETER_ENTITY_TYPE];
@@ -232,7 +233,15 @@ class DiscussApiController extends Controller
 
             // the default forum group usually comes with an auto generated subject. Replace it with the 
             // subject specified in the request.
-            $thread->subject = $data[self::PARAMETER_FORUM_POST_SUBJECT];
+            if (isset($data[self::PARAMETER_FORUM_POST_SUBJECT])) {
+                $thread->subject = $data[self::PARAMETER_FORUM_POST_SUBJECT];
+            } else if (empty($thread->subject)) {
+                $request->validate([
+                    self::PARAMETER_FORUM_POST_SUBJECT => $subjectRule
+                ]);
+
+                abort(422);
+            }
 
             // the thread is assigned a default form group based on the specified entity. However, if the request
             // specifies a specified group, it is here where it may be applied.

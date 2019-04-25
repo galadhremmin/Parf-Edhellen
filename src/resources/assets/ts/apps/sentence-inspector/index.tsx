@@ -6,6 +6,8 @@ import {
 } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 
+import { composeEnhancers } from '@root/utilities/func/redux-tools';
+
 import { SentenceActions } from './actions';
 import { IProps } from './index._types';
 import rootReducer from './reducers';
@@ -14,7 +16,7 @@ import SentenceInspector from './containers/SentenceInspector';
 
 const Inject = (props: IProps) => {
     const store = createStore(rootReducer, undefined,
-        applyMiddleware(thunkMiddleware),
+        composeEnhancers(applyMiddleware(thunkMiddleware)),
     );
 
     if (props.sentence) {

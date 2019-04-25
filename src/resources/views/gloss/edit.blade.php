@@ -3,7 +3,7 @@
 @section('title', 'Edit '.$gloss->word->word.' - Administration')
 @section('body')
 
-<h1>Edit gloss {{ $gloss->word->word }}</h1>
+<h1>Edit gloss &ldquo;{{ $gloss->word->word }}&rdquo;</h1>
 {!! Breadcrumbs::render('gloss.edit', $gloss) !!}
 
 <div id="ed-gloss-form"></div>

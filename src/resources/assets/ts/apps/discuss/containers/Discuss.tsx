@@ -49,6 +49,9 @@ function Discuss(props: IProps) {
     } = props;
 
     const {
+        entityId,
+        entityType,
+        forumGroupId,
         id: threadId,
     } = thread;
 
@@ -74,10 +77,17 @@ function Discuss(props: IProps) {
 
     const _onNewPostSubmit = useCallback((ev: IComponentEvent<IFormOutput>) => {
         fireEvent(null, onNewPostSubmit, {
+            ...(threadId ? {
+                forumThreadId: threadId,
+            } : {
+                entityId,
+                entityType,
+                forumGroupId,
+            }),
+
             content: ev.value.content,
-            forumThreadId: threadId,
         });
-    }, [ onNewPostSubmit, threadId ]);
+    }, [ onNewPostSubmit, entityId, entityType, forumGroupId, threadId ]);
 
     const _onPaginate = useCallback((ev: IComponentEvent<number>) => {
         if (ev.value !== currentPage) {

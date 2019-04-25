@@ -435,7 +435,8 @@ class DiscussRepository
                     'account_id'     => $account === null ? null : $account->id,
                     'entity_id'      => $entity->id,
                     'entity_type'    => $entityType,
-                    'forum_group_id' => $defaultGroup->id
+                    'forum_group_id' => $defaultGroup->id,
+                    'subject'        => $context->getName($entity)
                 ]);
             }
         }

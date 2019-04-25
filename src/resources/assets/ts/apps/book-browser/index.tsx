@@ -2,6 +2,8 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 
+import { composeEnhancers } from '@root/utilities/func/redux-tools';
+
 import {
     applyMiddleware,
     createStore,
@@ -14,7 +16,7 @@ import SearchResults from './containers/SearchResults';
 
 const Inject = () => {
     const store = createStore(rootReducer, undefined,
-        applyMiddleware(thunkMiddleware),
+        composeEnhancers(applyMiddleware(thunkMiddleware)),
     );
 
     return <Provider store={store}>
