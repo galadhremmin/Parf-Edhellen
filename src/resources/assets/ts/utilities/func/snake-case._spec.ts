@@ -47,6 +47,18 @@ describe('utilities/func/snake-case', () => {
         expect(actual).to.equal(expected);
     });
 
+    it('converts _snake_case to camelCase', () => {
+        const snakes = [
+            ['_we_are_not_yet_on_mars', 'weAreNotYetOnMars'],
+            ['__lan_gladh_iol', 'lanGladhIol'],
+        ];
+
+        for (const snake of snakes) {
+            const actual = camelCaseFromSnakeCase(snake[0]);
+            expect(actual).to.equal(snake[1], `Expected "${actual}" to be "${snake[1]}".`);
+        }
+    });
+
     it('converts snake_case object to camelCase object', () => {
         const input = {
             mars: {

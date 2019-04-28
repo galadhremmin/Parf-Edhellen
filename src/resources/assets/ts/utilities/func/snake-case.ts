@@ -12,10 +12,16 @@ export const toSnakeCase = (s: string) => {
  * @param s string subject
  */
 export const camelCaseFromSnakeCase = (s: string) => {
+    let length = 0;
     const words = s.split('_') //
-        .map((word: string, i: number) => i === 0 //
-            ? word
-            : word.charAt(0).toUpperCase() + word.substr(1));
+        .map((word: string, i: number) => {
+            const ps = length === 0
+                ? word
+                : word.charAt(0).toUpperCase() + word.substr(1);
+
+            length += word.length;
+            return ps;
+        });
 
     return words.join('');
 };

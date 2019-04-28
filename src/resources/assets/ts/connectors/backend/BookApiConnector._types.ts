@@ -57,7 +57,7 @@ export interface IGlossEntity {
     accountUrl: string;
     allTranslations: string;
     commentCount: number;
-    comments: null; // TODO ???
+    comments: string; // TODO ???
     createdAt: string;
     etymology: string;
     externalId: string;
@@ -74,7 +74,7 @@ export interface IGlossEntity {
     isIndex: boolean;
     isLatest: boolean;
     isRejected: boolean;
-    isUncertain: string;
+    isUncertain: boolean;
     language: ILanguageEntity;
     languageId: number;
     normalizedWord: string;

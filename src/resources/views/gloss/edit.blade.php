@@ -6,11 +6,7 @@
 <h1>Edit gloss &ldquo;{{ $gloss->word->word }}&rdquo;</h1>
 {!! Breadcrumbs::render('gloss.edit', $gloss) !!}
 
-<div id="ed-gloss-form"></div>
-
-<script type="application/json" id="ed-preloaded-gloss">
-{!! $gloss !!}
-</script>
+<div id="ed-gloss-form" data-inject-module="form-gloss" data-inject-prop-gloss="@json($gloss)"></div>
 
 @endsection
 

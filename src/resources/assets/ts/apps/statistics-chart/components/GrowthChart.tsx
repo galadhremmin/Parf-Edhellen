@@ -22,8 +22,19 @@ const GrowthChart = (props: IProps) => <ResponsiveContainer width="100%" height=
         <XAxis dataKey={DatasetXAxis}/>
         <YAxis/>
         <Tooltip/>
-        <Line connectNulls={true} dot={false} type="monotone" dataKey={DatasetYAxis} name="Total" stroke="#8884d8" />
-        {props.accounts.map((account: string) => <Bar key={account} dataKey={account} fill="#444444" />)}
+        <Line connectNulls={true}
+              dot={false}
+              isAnimationActive={false}
+              type="monotone"
+              dataKey={DatasetYAxis}
+              name="Total"
+              stroke="#8884d8"
+        />
+        {props.accounts.map((account: string) => <Bar key={account}
+            dataKey={account}
+            isAnimationActive={false}
+            fill="#444444"
+        />)}
     </ComposedChart>
 </ResponsiveContainer>;
 
