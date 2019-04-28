@@ -16,7 +16,7 @@ export const camelCaseFromSnakeCase = (s: string) => {
     const words = s.split('_') //
         .map((word: string, i: number) => {
             const ps = length === 0
-                ? word
+                ? (word.length === 0 ? '_' : word)
                 : word.charAt(0).toUpperCase() + word.substr(1);
 
             length += word.length;

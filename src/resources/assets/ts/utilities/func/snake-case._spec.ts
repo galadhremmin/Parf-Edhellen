@@ -47,10 +47,10 @@ describe('utilities/func/snake-case', () => {
         expect(actual).to.equal(expected);
     });
 
-    it('converts _snake_case to camelCase', () => {
+    it('converts _snake_case to _camelCase', () => {
         const snakes = [
-            ['_we_are_not_yet_on_mars', 'weAreNotYetOnMars'],
-            ['__lan_gladh_iol', 'lanGladhIol'],
+            ['_we_are_not_yet_on_mars', '_weAreNotYetOnMars'],
+            ['__lan_gladh_iol', '__lanGladhIol'],
         ];
 
         for (const snake of snakes) {
