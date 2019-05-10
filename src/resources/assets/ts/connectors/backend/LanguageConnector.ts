@@ -22,9 +22,8 @@ export default class LanguageConnector {
     /**
      * Gets all languages.
      */
-    public async all() {
-        const languages = await this._cache.get();
-        return languages;
+    public all() {
+        return this._cache.get();
     }
 
     /**

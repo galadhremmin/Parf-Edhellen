@@ -10,7 +10,7 @@ export default class UtilityApiConnector {
     constructor(private _api = new SharedReference(ApiConnector)) {
     }
 
-    public async parseMarkdown(args: IMarkdownParserRequest) {
-        return await this._api.value.post<IMarkdownParserResponse>('utility/markdown', args);
+    public parseMarkdown(args: IMarkdownParserRequest) {
+        return this._api.value.post<IMarkdownParserResponse>('utility/markdown', args);
     }
 }
