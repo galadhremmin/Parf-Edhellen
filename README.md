@@ -4,6 +4,12 @@ This is the source code for [elfdict.com](http://www.elfdict.com), a non-profit,
 Version 71 (model 4.0 incl. migrations) is in production.
 
 ## Configuration
+Ensure that the following dependencies are installed:
+
+```
+php7.3 php7.3-cli php7.3-common php7.3-curl php7.3-gd php7.3-intl php7.3-json php7.3-mbstring php7.3-mysql php7.3-readline php7.3-xml php7.3-zip
+```
+
 Installation is relatively easy:
 1. Configure the database using the model files. Execute the script files in ascending order, starting with _schema.sql_
 2. Shut down your web server

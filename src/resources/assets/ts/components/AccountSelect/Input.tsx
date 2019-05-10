@@ -12,11 +12,8 @@ function Input(props: IProps) {
         value,
     };
 
-    return <div className={classNames('input-group', { 'has-warning': !valid && props.required, 'has-success': valid })}>
+    return <div>
         <input {...inputProps} />
-        <div className="input-group-addon">
-            <span className={classNames('glyphicon', { 'glyphicon-exclamation-sign': !valid && this.props.required, 'glyphicon-ok': valid })} />
-        </div>
     </div>;
 }
 

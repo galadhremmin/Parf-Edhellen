@@ -9,16 +9,22 @@ function TagLabel(props: IProps) {
         onDelete,
     } = props;
 
-    const _onDeleteClick = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
-        ev.preventDefault();
-        fireEvent(`Tag[${tag}]`, onDelete, tag);
+    const _onTagClick = useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
+        if (! ev.target.checked) {
+            fireEvent(`Tag[${tag}]`, onDelete, tag);
+        }
     }, [ tag, onDelete ]);
 
-    return <span className="label label-default">
+    return <label className="label label-default">
+        <input checked={true}
+               name={`tag-checkbox--${tag}`}
+               onChange={_onTagClick}
+               type="checkbox"
+        />
         {tag}
         &#32;
-        <a onClick={_onDeleteClick}><span className="glyphicon glyphicon-remove-sign" /></a>
-    </span>;
+        <span className="glyphicon glyphicon-remove-sign" />
+    </label>;
 }
 
 export default TagLabel;

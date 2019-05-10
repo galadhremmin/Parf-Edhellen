@@ -45,17 +45,16 @@ export default class TagInput extends React.Component<IProps, IState> {
         </>;
     }
 
-    private _getTags() {
+    private _getTags(clone = false) {
         let {
             value: tags,
         } = this.props;
 
-        console.log(tags);
         if (! Array.isArray(tags)) {
             tags = [];
         }
 
-        return tags;
+        return clone ? [ ...tags ] : tags;
     }
 
     private _addTag(tag: string) {
@@ -70,7 +69,7 @@ export default class TagInput extends React.Component<IProps, IState> {
             onChange,
         } = this.props;
 
-        const tags = this._getTags();
+        const tags = this._getTags(/* clone: */ true);
 
         // Do not add the tag if it already exists
         if (tags.indexOf(tag) > -1) {
@@ -78,13 +77,13 @@ export default class TagInput extends React.Component<IProps, IState> {
         }
 
         tags.push(tag);
-        tags.sort(); // TODO: locale compare to sort alphabetically
+        tags.sort((a, b) => a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase()));
 
         fireEvent(name, onChange, tags);
     }
 
     private _deleteTag(tag: string) {
-        const tags = [ ...this._getTags() ];
+        const tags = this._getTags(/* clone: */ true);
 
         const pos = tags.indexOf(tag);
         if (pos > -1) {
