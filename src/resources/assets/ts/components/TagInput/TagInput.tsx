@@ -21,6 +21,10 @@ export default class TagInput extends React.Component<IProps, IState> {
 
     public render() {
         const {
+            name,
+        } = this.props;
+
+        const {
             _onBlur,
             _onDeleteTag,
             _onKeyPress,
@@ -33,16 +37,17 @@ export default class TagInput extends React.Component<IProps, IState> {
 
         const tags = this._getTags();
 
-        return <>
+        return <div>
             {tags.map((tag: string) => <TagLabel key={tag} tag={tag} onDelete={_onDeleteTag} />)}
             <input className="form-control"
+                id={name}
                 onBlur={_onBlur}
                 onChange={_onTextChange}
                 onKeyPress={_onKeyPress}
                 type="text"
                 value={textValue}
             />
-        </>;
+        </div>;
     }
 
     private _getTags(clone = false) {
@@ -76,7 +81,7 @@ export default class TagInput extends React.Component<IProps, IState> {
             return;
         }
 
-        tags.push(tag);
+        tags.push(tag.trim());
         tags.sort((a, b) => a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase()));
 
         fireEvent(name, onChange, tags);

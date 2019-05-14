@@ -41,6 +41,22 @@ describe('components/TagInput', () => {
         expect(actual).to.deep.equal(expected);
     });
 
+    it('trims tags', (done) => {
+        const inject = ' tesla ';
+        const expected = 'tesla';
+
+        const _onChange = (ev: IComponentEvent<string[]>) => {
+            expect(ev.value).to.contain(expected);
+            done();
+        };
+        const wrapper = mount(<TagInput onChange={_onChange} />);
+        const input = wrapper.find('input.form-control');
+
+        // add a tag to the array of tags.
+        input.simulate('change', { target: { value: inject } });
+        input.simulate('keypress', { which: 13 });
+    });
+
     it('can delete tags', () => {
         const original = [ 'S', '3', 'X', 'Y', 'i pace' ];
         let actual: string[] = [];

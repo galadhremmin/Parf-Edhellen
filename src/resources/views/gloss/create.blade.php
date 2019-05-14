@@ -6,10 +6,6 @@
 <h1>Add gloss</h1>
 {!! Breadcrumbs::render('gloss.create') !!}
 
-<div id="ed-gloss-form"></div>
+<div id="ed-gloss-form" data-inject-module="form-gloss"></div>
 
-@endsection
-
-@section('scripts')
-  <script type="text/javascript" src="@assetpath(/js/gloss-admin.js)" async></script>
 @endsection

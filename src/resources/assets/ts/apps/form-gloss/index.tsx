@@ -13,7 +13,7 @@ import GlossActions from './actions/GlossActions';
 import { IProps } from './index._types';
 import rootReducer from './reducers';
 
-import Gloss from './containers/Gloss';
+import GlossForm from './containers/GlossForm';
 
 const Inject = (props: IProps) => {
     const store = createStore(rootReducer, undefined,
@@ -37,7 +37,7 @@ const Inject = (props: IProps) => {
     }
 
     return <Provider store={store}>
-        <Gloss />
+        <GlossForm />
     </Provider>;
 };
 

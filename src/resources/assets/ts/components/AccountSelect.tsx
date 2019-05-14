@@ -1,0 +1,64 @@
+import React, {
+    useCallback,
+    useState,
+} from 'react';
+
+import AccountApiConnector from '@root/connectors/backend/AccountApiConnector';
+import { IAccountSuggestion } from '@root/connectors/backend/AccountApiConnector._types';
+import SharedReference from '@root/utilities/SharedReference';
+
+import { IProps } from './AccountSelect._types';
+import { fireEvent } from './Component';
+import { IComponentEvent } from './Component._types';
+import EntitySelect from './EntitySelect';
+
+const accountFormatter = (account: IAccountSuggestion) => account ? account.nickname : '';
+
+const renderAccount = (account: IAccountSuggestion) => <div>
+    {account.nickname}
+</div>;
+
+function AccountSelect(props: IProps) {
+    const [ suggestions, setSuggestions ] = useState([]);
+
+    const {
+        apiConnector,
+        name,
+        onChange,
+        value,
+    } = props;
+
+    const _onClearSuggestions = useCallback(() => {
+        setSuggestions([]);
+    }, [ setSuggestions ]);
+
+    const _onSuggest = useCallback(async (ev: IComponentEvent<string>) => {
+        const newSuggestions = await apiConnector.find({
+            max: 15,
+            nickname: ev.value,
+        });
+
+        setSuggestions(newSuggestions);
+    }, [ apiConnector ]);
+
+    const _onChange = useCallback((ev: IComponentEvent<IAccountSuggestion>) => {
+        fireEvent(name, onChange, ev.value);
+    }, [ name, onChange ]);
+
+    return <EntitySelect<IAccountSuggestion>
+        formatter={accountFormatter}
+        name={name}
+        onChange={_onChange}
+        onClearSuggestions={_onClearSuggestions}
+        onSuggest={_onSuggest}
+        renderSuggestion={renderAccount}
+        suggestions={suggestions}
+        value={value}
+    />;
+}
+
+AccountSelect.defaultProps = {
+    apiConnector: SharedReference.getInstance(AccountApiConnector),
+} as Partial<IProps>;
+
+export default AccountSelect;

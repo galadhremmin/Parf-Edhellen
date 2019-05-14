@@ -1,7 +1,24 @@
-import React from 'react';
+import React, {
+    useState,
+} from 'react';
 
-function Gloss(props: any) {
+import AccountSelect from '@root/components/AccountSelect';
+import TagInput from '@root/components/TagInput';
+import { IAccountSuggestion } from '@root/connectors/backend/AccountApiConnector._types';
+
+function GlossForm(props: any) {
+    const [ account, setAccount ] = useState<IAccountSuggestion>(null);
+    const [ tags, setTags ] = useState<string[]>([]);
+
     return <form>
+        <div className="form-group">
+            <label htmlFor="translations">Translations</label>
+            <TagInput name="translations" value={tags} onChange={(e) => setTags(e.value)} />
+        </div>
+        <div className="form-group">
+            <label htmlFor="account">Account</label>
+            <AccountSelect name="account" onChange={(e) => setAccount(e.value)} value={account} />
+        </div>
         <div className="form-group">
             <label htmlFor="exampleInputEmail1">Email address</label>
             <input type="email" className="form-control" id="exampleInputEmail1" placeholder="Email" />
@@ -24,4 +41,4 @@ function Gloss(props: any) {
     </form>;
 }
 
-export default Gloss;
+export default GlossForm;

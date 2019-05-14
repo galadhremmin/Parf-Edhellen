@@ -9,7 +9,3 @@
 <div id="ed-gloss-form" data-inject-module="form-gloss" data-inject-prop-gloss="@json($gloss)"></div>
 
 @endsection
-
-@section('scripts')
-  <script type="text/javascript" src="@assetpath(/js/gloss-admin.js)" async></script>
-@endsection
