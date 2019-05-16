@@ -11,9 +11,11 @@ export interface IProps<T> extends IComponentProps<T> {
     renderSuggestion: (suggestion: T) => ReactNode;
     renderValue: (value: T) => ReactNode;
     suggestions: T[];
+    valueClassNames: string;
 }
 
 export interface IState {
+    editing: boolean;
     text: string;
     suggestionsFor: string;
 }

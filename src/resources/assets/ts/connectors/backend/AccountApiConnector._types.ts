@@ -6,5 +6,6 @@ export interface IFindRequest {
 export type FindResponse = IAccountSuggestion[];
 
 export interface IAccountSuggestion {
+    id: number;
     nickname: string;
 }

@@ -1,0 +1,12 @@
+@import '../../_scss/_variables';
+
+.AccountSelect--value {
+    > input {
+        display: none;
+    }
+
+    background: $brand-info;
+    display: inline-block;
+    border-radius: $border-radius-base;
+    padding: $border-radius-base;
+}

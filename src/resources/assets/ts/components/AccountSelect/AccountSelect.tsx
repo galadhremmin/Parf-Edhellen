@@ -7,16 +7,16 @@ import AccountApiConnector from '@root/connectors/backend/AccountApiConnector';
 import { IAccountSuggestion } from '@root/connectors/backend/AccountApiConnector._types';
 import SharedReference from '@root/utilities/SharedReference';
 
+import { fireEvent } from '../Component';
+import { IComponentEvent } from '../Component._types';
+import EntitySelect from '../EntitySelect';
 import { IProps } from './AccountSelect._types';
-import { fireEvent } from './Component';
-import { IComponentEvent } from './Component._types';
-import EntitySelect from './EntitySelect';
+import AccountSuggestion from './AccountSuggestion';
+import AccountValue from './AccountValue';
+
+import './AccountSelect.scss';
 
 const accountFormatter = (account: IAccountSuggestion) => account ? account.nickname : '';
-
-const renderAccount = (account: IAccountSuggestion) => <div>
-    {account.nickname}
-</div>;
 
 function AccountSelect(props: IProps) {
     const [ suggestions, setSuggestions ] = useState([]);
@@ -51,9 +51,11 @@ function AccountSelect(props: IProps) {
         onChange={_onChange}
         onClearSuggestions={_onClearSuggestions}
         onSuggest={_onSuggest}
-        renderSuggestion={renderAccount}
+        renderSuggestion={AccountSuggestion}
+        renderValue={AccountValue}
         suggestions={suggestions}
         value={value}
+        valueClassNames="AccountSelect--value"
     />;
 }
 

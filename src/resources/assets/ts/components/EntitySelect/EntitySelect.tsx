@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import React from 'react';
 import Autosuggest, {
     ChangeEvent,
@@ -21,11 +22,13 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
     public static defaultProps = {
         formatter: (s) => s || '',
         renderSuggestion: (s) => <span>{JSON.stringify(s)}</span>,
-        renderValue: () => null,
+        renderValue: (v) => JSON.stringify(v),
         value: null,
+        valueClassNames: '',
     } as Partial<IProps<any>>;
 
     public state = {
+        editing: false,
         suggestionsFor: null,
         text: '',
     } as IState;
@@ -46,31 +49,120 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
             renderValue,
             suggestions,
             value,
+            valueClassNames,
+        } = this.props;
+
+        const {
+            editing,
+            text,
+        } = this.state;
+
+        const {
+            _onTextBlur,
+            _onTextChange,
+            _onTextKeyPress,
+            _onValueChange,
+        } = this;
+
+        if (editing) {
+            const inputProps = {
+                autoFocus: true,
+                name,
+                onBlur: _onTextBlur,
+                onChange: _onTextChange,
+                onKeyPress: _onTextKeyPress,
+                value: text,
+            };
+
+            return <Autosuggest
+                id={`${name}-suggestions`}
+                alwaysRenderSuggestions={false}
+                focusInputOnSuggestionClick={true}
+                multiSection={false}
+                suggestions={suggestions}
+                onSuggestionsClearRequested={this._onSuggestionsClearRequest}
+                onSuggestionsFetchRequested={this._onSuggestionsFetchRequest}
+                onSuggestionSelected={this._onSuggestionSelected}
+                getSuggestionValue={formatter}
+                renderInputComponent={DefaultInput}
+                renderSuggestion={renderSuggestion}
+                inputProps={inputProps}
+            />;
+        } else {
+            return <label className={classNames(valueClassNames)}>
+                <input
+                    checked={true}
+                    type="checkbox"
+                    name={name}
+                    onChange={_onValueChange}
+                    value={JSON.stringify(value)}
+                />
+                {renderValue(value)}
+            </label>;
+        }
+    }
+
+    private _requestSuggestions(text: string) {
+        const {
+            onSuggest,
+        } = this.props;
+
+        fireEvent(name, onSuggest, text);
+    }
+
+    private _applyValue(value: T = null) {
+        const {
+            formatter,
+            onChange,
+            name,
+            suggestions,
         } = this.props;
 
         const {
             text,
         } = this.state;
 
-        const inputProps = {
-            name,
-            onChange: this._onChange,
-            value: text,
-        };
+        if (value === null && suggestions.length > 0) {
+            value = suggestions.find((s: T) => formatter(s).toLocaleLowerCase() === text.toLocaleLowerCase()) || null;
+        }
 
-        return <Autosuggest
-            id={`${name}-suggestions`}
-            alwaysRenderSuggestions={false}
-            multiSection={false}
-            suggestions={suggestions}
-            onSuggestionsClearRequested={this._onSuggestionsClearRequest}
-            onSuggestionsFetchRequested={this._onSuggestionsFetchRequest}
-            onSuggestionSelected={this._onSuggestionSelected}
-            getSuggestionValue={formatter}
-            renderInputComponent={DefaultInput}
-            renderSuggestion={renderSuggestion}
-            inputProps={inputProps}
-        />;
+        fireEvent(name, onChange, value);
+
+        this.setState({
+            editing: value === null,
+        });
+    }
+
+    private _onValueChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+        const {
+            checked,
+        } = ev.target;
+
+        if (! checked) {
+            this.setState({
+                editing: true,
+            });
+        }
+    }
+
+    private _onTextBlur = () => {
+        this._applyValue();
+    }
+
+    private _onTextChange = (ev: React.FormEvent<any>, params: ChangeEvent) => {
+        const text = params.newValue;
+
+        this.setState({
+            editing: true,
+            text,
+        });
+    }
+
+    private _onTextKeyPress = (ev: React.KeyboardEvent<HTMLInputElement>) => {
+        if (ev.which === 13) {
+            ev.preventDefault();
+            this._applyValue();
+        }
     }
 
     private _onSuggestionsFetchRequest = (ev: Autosuggest.SuggestionsFetchRequestedParams) => {
@@ -105,38 +197,6 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
     }
 
     private _onSuggestionSelected = (ev: React.FormEvent<any>, data: SuggestionSelectedEventData<T>) => {
-        const {
-            onChange,
-        } = this.props;
-
-        fireEvent(name, onChange, data.suggestion || null);
-    }
-
-    private _onChange = (ev: React.FormEvent<any>, params: ChangeEvent) => {
-        const {
-            formatter,
-            suggestions,
-            onChange,
-            name,
-        } = this.props;
-
-        const text = params.newValue;
-        const suggestion = suggestions.find((s: T) => formatter(s) === text) || null;
-
-        this.setState({
-            text,
-        });
-
-        if (suggestion !== null) {
-            fireEvent(name, onChange, suggestion);
-        }
-    }
-
-    private _requestSuggestions = (text: string) => {
-        const {
-            onSuggest,
-        } = this.props;
-
-        fireEvent(name, onSuggest, text);
+        this._applyValue(data.suggestion || null);
     }
 }
