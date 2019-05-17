@@ -12,7 +12,7 @@ import { IComponentEvent } from '../Component._types';
 import EntitySelect from '../EntitySelect';
 import { IProps } from './AccountSelect._types';
 import AccountSuggestion from './AccountSuggestion';
-import AccountValue from './AccountValue';
+import { injectAccountValue } from './AccountValue';
 
 import './AccountSelect.scss';
 
@@ -52,7 +52,7 @@ function AccountSelect(props: IProps) {
         onClearSuggestions={_onClearSuggestions}
         onSuggest={_onSuggest}
         renderSuggestion={AccountSuggestion}
-        renderValue={AccountValue}
+        renderValue={injectAccountValue}
         suggestions={suggestions}
         value={value}
         valueClassNames="AccountSelect--value"

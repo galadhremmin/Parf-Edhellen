@@ -12,20 +12,23 @@ use App\Models\{
     ForumPost,
     ForumThread
 };
+use App\Helpers\StorageHelper;
 
 class DiscussAdapter
 {
     private $_contextFactory;
+    private $_storageHelper;
 
-    public function __construct(ContextFactory $contextFactory)
+    public function __construct(ContextFactory $contextFactory, StorageHelper $storageHelper)
     {
         $this->_contextFactory = $contextFactory;
+        $this->_storageHelper = $storageHelper;
     }
 
     public function adaptAccount(Account $account)
     {
         if ($account->has_avatar) {
-            $account->setAttribute('avatar_path', sprintf('/storage/avatars/%d.png', $account->id));
+            $account->setAttribute('avatar_path', $this->_storageHelper->accountAvatar($account, true));
         }
     }
 

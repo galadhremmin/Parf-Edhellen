@@ -22,6 +22,9 @@ Route::group([
     Route::resource('sentence', 'SentenceApiController', ['only' => [
         'show'
     ]]);
+
+    Route::get('account/{id}/avatar', [ 'uses' => 'AccountApiController@getAvatar' ]);
+    Route::post('account/find',       [ 'uses' => 'AccountApiController@findAccount' ]);
 });
 
 // Public, throttled API

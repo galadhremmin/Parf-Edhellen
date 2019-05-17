@@ -14,6 +14,8 @@ import {
     IState,
 } from './EntitySelect._types';
 
+import './EntitySelect.scss';
+
 /**
  * This component does not currently work. It needs to be reinvented.
  * @param props
@@ -29,6 +31,7 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
 
     public state = {
         editing: false,
+        focused: false,
         suggestionsFor: null,
         text: '',
     } as IState;
@@ -43,7 +46,6 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
     public render() {
         const {
             formatter,
-            loading,
             name,
             renderSuggestion,
             renderValue,
@@ -54,6 +56,7 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
 
         const {
             editing,
+            focused,
             text,
         } = this.state;
 
@@ -61,7 +64,9 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
             _onTextBlur,
             _onTextChange,
             _onTextKeyPress,
+            _onValueBlur,
             _onValueChange,
+            _onValueFocus,
         } = this;
 
         if (editing) {
@@ -89,11 +94,13 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
                 inputProps={inputProps}
             />;
         } else {
-            return <label className={classNames(valueClassNames)}>
+            return <label className={classNames(valueClassNames, { 'EntitySelect--focus': focused })}>
                 <input
                     checked={true}
                     type="checkbox"
                     name={name}
+                    onBlur={_onValueBlur}
+                    onFocus={_onValueFocus}
                     onChange={_onValueChange}
                     value={JSON.stringify(value)}
                 />
@@ -110,26 +117,40 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
         fireEvent(name, onSuggest, text);
     }
 
-    private _applyValue(value: T = null) {
+    private _applyValue(newValue: T = null) {
         const {
             formatter,
             onChange,
             name,
             suggestions,
+            value,
         } = this.props;
 
         const {
             text,
         } = this.state;
 
-        if (value === null && suggestions.length > 0) {
-            value = suggestions.find((s: T) => formatter(s).toLocaleLowerCase() === text.toLocaleLowerCase()) || null;
+        if (newValue === null && suggestions.length > 0) {
+            newValue = suggestions.find(
+                (s: T) => formatter(s).toLocaleLowerCase() === text.toLocaleLowerCase(),
+            ) || null;
+
+        } else if (formatter(value) === text) {
+            newValue = value;
         }
 
-        fireEvent(name, onChange, value);
+        if (newValue !== value) {
+            fireEvent(name, onChange, newValue);
+        }
 
         this.setState({
-            editing: value === null,
+            editing: newValue === null,
+        });
+    }
+
+    private _onValueBlur = () => {
+        this.setState({
+            focused: false,
         });
     }
 
@@ -141,8 +162,15 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
         if (! checked) {
             this.setState({
                 editing: true,
+                focused: false,
             });
         }
+    }
+
+    private _onValueFocus = () => {
+        this.setState({
+            focused: true,
+        });
     }
 
     private _onTextBlur = () => {

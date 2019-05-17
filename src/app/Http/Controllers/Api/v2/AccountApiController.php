@@ -6,9 +6,17 @@ use Illuminate\Http\Request;
 
 use App\Models\Account;
 use App\Http\Controllers\Controller;
+use App\Helpers\StorageHelper;
 
 class AccountApiController extends Controller 
 {
+    private $_storageHelper;
+
+    public function __construct(StorageHelper $storageHelper) 
+    {
+        $this->_storageHelper = $storageHelper;
+    }
+
     public function index(Request $request)
     {
         return Account::orderBy('nickname')
@@ -51,5 +59,14 @@ class AccountApiController extends Controller
         }
 
         return $query->get();
+    }
+
+    public function getAvatar(Request $request, int $id)
+    {
+        $account = Account::find($id);
+
+        return [
+            'avatar' => $this->_storageHelper->accountAvatar($account, true)
+        ];
     }
 }

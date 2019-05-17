@@ -16,6 +16,7 @@ export interface IProps<T> extends IComponentProps<T> {
 
 export interface IState {
     editing: boolean;
+    focused: boolean;
     text: string;
     suggestionsFor: string;
 }

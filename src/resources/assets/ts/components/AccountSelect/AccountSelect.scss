@@ -2,11 +2,28 @@
 
 .AccountSelect--value {
     > input {
-        display: none;
+        position: absolute;
+        left: -100px;
+        top: 0;
+    }
+    > .avatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 12px;
+        margin-right: 0.5rem;
+    }
+    > .id {
+        color: $gray-light;
+        font-family: $font-family-tiny;
+        float: right;
+        font-size: 0.8rem;
+        line-height: 2.25;
     }
 
-    background: $brand-info;
-    display: inline-block;
+    display: block;
+    overflow: hidden;
+    border: 1px solid $input-border;
     border-radius: $border-radius-base;
-    padding: $border-radius-base;
+    padding: $padding-base-vertical $padding-base-horizontal;
+    font-weight: normal;
 }

@@ -9,3 +9,11 @@ export interface IAccountSuggestion {
     id: number;
     nickname: string;
 }
+
+export interface IGetAvatarRequest {
+    accountId: number;
+}
+
+export interface IGetAvatarResponse {
+    avatar: string;
+}
