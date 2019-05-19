@@ -1,3 +1,18 @@
+@import '../../_scss/_variables';
+
+.EntitySelect {
+    > input {
+        position: absolute;
+        left: -100%;
+    }
+
+    display: block;
+    overflow: hidden;
+    border: 1px solid $input-border;
+    border-radius: $border-radius-base;
+    padding: $padding-base-vertical $padding-base-horizontal;
+    font-weight: normal;
+}
 .EntitySelect--focus {
     /* TODO: This is a shameless copy from the web inspector. Fix this. */
     border-color: #98cbe8 !important;

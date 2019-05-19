@@ -1,11 +1,6 @@
 @import '../../_scss/_variables';
 
-.AccountSelect--value {
-    > input {
-        position: absolute;
-        left: -100px;
-        top: 0;
-    }
+.EntitySelect.AccountSelect--value {
     > .avatar {
         width: 24px;
         height: 24px;
@@ -19,11 +14,4 @@
         font-size: 0.8rem;
         line-height: 2.25;
     }
-
-    display: block;
-    overflow: hidden;
-    border: 1px solid $input-border;
-    border-radius: $border-radius-base;
-    padding: $padding-base-vertical $padding-base-horizontal;
-    font-weight: normal;
 }

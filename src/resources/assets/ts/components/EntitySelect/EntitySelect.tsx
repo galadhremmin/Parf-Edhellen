@@ -36,6 +36,8 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
         text: '',
     } as IState;
 
+    private _shouldAutofocus = false;
+
     private _beginRequestSuggestions: (text: string) => void;
 
     public constructor(props: IProps<T>) {
@@ -63,10 +65,12 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
         const {
             _onTextBlur,
             _onTextChange,
-            _onTextKeyPress,
+            _onTextKeyDown,
             _onValueBlur,
             _onValueChange,
             _onValueFocus,
+            _onValueKeyDown,
+            _shouldAutofocus,
         } = this;
 
         if (editing) {
@@ -75,7 +79,7 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
                 name,
                 onBlur: _onTextBlur,
                 onChange: _onTextChange,
-                onKeyPress: _onTextKeyPress,
+                onKeyDown: _onTextKeyDown,
                 value: text,
             };
 
@@ -94,14 +98,18 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
                 inputProps={inputProps}
             />;
         } else {
-            return <label className={classNames(valueClassNames, { 'EntitySelect--focus': focused })}>
+            return <label className={classNames(valueClassNames, 'EntitySelect', { 'EntitySelect--focus': focused })}>
                 <input
+                    autoFocus={_shouldAutofocus}
+                    autoCorrect="off"
+                    autoComplete="off"
                     checked={true}
                     type="checkbox"
                     name={name}
                     onBlur={_onValueBlur}
                     onFocus={_onValueFocus}
                     onChange={_onValueChange}
+                    onKeyDown={_onValueKeyDown}
                     value={JSON.stringify(value)}
                 />
                 {renderValue(value)}
@@ -143,8 +151,23 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
             fireEvent(name, onChange, newValue);
         }
 
+        if (newValue !== null) {
+            this._leaveEditMode();
+        }
+    }
+
+    private _enterEditMode() {
+        this._shouldAutofocus = false;
         this.setState({
-            editing: newValue === null,
+            editing: true,
+            focused: false,
+        });
+    }
+
+    private _leaveEditMode() {
+        this._shouldAutofocus = true;
+        this.setState({
+            editing: false,
         });
     }
 
@@ -160,10 +183,7 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
         } = ev.target;
 
         if (! checked) {
-            this.setState({
-                editing: true,
-                focused: false,
-            });
+            this._enterEditMode();
         }
     }
 
@@ -171,6 +191,18 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
         this.setState({
             focused: true,
         });
+    }
+
+    private _onValueKeyDown = (ev: React.KeyboardEvent<HTMLInputElement>) => {
+        const code = ev.which;
+        if (!(code > 47 && code < 58) && // numeric (0-9)
+            !(code > 64 && code < 91) && // upper alpha (A-Z)
+            !(code > 96 && code < 123)) { // lower alpha (a-z)
+            return;
+        }
+
+        ev.preventDefault();
+        this._enterEditMode();
     }
 
     private _onTextBlur = () => {
@@ -186,7 +218,7 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
         });
     }
 
-    private _onTextKeyPress = (ev: React.KeyboardEvent<HTMLInputElement>) => {
+    private _onTextKeyDown = (ev: React.KeyboardEvent<HTMLInputElement>) => {
         if (ev.which === 13) {
             ev.preventDefault();
             this._applyValue();
