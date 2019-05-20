@@ -1,4 +1,8 @@
-import React, { useCallback } from 'react';
+import classNames from 'classnames';
+import React, {
+    useCallback,
+    useState,
+} from 'react';
 
 import { fireEvent } from '../Component';
 import { IProps } from './TagLabel._types';
@@ -9,16 +13,28 @@ function TagLabel(props: IProps) {
         onDelete,
     } = props;
 
+    const [ focused, setFocused ] = useState(false);
+
     const _onTagClick = useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
         if (! ev.target.checked) {
             fireEvent(`Tag[${tag}]`, onDelete, tag);
         }
     }, [ tag, onDelete ]);
 
-    return <label className="label label-default">
+    const _onTagBlur = useCallback(() => {
+        setFocused(false);
+    }, [ setFocused ]);
+
+    const _onTagFocus = useCallback(() => {
+        setFocused(true);
+    }, [ setFocused ]);
+
+    return <label className={classNames({ focused })}>
         <input checked={true}
                name={`tag-checkbox--${tag}`}
+               onBlur={_onTagBlur}
                onChange={_onTagClick}
+               onFocus={_onTagFocus}
                type="checkbox"
         />
         {tag}

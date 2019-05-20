@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createRef } from 'react';
 
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
 
@@ -10,6 +10,8 @@ import {
 } from './TagInput._types';
 import TagLabel from './TagLabel';
 
+import './TagInput.scss';
+
 export default class TagInput extends React.Component<IProps, IState> {
     public static defaultProps = {
         value: [],
@@ -18,6 +20,8 @@ export default class TagInput extends React.Component<IProps, IState> {
     public state = {
         textValue: '',
     };
+
+    private _inputRef = createRef<HTMLInputElement>();
 
     public render() {
         const {
@@ -37,9 +41,12 @@ export default class TagInput extends React.Component<IProps, IState> {
 
         const tags = this._getTags();
 
-        return <div>
-            {tags.map((tag: string) => <TagLabel key={tag} tag={tag} onDelete={_onDeleteTag} />)}
-            <input className="form-control"
+        return <>
+            <div className="TagInput--values">
+                {tags.map((tag: string) => <TagLabel key={tag} tag={tag} onDelete={_onDeleteTag} />)}
+            </div>
+            <input ref={this._inputRef}
+                className="form-control"
                 id={name}
                 onBlur={_onBlur}
                 onChange={_onTextChange}
@@ -47,7 +54,7 @@ export default class TagInput extends React.Component<IProps, IState> {
                 type="text"
                 value={textValue}
             />
-        </div>;
+        </>;
     }
 
     private _getTags(clone = false) {
@@ -105,6 +112,10 @@ export default class TagInput extends React.Component<IProps, IState> {
 
     private _onDeleteTag = (ev: IComponentEvent<string>) => {
         this._deleteTag(ev.value);
+
+        if (this._inputRef.current !== null) {
+            this._inputRef.current.focus();
+        }
     }
 
     private _onTextChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
