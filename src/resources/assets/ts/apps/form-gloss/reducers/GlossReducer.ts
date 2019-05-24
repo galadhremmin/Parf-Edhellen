@@ -7,27 +7,33 @@ import {
 const GlossReducer = (state: IGlossState = {
     accountId: 0,
     comments: '',
+    details: [],
     etymology: null,
     externalId: null,
     id: 0,
-    inflections: {},
-    isCanon: false,
     isIndex: false,
     isLatest: false,
     isRejected: false,
     isUncertain: false,
+    keywords: [],
     languageId: 0,
-    originalGlossId: null,
-    senseId: 0,
+    sense: null,
     source: '',
+    speechId: 0,
     tengwar: '',
     translations: [],
-    type: '',
-    word: '',
+    word: {
+        word: '',
+    },
 }, action: IGlossAction) => {
     switch (action.type) {
         case Actions.ReceiveGloss:
             return action.gloss;
+        case Actions.SetField:
+            return {
+                ...state,
+                [action.field]: action.value,
+            };
         default:
             return state;
     }

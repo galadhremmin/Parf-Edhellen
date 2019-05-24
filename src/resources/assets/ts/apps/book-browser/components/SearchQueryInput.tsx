@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import React from 'react';
 
 import { fireEventAsync } from '@root/components/Component';
-import { FormComponent } from '@root/components/FormComponent';
+import { FormComponent } from '@root/components/Form/FormComponent';
 import {
     IComponentProps,
     IProps,

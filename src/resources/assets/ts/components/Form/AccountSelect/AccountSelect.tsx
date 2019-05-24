@@ -7,8 +7,8 @@ import AccountApiConnector from '@root/connectors/backend/AccountApiConnector';
 import { IAccountSuggestion } from '@root/connectors/backend/AccountApiConnector._types';
 import SharedReference from '@root/utilities/SharedReference';
 
-import { fireEvent } from '../Component';
-import { IComponentEvent } from '../Component._types';
+import { fireEvent } from '../../Component';
+import { IComponentEvent } from '../../Component._types';
 import EntitySelect from '../EntitySelect';
 import { IProps } from './AccountSelect._types';
 import AccountSuggestion from './AccountSuggestion';

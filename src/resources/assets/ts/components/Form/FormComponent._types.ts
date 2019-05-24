@@ -1,8 +1,9 @@
 import {
     ComponentEventHandler,
-} from './Component._types';
+} from '../Component._types';
 
 export interface IBackingComponentProps<V> {
+    className?: string;
     name?: string;
     tabIndex?: number;
     required?: boolean;

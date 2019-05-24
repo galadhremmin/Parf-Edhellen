@@ -1,6 +1,6 @@
 import React from 'react';
 
-import StaticAlert from './StaticAlert';
+import StaticAlert from '../StaticAlert';
 import { IProps } from './ValidationErrorAlert._types';
 
 const ValidationErrorAlert = (props: IProps) => {

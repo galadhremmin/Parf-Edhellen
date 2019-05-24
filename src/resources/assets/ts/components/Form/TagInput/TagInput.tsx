@@ -2,8 +2,8 @@ import React, { createRef } from 'react';
 
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
 
-import { fireEvent } from '../Component';
-import { IComponentEvent } from '../Component._types';
+import { fireEvent } from '../../Component';
+import { IComponentEvent } from '../../Component._types';
 import {
     IProps,
     IState,

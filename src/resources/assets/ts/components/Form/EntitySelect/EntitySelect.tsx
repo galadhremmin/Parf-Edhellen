@@ -7,7 +7,7 @@ import Autosuggest, {
 
 import debounce from '@root/utilities/func/debounce';
 
-import { fireEvent } from '../Component';
+import { fireEvent } from '../../Component';
 import DefaultInput from './DefaultInput';
 import {
     IProps,

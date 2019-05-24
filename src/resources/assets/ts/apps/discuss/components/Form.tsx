@@ -7,7 +7,7 @@ import {
     fireEventAsync,
 } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
-import MarkdownInput from '@root/components/MarkdownInput';
+import MarkdownInput from '@root/components/Form/MarkdownInput';
 
 import {
     IFormOutput,

@@ -1,58 +1,135 @@
 import React, {
     useCallback,
-    useState,
 } from 'react';
 import { connect } from 'react-redux';
 
 import { ReduxThunkDispatch } from '@root/_types';
-import AccountSelect from '@root/components/AccountSelect';
 import { fireEvent } from '@root/components/Component';
-import TagInput from '@root/components/TagInput';
-import { IAccountSuggestion } from '@root/connectors/backend/AccountApiConnector._types';
+import { IComponentEvent } from '@root/components/Component._types';
+import AccountSelect from '@root/components/Form/AccountSelect';
+import LanguageSelect from '@root/components/Form/LanguageSelect';
+import MarkdownInput from '@root/components/Form/MarkdownInput';
+import OptionalLabel from '@root/components/Form/OptionalLabel';
+import TagInput from '@root/components/Form/TagInput';
 
+import GlossActions from '../actions/GlossActions';
 import { RootReducer } from '../reducers';
-import { IProps } from './GlossForm._types';
+import {
+    defaultTransformer,
+    keywordsTransformer,
+    translationsTransformer,
+    wordTransformer,
+} from '../utilities/value-transformers';
+import { ValueTransformer } from '../utilities/value-transformers._types';
+import {
+    GlossProps,
+    IProps,
+} from './GlossForm._types';
 
 function GlossForm(props: IProps) {
-    const [ account, setAccount ] = useState<IAccountSuggestion>(null);
-    const [ tags, setTags ] = useState<string[]>([]);
-
     const {
-        gloss,
+        name,
+        onGlossFieldChange,
         onSubmit,
     } = props;
 
+    const {
+        account,
+        comments,
+        keywords,
+        languageId,
+        source,
+        translations,
+        word,
+    } = props.gloss;
+
+    const _onFieldChange = (field: GlossProps, value: string) => {
+        const params = {
+            field,
+            value,
+        };
+
+        fireEvent(name, onGlossFieldChange, params);
+    };
+
+    const _onChangeNative = (field: GlossProps, transform: ValueTransformer = defaultTransformer) =>
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = transform(e.target.value);
+        _onFieldChange(field, value);
+    };
+
+    const _onChange = (field: GlossProps, transform: ValueTransformer = defaultTransformer) =>
+        (e: IComponentEvent<any>) => {
+        const value = transform(e.value);
+        _onFieldChange(field, value);
+    };
+
     const _onSubmit = useCallback((ev: React.FormEvent) => {
         ev.preventDefault();
-        fireEvent('GlossForm', onSubmit, null);
-    }, [ onSubmit ]);
+        fireEvent(name, onSubmit, null);
+    }, [ name, onSubmit ]);
 
     return <form onSubmit={_onSubmit}>
-        <div className="form-group">
+        <div className="form-group form-group-sm">
             <label htmlFor="ed-gloss-word" className="control-label">Word</label>
-            <input type="text" className="form-control" id="ed-gloss-word" name="word"
-                value={gloss.word} onChange={null} />
+            <input type="text"
+                className="form-control"
+                id="ed-gloss-word"
+                value={word.word}
+                onChange={_onChangeNative('word', wordTransformer)}
+            />
         </div>
-        <div className="form-group">
-            <label htmlFor="translations">Translations</label>
-            <TagInput name="translations" value={tags} onChange={(e) => setTags(e.value)} />
+        <div className="form-group form-group-sm">
+            <label htmlFor="ed-gloss-language">Language</label>
+            <LanguageSelect
+                className="form-control"
+                name="ed-gloss-language"
+                value={languageId}
+                onChange={_onChange('languageId')}
+            />
         </div>
-        <div className="form-group">
-            <label htmlFor="account">Account</label>
-            <AccountSelect name="account" onChange={(e) => setAccount(e.value)} value={account} />
+        <div className="form-group form-group-sm">
+            <label htmlFor="ed-gloss-translations">Translations</label>
+            <TagInput
+                name="ed-gloss-translations"
+                value={translations.map((t) => t.translation)}
+                onChange={_onChange('translations', translationsTransformer)}
+            />
         </div>
-        <div className="form-group">
-            <label htmlFor="exampleInputEmail1">EDiscussmail address</label>
-            <input type="email" className="form-control" id="exampleInputEmail1" placeholder="Email" />
+        <div className="form-group form-group-sm">
+            <label htmlFor="ed-gloss-sources" className="control-label">Sources</label>
+            <input type="text"
+                className="form-control"
+                id="ed-gloss-sources"
+                value={source}
+                onChange={_onChangeNative('source')}
+            />
         </div>
-        <div className="form-group">
-            <label htmlFor="exampleInputPassword1">Password</label>
-            <input type="password" className="form-control" id="exampleInputPassword1" placeholder="Password" />
+        <div className="form-group form-group-sm">
+            <label htmlFor="ed-gloss-keywords">
+                Keywords
+                <OptionalLabel />
+            </label>
+            <TagInput
+                name="ed-gloss-keywords"
+                value={keywords.map((k) => k.word)}
+                onChange={_onChange('keywords', keywordsTransformer)}
+            />
         </div>
-        <div className="form-group">
-            <label htmlFor="exampleInputFile">File input</label>
-            <input type="file" id="exampleInputFile" />
-            <p className="help-block">Example block-level help text here.</p>
+        <div className="form-group form-group-sm">
+            <label htmlFor="ed-gloss-account">Account</label>
+            <AccountSelect
+                name="ed-gloss-account"
+                onChange={_onChange('account')}
+                value={account}
+            />
+        </div>
+        <div className="form-group form-group-sm">
+            <label htmlFor="ed-gloss-comments">Comments</label>
+            <MarkdownInput name="ed-gloss-comments"
+                value={comments}
+                onChange={_onChange('comments')}
+            />
         </div>
         <div className="checkbox">
             <label>
@@ -63,13 +140,18 @@ function GlossForm(props: IProps) {
     </form>;
 }
 
+GlossForm.defaultProps = {
+    name: 'GlossForm',
+} as Partial<IProps>;
+
 const mapStateToProps = (state: RootReducer) => ({
     gloss: state.gloss,
 } as Partial<IProps>);
 
-// const actions = new DiscussActions();
+const actions = new GlossActions();
 const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => ({
-    onSubmit: (ev) => console.log(ev),
+    onGlossFieldChange: (e) => dispatch(actions.setField(e.value.field, e.value.value)),
+    onSubmit: (e) => console.log(e),
 } as Partial<IProps>);
 
 export default connect(mapStateToProps, mapDispatchToProps)(GlossForm);

@@ -1,6 +1,6 @@
 import Cache from '@root/utilities/Cache';
 
-import { ComponentEventHandler } from './Component._types';
+import { ComponentEventHandler } from '../Component._types';
 
 export interface IComponentProps {
     [propName: string]: any;

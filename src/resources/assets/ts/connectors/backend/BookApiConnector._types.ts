@@ -46,11 +46,6 @@ export interface ILanguageEntity {
     tengwarMode?: string;
 }
 
-export interface IWordEntity {
-    word: string;
-    normalizedWord: string;
-}
-
 export interface IBookGlossEntity {
     accountId: number;
     accountName: string;

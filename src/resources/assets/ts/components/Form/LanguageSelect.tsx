@@ -3,8 +3,8 @@ import React from 'react';
 import {
     ILanguageEntity,
     ILanguagesResponse,
-} from '../connectors/backend/BookApiConnector._types';
-import LanguageConnector from '../connectors/backend/LanguageConnector';
+} from '@root/connectors/backend/BookApiConnector._types';
+import LanguageConnector from '@root/connectors/backend/LanguageConnector';
 import {
     FormComponent,
     integerConverter,

@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { ComponentEventHandler } from '../Component._types';
+import { ComponentEventHandler } from '../../Component._types';
 import { IComponentProps } from '../FormComponent._types';
 
 export interface IProps<T> extends IComponentProps<T> {

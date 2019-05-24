@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { mount } from 'enzyme';
 import React from 'react';
 
-import { IComponentEvent } from '../Component._types';
+import { IComponentEvent } from '../../Component._types';
 import TagInput from './TagInput';
 
 import '@root/utilities/Enzyme';

@@ -3,14 +3,14 @@ import React from 'react';
 
 import {
     fireEvent,
-} from './Component';
+} from '../Component';
 import {
     IBackingComponentProps,
     IComponentProps,
 } from './FormComponent._types';
 
 const DefaultComponentPropNames: Array<keyof IBackingComponentProps<any>> = //
-    ['name', 'value', 'required', 'tabIndex'];
+    ['className', 'name', 'value', 'required', 'tabIndex'];
 
 export interface FormComponent {
     /**
@@ -81,7 +81,9 @@ export abstract class FormComponent<V = any, P = {}, CP = {}, S = {}, SS = any>
         const allProps = this.props as any;
 
         for (const propName of propNames) {
-            props[propName] = allProps[propName];
+            if (allProps[propName] !== undefined) {
+                props[propName] = allProps[propName];
+            }
         }
 
         return props;

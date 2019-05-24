@@ -86,7 +86,9 @@ class GlossController extends Controller
     public function edit(Request $request, int $id) 
     {
         // Eagerly load the gloss.
-        $gloss = Gloss::with('word', 'gloss_details', 'gloss_group', 'sense', 'sense.word', 'translations')
+        $gloss = Gloss::with(
+            'account', 'word', 'gloss_details', 'gloss_group',
+            'sense', 'sense.word', 'translations')
             ->findOrFail($id)
             ->getLatestVersion();
 
@@ -96,10 +98,8 @@ class GlossController extends Controller
             ]);
         }
 
-        // Retrieve the words associated with the gloss' set of keywords. This is achieved by
-        // joining with the _words_ table. The result is assigned to _keywords, which starts with
-        // an underscore.
-        $gloss->_keywords = $this->_glossRepository->getKeywords($gloss->sense_id, $gloss->id);
+        // Overwrite the entity's keywords with a complete list of keywords (including keywords associated with the sense).
+        $gloss->keywords = $this->_glossRepository->getKeywords($gloss->sense_id, $gloss->id);
 
         return $request->ajax() 
             ? $gloss

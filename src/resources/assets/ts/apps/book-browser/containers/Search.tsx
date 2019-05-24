@@ -4,7 +4,7 @@ import {
 } from 'react-redux';
 
 import { IComponentEvent } from '@root/components/Component._types';
-import LanguageSelect from '@root/components/LanguageSelect';
+import LanguageSelect from '@root/components/Form/LanguageSelect';
 import debounce from '@root/utilities/func/debounce';
 import SharedReference from '@root/utilities/SharedReference';
 import { SearchActions } from '../actions';

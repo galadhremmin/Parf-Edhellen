@@ -12,7 +12,7 @@ import MemoryStorage from '@root/utilities/MemoryStorage';
 import MarkdownInput from './MarkdownInput';
 import { IComponentConfig } from './MarkdownInput._types';
 
-import '../utilities/Enzyme';
+import '@root/utilities/Enzyme';
 
 describe('components/MarkdownInput', () => {
     const MarkdownText = 'This *text* is **bold**!';

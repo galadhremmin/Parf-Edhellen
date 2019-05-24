@@ -5,8 +5,8 @@ import { LearnMoreMarkdownUrl } from '@root/config';
 import Cache from '@root/utilities/Cache';
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
 
-import { fireEvent } from './Component';
-import Markdown from './Markdown';
+import { fireEvent } from '../Component';
+import Markdown from '../Markdown';
 import {
     IComponentConfig,
     IProps,

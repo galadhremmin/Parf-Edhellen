@@ -12,7 +12,7 @@ import UnauthenticatedAlert from '@root/apps/discuss/components/UnauthenticatedA
 import { fireEvent } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
 import Dialog from '@root/components/Dialog';
-import ValidationErrorAlert from '@root/components/ValidationErrorAlert';
+import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
 import { IProps } from './CreateThreadButton._types';
 
 function CreateThreadButton(props: IProps) {

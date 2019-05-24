@@ -3,9 +3,7 @@ import {
     ReduxThunkDispatch,
 } from '@root/_types';
 import BookApiConnector from '@root/connectors/backend/BookApiConnector';
-import {
-    IBookGlossEntity,
-} from '@root/connectors/backend/BookApiConnector._types';
+import { IGlossEntity } from '@root/connectors/backend/GlossResourceApiConnector._types';
 import SharedReference from '@root/utilities/SharedReference';
 
 import Actions from './Actions';
@@ -20,10 +18,18 @@ export default class GlossActions {
         };
     }
 
-    public setGloss(gloss: IBookGlossEntity) {
+    public setGloss(gloss: IGlossEntity) {
         return {
             gloss,
             type: Actions.ReceiveGloss,
+        };
+    }
+
+    public setField(field: keyof IGlossEntity, value: any) {
+        return {
+            field,
+            type: Actions.SetField,
+            value,
         };
     }
 }

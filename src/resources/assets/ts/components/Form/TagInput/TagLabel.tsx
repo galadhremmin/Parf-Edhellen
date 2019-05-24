@@ -4,7 +4,7 @@ import React, {
     useState,
 } from 'react';
 
-import { fireEvent } from '../Component';
+import { fireEvent } from '../../Component';
 import { IProps } from './TagLabel._types';
 
 function TagLabel(props: IProps) {
