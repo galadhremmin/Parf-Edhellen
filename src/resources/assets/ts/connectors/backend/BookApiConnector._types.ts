@@ -62,13 +62,13 @@ export interface IBookGlossEntity {
     etymology: string;
     externalId: string;
     externalLinkFormat: string;
-    glossDetails: IGlossDetailEntity[];
+    glossDetails: IBookGlossDetailEntity[];
     glossGroupId: number;
     glossGroupName: string;
     id: number;
-    inflectedWord?: IWordInflection;
+    inflectedWord?: IBookWordInflection;
     inflections: {
-        [ sentenceId: string ]: IInflectionEntity[];
+        [ sentenceId: string ]: IBookInflectionEntity[];
     };
     isCanon: boolean;
     isIndex: boolean;
@@ -91,19 +91,19 @@ export interface IBookGlossEntity {
     word: string;
 }
 
-export interface IGlossDetailEntity {
+export interface IBookGlossDetailEntity {
     category: string;
     order: number;
     text: string;
 }
 
-export interface IWordInflection {
+export interface IBookWordInflection {
     inflections: ISentenceFragmentInflection[];
     speech: string;
     word: string;
 }
 
-export interface IInflectionEntity {
+export interface IBookInflectionEntity {
     glossId: number;
     inflection: string;
     languageId: number;
@@ -182,7 +182,7 @@ export enum SentenceFragmentType {
     WordConnection    = 45,
 }
 
-export interface IInflectionEntity {
+export interface IBookInflectionEntity {
     id: number;
     name: string;
 }
