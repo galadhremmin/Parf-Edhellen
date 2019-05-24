@@ -1,4 +1,4 @@
-import { IGlossEntity } from '@root/connectors/backend/BookApiConnector._types';
+import { IBookGlossEntity } from '@root/connectors/backend/BookApiConnector._types';
 import { ICardResponse } from '@root/connectors/backend/FlashcardApiConnector._types';
 
 export interface IProps {
@@ -9,7 +9,7 @@ export interface IProps {
 interface ILocalState {
     correct: boolean;
     flipped: boolean;
-    gloss: IGlossEntity;
+    gloss: IBookGlossEntity;
     loading: boolean;
 }
 

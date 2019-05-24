@@ -1,10 +1,10 @@
 import { IEventProps } from '@root/components/HtmlInject._types';
 import {
-    IGlossEntity,
+    IBookGlossEntity,
     ILanguageEntity,
 } from '@root/connectors/backend/BookApiConnector._types';
 
 export interface IProps extends IEventProps {
-    glosses: IGlossEntity[];
+    glosses: IBookGlossEntity[];
     language: ILanguageEntity;
 }

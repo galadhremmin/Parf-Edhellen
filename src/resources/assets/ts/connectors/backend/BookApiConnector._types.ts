@@ -24,7 +24,7 @@ export interface IGlossaryRequest {
 export interface IGlossaryResponse {
     languages: ILanguageEntity[] | null;
     sections: Array<{
-        glosses: IGlossEntity[];
+        glosses: IBookGlossEntity[];
         language: ILanguageEntity;
     }>;
     sense: number[];
@@ -51,7 +51,7 @@ export interface IWordEntity {
     normalizedWord: string;
 }
 
-export interface IGlossEntity {
+export interface IBookGlossEntity {
     accountId: number;
     accountName: string;
     accountUrl: string;

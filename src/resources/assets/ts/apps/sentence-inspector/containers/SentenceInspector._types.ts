@@ -1,6 +1,6 @@
 import { ThunkDispatch } from 'redux-thunk';
 
-import { IGlossEntity } from '@root/connectors/backend/BookApiConnector._types';
+import { IBookGlossEntity } from '@root/connectors/backend/BookApiConnector._types';
 
 import {
     FragmentsReducerState,
@@ -21,5 +21,5 @@ export interface IProps {
 
 export interface IState {
     fragment: IFragmentsReducerState;
-    gloss: IGlossEntity;
+    gloss: IBookGlossEntity;
 }

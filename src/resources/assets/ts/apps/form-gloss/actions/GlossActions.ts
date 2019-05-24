@@ -4,7 +4,7 @@ import {
 } from '@root/_types';
 import BookApiConnector from '@root/connectors/backend/BookApiConnector';
 import {
-    IGlossEntity,
+    IBookGlossEntity,
 } from '@root/connectors/backend/BookApiConnector._types';
 import SharedReference from '@root/utilities/SharedReference';
 
@@ -20,7 +20,7 @@ export default class GlossActions {
         };
     }
 
-    public setGloss(gloss: IGlossEntity) {
+    public setGloss(gloss: IBookGlossEntity) {
         return {
             gloss,
             type: Actions.ReceiveGloss,

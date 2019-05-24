@@ -1,4 +1,4 @@
-import { IGlossEntity } from './BookApiConnector._types';
+import { IBookGlossEntity } from './BookApiConnector._types';
 
 export interface ICardRequest {
     id: number;
@@ -19,5 +19,5 @@ export interface ICardTestRequest {
 
 export interface ICardTestResponse {
     correct: boolean;
-    gloss: IGlossEntity;
+    gloss: IBookGlossEntity;
 }
