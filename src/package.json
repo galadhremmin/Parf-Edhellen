@@ -3,8 +3,8 @@
   "scripts": {
     "watch": "npm run dev -- -w",
     "watch-poll": "npm run dev -- -w --watch-poll",
-    "production": "npm run dev -- -p",
-    "test": "npm run lint && TS_NODE_PROJECT=\"tsconfig.unit-test.json\" mocha -r ts-node/register -r babel-register -r jsdom-global/register -r tsconfig-paths/register -r ignore-styles \"./resources/assets/ts/**/*._spec.ts\" \"./resources/assets/ts/**/*._spec.tsx\"",
+    "production": "npm run lint && npm run dev -- -p",
+    "test": "TS_NODE_PROJECT=\"tsconfig.unit-test.json\" mocha -r ts-node/register -r babel-register -r jsdom-global/register -r tsconfig-paths/register -r ignore-styles \"./resources/assets/ts/**/*._spec.ts\" \"./resources/assets/ts/**/*._spec.tsx\"",
     "lint": "tslint \"resources/assets/ts/**/*.ts\" \"resources/assets/ts/**/*.tsx\"",
     "dev": "node node_modules/webpack/bin/webpack.js --config webpack.config.js --mode development"
   },
