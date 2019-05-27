@@ -19,16 +19,23 @@ describe('components/Form', () => {
 
         const DefaultLoader = () => Promise.resolve(Values);
 
-        it('mounts', () => {
+        it('mounts', (done) => {
             const wrapper = mount(<AsyncSelect loaderOfValues={DefaultLoader} textField="t" valueField="x" />);
 
-            const options = wrapper.find('option');
-            expect(options.length).to.equal(Values.length);
+            setTimeout(() => {
+                wrapper.update();
+                console.log(wrapper.html());
 
-            for (let i = 0; i < Values.length; i += 1) {
-                expect(options.at(i).prop('value')).to.equal(Values[i].x);
-                expect(options.at(i).text()).to.equal(Values[i].t);
-            }
+                const options = wrapper.find('option');
+                expect(options.length).to.equal(Values.length);
+
+                for (let i = 0; i < Values.length; i += 1) {
+                    expect(options.at(i).prop('value')).to.equal(Values[i].x);
+                    expect(options.at(i).text()).to.equal(Values[i].t);
+                }
+
+                done();
+            }, 0);
         });
 
     });
