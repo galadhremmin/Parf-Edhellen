@@ -24,7 +24,6 @@ describe('components/Form', () => {
 
             setTimeout(() => {
                 wrapper.update();
-                console.log(wrapper.html());
 
                 const options = wrapper.find('option');
                 expect(options.length).to.equal(Values.length);
@@ -35,8 +34,53 @@ describe('components/Form', () => {
                 }
 
                 done();
-            }, 0);
+            });
         });
 
+        it('supports id as value output', (done) => {
+            const value = Values[Math.ceil(Values.length / 2)];
+
+            const onChange = (ev: IComponentEvent<any>) => {
+                expect(ev.value).to.equal(value.x);
+                done();
+            };
+
+            const wrapper = mount(<AsyncSelect
+                loaderOfValues={DefaultLoader}
+                name="unit-test"
+                onChange={onChange}
+                textField="t"
+                valueField="x"
+                valueType="id"
+            />);
+
+            setTimeout(() => {
+                wrapper.update();
+                wrapper.find(`select`).simulate('change', { target: { value: value.x } });
+            });
+        });
+
+        it('supports entity as value output', (done) => {
+            const value = Values[Math.ceil(Values.length / 2)];
+
+            const onChange = (ev: IComponentEvent<any>) => {
+                expect(ev.value).to.deep.equal(value);
+                done();
+            };
+
+            const wrapper = mount(<AsyncSelect
+                loaderOfValues={DefaultLoader}
+                name="unit-test"
+                onChange={onChange}
+                textField="t"
+                valueField="x"
+                valueType="entity"
+            />);
+
+            setTimeout(() => {
+                wrapper.update();
+                wrapper.find(`select`).simulate('change', { target: { value: value.x } });
+            });
+        });
     });
 });

@@ -10,6 +10,7 @@ import AccountSelect from '@root/components/Form/AccountSelect';
 import LanguageSelect from '@root/components/Form/LanguageSelect';
 import MarkdownInput from '@root/components/Form/MarkdownInput';
 import OptionalLabel from '@root/components/Form/OptionalLabel';
+import SpeechSelect from '@root/components/Form/SpeechSelect';
 import TagInput from '@root/components/Form/TagInput';
 
 import GlossActions from '../actions/GlossActions';
@@ -39,6 +40,7 @@ function GlossForm(props: IProps) {
         keywords,
         languageId,
         source,
+        speechId,
         translations,
         word,
     } = props.gloss;
@@ -94,6 +96,15 @@ function GlossForm(props: IProps) {
                 name="ed-gloss-translations"
                 value={translations.map((t) => t.translation)}
                 onChange={_onChange('translations', translationsTransformer)}
+            />
+        </div>
+        <div className="form-group form-group-sm">
+            <label htmlFor="ed-gloss-speech">Speech</label>
+            <SpeechSelect
+                className="form-control"
+                name="ed-gloss-speech"
+                value={speechId}
+                onChange={_onChange('speechId')}
             />
         </div>
         <div className="form-group form-group-sm">

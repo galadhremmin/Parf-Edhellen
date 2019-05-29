@@ -2,11 +2,15 @@ import React, { useCallback } from 'react';
 
 import { fireEvent } from '@root/components/Component';
 import { excludeProps } from '@root/utilities/func/props';
-import { IProps } from './AsyncSelect._types';
+import {
+    IdValue,
+    IProps,
+    ValueType,
+} from './AsyncSelect._types';
 import useFetch from './fetch';
 
 const InternalProps: Array<keyof IProps> = [
-    'loaderOfValues', 'onChange', 'textField', 'value', 'valueField',
+    'loaderOfValues', 'onChange', 'textField', 'value', 'valueField', 'valueType',
 ];
 
 function AsyncSelect<T = any>(props: IProps<T>) {
@@ -19,24 +23,62 @@ function AsyncSelect<T = any>(props: IProps<T>) {
         textField,
         value,
         valueField,
+        valueType,
     } = props;
 
     const values = useFetch(loaderOfValues, value);
 
     const _onChange = useCallback((ev: React.ChangeEvent<HTMLSelectElement>) => {
-        const newValue = values.find((v) => v[valueField] as any === ev.target.value);
+        const newValue = getDesiredValue(
+// tslint:disable-next-line: triple-equals
+            values.find((v) => v[valueField] as any == ev.target.value),
+            valueType,
+            valueField as string,
+        );
+
         fireEvent(name, onChange, newValue ? newValue : null);
     }, [ name, onChange, values, valueField ]);
 
     return <select {...componentProps}
         id={name}
         onChange={_onChange}
-        value={value ? (value[valueField] as any) : ''}>
+        value={getNativeValue(value, valueField as string)}>
         {values.map((option) => {
             const optionValue = option[valueField] as any;
             return <option key={optionValue} value={optionValue}>{option[textField]}</option>;
         })}
     </select>;
+}
+
+AsyncSelect.defaultProps = {
+    valueType: 'entity',
+} as IProps;
+
+function getNativeValue(v: any, valueField: string): IdValue {
+    if (v === null || v === undefined) {
+        return '';
+    }
+
+    if (typeof v === 'object') {
+        return v[valueField];
+    }
+
+    return v;
+}
+
+function getDesiredValue(v: any, valueType: ValueType, valueField: string): IdValue {
+    if (v === null || v === undefined) {
+        return null;
+    }
+
+    switch (valueType) {
+        case 'id':
+            return v[valueField];
+        case 'entity':
+            return v;
+        default:
+            return null;
+    }
 }
 
 export default AsyncSelect;

@@ -4,10 +4,11 @@ import {
 } from 'react';
 
 import {
+    IdValue,
     ValueLoader,
 } from './AsyncSelect._types';
 
-const useFetch = <T>(loader: ValueLoader<T>, value: T) => {
+const useFetch = <T>(loader: ValueLoader<T>, value: T | IdValue) => {
     const [ values, setValues ] = useState<T[]>([]);
 
     useEffect(() => {
