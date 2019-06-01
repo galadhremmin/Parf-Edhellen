@@ -134,13 +134,15 @@ class MarkdownParser extends \Parsedown
 
         // remove footnotes, in case they were  imported by accident
         $word = str_replace(['¹', '²', '³'], '', $word);
+        $wordLowercase = mb_strtolower($word);
         $normalizedWord = StringHelper::normalize($word);
 
         $attrs = [
             'href' => '/w/' . urlencode($normalizedWord),
             'title' => 'Navigate to '.$word.'.',
             'class' => 'ed-word-reference',
-            'data-word' => $normalizedWord
+            'data-word' => $normalizedWord,
+            'data-original-word' => $wordLowercase
         ];
         if (! empty($language)) {
             $attrs['href'] .= '/'.$language;
