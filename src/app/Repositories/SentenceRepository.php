@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use Auth;
+use Exception;
 use Illuminate\Support\Facades\DB;
 
 use App\Events\{
@@ -152,22 +153,44 @@ class SentenceRepository
             throw new \Exception('The number of fragments must match the number of inflections.');
         }
         
-        $sentence->save();
-        $this->destroyFragments($sentence);
-        
-        for ($i = 0; $i < $numberOfFragments; $i += 1) {
-            $fragment = $fragments[$i];
-            $fragment->sentence_id = $sentence->id;
-            $fragment->save();
+        try {
+            DB::beginTransaction();
 
-            for ($j = 0; $j < count($inflections[$i]); $j += 1) {
-                $inflectionRel = $inflections[$i][$j];
-                $inflectionRel->sentence_fragment_id = $fragment->id;
-                $inflectionRel->save(); 
+            $sentence->save();
+            $this->destroyFragments($sentence);
+            
+            for ($i = 0; $i < $numberOfFragments; $i += 1) {
+                $fragment = $fragments[$i];
+                $fragment->sentence_id = $sentence->id;
+                $fragment->save();
+
+                if (! $fragment->type) {
+                    try {
+                        for ($j = 0; $j < count($inflections[$i]); $j += 1) {
+                            $inflectionRel = $inflections[$i][$j];
+                            $inflectionRel->sentence_fragment_id = $fragment->id;
+                            $inflectionRel->save(); 
+                        }
+                    } catch (Exception $ex) {
+                        throw new Exception(
+                            sprintf('Failed to process inflections for "%s" (%i). Inflections: %s',
+                                $fragment->fragment, $i, \json_encode($inflections)),
+                            0, $ex);
+                    }
+
+                    try {
+                        $this->_keywordRepository->createKeyword($fragment->gloss->word, $fragment->gloss->sense, 
+                            $fragment->gloss, $fragment->fragment, $fragment->id);
+                    } catch (Exception $ex) {
+                        throw new Exception(sprintf('Failed to save keywords for "%s" (%i).', $fragment->fragment, $i), 0, $ex);
+                    }
+                }
             }
 
-            $this->_keywordRepository->createKeyword($fragment->gloss->word, $fragment->gloss->sense, 
-                $fragment->gloss, $fragment->fragment, $fragment->id);
+            DB::commit();
+        } catch (Exception $ex) {
+            DB::rollBack();
+            throw $ex;
         }
 
         // Inform listeners of this change.
