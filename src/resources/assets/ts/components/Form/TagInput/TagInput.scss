@@ -18,11 +18,16 @@
         left: -100%;
     }
 
+    > span.glyphicon {
+        color: $gray-light;
+        font-size: 70%;
+    }
+
     display: inline-block;
     overflow: hidden;
     border: 1px solid $input-border;
     border-radius: $border-radius-base;
-    padding: $padding-base-vertical $padding-base-horizontal;
+    padding: 0 $padding-base-horizontal/2;
     margin-left: 0.5em;
     font-weight: normal;
 }
