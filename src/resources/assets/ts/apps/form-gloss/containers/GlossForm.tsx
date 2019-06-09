@@ -29,6 +29,7 @@ import {
     GlossProps,
     IProps,
 } from './GlossForm._types';
+import TengwarInput from '@root/components/Form/TengwarInput';
 
 function GlossForm(props: IProps) {
     const {
@@ -65,10 +66,10 @@ function GlossForm(props: IProps) {
         _onFieldChange(field, value);
     };
 
-    const _onSubmit = useCallback((ev: React.FormEvent) => {
+    const _onSubmit = (ev: React.FormEvent) => {
         ev.preventDefault();
-        fireEvent(name, onSubmit, null);
-    }, [ name, onSubmit ]);
+        fireEvent(name, onSubmit, gloss);
+    };
 
     return <form onSubmit={_onSubmit}>
         <Panel title="Basic information">
@@ -134,25 +135,6 @@ function GlossForm(props: IProps) {
             </div>
         </Panel>
         <Panel title="Additional information">
-            <div className="form-group form-group-sm">
-                <label htmlFor="ed-gloss-account">Account</label>
-                <AccountSelect
-                    name="ed-gloss-account"
-                    onChange={_onChange('account')}
-                    value={gloss.account}
-                />
-            </div>
-            <div className="form-group form-group-sm">
-                <label htmlFor="ed-gloss-keywords">
-                    Keywords
-                    <OptionalLabel />
-                </label>
-                <TagInput
-                    name="ed-gloss-keywords"
-                    value={gloss.keywords.map((k) => k.word)}
-                    onChange={_onChange('keywords', keywordsTransformer)}
-                />
-            </div>
             <div className="checkbox">
                 <label>
                     <input type="checkbox"
@@ -181,6 +163,36 @@ function GlossForm(props: IProps) {
                 <GlossDetailInput name="ed-gloss-details"
                     onChange={_onChange('glossDetails')}
                     value={gloss.glossDetails} />
+            </div>
+            <div className="form-group form-group-sm">
+                <label htmlFor="ed-gloss-keywords">
+                    Keywords
+                    <OptionalLabel />
+                </label>
+                <TagInput
+                    name="ed-gloss-keywords"
+                    value={gloss.keywords.map((k) => k.word)}
+                    onChange={_onChange('keywords', keywordsTransformer)}
+                />
+            </div>
+            <div className="form-group form-group-sm">
+                <label htmlFor="ed-gloss-tengwar">
+                    Transcription
+                    <OptionalLabel />
+                </label>
+                <TengwarInput
+                    name="ed-gloss-tengwar"
+                    onChange={_onChange('tengwar')}
+                    value={gloss.tengwar}
+                />
+            </div>
+            <div className="form-group form-group-sm">
+                <label htmlFor="ed-gloss-account">Account</label>
+                <AccountSelect
+                    name="ed-gloss-account"
+                    onChange={_onChange('account')}
+                    value={gloss.account}
+                />
             </div>
         </Panel>
         <div className="text-center">

@@ -37,7 +37,9 @@ const GlossReducer = (state: IGlossState = {
             const {
                 gloss,
             } = action;
+
             gloss.comments = gloss.comments || '';
+            gloss.tengwar = gloss.tengwar || '';
 
             return gloss;
         case Actions.SetField:
