@@ -15,10 +15,12 @@ import TagInput from '@root/components/Form/TagInput';
 import Panel from '@root/components/Panel';
 
 import GlossActions from '../actions/GlossActions';
+import GlossDetailInput from '../components/GlossDetailInput';
 import { RootReducer } from '../reducers';
 import {
     defaultTransformer,
     keywordsTransformer,
+    senseTransformer,
     translationsTransformer,
     wordTransformer,
 } from '../utilities/value-transformers';
@@ -77,6 +79,15 @@ function GlossForm(props: IProps) {
                     id="ed-gloss-word"
                     value={gloss.word.word}
                     onChange={_onChangeNative('word', wordTransformer)}
+                />
+            </div>
+            <div className="form-group form-group-sm">
+                <label htmlFor="ed-gloss-sense-word" className="control-label">Sense</label>
+                <input type="text"
+                    className="form-control"
+                    id="ed-gloss-sense-word"
+                    value={gloss.sense.word.word}
+                    onChange={_onChangeNative('sense', senseTransformer)}
                 />
             </div>
             <div className="form-group form-group-sm">
@@ -161,6 +172,15 @@ function GlossForm(props: IProps) {
                         onChange={_onChangeNative('isRejected')}
                     /> Rejected (strikethrough)
                 </label>
+            </div>
+            <div className="form-group form-group-sm">
+                <label htmlFor="ed-gloss-details">
+                    Details
+                    <OptionalLabel />
+                </label>
+                <GlossDetailInput name="ed-gloss-details"
+                    onChange={_onChange('glossDetails')}
+                    value={gloss.glossDetails} />
             </div>
         </Panel>
         <div className="text-center">

@@ -553,7 +553,9 @@ class GlossRepository
                     $query->whereNull('keywords.gloss_id')
                         ->orWhere('keywords.gloss_id', $id);
                 })
-                ->select('words.id', 'words.word')
+                ->select('words.word')
+                ->distinct()
+                ->orderBy('words.word')
                 ->get();
 
         return $keywords;

@@ -7,9 +7,11 @@ import {
 const GlossReducer = (state: IGlossState = {
     accountId: 0,
     comments: '',
-    details: [],
     etymology: null,
     externalId: null,
+    glossDetails: [],
+    glossGroup: null,
+    glossGroupId: 0,
     id: 0,
     isIndex: false,
     isLatest: false,
@@ -17,7 +19,11 @@ const GlossReducer = (state: IGlossState = {
     isUncertain: false,
     keywords: [],
     languageId: 0,
-    sense: null,
+    sense: {
+        word: {
+            word: '',
+        },
+    },
     source: '',
     speechId: 0,
     tengwar: '',
@@ -28,7 +34,12 @@ const GlossReducer = (state: IGlossState = {
 }, action: IGlossAction) => {
     switch (action.type) {
         case Actions.ReceiveGloss:
-            return action.gloss;
+            const {
+                gloss,
+            } = action;
+            gloss.comments = gloss.comments || '';
+
+            return gloss;
         case Actions.SetField:
             return {
                 ...state,

@@ -6,9 +6,9 @@ export interface IGlossEntity {
     childGlossId?: number;
     comments?: string;
     createdAt?: string;
-    details?: IGlossDetail[];
     etymology?: null;
     externalId?: string;
+    glossDetails?: IGlossDetail[];
     glossGroup?: IGlossGroup;
     glossGroupId?: number;
     id?: number;
@@ -56,7 +56,7 @@ export interface IKeywordEntity {
 export interface ISenseEntity {
     createdAt?: string;
     description?: string;
-    id: number;
+    id?: number;
     updatedAt?: string;
     word: IWordEntity;
 }
