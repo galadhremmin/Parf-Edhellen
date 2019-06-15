@@ -11,6 +11,7 @@ export interface IGlossEntity {
     glossDetails?: IGlossDetail[];
     glossGroup?: IGlossGroup;
     glossGroupId?: number;
+    hasDetails?: boolean;
     id?: number;
     isDeleted?: boolean;
     isIndex?: boolean;

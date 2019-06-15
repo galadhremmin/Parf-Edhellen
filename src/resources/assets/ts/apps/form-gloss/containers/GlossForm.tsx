@@ -12,6 +12,7 @@ import MarkdownInput from '@root/components/Form/MarkdownInput';
 import OptionalLabel from '@root/components/Form/OptionalLabel';
 import SpeechSelect from '@root/components/Form/SpeechSelect';
 import TagInput from '@root/components/Form/TagInput';
+import TengwarInput from '@root/components/Form/TengwarInput';
 import Panel from '@root/components/Panel';
 
 import GlossActions from '../actions/GlossActions';
@@ -29,10 +30,11 @@ import {
     GlossProps,
     IProps,
 } from './GlossForm._types';
-import TengwarInput from '@root/components/Form/TengwarInput';
 
 function GlossForm(props: IProps) {
     const {
+        confirmButton,
+        edit,
         name,
         onGlossFieldChange,
         onSubmit,
@@ -68,140 +70,164 @@ function GlossForm(props: IProps) {
 
     const _onSubmit = (ev: React.FormEvent) => {
         ev.preventDefault();
-        fireEvent(name, onSubmit, gloss);
+
+        // create a deep copy of the gloss.
+        const newGloss = JSON.parse(JSON.stringify(gloss)) as typeof gloss;
+        if (! edit) {
+            newGloss.id = null;
+        }
+
+        // remove parameters that are not supported by the service
+        delete newGloss.childGlossId;
+        delete newGloss.hasDetails;
+        delete newGloss.isDeleted;
+        delete newGloss.isIndex;
+        delete newGloss.isLatest;
+        delete newGloss.originGlossId;
+        delete newGloss.senseId;
+
+        fireEvent(name, onSubmit, newGloss);
     };
 
     return <form onSubmit={_onSubmit}>
-        <Panel title="Basic information">
-            <div className="form-group form-group-sm">
-                <label htmlFor="ed-gloss-word" className="control-label">Word</label>
-                <input type="text"
-                    className="form-control"
-                    id="ed-gloss-word"
-                    value={gloss.word.word}
-                    onChange={_onChangeNative('word', wordTransformer)}
-                />
+        <div className="row">
+            <div className="col-sm-12 col-lg-6">
+                <Panel title="Basic information">
+                    <div className="form-group form-group-sm">
+                        <label htmlFor="ed-gloss-word" className="control-label">Word</label>
+                        <input type="text"
+                            className="form-control"
+                            id="ed-gloss-word"
+                            value={gloss.word.word}
+                            onChange={_onChangeNative('word', wordTransformer)}
+                        />
+                    </div>
+                    <div className="form-group form-group-sm">
+                        <label htmlFor="ed-gloss-sense-word" className="control-label">Sense</label>
+                        <input type="text"
+                            className="form-control"
+                            id="ed-gloss-sense-word"
+                            value={gloss.sense.word.word}
+                            onChange={_onChangeNative('sense', senseTransformer)}
+                        />
+                    </div>
+                    <div className="form-group form-group-sm">
+                        <label htmlFor="ed-gloss-language">Language</label>
+                        <LanguageSelect
+                            className="form-control"
+                            name="ed-gloss-language"
+                            value={gloss.languageId}
+                            onChange={_onChange('languageId')}
+                        />
+                    </div>
+                    <div className="form-group form-group-sm">
+                        <label htmlFor="ed-gloss-translations">Translations</label>
+                        <TagInput
+                            name="ed-gloss-translations"
+                            value={gloss.translations.map((t) => t.translation)}
+                            onChange={_onChange('translations', translationsTransformer)}
+                        />
+                    </div>
+                    <div className="form-group form-group-sm">
+                        <label htmlFor="ed-gloss-speech">Speech</label>
+                        <SpeechSelect
+                            className="form-control"
+                            name="ed-gloss-speech"
+                            value={gloss.speechId}
+                            onChange={_onChange('speechId')}
+                        />
+                    </div>
+                    <div className="form-group form-group-sm">
+                        <label htmlFor="ed-gloss-sources" className="control-label">Sources</label>
+                        <input type="text"
+                            className="form-control"
+                            id="ed-gloss-sources"
+                            value={gloss.source}
+                            onChange={_onChangeNative('source')}
+                        />
+                    </div>
+                    <div className="form-group form-group-sm">
+                        <label htmlFor="ed-gloss-comments">Comments</label>
+                        <MarkdownInput name="ed-gloss-comments"
+                            value={gloss.comments}
+                            onChange={_onChange('comments')}
+                        />
+                    </div>
+                </Panel>
             </div>
-            <div className="form-group form-group-sm">
-                <label htmlFor="ed-gloss-sense-word" className="control-label">Sense</label>
-                <input type="text"
-                    className="form-control"
-                    id="ed-gloss-sense-word"
-                    value={gloss.sense.word.word}
-                    onChange={_onChangeNative('sense', senseTransformer)}
-                />
+            <div className="col-sm-12 col-lg-6">
+                <Panel title="Additional information">
+                    <div className="checkbox">
+                        <label>
+                            <input type="checkbox"
+                                name="ed-gloss-is-uncertain"
+                                checked={gloss.isUncertain}
+                                value={1}
+                                onChange={_onChangeNative('isUncertain')}
+                            /> Uncertain
+                        </label>
+                    </div>
+                    <div className="checkbox">
+                        <label>
+                            <input type="checkbox"
+                                name="ed-gloss-is-rejected"
+                                checked={gloss.isRejected}
+                                value={1}
+                                onChange={_onChangeNative('isRejected')}
+                            /> Rejected (strikethrough)
+                        </label>
+                    </div>
+                    <div className="form-group form-group-sm">
+                        <label htmlFor="ed-gloss-details">
+                            Details
+                            <OptionalLabel />
+                        </label>
+                        <GlossDetailInput name="ed-gloss-details"
+                            onChange={_onChange('glossDetails')}
+                            value={gloss.glossDetails} />
+                    </div>
+                    <div className="form-group form-group-sm">
+                        <label htmlFor="ed-gloss-keywords">
+                            Keywords
+                            <OptionalLabel />
+                        </label>
+                        <TagInput
+                            name="ed-gloss-keywords"
+                            value={gloss.keywords.map((k) => k.word)}
+                            onChange={_onChange('keywords', keywordsTransformer)}
+                        />
+                    </div>
+                    <div className="form-group form-group-sm">
+                        <label htmlFor="ed-gloss-tengwar">
+                            Transcription
+                            <OptionalLabel />
+                        </label>
+                        <TengwarInput
+                            name="ed-gloss-tengwar"
+                            onChange={_onChange('tengwar')}
+                            value={gloss.tengwar}
+                        />
+                    </div>
+                    <div className="form-group form-group-sm">
+                        <label htmlFor="ed-gloss-account">Account</label>
+                        <AccountSelect
+                            name="ed-gloss-account"
+                            onChange={_onChange('account')}
+                            value={gloss.account}
+                        />
+                    </div>
+                </Panel>
             </div>
-            <div className="form-group form-group-sm">
-                <label htmlFor="ed-gloss-language">Language</label>
-                <LanguageSelect
-                    className="form-control"
-                    name="ed-gloss-language"
-                    value={gloss.languageId}
-                    onChange={_onChange('languageId')}
-                />
-            </div>
-            <div className="form-group form-group-sm">
-                <label htmlFor="ed-gloss-translations">Translations</label>
-                <TagInput
-                    name="ed-gloss-translations"
-                    value={gloss.translations.map((t) => t.translation)}
-                    onChange={_onChange('translations', translationsTransformer)}
-                />
-            </div>
-            <div className="form-group form-group-sm">
-                <label htmlFor="ed-gloss-speech">Speech</label>
-                <SpeechSelect
-                    className="form-control"
-                    name="ed-gloss-speech"
-                    value={gloss.speechId}
-                    onChange={_onChange('speechId')}
-                />
-            </div>
-            <div className="form-group form-group-sm">
-                <label htmlFor="ed-gloss-sources" className="control-label">Sources</label>
-                <input type="text"
-                    className="form-control"
-                    id="ed-gloss-sources"
-                    value={gloss.source}
-                    onChange={_onChangeNative('source')}
-                />
-            </div>
-            <div className="form-group form-group-sm">
-                <label htmlFor="ed-gloss-comments">Comments</label>
-                <MarkdownInput name="ed-gloss-comments"
-                    value={gloss.comments}
-                    onChange={_onChange('comments')}
-                />
-            </div>
-        </Panel>
-        <Panel title="Additional information">
-            <div className="checkbox">
-                <label>
-                    <input type="checkbox"
-                        name="ed-gloss-is-uncertain"
-                        checked={gloss.isUncertain}
-                        value={1}
-                        onChange={_onChangeNative('isUncertain')}
-                    /> Uncertain
-                </label>
-            </div>
-            <div className="checkbox">
-                <label>
-                    <input type="checkbox"
-                        name="ed-gloss-is-rejected"
-                        checked={gloss.isRejected}
-                        value={1}
-                        onChange={_onChangeNative('isRejected')}
-                    /> Rejected (strikethrough)
-                </label>
-            </div>
-            <div className="form-group form-group-sm">
-                <label htmlFor="ed-gloss-details">
-                    Details
-                    <OptionalLabel />
-                </label>
-                <GlossDetailInput name="ed-gloss-details"
-                    onChange={_onChange('glossDetails')}
-                    value={gloss.glossDetails} />
-            </div>
-            <div className="form-group form-group-sm">
-                <label htmlFor="ed-gloss-keywords">
-                    Keywords
-                    <OptionalLabel />
-                </label>
-                <TagInput
-                    name="ed-gloss-keywords"
-                    value={gloss.keywords.map((k) => k.word)}
-                    onChange={_onChange('keywords', keywordsTransformer)}
-                />
-            </div>
-            <div className="form-group form-group-sm">
-                <label htmlFor="ed-gloss-tengwar">
-                    Transcription
-                    <OptionalLabel />
-                </label>
-                <TengwarInput
-                    name="ed-gloss-tengwar"
-                    onChange={_onChange('tengwar')}
-                    value={gloss.tengwar}
-                />
-            </div>
-            <div className="form-group form-group-sm">
-                <label htmlFor="ed-gloss-account">Account</label>
-                <AccountSelect
-                    name="ed-gloss-account"
-                    onChange={_onChange('account')}
-                    value={gloss.account}
-                />
-            </div>
-        </Panel>
+        </div>
         <div className="text-center">
-            <button type="submit" className="btn btn-primary">Submit</button>
+            <button type="submit" className="btn btn-primary">{confirmButton}</button>
         </div>
     </form>;
 }
 
 GlossForm.defaultProps = {
+    confirmButton: 'Confirm and Save',
+    edit: false,
     name: 'GlossForm',
 } as Partial<IProps>;
 

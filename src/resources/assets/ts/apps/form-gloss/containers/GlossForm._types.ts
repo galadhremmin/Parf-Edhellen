@@ -3,6 +3,8 @@ import { IGlossEntity } from '@root/connectors/backend/GlossResourceApiConnector
 import { IGlossState } from '../reducers/GlossReducer._types';
 
 export interface IProps {
+    confirmButton?: string;
+    edit?: boolean;
     gloss: IGlossState;
     name: string;
     onGlossFieldChange: ComponentEventHandler<IChangeSpec>;
