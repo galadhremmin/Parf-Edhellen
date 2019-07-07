@@ -5,7 +5,7 @@ import {
 } from './GlossReducer._types';
 
 const GlossReducer = (state: IGlossState = {
-    accountId: 0,
+    account: null,
     comments: '',
     etymology: null,
     externalId: null,

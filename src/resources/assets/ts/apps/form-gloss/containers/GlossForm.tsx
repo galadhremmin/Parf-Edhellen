@@ -100,6 +100,7 @@ function GlossForm(props: IProps) {
                             id="ed-gloss-word"
                             value={gloss.word.word}
                             onChange={_onChangeNative('word', wordTransformer)}
+                            required={true}
                         />
                     </div>
                     <div className="form-group form-group-sm">
@@ -109,6 +110,7 @@ function GlossForm(props: IProps) {
                             id="ed-gloss-sense-word"
                             value={gloss.sense.word.word}
                             onChange={_onChangeNative('sense', senseTransformer)}
+                            required={true}
                         />
                     </div>
                     <div className="form-group form-group-sm">
@@ -118,6 +120,7 @@ function GlossForm(props: IProps) {
                             name="ed-gloss-language"
                             value={gloss.languageId}
                             onChange={_onChange('languageId')}
+                            required={true}
                         />
                     </div>
                     <div className="form-group form-group-sm">
@@ -126,6 +129,7 @@ function GlossForm(props: IProps) {
                             name="ed-gloss-translations"
                             value={gloss.translations.map((t) => t.translation)}
                             onChange={_onChange('translations', translationsTransformer)}
+                            required={true}
                         />
                     </div>
                     <div className="form-group form-group-sm">
@@ -135,6 +139,7 @@ function GlossForm(props: IProps) {
                             name="ed-gloss-speech"
                             value={gloss.speechId}
                             onChange={_onChange('speechId')}
+                            required={true}
                         />
                     </div>
                     <div className="form-group form-group-sm">
@@ -144,6 +149,7 @@ function GlossForm(props: IProps) {
                             id="ed-gloss-sources"
                             value={gloss.source}
                             onChange={_onChangeNative('source')}
+                            required={true}
                         />
                     </div>
                     <div className="form-group form-group-sm">
@@ -238,7 +244,7 @@ const mapStateToProps = (state: RootReducer) => ({
 const actions = new GlossActions();
 const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => ({
     onGlossFieldChange: (e) => dispatch(actions.setField(e.value.field, e.value.value)),
-    onSubmit: (e) => console.log(e),
+    onSubmit: (e) => dispatch(actions.saveGloss(e.value)),
 } as Partial<IProps>);
 
 export default connect(mapStateToProps, mapDispatchToProps)(GlossForm);
