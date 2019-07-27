@@ -2,6 +2,8 @@ import {
     ReduxThunk,
     ReduxThunkDispatch,
 } from '@root/_types';
+import { handleValidationErrors } from '@root/components/Form/Validation';
+import ContributionResourceApiConnector from '@root/connectors/backend/ContributionResourceApiConnector';
 import GlossResourceApiConnector from '@root/connectors/backend/GlossResourceApiConnector';
 import { IGlossEntity } from '@root/connectors/backend/GlossResourceApiConnector._types';
 import SharedReference from '@root/utilities/SharedReference';
@@ -9,11 +11,13 @@ import SharedReference from '@root/utilities/SharedReference';
 import Actions from './Actions';
 
 export default class GlossActions {
-    constructor(private _api = SharedReference.getInstance(GlossResourceApiConnector)) {}
+    constructor(
+        private _glossApi = SharedReference.getInstance(GlossResourceApiConnector),
+        private _contributionApi = SharedReference.getInstance(ContributionResourceApiConnector)) {}
 
     public gloss(glossId: number): ReduxThunk {
         return async (dispatch: ReduxThunkDispatch) => {
-            const gloss = await this._api.gloss(glossId);
+            const gloss = await this._glossApi.gloss(glossId);
             dispatch(this.setGloss(gloss));
         };
     }
@@ -34,13 +38,9 @@ export default class GlossActions {
     }
 
     public saveGloss(gloss: IGlossEntity) {
-        return async (dispatch: ReduxThunkDispatch) => {
-            try {
-                const response = await this._api.saveGloss(gloss);
-                console.log(['success', response]);
-            } catch (e) {
-                console.log(e);
-            }
-        };
+        return (dispatch: ReduxThunkDispatch) => handleValidationErrors(dispatch, async () => {
+            const response = await this._contributionApi.saveGloss(gloss);
+            return response;
+        });
     }
 }

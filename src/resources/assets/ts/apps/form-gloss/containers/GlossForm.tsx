@@ -13,6 +13,7 @@ import OptionalLabel from '@root/components/Form/OptionalLabel';
 import SpeechSelect from '@root/components/Form/SpeechSelect';
 import TagInput from '@root/components/Form/TagInput';
 import TengwarInput from '@root/components/Form/TengwarInput';
+import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
 import Panel from '@root/components/Panel';
 
 import GlossActions from '../actions/GlossActions';
@@ -35,6 +36,7 @@ function GlossForm(props: IProps) {
     const {
         confirmButton,
         edit,
+        errors,
         name,
         onGlossFieldChange,
         onSubmit,
@@ -90,6 +92,7 @@ function GlossForm(props: IProps) {
     };
 
     return <form onSubmit={_onSubmit}>
+        <ValidationErrorAlert error={errors} />
         <div className="row">
             <div className="col-sm-12 col-lg-6">
                 <Panel title="Basic information">
@@ -234,10 +237,12 @@ function GlossForm(props: IProps) {
 GlossForm.defaultProps = {
     confirmButton: 'Confirm and Save',
     edit: false,
+    errors: null,
     name: 'GlossForm',
 } as Partial<IProps>;
 
 const mapStateToProps = (state: RootReducer) => ({
+    errors: state.errors,
     gloss: state.gloss,
 } as Partial<IProps>);
 

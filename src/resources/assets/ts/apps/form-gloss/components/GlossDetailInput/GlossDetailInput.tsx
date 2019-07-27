@@ -10,11 +10,11 @@ const _setOrder = (newValue: IGlossDetail[]) => {
     });
 };
 
-const _createNewValue = (detail: IGlossDetail, source: number, value: IGlossDetail[]) => {
+const _createNewValue = (detail: IGlossDetail, sourceIndex: number, value: IGlossDetail[]) => {
     return [
-        ...value.slice(0, source),
+        ...value.slice(0, sourceIndex),
         detail,
-        ...value.slice(source + 1),
+        ...value.slice(sourceIndex + 1),
     ];
 };
 
@@ -40,20 +40,20 @@ function GlossDetailInput(props: IComponentProps<IGlossDetail[]>) {
         fireEvent(name, onChange, newValue);
     };
 
-    const _onMoveClick = (source: number, direction: number) => (ev: React.MouseEvent<HTMLButtonElement>) => {
+    const _onMoveClick = (sourceIndex: number, direction: number) => (ev: React.MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
 
-        const destination = source + direction;
+        const destination = sourceIndex + direction;
         if (destination < 0 || destination >= value.length) {
             return;
         }
 
         const newValue = value.map((detail, i) => {
             let newDetail = detail;
-            if (source === i) {
+            if (sourceIndex === i) {
                 newDetail = value[destination];
             } else if (destination === i) {
-                newDetail = value[source];
+                newDetail = value[sourceIndex];
             }
 
             return {
@@ -65,25 +65,25 @@ function GlossDetailInput(props: IComponentProps<IGlossDetail[]>) {
         fireEvent(name, onChange, newValue);
     };
 
-    const _onDeleteClick = (source: number) => (ev: React.MouseEvent<HTMLButtonElement>) => {
+    const _onDeleteClick = (sourceIndex: number) => (ev: React.MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
 
-        const newValue = value.filter((v, i) => i !== source);
+        const newValue = value.filter((v, i) => i !== sourceIndex);
         _setOrder(newValue);
 
         fireEvent(name, onChange, newValue);
     };
 
-    const _onDetailChange = (source: number, property: keyof IGlossDetail) =>
+    const _onDetailChange = (sourceIndex: number, propertyName: keyof IGlossDetail) =>
         (ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const {
             value: textValue,
         } = ev.target;
 
-        const detail = value[source];
-        detail[property] = textValue;
+        const detail = value[sourceIndex] as any;
+        detail[propertyName] = textValue;
 
-        const newValue = _createNewValue(detail, source, value);
+        const newValue = _createNewValue(detail, sourceIndex, value);
         fireEvent(name, onChange, newValue);
     };
 

@@ -4,26 +4,16 @@ namespace App\Http\Controllers\Resources;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 use App\Adapters\BookAdapter;
 use App\Repositories\GlossRepository;
 use App\Models\{
     Gloss, 
-    Keyword, 
-    Word, 
     Language 
-};
-use App\Helpers\{ 
-    LinkHelper, 
-    StringHelper 
 };
 use App\Http\Controllers\Traits\{
     CanValidateGloss, 
     CanMapGloss 
-};
-use App\Events\{
-    GlossDestroyed
 };
 
 class GlossController extends Controller
@@ -108,34 +98,6 @@ class GlossController extends Controller
             ]);
     }
 
-    public function store(Request $request)
-    {
-        $this->validateGlossInRequest($request);
-
-        $gloss = new Gloss;
-        $gloss = $this->saveGloss($gloss, $request);
-
-        $link = resolve(LinkHelper::class);
-        return response([
-            'id'  => $gloss->id,
-            'url' => $link->gloss($gloss->id)
-        ], 201);
-    }
-
-    public function update(Request $request, int $id)
-    {
-        $this->validateGlossInRequest($request, $id);
-
-        $gloss = Gloss::findOrFail($id);
-        $gloss = $this->saveGloss($gloss, $request);
-
-        $link = resolve(LinkHelper::class);
-        return response([
-            'id'  => $gloss->id,
-            'url' => $link->gloss($gloss->id)
-        ], 200);
-    } 
-
     public function confirmDelete(Request $request, int $id)
     {
         $gloss = Gloss::findOrFail($id);
@@ -143,37 +105,5 @@ class GlossController extends Controller
         return view('gloss.confirm-delete', [
             'gloss' => $gloss
         ]);
-    }
-
-    public function destroy(Request $request, int $id) 
-    {
-        $this->validate($request, [
-            'replacement_id' => 'sometimes|numeric|exists:glosses,id'
-        ]);
-
-        $gloss = Gloss::findOrFail($id);
-        $replacementId = $request->has('replacement_id') 
-            ? intval($request->input('replacement_id'))
-            : null;
-        $replacement = $replacementId !== null 
-            ? Gloss::findOrFail($replacementId)
-            : null;
-
-        $ok = $this->_glossRepository->deleteGlossWithId($id, $replacementId);
-        if ($ok) {
-            event(new GlossDestroyed($gloss, $replacement));
-        }
-
-        return $ok
-            ? response(null, 204)
-            : response(null, 400);
-    }
-
-    protected function saveGloss(Gloss $gloss, Request $request)
-    {
-        $map = $this->mapGloss($gloss, $request);
-        extract($map);
-
-        return $this->_glossRepository->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
     }
 }
