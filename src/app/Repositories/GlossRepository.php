@@ -127,7 +127,7 @@ class GlossRepository
      * Gets the ID for the latest entity associated with the specified origin.
      *
      * @param int $originGlossId
-     * @return void
+     * @return int
      */
     public function getLatestGloss(int $originGlossId)
     {

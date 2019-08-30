@@ -108,11 +108,11 @@ class GlossContributionController extends Controller implements IContributionCon
 
         $payloadData = $payload + [ 
             'contribution_id' => $contribution->id,
-            'word'         => $word,
-            'sense'        => $sense,
-            '_keywords'    => $keywords,
-            'notes'        => $contribution->notes,
-            'translations' => $translations
+            'word'            => $word,
+            'sense'           => $sense,
+            'keywords'        => $keywords,
+            'notes'           => $contribution->notes,
+            'translations'    => $translations
         ];
 
         return $request->ajax()
@@ -121,7 +121,7 @@ class GlossContributionController extends Controller implements IContributionCon
                 'payload' => $payloadData
             ] : view('contribution.gloss.edit', [
                 'review' => $contribution, 
-                'payload' => json_encode($payloadData)
+                'payload' => $payloadData
             ]);
     }
     

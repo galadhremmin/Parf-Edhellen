@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import React, { useCallback } from 'react';
 
 import { excludeProps } from '@root/utilities/func/props';
+import { isEmptyString } from '@root/utilities/func/string-manipulation';
 import { fireEvent } from '../Component';
 import { IComponentProps } from './FormComponent._types';
 
@@ -17,7 +18,8 @@ function TengwarInput(props: IComponentProps<string>) {
     const componentClassName = classNames('form-control', 'tengwar', className || '');
 
     const _onChange = useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
-        fireEvent(name, onChange, ev.target.value);
+        const { value: newValue } = ev.target;
+        fireEvent(name, onChange, newValue);
     }, [ name, onChange, value ]);
 
     return <input type="text"

@@ -13,7 +13,7 @@ trait CanValidateGloss
             'id'                         => 'sometimes|required|numeric|exists:glosses,id',
             'language_id'                => 'required|numeric|exists:languages,id',
             'speech_id'                  => 'required|numeric|exists:speeches,id',
-            'word'                       => 'required|string|min:1|max:64',
+            'word.word'                  => 'required|string|min:1|max:64',
             'sense.word.word'            => 'required|string|min:1|max:64',
             'source'                     => 'required|string|min:3',
             'is_rejected'                => 'required|boolean',

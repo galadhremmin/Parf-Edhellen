@@ -88,6 +88,10 @@ function GlossForm(props: IProps) {
         delete newGloss.originGlossId;
         delete newGloss.senseId;
 
+        if (newGloss.tengwar.length < 1) {
+            delete newGloss.tengwar;
+        }
+
         fireEvent(name, onSubmit, newGloss);
     };
 

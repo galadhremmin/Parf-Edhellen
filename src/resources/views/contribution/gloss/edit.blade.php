@@ -5,12 +5,6 @@
   <h1>Change contribution #{{ $review->id }}</h1>
   
   {!! Breadcrumbs::render('contribution.edit', $review->id) !!}
-  <div id="ed-gloss-form" data-admin="false" data-confirm-button-text="{{ $review->is_approved === null ? 'Save changes' : 'Resubmit for review' }}"></div>
-
-  <script type="application/json" id="ed-preloaded-gloss">{!! $payload !!}</script>
-
-@endsection
-
-@section('scripts')
-  <script type="text/javascript" src="@assetpath(/js/gloss-admin.js)" async></script>
+  <div id="ed-gloss-form" data-inject-module="form-gloss" data-inject-prop-gloss="@json($payload)"
+    data-inject-prop-confirm-button="{{ $review->is_approved === null ? 'Save changes' : 'Resubmit for review' }}"></div>
 @endsection

@@ -19,8 +19,12 @@ const ValidationErrorAlert = (props: IProps) => {
     }
 
     const errors = [];
-    for (const [ propertyName, propertyError ] of error.errors) {
-        errors.push(`${propertyName}: ${propertyError}`);
+    for (const [ propertyName, propertyErrors ] of error.errors) {
+        for (const propertyError of propertyErrors) {
+            errors.push(<span key={errors.length}>
+                <em>{propertyName}</em>: {propertyError}
+            </span>);
+        }
     }
 
     const modifiedMessage = /[!\?\.:]{1}$/.test(error.errorMessage)
