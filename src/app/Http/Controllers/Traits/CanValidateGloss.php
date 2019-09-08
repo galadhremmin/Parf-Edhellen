@@ -26,8 +26,7 @@ trait CanValidateGloss
             'details'                    => 'sometimes|array',
             'details.*.category'         => 'required|string',
             'details.*.order'            => 'required|numeric|min:1',
-            'details.*.text'             => 'required|string',
-            'comments'                   => 'sometimes|string'
+            'details.*.text'             => 'required|string'
         ];
 
         if (! $review) {

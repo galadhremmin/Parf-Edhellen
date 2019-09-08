@@ -140,7 +140,7 @@ class GlossContributionController extends Controller implements IContributionCon
                 ->with('sense', 'sense.word', 'gloss_group', 'word', 'translations')
                 ->firstOrFail();
 
-            $gloss->_keywords = $this->_glossRepository->getKeywords($gloss->sense_id, $gloss->id);
+            $gloss->keywords = $this->_glossRepository->getKeywords($gloss->sense_id, $gloss->id);
         }
 
         return $request->ajax()
