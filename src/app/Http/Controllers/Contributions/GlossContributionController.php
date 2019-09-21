@@ -143,7 +143,7 @@ class GlossContributionController extends Controller implements IContributionCon
 
         if ($entityId) {
             $gloss = Gloss::where('id', $entityId)
-                ->with('sense', 'sense.word', 'gloss_group', 'word', 'translations')
+                ->with('account', 'sense', 'sense.word', 'gloss_group', 'word', 'translations')
                 ->firstOrFail();
 
             $gloss->keywords = $this->_glossRepository->getKeywords($gloss->sense_id, $gloss->id);
@@ -153,7 +153,7 @@ class GlossContributionController extends Controller implements IContributionCon
             ? $gloss
             // create a payload model if a gloss exists.
             : view('contribution.gloss.create', $gloss ? [
-                'payload' => json_encode($gloss)
+                'payload' => $gloss
             ] : []);
     }
 
@@ -181,11 +181,11 @@ class GlossContributionController extends Controller implements IContributionCon
             $entity->account_id = $request->user()->id;
         }
 
-        $entity->_translations    = $translations;
+        $entity->_translations  = $translations;
 
-        $contribution->word       = $word;
-        $contribution->sense      = $sense;
-        $contribution->keywords   = json_encode($keywords);
+        $contribution->word     = $word;
+        $contribution->sense    = $sense;
+        $contribution->keywords = json_encode($keywords);
 
         return $entity;
     }

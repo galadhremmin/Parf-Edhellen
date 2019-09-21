@@ -243,6 +243,7 @@ GlossForm.defaultProps = {
     confirmButton: 'Confirm and Save',
     edit: false,
     errors: null,
+    gloss: null,
     name: 'GlossForm',
 } as Partial<IProps>;
 

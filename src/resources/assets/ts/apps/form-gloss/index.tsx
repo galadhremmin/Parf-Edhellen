@@ -23,6 +23,7 @@ const Inject = (props: IProps) => {
     );
 
     const {
+        confirmButton,
         gloss,
         prefetched,
     } = props;
@@ -37,7 +38,7 @@ const Inject = (props: IProps) => {
     }
 
     return <Provider store={store}>
-        <GlossForm />
+        <GlossForm confirmButton={confirmButton || null} />
     </Provider>;
 };
 

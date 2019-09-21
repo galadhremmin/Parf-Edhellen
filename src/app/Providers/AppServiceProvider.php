@@ -31,7 +31,7 @@ class AppServiceProvider extends ServiceProvider
             return "<?php echo (new \App\Helpers\MarkdownParser)->line($data); ?>";
         });
         Blade::directive('json', function (string $data) {
-            return "<?php echo (htmlentities(json_encode(($data), ENT_QUOTES))); ?>";
+            return "<?php echo (htmlentities(($data) instanceOf \Illuminate\Contracts\Support\Jsonable ? ($data)->toJSON() : json_encode(($data), ENT_QUOTES))); ?>";
         });
 
         Blade::directive('assetpath', function (string $filePath) {
