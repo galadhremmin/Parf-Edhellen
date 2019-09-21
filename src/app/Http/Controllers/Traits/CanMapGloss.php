@@ -17,7 +17,7 @@ trait CanMapGloss
         $word         = $request->input('word.word');
         $sense        = $request->input('sense.word.word');
 
-        $gloss->account_id    = intval($request->input('account_id'));
+        $gloss->account_id    = intval($request->input('account.id') ?: $request->input('account_id'));
         $gloss->language_id   = intval($request->input('language_id'));
         $gloss->speech_id     = intval($request->input('speech_id'));
 

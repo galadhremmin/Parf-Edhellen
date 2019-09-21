@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Repositories\GlossRepository;
 use App\Adapters\BookAdapter;
 use App\Models\{
+    Account,
     Contribution,
     Sense,
     Gloss,
@@ -104,10 +105,15 @@ class GlossContributionController extends Controller implements IContributionCon
 
         // extend the payload with information necessary for the form.
         $payload = json_decode($contribution->payload, true);
+        $account = Account::find(isset($payload['account_id'])
+            ? $payload['account_id'] 
+            : $contribution->account_id
+        );
         $translations = $this->getTranslationsFromPayload($payload);
 
         $payloadData = $payload + [ 
             'contribution_id' => $contribution->id,
+            'account'         => $account,
             'word'            => $word,
             'sense'           => $sense,
             'keywords'        => $keywords,
@@ -171,8 +177,11 @@ class GlossContributionController extends Controller implements IContributionCon
         $map = $this->mapGloss($entity, $request);
         extract($map);
 
+        if (! $request->user()->isAdministrator()) {
+            $entity->account_id = $request->user()->id;
+        }
+
         $entity->_translations    = $translations;
-        $entity->account_id       = $contribution->account_id;
 
         $contribution->word       = $word;
         $contribution->sense      = $sense;

@@ -40,7 +40,9 @@ export default class GlossActions {
     public saveGloss(gloss: IGlossEntity) {
         return (dispatch: ReduxThunkDispatch) => handleValidationErrors(dispatch, async () => {
             const response = await this._contributionApi.saveGloss(gloss);
-            return response;
+            if (response.url) {
+                window.location.href = response.url;
+            }
         });
     }
 }
