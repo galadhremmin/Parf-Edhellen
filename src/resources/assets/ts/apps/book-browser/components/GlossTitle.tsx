@@ -1,6 +1,9 @@
 import classNames from 'classnames';
 import React from 'react';
 
+import { RoleManager, SecurityRole } from '@root/security';
+import SharedReference from '@root/utilities/SharedReference';
+
 import { IProps } from './GlossTitle._types';
 
 import GlossAbsoluteLink from './GlossAbsoluteLink';
@@ -13,7 +16,8 @@ const GlossTitle = (props: IProps) => {
         toolbar,
     } = props;
 
-    const className = classNames({rejected: gloss.isRejected});
+    const className = classNames({ rejected: gloss.isRejected });
+    const isAuthenticated = SharedReference.getInstance(RoleManager).currentRole !== SecurityRole.Anonymous;
 
     return <h3 className="gloss-word">
         <NeologismIndicator gloss={gloss} />
@@ -33,6 +37,14 @@ const GlossTitle = (props: IProps) => {
         {toolbar && <React.Fragment>
             <NumberOfComments gloss={gloss} />
             <GlossAbsoluteLink gloss={gloss} />
+            {isAuthenticated && <React.Fragment>
+                <a href={`/dashboard/contribution/create/gloss?entity_id=${gloss.id}`}>
+                    <span className="glyphicon glyphicon-pencil"></span>
+                </a>
+                <a href={`/dashboard/contribution/create/gloss?entity_id=${gloss.id}`}>
+                    <span className="glyphicon glyphicon-trash"></span>
+                </a>
+            </React.Fragment>}
         </React.Fragment>}
     </h3>;
 };

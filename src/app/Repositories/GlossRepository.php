@@ -60,6 +60,11 @@ class GlossRepository
         $keywords = $query
             ->select('keyword as k', 'normalized_keyword as nk', 'reversed_normalized_keyword_unaccented_length as nrkul',
                 'normalized_keyword_unaccented_length as nkul', 'reversed_normalized_keyword as rnk', 'word as ok')
+            ->where(function ($q) {
+                // ignore inflections where the word is the same as the keyword.
+                $q->whereNull('word')
+                    ->orWhere('keyword', '<>', DB::raw('word'));
+            })
             ->orderBy($reversed ? 'nrkul' : 'nkul', 'asc')
             ->orderBy($reversed ? 'rnk' : 'nk', 'asc')
             ->limit(100)

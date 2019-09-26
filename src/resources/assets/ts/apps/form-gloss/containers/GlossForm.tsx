@@ -96,6 +96,8 @@ function GlossForm(props: IProps) {
         fireEvent(name, onSubmit, newGloss);
     };
 
+    const tengwarMode = '';
+
     return <form onSubmit={_onSubmit}>
         <ValidationErrorAlert error={errors} />
         <div className="row">
@@ -217,8 +219,11 @@ function GlossForm(props: IProps) {
                             <OptionalLabel />
                         </label>
                         <TengwarInput
+                            inputSize="sm"
+                            languageId={gloss.languageId}
                             name="ed-gloss-tengwar"
                             onChange={_onChange('tengwar')}
+                            originalText={gloss.word.word}
                             value={gloss.tengwar}
                         />
                     </div>
