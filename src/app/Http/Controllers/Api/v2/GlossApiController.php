@@ -19,16 +19,20 @@ class GlossApiController extends Controller
     public function destroy(Request $request, int $id)
     {
         $data = $request->validate([
-            'replacement_id' => 'numeric|exists:glosses,id|not_in:'.$id
+            'replacement_id' => 'numeric|not_in:'.$id
         ]);
 
-        $glosses = $this->_repository->getGloss($data['replacement_id']);
-        if ($glosses->count() === 0) {
-            return response(null, 400);
+        $replacementId = intval($data['replacement_id']);
+
+        if ($replacementId !== 0) {
+            $glosses = $this->_repository->getGloss($replacementId);
+            if ($glosses->count() === 0) {
+                return response(null, 400);
+            }
         }
 
         return response(null,
-            $this->_repository->deleteGlossWithId($id, $glosses->first()->id) ? 200 : 400
+            $this->_repository->deleteGlossWithId($id, $replacementId) ? 200 : 400
         );
     }
 }

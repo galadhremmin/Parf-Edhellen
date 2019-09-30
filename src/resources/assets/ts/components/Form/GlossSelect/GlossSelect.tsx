@@ -6,6 +6,7 @@ import React, {
 
 import BookApiConnector from '@root/connectors/backend/BookApiConnector';
 import { ISuggestionEntity } from '@root/connectors/backend/BookApiConnector._types';
+import { mapper } from '@root/utilities/func/mapper';
 import SharedReference from '@root/utilities/SharedReference';
 
 import { fireEvent } from '../../Component';
@@ -26,12 +27,38 @@ function GlossSelect(props: IProps) {
     } = props;
 
     const [ suggestions, setSuggestions ] = useState([]);
-    const [ complexValue, setComplexValue ] = useState(null);
+    const [ complexValue, setComplexValue ] = useState<ISuggestionEntity>(null);
 
     useEffect(() => {
-        if (value !== 0 && (complexValue === null || value !== complexValue.id)) {
-            setComplexValue(_createComplex(value));
+        let cancelled = false;
+        if (value && (complexValue === null || value !== complexValue.id)) {
+            // Resolve numeric values to complex value. The complex value is local state
+            // used by the component to visualize the gloss in a human-readable format.
+            apiConnector.gloss(value)
+                .then((r) => {
+                    if (cancelled) {
+                        return;
+                    }
+
+                    const gloss = r.sections[0].glosses[0];
+                    const suggestion = mapper<typeof gloss, ISuggestionEntity>({
+                        accountName: 'accountName',
+                        comments: 'comments',
+                        glossGroupName: 'glossGroupName',
+                        id: 'id',
+                        normalizedWord: 'normalizedWord',
+                        source: 'source',
+                        translation: 'allTranslations',
+                        type: 'type',
+                        word: 'word',
+                    }, gloss);
+
+                    setComplexValue(suggestion);
+                }).catch(() => {
+                    setComplexValue(null);
+                });
         }
+        return () => { cancelled = true; };
     }, [ complexValue, setComplexValue, value ]);
 
     const _onClearSuggestions = useCallback(() => {
@@ -39,17 +66,19 @@ function GlossSelect(props: IProps) {
     }, [ setSuggestions ]);
 
     const _onSuggest = useCallback(async (ev: IComponentEvent<string>) => {
+        const word = ev.value.replace(/\s\(\d+\)$/, '');
+
         const newSuggestions = await apiConnector.suggest({
             inexact: true,
-            words: [ ev.value ],
+            words: [ word ],
         });
 
-        setSuggestions(newSuggestions[ev.value] || []);
+        setSuggestions(newSuggestions[word] || []);
     }, [ apiConnector ]);
 
     const _onChange = useCallback((ev: IComponentEvent<ISuggestionEntity>) => {
         setComplexValue(ev.value);
-        fireEvent(name, onChange, ev.value.id);
+        fireEvent(name, onChange, ev.value ? ev.value.id : null);
     }, [ setComplexValue, name, onChange ]);
 
     return <EntitySelect<ISuggestionEntity>
@@ -65,11 +94,6 @@ function GlossSelect(props: IProps) {
         valueClassNames="GlossSelect--value"
     />;
 }
-
-const _createComplex = (value: number) => ({
-    accountName: '',
-    id: value,
-}) as ISuggestionEntity;
 
 GlossSelect.defaultProps = {
     apiConnector: SharedReference.getInstance(BookApiConnector),

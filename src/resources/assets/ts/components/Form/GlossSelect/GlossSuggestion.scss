@@ -1,6 +1,15 @@
+@import '../../../_scss/_variables';
+
 .GlossSuggestion--gloss {
     font-weight: bold;
 }
 .GlossSuggestion--type {
     font-style: italic;
+}
+.GlossSuggestion--id {
+    color: $gray-light;
+    font-family: $font-family-tiny;
+    float: right;
+    font-size: 0.8rem;
+    line-height: 2.25;
 }
