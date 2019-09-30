@@ -208,7 +208,11 @@ class GlossRepository
             'a.nickname as account_name',
             'tg.name as gloss_group_name',
             'g.id'
-        ], false)->where('g.language_id', $languageId);
+        ], false);
+
+        if ($languageId !== 0) {
+            $query = $query->where('g.language_id', $languageId);
+        }
         
         if ($inexact) {
             $query->where(function ($query) use ($normalizedWords) {

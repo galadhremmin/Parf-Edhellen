@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React from 'react';
+import React, { Suspense } from 'react';
 
 import { fireEvent } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
@@ -68,11 +68,11 @@ export default class FragmentInspector extends React.PureComponent<IProps> {
                 <Markdown text={fragment.comments} parse={true} />
             </section>}
             <section>
-                <React.Suspense fallback={<Spinner />}>
+                <Suspense fallback={<Spinner />}>
                     <GlossInspectorAsync gloss={this.props.gloss}
                         onReferenceLinkClick={this._onReferenceLinkClick}
                         toolbar={false} />
-                </React.Suspense>
+                </Suspense>
             </section>
         </article>;
     }

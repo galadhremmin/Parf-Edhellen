@@ -13,6 +13,7 @@ function Dialog<V>(props: IProps<V>) {
         onConfirm,
         onDismiss,
         title,
+        valid,
         value,
     } = props;
 
@@ -23,8 +24,10 @@ function Dialog<V>(props: IProps<V>) {
 
     const _onConfirm = useCallback((ev: React.MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
-        fireEvent('Dialog', onConfirm, value);
-    }, [ onConfirm, value ]);
+        if (valid) {
+            fireEvent('Dialog', onConfirm, value);
+        }
+    }, [ onConfirm, valid, value ]);
 
      // This is needed so screen readers don't see main content when modal is opened.
      const appElement = document.querySelector('main');
@@ -52,6 +55,7 @@ function Dialog<V>(props: IProps<V>) {
 
 Dialog.defaultProps = {
     actionBar: true,
+    valid: true,
 } as Partial<IProps<any>>;
 
 const DialogStyles = {

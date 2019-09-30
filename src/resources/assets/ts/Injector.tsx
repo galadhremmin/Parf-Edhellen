@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { render } from 'react-dom';
 import Spinner from './components/Spinner';
 import { snakeCasePropsToCamelCase } from './utilities/func/snake-case';
@@ -25,11 +25,11 @@ const InjectPropAttributeName = 'injectProp';
 const load = (element: HTMLElement, moduleName: string, props: any) => {
     const Component = React.lazy(() => import(`./apps/${moduleName}/index`));
 
-    render(<React.Suspense fallback={<Spinner />}>
+    render(<Suspense fallback={<Spinner />}>
         <React.StrictMode>
             <Component {...props} />
         </React.StrictMode>
-    </React.Suspense>, element);
+    </Suspense>, element);
 };
 
 /**

@@ -1,7 +1,10 @@
 import classNames from 'classnames';
-import React from 'react';
+import React, { Suspense } from 'react';
 
-import { RoleManager, SecurityRole } from '@root/security';
+import {
+    RoleManager,
+    SecurityRole,
+} from '@root/security';
 import SharedReference from '@root/utilities/SharedReference';
 
 import { IProps } from './GlossTitle._types';
@@ -9,6 +12,8 @@ import { IProps } from './GlossTitle._types';
 import GlossAbsoluteLink from './GlossAbsoluteLink';
 import NeologismIndicator from './NeologismIndicator';
 import NumberOfComments from './NumberOfComments';
+
+const ToolbarAsync = React.lazy(() => import('./toolbar'));
 
 const GlossTitle = (props: IProps) => {
     const {
@@ -34,18 +39,11 @@ const GlossTitle = (props: IProps) => {
                     {inflection.name}
                 </span>)}
         </span>}
-        {toolbar && <React.Fragment>
+        {toolbar && <Suspense fallback={null}>
             <NumberOfComments gloss={gloss} />
             <GlossAbsoluteLink gloss={gloss} />
-            {isAuthenticated && <React.Fragment>
-                <a href={`/dashboard/contribution/create/gloss?entity_id=${gloss.id}`}>
-                    <span className="glyphicon glyphicon-pencil"></span>
-                </a>
-                <a href={`/dashboard/contribution/create/gloss?entity_id=${gloss.id}`}>
-                    <span className="glyphicon glyphicon-trash"></span>
-                </a>
-            </React.Fragment>}
-        </React.Fragment>}
+            {isAuthenticated && <ToolbarAsync gloss={gloss} />}
+        </Suspense>}
     </h3>;
 };
 

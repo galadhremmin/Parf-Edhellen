@@ -5,7 +5,10 @@ import {
     ParserInstructions,
     ProcessNodeDefinitions,
 } from 'html-to-react';
-import React, { PureComponent } from 'react';
+import React, {
+    PureComponent,
+    Suspense,
+} from 'react';
 
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
 import {
@@ -111,9 +114,9 @@ export default class HtmlInject extends PureComponent<IProps, IState> {
 
         const Component = React.lazy(() => import('./Tengwar'));
 
-        return <React.Suspense fallback={<span>&#128220;</span>}>
+        return <Suspense fallback={<span>&#128220;</span>}>
             <Component text={node.children[0].data} transcribe={true} mode={mode.toLowerCase()} />
-        </React.Suspense>;
+        </Suspense>;
     }
 
     private _onReferenceLinkClick(word: string, normalizedWord: string, languageShortName: string,

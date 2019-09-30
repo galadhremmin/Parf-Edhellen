@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 
 import Spinner from '@root/components/Spinner';
 import {
@@ -21,9 +21,9 @@ export default class ConditionalToolbar extends React.Component<IProps> {
             return null;
         }
 
-        return <React.Suspense fallback={<Spinner />}>
+        return <Suspense fallback={<Spinner />}>
             <ToolbarAsync {...props} />
-        </React.Suspense>;
+        </Suspense>;
     }
 }
 

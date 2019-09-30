@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { ComponentEventHandler } from './Component._types';
 
 export interface IProps<V> {
@@ -6,6 +7,7 @@ export interface IProps<V> {
     onConfirm?: ComponentEventHandler<V>;
     onDismiss: ComponentEventHandler<void>;
     open: boolean;
-    title: string;
+    title: ReactNode;
+    valid: boolean;
     value?: V;
 }

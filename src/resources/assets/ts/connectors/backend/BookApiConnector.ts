@@ -8,6 +8,8 @@ import {
     ILanguagesResponse,
     ISentenceRequest,
     ISentenceResponse,
+    ISuggestRequest,
+    ISuggestResponse,
 } from './BookApiConnector._types';
 
 export default class BookApiConnector {
@@ -38,5 +40,9 @@ export default class BookApiConnector {
 
     public sentence(args: ISentenceRequest) {
         return this._api.value.get<ISentenceResponse>(`sentence/${args.id}`);
+    }
+
+    public suggest(args: ISuggestRequest) {
+        return this._api.value.post<ISuggestResponse>(`book/suggest`, args);
     }
 }
