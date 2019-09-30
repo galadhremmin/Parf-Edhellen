@@ -51,8 +51,17 @@ function DeleteGloss(props: IProps) {
                         title={title}
                         value={replacementId}>
             <ValidationErrorAlert error={errors} />
-            Do you want to delete the gloss <Quote>{gloss.word}</Quote>?
+            <strong>
+                Do you want to delete the gloss <Quote>{gloss.word}</Quote>?
+            </strong>
+            <p>
+                It is recommended to provide an alternative gloss to ensure that there are no dangling
+                references, such as phrases with missing words, as a result of the deletion:
+            </p>
             <GlossSelect name="test" onChange={(e) => setReplacementId(e.value)} value={replacementId} />
+            <p>
+                Remember! A gloss is not <em>permanently</em>{' '}deleted. An system administrator can restore it.
+            </p>
         </Dialog>
         <a href="#" onClick={_onOpen}>
             <span className="glyphicon glyphicon-trash" />
