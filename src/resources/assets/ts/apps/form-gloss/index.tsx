@@ -38,7 +38,7 @@ const Inject = (props: IProps) => {
     }
 
     return <Provider store={store}>
-        <GlossForm confirmButton={confirmButton || null} />
+        <GlossForm confirmButton={confirmButton || undefined} edit={gloss && !! gloss.id} />
     </Provider>;
 };
 

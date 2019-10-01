@@ -7,6 +7,7 @@ import { ReduxThunkDispatch } from '@root/_types';
 import { fireEvent } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
 import AccountSelect from '@root/components/Form/AccountSelect';
+import GlossGroupSelect from '@root/components/Form/GlossGroupSelect';
 import LanguageSelect from '@root/components/Form/LanguageSelect';
 import MarkdownInput from '@root/components/Form/MarkdownInput';
 import OptionalLabel from '@root/components/Form/OptionalLabel';
@@ -76,7 +77,7 @@ function GlossForm(props: IProps) {
         // create a deep copy of the gloss.
         const newGloss = JSON.parse(JSON.stringify(gloss)) as typeof gloss;
         if (! edit) {
-            newGloss.id = null;
+            delete newGloss.id;
         }
 
         // remove parameters that are not supported by the service
@@ -95,8 +96,6 @@ function GlossForm(props: IProps) {
 
         fireEvent(name, onSubmit, newGloss);
     };
-
-    const tengwarMode = '';
 
     return <form onSubmit={_onSubmit}>
         <ValidationErrorAlert error={errors} />
@@ -233,6 +232,15 @@ function GlossForm(props: IProps) {
                             name="ed-gloss-account"
                             onChange={_onChange('account')}
                             value={gloss.account}
+                        />
+                    </div>
+                    <div className="form-group form-group-sm">
+                        <label htmlFor="ed-gloss-speech">Categorization</label>
+                        <GlossGroupSelect
+                            className="form-control"
+                            name="ed-gloss-group-id"
+                            onChange={_onChange('glossGroupId')}
+                            value={gloss.glossGroupId}
                         />
                     </div>
                 </Panel>

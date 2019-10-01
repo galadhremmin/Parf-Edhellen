@@ -10,13 +10,20 @@ import {
 import useFetch from './fetch';
 
 const InternalProps: Array<keyof IProps> = [
-    'loaderOfValues', 'onChange', 'textField', 'value', 'valueField', 'valueType',
+    'allowEmpty',
+    'loaderOfValues',
+    'onChange',
+    'textField',
+    'value',
+    'valueField',
+    'valueType',
 ];
 
 function AsyncSelect<T = any>(props: IProps<T>) {
     const componentProps = excludeProps(props, InternalProps);
 
     const {
+        allowEmpty,
         name,
         loaderOfValues,
         onChange,
@@ -43,6 +50,7 @@ function AsyncSelect<T = any>(props: IProps<T>) {
         id={name}
         onChange={_onChange}
         value={getNativeValue(value, valueField as string)}>
+        {allowEmpty && <option key="empty" value=""></option>}
         {values.map((option) => {
             const optionValue = option[valueField] as any;
             return <option key={optionValue} value={optionValue}>{option[textField]}</option>;
@@ -51,6 +59,7 @@ function AsyncSelect<T = any>(props: IProps<T>) {
 }
 
 AsyncSelect.defaultProps = {
+    allowEmpty: false,
     valueType: 'entity',
 } as IProps;
 

@@ -11,6 +11,7 @@ import {
     ISuggestRequest,
     ISuggestResponse,
 } from './BookApiConnector._types';
+import { IGlossGroup } from './GlossResourceApiConnector._types';
 
 export default class BookApiConnector {
     constructor(private _api = new SharedReference(ApiConnector)) {
@@ -32,6 +33,10 @@ export default class BookApiConnector {
         }
 
         return this._api.value.post<IGlossaryResponse>('book/translate', args);
+    }
+
+    public groups() {
+        return this._api.value.get<IGlossGroup[]>('book/group');
     }
 
     public languages() {

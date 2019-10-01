@@ -15,7 +15,6 @@ export default class ContributionResourceApiConnector {
             ...args,
             morph: 'gloss',
         };
-        delete envelope.id;
 
         if (!!args.contributionId && ! isNaN(args.contributionId) && isFinite(args.contributionId)) {
             return this._api.value.put<IContributionSaveResponse>(`/dashboard/contribution/${args.contributionId}`,
