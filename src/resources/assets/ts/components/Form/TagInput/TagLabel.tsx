@@ -4,6 +4,7 @@ import React, {
     useState,
 } from 'react';
 
+import TextIcon from '@root/components/TextIcon';
 import { fireEvent } from '../../Component';
 import { IProps } from './TagLabel._types';
 
@@ -39,7 +40,7 @@ function TagLabel(props: IProps) {
         />
         {tag}
         &#32;
-        <span className="glyphicon glyphicon-remove-sign" />
+        <TextIcon icon="remove-sign" />
     </label>;
 }
 

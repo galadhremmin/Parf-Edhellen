@@ -22,6 +22,14 @@ export default class GlossActions {
         };
     }
 
+    public setEditing(glossId: number) {
+        return {
+            field: 'id',
+            type: Actions.SetField,
+            value: glossId || 0,
+        };
+    }
+
     public setGloss(gloss: IGlossEntity) {
         return {
             gloss,

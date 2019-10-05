@@ -8,6 +8,7 @@ import {
 } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
 import MarkdownInput from '@root/components/Form/MarkdownInput';
+import TextIcon from '@root/components/TextIcon';
 
 import {
     IFormOutput,
@@ -75,7 +76,7 @@ function Form(props: IProps) {
         <div className="form-group text-right">
             <button className="btn btn-default" onClick={_onCancelClick}>Cancel</button>
             <button type="submit" className="btn btn-primary">
-                <span className="glyphicon glyphicon-pencil"></span>
+                <TextIcon icon="pencil" />
                 Save
             </button>
         </div>

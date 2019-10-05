@@ -7,13 +7,12 @@
   {!! Breadcrumbs::render('contribution.create', 'sentence') !!}
   <div id="ed-sentence-form" data-admin="false"></div>
 
-  @if (isset($sentence) && isset($fragmentData))
-  <script type="application/json" id="ed-preloaded-sentence">{!! $sentence !!}</script>
-  <script type="application/json" id="ed-preloaded-sentence-fragments">{!! $fragmentData !!}</script>
+  <div id="ed-sentence-form"
+    data-inject-module="form-sentence"
+  @if (isset($sentence))
+    data-inject-prop-sentence="@json($sentence)"
+    data-inject-prop-sentence-fragments="@json($fragmentData)"
   @endif
+  ></div>
 
-@endsection
-
-@section('scripts')
-  <script type="text/javascript" src="@assetpath(/js/sentence-admin.js)" async></script>
 @endsection

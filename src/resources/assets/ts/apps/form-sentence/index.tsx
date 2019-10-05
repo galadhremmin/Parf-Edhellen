@@ -9,11 +9,11 @@ import thunkMiddleware from 'redux-thunk';
 import { ReduxThunkDispatch } from '@root/_types';
 import { composeEnhancers } from '@root/utilities/func/redux-tools';
 
-import GlossActions from './actions/GlossActions';
+// import GlossActions from './actions/GlossActions';
 import { IProps } from './index._types';
 import rootReducer from './reducers';
 
-import GlossForm from './containers/GlossForm';
+import SentenceForm from './containers/SentenceForm';
 
 const Inject = (props: IProps) => {
     const store = createStore(rootReducer, undefined,
@@ -23,27 +23,23 @@ const Inject = (props: IProps) => {
     );
 
     const {
-        confirmButton,
-        gloss,
-        prefetched,
+        sentence,
     } = props;
 
     const dispatch = store.dispatch as ReduxThunkDispatch;
 
-    const actions = new GlossActions();
+    /*
+    const actions = new SentenceActions();
     if (prefetched) {
         if (gloss !== undefined) {
-            dispatch(actions.setGloss(gloss));
+            dispatch(actions.setSentence(gloss));
         }
     }
+    */
 
     return <Provider store={store}>
-        <GlossForm confirmButton={confirmButton || undefined} />
+        <SentenceForm />
     </Provider>;
 };
-
-Inject.defaultProps = {
-    prefetched: true,
-} as Partial<IProps>;
 
 export default Inject;

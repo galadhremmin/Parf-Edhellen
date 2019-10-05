@@ -7,6 +7,7 @@ import { isEmptyString } from '@root/utilities/func/string-manipulation';
 
 import { fireEvent } from '../Component';
 import Markdown from '../Markdown';
+import TextIcon from '../TextIcon';
 import {
     IComponentConfig,
     IProps,
@@ -173,7 +174,7 @@ export default class MarkdownInput extends React.PureComponent<IProps, IState> {
                     <tr>
                         <td><code>![An exclamation](exclamation-glyph.png)</code></td>
                         <td>
-                            <span className="glyphicon glyphicon-exclamation-sign" title="An exclamation" />.
+                            <TextIcon icon="exclamation-sign" />
                             Displays an image with an alternate text (if the image fails to load).
                         </td>
                     </tr>

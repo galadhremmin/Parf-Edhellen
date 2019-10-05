@@ -1,6 +1,7 @@
 import React from 'react';
 
 import StaticAlert from '@root/components/StaticAlert';
+import TextIcon from '@root/components/TextIcon';
 
 const onAuthenticateClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
     ev.preventDefault();
@@ -10,7 +11,7 @@ const onAuthenticateClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
 function UnauthenticatedAlert() {
     return <StaticAlert type="info">
         <strong>
-            <span className="glyphicon glyphicon-info-sign" />
+            <TextIcon icon="info-sign" />
             {' '}
             Would you like to share your thoughts on the discussion?
         </strong>

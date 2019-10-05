@@ -40,12 +40,17 @@ export class SearchQuery extends React.PureComponent<IProps, IState> {
     }
 
     public render() {
+        const {
+            loading,
+        } = this.props;
+
         return <form onSubmit={this._onSubmit}>
             <div className="row">
                 <div className="col-md-12">
                     <SearchQueryInput
                         autoFocus={true}
                         name="query"
+                        loading={loading}
                         onChange={this._onQueryChange}
                         onSearchResultNavigate={this._onSearchResultNavigate}
                         tabIndex={1}
@@ -149,6 +154,7 @@ const mapStateToProps = (state: RootReducer) => ({
     currentGlossaryWord: state.glossary.word,
     includeOld: state.search.includeOld,
     languageId: state.search.languageId,
+    loading: state.search.loading,
     reversed: state.search.reversed,
     word: state.search.word,
 });

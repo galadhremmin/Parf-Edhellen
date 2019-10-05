@@ -5,8 +5,9 @@
   <h1>Contribute</h1>
   
   {!! Breadcrumbs::render('contribution.create', 'gloss') !!}
+
   <div id="ed-gloss-form" data-inject-module="form-gloss"
-  @if (! empty($payload)) 
+  @if (isset($payload)) 
     data-inject-prop-gloss="@json($payload)"
     data-inject-prop-confirm-button="Propose changes"
   @endif></div>

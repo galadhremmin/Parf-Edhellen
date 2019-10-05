@@ -1,6 +1,7 @@
 import React from 'react';
 
 import DateLabel from '@root/components/DateLabel';
+import TextIcon from '@root/components/TextIcon';
 import { IProps } from './GlossFooter._types';
 
 const GlossFooter = (props: IProps) => {
@@ -15,7 +16,7 @@ const GlossFooter = (props: IProps) => {
             <a href={gloss.externalLinkFormat.replace(/\{ExternalID\}/g, gloss.externalId)}
                 title={`Goes to ${gloss.glossGroupName} in new tab or window.`}
                 target="_blank">
-                <span className="glyphicon glyphicon-globe" />
+                <TextIcon icon="globe" />
                 {' '}
                 Source
             </a>.

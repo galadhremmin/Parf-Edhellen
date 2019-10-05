@@ -2,6 +2,7 @@ import React from 'react';
 
 import { fireEvent } from '@root/components/Component';
 import { IComponentProps } from '@root/components/Form/FormComponent._types';
+import TextIcon from '@root/components/TextIcon';
 import { IGlossDetail } from '@root/connectors/backend/GlossResourceApiConnector._types';
 
 const _setOrder = (newValue: IGlossDetail[]) => {
@@ -100,13 +101,13 @@ function GlossDetailInput(props: IComponentProps<IGlossDetail[]>) {
                 />
                 <div className="btn-group btn-group-xs" role="group">
                     <button type="button" className="btn btn-default" onClick={_onMoveClick(i, -1)}>
-                        <span className="glyphicon glyphicon-arrow-up"></span>
+                        <TextIcon icon="arrow-up" />
                     </button>
                     <button type="button" className="btn btn-default" onClick={_onDeleteClick(i)}>
-                        <span className="glyphicon glyphicon-remove"></span>
+                        <TextIcon icon="remove" />
                     </button>
                     <button type="button" className="btn btn-default" onClick={_onMoveClick(i, 1)}>
-                        <span className="glyphicon glyphicon-arrow-down"></span>
+                    <TextIcon icon="arrow-down" />
                     </button>
                 </div>
             </div>

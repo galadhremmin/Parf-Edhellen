@@ -77,8 +77,8 @@ class SentenceContributionController extends Controller implements IContribution
 
         return view('contribution.sentence.edit', [
             'review' => $contribution,
-            'sentence' => json_encode($sentence),
-            'fragmentData' => json_encode($fragmentData)
+            'sentence' => $sentence,
+            'fragmentData' => $fragmentData
         ]);
     }
     
@@ -97,8 +97,8 @@ class SentenceContributionController extends Controller implements IContribution
             $fragmentData = $this->createFragmentDataFromPayload($sentence);
 
             $model = [
-                'sentence'     => json_encode($sentence),
-                'fragmentData' => json_encode($fragmentData)
+                'sentence'     => $sentence,
+                'fragmentData' => $fragmentData
             ];
         }
 
@@ -243,7 +243,7 @@ class SentenceContributionController extends Controller implements IContribution
             }
         }
 
-        $result = $this->_sentenceAdapter->adaptFragments($fragments);
+        $result = $fragments;
         return $result;
     }
 

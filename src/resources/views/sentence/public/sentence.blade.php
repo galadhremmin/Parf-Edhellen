@@ -37,12 +37,8 @@
       <span class="glyphicon glyphicon-trash"></span>
       Delete
     </a>
-    <a href="{{ route('sentence.edit', [ 'id' => $sentence['sentence']->id ]) }}" class="btn btn-default">
-      <span class="glyphicon glyphicon-edit"></span>
-      Edit phrase
-    </a>
     @endif
-    <a href="{{ route('contribution.create', [ 'morph' => 'sentence', 'entity_id' => $sentence['sentence']->id ]) }}" class="btn btn-default">
+    <a href="{{ $link->contributeSentence($sentence['sentence']->id) }}" class="btn btn-default">
       <span class="glyphicon glyphicon-edit"></span>
       Propose changes
     </a>
@@ -68,11 +64,6 @@
     'morph'     => 'sentence',
     'enabled'   => true
   ])
-@endsection
-
-@section('scripts')
-  <script type="text/javascript" src="@assetpath(/js/sentence.js)" async></script>
-  <script type="text/javascript" src="@assetpath(/js/comment.js)" async></script>
 @endsection
 
 @section('styles')

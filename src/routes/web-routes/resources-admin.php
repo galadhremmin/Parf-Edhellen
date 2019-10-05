@@ -13,18 +13,18 @@ Route::group([
     Route::resource('inflection', 'InflectionController', [
         'except' => ['show']
     ]);
-    Route::resource('sentence', 'SentenceController', [
-        'except' => ['show']
-    ]);
     Route::resource('speech', 'SpeechController', [
         'except' => ['show']
     ]);
     Route::resource('gloss', 'GlossController', [
-        'except' => ['show']
+        'only' => ['index']
     ]);
-    Route::resource('system-error', 'SystemErrorController', ['only' => [
-        'index'
-    ]]);
+    Route::resource('sentence', 'SentenceController', [
+        'only' => ['index']
+    ]);
+    Route::resource('system-error', 'SystemErrorController', [
+        'only' => ['index']
+    ]);
 
     Route::get('sentence/confirm-destroy/{id}', 'SentenceController@confirmDestroy')->name('sentence.confirm-destroy');
     Route::post('sentence/validate', 'SentenceController@validatePayload');

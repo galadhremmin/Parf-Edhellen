@@ -9,6 +9,7 @@ export interface IProps {
     errors: ValidationError;
     gloss: IGlossState;
     name: string;
+    onEditChange: ComponentEventHandler<number>;
     onGlossFieldChange: ComponentEventHandler<IChangeSpec>;
     onSubmit: ComponentEventHandler<IGlossEntity>;
 }

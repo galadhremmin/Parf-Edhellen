@@ -3,6 +3,7 @@ import React from 'react';
 
 import { fireEventAsync } from '@root/components/Component';
 import { FormComponent } from '@root/components/Form/FormComponent';
+import TextIcon from '@root/components/TextIcon';
 import {
     IComponentProps,
     IProps,
@@ -14,14 +15,18 @@ export default class SearchQueryInput extends FormComponent<string, IProps, ICom
     }
 
     public render() {
-        const fieldClasses = classNames('form-control', { disabled: this.props.loading });
-        const statusClasses = classNames('glyphicon', this.props.loading
-            ? 'glyphicon-refresh loading' : 'glyphicon-search');
+        const {
+            loading,
+        } = this.props;
+
+        const fieldClasses = classNames('form-control', { disabled: loading });
+        const icon = loading ? 'refresh' : 'search';
+        const iconClassName = loading ? 'loading' : '';
         const componentProps = this.pickComponentProps();
 
         return <div className="input-group input-group-lg">
             <span className="input-group-addon">
-                <span className={statusClasses}>&#32;</span>
+                <TextIcon icon={icon} className={iconClassName} />
             </span>
             <input accessKey="s"
                 autoCapitalize="off"

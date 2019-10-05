@@ -1,4 +1,6 @@
 import React from 'react';
+
+import TextIcon from '@root/components/TextIcon';
 import { IProps } from './OldVersionAlert._types';
 
 const OldVersionAlert = (props: IProps) => {
@@ -9,7 +11,8 @@ const OldVersionAlert = (props: IProps) => {
     }
 
     return <p className="alert alert-danger">
-        <span className="glyphicon glyphicon-warning-sign"></span>{' '}
+        <TextIcon icon="warning-sign" />
+        {' '}
         <strong>Important!</strong> A newer version of this gloss was found in the dictionary.
         You should <a href={`/wt/${gloss.id}/latest`}> go to the latest version instead</a>.
     </p>;

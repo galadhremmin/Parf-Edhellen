@@ -5,6 +5,7 @@ import React, {
 
 import { IComponentEvent } from '@root/components/Component._types';
 import Dialog from '@root/components/Dialog';
+import TextIcon from '@root/components/TextIcon';
 import { LearnMoreWebFeedUrl } from '@root/config';
 import { createFeedUrl } from '@root/connectors/FeedApiConnector';
 import { FeedFormat } from '@root/connectors/FeedApiConnector._types';
@@ -42,7 +43,7 @@ function Feeds(props: IProps) {
     const feedUrl = feedUrlFactory('discuss', 'posts', props.groupId, feedType);
     return <div className="discuss-feed-buttons">
         <button className="btn btn-sm btn-default" onClick={_onOpen}>
-            <span className="glyphicon glyphicon-bell" />
+            <TextIcon icon="bell" />
             &#32;
             Feed
         </button>

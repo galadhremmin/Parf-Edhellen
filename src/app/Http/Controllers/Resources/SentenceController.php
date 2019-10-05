@@ -44,66 +44,12 @@ class SentenceController extends Controller
         return view('sentence.index', ['sentences' => $sentences]);
     }
 
-    public function create(Request $request)
-    {
-        return view('sentence.create');
-    }
-
-    public function edit(Request $request, int $id) 
-    {
-        $sentence = $this->_sentenceRepository->getSentence($id);
-
-        return view('sentence.edit', [
-            'sentence' => $sentence
-        ]);
-    }
-
     public function confirmDestroy(Request $request, int $id)
     {
         $sentence = Sentence::findOrFail($id);
         return view('sentence.confirm-destroy', [
             'sentence' => $sentence
         ]);
-    }
-
-    public function store(Request $request)
-    {
-        $this->validateSentenceInRequest($request);
-        $this->validateFragmentsInRequest($request);
-
-        $sentence = new Sentence;
-        $this->saveSentence($sentence, $request);
-
-        $link = resolve(LinkHelper::class);
-        return [
-            'sentence' => $sentence, 
-            'url'      => $link->sentence(
-                $sentence->language->id, 
-                $sentence->language->name,
-                $sentence->id,
-                $sentence->name
-            )
-        ];
-    }
-
-    public function update(Request $request, int $id)
-    {
-        $this->validateSentenceInRequest($request, $id);
-        $this->validateFragmentsInRequest($request);
-        
-        $sentence = Sentence::findOrFail($id);
-        $this->saveSentence($sentence, $request);
-
-        $link = resolve(LinkHelper::class);
-        return [
-            'sentence' => $sentence, 
-            'url'      => $link->sentence(
-                $sentence->language->id, 
-                $sentence->language->name,
-                $sentence->id,
-                $sentence->name
-            )
-        ];
     }
 
     public function destroy(Request $request, int $id) 
@@ -116,35 +62,5 @@ class SentenceController extends Controller
         event(new SentenceDestroyed($sentence));
 
         return redirect()->route('sentence.index');
-    }
-
-    public function validatePayload(Request $request)
-    {
-        $this->validateSentenceInRequest($request, $request->input('id') ?? 0);
-        return response(null, 204);
-    }
-
-    public function validateFragments(Request $request) 
-    {
-        $this->validateFragmentsInRequest($request);
-        return response(null, 204);
-    }
-
-    public function parseFragments(Request $request, string $name)
-    {
-        parent::validate($request, [
-            'fragments' => 'required|array'
-        ]);
-
-        $fragments = $request->input('fragments');
-        $sentences = resolve(SentenceHelper::class)->buildSentences($fragments, $name);
-
-        return $sentences[$name];
-    }
-
-    protected function saveSentence(Sentence $sentence, Request $request) 
-    {
-        $map = $this->mapSentence($sentence, $request);
-        $this->_sentenceRepository->saveSentence($map['sentence'], $map['fragments'], $map['inflections']);
     }
 }

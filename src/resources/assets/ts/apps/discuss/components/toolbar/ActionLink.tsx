@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { fireEvent } from '@root/components/Component';
+import TextIcon from '@root/components/TextIcon';
 import { IProps } from './ActionLink._types';
 
 export default class ActionLink extends React.PureComponent<IProps> {
@@ -10,7 +11,7 @@ export default class ActionLink extends React.PureComponent<IProps> {
         } = this.props;
 
         return <a href="#" onClick={this._onClick}>
-            <span className={`glyphicon glyphicon-${icon}`} />
+            <TextIcon icon={icon} />
             {' '}
             {this.props.children}
         </a>;

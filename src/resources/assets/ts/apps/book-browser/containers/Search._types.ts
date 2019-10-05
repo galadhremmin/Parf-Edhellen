@@ -11,6 +11,7 @@ export interface IProps {
     dispatch: ThunkDispatch<any, any, any>;
     includeOld?: boolean;
     languageId?: number;
+    loading?: boolean;
     reversed?: boolean;
     word?: string;
 }

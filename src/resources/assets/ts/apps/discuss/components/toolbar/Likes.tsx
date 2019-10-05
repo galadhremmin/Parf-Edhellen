@@ -2,8 +2,7 @@ import classNames from 'classnames';
 import React, { useCallback } from 'react';
 
 import { fireEventAsync } from '@root/components/Component';
-import DiscussApiConnector from '@root/connectors/backend/DiscussApiConnector';
-import SharedReference from '@root/utilities/SharedReference';
+import TextIcon from '@root/components/TextIcon';
 
 import connectApi from './ApiConnector';
 import { IProps } from './ApiConnector._types';
@@ -41,7 +40,7 @@ function Likes(props: IProps) {
     return <a href={`?forum_post_id=${forumPostId}`} onClick={_onLikeClick}>
         {threadMetadata.likesPerPost[forumPostId] || 0}
         &nbsp;
-        <span className={classNames('glyphicon', 'glyphicon-thumbs-up', {
+        <TextIcon icon="thumbs-up" className={classNames({
             'likes--liked-by-user': likedByAccount,
         })} />
     </a>;

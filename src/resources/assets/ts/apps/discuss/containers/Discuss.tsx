@@ -9,6 +9,7 @@ import { ReduxThunkDispatch } from '@root/_types';
 import { fireEvent } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
 import Pagination from '@root/components/Pagination';
+import TextIcon from '@root/components/TextIcon';
 import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
 import DiscussActions from '../actions/DiscussActions';
@@ -143,7 +144,7 @@ function Discuss(props: IProps) {
             />
         </div>
         <a href="#" className="discuss-body__bottom" onClick={_onGotoNavigation}>
-            <span className="glyphicon glyphicon-chevron-down" />
+            <TextIcon icon="chevron-down" />
         </a>
     </>;
 }

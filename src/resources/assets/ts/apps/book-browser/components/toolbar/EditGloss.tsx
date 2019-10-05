@@ -1,5 +1,6 @@
 import React from 'react';
 
+import TextIcon from '@root/components/TextIcon';
 import { IProps } from './index._types';
 
 function EditGloss(props: IProps) {
@@ -9,7 +10,7 @@ function EditGloss(props: IProps) {
 
     return <>
         <a href={`/dashboard/contribution/create/gloss?entity_id=${gloss.id}`}>
-            <span className="glyphicon glyphicon-pencil" />
+            <TextIcon icon="pencil" />
         </a>
     </>;
 }

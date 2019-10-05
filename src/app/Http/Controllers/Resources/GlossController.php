@@ -68,36 +68,6 @@ class GlossController extends Controller
         ]);
     }
 
-    public function create(Request $request)
-    {
-        return view('gloss.create');
-    }
-
-    public function edit(Request $request, int $id) 
-    {
-        // Eagerly load the gloss.
-        $gloss = Gloss::with(
-            'account', 'word', 'gloss_details', 'gloss_group',
-            'sense', 'sense.word', 'translations')
-            ->findOrFail($id)
-            ->getLatestVersion();
-
-        if ($gloss->id !== $id) {
-            return redirect()->route('gloss.edit', [
-                'id' => $gloss->id
-            ]);
-        }
-
-        // Overwrite the entity's keywords with a complete list of keywords (including keywords associated with the sense).
-        $gloss->keywords = $this->_glossRepository->getKeywords($gloss->sense_id, $gloss->id);
-
-        return $request->ajax() 
-            ? $gloss
-            : view('gloss.edit', [
-                'gloss' => $gloss
-            ]);
-    }
-
     public function confirmDelete(Request $request, int $id)
     {
         $gloss = Gloss::findOrFail($id);

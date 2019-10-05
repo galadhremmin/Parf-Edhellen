@@ -1,6 +1,7 @@
 import React, { useCallback, useRef } from 'react';
 
 import { fireEvent } from '@root/components/Component';
+import TextIcon from '@root/components/TextIcon';
 import {
     RoleManager,
     SecurityRole,
@@ -39,7 +40,7 @@ function RespondButton(props: IProps) {
 
         default:
             return <button className="btn btn-primary" onClick={onRespondClick}>
-                <span className="glyphicon glyphicon-envelope" />
+                <TextIcon icon="envelope" />
                 &nbsp;
                 Reply
             </button>;

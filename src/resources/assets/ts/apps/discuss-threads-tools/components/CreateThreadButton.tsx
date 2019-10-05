@@ -13,6 +13,7 @@ import { fireEvent } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
 import Dialog from '@root/components/Dialog';
 import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
+import TextIcon from '@root/components/TextIcon';
 import { IProps } from './CreateThreadButton._types';
 
 function CreateThreadButton(props: IProps) {
@@ -65,7 +66,7 @@ function CreateThreadButton(props: IProps) {
 
     return <>
         <button className="btn btn-primary" onClick={_onOpen}>
-            <span className="glyphicon glyphicon-pencil" />
+            <TextIcon icon="pencil" />
             {' '}
             New post
         </button>

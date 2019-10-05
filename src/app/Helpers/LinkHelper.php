@@ -2,6 +2,12 @@
 
 namespace App\Helpers;
 
+use App\Models\{
+    Gloss,
+    Sentence
+};
+use App\Models\Initialization\Morphs;
+
 class LinkHelper
 {
     public function author(int $authorId, string $authorName = null)
@@ -106,5 +112,25 @@ class LinkHelper
     public function contribution(int $contributionId)
     {
         return route('contribution.show', ['id' => $contributionId]);
+    }
+
+    public function contributeGloss(int $originalGlossId = 0)
+    {
+        $params = ['morph' => Morphs::getAlias(Gloss::class)];
+        if ($originalGlossId !== 0) {
+            $params['entity_id'] = $originalGlossId;
+        }
+
+        return route('contribution.create', $params);
+    }
+
+    public function contributeSentence(int $sentenceId = 0)
+    {
+        $params = ['morph' => Morphs::getAlias(Sentence::class)];
+        if ($sentenceId !== 0) {
+            $params['entity_id'] = $sentenceId;
+        }
+
+        return route('contribution.create', $params);
     }
 }

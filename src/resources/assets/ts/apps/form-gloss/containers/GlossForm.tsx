@@ -1,6 +1,4 @@
-import React, {
-    useCallback,
-} from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import { ReduxThunkDispatch } from '@root/_types';
@@ -16,6 +14,9 @@ import TagInput from '@root/components/Form/TagInput';
 import TengwarInput from '@root/components/Form/TengwarInput';
 import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
 import Panel from '@root/components/Panel';
+import Quote from '@root/components/Quote';
+import StaticAlert from '@root/components/StaticAlert';
+import TextIcon from '@root/components/TextIcon';
 
 import GlossActions from '../actions/GlossActions';
 import GlossDetailInput from '../components/GlossDetailInput';
@@ -39,6 +40,7 @@ function GlossForm(props: IProps) {
         edit,
         errors,
         name,
+        onEditChange,
         onGlossFieldChange,
         onSubmit,
     } = props;
@@ -46,6 +48,11 @@ function GlossForm(props: IProps) {
     const {
         gloss,
     } = props;
+
+    const _onDisableEdit = (ev: React.MouseEvent<HTMLAnchorElement>) => {
+        ev.preventDefault();
+        fireEvent(name, onEditChange, 0);
+    };
 
     const _onFieldChange = (field: GlossProps, value: string) => {
         const params = {
@@ -99,6 +106,16 @@ function GlossForm(props: IProps) {
 
     return <form onSubmit={_onSubmit}>
         <ValidationErrorAlert error={errors} />
+        {edit && <StaticAlert type="warning">
+            <p>
+                <TextIcon icon="info-sign" />{' '}
+                <strong>
+                    You are proposing changes to the gloss <Quote>{gloss.word.word}</Quote> ({gloss.id}).
+                </strong>{' '}
+                You can <a href="#" onClick={_onDisableEdit}>copy the gloss</a> if you want to use it as
+                a template.
+            </p>
+        </StaticAlert>}
         <div className="row">
             <div className="col-sm-12 col-lg-6">
                 <Panel title="Basic information">
@@ -110,6 +127,7 @@ function GlossForm(props: IProps) {
                             value={gloss.word.word}
                             onChange={_onChangeNative('word', wordTransformer)}
                             required={true}
+                            readOnly={edit}
                         />
                     </div>
                     <div className="form-group form-group-sm">
@@ -261,12 +279,14 @@ GlossForm.defaultProps = {
 } as Partial<IProps>;
 
 const mapStateToProps = (state: RootReducer) => ({
+    edit: state.gloss && !! state.gloss.id,
     errors: state.errors,
     gloss: state.gloss,
 } as Partial<IProps>);
 
 const actions = new GlossActions();
 const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => ({
+    onEditChange: (e) => dispatch(actions.setEditing(e.value)),
     onGlossFieldChange: (e) => dispatch(actions.setField(e.value.field, e.value.value)),
     onSubmit: (e) => dispatch(actions.saveGloss(e.value)),
 } as Partial<IProps>);

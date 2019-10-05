@@ -5,6 +5,7 @@ import Dialog from '@root/components/Dialog';
 import GlossSelect from '@root/components/Form/GlossSelect';
 import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
 import Quote from '@root/components/Quote';
+import TextIcon from '@root/components/TextIcon';
 import GlossResourceApiConnector from '@root/connectors/backend/GlossResourceApiConnector';
 import ValidationError from '@root/connectors/ValidationError';
 import SharedReference from '@root/utilities/SharedReference';
@@ -64,7 +65,7 @@ function DeleteGloss(props: IProps) {
             </p>
         </Dialog>
         <a href="#" onClick={_onOpen}>
-            <span className="glyphicon glyphicon-trash" />
+            <TextIcon icon="trash" />
         </a>
     </>;
 }

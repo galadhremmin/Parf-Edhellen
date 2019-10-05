@@ -3,6 +3,7 @@ import React from 'react';
 import HtmlInject from '@root/components/HtmlInject';
 import Spinner from '@root/components/Spinner';
 import Tengwar from '@root/components/Tengwar';
+import TextIcon from '@root/components/TextIcon';
 import FlashcardApiConnector from '@root/connectors/backend/FlashcardApiConnector';
 import Card from '../components/Card';
 import { SideOfTheCard } from '../components/Card._types';
@@ -13,7 +14,6 @@ import {
 } from './Flashcards._types';
 
 import './Flashcards.scss';
-
 export default class Flashcards extends React.Component<IProps, IState> {
     public state: IState = {
         correct: true,
@@ -95,11 +95,11 @@ export default class Flashcards extends React.Component<IProps, IState> {
             </div>}
             {gloss.source && <span className="source">[{gloss.source}]</span>}
             {correct ? <p className="text-success">
-                <span className="glyphicon glyphicon-ok" />
+                <TextIcon icon="ok" />
                 {' '}
                 That's right! Good job!
             </p> : <p className="text-danger">
-                <span className="glyphicon glyphicon-remove" />
+                <TextIcon icon="remove" />
                 {' '}
                 Wrong - better luck next time!
             </p>}
