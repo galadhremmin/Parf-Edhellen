@@ -42,7 +42,7 @@ export default class EditTabView extends React.Component<IProps, IState> {
 
         return <>
             <div className="EditTabView--split-view">
-                <div>
+                <div className="EditTabView--split-view__input">
                     <textarea className="form-control"
                             id={id}
                             name={name}
@@ -51,9 +51,10 @@ export default class EditTabView extends React.Component<IProps, IState> {
                             required={required}
                             rows={rows}
                             value={value}
+                            placeholder="Click or tap here to start typing."
                     />
                 </div>
-                <div>
+                <div className="EditTabView--split-view__preview">
                     <Markdown parse={true} text={previewValue} />
                 </div>
             </div>
