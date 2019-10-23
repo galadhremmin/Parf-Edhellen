@@ -7,7 +7,7 @@
   {!! Breadcrumbs::render('contribution.create', 'sentence') !!}
   <div id="ed-sentence-form" data-admin="false"></div>
 
-  <div id="ed-sentence-form"
+  <div id="ed-sentence-form"ww
     data-inject-module="form-sentence"
   @if (isset($sentence))
     data-inject-prop-sentence="@json($sentence)"

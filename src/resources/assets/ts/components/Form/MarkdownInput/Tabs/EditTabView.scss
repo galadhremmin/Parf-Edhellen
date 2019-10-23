@@ -1,0 +1,14 @@
+.EditTabView--split-view {
+    display: flex;
+    > div {
+        &:first-child {
+            margin-right: 1rem;
+        }
+        flex: 1;
+        align-items: stretch;
+    }
+    textarea {
+        height: 100%;
+        min-height: 5rem;
+    }
+}

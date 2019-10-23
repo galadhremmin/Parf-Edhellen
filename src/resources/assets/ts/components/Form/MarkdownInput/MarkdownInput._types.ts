@@ -1,6 +1,7 @@
 import Cache from '@root/utilities/Cache';
 
-import { ComponentEventHandler } from '../Component._types';
+import { ComponentEventHandler } from '../../Component._types';
+import { IProps as IEditTabViewProps } from './Tabs/EditTabView._types';
 
 export interface IComponentProps {
     [propName: string]: any;
@@ -10,15 +11,9 @@ export interface IComponentConfig {
     enter2Paragraph: boolean;
 }
 
-export interface IProps {
+export interface IProps extends IEditTabViewProps {
     className?: string;
     configCacheFactory?: () => Cache<IComponentConfig>;
-    id?: string;
-    onChange?: ComponentEventHandler<string>;
-    name: string;
-    required?: boolean;
-    rows?: number;
-    value: string;
 }
 
 export const enum Tab {

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { isEmptyString } from '@root/utilities/func/string-manipulation';
 import UtilityApiConnector from '../connectors/backend/UtilityApiConnector';
 import SharedReference from '../utilities/SharedReference';
 import HtmlInject from './HtmlInject';
@@ -12,7 +13,7 @@ export default class Markdown extends React.PureComponent<IProps, IState> {
     public static getDerivedStateFromProps(nextProps: IProps, prevState: IState) {
         if (nextProps.parse && nextProps.text !== prevState.lastText) {
             return {
-                html: null,
+                dirty: true,
                 lastText: nextProps.text,
             } as IState;
         }
@@ -21,6 +22,7 @@ export default class Markdown extends React.PureComponent<IProps, IState> {
     }
 
     public state: IState = {
+        dirty: true,
         html: null,
         lastText: null,
     };
@@ -35,11 +37,11 @@ export default class Markdown extends React.PureComponent<IProps, IState> {
 
     public componentDidUpdate() {
         const {
-            html,
+            dirty,
             lastText,
         } = this.state;
 
-        if (this.props.parse && html === null && lastText !== null) {
+        if (this.props.parse && dirty) {
             this._parse(lastText);
         }
     }
@@ -59,18 +61,21 @@ export default class Markdown extends React.PureComponent<IProps, IState> {
     }
 
     private async _parse(markdown: string) {
-        let html: string;
-        try {
-            const response = await this._api.value.parseMarkdown({
-                markdown,
-            });
+        let html = markdown;
+        if (! isEmptyString(markdown)) {
+            try {
+                const response = await this._api.value.parseMarkdown({
+                    markdown,
+                });
 
-            html = response.html;
-        } catch (ex) {
-            html = markdown;
+                html = response.html;
+            } catch (ex) {
+                html = markdown;
+            }
         }
 
         this.setState({
+            dirty: false,
             html,
         });
     }

@@ -4,6 +4,7 @@ export interface IProps {
 }
 
 export interface IState {
+    dirty: boolean;
     html: string;
     lastText: string;
 }
