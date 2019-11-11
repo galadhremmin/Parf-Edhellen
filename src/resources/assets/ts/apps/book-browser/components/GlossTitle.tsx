@@ -30,7 +30,10 @@ const GlossTitle = (props: IProps) => {
             {gloss.word}
         </span>
         {gloss.inflectedWord && <span className="gloss-word__inflection">
-            {gloss.inflectedWord.word}
+            {gloss.inflectedWord.word.toLocaleLowerCase() !== gloss.word.toLocaleLowerCase() &&
+                <span className="gloss-word__inflection__word">
+                    {gloss.inflectedWord.word.toLocaleLowerCase()}
+                </span>}
             <span className="gloss-word__inflection__name">
                 {gloss.inflectedWord.speech}
             </span>

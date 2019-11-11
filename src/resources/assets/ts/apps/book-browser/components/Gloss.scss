@@ -13,7 +13,7 @@ blockquote.gloss {
     margin-top: 0;
     
     .gloss-word__inflection {
-      &::before {
+      .gloss-word__inflection__word::before {
         content: ' > ';
       }
       .gloss-word__inflection__name {

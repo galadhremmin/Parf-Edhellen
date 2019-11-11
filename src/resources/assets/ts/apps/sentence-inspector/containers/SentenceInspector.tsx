@@ -55,6 +55,7 @@ export class SentenceInspector extends React.PureComponent<IProps, IState> {
         }
 
         return <div className="sentence-inspector">
+            <p className="sentence-inspector__introduction">Click on a word to begin.</p>
             <TextInspectorView {...selection}
                 fragmentInspector={this._renderInspector}
                 texts={texts}

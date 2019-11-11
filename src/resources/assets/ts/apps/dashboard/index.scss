@@ -1,0 +1,35 @@
+@import '../../_scss/variables';
+
+.dashboard-link-list {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0;
+    margin: 0;
+
+    > li {
+        &:first-child {
+            border-left: 1px solid $nav-tabs-border-color;
+        }
+
+        list-style: none;
+        border: 1px solid $nav-tabs-border-color;
+        border-left: none;
+        padding: 1rem;
+        flex-grow: 1;
+        text-align: center;
+        
+        a {
+            &:hover {
+                text-decoration: none;
+            }
+
+            > span.glyphicon {
+                font-size: 2rem;
+                display: block;
+            }
+
+            display: block;
+            color: inherit;
+        }
+    }
+}

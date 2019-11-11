@@ -3,14 +3,22 @@ import React from 'react';
 import Tengwar from '@root/components/Tengwar';
 import { IProps } from './GlossTranslations._types';
 
-const GlossTranslations = (props: IProps) => <p>
-    <Tengwar text={props.gloss.tengwar} />
-    {' '}
-    {props.gloss.type && <span className="word-type">{props.gloss.type}.</span>}
-    {' '}
-    <span itemProp="keywords">
-        {props.gloss.allTranslations}
-    </span>
-</p>;
+const GlossTranslations = (props: IProps) => {
+    const {
+        gloss,
+    } = props;
+
+    return <p>
+        <span title={gloss.language.name}>{gloss.language.shortName.toLocaleUpperCase()}.</span>
+        {' '}
+        <Tengwar text={gloss.tengwar} />
+        {' '}
+        {gloss.type && <span className="word-type">{gloss.type}.</span>}
+        {' '}
+        <span itemProp="keywords">
+            {gloss.allTranslations}
+        </span>
+    </p>;
+};
 
 export default GlossTranslations;

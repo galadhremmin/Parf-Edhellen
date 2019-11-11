@@ -15,7 +15,7 @@
           <h2 class="panel-title"><span class="glyphicon glyphicon-user"></span> About &ldquo;{{ $user->nickname }}&rdquo;</h2>
         </div>
         <div class="panel-body">
-          <ul class="pill-nav">
+          <ul class="dashboard-link-list">
             <li>
               <a href="{{ route('author.my-profile') }}">
                 <span class="glyphicon glyphicon-user"></span>
@@ -54,7 +54,7 @@
           <h2 class="panel-title"><span class="glyphicon glyphicon-globe"></span> Community</h2>
         </div>
         <div class="panel-body">
-          <ul class="pill-nav">
+          <ul class="dashboard-link-list">
             <li>
               <a href="{{ route('flashcard') }}">
                 <span class="glyphicon glyphicon-tags"></span>
@@ -67,9 +67,8 @@
             </li>
             <li>
               <a href="{{ route('contribution.index') }}">
-              <span class="glyphicon glyphicon-book"></span>
+                <span class="glyphicon glyphicon-book"></span>
                 Contributions
-
                 @if ($noOfContributions)
                 <span class="label label-info">{{ $noOfContributions }}</span>
                 @endif
@@ -119,4 +118,7 @@
     </div>
 
   </div>
+@endsection
+@section('styles')
+<link rel="stylesheet" href="@assetpath(style-dashboard.css)">
 @endsection

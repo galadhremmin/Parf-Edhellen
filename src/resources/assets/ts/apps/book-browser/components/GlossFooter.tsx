@@ -12,7 +12,7 @@ const GlossFooter = (props: IProps) => {
         {' '}
         {gloss.etymology && <span className="word-etymology">{gloss.etymology}.</span>}
         {' '}
-        {gloss.externalLinkFormat && gloss.externalId && <React.Fragment>
+        {gloss.externalLinkFormat && gloss.externalId && <>
             <a href={gloss.externalLinkFormat.replace(/\{ExternalID\}/g, gloss.externalId)}
                 title={`Goes to ${gloss.glossGroupName} in new tab or window.`}
                 target="_blank">
@@ -20,12 +20,12 @@ const GlossFooter = (props: IProps) => {
                 {' '}
                 Source
             </a>.
-        </React.Fragment>
+        </>
         }
         {' '}
-        {gloss.glossGroupId && <React.Fragment>
+        {gloss.glossGroupId && <>
             Group: <span itemProp="sourceOrganization">{gloss.glossGroupName}.</span>
-        </React.Fragment>}
+        </>}
         {' Published: '}
         <span itemProp="datePublished">
             <DateLabel dateTime={gloss.createdAt} />

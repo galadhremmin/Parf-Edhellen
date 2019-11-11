@@ -3,6 +3,11 @@
 .sentence-inspector {
     font-size: 1.6rem;
 
+    .sentence-inspector__introduction {
+        font-style: italic;
+        font-size: 0.9rem;
+    }
+
     > .p-group {
         padding-bottom: 1em;
         transition: 0.5s padding;
