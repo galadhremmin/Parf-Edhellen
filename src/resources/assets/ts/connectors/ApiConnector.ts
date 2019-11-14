@@ -191,6 +191,10 @@ export default class ApiConnector {
     }
 
     private _handleError(apiMethod: string, error: AxiosError) {
+        if (error === undefined) {
+            console.warn(`Received an empty error from ${apiMethod}.`);
+        }
+
         if (apiMethod === this._apiErrorMethod) {
             return Promise.reject(error);
         }

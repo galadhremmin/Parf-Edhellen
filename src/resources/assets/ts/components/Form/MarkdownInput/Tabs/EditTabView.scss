@@ -1,27 +1,31 @@
 @import '../../../../_scss/_variables';
 
-.EditTabView--split-view {
-    display: flex;
-    border-bottom: 1px solid $nav-tabs-border-color;
-    > div {
-        &.EditTabView--split-view__input {
-            margin-right: 0.5rem;
-            border-right: 1px solid $nav-tabs-border-color;
-            display: flex;
-            align-items: stretch;
-            > textarea {
-                flex: 1;
+@media (min-width: $screen-xs-min) {
+    .EditTabView--split-view {
+        display: flex;
+        border-bottom: 1px solid $nav-tabs-border-color;
+        > div {
+            &.EditTabView--split-view__input {
+                margin-right: 0.5rem;
+                border-right: 1px solid $nav-tabs-border-color;
+                display: flex;
+                align-items: stretch;
+                > textarea {
+                    flex: 1;
+                }
+                textarea {
+                    height: 100%;
+                    min-height: 5rem;
+                    border: none;
+                }
             }
+
+            &.EditTabView--split-view__preview {
+                padding: 0.5rem;
+            }
+            
+            flex: 1;
+            align-items: stretch;
         }
-        &.EditTabView--split-view__preview {
-            padding: 0.5rem;
-        }
-        flex: 1;
-        align-items: stretch;
-    }
-    textarea {
-        height: 100%;
-        min-height: 5rem;
-        border: none;
     }
 }

@@ -9,7 +9,9 @@ import { IProps } from './Dialog._types';
 function Dialog<V>(props: IProps<V>) {
     const {
         actionBar,
+        cancelButtonText,
         children,
+        confirmButtonText,
         onConfirm,
         onDismiss,
         title,
@@ -46,8 +48,12 @@ function Dialog<V>(props: IProps<V>) {
                 {children}
             </div>
             {actionBar && <div className="modal-footer">
-                <button type="button" className="btn btn-default" onClick={_onDismissDialog}>Close</button>
-                {onConfirm && <button type="button" className="btn btn-primary" onClick={_onConfirm}>OK</button>}
+                <button type="button" className="btn btn-default" onClick={_onDismissDialog}>
+                    {cancelButtonText}
+                </button>
+                {onConfirm && <button type="button" className="btn btn-primary" onClick={_onConfirm}>
+                    {confirmButtonText}
+                </button>}
             </div>}
         </div>
     </Modal>;
@@ -55,6 +61,8 @@ function Dialog<V>(props: IProps<V>) {
 
 Dialog.defaultProps = {
     actionBar: true,
+    cancelButtonText: 'Close',
+    confirmButtonText: 'OK',
     valid: true,
 } as Partial<IProps<any>>;
 

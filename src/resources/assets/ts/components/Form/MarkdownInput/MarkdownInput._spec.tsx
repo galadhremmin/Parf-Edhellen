@@ -4,7 +4,10 @@ import {
     ReactWrapper,
 } from 'enzyme';
 import React from 'react';
-import sinon, { SinonSandbox } from 'sinon';
+import sinon, {
+    SinonFakeServer,
+    SinonSandbox,
+} from 'sinon';
 
 import Cache from '@root/utilities/Cache';
 import MemoryStorage from '@root/utilities/MemoryStorage';
@@ -17,9 +20,11 @@ import '@root/utilities/Enzyme';
 describe('components/Form', () => {
     describe('MarkdownInput', () => {
         const MarkdownText = 'This *text* is **bold**!';
+        const HtmlText = 'This <em>text</em> is <b>bold</b>!';
 
         let wrapper: ReactWrapper;
         let sandbox: SinonSandbox;
+        let server: SinonFakeServer;
 
         before(() => {
             // This is necessary as `localstorage` is not supported by Mocha (in this context).
@@ -29,13 +34,11 @@ describe('components/Form', () => {
 
             wrapper = mount(<MarkdownInput value={MarkdownText} configCacheFactory={config} />);
             sandbox = sinon.createSandbox();
-        });
-
-        beforeEach(() => {
-            // TODO: Override axios' POST request.
+            server = sandbox.useFakeServer();
         });
 
         afterEach(() => {
+            server.restore();
             sandbox.restore();
         });
 
@@ -45,11 +48,38 @@ describe('components/Form', () => {
             expect(textareas.getDOMNode()).to.have.property('value', MarkdownText);
         });
 
-        it('mounts', () => {
+        it('respects required', () => {
             wrapper.setProps({
                 required: true,
             });
             expect(wrapper.find('textarea').getDOMNode()).to.have.property('required', true);
         });
+
+        it('renders preview', () => {
+            respondWithHtml();
+
+            /*
+            TODO: Implement this test. It is just not working for me right now, and I need to prioritize
+                  more important things. Functionality manually tested. (191113)
+            */
+
+            setTimeout(() => {
+                wrapper.update();
+
+                const container = wrapper.find('Markdown');
+                expect(container.length).to.equal(1);
+                // expect(container.state('html')).to.equal(HtmlText); -- Broken!!!
+            });
+        });
+
+        function respondWithHtml() {
+            server.respondWith([200, {
+                    'Content-Type': 'application/json',
+                },
+                JSON.stringify({
+                    html: HtmlText,
+                }),
+            ]);
+        }
     });
 });

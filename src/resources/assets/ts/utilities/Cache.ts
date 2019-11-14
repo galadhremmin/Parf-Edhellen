@@ -2,6 +2,7 @@ import { ApplicationGlobalPrefix } from '@root/config';
 
 import { isEmptyString } from './func/string-manipulation';
 import LazyLoader, { ILoader } from './LazyLoader';
+import MemoryStorage from './MemoryStorage';
 
 export default class Cache<T, L = T> extends LazyLoader<T, L> {
     public static withLocalStorage<T, L = T>(loader: ILoader<L>, storageKey: string) {
@@ -10,6 +11,10 @@ export default class Cache<T, L = T> extends LazyLoader<T, L> {
 
     public static withSessionStorage<T, L = T>(loader: ILoader<L>, storageKey: string) {
         return new this<T, L>(loader, window.sessionStorage, storageKey);
+    }
+
+    public static withMemoryStorage<T, L = T>(loader: ILoader<L>, storageKey: string) {
+        return new this<T, L>(loader, new MemoryStorage(), storageKey);
     }
 
     private _storageKey: string;

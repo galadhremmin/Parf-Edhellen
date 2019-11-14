@@ -14,8 +14,20 @@ export default class LanguageConnector {
     constructor(private _api: BookApiConnector = new BookApiConnector(),
         private _cache?: LazyLoader<ILanguagesResponse>) {
         if (_cache === undefined) {
-            this._cache = ExpiringCache.withLocalStorage(this._load.bind(this),
-                LocalStorageLanguages);
+            let cache: LazyLoader<ILanguagesResponse> = null;
+            try {
+                cache = ExpiringCache.withLocalStorage(this._load.bind(this), LocalStorageLanguages);
+            } catch (e) {
+                console.info(
+                    'Falling back to in-memory storage because LanguageConnector ' +
+                    `failed to initialize with localStorage: ${e}.`,
+                );
+            } finally {
+                // fallback - in-memory cache
+                cache = ExpiringCache.withMemoryStorage(this._load.bind(this), LocalStorageLanguages);
+            }
+
+            this._cache = cache;
         }
     }
 

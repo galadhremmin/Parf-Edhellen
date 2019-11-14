@@ -10,7 +10,3 @@
 {!! json_encode($payload) !!}
 </script>
 @endsection
-
-@section('scripts')
-  <script type="text/javascript" src="@assetpath(/js/comment.js)" async></script>
-@endsection

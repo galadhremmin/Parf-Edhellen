@@ -5,12 +5,17 @@ import {
     ILanguagesResponse,
 } from '@root/connectors/backend/BookApiConnector._types';
 import LanguageConnector from '@root/connectors/backend/LanguageConnector';
+import SharedReference from '@root/utilities/SharedReference';
 import {
     FormComponent,
     integerConverter,
 } from './FormComponent';
 
 interface IProps {
+    filter?: (language: ILanguageEntity) => boolean;
+    formatter?: (language: ILanguageEntity) => string;
+    includeAllLanguages?: boolean;
+    languageConnector?: LanguageConnector;
     value: number;
 }
 
@@ -18,18 +23,35 @@ interface IState {
     languages: ILanguagesResponse;
 }
 
+export const DefaultLanguageFilter = () => true;
+export const LanguageWithWritingModeOnlyFilter = (language: ILanguageEntity) => //
+    typeof language.tengwarMode === 'string' && language.tengwarMode.length > 0;
+
+export const DefaultLanguageFormatter = (language: ILanguageEntity) => language.name;
+export const LanguageAndWritingModeFormatter = (language: ILanguageEntity) => //
+    `${language.name} (${language.tengwarMode})`;
+
 /**
  * Represents a `<select>` component for languages, categorized by the time period when they were invented.
  */
-export default class LanguageSelect extends FormComponent<number, IProps, IProps, IState> {
+export class LanguageSelect extends FormComponent<number, IProps, IProps, IState> {
+    public static defaultProps = {
+        filter: DefaultLanguageFilter,
+        formatter: DefaultLanguageFormatter,
+        includeAllLanguages: true,
+        languageConnector: SharedReference.getInstance(LanguageConnector),
+        value: 0,
+    } as Partial<IProps>;
+
     public state: IState = {
         languages: null,
     };
 
     public async componentDidMount() {
-        const languageConnector = new LanguageConnector();
+        const {
+            languageConnector,
+        } = this.props;
         const languages = await languageConnector.all();
-
         this.setState({
             languages,
         });
@@ -44,9 +66,19 @@ export default class LanguageSelect extends FormComponent<number, IProps, IProps
         }
 
         const periods = Object.keys(this.state.languages);
+        const filter = this.props.filter || DefaultLanguageFilter;
+        const formatter = this.props.formatter || DefaultLanguageFormatter;
+        const includeAllLanguages = this.props.includeAllLanguages;
+
         return <select {...props} onChange={this.onChange}>
-            <option value={0}>All languages</option>
-            {periods.map((period) => <LanguagePeriod key={period} period={period} languages={languages[period]} />)}
+            {includeAllLanguages && <option value={0}>All languages</option>}
+            {!includeAllLanguages && <option value={0}></option>}
+            {periods.map((period) => <LanguagePeriod
+                key={period}
+                period={period}
+                languages={languages[period].filter(filter)}
+                formatter={formatter}
+            />)}
         </select>;
     }
 
@@ -63,20 +95,17 @@ export default class LanguageSelect extends FormComponent<number, IProps, IProps
 const LanguagePeriod = (props: {
     period: string;
     languages: ILanguageEntity[];
+    formatter: IProps['formatter'],
 }) => {
     if (props.languages.length < 1) {
         return null;
     }
 
     return <optgroup label={props.period}>
-        {props.languages.map((language) => <Language key={language.id} {...language} />)}
+        {props.languages.map((language) => <option key={language.id} value={language.id}>
+            {props.formatter(language)}
+        </option>)}
     </optgroup>;
 };
 
-/**
- * Represents a single language entity within a `<select>` context.
- * @param props
- */
-const Language = (props: ILanguageEntity) => {
-    return <option value={props.id}>{props.name}</option>;
-};
+export default LanguageSelect;

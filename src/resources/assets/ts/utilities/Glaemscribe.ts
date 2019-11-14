@@ -66,11 +66,13 @@ export default class Transcriber {
 
     private _loadMode(mode: string) {
         switch (mode) {
+            case 'adunaic':
             case 'blackspeech':
             case 'quenya':
             case 'sindarin':
             case 'sindarin-beleriand':
             case 'telerin':
+            case 'westron':
                 return import(`glaemscribe/js/modes/${mode}.glaem.js`);
         }
     }

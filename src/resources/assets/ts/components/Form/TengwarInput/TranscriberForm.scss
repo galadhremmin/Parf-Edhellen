@@ -1,0 +1,41 @@
+@import '../../../_scss/_variables';
+
+.TranscriberForm {
+    legend {
+        margin-bottom: $line-height-computed/2;
+    }
+    fieldset {
+        margin-bottom: $line-height-computed/2;
+
+        &.TranscriberForm__transcription {
+            > div {
+                text-align: center;
+                font-size: 3rem;
+            }
+        }
+    }
+
+    @media (min-width: $screen-md-min) {
+        display: grid;
+        grid-template-columns: 50% 50%;
+        grid-column-gap: $line-height-computed/2;
+
+        fieldset {
+            &.TranscriberForm__language {
+                grid-column: 1;
+                grid-row: 1;
+            }
+
+            &.TranscriberForm__text {
+                grid-column: 1;
+                grid-row: 2;
+            }
+
+            &.TranscriberForm__transcription {
+                grid-column: 2;
+                grid-row-start: 1;
+                grid-row-end: 2;
+            }
+        }
+    }
+}

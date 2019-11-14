@@ -151,7 +151,9 @@ export interface IAccountEntity {
     avatarPath: string;
     hasAvatar?: boolean;
     id: number;
+    isConfigured?: boolean;
     nickname: string;
+    profile?: string;
     tengwar?: string;
 }
 
