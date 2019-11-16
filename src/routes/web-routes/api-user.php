@@ -8,4 +8,7 @@ Route::group([
 ], function () {
     Route::get('book/word/{id}',  [ 'uses' => 'BookApiController@getWord'   ]);
     Route::post('book/word/find', [ 'uses' => 'BookApiController@findWord'  ]);
+
+    Route::post('account/edit/{id?}',        [ 'uses' => 'AccountApiController@update' ]);
+    Route::post('account/avatar/edit/{id?}', [ 'uses' => 'AccountApiController@updateAvatar' ]);
 });

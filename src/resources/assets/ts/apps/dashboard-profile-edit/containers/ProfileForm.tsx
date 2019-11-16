@@ -4,17 +4,49 @@ import React, {
 } from 'react';
 
 import { IComponentEvent } from '@root/components/Component._types';
+import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
+import TextIcon from '@root/components/TextIcon';
+import { AnonymousAvatarPath } from '@root/config';
+import AccountApiConnector from '@root/connectors/backend/AccountApiConnector';
+import SharedReference from '@root/utilities/SharedReference';
+
+import Avatar from '../components/Avatar';
 import InformationForm from '../components/InformationForm';
 import { IProps } from './ProfileForm._types';
 
-const ProfileForm = (props: IProps) => {
+import './ProfileForm.scss';
+
+const ProfileForm: React.SFC<IProps> = (props: IProps) => {
     const {
         account,
+        api,
     } = props;
+    const accountId = account.id;
 
+    const [ avatarPath, setAvatarPath ] = useState(() => account.avatarPath || AnonymousAvatarPath);
     const [ introduction, setIntroduction ] = useState(() => account.profile || '');
     const [ nickname, setNickname ] = useState(() => account.nickname || '');
     const [ tengwar, setTengwar ] = useState(() => account.tengwar || '');
+
+    const [ errors, setErrors ] = useState(null);
+
+    const _onAvatarChange = useCallback(async (ev: IComponentEvent<File>) => {
+        try {
+            const response = await api.saveAvatar({
+                accountId,
+                file: ev.value,
+            });
+
+            setAvatarPath(avatarPath === response.avatarPath //
+                ? URL.createObjectURL(ev.value) // force a refresh of the avatar image
+                : response.avatarPath,
+            );
+
+            setErrors(null);
+        } catch (e) {
+            setErrors(e);
+        }
+    }, [ accountId, avatarPath, api ]);
 
     const _onIntroductionChange = useCallback((ev: IComponentEvent<string>) => {
         setIntroduction(ev.value);
@@ -28,15 +60,45 @@ const ProfileForm = (props: IProps) => {
         setTengwar(ev.value);
     }, [ setTengwar ]);
 
+    const _onSubmit = useCallback(async () => {
+        try {
+            const response = await api.saveProfile({
+                accountId,
+                introduction,
+                nickname,
+                tengwar,
+            });
+
+            setErrors(null);
+            window.location.href = response.profileUrl;
+        } catch (e) {
+            setErrors(e);
+        }
+    }, [ accountId, api, introduction, nickname, tengwar ]);
+
     return <>
+        <ValidationErrorAlert error={errors} />
+        <section className="InformationForm--avatar-form">
+            <Avatar path={avatarPath}
+                    onChange={_onAvatarChange}
+            />
+            <div className="InformationForm--avatar-form__instructions">
+                Click or drag to change.
+            </div>
+        </section>
         <InformationForm introduction={introduction}
                          nickname={nickname}
                          tengwar={tengwar}
                          onIntroductionChange={_onIntroductionChange}
                          onNicknameChange={_onNicknameChange}
                          onTengwarChange={_onTengwarChange}
+                         onSubmit={_onSubmit}
         />
     </>;
+};
+
+ProfileForm.defaultProps = {
+    api: SharedReference.getInstance(AccountApiConnector),
 };
 
 export default ProfileForm;

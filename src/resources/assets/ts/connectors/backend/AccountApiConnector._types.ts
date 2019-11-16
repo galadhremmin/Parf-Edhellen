@@ -17,3 +17,25 @@ export interface IGetAvatarRequest {
 export interface IGetAvatarResponse {
     avatar: string;
 }
+
+export interface ISaveAvatarRequest {
+    accountId: number;
+    file: File;
+}
+
+export interface ISaveAvatarResponse {
+    accountId: number;
+    avatarPath: string;
+}
+
+export interface ISaveProfileRequest {
+    accountId: number;
+    introduction: string;
+    nickname: string;
+    tengwar: string;
+}
+
+export interface ISaveProfileResponse {
+    nickname: string;
+    profileUrl: string;
+}

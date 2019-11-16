@@ -1,6 +1,7 @@
 import React from 'react';
 
 import StaticAlert from '../StaticAlert';
+import TextIcon from '../TextIcon';
 import { IProps } from './ValidationErrorAlert._types';
 
 const ValidationErrorAlert = (props: IProps) => {
@@ -10,6 +11,15 @@ const ValidationErrorAlert = (props: IProps) => {
 
     if (error === null) {
         return null;
+    }
+
+    if (typeof error === 'string') {
+        // Something went really, really bad; probably 500 Server Error, so fallback on
+        // a red, menacing alert:
+        return <StaticAlert type="danger">
+            <TextIcon icon="warning-sign" />
+            {` ${error}`}
+        </StaticAlert>;
     }
 
     if (error.errors.size < 1) {

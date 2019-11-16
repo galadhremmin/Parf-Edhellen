@@ -3,9 +3,12 @@ import ApiConnector from '../ApiConnector';
 import {
     FindResponse,
     IFindRequest,
-
     IGetAvatarRequest,
     IGetAvatarResponse,
+    ISaveAvatarRequest,
+    ISaveAvatarResponse,
+    ISaveProfileRequest,
+    ISaveProfileResponse,
 } from './AccountApiConnector._types';
 
 export default class AccountApiConnector {
@@ -18,5 +21,16 @@ export default class AccountApiConnector {
 
     public getAvatar(args: IGetAvatarRequest) {
         return this._api.value.get<IGetAvatarResponse>(`account/${args.accountId}/avatar`);
+    }
+
+    public saveProfile(args: ISaveProfileRequest) {
+        return this._api.value.post<ISaveProfileResponse>(`account/edit/${args.accountId}`, args);
+    }
+
+    public saveAvatar(args: ISaveAvatarRequest) {
+        const formData = new FormData();
+        formData.append('avatar', args.file, args.file.name);
+
+        return this._api.value.post<ISaveAvatarResponse>(`account/avatar/edit/${args.accountId}`, formData);
     }
 }

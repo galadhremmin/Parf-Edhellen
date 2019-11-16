@@ -10,5 +10,4 @@ Route::group([ 'middleware' => 'auth' ], function () {
 
     // User profile
     Route::get('/author/edit/{id?}',  [ 'uses' => 'AuthorController@edit' ])->name('author.edit-profile');
-    Route::post('/author/edit/{id?}', [ 'uses' => 'AuthorController@update' ])->name('author.update-profile');
 });

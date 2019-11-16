@@ -122,6 +122,7 @@ export default class ApiConnector {
         return {
             headers: {
                 'Accept': 'application/json',
+                'Content-Type': 'application/json',
                 'X-Requested-With': 'XMLHttpRequest',
             },
             timeout: 2500,
@@ -168,7 +169,11 @@ export default class ApiConnector {
         const config = this.config;
         const hasBody = payload !== null;
         if (hasBody) {
-            payload = propsToSnakeCase(payload);
+            if (payload instanceof FormData) {
+                config.headers['Content-Type'] = 'multipart/form-data';
+            } else {
+                payload = propsToSnakeCase(payload);
+            }
         }
 
         return factory.call(this._factory, this._prepareUrl(apiMethod, queryStringMap),

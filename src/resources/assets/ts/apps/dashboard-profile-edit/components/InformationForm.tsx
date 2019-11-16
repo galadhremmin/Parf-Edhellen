@@ -3,6 +3,7 @@ import React, { useCallback } from 'react';
 import { fireEvent } from '@root/components/Component';
 import MarkdownInput from '@root/components/Form/MarkdownInput';
 import TengwarInput from '@root/components/Form/TengwarInput';
+import TextIcon from '@root/components/TextIcon';
 
 import { IProps } from './InformationForm._types';
 
@@ -15,43 +16,49 @@ function InformationForm(props: IProps) {
         onIntroductionChange,
         onNicknameChange,
         onTengwarChange,
+
+        onSubmit,
     } = props;
 
     const _onNicknameChange = useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
         fireEvent(null, onNicknameChange, ev.target.value);
     }, [ nickname, onNicknameChange ]);
 
-    return <form className="form-horizontal" method="post" action="http://localhost:8000/author/edit/173">
+    const _onSubmit = useCallback((ev: React.FormEvent<HTMLFormElement>) => {
+        ev.preventDefault();
+        fireEvent('InformationForm', onSubmit);
+    }, [ onSubmit ]);
+
+    return <form method="post" action="#" onSubmit={_onSubmit}>
         <div className="form-group">
-            <label htmlFor="ed-author-nickname" className="col-sm-2 control-label">Nickname</label>
-            <div className="col-sm-10">
-                <input type="text"
-                       className="form-control"
-                       name="ed-author-nickname"
-                       onChange={_onNicknameChange}
-                       value={nickname}
-                />
-            </div>
+            <label htmlFor="ed-author-nickname" className="control-label">Nickname</label>
+            <input type="text"
+                    className="form-control"
+                    name="ed-author-nickname"
+                    onChange={_onNicknameChange}
+                    value={nickname}
+            />
         </div>
         <div className="form-group">
-            <label htmlFor="ed-author-tengwar" className="col-sm-2 control-label">Tengwar</label>
-            <div className="col-sm-10">
-                <TengwarInput name="ed-author-tengwar"
-                              onChange={onTengwarChange}
-                              originalText={nickname}
-                              value={tengwar}
-                />
-            </div>
+            <label htmlFor="ed-author-tengwar" className="control-label">Tengwar</label>
+            <TengwarInput name="ed-author-tengwar"
+                            onChange={onTengwarChange}
+                            originalText={nickname}
+                            value={tengwar}
+            />
         </div>
         <div className="form-group">
-            <label htmlFor="ed-author-profile" className="col-sm-2 control-label">Introduction</label>
-            <div className="col-sm-10">
-                <MarkdownInput name="ed-author-profile"
-                               rows={15}
-                               onChange={onIntroductionChange}
-                               value={introduction}
-                />
-            </div>
+            <label htmlFor="ed-author-profile" className="control-label">Introduction</label>
+            <MarkdownInput name="ed-author-profile"
+                            rows={15}
+                            onChange={onIntroductionChange}
+                            value={introduction}
+            />
+        </div>
+        <div className="text-center">
+            <button type="submit" className="btn btn-primary">
+                <TextIcon icon="ok" /> Save changes
+            </button>
         </div>
     </form>;
 }

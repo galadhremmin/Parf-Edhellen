@@ -1,7 +1,11 @@
 @import '../../../../_scss/_variables';
 
-@media (min-width: $screen-xs-min) {
-    .EditTabView--split-view {
+.EditTabView--split-view {
+    .EditTabView--split-view__preview {
+        display: none;
+    }
+
+    @media (min-width: $screen-xs-min) {
         display: flex;
         border-bottom: 1px solid $nav-tabs-border-color;
         > div {
