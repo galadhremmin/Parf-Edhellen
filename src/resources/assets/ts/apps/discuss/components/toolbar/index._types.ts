@@ -1,9 +1,9 @@
 import { ComponentEventHandler } from '@root/components/Component._types';
-import DiscussApiConnector from '@root/connectors/backend/DiscussApiConnector';
-import {
+import IDiscussApi, {
     IPostEntity,
     IThreadEntity,
-} from '@root/connectors/backend/DiscussApiConnector._types';
+} from '@root/connectors/backend/IDiscussApi';
+import { IRoleManager } from '@root/security';
 
 import { IThreadMetadataState } from '../../reducers/ThreadMetadataReducer._types';
 
@@ -13,10 +13,11 @@ export interface IThreadMetadataArgs {
 }
 
 export interface IProps {
-    apiConnector?: DiscussApiConnector;
+    apiConnector?: IDiscussApi;
     onPostChange?: ComponentEventHandler<number>;
     onThreadMetadataChange?: ComponentEventHandler<IThreadMetadataArgs>;
     post: IPostEntity;
     thread: IThreadEntity;
     threadMetadata: IThreadMetadataState;
+    roleManager?: IRoleManager;
 }

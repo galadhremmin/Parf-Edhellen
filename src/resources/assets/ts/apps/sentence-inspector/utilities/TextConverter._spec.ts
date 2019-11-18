@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import {
     ISentenceFragmentEntity,
     ITextTransformation,
-} from '@root/connectors/backend/BookApiConnector._types';
+} from '@root/connectors/backend/IBookApi';
 import { snakeCasePropsToCamelCase } from '@root/utilities/func/snake-case';
 
 import convert from './TextConverter';

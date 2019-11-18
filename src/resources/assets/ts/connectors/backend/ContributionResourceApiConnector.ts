@@ -1,12 +1,12 @@
 import SharedReference from '../../utilities/SharedReference';
 import ApiConnector from '../ApiConnector';
-import {
+import IContributionResourceApi, {
     IContribution,
     IContributionSaveResponse,
-} from './ContributionResourceApiConnector._types';
-import { IGlossEntity } from './GlossResourceApiConnector._types';
+} from './IContributionResourceApi';
+import { IGlossEntity } from './IGlossResourceApi';
 
-export default class ContributionResourceApiConnector {
+export default class ContributionResourceApiConnector implements IContributionResourceApi {
     constructor(private _api = new SharedReference(ApiConnector)) {
     }
 

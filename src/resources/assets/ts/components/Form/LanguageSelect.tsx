@@ -3,7 +3,8 @@ import React from 'react';
 import {
     ILanguageEntity,
     ILanguagesResponse,
-} from '@root/connectors/backend/BookApiConnector._types';
+} from '@root/connectors/backend/IBookApi';
+import ILanguageApi from '@root/connectors/backend/ILanguageApi';
 import LanguageConnector from '@root/connectors/backend/LanguageConnector';
 import SharedReference from '@root/utilities/SharedReference';
 import {
@@ -15,7 +16,7 @@ interface IProps {
     filter?: (language: ILanguageEntity) => boolean;
     formatter?: (language: ILanguageEntity) => string;
     includeAllLanguages?: boolean;
-    languageConnector?: LanguageConnector;
+    languageConnector?: ILanguageApi;
     value: number;
 }
 

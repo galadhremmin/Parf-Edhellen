@@ -1,6 +1,6 @@
 import SharedReference from '../../utilities/SharedReference';
 import ApiConnector from '../ApiConnector';
-import {
+import IBookApi, {
     FindResponse,
     IFindRequest,
     IGlossaryRequest,
@@ -10,10 +10,10 @@ import {
     ISentenceResponse,
     ISuggestRequest,
     ISuggestResponse,
-} from './BookApiConnector._types';
-import { IGlossGroup } from './GlossResourceApiConnector._types';
+} from './IBookApi';
+import { IGlossGroup } from './IGlossResourceApi';
 
-export default class BookApiConnector {
+export default class BookApiConnector implements IBookApi {
     constructor(private _api = new SharedReference(ApiConnector)) {
     }
 

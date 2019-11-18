@@ -4,11 +4,11 @@ import React, {
 } from 'react';
 
 import AccountApiConnector from '@root/connectors/backend/AccountApiConnector';
-import { IAccountSuggestion } from '@root/connectors/backend/AccountApiConnector._types';
+import IAccountApi, { IAccountSuggestion } from '@root/connectors/backend/IAccountApi';
 import SharedReference from '@root/utilities/SharedReference';
 import { IProps } from './AccountValue._types';
 
-const useFetch = (apiConnector: AccountApiConnector, accountId: number) => {
+const useFetch = (apiConnector: IAccountApi, accountId: number) => {
     const [ path, setPath ] = useState(null);
 
     useEffect(() => {

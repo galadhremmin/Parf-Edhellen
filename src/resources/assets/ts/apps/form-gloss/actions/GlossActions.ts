@@ -5,15 +5,17 @@ import {
 import { handleValidationErrors } from '@root/components/Form/Validation';
 import ContributionResourceApiConnector from '@root/connectors/backend/ContributionResourceApiConnector';
 import GlossResourceApiConnector from '@root/connectors/backend/GlossResourceApiConnector';
-import { IGlossEntity } from '@root/connectors/backend/GlossResourceApiConnector._types';
+import IContributionResourceApi from '@root/connectors/backend/IContributionResourceApi';
+import IGlossResourceApi, { IGlossEntity } from '@root/connectors/backend/IGlossResourceApi';
 import SharedReference from '@root/utilities/SharedReference';
 
 import Actions from './Actions';
 
 export default class GlossActions {
     constructor(
-        private _glossApi = SharedReference.getInstance(GlossResourceApiConnector),
-        private _contributionApi = SharedReference.getInstance(ContributionResourceApiConnector)) {}
+        private _glossApi: IGlossResourceApi = SharedReference.getInstance(GlossResourceApiConnector),
+        private _contributionApi: IContributionResourceApi = SharedReference.getInstance(
+            ContributionResourceApiConnector)) {}
 
     public gloss(glossId: number): ReduxThunk {
         return async (dispatch: ReduxThunkDispatch) => {

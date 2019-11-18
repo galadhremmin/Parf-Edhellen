@@ -1,5 +1,5 @@
 import { IReduxAction } from '@root/_types';
-import { IGlossEntity } from '@root/connectors/backend/GlossResourceApiConnector._types';
+import { IGlossEntity } from '@root/connectors/backend/IGlossResourceApi';
 
 export type IGlossState = IGlossEntity;
 

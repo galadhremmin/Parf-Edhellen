@@ -1,12 +1,12 @@
 import SharedReference from '../../utilities/SharedReference';
 import ApiConnector from '../ApiConnector';
 
-import {
+import IUtilityApi, {
     IMarkdownParserRequest,
     IMarkdownParserResponse,
-} from './UtilityApiConnector._types';
+} from './IUtilityApi';
 
-export default class UtilityApiConnector {
+export default class UtilityApiConnector implements IUtilityApi {
     constructor(private _api = new SharedReference(ApiConnector)) {
     }
 

@@ -3,7 +3,7 @@ import { ApiPath } from '@root/config';
 import {
     FeedFormat,
     FeedUrlFactory,
-} from './FeedApiConnector._types';
+} from './IFeedApi';
 
 export const createFeedUrl: FeedUrlFactory = (context: 'discuss', entityType: 'posts',
     entityId: number = 0, feedFormat = FeedFormat.RSS) => //

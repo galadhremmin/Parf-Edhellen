@@ -8,7 +8,7 @@ import Dialog from '@root/components/Dialog';
 import TextIcon from '@root/components/TextIcon';
 import { LearnMoreWebFeedUrl } from '@root/config';
 import { createFeedUrl } from '@root/connectors/FeedApiConnector';
-import { FeedFormat } from '@root/connectors/FeedApiConnector._types';
+import { FeedFormat } from '@root/connectors/IFeedApi';
 
 import FeedFormatSelect from '../components/FeedFormatSelect';
 import { IProps } from '../index._types';

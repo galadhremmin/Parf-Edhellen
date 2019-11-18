@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Quote from '@root/components/Quote';
-import { ISuggestionEntity } from '@root/connectors/backend/BookApiConnector._types';
+import { ISuggestionEntity } from '@root/connectors/backend/IBookApi';
 
 import './GlossSuggestion.scss';
 

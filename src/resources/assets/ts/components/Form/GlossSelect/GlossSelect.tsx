@@ -5,7 +5,7 @@ import React, {
 } from 'react';
 
 import BookApiConnector from '@root/connectors/backend/BookApiConnector';
-import { ISuggestionEntity } from '@root/connectors/backend/BookApiConnector._types';
+import { ISuggestionEntity } from '@root/connectors/backend/IBookApi';
 import { mapper } from '@root/utilities/func/mapper';
 import SharedReference from '@root/utilities/SharedReference';
 

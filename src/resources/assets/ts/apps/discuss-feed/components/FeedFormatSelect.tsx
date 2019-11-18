@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 
 import { fireEvent } from '@root/components/Component';
-import { FeedFormat } from '@root/connectors/FeedApiConnector._types';
+import { FeedFormat } from '@root/connectors/IFeedApi';
 
 import { IProps } from './FeedFormatSelect._types';
 
@@ -15,7 +15,7 @@ function FeedFormatSelect(props: IProps) {
 
     const values = Object.keys(FeedFormat).map((text) => ({
         text,
-        value: FeedFormat[text as any],
+        value: (FeedFormat as any)[text], // TODO - there has to be a more elegant way to do this.
     }));
 
     const _onChange = useCallback((ev: React.ChangeEvent<HTMLSelectElement>) => {

@@ -1,4 +1,4 @@
-import { ISentenceFragmentEntity } from '@root/connectors/backend/BookApiConnector._types';
+import { ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
 import { mapArray } from '@root/utilities/func/mapper';
 
 import { Actions } from '../actions';

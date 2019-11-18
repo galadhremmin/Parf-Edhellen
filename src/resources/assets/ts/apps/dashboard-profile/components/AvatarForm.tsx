@@ -6,13 +6,14 @@ import React, {
 } from 'react';
 
 import { fireEventAsync } from '@root/components/Component';
-import { IProps } from './Avatar._types';
+import Avatar from './Avatar';
+import { IProps } from './AvatarForm._types';
 
-import './Avatar.scss';
+import './AvatarForm.scss';
 
-function Avatar(props: IProps) {
+function AvatarForm(props: IProps) {
     const {
-        onChange,
+        onAvatarChange,
         path,
     } = props;
 
@@ -50,19 +51,19 @@ function Avatar(props: IProps) {
         }
 
         if (imageFile !== null) {
-            fireEventAsync('Avatar', onChange, imageFile);
+            fireEventAsync('Avatar', onAvatarChange, imageFile);
             imageFile = null;
         }
 
         setShowCallToAction(false);
-    }, [ onChange ]);
+    }, [ onAvatarChange ]);
 
     const _onFileChange = useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
         ev.preventDefault();
         if (ev.target.files.length > 0) {
-            fireEventAsync('Avatar', onChange, ev.target.files[0]);
+            fireEventAsync('Avatar', onAvatarChange, ev.target.files[0]);
         }
-    }, [ onChange ]);
+    }, [ onAvatarChange ]);
 
     const _onClick = useCallback(() => {
         if (fileComponent.current) {
@@ -70,19 +71,19 @@ function Avatar(props: IProps) {
         }
     }, [ fileComponent ]);
 
-    return <div className="Avatar--picture"
+    return <Avatar
         onClick={_onClick}
         onDrop={_onDrop}
         onDragOver={_onShowCallToAction}
         onDragEnd={_onHideCallToAction}
         onDragExit={_onHideCallToAction}
         onDragLeave={_onHideCallToAction}
-        style={{ backgroundImage: `url(${path})` }}>
+        path={path}>
         <span className={classNames('Avatar--picture__drophere', {
             show: showCallToAction,
         })}>Drop your photo here</span>
         <input type="file" ref={fileComponent} onChange={_onFileChange} />
-    </div>;
+    </Avatar>;
 }
 
-export default Avatar;
+export default AvatarForm;

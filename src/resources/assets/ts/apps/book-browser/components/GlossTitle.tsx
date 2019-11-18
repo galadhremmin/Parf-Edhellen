@@ -15,14 +15,15 @@ import NumberOfComments from './NumberOfComments';
 
 const ToolbarAsync = React.lazy(() => import('./toolbar'));
 
-const GlossTitle = (props: IProps) => {
+const GlossTitle: React.SFC<IProps> = (props: IProps) => {
     const {
         gloss,
         toolbar,
+        roleManager,
     } = props;
 
     const className = classNames({ rejected: gloss.isRejected });
-    const isAuthenticated = SharedReference.getInstance(RoleManager).currentRole !== SecurityRole.Anonymous;
+    const isAuthenticated = roleManager.currentRole !== SecurityRole.Anonymous;
 
     return <h3 className="gloss-word">
         <NeologismIndicator gloss={gloss} />
@@ -48,6 +49,10 @@ const GlossTitle = (props: IProps) => {
             {isAuthenticated && <ToolbarAsync gloss={gloss} />}
         </Suspense>}
     </h3>;
+};
+
+GlossTitle.defaultProps = {
+    roleManager: SharedReference.getInstance(RoleManager),
 };
 
 export default GlossTitle;

@@ -8,9 +8,10 @@ import BookApiConnector from './BookApiConnector';
 import {
     ILanguageEntity,
     ILanguagesResponse,
-} from './BookApiConnector._types';
+} from './IBookApi';
+import ILanguageApi from './ILanguageApi';
 
-export default class LanguageConnector {
+export default class LanguageConnector implements ILanguageApi {
     constructor(private _api: BookApiConnector = new BookApiConnector(),
         private _cache?: LazyLoader<ILanguagesResponse>) {
         if (_cache === undefined) {

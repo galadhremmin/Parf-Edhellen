@@ -2,15 +2,6 @@
 @import '../../../_scss/variables';
 
 .Avatar--picture {
-    width: 10rem;
-    height: 10rem;
-    border-radius: 5rem;
-    border: 1px solid $nav-tabs-border-color;
-    display: inline-block;
-    background-size: cover;
-    overflow: hidden;
-    @include ed-box-shadow();
-
     > .Avatar--picture__drophere {
         line-height: 10rem;
         opacity: 0;

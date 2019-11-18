@@ -1,5 +1,5 @@
-import { IBookGlossEntity } from '@root/connectors/backend/BookApiConnector._types';
-import { ICardResponse } from '@root/connectors/backend/FlashcardApiConnector._types';
+import { IBookGlossEntity } from '@root/connectors/backend/IBookApi';
+import { ICardResponse } from '@root/connectors/backend/IFlashcardApi';
 
 export interface IProps {
     flashcardId: number;

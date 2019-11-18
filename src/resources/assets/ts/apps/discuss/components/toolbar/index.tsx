@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {
-    RoleManager,
+    IRoleManager,
     SecurityRole,
 } from '@root/security';
 import SharedReference from '@root/utilities/SharedReference';
@@ -14,8 +14,7 @@ import Likes from './Likes';
 
 import './index.scss';
 
-const getEligibleToolbarComponents = (postAccountId: number) => {
-    const roleManager = SharedReference.getInstance(RoleManager);
+const getEligibleToolbarComponents = (roleManager: IRoleManager, postAccountId: number) => {
     const role = roleManager.currentRole;
     const accountId = roleManager.accountId;
     const components = [];
@@ -31,7 +30,11 @@ const getEligibleToolbarComponents = (postAccountId: number) => {
 };
 
 function Toolbar(props: IProps) {
-    const toolbar = getEligibleToolbarComponents(props.post.account.id);
+    const {
+        post,
+        roleManager,
+    } = props;
+    const toolbar = getEligibleToolbarComponents(roleManager, post.account.id);
 
     return <span className="post-header--tools">
         {toolbar.map((Component, i) => <Component key={i} {...props} />)}

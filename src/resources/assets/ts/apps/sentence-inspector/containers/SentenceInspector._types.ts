@@ -1,6 +1,6 @@
 import { ThunkDispatch } from 'redux-thunk';
 
-import { IBookGlossEntity } from '@root/connectors/backend/BookApiConnector._types';
+import { IBookGlossEntity } from '@root/connectors/backend/IBookApi';
 
 import {
     FragmentsReducerState,

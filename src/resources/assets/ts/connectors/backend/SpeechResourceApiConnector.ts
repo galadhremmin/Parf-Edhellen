@@ -1,10 +1,10 @@
 import SharedReference from '../../utilities/SharedReference';
 import ApiConnector from '../ApiConnector';
-import {
+import ISpeechResourceApi, {
     ISpeechEntity,
-} from './SpeechResourceApiConnector._types';
+} from './ISpeechResourceApi';
 
-export default class SpeechResourceApiConnector {
+export default class SpeechResourceApiConnector implements ISpeechResourceApi {
     constructor(private _api = new SharedReference(ApiConnector)) {
     }
 

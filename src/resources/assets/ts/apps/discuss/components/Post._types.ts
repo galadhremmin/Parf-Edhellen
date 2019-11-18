@@ -1,4 +1,4 @@
-import { IPostEntity } from '@root/connectors/backend/DiscussApiConnector._types';
+import { IPostEntity } from '@root/connectors/backend/IDiscussApi';
 
 export interface IProps {
     post: IPostEntity;

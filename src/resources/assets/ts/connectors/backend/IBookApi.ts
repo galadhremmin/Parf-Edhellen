@@ -1,3 +1,5 @@
+import { IGlossGroup } from './IGlossResourceApi';
+
 export interface IFindRequest {
     includeOld?: boolean;
     languageId?: number;
@@ -227,4 +229,14 @@ export interface ISuggestionEntity {
     translation: string;
     type: string;
     word: string;
+}
+
+export default interface IBookApi {
+    find(args: IFindRequest): Promise<FindResponse>;
+    gloss(id: number): Promise<IGlossaryResponse>;
+    glossary(args: IGlossaryRequest): Promise<IGlossaryResponse>;
+    groups(): Promise<IGlossGroup[]>;
+    languages(): Promise<ILanguagesResponse>;
+    sentence(args: ISentenceRequest): Promise<ISentenceResponse>;
+    suggest(args: ISuggestRequest): Promise<ISuggestResponse>;
 }

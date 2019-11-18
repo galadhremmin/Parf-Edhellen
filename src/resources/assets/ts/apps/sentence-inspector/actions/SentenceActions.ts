@@ -1,7 +1,7 @@
 import {
     ISentenceFragmentEntity,
     ISentenceResponse,
-} from '@root/connectors/backend/BookApiConnector._types';
+} from '@root/connectors/backend/IBookApi';
 
 import Actions from './Actions';
 

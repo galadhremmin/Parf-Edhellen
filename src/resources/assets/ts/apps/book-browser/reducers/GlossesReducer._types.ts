@@ -1,4 +1,4 @@
-import { IBookGlossEntity } from '@root/connectors/backend/BookApiConnector._types';
+import { IBookGlossEntity } from '@root/connectors/backend/IBookApi';
 
 export interface IGlossesState {
     [ languageId: number ]: IBookGlossEntity[];

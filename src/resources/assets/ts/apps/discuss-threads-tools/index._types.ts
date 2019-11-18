@@ -1,9 +1,9 @@
-import DiscussApiConnector from '@root/connectors/backend/DiscussApiConnector';
-import { RoleManager } from '@root/security';
+import IDiscussApi from '@root/connectors/backend/IDiscussApi';
+import { IRoleManager } from '@root/security';
 
 export interface IProps {
-    apiConnector: DiscussApiConnector;
+    apiConnector: IDiscussApi;
     groupId: number;
     groupName: string;
-    roleManager: RoleManager;
+    roleManager: IRoleManager;
 }

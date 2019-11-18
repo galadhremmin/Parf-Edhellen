@@ -1,7 +1,6 @@
-import AccountApiConnector from '@root/connectors/backend/AccountApiConnector';
-import { IAccountSuggestion } from '@root/connectors/backend/AccountApiConnector._types';
+import IAccountApi, { IAccountSuggestion } from '@root/connectors/backend/IAccountApi';
 
 export interface IProps {
     account: IAccountSuggestion;
-    apiConnector: AccountApiConnector;
+    apiConnector: IAccountApi;
 }

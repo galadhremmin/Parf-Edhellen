@@ -1,4 +1,4 @@
-import { IAccountEntity } from './BookApiConnector._types';
+import { IAccountEntity } from './IBookApi';
 
 export interface IGlossEntity {
     account?: IAccountEntity;
@@ -74,4 +74,9 @@ export interface IWordEntity {
     reversedNormalizedWord?: string;
     updatedAt?: string;
     word: string;
+}
+
+export default interface IGlossResourceApi {
+    delete(glossId: number, replacementId: number): Promise<void>;
+    gloss(glossId: number): Promise<IGlossEntity>;
 }

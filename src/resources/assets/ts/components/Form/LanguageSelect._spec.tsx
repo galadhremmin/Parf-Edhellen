@@ -3,7 +3,7 @@ import { mount } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
 
-import { ILanguagesResponse } from '@root/connectors/backend/BookApiConnector._types';
+import { ILanguagesResponse } from '@root/connectors/backend/IBookApi';
 import LanguageConnector from '@root/connectors/backend/LanguageConnector';
 import {
     LanguageSelect,

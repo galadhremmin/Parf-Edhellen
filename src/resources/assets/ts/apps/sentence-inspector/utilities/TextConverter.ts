@@ -3,7 +3,7 @@ import {
     ISentenceFragmentEntity,
     ITextTransformation,
     SentenceFragmentType,
-} from '@root/connectors/backend/BookApiConnector._types';
+} from '@root/connectors/backend/IBookApi';
 import { mapArray } from '@root/utilities/func/mapper';
 import {
     IFragmentInSentenceState,

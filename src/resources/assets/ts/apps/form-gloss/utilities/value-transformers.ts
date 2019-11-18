@@ -3,7 +3,7 @@ import {
     ISenseEntity,
     ITranslationEntity,
     IWordEntity,
-} from '@root/connectors/backend/GlossResourceApiConnector._types';
+} from '@root/connectors/backend/IGlossResourceApi';
 import { ValueTransformer } from './value-transformers._types';
 
 export const defaultTransformer: ValueTransformer<any, any> = (x) => x;

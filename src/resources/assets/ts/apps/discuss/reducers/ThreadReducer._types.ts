@@ -10,7 +10,7 @@ import {
     IThreadMetadataRequest,
     IThreadRequest,
     IThreadResponse,
-} from '@root/connectors/backend/DiscussApiConnector._types';
+} from '@root/connectors/backend/IDiscussApi';
 
 export type ICreatePostAction = ICreatePostRequest;
 export type IThreadAction = IThreadRequest;

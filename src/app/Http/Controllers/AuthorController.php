@@ -55,8 +55,7 @@ class AuthorController extends Controller
         return view('author.profile', [
             'author'  => $author,
             'profile' => $profile,
-            'stats'   => $stats,
-            'avatar'  => $this->_storageHelper->accountAvatar($author, false /* = _null_ if none exists */)
+            'stats'   => $stats
         ]);
     }
 

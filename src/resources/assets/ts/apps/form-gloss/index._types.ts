@@ -1,4 +1,4 @@
-import { IGlossEntity } from '@root/connectors/backend/GlossResourceApiConnector._types';
+import { IGlossEntity } from '@root/connectors/backend/IGlossResourceApi';
 
 export interface IProps {
     confirmButton: string;

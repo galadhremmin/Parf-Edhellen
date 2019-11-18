@@ -11,17 +11,9 @@
   <h1>{{ $author->nickname }}</h1>
 
   <section class="edit-profile"
-          data-inject-module="dashboard-profile-edit"
+          data-inject-module="dashboard-profile"
+          data-inject-prop-container="ProfileForm"
           data-inject-prop-account="@json($author)"></section>
 
   @endif
 @endsection
-
-@section('scripts')
-  <!-- ??? -->
-@endsection
-
-@section('styles')
-  <!-- ??? -->
-@endsection
-

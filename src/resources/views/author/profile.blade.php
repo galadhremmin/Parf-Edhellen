@@ -6,35 +6,10 @@
   @if ($author === null)
     This is not the droid you are looking for.
   @else
-    <header class="profile-header">
-      <div class="ed-profile-picture" {!! $avatar ? 'style="background-image:url('.$avatar.')"' : '' !!}></div>
-      @if (!empty($author->tengwar))
-      <span aria-hidden="true" class="tengwar">{{ $author->tengwar }}</span>
-      @endif
-      <h1>
-        {{ $author->nickname }}
-      </h1>
-    </header>
-
-    <div class="row">
-      <div class="col-md-8 col-sm-12">
-      @if (!empty($profile))
-        {!! $profile !!}
-      @else
-        <p>
-          {{ $author->nickname }} is but a rumour in the wind. Perhaps one day they might
-          come forth and reveal themselves.
-        </p>
-      @endif
-
-      @if (Auth::check() && Auth::user()->id === $author->id)
-        <div class="text-right">
-          <a href="{{ route('author.edit-profile') }}" class="btn btn-default">
-            <span class="glyphicon glyphicon-edit"></span>
-            Edit profile
-          </a>
-        </div>
-      @endif
+    <div class="view-profile"
+         data-inject-module="dashboard-profile"
+         data-inject-prop-container="Profile"
+         data-inject-prop-account="@json($author)"></div>
       </div>
       <div class="col-md-4 col-sm-12">
         <h2 class="hidden-md hidden-lg">Statistics</h2>
@@ -70,9 +45,13 @@
     </div>
   @endif
   <hr>
-  @include('_shared._comments', [
-    'entity_id' => $author->id,
-    'morph'     => 'account',
-    'enabled'   => true
+
+  @include('discuss._standalone', [
+    'entity_id'   => $author->id,
+    'entity_type' => 'account'
   ])
+@endsection
+
+@section('styles')
+@include('discuss._css')
 @endsection

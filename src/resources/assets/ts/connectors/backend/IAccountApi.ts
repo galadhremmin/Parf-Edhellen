@@ -39,3 +39,10 @@ export interface ISaveProfileResponse {
     nickname: string;
     profileUrl: string;
 }
+
+export default interface IAccountApi {
+    find(args: IFindRequest): Promise<FindResponse>;
+    getAvatar(args: IGetAvatarRequest): Promise<IGetAvatarResponse>;
+    saveAvatar(args: ISaveAvatarRequest): Promise<ISaveAvatarResponse>;
+    saveProfile(args: ISaveProfileRequest): Promise<ISaveProfileResponse>;
+}

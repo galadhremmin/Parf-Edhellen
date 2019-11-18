@@ -5,7 +5,7 @@ import {
 } from 'enzyme';
 import React from 'react';
 
-import { IAccountEntity } from '../connectors/backend/BookApiConnector._types';
+import { IAccountEntity } from '../connectors/backend/IBookApi';
 import ProfileLink from './ProfileLink';
 
 import '../utilities/Enzyme';

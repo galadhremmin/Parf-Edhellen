@@ -1,4 +1,4 @@
-import { IAccountEntity } from './BookApiConnector._types';
+import { IAccountEntity } from './IBookApi';
 
 export interface IThreadRequest {
     entityId?: number;
@@ -119,4 +119,14 @@ export interface ILikeEntity {
     forumPostId: number;
     id: number;
     updatedAt: string;
+}
+
+export default interface IDiscussApi {
+    thread(payload: IThreadRequest): Promise<IThreadResponse>;
+    threadMetadata(payload: IThreadMetadataRequest): Promise<IThreadMetadataResponse>;
+    post(payload: IPostRequest): Promise<IPostResponse>;
+    createPost(payload: ICreatePostRequest): Promise<ICreatePostResponse>;
+    deletePost(payload: IDeletePostRequest): Promise<void>;
+    updatePost(payload: IUpdatePostRequest): Promise<IUpdatePostResponse>;
+    likePost(payload: ILikePostRequest): Promise<ILikePostResponse>;
 }

@@ -5,7 +5,7 @@ import React, {
 
 import { IComponentEvent } from '@root/components/Component._types';
 import DiscussApiConnector from '@root/connectors/backend/DiscussApiConnector';
-import { ICreatePostRequest } from '@root/connectors/backend/DiscussApiConnector._types';
+import { ICreatePostRequest } from '@root/connectors/backend/IDiscussApi';
 import ValidationError from '@root/connectors/ValidationError';
 import {
     RoleManager,

@@ -7,7 +7,8 @@ import {
     IGlossaryRequest,
     IGlossaryResponse,
     ILanguageEntity,
-} from '@root/connectors/backend/BookApiConnector._types';
+} from '@root/connectors/backend/IBookApi';
+import ILanguageApi from '@root/connectors/backend/ILanguageApi';
 import LanguageConnector from '@root/connectors/backend/LanguageConnector';
 import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import { stringHash } from '@root/utilities/func/hashing';
@@ -28,7 +29,7 @@ import { ILoadGlossaryAction } from './SearchActions._types';
 
 export default class SearchActions {
     constructor(private _api: BookApiConnector = SharedReference.getInstance(BookApiConnector),
-        private _languages: LanguageConnector = SharedReference.getInstance(LanguageConnector),
+        private _languages: ILanguageApi = SharedReference.getInstance(LanguageConnector),
         private _globalEvents = new GlobalEventConnector()) {
     }
 

@@ -5,7 +5,7 @@ import {
 } from 'enzyme';
 import React from 'react';
 
-import { IGlossaryResponse } from '@root/connectors/backend/BookApiConnector._types';
+import { IGlossaryResponse } from '@root/connectors/backend/IBookApi';
 import { snakeCasePropsToCamelCase } from '@root/utilities/func/snake-case';
 import GlossaryReducer from '../reducers/GlossaryReducer';
 import { IGlossaryState } from '../reducers/GlossaryReducer._types';

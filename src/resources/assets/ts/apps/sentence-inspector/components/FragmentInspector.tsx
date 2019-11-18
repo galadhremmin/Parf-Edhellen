@@ -6,7 +6,7 @@ import { IComponentEvent } from '@root/components/Component._types';
 import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
 import Markdown from '@root/components/Markdown';
 import Spinner from '@root/components/Spinner';
-import { ISentenceFragmentEntity } from '@root/connectors/backend/BookApiConnector._types';
+import { ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
 import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 
 import { IProps } from './FragmentInspector._types';

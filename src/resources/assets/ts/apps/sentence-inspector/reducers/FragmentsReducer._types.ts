@@ -1,6 +1,6 @@
 import {
     SentenceFragmentType,
-} from '@root/connectors/backend/BookApiConnector._types';
+} from '@root/connectors/backend/IBookApi';
 
 export interface IFragmentsReducerState {
     comments: string;

@@ -1,4 +1,4 @@
-import { IBookGlossEntity } from './BookApiConnector._types';
+import { IBookGlossEntity } from './IBookApi';
 
 export interface ICardRequest {
     id: number;
@@ -20,4 +20,9 @@ export interface ICardTestRequest {
 export interface ICardTestResponse {
     correct: boolean;
     gloss: IBookGlossEntity;
+}
+
+export default interface IFlashcardApi {
+    card(args: ICardRequest): Promise<ICardResponse>;
+    test(args: ICardTestRequest): Promise<ICardTestResponse>;
 }

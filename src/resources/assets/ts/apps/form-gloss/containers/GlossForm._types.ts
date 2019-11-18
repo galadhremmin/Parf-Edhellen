@@ -1,5 +1,5 @@
 import { ComponentEventHandler } from '@root/components/Component._types';
-import { IGlossEntity } from '@root/connectors/backend/GlossResourceApiConnector._types';
+import { IGlossEntity } from '@root/connectors/backend/IGlossResourceApi';
 import ValidationError from '@root/connectors/ValidationError';
 import { IGlossState } from '../reducers/GlossReducer._types';
 

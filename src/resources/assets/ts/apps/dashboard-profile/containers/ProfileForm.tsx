@@ -5,12 +5,11 @@ import React, {
 
 import { IComponentEvent } from '@root/components/Component._types';
 import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
-import TextIcon from '@root/components/TextIcon';
 import { AnonymousAvatarPath } from '@root/config';
 import AccountApiConnector from '@root/connectors/backend/AccountApiConnector';
 import SharedReference from '@root/utilities/SharedReference';
 
-import Avatar from '../components/Avatar';
+import AvatarForm from '../components/AvatarForm';
 import InformationForm from '../components/InformationForm';
 import { IProps } from './ProfileForm._types';
 
@@ -79,21 +78,23 @@ const ProfileForm: React.SFC<IProps> = (props: IProps) => {
     return <>
         <ValidationErrorAlert error={errors} />
         <section className="InformationForm--avatar-form">
-            <Avatar path={avatarPath}
-                    onChange={_onAvatarChange}
+            <AvatarForm path={avatarPath}
+                        onAvatarChange={_onAvatarChange}
             />
             <div className="InformationForm--avatar-form__instructions">
                 Click or drag to change.
             </div>
         </section>
-        <InformationForm introduction={introduction}
-                         nickname={nickname}
-                         tengwar={tengwar}
-                         onIntroductionChange={_onIntroductionChange}
-                         onNicknameChange={_onNicknameChange}
-                         onTengwarChange={_onTengwarChange}
-                         onSubmit={_onSubmit}
-        />
+        <section className="InformationForm--info-form">
+            <InformationForm introduction={introduction}
+                            nickname={nickname}
+                            tengwar={tengwar}
+                            onIntroductionChange={_onIntroductionChange}
+                            onNicknameChange={_onNicknameChange}
+                            onTengwarChange={_onTengwarChange}
+                            onSubmit={_onSubmit}
+            />
+        </section>
     </>;
 };
 

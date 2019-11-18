@@ -1,6 +1,6 @@
 import SharedReference from '../../utilities/SharedReference';
 import ApiConnector from '../ApiConnector';
-import {
+import IDiscussApi, {
     ICreatePostRequest,
     ICreatePostResponse,
     IDeletePostRequest,
@@ -14,13 +14,13 @@ import {
     IThreadResponse,
     IUpdatePostRequest,
     IUpdatePostResponse,
-} from './DiscussApiConnector._types';
+} from './IDiscussApi';
 
-export default class DiscussApiConnector {
+export default class DiscussApiConnector implements IDiscussApi {
     constructor(private _api = new SharedReference(ApiConnector)) {
     }
 
-    public async thread(payload: IThreadRequest) {
+    public thread(payload: IThreadRequest) {
         const params: Partial<IThreadRequest> = {};
 
         if (payload.offset !== undefined) {
@@ -31,7 +31,7 @@ export default class DiscussApiConnector {
             params.forumPostId = payload.forumPostId;
         }
 
-        return await this._api.value.get<IThreadResponse>(
+        return this._api.value.get<IThreadResponse>(
             this._makePath('thread/' +
                 (payload.id || `${payload.entityType}/${payload.entityId}`),
             ),

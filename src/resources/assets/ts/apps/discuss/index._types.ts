@@ -4,7 +4,7 @@ import {
 import {
     IPostEntity,
     IThreadEntity,
-} from '@root/connectors/backend/DiscussApiConnector._types';
+} from '@root/connectors/backend/IDiscussApi';
 
 import { IFormChangeData } from './components/Form._types';
 import { IThreadMetadataArgs } from './components/toolbar/index._types';

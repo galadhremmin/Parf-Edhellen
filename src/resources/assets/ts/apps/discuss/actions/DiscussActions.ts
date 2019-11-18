@@ -3,10 +3,10 @@ import {
     ReduxThunkDispatch,
 } from '@root/_types';
 import DiscussApiConnector from '@root/connectors/backend/DiscussApiConnector';
-import {
+import IDiscussApi, {
     IPostResponse,
     IThreadResponse,
-} from '@root/connectors/backend/DiscussApiConnector._types';
+} from '@root/connectors/backend/IDiscussApi';
 import BrowserHistory from '@root/utilities/BrowserHistory';
 import SharedReference from '@root/utilities/SharedReference';
 
@@ -21,7 +21,7 @@ import {
 import Actions from './Actions';
 
 export default class DiscussActions {
-    constructor(private _api = new SharedReference(DiscussApiConnector)) {
+    constructor(private _api: SharedReference<IDiscussApi> = new SharedReference(DiscussApiConnector)) {
     }
 
     public thread(args: IThreadAction): ReduxThunk {

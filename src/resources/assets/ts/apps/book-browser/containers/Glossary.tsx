@@ -6,7 +6,7 @@ import { Waypoint } from 'react-waypoint';
 import { IComponentEvent } from '@root/components/Component._types';
 import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
 import Spinner from '@root/components/Spinner';
-import { ILanguageEntity } from '@root/connectors/backend/BookApiConnector._types';
+import { ILanguageEntity } from '@root/connectors/backend/IBookApi';
 import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import { snakeCasePropsToCamelCase } from '@root/utilities/func/snake-case';
 import SharedReference from '@root/utilities/SharedReference';
