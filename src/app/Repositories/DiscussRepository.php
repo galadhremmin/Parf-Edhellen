@@ -400,7 +400,8 @@ class DiscussRepository
                 throw new Exception(sprintf('Unsupported discuss entity "%s" with ID %d.', $entityType, $id));
             }
 
-            if (! $context->available($id)) {
+            $this->resolveAccount($account);
+            if (! $context->available($id, $account)) {
                 throw new AuthenticationException;
             }
 
@@ -420,7 +421,6 @@ class DiscussRepository
                     return null;
                 }
 
-                $this->resolveAccount($account);
                 if (! $entity->exists) {
                     if ($account === null) {
                         throw new AuthenticationException;

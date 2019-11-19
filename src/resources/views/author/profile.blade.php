@@ -18,7 +18,3 @@
     'entity_type' => 'account'
   ])
 @endsection
-
-@section('styles')
-@include('discuss._css')
-@endsection

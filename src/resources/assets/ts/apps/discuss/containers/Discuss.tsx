@@ -134,7 +134,7 @@ function Discuss(props: IProps) {
                         onChange={_onNewPostChange}
                         onSubmit={_onNewPostSubmit}
                   />
-                : <RespondButton onClick={_onCreateNewPost} />}
+                : <RespondButton onClick={_onCreateNewPost} isNewPost={posts.length === 0} />}
         </aside>
         <div ref={paginationRef}>
             <Pagination currentPage={currentPage}
@@ -143,9 +143,9 @@ function Discuss(props: IProps) {
                 pages={pages}
             />
         </div>
-        <a href="#" className="discuss-body__bottom" onClick={_onGotoNavigation}>
+        {posts.length > 0 && <a href="#" className="discuss-body__bottom" onClick={_onGotoNavigation}>
             <TextIcon icon="chevron-down" />
-        </a>
+        </a>}
     </>;
 }
 

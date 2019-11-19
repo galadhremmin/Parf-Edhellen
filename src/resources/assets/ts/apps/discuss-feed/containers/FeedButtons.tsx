@@ -70,7 +70,11 @@ function Feeds(props: IProps) {
                        id="feed-url"
                        onFocus={onFeedUrlFocus}
                        type="text"
+                       readOnly={true}
                        value={feedUrl} />
+                <div className="text-right">
+                    <a href={feedUrl} target="_blank">Open feed in a new tab</a>
+                </div>
             </div>
         </Dialog>
     </div>;

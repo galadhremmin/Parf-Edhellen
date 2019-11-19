@@ -45,5 +45,4 @@
       border: none;
     }
   </style>
-  @include('discuss._css')
 @endsection

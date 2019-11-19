@@ -54,8 +54,3 @@
   ])
 
 @endsection
-@section('styles')
-<link rel="stylesheet" href="@assetpath(style-discuss.css)">
-@endsection
-@section('scripts')
-@endsection

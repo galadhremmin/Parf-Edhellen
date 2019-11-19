@@ -12,6 +12,7 @@ import UnauthenticatedAlert from './UnauthenticatedAlert';
 
 function RespondButton(props: IProps) {
     const {
+        isNewPost,
         onClick,
     } = props;
 
@@ -42,7 +43,7 @@ function RespondButton(props: IProps) {
             return <button className="btn btn-primary" onClick={onRespondClick}>
                 <TextIcon icon="envelope" />
                 &nbsp;
-                Reply
+                {isNewPost ? 'Create thread' : 'Reply'}
             </button>;
     }
 }

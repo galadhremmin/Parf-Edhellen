@@ -31,9 +31,3 @@
     </section>
   </article>
 @endsection
-@section('styles')
-@include('discuss._css')
-@endsection
-@section('scripts')
-
-@endsection

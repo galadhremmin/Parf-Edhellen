@@ -21,7 +21,6 @@ module.exports = {
     index: `${sourcePath}/index.tsx`,
     'style-auth': `${sourcePath}/apps/auth/index.scss`,
     'style-dashboard': `${sourcePath}/apps/dashboard/index.scss`,
-    'style-discuss': `${sourcePath}/apps/discuss/index.scss`,
     'style-timeline': `${sourcePath}/apps/timeline/index.scss`,
   },
   output: {

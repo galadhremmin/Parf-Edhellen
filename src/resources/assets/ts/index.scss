@@ -6,6 +6,8 @@
 @import './_scss/autosuggest';
 @import "./_scss/_link-block";
 
+/* Please note that there are other imports on the bottom */
+
 html, body {
   width: 100%;
   margin: 0;
@@ -332,3 +334,5 @@ blockquote h3 a {
 .search-result-navigator ul.pager {
   margin: 0;
 }
+
+@import './apps/discuss/index.scss'; /* Discuss is pretty much everywhere, so no point in separation here. */
