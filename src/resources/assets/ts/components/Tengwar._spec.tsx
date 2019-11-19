@@ -41,8 +41,9 @@ describe('components/Tengwar', () => {
         // Let the promises evaluate asynchronously as the transcriber is written
         // asynchronously as it is expected to load static resources.
         setTimeout(() => {
+            wrapper.update();
             expect(wrapper.text()).to.equal(expected);
             done();
-        }, 1);
+        }, 0);
     });
 });

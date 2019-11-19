@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { expect } from 'chai';
 import {
     mount,
@@ -24,21 +25,22 @@ describe('components/Form', () => {
 
         let wrapper: ReactWrapper;
         let sandbox: SinonSandbox;
-        let server: SinonFakeServer;
 
         before(() => {
+            sandbox = sinon.createSandbox();
+        });
+
+        beforeEach(() => {
+            sandbox.stub(axios, 'post').returns(Promise.resolve(HtmlText));
+
             // This is necessary as `localstorage` is not supported by Mocha (in this context).
             const config = () => new Cache<IComponentConfig>(() => Promise.resolve({
                 enter2Paragraph: true,
             }), new MemoryStorage(), 'unit-test');
-
             wrapper = mount(<MarkdownInput value={MarkdownText} configCacheFactory={config} />);
-            sandbox = sinon.createSandbox();
-            server = sandbox.useFakeServer();
         });
 
         afterEach(() => {
-            server.restore();
             sandbox.restore();
         });
 
@@ -56,8 +58,6 @@ describe('components/Form', () => {
         });
 
         it('renders preview', () => {
-            respondWithHtml();
-
             /*
             TODO: Implement this test. It is just not working for me right now, and I need to prioritize
                   more important things. Functionality manually tested. (191113)
@@ -71,15 +71,5 @@ describe('components/Form', () => {
                 // expect(container.state('html')).to.equal(HtmlText); -- Broken!!!
             });
         });
-
-        function respondWithHtml() {
-            server.respondWith([200, {
-                    'Content-Type': 'application/json',
-                },
-                JSON.stringify({
-                    html: HtmlText,
-                }),
-            ]);
-        }
     });
 });

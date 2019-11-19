@@ -1,7 +1,10 @@
 import React from 'react';
 
-import 'spinkit/scss/spinners/5-pulse.scss';
+import 'spinkit/spinkit.css';
 
-const Spinner = () => <div className="sk-spinner sk-spinner-pulse" />;
+const Spinner = () => <div className="sk-bounce">
+    <div className="sk-bounce-dot"></div>
+    <div className="sk-bounce-dot"></div>
+</div>;
 
 export default Spinner;
