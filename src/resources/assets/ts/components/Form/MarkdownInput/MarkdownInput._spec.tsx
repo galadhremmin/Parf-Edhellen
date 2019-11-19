@@ -6,7 +6,6 @@ import {
 } from 'enzyme';
 import React from 'react';
 import sinon, {
-    SinonFakeServer,
     SinonSandbox,
 } from 'sinon';
 

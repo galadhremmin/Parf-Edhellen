@@ -1,6 +1,6 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
+const cleanWebpack = require('clean-webpack-plugin');
 const WebpackNotifierPlugin = require('webpack-notifier');
 
 // const AsyncChunkNames = require('webpack-async-chunk-names-plugin');
@@ -96,7 +96,7 @@ module.exports = {
         loader: 'source-map-loader' 
       },
       {
-        test: /\.scss$/,
+        test: /\.s?css$/,
         use: [
           bundleCssWithJavaScript ? 'style-loader' : MiniCssExtractPlugin.loader, // creates style nodes from JS strings
           "css-loader?modules=false", // translates CSS into CommonJS
@@ -116,7 +116,7 @@ module.exports = {
     ]
   },
   plugins: [
-    new CleanWebpackPlugin(),
+    new cleanWebpack.CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       // both options are optional
