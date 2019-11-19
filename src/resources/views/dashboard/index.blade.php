@@ -92,24 +92,25 @@
           <h2 class="panel-title"><span class="glyphicon glyphicon-cog"></span> Administration</h2>
         </div>
         <div class="panel-body">
-          <ul>
+          <ul class="dashboard-link-list no-icon">
             <li>
-              <a href="{{ route('contribution.list') }}">Contributions</a>
-              @if ($noOfPendingContributions > 0)
-              <span class="label label-info">{{ $noOfPendingContributions }}</span>
-              @endif
+              <a href="{{ route('contribution.list') }}">
+                Contributions
+                @if ($noOfPendingContributions > 0)
+                <span class="label label-info">{{ $noOfPendingContributions }}</span>
+                @endif
+              </a>
             </li>
             <li><a href="{{ route('inflection.index') }}">Inflections</a></li>
             <li><a href="{{ route('speech.index') }}">Type of speeches</a></li>
             <li><a href="{{ route('sentence.index') }}">Phrases</a></li>
             <li><a href="{{ route('gloss.index') }}">Glossary</a></li>
-          </ul>
-          <hr>
-          <ul>
             <li><a href="{{ route('account.index') }}">Accounts</a></li>
             <li>
-              <a href="{{ route('system-error.index') }}">System errors</a> 
-              <span class="label label-info">{{ $numberOfErrors }}</span>
+              <a href="{{ route('system-error.index') }}">
+                System errors 
+                <span class="label label-info">{{ $numberOfErrors }}</span>
+              </a>
             </li>
           </ul>
         </div>
