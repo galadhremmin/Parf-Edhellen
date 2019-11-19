@@ -21,6 +21,7 @@ function Profile(props: IProps) {
 
     const {
         roleManager,
+        statistics,
     } = props;
 
     return <article className="Profile--container">
@@ -36,11 +37,23 @@ function Profile(props: IProps) {
                         come forth and reveal themselves.
                      </p>}
         </section>
-        {roleManager.accountId === id || roleManager.isAdministrator && <a
-            href="{{ route('author.edit-profile') }}" className="btn btn-default">
-            <TextIcon icon="edit" />
-            Edit profile
-        </a>}
+        {statistics && <section className="Profile--container__statistics">
+            <p>
+                {nickname} has flipped <em>{statistics.noOfFlashcards} flashcards</em>,
+                received <em>{statistics.noOfThanks} thanks</em>,
+                and created <a href={`/author/${id}/posts`}><em>{statistics.noOfPosts} posts</em></a>.
+                They have contributed to the dictionary by creating{' '}
+                <a href={`/author/${id}/glosses`}><em>{statistics.noOfGlosses} glosses</em></a>,{' '}
+                <a href={`/author/${id}/sentences`}><em>{statistics.noOfSentences} texts</em></a>{' '}
+                and <em>{statistics.noOfWords} words</em>.
+            </p>
+        </section>}
+        {(roleManager.accountId === id || roleManager.isAdministrator) && <aside className="text-center">
+            <a href={`/author/edit/${id}`} className="btn btn-default">
+                <TextIcon icon="edit" />
+                Edit profile
+            </a>
+        </aside>}
     </article>;
 }
 

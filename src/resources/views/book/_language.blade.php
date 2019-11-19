@@ -11,10 +11,9 @@
 
       @if ($single)
         <hr>
-        @include('_shared._comments', [
-          'morph'      => 'gloss',
-          'entity_id'  => $gloss->id,
-          'enabled'    => true
+        @include('discuss._standalone', [
+          'entity_id'   => $gloss->id,
+          'entity_type' => 'gloss'
         ])
       @endif
     @endforeach

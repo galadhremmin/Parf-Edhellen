@@ -4,6 +4,7 @@
 $ed-toolbar-height: 30px;
 $ed-forum-post-profile-width: 120px;
 $ed-device-width: 540px;
+$ed-forum-post-body-maximum-width: 50rem;
 
 h1 {
     text-align: center;
@@ -144,7 +145,7 @@ h1 {
 
     .post-body {
         p, ul, ol {
-            max-width: 600px;
+            max-width: $ed-forum-post-body-maximum-width;
         }
         pre {
             max-width: max-content;

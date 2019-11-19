@@ -39,11 +39,10 @@
 
   @include('contribution._notes', $review)
   @include('contribution._pending-info', $review)
-  <hr>
-  @include('_shared._comments', [
-    'entity_id' => $review->id,
-    'morph'     => 'contribution',
-    'enabled'   => true
+  <hr>  
+  @include('discuss._standalone', [
+    'entity_id'   => $review->id,
+    'entity_type' => 'contribution'
   ])
 
 @endsection

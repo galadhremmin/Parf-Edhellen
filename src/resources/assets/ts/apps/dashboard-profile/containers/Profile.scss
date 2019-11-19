@@ -1,7 +1,17 @@
+$ed-profile-body-maximum-width: 50rem;
+
 .Profile--container {
+    max-width: $ed-profile-body-maximum-width;
+    margin: 0 auto;
     header {
         h1, h2 {
             margin-top: 0;
+        }
+    }
+    .Profile--container__statistics {
+        em {
+            font-weight: bold;
+            font-style: normal;
         }
     }
 }

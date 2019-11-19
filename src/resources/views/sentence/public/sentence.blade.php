@@ -59,10 +59,9 @@
     @endif
   </footer>
   <hr>
-  @include('_shared._comments', [
-    'entity_id' => $sentence['sentence']->id,
-    'morph'     => 'sentence',
-    'enabled'   => true
+  @include('discuss._standalone', [
+    'entity_id'   => $sentence['sentence']->id,
+    'entity_type' => 'sentence'
   ])
 @endsection
 
