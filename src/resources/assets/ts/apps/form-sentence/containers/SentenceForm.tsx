@@ -1,5 +1,6 @@
 import React from 'react';
 
+import StaticAlert from '@root/components/StaticAlert';
 import { IProps } from './SentenceForm._types';
 
 function SentenceForm(props: IProps) {
@@ -7,9 +8,9 @@ function SentenceForm(props: IProps) {
         sentence,
     } = props;
 
-    return <pre>
-        {JSON.stringify(sentence, undefined, 2)}
-    </pre>;
+    return <StaticAlert type="info">
+        Coming soon!
+    </StaticAlert>;
 }
 
 export default SentenceForm;
