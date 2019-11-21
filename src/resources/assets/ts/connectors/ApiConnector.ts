@@ -15,6 +15,10 @@ import {
     snakeCasePropsToCamelCase,
     toSnakeCase,
 } from '../utilities/func/snake-case';
+import {
+    ErrorCategory,
+    IReportErrorApi,
+} from './IReportErrorApi';
 import ValidationError from './ValidationError';
 
 interface IErrorReport {
@@ -30,7 +34,7 @@ interface IQueryStringMap {
     [key: string]: any;
 }
 
-export default class ApiConnector {
+export default class ApiConnector implements IReportErrorApi {
     constructor(
         private _apiPathName: string = ApiPath,
         private _apiErrorMethod: string = ApiExceptionCollectorMethod,
@@ -111,8 +115,8 @@ export default class ApiConnector {
     /**
      * Register the specified error.
      */
-    public error(message: string, url: string, error: string, category: string = 'frontend') {
-        return this.post(this._apiErrorMethod, { message, url, error, category });
+    public error(message: string, url: string, error: string, category: string = ErrorCategory.Frontend) {
+        return this.post<void>(this._apiErrorMethod, { message, url, error, category });
     }
 
     /**

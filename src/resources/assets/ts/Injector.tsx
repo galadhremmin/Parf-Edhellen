@@ -1,6 +1,9 @@
-import React, { Suspense } from 'react';
+import React, {
+    Suspense,
+} from 'react';
 import { render } from 'react-dom';
 import Spinner from './components/Spinner';
+import ErrorBoundary from './utilities/ErrorBoundary';
 import { snakeCasePropsToCamelCase } from './utilities/func/snake-case';
 
 /**
@@ -26,9 +29,11 @@ const load = (element: HTMLElement, moduleName: string, props: any) => {
     const Component = React.lazy(() => import(`./apps/${moduleName}/index`));
 
     render(<Suspense fallback={<Spinner />}>
-        <React.StrictMode>
-            <Component {...props} />
-        </React.StrictMode>
+        <ErrorBoundary>
+            <React.StrictMode>
+                <Component {...props} />
+            </React.StrictMode>
+        </ErrorBoundary>
     </Suspense>, element);
 };
 

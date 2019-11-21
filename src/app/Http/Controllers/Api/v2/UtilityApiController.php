@@ -42,6 +42,7 @@ class UtilityApiController extends Controller
         $this->validate($request, [
             'message'  => 'string|required',
             'url'      => 'string|required',
+            'error'    => 'string',
             'category' => 'string'
         ]);
 
@@ -68,5 +69,13 @@ class UtilityApiController extends Controller
         ]);
 
         return response(null, 201);
+    }
+
+    public function getErrors()
+    {
+        $errors = SystemError::orderBy('id', 'desc')
+            ->simplePaginate(30);
+
+        return $errors;
     }
 }

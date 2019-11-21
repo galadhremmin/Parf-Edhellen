@@ -14,4 +14,6 @@ Route::group([
         ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ]);
 
     Route::get('book/group',    [ 'uses' => 'BookApiController@getGroups' ]);
+
+    Route::get('utility/error', [ 'uses' => 'UtilityApiController@getErrors' ]);
 });
