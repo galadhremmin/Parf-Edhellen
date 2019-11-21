@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{
     Cache,
-    Storage
 };
 
 use App\Repositories\{
@@ -14,8 +12,7 @@ use App\Repositories\{
     StatisticsRepository
 };
 use App\Repositories\Interfaces\IAuditTrailRepository;
-use App\Models\{ 
-    AuditTrail,
+use App\Models\{
     Gloss,
     Sentence
 };

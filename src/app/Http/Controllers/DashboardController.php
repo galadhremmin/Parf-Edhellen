@@ -3,10 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 use App\Models\{
-    Account, 
     FlashcardResult, 
     Contribution,
     SystemError
@@ -47,7 +45,9 @@ class DashboardController extends Controller
         ]);
 
         $user = $request->user();
-        $user->setIncognito( boolval($request->input('incognito')) );
+        if ($user->isAdministrator()) {
+            $user->setIncognito( boolval($request->input('incognito')) );
+        }
 
         return redirect()->route('dashboard');
     }

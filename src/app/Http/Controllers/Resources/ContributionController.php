@@ -5,10 +5,6 @@ namespace App\Http\Controllers\Resources;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Support\Jsonable;
-use Illuminate\Support\Facades\{
-    Auth,
-    View
-};
 
 use App\Http\Controllers\Controller;
 use App\Models\Initialization\Morphs;
@@ -23,7 +19,6 @@ use App\Models\{
     Gloss
 };
 use App\Http\Controllers\Contributions\{
-    IContributionController,
     SentenceContributionController,
     GlossContributionController
 };

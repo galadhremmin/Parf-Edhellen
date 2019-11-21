@@ -67,13 +67,4 @@ class GlossController extends Controller
             'glosses' => $glosses
         ]);
     }
-
-    public function confirmDelete(Request $request, int $id)
-    {
-        $gloss = Gloss::findOrFail($id);
-        
-        return view('gloss.confirm-delete', [
-            'gloss' => $gloss
-        ]);
-    }
 }

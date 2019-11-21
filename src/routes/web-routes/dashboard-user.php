@@ -9,5 +9,6 @@ Route::group([ 'middleware' => 'auth' ], function () {
         ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ])->name('flashcard.list');
 
     // User profile
-    Route::get('/author/edit/{id?}',  [ 'uses' => 'AuthorController@edit' ])->name('author.edit-profile');
+    Route::get('/author/edit/{id?}',  [ 'uses' => 'AuthorController@edit' ])
+        ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ])->name('author.edit-profile');
 });

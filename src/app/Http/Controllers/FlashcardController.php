@@ -3,18 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Auth;
 use Cache;
 use DB;
 
 use App\Adapters\BookAdapter;
 use App\Helpers\{
-    MarkdownParser,
     StringHelper
 };
 use App\Events\FlashcardFlipped;
 use App\Models\{
-    Account,
     Flashcard, 
     FlashcardResult, 
     Language, 

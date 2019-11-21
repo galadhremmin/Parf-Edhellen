@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Resources;
 
 use Illuminate\Http\Request;
-use Auth;
 use DB;
 
 use App\Models\SystemError;

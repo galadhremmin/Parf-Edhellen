@@ -23,7 +23,8 @@ Route::group([
         'show'
     ]]);
 
-    Route::get('account/{id}/avatar', [ 'uses' => 'AccountApiController@getAvatar' ]);
+    Route::get('account/{id}/avatar', [ 'uses' => 'AccountApiController@getAvatar' ])
+        ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ]);
     Route::post('account/find',       [ 'uses' => 'AccountApiController@findAccount' ]);
 });
 

@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Resources;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rule;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\SentenceRepository;
@@ -12,18 +10,11 @@ use App\Events\{
     SentenceDestroyed
 };
 use App\Models\{
-    Language, 
-    Sentence, 
-    SentenceFragment, 
-    SentenceFragmentInflectionRel
+    Sentence
 };
 use App\Http\Controllers\Traits\{
     CanMapSentence, 
     CanValidateSentence
-};
-use App\Helpers\{
-    LinkHelper,
-    SentenceHelper
 };
 
 class SentenceController extends Controller
