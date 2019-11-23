@@ -1,4 +1,4 @@
-import SharedReference from '../../utilities/SharedReference';
+import { DI, resolve } from '@root/di';
 import ApiConnector from '../ApiConnector';
 import IDiscussApi, {
     ICreatePostRequest,
@@ -17,7 +17,7 @@ import IDiscussApi, {
 } from './IDiscussApi';
 
 export default class DiscussApiConnector implements IDiscussApi {
-    constructor(private _api = new SharedReference(ApiConnector)) {
+    constructor(private _api = resolve<ApiConnector>(DI.BackendApi)) {
     }
 
     public thread(payload: IThreadRequest) {
@@ -31,7 +31,7 @@ export default class DiscussApiConnector implements IDiscussApi {
             params.forumPostId = payload.forumPostId;
         }
 
-        return this._api.value.get<IThreadResponse>(
+        return this._api.get<IThreadResponse>(
             this._makePath('thread/' +
                 (payload.id || `${payload.entityType}/${payload.entityId}`),
             ),
@@ -40,13 +40,13 @@ export default class DiscussApiConnector implements IDiscussApi {
     }
 
     public threadMetadata(payload: IThreadMetadataRequest) {
-        return this._api.value.post<IThreadMetadataResponse>(
+        return this._api.post<IThreadMetadataResponse>(
             this._makePath('thread/metadata'), payload,
         );
     }
 
     public post(payload: IPostRequest) {
-        return this._api.value.get<IPostResponse>(
+        return this._api.get<IPostResponse>(
             this._makePath(`post/${payload.forumPostId}`),
             {
                 includeDeleted: payload.includeDeleted ? 1 : 0,
@@ -56,27 +56,27 @@ export default class DiscussApiConnector implements IDiscussApi {
     }
 
     public createPost(payload: ICreatePostRequest) {
-        return this._api.value.post<ICreatePostResponse>(
+        return this._api.post<ICreatePostResponse>(
             this._makePath('post'),
             payload,
         );
     }
 
     public deletePost(payload: IDeletePostRequest) {
-        return this._api.value.delete<void>(
+        return this._api.delete<void>(
             this._makePath(`post/${payload.forumPostId}`),
         );
     }
 
     public updatePost(payload: IUpdatePostRequest) {
-        return this._api.value.put<IUpdatePostResponse>(
+        return this._api.put<IUpdatePostResponse>(
             this._makePath(`post/${payload.forumPostId}`),
             payload,
         );
     }
 
     public likePost(payload: ILikePostRequest) {
-        return this._api.value.post<ILikePostResponse>(
+        return this._api.post<ILikePostResponse>(
             this._makePath('like'),
             payload,
         );

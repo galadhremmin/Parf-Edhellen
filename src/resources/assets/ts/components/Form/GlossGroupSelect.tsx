@@ -1,8 +1,7 @@
 import React, { useCallback } from 'react';
 
-import BookApiConnector from '@root/connectors/backend/BookApiConnector';
+import { DI, resolve } from '@root/di';
 import { excludeProps } from '@root/utilities/func/props';
-import SharedReference from '@root/utilities/SharedReference';
 
 import AsyncSelect from './AsyncSelect/AsyncSelect';
 import { IProps } from './GlossGroupSelect._types';
@@ -29,7 +28,7 @@ function GlossGroupSelect(props: IProps) {
 }
 
 GlossGroupSelect.defaultProps = {
-    apiConnector: SharedReference.getInstance(BookApiConnector),
+    apiConnector: resolve(DI.BookApi),
     value: null,
 } as IProps;
 

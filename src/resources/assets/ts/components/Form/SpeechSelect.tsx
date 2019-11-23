@@ -1,8 +1,7 @@
 import React, { useCallback } from 'react';
 
-import SpeechResourceApiConnector from '@root/connectors/backend/SpeechResourceApiConnector';
+import { DI, resolve } from '@root/di';
 import { excludeProps } from '@root/utilities/func/props';
-import SharedReference from '@root/utilities/SharedReference';
 
 import AsyncSelect from './AsyncSelect/AsyncSelect';
 import { IProps } from './SpeechSelect._types';
@@ -28,7 +27,7 @@ function SpeechSelect(props: IProps) {
 }
 
 SpeechSelect.defaultProps = {
-    apiConnector: SharedReference.getInstance(SpeechResourceApiConnector),
+    apiConnector: resolve(DI.SpeechApi),
     value: null,
 } as IProps;
 

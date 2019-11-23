@@ -1,11 +1,10 @@
 import classNames from 'classnames';
 import React, { Suspense } from 'react';
 
+import { DI, resolve } from '@root/di';
 import {
-    RoleManager,
     SecurityRole,
 } from '@root/security';
-import SharedReference from '@root/utilities/SharedReference';
 
 import { IProps } from './GlossTitle._types';
 
@@ -52,7 +51,7 @@ const GlossTitle: React.SFC<IProps> = (props: IProps) => {
 };
 
 GlossTitle.defaultProps = {
-    roleManager: SharedReference.getInstance(RoleManager),
+    roleManager: resolve(DI.RoleManager),
 };
 
 export default GlossTitle;

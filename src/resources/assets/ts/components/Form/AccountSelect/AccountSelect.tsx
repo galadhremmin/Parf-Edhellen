@@ -3,9 +3,8 @@ import React, {
     useState,
 } from 'react';
 
-import AccountApiConnector from '@root/connectors/backend/AccountApiConnector';
 import { IAccountSuggestion } from '@root/connectors/backend/IAccountApi';
-import SharedReference from '@root/utilities/SharedReference';
+import { DI, resolve } from '@root/di';
 
 import { fireEvent } from '../../Component';
 import { IComponentEvent } from '../../Component._types';
@@ -60,7 +59,7 @@ function AccountSelect(props: IProps) {
 }
 
 AccountSelect.defaultProps = {
-    apiConnector: SharedReference.getInstance(AccountApiConnector),
+    apiConnector: resolve(DI.AccountApi),
 } as Partial<IProps>;
 
 export default AccountSelect;

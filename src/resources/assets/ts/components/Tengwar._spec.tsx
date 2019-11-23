@@ -3,7 +3,6 @@ import { mount, ReactWrapper } from 'enzyme';
 import React from 'react';
 import sinon from 'sinon';
 
-import SharedReference from '../utilities/SharedReference';
 import Tengwar from './Tengwar';
 import { IProps } from './Tengwar._types';
 
@@ -31,11 +30,12 @@ describe('components/Tengwar', () => {
             mode: DefaultMode,
             text,
             transcribe: true,
-            transcriber: new SharedReference(class MockedTranscriber {
+            // tslint:disable-next-line: new-parens
+            transcriber: new class MockedTranscriber {
                 public transcribe = sinon.stub()
                     .withArgs(text, DefaultMode)
                     .returns(expected);
-            }),
+            },
         });
 
         // Let the promises evaluate asynchronously as the transcriber is written

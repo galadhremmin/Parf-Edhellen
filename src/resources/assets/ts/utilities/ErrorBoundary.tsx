@@ -1,15 +1,14 @@
 import React from 'react';
 
 import StaticAlert from '@root/components/StaticAlert';
-import ApiConnector from '@root/connectors/ApiConnector';
 import { ErrorCategory } from '@root/connectors/IReportErrorApi';
-import SharedReference from './SharedReference';
+import { DI, resolve } from '@root/di';
 
 import { IProps, IState } from './ErrorBoundary._types';
 
 export default class ErrorBoundary extends React.Component<IProps, IState> {
     public static defaultProps = {
-        reportErrorApi: SharedReference.getInstance(ApiConnector),
+        reportErrorApi: resolve(DI.BackendApi),
     };
 
     public static getDerivedStateFromError(error: Error) {

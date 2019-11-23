@@ -3,8 +3,7 @@ import React from 'react';
 import Markdown from '@root/components/Markdown';
 import Tengwar from '@root/components/Tengwar';
 import TextIcon from '@root/components/TextIcon';
-import { RoleManager } from '@root/security';
-import SharedReference from '@root/utilities/SharedReference';
+import { DI, resolve } from '@root/di';
 import Avatar from '../components/Avatar';
 import { IProps } from './Profile._types';
 
@@ -58,7 +57,7 @@ function Profile(props: IProps) {
 }
 
 Profile.defaultProps = {
-    roleManager: SharedReference.getInstance(RoleManager),
+    roleManager: resolve(DI.RoleManager),
 } as Partial<IProps>;
 
 export default Profile;

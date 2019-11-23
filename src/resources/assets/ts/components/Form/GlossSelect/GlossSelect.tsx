@@ -4,10 +4,9 @@ import React, {
     useState,
 } from 'react';
 
-import BookApiConnector from '@root/connectors/backend/BookApiConnector';
 import { ISuggestionEntity } from '@root/connectors/backend/IBookApi';
+import { DI, resolve } from '@root/di';
 import { mapper } from '@root/utilities/func/mapper';
-import SharedReference from '@root/utilities/SharedReference';
 
 import { fireEvent } from '../../Component';
 import { IComponentEvent } from '../../Component._types';
@@ -96,7 +95,7 @@ function GlossSelect(props: IProps) {
 }
 
 GlossSelect.defaultProps = {
-    apiConnector: SharedReference.getInstance(BookApiConnector),
+    apiConnector: resolve(DI.BookApi),
     value: 0,
 } as Partial<IProps>;
 

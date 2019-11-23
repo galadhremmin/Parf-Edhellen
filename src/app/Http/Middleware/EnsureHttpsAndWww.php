@@ -48,7 +48,7 @@ class EnsureHttpsAndWww
             }
 
             // for Proxies
-            Request::setTrustedProxies([$request->getClientIp()]);
+            Request::setTrustedProxies([$request->getClientIp()], Request::getTrustedHeaderSet());
             return redirect()->secure($correctUrl);
         }
 

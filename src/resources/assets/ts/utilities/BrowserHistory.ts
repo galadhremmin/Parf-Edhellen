@@ -1,14 +1,12 @@
+import { DI, resolve } from '@root/di';
 import {
     IHistory,
     UrlComponents,
 } from './BrowserHistory._types';
-import SharedReference from './SharedReference';
 
 export default class BrowserHistory {
-    private static _ref = new SharedReference(BrowserHistory);
-
     static get default() {
-        return this._ref.value;
+        return resolve<BrowserHistory>(DI.BrowserHistory);
     }
 
     constructor(private _history: IHistory = window.history) {

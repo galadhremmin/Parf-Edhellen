@@ -1,4 +1,5 @@
-import SharedReference from '../../utilities/SharedReference';
+import { DI, resolve } from '@root/di';
+
 import ApiConnector from '../ApiConnector';
 import IAccountApi, {
     FindResponse,
@@ -12,25 +13,25 @@ import IAccountApi, {
 } from './IAccountApi';
 
 export default class AccountApiConnector implements IAccountApi {
-    constructor(private _api = new SharedReference(ApiConnector)) {
+    constructor(private _api = resolve<ApiConnector>(DI.BackendApi)) {
     }
 
     public find(args: IFindRequest) {
-        return this._api.value.post<FindResponse>('account/find', args);
+        return this._api.post<FindResponse>('account/find', args);
     }
 
     public getAvatar(args: IGetAvatarRequest) {
-        return this._api.value.get<IGetAvatarResponse>(`account/${args.accountId}/avatar`);
+        return this._api.get<IGetAvatarResponse>(`account/${args.accountId}/avatar`);
     }
 
     public saveAvatar(args: ISaveAvatarRequest) {
         const formData = new FormData();
         formData.append('avatar', args.file, args.file.name);
 
-        return this._api.value.post<ISaveAvatarResponse>(`account/avatar/edit/${args.accountId}`, formData);
+        return this._api.post<ISaveAvatarResponse>(`account/avatar/edit/${args.accountId}`, formData);
     }
 
     public saveProfile(args: ISaveProfileRequest) {
-        return this._api.value.post<ISaveProfileResponse>(`account/edit/${args.accountId}`, args);
+        return this._api.post<ISaveProfileResponse>(`account/edit/${args.accountId}`, args);
     }
 }

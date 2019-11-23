@@ -1,5 +1,3 @@
-import SharedReference from '@root/utilities/SharedReference';
-
 export interface ITranscriber {
     transcribe(text: string, mode: string): string;
 }
@@ -9,7 +7,7 @@ export interface IProps {
     mode?: string;
     text: string;
     transcribe?: boolean;
-    transcriber?: SharedReference<ITranscriber>;
+    transcriber?: ITranscriber;
 }
 
 export interface IState {

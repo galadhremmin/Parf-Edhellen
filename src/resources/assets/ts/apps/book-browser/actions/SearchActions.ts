@@ -1,20 +1,18 @@
 import { Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
-import BookApiConnector from '@root/connectors/backend/BookApiConnector';
-import {
+import IBookApi, {
     IFindEntity,
     IGlossaryRequest,
     IGlossaryResponse,
     ILanguageEntity,
 } from '@root/connectors/backend/IBookApi';
 import ILanguageApi from '@root/connectors/backend/ILanguageApi';
-import LanguageConnector from '@root/connectors/backend/LanguageConnector';
 import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
+import { DI, resolve } from '@root/di';
 import { stringHash } from '@root/utilities/func/hashing';
 import { mapArray } from '@root/utilities/func/mapper';
 import { capitalize } from '@root/utilities/func/string-manipulation';
-import SharedReference from '@root/utilities/SharedReference';
 
 import { RootReducer } from '../reducers';
 import { ISearchAction } from '../reducers/SearchReducer._types';
@@ -28,8 +26,8 @@ import {
 import { ILoadGlossaryAction } from './SearchActions._types';
 
 export default class SearchActions {
-    constructor(private _api: BookApiConnector = SharedReference.getInstance(BookApiConnector),
-        private _languages: ILanguageApi = SharedReference.getInstance(LanguageConnector),
+    constructor(private _api: IBookApi = resolve(DI.BookApi),
+        private _languages: ILanguageApi = resolve(DI.LanguageApi),
         private _globalEvents = new GlobalEventConnector()) {
     }
 

@@ -6,8 +6,7 @@ import React, {
 import { IComponentEvent } from '@root/components/Component._types';
 import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
 import { AnonymousAvatarPath } from '@root/config';
-import AccountApiConnector from '@root/connectors/backend/AccountApiConnector';
-import SharedReference from '@root/utilities/SharedReference';
+import { DI, resolve } from '@root/di';
 
 import AvatarForm from '../components/AvatarForm';
 import InformationForm from '../components/InformationForm';
@@ -99,7 +98,7 @@ const ProfileForm: React.SFC<IProps> = (props: IProps) => {
 };
 
 ProfileForm.defaultProps = {
-    api: SharedReference.getInstance(AccountApiConnector),
+    api: resolve(DI.AccountApi),
 };
 
 export default ProfileForm;

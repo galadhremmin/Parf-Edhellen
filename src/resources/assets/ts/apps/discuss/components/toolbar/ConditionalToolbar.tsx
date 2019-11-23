@@ -1,17 +1,16 @@
 import React, { Suspense } from 'react';
 
 import Spinner from '@root/components/Spinner';
+import { DI, resolve } from '@root/di';
 import {
-    RoleManager,
     SecurityRole,
 } from '@root/security';
-import SharedReference from '@root/utilities/SharedReference';
 
 import { IProps } from './ConditionalToolbar._types';
 
 export default class ConditionalToolbar extends React.Component<IProps> {
     public static defaultProps = {
-        roleManager: SharedReference.getInstance(RoleManager),
+        roleManager: resolve(DI.RoleManager),
     } as Partial<IProps>;
 
     public render() {

@@ -5,8 +5,7 @@ import {
     ILanguagesResponse,
 } from '@root/connectors/backend/IBookApi';
 import ILanguageApi from '@root/connectors/backend/ILanguageApi';
-import LanguageConnector from '@root/connectors/backend/LanguageConnector';
-import SharedReference from '@root/utilities/SharedReference';
+import { DI, resolve } from '@root/di';
 import {
     FormComponent,
     integerConverter,
@@ -40,7 +39,7 @@ export class LanguageSelect extends FormComponent<number, IProps, IProps, IState
         filter: DefaultLanguageFilter,
         formatter: DefaultLanguageFormatter,
         includeAllLanguages: true,
-        languageConnector: SharedReference.getInstance(LanguageConnector),
+        languageConnector: resolve(DI.LanguageApi),
         value: 0,
     } as Partial<IProps>;
 

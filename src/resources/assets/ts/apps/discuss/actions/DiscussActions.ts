@@ -2,13 +2,12 @@ import {
     ReduxThunk,
     ReduxThunkDispatch,
 } from '@root/_types';
-import DiscussApiConnector from '@root/connectors/backend/DiscussApiConnector';
 import IDiscussApi, {
     IPostResponse,
     IThreadResponse,
 } from '@root/connectors/backend/IDiscussApi';
+import { DI, resolve } from '@root/di';
 import BrowserHistory from '@root/utilities/BrowserHistory';
-import SharedReference from '@root/utilities/SharedReference';
 
 import { RootReducer } from '../reducers';
 import {
@@ -21,7 +20,7 @@ import {
 import Actions from './Actions';
 
 export default class DiscussActions {
-    constructor(private _api: SharedReference<IDiscussApi> = new SharedReference(DiscussApiConnector)) {
+    constructor(private _api: IDiscussApi = resolve(DI.DiscussApi)) {
     }
 
     public thread(args: IThreadAction): ReduxThunk {
@@ -30,14 +29,14 @@ export default class DiscussActions {
                 type: Actions.RequestThread,
             });
 
-            const threadData = await this._api.value.thread(args);
+            const threadData = await this._api.thread(args);
             dispatch(this.setThread(threadData));
         };
     }
 
     public setThread(threadData: IThreadResponse): ReduxThunk {
         // Update the browser's current page (in the event that the client refreshes the window)
-        const browserHistory = SharedReference.getInstance(BrowserHistory);
+        const browserHistory = resolve<BrowserHistory>(DI.BrowserHistory);
         browserHistory.push(`?offset=${threadData.currentPage}`);
 
         return async (dispatch: ReduxThunkDispatch) => {
@@ -66,7 +65,7 @@ export default class DiscussActions {
                 type: Actions.RequestThreadMetadata,
             });
 
-            const metadata = await this._api.value.threadMetadata(args);
+            const metadata = await this._api.threadMetadata(args);
             dispatch({
                 metadata,
                 type: Actions.ReceiveThreadMetadata,
@@ -76,7 +75,7 @@ export default class DiscussActions {
 
     public post(args: IPostAction): ReduxThunk {
         return async (dispatch: ReduxThunkDispatch) => {
-            const postData = await this._api.value.post(args);
+            const postData = await this._api.post(args);
             dispatch(this.setPost(postData));
         };
     }
@@ -116,7 +115,7 @@ export default class DiscussActions {
                     type: Actions.RequestCreatePost,
                 });
 
-                const postData = await this._api.value.createPost(args);
+                const postData = await this._api.createPost(args);
 
                 dispatch({
                     type: Actions.ReceiveCreatePost,
