@@ -34,7 +34,9 @@ class DiscussAdapter
 
     public function adaptPost(ForumPost $post)
     {
-        $this->adaptAccount($post->account);
+        if ($post->account_id) {
+            $this->adaptAccount($post->account);
+        }
 
         if ($post->is_hidden || $post->is_deleted) {
             $post->content = null;
@@ -55,7 +57,9 @@ class DiscussAdapter
 
     public function adaptThread(ForumThread $thread)
     {
-        $this->adaptAccount($thread->account);
+        if ($thread->account_id) {
+            $this->adaptAccount($thread->account);
+        }
     }
 
     public function adaptThreads(Collection $threads)
