@@ -6,6 +6,7 @@ Route::group([
     'prefix'    => API_PATH
 ], function () {
 
+    Route::get('book/group',               [ 'uses' => 'BookApiController@getGroups' ]);
     Route::get('book/languages',           [ 'uses' => 'BookApiController@getLanguages' ]);
     Route::get('book/translate/{glossId}', [ 'uses' => 'BookApiController@get' ])
         ->where([ 'glossId' => REGULAR_EXPRESSION_NUMERIC ]);
