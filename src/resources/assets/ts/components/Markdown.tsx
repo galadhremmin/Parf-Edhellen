@@ -1,8 +1,9 @@
 import React from 'react';
 
+import IUtilityApi from '@root/connectors/backend/IUtilityApi';
+import { DI, resolve } from '@root/di';
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
-import UtilityApiConnector from '../connectors/backend/UtilityApiConnector';
-import SharedReference from '../utilities/SharedReference';
+
 import HtmlInject from './HtmlInject';
 import {
     IProps,
@@ -27,7 +28,7 @@ export default class Markdown extends React.PureComponent<IProps, IState> {
         lastText: null,
     };
 
-    private _api = new SharedReference(UtilityApiConnector);
+    private _api = resolve<IUtilityApi>(DI.UtilityApi);
 
     public componentDidMount() {
         if (this.props.parse) {
@@ -64,7 +65,7 @@ export default class Markdown extends React.PureComponent<IProps, IState> {
         let html = markdown;
         if (! isEmptyString(markdown)) {
             try {
-                const response = await this._api.value.parseMarkdown({
+                const response = await this._api.parseMarkdown({
                     markdown,
                 });
 

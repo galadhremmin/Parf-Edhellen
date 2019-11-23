@@ -1,7 +1,6 @@
 import React from 'react';
 
-import Glaemscribe from '@root/utilities/Glaemscribe';
-import SharedReference from '@root/utilities/SharedReference';
+import { DI, resolve } from '@root/di';
 import {
     IProps,
     IState,
@@ -12,7 +11,7 @@ import './Tengwar.scss';
 export default class Tengwar extends React.Component<IProps> {
     public static defaultProps = {
         as: 'span',
-        transcriber: new SharedReference(Glaemscribe),
+        transcriber: resolve(DI.Glaemscribe),
     };
 
     public static getDerivedStateFromProps(nextProps: IProps, prevState: IState) {
@@ -65,7 +64,7 @@ export default class Tengwar extends React.Component<IProps> {
     }
 
     private async _transcribe() {
-        const transcribed = await this.props.transcriber.value.transcribe(this.state.lastText, this.props.mode);
+        const transcribed = this.props.transcriber.transcribe(this.state.lastText, this.props.mode);
         this.setState({
             transcribed,
         });

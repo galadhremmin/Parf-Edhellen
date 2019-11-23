@@ -4,7 +4,6 @@ import {
     IRoleManager,
     SecurityRole,
 } from '@root/security';
-import SharedReference from '@root/utilities/SharedReference';
 
 import { IProps } from './index._types';
 

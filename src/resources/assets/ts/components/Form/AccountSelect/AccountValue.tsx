@@ -3,9 +3,8 @@ import React, {
     useState,
 } from 'react';
 
-import AccountApiConnector from '@root/connectors/backend/AccountApiConnector';
 import IAccountApi, { IAccountSuggestion } from '@root/connectors/backend/IAccountApi';
-import SharedReference from '@root/utilities/SharedReference';
+import { DI, resolve } from '@root/di';
 import { IProps } from './AccountValue._types';
 
 const useFetch = (apiConnector: IAccountApi, accountId: number) => {
@@ -42,7 +41,7 @@ function AccountValue(props: IProps) {
 }
 
 AccountValue.defaultProps = {
-    apiConnector: SharedReference.getInstance(AccountApiConnector),
+    apiConnector: resolve(DI.AccountApi),
 } as Partial<IProps>;
 
 export const injectAccountValue = (account: IAccountSuggestion) => <AccountValue account={account} />;

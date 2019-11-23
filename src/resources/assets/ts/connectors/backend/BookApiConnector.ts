@@ -1,4 +1,4 @@
-import SharedReference from '../../utilities/SharedReference';
+import { DI, resolve } from '@root/di';
 import ApiConnector from '../ApiConnector';
 import IBookApi, {
     FindResponse,
@@ -14,15 +14,15 @@ import IBookApi, {
 import { IGlossGroup } from './IGlossResourceApi';
 
 export default class BookApiConnector implements IBookApi {
-    constructor(private _api = new SharedReference(ApiConnector)) {
+    constructor(private _api = resolve<ApiConnector>(DI.BackendApi)) {
     }
 
     public find(args: IFindRequest) {
-        return this._api.value.post<FindResponse>('book/find', args);
+        return this._api.post<FindResponse>('book/find', args);
     }
 
     public gloss(id: number) {
-        return this._api.value.get<IGlossaryResponse>(`book/translate/${id}`);
+        return this._api.get<IGlossaryResponse>(`book/translate/${id}`);
     }
 
     public glossary(args: IGlossaryRequest) {
@@ -32,22 +32,22 @@ export default class BookApiConnector implements IBookApi {
             delete args.languageId;
         }
 
-        return this._api.value.post<IGlossaryResponse>('book/translate', args);
+        return this._api.post<IGlossaryResponse>('book/translate', args);
     }
 
     public groups() {
-        return this._api.value.get<IGlossGroup[]>('book/group');
+        return this._api.get<IGlossGroup[]>('book/group');
     }
 
     public languages() {
-        return this._api.value.get<ILanguagesResponse>('book/languages');
+        return this._api.get<ILanguagesResponse>('book/languages');
     }
 
     public sentence(args: ISentenceRequest) {
-        return this._api.value.get<ISentenceResponse>(`sentence/${args.id}`);
+        return this._api.get<ISentenceResponse>(`sentence/${args.id}`);
     }
 
     public suggest(args: ISuggestRequest) {
-        return this._api.value.post<ISuggestResponse>(`book/suggest`, args);
+        return this._api.post<ISuggestResponse>(`book/suggest`, args);
     }
 }

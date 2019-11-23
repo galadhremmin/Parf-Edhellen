@@ -2,8 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { IComponentEvent } from '@root/components/Component._types';
-import BookApiConnector from '@root/connectors/backend/BookApiConnector';
-import SharedReference from '@root/utilities/SharedReference';
+import IBookApi from '@root/connectors/backend/IBookApi';
+import { DI, resolve } from '@root/di';
 
 import { RootReducer } from '../reducers';
 import {
@@ -26,7 +26,7 @@ export class SentenceInspector extends React.PureComponent<IProps, IState> {
     };
 
     private _actions = new SentenceActions();
-    private _api = new SharedReference(BookApiConnector);
+    private _api = resolve<IBookApi>(DI.BookApi);
 
     public componentDidMount() {
         const {
@@ -87,7 +87,7 @@ export class SentenceInspector extends React.PureComponent<IProps, IState> {
 
     private async _selectFragment(id: number) {
         const fragment = this.props.fragments.find((f) => f.id === id);
-        const details = await this._api.value.gloss(fragment.glossId);
+        const details = await this._api.gloss(fragment.glossId);
         const gloss = details.sections[0].glosses[0];
 
         gloss.inflectedWord = {

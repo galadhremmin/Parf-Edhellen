@@ -6,9 +6,9 @@ import GlossSelect from '@root/components/Form/GlossSelect';
 import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
 import Quote from '@root/components/Quote';
 import TextIcon from '@root/components/TextIcon';
-import GlossResourceApiConnector from '@root/connectors/backend/GlossResourceApiConnector';
+import IGlossResourceApi from '@root/connectors/backend/IGlossResourceApi';
 import ValidationError from '@root/connectors/ValidationError';
-import SharedReference from '@root/utilities/SharedReference';
+import { DI, resolve } from '@root/di';
 import { IProps } from './index._types';
 
 function DeleteGloss(props: IProps) {
@@ -35,7 +35,7 @@ function DeleteGloss(props: IProps) {
     }, [ setIsOpen ]);
 
     const _onDelete = useCallback(async (ev: IComponentEvent<number>) => {
-        const api = SharedReference.getInstance(GlossResourceApiConnector);
+        const api = resolve<IGlossResourceApi>(DI.GlossApi);
         try {
             await api.delete(glossId, ev.value);
             setIsOpen(false);

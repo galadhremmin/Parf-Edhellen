@@ -2,11 +2,11 @@ import React, { useCallback, useRef } from 'react';
 
 import { fireEvent } from '@root/components/Component';
 import TextIcon from '@root/components/TextIcon';
+import { DI, resolve } from '@root/di';
 import {
     RoleManager,
     SecurityRole,
 } from '@root/security';
-import SharedReference from '@root/utilities/SharedReference';
 import { IProps } from './RespondButton._types';
 import UnauthenticatedAlert from './UnauthenticatedAlert';
 
@@ -25,7 +25,7 @@ function RespondButton(props: IProps) {
             return roleManager;
         }
 
-        roleManager = SharedReference.getInstance(RoleManager);
+        roleManager = resolve(DI.RoleManager);
         roleManagerRef.current = roleManager;
         return roleManager;
     };

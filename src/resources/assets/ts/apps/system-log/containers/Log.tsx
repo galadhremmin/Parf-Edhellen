@@ -16,9 +16,8 @@ import {
 
 import { IComponentEvent } from '@root/components/Component._types';
 import { IErrorEntity } from '@root/connectors/backend/ILogApi';
-import UtilityApiConnector from '@root/connectors/backend/UtilityApiConnector';
 import { ErrorCategory } from '@root/connectors/IReportErrorApi';
-import SharedReference from '@root/utilities/SharedReference';
+import { DI, resolve } from '@root/di';
 
 import LogList from '../components/LogList';
 import { IProps } from '../index._types';
@@ -90,7 +89,7 @@ function Log(props: IProps) {
 }
 
 Log.defaultProps = {
-    logApi: SharedReference.getInstance(UtilityApiConnector),
+    logApi: resolve(DI.UtilityApi),
 } as Partial<IProps>;
 
 export default Log;

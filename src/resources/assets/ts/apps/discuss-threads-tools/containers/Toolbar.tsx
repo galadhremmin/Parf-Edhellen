@@ -4,15 +4,13 @@ import React, {
 } from 'react';
 
 import { IComponentEvent } from '@root/components/Component._types';
-import DiscussApiConnector from '@root/connectors/backend/DiscussApiConnector';
 import { ICreatePostRequest } from '@root/connectors/backend/IDiscussApi';
 import ValidationError from '@root/connectors/ValidationError';
+import { DI, resolve } from '@root/di';
 import {
-    RoleManager,
     SecurityRole,
 } from '@root/security';
 import BrowserHistory from '@root/utilities/BrowserHistory';
-import SharedReference from '@root/utilities/SharedReference';
 
 import CreateThreadButton from '../components/CreateThreadButton';
 import { IProps } from '../index._types';
@@ -30,7 +28,7 @@ function Toolbar(props: IProps) {
             const postData = await apiConnector.createPost(ev.value);
             setError(null);
 
-            const browserHistory = SharedReference.getInstance(BrowserHistory);
+            const browserHistory = resolve<BrowserHistory>(DI.BrowserHistory);
             browserHistory.redirect(postData.postUrl);
         } catch (e) {
             if (e instanceof ValidationError) {
@@ -51,8 +49,8 @@ function Toolbar(props: IProps) {
 }
 
 Toolbar.defaultProps = {
-    apiConnector: SharedReference.getInstance(DiscussApiConnector),
-    roleManager: SharedReference.getInstance(RoleManager),
+    apiConnector: resolve(DI.DiscussApi),
+    roleManager: resolve(DI.RoleManager),
 } as Partial<IProps>;
 
 export default Toolbar;

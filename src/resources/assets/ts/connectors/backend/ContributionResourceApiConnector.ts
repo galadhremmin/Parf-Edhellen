@@ -1,4 +1,4 @@
-import SharedReference from '../../utilities/SharedReference';
+import { DI, resolve } from '@root/di';
 import ApiConnector from '../ApiConnector';
 import IContributionResourceApi, {
     IContribution,
@@ -7,7 +7,7 @@ import IContributionResourceApi, {
 import { IGlossEntity } from './IGlossResourceApi';
 
 export default class ContributionResourceApiConnector implements IContributionResourceApi {
-    constructor(private _api = new SharedReference(ApiConnector)) {
+    constructor(private _api = resolve<ApiConnector>(DI.BackendApi)) {
     }
 
     public saveGloss(args: IContribution<IGlossEntity>) {
@@ -17,11 +17,11 @@ export default class ContributionResourceApiConnector implements IContributionRe
         };
 
         if (!!args.contributionId && ! isNaN(args.contributionId) && isFinite(args.contributionId)) {
-            return this._api.value.put<IContributionSaveResponse>(`/dashboard/contribution/${args.contributionId}`,
+            return this._api.put<IContributionSaveResponse>(`/dashboard/contribution/${args.contributionId}`,
                 envelope);
         }
 
         delete envelope.contributionId;
-        return this._api.value.post<IContributionSaveResponse>('/dashboard/contribution', envelope);
+        return this._api.post<IContributionSaveResponse>('/dashboard/contribution', envelope);
     }
 }

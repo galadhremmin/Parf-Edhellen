@@ -6,7 +6,6 @@ import {
 import { IComponentEvent } from '@root/components/Component._types';
 import LanguageSelect from '@root/components/Form/LanguageSelect';
 import debounce from '@root/utilities/func/debounce';
-import SharedReference from '@root/utilities/SharedReference';
 import { SearchActions } from '../actions';
 import SearchQueryInput from '../components/SearchQueryInput';
 import { RootReducer } from '../reducers';
@@ -22,7 +21,7 @@ export class SearchQuery extends React.PureComponent<IProps, IState> {
 
     public state: IState;
 
-    private _actions: SharedReference<SearchActions>;
+    private _actions: SearchActions;
     private _beginSearch: (queryChanged: boolean) => void;
 
     constructor(props: IProps) {
@@ -35,7 +34,7 @@ export class SearchQuery extends React.PureComponent<IProps, IState> {
             word: props.word,
         };
 
-        this._actions = new SharedReference(SearchActions);
+        this._actions = new SearchActions();
         this._beginSearch = debounce(500, this._search);
     }
 
@@ -126,7 +125,7 @@ export class SearchQuery extends React.PureComponent<IProps, IState> {
      */
     private _onSearchResultNavigate = (ev: IComponentEvent<number>) => {
         this.props.dispatch(
-            this._actions.value.selectNextResult(ev.value),
+            this._actions.selectNextResult(ev.value),
         );
     }
 
@@ -136,7 +135,7 @@ export class SearchQuery extends React.PureComponent<IProps, IState> {
      */
     private _search(queryChanged: boolean) {
         this.props.dispatch(
-            this._actions.value.search(this.state),
+            this._actions.search(this.state),
         );
 
         // If the user has only made changes to the filtering functions (such as language selection),
@@ -144,7 +143,7 @@ export class SearchQuery extends React.PureComponent<IProps, IState> {
         // to reflect to the glossary currently loaded.
         if (queryChanged === false && this.props.currentGlossaryWord.length > 0) {
             this.props.dispatch(
-                this._actions.value.reloadGlossary(),
+                this._actions.reloadGlossary(),
             );
         }
     }

@@ -1,4 +1,4 @@
-import SharedReference from '../../utilities/SharedReference';
+import { DI, resolve } from '@root/di';
 import ApiConnector from '../ApiConnector';
 import IFlashcardApi, {
     ICardRequest,
@@ -8,14 +8,14 @@ import IFlashcardApi, {
 } from './IFlashcardApi';
 
 export default class FlashcardApiConnector implements IFlashcardApi {
-    constructor(private _api = new SharedReference(ApiConnector)) {
+    constructor(private _api = resolve<ApiConnector>(DI.BackendApi)) {
     }
 
     public card(args: ICardRequest) {
-        return this._api.value.post<ICardResponse>('/flashcard/card', args);
+        return this._api.post<ICardResponse>('/flashcard/card', args);
     }
 
     public test(args: ICardTestRequest) {
-        return this._api.value.post<ICardTestResponse>('/flashcard/test', args);
+        return this._api.post<ICardTestResponse>('/flashcard/test', args);
     }
 }

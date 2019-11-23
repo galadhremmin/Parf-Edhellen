@@ -1,13 +1,12 @@
 import React from 'react';
 
-import DiscussApiConnector from '@root/connectors/backend/DiscussApiConnector';
-import SharedReference from '@root/utilities/SharedReference';
+import { DI, resolve } from '@root/di';
 
 function connectApi<TProps>(component: React.SFC<TProps>) {
     const existingProps = component.defaultProps || {};
 
     component.defaultProps = Object.assign({}, existingProps, {
-        apiConnector: SharedReference.getInstance(DiscussApiConnector),
+        apiConnector: resolve(DI.DiscussApi),
     }) as any;
 
     return component;

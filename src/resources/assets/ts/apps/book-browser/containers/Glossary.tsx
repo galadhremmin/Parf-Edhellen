@@ -9,7 +9,6 @@ import Spinner from '@root/components/Spinner';
 import { ILanguageEntity } from '@root/connectors/backend/IBookApi';
 import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import { snakeCasePropsToCamelCase } from '@root/utilities/func/snake-case';
-import SharedReference from '@root/utilities/SharedReference';
 
 import { SearchActions } from '../actions';
 import Language from '../components/Language';
@@ -23,7 +22,7 @@ export class Glossary extends React.PureComponent<IProps, IState> {
         notifyLoaded: true,
     };
 
-    private _actions = new SharedReference(SearchActions);
+    private _actions = new SearchActions();
     private _globalEvents = new GlobalEventConnector();
 
     public componentDidMount() {
@@ -126,7 +125,7 @@ export class Glossary extends React.PureComponent<IProps, IState> {
         }
 
         this.props.dispatch(
-            this._actions.value.setGlossary(preloadedGlossary),
+            this._actions.setGlossary(preloadedGlossary),
         );
     }
 
@@ -173,7 +172,7 @@ export class Glossary extends React.PureComponent<IProps, IState> {
      */
     private _onReferenceClick = async (ev: IComponentEvent<IReferenceLinkClickDetails>) => {
         this.props.dispatch(
-            this._actions.value.loadReference(ev.value.word, ev.value.normalizedWord, ev.value.languageShortName),
+            this._actions.loadReference(ev.value.word, ev.value.normalizedWord, ev.value.languageShortName),
         );
     }
 

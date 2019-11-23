@@ -3,7 +3,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { IComponentEvent } from '@root/components/Component._types';
-import SharedReference from '@root/utilities/SharedReference';
 import { SearchActions } from '../actions';
 import SearchResult from '../components/SearchResult';
 import { RootReducer } from '../reducers';
@@ -18,7 +17,7 @@ export class SearchResults extends React.PureComponent<IProps> {
         } as IProps;
     }
 
-    private _actions = new SharedReference(SearchActions);
+    private _actions = new SearchActions();
 
     public render() {
         const searching = this.props.word.length > 0;
@@ -91,7 +90,7 @@ export class SearchResults extends React.PureComponent<IProps> {
      * for the specified search result.
      */
     private _onClick = (ev: IComponentEvent<ISearchResult>) => {
-        this.props.dispatch(this._actions.value.glossary({
+        this.props.dispatch(this._actions.glossary({
             searchResult: ev.value,
             updateBrowserHistory: true,
         }));
@@ -99,12 +98,12 @@ export class SearchResults extends React.PureComponent<IProps> {
 
     private _onNextSearchResult = (ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
-        this.props.dispatch(this._actions.value.selectNextResult(+1));
+        this.props.dispatch(this._actions.selectNextResult(+1));
     }
 
     private _onPreviousSearchResult = (ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
-        this.props.dispatch(this._actions.value.selectNextResult(-1));
+        this.props.dispatch(this._actions.selectNextResult(-1));
     }
 }
 

@@ -3,19 +3,16 @@ import {
     ReduxThunkDispatch,
 } from '@root/_types';
 import { handleValidationErrors } from '@root/components/Form/Validation';
-import ContributionResourceApiConnector from '@root/connectors/backend/ContributionResourceApiConnector';
-import GlossResourceApiConnector from '@root/connectors/backend/GlossResourceApiConnector';
 import IContributionResourceApi from '@root/connectors/backend/IContributionResourceApi';
 import IGlossResourceApi, { IGlossEntity } from '@root/connectors/backend/IGlossResourceApi';
-import SharedReference from '@root/utilities/SharedReference';
+import { DI, resolve } from '@root/di';
 
 import Actions from './Actions';
 
 export default class GlossActions {
     constructor(
-        private _glossApi: IGlossResourceApi = SharedReference.getInstance(GlossResourceApiConnector),
-        private _contributionApi: IContributionResourceApi = SharedReference.getInstance(
-            ContributionResourceApiConnector)) {}
+        private _glossApi: IGlossResourceApi = resolve(DI.GlossApi),
+        private _contributionApi: IContributionResourceApi = resolve(DI.ContributionApi)) {}
 
     public gloss(glossId: number): ReduxThunk {
         return async (dispatch: ReduxThunkDispatch) => {
