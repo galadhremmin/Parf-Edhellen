@@ -74,7 +74,7 @@ class UtilityApiController extends Controller
     public function getErrors()
     {
         $errors = SystemError::orderBy('id', 'desc')
-            ->simplePaginate(30);
+            ->paginate(10);
 
         return $errors;
     }

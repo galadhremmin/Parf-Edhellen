@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { IProps } from './Pagination._types';
+import { IProps, PageModes } from './Pagination._types';
 import PaginationLink from './PaginationLink';
+import { createPageArray } from './utils';
 
 const Pagination = (props: IProps) => {
     const {
@@ -15,6 +16,18 @@ const Pagination = (props: IProps) => {
         return null;
     }
 
+    let pageArray: Array<number | string>;
+    switch (pages) {
+        case PageModes.AutoGenerate:
+            pageArray = createPageArray(noOfPages);
+            break;
+        case PageModes.None:
+            pageArray = [];
+            break;
+        default:
+            pageArray = pages || [];
+    }
+
     return <nav className="text-center">
         <ul className="pagination">
             {currentPage > 1 && <li>
@@ -24,7 +37,7 @@ const Pagination = (props: IProps) => {
                     Older
                 </PaginationLink>
             </li>}
-            {pages.map((pageNumber) => <li key={pageNumber}
+            {pageArray.map((pageNumber) => <li key={pageNumber}
                 className={currentPage === pageNumber ? 'active' : ''}>
                 <PaginationLink pageNumber={pageNumber}
                     onClick={onClick}>

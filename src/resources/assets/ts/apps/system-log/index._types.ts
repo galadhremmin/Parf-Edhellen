@@ -1,3 +1,5 @@
+import { ILogApi } from '@root/connectors/backend/ILogApi';
+
 export interface IWeeklyErrors {
     [errorCategory: string]: number;
 }
@@ -8,4 +10,5 @@ export interface IErrorsByWeek {
 
 export interface IProps {
     errorsByWeek: IErrorsByWeek[];
+    logApi: ILogApi;
 }

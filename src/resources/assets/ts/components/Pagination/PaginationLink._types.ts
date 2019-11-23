@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { ComponentEventHandler } from './Component._types';
+import { ComponentEventHandler } from '../Component._types';
 
 export interface IProps {
     children?: ReactNode;

@@ -7,7 +7,7 @@ import React from 'react';
 
 import Pagination from './Pagination';
 
-import '../utilities/Enzyme';
+import '../../utilities/Enzyme';
 
 describe('components/Pagination', () => {
     let wrapper: ReactWrapper;

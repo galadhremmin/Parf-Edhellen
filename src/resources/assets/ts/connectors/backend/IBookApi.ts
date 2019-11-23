@@ -150,7 +150,7 @@ export interface ISentenceEntity {
 }
 
 export interface IAccountEntity {
-    avatarPath: string;
+    avatarPath?: string;
     hasAvatar?: boolean;
     id: number;
     isConfigured?: boolean;

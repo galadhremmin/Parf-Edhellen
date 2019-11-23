@@ -15,5 +15,5 @@ Route::group([
 
     Route::get('book/group',    [ 'uses' => 'BookApiController@getGroups' ]);
 
-    Route::get('utility/error', [ 'uses' => 'UtilityApiController@getErrors' ]);
+    Route::get('utility/errors', [ 'uses' => 'UtilityApiController@getErrors' ]);
 });

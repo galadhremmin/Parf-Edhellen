@@ -1,8 +1,8 @@
 import SharedReference from '../../utilities/SharedReference';
 import ApiConnector from '../ApiConnector';
 
+import { IGetErrorsResponse } from './ILogApi';
 import IUtilityApi, {
-    IGetErrorsResponse,
     IMarkdownParserRequest,
     IMarkdownParserResponse,
 } from './IUtilityApi';
@@ -11,8 +11,9 @@ export default class UtilityApiConnector implements IUtilityApi {
     constructor(private _api = new SharedReference(ApiConnector)) {
     }
 
-    public getErrors() {
-        return this._api.value.get<IGetErrorsResponse>('utility/errors');
+    public getErrors(page: number = 1) {
+        page = Math.max(1, page);
+        return this._api.value.get<IGetErrorsResponse>('utility/errors', { page });
     }
 
     public parseMarkdown(args: IMarkdownParserRequest) {
