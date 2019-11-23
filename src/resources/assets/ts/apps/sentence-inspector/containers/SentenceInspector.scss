@@ -1,0 +1,52 @@
+@import "../../../_scss/_variables";
+
+.sentence-inspector {
+    font-size: 1.6rem;
+
+    .sentence-inspector__introduction {
+        font-style: italic;
+        font-size: 0.9rem;
+    }
+
+    > .p-group {
+        padding-bottom: 1em;
+        transition: 0.5s padding;
+
+        > .p-group__p {
+            text-align: center;
+            line-height: 1.8;
+
+            &.english {
+                font-style: italic;
+                font-size: 0.8em;
+                line-height: 2.25;
+            }
+
+            > a {
+                color: inherit;
+                text-decoration: none;
+
+                &.selected {
+                    font-weight: bold;
+                }
+            }
+        }
+    }
+
+    @media (min-width: $screen-md-min) {
+        > .p-group {
+            display: flex;
+            padding-bottom: 0;
+
+            > .p-group__p {
+                flex: 1;
+                text-align: left;
+
+                &.english {
+                    font-size: inherit;
+                    line-height: inherit;
+                }
+            }
+        }
+    }
+}

@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Auth;
+use Route;
 
 use Tests\Unit\Traits\CanCreateGloss;
 use App\Adapters\BookAdapter;
@@ -26,7 +27,7 @@ class BookAdapterTest extends TestCase
 
     private $_adapter;
 
-    protected function setUp() 
+    protected function setUp(): void
     {
         parent::setUp();
         $this->setUpGlosses();
@@ -34,7 +35,7 @@ class BookAdapterTest extends TestCase
         $this->_adapter = resolve(BookAdapter::class);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->tearDownGlosses();
         parent::tearDown();

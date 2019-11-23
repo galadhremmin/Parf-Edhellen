@@ -2,21 +2,24 @@
 namespace App\Http\Controllers\Traits;
 
 use App\Adapters\BookAdapter;
-use App\Repositories\{ForumRepository, GlossRepository};
 use App\Models\Gloss;
+use App\Repositories\{
+    DiscussRepository,
+    GlossRepository
+};
 
 trait CanGetGloss
 {
     protected $_bookAdapter;
-    protected $_forumRepository;
+    protected $_discussRepository;
     protected $_glossRepository;
 
     public function __construct(BookAdapter $bookAdapter,
-        ForumRepository $forumRepository,
+        DiscussRepository $discussRepository,
         GlossRepository $glossRepository)
     {
         $this->_bookAdapter = $bookAdapter;
-        $this->_forumRepository = $forumRepository;
+        $this->_discussRepository = $discussRepository;
         $this->_glossRepository = $glossRepository;
     }
     
@@ -36,7 +39,7 @@ trait CanGetGloss
         }
 
         $gloss = $glosses->first();
-        $comments = $this->_forumRepository->getCommentCountForEntities(Gloss::class, [$glossId]);
+        $comments = $this->_discussRepository->getNumberOfPostsForEntities(Gloss::class, [$glossId]);
         return $this->_bookAdapter->adaptGlosses($glosses->toArray(), [/* no inflections */], $comments, $gloss->word);
     }
 

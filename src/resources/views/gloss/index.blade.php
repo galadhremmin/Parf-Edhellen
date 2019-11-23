@@ -16,7 +16,7 @@
         </div>
         <div class="panel-body">
           <ul>
-            <li><a href="{{ route('gloss.create') }}">Add gloss</a></li>
+            <li><a href="{{ $link->contributeGloss() }}">Add gloss</a></li>
             <li>
               Glossaries by language:
               <ul>
@@ -40,7 +40,7 @@
             <ul>
                 @foreach ($latestGlosses as $t)
                 <li>
-                    <strong><a href="{{ route('gloss.edit', [ 'id' => $t->id ]) }}">{{ $t->word->word }}</a></strong>
+                    <strong><a href="{{ $link->contributeGloss($t->id) }}">{{ $t->word->word }}</a></strong>
                     by 
                     <a href="{{ $link->author($t->account_id, $t->account->nickname) }}">{{ $t->account->nickname }}</a>
                     <span title="{{ $t->updated_at ?: $t->created_at }}" class="label label-default pull-right date">

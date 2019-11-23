@@ -1,3 +1,4 @@
+@inject('link', 'App\Helpers\LinkHelper')
 @extends('_layouts.default')
 
 @section('title', 'Phrases - Administration')
@@ -8,7 +9,7 @@
 
 <p>Click on a phrase beneath to edit it.</p>
 
-<a class="btn btn-primary" href="{{ route('sentence.create') }}">Add phrase</a>
+<a class="btn btn-primary" href="{{ $link->contributeSentence() }}">Add phrase</a>
 
 @if (count($sentences) < 1)
 <em>No known phrases.</em> 
@@ -17,7 +18,7 @@
     <h2>{{ $languageName }}</h2>
     <ul>
       @foreach ($sentencesForLanguage as $sentence)
-      <li><a href="{{ route('sentence.edit', ['id' => $sentence->id]) }}">{{ $sentence->name }}</a></li>
+      <li><a href="{{ $link->contributeSentence($sentence->id) }}">{{ $sentence->name }}</a></li>
       @endforeach
     </ul>
   @endforeach

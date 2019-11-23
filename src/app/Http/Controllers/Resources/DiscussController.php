@@ -3,74 +3,89 @@
 namespace App\Http\Controllers\Resources;
 
 use Illuminate\Http\Request;
-use Illuminate\Auth\AuthenticationException;
 use Cache; 
 use Carbon\Carbon;
 
 use App\Http\Controllers\Controller;
 use App\Http\Discuss\ContextFactory;
+use App\Http\Controllers\Traits\CanAdaptDiscuss;
 use App\Adapters\DiscussAdapter;
-use App\Models\Initialization\Morphs;
-use App\Events\ForumPostCreated;
-use App\Repositories\StatisticsRepository;
-use App\Helpers\{
-    LinkHelper,
-    StringHelper
+use App\Repositories\{
+    DiscussRepository,
+    StatisticsRepository
 };
 use App\Models\{
-    Account,
-    ForumDiscussion,
-    ForumThread,
-    ForumPost
+    Account
 };
 
 class DiscussController extends Controller
 {
-    protected $_discussAdapter;
+    use CanAdaptDiscuss {
+        CanAdaptDiscuss::__construct as setupDiscussAdapter;
+    }
+
     protected $_contextFactory;
+    protected $_discussRepository;
     protected $_statisticsRepository;
 
-    public function __construct(DiscussAdapter $discussAdapter, ContextFactory $contextFactory,
+    public function __construct(
+        DiscussAdapter $discussAdapter,
+        ContextFactory $contextFactory,
+        DiscussRepository $discussRepository,
         StatisticsRepository $statisticsRepository) 
     {
-        $this->_discussAdapter       = $discussAdapter;
+        $this->setupDiscussAdapter($discussAdapter);
+        $this->_discussRepository    = $discussRepository;
         $this->_contextFactory       = $contextFactory;
         $this->_statisticsRepository = $statisticsRepository;
     }
 
     public function index(Request $request)
     {
-        $noOfThreadsPerPage = config('ed.forum_thread_resultset_max_length');
-        $noOfPages = ceil(ForumThread::where('number_of_posts', '>', 0)
-            ->count() / $noOfThreadsPerPage);
-        $currentPage = min($noOfPages - 1, max(0, intval($request->input('offset'))));
+        return $this->groups($request);
+    }
 
-        $threads = ForumThread::where('number_of_posts', '>', 0)
-            ->with('account')
-            ->orderBy('is_sticky', 'desc')
-            ->orderBy('updated_at', 'desc')
-            ->orderBy('created_at', 'desc')
-            ->skip($currentPage * $noOfThreadsPerPage)
-            ->take($noOfThreadsPerPage)
-            ->get();
+    public function groups(Request $request)
+    {
+        $groups = $this->_discussRepository->getGroups();
+        return view('discuss.groups', $groups->getAllValues());
+    }
+
+    public function group(Request $request, int $id)
+    {
+        $currentPage = max(0, intval($request->input('offset')));
+
+        $group = $this->_discussRepository->getGroup($id);
+        $model = $this->adaptForumThreadsInGroup(
+            $this->_discussRepository->getThreadDataInGroup($group, $request->user(), $currentPage)
+        );
         
-        $pages = [];
-        for ($i = 0; $i < $noOfPages; $i += 1) {
-            $pages[$i] = $i + 1;
-        }
+        return view('discuss.group', $model->getAllValues());
+    }
 
-        $adapted = $this->_discussAdapter->adaptThreads($threads);
-        return view('discuss.index', [
-            'threads' => $adapted,
-            'pages'   => $pages,
-            'currentPage' => $currentPage,
-            'noOfPages' => $noOfPages
+    public function show(Request $request, int $groupId, string $groupSlug, int $id)
+    {
+        $currentPage = max(0, intval($request->get('offset')));
+        $forumPostId = intval($request->get('forum_post_id'));
+
+        $groupData = [
+            'group' => $this->_discussRepository->getGroup($groupId)
+        ];
+        $threadData = $this->adaptForumThread(
+            $this->_discussRepository->getThreadData($id)
+        );
+        $postData = $this->adaptForumPostsInThread(
+            $this->_discussRepository->getPostDataInThread($threadData->getThread(), $request->user(), 'asc', $currentPage, $forumPostId)
+        );
+
+        return view('discuss.thread', $threadData->getAllValues() + $groupData + [
+            'preloadedPosts' => $postData->getAllValues()
         ]);
     }
 
     public function topMembers(Request $request)
     {
-        $cacheTtlInMinutes = 30;
+        $cacheTtlInMinutes = 30 * 60;
         $data = Cache::remember('discuss.top-members', $cacheTtlInMinutes, function () use($cacheTtlInMinutes) {
             return array_merge(
                 $this->_statisticsRepository->getContributors(),
@@ -92,81 +107,8 @@ class DiscussController extends Controller
         return view('discuss.member-all-list', ['members' => $members]);
     }
 
-    public function show(Request $request, int $id)
-    {
-        $thread = ForumThread::findOrFail($id);
-        if ($thread->number_of_posts < 1) {
-            abort(404, 'The thread you are looking for does not exist.');
-        }
-
-        $context = $this->_contextFactory->create($thread->entity_type);
-        $user = $request->user();
-        if (! $context->available($thread, $user)) {
-            if (! $user) {
-                throw new AuthenticationException;
-            } 
-            
-            abort(403);
-        }
-
-        return view('discuss.show', [
-            'thread'  => $thread,
-            'context' => $context
-        ]);
-    }
-
     public function create(Request $request)
     {
         return view('discuss.create');
-    }
-
-    public function store(Request $request)
-    {
-        $this->validate($request, [
-            'subject' => 'required|string|min:3',
-            'content' => 'required|string|min:3'
-        ]);
-
-        $userId = $request->user()->id;
-
-        // Create a discussion which will be the entity associated with
-        // the thread.
-        $discussion = ForumDiscussion::create([
-            'account_id' => $userId
-        ]);
-        $typeName = Morphs::getAlias($discussion);
-
-        // Create a forum thread for the previously created discussion.
-        $thread = ForumThread::create([
-            'entity_type'        => $typeName,
-            'entity_id'          => $discussion->id,
-            'subject'            => $request->input('subject'),
-            'normalized_subject' => StringHelper::normalize($request->input('subject')),
-            'account_id'         => $userId,
-            'number_of_posts'    => 1
-        ]);
-
-        // Create a post with the user's message content
-        $post = ForumPost::create([
-            'account_id'      => $userId,
-            'forum_thread_id' => $thread->id,
-            'content'         => $request->input('content')
-        ]);
-
-        event(new ForumPostCreated($post, $userId));
-
-        $linker = new LinkHelper();
-        return redirect($linker->forumThread($thread->id, $thread->normalized_subject));
-    }
-
-    public function resolveThread(Request $request, int $id)
-    {
-        $discuss = ForumDiscussion::findOrFail($id);
-        if ($discuss === null) {
-            abort(404, 'The discussion does not exist.');
-        }
-
-        $linker = new LinkHelper();
-        return redirect($linker->forumThread($discuss->forum_thread->id, $discuss->forum_thread->normalized_subject));
     }
 }

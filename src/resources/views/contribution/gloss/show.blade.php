@@ -42,14 +42,9 @@
   You can <a href="{{ $link->gloss($review->gloss_id) }}">visit the gloss in the dictionary</a>.
   @endif
   <hr>
-  @include('_shared._comments', [
-    'entity_id' => $review->id,
-    'morph'     => 'contribution',
-    'enabled'   => true
+  @include('discuss._standalone', [
+    'entity_id'   => $review->id,
+    'entity_type' => 'contribution'
   ])
 
-@endsection
-
-@section('scripts')
-  <script type="text/javascript" src="@assetpath(/js/comment.js)" async></script>
 @endsection

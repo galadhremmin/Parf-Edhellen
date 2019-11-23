@@ -12,8 +12,11 @@ use App\Events\{
 };
 use App\Models\{ 
     Sentence, 
-    SentenceFragment 
+    SentenceFragment,
+    SentenceFragmentInflectionRel,
+    Speech
 };
+use App\Helpers\SentenceHelper;
 
 class SentenceRepository
 {
@@ -88,6 +91,58 @@ class SentenceRepository
             ->get()
             ->groupBy('sentence_fragment_id')
             ->toArray();
+    }
+
+    public function getSentence(int $id)
+    {
+        $sentence = Sentence::findOrFail($id)
+            ->load('account', 'language');
+
+        $fragments = $sentence->sentence_fragments;
+        $fragmentIds = $fragments->map(function ($f) {
+            return $f->id;
+        });
+
+        $inflections = SentenceFragmentInflectionRel::whereIn('sentence_fragment_id', $fragmentIds)
+            ->join('inflections', 'inflections.id', 'inflection_id')
+            ->select('sentence_fragment_id', 'inflections.name', 'inflections.id as inflection_id')
+            ->get()
+            ->groupBy('sentence_fragment_id');
+
+        $translations = $sentence->sentence_translations()
+            ->select('sentence_number', 'paragraph_number', 'translation')
+            ->get()
+            ->transform(function ($item) {
+                $item->makeHidden('paragraph_number');
+                return $item;
+            })->mapWithKeys(function ($item) {
+                return [ $item->paragraph_number => $item ];
+            });
+
+        $speechIds = $fragments->reduce(function ($carry, $f) {
+            if ($f->speech_id !== null && !in_array($f->speech_id, $carry)) {
+                $carry[] = $f->speech_id;
+            }
+
+            return $carry;
+        }, []);
+        $speeches = count($speechIds) < 1 ? [] : Speech::whereIn('id', $speechIds)
+            ->select('id', 'name')
+            ->get()
+            ->mapWithKeys(function ($item) {
+                return [$item->id => $item->name];
+            });
+
+        $sentence->makeHidden(['account_id', 'language_id', 'sentence_translations', 'sentence_fragments']);
+
+        return [
+            'inflections' => $inflections,
+            'sentence' => $sentence,
+            'sentence_fragments' => $fragments,
+            'sentence_translations' => $translations,
+            'sentence_transformations' => resolve(SentenceHelper::class)->buildSentences($fragments),
+            'speeches' => $speeches
+        ];
     }
 
     public function saveSentence(Sentence $sentence, array $fragments, array $inflections) 

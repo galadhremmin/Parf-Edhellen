@@ -1,0 +1,17 @@
+@import '../../../_scss/_variables';
+
+.EntitySelect.AccountSelect--value {
+    > .avatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 12px;
+        margin-right: 0.5rem;
+    }
+    > .id {
+        color: $gray-light;
+        font-family: $font-family-tiny;
+        float: right;
+        font-size: 0.8rem;
+        line-height: 2.25;
+    }
+}

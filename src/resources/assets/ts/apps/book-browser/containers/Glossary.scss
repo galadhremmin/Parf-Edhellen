@@ -1,0 +1,61 @@
+@import '../../../_scss/_variables';
+
+$gloss-border-color: #dedede;
+
+.ed-glossary {
+  &.ed-glossary--unusual {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid $gloss-border-color;
+  }
+
+  .ed-glossary__language {
+    margin-top: 4em;
+
+    &:first-child {
+      margin-top: 0 !important;
+    }
+
+    > header {
+      text-align: center;
+
+      h2 {
+        font-size: 200%;
+        font-weight: bold;
+      }
+      @media (max-width: $screen-sm-min) {
+        text-align: left;
+      }
+    }
+  }
+  .ed-glossary__language__words {
+    columns: 2;
+  }
+  @media (max-width: $screen-sm-min) {
+    .ed-glossary__language__words {
+      columns: auto;
+    }
+  }
+  @media (min-width: $screen-xxl-width) {
+    .ed-glossary__language__words {
+      columns: 3;
+    }
+  }
+  @media (min-width: $screen-xxxl-width) {
+    .ed-glossary__language__words {
+      columns: 4;
+    }
+  }
+
+  &.ed-glossary--single {
+    .ed-glossary__language__words {
+      columns: auto;
+    }
+  }
+}
+.ed-admin-tool {
+  display: none;
+}
+body.ed-admin .ed-admin-tool {
+  display: inline-block;
+}

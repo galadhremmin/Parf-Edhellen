@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Repositories\GlossRepository;
 use App\Adapters\BookAdapter;
 use App\Models\{
+    Account,
     Contribution,
     Sense,
     Gloss,
@@ -104,15 +105,20 @@ class GlossContributionController extends Controller implements IContributionCon
 
         // extend the payload with information necessary for the form.
         $payload = json_decode($contribution->payload, true);
+        $account = Account::find(isset($payload['account_id'])
+            ? $payload['account_id'] 
+            : $contribution->account_id
+        );
         $translations = $this->getTranslationsFromPayload($payload);
 
         $payloadData = $payload + [ 
             'contribution_id' => $contribution->id,
-            'word'         => $word,
-            'sense'        => $sense,
-            '_keywords'    => $keywords,
-            'notes'        => $contribution->notes,
-            'translations' => $translations
+            'account'         => $account,
+            'word'            => $word,
+            'sense'           => $sense,
+            'keywords'        => $keywords,
+            'notes'           => $contribution->notes,
+            'translations'    => $translations
         ];
 
         return $request->ajax()
@@ -121,7 +127,7 @@ class GlossContributionController extends Controller implements IContributionCon
                 'payload' => $payloadData
             ] : view('contribution.gloss.edit', [
                 'review' => $contribution, 
-                'payload' => json_encode($payloadData)
+                'payload' => $payloadData
             ]);
     }
     
@@ -137,17 +143,17 @@ class GlossContributionController extends Controller implements IContributionCon
 
         if ($entityId) {
             $gloss = Gloss::where('id', $entityId)
-                ->with('sense', 'sense.word', 'gloss_group', 'word', 'translations')
+                ->with('account', 'sense', 'sense.word', 'gloss_group', 'word', 'translations')
                 ->firstOrFail();
 
-            $gloss->_keywords = $this->_glossRepository->getKeywords($gloss->sense_id, $gloss->id);
+            $gloss->keywords = $this->_glossRepository->getKeywords($gloss->sense_id, $gloss->id);
         }
 
         return $request->ajax()
             ? $gloss
             // create a payload model if a gloss exists.
             : view('contribution.gloss.create', $gloss ? [
-                'payload' => json_encode($gloss)
+                'payload' => $gloss
             ] : []);
     }
 
@@ -171,12 +177,15 @@ class GlossContributionController extends Controller implements IContributionCon
         $map = $this->mapGloss($entity, $request);
         extract($map);
 
-        $entity->_translations    = $translations;
-        $entity->account_id       = $contribution->account_id;
+        if (! $request->user()->isAdministrator()) {
+            $entity->account_id = $request->user()->id;
+        }
 
-        $contribution->word       = $word;
-        $contribution->sense      = $sense;
-        $contribution->keywords   = json_encode($keywords);
+        $entity->_translations  = $translations;
+
+        $contribution->word     = $word;
+        $contribution->sense    = $sense;
+        $contribution->keywords = json_encode($keywords);
 
         return $entity;
     }

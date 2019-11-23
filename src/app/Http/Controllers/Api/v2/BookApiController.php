@@ -45,7 +45,7 @@ class BookApiController extends Controller
 
     public function getLanguages()
     {
-        $languages = Cache::remember('ed.lang', 60 /* minutes */, function () {
+        $languages = Cache::remember('ed.lang', 60 * 60 /* seconds */, function () {
             return Language::all()
                 ->sortBy('order')
                 ->sortBy('name')

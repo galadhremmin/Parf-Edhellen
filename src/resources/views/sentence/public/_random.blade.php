@@ -3,28 +3,28 @@
 
 <blockquote class="daily-sentence">
   <p class="tengwar tengwar-lg">
-    {{ $combiner->combine($sentenceData['fragments'], $sentenceData['tengwar']) }}
+    {{ $combiner->combine($sentence['sentence_fragments'], $sentence['sentence_transformations']['tengwar']) }}
   </p>
   <p>
     <em>
-    {{ $combiner->combine($sentenceData['fragments'], $sentenceData['latin']) }}
+    {{ $combiner->combine($sentence['sentence_fragments'], $sentence['sentence_transformations']['latin']) }}
     </em>
   </p>
-  <p>{{$sentence->description}}</p>
+  <p>{{$sentence['sentence']->description}}</p>
   <footer>
-    {{$sentence->language->name}}
-    [{{$sentence->source}}]
-    @if ($sentence->account_id)
+    {{$sentence['sentence']->language->name}}
+    [{{$sentence['sentence']->source}}]
+    @if ($sentence['sentence']->account)
     by
-    <a href="{{ $link->author($sentence->account_id, $sentence->account->nickname) }}">
-      {{ $sentence->account->nickname }}
+    <a href="{{ $link->author($sentence['sentence']->account->id, $sentence['sentence']->account->nickname) }}">
+      {{ $sentence['sentence']->account->nickname }}
     </a>
     @endif
   </footer>
   @include('sentence.public._readmore', [ 
-    'languageId'   => $sentence->language_id,
-    'languageName' => $sentence->language->name,
-    'sentenceId'   => $sentence->id,
-    'sentenceName' => $sentence->name
+    'languageId'   => $sentence['sentence']->language->id,
+    'languageName' => $sentence['sentence']->language->name,
+    'sentenceId'   => $sentence['sentence']->id,
+    'sentenceName' => $sentence['sentence']->name
   ])
 </blockquote>

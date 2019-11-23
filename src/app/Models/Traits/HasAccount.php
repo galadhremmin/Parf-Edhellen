@@ -23,7 +23,8 @@ trait HasAccount
 
     public function account() 
     {
-        return $this->belongsTo(Account::class);
+        return $this->belongsTo(Account::class)
+            ->select(['id', 'nickname', 'tengwar', 'has_avatar']);
     }
 
     private function getAccountId($accountOrId)

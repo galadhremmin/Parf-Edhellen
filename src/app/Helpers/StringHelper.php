@@ -58,7 +58,7 @@ class StringHelper
      * @param string $str
      * @param boolean $accentsMatter - whether accents should be normalized according to a phonetic approximation
      * @param boolean $retainWildcard - retains wildcard character (*) 
-     * @return void
+     * @return string
      */
     public static function normalize(string $str, $accentsMatter = true, $retainWildcard = false) 
     {          

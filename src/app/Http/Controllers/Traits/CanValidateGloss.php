@@ -10,10 +10,12 @@ trait CanValidateGloss
         $maximumNumberOfTranslations = config('ed.max_number_of_translations');
         
         $rules = [
-            'id'                         => 'sometimes|required|numeric|exists:glosses,id',
+            'id'                         => 'sometimes|numeric|exists:glosses,id',
+            'account.id'                 => 'required|numeric|exists:accounts,id',
+            'account_id'                 => 'sometimes|numeric|exists:accounts,id',
             'language_id'                => 'required|numeric|exists:languages,id',
             'speech_id'                  => 'required|numeric|exists:speeches,id',
-            'word'                       => 'required|string|min:1|max:64',
+            'word.word'                  => 'required|string|min:1|max:64',
             'sense.word.word'            => 'required|string|min:1|max:64',
             'source'                     => 'required|string|min:3',
             'is_rejected'                => 'required|boolean',
@@ -32,6 +34,8 @@ trait CanValidateGloss
         if (! $review) {
             $rules['account_id']     = 'required|numeric|exists:accounts,id';
             $rules['gloss_group_id'] = 'sometimes|numeric|exists:gloss_groups,id';
+        } else {
+            ;
         }
 
         parent::validate($request, $rules);

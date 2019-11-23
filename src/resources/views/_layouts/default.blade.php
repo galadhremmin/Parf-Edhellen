@@ -14,14 +14,15 @@
   <link rel="apple-touch-icon-precomposed" href="/img/favicons/apple-touch-icon-precomposed.png">
   <link rel="icon" type="image/png" href="/img/favicons/favicon-194x194.png">
   <link rel="manifest" href="/img/favicons/manifest.json">
-  <link href="https://fonts.googleapis.com/css?family=Lora:400,400i&amp;subset=latin-ext" rel="stylesheet">
-  <link href="@assetpath(/css/app.css)" rel="stylesheet">
+  <link href="@assetpath(/vendor.css)" rel="stylesheet">
+  <link href="@assetpath(/index.css)" rel="stylesheet">
   @yield('styles')
   @if (!empty(config('ed.header_view')))
     @include(config('ed.header_view'))
   @endif
+  <noscript><style type="text/css">.noscript--hidden{display:none;}</style></noscript>
 </head>
-<body class="{{ $isAdmin ? 'ed-admin' : ($isAdmin === false ? 'ed-user' : 'ed-anonymous') }}" data-user-id="{{ $user ? $user->id : '0' }}" data-v="{{ config('ed.version') }}">
+<body class="{{ $isAdmin ? 'ed-admin' : ($isAdmin === false ? 'ed-user' : 'ed-anonymous') }}" data-account-id="{{ $user ? $user->id : '0' }}" data-v="{{ config('ed.version') }}">
   <div class="head-content">
     <aside class="navbar navbar-default navbar-static-top" role="navigation">
       <div class="container">
@@ -40,7 +41,9 @@
             <li class="{{ active('about') }}"><a href="{{ route('about') }}">@lang('about.title')</a></li>
             <li class="{{ active(['sentence.public', 'sentence.public.language', 'sentence.public.sentence']) }}"><a href="{{ route('sentence.public') }}">@lang('sentence.title')</a></li>
             <li class="{{ active(['flashcard', 'flashcard.cards']) }}"><a href="{{ route('flashcard') }}">@lang('flashcard.title')</a></li>
-            <li class="{{ active('discuss.index') }}"><a href="{{ route('discuss.index') }}">@lang('discuss.title')</a></li>
+            <li class="{{ active(['discuss.index', 'discuss.group', 'discuss.show', 'discuss.member-list']) }}">
+              <a href="{{ route('discuss.index') }}">@lang('discuss.title')</a>
+            </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <li class="{{ active('discuss.members') }}">
@@ -110,18 +113,9 @@
     </section>
   </footer>
 
-  <script type="text/javascript" src="@assetpath(/js/manifest.js)"></script>
-  <script type="text/javascript" src="@assetpath(/js/vendor.js)"></script>
-  <script type="text/javascript" src="@assetpath(/js/ie.js)"></script>
-  <script type="text/javascript" src="@assetpath(/js/glaemscribe.js)"></script>
-  @if ($user)
-    @if ($isAdmin)
-    <script type="text/javascript" src="@assetpath(/js/global-plugins-admin.js)"></script>
-    @else
-    <script type="text/javascript" src="@assetpath(/js/global-plugins-restricted.js)"></script>
-    @endif
-  @endif
-  <script type="text/javascript" src="@assetpath(/js/global.js)" async></script>
+  <script type="text/javascript" src="@assetpath(vendor.js)"></script>
+  <script type="text/javascript" src="@assetpath(index.js)"></script>
+  
   @yield('scripts')
   @if (!empty(config('ed.footer_view')))
     @include(config('ed.footer_view'))

@@ -29,7 +29,7 @@
             @markdown($post->content)
             <hr>
             <div class="{{ $post->inverted ? 'text-right' : '' }}">
-              <a href="{{ route('forum.show', ['id' => $post->id]) }}" class="btn btn-sm btn-default">
+              <a href="{{ $link->forumThread($post->forum_group_id, 'g', $post->forum_thread_id, $post->subject_path, $post->id) }}" class="btn btn-sm btn-default">
                 <span class="glyphicon glyphicon-envelope"></span>
                 View thread
               </a>
@@ -68,5 +68,5 @@
   @endif
 @endsection
 @section('styles')
-  <link href="@assetpath(/css/app.timeline.css)" rel="stylesheet">
+<link rel="stylesheet" href="@assetpath(style-timeline.css)">
 @endsection

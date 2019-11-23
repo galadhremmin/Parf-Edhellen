@@ -14,10 +14,10 @@ trait CanMapGloss
 {
     public function mapGloss(Gloss $gloss, Request $request)
     {
-        $word         = $request->input('word');
+        $word         = $request->input('word.word');
         $sense        = $request->input('sense.word.word');
 
-        $gloss->account_id    = intval($request->input('account_id'));
+        $gloss->account_id    = intval($request->input('account.id') ?: $request->input('account_id'));
         $gloss->language_id   = intval($request->input('language_id'));
         $gloss->speech_id     = intval($request->input('speech_id'));
 
@@ -32,7 +32,7 @@ trait CanMapGloss
             ? intval($request->input('gloss_group_id'))
             : null;
 
-        $gloss->tengwar  = $request->has('tengwar')
+        $gloss->tengwar = $request->has('tengwar')
             ? $request->input('tengwar')
             : null;
 

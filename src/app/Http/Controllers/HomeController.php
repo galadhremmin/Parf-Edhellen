@@ -2,25 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{
     Cache,
-    Storage
 };
 
 use App\Repositories\{
     ContributionRepository,
+    SentenceRepository,
     StatisticsRepository
 };
 use App\Repositories\Interfaces\IAuditTrailRepository;
-use App\Models\{ 
-    AuditTrail,
+use App\Models\{
     Gloss,
     Sentence
 };
 use App\Adapters\{
     AuditTrailAdapter,
-    SentenceAdapter,
     BookAdapter
 };
 
@@ -28,18 +25,18 @@ class HomeController extends Controller
 {
     protected $_auditTrail;
     protected $_auditTrailAdapter;
-    protected $_sentenceAdapter;
+    protected $_sentenceRepository;
     protected $_bookAdapter;
     protected $_reviewRepository;
     protected $_statisticsRepository;
 
     public function __construct(IAuditTrailRepository $auditTrail, AuditTrailAdapter $auditTrailAdapter, StatisticsRepository $statisticsRepository,
-        BookAdapter $bookAdapter, SentenceAdapter $sentenceAdapter, ContributionRepository $contributionRepository) 
+        BookAdapter $bookAdapter, SentenceRepository $sentenceRepository, ContributionRepository $contributionRepository) 
     {
         $this->_auditTrail           = $auditTrail;
         $this->_auditTrailAdapter    = $auditTrailAdapter;
         $this->_bookAdapter          = $bookAdapter;
-        $this->_sentenceAdapter      = $sentenceAdapter;
+        $this->_sentenceRepository   = $sentenceRepository;
         $this->_reviewRepository     = $contributionRepository;
         $this->_statisticsRepository = $statisticsRepository;
     }
@@ -55,19 +52,16 @@ class HomeController extends Controller
             : null;
 
         // Retrieve a random sentence to be featured.
-        $randomSentence = Cache::remember('ed.home.sentence', 60 * 24 /* minutes */, function () {
-            $sentence = Sentence::approved()->inRandomOrder()->first();
-            
+        $randomSentence = Cache::remember('ed.home.sentence', 60 * 24 /* seconds */, function () {
+            $sentence = Sentence::approved()->inRandomOrder()
+                ->select('id')->first();
             return [
-                'sentence'     => $sentence,
-                'sentenceData' => $sentence 
-                    ? $this->_sentenceAdapter->adaptFragments($sentence->sentence_fragments, false) 
-                    : null
+                'sentence' => $this->_sentenceRepository->getSentence($sentence->id)
             ];
         });
 
         // Retrieve a random gloss to feature
-        $randomGloss = Cache::remember('ed.home.gloss', 60 /* minutes */, function () {
+        $randomGloss = Cache::remember('ed.home.gloss', 60 * 60 /* seconds */, function () {
             $gloss = Gloss::active()
                 ->inRandomOrder()
                 ->notUncertain()
@@ -78,7 +72,7 @@ class HomeController extends Controller
             ];
         });
 
-        $statistics = Cache::remember('ed.home.statistics', 60 /* minutes */, function () {
+        $statistics = Cache::remember('ed.home.statistics', 60 * 60 /* seconds */, function () {
             return $this->_statisticsRepository->getGlobalStatistics();
         });
 

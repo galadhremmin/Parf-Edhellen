@@ -7,16 +7,6 @@ use App\Http\Controllers\SocialAuthController;
 
 class AuthorizationTest extends TestCase
 {
-    public function setUp() 
-    {
-        parent::setUp();
-    }
-
-    public function tearDown() 
-    {
-        parent::tearDown();
-    }
-
     public function testAvailableNickname()
     {
         $expected = '5nOHivFbGMCVya8bY1SXeUZaXy';

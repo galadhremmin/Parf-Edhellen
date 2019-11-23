@@ -108,7 +108,7 @@ class StatisticsRepository
         $data['totals']['glosses'] = Gloss::active()->count();
 
         // Retrieve growth over time (grouped by day) and involve the members previously identified as parth of the growth.
-        $data['growth'] = $this->getGrowthOverTime($data['categories'], Carbon::now()->addYears(-2), Carbon::now(), 
+        $data['growth'] = $this->getGrowthOverTime($data['categories'], Carbon::now()->addYears(-1), Carbon::now(), 
             // create an array [category] => [account ids]
             array_reduce($data['categories'], function ($carry, $category) use ($data) {
                 $carry[$category] = array_unique(array_map(function ($v) {
@@ -117,7 +117,7 @@ class StatisticsRepository
 
                 return $carry;
             }, []));
-        $data['growth']['new_accounts'] = $this->getGrowthOverTime(['accounts'], Carbon::now()->addYears(-2), Carbon::now())['accounts'];
+        $data['growth']['new_accounts'] = $this->getGrowthOverTime(['accounts'], Carbon::now()->addYears(-1), Carbon::now())['accounts'];
 
         // Retrieve newest accounts
         $data['new_accounts'] = $this->getNewestAccounts($numberOfResultsPerCategory);

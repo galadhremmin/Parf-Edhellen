@@ -22,14 +22,14 @@ class SentenceRepositoryTest extends TestCase
         CanCreateGloss::getRepository as getGlossRepository;
     } // ; <-- remedies Visual Studio Code colouring bug
 
-    public function setUp() 
+    public function setUp(): void
     {
         parent::setUp();
         DB::beginTransaction();
         $this->setUpGlosses();   
     }
 
-    public function tearDown() 
+    public function tearDown(): void
     {
         $this->tearDownGlosses();
         DB::rollBack();

@@ -17,6 +17,11 @@ class Sentence extends ModelBase implements Interfaces\IHasFriendlyName
             ->orderBy('order');
     }
 
+    public function sentence_translations()
+    {
+        return $this->hasMany(SentenceTranslation::class);
+    }
+
     public function language() 
     {
         return $this->belongsTo(Language::class);

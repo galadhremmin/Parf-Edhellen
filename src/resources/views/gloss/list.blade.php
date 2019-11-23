@@ -11,7 +11,7 @@
     @foreach ($glosses as $t)
     <li class="list-group-item">
       <p>
-        <a href="{{ route('gloss.edit', [ 'id' => $t->id ]) }}"{!! $t->is_rejected ? 'style="text-decoration:line-through"' : '' !!}>
+        <a href="{{ $link->contributeGloss($t->id) }}"{!! $t->is_rejected ? 'style="text-decoration:line-through"' : '' !!}>
           <strong>{{ $t->word->word }}</strong>
         </a>
         @if ($t->speech)

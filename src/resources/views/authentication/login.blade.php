@@ -35,3 +35,6 @@
 
   Do you miss your community? If you would contact <em>@parmaeldo</em> on Twitter, I'll see what I can do!
 @endsection
+@section('styles')
+<link rel="stylesheet" href="@assetpath(style-auth.css)">
+@endsection

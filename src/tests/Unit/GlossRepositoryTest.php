@@ -21,13 +21,13 @@ class GlossRepositoryTest extends TestCase
         CanCreateGloss::getRepository as getGlossRepository;
     } // ; <-- remedies Visual Studio Code colouring bug
 
-    protected function setUp() 
+    protected function setUp(): void
     {
         parent::setUp();
         $this->setUpGlosses();      
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $this->tearDownGlosses();
         parent::tearDown();

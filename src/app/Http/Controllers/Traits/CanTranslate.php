@@ -3,7 +3,7 @@ namespace App\Http\Controllers\Traits;
 
 use App\Adapters\BookAdapter;
 use App\Repositories\{
-    ForumRepository, 
+    DiscussRepository, 
     SentenceRepository, 
     GlossRepository
 };
@@ -12,17 +12,17 @@ use App\Models\Gloss;
 trait CanTranslate
 {
     protected $_bookAdapter;
-    protected $_forumRepository;
+    protected $_discussRepository;
     protected $_glossRepository;
     protected $_sentenceRepository;
 
     public function __construct(BookAdapter $bookAdapter,
-        ForumRepository $forumRepository,
+        DiscussRepository $discussRepository,
         GlossRepository $glossRepository, 
         SentenceRepository $sentenceRepository)
     {
         $this->_bookAdapter = $bookAdapter;
-        $this->_forumRepository = $forumRepository;
+        $this->_discussRepository = $discussRepository;
         $this->_glossRepository = $glossRepository;
         $this->_sentenceRepository = $sentenceRepository;
     }
@@ -37,7 +37,7 @@ trait CanTranslate
         $inflections = $includeInflections
             ? $this->_sentenceRepository->getInflectionsForGlosses($glossIds) 
             : [];
-        $comments = $this->_forumRepository->getCommentCountForEntities(Gloss::class, $glossIds);
+        $comments = $this->_discussRepository->getNumberOfPostsForEntities(Gloss::class, $glossIds);
         
         return $this->_bookAdapter->adaptGlosses($glosses, $inflections, $comments, $word);
     }

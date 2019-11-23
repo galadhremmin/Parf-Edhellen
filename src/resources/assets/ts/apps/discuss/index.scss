@@ -1,0 +1,226 @@
+@import '../../_scss/_variables';
+@import '../../_scss/fx';
+
+$ed-toolbar-height: 30px;
+$ed-forum-post-profile-width: 120px;
+$ed-device-width: 540px;
+$ed-forum-post-body-maximum-width: 50rem;
+
+h1 {
+    text-align: center;
+    word-wrap: break-word;
+}
+
+.discuss-thread-tools {
+    height: 37px;
+    overflow: hidden;
+}
+
+.discuss-body {
+    > .sk-spinner.noscript--hidden {
+        margin-bottom: 100vh;
+    }
+
+    .discuss-body__toolbar--primary {
+        margin-top: 1em;
+        text-align: center;
+
+        > form, .alert {
+            text-align: initial;
+        }
+
+        @media (max-width: $ed-device-width) {
+            > .btn {
+                width: 100%;
+            }
+        }
+    }
+
+    .discuss-body__bottom {
+        position: fixed;
+        right: 1em;
+        bottom: 1em;
+    }
+}
+
+.discuss-table {
+    box-sizing: border-box;
+
+    /* row */
+    .r {
+        display: flex;
+        flex-wrap: wrap;
+        padding: $padding-base-vertical;
+
+        &:nth-child(even) {
+            background-color: $table-bg-accent;
+        }
+        
+        &:hover {
+            background-color: $alert-info-bg;
+            border-radius: $border-radius-base;
+        }
+
+        &.sticky {
+            background: $text-color;
+            color: white;
+            a {
+                color: inherit;
+            }
+        }
+
+        /* column */
+        .c { 
+            flex-basis: 0;
+            flex-grow: 1;
+            max-width: 100%;
+
+            &.p2 {
+                flex-grow: 2;
+            }
+
+            &:first-child {
+                max-width: 80px;
+            }
+
+            /* profile picture */
+            .pp {
+                img {
+                    width: 60px;
+                    height: 60px;
+                    border-radius: 30px;
+                    @include ed-box-shadow();
+                }
+            }
+
+            /* profile information */
+            .pi {
+                font-family: $font-family-tiny;
+                font-size: 80%;
+            }
+        }
+    }
+
+    .member-list-account {
+        font-size: 1.5em;
+
+        .profile-summary {
+            font-size: 1rem;
+        }
+    }
+
+    .member-list-number {
+        font-size: 2em; 
+
+        .total-indicator {
+            font-size: 1rem;
+        }  
+    }
+}
+
+.forum-post {
+    display: table;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: $line-height-computed;
+    padding-top: $line-height-computed;
+    border-top: 1px solid $gray-lighter;
+    transition: background-color 2s, padding 2s;
+
+    &:first-child {
+        margin-top: 0;
+        padding-top: 0;
+        border-top: none;
+    }
+
+    &.forum-post--thread + .forum-post {
+        border-top-width: thick;
+    }
+
+    &.highlight {
+        background-color: $alert-info-bg;
+        padding: $padding-large-vertical;
+        border-radius: $border-radius-large;
+    }
+
+    .post-body {
+        p, ul, ol {
+            max-width: $ed-forum-post-body-maximum-width;
+        }
+        pre {
+            max-width: max-content;
+        }
+        table {
+            width: auto;
+            min-width: 200px;
+        }
+    }
+
+    .post-profile-picture {
+        display: table-cell;
+        width: $ed-forum-post-profile-width;
+        text-align: center;
+        font-size: 85%;
+
+        img {
+            width: $ed-forum-post-profile-width/2; 
+            height: $ed-forum-post-profile-width/2;
+            border-radius: $ed-forum-post-profile-width/4;
+            border: 2px solid white;
+            @include ed-box-shadow();
+        }
+    }
+
+    .post-content {
+        display: table-cell;
+        vertical-align: top;
+        overflow: hidden;
+    }
+
+    footer, header {
+        font-family: $font-family-tiny;
+    }
+
+    footer {
+        font-size: $font-size-small;
+        color: $gray-light;
+
+        .post-no {
+            float: right;
+            font-size: $font-size-small;
+            color: $gray-light;
+        }
+
+        > a {
+            float: right;
+        }
+    }
+
+    a {
+        text-decoration: none;
+
+        .like-not-liked {
+            color: $gray-light;
+        }
+
+        .like-liked {
+            color: $brand-success;
+        }
+    }
+}
+
+@media (max-width: $ed-device-width) {
+    .forum-post .post-profile-picture {
+        font-size: 70%;
+        font-family: Helvetica, Arial, sans-serif;
+        width: $ed-forum-post-profile-width*0.16;
+        padding-top: 2px;
+        text-align: left;
+
+        img {
+            width: $ed-forum-post-profile-width*0.25*0.5; 
+            height: $ed-forum-post-profile-width*0.25*0.5;
+            border-radius: $ed-forum-post-profile-width*0.25*0.5*0.5;
+        }
+    }
+}

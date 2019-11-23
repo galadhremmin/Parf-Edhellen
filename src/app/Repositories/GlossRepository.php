@@ -60,6 +60,11 @@ class GlossRepository
         $keywords = $query
             ->select('keyword as k', 'normalized_keyword as nk', 'reversed_normalized_keyword_unaccented_length as nrkul',
                 'normalized_keyword_unaccented_length as nkul', 'reversed_normalized_keyword as rnk', 'word as ok')
+            ->where(function ($q) {
+                // ignore inflections where the word is the same as the keyword.
+                $q->whereNull('word')
+                    ->orWhere('keyword', '<>', DB::raw('word'));
+            })
             ->orderBy($reversed ? 'nrkul' : 'nkul', 'asc')
             ->orderBy($reversed ? 'rnk' : 'nk', 'asc')
             ->limit(100)
@@ -127,7 +132,7 @@ class GlossRepository
      * Gets the ID for the latest entity associated with the specified origin.
      *
      * @param int $originGlossId
-     * @return void
+     * @return int
      */
     public function getLatestGloss(int $originGlossId)
     {
@@ -203,7 +208,11 @@ class GlossRepository
             'a.nickname as account_name',
             'tg.name as gloss_group_name',
             'g.id'
-        ], false)->where('g.language_id', $languageId);
+        ], false);
+
+        if ($languageId !== 0) {
+            $query = $query->where('g.language_id', $languageId);
+        }
         
         if ($inexact) {
             $query->where(function ($query) use ($normalizedWords) {
@@ -553,7 +562,9 @@ class GlossRepository
                     $query->whereNull('keywords.gloss_id')
                         ->orWhere('keywords.gloss_id', $id);
                 })
-                ->select('words.id', 'words.word')
+                ->select('words.word')
+                ->distinct()
+                ->orderBy('words.word')
                 ->get();
 
         return $keywords;

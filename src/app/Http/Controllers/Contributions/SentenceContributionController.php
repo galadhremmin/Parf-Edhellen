@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Collection;
 
 use App\Repositories\SentenceRepository;
-use App\Adapters\SentenceAdapter;
 use App\Models\{
     Contribution,
     Sentence,
@@ -24,12 +23,10 @@ class SentenceContributionController extends Controller implements IContribution
     use CanValidateSentence, 
         CanMapSentence;
 
-    private $_sentenceAdapter;
     private $_sentenceRepository;
 
-    public function __construct(SentenceAdapter $sentenceAdapter, SentenceRepository $sentenceRepository)
+    public function __construct(SentenceRepository $sentenceRepository)
     {
-        $this->_sentenceAdapter = $sentenceAdapter;
         $this->_sentenceRepository = $sentenceRepository;
     }
 
@@ -80,8 +77,8 @@ class SentenceContributionController extends Controller implements IContribution
 
         return view('contribution.sentence.edit', [
             'review' => $contribution,
-            'sentence' => json_encode($sentence),
-            'fragmentData' => json_encode($fragmentData)
+            'sentence' => $sentence,
+            'fragmentData' => $fragmentData
         ]);
     }
     
@@ -100,8 +97,8 @@ class SentenceContributionController extends Controller implements IContribution
             $fragmentData = $this->createFragmentDataFromPayload($sentence);
 
             $model = [
-                'sentence'     => json_encode($sentence),
-                'fragmentData' => json_encode($fragmentData)
+                'sentence'     => $sentence,
+                'fragmentData' => $fragmentData
             ];
         }
 
@@ -246,7 +243,7 @@ class SentenceContributionController extends Controller implements IContribution
             }
         }
 
-        $result = $this->_sentenceAdapter->adaptFragments($fragments);
+        $result = $fragments;
         return $result;
     }
 

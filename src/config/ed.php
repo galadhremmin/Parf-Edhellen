@@ -31,8 +31,8 @@ return [
 
     // applicable sentence builders
     'required_sentence_builders' => [
-        'latin'   => App\Adapters\LatinSentenceBuilder::class,
-        'tengwar' => App\Adapters\TengwarSentenceBuilder::class
+        'latin'   => App\Helpers\SentenceBuilders\LatinSentenceBuilder::class,
+        'tengwar' => App\Helpers\SentenceBuilders\TengwarSentenceBuilder::class
     ],
 
     // Sitemap for unlocking sitemap view 

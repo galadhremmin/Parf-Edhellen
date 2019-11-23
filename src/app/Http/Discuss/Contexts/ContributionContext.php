@@ -21,7 +21,12 @@ class ContributionContext implements IDiscussContext
         return route('contribution.show', ['id' => $entity->id]);
     }
 
-    function available($entityOrId, Account $account = null)
+    public function resolveById(int $entityId)
+    {
+        return Contribution::find($entityId);
+    }
+
+    public function available($entityOrId, Account $account = null)
     {
         if ($account === null) {
             return false;

@@ -4,20 +4,23 @@ namespace App\Http\Discuss\Contexts;
 
 use Illuminate\Database\Eloquent\Model;
 
-use App\Adapters\SentenceAdapter;
-use App\Models\Account;
 use App\Http\Discuss\IDiscussContext;
 use App\Helpers\LinkHelper;
+use App\Models\{
+    Account,
+    Sentence
+};
+use App\Repositories\SentenceRepository;
 
 class SentenceContext implements IDiscussContext
 {
     private $_linkHelper;
-    private $_sentenceAdapter;
+    private $_repository;
 
-    public function __construct(LinkHelper $linkHelper, SentenceAdapter $sentenceAdapter)
+    public function __construct(LinkHelper $linkHelper, SentenceRepository $repository)
     {
-        $this->_linkHelper      = $linkHelper;
-        $this->_sentenceAdapter = $sentenceAdapter;
+        $this->_linkHelper = $linkHelper;
+        $this->_repository = $repository;
     }
 
     public function resolve(Model $entity)
@@ -30,7 +33,12 @@ class SentenceContext implements IDiscussContext
             $entity->id, $entity->name);
     }
 
-    function available($entityOrId, Account $account = null)
+    public function resolveById(int $entityId)
+    {
+        return Sentence::find($entityId);
+    }
+
+    public function available($entityOrId, Account $account = null)
     {
         return true;
     }
@@ -52,12 +60,10 @@ class SentenceContext implements IDiscussContext
     }
 
     public function view(Model $entity)
-    {
-        $data = $this->_sentenceAdapter->adaptFragments($entity->sentence_fragments, false);
-
+    {   
+        $sentence = $this->_repository->getSentence($entity->id);
         return view('discuss.context._sentence', [
-            'sentence'     => $entity,
-            'sentenceData' => $data
+            'sentence' => $sentence
         ]);
     }
 }

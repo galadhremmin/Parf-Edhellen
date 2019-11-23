@@ -32,7 +32,7 @@ class AuditTrailAdapter
      * containing strings a human would be able to understand.
      *
      * @param Collection|array $actions
-     * @return void
+     * @return array
      */
     public function adapt($actions)
     {
@@ -96,7 +96,13 @@ class AuditTrailAdapter
                         break;
                 }
 
-                $entity = 'a comment in <a href="'.route('forum.show', ['id' => $action->entity_id]).'">'.$action->entity_name.'</a>';
+                $entity = 'a comment in <a href="'.
+                    route('discuss.resolve', [
+                        'entityType' => $action->entity_type,
+                        'entityId' => $action->entity_id
+                    ]).'">'.
+                    $action->entity_name.
+                '</a>';
             } else if ($action->entity instanceof FlashcardResult) {
                 switch ($action->action_id) {
                     case AuditTrail::ACTION_FLASHCARD_FIRST_CARD:
@@ -184,7 +190,7 @@ class AuditTrailAdapter
         $noOfMergers = $noOfRows - count($trail); 
         if ($noOfMergers > 0) {
             $remainingRows = $this->_repository->get($noOfMergers, $skipNoOfRows + $noOfRows);
-            return array_merge($trail, $this->adapt($remainingRows, $skipNoOfRows + $noOfRows, $previousItem));
+            return array_merge($trail, $this->adapt($remainingRows));
         }
 
         return $trail;

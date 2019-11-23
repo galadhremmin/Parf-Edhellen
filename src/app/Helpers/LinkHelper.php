@@ -2,6 +2,12 @@
 
 namespace App\Helpers;
 
+use App\Models\{
+    Gloss,
+    Sentence
+};
+use App\Models\Initialization\Morphs;
+
 class LinkHelper
 {
     public function author(int $authorId, string $authorName = null)
@@ -72,16 +78,26 @@ class LinkHelper
 
         return $url;
     }
+    
+    public function forumGroup(int $groupId, string $groupName)
+    {
+        return route('discuss.group', [
+            'id' => $groupId,
+            'slug' => StringHelper::normalizeForUrl($groupName)
+        ]);
+    }
 
-    public function forumThread(int $threadId, string $normalizedSubject = null, $postId = null) 
+    public function forumThread(int $groupId, string $groupName, int $threadId, string $normalizedSubject = null, $postId = 0)
     {
         $slug = $normalizedSubject === null || empty($normalizedSubject) ? 'thread' : $normalizedSubject;
         $props = [
             'id' => $threadId,
-            'slug' => $slug
+            'slug' => $slug,
+            'groupId' => $groupId,
+            'groupSlug' => StringHelper::normalizeForUrl($groupName),
         ];
 
-        if (is_numeric($postId)) {
+        if ($postId !== 0) {
             $props['forum_post_id'] = $postId;
         }
 
@@ -96,5 +112,25 @@ class LinkHelper
     public function contribution(int $contributionId)
     {
         return route('contribution.show', ['id' => $contributionId]);
+    }
+
+    public function contributeGloss(int $originalGlossId = 0)
+    {
+        $params = ['morph' => Morphs::getAlias(Gloss::class)];
+        if ($originalGlossId !== 0) {
+            $params['entity_id'] = $originalGlossId;
+        }
+
+        return route('contribution.create', $params);
+    }
+
+    public function contributeSentence(int $sentenceId = 0)
+    {
+        $params = ['morph' => Morphs::getAlias(Sentence::class)];
+        if ($sentenceId !== 0) {
+            $params['entity_id'] = $sentenceId;
+        }
+
+        return route('contribution.create', $params);
     }
 }

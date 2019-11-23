@@ -21,7 +21,3 @@
   </div>
 
 @endsection
-@section('styles')
-<link rel="stylesheet" href="@assetpath(css/app.discuss.css)">
-@endsection
-
