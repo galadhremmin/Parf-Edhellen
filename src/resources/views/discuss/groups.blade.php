@@ -6,7 +6,7 @@
   
 {!! Breadcrumbs::render('discuss') !!}
 
-<h1>Discussion <span class="tengwar">3D7w#3F</span></h1>
+<h1>Discussion <span class="tengwar"></span></h1>
 
 <div class="link-blocks">
   @foreach ($groups as $group)

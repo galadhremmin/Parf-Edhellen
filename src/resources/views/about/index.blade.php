@@ -3,7 +3,7 @@
 @section('title', 'About')
 @section('body')
 
-<h1>About <span class="tengwar" title="Parf Edhellen">q7Er 4$j$¸5$</span></h1>
+<h1>About <span class="tengwar" title="About Parf Edhellen">  </span></h1>
 <p>Welcome to the <em>Parf Edhellen</em>, The collaborative dictionary dedicated to Tolkien's amazing languages. 
 <em>Parf Edhellen</em> means &ldquo;Elvish Book&rdquo; in Sindarin, the noble language of elves and men. But the 
 dictionary contains all elvish languages, including Telerin and Quenya, with words imported from a variety of 
