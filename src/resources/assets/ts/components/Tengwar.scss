@@ -1,15 +1,15 @@
 @font-face {
-  font-family: 'TengwarAnnatarGlaemscrafu';
-  src: url('../../fonts/tengwar/tengwar-annatar-glaemscrafu.eot');
-  src: url('../../fonts/tengwar/tengwar-annatar-glaemscrafu.eot?#iefix') format('embedded-opentype'),
-        url('../../fonts/tengwar/tengwar-annatar-glaemscrafu.woff') format('woff'),
-        url('../../fonts/tengwar/tengwar-annatar-glaemscrafu.ttf') format('truetype'),
-        url('../../fonts/tengwar/tengwar-annatar-glaemscrafu.svg#tengwar_annatar_glaemscrafuRg') format('svg');
+  font-family: 'TengwarAnnatarGlaemunicode';
+  src: url('../../fonts/tengwar/tengwar-annatar-glaemunicode.eot');
+  src: url('../../fonts/tengwar/tengwar-annatar-glaemunicode.eot?#iefix') format('embedded-opentype'),
+       url('../../fonts/tengwar/tengwar-annatar-glaemunicode.woff') format('woff'),
+       url('../../fonts/tengwar/tengwar-annatar-glaemunicode.ttf') format('truetype'),
+       url('../../fonts/tengwar/tengwar-annatar-glaemunicode.svg#tengwar_annatar_glaemunicodRg') format('svg');
   font-weight: normal;
   font-style: normal;
 }
 .tengwar {
-  font-family: 'TengwarAnnatarGlaemscrafu';
+  font-family: 'TengwarAnnatarGlaemunicode';
   font-size: 110%;
   line-height: 1.5;
   text-decoration: none;

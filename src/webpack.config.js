@@ -3,12 +3,9 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const cleanWebpack = require('clean-webpack-plugin');
 const WebpackNotifierPlugin = require('webpack-notifier');
 
-// const AsyncChunkNames = require('webpack-async-chunk-names-plugin');
-
 // Reads `.env` configuration values to `process.env`
 require('dotenv').config();
 
-const devMode = process.env.NODE_ENV !== 'production';
 const bundleCssWithJavaScript = false;
 const version = process.env.ED_VERSION;
 
@@ -54,7 +51,7 @@ module.exports = {
           enforce: true,
         }
       }
-    }
+    },
   },
   devtool: 'source-map',
   resolve: {
@@ -79,11 +76,17 @@ module.exports = {
           'exports-loader?Glaemscribe',
         ],
         */
-        use: 'script-loader',
+        // use: 'script-loader',
+        use: [
+          'exports-loader?Glaemscribe',
+        ],
       },
       {
-        test: /\.(glaem|cst)\.js$/,
-        use: 'script-loader',
+        test: /\.(cst|glaem)\.js$/,
+        // use: 'script-loader',
+        use: [
+          'imports-loader?Glaemscribe=>window.Glaemscribe',
+        ],
       },
       { 
         test: /\.tsx?$/, 
