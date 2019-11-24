@@ -68,11 +68,11 @@ export default class Transcriber {
     }
 
     private async _loadCharset() {
-        if (DefaultGlaemscribeCharacterSet === 'tengwar_ds_annatar') {
-            return await import(`glaemscribe/js/charsets/tengwar_ds_annatar.cst.js`);
+        try {
+            return await import(`glaemscribe/js/charsets/${DefaultGlaemscribeCharacterSet}.cst.js`);
+        } catch (ex) {
+            throw new Error(`${DefaultGlaemscribeCharacterSet} is not included in the current application bundle: ${ex}.`);
         }
-
-        throw new Error(`${DefaultGlaemscribeCharacterSet} is not included in the current application bundle.`);
     }
 
     private _loadMode(mode: string) {

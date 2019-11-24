@@ -64,7 +64,7 @@ export default class Tengwar extends React.Component<IProps> {
     }
 
     private async _transcribe() {
-        const transcribed = this.props.transcriber.transcribe(this.state.lastText, this.props.mode);
+        const transcribed = await this.props.transcriber.transcribe(this.state.lastText, this.props.mode);
         this.setState({
             transcribed,
         });
