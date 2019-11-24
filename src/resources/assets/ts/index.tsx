@@ -7,7 +7,6 @@ import BookBrowserApp from './apps/book-browser';
 import inject from './Injector';
 
 import './index.scss';
-import Tengwar from './components/Tengwar';
 
 /**
  * Render the website's most important component.
