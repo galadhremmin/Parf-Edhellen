@@ -7,7 +7,7 @@
     "test": "TS_NODE_PROJECT=\"tsconfig.unit-test.json\" TS_NODE_TRANSPILE_ONLY=true mocha -r ts-node/register -r babel-register -r jsdom-global/register -r tsconfig-paths/register -r ignore-styles \"./resources/assets/ts/**/*._spec.ts\" \"./resources/assets/ts/**/*._spec.tsx\"",
     "lint": "tslint \"resources/assets/ts/**/*.ts\" \"resources/assets/ts/**/*.tsx\"",
     "dev": "node node_modules/webpack/bin/webpack.js --config webpack.config.js --mode development",
-    "prod-wrap": "node node_modules/webpack/bin/webpack.js --config webpack.config.js --mode production"
+    "prod-wrap": "node node_modules/webpack/bin/webpack.js --config webpack.prod.config.js --mode production"
   },
   "config": {
     "webpack": "node_modules/laravel-mix/setup/webpack.config.js"
@@ -39,8 +39,10 @@
     "dotenv": "^8.2.0",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.15.1",
+    "exports-loader": "^0.7.0",
     "file-loader": "^4.2.0",
     "ignore-styles": "^5.0.1",
+    "imports-loader": "^0.8.0",
     "jsdom": "^15.2.1",
     "jsdom-global": "^3.0.2",
     "mini-css-extract-plugin": "^0.8.0",
@@ -52,6 +54,7 @@
     "sinon": "^7.5.0",
     "source-map-loader": "^0.2.4",
     "style-loader": "^1.0.0",
+    "terser-webpack-plugin": "^2.2.1",
     "ts-loader": "^6.2.1",
     "ts-node": "^8.5.2",
     "tsconfig-paths": "^3.9.0",
@@ -61,6 +64,7 @@
     "url-loader": "^2.2.0",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
+    "webpack-merge": "^4.2.2",
     "webpack-notifier": "^1.8.0"
   },
   "dependencies": {

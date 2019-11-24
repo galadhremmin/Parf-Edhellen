@@ -34,26 +34,37 @@ export default class Transcriber {
     }
 
     public async initializeGlaemscribe(mode: string) {
-        if ('Glaemscribe' in window === false) {
-            await this._loadGlaemscribe();
+        let transcriber = this._getGlaemscribe();
+        if (! transcriber) {
+            transcriber = await this._loadGlaemscribe();
         }
 
         if (Transcriber._modes.hasOwnProperty(mode) === false) {
             await this._loadMode(mode);
-            Glaemscribe.resource_manager.load_modes(mode);
+            transcriber.resource_manager.load_modes(mode);
             Transcriber._modes[mode] = true;
         }
 
         if (Transcriber._charset === false) {
             await this._loadCharset();
-            Glaemscribe.resource_manager.load_charsets(DefaultGlaemscribeCharacterSet);
+            transcriber.resource_manager.load_charsets(DefaultGlaemscribeCharacterSet);
             Transcriber._charset = true;
         }
     }
 
-    private async _loadGlaemscribe() {
+    private _getGlaemscribe() {
+        return (window as any).Glaemscribe;
+    }
+
+    private _setGlaemscribe(transcriber: IGlaemscribe) {
+        (window as any).Glaemscribe = transcriber;
+    }
+
+    private async _loadGlaemscribe(): Promise<IGlaemscribe> {
         // Load and execute Glaemscribe
-        return await import('glaemscribe/js/glaemscribe.min.js');
+        const Glaemscribe = await import('glaemscribe/js/glaemscribe.min.js');
+        this._setGlaemscribe(Glaemscribe);
+        return Glaemscribe;
     }
 
     private async _loadCharset() {
@@ -65,15 +76,6 @@ export default class Transcriber {
     }
 
     private _loadMode(mode: string) {
-        switch (mode) {
-            case 'adunaic':
-            case 'blackspeech':
-            case 'quenya':
-            case 'sindarin':
-            case 'sindarin-beleriand':
-            case 'telerin':
-            case 'westron':
-                return import(`glaemscribe/js/modes/${mode}.glaem.js`);
-        }
+        return import(`glaemscribe/js/modes/${mode}.glaem.js`);
     }
 }
