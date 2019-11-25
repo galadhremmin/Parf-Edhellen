@@ -37,12 +37,6 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('assetpath', function (string $filePath) {
             $root = '/v'.config('ed.version');
 
-            // detect Internet Explorer and append `-ie' to the asset path.
-            $agent = $_SERVER['HTTP_USER_AGENT'];
-            if (strpos($agent, 'Trident') !== false || strpos($agent, 'MSIE') !== false) {
-                $root .= '-ie';
-            }
-
             if (empty($filePath)) {
                 return $root;
             }
