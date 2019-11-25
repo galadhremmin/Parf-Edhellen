@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Sentence, Gloss};
+use App\Models\{ForumGroup, Sentence, Gloss};
 use App\Helpers\{LinkHelper, StringHelper};
 
 use App\Http\Controllers\Controller;
@@ -12,17 +12,21 @@ class SitemapController extends Controller
 {
     private $_linkHelper;
     private $_domain;
+    private $_accessKey;
 
     public function __construct(LinkHelper $linkHelper)
     {
         $this->_linkHelper = $linkHelper;
         $this->_domain = config('app.url');
+        $this->_accessKey = config('ed.sitemap_key');
     }
 
     public function index(Request $request, string $context)
     {
-        if (! $request->has('key') || $request->input('key') !== config('ed.sitemap_key')) {
-            return response(null, 401);
+        if (! empty($this->_accessKey)) {
+            if (! $request->has('key') || $request->input('key') !== $this->_accessKey) {
+                return abort(401, 'Incorrect access token.');
+            }
         }
 
         $xml = '<?xml version="1.0" encoding="UTF-8"?>'."\n".
@@ -39,8 +43,8 @@ class SitemapController extends Controller
                         'to'      => 'required|numeric|min:0'
                     ]);
 
-                    $from    = $request->input('from');
-                    $to      = $request->input('to');
+                    $from    = intval($request->input('from'));
+                    $to      = intval($request->input('to'));
 
                     $this->addGlosses($xml, $from, $to);
                 }
@@ -48,6 +52,11 @@ class SitemapController extends Controller
             case 'sentences':
                 $this->addSentences($xml);
                 break;
+            case 'discuss':
+                $this->addDiscuss($xml);
+                break;
+            default:
+                abort(400, sprintf('"%s" is an unrecognised context.', $context));
         }
 
         $xml .= '</urlset>'."\n";
@@ -58,7 +67,7 @@ class SitemapController extends Controller
 
     private function addPages(string& $xml)
     {
-        $routeNames = ['home', 'about', 'about.donations'];
+        $routeNames = ['home', 'about', 'about.cookies', 'about.privacy', 'flashcard', 'sentence.public', 'discuss.index'];
 
         foreach ($routeNames as $routeName) {
             $xml .= '<url>'.
@@ -115,6 +124,19 @@ class SitemapController extends Controller
                 'monthly',
                 $sentence->updated_at ?: $sentence->created_at
             );
+        }
+    }
+
+    private function addDiscuss(string& $xml)
+    {
+        $this->addNode($xml, route('discuss.index'));
+
+        $groups = ForumGroup::all();
+        foreach ($groups as $group) {
+            $this->addNode($xml, $this->_linkHelper->forumGroup($group->id, $group->name));
+            foreach ($group->forum_threads as $thread) {
+                $this->addNode($xml, $this->_linkHelper->forumThread($group->id, $group->name, $thread->id, $thread->normalized_subject));
+            }
         }
     }
 
