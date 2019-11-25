@@ -35,14 +35,16 @@ function AvatarForm(props: IProps) {
 
         let imageFile: File = null;
         if (ev.dataTransfer.items) {
-            for (const file of ev.dataTransfer.items) {
+            for (let i = 0; i < ev.dataTransfer.items.length; i += 1) {
+                const file = ev.dataTransfer.items.item(i);
                 if (file.kind === 'file' && file.type.indexOf('image') !== -1) {
                     imageFile = file.getAsFile();
                     break;
                 }
             }
         } else {
-            for (const file of ev.dataTransfer.files) {
+            for (let i = 0; i < ev.dataTransfer.files.length; i += 1) {
+                const file = ev.dataTransfer.files.item(i);
                 if (file.type.indexOf('image') !== -1) {
                     imageFile = file;
                     break;

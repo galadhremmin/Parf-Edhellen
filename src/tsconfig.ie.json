@@ -1,0 +1,37 @@
+{
+    "compilerOptions": {
+        "baseUrl": "./resources/assets/ts",
+        "outDir": "./public/build",
+        "sourceMap": true,
+        "noImplicitAny": true,
+        "module": "esnext",
+        "target": "es5",
+        "jsx": "react",
+        "allowSyntheticDefaultImports": true,
+        "moduleResolution": "node",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "esModuleInterop": true,
+        "types": [
+            "react",
+            "react-dom",
+            "react-redux",
+            "redux",
+            "moment",
+            "moment",
+            "mocha",
+            "chai"
+        ],
+        "paths": {
+            "@root/*": [
+                "*"
+            ]
+        }
+    },
+    "include": [
+        "./resources/assets/ts/**/*"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
