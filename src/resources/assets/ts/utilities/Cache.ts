@@ -27,7 +27,7 @@ export default class Cache<T, L = T> extends LazyLoader<T, L> {
         }
 
         const prefix = `${ApplicationGlobalPrefix}.`;
-        if (! storageKey.startsWith(prefix)) {
+        if (storageKey.indexOf(prefix) !== 0) {
             storageKey = `${prefix}${storageKey}`;
         }
 

@@ -43,7 +43,7 @@ const load = (element: HTMLElement, moduleName: string, props: any) => {
  * @param element the element with the dataset.
  */
 const getProps = (element: HTMLElement) => Object.keys(element.dataset) //
-    .filter((p: string) => p.startsWith(InjectPropAttributeName)) //
+    .filter((p: string) => p.indexOf(InjectPropAttributeName) === 0) //
     .reduce((ps: any, p: string) => {
         const propName = p.charAt(InjectPropAttributeName.length).toLowerCase() + //
         p.substr(InjectPropAttributeName.length + 1);
