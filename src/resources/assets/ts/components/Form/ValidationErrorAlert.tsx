@@ -28,14 +28,14 @@ const ValidationErrorAlert = (props: IProps) => {
         </StaticAlert>;
     }
 
-    const errors = [];
-    for (const [ propertyName, propertyErrors ] of error.errors) {
+    const errors: React.ReactNode[] = [];
+    error.errors.forEach((propertyErrors, propertyName) => {
         for (const propertyError of propertyErrors) {
             errors.push(<span key={errors.length}>
                 <em>{propertyName}</em>: {propertyError}
             </span>);
         }
-    }
+    });
 
     const modifiedMessage = /[!\?\.:]{1}$/.test(error.errorMessage)
         ? error.errorMessage.substr(0, error.errorMessage.length - 1)
