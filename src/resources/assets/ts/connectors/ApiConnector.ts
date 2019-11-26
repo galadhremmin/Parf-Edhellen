@@ -127,10 +127,20 @@ export default class ApiConnector implements IReportErrorApi {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': this._getCsrfToken(),
                 'X-Requested-With': 'XMLHttpRequest',
             },
             timeout: 2500,
         };
+    }
+
+    private _getCsrfToken() {
+        const metaField = document.getElementById('ed-csrf-token');
+        if (! metaField) {
+            return undefined;
+        }
+
+        return metaField.getAttribute('content');
     }
 
     /**

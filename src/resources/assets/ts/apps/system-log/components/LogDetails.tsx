@@ -19,22 +19,28 @@ function LogDetails(props: IProps) {
         <div className="LogDetails__stack">
             {log.error}
         </div>
-        <table className="table table-condensed">
-            <thead>
-                <tr>
-                    <th>Account ID</th>
-                    <th>IP</th>
-                    <th>ID</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><ProfileLink account={account} /></td>
-                    <td>{log.ip}</td>
-                    <td>{log.id}</td>
-                </tr>
-            </tbody>
-        </table>
+        <div className="table-responsive">
+            <table className="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>URL</th>
+                        <th>User agent</th>
+                        <th>Account ID</th>
+                        <th>IP</th>
+                        <th>ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{log.url}</td>
+                        <td>{log.userAgent}</td>
+                        <td><ProfileLink account={account} /></td>
+                        <td>{log.ip}</td>
+                        <td>{log.id}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </>;
 }
 
