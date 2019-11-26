@@ -10,6 +10,7 @@ export interface IErrorEntity {
     message: string;
     updatedAt: Date;
     url: string;
+    userAgent: string;
 }
 
 export interface IGetErrorsResponse {

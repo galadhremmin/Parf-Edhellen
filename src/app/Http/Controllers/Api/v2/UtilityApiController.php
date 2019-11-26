@@ -65,7 +65,8 @@ class UtilityApiController extends Controller
                 ? $user->id 
                 : null,
             'is_common'  => 0,
-            'category'   => $category
+            'category'   => $category,
+            'user_agent' => $_SERVER['HTTP_USER_AGENT']
         ]);
 
         return response(null, 201);
