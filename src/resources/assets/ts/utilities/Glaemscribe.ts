@@ -1,5 +1,13 @@
 /// <reference path="../_types/glaemscribe.d.ts" />
-import { DefaultGlaemscribeCharacterSet } from '../config';
+import {
+    DefaultGlaemscribeCharacterSet,
+    GlaemscribeModeMappings,
+} from '../config';
+
+const enum InitializationContext {
+    Charset = 'charset',
+    Mode = 'mode',
+}
 
 /**
  * Transcribes the specified text body to tengwar using the parmaite font.
@@ -7,14 +15,16 @@ import { DefaultGlaemscribeCharacterSet } from '../config';
  * @param {string} mode
  */
 export default class Transcriber {
-    private static _modes: any = {};
-    private static _charset = false;
+    private static _initializations: { [key: string]: Promise<string> } = {};
 
     public async transcribe(text: string, mode: string) {
-        await this.initializeGlaemscribe(mode);
+        const params = await this.initializeGlaemscribe(mode);
+        if (params === null) {
+            return undefined; // fail!
+        }
 
-        const transcriber = Glaemscribe.resource_manager.loaded_modes[mode];
-        const charset = Glaemscribe.resource_manager.loaded_charsets[DefaultGlaemscribeCharacterSet];
+        const transcriber = Glaemscribe.resource_manager.loaded_modes[params.mode];
+        const charset = Glaemscribe.resource_manager.loaded_charsets[params.charset];
         if (!transcriber) {
             return undefined;
         }
@@ -39,17 +49,26 @@ export default class Transcriber {
             transcriber = await this._loadGlaemscribe();
         }
 
-        if (Transcriber._modes.hasOwnProperty(mode) === false) {
-            await this._loadMode(mode);
+        if (! transcriber.resource_manager.loaded_modes.hasOwnProperty(mode)) {
+            mode = await this._loadMode(mode);
+
+            if (mode === null) {
+                return null;
+            }
+
             transcriber.resource_manager.load_modes(mode);
-            Transcriber._modes[mode] = true;
         }
 
-        if (Transcriber._charset === false) {
-            await this._loadCharset();
-            transcriber.resource_manager.load_charsets(DefaultGlaemscribeCharacterSet);
-            Transcriber._charset = true;
+        const charset = DefaultGlaemscribeCharacterSet;
+        if (! transcriber.resource_manager.loaded_charsets.hasOwnProperty(charset)) {
+            await this._loadCharset(charset);
+            transcriber.resource_manager.load_charsets(charset);
         }
+
+        return {
+            charset,
+            mode,
+        };
     }
 
     private _getGlaemscribe() {
@@ -67,15 +86,41 @@ export default class Transcriber {
         return Glaemscribe;
     }
 
-    private async _loadCharset() {
+    private async _loadCharset(charset: string) {
         try {
-            return await import(`glaemscribe/js/charsets/${DefaultGlaemscribeCharacterSet}.cst.js`);
+            return await this._initialize(InitializationContext.Charset, charset, async () => {
+                await import(`glaemscribe/js/charsets/${charset}.cst.js`);
+                return charset;
+            });
         } catch (ex) {
-            throw new Error(`${DefaultGlaemscribeCharacterSet} is not included in the current application bundle: ${ex}.`);
+            throw new Error(`${charset} is not included in the current application bundle: ${ex}.`);
         }
     }
 
-    private _loadMode(mode: string) {
-        return import(`glaemscribe/js/modes/${mode}.glaem.js`);
+    private async _loadMode(mode: string) {
+        const actualMode = GlaemscribeModeMappings[mode] || mode;
+        try {
+            return await this._initialize(InitializationContext.Mode, mode, async () => {
+                await import(`glaemscribe/js/modes/${actualMode}.glaem.js`);
+                return actualMode;
+            });
+        } catch (ex) {
+            return null;
+        }
+    }
+
+    private async _initialize(context: InitializationContext, name: string, callback: () => Promise<string>) {
+        const key = [context, name].join('-');
+        const existingInitialization = Transcriber._initializations[key];
+        if (existingInitialization !== undefined) {
+            return existingInitialization;
+        }
+
+        const promise = callback().finally(() => {
+            delete Transcriber._initializations[key];
+        });
+
+        Transcriber._initializations[key] = promise;
+        return promise;
     }
 }

@@ -3,6 +3,9 @@
 return [
     'title' => 'Discuss',
 
+    'community.title' => 'Community',
+    'community.profile' => 'Profile',
+
     'member-list.title' => 'Contributors',
 
     'member-list.category.glosses' => 'Most glosses',

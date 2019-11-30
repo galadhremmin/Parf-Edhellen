@@ -1,11 +1,18 @@
 const toggleClick = (subject: HTMLElement, ev: MouseEvent) => {
     ev.preventDefault();
 
-    const targetSelector = subject.dataset.target;
-    const className = subject.dataset.toggle;
+    let targets: NodeListOf<HTMLElement> | HTMLElement[];
+    let className: string;
 
-    const targets = document.querySelectorAll<HTMLElement>(targetSelector);
-    targets.forEach((target) => {
+    if (subject.classList.contains('dropdown-toggle')) {
+        className = 'open';
+        targets = [ subject.parentElement ];
+    } else {
+        className = subject.dataset.toggle;
+        targets = document.querySelectorAll<HTMLElement>(subject.dataset.target);
+    }
+
+    targets.forEach((target: HTMLElement) => {
         target.classList.toggle(className);
     });
 };
@@ -14,9 +21,21 @@ const hookToggle = (toggle: HTMLElement) => {
     toggle.addEventListener('click', toggleClick.bind(window, toggle));
 };
 
-export const hookBootstrapToggles = () => {
+const hookNavbarToggles = () => {
     const toggles = document.querySelectorAll<HTMLElement>('.navbar-toggle');
     toggles.forEach((toggle) => {
         hookToggle(toggle);
     });
+};
+
+const hookDropdownToggles = () => {
+    const toggles = document.querySelectorAll<HTMLElement>('.dropdown-toggle');
+    toggles.forEach((toggle) => {
+        hookToggle(toggle);
+    });
+};
+
+export const hookBootstrapToggles = () => {
+    hookNavbarToggles();
+    hookDropdownToggles();
 };

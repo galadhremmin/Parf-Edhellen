@@ -9,6 +9,14 @@ export const GlobalEventLoadGlossary = 'ednavigate';
 export const GlobalEventLoadReference = 'edref';
 
 export const DefaultGlaemscribeCharacterSet = 'tengwar_guni_annatar';
+export const GlaemscribeModeMappings: { [mode: string]: string } = {
+    'blackspeech': 'blackspeech-tengwar-general_use',
+    'quenya': 'quenya-tengwar-classical',
+    'sindarin': 'sindarin-tengwar-general_use',
+    'sindarin-beleriand': 'sindarin-tengwar-beleriand',
+    'telerin': 'telerin-tengwar-glaemscrafu',
+    'westron': 'westron-tengwar-glaemscrafu',
+};
 
 export const LearnMoreMarkdownUrl = 'https://en.wikipedia.org/wiki/Markdown';
 export const LearnMoreWebFeedUrl = 'https://en.wikipedia.org/wiki/Web_feed';
