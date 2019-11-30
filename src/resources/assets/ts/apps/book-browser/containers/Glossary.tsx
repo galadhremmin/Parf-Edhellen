@@ -11,6 +11,7 @@ import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import { snakeCasePropsToCamelCase } from '@root/utilities/func/snake-case';
 
 import { SearchActions } from '../actions';
+import { IBrowserHistoryState } from '../actions/SearchActions._types';
 import Language from '../components/Language';
 import { RootReducer } from '../reducers';
 import { IProps, IState } from './Glossary._types';
@@ -32,9 +33,11 @@ export class Glossary extends React.PureComponent<IProps, IState> {
         // Subscribe to the global event `loadReference` which occurs when the customer clicks
         // a reference link in any component not associated with the Glossary app.
         this._globalEvents.loadReference = this._onGlobalListenerReferenceLoad;
+        window.addEventListener('popstate', this._onPopState);
     }
 
     public componentWillUnmount() {
+        window.removeEventListener('popstate', this._onPopState);
         this._globalEvents.disconnect();
     }
 
@@ -172,7 +175,8 @@ export class Glossary extends React.PureComponent<IProps, IState> {
      */
     private _onReferenceClick = async (ev: IComponentEvent<IReferenceLinkClickDetails>) => {
         this.props.dispatch(
-            this._actions.loadReference(ev.value.word, ev.value.normalizedWord, ev.value.languageShortName),
+            this._actions.loadReference(ev.value.word, ev.value.normalizedWord, ev.value.languageShortName,
+                ev.value.updateBrowserHistory),
         );
     }
 
@@ -212,6 +216,23 @@ export class Glossary extends React.PureComponent<IProps, IState> {
         this._onReferenceClick({
             value: ev.detail,
         });
+    }
+
+    private _onPopState = (ev: PopStateEvent) => {
+        const state = ev.state as IBrowserHistoryState;
+        if (! state.glossary) {
+            return;
+        }
+
+        this._onReferenceClick({
+            value: {
+                ...state,
+                updateBrowserHistory: false,
+            },
+        });
+        this.props.dispatch(
+            this._actions.selectSearchResultByWord(state.word),
+        );
     }
 }
 

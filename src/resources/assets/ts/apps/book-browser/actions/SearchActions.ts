@@ -23,7 +23,10 @@ import {
     ISelectSearchResultAction,
     ISetSearchResultAction,
 } from '../reducers/SearchResultsReducer._types';
-import { ILoadGlossaryAction } from './SearchActions._types';
+import {
+    IBrowserHistoryState,
+    ILoadGlossaryAction,
+} from './SearchActions._types';
 
 export default class SearchActions {
     constructor(private _api: IBookApi = resolve(DI.BookApi),
@@ -87,7 +90,7 @@ export default class SearchActions {
     /**
      * Moves to the next (or previous) search result based on the specified `direction`;
      * +1 moves forward, -1 moves backwards.
-     * @param direction
+     * @param direction +1 down, -1 up.
      */
     public selectNextResult(direction: number) {
         return async (dispatch: ThunkDispatch<any, any, any>, getState: () => RootReducer) => {
@@ -114,6 +117,24 @@ export default class SearchActions {
                 updateBrowserHistory: true,
             };
             await this.glossary(args)(dispatch);
+        };
+    }
+
+    /**
+     * Picks amongst current search results based on the specified word.
+     * @param word word
+     */
+    public selectSearchResultByWord(word: string) {
+        return (dispatch: ThunkDispatch<any, any, any>, getState: () => RootReducer) => {
+            const results = getState().searchResults;
+            if (! Array.isArray(results) || results.length < 1) {
+                return;
+            }
+
+            const result = results.find((s) => s.word === word);
+            if (result) {
+                dispatch(this.selectSearchResult(result));
+            }
         };
     }
 
@@ -190,8 +211,9 @@ export default class SearchActions {
      * Loads the glossary for the reference link.
      * @param word
      * @param languageShortName
+     * @param updateBrowserHistory (optional) whether to invoke pushState.
      */
-    public loadReference(word: string, normalizedWord: string, languageShortName: string) {
+    public loadReference(word: string, normalizedWord: string, languageShortName: string, updateBrowserHistory = true) {
         return async (dispatch: ThunkDispatch<any, any, any>, getState: () => RootReducer) => {
             const language = await this._languages.find(languageShortName, 'shortName');
             let languageId = 0;
@@ -200,12 +222,13 @@ export default class SearchActions {
             }
 
             const state = getState();
-            await this._loadGlossary(dispatch, {
+            const args = {
                 includeOld: state.search.includeOld,
                 languageId,
                 normalizedWord,
                 word,
-            }, languageShortName);
+            };
+            await this._loadGlossary(dispatch, args, languageShortName, updateBrowserHistory);
         };
     }
 
@@ -232,7 +255,13 @@ export default class SearchActions {
         // When navigating using the browser's back and forward buttons,
         // the state needn't be modified.
         if (updateBrowserHistory && window.history.pushState) {
-            window.history.pushState(null, title, address);
+            const state: IBrowserHistoryState = {
+                glossary: true,
+                languageShortName,
+                normalizedWord: args.normalizedWord,
+                word: args.word,
+            };
+            window.history.pushState(state, title, address);
         }
 
         // because most browsers doesn't change the document title when pushing state
