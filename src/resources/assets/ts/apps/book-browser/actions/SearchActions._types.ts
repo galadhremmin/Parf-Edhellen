@@ -6,3 +6,10 @@ export interface ILoadGlossaryAction {
     searchResult: ISearchResult;
     updateBrowserHistory: boolean;
 }
+
+export interface IBrowserHistoryState {
+    glossary: boolean;
+    languageShortName: string;
+    normalizedWord: string;
+    word: string;
+}

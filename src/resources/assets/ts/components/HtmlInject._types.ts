@@ -4,6 +4,7 @@ export interface IReferenceLinkClickDetails {
     languageShortName: string;
     normalizedWord: string;
     word: string;
+    updateBrowserHistory?: boolean;
 }
 
 export interface IEventProps {
