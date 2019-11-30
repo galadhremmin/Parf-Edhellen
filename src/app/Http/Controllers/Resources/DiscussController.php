@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers\Resources;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Cache; 
+use Cache;
+use Log;
 use Carbon\Carbon;
 
 use App\Http\Controllers\Controller;
 use App\Http\Discuss\ContextFactory;
 use App\Http\Controllers\Traits\CanAdaptDiscuss;
 use App\Adapters\DiscussAdapter;
+use App\Helpers\LinkHelper;
 use App\Repositories\{
     DiscussRepository,
     StatisticsRepository
@@ -27,17 +30,20 @@ class DiscussController extends Controller
     protected $_contextFactory;
     protected $_discussRepository;
     protected $_statisticsRepository;
+    private $_linkHelper;
 
     public function __construct(
         DiscussAdapter $discussAdapter,
         ContextFactory $contextFactory,
         DiscussRepository $discussRepository,
-        StatisticsRepository $statisticsRepository) 
+        StatisticsRepository $statisticsRepository,
+        LinkHelper $linkHelper)
     {
         $this->setupDiscussAdapter($discussAdapter);
         $this->_discussRepository    = $discussRepository;
         $this->_contextFactory       = $contextFactory;
         $this->_statisticsRepository = $statisticsRepository;
+        $this->_linkHelper = $linkHelper;
     }
 
     public function index(Request $request)
@@ -55,12 +61,24 @@ class DiscussController extends Controller
     {
         $currentPage = max(0, intval($request->input('offset')));
 
-        $group = $this->_discussRepository->getGroup($id);
-        $model = $this->adaptForumThreadsInGroup(
-            $this->_discussRepository->getThreadDataInGroup($group, $request->user(), $currentPage)
-        );
+        try {
+            $group = $this->_discussRepository->getGroup($id);
+            $model = $this->adaptForumThreadsInGroup(
+                $this->_discussRepository->getThreadDataInGroup($group, $request->user(), $currentPage)
+            );
         
-        return view('discuss.group', $model->getAllValues());
+            return view('discuss.group', $model->getAllValues());
+        } catch (ModelNotFoundException $ex) {
+            // unfortunately, before groups were a thing, the path pattern was identical to threads
+            // so implement a graceful fallback before giving up:
+            $threadData = $this->_discussRepository->getThreadData($id);
+            $thread = $threadData->getThread();
+            $path = $this->_linkHelper->forumThread(
+                $thread->forum_group_id, $thread->forum_group->name,
+                $id, $thread->normalized_subject
+            );
+            return redirect($path);
+        }
     }
 
     public function show(Request $request, int $groupId, string $groupSlug, int $id)
