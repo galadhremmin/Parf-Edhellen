@@ -3,5 +3,6 @@
 return [
     'title' => 'Dashboard',
     'login' => 'Log in',
-    'logout' => 'Log out'
+    'logout' => 'Log out',
+    'register' => 'Register'
 ];

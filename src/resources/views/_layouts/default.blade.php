@@ -47,32 +47,57 @@
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
-            <li class="{{ active('discuss.members') }}">
-              <a href="{{ route('discuss.members') }}">
-                @lang('discuss.member-list.title')
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                @if ($user)
+                  {{ $user->nickname }}
+                @else
+                  @lang('discuss.community.title')
+                @endif
+                <span class="caret"></span>
               </a>
+              <ul class="dropdown-menu">
+                @if ($user)
+                <li class="{{ active('author.my-profile') }}">
+                  <a href="{{ route('author.my-profile') }}">
+                    <span class="glyphicon glyphicon-user"></span> 
+                    &nbsp;@lang('discuss.community.profile')
+                  </a>
+                </li>
+                <li class="{{ active('dashboard') }}">
+                  <a href="{{ route('dashboard') }}">
+                    <span class="glyphicon glyphicon-dashboard"></span> 
+                    &nbsp;@lang('dashboard.title')
+                  </a>
+                </li>
+                <li>
+                  <a href="{{ route('logout') }}">
+                    <span class="glyphicon glyphicon-log-out"></span> 
+                    &nbsp;@lang('dashboard.logout')
+                  </a>
+                </li>
+                @else
+                <li class="{{ active('login') }}">
+                  <a href="{{ route('login') }}">
+                    <span class="glyphicon glyphicon-log-in"></span> 
+                    &nbsp;@lang('dashboard.login')
+                  </a>
+                </li>
+                <li>
+                  <a href="{{ route('login') }}">
+                    <span class="glyphicon glyphicon-user"></span> 
+                    &nbsp;@lang('dashboard.register')
+                  </a>
+                </li>
+                @endif
+                <li class="divider" role="separator"></li>
+                <li class="{{ active('discuss.members') }}">
+                  <a href="{{ route('discuss.members') }}">
+                    @lang('discuss.member-list.title')
+                  </a>
+                </li>
+              </ul>
             </li>
-            @if ($user)
-            <li class="{{ active('dashboard') }}">
-              <a href="{{ route('dashboard') }}">
-                <span class="glyphicon glyphicon-dashboard"></span> 
-                &nbsp;@lang('dashboard.title')
-              </a>
-            </li>
-            <li>
-              <a href="{{ route('logout') }}">
-                <span class="glyphicon glyphicon-log-out"></span> 
-                &nbsp;@lang('dashboard.logout')
-              </a>
-            </li>
-            @else
-            <li class="{{ active('login') }}">
-              <a href="{{ route('login') }}">
-                <span class="glyphicon glyphicon-log-in"></span> 
-                &nbsp;@lang('dashboard.login')
-              </a>
-            </li>
-            @endif
           </ul>
         </div><!--/.nav-collapse -->
       </div><!--/.container-fluid -->
