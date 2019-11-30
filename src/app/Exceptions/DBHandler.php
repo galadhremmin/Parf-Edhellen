@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Exception;
 
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Session\TokenMismatchException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use App\Models\SystemError;
@@ -23,7 +24,8 @@ class DBHandler extends Handler
     {
         $shouldIgnore = $exception instanceof AuthenticationException ||
                         $exception instanceof NotFoundHttpException ||
-                        $exception instanceof ValidationException;
+                        $exception instanceof ValidationException ||
+                        $exception instanceof TokenMismatchException;
 
         // make sure that it is possible to establish a database connection
         if (! $shouldIgnore) {
