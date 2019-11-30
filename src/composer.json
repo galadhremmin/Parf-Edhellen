@@ -15,6 +15,7 @@
         "laravel/socialite": "^3.0",
         "laravel/tinker": "~1.0",
         "sensiolabs/security-checker": "^4.1",
+        "socialiteproviders/discord": "^2.0",
         "socialiteproviders/microsoft-live": "^3.0",
         "watson/active": "^2.0"
     },

@@ -38,6 +38,12 @@ return [
         'redirect' => env('AUTH_MICROSOFT_REDIRECT'),
     ],
 
+    'discord' => [
+        'client_id' => env('AUTH_DISCORD_APP_ID'),
+        'client_secret' => env('AUTH_DISCORD_APP_SECRET'),
+        'redirect' => env('AUTH_DISCORD_REDIRECT'),
+    ],
+
     'ses' => [
         'key' => env('AUTH_SES_KEY'),
         'secret' => env('AUTH_SES_SECRET'),
