@@ -1,10 +1,10 @@
 import React from 'react';
 
+import Avatar from '@root/components/Avatar';
 import Markdown from '@root/components/Markdown';
 import Tengwar from '@root/components/Tengwar';
 import TextIcon from '@root/components/TextIcon';
 import { DI, resolve } from '@root/di';
-import Avatar from '../components/Avatar';
 import { IProps } from './Profile._types';
 
 import './Profile.scss';

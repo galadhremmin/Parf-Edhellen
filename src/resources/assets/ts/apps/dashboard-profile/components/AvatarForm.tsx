@@ -5,8 +5,8 @@ import React, {
     useState,
 } from 'react';
 
+import Avatar from '@root/components/Avatar';
 import { fireEventAsync } from '@root/components/Component';
-import Avatar from './Avatar';
 import { IProps } from './AvatarForm._types';
 
 import './AvatarForm.scss';

@@ -220,7 +220,7 @@ export class Glossary extends React.PureComponent<IProps, IState> {
 
     private _onPopState = (ev: PopStateEvent) => {
         const state = ev.state as IBrowserHistoryState;
-        if (! state.glossary) {
+        if (! state || ! state.glossary) {
             return;
         }
 

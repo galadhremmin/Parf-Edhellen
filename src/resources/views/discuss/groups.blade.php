@@ -15,6 +15,9 @@
       <span class="label label-default">{{ $number_of_threads[$group->id] }}</span>
       <h3>{{ $group->name }}</h3>
       <p>{{ $group->description }}</p>
+      @if (isset($accountsInGroup[$group->id]))
+      <div data-inject-module="discuss-groups" data-inject-prop-accounts="@json($accountsInGroup[$group->id])"></div>
+      @endif
     </a>
   </blockquote>
   @endforeach

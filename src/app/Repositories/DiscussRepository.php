@@ -35,6 +35,7 @@ use App\Repositories\ValueObjects\{
     ForumThreadsInGroupValue,
     ForumThreadValue
 };
+use Carbon\Carbon;
 
 class DiscussRepository
 {
@@ -49,7 +50,7 @@ class DiscussRepository
      * Gets an associative array with the following keys:
      * * `groups`: all available groups in the system.
      * 
-     * @return Collection
+     * @return ForumGroupsValue
      */
     public function getGroups() 
     {
@@ -62,6 +63,40 @@ class DiscussRepository
             'groups' => $groups,
             'number_of_threads' => $numberOfThreads
         ]);
+    }
+
+    /**
+     * Gets active account contributors in the specified groups.
+     * 
+     * @return Collection
+     */
+    public function getAccountsInGroup(Collection $groups)
+    {
+        $groupIds = $groups->map(function ($group) {
+            return $group->id;
+        });
+        $accountIds = DB::table('forum_threads')
+            ->join('forum_posts', 'forum_posts.forum_thread_id', '=', 'forum_threads.id')
+            ->join('accounts', 'accounts.id', '=', 'forum_posts.account_id')
+            ->whereIn('forum_group_id', $groupIds)
+            ->where('forum_posts.created_at', '>=', Carbon::now()->addMonth(-12))
+            ->where('accounts.has_avatar', 1)
+            ->orderBy('forum_posts.created_at', 'desc')
+            ->select('forum_posts.account_id', 'forum_group_id', 'accounts.has_avatar', 'accounts.nickname')
+            ->distinct()
+            ->get()
+            ->mapToDictionary(function ($a) {
+                $account = new Account([
+                    'nickname'   => $a->nickname,
+                    'has_avatar' => $a->has_avatar,
+                ]);
+                $account->id = $a->account_id; // `id` is not fillable
+                return [
+                    $a->forum_group_id => $account
+                ];
+            });
+
+        return $accountIds;
     }
 
     /**

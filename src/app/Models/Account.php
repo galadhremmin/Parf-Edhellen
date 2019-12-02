@@ -19,7 +19,8 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName
      * @var array
      */
     protected $fillable = [
-        'nickname', 'email', 'identity', 'authorization_provider_id', 'created_at', 'provider_id', 'is_configured'
+        'nickname', 'email', 'identity', 'authorization_provider_id', 'created_at', 'provider_id', 'is_configured',
+        'has_avatar'
     ];
 
     /**
