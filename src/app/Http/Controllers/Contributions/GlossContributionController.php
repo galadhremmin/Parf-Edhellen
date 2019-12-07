@@ -13,6 +13,7 @@ use App\Models\{
     Contribution,
     Sense,
     Gloss,
+    GlossDetail,
     Translation,
     Word
 };
@@ -52,6 +53,7 @@ class GlossContributionController extends Controller implements IContributionCon
         }
 
         $translations = $this->getTranslationsFromPayload($glossData);
+        $details      = $this->getDetailsFromPayload($glossData);
         $parentGloss = array_key_exists('id', $glossData)
             ? $glossData['id'] : 0;
         $glossData = $glossData + [ 
@@ -67,10 +69,9 @@ class GlossContributionController extends Controller implements IContributionCon
         // Hack for assigning to the relation _translations_ without saving them to the database.
         $gloss->setRelation('translations', new Collection($translations));
         $gloss->setRelation('word', new Word(['word' => $contribution->word]));
-        $gloss->setRelation('gloss_details', new Collection());
+        $gloss->setRelation('gloss_details', new Collection($details));
 
         $glossData = $this->_bookAdapter->adaptGlosses($glosses);
-        
         return view('contribution.gloss.show', $glossData + [
             'review'      => $contribution,
             'keywords'    => $keywords,
@@ -110,6 +111,7 @@ class GlossContributionController extends Controller implements IContributionCon
             : $contribution->account_id
         );
         $translations = $this->getTranslationsFromPayload($payload);
+        $details      = $this->getDetailsFromPayload($payload);
 
         $payloadData = $payload + [ 
             'contribution_id' => $contribution->id,
@@ -118,7 +120,8 @@ class GlossContributionController extends Controller implements IContributionCon
             'sense'           => $sense,
             'keywords'        => $keywords,
             'notes'           => $contribution->notes,
-            'translations'    => $translations
+            'translations'    => $translations,
+            'gloss_details'   => $details
         ];
 
         return $request->ajax()
@@ -143,7 +146,7 @@ class GlossContributionController extends Controller implements IContributionCon
 
         if ($entityId) {
             $gloss = Gloss::where('id', $entityId)
-                ->with('account', 'sense', 'sense.word', 'gloss_group', 'word', 'translations')
+                ->with('account', 'sense', 'sense.word', 'gloss_group', 'word', 'translations', 'gloss_details')
                 ->firstOrFail();
 
             $gloss->keywords = $this->_glossRepository->getKeywords($gloss->sense_id, $gloss->id);
@@ -182,6 +185,7 @@ class GlossContributionController extends Controller implements IContributionCon
         }
 
         $entity->_translations  = $translations;
+        $entity->_details       = $details;
 
         $contribution->word     = $word;
         $contribution->sense    = $sense;
@@ -197,6 +201,7 @@ class GlossContributionController extends Controller implements IContributionCon
         ];
 
         $translations = $this->getTranslationsFromPayload($glossData);
+        $details      = $this->getDetailsFromPayload($glossData);
 
         $gloss = new Gloss($glossData);
         // is the contribution a proposed change to an existing gloss?
@@ -207,10 +212,15 @@ class GlossContributionController extends Controller implements IContributionCon
         $keywords = json_decode($contribution->keywords, true);
 
         $gloss = $this->_glossRepository->saveGloss(
-            $contribution->word, $contribution->sense, $gloss, $translations, $keywords);
+            $contribution->word, $contribution->sense, $gloss, $translations, $keywords, $details);
         $contribution->gloss_id = $gloss->id;
     }
 
+    /**
+     * Gets translations (if available) from the specified array.
+     * @param $glossData array payload from persistence layer
+     * @return array
+     */
     private function getTranslationsFromPayload(array& $glossData)
     {
         // Retrieve translations, which should either be a an array stored
@@ -242,5 +252,24 @@ class GlossContributionController extends Controller implements IContributionCon
         }
         
         return $translations;
+    }
+
+    /**
+     * Gets gloss details from the specified array.
+     * @param $glossData array payload from persistence layer
+     * @return array
+     */
+    private function getDetailsFromPayload(array& $glossData)
+    {
+        if (! isset($glossData['_details'])) {
+            return [];
+        }
+
+        $details = array_map(function ($data) {
+            return new GlossDetail($data);
+        }, $glossData['_details']);
+        unset($glossData['_details']);
+
+        return $details;
     }
 }
