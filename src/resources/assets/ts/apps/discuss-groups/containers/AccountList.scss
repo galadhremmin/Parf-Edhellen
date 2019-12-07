@@ -1,0 +1,33 @@
+@import '../../../_scss/variables';
+
+$max-avatar-size: 2rem;
+$avatar-distance: 0.1rem;
+
+.AccountList--avatars {
+    overflow: hidden;
+    white-space: nowrap;
+
+    .Avatar--picture {
+        width: $max-avatar-size;
+        height: $max-avatar-size;
+        box-shadow: none;
+        margin-left: $avatar-distance;
+
+        &:first-child {
+            margin-left: 0;
+        }
+    }
+
+    > * {
+        vertical-align: middle;
+    }
+
+    &:after {
+        content: "... and more.";
+        display: inline-block;
+        font-family: $font-family-tiny;
+        font-size: 0.8rem;
+        color: $gray;
+        margin-left: $avatar-distance*5;
+    }
+}

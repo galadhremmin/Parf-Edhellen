@@ -53,7 +53,7 @@ trait CanAdaptDiscuss
 
     protected function adaptForumPosts(Collection $data)
     {
-        $this->_discussAdapter->adaptPost($data);
+        $this->_discussAdapter->adaptPosts($data);
         return $data;
     }
 
@@ -66,6 +66,16 @@ trait CanAdaptDiscuss
     protected function adaptForumPostsInThread(ForumPostsInThreadValue $data)
     {
         $this->_discussAdapter->adaptPosts($data->getPosts());
+        return $data;
+    }
+
+    protected function adaptAccountsPerForumGroup(Collection $data)
+    {
+        foreach ($data as $accounts) {
+            foreach ($accounts as $account) {
+                $this->_discussAdapter->adaptAccount($account);
+            }
+        }
         return $data;
     }
 }

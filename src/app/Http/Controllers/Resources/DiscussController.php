@@ -53,8 +53,15 @@ class DiscussController extends Controller
 
     public function groups(Request $request)
     {
-        $groups = $this->_discussRepository->getGroups();
-        return view('discuss.groups', $groups->getAllValues());
+        $groups   = $this->_discussRepository->getGroups();
+        $accounts = $this->adaptAccountsPerForumGroup(
+            $this->_discussRepository->getAccountsInGroup($groups->getGroups())
+        );
+
+        $model = $groups->getAllValues() + [
+            'accountsInGroup' => $accounts
+        ];
+        return view('discuss.groups', $model);
     }
 
     public function group(Request $request, int $id)
