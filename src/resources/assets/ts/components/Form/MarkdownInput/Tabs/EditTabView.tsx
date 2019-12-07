@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 
 import { fireEvent } from '@root/components/Component';
 import Markdown from '@root/components/Markdown';
@@ -8,7 +8,11 @@ import { IProps, IState } from './EditTabView._types';
 
 import './EditTabView.scss';
 
+const ParagraphDelimiter = `\n\n`;
+const EnterKeyCode = 13;
+
 export default class EditTabView extends React.Component<IProps, IState> {
+    private _markdownEditor: HTMLTextAreaElement;
     private _triggerPreview = debounce(500, () => {
         const {
             value,
@@ -22,8 +26,25 @@ export default class EditTabView extends React.Component<IProps, IState> {
     constructor(props: IProps) {
         super(props);
         this.state = {
+            caretPosition: null,
             previewValue: props.value || null,
         };
+    }
+
+    public componentDidUpdate() {
+        const {
+            caretPosition,
+        } = this.state;
+
+        if (caretPosition !== null) {
+            // Set the caret position to the one held in component state. This is a one-time
+            // operation used to recover caret position for when paragraphs (or other textarea
+            // events are overridden).
+            this._markdownEditor.selectionEnd = caretPosition;
+            this.setState({
+                caretPosition: null,
+            });
+        }
     }
 
     public render() {
@@ -51,6 +72,7 @@ export default class EditTabView extends React.Component<IProps, IState> {
                             required={required}
                             rows={rows}
                             value={value}
+                            ref={this._setMarkdownEditorRef}
                             placeholder="Click or tap here to start typing."
                     />
                 </div>
@@ -73,6 +95,10 @@ export default class EditTabView extends React.Component<IProps, IState> {
                 </small>
             </div>
         </>;
+    }
+
+    private _setMarkdownEditorRef = (component: HTMLTextAreaElement) => {
+        this._markdownEditor = component;
     }
 
     private _triggerChange(newValue: string) {
@@ -109,13 +135,31 @@ export default class EditTabView extends React.Component<IProps, IState> {
         }
 
         const target = (ev.target as HTMLTextAreaElement);
-        const pos = target.selectionStart;
+        const start = target.selectionStart;
+        const end = target.selectionEnd;
 
-        if (ev.which === 13 && pos !== undefined) {
+        if (ev.which === EnterKeyCode && start !== undefined) {
+            // Intercept the event and prevent propagation as the default behavior for the enter key is completely
+            // overridden by this component.
             ev.preventDefault();
             ev.stopPropagation();
 
-            const newValue = target.value.substr(0, pos) + `\n\n` + target.value.substr(pos + 1);
+            // Insert a paragraph between the start and end position of the current 'selection' (i.e. caret position).
+            const newValue = [
+                target.value.substr(0, start),
+                ParagraphDelimiter,
+                target.value.substr(end),
+            ].join('');
+
+            // The component needs to remember the last caret position so that it can be restored after the
+            // component's value prop is changed. If the component do not remember the caret position, the
+            // caret will be moved to the end of the string.
+            this.setState({
+                caretPosition: end + ParagraphDelimiter.length,
+            });
+
+            // Inform observers that the value has changed. It is necessary to manually fire the change event
+            // because the event has been intercepted and propagation has been disabled.
             this._triggerChange(newValue);
         }
     }
