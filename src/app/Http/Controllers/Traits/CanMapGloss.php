@@ -46,7 +46,7 @@ trait CanMapGloss
             ]);
         }, $request->input('translations'));
 
-        $details = $request->has('details') 
+        $details = $request->has('gloss_details') 
             ? array_map(function ($d) use($gloss) {
                 return new GlossDetail([
                     'category'   => trim($d['category']),
@@ -54,7 +54,7 @@ trait CanMapGloss
                     'order'      => intval($d['order']),
                     'account_id' => $gloss->account_id
                 ]);
-            }, $request->input('details'))
+            }, $request->input('gloss_details'))
             : [];
 
         return [
