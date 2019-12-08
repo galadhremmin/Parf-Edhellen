@@ -104,6 +104,11 @@ class LinkHelper
         return route('discuss.show', $props);
     }
 
+    public function resolveThreadByPost(int $postId)
+    {
+        return route('discuss.resolve-by-post', [ 'postId' => $postId ]);
+    }
+
     public function mailCancellation(string $cancellationToken)
     {
         return route('mail-setting.cancellation', ['token' => $cancellationToken]);

@@ -6,7 +6,7 @@ This is a notification that the thread you are subscribed to has changed.
 If you do not believe you have subscribed to this thread, {{ config('app.name') }}
 has probably notified you because you have posted to it. 
 
-@component('mail::button', ['url' => $link->forumThread($post->forum_thread_id)])
+@component('mail::button', ['url' => $link->resolveThreadByPost($post->id)])
 Show {{ $post->account->nickname }}'s post
 @endcomponent
 

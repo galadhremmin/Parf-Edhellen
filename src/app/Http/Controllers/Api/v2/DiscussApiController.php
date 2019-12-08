@@ -176,6 +176,30 @@ class DiscussApiController extends Controller
     }
 
     /**
+     * HTTP GET. Returns the thread for a specific post.
+     */
+    public function resolveThreadFromPost(Request $request, int $postId)
+    {
+        $post = $this->_discussRepository->getPost($postId, $request->user());
+        if ($post === null) {
+            abort(404, sprintf('Post with ID %d does not exist.', $postId));
+        }
+
+        if ($request->ajax()) {
+            return $post->forum_thread;
+        } else {
+            $linker = resolve(LinkHelper::class);
+            return redirect($linker->forumThread(
+                $post->forum_thread->forum_group_id,
+                $post->forum_thread->forum_group->name,
+                $post->forum_thread_id,
+                $post->forum_thread->normalized_subject,
+                $post->id
+            ));
+        }
+    }
+
+    /**
      * HTTP POST. Retrieves metadata associated with the specified posts.
      */
     public function getThreadMetadata(Request $request)
