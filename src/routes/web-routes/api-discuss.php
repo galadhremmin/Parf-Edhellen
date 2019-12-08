@@ -21,6 +21,10 @@ Route::group([
             'entityType' => '[a-z]+',
             'entityId' => REGULAR_EXPRESSION_NUMERIC
         ])->name('discuss.resolve');
+    Route::get('thread/resolve-by-post/{postId}', [ 'uses' => 'DiscussApiController@resolveThreadFromPost' ])
+        ->where([
+            'postId' => REGULAR_EXPRESSION_NUMERIC
+        ])->name('discuss.resolve-by-post');
     Route::get('post/{postId}', [ 'uses' => 'DiscussApiController@getPost' ])
         ->where([ 'postId' => REGULAR_EXPRESSION_NUMERIC ]);
 

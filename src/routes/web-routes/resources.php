@@ -16,6 +16,4 @@ Route::group([
         ->name('discuss.members');
     Route::get('/all-contributors', 'DiscussController@allMembers')
         ->name('discuss.member-list');
-    Route::get('discuss/find-thread/{id}', 'DiscussController@resolveThread')
-        ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ])->name('discuss.find-thread');
 });

@@ -622,6 +622,7 @@ class DiscussRepository
             return false;
         }
 
+        $event = null;
         try {
             DB::beginTransaction();
 
@@ -630,6 +631,7 @@ class DiscussRepository
             if ($originalPost->exists) {
                 // update the existing post.
                 $originalPost->save();
+                $event = new ForumPostEdited($originalPost, $account->id);
             } else {
                 $post = ForumPost::create([
                     'account_id'          => $account->id,
@@ -642,6 +644,8 @@ class DiscussRepository
                 
                 // Abandon the original post by pointing at the post we just created.
                 $originalPost = $post;
+
+                $event = new ForumPostCreated($originalPost, $account->id);
             }
 
             $thread->account_id = $account->id;
@@ -653,7 +657,10 @@ class DiscussRepository
             throw $ex;
         }
 
-        event(new ForumPostCreated($originalPost, $account->id));
+        if ($event !== null) {
+            event($event);
+        }
+
         return true;
     }
 
