@@ -171,6 +171,13 @@ export interface ISentenceFragmentEntity {
     type?: SentenceFragmentType;
 }
 
+export interface ISentenceTranslationEntity {
+    sentenceId?: number;
+    sentenceNumber: number;
+    translation: string;
+    paragraphNumber: number;
+}
+
 export enum SentenceFragmentType {
     Word              = 0,
     NewLine           = 10,

@@ -1,20 +1,18 @@
+import { mapper } from '@root/utilities/func/mapper';
 import { Actions } from '../actions';
 import {
     IGlossAction,
     IGlossState,
 } from './GlossReducer._types';
 
-const GlossReducer = (state: IGlossState = {
+const InitialState: IGlossState = {
     account: null,
     comments: '',
     etymology: null,
     externalId: null,
     glossDetails: [],
-    glossGroup: null,
     glossGroupId: 0,
     id: 0,
-    isIndex: false,
-    isLatest: false,
     isRejected: false,
     isUncertain: false,
     keywords: [],
@@ -31,17 +29,31 @@ const GlossReducer = (state: IGlossState = {
     word: {
         word: '',
     },
-}, action: IGlossAction) => {
+};
+
+const GlossReducer = (state: IGlossState = InitialState, action: IGlossAction) => {
     switch (action.type) {
         case Actions.ReceiveGloss:
-            const {
-                gloss,
-            } = action;
-
-            gloss.comments = gloss.comments || '';
-            gloss.tengwar = gloss.tengwar || '';
-
-            return gloss;
+            return mapper<typeof action['gloss'], IGlossState>({
+                account: 'account',
+                comments: (gloss) => gloss.comments || '',
+                etymology: 'etymology',
+                externalId: 'externalId',
+                glossDetails: 'glossDetails',
+                glossGroupId: 'glossGroupId',
+                id: 'id',
+                isRejected: 'isRejected',
+                isUncertain: 'isUncertain',
+                keywords: 'keywords',
+                languageId: 'languageId',
+                phonetic: 'phonetic',
+                sense: 'sense',
+                source: 'source',
+                speechId: 'speechId',
+                tengwar: (gloss) => gloss.tengwar || '',
+                translations: 'translations',
+                word: 'word',
+            }, action.gloss);
         case Actions.SetField:
             return {
                 ...state,

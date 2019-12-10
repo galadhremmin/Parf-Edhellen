@@ -9,7 +9,7 @@ import thunkMiddleware from 'redux-thunk';
 import { ReduxThunkDispatch } from '@root/_types';
 import { composeEnhancers } from '@root/utilities/func/redux-tools';
 
-// import GlossActions from './actions/GlossActions';
+import { SentenceActions } from './actions';
 import { IProps } from './index._types';
 import rootReducer from './reducers';
 
@@ -24,18 +24,20 @@ const Inject = (props: IProps) => {
 
     const {
         sentence,
+        sentenceFragments,
+        sentenceTranslations,
+        prefetched,
     } = props;
 
     const dispatch = store.dispatch as ReduxThunkDispatch;
 
-    /*
     const actions = new SentenceActions();
     if (prefetched) {
-        if (gloss !== undefined) {
-            dispatch(actions.setSentence(gloss));
+        if (sentence !== undefined) {
+            dispatch(actions.setSentence(sentence));
+            dispatch(actions.setSentenceFragments(sentenceFragments));
         }
     }
-    */
 
     return <Provider store={store}>
         <SentenceForm />
