@@ -9,12 +9,14 @@ function SentenceForm(props: IProps) {
     const {
         sentence,
         sentenceFragments,
+        sentenceTranslations,
     } = props;
 
     return <StaticAlert type="info">
         <pre>
         {JSON.stringify(sentence, undefined, 2)}
         {JSON.stringify(sentenceFragments, undefined, 2)}
+        {JSON.stringify(sentenceTranslations, undefined, 2)}
         </pre>
     </StaticAlert>;
 }
@@ -27,6 +29,7 @@ SentenceForm.defaultProps = {
 const mapStateToProps = (state: RootReducer) => ({
     sentence: state.sentence,
     sentenceFragments: state.sentenceFragments,
+    sentenceTranslations: state.sentenceTranslations,
 }) as IProps;
 const mapDispatchToProps: any = undefined;
 

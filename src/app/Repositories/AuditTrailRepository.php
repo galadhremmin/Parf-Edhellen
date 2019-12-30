@@ -40,7 +40,8 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
             // Put audit trail actions here that only administrators should see.
             $query = $query->where('is_admin', 0)
                 ->whereNotIn('action_id', [
-                    AuditTrail::ACTION_PROFILE_AUTHENTICATED
+                    AuditTrail::ACTION_PROFILE_AUTHENTICATED,
+                    AuditTrail::ACTION_PROFILE_FIRST_TIME
                 ]);
         }
         

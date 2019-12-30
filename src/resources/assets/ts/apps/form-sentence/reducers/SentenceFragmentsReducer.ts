@@ -11,7 +11,7 @@ const SentenceFragmentsReducer = (state = InitialState, action: ISentenceFragmen
     switch (action.type) {
         case Actions.ReceiveFragment:
             return action.sentenceFragments.map(
-                (fragment, i) => SentenceFragmentReducer(fragment, {
+                (fragment, i) => SentenceFragmentReducer(null, {
                     ...action,
                     sentenceFragment: {
                         ...fragment,
@@ -24,7 +24,7 @@ const SentenceFragmentsReducer = (state = InitialState, action: ISentenceFragmen
                 if (fragment.id === action.sentenceFragment.id) {
                     return SentenceFragmentReducer(fragment, action);
                 }
-                return state;
+                return fragment;
             });
         default:
             return state;

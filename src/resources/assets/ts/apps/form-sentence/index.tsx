@@ -36,6 +36,10 @@ const Inject = (props: IProps) => {
         if (sentence !== undefined) {
             dispatch(actions.setSentence(sentence));
             dispatch(actions.setSentenceFragments(sentenceFragments));
+
+            if (Array.isArray(sentenceTranslations)) {
+                dispatch(actions.setSentenceTranslations(sentenceTranslations));
+            }
         }
     }
 

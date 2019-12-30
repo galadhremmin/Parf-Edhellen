@@ -2,12 +2,12 @@ import {
     ReduxThunk,
     ReduxThunkDispatch,
 } from '@root/_types';
-import { handleValidationErrors } from '@root/components/Form/Validation';
-import { ISentenceEntity, ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
 import IContributionResourceApi from '@root/connectors/backend/IContributionResourceApi';
 import { DI, resolve } from '@root/di';
+
 import { ISentenceFragmentsReducerState } from '../reducers/SentenceFragmentsReducer._types';
 import { ISentenceReducerState } from '../reducers/SentenceReducer._types';
+import { ISentenceTranslationsReducerState } from '../reducers/SentenceTranslationsReducer._types';
 
 import Actions from './Actions';
 
@@ -27,6 +27,13 @@ export default class GlossActions {
         return {
             sentenceFragments,
             type: Actions.ReceiveFragment,
+        };
+    }
+
+    public setSentenceTranslations(sentenceTranslations: ISentenceTranslationsReducerState) {
+        return {
+            sentenceTranslations,
+            type: Actions.ReceiveTranslation,
         };
     }
 }
