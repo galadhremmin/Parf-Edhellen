@@ -87,16 +87,6 @@ function GlossForm(props: IProps) {
             delete newGloss.id;
         }
 
-        // remove parameters that are not supported by the service
-        delete newGloss.accountId; // replaced by `account`.
-        delete newGloss.childGlossId;
-        delete newGloss.hasDetails;
-        delete newGloss.isDeleted;
-        delete newGloss.isIndex;
-        delete newGloss.isLatest;
-        delete newGloss.originGlossId;
-        delete newGloss.senseId; // replaced by `sense`.
-
         if (newGloss.tengwar.length < 1) {
             delete newGloss.tengwar;
         }

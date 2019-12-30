@@ -8,8 +8,8 @@ import {
     ThunkDispatch,
 } from 'redux-thunk';
 
-export interface IReduxAction {
-    type: string;
+export interface IReduxAction<TType = string> {
+    type: TType;
 }
 
 export type IReduxActionableState<T> = T & IReduxAction;

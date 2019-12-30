@@ -69,12 +69,11 @@ class SentenceContributionController extends Controller implements IContribution
         $payload = json_decode($contribution->payload, true);
         $this->makeMapCurrent($payload);
         
-        $sentence = $payload['sentence'];
+        $sentence = new Sentence($payload['sentence']);
         $sentence['contribution_id'] = $contribution->id;
         $sentence['notes'] = $contribution->notes ?: '';
 
         $fragmentData = $this->createFragmentDataFromPayload($payload);
-
         return view('contribution.sentence.edit', [
             'review' => $contribution,
             'sentence' => $sentence,
@@ -94,12 +93,12 @@ class SentenceContributionController extends Controller implements IContribution
 
         if ($entityId) {
             $sentence = Sentence::findOrFail($entityId);
-            $fragmentData = $this->createFragmentDataFromPayload($sentence);
+            $sentence->load('account');
 
-            $model = [
-                'sentence'     => $sentence,
-                'fragmentData' => $fragmentData
-            ];
+            $fragmentData = $this->createFragmentDataFromPayload($sentence);
+            $model = array_merge($fragmentData, [
+                'sentence'  => $sentence
+            ]);
         }
 
         return view('contribution.sentence.create', $model);
@@ -220,10 +219,12 @@ class SentenceContributionController extends Controller implements IContribution
     private function createFragmentDataFromPayload($payload)
     {
         if ($payload instanceof Sentence) {
-            $fragments = $payload->sentence_fragments;
+            $fragments    = $payload->sentence_fragments;
+            $translations = $payload->sentence_translations;
 
         } else {
             $fragments = new Collection();
+            $translations = new Collection();
             
             $i = 0;
             foreach ($payload['fragments'] as $fragmentData) {
@@ -243,8 +244,10 @@ class SentenceContributionController extends Controller implements IContribution
             }
         }
 
-        $result = $fragments;
-        return $result;
+        return [
+            'fragments'    => $fragments,
+            'translations' => $translations
+        ];
     }
 
     /**
