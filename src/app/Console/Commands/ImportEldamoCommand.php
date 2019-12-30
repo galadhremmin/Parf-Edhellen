@@ -339,10 +339,10 @@ class ImportEldamoCommand extends Command
 
             $keywords = array_keys((array) $t->variations); // are automatically populated, anyway.
             foreach ($translations as $translation) {
-                $parts = explode(', ', $translation);
+                $parts = explode(', ', $translation->translation);
                 foreach ($parts as $part) {
                     if (! in_array($part, $keywords)) {
-                        $keywords[] = $part;
+                        $keywords[] = trim($part, "\t *");
                     }
                 }
             }
