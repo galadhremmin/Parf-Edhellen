@@ -331,13 +331,21 @@ class ImportEldamoCommand extends Command
             $sense = $t->translations[0];
             $word = $t->word;
 
-            $keywords = array_keys((array) $t->variations); // are automatically populated, anyway.
-
             $translations = array_map(function ($v) {
                 return new Translation(['translation' => $v]);
             }, array_unique(array_map(function ($v) {
                 return self::removeMark($v);
             }, $t->translations)));
+
+            $keywords = array_keys((array) $t->variations); // are automatically populated, anyway.
+            foreach ($translations as $translation) {
+                $parts = explode(', ', $translation);
+                foreach ($parts as $part) {
+                    if (! in_array($part, $keywords)) {
+                        $keywords[] = $part;
+                    }
+                }
+            }
 
             $inflections = array_unique(array_map(function ($v) {
                 return mb_strtolower($v->entity->word, 'utf-8');
