@@ -85,8 +85,8 @@ class BookApiController extends Controller
 
         $query = Word::where('normalized_word', 'like', $normalizedWord.'%');
 
-        if ($request->has('max')) {
-            $query = $query->take($request->input('max'));
+        if ($max > 0) {
+            $query = $query->take($max);
         }
 
         return $query->select('id', 'word')->get();
