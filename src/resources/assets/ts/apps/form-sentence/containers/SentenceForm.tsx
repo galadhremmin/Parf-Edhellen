@@ -13,11 +13,7 @@ function SentenceForm(props: IProps) {
     } = props;
 
     return <StaticAlert type="info">
-        <pre>
-        {JSON.stringify(sentence, undefined, 2)}
-        {JSON.stringify(sentenceFragments, undefined, 2)}
-        {JSON.stringify(sentenceTranslations, undefined, 2)}
-        </pre>
+        Coming soon!
     </StaticAlert>;
 }
 

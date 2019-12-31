@@ -95,7 +95,7 @@ export default class SearchActions {
     public selectNextResult(direction: number) {
         return async (dispatch: ThunkDispatch<any, any, any>, getState: () => RootReducer) => {
             const searchResults = getState().searchResults;
-            if (searchResults.length < 2) {
+            if (searchResults.length < 1) {
                 return;
             }
 
