@@ -20,4 +20,4 @@ export interface ISelectNextSearchResult {
 }
 export type ISearchResultReducerAction = IReduxAction & {
     searchResults?: ISearchResult[],
-} & ISelectSearchResultAction & ISelectNextSearchResult;
+} & Partial<ISelectSearchResultAction> & Partial<ISelectNextSearchResult>;

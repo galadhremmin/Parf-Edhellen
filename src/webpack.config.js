@@ -37,7 +37,31 @@ module.exports = {
         vendor: {
           name: 'vendor',
           chunks: 'all', // async and sync chunks
-          test: /node_modules/,
+          test(module) {
+            return module.resource &&
+              module.resource.includes('node_modules/') &&
+              !module.resource.includes('node_modules/glaemscribe') &&
+              !module.resource.includes('node_modules/recharts');
+          },
+          priority: 0,
+        },
+
+        glaemscribe: {
+          name(module, chunks, cacheGroupKey) {
+            const moduleFileName = module.identifier().split('/').reduceRight(item => item);
+            const type = moduleFileName.includes('.cst.') ? 'charset' : 'mode';
+            return [cacheGroupKey, type, moduleFileName].join('.');
+          },
+          chunks: 'async',
+          test: /node_modules\/glaemscribe\//,
+          priority: 20,
+        },
+
+        recharts: {
+          name: 'recharts',
+          chunks: 'all',
+          test: /node_modules\/recharts/,
+          priority: 20,
         },
 
         // common chunks, like components that are used by at least
@@ -96,7 +120,7 @@ module.exports = {
       { 
         enforce: 'pre', 
         test: /\.js$/, 
-        loader: 'source-map-loader' 
+        loader: 'source-map-loader'
       },
       {
         test: /\.s?css$/,
