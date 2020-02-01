@@ -36,4 +36,12 @@ export default class GlossActions {
             type: Actions.ReceiveTranslation,
         };
     }
+
+    public setField(field: keyof ISentenceReducerState, value: any) {
+        return {
+            field,
+            type: Actions.SetField,
+            value,
+        };
+    }
 }

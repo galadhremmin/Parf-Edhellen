@@ -143,6 +143,7 @@ export interface ISentenceEntity {
     isApproved?: boolean;
     isNeologism?: boolean;
     language?: ILanguageEntity;
+    languageId?: number;
     longDescription?: string;
     name?: string;
     source?: string;
