@@ -5,6 +5,7 @@ enum Actions {
     SetFragment        = 'ED_FORM_SENTENCE_FRAGMENT_SET',
     SetTranslation     = 'ED_FORM_SENTENCE_TRANSLATION_SET',
     SetField           = 'ED_FORM_SENTENCE_FIELD_SET',
+    SetText            = 'ED_FORM_SENTENCE_TEXT_SET',
 }
 
 export default Actions;

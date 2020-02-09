@@ -5,7 +5,6 @@ import { IComponentEvent } from '@root/components/Component._types';
 import AccountSelect from '@root/components/Form/AccountSelect';
 import LanguageSelect from '@root/components/Form/LanguageSelect';
 import MarkdownInput from '@root/components/Form/MarkdownInput';
-import Panel from '@root/components/Panel';
 import { IProps } from './MetadataForm._types';
 
 function MetadataForm(props: IProps) {
@@ -33,7 +32,7 @@ function MetadataForm(props: IProps) {
         });
     }, [ onChange ]);
 
-    return <Panel title="Basic information">
+    return <>
         <div className="form-group form-group-sm">
             <label htmlFor="ed-sentence-name" className="control-label">Name</label>
             <input type="text"
@@ -92,7 +91,7 @@ function MetadataForm(props: IProps) {
         <pre>
             {JSON.stringify(sentence, null, 2)}
         </pre>
-    </Panel>;
+    </>;
 }
 
 export default MetadataForm;

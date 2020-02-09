@@ -165,6 +165,7 @@ export interface ISentenceFragmentEntity {
     fragment?: string;
     glossId?: number;
     id: number;
+    paragraphNumber: number;
     sentenceNumber: number;
     speech?: string;
     speechId?: number;

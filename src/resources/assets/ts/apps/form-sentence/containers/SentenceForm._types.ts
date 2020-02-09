@@ -11,8 +11,10 @@ export interface ISentenceFieldChangeSpec {
 
 export interface IProps {
     onSentenceFieldChange: ComponentEventHandler<ISentenceFieldChangeSpec>;
+    onSentenceTextChange: ComponentEventHandler<string>;
     prefetched?: boolean;
     sentence?: ISentenceReducerState;
     sentenceFragments?: ISentenceFragmentsReducerState;
+    sentenceText?: string;
     sentenceTranslations?: null[];
 }

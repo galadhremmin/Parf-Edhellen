@@ -44,4 +44,11 @@ export default class GlossActions {
             value,
         };
     }
+
+    public setText(text: string) {
+        return {
+            text,
+            type: Actions.SetText,
+        };
+    }
 }
