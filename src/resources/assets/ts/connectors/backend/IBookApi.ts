@@ -143,6 +143,7 @@ export interface ISentenceEntity {
     isApproved?: boolean;
     isNeologism?: boolean;
     language?: ILanguageEntity;
+    languageId?: number;
     longDescription?: string;
     name?: string;
     source?: string;
@@ -164,6 +165,7 @@ export interface ISentenceFragmentEntity {
     fragment?: string;
     glossId?: number;
     id: number;
+    paragraphNumber: number;
     sentenceNumber: number;
     speech?: string;
     speechId?: number;

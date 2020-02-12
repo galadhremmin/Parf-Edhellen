@@ -1,20 +1,32 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import StaticAlert from '@root/components/StaticAlert';
+import { ReduxThunkDispatch } from '@root/_types';
+import Panel from '@root/components/Panel';
+import { SentenceActions } from '../actions';
+import FragmentsForm from '../components/FragmentsForm';
+import MetadataForm from '../components/MetadataForm';
 import { RootReducer } from '../reducers';
 import { IProps } from './SentenceForm._types';
 
 function SentenceForm(props: IProps) {
     const {
+        onSentenceFieldChange,
+        onSentenceTextChange,
         sentence,
         sentenceFragments,
+        sentenceText,
         sentenceTranslations,
     } = props;
 
-    return <StaticAlert type="info">
-        Coming soon!
-    </StaticAlert>;
+    return <>
+        <Panel title="Basic information">
+            <MetadataForm sentence={sentence} onChange={onSentenceFieldChange} />
+        </Panel>
+        <Panel title="Fragments">
+            <FragmentsForm text={sentenceText} onChange={onSentenceTextChange} />
+        </Panel>
+    </>;
 }
 
 SentenceForm.defaultProps = {
@@ -25,8 +37,14 @@ SentenceForm.defaultProps = {
 const mapStateToProps = (state: RootReducer) => ({
     sentence: state.sentence,
     sentenceFragments: state.sentenceFragments,
+    sentenceText: state.sentenceText,
     sentenceTranslations: state.sentenceTranslations,
 }) as IProps;
-const mapDispatchToProps: any = undefined;
+
+const actions = new SentenceActions();
+const mapDispatchToProps: any = (dispatch: ReduxThunkDispatch) => ({
+    onSentenceFieldChange: (ev) => dispatch(actions.setField(ev.value.field, ev.value.value)),
+    onSentenceTextChange: (ev) => dispatch(actions.setText(ev.value)),
+}) as Partial<IProps>;
 
 export default connect(mapStateToProps, mapDispatchToProps)(SentenceForm);

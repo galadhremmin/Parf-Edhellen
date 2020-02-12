@@ -17,6 +17,10 @@ h1 {
 }
 
 .discuss-body {
+    img {
+        max-width: 100%;
+    }
+
     > .sk-spinner.noscript--hidden {
         margin-bottom: 100vh;
     }

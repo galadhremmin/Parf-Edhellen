@@ -11,7 +11,6 @@ const InitialState: ISentenceReducerState = {
     id: 0,
     isApproved: false,
     isNeologism: true,
-    language: null,
     longDescription: '',
     name: '',
     source: '',
@@ -26,11 +25,16 @@ const SentenceReducer = (state: ISentenceReducerState = InitialState, action: IS
                 id: 'id',
                 isApproved: 'isApproved',
                 isNeologism: 'isNeologism',
-                language: 'language',
+                languageId: (v) => v.languageId || (v.language ? v.language.id : null),
                 longDescription: 'longDescription',
                 name: 'name',
                 source: 'source',
             }, action.sentence);
+        case Actions.SetField:
+            return {
+                ...state,
+                [action.field]: action.value,
+            };
         default:
             return state;
     }
