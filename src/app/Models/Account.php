@@ -29,7 +29,7 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName
      * @var array
      */
     protected $hidden = [
-        'identity', 'authorization_provider_id', 'remember_token'
+        'identity', 'authorization_provider_id', 'remember_token', 'email'
     ];
 
     public function authorization_provider()
