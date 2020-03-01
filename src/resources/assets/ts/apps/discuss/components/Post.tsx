@@ -16,6 +16,7 @@ export function Post(props: IProps) {
     const {
         post,
         renderToolbar,
+        onReferenceLinkClick,
     } = props;
     const {
         _isFocused: focused,
@@ -42,7 +43,7 @@ export function Post(props: IProps) {
             <div className="post-body">
                 {post.isDeleted
                     ? <em>{post.account.nickname} has redacted their post.</em>
-                    : <HtmlInject html={post.content} />}
+                    : <HtmlInject html={post.content} onReferenceLinkClick={onReferenceLinkClick} />}
             </div>
             <footer>
                 <DateLabel dateTime={post.createdAt} />

@@ -9,6 +9,7 @@ import Spinner from '@root/components/Spinner';
 import { ILanguageEntity } from '@root/connectors/backend/IBookApi';
 import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import { snakeCasePropsToCamelCase } from '@root/utilities/func/snake-case';
+import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
 import { SearchActions } from '../actions';
 import { IBrowserHistoryState } from '../actions/SearchActions._types';
@@ -18,11 +19,12 @@ import { IProps, IState } from './Glossary._types';
 
 import './Glossary.scss';
 
-export class Glossary extends React.PureComponent<IProps, IState> {
+export class Glossary extends React.Component<IProps, IState> {
     public state: IState = {
         notifyLoaded: true,
     };
 
+    private _glossaryContainerRef: HTMLDivElement;
     private _actions = new SearchActions();
     private _globalEvents = new GlobalEventConnector();
 
@@ -42,7 +44,17 @@ export class Glossary extends React.PureComponent<IProps, IState> {
     }
 
     public render() {
-        const { isEmpty, loading, word } = this.props;
+        return <div className="ed-glossary-container" ref={this._setGlossaryContainerRef}>
+            {this._renderViews()}
+        </div>;
+    }
+
+    private _renderViews() {
+        const {
+            isEmpty,
+            loading,
+            word,
+        } = this.props;
 
         if (loading) {
             return <Spinner />;
@@ -158,6 +170,13 @@ export class Glossary extends React.PureComponent<IProps, IState> {
     }
 
     /**
+     * Sets an internal reference to the current element representing the glossary container.
+     */
+    private _setGlossaryContainerRef = (elem: HTMLDivElement) => {
+        this._glossaryContainerRef = elem;
+    }
+
+    /**
      * Removes an element with the id `ed-book-for-bots` which is a partial server-side rendering
      * of the glossary intended for search indexing purposes.
      */
@@ -213,6 +232,14 @@ export class Glossary extends React.PureComponent<IProps, IState> {
      * Default event handler for the global event `referenceClick`.
      */
     private _onGlobalListenerReferenceLoad = (ev: CustomEvent) => {
+        // go to the top of the page to ensure that the client understands that the glossary
+        // is being reloaded.
+        if (this._glossaryContainerRef) {
+            makeVisibleInViewport(this._glossaryContainerRef);
+        } else {
+            window.scrollTo(0, 0);
+        }
+
         this._onReferenceClick({
             value: ev.detail,
         });

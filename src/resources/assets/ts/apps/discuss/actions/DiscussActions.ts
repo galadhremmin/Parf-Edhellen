@@ -34,10 +34,18 @@ export default class DiscussActions {
         };
     }
 
-    public setThread(threadData: IThreadResponse): ReduxThunk {
-        // Update the browser's current page (in the event that the client refreshes the window)
-        const browserHistory = resolve<BrowserHistory>(DI.BrowserHistory);
-        browserHistory.push(`?offset=${threadData.currentPage}`);
+    public setThread(threadData: IThreadResponse, updateHistory = false): ReduxThunk {
+        if (updateHistory) {
+            // Update the browser's current page (in the event that the client refreshes the window)
+            const browserHistory = resolve<BrowserHistory>(DI.BrowserHistory);
+            const {
+                currentPage,
+            } = threadData;
+
+            if (currentPage !== undefined) {
+                browserHistory.push(`?offset=${currentPage}`);
+            }
+        }
 
         return async (dispatch: ReduxThunkDispatch) => {
             dispatch({

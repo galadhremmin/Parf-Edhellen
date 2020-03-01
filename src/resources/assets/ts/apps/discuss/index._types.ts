@@ -1,6 +1,7 @@
 import {
     ComponentEventHandler,
 } from '@root/components/Component._types';
+import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
 import {
     IPostEntity,
     IThreadEntity,
@@ -30,6 +31,7 @@ export interface IProps {
     onNewPostSubmit?: ComponentEventHandler<ICreatePostAction>;
     onNewPostDiscard?: ComponentEventHandler<void>;
     onPageChange?: ComponentEventHandler<IPageChangeEvent>;
+    onReferenceLinkClick?: ComponentEventHandler<IReferenceLinkClickDetails>;
     posts?: IPostEntity[];
     thread: IThreadEntity;
     threadMetadata?: IThreadMetadataState;

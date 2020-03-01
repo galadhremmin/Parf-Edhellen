@@ -37,7 +37,7 @@ const Inject = (props: IProps) => {
             const args: any = {
                 ...props,
             };
-            dispatch(actions.setThread(args));
+            dispatch(actions.setThread(args, /* updateHistory: */ false));
         }
     } else {
         dispatch(actions.thread({
