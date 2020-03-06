@@ -61,6 +61,7 @@ export interface IBookGlossEntity {
     externalLinkFormat: string;
     glossDetails: IBookGlossDetailEntity[];
     glossGroupId: number;
+    glossGroupLabel?: string;
     glossGroupName: string;
     id: number;
     inflectedWord?: IBookWordInflection;
@@ -165,7 +166,7 @@ export interface ISentenceFragmentEntity {
     fragment?: string;
     glossId?: number;
     id: number;
-    paragraphNumber: number;
+    paragraphNumber?: number;
     sentenceNumber: number;
     speech?: string;
     speechId?: number;

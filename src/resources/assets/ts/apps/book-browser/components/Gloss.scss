@@ -9,9 +9,19 @@ blockquote.gloss {
   break-inside: avoid;
   page-break-inside: avoid; /* -> https://caniuse.com/#search=columns */
 
-  h3.gloss-word { 
+  h3.gloss-word {
     margin-top: 0;
     
+    .gloss-word__neologism {
+      .label {
+        font-size: 0.8rem;
+        font-family: $font-family-tiny;
+        background-color: $brand-danger;
+        margin-left: 0.85rem;
+        vertical-align: middle;
+      }
+    }
+
     .gloss-word__inflection {
       .gloss-word__inflection__word::before {
         content: ' > ';

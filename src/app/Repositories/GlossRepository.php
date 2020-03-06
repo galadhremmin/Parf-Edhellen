@@ -656,7 +656,8 @@ class GlossRepository
             'g.comments', 'g.tengwar', 'g.phonetic', 'g.language_id', 'g.account_id',
             'a.nickname as account_name', 'w.normalized_word', 'g.is_index', 'g.created_at', 'g.gloss_group_id',
             'tg.name as gloss_group_name', 'tg.is_canon', 'tg.external_link_format', 'g.is_uncertain', 
-            'g.external_id', 'g.is_latest', 'g.is_rejected', 'g.origin_gloss_id', 'g.sense_id'
+            'g.external_id', 'g.is_latest', 'g.is_rejected', 'g.origin_gloss_id', 'g.sense_id',
+            'tg.label as gloss_group_label'
         ];
 
         $q0 = self::createGlossQueryWithoutDetails($columns, true)

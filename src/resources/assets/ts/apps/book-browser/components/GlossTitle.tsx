@@ -9,7 +9,7 @@ import {
 import { IProps } from './GlossTitle._types';
 
 import GlossAbsoluteLink from './GlossAbsoluteLink';
-import NeologismIndicator from './NeologismIndicator';
+import GlossGroupLabel from './GlossGroupLabel';
 import NumberOfComments from './NumberOfComments';
 
 const ToolbarAsync = React.lazy(() => import('./toolbar'));
@@ -23,12 +23,14 @@ const GlossTitle: React.SFC<IProps> = (props: IProps) => {
 
     const className = classNames({ rejected: gloss.isRejected });
     const isAuthenticated = roleManager.currentRole !== SecurityRole.Anonymous;
+    const hasWarning = ! gloss.isCanon || !! gloss.isUncertain;
 
     return <h3 className="gloss-word">
-        <NeologismIndicator gloss={gloss} />
+        {hasWarning && <span className="uncertain" title="Neologism/unattested">*</span>}
         <span itemProp="headline" className={className}>
             {gloss.word}
         </span>
+        <GlossGroupLabel gloss={gloss} />
         {gloss.inflectedWord && <span className="gloss-word__inflection">
             {gloss.inflectedWord.word.toLocaleLowerCase() !== gloss.word.toLocaleLowerCase() &&
                 <span className="gloss-word__inflection__word">
