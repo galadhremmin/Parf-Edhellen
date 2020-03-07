@@ -17,7 +17,7 @@ import GlossForm from './containers/GlossForm';
 
 const Inject = (props: IProps) => {
     const store = createStore(rootReducer, undefined,
-        composeEnhancers(
+        composeEnhancers('form-gloss')(
             applyMiddleware(thunkMiddleware),
         ),
     );

@@ -2,12 +2,16 @@ import {
     ReduxThunk,
     ReduxThunkDispatch,
 } from '@root/_types';
-import IContributionResourceApi from '@root/connectors/backend/IContributionResourceApi';
 import { DI, resolve } from '@root/di';
+import { ITextTransformation } from '@root/connectors/backend/IBookApi';
+import IContributionResourceApi from '@root/connectors/backend/IContributionResourceApi';
 
+import { RootReducer } from '../reducers';
 import { ISentenceFragmentsReducerState } from '../reducers/SentenceFragmentsReducer._types';
 import { ISentenceReducerState } from '../reducers/SentenceReducer._types';
 import { ISentenceTranslationsReducerState } from '../reducers/SentenceTranslationsReducer._types';
+import { TextTransformationsReducerState } from '../reducers/TextTransformationsReducer._types';
+import { convertTransformationToString } from '../utilities/transformations';
 
 import Actions from './Actions';
 
@@ -24,9 +28,31 @@ export default class GlossActions {
     }
 
     public setSentenceFragments(sentenceFragments: ISentenceFragmentsReducerState) {
-        return {
-            sentenceFragments,
-            type: Actions.ReceiveFragment,
+        return (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
+            dispatch({
+                sentenceFragments,
+                type: Actions.ReceiveFragment,
+            });
+
+            const textTransformations = getState().textTransformations;
+            if (textTransformations.latin !== undefined) {
+                dispatch(this.setTextWithLatinTransformer(textTransformations.latin,
+                    sentenceFragments));
+            }
+        };
+    }
+
+    public setTransformations(textTransformations: TextTransformationsReducerState) {
+        return (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
+            dispatch({
+                textTransformations,
+                type: Actions.ReceiveTransformation,
+            });
+
+            if (textTransformations.latin !== undefined) {
+                dispatch(this.setTextWithLatinTransformer(textTransformations.latin,
+                    getState().sentenceFragments));
+            }
         };
     }
 
@@ -47,8 +73,13 @@ export default class GlossActions {
 
     public setText(text: string) {
         return {
-            text,
-            type: Actions.SetText,
+            latinText: text,
+            type: Actions.SetLatinText,
         };
+    }
+
+    public setTextWithLatinTransformer(transformer: ITextTransformation, fragments: ISentenceFragmentsReducerState) {
+        const text = convertTransformationToString(transformer, fragments);
+        return this.setText(text);
     }
 }

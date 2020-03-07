@@ -165,9 +165,9 @@ export interface ISentenceFragmentEntity {
     comments?: string;
     fragment?: string;
     glossId?: number;
-    id: number;
+    id?: number;
     paragraphNumber?: number;
-    sentenceNumber: number;
+    sentenceNumber?: number;
     speech?: string;
     speechId?: number;
     tengwar?: string;
@@ -207,6 +207,7 @@ export interface ISentenceTranslation {
 
 export interface ITextTransformationsMap {
     [transformationName: string]: ITextTransformation;
+    latin?: ITextTransformation;
 }
 
 export interface ITextTransformation {

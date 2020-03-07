@@ -17,7 +17,7 @@ import Discuss from './containers/Discuss';
 
 const Inject = (props: IProps) => {
     const store = createStore(rootReducer, undefined,
-        composeEnhancers(
+        composeEnhancers('discuss')(
             applyMiddleware(thunkMiddleware),
         ),
     );

@@ -16,6 +16,7 @@ function SentenceForm(props: IProps) {
         sentence,
         sentenceFragments,
         sentenceText,
+        sentenceTransformations,
         sentenceTranslations,
     } = props;
 
@@ -23,7 +24,7 @@ function SentenceForm(props: IProps) {
         <Panel title="Basic information">
             <MetadataForm sentence={sentence} onChange={onSentenceFieldChange} />
         </Panel>
-        <Panel title="Fragments">
+        <Panel title="Phrase">
             <FragmentsForm text={sentenceText} onChange={onSentenceTextChange} />
         </Panel>
     </>;
@@ -37,7 +38,8 @@ SentenceForm.defaultProps = {
 const mapStateToProps = (state: RootReducer) => ({
     sentence: state.sentence,
     sentenceFragments: state.sentenceFragments,
-    sentenceText: state.sentenceText,
+    sentenceText: state.latinText,
+    sentenceTransformations: state.textTransformations,
     sentenceTranslations: state.sentenceTranslations,
 }) as IProps;
 

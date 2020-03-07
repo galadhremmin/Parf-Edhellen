@@ -24,6 +24,7 @@ function AccountSelect(props: IProps) {
         apiConnector,
         name,
         onChange,
+        required,
         value,
     } = props;
 
@@ -50,6 +51,7 @@ function AccountSelect(props: IProps) {
         onChange={_onChange}
         onClearSuggestions={_onClearSuggestions}
         onSuggest={_onSuggest}
+        required={required || false}
         renderSuggestion={AccountSuggestion}
         renderValue={injectAccountValue}
         suggestions={suggestions}
