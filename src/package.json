@@ -14,6 +14,7 @@
     "webpack": "node_modules/laravel-mix/setup/webpack.config.js"
   },
   "devDependencies": {
+    "@babel/core": "^7.8.7",
     "@types/chai": "^4.2.10",
     "@types/classnames": "^2.2.9",
     "@types/enzyme": "^3.10.5",
@@ -69,6 +70,8 @@
     "webpack-notifier": "^1.8.0"
   },
   "dependencies": {
+    "@ag-grid-community/all-modules": "^22.1.1",
+    "@ag-grid-community/react": "^22.1.2",
     "axios": "^0.19.2",
     "axios-retry": "^3.1.2",
     "babel-polyfill": "^6.26.0",

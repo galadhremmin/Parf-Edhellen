@@ -41,7 +41,8 @@ module.exports = {
             return module.resource &&
               module.resource.includes('node_modules/') &&
               !module.resource.includes('node_modules/glaemscribe') &&
-              !module.resource.includes('node_modules/recharts');
+              !module.resource.includes('node_modules/recharts') &&
+              !module.resource.includes('node_modules/@ag-grid-community');
           },
           priority: 0,
         },
@@ -61,6 +62,13 @@ module.exports = {
           name: 'recharts',
           chunks: 'all',
           test: /node_modules\/recharts/,
+          priority: 20,
+        },
+
+        grid: {
+          name: 'grid',
+          chunks: 'all',
+          test: /node_modules\/@ag\-grid\-community/,
           priority: 20,
         },
 

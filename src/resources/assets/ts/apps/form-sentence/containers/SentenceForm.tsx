@@ -25,7 +25,9 @@ function SentenceForm(props: IProps) {
             <MetadataForm sentence={sentence} onChange={onSentenceFieldChange} />
         </Panel>
         <Panel title="Phrase">
-            <FragmentsForm text={sentenceText} onChange={onSentenceTextChange} />
+            <FragmentsForm fragments={sentenceFragments}
+                text={sentenceText}
+                onChange={onSentenceTextChange} />
         </Panel>
     </>;
 }

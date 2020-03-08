@@ -2,9 +2,11 @@ import React, { useCallback } from 'react';
 
 import { fireEvent } from '@root/components/Component';
 import { IProps } from './FragmentsForm._types';
+import FragmentsGrid from './FragmentsGrid';
 
 function FragmentsForm(props: IProps) {
     const {
+        fragments,
         onChange,
         text,
     } = props;
@@ -23,6 +25,7 @@ function FragmentsForm(props: IProps) {
                       rows={10}
                       value={text}
             />
+            <FragmentsGrid fragments={fragments} />
         </div>
     </>;
 }

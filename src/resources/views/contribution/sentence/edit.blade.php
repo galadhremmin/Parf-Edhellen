@@ -9,9 +9,10 @@
   <div id="ed-sentence-form"
     data-inject-module="form-sentence"
     data-inject-prop-sentence="@json($sentence)"
-    data-inject-prop-sentence-fragments="@json($fragmentData)"
+    data-inject-prop-sentence-fragments="@json($fragments)"
     data-inject-prop-sentence-transformations="@json($transformations)"
     data-inject-prop-sentence-translations="@json($translations)"
+    data-inject-prop-prefetched="true"
     data-inject-prop-confirm-button="{{ $review->is_approved === null ? 'Save changes' : 'Resubmit for review' }}"
   ></div>
 

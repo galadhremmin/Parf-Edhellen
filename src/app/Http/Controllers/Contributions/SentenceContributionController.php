@@ -10,6 +10,7 @@ use App\Helpers\SentenceHelper;
 use App\Repositories\SentenceRepository;
 use App\Models\{
     Contribution,
+    Inflection,
     Sentence,
     SentenceFragment,
     SentenceFragmentInflectionRel
@@ -222,9 +223,20 @@ class SentenceContributionController extends Controller implements IContribution
      */
     private function createFragmentDataFromPayload($payload)
     {
+        $allInflections = Inflection::all();
+
         if ($payload instanceof Sentence) {
             $fragments    = $payload->sentence_fragments;
             $translations = $payload->sentence_translations;
+
+            foreach ($fragments as $fragment) {
+                $inflectionIds = $fragment->inflection_associations->map(function ($rel) {
+                    return $rel->inflection_id;
+                });
+                $fragment->inflections = $allInflections->filter(function ($inflection) use ($inflectionIds) {
+                    return $inflectionIds->contains($inflection->id);
+                });
+            }
 
         } else {
             $fragments = new Collection();
@@ -238,9 +250,13 @@ class SentenceContributionController extends Controller implements IContribution
                 $fragment->id = ($i + 1) * -10;
 
                 // Create an array of IDs for inflections associated with this fragment.
-                $fragment->_inflections = array_map(function ($rel) {
+                $inflectionIds = array_map(function ($rel) {
                     return $rel['inflection_id'];
                 }, $payload['inflections'][$i]);
+
+                $fragment->inflections = $allInflections->filter(function ($inflection) use ($inflectionIds) {
+                    return in_array($inflection->id, $inflectionIds);
+                });
 
                 $fragments->push($fragment);
                 
