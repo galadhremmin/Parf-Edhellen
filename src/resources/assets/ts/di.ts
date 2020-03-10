@@ -4,6 +4,7 @@ import BookApiConnector from './connectors/backend/BookApiConnector';
 import ContributionResourceApiConnector from './connectors/backend/ContributionResourceApiConnector';
 import DiscussApiConnector from './connectors/backend/DiscussApiConnector';
 import GlossResourceApiConnector from './connectors/backend/GlossResourceApiConnector';
+import InflectionResourceApiConnector from './connectors/backend/InflectionResourceApiConnector';
 import LanguageConnector from './connectors/backend/LanguageConnector';
 import SpeechResourceApiConnector from './connectors/backend/SpeechResourceApiConnector';
 import UtilityApiConnector from './connectors/backend/UtilityApiConnector';
@@ -22,6 +23,7 @@ export enum DI {
     DiscussApi = 'DiscussApi',
     Glaemscribe = 'Glaemscribe',
     GlossApi = 'GlossApi',
+    InflectionApi = 'InflectionApi',
     LanguageApi = 'LanguageApi',
     RoleManager = 'RoleManager',
     SpeechApi = 'SpeechApi',
@@ -46,6 +48,8 @@ export const getType = (name: DI): any => {
             return Glaemscribe;
         case DI.GlossApi:
             return GlossResourceApiConnector;
+        case DI.InflectionApi:
+            return InflectionResourceApiConnector;
         case DI.LanguageApi:
             return LanguageConnector;
         case DI.RoleManager:

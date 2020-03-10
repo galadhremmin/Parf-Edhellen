@@ -3,7 +3,7 @@ import {
     ICellRendererParams,
 } from '@ag-grid-community/all-modules';
 
-class TengwarRenderer implements ICellRendererComp {
+export default class TengwarRenderer implements ICellRendererComp {
     private _cell: HTMLElement;
 
     public init(params: ICellRendererParams) {
@@ -27,5 +27,3 @@ class TengwarRenderer implements ICellRendererComp {
         this._cell = null;
     }
 }
-
-export default TengwarRenderer;

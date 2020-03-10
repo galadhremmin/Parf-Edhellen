@@ -18,7 +18,7 @@ export interface IFragmentsReducerState {
 
 export interface IFragmentInflection {
     inflectionId: number;
-    name: string;
+    name?: string;
 }
 
 export type FragmentsReducerState = IFragmentsReducerState[];

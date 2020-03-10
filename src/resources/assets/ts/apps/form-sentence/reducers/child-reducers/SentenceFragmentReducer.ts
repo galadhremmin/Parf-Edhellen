@@ -27,6 +27,7 @@ const SentenceFragmentReducer = (state = InitialState, action: ISentenceFragment
                 fragment: 'fragment',
                 glossId: 'glossId',
                 id: 'id',
+                inflections: 'inflections',
                 paragraphNumber: 'paragraphNumber',
                 sentenceNumber: 'sentenceNumber',
                 speechId: 'speechId',

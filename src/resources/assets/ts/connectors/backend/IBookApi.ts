@@ -128,12 +128,12 @@ export interface ISentenceResponse {
 }
 
 export interface ISentenceFragmentInflectionMap {
-    [sentenceFragmentId: number]: ISentenceFragmentInflection[];
+    [sentenceFragmentId: string]: ISentenceFragmentInflection[];
 }
 
 export interface ISentenceFragmentInflection {
     inflectionId: number;
-    name: string;
+    name?: string;
 }
 
 export interface ISentenceEntity {
@@ -166,6 +166,7 @@ export interface ISentenceFragmentEntity {
     fragment?: string;
     glossId?: number;
     id?: number;
+    inflections?: ISentenceFragmentInflection[];
     paragraphNumber?: number;
     sentenceNumber?: number;
     speech?: string;

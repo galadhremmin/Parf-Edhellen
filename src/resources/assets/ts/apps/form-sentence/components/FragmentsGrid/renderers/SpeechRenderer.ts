@@ -4,15 +4,11 @@ import {
 } from '@ag-grid-community/all-modules';
 import { IAugmentedCellRendererParams } from '../FragmentsGrid._types';
 
-class SpeechRenderer implements ICellRendererComp {
-    private _cell: HTMLSelectElement;
+export default class SpeechRenderer implements ICellRendererComp {
+    private _cell: HTMLDivElement;
 
     public init(params: ICellRendererParams) {
-        const cell = document.createElement('select');
-        (params as IAugmentedCellRendererParams).speeches.forEach((speech) => {
-            cell.options[cell.options.length] = new Option(speech.name, speech.id.toString(10));
-        });
-
+        const cell = document.createElement('div');
         this._cell = cell;
 
         this.refresh(params);
@@ -23,7 +19,11 @@ class SpeechRenderer implements ICellRendererComp {
     }
 
     public refresh(params: ICellRendererParams) {
-        this._cell.value = params.valueFormatted || params.value;
+        const speeches = (params as IAugmentedCellRendererParams).speeches;
+        const value = params.value;
+
+        this._cell.textContent = speeches.has(value) //
+            ? speeches.get(value).name : 'invalid';
         return true;
     }
 
@@ -32,4 +32,3 @@ class SpeechRenderer implements ICellRendererComp {
     }
 }
 
-export default SpeechRenderer;
