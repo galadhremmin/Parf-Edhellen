@@ -1,6 +1,8 @@
 import { DI, resolve } from '@root/di';
 import ApiConnector from '../ApiConnector';
-import IGlossResourceApi, { IGlossEntity } from './IGlossResourceApi';
+import IGlossResourceApi, {
+    IGetGlossResponse,
+} from './IGlossResourceApi';
 
 export default class GlossResourceApiConnector implements IGlossResourceApi {
     constructor(private _api = resolve<ApiConnector>(DI.BackendApi)) {
@@ -10,7 +12,8 @@ export default class GlossResourceApiConnector implements IGlossResourceApi {
         return this._api.delete<void>(`gloss/${glossId}`, { replacementId });
     }
 
-    public gloss(glossId: number) {
-        return this._api.get<IGlossEntity>(`gloss/${glossId}`);
+    public async gloss(glossId: number) {
+        const response = await this._api.get<IGetGlossResponse>(`gloss/${glossId}`);
+        return response.gloss;
     }
 }

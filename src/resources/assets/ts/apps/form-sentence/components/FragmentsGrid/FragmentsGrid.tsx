@@ -13,6 +13,7 @@ import {
     DI,
     resolve,
 } from '@root/di';
+import IGlossResourceApi, { IGlossEntity } from '@root/connectors/backend/IGlossResourceApi';
 import {
     IInflection,
     IInflectionResourceApi,
@@ -23,6 +24,7 @@ import {
     RelevantFragmentTypes,
 } from './config';
 import InflectionCellEditor from './cell-editors/InflectionCellEditor';
+import GlossRenderer from './renderers/GlossRenderer';
 import InflectionRenderer from './renderers/InflectionRenderer';
 import SpeechRenderer from './renderers/SpeechRenderer';
 import TengwarRenderer from './renderers/TengwarRenderer';
@@ -41,6 +43,13 @@ class FragmentsGrid extends React.Component<IProps, IState> {
         groupedInflections: null,
         speeches: null,
     };
+
+    private _workers: Map<number, Promise<IGlossEntity>>;
+
+    constructor(props: IProps) {
+        super(props);
+        this._workers = new Map();
+    }
 
     public async componentDidMount() {
         const [ groupedInflections, speeches ] = await Promise.all([
@@ -65,6 +74,7 @@ class FragmentsGrid extends React.Component<IProps, IState> {
         const cellRendererParams = {
             groupedInflections,
             inflections: inflectionMap,
+            resolveGloss: this._onResolveGloss as any,
             speeches: speechMap,
         } as IState;
 
@@ -79,6 +89,8 @@ class FragmentsGrid extends React.Component<IProps, IState> {
                 field: 'tengwar',
             },
             {
+                cellRenderer: GlossRenderer,
+                cellRendererParams,
                 editable: true,
                 field: 'glossId',
             },
@@ -152,8 +164,22 @@ class FragmentsGrid extends React.Component<IProps, IState> {
             speeches,
         } = this.state;
 
-        return speeches.has(params.value) ? speeches.get(params.value).name : 'invalid';
+        const value = parseInt(params.value, 10);
+        return speeches.has(value) ? speeches.get(value).name : `invalid (${value})`;
     }
+
+    private _onResolveGloss = async (glossId: number) => {
+        if (this._workers.has(glossId)) {
+            return this._workers.get(glossId);
+        }
+
+        const glossApi = resolve<IGlossResourceApi>(DI.GlossApi);
+        const glossPromise = glossApi.gloss(glossId);
+        this._workers.set(glossId, glossPromise);
+        const gloss = await glossPromise;
+
+        return gloss;
+    };
 }
 
 export default FragmentsGrid;

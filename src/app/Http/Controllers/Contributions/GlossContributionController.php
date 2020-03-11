@@ -145,11 +145,11 @@ class GlossContributionController extends Controller implements IContributionCon
         $gloss = null;
 
         if ($entityId) {
-            $gloss = Gloss::where('id', $entityId)
-                ->with('account', 'sense', 'sense.word', 'gloss_group', 'word', 'translations', 'gloss_details')
-                ->firstOrFail();
-
-            $gloss->keywords = $this->_glossRepository->getKeywords($gloss->sense_id, $gloss->id);
+            $glosses = $this->_glossRepository->getGloss($entityId);
+            if (! $glosses->isEmpty()) {
+                $gloss = $glosses->first();
+                $gloss->keywords = $this->_glossRepository->getKeywords($gloss->sense_id, $gloss->id);
+            }
         }
 
         return $request->ajax()

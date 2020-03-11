@@ -162,7 +162,7 @@ export default class InflectionCellEditor extends PopupComponent implements ICel
         Object.keys(groupedInflections).forEach((group: string) => {
             groupedInflections[group].forEach((inflection) => {
                 if (! values.has(inflection.id)) {
-                    options.push(`<option value="${inflection.name}" />`);
+                    options.push(`<option value="${inflection.name}">${group}</option>`);
                 }
             });
         });
@@ -186,7 +186,5 @@ export default class InflectionCellEditor extends PopupComponent implements ICel
                 }
                 break;
         }
-
-        console.log(event);
     }
 }
