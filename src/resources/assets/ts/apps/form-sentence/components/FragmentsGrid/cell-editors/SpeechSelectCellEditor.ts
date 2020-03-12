@@ -23,10 +23,6 @@ export default class SpeechSelectCellEditor extends MultipleSelectCellEditor<ISp
         return this._allOptions;
     }
 
-    private get _speeches() {
-        return (this._editorParams as IFragmentGridMetadata).speeches;
-    }
-
     protected getOptionId(option: ISpeechEntity) {
         return option.id;
     }
@@ -40,8 +36,9 @@ export default class SpeechSelectCellEditor extends MultipleSelectCellEditor<ISp
     }
 
     protected getValueText(value: number) {
+        const speeches = this._editorParams.speeches;
         const id = this.getValueId(value);
-        return this._speeches.has(id) ? this._speeches.get(id).name : '⚠ invalid';
+        return speeches.has(id) ? speeches.get(id).name : '⚠ invalid';
     }
 
     protected convertOptionToValue(option: ISpeechEntity): number {
