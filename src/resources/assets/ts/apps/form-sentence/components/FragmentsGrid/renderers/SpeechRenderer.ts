@@ -20,7 +20,7 @@ export default class SpeechRenderer implements ICellRendererComp {
 
     public refresh(params: ICellRendererParams) {
         const speeches = (params as IAugmentedCellRendererParams).speeches;
-        const value = parseInt(params.value, 10);
+        const value = params.value;
 
         this._cell.textContent = speeches.has(value) //
             ? speeches.get(value).name : 'invalid';

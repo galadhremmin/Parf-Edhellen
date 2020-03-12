@@ -101,11 +101,13 @@ class GlossRepository
     {
         $gloss = Gloss::where('id', $id)
             ->with('account', 'sense', 'sense.word', 'gloss_group', 'word', 'translations', 'gloss_details')
-            ->firstOrFail();
+            ->first();
 
-        return new Collection([
-            $gloss
-        ]);
+        if ($gloss === null) {
+            return new Collection(); // Emtpy collection, i.e. no gloss was found.
+        }
+
+        return new Collection([ $gloss ]);
     }
 
     /**

@@ -10,7 +10,6 @@ import {
 import { IGlossEntity } from '@root/connectors/backend/IGlossResourceApi';
 import {
     IInflection,
-    IInflectionMap,
 } from '@root/connectors/backend/IInflectionResourceApi';
 import { ISpeechEntity } from '@root/connectors/backend/ISpeechResourceApi';
 
@@ -20,7 +19,7 @@ export type FragmentGridColumnDefinition = (Partial<ColDef> & {
 })[];
 
 export interface IFragmentGridMetadata extends Partial<ICellEditorParams> {
-    groupedInflections?: IInflectionMap;
+    groupedInflections?: Map<string, IInflection[]>;
     inflections?: Map<number, IInflection>;
     resolveGloss?: (glossId: number) => Promise<IGlossEntity>;
     speeches?: Map<number, ISpeechEntity>;

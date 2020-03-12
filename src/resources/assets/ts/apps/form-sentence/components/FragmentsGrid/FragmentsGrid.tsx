@@ -5,6 +5,7 @@ import {
     AllCommunityModules,
     GridReadyEvent,
     ValueFormatterParams,
+    ValueParserParams,
 } from '@ag-grid-community/all-modules';
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
@@ -24,6 +25,7 @@ import {
     RelevantFragmentTypes,
 } from './config';
 import InflectionCellEditor from './cell-editors/InflectionCellEditor';
+import SpeechSelectCellEditor from './cell-editors/SpeechSelectCellEditor';
 import GlossRenderer from './renderers/GlossRenderer';
 import InflectionRenderer from './renderers/InflectionRenderer';
 import SpeechRenderer from './renderers/SpeechRenderer';
@@ -44,11 +46,11 @@ class FragmentsGrid extends React.Component<IProps, IState> {
         speeches: null,
     };
 
-    private _workers: Map<number, Promise<IGlossEntity>>;
+    private _glossCache: Map<number, Promise<IGlossEntity>>;
 
     constructor(props: IProps) {
         super(props);
-        this._workers = new Map();
+        this._glossCache = new Map();
     }
 
     public async componentDidMount() {
@@ -57,22 +59,25 @@ class FragmentsGrid extends React.Component<IProps, IState> {
             resolve<ISpeechResourceApi>(DI.SpeechApi).speeches(),
         ]);
 
-        const speechMap = new Map<number, ISpeechEntity>();
+        const groupedInflectionsMap = new Map<string, IInflection[]>();
         const inflectionMap = new Map<number, IInflection>();
-
-        for (const speech of speeches) {
-            speechMap.set(speech.id, speech);
-        }
+        const speechMap = new Map<number, ISpeechEntity>();
 
         Object.keys(groupedInflections) //
             .forEach((group) => {
                 for (const inflection of groupedInflections[group]) {
                     inflectionMap.set(inflection.id, inflection);
                 }
+
+                groupedInflectionsMap.set(group, groupedInflections[group]);
             });
 
+        for (const speech of speeches) {
+            speechMap.set(speech.id, speech);
+        }
+
         const cellRendererParams = {
-            groupedInflections,
+            groupedInflections: groupedInflectionsMap,
             inflections: inflectionMap,
             resolveGloss: this._onResolveGloss as any,
             speeches: speechMap,
@@ -95,15 +100,12 @@ class FragmentsGrid extends React.Component<IProps, IState> {
                 field: 'glossId',
             },
             {
-                cellEditor: 'agSelectCellEditor',
-                cellEditorParams: {
-                    values: speeches.map((s) => s.id),
-                },
+                cellEditor: SpeechSelectCellEditor,
+                cellEditorParams: cellRendererParams,
                 cellRenderer: SpeechRenderer,
                 cellRendererParams,
                 editable: true,
                 field: 'speechId',
-                valueFormatter: this._onSpeechValueFormatted,
             },
             {
                 cellEditor: InflectionCellEditor,
@@ -152,30 +154,17 @@ class FragmentsGrid extends React.Component<IProps, IState> {
     }
 
     private _onGridReady = (params: GridReadyEvent) => {
-        // this.gridApi = params.api;
-
-        // this.gridColumnApi = params.columnApi;
-
         params.api.sizeColumnsToFit();
     };
 
-    private _onSpeechValueFormatted = (params: ValueFormatterParams) => {
-        const {
-            speeches,
-        } = this.state;
-
-        const value = parseInt(params.value, 10);
-        return speeches.has(value) ? speeches.get(value).name : `invalid (${value})`;
-    }
-
     private _onResolveGloss = async (glossId: number) => {
-        if (this._workers.has(glossId)) {
-            return this._workers.get(glossId);
+        if (this._glossCache.has(glossId)) {
+            return this._glossCache.get(glossId);
         }
 
         const glossApi = resolve<IGlossResourceApi>(DI.GlossApi);
         const glossPromise = glossApi.gloss(glossId);
-        this._workers.set(glossId, glossPromise);
+        this._glossCache.set(glossId, glossPromise);
         const gloss = await glossPromise;
 
         return gloss;

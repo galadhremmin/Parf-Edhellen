@@ -7,7 +7,6 @@ import {
 
 export default class GlossCellEditor extends PopupComponent implements ICellEditorComp {
     private static TEMPLATE = `<div class="ag-input-wrapper" role="presentation">
-        <span class="ag-input-selected-values"></span>
         <input type="text" list="ag-input-available-values" />
         <datalist id="ag-input-available-values"></datalist>
     </div>`;
