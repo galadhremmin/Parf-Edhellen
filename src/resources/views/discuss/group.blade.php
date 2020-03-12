@@ -32,7 +32,7 @@
           {{ $thread->subject }}
         </a>
         <div class="pi">
-          {{ $thread->account ? $thread->account->nickname : 'nobody' }}
+          {{ $thread->account ? $thread->account->nickname : 'nobody' }} on
           <span class="date">{{ $thread->updated_at ?: $thread->created_at }}</span>
         </div>
       </div>

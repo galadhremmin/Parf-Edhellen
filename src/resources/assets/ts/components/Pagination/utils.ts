@@ -1,4 +1,4 @@
-export const createPageArray = (noOfPages: number = 0, pages: Array<number | string> = null) => {
+export const createPageArray = (noOfPages: number = 0, pages: (number | string)[] = null) => {
     if (pages !== null) {
         return pages;
     }

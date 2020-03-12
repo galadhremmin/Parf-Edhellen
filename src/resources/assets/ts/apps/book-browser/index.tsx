@@ -16,7 +16,7 @@ import SearchResults from './containers/SearchResults';
 
 const Inject = () => {
     const store = createStore(rootReducer, undefined,
-        composeEnhancers(applyMiddleware(thunkMiddleware)),
+        composeEnhancers('book-browser')(applyMiddleware(thunkMiddleware)),
     );
 
     return <Provider store={store}>

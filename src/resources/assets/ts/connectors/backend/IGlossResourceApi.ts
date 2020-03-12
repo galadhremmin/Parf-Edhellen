@@ -30,7 +30,6 @@ export interface IGlossEntity {
     translations: ITranslationEntity[];
     updatedAt?: string;
     word: IWordEntity;
-    wordId?: number;
 }
 
 export interface IGlossDetail {
@@ -74,6 +73,10 @@ export interface IWordEntity {
     reversedNormalizedWord?: string;
     updatedAt?: string;
     word: string;
+}
+
+export interface IGetGlossResponse {
+    gloss: IGlossEntity;
 }
 
 export default interface IGlossResourceApi {

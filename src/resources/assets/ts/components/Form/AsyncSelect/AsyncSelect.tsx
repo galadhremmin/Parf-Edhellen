@@ -9,7 +9,7 @@ import {
 } from './AsyncSelect._types';
 import useFetch from './fetch';
 
-const InternalProps: Array<keyof IProps> = [
+const InternalProps: (keyof IProps)[] = [
     'allowEmpty',
     'loaderOfValues',
     'onChange',

@@ -82,7 +82,7 @@ class BookAdapterTest extends TestCase
         $gloss0->load('translations', 'gloss_details');        
         $gloss1->load('translations', 'gloss_details');
 
-        $glossesFromRepository = $this->getGlossRepository()->getGlosses([$gloss0->id, $gloss1->id])
+        $glossesFromRepository = $this->getGlossRepository()->getGlossVersions([$gloss0->id, $gloss1->id])
             ->toArray();
 
         $searchWord      = $gloss1->word->word;
@@ -124,7 +124,7 @@ class BookAdapterTest extends TestCase
 
         $gloss = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, []);
 
-        $glossesFromRepository = $this->getGlossRepository()->getGlosses([$gloss->id])->all();
+        $glossesFromRepository = $this->getGlossRepository()->getGlossVersions([$gloss->id])->all();
         $adapted = $this->_adapter->adaptGlosses($glossesFromRepository, [], [], $word);
         $adaptedGlossary = &$adapted['sections'][0]['glosses'];
 

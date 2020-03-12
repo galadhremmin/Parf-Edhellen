@@ -6,9 +6,11 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Collection;
 
+use App\Helpers\SentenceHelper;
 use App\Repositories\SentenceRepository;
 use App\Models\{
     Contribution,
+    Inflection,
     Sentence,
     SentenceFragment,
     SentenceFragmentInflectionRel
@@ -23,10 +25,12 @@ class SentenceContributionController extends Controller implements IContribution
     use CanValidateSentence, 
         CanMapSentence;
 
+    private $_sentenceHelper;
     private $_sentenceRepository;
 
-    public function __construct(SentenceRepository $sentenceRepository)
+    public function __construct(SentenceHelper $sentenceHelper, SentenceRepository $sentenceRepository)
     {
+        $this->_sentenceHelper = $sentenceHelper;
         $this->_sentenceRepository = $sentenceRepository;
     }
 
@@ -74,11 +78,12 @@ class SentenceContributionController extends Controller implements IContribution
         $sentence['notes'] = $contribution->notes ?: '';
 
         $fragmentData = $this->createFragmentDataFromPayload($payload);
-        return view('contribution.sentence.edit', [
+        $model = array_merge($fragmentData, [
             'review' => $contribution,
-            'sentence' => $sentence,
-            'fragmentData' => $fragmentData
+            'sentence' => $sentence
         ]);
+
+        return view('contribution.sentence.edit', $model);
     }
     
     /**
@@ -97,7 +102,7 @@ class SentenceContributionController extends Controller implements IContribution
 
             $fragmentData = $this->createFragmentDataFromPayload($sentence);
             $model = array_merge($fragmentData, [
-                'sentence'  => $sentence
+                'sentence' => $sentence
             ]);
         }
 
@@ -222,6 +227,10 @@ class SentenceContributionController extends Controller implements IContribution
             $fragments    = $payload->sentence_fragments;
             $translations = $payload->sentence_translations;
 
+            foreach ($fragments as $fragment) {
+                $fragment->inflections = $fragment->inflection_associations;
+            }
+
         } else {
             $fragments = new Collection();
             $translations = new Collection();
@@ -234,9 +243,7 @@ class SentenceContributionController extends Controller implements IContribution
                 $fragment->id = ($i + 1) * -10;
 
                 // Create an array of IDs for inflections associated with this fragment.
-                $fragment->_inflections = array_map(function ($rel) {
-                    return $rel['inflection_id'];
-                }, $payload['inflections'][$i]);
+                $fragment->inflections = $payload['inflections'][$i];
 
                 $fragments->push($fragment);
                 
@@ -244,9 +251,11 @@ class SentenceContributionController extends Controller implements IContribution
             }
         }
 
+        $transformations = $this->_sentenceHelper->buildSentences($fragments);
         return [
-            'fragments'    => $fragments,
-            'translations' => $translations
+            'fragments'       => $fragments,
+            'translations'    => $translations,
+            'transformations' => $transformations
         ];
     }
 

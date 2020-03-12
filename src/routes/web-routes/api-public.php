@@ -20,6 +20,9 @@ Route::group([
     Route::get('inflection/{id?}',         [ 'uses' => 'InflectionApiController@index' ])
         ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ]);
 
+    Route::get('gloss/{id?}',              [ 'uses' => 'GlossApiController@get' ])
+        ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ]);
+
     Route::resource('sentence', 'SentenceApiController', ['only' => [
         'show'
     ]]);

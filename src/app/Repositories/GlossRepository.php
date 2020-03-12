@@ -92,12 +92,31 @@ class GlossRepository
     }
 
     /**
+     * Gets the gloss entity with the specified ID.
+     * 
+     * @param int $id
+     * @return Collection
+     */
+    public function getGloss(int $id)
+    {
+        $gloss = Gloss::where('id', $id)
+            ->with('account', 'sense', 'sense.word', 'gloss_group', 'word', 'translations', 'gloss_details')
+            ->first();
+
+        if ($gloss === null) {
+            return new Collection(); // Emtpy collection, i.e. no gloss was found.
+        }
+
+        return new Collection([ $gloss ]);
+    }
+
+    /**
      * Gets the version of the gloss specified by the ID.
      *
      * @param int $id
      * @return Collection
      */
-    public function getGloss(int $id) 
+    public function getGlossVersion(int $id) 
     {
         $gloss = self::createGlossQuery(0, false, true, function ($q) use($id) {
                 return $q->where('g.id', $id);
@@ -113,7 +132,7 @@ class GlossRepository
      * @param int $id
      * @return Collection
      */
-    public function getGlosses(array $ids) 
+    public function getGlossVersions(array $ids) 
     {
         $glosses = self::createGlossQuery(0, false, true, function ($q) use($ids) {
                 return $q->whereIn('g.id', $ids);
@@ -655,8 +674,9 @@ class GlossRepository
             'w.word', 'g.id', 't.translation', 'g.etymology', 's.name as type', 'g.source',
             'g.comments', 'g.tengwar', 'g.phonetic', 'g.language_id', 'g.account_id',
             'a.nickname as account_name', 'w.normalized_word', 'g.is_index', 'g.created_at', 'g.gloss_group_id',
-            'tg.name as gloss_group_name', 'tg.is_canon', 'tg.external_link_format', 'g.is_uncertain', 
-            'g.external_id', 'g.is_latest', 'g.is_rejected', 'g.origin_gloss_id', 'g.sense_id'
+            'tg.name as gloss_group_name', 'tg.is_canon', 'tg.external_link_format', 'g.is_uncertain',
+            'g.external_id', 'g.is_latest', 'g.is_rejected', 'g.origin_gloss_id', 'g.sense_id',
+            'tg.label as gloss_group_label'
         ];
 
         $q0 = self::createGlossQueryWithoutDetails($columns, true)

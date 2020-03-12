@@ -53,7 +53,7 @@ trait CanGetGloss
      */
     public function getGlossUnadapted(int $glossId, bool $coerceLatest = false)
     {
-        $glosses = $this->_glossRepository->getGloss($glossId);
+        $glosses = $this->_glossRepository->getGlossVersion($glossId);
         if ($glosses->count() < 1) {
             return null;
         }

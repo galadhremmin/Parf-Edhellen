@@ -2,6 +2,7 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const cleanWebpack = require('clean-webpack-plugin');
 const WebpackNotifierPlugin = require('webpack-notifier');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 // Reads `.env` configuration values to `process.env`
 require('dotenv').config();
@@ -41,7 +42,8 @@ module.exports = {
             return module.resource &&
               module.resource.includes('node_modules/') &&
               !module.resource.includes('node_modules/glaemscribe') &&
-              !module.resource.includes('node_modules/recharts');
+              !module.resource.includes('node_modules/recharts') &&
+              !module.resource.includes('node_modules/@ag-grid-community');
           },
           priority: 0,
         },
@@ -61,6 +63,13 @@ module.exports = {
           name: 'recharts',
           chunks: 'all',
           test: /node_modules\/recharts/,
+          priority: 20,
+        },
+
+        grid: {
+          name: 'grid',
+          chunks: 'all',
+          test: /node_modules\/@ag\-grid\-community/,
           priority: 20,
         },
 
@@ -152,5 +161,6 @@ module.exports = {
     }),
     // new AsyncChunkNames(),
     new WebpackNotifierPlugin(),
+    // new BundleAnalyzerPlugin(),
   ],
 };

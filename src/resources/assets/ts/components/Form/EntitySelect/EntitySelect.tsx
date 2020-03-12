@@ -49,6 +49,7 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
         const {
             formatter,
             name,
+            required,
             renderSuggestion,
             renderValue,
             suggestions,
@@ -110,6 +111,7 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
                     onFocus={_onValueFocus}
                     onChange={_onValueChange}
                     onKeyDown={_onValueKeyDown}
+                    required={required}
                     value={JSON.stringify(value)}
                 />
                 {renderValue(value)}

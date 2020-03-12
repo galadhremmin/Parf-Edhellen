@@ -10,6 +10,7 @@ import { fireEvent } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
 import Pagination from '@root/components/Pagination';
 import TextIcon from '@root/components/TextIcon';
+import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
 import DiscussActions from '../actions/DiscussActions';
@@ -47,6 +48,7 @@ function Discuss(props: IProps) {
         onNewPostSubmit,
         onNewPostDiscard,
         onPageChange,
+        onReferenceLinkClick,
     } = props;
 
     const {
@@ -120,6 +122,7 @@ function Discuss(props: IProps) {
     return <>
         {posts.map(
             (post) => <Post key={post.id}
+                            onReferenceLinkClick={onReferenceLinkClick}
                             post={post}
                             renderToolbar={_renderToolbar}
                       />,
@@ -179,6 +182,10 @@ const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => ({
         id: ev.value.thread.id,
         offset: ev.value.pageNumber,
     })),
+    onReferenceLinkClick: (ev) => {
+        const globalEvent = new GlobalEventConnector();
+        globalEvent.fire(globalEvent.loadReference, ev.value);
+    },
 } as Partial<IProps>);
 
 export default connect(mapStateToProps, mapDispatchToProps)(Discuss);

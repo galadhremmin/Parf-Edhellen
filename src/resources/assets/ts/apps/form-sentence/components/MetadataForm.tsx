@@ -22,9 +22,9 @@ function MetadataForm(props: IProps) {
     }, [ onChange ]);
 
     const _onChangeNative = useCallback(
-        (field: keyof IProps['sentence']) => (ev: React.ChangeEvent<HTMLInputElement>) => {
+        (field: keyof IProps['sentence']) => (ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const value = /checkbox|radio/i.test(ev.target.type)
-            ? ev.target.checked : ev.target.value;
+            ? (ev.target as HTMLInputElement).checked : ev.target.value;
 
         fireEvent(null, onChange, {
             field,
@@ -69,6 +69,7 @@ function MetadataForm(props: IProps) {
                 name="ed-sentence-account"
                 onChange={_onChange('account')}
                 value={sentence.account}
+                required={true}
             />
         </div>
         <div className="checkbox">
@@ -82,15 +83,21 @@ function MetadataForm(props: IProps) {
             </label>
         </div>
         <div className="form-group form-group-sm">
-            <label htmlFor="ed-sentence-long-description">Description</label>
+            <label htmlFor="ed-sentence-description">Abstract</label>
+            <textarea className="form-control"
+                name="ed-sentence-description"
+                value={sentence.description}
+                onChange={_onChangeNative('description')}
+                required={true}
+            />
+        </div>
+        <div className="form-group form-group-sm">
+            <label htmlFor="ed-sentence-long-description">Details</label>
             <MarkdownInput name="ed-sentence-long-description"
                 value={sentence.longDescription}
                 onChange={_onChange('longDescription')}
             />
         </div>
-        <pre>
-            {JSON.stringify(sentence, null, 2)}
-        </pre>
     </>;
 }
 

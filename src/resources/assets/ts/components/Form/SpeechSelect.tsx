@@ -6,7 +6,7 @@ import { excludeProps } from '@root/utilities/func/props';
 import AsyncSelect from './AsyncSelect/AsyncSelect';
 import { IProps } from './SpeechSelect._types';
 
-const InternalProps: Array<keyof IProps> = [ 'apiConnector' ];
+const InternalProps: (keyof IProps)[] = [ 'apiConnector' ];
 
 function SpeechSelect(props: IProps) {
     const {

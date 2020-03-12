@@ -25,10 +25,10 @@ export interface IGlossaryRequest {
 
 export interface IGlossaryResponse {
     languages: ILanguageEntity[] | null;
-    sections: Array<{
+    sections: {
         glosses: IBookGlossEntity[];
         language: ILanguageEntity;
-    }>;
+    }[];
     sense: number[];
     single: boolean;
     word: string;
@@ -61,6 +61,7 @@ export interface IBookGlossEntity {
     externalLinkFormat: string;
     glossDetails: IBookGlossDetailEntity[];
     glossGroupId: number;
+    glossGroupLabel?: string;
     glossGroupName: string;
     id: number;
     inflectedWord?: IBookWordInflection;
@@ -81,9 +82,9 @@ export interface IBookGlossEntity {
     senseId: number;
     source: string;
     tengwar: string;
-    translations: Array<{
+    translations: {
         translation: string;
-    }>;
+    }[];
     type: string;
     word: string;
 }
@@ -127,12 +128,12 @@ export interface ISentenceResponse {
 }
 
 export interface ISentenceFragmentInflectionMap {
-    [sentenceFragmentId: number]: ISentenceFragmentInflection[];
+    [sentenceFragmentId: string]: ISentenceFragmentInflection[];
 }
 
 export interface ISentenceFragmentInflection {
     inflectionId: number;
-    name: string;
+    name?: string;
 }
 
 export interface ISentenceEntity {
@@ -164,9 +165,10 @@ export interface ISentenceFragmentEntity {
     comments?: string;
     fragment?: string;
     glossId?: number;
-    id: number;
-    paragraphNumber: number;
-    sentenceNumber: number;
+    id?: number;
+    inflections?: ISentenceFragmentInflection[];
+    paragraphNumber?: number;
+    sentenceNumber?: number;
     speech?: string;
     speechId?: number;
     tengwar?: string;
@@ -206,6 +208,7 @@ export interface ISentenceTranslation {
 
 export interface ITextTransformationsMap {
     [transformationName: string]: ITextTransformation;
+    latin?: ITextTransformation;
 }
 
 export interface ITextTransformation {

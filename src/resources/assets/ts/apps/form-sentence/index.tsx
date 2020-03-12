@@ -17,7 +17,7 @@ import SentenceForm from './containers/SentenceForm';
 
 const Inject = (props: IProps) => {
     const store = createStore(rootReducer, undefined,
-        composeEnhancers(
+        composeEnhancers('form-sentence')(
             applyMiddleware(thunkMiddleware),
         ),
     );
@@ -25,6 +25,7 @@ const Inject = (props: IProps) => {
     const {
         sentence,
         sentenceFragments,
+        sentenceTransformations,
         sentenceTranslations,
         prefetched,
     } = props;
@@ -35,11 +36,18 @@ const Inject = (props: IProps) => {
     if (prefetched) {
         if (sentence !== undefined) {
             dispatch(actions.setSentence(sentence));
-            dispatch(actions.setSentenceFragments(sentenceFragments));
+        }
 
-            if (Array.isArray(sentenceTranslations)) {
-                dispatch(actions.setSentenceTranslations(sentenceTranslations));
-            }
+        if (sentenceFragments !== undefined) {
+            dispatch(actions.setSentenceFragments(sentenceFragments));
+        }
+
+        if (sentenceTransformations !== undefined) {
+            dispatch(actions.setTransformations(sentenceTransformations));
+        }
+
+        if (sentenceTranslations !== undefined) {
+            dispatch(actions.setSentenceTranslations(sentenceTranslations));
         }
     }
 

@@ -16,6 +16,18 @@ class GlossApiController extends Controller
         $this->_repository = $repository;
     }
 
+    public function get(Request $request, int $id)
+    {
+        $glosses = $this->_repository->getGloss($id);
+        if ($glosses->isEmpty()) {
+            return response('', 404);
+        }
+
+        return [
+            'gloss' => $glosses->first()
+        ];
+    }
+
     public function destroy(Request $request, int $id)
     {
         $data = $request->validate([
@@ -25,7 +37,7 @@ class GlossApiController extends Controller
         $replacementId = intval($data['replacement_id']);
 
         if ($replacementId !== 0) {
-            $glosses = $this->_repository->getGloss($replacementId);
+            $glosses = $this->_repository->getGlossVersion($replacementId);
             if ($glosses->count() === 0) {
                 return response(null, 400);
             }

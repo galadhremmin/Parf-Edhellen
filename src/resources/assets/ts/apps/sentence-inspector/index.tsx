@@ -16,7 +16,7 @@ import SentenceInspector from './containers/SentenceInspector';
 
 const Inject = (props: IProps) => {
     const store = createStore(rootReducer, undefined,
-        composeEnhancers(applyMiddleware(thunkMiddleware)),
+        composeEnhancers('sentence-inspector')(applyMiddleware(thunkMiddleware)),
     );
 
     if (props.sentence) {

@@ -1,4 +1,4 @@
-export const excludeProps = <T>(props: T, propNames: Array<keyof T>) => {
+export const excludeProps = <T>(props: T, propNames: (keyof T)[]) => {
     if (! isValid(props, propNames)) {
         return props;
     }
@@ -9,7 +9,7 @@ export const excludeProps = <T>(props: T, propNames: Array<keyof T>) => {
     return pickProps<T>(props, namesToPick);
 };
 
-export const pickProps = <T>(props: T, propNames: Array<keyof T>) => {
+export const pickProps = <T>(props: T, propNames: (keyof T)[]) => {
     if (! isValid(props, propNames)) {
         return {} as any;
     }
@@ -27,7 +27,7 @@ export const pickProps = <T>(props: T, propNames: Array<keyof T>) => {
     }, {}) as any;
 };
 
-export const isValid = <T>(props: T, propNames: Array<keyof T>) => {
+export const isValid = <T>(props: T, propNames: (keyof T)[]) => {
     return typeof props === 'object' &&
         Array.isArray(propNames) &&
         propNames.length > 0;
