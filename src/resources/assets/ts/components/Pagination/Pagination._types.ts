@@ -10,5 +10,5 @@ export interface IProps {
     noOfPages: number;
     onClick?: ComponentEventHandler<number>;
     pageQueryParameterName?: string;
-    pages?: Array<string | number> | PageModes;
+    pages?: (string | number)[] | PageModes;
 }

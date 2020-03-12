@@ -23,7 +23,7 @@ export interface IProps {
     newPostEnabled?: boolean;
     newPostLoading?: boolean;
     noOfPages?: number;
-    pages?: Array<string | number>;
+    pages?: (string | number)[];
     onExistingPostChange?: ComponentEventHandler<number>;
     onExistingThreadMetadataChange?: ComponentEventHandler<IThreadMetadataArgs>;
     onNewPostChange?: ComponentEventHandler<IFormChangeData>;

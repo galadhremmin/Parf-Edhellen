@@ -9,7 +9,7 @@ import {
     IComponentProps,
 } from './FormComponent._types';
 
-const DefaultComponentPropNames: Array<keyof IBackingComponentProps<any>> = //
+const DefaultComponentPropNames: (keyof IBackingComponentProps<any>)[] = //
     ['className', 'name', 'value', 'required', 'tabIndex'];
 
 export interface FormComponent {

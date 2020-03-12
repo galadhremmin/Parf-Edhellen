@@ -25,10 +25,10 @@ export interface IGlossaryRequest {
 
 export interface IGlossaryResponse {
     languages: ILanguageEntity[] | null;
-    sections: Array<{
+    sections: {
         glosses: IBookGlossEntity[];
         language: ILanguageEntity;
-    }>;
+    }[];
     sense: number[];
     single: boolean;
     word: string;
@@ -82,9 +82,9 @@ export interface IBookGlossEntity {
     senseId: number;
     source: string;
     tengwar: string;
-    translations: Array<{
+    translations: {
         translation: string;
-    }>;
+    }[];
     type: string;
     word: string;
 }

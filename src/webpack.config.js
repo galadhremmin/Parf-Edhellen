@@ -2,6 +2,7 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const cleanWebpack = require('clean-webpack-plugin');
 const WebpackNotifierPlugin = require('webpack-notifier');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 // Reads `.env` configuration values to `process.env`
 require('dotenv').config();
@@ -160,5 +161,6 @@ module.exports = {
     }),
     // new AsyncChunkNames(),
     new WebpackNotifierPlugin(),
+    // new BundleAnalyzerPlugin(),
   ],
 };

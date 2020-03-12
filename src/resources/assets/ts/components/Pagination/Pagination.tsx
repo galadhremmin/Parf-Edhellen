@@ -16,7 +16,7 @@ const Pagination = (props: IProps) => {
         return null;
     }
 
-    let pageArray: Array<number | string>;
+    let pageArray: (number | string)[];
     switch (pages) {
         case PageModes.AutoGenerate:
             pageArray = createPageArray(noOfPages);
