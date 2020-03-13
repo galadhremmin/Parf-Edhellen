@@ -28,7 +28,7 @@ class BookController extends Controller
 
     public function pageForGlossId(Request $request, int $id)
     {
-        $model = $this->getGlossVersion($id);
+        $model = $this->getGloss($id);
         if (! $model) {
             abort(404);
         }
