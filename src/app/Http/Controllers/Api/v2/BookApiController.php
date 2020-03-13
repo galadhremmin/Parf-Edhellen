@@ -169,7 +169,7 @@ class BookApiController extends Controller
      */
     public function get(Request $request, int $glossId)
     {
-        $gloss = $this->getGlossVersion($glossId);
+        $gloss = $this->getGloss($glossId);
         if (! $gloss) {
             return response(null, 404);
         }
