@@ -1,5 +1,6 @@
 import { ComponentEventHandler } from '@root/components/Component._types';
 
+import { IFragmentChangeEventArgs } from '../components/FragmentsGrid/FragmentsGrid._types';
 import { ISentenceFragmentsReducerState } from '../reducers/SentenceFragmentsReducer._types';
 import { ISentenceReducerState } from '../reducers/SentenceReducer._types';
 import { TextTransformationsReducerState } from '../reducers/TextTransformationsReducer._types';
@@ -12,6 +13,7 @@ export interface ISentenceFieldChangeSpec {
 }
 
 export interface IProps {
+    onFragmentFieldChange: ComponentEventHandler<IFragmentChangeEventArgs>;
     onSentenceFieldChange: ComponentEventHandler<ISentenceFieldChangeSpec>;
     onSentenceTextChange: ComponentEventHandler<string>;
     prefetched?: boolean;

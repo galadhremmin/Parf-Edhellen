@@ -3,9 +3,8 @@ import React from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
 import {
     AllCommunityModules,
+    CellValueChangedEvent,
     GridReadyEvent,
-    ValueFormatterParams,
-    ValueParserParams,
 } from '@ag-grid-community/all-modules';
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
@@ -14,6 +13,7 @@ import {
     DI,
     resolve,
 } from '@root/di';
+import { fireEvent } from '@root/components/Component';
 import IGlossResourceApi, { IGlossEntity } from '@root/connectors/backend/IGlossResourceApi';
 import {
     IInflection,
@@ -141,6 +141,7 @@ class FragmentsGrid extends React.Component<IProps, IState> {
                     columnDefs={columnDefinition}
                     rowData={fragments}
                     onGridReady={this._onGridReady}
+                    onCellValueChanged={this._onCellValueChanged}
                 />}
         </div>;
     }
@@ -154,8 +155,8 @@ class FragmentsGrid extends React.Component<IProps, IState> {
     }
 
     private _onGridReady = (params: GridReadyEvent) => {
-        params.api.sizeColumnsToFit();
-    };
+        params.api.sizeColumnsToFit()
+    }
 
     private _onResolveGloss = async (glossId: number) => {
         if (this._glossCache.has(glossId)) {
@@ -168,7 +169,34 @@ class FragmentsGrid extends React.Component<IProps, IState> {
         const gloss = await glossPromise;
 
         return gloss;
-    };
+    }
+
+    private _onCellValueChanged = (ev: CellValueChangedEvent) => {
+        let {
+            newValue: value,
+        } = ev;
+
+        const {
+            column,
+            data: fragment,
+        } = ev;
+
+        const {
+            onChange,
+        } = this.props;
+
+        // always trim strings from unnecessary whitespace!
+        if (typeof value === 'string') {
+            value = value.trim();
+        }
+
+        const field = column.getColId();
+        fireEvent(this, onChange, {
+            field,
+            fragment,
+            value,
+        });
+    }
 }
 
 export default FragmentsGrid;

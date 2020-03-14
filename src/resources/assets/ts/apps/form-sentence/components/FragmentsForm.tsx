@@ -7,14 +7,15 @@ import FragmentsGrid from './FragmentsGrid';
 function FragmentsForm(props: IProps) {
     const {
         fragments,
-        onChange,
+        onFragmentChange,
+        onTextChange,
         text,
     } = props;
 
     const _onChangeNative = useCallback((ev: React.ChangeEvent<HTMLTextAreaElement>) => {
         const value = ev.target.value;
-        fireEvent(null, onChange, value);
-    }, [ onChange ]);
+        fireEvent(null, onTextChange, value);
+    }, [ onTextChange ]);
 
     return <>
         <div className="form-group form-group-sm">
@@ -25,7 +26,9 @@ function FragmentsForm(props: IProps) {
                       rows={10}
                       value={text}
             />
-            <FragmentsGrid fragments={fragments} />
+            <FragmentsGrid fragments={fragments}
+                           onChange={onFragmentChange}
+            />
         </div>
     </>;
 }

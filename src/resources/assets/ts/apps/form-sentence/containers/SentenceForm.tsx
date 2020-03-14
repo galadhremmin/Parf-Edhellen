@@ -11,6 +11,7 @@ import { IProps } from './SentenceForm._types';
 
 function SentenceForm(props: IProps) {
     const {
+        onFragmentFieldChange,
         onSentenceFieldChange,
         onSentenceTextChange,
         sentence,
@@ -27,7 +28,8 @@ function SentenceForm(props: IProps) {
         <Panel title="Phrase">
             <FragmentsForm fragments={sentenceFragments}
                 text={sentenceText}
-                onChange={onSentenceTextChange} />
+                onFragmentChange={onFragmentFieldChange}
+                onTextChange={onSentenceTextChange} />
         </Panel>
     </>;
 }
@@ -47,6 +49,7 @@ const mapStateToProps = (state: RootReducer) => ({
 
 const actions = new SentenceActions();
 const mapDispatchToProps: any = (dispatch: ReduxThunkDispatch) => ({
+    onFragmentFieldChange: (ev) => null,
     onSentenceFieldChange: (ev) => dispatch(actions.setField(ev.value.field, ev.value.value)),
     onSentenceTextChange: (ev) => dispatch(actions.setText(ev.value)),
 }) as Partial<IProps>;
