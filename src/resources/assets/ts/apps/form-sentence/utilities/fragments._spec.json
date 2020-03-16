@@ -1,0 +1,528 @@
+{
+  "sentenceFragments": [
+    {
+      "comments": "",
+      "fragment": "Aia",
+      "glossId": 364062,
+      "id": 10,
+      "inflections": [],
+      "paragraphNumber": 10,
+      "sentenceNumber": 10,
+      "speechId": 12,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "María",
+      "glossId": 367635,
+      "id": 20,
+      "inflections": [],
+      "paragraphNumber": 10,
+      "sentenceNumber": 10,
+      "speechId": 9,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "quanta",
+      "glossId": 385231,
+      "id": 30,
+      "inflections": [],
+      "paragraphNumber": 10,
+      "sentenceNumber": 10,
+      "speechId": 1,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "Eruanno",
+      "glossId": 377722,
+      "id": 40,
+      "inflections": [
+        {
+          "id": 1429,
+          "sentenceFragmentId": 3311,
+          "inflectionId": 114,
+          "createdAt": "2017-12-01T09:35:29+00:00",
+          "updatedAt": "2017-12-01T09:35:29+00:00"
+        }
+      ],
+      "paragraphNumber": 10,
+      "sentenceNumber": 10,
+      "speechId": 22,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "",
+      "glossId": null,
+      "id": 50,
+      "inflections": [],
+      "paragraphNumber": 10,
+      "sentenceNumber": 10,
+      "speechId": null,
+      "tengwar": null,
+      "type": 10
+    },
+    {
+      "comments": "",
+      "fragment": "i",
+      "glossId": 378363,
+      "id": 60,
+      "inflections": [],
+      "paragraphNumber": 20,
+      "sentenceNumber": 10,
+      "speechId": 33,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "Héru",
+      "glossId": 383744,
+      "id": 70,
+      "inflections": [],
+      "paragraphNumber": 20,
+      "sentenceNumber": 10,
+      "speechId": 14,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "Used together with [as](https://www.elfdict.com/wt/327897).",
+      "fragment": "aselyë",
+      "glossId": 382668,
+      "id": 80,
+      "inflections": [],
+      "paragraphNumber": 20,
+      "sentenceNumber": 10,
+      "speechId": 20,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "",
+      "glossId": null,
+      "id": 90,
+      "inflections": [],
+      "paragraphNumber": 20,
+      "sentenceNumber": 10,
+      "speechId": null,
+      "tengwar": null,
+      "type": 10
+    },
+    {
+      "comments": "",
+      "fragment": "aistana",
+      "glossId": 376729,
+      "id": 100,
+      "inflections": [],
+      "paragraphNumber": 30,
+      "sentenceNumber": 10,
+      "speechId": 1,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "elyë",
+      "glossId": 365640,
+      "id": 110,
+      "inflections": [],
+      "paragraphNumber": 30,
+      "sentenceNumber": 10,
+      "speechId": 21,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "imíca",
+      "glossId": 378256,
+      "id": 120,
+      "inflections": [],
+      "paragraphNumber": 30,
+      "sentenceNumber": 10,
+      "speechId": 20,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "nísi",
+      "glossId": 348696,
+      "id": 130,
+      "inflections": [
+        {
+          "id": 1430,
+          "sentenceFragmentId": 3320,
+          "inflectionId": 3,
+          "createdAt": "2017-12-01T09:35:29+00:00",
+          "updatedAt": "2017-12-01T09:35:29+00:00"
+        }
+      ],
+      "paragraphNumber": 30,
+      "sentenceNumber": 10,
+      "speechId": 14,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "",
+      "glossId": null,
+      "id": 140,
+      "inflections": [],
+      "paragraphNumber": 30,
+      "sentenceNumber": 10,
+      "speechId": null,
+      "tengwar": null,
+      "type": 10
+    },
+    {
+      "comments": "",
+      "fragment": "ar",
+      "glossId": 378343,
+      "id": 150,
+      "inflections": [],
+      "paragraphNumber": 40,
+      "sentenceNumber": 10,
+      "speechId": 27,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "aistana",
+      "glossId": 376729,
+      "id": 160,
+      "inflections": [],
+      "paragraphNumber": 40,
+      "sentenceNumber": 10,
+      "speechId": 1,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "i",
+      "glossId": 378363,
+      "id": 170,
+      "inflections": [],
+      "paragraphNumber": 40,
+      "sentenceNumber": 10,
+      "speechId": 33,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "yávë",
+      "glossId": 386200,
+      "id": 180,
+      "inflections": [],
+      "paragraphNumber": 40,
+      "sentenceNumber": 10,
+      "speechId": 14,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "mónalyo",
+      "glossId": 348166,
+      "id": 190,
+      "inflections": [
+        {
+          "id": 1431,
+          "sentenceFragmentId": 3326,
+          "inflectionId": 105,
+          "createdAt": "2017-12-01T09:35:29+00:00",
+          "updatedAt": "2017-12-01T09:35:29+00:00"
+        }
+      ],
+      "paragraphNumber": 40,
+      "sentenceNumber": 10,
+      "speechId": 14,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "Yésus",
+      "glossId": 369596,
+      "id": 200,
+      "inflections": [],
+      "paragraphNumber": 40,
+      "sentenceNumber": 10,
+      "speechId": 13,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "",
+      "glossId": null,
+      "id": 210,
+      "inflections": [],
+      "paragraphNumber": 40,
+      "sentenceNumber": 10,
+      "speechId": null,
+      "tengwar": null,
+      "type": 10
+    },
+    {
+      "comments": "",
+      "fragment": "Airë",
+      "glossId": 382944,
+      "id": 220,
+      "inflections": [],
+      "paragraphNumber": 50,
+      "sentenceNumber": 10,
+      "speechId": 29,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "María",
+      "glossId": 367635,
+      "id": 230,
+      "inflections": [],
+      "paragraphNumber": 50,
+      "sentenceNumber": 10,
+      "speechId": 9,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "Eruo",
+      "glossId": 382396,
+      "id": 240,
+      "inflections": [
+        {
+          "id": 1432,
+          "sentenceFragmentId": 3331,
+          "inflectionId": 114,
+          "createdAt": "2017-12-01T09:35:29+00:00",
+          "updatedAt": "2017-12-01T09:35:29+00:00"
+        }
+      ],
+      "paragraphNumber": 50,
+      "sentenceNumber": 10,
+      "speechId": 14,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "ontaril",
+      "glossId": 349261,
+      "id": 250,
+      "inflections": [],
+      "paragraphNumber": 50,
+      "sentenceNumber": 10,
+      "speechId": 14,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "",
+      "glossId": null,
+      "id": 260,
+      "inflections": [],
+      "paragraphNumber": 50,
+      "sentenceNumber": 10,
+      "speechId": null,
+      "tengwar": null,
+      "type": 10
+    },
+    {
+      "comments": "",
+      "fragment": "á",
+      "glossId": 366117,
+      "id": 270,
+      "inflections": [],
+      "paragraphNumber": 60,
+      "sentenceNumber": 10,
+      "speechId": 16,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "hyamë",
+      "glossId": 383890,
+      "id": 280,
+      "inflections": [
+        {
+          "id": 1433,
+          "sentenceFragmentId": 3335,
+          "inflectionId": 9,
+          "createdAt": "2017-12-01T09:35:29+00:00",
+          "updatedAt": "2017-12-01T09:35:29+00:00"
+        }
+      ],
+      "paragraphNumber": 60,
+      "sentenceNumber": 10,
+      "speechId": 26,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "Used together with [rá](https://www.elfdict.com/wt/332762).",
+      "fragment": "rámen",
+      "glossId": 378761,
+      "id": 290,
+      "inflections": [
+        {
+          "id": 1434,
+          "sentenceFragmentId": 3336,
+          "inflectionId": 113,
+          "createdAt": "2017-12-01T09:35:29+00:00",
+          "updatedAt": "2017-12-01T09:35:29+00:00"
+        }
+      ],
+      "paragraphNumber": 60,
+      "sentenceNumber": 10,
+      "speechId": 21,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "úcarindor",
+      "glossId": 385965,
+      "id": 300,
+      "inflections": [
+        {
+          "id": 1435,
+          "sentenceFragmentId": 3337,
+          "inflectionId": 3,
+          "createdAt": "2017-12-01T09:35:29+00:00",
+          "updatedAt": "2017-12-01T09:35:29+00:00"
+        }
+      ],
+      "paragraphNumber": 60,
+      "sentenceNumber": 10,
+      "speechId": 14,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "",
+      "glossId": null,
+      "id": 310,
+      "inflections": [],
+      "paragraphNumber": 60,
+      "sentenceNumber": 10,
+      "speechId": null,
+      "tengwar": null,
+      "type": 10
+    },
+    {
+      "comments": "",
+      "fragment": "sí",
+      "glossId": 382811,
+      "id": 320,
+      "inflections": [],
+      "paragraphNumber": 70,
+      "sentenceNumber": 10,
+      "speechId": 2,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "ar",
+      "glossId": 378343,
+      "id": 330,
+      "inflections": [],
+      "paragraphNumber": 70,
+      "sentenceNumber": 10,
+      "speechId": 27,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "lúmessë",
+      "glossId": 384329,
+      "id": 340,
+      "inflections": [
+        {
+          "id": 1436,
+          "sentenceFragmentId": 3341,
+          "inflectionId": 116,
+          "createdAt": "2017-12-01T09:35:29+00:00",
+          "updatedAt": "2017-12-01T09:35:29+00:00"
+        }
+      ],
+      "paragraphNumber": 70,
+      "sentenceNumber": 10,
+      "speechId": 14,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "ya",
+      "glossId": 382413,
+      "id": 350,
+      "inflections": [],
+      "paragraphNumber": 70,
+      "sentenceNumber": 10,
+      "speechId": 21,
+      "tengwar": "",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "firuvammë:",
+      "glossId": 377896,
+      "id": 360,
+      "inflections": [
+        {
+          "id": 1437,
+          "sentenceFragmentId": 3343,
+          "inflectionId": 15,
+          "createdAt": "2017-12-01T09:35:29+00:00",
+          "updatedAt": "2017-12-01T09:35:29+00:00"
+        },
+        {
+          "id": 1438,
+          "sentenceFragmentId": 3343,
+          "inflectionId": 64,
+          "createdAt": "2017-12-01T09:35:29+00:00",
+          "updatedAt": "2017-12-01T09:35:29+00:00"
+        }
+      ],
+      "paragraphNumber": 70,
+      "sentenceNumber": 10,
+      "speechId": 26,
+      "tengwar": "⸱",
+      "type": 0
+    },
+    {
+      "comments": "",
+      "fragment": "násië",
+      "glossId": 348459,
+      "id": 370,
+      "inflections": [],
+      "paragraphNumber": 70,
+      "sentenceNumber": 10,
+      "speechId": 12,
+      "tengwar": "",
+      "type": 0
+    }
+  ],
+  "text": "Aia María quanta Eruanno\ni Héru aselyë\naistana elyë imíca nísi\nar aistana i yávë mónalyo Yésus\nAirë María Eruo ontaril\ná hyamë rámen úcarindor\nsí ar lúmessë ya firuvammë: násië"
+}

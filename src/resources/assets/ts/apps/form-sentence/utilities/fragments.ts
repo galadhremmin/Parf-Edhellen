@@ -69,7 +69,7 @@ export const parseFragments = async (text: string, tengwarMode: string = null) =
 
         // ... a new line?
         else if (newlines.indexOf(c) > -1) {
-            additionalFragment = await createFragment(c, SentenceFragmentType.NewLine,
+            additionalFragment = await createFragment('', SentenceFragmentType.NewLine,
                 sentenceNumber, paragraphNumber);
             flush = true;
 
@@ -131,6 +131,86 @@ export const parseFragments = async (text: string, tengwarMode: string = null) =
     if (buffer.length > 0) {
         newFragments.push(await createFragment(buffer, SentenceFragmentType.Word,
             sentenceNumber, paragraphNumber, tengwarMode));
+    }
+
+    return newFragments;
+};
+
+export const mergeFragments = (newFragments: ISentenceFragmentEntity[], oldFragments: ISentenceFragmentEntity[]) => {
+    if (newFragments.length < 1 || oldFragments.length < 1) {
+        return;
+    }
+
+    const areFragmentsSame = (f0: ISentenceFragmentEntity, f1: ISentenceFragmentEntity) => {
+        if (f0.type !== f1.type) {
+            return false;
+        }
+
+        switch (f0.type) {
+            case SentenceFragmentType.Word:
+                return f0.fragment.toLocaleLowerCase() === f1.fragment.toLocaleLowerCase();
+            case SentenceFragmentType.Interpunctuation:
+            case SentenceFragmentType.OpenParanthesis:
+            case SentenceFragmentType.CloseParanthesis:
+                return f0.fragment === f1.fragment;
+            default:
+                return true;
+        }
+    };
+
+    // forward search -- clone from oldFragments until the first divergence
+    let start = 0;
+    for (; start < newFragments.length && start < oldFragments.length && //
+        areFragmentsSame(newFragments[start], oldFragments[start]); start += 1) {
+        newFragments[start] = { ...oldFragments[start] };
+    }
+
+    // fragments are identical so no further action will be necessary
+    if (start === newFragments.length) {
+        return newFragments;
+    }
+
+    // reverse search -- clone from oldFragments until the first divergence
+    let offset = 0;
+    let end;
+    while (offset < newFragments.length && offset < oldFragments.length) {
+        const newI = newFragments.length - offset - 1;
+        const oldI = oldFragments.length - offset - 1;
+
+        end = oldI;
+
+        if (oldI === start - 1 || ! areFragmentsSame(newFragments[newI], oldFragments[oldI])) {
+            break;
+        } else {
+            newFragments[newI] = { ...oldFragments[oldI] };
+            offset += 1;
+        }
+    }
+
+    if (end !== undefined && end + 1 !== start) {
+        // greedy search -- changes were performed throughout the text body which consequently
+        // breaks the forward and backward search algorithms. So the only way forward is to go
+        // greedy: match on words where possible with the `fragment` as the only eligible identifier.
+        // this will maintain any existing associations the user may have done.
+
+        // TODO
+    }
+
+    // reassign paragraphNumber and sentenceNumber because the sets are partially merged
+    let paragraphNumber = 1;
+    let sentenceNumber = 1;
+    for (const fragment of newFragments) {
+        fragment.paragraphNumber = paragraphNumber;
+        fragment.sentenceNumber = sentenceNumber;
+
+        switch (fragment.type) {
+            case SentenceFragmentType.NewLine:
+                paragraphNumber += 1;
+                break;
+            case SentenceFragmentType.Interpunctuation:
+                sentenceNumber += 1;
+                break;
+        }
     }
 
     return newFragments;

@@ -4,9 +4,21 @@ import {
     ISentenceFragmentEntity,
     SentenceFragmentType,
 } from '@root/connectors/backend/IBookApi';
-import { parseFragments } from './fragments';
+import {
+    parseFragments,
+    mergeFragments,
+} from './fragments';
 
 describe('apps/form-sentence/utilities/fragments', () => {
+    let testData: {
+        sentenceFragments: ISentenceFragmentEntity[];
+        text: string;
+    };
+
+    before(() => {
+        testData = require('./fragments._spec.json');
+    });
+
     it('transcribes a simple sentence without tengwar', async () => {
         const input = 'mae govannen mellon!';
         const expected = [{
@@ -110,7 +122,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
             tengwar: null,
             type: SentenceFragmentType.Interpunctuation,
         }, {
-            fragment: '\n',
+            fragment: '',
             paragraphNumber: 1,
             sentenceNumber: 2,
             tengwar: null,
@@ -128,7 +140,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
             tengwar: null,
             type: SentenceFragmentType.Interpunctuation,
         }, {
-            fragment: '\n',
+            fragment: '',
             paragraphNumber: 2,
             sentenceNumber: 3,
             tengwar: null,
@@ -149,5 +161,179 @@ describe('apps/form-sentence/utilities/fragments', () => {
         const actual = await parseFragments(input);
 
         expect(actual).to.deep.equal(expected);
+    });
+
+    it('restores original set when no changes were made', async () => {
+        const fragments = await parseFragments(testData.text, null);
+        const actual = mergeFragments(fragments, testData.sentenceFragments);
+        const expected = testData.sentenceFragments;
+
+        expect(actual).to.deep.equal(expected);
+    });
+
+    it('merges fragments when forward changes were made to the original set', async () => {
+        const modifiedText = `A B Changes!\n${testData.text}`;
+        const modifiedFragments = await parseFragments(modifiedText, null);
+        const originalFragments = testData.sentenceFragments.map((f) => ({
+            ...f,
+            paragraphNumber: f.paragraphNumber/10 + 1,
+            sentenceNumber: f.sentenceNumber/10 + 1,
+        }));
+        const actual = mergeFragments(modifiedFragments, originalFragments);
+        const expected = [{
+                fragment: 'A',
+                paragraphNumber: 1,
+                sentenceNumber: 1,
+                tengwar: null,
+                type: SentenceFragmentType.Word,
+            }, {
+                fragment: 'B',
+                paragraphNumber: 1,
+                sentenceNumber: 1,
+                tengwar: null,
+                type: SentenceFragmentType.Word,
+            }, {
+                fragment: 'Changes',
+                paragraphNumber: 1,
+                sentenceNumber: 1,
+                tengwar: null,
+                type: SentenceFragmentType.Word,
+            }, {
+                fragment: '!',
+                paragraphNumber: 1,
+                sentenceNumber: 1,
+                tengwar: null,
+                type: SentenceFragmentType.Interpunctuation,
+            }, {
+                fragment: '',
+                paragraphNumber: 1,
+                sentenceNumber: 2,
+                tengwar: null,
+                type: SentenceFragmentType.NewLine,
+            },
+            ...originalFragments,
+        ];
+
+        expect(actual).to.deep.equal(expected);
+    });
+
+    it('merges fragments when rear changes were made to the original set', async () => {
+        const modifiedText = `${testData.text}\nA B Changes!`;
+        const modifiedFragments = await parseFragments(modifiedText, null);
+        const originalFragments = testData.sentenceFragments.map((f) => ({
+            ...f,
+            paragraphNumber: f.paragraphNumber/10,
+            sentenceNumber: f.sentenceNumber/10,
+        }));
+        const actual = mergeFragments(modifiedFragments, originalFragments);
+        const {
+            paragraphNumber,
+            sentenceNumber,
+        } = originalFragments[originalFragments.length - 1];
+        const expected = [
+            ...originalFragments,
+            {
+                fragment: '',
+                paragraphNumber,
+                sentenceNumber,
+                tengwar: null,
+                type: SentenceFragmentType.NewLine,
+            },
+            {
+                fragment: 'A',
+                paragraphNumber: paragraphNumber + 1,
+                sentenceNumber,
+                tengwar: null,
+                type: SentenceFragmentType.Word,
+            }, {
+                fragment: 'B',
+                paragraphNumber: paragraphNumber + 1,
+                sentenceNumber,
+                tengwar: null,
+                type: SentenceFragmentType.Word,
+            }, {
+                fragment: 'Changes',
+                paragraphNumber: paragraphNumber + 1,
+                sentenceNumber,
+                tengwar: null,
+                type: SentenceFragmentType.Word,
+            }, {
+                fragment: '!',
+                paragraphNumber: paragraphNumber + 1,
+                sentenceNumber,
+                tengwar: null,
+                type: SentenceFragmentType.Interpunctuation,
+            },
+        ];
+
+        expect(actual).to.deep.equal(expected);
+    });
+
+    it('merges fragments when middle changes were made to the original set', async () => {
+        // this is the most sophisticated and complicated use case:
+        // the user is making changes within the text body (i.e. adding and/or removing fragments).
+        // it is essential that we maintain existing fragments to the greatest degree possible.
+        const oldText = 'A B C!\nD E F?';
+        const newText = 'A B C!\nG H I.\nD E F?';
+
+        const [ oldFragments, newFragments ] = await Promise.all([
+            parseFragments(oldText, null),
+            parseFragments(newText, null),
+        ]);
+
+        // add some random comments to old fragments to make it possible to look for original fragments:
+        oldFragments.forEach((f) => {
+            f.comments = (Math.random() % 1000).toString(10);
+        });
+
+        const actual = mergeFragments(newFragments, oldFragments);
+        const expected = [
+            ...oldFragments.slice(0, 5),
+            {
+                fragment: 'G',
+                paragraphNumber: 2,
+                sentenceNumber: 2,
+                tengwar: null,
+                type: SentenceFragmentType.Word,
+            },
+            {
+                fragment: 'H',
+                paragraphNumber: 2,
+                sentenceNumber: 2,
+                tengwar: null,
+                type: SentenceFragmentType.Word,
+            },
+            {
+                fragment: 'I',
+                paragraphNumber: 2,
+                sentenceNumber: 2,
+                tengwar: null,
+                type: SentenceFragmentType.Word,
+            },
+            {
+                fragment: '.',
+                paragraphNumber: 2,
+                sentenceNumber: 2,
+                tengwar: null,
+                type: SentenceFragmentType.Interpunctuation,
+            },
+            {
+                fragment: '',
+                paragraphNumber: 2,
+                sentenceNumber: 3,
+                tengwar: null,
+                type: SentenceFragmentType.NewLine,
+            },
+            ...oldFragments.slice(5).map((f) => ({
+                ...f,
+                paragraphNumber: 3,
+                sentenceNumber: 3,
+            })),
+        ];
+        expect(actual).to.deep.equal(expected);
+    });
+
+    it('merges fragments for dispersed changes to the original set', async () => {
+        expect(true).to.be.false;
     });
 });

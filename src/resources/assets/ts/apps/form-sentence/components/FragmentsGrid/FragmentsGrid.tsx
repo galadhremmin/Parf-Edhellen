@@ -4,6 +4,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 import {
     AllCommunityModules,
     CellValueChangedEvent,
+    DetailGridInfo,
     GridReadyEvent,
 } from '@ag-grid-community/all-modules';
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
@@ -47,10 +48,12 @@ class FragmentsGrid extends React.Component<IProps, IState> {
     };
 
     private _glossCache: Map<number, Promise<IGlossEntity>>;
+    private _gridRef: AgGridReact;
 
     constructor(props: IProps) {
         super(props);
         this._glossCache = new Map();
+        this._gridRef = null;
     }
 
     public async componentDidMount() {
@@ -126,6 +129,12 @@ class FragmentsGrid extends React.Component<IProps, IState> {
             ...cellRendererParams,
             columnDefinition,
         });
+
+        window.addEventListener('resize', this._onWindowResize);
+    }
+
+    public componentWillUnmount() {
+        window.removeEventListener('resize', this._onWindowResize);
     }
 
     public render() {
@@ -137,11 +146,12 @@ class FragmentsGrid extends React.Component<IProps, IState> {
 
         return <div className="ag-theme-balham FragmentsGrid--container">
             {columnDefinition &&
-                <AgGridReact modules={AllCommunityModules}
-                    columnDefs={columnDefinition}
-                    rowData={fragments}
-                    onGridReady={this._onGridReady}
+                <AgGridReact columnDefs={columnDefinition}
+                    modules={AllCommunityModules}
                     onCellValueChanged={this._onCellValueChanged}
+                    onGridReady={this._onGridReady}
+                    ref={this._onSetGridReference}
+                    rowData={fragments}
                 />}
         </div>;
     }
@@ -154,21 +164,14 @@ class FragmentsGrid extends React.Component<IProps, IState> {
         return fragments.filter((f) => RelevantFragmentTypes.includes(f.type));
     }
 
-    private _onGridReady = (params: GridReadyEvent) => {
-        params.api.sizeColumnsToFit()
-    }
+    private _onWindowResize = () => {
+        const {
+            _gridRef: gridRef,
+        } = this;
 
-    private _onResolveGloss = async (glossId: number) => {
-        if (this._glossCache.has(glossId)) {
-            return this._glossCache.get(glossId);
+        if (gridRef) {
+            (gridRef as any as DetailGridInfo).api.sizeColumnsToFit();
         }
-
-        const glossApi = resolve<IGlossResourceApi>(DI.GlossApi);
-        const glossPromise = glossApi.gloss(glossId);
-        this._glossCache.set(glossId, glossPromise);
-        const gloss = await glossPromise;
-
-        return gloss;
     }
 
     private _onCellValueChanged = (ev: CellValueChangedEvent) => {
@@ -196,6 +199,27 @@ class FragmentsGrid extends React.Component<IProps, IState> {
             fragment,
             value,
         });
+    }
+
+    private _onGridReady = (params: GridReadyEvent) => {
+        params.api.sizeColumnsToFit()
+    }
+
+    private _onSetGridReference = (gridRef: AgGridReact) => {
+        this._gridRef = gridRef;
+    }
+
+    private _onResolveGloss = async (glossId: number) => {
+        if (this._glossCache.has(glossId)) {
+            return this._glossCache.get(glossId);
+        }
+
+        const glossApi = resolve<IGlossResourceApi>(DI.GlossApi);
+        const glossPromise = glossApi.gloss(glossId);
+        this._glossCache.set(glossId, glossPromise);
+        const gloss = await glossPromise;
+
+        return gloss;
     }
 }
 
