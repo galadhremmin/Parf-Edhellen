@@ -4,7 +4,7 @@ import { fireEvent } from '@root/components/Component';
 import TextIcon from '@root/components/TextIcon';
 import { IProps } from './ActionLink._types';
 
-export default class ActionLink extends React.PureComponent<IProps> {
+export default class ActionLink extends React.Component<IProps> {
     public render() {
         const {
             icon,

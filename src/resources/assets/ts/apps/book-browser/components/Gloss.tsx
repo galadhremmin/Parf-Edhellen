@@ -12,7 +12,7 @@ import OldVersionAlert from './OldVersionAlert';
 
 import './Gloss.scss';
 
-export default class Gloss extends React.PureComponent<IProps> {
+export default class Gloss extends React.Component<IProps> {
     public static defaultProps = {
         toolbar: true,
     };

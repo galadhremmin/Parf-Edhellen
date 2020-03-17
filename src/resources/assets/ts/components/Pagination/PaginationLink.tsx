@@ -3,7 +3,7 @@ import React from 'react';
 import { fireEvent } from '../Component';
 import { IProps } from './PaginationLink._types';
 
-export default class PaginationLink extends React.PureComponent<IProps> {
+export default class PaginationLink extends React.Component<IProps> {
     public static defaultProps = {
         onClick: null,
         parameterName: 'offset',

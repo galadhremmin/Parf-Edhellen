@@ -19,7 +19,7 @@ import { IFragmentInSentenceState } from '../reducers/FragmentsReducer._types';
 
 import './SentenceInspector.scss';
 
-export class SentenceInspector extends React.PureComponent<IProps, IState> {
+export class SentenceInspector extends React.Component<IProps, IState> {
     public state: IState = {
         fragment: null,
         gloss: null,

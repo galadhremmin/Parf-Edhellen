@@ -6,6 +6,7 @@ import {
     ISentenceFragmentEntity,
     SentenceFragmentType,
 } from '@root/connectors/backend/IBookApi';
+import { stringHash } from '@root/utilities/func/hashing';
 import Glaemscribe from '@root/utilities/Glaemscribe';
 
 const createFragment = async (fragment: string, type: SentenceFragmentType, sentenceNumber: number,
@@ -136,70 +137,140 @@ export const parseFragments = async (text: string, tengwarMode: string = null) =
     return newFragments;
 };
 
-export const mergeFragments = (newFragments: ISentenceFragmentEntity[], oldFragments: ISentenceFragmentEntity[]) => {
-    if (newFragments.length < 1 || oldFragments.length < 1) {
-        return;
+const _areFragmentsSame = (f0: ISentenceFragmentEntity, f1: ISentenceFragmentEntity) => {
+    if (f0.type !== f1.type) {
+        return false;
     }
 
-    const areFragmentsSame = (f0: ISentenceFragmentEntity, f1: ISentenceFragmentEntity) => {
-        if (f0.type !== f1.type) {
-            return false;
-        }
+    switch (f0.type) {
+        case SentenceFragmentType.Word:
+            return f0.fragment.toLocaleLowerCase() === f1.fragment.toLocaleLowerCase();
+        case SentenceFragmentType.Interpunctuation:
+        case SentenceFragmentType.OpenParanthesis:
+        case SentenceFragmentType.CloseParanthesis:
+            return f0.fragment === f1.fragment;
+        default:
+            return true;
+    }
+};
 
-        switch (f0.type) {
-            case SentenceFragmentType.Word:
-                return f0.fragment.toLocaleLowerCase() === f1.fragment.toLocaleLowerCase();
-            case SentenceFragmentType.Interpunctuation:
-            case SentenceFragmentType.OpenParanthesis:
-            case SentenceFragmentType.CloseParanthesis:
-                return f0.fragment === f1.fragment;
-            default:
-                return true;
-        }
-    };
-
-    // forward search -- clone from oldFragments until the first divergence
-    let start = 0;
-    for (; start < newFragments.length && start < oldFragments.length && //
-        areFragmentsSame(newFragments[start], oldFragments[start]); start += 1) {
-        newFragments[start] = { ...oldFragments[start] };
+const _mergeForward = (newFragments: ISentenceFragmentEntity[], oldFragments: ISentenceFragmentEntity[]) => {
+    let i = 0;
+    for (; i < newFragments.length && i < oldFragments.length && //
+        _areFragmentsSame(newFragments[i], oldFragments[i]); i += 1) {
+        newFragments[i] = { ...oldFragments[i] };
     }
 
-    // fragments are identical so no further action will be necessary
-    if (start === newFragments.length) {
-        return newFragments;
-    }
+    return i - 1; // -1 because of the for-loop adding +1 with every iteration
+};
 
-    // reverse search -- clone from oldFragments until the first divergence
+const _mergeBackward = (newFragments: ISentenceFragmentEntity[], oldFragments: ISentenceFragmentEntity[], untilIndex: number) => {
     let offset = 0;
     let end;
     while (offset < newFragments.length && offset < oldFragments.length) {
         const newI = newFragments.length - offset - 1;
         const oldI = oldFragments.length - offset - 1;
 
-        end = oldI;
-
-        if (oldI === start - 1 || ! areFragmentsSame(newFragments[newI], oldFragments[oldI])) {
+        if (oldI === untilIndex || ! _areFragmentsSame(newFragments[newI], oldFragments[oldI])) {
+            if (end === undefined) {
+                end = newFragments.length; // the entire set is modified
+            }
             break;
         } else {
+            end = newI;
             newFragments[newI] = { ...oldFragments[oldI] };
             offset += 1;
         }
     }
 
-    if (end !== undefined && end + 1 !== start) {
-        // greedy search -- changes were performed throughout the text body which consequently
-        // breaks the forward and backward search algorithms. So the only way forward is to go
-        // greedy: match on words where possible with the `fragment` as the only eligible identifier.
-        // this will maintain any existing associations the user may have done.
+    return end;
+};
 
-        // TODO
+const _greedyMerge = (newFragments: ISentenceFragmentEntity[], oldFragments: ISentenceFragmentEntity[], bounds: [number, number]) => {
+    const catalog = new Map<string, Map<number, ISentenceFragmentEntity>>();
+
+    // tslint:disable-next-line: variable-name
+    const __createHash = (...fragments: ISentenceFragmentEntity[]) => {
+        const s = fragments.map((f) => f ? f.fragment.toLocaleLowerCase() : '')
+            .join('|');
+
+        return stringHash(s);
+    };
+
+    // build a catalogue of fragments and their adjacencies
+    for (let i = 0; i < oldFragments.length; i += 1) {
+        const f = oldFragments[i];
+
+        if (f.type !== SentenceFragmentType.Word) {
+            continue;
+        }
+
+        let adjacentCatalog: Map<number, ISentenceFragmentEntity>;
+        if (catalog.has(f.fragment)) {
+            adjacentCatalog = catalog.get(f.fragment);
+        } else {
+            adjacentCatalog = new Map();
+            catalog.set(f.fragment, adjacentCatalog);
+        }
+
+        const lf = oldFragments[i - 1]; // don't care if they are out of bounds. Undefined is fine.
+        const rf = oldFragments[i + 1];
+        const hashKeys = [
+            __createHash(f, rf),
+            __createHash(lf, f),
+            __createHash(lf, f, rf),
+        ];
+
+        for (const hashKey of hashKeys) {
+            if (adjacentCatalog.has(hashKey)) {
+                const f0 = adjacentCatalog.get(hashKey);
+                // TODO - pick the most 'complete' fragment
+            } else {
+                adjacentCatalog.set(hashKey, f);
+            }
+        }
     }
 
-    // reassign paragraphNumber and sentenceNumber because the sets are partially merged
+    for (let i = bounds[0]; i <= bounds[1]; i += 1) {
+        const lf = newFragments[i - 1]; // don't care if they are out of bounds. Undefined is fine.
+        const f  = newFragments[i];
+        const rf = newFragments[i + 1];
+
+        // unrecognised fragment -- it did not exist in the original set.
+        if (f.type !== SentenceFragmentType.Word || ! catalog.has(f.fragment)) {
+            continue;
+        }
+
+        const adjacentCatalog = catalog.get(f.fragment);
+        const hashKeys = [
+            __createHash(lf, f, rf), // ordered by priority
+            __createHash(f, rf),
+            __createHash(lf, f),
+        ];
+        let found = false;
+        for (const hashKey of hashKeys) {
+            if (adjacentCatalog.has(hashKey)) {
+                newFragments[i] = {
+                    ...adjacentCatalog.get(hashKey),
+                };
+                found = true;
+                break;
+            }
+        }
+
+        if (! found) {
+            // just grab the first fragment:
+            newFragments[i] = {
+                ...adjacentCatalog.values().next().value,
+            };
+        }
+    }
+};
+
+const _updateOrder = (fragments: ISentenceFragmentEntity[]) => {
     let paragraphNumber = 1;
     let sentenceNumber = 1;
-    for (const fragment of newFragments) {
+    for (const fragment of fragments) {
         fragment.paragraphNumber = paragraphNumber;
         fragment.sentenceNumber = sentenceNumber;
 
@@ -213,5 +284,33 @@ export const mergeFragments = (newFragments: ISentenceFragmentEntity[], oldFragm
         }
     }
 
-    return newFragments;
+    return fragments;
+};
+
+export const mergeFragments = (newFragments: ISentenceFragmentEntity[], oldFragments: ISentenceFragmentEntity[]) => {
+    if (newFragments.length < 1 || oldFragments.length < 1) {
+        return;
+    }
+
+    // forward search -- clone from oldFragments until the first divergence
+    const forwardEnd = _mergeForward(newFragments, oldFragments);
+
+    // fragments are identical so no further action will be necessary
+    if (forwardEnd === newFragments.length - 1) {
+        return newFragments;
+    }
+
+    // reverse search -- clone from oldFragments until the first divergence
+    const backwardEnd = _mergeBackward(newFragments, oldFragments, forwardEnd);
+
+    if (backwardEnd !== undefined && backwardEnd !== forwardEnd) {
+        // greedy search -- changes were performed throughout the text body which consequently
+        // breaks the forward and backward search algorithms. So the only way forward is to go
+        // greedy: match on words where possible with the `fragment` as the only eligible identifier.
+        // this will maintain any existing associations the user may have done.
+        _greedyMerge(newFragments, oldFragments, [ forwardEnd + 1, backwardEnd - 1 ]);
+    }
+
+    // reassign paragraphNumber and sentenceNumber because the sets are partially merged
+    return _updateOrder(newFragments);
 };

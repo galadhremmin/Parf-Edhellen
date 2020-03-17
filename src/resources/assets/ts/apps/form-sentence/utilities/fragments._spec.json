@@ -6,8 +6,8 @@
       "glossId": 364062,
       "id": 10,
       "inflections": [],
-      "paragraphNumber": 10,
-      "sentenceNumber": 10,
+      "paragraphNumber": 1,
+      "sentenceNumber": 1,
       "speechId": 12,
       "tengwar": "",
       "type": 0
@@ -18,8 +18,8 @@
       "glossId": 367635,
       "id": 20,
       "inflections": [],
-      "paragraphNumber": 10,
-      "sentenceNumber": 10,
+      "paragraphNumber": 1,
+      "sentenceNumber": 1,
       "speechId": 9,
       "tengwar": "",
       "type": 0
@@ -30,8 +30,8 @@
       "glossId": 385231,
       "id": 30,
       "inflections": [],
-      "paragraphNumber": 10,
-      "sentenceNumber": 10,
+      "paragraphNumber": 1,
+      "sentenceNumber": 1,
       "speechId": 1,
       "tengwar": "",
       "type": 0
@@ -50,8 +50,8 @@
           "updatedAt": "2017-12-01T09:35:29+00:00"
         }
       ],
-      "paragraphNumber": 10,
-      "sentenceNumber": 10,
+      "paragraphNumber": 1,
+      "sentenceNumber": 1,
       "speechId": 22,
       "tengwar": "",
       "type": 0
@@ -62,8 +62,8 @@
       "glossId": null,
       "id": 50,
       "inflections": [],
-      "paragraphNumber": 10,
-      "sentenceNumber": 10,
+      "paragraphNumber": 1,
+      "sentenceNumber": 1,
       "speechId": null,
       "tengwar": null,
       "type": 10
@@ -74,8 +74,8 @@
       "glossId": 378363,
       "id": 60,
       "inflections": [],
-      "paragraphNumber": 20,
-      "sentenceNumber": 10,
+      "paragraphNumber": 2,
+      "sentenceNumber": 1,
       "speechId": 33,
       "tengwar": "",
       "type": 0
@@ -86,8 +86,8 @@
       "glossId": 383744,
       "id": 70,
       "inflections": [],
-      "paragraphNumber": 20,
-      "sentenceNumber": 10,
+      "paragraphNumber": 2,
+      "sentenceNumber": 1,
       "speechId": 14,
       "tengwar": "",
       "type": 0
@@ -98,8 +98,8 @@
       "glossId": 382668,
       "id": 80,
       "inflections": [],
-      "paragraphNumber": 20,
-      "sentenceNumber": 10,
+      "paragraphNumber": 2,
+      "sentenceNumber": 1,
       "speechId": 20,
       "tengwar": "",
       "type": 0
@@ -110,8 +110,8 @@
       "glossId": null,
       "id": 90,
       "inflections": [],
-      "paragraphNumber": 20,
-      "sentenceNumber": 10,
+      "paragraphNumber": 2,
+      "sentenceNumber": 1,
       "speechId": null,
       "tengwar": null,
       "type": 10
@@ -122,8 +122,8 @@
       "glossId": 376729,
       "id": 100,
       "inflections": [],
-      "paragraphNumber": 30,
-      "sentenceNumber": 10,
+      "paragraphNumber": 3,
+      "sentenceNumber": 1,
       "speechId": 1,
       "tengwar": "",
       "type": 0
@@ -134,8 +134,8 @@
       "glossId": 365640,
       "id": 110,
       "inflections": [],
-      "paragraphNumber": 30,
-      "sentenceNumber": 10,
+      "paragraphNumber": 3,
+      "sentenceNumber": 1,
       "speechId": 21,
       "tengwar": "",
       "type": 0
@@ -146,8 +146,8 @@
       "glossId": 378256,
       "id": 120,
       "inflections": [],
-      "paragraphNumber": 30,
-      "sentenceNumber": 10,
+      "paragraphNumber": 3,
+      "sentenceNumber": 1,
       "speechId": 20,
       "tengwar": "",
       "type": 0
@@ -166,8 +166,8 @@
           "updatedAt": "2017-12-01T09:35:29+00:00"
         }
       ],
-      "paragraphNumber": 30,
-      "sentenceNumber": 10,
+      "paragraphNumber": 3,
+      "sentenceNumber": 1,
       "speechId": 14,
       "tengwar": "",
       "type": 0
@@ -178,8 +178,8 @@
       "glossId": null,
       "id": 140,
       "inflections": [],
-      "paragraphNumber": 30,
-      "sentenceNumber": 10,
+      "paragraphNumber": 3,
+      "sentenceNumber": 1,
       "speechId": null,
       "tengwar": null,
       "type": 10
@@ -190,8 +190,8 @@
       "glossId": 378343,
       "id": 150,
       "inflections": [],
-      "paragraphNumber": 40,
-      "sentenceNumber": 10,
+      "paragraphNumber": 4,
+      "sentenceNumber": 1,
       "speechId": 27,
       "tengwar": "",
       "type": 0
@@ -202,8 +202,8 @@
       "glossId": 376729,
       "id": 160,
       "inflections": [],
-      "paragraphNumber": 40,
-      "sentenceNumber": 10,
+      "paragraphNumber": 4,
+      "sentenceNumber": 1,
       "speechId": 1,
       "tengwar": "",
       "type": 0
@@ -214,8 +214,8 @@
       "glossId": 378363,
       "id": 170,
       "inflections": [],
-      "paragraphNumber": 40,
-      "sentenceNumber": 10,
+      "paragraphNumber": 4,
+      "sentenceNumber": 1,
       "speechId": 33,
       "tengwar": "",
       "type": 0
@@ -226,8 +226,8 @@
       "glossId": 386200,
       "id": 180,
       "inflections": [],
-      "paragraphNumber": 40,
-      "sentenceNumber": 10,
+      "paragraphNumber": 4,
+      "sentenceNumber": 1,
       "speechId": 14,
       "tengwar": "",
       "type": 0
@@ -246,8 +246,8 @@
           "updatedAt": "2017-12-01T09:35:29+00:00"
         }
       ],
-      "paragraphNumber": 40,
-      "sentenceNumber": 10,
+      "paragraphNumber": 4,
+      "sentenceNumber": 1,
       "speechId": 14,
       "tengwar": "",
       "type": 0
@@ -258,8 +258,8 @@
       "glossId": 369596,
       "id": 200,
       "inflections": [],
-      "paragraphNumber": 40,
-      "sentenceNumber": 10,
+      "paragraphNumber": 4,
+      "sentenceNumber": 1,
       "speechId": 13,
       "tengwar": "",
       "type": 0
@@ -270,8 +270,8 @@
       "glossId": null,
       "id": 210,
       "inflections": [],
-      "paragraphNumber": 40,
-      "sentenceNumber": 10,
+      "paragraphNumber": 4,
+      "sentenceNumber": 1,
       "speechId": null,
       "tengwar": null,
       "type": 10
@@ -282,8 +282,8 @@
       "glossId": 382944,
       "id": 220,
       "inflections": [],
-      "paragraphNumber": 50,
-      "sentenceNumber": 10,
+      "paragraphNumber": 5,
+      "sentenceNumber": 1,
       "speechId": 29,
       "tengwar": "",
       "type": 0
@@ -294,8 +294,8 @@
       "glossId": 367635,
       "id": 230,
       "inflections": [],
-      "paragraphNumber": 50,
-      "sentenceNumber": 10,
+      "paragraphNumber": 5,
+      "sentenceNumber": 1,
       "speechId": 9,
       "tengwar": "",
       "type": 0
@@ -314,8 +314,8 @@
           "updatedAt": "2017-12-01T09:35:29+00:00"
         }
       ],
-      "paragraphNumber": 50,
-      "sentenceNumber": 10,
+      "paragraphNumber": 5,
+      "sentenceNumber": 1,
       "speechId": 14,
       "tengwar": "",
       "type": 0
@@ -326,8 +326,8 @@
       "glossId": 349261,
       "id": 250,
       "inflections": [],
-      "paragraphNumber": 50,
-      "sentenceNumber": 10,
+      "paragraphNumber": 5,
+      "sentenceNumber": 1,
       "speechId": 14,
       "tengwar": "",
       "type": 0
@@ -338,8 +338,8 @@
       "glossId": null,
       "id": 260,
       "inflections": [],
-      "paragraphNumber": 50,
-      "sentenceNumber": 10,
+      "paragraphNumber": 5,
+      "sentenceNumber": 1,
       "speechId": null,
       "tengwar": null,
       "type": 10
@@ -350,8 +350,8 @@
       "glossId": 366117,
       "id": 270,
       "inflections": [],
-      "paragraphNumber": 60,
-      "sentenceNumber": 10,
+      "paragraphNumber": 6,
+      "sentenceNumber": 1,
       "speechId": 16,
       "tengwar": "",
       "type": 0
@@ -370,8 +370,8 @@
           "updatedAt": "2017-12-01T09:35:29+00:00"
         }
       ],
-      "paragraphNumber": 60,
-      "sentenceNumber": 10,
+      "paragraphNumber": 6,
+      "sentenceNumber": 1,
       "speechId": 26,
       "tengwar": "",
       "type": 0
@@ -390,8 +390,8 @@
           "updatedAt": "2017-12-01T09:35:29+00:00"
         }
       ],
-      "paragraphNumber": 60,
-      "sentenceNumber": 10,
+      "paragraphNumber": 6,
+      "sentenceNumber": 1,
       "speechId": 21,
       "tengwar": "",
       "type": 0
@@ -410,8 +410,8 @@
           "updatedAt": "2017-12-01T09:35:29+00:00"
         }
       ],
-      "paragraphNumber": 60,
-      "sentenceNumber": 10,
+      "paragraphNumber": 6,
+      "sentenceNumber": 1,
       "speechId": 14,
       "tengwar": "",
       "type": 0
@@ -422,8 +422,8 @@
       "glossId": null,
       "id": 310,
       "inflections": [],
-      "paragraphNumber": 60,
-      "sentenceNumber": 10,
+      "paragraphNumber": 6,
+      "sentenceNumber": 1,
       "speechId": null,
       "tengwar": null,
       "type": 10
@@ -434,8 +434,8 @@
       "glossId": 382811,
       "id": 320,
       "inflections": [],
-      "paragraphNumber": 70,
-      "sentenceNumber": 10,
+      "paragraphNumber": 7,
+      "sentenceNumber": 1,
       "speechId": 2,
       "tengwar": "",
       "type": 0
@@ -446,8 +446,8 @@
       "glossId": 378343,
       "id": 330,
       "inflections": [],
-      "paragraphNumber": 70,
-      "sentenceNumber": 10,
+      "paragraphNumber": 7,
+      "sentenceNumber": 1,
       "speechId": 27,
       "tengwar": "",
       "type": 0
@@ -466,8 +466,8 @@
           "updatedAt": "2017-12-01T09:35:29+00:00"
         }
       ],
-      "paragraphNumber": 70,
-      "sentenceNumber": 10,
+      "paragraphNumber": 7,
+      "sentenceNumber": 1,
       "speechId": 14,
       "tengwar": "",
       "type": 0
@@ -478,8 +478,8 @@
       "glossId": 382413,
       "id": 350,
       "inflections": [],
-      "paragraphNumber": 70,
-      "sentenceNumber": 10,
+      "paragraphNumber": 7,
+      "sentenceNumber": 1,
       "speechId": 21,
       "tengwar": "",
       "type": 0
@@ -505,8 +505,8 @@
           "updatedAt": "2017-12-01T09:35:29+00:00"
         }
       ],
-      "paragraphNumber": 70,
-      "sentenceNumber": 10,
+      "paragraphNumber": 7,
+      "sentenceNumber": 1,
       "speechId": 26,
       "tengwar": "⸱",
       "type": 0
@@ -517,8 +517,8 @@
       "glossId": 348459,
       "id": 370,
       "inflections": [],
-      "paragraphNumber": 70,
-      "sentenceNumber": 10,
+      "paragraphNumber": 7,
+      "sentenceNumber": 1,
       "speechId": 12,
       "tengwar": "",
       "type": 0

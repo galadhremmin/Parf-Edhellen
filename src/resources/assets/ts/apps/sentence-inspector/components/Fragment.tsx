@@ -1,7 +1,7 @@
 import React from 'react';
 import { IProps } from './Fragment._types';
 
-class Fragments extends React.PureComponent<IProps> {
+class Fragments extends React.Component<IProps> {
     public render() {
         const {
             fragment,

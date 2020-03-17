@@ -176,8 +176,8 @@ describe('apps/form-sentence/utilities/fragments', () => {
         const modifiedFragments = await parseFragments(modifiedText, null);
         const originalFragments = testData.sentenceFragments.map((f) => ({
             ...f,
-            paragraphNumber: f.paragraphNumber/10 + 1,
-            sentenceNumber: f.sentenceNumber/10 + 1,
+            paragraphNumber: f.paragraphNumber + 1,
+            sentenceNumber: f.sentenceNumber + 1,
         }));
         const actual = mergeFragments(modifiedFragments, originalFragments);
         const expected = [{
@@ -220,11 +220,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
     it('merges fragments when rear changes were made to the original set', async () => {
         const modifiedText = `${testData.text}\nA B Changes!`;
         const modifiedFragments = await parseFragments(modifiedText, null);
-        const originalFragments = testData.sentenceFragments.map((f) => ({
-            ...f,
-            paragraphNumber: f.paragraphNumber/10,
-            sentenceNumber: f.sentenceNumber/10,
-        }));
+        const originalFragments = testData.sentenceFragments;
         const actual = mergeFragments(modifiedFragments, originalFragments);
         const {
             paragraphNumber,
@@ -270,7 +266,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
     });
 
     it('merges fragments when middle changes were made to the original set', async () => {
-        // this is the most sophisticated and complicated use case:
+        // this is a sophisticated and moderately complicated use case:
         // the user is making changes within the text body (i.e. adding and/or removing fragments).
         // it is essential that we maintain existing fragments to the greatest degree possible.
         const oldText = 'A B C!\nD E F?';
@@ -334,6 +330,37 @@ describe('apps/form-sentence/utilities/fragments', () => {
     });
 
     it('merges fragments for dispersed changes to the original set', async () => {
-        expect(true).to.be.false;
+        // This is the use case where the user has integrated changes throughout the
+        // original text.
+        const oldText = 'mellon i vellon i mellyn';
+        const newText = 'gandalf mellon i mellyn i vellon i mellyn i vellon mellon mellyn dunadan';
+
+        const [ oldFragments, newFragments ] = await Promise.all([
+            parseFragments(oldText, null),
+            parseFragments(newText, null),
+        ]);
+
+        oldFragments.map((f, i) => {
+            f.comments = `${f.fragment} (${(Math.random() * 10000).toString(10)}) #${i}`;
+        });
+
+        const actual = mergeFragments(newFragments, oldFragments);
+        const expected = [
+            newFragments[0], // gandalf,
+            oldFragments[0],  // mellon
+            oldFragments[3],  // i [mellyn]
+            oldFragments[4],  // mellyn
+            oldFragments[1],  // i [vellon]
+            oldFragments[2],  // vellon
+            oldFragments[3],  // i [mellyn]
+            oldFragments[4],  // mellyn
+            oldFragments[1],  // i [vellon]
+            oldFragments[2],  // vellon
+            oldFragments[0],  // mellon
+            oldFragments[4],  // mellyn
+            newFragments[12], // dunadan
+        ];
+
+        expect(actual).to.deep.equal(expected);
     });
 });

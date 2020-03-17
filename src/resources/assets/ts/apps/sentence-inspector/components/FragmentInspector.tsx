@@ -13,7 +13,7 @@ import { IProps } from './FragmentInspector._types';
 
 import './FragmentInspector.scss';
 
-export default class FragmentInspector extends React.PureComponent<IProps> {
+export default class FragmentInspector extends React.Component<IProps> {
     private _globalEvents = new GlobalEventConnector();
     private _rootRef = React.createRef<HTMLElement>();
 

@@ -3,7 +3,7 @@ import React from 'react';
 import Gloss from './Gloss';
 import { IProps } from './Language._types';
 
-export default class GlossaryLanguage extends React.PureComponent<IProps> {
+export default class GlossaryLanguage extends React.Component<IProps> {
     public render() {
         const { glosses, language, onReferenceLinkClick } = this.props;
 

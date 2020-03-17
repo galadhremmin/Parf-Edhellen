@@ -10,7 +10,7 @@ import {
     IState,
 } from './Markdown._types';
 
-export default class Markdown extends React.PureComponent<IProps, IState> {
+export default class Markdown extends React.Component<IProps, IState> {
     public static getDerivedStateFromProps(nextProps: IProps, prevState: IState) {
         if (nextProps.parse && nextProps.text !== prevState.lastText) {
             return {
