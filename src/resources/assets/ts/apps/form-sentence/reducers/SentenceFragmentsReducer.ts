@@ -26,6 +26,13 @@ const SentenceFragmentsReducer = (state = InitialState, action: ISentenceFragmen
                 }
                 return fragment;
             });
+        case Actions.SetFragmentField:
+            return state.map((fragment) => {
+                if (fragment.id === action.sentenceFragment.id) {
+                    return SentenceFragmentReducer(fragment, action);
+                }
+                return fragment;
+            });
         default:
             return state;
     }

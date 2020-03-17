@@ -6,6 +6,8 @@ export type ISentenceFragmentReducerState = Pick<ISentenceFragmentEntity, 'comme
     'fragment' | 'glossId' | 'sentenceNumber' | 'speechId' | 'tengwar' | 'type' | 'id' |
     'inflections' | 'paragraphNumber'>;
 
-export interface ISentenceFragmentAction extends IReduxAction<Actions> {
+export interface ISentenceFragmentAction<T extends keyof ISentenceFragmentEntity = keyof ISentenceFragmentEntity> extends IReduxAction<Actions> {
+    field: T;
     sentenceFragment: ISentenceFragmentReducerState;
+    value: ISentenceFragmentEntity[T];
 }

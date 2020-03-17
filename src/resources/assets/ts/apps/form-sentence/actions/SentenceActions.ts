@@ -3,7 +3,7 @@ import {
     ReduxThunkDispatch,
 } from '@root/_types';
 import { DI, resolve } from '@root/di';
-import { ITextTransformation } from '@root/connectors/backend/IBookApi';
+import { ITextTransformation, ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
 import IContributionResourceApi from '@root/connectors/backend/IContributionResourceApi';
 
 import { RootReducer } from '../reducers';
@@ -75,6 +75,16 @@ export default class GlossActions {
         return {
             latinText: text,
             type: Actions.SetLatinText,
+        };
+    }
+
+    public setFragmentField<T extends keyof ISentenceFragmentEntity>(sentenceFragment: ISentenceFragmentEntity,
+        field: T, value: ISentenceFragmentEntity[T]) {
+        return {
+            field,
+            sentenceFragment,
+            type: Actions.SetFragmentField,
+            value,
         };
     }
 

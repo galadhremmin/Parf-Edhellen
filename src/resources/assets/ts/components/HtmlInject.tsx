@@ -50,6 +50,12 @@ export default class HtmlInject extends React.Component<IProps, IState> {
 
     private _inject() {
         const html = this.props.html;
+        const lastHtml = this.state.lastHtml;
+
+        if (html === lastHtml) {
+            return;
+        }
+
         const elements = this._convertHtmlToReact(html);
 
         this.setState({

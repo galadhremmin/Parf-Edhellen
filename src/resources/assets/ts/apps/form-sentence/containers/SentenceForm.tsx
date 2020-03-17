@@ -49,7 +49,7 @@ const mapStateToProps = (state: RootReducer) => ({
 
 const actions = new SentenceActions();
 const mapDispatchToProps: any = (dispatch: ReduxThunkDispatch) => ({
-    onFragmentFieldChange: (ev) => null,
+    onFragmentFieldChange: (ev) => dispatch(actions.setFragmentField(ev.value.fragment, ev.value.field, ev.value.value)),
     onSentenceFieldChange: (ev) => dispatch(actions.setField(ev.value.field, ev.value.value)),
     onSentenceTextChange: (ev) => dispatch(actions.setText(ev.value)),
 }) as Partial<IProps>;

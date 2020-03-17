@@ -24,10 +24,10 @@ export interface IFragmentGridMetadata extends Partial<ICellEditorParams> {
 
 export type IAugmentedCellRendererParams = IFragmentGridMetadata & Partial<ICellRendererParams>;
 
-export interface IFragmentChangeEventArgs {
-    field: keyof ISentenceFragmentEntity;
+export interface IFragmentChangeEventArgs<T extends keyof ISentenceFragmentEntity = keyof ISentenceFragmentEntity> {
+    field: T;
     fragment: ISentenceFragmentEntity;
-    value: any;
+    value: ISentenceFragmentEntity[T];
 }
 
 export interface IProps {

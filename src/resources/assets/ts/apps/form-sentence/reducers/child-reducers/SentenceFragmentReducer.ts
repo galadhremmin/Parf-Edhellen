@@ -34,6 +34,11 @@ const SentenceFragmentReducer = (state = InitialState, action: ISentenceFragment
                 tengwar: 'tengwar',
                 type: 'type',
             }, action.sentenceFragment);
+        case Actions.SetFragmentField:
+            return {
+                ...state,
+                [action.field]: action.value,
+            }
         default:
             return state;
     }
