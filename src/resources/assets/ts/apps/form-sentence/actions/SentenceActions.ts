@@ -5,6 +5,7 @@ import {
 import { DI, resolve } from '@root/di';
 import { ITextTransformation, ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
 import IContributionResourceApi from '@root/connectors/backend/IContributionResourceApi';
+import ILanguageApi from '@root/connectors/backend/ILanguageApi';
 
 import { RootReducer } from '../reducers';
 import { ISentenceFragmentsReducerState } from '../reducers/SentenceFragmentsReducer._types';
@@ -14,20 +15,22 @@ import { TextTransformationsReducerState } from '../reducers/TextTransformations
 import { convertTransformationToString } from '../utilities/transformations';
 
 import Actions from './Actions';
+import { parseFragments, mergeFragments } from '../utilities/fragments';
 
 export default class GlossActions {
     constructor(
         // private _glossApi: IGlossResourceApi = resolve(DI.GlossApi),
-        private _contributionApi: IContributionResourceApi = resolve(DI.ContributionApi)) {}
+        private _contributionApi: IContributionResourceApi = resolve(DI.ContributionApi),
+        private _languageApi: ILanguageApi = resolve(DI.LanguageApi)) {}
 
-    public setSentence(sentence: ISentenceReducerState) {
+    public setLoadedSentence(sentence: ISentenceReducerState) {
         return {
             sentence,
             type: Actions.ReceiveSentence,
         };
     }
 
-    public setSentenceFragments(sentenceFragments: ISentenceFragmentsReducerState) {
+    public setLoadedSentenceFragments(sentenceFragments: ISentenceFragmentsReducerState) {
         return (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
             dispatch({
                 sentenceFragments,
@@ -36,13 +39,12 @@ export default class GlossActions {
 
             const textTransformations = getState().textTransformations;
             if (textTransformations.latin !== undefined) {
-                dispatch(this.setTextWithLatinTransformer(textTransformations.latin,
-                    sentenceFragments));
+                dispatch(this.setTextWithLatinTransformer(sentenceFragments));
             }
         };
     }
 
-    public setTransformations(textTransformations: TextTransformationsReducerState) {
+    public setLoadedTransformations(textTransformations: TextTransformationsReducerState) {
         return (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
             dispatch({
                 textTransformations,
@@ -50,20 +52,19 @@ export default class GlossActions {
             });
 
             if (textTransformations.latin !== undefined) {
-                dispatch(this.setTextWithLatinTransformer(textTransformations.latin,
-                    getState().sentenceFragments));
+                dispatch(this.setTextWithLatinTransformer(getState().sentenceFragments));
             }
         };
     }
 
-    public setSentenceTranslations(sentenceTranslations: ISentenceTranslationsReducerState) {
+    public setLoadedSentenceTranslations(sentenceTranslations: ISentenceTranslationsReducerState) {
         return {
             sentenceTranslations,
             type: Actions.ReceiveTranslation,
         };
     }
 
-    public setField(field: keyof ISentenceReducerState, value: any) {
+    public setMetadataField(field: keyof ISentenceReducerState, value: any) {
         return {
             field,
             type: Actions.SetField,
@@ -71,8 +72,9 @@ export default class GlossActions {
         };
     }
 
-    public setText(text: string) {
+    public setLatinText(text: string, dirty = true) {
         return {
+            dirty,
             latinText: text,
             type: Actions.SetLatinText,
         };
@@ -88,8 +90,31 @@ export default class GlossActions {
         };
     }
 
-    public setTextWithLatinTransformer(transformer: ITextTransformation, fragments: ISentenceFragmentsReducerState) {
-        const text = convertTransformationToString(transformer, fragments);
-        return this.setText(text);
+    public setTextWithLatinTransformer(fragments: ISentenceFragmentsReducerState) {
+        return (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
+            const transformer = getState().textTransformations.latin;
+            if (transformer) {
+                const text = convertTransformationToString(transformer, fragments);
+                dispatch(this.setLatinText(text, false));
+            }
+        };
+    }
+
+    public reloadFragments(text: string) {
+        return async (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
+            const oldFragments = getState().sentenceFragments;
+            const languageId   = getState().sentence.languageId;
+
+            const language = this._languageApi.find(languageId, 'id');
+            if (language === null) {
+                // oof bad stuff!
+                throw new Error(`Failed to parse fragments because language ${languageId} does not exist!`);
+            }
+
+            const newFragments = await parseFragments(text);
+            mergeFragments(newFragments, oldFragments);
+
+            // TODO -- update everything :)
+        }
     }
 }

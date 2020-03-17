@@ -276,8 +276,8 @@ const mapStateToProps = (state: RootReducer) => ({
 
 const actions = new GlossActions();
 const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => ({
-    onEditChange: (e) => dispatch(actions.setEditing(e.value)),
-    onGlossFieldChange: (e) => dispatch(actions.setField(e.value.field, e.value.value)),
+    onEditChange: (e) => dispatch(actions.setEditingGlossId(e.value)),
+    onGlossFieldChange: (e) => dispatch(actions.setGlossField(e.value.field, e.value.value)),
     onSubmit: (e) => dispatch(actions.saveGloss(e.value)),
 } as Partial<IProps>);
 

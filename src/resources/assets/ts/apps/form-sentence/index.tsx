@@ -35,19 +35,19 @@ const Inject = (props: IProps) => {
     const actions = new SentenceActions();
     if (prefetched) {
         if (sentence !== undefined) {
-            dispatch(actions.setSentence(sentence));
+            dispatch(actions.setLoadedSentence(sentence));
         }
 
         if (sentenceFragments !== undefined) {
-            dispatch(actions.setSentenceFragments(sentenceFragments));
+            dispatch(actions.setLoadedSentenceFragments(sentenceFragments));
         }
 
         if (sentenceTransformations !== undefined) {
-            dispatch(actions.setTransformations(sentenceTransformations));
+            dispatch(actions.setLoadedTransformations(sentenceTransformations));
         }
 
         if (sentenceTranslations !== undefined) {
-            dispatch(actions.setSentenceTranslations(sentenceTranslations));
+            dispatch(actions.setLoadedSentenceTranslations(sentenceTranslations));
         }
     }
 

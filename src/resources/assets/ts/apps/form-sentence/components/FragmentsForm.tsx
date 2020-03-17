@@ -8,14 +8,21 @@ function FragmentsForm(props: IProps) {
     const {
         fragments,
         onFragmentChange,
+        onParseTextRequest,
         onTextChange,
         text,
+        textIsDirty,
     } = props;
 
     const _onChangeNative = useCallback((ev: React.ChangeEvent<HTMLTextAreaElement>) => {
         const value = ev.target.value;
         fireEvent(null, onTextChange, value);
     }, [ onTextChange ]);
+
+    const _onParseFragments = useCallback((ev: React.MouseEvent<HTMLButtonElement>) => {
+        ev.preventDefault();
+        fireEvent(null, onParseTextRequest, text);
+    }, [ onParseTextRequest, text ]);
 
     return <>
         <div className="form-group form-group-sm">
@@ -26,10 +33,13 @@ function FragmentsForm(props: IProps) {
                       rows={10}
                       value={text}
             />
-            <FragmentsGrid fragments={fragments}
-                           onChange={onFragmentChange}
-            />
+            <button className="btn btn-primary btn-block"
+                    disabled={! textIsDirty}
+                    onClick={_onParseFragments}>Update</button>
         </div>
+        <FragmentsGrid fragments={fragments}
+                        onChange={onFragmentChange}
+        />
     </>;
 }
 

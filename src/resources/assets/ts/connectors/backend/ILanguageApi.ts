@@ -3,7 +3,7 @@ import {
     ILanguagesResponse,
 } from './IBookApi';
 
-type LanguageComparator = (a: ILanguageEntity, b: ILanguageEntity) => boolean;
+export type LanguageComparator<TKey> = (a: TKey, b: TKey) => boolean;
 
 export default interface ILanguageApi {
     /**
@@ -18,5 +18,5 @@ export default interface ILanguageApi {
      * @param key (optional) the property on the language object that contains the expected `value`.
      * @param cmpFunc (optional) comparer; `===` by default.
      */
-    find(value: any, key?: keyof ILanguageEntity, cmpFunc?: LanguageComparator): Promise<ILanguageEntity>;
+    find<TKey extends keyof ILanguageEntity>(value: ILanguageEntity[TKey], key: TKey, cmpFunc?: LanguageComparator<ILanguageEntity[TKey]>): Promise<ILanguageEntity>;
 }
