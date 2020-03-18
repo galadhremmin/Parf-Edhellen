@@ -5,6 +5,7 @@ import {
     SentenceFragmentType,
 } from '@root/connectors/backend/IBookApi';
 import {
+    createFragment,
     parseFragments,
     mergeFragments,
 } from './fragments';
@@ -19,30 +20,83 @@ describe('apps/form-sentence/utilities/fragments', () => {
         testData = require('./fragments._spec.json');
     });
 
+    it('creates valid fragments', async () => {
+        const fragment = 'A';
+        const paragraphNumber = 100;
+        const sentenceNumber = 50;
+        const type = SentenceFragmentType.Word;
+
+        const actual = await createFragment(fragment, type, sentenceNumber, paragraphNumber);
+        const expected = {
+            fragment,
+            glossId: 0,
+            inflections: [],
+            paragraphNumber,
+            sentenceNumber,
+            speechId: 0,
+            tengwar: null,
+            type,
+        } as ISentenceFragmentEntity;
+
+        expect(actual).to.deep.equal(expected);
+    });
+
+    it('is case sensitive', async () => {
+        const oldText = 'A B C';
+        const newText = 'a b c';
+
+        const oldFragments = await parseFragments(oldText);
+        oldFragments.forEach((f) => {
+            f.comments = (Math.random() * 10000).toString(10);
+        });
+
+        const newFragments = await parseFragments(newText);
+
+        const actual = mergeFragments(newFragments, oldFragments);
+        const expected = oldFragments.map((f) => {
+            f.fragment = f.fragment.toLocaleLowerCase();
+            return f;
+        });
+
+        expect(actual).to.deep.equal(expected);
+    });
+
     it('transcribes a simple sentence without tengwar', async () => {
         const input = 'mae govannen mellon!';
         const expected = [{
             fragment: 'mae',
+            glossId: 0,
+            inflections: [],
             paragraphNumber: 1,
             sentenceNumber: 1,
+            speechId: 0,
             tengwar: null,
             type: SentenceFragmentType.Word,
         }, {
             fragment: 'govannen',
+            glossId: 0,
+            inflections: [],
             paragraphNumber: 1,
             sentenceNumber: 1,
+            speechId: 0,
             tengwar: null,
             type: SentenceFragmentType.Word,
         }, {
             fragment: 'mellon',
+            glossId: 0,
+            inflections: [],
             paragraphNumber: 1,
             sentenceNumber: 1,
+            speechId: 0,
             tengwar: null,
             type: SentenceFragmentType.Word,
         }, {
             fragment: '!',
+            glossId: 0,
+            inflections: [],
             paragraphNumber: 1,
             sentenceNumber: 1,
+            speechId: 0,
             tengwar: null,
             type: SentenceFragmentType.Interpunctuation,
         }] as ISentenceFragmentEntity[];
@@ -55,44 +109,65 @@ describe('apps/form-sentence/utilities/fragments', () => {
         const input = 'a b! c! d!';
         const expected = [{
             fragment: 'a',
+            glossId: 0,
+            inflections: [],
             paragraphNumber: 1,
             sentenceNumber: 1,
+            speechId: 0,
             tengwar: null,
             type: SentenceFragmentType.Word,
         }, {
             fragment: 'b',
+            glossId: 0,
+            inflections: [],
             paragraphNumber: 1,
             sentenceNumber: 1,
+            speechId: 0,
             tengwar: null,
             type: SentenceFragmentType.Word,
         }, {
             fragment: '!',
+            glossId: 0,
+            inflections: [],
             paragraphNumber: 1,
             sentenceNumber: 1,
+            speechId: 0,
             tengwar: null,
             type: SentenceFragmentType.Interpunctuation,
         }, {
             fragment: 'c',
+            glossId: 0,
+            inflections: [],
             paragraphNumber: 1,
             sentenceNumber: 2,
+            speechId: 0,
             tengwar: null,
             type: SentenceFragmentType.Word,
         }, {
             fragment: '!',
+            glossId: 0,
+            inflections: [],
             paragraphNumber: 1,
             sentenceNumber: 2,
+            speechId: 0,
             tengwar: null,
             type: SentenceFragmentType.Interpunctuation,
         }, {
             fragment: 'd',
+            glossId: 0,
+            inflections: [],
             paragraphNumber: 1,
             sentenceNumber: 3,
+            speechId: 0,
             tengwar: null,
             type: SentenceFragmentType.Word,
         }, {
             fragment: '!',
+            glossId: 0,
+            inflections: [],
             paragraphNumber: 1,
             sentenceNumber: 3,
+            speechId: 0,
             tengwar: null,
             type: SentenceFragmentType.Interpunctuation,
         }] as ISentenceFragmentEntity[];
@@ -105,56 +180,83 @@ describe('apps/form-sentence/utilities/fragments', () => {
         const input = 'a b!\nc!\nd!';
         const expected = [{
             fragment: 'a',
+            glossId: 0,
+            inflections: [],
             paragraphNumber: 1,
             sentenceNumber: 1,
+            speechId: 0,
             tengwar: null,
             type: SentenceFragmentType.Word,
         }, {
             fragment: 'b',
+            glossId: 0,
+            inflections: [],
             paragraphNumber: 1,
             sentenceNumber: 1,
+            speechId: 0,
             tengwar: null,
             type: SentenceFragmentType.Word,
         }, {
             fragment: '!',
+            glossId: 0,
+            inflections: [],
             paragraphNumber: 1,
             sentenceNumber: 1,
+            speechId: 0,
             tengwar: null,
             type: SentenceFragmentType.Interpunctuation,
         }, {
             fragment: '',
+            glossId: 0,
+            inflections: [],
             paragraphNumber: 1,
             sentenceNumber: 2,
+            speechId: 0,
             tengwar: null,
             type: SentenceFragmentType.NewLine,
         }, {
             fragment: 'c',
+            glossId: 0,
+            inflections: [],
             paragraphNumber: 2,
             sentenceNumber: 2,
+            speechId: 0,
             tengwar: null,
             type: SentenceFragmentType.Word,
         }, {
             fragment: '!',
+            glossId: 0,
+            inflections: [],
             paragraphNumber: 2,
             sentenceNumber: 2,
+            speechId: 0,
             tengwar: null,
             type: SentenceFragmentType.Interpunctuation,
         }, {
             fragment: '',
+            glossId: 0,
+            inflections: [],
             paragraphNumber: 2,
             sentenceNumber: 3,
+            speechId: 0,
             tengwar: null,
             type: SentenceFragmentType.NewLine,
         }, {
             fragment: 'd',
+            glossId: 0,
+            inflections: [],
             paragraphNumber: 3,
             sentenceNumber: 3,
+            speechId: 0,
             tengwar: null,
             type: SentenceFragmentType.Word,
         }, {
             fragment: '!',
+            glossId: 0,
+            inflections: [],
             paragraphNumber: 3,
             sentenceNumber: 3,
+            speechId: 0,
             tengwar: null,
             type: SentenceFragmentType.Interpunctuation,
         }] as ISentenceFragmentEntity[];
@@ -182,32 +284,47 @@ describe('apps/form-sentence/utilities/fragments', () => {
         const actual = mergeFragments(modifiedFragments, originalFragments);
         const expected = [{
                 fragment: 'A',
+                glossId: 0,
+                inflections: [],
                 paragraphNumber: 1,
                 sentenceNumber: 1,
+                speechId: 0,
                 tengwar: null,
                 type: SentenceFragmentType.Word,
             }, {
                 fragment: 'B',
+                glossId: 0,
+                inflections: [],
                 paragraphNumber: 1,
                 sentenceNumber: 1,
+                speechId: 0,
                 tengwar: null,
                 type: SentenceFragmentType.Word,
             }, {
                 fragment: 'Changes',
+                glossId: 0,
+                inflections: [],
                 paragraphNumber: 1,
                 sentenceNumber: 1,
+                speechId: 0,
                 tengwar: null,
                 type: SentenceFragmentType.Word,
             }, {
                 fragment: '!',
+                glossId: 0,
+                inflections: [],
                 paragraphNumber: 1,
                 sentenceNumber: 1,
+                speechId: 0,
                 tengwar: null,
                 type: SentenceFragmentType.Interpunctuation,
             }, {
                 fragment: '',
+                glossId: 0,
+                inflections: [],
                 paragraphNumber: 1,
                 sentenceNumber: 2,
+                speechId: 0,
                 tengwar: null,
                 type: SentenceFragmentType.NewLine,
             },
@@ -230,33 +347,48 @@ describe('apps/form-sentence/utilities/fragments', () => {
             ...originalFragments,
             {
                 fragment: '',
+                glossId: 0,
+                inflections: [],
                 paragraphNumber,
                 sentenceNumber,
+                speechId: 0,
                 tengwar: null,
                 type: SentenceFragmentType.NewLine,
             },
             {
                 fragment: 'A',
+                glossId: 0,
+                inflections: [],
                 paragraphNumber: paragraphNumber + 1,
                 sentenceNumber,
+                speechId: 0,
                 tengwar: null,
                 type: SentenceFragmentType.Word,
             }, {
                 fragment: 'B',
+                glossId: 0,
+                inflections: [],
                 paragraphNumber: paragraphNumber + 1,
                 sentenceNumber,
+                speechId: 0,
                 tengwar: null,
                 type: SentenceFragmentType.Word,
             }, {
                 fragment: 'Changes',
+                glossId: 0,
+                inflections: [],
                 paragraphNumber: paragraphNumber + 1,
                 sentenceNumber,
+                speechId: 0,
                 tengwar: null,
                 type: SentenceFragmentType.Word,
             }, {
                 fragment: '!',
+                glossId: 0,
+                inflections: [],
                 paragraphNumber: paragraphNumber + 1,
                 sentenceNumber,
+                speechId: 0,
                 tengwar: null,
                 type: SentenceFragmentType.Interpunctuation,
             },
@@ -287,36 +419,51 @@ describe('apps/form-sentence/utilities/fragments', () => {
             ...oldFragments.slice(0, 5),
             {
                 fragment: 'G',
+                glossId: 0,
+                inflections: [],
                 paragraphNumber: 2,
                 sentenceNumber: 2,
+                speechId: 0,
                 tengwar: null,
                 type: SentenceFragmentType.Word,
             },
             {
                 fragment: 'H',
+                glossId: 0,
+                inflections: [],
                 paragraphNumber: 2,
                 sentenceNumber: 2,
+                speechId: 0,
                 tengwar: null,
                 type: SentenceFragmentType.Word,
             },
             {
                 fragment: 'I',
+                glossId: 0,
+                inflections: [],
                 paragraphNumber: 2,
                 sentenceNumber: 2,
+                speechId: 0,
                 tengwar: null,
                 type: SentenceFragmentType.Word,
             },
             {
                 fragment: '.',
+                glossId: 0,
+                inflections: [],
                 paragraphNumber: 2,
                 sentenceNumber: 2,
+                speechId: 0,
                 tengwar: null,
                 type: SentenceFragmentType.Interpunctuation,
             },
             {
                 fragment: '',
+                glossId: 0,
+                inflections: [],
                 paragraphNumber: 2,
                 sentenceNumber: 3,
+                speechId: 0,
                 tengwar: null,
                 type: SentenceFragmentType.NewLine,
             },

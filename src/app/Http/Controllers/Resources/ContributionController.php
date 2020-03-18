@@ -301,8 +301,12 @@ class ContributionController extends Controller
         
         $id = $this->getEntityId($request);
         
-        $this->createController($request)->validateSubstep($request, $id, $substepId);
-        return response(null, 204);
+        $result = $this->createController($request)->validateSubstep($request, $id, $substepId);
+        if (is_bool($result)) {
+            return response(null, $result ? 204 : 400);
+        }
+
+        return $result;
     }
 
     /**

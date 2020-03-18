@@ -3,7 +3,7 @@ namespace App\Http\Controllers\Traits;
 
 use Illuminate\Http\Request;
 
-use App\Adapters\SentenceBuilder;
+use App\Helpers\SentenceBuilders\SentenceBuilder;
 
 trait CanValidateSentence
 {
@@ -23,17 +23,20 @@ trait CanValidateSentence
         }
         
         parent::validate($request, $rules);
+        return true;
     } 
 
-    public function validateFragmentsInRequest(Request $request)
+    public function validateFragmentsInRequest(Request $request, $validateIdCorrectness = true)
     {
         // This is unfortunately a multi-tiered validation process, as its validation
         // rules are heavily dependant on the request data payload.
         //
         // step 1: Ensure that there is a parameter called _fragments_.
         $rules = [
-            'fragments'        => 'required|array',
-            'fragments.*.type' => 'required|numeric|min:0|max:255'
+            'fragments'                    => 'required|array',
+            'fragments.*.type'             => 'required|numeric|min:0|max:255',
+            'fragments.*.paragraph_number' => 'required|numeric',
+            'fragments.*.sentence_number'  => 'required|numeric'
         ];
         parent::validate($request, $rules);
 
@@ -54,16 +57,23 @@ trait CanValidateSentence
             $rules[$prefix.'fragment'] = 'required|max:48';
 
             if (! $fragments[$i]['type']) {
-                $rules[$prefix.'tengwar']   = 'required|max:128';
-                $rules[$prefix.'gloss_id']  = 'required|exists:glosses,id';
-                $rules[$prefix.'speech_id'] = 'required|exists:speeches,id';
-
+                $rules[$prefix.'tengwar']     = 'required|max:128';
                 // inflections are optional, but when present, have to be declared as an array
-                $rules[$prefix.'inflections']      = 'sometimes|array';
-                $rules[$prefix.'inflections.*.id'] = 'sometimes|exists:inflections,id';
+                $rules[$prefix.'inflections'] = 'sometimes|array';
+                
+                if ($validateIdCorrectness) {
+                    $rules[$prefix.'gloss_id']  = 'required|exists:glosses,id';
+                    $rules[$prefix.'speech_id'] = 'required|exists:speeches,id';
+                    $rules[$prefix.'inflections.*.inflection_id'] = 'sometimes|exists:inflections,id';
+                } else {
+                    $rules[$prefix.'gloss_id']  = 'required|numeric';
+                    $rules[$prefix.'speech_id'] = 'required|numeric';
+                    $rules[$prefix.'inflections.*.inflection_id'] = 'sometimes|numeric';
+                }
             }
         }
 
         parent::validate($request, $rules);
+        return true;
     }
 }

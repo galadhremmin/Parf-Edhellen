@@ -6,6 +6,7 @@ import {
     CellValueChangedEvent,
     DetailGridInfo,
     GridReadyEvent,
+    RowNode,
 } from '@ag-grid-community/all-modules';
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
@@ -38,6 +39,7 @@ import {
 } from './FragmentsGrid._types';
 
 import './FragmentsGrid.scss';
+import { ISentenceFragmentEntity, SentenceFragmentType } from '@root/connectors/backend/IBookApi';
 
 class FragmentsGrid extends React.Component<IProps, IState> {
     public state: IState = {
@@ -142,11 +144,15 @@ class FragmentsGrid extends React.Component<IProps, IState> {
             columnDefinition,
         } = this.state;
 
-        const fragments = this.getRelevantFragments();
+        const {
+            fragments,
+        } = this.props;
 
         return <div className="ag-theme-balham FragmentsGrid--container">
             {columnDefinition &&
                 <AgGridReact columnDefs={columnDefinition}
+                    isExternalFilterPresent={this._onIsExternalFilterPresent}
+                    doesExternalFilterPass={this._onDoesExternalFilterPass}
                     modules={AllCommunityModules}
                     onCellValueChanged={this._onCellValueChanged}
                     onGridReady={this._onGridReady}
@@ -154,14 +160,6 @@ class FragmentsGrid extends React.Component<IProps, IState> {
                     rowData={fragments}
                 />}
         </div>;
-    }
-
-    private getRelevantFragments() {
-        const {
-            fragments,
-        } = this.props;
-
-        return fragments.filter((f) => RelevantFragmentTypes.includes(f.type));
     }
 
     private _onWindowResize = () => {
@@ -173,6 +171,13 @@ class FragmentsGrid extends React.Component<IProps, IState> {
             (gridRef as any as DetailGridInfo).api.sizeColumnsToFit();
         }
     }
+
+    private _onIsExternalFilterPresent = () => true;
+
+    private _onDoesExternalFilterPass = (ev: RowNode) => {
+        const data = ev.data as ISentenceFragmentEntity;
+        return data.type === SentenceFragmentType.Word;
+    };
 
     private _onCellValueChanged = (ev: CellValueChangedEvent) => {
         let {

@@ -2,6 +2,7 @@
 namespace App\Http\Controllers\Traits;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 use App\Models\{ 
     Sentence, 
@@ -22,7 +23,14 @@ trait CanMapSentence
         $sentence->is_neologism     = intval($request->input('is_neologism'));
         $sentence->is_approved      = 1; // always approved by default
 
-        $order = 0;
+        $fragmentsMap = $this->mapSentenceFragments($sentence, $request);
+        return array_merge([
+            'sentence' => $sentence
+        ], $fragmentsMap);
+    }
+
+    public function mapSentenceFragments(Sentence $sentence, Request $request)
+    {
         $fragments = [];
         $inflections = [];
 
@@ -49,8 +57,10 @@ trait CanMapSentence
                 }
             }
 
-            $fragment->order       = count($fragments) * 10;
-            $fragment->sentence_id = $sentence->id;
+            $fragment->paragraph_number = intval($fragmentData['paragraph_number']);
+            $fragment->sentence_number  = intval($fragmentData['sentence_number']);
+            $fragment->order            = count($fragments) * 10;
+            $fragment->sentence_id      = $sentence->id;
 
             $fragments[] = $fragment;
 
@@ -59,7 +69,7 @@ trait CanMapSentence
                 foreach ($fragmentData['inflections'] as $inflection) {
                     $inflectionRel = new SentenceFragmentInflectionRel;
 
-                    $inflectionRel->inflection_id        = $inflection['id'];
+                    $inflectionRel->inflection_id        = $inflection['inflection_id'];
                     $inflectionRel->sentence_fragment_id = $fragment->id;
 
                     $inflectionsForFragment[] = $inflectionRel;
@@ -70,9 +80,8 @@ trait CanMapSentence
         }
 
         return [
-            'sentence' => $sentence,
-            'fragments' => $fragments,
-            'inflections' => $inflections
+            'fragments' => new Collection($fragments),
+            'inflections' => new Collection($inflections)
         ];
     }
 }

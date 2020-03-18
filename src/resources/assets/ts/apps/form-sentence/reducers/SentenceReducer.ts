@@ -21,14 +21,14 @@ const SentenceReducer = (state: ISentenceReducerState = InitialState, action: IS
         case Actions.ReceiveSentence:
             return mapper<typeof action['sentence'], ISentenceReducerState>({
                 account: 'account',
-                description: 'description',
+                description: (v) => v.description || '',
                 id: 'id',
                 isApproved: 'isApproved',
                 isNeologism: 'isNeologism',
                 languageId: (v) => v.languageId || (v.language ? v.language.id : null),
-                longDescription: 'longDescription',
-                name: 'name',
-                source: 'source',
+                longDescription: (v) => v.longDescription || '',
+                name: (v) => v.name || '',
+                source: (v) => v.source || '',
             }, action.sentence);
         case Actions.SetField:
             return {

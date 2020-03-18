@@ -9,7 +9,7 @@ import {
 import { stringHash } from '@root/utilities/func/hashing';
 import Glaemscribe from '@root/utilities/Glaemscribe';
 
-const createFragment = async (fragment: string, type: SentenceFragmentType, sentenceNumber: number,
+export const createFragment = async (fragment: string, type: SentenceFragmentType, sentenceNumber: number,
     paragraphNumber: number, tengwarMode: string = null): Promise<ISentenceFragmentEntity> => {
     let tengwar: string = null;
 
@@ -20,11 +20,14 @@ const createFragment = async (fragment: string, type: SentenceFragmentType, sent
 
     return {
         fragment,
+        glossId: 0,
+        inflections: [],
         paragraphNumber,
+        speechId: 0,
         sentenceNumber,
         tengwar,
         type,
-    };
+    } as ISentenceFragmentEntity;
 };
 
 export const parseFragments = async (text: string, tengwarMode: string = null) => {
@@ -154,11 +157,18 @@ const _areFragmentsSame = (f0: ISentenceFragmentEntity, f1: ISentenceFragmentEnt
     }
 };
 
+const _mergeFragment = (newFragment: ISentenceFragmentEntity, oldFragment: ISentenceFragmentEntity) => ({
+    ...newFragment,
+    ...oldFragment,
+    fragment: newFragment.fragment,
+    tengwar: newFragment.tengwar || oldFragment.tengwar,
+});
+
 const _mergeForward = (newFragments: ISentenceFragmentEntity[], oldFragments: ISentenceFragmentEntity[]) => {
     let i = 0;
     for (; i < newFragments.length && i < oldFragments.length && //
         _areFragmentsSame(newFragments[i], oldFragments[i]); i += 1) {
-        newFragments[i] = { ...oldFragments[i] };
+        newFragments[i] = _mergeFragment(newFragments[i], oldFragments[i]);
     }
 
     return i - 1; // -1 because of the for-loop adding +1 with every iteration
@@ -178,7 +188,7 @@ const _mergeBackward = (newFragments: ISentenceFragmentEntity[], oldFragments: I
             break;
         } else {
             end = newI;
-            newFragments[newI] = { ...oldFragments[oldI] };
+            newFragments[newI] = _mergeFragment(newFragments[newI], oldFragments[oldI]);
             offset += 1;
         }
     }
@@ -250,9 +260,7 @@ const _greedyMerge = (newFragments: ISentenceFragmentEntity[], oldFragments: ISe
         let found = false;
         for (const hashKey of hashKeys) {
             if (adjacentCatalog.has(hashKey)) {
-                newFragments[i] = {
-                    ...adjacentCatalog.get(hashKey),
-                };
+                newFragments[i] = _mergeFragment(newFragments[i], adjacentCatalog.get(hashKey));
                 found = true;
                 break;
             }
@@ -260,9 +268,7 @@ const _greedyMerge = (newFragments: ISentenceFragmentEntity[], oldFragments: ISe
 
         if (! found) {
             // just grab the first fragment:
-            newFragments[i] = {
-                ...adjacentCatalog.values().next().value,
-            };
+            newFragments[i] = _mergeFragment(newFragments[i], adjacentCatalog.values().next().value);
         }
     }
 };

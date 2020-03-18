@@ -105,16 +105,19 @@ export default class GlossActions {
             const oldFragments = getState().sentenceFragments;
             const languageId   = getState().sentence.languageId;
 
-            const language = this._languageApi.find(languageId, 'id');
+            const language = await this._languageApi.find(languageId, 'id');
             if (language === null) {
                 // oof bad stuff!
                 throw new Error(`Failed to parse fragments because language ${languageId} does not exist!`);
             }
 
-            const newFragments = await parseFragments(text);
+            const newFragments = await parseFragments(text, language.tengwarMode || null);
             mergeFragments(newFragments, oldFragments);
 
-            // TODO -- update everything :)
-        }
+            const api = this._contributionApi;
+            const transformations = await api.validateTransformations(newFragments);
+            dispatch(this.setLoadedSentenceFragments(newFragments));
+            dispatch(this.setLoadedTransformations(transformations.transformations));
+        };
     }
 }

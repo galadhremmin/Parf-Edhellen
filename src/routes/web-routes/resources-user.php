@@ -29,9 +29,4 @@ Route::group([
         ->name('contribution.substep-validate');
     Route::post('contribution/validate', 'ContributionController@validateRequest')
         ->name('contribution.validate');
-
-    // Note: it is not a mistake to use the sentence controller in this instance. The functionality
-    //       implemented in this method is generic.
-    Route::post('contribution/sentence/parse-fragment/{name}', 'SentenceController@parseFragments')
-        ->name('contribution.parse-fragment');
 });

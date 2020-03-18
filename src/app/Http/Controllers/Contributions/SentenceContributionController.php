@@ -129,7 +129,10 @@ class SentenceContributionController extends Controller implements IContribution
             case 1:
                 $this->validateFragmentsInRequest($request);
                 break;
+            case 2:
+                return $this->createTransformations($request);
         }
+        return true;
     }
 
     /**
@@ -143,6 +146,7 @@ class SentenceContributionController extends Controller implements IContribution
     {
         $this->validateSentenceInRequest($request, $id, true);
         $this->validateFragmentsInRequest($request);
+        return true;
     }
 
     /**
@@ -213,6 +217,17 @@ class SentenceContributionController extends Controller implements IContribution
         // Save the sentence and assign the resulting ID to the contribution entity.
         $this->_sentenceRepository->saveSentence($sentence, $fragments, $inflections);
         $contribution->sentence_id = $sentence->id;
+    }
+
+    private function createTransformations(Request $request)
+    {
+        $this->validateFragmentsInRequest($request, false);
+        $sentence = new Sentence();
+        $fragmentsMap = $this->mapSentenceFragments($sentence, $request);
+        $transformations = $this->_sentenceHelper->buildSentences($fragmentsMap['fragments']);
+        return [
+            'transformations' => $transformations
+        ];
     }
 
     /**
