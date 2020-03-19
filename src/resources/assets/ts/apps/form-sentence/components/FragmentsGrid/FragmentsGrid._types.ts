@@ -6,7 +6,10 @@ import {
 
 import { ComponentEventHandler } from '@root/components/Component._types';
 import { ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
-import { IGlossEntity } from '@root/connectors/backend/IGlossResourceApi';
+import {
+    IGlossEntity,
+    ISuggestionEntity,
+} from '@root/connectors/backend/IGlossResourceApi';
 import { IInflection } from '@root/connectors/backend/IInflectionResourceApi';
 import { ISpeechEntity } from '@root/connectors/backend/ISpeechResourceApi';
 
@@ -20,6 +23,7 @@ export interface IFragmentGridMetadata extends Partial<ICellEditorParams> {
     inflections?: Map<number, IInflection>;
     resolveGloss?: (glossId: number) => Promise<IGlossEntity>;
     speeches?: Map<number, ISpeechEntity>;
+    suggestGloss?: (text: string) => Promise<ISuggestionEntity[]>;
 }
 
 export type IAugmentedCellRendererParams = IFragmentGridMetadata & Partial<ICellRendererParams>;
@@ -32,6 +36,7 @@ export interface IFragmentChangeEventArgs<T extends keyof ISentenceFragmentEntit
 
 export interface IProps {
     fragments: ISentenceFragmentEntity[];
+    languageId: number;
     onChange: ComponentEventHandler<IFragmentChangeEventArgs>;
 }
 

@@ -1,0 +1,21 @@
+@import '../../../../../_scss/_variables';
+
+.GlossCellEditor--suggestion {
+    display: block;
+    padding: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+
+    &:active, &:hover, &:focus {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    > * {
+        pointer-events: none;
+    }
+}
+
+.GlossCellEditor--selected {
+    background: $brand-info;
+}

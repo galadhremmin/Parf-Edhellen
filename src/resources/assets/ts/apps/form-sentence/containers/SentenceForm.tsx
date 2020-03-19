@@ -29,6 +29,7 @@ function SentenceForm(props: IProps) {
         </Panel>
         <Panel title="Phrase">
             <FragmentsForm fragments={sentenceFragments}
+                languageId={sentence.languageId}
                 text={sentenceText}
                 textIsDirty={sentenceTextIsDirty}
                 onFragmentChange={onFragmentChange}

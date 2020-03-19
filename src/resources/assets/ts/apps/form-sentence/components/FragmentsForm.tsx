@@ -7,6 +7,7 @@ import FragmentsGrid from './FragmentsGrid';
 function FragmentsForm(props: IProps) {
     const {
         fragments,
+        languageId,
         onFragmentChange,
         onParseTextRequest,
         onTextChange,
@@ -38,6 +39,7 @@ function FragmentsForm(props: IProps) {
                     onClick={_onParseFragments}>Update</button>
         </div>
         <FragmentsGrid fragments={fragments}
+                       languageId={languageId}
                         onChange={onFragmentChange}
         />
     </>;

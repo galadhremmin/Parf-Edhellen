@@ -117,27 +117,6 @@ class BookApiController extends Controller
     }
 
     /**
-     * HTTP POST. Suggests glosses for the specified array of words. 
-     *
-     * @param Request $request
-     * @return void
-     */
-    public function suggest(Request $request) 
-    {
-        $this->validate($request, [
-            'words'       => 'required|array',
-            'language_id' => 'numeric',
-            'inexact'     => 'boolean'
-        ]);
-
-        $words = $request->input('words');
-        $languageId = intval($request->input('language_id'));
-        $inexact = boolval($request->input('inexact'));
-        
-        return $this->_glossRepository->suggest($words, $languageId, $inexact); 
-    }
-
-    /**
      * HTTP POST. Translates the specified word.
      *
      * @param Request $request

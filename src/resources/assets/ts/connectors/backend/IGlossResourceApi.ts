@@ -1,4 +1,5 @@
 import { IAccountEntity } from './IBookApi';
+import { ISpeechEntity } from './ISpeechResourceApi';
 
 export interface IGlossEntity {
     account?: IAccountEntity;
@@ -25,6 +26,7 @@ export interface IGlossEntity {
     sense: ISenseEntity;
     senseId?: number;
     source: string;
+    speech?: ISpeechEntity;
     speechId: number;
     tengwar?: string;
     translations: ITranslationEntity[];
@@ -79,7 +81,31 @@ export interface IGetGlossResponse {
     gloss: IGlossEntity;
 }
 
+export interface ISuggestRequest {
+    inexact?: boolean;
+    languageId?: number;
+    parameterized?: boolean;
+    words: string[];
+}
+
+export interface ISuggestResponse {
+    [word: string]: ISuggestionEntity[];
+}
+
+export interface ISuggestionEntity {
+    accountName: string;
+    comments: string;
+    glossGroupName: string;
+    id: number;
+    normalizedWord: string;
+    source: string;
+    translation: string;
+    type: string;
+    word: string;
+}
+
 export default interface IGlossResourceApi {
     delete(glossId: number, replacementId: number): Promise<void>;
     gloss(glossId: number): Promise<IGlossEntity>;
+    suggest(args: ISuggestRequest): Promise<Map<string, ISuggestionEntity[]>>;
 }

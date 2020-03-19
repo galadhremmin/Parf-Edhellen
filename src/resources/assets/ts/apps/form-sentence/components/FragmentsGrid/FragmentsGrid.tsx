@@ -23,9 +23,7 @@ import {
 } from '@root/connectors/backend/IInflectionResourceApi';
 import ISpeechResourceApi, { ISpeechEntity } from '@root/connectors/backend/ISpeechResourceApi';
 
-import {
-    RelevantFragmentTypes,
-} from './config';
+import GlossCellEditor from './cell-editors/GlossCellEditor';
 import InflectionCellEditor from './cell-editors/InflectionCellEditor';
 import SpeechSelectCellEditor from './cell-editors/SpeechSelectCellEditor';
 import GlossRenderer from './renderers/GlossRenderer';
@@ -51,11 +49,13 @@ class FragmentsGrid extends React.Component<IProps, IState> {
 
     private _glossCache: Map<number, Promise<IGlossEntity>>;
     private _gridRef: AgGridReact;
+    private _glossApi: IGlossResourceApi;
 
     constructor(props: IProps) {
         super(props);
         this._glossCache = new Map();
         this._gridRef = null;
+        this._glossApi = resolve<IGlossResourceApi>(DI.GlossApi);
     }
 
     public async componentDidMount() {
@@ -84,8 +84,9 @@ class FragmentsGrid extends React.Component<IProps, IState> {
         const cellRendererParams = {
             groupedInflections: groupedInflectionsMap,
             inflections: inflectionMap,
-            resolveGloss: this._onResolveGloss as any,
+            resolveGloss: this._onResolveGloss,
             speeches: speechMap,
+            suggestGloss: this._onSuggestGloss,
         } as IState;
 
         const columnDefinition: FragmentGridColumnDefinition = [
@@ -99,6 +100,8 @@ class FragmentsGrid extends React.Component<IProps, IState> {
                 field: 'tengwar',
             },
             {
+                cellEditor: GlossCellEditor,
+                cellEditorParams: cellRendererParams,
                 cellRenderer: GlossRenderer,
                 cellRendererParams,
                 editable: true,
@@ -214,18 +217,34 @@ class FragmentsGrid extends React.Component<IProps, IState> {
         this._gridRef = gridRef;
     }
 
-    private _onResolveGloss = async (glossId: number) => {
+    private _onResolveGloss = (glossId: number) => {
         if (this._glossCache.has(glossId)) {
             return this._glossCache.get(glossId);
         }
 
-        const glossApi = resolve<IGlossResourceApi>(DI.GlossApi);
-        const glossPromise = glossApi.gloss(glossId);
+        const glossPromise = this._glossApi.gloss(glossId);
         this._glossCache.set(glossId, glossPromise);
-        const gloss = await glossPromise;
-
-        return gloss;
+        return glossPromise;
     }
+
+    private _onSuggestGloss = async (word: string) => {
+        const {
+            languageId,
+        } = this.props;
+
+        const suggestions = await this._glossApi.suggest({
+            inexact: true,
+            languageId,
+            parameterized: true,
+            words: [word],
+        });
+
+        if (suggestions.size > 0) {
+            return suggestions.values().next().value;
+        }
+
+        return null;
+    };
 }
 
 export default FragmentsGrid;

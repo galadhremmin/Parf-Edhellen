@@ -11,6 +11,7 @@ export interface IFragmentFormEvents {
 
 export interface IProps extends IFragmentFormEvents {
     fragments: ISentenceFragmentEntity[];
+    languageId: number;
     text: string;
     textIsDirty: boolean;
 }

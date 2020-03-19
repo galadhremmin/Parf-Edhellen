@@ -100,7 +100,7 @@ class GlossRepository
     public function getGloss(int $id)
     {
         $gloss = Gloss::where('id', $id)
-            ->with('account', 'sense', 'sense.word', 'gloss_group', 'word', 'translations', 'gloss_details')
+            ->with('account', 'sense', 'speech', 'sense.word', 'gloss_group', 'word', 'translations', 'gloss_details')
             ->first();
 
         if ($gloss === null) {

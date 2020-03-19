@@ -4,7 +4,9 @@ import React, {
     useState,
 } from 'react';
 
-import { ISuggestionEntity } from '@root/connectors/backend/IBookApi';
+import {
+    ISuggestionEntity,
+} from '@root/connectors/backend/IGlossResourceApi';
 import { DI, resolve } from '@root/di';
 import { mapper } from '@root/utilities/func/mapper';
 
@@ -39,18 +41,17 @@ function GlossSelect(props: IProps) {
                         return;
                     }
 
-                    const gloss = r.sections[0].glosses[0];
-                    const suggestion = mapper<typeof gloss, ISuggestionEntity>({
-                        accountName: 'accountName',
+                    const suggestion = mapper<typeof r, ISuggestionEntity>({
+                        accountName: (v) => v.account.nickname,
                         comments: 'comments',
-                        glossGroupName: 'glossGroupName',
+                        glossGroupName: (v) => v.glossGroup ? v.glossGroup.name : null,
                         id: 'id',
-                        normalizedWord: 'normalizedWord',
+                        normalizedWord: (v) => v.word.normalizedWord,
                         source: 'source',
-                        translation: 'allTranslations',
-                        type: 'type',
-                        word: 'word',
-                    }, gloss);
+                        translation: (v) => v.translations.map((t) => t.translation).join(', '),
+                        type: (v) => v.speech ? v.speech.name : null,
+                        word: (v) => v.word.word,
+                    }, r);
 
                     setComplexValue(suggestion);
                 }).catch(() => {
@@ -65,14 +66,22 @@ function GlossSelect(props: IProps) {
     }, [ setSuggestions ]);
 
     const _onSuggest = useCallback(async (ev: IComponentEvent<string>) => {
-        const word = ev.value.replace(/\s\(\d+\)$/, '');
+        const word = ev.value.trim();
 
-        const newSuggestions = await apiConnector.suggest({
-            inexact: true,
-            words: [ word ],
-        });
+        let newSuggestions: ISuggestionEntity[] = [];
+        if (word.length > 0) {
+            const suggestionMap = await apiConnector.suggest({
+                inexact: true,
+                parameterized: true,
+                words: [ word ],
+            });
 
-        setSuggestions(newSuggestions[word] || []);
+            if (suggestionMap.size > 0) {
+                newSuggestions = suggestionMap.values().next().value;
+            }
+        }
+
+        setSuggestions(newSuggestions);
     }, [ apiConnector ]);
 
     const _onChange = useCallback((ev: IComponentEvent<ISuggestionEntity>) => {
@@ -95,7 +104,7 @@ function GlossSelect(props: IProps) {
 }
 
 GlossSelect.defaultProps = {
-    apiConnector: resolve(DI.BookApi),
+    apiConnector: resolve(DI.GlossApi),
     value: 0,
 } as Partial<IProps>;
 

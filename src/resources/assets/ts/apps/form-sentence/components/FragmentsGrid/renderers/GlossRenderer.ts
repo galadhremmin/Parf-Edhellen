@@ -24,11 +24,13 @@ export default class GlossRenderer implements ICellRendererComp {
             value,
         } = params as IFragmentGridMetadata;
 
+        const cell = this._cell;
+
         resolveGloss(value).then((gloss) => {
             const translations = gloss.translations.map((t) => t.translation);
-            this._cell.textContent = `${gloss.word.word} “${translations.join(', ')}” (${gloss.id})`;
+            cell.textContent = `${gloss.word.word} “${translations.join(', ')}” (${gloss.id})`;
         }).catch(() => {
-            this._cell.textContent = '⚠ Invalid';
+            cell.textContent = '⚠ Invalid';
         });
         return true;
     }

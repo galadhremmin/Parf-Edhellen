@@ -11,7 +11,6 @@ Route::group([
     Route::get('book/translate/{glossId}', [ 'uses' => 'BookApiController@get' ])
         ->where([ 'glossId' => REGULAR_EXPRESSION_NUMERIC ]);
     Route::post('book/translate',          [ 'uses' => 'BookApiController@translate' ]);
-    Route::post('book/suggest',            [ 'uses' => 'BookApiController@suggest' ]);
     Route::post('book/find',               [ 'uses' => 'BookApiController@find' ]);
 
     Route::get('speech/{id?}',             [ 'uses' => 'SpeechApiController@index' ])
@@ -22,6 +21,7 @@ Route::group([
 
     Route::get('gloss/{id?}',              [ 'uses' => 'GlossApiController@get' ])
         ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ]);
+    Route::post('gloss/suggest',           [ 'uses' => 'GlossApiController@suggest' ]);
 
     Route::resource('sentence', 'SentenceApiController', ['only' => [
         'show'
