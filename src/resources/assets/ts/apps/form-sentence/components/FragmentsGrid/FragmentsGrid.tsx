@@ -151,18 +151,24 @@ class FragmentsGrid extends React.Component<IProps, IState> {
             fragments,
         } = this.props;
 
-        return <div className="ag-theme-balham FragmentsGrid--container">
-            {columnDefinition &&
-                <AgGridReact columnDefs={columnDefinition}
-                    isExternalFilterPresent={this._onIsExternalFilterPresent}
-                    doesExternalFilterPass={this._onDoesExternalFilterPass}
-                    modules={AllCommunityModules}
-                    onCellValueChanged={this._onCellValueChanged}
-                    onGridReady={this._onGridReady}
-                    ref={this._onSetGridReference}
-                    rowData={fragments}
-                />}
-        </div>;
+        return <>
+            <div className="ag-theme-balham FragmentsGrid--container">
+                {columnDefinition &&
+                    <AgGridReact columnDefs={columnDefinition}
+                        isExternalFilterPresent={this._onIsExternalFilterPresent}
+                        doesExternalFilterPass={this._onDoesExternalFilterPass}
+                        modules={AllCommunityModules}
+                        onCellValueChanged={this._onCellValueChanged}
+                        onGridReady={this._onGridReady}
+                        ref={this._onSetGridReference}
+                        rowData={fragments}
+                    />}
+            </div>
+            <p>
+                <strong>Tip!</strong> While searching for glosses, repeat vowels for longer sounds
+                (eg. <em>niin</em> matches <em>nín</em> and <em>niiin</em> matches <em>nîn</em>).
+            </p>
+        </>;
     }
 
     private _onWindowResize = () => {

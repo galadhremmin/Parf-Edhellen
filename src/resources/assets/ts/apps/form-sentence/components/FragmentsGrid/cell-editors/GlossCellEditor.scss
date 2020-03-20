@@ -1,5 +1,16 @@
 @import '../../../../../_scss/_variables';
 
+.GlossCellEditor {
+    display: flex;
+    flex-direction: column;
+}
+
+.GlossCellEditor--suggestions {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
 .GlossCellEditor--suggestion {
     display: block;
     padding: 0.5rem;

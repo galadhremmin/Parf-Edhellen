@@ -6,6 +6,7 @@ import {
 
 const InitialState: ILatinTextReducerState = {
     dirty: true,
+    paragraphs: [],
     text: '',
 };
 
@@ -14,8 +15,9 @@ const LatinTextReducer = (state = InitialState, action: ILatinTextAction) => {
         case Actions.SetLatinText:
             return {
                 dirty: action.dirty,
+                paragraphs: action.paragraphs,
                 text: action.latinText,
-            };
+            } as ILatinTextReducerState;
         default:
             return state;
     }

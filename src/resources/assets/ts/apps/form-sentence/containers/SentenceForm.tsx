@@ -3,9 +3,11 @@ import { connect } from 'react-redux';
 
 import { ReduxThunkDispatch } from '@root/_types';
 import Panel from '@root/components/Panel';
+import TextIcon from '@root/components/TextIcon';
 import { SentenceActions } from '../actions';
 import FragmentsForm from '../components/FragmentsForm';
 import MetadataForm from '../components/MetadataForm';
+import TranslationForm from '../components/TranslationForm';
 import { RootReducer } from '../reducers';
 import { IProps } from './SentenceForm._types';
 
@@ -17,9 +19,9 @@ function SentenceForm(props: IProps) {
         onTextChange,
         sentence,
         sentenceFragments,
+        sentenceParagraphs,
         sentenceText,
         sentenceTextIsDirty,
-        sentenceTransformations,
         sentenceTranslations,
     } = props;
 
@@ -36,6 +38,18 @@ function SentenceForm(props: IProps) {
                 onParseTextRequest={onParseTextRequest}
                 onTextChange={onTextChange} />
         </Panel>
+        <Panel title="Translations">
+            <TranslationForm translations={sentenceTranslations}
+                paragraphs={sentenceParagraphs}
+            />
+        </Panel>
+        <div className="text-right">
+            <button className="btn btn-primary">
+                <TextIcon icon="ok" />
+                &#32;
+                Save contribution
+            </button>
+        </div>
     </>;
 }
 
@@ -47,9 +61,9 @@ SentenceForm.defaultProps = {
 const mapStateToProps = (state: RootReducer) => ({
     sentence: state.sentence,
     sentenceFragments: state.sentenceFragments,
+    sentenceParagraphs: state.latinText.paragraphs,
     sentenceText: state.latinText.text,
     sentenceTextIsDirty: state.latinText.dirty,
-    sentenceTransformations: state.textTransformations,
     sentenceTranslations: state.sentenceTranslations,
 }) as IProps;
 

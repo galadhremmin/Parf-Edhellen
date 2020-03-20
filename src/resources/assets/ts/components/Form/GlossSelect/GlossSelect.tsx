@@ -44,12 +44,12 @@ function GlossSelect(props: IProps) {
                     const suggestion = mapper<typeof r, ISuggestionEntity>({
                         accountName: (v) => v.account.nickname,
                         comments: 'comments',
-                        glossGroupName: (v) => v.glossGroup ? v.glossGroup.name : null,
+                        glossGroupName: (v) => v.glossGroup?.name,
                         id: 'id',
                         normalizedWord: (v) => v.word.normalizedWord,
                         source: 'source',
                         translation: (v) => v.translations.map((t) => t.translation).join(', '),
-                        type: (v) => v.speech ? v.speech.name : null,
+                        type: (v) => v.speech?.name,
                         word: (v) => v.word.word,
                     }, r);
 

@@ -1,9 +1,10 @@
 import {
-    ReduxThunk,
     ReduxThunkDispatch,
 } from '@root/_types';
+import { ParagraphState } from '@root/apps/sentence-inspector/reducers/FragmentsReducer._types';
+import convert from '@root/apps/sentence-inspector/utilities/TextConverter';
 import { DI, resolve } from '@root/di';
-import { ITextTransformation, ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
+import { ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
 import IContributionResourceApi from '@root/connectors/backend/IContributionResourceApi';
 import ILanguageApi from '@root/connectors/backend/ILanguageApi';
 
@@ -16,6 +17,7 @@ import { convertTransformationToString } from '../utilities/transformations';
 
 import Actions from './Actions';
 import { parseFragments, mergeFragments } from '../utilities/fragments';
+import { parseTranslations } from '../utilities/translations';
 
 export default class GlossActions {
     constructor(
@@ -72,9 +74,10 @@ export default class GlossActions {
         };
     }
 
-    public setLatinText(text: string, dirty = true) {
+    public setLatinText(text: string, paragraphs: ParagraphState[] = [], dirty = true) {
         return {
             dirty,
+            paragraphs,
             latinText: text,
             type: Actions.SetLatinText,
         };
@@ -94,8 +97,9 @@ export default class GlossActions {
         return (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
             const transformer = getState().textTransformations.latin;
             if (transformer) {
-                const text = convertTransformationToString(transformer, fragments);
-                dispatch(this.setLatinText(text, false));
+                const text = convert(null, transformer, fragments);
+                const textString = convertTransformationToString(text, fragments);
+                dispatch(this.setLatinText(textString, text.paragraphs, false));
             }
         };
     }
@@ -116,8 +120,11 @@ export default class GlossActions {
 
             const api = this._contributionApi;
             const transformations = await api.validateTransformations(newFragments);
+            const translations = parseTranslations(newFragments);
+
             dispatch(this.setLoadedSentenceFragments(newFragments));
             dispatch(this.setLoadedTransformations(transformations.transformations));
+            dispatch(this.setLoadedSentenceTranslations(translations));
         };
     }
 }

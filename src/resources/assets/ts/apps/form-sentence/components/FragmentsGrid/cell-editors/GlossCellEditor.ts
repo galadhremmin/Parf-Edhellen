@@ -12,9 +12,9 @@ import { IFragmentGridMetadata } from '../FragmentsGrid._types';
 import './GlossCellEditor.scss';
 
 export default class GlossCellEditor extends PopupComponent implements ICellEditorComp {
-    private static TEMPLATE = `<div class="ag-input-wrapper" role="presentation">
-        <input type="text" list="ag-input-available-values" />
-        <ul></ul>
+    private static TEMPLATE = `<div role="presentation" class="GlossCellEditor">
+        <input class="GlossCellEditor--input" type="text" list="ag-input-available-values" />
+        <ul class="GlossCellEditor--suggestions"></ul>
     </div>`;
 
     /**
@@ -71,6 +71,19 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
         if (value !== 0 && this._inputElement.value === '') {
             this._editorParams.resolveGloss(value).then((gloss) => {
                 this._inputElement.value = gloss.word.word;
+                this._applySuggestions([
+                    {
+                        accountName: gloss.account.nickname,
+                        comments: gloss.comments,
+                        glossGroupName: gloss.glossGroup?.name,
+                        id: gloss.id,
+                        normalizedWord: gloss.word.normalizedWord,
+                        translation: gloss.translations.map((t) => t.translation).join(', '),
+                        type: gloss.speech?.name,
+                        source: gloss.source,
+                        word: gloss.word.word,
+                    },
+                ], 1);
             });
         }
 
@@ -80,11 +93,13 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
     public afterGuiAttached() {
         if (this.focusAfterAttached) {
             this._inputElement.focus();
+            this._inputElement.select();
         }
     }
 
     public focusIn() {
         this._inputElement.focus();
+        this._inputElement.select();
     }
 
     public getValue() {
@@ -93,6 +108,33 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
 
     public isPopup() {
         return true;
+    }
+
+    private _applySuggestions(suggestions: ISuggestionEntity[], suggestionIndex = 0) {
+        const {
+            _suggestionListElement: suggestionListElement,
+            _suggestionIndex: index,
+        } = this;
+
+        const html: string[] = [];
+
+        suggestions.forEach((s) => {
+            html.push(
+                `<li>
+                    <a href="#" class="GlossCellEditor--suggestion" data-gloss-id="${s.id}">
+                        <strong>${s.word}</strong> <i>${s.type || ''}</i> “${s.translation}” [${s.source || 'unknown source'}] ${s.glossGroupName} (${s.id})
+                    </a>
+                </li>`,
+            );
+        });
+
+        this._suggestions = suggestions;
+        this._suggestionIndex = suggestionIndex;
+
+        suggestionListElement.innerHTML = html.join('');
+        suggestionListElement.querySelectorAll('a[data-gloss-id]').forEach((a) => {
+            a.addEventListener('click', this._onSuggestionClick);
+        });
     }
 
     private _applySuggestion() {
@@ -133,31 +175,11 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
     private _onSuggest = debounce(500, async () => {
         const {
             _inputElement: inputElement,
-            _suggestionListElement: suggestionListElement,
-            _suggestionIndex: index,
         } = this;
 
         const text = inputElement.value;
         const suggestions = await this.suggestGloss(text);
-        const html: string[] = [];
-
-        suggestions.forEach((s) => {
-            html.push(
-                `<li>
-                    <a href="#" class="GlossCellEditor--suggestion" data-gloss-id="${s.id}">
-                        <strong>${s.word}</strong> <i>${s.type || ''}</i> “${s.translation}” [${s.source}] (${s.id})
-                    </a>
-                </li>`,
-            );
-        });
-
-        this._suggestions = suggestions;
-        this._suggestionIndex = 0;
-
-        suggestionListElement.innerHTML = html.join('');
-        suggestionListElement.querySelectorAll('a[data-gloss-id]').forEach((a) => {
-            a.addEventListener('click', this._onSuggestionClick);
-        });
+        this._applySuggestions(suggestions);
     });
 
     private _onSelectPreviousSuggestion = () => {
