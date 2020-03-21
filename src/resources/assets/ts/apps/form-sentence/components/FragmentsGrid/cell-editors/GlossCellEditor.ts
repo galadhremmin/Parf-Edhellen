@@ -113,7 +113,6 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
     private _applySuggestions(suggestions: ISuggestionEntity[], suggestionIndex = 0) {
         const {
             _suggestionListElement: suggestionListElement,
-            _suggestionIndex: index,
         } = this;
 
         const html: string[] = [];
@@ -133,7 +132,7 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
 
         suggestionListElement.innerHTML = html.join('');
         suggestionListElement.querySelectorAll('a[data-gloss-id]').forEach((a) => {
-            a.addEventListener('click', this._onSuggestionClick);
+            this.addDestroyableEventListener(a, 'click', this._onSuggestionClick);
         });
     }
 
@@ -145,6 +144,7 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
 
         const suggestion = this._suggestions[index];
         this._value = suggestion.id;
+        this._inputElement.value = suggestion.word;
         return true;
     }
 

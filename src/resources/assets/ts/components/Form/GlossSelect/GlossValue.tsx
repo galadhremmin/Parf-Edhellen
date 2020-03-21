@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ISuggestionEntity } from '@root/connectors/backend/IBookApi';
+import { ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
 import GlossSuggestion from './GlossSuggestion';
 
 function GlossValue(gloss: ISuggestionEntity) {

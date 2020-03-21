@@ -3,12 +3,12 @@ import { ParagraphState } from '@root/apps/sentence-inspector/reducers/Fragments
 
 export interface ILatinTextReducerState {
     dirty: boolean;
-    paragraphs: ParagraphState;
+    paragraphs: ParagraphState[];
     text: string;
 }
 
 export interface ILatinTextAction extends IReduxAction {
     dirty: boolean;
-    paragraphs: ParagraphState;
+    paragraphs: ParagraphState[];
     latinText: string;
 }

@@ -58,6 +58,31 @@ class FragmentsGrid extends React.Component<IProps, IState> {
         this._glossApi = resolve<IGlossResourceApi>(DI.GlossApi);
     }
 
+    public shouldComponentUpdate(nextProps: IProps, nextState: IState) {
+        const {
+            columnDefinition,
+        } = this.state;
+
+        const {
+            fragments,
+        } = this.props;
+
+        if (nextState.columnDefinition !== columnDefinition) {
+            return true;
+        }
+
+        // This check is incredibly important to avoid agGrid unnecessarily rerendering.
+        // Rerendering causes React unsafe warnings to be thrown while the user is editing
+        // fragments.
+        if (nextProps.fragments === fragments && //
+            nextProps.fragments.length === fragments.length && //
+            ! nextProps.fragments.some((f, i) => fragments[i].fragment !== f.fragment)) {
+            return true;
+        }
+
+        return false;
+    }
+
     public async componentDidMount() {
         const [ groupedInflections, speeches ] = await Promise.all([
             resolve<IInflectionResourceApi>(DI.InflectionApi).inflections(),

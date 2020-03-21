@@ -1,3 +1,4 @@
+import { ITextTransformationsMap } from '@root/connectors/backend/IBookApi';
 import { IFragmentFormEvents } from '../components/FragmentsForm._types';
 import { IMetadataFormEvents } from '../components/MetadataForm._types';
 import { ISentenceTranslationReducerState } from '../reducers/child-reducers/SentenceTranslationReducer._types';
@@ -19,5 +20,6 @@ export interface IProps extends IFragmentFormEvents, IMetadataFormEvents {
     sentenceParagraphs?: ILatinTextReducerState['paragraphs'];
     sentenceText?: string;
     sentenceTextIsDirty?: boolean;
+    sentenceTransformations: ITextTransformationsMap;
     sentenceTranslations?: ISentenceTranslationReducerState[];
 }
