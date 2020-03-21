@@ -74,9 +74,9 @@ class FragmentsGrid extends React.Component<IProps, IState> {
         // This check is incredibly important to avoid agGrid unnecessarily rerendering.
         // Rerendering causes React unsafe warnings to be thrown while the user is editing
         // fragments.
-        if (nextProps.fragments === fragments && //
-            nextProps.fragments.length === fragments.length && //
-            ! nextProps.fragments.some((f, i) => fragments[i].fragment !== f.fragment)) {
+        if (nextProps.fragments !== fragments || //
+            nextProps.fragments.length !== fragments.length || //
+            nextProps.fragments.some((f, i) => fragments[i].fragment !== f.fragment)) {
             return true;
         }
 
