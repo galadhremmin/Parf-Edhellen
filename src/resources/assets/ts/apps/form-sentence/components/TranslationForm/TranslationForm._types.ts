@@ -1,11 +1,23 @@
-import { IProps as IParentProps } from '../../containers/SentenceForm._types';
+import { ComponentEventHandler } from '@root/components/Component._types';
+import { ISentenceTranslation } from '@root/connectors/backend/IBookApi';
+import { ParagraphState } from '@root/apps/sentence-inspector/reducers/FragmentsReducer._types';
+import { ISentenceTranslationReducerState } from '../../reducers/child-reducers/SentenceTranslationReducer._types';
 
-export interface IProps {
-    paragraphs: IParentProps['sentenceParagraphs'];
-    translations: IParentProps['sentenceTranslations'];
+export interface ITranslationRow extends ISentenceTranslation {
+    paragraphNumber: number;
+    sentenceText: string;
 }
 
 export interface IState {
-    paragraphSentenceMap: Map<string, string>;
-    lastParagraphsRef: IProps['paragraphs'];
+    lastParagraphsRef: ParagraphState[];
+    translationRows: ITranslationRow[];
+}
+
+export interface ITranslationFormEvents {
+    onTranslationChange: ComponentEventHandler<ITranslationRow>;
+}
+
+export interface IProps extends ITranslationFormEvents {
+    paragraphs: ParagraphState[];
+    translations: ISentenceTranslationReducerState[];
 }

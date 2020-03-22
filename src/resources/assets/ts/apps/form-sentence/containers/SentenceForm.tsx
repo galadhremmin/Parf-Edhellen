@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
 
 import { ReduxThunkDispatch } from '@root/_types';
@@ -17,6 +17,8 @@ function SentenceForm(props: IProps) {
         onMetadataChange,
         onParseTextRequest,
         onTextChange,
+        onSubmit,
+        onTranslationChange,
         sentence,
         sentenceFragments,
         sentenceParagraphs,
@@ -25,7 +27,25 @@ function SentenceForm(props: IProps) {
         sentenceTranslations,
     } = props;
 
-    return <>
+    const _onSubmit = useCallback((ev) => {
+        ev.preventDefault();
+        console.log([
+            sentence,
+            sentenceFragments,
+            sentenceParagraphs,
+            sentenceText,
+            sentenceTranslations,
+        ]);
+    }, [
+        onSubmit,
+        sentence,
+        sentenceFragments,
+        sentenceParagraphs,
+        sentenceText,
+        sentenceTranslations,
+    ]);
+
+    return <form method="post" action="." onSubmit={_onSubmit}>
         <Panel title="Basic information">
             <MetadataForm sentence={sentence} onMetadataChange={onMetadataChange} />
         </Panel>
@@ -39,18 +59,19 @@ function SentenceForm(props: IProps) {
                 onTextChange={onTextChange} />
         </Panel>
         <Panel title="Translations">
-            <TranslationForm translations={sentenceTranslations}
+            <TranslationForm onTranslationChange={onTranslationChange}
+                translations={sentenceTranslations}
                 paragraphs={sentenceParagraphs}
             />
         </Panel>
         <div className="text-right">
-            <button className="btn btn-primary">
+            <button className="btn btn-primary" formAction="submit">
                 <TextIcon icon="ok" />
                 &#32;
                 Save contribution
             </button>
         </div>
-    </>;
+    </form>;
 }
 
 SentenceForm.defaultProps = {
@@ -73,6 +94,7 @@ const mapDispatchToProps: any = (dispatch: ReduxThunkDispatch) => ({
     onMetadataChange: (ev) => dispatch(actions.setMetadataField(ev.value.field, ev.value.value)),
     onParseTextRequest: (ev) => dispatch(actions.reloadFragments(ev.value)),
     onTextChange: (ev) => dispatch(actions.setLatinText(ev.value)),
+    onTranslationChange: (ev) => dispatch(actions.setTranslation(ev.value)),
 }) as Partial<IProps>;
 
 export default connect(mapStateToProps, mapDispatchToProps)(SentenceForm);

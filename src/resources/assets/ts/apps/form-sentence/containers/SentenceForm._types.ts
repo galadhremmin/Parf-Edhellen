@@ -1,6 +1,8 @@
+import { ComponentEventHandler } from '@root/components/Component._types';
 import { ITextTransformationsMap } from '@root/connectors/backend/IBookApi';
 import { IFragmentFormEvents } from '../components/FragmentsForm._types';
 import { IMetadataFormEvents } from '../components/MetadataForm._types';
+import { ITranslationFormEvents } from '../components/TranslationForm/TranslationForm._types';
 import { ISentenceTranslationReducerState } from '../reducers/child-reducers/SentenceTranslationReducer._types';
 import { ILatinTextReducerState } from '../reducers/LatinTextReducer._types';
 import { ISentenceFragmentsReducerState } from '../reducers/SentenceFragmentsReducer._types';
@@ -13,7 +15,11 @@ export interface ISentenceFieldChangeSpec {
     value: any;
 }
 
-export interface IProps extends IFragmentFormEvents, IMetadataFormEvents {
+export interface ISentenceFormEvents {
+    onSubmit: ComponentEventHandler<any>;
+}
+
+export interface IProps extends ISentenceFormEvents, IFragmentFormEvents, IMetadataFormEvents, ITranslationFormEvents {
     prefetched?: boolean;
     sentence?: ISentenceReducerState;
     sentenceFragments?: ISentenceFragmentsReducerState;

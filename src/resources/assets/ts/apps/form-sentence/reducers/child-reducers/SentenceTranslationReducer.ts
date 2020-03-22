@@ -13,6 +13,7 @@ const InitialState: ISentenceTranslationReducerState = {
 
 const SentenceTranslationReducer = (state = InitialState, action: ISentenceTranslationAction) => {
     switch (action.type) {
+        case Actions.ReloadAllFragments:
         case Actions.ReceiveTranslation:
         case Actions.SetTranslation:
             return mapper<typeof action['sentenceTranslation'], ISentenceTranslationReducerState>({

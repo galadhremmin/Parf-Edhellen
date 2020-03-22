@@ -1,4 +1,5 @@
 import { ParagraphState } from '@root/apps/sentence-inspector/reducers/FragmentsReducer._types';
+import { ITranslationRow } from '../components/TranslationForm/TranslationForm._types';
 import {
     ISentenceFragmentEntity,
     ISentenceTranslationEntity,
@@ -29,22 +30,34 @@ export const parseTranslations = (fragments: ISentenceFragmentEntity[]) => {
     return translations;
 };
 
-export const buildParagraphSentenceMap = (paragraphs: ParagraphState[], translations: ISentenceTranslationReducerState[]) => {
+export const createTranslationRows = (paragraphs: ParagraphState[], translations: ISentenceTranslationReducerState[]) => {
+    const _createKey = (paragraphNumber: number, sentenceNumber: number) => {
+        return [paragraphNumber, sentenceNumber].join('|');
+    }
+
     const paragraphNumbers = new Set<number>(
         translations.map((t) => t.paragraphNumber),
     );
 
-    if (paragraphNumbers.size !== paragraphs.length) {
+    const translationsMap = translations.reduce((map, t) => {
+        map.set(_createKey(t.paragraphNumber, t.sentenceNumber), t.translation);
+        return map;
+    }, new Map());
+
+    // Remove empty paragraphs (the user can create empty paragraphs)
+    const paragraphsWithWords = paragraphs.filter(p => p.length);
+
+    if (paragraphNumbers.size !== paragraphsWithWords.length) {
         throw new Error(
             `The number of elements in the paragraphs array (${paragraphs.length}) does not match the number of paragraphs (${paragraphNumbers.size}).`,
         );
     }
 
-    const paragraphSentenceMap = new Map<string, string>();
+    const rows: ITranslationRow[] = [];
+    const sentenceMap = new Map<number, string[]>();
     let i = 0;
     for (const paragraphNumber of paragraphNumbers) {
-        const paragraph = paragraphs[i];
-        const sentenceMap = new Map<number, string[]>();
+        const paragraph = paragraphsWithWords[i];
 
         for (const word of paragraph) {
             if (sentenceMap.has(word.sentenceNumber)) {
@@ -55,20 +68,17 @@ export const buildParagraphSentenceMap = (paragraphs: ParagraphState[], translat
         }
 
         for (const sentenceNumber of sentenceMap.keys()) {
-            const key = createParagraphSentenceMapKey(paragraphNumber, sentenceNumber);
-            if (paragraphSentenceMap.has(key)) {
-                throw new Error(`Paragraph and sentence map key collision on ${key}: ${paragraphs}.`);
-            }
-
-            paragraphSentenceMap.set(key, sentenceMap.get(sentenceNumber).join(''));
+            rows.push({
+                paragraphNumber,
+                sentenceNumber,
+                sentenceText: sentenceMap.get(sentenceNumber).join(''),
+                translation: translationsMap.get(_createKey(paragraphNumber, sentenceNumber)) || '',
+            });
         }
 
         i += 1;
+        sentenceMap.clear();
     }
 
-    return paragraphSentenceMap;
-};
-
-export const createParagraphSentenceMapKey = (paragraphNumber: number, sentenceNumber: number) => {
-    return `${paragraphNumber}|${sentenceNumber}`;
+    return rows;
 };

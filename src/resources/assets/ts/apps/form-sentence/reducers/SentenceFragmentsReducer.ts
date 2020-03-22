@@ -9,6 +9,7 @@ const InitialState: ISentenceFragmentsReducerState = [];
 
 const SentenceFragmentsReducer = (state = InitialState, action: ISentenceFragmentsAction) => {
     switch (action.type) {
+        case Actions.ReloadAllFragments:
         case Actions.ReceiveFragment:
             return action.sentenceFragments.map(
                 (fragment, i) => SentenceFragmentReducer(null, {

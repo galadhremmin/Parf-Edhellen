@@ -12,6 +12,7 @@ const InitialState: ILatinTextReducerState = {
 
 const LatinTextReducer = (state = InitialState, action: ILatinTextAction) => {
     switch (action.type) {
+        case Actions.ReloadAllFragments:
         case Actions.SetLatinText:
             return {
                 dirty: action.dirty,

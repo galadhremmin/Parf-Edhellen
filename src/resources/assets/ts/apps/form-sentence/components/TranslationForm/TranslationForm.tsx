@@ -1,13 +1,14 @@
 import React from 'react';
 
 import {
-    buildParagraphSentenceMap,
-    createParagraphSentenceMapKey,
+    createTranslationRows,
 } from '../../utilities/translations';
 import {
     IProps,
     IState,
+    ITranslationRow,
 } from './TranslationForm._types';
+import TranslationGrid from './TranslationGrid';
 
 export default class TranslationForm extends React.Component<IProps> {
     public static getDerivedStateFromProps(props: IProps, state: IState)
@@ -19,21 +20,19 @@ export default class TranslationForm extends React.Component<IProps> {
 
         if (paragraphs.length > 0 && translations.length > 0 && //
             paragraphs !== state.lastParagraphsRef) {
-            console.log('updating state');
-            let paragraphSentenceMap;
+            let translationRows: ITranslationRow[] = [];
             try {
-                paragraphSentenceMap = buildParagraphSentenceMap(paragraphs, translations);
+                translationRows = createTranslationRows(paragraphs, translations);
             } catch (e) {
                 // this is temporarily suppressed as older definitions actually do not have this structure
                 // configured by default.
-                paragraphSentenceMap = new Map();
                 console.warn(e);
             }
 
             return {
                 lastParagraphsRef: paragraphs, // save the reference
-                paragraphSentenceMap,
-            };
+                translationRows,
+            } as IState;
         }
 
         return null;
@@ -41,26 +40,25 @@ export default class TranslationForm extends React.Component<IProps> {
 
     public state = {
         lastParagraphsRef: null,
-        paragraphSentenceMap: new Map(),
+        translationRows: [],
     } as IState;
 
     public render() {
         const {
-            translations,
+            onTranslationChange,
         } = this.props;
 
         const {
-            paragraphSentenceMap,
+            translationRows,
         } = this.state;
+
+        if (translationRows.length < 1) {
+            return <p>You need to complete at least once sentence before you can use this function.</p>;
+        }
 
         return <>
             <p>This is optional but it enhances the experience with an English translation.</p>
-            <dl>
-                {translations.map((p, i) => <React.Fragment key={i}>
-                    <dt>{paragraphSentenceMap.get(createParagraphSentenceMapKey(p.paragraphNumber, p.sentenceNumber))}</dt>
-                    <dd>{JSON.stringify(translations)}</dd>
-                </React.Fragment>)}
-            </dl>
+            <TranslationGrid rows={translationRows} onChange={onTranslationChange} />
         </>;
     }
 }

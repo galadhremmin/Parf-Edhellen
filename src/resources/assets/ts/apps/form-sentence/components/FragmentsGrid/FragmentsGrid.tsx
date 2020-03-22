@@ -118,11 +118,13 @@ class FragmentsGrid extends React.Component<IProps, IState> {
             {
                 editable: false,
                 field: 'fragment',
+                resizable: true,
             },
             {
                 cellRenderer: TengwarRenderer,
                 editable: false,
                 field: 'tengwar',
+                resizable: true,
             },
             {
                 cellEditor: GlossCellEditor,
@@ -131,6 +133,7 @@ class FragmentsGrid extends React.Component<IProps, IState> {
                 cellRendererParams,
                 editable: true,
                 field: 'glossId',
+                resizable: true,
             },
             {
                 cellEditor: SpeechSelectCellEditor,
@@ -139,6 +142,7 @@ class FragmentsGrid extends React.Component<IProps, IState> {
                 cellRendererParams,
                 editable: true,
                 field: 'speechId',
+                resizable: true,
             },
             {
                 cellEditor: InflectionCellEditor,
@@ -147,11 +151,13 @@ class FragmentsGrid extends React.Component<IProps, IState> {
                 cellRendererParams,
                 editable: true,
                 field: 'inflections',
+                resizable: true,
             },
             {
                 editable: true,
                 field: 'comments',
                 cellEditor: 'agLargeTextCellEditor',
+                resizable: true,
             },
         ];
 
