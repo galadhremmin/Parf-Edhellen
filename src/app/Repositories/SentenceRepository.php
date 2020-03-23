@@ -145,7 +145,7 @@ class SentenceRepository
         ];
     }
 
-    public function saveSentence(Sentence $sentence, array $fragments, array $inflections) 
+    public function saveSentence(Sentence $sentence, array $fragments, array $inflections, array $translations = []) 
     {
         $changed = !! $sentence->id;
         $numberOfFragments = count($fragments);
@@ -157,8 +157,9 @@ class SentenceRepository
             DB::beginTransaction();
 
             $sentence->save();
+
+            // Re-create all sentence fragments
             $this->destroyFragments($sentence);
-            
             for ($i = 0; $i < $numberOfFragments; $i += 1) {
                 $fragment = $fragments[$i];
                 $fragment->sentence_id = $sentence->id;
@@ -185,6 +186,12 @@ class SentenceRepository
                         throw new Exception(sprintf('Failed to save keywords for "%s" (%i).', $fragment->fragment, $i), 0, $ex);
                     }
                 }
+            }
+
+            // Re-create all sentence translations
+            $sentence->sentence_translations()->delete();
+            if (count($translations) > 0) {
+                $sentence->sentence_translations()->saveMany($translations);
             }
 
             DB::commit();

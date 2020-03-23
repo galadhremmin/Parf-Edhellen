@@ -13,7 +13,8 @@ use App\Models\{
     Inflection,
     Sentence,
     SentenceFragment,
-    SentenceFragmentInflectionRel
+    SentenceFragmentInflectionRel,
+    SentenceTranslation
 };
 use App\Http\Controllers\Traits\{
     CanValidateSentence, 
@@ -171,7 +172,7 @@ class SentenceContributionController extends Controller implements IContribution
         $contribution->payload = json_encode($map);
         $contribution->word    = $entity->name;
         $contribution->sense   = 'text';
-        
+
         return $entity;
     }
 
@@ -214,8 +215,15 @@ class SentenceContributionController extends Controller implements IContribution
             }, $inflections);
         }, $map['inflections']);
 
+        $translations = [];
+        if (isset($map['translations'])) {
+            $translations = array_map(function ($translation) {
+                return new SentenceTranslation($translation);
+            }, $map['translations']);
+        }
+
         // Save the sentence and assign the resulting ID to the contribution entity.
-        $this->_sentenceRepository->saveSentence($sentence, $fragments, $inflections);
+        $this->_sentenceRepository->saveSentence($sentence, $fragments, $inflections, $translations);
         $contribution->sentence_id = $sentence->id;
     }
 
@@ -255,7 +263,7 @@ class SentenceContributionController extends Controller implements IContribution
                 $fragment = new SentenceFragment($fragmentData);
 
                 // Generate a fake ID (descending order, starting at -10).
-                $fragment->id = ($i + 1) * -10;
+                $fragment->id = ($i + 1) * -1;
 
                 // Create an array of IDs for inflections associated with this fragment.
                 $fragment->inflections = $payload['inflections'][$i];
@@ -263,6 +271,13 @@ class SentenceContributionController extends Controller implements IContribution
                 $fragments->push($fragment);
                 
                 $i += 1;
+            }
+
+            if (isset($payload['translations'])) {
+                foreach ($payload['translations'] as $translationData) {
+                    $translation = new SentenceTranslation($translationData);
+                    $translations->push($translation);
+                }
             }
         }
 

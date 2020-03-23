@@ -15,7 +15,7 @@ import {
     DI,
     resolve,
 } from '@root/di';
-import { fireEvent } from '@root/components/Component';
+import { fireEventAsync } from '@root/components/Component';
 import IGlossResourceApi, { IGlossEntity } from '@root/connectors/backend/IGlossResourceApi';
 import {
     IInflection,
@@ -239,7 +239,7 @@ class FragmentsGrid extends React.Component<IProps, IState> {
         }
 
         const field = column.getColId();
-        fireEvent(this, onChange, {
+        fireEventAsync(this, onChange, {
             field,
             fragment,
             value,

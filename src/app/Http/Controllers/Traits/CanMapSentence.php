@@ -7,7 +7,8 @@ use Illuminate\Support\Collection;
 use App\Models\{ 
     Sentence, 
     SentenceFragment,
-    SentenceFragmentInflectionRel
+    SentenceFragmentInflectionRel,
+    SentenceTranslation
 };
 
 trait CanMapSentence
@@ -33,6 +34,7 @@ trait CanMapSentence
     {
         $fragments = [];
         $inflections = [];
+        $translations = [];
 
         foreach ($request->input('fragments') as $fragmentData) {
             $fragment = new SentenceFragment;
@@ -79,9 +81,20 @@ trait CanMapSentence
             $inflections[] = $inflectionsForFragment;
         }
 
+        if ($request->has('translations')) {
+            foreach ($request->input('translations') as $translation) {
+                $translations[] = new SentenceTranslation([
+                    'paragraph_number' => intval($translation['paragraph_number']),
+                    'sentence_number'  => intval($translation['sentence_number']),
+                    'translation'      => $translation['translation']
+                ]);
+            }
+        }
+
         return [
             'fragments' => new Collection($fragments),
-            'inflections' => new Collection($inflections)
+            'inflections' => new Collection($inflections),
+            'translations' => new Collection($translations)
         ];
     }
 }

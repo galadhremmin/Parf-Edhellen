@@ -7,27 +7,38 @@ import {
 import IContributionResourceApi, {
     IContribution,
     IContributionSaveResponse,
+    ISaveSentenceContributionEntity,
     IValidateTransformationsResponse,
 } from './IContributionResourceApi';
 import { IGlossEntity } from './IGlossResourceApi';
 
 export default class ContributionResourceApiConnector implements IContributionResourceApi {
+    private static readonly ApiPrefix = '/dashboard/contribution';
+
     constructor(private _api = resolve<ApiConnector>(DI.BackendApi)) {
     }
 
     public saveGloss(args: IContribution<IGlossEntity>) {
+        return this.saveContribution(args, 'gloss');
+    }
+
+    public saveSentence(args: IContribution<ISaveSentenceContributionEntity>): Promise<IContributionSaveResponse> {
+        return this.saveContribution(args, 'sentence');
+    }
+
+    public saveContribution<T>(args: IContribution<T>, morph: 'gloss' | 'sentence') {
         const envelope = {
             ...args,
-            morph: 'gloss',
+            morph,
         };
 
         if (!!args.contributionId && ! isNaN(args.contributionId) && isFinite(args.contributionId)) {
-            return this._api.put<IContributionSaveResponse>(`/dashboard/contribution/${args.contributionId}`,
+            return this._api.put<IContributionSaveResponse>(this._apiPath(args.contributionId.toString(10)),
                 envelope);
         }
 
         delete envelope.contributionId;
-        return this._api.post<IContributionSaveResponse>('/dashboard/contribution', envelope);
+        return this._api.post<IContributionSaveResponse>(this._apiPath(), envelope);
     }
 
     public validateSentenceMetadata(args: ISentenceEntity) {
@@ -37,7 +48,7 @@ export default class ContributionResourceApiConnector implements IContributionRe
             substepId: 0,
         };
 
-        return this._api.post<void>('/dashboard/contribution/substep-validate', envelope);
+        return this._api.post<void>(this._apiPath('substep-validate'), envelope);
     }
 
     public validateSentenceFragments(args: ISentenceFragmentEntity[]) {
@@ -47,7 +58,7 @@ export default class ContributionResourceApiConnector implements IContributionRe
             substepId: 1,
         };
 
-        return this._api.post<void>('/dashboard/contribution/substep-validate', envelope);
+        return this._api.post<void>(this._apiPath('substep-validate'), envelope);
     }
 
     public validateTransformations(args: ISentenceFragmentEntity[]) {
@@ -57,6 +68,10 @@ export default class ContributionResourceApiConnector implements IContributionRe
             substepId: 2,
         };
 
-        return this._api.post<IValidateTransformationsResponse>('/dashboard/contribution/substep-validate', envelope);
+        return this._api.post<IValidateTransformationsResponse>(this._apiPath('substep-validate'), envelope);
+    }
+
+    private _apiPath(path: string = '') {
+        return `${ContributionResourceApiConnector.ApiPrefix}/${path}`;
     }
 }

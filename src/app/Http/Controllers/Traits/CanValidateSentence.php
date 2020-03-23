@@ -33,10 +33,14 @@ trait CanValidateSentence
         //
         // step 1: Ensure that there is a parameter called _fragments_.
         $rules = [
-            'fragments'                    => 'required|array',
-            'fragments.*.type'             => 'required|numeric|min:0|max:255',
-            'fragments.*.paragraph_number' => 'required|numeric',
-            'fragments.*.sentence_number'  => 'required|numeric'
+            'fragments'                       => 'required|array',
+            'fragments.*.type'                => 'required|numeric|min:0|max:255',
+            'fragments.*.paragraph_number'    => 'required|numeric',
+            'fragments.*.sentence_number'     => 'required|numeric',
+            'translations'                    => 'sometimes|array',
+            'translations.*.paragraph_number' => 'required|numeric',
+            'translations.*.sentence_number'  => 'required|numeric',
+            'translations.*.translation'      => 'required|string|min:1|max:65535' // 65535 is an arbitrary reasonable limit
         ];
         parent::validate($request, $rules);
 

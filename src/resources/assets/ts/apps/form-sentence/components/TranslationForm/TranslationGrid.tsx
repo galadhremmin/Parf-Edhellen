@@ -7,7 +7,7 @@ import {
 import { AgGridReact } from '@ag-grid-community/react/lib/agGridReact';
 import React from 'react';
 
-import { fireEvent } from '@root/components/Component';
+import { fireEventAsync } from '@root/components/Component';
 import {
     IProps,
     IState,
@@ -88,7 +88,7 @@ export default class TranslationGrid extends React.Component<IProps> {
             onChange,
         } = this.props;
 
-        fireEvent(this, onChange, {
+        fireEventAsync(this, onChange, {
             ...row,
             translation: value.trim(),
         });

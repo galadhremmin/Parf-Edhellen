@@ -7,8 +7,8 @@ import {
 
 const InitialState: ISentenceReducerState = {
     account: null,
+    contributionId: 0,
     description: '',
-    id: 0,
     isApproved: false,
     isNeologism: true,
     longDescription: '',
@@ -22,7 +22,7 @@ const SentenceReducer = (state: ISentenceReducerState = InitialState, action: IS
             return mapper<typeof action['sentence'], ISentenceReducerState>({
                 account: 'account',
                 description: (v) => v.description || '',
-                id: 'id',
+                contributionId: 'contributionId',
                 isApproved: 'isApproved',
                 isNeologism: 'isNeologism',
                 languageId: (v) => v.languageId || (v.language ? v.language.id : null),

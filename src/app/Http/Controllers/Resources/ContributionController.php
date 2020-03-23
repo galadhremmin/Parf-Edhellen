@@ -394,7 +394,7 @@ class ContributionController extends Controller
 
         // payloads might already be configured at this point, either by the save methods
         // or earlier in the call stack.
-        if (! $contribution->isDirty('payload')) {
+        if (! $contribution->isDirty('payload') && empty($contribution->payload)) {
             $contribution->payload = $entity instanceof Jsonable
                 ? $entity->toJson()
                 : json_encode($entity);

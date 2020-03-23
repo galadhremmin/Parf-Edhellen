@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
 
 import { ReduxThunkDispatch } from '@root/_types';
+import { fireEvent } from '@root/components/Component';
 import Panel from '@root/components/Panel';
 import TextIcon from '@root/components/TextIcon';
 import { SentenceActions } from '../actions';
@@ -29,19 +30,15 @@ function SentenceForm(props: IProps) {
 
     const _onSubmit = useCallback((ev) => {
         ev.preventDefault();
-        console.log([
-            sentence,
-            sentenceFragments,
-            sentenceParagraphs,
-            sentenceText,
-            sentenceTranslations,
-        ]);
+        fireEvent('SentenceForm', onSubmit, {
+            ...sentence,
+            fragments: sentenceFragments,
+            translations: sentenceTranslations,
+        });
     }, [
         onSubmit,
         sentence,
         sentenceFragments,
-        sentenceParagraphs,
-        sentenceText,
         sentenceTranslations,
     ]);
 
@@ -93,6 +90,7 @@ const mapDispatchToProps: any = (dispatch: ReduxThunkDispatch) => ({
     onFragmentChange: (ev) => dispatch(actions.setFragmentField(ev.value.fragment, ev.value.field, ev.value.value)),
     onMetadataChange: (ev) => dispatch(actions.setMetadataField(ev.value.field, ev.value.value)),
     onParseTextRequest: (ev) => dispatch(actions.reloadFragments(ev.value)),
+    onSubmit: (ev) => dispatch(actions.saveSentence(ev.value)),
     onTextChange: (ev) => dispatch(actions.setLatinText(ev.value)),
     onTranslationChange: (ev) => dispatch(actions.setTranslation(ev.value)),
 }) as Partial<IProps>;

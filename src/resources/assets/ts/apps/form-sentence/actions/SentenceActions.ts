@@ -5,7 +5,7 @@ import { ParagraphState } from '@root/apps/sentence-inspector/reducers/Fragments
 import convert from '@root/apps/sentence-inspector/utilities/TextConverter';
 import { DI, resolve } from '@root/di';
 import { ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
-import IContributionResourceApi from '@root/connectors/backend/IContributionResourceApi';
+import IContributionResourceApi, { ISaveSentenceContributionEntity } from '@root/connectors/backend/IContributionResourceApi';
 import ILanguageApi from '@root/connectors/backend/ILanguageApi';
 
 import { RootReducer } from '../reducers';
@@ -186,6 +186,13 @@ export default class GlossActions {
                 sentenceTranslations: translations,
                 textTransformations: transformations.transformations,
             });
+        };
+    }
+
+    public saveSentence(args: ISaveSentenceContributionEntity) {
+        return async (dispatch: ReduxThunkDispatch) => {
+            const response = await this._contributionApi.saveSentence(args);
+            console.log(response);
         };
     }
 }

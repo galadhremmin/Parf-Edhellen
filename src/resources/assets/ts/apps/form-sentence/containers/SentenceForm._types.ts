@@ -1,5 +1,6 @@
 import { ComponentEventHandler } from '@root/components/Component._types';
 import { ITextTransformationsMap } from '@root/connectors/backend/IBookApi';
+import { ISaveSentenceContributionEntity } from '@root/connectors/backend/IContributionResourceApi';
 import { IFragmentFormEvents } from '../components/FragmentsForm._types';
 import { IMetadataFormEvents } from '../components/MetadataForm._types';
 import { ITranslationFormEvents } from '../components/TranslationForm/TranslationForm._types';
@@ -16,7 +17,7 @@ export interface ISentenceFieldChangeSpec {
 }
 
 export interface ISentenceFormEvents {
-    onSubmit: ComponentEventHandler<any>;
+    onSubmit: ComponentEventHandler<ISaveSentenceContributionEntity>;
 }
 
 export interface IProps extends ISentenceFormEvents, IFragmentFormEvents, IMetadataFormEvents, ITranslationFormEvents {
