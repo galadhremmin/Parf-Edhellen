@@ -4,9 +4,11 @@ import {
 import { ParagraphState } from '@root/apps/sentence-inspector/reducers/FragmentsReducer._types';
 import convert from '@root/apps/sentence-inspector/utilities/TextConverter';
 import { DI, resolve } from '@root/di';
+import { setValidationErrors } from '@root/components/Form/Validation';
 import { ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
 import IContributionResourceApi, { ISaveSentenceContributionEntity } from '@root/connectors/backend/IContributionResourceApi';
 import ILanguageApi from '@root/connectors/backend/ILanguageApi';
+import ValidationError from '@root/connectors/ValidationError';
 
 import { RootReducer } from '../reducers';
 import { ISentenceTranslationReducerState } from '../reducers/child-reducers/SentenceTranslationReducer._types';
@@ -14,11 +16,11 @@ import { ISentenceFragmentsReducerState } from '../reducers/SentenceFragmentsRed
 import { ISentenceReducerState } from '../reducers/SentenceReducer._types';
 import { ISentenceTranslationsReducerState } from '../reducers/SentenceTranslationsReducer._types';
 import { TextTransformationsReducerState } from '../reducers/TextTransformationsReducer._types';
+import { parseFragments, mergeFragments } from '../utilities/fragments';
 import { convertTransformationToString } from '../utilities/transformations';
+import { parseTranslations } from '../utilities/translations';
 
 import Actions from './Actions';
-import { parseFragments, mergeFragments } from '../utilities/fragments';
-import { parseTranslations } from '../utilities/translations';
 
 export default class GlossActions {
     constructor(
@@ -191,8 +193,13 @@ export default class GlossActions {
 
     public saveSentence(args: ISaveSentenceContributionEntity) {
         return async (dispatch: ReduxThunkDispatch) => {
-            const response = await this._contributionApi.saveSentence(args);
-            console.log(response);
+            try {
+                const response = await this._contributionApi.saveSentence(args);
+            } catch (e) {
+                if (e instanceof ValidationError) {
+                    dispatch(setValidationErrors(e));
+                }
+            }
         };
     }
 }

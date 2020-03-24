@@ -6,6 +6,7 @@ import { IComponentEvent } from '@root/components/Component._types';
 import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
 import Markdown from '@root/components/Markdown';
 import Spinner from '@root/components/Spinner';
+import StaticAlert from '@root/components/StaticAlert';
 import { ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
 import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 
@@ -36,6 +37,7 @@ export default class FragmentInspector extends React.Component<IProps> {
     public render() {
         const {
             fragment,
+            gloss,
         } = this.props;
 
         return <aside className="fragment-inspector" ref={this._rootRef}>
@@ -55,7 +57,7 @@ export default class FragmentInspector extends React.Component<IProps> {
                     </li>
                 </ul>
             </nav>
-            {fragment ? this._renderFragment(fragment) : this._renderUnknownFragment()}
+            {fragment && gloss ? this._renderFragment(fragment) : this._renderUnknownFragment()}
         </aside>;
     }
 
@@ -78,7 +80,10 @@ export default class FragmentInspector extends React.Component<IProps> {
     }
 
     private _renderUnknownFragment() {
-        return <span>Unknown fragment...</span>;
+        return <StaticAlert type="warning">
+            <strong>The word does not exist!</strong>{' '}
+            The word has probably been removed from the dictionary. We have recorded this error. Sorry!
+        </StaticAlert>;
     }
 
     private _onPreviousClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {

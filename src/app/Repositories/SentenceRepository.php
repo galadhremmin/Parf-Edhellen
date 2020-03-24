@@ -17,6 +17,7 @@ use App\Models\{
     Speech
 };
 use App\Helpers\SentenceHelper;
+use Illuminate\Support\Collection;
 
 class SentenceRepository
 {
@@ -64,6 +65,8 @@ class SentenceRepository
             ->where('s.is_approved', 1)
             ->select('s.id', 's.description', 's.source', 's.is_neologism', 's.account_id',
                 'a.nickname as account_name', 's.name', 'l.name as language_name')
+            ->orderBy('language_name')
+            ->orderBy('name')
             ->get()
             ->groupBy('language_name');
     }
@@ -119,6 +122,21 @@ class SentenceRepository
                 return [ $item->paragraph_number => $item ];
             });
 
+        $sentence->makeHidden(['account_id', 'language_id', 'sentence_translations', 'sentence_fragments']);
+
+        $speeches = $this->getSpeechesForFragments($fragments);
+        return [
+            'inflections' => $inflections,
+            'sentence' => $sentence,
+            'sentence_fragments' => $fragments,
+            'sentence_translations' => $translations,
+            'sentence_transformations' => resolve(SentenceHelper::class)->buildSentences($fragments),
+            'speeches' => $speeches
+        ];
+    }
+
+    public function getSpeechesForFragments(Collection $fragments)
+    {
         $speechIds = $fragments->reduce(function ($carry, $f) {
             if ($f->speech_id !== null && !in_array($f->speech_id, $carry)) {
                 $carry[] = $f->speech_id;
@@ -132,17 +150,7 @@ class SentenceRepository
             ->mapWithKeys(function ($item) {
                 return [$item->id => $item->name];
             });
-
-        $sentence->makeHidden(['account_id', 'language_id', 'sentence_translations', 'sentence_fragments']);
-
-        return [
-            'inflections' => $inflections,
-            'sentence' => $sentence,
-            'sentence_fragments' => $fragments,
-            'sentence_translations' => $translations,
-            'sentence_transformations' => resolve(SentenceHelper::class)->buildSentences($fragments),
-            'speeches' => $speeches
-        ];
+        return $speeches;
     }
 
     public function saveSentence(Sentence $sentence, array $fragments, array $inflections, array $translations = []) 

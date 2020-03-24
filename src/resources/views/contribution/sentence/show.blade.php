@@ -25,10 +25,9 @@
   @markdown($sentence->description)
   @endif
 
-  <div id="ed-fragment-navigator"></div>
-  <script type="application/json" id="ed-preload-sentence-data">{!! $fragmentData !!}</script>
-
   @markdown($sentence->long_description)
+
+  <div id="ed-fragment-navigator" data-inject-module="sentence-inspector" data-inject-prop-sentence="@json($fragmentData)"></div>
 
   <p>
     <span class="label label-default">{{ $sentence->language->name }}</span>

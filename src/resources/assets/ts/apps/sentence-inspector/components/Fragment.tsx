@@ -8,7 +8,7 @@ class Fragments extends React.Component<IProps> {
             selected,
         } = this.props;
 
-        if (fragment.id > -1) {
+        if (fragment.id !== 0) {
             return <a href={`#${fragment.id}`}
                 className={selected ? 'selected' : undefined}
                 onClick={this._onClick}>

@@ -51,10 +51,25 @@ class SentenceContributionController extends Controller implements IContribution
             ? Sentence::findOrFail($payload['id']) : null;
 
         $sentence = new Sentence($payload['sentence']);
+
+        // This is all the data required by the sentence component. It has to be 'rebuilt'
+        // based on the JSON payload that is stored on the contribution. This is a bit clumsy, but
+        // it is currently the only way to visualize the sentence in the contribution preview view.
         $fragmentData = $this->createFragmentDataFromPayload($payload);
+        $speeches     = $this->_sentenceRepository->getSpeechesForFragments($fragmentData['fragments']);
+        $inflections  = Inflection::all()->groupBy('id');
+
+        $fragmentData = [
+            'inflections'              => $inflections,
+            'sentence'                 => $sentence,
+            'sentence_fragments'       => $fragmentData['fragments'],
+            'sentence_translations'    => $fragmentData['translations'],
+            'sentence_transformations' => $fragmentData['transformations'],
+            'speeches'                 => $speeches
+        ];
 
         return view('contribution.sentence.show', [
-            'fragmentData'     => json_encode($fragmentData),
+            'fragmentData'     => $fragmentData,
             'sentence'         => $sentence,
             'originalSentence' => $originalSentence,
             'review'           => $contribution,

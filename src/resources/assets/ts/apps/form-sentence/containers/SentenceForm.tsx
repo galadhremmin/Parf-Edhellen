@@ -14,6 +14,7 @@ import { IProps } from './SentenceForm._types';
 
 function SentenceForm(props: IProps) {
     const {
+        errors,
         onFragmentChange,
         onMetadataChange,
         onParseTextRequest,
@@ -28,6 +29,9 @@ function SentenceForm(props: IProps) {
         sentenceTranslations,
     } = props;
 
+    const sentenceId = sentence.id;
+    const languageId = sentence.languageId;
+
     const _onSubmit = useCallback((ev) => {
         ev.preventDefault();
         fireEvent('SentenceForm', onSubmit, {
@@ -40,6 +44,14 @@ function SentenceForm(props: IProps) {
         sentence,
         sentenceFragments,
         sentenceTranslations,
+    ]);
+
+    const _onOpenOriginal = useCallback((ev: React.MouseEvent<HTMLButtonElement>) => {
+        ev.preventDefault();
+        window.open(`/phrases/${languageId}-default/${sentenceId}-original`, '_blank');
+    }, [
+        languageId,
+        sentenceId,
     ]);
 
     return <form method="post" action="." onSubmit={_onSubmit}>
@@ -62,6 +74,14 @@ function SentenceForm(props: IProps) {
             />
         </Panel>
         <div className="text-right">
+            {sentenceId && <>
+                <button className="btn btn-default" formAction="button" onClick={_onOpenOriginal}>
+                    <TextIcon icon="open" />
+                    &#32;
+                    View original
+                </button>
+                &#32;
+            </>}
             <button className="btn btn-primary" formAction="submit">
                 <TextIcon icon="ok" />
                 &#32;
@@ -77,6 +97,7 @@ SentenceForm.defaultProps = {
 } as Partial<IProps>;
 
 const mapStateToProps = (state: RootReducer) => ({
+    errors: state.errors,
     sentence: state.sentence,
     sentenceFragments: state.sentenceFragments,
     sentenceParagraphs: state.latinText.paragraphs,

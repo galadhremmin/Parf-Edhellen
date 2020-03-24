@@ -16,7 +16,11 @@ import {
     resolve,
 } from '@root/di';
 import { fireEventAsync } from '@root/components/Component';
-import IGlossResourceApi, { IGlossEntity } from '@root/connectors/backend/IGlossResourceApi';
+import {
+    ISentenceFragmentEntity,
+    SentenceFragmentType,
+} from '@root/connectors/backend/IBookApi';
+import IGlossResourceApi, { IGlossEntity, ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
 import {
     IInflection,
     IInflectionResourceApi,
@@ -37,7 +41,6 @@ import {
 } from './FragmentsGrid._types';
 
 import './FragmentsGrid.scss';
-import { ISentenceFragmentEntity, SentenceFragmentType } from '@root/connectors/backend/IBookApi';
 
 class FragmentsGrid extends React.Component<IProps, IState> {
     public state: IState = {
@@ -48,7 +51,7 @@ class FragmentsGrid extends React.Component<IProps, IState> {
     };
 
     private _glossCache: Map<number, Promise<IGlossEntity>>;
-    private _gridRef: AgGridReact;
+    private _gridRef: AgGridReact & DetailGridInfo;
     private _glossApi: IGlossResourceApi;
 
     constructor(props: IProps) {
@@ -74,9 +77,9 @@ class FragmentsGrid extends React.Component<IProps, IState> {
         // This check is incredibly important to avoid agGrid unnecessarily rerendering.
         // Rerendering causes React unsafe warnings to be thrown while the user is editing
         // fragments.
-        if (nextProps.fragments !== fragments || //
-            nextProps.fragments.length !== fragments.length || //
-            nextProps.fragments.some((f, i) => fragments[i].fragment !== f.fragment)) {
+        if (nextProps.fragments !== fragments && //
+            (nextProps.fragments.length !== fragments.length || //
+             nextProps.fragments.some((f, i) => fragments[i].fragment !== f.fragment))) {
             return true;
         }
 
@@ -117,6 +120,7 @@ class FragmentsGrid extends React.Component<IProps, IState> {
         const columnDefinition: FragmentGridColumnDefinition = [
             {
                 editable: false,
+                headerName: 'Word',
                 field: 'fragment',
                 resizable: true,
             },
@@ -132,6 +136,7 @@ class FragmentsGrid extends React.Component<IProps, IState> {
                 cellRenderer: GlossRenderer,
                 cellRendererParams,
                 editable: true,
+                headerName: 'Gloss',
                 field: 'glossId',
                 resizable: true,
             },
@@ -141,6 +146,7 @@ class FragmentsGrid extends React.Component<IProps, IState> {
                 cellRenderer: SpeechRenderer,
                 cellRendererParams,
                 editable: true,
+                headerName: 'Speech',
                 field: 'speechId',
                 resizable: true,
             },
@@ -202,23 +208,106 @@ class FragmentsGrid extends React.Component<IProps, IState> {
         </>;
     }
 
+    /**
+     * Triggers the component's `onChange` event for the specified fragment, informing underlying data model to
+     * assign the specified field to the given value. This will not trigger a re-render of the component (unless
+     * the field is `fragment`) so this can lead to view model/data model discrepancies.
+     * @param fragment fragment to update (make sure it has the `id` property not null and/or 0)
+     * @param field field to update
+     * @param value value to assign
+     */
+    private _notifyChange<T extends keyof ISentenceFragmentEntity>(fragment: ISentenceFragmentEntity, field: T,
+        value: ISentenceFragmentEntity[T]) {
+        const {
+            onChange,
+        } = this.props;
+
+        fireEventAsync(this, onChange, {
+            field,
+            fragment,
+            value,
+        });
+    }
+
+    /**
+     * Updates agGrid's local state *and* the underlying data model by setting the same gloss and speech
+     * to fragments that are similar to the one specified.
+     * @param fragment fragment that was changed.
+     * @param glossId gloss ID assigned to the specified fragment.
+     */
+    private async _useGlossToUpdateSimilarFragments(fragment: ISentenceFragmentEntity, glossId: number) {
+        if (! glossId) {
+            return;
+        }
+
+        const gloss = await this._onResolveGloss(glossId);
+        const {
+            api,
+        } = this._gridRef;
+
+        const transaction: ISentenceFragmentEntity[] = [];
+        api.forEachNodeAfterFilter((node) => {
+            const f = node.data as ISentenceFragmentEntity;
+
+            if (f.type !== SentenceFragmentType.Word ||
+                f.fragment.toLocaleLowerCase() !== fragment.fragment.toLocaleLowerCase()) {
+                return;
+            }
+
+            let changed = false;
+            if (! f.glossId || f === fragment) {
+                f.glossId = glossId;
+                changed = true;
+                this._notifyChange(f, 'glossId', f.glossId);
+            }
+
+            if (! f.speechId || f === fragment) {
+                f.speechId = gloss.speechId || null;
+                changed = true;
+                this._notifyChange(f, 'speechId', f.speechId);
+            }
+
+            if (changed) {
+                transaction.push(f);
+            }
+        });
+
+        if (transaction.length > 0) {
+            api.updateRowData({
+                update: transaction,
+            });
+        }
+    };
+
+    /**
+     * Resizes the grid's columns appropriately when the viewport changes.
+     */
     private _onWindowResize = () => {
         const {
             _gridRef: gridRef,
         } = this;
 
         if (gridRef) {
-            (gridRef as any as DetailGridInfo).api.sizeColumnsToFit();
+            gridRef.api.sizeColumnsToFit();
         }
     }
 
+    /**
+     * Tells agGrid that there a custom filter function is exists.
+     */
     private _onIsExternalFilterPresent = () => true;
 
+    /**
+     * Custom agGrid view filter that only shows words.
+     */
     private _onDoesExternalFilterPass = (ev: RowNode) => {
         const data = ev.data as ISentenceFragmentEntity;
         return data.type === SentenceFragmentType.Word;
     };
 
+    /**
+     * On-change handler for agGrid.
+     */
     private _onCellValueChanged = (ev: CellValueChangedEvent) => {
         let {
             newValue: value,
@@ -229,34 +318,46 @@ class FragmentsGrid extends React.Component<IProps, IState> {
             data: fragment,
         } = ev;
 
-        const {
-            onChange,
-        } = this.props;
-
         // always trim strings from unnecessary whitespace!
         if (typeof value === 'string') {
             value = value.trim();
         }
 
-        const field = column.getColId();
-        fireEventAsync(this, onChange, {
-            field,
-            fragment,
-            value,
-        });
+        const field = column.getColId() as keyof ISentenceFragmentEntity;
+        if (field === 'glossId') {
+            this._useGlossToUpdateSimilarFragments(fragment, value);
+        } else {
+            this._notifyChange(fragment, field, value);
+        }
     }
 
+    /**
+     * Grid initialization (once it mounts).
+     */
     private _onGridReady = (params: GridReadyEvent) => {
         params.api.sizeColumnsToFit()
     }
 
+    /**
+     * Reference callback (assigns `_gridRef`).
+     */
     private _onSetGridReference = (gridRef: AgGridReact) => {
-        this._gridRef = gridRef;
+        this._gridRef = gridRef as any; // this really works!
     }
 
-    private _onResolveGloss = (glossId: number) => {
+    /**
+     * Attempts to resolve the specified gloss ID using local cache,
+     * or with the API. This is an asychronous operation.
+     * @param glossId gloss ID to look up
+     * @returns A gloss resolver promise.
+     */
+    private _onResolveGloss = (glossId: number): Promise<IGlossEntity> => {
         if (this._glossCache.has(glossId)) {
             return this._glossCache.get(glossId);
+        }
+
+        if (! glossId) {
+            return Promise.resolve<IGlossEntity>(null);
         }
 
         const glossPromise = this._glossApi.gloss(glossId);
@@ -264,7 +365,11 @@ class FragmentsGrid extends React.Component<IProps, IState> {
         return glossPromise;
     }
 
-    private _onSuggestGloss = async (word: string) => {
+    /**
+     * Retrieves suggestions asynchronously for the specified word.
+     * @param word look-up word
+     */
+    private _onSuggestGloss = async (word: string): Promise<ISuggestionEntity[]> => {
         const {
             languageId,
         } = this.props;

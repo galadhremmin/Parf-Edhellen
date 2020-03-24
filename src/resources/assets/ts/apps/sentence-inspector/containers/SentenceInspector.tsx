@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { IComponentEvent } from '@root/components/Component._types';
-import IBookApi from '@root/connectors/backend/IBookApi';
+import IBookApi, { IBookGlossEntity } from '@root/connectors/backend/IBookApi';
 import { DI, resolve } from '@root/di';
 
 import { RootReducer } from '../reducers';
@@ -87,14 +87,20 @@ export class SentenceInspector extends React.Component<IProps, IState> {
 
     private async _selectFragment(id: number) {
         const fragment = this.props.fragments.find((f) => f.id === id);
-        const details = await this._api.gloss(fragment.glossId);
-        const gloss = details.sections[0].glosses[0];
+        let gloss: IBookGlossEntity;
 
-        gloss.inflectedWord = {
-            inflections: fragment.inflections,
-            speech: fragment.speech,
-            word: fragment.fragment,
-        };
+        try {
+            const details = await this._api.gloss(fragment.glossId);
+            gloss = details.sections[0].glosses[0];
+            gloss.inflectedWord = {
+                inflections: fragment.inflections,
+                speech: fragment.speech,
+                word: fragment.fragment,
+            };
+        } catch (e) {
+            // often 404 -- handle fallback gracefully
+            gloss = null;
+        }
 
         this.setState({
             fragment,
