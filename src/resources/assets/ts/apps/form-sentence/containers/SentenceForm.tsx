@@ -5,6 +5,7 @@ import { ReduxThunkDispatch } from '@root/_types';
 import { fireEvent } from '@root/components/Component';
 import Panel from '@root/components/Panel';
 import TextIcon from '@root/components/TextIcon';
+import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
 import { SentenceActions } from '../actions';
 import FragmentsForm from '../components/FragmentsForm';
 import MetadataForm from '../components/MetadataForm';
@@ -55,6 +56,7 @@ function SentenceForm(props: IProps) {
     ]);
 
     return <form method="post" action="." onSubmit={_onSubmit}>
+        <ValidationErrorAlert error={errors} />
         <Panel title="Basic information">
             <MetadataForm sentence={sentence} onMetadataChange={onMetadataChange} />
         </Panel>
