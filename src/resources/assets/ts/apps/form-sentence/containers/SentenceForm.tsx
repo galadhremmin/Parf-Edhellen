@@ -6,6 +6,7 @@ import { fireEvent } from '@root/components/Component';
 import Panel from '@root/components/Panel';
 import TextIcon from '@root/components/TextIcon';
 import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
+import { isEmptyString } from '@root/utilities/func/string-manipulation';
 import { SentenceActions } from '../actions';
 import FragmentsForm from '../components/FragmentsForm';
 import MetadataForm from '../components/MetadataForm';
@@ -16,6 +17,7 @@ import { IProps } from './SentenceForm._types';
 function SentenceForm(props: IProps) {
     const {
         errors,
+        fragmentErrors,
         onFragmentChange,
         onMetadataChange,
         onParseTextRequest,
@@ -35,10 +37,17 @@ function SentenceForm(props: IProps) {
 
     const _onSubmit = useCallback((ev) => {
         ev.preventDefault();
+        let translations: typeof sentenceTranslations = [];
+        // Only include translations if they are valid. These are meant to be optional.
+        if (sentenceTranslations.length > 0 && //
+            ! sentenceTranslations.some((t) => isEmptyString(t.translation))) {
+            translations = sentenceTranslations;
+        }
+
         fireEvent('SentenceForm', onSubmit, {
             ...sentence,
             fragments: sentenceFragments,
-            translations: sentenceTranslations,
+            translations,
         });
     }, [
         onSubmit,
@@ -61,7 +70,8 @@ function SentenceForm(props: IProps) {
             <MetadataForm sentence={sentence} onMetadataChange={onMetadataChange} />
         </Panel>
         <Panel title="Phrase">
-            <FragmentsForm fragments={sentenceFragments}
+            <FragmentsForm errors={fragmentErrors}
+                fragments={sentenceFragments}
                 languageId={sentence.languageId}
                 text={sentenceText}
                 textIsDirty={sentenceTextIsDirty}
@@ -100,6 +110,7 @@ SentenceForm.defaultProps = {
 
 const mapStateToProps = (state: RootReducer) => ({
     errors: state.errors,
+    fragmentErrors: state.fragmentErrors,
     sentence: state.sentence,
     sentenceFragments: state.sentenceFragments,
     sentenceParagraphs: state.latinText.paragraphs,

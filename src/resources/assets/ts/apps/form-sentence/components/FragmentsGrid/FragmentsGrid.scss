@@ -1,4 +1,10 @@
+@import '../../../../_scss/_variables';
+
 .FragmentsGrid--container {
     height: 600px;
     width: 100%;
+
+    .in-error {
+        background-color: $state-danger-bg;
+    }
 }

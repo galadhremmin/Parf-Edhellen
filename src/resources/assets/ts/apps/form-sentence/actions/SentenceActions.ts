@@ -195,6 +195,7 @@ export default class GlossActions {
         return async (dispatch: ReduxThunkDispatch) => {
             try {
                 const response = await this._contributionApi.saveSentence(args);
+                window.location.href = response.url;
             } catch (e) {
                 if (e instanceof ValidationError) {
                     dispatch(setValidationErrors(e));

@@ -6,6 +6,7 @@ import FragmentsGrid from './FragmentsGrid';
 
 function FragmentsForm(props: IProps) {
     const {
+        errors,
         fragments,
         languageId,
         onFragmentChange,
@@ -38,9 +39,10 @@ function FragmentsForm(props: IProps) {
                     disabled={! textIsDirty}
                     onClick={_onParseFragments}>Update</button>
         </div>
-        <FragmentsGrid fragments={fragments}
-                       languageId={languageId}
-                        onChange={onFragmentChange}
+        <FragmentsGrid errors={errors}
+            fragments={fragments}
+            languageId={languageId}
+            onChange={onFragmentChange}
         />
     </>;
 }

@@ -53,37 +53,14 @@ class FragmentsGrid extends React.Component<IProps, IState> {
     private _glossCache: Map<number, Promise<IGlossEntity>>;
     private _gridRef: AgGridReact & DetailGridInfo;
     private _glossApi: IGlossResourceApi;
+    private _lastErrors: IProps['errors'];
 
     constructor(props: IProps) {
         super(props);
         this._glossCache = new Map();
         this._gridRef = null;
+        this._lastErrors = null;
         this._glossApi = resolve<IGlossResourceApi>(DI.GlossApi);
-    }
-
-    public shouldComponentUpdate(nextProps: IProps, nextState: IState) {
-        const {
-            columnDefinition,
-        } = this.state;
-
-        const {
-            fragments,
-        } = this.props;
-
-        if (nextState.columnDefinition !== columnDefinition) {
-            return true;
-        }
-
-        // This check is incredibly important to avoid agGrid unnecessarily rerendering.
-        // Rerendering causes React unsafe warnings to be thrown while the user is editing
-        // fragments.
-        if (nextProps.fragments !== fragments && //
-            (nextProps.fragments.length !== fragments.length || //
-             nextProps.fragments.some((f, i) => fragments[i].fragment !== f.fragment))) {
-            return true;
-        }
-
-        return false;
     }
 
     public async componentDidMount() {
@@ -179,6 +156,25 @@ class FragmentsGrid extends React.Component<IProps, IState> {
         window.removeEventListener('resize', this._onWindowResize);
     }
 
+    public componentDidUpdate() {
+        const {
+            errors,
+        } = this.props;
+        const {
+            _lastErrors: lastErrors,
+            _gridRef: gridRef,
+        } = this;
+
+        // HACK to highlight erroneous rows. TODO: find a different way of
+        // ensuring that the grid is informed when state is changed.
+        if (lastErrors !== errors) {
+            this._lastErrors = errors;
+            gridRef.api.redrawRows({
+                rowNodes: gridRef.api.getRenderedNodes(),
+            });
+        }
+    }
+
     public render() {
         const {
             columnDefinition,
@@ -191,14 +187,18 @@ class FragmentsGrid extends React.Component<IProps, IState> {
         return <>
             <div className="ag-theme-balham FragmentsGrid--container">
                 {columnDefinition &&
-                    <AgGridReact columnDefs={columnDefinition}
+                    <AgGridReact
+                        modules={AllCommunityModules}
+                        deltaRowDataMode
+                        getRowNodeId={this._onGetRowNodeId}
                         isExternalFilterPresent={this._onIsExternalFilterPresent}
                         doesExternalFilterPass={this._onDoesExternalFilterPass}
-                        modules={AllCommunityModules}
+                        getRowClass={this._onRowClass}
+                        columnDefs={columnDefinition}
+                        rowData={fragments}
                         onCellValueChanged={this._onCellValueChanged}
                         onGridReady={this._onGridReady}
                         ref={this._onSetGridReference}
-                        rowData={fragments}
                     />}
             </div>
             <p>
@@ -303,7 +303,7 @@ class FragmentsGrid extends React.Component<IProps, IState> {
     private _onDoesExternalFilterPass = (ev: RowNode) => {
         const data = ev.data as ISentenceFragmentEntity;
         return data.type === SentenceFragmentType.Word;
-    };
+    }
 
     /**
      * On-change handler for agGrid.
@@ -329,6 +329,24 @@ class FragmentsGrid extends React.Component<IProps, IState> {
         } else {
             this._notifyChange(fragment, field, value);
         }
+    }
+
+    /**
+     * Returns an unique string identifier given a fragment entity. This is required
+     * by agGrid's `deltaRowDataMode`.
+     */
+    private _onGetRowNodeId = (row: ISentenceFragmentEntity) => {
+        return row.id.toString(10);
+    }
+
+    /**
+     * Returns the row highlight class depending on whether there are errors available.
+     */
+    private _onRowClass = (params: RowNode) => {
+        const {
+            errors,
+        } = this.props;
+        return !! errors[params.rowIndex.toString(10)] ? 'in-error' : null;
     }
 
     /**

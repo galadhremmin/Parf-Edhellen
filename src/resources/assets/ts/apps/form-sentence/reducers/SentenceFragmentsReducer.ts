@@ -15,8 +15,10 @@ const SentenceFragmentsReducer = (state = InitialState, action: ISentenceFragmen
                 (fragment, i) => SentenceFragmentReducer(null, {
                     ...action,
                     sentenceFragment: {
+                        paragraphNumber: 1,
+                        sentenceNumber: 1,
                         ...fragment,
-                        id: (i + 1) * -10,
+                        id: -(i + 1),
                     },
                 }),
             );

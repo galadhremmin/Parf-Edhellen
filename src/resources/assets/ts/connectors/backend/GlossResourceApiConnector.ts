@@ -8,7 +8,7 @@ import IGlossResourceApi, {
 } from './IGlossResourceApi';
 import ILanguageApi from './ILanguageApi';
 
-const LanguageParameterRegEx = /\blang:([\w\s]+)$/;
+const LanguageParameterRegEx = /\blang:([\w\s]+)$/u;
 
 export default class GlossResourceApiConnector implements IGlossResourceApi {
     constructor(private _api = resolve<ApiConnector>(DI.BackendApi),
@@ -46,7 +46,7 @@ export default class GlossResourceApiConnector implements IGlossResourceApi {
             if (m) {
                 const languageName = m[1];
                 const language = await this._languageApi.find(languageName, 'name',
-                    (a, b) => a.toLocaleLowerCase() === b.toLocaleLowerCase());
+                    (candidate, value) => candidate.toLocaleLowerCase().startsWith(value.toLocaleLowerCase()));
 
                 if (language) {
                     args.languageId = language.id;

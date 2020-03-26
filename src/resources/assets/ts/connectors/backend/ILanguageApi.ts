@@ -3,7 +3,7 @@ import {
     ILanguagesResponse,
 } from './IBookApi';
 
-export type LanguageComparator<TKey> = (a: TKey, b: TKey) => boolean;
+export type LanguageComparator<TKey> = (candidate: TKey, value: TKey) => boolean;
 
 export default interface ILanguageApi {
     /**
