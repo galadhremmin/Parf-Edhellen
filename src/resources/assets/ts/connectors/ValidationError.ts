@@ -1,5 +1,5 @@
 interface IErrorMap {
-    [propertyName: string]: string;
+    [propertyName: string]: string[];
 }
 
 export default class ValidationError {
@@ -10,7 +10,7 @@ export default class ValidationError {
     }
 
     public get errors() {
-        const map = new Map<string, string>();
+        const map = new Map<string, string[]>();
 
         if (this._errorMap === null) {
             return map;

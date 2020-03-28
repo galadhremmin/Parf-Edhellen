@@ -12,16 +12,9 @@ use App\Events\{
 use App\Models\{
     Sentence
 };
-use App\Http\Controllers\Traits\{
-    CanMapSentence, 
-    CanValidateSentence
-};
 
 class SentenceController extends Controller
 {
-    use CanMapSentence,
-        CanValidateSentence;
-
     protected $_sentenceRepository;
 
     public function __construct(SentenceRepository $sentenceRepository)

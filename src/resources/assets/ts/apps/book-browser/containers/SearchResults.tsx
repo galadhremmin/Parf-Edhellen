@@ -9,7 +9,7 @@ import { RootReducer } from '../reducers';
 import { ISearchResult } from '../reducers/SearchResultsReducer._types';
 import { IProps } from './SearchResults._types';
 
-export class SearchResults extends React.PureComponent<IProps> {
+export class SearchResults extends React.Component<IProps> {
     static get defaultProps() {
         return {
             searchResults: [],

@@ -33,7 +33,7 @@ const Inject = (props: IProps) => {
     const actions = new GlossActions();
     if (prefetched) {
         if (gloss !== undefined) {
-            dispatch(actions.setGloss(gloss));
+            dispatch(actions.setLoadedGloss(gloss));
         }
     }
 

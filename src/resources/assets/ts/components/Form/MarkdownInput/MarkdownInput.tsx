@@ -19,7 +19,7 @@ const DefaultConfigCacheFactory = () => Cache.withLocalStorage<IComponentConfig>
     enter2Paragraph: true,
 }), 'components.MarkdownInput.config');
 
-export default class MarkdownInput extends React.PureComponent<IProps, IState> {
+export default class MarkdownInput extends React.Component<IProps, IState> {
     public static defaultProps = {
         configCacheFactory: DefaultConfigCacheFactory,
         id: 'markdownBody',

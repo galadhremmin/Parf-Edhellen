@@ -163,11 +163,13 @@ class GlossContributionController extends Controller implements IContributionCon
     public function validateSubstep(Request $request, int $id = 0, int $substepId = 0)
     {
         // noop
+        return true;
     }
 
     public function validateBeforeSave(Request $request, int $id = 0)
     {
         $this->validateGlossInRequest($request, $id, true);
+        return true;
     }
 
     public function populate(Contribution $contribution, Request $request)

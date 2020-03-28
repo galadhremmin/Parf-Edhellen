@@ -7,14 +7,23 @@ import FragmentsGrid from './FragmentsGrid';
 function FragmentsForm(props: IProps) {
     const {
         fragments,
-        onChange,
+        languageId,
+        onFragmentChange,
+        onParseTextRequest,
+        onTextChange,
         text,
+        textIsDirty,
     } = props;
 
     const _onChangeNative = useCallback((ev: React.ChangeEvent<HTMLTextAreaElement>) => {
         const value = ev.target.value;
-        fireEvent(null, onChange, value);
-    }, [ onChange ]);
+        fireEvent(null, onTextChange, value);
+    }, [ onTextChange ]);
+
+    const _onParseFragments = useCallback((ev: React.MouseEvent<HTMLButtonElement>) => {
+        ev.preventDefault();
+        fireEvent(null, onParseTextRequest, text);
+    }, [ onParseTextRequest, text ]);
 
     return <>
         <div className="form-group form-group-sm">
@@ -25,8 +34,15 @@ function FragmentsForm(props: IProps) {
                       rows={10}
                       value={text}
             />
-            <FragmentsGrid fragments={fragments} />
+            <button className="btn btn-primary btn-block"
+                    disabled={! textIsDirty}
+                    onClick={_onParseFragments}>Update</button>
         </div>
+        <FragmentsGrid
+            fragments={fragments}
+            languageId={languageId}
+            onChange={onFragmentChange}
+        />
     </>;
 }
 

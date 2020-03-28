@@ -14,9 +14,9 @@ export default class SentenceActions {
     }
 
     public selectFragment(fragment: ISentenceFragmentEntity) {
-        if (fragment.id < 0) {
+        if (fragment.id === 0) {
             throw new Error(`You cannot select fragment ${fragment.id}. You may only select fragments
-                with a positive ID.`);
+                with a valid ID.`);
         }
 
         if (typeof window === 'object') {

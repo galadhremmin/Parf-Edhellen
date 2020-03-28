@@ -3,7 +3,7 @@ import React from 'react';
 import { fireEvent } from '@root/components/Component';
 import { IProps } from './SearchResult._types';
 
-class SearchResult extends React.PureComponent<IProps> {
+class SearchResult extends React.Component<IProps> {
     public render() {
         const r = this.props.searchResult;
         const className = r.selected ? 'selected' : undefined;

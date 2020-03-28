@@ -36,7 +36,7 @@ export const booleanConverter = (value: string | boolean) => isNull(value) ? fal
  * `V` is the value type, `P` props type, `CP` backing component props type, `S` state type.
  */
 export abstract class FormComponent<V = any, P = {}, CP = {}, S = {}, SS = any>
-    extends React.PureComponent<P & IComponentProps<V>, S & IBackingComponentProps<V>, SS> {
+    extends React.Component<P & IComponentProps<V>, S & IBackingComponentProps<V>, SS> {
 
     /**
      * Default value converter for string values.

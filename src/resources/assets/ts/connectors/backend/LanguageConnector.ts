@@ -46,13 +46,14 @@ export default class LanguageConnector implements ILanguageApi {
      * @param key (optional) the property on the language object that contains the expected `value`.
      * @param cmpFunc (optional) comparer; `===` by default.
      */
-    public async find(value: any, key: keyof ILanguageEntity = 'id', cmpFunc = (a: any, b: any) => a === b) {
+    public async find<TKey extends keyof ILanguageEntity>(value: ILanguageEntity[TKey], key: TKey,
+        cmpFunc = (a: ILanguageEntity[TKey], b: ILanguageEntity[TKey]) => a === b) {
         const categorizedLanguages = await this.all();
         const categories = Object.keys(categorizedLanguages);
 
         for (const category of categories) {
             const languages = categorizedLanguages[category];
-            const language = languages.find((l: any) => cmpFunc(l[key], value));
+            const language = languages.find((l: ILanguageEntity) => cmpFunc(l[key], value));
 
             if (typeof language === 'object') {
                 return language;

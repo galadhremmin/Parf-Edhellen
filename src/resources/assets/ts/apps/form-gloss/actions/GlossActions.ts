@@ -14,14 +14,14 @@ export default class GlossActions {
         private _glossApi: IGlossResourceApi = resolve(DI.GlossApi),
         private _contributionApi: IContributionResourceApi = resolve(DI.ContributionApi)) {}
 
-    public gloss(glossId: number): ReduxThunk {
+    public loadGloss(glossId: number): ReduxThunk {
         return async (dispatch: ReduxThunkDispatch) => {
             const gloss = await this._glossApi.gloss(glossId);
-            dispatch(this.setGloss(gloss));
+            dispatch(this.setLoadedGloss(gloss));
         };
     }
 
-    public setEditing(glossId: number) {
+    public setEditingGlossId(glossId: number) {
         return {
             field: 'id',
             type: Actions.SetField,
@@ -29,14 +29,14 @@ export default class GlossActions {
         };
     }
 
-    public setGloss(gloss: IGlossEntity) {
+    public setLoadedGloss(gloss: IGlossEntity) {
         return {
             gloss,
             type: Actions.ReceiveGloss,
         };
     }
 
-    public setField(field: keyof IGlossEntity, value: any) {
+    public setGlossField(field: keyof IGlossEntity, value: any) {
         return {
             field,
             type: Actions.SetField,

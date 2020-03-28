@@ -152,7 +152,7 @@ export default class SearchActions {
             let language: ILanguageEntity = null;
             let languageShortName: string = null;
             if (languageId !== 0) {
-                language = await this._languages.find(languageId);
+                language = await this._languages.find(languageId, 'id');
                 languageShortName = language.shortName;
             }
 

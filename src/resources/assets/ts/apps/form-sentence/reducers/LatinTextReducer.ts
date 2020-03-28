@@ -1,12 +1,24 @@
 import { Actions } from '../actions';
-import { ILatinTextAction } from './LatinTextReducer._types';
+import {
+    ILatinTextAction,
+    ILatinTextReducerState,
+} from './LatinTextReducer._types';
 
-const InitialState = '';
+const InitialState: ILatinTextReducerState = {
+    dirty: true,
+    paragraphs: [],
+    text: '',
+};
 
 const LatinTextReducer = (state = InitialState, action: ILatinTextAction) => {
     switch (action.type) {
+        case Actions.ReloadAllFragments:
         case Actions.SetLatinText:
-            return action.latinText;
+            return {
+                dirty: action.dirty,
+                paragraphs: action.paragraphs,
+                text: action.latinText,
+            } as ILatinTextReducerState;
         default:
             return state;
     }

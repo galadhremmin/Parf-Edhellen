@@ -301,8 +301,12 @@ class ContributionController extends Controller
         
         $id = $this->getEntityId($request);
         
-        $this->createController($request)->validateSubstep($request, $id, $substepId);
-        return response(null, 204);
+        $result = $this->createController($request)->validateSubstep($request, $id, $substepId);
+        if (is_bool($result)) {
+            return response(null, $result ? 204 : 400);
+        }
+
+        return $result;
     }
 
     /**
@@ -390,7 +394,7 @@ class ContributionController extends Controller
 
         // payloads might already be configured at this point, either by the save methods
         // or earlier in the call stack.
-        if (! $contribution->isDirty('payload')) {
+        if (! $contribution->isDirty('payload') && empty($contribution->payload)) {
             $contribution->payload = $entity instanceof Jsonable
                 ? $entity->toJson()
                 : json_encode($entity);

@@ -221,28 +221,6 @@ export interface ISpeechMap {
     [speechId: string]: string;
 }
 
-export interface ISuggestRequest {
-    inexact?: boolean;
-    languageId?: number;
-    words: string[];
-}
-
-export interface ISuggestResponse {
-    [word: string]: ISuggestionEntity[];
-}
-
-export interface ISuggestionEntity {
-    accountName: string;
-    comments: string;
-    glossGroupName: string;
-    id: number;
-    normalizedWord: string;
-    source: string;
-    translation: string;
-    type: string;
-    word: string;
-}
-
 export default interface IBookApi {
     find(args: IFindRequest): Promise<FindResponse>;
     gloss(id: number): Promise<IGlossaryResponse>;
@@ -250,5 +228,4 @@ export default interface IBookApi {
     groups(): Promise<IGlossGroup[]>;
     languages(): Promise<ILanguagesResponse>;
     sentence(args: ISentenceRequest): Promise<ISentenceResponse>;
-    suggest(args: ISuggestRequest): Promise<ISuggestResponse>;
 }

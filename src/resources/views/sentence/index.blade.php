@@ -16,11 +16,26 @@
 @else
   @foreach ($sentences as $languageName => $sentencesForLanguage)
     <h2>{{ $languageName }}</h2>
-    <ul>
-      @foreach ($sentencesForLanguage as $sentence)
-      <li><a href="{{ $link->contributeSentence($sentence->id) }}">{{ $sentence->name }}</a></li>
-      @endforeach
-    </ul>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Author</th>
+          <th>Flag</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach ($sentencesForLanguage as $sentence)
+        <tr>
+          <td>{{ $sentence->id }}</td>
+          <td><a href="{{ $link->contributeSentence($sentence->id) }}">{{ $sentence->name }}</a></td>
+          <td>{{ $sentence->account_name }}</td>
+          <td>{{ $sentence->is_neologism ? 'Neologism' : 'Attested' }}</td>
+        </tr>
+        @endforeach
+      </tbody>
+    </table>
   @endforeach
 @endif
 

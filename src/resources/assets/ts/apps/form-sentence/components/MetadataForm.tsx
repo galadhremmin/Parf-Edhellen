@@ -9,28 +9,28 @@ import { IProps } from './MetadataForm._types';
 
 function MetadataForm(props: IProps) {
     const {
-        onChange,
+        onMetadataChange,
         sentence,
     } = props;
 
     const _onChange = useCallback(
         (field: keyof IProps['sentence']) => (ev: IComponentEvent<any>) => {
-        fireEvent(null, onChange, {
+        fireEvent(null, onMetadataChange, {
             field,
             value: ev.value,
         });
-    }, [ onChange ]);
+    }, [ onMetadataChange ]);
 
     const _onChangeNative = useCallback(
         (field: keyof IProps['sentence']) => (ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const value = /checkbox|radio/i.test(ev.target.type)
             ? (ev.target as HTMLInputElement).checked : ev.target.value;
 
-        fireEvent(null, onChange, {
+        fireEvent(null, onMetadataChange, {
             field,
             value,
         });
-    }, [ onChange ]);
+    }, [ onMetadataChange ]);
 
     return <>
         <div className="form-group form-group-sm">

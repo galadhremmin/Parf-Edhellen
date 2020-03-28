@@ -8,8 +8,6 @@ import IBookApi, {
     ILanguagesResponse,
     ISentenceRequest,
     ISentenceResponse,
-    ISuggestRequest,
-    ISuggestResponse,
 } from './IBookApi';
 import { IGlossGroup } from './IGlossResourceApi';
 
@@ -45,9 +43,5 @@ export default class BookApiConnector implements IBookApi {
 
     public sentence(args: ISentenceRequest) {
         return this._api.get<ISentenceResponse>(`sentence/${args.id}`);
-    }
-
-    public suggest(args: ISuggestRequest) {
-        return this._api.post<ISuggestResponse>(`book/suggest`, args);
     }
 }

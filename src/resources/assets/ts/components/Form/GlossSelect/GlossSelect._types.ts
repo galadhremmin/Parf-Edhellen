@@ -1,7 +1,7 @@
-import IBookApiConnector from '@root/connectors/backend/IBookApi';
+import IGlossResourceApi from '@root/connectors/backend/IGlossResourceApi';
 
 import { IComponentProps } from '../FormComponent._types';
 
 export interface IProps extends IComponentProps<number> {
-    apiConnector?: IBookApiConnector;
+    apiConnector?: IGlossResourceApi;
 }

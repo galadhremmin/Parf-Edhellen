@@ -7,6 +7,7 @@ import {
 } from './SentenceFragmentReducer._types';
 
 const InitialState: ISentenceFragmentReducerState = {
+    _error: null,
     comments: '',
     fragment: '',
     glossId: 0,
@@ -20,9 +21,11 @@ const InitialState: ISentenceFragmentReducerState = {
 
 const SentenceFragmentReducer = (state = InitialState, action: ISentenceFragmentAction) => {
     switch (action.type) {
+        case Actions.ReloadAllFragments:
         case Actions.ReceiveFragment:
         case Actions.SetFragment:
             return mapper<typeof action['sentenceFragment'], ISentenceFragmentReducerState>({
+                _error: (v) => v._error || null,
                 comments: 'comments',
                 fragment: 'fragment',
                 glossId: 'glossId',
@@ -34,6 +37,11 @@ const SentenceFragmentReducer = (state = InitialState, action: ISentenceFragment
                 tengwar: 'tengwar',
                 type: 'type',
             }, action.sentenceFragment);
+        case Actions.SetFragmentField:
+            return {
+                ...state,
+                [action.field]: action.value,
+            }
         default:
             return state;
     }

@@ -13,7 +13,7 @@ import Fragment from './Fragment';
 import Paragraph from './Paragraph';
 import ParagraphGroup from './ParagraphGroup';
 
-export default class TextInspectorView extends React.PureComponent<IProps> {
+export default class TextInspectorView extends React.Component<IProps> {
     public render() {
         const {
             texts,

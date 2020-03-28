@@ -4,7 +4,7 @@ import Glaemscribe from '@root/utilities/Glaemscribe';
 
 export const transcribe = async (text: string, languageId: number) => {
     const languageConnector = resolve<ILanguageApi>(DI.LanguageApi);
-    const language = await languageConnector.find(languageId);
+    const language = await languageConnector.find(languageId, 'id');
     if (language === null) {
         return null;
     }

@@ -6,7 +6,6 @@ import {
     ProcessNodeDefinitions,
 } from 'html-to-react';
 import React, {
-    PureComponent,
     Suspense,
 } from 'react';
 
@@ -19,7 +18,7 @@ import {
     IState,
 } from './HtmlInject._types';
 
-export default class HtmlInject extends PureComponent<IProps, IState> {
+export default class HtmlInject extends React.Component<IProps, IState> {
     public static getDerivedStateFromProps(nextProps: IProps, prevState: IState) {
         if (nextProps.html !== prevState.lastHtml) {
             return {
@@ -51,6 +50,12 @@ export default class HtmlInject extends PureComponent<IProps, IState> {
 
     private _inject() {
         const html = this.props.html;
+        const lastHtml = this.state.lastHtml;
+
+        if (html === lastHtml) {
+            return;
+        }
+
         const elements = this._convertHtmlToReact(html);
 
         this.setState({

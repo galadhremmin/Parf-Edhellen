@@ -6,7 +6,7 @@ class SentenceFragment extends ModelBase
 {
     protected $fillable = [ 
         'fragment', 'tengwar', 'comments', 'speech_id', 'gloss_id', 'sentence_id',
-        'order', 'is_linebreak', 'type'
+        'order', 'is_linebreak', 'type', 'paragraph_number', 'sentence_number'
     ];
 
     public function gloss()
