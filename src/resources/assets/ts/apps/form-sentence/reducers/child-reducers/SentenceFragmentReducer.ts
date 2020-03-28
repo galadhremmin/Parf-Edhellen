@@ -7,6 +7,7 @@ import {
 } from './SentenceFragmentReducer._types';
 
 const InitialState: ISentenceFragmentReducerState = {
+    _error: null,
     comments: '',
     fragment: '',
     glossId: 0,
@@ -24,6 +25,7 @@ const SentenceFragmentReducer = (state = InitialState, action: ISentenceFragment
         case Actions.ReceiveFragment:
         case Actions.SetFragment:
             return mapper<typeof action['sentenceFragment'], ISentenceFragmentReducerState>({
+                _error: (v) => v._error || null,
                 comments: 'comments',
                 fragment: 'fragment',
                 glossId: 'glossId',

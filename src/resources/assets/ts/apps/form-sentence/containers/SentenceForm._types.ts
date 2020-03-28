@@ -7,7 +7,6 @@ import { IMetadataFormEvents } from '../components/MetadataForm._types';
 import { ITranslationFormEvents } from '../components/TranslationForm/TranslationForm._types';
 import { ISentenceTranslationReducerState } from '../reducers/child-reducers/SentenceTranslationReducer._types';
 import { ILatinTextReducerState } from '../reducers/LatinTextReducer._types';
-import { ISentenceFragmentErrorsReducerState } from '../reducers/SentenceFragmentErrorsReducer._types';
 import { ISentenceFragmentsReducerState } from '../reducers/SentenceFragmentsReducer._types';
 import { ISentenceReducerState } from '../reducers/SentenceReducer._types';
 
@@ -24,7 +23,6 @@ export interface ISentenceFormEvents {
 
 export interface IProps extends ISentenceFormEvents, IFragmentFormEvents, IMetadataFormEvents, ITranslationFormEvents {
     errors?: ValidationError;
-    fragmentErrors?: ISentenceFragmentErrorsReducerState;
     prefetched?: boolean;
     sentence?: ISentenceReducerState;
     sentenceFragments?: ISentenceFragmentsReducerState;

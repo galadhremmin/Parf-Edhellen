@@ -231,6 +231,8 @@ export default class ApiConnector implements IReportErrorApi {
                     message = 'You are not authorized to use this feature.';
                     category = 'frontend-403';
                     break;
+                case 404:
+                    return Promise.reject(`${apiMethod}: The specified resource cannot be found.`);
                 case 419:
                     message = 'Your browsing session has timed out. This usually happens when you leave ' +
                         'the page open for a long time. Please refresh the page and try again.';

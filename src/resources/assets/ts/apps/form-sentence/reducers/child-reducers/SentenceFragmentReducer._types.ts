@@ -4,10 +4,12 @@ import { Actions } from '../../actions';
 
 export type ISentenceFragmentReducerState = Pick<ISentenceFragmentEntity, 'comments' |
     'fragment' | 'glossId' | 'sentenceNumber' | 'speechId' | 'tengwar' | 'type' | 'id' |
-    'inflections' | 'paragraphNumber'>;
+    'inflections' | 'paragraphNumber'> & {
+        _error?: string[];
+    };
 
-export interface ISentenceFragmentAction<T extends keyof ISentenceFragmentEntity = keyof ISentenceFragmentEntity> extends IReduxAction<Actions> {
+export interface ISentenceFragmentAction<T extends keyof ISentenceFragmentReducerState = keyof ISentenceFragmentReducerState> extends IReduxAction<Actions> {
     field: T;
     sentenceFragment: ISentenceFragmentReducerState;
-    value: ISentenceFragmentEntity[T];
+    value: ISentenceFragmentReducerState[T];
 }

@@ -12,11 +12,11 @@ import {
 } from '@root/connectors/backend/IGlossResourceApi';
 import { IInflection } from '@root/connectors/backend/IInflectionResourceApi';
 import { ISpeechEntity } from '@root/connectors/backend/ISpeechResourceApi';
-import { ISentenceFragmentErrorsReducerState } from '../../reducers/SentenceFragmentErrorsReducer._types';
+import { ISentenceFragmentReducerState } from '../../reducers/child-reducers/SentenceFragmentReducer._types';
 
 export type FragmentGridColumnDefinition = (Partial<ColDef> & {
     cellRendererParams?: IFragmentGridMetadata;
-    field: keyof ISentenceFragmentEntity,
+    field: keyof ISentenceFragmentReducerState,
 })[];
 
 export interface IFragmentGridMetadata extends Partial<ICellEditorParams> {
@@ -36,8 +36,7 @@ export interface IFragmentChangeEventArgs<T extends keyof ISentenceFragmentEntit
 }
 
 export interface IProps {
-    errors: ISentenceFragmentErrorsReducerState;
-    fragments: ISentenceFragmentEntity[];
+    fragments: ISentenceFragmentReducerState[];
     languageId: number;
     onChange: ComponentEventHandler<IFragmentChangeEventArgs>;
 }

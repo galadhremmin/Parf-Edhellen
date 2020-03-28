@@ -193,6 +193,7 @@ export default class GlossActions {
 
     public saveSentence(args: ISaveSentenceContributionEntity) {
         return async (dispatch: ReduxThunkDispatch) => {
+            dispatch(setValidationErrors(null));
             try {
                 const response = await this._contributionApi.saveSentence(args);
                 window.location.href = response.url;

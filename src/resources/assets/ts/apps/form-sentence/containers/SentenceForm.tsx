@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { connect } from 'react-redux';
 
 import { ReduxThunkDispatch } from '@root/_types';
@@ -13,11 +13,11 @@ import MetadataForm from '../components/MetadataForm';
 import TranslationForm from '../components/TranslationForm';
 import { RootReducer } from '../reducers';
 import { IProps } from './SentenceForm._types';
+import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
 function SentenceForm(props: IProps) {
     const {
         errors,
-        fragmentErrors,
         onFragmentChange,
         onMetadataChange,
         onParseTextRequest,
@@ -32,8 +32,22 @@ function SentenceForm(props: IProps) {
         sentenceTranslations,
     } = props;
 
+    const [ submitted, setSubmitted ] = useState(false);
+    const errorContainer = useRef<HTMLDivElement>();
+
     const sentenceId = sentence.id;
     const languageId = sentence.languageId;
+
+    useEffect(() => {
+        if (errors && errors.errors.size && submitted) {
+            makeVisibleInViewport(errorContainer.current);
+            setSubmitted(false);
+        }
+    }, [
+        errorContainer,
+        errors,
+        submitted,
+    ]);
 
     const _onSubmit = useCallback((ev) => {
         ev.preventDefault();
@@ -43,6 +57,8 @@ function SentenceForm(props: IProps) {
             ! sentenceTranslations.some((t) => isEmptyString(t.translation))) {
             translations = sentenceTranslations;
         }
+
+        setSubmitted(true);
 
         fireEvent('SentenceForm', onSubmit, {
             ...sentence,
@@ -65,13 +81,14 @@ function SentenceForm(props: IProps) {
     ]);
 
     return <form method="post" action="." onSubmit={_onSubmit}>
-        <ValidationErrorAlert error={errors} />
+        <div ref={errorContainer}>
+            <ValidationErrorAlert error={errors} />
+        </div>
         <Panel title="Basic information">
             <MetadataForm sentence={sentence} onMetadataChange={onMetadataChange} />
         </Panel>
         <Panel title="Phrase">
-            <FragmentsForm errors={fragmentErrors}
-                fragments={sentenceFragments}
+            <FragmentsForm fragments={sentenceFragments}
                 languageId={sentence.languageId}
                 text={sentenceText}
                 textIsDirty={sentenceTextIsDirty}
@@ -110,7 +127,6 @@ SentenceForm.defaultProps = {
 
 const mapStateToProps = (state: RootReducer) => ({
     errors: state.errors,
-    fragmentErrors: state.fragmentErrors,
     sentence: state.sentence,
     sentenceFragments: state.sentenceFragments,
     sentenceParagraphs: state.latinText.paragraphs,

@@ -4,6 +4,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 import {
     AllCommunityModules,
     CellValueChangedEvent,
+    ColDef,
     DetailGridInfo,
     GridReadyEvent,
     RowNode,
@@ -16,10 +17,7 @@ import {
     resolve,
 } from '@root/di';
 import { fireEventAsync } from '@root/components/Component';
-import {
-    ISentenceFragmentEntity,
-    SentenceFragmentType,
-} from '@root/connectors/backend/IBookApi';
+import { SentenceFragmentType, ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
 import IGlossResourceApi, { IGlossEntity, ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
 import {
     IInflection,
@@ -27,6 +25,7 @@ import {
 } from '@root/connectors/backend/IInflectionResourceApi';
 import ISpeechResourceApi, { ISpeechEntity } from '@root/connectors/backend/ISpeechResourceApi';
 
+import { ISentenceFragmentReducerState } from '../../reducers/child-reducers/SentenceFragmentReducer._types';
 import GlossCellEditor from './cell-editors/GlossCellEditor';
 import InflectionCellEditor from './cell-editors/InflectionCellEditor';
 import SpeechSelectCellEditor from './cell-editors/SpeechSelectCellEditor';
@@ -42,6 +41,10 @@ import {
 
 import './FragmentsGrid.scss';
 
+const DefaultColumnDefinition = {
+    tooltipField: '_error',
+} as ColDef;
+
 class FragmentsGrid extends React.Component<IProps, IState> {
     public state: IState = {
         columnDefinition: null,
@@ -53,13 +56,11 @@ class FragmentsGrid extends React.Component<IProps, IState> {
     private _glossCache: Map<number, Promise<IGlossEntity>>;
     private _gridRef: AgGridReact & DetailGridInfo;
     private _glossApi: IGlossResourceApi;
-    private _lastErrors: IProps['errors'];
 
     constructor(props: IProps) {
         super(props);
         this._glossCache = new Map();
         this._gridRef = null;
-        this._lastErrors = null;
         this._glossApi = resolve<IGlossResourceApi>(DI.GlossApi);
     }
 
@@ -156,25 +157,6 @@ class FragmentsGrid extends React.Component<IProps, IState> {
         window.removeEventListener('resize', this._onWindowResize);
     }
 
-    public componentDidUpdate() {
-        const {
-            errors,
-        } = this.props;
-        const {
-            _lastErrors: lastErrors,
-            _gridRef: gridRef,
-        } = this;
-
-        // HACK to highlight erroneous rows. TODO: find a different way of
-        // ensuring that the grid is informed when state is changed.
-        if (lastErrors !== errors) {
-            this._lastErrors = errors;
-            gridRef.api.redrawRows({
-                rowNodes: gridRef.api.getRenderedNodes(),
-            });
-        }
-    }
-
     public render() {
         const {
             columnDefinition,
@@ -195,6 +177,8 @@ class FragmentsGrid extends React.Component<IProps, IState> {
                         doesExternalFilterPass={this._onDoesExternalFilterPass}
                         getRowClass={this._onRowClass}
                         columnDefs={columnDefinition}
+                        defaultColDef={DefaultColumnDefinition}
+                        enableBrowserTooltips={true}
                         rowData={fragments}
                         onCellValueChanged={this._onCellValueChanged}
                         onGridReady={this._onGridReady}
@@ -344,9 +328,9 @@ class FragmentsGrid extends React.Component<IProps, IState> {
      */
     private _onRowClass = (params: RowNode) => {
         const {
-            errors,
-        } = this.props;
-        return !! errors[params.rowIndex.toString(10)] ? 'in-error' : null;
+            _error: error,
+        } = params.data as ISentenceFragmentReducerState;
+        return Array.isArray(error) ? 'in-error' : null;
     }
 
     /**
