@@ -317,6 +317,7 @@ class BookAdapter
                         $inflectionsForFragment[0]->language_name, 
                         $inflectionsForFragment[0]->sentence_id, 
                         $inflectionsForFragment[0]->sentence_name,
+                        $inflectionsForFragment[0]->sentence_id,
                         $sentenceFragmentId
                     );
                 }

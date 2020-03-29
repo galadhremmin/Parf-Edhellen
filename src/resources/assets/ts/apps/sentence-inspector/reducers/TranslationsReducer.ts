@@ -15,6 +15,7 @@ const TranslationFragmentsReducer = (state: TranslationsState = {
                         const paragraph = action.sentence.sentenceTranslations[paragraphNumber];
 
                         return [{
+                            id: 0,
                             fragment: paragraph.translation,
                             sentenceNumber: paragraph.sentenceNumber,
                         }];
