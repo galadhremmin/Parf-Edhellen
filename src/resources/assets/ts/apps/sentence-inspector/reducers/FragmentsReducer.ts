@@ -1,4 +1,4 @@
-import { ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
+import { ISentenceFragmentEntity, SentenceFragmentType } from '@root/connectors/backend/IBookApi';
 import { mapArray } from '@root/utilities/func/mapper';
 
 import { Actions } from '../actions';
@@ -33,7 +33,7 @@ const FragmentsReducer = (state: FragmentsReducerState = [], action: ISentenceRe
                 comments: 'comments',
                 fragment: 'fragment',
                 glossId: 'glossId',
-                id: 'id',
+                id: (v) => v.type === SentenceFragmentType.Word ? (v.id || 0) : 0,
                 inflections: (v) => action.sentence.inflections[v.id.toString(10)],
                 nextFragmentId: (v, i) => findNextFragmentId(v, fragments, i, 1),
                 previousFragmentId: (v, i) => findNextFragmentId(v, fragments, i, -1),

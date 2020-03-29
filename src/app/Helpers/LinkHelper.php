@@ -60,7 +60,7 @@ class LinkHelper
     }
 
     public function sentence(int $languageId, string $languageName, int $sentenceId, string $sentenceName,
-        int $sentenceFragmentId = 0)
+        int $sentenceSentenceId = 0, int $sentenceFragmentId = 0)
     {
         $languageName = StringHelper::normalizeForUrl($languageName);
         $sentenceName = StringHelper::normalizeForUrl($sentenceName);
@@ -73,7 +73,7 @@ class LinkHelper
         ]);
 
         if ($sentenceFragmentId !== 0) {
-            $url .= '#!'.$sentenceFragmentId;
+            $url .= '#!'.$sentenceSentenceId.'/'.$sentenceFragmentId;
         }
 
         return $url;
