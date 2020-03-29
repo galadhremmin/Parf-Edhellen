@@ -5,15 +5,15 @@ import {
 } from './SelectionReducer._types';
 
 const SelectionReducer = (state: ISelectionReducerState = {
-    fragmentId: 0,
-    sentenceNumber: 0,
+    fragmentId: null,
+    sentenceNumber: null,
 }, action: ISelectionReducerAction) => {
     switch (action.type) {
         case Actions.SelectFragment:
             return {
                 ...state,
-                fragmentId: action.fragmentId,
-                sentenceNumber: action.sentenceNumber,
+                fragmentId: action.fragmentId || null,
+                sentenceNumber: action.sentenceNumber || null,
             };
         default:
             return state;

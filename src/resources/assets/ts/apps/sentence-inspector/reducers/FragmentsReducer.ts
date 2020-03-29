@@ -17,7 +17,7 @@ const findNextFragmentId = (fragment: ISentenceFragmentEntity, fragments: ISente
     }
 
     for (let i = index + direction; i > -1 && i < fragments.length; i += direction) {
-        if (fragments[i].glossId !== null) {
+        if (fragments[i].glossId) {
             return fragments[i].id;
         }
     }

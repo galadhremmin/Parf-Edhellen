@@ -34,7 +34,7 @@ export default class TextInspectorView extends React.Component<IProps> {
 
         const groups = [];
 
-        let paragraphNumber = 0;
+        let paragraphNumber = 1;
         while (true) {
             const args: IRenderArgs = {
                 fragmentSelected: false,
