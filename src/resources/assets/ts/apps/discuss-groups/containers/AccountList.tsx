@@ -11,7 +11,10 @@ function AccountList(props: IProps) {
     } = props;
 
     return <div className="AccountList--avatars">
-        {accounts.map((account) => <Avatar key={account.id} path={account.avatarPath} />)}
+        {accounts.map((account) => <Avatar key={account.id}
+            title={account.nickname}
+            path={account.avatarPath}
+        />)}
     </div>;
 }
 

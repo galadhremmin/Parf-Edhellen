@@ -6,6 +6,8 @@ import Modal from 'react-modal';
 import { fireEvent } from './Component';
 import { IProps } from './Dialog._types';
 
+import './Dialog.scss';
+
 function Dialog<V>(props: IProps<V>) {
     const {
         actionBar,
@@ -47,7 +49,7 @@ function Dialog<V>(props: IProps<V>) {
             <div className="modal-body">
                 {children}
             </div>
-            {actionBar && <div className="modal-footer">
+            {actionBar && <div className="modal-footer Dialog--footer">
                 <button type="button" className="btn btn-default" onClick={_onDismissDialog}>
                     {cancelButtonText}
                 </button>

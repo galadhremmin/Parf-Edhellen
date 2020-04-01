@@ -1,0 +1,8 @@
+@import '../_scss/_variables';
+
+@media (max-width: $screen-sm-min) {
+    .Dialog--footer {
+        display: flex;
+        flex-direction: column;
+    }
+}

@@ -1,5 +1,9 @@
 @import '../../../../_scss/_variables';
 
-.likes--liked-by-user {
-    color: $brand-success;
+a.Likes--link {
+    .Likes--link__liked {
+        color: $brand-success;
+    }
+
+    font-size: 1rem;
 }

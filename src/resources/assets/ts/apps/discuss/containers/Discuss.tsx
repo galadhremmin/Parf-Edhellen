@@ -2,10 +2,12 @@ import React, {
     useCallback,
     useEffect,
     useRef,
+    useState,
 } from 'react';
 import { connect } from 'react-redux';
 
 import { ReduxThunkDispatch } from '@root/_types';
+import AuthenticationDialog from '@root/components/AuthenticationDialog';
 import { fireEvent } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
 import Pagination from '@root/components/Pagination';
@@ -30,6 +32,8 @@ import ConditionalToolbar from '../components/toolbar/ConditionalToolbar';
 function Discuss(props: IProps) {
     const formRef = useRef(null);
     const paginationRef = useRef(null);
+
+    const [ promoteAuth, setPromoteAuth ] = useState(false);
 
     const {
         currentPage,
@@ -65,6 +69,14 @@ function Discuss(props: IProps) {
             makeVisibleInViewport(formRef.current);
         }
     }, [ newPostEnabled, formRef ]);
+
+    const _onAuthenticationRequired = useCallback(() => {
+        setPromoteAuth(true);
+    }, []);
+
+    const _onAuthenticationCancelled = useCallback(() => {
+        setPromoteAuth(false);
+    }, []);
 
     const _onCreateNewPost = useCallback(() => {
         fireEvent(null, onNewPostCreate);
@@ -112,6 +124,7 @@ function Discuss(props: IProps) {
 
     const _renderToolbar = useCallback((postProps: IPostProps) => {
         return <ConditionalToolbar
+            onAuthenticationRequired={_onAuthenticationRequired}
             onPostChange={onExistingPostChange}
             onThreadMetadataChange={onExistingThreadMetadataChange}
             post={postProps.post}
@@ -149,6 +162,7 @@ function Discuss(props: IProps) {
         {posts.length > 0 && <a href="#" className="discuss-body__bottom" onClick={_onGotoNavigation}>
             <TextIcon icon="chevron-down" />
         </a>}
+        <AuthenticationDialog onDismiss={_onAuthenticationCancelled} open={promoteAuth} />
     </>;
 }
 

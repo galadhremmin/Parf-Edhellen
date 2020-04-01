@@ -58,13 +58,20 @@ function SentenceForm(props: IProps) {
             translations = sentenceTranslations;
         }
 
-        setSubmitted(true);
-
-        fireEvent('SentenceForm', onSubmit, {
+        const payload = {
             ...sentence,
             fragments: sentenceFragments,
             translations,
-        });
+        };
+        // leaving `id` will trick the API backend to look for an existing entity
+        // with the matching ID, even when it is zero or null.
+        if (! payload.id) {
+            delete payload.id;
+        }
+
+        setSubmitted(true);
+
+        fireEvent('SentenceForm', onSubmit, payload);
     }, [
         onSubmit,
         sentence,
@@ -103,14 +110,11 @@ function SentenceForm(props: IProps) {
             />
         </Panel>
         <div className="text-right">
-            {sentenceId && <>
-                <button className="btn btn-default" formAction="button" onClick={_onOpenOriginal}>
-                    <TextIcon icon="open" />
-                    &#32;
-                    View original
-                </button>
+            {!! sentenceId && <button className="btn btn-default" formAction="button" onClick={_onOpenOriginal}>
+                <TextIcon icon="open" />
                 &#32;
-            </>}
+                View original
+            </button>}
             <button className="btn btn-primary" formAction="submit">
                 <TextIcon icon="ok" />
                 &#32;
