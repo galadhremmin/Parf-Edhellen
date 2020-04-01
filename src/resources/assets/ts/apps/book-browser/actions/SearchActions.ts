@@ -107,16 +107,12 @@ export default class SearchActions {
             }
 
             const searchResult = searchResults[selectedIndex];
-            const includeOld = getState().search.includeOld;
-            const languageId = getState().search.languageId;
 
             const args = {
-                includeOld,
-                languageId,
                 searchResult,
                 updateBrowserHistory: true,
             };
-            await this.glossary(args)(dispatch);
+            await this.glossary(args)(dispatch, getState);
         };
     }
 
