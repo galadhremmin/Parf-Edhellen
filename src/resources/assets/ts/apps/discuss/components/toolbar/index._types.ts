@@ -14,6 +14,7 @@ export interface IThreadMetadataArgs {
 
 export interface IProps {
     apiConnector?: IDiscussApi;
+    onAuthenticationRequired?: ComponentEventHandler<string>;
     onPostChange?: ComponentEventHandler<number>;
     onThreadMetadataChange?: ComponentEventHandler<IThreadMetadataArgs>;
     post: IPostEntity;

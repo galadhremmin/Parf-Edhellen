@@ -15,7 +15,7 @@ function Avatar(props: IProps) {
         path = AnonymousAvatarPath;
     }
 
-    const componentProps = excludeProps(props, ['path']);
+    const componentProps = excludeProps(props, ['children', 'path']);
     return <div
         {...componentProps}
         className="Avatar--picture" style={{ backgroundImage: `url(${path})` }}>

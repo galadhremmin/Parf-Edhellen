@@ -143,9 +143,18 @@ export default class SearchActions {
      * @param args
      */
     public glossary(args: ILoadGlossaryAction) {
-        return async (dispatch: ThunkDispatch<any, any, any>) => {
-            const includeOld = args.includeOld || true;
-            const languageId = args.languageId || 0;
+        return async (dispatch: ThunkDispatch<any, any, any>, getState: () => RootReducer) => {
+            let includeOld = getState().search.includeOld;
+            let languageId = getState().search.languageId;
+
+            if (args.includeOld !== undefined) {
+                includeOld = args.includeOld;
+            }
+
+            if (args.languageId !== undefined) {
+                languageId = args.languageId;
+            }
+
             const word = args.searchResult.originalWord || //
                 args.searchResult.word;
 
@@ -203,7 +212,7 @@ export default class SearchActions {
                 ...search,
                 searchResult,
                 updateBrowserHistory: true,
-            })(dispatch);
+            })(dispatch, getState);
         };
     }
 
