@@ -13,6 +13,7 @@ export interface IFragmentsReducerState {
     sentenceNumber: number;
     speechId: number;
     speech: string;
+    tengwar: string;
     type: SentenceFragmentType;
 }
 

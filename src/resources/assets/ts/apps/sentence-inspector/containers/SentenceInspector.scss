@@ -16,6 +16,10 @@
             text-align: center;
             line-height: 1.8;
 
+            + .p-group__p {
+                margin-left: 0;
+            }
+
             &.english {
                 font-style: italic;
                 font-size: 0.8em;
@@ -41,6 +45,10 @@
             > .p-group__p {
                 flex: 1;
                 text-align: left;
+
+                + .p-group__p {
+                    margin-left: 1rem;
+                }
 
                 &.english {
                     font-size: inherit;

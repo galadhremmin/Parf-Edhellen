@@ -3,17 +3,34 @@
 $inspector-border-radius: 0.2em;
 $inspector-background: $panel-default-heading-bg;
 $inspector-border: $panel-default-border;
+$inspector-height: 40vh;
+$inspector-max-width: 600px;
+$inspector-border-top: #8aa5c3;
+
+.fragment-inspector--open {
+    padding-bottom: $inspector-height;
+    padding-bottom: calc(#{$inspector-height} - #{$footer-height});
+
+    > .head-content {
+        min-height: auto;
+    }
+}
 
 .fragment-inspector {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    height: $inspector-height;
+    width: 100%;
+    z-index: 1000;
+    overflow-y: scroll;
+    padding: $line-height-computed/2 $line-height-computed 0 $line-height-computed;
     background: $inspector-background;
-    border: 1px solid $inspector-border;
-    border-top: none;
-    border-bottom-left-radius: $inspector-border-radius;
-    border-bottom-right-radius: $inspector-border-radius;
-    padding: 0 $line-height-computed 0 $line-height-computed;
+    border-top: 2px solid $inspector-border-top;
+    box-shadow: 0px -0.25rem 0.5rem 0px rgba(0, 0, 0, 0.2);
 
-    article {
-        max-width: 600px;
+    > article {
+        max-width: $inspector-max-width;
         margin: 0 auto;
 
         > header h1 {
@@ -22,7 +39,6 @@ $inspector-border: $panel-default-border;
 
         > section {
             &.abstract {
-                font-style: italic;
                 font-size: 1rem;
             }
 
@@ -36,18 +52,11 @@ $inspector-border: $panel-default-border;
     nav {
         font-size: 1rem;
         > ul {
-            margin-top: 0;
+            margin: $line-height-computed/4 0 $line-height-computed/2 0;
         }
-    }
-}
-
-.sentence-inspector > .p-group {
-    &.selected {
-        background: $inspector-background;
-        border: 1px solid $inspector-border;
-        padding: $line-height-computed $line-height-computed 0 $line-height-computed;
-        border-bottom: none;
-        border-top-left-radius: $inspector-border-radius;
-        border-top-right-radius: $inspector-border-radius;
+        .tengwar-pill > span {
+            border: none;
+            font-size: 1.1rem;
+        }
     }
 }

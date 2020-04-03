@@ -7,6 +7,7 @@ import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
 import Markdown from '@root/components/Markdown';
 import Spinner from '@root/components/Spinner';
 import StaticAlert from '@root/components/StaticAlert';
+import Tengwar from '@root/components/Tengwar';
 import { ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
 import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 
@@ -24,6 +25,11 @@ export default class FragmentInspector extends React.Component<IProps> {
      */
     public componentDidMount() {
         this._jumpToComponent();
+        document.body.classList.add('fragment-inspector--open');
+    }
+
+    public componentWillUnmount() {
+        document.body.classList.remove('fragment-inspector--open');
     }
 
     /**
@@ -41,6 +47,7 @@ export default class FragmentInspector extends React.Component<IProps> {
         } = this.props;
 
         return <aside className="fragment-inspector" ref={this._rootRef}>
+            <a href="#">&times;</a>
             <nav aria-label="Fragment navigator">
                 <ul className="pager">
                     <li className={classNames('previous', { disabled: !fragment || !fragment.previousFragmentId })}>
@@ -49,6 +56,9 @@ export default class FragmentInspector extends React.Component<IProps> {
                             &larr; Previous
                         </a>
                     </li>
+                    {fragment && <li className="tengwar-pill">
+                        <Tengwar text={fragment.tengwar} transcribe={false} />
+                    </li>}
                     <li className={classNames('next', { disabled: !fragment || !fragment.nextFragmentId })}>
                         <a href="#next"
                             onClick={this._onNextClick}>

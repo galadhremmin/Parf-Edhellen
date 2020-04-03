@@ -40,6 +40,7 @@ const FragmentsReducer = (state: FragmentsReducerState = [], action: ISentenceRe
                 sentenceNumber: 'sentenceNumber',
                 speech: (v) => action.sentence.speeches[v.speechId],
                 speechId: 'speechId',
+                tengwar: 'tengwar',
                 type: 'type',
             }, fragments);
         }
