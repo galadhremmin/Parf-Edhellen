@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { IComponentEvent } from '@root/components/Component._types';
+import TextIcon from '@root/components/TextIcon';
 import IBookApi, { IBookGlossEntity } from '@root/connectors/backend/IBookApi';
 import { DI, resolve } from '@root/di';
 
@@ -55,7 +56,12 @@ export class SentenceInspector extends React.Component<IProps, IState> {
         }
 
         return <div className="sentence-inspector">
-            <p className="sentence-inspector__introduction">Click on a word to begin.</p>
+            <p className="sentence-inspector__introduction">
+                <TextIcon icon="info-sign" />{' '}
+                Click or tap on a word below to learn about the gloss and the grammar
+                rules that apply. The information becomes available at the bottom
+                of the screen.
+            </p>
             <TextInspectorView {...selection}
                 fragmentInspector={this._renderInspector}
                 texts={texts}
@@ -86,6 +92,15 @@ export class SentenceInspector extends React.Component<IProps, IState> {
     }
 
     private async _selectFragment(id: number) {
+        if (id === null) {
+            // deselect current fragment
+            this.props.dispatch(
+                this._actions.selectFragment(null),
+            );
+
+            return;
+        }
+
         const fragment = this.props.fragments.find((f) => f.id === id);
         let gloss: IBookGlossEntity;
 

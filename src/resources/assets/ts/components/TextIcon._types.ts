@@ -1,5 +1,5 @@
-type BootstrapIcons = 'arrow-down' | 'arrow-up' | 'bell' | 'chevron-down' | 'chevron-up' |
-    'comment' | 'edit' | 'envelope' | 'exclamation-sign'| 'info-sign' | 'globe' | 'ok' | 'open'|
+type BootstrapIcons = 'arrow-down' | 'arrow-up' | 'bell' | 'chevron-down' | 'chevron-up' | 'chevron-left' |
+    'chevron-right' | 'comment' | 'edit' | 'envelope' | 'exclamation-sign'| 'info-sign' | 'globe' | 'ok' | 'open'|
     'pencil' | 'refresh' | 'remove' | 'remove-sign' | 'search' | 'share' | 'thumbs-down' | 'thumbs-up' |
     'trash' | 'warning-sign';
 

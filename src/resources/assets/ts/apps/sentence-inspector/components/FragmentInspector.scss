@@ -3,13 +3,12 @@
 $inspector-border-radius: 0.2em;
 $inspector-background: $panel-default-heading-bg;
 $inspector-border: $panel-default-border;
-$inspector-height: 40vh;
+$inspector-height: 45vh;
 $inspector-max-width: 600px;
-$inspector-border-top: #8aa5c3;
+$inspector-border-top: $gray-lighter; // #8aa5c3;
 
-.fragment-inspector--open {
+.fragment-inspector--open .sentence-inspector {
     padding-bottom: $inspector-height;
-    padding-bottom: calc(#{$inspector-height} - #{$footer-height});
 
     > .head-content {
         min-height: auto;
@@ -26,7 +25,7 @@ $inspector-border-top: #8aa5c3;
     overflow-y: scroll;
     padding: $line-height-computed/2 $line-height-computed 0 $line-height-computed;
     background: $inspector-background;
-    border-top: 2px solid $inspector-border-top;
+    border-top: 3px solid $inspector-border-top;
     box-shadow: 0px -0.25rem 0.5rem 0px rgba(0, 0, 0, 0.2);
 
     > article {
@@ -53,6 +52,18 @@ $inspector-border-top: #8aa5c3;
         font-size: 1rem;
         > ul {
             margin: $line-height-computed/4 0 $line-height-computed/2 0;
+            > li {
+                a {
+                    border: none;
+                    padding: 0;
+                    font-size: 1.25rem;
+                    color: $gray-light;
+
+                    + a {
+                        padding-left: 1em;
+                    }
+                }
+            }
         }
         .tengwar-pill > span {
             border: none;

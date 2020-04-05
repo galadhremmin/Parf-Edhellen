@@ -14,6 +14,7 @@ import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import { IProps } from './FragmentInspector._types';
 
 import './FragmentInspector.scss';
+import TextIcon from '@root/components/TextIcon';
 
 export default class FragmentInspector extends React.Component<IProps> {
     private _globalEvents = new GlobalEventConnector();
@@ -47,22 +48,25 @@ export default class FragmentInspector extends React.Component<IProps> {
         } = this.props;
 
         return <aside className="fragment-inspector" ref={this._rootRef}>
-            <a href="#">&times;</a>
             <nav aria-label="Fragment navigator">
                 <ul className="pager">
-                    <li className={classNames('previous', { disabled: !fragment || !fragment.previousFragmentId })}>
+                    <li className="previous">
                         <a href="#previous"
                             onClick={this._onPreviousClick}>
-                            &larr; Previous
+                            <TextIcon icon="chevron-left" />
+                        </a>
+                        <a href="#"
+                            onClick={this._onCloseClick}>
+                            <TextIcon icon="remove" />
                         </a>
                     </li>
                     {fragment && <li className="tengwar-pill">
                         <Tengwar text={fragment.tengwar} transcribe={false} />
                     </li>}
-                    <li className={classNames('next', { disabled: !fragment || !fragment.nextFragmentId })}>
+                    <li className="next">
                         <a href="#next"
                             onClick={this._onNextClick}>
-                            Next &rarr;
+                            <TextIcon icon="chevron-right" />
                         </a>
                     </li>
                 </ul>
@@ -96,14 +100,29 @@ export default class FragmentInspector extends React.Component<IProps> {
         </StaticAlert>;
     }
 
+    private _onCloseClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
+        ev.preventDefault();
+        this._selectFragment(null);
+    }
+
     private _onPreviousClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
-        this._selectFragment(this.props.fragment.previousFragmentId);
+        const {
+            previousFragmentId,
+        } = this.props.fragment;
+        if (previousFragmentId) {
+            this._selectFragment(previousFragmentId);
+        }
     }
 
     private _onNextClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
-        this._selectFragment(this.props.fragment.nextFragmentId);
+        const {
+            nextFragmentId,
+        } = this.props.fragment;
+        if (nextFragmentId) {
+            this._selectFragment(nextFragmentId);
+        }
     }
 
     private _onReferenceLinkClick = (ev: IComponentEvent<IReferenceLinkClickDetails>) => {
@@ -115,7 +134,7 @@ export default class FragmentInspector extends React.Component<IProps> {
             onFragmentMoveClick,
         } = this.props;
 
-        if (id && onFragmentMoveClick) {
+        if (onFragmentMoveClick) {
             fireEvent(this, onFragmentMoveClick, id);
         }
     }

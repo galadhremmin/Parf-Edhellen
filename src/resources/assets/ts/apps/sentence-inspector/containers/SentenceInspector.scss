@@ -6,11 +6,16 @@
     .sentence-inspector__introduction {
         font-style: italic;
         font-size: 0.9rem;
+        text-align: center;
     }
 
     > .p-group {
-        padding-bottom: 1em;
+        padding-bottom: 1rem;
         transition: 0.5s padding;
+
+        &.selected {
+            padding-top: 2rem;
+        }
 
         > .p-group__p {
             text-align: center;
@@ -18,6 +23,7 @@
 
             + .p-group__p {
                 margin-left: 0;
+                margin-top: 0.5rem;
             }
 
             &.english {
@@ -31,7 +37,11 @@
                 text-decoration: none;
 
                 &.selected {
+                    color: #d1305e;
+                    text-shadow: 0px 0px 0.2rem #ddd;
                     font-weight: bold;
+                    padding-top: 1rem;
+                    padding-bottom: 1rem;
                 }
             }
         }
@@ -48,6 +58,7 @@
 
                 + .p-group__p {
                     margin-left: 1rem;
+                    margin-top: 0;
                 }
 
                 &.english {

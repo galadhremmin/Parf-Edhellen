@@ -10,7 +10,7 @@ import { snakeCasePropsToCamelCase } from '@root/utilities/func/snake-case';
 import convert from './TextConverter';
 
 describe('apps/sentence/utilities/TextConverter', () => {
-    const MinimumId = 1 << 31;
+    const MinimumId = 0;
     const Fragments: ISentenceFragmentEntity[] = snakeCasePropsToCamelCase(
         JSON.parse(`[{"id":3242,"gloss_id":366116,"type":0,"fragment":"A","tengwar":"\`C","speech":"interjection","speech_id":12,"comments":null,"inflections":[]},{"id":3243,"gloss_id":336024,"type":0,"fragment":"T\u00farin","tengwar":"1~M7T5","speech":"masculine name","speech_id":13,"comments":"","inflections":[]},{"id":3244,"gloss_id":369112,"type":0,"fragment":"Turambar","tengwar":"1U7Ew#6","speech":"masculine name","speech_id":13,"comments":null,"inflections":[]},{"id":3245,"gloss_id":115037,"type":0,"fragment":"tur\u00fan\u2019","tengwar":"1U7~M5","speech":"verb","speech_id":26,"comments":"","inflections":[{"id":43,"name":"passive participle"}]},{"id":3246,"gloss_id":103246,"type":0,"fragment":"ambartanen","tengwar":"\`Cw#61E5$5","speech":"noun","speech_id":14,"comments":"","inflections":[{"id":115,"name":"instrumental"}]},{"id":3247,"gloss_id":null,"type":31,"fragment":"!","tengwar":"\u00c1","speech":null,"speech_id":null,"comments":null,"inflections":[]}]`)
     );
@@ -27,13 +27,13 @@ describe('apps/sentence/utilities/TextConverter', () => {
             Fragments[0].id,
             MinimumId,
             Fragments[1].id,
-            MinimumId + 1,
+            MinimumId,
             Fragments[2].id,
-            MinimumId + 2,
+            MinimumId,
             Fragments[3].id,
-            MinimumId + 3,
+            MinimumId,
             Fragments[4].id,
-            MinimumId + 4,
+            MinimumId,
         ];
         expect(map.paragraphs[0].map((v) => v.id)).to.deep.equal(expectedIds);
 
@@ -62,14 +62,14 @@ describe('apps/sentence/utilities/TextConverter', () => {
             Fragments[0].id,
             MinimumId,
             Fragments[1].id,
-            MinimumId + 1,
+            MinimumId,
             Fragments[2].id,
-            MinimumId + 2,
+            MinimumId,
             Fragments[3].id,
-            MinimumId + 3,
+            MinimumId,
             Fragments[4].id,
-            MinimumId + 4,
-            MinimumId + 5,
+            MinimumId,
+            MinimumId,
         ];
         expect(map.paragraphs[0].map((v) => v.id)).to.deep.equal(expectedIds);
 
