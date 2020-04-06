@@ -1,6 +1,7 @@
 <?php
 
 // Public unrestricted API for discuss
+
 Route::group([ 
     'namespace' => API_NAMESPACE, 
     'prefix'    => API_PATH.'/discuss'
@@ -29,11 +30,21 @@ Route::group([
         ->where([ 'postId' => REGULAR_EXPRESSION_NUMERIC ]);
 
     Route::post('thread/metadata', [ 'uses' => 'DiscussApiController@getThreadMetadata' ]);
-    Route::post('like', [ 'uses' => 'DiscussApiController@storeLike' ]);
+    Route::post('like',            [ 'uses' => 'DiscussApiController@storeLike' ]);
 
     Route::post('post', [ 'uses' => 'DiscussApiController@storePost' ]);
     Route::put('post/{postId}', [ 'uses' => 'DiscussApiController@updatePost' ])
         ->where([ 'postId' => REGULAR_EXPRESSION_NUMERIC ]);
     Route::delete('post/{postId}', [ 'uses' => 'DiscussApiController@deletePost' ])
         ->where([ 'postId' => REGULAR_EXPRESSION_NUMERIC ]);
+});
+
+// Admin restricted API for discuss
+
+Route::group([ 
+    'namespace' => API_NAMESPACE, 
+    'prefix'    => API_PATH.'/discuss',
+    'middleware' => ['auth', 'auth.require-role:Administrators']
+], function () {
+    Route::put('thread/stick', [ 'uses' => 'DiscussApiController@updateThreadStickiness' ]);
 });

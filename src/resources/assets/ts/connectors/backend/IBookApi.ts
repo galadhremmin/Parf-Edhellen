@@ -54,7 +54,7 @@ export interface IBookGlossEntity {
     accountUrl: string;
     allTranslations: string;
     commentCount: number;
-    comments: string; // TODO ???
+    comments: string;
     createdAt: string;
     etymology: string;
     externalId: string;

@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { IPostEntity } from '@root/connectors/backend/IDiscussApi';
 import {
     IRoleManager,
     SecurityRole,
@@ -10,16 +11,24 @@ import { IProps } from './index._types';
 import DeletePost from './DeletePost';
 import EditPost from './EditPost';
 import Likes from './Likes';
+import StickyPost from './StickyPost';
 
 import './index.scss';
 
-const getEligibleToolbarComponents = (roleManager: IRoleManager, postAccountId: number) => {
+const getEligibleToolbarComponents = (roleManager: IRoleManager, post: IPostEntity) => {
     const role = roleManager.currentRole;
     const accountId = roleManager.accountId;
     const components = [];
 
+    if (role === SecurityRole.Administrator) {
+        if (post._isThreadPost) {
+            components.push(StickyPost);
+        }
+        // components.push(RestorePost); -- TODO
+    }
+
     if (role === SecurityRole.Administrator ||
-        accountId === postAccountId) {
+        accountId === post.account.id) {
         components.push(EditPost);
         components.push(DeletePost);
     }
@@ -33,7 +42,7 @@ function Toolbar(props: IProps) {
         post,
         roleManager,
     } = props;
-    const toolbar = getEligibleToolbarComponents(roleManager, post.account.id);
+    const toolbar = getEligibleToolbarComponents(roleManager, post);
 
     return <span className="post-header--tools">
         {toolbar.map((Component, i) => <Component key={i} {...props} />)}

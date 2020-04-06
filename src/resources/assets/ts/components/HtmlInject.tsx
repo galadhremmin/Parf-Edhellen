@@ -45,19 +45,23 @@ export default class HtmlInject extends React.Component<IProps, IState> {
     }
 
     public render() {
-        return this.state.elements;
+        const {
+            html,
+        } = this.props;
+        return isEmptyString(html)
+            ? null
+            : this.state.elements;
     }
 
     private _inject() {
         const html = this.props.html;
         const lastHtml = this.state.lastHtml;
 
-        if (html === lastHtml) {
+        if (html === lastHtml || isEmptyString(html)) {
             return;
         }
 
         const elements = this._convertHtmlToReact(html);
-
         this.setState({
             elements,
             lastHtml: html,
@@ -65,7 +69,7 @@ export default class HtmlInject extends React.Component<IProps, IState> {
     }
 
     private _convertHtmlToReact(html: string) {
-        if (! html || /^\s*$/.test(html)) {
+        if (isEmptyString(html)) {
             return null;
         }
 

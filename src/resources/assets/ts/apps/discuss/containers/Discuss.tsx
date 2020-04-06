@@ -46,6 +46,7 @@ function Discuss(props: IProps) {
         threadMetadata,
 
         onExistingPostChange,
+        onExistingThreadChange,
         onExistingThreadMetadataChange,
         onNewPostChange,
         onNewPostCreate,
@@ -126,11 +127,18 @@ function Discuss(props: IProps) {
         return <ConditionalToolbar
             onAuthenticationRequired={_onAuthenticationRequired}
             onPostChange={onExistingPostChange}
+            onThreadChange={onExistingThreadChange}
             onThreadMetadataChange={onExistingThreadMetadataChange}
             post={postProps.post}
             thread={thread}
             threadMetadata={threadMetadata} />;
-    }, [ onExistingPostChange, onExistingThreadMetadataChange, thread, threadMetadata ]);
+    }, [
+        onExistingPostChange,
+        onExistingThreadChange,
+        onExistingThreadMetadataChange,
+        thread,
+        threadMetadata,
+    ]);
 
     return <>
         {posts.map(
@@ -182,6 +190,7 @@ const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => ({
         forumPostId: ev.value,
         includeDeleted: true,
     })),
+    onExistingThreadChange: (ev) => dispatch(actions.thread({ id: ev.value })),
     onExistingThreadMetadataChange: (ev) => dispatch(actions.threadMetadata(ev.value)),
     onNewPostChange: (ev) => dispatch(actions.changeNewPost({
         propertyName: ev.value.name,

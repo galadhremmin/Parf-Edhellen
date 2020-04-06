@@ -8,6 +8,8 @@ import IDiscussApi, {
     ILikePostResponse,
     IPostRequest,
     IPostResponse,
+    IStickThreadRequest,
+    IStickThreadResponse,
     IThreadMetadataRequest,
     IThreadMetadataResponse,
     IThreadRequest,
@@ -78,6 +80,13 @@ export default class DiscussApiConnector implements IDiscussApi {
     public likePost(payload: ILikePostRequest) {
         return this._api.post<ILikePostResponse>(
             this._makePath('like'),
+            payload,
+        );
+    }
+
+    public stickThread(payload: IStickThreadRequest) {
+        return this._api.put<IStickThreadResponse>(
+            this._makePath('thread/stick'),
             payload,
         );
     }
