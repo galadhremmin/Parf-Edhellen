@@ -2,7 +2,7 @@ import { IAccountEntity } from './IBookApi';
 
 export interface IThreadRequest {
     entityId?: number;
-    entityType: string;
+    entityType?: string;
     forumPostId?: number;
     id?: number;
     offset?: number;
@@ -83,6 +83,15 @@ export interface IPostResponse {
     post: IPostEntity;
 }
 
+export interface IStickThreadRequest {
+    forumThreadId: number;
+    sticky: boolean;
+}
+
+export interface IStickThreadResponse {
+    sticky: boolean;
+}
+
 export interface IThreadEntity {
     accountId: number;
     createdAt: string;
@@ -129,4 +138,5 @@ export default interface IDiscussApi {
     deletePost(payload: IDeletePostRequest): Promise<void>;
     updatePost(payload: IUpdatePostRequest): Promise<IUpdatePostResponse>;
     likePost(payload: ILikePostRequest): Promise<ILikePostResponse>;
+    stickThread(payload: IStickThreadRequest): Promise<IStickThreadResponse>;
 }

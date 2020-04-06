@@ -518,7 +518,7 @@ class DiscussRepository
                 ->first();
 
             if ($group === null) {
-                throw new Exception(sprint('No forum group is configured for %s.', $discussionMorph));
+                throw new Exception(sprintf('No forum group is configured for %s.', $discussionMorph));
             }
         }
 
@@ -739,6 +739,13 @@ class DiscussRepository
         }
 
         return true;
+    }
+
+    public function saveSticky(int $threadId, bool $sticky)
+    {
+        ForumThread::where('id', $threadId)
+            ->update(['is_sticky' => $sticky]);
+        return $sticky;
     }
 
     private function checkPostAuthorization(?Account $account, ForumPost $post, ForumThread $thread = null)

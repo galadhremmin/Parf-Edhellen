@@ -25,6 +25,7 @@ export interface IProps {
     noOfPages?: number;
     pages?: (string | number)[];
     onExistingPostChange?: ComponentEventHandler<number>;
+    onExistingThreadChange?: ComponentEventHandler<number>;
     onExistingThreadMetadataChange?: ComponentEventHandler<IThreadMetadataArgs>;
     onNewPostChange?: ComponentEventHandler<IFormChangeData>;
     onNewPostCreate?: ComponentEventHandler<void>;

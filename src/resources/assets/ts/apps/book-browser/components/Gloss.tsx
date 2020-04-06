@@ -15,6 +15,7 @@ import './Gloss.scss';
 export default class Gloss extends React.Component<IProps> {
     public static defaultProps = {
         toolbar: true,
+        warnings: true,
     };
 
     public render() {
@@ -22,14 +23,14 @@ export default class Gloss extends React.Component<IProps> {
             gloss,
             onReferenceLinkClick,
             toolbar,
+            warnings,
         } = this.props;
 
         const id = `gloss-block-${gloss.id}`;
         const className = classNames({ contribution: !gloss.isCanon }, 'gloss');
-        // const toolbarPlugins = EDConfig.pluginsFor('book-gloss-toolbar');
 
         return <blockquote itemScope={true} itemType="http://schema.org/Article" id={id} className={className}>
-            <OldVersionAlert gloss={gloss} />
+            {warnings && <OldVersionAlert gloss={gloss} />}
             <GlossTitle gloss={gloss} toolbar={toolbar} />
             <GlossTranslations gloss={gloss} />
             <GlossDetails gloss={gloss} showDetails={true} onReferenceLinkClick={onReferenceLinkClick} />

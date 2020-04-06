@@ -24,6 +24,7 @@ class DiscussApiController extends Controller
     const PARAMETER_FORUM_POST_CONTENT = 'content';
     const PARAMETER_FORUM_POST_SUBJECT = 'subject';
     const PARAMETER_FORUM_THREAD_ID = 'forum_thread_id';
+    const PARAMETER_FORUM_THREAD_STICKY = 'sticky';
     const PARAMETER_FORUM_GROUP_ID = 'forum_group_id';
     const PARAMETER_FORUM_POST_ID = 'forum_post_id';
     
@@ -348,6 +349,22 @@ class DiscussApiController extends Controller
 
         return [
             self::PROPERTY_POST_LIKE => $like
+        ];
+    }
+
+    public function updateThreadStickiness(Request $request)
+    {
+        $data = $request->validate([
+            self::PARAMETER_FORUM_THREAD_ID     => 'required|numeric|exists:forum_threads,id',
+            self::PARAMETER_FORUM_THREAD_STICKY => 'required|boolean'
+        ]);
+
+        $threadId = intval($data[self::PARAMETER_FORUM_THREAD_ID]);
+        $sticky   = boolval($data[self::PARAMETER_FORUM_THREAD_STICKY]);
+        $this->_discussRepository->saveSticky($threadId, $sticky);
+
+        return [
+            self::PARAMETER_FORUM_THREAD_STICKY => $sticky
         ];
     }
 

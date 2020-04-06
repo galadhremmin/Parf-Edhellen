@@ -87,7 +87,9 @@ export default class FragmentInspector extends React.Component<IProps> {
                 <Suspense fallback={<Spinner />}>
                     <GlossInspectorAsync gloss={this.props.gloss}
                         onReferenceLinkClick={this._onReferenceLinkClick}
-                        toolbar={false} />
+                        toolbar={false}
+                        warnings={false}
+                    />
                 </Suspense>
             </section>
         </article>;
