@@ -26,7 +26,7 @@ function FragmentsForm(props: IProps) {
     }, [ onParseTextRequest, text ]);
 
     return <>
-        <div className="form-group form-group-sm">
+        <div className="form-group">
             <label htmlFor="ed-sentence-text-body">Text body</label>
             <textarea id="ed-sentence-text-body"
                       className="form-control"

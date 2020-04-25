@@ -100,7 +100,7 @@ h1 {
             /* profile information */
             .pi {
                 font-family: $font-family-tiny;
-                font-size: 80%;
+                font-size: 0.9rem;
             }
         }
     }
@@ -164,7 +164,7 @@ h1 {
         display: table-cell;
         width: $ed-forum-post-profile-width;
         text-align: center;
-        font-size: 85%;
+        font-size: 0.9rem;
 
         img {
             width: $ed-forum-post-profile-width/2; 
@@ -215,7 +215,7 @@ h1 {
 
 @media (max-width: $ed-device-width) {
     .forum-post .post-profile-picture {
-        font-size: 70%;
+        font-size: 0.9rem;
         font-family: Helvetica, Arial, sans-serif;
         width: $ed-forum-post-profile-width*0.16;
         padding-top: 2px;
