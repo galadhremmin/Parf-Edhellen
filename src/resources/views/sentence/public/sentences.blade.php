@@ -63,6 +63,3 @@
     </div>
   @endif
 @endsection
-@section('styles')
-  <link href="@assetpath(/css/app.sentences.css)" rel="stylesheet">
-@endsection

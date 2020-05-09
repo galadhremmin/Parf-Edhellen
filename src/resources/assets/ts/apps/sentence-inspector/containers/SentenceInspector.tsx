@@ -56,12 +56,13 @@ export class SentenceInspector extends React.Component<IProps, IState> {
         }
 
         return <div className="sentence-inspector">
-            <p className="sentence-inspector__introduction">
-                <TextIcon icon="info-sign" />{' '}
-                Click or tap on a word below to learn about the gloss and the grammar
-                rules that apply. The information becomes available at the bottom
-                of the screen.
-            </p>
+            <div className="container">
+                <p className="sentence-inspector__introduction">
+                    Click or tap on a word below to learn about the gloss and the grammar
+                    rules that apply. The information becomes available on the bottom
+                    of the screen.
+                </p>
+            </div>
             <TextInspectorView {...selection}
                 fragmentInspector={this._renderInspector}
                 texts={texts}

@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import React, { Suspense } from 'react';
 
 import { fireEvent } from '@root/components/Component';
@@ -10,6 +9,7 @@ import StaticAlert from '@root/components/StaticAlert';
 import Tengwar from '@root/components/Tengwar';
 import { ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
 import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
+import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
 import { IProps } from './FragmentInspector._types';
 
@@ -153,9 +153,9 @@ export default class FragmentInspector extends React.Component<IProps> {
             // sibling is always the selected text.
             const sibling = component.previousElementSibling;
             if (sibling) {
-                sibling.scrollIntoView({
-                    block: 'start',
-                });
+                // -24 is a little offset to ensure that the viewport does not scroll beyond
+                // the element
+                makeVisibleInViewport(sibling, [0, -24]);
             }
         }
     }

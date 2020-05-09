@@ -2,11 +2,11 @@
 
 .sentence-inspector {
     font-size: 1.3rem;
+    padding-bottom: 4rem;
 
     .sentence-inspector__introduction {
         font-style: italic;
-        font-size: 0.9rem;
-        text-align: center;
+        font-size: 1rem;
     }
 
     > .p-group {
@@ -14,7 +14,7 @@
         transition: 0.5s padding;
 
         &.selected {
-            padding-top: 2rem;
+            padding-bottom: 2rem;
         }
 
         > .p-group__p {
@@ -37,33 +37,11 @@
                 text-decoration: none;
 
                 &.selected {
-                    color: #d1305e;
+                    color: $brand-primary;
                     text-shadow: 0px 0px 0.2rem #ddd;
                     font-weight: bold;
                     padding-top: 1rem;
                     padding-bottom: 1rem;
-                }
-            }
-        }
-    }
-
-    @media (min-width: $screen-md-min) {
-        > .p-group {
-            display: flex;
-            padding-bottom: 0;
-
-            > .p-group__p {
-                flex: 1;
-                text-align: left;
-
-                + .p-group__p {
-                    margin-left: 1rem;
-                    margin-top: 0;
-                }
-
-                &.english {
-                    font-size: inherit;
-                    line-height: inherit;
                 }
             }
         }
