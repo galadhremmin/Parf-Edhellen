@@ -109,7 +109,7 @@ function GlossForm(props: IProps) {
         <div className="row">
             <div className="col-sm-12 col-lg-6">
                 <Panel title="Basic information">
-                    <div className="form-group form-group-sm">
+                    <div className="form-group">
                         <label htmlFor="ed-gloss-word" className="control-label">Word</label>
                         <input type="text"
                             className="form-control"
@@ -120,7 +120,7 @@ function GlossForm(props: IProps) {
                             readOnly={edit}
                         />
                     </div>
-                    <div className="form-group form-group-sm">
+                    <div className="form-group">
                         <label htmlFor="ed-gloss-sense-word" className="control-label">Sense</label>
                         <input type="text"
                             className="form-control"
@@ -130,7 +130,7 @@ function GlossForm(props: IProps) {
                             required={true}
                         />
                     </div>
-                    <div className="form-group form-group-sm">
+                    <div className="form-group">
                         <label htmlFor="ed-gloss-language">Language</label>
                         <LanguageSelect
                             className="form-control"
@@ -140,7 +140,7 @@ function GlossForm(props: IProps) {
                             required={true}
                         />
                     </div>
-                    <div className="form-group form-group-sm">
+                    <div className="form-group">
                         <label htmlFor="ed-gloss-translations">Translations</label>
                         <TagInput
                             name="ed-gloss-translations"
@@ -149,7 +149,7 @@ function GlossForm(props: IProps) {
                             required={true}
                         />
                     </div>
-                    <div className="form-group form-group-sm">
+                    <div className="form-group">
                         <label htmlFor="ed-gloss-speech">Speech</label>
                         <SpeechSelect
                             className="form-control"
@@ -159,7 +159,7 @@ function GlossForm(props: IProps) {
                             required={true}
                         />
                     </div>
-                    <div className="form-group form-group-sm">
+                    <div className="form-group">
                         <label htmlFor="ed-gloss-sources" className="control-label">Sources</label>
                         <input type="text"
                             className="form-control"
@@ -169,7 +169,7 @@ function GlossForm(props: IProps) {
                             required={true}
                         />
                     </div>
-                    <div className="form-group form-group-sm">
+                    <div className="form-group">
                         <label htmlFor="ed-gloss-comments">Comments</label>
                         <MarkdownInput name="ed-gloss-comments"
                             value={gloss.comments}
@@ -200,7 +200,7 @@ function GlossForm(props: IProps) {
                             /> Rejected (strikethrough)
                         </label>
                     </div>
-                    <div className="form-group form-group-sm">
+                    <div className="form-group">
                         <label htmlFor="ed-gloss-details">
                             Details
                             <OptionalLabel />
@@ -209,7 +209,7 @@ function GlossForm(props: IProps) {
                             onChange={_onChange('glossDetails')}
                             value={gloss.glossDetails} />
                     </div>
-                    <div className="form-group form-group-sm">
+                    <div className="form-group">
                         <label htmlFor="ed-gloss-keywords">
                             Keywords
                             <OptionalLabel />
@@ -220,7 +220,7 @@ function GlossForm(props: IProps) {
                             onChange={_onChange('keywords', keywordsTransformer)}
                         />
                     </div>
-                    <div className="form-group form-group-sm">
+                    <div className="form-group">
                         <label htmlFor="ed-gloss-tengwar">
                             Transcription
                             <OptionalLabel />
@@ -234,7 +234,7 @@ function GlossForm(props: IProps) {
                             value={gloss.tengwar}
                         />
                     </div>
-                    <div className="form-group form-group-sm">
+                    <div className="form-group">
                         <label htmlFor="ed-gloss-account">Account</label>
                         <AccountSelect
                             name="ed-gloss-account"
@@ -242,7 +242,7 @@ function GlossForm(props: IProps) {
                             value={gloss.account}
                         />
                     </div>
-                    <div className="form-group form-group-sm">
+                    <div className="form-group">
                         <label htmlFor="ed-gloss-speech">Categorization</label>
                         <GlossGroupSelect
                             className="form-control"

@@ -33,7 +33,7 @@ function MetadataForm(props: IProps) {
     }, [ onMetadataChange ]);
 
     return <>
-        <div className="form-group form-group-sm">
+        <div className="form-group">
             <label htmlFor="ed-sentence-name" className="control-label">Name</label>
             <input type="text"
                 className="form-control"
@@ -43,7 +43,7 @@ function MetadataForm(props: IProps) {
                 required={true}
             />
         </div>
-        <div className="form-group form-group-sm">
+        <div className="form-group">
             <label htmlFor="ed-sentence-language">Language</label>
             <LanguageSelect
                 className="form-control"
@@ -53,7 +53,7 @@ function MetadataForm(props: IProps) {
                 required={true}
             />
         </div>
-        <div className="form-group form-group-sm">
+        <div className="form-group">
             <label htmlFor="ed-sentence-source" className="control-label">Source</label>
             <input type="text"
                 className="form-control"
@@ -63,7 +63,7 @@ function MetadataForm(props: IProps) {
                 required={true}
             />
         </div>
-        <div className="form-group form-group-sm">
+        <div className="form-group">
             <label htmlFor="ed-sentence-account">Account</label>
             <AccountSelect
                 name="ed-sentence-account"
@@ -82,7 +82,7 @@ function MetadataForm(props: IProps) {
                 /> Neologism
             </label>
         </div>
-        <div className="form-group form-group-sm">
+        <div className="form-group">
             <label htmlFor="ed-sentence-description">Abstract</label>
             <textarea className="form-control"
                 name="ed-sentence-description"
@@ -91,7 +91,7 @@ function MetadataForm(props: IProps) {
                 required={true}
             />
         </div>
-        <div className="form-group form-group-sm">
+        <div className="form-group">
             <label htmlFor="ed-sentence-long-description">Details</label>
             <MarkdownInput name="ed-sentence-long-description"
                 value={sentence.longDescription}

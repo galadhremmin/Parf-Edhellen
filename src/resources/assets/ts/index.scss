@@ -11,7 +11,7 @@
 html, body {
   width: 100%;
   margin: 0;
-  font-size: 14px;
+  font-size: 16px;
 }
 body {
   overflow-y: scroll;
@@ -31,7 +31,7 @@ body {
     min-height: $footer-height;
     padding: 1em;
     box-sizing: border-box;
-    font-size: 90%;
+    font-size: 0.9rem;
 
     display: flex;
     > section {
@@ -43,7 +43,7 @@ body {
     }
 
     h3 {
-      font-size: 110%;
+      font-size: 1.1rem;
       margin-top: 0;
       font-style: italic;
     }
@@ -71,7 +71,7 @@ body {
   }
 }
 blockquote footer {
-    font-size: 85%;
+    font-size: 0.9rem;
     font-family: $font-family-tiny;
 }
 .introtron {
@@ -129,7 +129,7 @@ h1, h2 {
   text-align: center;
 }
 header h2.tengwar {
-  font-size: 140%;
+  font-size: 1.4rem;
 }
 .clear-left {
   clear: left;
@@ -169,7 +169,7 @@ blockquote h3 a {
   color:#aaa;
 }
 .performance-data {
-  font-size: 80%;
+  font-size: 0.9rem;
   color: #bbb;
   text-align: right;
 }
@@ -192,7 +192,7 @@ blockquote h3 a {
   padding: 10px;
   border-radius: 10px;
   background: #eee;
-  font-size: 90%;
+  font-size: 0.9rem;
   margin-bottom: 10px;
 }
 .ed-fragment {
@@ -318,7 +318,7 @@ blockquote h3 a {
     border: none;
 
     h3 {
-      font-size: 18px;
+      font-size: 1.1rem;
       font-weight: normal;
       font-style: italic;
     }
@@ -326,7 +326,6 @@ blockquote h3 a {
 }
 .beating {
   color: red;
-  font-size: 90%;
   animation: heartbeat 3s infinite;
   animation-direction: alternate;
   animation-timing-function: linear;
