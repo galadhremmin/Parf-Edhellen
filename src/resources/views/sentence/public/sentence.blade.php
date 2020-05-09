@@ -11,22 +11,24 @@
     @include('_shared._neologism', ['account' => $sentence['sentence']->account])
   @endif
 
-  <header>
-    @include('sentence.public._header')
-    <h2>{{ $sentence['sentence']->name }}</h2>
-  </header>
+  <div class="container">
+    <header>
+      @include('sentence.public._header')
+      <h2>{{ $sentence['sentence']->name }}</h2>
+    </header>
 
-  @if (!empty($sentence['sentence']->description))
-  <div class="abstract">
-    @markdown($sentence['sentence']->description)
-  </div>
-  @endif
+    @if (!empty($sentence['sentence']->description))
+    <div class="abstract">
+      @markdown($sentence['sentence']->description)
+    </div>
+    @endif
 
-  @if (! empty($sentence['sentence']->long_description))
-  <div class="long-text-body">
-    @markdown($sentence['sentence']->long_description)
+    @if (! empty($sentence['sentence']->long_description))
+    <div class="long-text-body">
+      @markdown($sentence['sentence']->long_description)
+    </div>
+    @endif
   </div>
-  @endif
 
   <div id="ed-fragment-navigator" data-inject-module="sentence-inspector" data-inject-prop-sentence="{{ json_encode($sentence) }}"></div>
 
@@ -46,6 +48,7 @@
   @endif  
 
   <footer class="sentence-footer">
+    &mdash;
     Source [{{ $sentence['sentence']->source }}]. 
     Published <span class="date">{{ $sentence['sentence']->created_at }}</span>
     @if ($sentence['sentence']->updated_at)
@@ -66,5 +69,5 @@
 @endsection
 
 @section('styles')
-  <link href="@assetpath(/css/app.sentence.css)" rel="stylesheet">
+  <link href="@assetpath(style-sentence.css)" rel="stylesheet">
 @endsection
