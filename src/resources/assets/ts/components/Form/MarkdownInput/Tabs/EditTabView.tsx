@@ -138,6 +138,7 @@ export default class EditTabView extends React.Component<IProps, IState> {
         const start = target.selectionStart;
         const end = target.selectionEnd;
 
+        // TODO: #24 Do not trigger this behavior when the user is working on a markdown component, such as a list or table.
         if (ev.which === EnterKeyCode && start !== undefined) {
             // Intercept the event and prevent propagation as the default behavior for the enter key is completely
             // overridden by this component.
