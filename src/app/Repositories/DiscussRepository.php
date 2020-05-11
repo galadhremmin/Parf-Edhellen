@@ -317,8 +317,9 @@ class DiscussRepository
             $posts = $query->get();
 
             // Prepend the first post in the thread to the resulting collection if it does not already exist.
-            /* TODO: #26 Remove this functionality after the experiment is complete.
             $firstPostInThreadId = $firstPostInThread->id;
+
+            /* TODO: #26 Remove this functionality after the experiment is complete.
             if (! $posts->contains(function ($post) use ($firstPostInThreadId) {
                 return $post->id === $firstPostInThreadId;
             })) {
