@@ -1,11 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { toSnakeCase } from '@root/utilities/func/snake-case';
-import { IGlobalAdConfiguration } from '../index._types';
+import { IProps } from './Ad._types';
 
-function Ad(props: IGlobalAdConfiguration) {
+function Ad(props: IProps) {
     const {
         dataset,
+        onMount,
     } = props;
+
+    useEffect(() => {
+        if (typeof onMount === 'function') {
+            onMount();
+        }
+    }, [ onMount ]);
 
     let data = {};
     if (typeof dataset === 'object') {

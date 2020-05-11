@@ -9,6 +9,8 @@ export interface IGlobalAdConfiguration {
     props: any;
 }
 
-export interface IGlobalAdsConfiguration {
+export type IGlobalAdsConfiguration = {
     [adName: string]: IGlobalAdConfiguration;
-}
+} & {
+    _mount?: () => void;
+};
