@@ -35,6 +35,9 @@
     </blockquote>
     @endforeach
   </div>
+  @include('_shared._ad', [
+    'ad' => 'phrases'
+  ])
   @if(! empty($neologisms))
     <hr>
     <h2>*Neo-{{ mb_strtolower($language->name) }}</h2>

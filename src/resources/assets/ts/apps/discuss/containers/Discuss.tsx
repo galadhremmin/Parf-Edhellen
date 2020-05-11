@@ -115,6 +115,8 @@ function Discuss(props: IProps) {
                 pageNumber: ev.value,
                 thread,
             });
+
+            window.scroll(0, 0);
         }
     }, [ currentPage, thread, _onDiscardNewPost, onPageChange ]);
 
@@ -142,11 +144,13 @@ function Discuss(props: IProps) {
 
     return <>
         {posts.map(
-            (post) => <Post key={post.id}
-                            onReferenceLinkClick={onReferenceLinkClick}
-                            post={post}
-                            renderToolbar={_renderToolbar}
-                      />,
+            (post) => <>
+                <Post key={post.id}
+                    onReferenceLinkClick={onReferenceLinkClick}
+                    post={post}
+                    renderToolbar={_renderToolbar}
+                />
+            </>,
         )}
         <aside ref={formRef} className="discuss-body__toolbar--primary">
             {newPostEnabled
