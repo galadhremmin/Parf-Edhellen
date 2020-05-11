@@ -35,6 +35,7 @@
       developed and maintained by Leonard (<a href="https://twitter.com/parmaeldo" target="_blank">@parmaeldo</a>).
       If you are a developer, you can follow the project on <a href="https://github.com/galadhremmin/Parf-Edhellen" target="_blank">Github</a>.
     </p>
+    <div class="ed-ad-container" data-inject-module="ad" data-inject-prop-ad="frontpage"></div>
   </div>
   <div class="col-xs-12 col-sm-6 col-md-4">
     <h4>Gloss of the hour</h4>
@@ -55,7 +56,6 @@
       'sentence' => $sentence
     ])
     @endif
-    <div class="ed-ad-container" data-inject-module="ad" data-inject-prop-ad="frontpage"></div>
   </div>
   <div class="col-xs-12 col-sm-12 col-md-4">
     <h4>Community activity</h4>
@@ -67,5 +67,6 @@
     ])
   </div>
 </div>
+<div class="ed-ad-container" data-inject-module="ad" data-inject-prop-ad="frontpage"></div>
 
 @endsection
