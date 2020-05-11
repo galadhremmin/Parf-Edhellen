@@ -1,10 +1,13 @@
 <script>
 (() => {
-const props = {className:'adsbygoogle'};
+const props = {
+className:'adsbygoogle',
+style:{display:'block'},
+};
 const dataset = {
 adClient:'ca-pub-8268364504414566',
 adFormat:'auto',
-fullWidthResponsive:true
+fullWidthResponsive:true,
 };
 window['ed.ads.config'] = {
 frontpage: {
@@ -14,7 +17,7 @@ frontpage: {
     adSlot:'6826878711'
   }
 },
-_mounted: () => { (adsbygoogle = window.adsbygoogle || []).push({}); }
+_mount: () => { (adsbygoogle = window.adsbygoogle || []).push({}); }
 };
 })();
 </script>
