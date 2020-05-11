@@ -1,9 +1,10 @@
 <script>
 (function(){
-const minHeight='280px';
+const minHeight='50px';
+const maxHeight='280px';
 const props = {
 className:'adsbygoogle',
-style:{display:'block',minHeight},
+style:{display:'block',minHeight,maxHeight},
 };
 const dataset = {
 adClient:'ca-pub-8268364504414566',
