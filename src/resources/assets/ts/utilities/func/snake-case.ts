@@ -2,21 +2,21 @@
  * Converts the string subject from camelCase to snake_case.
  * @param s string subject
  */
-export const toSnakeCase = (s: string) => {
+export const toSnakeCase = (s: string, delimiter = '_') => {
     return s.replace(/^([A-Z])/, (substr: string) => substr.toLowerCase())
-        .replace(/([A-Z]{1})/g, (substr: string) => '_' + substr.toLowerCase());
+        .replace(/([A-Z]{1})/g, (substr: string) => delimiter + substr.toLowerCase());
 };
 
 /**
  * Converts the string subject from snake_case to camelCase.
  * @param s string subject
  */
-export const camelCaseFromSnakeCase = (s: string) => {
+export const camelCaseFromSnakeCase = (s: string, delimiter = '_') => {
     let length = 0;
-    const words = s.split('_') //
+    const words = s.split(delimiter) //
         .map((word: string, i: number) => {
             const ps = length === 0
-                ? (word.length === 0 ? '_' : word)
+                ? (word.length === 0 ? delimiter : word)
                 : word.charAt(0).toUpperCase() + word.substr(1);
 
             length += word.length;
