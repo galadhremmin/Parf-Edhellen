@@ -6,8 +6,6 @@ import {
 
 const PostsReducer = (state: IPostsState = [], action: IPostsReducerAction) => {
     switch (action.type) {
-        case Actions.RequestThread:
-            return [];
         case Actions.ReceiveThread:
             return action.threadData.posts.map((post) => {
                 post._isThreadPost = (post.id === action.threadData.threadPostId);
