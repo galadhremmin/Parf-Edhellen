@@ -1,12 +1,13 @@
 <script>
-(() => {
+(function(){
+const minHeight='280px';
 const props = {
 className:'adsbygoogle',
-style:{display:'block'},
+style:{display:'block',minHeight},
 };
 const dataset = {
 adClient:'ca-pub-8268364504414566',
-adFormat:'auto',
+//adFormat:'auto',
 fullWidthResponsive:true,
 };
 window['ed.ads.config'] = {
