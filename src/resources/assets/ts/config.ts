@@ -8,6 +8,8 @@ export const LocalStorageLanguages = 'ed.languages';
 export const GlobalEventLoadGlossary = 'ednavigate';
 export const GlobalEventLoadReference = 'edref';
 
+export const GlobalAdsConfigurationName = 'ed.ads.config';
+
 export const DefaultGlaemscribeCharacterSet = 'tengwar_guni_annatar';
 export const GlaemscribeModeMappings: { [mode: string]: string } = {
     'blackspeech': 'blackspeech-tengwar-general_use',

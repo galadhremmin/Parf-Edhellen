@@ -55,6 +55,7 @@
       'sentence' => $sentence
     ])
     @endif
+    <div class="ed-ad-container" data-inject-module="ad" data-inject-prop-ad="frontpage"></div>
   </div>
   <div class="col-xs-12 col-sm-12 col-md-4">
     <h4>Community activity</h4>
