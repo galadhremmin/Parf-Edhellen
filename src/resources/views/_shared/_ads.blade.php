@@ -1,7 +1,7 @@
 <script>
 (function(){
-const minHeight='50px';
-const maxHeight='280px';
+const minHeight='280px';
+const maxHeight='auto';
 const props = {
 className:'adsbygoogle',
 style:{display:'block',minHeight,maxHeight},
