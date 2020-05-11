@@ -334,4 +334,12 @@ blockquote h3 a {
   margin: 0;
 }
 
+.ed-ad-container {
+  width: 100%;
+  margin-top: 2rem;
+}
+.ed-ad-container:empty {
+  display: none;
+}
+
 @import './apps/discuss/index.scss'; /* Discuss is pretty much everywhere, so no point in separation here. */
