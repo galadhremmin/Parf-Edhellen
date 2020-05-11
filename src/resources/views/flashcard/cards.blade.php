@@ -15,12 +15,15 @@
     <aside>
       @if ($user) 
       <div class="alert alert-info">
-        Your answers are saved automatically so you can <a href="{{ route('flashcard.list', ['id' => $flashcard->id]) }}">review your performance</a>.
+        Your answers are saved so you can <a href="{{ route('flashcard.list', ['id' => $flashcard->id]) }}">review your performance</a>.
         Good luck!
       </div>
       @else
       @include('flashcard._login')
       @endif
+      @include('_shared._ad', [
+        'ad' => 'flashcards'
+      ])
     </aside>
   </div>
       

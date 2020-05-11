@@ -263,7 +263,7 @@ class DiscussRepository
         $skip = 0;
         if ($ascending) {
             if ($jumpToId !== 0) {
-                // if the the client is, in fact, requesting to oad a specific post, we 
+                // if the the client is, in fact, requesting to load a specific post, we 
                 // must determine the page on which the post can be found.
                 $pageNumber = $noOfPages;
                 do {
@@ -284,10 +284,6 @@ class DiscussRepository
                 } while ($pageNumber > 1);
             }
 
-            // The default page should always be the last page, as it is what the user is interested in seeing (= most recent).
-            if ($pageNumber <= 0) {
-                $pageNumber = $noOfPages;
-            }
             $skip = ($pageNumber - 1) * $maxLength;
 
         } else {
@@ -321,12 +317,14 @@ class DiscussRepository
             $posts = $query->get();
 
             // Prepend the first post in the thread to the resulting collection if it does not already exist.
+            /* TODO: #26 Remove this functionality after the experiment is complete.
             $firstPostInThreadId = $firstPostInThread->id;
             if (! $posts->contains(function ($post) use ($firstPostInThreadId) {
                 return $post->id === $firstPostInThreadId;
             })) {
                 $posts->prepend($firstPostInThread);
             }
+            */
         }
 
         $pages = $this->createPageArray($noOfPages);

@@ -1,0 +1,1 @@
+<div class="ed-ad-container" data-inject-module="ad" data-inject-prop-ad="{{ $ad }}"></div>

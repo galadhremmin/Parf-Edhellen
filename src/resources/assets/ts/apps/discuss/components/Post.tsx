@@ -47,6 +47,7 @@ export function Post(props: IProps) {
             </div>
             <footer>
                 <DateLabel dateTime={post.createdAt} />
+                {isThreadPost && ' (original post)'}
                 <a href={`?forum_post_id=${post.id}`} className="post-no">
                     {post.id}
                 </a>
