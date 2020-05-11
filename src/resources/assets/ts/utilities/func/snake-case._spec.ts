@@ -23,6 +23,22 @@ describe('utilities/func/snake-case', () => {
         expect(actual).to.equal(expected);
     });
 
+    it('converts camelCase to snake-case (- as delimiter)', () => {
+        const input = 'aSmallStepForAMan';
+        const expected = 'a-small-step-for-a-man';
+        const actual = toSnakeCase(input, '-');
+
+        expect(actual).to.equal(expected);
+    });
+
+    it('converts CamelCase to snake-case (- as delimiter)', () => {
+        const input = 'ASmallStepForAMan';
+        const expected = 'a-small-step-for-a-man';
+        const actual = toSnakeCase(input, '-');
+
+        expect(actual).to.equal(expected);
+    });
+
     it('converts an object with camelCase props to snake_case', () => {
         const obj = {
             aSmallStepForAMan: 10,
@@ -44,6 +60,14 @@ describe('utilities/func/snake-case', () => {
         const expected = 'weAreNotYetOnMars';
 
         const actual = camelCaseFromSnakeCase(input);
+        expect(actual).to.equal(expected);
+    });
+
+    it('converts snake-case (- as delimiter) to camelCase', () => {
+        const input = 'we-are-not-yet-on-mars';
+        const expected = 'weAreNotYetOnMars';
+
+        const actual = camelCaseFromSnakeCase(input, '-');
         expect(actual).to.equal(expected);
     });
 
