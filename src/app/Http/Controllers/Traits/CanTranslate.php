@@ -27,15 +27,16 @@ trait CanTranslate
         $this->_sentenceRepository = $sentenceRepository;
     }
 
-    public function translate(string $word, int $languageId = 0, bool $includeInflections = true, bool $includeOld = true)
+    public function translate(string $word, int $languageId = 0, bool $includeInflections = true, bool $includeOld = true,
+        array $speechIds = null, array $glossGroupIds = null)
     {
-        $glosses = $this->_glossRepository->getWordGlosses($word, $languageId, $includeOld);
+        $glosses = $this->_glossRepository->getWordGlosses($word, $languageId, $includeOld, $speechIds, $glossGroupIds);
         $glossIds = array_map(function ($v) {
             return $v->id;
         }, $glosses);
 
         $inflections = $includeInflections
-            ? $this->_sentenceRepository->getInflectionsForGlosses($glossIds) 
+            ? $this->_sentenceRepository->getInflectionsForGlosses($glossIds)
             : [];
         $comments = $this->_discussRepository->getNumberOfPostsForEntities(Gloss::class, $glossIds);
         

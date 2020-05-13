@@ -19,7 +19,6 @@ function GlossGroupSelect(props: IProps) {
 
     return <AsyncSelect
         {...componentProps}
-        allowEmpty={true}
         loaderOfValues={_getValues}
         textField="name"
         valueField="id"
@@ -28,6 +27,7 @@ function GlossGroupSelect(props: IProps) {
 }
 
 GlossGroupSelect.defaultProps = {
+    allowEmpty: true,
     apiConnector: resolve(DI.BookApi),
     value: null,
 } as IProps;

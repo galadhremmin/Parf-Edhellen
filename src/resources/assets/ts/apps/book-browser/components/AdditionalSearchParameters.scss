@@ -1,0 +1,9 @@
+.AdditionalSearchParameters {
+    text-align: center;
+    > select {
+        margin-left: 1rem;
+        &:first-child {
+            margin-left: 0;
+        }
+    }
+}

@@ -140,8 +140,16 @@ export default class SearchActions {
      */
     public glossary(args: ILoadGlossaryAction) {
         return async (dispatch: ThunkDispatch<any, any, any>, getState: () => RootReducer) => {
-            let includeOld = getState().search.includeOld;
-            let languageId = getState().search.languageId;
+            const state = getState();
+
+            let glossGroupIds = state.search.glossGroupIds;
+            let includeOld    = state.search.includeOld;
+            let languageId    = state.search.languageId;
+            let speechIds     = state.search.speechIds;
+
+            if (args.glossGroupIds !== undefined) {
+                glossGroupIds = args.glossGroupIds;
+            }
 
             if (args.includeOld !== undefined) {
                 includeOld = args.includeOld;
@@ -149,6 +157,10 @@ export default class SearchActions {
 
             if (args.languageId !== undefined) {
                 languageId = args.languageId;
+            }
+
+            if (args.speechIds !== undefined) {
+                speechIds = args.speechIds;
             }
 
             const word = args.searchResult.originalWord || //
@@ -164,10 +176,12 @@ export default class SearchActions {
             dispatch(this.selectSearchResult(args.searchResult));
 
             const request = {
+                glossGroupIds,
                 includeOld,
                 inflections: true,
                 languageId,
                 normalizedWord: args.searchResult.normalizedWord,
+                speechIds,
                 word,
             };
             await this._loadGlossary(dispatch, request, languageShortName, args.updateBrowserHistory);
