@@ -28,18 +28,23 @@ class GlossRepository
         $this->_keywordRepository = $keywordRepository;
     }
 
-    public function getKeywordsForLanguage(string $word, $reversed = false, $languageId = 0, $includeOld = true) 
+    public function getKeywordsForLanguage(string $word, $reversed = false, $languageId = 0, $includeOld = true, array $speechIds = null,
+        array $glossGroupIds = null)
     {
         $hasWildcard = null;
         $word = self::formatWord($word, $hasWildcard);
 
-        if ($languageId > 0) {
+        // TODO: #27 Completely refactor this logic. This search method is ridiculously poorly implemented.
+        if ($languageId !== 0 || ! empty($speechIds) || ! empty($glossGroupIds)) {
             $filter = [
                 [ 'g.is_latest', 1 ],
                 [ 'g.is_deleted', 0 ],
-                [ 'g.language_id', $languageId ],
                 [ $reversed ? 'k.reversed_normalized_keyword_unaccented' : 'k.normalized_keyword_unaccented', 'like', $word ]
             ];
+    
+            if ($languageId > 0) {
+                $filter[] = [ 'g.language_id', $languageId ];
+            }
 
             if ($hasWildcard) {
                 $filter[] = [ 'k.word_id', '=', DB::raw('g.word_id') ];
@@ -53,6 +58,14 @@ class GlossRepository
                 ->join('glosses as g', 'k.gloss_id', 'g.id')
                 ->whereNotNull('k.gloss_id')
                 ->where($filter);
+    
+            if (! empty($speechIds)) {
+                $query = $query->whereIn('g.speech_id', $speechIds);
+            }
+    
+            if (! empty($glossGroupIds)) {
+                $query = $query->whereIn('g.gloss_group_id', $glossGroupIds);
+            }
         } else {
             $query = Keyword::findByWord($word, $reversed, $includeOld);
         }
@@ -77,15 +90,26 @@ class GlossRepository
      * @param bool $includeOld
      * @return array
      */
-    public function getWordGlosses(string $word, int $languageId = 0, bool $includeOld = true) 
+    public function getWordGlosses(string $word, int $languageId = 0, bool $includeOld = true, array $speechIds = null,
+        array $glossGroupIds = null) 
     {
         if (empty($word)) {
             return [];
         }
 
         $senses = self::getSensesForWord($word);
-        return self::createGlossQuery($languageId, true /* = latest */, $includeOld, function($q) use($senses) {
-                return $q->whereIn('g.sense_id', $senses);
+        $collections = [
+            'g.sense_id'       => $senses,
+            'g.speech_id'      => $speechIds,
+            'g.gloss_group_id' => $glossGroupIds
+        ];
+        return self::createGlossQuery($languageId, true /* = latest */, $includeOld, function($q) use($collections) {
+                foreach ($collections as $column => $collection) {
+                    if (is_array($collection) && count($collection) > 0) {
+                        $q = $q->whereIn($column, $collection);
+                    }
+                }
+                return $q;
             })
             ->get()
             ->toArray();

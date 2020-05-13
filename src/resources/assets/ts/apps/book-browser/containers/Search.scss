@@ -1,11 +1,30 @@
 @import "../../../_scss/_variables";
 
-#ed-search-component {
+.Search {
   min-height: 96px;
 
   @media (max-width: 430px) {
     min-height: 115px;
   }
+
+  .Search--config__language {
+    text-align: center;
+  }
+  .Search--config__expand {
+    margin-left: 1rem;
+    color: inherit;
+    font-size: 0.8rem;
+    &:hover, &:active, &:focus {
+      text-decoration: none;
+    }
+    > .icon {
+      pointer-events: none;
+      margin-left: 0.3rem;
+    }
+  }
+}
+
+#ed-search-component {
 
   .search-result-presenter {
     margin-bottom: 20px;
@@ -27,9 +46,6 @@
   }
   .search-result-navigator {
     margin-bottom: 5px;
-  }
-  .search-language-select {
-    text-align: center;
   }
 
   /*

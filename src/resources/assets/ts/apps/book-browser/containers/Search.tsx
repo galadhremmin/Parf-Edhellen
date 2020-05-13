@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import React from 'react';
 import {
     connect,
@@ -5,6 +6,8 @@ import {
 
 import { IComponentEvent } from '@root/components/Component._types';
 import LanguageSelect from '@root/components/Form/LanguageSelect';
+import TextIcon from '@root/components/TextIcon';
+import Cache from '@root/utilities/Cache';
 import debounce from '@root/utilities/func/debounce';
 import { SearchActions } from '../actions';
 import SearchQueryInput from '../components/SearchQueryInput';
@@ -17,33 +20,64 @@ import {
 
 import './Search.scss';
 
+const AdditionalSearchParametersAsync = React.lazy(() => import('../components/AdditionalSearchParameters'));
+
 export class SearchQuery extends React.Component<IProps, IState> {
 
     public state: IState;
 
     private _actions: SearchActions;
+    private _stateCache: Cache<IState>;
     private _beginSearch: (queryChanged: boolean) => void;
 
     constructor(props: IProps) {
         super(props);
 
-        this.state = {
+        const defaultState = {
+            glossGroupIds: [0],
             includeOld: props.includeOld,
             languageId: props.languageId,
             reversed: props.reversed,
+            showMore: false,
+            speechIds: [0],
             word: props.word,
         };
 
+        // The component maintains its own transient state between the last search (maintained by Redux)
+        // and current state (maintained by the component). The two states converge when the search command
+        // is executed.
+        this.state = defaultState;
+
         this._actions = new SearchActions();
         this._beginSearch = debounce(500, this._search);
+        this._stateCache = Cache.withLocalStorage(
+            () => Promise.resolve(defaultState),
+            'ed.search-state',
+        );
+    }
+
+    public async componentDidMount() {
+        const persistedState = await this._stateCache.get();
+        if (persistedState) {
+            this.setState(persistedState);
+        }
     }
 
     public render() {
         const {
             loading,
         } = this.props;
+        const {
+            glossGroupIds,
+            includeOld,
+            languageId,
+            reversed,
+            showMore,
+            speechIds,
+            word,
+        } = this.state;
 
-        return <form onSubmit={this._onSubmit}>
+        return <form onSubmit={this._onSubmit} className="Search">
             <div className="row">
                 <div className="col-md-12">
                     <SearchQueryInput
@@ -53,21 +87,21 @@ export class SearchQuery extends React.Component<IProps, IState> {
                         onChange={this._onQueryChange}
                         onSearchResultNavigate={this._onSearchResultNavigate}
                         tabIndex={1}
-                        value={this.state.word}
+                        value={word}
                     />
                 </div>
             </div>
-            <div className="row">
-                <div className="search-language-select">
+            <div className="row Search--config">
+                <div className="Search--config__language">
                     <label className="inline input-sm">
-                        <input checked={this.state.reversed}
+                        <input checked={reversed}
                             name="reversed"
                             onChange={this._onReverseChange}
                             type="checkbox"
                         /> Reversed
                     </label>
                     <label className="inline input-sm">
-                        <input checked={this.state.includeOld}
+                        <input checked={includeOld}
                             name="excludeOld"
                             onChange={this._onIncludeOldChange}
                             type="checkbox"
@@ -76,10 +110,22 @@ export class SearchQuery extends React.Component<IProps, IState> {
                     <LanguageSelect
                         name="languageId"
                         onChange={this._onLanguageChange}
-                        value={this.state.languageId}
+                        value={languageId}
                     />
+                    <a href="#" onClick={this._onShowMoreClick} className="Search--config__expand">
+                        More
+                        <TextIcon icon={showMore ? 'chevron-up' : 'chevron-down'} className="icon" />
+                    </a>
                 </div>
             </div>
+            {showMore && <React.Suspense fallback={null}>
+                <AdditionalSearchParametersAsync
+                    glossGroupId={glossGroupIds[0]}
+                    onGlossGroupIdChange={this._onGlossGroupIdChange}
+                    onSpeechIdChange={this._onSpeechIdChange}
+                    speechId={speechIds[0]}
+                />
+            </React.Suspense>}
         </form>;
     }
 
@@ -91,25 +137,63 @@ export class SearchQuery extends React.Component<IProps, IState> {
         this._beginSearch(/* queryChanged: */ true);
     }
 
-    private _onReverseChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    private _onShowMoreClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
+        ev.preventDefault();
+        let {
+            showMore,
+        } = this.state;
+
+        showMore = !showMore;
         this.setState({
-            reversed: ev.target.checked,
+            showMore,
         });
 
+        this._persistState('showMore', showMore);
+    }
+
+    private _onReverseChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+        const reversed = ev.target.checked;
+        this.setState({
+            reversed,
+        });
+
+        this._persistState('reversed', reversed);
         this._beginSearch(/* queryChanged: */ true);
     }
 
     private _onIncludeOldChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+        const includeOld = ev.target.checked;
         this.setState({
-            includeOld: ev.target.checked,
+            includeOld,
         });
 
+        this._persistState('includeOld', includeOld);
         this._beginSearch(/* queryChanged: */ false);
     }
 
     private _onLanguageChange = (ev: IComponentEvent<number>) => {
+        const languageId = ev.value;
         this.setState({
-            languageId: ev.value,
+            languageId,
+        });
+
+        this._persistState('languageId', languageId);
+        this._beginSearch(/* queryChanged: */ false);
+    }
+
+    private _onGlossGroupIdChange = (ev: IComponentEvent<number>) => {
+        const glossGroupIds = [ev.value || 0];
+        this.setState({
+            glossGroupIds,
+        });
+
+        this._persistState('glossGroupIds', glossGroupIds);
+        this._beginSearch(/* queryChanged: */ false);
+    }
+
+    private _onSpeechIdChange = (ev: IComponentEvent<number>) => {
+        this.setState({
+            speechIds: [ev.value || 0],
         });
 
         this._beginSearch(/* queryChanged: */ false);
@@ -134,8 +218,15 @@ export class SearchQuery extends React.Component<IProps, IState> {
      * changed.
      */
     private _search(queryChanged: boolean) {
+        const state = this.state;
         this.props.dispatch(
-            this._actions.search(this.state),
+            this._actions.search({
+                ...state,
+                // These hacks only accommodates for the fact that the UI does not currently support
+                // multiple selections.
+                glossGroupIds: state.glossGroupIds[0] === 0 ? [] : state.glossGroupIds,
+                speechIds: state.speechIds[0] === 0 ? [] : state.speechIds,
+            }),
         );
 
         // If the user has only made changes to the filtering functions (such as language selection),
@@ -146,6 +237,14 @@ export class SearchQuery extends React.Component<IProps, IState> {
                 this._actions.reloadGlossary(),
             );
         }
+    }
+
+    private async _persistState<T extends keyof IState>(key: T, value: IState[T]) {
+        const state = await this._stateCache.get();
+        this._stateCache.set({
+            ...state,
+            [key]: value,
+        });
     }
 }
 

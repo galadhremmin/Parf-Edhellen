@@ -100,19 +100,19 @@ class BookApiController extends Controller
      */
     public function find(Request $request)
     {
-        $this->validate($request, [
-            'word'        => 'required',
-            'include_old' => 'required|boolean',
-            'reversed'    => 'boolean',
-            'language_id' => 'numeric',
+        $this->validateBasicRequest($request, [
+            'reversed' => 'boolean'
         ]);
 
-        $word       = StringHelper::normalize( $request->input('word'), /* accentsMatter: */ false, /* retainWildcard: */ true );
-        $includeOld = boolval($request->input('include_old'));
-        $reversed   = $request->input('reversed') === true;
-        $languageId = intval($request->input('language_id'));
+        $glossGroupIds = $request->has('gloss_group_ids') ? $request->input('gloss_group_ids') : null;
+        $includeOld    = boolval($request->input('include_old'));
+        $languageId    = intval($request->input('language_id'));
+        $reversed      = $request->input('reversed') === true;
+        $speechIds     = $request->has('speech_ids') ? $request->input('speech_ids') : null;
+        $word          = StringHelper::normalize( $request->input('word'), /* accentsMatter: */ false, /* retainWildcard: */ true );
 
-        $keywords = $this->_glossRepository->getKeywordsForLanguage($word, $reversed, $languageId, $includeOld);
+        $keywords = $this->_glossRepository->getKeywordsForLanguage($word, $reversed, $languageId, $includeOld,
+            $speechIds, $glossGroupIds);
         return $keywords;
     }
 
@@ -124,19 +124,18 @@ class BookApiController extends Controller
      */
     public function translate(Request $request)
     {
-        $this->validate($request, [
-            'word'        => 'required|min:1|max:255',
-            'language_id' => 'sometimes|required|exists:languages,id',
-            'include_old' => 'sometimes|required|boolean',
+        $this->validateBasicRequest($request, [
             'inflections' => 'sometimes|boolean'
         ]);
 
-        $word = StringHelper::normalize( $request->input('word') );
-        $languageId = $request->has('language_id') ? intval($request->input('language_id')) : 0;
+        $glossGroupIds = $request->has('gloss_group_ids') ? $request->input('gloss_group_ids') : null;
         $includeOld = $request->has('include_old') ? boolval($request->input('include_old')) : true;
         $inflections = $request->has('inflections') && $request->input('inflections');
+        $languageId = $request->has('language_id') ? intval($request->input('language_id')) : 0;
+        $speechIds = $request->has('speech_ids') ? $request->input('speech_ids') : null;
+        $word = StringHelper::normalize( $request->input('word') );
 
-        return $this->doTranslate($word, $languageId, $inflections, $includeOld);
+        return $this->doTranslate($word, $languageId, $inflections, $includeOld, $speechIds, $glossGroupIds);
     }
 
     /**
@@ -154,5 +153,18 @@ class BookApiController extends Controller
         }
 
         return $gloss;
+    }
+
+    private function validateBasicRequest(Request $request, array $additional = [])
+    {
+        $this->validate($request, $additional + [
+            'gloss_group_ids'   => 'sometimes|array',
+            'gloss_group_ids.*' => 'sometimes|numeric',
+            'include_old'       => 'required|boolean',
+            'language_id'       => 'sometimes|required',
+            'speech_ids'        => 'sometimes|array',
+            'speech_ids.*'      => 'sometimes|numeric',
+            'word'              => 'required|min:1|max:255',
+        ]);
     }
 }

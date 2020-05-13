@@ -5,11 +5,13 @@ import {
 } from './SearchReducer._types';
 
 const SearchReducer = (state: ISearchState = {
+    glossGroupIds: [],
     includeOld: true,
     itemIndex: -1,
     languageId: 0,
     loading: false,
     reversed: false,
+    speechIds: [],
     word: '',
 }, action: ISearchReduxAction) => {
     switch (action.type) {
@@ -19,9 +21,11 @@ const SearchReducer = (state: ISearchState = {
                 itemIndex: -1,
                 loading: true,
 
+                glossGroupIds: action.glossGroupIds || [],
                 includeOld: action.includeOld,
                 languageId: action.languageId,
                 reversed: action.reversed,
+                speechIds: action.speechIds || [],
                 word: action.word,
             };
         case Actions.ReceiveSearchResults:

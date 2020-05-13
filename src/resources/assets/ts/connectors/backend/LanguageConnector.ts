@@ -23,9 +23,12 @@ export default class LanguageConnector implements ILanguageApi {
                     'Falling back to in-memory storage because LanguageConnector ' +
                     `failed to initialize with localStorage: ${e}.`,
                 );
+                cache = null;
             } finally {
                 // fallback - in-memory cache
-                cache = ExpiringCache.withMemoryStorage(this._load.bind(this), LocalStorageLanguages);
+                if (cache === null) {
+                    cache = ExpiringCache.withMemoryStorage(this._load.bind(this), LocalStorageLanguages);
+                }
             }
 
             this._cache = cache;
