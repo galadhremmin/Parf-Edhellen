@@ -61,12 +61,16 @@ export default class ContributionResourceApiConnector implements IContributionRe
         return this._api.post<void>(this._apiPath('substep-validate'), envelope);
     }
 
-    public validateTransformations(args: ISentenceFragmentEntity[]) {
-        const envelope = {
+    public validateTransformations(args: ISentenceFragmentEntity[], suggestForLanguageId: number = 0) {
+        const envelope: any = {
             fragments: args,
             morph: 'sentence',
             substepId: 2,
         };
+
+        if (suggestForLanguageId !== 0) {
+            envelope.suggestForLanguageId = suggestForLanguageId;
+        }
 
         return this._api.post<IValidateTransformationsResponse>(this._apiPath('substep-validate'), envelope);
     }

@@ -83,6 +83,7 @@
     "glaemscribe": "^1.2.0",
     "html-to-react": "^1.4.2",
     "moment": "^2.24.0",
+    "query-string": "^6.12.1",
     "react": "^16.13.0",
     "react-autosuggest": "^9.4.3",
     "react-dom": "^16.13.0",

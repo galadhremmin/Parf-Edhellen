@@ -103,6 +103,8 @@ class GlossRepository
             'g.speech_id'      => $speechIds,
             'g.gloss_group_id' => $glossGroupIds
         ];
+        $maximumNumberOfResources = config('ed.gloss_repository_maximum_results');
+
         return self::createGlossQuery($languageId, true /* = latest */, $includeOld, function($q) use($collections) {
                 foreach ($collections as $column => $collection) {
                     if (is_array($collection) && count($collection) > 0) {
@@ -111,6 +113,7 @@ class GlossRepository
                 }
                 return $q;
             })
+            ->limit($maximumNumberOfResources)
             ->get()
             ->toArray();
     }

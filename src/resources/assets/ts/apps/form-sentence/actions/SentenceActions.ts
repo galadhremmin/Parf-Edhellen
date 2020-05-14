@@ -5,7 +5,7 @@ import { ParagraphState } from '@root/apps/sentence-inspector/reducers/Fragments
 import convert from '@root/apps/sentence-inspector/utilities/TextConverter';
 import { DI, resolve } from '@root/di';
 import { setValidationErrors } from '@root/components/Form/Validation';
-import { ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
+import { ISentenceFragmentEntity, SentenceFragmentType } from '@root/connectors/backend/IBookApi';
 import IContributionResourceApi, { ISaveSentenceContributionEntity } from '@root/connectors/backend/IContributionResourceApi';
 import ILanguageApi from '@root/connectors/backend/ILanguageApi';
 import ValidationError from '@root/connectors/ValidationError';
@@ -173,11 +173,28 @@ export default class GlossActions {
             mergeFragments(newFragments, oldFragments);
 
             const api = this._contributionApi;
-            const transformations = await api.validateTransformations(newFragments);
+            const metadata = await api.validateTransformations(newFragments, languageId);
             const translations = parseTranslations(newFragments);
 
-            const textComponents = convert(null, transformations.transformations.latin, newFragments);
+            const textComponents = convert(null, metadata.transformations.latin, newFragments);
             const latinText = convertTransformationToString(textComponents, newFragments);
+
+            // Use suggestions for fragments that have not been assigned a gloss.
+            newFragments.forEach((f) => {
+                if (f.type !== SentenceFragmentType.Word || f.glossId) {
+                    return;
+                }
+
+                const fragment = f.fragment.toLocaleLowerCase();
+                const suggestion = metadata.suggestions[fragment];
+                if (suggestion !== undefined) {
+                    f.glossId = suggestion.glossId;
+                    f.speechId = suggestion.speechId;
+                    f.inflections = suggestion.inflectionIds.map((i) => ({
+                        inflectionId: i,
+                    }));
+                }
+            });
 
             dispatch({
                 dirty: false,
@@ -186,7 +203,7 @@ export default class GlossActions {
                 type: Actions.ReloadAllFragments,
                 sentenceFragments: newFragments,
                 sentenceTranslations: translations,
-                textTransformations: transformations.transformations,
+                textTransformations: metadata.transformations,
             });
         };
     }

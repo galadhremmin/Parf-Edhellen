@@ -3,6 +3,7 @@ import React from 'react';
 import {
     createTranslationRows,
 } from '../../utilities/translations';
+import NoSentencesAlert from '../NoSentencesAlert';
 import {
     IProps,
     IState,
@@ -53,7 +54,7 @@ export default class TranslationForm extends React.Component<IProps> {
         } = this.state;
 
         if (translationRows.length < 1) {
-            return <p>You need to complete at least once sentence before you can use this function.</p>;
+            return <NoSentencesAlert />;
         }
 
         return <>

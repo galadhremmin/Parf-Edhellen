@@ -11,6 +11,7 @@ import useFetch from './fetch';
 
 const InternalProps: (keyof IProps)[] = [
     'allowEmpty',
+    'emptyText',
     'loaderOfValues',
     'onChange',
     'textField',

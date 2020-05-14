@@ -30,3 +30,11 @@ export enum SecurityRole {
     User = 'ed-user',
     Administrator = 'ed-admin',
 }
+
+export const CommonPaths = {
+    contributions: {
+        gloss: '/dashboard/contribution/create/gloss',
+        sentence: '/dashboard/contribution/create/sentence',
+    },
+    dashboard: '/dashboard',
+};

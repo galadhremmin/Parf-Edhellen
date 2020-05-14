@@ -10,13 +10,18 @@ use App\Events\{
     SentenceCreated,
     SentenceEdited
 };
-use App\Models\{ 
-    Sentence, 
+use App\Models\{
+    Gloss,
+    Keyword,
+    Sentence,
     SentenceFragment,
     SentenceFragmentInflectionRel,
     Speech
 };
-use App\Helpers\SentenceHelper;
+use App\Helpers\{
+    SentenceHelper,
+    StringHelper
+};
 use Illuminate\Support\Collection;
 
 class SentenceRepository
@@ -224,5 +229,68 @@ class SentenceRepository
             $fragment->keywords()->delete();
             $fragment->delete();
         }
+    }
+
+    public function suggestFragmentGlosses(Collection $fragments, int $languageId)
+    {
+        $distinctFragments = $fragments->filter(function ($f) {
+            return $f->type === 0 && $f->gloss_id === 0; // = i.e. words
+        })->map(function ($f) {
+            return [
+                'normalized' => StringHelper::normalize($f->fragment, true),
+                'original'   => StringHelper::toLower($f->fragment)
+            ];
+        })->unique('normalized');
+
+        $maximumFragments = config('ed.sentence_repository_maximum_fragments');
+        if ($distinctFragments->count() > $maximumFragments) {
+            $distinctFragments->splice(0, $maximumFragments);
+        }
+
+        $suggestions = [];
+        foreach ($distinctFragments as $f) {
+            $inflectionIds = [];
+            $glossId = null;
+            $speechId = null;
+
+            $fragmentData = Keyword::where('normalized_keyword', $f['normalized'])
+                ->whereNotNull('sentence_fragment_id')
+                ->join('sentence_fragments', 'sentence_fragments.id', '=', 'keywords.sentence_fragment_id')
+                ->where('is_sense', 0)
+                ->select('sentence_fragment_id', 'speech_id', 'sentence_fragments.gloss_id')
+                ->first();
+
+            if ($fragmentData !== null) {
+                $inflectionIds = SentenceFragmentInflectionRel::where('sentence_fragment_id', $fragmentData->sentence_fragment_id) //
+                    ->pluck('inflection_id');
+                $glossId = $fragmentData->gloss_id;
+                $speechId = $fragmentData->speech_id;
+            }
+
+            if ($glossId === null) {
+                $gloss = Gloss::active()
+                    ->join('words', 'words.id', '=', 'glosses.word_id')
+                    ->where('language_id', $languageId)
+                    ->where('normalized_word', $f['normalized'])
+                    ->orderBy('glosses.speech_id', 'desc')
+                    ->select('glosses.id', 'glosses.speech_id')
+                    ->first();
+                
+                if ($gloss !== null) {
+                    $glossId = $gloss->id;
+                    $speechId = $gloss->speech_id;
+                }
+            }
+
+            if ($glossId !== null) {
+                $suggestions[$f['original']] = [
+                    'gloss_id' => $glossId,
+                    'speech_id' => $speechId,
+                    'inflection_ids' => $inflectionIds
+                ];
+            }
+        }
+
+        return $suggestions;
     }
 }

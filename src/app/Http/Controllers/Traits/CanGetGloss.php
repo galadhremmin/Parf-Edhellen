@@ -7,6 +7,7 @@ use App\Repositories\{
     DiscussRepository,
     GlossRepository
 };
+use Illuminate\Http\Request;
 
 trait CanGetGloss
 {
@@ -65,5 +66,17 @@ trait CanGetGloss
         }
 
         return $glosses;
+    }
+
+    public function validateGetGlossConfiguration(Request $request)
+    {
+        return $this->validate($request, [
+            'gloss_group_ids'   => 'sometimes|array',
+            'gloss_group_ids.*' => 'sometimes|numeric',
+            'include_old'       => 'sometimes|boolean',
+            'language_id'       => 'sometimes|numeric',
+            'speech_ids'        => 'sometimes|array',
+            'speech_ids.*'      => 'sometimes|numeric'
+        ]);
     }
 }

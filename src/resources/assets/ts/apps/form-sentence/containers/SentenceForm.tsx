@@ -103,7 +103,7 @@ function SentenceForm(props: IProps) {
                 onParseTextRequest={onParseTextRequest}
                 onTextChange={onTextChange} />
         </Panel>
-        <Panel title="Translations">
+        <Panel title="Translations (optional)">
             <TranslationForm onTranslationChange={onTranslationChange}
                 translations={sentenceTranslations}
                 paragraphs={sentenceParagraphs}
