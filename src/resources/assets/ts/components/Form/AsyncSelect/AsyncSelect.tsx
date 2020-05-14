@@ -11,6 +11,7 @@ import useFetch from './fetch';
 
 const InternalProps: (keyof IProps)[] = [
     'allowEmpty',
+    'emptyText',
     'loaderOfValues',
     'onChange',
     'textField',
@@ -24,8 +25,9 @@ function AsyncSelect<T = any>(props: IProps<T>) {
 
     const {
         allowEmpty,
-        name,
+        emptyText,
         loaderOfValues,
+        name,
         onChange,
         textField,
         value,
@@ -50,7 +52,7 @@ function AsyncSelect<T = any>(props: IProps<T>) {
         id={name}
         onChange={_onChange}
         value={getNativeValue(value, valueField as string)}>
-        {allowEmpty && <option key="empty" value=""></option>}
+        {allowEmpty && <option key="empty" value="">{emptyText || ''}</option>}
         {values.map((option) => {
             const optionValue = option[valueField] as any;
             return <option key={optionValue} value={optionValue}>{option[textField]}</option>;

@@ -1,5 +1,27 @@
 @import "../../../_scss/_variables";
 
+.Search {
+
+  .Search--config__language {
+    text-align: center;
+  }
+  .Search--config__expand {
+    margin-left: 1rem;
+    color: inherit;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    text-decoration: none;
+    > span:last-child {
+      margin-left: 0.2rem;
+      text-decoration: underline;
+    }
+    > .icon {
+      pointer-events: none;
+      margin-left: 0.3rem;
+    }
+  }
+}
+
 #ed-search-component {
   min-height: 96px;
 
@@ -27,9 +49,6 @@
   }
   .search-result-navigator {
     margin-bottom: 5px;
-  }
-  .search-language-select {
-    text-align: center;
   }
 
   /*

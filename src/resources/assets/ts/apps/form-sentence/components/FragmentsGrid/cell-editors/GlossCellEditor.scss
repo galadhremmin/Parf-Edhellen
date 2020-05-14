@@ -3,6 +3,17 @@
 .GlossCellEditor {
     display: flex;
     flex-direction: column;
+    height: 250px;
+}
+
+.GlossCellEditor--input {
+    height: 40px;
+    padding: 0.3rem;
+}
+
+.GlossCellEditor--scroller {
+    height: 210px;
+    overflow-y: scroll;
 }
 
 .GlossCellEditor--suggestions {

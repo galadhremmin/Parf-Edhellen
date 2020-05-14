@@ -1,3 +1,4 @@
+import queryString from 'query-string';
 import { Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -13,6 +14,7 @@ import { DI, resolve } from '@root/di';
 import { stringHash } from '@root/utilities/func/hashing';
 import { mapArray } from '@root/utilities/func/mapper';
 import { capitalize } from '@root/utilities/func/string-manipulation';
+import { toSnakeCase } from '@root/utilities/func/snake-case';
 
 import { RootReducer } from '../reducers';
 import { ISearchAction } from '../reducers/SearchReducer._types';
@@ -140,8 +142,16 @@ export default class SearchActions {
      */
     public glossary(args: ILoadGlossaryAction) {
         return async (dispatch: ThunkDispatch<any, any, any>, getState: () => RootReducer) => {
-            let includeOld = getState().search.includeOld;
-            let languageId = getState().search.languageId;
+            const state = getState();
+
+            let glossGroupIds = state.search.glossGroupIds;
+            let includeOld    = state.search.includeOld;
+            let languageId    = state.search.languageId;
+            let speechIds     = state.search.speechIds;
+
+            if (args.glossGroupIds !== undefined) {
+                glossGroupIds = args.glossGroupIds;
+            }
 
             if (args.includeOld !== undefined) {
                 includeOld = args.includeOld;
@@ -149,6 +159,10 @@ export default class SearchActions {
 
             if (args.languageId !== undefined) {
                 languageId = args.languageId;
+            }
+
+            if (args.speechIds !== undefined) {
+                speechIds = args.speechIds;
             }
 
             const word = args.searchResult.originalWord || //
@@ -164,10 +178,12 @@ export default class SearchActions {
             dispatch(this.selectSearchResult(args.searchResult));
 
             const request = {
+                glossGroupIds,
                 includeOld,
                 inflections: true,
                 languageId,
                 normalizedWord: args.searchResult.normalizedWord,
+                speechIds,
                 word,
             };
             await this._loadGlossary(dispatch, request, languageShortName, args.updateBrowserHistory);
@@ -255,7 +271,30 @@ export default class SearchActions {
 
         // Browser specific: build the browser's new title and its new address.
         const title = `${capitalizedWord} - Parf Edhellen`;
-        const address = `/w/${uriEncodedWord}` + (languageShortName ? `/${languageShortName}` : '');
+        let address = `/w/${uriEncodedWord}` + (languageShortName ? `/${languageShortName}` : '');
+
+        // embellish the address with configuration values that are not supported by the native URL format
+        const GlossaryUrlSupportedConfiguration: (keyof IGlossaryRequest)[] = [
+            'inflections', 'languageId', 'normalizedWord', 'word',
+        ];
+        const unsupportedConfigs = Object.keys(args) //
+            .filter((key: keyof IGlossaryRequest) => {
+                // Filter out all supported configurations
+                return ! GlossaryUrlSupportedConfiguration.includes(key);
+            }).reduce((carry: any, key: keyof IGlossaryRequest) => {
+                const value = args[key];
+                // tslint:disable-next-line: no-bitwise
+                carry[toSnakeCase(key)] = typeof value === 'boolean' ? ~~value : value;
+                return carry;
+            }, {});
+
+        if (Object.keys(unsupportedConfigs).length > 0) {
+            address += '?' + queryString.stringify(unsupportedConfigs, {
+                arrayFormat: 'bracket',
+                skipEmptyString: true,
+                skipNull: true,
+            });
+        }
 
         // When navigating using the browser's back and forward buttons,
         // the state needn't be modified.

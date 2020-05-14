@@ -11,7 +11,8 @@ export type IdValue = string | number;
 export type ValueType = 'id' | 'entity';
 
 export interface IProps<T = any> extends IComponentProps<T | IdValue> {
-    allowEmpty: boolean;
+    allowEmpty?: boolean;
+    emptyText?: string;
     loaderOfValues: ValueLoader<T>;
     textField: keyof T;
     valueField: AllowedNames<T, IdValue>;

@@ -49,5 +49,11 @@ return [
         App\Models\Gloss::class           => App\Http\Discuss\Contexts\GlossContext::class
     ],
     'forum_resultset_max_length' => 10,
-    'forum_thread_resultset_max_length' => 15
+    'forum_thread_resultset_max_length' => 15,
+
+    // sentence repository configuration
+    'sentence_repository_maximum_fragments' => 100,
+    
+    // gloss repository configuration
+    'gloss_repository_maximum_results' => 1000
 ];

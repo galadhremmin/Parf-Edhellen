@@ -1,10 +1,12 @@
 import { IGlossGroup } from './IGlossResourceApi';
 
 export interface IFindRequest {
+    glossGroupIds?: number[];
     includeOld?: boolean;
     languageId?: number;
     word?: string;
     reversed?: boolean;
+    speechIds?: number[];
 }
 
 export interface IFindEntity {
@@ -16,10 +18,12 @@ export interface IFindEntity {
 export type FindResponse = IFindEntity[];
 
 export interface IGlossaryRequest {
+    glossGroupIds?: number[];
     includeOld: boolean;
     inflections?: boolean;
     languageId?: number;
     normalizedWord?: string;
+    speechIds?: number[];
     word: string;
 }
 
