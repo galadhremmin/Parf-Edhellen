@@ -144,13 +144,11 @@ function Discuss(props: IProps) {
 
     return <>
         {posts.map(
-            (post) => <>
-                <Post key={post.id}
-                    onReferenceLinkClick={onReferenceLinkClick}
-                    post={post}
-                    renderToolbar={_renderToolbar}
-                />
-            </>,
+            (post) => <Post key={post.id}
+                onReferenceLinkClick={onReferenceLinkClick}
+                post={post}
+                renderToolbar={_renderToolbar}
+            />,
         )}
         <aside ref={formRef} className="discuss-body__toolbar--primary">
             {newPostEnabled

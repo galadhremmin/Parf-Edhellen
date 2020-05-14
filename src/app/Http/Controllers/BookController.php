@@ -18,9 +18,15 @@ class BookController extends Controller
 
     public function pageForWord(Request $request, string $word, string $language = null)
     {
-        $language = $this->getLanguageByShortName($language);
-        $model = $this->translate($word, $language ? $language->id : 0, true);
-        
+        $this->validateGetGlossConfiguration($request);
+
+        $language     = $this->getLanguageByShortName($language);
+        $includeOld   = $request->has('include_old')     ? $request->input('include_old') : true;
+        $glossGroupId = $request->has('gloss_group_ids') ? $request->input('gloss_group_ids') : null;
+        $speechIds    = $request->has('speech_ids')      ? $request->input('speech_ids') : null;
+
+        $model = $this->translate($word, $language ? $language->id : 0, true, $includeOld, $speechIds, $glossGroupId);
+
         return view('book.page', [
             'payload' => $model
         ]);

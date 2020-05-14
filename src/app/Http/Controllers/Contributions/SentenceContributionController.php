@@ -95,7 +95,7 @@ class SentenceContributionController extends Controller implements IContribution
 
         $fragmentData = $this->createFragmentDataFromPayload($payload);
         $model = array_merge($fragmentData, [
-            'review' => $contribution,
+            'review'   => $contribution,
             'sentence' => $sentence
         ]);
 
@@ -245,10 +245,22 @@ class SentenceContributionController extends Controller implements IContribution
     private function createTransformations(Request $request)
     {
         $this->validateFragmentsInRequest($request, false);
+        $suggestionMap = $request->validate([
+            'suggest_for_language_id' => 'sometimes|numeric|exists:languages,id'
+        ]);
+
         $sentence = new Sentence();
         $fragmentsMap = $this->mapSentenceFragments($sentence, $request);
         $transformations = $this->_sentenceHelper->buildSentences($fragmentsMap['fragments']);
+        $suggestions = [];
+
+        if (isset($suggestionMap['suggest_for_language_id'])) {
+            $languageId = intval($suggestionMap['suggest_for_language_id']);
+            $suggestions = $this->_sentenceRepository->suggestFragmentGlosses($fragmentsMap['fragments'], $languageId);
+        }
+
         return [
+            'suggestions'     => (object) $suggestions,
             'transformations' => $transformations
         ];
     }

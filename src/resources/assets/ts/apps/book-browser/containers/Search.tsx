@@ -113,8 +113,13 @@ export class SearchQuery extends React.Component<IProps, IState> {
                         value={languageId}
                     />
                     <a href="#" onClick={this._onShowMoreClick} className="Search--config__expand">
-                        More
-                        <TextIcon icon={showMore ? 'chevron-up' : 'chevron-down'} className="icon" />
+                        {showMore ? <>
+                            <TextIcon icon="minus-sign" />
+                            <span>Less options</span>
+                        </> : <>
+                            <TextIcon icon="plus-sign" />
+                            <span>More options</span>
+                        </>}
                     </a>
                 </div>
             </div>
@@ -139,16 +144,27 @@ export class SearchQuery extends React.Component<IProps, IState> {
 
     private _onShowMoreClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
+        const state = this.state;
         let {
             showMore,
-        } = this.state;
+        } = state;
 
         showMore = !showMore;
-        this.setState({
-            showMore,
-        });
 
-        this._persistState('showMore', showMore);
+        const nextState: Partial<IState> = {
+            showMore,
+        };
+        if (! showMore) {
+            // reset default configuration
+            nextState.glossGroupIds = [0];
+            nextState.speechIds     = [0];
+        }
+
+        this.setState(nextState);
+        this._persistState({
+            ...state,
+            ...nextState,
+        });
     }
 
     private _onReverseChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
@@ -239,12 +255,17 @@ export class SearchQuery extends React.Component<IProps, IState> {
         }
     }
 
-    private async _persistState<T extends keyof IState>(key: T, value: IState[T]) {
+    private async _persistState<T extends keyof IState>(keyOrState: T | IState, value?: IState[T]) {
         const state = await this._stateCache.get();
-        this._stateCache.set({
-            ...state,
-            [key]: value,
-        });
+
+        if (typeof keyOrState === 'string') {
+            this._stateCache.set({
+                ...state,
+                [keyOrState]: value,
+            });
+        } else {
+            this._stateCache.set(keyOrState);
+        }
     }
 }
 

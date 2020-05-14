@@ -157,14 +157,9 @@ class BookApiController extends Controller
 
     private function validateBasicRequest(Request $request, array $additional = [])
     {
+        $this->validateGetGlossConfiguration($request);
         $this->validate($request, $additional + [
-            'gloss_group_ids'   => 'sometimes|array',
-            'gloss_group_ids.*' => 'sometimes|numeric',
-            'include_old'       => 'required|boolean',
-            'language_id'       => 'sometimes|required',
-            'speech_ids'        => 'sometimes|array',
-            'speech_ids.*'      => 'sometimes|numeric',
-            'word'              => 'required|min:1|max:255',
+            'word' => 'required|min:1|max:255',
         ]);
     }
 }

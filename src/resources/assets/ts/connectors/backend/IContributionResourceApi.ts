@@ -20,7 +20,18 @@ export interface IContributionSaveResponse {
     url: string;
 }
 
+export interface IFragmentSuggestion {
+    glossId: number;
+    inflectionIds: number[];
+    speechId: number;
+}
+
+export interface IFragmentSuggestions {
+    [fragment: string]: IFragmentSuggestion;
+}
+
 export interface IValidateTransformationsResponse {
+    suggestions?: IFragmentSuggestions;
     transformations: ITextTransformationsMap;
 }
 
@@ -32,7 +43,7 @@ export interface ISentenceContributionApi {
     saveSentence(args: IContribution<ISaveSentenceContributionEntity>): Promise<IContributionSaveResponse>;
     validateSentenceMetadata(args: ISentenceEntity): Promise<void>;
     validateSentenceFragments(args: ISentenceFragmentEntity[]): Promise<void>;
-    validateTransformations(args: ISentenceFragmentEntity[]): Promise<IValidateTransformationsResponse>;
+    validateTransformations(args: ISentenceFragmentEntity[], suggestForLanguageId?: number): Promise<IValidateTransformationsResponse>;
 }
 
 export default interface IContributionResourceApi extends IGlossContributionApi, ISentenceContributionApi {

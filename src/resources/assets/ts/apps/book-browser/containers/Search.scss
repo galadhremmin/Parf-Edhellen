@@ -1,11 +1,6 @@
 @import "../../../_scss/_variables";
 
 .Search {
-  min-height: 96px;
-
-  @media (max-width: 430px) {
-    min-height: 115px;
-  }
 
   .Search--config__language {
     text-align: center;
@@ -14,8 +9,11 @@
     margin-left: 1rem;
     color: inherit;
     font-size: 0.8rem;
-    &:hover, &:active, &:focus {
-      text-decoration: none;
+    white-space: nowrap;
+    text-decoration: none;
+    > span:last-child {
+      margin-left: 0.2rem;
+      text-decoration: underline;
     }
     > .icon {
       pointer-events: none;
@@ -25,6 +23,11 @@
 }
 
 #ed-search-component {
+  min-height: 96px;
+
+  @media (max-width: 430px) {
+    min-height: 115px;
+  }
 
   .search-result-presenter {
     margin-bottom: 20px;

@@ -14,7 +14,7 @@ import './GlossCellEditor.scss';
 export default class GlossCellEditor extends PopupComponent implements ICellEditorComp {
     private static TEMPLATE = `<div role="presentation" class="GlossCellEditor">
         <input class="GlossCellEditor--input" type="text" list="ag-input-available-values" />
-        <ul class="GlossCellEditor--suggestions"></ul>
+        <div class="GlossCellEditor--scroller"><ul class="GlossCellEditor--suggestions"></ul></div>
     </div>`;
 
     /**
@@ -27,6 +27,7 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
 
     private _editorParams: IFragmentGridMetadata;
     private _inputElement: HTMLInputElement;
+    private _suggestionsScroller: HTMLDivElement;
     private _suggestionListElement: HTMLUListElement;
 
     protected get resolveGloss() {
@@ -44,8 +45,9 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
     public init(params: ICellEditorParams): void {
         this._editorParams = params as IFragmentGridMetadata;
 
-        this._inputElement          = this.getGui().querySelector<HTMLInputElement>('input');
-        this._suggestionListElement = this.getGui().querySelector<HTMLUListElement>('ul');
+        this._inputElement          = this.getGui().querySelector<HTMLInputElement>('.GlossCellEditor--input');
+        this._suggestionsScroller   = this.getGui().querySelector<HTMLDivElement>('.GlossCellEditor--scroller');
+        this._suggestionListElement = this.getGui().querySelector<HTMLUListElement>('.GlossCellEditor--suggestions');
 
         let value = params.value;
 
@@ -117,11 +119,15 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
 
         const html: string[] = [];
 
-        suggestions.forEach((s) => {
+        suggestions.forEach((s, i) => {
+            let source = s.source;
+            if (source?.length > 40) {
+                source = source.substr(0, 40)+ '...';
+            }
             html.push(
                 `<li>
                     <a href="#" class="GlossCellEditor--suggestion" data-gloss-id="${s.id}">
-                        <strong>${s.word}</strong> <i>${s.type || ''}</i> “${s.translation}” [${s.source || 'unknown source'}] ${s.glossGroupName} (${s.id})
+                        <strong>${s.word}</strong> <i>${s.type || ''}</i> “${s.translation}” [${source || 'unknown source'}] ${s.glossGroupName} (${s.id}, #${i + 1})
                     </a>
                 </li>`,
             );
@@ -208,6 +214,7 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
         const {
             _suggestionIndex: index,
             _suggestionListElement: list,
+            _suggestionsScroller: container,
         } = this;
 
         const className = 'GlossCellEditor--selected';
@@ -217,9 +224,11 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
             existingElement.classList.remove(className);
         }
 
-        const selectElement = list.querySelector(`li:nth-child(${index})`);
+        const selectElement = list.querySelector<HTMLLIElement>(`li:nth-child(${index})`);
         if (selectElement) {
             selectElement.classList.add(className);
+            // Make sure that the element is visible in the viewport
+            container.scrollTop = selectElement.offsetTop - list.offsetTop;
         }
     };
 
@@ -232,6 +241,7 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
         if (index > -1) {
             this._suggestionIndex = index + 1; // index is 1-based.
             this._applySuggestion();
+            this._editorParams.api.stopEditing(false); // close the editor as the customer has made their choice.
         }
     };
 }
