@@ -1,9 +1,36 @@
+$default-margin: 0.5rem;
+$ui-reflow-breakpoint: 520px;
+$ui-reflow-breakpoint-sm: 408px;
+
 .AdditionalSearchParameters {
-    text-align: center;
-    > select {
-        margin-left: 1rem;
-        &:first-child {
-            margin-left: 0;
+    text-align: right;
+    margin-top: 0.1rem;
+
+    @media (max-width: $ui-reflow-breakpoint) {
+        text-align: center;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        > div {
+            flex-grow: 1;
+            &:first-child {
+                margin-right: $default-margin/2;
+            }
+            &:last-child {
+                margin-left: $default-margin/2;
+            }
+            > select {
+                width: 100%;
+            }
+        }
+    }
+    @media (min-width: $ui-reflow-breakpoint + 1) {
+        > div {
+            display: inline-block;
+            margin-left: $default-margin;
+            &:first-child {
+                margin-left: 0;
+            }
         }
     }
 }
