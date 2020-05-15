@@ -20,7 +20,7 @@ Route::group([
         'only' => ['index']
     ]);
     Route::resource('sentence', 'SentenceController', [
-        'only' => ['index']
+        'only' => ['index', 'destroy']
     ]);
     Route::resource('system-error', 'SystemErrorController', [
         'only' => ['index']
