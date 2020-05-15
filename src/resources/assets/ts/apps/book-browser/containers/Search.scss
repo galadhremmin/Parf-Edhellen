@@ -1,9 +1,9 @@
 @import "../../../_scss/_variables";
 
 .Search {
-
+  text-align: right;
   .Search--config__language {
-    text-align: center;
+    display: inline-block;
   }
   .Search--config__expand {
     margin-left: 1rem;
@@ -23,10 +23,10 @@
 }
 
 #ed-search-component {
-  min-height: 96px;
+  min-height: 116px;
 
   @media (max-width: 430px) {
-    min-height: 115px;
+    min-height: 135px;
   }
 
   .search-result-presenter {
