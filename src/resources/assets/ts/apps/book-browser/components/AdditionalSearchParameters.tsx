@@ -15,20 +15,24 @@ function AdditionalSearchParameters(props: IProps) {
     } = props;
 
     return <div className="AdditionalSearchParameters">
-        <SpeechSelect
-            allowEmpty={true}
-            emptyText="Any parts of speech"
-            name="speech"
-            onChange={onSpeechIdChange}
-            value={speechId}
-        />
-        <GlossGroupSelect
-            allowEmpty={true}
-            emptyText="Any group"
-            name="gloss-group"
-            onChange={onGlossGroupIdChange}
-            value={glossGroupId}
-        />
+        <div>
+            <SpeechSelect
+                allowEmpty={true}
+                emptyText="Any parts of speech"
+                name="speech"
+                onChange={onSpeechIdChange}
+                value={speechId}
+            />
+        </div>
+        <div>
+            <GlossGroupSelect
+                allowEmpty={true}
+                emptyText="Any group"
+                name="gloss-group"
+                onChange={onGlossGroupIdChange}
+                value={glossGroupId}
+            />
+        </div>
     </div>
 }
 

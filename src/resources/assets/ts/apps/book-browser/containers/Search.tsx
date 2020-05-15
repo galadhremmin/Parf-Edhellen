@@ -92,35 +92,37 @@ export class SearchQuery extends React.Component<IProps, IState> {
                 </div>
             </div>
             <div className="row Search--config">
-                <div className="Search--config__language">
+                <div className="col-md-12">
                     <label className="inline input-sm">
                         <input checked={reversed}
                             name="reversed"
                             onChange={this._onReverseChange}
                             type="checkbox"
-                        /> Reversed
+                        /> Reverse
                     </label>
                     <label className="inline input-sm">
                         <input checked={includeOld}
                             name="excludeOld"
                             onChange={this._onIncludeOldChange}
                             type="checkbox"
-                        /> Old sources
+                        /> Incl. outdated
                     </label>
-                    <LanguageSelect
-                        name="languageId"
-                        onChange={this._onLanguageChange}
-                        value={languageId}
-                    />
-                    <a href="#" onClick={this._onShowMoreClick} className="Search--config__expand">
-                        {showMore ? <>
-                            <TextIcon icon="minus-sign" />
-                            <span>Less options</span>
-                        </> : <>
-                            <TextIcon icon="plus-sign" />
-                            <span>More options</span>
-                        </>}
-                    </a>
+                    <div className="Search--config__language">
+                        <LanguageSelect
+                            name="languageId"
+                            onChange={this._onLanguageChange}
+                            value={languageId}
+                        />
+                        <a href="#" onClick={this._onShowMoreClick} className="Search--config__expand">
+                            {showMore ? <>
+                                <TextIcon icon="minus-sign" />
+                                <span>Less options</span>
+                            </> : <>
+                                <TextIcon icon="plus-sign" />
+                                <span>More options</span>
+                            </>}
+                        </a>
+                    </div>
                 </div>
             </div>
             {showMore && <React.Suspense fallback={null}>
