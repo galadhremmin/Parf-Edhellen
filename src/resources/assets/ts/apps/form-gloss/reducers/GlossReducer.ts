@@ -37,6 +37,7 @@ const GlossReducer = (state: IGlossState = InitialState, action: IGlossAction) =
             return mapper<typeof action['gloss'], IGlossState>({
                 account: 'account',
                 comments: (gloss) => gloss.comments || '',
+                contributionId: 'contributionId',
                 etymology: 'etymology',
                 externalId: 'externalId',
                 glossDetails: 'glossDetails',

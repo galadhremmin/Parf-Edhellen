@@ -23,9 +23,9 @@ module.exports = {
     'style-sentence': `${sourcePath}/apps/sentence/index.scss`,
   },
   output: {
+    chunkFilename: `[name].js`,
     filename: '[name].js',
     path: outputPath,
-    chunkFilename: '[name].js',
     publicPath: `${publicPath}/`,
   },
   optimization: {
@@ -51,7 +51,7 @@ module.exports = {
 
         glaemscribe: {
           name(module, chunks, cacheGroupKey) {
-            const moduleFileName = module.identifier().split('/').reduceRight(item => item);
+            const moduleFileName = module.identifier().split('/').reduceRight(item => item).replace(/\.js$/, '');
             const type = moduleFileName.includes('.cst.') ? 'charset' : 'mode';
             return [cacheGroupKey, type, moduleFileName].join('.');
           },
@@ -158,7 +158,8 @@ module.exports = {
       // Options similar to the same options in webpackOptions.output
       // both options are optional
       filename: "[name].css",
-      chunkFilename: "[id].css"
+      chunkFilename: "[id].css",
+      ignoreOrder: true,
     }),
     // new AsyncChunkNames(),
     new WebpackNotifierPlugin(),

@@ -2,8 +2,14 @@ import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { connect } from 'react-redux';
 
 import { ReduxThunkDispatch } from '@root/_types';
+import {
+    DI,
+    resolve,
+} from '@root/di';
 import { fireEvent } from '@root/components/Component';
 import Panel from '@root/components/Panel';
+import Quote from '@root/components/Quote';
+import StaticAlert from '@root/components/StaticAlert';
 import TextIcon from '@root/components/TextIcon';
 import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
@@ -17,6 +23,7 @@ import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
 function SentenceForm(props: IProps) {
     const {
+        bookApi,
         errors,
         onFragmentChange,
         onMetadataChange,
@@ -33,6 +40,7 @@ function SentenceForm(props: IProps) {
     } = props;
 
     const [ submitted, setSubmitted ] = useState(false);
+    const [ currentSentenceName, setCurrentSentenceName ] = useState(null);
     const errorContainer = useRef<HTMLDivElement>();
 
     const sentenceId = sentence.id;
@@ -48,6 +56,14 @@ function SentenceForm(props: IProps) {
         errors,
         submitted,
     ]);
+
+    useEffect(() => {
+        if (bookApi) {
+            bookApi.sentence({ id: sentenceId }).then((s) => {
+                setCurrentSentenceName(s.sentence.name);
+            });
+        }
+    }, [ sentenceId ]);
 
     const _onSubmit = useCallback((ev) => {
         ev.preventDefault();
@@ -88,6 +104,12 @@ function SentenceForm(props: IProps) {
     ]);
 
     return <form method="post" action="." onSubmit={_onSubmit}>
+        {(sentenceId && currentSentenceName) && <StaticAlert type="info">
+            <TextIcon icon="info-sign" />{' '}
+            You are proposing a change to the phrase{' '}
+            <Quote>{currentSentenceName}</Quote>{' '}
+            ({sentence.id}).
+        </StaticAlert>}
         <div ref={errorContainer}>
             <ValidationErrorAlert error={errors} />
         </div>
@@ -125,6 +147,7 @@ function SentenceForm(props: IProps) {
 }
 
 SentenceForm.defaultProps = {
+    bookApi: resolve(DI.BookApi),
     sentence: null,
     sentenceFragments: [],
 } as Partial<IProps>;

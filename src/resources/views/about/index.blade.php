@@ -36,7 +36,8 @@ a Tolkien-fan, and language enthusiast.
 </dl>
 <p></p>
 <p>
-  We use <em>Glaemscribe</em> by <a href="https://www.jrrvf.com/glaemscrafu/english/glaemscribe.html" target="_blank">Benjamin Babut</a> for transcriptions. 
+  We use <em>Glaemscribe</em> by <a href="https://www.jrrvf.com/glaemscrafu/english/glaemscribe.html" target="_blank">Benjamin Babut</a> for transcriptions.
+  The photograph used for the main menu was taken by <a href="https://www.pexels.com/photo/evening-foggy-forest-frost-376368/" target="_blank">VisionPic .net</a>.
 </p>
 
 <a name="search"></a>

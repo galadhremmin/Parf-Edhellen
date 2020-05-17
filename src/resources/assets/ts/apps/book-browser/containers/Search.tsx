@@ -19,6 +19,7 @@ import {
 } from './Search._types';
 
 import './Search.scss';
+import { excludeProps } from '@root/utilities/func/props';
 
 const AdditionalSearchParametersAsync = React.lazy(() => import('../components/AdditionalSearchParameters'));
 
@@ -52,7 +53,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
         this._beginSearch = debounce(500, this._search);
         this._stateCache = Cache.withLocalStorage(
             () => Promise.resolve(defaultState),
-            'ed.search-state',
+            'ed.search-state.v2',
         );
     }
 
@@ -163,10 +164,12 @@ export class SearchQuery extends React.Component<IProps, IState> {
         }
 
         this.setState(nextState);
-        this._persistState({
-            ...state,
-            ...nextState,
-        });
+        this._persistState(
+            excludeProps({
+                ...state,
+                ...nextState,
+            }, ['word']),
+        );
     }
 
     private _onReverseChange = (ev: React.ChangeEvent<HTMLInputElement>) => {

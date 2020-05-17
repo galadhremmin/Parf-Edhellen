@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Traits;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
-use App\Models\{ 
+use App\Models\{
+    Account,
     Sentence, 
     SentenceFragment,
     SentenceFragmentInflectionRel,
@@ -18,8 +19,8 @@ trait CanMapSentence
         $sentence->name             = $request->input('name');
         $sentence->source           = $request->input('source');
         $sentence->description      = $request->input('description');
+        $sentence->account_id       = intval($request->input('account.id'));
         $sentence->long_description = $request->input('long_description') ?? null;
-        $sentence->account_id       = intval($request->input('account_id'));
         $sentence->language_id      = intval($request->input('language_id'));
         $sentence->is_neologism     = intval($request->input('is_neologism'));
         $sentence->is_approved      = 1; // always approved by default

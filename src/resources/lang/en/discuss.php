@@ -3,7 +3,7 @@
 return [
     'title' => 'Discuss',
 
-    'community.title' => 'Community',
+    'community.title' => 'Account',
     'community.profile' => 'Profile',
 
     'member-list.title' => 'Contributors',
