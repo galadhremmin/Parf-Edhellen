@@ -9,7 +9,7 @@ module.exports = merge(baseConfig, {
         minimizer: [
             new TerserPlugin({
                 parallel: true,
-                // sourceMap: false,
+                sourceMap: false,
                 terserOptions: {
                     keep_classnames: true,
                     keep_fnames: true,

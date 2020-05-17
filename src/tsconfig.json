@@ -2,10 +2,10 @@
     "compilerOptions": {
         "baseUrl": "./resources/assets/ts",
         "outDir": "./public/build",
-        "sourceMap": false,
+        "sourceMap": true,
         "noImplicitAny": true,
         "module": "esnext",
-        "target": "ES2016",
+        "target": "ES2017",
         "jsx": "react",
         "allowSyntheticDefaultImports": true,
         "downlevelIteration": false,
