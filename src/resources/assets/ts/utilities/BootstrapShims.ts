@@ -15,6 +15,8 @@ const toggleClick = (subject: HTMLElement, ev: MouseEvent) => {
     targets.forEach((target: HTMLElement) => {
         target.classList.toggle(className);
     });
+
+    subject.classList.toggle('open');
 };
 
 const hookToggle = (toggle: HTMLElement) => {

@@ -168,7 +168,7 @@ class GlossContributionController extends Controller implements IContributionCon
 
     public function validateBeforeSave(Request $request, int $id = 0)
     {
-        $this->validateGlossInRequest($request, $id, true);
+        $this->validateGlossInRequest($request, $id);
         return true;
     }
 

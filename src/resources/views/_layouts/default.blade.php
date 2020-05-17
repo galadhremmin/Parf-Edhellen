@@ -24,7 +24,7 @@
 </head>
 <body class="{{ $isAdmin ? 'ed-admin' : ($isAdmin === false ? 'ed-user' : 'ed-anonymous') }}" data-account-id="{{ $user ? $user->id : '0' }}" data-v="{{ config('ed.version') }}">
   <div class="head-content">
-    <aside class="navbar navbar-default navbar-static-top" role="navigation">
+    <aside class="navbar navbar-inverse navbar-static-top" id="site-main-menu" role="navigation">
       <div class="container">
         <div class="navbar-header">
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -89,7 +89,6 @@
                   </a>
                 </li>
                 @endif
-                <li class="divider" role="separator"></li>
                 <li class="{{ active('discuss.members') }}">
                   <a href="{{ route('discuss.members') }}">
                     @lang('discuss.member-list.title')

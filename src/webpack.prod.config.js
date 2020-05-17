@@ -3,12 +3,13 @@ const baseConfig = require('./webpack.config');
 const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = merge(baseConfig, {
+    devtool: false,
     optimization: {    
         minimize: true,
         minimizer: [
             new TerserPlugin({
                 parallel: true,
-                sourceMap: false,
+                // sourceMap: false,
                 terserOptions: {
                     keep_classnames: true,
                     keep_fnames: true,

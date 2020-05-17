@@ -40,7 +40,7 @@ const GlossTitle: React.SFC<IProps> = (props: IProps) => {
                 {gloss.inflectedWord.speech}
             </span>
             {gloss.inflectedWord.inflections && gloss.inflectedWord.inflections.map(
-                (inflection) => <span key={inflection.inflectionId} className="gloss-word__inflection__name">
+                (inflection) => <span key={inflection.inflectionId || inflection.name} className="gloss-word__inflection__name">
                     {inflection.name}
                 </span>)}
         </span>}

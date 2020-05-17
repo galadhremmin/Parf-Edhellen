@@ -34,7 +34,13 @@ const FragmentsReducer = (state: FragmentsReducerState = [], action: ISentenceRe
                 fragment: 'fragment',
                 glossId: 'glossId',
                 id: (v) => v.type === SentenceFragmentType.Word ? (v.id || 0) : 0,
-                inflections: (v) => action.sentence.inflections[v.id.toString(10)],
+                inflections: (v) => {
+                    if (Array.isArray(v.inflections)) {
+                        return v.inflections.map<any>((i) => action.sentence.inflections[i.inflectionId]);
+                    }
+
+                    return action.sentence.inflections[v.id.toString(10)]
+                },
                 nextFragmentId: (v, i) => findNextFragmentId(v, fragments, i, 1),
                 previousFragmentId: (v, i) => findNextFragmentId(v, fragments, i, -1),
                 sentenceNumber: 'sentenceNumber',

@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 
 trait CanValidateGloss
 {
-    public function validateGlossInRequest(Request $request, $id = 0, $review = false)
+    public function validateGlossInRequest(Request $request, $id = 0)
     {
         $maximumNumberOfTranslations = config('ed.max_number_of_translations');
         
@@ -28,15 +28,9 @@ trait CanValidateGloss
             'details'                    => 'sometimes|array',
             'details.*.category'         => 'required|string',
             'details.*.order'            => 'required|numeric|min:1',
-            'details.*.text'             => 'required|string'
+            'details.*.text'             => 'required|string',
+            'gloss_group_id'             => 'sometimes|numeric|exists:gloss_groups,id'
         ];
-
-        if (! $review) {
-            $rules['account_id']     = 'required|numeric|exists:accounts,id';
-            $rules['gloss_group_id'] = 'sometimes|numeric|exists:gloss_groups,id';
-        } else {
-            ;
-        }
 
         parent::validate($request, $rules);
     } 

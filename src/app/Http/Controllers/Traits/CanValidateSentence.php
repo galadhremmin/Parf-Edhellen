@@ -7,7 +7,7 @@ use App\Helpers\SentenceBuilders\SentenceBuilder;
 
 trait CanValidateSentence
 {
-    public function validateSentenceInRequest(Request $request, int $id = 0, bool $review = false)
+    public function validateSentenceInRequest(Request $request, int $id = 0)
     {
         $rules = [
             'id'              => 'sometimes|required|numeric|exists:sentences,id',
@@ -15,13 +15,10 @@ trait CanValidateSentence
             'description'     => 'required|string|max:255',
             'language_id'     => 'required|numeric|exists:languages,id',
             'source'          => 'required|min:3|max:64',
-            'is_neologism'    => 'required|boolean'
+            'is_neologism'    => 'required|boolean',
+            'account.id'      => 'required|numeric|exists:accounts,id'
         ];
 
-        if (! $review) {
-            $rules['account_id'] = 'sometimes|numeric|exists:accounts,id';
-        }
-        
         parent::validate($request, $rules);
         return true;
     } 

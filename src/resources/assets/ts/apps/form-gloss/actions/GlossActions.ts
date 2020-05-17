@@ -3,7 +3,7 @@ import {
     ReduxThunkDispatch,
 } from '@root/_types';
 import { handleValidationErrors } from '@root/components/Form/Validation';
-import IContributionResourceApi from '@root/connectors/backend/IContributionResourceApi';
+import IContributionResourceApi, { IContribution } from '@root/connectors/backend/IContributionResourceApi';
 import IGlossResourceApi, { IGlossEntity } from '@root/connectors/backend/IGlossResourceApi';
 import { DI, resolve } from '@root/di';
 
@@ -36,7 +36,7 @@ export default class GlossActions {
         };
     }
 
-    public setGlossField(field: keyof IGlossEntity, value: any) {
+    public setGlossField<T extends keyof IContribution<IGlossEntity>>(field: T, value: IContribution<IGlossEntity>[T]) {
         return {
             field,
             type: Actions.SetField,
