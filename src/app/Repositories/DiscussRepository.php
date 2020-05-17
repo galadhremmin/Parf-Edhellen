@@ -261,6 +261,7 @@ class DiscussRepository
         //                    by the client continuously sending the last, least major ID to the API.
         // 
         $skip = 0;
+        $jumpToLatestPost = false;
         if ($ascending) {
             if ($jumpToId !== 0) {
                 // if the the client is, in fact, requesting to load a specific post, we 
@@ -283,7 +284,11 @@ class DiscussRepository
                     $pageNumber -= 1;
                 } while ($pageNumber > 1);
             }
-
+            // if there are no preferences, go to the latest post.
+            if ($pageNumber <= 0) {
+                $pageNumber = $noOfPages;
+                $jumpToLatestPost = true;
+            }
             $skip = ($pageNumber - 1) * $maxLength;
 
         } else {
@@ -315,6 +320,10 @@ class DiscussRepository
             }
 
             $posts = $query->get();
+
+            if ($jumpToLatestPost && $posts->count() > 0) {
+                $jumpToId = $direction === 'asc' ? $posts->last()->id : $posts->first()->id;
+            }
 
             // Prepend the first post in the thread to the resulting collection if it does not already exist.
             $firstPostInThreadId = $firstPostInThread->id;

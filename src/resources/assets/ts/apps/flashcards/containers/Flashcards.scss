@@ -110,23 +110,27 @@
 }
 
 @media (min-width: $screen-sm-min) {
-    .flashcard-container {
-        display: flex;
+  .flashcard-container {
+    display: flex;
 
-        #ed-flashcard-component {
-            flex: 2;
-        }
+    #ed-flashcard-component {
+      flex: 2;
 
-        > aside {
-            &:empty {
-                display: none;
-            }
-            
-            > .alert {
-                margin-top: 0;
-            }
-
-            flex: 1;
-        }
+      .list-group-item > a {
+        display: block;
+      }
     }
+
+    > aside {
+      &:empty {
+        display: none;
+      }
+      
+      > .alert {
+        margin-top: 0;
+      }
+
+      flex: 1;
+    }
+  }
 }

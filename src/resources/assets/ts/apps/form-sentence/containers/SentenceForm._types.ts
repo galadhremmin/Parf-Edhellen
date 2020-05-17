@@ -1,5 +1,5 @@
 import { ComponentEventHandler } from '@root/components/Component._types';
-import { ITextTransformationsMap } from '@root/connectors/backend/IBookApi';
+import IBookApi, { ITextTransformationsMap } from '@root/connectors/backend/IBookApi';
 import { ISaveSentenceContributionEntity } from '@root/connectors/backend/IContributionResourceApi';
 import ValidationError from '@root/connectors/ValidationError';
 import { IFragmentFormEvents } from '../components/FragmentsForm._types';
@@ -22,6 +22,7 @@ export interface ISentenceFormEvents {
 }
 
 export interface IProps extends ISentenceFormEvents, IFragmentFormEvents, IMetadataFormEvents, ITranslationFormEvents {
+    bookApi?: IBookApi;
     errors?: ValidationError;
     prefetched?: boolean;
     sentence?: ISentenceReducerState;

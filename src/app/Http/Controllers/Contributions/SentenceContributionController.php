@@ -57,7 +57,7 @@ class SentenceContributionController extends Controller implements IContribution
         // it is currently the only way to visualize the sentence in the contribution preview view.
         $fragmentData = $this->createFragmentDataFromPayload($payload);
         $speeches     = $this->_sentenceRepository->getSpeechesForFragments($fragmentData['fragments']);
-        $inflections  = Inflection::all()->groupBy('id');
+        $inflections  = Inflection::all()->keyBy('id');
 
         $fragmentData = [
             'inflections'              => $inflections,
@@ -89,9 +89,15 @@ class SentenceContributionController extends Controller implements IContribution
         $payload = json_decode($contribution->payload, true);
         $this->makeMapCurrent($payload);
         
-        $sentence = new Sentence($payload['sentence']);
-        $sentence['contribution_id'] = $contribution->id;
-        $sentence['notes'] = $contribution->notes ?: '';
+        $sentenceData = $payload['sentence'];
+        $sentence = new Sentence($sentenceData);
+        $sentence->contribution_id = $contribution->id;
+        $sentence->notes = $contribution->notes ?: '';
+        $sentence->load('account');
+
+        if (isset($sentenceData['id']) && $sentenceData['id'] !== 0) {
+            $sentence->id = $sentenceData['id'];
+        }
 
         $fragmentData = $this->createFragmentDataFromPayload($payload);
         $model = array_merge($fragmentData, [
@@ -140,7 +146,7 @@ class SentenceContributionController extends Controller implements IContribution
     {
         switch ($substepId) {
             case 0:
-                $this->validateSentenceInRequest($request, $id, true);
+                $this->validateSentenceInRequest($request, $id);
                 break;
             case 1:
                 $this->validateFragmentsInRequest($request);
@@ -160,7 +166,7 @@ class SentenceContributionController extends Controller implements IContribution
      */
     public function validateBeforeSave(Request $request, int $id = 0)
     {
-        $this->validateSentenceInRequest($request, $id, true);
+        $this->validateSentenceInRequest($request, $id);
         $this->validateFragmentsInRequest($request);
         return true;
     }
@@ -182,7 +188,9 @@ class SentenceContributionController extends Controller implements IContribution
         
         $map = $this->mapSentence($entity, $request);
 
-        $entity->account_id = $contribution->account_id;
+        if (! $request->user()->isAdministrator()) {
+            $entity->account_id = $contribution->account_id;
+        }
     
         $contribution->payload = json_encode($map);
         $contribution->word    = $entity->name;

@@ -1,13 +1,14 @@
 import { IReduxAction } from '@root/_types';
+import { IContribution } from '@root/connectors/backend/IContributionResourceApi';
 import { IGlossEntity } from '@root/connectors/backend/IGlossResourceApi';
 
-export type IGlossState = Pick<IGlossEntity, 'account' | 'comments' |
+export type IGlossState = IContribution<Pick<IGlossEntity, 'account' | 'comments' |
     'etymology' | 'externalId' | 'glossDetails' | 'glossGroupId' | 'id' |
     'isRejected' | 'isUncertain' | 'keywords' | 'languageId' | 'phonetic' |
-    'sense' | 'source' | 'speechId' | 'tengwar' | 'translations' | 'word'>;
+    'sense' | 'source' | 'speechId' | 'tengwar' | 'translations' | 'word'>>;
 
 export interface IGlossAction extends IReduxAction {
-    gloss: IGlossEntity;
+    gloss: IContribution<IGlossEntity>;
     field: string;
     value: string;
 }
