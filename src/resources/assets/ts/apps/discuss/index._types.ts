@@ -1,45 +1,8 @@
-import {
-    ComponentEventHandler,
-} from '@root/components/Component._types';
-import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
-import {
-    IPostEntity,
-    IThreadEntity,
-} from '@root/connectors/backend/IDiscussApi';
+import { IProps as IDiscussProps } from './containers/Discuss._types';
 
-import { IFormChangeData } from './components/Form._types';
-import { IThreadMetadataArgs } from './components/toolbar/index._types';
-import { IThreadMetadataState } from './reducers/ThreadMetadataReducer._types';
-import { ICreatePostAction } from './reducers/ThreadReducer._types';
-
-export interface IProps {
+export interface IProps extends Partial<IDiscussProps> {
     entityId?: number;
     entityType?: string;
+    jumpEnabled?: boolean;
     prefetched?: boolean;
-
-    currentPage?: number;
-    jumpPostId?: number;
-    newPostContent?: string;
-    newPostEnabled?: boolean;
-    newPostLoading?: boolean;
-    noOfPages?: number;
-    pages?: (string | number)[];
-    onExistingPostChange?: ComponentEventHandler<number>;
-    onExistingThreadChange?: ComponentEventHandler<number>;
-    onExistingThreadMetadataChange?: ComponentEventHandler<IThreadMetadataArgs>;
-    onNewPostChange?: ComponentEventHandler<IFormChangeData>;
-    onNewPostCreate?: ComponentEventHandler<void>;
-    onNewPostSubmit?: ComponentEventHandler<ICreatePostAction>;
-    onNewPostDiscard?: ComponentEventHandler<void>;
-    onPageChange?: ComponentEventHandler<IPageChangeEvent>;
-    onReferenceLinkClick?: ComponentEventHandler<IReferenceLinkClickDetails>;
-    posts?: IPostEntity[];
-    thread: IThreadEntity;
-    threadMetadata?: IThreadMetadataState;
-    threadPostId?: number;
-}
-
-interface IPageChangeEvent {
-    pageNumber: number;
-    thread: IThreadEntity;
 }

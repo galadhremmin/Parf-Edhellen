@@ -23,18 +23,18 @@ export default class DiscussActions {
     constructor(private _api: IDiscussApi = resolve(DI.DiscussApi)) {
     }
 
-    public thread(args: IThreadAction): ReduxThunk {
+    public thread(args: IThreadAction, jump: boolean = true): ReduxThunk {
         return async (dispatch: ReduxThunkDispatch) => {
             dispatch({
                 type: Actions.RequestThread,
             });
 
             const threadData = await this._api.thread(args);
-            dispatch(this.setThread(threadData));
+            dispatch(this.setThread(threadData, false, jump));
         };
     }
 
-    public setThread(threadData: IThreadResponse, updateHistory = false): ReduxThunk {
+    public setThread(threadData: IThreadResponse, updateHistory = false, jump = true): ReduxThunk {
         if (updateHistory) {
             // Update the browser's current page (in the event that the client refreshes the window)
             const browserHistory = resolve<BrowserHistory>(DI.BrowserHistory);
@@ -48,6 +48,10 @@ export default class DiscussActions {
         }
 
         return async (dispatch: ReduxThunkDispatch) => {
+            if (! jump) {
+                threadData.jumpPostId = null;
+            }
+
             dispatch({
                 threadData,
                 type: Actions.ReceiveThread,

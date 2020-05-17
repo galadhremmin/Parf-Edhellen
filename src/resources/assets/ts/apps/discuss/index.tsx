@@ -25,6 +25,7 @@ const Inject = (props: IProps) => {
     const {
         entityId,
         entityType,
+        jumpEnabled,
         prefetched,
         thread,
     } = props;
@@ -37,13 +38,13 @@ const Inject = (props: IProps) => {
             const args: any = {
                 ...props,
             };
-            dispatch(actions.setThread(args, /* updateHistory: */ false));
+            dispatch(actions.setThread(args, /* updateHistory: */ false, jumpEnabled));
         }
     } else {
         dispatch(actions.thread({
             entityId,
             entityType,
-        }));
+        }, jumpEnabled));
     }
 
     return <Provider store={store}>
@@ -53,6 +54,7 @@ const Inject = (props: IProps) => {
 
 Inject.defaultProps = {
     prefetched: true,
+    jumpEnabled: true,
 } as Partial<IProps>;
 
 export default Inject;
