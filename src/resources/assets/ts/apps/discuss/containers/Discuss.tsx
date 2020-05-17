@@ -16,18 +16,17 @@ import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
 import DiscussActions from '../actions/DiscussActions';
-import Form from '../components/Form';
 import {
     IFormChangeData,
     IFormOutput,
 } from '../components/Form._types';
+import Form from '../components/Form';
 import Post from '../components/Post';
 import { IProps as IPostProps } from '../components/Post._types';
 import RespondButton from '../components/RespondButton';
-import { IProps } from '../index._types';
-import { RootReducer } from '../reducers';
-
 import ConditionalToolbar from '../components/toolbar/ConditionalToolbar';
+import { RootReducer } from '../reducers';
+import { IProps } from './Discuss._types';
 
 function Discuss(props: IProps) {
     const formRef = useRef(null);
