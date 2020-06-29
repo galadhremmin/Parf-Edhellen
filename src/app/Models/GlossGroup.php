@@ -10,4 +10,12 @@ class GlossGroup extends ModelBase
     {
         return $this->hasMany(Gloss::class);
     }
+
+    public function scopeSafe($query) 
+    {
+        $query->where([
+            [ 'is_canon', 1 ],
+            [ 'is_old', 0 ]
+        ]);
+    }
 }

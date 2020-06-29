@@ -1,0 +1,17 @@
+.GlossList--glosses {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+
+    > li {
+        &.discovered {
+            
+        }
+        .word {
+            &::before {
+                content: "⇒";
+                padding: 0 0.5rem;
+            }
+        }
+    }
+}

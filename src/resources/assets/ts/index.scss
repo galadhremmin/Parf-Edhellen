@@ -29,6 +29,8 @@ body {
   background-size: cover;
   .navbar-nav > li > a {
     color: white;
+    padding-left: 0.6rem;
+    padding-right: 0.6rem;
     &.active {
       background: white;
       color: black;
@@ -96,6 +98,7 @@ body {
     background: url(/img/logotype.png) no-repeat center center;
     background-size: 140px 45px;
     margin-right: 10px;
+    margin-left: 0;
     @media (max-width: $screen-md-min) {
       margin-left: $panel-body-padding + $font-size-base*0.5; /* due to 0.5em border */
     }

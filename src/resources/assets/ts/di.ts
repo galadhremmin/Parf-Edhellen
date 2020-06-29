@@ -8,6 +8,7 @@ import InflectionResourceApiConnector from './connectors/backend/InflectionResou
 import LanguageConnector from './connectors/backend/LanguageConnector';
 import SpeechResourceApiConnector from './connectors/backend/SpeechResourceApiConnector';
 import UtilityApiConnector from './connectors/backend/UtilityApiConnector';
+import WordFinderConnector from './connectors/backend/WordFinderConnector';
 import { RoleManager } from './security';
 import BrowserHistory from './utilities/BrowserHistory';
 import Glaemscribe from './utilities/Glaemscribe';
@@ -28,6 +29,7 @@ export enum DI {
     RoleManager = 'RoleManager',
     SpeechApi = 'SpeechApi',
     UtilityApi = 'UtilityApi',
+    WordFinderApi = 'WordFinderApi',
 }
 
 export const getType = (name: DI): any => {
@@ -58,6 +60,8 @@ export const getType = (name: DI): any => {
             return SpeechResourceApiConnector;
         case DI.UtilityApi:
             return UtilityApiConnector;
+        case DI.WordFinderApi:
+            return WordFinderConnector;
         default:
             throw new Error(`Unrecognised DI ${name}.`);
     }
