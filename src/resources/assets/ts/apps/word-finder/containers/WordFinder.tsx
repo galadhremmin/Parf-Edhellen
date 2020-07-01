@@ -1,6 +1,6 @@
 import React, {
-    useCallback,
     useEffect,
+    useState,
 } from 'react';
 import { connect } from 'react-redux';
 
@@ -21,6 +21,9 @@ import {
     IContainerProps,
 } from '../index._types';
 
+import './WordFinder.scss';
+import Timer from '../components/Timer';
+
 function WordFinder(props: IContainerProps) {
     const {
         glosses,
@@ -28,6 +31,7 @@ function WordFinder(props: IContainerProps) {
         parts,
         selectedParts,
         stage,
+        tengwarMode,
 
         onLoadGame,
 
@@ -45,13 +49,14 @@ function WordFinder(props: IContainerProps) {
 
     useEffect(() => {
         const word = selectedParts.map((i) => parts[i].part).join('');
-        const gloss = glosses.find((g) => g.available && g.word === word);
+        const gloss = glosses.find((g) => g.available && g.wordForComparison === word);
         if (gloss) {
             fireEvent('WordFinder', onDiscoverWord, gloss.id);
         }
     }, [ selectedParts ]);
 
-    return <>
+    return <div className="WordFinder">
+        <span className="WordFinder__timer"><Timer /></span>
         <section>
             <GlossList glosses={glosses} />
         </section>
@@ -61,9 +66,10 @@ function WordFinder(props: IContainerProps) {
                 onDeselectPart={onDeselectPart}
                 parts={parts}
                 selectedParts={selectedParts}
+                tengwarMode={tengwarMode}
             />}
         </section>
-    </>;
+    </div>;
 }
 
 const mapStateToProps = (state: RootReducer) => ({
@@ -71,6 +77,7 @@ const mapStateToProps = (state: RootReducer) => ({
     parts: state.parts,
     selectedParts: state.selectedParts,
     stage: state.stage,
+    tengwarMode: state.stage.tengwarMode,
 }) as IContainerProps;
 
 const gameActions = new GameActions();

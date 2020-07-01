@@ -1,0 +1,22 @@
+@import '../../../_scss/variables';
+
+.WordFinder {
+    max-width: 360px;
+    min-height: 520px;
+    margin: 0 auto;
+    border: 1px solid white;
+    padding: 1rem;
+    border-radius: 0.3rem;
+    color: white;
+    background: radial-gradient(circle, rgb(97, 97, 97) 0%, rgb(0, 7, 19) 100%);
+    background-position: bottom;
+    background-size: cover;
+    background-repeat: no-repeat;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75);
+}
+
+.WordFinder__timer {
+    float: right;
+    font-size: 0.8rem;
+    font-family: $font-family-tiny;
+}

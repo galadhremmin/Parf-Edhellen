@@ -1,11 +1,16 @@
 import classNames from 'classnames';
 import React, {
     useCallback,
-    useState,
+    useEffect,
+    useRef,
 } from 'react';
 
 import { fireEvent } from '@root/components/Component';
+import Tengwar from '@root/components/Tengwar';
 import { IProps } from './CombinePartsStage._types';
+
+import './CombinePartsStage.scss';
+import Spinner from '@root/components/Spinner';
 
 const getPartIdFromDataset = (target: EventTarget) => {
     const partIdAttribute = 'partId';
@@ -17,10 +22,17 @@ function CombinePartsStage(props: IProps) {
     const {
         parts,
         selectedParts,
+        tengwarMode,
 
         onDeselectPart,
         onSelectPart,
     } = props;
+
+    const partsRef = useRef<HTMLDivElement>();
+
+    useEffect(() => {
+        partsRef.current?.querySelector('button')?.focus();
+    }, [ parts ]);
 
     const _onDeselectPart = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
@@ -32,25 +44,29 @@ function CombinePartsStage(props: IProps) {
         fireEvent('CombinePartsStage', onSelectPart, getPartIdFromDataset(ev.target));
     }, [ onSelectPart ]);
 
-    return <>
-        <div>
-            {selectedParts.map((i) => <a key={i}
+    return <div className="CombinePartsStage">
+        <div className="CombinePartsStage__selected-parts">
+            {selectedParts.length ? selectedParts.map((i) => <a key={i}
                 href="#"
                 className=""
                 onClick={_onDeselectPart}
                 data-part-id={parts[i]?.id}>
                     {parts[i]?.part}
-                </a>)}
+                </a>) : <>&nbsp;</>}
         </div>
-        <div>
-            {parts.map((p, i) => <button key={p.id}
+        <div className="CombinePartsStage__parts" ref={partsRef}>
+            {parts.map((p) => <button key={p.id}
                 className={classNames('btn btn-default', { 'hidden': ! p.available, 'disabled': p.selected })}
                 data-part-id={p.id}
                 onClick={_onSelectPart}>
-                    {p.part}
+                    {`${p.part} `}
+                    {!! tengwarMode && <Tengwar mode="sindarin" transcribe={true} text={p.part} />}
             </button>)}
         </div>
-    </>;
+        <div className="CombinePartsStage__tips">
+            Are you stuck? <a href="#">Ask for a tip!</a>
+        </div>
+    </div>;
 }
 
 export default CombinePartsStage;
