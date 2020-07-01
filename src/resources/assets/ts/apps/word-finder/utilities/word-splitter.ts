@@ -1,7 +1,10 @@
 import { IGloss } from '@root/connectors/backend/IWordFinderApi';
 
+export const preprocessWordForSplitting = (word: string) => //
+    word.toLocaleLowerCase().replace(/[\-]/g, '');
+
 export const splitWord = (word: string) => {
-    const wordWithoutSpaces = word.replace(/[\-]/g, '');
+    const wordWithoutSpaces = preprocessWordForSplitting(word);
     const parts: string[] = [];
 
     for (let pos = 0; pos < wordWithoutSpaces.length; ) {

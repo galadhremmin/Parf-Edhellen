@@ -1,16 +1,35 @@
+@keyframes ed-word-pulsate {
+    from {
+        text-shadow: #000 0 0 0.1rem;
+    }
+    to {
+        text-shadow: rgb(138, 138, 138) 0 0 0.2rem;
+    }
+}
+
 .GlossList--glosses {
     list-style-type: none;
     padding: 0;
     margin: 0;
 
     > li {
+        animation: ed-word-pulsate 1.5s infinite alternate;
+        text-transform: capitalize;
+        text-align: center;
+        font-style: italic;
         &.discovered {
-            
+            opacity: 0.5;
+            animation: none;
         }
         .word {
             &::before {
                 content: "⇒";
                 padding: 0 0.5rem;
+            }
+            > a {
+                text-transform: none;
+                text-decoration: underline;
+                color: white;
             }
         }
     }

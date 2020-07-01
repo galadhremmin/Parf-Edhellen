@@ -2,6 +2,7 @@ import {
     Actions,
     IGameAction,
 } from '../actions';
+import { preprocessWordForSplitting } from '../utilities/word-splitter';
 import { IGameGloss } from './IGlossesReducer';
 
 const InitialState: IGameGloss[] = [];
@@ -13,7 +14,8 @@ const GlossesReducer = (state = InitialState, action: IGameAction) => {
                 available: true,
                 gloss: g.gloss,
                 id: g.id,
-                word: g.word.replace(/[\-]/g, ''),
+                word: g.word,
+                wordForComparison: preprocessWordForSplitting(g.word),
             }) as IGameGloss);
         case Actions.DiscoverWord:
             return state.map((g) => {

@@ -7,6 +7,7 @@ import { IStageReducerState } from './StageReducer._types';
 
 const InitialState: IStageReducerState = {
     stage: GameStage.Loading,
+    tengwarMode: null,
 };
 
 const StageReducer = (state = InitialState, action: IGameAction) => {
@@ -16,6 +17,7 @@ const StageReducer = (state = InitialState, action: IGameAction) => {
             return {
                 ...state,
                 stage: action.stage,
+                tengwarMode: action.language.tengwarMode || null,
             };
         default:
             return state;

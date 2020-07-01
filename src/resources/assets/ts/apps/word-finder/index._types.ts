@@ -24,6 +24,7 @@ export interface IContainerProps extends IGameProps, IContainerEvents {
     parts?: IWordPart[];
     selectedParts?: number[];
     stage?: IStageReducerState;
+    tengwarMode?: string;
 }
 
 export interface IStageProps extends IStageEvents {

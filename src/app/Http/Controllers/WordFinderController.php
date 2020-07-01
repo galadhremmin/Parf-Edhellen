@@ -9,13 +9,18 @@ use DB;
 
 use App\Models\{ 
     Gloss,
-    GlossGroup
+    GlossGroup,
+    Language
 };
 
 class WordFinderController extends Controller
 {
     public function show(Request $request, int $languageId)
     {
-        return view('word-finder.show', [ 'languageId' => $languageId ]);
+        $language = Language::findOrFail($languageId);
+        return view('word-finder.show', [
+            'language'   => $language,
+            'languageId' => $languageId
+        ]);
     }
 }
