@@ -7,6 +7,8 @@ import { IStageReducerState } from './reducers/StageReducer._types';
 
 export interface IContainerEvents extends IStageEvents {
     onLoadGame?: ComponentEventHandler<number>;
+    onStageChange?: ComponentEventHandler<GameStage>;
+    onTimeUpdate?: ComponentEventHandler<number>;
 }
 
 export interface IStageEvents {

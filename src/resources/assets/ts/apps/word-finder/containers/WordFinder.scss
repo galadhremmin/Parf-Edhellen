@@ -1,18 +1,19 @@
 @import '../../../_scss/variables';
 
+.WordFinder--container {
+    margin: 0 -15px;
+    padding: 1rem 15px;
+    background: #355166;
+    @media (min-width: $screen-sm-min) {
+        border-radius: 0.5rem;
+    }
+}
+
 .WordFinder {
     max-width: 360px;
     min-height: 520px;
     margin: 0 auto;
-    border: 1px solid white;
-    padding: 1rem;
-    border-radius: 0.3rem;
     color: white;
-    background: radial-gradient(circle, rgb(97, 97, 97) 0%, rgb(0, 7, 19) 100%);
-    background-position: bottom;
-    background-size: cover;
-    background-repeat: no-repeat;
-    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75);
 }
 
 .WordFinder__timer {

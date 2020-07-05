@@ -71,4 +71,18 @@ export default class GameActions {
             glossId,
         };
     }
+
+    public setTime(time: number) {
+        return {
+            type: Actions.SetTime,
+            time,
+        };
+    }
+
+    public setStage(stage: GameStage) {
+        return {
+            type: Actions.SetStage,
+            stage,
+        };
+    }
 }
