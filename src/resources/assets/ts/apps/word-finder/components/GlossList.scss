@@ -8,17 +8,15 @@
 }
 
 .GlossList--glosses {
-    list-style-type: none;
-    padding: 0;
+    list-style-type: square;
+    padding: 0 0 0 1rem;
     margin: 0;
 
     > li {
         animation: ed-word-pulsate 1.5s infinite alternate;
-        text-transform: capitalize;
-        text-align: center;
-        font-style: italic;
+        transition: opacity 1s;
         &.discovered {
-            opacity: 0.5;
+            opacity: 0.8;
             animation: none;
         }
         .word {
@@ -28,8 +26,11 @@
             }
             > a {
                 text-transform: none;
-                text-decoration: underline;
                 color: white;
+                text-decoration: none;
+                span {
+                    pointer-events: none;
+                }
             }
         }
     }

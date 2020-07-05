@@ -11,6 +11,7 @@ import { IProps } from './CombinePartsStage._types';
 
 import './CombinePartsStage.scss';
 import Spinner from '@root/components/Spinner';
+import { GameStage } from '../actions';
 
 const getPartIdFromDataset = (target: EventTarget) => {
     const partIdAttribute = 'partId';
@@ -24,6 +25,7 @@ function CombinePartsStage(props: IProps) {
         selectedParts,
         tengwarMode,
 
+        onChangeStage,
         onDeselectPart,
         onSelectPart,
     } = props;
@@ -32,6 +34,11 @@ function CombinePartsStage(props: IProps) {
 
     useEffect(() => {
         partsRef.current?.querySelector('button')?.focus();
+
+        const availableParts = parts.filter((g) => g.available).length;
+        if (availableParts < 1) {
+            fireEvent('CombinePartsStage', onChangeStage, GameStage.Success);
+        }
     }, [ parts ]);
 
     const _onDeselectPart = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
@@ -52,7 +59,7 @@ function CombinePartsStage(props: IProps) {
                 onClick={_onDeselectPart}
                 data-part-id={parts[i]?.id}>
                     {parts[i]?.part}
-                </a>) : <>&nbsp;</>}
+                </a>) : <span>&nbsp;</span>}
         </div>
         <div className="CombinePartsStage__parts" ref={partsRef}>
             {parts.map((p) => <button key={p.id}

@@ -6,7 +6,7 @@ import { IStageProps } from '../index._types';
 
 function SuccessStage(props: IStageProps) {
     const {
-        // onUpdateStage,
+        onChangeStage,
     } = props;
 
     useEffect(() => {

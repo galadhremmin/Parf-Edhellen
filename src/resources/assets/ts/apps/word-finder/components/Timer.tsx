@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment';
 
-function Timer() {
-    const [ startTime ] = useState(() => moment());
-    const [ lastRenderTime, setElapsedTime ] = useState(startTime);
+import { fireEvent } from '@root/components/Component';
+import { IProps } from './Timer._types';
+
+function Timer(props: IProps) {
+    const {
+        onTick,
+        startValue,
+        value,
+    } = props;
 
     useEffect(() => {
-        // time called???
-        console.log('called');
         const timer = window.setInterval(() => {
-            setElapsedTime(moment());
+            const now  = moment();
+            fireEvent('Timer', onTick, now.unix());
         }, 1000);
 
         return () => {
@@ -17,10 +22,17 @@ function Timer() {
         }
     }, []);
 
-    const duration = lastRenderTime.diff(startTime, 'seconds');
+    const duration = moment.unix(value).diff(
+        moment.unix(startValue), 'seconds',
+    );
     return <span>
         {duration}
     </span>;
 }
+
+Timer.defaultProps = {
+    startValue: moment().unix(),
+    value: moment().unix(),
+} as IProps;
 
 export default Timer;

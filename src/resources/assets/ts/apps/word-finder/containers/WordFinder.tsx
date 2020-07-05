@@ -1,6 +1,5 @@
 import React, {
     useEffect,
-    useState,
 } from 'react';
 import { connect } from 'react-redux';
 
@@ -23,6 +22,7 @@ import {
 
 import './WordFinder.scss';
 import Timer from '../components/Timer';
+import SuccessStage from '../components/SuccessStage';
 
 function WordFinder(props: IContainerProps) {
     const {
@@ -34,10 +34,12 @@ function WordFinder(props: IContainerProps) {
         tengwarMode,
 
         onLoadGame,
+        onStageChange,
 
         // Events for running stage of the game
         onDeselectPart,
         onDiscoverWord,
+        onTimeUpdate,
         onSelectPart,
     } = props;
 
@@ -55,20 +57,32 @@ function WordFinder(props: IContainerProps) {
         }
     }, [ selectedParts ]);
 
-    return <div className="WordFinder">
-        <span className="WordFinder__timer"><Timer /></span>
-        <section>
-            <GlossList glosses={glosses} />
-        </section>
-        <section>
-            {stage.stage === GameStage.Running && <CombinePartsStage
-                onSelectPart={onSelectPart}
-                onDeselectPart={onDeselectPart}
-                parts={parts}
-                selectedParts={selectedParts}
-                tengwarMode={tengwarMode}
-            />}
-        </section>
+    return <div className="WordFinder--container">
+        <div className="WordFinder">
+            <span className="WordFinder__timer">
+                <Timer onTick={onTimeUpdate}
+                    startValue={stage.startTime}
+                    value={stage.time}
+                />
+            </span>
+            <section>
+                <h3>Glosses</h3>
+                <GlossList tengwarMode={tengwarMode} glosses={glosses} />
+            </section>
+            <section>
+                {stage.stage === GameStage.Running && <CombinePartsStage
+                    onChangeStage={onStageChange}
+                    onDeselectPart={onDeselectPart}
+                    onSelectPart={onSelectPart}
+                    parts={parts}
+                    selectedParts={selectedParts}
+                    tengwarMode={tengwarMode}
+                />}
+                {stage.stage === GameStage.Success && <SuccessStage
+                    onChangeStage={onStageChange}
+                />}
+            </section>
+        </div>
     </div>;
 }
 
@@ -83,9 +97,10 @@ const mapStateToProps = (state: RootReducer) => ({
 const gameActions = new GameActions();
 const mapDispatchToProps: any = (dispatch: ReduxThunkDispatch) => ({
     onLoadGame: (ev: IComponentEvent<number>) => dispatch(gameActions.loadGame(ev.value)),
-
+    onStageChange: (ev: IComponentEvent<GameStage>) => dispatch(gameActions.setStage(ev.value)),
     onDeselectPart: (ev: IComponentEvent<number>) => dispatch(gameActions.deselectPart(ev.value)),
     onDiscoverWord: (ev: IComponentEvent<number>) => dispatch(gameActions.discoverWord(ev.value)),
+    onTimeUpdate: (ev: IComponentEvent<number>) => dispatch(gameActions.setTime(ev.value)),
     onSelectPart: (ev: IComponentEvent<number>) => dispatch(gameActions.selectPart(ev.value)),
 }) as Partial<IContainerProps>;
 
