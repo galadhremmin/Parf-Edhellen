@@ -3,23 +3,26 @@
 .CombinePartsStage {
     .CombinePartsStage__selected-parts {
         text-align: center;
-        > a, > span {
+        font-size: 1.25rem;
+        line-height: 2;
+        color: white;
+        > a {
             text-transform: uppercase;
-            font-size: 1.25rem;
             font-weight: bold;
-            line-height: 2;
-            color: white;
+            color: inherit;
+        }
+        > span {
+            font-style: italic;
         }
     }
     .CombinePartsStage__parts {
-        display: flex;
         flex-wrap: wrap;
         flex-direction: row;
         padding: 0.5rem;
         background: white;
         border-radius: 0.3rem;
+        column-count: 4;
         > button {
-            flex-grow: 1;
             border-radius: 0;
             border: none;
             font-weight: bold;
@@ -35,6 +38,7 @@
         font-family: $font-family-tiny;
         font-size: 0.8rem;
         text-align: right;
+        display: none; /* currently not supported */
         > a {
             color: white;
             text-decoration: underline;

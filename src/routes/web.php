@@ -22,6 +22,7 @@ require 'web-routes/dashboard-admin.php';
 require 'web-routes/dashboard-user.php';
 require 'web-routes/dictionary.php';
 require 'web-routes/flashcards.php';
+require 'web-routes/games.php';
 require 'web-routes/phrases.php';
 require 'web-routes/word-finder.php';
 

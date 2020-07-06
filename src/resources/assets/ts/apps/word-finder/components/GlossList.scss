@@ -20,10 +20,7 @@
             animation: none;
         }
         .word {
-            &::before {
-                content: "⇒";
-                padding: 0 0.5rem;
-            }
+            font-weight: bold;
             > a {
                 text-transform: none;
                 color: white;

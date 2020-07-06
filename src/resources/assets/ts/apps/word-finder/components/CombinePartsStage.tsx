@@ -59,7 +59,9 @@ function CombinePartsStage(props: IProps) {
                 onClick={_onDeselectPart}
                 data-part-id={parts[i]?.id}>
                     {parts[i]?.part}
-                </a>) : <span>&nbsp;</span>}
+                </a>) : <span className="info">
+                    Select your initial letters...
+                </span>}
         </div>
         <div className="CombinePartsStage__parts" ref={partsRef}>
             {parts.map((p) => <button key={p.id}
