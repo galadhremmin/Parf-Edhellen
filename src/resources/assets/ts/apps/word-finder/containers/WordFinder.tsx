@@ -43,11 +43,15 @@ function WordFinder(props: IContainerProps) {
         onSelectPart,
     } = props;
 
+    const {
+        stage: currentStage,
+    } = stage;
+
     useEffect(() => {
-        if (languageId !== 0) {
+        if (languageId !== 0 && currentStage === GameStage.Loading) {
             fireEvent('WordFinder', onLoadGame, languageId);
         }
-    }, [ languageId ]);
+    }, [ languageId, currentStage ]);
 
     useEffect(() => {
         const word = selectedParts.map((i) => parts[i].part).join('');
@@ -62,6 +66,7 @@ function WordFinder(props: IContainerProps) {
             <span className="WordFinder__timer">
                 <Timer onTick={onTimeUpdate}
                     startValue={stage.startTime}
+                    tick={currentStage === GameStage.Running}
                     value={stage.time}
                 />
             </span>
@@ -70,7 +75,7 @@ function WordFinder(props: IContainerProps) {
                 <GlossList tengwarMode={tengwarMode} glosses={glosses} />
             </section>
             <section>
-                {stage.stage === GameStage.Running && <CombinePartsStage
+                {currentStage === GameStage.Running && <CombinePartsStage
                     onChangeStage={onStageChange}
                     onDeselectPart={onDeselectPart}
                     onSelectPart={onSelectPart}
@@ -78,8 +83,10 @@ function WordFinder(props: IContainerProps) {
                     selectedParts={selectedParts}
                     tengwarMode={tengwarMode}
                 />}
-                {stage.stage === GameStage.Success && <SuccessStage
+                {currentStage === GameStage.Success && <SuccessStage
                     onChangeStage={onStageChange}
+                    startTime={stage.startTime}
+                    time={stage.time}
                 />}
             </section>
         </div>

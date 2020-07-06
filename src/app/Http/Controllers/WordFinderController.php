@@ -8,19 +8,23 @@ use Illuminate\Support\Facades\Auth;
 use DB;
 
 use App\Models\{ 
-    Gloss,
-    GlossGroup,
-    Language
+    GameWordFinderLanguage
 };
 
 class WordFinderController extends Controller
 {
-    public function show(Request $request, int $languageId)
+    public function index(Request $request)
     {
-        $language = Language::findOrFail($languageId);
+        $games = GameWordFinderLanguage::orderBy('title')
+            ->get();
+        return view('word-finder.index', [ 'games' => $games ]);
+    }
+
+    public function show(Request $request, int $gameId)
+    {
+        $game = GameWordFinderLanguage::findOrFail($gameId);
         return view('word-finder.show', [
-            'language'   => $language,
-            'languageId' => $languageId
+            'game' => $game
         ]);
     }
 }

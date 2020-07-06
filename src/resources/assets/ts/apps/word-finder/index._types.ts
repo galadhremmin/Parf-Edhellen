@@ -31,4 +31,6 @@ export interface IContainerProps extends IGameProps, IContainerEvents {
 
 export interface IStageProps extends IStageEvents {
     onChangeStage?: ComponentEventHandler<GameStage>;
+    startTime?: number;
+    time?: number;
 }

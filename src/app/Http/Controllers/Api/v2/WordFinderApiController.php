@@ -16,7 +16,7 @@ use App\Models\{
 
 class WordFinderApiController extends Controller
 {
-    public function index(Request $request, int $languageId)
+    public function play(Request $request, int $languageId)
     {
         $groupIds = GlossGroup::safe()
             ->select('id')

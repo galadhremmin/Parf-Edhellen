@@ -3,13 +3,13 @@ import { ILanguageEntity } from '@root/connectors/backend/IBookApi';
 import { IGloss } from '@root/connectors/backend/IWordFinderApi';
 
 export interface IGameAction extends IReduxAction {
-    duration?: number;
     glossId?: number;
     glossary?: IGloss[];
     language?: ILanguageEntity;
     parts?: string[];
     selectedPartId?: number;
     stage?: GameStage;
+    time?: number;
 }
 
 export const enum GameStage {

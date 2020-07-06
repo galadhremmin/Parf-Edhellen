@@ -8,10 +8,15 @@ function Timer(props: IProps) {
     const {
         onTick,
         startValue,
+        tick,
         value,
     } = props;
 
     useEffect(() => {
+        if (! tick) {
+            return;
+        }
+
         const timer = window.setInterval(() => {
             const now  = moment();
             fireEvent('Timer', onTick, now.unix());
@@ -20,7 +25,7 @@ function Timer(props: IProps) {
         return () => {
             window.clearInterval(timer);
         }
-    }, []);
+    }, [ tick ]);
 
     const duration = moment.unix(value).diff(
         moment.unix(startValue), 'seconds',

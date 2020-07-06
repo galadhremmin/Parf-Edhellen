@@ -1,22 +1,16 @@
 @extends('_layouts.default')
 
-@section('title', 'System errors - Administration')
+@section('title', __('word-finder.title.show', [ 'language' => $game->language->name ]))
 @section('body')
 
-<h1>Word discoverer - {{ $language->name }}</h1>
+<h1>@lang('word-finder.title.show', [ 'language' => $game->language->name ])</h1>
+  
+{!! Breadcrumbs::render('word-finder.show', $game) !!}
 
-<p>
-  Below you have a list of words in English. Your task is to find the corresponding
-  words in {{ $language->name }} using the letters below. You can combine the letters
-  however you would like, but there is only one word per gloss.
-</p>
-<p>
-  Tap on the letters to start assembling a word. The letters you have selected are
-  presented in bold. If you regret your choice, tap on the letters to return them
-  to the grid of available letters.
-</p>
+<p>@lang('word-finder.instructions1', ['language' => $game->language->name ])</p>
+<p>@lang('word-finder.instructions2', ['language' => $game->language->name ])</p>
 
 <div data-inject-module="word-finder"
-     data-inject-prop-language-id="{{ $languageId }}"></div>
+     data-inject-prop-language-id="{{ $game->language_id }}"></div>
 
 @endsection
