@@ -6,10 +6,9 @@
   
   {!! Breadcrumbs::render('flashcard') !!}
 
-  <p>
-    Welcome to <em>Flashcards</em>, where you can challenge your Elvish vocabulary.
-    Choose a language beneath to get started. 
-  </p>
+  <p>@lang('flashcard.description')</p>
+  <p>@lang('flashcard.instructions')</p>
+
   @if ($statistics && $statistics['_total'] > 0)
   <p>
     You have been here before! You have reviewed <strong>{{ $statistics['_total'] }}</strong> cards, 

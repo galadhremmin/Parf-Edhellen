@@ -208,13 +208,22 @@ Breadcrumbs::register('contribution.confirm-approve', function ($breadcrumbs, in
     $breadcrumbs->parent('contribution.show', $id);
     $breadcrumbs->push('Approved!', route('contribution.confirm-approve', ['id' => $id]));
 });
+// //////////////////////////////////////////////////////////////////////////////////////////////
+// Games
+
+Breadcrumbs::register('games', function ($breadcrumbs)
+{
+    $breadcrumbs->parent('home');
+    $breadcrumbs->push('Games', route('games'));
+});
+
 
 // //////////////////////////////////////////////////////////////////////////////////////////////
-// Dashboard > Flashcards
+// Games > Flashcards
 
 Breadcrumbs::register('flashcard', function ($breadcrumbs)
 {
-    $breadcrumbs->parent('home');
+    $breadcrumbs->parent('games');
     $breadcrumbs->push('Flashcards', route('flashcard'));
 });
 
@@ -228,6 +237,21 @@ Breadcrumbs::register('flashcard.list', function ($breadcrumbs, App\Models\Flash
 {
     $breadcrumbs->parent('flashcard');
     $breadcrumbs->push('Results for '.$flashcard->language->name, route('flashcard.list', ['id' => $flashcard->language->id]));
+});
+
+// //////////////////////////////////////////////////////////////////////////////////////////////
+// Games > Sage
+
+Breadcrumbs::register('word-finder', function ($breadcrumbs)
+{
+    $breadcrumbs->parent('games');
+    $breadcrumbs->push('Sage', route('word-finder.index'));
+});
+
+Breadcrumbs::register('word-finder.show', function ($breadcrumbs, App\Models\GameWordFinderLanguage $game)
+{
+    $breadcrumbs->parent('word-finder');
+    $breadcrumbs->push($game->language->name.' Sage', route('word-finder.show', ['gameId' => $game->language_id]));
 });
 
 // //////////////////////////////////////////////////////////////////////////////////////////////
