@@ -68,8 +68,7 @@ function CombinePartsStage(props: IProps) {
                 className={classNames('btn btn-default', { 'hidden': ! p.available, 'disabled': p.selected })}
                 data-part-id={p.id}
                 onClick={_onSelectPart}>
-                    {`${p.part} `}
-                    {!! tengwarMode && <Tengwar mode="sindarin" transcribe={true} text={p.part} />}
+                    {p.part}
             </button>)}
         </div>
         <div className="CombinePartsStage__tips">
