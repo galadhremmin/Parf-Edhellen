@@ -1,0 +1,26 @@
+@mixin list-styles($symbol) {
+    list-style: none;
+    padding-left: 0;
+    li::before {
+      content: "#{$symbol} ";
+    }
+}
+
+.GlossDetails .details__body {
+    &.derivations {
+        ul {
+            @include list-styles("<");
+        }
+    }
+    &.derivatives {
+        ul {
+            @include list-styles(">");
+        }
+    }
+    ul, ol {
+        padding-left: 1rem;
+    }
+    table {
+        font-size: 0.85rem;
+    }
+}

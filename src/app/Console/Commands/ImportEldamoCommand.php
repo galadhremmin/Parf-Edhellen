@@ -274,6 +274,7 @@ class ImportEldamoCommand extends Command
                 'text' => $d->body,
                 'account_id' => $gloss->account_id,
                 'order' => $order[$d->title],
+                'type' => isset($d->type) ? $d->type : null,
             ]);
         }, $data->details);
 

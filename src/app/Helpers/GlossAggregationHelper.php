@@ -61,7 +61,8 @@ class GlossAggregationHelper
                     $carry[] = new GlossDetail([
                         'category' => $item->gloss_details_category,
                         'order'    => $item->gloss_details_order,
-                        'text'     => $item->gloss_details_text
+                        'text'     => $item->gloss_details_text,
+                        'type'     => $item->gloss_details_type
                     ]);
                 }
                 return $carry;
@@ -70,7 +71,8 @@ class GlossAggregationHelper
             unset(
                 $gloss->gloss_details_category,
                 $gloss->gloss_details_order,
-                $gloss->gloss_details_text
+                $gloss->gloss_details_text,
+                $gloss->gloss_details_type
             );
 
             return $gloss;

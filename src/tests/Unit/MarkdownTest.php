@@ -51,4 +51,14 @@ class MarkdownTest extends TestCase
 
         $this->assertEquals($expected, $actual);
     }
+
+    public function testDerivation()
+    {
+        $markdown = "text\n˃ T1\n  ˃ T2\n    ˃ T3\ntext\n";
+
+        $parser = new MarkdownParser;
+        $actual = $parser->parse($markdown);
+
+        dd($actual);
+    }
 }

@@ -38,6 +38,7 @@ export interface IGlossDetail {
     category: string;
     order: number;
     text: string;
+    type?: string;
 }
 
 export interface IGlossGroup {

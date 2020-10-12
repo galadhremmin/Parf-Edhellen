@@ -11,11 +11,11 @@ const GlossInflections = (props: IProps) => {
 
     const sentenceIds = Object.keys(gloss.inflections);
 
-    return <section className="details">
+    return <section className="GlossDetails details">
         <header>
             <h4>Inflections (from phrases)</h4>
         </header>
-        <div className="table-responsive">
+        <div className="table-responsive details__body">
             <table className="table table-striped table-hover table-condensed">
                 <thead>
                     <tr>
