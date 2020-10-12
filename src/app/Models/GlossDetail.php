@@ -7,7 +7,7 @@ class GlossDetail extends ModelBase
     use Traits\HasAccount;
     
     protected $fillable = [ 
-        'account_id', 'gloss_id', 'category', 'text', 'order'
+        'account_id', 'gloss_id', 'category', 'text', 'order', 'type'
     ];
 
     public function gloss() 
