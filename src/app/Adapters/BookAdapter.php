@@ -267,6 +267,12 @@ class BookAdapter
             $gloss->comments = $markdownParser->text($gloss->comments);
         }
 
+        // Restore the order of the details based on the `order` property
+        usort($gloss->gloss_details, function ($a, $b) {
+            return $a->order === $b->order ? 0 : ($a->order > $b->order ? 1 : -1);
+        });
+
+        // Parse markdown to HTML
         foreach ($gloss->gloss_details as $detail) {
             $detail->text = $markdownParser->text($detail->text);
         }
