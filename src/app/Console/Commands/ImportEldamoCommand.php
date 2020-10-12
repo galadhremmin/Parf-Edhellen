@@ -253,17 +253,29 @@ class ImportEldamoCommand extends Command
 
     private function createDetails(object $data, Gloss $gloss): array
     {
-        $details = array_map(function ($d) use($gloss) {
+        $order = [
+            'Variations'            => 10,
+            'Changes'               => 20,
+            'Derivatives'           => 25,
+            'Derivations'           => 30,
+            'Cognates'              => 40,
+            'Element in'            => 50,
+            'Phonetic Developments' => 60,
+            'Inflections'           => 70,
+        ];
+
+        $details = array_map(function ($d) use($gloss, $order) {
+            if (! isset($order[$d->title])) {
+                throw new \Exception(sprintf("Unknown gloss detail category: %s.", $d->title));
+            }
+
             return new GlossDetail([
                 'category' => $d->title,
                 'text' => $d->body,
-                'account_id' => $gloss->account_id
+                'account_id' => $gloss->account_id,
+                'order' => $order[$d->title],
             ]);
         }, $data->details);
-
-        for ($i = 1; $i <= count($details); $i += 1) {
-            $details[$i - 1]->order = $i * 10;
-        }
 
         return $details;
     }
