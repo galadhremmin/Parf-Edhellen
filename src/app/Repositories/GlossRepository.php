@@ -312,7 +312,7 @@ class GlossRepository
 
         foreach ($keywords as $keyword) {
             if (! is_string($keyword)) {
-                throw new \Exception('The array of keywords must only contain strings.');
+                throw new \Exception(sprintf('The array of keywords must only contain strings. Found "%s".', json_encode($keyword)));
             }
         }
 
@@ -736,7 +736,8 @@ class GlossRepository
             $columns = array_merge($columns, [
                 DB::raw('NULL as gloss_details_category'), 
                 DB::raw('NULL as gloss_details_text'), 
-                DB::raw('NULL as gloss_details_order')
+                DB::raw('NULL as gloss_details_order'),
+                DB::raw('NULL as gloss_details_type')
             ]);
         }
 
@@ -754,7 +755,8 @@ class GlossRepository
         $columns = array_merge($columns, [
             'gd.category as gloss_details_category', 
             'gd.text as gloss_details_text', 
-            'gd.order as gloss_details_order'
+            'gd.order as gloss_details_order',
+            'gd.type as gloss_details_type'
         ]);
         
         return self::createGlossQueryWithoutDetails($columns, false)

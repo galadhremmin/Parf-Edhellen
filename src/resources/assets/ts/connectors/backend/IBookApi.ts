@@ -97,6 +97,7 @@ export interface IBookGlossDetailEntity {
     category: string;
     order: number;
     text: string;
+    type?: string;
 }
 
 export interface IBookWordInflection {

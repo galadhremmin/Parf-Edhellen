@@ -4,14 +4,15 @@ namespace App\Helpers;
 
 class MarkdownParser extends \Parsedown
 {
+    const SYMBOL_REFERENCE     = '[';
+    const SYMBOL_TRANSCRIPTION = '@';
 
     function __construct($disabledBlockTypes = [])
     {
-        $this->InlineTypes['['][] = 'Reference';
-        $this->InlineTypes['>']   = ['SeeAlso'];
-        $this->InlineTypes['@']   = ['Transcription'];
+        $this->InlineTypes[self::SYMBOL_REFERENCE][]   = 'Reference';
+        $this->InlineTypes[self::SYMBOL_TRANSCRIPTION] = ['Transcription'];
 
-        $this->inlineMarkerList = '!"*_&[:<>`~\\@';
+        $this->inlineMarkerList = implode('', array_keys($this->InlineTypes));
 
         // escapes markup (HTML)
         $this->setMarkupEscaped(true);
@@ -231,6 +232,18 @@ class MarkdownParser extends \Parsedown
     {
         $link = parent::inlineUrl($Excerpt);
         return $this->shortenUri($link);
+    }
+
+    protected function inlineDerivatives($Excerpt)
+    {
+        dd($Excerpt);
+        return [];
+    }
+
+    protected function inlineDerivations($Excerpt)
+    {
+        dd($Excerpt);
+        return [];
     }
 
     private function shortenUri($link)
