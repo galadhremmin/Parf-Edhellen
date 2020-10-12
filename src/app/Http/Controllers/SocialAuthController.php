@@ -120,7 +120,8 @@ class SocialAuthController extends Controller
         return redirect()->route('dashboard', [ 'loggedIn' => true ]);
     }
 
-    public static function getProvider(string $providerName) {
+    public static function getProvider(string $providerName)
+    {
         if (empty($providerName)) {
             throw new \UnexpectedValueException('Missing an identity provider.');
         }
