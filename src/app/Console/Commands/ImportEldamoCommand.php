@@ -67,31 +67,34 @@ class ImportEldamoCommand extends Command
         $eldamoGroup   = $this->getEldamo();
         $eldamoAccount = $this->getEldamoAccount($eldamoGroup);
         
-        $glossary = [];
-
         // Create glossary by reading line by line (expecting jsonl file).
         if ($fp = fopen($path, 'r')) {
-            $lineNumber = 1;
-            while (! feof($fp)) {
-                $line = fgets($fp);
-                $entity = json_decode($line);
-                if (! $entity) {
-                    throw new \Exception(sprintf('Line %d is corrupt - entity is null or undefined. JSON: %s', $lineNumber, $line));
-                }
+            try {
+                $lineNumber = 1;
+                while (! feof($fp)) {
+                    $line = fgets($fp);
+                    $entity = json_decode($line);
+                    if (! $entity) {
+                        throw new \Exception(sprintf('Line %d is corrupt - entity is null or undefined. JSON: %s', $lineNumber, $line));
+                    }
 
-                $data = $this->createImportData($entity, $eldamoGroup, $eldamoAccount);
-                if (! $data['gloss']->language_id) {
-                    $this->line(sprintf('Skipping %s (line %d): unsupported language %s.', $data['gloss']->external_id, $lineNumber, $entity['gloss']->language));
-                } else {
-                    $glossary[] = $data;
+                    $data = $this->createImportData($entity, $eldamoGroup, $eldamoAccount);
+                    if (! $data['gloss']->language_id) {
+                        $this->line(sprintf('Skipping %s (line %d): unsupported language %s.', $data['gloss']->external_id, $lineNumber, $entity['gloss']->language));
+
+                    } else {
+                        $this->validateImports($lineNumber, $data);
+                        $this->import($lineNumber, $data);
+                        
+                    }
+
+                    $lineNumber += 1;
+                    unset($data);
                 }
-                $lineNumber += 1;
+            } finally {
+                fclose($fp);
             }
-            fclose($fp);
         }
-
-        $this->validateImports($glossary);
-        $this->import($glossary);
     }
 
     private function createImportData(object $data, GlossGroup $eldamoGroup, Account $eldamoAccount): array
@@ -131,98 +134,91 @@ class ImportEldamoCommand extends Command
         ];
     }
 
-    private function validateImports(array $glossary): void
+    private function validateImports(int $index, array $data): void
     {
-        foreach ($glossary as $data) {
-            $details      = $data['details'];
-            $gloss        = $data['gloss'];
-            $inflections  = $data['inflections'];
-            $keywords     = $data['keywords'];
-            $sense        = $data['sense'];
-            $translations = $data['translations'];
-            $word         = $data['word'];
+        $details      = $data['details'];
+        $gloss        = $data['gloss'];
+        $inflections  = $data['inflections'];
+        $keywords     = $data['keywords'];
+        $sense        = $data['sense'];
+        $translations = $data['translations'];
+        $word         = $data['word'];
 
-            $id = $gloss->external_id;
+        $id = $gloss->external_id;
 
-            // Validate details
-            foreach ($details as $detail) {
-                if (empty($detail->category)) {
-                    throw new \Exception(sprintf('Details title is empty for %d.', $id));
-                }
-
-                if (empty($detail->text)) {
-                    throw new \Exception(sprintf('Details body is empty for %d.', $id));
-                }
+        // Validate details
+        foreach ($details as $detail) {
+            if (empty($detail->category)) {
+                throw new \Exception(sprintf('Details title is empty for %d.', $id));
             }
 
-            if (! $gloss->account_id) {
-                throw new \Exception(sprintf('Invalid account ID for %d.', $id));
+            if (empty($detail->text)) {
+                throw new \Exception(sprintf('Details body is empty for %d.', $id));
+            }
+        }
+
+        if (! $gloss->account_id) {
+            throw new \Exception(sprintf('Invalid account ID for %d.', $id));
+        }
+
+        if (! $gloss->language_id) {
+            throw new \Exception(sprintf('Invalid language ID for %d.', $id));
+        }
+
+        foreach ($keywords as $keyword) {
+            if (empty($keyword)) {
+                throw new \Exception(sprintf('Invalid keyword for %d.', $id));
             }
 
-            if (! $gloss->language_id) {
-                throw new \Exception(sprintf('Invalid language ID for %d.', $id));
-            }
-
-            foreach ($keywords as $keyword) {
-                if (empty($keyword)) {
-                    throw new \Exception(sprintf('Invalid keyword for %d.', $id));
-                }
-
-                if (! is_string($keyword)) {
-                    throw new \Exception(sprintf('Invalid keyword "%s" for %d.', $keyword, $id));
-                }
+            if (! is_string($keyword)) {
+                throw new \Exception(sprintf('Invalid keyword "%s" for %d.', $keyword, $id));
             }
         }
     }
 
-    private function import(array $glossary): void
+    private function import(int $index, array $data): void
     {
-        $index = 1;
-        foreach ($glossary as $data) {
-            $details      = $data['details'];
-            $gloss        = $data['gloss'];
-            $inflections  = $data['inflections'];
-            $keywords     = $data['keywords'];
-            $sense        = $data['sense'];
-            $translations = $data['translations'];
-            $word         = $data['word'];
+        $details      = $data['details'];
+        $gloss        = $data['gloss'];
+        $inflections  = $data['inflections'];
+        $keywords     = $data['keywords'];
+        $sense        = $data['sense'];
+        $translations = $data['translations'];
+        $word         = $data['word'];
 
-            $this->line($index.' '.$gloss->language->name.': '.$word.' ('.$sense.')');
-                
-            if ($gloss->id) {
-                $this->line("\tExisting ID: ".$gloss->id);
-            } else {
-                $this->line("\tNew gloss!");
-            }
+        $this->line($index.' '.$gloss->language->name.': '.$word.' ('.$sense.')');
+            
+        if ($gloss->id) {
+            $this->line("\tExisting ID: ".$gloss->id);
+        } else {
+            $this->line("\tNew gloss!");
+        }
 
-            $this->line("\tAccount ID: ".$gloss->account_id);
-            $this->line("\tExternal ID: ".$gloss->external_id);
-            $this->line("\tGloss group: ".$gloss->gloss_group_id);
-            $this->line("\tDetails: ".count($details));
-            $this->line("\tKeywords: ".count($keywords));
-            $this->line("\tClassification: ".($gloss->is_uncertain ? 'uncertain' : 'regular'));
-            $this->line("\tAttempting to save...");
+        $this->line("\tAccount ID: ".$gloss->account_id);
+        $this->line("\tExternal ID: ".$gloss->external_id);
+        $this->line("\tGloss group: ".$gloss->gloss_group_id);
+        $this->line("\tDetails: ".count($details));
+        $this->line("\tKeywords: ".count($keywords));
+        $this->line("\tClassification: ".($gloss->is_uncertain ? 'uncertain' : 'regular'));
+        $this->line("\tAttempting to save...");
 
-            try {
-                $importedGloss = $this->_glossRepository->saveGloss($word, $sense, $gloss, $translations, $keywords, $details, false);
-                $importedGloss->load('word', 'sense', 'gloss_group');
-            } catch (\Exception $ex) {
-                $this->error(sprintf('Failed to import gloss %s.', $gloss->external_id));
-                $this->error($ex->getMessage());
-                $this->error($ex->getTraceAsString());
-                dd([$word, $sense, $gloss, $translations, $keywords, $details]);
-            }
+        try {
+            $importedGloss = $this->_glossRepository->saveGloss($word, $sense, $gloss, $translations, $keywords, $details, false);
+            $importedGloss->load('word', 'sense', 'gloss_group');
+        } catch (\Exception $ex) {
+            $this->error(sprintf('Failed to import gloss %s.', $gloss->external_id));
+            $this->error($ex->getMessage());
+            $this->error($ex->getTraceAsString());
+            dd([$word, $sense, $gloss, $translations, $keywords, $details]);
+        }
 
-            $this->line("\tSuccess! ID: ".$importedGloss->id);
-            $this->line("\tInflections: ".count($inflections));
+        $this->line("\tSuccess! ID: ".$importedGloss->id);
+        $this->line("\tInflections: ".count($inflections));
 
-            foreach ($inflections as $inflection) {
-                $this->line("\t- ".$inflection->word);
-                $keyword = $this->_keywordRepository->createKeyword($importedGloss->word, $importedGloss->sense, $importedGloss, $inflection->word);
-                $this->line("\t\tID: ".$keyword->id);
-            }
-
-            $index += 1;
+        foreach ($inflections as $inflection) {
+            $this->line("\t- ".$inflection->word);
+            $keyword = $this->_keywordRepository->createKeyword($importedGloss->word, $importedGloss->sense, $importedGloss, $inflection->word);
+            $this->line("\t\tID: ".$keyword->id);
         }
     }
 
