@@ -4,7 +4,12 @@ namespace App\Models;
 
 class Language extends ModelBase
 {
-    protected $hidden = ['created_at', 'updated_at', 'order', 'category', 'description'];
+    protected $hidden = [
+        'created_at', 'updated_at', 'order', 'category', 'description'
+    ];
+    protected $fillable = [ 
+        'name', 'is_invented', 'category', 'description', 'short_name', 'is_unusual', 'tengwar_mode', 'order'
+    ];
 
     public function scopeShortName($query, string $shortName)
     {

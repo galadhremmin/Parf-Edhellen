@@ -312,7 +312,7 @@ class GlossRepository
 
         foreach ($keywords as $keyword) {
             if (! is_string($keyword)) {
-                throw new \Exception('The array of keywords must only contain strings.');
+                throw new \Exception(sprintf('The array of keywords must only contain strings. Found "%s".', json_encode($keyword)));
             }
         }
 
