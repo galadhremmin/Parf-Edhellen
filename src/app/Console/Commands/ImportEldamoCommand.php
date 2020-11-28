@@ -64,8 +64,9 @@ class ImportEldamoCommand extends Command
             return;
         }
 
-        $eldamoGroup   = $this->getEldamo();
-        $eldamoAccount = $this->getEldamoAccount($eldamoGroup);
+        $eldamoGroup    = $this->getEldamo();
+        $neologismGroup = $this->getNeologisms();
+        $eldamoAccount  = $this->getEldamoAccount($eldamoGroup);
         
         // Create glossary by reading line by line (expecting jsonl file).
         if ($fp = fopen($path, 'r')) {
@@ -78,7 +79,7 @@ class ImportEldamoCommand extends Command
                         throw new \Exception(sprintf('Line %d is corrupt - entity is null or undefined. JSON: %s', $lineNumber, $line));
                     }
 
-                    $data = $this->createImportData($entity, $eldamoGroup, $eldamoAccount);
+                    $data = $this->createImportData($entity, $eldamoGroup, $neologismGroup, $eldamoAccount);
                     if (! $data['gloss']->language_id) {
                         $this->line(sprintf('Skipping %s (line %d): unsupported language %s.', $data['gloss']->external_id, $lineNumber, $entity['gloss']->language));
 
@@ -97,12 +98,11 @@ class ImportEldamoCommand extends Command
         }
     }
 
-    private function createImportData(object $data, GlossGroup $eldamoGroup, Account $eldamoAccount): array
+    private function createImportData(object $data, GlossGroup $eldamoGroup, GlossGroup $neologismGroup, Account $eldamoAccount): array
     {
         $gloss = Gloss::firstOrNew(['external_id' => $data->gloss->id]);
 
         $gloss->account_id     = $eldamoAccount->id;
-        $gloss->gloss_group_id = $eldamoGroup->id;
         $gloss->source         = implode('; ', $data->sources);
         $gloss->comments       = $data->gloss->notes;
         $gloss->is_deleted     = 0;
@@ -110,8 +110,18 @@ class ImportEldamoCommand extends Command
                                  $data->gloss->mark === '*' ||
                                  $data->gloss->mark === '‽' ||
                                  $data->gloss->mark === '!' ||
-                                 $data->gloss->mark === '#';
+                                 $data->gloss->mark === '#' ||
+                                 $data->gloss->mark === '^' ||
+                                 $data->gloss->mark === '⚠️';
         $gloss->is_rejected    = $data->gloss->mark === '-';
+
+        if ($data->gloss->mark === '!' ||
+            $data->gloss->mark === '?' ||
+            $data->gloss->mark === '⚠️') {
+            $gloss->gloss_group_id = $neologismGroup->id;
+        } else {
+            $gloss->gloss_group_id = $eldamoGroup->id;
+        }
 
         $this->setLanguage($data, $gloss);
         $this->setSpeech($data, $gloss);
@@ -306,6 +316,11 @@ class ImportEldamoCommand extends Command
     private function getEldamo(): GlossGroup
     {
         return GlossGroup::where('name', 'Eldamo')->firstOrFail();
+    }
+
+    private function getNeologisms(): GlossGroup
+    {
+        return GlossGroup::where('name', 'Neologism')->firstOrFail();
     }
 
     private function getEldamoAccount(GlossGroup $group): Account
