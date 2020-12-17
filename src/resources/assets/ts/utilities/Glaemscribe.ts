@@ -81,9 +81,9 @@ export default class Transcriber {
 
     private async _loadGlaemscribe(): Promise<IGlaemscribe> {
         // Load and execute Glaemscribe
-        const Glaemscribe = await import('glaemscribe/js/glaemscribe.min.js');
-        this._setGlaemscribe(Glaemscribe);
-        return Glaemscribe;
+        const module = await import('glaemscribe/js/glaemscribe.min.js');
+        this._setGlaemscribe(module.Glaemscribe);
+        return this._getGlaemscribe();
     }
 
     private async _loadCharset(charset: string) {

@@ -15,7 +15,7 @@ describe('components/Form', () => {
             ];
 
             const wrapper = mount(<span>
-                <TagInput value={tags} />
+                <TagInput name="unit-test" value={tags} />
             </span>);
 
             expect(wrapper.find('TagLabel').length).to.equal(tags.length);
@@ -33,12 +33,12 @@ describe('components/Form', () => {
                 expect(ev.value).to.contain(inject);
                 actual = ev.value;
             };
-            const wrapper = mount(<TagInput value={original} onChange={_onChange} />);
+            const wrapper = mount(<TagInput name="unit-test" value={original} onChange={_onChange} />);
             const input = wrapper.find('input.form-control');
 
             // add a tag to the array of tags.
             input.simulate('change', { target: { value: inject } });
-            input.simulate('keypress', { which: 13 });
+            input.simulate('keypress', { key: 'Enter' });
             expect(actual).to.deep.equal(expected);
         });
 
@@ -50,12 +50,12 @@ describe('components/Form', () => {
                 expect(ev.value).to.contain(expected);
                 done();
             };
-            const wrapper = mount(<TagInput onChange={_onChange} />);
+            const wrapper = mount(<TagInput name="unit-test" onChange={_onChange} />);
             const input = wrapper.find('input.form-control');
 
             // add a tag to the array of tags.
             input.simulate('change', { target: { value: inject } });
-            input.simulate('keypress', { which: 13 });
+            input.simulate('keypress', { key: 'Enter' });
         });
 
         it('can delete tags', () => {
@@ -67,7 +67,7 @@ describe('components/Form', () => {
                 expect(ev.value).to.not.contain(remove);
                 actual = ev.value;
             };
-            const wrapper = mount(<TagInput value={original} onChange={_onChange} />);
+            const wrapper = mount(<TagInput name="unit-test" value={original} onChange={_onChange} />);
             const input = wrapper.find(`input[name="tag-checkbox--${remove}"]`);
 
             // remove the tag by unchecking it

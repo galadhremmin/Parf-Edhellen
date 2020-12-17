@@ -78,6 +78,7 @@ export default class TagInput extends React.Component<IProps, IState> {
         }
 
         const {
+            name,
             onChange,
         } = this.props;
 
@@ -95,12 +96,16 @@ export default class TagInput extends React.Component<IProps, IState> {
     }
 
     private _deleteTag(tag: string) {
+        const {
+            name,
+            onChange,
+        } = this.props;
         const tags = this._getTags(/* clone: */ true);
 
         const pos = tags.indexOf(tag);
         if (pos > -1) {
             tags.splice(pos, 1);
-            fireEvent(name, this.props.onChange, tags);
+            fireEvent(name, onChange, tags);
         }
     }
 
@@ -135,7 +140,7 @@ export default class TagInput extends React.Component<IProps, IState> {
             textValue,
         } = this.state;
 
-        if (ev.which === 13) {
+        if (ev.key === 'Enter') {
             ev.preventDefault();
             this._addTag(textValue);
         }

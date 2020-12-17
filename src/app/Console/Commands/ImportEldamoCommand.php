@@ -333,11 +333,6 @@ class ImportEldamoCommand extends Command
         return Account::findOrFail($existing->account_id);
     }
 
-    private function getNeologisms(): GlossGroup
-    {
-        return GlossGroup::where('name', 'Neologism')->firstOrFail();
-    }
-
     private function getLanguageMap()
     {
         if (is_array($this->_languageMap)) {

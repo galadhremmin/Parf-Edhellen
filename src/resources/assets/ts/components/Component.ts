@@ -16,7 +16,7 @@ export const fireEvent = <V>(componentOrName: ComponentOrName, ev: ComponentEven
             name = componentOrName;
         }
 
-    } else if (componentOrName !== null) {
+    } else if (componentOrName) {
         const {
             id: componentId,
             name: componentName,
