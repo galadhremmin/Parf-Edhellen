@@ -43,6 +43,7 @@ describe('components/Tengwar', () => {
         setTimeout(() => {
             wrapper.update();
             expect(wrapper.text()).to.equal(expected);
+            expect(wrapper.getDOMNode().getAttribute('title')).to.equal(text);
             done();
         }, 0);
     });

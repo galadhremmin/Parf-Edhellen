@@ -60,7 +60,7 @@ export default class Tengwar extends React.Component<IProps> {
             return null;
         }
 
-        return <Component className={className}>{tengwar}</Component>;
+        return <Component className={className} title={text}>{tengwar}</Component>;
     }
 
     private async _transcribe() {

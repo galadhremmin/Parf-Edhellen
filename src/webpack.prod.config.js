@@ -1,4 +1,4 @@
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const baseConfig = require('./webpack.config');
 const TerserPlugin = require('terser-webpack-plugin');
 
@@ -9,7 +9,6 @@ module.exports = merge(baseConfig, {
         minimizer: [
             new TerserPlugin({
                 parallel: true,
-                sourceMap: false,
                 terserOptions: {
                     keep_classnames: true,
                     keep_fnames: true,

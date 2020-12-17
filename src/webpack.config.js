@@ -103,42 +103,21 @@ module.exports = {
     rules: [
       {
         test: require.resolve('glaemscribe/js/glaemscribe.min.js'),
-        /* this is a much more elegant approach, but it will need additional effort to work with Glaemscribe's
-        resource manager, as *.glaem.js files expects Glaemscribe to be a global variable.
-        loaders: [
-          'imports-loader?this=>window',
-          'exports-loader?Glaemscribe',
-        ],
-        */
-        // use: 'script-loader',
-        use: [
-          'exports-loader?Glaemscribe',
-        ],
+        use: [{
+          loader: 'exports-loader',
+          options: {
+            exports: 'Glaemscribe',
+          },
+        }],
       },
       {
         test: /\.(cst|glaem)\.js$/,
-        // use: 'script-loader',
-        use: [
-          'imports-loader?Glaemscribe=>window.Glaemscribe',
-        ],
-      },
-      { 
-        test: /\.tsx?$/, 
-        loader: 'ts-loader',
-      },
-      // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
-      { 
-        enforce: 'pre', 
-        test: /\.js$/, 
-        loader: 'source-map-loader'
-      },
-      {
-        test: /\.s?css$/,
-        use: [
-          bundleCssWithJavaScript ? 'style-loader' : MiniCssExtractPlugin.loader, // creates style nodes from JS strings
-          "css-loader?modules=false", // translates CSS into CommonJS
-          "sass-loader" // compiles Sass to CSS, using Node Sass by default
-        ]
+        use: [{
+          loader: 'imports-loader',
+          options: {
+            additionalCode: 'var Glaemscribe = window.Glaemscribe;',
+          },
+        }],
       },
       {
         test: /\.(eot|ttf|svg)$/,
@@ -148,9 +127,49 @@ module.exports = {
       },
       {
         test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'url-loader?name=fonts/[name].[ext]&mimetype=application/font-woff'
+        use: [{
+          loader: 'url-loader',
+          options: {
+            mimetype: 'application/font-woff',
+            name: 'fonts/[name].[ext]',
+          }
+        }],
       },
-    ]
+      {
+        test: /\.(gif|jpg|png)$/i,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              esModule: false,
+            }
+          }
+        ],
+      },
+      { 
+        test: /\.tsx?$/, 
+        use: 'ts-loader',
+      },
+      // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
+      { 
+        enforce: 'pre', 
+        test: /\.js$/, 
+        use: 'source-map-loader'
+      },
+      {
+        test: /\.s?css$/,
+        use: [
+          bundleCssWithJavaScript ? 'style-loader' : MiniCssExtractPlugin.loader, // creates style nodes from JS strings
+          {
+            loader: 'css-loader',
+            options: {
+              modules: false, // translates CSS into CommonJS
+            },
+          },
+          "sass-loader" // compiles Sass to CSS, using Node Sass by default
+        ]
+      },
+    ],
   },
   plugins: [
     new cleanWebpack.CleanWebpackPlugin(),

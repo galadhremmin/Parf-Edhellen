@@ -1,5 +1,4 @@
 import {
-    Constants,
     ICellEditorComp,
     ICellEditorParams,
     PopupComponent,
@@ -8,6 +7,7 @@ import {
 import { ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
 import debounce from '@root/utilities/func/debounce';
 import { IFragmentGridMetadata } from '../FragmentsGrid._types';
+import KeyboardConstants from './KeyboardConstants';
 
 import './GlossCellEditor.scss';
 
@@ -54,8 +54,8 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
         if (params.cellStartedEdit) {
             this.focusAfterAttached = true;
 
-            if (Constants.KEY_BACKSPACE === params.keyPress ||
-                Constants.KEY_DELETE    === params.keyPress) {
+            if (KeyboardConstants.Backspace === params.keyPress ||
+                KeyboardConstants.Delete    === params.keyPress) {
                 value = 0;
 
             } else if (params.charPress) {
@@ -89,7 +89,7 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
             });
         }
 
-        this.addDestroyableEventListener(this._inputElement, 'keydown', this._onKeyDown);
+        this.addManagedListener(this._inputElement, 'keydown', this._onKeyDown);
     }
 
     public afterGuiAttached() {
@@ -138,7 +138,7 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
 
         suggestionListElement.innerHTML = html.join('');
         suggestionListElement.querySelectorAll('a[data-gloss-id]').forEach((a) => {
-            this.addDestroyableEventListener(a, 'click', this._onSuggestionClick);
+            this.addManagedListener(a, 'click', this._onSuggestionClick);
         });
     }
 
@@ -156,18 +156,18 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
 
     private _onKeyDown = (ev: KeyboardEvent) => {
         const target = ev.target as HTMLInputElement;
-        switch (ev.keyCode) {
-            case Constants.KEY_ENTER:
+        switch (ev.key) {
+            case 'Enter':
                 if (target.value.length > 0 && ! this._applySuggestion()) {
                     ev.stopPropagation();
                 }
                 break;
-            case Constants.KEY_UP:
+            case 'ArrowUp':
                 ev.stopPropagation();
                 ev.preventDefault();
                 this._onSelectPreviousSuggestion();
                 break;
-            case Constants.KEY_DOWN:
+            case 'ArrowDown':
                 ev.stopPropagation();
                 ev.preventDefault();
                 this._onSelectNextSuggestion();

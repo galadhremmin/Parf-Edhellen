@@ -19,7 +19,6 @@
             "react-redux",
             "redux",
             "moment",
-            "moment",
             "mocha",
             "chai"
         ],
