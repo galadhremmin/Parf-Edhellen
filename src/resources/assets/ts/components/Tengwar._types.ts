@@ -1,5 +1,6 @@
 export interface ITranscriber {
-    transcribe(text: string, mode: string): string;
+    transcribe(text: string, mode: string): Promise<string>;
+    getModeName(mode: string): Promise<string>;
 }
 
 export interface IProps {
@@ -11,6 +12,7 @@ export interface IProps {
 }
 
 export interface IState {
+    modeName?: string;
     lastText: string;
     transcribed: string;
 }

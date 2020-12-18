@@ -4,7 +4,7 @@ import React from 'react';
 import sinon from 'sinon';
 
 import Tengwar from './Tengwar';
-import { IProps } from './Tengwar._types';
+import { IProps, ITranscriber } from './Tengwar._types';
 
 import '../utilities/Enzyme';
 
@@ -12,6 +12,7 @@ describe('components/Tengwar', () => {
     let wrapper: ReactWrapper<IProps>;
     const DefaultMessage = 'Hello world!';
     const DefaultMode = 'sindarin';
+    const DefaultModeName = 'unit-test';
 
     before(() => {
         wrapper = mount(<Tengwar text={DefaultMessage} />);
@@ -31,10 +32,11 @@ describe('components/Tengwar', () => {
             text,
             transcribe: true,
             // tslint:disable-next-line: new-parens
-            transcriber: new class MockedTranscriber {
+            transcriber: new class MockedTranscriber implements ITranscriber {
                 public transcribe = sinon.stub()
                     .withArgs(text, DefaultMode)
                     .returns(expected);
+                public getModeName = () => Promise.resolve(DefaultModeName);
             },
         });
 
@@ -43,7 +45,7 @@ describe('components/Tengwar', () => {
         setTimeout(() => {
             wrapper.update();
             expect(wrapper.text()).to.equal(expected);
-            expect(wrapper.getDOMNode().getAttribute('title')).to.equal(text);
+            expect(wrapper.getDOMNode().getAttribute('title')).to.equal(`${text} (${DefaultModeName})`);
             done();
         }, 0);
     });

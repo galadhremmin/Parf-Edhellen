@@ -1,4 +1,5 @@
 /// <reference path="../_types/glaemscribe.d.ts" />
+import { ITranscriber } from '@root/components/Tengwar._types';
 import {
     DefaultGlaemscribeCharacterSet,
     GlaemscribeModeMappings,
@@ -14,7 +15,7 @@ const enum InitializationContext {
  * @param {string} text
  * @param {string} mode
  */
-export default class Transcriber {
+export default class Transcriber implements ITranscriber {
     private static _initializations: { [key: string]: Promise<string> } = {};
 
     public async transcribe(text: string, mode: string) {
@@ -43,12 +44,23 @@ export default class Transcriber {
         return result[1].trim();
     }
 
+    public async getModeName(mode: string) {
+        const params = await this.initializeGlaemscribe(mode);
+        if (params === null) {
+            return null;
+        }
+
+        const loadedMode = Glaemscribe.resource_manager.loaded_modes[params.mode];
+        return loadedMode.human_name;
+    }
+
     public async initializeGlaemscribe(mode: string) {
         let transcriber = this._getGlaemscribe();
         if (! transcriber) {
             transcriber = await this._loadGlaemscribe();
         }
 
+        let humanName: string;
         if (! transcriber.resource_manager.loaded_modes.hasOwnProperty(mode)) {
             mode = await this._loadMode(mode);
 
@@ -57,6 +69,7 @@ export default class Transcriber {
             }
 
             transcriber.resource_manager.load_modes(mode);
+            humanName = transcriber.resource_manager.loaded_modes[mode].human_name;
         }
 
         const charset = DefaultGlaemscribeCharacterSet;
@@ -67,6 +80,7 @@ export default class Transcriber {
 
         return {
             charset,
+            humanName,
             mode,
         };
     }
