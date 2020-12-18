@@ -41,7 +41,7 @@ body {
   }
 
   @media (max-width: $screen-sm-min) {
-    background-image: url(/img/backgrounds/header-sm.jpg);
+    background-image: url(../img/backgrounds/header-sm.jpg);
     ul.dropdown-menu > li > a {
       color: white;
     }
@@ -78,10 +78,10 @@ body {
     }
   }
   @media (min-width: $screen-sm-min + 1) {
-    background-image: url(/img/backgrounds/header-md.jpg);
+    background-image: url(../img/backgrounds/header-md.jpg);
   }
   @media (min-width: 1920px) {
-    background-image: url(/img/backgrounds/header-lg.jpg);
+    background-image: url(../img/backgrounds/header-lg.jpg);
   }
   @media (min-width: $screen-sm-min) {
     .navbar-nav {
@@ -94,7 +94,7 @@ body {
     overflow: hidden;
     text-indent: -9999px;
     width: 140px;
-    background: url(/img/logotype.png) no-repeat center center;
+    background: url(../img/logotype.png) no-repeat center center;
     background-size: 140px 45px;
     margin-right: 10px;
     margin-left: 0;

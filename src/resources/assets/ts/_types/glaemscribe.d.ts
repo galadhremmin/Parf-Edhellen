@@ -1,6 +1,7 @@
 declare module 'glaemscribe/*';
 
 interface ITranscriber {
+    human_name: string;
     transcribe(text: string, charset: string): string[];
 }
 

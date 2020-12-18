@@ -12,11 +12,12 @@ export default class Tengwar extends React.Component<IProps> {
     public static defaultProps = {
         as: 'span',
         transcriber: resolve(DI.Glaemscribe),
-    };
+    } as Partial<IProps>;
 
     public static getDerivedStateFromProps(nextProps: IProps, prevState: IState) {
         if (nextProps.text !== prevState.lastText) {
             return {
+                modeName: '',
                 lastText: nextProps.text,
                 transcribed: null,
             } as IState;
@@ -54,18 +55,37 @@ export default class Tengwar extends React.Component<IProps> {
             transcribe,
             text,
         } = this.props;
+        const {
+            modeName,
+            transcribed,
+        } = this.state;
 
-        const tengwar = transcribe ? this.state.transcribed : text;
+        let tengwar = text;
+        let title = '';
+        if (transcribe) {
+            tengwar = transcribed;
+            title = `${text} (${modeName})`;
+        }
         if (!tengwar) {
             return null;
         }
 
-        return <Component className={className} title={text}>{tengwar}</Component>;
+        return <Component className={className} title={title}>{tengwar}</Component>;
     }
 
     private async _transcribe() {
-        const transcribed = await this.props.transcriber.transcribe(this.state.lastText, this.props.mode);
+        const {
+            mode,
+            transcriber,
+        } = this.props;
+        const {
+            lastText,
+        } = this.state;
+
+        const transcribed = await transcriber.transcribe(lastText, mode);
+        const modeName = await transcriber.getModeName(mode);
         this.setState({
+            modeName,
             transcribed,
         });
     }

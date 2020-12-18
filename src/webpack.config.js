@@ -139,10 +139,7 @@ module.exports = {
         test: /\.(gif|jpg|png)$/i,
         use: [
           {
-            loader: 'url-loader',
-            options: {
-              esModule: false,
-            }
+            loader: 'file-loader',
           }
         ],
       },
