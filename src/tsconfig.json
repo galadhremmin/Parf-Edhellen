@@ -14,11 +14,11 @@
         "emitDecoratorMetadata": true,
         "esModuleInterop": true,
         "types": [
+            "luxon",
             "react",
             "react-dom",
             "react-redux",
             "redux",
-            "moment",
             "mocha",
             "chai"
         ],

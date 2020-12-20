@@ -72,16 +72,14 @@
   "dependencies": {
     "@ag-grid-community/all-modules": "^24.1.0",
     "@ag-grid-community/react": "^24.1.1",
+    "@types/luxon": "^1.25.0",
     "axios": "^0.21.0",
-    "axios-retry": "^3.1.9",
     "babel-polyfill": "^6.26.0",
     "bootstrap-sass": "^3.4.1",
     "classnames": "^2.2.6",
-    "core-js": "^3.8.1",
-    "fast-equals": "^2.0.0",
     "glaemscribe": "^1.2.0",
     "html-to-react": "^1.4.5",
-    "moment": "^2.29.1",
+    "luxon": "^1.25.0",
     "query-string": "^6.13.7",
     "react": "^17.0.1",
     "react-autosuggest": "^10.0.4",
@@ -92,8 +90,6 @@
     "recharts": "^2.0.0-beta.1",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
-    "retry-axios": "^2.4.0",
-    "scroll-into-view": "^1.15.0",
     "spinkit": "^2.0.1"
   }
 }

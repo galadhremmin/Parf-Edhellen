@@ -4,7 +4,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = merge(baseConfig, {
     devtool: false,
-    optimization: {    
+    optimization: {
         minimize: true,
         minimizer: [
             new TerserPlugin({

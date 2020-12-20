@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import moment from 'moment';
+import { DateTime } from 'luxon';
 
 import { fireEvent } from '@root/components/Component';
 import { IProps } from './Timer._types';
@@ -18,8 +18,8 @@ function Timer(props: IProps) {
         }
 
         const timer = window.setInterval(() => {
-            const now  = moment();
-            fireEvent('Timer', onTick, now.unix());
+            const now  = DateTime.local();
+            fireEvent('Timer', onTick, now.toMillis());
         }, 1000);
 
         return () => {
@@ -27,8 +27,8 @@ function Timer(props: IProps) {
         }
     }, [ tick ]);
 
-    const duration = moment.unix(value).diff(
-        moment.unix(startValue), 'seconds',
+    const duration = DateTime.fromMillis(value).diff(
+        DateTime.fromMillis(startValue), 'seconds',
     );
     return <span>
         {duration}
@@ -36,8 +36,8 @@ function Timer(props: IProps) {
 }
 
 Timer.defaultProps = {
-    startValue: moment().unix(),
-    value: moment().unix(),
+    startValue: DateTime.local().toMillis(),
+    value: DateTime.local().toMillis(),
 } as IProps;
 
 export default Timer;
