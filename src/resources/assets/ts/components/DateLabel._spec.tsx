@@ -13,7 +13,7 @@ describe('components/DateLabel', () => {
         const wrapper = mount(<DateLabel dateTime={dateTime} />);
 
         expect(wrapper.find('time').prop('dateTime')).to.equal(dateTime.toISOString());
-        expect(wrapper.find('time').text()).to.equal(DateTime.fromJSDate(dateTime).toFormat('LLL'));
+        expect(wrapper.find('time').text()).to.equal(DateTime.fromJSDate(dateTime).toFormat('fff'));
     });
 
     it('formats ISO string dates appropriately', () => {
@@ -21,7 +21,7 @@ describe('components/DateLabel', () => {
         const wrapper = mount(<DateLabel dateTime={dateTime} />);
 
         expect(wrapper.find('time').prop('dateTime')).to.equal(dateTime);
-        expect(wrapper.find('time').text()).to.equal(DateTime.fromISO(dateTime).toFormat('LLL'));
+        expect(wrapper.find('time').text()).to.equal(DateTime.fromISO(dateTime).toFormat('fff'));
     });
 
     it('handles failures', () => {
