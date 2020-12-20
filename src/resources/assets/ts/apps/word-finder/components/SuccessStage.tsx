@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import React, { useCallback } from 'react';
 
 import { fireEvent } from '@root/components/Component';
@@ -19,6 +19,7 @@ function SuccessStage(props: IStageProps) {
         fireEvent('SuccessStage', onChangeStage, GameStage.Loading);
     }, []);
 
+    const timeElapsed = DateTime.fromMillis(time).diff(DateTime.fromMillis(startTime), 'seconds');
     return <>
         <div className="SuccessStage--fireworks">
             <div className="before"></div>
@@ -27,7 +28,7 @@ function SuccessStage(props: IStageProps) {
         <h3>
             Eglerio!
         </h3>
-        <p>You found all words in {moment.unix(time).diff(moment.unix(startTime), 'seconds')} seconds!</p>
+        <p>You found all words in {timeElapsed} seconds!</p>
         <button className="btn btn-lg btn-primary SuccessStage--play-again" onClick={_onPlayAgain}>Play again</button>
     </>
 }

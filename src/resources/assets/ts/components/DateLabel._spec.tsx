@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { mount } from 'enzyme';
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import React from 'react';
 
 import DateLabel from './DateLabel';
@@ -13,7 +13,7 @@ describe('components/DateLabel', () => {
         const wrapper = mount(<DateLabel dateTime={dateTime} />);
 
         expect(wrapper.find('time').prop('dateTime')).to.equal(dateTime.toISOString());
-        expect(wrapper.find('time').text()).to.equal(moment(dateTime).format('LLL'));
+        expect(wrapper.find('time').text()).to.equal(DateTime.fromJSDate(dateTime).toFormat('LLL'));
     });
 
     it('formats ISO string dates appropriately', () => {
@@ -21,7 +21,7 @@ describe('components/DateLabel', () => {
         const wrapper = mount(<DateLabel dateTime={dateTime} />);
 
         expect(wrapper.find('time').prop('dateTime')).to.equal(dateTime);
-        expect(wrapper.find('time').text()).to.equal(moment(dateTime).format('LLL'));
+        expect(wrapper.find('time').text()).to.equal(DateTime.fromISO(dateTime).toFormat('LLL'));
     });
 
     it('handles failures', () => {

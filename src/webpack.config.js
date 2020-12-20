@@ -31,24 +31,12 @@ module.exports = {
   optimization: {
     splitChunks: {
       cacheGroups: {
-        // disable Webpack 4's default cache groups.
         default: false,
-        vendors: false,
-
-        // vendor bundle
-        vendor: {
-          name: 'vendor',
-          chunks: 'all', // async and sync chunks
-          test(module) {
-            return module.resource &&
-              module.resource.includes('node_modules/') &&
-              !module.resource.includes('node_modules/glaemscribe') &&
-              !module.resource.includes('node_modules/recharts') &&
-              !module.resource.includes('node_modules/@ag-grid-community');
-          },
+        vendors: {
+          test: /\/node_modules\/(axios|classnames|html\-to\-react|query\-string|luxon|react|redux|spinkit)/,
           priority: 0,
+          reuseExistingChunk: true,
         },
-
         glaemscribe: {
           name(module, chunks, cacheGroupKey) {
             const moduleFileName = module.identifier().split('/').reduceRight(item => item).replace(/\.js$/, '');
@@ -57,37 +45,29 @@ module.exports = {
           },
           chunks: 'async',
           test: /node_modules\/glaemscribe\//,
-          priority: 20,
+          priority: 10,
+          reuseExistingChunk: true,
         },
-
-        recharts: {
-          name: 'recharts',
-          chunks: 'all',
-          test: /node_modules\/recharts/,
-          priority: 20,
-        },
-
         grid: {
-          name: 'grid',
-          chunks: 'all',
-          test: /node_modules\/@ag\-grid\-community/,
+          test: /\/node_modules\/\@ag\-grid\-community/,
           priority: 20,
+          reuseExistingChunk: true,
         },
-
-        // common chunks, like components that are used by at least
-        // in two separate chunks.
+        recharts: {
+          test: /\/node_modules\/(recharts|d3|lodash|core\-js)/,
+          priority: 30,
+          reuseExistingChunk: true,
+        },
         common: {
           name: 'common',
           minChunks: 2,
-          chunks: 'async',
-          priority: 10,
+          priority: -10,
           reuseExistingChunk: true,
-          enforce: true,
-        }
-      }
+        },
+      },
     },
   },
-  devtool: 'source-map',
+  // devtool: 'source-map',
   resolve: {
     alias: {
       '@root': sourcePath,

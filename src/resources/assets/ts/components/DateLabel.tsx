@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import React from 'react';
 
 import { IProps } from './DateLabel._types';
@@ -10,10 +10,10 @@ export function DateLabel(props: IProps) {
 
     const dateTimeISOString = typeof dateTime === 'string'
         ? dateTime : dateTime.toISOString();
-    const momentDate = moment(dateTime, moment.ISO_8601, true);
+    const date = DateTime.fromISO(dateTimeISOString);
 
-    if (momentDate.isValid()) {
-        return <time dateTime={dateTimeISOString}>{momentDate.format('LLL')}</time>;
+    if (date.isValid) {
+        return <time dateTime={dateTimeISOString}>{date.toFormat('LLL')}</time>;
     } else {
         return <span>{`Unknown date (${dateTime})`}</span>;
     }
