@@ -1,9 +1,12 @@
+import KeyboardConstants from './KeyboardConstants';
 import {
-    Constants,
     ICellEditorComp,
     ICellEditorParams,
     PopupComponent,
 } from '@ag-grid-community/all-modules';
+
+const KEY_BACKSPACE = 8;
+const KEY_DELETE    = 46;
 
 export default class MultipleSelectCellEditor<T, V = T> extends PopupComponent implements ICellEditorComp {
     private static TEMPLATE = `<div class="ag-input-wrapper" role="presentation">
@@ -48,13 +51,13 @@ export default class MultipleSelectCellEditor<T, V = T> extends PopupComponent i
         if (params.cellStartedEdit) {
             this.focusAfterAttached = true;
 
-            if (Constants.KEY_BACKSPACE === params.keyPress) {
+            if (KeyboardConstants.Backspace === params.keyPress) {
                 // The customer is interacting with the grid via the keyboard, and they pressed
                 // the backspace key -- the expected behavior is to remove the last value from
                 // the list of values.
                 values = values.slice(0, values.length - 1);
 
-            } else if (Constants.KEY_DELETE === params.keyPress) {
+            } else if (KeyboardConstants.Delete === params.keyPress) {
                 // The customer is pressing the delete key -- the expected behavior is that all
                 // current values are removed.
                 values = [];
@@ -71,7 +74,7 @@ export default class MultipleSelectCellEditor<T, V = T> extends PopupComponent i
         this._updateValues();
 
 
-        this.addDestroyableEventListener(this._inputElement, 'keydown', this._onKeyDown);
+        this.addManagedListener(this._inputElement, 'keydown', this._onKeyDown);
     }
 
     public afterGuiAttached() {
@@ -229,15 +232,15 @@ export default class MultipleSelectCellEditor<T, V = T> extends PopupComponent i
             maxNumberOfValues,
         } = this;
 
-        switch (event.keyCode) {
-            case Constants.KEY_ENTER:
+        switch (event.key) {
+            case 'Enter':
                 if (target.value.length > 0) {
                     if (this._addValue(target.value) && maxNumberOfValues !== values.length) {
                         event.stopPropagation();
                     }
                 }
                 break;
-            case Constants.KEY_BACKSPACE:
+            case 'Backspace':
                 if (target.value.length === 0) {
                     event.stopPropagation();
                     this._removeLastValue();

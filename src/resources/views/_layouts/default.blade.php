@@ -139,7 +139,6 @@
     </section>
   </footer>
 
-  <script type="text/javascript" src="@assetpath(vendor.js)"></script>
   <script type="text/javascript" src="@assetpath(index.js)"></script>
   
   @yield('scripts')

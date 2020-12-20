@@ -121,6 +121,7 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
 
     private _requestSuggestions(text: string) {
         const {
+            name,
             onSuggest,
         } = this.props;
 
@@ -252,6 +253,7 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
 
     private _onSuggestionsClearRequest = () => {
         const {
+            name,
             onClearSuggestions,
         } = this.props;
 

@@ -1,4 +1,4 @@
-import moment from 'moment';
+import { DateTime } from 'luxon';
 import {
     Actions,
     IGameAction,
@@ -16,7 +16,7 @@ const InitialState: IStageReducerState = {
 const StageReducer = (state = InitialState, action: IGameAction) => {
     switch (action.type) {
         case Actions.InitializeGame: {
-            const now = moment().unix();
+            const now = DateTime.local().toMillis();
             return {
                 ...state,
                 duration: 0,

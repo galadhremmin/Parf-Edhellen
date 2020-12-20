@@ -26,7 +26,9 @@ const renderDates = () => {
     });
 };
 
-renderDictionary();
-renderDates();
-inject();
-hookBootstrapToggles();
+window.addEventListener('load', () => {
+    renderDictionary();
+    renderDates();
+    inject();
+    hookBootstrapToggles();
+});

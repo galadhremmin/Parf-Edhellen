@@ -31,24 +31,12 @@ module.exports = {
   optimization: {
     splitChunks: {
       cacheGroups: {
-        // disable Webpack 4's default cache groups.
         default: false,
-        vendors: false,
-
-        // vendor bundle
-        vendor: {
-          name: 'vendor',
-          chunks: 'all', // async and sync chunks
-          test(module) {
-            return module.resource &&
-              module.resource.includes('node_modules/') &&
-              !module.resource.includes('node_modules/glaemscribe') &&
-              !module.resource.includes('node_modules/recharts') &&
-              !module.resource.includes('node_modules/@ag-grid-community');
-          },
+        vendors: {
+          test: /\/node_modules\/(axios|classnames|html\-to\-react|query\-string|luxon|react|redux|spinkit)/,
           priority: 0,
+          reuseExistingChunk: true,
         },
-
         glaemscribe: {
           name(module, chunks, cacheGroupKey) {
             const moduleFileName = module.identifier().split('/').reduceRight(item => item).replace(/\.js$/, '');
@@ -57,37 +45,29 @@ module.exports = {
           },
           chunks: 'async',
           test: /node_modules\/glaemscribe\//,
-          priority: 20,
+          priority: 10,
+          reuseExistingChunk: true,
         },
-
-        recharts: {
-          name: 'recharts',
-          chunks: 'all',
-          test: /node_modules\/recharts/,
-          priority: 20,
-        },
-
         grid: {
-          name: 'grid',
-          chunks: 'all',
-          test: /node_modules\/@ag\-grid\-community/,
+          test: /\/node_modules\/\@ag\-grid\-community/,
           priority: 20,
+          reuseExistingChunk: true,
         },
-
-        // common chunks, like components that are used by at least
-        // in two separate chunks.
+        recharts: {
+          test: /\/node_modules\/(recharts|d3|lodash|core\-js)/,
+          priority: 30,
+          reuseExistingChunk: true,
+        },
         common: {
           name: 'common',
           minChunks: 2,
-          chunks: 'async',
-          priority: 10,
+          priority: -10,
           reuseExistingChunk: true,
-          enforce: true,
-        }
-      }
+        },
+      },
     },
   },
-  devtool: 'source-map',
+  // devtool: 'source-map',
   resolve: {
     alias: {
       '@root': sourcePath,
@@ -103,42 +83,21 @@ module.exports = {
     rules: [
       {
         test: require.resolve('glaemscribe/js/glaemscribe.min.js'),
-        /* this is a much more elegant approach, but it will need additional effort to work with Glaemscribe's
-        resource manager, as *.glaem.js files expects Glaemscribe to be a global variable.
-        loaders: [
-          'imports-loader?this=>window',
-          'exports-loader?Glaemscribe',
-        ],
-        */
-        // use: 'script-loader',
-        use: [
-          'exports-loader?Glaemscribe',
-        ],
+        use: [{
+          loader: 'exports-loader',
+          options: {
+            exports: 'Glaemscribe',
+          },
+        }],
       },
       {
         test: /\.(cst|glaem)\.js$/,
-        // use: 'script-loader',
-        use: [
-          'imports-loader?Glaemscribe=>window.Glaemscribe',
-        ],
-      },
-      { 
-        test: /\.tsx?$/, 
-        loader: 'ts-loader',
-      },
-      // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
-      { 
-        enforce: 'pre', 
-        test: /\.js$/, 
-        loader: 'source-map-loader'
-      },
-      {
-        test: /\.s?css$/,
-        use: [
-          bundleCssWithJavaScript ? 'style-loader' : MiniCssExtractPlugin.loader, // creates style nodes from JS strings
-          "css-loader?modules=false", // translates CSS into CommonJS
-          "sass-loader" // compiles Sass to CSS, using Node Sass by default
-        ]
+        use: [{
+          loader: 'imports-loader',
+          options: {
+            additionalCode: 'var Glaemscribe = window.Glaemscribe;',
+          },
+        }],
       },
       {
         test: /\.(eot|ttf|svg)$/,
@@ -148,9 +107,46 @@ module.exports = {
       },
       {
         test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: 'url-loader?name=fonts/[name].[ext]&mimetype=application/font-woff'
+        use: [{
+          loader: 'url-loader',
+          options: {
+            mimetype: 'application/font-woff',
+            name: 'fonts/[name].[ext]',
+          }
+        }],
       },
-    ]
+      {
+        test: /\.(gif|jpg|png)$/i,
+        use: [
+          {
+            loader: 'file-loader',
+          }
+        ],
+      },
+      { 
+        test: /\.tsx?$/, 
+        use: 'ts-loader',
+      },
+      // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
+      { 
+        enforce: 'pre', 
+        test: /\.js$/, 
+        use: 'source-map-loader'
+      },
+      {
+        test: /\.s?css$/,
+        use: [
+          bundleCssWithJavaScript ? 'style-loader' : MiniCssExtractPlugin.loader, // creates style nodes from JS strings
+          {
+            loader: 'css-loader',
+            options: {
+              modules: false, // translates CSS into CommonJS
+            },
+          },
+          "sass-loader" // compiles Sass to CSS, using Node Sass by default
+        ]
+      },
+    ],
   },
   plugins: [
     new cleanWebpack.CleanWebpackPlugin(),
