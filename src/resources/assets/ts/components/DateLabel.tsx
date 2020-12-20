@@ -13,7 +13,7 @@ export function DateLabel(props: IProps) {
     const date = DateTime.fromISO(dateTimeISOString);
 
     if (date.isValid) {
-        return <time dateTime={dateTimeISOString}>{date.toFormat('LLL')}</time>;
+        return <time dateTime={dateTimeISOString}>{date.toFormat('fff')}</time>;
     } else {
         return <span>{`Unknown date (${dateTime})`}</span>;
     }
