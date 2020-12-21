@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { DateTime } from 'luxon';
 
 import { fireEvent } from '@root/components/Component';
@@ -31,7 +31,7 @@ function Timer(props: IProps) {
         DateTime.fromMillis(startValue), 'seconds',
     );
     return <span>
-        {duration}
+        {duration.toFormat('s')}
     </span>;
 }
 
