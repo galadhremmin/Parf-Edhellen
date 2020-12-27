@@ -25,4 +25,8 @@
 
 <div data-inject-module="discuss-feed"></div>
 
+@include('_shared._ad', [
+  'ad' => 'forum'
+])
+
 @endsection

@@ -12,5 +12,8 @@
 
 <div data-inject-module="word-finder"
      data-inject-prop-language-id="{{ $game->language_id }}"></div>
+@include('_shared._ad', [
+  'ad' => 'sage'
+])
 
 @endsection
