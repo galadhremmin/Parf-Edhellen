@@ -6,13 +6,13 @@ import { GlobalAdsConfigurationName } from '@root/config';
 import '@root/utilities/Enzyme';
 
 import Ad from '.';
+import Placeholder from './containers/Placeholder';
 import { IGlobalAdConfiguration } from './index._types';
 
 describe('apps/ad', () => {
     it('does not render when there is no ads available', () => {
         const wrapper = mount(<Ad ad="frontpage" />);
-        expect(wrapper.text()).to.be.empty;
-        expect(wrapper.getDOMNode()).to.be.null;
+        expect(wrapper.find(Placeholder).length).to.equal(1);
     });
 
     it('does render when there is an ad available', () => {
