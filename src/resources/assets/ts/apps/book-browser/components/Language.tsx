@@ -1,5 +1,6 @@
 import React from 'react';
 
+import Ad from '@root/apps/ad';
 import Gloss from './Gloss';
 import { IProps } from './Language._types';
 
@@ -19,6 +20,9 @@ export default class GlossaryLanguage extends React.Component<IProps> {
             <section className="ed-glossary__language__words">
                 {glosses.map((gloss) => <Gloss gloss={gloss} key={gloss.id}
                     onReferenceLinkClick={onReferenceLinkClick} />)}
+            </section>
+            <section>
+                <Ad ad="glossary" />
             </section>
         </article>;
     }

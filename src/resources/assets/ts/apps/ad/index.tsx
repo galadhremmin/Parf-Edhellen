@@ -2,8 +2,8 @@ import React from 'react';
 import { GlobalAdsConfigurationName } from '@root/config';
 
 import Ad from './containers/Ad';
+import Placeholder from './containers/Placeholder';
 import {
-    IGlobalAdConfiguration,
     IGlobalAdsConfiguration,
     IProps,
 } from './index._types';
@@ -14,7 +14,7 @@ const Inject = (props: IProps) => {
     } = props;
 
     if (! window?.hasOwnProperty(GlobalAdsConfigurationName)) {
-        return null;
+        return <Placeholder ad={ad} />;
     }
 
     const adConfigs = (window as any)[GlobalAdsConfigurationName] as IGlobalAdsConfiguration;

@@ -1,8 +1,5 @@
 import { expect } from 'chai';
-import {
-    mount,
-    ReactWrapper,
-} from 'enzyme';
+import { mount } from 'enzyme';
 import React from 'react';
 
 import { GlobalAdsConfigurationName } from '@root/config';

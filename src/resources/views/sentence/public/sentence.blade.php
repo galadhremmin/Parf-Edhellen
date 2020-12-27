@@ -65,6 +65,7 @@
   @include('_shared._ad', [
     'ad' => 'phrases'
   ])
+  <hr>
   @include('discuss._standalone', [
     'entity_id'   => $sentence['sentence']->id,
     'entity_type' => 'sentence'
