@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
 import { IProps } from '../index._types';
 
-const PlaceholderStyles = {
+const PlaceholderStyles: CSSProperties = {
     border: '1px solid red',
     color: 'red',
     display: 'block',
-    'line-height': '140px',
-    'text-align': 'center',
-    'text-decoration': 'none',
+    lineHeight: '140px',
+    textAlign: 'center',
+    textDecoration: 'none',
 };
+
 function Placeholder(props: IProps) {
     const {
         ad,
