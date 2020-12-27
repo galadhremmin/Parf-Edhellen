@@ -1,6 +1,6 @@
 <script>
 (function(){
-const minHeight='280px';
+const minHeight='140px';
 const maxHeight='auto';
 const props = {
 className:'adsbygoogle',
@@ -31,27 +31,21 @@ phrases: {
   }, dataset)
 },
 glossary: {
-  props: Object.assign(props, {
-    minHeight: '140px'
-  }),
+  props,
   dataset: Object.assign({
     adSlot:'9363211011',
     adLayoutKey:'-gw-3+1f-3d+2z'
   }, dataset)
 },
 forum: {
-  props: Object.assign(props, {
-    minHeight: '140px'
-  }),
+  props,
   dataset: Object.assign({
     adSlot:'7017083422',
     adLayoutKey:'-gw-3+1f-3d+2z'
   }, dataset)
 },
 sage: {
-  props: Object.assign(props, {
-    minHeight: '140px'
-  }),
+  props,
   dataset: Object.assign({
     adSlot:'3767254384'
   }, dataset)
