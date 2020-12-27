@@ -29,5 +29,10 @@
       @endforeach
       @include('discuss._pagination', $preloadedPosts)
     </section>
+    <section>
+    @include('_shared._ad', [
+      'ad' => 'forum'
+    ])
+    </section>
   </article>
 @endsection
