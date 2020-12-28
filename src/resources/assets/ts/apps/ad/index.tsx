@@ -19,7 +19,7 @@ const Inject = (props: IProps) => {
 
     const adConfigs = (window as any)[GlobalAdsConfigurationName] as IGlobalAdsConfiguration;
     const config = adConfigs[ad];
-    return config ? <Ad {...config} onMount={adConfigs._mount || null} /> : null;
+    return config ? <Ad ad={ad} {...config} onMount={adConfigs._mount || null} /> : null;
 };
 
 export default Inject;
