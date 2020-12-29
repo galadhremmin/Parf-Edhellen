@@ -176,6 +176,11 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        
+        /**
+         * Custom AWS Service Providers...
+         */
+        App\Providers\Aws\ComprehendServiceProvider::class,
 
         /*
          * Custom Service Providers ...
