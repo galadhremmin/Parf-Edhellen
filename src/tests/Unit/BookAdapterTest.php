@@ -62,7 +62,7 @@ class BookAdapterTest extends TestCase
         }, $translations)), $adapted->all_translations);
     }
 
-    public function testAdaptGlosses()
+    public function testAdaptedGlossesAreEqualFromArrayAndRepository()
     {
         extract( $this->createGloss(__FUNCTION__) );
 
@@ -93,7 +93,9 @@ class BookAdapterTest extends TestCase
         $atomDate        = false;
         $groupByLanguage = true;
 
+        // These are the adapted versions from the array
         $adapted = $this->_adapter->adaptGlosses($glosses, $inflections, $comments, $searchWord, $groupByLanguage, $atomDate);
+        // These are the adapted version from the repository
         $adaptedFromRepository = $this->_adapter->adaptGlosses($glossesFromRepository, $inflections, $comments, $searchWord, 
             $groupByLanguage, $atomDate);
         

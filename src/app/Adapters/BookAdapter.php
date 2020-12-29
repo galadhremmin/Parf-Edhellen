@@ -63,7 +63,7 @@ class BookAdapter
             $gloss = $glosses[0];
             $language = Language::findOrFail($gloss->language_id);
 
-            return self::assignColumnWidths([
+            return [
                 'word' => $word,
                 'sections' => [
                     [
@@ -74,7 +74,7 @@ class BookAdapter
                 ],
                 'single' => true,
                 'sense' => [$gloss->sense_id]
-            ], 1);
+            ];
         }
 
         // * Multiple glosses (possibly across multiple languages)
@@ -169,13 +169,13 @@ class BookAdapter
                 ];
             }
 
-            return self::assignColumnWidths([
+            return [
                 'word'      => $word,
                 'sections'  => $sections,
                 'languages' => null,
                 'single'    => false,
                 'sense'     => $sense
-            ], count($allLanguages));
+            ];
 
         } 
 
@@ -239,7 +239,8 @@ class BookAdapter
                 return new GlossDetail([
                     'category'   => $t->category,
                     'order'      => $t->order,
-                    'text'       => $t->text
+                    'text'       => $t->text,
+                    'type'       => $t->type
                 ]);
             })->all();
 
@@ -378,18 +379,5 @@ class BookAdapter
         }
 
         $gloss->rating = $rating;
-    }
-
-    private static function assignColumnWidths(array $model, int $numberOfLanguages)
-    {
-        $max = 12;
-        $mid = $numberOfLanguages > 1 ? 6 : $max;
-        $min = $numberOfLanguages > 2 ? 6 : $mid;
-
-        $model['columnsMax'] = $max;
-        $model['columnsMid'] = $mid;
-        $model['columnsMin'] = $min;
-
-        return $model;
     }
 }
