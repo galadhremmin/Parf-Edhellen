@@ -14,7 +14,7 @@ class GlossDetails extends Migration
     public function up()
     {
         Schema::create('gloss_details', function (Blueprint $table) {
-            $table->engine = 'InnoDB';	
+            $table->engine = 'InnoDB';
             
             $table->increments('id');
             $table->timestamps();
