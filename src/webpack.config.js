@@ -16,6 +16,7 @@ const outputPath = path.resolve(__dirname, `public/${publicPath}`);
 
 module.exports = {
   entry: {
+    ads: `${sourcePath}/ads.ts`,
     index: `${sourcePath}/index.tsx`,
     'style-auth': `${sourcePath}/apps/auth/index.scss`,
     'style-dashboard': `${sourcePath}/apps/dashboard/index.scss`,
