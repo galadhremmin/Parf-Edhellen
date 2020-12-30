@@ -43,7 +43,7 @@ forum: {
   dataset: Object.assign({
     adFormat: 'autorelaxed',
     adSlot:'4716076809',
-    matchedContentRowsNum: "1,3"
+    matchedContentRowsNum: "1,3",
     matchedContentColumnsNum: "1,2"
   }, dataset)
 },
