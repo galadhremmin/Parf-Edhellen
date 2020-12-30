@@ -33,7 +33,6 @@ phrases: {
 glossary: {
   props,
   dataset: Object.assign({
-    adFormat: 'auto',
     adSlot: '7637931221',
     fullWidthResponsive: 'true'
   }, dataset)
