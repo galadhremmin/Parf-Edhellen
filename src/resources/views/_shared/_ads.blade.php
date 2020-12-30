@@ -44,7 +44,8 @@ forum: {
     adFormat: 'autorelaxed',
     adSlot:'4716076809',
     matchedContentRowsNum: "1,3",
-    matchedContentColumnsNum: "1,2"
+    matchedContentColumnsNum: "1,2",
+    matchedContentUiType: "image_stacked"
   }, dataset)
 },
 sage: {
