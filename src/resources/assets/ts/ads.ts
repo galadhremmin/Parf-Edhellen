@@ -18,43 +18,49 @@
   const config: any = {
     flashcards: {
       props,
-      dataset: Object.assign({
+      dataset: {
+        ...dataset,
         adSlot: '3964210950',
-      }, dataset),
+      },
     },
     frontpage: {
       props,
-      dataset: Object.assign({
+      dataset: {
+        ...dataset,
         adSlot: '6826878711',
-      }, dataset),
+      },
     },
     phrases: {
       props,
-      dataset: Object.assign({
+      dataset: {
+        ...dataset,
         adSlot: '3237620511',
-      }, dataset),
+      },
     },
     glossary: {
       props,
-      dataset: Object.assign({
+      dataset: {
+        ...dataset,
         adFormat: 'auto',
         adSlot: '7637931221',
         fullWidthResponsive: 'true',
-      }, dataset),
+      },
     },
     forum: {
       props,
-      dataset: Object.assign({
+      dataset: {
+        ...dataset,
         adFormat: 'auto',
         adSlot: '9202116727',
         fullWidthResponsive: 'true',
-      }, dataset),
+      },
     },
     sage: {
       props,
-      dataset: Object.assign({
+      dataset: {
+        ...dataset,
         adSlot: '3767254384',
-      }, dataset),
+      },
     },
     _mount: () => {
       ((window[googleAdsKey] || []) as any).push({});
