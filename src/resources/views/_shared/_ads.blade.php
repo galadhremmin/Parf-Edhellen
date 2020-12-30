@@ -33,8 +33,9 @@ phrases: {
 glossary: {
   props,
   dataset: Object.assign({
-    adFormat: 'autorelaxed',
-    adSlot:'5834535598'
+    adFormat: 'auto',
+    adSlot:'7637931221'
+    fullWidthResponsive: 'true',
   }, dataset)
 },
 forum: {
