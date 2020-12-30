@@ -33,15 +33,15 @@ phrases: {
 glossary: {
   props,
   dataset: Object.assign({
-    adSlot:'9363211011',
-    adLayoutKey:'-gw-3+1f-3d+2z'
+    adFormat: 'autorelaxed',
+    adSlot:'5834535598'
   }, dataset)
 },
 forum: {
   props,
   dataset: Object.assign({
-    adSlot:'7017083422',
-    adLayoutKey:'-gw-3+1f-3d+2z'
+    adFormat: 'autorelaxed',
+    adSlot:'4716076809'
   }, dataset)
 },
 sage: {
