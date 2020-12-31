@@ -49,10 +49,14 @@ class SearchIndex extends Migration
             $table->integer('gloss_group_id')->nullable();
             $table->boolean('is_old')->nullable();
 
-            $table->index(['normalized_keyword', 'normalized_keyword_unaccented'])
-                ->name('search_keywords_keyword_index');
-            $table->index(['normalized_keyword_reversed', 'normalized_keyword_reversed_unaccented'])
-                ->name('search_keywords_keyword_reversed_index');
+            $table->index('normalized_keyword')
+                ->name('search_keywords_kw_index');
+            $table->index('normalized_keyword_unaccented')
+                ->name('search_keywords_kw_ua_index');
+            $table->index('normalized_keyword_reversed')
+                ->name('search_keywords_kw_r_index');
+            $table->index('normalized_keyword_reversed_unaccented')
+                ->name('search_keywords_keyword_kw_r_ua_index');
         });
 
         foreach (Keyword::cursor() as $keyword) {
