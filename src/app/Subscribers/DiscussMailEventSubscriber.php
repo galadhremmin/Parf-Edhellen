@@ -28,6 +28,10 @@ class DiscussMailEventSubscriber
      */
     public function subscribe($events)
     {
+        if (config('app.env') !== 'production') {
+            return;
+        }
+
         $events->listen(
             ForumPostCreated::class,
             self::class.'@onForumPostCreated'
