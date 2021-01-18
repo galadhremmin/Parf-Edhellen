@@ -13,10 +13,11 @@ use App\Events\{
 };
 use App\Models\{ 
     Keyword,
-    Gloss, 
+    Gloss,
     Translation,
-    Sense, 
-    Word 
+    SearchKeyword,
+    Sense,
+    Word
 };
 
 class GlossRepository
@@ -31,54 +32,46 @@ class GlossRepository
     public function getKeywordsForLanguage(string $word, $reversed = false, $languageId = 0, $includeOld = true, array $speechIds = null,
         array $glossGroupIds = null)
     {
-        $hasWildcard = null;
-        $word = self::formatWord($word, $hasWildcard);
+        $word = self::formatWord($word);
+        $searchColumn = $reversed ? 'normalized_keyword_reversed_unaccented' : 'normalized_keyword_unaccented';
+        $lengthColumn = $searchColumn.'_length';
 
-        // TODO: #27 Completely refactor this logic. This search method is ridiculously poorly implemented.
-        if ($languageId !== 0 || ! empty($speechIds) || ! empty($glossGroupIds)) {
-            $filter = [
-                [ 'g.is_latest', 1 ],
-                [ 'g.is_deleted', 0 ],
-                [ $reversed ? 'k.reversed_normalized_keyword_unaccented' : 'k.normalized_keyword_unaccented', 'like', $word ]
-            ];
+        $query = SearchKeyword::where($searchColumn, 'like', $word);
+
+        if ($languageId !== 0) {
+            $query = $query->where('language_id', intval($languageId));
+        }
+
+        if (! $includeOld) {
+            $query = $query->where('is_old', 0);
+        }
     
-            if ($languageId > 0) {
-                $filter[] = [ 'g.language_id', $languageId ];
-            }
+        if (! empty($speechIds)) {
+            $query = $query->whereIn('speech_id', $speechIds);
+        }
 
-            if ($hasWildcard) {
-                $filter[] = [ 'k.word_id', '=', DB::raw('g.word_id') ];
-            }
-
-            if (! $includeOld) {
-                $filter[] = [ 'k.is_old', 0 ];
-            }
-
-            $query = DB::table('keywords as k')
-                ->join('glosses as g', 'k.gloss_id', 'g.id')
-                ->whereNotNull('k.gloss_id')
-                ->where($filter);
-    
-            if (! empty($speechIds)) {
-                $query = $query->whereIn('g.speech_id', $speechIds);
-            }
-    
-            if (! empty($glossGroupIds)) {
-                $query = $query->whereIn('g.gloss_group_id', $glossGroupIds);
-            }
-        } else {
-            $query = Keyword::findByWord($word, $reversed, $includeOld);
+        if (! empty($glossGroupIds)) {
+            $query = $query->whereIn('gloss_group_id', $glossGroupIds);
         }
 
         $keywords = $query
-            ->select('keyword as k', 'normalized_keyword as nk', 'reversed_normalized_keyword_unaccented_length as nrkul',
-                'normalized_keyword_unaccented_length as nkul', 'reversed_normalized_keyword as rnk', 'word as ok')
-            ->orderBy($reversed ? 'nrkul' : 'nkul', 'asc')
-            ->orderBy($reversed ? 'rnk' : 'nk', 'asc')
+            ->select(
+                'search_group as g',
+                'keyword as k',
+                'normalized_keyword as nk',
+                'word as ok'
+            )
+            ->groupBy(
+                'search_group',
+                'keyword',
+                'normalized_keyword',
+                'word'
+            )
+            ->orderBy(DB::raw('MAX('.$lengthColumn.')'), 'asc')
+            ->orderBy($searchColumn, 'asc')
             ->limit(100)
-            ->distinct()
             ->get();
-
+        
         return $keywords;
     }
 

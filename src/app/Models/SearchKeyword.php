@@ -4,7 +4,12 @@ namespace App\Models;
 
 class SearchKeyword extends ModelBase
 {
+    public const SEARCH_GROUP_UNASSIGNED = 0;
+    public const SEARCH_GROUP_DICTIONARY = 1;
+    public const SEARCH_GROUP_SENTENCE   = 2;
+
     protected $fillable = [
+        'search_group',
         'keyword',
         'normalized_keyword',
         'normalized_keyword_reversed',
