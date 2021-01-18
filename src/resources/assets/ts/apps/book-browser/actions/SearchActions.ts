@@ -51,9 +51,11 @@ export default class SearchActions {
             if (typeof args.word === 'string' && args.word.length > 0) {
                 try {
                     const rawResults = await this._api.find(args);
-
+                    // generate a unique ID for each result item. We need to use an counter since
+                    // the keyword and the normalized keyword both may not be unique.
+                    let index = 0;
                     results = mapArray<IFindEntity, ISearchResult>({
-                        id: (r) => stringHash(`${(r.ok || '')}.${r.k}`),
+                        id: () => index++,
                         normalizedWord: 'nk',
                         originalWord: 'ok',
                         word: 'k',
