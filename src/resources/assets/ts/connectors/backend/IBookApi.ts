@@ -10,6 +10,7 @@ export interface IFindRequest {
 }
 
 export interface IFindEntity {
+    g: number;
     k: string;
     nk: string;
     ok: string;

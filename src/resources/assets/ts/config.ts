@@ -20,6 +20,13 @@ export const GlaemscribeModeMappings: { [mode: string]: string } = {
     'westron': 'westron-tengwar-glaemscrafu',
 };
 
+// See SearchKeyword.php
+export const SearchResultGroups = {
+    '0': 'Unassigned',
+    '1': 'Glossary',
+    '2': 'Phrases',
+};
+
 export const LearnMoreMarkdownUrl = 'https://en.wikipedia.org/wiki/Markdown';
 export const LearnMoreWebFeedUrl = 'https://en.wikipedia.org/wiki/Web_feed';
 

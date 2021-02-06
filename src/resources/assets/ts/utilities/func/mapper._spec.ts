@@ -1,5 +1,8 @@
 import { expect } from 'chai';
-import { mapper } from './mapper';
+import {
+    mapArrayGroupBy,
+    mapper,
+} from './mapper';
 
 interface IOrigin {
     x?: number;
@@ -73,5 +76,43 @@ describe('utilities/func/convert', () => {
     it('returns null when given NaN as a number', () => {
         const d = mapper<number, IDestination>({}, NaN);
         expect(d).to.be.null;
+    });
+
+    it ('can group by a property', () => {
+        const o: IOrigin[] = [];
+        const numberOfElementsInTestSet = 10;
+        
+        for (let i = 1; i <= numberOfElementsInTestSet; i += 1) {
+            o.push({
+                n: i % 2,
+                x: 20,
+                y: '30',
+                z: true,
+            });
+        };
+
+        const a = mapArrayGroupBy<IOrigin, IDestination>({
+            a: 'x',
+            b: 'y',
+            c: 'z',
+        }, o, (v) => v.n);
+
+        const keys = Array.from(a.keys());
+
+        expect(keys).to.have.lengthOf(2);
+        expect(keys).to.contain(0);
+        expect(keys).to.contain(1);
+
+        for (const key of keys) {
+            const values = a.get(key);
+            expect(values).to.have.lengthOf(numberOfElementsInTestSet/2);
+            const expectedValues = o.filter((v) => v.n == key).map<IDestination>((v) => ({
+                a: v.x,
+                b: v.y,
+                c: v.z,
+            }));
+
+            expect(values).to.deep.equal(expectedValues);
+        }
     });
 });

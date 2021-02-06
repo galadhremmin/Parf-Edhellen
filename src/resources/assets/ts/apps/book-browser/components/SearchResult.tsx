@@ -5,8 +5,11 @@ import { IProps } from './SearchResult._types';
 
 class SearchResult extends React.Component<IProps> {
     public render() {
-        const r = this.props.searchResult;
-        const className = r.selected ? 'selected' : undefined;
+        const {
+            searchResult: r,
+            selected,
+        } = this.props;
+        const className = selected ? 'selected' : undefined;
 
         return <a href="#" className={className} onClick={this._onClick}>
             <span className="word">{r.originalWord || r.word}</span>

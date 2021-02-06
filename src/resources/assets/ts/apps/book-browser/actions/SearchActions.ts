@@ -9,10 +9,11 @@ import IBookApi, {
     ILanguageEntity,
 } from '@root/connectors/backend/IBookApi';
 import ILanguageApi from '@root/connectors/backend/ILanguageApi';
+import { SearchResultGroups } from '@root/config';
 import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import { DI, resolve } from '@root/di';
-import { stringHash } from '@root/utilities/func/hashing';
-import { mapArray } from '@root/utilities/func/mapper';
+import { stringHashAll } from '@root/utilities/func/hashing';
+import { mapArrayGroupBy } from '@root/utilities/func/mapper';
 import { capitalize } from '@root/utilities/func/string-manipulation';
 import { toSnakeCase } from '@root/utilities/func/snake-case';
 
@@ -47,19 +48,26 @@ export default class SearchActions {
                 ...args,
             });
 
-            let results: ISearchResult[] = [];
+            let results: Map<string, ISearchResult[]> = new Map();
             if (typeof args.word === 'string' && args.word.length > 0) {
                 try {
                     const rawResults = await this._api.find(args);
                     // generate a unique ID for each result item. We need to use an counter since
                     // the keyword and the normalized keyword both may not be unique.
                     let index = 0;
-                    results = mapArray<IFindEntity, ISearchResult>({
-                        id: () => index++,
+                    results = mapArrayGroupBy<IFindEntity, ISearchResult>({
+                        id: (v) => stringHashAll(v.k, v.nk, v.ok, v.g.toString(10)),
                         normalizedWord: 'nk',
                         originalWord: 'ok',
                         word: 'k',
-                    }, rawResults);
+                    }, rawResults, (v) => {
+                        const groupId: keyof typeof SearchResultGroups = v.g.toString(10) as any;
+                        if (! SearchResultGroups.hasOwnProperty(groupId)) {
+                            return SearchResultGroups['0'];
+                        }
+
+                        return SearchResultGroups[groupId];
+                    });
                 } catch (e) {
                     console.warn(e);
                 }
@@ -98,24 +106,29 @@ export default class SearchActions {
      */
     public selectNextResult(direction: number) {
         return async (dispatch: ThunkDispatch<any, any, any>, getState: () => RootReducer) => {
-            const searchResults = getState().searchResults;
-            if (searchResults.length < 1) {
+            const {
+                resultIds,
+                resultsById,
+                selectedId,
+            } = getState().searchResults;
+            if (resultIds.length < 1) {
                 return;
             }
 
-            let selectedIndex = searchResults.findIndex((result) => result.selected) + direction;
+            let selectedIndex = resultIds.indexOf(selectedId) + direction;
             if (selectedIndex < 0) {
-                selectedIndex = searchResults.length - 1;
-            } else if (selectedIndex >= searchResults.length) {
+                selectedIndex = resultIds.length - 1;
+            } else if (selectedIndex >= resultIds.length) {
                 selectedIndex = 0;
             }
 
-            const searchResult = searchResults[selectedIndex];
+            const searchResult = resultsById[resultIds[selectedIndex]];
 
             const args = {
                 searchResult,
                 updateBrowserHistory: true,
             };
+
             await this.glossary(args)(dispatch, getState);
         };
     }
@@ -172,6 +185,7 @@ export default class SearchActions {
 
             let language: ILanguageEntity = null;
             let languageShortName: string = null;
+            
             if (languageId !== 0) {
                 language = await this._languages.find(languageId, 'id');
                 languageShortName = language.shortName;
@@ -197,7 +211,15 @@ export default class SearchActions {
      */
     public reloadGlossary() {
         return async (dispatch: ThunkDispatch<any, any, any>, getState: () => RootReducer) => {
-            const { glossary, search, searchResults } = getState();
+            const {
+                glossary,
+                search,
+                searchResults,
+            } = getState();
+            const {
+                selectedId,
+                resultsById,
+            } = searchResults;
 
             // Do not attempt to reload an uninitiated glossary.
             if (glossary.word.length < 1) {
@@ -207,9 +229,12 @@ export default class SearchActions {
             // Attempt to find the selected search result, first by looking at the `selected` property,
             // and secondarily by comparing the values of the `word` property. Lastly, if the search
             // result does not exist, create a fake search result (id = 0) for the glossary.
-            let searchResult = searchResults.find((r) => r.selected) || null;
+            let searchResult: ISearchResult;
+            if (selectedId !== null) {
+                searchResult = resultsById[selectedId] || null;
+            }
             if (searchResult === null) {
-                searchResult = searchResults.find((r) => r.word === glossary.word) || null;
+                searchResult = Object.values(resultsById).find((r) => r.word === glossary.word) || null;
             }
             if (searchResult === null) {
                 const word = glossary.word;
