@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { stringHash } from './hashing';
+import { stringHash, stringHashAll } from './hashing';
 
 describe('utilities/func/hashing', () => {
     it('hashes correctly', () => {
@@ -12,5 +12,12 @@ describe('utilities/func/hashing', () => {
         const actual = input.map(stringHash);
 
         expect(actual).to.deep.equal(expected);
+    });
+
+    it('hashes multiple components', () => {
+        const actual = stringHashAll('a', 'b', 'c');
+        const expected = stringHash('a|b|c');
+
+        expect(actual).to.equal(expected);
     });
 });

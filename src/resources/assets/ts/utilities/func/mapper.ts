@@ -47,12 +47,30 @@ export const mapper = <S, D>(table: ConversionTable<S, D>, subject: S, resolverA
 /**
  * Converts an array of `S` to an array of `D`.
  * @param table
- * @param subject
+ * @param subjects
  */
-export const mapArray = <S, D>(table: ConversionTable<S, D>, subject: S[]): D[] => {
-    if (isIneligible(subject)) {
+export const mapArray = <S, D>(table: ConversionTable<S, D>, subjects: S[]): D[] => {
+    if (isIneligible(subjects)) {
         return [];
     }
 
-    return subject.map((s, i) => mapper(table, s, [i]));
+    return subjects.map((s, i) => mapper(table, s, [i]));
+};
+
+export const mapArrayGroupBy = <S, D, G = string>(table: ConversionTable<S, D>, subjects: S[], groupBy: (v: S) => G): Map<G, D[]> => {
+    const map = new Map<G, D[]>();
+    if (isIneligible(subjects)) {
+        return map;
+    }
+
+    for (const subject of subjects) {
+        const groupName = groupBy.call(subjects, subject);
+        if (! map.has(groupName)) {
+            map.set(groupName, []);
+        }
+        const group = map.get(groupName);
+        group.push(mapper(table, subject, [group.length]));
+    }
+
+    return map;
 };

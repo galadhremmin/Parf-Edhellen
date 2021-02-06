@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { IComponentEvent } from '@root/components/Component._types';
 import { SearchActions } from '../actions';
-import SearchResult from '../components/SearchResult';
+import SearchGroup from '../components/SearchGroup';
 import { RootReducer } from '../reducers';
 import { ISearchResult } from '../reducers/SearchResultsReducer._types';
 import { IProps } from './SearchResults._types';
@@ -12,7 +12,9 @@ import { IProps } from './SearchResults._types';
 export class SearchResults extends React.Component<IProps> {
     static get defaultProps() {
         return {
+            searchGroups: [],
             searchResults: [],
+            selectedResultId: 0,
             word: '',
         } as IProps;
     }
@@ -26,7 +28,11 @@ export class SearchResults extends React.Component<IProps> {
             return null;
         }
 
-        const { searchResults } = this.props;
+        const {
+            searchGroups,
+            searchResults,
+            selectedResultId,
+        } = this.props;
 
         const searchResultContainerStyles = classNames(
             'panel-body', 'results-panel',
@@ -54,11 +60,13 @@ export class SearchResults extends React.Component<IProps> {
                         </div>
                     </div>
                     <div className="row">
-                        <ul className="search-result">
-                            {this.props.searchResults.map((result) => <li key={result.id}>
-                                <SearchResult searchResult={result} onClick={this._onClick} />
-                            </li>)}
-                        </ul>
+                        {searchGroups.map((group, i) => <SearchGroup
+                            groupName={group}
+                            onClick={this._onClick}
+                            key={group}
+                            searchResults={searchResults[i]}
+                            selectedResultId={selectedResultId}
+                        />)}
                     </div>
                 </div>
                 <div className={noSearchResultsStyles}>
@@ -107,8 +115,10 @@ export class SearchResults extends React.Component<IProps> {
     }
 }
 
-const mapStateToProps = (state: RootReducer) => ({
-    searchResults: state.searchResults,
+const mapStateToProps = (state: RootReducer): IProps => ({
+    searchGroups: state.searchResults.groups,
+    searchResults: state.searchResults.resultsByGroupIndex,
+    selectedResultId: state.searchResults.selectedId,
     word: state.search.word,
 });
 

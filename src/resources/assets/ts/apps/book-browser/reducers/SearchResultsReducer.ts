@@ -5,61 +5,69 @@ import {
     ISearchResultState,
 } from './SearchResultsReducer._types';
 
-/**
- * Transitions the `selected` state from current state to the new array of search results.
- * @param state current state
- * @param results new state
- */
-const _transitionSelected = (state: ISearchResultState, results: ISearchResult[]) => {
-    const selected = state.find((r) => r.selected) || null;
-    if (selected !== null) {
-        const newSelected = results.find((r) => r.id === selected.id) || null;
 
-        if (newSelected !== null) {
-            newSelected.selected = true;
-        }
-    }
-
-    return results;
-};
-
-const _filterResults = (keywords: ISearchResult[]) => {
-    const usedKeywords = new Set();
-    const results = [];
-
-    for (const keyword of keywords) {
-        if (! usedKeywords.has(keyword.word)) {
-            usedKeywords.add(keyword.word);
-            results.push(keyword);
-        } else if (keyword.word !== keyword.originalWord) {
-            results.push(keyword);
-        }
-    }
-
-    usedKeywords.clear();
-    return results;
-};
-
-const SearchResultsReducer = (state: ISearchResultState = [],
+const SearchResultsReducer = (state: ISearchResultState = {
+    groups: [],
+    resultIds: [],
+    resultsByGroupIndex: [],
+    resultsById: {},
+    selectedId: 0,
+},
     action: ISearchResultReducerAction) => {
     switch (action.type) {
         case Actions.ReceiveSearchResults: {
-            const searchResults = _transitionSelected(state, action.searchResults);
-            return [
-                ..._filterResults(searchResults),
-            ];
+            let {
+                selectedId,
+            } = state;
+            const {
+                searchResults,
+            } = action;
+
+            const groups: string[] = [];
+            const resultsByGroupIndex: ISearchResult[][] = [];
+            const resultsById: any = {};
+            const resultIds: number[] = [];
+
+            for (const group of searchResults.keys()) {
+                groups.push(group);
+
+                const r = searchResults.get(group);
+                resultsByGroupIndex.push(r);
+                r.forEach((v) => {
+                    resultIds.push(v.id);
+                    resultsById[v.id] = v;
+                });
+            }
+
+            if (! resultIds.includes(selectedId)) {
+                selectedId = 0;
+            }
+
+            return {
+                ...state,
+                groups,
+                resultIds,
+                resultsByGroupIndex,
+                resultsById,
+                selectedId,
+            };
         }
 
-        case Actions.SelectSearchResult:
-            return state.map((r: ISearchResult) => {
-                const selected = r.id === action.id;
-                if (r.selected === selected) {
-                    return r;
-                }
+        case Actions.SelectSearchResult: {
+            let {
+                resultIds,
+            } = state;
 
-                return { ...r, selected };
-            });
+            let selectedId = action.id;
+            if (! resultIds.includes(selectedId)) {
+                selectedId = 0;
+            }
 
+            return {
+                ...state,
+                selectedId,
+            };
+        }
         default:
             return state;
     }
