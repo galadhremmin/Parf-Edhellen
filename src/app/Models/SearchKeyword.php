@@ -28,6 +28,6 @@ class SearchKeyword extends ModelBase
         'gloss_group_id',
         'is_old',
         'word',
-        'word_id'
+        'word_id',
     ];
 }

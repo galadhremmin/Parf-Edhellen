@@ -29,7 +29,9 @@ class EventServiceProvider extends ServiceProvider
         \App\Subscribers\ContributionMailEventSubscriber::class,
         \App\Subscribers\DiscussEventSubscriber::class,
         \App\Subscribers\DiscussMailEventSubscriber::class,
-        \App\Subscribers\DiscussPostIndexerSubscriber::class
+        \App\Subscribers\DiscussPostIndexerSubscriber::class,
+        \App\Subscribers\GlossIndexerSubscriber::class,
+        \App\Subscribers\SentenceIndexerSubscriber::class
     ];
 
     /**
