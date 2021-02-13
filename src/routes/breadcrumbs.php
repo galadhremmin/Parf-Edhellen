@@ -251,7 +251,7 @@ Breadcrumbs::register('word-finder', function ($breadcrumbs)
 Breadcrumbs::register('word-finder.show', function ($breadcrumbs, App\Models\GameWordFinderLanguage $game)
 {
     $breadcrumbs->parent('word-finder');
-    $breadcrumbs->push($game->language->name.' Sage', route('word-finder.show', ['gameId' => $game->language_id]));
+    $breadcrumbs->push($game->language->name.' Sage', route('word-finder.show', ['languageId' => $game->language_id]));
 });
 
 // //////////////////////////////////////////////////////////////////////////////////////////////

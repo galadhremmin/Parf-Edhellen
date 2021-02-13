@@ -12,7 +12,7 @@
 <div class="link-blocks">
   @foreach ($games as $game)
   <blockquote>
-    <a class="block-link" href="{{ route('word-finder.show', ['gameId' => $game->language_id]) }}">
+    <a class="block-link" href="{{ route('word-finder.show', ['languageId' => $game->language_id]) }}">
       <h3>
         {{ $game->title }}
       </h3>
