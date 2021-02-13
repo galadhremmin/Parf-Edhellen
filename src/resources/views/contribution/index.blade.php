@@ -47,7 +47,7 @@
               <tr>
                 <td class="date">{{ $review->created_at }}</td>
                 <td>
-                  <a href="{{ route('contribution.show', ['id' => $review->id]) }}">{{ $review->word }} ({{ $review->sense }})</a></td>
+                  <a href="{{ route('contribution.show', ['contribution' => $review->id]) }}">{{ $review->word }} ({{ $review->sense }})</a></td>
                 <td>
                   @if ($review->is_approved === null)
                   <span class="text-info">pending</span>

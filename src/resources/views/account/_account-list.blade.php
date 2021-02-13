@@ -12,7 +12,7 @@
     <tr>
       <td>{{ $account->id }}</td>
       <td>
-        <a href="{{ route('account.edit', ['id' => $account->id]) }}">
+        <a href="{{ route('account.edit', ['account' => $account->id]) }}">
           {{$account->nickname}}
         </a>
       </td>

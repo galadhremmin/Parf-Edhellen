@@ -116,7 +116,7 @@ class LinkHelper
 
     public function contribution(int $contributionId)
     {
-        return route('contribution.show', ['id' => $contributionId]);
+        return route('contribution.show', ['contribution' => $contributionId]);
     }
 
     public function contributeGloss(int $originalGlossId = 0)

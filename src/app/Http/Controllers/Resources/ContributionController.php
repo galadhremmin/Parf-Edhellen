@@ -170,7 +170,7 @@ class ContributionController extends Controller
 
         return response([
             'id'  => $contribution->id,
-            'url' => route('contribution.show', ['id' => $contribution->id])
+            'url' => route('contribution.show', ['contribution' => $contribution->id])
         ], 201);
     }
 
@@ -204,7 +204,7 @@ class ContributionController extends Controller
 
         return response([
             'id'  => $contribution->id,
-            'url' => route('contribution.show', ['id' => $contribution->id])
+            'url' => route('contribution.show', ['contribution' => $contribution->id])
         ], 200);
     } 
 
@@ -233,7 +233,7 @@ class ContributionController extends Controller
 
         event(new ContributionRejected($contribution));
 
-        return redirect()->route('contribution.show', ['id' => $contribution->id]);
+        return redirect()->route('contribution.show', ['contribution' => $contribution->id]);
     } 
 
     /**
@@ -260,7 +260,7 @@ class ContributionController extends Controller
 
         event(new ContributionApproved($contribution));
 
-        return redirect()->route('contribution.show', ['id' => $contribution->id]);
+        return redirect()->route('contribution.show', ['contribution' => $contribution->id]);
     }
 
     /**

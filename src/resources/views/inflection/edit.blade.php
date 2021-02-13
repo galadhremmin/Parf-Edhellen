@@ -13,7 +13,7 @@
 
 @include('_shared._errors', [ 'errors' => $errors ])
 
-<form method="post" action="{{ route('inflection.update', [ 'id' => $inflection->id ]) }}">
+<form method="post" action="{{ route('inflection.update', [ 'inflection' => $inflection->id ]) }}">
   <div class="form-group">
     <label for="ed-inflection-name" class="control-label">Name</label>
     <input type="text" class="form-control" value="{{ $inflection->name }}" id="ed-inflection-name" name="name">
@@ -30,7 +30,7 @@
   {{ method_field('PUT') }}
 </form>
 <hr>
-<form method="post" action="{{ route('inflection.destroy', [ 'id' => $inflection->id ]) }}">
+<form method="post" action="{{ route('inflection.destroy', [ 'inflection' => $inflection->id ]) }}">
   <p>Alternatively, you can <button type="submit" class="link-button">delete the inflection</button>.</p>
   {{ csrf_field() }}
   {{ method_field('DELETE') }}
