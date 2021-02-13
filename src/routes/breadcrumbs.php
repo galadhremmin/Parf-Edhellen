@@ -63,7 +63,7 @@ Breadcrumbs::register('speech.create', function ($breadcrumbs)
 Breadcrumbs::register('speech.edit', function ($breadcrumbs, App\Models\Speech $speech)
 {
     $breadcrumbs->parent('speech.index');
-    $breadcrumbs->push('Speech: '.$speech->Name, route('speech.edit', [ 'id' => $speech->SpeechID ]));
+    $breadcrumbs->push('Speech: '.$speech->Name, route('speech.edit', [ 'speech' => $speech->id ]));
 });
 
 // //////////////////////////////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ Breadcrumbs::register('inflection.edit', function ($breadcrumbs, App\Models\Infl
 {
     $breadcrumbs->parent('inflection.index');
     $breadcrumbs->push('Inflection: '.$inflection->Name, route('inflection.edit', [
-        'id' => $inflection->InflectionID
+        'inflection' => $inflection->id
     ]));
 });
 
@@ -110,7 +110,7 @@ Breadcrumbs::register('sentence.edit', function ($breadcrumbs, App\Models\Senten
 {
     $breadcrumbs->parent('sentence.index');
     $breadcrumbs->push('Edit phrase (' . $sentence->name . ')', route('sentence.edit', [
-        'id' => $sentence->id
+        'inflection' => $sentence->id
     ]));
 });
 
@@ -176,13 +176,13 @@ Breadcrumbs::register('contribution.create', function ($breadcrumbs, string $mor
 Breadcrumbs::register('contribution.edit', function ($breadcrumbs, int $id)
 {
     $breadcrumbs->parent('contribution.index');
-    $breadcrumbs->push('Change contribution', route('contribution.edit', ['id' => $id]));
+    $breadcrumbs->push('Change contribution', route('contribution.edit', ['contribution' => $id]));
 });
 
 Breadcrumbs::register('contribution.show', function ($breadcrumbs, int $id, bool $admin = false)
 {
     $breadcrumbs->parent($admin ? 'contribution.list' : 'contribution.index');
-    $breadcrumbs->push('Contribution #'.$id, route('contribution.show', ['id' => $id]));
+    $breadcrumbs->push('Contribution #'.$id, route('contribution.show', ['contribution' => $id]));
 });
 
 Breadcrumbs::register('contribution.list', function ($breadcrumbs)
@@ -194,19 +194,19 @@ Breadcrumbs::register('contribution.list', function ($breadcrumbs)
 Breadcrumbs::register('contribution.confirm-destroy', function ($breadcrumbs, int $id)
 {
     $breadcrumbs->parent('contribution.show', $id);
-    $breadcrumbs->push('Confirm deletion', route('contribution.confirm-destroy', ['id' => $id]));
+    $breadcrumbs->push('Confirm deletion', route('contribution.confirm-destroy', ['contribution' => $id]));
 });
 
 Breadcrumbs::register('contribution.confirm-reject', function ($breadcrumbs, int $id)
 {
     $breadcrumbs->parent('contribution.show', $id);
-    $breadcrumbs->push('Confirm rejection', route('contribution.confirm-reject', ['id' => $id]));
+    $breadcrumbs->push('Confirm rejection', route('contribution.confirm-reject', ['contribution' => $id]));
 });
 
 Breadcrumbs::register('contribution.confirm-approve', function ($breadcrumbs, int $id)
 {
     $breadcrumbs->parent('contribution.show', $id);
-    $breadcrumbs->push('Approved!', route('contribution.confirm-approve', ['id' => $id]));
+    $breadcrumbs->push('Approved!', route('contribution.confirm-approve', ['contribution' => $id]));
 });
 // //////////////////////////////////////////////////////////////////////////////////////////////
 // Games
@@ -320,7 +320,7 @@ Breadcrumbs::register('account.index', function ($breadcrumbs)
 Breadcrumbs::register('account.edit', function ($breadcrumbs, App\Models\Account $account)
 {
     $breadcrumbs->parent('account.index');
-    $breadcrumbs->push('Account '.$account->nickname.' ('.$account->id.')', route('account.edit', ['id' => $account->id]));
+    $breadcrumbs->push('Account '.$account->nickname.' ('.$account->id.')', route('account.edit', ['account' => $account->id]));
 });
 
 Breadcrumbs::register('account.by-role', function ($breadcrumbs, App\Models\Role $role)

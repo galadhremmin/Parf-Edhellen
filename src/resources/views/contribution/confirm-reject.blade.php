@@ -24,7 +24,7 @@
 
     <div class="text-right">
       <div class="btn-group" role="group">
-        <a href="{{ route('contribution.show', ['id' => $review->id]) }}" class="btn btn-default">Cancel rejection</a>
+        <a href="{{ route('contribution.show', ['contribution' => $review->id]) }}" class="btn btn-default">Cancel rejection</a>
         <button type="submit" class="btn btn-warning"><span class="glyphicon glyphicon-minus-sign"></span> Reject</button>
       </div>
     </div>

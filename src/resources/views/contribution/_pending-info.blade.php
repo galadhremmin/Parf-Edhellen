@@ -22,7 +22,7 @@
 @if (! $review->is_approved)
 <hr>
 
-You can <a href="{{ route('contribution.edit', ['id' => $review->id]) }}">change the submission</a> or 
+You can <a href="{{ route('contribution.edit', ['contribution' => $review->id]) }}">change the submission</a> or 
 <a href="{{ route('contribution.confirm-destroy', ['id' => $review->id]) }}">delete the submission</a>. 
 If you edit a rejected submission, it will be resubmitted for review; if you edit a pending submission, 
 an administrator will review the latest version of your submission.
