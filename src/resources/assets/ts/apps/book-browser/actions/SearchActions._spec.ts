@@ -57,6 +57,7 @@ describe('apps/book-browser/reducers/SearchReducer', () => {
         expect(fakeDispatch.secondCall.args[0].type).to.equal(Actions.ReceiveSearchResults);
 
         const items = TestSearchResults.map((r) => ({
+            groupId: r.g,
             id: stringHashAll(r.k, r.nk, r.ok, r.g.toString(10)),
             normalizedWord: r.nk,
             originalWord: r.ok,
