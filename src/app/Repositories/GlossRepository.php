@@ -23,10 +23,12 @@ use App\Models\{
 class GlossRepository
 {
     protected $_keywordRepository;
+    protected $_wordRepository;
 
-    public function __construct(KeywordRepository $keywordRepository)
+    public function __construct(KeywordRepository $keywordRepository, WordRepository $wordRepository)
     {
         $this->_keywordRepository = $keywordRepository;
+        $this->_wordRepository = $wordRepository;
     }
 
     public function getKeywordsForLanguage(string $word, $reversed = false, $languageId = 0, $includeOld = true, array $speechIds = null,
@@ -324,8 +326,8 @@ class GlossRepository
         $senseString  = StringHelper::toLower($senseString);
 
         // 2. Retrieve existing or create a new word entity for the sense and the word.
-        $word          = $this->createWord($wordString, $gloss->account_id);
-        $senseWord     = $this->createWord($senseString, $gloss->account_id);
+        $word          = $this->_wordRepository->save($wordString, $gloss->account_id);
+        $senseWord     = $this->_wordRepository->save($senseString, $gloss->account_id);
 
         // 3. Load sense or create it if it doesn't exist. A sense is 1:1 mapped with
         // words, and therefore doesn't have its own incrementing identifier.
@@ -518,7 +520,7 @@ class GlossRepository
             $this->_keywordRepository->createKeyword($word, $sense, $gloss);
 
             foreach ($translationStrings as $translationString) {
-                $translationWord = $this->createWord($translationString, $gloss->account_id);
+                $translationWord = $this->_wordRepository->save($translationString, $gloss->account_id);
 
                 if ($translationWord->id !== $gloss->word_id) {
                     $this->_keywordRepository->createKeyword($translationWord, $sense, $gloss);
@@ -533,7 +535,7 @@ class GlossRepository
 
             // 12b. Recreate the keywords for the sense.
             foreach ($keywords as $keyword) {
-                $keywordWord = $this->createWord($keyword, $gloss->account_id);
+                $keywordWord = $this->_wordRepository->save($keyword, $gloss->account_id);
 
                 if ($sense->keywords()->where('word_id', $keywordWord->id)->count() < 1) {
                     $this->_keywordRepository->createKeyword($keywordWord, $sense, null);
@@ -617,26 +619,6 @@ class GlossRepository
             $ids[] = $row->sense_id;
         
         return $ids;
-    }
-
-    protected function createWord(string $wordString, int $accountId)
-    {
-        $wordString = mb_strtolower(trim($wordString), 'utf-8');
-        $word = Word::whereRaw('BINARY word = ?', [ $wordString ])->first(); 
-
-        if (! $word) {
-            $normalizedWordString = StringHelper::normalize($wordString);
-            
-            $word = new Word;
-            $word->word                     = $wordString;
-            $word->normalized_word          = $normalizedWordString;
-            $word->reversed_normalized_word = strrev($normalizedWordString); 
-            $word->account_id               = $accountId;
-
-            $word->save();
-        }
-
-        return $word; 
     }
 
     protected function createSense(Word $senseWord)

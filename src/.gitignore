@@ -13,4 +13,5 @@ Homestead.yaml
 *.lock
 package-lock.json
 BingSiteAuth.xml
-
+*.bak
+*.cache

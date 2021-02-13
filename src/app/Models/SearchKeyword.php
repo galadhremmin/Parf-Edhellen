@@ -7,6 +7,7 @@ class SearchKeyword extends ModelBase
     public const SEARCH_GROUP_UNASSIGNED = 0;
     public const SEARCH_GROUP_DICTIONARY = 1;
     public const SEARCH_GROUP_SENTENCE   = 2;
+    public const SEARCH_GROUP_FORUM_POST = 3;
 
     protected $fillable = [
         'search_group',
