@@ -81,7 +81,7 @@ describe('utilities/func/convert', () => {
     it ('can group by a property', () => {
         const o: IOrigin[] = [];
         const numberOfElementsInTestSet = 10;
-        
+
         for (let i = 1; i <= numberOfElementsInTestSet; i += 1) {
             o.push({
                 n: i % 2,
@@ -106,6 +106,7 @@ describe('utilities/func/convert', () => {
         for (const key of keys) {
             const values = a.get(key);
             expect(values).to.have.lengthOf(numberOfElementsInTestSet/2);
+            // tslint:disable-next-line: triple-equals
             const expectedValues = o.filter((v) => v.n == key).map<IDestination>((v) => ({
                 a: v.x,
                 b: v.y,
