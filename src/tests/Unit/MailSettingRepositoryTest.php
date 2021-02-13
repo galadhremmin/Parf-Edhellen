@@ -10,6 +10,7 @@ use Illuminate\Mail\SendQueuedMailable;
 use Illuminate\Support\Facades\Queue;
 use Auth;
 use DB;
+use Mail;
 
 use App\Repositories\MailSettingRepository;
 use App\Models\Initialization\Morphs;
@@ -175,6 +176,9 @@ class MailSettingRepositoryTest extends TestCase
 
     public function testShouldNotifyPostCreated()
     {
+        Mail::fake();
+        Queue::fake();
+
         $thread = ForumThread::create([
             'entity_type'    => Morphs::getAlias($this->_contribution),
             'entity_id'      => $this->_contribution->id,
@@ -198,12 +202,10 @@ class MailSettingRepositoryTest extends TestCase
             })
         );
         
-        Queue::fake();
-        
         resolve(DiscussMailEventSubscriber::class)->onForumPostCreated(new ForumPostCreated($post, $post->account_id));
 
-        Queue::assertPushed(SendQueuedMailable::class, function ($job) use ($expected) {
-            return count(array_filter($job->mailable->to, function ($a) use ($expected) {
+        Mail::assertQueued(ForumPostCreatedMail::class, function ($job) use ($expected) {
+            return count(array_filter($job->to, function ($a) use ($expected) {
                 return in_array($a['address'], $expected);
             })) > 0;
         });
@@ -211,6 +213,9 @@ class MailSettingRepositoryTest extends TestCase
 
     public function testShouldNotifyPostOnProfile()
     {
+        Mail::fake();
+        Queue::fake();
+
         $thread = ForumThread::create([
             'entity_type'    => Morphs::getAlias($this->_accounts[0]),
             'entity_id'      => $this->_accountIds[0],
@@ -227,63 +232,54 @@ class MailSettingRepositoryTest extends TestCase
         
         $expected = [$this->_accounts[0]->email];
         
-        Queue::fake();
-        
         resolve(DiscussMailEventSubscriber::class)->onForumPostCreated(new ForumPostCreated($post, $post->account_id));
 
-        Queue::assertPushed(SendQueuedMailable::class, function ($job) use ($expected) {
-            $this->assertTrue(
-                $job->mailable instanceof ForumPostCreatedMail ||
-                $job->mailable instanceof ForumPostOnProfileMail
-            );
-
+        Mail::assertQueued(ForumPostOnProfileMail::class, function ($job) use ($expected) {
             return array_map(function ($a) {
                 return $a['address'];
-            }, $job->mailable->to) === $expected;
+            }, $job->to) === $expected;
         });
     }
 
     public function testShouldNotifyContributorOfApproval()
     {
+        Mail::fake();
+        Queue::fake();
+
         $contribution = $this->_contribution;
         $contribution->reviewed_by_account_id = $this->_accounts[1]->id;
         $contribution->is_approved = 1;
         $contribution->save();
 
         $expected = [$this->_accounts[0]->email];
-
-        Queue::fake();
         
         resolve(ContributionMailEventSubscriber::class)->onContributionApproved(new ContributionApproved($contribution));
 
-        Queue::assertPushed(SendQueuedMailable::class, function ($job) use ($expected) {
-            $this->assertTrue($job->mailable instanceof ContributionApprovedMail);
-
+        Mail::assertQueued(ContributionApprovedMail::class, function ($job) use ($expected) {
             return array_map(function ($a) {
                 return $a['address'];
-            }, $job->mailable->to) === $expected;
+            }, $job->to) === $expected;
         });
     }
 
     public function testShouldNotifyContributorOfRejection()
     {
+        Mail::fake();
+        Queue::fake();
+
         $contribution = $this->_contribution;
         $contribution->reviewed_by_account_id = $this->_accounts[1]->id;
         $contribution->is_approved = 0;
         $contribution->save();
 
         $expected = [$this->_accounts[0]->email];
-
-        Queue::fake();
         
         resolve(ContributionMailEventSubscriber::class)->onContributionRejected(new ContributionRejected($contribution));
 
-        Queue::assertPushed(SendQueuedMailable::class, function ($job) use ($expected) {
-            $this->assertTrue($job->mailable instanceof ContributionRejectedMail);
-
+        Mail::assertQueued(ContributionRejectedMail::class, function ($job) use ($expected) {
             return array_map(function ($a) {
                 return $a['address'];
-            }, $job->mailable->to) === $expected;
+            }, $job->to) === $expected;
         });
     }
 

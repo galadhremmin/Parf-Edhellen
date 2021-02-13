@@ -28,6 +28,10 @@ class ContributionMailEventSubscriber
      */
     public function subscribe($events)
     {
+        if (config('app.env') !== 'production') {
+            return;
+        }
+
         $events->listen(
             ContributionApproved::class,
             self::class.'@onContributionApproved'

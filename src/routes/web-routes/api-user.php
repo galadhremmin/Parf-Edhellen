@@ -14,4 +14,7 @@ Route::group([
         ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ]);
     Route::post('account/avatar/edit/{id?}', [ 'uses' => 'AccountApiController@updateAvatar' ])
         ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ]);
+    Route::delete('account/edit/{id?}',      [ 'uses' => 'AccountApiController@delete' ])
+        ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ])
+        ->name('api.account.delete');
 });

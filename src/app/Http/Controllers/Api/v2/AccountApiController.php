@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Api\v2;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\{
     Auth,
     Storage
 };
+use Illuminate\Support\Str;
 
 use App\Events\{
     AccountChanged,
@@ -121,7 +123,7 @@ class AccountApiController extends Controller
             abort(400, 'Bad avatar image.');
         }
 
-        $localPath = Storage::disk('local')->path(sprintf('public/avatars/%d.png', $account->id));
+        $localPath = $this->getAvatarPath($accountId);
         $maxSizeInPixels = config('ed.avatar_size');
 
         try {
@@ -145,13 +147,44 @@ class AccountApiController extends Controller
         ];
     }
 
+    public function delete(Request $request, int $accountId)
+    {
+        $uuid    = 'DELETED'.Str::uuid();
+        $date    = Carbon::now()->toDateTimeString();
+
+        $account = $this->getAuthorizedAccount($request, $accountId);
+        $account->nickname                   = sprintf('(Deleted %s)', $date);
+        $account->email                      = 'deleted@'.$uuid;
+        $account->authorization_provider_id  = null;
+        $account->identity                   = $uuid;
+        $account->profile                    = 'The user deleted their account on '.$date;
+        $account->tengwar                    = null;
+        $account->has_avatar                 = 0;
+        $account->save();
+
+        $localPath = $this->getAvatarPath($accountId);
+        if (file_exists($localPath)) {
+            unlink($localPath);
+        }
+
+        return [
+            'redirect_to' => route('logout')
+        ];
+    }
+
+    private function getAvatarPath(int $accountId)
+    {
+        return Storage::disk('local')->path(sprintf('public/avatars/%d.png', $accountId));
+    }
+
     private function getAuthorizedAccount(Request $request, int $accountId)
     {
         if ($accountId === null) {
             return $request->user();
         }
 
-        if ($request->user()->id !== $accountId && ! $request->user()->isAdministrator()) {
+        $user = $request->user();
+        if ($user->id !== $accountId && ! $user->isAdministrator()) {
             abort(403, sprintf('You are not authorized to perform this operation on account %d.', $accountId));
         }
 

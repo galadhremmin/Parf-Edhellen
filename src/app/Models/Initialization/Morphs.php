@@ -13,7 +13,10 @@ use App\Models\{
     ForumDiscussion,
     ForumThread,
     ForumPost, 
-    Sentence 
+    Sentence,
+    SentenceFragment,
+    Sense,
+    Word
 };
 
 class Morphs 
@@ -27,9 +30,13 @@ class Morphs
             'flashcard'    => FlashcardResult::class,
             'forum'        => ForumPost::class,
             'sentence'     => Sentence::class,
+            'fragment'     => SentenceFragment::class,
             'gloss'        => Gloss::class,
             'discussion'   => ForumDiscussion::class,
-            'forum_thread' => ForumThread::class
+            'forum_thread' => ForumThread::class,
+            'forum_post'   => ForumPost::class,
+            'sense'        => Sense::class,
+            'word'         => Word::class
         ]);
     }
 

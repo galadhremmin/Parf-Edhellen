@@ -17,3 +17,10 @@ export const stringHash = (str: string) => {
 
     return hash;
 };
+
+export const stringHashAll = (...str: string[]) => {
+    if (str.length < 1) {
+        return 0;
+    }
+    return stringHash(str.join('|'));
+};

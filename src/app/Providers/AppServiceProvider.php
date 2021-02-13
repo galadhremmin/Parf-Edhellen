@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\{
     Blade,
     Schema
@@ -22,6 +23,8 @@ class AppServiceProvider extends ServiceProvider
         // Reference: https://laravel.com/docs/master/migrations#creating-indexes
         Schema::defaultStringLength(191);
         Morphs::map();
+        // https://laravel.com/docs/8.x/upgrade#pagination-defaults
+        Paginator::useBootstrap();
 
         // @markdown method injection
         Blade::directive('markdown', function (string $data) {

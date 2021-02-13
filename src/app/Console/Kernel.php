@@ -13,8 +13,9 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        Commands\RefreshNormalizationCommand::class,
         Commands\ImportEldamoCommand::class,
+        Commands\RefreshDiscussIndexesCommand::class,
+        Commands\RefreshNormalizationCommand::class,
     ];
 
     /**

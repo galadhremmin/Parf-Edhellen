@@ -13,72 +13,67 @@ use App\Events\{
 };
 use App\Models\{ 
     Keyword,
-    Gloss, 
+    Gloss,
     Translation,
-    Sense, 
-    Word 
+    SearchKeyword,
+    Sense,
+    Word
 };
 
 class GlossRepository
 {
     protected $_keywordRepository;
+    protected $_wordRepository;
 
-    public function __construct(KeywordRepository $keywordRepository)
+    public function __construct(KeywordRepository $keywordRepository, WordRepository $wordRepository)
     {
         $this->_keywordRepository = $keywordRepository;
+        $this->_wordRepository = $wordRepository;
     }
 
     public function getKeywordsForLanguage(string $word, $reversed = false, $languageId = 0, $includeOld = true, array $speechIds = null,
         array $glossGroupIds = null)
     {
-        $hasWildcard = null;
-        $word = self::formatWord($word, $hasWildcard);
+        $word = self::formatWord($word);
+        $searchColumn = $reversed ? 'normalized_keyword_reversed_unaccented' : 'normalized_keyword_unaccented';
+        $lengthColumn = $searchColumn.'_length';
 
-        // TODO: #27 Completely refactor this logic. This search method is ridiculously poorly implemented.
-        if ($languageId !== 0 || ! empty($speechIds) || ! empty($glossGroupIds)) {
-            $filter = [
-                [ 'g.is_latest', 1 ],
-                [ 'g.is_deleted', 0 ],
-                [ $reversed ? 'k.reversed_normalized_keyword_unaccented' : 'k.normalized_keyword_unaccented', 'like', $word ]
-            ];
+        $query = SearchKeyword::where($searchColumn, 'like', $word);
+
+        if ($languageId !== 0) {
+            $query = $query->where('language_id', intval($languageId));
+        }
+
+        if (! $includeOld) {
+            $query = $query->where('is_old', 0);
+        }
     
-            if ($languageId > 0) {
-                $filter[] = [ 'g.language_id', $languageId ];
-            }
+        if (! empty($speechIds)) {
+            $query = $query->whereIn('speech_id', $speechIds);
+        }
 
-            if ($hasWildcard) {
-                $filter[] = [ 'k.word_id', '=', DB::raw('g.word_id') ];
-            }
-
-            if (! $includeOld) {
-                $filter[] = [ 'k.is_old', 0 ];
-            }
-
-            $query = DB::table('keywords as k')
-                ->join('glosses as g', 'k.gloss_id', 'g.id')
-                ->whereNotNull('k.gloss_id')
-                ->where($filter);
-    
-            if (! empty($speechIds)) {
-                $query = $query->whereIn('g.speech_id', $speechIds);
-            }
-    
-            if (! empty($glossGroupIds)) {
-                $query = $query->whereIn('g.gloss_group_id', $glossGroupIds);
-            }
-        } else {
-            $query = Keyword::findByWord($word, $reversed, $includeOld);
+        if (! empty($glossGroupIds)) {
+            $query = $query->whereIn('gloss_group_id', $glossGroupIds);
         }
 
         $keywords = $query
-            ->select('keyword as k', 'normalized_keyword as nk', 'reversed_normalized_keyword_unaccented_length as nrkul',
-                'normalized_keyword_unaccented_length as nkul', 'reversed_normalized_keyword as rnk', 'word as ok')
-            ->orderBy($reversed ? 'nrkul' : 'nkul', 'asc')
-            ->orderBy($reversed ? 'rnk' : 'nk', 'asc')
+            ->select(
+                'search_group as g',
+                'keyword as k',
+                'normalized_keyword as nk',
+                'word as ok'
+            )
+            ->groupBy(
+                'search_group',
+                'keyword',
+                'normalized_keyword',
+                'word'
+            )
+            ->orderBy(DB::raw('MAX('.$lengthColumn.')'), 'asc')
+            ->orderBy($searchColumn, 'asc')
             ->limit(100)
-            ->distinct()
             ->get();
-
+        
         return $keywords;
     }
 
@@ -331,8 +326,8 @@ class GlossRepository
         $senseString  = StringHelper::toLower($senseString);
 
         // 2. Retrieve existing or create a new word entity for the sense and the word.
-        $word          = $this->createWord($wordString, $gloss->account_id);
-        $senseWord     = $this->createWord($senseString, $gloss->account_id);
+        $word          = $this->_wordRepository->save($wordString, $gloss->account_id);
+        $senseWord     = $this->_wordRepository->save($senseString, $gloss->account_id);
 
         // 3. Load sense or create it if it doesn't exist. A sense is 1:1 mapped with
         // words, and therefore doesn't have its own incrementing identifier.
@@ -525,7 +520,7 @@ class GlossRepository
             $this->_keywordRepository->createKeyword($word, $sense, $gloss);
 
             foreach ($translationStrings as $translationString) {
-                $translationWord = $this->createWord($translationString, $gloss->account_id);
+                $translationWord = $this->_wordRepository->save($translationString, $gloss->account_id);
 
                 if ($translationWord->id !== $gloss->word_id) {
                     $this->_keywordRepository->createKeyword($translationWord, $sense, $gloss);
@@ -540,7 +535,7 @@ class GlossRepository
 
             // 12b. Recreate the keywords for the sense.
             foreach ($keywords as $keyword) {
-                $keywordWord = $this->createWord($keyword, $gloss->account_id);
+                $keywordWord = $this->_wordRepository->save($keyword, $gloss->account_id);
 
                 if ($sense->keywords()->where('word_id', $keywordWord->id)->count() < 1) {
                     $this->_keywordRepository->createKeyword($keywordWord, $sense, null);
@@ -624,26 +619,6 @@ class GlossRepository
             $ids[] = $row->sense_id;
         
         return $ids;
-    }
-
-    protected function createWord(string $wordString, int $accountId)
-    {
-        $wordString = mb_strtolower(trim($wordString), 'utf-8');
-        $word = Word::whereRaw('BINARY word = ?', [ $wordString ])->first(); 
-
-        if (! $word) {
-            $normalizedWordString = StringHelper::normalize($wordString);
-            
-            $word = new Word;
-            $word->word                     = $wordString;
-            $word->normalized_word          = $normalizedWordString;
-            $word->reversed_normalized_word = strrev($normalizedWordString); 
-            $word->account_id               = $accountId;
-
-            $word->save();
-        }
-
-        return $word; 
     }
 
     protected function createSense(Word $senseWord)

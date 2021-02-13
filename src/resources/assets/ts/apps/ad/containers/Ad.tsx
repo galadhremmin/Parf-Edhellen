@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
 import { toSnakeCase } from '@root/utilities/func/snake-case';
 import { IProps } from './Ad._types';
+import { IProps as IAppProps } from '../index._types';
 
-function Ad(props: IProps) {
+function Ad(props: IProps & IAppProps) {
     const {
+        ad,
         dataset,
         onMount,
     } = props;
@@ -12,7 +14,7 @@ function Ad(props: IProps) {
         if (typeof onMount === 'function') {
             onMount();
         }
-    }, [ onMount ]);
+    }, [ ad ]);
 
     let data = {};
     if (typeof dataset === 'object') {
