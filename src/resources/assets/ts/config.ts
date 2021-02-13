@@ -25,6 +25,7 @@ export const SearchResultGroups = {
     '0': 'Unassigned',
     '1': 'Glossary',
     '2': 'Phrases',
+    '3': 'Discuss',
 };
 
 export const LearnMoreMarkdownUrl = 'https://en.wikipedia.org/wiki/Markdown';
