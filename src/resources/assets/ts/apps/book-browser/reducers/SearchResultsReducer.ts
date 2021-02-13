@@ -54,7 +54,7 @@ const SearchResultsReducer = (state: ISearchResultState = {
         }
 
         case Actions.SelectSearchResult: {
-            let {
+            const {
                 resultIds,
             } = state;
 
