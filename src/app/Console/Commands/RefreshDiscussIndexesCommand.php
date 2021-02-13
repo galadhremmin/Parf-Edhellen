@@ -18,7 +18,7 @@ class RefreshDiscussIndexesCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'ed-discuss:refresh-indexes';
+    protected $signature = 'ed-search:refresh-discuss';
 
     /**
      * The console command description.

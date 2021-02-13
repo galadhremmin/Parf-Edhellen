@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\ImportEldamoCommand::class,
+        Commands\PopulateSearchIndexCommand::class,
         Commands\RefreshDiscussIndexesCommand::class,
         Commands\RefreshNormalizationCommand::class,
     ];
