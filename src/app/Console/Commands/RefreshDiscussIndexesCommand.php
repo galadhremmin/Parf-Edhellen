@@ -46,7 +46,7 @@ class RefreshDiscussIndexesCommand extends Command
             $this->info('===============================================================================================');
             $this->info($post->content);
             $this->info('');
-            if ($keywords->count() > 0) {
+            if (count($keywords) > 0) {
                 $this->info($keywords);
             } else {
                 $this->info('> No keywords.');
