@@ -17,8 +17,17 @@ class Keyword extends ModelBase
         'normalized_keyword_length', 
         'reversed_normalized_keyword_length', 
         'normalized_keyword_unaccented_length',
-        'reversed_normalized_keyword_unaccented_length'
+        'reversed_normalized_keyword_unaccented_length',
+        'word'
     ];
+
+    /**
+     * Retrieves the Word entity associated with this keyword. It is deliberately suffixed `Entity` because `word` exists as a column. :(
+     */
+    public function wordEntity() 
+    {
+        return $this->belongsTo(Word::class, 'word_id');
+    }
 
     public function scopeFindByWord($query, string $word, $reversed = false, $includeOld = true) 
     {

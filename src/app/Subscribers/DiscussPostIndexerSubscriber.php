@@ -24,7 +24,8 @@ use App\Models\{
     ForumThread
 };
 use App\Events\{
-    ForumPostCreated
+    ForumPostCreated,
+    ForumPostEdited
 };
 
 class DiscussPostIndexerSubscriber
@@ -51,18 +52,38 @@ class DiscussPostIndexerSubscriber
             ForumPostCreated::class,
             self::class.'@onForumPostCreated'
         );
+
+        $events->listen(
+            ForumPostEdited::class,
+            self::class.'@onForumPostEdited'
+        );
     }
 
     public function onForumPostCreated(ForumPostCreated $event)
     {
-        $post = $event->post;
-        $keywords = $this->_analyzer->detectKeyPhrases($post->content);
-        
-        $post = $event->post;
+        $this->update($event->post);
+    }
 
-        foreach ($keywords as $keyword) {
-            $word = $this->_wordRepository->save($keyword, $post->account_id);
-            $this->_searchIndexRepository->createIndex($post, $word);
+    public function onForumPostEdited(ForumPostEdited $event)
+    {
+        $this->update($event->post);
+    }
+
+    private function delete(ForumPost $post)
+    {
+        $this->_searchIndexRepository->deleteAll($post);
+    }
+
+    private function update(ForumPost $post)
+    {
+        if ($post->is_deleted) {
+            $this->delete($post);
+        } else {
+            $keywords = $this->_analyzer->detectKeyPhrases($post->content);
+            foreach ($keywords as $keyword) {
+                $word = $this->_wordRepository->save($keyword, $post->account_id);
+                $this->_searchIndexRepository->createIndex($post, $word);
+            }
         }
     }
 }

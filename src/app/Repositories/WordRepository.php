@@ -9,7 +9,7 @@ use App\Models\{
 
 class WordRepository 
 {
-    public function save(string $wordString, int $accountId)
+    public function save(string $wordString, int $accountId): Word
     {
         $wordString = mb_strtolower(trim($wordString), 'utf-8');
         $word = Word::whereRaw('BINARY word = ?', [ $wordString ])->first(); 
