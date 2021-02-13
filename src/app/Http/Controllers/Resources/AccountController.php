@@ -84,7 +84,7 @@ class AccountController extends Controller
         $account = Account::findOrFail($id);
         $account->addMembershipTo($role->name);
 
-        return redirect()->route('account.edit', ['id' => $account->id]);
+        return redirect()->route('account.edit', ['account' => $account->id]);
     }
 
     public function deleteMembership(Request $request, int $id)
@@ -99,6 +99,6 @@ class AccountController extends Controller
         $account = Account::findOrFail($id);
         $account->removeMembership($role->name);
 
-        return redirect()->route('account.edit', ['id' => $account->id]);
+        return redirect()->route('account.edit', ['account' => $account->id]);
     }
 }

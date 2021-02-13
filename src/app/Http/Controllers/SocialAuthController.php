@@ -18,6 +18,12 @@ class SocialAuthController extends Controller
 {
     public function login(Request $request)
     {
+        if (app()->runningUnitTests() && $request->has('login-as')) {
+            $accountId = intval($request->input('login-as'));
+            $account = Account::findOrFail($accountId);
+            return $this->doLogin($request, $account, false);
+        }
+
         if ($request->has('redirect')) {
             $url = parse_url($request->input('redirect'));
 

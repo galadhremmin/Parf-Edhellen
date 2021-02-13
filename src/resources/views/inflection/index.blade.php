@@ -16,7 +16,7 @@
     <ul>
     @foreach ($inflectionsInGroup as $inflection)
     <li>
-      <a href="{{ route('inflection.edit', ['id' => $inflection->id]) }}">
+      <a href="{{ route('inflection.edit', ['inflection' => $inflection->id]) }}">
         {{$inflection->name}}
       </a>
     </li>
