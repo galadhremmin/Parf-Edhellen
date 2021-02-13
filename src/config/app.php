@@ -187,7 +187,6 @@ return [
          */
         Watson\Active\ActiveServiceProvider::class, // https://packagist.org/packages/watson/active
         \SocialiteProviders\Manager\ServiceProvider::class, // http://socialiteproviders.github.io/providers/microsoft-live/
-        DaveJamesMiller\Breadcrumbs\ServiceProvider::class, // https://laravel-breadcrumbs.readthedocs.io
         Intervention\Image\ImageServiceProvider::class // http://image.intervention.io/
     ],
 
@@ -238,7 +237,6 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
-        'Breadcrumbs' => DaveJamesMiller\Breadcrumbs\Facade::class,
         'Image' => Intervention\Image\ImageServiceProvider::class
     ],
 
