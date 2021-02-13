@@ -54,7 +54,6 @@ export default class SearchActions {
                     const rawResults = await this._api.find(args);
                     // generate a unique ID for each result item. We need to use an counter since
                     // the keyword and the normalized keyword both may not be unique.
-                    let index = 0;
                     results = mapArrayGroupBy<IFindEntity, ISearchResult>({
                         id: (v) => stringHashAll(v.k, v.nk, v.ok, v.g.toString(10)),
                         normalizedWord: 'nk',
@@ -185,7 +184,7 @@ export default class SearchActions {
 
             let language: ILanguageEntity = null;
             let languageShortName: string = null;
-            
+
             if (languageId !== 0) {
                 language = await this._languages.find(languageId, 'id');
                 languageShortName = language.shortName;
@@ -242,7 +241,6 @@ export default class SearchActions {
                     id: 0,
                     normalizedWord: word,
                     originalWord: null,
-                    selected: true,
                     word,
                 };
             }

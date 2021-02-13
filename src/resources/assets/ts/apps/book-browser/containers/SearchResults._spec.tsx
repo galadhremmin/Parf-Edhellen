@@ -15,24 +15,21 @@ describe('apps/book-browser/containers/SearchResults', () => {
                 id: 1,
                 normalizedWord: 'word 1',
                 originalWord: null,
-                selected: false,
                 word: 'word 1',
             },
             {
                 id: 2,
                 normalizedWord: 'word 2',
                 originalWord: null,
-                selected: false,
                 word: 'word 2',
             },
             {
                 id: 3,
                 normalizedWord: 'word 3',
                 originalWord: null,
-                selected: false,
                 word: 'word 3',
             },
-        ]
+        ],
     ];
 
     before(() => {

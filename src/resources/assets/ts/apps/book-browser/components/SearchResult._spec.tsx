@@ -11,7 +11,6 @@ describe('apps/book-browser/components/SearchResultsContainer', () => {
         id: 1,
         normalizedWord: 'normalized word',
         originalWord: null,
-        selected: false,
         word: 'word',
     };
 
