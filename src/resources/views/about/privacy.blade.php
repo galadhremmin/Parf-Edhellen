@@ -20,5 +20,7 @@
 
 <p>If ever in doubt, please refer to our <a href="https://github.com/galadhremmin/Parf-Edhellen" target="_blank">source repository on Github</a>. The latest commit in the mainline branch is always the version we are currently running in production.</p>
 
+<p>If you want to delete your account, please make a DELETE request to <code>/api/v2/Faccount/edit/{ID}</code> where <code>{ID}</code> represents your actual account ID.</p>
+
 <p>This policy is effective as of 29 September 2018.</p>
 @endsection
