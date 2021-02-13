@@ -20,7 +20,7 @@ class DBHandler extends Handler
      * @param  \Exception  $exception
      * @return void
      */
-    public function report(Exception $exception)
+    public function report(\Throwable $exception)
     {
         $shouldIgnore = $exception instanceof AuthenticationException ||
                         $exception instanceof NotFoundHttpException ||
