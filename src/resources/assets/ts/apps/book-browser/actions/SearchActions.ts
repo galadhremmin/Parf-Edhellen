@@ -55,6 +55,7 @@ export default class SearchActions {
                     // generate a unique ID for each result item. We need to use an counter since
                     // the keyword and the normalized keyword both may not be unique.
                     results = mapArrayGroupBy<IFindEntity, ISearchResult>({
+                        groupId: 'g',
                         id: (v) => stringHashAll(v.k, v.nk, v.ok, v.g.toString(10)),
                         normalizedWord: 'nk',
                         originalWord: 'ok',
