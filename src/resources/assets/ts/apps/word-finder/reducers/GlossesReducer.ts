@@ -16,7 +16,7 @@ const GlossesReducer = (state = InitialState, action: IGameAction) => {
                 id: g.id,
                 word: g.word,
                 wordForComparison: preprocessWordForSplitting(g.word),
-                wordLength: g.word.replace(/\s\-/g, '').length,
+                wordLength: g.word.replace(/[\s\-]/g, '').length,
             }) as IGameGloss);
         case Actions.DiscoverWord:
             return state.map((g) => {
