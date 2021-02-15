@@ -32,36 +32,26 @@ class RssFeedAdapter
         ];
 
         foreach ($this->_metadata as $tagName => $value) {
-            $payload[] = [
-                '<'.$tagName.'>'.htmlentities($value, ENT_QUOTES).'</'.$tagName.'>'
-            ];
+            $payload[] = '<'.$tagName.'>'.htmlentities($value, ENT_QUOTES).'</'.$tagName.'>';
         }
 
         foreach ($data as $d) {
             $fd = $itemFormatter($d);
             $this->validateFormattedItem($fd);
 
-            $payload[] = [
-                '<item>'
-            ];
+            $payload[] = '<item>';
 
             foreach ($fd as $tagName => $value) {
-                $payload[] = [
-                    '<'.$tagName.'><![CDATA['.htmlentities($value, ENT_QUOTES).']]></'.$tagName.'>',
-                ];
+                $payload[] = '<'.$tagName.'><![CDATA['.htmlentities($value, ENT_QUOTES).']]></'.$tagName.'>';
             }
 
-            $payload[] = [
-                '</item>'
-            ];
+            $payload[] = '</item>';
         }
 
-        $payload[] = [
-                '</channel>',
-            '</rss>'
-        ];
+        $payload[] = '</channel>'.
+            '</rss>';
 
-        return implode("\n", array_flatten($payload));
+        return implode("\n", $payload);
     }
 
     private function validateFormattedItem($fd)
