@@ -68,7 +68,7 @@ function CombinePartsStage(props: IProps) {
                 className={classNames('btn btn-default', { 'hidden': ! p.available, 'disabled': p.selected })}
                 data-part-id={p.id}
                 onClick={_onSelectPart}>
-                    {p.part}
+                    {p.part.trim()}
             </button>)}
         </div>
         <div className="CombinePartsStage__tips">
