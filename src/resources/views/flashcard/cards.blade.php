@@ -21,12 +21,11 @@
       @else
       @include('flashcard._login')
       @endif
-      @include('_shared._ad', [
-        'ad' => 'flashcards'
-      ])
     </aside>
   </div>
-      
+  @include('_shared._ad', [
+    'ad' => 'flashcards'
+  ])
 @endsection
 @section('styles')
   <link href="@assetpath(/css/app.flashcard.css)" rel="stylesheet">
