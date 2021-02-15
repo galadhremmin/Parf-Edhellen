@@ -28,7 +28,7 @@ function SuccessStage(props: IStageProps) {
         <h3>
             Eglerio!
         </h3>
-        <p>You found all words in {timeElapsed} seconds!</p>
+        <p>You found all words in {timeElapsed.toFormat('s')} seconds!</p>
         <button className="btn btn-lg btn-primary SuccessStage--play-again" onClick={_onPlayAgain}>Play again</button>
     </>
 }
