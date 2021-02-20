@@ -2,6 +2,8 @@ import { DI, resolve } from '@root/di';
 import ApiConnector from '../ApiConnector';
 import IBookApi, {
     FindResponse,
+    IEntitiesRequest,
+    IEntitiesResponse,
     IFindRequest,
     IGlossaryRequest,
     IGlossaryResponse,
@@ -13,6 +15,10 @@ import { IGlossGroup } from './IGlossResourceApi';
 
 export default class BookApiConnector implements IBookApi {
     constructor(private _api = resolve<ApiConnector>(DI.BackendApi)) {
+    }
+
+    entities({ groupId, data }: IEntitiesRequest): Promise<IEntitiesResponse> {
+        return this._api.post<IEntitiesResponse>(`book/entities/${groupId}`, data);
     }
 
     public find(args: IFindRequest) {

@@ -4,12 +4,16 @@ import { connect } from 'react-redux';
 
 import { IComponentEvent } from '@root/components/Component._types';
 import StaticAlert from '@root/components/StaticAlert';
+import {
+    SearchResultGlossaryGroup,
+    SearchResultGroups,
+} from '@root/config';
+import Cache from '@root/utilities/Cache';
 import { SearchActions } from '../actions';
 import SearchGroup from '../components/SearchGroup';
 import { RootReducer } from '../reducers';
 import { ISearchResult } from '../reducers/SearchResultsReducer._types';
 import { IProps } from './SearchResults._types';
-import Cache from '@root/utilities/Cache';
 
 export class SearchResults extends React.Component<IProps> {
     static get defaultProps() {
@@ -125,10 +129,19 @@ export class SearchResults extends React.Component<IProps> {
      * for the specified search result.
      */
     private _onClick = (ev: IComponentEvent<ISearchResult>) => {
-        this.props.dispatch(this._actions.glossary({
-            searchResult: ev.value,
+        const {
+            dispatch,
+        } = this.props;
+        const searchResult = ev.value;
+        const payload = {
+            searchResult,
             updateBrowserHistory: true,
-        }));
+        };
+        if (! searchResult.groupId || SearchResultGroups[searchResult.groupId] === SearchResultGlossaryGroup) {
+            dispatch(this._actions.glossary(payload));
+        } else {
+            dispatch(this._actions.expandSearchResult(payload));
+        }
     }
 
     private _onDismissInstructions = () => {

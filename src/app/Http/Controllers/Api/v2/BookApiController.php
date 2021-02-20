@@ -116,6 +116,11 @@ class BookApiController extends Controller
         return $keywords;
     }
 
+    public function entities(Request $request, int $groupId)
+    {
+        abort(405, 'Not Yet Supported'); // TODO
+    }
+
     /**
      * HTTP POST. Translates the specified word.
      *

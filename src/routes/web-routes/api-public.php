@@ -10,6 +10,8 @@ Route::group([
     Route::get('book/languages',           [ 'uses' => 'BookApiController@getLanguages' ]);
     Route::get('book/translate/{glossId}', [ 'uses' => 'BookApiController@get' ])
         ->where([ 'glossId' => REGULAR_EXPRESSION_NUMERIC ]);
+    Route::post('book/entities/{groupId}', [ 'uses' => 'BookApiController@entities' ])
+        ->where([ 'groupId' => REGULAR_EXPRESSION_NUMERIC ]);
     Route::post('book/translate',          [ 'uses' => 'BookApiController@translate' ]);
     Route::post('book/find',               [ 'uses' => 'BookApiController@find' ]);
 

@@ -1,7 +1,6 @@
-import { SearchResultGroups } from '@root/config';
 import { ISearchResult } from '../reducers/SearchResultsReducer._types';
 
-export interface ILoadGlossaryAction {
+export interface IExpandSearchResultAction {
     glossGroupIds?: number[];
     includeOld?: boolean;
     languageId?: number;
