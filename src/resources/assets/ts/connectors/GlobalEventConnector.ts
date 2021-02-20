@@ -1,4 +1,5 @@
 import {
+    GlobalEventLoadEntity,
     GlobalEventLoadGlossary,
     GlobalEventLoadReference,
 } from '../config';
@@ -27,6 +28,21 @@ export default class GlobalEventConnector {
             ...carry,
             [key]: this._listeners[key],
         }), {}) as IEventMap;
+    }
+
+    /**
+     * Associates the specified listener function with the `loadEntity` event. This event
+     * is used for every search entity that is not associated with the glossary.
+     */
+    public set loadEntity(listenerFunc: EventListenerOrName) {
+        this._connect(GlobalEventLoadEntity, listenerFunc);
+    }
+
+    /**
+     * Gets the `loadEntity` event's name as a string.
+     */
+    public get loadEntity() {
+        return GlobalEventLoadEntity;
     }
 
     /**

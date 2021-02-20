@@ -28,7 +28,7 @@ import {
 } from '../reducers/SearchResultsReducer._types';
 import {
     IBrowserHistoryState,
-    ILoadGlossaryAction,
+    IExpandSearchResultAction,
 } from './SearchActions._types';
 
 export default class SearchActions {
@@ -155,55 +155,13 @@ export default class SearchActions {
      * Loads the glossary for the specified search result.
      * @param args
      */
-    public glossary(args: ILoadGlossaryAction) {
-        return async (dispatch: ThunkDispatch<any, any, any>, getState: () => RootReducer) => {
-            const state = getState();
+    public glossary(args: IExpandSearchResultAction) {
+        return this._expand(args, (r, l, d) => this._loadGlossary(d, r, l?.shortName, //
+            args.updateBrowserHistory));
+    }
 
-            let glossGroupIds = state.search.glossGroupIds;
-            let includeOld    = state.search.includeOld;
-            let languageId    = state.search.languageId;
-            let speechIds     = state.search.speechIds;
-
-            if (args.glossGroupIds !== undefined) {
-                glossGroupIds = args.glossGroupIds;
-            }
-
-            if (args.includeOld !== undefined) {
-                includeOld = args.includeOld;
-            }
-
-            if (args.languageId !== undefined) {
-                languageId = args.languageId;
-            }
-
-            if (args.speechIds !== undefined) {
-                speechIds = args.speechIds;
-            }
-
-            const word = args.searchResult.originalWord || //
-                args.searchResult.word;
-
-            let language: ILanguageEntity = null;
-            let languageShortName: string = null;
-
-            if (languageId !== 0) {
-                language = await this._languages.find(languageId, 'id');
-                languageShortName = language.shortName;
-            }
-
-            dispatch(this.selectSearchResult(args.searchResult));
-
-            const request = {
-                glossGroupIds,
-                includeOld,
-                inflections: true,
-                languageId,
-                normalizedWord: args.searchResult.normalizedWord,
-                speechIds,
-                word,
-            };
-            await this._loadGlossary(dispatch, request, languageShortName, args.updateBrowserHistory);
-        };
+    public expandSearchResult(args: IExpandSearchResultAction) {
+        return this._expand(args, this._loadMatchingEntities.bind(this, args));
     }
 
     /**
@@ -255,7 +213,7 @@ export default class SearchActions {
     }
 
     /**
-     * Loads the glossary for the reference link.
+     * Loads the glossary for the reference link._expandSearchResult
      * @param word
      * @param languageShortName
      * @param updateBrowserHistory (optional) whether to invoke pushState.
@@ -287,6 +245,58 @@ export default class SearchActions {
         return {
             glossary,
             type: Actions.ReceiveGlossary,
+        };
+    }
+
+    private _expand(args: IExpandSearchResultAction, expander: (request: IGlossaryRequest, language: ILanguageEntity, //
+        dispatch: ThunkDispatch<any, any, any>) => Promise<void>) {
+        return async (dispatch: ThunkDispatch<any, any, any>, getState: () => RootReducer) => {
+            const state = getState();
+
+            let glossGroupIds = state.search.glossGroupIds;
+            let includeOld    = state.search.includeOld;
+            let languageId    = state.search.languageId;
+            let speechIds     = state.search.speechIds;
+
+            if (args.glossGroupIds !== undefined) {
+                glossGroupIds = args.glossGroupIds;
+            }
+
+            if (args.includeOld !== undefined) {
+                includeOld = args.includeOld;
+            }
+
+            if (args.languageId !== undefined) {
+                languageId = args.languageId;
+            }
+
+            if (args.speechIds !== undefined) {
+                speechIds = args.speechIds;
+            }
+
+            const word = args.searchResult.originalWord || //
+                args.searchResult.word;
+
+            let language: ILanguageEntity = null;
+            let languageShortName: string = null;
+
+            if (languageId !== 0) {
+                language = await this._languages.find(languageId, 'id');
+                languageShortName = language.shortName;
+            }
+
+            const request = {
+                glossGroupIds,
+                includeOld,
+                inflections: true,
+                languageId,
+                languageShortName,
+                normalizedWord: args.searchResult.normalizedWord,
+                speechIds,
+                word,
+            };
+
+            return expander(request, language, dispatch);
         };
     }
 
@@ -348,5 +358,28 @@ export default class SearchActions {
 
         const glossary = await this._api.glossary(args);
         dispatch(this.setGlossary(glossary));
+    }
+
+    private async _loadMatchingEntities(args: IExpandSearchResultAction, request: IGlossaryRequest, language: ILanguageEntity, //
+        dispatch: ThunkDispatch<any, any, any>) {
+        const address = ''; // todo
+        const {
+            searchResult,
+        } = args;
+        this._globalEvents.fire(this._globalEvents.loadEntity, {
+            detail: {
+                address,
+                groupId: searchResult.groupId,
+                languageId: language?.id,
+                word: request.word,
+            },
+        });
+
+        const entities = await this._api.entities({
+            data: request,
+            groupId: searchResult.groupId,
+        });
+
+        console.log(entities);
     }
 }
