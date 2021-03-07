@@ -31,52 +31,6 @@ class GlossRepository
         $this->_wordRepository = $wordRepository;
     }
 
-    public function getKeywordsForLanguage(string $word, $reversed = false, $languageId = 0, $includeOld = true, array $speechIds = null,
-        array $glossGroupIds = null)
-    {
-        $word = self::formatWord($word);
-        $searchColumn = $reversed ? 'normalized_keyword_reversed_unaccented' : 'normalized_keyword_unaccented';
-        $lengthColumn = $searchColumn.'_length';
-
-        $query = SearchKeyword::where($searchColumn, 'like', $word);
-
-        if ($languageId !== 0) {
-            $query = $query->where('language_id', intval($languageId));
-        }
-
-        if (! $includeOld) {
-            $query = $query->where('is_old', 0);
-        }
-    
-        if (! empty($speechIds)) {
-            $query = $query->whereIn('speech_id', $speechIds);
-        }
-
-        if (! empty($glossGroupIds)) {
-            $query = $query->whereIn('gloss_group_id', $glossGroupIds);
-        }
-
-        $keywords = $query
-            ->select(
-                'search_group as g',
-                'keyword as k',
-                'normalized_keyword as nk',
-                'word as ok'
-            )
-            ->groupBy(
-                'search_group',
-                'keyword',
-                'normalized_keyword',
-                'word'
-            )
-            ->orderBy(DB::raw('MAX('.$lengthColumn.')'), 'asc')
-            ->orderBy($searchColumn, 'asc')
-            ->limit(100)
-            ->get();
-        
-        return $keywords;
-    }
-
     /**
      * Returns a list of glosses which match the specified word. This method looks for sense.
      *
@@ -763,16 +717,5 @@ class GlossRepository
 
         $g->is_deleted = true;
         $g->save();
-    }
-
-    protected static function formatWord(string $word, bool& $hasWildcard = null) 
-    {
-        if (strpos($word, '*') !== false) {
-            $hasWildcard = true;
-            return str_replace('*', '%', $word);
-        } 
-        
-        $hasWildcard = false;
-        return $word.'%';
     }
 }

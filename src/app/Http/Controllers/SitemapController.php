@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Abstracts\Controller;
 use App\Models\{ForumGroup, Sentence, Gloss};
 use App\Helpers\{LinkHelper, StringHelper};
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class SitemapController extends Controller

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Abstracts\Controller;
+
 class AboutController extends Controller
 {
     public function index() 

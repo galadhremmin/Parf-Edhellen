@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use App\Http\Controllers\Abstracts\Controller;
 use App\Models\{
     FlashcardResult, 
     Contribution,

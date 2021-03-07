@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Resources;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Abstracts\Controller;
 use Illuminate\Http\Request;
 
 use App\Adapters\BookAdapter;

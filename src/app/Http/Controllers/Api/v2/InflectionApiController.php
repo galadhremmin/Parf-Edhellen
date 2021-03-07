@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\v2;
 use Illuminate\Http\Request;
 
 use App\Models\Inflection;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Abstracts\Controller;
 
 class InflectionApiController extends Controller 
 {

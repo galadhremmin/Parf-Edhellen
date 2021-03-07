@@ -8,9 +8,8 @@ use Cache;
 use Log;
 use Carbon\Carbon;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Abstracts\Controller;
 use App\Http\Discuss\ContextFactory;
-use App\Http\Controllers\Traits\CanAdaptDiscuss;
 use App\Adapters\DiscussAdapter;
 use App\Helpers\LinkHelper;
 use App\Repositories\{
@@ -23,11 +22,8 @@ use App\Models\{
 
 class DiscussController extends Controller
 {
-    use CanAdaptDiscuss {
-        CanAdaptDiscuss::__construct as setupDiscussAdapter;
-    }
-
     protected $_contextFactory;
+    protected $_discussAdapter;
     protected $_discussRepository;
     protected $_statisticsRepository;
     private $_linkHelper;
@@ -39,11 +35,11 @@ class DiscussController extends Controller
         StatisticsRepository $statisticsRepository,
         LinkHelper $linkHelper)
     {
-        $this->setupDiscussAdapter($discussAdapter);
+        $this->_discussAdapter       = $discussAdapter;
         $this->_discussRepository    = $discussRepository;
         $this->_contextFactory       = $contextFactory;
         $this->_statisticsRepository = $statisticsRepository;
-        $this->_linkHelper = $linkHelper;
+        $this->_linkHelper           = $linkHelper;
     }
 
     public function index(Request $request)
@@ -54,7 +50,7 @@ class DiscussController extends Controller
     public function groups(Request $request)
     {
         $groups   = $this->_discussRepository->getGroups();
-        $accounts = $this->adaptAccountsPerForumGroup(
+        $accounts = $this->_discussAdapter->adaptAccountsPerForumGroup(
             $this->_discussRepository->getAccountsInGroup($groups->getGroups())
         );
 
@@ -70,11 +66,10 @@ class DiscussController extends Controller
 
         try {
             $group = $this->_discussRepository->getGroup($id);
-            $model = $this->adaptForumThreadsInGroup(
-                $this->_discussRepository->getThreadDataInGroup($group, $request->user(), $currentPage)
-            );
+            $threads = $this->_discussRepository->getThreadDataInGroup($group, $request->user(), $currentPage);
+            $this->_discussAdapter->adaptThreads($threads->getThreads());
         
-            return view('discuss.group', $model->getAllValues());
+            return view('discuss.group', $threads->getAllValues());
         } catch (ModelNotFoundException $ex) {
             // unfortunately, before groups were a thing, the path pattern was identical to threads
             // so implement a graceful fallback before giving up:
@@ -96,12 +91,11 @@ class DiscussController extends Controller
         $groupData = [
             'group' => $this->_discussRepository->getGroup($groupId)
         ];
-        $threadData = $this->adaptForumThread(
-            $this->_discussRepository->getThreadData($id)
-        );
-        $postData = $this->adaptForumPostsInThread(
-            $this->_discussRepository->getPostDataInThread($threadData->getThread(), $request->user(), 'asc', $currentPage, $forumPostId)
-        );
+        $threadData = $this->_discussRepository->getThreadData($id);
+        $this->_discussAdapter->adaptForumThread($threadData->getThread());
+
+        $postData = $this->_discussRepository->getPostDataInThread($threadData->getThread(), $request->user(), 'asc', $currentPage, $forumPostId);
+        $this->_discussAdapter->adaptPosts($postData->getPosts());
 
         return view('discuss.thread', $threadData->getAllValues() + $groupData + [
             'preloadedPosts' => $postData->getAllValues()

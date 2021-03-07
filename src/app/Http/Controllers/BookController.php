@@ -4,17 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Language;
+use App\Http\Controllers\Abstracts\BookBaseController;
 use App\Http\Controllers\Traits\{
-    CanGetLanguage,
-    CanTranslate, 
-    CanGetGloss
+    CanGetLanguage
 };
 
-class BookController extends Controller
+class BookController extends BookBaseController
 {
-    use CanTranslate, CanGetGloss, CanGetLanguage {
-        CanTranslate::__construct insteadof CanGetGloss;
-    } // ;
+    use CanGetLanguage;
 
     public function pageForWord(Request $request, string $word, string $language = null)
     {
@@ -25,7 +22,7 @@ class BookController extends Controller
         $glossGroupId = $request->has('gloss_group_ids') ? $request->input('gloss_group_ids') : null;
         $speechIds    = $request->has('speech_ids')      ? $request->input('speech_ids') : null;
 
-        $model = $this->translate($word, $language ? $language->id : 0, true, $includeOld, $speechIds, $glossGroupId);
+        $model = $this->findGlosses($word, $language ? $language->id : 0, true, $includeOld, $speechIds, $glossGroupId);
 
         return view('book.page', [
             'payload' => $model

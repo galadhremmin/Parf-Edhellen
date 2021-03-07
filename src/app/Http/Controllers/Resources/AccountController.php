@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Resources;
 
 use Illuminate\Http\Request;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Abstracts\Controller;
 use App\Adapters\AuditTrailAdapter;
 use App\Models\{
     Account,

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Contributions;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\Collection;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Abstracts\Controller;
 use App\Repositories\GlossRepository;
 use App\Adapters\BookAdapter;
 use App\Models\{

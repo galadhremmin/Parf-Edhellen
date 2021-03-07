@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\{
-    Cache,
-};
+use Illuminate\Support\Facades\Cache;
 
+use App\Http\Controllers\Abstracts\Controller;
 use App\Repositories\{
     ContributionRepository,
     SentenceRepository,

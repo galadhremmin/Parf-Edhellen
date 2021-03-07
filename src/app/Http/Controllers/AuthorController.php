@@ -11,6 +11,7 @@ use App\Adapters\{
     BookAdapter,
     DiscussAdapter
 };
+use App\Http\Controllers\Abstracts\Controller;
 use App\Repositories\StatisticsRepository;
 use App\Helpers\{
     MarkdownParser,

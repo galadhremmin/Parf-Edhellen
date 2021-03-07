@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\v2;
 
 use Illuminate\Http\Request;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Abstracts\Controller;
 use App\Repositories\GlossRepository;
 
 class GlossApiController extends Controller

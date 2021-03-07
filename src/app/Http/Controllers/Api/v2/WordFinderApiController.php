@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 
 use DB;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Abstracts\Controller;
 use App\Helpers\StringHelper;
 use App\Models\{ 
     Gloss,
