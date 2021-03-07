@@ -7,6 +7,7 @@ use Cache;
 
 use App\Http\Controllers\Abstracts\BookBaseController;
 use App\Helpers\StringHelper;
+use App\Repositories\ValueObjects\SearchIndexSearchValue;
 use App\Models\{
     Keyword,
     Gloss, 
@@ -92,8 +93,7 @@ class BookApiController extends BookBaseController
     public function find(Request $request)
     {
         $v = $this->validateFindRequest($request);
-        return $this->_searchIndexRepository->findKeywords($v['word'], $v['reversed'], $v['languageId'], //
-            $v['includeOld'], $v['speechIds'], $v['glossGroupIds']);
+        return $this->_searchIndexRepository->findKeywords($v);
     }
 
     /**
@@ -102,7 +102,9 @@ class BookApiController extends BookBaseController
     public function entities(Request $request, int $groupId)
     {
         $v = $this->validateFindRequest($request);
-        return [];
+        return $this->_searchIndexRepository->resolveIndexToEntities($groupId, new SearchIndexSearchValue([
+            'word' => $v->getWord()
+        ]));
     }
 
     /**
@@ -152,33 +154,33 @@ class BookApiController extends BookBaseController
         ]);
     }
 
-    private function validateFindRequest(Request $request)
+    private function validateFindRequest(Request $request): SearchIndexSearchValue
     {
         $v = $request->validate([
             'gloss_group_ids'   => 'sometimes|array',
             'gloss_group_ids.*' => 'sometimes|numeric',
-            'include_old'       => 'boolean',
+            'include_old'       => 'sometimes|boolean',
             'language_id'       => 'sometimes|numeric',
-            'reversed'          => 'boolean',
+            'reversed'          => 'sometimes|boolean',
             'speech_ids'        => 'sometimes|array',
             'speech_ids.*'      => 'sometimes|numeric',
             'word'              => 'required|string'
         ]);
 
         $glossGroupIds = isset($v['gloss_group_ids']) ? $v['gloss_group_ids'] : null;
-        $includeOld    = boolval($v['include_old']);
-        $languageId    = intval($v['language_id']);
-        $reversed      = $v['reversed'] === true;
+        $includeOld    = isset($v['include_old']) ? boolval($v['include_old']) : true;
+        $languageId    = isset($v['language_id']) ? intval($v['language_id']) : null;
+        $reversed      = isset($v['reversed']) ? boolval($v['reversed']) : false;
         $speechIds     = isset($v['speech_ids']) ? $v['speech_ids'] : null;
         $word          = StringHelper::normalize($v['word'], /* accentsMatter: */ false, /* retainWildcard: */ true);
 
-        return [
-            'glossGroupIds' => $glossGroupIds,
-            'includeOld'    => $includeOld,
-            'languageId'    => $languageId,
-            'reversed'      => $reversed,
-            'speechIds'     => $speechIds,
-            'word'          => $word
-        ];
+        return new SearchIndexSearchValue([
+            'gloss_group_ids' => $glossGroupIds,
+            'include_old'     => $includeOld,
+            'language_id'     => $languageId,
+            'reversed'        => $reversed,
+            'speech_ids'      => $speechIds,
+            'word'            => $word
+        ]);
     }
 }
