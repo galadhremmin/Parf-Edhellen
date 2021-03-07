@@ -6,7 +6,8 @@ use Illuminate\Support\Str;
 use Tests\TestCase;
 use App\Http\Controllers\Api\v2\BookApiController;
 use App\Models\{
-    Gloss
+    Gloss,
+    SearchKeyword
 };
 
 class BookApiControllerTest extends TestCase
@@ -42,7 +43,11 @@ class BookApiControllerTest extends TestCase
 
     public function testEntities()
     {
-        $this->assertTrue(true); // TODO
+        $response = $this->postJson(
+            route('api.book.entities', ['groupId' => SearchKeyword::SEARCH_GROUP_DICTIONARY]),
+            ['word' => 'a']
+        );
+        $response->assertSuccessful();
     }
 
     public function testTranslate()

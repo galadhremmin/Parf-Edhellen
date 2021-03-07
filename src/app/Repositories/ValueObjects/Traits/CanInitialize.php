@@ -18,27 +18,33 @@ trait CanInitialize
         return $this->_values;
     }
 
-    protected function initialize(array &$properties, string $propertyName)
+    protected function initialize(array &$properties, string $propertyName, $required = true)
     {
         if (empty($propertyName) || ! is_string($propertyName)) {
             throw new Exception('Property name must be a valid string');
         }
 
         if (! isset($properties[$propertyName])) {
-            throw new Exception(sprintf('The %s does not contain the required property %s.', serialize($properties), $propertyName));
+            if ($required) {
+                throw new Exception(sprintf('The %s does not contain the required property %s.', json_encode($properties), $propertyName));
+            }
+            
+            $v = 0;
+        } else {
+            $v = $properties[$propertyName];
         }
 
         if (! is_array($this->_values)) {
             $this->_values = [];
         }
 
-        $this->_values[$propertyName] = $properties[$propertyName];
+        $this->_values[$propertyName] = $v;
     }
 
-    protected function initializeAll(array &$properties, array $propertyNames)
+    protected function initializeAll(array &$properties, array $propertyNames, $required = true)
     {
         foreach ($propertyNames as $propertyName) {
-            $this->initialize($properties, $propertyName);
+            $this->initialize($properties, $propertyName, $required);
         }
     }
 
