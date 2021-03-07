@@ -4,14 +4,13 @@ namespace App\Http\Controllers\Api\v2;
 
 use Illuminate\Http\Request;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Abstracts\Controller;
 use App\Models\{
     ForumPost
 };
 use App\Adapters\DiscussAdapter;
 use App\Repositories\DiscussRepository;
 use App\Helpers\LinkHelper;
-use App\Http\Controllers\Traits\CanAdaptDiscuss;
 
 class DiscussApiController extends Controller 
 {
@@ -34,15 +33,12 @@ class DiscussApiController extends Controller
     const PROPERTY_POST_LIKE = 'like';
     const PROPERTY_POST_URL = 'postUrl';
 
-    use CanAdaptDiscuss {
-        CanAdaptDiscuss::__construct as setupDiscussAdapter;
-    }
-
+    protected $_discussAdapter;
     protected $_discussRepository;
 
     public function __construct(DiscussAdapter $discussAdapter, DiscussRepository $discussRepository)
     {
-        $this->setupDiscussAdapter($discussAdapter);
+        $this->_discussAdapter    = $discussAdapter;
         $this->_discussRepository = $discussRepository;
     }
 
@@ -57,9 +53,10 @@ class DiscussApiController extends Controller
         $page = $this->getPageFromRequest($request);
         $user = $request->user();
 
-        return $this->adaptForumThreadsInGroup(
-            $this->_discussRepository->getThreadDataInGroup($group, $user, $page)
-        );
+        $threadData = $this->_discussRepository->getThreadDataInGroup($group, $user, $page);
+        $this->_discussAdapter->adaptThreads($threadData->getThreads());
+
+        return $threadData;
     }
 
     /**
@@ -67,9 +64,9 @@ class DiscussApiController extends Controller
      */
     public function getLatestThreads(Request $request)
     {
-        return $this->adaptForumThreads(
-            $this->_discussRepository->getLatestThreads()
-        );
+        $threadData = $this->_discussRepository->getLatestThreads();
+        $this->_discussAdapter->adaptThreads($threadData);
+        return $threadData;
     }
 
     /**
@@ -95,10 +92,10 @@ class DiscussApiController extends Controller
         $postData = $this->_discussRepository->getPostDataInThread($threadData->getThread(), $user,
             self::DEFAULT_SORT_BY_DATE_ORDER, $page, $postId);
 
-        return array_merge(
-            $this->adaptForumThread($threadData)->getAllValues(),
-            $this->adaptForumPostsInThread($postData)->getAllValues()
-        );
+        $this->_discussAdapter->adaptForumThread($threadData->getThread());
+        $this->_discussAdapter->adaptPosts($postData->getPosts());
+
+        return array_merge($threadData->getAllValues(), $postData->getAllValues());
     }
 
     public function getThreadByEntity(Request $request, string $entityType, int $entityId)
@@ -138,7 +135,7 @@ class DiscussApiController extends Controller
         }
 
         if (! isset($data['markdown']) || boolval($data['markdown']) === false) {
-            $this->adaptForumPost($post);
+            $this->_discussAdapter->adaptPost($post);
         }
 
         return [

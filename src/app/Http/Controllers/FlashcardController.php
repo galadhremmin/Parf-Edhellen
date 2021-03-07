@@ -7,9 +7,8 @@ use Cache;
 use DB;
 
 use App\Adapters\BookAdapter;
-use App\Helpers\{
-    StringHelper
-};
+use App\Helpers\StringHelper;
+use App\Http\Controllers\Abstracts\Controller;
 use App\Events\FlashcardFlipped;
 use App\Models\{
     Flashcard, 

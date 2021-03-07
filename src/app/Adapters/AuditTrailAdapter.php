@@ -97,7 +97,7 @@ class AuditTrailAdapter
                 }
 
                 $entity = 'a comment in <a href="'.
-                    route('discuss.resolve', [
+                    route('api.discuss.resolve', [
                         'entityType' => $action->entity_type,
                         'entityId' => $action->entity_id
                     ]).'">'.

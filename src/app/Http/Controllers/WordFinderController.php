@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 
 use DB;
 
+use App\Http\Controllers\Abstracts\Controller;
 use App\Models\{ 
     GameWordFinderLanguage
 };

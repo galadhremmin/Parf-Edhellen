@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Contributions;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Abstracts\Controller;
 use Illuminate\Support\Collection;
 
 use App\Helpers\SentenceHelper;

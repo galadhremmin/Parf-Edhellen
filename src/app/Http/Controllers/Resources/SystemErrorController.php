@@ -7,7 +7,7 @@ use DB;
 use Carbon\Carbon;
 
 use App\Models\SystemError;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Abstracts\Controller;
 
 class SystemErrorController extends Controller
 {

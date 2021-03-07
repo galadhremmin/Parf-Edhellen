@@ -9,6 +9,7 @@ use Socialite;
 use Carbon\Carbon;
 
 use App\Events\AccountAuthenticated;
+use App\Http\Controllers\Abstracts\Controller;
 use App\Models\{ 
     Account, 
     AuthorizationProvider 

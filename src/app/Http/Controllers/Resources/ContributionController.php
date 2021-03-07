@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Support\Jsonable;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Abstracts\Controller;
 use App\Models\Initialization\Morphs;
 use App\Events\{
     ContributionApproved,

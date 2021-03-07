@@ -17,7 +17,7 @@ use App\Events\{
 };
 use App\Helpers\LinkHelper;
 use App\Models\Account;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Abstracts\Controller;
 use App\Helpers\StorageHelper;
 use Image;
 

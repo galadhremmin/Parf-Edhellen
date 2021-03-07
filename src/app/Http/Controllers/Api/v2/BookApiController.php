@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\v2;
 use Illuminate\Http\Request;
 use Cache;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Abstracts\BookBaseController;
 use App\Helpers\StringHelper;
 use App\Models\{
     Keyword,
@@ -14,18 +14,9 @@ use App\Models\{
     Language,
     Word
 };
-use App\Http\Controllers\Traits\{
-    CanTranslate, 
-    CanGetGloss 
-};
 
-class BookApiController extends Controller 
+class BookApiController extends BookBaseController
 {
-    use CanTranslate, CanGetGloss { 
-        CanTranslate::__construct insteadof CanGetGloss;
-        CanTranslate::translate as protected doTranslate; 
-    } // ;
-
     /**
      * HTTP GET. Gets the word which corresponds to the specified ID. 
      *
@@ -100,25 +91,18 @@ class BookApiController extends Controller
      */
     public function find(Request $request)
     {
-        $this->validateBasicRequest($request, [
-            'reversed' => 'boolean'
-        ]);
-
-        $glossGroupIds = $request->has('gloss_group_ids') ? $request->input('gloss_group_ids') : null;
-        $includeOld    = boolval($request->input('include_old'));
-        $languageId    = intval($request->input('language_id'));
-        $reversed      = $request->input('reversed') === true;
-        $speechIds     = $request->has('speech_ids') ? $request->input('speech_ids') : null;
-        $word          = StringHelper::normalize( $request->input('word'), /* accentsMatter: */ false, /* retainWildcard: */ true );
-
-        $keywords = $this->_glossRepository->getKeywordsForLanguage($word, $reversed, $languageId, $includeOld,
-            $speechIds, $glossGroupIds);
-        return $keywords;
+        $v = $this->validateFindRequest($request);
+        return $this->_searchIndexRepository->findKeywords($v['word'], $v['reversed'], $v['languageId'], //
+            $v['includeOld'], $v['speechIds'], $v['glossGroupIds']);
     }
 
+    /**
+     * HTTP POST. Finds entitites corresponding to a specified keyword.
+     */
     public function entities(Request $request, int $groupId)
     {
-        abort(405, 'Not Yet Supported'); // TODO
+        $v = $this->validateFindRequest($request);
+        return [];
     }
 
     /**
@@ -140,7 +124,7 @@ class BookApiController extends Controller
         $speechIds = $request->has('speech_ids') ? $request->input('speech_ids') : null;
         $word = StringHelper::normalize( $request->input('word') );
 
-        return $this->doTranslate($word, $languageId, $inflections, $includeOld, $speechIds, $glossGroupIds);
+        return $this->findGlosses($word, $languageId, $inflections, $includeOld, $speechIds, $glossGroupIds);
     }
 
     /**
@@ -166,5 +150,35 @@ class BookApiController extends Controller
         $this->validate($request, $additional + [
             'word' => 'required|min:1|max:255',
         ]);
+    }
+
+    private function validateFindRequest(Request $request)
+    {
+        $v = $request->validate([
+            'gloss_group_ids'   => 'sometimes|array',
+            'gloss_group_ids.*' => 'sometimes|numeric',
+            'include_old'       => 'boolean',
+            'language_id'       => 'sometimes|numeric',
+            'reversed'          => 'boolean',
+            'speech_ids'        => 'sometimes|array',
+            'speech_ids.*'      => 'sometimes|numeric',
+            'word'              => 'required|string'
+        ]);
+
+        $glossGroupIds = isset($v['gloss_group_ids']) ? $v['gloss_group_ids'] : null;
+        $includeOld    = boolval($v['include_old']);
+        $languageId    = intval($v['language_id']);
+        $reversed      = $v['reversed'] === true;
+        $speechIds     = isset($v['speech_ids']) ? $v['speech_ids'] : null;
+        $word          = StringHelper::normalize($v['word'], /* accentsMatter: */ false, /* retainWildcard: */ true);
+
+        return [
+            'glossGroupIds' => $glossGroupIds,
+            'includeOld'    => $includeOld,
+            'languageId'    => $languageId,
+            'reversed'      => $reversed,
+            'speechIds'     => $speechIds,
+            'word'          => $word
+        ];
     }
 }

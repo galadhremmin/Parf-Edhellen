@@ -106,7 +106,7 @@ class LinkHelper
 
     public function resolveThreadByPost(int $postId)
     {
-        return route('discuss.resolve-by-post', [ 'postId' => $postId ]);
+        return route('api.discuss.resolve-by-post', [ 'postId' => $postId ]);
     }
 
     public function mailCancellation(string $cancellationToken)

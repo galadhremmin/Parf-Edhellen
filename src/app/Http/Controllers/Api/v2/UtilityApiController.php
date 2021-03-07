@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\v2;
 use Illuminate\Http\Request;
 
 use App\Helpers\MarkdownParser;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Abstracts\Controller;
 use App\Models\SystemError;
 
 class UtilityApiController extends Controller

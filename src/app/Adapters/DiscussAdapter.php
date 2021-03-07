@@ -30,6 +30,17 @@ class DiscussAdapter
         if ($account->has_avatar) {
             $account->setAttribute('avatar_path', $this->_storageHelper->accountAvatar($account, true));
         }
+        return $account;
+    }
+
+    public function adaptAccountsPerForumGroup(Collection $data)
+    {
+        foreach ($data as $accounts) {
+            foreach ($accounts as $account) {
+                $this->adaptAccount($account);
+            }
+        }
+        return $data;
     }
 
     public function adaptPost(ForumPost $post)
@@ -53,6 +64,7 @@ class DiscussAdapter
         $posts->map(function ($post, $i) {
             $this->adaptPost($post);
         });
+        return $posts;
     }
 
     public function adaptThread(ForumThread $thread)
@@ -60,6 +72,22 @@ class DiscussAdapter
         if ($thread->account_id) {
             $this->adaptAccount($thread->account);
         }
+        return $thread;
+    }
+
+    public function adaptForumThread($data)
+    {
+        $thread = null;
+        if ($data instanceof ForumThreadValue) {
+            $thread = $data->getThread();
+        } else if ($data instanceof ForumThread) {
+            $thread = &$data;
+        } else {
+            throw new \Exception(sprintf('Unsupported entity %s.', get_class($data)));
+        }
+
+        $this->adaptThread($thread);
+        return $data;
     }
 
     public function adaptThreads(Collection $threads)
@@ -67,6 +95,7 @@ class DiscussAdapter
         $threads->map(function ($thread) {
             $this->adaptThread($thread);
         });
+        return $threads;
     }
 
     public function adaptForTimeline(Collection $posts)

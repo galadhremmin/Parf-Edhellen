@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Language;
 use App\Models\Sentence;
 use App\Helpers\MarkdownParser;
+use App\Http\Controllers\Abstracts\Controller;
 use App\Repositories\SentenceRepository;
 use Illuminate\Http\Request;
 
