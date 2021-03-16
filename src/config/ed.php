@@ -51,6 +51,28 @@ return [
     'forum_resultset_max_length' => 10,
     'forum_thread_resultset_max_length' => 15,
 
+    // book configuration, including resolvers
+    'book_entities' => [
+        App\Models\Gloss::class => [
+            'group_id' => App\Models\SearchKeyword::SEARCH_GROUP_DICTIONARY,
+            'resolver' => App\Repositories\SearchIndexResolvers\GlossSearchIndexResolver::class
+        ],
+        App\Models\ForumPost::class => [
+            'group_id' => App\Models\SearchKeyword::SEARCH_GROUP_FORUM_POST,
+            'resolver' => App\Repositories\SearchIndexResolvers\ForumPostSearchIndexResolver::class
+        ],
+        App\Models\SentenceFragment::class => [
+            'group_id' => App\Models\SearchKeyword::SEARCH_GROUP_SENTENCE,
+            'resolver' => App\Repositories\SearchIndexResolvers\SentenceSearchIndexResolver::class
+        ]
+    ],
+    'book_group_id_to_book_entities' => [
+        // This is just a fast lookup table used by the search index repository. It should mirror the `book_entities` configuration
+        App\Models\SearchKeyword::SEARCH_GROUP_DICTIONARY => App\Models\Gloss::class,
+        App\Models\SearchKeyword::SEARCH_GROUP_FORUM_POST => App\Models\ForumPost::class,
+        App\Models\SearchKeyword::SEARCH_GROUP_SENTENCE   => App\Models\SentenceFragment::class
+    ],
+
     // sentence repository configuration
     'sentence_repository_maximum_fragments' => 100,
     

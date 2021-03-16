@@ -9,7 +9,7 @@ class SearchIndexSearchValue implements \JsonSerializable
     public function __construct(array $properties)
     {
         $this->initializeAll($properties, [
-            'gloss_group_ids', 'include_old', 'language_id', 'reversed',
+            'gloss_group_ids', 'inflections', 'include_old', 'language_id', 'reversed',
             'speech_ids', 'word'
         ], /* required: */ false);
     }
@@ -19,19 +19,24 @@ class SearchIndexSearchValue implements \JsonSerializable
         return $this->getValue('gloss_group_ids');
     }
 
-    public function getIncludesOld() 
+    public function getIncludesInflections()
     {
-        return $this->getValue('include_old');
+        return $this->getValue('inflections') || false;
+    }
+
+    public function getIncludesOld()
+    {
+        return $this->getValue('include_old') || true;
     }
 
     public function getLanguageId() 
     {
-        return $this->getValue('language_id');
+        return $this->getValue('language_id') || 0;
     }
 
     public function getReversed() 
     {
-        return $this->getValue('reversed');
+        return $this->getValue('reversed') || false;
     }
 
     public function getSpeechIds() 

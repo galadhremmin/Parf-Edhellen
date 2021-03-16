@@ -3,26 +3,24 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Language;
+use App\Models\SearchKeyword;
 use App\Http\Controllers\Abstracts\BookBaseController;
-use App\Http\Controllers\Traits\{
-    CanGetLanguage
-};
+use Traits\CanGetLanguage;
 
 class BookController extends BookBaseController
 {
-    use CanGetLanguage;
-
     public function pageForWord(Request $request, string $word, string $language = null)
     {
-        $this->validateGetGlossConfiguration($request);
+        $languageId = 0;
+        if ($language !== null) {
+            $language = $this->getLanguageByShortName($language);
+            if ($language !== null) {
+                $languageId = $language->id;
+            }
+        }
 
-        $language     = $this->getLanguageByShortName($language);
-        $includeOld   = $request->has('include_old')     ? $request->input('include_old') : true;
-        $glossGroupId = $request->has('gloss_group_ids') ? $request->input('gloss_group_ids') : null;
-        $speechIds    = $request->has('speech_ids')      ? $request->input('speech_ids') : null;
-
-        $model = $this->findGlosses($word, $language ? $language->id : 0, true, $includeOld, $speechIds, $glossGroupId);
+        $v = $this->validateFindRequest($request, ['word' => $word, 'language_id' => $languageId]);
+        $model = $this->_searchIndexRepository->resolveIndexToEntities(SearchKeyword::SEARCH_GROUP_DICTIONARY, $v);
 
         return view('book.page', [
             'payload' => $model

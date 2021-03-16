@@ -4,6 +4,10 @@ namespace App\Repositories;
 
 use App\Helpers\StringHelper;
 use App\Models\Initialization\Morphs;
+use App\Repositories\SearchIndexResolvers\{
+    GlossSearchIndexResolver,
+    KeywordsSearchIndexResolver
+};
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
 use App\Models\{
     Gloss,
@@ -18,11 +22,13 @@ use DB;
 
 class SearchIndexRepository 
 {
-    static $_searchGroupMappings = [
-        Gloss::class            => SearchKeyword::SEARCH_GROUP_DICTIONARY,
-        ForumPost::class        => SearchKeyword::SEARCH_GROUP_FORUM_POST,
-        SentenceFragment::class => SearchKeyword::SEARCH_GROUP_SENTENCE
-    ];
+    private static $_resolvers = null;
+    private $_keywordsResolver;
+
+    public function __construct(KeywordsSearchIndexResolver $keywordsResolver)
+    {
+        $this->_keywordsResolver = $keywordsResolver;
+    }
 
     public function createIndex(ModelBase $model, Word $word, string $inflection = null): SearchKeyword
     {
@@ -86,88 +92,25 @@ class SearchIndexRepository
 
     public function findKeywords(SearchIndexSearchValue $v)
     {
-        $queryData = $this->buildQuery($v);
-        $keywords = $queryData['query'] //
-            ->select(
-                'search_group as g',
-                'keyword as k',
-                'normalized_keyword as nk',
-                'word as ok'
-            )
-            ->groupBy(
-                'search_group',
-                'keyword',
-                'normalized_keyword',
-                'word'
-            )
-            ->orderBy(DB::raw('MAX('.$queryData['length_column'].')'), 'asc')
-            ->orderBy($queryData['search_column'], 'asc')
-            ->limit(100)
-            ->get();
-        
+        $keywords = $this->_keywordsResolver->resolve($v);
         return $keywords;
     }
 
     public function resolveIndexToEntities(int $searchGroupId, SearchIndexSearchValue $v)
     {
-        $queryData = $this->buildQuery($v);
-        $entityIds = $queryData['query'] //
-            ->select('entity_id')
-            ->where('entity_name', $this->getEntityNameFromSearchGroup($searchGroupId))
-            ->orderBy($queryData['search_column'], 'asc')
-            ->limit(100)
-            ->pluck('entity_id');
+        $entityName = $this->getEntityNameFromSearchGroup($searchGroupId);
 
-        return $entityIds;
-    }
-
-    private function buildQuery(SearchIndexSearchValue $v)
-    {
-        $word = $this->formatWord($v->getWord());
-        $searchColumn = $v->getReversed() ? 'normalized_keyword_reversed_unaccented' : 'normalized_keyword_unaccented';
-        $lengthColumn = $searchColumn.'_length';
-
-        $query = SearchKeyword::where($searchColumn, 'like', $word);
-
-        if ($v->getLanguageId() !== 0) {
-            $query = $query->where('language_id', intval($v->getLanguageId()));
-        }
-
-        if ($v->getIncludesOld() === false) {
-            $query = $query->where('is_old', 0);
-        }
-    
-        if (! empty($v->getSpeechIds())) {
-            $query = $query->whereIn('speech_id', $v->getSpeechIds());
-        }
-
-        if (! empty($v->getGlossGroupIds())) {
-            $query = $query->whereIn('gloss_group_id', $v->getGlossGroupIds());
-        }
-
-        return [
-            'query' => $query,
-            'search_column' => $searchColumn,
-            'length_column' => $lengthColumn
-        ];
-    }
-
-    private function formatWord(string $word, bool& $hasWildcard = null) 
-    {
-        if (strpos($word, '*') !== false) {
-            $hasWildcard = true;
-            return str_replace('*', '%', $word);
-        } 
-        
-        $hasWildcard = false;
-        return $word.'%';
+        $config = config('ed.book_entities');
+        $resolverName = $config[$entityName]['resolver'];
+        return resolve($resolverName)->resolve($v);
     }
 
     private function getSearchGroup(string $entityName): int
     {
         $morpedModel = Morphs::getMorphedModel($entityName);
-        if (isset(self::$_searchGroupMappings[$morpedModel])) {
-            return self::$_searchGroupMappings[$morpedModel];
+        $config = config('ed.book_entities');
+        if (isset($config[$morpedModel])) {
+            return $config[$morpedModel]['group_id'];
         }
 
         throw new \Exception(sprintf('Unrecognised search group for %s and %s.', $entityName, $morpedModel));
@@ -175,10 +118,9 @@ class SearchIndexRepository
 
     private function getEntityNameFromSearchGroup(int $searchGroupId): ?string
     {
-        $mappings = array_flip(self::$_searchGroupMappings);
-
-        if (isset($mappings[$searchGroupId])) {
-            return Morphs::getAlias($mappings[$searchGroupId]);
+        $config = config('ed.book_group_id_to_book_entities');
+        if (isset($config[$searchGroupId])) {
+            return $config[$searchGroupId];
         }
 
         throw new \Exception(sprintf('Unrecognised search group %d.', $searchGroupId));

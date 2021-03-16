@@ -29,7 +29,7 @@ trait CanInitialize
                 throw new Exception(sprintf('The %s does not contain the required property %s.', json_encode($properties), $propertyName));
             }
             
-            $v = 0;
+            $v = null;
         } else {
             $v = $properties[$propertyName];
         }
@@ -50,7 +50,7 @@ trait CanInitialize
 
     protected function getValue($propertyName)
     {
-        if (! isset($this->_values[$propertyName])) {
+        if (! array_key_exists($propertyName, $this->_values)) {
             throw new Exception(sprintf('The property %s does not exist.', $propertyName));
         }
 
