@@ -34,15 +34,14 @@ function Entities(props: IEntitiesComponentProps) {
 
     useEffect(() => {
         if (groupId < 1) {
-            return;
+            setComponentName(null);
+        } else {
+            const nextComponentName = SearchResultGroups[groupId];
+            if (nextComponentName === undefined) {
+                throw new Error(`Unrecognised entities group ID: ${groupId}. There's no renderer that supports this group.`);
+            }
+            setComponentName(nextComponentName);
         }
-
-        const nextComponentName = SearchResultGroups[groupId];
-        if (nextComponentName === undefined) {
-            throw new Error(`Unrecognised entities group ID: ${groupId}. There's no renderer that supports this group.`);
-        }
-
-        setComponentName(nextComponentName);
     }, [ groupId ]);
 
     if (componentName === null) {
