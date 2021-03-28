@@ -108,17 +108,6 @@ class BookApiController extends BookBaseController
     }
 
     /**
-     * HTTP POST. Translates the specified word.
-     *
-     * @param Request $request
-     * @return void
-     */
-    public function translate(Request $request)
-    {
-        return $this->entities($request, SearchKeyword::SEARCH_GROUP_DICTIONARY);
-    }
-
-    /**
      * HTTP GET. Gets the gloss corresponding to the specified ID.
      *
      * @param Request $request

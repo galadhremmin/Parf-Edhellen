@@ -50,14 +50,6 @@ class BookApiControllerTest extends TestCase
         $response->assertSuccessful();
     }
 
-    public function testTranslate()
-    {
-        $response = $this->postJson(route('api.book.translate', []));
-        $response->assertStatus(422);
-
-        // TODO: Actually test translating a word
-    }
-
     public function testFind()
     {
         $response = $this->postJson(route('api.book.find', []));

@@ -16,8 +16,6 @@ Route::group([
     Route::post('book/entities/{groupId}', [ 'uses' => 'BookApiController@entities' ])
         ->where([ 'groupId' => REGULAR_EXPRESSION_NUMERIC ])
         ->name('api.book.entities');
-    Route::post('book/translate',          [ 'uses' => 'BookApiController@translate' ])
-        ->name('api.book.translate');
     Route::post('book/find',               [ 'uses' => 'BookApiController@find' ])
         ->name('api.book.find');
 
