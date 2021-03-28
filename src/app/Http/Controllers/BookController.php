@@ -13,6 +13,11 @@ class BookController extends BookBaseController
 
     public function pageForWord(Request $request, string $word, string $language = null)
     {
+        return $this->pageForEntity($request, '', SearchKeyword::SEARCH_GROUP_DICTIONARY, $word, $language);
+    }
+
+    public function pageForEntity(Request $request, string $groupName, string $groupId, string $word, string $language = null)
+    {
         $languageId = 0;
         if ($language !== null) {
             $language = $this->getLanguageByShortName($language);
@@ -22,7 +27,7 @@ class BookController extends BookBaseController
         }
 
         $v = $this->validateFindRequest($request, ['word' => $word, 'language_id' => $languageId]);
-        $entities = $this->_searchIndexRepository->resolveIndexToEntities(SearchKeyword::SEARCH_GROUP_DICTIONARY, $v);
+        $entities = $this->_searchIndexRepository->resolveIndexToEntities($groupId, $v);
 
         return view('book.page', [
             'payload' => $entities

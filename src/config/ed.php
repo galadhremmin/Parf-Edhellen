@@ -51,7 +51,12 @@ return [
     'forum_resultset_max_length' => 10,
     'forum_thread_resultset_max_length' => 15,
 
-    // book configuration, including resolvers
+    // book configuration, including resolvers.
+    // NOTE: when adding new entities, ensure that the following files are available:
+    //       1. resources/views/book/<morph alias>/index.blade.php
+    //       2. resources/assets/ts/apps/book-browser/<frontend alias>/index.ts. You
+    //          configure frontend alias within the resources/assets/ts/config.ts
+    //          file (see `SearchResultGroups`).
     'book_entities' => [
         App\Models\Gloss::class => [
             'group_id' => App\Models\SearchKeyword::SEARCH_GROUP_DICTIONARY,

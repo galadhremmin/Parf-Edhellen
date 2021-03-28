@@ -387,7 +387,7 @@ export default class SearchActions {
         } else {
             const groupName = SearchResultGroups[groupId].toLocaleLowerCase();
             title = `${capitalizedWord} - Parf Edhellen`;
-            address = `/e/${groupName}/${uriEncodedWord}` + (languageShortName ? `/${languageShortName}` : '');
+            address = `/e/${groupName}-${groupId}/${uriEncodedWord}` + (languageShortName ? `/${languageShortName}` : '');
         }
 
         // embellish the address with configuration values that are not supported by the native URL format

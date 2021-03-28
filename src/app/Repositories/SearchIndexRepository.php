@@ -120,10 +120,11 @@ class SearchIndexRepository
         // DEPRECATED END
 
         return [
-            'entities' => $entities,
-            'group_id' => $searchGroupId,
-            'single'   => $single,
-            'word'     => $word
+            'entities'   => $entities,
+            'group_id'   => $searchGroupId,
+            'group_name' => Morphs::getAlias($entityName),
+            'single'     => $single,
+            'word'       => $word
         ];
     }
 

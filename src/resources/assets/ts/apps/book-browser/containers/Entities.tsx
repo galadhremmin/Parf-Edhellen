@@ -10,6 +10,7 @@ import { IEntitiesComponentProps } from './Entities._types';
 import LoadingIndicator from '../components/LoadingIndicator';
 
 function Entities(props: IEntitiesComponentProps) {
+    // This is the component that will be used to render the entities.
     const [ componentName, setComponentName ] = useState<string>(null);
 
     const {
