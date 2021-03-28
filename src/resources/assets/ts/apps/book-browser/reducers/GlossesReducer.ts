@@ -1,11 +1,17 @@
+import { SearchResultGlossaryGroupId } from '@root/config';
 import { Actions } from '../actions';
-import { IGlossaryAction } from './GlossaryReducer._types';
+import { IEntitiesAction } from './EntitiesReducer._types';
 import { IGlossesState } from './GlossesReducer._types';
 
-const GlossesReducer = (state: IGlossesState = {}, action: IGlossaryAction) => {
+const GlossesReducer = (state: IGlossesState = {}, action: IEntitiesAction) => {
+    // This reducer only supports the glossary.
+    if (action.groupId !== SearchResultGlossaryGroupId) {
+        return state;
+    }
+
     switch (action.type) {
-        case Actions.ReceiveGlossary:
-            return action.glossary.sections.reduce<IGlossesState>((map, section) => {
+        case Actions.ReceiveEntities:
+            return action.entities.sections.reduce<IGlossesState>((map, section) => {
                 map[section.language.id] = section.glosses;
                 return map;
             }, {});

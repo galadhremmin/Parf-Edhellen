@@ -161,4 +161,4 @@ export default class FragmentInspector extends React.Component<IProps> {
     }
 }
 
-const GlossInspectorAsync = React.lazy(() => import('@root/apps/book-browser/components/Gloss'));
+const GlossInspectorAsync = React.lazy(() => import('@root/apps/book-browser/components/GlossaryEntities/Gloss'));

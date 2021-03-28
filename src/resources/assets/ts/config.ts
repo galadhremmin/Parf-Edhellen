@@ -21,14 +21,15 @@ export const GlaemscribeModeMappings: { [mode: string]: string } = {
     'westron': 'westron-tengwar-glaemscrafu',
 };
 
-// See SearchKeyword.php
+// See SearchKeyword.php -- TODO: How can we decouple this and let the server take care of it?
 export const SearchResultGroups = {
-    '0': 'Unassigned',
-    '1': 'Glossary',
-    '2': 'Phrases',
-    '3': 'Discuss',
+    0: 'Unassigned',
+    1: 'Glossary',
+    2: 'Phrases',
+    3: 'Discuss',
 };
-export const SearchResultGlossaryGroup = SearchResultGroups[1];
+export const SearchResultGlossaryGroupId = 1;
+export const SearchResultGlossaryGroup = SearchResultGroups[SearchResultGlossaryGroupId];
 
 export const LearnMoreMarkdownUrl = 'https://en.wikipedia.org/wiki/Markdown';
 export const LearnMoreWebFeedUrl = 'https://en.wikipedia.org/wiki/Web_feed';

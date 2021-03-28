@@ -21,22 +21,26 @@ class SearchIndexSearchValue implements \JsonSerializable
 
     public function getIncludesInflections()
     {
-        return $this->getValue('inflections') || false;
+        $v = $this->getValue('inflections');
+        return $v ? $v : false;
     }
 
     public function getIncludesOld()
     {
-        return $this->getValue('include_old') || true;
+        $v = $this->getValue('include_old');
+        return !$v ? $v : true;
     }
 
     public function getLanguageId() 
     {
-        return $this->getValue('language_id') || 0;
+        $v = $this->getValue('language_id');
+        return $v ? $v : 0;
     }
 
     public function getReversed() 
     {
-        return $this->getValue('reversed') || false;
+        $v = $this->getValue('reversed');
+        return $v ? $v : false;
     }
 
     public function getSpeechIds() 

@@ -1,17 +1,17 @@
 import { ThunkDispatch } from 'redux-thunk';
 
+import { SearchResultGroups } from '@root/config';
 import { ILanguageEntity } from '@root/connectors/backend/IBookApi';
-import { IGlossaryState } from '../reducers/GlossaryReducer._types';
 import { IGlossesState } from '../reducers/GlossesReducer._types';
 
-export interface IProps extends IGlossaryState {
+export interface IEntitiesComponentProps {
     dispatch?: ThunkDispatch<any, any, any>;
     glosses: IGlossesState;
-    languages: ILanguageEntity[];
-    unusualLanguages: ILanguageEntity[];
+    groupId?: keyof typeof SearchResultGroups;
     isEmpty: boolean;
-}
-
-export interface IState {
-    notifyLoaded: boolean;
+    languages: ILanguageEntity[];
+    loading: boolean;
+    single: boolean;
+    unusualLanguages: ILanguageEntity[];
+    word: string;
 }

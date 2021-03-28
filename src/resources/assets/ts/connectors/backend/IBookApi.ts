@@ -19,7 +19,7 @@ export interface IFindEntity {
 
 export type FindResponse = IFindEntity[];
 
-export interface IGlossaryRequest {
+export interface IEntitiesRequestData {
     glossGroupIds?: number[];
     includeOld: boolean;
     inflections?: boolean;
@@ -36,8 +36,6 @@ export interface IGlossaryResponse {
         language: ILanguageEntity;
     }[];
     sense: number[];
-    single: boolean;
-    word: string;
 }
 
 export interface ILanguagesResponse {
@@ -229,19 +227,21 @@ export interface ISpeechMap {
 }
 
 export interface IEntitiesRequest {
-    data: IGlossaryRequest;
+    data: IEntitiesRequestData;
     groupId: keyof typeof SearchResultGroups;
 }
 
-export interface IEntitiesResponse {
-    void: void;
+export interface IEntitiesResponse<T> {
+    entities: T;
+    groupId: number;
+    single: boolean;
+    word: string;
 }
 
 export default interface IBookApi {
-    entities(args: IEntitiesRequest): Promise<IEntitiesResponse>;
+    entities<T = IGlossaryResponse>(args: IEntitiesRequest): Promise<IEntitiesResponse<T>>;
     find(args: IFindRequest): Promise<FindResponse>;
     gloss(id: number): Promise<IGlossaryResponse>;
-    glossary(args: IGlossaryRequest): Promise<IGlossaryResponse>;
     groups(): Promise<IGlossGroup[]>;
     languages(): Promise<ILanguagesResponse>;
     sentence(args: ISentenceRequest): Promise<ISentenceResponse>;

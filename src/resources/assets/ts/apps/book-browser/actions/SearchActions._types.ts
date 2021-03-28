@@ -6,11 +6,12 @@ export interface IExpandSearchResultAction {
     languageId?: number;
     searchResult: ISearchResult;
     speechIds?: number[];
-    updateBrowserHistory: boolean;
+    updateBrowserHistory?: boolean;
 }
 
 export interface IBrowserHistoryState {
     glossary: boolean;
+    groupId: number;
     languageShortName: string;
     normalizedWord: string;
     word: string;

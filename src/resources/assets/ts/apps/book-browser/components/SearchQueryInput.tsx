@@ -43,12 +43,12 @@ export default class SearchQueryInput extends FormComponent<string, IProps, ICom
 
     private _onKeyDown = (ev: React.KeyboardEvent<HTMLInputElement>) => {
         let direction = 0;
-        switch (ev.which) {
-            case 38: // up
+        switch (ev.key) {
+            case 'ArrowUp': // up
                 direction = -1;
                 break;
-            case 13: // enter
-            case 40: // down
+            case 'Enter': // enter
+            case 'ArrowDown': // down
                 direction = +1;
                 break;
         }

@@ -1,0 +1,11 @@
+@import '../../../_scss/_variables';
+
+.LoadingIndicator {
+    text-align: center;
+    font-family: $font-family-tiny;
+    color: #666;
+    font-size: 0.8rem;
+    > div {
+      display: inline-block;
+    }
+}

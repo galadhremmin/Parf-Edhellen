@@ -5,7 +5,6 @@ import IBookApi, {
     IEntitiesRequest,
     IEntitiesResponse,
     IFindRequest,
-    IGlossaryRequest,
     IGlossaryResponse,
     ILanguagesResponse,
     ISentenceRequest,
@@ -17,8 +16,8 @@ export default class BookApiConnector implements IBookApi {
     constructor(private _api = resolve<ApiConnector>(DI.BackendApi)) {
     }
 
-    entities({ groupId, data }: IEntitiesRequest): Promise<IEntitiesResponse> {
-        return this._api.post<IEntitiesResponse>(`book/entities/${groupId}`, data);
+    entities<T>({ groupId, data }: IEntitiesRequest): Promise<IEntitiesResponse<T>> {
+        return this._api.post<IEntitiesResponse<T>>(`book/entities/${groupId}`, data);
     }
 
     public find(args: IFindRequest) {
@@ -27,16 +26,6 @@ export default class BookApiConnector implements IBookApi {
 
     public gloss(id: number) {
         return this._api.get<IGlossaryResponse>(`book/translate/${id}`);
-    }
-
-    public glossary(args: IGlossaryRequest) {
-        // language_id is an optional parameter and should not be passed as
-        // an argument if it is not set.
-        if ([0, null].indexOf(args.languageId) > -1) {
-            delete args.languageId;
-        }
-
-        return this._api.post<IGlossaryResponse>('book/translate', args);
     }
 
     public groups() {

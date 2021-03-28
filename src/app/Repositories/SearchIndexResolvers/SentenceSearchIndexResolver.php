@@ -3,25 +3,30 @@
 namespace App\Repositories\SearchIndexResolvers;
 
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
-use App\Models\Gloss;
-use App\Repositories\{
-    DiscussRepository,
-    GlossRepository,
-    SentenceRepository
+use App\Models\{
+    Sentence,
+    SentenceFragment
 };
-use App\Adapters\BookAdapter;
 
 class SentenceSearchIndexResolver extends SearchIndexResolverBase
 {
-    public function resolveByQuery(array $params, SearchIndexSearchValue $value)
+    public function resolveByQuery(array $params, SearchIndexSearchValue $value): array
     {
         $entityIds = $params['query'] //
             ->select('entity_id')
-            ->where('entity_name', 'sentence')
+            ->where('entity_name', 'fragment')
             ->orderBy($params['search_column'], 'asc')
             ->limit(100)
             ->pluck('entity_id');
 
-        return Sentence::whereIn('id', $entityIds);
+        $sentenceIds = SentenceFragment::whereIn('id', $entityIds)
+            ->select('sentence_id')
+            ->pluck('sentence_id');
+        
+        $sentences = Sentence::whereIn('id', $sentenceIds)
+            ->get()
+            ->toArray();
+
+        return $sentences;
     }
 }

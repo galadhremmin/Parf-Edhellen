@@ -275,7 +275,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
 }
 
 const mapStateToProps = (state: RootReducer) => ({
-    currentGlossaryWord: state.glossary.word,
+    currentGlossaryWord: state.entities.word,
     includeOld: state.search.includeOld,
     languageId: state.search.languageId,
     loading: state.search.loading,

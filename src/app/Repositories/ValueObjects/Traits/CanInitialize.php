@@ -24,7 +24,7 @@ trait CanInitialize
             throw new Exception('Property name must be a valid string');
         }
 
-        if (! isset($properties[$propertyName])) {
+        if (! array_key_exists($propertyName, $properties)) {
             if ($required) {
                 throw new Exception(sprintf('The %s does not contain the required property %s.', json_encode($properties), $propertyName));
             }

@@ -116,7 +116,7 @@ abstract class BookBaseController extends Controller
 
         $includeOld    = isset($v['include_old']) ? boolval($v['include_old']) : true;
         $inflections   = isset($v['inflections']) ? boolval($v['inflections']) : false;
-        $languageId    = isset($v['language_id']) ? intval($v['language_id']) : null;
+        $languageId    = isset($v['language_id']) ? intval($v['language_id']) : 0;
         $reversed      = isset($v['reversed']) ? boolval($v['reversed']) : false;
         $word          = StringHelper::normalize($v['word'], /* accentsMatter: */ false, /* retainWildcard: */ true);
 

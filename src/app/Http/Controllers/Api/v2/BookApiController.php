@@ -103,7 +103,8 @@ class BookApiController extends BookBaseController
     public function entities(Request $request, int $groupId)
     {
         $v = $this->validateFindRequest($request);
-        return $this->_searchIndexRepository->resolveIndexToEntities($groupId, $v);
+        $entities = $this->_searchIndexRepository->resolveIndexToEntities($groupId, $v);
+        return $entities;
     }
 
     /**

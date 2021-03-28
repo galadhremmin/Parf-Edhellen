@@ -137,11 +137,7 @@ export class SearchResults extends React.Component<IProps> {
             searchResult,
             updateBrowserHistory: true,
         };
-        if (! searchResult.groupId || SearchResultGroups[searchResult.groupId] === SearchResultGlossaryGroup) {
-            dispatch(this._actions.glossary(payload));
-        } else {
-            dispatch(this._actions.expandSearchResult(payload));
-        }
+        dispatch(this._actions.expandSearchResult(payload));
     }
 
     private _onDismissInstructions = () => {

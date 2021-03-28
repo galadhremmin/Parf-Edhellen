@@ -23,8 +23,8 @@ abstract class SearchIndexResolverBase implements ISearchIndexResolver
 
         $query = SearchKeyword::where($searchColumn, 'like', $word);
 
-        if ($v->getLanguageId() !== 0) {
-            $query = $query->where('language_id', intval($v->getLanguageId()));
+        if ($v->getLanguageId()) {
+            $query = $query->where('language_id', $v->getLanguageId());
         }
 
         if ($v->getIncludesOld() === false) {

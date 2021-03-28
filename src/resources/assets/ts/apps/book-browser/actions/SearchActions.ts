@@ -4,12 +4,16 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import IBookApi, {
     IFindEntity,
-    IGlossaryRequest,
-    IGlossaryResponse,
+    IEntitiesRequestData,
     ILanguageEntity,
+    IEntitiesRequest,
+    IEntitiesResponse,
 } from '@root/connectors/backend/IBookApi';
 import ILanguageApi from '@root/connectors/backend/ILanguageApi';
-import { SearchResultGroups } from '@root/config';
+import {
+    SearchResultGlossaryGroupId,
+    SearchResultGroups,
+} from '@root/config';
 import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import { DI, resolve } from '@root/di';
 import { stringHashAll } from '@root/utilities/func/hashing';
@@ -123,13 +127,17 @@ export default class SearchActions {
             }
 
             const searchResult = resultsById[resultIds[selectedIndex]];
-
+            if (!searchResult) {
+                // Do nothing if the search result doesn't exist.
+                console.warn(`Trying to expand a non-existant search result for ${selectedIndex}.`);
+                return;
+            }
             const args = {
                 searchResult,
                 updateBrowserHistory: true,
             };
 
-            await this.glossary(args)(dispatch, getState);
+            await this.expandSearchResult(args)(dispatch, getState);
         };
     }
 
@@ -152,111 +160,24 @@ export default class SearchActions {
     }
 
     /**
-     * Loads the glossary for the specified search result.
-     * @param args
+     * Loads entities asspcoated with the specified arguments, including (but not necessarily related to) the glossary.
+     * @param args Search action arguments
      */
-    public glossary(args: IExpandSearchResultAction) {
-        return this._expand(args, (r, l, d) => this._loadGlossary(d, r, l?.shortName, //
-            args.updateBrowserHistory));
-    }
-
     public expandSearchResult(args: IExpandSearchResultAction) {
-        return this._expand(args, this._loadMatchingEntities.bind(this, args));
-    }
+        const {
+            searchResult,
+            updateBrowserHistory,
+        } = args;
 
-    /**
-     * Reloads the glossary based on current state.
-     */
-    public reloadGlossary() {
         return async (dispatch: ThunkDispatch<any, any, any>, getState: () => RootReducer) => {
-            const {
-                glossary,
-                search,
-                searchResults,
-            } = getState();
-            const {
-                selectedId,
-                resultsById,
-            } = searchResults;
-
-            // Do not attempt to reload an uninitiated glossary.
-            if (glossary.word.length < 1) {
-                return;
-            }
-
-            // Attempt to find the selected search result, first by looking at the `selected` property,
-            // and secondarily by comparing the values of the `word` property. Lastly, if the search
-            // result does not exist, create a fake search result (id = 0) for the glossary.
-            let searchResult: ISearchResult;
-            if (selectedId !== null) {
-                searchResult = resultsById[selectedId] || null;
-            }
-            if (searchResult === null) {
-                searchResult = Object.values(resultsById).find((r) => r.word === glossary.word) || null;
-            }
-            if (searchResult === null) {
-                const word = glossary.word;
-                searchResult = {
-                    id: 0,
-                    normalizedWord: word,
-                    originalWord: null,
-                    word,
-                };
-            }
-
-            await this.glossary({
-                ...search,
-                searchResult,
-                updateBrowserHistory: true,
-            })(dispatch, getState);
-        };
-    }
-
-    /**
-     * Loads the glossary for the reference link._expandSearchResult
-     * @param word
-     * @param languageShortName
-     * @param updateBrowserHistory (optional) whether to invoke pushState.
-     */
-    public loadReference(word: string, normalizedWord: string, languageShortName: string, updateBrowserHistory = true) {
-        return async (dispatch: ThunkDispatch<any, any, any>, getState: () => RootReducer) => {
-            const language = await this._languages.find(languageShortName, 'shortName');
-            let languageId = 0;
-            if (language !== null) {
-                languageId = language.id;
-            }
-
             const state = getState();
-            const args = {
-                includeOld: state.search.includeOld,
+
+            let {
+                glossGroupIds,
+                includeOld,
                 languageId,
-                normalizedWord,
-                word,
-            };
-            await this._loadGlossary(dispatch, args, languageShortName, updateBrowserHistory);
-        };
-    }
-
-    /**
-     * Sets the specified `glossary`.
-     * @param glossary
-     */
-    public setGlossary(glossary: IGlossaryResponse) {
-        return {
-            glossary,
-            type: Actions.ReceiveGlossary,
-        };
-    }
-
-    private _expand(args: IExpandSearchResultAction, expander: (request: IGlossaryRequest, language: ILanguageEntity, //
-        dispatch: ThunkDispatch<any, any, any>) => Promise<void>) {
-        return async (dispatch: ThunkDispatch<any, any, any>, getState: () => RootReducer) => {
-            const state = getState();
-
-            let glossGroupIds = state.search.glossGroupIds;
-            let includeOld    = state.search.includeOld;
-            let languageId    = state.search.languageId;
-            let speechIds     = state.search.speechIds;
+                speechIds,
+            } = state.search;
 
             if (args.glossGroupIds !== undefined) {
                 glossGroupIds = args.glossGroupIds;
@@ -285,101 +206,215 @@ export default class SearchActions {
                 languageShortName = language.shortName;
             }
 
-            const request = {
-                glossGroupIds,
-                includeOld,
-                inflections: true,
-                languageId,
-                languageShortName,
-                normalizedWord: args.searchResult.normalizedWord,
-                speechIds,
-                word,
+            const request: IEntitiesRequest = {
+                data: {
+                    glossGroupIds,
+                    includeOld,
+                    inflections: true,
+                    languageId,
+                    normalizedWord: args.searchResult.normalizedWord,
+                    speechIds,
+                    word,
+                },
+                groupId: searchResult.groupId,
             };
 
-            return expander(request, language, dispatch);
+            const {
+                address,
+                title,
+            } = this._prepareAddress(request);
+
+            // When navigating using the browser's back and forward buttons,
+            // the state needn't be modified.
+            if (updateBrowserHistory && window.history.pushState) {
+                const nextState: IBrowserHistoryState = {
+                    glossary: true,
+                    languageShortName,
+                    groupId: searchResult.groupId,
+                    normalizedWord: searchResult.normalizedWord,
+                    word: searchResult.word,
+                };
+                window.history.pushState(nextState, title, address);
+            }
+
+            // because most browsers doesn't change the document title when pushing state
+            document.title = title;
+
+            this._globalEvents.fire(this._globalEvents.loadEntity, {
+                detail: {
+                    address,
+                    groupId: searchResult.groupId,
+                    languageId: language?.id,
+                    word: searchResult.word,
+                },
+            });
+
+            // DEPRECATED: Inform indirect listeners about the navigation. Kept for backwards compatibility.
+            if (searchResult.groupId === SearchResultGlossaryGroupId) {
+                this._globalEvents.fire(this._globalEvents.loadGlossary, {
+                    detail: {
+                        address,
+                        languageId: args.languageId,
+                        word,
+                    },
+                });
+            }
+
+            dispatch(this.selectSearchResult(args.searchResult));
+
+            dispatch({
+                groupId: args.searchResult.groupId,
+                type: Actions.RequestEntities,
+            });
+            const entities = await this._api.entities(request);
+            dispatch(this.setEntities(entities));
+        }
+    }
+
+    /**
+     * Reloads the glossary based on current state.
+     */
+    public reloadGlossary() {
+        return async (dispatch: ThunkDispatch<any, any, any>, getState: () => RootReducer) => {
+            const {
+                entities,
+                search,
+                searchResults,
+            } = getState();
+            const {
+                selectedId,
+                resultsById,
+            } = searchResults;
+
+            // Do not attempt to reload an uninitiated glossary.
+            if (entities.word.length < 1) {
+                return;
+            }
+
+            // Attempt to find the selected search result, first by looking at the `selected` property,
+            // and secondarily by comparing the values of the `word` property. Lastly, if the search
+            // result does not exist, create a fake search result (id = 0) for the glossary.
+            let searchResult: ISearchResult;
+            if (selectedId !== null) {
+                searchResult = resultsById[selectedId] || null;
+            }
+            if (searchResult === null) {
+                searchResult = Object.values(resultsById).find((r) => r.word === entities.word) || null;
+            }
+            if (searchResult === null) {
+                const word = entities.word;
+                searchResult = {
+                    id: 0,
+                    groupId: SearchResultGlossaryGroupId,
+                    normalizedWord: word,
+                    originalWord: null,
+                    word,
+                };
+            }
+
+            await this.expandSearchResult({
+                ...search,
+                searchResult,
+                updateBrowserHistory: true,
+            })(dispatch, getState);
         };
     }
 
-    private async _loadGlossary(dispatch: ThunkDispatch<any, any, any>, args: IGlossaryRequest,
-        languageShortName: string = null, updateBrowserHistory: boolean = true) {
-        const uriEncodedWord = encodeURIComponent(args.normalizedWord);
-        const capitalizedWord = capitalize(args.word);
+    /**
+     * Loads the glossary for the reference link._expandSearchResult
+     * @param word
+     * @param languageShortName
+     * @param updateBrowserHistory (optional) whether to invoke pushState.
+     */
+    public loadReference(word: string, normalizedWord: string, languageShortName: string, updateBrowserHistory = true) {
+        return async (dispatch: ThunkDispatch<any, any, any>, getState: () => RootReducer) => {
+            const language = await this._languages.find(languageShortName, 'shortName');
+            let languageId = 0;
+            if (language !== null) {
+                languageId = language.id;
+            }
 
-        // Browser specific: build the browser's new title and its new address.
-        const title = `${capitalizedWord} - Parf Edhellen`;
-        let address = `/w/${uriEncodedWord}` + (languageShortName ? `/${languageShortName}` : '');
+            const state = getState();
+            const args: IExpandSearchResultAction = {
+                ...state.search,
+                languageId,
+                searchResult: {
+                    id: 0,
+                    groupId: SearchResultGlossaryGroupId,
+                    normalizedWord,
+                    originalWord: null as string,
+                    word,
+                },
+                updateBrowserHistory,
+            };
+
+            this.expandSearchResult(args);
+        };
+    }
+
+    /**
+     * Sets the specified `glossary`.
+     * @param glossary
+     */
+    public setEntities<T>(entities: IEntitiesResponse<T>) {
+        return {
+            ...entities,
+            type: Actions.ReceiveEntities,
+        };
+    }
+
+    private _prepareAddress(args: IEntitiesRequest, languageShortName: string = null) {
+        const {
+            groupId,
+        } = args;
+
+        const {
+            normalizedWord,
+            word,
+        } = args.data;
+
+        const uriEncodedWord = encodeURIComponent(normalizedWord);
+        const capitalizedWord = capitalize(word);
+
+        let title: string;
+        let address: string;
+
+        // DEPRECATED: special rule for glossary.
+        if (groupId === SearchResultGlossaryGroupId) {
+            // Browser specific: build the browser's new title and its new address.
+            title = `${capitalizedWord} - Parf Edhellen`;
+            address = `/w/${uriEncodedWord}` + (languageShortName ? `/${languageShortName}` : '');
+        } else {
+            const groupName = SearchResultGroups[groupId].toLocaleLowerCase();
+            title = `${capitalizedWord} - Parf Edhellen`;
+            address = `/e/${groupName}/${uriEncodedWord}` + (languageShortName ? `/${languageShortName}` : '');
+        }
 
         // embellish the address with configuration values that are not supported by the native URL format
-        const GlossaryUrlSupportedConfiguration: (keyof IGlossaryRequest)[] = [
-            'inflections', 'languageId', 'normalizedWord', 'word',
+        const supportedSettings: (keyof typeof args.data)[] = [
+            'glossGroupIds', 'includeOld', 'speechIds',
         ];
-        const unsupportedConfigs = Object.keys(args) //
-            .filter((key: keyof IGlossaryRequest) => {
-                // Filter out all supported configurations
-                return ! GlossaryUrlSupportedConfiguration.includes(key);
-            }).reduce((carry: any, key: keyof IGlossaryRequest) => {
-                const value = args[key];
-                // tslint:disable-next-line: no-bitwise
-                carry[toSnakeCase(key)] = typeof value === 'boolean' ? ~~value : value;
-                return carry;
-            }, {});
 
-        if (Object.keys(unsupportedConfigs).length > 0) {
-            address += '?' + queryString.stringify(unsupportedConfigs, {
+        const settings: { [key: string]: any } = {};
+        let noOfSettings = 0;
+        for (const setting of supportedSettings) {
+            const value = args.data[setting];
+            // tslint:disable-next-line: no-bitwise
+            settings[toSnakeCase(setting)] = typeof value === 'boolean' ? ~~value : value;
+            noOfSettings += 1;
+        }
+
+        if (noOfSettings > 0) {
+            address += '?' + queryString.stringify(settings, {
                 arrayFormat: 'bracket',
                 skipEmptyString: true,
                 skipNull: true,
             });
         }
 
-        // When navigating using the browser's back and forward buttons,
-        // the state needn't be modified.
-        if (updateBrowserHistory && window.history.pushState) {
-            const state: IBrowserHistoryState = {
-                glossary: true,
-                languageShortName,
-                normalizedWord: args.normalizedWord,
-                word: args.word,
-            };
-            window.history.pushState(state, title, address);
+        return {
+            address,
+            title,
         }
-
-        // because most browsers doesn't change the document title when pushing state
-        document.title = title;
-
-        // Inform indirect listeners about the navigation
-        this._globalEvents.fire(this._globalEvents.loadGlossary, {
-            detail: {
-                address,
-                languageId: args.languageId,
-                word: args.word,
-            },
-        });
-
-        const glossary = await this._api.glossary(args);
-        dispatch(this.setGlossary(glossary));
-    }
-
-    private async _loadMatchingEntities(args: IExpandSearchResultAction, request: IGlossaryRequest, language: ILanguageEntity, //
-        dispatch: ThunkDispatch<any, any, any>) {
-        const address = ''; // todo
-        const {
-            searchResult,
-        } = args;
-        this._globalEvents.fire(this._globalEvents.loadEntity, {
-            detail: {
-                address,
-                groupId: searchResult.groupId,
-                languageId: language?.id,
-                word: request.word,
-            },
-        });
-
-        const entities = await this._api.entities({
-            data: request,
-            groupId: searchResult.groupId,
-        });
-
-        console.log(entities);
     }
 }

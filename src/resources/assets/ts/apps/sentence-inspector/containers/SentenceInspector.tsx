@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { IComponentEvent } from '@root/components/Component._types';
-import TextIcon from '@root/components/TextIcon';
 import IBookApi, { IBookGlossEntity } from '@root/connectors/backend/IBookApi';
 import { DI, resolve } from '@root/di';
 

@@ -102,7 +102,29 @@ class SearchIndexRepository
 
         $config = config('ed.book_entities');
         $resolverName = $config[$entityName]['resolver'];
-        return resolve($resolverName)->resolve($v);
+        $entities = resolve($resolverName)->resolve($v);
+
+        $single = count($entities) === 1;
+        $word   = $v->getWord();
+
+        // DEPRECATED START: Backwards compatibility for the BookAdapter for the glossary
+        if (array_key_exists('single', $entities)) {
+            $single = $entities['single'];
+            unset($entities['single']);
+        }
+
+        if (array_key_exists('word', $entities)) {
+            $word = $entities['word'];
+            unset($entities['word']);
+        }
+        // DEPRECATED END
+
+        return [
+            'entities' => $entities,
+            'group_id' => $searchGroupId,
+            'single'   => $single,
+            'word'     => $word
+        ];
     }
 
     private function getSearchGroup(string $entityName): int

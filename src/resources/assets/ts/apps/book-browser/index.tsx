@@ -1,30 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
-import thunkMiddleware from 'redux-thunk';
-
-import { composeEnhancers } from '@root/utilities/func/redux-tools';
-
 import {
     applyMiddleware,
     createStore,
 } from 'redux';
-import rootReducer from './reducers';
+import thunkMiddleware from 'redux-thunk';
 
-import Glossary from './containers/Glossary';
+import { composeEnhancers } from '@root/utilities/func/redux-tools';
+
+import rootReducer from './reducers';
+import Entities from './containers/Entities';
 import Search from './containers/Search';
 import SearchResults from './containers/SearchResults';
 
-const Inject = () => {
-    const store = createStore(rootReducer, undefined,
-        composeEnhancers('book-browser')(applyMiddleware(thunkMiddleware)),
-    );
+const store = createStore(rootReducer, undefined,
+    composeEnhancers('book-browser')(applyMiddleware(thunkMiddleware)),
+);
 
+const Inject = () => {
     return <Provider store={store}>
-        <React.Fragment>
+        <>
             <Search />
             <SearchResults />
-            <Glossary />
-        </React.Fragment>
+            <Entities />
+        </>
     </Provider>;
 };
 

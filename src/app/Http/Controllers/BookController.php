@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\SearchKeyword;
 use App\Http\Controllers\Abstracts\BookBaseController;
-use Traits\CanGetLanguage;
+use App\Http\Controllers\Traits\CanGetLanguage;
 
 class BookController extends BookBaseController
 {
+    use CanGetLanguage;
+
     public function pageForWord(Request $request, string $word, string $language = null)
     {
         $languageId = 0;
@@ -20,10 +22,10 @@ class BookController extends BookBaseController
         }
 
         $v = $this->validateFindRequest($request, ['word' => $word, 'language_id' => $languageId]);
-        $model = $this->_searchIndexRepository->resolveIndexToEntities(SearchKeyword::SEARCH_GROUP_DICTIONARY, $v);
+        $entities = $this->_searchIndexRepository->resolveIndexToEntities(SearchKeyword::SEARCH_GROUP_DICTIONARY, $v);
 
         return view('book.page', [
-            'payload' => $model
+            'payload' => $entities
         ]);
     }
 
