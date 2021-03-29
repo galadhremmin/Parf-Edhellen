@@ -13,11 +13,11 @@ import WordFinder from './containers/WordFinder';
 import { IGameProps } from './index._types';
 import rootReducer from './reducers';
 
-const Inject = (props: IGameProps) => {
-    const store = createStore(rootReducer, undefined,
-        composeEnhancers('word-finder')(applyMiddleware(thunkMiddleware)),
-    );
+const store = createStore(rootReducer, undefined,
+    composeEnhancers('word-finder')(applyMiddleware(thunkMiddleware)),
+);
 
+const Inject = (props: IGameProps) => {
     return <Provider store={store}>
         <WordFinder languageId={props.languageId} />
     </Provider>;

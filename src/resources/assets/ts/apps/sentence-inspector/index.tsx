@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import {
     applyMiddleware,
@@ -14,23 +14,26 @@ import rootReducer from './reducers';
 
 import SentenceInspector from './containers/SentenceInspector';
 
+const store = createStore(rootReducer, undefined,
+    composeEnhancers('sentence-inspector')(applyMiddleware(thunkMiddleware)),
+);
+
 const Inject = (props: IProps) => {
-    const store = createStore(rootReducer, undefined,
-        composeEnhancers('sentence-inspector')(applyMiddleware(thunkMiddleware)),
-    );
 
-    if (props.sentence) {
-        const actions = new SentenceActions();
-        store.dispatch(actions.setSentence(props.sentence));
+    useEffect(() => {
+        if (props.sentence) {
+            const actions = new SentenceActions();
+            store.dispatch(actions.setSentence(props.sentence));
 
-        const matches = /^#!([0-9]+)\/([0-9]+)$/.exec(window.location.hash);
-        if (matches) {
-            store.dispatch(actions.selectFragment({
-                id: parseInt(matches[2], 10),
-                sentenceNumber: parseInt(matches[1], 10),
-            }));
+            const matches = /^#!([0-9]+)\/([0-9]+)$/.exec(window.location.hash);
+            if (matches) {
+                store.dispatch(actions.selectFragment({
+                    id: parseInt(matches[2], 10),
+                    sentenceNumber: parseInt(matches[1], 10),
+                }));
+            }
         }
-    }
+    }, []);
 
     return <Provider store={store}>
         <SentenceInspector />

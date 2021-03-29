@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import {
     applyMiddleware,
@@ -15,27 +15,29 @@ import rootReducer from './reducers';
 
 import GlossForm from './containers/GlossForm';
 
-const Inject = (props: IProps) => {
-    const store = createStore(rootReducer, undefined,
-        composeEnhancers('form-gloss')(
-            applyMiddleware(thunkMiddleware),
-        ),
-    );
+const store = createStore(rootReducer, undefined,
+    composeEnhancers('form-gloss')(
+        applyMiddleware(thunkMiddleware),
+    ),
+);
 
+const Inject = (props: IProps) => {
     const {
         confirmButton,
         gloss,
         prefetched,
     } = props;
 
-    const dispatch = store.dispatch as ReduxThunkDispatch;
+    useEffect(() => {
+        const dispatch = store.dispatch as ReduxThunkDispatch;
 
-    const actions = new GlossActions();
-    if (prefetched) {
-        if (gloss !== undefined) {
-            dispatch(actions.setLoadedGloss(gloss));
+        const actions = new GlossActions();
+        if (prefetched) {
+            if (gloss !== undefined) {
+                dispatch(actions.setLoadedGloss(gloss));
+            }
         }
-    }
+    }, []);
 
     return <Provider store={store}>
         <GlossForm confirmButton={confirmButton || undefined} />

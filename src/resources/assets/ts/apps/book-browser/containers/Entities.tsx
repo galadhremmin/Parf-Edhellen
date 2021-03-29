@@ -1,4 +1,4 @@
-import React, { useEffect, Suspense, useState } from 'react';
+import React, { useEffect, Suspense, useState, useRef } from 'react';
 import { connect } from 'react-redux';
 
 import { SearchResultGroups } from '@root/config';
@@ -11,7 +11,7 @@ import LoadingIndicator from '../components/LoadingIndicator';
 
 function Entities(props: IEntitiesComponentProps) {
     // This is the component that will be used to render the entities.
-    const [ componentName, setComponentName ] = useState<string>(null);
+    const [ Component, setComponent ] = useState<React.ComponentType<IEntitiesComponentProps>>(null);
 
     const {
         dispatch,
@@ -35,21 +35,20 @@ function Entities(props: IEntitiesComponentProps) {
 
     useEffect(() => {
         if (groupId < 1) {
-            setComponentName(null);
+            setComponent(null);
         } else {
-            const nextComponentName = SearchResultGroups[groupId];
-            if (nextComponentName === undefined) {
+            const componentName = SearchResultGroups[groupId];
+            if (componentName === undefined) {
                 throw new Error(`Unrecognised entities group ID: ${groupId}. There's no renderer that supports this group.`);
             }
-            setComponentName(nextComponentName);
+            setComponent(React.lazy(() => import(`../components/${componentName}Entities`)));
         }
     }, [ groupId ]);
 
-    if (componentName === null) {
+    if (Component === null) {
         return null;
     }
 
-    const Component = React.lazy(() => import(`../components/${componentName}Entities`));
     return <Suspense fallback={<LoadingIndicator text="Setting things up..." />}>
         <Component {...props} />
     </Suspense>;

@@ -22,9 +22,14 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
         notifyLoaded: true,
     };
 
-    private _glossaryContainerRef: HTMLDivElement;
+    private _glossaryContainerRef: React.RefObject<HTMLDivElement>;
     private _actions = new SearchActions();
     private _globalEvents = new GlobalEventConnector();
+
+    constructor(props: IEntitiesComponentProps) {
+        super(props);
+        this._glossaryContainerRef = React.createRef<HTMLDivElement>();
+    }
 
     public componentDidMount() {
         // Subscribe to the global event `loadReference` which occurs when the customer clicks
@@ -39,7 +44,7 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
     }
 
     public render() {
-        return <div className="ed-glossary-container" ref={this._setGlossaryContainerRef}>
+        return <div className="ed-glossary-container" ref={this._glossaryContainerRef}>
             {this._renderViews()}
         </div>;
     }
@@ -52,7 +57,7 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
         } = this.props;
 
         if (loading) {
-            return <LoadingIndicator text="Retrieving glossary..." />;
+            return this._renderLoading();
         }
 
         if (!word || word.length < 1) {
@@ -64,6 +69,17 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
         }
 
         return this._renderDictionary();
+    }
+
+    private _renderLoading() {
+        const lastHeight = this._glossaryContainerRef.current?.offsetHeight || 500;
+        const heightStyle = {
+            minHeight: `${lastHeight}px`,
+        };
+
+        return <div style={heightStyle}>
+            <LoadingIndicator text="Retrieving glossary..." />
+        </div>;
     }
 
     private _renderEmptyDictionary() {
@@ -123,13 +139,6 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
     }
 
     /**
-     * Sets an internal reference to the current element representing the glossary container.
-     */
-    private _setGlossaryContainerRef = (elem: HTMLDivElement) => {
-        this._glossaryContainerRef = elem;
-    }
-
-    /**
      * Default event handler for reference link clicks.
      */
     private _onReferenceClick = async (ev: IComponentEvent<IReferenceLinkClickDetails>) => {
@@ -174,8 +183,8 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
     private _onGlobalListenerReferenceLoad = (ev: CustomEvent) => {
         // go to the top of the page to ensure that the client understands that the glossary
         // is being reloaded.
-        if (this._glossaryContainerRef) {
-            makeVisibleInViewport(this._glossaryContainerRef);
+        if (this._glossaryContainerRef.current) {
+            makeVisibleInViewport(this._glossaryContainerRef.current);
         } else {
             window.scrollTo(0, 0);
         }

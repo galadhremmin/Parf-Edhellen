@@ -79,8 +79,8 @@ export class SearchResults extends React.Component<IProps> {
         const noSearchResultsStyles = classNames('panel-body', 'results-empty',
             { hidden: searchResults.length > 0 },
         );
-        const navigatorStyles = classNames('row', 'search-result-navigator',
-            { hidden: searchResults.length < 2 },
+        const navigatorStyles = classNames('search-result-navigator',
+            { hidden: searchResults.length < 1 },
         );
 
         return <section>
@@ -102,24 +102,24 @@ export class SearchResults extends React.Component<IProps> {
                         searchResults={searchResults[i]}
                         selectedResultId={selectedResultId}
                     />)}
+                    <div className={navigatorStyles}>
+                        <nav>
+                            <ul className="pager">
+                                <li className="previous">
+                                    <a href="#" onClick={this._onPreviousSearchResult}>&larr; Previous</a>
+                                </li>
+                                <li className="next">
+                                    <a href="#" onClick={this._onNextSearchResult}>Next &rarr;</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
                 <div className={noSearchResultsStyles}>
                     <StaticAlert type="warning">
                         The dictionary unfortunately does not contain words that match <strong>{this.props.word}</strong>. Have you tried a synonym or perhaps even an antonym?
                     </StaticAlert>
                 </div>
-            </div>
-            <div className={navigatorStyles}>
-                <nav>
-                    <ul className="pager">
-                        <li className="previous">
-                            <a href="#" onClick={this._onPreviousSearchResult}>&larr; Previous</a>
-                        </li>
-                        <li className="next">
-                            <a href="#" onClick={this._onNextSearchResult}>Next &rarr;</a>
-                        </li>
-                    </ul>
-                </nav>
             </div>
         </section>;
     }
@@ -138,6 +138,7 @@ export class SearchResults extends React.Component<IProps> {
             updateBrowserHistory: true,
         };
         dispatch(this._actions.expandSearchResult(payload));
+        this._onDismissInstructions();
     }
 
     private _onDismissInstructions = () => {

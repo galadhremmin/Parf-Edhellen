@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import {
     applyMiddleware,
@@ -15,13 +15,13 @@ import rootReducer from './reducers';
 
 import SentenceForm from './containers/SentenceForm';
 
-const Inject = (props: IProps) => {
-    const store = createStore(rootReducer, undefined,
-        composeEnhancers('form-sentence')(
-            applyMiddleware(thunkMiddleware),
-        ),
-    );
+const store = createStore(rootReducer, undefined,
+    composeEnhancers('form-sentence')(
+        applyMiddleware(thunkMiddleware),
+    ),
+);
 
+const Inject = (props: IProps) => {
     const {
         sentence,
         sentenceFragments,
@@ -30,26 +30,28 @@ const Inject = (props: IProps) => {
         prefetched,
     } = props;
 
-    const dispatch = store.dispatch as ReduxThunkDispatch;
+    useEffect(() => {
+        const dispatch = store.dispatch as ReduxThunkDispatch;
 
-    const actions = new SentenceActions();
-    if (prefetched) {
-        if (sentence !== undefined) {
-            dispatch(actions.setLoadedSentence(sentence));
-        }
+        const actions = new SentenceActions();
+        if (prefetched) {
+            if (sentence !== undefined) {
+                dispatch(actions.setLoadedSentence(sentence));
+            }
 
-        if (sentenceFragments !== undefined) {
-            dispatch(actions.setLoadedSentenceFragments(sentenceFragments));
-        }
+            if (sentenceFragments !== undefined) {
+                dispatch(actions.setLoadedSentenceFragments(sentenceFragments));
+            }
 
-        if (sentenceTransformations !== undefined) {
-            dispatch(actions.setLoadedTransformations(sentenceTransformations));
-        }
+            if (sentenceTransformations !== undefined) {
+                dispatch(actions.setLoadedTransformations(sentenceTransformations));
+            }
 
-        if (sentenceTranslations !== undefined) {
-            dispatch(actions.setLoadedSentenceTranslations(sentenceTranslations));
+            if (sentenceTranslations !== undefined) {
+                dispatch(actions.setLoadedSentenceTranslations(sentenceTranslations));
+            }
         }
-    }
+    }, []);
 
     return <Provider store={store}>
         <SentenceForm />
