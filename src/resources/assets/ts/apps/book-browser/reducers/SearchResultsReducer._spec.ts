@@ -6,7 +6,7 @@ import { ISearchResult } from './SearchResultsReducer._types';
 
 describe('apps/book-browser/reducers/SearchResultsReducer', () => {
     it ('builds correct state', () => {
-        const input = new Map< string, ISearchResult[]>();
+        const keywords = new Map<string, ISearchResult[]>();
         const groupName = 'unit test';
         const values = [
             {
@@ -28,7 +28,7 @@ describe('apps/book-browser/reducers/SearchResultsReducer', () => {
                 word: 'elfin',
             },
         ];
-        input.set(groupName, values);
+        keywords.set(groupName, values);
 
         const actual = SearchResultsReducer({
             groups: [],
@@ -36,8 +36,12 @@ describe('apps/book-browser/reducers/SearchResultsReducer', () => {
             resultsByGroupIndex: [],
             resultsById: {},
             selectedId: 0,
+            groupIdMap: {},
         }, {
-            searchResults: input,
+            searchResults: {
+                keywords,
+                searchGroups: {},
+            },
             type: Actions.ReceiveSearchResults,
         });
 

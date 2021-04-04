@@ -6,6 +6,7 @@ import {
 
 const EntitiesReducer = (state: IEntitiesState = {
     groupId: 0,
+    groupIntlName: null,
     loading: false,
     single: false,
     word: '',
@@ -23,6 +24,7 @@ const EntitiesReducer = (state: IEntitiesState = {
                 loading: false,
 
                 groupId: action.groupId,
+                groupIntlName: action.groupIntlName,
                 single: action.single,
                 word: action.word,
             };

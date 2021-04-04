@@ -1,4 +1,3 @@
-import { SearchResultGroups } from '@root/config';
 import { IGlossGroup } from './IGlossResourceApi';
 
 export interface IFindRequest {
@@ -17,7 +16,14 @@ export interface IFindEntity {
     ok: string;
 }
 
-export type FindResponse = IFindEntity[];
+export interface ISearchGroups {
+    [groupId: number]: string;
+}
+
+export interface IFindResponse {
+    keywords: IFindEntity[];
+    searchGroups: ISearchGroups;
+}
 
 export interface IEntitiesRequestData {
     glossGroupIds?: number[];
@@ -228,7 +234,7 @@ export interface ISpeechMap {
 
 export interface IEntitiesRequest {
     data: IEntitiesRequestData;
-    groupId: keyof typeof SearchResultGroups;
+    groupId: number;
 }
 
 export interface IEntitiesResponse<T> {
@@ -240,7 +246,7 @@ export interface IEntitiesResponse<T> {
 
 export default interface IBookApi {
     entities<T = IGlossaryResponse>(args: IEntitiesRequest): Promise<IEntitiesResponse<T>>;
-    find(args: IFindRequest): Promise<FindResponse>;
+    find(args: IFindRequest): Promise<IFindResponse>;
     gloss(id: number): Promise<IGlossaryResponse>;
     groups(): Promise<IGlossGroup[]>;
     languages(): Promise<ILanguagesResponse>;

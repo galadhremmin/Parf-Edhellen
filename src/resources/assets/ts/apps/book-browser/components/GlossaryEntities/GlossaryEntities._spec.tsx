@@ -5,12 +5,10 @@ import {
 } from 'enzyme';
 import React from 'react';
 
-import { SearchResultGlossaryGroupId } from '@root/config';
-import { IEntitiesResponse, IGlossaryResponse } from '@root/connectors/backend/IBookApi';
+import { IEntitiesResponse } from '@root/connectors/backend/IBookApi';
 import { snakeCasePropsToCamelCase } from '@root/utilities/func/snake-case';
 import { Actions } from '../../actions';
 import {
-    IEntitiesAction,
     IEntitiesState,
 } from '../../reducers/EntitiesReducer._types';
 import EntitiesReducer from '../../reducers/EntitiesReducer';

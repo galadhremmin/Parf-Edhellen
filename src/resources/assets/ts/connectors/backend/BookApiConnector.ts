@@ -1,7 +1,7 @@
 import { DI, resolve } from '@root/di';
 import ApiConnector from '../ApiConnector';
 import IBookApi, {
-    FindResponse,
+    IFindResponse,
     IEntitiesRequest,
     IEntitiesResponse,
     IFindRequest,
@@ -21,7 +21,7 @@ export default class BookApiConnector implements IBookApi {
     }
 
     public find(args: IFindRequest) {
-        return this._api.post<FindResponse>('book/find', args);
+        return this._api.post<IFindResponse>('book/find', args);
     }
 
     public gloss(id: number) {

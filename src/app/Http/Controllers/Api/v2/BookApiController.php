@@ -38,7 +38,7 @@ class BookApiController extends BookBaseController
 
     public function getLanguages()
     {
-        $languages = Cache::remember('ed.languages', 60 * 60 /* seconds */, function () {
+        $languages = Cache::remember('ed.languages', 60 * 60 /* = 1 hour */, function () {
             return Language::all()
                 ->sortBy('order')
                 ->sortBy('name')
@@ -94,7 +94,23 @@ class BookApiController extends BookBaseController
     public function find(Request $request)
     {
         $v = $this->validateFindRequest($request);
-        return $this->_searchIndexRepository->findKeywords($v);
+        $keywords = $this->_searchIndexRepository->findKeywords($v);
+
+        // Create a key-value pair that maps group ID (integers) to a human readable, internationalized format.
+        $locale = $request->getLocale();
+        $searchGroups = Cache::remember('ed.search-groups.'.$locale, 60 * 60 /* = 1 hour */, function () {
+            $config   = config('ed.book_entities');
+            $entities = array_values($config);
+            return array_reduce($entities, function ($carry, $entity) {
+                $carry[intval($entity['group_id'])] = __('entities.'.$entity['intl_name']);
+                return $carry;
+            }, []);
+        });
+
+        return [
+            'keywords'      => $keywords,
+            'search_groups' => $searchGroups
+        ];
     }
 
     /**

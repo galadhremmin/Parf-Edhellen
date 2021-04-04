@@ -4,16 +4,13 @@ import { ThunkDispatch } from 'redux-thunk';
 
 import IBookApi, {
     IFindEntity,
-    IEntitiesRequestData,
     ILanguageEntity,
     IEntitiesRequest,
     IEntitiesResponse,
+    ISearchGroups,
 } from '@root/connectors/backend/IBookApi';
 import ILanguageApi from '@root/connectors/backend/ILanguageApi';
-import {
-    SearchResultGlossaryGroupId,
-    SearchResultGroups,
-} from '@root/config';
+import { SearchResultGlossaryGroupId } from '@root/config';
 import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import { DI, resolve } from '@root/di';
 import { stringHashAll } from '@root/utilities/func/hashing';
@@ -52,32 +49,34 @@ export default class SearchActions {
                 ...args,
             });
 
-            let results: Map<string, ISearchResult[]> = new Map();
+            let keywords = new Map<string, ISearchResult[]>();
+            let searchGroups: ISearchGroups = {};
             if (typeof args.word === 'string' && args.word.length > 0) {
                 try {
                     const rawResults = await this._api.find(args);
+
                     // generate a unique ID for each result item. We need to use an counter since
                     // the keyword and the normalized keyword both may not be unique.
-                    results = mapArrayGroupBy<IFindEntity, ISearchResult>({
+                    keywords = mapArrayGroupBy<IFindEntity, ISearchResult>({
                         groupId: 'g',
                         id: (v) => stringHashAll(v.k, v.nk, v.ok, v.g.toString(10)),
                         normalizedWord: 'nk',
                         originalWord: 'ok',
                         word: 'k',
-                    }, rawResults, (v) => {
-                        const groupId: keyof typeof SearchResultGroups = v.g.toString(10) as any;
-                        if (! SearchResultGroups.hasOwnProperty(groupId)) {
-                            return SearchResultGroups['0'];
-                        }
-
-                        return SearchResultGroups[groupId];
+                    }, rawResults.keywords, (v) => {
+                        return rawResults.searchGroups[v.g] || `Unknown #${v.g}`;
                     });
+
+                    searchGroups = rawResults.searchGroups;
                 } catch (e) {
                     console.warn(e);
                 }
             }
 
-            dispatch(this.setSearchResults(results));
+            dispatch(this.setSearchResults({
+                keywords,
+                searchGroups,
+            }));
         };
     }
 
@@ -179,6 +178,10 @@ export default class SearchActions {
                 speechIds,
             } = state.search;
 
+            const {
+                groupIdMap,
+            } = state.searchResults;
+
             if (args.glossGroupIds !== undefined) {
                 glossGroupIds = args.glossGroupIds;
             }
@@ -222,7 +225,7 @@ export default class SearchActions {
             const {
                 address,
                 title,
-            } = this._prepareAddress(request);
+            } = this._prepareAddress(request, groupIdMap, languageShortName);
 
             // When navigating using the browser's back and forward buttons,
             // the state needn't be modified.
@@ -363,7 +366,7 @@ export default class SearchActions {
         };
     }
 
-    private _prepareAddress(args: IEntitiesRequest, languageShortName: string = null) {
+    private _prepareAddress(args: IEntitiesRequest, groupIdMap: ISearchGroups, languageShortName: string = null) {
         const {
             groupId,
         } = args;
@@ -385,7 +388,7 @@ export default class SearchActions {
             title = `${capitalizedWord} - Parf Edhellen`;
             address = `/w/${uriEncodedWord}` + (languageShortName ? `/${languageShortName}` : '');
         } else {
-            const groupName = SearchResultGroups[groupId].toLocaleLowerCase();
+            const groupName = groupIdMap[groupId]?.toLocaleLowerCase() || 'entity';
             title = `${capitalizedWord} - Parf Edhellen`;
             address = `/e/${groupName}-${groupId}/${uriEncodedWord}` + (languageShortName ? `/${languageShortName}` : '');
         }

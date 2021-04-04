@@ -1,7 +1,6 @@
 import { expect } from 'chai';
 import * as sinon from 'sinon';
 
-import { SearchResultGroups } from '@root/config';
 import BookApiConnector from '@root/connectors/backend/BookApiConnector';
 import { stringHashAll } from '@root/utilities/func/hashing';
 import SearchActions from '../actions/SearchActions';
@@ -10,20 +9,25 @@ import { ISearchAction } from '../reducers/SearchReducer._types';
 import Actions from './Actions';
 
 describe('apps/book-browser/reducers/SearchReducer', () => {
-    const TestSearchResults = [
-        {
-            g: 1,
-            k: 'keyword1',
-            nk: 'keyword1-nk',
-            ok: 'keyword1-ok',
+    const TestSearchResults = {
+        keywords: [
+            {
+                g: 1,
+                k: 'keyword1',
+                nk: 'keyword1-nk',
+                ok: 'keyword1-ok',
+            },
+            {
+                g: 1,
+                k: 'keyword2',
+                nk: 'keyword2-nk',
+                ok: 'keyword2-ok',
+            },
+        ],
+        searchGroups: {
+            1: 'Unit test',
         },
-        {
-            g: 1,
-            k: 'keyword2',
-            nk: 'keyword2-nk',
-            ok: 'keyword2-ok',
-        },
-    ];
+    };
 
     let sandbox: sinon.SinonSandbox;
     let actions: SearchActions;
@@ -56,14 +60,14 @@ describe('apps/book-browser/reducers/SearchReducer', () => {
         expect(fakeDispatch.secondCall.args.length).to.equal(1);
         expect(fakeDispatch.secondCall.args[0].type).to.equal(Actions.ReceiveSearchResults);
 
-        const items = TestSearchResults.map((r) => ({
+        const items = TestSearchResults.keywords.map((r) => ({
             groupId: r.g,
             id: stringHashAll(r.k, r.nk, r.ok, r.g.toString(10)),
             normalizedWord: r.nk,
             originalWord: r.ok,
             word: r.k,
         }));
-        const actual = fakeDispatch.secondCall.args[0].searchResults.get(SearchResultGroups[1]);
+        const actual = fakeDispatch.secondCall.args[0].searchResults.keywords.get(TestSearchResults.searchGroups[1]);
         expect(actual).to.deep.equal(items);
     });
 });

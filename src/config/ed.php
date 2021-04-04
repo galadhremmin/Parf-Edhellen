@@ -54,21 +54,22 @@ return [
     // book configuration, including resolvers.
     // NOTE: when adding new entities, ensure that the following files are available:
     //       1. resources/views/book/<morph alias>/index.blade.php
-    //       2. resources/assets/ts/apps/book-browser/<frontend alias>/index.ts. You
-    //          configure frontend alias within the resources/assets/ts/config.ts
-    //          file (see `SearchResultGroups`).
+    //       2. resources/assets/ts/apps/book-browser/<frontend alias>/index.ts.
     'book_entities' => [
         App\Models\Gloss::class => [
-            'group_id' => App\Models\SearchKeyword::SEARCH_GROUP_DICTIONARY,
-            'resolver' => App\Repositories\SearchIndexResolvers\GlossSearchIndexResolver::class
+            'group_id'  => App\Models\SearchKeyword::SEARCH_GROUP_DICTIONARY,
+            'resolver'  => App\Repositories\SearchIndexResolvers\GlossSearchIndexResolver::class,
+            'intl_name' => 'glossary'
         ],
         App\Models\ForumPost::class => [
-            'group_id' => App\Models\SearchKeyword::SEARCH_GROUP_FORUM_POST,
-            'resolver' => App\Repositories\SearchIndexResolvers\ForumPostSearchIndexResolver::class
+            'group_id'  => App\Models\SearchKeyword::SEARCH_GROUP_FORUM_POST,
+            'resolver'  => App\Repositories\SearchIndexResolvers\ForumPostSearchIndexResolver::class,
+            'intl_name' => 'forum_post'
         ],
         App\Models\SentenceFragment::class => [
             'group_id' => App\Models\SearchKeyword::SEARCH_GROUP_SENTENCE,
-            'resolver' => App\Repositories\SearchIndexResolvers\SentenceSearchIndexResolver::class
+            'resolver' => App\Repositories\SearchIndexResolvers\SentenceSearchIndexResolver::class,
+            'intl_name' => 'sentence'
         ]
     ],
     'book_group_id_to_book_entities' => [

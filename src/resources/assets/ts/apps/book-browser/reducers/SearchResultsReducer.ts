@@ -12,6 +12,7 @@ const SearchResultsReducer = (state: ISearchResultState = {
     resultsByGroupIndex: [],
     resultsById: {},
     selectedId: 0,
+    groupIdMap: {},
 },
     action: ISearchResultReducerAction) => {
     switch (action.type) {
@@ -28,10 +29,10 @@ const SearchResultsReducer = (state: ISearchResultState = {
             const resultsById: any = {};
             const resultIds: number[] = [];
 
-            for (const group of searchResults.keys()) {
+            for (const group of searchResults.keywords.keys()) {
                 groups.push(group);
 
-                const r = searchResults.get(group);
+                const r = searchResults.keywords.get(group);
                 resultsByGroupIndex.push(r);
                 r.forEach((v) => {
                     resultIds.push(v.id);
@@ -50,6 +51,7 @@ const SearchResultsReducer = (state: ISearchResultState = {
                 resultsByGroupIndex,
                 resultsById,
                 selectedId,
+                groupIdMap: searchResults.searchGroups,
             };
         }
 

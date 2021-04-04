@@ -34,7 +34,7 @@ class KeywordsSearchIndexResolver extends SearchIndexResolverBase
             ->limit(100)
             ->get()
             ->toArray();
-
+        
         return $keywords;
     }
 }

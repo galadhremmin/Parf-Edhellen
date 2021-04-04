@@ -4,10 +4,6 @@ import { connect } from 'react-redux';
 
 import { IComponentEvent } from '@root/components/Component._types';
 import StaticAlert from '@root/components/StaticAlert';
-import {
-    SearchResultGlossaryGroup,
-    SearchResultGroups,
-} from '@root/config';
 import Cache from '@root/utilities/Cache';
 import { SearchActions } from '../actions';
 import SearchGroup from '../components/SearchGroup';

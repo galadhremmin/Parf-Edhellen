@@ -102,6 +102,7 @@ class SearchIndexRepository
 
         $config = config('ed.book_entities');
         $resolverName = $config[$entityName]['resolver'];
+        $intlName = $config[$entityName]['intl_name'];
         $entities = resolve($resolverName)->resolve($v);
 
         $single = count($entities) === 1;
@@ -120,11 +121,11 @@ class SearchIndexRepository
         // DEPRECATED END
 
         return [
-            'entities'   => $entities,
-            'group_id'   => $searchGroupId,
-            'group_name' => Morphs::getAlias($entityName),
-            'single'     => $single,
-            'word'       => $word
+            'entities'        => $entities,
+            'group_id'        => $searchGroupId,
+            'group_intl_name' => $intlName,
+            'single'          => $single,
+            'word'            => $word
         ];
     }
 

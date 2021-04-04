@@ -7,6 +7,7 @@ import { default as glosses } from './GlossesReducer';
 import { default as languages } from './LanguagesReducer';
 import { default as search } from './SearchReducer';
 import { default as searchResults } from './SearchResultsReducer';
+import { default as sentences } from './SentencesReducer';
 
 const reducers = {
     entities,
@@ -14,6 +15,7 @@ const reducers = {
     languages,
     search,
     searchResults,
+    sentences,
 };
 
 export type RootReducer = CreateRootReducer<typeof reducers>;

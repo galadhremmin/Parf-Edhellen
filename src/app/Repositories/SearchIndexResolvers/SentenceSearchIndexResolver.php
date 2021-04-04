@@ -24,6 +24,7 @@ class SentenceSearchIndexResolver extends SearchIndexResolverBase
             ->pluck('sentence_id');
         
         $sentences = Sentence::whereIn('id', $sentenceIds)
+            ->select('id', 'name', 'description', 'language_id', 'is_neologism', 'account_id')
             ->get()
             ->toArray();
 

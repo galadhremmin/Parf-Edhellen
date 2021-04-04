@@ -1,13 +1,13 @@
-import React, { useEffect, Suspense, useState, useRef } from 'react';
+import React, { useEffect, Suspense, useState } from 'react';
 import { connect } from 'react-redux';
 
-import { SearchResultGroups } from '@root/config';
 import { IEntitiesResponse } from '@root/connectors/backend/IBookApi';
 import { snakeCasePropsToCamelCase } from '@root/utilities/func/snake-case';
 import { SearchActions } from '../actions';
 import { RootReducer } from '../reducers';
 import { IEntitiesComponentProps } from './Entities._types';
 import LoadingIndicator from '../components/LoadingIndicator';
+import { capitalize } from '@root/utilities/func/string-manipulation';
 
 function Entities(props: IEntitiesComponentProps) {
     // This is the component that will be used to render the entities.
@@ -16,6 +16,7 @@ function Entities(props: IEntitiesComponentProps) {
     const {
         dispatch,
         groupId,
+        groupName,
     } = props;
 
     /**
@@ -37,13 +38,9 @@ function Entities(props: IEntitiesComponentProps) {
         if (groupId < 1) {
             setComponent(null);
         } else {
-            const componentName = SearchResultGroups[groupId];
-            if (componentName === undefined) {
-                throw new Error(`Unrecognised entities group ID: ${groupId}. There's no renderer that supports this group.`);
-            }
-            setComponent(React.lazy(() => import(`../components/${componentName}Entities`)));
+            setComponent(React.lazy(() => import(`../components/${capitalize(groupName)}Entities`)));
         }
-    }, [ groupId ]);
+    }, [ groupId, groupName ]);
 
     if (Component === null) {
         return null;
@@ -94,14 +91,19 @@ const _removeEntitiesForBots = () => {
 
 const mapStateToProps = (state: RootReducer): IEntitiesComponentProps => ({
     groupId: state.entities.groupId,
+    groupName: state.entities.groupIntlName,
     loading: state.entities.loading,
     single: state.entities.single,
     word: state.entities.word,
 
+    // Glossary
     isEmpty: state.languages.isEmpty,
     glosses: state.glosses,
     languages: state.languages.common,
     unusualLanguages: state.languages.unusual,
+
+    // Sentences
+    sentences: state.sentences,
 });
 
 export default connect(mapStateToProps)(Entities);

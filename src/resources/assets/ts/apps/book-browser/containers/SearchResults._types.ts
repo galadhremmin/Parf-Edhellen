@@ -1,3 +1,4 @@
+import { ISearchGroups } from '@root/connectors/backend/IBookApi';
 import { ThunkDispatch } from 'redux-thunk';
 import { ISearchResult } from '../reducers/SearchResultsReducer._types';
 
