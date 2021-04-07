@@ -12,7 +12,7 @@ import { SearchActions } from '../../actions';
 import { IBrowserHistoryState } from '../../actions/SearchActions._types';
 import { IEntitiesComponentProps } from '../../containers/Entities._types';
 import { IState } from './GlossaryEntities._types';
-import Language from './Language';
+import GlossaryLanguage from './GlossaryLanguage';
 import LoadingIndicator from '../LoadingIndicator';
 
 import './GlossaryEntities.scss';
@@ -132,8 +132,8 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
         return <section className={classNames.join(' ')}>
             {abstract}
             {languages.map(
-                (language) => <Language key={language.id} language={language}
-                    glosses={this.props.glosses[language.id]} onReferenceLinkClick={this._onReferenceClick} />,
+                (language) => <GlossaryLanguage key={language.id} language={language}
+                    glosses={this.props.sections[language.id]} onReferenceLinkClick={this._onReferenceClick} />,
             )}
         </section>;
     }

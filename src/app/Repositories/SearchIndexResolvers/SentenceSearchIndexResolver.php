@@ -2,6 +2,7 @@
 
 namespace App\Repositories\SearchIndexResolvers;
 
+use App\Adapters\SentenceAdapter;
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
 use App\Models\{
     Sentence,
@@ -10,6 +11,11 @@ use App\Models\{
 
 class SentenceSearchIndexResolver extends SearchIndexResolverBase
 {
+    public function __construct(SentenceAdapter $adapter)
+    {
+        $this->_sentenceAdapter = $adapter;
+    }
+
     public function resolveByQuery(array $params, SearchIndexSearchValue $value): array
     {
         $entityIds = $params['query'] //
@@ -25,9 +31,8 @@ class SentenceSearchIndexResolver extends SearchIndexResolverBase
         
         $sentences = Sentence::whereIn('id', $sentenceIds)
             ->select('id', 'name', 'description', 'language_id', 'is_neologism', 'account_id')
-            ->get()
-            ->toArray();
-
-        return $sentences;
+            ->get();
+        
+        return $this->_sentenceAdapter->adaptSentence($sentences);
     }
 }

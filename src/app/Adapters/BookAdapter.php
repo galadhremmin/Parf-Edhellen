@@ -69,7 +69,7 @@ class BookAdapter
                     [
                         // Load the language by examining the first (and only) element of the array
                         'language' => $language,
-                        'glosses'  => [ $this->adaptGloss($gloss, new Collection([$language]), $inflections, $commentsById, $atomDate, $linker) ]
+                        'entities'  => [ $this->adaptGloss($gloss, new Collection([$language]), $inflections, $commentsById, $atomDate, $linker) ]
                     ]
                 ],
                 'single' => true,
@@ -165,7 +165,7 @@ class BookAdapter
 
                 $sections[] = [
                     'language' => $language,
-                    'glosses' => $glosses
+                    'entities' => $glosses
                 ];
             }
 
@@ -183,7 +183,7 @@ class BookAdapter
             'word'    => $word,
             'sections' => [[ // <-- this is deliberate
                 'language' => null,
-                'glosses'  => $gloss2LanguageMap[0]
+                'entities'  => $gloss2LanguageMap[0]
             ]],
             'languages' => $allLanguages,
             'single'    => false,

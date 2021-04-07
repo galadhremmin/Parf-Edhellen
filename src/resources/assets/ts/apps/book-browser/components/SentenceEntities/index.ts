@@ -1,2 +1,2 @@
-import PhrasesEntities from './PhrasesEntities';
-export default PhrasesEntities;
+import SentencesEntities from './SentencesEntities';
+export default SentencesEntities;

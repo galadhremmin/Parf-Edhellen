@@ -1,4 +1,3 @@
-import { SearchResultGlossaryGroupId } from '@root/config';
 import { Actions } from '../actions';
 import { IEntitiesAction } from './EntitiesReducer._types';
 import { ILanguagesState } from './LanguagesReducer._types';
@@ -8,11 +7,6 @@ const LanguagesReducer = (state: ILanguagesState = {
     isEmpty: true,
     unusual: [],
 }, action: IEntitiesAction) => {
-    // This reducer only supports the glossary.
-    if (action.groupId !== SearchResultGlossaryGroupId) {
-        return state;
-    }
-
     switch (action.type) {
         case Actions.ReceiveEntities:
             return {

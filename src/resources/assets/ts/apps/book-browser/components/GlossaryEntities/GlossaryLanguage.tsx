@@ -2,7 +2,8 @@ import React from 'react';
 
 import Ad from '@root/apps/ad';
 import Gloss from './Gloss';
-import { IProps } from './Language._types';
+import { IProps } from './GlossaryLanguage._types';
+import Language from '../Language';
 
 export default class GlossaryLanguage extends React.Component<IProps> {
     public render() {
@@ -10,12 +11,7 @@ export default class GlossaryLanguage extends React.Component<IProps> {
 
         return <article className="ed-glossary__language">
             <header>
-                <h2>
-                    { language.isUnusual ? '† ' : '' }
-                    { language.name }
-                    &nbsp;
-                    <span className="tengwar">{ language.tengwar }</span>
-                </h2>
+                <Language language={language} />
             </header>
             <section className="ed-glossary__language__words">
                 {glosses.map((gloss) => <Gloss gloss={gloss} key={gloss.id}

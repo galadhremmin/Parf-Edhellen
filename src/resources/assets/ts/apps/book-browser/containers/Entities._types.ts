@@ -1,23 +1,20 @@
 import { ThunkDispatch } from 'redux-thunk';
 
-import { ILanguageEntity } from '@root/connectors/backend/IBookApi';
-import { IGlossesState } from '../reducers/GlossesReducer._types';
-import { SentenceReducerState } from '../reducers/SentencesReducer._types';
+import {
+    IBookGlossEntity,
+    ILanguageEntity,
+} from '@root/connectors/backend/IBookApi';
+import { ISectionsState } from '../reducers/SectionsReducer._types';
 
-export interface IEntitiesComponentProps {
+export interface IEntitiesComponentProps<T = IBookGlossEntity> {
     dispatch?: ThunkDispatch<any, any, any>;
     groupId?: number;
     groupName?: string;
     isEmpty: boolean;
+    languages?: ILanguageEntity[];
     loading: boolean;
+    sections?: ISectionsState<T>;
     single: boolean;
     word: string;
-
-    // Glossary
-    glosses?: IGlossesState;
-    languages?: ILanguageEntity[];
     unusualLanguages?: ILanguageEntity[];
-
-    // Sentences
-    sentences?: SentenceReducerState;
 }

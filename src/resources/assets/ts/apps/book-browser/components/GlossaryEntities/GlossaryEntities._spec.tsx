@@ -12,8 +12,8 @@ import {
     IEntitiesState,
 } from '../../reducers/EntitiesReducer._types';
 import EntitiesReducer from '../../reducers/EntitiesReducer';
-import GlossesReducer from '../../reducers/GlossesReducer';
-import { IGlossesState } from '../../reducers/GlossesReducer._types';
+import SectionsReducer from '../../reducers/SectionsReducer';
+import { ISectionsState } from '../../reducers/SectionsReducer._types';
 import { ILanguagesState } from '../../reducers/LanguagesReducer._types';
 import LanguagesReducer from '../../reducers/LanguagesReducer';
 import GlossaryEntities from './GlossaryEntities';
@@ -27,7 +27,7 @@ describe('apps/book-browser/containers/Glossary', () => {
     let wrapper: ReactWrapper;
 
     let glossary: IEntitiesState;
-    let glosses: IGlossesState;
+    let sections: ISectionsState;
     let languages: ILanguagesState;
 
     before(() => {
@@ -39,11 +39,11 @@ describe('apps/book-browser/containers/Glossary', () => {
             type: Actions.ReceiveEntities,
         };
         glossary = EntitiesReducer(null, action);
-        glosses = GlossesReducer(null, action);
+        sections = SectionsReducer(null, action);
         languages = LanguagesReducer(null, action);
 
         wrapper = mount(<GlossaryEntities
-            glosses={glosses}
+            sections={sections}
             isEmpty={false}
             languages={languages.common}
             loading={false}

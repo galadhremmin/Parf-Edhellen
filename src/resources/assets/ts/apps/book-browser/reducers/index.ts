@@ -3,19 +3,17 @@ import { combineReducers } from 'redux';
 import { CreateRootReducer } from '@root/_types';
 
 import { default as entities } from './EntitiesReducer';
-import { default as glosses } from './GlossesReducer';
+import { default as sections } from './SectionsReducer';
 import { default as languages } from './LanguagesReducer';
 import { default as search } from './SearchReducer';
 import { default as searchResults } from './SearchResultsReducer';
-import { default as sentences } from './SentencesReducer';
 
 const reducers = {
     entities,
-    glosses,
+    sections,
     languages,
     search,
     searchResults,
-    sentences,
 };
 
 export type RootReducer = CreateRootReducer<typeof reducers>;

@@ -3,10 +3,10 @@ export interface IProps {
 }
 
 export interface IGlobalAdConfiguration {
-    dataset: {
+    dataset?: {
         [key: string]: any;
     };
-    props: any;
+    props?: any;
 }
 
 export type IGlobalAdsConfiguration = {

@@ -12,11 +12,13 @@ import { capitalize } from '@root/utilities/func/string-manipulation';
 function Entities(props: IEntitiesComponentProps) {
     // This is the component that will be used to render the entities.
     const [ Component, setComponent ] = useState<React.ComponentType<IEntitiesComponentProps>>(null);
+    const [ componentGroupName, setComponentGroupName ] = useState<string | null>(null);
 
     const {
         dispatch,
         groupId,
         groupName,
+        loading,
     } = props;
 
     /**
@@ -35,19 +37,23 @@ function Entities(props: IEntitiesComponentProps) {
     }, []);
 
     useEffect(() => {
-        if (groupId < 1) {
+        if (! groupName) {
             setComponent(null);
+            setComponentGroupName(null);
         } else {
             setComponent(React.lazy(() => import(`../components/${capitalize(groupName)}Entities`)));
+            setComponentGroupName(groupName);
         }
-    }, [ groupId, groupName ]);
+    }, [ groupName ]);
 
     if (Component === null) {
         return null;
     }
 
-    return <Suspense fallback={<LoadingIndicator text="Setting things up..." />}>
-        <Component {...props} />
+    const LoadingComponent = <LoadingIndicator text="Setting things up..." />;
+
+    return <Suspense fallback={LoadingComponent}>
+        {componentGroupName !== groupName ? LoadingComponent : <Component {...props} />}
     </Suspense>;
 }
 
@@ -93,17 +99,14 @@ const mapStateToProps = (state: RootReducer): IEntitiesComponentProps => ({
     groupId: state.entities.groupId,
     groupName: state.entities.groupIntlName,
     loading: state.entities.loading,
+    sections: state.sections,
     single: state.entities.single,
     word: state.entities.word,
 
     // Glossary
     isEmpty: state.languages.isEmpty,
-    glosses: state.glosses,
     languages: state.languages.common,
     unusualLanguages: state.languages.unusual,
-
-    // Sentences
-    sentences: state.sentences,
 });
 
 export default connect(mapStateToProps)(Entities);

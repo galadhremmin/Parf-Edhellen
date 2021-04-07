@@ -35,10 +35,10 @@ export interface IEntitiesRequestData {
     word: string;
 }
 
-export interface IGlossaryResponse {
+export interface IGlossaryResponse<T = IBookGlossEntity> {
     languages: ILanguageEntity[] | null;
     sections: {
-        glosses: IBookGlossEntity[];
+        entities: T[];
         language: ILanguageEntity;
     }[];
     sense: number[];

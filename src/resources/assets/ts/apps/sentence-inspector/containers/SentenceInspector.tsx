@@ -106,7 +106,7 @@ export class SentenceInspector extends React.Component<IProps, IState> {
 
         try {
             const details = await this._api.gloss(fragment.glossId);
-            gloss = details.sections[0].glosses[0];
+            gloss = details.sections[0].entities[0];
             gloss.inflectedWord = {
                 inflections: fragment.inflections,
                 speech: fragment.speech,
