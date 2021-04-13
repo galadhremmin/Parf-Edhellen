@@ -10,7 +10,8 @@ use App\Helpers\StringHelper;
 use App\Models\{
     Gloss,
     Keyword,
-    SearchKeyword
+    SearchKeyword,
+    SentenceFragment
 };
 
 class PopulateSearchIndexCommand extends Command 
@@ -102,6 +103,14 @@ class PopulateSearchIndexCommand extends Command
             }
 
             $this->info(sprintf('%d: Done', $keyword->id));
+        }
+
+        $fragments = SentenceFragment::where('sentence_id', 'fragment', 'gloss_id')
+            ->distinct()
+            ->get();
+        
+        foreach ($fragments as $fragment) {
+            // TODO
         }
     }
 }

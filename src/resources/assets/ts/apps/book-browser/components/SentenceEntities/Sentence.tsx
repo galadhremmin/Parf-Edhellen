@@ -12,7 +12,7 @@ function Sentence(props: IProps) {
             <p>{sentence.description}</p>
         </a>
         <footer>
-            {sentence.source} by <a href="http://localhost:8000/author/170-aldaleon">Aldaleon</a>.
+            {sentence.source} by <a href={`/author/${sentence.account?.id}`}>{sentence.account?.nickname}</a>.
         </footer>
     </blockquote>;
 }

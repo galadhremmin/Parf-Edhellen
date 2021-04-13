@@ -198,8 +198,7 @@ export default class SearchActions {
                 speechIds = args.speechIds;
             }
 
-            const word = args.searchResult.originalWord || //
-                args.searchResult.word;
+            const word = args.searchResult.word;
 
             let language: ILanguageEntity = null;
             let languageShortName: string = null;

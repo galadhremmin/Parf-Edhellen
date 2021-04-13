@@ -26,7 +26,7 @@ class SentenceAdapter
             $language = null;
 
             if (array_key_exists($languageId, $sectionToLanguageMap)) {
-                $section = &$sections[$sectionToLanguageMap[$languageId]];
+                $section  = $sections[$sectionToLanguageMap[$languageId]];
                 $language = $section['language'];
                 $section['entities'][] = $sentence;
             } else {

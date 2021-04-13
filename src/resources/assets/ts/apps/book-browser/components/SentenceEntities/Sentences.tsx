@@ -15,7 +15,7 @@ function Sentences(props: IProps) {
         <header>
             <Language language={language} />
         </header>
-        <section className="ed-glossary__language__words">
+        <section className="link-blocks">
             {sentences.map((sentence) => <Sentence key={sentence.id} sentence={sentence} />)}
         </section>
         <section>
