@@ -7,7 +7,7 @@ function Sentence(props: IProps) {
         sentence,
     } = props;
     return <blockquote>
-        <a className="block-link" href={`/phrases/${sentence.languageId}-l/${sentence.id}-p`}>
+        <a className="block-link" href={sentence.linkHref}>
             <h3>{sentence.name}</h3>
             <p>{sentence.description}</p>
         </a>

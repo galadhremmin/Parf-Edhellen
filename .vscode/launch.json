@@ -6,13 +6,13 @@
     "configurations": [
         {
             "env": {
-                "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.unit-test.json",
+                "TS_NODE_PROJECT": "${workspaceFolder}/src/tsconfig.unit-test.json",
                 "TS_NODE_TRANSPILE_ONLY": "true"
             },
             "type": "node",
             "request": "launch",
             "name": "Mocha All",
-            "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+            "program": "${workspaceFolder}/src/node_modules/mocha/bin/_mocha",
             "args": [
                 "--timeout",
                 "999999",
@@ -27,21 +27,21 @@
                 "tsconfig-paths/register",
                 "-r",
                 "ignore-styles",
-                "'${workspaceFolder}/resources/assets/ts/*/*._spec.ts'",
-                "'${workspaceFolder}/resources/assets/ts/*/*._spec.tsx'"
+                "${workspaceFolder}/src/resources/assets/ts/*/*._spec.ts",
+                "${workspaceFolder}/src/resources/assets/ts/*/*._spec.tsx"
             ],
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen"
         },
         {
             "env": {
-                "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.unit-test.json",
+                "TS_NODE_PROJECT": "${workspaceFolder}/src/tsconfig.unit-test.json",
                 "TS_NODE_TRANSPILE_ONLY": "true"
             },
             "type": "node",
             "request": "launch",
             "name": "Mocha Current File",
-            "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+            "program": "${workspaceFolder}/src/node_modules/mocha/bin/_mocha",
             "args": [
                 "--timeout",
                 "999999",

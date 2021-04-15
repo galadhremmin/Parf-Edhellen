@@ -156,6 +156,7 @@ export interface ISentenceEntity {
     isNeologism?: boolean;
     language?: ILanguageEntity;
     languageId?: number;
+    linkHref?: string;
     longDescription?: string;
     name?: string;
     source?: string;

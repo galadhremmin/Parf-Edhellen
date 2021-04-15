@@ -49,7 +49,20 @@ class StringHelper
 
     public static function toLower(string $str) 
     {
+        if (empty($str)) {
+            return $str;
+        }
+
         return trim(mb_strtolower($str, 'utf-8'));
+    }
+
+    public static function clean(string $str)
+    {
+        if (empty($str)) {
+            return $str;
+        }
+
+        return preg_replace('/[¹²³‽†√#]/u', '', $str);
     }
 
     /**
@@ -61,9 +74,14 @@ class StringHelper
      * @return string
      */
     public static function normalize(string $str, $accentsMatter = true, $retainWildcard = false) 
-    {          
+    {
+        if (empty($str)) {
+            return $str;
+        }
+
         $str = self::toLower($str);
-        $str = preg_replace('/[¹²³’‽†√#\\{\\}\\[\\]\+=!\.]/u', '', $str);
+        $str = self::clean($str);
+        $str = preg_replace('/[’\\{\\}\\[\\]\+=!\.]/u', '', $str);
 
         if (! $retainWildcard) {
             $str = str_replace('*', '', $str);

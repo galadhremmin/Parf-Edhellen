@@ -10,10 +10,12 @@ import SearchGroup from '../components/SearchGroup';
 import { RootReducer } from '../reducers';
 import { ISearchResult } from '../reducers/SearchResultsReducer._types';
 import { IProps } from './SearchResults._types';
+import LoadingIndicator from '../components/LoadingIndicator';
 
 export class SearchResults extends React.Component<IProps> {
     static get defaultProps() {
         return {
+            loading: true,
             searchGroups: [],
             searchResults: [],
             selectedResultId: 0,
@@ -59,6 +61,7 @@ export class SearchResults extends React.Component<IProps> {
         }
 
         const {
+            loading,
             searchGroups,
             searchResults,
             selectedResultId,
@@ -70,10 +73,10 @@ export class SearchResults extends React.Component<IProps> {
 
         const searchResultContainerStyles = classNames(
             'panel-body', 'results-panel',
-            { hidden: searchResults.length < 1 },
+            { hidden: searchResults.length < 1 && !loading },
         );
         const noSearchResultsStyles = classNames('panel-body', 'results-empty',
-            { hidden: searchResults.length > 0 },
+            { hidden: searchResults.length > 0 || loading },
         );
         const navigatorStyles = classNames('search-result-navigator',
             { hidden: searchResults.length < 1 },
@@ -91,6 +94,7 @@ export class SearchResults extends React.Component<IProps> {
                         These words match <strong>{this.props.word}</strong>. Click on the one most relevant to you,
                         or simply press enter to go to the first result in the list.
                     </StaticAlert>}
+                    {loading && <LoadingIndicator text="Browsing the dictionary..." />}
                     {searchGroups.map((group, i) => <SearchGroup
                         groupName={group}
                         onClick={this._onClick}
@@ -157,6 +161,7 @@ export class SearchResults extends React.Component<IProps> {
 }
 
 const mapStateToProps = (state: RootReducer): IProps => ({
+    loading: state.search.loading,
     searchGroups: state.searchResults.groups,
     searchResults: state.searchResults.resultsByGroupIndex,
     selectedResultId: state.searchResults.selectedId,

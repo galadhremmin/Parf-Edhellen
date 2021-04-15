@@ -30,11 +30,13 @@ class SearchIndexRepository
         $this->_keywordsResolver = $keywordsResolver;
     }
 
-    public function createIndex(ModelBase $model, Word $word, string $inflection = null): SearchKeyword
+    public function createIndex(ModelBase $model, Word $wordEntity, string $inflection = null): SearchKeyword
     {
         $entityName   = Morphs::getAlias($model);
         $entityId     = $model->id;
-        $keyword      = empty($inflection) ? $word->word : $inflection;
+        $word         = StringHelper::toLower(StringHelper::clean($wordEntity->word));
+        $inflection   = StringHelper::toLower(StringHelper::clean($inflection));
+        $keyword      = empty($inflection) ? $word : $inflection;
         $glossGroupId = null;
 
         $isOld = false;
@@ -67,8 +69,8 @@ class SearchIndexRepository
             'entity_name'    => $entityName,
             'entity_id'      => $entityId,
             'is_old'         => $isOld,
-            'word'           => $word->word,
-            'word_id'        => $word->id,
+            'word'           => $word,
+            'word_id'        => $wordEntity->id,
 
             'search_group'   => $this->getSearchGroup($entityName)
         ];
