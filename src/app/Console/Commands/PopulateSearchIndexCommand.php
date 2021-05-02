@@ -62,14 +62,14 @@ class PopulateSearchIndexCommand extends Command
             $take = 40000;
         }
 
-        if (! $this->confirm(sprintf('Do you want to skip %d glosses and process %d glosses? [yes/no]', $skip, $take))) {
+        if (! $this->confirm(sprintf('Do you want to skip %d glosses and process %d glosses (final gloss no %d)? [yes/no]', $skip, $take, $skip + $take))) {
             $this->info('Cancelling...');
             return 0;
         }
 
         $keywords = Keyword::whereNull('sentence_fragment_id') //
             ->skip($skip)
-            ->take($take)
+            ->take($skip + $take)
             ->cursor();
 
         $count = 0;
