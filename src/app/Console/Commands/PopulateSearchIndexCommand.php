@@ -39,11 +39,6 @@ class PopulateSearchIndexCommand extends Command
      */
     public function handle()
     {
-        SearchKeyword::whereIn('search_group', [
-            SearchKeyword::SEARCH_GROUP_DICTIONARY,
-            SearchKeyword::SEARCH_GROUP_SENTENCE
-        ])->delete();
-
         $noOfSentenceKeywords = $this->refreshSentences();
         $noOfGlossaryKeywords = $this->refreshGlossary();
 
@@ -53,7 +48,28 @@ class PopulateSearchIndexCommand extends Command
 
     private function refreshGlossary()
     {
+        if (! $this->confirm('Do you want to reprocess the glossary? [yes/no]')) {
+            return 0;
+        }
+
+        $skip = intval( $this->ask('How many glosses do you want to skip?') );
+        $take = intval( $this->ask('How many glosses do you want to process?') );
+
+        if (! $skip) {
+            $skip = 0;
+        }
+        if (! $take) {
+            $take = 40000;
+        }
+
+        if (! $this->confirm(sprintf('Do you want to skip %d glosses and process %d glosses? [yes/no]', $skip, $take))) {
+            $this->info('Cancelling...');
+            return 0;
+        }
+
         $keywords = Keyword::whereNull('sentence_fragment_id') //
+            ->skip($skip)
+            ->take($take)
             ->cursor();
 
         $count = 0;
@@ -89,9 +105,15 @@ class PopulateSearchIndexCommand extends Command
             foreach ($entities as $entityName => $entityId) {
                 $word = StringHelper::toLower(StringHelper::clean(empty($keyword->word) ? $keyword->keyword : $keyword->word));
                 $keywordString = StringHelper::toLower(StringHelper::clean($keyword->keyword));
-                $data = [
-                    'search_group'                           => SearchKeyword::SEARCH_GROUP_DICTIONARY,
-                    'keyword'                                => $keywordString,
+                $qualifierData = [
+                    'search_group'   => SearchKeyword::SEARCH_GROUP_DICTIONARY,
+                    'keyword'        => $keywordString,
+                    'entity_name'    => $entityName,
+                    'entity_id'      => $entityId,
+                    'word'           => $word,
+                    'word_id'        => $keyword->word_id,
+                ];
+                $data = $qualifierData + [
                     'normalized_keyword'                     => $normalizedKeyword,
                     'normalized_keyword_unaccented'          => $normalizedKeywordUnaccented,
                     'normalized_keyword_reversed'            => $normalizedKeywordReversed,
@@ -101,17 +123,14 @@ class PopulateSearchIndexCommand extends Command
                     'normalized_keyword_unaccented_length'   => mb_strlen($normalizedKeywordUnaccented),
                     'normalized_keyword_reversed_length'     => mb_strlen($normalizedKeywordUnaccented),
                     'normalized_keyword_reversed_unaccented_length' => mb_strlen($normalizedKeywordUnaccentedReversed),
-                    'entity_name'    => $entityName,
-                    'entity_id'      => $entityId,
                     'is_old'         => $keyword->is_old,
-                    'word'           => $word,
-                    'word_id'        => $keyword->word_id,
                     'gloss_group_id' => $glossGroupId,
                     'language_id'    => $languageId,
                     'speech_id'      => $speechId
                 ];
                 SearchKeyword::create($data);
                 unset($data);
+                unset($qualifierData);
                 $count += 1;
             }
 
@@ -123,6 +142,13 @@ class PopulateSearchIndexCommand extends Command
 
     private function refreshSentences()
     {
+        if (! $this->confirm('Do you want to reprocess all phrases? [yes/no]')) {
+            return 0;
+        }
+
+        SearchKeyword::where('search_group', SearchKeyword::SEARCH_GROUP_SENTENCE)
+            ->delete();
+
         $fragments = SentenceFragment::select(
             'sentence_fragments.id',
             'sentence_fragments.sentence_id',
