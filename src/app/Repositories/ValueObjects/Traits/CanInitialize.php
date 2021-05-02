@@ -10,7 +10,9 @@ trait CanInitialize
 
     public function jsonSerialize()
     {
-        return $this->getAllValues();
+        $v = array_merge([], $this->getAllValues());
+        ksort($v);
+        return $v;
     }
 
     public function getAllValues()
