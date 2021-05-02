@@ -111,10 +111,12 @@ class PopulateSearchIndexCommand extends Command
                     'speech_id'      => $speechId
                 ];
                 SearchKeyword::create($data);
+                unset($data);
                 $count += 1;
             }
 
             $this->info(sprintf('%d (glossary): %s done', $entityId, $keywordString));
+            unset($entities);
         }
         return $count;
     }
@@ -170,6 +172,7 @@ class PopulateSearchIndexCommand extends Command
             ];
             SearchKeyword::create($data);
             $count += 1;
+            unset($data);
 
             $this->info(sprintf('%d (sentence): %s -> %s done', $fragment->sentence_id, $fragment->word, $fragment->fragment));
         }
