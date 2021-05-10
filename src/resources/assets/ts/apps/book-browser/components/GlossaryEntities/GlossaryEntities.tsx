@@ -53,15 +53,10 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
         const {
             isEmpty,
             loading,
-            word,
         } = this.props;
 
         if (loading) {
             return this._renderLoading();
-        }
-
-        if (!word || word.length < 1) {
-            return null;
         }
 
         if (isEmpty) {

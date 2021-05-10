@@ -120,7 +120,7 @@ class BookApiController extends BookBaseController
     {
         $v = $this->validateFindRequest($request);
 
-        $cacheKey = 'ed.entities.'.md5(json_encode($v));
+        $cacheKey = 'ed.entities.'.$groupId.'.'.md5(json_encode($v));
         $entities = Cache::get($cacheKey);
         if ($entities === null) {
             $entities = $this->_searchIndexRepository->resolveIndexToEntities($groupId, $v);

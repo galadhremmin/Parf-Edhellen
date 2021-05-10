@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\SearchKeyword;
 use App\Http\Controllers\Abstracts\BookBaseController;
 use App\Http\Controllers\Traits\CanGetLanguage;
+use App\Repositories\ValueObjects\SpecificEntitiesSearchValue;
 
 class BookController extends BookBaseController
 {
@@ -36,13 +37,14 @@ class BookController extends BookBaseController
 
     public function pageForGlossId(Request $request, int $id)
     {
-        $model = $this->getGloss($id);
-        if (! $model) {
+        $v = new SpecificEntitiesSearchValue([$id]);
+        $entities = $this->_searchIndexRepository->resolveIndexToEntities(SearchKeyword::SEARCH_GROUP_DICTIONARY, $v);
+        if (count($entities['entities']) === 0) {
             abort(404);
         }
 
         return view('book.page', [
-            'payload' => $model
+            'payload' => $entities
         ]);
     }
 
@@ -68,7 +70,7 @@ class BookController extends BookBaseController
 
         return view('book.version', [
             'word'      => $word,
-            'versions'  => $model['sections'][0]['glosses']
+            'versions'  => $model['sections'][0]['entities']
         ]);
     }
 }

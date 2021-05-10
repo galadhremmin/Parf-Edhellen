@@ -68,6 +68,23 @@ class GlossRepository
     }
 
     /**
+     * Gets a list of glosses with the specified IDs.
+     * @param array $ids array of integers
+     * @return array
+     */
+    public function getGlosses(array $ids)
+    {
+        $maximumNumberOfResources = config('ed.gloss_repository_maximum_results');
+        return self::createGlossQuery(0, true, true, function ($q) use($ids) {
+            $q->whereIn('g.id', $ids);
+            return $q;
+        })
+        ->limit($maximumNumberOfResources)
+        ->get()
+        ->toArray();
+    }
+
+    /**
      * Gets the gloss entity with the specified ID.
      * 
      * @param int $id
@@ -531,6 +548,9 @@ class GlossRepository
                 $t = $child;
             }
         } else {
+            $glossIds = array_map(function ($v) {
+                return $v->id;
+            }, $glosses);
             $this->deleteGloss($gloss, $replaceId);
         }
 

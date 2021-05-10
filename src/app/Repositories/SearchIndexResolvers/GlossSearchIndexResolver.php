@@ -2,7 +2,10 @@
 
 namespace App\Repositories\SearchIndexResolvers;
 
-use App\Repositories\ValueObjects\SearchIndexSearchValue;
+use App\Repositories\ValueObjects\{
+    SearchIndexSearchValue,
+    SpecificEntitiesSearchValue
+};
 use App\Models\Gloss;
 use App\Repositories\{
     DiscussRepository,
@@ -29,13 +32,17 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
 
     public function resolve(SearchIndexSearchValue $value): array
     {
-        $glosses = $this->_glossRepository->getWordGlosses(
-            $value->getWord(),
-            $value->getLanguageId(),
-            $value->getIncludesOld(),
-            $value->getSpeechIds(),
-            $value->getGlossGroupIds()
-        );
+        if ($value instanceof SpecificEntitiesSearchValue) {
+            $glosses = $this->_glossRepository->getGlosses($value->getIds());
+        } else {
+            $glosses = $this->_glossRepository->getWordGlosses(
+                $value->getWord(),
+                $value->getLanguageId(),
+                $value->getIncludesOld(),
+                $value->getSpeechIds(),
+                $value->getGlossGroupIds()
+            );
+        }
         $glossIds = array_map(function ($v) {
             return $v->id;
         }, $glosses);
