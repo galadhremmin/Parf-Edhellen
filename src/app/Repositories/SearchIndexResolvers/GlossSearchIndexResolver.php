@@ -13,6 +13,7 @@ use App\Repositories\{
     SentenceRepository
 };
 use App\Adapters\BookAdapter;
+use App\Helpers\StringHelper;
 
 class GlossSearchIndexResolver implements ISearchIndexResolver
 {
@@ -35,8 +36,9 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
         if ($value instanceof SpecificEntitiesSearchValue) {
             $glosses = $this->_glossRepository->getGlosses($value->getIds());
         } else {
+            $normalizedWord = StringHelper::normalize($value->getWord(), /* accentsMatter = */ true, /* retainWildcard = */ false);
             $glosses = $this->_glossRepository->getWordGlosses(
-                $value->getWord(),
+                $normalizedWord,
                 $value->getLanguageId(),
                 $value->getIncludesOld(),
                 $value->getSpeechIds(),
