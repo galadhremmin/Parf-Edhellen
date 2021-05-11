@@ -118,7 +118,7 @@ abstract class BookBaseController extends Controller
         $inflections   = isset($v['inflections']) ? boolval($v['inflections']) : false;
         $languageId    = isset($v['language_id']) ? intval($v['language_id']) : 0;
         $reversed      = isset($v['reversed']) ? boolval($v['reversed']) : false;
-        $word          = StringHelper::normalize($v['word'], /* accentsMatter: */ false, /* retainWildcard: */ true);
+        $word          = $v['word'];
 
         $glossGroupIds = isset($v['gloss_group_ids']) ? array_map(function ($v) {
             return intval($v);

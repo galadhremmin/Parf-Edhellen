@@ -4,6 +4,7 @@ namespace App\Repositories\SearchIndexResolvers;
 
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
 use App\Models\SearchKeyword;
+use App\Helpers\StringHelper;
 
 abstract class SearchIndexResolverBase implements ISearchIndexResolver
 {
@@ -40,7 +41,7 @@ abstract class SearchIndexResolverBase implements ISearchIndexResolver
         }
 
         return [
-            'query' => $query,
+            'query'         => $query,
             'search_column' => $searchColumn,
             'length_column' => $lengthColumn
         ];
@@ -48,6 +49,8 @@ abstract class SearchIndexResolverBase implements ISearchIndexResolver
 
     private function formatWord(string $word) 
     {
+        $word = StringHelper::normalize($word, /* accentsMatter = */ false, /* retainWildcard = */ true);
+
         if (strpos($word, '*') !== false) {
             return str_replace('*', '%', $word);
         } 
