@@ -15,18 +15,6 @@ $gloss-border-color: #dedede;
     &:first-child {
       margin-top: 0 !important;
     }
-
-    > header {
-      text-align: center;
-
-      h2 {
-        font-size: 2rem;
-        font-weight: bold;
-      }
-      @media (max-width: $screen-sm-min) {
-        text-align: left;
-      }
-    }
   }
   .ed-glossary__language__words {
     columns: 2;

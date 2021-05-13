@@ -75,7 +75,7 @@ class GlossRepository
     public function getGlosses(array $ids)
     {
         $maximumNumberOfResources = config('ed.gloss_repository_maximum_results');
-        return self::createGlossQuery(0, true, true, function ($q) use($ids) {
+        return self::createGlossQuery(0, false /* = latest */, true /* = include old */, function ($q) use($ids) {
             $q->whereIn('g.id', $ids);
             return $q;
         })

@@ -1,7 +1,7 @@
-import classNames from 'classnames';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import HtmlInject from '@root/components/HtmlInject';
+import GlossDetail from './GlossDetail';
 import { IProps } from './GlossDetails._types';
 
 import './GlossDetails.scss';
@@ -12,21 +12,12 @@ const GlossDetails = (props: IProps) => {
         onReferenceLinkClick,
         showDetails,
     } = props;
-
-    return <React.Fragment>
+    return <>
         <HtmlInject html={gloss.comments} onReferenceLinkClick={onReferenceLinkClick} />
-
         {showDetails && gloss.glossDetails.map(
-            (d) => <section className="GlossDetails details" key={d.order}>
-                <header>
-                    <h4>{d.category}</h4>
-                </header>
-                <div className={classNames('details__body', { [String(d.type)]: !!d.type })}>
-                    <HtmlInject html={d.text} onReferenceLinkClick={onReferenceLinkClick} />
-                </div>
-            </section>,
+            (d) => <GlossDetail key={`${d.order}_${d.category}`} detail={d} onReferenceLinkClick={onReferenceLinkClick} />,
         )}
-    </React.Fragment>;
+    </>;
 };
 
 GlossDetails.defaultProps = {

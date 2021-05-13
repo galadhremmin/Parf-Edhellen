@@ -6,6 +6,7 @@ import { IComponentEvent } from '@root/components/Component._types';
 import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
 import { ILanguageEntity } from '@root/connectors/backend/IBookApi';
 import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
+import Cache from '@root/utilities/Cache';
 import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
 import { SearchActions } from '../../actions';
@@ -20,22 +21,37 @@ import './GlossaryEntities.scss';
 export default class GlossaryEntities extends React.Component<IEntitiesComponentProps, IState> {
     public state: IState = {
         notifyLoaded: true,
+        showUnusualLanguages: false,
     };
 
     private _glossaryContainerRef: React.RefObject<HTMLDivElement>;
     private _actions = new SearchActions();
     private _globalEvents = new GlobalEventConnector();
+    private _unusualLanguagesConfig: Cache<boolean>;
 
     constructor(props: IEntitiesComponentProps) {
         super(props);
         this._glossaryContainerRef = React.createRef<HTMLDivElement>();
+
+        const languagesConfigKey = 'ed.glossary.unusual-languages';
+        try {
+            this._unusualLanguagesConfig = Cache.withLocalStorage<boolean>(() => Promise.resolve(false), languagesConfigKey);
+        } catch (e) {
+            // Probably a unit test
+            this._unusualLanguagesConfig = Cache.withMemoryStorage<boolean>(() => Promise.resolve(false), languagesConfigKey);
+        }
     }
 
-    public componentDidMount() {
+    public async componentDidMount() {
         // Subscribe to the global event `loadReference` which occurs when the customer clicks
         // a reference link in any component not associated with the Glossary app.
         this._globalEvents.loadReference = this._onGlobalListenerReferenceLoad;
         window.addEventListener('popstate', this._onPopState);
+
+        const showUnusualLanguages = await this._unusualLanguagesConfig.get();
+        this.setState({
+            showUnusualLanguages,
+        });
     }
 
     public componentWillUnmount() {
@@ -105,16 +121,36 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
     }
 
     private _renderUnusualLanguages() {
+        const {
+            showUnusualLanguages,
+        } = this.state;
+
         if (this.props.unusualLanguages.length === 0) {
             return null;
         }
 
-        const abstract = <p>
-            <strong>Beware, older languages below!</strong> {' '}
-            The languages below were invented during Tolkien's earlier period and should be used with caution. {' '}
-            Remember to never, ever mix words from different languages!
-        </p>;
-        return this._renderLanguages(this.props.unusualLanguages, abstract, ['ed-glossary--unusual']);
+        const abstract = <>
+            <h3>
+                There are more words but they are from Tolkien's earlier conceptional periods
+            </h3>
+            <p>
+                Tolkien likely changed these words as he evolved the aesthetics and completeness of the languages. You may even find
+                languages that Tolkien later rejected. Do not mix words from different time periods unless you are familiar with the
+                phonetical developments.
+            </p>
+        </>;
+
+        if (showUnusualLanguages) {
+            return this._renderLanguages(this.props.unusualLanguages, abstract, ['ed-glossary--unusual']);
+        } else {
+            return <div className="text-center">
+                {abstract}
+                <p>
+                    You can view these words by clicking the button below. You will not be asked again (unless you clear your browser's local storage!)
+                </p>
+                <button className="btn btn-default" onClick={this._onUnusualLanguagesShowClick}>I understand - show me the words!</button>
+            </div>;
+        }
     }
 
     private _renderLanguages(languages: ILanguageEntity[], abstract: React.ReactNode = null, //
@@ -204,6 +240,17 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
         this.props.dispatch(
             this._actions.selectSearchResultByWord(state.word),
         );
+    }
+
+    /**
+     * Permanently (well, in local storage) displays languages from Tolkien's earlier conceptual periods.
+     */
+    private _onUnusualLanguagesShowClick = () => {
+        const showUnusualLanguages = true;
+        this.setState({
+            showUnusualLanguages,
+        });
+        this._unusualLanguagesConfig.set(showUnusualLanguages);
     }
 }
 

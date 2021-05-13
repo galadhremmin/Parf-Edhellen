@@ -49,6 +49,7 @@ export interface ILanguagesResponse {
 }
 
 export interface ILanguageEntity {
+    category?: string;
     id: number;
     isInvented?: boolean;
     isUnusual?: boolean;

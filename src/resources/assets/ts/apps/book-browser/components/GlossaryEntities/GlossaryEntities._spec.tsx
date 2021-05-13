@@ -23,7 +23,7 @@ import '@root/utilities/Enzyme';
 // Define node `require` for synchronous file loading
 declare var require: any;
 
-describe('apps/book-browser/containers/Glossary', () => {
+describe('apps/book-browser/containers/GlossaryEntities', () => {
     let wrapper: ReactWrapper;
 
     let glossary: IEntitiesState;
@@ -61,6 +61,7 @@ describe('apps/book-browser/containers/Glossary', () => {
 
     it('displays results', () => {
         wrapper.setProps({ loading: false });
+        wrapper.setState({ showUnusualLanguages: true });
 
         // the test data collection contains unusual and common languages, so there
         // should be two sections, one of which shouldb be flagged as `unusual`.
@@ -68,7 +69,7 @@ describe('apps/book-browser/containers/Glossary', () => {
 
         const unusualSection = wrapper.find('.ed-glossary.ed-glossary--unusual');
         expect(unusualSection).to.exist;
-        expect(unusualSection.text()).to.contain('Beware, older languages below!');
+        expect(unusualSection.text()).to.contain('There are more words but they are from Tolkien\'s earlier conceptional periods');
 
         // Expect there to be a `Language` component per language.
         expect(wrapper.find('.ed-glossary__language').length).to.equal(
@@ -77,8 +78,9 @@ describe('apps/book-browser/containers/Glossary', () => {
     });
 
     it('should not render because word is empty', () => {
-        wrapper.setProps({ word: '' });
+        wrapper.setProps({ isEmpty: true });
 
-        expect(wrapper.isEmptyRender()).to.be.true;
+        expect(wrapper.isEmptyRender()).to.be.false;
+        expect(wrapper.text()).to.contain('Alas! What you are looking for does not exist!');
     });
 });
