@@ -18,7 +18,7 @@
 
   <div class="well">
     @foreach ($sections as $section)
-      @foreach ($section['glosses'] as $gloss)
+      @foreach ($section['entities'] as $gloss)
         @include('book._gloss', [ 
           'gloss' => $gloss, 
           'language' => $section['language'],

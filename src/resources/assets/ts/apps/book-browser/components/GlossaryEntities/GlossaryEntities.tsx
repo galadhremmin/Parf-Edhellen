@@ -136,7 +136,7 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
             <p>
                 Tolkien likely changed these words as he evolved the aesthetics and completeness of the languages. You may even find
                 languages that Tolkien later rejected. Do not mix words from different time periods unless you are familiar with the
-                phonetical developments.
+                phonetic developments.
             </p>
         </>;
 
