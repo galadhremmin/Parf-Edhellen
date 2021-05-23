@@ -18,8 +18,8 @@ function GlossFragmentInspector(props: IProps) {
         fragment,
     } = props;
 
-    const gloss = useGloss(fragment?.glossId, (gloss) => ({
-        ...gloss,
+    const gloss = useGloss(fragment?.glossId, (nextGloss) => ({
+        ...nextGloss,
         inflectedWord: {
             inflections: fragment.inflections,
             speech: fragment.speech,

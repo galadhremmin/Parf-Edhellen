@@ -4,7 +4,7 @@
     "watch": "npm run dev -- -w",
     "watch-poll": "npm run dev -- -w --watch-poll",
     "production": "npm run lint && npm run test && npm run prod-wrap",
-    "test": "TS_NODE_PROJECT=\"tsconfig.unit-test.json\" TS_NODE_TRANSPILE_ONLY=true mocha -r ts-node/register -r babel-register -r jsdom-global/register -r tsconfig-paths/register -r ignore-styles \"./resources/assets/ts/**/*._spec.ts\" \"./resources/assets/ts/**/*._spec.tsx\"",
+    "test": "TS_NODE_PROJECT=\"tsconfig.unit-test.json\" TS_NODE_TRANSPILE_ONLY=true mocha -r ts-node/register -r @babel/register -r jsdom-global/register -r tsconfig-paths/register -r ignore-styles \"./resources/assets/ts/**/*._spec.ts\" \"./resources/assets/ts/**/*._spec.tsx\"",
     "lint": "tslint \"resources/assets/ts/**/*.ts\" \"resources/assets/ts/**/*.tsx\"",
     "dev": "node node_modules/webpack/bin/webpack.js --config webpack.config.js --mode development",
     "prod-wrap": "node node_modules/webpack/bin/webpack.js --config webpack.prod.config.js --mode production"
