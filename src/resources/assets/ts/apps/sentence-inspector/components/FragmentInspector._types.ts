@@ -1,11 +1,12 @@
 import { ComponentEventHandler } from '@root/components/Component._types';
-import { IBookGlossEntity } from '@root/connectors/backend/IBookApi';
 
 import { IFragmentsReducerState } from '../reducers/FragmentsReducer._types';
 
-export interface IProps {
+export interface IProps extends IEventProps {
     fragment?: IFragmentsReducerState;
-    fragmentId: number;
-    gloss: IBookGlossEntity;
-    onFragmentMoveClick?: ComponentEventHandler<number>;
+}
+
+export interface IEventProps {
+    onNextOrPreviousFragmentClick?: ComponentEventHandler<number>;
+    onSelectFragment?: ComponentEventHandler<IFragmentsReducerState>;
 }

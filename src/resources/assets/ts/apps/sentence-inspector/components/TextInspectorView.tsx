@@ -10,6 +10,7 @@ import {
 } from './TextInspectorView._types';
 
 import Fragment from './Fragment';
+import FragmentInspector from './FragmentInspector';
 import Paragraph from './Paragraph';
 import ParagraphGroup from './ParagraphGroup';
 
@@ -28,8 +29,9 @@ export default class TextInspectorView extends React.Component<IProps> {
 
     private _renderParagraphGroups(texts: ITextState[]) {
         const {
-            fragmentId,
-            fragmentInspector: FragmentInspector,
+            fragment,
+            onNextOrPreviousFragmentClick,
+            onSelectFragment,
         } = this.props;
 
         const groups = [];
@@ -54,7 +56,12 @@ export default class TextInspectorView extends React.Component<IProps> {
             </ParagraphGroup>);
 
             if (args.fragmentSelected) {
-                groups.push(<FragmentInspector key="inspector" fragmentId={fragmentId} gloss={null} />);
+                groups.push(<FragmentInspector
+                    key="inspector"
+                    fragment={fragment}
+                    onNextOrPreviousFragmentClick={onNextOrPreviousFragmentClick}
+                    onSelectFragment={onSelectFragment}
+                />);
             }
 
             paragraphNumber += 1;
@@ -93,11 +100,11 @@ export default class TextInspectorView extends React.Component<IProps> {
 
     private _renderFragment(fragment: IFragmentInSentenceState, key: number, args: IRenderArgs) {
         const {
-            fragmentId,
-            onFragmentClick,
+            fragment: selectedFragment,
+            onFragmentInSentenceClick,
         } = this.props;
 
-        const selected = fragment.id === fragmentId;
+        const selected = fragment.id === selectedFragment?.id;
         if (selected) {
             args.fragmentSelected = selected;
         }
@@ -105,7 +112,7 @@ export default class TextInspectorView extends React.Component<IProps> {
         return <Fragment
             key={key}
             fragment={fragment}
-            onClick={onFragmentClick}
+            onClick={onFragmentInSentenceClick}
             selected={selected}
         />;
     }

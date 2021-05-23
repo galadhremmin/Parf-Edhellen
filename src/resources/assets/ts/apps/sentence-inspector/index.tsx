@@ -27,10 +27,11 @@ const Inject = (props: IProps) => {
 
             const matches = /^#!([0-9]+)\/([0-9]+)$/.exec(window.location.hash);
             if (matches) {
-                store.dispatch(actions.selectFragment({
-                    id: parseInt(matches[2], 10),
-                    sentenceNumber: parseInt(matches[1], 10),
-                }));
+                const fragmentId = parseInt(matches[2], 10);
+                const fragment = store.getState().fragments.find((f) => f.id === fragmentId);
+                if (fragment) {
+                    store.dispatch(actions.selectFragment(fragment));
+                }
             }
         }
     }, []);

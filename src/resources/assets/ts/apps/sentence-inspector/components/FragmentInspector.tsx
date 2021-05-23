@@ -1,164 +1,117 @@
-import React, { Suspense } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 
-import { fireEvent } from '@root/components/Component';
-import { IComponentEvent } from '@root/components/Component._types';
-import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
-import Markdown from '@root/components/Markdown';
-import Spinner from '@root/components/Spinner';
 import StaticAlert from '@root/components/StaticAlert';
 import Tengwar from '@root/components/Tengwar';
-import { ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
-import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
 import { IProps } from './FragmentInspector._types';
 
 import './FragmentInspector.scss';
 import TextIcon from '@root/components/TextIcon';
+import GlossFragmentInspector from './GlossFragmentInspector';
+import { fireEventAsync } from '@root/components/Component';
+import classNames from 'classnames';
 
-export default class FragmentInspector extends React.Component<IProps> {
-    private _globalEvents = new GlobalEventConnector();
-    private _rootRef = React.createRef<HTMLElement>();
+function jumpToComponent(component: HTMLElement) {
+    if (component) {
+        // TODO: we should not use `previousElementSibling` here as it 'leaks' out
+        // of the component. The reason for this behavior is this: the inspector
+        // is injected /after/ the paragraph currently selected. So the previous
+        // sibling is always the selected text.
+        const sibling = component.previousElementSibling;
+        if (sibling) {
+            // -24 is a little offset to ensure that the viewport does not scroll beyond
+            // the element
+            makeVisibleInViewport(sibling, [0, -24]);
+        }
+    }
+}
+
+export function FragmentInspector(props: IProps) {
+    const _rootRef = useRef<HTMLElement>();
 
     /**
      * Jump to the component when it mounts, as it is expected to only be
      * mounted when the customer is interested in its content.
      */
-    public componentDidMount() {
-        this._jumpToComponent();
+    useEffect(() => {
+        jumpToComponent(_rootRef.current);
         document.body.classList.add('fragment-inspector--open');
-    }
-
-    public componentWillUnmount() {
-        document.body.classList.remove('fragment-inspector--open');
-    }
+        return () => {
+            document.body.classList.remove('fragment-inspector--open');
+        }
+    }, []);
 
     /**
      * Jump to the component when it re-renders, as the customer is expecting
      * to see its content.
      */
-    public componentDidUpdate() {
-        this._jumpToComponent();
-    }
+    useEffect(() => {
+        jumpToComponent(_rootRef.current);
+    });
 
-    public render() {
-        const {
-            fragment,
-            gloss,
-        } = this.props;
+    const {
+        fragment,
+        onNextOrPreviousFragmentClick,
+        onSelectFragment,
+    } = props;
+    const {
+        previousFragmentId,
+        nextFragmentId,
+    } = props.fragment;
 
-        return <aside className="fragment-inspector" ref={this._rootRef}>
-            <nav aria-label="Fragment navigator">
-                <ul className="pager">
-                    <li className="previous">
-                        <a href="#previous"
-                            onClick={this._onPreviousClick}>
-                            <TextIcon icon="chevron-left" />
-                        </a>
-                        <a href="#"
-                            onClick={this._onCloseClick}>
-                            <TextIcon icon="remove" />
-                        </a>
-                    </li>
-                    {fragment && <li className="tengwar-pill">
-                        <Tengwar text={fragment.tengwar} transcribe={false} />
-                    </li>}
-                    <li className="next">
-                        <a href="#next"
-                            onClick={this._onNextClick}>
-                            <TextIcon icon="chevron-right" />
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            {fragment && gloss ? this._renderFragment(fragment) : this._renderUnknownFragment()}
-        </aside>;
-    }
+    const _onCloseClick = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
+        ev.preventDefault();
+        fireEventAsync('FragmentInspector', onSelectFragment, null);
+    }, [ onSelectFragment ]);
 
-    private _renderFragment(fragment: ISentenceFragmentEntity) {
-        return <article>
-            <header>
-                <h1>{fragment.fragment}</h1>
-            </header>
-            {fragment.comments && <section className="abstract">
-                <Markdown text={fragment.comments} parse={true} />
-            </section>}
-            <section>
-                <Suspense fallback={<Spinner />}>
-                    <GlossInspectorAsync gloss={this.props.gloss}
-                        onReferenceLinkClick={this._onReferenceLinkClick}
-                        toolbar={false}
-                        warnings={false}
-                    />
-                </Suspense>
-            </section>
-        </article>;
-    }
+    const _onPreviousClick = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
+        ev.preventDefault();
+        if (previousFragmentId) {
+            fireEventAsync('FragmentInspector', onNextOrPreviousFragmentClick, previousFragmentId);
+        }
+    }, [ onNextOrPreviousFragmentClick, previousFragmentId ]);
 
-    private _renderUnknownFragment() {
-        return <StaticAlert type="warning">
+    const _onNextClick = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
+        ev.preventDefault();
+        if (nextFragmentId) {
+            fireEventAsync('FragmentInspector', onNextOrPreviousFragmentClick, nextFragmentId);
+        }
+    }, [ onNextOrPreviousFragmentClick, nextFragmentId ]);
+
+    return <aside className="fragment-inspector" ref={_rootRef}>
+        <nav aria-label="Fragment navigator">
+            <ul className="pager">
+                <li className="previous">
+                    <a href="#previous"
+                        className={classNames({ disabled: ! previousFragmentId})}
+                        onClick={_onPreviousClick}>
+                        <TextIcon icon="chevron-left" />
+                    </a>
+                    <a href="#"
+                        onClick={_onCloseClick}>
+                        <TextIcon icon="remove" />
+                    </a>
+                </li>
+                {fragment && <li className="tengwar-pill">
+                    <Tengwar text={fragment.tengwar} transcribe={false} />
+                </li>}
+                <li className="next">
+                    <a href="#next"
+                        onClick={_onNextClick}
+                        className={classNames({ disabled: ! nextFragmentId})}>
+                        <TextIcon icon="chevron-right" />
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        {! fragment && <StaticAlert type="warning">
             <strong>The word does not exist!</strong>{' '}
             The word has probably been removed from the dictionary. We have recorded this error. Sorry!
-        </StaticAlert>;
-    }
-
-    private _onCloseClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
-        ev.preventDefault();
-        this._selectFragment(null);
-    }
-
-    private _onPreviousClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
-        ev.preventDefault();
-        const {
-            previousFragmentId,
-        } = this.props.fragment;
-        if (previousFragmentId) {
-            this._selectFragment(previousFragmentId);
-        }
-    }
-
-    private _onNextClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
-        ev.preventDefault();
-        const {
-            nextFragmentId,
-        } = this.props.fragment;
-        if (nextFragmentId) {
-            this._selectFragment(nextFragmentId);
-        }
-    }
-
-    private _onReferenceLinkClick = (ev: IComponentEvent<IReferenceLinkClickDetails>) => {
-        this._globalEvents.fire(this._globalEvents.loadReference, ev.value);
-    }
-
-    private _selectFragment(id: number) {
-        const {
-            onFragmentMoveClick,
-        } = this.props;
-
-        if (onFragmentMoveClick) {
-            fireEvent(this, onFragmentMoveClick, id);
-        }
-    }
-
-    private _jumpToComponent() {
-        const {
-            current: component,
-        } = this._rootRef;
-
-        if (component) {
-            // TODO: we should not use `previousElementSibling` here as it 'leaks' out
-            // of the component. The reason for this behavior is this: the inspector
-            // is injected /after/ the paragraph currently selected. So the previous
-            // sibling is always the selected text.
-            const sibling = component.previousElementSibling;
-            if (sibling) {
-                // -24 is a little offset to ensure that the viewport does not scroll beyond
-                // the element
-                makeVisibleInViewport(sibling, [0, -24]);
-            }
-        }
-    }
+        </StaticAlert>}
+        {fragment && <GlossFragmentInspector fragment={fragment} />}
+    </aside>;
 }
 
-const GlossInspectorAsync = React.lazy(() => import('@root/apps/book-browser/components/GlossaryEntities/Gloss'));
+export default FragmentInspector;
+

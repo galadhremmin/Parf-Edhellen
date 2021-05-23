@@ -1,3 +1,4 @@
+import { fireEventAsync } from '@root/components/Component';
 import React from 'react';
 import { IProps } from './Fragment._types';
 
@@ -28,7 +29,7 @@ class Fragments extends React.Component<IProps> {
         } = this.props;
 
         if (typeof onClick === 'function') {
-            onClick(fragment);
+            fireEventAsync('Fragment', onClick, fragment);
         }
     }
 }

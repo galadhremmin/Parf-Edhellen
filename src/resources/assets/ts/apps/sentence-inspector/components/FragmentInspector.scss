@@ -61,7 +61,11 @@ $inspector-border-top: $gray-lighter; // #8aa5c3;
                     padding: 0.1rem 0.4rem 0 0.4rem;
 
                     + a {
-                        padding-left: 1em;
+                        margin-left: 1em;
+                    }
+
+                    &.disabled > span.glyphicon {
+                        background: transparent;
                     }
                 }
             }

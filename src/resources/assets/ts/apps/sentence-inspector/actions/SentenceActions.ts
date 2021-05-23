@@ -14,21 +14,14 @@ export default class SentenceActions {
     }
 
     public selectFragment(fragment: ISentenceFragmentEntity) {
-        if (fragment === null) {
-            return {
-                fragmentId: null,
-                sentenceNumber: null,
-                type: Actions.SelectFragment,
-            };
-        }
-
-        if (typeof window === 'object') {
-            window.location.hash = `#!${fragment.sentenceNumber}/${fragment.id}`;
+        if (fragment?.id && fragment?.sentenceNumber) {
+            if (typeof window === 'object') {
+                window.location.hash = `#!${fragment.sentenceNumber}/${fragment.id}`;
+            }
         }
 
         return {
-            fragmentId: fragment.id,
-            sentenceNumber: fragment.sentenceNumber,
+            fragment: fragment || null,
             type: Actions.SelectFragment,
         };
     }

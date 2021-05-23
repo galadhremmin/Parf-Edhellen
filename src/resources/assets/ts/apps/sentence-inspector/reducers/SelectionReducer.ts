@@ -4,17 +4,10 @@ import {
     ISelectionReducerState,
 } from './SelectionReducer._types';
 
-const SelectionReducer = (state: ISelectionReducerState = {
-    fragmentId: null,
-    sentenceNumber: null,
-}, action: ISelectionReducerAction) => {
+const SelectionReducer = (state: ISelectionReducerState = null, action: ISelectionReducerAction) => {
     switch (action.type) {
         case Actions.SelectFragment:
-            return {
-                ...state,
-                fragmentId: action.fragmentId || null,
-                sentenceNumber: action.sentenceNumber || null,
-            };
+            return action.fragment;
         default:
             return state;
     }

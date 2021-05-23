@@ -1,16 +1,18 @@
-import { Factory } from 'react';
-
+import { ComponentEventHandler } from '@root/components/Component._types';
 import {
     IFragmentInSentenceState,
+    IFragmentsReducerState,
     ITextState,
 } from '../reducers/FragmentsReducer._types';
-import { IProps as IFragmentInspectorProps } from './FragmentInspector._types';
+import { IEventProps as IInspectorEventProps } from './FragmentInspector._types';
 
-export interface IProps {
-    fragmentInspector: Factory<IFragmentInspectorProps>;
-    fragmentId: number;
+export interface IProps extends IEventProps {
+    fragment: IFragmentsReducerState;
     texts: ITextState[];
-    onFragmentClick?: (fragment: IFragmentInSentenceState) => void;
+}
+
+export interface IEventProps extends IInspectorEventProps {
+    onFragmentInSentenceClick?: ComponentEventHandler<IFragmentInSentenceState>;
 }
 
 export interface IRenderArgs {

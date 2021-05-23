@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import React from 'react';
 
-import { InputProps } from 'react-autosuggest';
+import { RenderInputComponentProps } from 'react-autosuggest';
 
-function DefaultInput<T>(props: InputProps<T>) {
+function DefaultInput(props: RenderInputComponentProps) {
     props.className = classNames('form-control', props.className);
     return <input {...(props as any)} />;
 }

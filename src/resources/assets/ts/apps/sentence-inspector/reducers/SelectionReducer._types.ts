@@ -1,11 +1,8 @@
 import { IReduxAction } from '@root/_types';
+import { IFragmentsReducerState } from './FragmentsReducer._types';
 
-export interface ISelectionReducerState {
-    fragmentId: number;
-    sentenceNumber: number;
-}
+export type ISelectionReducerState = IFragmentsReducerState;
 
 export interface ISelectionReducerAction extends IReduxAction {
-    fragmentId?: number;
-    sentenceNumber?: number;
+    fragment: ISelectionReducerState;
 }
