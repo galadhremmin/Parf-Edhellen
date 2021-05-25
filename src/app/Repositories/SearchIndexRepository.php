@@ -76,6 +76,7 @@ class SearchIndexRepository
         ];
 
         $keyword = SearchKeyword::create($data);
+        $keyword->save();
         return $keyword;
     }
 
