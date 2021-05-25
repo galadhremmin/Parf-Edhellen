@@ -548,9 +548,6 @@ class GlossRepository
                 $t = $child;
             }
         } else {
-            $glossIds = array_map(function ($v) {
-                return $v->id;
-            }, $glosses);
             $this->deleteGloss($gloss, $replaceId);
         }
 
@@ -721,7 +718,7 @@ class GlossRepository
             $g->sense->keywords()->delete();
         }
 
-        if (! $g->is_index) {
+        if (! $g->is_index && $replaceId !== null) {
             $g->sentence_fragments()->update([
                 'gloss_id' => $replaceId
             ]);

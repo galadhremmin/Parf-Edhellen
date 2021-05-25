@@ -170,21 +170,37 @@ class AuditTrailSubscriber
 
     public function onSentenceCreated(SentenceCreated $event) 
     {
+        if ($event->accountId === 0) {
+            return;
+        }
+
         $this->repository()->store(AuditTrail::ACTION_SENTENCE_ADD, $event->sentence, $event->accountId);
     }
 
     public function onSentenceEdited(SentenceEdited $event) 
     {
+        if ($event->accountId === 0) {
+            return;
+        }
+
         $this->repository()->store(AuditTrail::ACTION_SENTENCE_EDIT, $event->sentence, $event->accountId);
     }
 
     public function onGlossCreated(GlossCreated $event) 
     {
+        if ($event->accountId === 0) {
+            return;
+        }
+
         $this->repository()->store(AuditTrail::ACTION_GLOSS_ADD, $event->gloss, $event->accountId);
     }
 
     public function onGlossEdited(GlossEdited $event) 
     {
+        if ($event->accountId === 0) {
+            return;
+        }
+
         $this->repository()->store(AuditTrail::ACTION_GLOSS_EDIT, $event->gloss, $event->accountId);
     }
 

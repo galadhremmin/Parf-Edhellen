@@ -200,14 +200,9 @@ Breadcrumbs::register('contribution.confirm-destroy', function ($breadcrumbs, in
 Breadcrumbs::register('contribution.confirm-reject', function ($breadcrumbs, int $id)
 {
     $breadcrumbs->parent('contribution.show', $id);
-    $breadcrumbs->push('Confirm rejection', route('contribution.confirm-reject', ['contribution' => $id]));
+    $breadcrumbs->push('Confirm rejection', route('contribution.confirm-reject', ['id' => $id]));
 });
 
-Breadcrumbs::register('contribution.confirm-approve', function ($breadcrumbs, int $id)
-{
-    $breadcrumbs->parent('contribution.show', $id);
-    $breadcrumbs->push('Approved!', route('contribution.confirm-approve', ['contribution' => $id]));
-});
 // //////////////////////////////////////////////////////////////////////////////////////////////
 // Games
 

@@ -9,6 +9,10 @@ use App\Repositories\{
     KeywordRepository
 };
 use App\Helpers\StringHelper;
+use App\Jobs\{
+    ProcessGlossDeprecation,
+    ProcessGlossImport
+};
 use App\Models\{
     Account,
     Gloss, 
@@ -79,14 +83,20 @@ class ImportEldamoCommand extends Command
                         throw new \Exception(sprintf('Line %d is corrupt - entity is null or undefined. JSON: %s', $lineNumber, $line));
                     }
 
-                    $data = $this->createImportData($entity, $eldamoGroup, $neologismGroup, $eldamoAccount);
-                    if (! $data['gloss']->language_id) {
-                        $this->line(sprintf('Skipping %s (line %d): unsupported language %s.', $data['gloss']->external_id, $lineNumber, $entity['gloss']->language));
+                    if (isset($entity->allIds)) {
+                        $this->line('allIds records: '.count($entity->allIds));
+                        $this->deleteAllBut($eldamoGroup, $entity->allIds);
 
                     } else {
-                        $this->validateImports($lineNumber, $data);
-                        $this->import($lineNumber, $data);
-                        
+                        $data = $this->createImportData($entity, $eldamoGroup, $neologismGroup, $eldamoAccount);
+                        if (! $data['gloss']->language_id) {
+                            $this->line(sprintf('Skipping %s (line %d): unsupported language %s.', $data['gloss']->external_id, $lineNumber, $entity['gloss']->language));
+
+                        } else {
+                            $this->validateImports($lineNumber, $data);
+                            $this->import($lineNumber, $data);
+                            
+                        }
                     }
 
                     $lineNumber += 1;
@@ -186,50 +196,31 @@ class ImportEldamoCommand extends Command
         }
     }
 
+    private function deleteAllBut(GlossGroup $eldamoGroup, array $externalIds)
+    {
+        $ids = Gloss::active() //
+            ->where('gloss_group_id', $eldamoGroup->id) //
+            ->whereNotIn('external_id', $externalIds) //
+            ->select('id') //
+            ->get() //
+            ->pluck('id')
+            ->toArray();
+
+        if (count($ids) < 1) {
+            // no clean-up necessary.
+            return;
+        }
+
+        $this->line('!! dispatching deletion of '.count($ids).' entities');
+        ProcessGlossDeprecation::dispatch($ids);
+        $this->line('!! dispatched job');
+    }
+
     private function import(int $index, array $data): void
     {
-        $details      = $data['details'];
-        $gloss        = $data['gloss'];
-        $inflections  = $data['inflections'];
-        $keywords     = $data['keywords'];
-        $sense        = $data['sense'];
-        $translations = $data['translations'];
-        $word         = $data['word'];
-
-        $this->line($index.' '.$gloss->language->name.': '.$word.' ('.$sense.')');
-            
-        if ($gloss->id) {
-            $this->line("\tExisting ID: ".$gloss->id);
-        } else {
-            $this->line("\tNew gloss!");
-        }
-
-        $this->line("\tAccount ID: ".$gloss->account_id);
-        $this->line("\tExternal ID: ".$gloss->external_id);
-        $this->line("\tGloss group: ".$gloss->gloss_group_id);
-        $this->line("\tDetails: ".count($details));
-        $this->line("\tKeywords: ".count($keywords));
-        $this->line("\tClassification: ".($gloss->is_uncertain ? 'uncertain' : 'regular'));
-        $this->line("\tAttempting to save...");
-
-        try {
-            $importedGloss = $this->_glossRepository->saveGloss($word, $sense, $gloss, $translations, $keywords, $details, false);
-            $importedGloss->load('word', 'sense', 'gloss_group');
-        } catch (\Exception $ex) {
-            $this->error(sprintf('Failed to import gloss %s.', $gloss->external_id));
-            $this->error($ex->getMessage());
-            $this->error($ex->getTraceAsString());
-            dd([$word, $sense, $gloss, $translations, $keywords, $details]);
-        }
-
-        $this->line("\tSuccess! ID: ".$importedGloss->id);
-        $this->line("\tInflections: ".count($inflections));
-
-        foreach ($inflections as $inflection) {
-            $this->line("\t- ".$inflection->word);
-            $keyword = $this->_keywordRepository->createKeyword($importedGloss->word, $importedGloss->sense, $importedGloss, $inflection->word);
-            $this->line("\t\tID: ".$keyword->id);
-        }
+        $this->line($index.' - dispatching job');
+        ProcessGlossImport::dispatch($data);
+        $this->line($index.' - dispatched job');
     }
 
     private function setLanguage(object $data, Gloss $gloss): void
