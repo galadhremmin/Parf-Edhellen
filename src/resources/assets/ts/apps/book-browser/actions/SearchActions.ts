@@ -350,7 +350,7 @@ export default class SearchActions {
                 updateBrowserHistory,
             };
 
-            this.expandSearchResult(args);
+            this.expandSearchResult(args)(dispatch, getState);
         };
     }
 
