@@ -9,7 +9,8 @@ use Auth;
 use App\Helpers\StringHelper;
 use App\Events\{
     GlossCreated,
-    GlossEdited
+    GlossEdited,
+    SenseEdited
 };
 use App\Models\{ 
     Keyword,
@@ -311,6 +312,7 @@ class GlossRepository
 
         if (! $gloss->id && $gloss->external_id) {
             $existingGloss = Gloss::where('external_id', $gloss->external_id)
+                ->orderBy('id', 'desc')
                 ->first();
             
             if ($existingGloss) {
@@ -486,6 +488,7 @@ class GlossRepository
         if ($keywordsChanged) {
             if ($originalGloss) {
                 $originalGloss->keywords()->delete();
+                event(new GlossEdited($originalGloss, /* account id: */ 0));
             }
 
             $this->_keywordRepository->createKeyword($word, $sense, $gloss);
@@ -512,6 +515,8 @@ class GlossRepository
                     $this->_keywordRepository->createKeyword($keywordWord, $sense, null);
                 }
             }
+
+            event(new SenseEdited($sense));
         }
 
         // 13. Register an audit trail

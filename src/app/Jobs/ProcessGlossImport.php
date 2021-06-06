@@ -59,7 +59,5 @@ class ProcessGlossImport implements ShouldQueue
                 $keyword = $keywordRepository->createKeyword($importedGloss->word, $importedGloss->sense, $importedGloss, $inflection->word);
             }
         }
-
-        event(new GlossEdited($importedGloss, /* account ID: */ 0));
     }
 }

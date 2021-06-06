@@ -124,7 +124,7 @@ class Gloss extends ModelBase implements Interfaces\IHasFriendlyName
 
     public function getLatestVersion() 
     {
-        return $this->is_latest 
+        return $this->is_latest
             ? $this
             : Gloss::where([
                 [ 'origin_gloss_id', '=', $this->origin_gloss_id ?: $this->id ],
