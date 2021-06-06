@@ -47,15 +47,17 @@ class ProcessGlossImport implements ShouldQueue
         $translations = $data['translations'];
         $word         = $data['word'];
 
+        $changed = false;
         try {
-            $importedGloss = $glossRepository->saveGloss($word, $sense, $gloss, $translations, $keywords, $details, false);
-            $importedGloss->load('word', 'sense', 'gloss_group');
+            $importedGloss = $glossRepository->saveGloss($word, $sense, $gloss, $translations, $keywords, $details, false, $changed);
         } catch (\Exception $ex) {
             throw $ex;
         }
 
-        foreach ($inflections as $inflection) {
-            $keyword = $keywordRepository->createKeyword($importedGloss->word, $importedGloss->sense, $importedGloss, $inflection->word);
+        if ($changed) {
+            foreach ($inflections as $inflection) {
+                $keyword = $keywordRepository->createKeyword($importedGloss->word, $importedGloss->sense, $importedGloss, $inflection->word);
+            }
         }
 
         event(new GlossEdited($importedGloss, /* account ID: */ 0));
