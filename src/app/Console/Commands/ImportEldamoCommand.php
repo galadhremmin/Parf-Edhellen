@@ -212,14 +212,14 @@ class ImportEldamoCommand extends Command
         }
 
         $this->line('!! dispatching deletion of '.count($ids).' entities');
-        ProcessGlossDeprecation::dispatch($ids);
+        ProcessGlossDeprecation::dispatch($ids)->onQueue('import');
         $this->line('!! dispatched job');
     }
 
     private function import(int $index, array $data): void
     {
         $this->line($index.' - dispatching job');
-        ProcessGlossImport::dispatch($data);
+        ProcessGlossImport::dispatch($data)->onQueue('import');
         $this->line($index.' - dispatched job');
     }
 

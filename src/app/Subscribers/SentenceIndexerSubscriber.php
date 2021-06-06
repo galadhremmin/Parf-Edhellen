@@ -26,6 +26,7 @@ use App\Events\{
     SentenceDestroyed,
     SentenceEdited
 };
+use App\Jobs\ProcessSearchIndexCreation;
 
 class SentenceIndexerSubscriber
 {
@@ -84,7 +85,8 @@ class SentenceIndexerSubscriber
     {
         foreach ($sentence->sentence_fragments as $fragment) {
             foreach ($fragment->keywords as $keyword) {
-                $this->_searchIndexRepository->createIndex($fragment, $keyword->wordEntity, $keyword->keyword);
+                ProcessSearchIndexCreation::dispatch($fragment, $keyword->wordEntity, $keyword->keyword) //
+                    ->onQueue('indexing');
             }
         }
     }

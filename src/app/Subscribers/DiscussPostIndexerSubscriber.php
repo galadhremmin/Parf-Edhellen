@@ -27,6 +27,7 @@ use App\Events\{
     ForumPostCreated,
     ForumPostEdited
 };
+use App\Jobs\ProcessSearchIndexCreation;
 
 class DiscussPostIndexerSubscriber
 {
@@ -82,7 +83,8 @@ class DiscussPostIndexerSubscriber
             $keywords = $this->_analyzer->detectKeyPhrases($post->content);
             foreach ($keywords as $keyword) {
                 $word = $this->_wordRepository->save($keyword, $post->account_id);
-                $this->_searchIndexRepository->createIndex($post, $word);
+                ProcessSearchIndexCreation::dispatch($post, $word) //
+                    ->onQueue('indexing');
             }
         }
     }

@@ -27,6 +27,7 @@ use App\Events\{
     GlossDestroyed,
     GlossEdited
 };
+use App\Jobs\ProcessSearchIndexCreation;
 
 class GlossIndexerSubscriber
 {
@@ -82,7 +83,8 @@ class GlossIndexerSubscriber
     {
         $this->delete($gloss);
         foreach ($gloss->keywords as $keyword) {
-            $this->_searchIndexRepository->createIndex($gloss, $keyword->wordEntity, $keyword->keyword);
+            ProcessSearchIndexCreation::dispatch($gloss, $keyword->wordEntity, $keyword->keyword) //
+                ->onQueue('indexing');
         }
     }
 }
