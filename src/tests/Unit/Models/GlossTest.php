@@ -58,4 +58,12 @@ class GlossTest extends TestCase
         $clonedGloss->created_at = Carbon::now();
         $this->assertTrue($this->_gloss->equals($clonedGloss));
     }
+    
+    public function testDoesRejectInvalidValues(): void
+    {
+        $this->assertFalse($this->_gloss->equals(null));
+        $this->assertFalse($this->_gloss->equals([]));
+        $this->assertFalse($this->_gloss->equals(0));
+        $this->assertFalse($this->_gloss->equals(''));
+    }
 }

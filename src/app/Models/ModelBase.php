@@ -29,8 +29,12 @@ abstract class ModelBase extends Model
         return $date->toAtomString();
     }
 
-    public function equals(Gloss $gloss)
+    public function equals($gloss)
     {
+        if ($gloss === null || $gloss instanceof Gloss === false) {
+            return false;
+        }
+
         $equals = $this === $gloss;
 
         if (! $equals) {
