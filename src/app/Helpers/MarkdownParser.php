@@ -236,13 +236,11 @@ class MarkdownParser extends \Parsedown
 
     protected function inlineDerivatives($Excerpt)
     {
-        dd($Excerpt);
         return [];
     }
 
     protected function inlineDerivations($Excerpt)
     {
-        dd($Excerpt);
         return [];
     }
 

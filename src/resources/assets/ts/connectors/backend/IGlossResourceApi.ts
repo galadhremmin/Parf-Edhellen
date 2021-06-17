@@ -20,6 +20,7 @@ export interface IGlossEntity {
     isRejected?: boolean;
     isUncertain?: boolean;
     keywords?: IKeywordEntity[];
+    label?: string;
     languageId: number;
     originGlossId?: number;
     phonetic?: null;

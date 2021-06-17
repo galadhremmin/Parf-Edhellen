@@ -245,7 +245,7 @@ class BookAdapter
             })->all();
 
             unset(
-                $gloss->word_id, 
+                $gloss->word_id,
                 $gloss->is_deleted,
                 $gloss->child_gloss_id,
                 $gloss->updated_at,

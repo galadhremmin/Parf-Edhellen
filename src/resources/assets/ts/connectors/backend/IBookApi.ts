@@ -84,6 +84,7 @@ export interface IBookGlossEntity {
     isLatest: boolean;
     isRejected: boolean;
     isUncertain: boolean;
+    label: string;
     language: ILanguageEntity;
     languageId: number;
     normalizedWord: string;

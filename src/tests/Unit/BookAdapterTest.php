@@ -79,7 +79,7 @@ class BookAdapterTest extends TestCase
         $gloss0->refresh();
         $gloss1->refresh();
 
-        $gloss0->load('translations', 'gloss_details');        
+        $gloss0->load('translations', 'gloss_details');
         $gloss1->load('translations', 'gloss_details');
 
         $glossesFromRepository = $this->getGlossRepository()->getGlossVersions([$gloss0->id, $gloss1->id])
@@ -106,16 +106,16 @@ class BookAdapterTest extends TestCase
         $this->assertFalse($adapted['single']);
 
         $this->assertEquals(1, count($adapted['sections']));
-        $this->assertEquals(2, count($adapted['sections'][0]['glosses']));
+        $this->assertEquals(2, count($adapted['sections'][0]['entities']));
 
-        $this->assertEquals($gloss1->id, $adapted['sections'][0]['glosses'][0]->id);
-        $this->assertEquals($gloss0->id, $adapted['sections'][0]['glosses'][1]->id);
+        $this->assertEquals($gloss1->id, $adapted['sections'][0]['entities'][0]->id);
+        $this->assertEquals($gloss0->id, $adapted['sections'][0]['entities'][1]->id);
 
-        $this->assertEquals($comments[$gloss1->id], $adapted['sections'][0]['glosses'][0]->comment_count);
-        $this->assertEquals($comments[$gloss0->id], $adapted['sections'][0]['glosses'][1]->comment_count);
+        $this->assertEquals($comments[$gloss1->id], $adapted['sections'][0]['entities'][0]->comment_count);
+        $this->assertEquals($comments[$gloss0->id], $adapted['sections'][0]['entities'][1]->comment_count);
 
-        $this->assertEquals($adaptedFromRepository['sections'][0]['glosses'][0]->id, $adapted['sections'][0]['glosses'][0]->id);
-        $this->assertEquals($adaptedFromRepository['sections'][0]['glosses'][1]->id, $adapted['sections'][0]['glosses'][1]->id);
+        $this->assertEquals($adaptedFromRepository['sections'][0]['entities'][0]->id, $adapted['sections'][0]['entities'][0]->id);
+        $this->assertEquals($adaptedFromRepository['sections'][0]['entities'][1]->id, $adapted['sections'][0]['entities'][1]->id);
 
         $this->assertEquals($adaptedFromRepository, $adapted);
     }
@@ -128,7 +128,7 @@ class BookAdapterTest extends TestCase
 
         $glossesFromRepository = $this->getGlossRepository()->getGlossVersions([$gloss->id])->all();
         $adapted = $this->_adapter->adaptGlosses($glossesFromRepository, [], [], $word);
-        $adaptedGlossary = &$adapted['sections'][0]['glosses'];
+        $adaptedGlossary = &$adapted['sections'][0]['entities'];
 
         $this->assertEquals(1, count($adaptedGlossary));
         $this->assertNotNull($adaptedGlossary[0]->gloss_details);
@@ -152,7 +152,7 @@ class BookAdapterTest extends TestCase
         }
 
         $adapted = $this->_adapter->adaptGlosses($glossary, [], [], 'mal');
-        $adaptedGlossary = &$adapted['sections'][0]['glosses'];
+        $adaptedGlossary = &$adapted['sections'][0]['entities'];
 
         for ($i = 0; $i < count($expected); $i += 1) {
             $this->assertEquals($expected[$i], $adaptedGlossary[$i]->word);
@@ -207,7 +207,7 @@ class BookAdapterTest extends TestCase
 
         $versions = $this->getGlossRepository()->getVersions($gloss0->id); 
         $adapted = $this->_adapter->adaptGlosses($versions, [], [], $word, false, false);
-        $glosses = & $adapted['sections'][0]['glosses'];
+        $glosses = & $adapted['sections'][0]['entities'];
 
         $this->assertEquals(4, count($glosses));
 

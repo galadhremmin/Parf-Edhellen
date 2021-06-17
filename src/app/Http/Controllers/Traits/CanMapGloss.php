@@ -32,6 +32,10 @@ trait CanMapGloss
             ? intval($request->input('gloss_group_id'))
             : null;
 
+        $gloss->label = $request->has('label')
+            ? $request->input('label')
+            : null;
+
         $gloss->tengwar = $request->has('tengwar')
             ? $request->input('tengwar')
             : null;

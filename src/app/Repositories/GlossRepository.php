@@ -331,22 +331,7 @@ class GlossRepository
                        $originalGloss->word_id !== $word->id;
             
             if (! $changed) {
-                $newAttributes = $gloss->attributesToArray();
-                $oldAttributes = $originalGloss->attributesToArray();
-
-                foreach ($newAttributes as $key => $value) {
-                    // Skip dates, as they are bound to be different.
-                    if ($key === 'created_at' || $key === 'updated_at') {
-                        continue;
-                    }
-
-                    // avoid perfect equality (===/!==) because the value in the DB
-                    // can diverge from the one passed from the view.
-                    if ($oldAttributes[$key] != $value) {
-                        $changed = true;
-                        break;
-                    }
-                }
+                $changed = ! $originalGloss->equals($gloss);
             }
             
             // If no other parameters have changed, iterate through the list of translations 
@@ -654,7 +639,7 @@ class GlossRepository
             'a.nickname as account_name', 'w.normalized_word', 'g.is_index', 'g.created_at', 'g.gloss_group_id',
             'tg.name as gloss_group_name', 'tg.is_canon', 'tg.external_link_format', 'g.is_uncertain',
             'g.external_id', 'g.is_latest', 'g.is_rejected', 'g.origin_gloss_id', 'g.sense_id',
-            'tg.label as gloss_group_label'
+            'tg.label as gloss_group_label', 'g.label'
         ];
 
         $q0 = self::createGlossQueryWithoutDetails($columns, true)

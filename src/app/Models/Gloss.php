@@ -9,7 +9,7 @@ class Gloss extends ModelBase implements Interfaces\IHasFriendlyName
     protected $fillable = [ 
         'account_id', 'language_id', 'word_id', 'speech_id', 'gloss_group_id', 'sense', 
         'source', 'comments', 'notes', 'is_uncertain', 'is_rejected', 'tengwar',
-        'word', 'external_id', 'has_details'
+        'word', 'external_id', 'has_details', 'label'
     ];
 
     public function translations() 

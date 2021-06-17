@@ -88,6 +88,7 @@ trait CanCreateGloss
         $gloss->tengwar = 'yljjh6';
         $gloss->speech_id = $speechId;
         $gloss->external_id = 'UA-Unit-GlossRepository-'.$method;
+        $gloss->label = null;
 
         $translations = $this->createTranslations();
         

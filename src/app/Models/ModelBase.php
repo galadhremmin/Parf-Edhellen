@@ -8,8 +8,8 @@ use DateTimeInterface;
 abstract class ModelBase extends Model
 {
     protected $dates = [
-        'created_at',
-        'updated_at'
+        Model::CREATED_AT,
+        Model::UPDATED_AT
         // 'deleted_at' <-- presently not supported
     ];
 
@@ -27,5 +27,38 @@ abstract class ModelBase extends Model
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->toAtomString();
+    }
+
+    public function equals(Gloss $gloss)
+    {
+        $equals = $this === $gloss;
+
+        if (! $equals) {
+            $equals = true;
+            $attributeNames = $this->getAttributes();
+
+            foreach ($attributeNames as $attributeName => $attribute) {
+                if ($attributeName === $this->primaryKey ||
+                    in_array($attributeName, $this->dates) ||
+                    ! array_key_exists($attributeName, $gloss->attributes)) {
+                    continue;
+                }
+
+                $otherAttribute = $gloss->getAttribute($attributeName);
+                if ($attribute instanceof ModelBase) {
+                    $equals = $attribute->equals($otherAttribute);
+                } else {
+                    // Deliberately use `==` to support type casting. A typical example
+                    // is supporting boolean values that are stored as `1/0` in the database.
+                    $equals = $attribute == $otherAttribute;
+                }
+
+                if (! $equals) {
+                    break;
+                }
+            }
+        }
+
+        return $equals;
     }
 }

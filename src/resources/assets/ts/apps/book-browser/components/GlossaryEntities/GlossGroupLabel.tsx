@@ -4,15 +4,16 @@ import { IProps } from './GlossGroupLabel._types';
 const GlossGroupLabel = (props: IProps) => {
     const {
         glossGroupLabel,
+        label: glossLabel,
     } = props.gloss;
 
-    const hasLabel = !! glossGroupLabel;
-    if (! hasLabel) {
+    const label = glossLabel ?? glossGroupLabel;
+    if (! label) {
         return null;
     }
 
     return <span className="gloss-word__neologism">
-        {hasLabel && <span className="label" title={glossGroupLabel}>{glossGroupLabel}</span>}
+        <span className="label" title={label}>{label}</span>
     </span>;
 };
 

@@ -251,6 +251,19 @@ function GlossForm(props: IProps) {
                             value={gloss.glossGroupId}
                         />
                     </div>
+                    <div className="form-group">
+                        <label htmlFor="ed-gloss-label">
+                            Label
+                            <OptionalLabel />
+                        </label>
+                        <input type="text"
+                            className="form-control"
+                            id="ed-gloss-label"
+                            value={gloss.label}
+                            onChange={_onChangeNative('label')}
+                            required={false}
+                        />
+                    </div>
                 </Panel>
             </div>
         </div>

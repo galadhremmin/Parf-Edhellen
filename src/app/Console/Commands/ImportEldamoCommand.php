@@ -45,6 +45,9 @@ class ImportEldamoCommand extends Command
     private $_languageMap;
     private $_speechMap;
 
+    private $_glossGroups;
+    private $_eldamoAccount;
+
     public function __construct(GlossRepository $glossRepository, KeywordRepository $keywordRepository)
     {
         parent::__construct();
@@ -53,6 +56,19 @@ class ImportEldamoCommand extends Command
 
         $this->_languageMap = null;
         $this->_speechMap   = null;
+
+        $this->_glossGroups = [
+            'default'      => GlossGroup::where('name', 'Eldamo')->firstOrFail(),
+            'adaptations'  => GlossGroup::where('name', 'Eldamo - adaptations')->firstOrFail(),
+            'fan invented' => GlossGroup::where('name', 'Eldamo - fan invented')->firstOrFail()
+        ];
+
+        // Find the user account for an existing gloss from Eldamo. 
+        $existing = Gloss::where('gloss_group_id', $this->_glossGroups['default'])
+            ->select('account_id')
+            ->firstOrFail();
+
+        $this->_eldamoAccount = Account::findOrFail($existing->account_id); // TODO -- what exactly do we do if the account doesn't exist?
     }
 
     /**
@@ -67,10 +83,6 @@ class ImportEldamoCommand extends Command
             $this->error($path.' does not exist.');
             return;
         }
-
-        $eldamoGroup    = $this->getEldamo();
-        $neologismGroup = $this->getNeologisms();
-        $eldamoAccount  = $this->getEldamoAccount($eldamoGroup);
         
         // Create glossary by reading line by line (expecting jsonl file).
         if ($fp = fopen($path, 'r')) {
@@ -85,10 +97,12 @@ class ImportEldamoCommand extends Command
 
                     if (isset($entity->allIds)) {
                         $this->line('allIds records: '.count($entity->allIds));
-                        $this->deleteAllBut($eldamoGroup, $entity->allIds);
+                        foreach ($this->_glossGroups as $_ => $group) {
+                            $this->deleteAllBut($group, $entity->allIds);
+                        }
 
                     } else {
-                        $data = $this->createImportData($entity, $eldamoGroup, $neologismGroup, $eldamoAccount);
+                        $data = $this->createImportData($entity);
                         if (! $data['gloss']->language_id) {
                             $this->line(sprintf('Skipping %s (line %d): unsupported language %s.', $data['gloss']->external_id, $lineNumber, $entity['gloss']->language));
 
@@ -108,11 +122,11 @@ class ImportEldamoCommand extends Command
         }
     }
 
-    private function createImportData(object $data, GlossGroup $eldamoGroup, GlossGroup $neologismGroup, Account $eldamoAccount): array
+    private function createImportData(object $data): array
     {
         $gloss = Gloss::firstOrNew(['external_id' => $data->gloss->id]);
 
-        $gloss->account_id     = $eldamoAccount->id;
+        $gloss->account_id     = $this->_eldamoAccount->id;
         $gloss->source         = implode('; ', $data->sources);
         $gloss->comments       = $data->gloss->notes;
         $gloss->is_deleted     = 0;
@@ -125,13 +139,29 @@ class ImportEldamoCommand extends Command
                                  $data->gloss->mark === '⚠️';
         $gloss->is_rejected    = $data->gloss->mark === '-';
 
-        if ($data->gloss->mark === '!' ||
-            $data->gloss->mark === '?' ||
-            $data->gloss->mark === '⚠️') {
-            $gloss->gloss_group_id = $neologismGroup->id;
-        } else {
-            $gloss->gloss_group_id = $eldamoGroup->id;
+        $groupName = 'default';
+        switch ($data->gloss->mark) {
+            case '!':
+                // ! marks words that are pure neologisms: fabrications and inventions by authors other than Tolkien
+                $groupName = 'fan invented';
+                break;
+            case '^':
+                $groupName = 'adaptations';
+                break;
+            case '#':
+                $gloss->label = 'Derived';
+                break;
+            case '?':
+                $gloss->label = 'Speculative';
+                break;
+            case '*':
+                $gloss->label = 'Reconstructed';
+                break;
+            case '⚠️':
+                $gloss->label = 'Not recommended';
+                break;
         }
+        $gloss->gloss_group_id = $this->_glossGroups[$groupName];
 
         $this->setLanguage($data, $gloss);
         $this->setSpeech($data, $gloss);
@@ -257,8 +287,9 @@ class ImportEldamoCommand extends Command
             'Derivations'           => 30,
             'Cognates'              => 40,
             'Element in'            => 50,
-            'Phonetic Developments' => 60,
-            'Inflections'           => 70,
+            'Elements'              => 60,
+            'Phonetic Developments' => 70,
+            'Inflections'           => 80,
         ];
 
         $details = array_map(function ($d) use($gloss, $order) {
@@ -302,26 +333,6 @@ class ImportEldamoCommand extends Command
         return array_map(function ($v) {
             return new Translation(['translation' => $v]);
         }, $translations);
-    }
-
-    private function getEldamo(): GlossGroup
-    {
-        return GlossGroup::where('name', 'Eldamo')->firstOrFail();
-    }
-
-    private function getNeologisms(): GlossGroup
-    {
-        return GlossGroup::where('name', 'Neologism')->firstOrFail();
-    }
-
-    private function getEldamoAccount(GlossGroup $group): Account
-    {
-        // Find the user account for an existing gloss from Eldamo. 
-        $existing = Gloss::where('gloss_group_id', $group->id)
-            ->select('account_id')
-            ->firstOrFail();
-
-        return Account::findOrFail($existing->account_id);
     }
 
     private function getLanguageMap()
