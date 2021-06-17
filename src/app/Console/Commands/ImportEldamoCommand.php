@@ -352,7 +352,7 @@ class ImportEldamoCommand extends Command
             'eon'  => 0, // 'early old noldorin',
             'eoq'  => 0, // 'early old qenya',
             'ep'   => 'early primitive elvish',
-            'eq'   => 'qenya', // <~~ deviation from "early quenya"!
+            'eq'   => 'early quenya',
             'et'   => 'solosimpi', // 'early telerin',
             'fal'  => 'doriathrin', // 'falathrin',
             'g'    => 'gnomish',
