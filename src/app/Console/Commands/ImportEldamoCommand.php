@@ -2,6 +2,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 
 use App\Repositories\{
@@ -57,18 +58,8 @@ class ImportEldamoCommand extends Command
         $this->_languageMap = null;
         $this->_speechMap   = null;
 
-        $this->_glossGroups = [
-            'default'      => GlossGroup::where('name', 'Eldamo')->firstOrFail(),
-            'adaptations'  => GlossGroup::where('name', 'Eldamo - adaptations')->firstOrFail(),
-            'fan invented' => GlossGroup::where('name', 'Eldamo - fan invented')->firstOrFail()
-        ];
-
-        // Find the user account for an existing gloss from Eldamo. 
-        $existing = Gloss::where('gloss_group_id', $this->_glossGroups['default'])
-            ->select('account_id')
-            ->firstOrFail();
-
-        $this->_eldamoAccount = Account::findOrFail($existing->account_id); // TODO -- what exactly do we do if the account doesn't exist?
+        $this->_glossGroups = [];
+        $this->_eldamoAccount = null;
     }
 
     /**
@@ -78,6 +69,8 @@ class ImportEldamoCommand extends Command
      */
     public function handle()
     {
+        $this->initializeImport();
+        
         $path = $this->argument('source');
         if (! file_exists($path)) {
             $this->error($path.' does not exist.');
@@ -122,6 +115,26 @@ class ImportEldamoCommand extends Command
         }
     }
 
+    private function initializeImport()
+    {
+        try {
+            $this->_glossGroups = [
+                'default'      => GlossGroup::where('name', 'Eldamo')->firstOrFail(),
+                'adaptations'  => GlossGroup::where('name', 'Eldamo - fan adaptations')->firstOrFail(),
+                'fan invented' => GlossGroup::where('name', 'Eldamo - fan inventions')->firstOrFail()
+            ];
+        } catch (ModelNotFoundException $ex) {
+            throw new ModelNotFoundException("Failed to initialize import of Eldamo dataset because the required gloss groups do not exist.", $ex->getCode(), $ex);
+        }
+
+        // Find the user account for an existing gloss from Eldamo. 
+        $existing = Gloss::where('gloss_group_id', $this->_glossGroups['default'])
+            ->select('account_id')
+            ->firstOrFail();
+
+        $this->_eldamoAccount = Account::findOrFail($existing->account_id); // TODO -- what exactly do we do if the account doesn't exist?
+    }
+
     private function createImportData(object $data): array
     {
         $gloss = Gloss::firstOrNew(['external_id' => $data->gloss->id]);
@@ -134,7 +147,6 @@ class ImportEldamoCommand extends Command
                                  $data->gloss->mark === '*' ||
                                  $data->gloss->mark === '‽' ||
                                  $data->gloss->mark === '!' ||
-                                 $data->gloss->mark === '#' ||
                                  $data->gloss->mark === '^' ||
                                  $data->gloss->mark === '⚠️';
         $gloss->is_rejected    = $data->gloss->mark === '-';
@@ -148,20 +160,29 @@ class ImportEldamoCommand extends Command
             case '^':
                 $groupName = 'adaptations';
                 break;
-            case '#':
-                $gloss->label = 'Derived';
-                break;
             case '?':
                 $gloss->label = 'Speculative';
                 break;
             case '*':
                 $gloss->label = 'Reconstructed';
                 break;
+            /*  
+                For your purposes, you may not want to indicate "#" markers. Those are for items derived from well
+                known principles from attested forms, and are pretty "safe". I think marking those as "Derived" would
+                confuse your target audience of less knowledgeable students.
+            case '#':
+                $gloss->label = 'Derived';
+                break;
+            */
+            /*
+                You may want to be careful about using deprecated tags and ⚠️ markers. Both are reflections
+                of my opinion only.
             case '⚠️':
                 $gloss->label = 'Not recommended';
                 break;
+            */
         }
-        $gloss->gloss_group_id = $this->_glossGroups[$groupName];
+        $gloss->gloss_group_id = $this->_glossGroups[$groupName]->id;
 
         $this->setLanguage($data, $gloss);
         $this->setSpeech($data, $gloss);

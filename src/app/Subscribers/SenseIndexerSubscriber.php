@@ -59,9 +59,21 @@ class SenseIndexerSubscriber
     private function update(Sense $sense)
     {
         $this->delete($sense);
-        foreach ($sense->keywords as $keyword) {
-            ProcessSearchIndexCreation::dispatch($sense, $keyword->wordEntity) //
-                ->onQueue('indexing');
+
+        $keywords = [];
+        $glosses = $sense->glosses()
+            ->where('is_latest', 1)
+            ->where('is_deleted', 0)
+            ->get();
+
+        foreach ($glosses as $gloss) {
+            foreach ($gloss->keywords as $keyword) {
+                if (! isset($keywords[$keyword])) {
+                    ProcessSearchIndexCreation::dispatch($sense, $keyword->wordEntity) //
+                        ->onQueue('indexing');
+                    $keywords[$keyword] = true;
+                }
+            }
         }
     }
 }

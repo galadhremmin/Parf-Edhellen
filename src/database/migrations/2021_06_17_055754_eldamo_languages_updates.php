@@ -20,19 +20,19 @@ class EldamoLanguagesUpdates extends Migration
     public function up()
     {
         GlossGroup::create([
-            'name' => 'Eldamo - fan invented',
+            'name' => 'Eldamo - fan inventions',
             'external_link_format' => 'http://eldamo.org/content/words/word-{ExternalID}.html',
             'is_canon' => 0,
             'is_old' => 0,
-            'label' => 'fan invented'
+            'label' => 'fan invention'
         ]);
 
         GlossGroup::create([
-            'name' => 'Eldamo - adaptations',
+            'name' => 'Eldamo - fan adaptations',
             'external_link_format' => 'http://eldamo.org/content/words/word-{ExternalID}.html',
             'is_canon' => 0,
             'is_old' => 0,
-            'label' => 'adaptation'
+            'label' => 'fan adaptation'
         ]);
 
         $unitTests = GlossGroup::where('name', 'Unit tests')->first();
@@ -60,7 +60,7 @@ class EldamoLanguagesUpdates extends Migration
     public function down()
     {
         Language::where('name', 'Early Quenya')->delete();
-        GlossGroup::where('name', 'Eldamo - fan invented')->delete();
-        GlossGroup::where('name', 'Eldamo - adaptations')->delete();
+        GlossGroup::where('name', 'Eldamo - fan inventions')->delete();
+        GlossGroup::where('name', 'Eldamo - fan adaptations')->delete();
     }
 }

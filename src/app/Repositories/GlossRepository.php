@@ -385,18 +385,6 @@ class GlossRepository
                 $gloss = $gloss->replicate();
                 $gloss->origin_gloss_id = $originalGloss->origin_gloss_id ?: $originalGloss->id;
                 $gloss->child_gloss_id = null;
-
-                // 6. If the sense has changed, check whether the previous sense should be excluded from
-                // the keywords table, which should only contain keywords to current senses.
-                if ($originalGloss->sense_id !== $sense->id) {
-                    $originalSense = Sense::find($originalGloss->sense_id);
-
-                    // is the original gloss the only one associated with this sense?
-                    if ($originalSense !== null && $originalSense->glosses()->count() === 1) {
-                        // delete the sense's keywords as the sense is no longer in use.
-                        $originalSense->keywords()->delete();
-                    }
-                }
             }
         } else {
             $gloss->origin_gloss_id = null;
@@ -431,87 +419,47 @@ class GlossRepository
                 ]);
             }
         }
-        
-        // 9. Process keywords -- filter through the keywords and remove keywords that
-        // match the gloss and the translation's word, as these are managed separately.
+
+        // 9. Save keywords, if they've changed
         $translationStrings = array_map(function ($t) {
             return $t->translation;
         }, $translations);
-        $keywords = array_filter($keywords, function ($w) use($wordString, $translationStrings) {
-            return $w !== $wordString && ! in_array($w, $translationStrings);
-        });
-        
-        // 10. Remove existing keywords, if they have changed
-        $keywordsChanged = $translationsChanged || $changed;
-        if ($originalGloss !== null && ! $keywordsChanged) {
-            // transform original keyword entities to an array of strings.
-            $originalKeywords = array_merge(
-                $originalGloss->keywords->map(function ($k) {
-                        return $k->keyword;
-                    })->toArray(),
 
-                $originalGloss->sense->keywords()
-                    ->whereNull('gloss_id')
-                    ->get()
-                    ->map(function ($k) {
-                        return $k->keyword;
-                    })->toArray()
-            );
+        $newKeywords = array_unique(array_merge($keywords, [ $wordString ], $translationStrings));
+        $keywordsChanged = $changed;
 
-            // Create an array of keywords for the original entity as well as the new entity, and sort them. 
-            // Once sorted, simple equality check can be carried out to determine whether the arrays are identical.
-            $originalKeywords = array_unique($originalKeywords);
-            $newKeywords = array_merge($keywords, [ $wordString ], $translationStrings);
+        if (! $keywordsChanged) {
+            $oldKeywords = $originalGloss !== null ? array_unique(
+                $originalGloss->keywords->map(function ($f) {
+                    return $f->keyword;
+                })->toArray()
+            ) : [];
 
-            sort($originalKeywords);
             sort($newKeywords);
-            
-            $keywordsChanged = $originalKeywords !== $newKeywords;
+            sort($oldKeywords);
+
+            $keywordsChanged = $newKeywords !== $oldKeywords;
         }
 
-        // 11. save gloss and word as keywords on the translation, if changed.
         if ($keywordsChanged) {
-            if ($originalGloss) {
-                $originalGloss->keywords()->delete();
-                event(new GlossEdited($originalGloss, /* account id: */ 0));
-            }
+            $gloss->keywords()->delete();
 
-            $this->_keywordRepository->createKeyword($word, $sense, $gloss);
-
-            foreach ($translationStrings as $translationString) {
-                $translationWord = $this->_wordRepository->save($translationString, $gloss->account_id);
-
-                if ($translationWord->id !== $gloss->word_id) {
-                    $this->_keywordRepository->createKeyword($translationWord, $sense, $gloss);
-                }
-            }
-
-            // 12. Register keywords on the sense
-            // 12a. Delete existing keywords associated with the sense.
-            if ($resetKeywords) {
-                $sense->keywords()->whereNull('gloss_id')->delete();
-            }
-
-            // 12b. Recreate the keywords for the sense.
-            foreach ($keywords as $keyword) {
+            foreach ($newKeywords as $keyword) {
                 $keywordWord = $this->_wordRepository->save($keyword, $gloss->account_id);
-
-                if ($sense->keywords()->where('word_id', $keywordWord->id)->count() < 1) {
-                    $this->_keywordRepository->createKeyword($keywordWord, $sense, null);
-                }
+                $this->_keywordRepository->createKeyword($keywordWord, $sense, $gloss);
             }
-
-            event(new SenseEdited($sense));
         }
 
         // 13. Register an audit trail
         if ($changed || $keywordsChanged || $originalGloss === null) {
-
-            $event = ($originalGloss === null)
-                ? new GlossCreated($gloss, $gloss->account_id) 
-                : new GlossEdited($gloss, Auth::check() ? Auth::user()->id : $gloss->account_id);
+            $newGloss = $originalGloss === null;
+            $event = $newGloss ? new GlossCreated($gloss, $gloss->account_id) //
+                               : new GlossEdited($gloss, Auth::check() ? Auth::user()->id : $gloss->account_id);
             
             event($event);
+            if ($newGloss || $keywordsChanged) {
+                event(new SenseEdited($sense));
+            }
         }
 
         return $gloss;

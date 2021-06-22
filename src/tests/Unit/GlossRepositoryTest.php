@@ -6,8 +6,10 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Auth;
+use Queue;
 
 use Tests\Unit\Traits\CanCreateGloss;
+use App\Jobs\ProcessSearchIndexCreation;
 use App\Models\{
     Gloss,
     Translation
@@ -24,7 +26,8 @@ class GlossRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->setUpGlosses();      
+        $this->setUpGlosses();
+        Queue::fake();
     }
 
     protected function tearDown(): void
@@ -47,8 +50,8 @@ class GlossRepositoryTest extends TestCase
         $existingGloss = $this->getGlossRepository()->saveGloss($word . ' origin', $sense, $gloss, $translations, $keywords, $details);
         // Create a new gloss, derived from the origin gloss. 
         $newGloss = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
-        $savedGloss = Gloss::findOrFail($newGloss->id);
 
+        $savedGloss = Gloss::findOrFail($newGloss->id);
         $existingGloss->refresh();
 
         $this->assertEquals($gloss->language_id, $savedGloss->language_id);
@@ -77,7 +80,7 @@ class GlossRepositoryTest extends TestCase
             return $k->keyword;
         })->toArray();
         $expected = array_unique(
-            array_merge([$word], array_map(function ($t) {
+            array_merge([$word], $keywords, array_map(function ($t) {
                 return $t->translation;
             }, $translations))
         );
@@ -86,13 +89,15 @@ class GlossRepositoryTest extends TestCase
         sort($expected);
 
         $this->assertEquals($expected, $actual);
-        $this->assertEquals(0, $existingGloss->keywords()->count());
+        $this->assertEquals(count($expected), $existingGloss->keywords()->count());
 
-        $actual = $savedGloss->sense->keywords()->whereNull('gloss_id')->get()
+        $actual = $savedGloss->sense->keywords
             ->map(function ($k) {
                 return $k->keyword;
             })->toArray();
-        $expected = $keywords;
+        $expected = $savedGloss->keywords->merge($existingGloss->keywords)->map(function ($f) {
+            return $f->keyword;
+        })->toArray();
 
         sort($actual);
         sort($expected);

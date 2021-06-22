@@ -6,6 +6,7 @@ use Tests\TestCase;
 
 use Auth;
 use DB;
+use Queue;
 
 use Tests\Unit\Traits\{
     CanCreateGloss
@@ -36,6 +37,7 @@ class DiscussRepositoryTest extends TestCase
         parent::setUp();
         DB::beginTransaction();
         $this->setUpGlosses();
+        Queue::fake();
 
         $this->_repository = resolve(DiscussRepository::class);
     }

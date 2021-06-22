@@ -6,6 +6,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Auth;
+use Queue;
 
 use Tests\Unit\Traits\CanCreateGloss;
 use App\Repositories\KeywordRepository;
@@ -26,6 +27,7 @@ class KeywordRepositoryTest extends TestCase
     {
         parent::setUp();
         $this->setUpGlosses();
+        Queue::fake();
     }
 
     protected function tearDown(): void
@@ -53,6 +55,16 @@ class KeywordRepositoryTest extends TestCase
         $repository->createKeyword($gloss->word, $gloss->sense, $gloss);
         $repository->createKeyword($gloss->word, $gloss->sense, $gloss);
 
-        $this->assertEquals(count($keywords), $gloss->keywords()->count());
+        $expected = array_unique(array_merge($keywords, array_map(function ($t) {
+            return $t->translation;
+        }, $translations), [ $word ]));
+        $actual = $gloss->keywords->map(function ($k) {
+            return $k->keyword;
+        })->toArray();
+
+        sort($expected);
+        sort($actual);
+
+        $this->assertEquals($expected, $actual);
     }
 }

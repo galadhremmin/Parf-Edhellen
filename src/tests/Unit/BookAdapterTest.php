@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Auth;
 use Route;
+use Queue;
 
 use Tests\Unit\Traits\CanCreateGloss;
 use App\Adapters\BookAdapter;
@@ -31,6 +32,7 @@ class BookAdapterTest extends TestCase
     {
         parent::setUp();
         $this->setUpGlosses();
+        Queue::fake();
         
         $this->_adapter = resolve(BookAdapter::class);
     }
