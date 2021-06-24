@@ -13,7 +13,7 @@ import DateLabel from './components/DateLabel';
 const loadLatestScript = () => {
     const scriptTag = document.currentScript as HTMLScriptElement;
     if (! scriptTag) {
-        return;
+        return true;
     }
 
     const latestVersion = document.body.dataset[`v`];
