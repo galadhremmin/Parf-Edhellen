@@ -1,5 +1,5 @@
 import React, {
-    useCallback,
+    useCallback, useEffect,
 } from 'react';
 import Modal from 'react-modal';
 
@@ -14,6 +14,7 @@ function Dialog<V>(props: IProps<V>) {
         cancelButtonText,
         children,
         confirmButtonText,
+        open,
         onConfirm,
         onDismiss,
         title,
@@ -33,11 +34,20 @@ function Dialog<V>(props: IProps<V>) {
         }
     }, [ onConfirm, valid, value ]);
 
+    useEffect(() => {
+        const noscrollClass = 'DialogBody--noscroll';
+        if (open) {
+            document.body.classList.add(noscrollClass);
+        } else {
+            document.body.classList.remove(noscrollClass);
+        }
+    }, [ open ]);
+
      // This is needed so screen readers don't see main content when modal is opened.
      const appElement = document.querySelector('main');
     return <Modal appElement={appElement}
         className="modal-dialog"
-        isOpen={props.open}
+        isOpen={open}
         style={DialogStyles}>
         <div className="modal-content">
             <div className="modal-header">

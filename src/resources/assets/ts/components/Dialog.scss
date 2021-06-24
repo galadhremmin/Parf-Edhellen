@@ -1,5 +1,12 @@
 @import '../_scss/_variables';
 
+body.DialogBody--noscroll {
+    overflow: hidden;
+    .ReactModal__Overlay {
+        overflow-y: scroll;
+    }
+}
+
 @media (max-width: $screen-sm-min) {
     .Dialog--footer {
         > .btn + .btn {
