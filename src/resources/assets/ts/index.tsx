@@ -12,7 +12,7 @@ import DateLabel from './components/DateLabel';
 
 const loadLatestScript = () => {
     const scriptTag = document.currentScript as HTMLScriptElement;
-    if (scriptTag === null) {
+    if (! scriptTag) {
         return;
     }
 
