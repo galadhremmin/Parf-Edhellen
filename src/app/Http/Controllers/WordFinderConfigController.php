@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use DB;
 use Cache;
 
 use App\Http\Controllers\Abstracts\Controller;
@@ -32,7 +33,7 @@ class WordFinderConfigController extends Controller
             'gloss_group_ids.*' => 'numeric|exists:gloss_groups,id'
         ]);
 
-        GameWordFinderGlossGroup::truncate();
+        DB::table('game_word_finder_gloss_groups')->delete();
         foreach ($data['gloss_group_ids'] as $glossGroupId) {
             GameWordFinderGlossGroup::create([
                 'gloss_group_id' => $glossGroupId
