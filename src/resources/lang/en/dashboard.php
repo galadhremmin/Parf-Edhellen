@@ -4,5 +4,6 @@ return [
     'title' => 'Dashboard',
     'login' => 'Log in',
     'logout' => 'Log out',
-    'register' => 'Register'
+    'register' => 'Register',
+    'contributions' => 'Contributions'
 ];

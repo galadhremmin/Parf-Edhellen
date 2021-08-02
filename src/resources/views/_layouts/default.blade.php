@@ -59,16 +59,22 @@
               </a>
               <ul class="dropdown-menu">
                 @if ($user)
+                <li class="{{ active('dashboard') }}">
+                  <a href="{{ route('dashboard') }}">
+                    <span class="glyphicon glyphicon-dashboard"></span> 
+                    &nbsp;@lang('dashboard.title')
+                  </a>
+                </li>
                 <li class="{{ active('author.my-profile') }}">
                   <a href="{{ route('author.my-profile') }}">
                     <span class="glyphicon glyphicon-user"></span> 
                     &nbsp;@lang('discuss.community.profile')
                   </a>
                 </li>
-                <li class="{{ active('dashboard') }}">
-                  <a href="{{ route('dashboard') }}">
-                    <span class="glyphicon glyphicon-dashboard"></span> 
-                    &nbsp;@lang('dashboard.title')
+                <li class="{{ active('contribution.index') }}">
+                  <a href="{{ route('contribution.index') }}">
+                    <span class="glyphicon glyphicon-book"></span> 
+                    &nbsp;@lang('dashboard.contributions')
                   </a>
                 </li>
                 <li>
@@ -91,6 +97,7 @@
                   </a>
                 </li>
                 @endif
+                <li class="divider"></li>
                 <li class="{{ active('discuss.members') }}">
                   <a href="{{ route('discuss.members') }}">
                     @lang('discuss.member-list.title')

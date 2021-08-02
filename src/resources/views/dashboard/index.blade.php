@@ -106,6 +106,7 @@
             <li><a href="{{ route('sentence.index') }}">Phrases</a></li>
             <li><a href="{{ route('gloss.index') }}">Glossary</a></li>
             <li><a href="{{ route('account.index') }}">Accounts</a></li>
+            <li><a href="{{ route('word-finder.config.index') }}">Sage configuration</a></li>
             <li>
               <a href="{{ route('system-error.index') }}">
                 System errors 

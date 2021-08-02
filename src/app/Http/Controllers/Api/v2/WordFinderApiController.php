@@ -6,10 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 use DB;
+use Cache;
 
 use App\Http\Controllers\Abstracts\Controller;
 use App\Helpers\StringHelper;
 use App\Models\{ 
+    GameWordFinderGlossGroup,
     Gloss,
     GlossGroup
 };
@@ -18,11 +20,7 @@ class WordFinderApiController extends Controller
 {
     public function play(Request $request, int $languageId)
     {
-        $groupIds = GlossGroup::safe()
-            ->select('id')
-            ->get()
-            ->pluck('id')
-            ->toArray();
+        $groupIds = $this->getGlossGroupIds();
 
         $glossary = [];
         $glosses = [];
@@ -54,5 +52,22 @@ class WordFinderApiController extends Controller
         return [
             'glossary' => $glossary
         ];
+    }
+
+    private function getGlossGroupIds(): array
+    {
+        $glossGroupIds = Cache::remember('ed.game.word-finder.gloss-groups', 60 * 60 * 24 /* seconds */, function () {
+            return GameWordFinderGlossGroup::pluck('gloss_group_id')->toArray();
+        });
+
+        if (! is_array($glossGroupIds) || count($glossGroupIds) < 1) {
+            $glossGroupIds = GlossGroup::safe()
+                ->select('id')
+                ->get()
+                ->pluck('id')
+                ->toArray();
+        }
+
+        return $glossGroupIds;
     }
 }
