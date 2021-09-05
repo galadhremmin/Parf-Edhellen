@@ -42,12 +42,16 @@ class StringHelper
         // Disable construction
     }
 
-    public static function htmlEntities(string $str)
+    public static function htmlEntities(?string $str)
     {
+        if (empty($str)) {
+            return $str;
+        }
+
         return htmlentities($str, ENT_HTML5 | ENT_SUBSTITUTE | ENT_QUOTES, 'UTF-8');
     }
 
-    public static function toLower(string $str) 
+    public static function toLower(?string $str) 
     {
         if (empty($str)) {
             return $str;
@@ -56,7 +60,7 @@ class StringHelper
         return trim(mb_strtolower($str, 'utf-8'));
     }
 
-    public static function clean(string $str)
+    public static function clean(?string $str)
     {
         if (empty($str)) {
             return $str;
@@ -73,7 +77,7 @@ class StringHelper
      * @param boolean $retainWildcard - retains wildcard character (*) 
      * @return string
      */
-    public static function normalize(string $str, $accentsMatter = true, $retainWildcard = false) 
+    public static function normalize(?string $str, $accentsMatter = true, $retainWildcard = false) 
     {
         if (empty($str)) {
             return $str;

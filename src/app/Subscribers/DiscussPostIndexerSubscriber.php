@@ -27,7 +27,7 @@ use App\Events\{
     ForumPostCreated,
     ForumPostEdited
 };
-use App\Jobs\ProcessSearchIndexCreation;
+use App\Jobs\ProcessDiscussIndex;
 
 class DiscussPostIndexerSubscriber
 {
@@ -70,22 +70,8 @@ class DiscussPostIndexerSubscriber
         $this->update($event->post);
     }
 
-    private function delete(ForumPost $post)
-    {
-        $this->_searchIndexRepository->deleteAll($post);
-    }
-
     private function update(ForumPost $post)
     {
-        if ($post->is_deleted) {
-            $this->delete($post);
-        } else {
-            $keywords = $this->_analyzer->detectKeyPhrases($post->content);
-            foreach ($keywords as $keyword) {
-                $word = $this->_wordRepository->save($keyword, $post->account_id);
-                ProcessSearchIndexCreation::dispatch($post, $word) //
-                    ->onQueue('indexing');
-            }
-        }
+        ProcessDiscussIndex::dispatch($post)->onQueue('indexing');
     }
 }

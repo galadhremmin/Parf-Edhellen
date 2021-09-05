@@ -27,7 +27,7 @@ class ComprehendFacade implements IIdentifiesPhrases
     {
         $chunks = $this->_createChunks($text);
         $keywords = $this->_identifyKeyPhrasesFromChunks($chunks);
-        return $keywords;
+        return array_unique($keywords);
     }
 
     /**

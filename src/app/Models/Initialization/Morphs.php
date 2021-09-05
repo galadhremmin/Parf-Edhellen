@@ -28,13 +28,12 @@ class Morphs
             'contribution' => Contribution::class,
             'favourite'    => Favourite::class,
             'flashcard'    => FlashcardResult::class,
-            'forum'        => ForumPost::class,
             'sentence'     => Sentence::class,
             'fragment'     => SentenceFragment::class,
             'gloss'        => Gloss::class,
             'discussion'   => ForumDiscussion::class,
             'forum_thread' => ForumThread::class,
-            'forum_post'   => ForumPost::class,
+            'forum'        => ForumPost::class,
             'sense'        => Sense::class,
             'word'         => Word::class
         ]);

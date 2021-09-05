@@ -8,8 +8,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use App\Models\{
-    Gloss,
+    ModelBase,
     Keyword,
     Word
 };
@@ -19,7 +20,7 @@ class ProcessSearchIndexCreation implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $gloss;
+    protected $entity;
     protected $keyword;
     protected $inflection;
 
@@ -28,11 +29,11 @@ class ProcessSearchIndexCreation implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(Gloss $gloss, Word $keyword, string $inflection = null)
+    public function __construct(ModelBase $entity, Word $keyword, string $inflection = null)
     {
-        $this->gloss      = $gloss;
+        $this->entity     = $entity;
         $this->keyword    = $keyword;
-        $this->inflection = $inflection ;
+        $this->inflection = $inflection;
     }
 
     /**
@@ -42,6 +43,6 @@ class ProcessSearchIndexCreation implements ShouldQueue
      */
     public function handle(SearchIndexRepository $searchIndexRepository)
     {
-        $searchIndexRepository->createIndex($this->gloss, $this->keyword, $this->inflection);
+        $searchIndexRepository->createIndex($this->entity, $this->keyword, $this->inflection);
     }
 }

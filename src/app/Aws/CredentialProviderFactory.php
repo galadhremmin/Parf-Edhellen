@@ -14,7 +14,7 @@ class CredentialProviderFactory
     {
         $iniPath = config('aws.config_path');
         if (empty($iniPath)) {
-            $defaultProvider = CredentialProvider::defaultProvider();
+            $provider = CredentialProvider::defaultProvider();
         } else {
             $defaultProvider = CredentialProvider::ini(null, $iniPath);
 
