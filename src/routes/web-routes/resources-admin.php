@@ -22,9 +22,13 @@ Route::group([
     Route::resource('sentence', 'SentenceController', [
         'only' => ['index', 'destroy']
     ]);
+
     Route::resource('system-error', 'SystemErrorController', [
         'only' => ['index']
     ]);
+    Route::get('system-error/connectivity/{component}', 'SystemErrorController@testConnectivity')
+        ->where([ 'component' => '[a-zA-Z]+' ])
+        ->name('system-error.connectivity');
 
     Route::get('sentence/confirm-destroy/{id}', 'SentenceController@confirmDestroy')->name('sentence.confirm-destroy');
     Route::post('sentence/validate', 'SentenceController@validatePayload');

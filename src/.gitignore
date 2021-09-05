@@ -10,6 +10,8 @@
 Homestead.json
 Homestead.yaml
 .env
+.aws
+ads.txt
 *.lock
 package-lock.json
 BingSiteAuth.xml

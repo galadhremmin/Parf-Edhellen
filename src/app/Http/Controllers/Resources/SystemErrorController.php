@@ -36,4 +36,27 @@ class SystemErrorController extends Controller
 
         return view('system-error.index', [ 'errorsByWeek' => $errorsByWeek]);
     }
+
+    public function testConnectivity(Request $request, string $component)
+    {
+        $className = 'App\\Monitors\\'.$component;
+        if (! class_exists($className)) {
+            abort(400, sprintf('Unrecognised monitor %s.', $className));
+        }
+
+        try {
+            $entity = resolve($className);
+
+            if (! method_exists($entity, 'testOnce')) {
+                abort(400, sprintf('Monitor %s does not support self-checks.', $className));
+            }
+
+            $entity->testOnce();
+        } catch (\Exception $ex) {
+            // Failed
+            return $ex;
+        }
+
+        return 'OK';
+    }
 }

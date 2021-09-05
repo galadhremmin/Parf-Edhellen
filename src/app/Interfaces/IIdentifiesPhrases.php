@@ -2,7 +2,7 @@
 
 namespace App\Interfaces;
 
-interface IIdentifiesPhrases 
+interface IIdentifiesPhrases
 {
     /**
      * Identifies key phrases from the specified text.

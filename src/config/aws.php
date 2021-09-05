@@ -1,7 +1,6 @@
 <?php
 
 return [
-    'comprehend' => [
-        'region' => 'us-east-1'
-    ],
+    'config_path' => env('AWS_CREDENTIALS_FILE'),
+    'region' => 'us-east-1',
 ];
