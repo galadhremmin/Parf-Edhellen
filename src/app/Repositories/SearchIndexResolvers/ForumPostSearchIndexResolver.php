@@ -13,7 +13,7 @@ use App\Adapters\BookAdapter;
 
 class ForumPostSearchIndexResolver implements ISearchIndexResolver
 {
-    public function resolve(SearchIndexSearchValue $value)
+    public function resolve(SearchIndexSearchValue $value): array
     {
         $entityIds = $params['query'] //
             ->select('entity_id')
@@ -22,6 +22,8 @@ class ForumPostSearchIndexResolver implements ISearchIndexResolver
             ->limit(100)
             ->pluck('entity_id');
 
-        return Sentence::whereIn('id', $entityIds);
+        return Sentence::whereIn('id', $entityIds)
+            ->get()
+            ->toArray();
     }
 }

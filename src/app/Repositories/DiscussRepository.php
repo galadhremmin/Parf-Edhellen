@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\AuthManager;
 
 use DB;
 use Exception;
@@ -39,11 +39,19 @@ use Carbon\Carbon;
 
 class DiscussRepository
 {
+    /**
+     * @var ContextFactory
+     */
     private $_contextFactory;
+    /**
+     * @var AuthManager
+     */
+    private $_authManager;
 
-    public function __construct(ContextFactory $contextFactory)
+    public function __construct(ContextFactory $contextFactory, AuthManager $authManager)
     {
         $this->_contextFactory = $contextFactory;
+        $this->_authManager    = $authManager;
     }
 
     /**
@@ -832,7 +840,7 @@ class DiscussRepository
     private function resolveAccount(Account &$account = null)
     {
         if ($account === null) {
-            $account = Auth::user();
+            $account = $this->_authManager->user();
         }
     }
 

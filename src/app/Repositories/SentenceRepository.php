@@ -2,9 +2,9 @@
 
 namespace App\Repositories;
 
-use Auth;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Auth\AuthManager;
 
 use App\Events\{
     SentenceCreated,
@@ -27,10 +27,15 @@ use Illuminate\Support\Collection;
 class SentenceRepository
 {
     private $_keywordRepository;
+    /**
+     * @var AuthManager
+     */
+    private $_authManager;
 
-    public function __construct(KeywordRepository $keywordRepository)
+    public function __construct(KeywordRepository $keywordRepository, AuthManager $authManager)
     {
         $this->_keywordRepository = $keywordRepository;
+        $this->_authManager = $authManager;
     }
 
     /**
@@ -216,7 +221,7 @@ class SentenceRepository
         // Inform listeners of this change.
         $event = ! $changed 
                 ? new SentenceCreated($sentence, $sentence->account_id)
-                : new SentenceEdited($sentence, Auth::user()->id);
+                : new SentenceEdited($sentence, $this->_authManager->user()->id);
         event($event);
 
         return $sentence;

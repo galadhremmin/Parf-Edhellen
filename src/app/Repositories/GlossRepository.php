@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Auth;
+use Illuminate\Auth\AuthManager;
 
 use App\Helpers\StringHelper;
 use App\Events\{
@@ -23,13 +23,24 @@ use App\Models\{
 
 class GlossRepository
 {
+    /**
+     * @var KeywordRepository
+     */
     protected $_keywordRepository;
+    /**
+     * @var WordRepository
+     */
     protected $_wordRepository;
+    /**
+     * @var AuthManager
+     */
+    protected $_authManager;
 
-    public function __construct(KeywordRepository $keywordRepository, WordRepository $wordRepository)
+    public function __construct(KeywordRepository $keywordRepository, WordRepository $wordRepository, AuthManager $authManager)
     {
         $this->_keywordRepository = $keywordRepository;
         $this->_wordRepository = $wordRepository;
+        $this->_authManager = $authManager;
     }
 
     /**
@@ -454,7 +465,7 @@ class GlossRepository
         if ($changed || $keywordsChanged || $originalGloss === null) {
             $newGloss = $originalGloss === null;
             $event = $newGloss ? new GlossCreated($gloss, $gloss->account_id) //
-                               : new GlossEdited($gloss, Auth::check() ? Auth::user()->id : $gloss->account_id);
+                               : new GlossEdited($gloss, $this->_authManager->check() ? $this->_authManager->user()->id : $gloss->account_id);
             
             event($event);
             if ($newGloss || $keywordsChanged) {

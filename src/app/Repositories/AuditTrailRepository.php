@@ -15,15 +15,23 @@ use App\Models\{
 };
 use App\Models\Initialization\Morphs;
 
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\AuthManager;
 
 class AuditTrailRepository implements Interfaces\IAuditTrailRepository
 {
+    /**
+     * @var LinkHelper
+     */
     protected $_link;
+    /**
+     * @var AuthManager
+     */
+    protected $_authManager;
 
-    public function __construct(LinkHelper $link)
+    public function __construct(LinkHelper $link, AuthManager $authManager)
     {
-        $this->_link = $link;
+        $this->_link        = $link;
+        $this->_authManager = $authManager;
     }
 
     public function get(int $noOfRows, int $skipNoOfRows = 0)
@@ -36,7 +44,7 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
                 'entity' => function () {}
             ]);
         
-        if (! Auth::check() || ! Auth::user()->isAdministrator()) {
+        if (! $this->_authManager->check() || ! $this->_authManager->user()->isAdministrator()) {
             // Put audit trail actions here that only administrators should see.
             $query = $query->where('is_admin', 0)
                 ->whereNotIn('action_id', [
@@ -53,7 +61,7 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
     {
         if ($userId === 0) {
             // Is the user authenticated?
-            if (! Auth::check()) {
+            if (! $this->_authManager->check()) {
                 if (($entity instanceof ModelBase && $entity->hasAttribute('account_id')) ||
                      property_exists($entity, 'account_id')) {
                     $userId = $entity->account_id;
@@ -63,7 +71,7 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
                     return;
                 }
             } else {
-                $userId = Auth::user()->id;
+                $userId = $this->_authManager->user()->id;
             }
         }
 

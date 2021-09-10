@@ -3,7 +3,7 @@
 namespace App\Adapters;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\AuthManager;
 
 use App\Http\Discuss\ContextFactory;
 use App\Helpers\MarkdownParser;
@@ -18,11 +18,13 @@ class DiscussAdapter
 {
     private $_contextFactory;
     private $_storageHelper;
+    private $_authManager;
 
-    public function __construct(ContextFactory $contextFactory, StorageHelper $storageHelper)
+    public function __construct(ContextFactory $contextFactory, StorageHelper $storageHelper, AuthManager $authManager)
     {
         $this->_contextFactory = $contextFactory;
         $this->_storageHelper = $storageHelper;
+        $this->_authManager = $authManager;
     }
 
     public function adaptAccount(Account $account)
@@ -100,7 +102,7 @@ class DiscussAdapter
 
     public function adaptForTimeline(Collection $posts)
     {
-        $user = Auth::user();
+        $user = $this->_authManager->user();
         $thread_id = 0;
         $inverted   = true;
 

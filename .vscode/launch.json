@@ -5,13 +5,27 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "PHP: Listen for Xdebug",
+            "type": "php",
+            "request": "launch",
+            "port": 9003
+        },
+        {
+            "name": "PHP: Launch currently open script",
+            "type": "php",
+            "request": "launch",
+            "program": "${file}",
+            "cwd": "${fileDirname}",
+            "port": 9003
+        },
+        {
             "env": {
                 "TS_NODE_PROJECT": "${workspaceFolder}/src/tsconfig.unit-test.json",
                 "TS_NODE_TRANSPILE_ONLY": "true"
             },
             "type": "node",
             "request": "launch",
-            "name": "Mocha All",
+            "name": "JS: Mocha All",
             "program": "${workspaceFolder}/src/node_modules/mocha/bin/_mocha",
             "args": [
                 "--timeout",
@@ -40,7 +54,7 @@
             },
             "type": "node",
             "request": "launch",
-            "name": "Mocha Current File",
+            "name": "JS: Mocha Current File",
             "program": "${workspaceFolder}/src/node_modules/mocha/bin/_mocha",
             "args": [
                 "--timeout",
