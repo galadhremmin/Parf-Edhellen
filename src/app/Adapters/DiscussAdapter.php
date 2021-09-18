@@ -12,6 +12,7 @@ use App\Models\{
     ForumPost,
     ForumThread
 };
+use App\Repositories\ValueObjects\ForumThreadsForPostsValue;
 use App\Helpers\StorageHelper;
 
 class DiscussAdapter
@@ -141,5 +142,26 @@ class DiscussAdapter
         }
 
         return $adapted;
+    }
+
+    public function adaptForSearchResults(ForumThreadsForPostsValue $value)
+    {
+        $sections = [];
+        foreach ($value->getThreads() as $thread) {
+            $groupId = $thread->forum_group_id;
+            if (isset($sections[$groupId])) {
+                $sections[$groupId]['entities'][] = $thread;
+
+            } else {
+                $sections[$groupId] = [
+                    'entities' => [ $thread ],
+                    'language' => $value->getGroups()[$groupId]
+                ];
+            }
+        }
+
+        return [
+            'sections' => array_values($sections)
+        ];
     }
 }

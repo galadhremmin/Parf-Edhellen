@@ -14,8 +14,8 @@ import {
 import EntitiesReducer from '../../reducers/EntitiesReducer';
 import SectionsReducer from '../../reducers/SectionsReducer';
 import { ISectionsState } from '../../reducers/SectionsReducer._types';
-import { ILanguagesState } from '../../reducers/LanguagesReducer._types';
-import LanguagesReducer from '../../reducers/LanguagesReducer';
+import { ICategoriesState } from '../../reducers/CategoriesReducer._types';
+import LanguagesReducer from '../../reducers/CategoriesReducer';
 import GlossaryEntities from './GlossaryEntities';
 
 import '@root/utilities/Enzyme';
@@ -28,7 +28,7 @@ describe('apps/book-browser/containers/GlossaryEntities', () => {
 
     let glossary: IEntitiesState;
     let sections: ISectionsState;
-    let languages: ILanguagesState;
+    let languages: ICategoriesState;
 
     before(() => {
         const testData = snakeCasePropsToCamelCase<IEntitiesResponse<any>>(

@@ -32,6 +32,7 @@ use App\Repositories\ValueObjects\{
     ForumPostsInThreadValue,
     ForumThreadForEntityValue,
     ForumThreadMetadataValue,
+    ForumThreadsForPostsValue,
     ForumThreadsInGroupValue,
     ForumThreadValue
 };
@@ -182,6 +183,38 @@ class DiscussRepository
         return new ForumThreadValue([
             'context' => $context,
             'thread'  => $thread
+        ]);
+    }
+
+    public function getThreadsForPosts(array $postIds)
+    {
+        $postIdAndThreadId = ForumPost::whereIn('id', $postIds) //
+            ->select('forum_thread_id', 'id') //
+            ->distinct() //
+            ->get();
+
+        $threadIds = $postIdAndThreadId->pluck('forum_thread_id');
+        $threads = ForumThread::whereIn('id', $threadIds) //
+            ->distinct() //
+            ->get() //
+            ->keyBy('id');
+
+        $groupIds = $threads->values()->pluck('forum_group_id');
+        $groups = ForumGroup::whereIn('id', $groupIds) //
+            ->distinct() //
+            ->get()
+            ->keyBy('id');
+
+        $threadsWithPosts = $postIdAndThreadId->map(function($data) use($threads) {
+            $thread = clone $threads[$data->forum_thread_id];
+            $thread->forum_post_id = $data->id;
+
+            return $thread;
+        });
+
+        return new ForumThreadsForPostsValue([
+            'forum_threads' => $threadsWithPosts,
+            'forum_groups'  => $groups
         ]);
     }
 

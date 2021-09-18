@@ -92,6 +92,12 @@ export interface IStickThreadResponse {
     sticky: boolean;
 }
 
+export interface IForumGroupEntity {
+    description: string;
+    id: number;
+    name: string;
+}
+
 export interface IThreadEntity {
     accountId: number;
     createdAt: string;

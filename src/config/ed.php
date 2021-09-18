@@ -64,7 +64,7 @@ return [
         App\Models\ForumPost::class => [
             'group_id'  => App\Models\SearchKeyword::SEARCH_GROUP_FORUM_POST,
             'resolver'  => App\Repositories\SearchIndexResolvers\ForumPostSearchIndexResolver::class,
-            'intl_name' => 'forum_post'
+            'intl_name' => 'discuss'
         ],
         App\Models\SentenceFragment::class => [
             'group_id' => App\Models\SearchKeyword::SEARCH_GROUP_SENTENCE,

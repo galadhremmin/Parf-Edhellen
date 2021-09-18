@@ -104,9 +104,9 @@ const mapStateToProps = (state: RootReducer): IEntitiesComponentProps => ({
     word: state.entities.word,
 
     // Glossary
-    isEmpty: state.languages.isEmpty,
-    languages: state.languages.common,
-    unusualLanguages: state.languages.unusual,
+    isEmpty: state.categories.isEmpty,
+    languages: state.categories.common,
+    unusualLanguages: state.categories.unusual,
 });
 
 export default connect(mapStateToProps)(Entities);

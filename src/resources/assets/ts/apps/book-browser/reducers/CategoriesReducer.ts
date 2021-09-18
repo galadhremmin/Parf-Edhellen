@@ -1,8 +1,8 @@
 import { Actions } from '../actions';
 import { IEntitiesAction } from './EntitiesReducer._types';
-import { ILanguagesState } from './LanguagesReducer._types';
+import { ICategoriesState } from './CategoriesReducer._types';
 
-const LanguagesReducer = (state: ILanguagesState = {
+const LanguagesReducer = (state: ICategoriesState = {
     common: [],
     isEmpty: true,
     unusual: [],
