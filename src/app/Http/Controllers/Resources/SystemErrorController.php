@@ -6,35 +6,25 @@ use Illuminate\Http\Request;
 use DB;
 use Carbon\Carbon;
 
-use App\Models\SystemError;
+use App\Models\{
+    SystemError,
+    FailedJob
+};
 use App\Http\Controllers\Abstracts\Controller;
 
 class SystemErrorController extends Controller
 {
     public function index(Request $request)
     {
-        $errorsByWeek = SystemError::select( 
-            DB::raw('year(created_at) as year'), 
-            DB::raw('week(created_at) as week'),
-            DB::raw('count(*) as number_of_errors'),
-            'category')
-            ->groupBy(DB::raw('year(created_at)'), DB::raw('week(created_at)'), 'category')
-            ->where('created_at', '>=', Carbon::today()->addMonth(-18))
-            ->get()
-            ->groupBy(function ($item) {
-                return sprintf('%d/%d', $item['year'], $item['week']);
-            });
-        
-        $errorsByWeek = $errorsByWeek->keys()
-            ->map(function ($week) use ($errorsByWeek) {
-                return $errorsByWeek[$week]->reduce(function ($carry, $item) use ($week) {
-                    $carry['week'] = $week;
-                    $carry[$item['category']] = $item['number_of_errors'];
-                    return $carry;
-                }, []);
-            });
+        $errorsByWeek = $this->getRowCountPerWeek(SystemError::class, 'category');
+        $failedJobsByWeek = $this->getRowCountPerWeek(FailedJob::class, 'queue', 'failed_at');
 
-        return view('system-error.index', [ 'errorsByWeek' => $errorsByWeek]);
+        return view('system-error.index', [
+            'errorsByWeek'         => $errorsByWeek['count_by_week'],
+            'errorCategories'      => $errorsByWeek['categories'],
+            'failedJobsByWeek'     => $failedJobsByWeek['count_by_week'],
+            'failedJobsCategories' => $failedJobsByWeek['categories']
+        ]);
     }
 
     public function testConnectivity(Request $request, string $component)
@@ -58,5 +48,56 @@ class SystemErrorController extends Controller
         }
 
         return 'OK';
+    }
+
+    private function getRowCountPerWeek(string $modelName, string $category, string $dateColumn = 'created_at')
+    {
+        $cutoffDate = Carbon::today()->addMonth(-6);
+
+        $selectFields = [
+            DB::raw('YEAR('.$dateColumn.') AS year'), 
+            DB::raw('WEEK('.$dateColumn.') AS week'),
+            DB::raw('CONCAT(YEAR('.$dateColumn.'), "/",  WEEK('.$dateColumn.')) AS year_week'),
+            DB::raw('COUNT(*) AS number_of_errors'),
+            DB::raw($category.' AS category')
+        ];
+
+        $groupByFields = [
+            DB::raw('year'),
+            DB::raw('week'),
+            DB::raw('year_week'),
+            DB::raw('category')
+        ];
+
+        $model = new $modelName;
+        $countByWeek = $model::select($selectFields)
+            ->groupBy($groupByFields)
+            ->where($dateColumn, '>=', $cutoffDate)
+            ->get();
+
+        $categories = $countByWeek->pluck('category')->unique();
+        $countByWeek = $countByWeek->reduce(function ($carry, $item) {
+                $key      = $item->year_week;
+                $value    = $item->number_of_errors;
+                $category = $item->category;
+    
+                if (isset($carry[$key])) {
+                    $carry[$key][$category] = $value;
+                } else {
+                    $carry[$key] = [
+                        'year_week' => $item->year_week,
+                        'week'      => $item->week,
+                        'year'      => $item->year,
+                        $category   => $value
+                    ];
+                }
+    
+                return $carry;
+            }, []);
+        
+        return [
+            'count_by_week' => collect(array_values($countByWeek)),
+            'categories'    => $categories
+        ];
     }
 }

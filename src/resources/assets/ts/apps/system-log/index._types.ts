@@ -4,11 +4,20 @@ export interface IWeeklyErrors {
     [errorCategory: string]: number;
 }
 
-export interface IErrorsByWeek {
-    [yearWeek: string]: IWeeklyErrors;
+export interface IWeeklyFailedJobs {
+    year: number;
+    numberOfErrors: number;
+    week: number;
+}
+
+export interface IErrorsByWeek<T> {
+    [yearWeek: string]: T;
 }
 
 export interface IProps {
-    errorsByWeek: IErrorsByWeek[];
+    errorsByWeek: IErrorsByWeek<IWeeklyErrors>[];
+    errorCategories: string[];
+    failedJobsByWeek: IWeeklyFailedJobs[];
+    failedJobsCategories: string[];
     logApi: ILogApi;
 }
