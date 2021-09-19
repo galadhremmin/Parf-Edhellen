@@ -194,8 +194,14 @@ class DiscussRepository
             ->get();
 
         $threadIds = $postIdAndThreadId->pluck('forum_thread_id');
-        $threads = ForumThread::whereIn('id', $threadIds) //
+        $threads = ForumThread::whereIn('forum_threads.id', $threadIds)
+            ->join('accounts', 'accounts.id', 'forum_threads.account_id') //
             ->distinct() //
+            ->select(
+                'forum_threads.id', 'forum_threads.subject', 'forum_threads.updated_at', 'forum_threads.created_at',
+                'forum_threads.number_of_posts', 'forum_threads.number_of_likes', 'forum_threads.normalized_subject',
+                'forum_threads.forum_group_id', 'forum_threads.account_id', 'accounts.nickname as account_name',
+                'accounts.has_avatar')
             ->get() //
             ->keyBy('id');
 

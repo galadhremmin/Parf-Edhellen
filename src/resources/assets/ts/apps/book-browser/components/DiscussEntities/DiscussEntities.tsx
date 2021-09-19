@@ -1,31 +1,24 @@
-import DateLabel from '@root/components/DateLabel';
+import Quote from '@root/components/Quote';
 import { IThreadEntity } from '@root/connectors/backend/IDiscussApi';
 import React from 'react';
 import { IEntitiesComponentProps } from '../../containers/Entities._types';
+import DiscussTable from './DiscussTable';
 
 function DiscussEntities(props: IEntitiesComponentProps<IThreadEntity>) {
     const {
         sections,
         languages: groups,
+        word,
     } = props;
-    return groups.map((group) => <div key={group.id}>
-        <h2>{group.name}</h2>
-        <div className="discuss-table">
-            {sections[group.id].map((thread) => <div className="r" key={thread.id}>
-                <div className="c">
-                    <a href="http://localhost:8000/author/1927-rainelda" title="View Rainelda's profile" className="pp">
-                        <img src="/storage/avatars/1927.png" />
-                    </a>
-                </div>
-                <div className="c p2">
-                    <a href="?">{thread.subject}</a>
-                    <div className="pi">
-                        {thread.accountId} on <DateLabel dateTime={thread.updatedAt || thread.createdAt} />
-                    </div>
-                </div>
-            </div>)}
-        </div>
-    </div>);
+    const isMultipleKeywords = word.trim().split(' ').length > 1;
+    return <>
+        <h2>Threads with the {isMultipleKeywords ? 'keywords' : 'keyword'} <Quote>{word}</Quote></h2>
+        <p>The threads are organized by the discussion group they are part of.</p>
+        {groups.map((group) => <div key={group.id}>
+            <h3>{group.name}</h3>
+            <DiscussTable threads={sections[group.id]} />
+        </div>)}
+    </>;
 }
 
 export default DiscussEntities;

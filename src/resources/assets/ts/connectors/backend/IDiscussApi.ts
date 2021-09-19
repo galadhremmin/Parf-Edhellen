@@ -100,6 +100,9 @@ export interface IForumGroupEntity {
 
 export interface IThreadEntity {
     accountId: number;
+    accountName?: string;
+    accountAvatarPath?: string;
+    accountPath?: string;
     createdAt: string;
     entityId: number;
     entityType: string;
@@ -110,6 +113,7 @@ export interface IThreadEntity {
     numberOfLikes: number;
     numberOfPosts: number;
     subject: string;
+    threadPath?: string;
     updatedAt: string;
 }
 
