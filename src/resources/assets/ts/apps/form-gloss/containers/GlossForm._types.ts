@@ -6,12 +6,12 @@ import { IGlossState } from '../reducers/GlossReducer._types';
 export interface IProps {
     confirmButton?: string;
     edit?: boolean;
-    errors: ValidationError;
-    gloss: IGlossState;
-    name: string;
-    onEditChange: ComponentEventHandler<number>;
-    onGlossFieldChange: ComponentEventHandler<IChangeSpec>;
-    onSubmit: ComponentEventHandler<IGlossEntity>;
+    errors?: ValidationError;
+    gloss?: IGlossState;
+    name?: string;
+    onEditChange?: ComponentEventHandler<number>;
+    onGlossFieldChange?: ComponentEventHandler<IChangeSpec>;
+    onSubmit?: ComponentEventHandler<IGlossEntity>;
 }
 
 export type GlossProps = keyof IGlossState;

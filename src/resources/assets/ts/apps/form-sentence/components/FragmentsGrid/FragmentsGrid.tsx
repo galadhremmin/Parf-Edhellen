@@ -7,6 +7,7 @@ import {
     ColDef,
     DetailGridInfo,
     GridReadyEvent,
+    RowClassParams,
     RowNode,
 } from '@ag-grid-community/all-modules';
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
@@ -44,6 +45,15 @@ import './FragmentsGrid.scss';
 const DefaultColumnDefinition = {
     tooltipField: '_error',
 } as ColDef;
+
+const RowClassRules = {
+    'in-error': (params: RowClassParams) => {
+        const {
+            _error: error,
+        } = params.data as ISentenceFragmentReducerState;
+        return Array.isArray(error);
+    },
+};
 
 class FragmentsGrid extends React.Component<IProps, IState> {
     public state: IState = {
@@ -175,7 +185,7 @@ class FragmentsGrid extends React.Component<IProps, IState> {
                         getRowNodeId={this._onGetRowNodeId}
                         isExternalFilterPresent={this._onIsExternalFilterPresent}
                         doesExternalFilterPass={this._onDoesExternalFilterPass}
-                        getRowClass={this._onRowClass}
+                        rowClassRules={RowClassRules}
                         columnDefs={columnDefinition}
                         defaultColDef={DefaultColumnDefinition}
                         enableBrowserTooltips={true}
@@ -321,16 +331,6 @@ class FragmentsGrid extends React.Component<IProps, IState> {
      */
     private _onGetRowNodeId = (row: ISentenceFragmentEntity) => {
         return row.id.toString(10);
-    }
-
-    /**
-     * Returns the row highlight class depending on whether there are errors available.
-     */
-    private _onRowClass = (params: RowNode) => {
-        const {
-            _error: error,
-        } = params.data as ISentenceFragmentReducerState;
-        return Array.isArray(error) ? 'in-error' : null;
     }
 
     /**

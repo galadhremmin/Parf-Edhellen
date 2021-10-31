@@ -82,7 +82,7 @@ describe('connectors/ApiConnector', () => {
             });
 
         sandbox.stub(axios, 'post')
-            .callsFake((method, payload) => {
+            .callsFake((method, payload: any) => {
                 expect(method).to.equal(`${ApiPrefix}/${ApiErrorMethod}`);
                 expect(payload.category).to.equal('frontend');
                 expect(payload.url).to.equal(ApiMethod);

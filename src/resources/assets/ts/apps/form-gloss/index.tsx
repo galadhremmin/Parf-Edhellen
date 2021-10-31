@@ -40,7 +40,7 @@ const Inject = (props: IProps) => {
     }, []);
 
     return <Provider store={store}>
-        <GlossForm confirmButton={confirmButton || undefined} />
+        <GlossForm confirmButton={confirmButton || null} />
     </Provider>;
 };
 

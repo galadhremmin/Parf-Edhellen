@@ -35,8 +35,7 @@ function AvatarForm(props: IProps) {
 
         let imageFile: File = null;
         if (ev.dataTransfer.items) {
-            for (let i = 0; i < ev.dataTransfer.items.length; i += 1) {
-                const file = ev.dataTransfer.items.item(i);
+            for (const file of ev.dataTransfer.items) {
                 if (file.kind === 'file' && file.type.indexOf('image') !== -1) {
                     imageFile = file.getAsFile();
                     break;

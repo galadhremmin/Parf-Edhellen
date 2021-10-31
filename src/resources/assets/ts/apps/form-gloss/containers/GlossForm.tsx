@@ -279,19 +279,19 @@ GlossForm.defaultProps = {
     errors: null,
     gloss: null,
     name: 'GlossForm',
-} as Partial<IProps>;
+} as IProps;
 
 const mapStateToProps = (state: RootReducer) => ({
     edit: state.gloss && !! state.gloss.id,
     errors: state.errors,
     gloss: state.gloss,
-} as Partial<IProps>);
+} as IProps);
 
 const actions = new GlossActions();
 const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => ({
     onEditChange: (e) => dispatch(actions.setEditingGlossId(e.value)),
     onGlossFieldChange: (e) => dispatch(actions.setGlossField(e.value.field, e.value.value)),
     onSubmit: (e) => dispatch(actions.saveGloss(e.value)),
-} as Partial<IProps>);
+} as IProps);
 
-export default connect(mapStateToProps, mapDispatchToProps)(GlossForm);
+export default connect<IProps, IProps, IProps>(mapStateToProps, mapDispatchToProps)(GlossForm);

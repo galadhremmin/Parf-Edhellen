@@ -21,9 +21,6 @@
       @else
       @include('flashcard._login')
       @endif
-      @include('_shared._ad', [
-        'ad' => 'flashcards'
-      ])
     </aside>
   </div>
       
