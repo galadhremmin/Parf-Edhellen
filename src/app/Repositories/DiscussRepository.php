@@ -873,50 +873,41 @@ class DiscussRepository
 
     private function updateForumThread(ForumThread $thread)
     {
-        try {
-            DB::beginTransaction();
+        $postIds = $thread->forum_posts() //
+            ->orderBy('created_at', 'asc')
+            ->where([
+                ['is_deleted', '<>', 1],
+                ['is_hidden', '<>', 1]
+            ]) //
+            ->select('id') //
+            ->pluck('id');
 
-            $postIds = $thread->forum_posts() //
-                ->orderBy('created_at', 'asc')
-                ->where([
-                    ['is_deleted', '<>', 1],
-                    ['is_hidden', '<>', 1]
-                ]) //
-                ->select('id') //
-                ->pluck('id');
+        $noOfPosts = $postIds->count();
+        $isEmpty   = $noOfPosts > 1; // 1 = only main post is present
+        $noOfLikes = $noOfPosts === 0 ? 0 : //
+            ForumPostLike::whereIn('forum_post_id', $postIds)->count();
 
-            $noOfPosts = $postIds->count();
-            $isEmpty   = $noOfPosts > 1; // 1 = only main post is present
-            $noOfLikes = $noOfPosts === 0 ? 0 : //
-                ForumPostLike::whereIn('forum_post_id', $postIds)->count();
-
-            // Handle deletion case - do not 'bump' the thread when people remove their posts.
-            if ($thread->number_of_posts >= $noOfPosts) {
-                $thread->timestamps = false;
-            }
-
-            $thread->number_of_posts = $noOfPosts;
-            $thread->number_of_likes = $noOfLikes;
-            $thread->is_empty        = $isEmpty;
-
-            // Make sure that `account_id` reflects the `account_id` for the last record associated with
-            // the given thread.
-            if ($noOfPosts > 0) {
-                $postId = $postIds->last();
-                $latest = ForumPost::where('id', $postId) //
-                    ->select('account_id') //
-                    ->pluck('account_id');
-
-                $thread->account_id = $latest->first();
-            }
-
-            $thread->save();
-
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollBack();
-            throw $ex;
+        // Handle deletion case - do not 'bump' the thread when people remove their posts.
+        if ($thread->number_of_posts >= $noOfPosts) {
+            $thread->timestamps = false;
         }
+
+        $thread->number_of_posts = $noOfPosts;
+        $thread->number_of_likes = $noOfLikes;
+        $thread->is_empty        = $isEmpty;
+
+        // Make sure that `account_id` reflects the `account_id` for the last record associated with
+        // the given thread.
+        if ($noOfPosts > 0) {
+            $postId = $postIds->last();
+            $latest = ForumPost::where('id', $postId) //
+                ->select('account_id') //
+                ->pluck('account_id');
+
+            $thread->account_id = $latest->first();
+        }
+
+        $thread->save();
     }
 
     /**
