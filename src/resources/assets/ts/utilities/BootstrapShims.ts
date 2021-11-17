@@ -1,4 +1,4 @@
-const toggleClick = (subject: HTMLElement, ev: MouseEvent) => {
+export const toggleClick = (subject: HTMLElement, ev: MouseEvent) => {
     ev.preventDefault();
 
     let targets: NodeListOf<HTMLElement> | HTMLElement[];
@@ -24,16 +24,18 @@ const hookToggle = (toggle: HTMLElement) => {
 };
 
 const hookNavbarToggles = () => {
-    const toggles = document.querySelectorAll<HTMLElement>('.navbar-toggle');
+    const toggles = document.querySelectorAll<HTMLElement>('.navbar-toggle:not(.hooked)');
     toggles.forEach((toggle) => {
         hookToggle(toggle);
+        toggle.classList.add('hooked');
     });
 };
 
 const hookDropdownToggles = () => {
-    const toggles = document.querySelectorAll<HTMLElement>('.dropdown-toggle');
+    const toggles = document.querySelectorAll<HTMLElement>('.dropdown-toggle:not(.hooked)');
     toggles.forEach((toggle) => {
         hookToggle(toggle);
+        toggle.classList.add('hooked');
     });
 };
 

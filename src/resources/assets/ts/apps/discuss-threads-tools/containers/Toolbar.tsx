@@ -13,7 +13,10 @@ import {
 import BrowserHistory from '@root/utilities/BrowserHistory';
 
 import CreateThreadButton from '../components/CreateThreadButton';
+import FiltersButton from '../components/FiltersButton';
 import { IProps } from '../index._types';
+
+import './Toolbar.scss';
 
 function Toolbar(props: IProps) {
     const {
@@ -39,7 +42,9 @@ function Toolbar(props: IProps) {
         }
     }, [ apiConnector, setError ]);
 
-    return <div className="text-center">
+    return <div className="DiscussToolbar text-center">
+        <FiltersButton groupId={props.groupId}
+                       groupName={props.groupName} />
         <CreateThreadButton error={error}
                             enabled={roleManager.currentRole !== SecurityRole.Anonymous}
                             groupId={props.groupId}

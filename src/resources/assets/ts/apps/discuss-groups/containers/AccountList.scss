@@ -2,6 +2,7 @@
 
 $max-avatar-size: 2rem;
 $avatar-distance: 0.1rem;
+$avatar-distance-step: 5;
 
 .AccountList--avatars {
     overflow: hidden;
@@ -11,7 +12,8 @@ $avatar-distance: 0.1rem;
         width: $max-avatar-size;
         height: $max-avatar-size;
         box-shadow: none;
-        margin-left: $avatar-distance;
+        margin-left: $avatar-distance*-$avatar-distance-step;
+        background: black;
 
         &:first-child {
             margin-left: 0;

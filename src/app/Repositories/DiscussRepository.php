@@ -30,6 +30,7 @@ use App\Models\{
 use App\Repositories\ValueObjects\{
     ForumGroupsValue,
     ForumPostsInThreadValue,
+    ForumThreadFilterValue,
     ForumThreadForEntityValue,
     ForumThreadMetadataValue,
     ForumThreadsForPostsValue,
@@ -134,17 +135,54 @@ class DiscussRepository
      * @param integer $pageNumber
      * @return ForumThreadsInGroupValue
      */
-    public function getThreadDataInGroup(ForumGroup $group, Account $account = null, int $pageNumber = 0)
+    public function getThreadDataInGroup(ForumThreadFilterValue $arguments)
     {
+        $group       = $arguments->getForumGroup();
+        $account     = $arguments->getAccount();
+        $pageNumber  = $arguments->getPageNumber();
+        $filterNames = $arguments->getFilterNames();
+
         $this->resolveAccount($account);
 
+        if ($group === null) {
+            $threads = ForumThread::where('account');
+        } else {
+            $threads = ForumThread::inGroup($group->id)->with('account');
+        }
+
+        if (! empty($filterNames)) {
+            $threads = $threads->where(function ($q) use($filterNames) {
+                $first = true;
+                foreach ($filterNames as $filterName) {
+                    $criteria = [];
+
+                    switch ($filterName) {
+                        case 'unanswered':
+                            $criteria = [ 'is_empty', true ];
+                            break;
+                        case 'sticky':
+                            $criteria = [ 'is_sticky', true ];
+                            break;
+                        case 'default':
+                            $criteria = [ 'is_empty', false ];
+                            break;
+                    }
+
+                    if ($first) {
+                        $q = $q->where([$criteria]);
+                        $first = false;
+                    } else {
+                        $q = $q->orWhere([$criteria]);
+                    }
+                }
+            });
+        }
+
         $noOfThreadsPerPage = config('ed.forum_thread_resultset_max_length');
-        $noOfPages = intval(ceil(ForumThread::inGroup($group->id)->count() / $noOfThreadsPerPage));
+        $noOfPages = intval(ceil($threads->count() / $noOfThreadsPerPage));
         $currentPage = min($noOfPages, max(1, intval($pageNumber)));
 
-        $threads = ForumThread::inGroup($group->id)
-            ->with('account')
-            ->orderBy('is_sticky', 'desc')
+        $threads = $threads->orderBy('is_sticky', 'desc')
             ->orderBy('updated_at', 'desc')
             ->orderBy('created_at', 'desc')
             ->skip(($currentPage - 1) * $noOfThreadsPerPage)
@@ -835,39 +873,50 @@ class DiscussRepository
 
     private function updateForumThread(ForumThread $thread)
     {
-        $postIds = $thread->forum_posts() //
-            ->orderBy('created_at', 'asc')
-            ->where([
-                ['is_deleted', '<>', 1],
-                ['is_hidden', '<>', 1]
-            ]) //
-            ->select('id') //
-            ->pluck('id');
+        try {
+            DB::beginTransaction();
 
-        $noOfPosts = $postIds->count();
-        $noOfLikes = $noOfPosts === 0 //
-            ? 0 : ForumPostLike::whereIn('forum_post_id', $postIds)->count();
+            $postIds = $thread->forum_posts() //
+                ->orderBy('created_at', 'asc')
+                ->where([
+                    ['is_deleted', '<>', 1],
+                    ['is_hidden', '<>', 1]
+                ]) //
+                ->select('id') //
+                ->pluck('id');
 
-        // Handle deletion case - do not 'bump' the thread when people remove their posts.
-        if ($thread->number_of_posts >= $noOfPosts) {
-            $thread->timestamps = false;
+            $noOfPosts = $postIds->count();
+            $isEmpty   = $noOfPosts > 1; // 1 = only main post is present
+            $noOfLikes = $noOfPosts === 0 ? 0 : //
+                ForumPostLike::whereIn('forum_post_id', $postIds)->count();
+
+            // Handle deletion case - do not 'bump' the thread when people remove their posts.
+            if ($thread->number_of_posts >= $noOfPosts) {
+                $thread->timestamps = false;
+            }
+
+            $thread->number_of_posts = $noOfPosts;
+            $thread->number_of_likes = $noOfLikes;
+            $thread->is_empty        = $isEmpty;
+
+            // Make sure that `account_id` reflects the `account_id` for the last record associated with
+            // the given thread.
+            if ($noOfPosts > 0) {
+                $postId = $postIds->last();
+                $latest = ForumPost::where('id', $postId) //
+                    ->select('account_id') //
+                    ->pluck('account_id');
+
+                $thread->account_id = $latest->first();
+            }
+
+            $thread->save();
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $ex;
         }
-
-        $thread->number_of_posts = $noOfPosts;
-        $thread->number_of_likes = $noOfLikes;
-
-        // Make sure that `account_id` reflects the `account_id` for the last record associated with
-        // the given thread.
-        if ($noOfPosts > 0) {
-            $postId = $postIds->last();
-            $latest = ForumPost::where('id', $postId) //
-                ->select('account_id') //
-                ->pluck('account_id');
-
-            $thread->account_id = $latest->first();
-        }
-
-        $thread->save();
     }
 
     /**

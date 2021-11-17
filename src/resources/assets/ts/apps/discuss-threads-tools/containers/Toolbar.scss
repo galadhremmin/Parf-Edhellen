@@ -1,0 +1,12 @@
+.DiscussToolbar {
+    > button, > div {
+        margin-left: 1rem;
+        &:first-child {
+            margin-left: 0;
+        }
+
+        &.right {
+            float: right;
+        }
+    }
+}

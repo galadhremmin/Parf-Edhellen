@@ -10,6 +10,7 @@ use App\Models\{
 };
 use App\Adapters\DiscussAdapter;
 use App\Repositories\DiscussRepository;
+use App\Repositories\ValueObjects\ForumThreadFilterValue;
 use App\Helpers\LinkHelper;
 
 class DiscussApiController extends Controller 
@@ -53,7 +54,12 @@ class DiscussApiController extends Controller
         $page = $this->getPageFromRequest($request);
         $user = $request->user();
 
-        $threadData = $this->_discussRepository->getThreadDataInGroup($group, $user, $page);
+        $args = new ForumThreadFilterValue([
+            'forum_group' => $group,
+            'account'     => $user,
+            'page_number' => $page
+        ]);
+        $threadData = $this->_discussRepository->getThreadDataInGroup($args);
         $this->_discussAdapter->adaptThreads($threadData->getThreads());
 
         return $threadData;

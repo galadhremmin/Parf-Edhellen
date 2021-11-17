@@ -16,6 +16,7 @@ use App\Repositories\{
     DiscussRepository,
     StatisticsRepository
 };
+use App\Repositories\ValueObjects\ForumThreadFilterValue;
 use App\Models\{
     Account
 };
@@ -63,10 +64,21 @@ class DiscussController extends Controller
     public function group(Request $request, int $id)
     {
         $currentPage = max(0, intval($request->input('offset')));
+        $filterNames = $request->input('filters') ?: [];
+
+        if (! is_array($filterNames)) {
+            $filterNames = [$filterNames];
+        }
 
         try {
             $group = $this->_discussRepository->getGroup($id);
-            $threads = $this->_discussRepository->getThreadDataInGroup($group, $request->user(), $currentPage);
+            $args = new ForumThreadFilterValue([
+                'forum_group'  => $group,
+                'account'      => $request->user(),
+                'page_number'  => $currentPage,
+                'filter_names' => $filterNames
+            ]);
+            $threads = $this->_discussRepository->getThreadDataInGroup($args);
             $this->_discussAdapter->adaptThreads($threads->getThreads());
         
             return view('discuss.group', $threads->getAllValues());

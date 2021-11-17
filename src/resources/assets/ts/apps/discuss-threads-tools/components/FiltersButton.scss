@@ -1,0 +1,8 @@
+.FiltersButton {
+    // I hate that I have to do this. I really should swap out Bootstrap
+    > .FiltersButton--menu {
+        li.checkbox {
+            padding-left: 10px; // magic number that looks good.
+        }
+    }
+}

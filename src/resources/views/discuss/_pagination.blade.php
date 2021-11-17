@@ -3,17 +3,17 @@
   <ul class="pagination">
     @if ($current_page > 1)
     <li>
-      <a href="?offset={{ $current_page - 1 }}"><span aria-hidden="true">← Older</span></a>
+      <a href="{{ request()->fullUrlWithQuery(['offset' => $current_page - 1]) }}"><span aria-hidden="true">← Older</span></a>
     </li>
     @endif
     @foreach ($pages as $page_number)
     <li class="{{ $page_number == $current_page ? 'active' : '' }}">
-      <a href="?offset={{ $page_number }}">{{ $page_number }}</a>
+      <a href="{{ request()->fullUrlWithQuery(['offset' => $page_number]) }}">{{ $page_number }}</a>
     </li>
     @endforeach
     @if ($current_page < $no_of_pages)
     <li>
-      <a href="?offset={{$current_page + 1}}"><span aria-hidden="true">Newer →</span></a>
+      <a href="{{ request()->fullUrlWithQuery(['offset' => $current_page + 1]) }}"><span aria-hidden="true">Newer →</span></a>
     </li>
     @endif
   </ul>

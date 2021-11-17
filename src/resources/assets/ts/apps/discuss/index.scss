@@ -13,7 +13,6 @@ h1 {
 
 .discuss-thread-tools {
     height: 37px;
-    overflow: hidden;
 }
 
 .discuss-body {
@@ -50,6 +49,11 @@ h1 {
 .discuss-table {
     box-sizing: border-box;
 
+    > h2 {
+        text-align: left;
+        font-weight: 100;
+    }
+
     /* row */
     .r {
         display: flex;
@@ -63,14 +67,6 @@ h1 {
         &:hover {
             background-color: $alert-info-bg;
             border-radius: $border-radius-base;
-        }
-
-        &.sticky {
-            background: $text-color;
-            color: white;
-            a {
-                color: inherit;
-            }
         }
 
         /* column */
@@ -107,7 +103,6 @@ h1 {
 
     .member-list-account {
         font-size: 1.5em;
-
         .profile-summary {
             font-size: 1rem;
         }
@@ -132,7 +127,6 @@ h1 {
     transition: background-color 2s, padding 2s;
 
     &:first-child {
-        margin-top: 0;
         padding-top: 0;
         border-top: none;
     }
@@ -226,5 +220,12 @@ h1 {
             height: $ed-forum-post-profile-width*0.25*0.5;
             border-radius: $ed-forum-post-profile-width*0.25*0.5*0.5;
         }
+    }
+}
+
+@media (min-width: calc(#{$ed-forum-post-body-maximum-width} + #{$ed-forum-post-profile-width})) {
+    .forum-post {
+        max-width: calc(#{$ed-forum-post-body-maximum-width} + #{$ed-forum-post-profile-width});
+        margin: $line-height-computed auto 0 auto;
     }
 }
