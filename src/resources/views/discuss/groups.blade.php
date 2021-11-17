@@ -21,13 +21,6 @@
     </a>
   </blockquote>
   @endforeach
-  <blockquote>
-    <a class="block-link" href="{{ $linker->forumGroup(0, '') }}">
-      <span class="label label-default">0</span>
-      <h3>Unanswered threads</h3>
-      <p>These are threads who have not received a response as of yet.</p>
-    </a>
-  </blockquote>
 </div>
 
 <div data-inject-module="discuss-feed"></div>
