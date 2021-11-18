@@ -891,7 +891,7 @@ class DiscussRepository
                 ->pluck('id');
 
             $noOfPosts = $postIds->count();
-            $isEmpty   = $noOfPosts > 1; // 1 = only main post is present
+            $isEmpty   = $noOfPosts < 2; // 1 = only main post is present
             $noOfLikes = $noOfPosts === 0 ? 0 : //
                 ForumPostLike::whereIn('forum_post_id', $postIds)->count();
 
