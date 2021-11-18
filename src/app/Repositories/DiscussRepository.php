@@ -834,7 +834,7 @@ class DiscussRepository
         }
 
         $this->updateForumThread($post->forum_thread);
-        event(new ForumPostDeleted($post, $account));
+        event(new ForumPostDeleted($post, $account->id));
 
         return true;
     }
