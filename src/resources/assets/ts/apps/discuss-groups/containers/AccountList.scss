@@ -13,7 +13,8 @@ $avatar-distance-step: 5;
         height: $max-avatar-size;
         box-shadow: none;
         margin-left: $avatar-distance*-$avatar-distance-step;
-        background: black;
+        background: white;
+        background-size: cover;
 
         &:first-child {
             margin-left: 0;

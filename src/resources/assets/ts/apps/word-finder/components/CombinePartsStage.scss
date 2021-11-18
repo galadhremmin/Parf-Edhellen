@@ -6,6 +6,7 @@
         font-size: 1.25rem;
         line-height: 2;
         color: white;
+        margin-top: 1rem;
         > a {
             text-transform: uppercase;
             font-weight: bold;
@@ -16,21 +17,30 @@
         }
     }
     .CombinePartsStage__parts {
-        flex-wrap: wrap;
-        flex-direction: row;
-        padding: 0.5rem;
         background: white;
         border-radius: 0.3rem;
-        column-count: 5;
-        > button {
-            border-radius: 0;
-            border: none;
-            font-weight: bold;
-            background: none;
-            transition: opacity 1s;
+        padding: 0.5rem;
 
-            > .tengwar {
-                pointer-events: none;
+        .choices {
+            flex-wrap: wrap;
+            flex-direction: row;
+            column-count: 5;
+
+            > button {
+                font-weight: bold;
+                background: none;
+                transition: opacity 1s;
+                width: 100%;
+                margin-bottom: 0.5rem;
+
+                > .tengwar {
+                    pointer-events: none;
+                }
+            }
+        }
+        .undo-button {
+            > button {
+                width: 100%;
             }
         }
     }

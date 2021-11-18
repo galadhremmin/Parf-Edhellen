@@ -6,11 +6,10 @@ import React, {
 } from 'react';
 
 import { fireEvent } from '@root/components/Component';
-import Tengwar from '@root/components/Tengwar';
+import Quote from '@root/components/Quote';
 import { IProps } from './CombinePartsStage._types';
 
 import './CombinePartsStage.scss';
-import Spinner from '@root/components/Spinner';
 import { GameStage } from '../actions';
 
 const getPartIdFromDataset = (target: EventTarget) => {
@@ -51,6 +50,17 @@ function CombinePartsStage(props: IProps) {
         fireEvent('CombinePartsStage', onSelectPart, getPartIdFromDataset(ev.target));
     }, [ onSelectPart ]);
 
+    const _onUndo = useCallback(() => {
+        if (! selectedParts.length) {
+            return;
+        }
+
+        const partIndex = selectedParts[selectedParts.length - 1];
+        const part = parts[partIndex];
+
+        fireEvent('PartList', onDeselectPart, part.id);
+    }, [ selectedParts, parts ]);
+
     return <div className="CombinePartsStage">
         <div className="CombinePartsStage__selected-parts">
             {selectedParts.length ? selectedParts.map((i) => <a key={i}
@@ -63,13 +73,21 @@ function CombinePartsStage(props: IProps) {
                     Select your initial letters...
                 </span>}
         </div>
-        <div className="CombinePartsStage__parts" ref={partsRef}>
-            {parts.map((p) => <button key={p.id}
-                className={classNames('btn btn-default', { 'hidden': ! p.available, 'disabled': p.selected })}
-                data-part-id={p.id}
-                onClick={_onSelectPart}>
-                    {p.part.trim()}
-            </button>)}
+        <div className="CombinePartsStage__parts">
+            <div className="choices" ref={partsRef}>
+                {parts.map((p) => <button key={p.id}
+                    className={classNames('btn btn-default', { 'hidden': ! p.available, 'disabled': p.selected })}
+                    data-part-id={p.id}
+                    onClick={_onSelectPart}>
+                        {p.part.trim()}
+                </button>)}
+            </div>
+            {selectedParts.length > 0 && <div className="undo-button">
+                <button className="btn btn-default" onClick={_onUndo}>
+                    {'Undo '}
+                    <Quote>{parts[selectedParts[selectedParts.length - 1]].part}</Quote>
+                </button>
+            </div>}
         </div>
         <div className="CombinePartsStage__tips">
             Are you stuck? <a href="#">Ask for a tip!</a>

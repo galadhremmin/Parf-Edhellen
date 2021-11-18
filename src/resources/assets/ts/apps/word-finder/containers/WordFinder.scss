@@ -1,9 +1,14 @@
 @import '../../../_scss/variables';
+@import "../../../_scss/fx";
 
 .WordFinder--container {
     margin: 0 -15px;
     padding: 1rem 15px;
-    background: #355166;
+    background-color: #355166;
+    background-image: url(../../../../img/word-finder-background.jpg);
+    background-size: cover;
+    @include ed-box-shadow();
+
     @media (min-width: $screen-sm-min) {
         border-radius: 0.5rem;
     }

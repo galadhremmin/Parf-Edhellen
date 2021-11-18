@@ -15,6 +15,7 @@ use App\Models\Initialization\Morphs;
 use App\Helpers\StringHelper;
 use App\Events\{
     ForumPostCreated,
+    ForumPostDeleted,
     ForumPostEdited,
     ForumPostLikeCreated
 };
@@ -742,13 +743,15 @@ class DiscussRepository
             }
 
             $thread->account_id = $account->id;
-            $this->updateForumThread($thread);
 
             DB::commit();
         } catch (\Exception $ex) {
             DB::rollBack();
-            throw $ex;
+            $errorMessage = sprintf("Failed to save post %s.", $originalPost->toJson());
+            throw new \Exception($errorMessage, 0, $ex);
         }
+
+        $this->updateForumThread($thread);
 
         if ($event !== null) {
             event($event);
@@ -791,14 +794,15 @@ class DiscussRepository
             $post->number_of_likes = $post->forum_post_likes()->count();
             $post->save();
 
-            // Count number of likes on a thread level
-            $this->updateForumThread($post->forum_thread);
-
             DB::commit();
         } catch (Exception $ex) {
             DB::rollBack();
-            throw $ex;
+            $errorMessage = sprintf("Failed to save post like for %d for account %d.", $postId, $account->id);
+            throw new \Exception($errorMessage, 0, $ex);
         }
+
+        // Count number of likes on a thread level
+        $this->updateForumThread($post->forum_thread);
 
         // notify only when a like is created.
         if ($like !== null) {
@@ -822,14 +826,15 @@ class DiscussRepository
             $post->is_hidden = 0;
             $post->save();
 
-            $this->updateForumThread($post->forum_thread);
-
             DB::commit();
         }
         catch (Exception $ex) {
             DB::rollBack();
             throw $ex;
         }
+
+        $this->updateForumThread($post->forum_thread);
+        event(new ForumPostDeleted($post, $account));
 
         return true;
     }
@@ -873,41 +878,53 @@ class DiscussRepository
 
     private function updateForumThread(ForumThread $thread)
     {
-        $postIds = $thread->forum_posts() //
-            ->orderBy('created_at', 'asc')
-            ->where([
-                ['is_deleted', '<>', 1],
-                ['is_hidden', '<>', 1]
-            ]) //
-            ->select('id') //
-            ->pluck('id');
+        try {
+            DB::beginTransaction();
 
-        $noOfPosts = $postIds->count();
-        $isEmpty   = $noOfPosts > 1; // 1 = only main post is present
-        $noOfLikes = $noOfPosts === 0 ? 0 : //
-            ForumPostLike::whereIn('forum_post_id', $postIds)->count();
+            $postIds = $thread->forum_posts() //
+                ->orderBy('created_at', 'asc')
+                ->where([
+                    ['is_deleted', '<>', 1],
+                    ['is_hidden', '<>', 1]
+                ]) //
+                ->select('id') //
+                ->pluck('id');
 
-        // Handle deletion case - do not 'bump' the thread when people remove their posts.
-        if ($thread->number_of_posts >= $noOfPosts) {
-            $thread->timestamps = false;
+            $noOfPosts = $postIds->count();
+            $isEmpty   = $noOfPosts > 1; // 1 = only main post is present
+            $noOfLikes = $noOfPosts === 0 ? 0 : //
+                ForumPostLike::whereIn('forum_post_id', $postIds)->count();
+
+            // Handle deletion case - do not 'bump' the thread when people remove their posts.
+            if ($thread->number_of_posts >= $noOfPosts) {
+                $thread->timestamps = false;
+            }
+
+            $thread->number_of_posts = $noOfPosts;
+            $thread->number_of_likes = $noOfLikes;
+            $thread->is_empty        = $isEmpty;
+
+            // Make sure that `account_id` reflects the `account_id` for the last record associated with
+            // the given thread.
+            if ($noOfPosts > 0) {
+                $postId = $postIds->last();
+                $latest = ForumPost::where('id', $postId) //
+                    ->select('account_id') //
+                    ->pluck('account_id');
+
+                $thread->account_id = $latest->first();
+            }
+
+            $thread->save();
+
+            DB::commit();
         }
+        catch (\Exception $ex) {
+            DB::rollBack();
 
-        $thread->number_of_posts = $noOfPosts;
-        $thread->number_of_likes = $noOfLikes;
-        $thread->is_empty        = $isEmpty;
-
-        // Make sure that `account_id` reflects the `account_id` for the last record associated with
-        // the given thread.
-        if ($noOfPosts > 0) {
-            $postId = $postIds->last();
-            $latest = ForumPost::where('id', $postId) //
-                ->select('account_id') //
-                ->pluck('account_id');
-
-            $thread->account_id = $latest->first();
+            $errorMessage = sprintf("Failed to update thread medadata %s.", $thread->toJson());
+            throw new \Exception($errorMessage, 0, $ex);
         }
-
-        $thread->save();
     }
 
     /**
