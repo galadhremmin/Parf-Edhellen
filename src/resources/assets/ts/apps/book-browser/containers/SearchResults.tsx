@@ -11,6 +11,7 @@ import { RootReducer } from '../reducers';
 import { ISearchResult } from '../reducers/SearchResultsReducer._types';
 import { IProps } from './SearchResults._types';
 import LoadingIndicator from '../components/LoadingIndicator';
+import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 
 export class SearchResults extends React.Component<IProps> {
     static get defaultProps() {
@@ -29,9 +30,12 @@ export class SearchResults extends React.Component<IProps> {
 
     private _actions = new SearchActions();
     private _enableTipsCache: Cache<boolean>;
+    private _globalEvents = new GlobalEventConnector();
+    private _containerRef: React.RefObject<HTMLDivElement>;
 
     constructor(props: IProps) {
         super(props);
+        this._containerRef = React.createRef<HTMLDivElement>();
 
         // SessionStorage is sometimes unavailable, like within privacy mode or unit testing mode. Provide a graceful
         // fallback in these situations.
@@ -51,6 +55,10 @@ export class SearchResults extends React.Component<IProps> {
                 enableTips,
             });
         }
+    }
+
+    public componentWillUnmount() {
+        this._globalEvents.disconnect();
     }
 
     public render() {
@@ -83,7 +91,7 @@ export class SearchResults extends React.Component<IProps> {
         );
 
         return <section>
-            <div className="panel panel-default search-result-wrapper">
+            <div className="panel panel-default search-result-wrapper" ref={this._containerRef}>
                 <div className="panel-heading">
                     <h3 className="panel-title search-result-wrapper-toggler-title">
                         Search results

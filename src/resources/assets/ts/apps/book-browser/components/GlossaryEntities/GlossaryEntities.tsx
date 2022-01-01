@@ -5,9 +5,7 @@ import { Waypoint } from 'react-waypoint';
 import { IComponentEvent } from '@root/components/Component._types';
 import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
 import { ILanguageEntity } from '@root/connectors/backend/IBookApi';
-import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import Cache from '@root/utilities/Cache';
-import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
 import { SearchActions } from '../../actions';
 import { IBrowserHistoryState } from '../../actions/SearchActions._types';
@@ -26,7 +24,6 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
 
     private _glossaryContainerRef: React.RefObject<HTMLDivElement>;
     private _actions = new SearchActions();
-    private _globalEvents = new GlobalEventConnector();
     private _unusualLanguagesConfig: Cache<boolean>;
 
     constructor(props: IEntitiesComponentProps) {
@@ -43,9 +40,6 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
     }
 
     public async componentDidMount() {
-        // Subscribe to the global event `loadReference` which occurs when the customer clicks
-        // a reference link in any component not associated with the Glossary app.
-        this._globalEvents.loadReference = this._onGlobalListenerReferenceLoad;
         window.addEventListener('popstate', this._onPopState);
 
         const showUnusualLanguages = await this._unusualLanguagesConfig.get();
@@ -56,7 +50,6 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
 
     public componentWillUnmount() {
         window.removeEventListener('popstate', this._onPopState);
-        this._globalEvents.disconnect();
     }
 
     public render() {
@@ -206,23 +199,6 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
                 notifyLoaded,
             });
         }
-    }
-
-    /**
-     * Default event handler for the global event `referenceClick`.
-     */
-    private _onGlobalListenerReferenceLoad = (ev: CustomEvent) => {
-        // go to the top of the page to ensure that the client understands that the glossary
-        // is being reloaded.
-        if (this._glossaryContainerRef.current) {
-            makeVisibleInViewport(this._glossaryContainerRef.current);
-        } else {
-            window.scrollTo(0, 0);
-        }
-
-        this._onReferenceClick({
-            value: ev.detail,
-        });
     }
 
     private _onPopState = (ev: PopStateEvent) => {

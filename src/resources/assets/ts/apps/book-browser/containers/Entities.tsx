@@ -16,9 +16,7 @@ function Entities(props: IEntitiesComponentProps) {
 
     const {
         dispatch,
-        groupId,
         groupName,
-        loading,
     } = props;
 
     /**
