@@ -13,7 +13,7 @@
     <span itemprop="headline" class="{{ $gloss->is_rejected ? 'rejected' : '' }}">
       {{ $gloss->word }}
     </span>
-    @if ($gloss->label) 
+    @if (isset($gloss->label) && ! empty($gloss->label))
     <span class="gloss-word__neologism">
         <span class="label" title="{{ $gloss->label }}">{{ $gloss->label }}</span>
     </span>
