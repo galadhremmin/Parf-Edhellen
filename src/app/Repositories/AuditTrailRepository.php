@@ -39,7 +39,7 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
         $query = AuditTrail::orderBy('id', 'desc')
             ->with([
                 'account' => function ($query) {
-                    $query->select('id', 'nickname');
+                    $query->select('id', 'nickname', 'has_avatar');
                 },
                 'entity' => function () {}
             ]);
