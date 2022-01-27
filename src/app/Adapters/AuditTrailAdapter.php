@@ -90,17 +90,17 @@ class AuditTrailAdapter
             } else if ($action->entity instanceof ForumPost) {
                 switch ($action->action_id) {
                     case AuditTrail::ACTION_COMMENT_ADD:
-                        $message = 'wrote';
+                        $message = 'posted';
                         break;
                     case AuditTrail::ACTION_COMMENT_EDIT:
-                        $message = 'modified';
+                        $message = 'changed a post ';
                         break;
                     case AuditTrail::ACTION_COMMENT_LIKE:
-                        $message = 'liked';
+                        $message = 'liked a post';
                         break;
                 }
 
-                $entity = 'their post to <a href="'.
+                $entity = 'in <a href="'.
                     route('api.discuss.resolve', [
                         'entityType' => $action->entity_type,
                         'entityId' => $action->entity_id
