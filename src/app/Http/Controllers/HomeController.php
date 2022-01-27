@@ -76,7 +76,10 @@ class HomeController extends Controller
         });
 
         // Retrieve the 10 latest audit trail
-        $auditTrails = $this->_auditTrailAdapter->adaptAndMerge( $this->_auditTrail->get(10) );
+        $auditTrails = Cache::remember('ed.home.audit', 60 * 5 /* seconds */, function() {
+            return $this->_auditTrailAdapter->adaptAndMerge( $this->_auditTrail->get(10) );
+        });
+
         $data = $randomSentence + $randomGloss + $statistics + [
             'auditTrails'      => $auditTrails,
             'background'       => $background
