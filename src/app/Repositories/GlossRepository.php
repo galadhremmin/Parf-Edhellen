@@ -217,7 +217,7 @@ class GlossRepository
             return $groupedSuggestions;
         }
 
-        $query = self::createGlossQueryWithoutDetails([
+        $fields = [
             'w.normalized_word',
             'w.word',
             'g.comments',
@@ -227,7 +227,8 @@ class GlossRepository
             'a.nickname as account_name',
             'tg.name as gloss_group_name',
             'g.id'
-        ], false);
+        ];
+        $query = self::createGlossQueryWithoutDetails($fields, false);
 
         if ($languageId !== 0) {
             $query = $query->where('g.language_id', $languageId);
@@ -246,30 +247,29 @@ class GlossRepository
         $suggestions = $query
             ->orderBy(DB::raw('CHAR_LENGTH(w.normalized_word)'))
             ->limit($numberOfNormalizedWords*15)
-            ->get()
-            ->toArray();
-        
-        if (count($suggestions) > 0) {
+            ->get();
+
+        if ($suggestions->count() > 0) {
             foreach ($words as $word) {
                 $lengthOfWord = strlen($word);
                 
                 // Try to find direct matches first, i.e. á => á.
-                $matchingSuggestions = array_filter($suggestions, function($s) use($word, $lengthOfWord) {
+                $matchingSuggestions = $suggestions->filter(function($s) use($word, $lengthOfWord) {
                     return strlen($s->word) >= $lengthOfWord && substr($word, 0, $lengthOfWord) === $word;
                 });
 
-                if (count($matchingSuggestions) < 1) {
+                if ($matchingSuggestions->count() < 1) {
                     // If no direct matches were found, normalize the word and try again, i.e. a => a
                     $normalizedWord = StringHelper::normalize($word);
                     $lengthOfWord = strlen($normalizedWord);
 
-                    $matchingSuggestions = array_filter($suggestions, function ($s) use ($normalizedWord, $lengthOfWord) {
+                    $matchingSuggestions = $suggestions->filter(function ($s) use ($normalizedWord, $lengthOfWord) {
                         return strlen($s->normalized_word) >= $lengthOfWord && 
                             substr($s->normalized_word, 0, $lengthOfWord) === $normalizedWord;
                     });
                 }
 
-                $groupedSuggestions[$word] = $matchingSuggestions;
+                $groupedSuggestions[$word] = $matchingSuggestions->values();
             }
         }
 
