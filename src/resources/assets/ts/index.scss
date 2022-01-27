@@ -239,5 +239,32 @@ blockquote h3 a {
 .ed-ad-container:empty {
   display: none;
 }
+.ed-home-activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    padding-left: 50px;
+    padding-bottom: 5px;
+  }
+
+  .ed-home-activity-avatar {
+    float: left;
+    display: block;
+    margin-left: -50px;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    background-size: cover;
+    @include ed-box-shadow();
+  }
+
+  .date {
+    display: block;
+    font-size: 0.8rem;
+    font-family: $font-family-tiny;
+  }
+}
 
 @import './apps/discuss/index.scss'; /* Discuss is pretty much everywhere, so no point in separation here. */

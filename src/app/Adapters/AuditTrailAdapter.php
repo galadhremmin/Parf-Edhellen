@@ -5,7 +5,10 @@ namespace App\Adapters;
 use Illuminate\Support\Collection;
 use Carbon\Carbon;
 
-use App\Helpers\LinkHelper;
+use App\Helpers\{
+    LinkHelper,
+    StorageHelper
+};
 use App\Repositories\AuditTrailRepository;
 use App\Models\{
     Account,
@@ -21,10 +24,11 @@ class AuditTrailAdapter
     private $_link;
     private $_repository;
 
-    public function __construct(LinkHelper $linkHelper, AuditTrailRepository $repository)
+    public function __construct(LinkHelper $linkHelper, AuditTrailRepository $repository, StorageHelper $storageHelper)
     {
         $this->_link = $linkHelper;
         $this->_repository = $repository;
+        $this->_storageHelper = $storageHelper;
     }
 
     /**
@@ -96,7 +100,7 @@ class AuditTrailAdapter
                         break;
                 }
 
-                $entity = 'a comment in <a href="'.
+                $entity = 'their post to <a href="'.
                     route('api.discuss.resolve', [
                         'entityType' => $action->entity_type,
                         'entityId' => $action->entity_id
@@ -132,11 +136,12 @@ class AuditTrailAdapter
             }
 
             $item = [
-                'account_id'   => $action->account_id,
-                'account_name' => $action->account->nickname,
-                'created_at'   => $action->created_at,
-                'message'      => $message,
-                'entity'       => $entity
+                'account_id'     => $action->account_id,
+                'account_name'   => $action->account->nickname,
+                'account_avatar' => $this->_storageHelper->accountAvatar($action->account, true /* = _null_ if none exists */),
+                'created_at'     => $action->created_at,
+                'message'        => $message,
+                'entity'         => $entity
             ];
 
             $trail[] = $item;
