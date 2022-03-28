@@ -1,3 +1,5 @@
+@import "~bootstrap/scss/bootstrap";
+
 // Body
 $body-bg: #f5f8fa;
 
@@ -7,9 +9,6 @@ $brand-info: #8eb4cb;
 $brand-success: #2ab27b;
 $brand-warning: #cbb956;
 $brand-danger: #bf5329;
-
-// Typography
-$icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
 
 // Default body font:
 // - Iowan Old Style: preferred serif font on iOS
@@ -45,5 +44,3 @@ $screen-xxl-width: 1700px;
 $screen-xxxl-width: 2200px;
 
 $footer-height: 150px;
-
-@import 'node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_variables';

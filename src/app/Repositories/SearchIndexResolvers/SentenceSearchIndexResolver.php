@@ -51,7 +51,9 @@ class SentenceSearchIndexResolver extends SearchIndexResolverBase
                 ->groupBy('id');
 
             foreach ($sentences as $sentence) {
-                $sentence->account = $accounts[$sentence->account_id][0];
+                if (isset($accounts[$sentence->account_id])) {
+                    $sentence->account = $accounts[$sentence->account_id][0];
+                }
             }
         }
 

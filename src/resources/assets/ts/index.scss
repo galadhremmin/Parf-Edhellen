@@ -1,11 +1,11 @@
 @import "./_scss/_variables";
 @import "./_scss/_fx";
-@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 
 @import './_scss/autosuggest';
 @import "./_scss/_link-block";
 
 /* Please note that there are other imports on the bottom */
+/*
 
 html, body {
   width: 100%;
@@ -99,7 +99,7 @@ body {
     margin-right: 10px;
     margin-left: 0;
     @media (max-width: $screen-md-min) {
-      margin-left: $panel-body-padding + $font-size-base*0.5; /* due to 0.5em border */
+      margin-left: $panel-body-padding + $font-size-base*0.5; // due to 0.5em border
     }
   }
 }
@@ -239,6 +239,8 @@ blockquote h3 a {
 .ed-ad-container:empty {
   display: none;
 }
+*/
+
 .ed-home-activity-list {
   list-style: none;
   margin: 0;
@@ -265,6 +267,17 @@ blockquote h3 a {
     font-size: 0.8rem;
     font-family: $font-family-tiny;
   }
+}
+
+.ed-home-activity-avatar {
+  float: left;
+  display: block;
+  margin-left: -50px;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background-size: cover;
+  @include ed-box-shadow();
 }
 
 @import './apps/discuss/index.scss'; /* Discuss is pretty much everywhere, so no point in separation here. */

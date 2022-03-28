@@ -25,9 +25,9 @@
   position: absolute;
   width: 100%;
   background-color: #fff;
-  border-bottom-left-radius: $border-radius-large;
-  border-bottom-right-radius: $border-radius-large;
-  border: 1px solid $dropdown-border;
+  border-bottom-left-radius: $border-radius-lg;
+  border-bottom-right-radius: $border-radius-lg;
+  border: 1px solid $dropdown-border-color;
   border-top: none;
   z-index: 100;
 }
@@ -44,7 +44,7 @@
 }
 
 .react-autosuggest__suggestion--highlighted {
-  background-color: $gray-lighter;
+  background-color: $gray-200;
 }
 
 .react-autosuggest__section-container {
@@ -58,5 +58,5 @@
 .react-autosuggest__section-title {
   padding: 10px 0 0 10px;
   font-size: 0.9rem;
-  color: $gray-light;
+  color: $gray-500;
 }

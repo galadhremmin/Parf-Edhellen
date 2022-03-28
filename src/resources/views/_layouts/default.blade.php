@@ -23,93 +23,93 @@
   <noscript><style type="text/css">.noscript--hidden{display:none;}</style></noscript>
 </head>
 <body class="{{ $isAdmin ? 'ed-admin' : ($isAdmin === false ? 'ed-user' : 'ed-anonymous') }}" data-account-id="{{ $user ? $user->id : '0' }}" data-v="{{ config('ed.version') }}">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="/">{{ config('ed.title') }}</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-menu-content" aria-controls="main-menu-content" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="main-menu-content">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link {{ active('home') }}" href="/">@lang('home.title')</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {{ active('about') }}" href="{{ route('about') }}">@lang('about.title')</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {{ active(['sentence.public', 'sentence.public.language', 'sentence.public.sentence']) }}" href="{{ route('sentence.public') }}">@lang('sentence.title')</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {{ active(['games', 'flashcard', 'flashcard.cards', 'word-finder.index', 'word-finder.show']) }}" href="{{ route('games') }}">@lang('games.title')</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link {{ active(['discuss.index', 'discuss.group', 'discuss.show', 'discuss.member-list']) }}" href="{{ route('discuss.index') }}">
+              @lang('discuss.title')
+            </a>
+          </li>
+        </ul>
+        <ul class="navbar-nav d-flex mb-2 mb-lg-0">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="user-menu-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              @if ($user)
+                {{ $user->nickname }}
+              @else
+                @lang('discuss.community.title')
+              @endif
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="user-menu-dropdown">
+              @if ($user)
+              <li>
+                <a class="dropdown-item {{ active('dashboard') }}" href="{{ route('dashboard') }}">
+                  <span class="glyphicon glyphicon-dashboard"></span> 
+                  &nbsp;@lang('dashboard.title')
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item {{ active('author.my-profile') }}" href="{{ route('author.my-profile') }}">
+                  <span class="glyphicon glyphicon-user"></span> 
+                  &nbsp;@lang('discuss.community.profile')
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item {{ active('contribution.index') }}" href="{{ route('contribution.index') }}">
+                  <span class="glyphicon glyphicon-book"></span> 
+                  &nbsp;@lang('dashboard.contributions')
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="{{ route('logout') }}">
+                  <span class="glyphicon glyphicon-log-out"></span> 
+                  &nbsp;@lang('dashboard.logout')
+                </a>
+              </li>
+              @else
+              <li>
+                <a class="dropdown-item {{ active('login') }}" href="{{ route('login') }}">
+                  <span class="glyphicon glyphicon-log-in"></span> 
+                  &nbsp;@lang('dashboard.login')
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="{{ route('login') }}">
+                  <span class="glyphicon glyphicon-user"></span> 
+                  &nbsp;@lang('dashboard.register')
+                </a>
+              </li>
+              @endif
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item {{ active('discuss.members') }}" href="{{ route('discuss.members') }}">
+                  @lang('discuss.member-list.title')
+                </a>
+              </li>
+            </ul>
+          </li>
+      </div>
+    </div>
+  </nav>
   <div class="head-content">
-    <aside class="navbar navbar-inverse navbar-static-top" id="site-main-menu" role="navigation">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">@lang('home.menu.open')</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="/">{{ config('ed.title') }}</a>
-        </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="{{ active('home') }}"><a href="/">@lang('home.title')</a></li>
-            <li class="{{ active('about') }}"><a href="{{ route('about') }}">@lang('about.title')</a></li>
-            <li class="{{ active(['sentence.public', 'sentence.public.language', 'sentence.public.sentence']) }}"><a href="{{ route('sentence.public') }}">@lang('sentence.title')</a></li>
-            <li class="{{ active(['games', 'flashcard', 'flashcard.cards', 'word-finder.index', 'word-finder.show']) }}">
-              <a href="{{ route('games') }}">@lang('games.title')</a>
-            </li>
-            <li class="{{ active(['discuss.index', 'discuss.group', 'discuss.show', 'discuss.member-list']) }}">
-              <a href="{{ route('discuss.index') }}">@lang('discuss.title')</a>
-            </li>
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
-                @if ($user)
-                  {{ $user->nickname }}
-                @else
-                  @lang('discuss.community.title')
-                @endif
-                <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu">
-                @if ($user)
-                <li class="{{ active('dashboard') }}">
-                  <a href="{{ route('dashboard') }}">
-                    <span class="glyphicon glyphicon-dashboard"></span> 
-                    &nbsp;@lang('dashboard.title')
-                  </a>
-                </li>
-                <li class="{{ active('author.my-profile') }}">
-                  <a href="{{ route('author.my-profile') }}">
-                    <span class="glyphicon glyphicon-user"></span> 
-                    &nbsp;@lang('discuss.community.profile')
-                  </a>
-                </li>
-                <li class="{{ active('contribution.index') }}">
-                  <a href="{{ route('contribution.index') }}">
-                    <span class="glyphicon glyphicon-book"></span> 
-                    &nbsp;@lang('dashboard.contributions')
-                  </a>
-                </li>
-                <li>
-                  <a href="{{ route('logout') }}">
-                    <span class="glyphicon glyphicon-log-out"></span> 
-                    &nbsp;@lang('dashboard.logout')
-                  </a>
-                </li>
-                @else
-                <li class="{{ active('login') }}">
-                  <a href="{{ route('login') }}">
-                    <span class="glyphicon glyphicon-log-in"></span> 
-                    &nbsp;@lang('dashboard.login')
-                  </a>
-                </li>
-                <li>
-                  <a href="{{ route('login') }}">
-                    <span class="glyphicon glyphicon-user"></span> 
-                    &nbsp;@lang('dashboard.register')
-                  </a>
-                </li>
-                @endif
-                <li class="divider"></li>
-                <li class="{{ active('discuss.members') }}">
-                  <a href="{{ route('discuss.members') }}">
-                    @lang('discuss.member-list.title')
-                  </a>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div><!--/.container-fluid -->
-    </aside>
-
     <main class="container" id="site-container">
       <!-- scripting disabled warning -->
       <noscript>
@@ -121,14 +121,14 @@
       </noscript>
 
       <!-- search component -->
-      <div id="ed-search-component"></div>
+      <div id="ed-search-component" class="mt-4"></div>
 
       <!-- begin content -->
       @yield('body')
     </main>
   </div>
-  <footer>
-    <section>
+  <footer class="bg-dark text-muted p-4 d-flex">
+    <section class="flex-fill w-100">
       <h3>{{ config('ed.title') }}</h3>
       <nav>
         <ul>
@@ -139,7 +139,7 @@
         </ul>
       </nav>
     </section>
-    <section>
+    <section class="flex-fill w-100">
       Black Speech, Nandorin, Noldorin, Quendya, Quenya, Sindarin, Telerin are languages conceived by Tolkien and they do not belong to us; 
       we neither can nor do claim affiliation with <a href="http://www.middleearth.com/" target="_blank">Middle-earth Enterprises</a> nor 
       <a href="http://www.tolkienestate.com/" target="_blank">Tolkien Estate</a>.

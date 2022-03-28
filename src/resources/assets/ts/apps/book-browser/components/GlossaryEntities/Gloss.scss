@@ -5,7 +5,7 @@ $gloss-border-color: #dedede;
 blockquote.gloss {
   border-width: 1px;
   overflow: hidden;
-  border-left-color: $gloss-border-color;
+//  border-left-color: $gloss-border-color;
   break-inside: avoid;
   page-break-inside: avoid; /* -> https://caniuse.com/#search=columns */
 
@@ -16,7 +16,7 @@ blockquote.gloss {
       .label {
         font-size: 0.8rem;
         font-family: $font-family-tiny;
-        background-color: $brand-danger;
+//        background-color: $brand-danger;
         margin-left: 0.85rem;
         vertical-align: middle;
       }
@@ -75,7 +75,7 @@ blockquote.gloss {
     overflow: hidden;
   }
   section.details {
-    padding: $padding-small-vertical 0;
+//    padding: $padding-small-vertical 0;
 
     header > h4 {
       margin-top: 0;

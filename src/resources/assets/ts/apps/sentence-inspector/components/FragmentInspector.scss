@@ -1,11 +1,11 @@
 @import '../../../_scss/variables';
 
 $inspector-border-radius: 0.2em;
-$inspector-background: $panel-default-heading-bg;
-$inspector-border: $panel-default-border;
+$inspector-background: #ccc; //$panel-default-heading-bg;
+$inspector-border: #ccc;// $panel-default-border;
 $inspector-height: 45vh;
 $inspector-max-width: 600px;
-$inspector-border-top: $gray-lighter; // #8aa5c3;
+$inspector-border-top: $gray-200; // #8aa5c3;
 
 .fragment-inspector--open .sentence-inspector {
     padding-bottom: $inspector-height;
@@ -23,7 +23,7 @@ $inspector-border-top: $gray-lighter; // #8aa5c3;
     width: 100%;
     z-index: 1000;
     overflow-y: scroll;
-    padding: $line-height-computed/2 $line-height-computed 0 $line-height-computed;
+    padding: $line-height-base/2 $line-height-base 0 $line-height-base;
     background: $inspector-background;
     border-top: 3px solid $inspector-border-top;
     box-shadow: 0px -0.25rem 0.5rem 0px rgba(0, 0, 0, 0.2);
@@ -51,13 +51,13 @@ $inspector-border-top: $gray-lighter; // #8aa5c3;
     nav {
         font-size: 1rem;
         > ul {
-            margin: $line-height-computed/4 0 $line-height-computed/2 0;
+            margin: $line-height-base/4 0 $line-height-base/2 0;
             > li {
                 a {
                     border: none;
                     padding: 0;
                     font-size: 1.25rem;
-                    color: $gray-light;
+                    color: $gray-500;
                     padding: 0.1rem 0.4rem 0 0.4rem;
 
                     + a {

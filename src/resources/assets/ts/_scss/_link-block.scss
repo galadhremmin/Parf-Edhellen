@@ -1,7 +1,7 @@
 @import './_variables';
 
 .link-blocks {
-  @media (min-width: $screen-sm-min) {
+  @media (min-width: map-get($grid-breakpoints, 'sm')) {
     columns: 2;
   }
 
@@ -9,7 +9,7 @@
     page-break-inside: avoid;
     
     &:hover {
-      background: $alert-info-bg;
+      // background: $alert-info-bg;
       border-radius: 5px;
     }
   

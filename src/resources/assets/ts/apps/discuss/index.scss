@@ -58,15 +58,15 @@ h1 {
     .r {
         display: flex;
         flex-wrap: wrap;
-        padding: $padding-base-vertical;
+//        padding: $padding-base-vertical;
 
         &:nth-child(even) {
-            background-color: $table-bg-accent;
+            // background-color: $table-bg-accent;
         }
         
         &:hover {
-            background-color: $alert-info-bg;
-            border-radius: $border-radius-base;
+            // background-color: $alert-info-bg;
+//            border-radius: $border-radius-base;
         }
 
         /* column */
@@ -121,9 +121,9 @@ h1 {
     display: table;
     width: 100%;
     box-sizing: border-box;
-    margin-top: $line-height-computed;
-    padding-top: $line-height-computed;
-    border-top: 1px solid $gray-lighter;
+    margin-top: $line-height-base;
+    padding-top: $line-height-base;
+    border-top: 1px solid $gray-200;
     transition: background-color 2s, padding 2s;
 
     &:first-child {
@@ -136,9 +136,9 @@ h1 {
     }
 
     &.highlight {
-        background-color: $alert-info-bg;
-        padding: $padding-large-vertical;
-        border-radius: $border-radius-large;
+        // background-color: $alert-info-bg;
+//        padding: $padding-large-vertical;
+        border-radius: $border-radius-lg;
     }
 
     .post-body {
@@ -180,13 +180,13 @@ h1 {
     }
 
     footer {
-        font-size: $font-size-small;
-        color: $gray-light;
+//        font-size: $font-size-small;
+        color: $gray-500;
 
         .post-no {
             float: right;
-            font-size: $font-size-small;
-            color: $gray-light;
+//            font-size: $font-size-small;
+            color: $gray-500;
         }
 
         > a {
@@ -198,11 +198,11 @@ h1 {
         text-decoration: none;
 
         .like-not-liked {
-            color: $gray-light;
+            color: $gray-500;
         }
 
         .like-liked {
-            color: $brand-success;
+//            color: $brand-success;
         }
     }
 }
@@ -226,6 +226,6 @@ h1 {
 @media (min-width: calc(#{$ed-forum-post-body-maximum-width} + #{$ed-forum-post-profile-width})) {
     .forum-post {
         max-width: calc(#{$ed-forum-post-body-maximum-width} + #{$ed-forum-post-profile-width});
-        margin: $line-height-computed auto 0 auto;
+        margin: $line-height-base auto 0 auto;
     }
 }

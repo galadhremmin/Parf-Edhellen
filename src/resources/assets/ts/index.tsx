@@ -1,7 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
-
-import { hookBootstrapToggles } from './utilities/BootstrapShims';
+import 'bootstrap';
 
 import BookBrowserApp from './apps/book-browser';
 import inject from './Injector';
@@ -52,6 +51,5 @@ if (loadLatestScript()) {
         renderDictionary();
         renderDates();
         inject();
-        hookBootstrapToggles();
     });
 }

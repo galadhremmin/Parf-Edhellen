@@ -19,15 +19,15 @@
     }
 
     > span.glyphicon {
-        color: $gray-light;
+        color: $gray-500;
         font-size: 70%;
     }
 
     display: inline-block;
     overflow: hidden;
-    border: 1px solid $input-border;
-    border-radius: $border-radius-base;
-    padding: 0 $padding-base-horizontal/2;
+//    border: 1px solid $input-border;
+//    border-radius: $border-radius-base;
+//    padding: 0 $padding-base-horizontal/2;
     margin-left: 0.5em;
     font-weight: normal;
 }

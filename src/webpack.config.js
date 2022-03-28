@@ -100,22 +100,6 @@ module.exports = {
         }],
       },
       {
-        test: /\.(eot|ttf|svg)$/,
-        use: [
-          'file-loader?name=fonts/[name].[ext]'
-        ]
-      },
-      {
-        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        use: [{
-          loader: 'url-loader',
-          options: {
-            mimetype: 'application/font-woff',
-            name: 'fonts/[name].[ext]',
-          }
-        }],
-      },
-      {
         test: /\.(gif|jpg|png)$/i,
         use: [
           {
@@ -128,24 +112,45 @@ module.exports = {
         use: 'ts-loader',
       },
       // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
+      /*
       { 
         enforce: 'pre', 
         test: /\.js$/, 
         use: 'source-map-loader'
       },
+      */
       {
-        test: /\.s?css$/,
+        test: /\.scss$/,
         use: [
           bundleCssWithJavaScript ? 'style-loader' : MiniCssExtractPlugin.loader, // creates style nodes from JS strings
           {
             loader: 'css-loader',
             options: {
               modules: false, // translates CSS into CommonJS
+              sourceMap: false,
             },
           },
-          "sass-loader" // compiles Sass to CSS, using Node Sass by default
+          {
+            loader: 'sass-loader', // compiles Sass to CSS, using Node Sass by defaultoptions: {
+            options: {
+              sourceMap: false,
+            },
+          },
         ]
       },
+      {
+        test: /\.css$/,
+        use: [
+          bundleCssWithJavaScript ? 'style-loader' : MiniCssExtractPlugin.loader, // creates style nodes from JS strings
+          {
+            loader: 'css-loader',
+            options: {
+              modules: false, // translates CSS into CommonJS
+              sourceMap: false,
+            },
+          },
+        ]
+      }
     ],
   },
   plugins: [

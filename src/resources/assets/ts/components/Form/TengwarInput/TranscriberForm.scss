@@ -2,10 +2,10 @@
 
 .TranscriberForm {
     legend {
-        margin-bottom: $line-height-computed/2;
+        margin-bottom: $line-height-base/2;
     }
     fieldset {
-        margin-bottom: $line-height-computed/2;
+        margin-bottom: $line-height-base/2;
 
         &.TranscriberForm__transcription {
             > div {
@@ -15,10 +15,10 @@
         }
     }
 
-    @media (min-width: $screen-md-min) {
+    @media (min-width: map-get($grid-breakpoints, 'md')) {
         display: grid;
         grid-template-columns: 50% 50%;
-        grid-column-gap: $line-height-computed/2;
+        grid-column-gap: $line-height-base/2;
 
         fieldset {
             &.TranscriberForm__language {
