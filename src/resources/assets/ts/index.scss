@@ -1,8 +1,71 @@
 @import "./_scss/_variables";
 @import "./_scss/_fx";
 
+@import "~bootstrap/scss/bootstrap";
+
+$font-family-sans-serif: "Iowan Old Style", Georgia, "Bitstream Charter", "Charis SIL", Utopia, "URW Bookman L", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
 @import './_scss/autosuggest';
 @import "./_scss/_link-block";
+
+.navbar-brand {
+  overflow: hidden;
+  text-indent: -9999px;
+  width: 140px;
+  background: url(../img/logotype.png) no-repeat center center;
+  background-size: 140px 45px;
+}
+
+header h2.tengwar {
+  font-size: 1.4rem;
+}
+
+.ed-home-activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    padding-left: 50px;
+    padding-bottom: 5px;
+  }
+
+  .ed-home-activity-avatar {
+    float: left;
+    display: block;
+    margin-left: -50px;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    background-size: cover;
+    @include ed-box-shadow();
+  }
+
+  .date {
+    display: block;
+    font-size: 0.8rem;
+    font-family: $font-family-tiny;
+  }
+}
+
+.ed-home-activity-avatar {
+  float: left;
+  display: block;
+  margin-left: -50px;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  background-size: cover;
+  @include ed-box-shadow();
+}
+
+.hidden {
+  display: none;
+}
+
+@import './apps/discuss/index.scss'; /* Discuss is pretty much everywhere, so no point in separation here. */
+
+
 
 /* Please note that there are other imports on the bottom */
 /*
@@ -176,9 +239,6 @@ h1,h2,h3,h4,h5 {
 h1, h2 {
   text-align: center;
 }
-header h2.tengwar {
-  font-size: 1.4rem;
-}
 blockquote {
   font-size: 1rem;
   line-height: 1.5;
@@ -240,44 +300,3 @@ blockquote h3 a {
   display: none;
 }
 */
-
-.ed-home-activity-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-
-  li {
-    padding-left: 50px;
-    padding-bottom: 5px;
-  }
-
-  .ed-home-activity-avatar {
-    float: left;
-    display: block;
-    margin-left: -50px;
-    width: 40px;
-    height: 40px;
-    border-radius: 20px;
-    background-size: cover;
-    @include ed-box-shadow();
-  }
-
-  .date {
-    display: block;
-    font-size: 0.8rem;
-    font-family: $font-family-tiny;
-  }
-}
-
-.ed-home-activity-avatar {
-  float: left;
-  display: block;
-  margin-left: -50px;
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
-  background-size: cover;
-  @include ed-box-shadow();
-}
-
-@import './apps/discuss/index.scss'; /* Discuss is pretty much everywhere, so no point in separation here. */

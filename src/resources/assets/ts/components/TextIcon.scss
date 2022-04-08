@@ -1,0 +1,86 @@
+.TextIcon {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-repeat: no-repeat;
+    background-size: 1em 1em;
+
+    &.TextIcon--arrow-down {
+        background-image: url("~bootstrap-icons/icons/arrow-down.svg");
+    }
+    &.TextIcon--bell {
+        background-image: url("~bootstrap-icons/icons/bell.svg");
+    }
+    &.TextIcon--chevron-left {
+        background-image: url("~bootstrap-icons/icons/chevron-left.svg");
+    }
+    &.TextIcon--chevron-right {
+        background-image: url("~bootstrap-icons/icons/chevron-right.svg");
+    }
+    &.TextIcon--chevron-up {
+        background-image: url("~bootstrap-icons/icons/chevron-up.svg");
+    }
+    &.TextIcon--chevron-down {
+        background-image: url("~bootstrap-icons/icons/chevron-down.svg");
+    }
+    &.TextIcon--comment {
+        background-image: url("~bootstrap-icons/icons/chat-square-dots.svg");
+    }
+    &.TextIcon--edit {
+        background-image: url("~bootstrap-icons/icons/pencil.svg");
+    }
+    &.TextIcon--envelope {
+        background-image: url("~bootstrap-icons/icons/envelope.svg");
+    }
+    &.TextIcon--exclamation-sign {
+        background-image: url("~bootstrap-icons/icons/exclamation-circle.svg");
+    }
+    &.TextIcon--info-sign {
+        background-image: url("~bootstrap-icons/icons/info-circle.svg");
+    }
+    &.TextIcon--globe {
+        background-image: url("~bootstrap-icons/icons/globe.svg");
+    }
+    &.TextIcon--ok {
+        background-image: url("~bootstrap-icons/icons/check.svg");
+    }
+    &.TextIcon--pushpin {
+        background-image: url("~bootstrap-icons/icons/pin-angle.svg");
+    }
+    &.TextIcon--refresh {
+        background-image: url("~bootstrap-icons/icons/arrow-clockwise.svg");
+    }
+    &.TextIcon--remove {
+        background-image: url("~bootstrap-icons/icons/eraser.svg");
+    }
+    &.TextIcon--search {
+        background-image: url("~bootstrap-icons/icons/search.svg");
+    }
+    &.TextIcon--share {
+        background-image: url("~bootstrap-icons/icons/share.svg");
+    }
+    &.TextIcon--thumbs-down {
+        background-image: url("~bootstrap-icons/icons/hand-thumbs-down.svg");
+        &.filled {
+            background-image: url("~bootstrap-icons/icons/hand-thumbs-down-fill.svg");
+        }
+    }
+    &.TextIcon--thumbs-up {
+        background-image: url("~bootstrap-icons/icons/hand-thumbs-up.svg");
+        &.filled {
+            background-image: url("~bootstrap-icons/icons/hand-thumbs-up-fill.svg");
+        }
+    }
+    &.TextIcon--trash {
+        background-image: url("~bootstrap-icons/icons/trash.svg");
+    }
+    &.TextIcon--warning-sign {
+        background-image: url("~bootstrap-icons/icons/exclamation-triangle.svg");
+    }
+    &.TextIcon--minus-sign {
+        background-image: url("~bootstrap-icons/icons/dash.svg");
+    }
+    &.TextIcon--plus-sign {
+        background-image: url("~bootstrap-icons/icons/plus.svg");
+    }
+}

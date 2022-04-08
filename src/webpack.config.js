@@ -99,14 +99,6 @@ module.exports = {
           },
         }],
       },
-      {
-        test: /\.(gif|jpg|png)$/i,
-        use: [
-          {
-            loader: 'file-loader',
-          }
-        ],
-      },
       { 
         test: /\.tsx?$/, 
         use: 'ts-loader',
@@ -150,7 +142,7 @@ module.exports = {
             },
           },
         ]
-      }
+      },
     ],
   },
   plugins: [

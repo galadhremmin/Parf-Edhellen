@@ -66,7 +66,7 @@ function CreateThreadButton(props: IProps) {
 
     return <>
         <button className="btn btn-primary" onClick={_onOpen}>
-            <TextIcon icon="pencil" />
+            <TextIcon icon="comment" />
             {' '}
             New post
         </button>

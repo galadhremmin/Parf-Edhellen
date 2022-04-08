@@ -1,11 +1,15 @@
 @import '../../../_scss/variables';
 
 $inspector-border-radius: 0.2em;
-$inspector-background: #ccc; //$panel-default-heading-bg;
+$inspector-background: $gray-200; //$panel-default-heading-bg;
 $inspector-border: #ccc;// $panel-default-border;
 $inspector-height: 45vh;
 $inspector-max-width: 600px;
 $inspector-border-top: $gray-200; // #8aa5c3;
+
+.fragment-inspector--open {
+    overflow-y: hidden;
+}
 
 .fragment-inspector--open .sentence-inspector {
     padding-bottom: $inspector-height;
@@ -20,21 +24,42 @@ $inspector-border-top: $gray-200; // #8aa5c3;
     left: 0;
     bottom: 0;
     height: $inspector-height;
+    box-sizing: border-box;
     width: 100%;
     z-index: 1000;
     overflow-y: scroll;
-    padding: $line-height-base/2 $line-height-base 0 $line-height-base;
     background: $inspector-background;
-    border-top: 3px solid $inspector-border-top;
-    box-shadow: 0px -0.25rem 0.5rem 0px rgba(0, 0, 0, 0.2);
+    padding: 1rem 2rem 0 2rem;
+    box-shadow: inset 0 0 10px  rgba(0, 0, 0, 0.2);
+    font-size: 1rem;
+
+    .btn-close {
+        position: fixed;
+        right: 20px;
+        z-index: 1002;
+    }
+
+    .navigation-arrows {
+        position: fixed;
+        display: flex;
+        align-items: center;
+        height: $inspector-height;
+        font-size: 1.5rem;
+        animation: fragment-inspector-arrows-spawn 1.5s alternate;
+        animation-iteration-count: 3;
+
+        &.left {
+            left: 0;
+        }
+        &.right {
+            right: 20px; // because of the scroll bar! :(
+        }
+    }
 
     > article {
         max-width: $inspector-max-width;
         margin: 0 auto;
-
-        > header h1 {
-            display: none;
-        }
+        z-index: 1001;
 
         > section {
             &.abstract {
@@ -44,35 +69,17 @@ $inspector-border-top: $gray-200; // #8aa5c3;
             > blockquote {
                 padding: 0;
                 border: none;
+                margin: 0;
             }
         }
     }
+}
 
-    nav {
-        font-size: 1rem;
-        > ul {
-            margin: $line-height-base/4 0 $line-height-base/2 0;
-            > li {
-                a {
-                    border: none;
-                    padding: 0;
-                    font-size: 1.25rem;
-                    color: $gray-500;
-                    padding: 0.1rem 0.4rem 0 0.4rem;
-
-                    + a {
-                        margin-left: 1em;
-                    }
-
-                    &.disabled > span.glyphicon {
-                        background: transparent;
-                    }
-                }
-            }
-        }
-        .tengwar-pill > span {
-            border: none;
-            font-size: 1.1rem;
-        }
+@keyframes fragment-inspector-arrows-spawn {
+    0% {
+        transform: scale(2);
+    }
+    100% {
+        transform: scale(1);
     }
 }

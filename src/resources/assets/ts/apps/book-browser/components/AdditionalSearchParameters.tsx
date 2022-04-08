@@ -33,7 +33,7 @@ function AdditionalSearchParameters(props: IProps) {
                 value={glossGroupId}
             />
         </div>
-    </div>
+    </div>;
 }
 
 AdditionalSearchParameters.defaultProps = {

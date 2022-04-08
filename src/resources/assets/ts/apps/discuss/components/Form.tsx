@@ -76,7 +76,7 @@ function Form(props: IProps) {
         <div className="form-group text-right">
             <button className="btn btn-default" onClick={_onCancelClick}>Cancel</button>
             <button type="submit" className="btn btn-primary">
-                <TextIcon icon="pencil" />
+                <TextIcon icon="edit" />
                 Save
             </button>
         </div>

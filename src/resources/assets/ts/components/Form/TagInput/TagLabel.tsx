@@ -40,7 +40,7 @@ function TagLabel(props: IProps) {
         />
         {tag}
         &#32;
-        <TextIcon icon="remove-sign" />
+        <TextIcon icon="remove" />
     </label>;
 }
 

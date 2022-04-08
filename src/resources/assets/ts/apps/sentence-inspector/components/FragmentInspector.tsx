@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 
-import StaticAlert from '@root/components/StaticAlert';
-import Tengwar from '@root/components/Tengwar';
 import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
 import { IProps } from './FragmentInspector._types';
@@ -60,7 +58,7 @@ export function FragmentInspector(props: IProps) {
         nextFragmentId,
     } = props.fragment;
 
-    const _onCloseClick = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
+    const _onCloseClick = useCallback((ev: React.MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
         fireEventAsync('FragmentInspector', onSelectFragment, null);
     }, [ onSelectFragment ]);
@@ -80,35 +78,17 @@ export function FragmentInspector(props: IProps) {
     }, [ onNextOrPreviousFragmentClick, nextFragmentId ]);
 
     return <aside className="fragment-inspector" ref={_rootRef}>
-        <nav aria-label="Fragment navigator">
-            <ul className="pager">
-                <li className="previous">
-                    <a href="#previous"
-                        className={classNames({ disabled: ! previousFragmentId})}
-                        onClick={_onPreviousClick}>
-                        <TextIcon icon="chevron-left" />
-                    </a>
-                    <a href="#"
-                        onClick={_onCloseClick}>
-                        <TextIcon icon="remove" />
-                    </a>
-                </li>
-                {fragment && <li className="tengwar-pill">
-                    <Tengwar text={fragment.tengwar} transcribe={false} />
-                </li>}
-                <li className="next">
-                    <a href="#next"
-                        onClick={_onNextClick}
-                        className={classNames({ disabled: ! nextFragmentId})}>
-                        <TextIcon icon="chevron-right" />
-                    </a>
-                </li>
-            </ul>
-        </nav>
-        {! fragment && <StaticAlert type="warning">
-            <strong>The word does not exist!</strong>{' '}
-            The word has probably been removed from the dictionary. We have recorded this error. Sorry!
-        </StaticAlert>}
+        <a href="#previous"
+            className={classNames('navigation-arrows left', { 'opacity-25': ! previousFragmentId})}
+            onClick={_onPreviousClick}>
+            <TextIcon icon="chevron-left" />
+        </a>
+        <a href="#next"
+            onClick={_onNextClick}
+            className={classNames('navigation-arrows right', { 'opacity-25': ! nextFragmentId})}>
+            <TextIcon icon="chevron-right" />
+        </a>
+        <button type="button" onClick={_onCloseClick} className="btn-close" />
         {fragment && <GlossFragmentInspector fragment={fragment} />}
     </aside>;
 }

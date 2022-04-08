@@ -2,8 +2,10 @@ import IBookApi, { IBookGlossEntity } from '@root/connectors/backend/IBookApi';
 import { DI, resolve } from '@root/di';
 import { useEffect, useState } from 'react';
 
-function useGloss<T extends IBookGlossEntity = IBookGlossEntity>(glossId: number, adapter?: (gloss: IBookGlossEntity) => T) {
-    const [ gloss, setGloss ] = useState<T>(null);
+import { IHookedGloss } from './useGloss._types';
+
+function useGloss<T extends IBookGlossEntity = IBookGlossEntity>(glossId: number, adapter?: (gloss: IBookGlossEntity) => T): IHookedGloss<T> {
+    const [ gloss, setGloss ] = useState<IHookedGloss<T>>(null);
 
     useEffect(() => {
         if (! glossId) {
@@ -13,15 +15,25 @@ function useGloss<T extends IBookGlossEntity = IBookGlossEntity>(glossId: number
             api.gloss(glossId) //
                 .then((details) => {
                     const entity = details.sections[0].entities[0];
+                    let nextGloss;
                     if (typeof adapter === 'function') {
-                        setGloss(adapter(entity));
+                        nextGloss = adapter(entity);
                     } else {
-                        setGloss(entity as T);
+                        nextGloss = entity as T;
                     }
+
+                    setGloss({
+                        error: null,
+                        gloss: nextGloss,
+                    });
                 }) //
                 .catch((ex) => {
-                    console.warn(`[useGloss]: Failed to resolve gloss ${glossId}: ${ex}`);
-                    setGloss(null);
+                    const error = `[useGloss]: Failed to resolve gloss ${glossId}: ${ex}`;
+                    console.warn(error);
+                    setGloss({
+                        error,
+                        gloss: null,
+                    });
                 });
         }
     }, [ glossId ]);

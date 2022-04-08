@@ -86,7 +86,7 @@ function EditPost(props: IProps) {
     ]);
 
     return <>
-        <ActionLink icon="pencil"
+        <ActionLink icon="edit"
             onClick={_onOpenDialog}
             post={post}
             thread={thread}

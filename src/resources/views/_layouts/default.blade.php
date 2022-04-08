@@ -22,7 +22,8 @@
   @endif
   <noscript><style type="text/css">.noscript--hidden{display:none;}</style></noscript>
 </head>
-<body class="{{ $isAdmin ? 'ed-admin' : ($isAdmin === false ? 'ed-user' : 'ed-anonymous') }}" data-account-id="{{ $user ? $user->id : '0' }}" data-v="{{ config('ed.version') }}">
+<body class="bg-dark {{ $isAdmin ? 'ed-admin' : ($isAdmin === false ? 'ed-user' : 'ed-anonymous') }}" data-account-id="{{ $user ? $user->id : '0' }}" data-v="{{ config('ed.version') }}">
+<div class="bg-white pb-4">
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
       <a class="navbar-brand" href="/">{{ config('ed.title') }}</a>
@@ -127,30 +128,31 @@
       @yield('body')
     </main>
   </div>
-  <footer class="bg-dark text-muted p-4 d-flex">
-    <section class="flex-fill w-100">
-      <h3>{{ config('ed.title') }}</h3>
-      <nav>
-        <ul>
-          <li><a href="{{ route('login') }}">Log in</a></li>
-          <li><a href="{{ route('about') }}">About the website</a></li>
-          <li><a href="{{ route('about.cookies') }}">Cookie policy</a></li>
-          <li><a href="{{ route('about.privacy') }}">Privacy policy</a></li>
-        </ul>
-      </nav>
-    </section>
-    <section class="flex-fill w-100">
-      Black Speech, Nandorin, Noldorin, Quendya, Quenya, Sindarin, Telerin are languages conceived by Tolkien and they do not belong to us; 
-      we neither can nor do claim affiliation with <a href="http://www.middleearth.com/" target="_blank">Middle-earth Enterprises</a> nor 
-      <a href="http://www.tolkienestate.com/" target="_blank">Tolkien Estate</a>.
-    </section>
-  </footer>
+</div>
+<footer class="text-muted p-4 d-flex">
+  <section class="flex-fill w-100">
+    <h3>{{ config('ed.title') }}</h3>
+    <nav>
+      <ul>
+        <li><a href="{{ route('login') }}">Log in</a></li>
+        <li><a href="{{ route('about') }}">About the website</a></li>
+        <li><a href="{{ route('about.cookies') }}">Cookie policy</a></li>
+        <li><a href="{{ route('about.privacy') }}">Privacy policy</a></li>
+      </ul>
+    </nav>
+  </section>
+  <section class="flex-fill w-100">
+    Black Speech, Nandorin, Noldorin, Quendya, Quenya, Sindarin, Telerin are languages conceived by Tolkien and they do not belong to us; 
+    we neither can nor do claim affiliation with <a href="http://www.middleearth.com/" target="_blank">Middle-earth Enterprises</a> nor 
+    <a href="http://www.tolkienestate.com/" target="_blank">Tolkien Estate</a>.
+  </section>
+</footer>
 
-  <script type="text/javascript" src="@assetpath(index.js)"></script>
-  
-  @yield('scripts')
-  @if (!empty(config('ed.footer_view')))
-    @include(config('ed.footer_view'))
-  @endif
-  </body>
+<script type="text/javascript" src="@assetpath(index.js)"></script>
+
+@yield('scripts')
+@if (!empty(config('ed.footer_view')))
+  @include(config('ed.footer_view'))
+@endif
+</body>
 </html>

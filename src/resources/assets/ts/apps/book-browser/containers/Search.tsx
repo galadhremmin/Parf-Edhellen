@@ -78,9 +78,9 @@ export class SearchQuery extends React.Component<IProps, IState> {
             word,
         } = this.state;
 
-        return <form onSubmit={this._onSubmit} className="Search">
+        return <form onSubmit={this._onSubmit} className="Search container-fluid">
             <div className="row">
-                <div className="col-md-12">
+                <div className="col">
                     <SearchQueryInput
                         autoFocus={true}
                         name="query"
@@ -92,8 +92,8 @@ export class SearchQuery extends React.Component<IProps, IState> {
                     />
                 </div>
             </div>
-            <div className="row Search--config">
-                <div className="col-md-12">
+            <div className="row Search--config mt-2">
+                <div className="col">
                     <label className="inline input-sm">
                         <input checked={reversed}
                             name="reversed"
@@ -126,14 +126,18 @@ export class SearchQuery extends React.Component<IProps, IState> {
                     </div>
                 </div>
             </div>
-            {showMore && <React.Suspense fallback={null}>
-                <AdditionalSearchParametersAsync
-                    glossGroupId={glossGroupIds[0]}
-                    onGlossGroupIdChange={this._onGlossGroupIdChange}
-                    onSpeechIdChange={this._onSpeechIdChange}
-                    speechId={speechIds[0]}
-                />
-            </React.Suspense>}
+            <div className="row">
+                <div className="col">
+                    {showMore && <React.Suspense fallback={null}>
+                        <AdditionalSearchParametersAsync
+                            glossGroupId={glossGroupIds[0]}
+                            onGlossGroupIdChange={this._onGlossGroupIdChange}
+                            onSpeechIdChange={this._onSpeechIdChange}
+                            speechId={speechIds[0]}
+                        />
+                    </React.Suspense>}
+                </div>
+            </div>
         </form>;
     }
 

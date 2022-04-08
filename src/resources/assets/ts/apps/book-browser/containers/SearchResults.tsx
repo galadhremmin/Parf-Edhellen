@@ -12,6 +12,7 @@ import { ISearchResult } from '../reducers/SearchResultsReducer._types';
 import { IProps } from './SearchResults._types';
 import LoadingIndicator from '../components/LoadingIndicator';
 import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
+import Quote from '@root/components/Quote';
 
 export class SearchResults extends React.Component<IProps> {
     static get defaultProps() {
@@ -80,10 +81,10 @@ export class SearchResults extends React.Component<IProps> {
         } = this.state;
 
         const searchResultContainerStyles = classNames(
-            'panel-body', 'results-panel',
+            'results-panel',
             { hidden: searchResults.length < 1 && !loading },
         );
-        const noSearchResultsStyles = classNames('panel-body', 'results-empty',
+        const noSearchResultsStyles = classNames('results-empty',
             { hidden: searchResults.length > 0 || loading },
         );
         const navigatorStyles = classNames('search-result-navigator',
@@ -91,12 +92,10 @@ export class SearchResults extends React.Component<IProps> {
         );
 
         return <section>
-            <div className="panel panel-default search-result-wrapper" ref={this._containerRef}>
-                <div className="panel-heading">
-                    <h3 className="panel-title search-result-wrapper-toggler-title">
-                        Search results
-                    </h3>
-                </div>
+            <div ref={this._containerRef} className="shadow-lg p-3 mb-5 bg-body rounded mt-4">
+                <h3>
+                    Search results
+                </h3>
                 <div className={searchResultContainerStyles}>
                     {enableTips && <StaticAlert type="info" dismissable={true} onDismiss={this._onDismissInstructions}>
                         These words match <strong>{this.props.word}</strong>. Click on the one most relevant to you,
@@ -111,21 +110,21 @@ export class SearchResults extends React.Component<IProps> {
                         selectedResultId={selectedResultId}
                     />)}
                     <div className={navigatorStyles}>
-                        <nav>
-                            <ul className="pager">
-                                <li className="previous">
-                                    <a href="#" onClick={this._onPreviousSearchResult}>&larr; Previous</a>
-                                </li>
-                                <li className="next">
-                                    <a href="#" onClick={this._onNextSearchResult}>Next &rarr;</a>
-                                </li>
-                            </ul>
+                        <nav className="container-fluid">
+                            <div className="row">
+                                <div className="col">
+                                    <a className="btn btn-light" href="#" onClick={this._onPreviousSearchResult}>&larr; Previous</a>
+                                </div>
+                                <div className="col text-end">
+                                    <a className="btn btn-light" href="#" onClick={this._onNextSearchResult}>Next &rarr;</a>
+                                </div>
+                            </div>
                         </nav>
                     </div>
                 </div>
                 <div className={noSearchResultsStyles}>
                     <StaticAlert type="warning">
-                        The dictionary unfortunately does not contain words that match <strong>{this.props.word}</strong>. Have you tried a synonym or perhaps even an antonym?
+                        No words matching <strong><Quote>{this.props.word}</Quote></strong> were found inthe dictionary. Have you tried synonyms or perhaps antonyms?
                     </StaticAlert>
                 </div>
             </div>

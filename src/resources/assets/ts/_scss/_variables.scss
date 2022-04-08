@@ -1,4 +1,5 @@
-@import "~bootstrap/scss/bootstrap";
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
 
 // Body
 $body-bg: #f5f8fa;
@@ -36,11 +37,5 @@ $btn-default-color: $text-color;
 $input-border: lighten($text-color, 40%);
 $input-border-focus: lighten($brand-primary, 25%);
 $input-color-placeholder: lighten($text-color, 30%);
-
-// Panels
-$panel-default-heading-bg: #fff;
-
-$screen-xxl-width: 1700px;
-$screen-xxxl-width: 2200px;
 
 $footer-height: 150px;
