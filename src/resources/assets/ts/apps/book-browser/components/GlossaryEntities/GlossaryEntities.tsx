@@ -141,7 +141,7 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
                 <p>
                     You can view these words by clicking the button below. You will not be asked again (unless you clear your browser's local storage!)
                 </p>
-                <button className="btn btn-default" onClick={this._onUnusualLanguagesShowClick}>I understand - show me the words!</button>
+                <button className="btn btn-secondary" onClick={this._onUnusualLanguagesShowClick}>I understand - show me the words!</button>
             </div>;
         }
     }

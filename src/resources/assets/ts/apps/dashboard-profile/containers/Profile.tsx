@@ -48,7 +48,7 @@ function Profile(props: IProps) {
             </p>
         </section>}
         {(roleManager.accountId === id || roleManager.isAdministrator) && <aside className="text-center">
-            <a href={`/author/edit/${id}`} className="btn btn-default">
+            <a href={`/author/edit/${id}`} className="btn btn-secondary">
                 <TextIcon icon="edit" />
                 Edit profile
             </a>

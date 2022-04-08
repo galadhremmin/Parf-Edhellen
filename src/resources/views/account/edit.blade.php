@@ -33,7 +33,7 @@
           @foreach ($account->roles as $role)
           <li class="list-group-item">
             <a href="{{ route('account.by-role', ['id' => $role->id]) }}">{{ $role->name }}</a>
-            <button type="submit" name="role_id" value="{{ $role->id }}" class="btn btn-default btn-sm pull-right">
+            <button type="submit" name="role_id" value="{{ $role->id }}" class="btn btn-secondary btn-sm pull-right">
               Remove
             </button>
           </li>
@@ -50,7 +50,7 @@
               @endforeach
             </select>
             <span class="input-group-btn">
-              <button class="btn btn-default" type="submit">Add</button>
+              <button class="btn btn-secondary" type="submit">Add</button>
             </span>
           </div>
         </form>

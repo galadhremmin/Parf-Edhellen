@@ -29,7 +29,7 @@
             @markdown($post->content)
             <hr>
             <div class="{{ $post->inverted ? 'text-end' : '' }}">
-              <a href="{{ $link->forumThread($post->forum_group_id, 'g', $post->forum_thread_id, $post->subject_path, $post->id) }}" class="btn btn-sm btn-default">
+              <a href="{{ $link->forumThread($post->forum_group_id, 'g', $post->forum_thread_id, $post->subject_path, $post->id) }}" class="btn btn-sm btn-secondary">
                 <span class="glyphicon glyphicon-envelope"></span>
                 View thread
               </a>

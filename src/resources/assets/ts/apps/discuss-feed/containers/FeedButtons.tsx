@@ -42,7 +42,7 @@ function Feeds(props: IProps) {
 
     const feedUrl = feedUrlFactory('discuss', 'posts', props.groupId, feedType);
     return <div className="discuss-feed-buttons">
-        <button className="btn btn-sm btn-default" onClick={_onOpen}>
+        <button className="btn btn-sm btn-secondary" onClick={_onOpen}>
             <TextIcon icon="bell" />
             &#32;
             Feed

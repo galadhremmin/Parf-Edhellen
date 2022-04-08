@@ -13,7 +13,7 @@
 
     <div class="text-end">
       <div class="btn-group" role="group">
-        <a href="{{ $link->sentence($sentence->language_id, $sentence->language->name, $sentence->id, $sentence->name) }}" class="btn btn-default">Cancel deletion</a>
+        <a href="{{ $link->sentence($sentence->language_id, $sentence->language->name, $sentence->id, $sentence->name) }}" class="btn btn-secondary">Cancel deletion</a>
         <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-remove-sign"></span> Delete</button>
       </div>
     </div>

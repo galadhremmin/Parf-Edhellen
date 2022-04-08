@@ -100,13 +100,13 @@ function GlossDetailInput(props: IComponentProps<IGlossDetail[]>) {
                     value={detail.category}
                 />
                 <div className="btn-group btn-group-xs" role="group">
-                    <button type="button" className="btn btn-default" onClick={_onMoveClick(i, -1)}>
+                    <button type="button" className="btn btn-secondary" onClick={_onMoveClick(i, -1)}>
                         <TextIcon icon="arrow-up" />
                     </button>
-                    <button type="button" className="btn btn-default" onClick={_onDeleteClick(i)}>
+                    <button type="button" className="btn btn-secondary" onClick={_onDeleteClick(i)}>
                         <TextIcon icon="remove" />
                     </button>
-                    <button type="button" className="btn btn-default" onClick={_onMoveClick(i, 1)}>
+                    <button type="button" className="btn btn-secondary" onClick={_onMoveClick(i, 1)}>
                     <TextIcon icon="arrow-down" />
                     </button>
                 </div>
@@ -122,7 +122,7 @@ function GlossDetailInput(props: IComponentProps<IGlossDetail[]>) {
             </div>
         </div>)}
         {(value.length === 0 || value[value.length - 1].text.length > 0) && <div className="text-center">
-            <button className="btn btn-default"
+            <button className="btn btn-secondary"
                     onClick={_onAddClick}>Add details</button>
         </div>}
     </>;

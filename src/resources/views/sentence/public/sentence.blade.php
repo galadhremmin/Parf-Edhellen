@@ -35,12 +35,12 @@
   @if (Auth::check())
   <p class="text-end">
     @if (Auth::user()->isAdministrator())
-    <a href="{{ route('sentence.confirm-destroy', [ 'id' => $sentence['sentence']->id ]) }}" class="btn btn-default">
+    <a href="{{ route('sentence.confirm-destroy', [ 'id' => $sentence['sentence']->id ]) }}" class="btn btn-secondary">
       <span class="glyphicon glyphicon-trash"></span>
       Delete
     </a>
     @endif
-    <a href="{{ $link->contributeSentence($sentence['sentence']->id) }}" class="btn btn-default">
+    <a href="{{ $link->contributeSentence($sentence['sentence']->id) }}" class="btn btn-secondary">
       <span class="glyphicon glyphicon-edit"></span>
       Propose changes
     </a>

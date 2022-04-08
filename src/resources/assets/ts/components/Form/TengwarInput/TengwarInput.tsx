@@ -66,7 +66,7 @@ function TengwarInput(props: IProps) {
             onChange={_onChange}
         />
         <span className="input-group-btn">
-            <button className="btn btn-default"
+            <button className="btn btn-secondary"
                     type="button"
                     onClick={_onTranscribe}>
                 Transcribe

@@ -21,7 +21,7 @@
         <label for="filter-params">Filter</label>
         <input type="text" class="form-control" id="filter-params" name="filter" value="{{ isset($filter) ? $filter : '' }}">
       </div>
-      <button type="submit" class="btn btn-default">Apply</button>
+      <button type="submit" class="btn btn-secondary">Apply</button>
     </form>
   </div>
 </div>

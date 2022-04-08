@@ -76,14 +76,14 @@ function CombinePartsStage(props: IProps) {
         <div className="CombinePartsStage__parts">
             <div className="choices" ref={partsRef}>
                 {parts.map((p) => <button key={p.id}
-                    className={classNames('btn btn-default', { 'hidden': ! p.available, 'disabled': p.selected })}
+                    className={classNames('btn btn-secondary', { 'hidden': ! p.available, 'disabled': p.selected })}
                     data-part-id={p.id}
                     onClick={_onSelectPart}>
                         {p.part.trim()}
                 </button>)}
             </div>
             {selectedParts.length > 0 && <div className="undo-button">
-                <button className="btn btn-default" onClick={_onUndo}>
+                <button className="btn btn-secondary" onClick={_onUndo}>
                     {'Undo '}
                     <Quote>{parts[selectedParts[selectedParts.length - 1]].part}</Quote>
                 </button>

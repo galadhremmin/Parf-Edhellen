@@ -23,7 +23,7 @@
 
     <div class="text-end">
       <div class="btn-group" role="group">
-        <a href="{{ route('contribution.show', ['contribution' => $review->id]) }}" class="btn btn-default">Cancel deletion</a>
+        <a href="{{ route('contribution.show', ['contribution' => $review->id]) }}" class="btn btn-secondary">Cancel deletion</a>
         <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-remove-sign"></span> Delete</button>
       </div>
     </div>

@@ -132,7 +132,7 @@ function SentenceForm(props: IProps) {
             />
         </Panel>
         <div className="text-end">
-            {!! sentenceId && <button className="btn btn-default" formAction="button" onClick={_onOpenOriginal}>
+            {!! sentenceId && <button className="btn btn-secondary" formAction="button" onClick={_onOpenOriginal}>
                 <TextIcon icon="search" />
                 &#32;
                 View original

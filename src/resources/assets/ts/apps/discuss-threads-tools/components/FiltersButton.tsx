@@ -67,7 +67,7 @@ function FiltersButton(props: IProps) {
     }, [ filterMap ]);
 
     return <div className={classNames('btn-group', 'right', 'FiltersButton', { open: expanded })}>
-        <button type="button" className="btn btn-default" onClick={_onExpand}>
+        <button type="button" className="btn btn-secondary" onClick={_onExpand}>
             Filters <span className="caret"></span>
         </button>
         <ul className="dropdown-menu FiltersButton--menu">
