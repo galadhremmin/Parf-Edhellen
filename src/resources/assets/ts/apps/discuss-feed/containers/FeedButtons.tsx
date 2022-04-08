@@ -72,7 +72,7 @@ function Feeds(props: IProps) {
                        type="text"
                        readOnly={true}
                        value={feedUrl} />
-                <div className="text-right">
+                <div className="text-end">
                     <a href={feedUrl} target="_blank">Open feed in a new tab</a>
                 </div>
             </div>

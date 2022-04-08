@@ -20,7 +20,7 @@ function DiscussTableRow(props: IProps) {
                 {thread.accountName} on <DateLabel dateTime={thread.updatedAt || thread.createdAt} />
             </div>
         </div>
-        <div className="c text-right">
+        <div className="c text-end">
             {thread.numberOfPosts} <span className="glyphicon glyphicon-comment"></span>{' '}
             {thread.numberOfLikes} <span className="glyphicon glyphicon-thumbs-up"></span>
         </div>

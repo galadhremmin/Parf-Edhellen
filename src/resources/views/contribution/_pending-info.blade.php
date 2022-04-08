@@ -5,7 +5,7 @@
     <form method="post" action="{{ route('contribution.approve', ['id' => $review->id]) }}">
       {{ csrf_field() }}
       {{ method_field('PUT') }}
-      <div class="text-right">
+      <div class="text-end">
         <div class="btn-group" role="group">
           <a href="{{ route('contribution.confirm-reject', ['id' => $review->id]) }}" class="btn btn-warning">
             <span class="glyphicon glyphicon-minus-sign"></span> Reject

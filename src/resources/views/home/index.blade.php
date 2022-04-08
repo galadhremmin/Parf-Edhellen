@@ -46,8 +46,8 @@
         'gloss' => $gloss,
         'hideComments' => true
       ])
-      <p class="text-right">
-        <a href="{{ $link->gloss($gloss->id) }}" class="btn btn-default">
+      <p class="text-end">
+        <a href="{{ $link->gloss($gloss->id) }}" class="btn btn-secondary">
           Learn more
         </a>
       </p>

@@ -131,7 +131,7 @@ function SentenceForm(props: IProps) {
                 paragraphs={sentenceParagraphs}
             />
         </Panel>
-        <div className="text-right">
+        <div className="text-end">
             {!! sentenceId && <button className="btn btn-default" formAction="button" onClick={_onOpenOriginal}>
                 <TextIcon icon="search" />
                 &#32;

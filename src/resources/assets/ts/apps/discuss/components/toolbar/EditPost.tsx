@@ -98,6 +98,7 @@ function EditPost(props: IProps) {
             onDismiss={_onDismissDialog}
             open={isOpen}
             title="Edit post"
+            size="xl"
             value={0}>
             <Form content={content}
                 name={`edit-post-${post.id}`}

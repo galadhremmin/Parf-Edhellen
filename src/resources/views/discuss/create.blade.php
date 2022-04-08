@@ -17,7 +17,7 @@
       <label for="ed-discuss-content" class="control-label">Message</label>
       <textarea id="ed-discuss-content" class="form-control" name="content" rows="8"></textarea>
     </div>
-    <div class="form-group text-right">
+    <div class="form-group text-end">
       <a href="{{ route('discuss.index') }}" class="btn btn-default">Cancel</a>
       <button type="submit" class="btn btn-primary">
         <span class="glyphicon glyphicon-pencil"></span>

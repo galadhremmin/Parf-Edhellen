@@ -33,7 +33,7 @@
   <div id="ed-fragment-navigator" data-inject-module="sentence-inspector" data-inject-prop-sentence="{{ json_encode($sentence) }}"></div>
 
   @if (Auth::check())
-  <p class="text-right">
+  <p class="text-end">
     @if (Auth::user()->isAdministrator())
     <a href="{{ route('sentence.confirm-destroy', [ 'id' => $sentence['sentence']->id ]) }}" class="btn btn-default">
       <span class="glyphicon glyphicon-trash"></span>

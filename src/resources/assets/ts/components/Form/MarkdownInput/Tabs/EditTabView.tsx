@@ -81,7 +81,7 @@ export default class EditTabView extends React.Component<IProps, IState> {
                 </div>
             </div>
             <div>
-                <div className="checkbox text-right">
+                <div className="checkbox text-end">
                     <label>
                         <input type="checkbox" checked={enter2Paragraph} onChange={this._onEnter2ParagraphChange} />
                         Enter key inserts a paragraph (&para;)

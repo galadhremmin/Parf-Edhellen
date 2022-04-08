@@ -16,7 +16,7 @@
         <span class="date">{{ $thread->updated_at ?: $thread->created_at }}</span>
     </div>
     </div>
-    <div class="c text-right">
+    <div class="c text-end">
     {{ $thread->number_of_posts }} <span class="glyphicon glyphicon-comment"></span>
     {{ $thread->number_of_likes }} <span class="glyphicon glyphicon-thumbs-up"></span>
     </div>

@@ -73,7 +73,7 @@ function Form(props: IProps) {
                 value={content}
             />
         </div>
-        <div className="form-group text-right">
+        <div className="form-group text-end">
             <button className="btn btn-default" onClick={_onCancelClick}>Cancel</button>
             <button type="submit" className="btn btn-primary">
                 <TextIcon icon="edit" />

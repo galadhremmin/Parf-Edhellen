@@ -7,6 +7,7 @@ import { fireEvent } from './Component';
 import { IProps } from './Dialog._types';
 
 import './Dialog.scss';
+import classNames from 'classnames';
 
 function Dialog<V>(props: IProps<V>) {
     const {
@@ -17,6 +18,7 @@ function Dialog<V>(props: IProps<V>) {
         open,
         onConfirm,
         onDismiss,
+        size,
         title,
         valid,
         value,
@@ -49,7 +51,7 @@ function Dialog<V>(props: IProps<V>) {
         className="modal"
         isOpen={open}
         style={DialogStyles}>
-        <div className="modal-dialog">
+        <div className={classNames('modal-dialog', { [`modal-${size}`]: !! size })}>
             <div className="modal-content">
                 <div className="modal-header">
                     <h4 className="modal-title">{title}</h4>

@@ -1,5 +1,5 @@
-<p class="text-right">
-  <a href="{{ $link->sentence($languageId, $languageName, $sentenceId, $sentenceName) }}" class="btn btn-default">
+<p class="text-end">
+  <a href="{{ $link->sentence($languageId, $languageName, $sentenceId, $sentenceName) }}" class="btn btn-secondary">
     Learn more
   </a>
 </p>

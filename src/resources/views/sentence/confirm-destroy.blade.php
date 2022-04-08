@@ -11,7 +11,7 @@
     {{ csrf_field() }}
     {{ method_field('DELETE') }}
 
-    <div class="text-right">
+    <div class="text-end">
       <div class="btn-group" role="group">
         <a href="{{ $link->sentence($sentence->language_id, $sentence->language->name, $sentence->id, $sentence->name) }}" class="btn btn-default">Cancel deletion</a>
         <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-remove-sign"></span> Delete</button>

@@ -73,6 +73,7 @@ function CreateThreadButton(props: IProps) {
         <Dialog actionBar={false}
                 open={isOpen}
                 onDismiss={_onDismiss}
+                size="xl"
                 title={`Create thread in ${groupName}`}>
             <ValidationErrorAlert error={error} />
             {enabled

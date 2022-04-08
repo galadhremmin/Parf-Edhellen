@@ -14,7 +14,7 @@
       @markdownInline(mb_strimwidth($account->profile, 0, 64, '...'))
     </p>
   </div>
-  <div class="c text-right member-list-number">
+  <div class="c text-end member-list-number">
     @if (isset($detailsView))
       @include($detailsView, ['account' => $account, 'data' => isset($details) ? $details : null])
     @endif

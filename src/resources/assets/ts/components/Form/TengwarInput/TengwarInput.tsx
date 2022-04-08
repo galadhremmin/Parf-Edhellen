@@ -75,6 +75,7 @@ function TengwarInput(props: IProps) {
         <Dialog<string> cancelButtonText="Cancel"
                         confirmButtonText="Apply"
                         open={isDialogOpen}
+                        size="lg"
                         title="Transcription"
                         onDismiss={_onDismissDialog}
                         onConfirm={_onConfirmDialog}

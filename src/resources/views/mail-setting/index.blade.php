@@ -24,7 +24,7 @@
     </div>
     @endforeach
 
-    <div class="text-right">
+    <div class="text-end">
       <div class="btn-group" role="group">
         <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-save"></span> Save changes</button>
       </div>
