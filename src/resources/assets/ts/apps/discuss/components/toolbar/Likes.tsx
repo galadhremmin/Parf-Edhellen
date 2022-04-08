@@ -56,7 +56,7 @@ function Likes(props: IProps) {
         {threadMetadata.likesPerPost[forumPostId] || 0}
         &nbsp;
         <TextIcon icon="thumbs-up" className={classNames({
-            'Likes--link__liked': likedByAccount,
+            'filled': likedByAccount,
         })} />
     </a>;
 }
