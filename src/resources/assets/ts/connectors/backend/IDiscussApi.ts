@@ -1,5 +1,10 @@
 import { IAccountEntity } from './IBookApi';
 
+export interface IGroupsResponse {
+    groups: IForumGroupEntity[];
+    numberOfThreads: Record<number, number>;
+}
+
 export interface IThreadRequest {
     entityId?: number;
     entityType?: string;
@@ -140,7 +145,18 @@ export interface ILikeEntity {
     updatedAt: string;
 }
 
+export interface IMoveThreadRequest {
+    forumThreadId: number;
+    forumGroupId: number;
+}
+
+export interface IMoveThreadResponse {
+    forumThreadId: number;
+    forumGroupId: number;
+}
+
 export default interface IDiscussApi {
+    groups(): Promise<IGroupsResponse>;
     thread(payload: IThreadRequest): Promise<IThreadResponse>;
     threadMetadata(payload: IThreadMetadataRequest): Promise<IThreadMetadataResponse>;
     post(payload: IPostRequest): Promise<IPostResponse>;
@@ -148,5 +164,6 @@ export default interface IDiscussApi {
     deletePost(payload: IDeletePostRequest): Promise<void>;
     updatePost(payload: IUpdatePostRequest): Promise<IUpdatePostResponse>;
     likePost(payload: ILikePostRequest): Promise<ILikePostResponse>;
+    moveThread(payload: IMoveThreadRequest): Promise<IMoveThreadResponse>;
     stickThread(payload: IStickThreadRequest): Promise<IStickThreadResponse>;
 }

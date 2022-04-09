@@ -69,4 +69,6 @@ Route::group([
 ], function () {
     Route::put('thread/stick', [ 'uses' => 'DiscussApiController@updateThreadStickiness' ])
         ->name('api.discuss.stick');
+    Route::put('thread/move', [ 'uses' => 'DiscussApiController@updateThreadGroup' ])
+        ->name('api.discuss.move');
 });

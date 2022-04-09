@@ -846,6 +846,13 @@ class DiscussRepository
         return $sticky;
     }
 
+    public function moveThread(int $threadId, int $groupId)
+    {
+        ForumThread::where('id', $threadId)
+            ->update(['forum_group_id' => $groupId]);
+        return $groupId;
+    }
+
     private function checkPostAuthorization(?Account $account, ForumPost $post, ForumThread $thread = null)
     {
         if ($thread === null) {

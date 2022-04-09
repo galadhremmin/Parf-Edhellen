@@ -371,6 +371,23 @@ class DiscussApiController extends Controller
         ];
     }
 
+    public function updateThreadGroup(Request $request)
+    {
+        $data = $request->validate([
+            self::PARAMETER_FORUM_THREAD_ID => 'required|numeric|exists:forum_threads,id',
+            self::PARAMETER_FORUM_GROUP_ID  => 'required|numeric|exists:forum_groups,id',
+        ]);
+
+        $threadId = intval($data[self::PARAMETER_FORUM_THREAD_ID]);
+        $groupId  = intval($data[self::PARAMETER_FORUM_GROUP_ID]);
+        $this->_discussRepository->moveThread($threadId, $groupId);
+
+        return [
+            self::PARAMETER_FORUM_THREAD_ID => $threadId,
+            self::PARAMETER_FORUM_GROUP_ID  => $groupId
+        ];
+    }
+
     private function getPageFromRequest(Request $request)
     {
         $params = $request->validate([
