@@ -1,16 +1,3 @@
-@import "~bootstrap/scss/functions";
-@import "~bootstrap/scss/variables";
-
-// Body
-$body-bg: #f5f8fa;
-
-// Brands
-$brand-primary: #015788;
-$brand-info: #8eb4cb;
-$brand-success: #2ab27b;
-$brand-warning: #cbb956;
-$brand-danger: #bf5329;
-
 // Default body font:
 // - Iowan Old Style: preferred serif font on iOS
 // - Georgia: compatible with everything except Linux
@@ -18,21 +5,14 @@ $brand-danger: #bf5329;
 // - serif: fallback
 $font-family-sans-serif: "Iowan Old Style", Georgia, "Bitstream Charter", "Charis SIL", Utopia, "URW Bookman L", serif;
 $font-family-tiny: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-$font-size-base: 14px;
+$font-size-root: 14px;
 $line-height-base: 1.6;
-$text-color: #202020;
 
-// Navbar
-$navbar-default-bg: #202020;
-$navbar-default-link-color: white;
-$navbar-default-link-hover-color: white;
-$navbar-default-link-active-color: $text-color;
-$navbar-default-link-active-bg: white;
-$navbar-default-link-hover-bg: #202020;
+// Custom components
+$link-block-background-color-hover: #d9edf7;
 
-// Inputs
-$input-border: lighten($text-color, 40%);
-$input-border-focus: lighten($brand-primary, 25%);
-$input-color-placeholder: lighten($text-color, 30%);
-
-$footer-height: 150px;
+// Bootstrap configuration
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/utilities";

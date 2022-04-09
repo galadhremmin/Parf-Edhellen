@@ -39,7 +39,9 @@ function GlossFragmentInspector(props: IProps) {
         </section>}
         <section>
             {gloss && <Suspense fallback={<Spinner />}>
-                {gloss.error === null && <GlossInspectorAsync gloss={gloss?.gloss}
+                {gloss.error === null && <GlossInspectorAsync
+                    bordered={false}
+                    gloss={gloss?.gloss}
                     onReferenceLinkClick={onReferenceLinkClick}
                     toolbar={false}
                     warnings={false}

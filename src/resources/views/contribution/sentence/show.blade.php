@@ -30,9 +30,9 @@
   <div id="ed-fragment-navigator" data-inject-module="sentence-inspector" data-inject-prop-sentence="@json($fragmentData)"></div>
 
   <p>
-    <span class="label label-default">{{ $sentence->language->name }}</span>
+    <span class="badge bg-secondary">{{ $sentence->language->name }}</span>
     @if ($sentence->is_neologism)
-    <span class="label label-default">Neologism</span>
+    <span class="badge bg-secondary">Neologism</span>
     @endif
   </p>
 

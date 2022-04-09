@@ -33,7 +33,7 @@
           @foreach ($account->roles as $role)
           <li class="list-group-item">
             <a href="{{ route('account.by-role', ['id' => $role->id]) }}">{{ $role->name }}</a>
-            <button type="submit" name="role_id" value="{{ $role->id }}" class="btn btn-secondary btn-sm pull-right">
+            <button type="submit" name="role_id" value="{{ $role->id }}" class="btn btn-secondary btn-sm float-end">
               Remove
             </button>
           </li>

@@ -9,7 +9,7 @@
     page-break-inside: avoid;
     
     &:hover {
-      // background: $alert-info-bg;
+      background: $link-block-background-color-hover;
       border-radius: 5px;
     }
   
@@ -18,7 +18,7 @@
       text-decoration: none;
       display: block;
 
-      .label {
+      .badge {
         float: right;
         font-family: $font-family-tiny;
       }

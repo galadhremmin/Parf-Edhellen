@@ -58,15 +58,15 @@ h1 {
     .r {
         display: flex;
         flex-wrap: wrap;
-//        padding: $padding-base-vertical;
+        padding: $container-padding-x;
 
         &:nth-child(even) {
-            // background-color: $table-bg-accent;
+            background-color: $table-striped-bg;
         }
         
         &:hover {
-            // background-color: $alert-info-bg;
-//            border-radius: $border-radius-base;
+            background-color: $link-block-background-color-hover;
+            border-radius: $border-radius;
         }
 
         /* column */
@@ -121,8 +121,8 @@ h1 {
     display: table;
     width: 100%;
     box-sizing: border-box;
-    margin-top: $line-height-base;
-    padding-top: $line-height-base;
+    margin-top: $container-padding-x;
+    padding-top: $container-padding-x;
     border-top: 1px solid $gray-200;
     transition: background-color 2s, padding 2s;
 
@@ -136,8 +136,7 @@ h1 {
     }
 
     &.highlight {
-        // background-color: $alert-info-bg;
-//        padding: $padding-large-vertical;
+        background-color: $link-block-background-color-hover;
         border-radius: $border-radius-lg;
     }
 
@@ -180,13 +179,13 @@ h1 {
     }
 
     footer {
-//        font-size: $font-size-small;
-        color: $gray-500;
+        font-size: $font-size-sm;
+        color: $gray-600;
 
         .post-no {
             float: right;
-//            font-size: $font-size-small;
-            color: $gray-500;
+            font-size: $font-size-sm;
+            color: $gray-600;
         }
 
         > a {
@@ -196,14 +195,6 @@ h1 {
 
     a {
         text-decoration: none;
-
-        .like-not-liked {
-            color: $gray-500;
-        }
-
-        .like-liked {
-//            color: $brand-success;
-        }
     }
 }
 
@@ -226,6 +217,5 @@ h1 {
 @media (min-width: calc(#{$ed-forum-post-body-maximum-width} + #{$ed-forum-post-profile-width})) {
     .forum-post {
         max-width: calc(#{$ed-forum-post-body-maximum-width} + #{$ed-forum-post-profile-width});
-        margin: $line-height-base auto 0 auto;
     }
 }

@@ -61,7 +61,7 @@
                 Flashcards
 
                 @if ($noOfFlashcards)
-                <span class="label label-info">{{ $noOfFlashcards }}</span>
+                <span class="badge bg-secondary">{{ $noOfFlashcards }}</span>
                 @endif
               </a>
             </li>
@@ -70,7 +70,7 @@
                 <span class="glyphicon glyphicon-book"></span>
                 Contributions
                 @if ($noOfContributions)
-                <span class="label label-info">{{ $noOfContributions }}</span>
+                <span class="badge bg-secondary">{{ $noOfContributions }}</span>
                 @endif
               </a>
             </li>
@@ -97,7 +97,7 @@
               <a href="{{ route('contribution.list') }}">
                 Contributions
                 @if ($noOfPendingContributions > 0)
-                <span class="label label-info">{{ $noOfPendingContributions }}</span>
+                <span class="badge bg-secondary">{{ $noOfPendingContributions }}</span>
                 @endif
               </a>
             </li>
@@ -110,7 +110,7 @@
             <li>
               <a href="{{ route('system-error.index') }}">
                 System errors 
-                <span class="label label-info">{{ $numberOfErrors }}</span>
+                <span class="badge bg-secondary">{{ $numberOfErrors }}</span>
               </a>
             </li>
           </ul>

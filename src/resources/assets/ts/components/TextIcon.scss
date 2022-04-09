@@ -1,89 +1,101 @@
+@mixin mask-image-compatible($image) {
+    -webkit-mask-image: url(#{$image});
+    mask-image: url(#{$image});
+}
+
 .TextIcon {
     display: inline-block;
     width: 1em;
     height: 1em;
-    background-repeat: no-repeat;
-    background-size: 1em 1em;
+    background-color: black;
+    -webkit-mask-size: 1em;
+    mask-size: 1em;
 
     &.TextIcon--arrow-down {
-        background-image: url("~bootstrap-icons/icons/arrow-down.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/arrow-down.svg");
     }
     &.TextIcon--bell {
-        background-image: url("~bootstrap-icons/icons/bell.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/bell.svg");
     }
     &.TextIcon--chevron-left {
-        background-image: url("~bootstrap-icons/icons/chevron-left.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/chevron-left.svg");
     }
     &.TextIcon--chevron-right {
-        background-image: url("~bootstrap-icons/icons/chevron-right.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/chevron-right.svg");
     }
     &.TextIcon--chevron-up {
-        background-image: url("~bootstrap-icons/icons/chevron-up.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/chevron-up.svg");
     }
     &.TextIcon--chevron-down {
-        background-image: url("~bootstrap-icons/icons/chevron-down.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/chevron-down.svg");
     }
     &.TextIcon--comment {
-        background-image: url("~bootstrap-icons/icons/chat-square-dots.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/chat-square-dots.svg");
     }
     &.TextIcon--edit {
-        background-image: url("~bootstrap-icons/icons/pencil.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/pencil.svg");
     }
     &.TextIcon--envelope {
-        background-image: url("~bootstrap-icons/icons/envelope.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/envelope.svg");
     }
     &.TextIcon--exclamation-sign {
-        background-image: url("~bootstrap-icons/icons/exclamation-circle.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/exclamation-circle.svg");
     }
     &.TextIcon--info-sign {
-        background-image: url("~bootstrap-icons/icons/info-circle.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/info-circle.svg");
     }
     &.TextIcon--globe {
-        background-image: url("~bootstrap-icons/icons/globe.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/globe.svg");
     }
     &.TextIcon--ok {
-        background-image: url("~bootstrap-icons/icons/check.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/check.svg");
     }
     &.TextIcon--pushpin {
-        background-image: url("~bootstrap-icons/icons/pin-angle.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/pin-angle.svg");
     }
     &.TextIcon--refresh {
-        background-image: url("~bootstrap-icons/icons/arrow-clockwise.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/arrow-clockwise.svg");
     }
     &.TextIcon--remove {
-        background-image: url("~bootstrap-icons/icons/eraser.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/eraser.svg");
     }
     &.TextIcon--search {
-        background-image: url("~bootstrap-icons/icons/search.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/search.svg");
     }
     &.TextIcon--share {
-        background-image: url("~bootstrap-icons/icons/share.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/share.svg");
     }
     &.TextIcon--thumbs-down {
-        background-image: url("~bootstrap-icons/icons/hand-thumbs-down.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/hand-thumbs-down.svg");
         &.filled {
-            background-image: url("~bootstrap-icons/icons/hand-thumbs-down-fill.svg");
+            @include mask-image-compatible("~bootstrap-icons/icons/hand-thumbs-down-fill.svg");
         }
     }
     &.TextIcon--thumbs-up {
-        background-image: url("~bootstrap-icons/icons/hand-thumbs-up.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/hand-thumbs-up.svg");
         &.filled {
-            background-image: url("~bootstrap-icons/icons/hand-thumbs-up-fill.svg");
+            @include mask-image-compatible("~bootstrap-icons/icons/hand-thumbs-up-fill.svg");
         }
     }
     &.TextIcon--trash {
-        background-image: url("~bootstrap-icons/icons/trash.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/trash.svg");
     }
     &.TextIcon--warning-sign {
-        background-image: url("~bootstrap-icons/icons/exclamation-triangle.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/exclamation-triangle.svg");
     }
     &.TextIcon--minus-sign {
-        background-image: url("~bootstrap-icons/icons/dash.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/dash.svg");
     }
     &.TextIcon--plus-sign {
-        background-image: url("~bootstrap-icons/icons/plus.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/plus.svg");
     }
     &.TextIcon--move {
-        background-image: url("~bootstrap-icons/icons/box-arrow-right.svg");
+        @include mask-image-compatible("~bootstrap-icons/icons/box-arrow-right.svg");
     }
+}
+
+// This is a hack to support icons used within buttons. Unfortunately, the SVG approach
+// doesn't automatically pick up the text colour.
+button > .TextIcon {
+    background-color: white;
 }

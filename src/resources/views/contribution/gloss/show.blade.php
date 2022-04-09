@@ -25,11 +25,11 @@
           'disable_tools' => true
         ])
       @endforeach
-      <span class="label label-default">{{ $section['language']['name'] }}</span>
+      <span class="badge bg-secondary">{{ $section['language']['name'] }}</span>
     @endforeach
 
     @foreach ($keywords as $keyword) 
-      <span class="label label-default">{{ $keyword }}</span>
+      <span class="badge bg-secondary">{{ $keyword }}</span>
     @endforeach
   </div>
   

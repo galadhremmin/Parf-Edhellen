@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import React from 'react';
 
 import { IProps, PageModes } from './Pagination._types';
@@ -30,27 +31,27 @@ const Pagination = (props: IProps) => {
 
     return <nav className="text-center">
         <ul className="pagination">
-            {currentPage > 1 && <li>
+            <li className={classNames('page-item', { disabled: currentPage <= 1 })}>
                 <PaginationLink pageNumber={currentPage - 1}
                     onClick={onClick}>
                     <span aria-hidden="true">← </span>
-                    Older
+                    Previous
                 </PaginationLink>
-            </li>}
+            </li>
             {pageArray.map((pageNumber) => <li key={pageNumber}
-                className={currentPage === pageNumber ? 'active' : ''}>
+                className={classNames('page-item', { active: currentPage === pageNumber})}>
                 <PaginationLink pageNumber={pageNumber}
                     onClick={onClick}>
                     {pageNumber}
                 </PaginationLink>
             </li>)}
-            {currentPage < noOfPages && <li>
+            <li className={classNames('page-item', { disabled: currentPage >= noOfPages })}>
                 <PaginationLink pageNumber={currentPage + 1}
                     onClick={onClick}>
-                    Newer
+                    Next
                     <span aria-hidden="true"> →</span>
                 </PaginationLink>
-            </li>}
+            </li>
         </ul>
     </nav>;
 };

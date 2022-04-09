@@ -17,7 +17,7 @@
     </div>
     </div>
     <div class="c text-end">
-    {{ $thread->number_of_posts }} <span class="glyphicon glyphicon-comment"></span>
-    {{ $thread->number_of_likes }} <span class="glyphicon glyphicon-thumbs-up"></span>
+    <span class="TextIcon TextIcon--comment" title="Number of comments"></span> {{ $thread->number_of_posts }}
+    <span class="TextIcon TextIcon--thumbs-up" title="Number of likes"></span> {{ $thread->number_of_likes }}
     </div>
 </div>

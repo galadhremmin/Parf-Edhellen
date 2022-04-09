@@ -28,7 +28,7 @@ function Tabs(props: IProps) {
             <a href="#" onClick={_onTabChange(Tab.SyntaxTab)}>Formatting</a>
         </li>
         <li role="presentation"
-            className={classNames('pull-right', {
+            className={classNames('float-end', {
                 active: tab === Tab.PreviewTab,
             })}>
             <a href="#" onClick={_onTabChange(Tab.PreviewTab)}>Preview</a>

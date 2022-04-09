@@ -128,7 +128,7 @@ export default class MultipleSelectCellEditor<T, V = T> extends PopupComponent i
             const valueId = this.getValueId(value);
             const valueText = this.getValueText(value);
             valueMap.add(valueId);
-            labels.push(`<span class="label label-default">${valueText}</span>`);
+            labels.push(`<span class="badge bg-secondary">${valueText}</span>`);
         });
 
         wrapper.innerHTML = labels.join('');

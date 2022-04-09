@@ -44,17 +44,17 @@
   <div class="text-center">
     <nav aria-label="Page navigation">
       <ul class="pagination">
-        <li class="{{ $page < 1 ? 'disabled' : '' }}">
-          <a href="{{ route('author.posts', ['id' => $author->id, 'page' => max(0, $page - 1)]) }}" aria-label="Previous">
+        <li class="page-item{{ $page < 1 ? ' disabled' : '' }}">
+          <a href="{{ route('author.posts', ['id' => $author->id, 'page' => max(0, $page - 1)]) }}" class="page-link" aria-label="Previous">
             <span aria-hidden="true">&larr;</span>
             Previous
           </a>
         </li>
         @for ($i = 0; $i < $noOfPages; $i += 1)
-        <li class="{{ $page === $i ? 'active' : '' }}"><a href="{{ route('author.posts', ['id' => $author->id, 'page' => $i]) }}">{{ $i + 1 }}</a></li>
+        <li class="page-item{{ $page === $i ? ' active' : '' }}"><a href="{{ route('author.posts', ['id' => $author->id, 'page' => $i]) }}" class="page-link">{{ $i + 1 }}</a></li>
         @endfor
-        <li class="{{ $page >= $noOfPages - 1 ? 'disabled' : '' }}">
-          <a href="{{ route('author.posts', ['id' => $author->id, 'page' => min($noOfPages - 1, $page + 1)]) }}" aria-label="Next">
+        <li class="page-item{{ $page >= $noOfPages - 1 ? ' disabled' : '' }}">
+          <a href="{{ route('author.posts', ['id' => $author->id, 'page' => min($noOfPages - 1, $page + 1)]) }}" class="page-link" aria-label="Next">
             Next
             <span aria-hidden="true">&rarr;</span>
           </a>

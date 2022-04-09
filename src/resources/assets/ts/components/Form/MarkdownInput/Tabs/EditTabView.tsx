@@ -87,7 +87,7 @@ export default class EditTabView extends React.Component<IProps, IState> {
                         Enter key inserts a paragraph (&para;)
                     </label>
                 </div>
-                <small className="pull-right">
+                <small className="float-end">
                     {' Supports Markdown. '}
                     <a href={LearnMoreMarkdownUrl} target="_blank">
                         Read more (opens a new window)
