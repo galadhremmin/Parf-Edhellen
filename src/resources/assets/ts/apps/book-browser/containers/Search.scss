@@ -2,9 +2,6 @@
 
 .Search {
   text-align: right;
-  .Search--config__language {
-    display: inline-block;
-  }
   .Search--config__expand {
     margin-left: 1rem;
     color: inherit;
@@ -29,13 +26,6 @@
     min-height: 135px;
   }
 
-  .search-reverse-box-wrapper,
-  .search-language-select {
-    float: right;
-  }
-  .search-language-select {
-    margin-right: 15px;
-  }
   .search-result-wrapper {
     margin-top: 5px;
     margin-bottom: 5px;
@@ -81,15 +71,9 @@
 
     > li > a {
       color: inherit;
-
       &.selected {
         font-weight: bold;
       }
-
-      > .word {
-//        color: $link-color;
-      }
-
       > .development {
         &::before {
           content: ' ⇨ ';

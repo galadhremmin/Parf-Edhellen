@@ -20,16 +20,29 @@
     @endif
   </h3>
 
-  @if ($gloss->tengwar != null)
-  &#32;<span class="tengwar">{{ $gloss->tengwar }}</span>
-  @endif
-  @if ($gloss->type)
-    <span class="word-type" rel="trans-type">{{ $gloss->type }}.</span>
-  @endif
-  <span rel="trans-gloss" itemprop="keywords">{{ $gloss->all_translations }}</span>
+  <p>
+    @if ($gloss->tengwar != null)
+    &#32;<span class="tengwar">{{ $gloss->tengwar }}</span>
+    @endif
+    @if ($gloss->type)
+      <span class="word-type" rel="trans-type">{{ $gloss->type }}.</span>
+    @endif
+    <span rel="trans-gloss" itemprop="keywords">{{ $gloss->all_translations }}</span>
+  </p>
 
   @if (!isset($hideComments) || !$hideComments)
   <div class="word-comments" rel="trans-comments" itemprop="articleBody">{!! $gloss->comments !!}</div>
+  @endif
+
+  @if (isset($gloss->gloss_details) && is_array($gloss->gloss_details))
+  @foreach ($gloss->gloss_details as $detail)
+  <section class="GlossDetails details">
+    <header><h4>{{ $detail->category }}</h4></header>
+    <div class="details__body{{ ! empty($detail->type) ? ' '.$detail->type : '' }}">
+      {!! $detail->text !!}
+    </div>
+  </section>
+  @endforeach
   @endif
 
   <footer class="word-footer">

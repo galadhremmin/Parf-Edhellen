@@ -4,12 +4,13 @@
 @section('title', 'Welcome!')
 @section('body')
 
-<div class="introtron">
-  <h1 title="Well met!">Mae govannen!</h1>
-  <p>
+<div>
+  <h1 class="fst-italic" title="Well met!">Mae govannen!</h1>
+  <p class="text-center">
     Well met! You have found an elvish book, <em>Parf Edhellen</em>, dedicated
     to the fictional languages in Tolkien's legendarium. 
   </p>
+  <hr>
 </div>
 <div class="row">
   <div class="col-xs-12 col-sm-6 col-md-4">

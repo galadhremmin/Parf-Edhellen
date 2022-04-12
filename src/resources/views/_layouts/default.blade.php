@@ -24,14 +24,16 @@
 </head>
 <body class="bg-dark {{ $isAdmin ? 'ed-admin' : ($isAdmin === false ? 'ed-user' : 'ed-anonymous') }}" data-account-id="{{ $user ? $user->id : '0' }}" data-v="{{ config('ed.version') }}">
 <div class="bg-white pb-4">
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="ed-site-main-menu">
     <div class="container">
       <a class="navbar-brand" href="/">{{ config('ed.title') }}</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-menu-content" aria-controls="main-menu-content" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
       </button>
       <div class="collapse navbar-collapse" id="main-menu-content">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <ul class="navbar-nav me-auto">
           <li class="nav-item">
             <a class="nav-link {{ active('home') }}" href="/">@lang('home.title')</a>
           </li>
@@ -50,7 +52,7 @@
             </a>
           </li>
         </ul>
-        <ul class="navbar-nav d-flex mb-2 mb-lg-0">
+        <ul class="navbar-nav d-flex">
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="user-menu-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               @if ($user)
@@ -131,20 +133,20 @@
 </div>
 <footer class="text-muted p-4 d-flex">
   <section class="flex-fill w-100">
-    <h3>{{ config('ed.title') }}</h3>
+    <h3 class="fst-italic fs-5">{{ config('ed.title') }}</h3>
     <nav>
       <ul>
-        <li><a href="{{ route('login') }}">Log in</a></li>
-        <li><a href="{{ route('about') }}">About the website</a></li>
-        <li><a href="{{ route('about.cookies') }}">Cookie policy</a></li>
-        <li><a href="{{ route('about.privacy') }}">Privacy policy</a></li>
+        <li><a href="{{ route('login') }}" class="link-secondary text-decoration-underline">Log in</a></li>
+        <li><a href="{{ route('about') }}" class="link-secondary text-decoration-underline">About the website</a></li>
+        <li><a href="{{ route('about.cookies') }}" class="link-secondary text-decoration-underline">Cookie policy</a></li>
+        <li><a href="{{ route('about.privacy') }}" class="link-secondary text-decoration-underline">Privacy policy</a></li>
       </ul>
     </nav>
   </section>
   <section class="flex-fill w-100">
     Black Speech, Nandorin, Noldorin, Quendya, Quenya, Sindarin, Telerin are languages conceived by Tolkien and they do not belong to us; 
-    we neither can nor do claim affiliation with <a href="http://www.middleearth.com/" target="_blank">Middle-earth Enterprises</a> nor 
-    <a href="http://www.tolkienestate.com/" target="_blank">Tolkien Estate</a>.
+    we neither can nor do claim affiliation with <a href="http://www.middleearth.com/" target="_blank" class="link-secondary text-decoration-underline">Middle-earth Enterprises</a> nor 
+    <a href="http://www.tolkienestate.com/" target="_blank" class="link-secondary text-decoration-underline">Tolkien Estate</a>.
   </section>
 </footer>
 

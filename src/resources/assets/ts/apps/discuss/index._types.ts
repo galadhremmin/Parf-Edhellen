@@ -5,4 +5,5 @@ export interface IProps extends Partial<IDiscussProps> {
     entityType?: string;
     jumpEnabled?: boolean;
     prefetched?: boolean;
+    readonly?: boolean;
 }

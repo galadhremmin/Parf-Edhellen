@@ -50,13 +50,14 @@ const Inject = (props: IProps) => {
     }, []);
 
     return <Provider store={store}>
-        <Discuss />
+        <Discuss readonly={props.readonly} />
     </Provider>;
 };
 
 Inject.defaultProps = {
     prefetched: true,
     jumpEnabled: true,
+    readonly: false,
 } as Partial<IProps>;
 
 export default Inject;

@@ -42,6 +42,7 @@ function Likes(props: IProps) {
         } catch (e) {
             // failed
             console.warn(e);
+            alert(`Sorry! For some reason, we failed to like the post. System error: ${e}!`);
         }
     }, [
         apiConnector,

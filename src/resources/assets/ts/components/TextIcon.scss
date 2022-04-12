@@ -14,6 +14,9 @@
     &.TextIcon--arrow-down {
         @include mask-image-compatible("~bootstrap-icons/icons/arrow-down.svg");
     }
+    &.TextIcon--arrow-up {
+        @include mask-image-compatible("~bootstrap-icons/icons/arrow-up.svg");
+    }
     &.TextIcon--bell {
         @include mask-image-compatible("~bootstrap-icons/icons/bell.svg");
     }

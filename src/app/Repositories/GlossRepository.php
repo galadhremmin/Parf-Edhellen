@@ -183,6 +183,7 @@ class GlossRepository
                         ->orWhere('g.origin_gloss_id', $originId);
                 });
             })
+            ->orderBy('id', 'desc')
             ->get()
             ->toArray();
     }

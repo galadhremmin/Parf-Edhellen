@@ -41,6 +41,7 @@ function Discuss(props: IProps) {
         noOfPages,
         pages,
         posts,
+        readonly,
         thread,
         threadMetadata,
 
@@ -149,7 +150,7 @@ function Discuss(props: IProps) {
                 renderToolbar={_renderToolbar}
             />,
         )}
-        <aside ref={formRef} className="discuss-body__toolbar--primary">
+        {! readonly && <aside ref={formRef} className="discuss-body__toolbar--primary">
             {newPostEnabled
                 ? <Form name="discussForm"
                         content={newPostContent}
@@ -160,7 +161,7 @@ function Discuss(props: IProps) {
                         onSubmit={_onNewPostSubmit}
                   />
                 : <RespondButton onClick={_onCreateNewPost} isNewPost={posts.length === 0} />}
-        </aside>
+        </aside>}
         <div ref={paginationRef}>
             <Pagination currentPage={currentPage}
                 noOfPages={noOfPages}
@@ -212,4 +213,4 @@ const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => ({
     },
 } as Partial<IProps>);
 
-export default connect(mapStateToProps, mapDispatchToProps)(Discuss);
+export default connect<Partial<IProps>, Partial<IProps>, IProps>(mapStateToProps, mapDispatchToProps)(Discuss);

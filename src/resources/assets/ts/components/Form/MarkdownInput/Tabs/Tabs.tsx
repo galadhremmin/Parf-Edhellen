@@ -17,21 +17,14 @@ function Tabs(props: IProps) {
     };
 
     return <ul className="nav nav-tabs">
-        <li role="presentation"
-            className={classNames({active: tab === Tab.EditTab})}>
-            <a href="#" onClick={_onTabChange(Tab.EditTab)}>Edit</a>
+        <li className="nav-item">
+            <a className={classNames('nav-link', { active: tab === Tab.EditTab })} href="#" onClick={_onTabChange(Tab.EditTab)}>Edit</a>
         </li>
-        <li role="presentation"
-            className={classNames({
-                active: tab === Tab.SyntaxTab,
-        })}>
-            <a href="#" onClick={_onTabChange(Tab.SyntaxTab)}>Formatting</a>
+        <li className="nav-item">
+            <a className={classNames('nav-link', { active: tab === Tab.SyntaxTab })} href="#" onClick={_onTabChange(Tab.SyntaxTab)}>Formatting</a>
         </li>
-        <li role="presentation"
-            className={classNames('float-end', {
-                active: tab === Tab.PreviewTab,
-            })}>
-            <a href="#" onClick={_onTabChange(Tab.PreviewTab)}>Preview</a>
+        <li className="float-end nav-item">
+            <a className={classNames('nav-link', { active: tab === Tab.PreviewTab })} href="#" onClick={_onTabChange(Tab.PreviewTab)}>Preview</a>
         </li>
     </ul>;
 }

@@ -1,6 +1,5 @@
 import React from 'react';
 import { render } from 'react-dom';
-import 'bootstrap';
 
 import BookBrowserApp from './apps/book-browser';
 import inject from './Injector';
@@ -8,6 +7,7 @@ import inject from './Injector';
 import './index.scss';
 import './components/Tengwar.scss'; // Tengwar is scattered across the website, so this will ensure all will render appropriately.
 import DateLabel from './components/DateLabel';
+import bootstrapServerSideRenderedBootstrapComponents from './utilities/BootstrapBootstrapper';
 
 const loadLatestScript = () => {
     const scriptTag = document.currentScript as HTMLScriptElement;
@@ -48,8 +48,9 @@ if (loadLatestScript()) {
     };
 
     window.addEventListener('load', () => {
-        renderDictionary();
+        bootstrapServerSideRenderedBootstrapComponents();
         renderDates();
+        renderDictionary();
         inject();
     });
 }

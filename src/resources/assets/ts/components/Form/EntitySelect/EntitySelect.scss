@@ -8,9 +8,9 @@
 
     display: block;
     overflow: hidden;
-//    border: 1px solid $input-border;
-//    border-radius: $border-radius-base;
-//    padding: $padding-base-vertical $padding-base-horizontal;
+    border: $input-border-width solid $input-border-color;
+    border-radius: $input-border-radius;
+    padding: $input-padding-y $input-padding-x;
     font-weight: normal;
 }
 .EntitySelect--focus {

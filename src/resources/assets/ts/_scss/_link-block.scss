@@ -1,6 +1,22 @@
 @import './_variables';
 
 .link-blocks {
+
+  /* Restored from Bootstrap 3 */
+  blockquote {
+    padding: 11px 22px;
+    margin: 0 0 22px;
+    border-left: 5px solid #eee;
+
+    footer {
+      display: block;
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: #777;
+      font-family: $font-family-tiny;
+    }
+  }
+  
   @media (min-width: map-get($grid-breakpoints, 'sm')) {
     columns: 2;
   }

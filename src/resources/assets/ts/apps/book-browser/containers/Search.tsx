@@ -94,21 +94,21 @@ export class SearchQuery extends React.Component<IProps, IState> {
             </div>
             <div className="row Search--config mt-2">
                 <div className="col">
-                    <label className="inline input-sm">
+                    <label className="ms-2">
                         <input checked={reversed}
                             name="reversed"
                             onChange={this._onReverseChange}
                             type="checkbox"
                         /> Reverse
                     </label>
-                    <label className="inline input-sm">
+                    <label className="ms-2">
                         <input checked={includeOld}
                             name="excludeOld"
                             onChange={this._onIncludeOldChange}
                             type="checkbox"
                         /> Incl. outdated
                     </label>
-                    <div className="Search--config__language">
+                    <div className="ms-2 d-inline-block">
                         <LanguageSelect
                             name="languageId"
                             onChange={this._onLanguageChange}

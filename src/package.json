@@ -18,6 +18,7 @@
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
     "@babel/register": "^7.17.7",
+    "@types/bootstrap": "^5.1.9",
     "@types/chai": "^4.3.0",
     "@types/classnames": "^2.3.1",
     "@types/enzyme": "^3.10.11",

@@ -37,6 +37,13 @@ function FiltersButton(props: IProps) {
         }, {});
     });
 
+    const [ isOpen, setIsOpen ] = useState<boolean>(false);
+
+    const _onOpenClick = useCallback((ev: React.MouseEvent) => {
+        ev.preventDefault();
+        setIsOpen((x) => !x);
+    }, []);
+
     const _onFilterChange = useCallback((ev: React.ChangeEvent) => {
         const {
             value,
@@ -62,10 +69,10 @@ function FiltersButton(props: IProps) {
     }, [ filterMap ]);
 
     return <div className={classNames('dropdown', 'right', 'FiltersButton')}>
-        <button type="button" className="btn btn-secondary dropdown-toggle" id="ed-discuss-filters-dropdown-button" data-bs-toggle="dropdown" aria-expanded="false">
+        <button type="button" className="btn btn-secondary dropdown-toggle" onClick={_onOpenClick}>
             Filters <span className="caret"></span>
         </button>
-        <ul className="dropdown-menu FiltersButton--menu" aria-labelledby="ed-discuss-filters-dropdown-button">
+        <ul className={classNames('dropdown-menu', 'FiltersButton--menu', { show: isOpen })}>
             {DiscussFilters.map((f) => <li key={f.id} className="checkbox">
                 <label>
                     <input type="checkbox"

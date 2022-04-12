@@ -35,6 +35,7 @@ export interface IProps {
     onPageChange?: ComponentEventHandler<IPageChangeEvent>;
     onReferenceLinkClick?: ComponentEventHandler<IReferenceLinkClickDetails>;
     posts?: IPostEntity[];
+    readonly?: boolean;
     thread?: IThreadEntity;
     threadMetadata?: IThreadMetadataState;
     threadPostId?: number;

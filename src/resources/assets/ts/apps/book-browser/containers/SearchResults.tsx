@@ -71,9 +71,11 @@ export class SearchResults extends React.Component<IProps> {
 
         const {
             loading,
+            reversed,
             searchGroups,
             searchResults,
             selectedResultId,
+            word,
         } = this.props;
 
         const {
@@ -124,7 +126,9 @@ export class SearchResults extends React.Component<IProps> {
                 </div>
                 <div className={noSearchResultsStyles}>
                     <StaticAlert type="warning">
-                        No words matching <strong><Quote>{this.props.word}</Quote></strong> were found inthe dictionary. Have you tried synonyms or perhaps antonyms?
+                        No words matching <strong><Quote>{reversed ? word.split('').reverse().join('') : word}</Quote></strong>
+                        {reversed ? <em> (<Quote>{word}</Quote> reversed) </em> : ' '}
+                        were found in the dictionary. Have you tried synonyms or perhaps antonyms?
                     </StaticAlert>
                 </div>
             </div>
@@ -169,6 +173,7 @@ export class SearchResults extends React.Component<IProps> {
 
 const mapStateToProps = (state: RootReducer): IProps => ({
     loading: state.search.loading,
+    reversed: state.search.reversed,
     searchGroups: state.searchResults.groups,
     searchResults: state.searchResults.resultsByGroupIndex,
     selectedResultId: state.searchResults.selectedId,

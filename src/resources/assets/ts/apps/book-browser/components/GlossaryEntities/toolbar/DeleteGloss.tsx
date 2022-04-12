@@ -57,11 +57,11 @@ function DeleteGloss(props: IProps) {
             </strong>
             <p>
                 It is recommended to provide an alternative gloss to ensure that there are no dangling
-                references, such as phrases with missing words, as a result of the deletion:
+                references as a result of the deletion, such as phrases depending on the gloss:
             </p>
             <GlossSelect name="test" onChange={(e) => setReplacementId(e.value)} value={replacementId} />
             <p>
-                Remember! A gloss is not <em>permanently</em>{' '}deleted. An system administrator can restore it.
+                Remember! A gloss can't be <em>permanently</em>{' '}deleted. A deleted gloss can be restored.
             </p>
         </Dialog>
         <a href="#" onClick={_onOpen}>

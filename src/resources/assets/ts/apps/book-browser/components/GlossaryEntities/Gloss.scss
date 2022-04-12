@@ -3,11 +3,14 @@
 $gloss-border-color: #dedede;
 
 blockquote.gloss {
-  border-width: 1px;
   overflow: hidden;
-//  border-left-color: $gloss-border-color;
+  padding: 1rem;
   break-inside: avoid;
   page-break-inside: avoid; /* -> https://caniuse.com/#search=columns */
+
+  footer {
+    font-size: 0.8rem;
+  }
 
   h3.gloss-word {
     margin-top: 0;
@@ -37,9 +40,8 @@ blockquote.gloss {
     a {
       float: right;
       margin-left: 5px;
-      font-size: 70%;
-      line-height: 100%;
-      color: #ccc;
+      font-size: 0.8rem;
+      color: inherit;
 
       &:hover {
         color: inherit;
@@ -58,13 +60,13 @@ blockquote.gloss {
     font-style: italic;
   }
   .ed-comments-no {
+    text-decoration: none;
+
     &:hover, &:active, &:visited {
       text-decoration: none;
     }
 
     > .no {
-      font-size: 80%;
-      line-height: 24px;
       vertical-align: top;
     }
   }
@@ -75,8 +77,6 @@ blockquote.gloss {
     overflow: hidden;
   }
   section.details {
-//    padding: $padding-small-vertical 0;
-
     header > h4 {
       margin-top: 0;
       font-size: inherit;
