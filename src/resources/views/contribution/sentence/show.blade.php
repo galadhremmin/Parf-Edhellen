@@ -11,7 +11,7 @@
 
   @if (isset($originalSentence))
   <p>
-    <span class="glyphicon glyphicon-info-sign"></span>
+    <span class="TextIcon TextIcon--info-sign"></span>
     This is a proposed modification of the phrase  
     <a href="{{ $link->sentence($originalSentence->language_id, $originalSentence->language->name, $originalSentence->id, $originalSentence->name) }}">
       {{ $originalSentence->name }}

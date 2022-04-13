@@ -8,10 +8,10 @@
       <div class="text-end">
         <div class="btn-group" role="group">
           <a href="{{ route('contribution.confirm-reject', ['id' => $review->id]) }}" class="btn btn-warning">
-            <span class="glyphicon glyphicon-minus-sign"></span> Reject
+            <span class="TextIcon TextIcon--trash"></span> Reject
           </a>
           <button type="submit" class="btn btn-success">
-            <span class="glyphicon glyphicon-ok-sign"></span> Approve
+            <span class="TextIcon TextIcon--ok bg-black"></span> Approve
           </button>
         </div>
       </div>

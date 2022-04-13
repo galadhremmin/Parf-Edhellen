@@ -36,7 +36,7 @@
         <td>{{ $r->expected }}</td>
         <td>
           <span class="{{ $r->correct ? 'text-success' : 'text-danger' }}">
-            <span class="glyphicon {{ $r->correct ? 'glyphicon-ok' : 'glyphicon-remove' }}"></span>
+            <span class="TextIcon {{ $r->correct ? 'TextIcon--thumbs-up bg-success' : 'TextIcon--thumbs-down bg-danger' }}"></span>
             {{ $r->actual }}
           </span>
         </td>

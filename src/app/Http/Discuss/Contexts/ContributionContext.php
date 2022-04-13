@@ -57,7 +57,7 @@ class ContributionContext implements IDiscussContext
     public function getIconPath()
     {
         // Refer to Bootstrap glyphicons.
-        return 'plus';
+        return 'book';
     }
 
     public function view(Model $entity)

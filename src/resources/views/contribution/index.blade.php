@@ -11,7 +11,7 @@
 
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h2 class="panel-title"><span class="glyphicon glyphicon-tree-deciduous"></span> Contribute</h2>
+          <h2 class="panel-title">Contribute</h2>
         </div>
         <div class="panel-body">
           <ul>
@@ -19,8 +19,8 @@
             <li><a href="{{ route('contribution.create', ['morph' => 'sentence']) }}">Add phrase</a></li>
           </ul>
           <p>
-            <span class="glyphicon glyphicon-info-sign"></span> You can also propose changes to the dictionary. 
-            Browse around, and click the <span class="glyphicon glyphicon-edit text-info"></span> button.
+            <span class="TextIcon TextIcon--info-sign"></span> You can also propose changes to the dictionary. 
+            Browse around, and click the <span class="TextIcon TextIcon--edit"></span> button.
           </p>
         </div>
       </div>
@@ -28,7 +28,7 @@
     <div class="col-md-6">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h2 class="panel-title"><span class="glyphicon glyphicon-hourglass"></span> Review status</h2>
+          <h2 class="panel-title"></span> Review status</h2>
         </div>
         <div class="panel-body">
           @if (count($reviews) < 1)

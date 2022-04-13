@@ -1,5 +1,62 @@
 @import '../../../../_scss/_variables';
 
+@keyframes happy-like {
+    0% {
+        transform: scale(1);
+    }
+    20% {
+        transform: rotate(20deg) scale(4);
+    }
+    40% {
+        transform: rotate(-40deg) scale(6);
+    }
+    80% {
+        transform: scale(10);
+        background-color: $success;
+    }
+    100% {
+        transform: scale(1);
+        background-color: inherit;
+    }
+}
+
+@keyframes disappointed-dislike {
+    0% {
+        transform: scale(1);
+    }
+    20% {
+        transform: rotate(-180deg) scale(4);
+    }
+    40% {
+        transform: rotate(-180deg) scale(10);
+        background-color: $danger;
+    }
+    60% {
+        transform: rotate(-180deg) scale(10) translateY(0.2rem);
+    }
+    80% {
+        transform: rotate(-180deg) scale(10) translateY(-0.2rem);
+    }
+    100% {
+        transform: scale(1);
+        background-color: black;
+    }
+}
+
 a.Likes--link {
     font-size: 1rem;
+    .TextIcon.animate {
+        &.filled {
+            animation-name: happy-like;
+            animation-duration: 1.5s;
+            animation-iteration-count: 1;
+            animation-timing-function: ease-in-out;
+        }
+        &:not(.filled) {
+            animation-name: disappointed-dislike;
+            animation-duration: 1.5s;
+            animation-iteration-count: 1;
+            animation-timing-function: ease-in-out;
+        }
+    }
 }

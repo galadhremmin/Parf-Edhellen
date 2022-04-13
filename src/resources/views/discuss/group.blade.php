@@ -14,7 +14,7 @@
   <div class="discuss-table">
   @if (count($threads) < 1)
   <p>
-    <span class="glyphicon glyphicon-info-sign"></span>
+    <span class="TextIcon TextIcon--info-sign"></span>
     There are currently no threads associated with this subject.
   </p>
   @else

@@ -7,7 +7,7 @@
     <div class="c p2">
     <a href="{{ $linker->forumThread($group->id, $group->name, $thread->id, $thread->normalized_subject) }}">
         @if ($thread->is_sticky)
-        <span class="glyphicon glyphicon-pushpin" title="This post has been pinned to the top by an administrator."></span>
+        <span class="TextIcon TextIcon--pushpin" title="This post has been pinned to the top by an administrator."></span>
         @endif
         {{ $thread->subject }}
     </a>

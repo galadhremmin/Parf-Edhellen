@@ -24,7 +24,7 @@
         <td>{{ $gloss->language->name }}</td>
         <td>
           @if ($gloss->is_uncertain || ! $gloss->is_canon)
-          <span class="glyphicon glyphicon-asterisk"></span>
+          <span class="TextIcon TextIcon--asterisk"></span>
           @endif
           <a href="{{ $link->gloss($gloss->id) }}">
             {{ $gloss->word }} / {{ $gloss->sense }}

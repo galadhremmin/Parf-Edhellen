@@ -1,9 +1,10 @@
 import classNames from 'classnames';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { fireEventAsync } from '@root/components/Component';
 import { SecurityRole } from '@root/config';
 import TextIcon from '@root/components/TextIcon';
+import useAnimationOnChange from '@root/utilities/hooks/useAnimationOnChange';
 
 import connectApi from './ApiConnector';
 import { IProps } from './ApiConnector._types';
@@ -23,6 +24,7 @@ function Likes(props: IProps) {
     const forumPostId = post.id;
     const forumThreadId = thread.id;
     const likedByAccount = threadMetadata.likes.indexOf(forumPostId) > -1;
+    const shouldAnimate = useAnimationOnChange(likedByAccount, 2000);
 
     const _onLikeClick = useCallback(async (ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
@@ -58,6 +60,7 @@ function Likes(props: IProps) {
         &nbsp;
         <TextIcon icon="thumbs-up" className={classNames({
             'filled': likedByAccount,
+            'animate': shouldAnimate,
         })} />
     </a>;
 }

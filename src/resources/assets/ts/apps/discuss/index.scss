@@ -141,6 +141,8 @@ h1 {
     }
 
     .post-body {
+        overflow: hidden;
+
         p, ul, ol {
             max-width: $ed-forum-post-body-maximum-width;
         }
@@ -171,7 +173,6 @@ h1 {
     .post-content {
         display: table-cell;
         vertical-align: top;
-        overflow: hidden;
     }
 
     footer, header {

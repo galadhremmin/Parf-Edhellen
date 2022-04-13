@@ -4,14 +4,14 @@
 @section('title', 'Welcome!')
 @section('body')
 
-<div>
+<header>
   <h1 class="fst-italic" title="Well met!">Mae govannen!</h1>
   <p class="text-center">
     Well met! You have found an elvish book, <em>Parf Edhellen</em>, dedicated
     to the fictional languages in Tolkien's legendarium. 
   </p>
   <hr>
-</div>
+</header>
 <div class="row">
   <div class="col-xs-12 col-sm-6 col-md-4">
     <h4>About the website</h4>
@@ -48,12 +48,13 @@
         'hideComments' => true
       ])
       <p class="text-end">
-        <a href="{{ $link->gloss($gloss->id) }}" class="btn btn-secondary">
+        <a href="{{ $link->gloss($gloss->id) }}" class="btn btn-sm btn-secondary">
           Learn more
         </a>
       </p>
     </div>
     @if ($sentence)
+    <hr class="d-sm-none d-md-block" />
     <h4>Phrase of the day</h4>
     @include('sentence.public._random', [ 
       'sentence' => $sentence
@@ -61,6 +62,7 @@
     @endif
   </div>
   <div class="col-xs-12 col-sm-12 col-md-4">
+    <hr class="d-md-none" />
     <h4>Community activity</h4>
     <p>
       The {{count($auditTrails)}} most recent activities.

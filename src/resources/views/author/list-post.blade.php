@@ -13,14 +13,14 @@
     @foreach ($posts as $post)
       <li class="{{ $post->inverted ? 'timeline-inverted' : '' }}">
         @if (! $post->i) 
-        <div class="timeline-badge info"><i class="glyphicon glyphicon-{{ $post->icon }}"></i></div>
+        <div class="timeline-badge info"><i class="TextIcon TextIcon--{{ $post->icon }} bg-white"></i></div>
         @endif
         <div class="timeline-panel">
           <div class="timeline-heading">
             <h4 class="timeline-title">{{ $post->subject }}</h4>
             <p>
               <small class="text-muted">
-                <i class="glyphicon glyphicon-time"></i> 
+                <i class="TextIcon TextIcon--calendar"></i> 
                 <span class="date">{{ $post->created_at }}</span>
               </small>
             </p>
@@ -30,7 +30,6 @@
             <hr>
             <div class="{{ $post->inverted ? 'text-end' : '' }}">
               <a href="{{ $link->forumThread($post->forum_group_id, 'g', $post->forum_thread_id, $post->subject_path, $post->id) }}" class="btn btn-sm btn-secondary">
-                <span class="glyphicon glyphicon-envelope"></span>
                 View thread
               </a>
             </div>

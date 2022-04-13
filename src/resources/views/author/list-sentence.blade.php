@@ -23,7 +23,7 @@
         <td>{{ $sentence->language->name }}</td>
         <td>
             @if ($sentence->is_neologism)
-            <span class="glyphicon glyphicon-asterisk"></span>
+            <span class="TextIcon TextIcon--asterisk"></span>
             @endif
             <a href="{{ $link->sentence($sentence->language_id, $sentence->language->name, $sentence->id, $sentence->name) }}">
               {{ $sentence->name }}

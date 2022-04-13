@@ -43,12 +43,19 @@
 // Custom capabilities to ElfDict
 @import "./_scss/_fx";
 
-// Custom components
+// Custom components that are used throughout Parf Edhellen
 @import './_scss/autosuggest';
 @import "./_scss/_link-block";
 
+// Custom components used specifically on the landing page. These styles need to be preloaded to avoid unecessary reflows.
+@import './apps/book-browser/components/GlossaryEntities/Gloss.scss';
+
 a {
   text-decoration: none;
+}
+
+.hidden {
+  display: none;
 }
 
 #ed-site-main-menu {
@@ -160,255 +167,20 @@ a {
   }
 }
 
-.ed-home-activity-avatar {
-  float: left;
-  display: block;
-  margin-left: -50px;
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
-  background-size: cover;
-  @include ed-box-shadow();
-}
-
-.hidden {
-  display: none;
+.hourly-gloss, .daily-sentence {
+  h3.gloss-word {
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+  p.tengwar-lg {
+    margin-bottom: 0;
+  }
+  p {
+    margin-bottom: 0.25rem; // I know this is bad but it's only for these specific components on the landing page. The default padding looks bad.
+  }
+  blockquote {
+    padding: 0; // We don't need padding for the landing page. It's already in the grid.
+  }
 }
 
 @import './apps/discuss/index.scss'; /* Discuss is pretty much everywhere, so no point in separation here. */
-
-
-
-/* Please note that there are other imports on the bottom */
-/*
-
-html, body {
-  width: 100%;
-  margin: 0;
-  font-size: 16px;
-}
-body {
-  overflow-y: scroll;
-  background: white;
-}
-.head-content {
-  min-height: 100vh;
-  padding-bottom: $footer-height + 14px;
-  box-sizing: border-box;
-}
-#site-main-menu.navbar {
-  text-transform: uppercase;
-  font-family: $font-family-tiny;
-  padding-top: 50px;
-  background-size: cover;
-  .navbar-nav > li > a {
-    color: white;
-    padding-left: 0.6rem;
-    padding-right: 0.6rem;
-    &.active {
-      background: white;
-      color: black;
-    }
-  }
-  .navbar-nav > li.active > a {
-    background: white;
-    color: black;
-  }
-
-  @media (max-width: $screen-sm-min) {
-    background-image: url(../img/backgrounds/header-sm.jpg);
-    ul.dropdown-menu > li > a {
-      color: white;
-    }
-    .navbar-nav > li.active > a, ul.dropdown-menu > li.active > a {
-      background-color: transparent;
-      font-weight: bold;
-      color: white;
-    }
-    .navbar-nav > li.open > a:focus {
-      background-color: transparent;
-    }
-    .navbar-collapse:not(.collapse) {
-      border: none;
-      box-shadow: none;
-    }
-    button.navbar-toggle {
-      background: none !important;
-      border: none !important;
-      transition: transform 1s;
-      > .icon-bar {
-        transition: transform 1s;
-      }
-      &.open {
-        transform: rotate(-90deg);
-        > .icon-bar {
-          &:nth-child(2) {
-            transform: rotate(-30deg);
-          }
-          &:nth-child(4) {
-            transform: rotate(30deg);
-          }
-        }
-      }
-    }
-  }
-  @media (min-width: $screen-sm-min + 1) {
-    background-image: url(../img/backgrounds/header-md.jpg);
-  }
-  @media (min-width: 1920px) {
-    background-image: url(../img/backgrounds/header-lg.jpg);
-  }
-  @media (min-width: $screen-sm-min) {
-    .navbar-nav {
-      > .active {
-        transform: translateY(5px);
-      }
-    }
-  }
-  .navbar-brand {
-    overflow: hidden;
-    text-indent: -9999px;
-    width: 140px;
-    background: url(../img/logotype.png) no-repeat center center;
-    background-size: 140px 45px;
-    margin-right: 10px;
-    margin-left: 0;
-    @media (max-width: $screen-md-min) {
-      margin-left: $panel-body-padding + $font-size-base*0.5; // due to 0.5em border
-    }
-  }
-}
-#site-container  {
-  padding-top: 1em;
-  position: relative;
-  ol.breadcrumb {
-    background: none;
-    padding: 0;
-    margin: 0 0 0.5rem 0;
-    font-style: italic;
-  }
-}
-body > footer {
-  color: #9b9b9b;
-  font-family: $font-family-tiny;
-  background: #202020;
-  margin-top: -$footer-height;
-  min-height: $footer-height;
-  padding: 1em;
-  box-sizing: border-box;
-  font-size: 0.9rem;
-
-  display: flex;
-  > section {
-    flex: 1;
-
-    &:last-child {
-      text-align: right;
-    }
-  }
-
-  h3 {
-    font-size: 1.1rem;
-    margin-top: 0;
-    font-style: italic;
-  }
-  a, a:active, a:hover {
-    color: #9b9b9b;
-    text-decoration: underline;
-  }
-  li {
-    padding: 0;
-  }
-}
-@media (min-width: $screen-xxl-width) {
-  #site-container {
-    width: $screen-xxl-width - 200px;
-  }
-}
-@media (min-width: $screen-xxxl-width) {
-  #site-container {
-    width: $screen-xxxl-width - 200px;
-  }
-}
-blockquote footer {
-    font-size: 0.9rem;
-    font-family: $font-family-tiny;
-}
-.introtron {
-  text-align: center;
-  border-bottom: 1px solid #eee;
-  margin-bottom: 1em;
-  padding-bottom: 1em;
-  h1 {
-    font-style: italic;
-    font-weight: normal;
-  }
-}
-h1,h2,h3,h4,h5 {
-  font-family: $font-family-sans-serif;
-  font-weight: bold;
-}
-h1, h2 {
-  text-align: center;
-}
-blockquote {
-  font-size: 1rem;
-  line-height: 1.5;
-}
-blockquote h3 a {
-  color: inherit;
-}
-.modal {
-  text-align: center;
-}
-.modal:before {
-  display: inline-block;
-  vertical-align: middle;
-  content: " ";
-  height: 100%;
-}
-.modal-dialog {
-  display: inline-block;
-  text-align: left;
-  vertical-align: middle;
-  width: 80%;
-}
-.adblocker {
-  display: none;
-}
-.alert {
-  font-size: 1rem;
-}
-.list-group {
-  font-size: 1rem;
-}
-.daily-sentence {
-  padding: 5px 0 0 0;
-  margin: 0;
-  border: none;
-}
-.hourly-gloss {
-  blockquote {
-    padding: 0;
-    margin: 0;
-    border: none;
-
-    h3 {
-      font-size: 1.1rem;
-      font-weight: normal;
-      font-style: italic;
-    }
-  }
-}
-.search-result-navigator ul.pager {
-  margin: 0;
-}
-.ed-ad-container {
-  width: 100%;
-  margin-top: 2rem;
-  text-align: center;
-}
-.ed-ad-container:empty {
-  display: none;
-}
-*/

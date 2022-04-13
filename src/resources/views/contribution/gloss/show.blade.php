@@ -11,7 +11,7 @@
 
   @if ($parentGloss)
   <p>
-    <span class="glyphicon glyphicon-info-sign"></span>
+    <span class="TextIcon TextIcon--info-sign"></span>
     This is a proposed modification of the gloss <a href="{{ $link->gloss($parentGloss) }}">{{ $parentGloss }}</a>.
   </p>
   @endif

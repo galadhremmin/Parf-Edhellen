@@ -24,7 +24,7 @@
     <div class="text-end">
       <div class="btn-group" role="group">
         <a href="{{ route('contribution.show', ['contribution' => $review->id]) }}" class="btn btn-secondary">Cancel deletion</a>
-        <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-remove-sign"></span> Delete</button>
+        <button type="submit" class="btn btn-danger"><span class="TextIcon TextIcon--trash"></span> Delete</button>
       </div>
     </div>
   </form>

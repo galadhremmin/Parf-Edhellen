@@ -65,38 +65,38 @@
               @if ($user)
               <li>
                 <a class="dropdown-item {{ active('dashboard') }}" href="{{ route('dashboard') }}">
-                  <span class="glyphicon glyphicon-dashboard"></span> 
+                  <span class="TextIcon TextIcon--house"></span> 
                   &nbsp;@lang('dashboard.title')
                 </a>
               </li>
               <li>
                 <a class="dropdown-item {{ active('author.my-profile') }}" href="{{ route('author.my-profile') }}">
-                  <span class="glyphicon glyphicon-user"></span> 
+                  <span class="TextIcon TextIcon--person"></span> 
                   &nbsp;@lang('discuss.community.profile')
                 </a>
               </li>
               <li>
                 <a class="dropdown-item {{ active('contribution.index') }}" href="{{ route('contribution.index') }}">
-                  <span class="glyphicon glyphicon-book"></span> 
+                  <span class="TextIcon TextIcon--book"></span> 
                   &nbsp;@lang('dashboard.contributions')
                 </a>
               </li>
               <li>
                 <a class="dropdown-item" href="{{ route('logout') }}">
-                  <span class="glyphicon glyphicon-log-out"></span> 
+                  <span class="TextIcon TextIcon--logout"></span> 
                   &nbsp;@lang('dashboard.logout')
                 </a>
               </li>
               @else
               <li>
                 <a class="dropdown-item {{ active('login') }}" href="{{ route('login') }}">
-                  <span class="glyphicon glyphicon-log-in"></span> 
+                  <span class="TextIcon TextIcon--log-in"></span> 
                   &nbsp;@lang('dashboard.login')
                 </a>
               </li>
               <li>
                 <a class="dropdown-item" href="{{ route('login') }}">
-                  <span class="glyphicon glyphicon-user"></span> 
+                  <span class="TextIcon TextIcon--person"></span> 
                   &nbsp;@lang('dashboard.register')
                 </a>
               </li>
@@ -104,6 +104,7 @@
               <li><hr class="dropdown-divider"></li>
               <li>
                 <a class="dropdown-item {{ active('discuss.members') }}" href="{{ route('discuss.members') }}">
+                  <span class="TextIcon TextIcon--people"></span> 
                   @lang('discuss.member-list.title')
                 </a>
               </li>
@@ -117,7 +118,7 @@
       <!-- scripting disabled warning -->
       <noscript>
         <div id="noscript" class="alert alert-danger">
-          <strong><span class="glyphicon glyphicon-flag" aria-hidden="true"></span> @lang('home.noscript.title')</strong>
+          <strong><span class="TextIcon TextIcon--warning-sign" aria-hidden="true"></span> @lang('home.noscript.title')</strong>
           <p>@lang('home.noscript.message', ['website' => config('ed.title')])</p>
           <p><a href="https://support.google.com/bin/answer.py?hl=en&amp;answer=23852" target="_blank">@lang('home.noscript.call-to-action')</a>.</p>
         </div>

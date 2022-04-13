@@ -1,4 +1,5 @@
 import DateLabel from '@root/components/DateLabel';
+import TextIcon from '@root/components/TextIcon';
 import React from 'react';
 
 import { IProps } from './DiscussTableRow._types';
@@ -21,8 +22,8 @@ function DiscussTableRow(props: IProps) {
             </div>
         </div>
         <div className="c text-end">
-            {thread.numberOfPosts} <span className="glyphicon glyphicon-comment"></span>{' '}
-            {thread.numberOfLikes} <span className="glyphicon glyphicon-thumbs-up"></span>
+            {thread.numberOfPosts} <TextIcon icon="comment" />{' '}
+            {thread.numberOfLikes} <TextIcon icon="thumbs-up" />
         </div>
     </div>;
 }

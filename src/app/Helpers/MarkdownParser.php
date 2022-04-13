@@ -6,6 +6,7 @@ class MarkdownParser extends \Parsedown
 {
     const SYMBOL_REFERENCE     = '[';
     const SYMBOL_TRANSCRIPTION = '@';
+    const SYMBOL_SEE_ALSO      = '>';
 
     function __construct($disabledBlockTypes = [])
     {
@@ -165,6 +166,7 @@ class MarkdownParser extends \Parsedown
      * Implements >> "see also"-tokens
      * @param $Excerpt
      */
+    /* 220412: There isn't an elegant way to do this currently. Disabled for now.
     protected function inlineSeeAlso($Excerpt)
     {
         $text = $Excerpt['text'];
@@ -176,12 +178,13 @@ class MarkdownParser extends \Parsedown
                     'name' => 'span',
                     'text' => '',
                     'attributes' => [
-                        'class' => 'glyphicon glyphicon-hand-right'
+                        'class' => 'TextIcon TextIcon--hand-index right'
                     ]
                 ]
             ];
         }
     }
+    */
 
     protected function inlineTranscription($Excerpt)
     {

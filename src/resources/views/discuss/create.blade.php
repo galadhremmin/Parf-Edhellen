@@ -20,7 +20,7 @@
     <div class="form-group text-end">
       <a href="{{ route('discuss.index') }}" class="btn btn-secondary">Cancel</a>
       <button type="submit" class="btn btn-primary">
-        <span class="glyphicon glyphicon-pencil"></span>
+        <span class="TextIcon TextIcon--pencil"></span>
         Save
       </button>
     </div>

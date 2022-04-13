@@ -17,8 +17,17 @@
     &.TextIcon--arrow-up {
         @include mask-image-compatible("~bootstrap-icons/icons/arrow-up.svg");
     }
+    &.TextIcon--asterisk {
+        @include mask-image-compatible("~bootstrap-icons/icons/asterisk.svg");
+    }
     &.TextIcon--bell {
         @include mask-image-compatible("~bootstrap-icons/icons/bell.svg");
+    }
+    &.TextIcon--book {
+        @include mask-image-compatible("~bootstrap-icons/icons/book.svg");
+    }
+    &.TextIcon--calendar {
+        @include mask-image-compatible("~bootstrap-icons/icons/calendar.svg");
     }
     &.TextIcon--chevron-left {
         @include mask-image-compatible("~bootstrap-icons/icons/chevron-left.svg");
@@ -46,6 +55,15 @@
     }
     &.TextIcon--info-sign {
         @include mask-image-compatible("~bootstrap-icons/icons/info-circle.svg");
+    }
+    &.TextIcon--hand-index {
+        @include mask-image-compatible("~bootstrap-icons/icons/hand-index.svg");
+        &.right {
+            transform: rotate(90deg);
+        }
+    }
+    &.TextIcon--house {
+        @include mask-image-compatible("~bootstrap-icons/icons/house.svg");
     }
     &.TextIcon--globe {
         @include mask-image-compatible("~bootstrap-icons/icons/globe.svg");
@@ -89,11 +107,20 @@
     &.TextIcon--minus-sign {
         @include mask-image-compatible("~bootstrap-icons/icons/dash.svg");
     }
+    &.TextIcon--people {
+        @include mask-image-compatible("~bootstrap-icons/icons/people.svg");
+    }
     &.TextIcon--plus-sign {
         @include mask-image-compatible("~bootstrap-icons/icons/plus.svg");
     }
-    &.TextIcon--move {
+    &.TextIcon--logout {
+        @include mask-image-compatible("~bootstrap-icons/icons/box-arrow-left.svg");
+    }
+    &.TextIcon--move, &.TextIcon--login {
         @include mask-image-compatible("~bootstrap-icons/icons/box-arrow-right.svg");
+    }
+    &.TextIcon--person {
+        @include mask-image-compatible("~bootstrap-icons/icons/person.svg");
     }
 }
 
