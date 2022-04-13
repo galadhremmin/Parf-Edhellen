@@ -18,7 +18,7 @@
     <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle" title="Latest version"><span class="visually-hidden">Latest version</span></span>
     @endif
     <div class="card-body">
-      <span class="float-end">
+      <div class="text-end">
         <span class="date">{{ $v->created_at }}</span> · <em>
           @if ($v->is_latest) 
             Latest
@@ -28,7 +28,7 @@
             Deprecated
           @endif
           version</em>
-      </span>
+      </div>
       @include('book._gloss', [ 
         'gloss' => $v, 
         'language' => $v->language,
@@ -36,9 +36,9 @@
       ])
       <div class="text-end">
         <a class="btn btn-secondary" href="{{ $link->contributeGloss($v->id) }}">
-          {{ $v->is_latest ? 'Edit' : 'Restore' }}
+          {{ $v->is_latest ? 'Propose changes' : 'Restore' }}
         </a>
-        @if ($user->isAdministrator())
+        @if ($user !== null && $user->isAdministrator())
         <a class="btn btn-secondary" data-bs-toggle="collapse" href="#ed-gloss-version-{{ $v->id }}-container" role="button" data-bs-target="#ed-gloss-version-{{ $v->id }}">
           View JSON
         </a>

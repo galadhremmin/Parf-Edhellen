@@ -1,7 +1,39 @@
-type BootstrapIcons = 'arrow-down' | 'arrow-up' | 'bell' | 'chevron-down' | 'chevron-up' | 'chevron-left' |
-    'chevron-right' | 'comment' | 'edit' | 'envelope' | 'exclamation-sign'| 'info-sign' | 'globe' | 'ok' |
-    'pushpin' | 'refresh' | 'remove' | 'search' | 'share' | 'thumbs-down' | 'thumbs-up' |
-    'trash' | 'warning-sign' | 'minus-sign' | 'plus-sign' | 'move';
+type BootstrapIcons = 'arrow-down' |
+'arrow-up' |
+'asterisk' |
+'bell' |
+'book' |
+'calendar' |
+'chevron-left' |
+'chevron-right' |
+'chevron-up' |
+'chevron-down' |
+'clock-history' |
+'comment' |
+'edit' |
+'envelope' |
+'exclamation-sign' |
+'info-sign' |
+'hand-index' |
+'house' |
+'globe' |
+'ok' |
+'pushpin' |
+'refresh' |
+'remove' |
+'search' |
+'share' |
+'thumbs-down' |
+'thumbs-up' |
+'trash' |
+'warning-sign' |
+'minus-sign' |
+'people' |
+'plus-sign' |
+'logout' |
+'move' |
+'login' |
+'person';
 
 export interface IProps {
     className?: string;

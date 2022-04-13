@@ -1,9 +1,9 @@
 import React from 'react';
 
 import TextIcon from '@root/components/TextIcon';
-import { IProps } from './GlossAbsoluteLink._types';
+import { IProps } from './GlossShare._types';
 
-const GlossAbsoluteLink = (props: IProps) => {
+const GlossShare = (props: IProps) => {
     const { gloss } = props;
 
     return <a href={`/wt/${gloss.id}`} className="gloss-link">
@@ -11,4 +11,4 @@ const GlossAbsoluteLink = (props: IProps) => {
     </a>;
 };
 
-export default GlossAbsoluteLink;
+export default GlossShare;

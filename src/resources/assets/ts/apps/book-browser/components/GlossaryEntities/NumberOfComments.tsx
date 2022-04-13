@@ -6,7 +6,7 @@ import { IProps } from './NumberOfComments._types';
 const NumberOfComments = (props: IProps) => {
     const { gloss } = props;
 
-    return <a href={`/wt/${gloss.id}/versions`} className="ed-comments-no"
+    return <a href={`/wt/${gloss.id}`} className="ed-comments-no"
         title="See all versions and read comments">
         <TextIcon icon="comment" />
         {' '}

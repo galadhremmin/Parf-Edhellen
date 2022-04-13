@@ -7,7 +7,11 @@ import Language from '../Language';
 
 export default class GlossaryLanguage extends React.Component<IProps> {
     public render() {
-        const { glosses, language, onReferenceLinkClick } = this.props;
+        const {
+            glosses,
+            language,
+            onReferenceLinkClick,
+        } = this.props;
 
         return <article className="ed-glossary__language">
             <header>

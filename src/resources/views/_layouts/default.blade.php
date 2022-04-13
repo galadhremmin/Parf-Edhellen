@@ -90,7 +90,7 @@
               @else
               <li>
                 <a class="dropdown-item {{ active('login') }}" href="{{ route('login') }}">
-                  <span class="TextIcon TextIcon--log-in"></span> 
+                  <span class="TextIcon TextIcon--login"></span> 
                   &nbsp;@lang('dashboard.login')
                 </a>
               </li>

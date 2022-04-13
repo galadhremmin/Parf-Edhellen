@@ -1,9 +1,14 @@
-import React from 'react';
+import React, {
+    Fragment,
+    Suspense,
+    lazy,
+} from 'react';
 
 import { Waypoint } from 'react-waypoint';
 
 import { IComponentEvent } from '@root/components/Component._types';
 import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
+import Spinner from '@root/components/Spinner';
 import { ILanguageEntity } from '@root/connectors/backend/IBookApi';
 import Cache from '@root/utilities/Cache';
 
@@ -15,6 +20,8 @@ import GlossaryLanguage from './GlossaryLanguage';
 import LoadingIndicator from '../LoadingIndicator';
 
 import './GlossaryEntities.scss';
+
+const DiscussComponent = lazy(() => import('@root/apps/discuss'));
 
 export default class GlossaryEntities extends React.Component<IEntitiesComponentProps, IState> {
     public state: IState = {
@@ -94,7 +101,7 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
     }
 
     private _renderDictionary() {
-        return <React.Fragment>
+        return <>
             {this.state.notifyLoaded && <FixedBouncingArrow />}
             <Waypoint onEnter={this._onWaypointEnter} onLeave={this._onWaypointLeave}>
                 <article>
@@ -102,7 +109,7 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
                     {this._renderUnusualLanguages()}
                 </article>
             </Waypoint>
-        </React.Fragment>;
+        </>;
     }
 
     private _renderCommonLanguages() {
@@ -148,16 +155,29 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
 
     private _renderLanguages(languages: ILanguageEntity[], abstract: React.ReactNode = null, //
         classNames: string[] = []) {
+        const {
+            groupName,
+            sections,
+            single,
+        } = this.props;
+
         classNames = [ 'ed-glossary', ...classNames ];
-        if (this.props.single) {
+        if (single) {
             classNames.push('ed-glossary--single');
         }
 
         return <section className={classNames.join(' ')}>
             {abstract}
             {languages.map(
-                (language) => <GlossaryLanguage key={language.id} language={language}
-                    glosses={this.props.sections[language.id]} onReferenceLinkClick={this._onReferenceClick} />,
+                (language) => <Fragment key={language.id}>
+                    <GlossaryLanguage language={language}
+                        glosses={sections[language.id]} onReferenceLinkClick={this._onReferenceClick} />
+                    {single && <section className="mt-3">
+                        <Suspense fallback={<Spinner />}>
+                            <DiscussComponent entityId={sections[language.id][0].id} entityType={groupName} />
+                        </Suspense>
+                    </section>}
+                </Fragment>,
             )}
         </section>;
     }

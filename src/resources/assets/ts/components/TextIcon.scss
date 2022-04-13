@@ -41,6 +41,9 @@
     &.TextIcon--chevron-down {
         @include mask-image-compatible("~bootstrap-icons/icons/chevron-down.svg");
     }
+    &.TextIcon--clock-history {
+        @include mask-image-compatible("~bootstrap-icons/icons/clock-history.svg");
+    }
     &.TextIcon--comment {
         @include mask-image-compatible("~bootstrap-icons/icons/chat-square-dots.svg");
     }

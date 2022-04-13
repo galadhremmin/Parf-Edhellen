@@ -31,7 +31,7 @@ export default class Gloss extends React.Component<IProps> {
         const id = `gloss-block-${gloss.id}`;
         const className = classNames({
             contribution: !gloss.isCanon,
-            'shadow-sm': bordered, 
+            'shadow-sm': bordered,
             border: bordered,
             rounded: bordered,
         }, 'gloss');

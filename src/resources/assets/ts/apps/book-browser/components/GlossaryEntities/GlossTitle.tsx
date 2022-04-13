@@ -8,13 +8,13 @@ import {
 
 import { IProps } from './GlossTitle._types';
 
-import GlossAbsoluteLink from './GlossAbsoluteLink';
 import GlossGroupLabel from './GlossGroupLabel';
 import NumberOfComments from './NumberOfComments';
+import VersionsLink from './VersionsLink';
 
 const ToolbarAsync = React.lazy(() => import('./toolbar'));
 
-const GlossTitle: React.SFC<IProps> = (props: IProps) => {
+const GlossTitle = (props: IProps) => {
     const {
         gloss,
         toolbar,
@@ -44,11 +44,13 @@ const GlossTitle: React.SFC<IProps> = (props: IProps) => {
                     {inflection.name}
                 </span>)}
         </span>}
-        {toolbar && <Suspense fallback={null}>
+        {toolbar && <>
             <NumberOfComments gloss={gloss} />
-            <GlossAbsoluteLink gloss={gloss} />
-            {isAuthenticated && <ToolbarAsync gloss={gloss} />}
-        </Suspense>}
+            <VersionsLink gloss={gloss} />
+            {isAuthenticated && <Suspense fallback={null}>
+                <ToolbarAsync gloss={gloss} />
+            </Suspense>}
+        </>}
     </h3>;
 };
 
