@@ -19,7 +19,7 @@
     @endif
     <div class="card-body">
       <div class="text-end">
-        <span class="date">{{ $v->created_at }}</span> · <em>
+        <time datetime="{{ $v->created_at }}">{{ $v->created_at }}</time> · <em>
           @if ($v->is_latest) 
             Latest
           @elseif (! $v->origin_gloss_id || $v->origin_gloss_id === $v->id)

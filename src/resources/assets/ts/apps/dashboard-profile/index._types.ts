@@ -12,5 +12,7 @@ export interface IAccountStatistics {
 export interface IProps {
     account: IAccountEntity;
     container: string;
-    statistics: IAccountStatistics;
+    hideProfile?: boolean;
+    readonly?: boolean;
+    statistics?: IAccountStatistics;
 }

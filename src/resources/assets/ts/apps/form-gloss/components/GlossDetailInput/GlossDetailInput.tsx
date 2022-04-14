@@ -92,7 +92,7 @@ function GlossDetailInput(props: IComponentProps<IGlossDetail[]>) {
             {value.map((detail, i) => <div key={detail.order} className="form-group row">
             <div className="col-sm-3 d-flex flex-column">
                 <input type="text"
-                    className="form-control mb-auto"
+                    className="form-control"
                     id={`ed-gloss-detail-title-${detail.order}`}
                     onChange={_onDetailChange(i, 'category')}
                     placeholder="Title"

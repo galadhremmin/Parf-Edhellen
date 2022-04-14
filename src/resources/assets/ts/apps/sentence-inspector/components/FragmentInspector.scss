@@ -58,6 +58,10 @@ $inspector-border-top: $gray-200; // #8aa5c3;
         &.right {
             right: 20px; // because of the scroll bar! :(
         }
+        &.disabled {
+            animation: none;
+            opacity: 0.25;
+        }
     }
 
     > article {

@@ -5,6 +5,7 @@ import { DI, resolve } from '@root/di';
 import {
     SecurityRole,
 } from '@root/security';
+import TextIcon from '@root/components/TextIcon';
 
 import { IProps } from './GlossTitle._types';
 
@@ -26,7 +27,9 @@ const GlossTitle = (props: IProps) => {
     const hasWarning = ! gloss.isCanon || !! gloss.isUncertain;
 
     return <h3 className="gloss-word">
-        {hasWarning && <span className="uncertain" title="Neologism/unattested">*</span>}
+        {hasWarning && <span className="uncertain" title="Neologism/unattested">
+            <TextIcon icon="asterisk" className="fs-5" />
+        </span>}
         <span itemProp="headline" className={className}>
             {gloss.word}
         </span>

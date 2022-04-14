@@ -4,6 +4,13 @@ $success: #2ab27b;
 $warning: #cbb956;
 $danger: #bf5329;
 
+// Disable custom bootstrap components
+$enable-cssgrid: false;
+$enable-rfs: false;
+$enable-deprecation-messages: false;
+$enable-shadows: true;
+$enable-gradients: false;
+
 // Default body font:
 // - Iowan Old Style: preferred serif font on iOS
 // - Georgia: compatible with everything except Linux

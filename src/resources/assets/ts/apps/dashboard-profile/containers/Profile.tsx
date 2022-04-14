@@ -19,7 +19,9 @@ function Profile(props: IProps) {
     } = props.account;
 
     const {
+        hideProfile,
         roleManager,
+        readonly,
         statistics,
     } = props;
 
@@ -29,13 +31,13 @@ function Profile(props: IProps) {
             <h1>{nickname}</h1>
             {tengwar && <Tengwar as="h2" text={tengwar} />}
         </header>
-        <section>
+        {! hideProfile && <section>
             {profile ? <Markdown parse={true} text={profile} />
                      : <p>
                         {nickname} is but a rumour in the wind. Perhaps one day they might
                         come forth and reveal themselves.
                      </p>}
-        </section>
+        </section>}
         {statistics && <section className="Profile--container__statistics">
             <p>
                 {nickname} has flipped <em>{statistics.noOfFlashcards} flashcards</em>,
@@ -47,7 +49,7 @@ function Profile(props: IProps) {
                 and <em>{statistics.noOfWords} words</em>.
             </p>
         </section>}
-        {(roleManager.accountId === id || roleManager.isAdministrator) && <aside className="text-center">
+        {(! readonly && (roleManager.accountId === id || roleManager.isAdministrator)) && <aside className="text-center">
             <a href={`/author/edit/${id}`} className="btn btn-secondary">
                 <TextIcon icon="edit" />
                 Edit profile

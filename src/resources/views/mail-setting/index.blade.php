@@ -48,7 +48,7 @@
 <tbody>
 @foreach ($overrides as $override)
 <tr>
-    <td class="date">{{ $override->updated_at ?: $override->created_at }}</td> 
+    <td><time datetime="{{ $override->updated_at ?: $override->created_at }}">{{ $override->updated_at ?: $override->created_at }}</time></td> 
     <td>{{ $override->entity_type }}</td>
 </tr>   
 @endforeach

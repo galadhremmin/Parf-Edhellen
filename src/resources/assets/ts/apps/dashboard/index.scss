@@ -1,32 +1,6 @@
 @import '../../_scss/variables';
 
-.dashboard-link-list {
-    display: flex;
-    flex-wrap: wrap;
-    padding: 0;
-    margin: 0;
-    border: 1px solid $nav-tabs-border-color;
-
-    > li {
-        list-style: none;
-        flex-grow: 1;
-        text-align: center;
-        
-        a {
-            &:hover {
-                text-decoration: none;
-                box-shadow: 0 0 0.5rem $gray-500;
-                border-radius: 0.2rem;
-            }
-
-            > span.TextIcon {
-                font-size: 2rem;
-                display: block;
-            }
-
-            padding: 1rem;
-            display: block;
-            color: inherit;
-        }
-    }
+#ed-profile-aside .Avatar--picture {
+  box-shadow: none;
+  border: 1px solid $border-color;
 }

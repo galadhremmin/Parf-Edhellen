@@ -7,7 +7,7 @@
 <h1>Delete phrase <em>&ldquo;{{ $sentence->name }}&rdquo;</em></h1>
 {!! Breadcrumbs::render('sentence.confirm-destroy', $sentence) !!}
 
-<form method="post" action="{{ route('sentence.destroy', ['id' => $sentence->id]) }}">
+<form method="post" action="{{ route('sentence.destroy', ['sentence' => $sentence->id]) }}">
     {{ csrf_field() }}
     {{ method_field('DELETE') }}
 

@@ -38,11 +38,12 @@ if (loadLatestScript()) {
     };
 
     const renderDates = () => {
-        const dateElements = document.querySelectorAll<HTMLElement>('span.date');
-        dateElements.forEach((dateElement) => {
-            const date = dateElement.textContent.trim();
+        const dateElements = document.querySelectorAll<HTMLElement>('time');
+        dateElements.forEach((dateElement: HTMLTimeElement) => {
+            const date = dateElement.dateTime.trim();
             if (date.length > 0) {
-                render(<DateLabel dateTime={date} />, dateElement);
+                render(<DateLabel dateTime={date} ignoreTag={true} />, dateElement);
+                dateElement.classList.add('opacity-100');
             }
         });
     };

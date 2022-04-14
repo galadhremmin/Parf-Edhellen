@@ -13,7 +13,7 @@
     </a>
     <div class="pi">
         {{ $thread->account ? $thread->account->nickname : 'nobody' }} on
-        <span class="date">{{ $thread->updated_at ?: $thread->created_at }}</span>
+        <time datetime="{{ $thread->updated_at ?: $thread->created_at }}">{{ $thread->updated_at ?: $thread->created_at }}</time>
     </div>
     </div>
     <div class="c text-end">

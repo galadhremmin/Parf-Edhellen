@@ -23,7 +23,7 @@
     <tbody>
       @foreach ($results as $r)
       <tr class="{{ $r->correct ? '' : 'danger' }}">
-        <td class="date">{{ $r->created_at }}</td>
+        <td><time datetime="{{ $r->created_at }}">{{ $r->created_at }}</time></td>
         <td>
           @if ($r->gloss) 
           <a href="{{ $link->gloss($r->gloss_id) }}">

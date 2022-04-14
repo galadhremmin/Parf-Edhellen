@@ -9,7 +9,7 @@
 
   <p>
     Are you sure you want to reject <strong>{{ $review->word }}</strong> ({{ $review->sense }}) which 
-    was submitted for review <span class="date">{{ $review->created_at }}</span> by 
+    was submitted for review <time datetime="{{ $review->created_at }}">{{ $review->created_at }}</time> by 
     <a href="{{ $link->author($review->account_id, $review->account->nickname) }}">{{ $review->account->nickname }}</a>?
   </p>
 

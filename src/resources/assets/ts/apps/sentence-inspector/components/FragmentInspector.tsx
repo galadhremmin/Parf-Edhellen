@@ -79,13 +79,13 @@ export function FragmentInspector(props: IProps) {
 
     return <aside className="fragment-inspector" ref={_rootRef}>
         <a href="#previous"
-            className={classNames('navigation-arrows left', { 'opacity-25': ! previousFragmentId})}
+            className={classNames('navigation-arrows left', { 'disabled': ! previousFragmentId})}
             onClick={_onPreviousClick}>
             <TextIcon icon="chevron-left" />
         </a>
         <a href="#next"
             onClick={_onNextClick}
-            className={classNames('navigation-arrows right', { 'opacity-25': ! nextFragmentId})}>
+            className={classNames('navigation-arrows right', { 'disabled': ! nextFragmentId})}>
             <TextIcon icon="chevron-right" />
         </a>
         <button type="button" onClick={_onCloseClick} className="btn-close" />

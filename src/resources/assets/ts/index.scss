@@ -54,6 +54,15 @@ a {
   text-decoration: none;
 }
 
+// TODO: Temporary hack until we can figure out how to handle localization without re-renders. Server side?
+// Refer to `renderDates` for information on how this is used.
+// <hack>
+time:not(.react) {
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+// </hack>
+
 .hidden {
   display: none;
 }
@@ -160,7 +169,7 @@ a {
     @include ed-box-shadow();
   }
 
-  .date {
+  time {
     display: block;
     font-size: 0.8rem;
     font-family: $font-family-tiny;

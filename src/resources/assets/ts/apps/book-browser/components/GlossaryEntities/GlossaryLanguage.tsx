@@ -21,7 +21,7 @@ export default class GlossaryLanguage extends React.Component<IProps> {
                 {glosses.map((gloss) => <Gloss gloss={gloss} key={gloss.id}
                     onReferenceLinkClick={onReferenceLinkClick} />)}
             </section>
-            <section>
+            <section className="mt-3">
                 <Ad ad="glossary" />
             </section>
         </article>;
