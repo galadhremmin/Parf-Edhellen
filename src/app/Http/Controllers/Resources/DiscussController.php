@@ -56,7 +56,7 @@ class DiscussController extends Controller
         );
 
         $model = $groups->getAllValues() + [
-            'accountsInGroup' => $accounts
+            'accounts_in_group' => $accounts
         ];
         return view('discuss.groups', $model);
     }

@@ -65,13 +65,17 @@ class DiscussRepository
      */
     public function getGroups() 
     {
-        $groups = ForumGroup::orderBy('name')->get();
-        $numberOfThreads = ForumThread::groupBy('forum_group_id')
-            ->select('forum_group_id', DB::raw('count(*) as count'))
+        $groups = ForumGroup::orderBy('name') //
+            ->orderBy('name')
+            ->get()
+            ->groupBy('category');
+        $numberOfThreads = ForumThread::groupBy('forum_group_id') //
+            ->select('forum_group_id', DB::raw('count(*) as count')) //
             ->pluck('count', 'forum_group_id');
 
         return new ForumGroupsValue([
             'groups' => $groups,
+            'group_categories' => $groups->keys(),
             'number_of_threads' => $numberOfThreads
         ]);
     }
@@ -83,9 +87,10 @@ class DiscussRepository
      */
     public function getAccountsInGroup(Collection $groups)
     {
-        $groupIds = $groups->map(function ($group) {
-            return $group->id;
-        });
+        $groupIds = $groups->flatMap(function ($group) {
+            return $group->pluck('id');
+        })->unique();
+
         $accountIds = DB::table('forum_threads')
             ->join('forum_posts', 'forum_posts.forum_thread_id', '=', 'forum_threads.id')
             ->join('accounts', 'accounts.id', '=', 'forum_posts.account_id')
