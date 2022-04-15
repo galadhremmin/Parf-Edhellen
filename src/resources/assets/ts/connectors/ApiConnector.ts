@@ -131,6 +131,7 @@ export default class ApiConnector implements IReportErrorApi {
                 'X-Requested-With': 'XMLHttpRequest',
             },
             timeout: 0,
+            clarifyTimeoutError: true,
         };
     }
 
@@ -220,7 +221,15 @@ export default class ApiConnector implements IReportErrorApi {
 
         let errorReport: IErrorReport = null;
         let category: string;
-        if (error.response) {
+        if (error.code === 'ECONNABORTED') {
+            alert('Your request timed out. This is likely due to us failing to respond to your request in time. Please try to reload the page and try again.');
+            category = 'frontend-timeout';
+            errorReport = {
+                apiMethod,
+                data: error.message,
+                headers: error.toJSON(),
+            };
+        } else if (error.response) {
             let message = null;
             switch (error.response.status) {
                 case 401:
