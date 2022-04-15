@@ -9,7 +9,7 @@ import '../utilities/Enzyme';
 
 describe('components/DateLabel', () => {
     it('formats Date appropriately', () => {
-        const dateTime = new Date();
+        const dateTime = DateTime.now().minus({ month: 1 }).toJSDate();
         const wrapper = mount(<DateLabel dateTime={dateTime} />);
 
         expect(wrapper.find('time').prop('dateTime')).to.equal(dateTime.toISOString());
@@ -18,7 +18,7 @@ describe('components/DateLabel', () => {
     });
 
     it('formats ISO string dates appropriately', () => {
-        const dateTime = new Date().toISOString();
+        const dateTime = DateTime.now().minus({ year: 1 }).toISOTime();
         const wrapper = mount(<DateLabel dateTime={dateTime} />);
 
         expect(wrapper.find('time').prop('dateTime')).to.equal(dateTime);
