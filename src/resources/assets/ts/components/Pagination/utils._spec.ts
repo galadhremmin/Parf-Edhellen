@@ -2,7 +2,7 @@ import { expect } from 'chai';
 
 import { createPageArray, getFirstPageNumber, isPageArrayTruncated } from './utils';
 
-describe('components/Pagination', () => {
+describe('components/Pagination/utils', () => {
     it('handles array within bounds', () => {
         const numberOfPages = 8;
         const currentPage = 8;
