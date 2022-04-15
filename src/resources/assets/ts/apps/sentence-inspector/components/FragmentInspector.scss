@@ -32,6 +32,7 @@ $inspector-border-top: $gray-200; // #8aa5c3;
     padding: 1rem 2rem 0 2rem;
     box-shadow: inset 0 0 10px  rgba(0, 0, 0, 0.2);
     font-size: 1rem;
+    pointer-events: all;
 
     h1 {
         font-size: 1.75rem;
