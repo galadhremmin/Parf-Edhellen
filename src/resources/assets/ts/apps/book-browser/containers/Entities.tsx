@@ -94,6 +94,7 @@ const _removeEntitiesForBots = () => {
 }
 
 const mapStateToProps = (state: RootReducer): IEntitiesComponentProps => ({
+    entityMorph: state.entities.entityMorph,
     groupId: state.entities.groupId,
     groupName: state.entities.groupIntlName,
     loading: state.entities.loading,

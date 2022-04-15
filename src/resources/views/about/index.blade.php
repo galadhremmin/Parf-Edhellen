@@ -48,12 +48,12 @@ a Tolkien-fan, and language enthusiast.
 
 <p>Use wildcards to search in multiple directions, for an example <em>*en*</em> would yield <em>endeavor, envelop, generalization, sentimentality, taken,</em> ectetera.</p>
 
-<blockquote><span class="glyphicon glyphicon-info-sign"></span> Wildcards disable thematic search when you choose a language.</blockquote>
+<blockquote><span class="TextIcon TextIcon--info-sign"></span> Wildcards disable thematic search when you choose a language.</blockquote>
 
 <p>By checking the <em>Old sources</em> checkbox, the dictionary will include words from dictionaries that have not been updated for several years. These words are usually not incorrect, but they would not contain information from later linguistic publications.</p>
 <a href="unverified"></a>
 <h2>Unverified or debatable glosses</h2>
-<p>You'll sometimes encounter the <span class="glyphicon glyphicon-asterisk"></span> symbol, usually together with a warning. These
+<p>You'll sometimes encounter the <span class="TextIcon TextIcon--asterisk"></span> symbol, usually together with a warning. These
   exist to inform you that the gloss originate from a source which might be outdated or questionable. This is unfortunately fairly common
   because linguistic material on Tolkien's languages are only sporadically made available to the community; initiatives have the time to arise
   and gradually wither between publications. Hiswelókë, which haven't been updated for years, is nonetheless still excellent, and one of the prominent

@@ -24,7 +24,7 @@ $ui-reflow-breakpoint-sm: 408px;
             }
         }
     }
-    @media (min-width: $ui-reflow-breakpoint + 1) {
+    @media (min-width: ($ui-reflow-breakpoint + 1)) {
         > div {
             display: inline-block;
             margin-left: $default-margin;

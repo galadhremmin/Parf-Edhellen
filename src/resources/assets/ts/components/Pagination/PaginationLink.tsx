@@ -15,7 +15,7 @@ export default class PaginationLink extends React.Component<IProps> {
             pageNumber,
         } = this.props;
 
-        return <a href={this._createLink()} onClick={this._onClick}>
+        return <a href={this._createLink()} onClick={this._onClick} className="page-link">
             {children || pageNumber}
         </a>;
     }

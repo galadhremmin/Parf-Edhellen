@@ -10,9 +10,9 @@
   <p>
     Are you sure you want to delete <strong>{{ $review->word }}</strong> ({{ $review->sense }}) which 
     @if ($review->account_id === Auth::user()->id)
-    you submitted for review <span class="date">{{ $review->created_at }}</span>?
+    you submitted for review @date($review->created_at)?
     @else
-    was submitted for review <span class="date">{{ $review->created_at }}</span> by 
+    was submitted for review @date($review->created_at) by 
     <a href="{{ $link->author($review->account_id, $review->account->nickname) }}">{{ $review->account->nickname }}</a>?
     @endif
   </p>
@@ -21,10 +21,10 @@
     {{ csrf_field() }}
     {{ method_field('DELETE') }}
 
-    <div class="text-right">
+    <div class="text-end">
       <div class="btn-group" role="group">
-        <a href="{{ route('contribution.show', ['contribution' => $review->id]) }}" class="btn btn-default">Cancel deletion</a>
-        <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon-remove-sign"></span> Delete</button>
+        <a href="{{ route('contribution.show', ['contribution' => $review->id]) }}" class="btn btn-secondary">Cancel deletion</a>
+        <button type="submit" class="btn btn-danger"><span class="TextIcon TextIcon--trash"></span> Delete</button>
       </div>
     </div>
   </form>

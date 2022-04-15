@@ -24,9 +24,9 @@
     </div>
     @endforeach
 
-    <div class="text-right">
+    <div class="text-end">
       <div class="btn-group" role="group">
-        <button type="submit" class="btn btn-primary"><span class="glyphicon glyphicon-save"></span> Save changes</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
       </div>
     </div>
 </form>
@@ -48,7 +48,7 @@
 <tbody>
 @foreach ($overrides as $override)
 <tr>
-    <td class="date">{{ $override->updated_at ?: $override->created_at }}</td> 
+    <td>@date($override->updated_at ?: $override->created_at)</td> 
     <td>{{ $override->entity_type }}</td>
 </tr>   
 @endforeach

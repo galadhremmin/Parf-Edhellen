@@ -56,7 +56,7 @@ class SentenceContext implements IDiscussContext
     public function getIconPath()
     {
         // Refer to Bootstrap glyphicons.
-        return 'align-justify';
+        return 'book';
     }
 
     public function view(Model $entity)

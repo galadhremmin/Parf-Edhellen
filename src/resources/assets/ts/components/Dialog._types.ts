@@ -9,6 +9,7 @@ export interface IProps<V> {
     onConfirm?: ComponentEventHandler<V>;
     onDismiss: ComponentEventHandler<void>;
     open: boolean;
+    size?: 'sm' | 'lg' | 'xl' | undefined;
     title: ReactNode;
     valid: boolean;
     value?: V;

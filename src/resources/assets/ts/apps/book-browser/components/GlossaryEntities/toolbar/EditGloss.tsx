@@ -10,7 +10,7 @@ function EditGloss(props: IProps) {
 
     return <>
         <a href={`/dashboard/contribution/create/gloss?entity_id=${gloss.id}`}>
-            <TextIcon icon="pencil" />
+            <TextIcon icon="edit" />
         </a>
     </>;
 }

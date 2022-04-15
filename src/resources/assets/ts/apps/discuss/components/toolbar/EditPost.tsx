@@ -86,7 +86,7 @@ function EditPost(props: IProps) {
     ]);
 
     return <>
-        <ActionLink icon="pencil"
+        <ActionLink icon="edit"
             onClick={_onOpenDialog}
             post={post}
             thread={thread}
@@ -98,6 +98,7 @@ function EditPost(props: IProps) {
             onDismiss={_onDismissDialog}
             open={isOpen}
             title="Edit post"
+            size="xl"
             value={0}>
             <Form content={content}
                 name={`edit-post-${post.id}`}

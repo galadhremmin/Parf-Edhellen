@@ -35,7 +35,7 @@
         #<a href="{{ $link->gloss($t->id) }}">{{ $t->id }}</a>
       </p>
       @foreach ($t->keywords as $k)
-      <span class="label label-info">{{ $k->keyword }}</span>
+      <span class="badge bg-secondary">{{ $k->keyword }}</span>
       @endforeach
     </li>
     @endforeach

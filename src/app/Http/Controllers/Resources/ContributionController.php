@@ -33,12 +33,18 @@ class ContributionController extends Controller
      */
     public function index(Request $request)
     {
-        $contributions = Contribution::forAccount($request->user()->id)
-            ->orderBy('id', 'desc')
-            ->get();
+        $user = $request->user();
+        $pendingReviews  = Contribution::whereAccount($user->id)->whereNull('is_approved')
+            ->orderBy('id', 'asc')->simplePaginate(10, ['*'], 'pending');
+        $rejectedReviews = Contribution::whereAccount($user->id)->where('is_approved', 0)
+            ->orderBy('id', 'asc')->simplePaginate(10, ['*'], 'rejected');
+        $approvedReviews = Contribution::whereAccount($user->id)->where('is_approved', 1)
+            ->orderBy('id', 'asc')->simplePaginate(10, ['*'], 'approved');
 
         return view('contribution.index', [
-            'reviews' => $contributions
+            'approvedReviews' => $approvedReviews,
+            'rejectedReviews' => $rejectedReviews,
+            'pendingReviews'  => $pendingReviews
         ]);
     }
     

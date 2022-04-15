@@ -1,63 +1,110 @@
+// Custom variables to ElfDict
 @import "./_scss/_variables";
-@import "./_scss/_fx";
-@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 
+// Layout & components
+@import "~bootstrap/scss/root";
+@import "~bootstrap/scss/reboot";
+@import "~bootstrap/scss/type";
+// @import "~bootstrap/scss/images";
+@import "~bootstrap/scss/containers";
+@import "~bootstrap/scss/grid";
+@import "~bootstrap/scss/tables";
+@import "~bootstrap/scss/forms";
+@import "~bootstrap/scss/buttons";
+@import "~bootstrap/scss/transitions";
+@import "~bootstrap/scss/dropdown";
+@import "~bootstrap/scss/button-group";
+@import "~bootstrap/scss/nav";
+@import "~bootstrap/scss/navbar";
+ @import "~bootstrap/scss/card";
+// @import "~bootstrap/scss/accordion";
+@import "~bootstrap/scss/breadcrumb";
+@import "~bootstrap/scss/pagination";
+@import "~bootstrap/scss/badge";
+@import "~bootstrap/scss/alert";
+// @import "~bootstrap/scss/progress";
+@import "~bootstrap/scss/list-group";
+@import "~bootstrap/scss/close";
+// @import "~bootstrap/scss/toasts";
+@import "~bootstrap/scss/modal";
+// @import "~bootstrap/scss/tooltip";
+// @import "~bootstrap/scss/popover";
+// @import "~bootstrap/scss/carousel";
+// @import "~bootstrap/scss/spinners";
+// @import "~bootstrap/scss/offcanvas";
+// @import "~bootstrap/scss/placeholders";
+
+// Helpers
+@import "~bootstrap/scss/helpers";
+
+// Utilities
+@import "~bootstrap/scss/utilities/api";
+
+// Custom capabilities to ElfDict
+@import "./_scss/_fx";
+
+// Custom components that are used throughout Parf Edhellen
 @import './_scss/autosuggest';
 @import "./_scss/_link-block";
 
-/* Please note that there are other imports on the bottom */
+// Custom components used specifically on the landing page. These styles need to be preloaded to avoid unecessary reflows.
+@import './apps/book-browser/components/GlossaryEntities/Gloss.scss';
 
-html, body {
-  width: 100%;
-  margin: 0;
-  font-size: 16px;
+a {
+  text-decoration: none;
 }
-body {
-  overflow-y: scroll;
-  background: white;
+
+.hidden {
+  display: none;
 }
-.head-content {
-  min-height: 100vh;
-  padding-bottom: $footer-height + 14px;
-  box-sizing: border-box;
-}
-#site-main-menu.navbar {
+
+#ed-site-main-menu {
   text-transform: uppercase;
   font-family: $font-family-tiny;
   padding-top: 50px;
   background-size: cover;
-  .navbar-nav > li > a {
+  padding-bottom: 0;
+
+  .navbar-brand {
+    overflow: hidden;
+    text-indent: -9999px;
+    width: 140px;
+    background: url(../img/logotype.png) no-repeat center center;
+    background-size: 140px 45px;
+  }
+  .navbar-toggler {
+    > .icon-bar {
+        display: block;
+        width: 22px;
+        height: 2px;
+        border-radius: 1px;
+        background: white;
+    }
+  
+    >.icon-bar + .icon-bar {
+        margin-top: 4px;
+    }
+  }
+  .navbar-nav > .nav-item > .nav-link {
     color: white;
-    padding-left: 0.6rem;
-    padding-right: 0.6rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
     &.active {
       background: white;
       color: black;
     }
   }
-  .navbar-nav > li.active > a {
+  .navbar-nav > .nav-item > .nav-link.active {
     background: white;
     color: black;
+    border-top-left-radius: $border-radius;
+    border-top-right-radius: $border-radius;
+    transform: translateY(0.3rem);
   }
-
-  @media (max-width: $screen-sm-min) {
+  @media (max-width: map-get($grid-breakpoints, 'lg')) {
     background-image: url(../img/backgrounds/header-sm.jpg);
-    ul.dropdown-menu > li > a {
-      color: white;
-    }
-    .navbar-nav > li.active > a, ul.dropdown-menu > li.active > a {
-      background-color: transparent;
-      font-weight: bold;
-      color: white;
-    }
-    .navbar-nav > li.open > a:focus {
-      background-color: transparent;
-    }
-    .navbar-collapse:not(.collapse) {
-      border: none;
-      box-shadow: none;
-    }
-    button.navbar-toggle {
+    padding-bottom: 0.5rem;
+    button.navbar-toggler {
       background: none !important;
       border: none !important;
       transition: transform 1s;
@@ -67,178 +114,31 @@ body {
       &.open {
         transform: rotate(-90deg);
         > .icon-bar {
-          &:nth-child(2) {
+          &:nth-child(1) {
             transform: rotate(-30deg);
           }
-          &:nth-child(4) {
+          &:nth-child(3) {
             transform: rotate(30deg);
           }
         }
       }
     }
+    .navbar-nav {
+      margin-top: 0.5rem;
+    }
+    .navbar-nav > .nav-item > .nav-link.active {
+      border-radius: $border-radius;
+      transform: none;
+    }
   }
-  @media (min-width: $screen-sm-min + 1) {
+  @media (min-width: #{map-get($grid-breakpoints, 'md') + 1}) {
     background-image: url(../img/backgrounds/header-md.jpg);
   }
   @media (min-width: 1920px) {
     background-image: url(../img/backgrounds/header-lg.jpg);
   }
-  @media (min-width: $screen-sm-min) {
-    .navbar-nav {
-      > .active {
-        transform: translateY(5px);
-      }
-    }
-  }
-  .navbar-brand {
-    overflow: hidden;
-    text-indent: -9999px;
-    width: 140px;
-    background: url(../img/logotype.png) no-repeat center center;
-    background-size: 140px 45px;
-    margin-right: 10px;
-    margin-left: 0;
-    @media (max-width: $screen-md-min) {
-      margin-left: $panel-body-padding + $font-size-base*0.5; /* due to 0.5em border */
-    }
-  }
 }
-#site-container  {
-  padding-top: 1em;
-  position: relative;
-  ol.breadcrumb {
-    background: none;
-    padding: 0;
-    margin: 0 0 0.5rem 0;
-    font-style: italic;
-  }
-}
-body > footer {
-  color: #9b9b9b;
-  font-family: $font-family-tiny;
-  background: #202020;
-  margin-top: -$footer-height;
-  min-height: $footer-height;
-  padding: 1em;
-  box-sizing: border-box;
-  font-size: 0.9rem;
 
-  display: flex;
-  > section {
-    flex: 1;
-
-    &:last-child {
-      text-align: right;
-    }
-  }
-
-  h3 {
-    font-size: 1.1rem;
-    margin-top: 0;
-    font-style: italic;
-  }
-  a, a:active, a:hover {
-    color: #9b9b9b;
-    text-decoration: underline;
-  }
-  li {
-    padding: 0;
-  }
-}
-@media (min-width: $screen-xxl-width) {
-  #site-container {
-    width: $screen-xxl-width - 200px;
-  }
-}
-@media (min-width: $screen-xxxl-width) {
-  #site-container {
-    width: $screen-xxxl-width - 200px;
-  }
-}
-blockquote footer {
-    font-size: 0.9rem;
-    font-family: $font-family-tiny;
-}
-.introtron {
-  text-align: center;
-  border-bottom: 1px solid #eee;
-  margin-bottom: 1em;
-  padding-bottom: 1em;
-  h1 {
-    font-style: italic;
-    font-weight: normal;
-  }
-}
-h1,h2,h3,h4,h5 {
-  font-family: $font-family-sans-serif;
-  font-weight: bold;
-}
-h1, h2 {
-  text-align: center;
-}
-header h2.tengwar {
-  font-size: 1.4rem;
-}
-blockquote {
-  font-size: 1rem;
-  line-height: 1.5;
-}
-blockquote h3 a {
-  color: inherit;
-}
-.modal {
-  text-align: center;
-}
-.modal:before {
-  display: inline-block;
-  vertical-align: middle;
-  content: " ";
-  height: 100%;
-}
-.modal-dialog {
-  display: inline-block;
-  text-align: left;
-  vertical-align: middle;
-  width: 80%;
-}
-.adblocker {
-  display: none;
-}
-.alert {
-  font-size: 1rem;
-}
-.list-group {
-  font-size: 1rem;
-}
-.daily-sentence {
-  padding: 5px 0 0 0;
-  margin: 0;
-  border: none;
-}
-.hourly-gloss {
-  blockquote {
-    padding: 0;
-    margin: 0;
-    border: none;
-
-    h3 {
-      font-size: 1.1rem;
-      font-weight: normal;
-      font-style: italic;
-    }
-  }
-}
-.search-result-navigator ul.pager {
-  margin: 0;
-}
-.ed-ad-container {
-  width: 100%;
-  margin-top: 2rem;
-  text-align: center;
-}
-.ed-ad-container:empty {
-  display: none;
-}
 .ed-home-activity-list {
   list-style: none;
   margin: 0;
@@ -260,10 +160,26 @@ blockquote h3 a {
     @include ed-box-shadow();
   }
 
-  .date {
+  time {
     display: block;
     font-size: 0.8rem;
     font-family: $font-family-tiny;
+  }
+}
+
+.hourly-gloss, .daily-sentence, .discuss-entity {
+  h3.gloss-word {
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+  p.tengwar-lg {
+    margin-bottom: 0;
+  }
+  p {
+    margin-bottom: 0.25rem; // I know this is bad but it's only for these specific components on the landing page. The default padding looks bad.
+  }
+  blockquote {
+    padding: 0; // We don't need padding for the landing page. It's already in the grid.
   }
 }
 

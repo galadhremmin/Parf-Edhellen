@@ -11,8 +11,10 @@ import AuthenticationDialog from '@root/components/AuthenticationDialog';
 import { fireEvent } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
 import Pagination from '@root/components/Pagination';
+import { PageModes } from '@root/components/Pagination/Pagination._types';
 import TextIcon from '@root/components/TextIcon';
 import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
+import { DI, resolve } from '@root/di';
 import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
 import DiscussActions from '../actions/DiscussActions';
@@ -39,8 +41,9 @@ function Discuss(props: IProps) {
         newPostContent,
         newPostEnabled,
         noOfPages,
-        pages,
         posts,
+        readonly,
+        roleManager,
         thread,
         threadMetadata,
 
@@ -119,11 +122,6 @@ function Discuss(props: IProps) {
         }
     }, [ currentPage, thread, _onDiscardNewPost, onPageChange ]);
 
-    const _onGotoNavigation = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
-        ev.preventDefault();
-        makeVisibleInViewport(paginationRef.current);
-    }, [ paginationRef ]);
-
     const _renderToolbar = useCallback((postProps: IPostProps) => {
         return <ConditionalToolbar
             onAuthenticationRequired={_onAuthenticationRequired}
@@ -131,6 +129,7 @@ function Discuss(props: IProps) {
             onThreadChange={onExistingThreadChange}
             onThreadMetadataChange={onExistingThreadMetadataChange}
             post={postProps.post}
+            roleManager={roleManager}
             thread={thread}
             threadMetadata={threadMetadata} />;
     }, [
@@ -149,7 +148,7 @@ function Discuss(props: IProps) {
                 renderToolbar={_renderToolbar}
             />,
         )}
-        <aside ref={formRef} className="discuss-body__toolbar--primary">
+        {(! readonly || roleManager.isAdministrator) && <aside ref={formRef} className="discuss-body__toolbar--primary mb-3 mt-3 text-center">
             {newPostEnabled
                 ? <Form name="discussForm"
                         content={newPostContent}
@@ -160,17 +159,14 @@ function Discuss(props: IProps) {
                         onSubmit={_onNewPostSubmit}
                   />
                 : <RespondButton onClick={_onCreateNewPost} isNewPost={posts.length === 0} />}
-        </aside>
+        </aside>}
         <div ref={paginationRef}>
             <Pagination currentPage={currentPage}
                 noOfPages={noOfPages}
                 onClick={_onPaginate}
-                pages={pages}
+                pages={PageModes.AutoGenerate}
             />
         </div>
-        {posts.length > 0 && <a href="#" className="discuss-body__bottom" onClick={_onGotoNavigation}>
-            <TextIcon icon="chevron-down" />
-        </a>}
         <AuthenticationDialog onDismiss={_onAuthenticationCancelled} open={promoteAuth} />
     </>;
 }
@@ -183,6 +179,7 @@ const mapStateToProps = (state: RootReducer) => ({
     posts: state.posts,
     thread: state.thread,
     threadMetadata: state.threadMetadata,
+    roleManager: resolve(DI.RoleManager),
 } as Partial<IProps>);
 
 const actions = new DiscussActions();
@@ -212,4 +209,4 @@ const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => ({
     },
 } as Partial<IProps>);
 
-export default connect(mapStateToProps, mapDispatchToProps)(Discuss);
+export default connect<Partial<IProps>, Partial<IProps>, IProps>(mapStateToProps, mapDispatchToProps)(Discuss);

@@ -1,11 +1,8 @@
+@import "../../../_scss/variables";
+
 .SearchGroup__group-name {
-    &:first-child {
-        margin-top: -15px;
-    }
-    margin: 0 -15px;
-    padding: 5px;
-    background: #ddd;
-    text-align: center;
+    background: $gray-200;
     font-size: 1rem;
     font-weight: bold;
+    border-radius: $border-radius-sm;
 }

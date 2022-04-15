@@ -32,9 +32,14 @@ class DBHandler extends Handler
             $request = request();
             $user = $request->user();
             $common = $this->shouldReport($exception);
+            $message = get_class($exception).(! empty($exception->getMessage()) ? ': '.$exception->getMessage() : '');
+
+            if (strlen($message) > 1024) {
+                $message = substr($message, 0, 1024);
+            }
 
             SystemError::create([
-                'message'    => get_class($exception).(! empty($exception->getMessage()) ? ': '.$exception->getMessage() : ''),
+                'message'    => $message,
                 'url'        => $request->fullUrl(),
                 'ip'         => array_key_exists('REMOTE_ADDR', $_SERVER) ? $_SERVER['REMOTE_ADDR'] : null,
                 'is_common'  => $common,

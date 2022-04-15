@@ -25,7 +25,7 @@ export default class SearchQueryInput extends FormComponent<string, IProps, ICom
         const componentProps = this.pickComponentProps();
 
         return <div className="input-group input-group-lg">
-            <span className="input-group-addon">
+            <span className="input-group-text">
                 <TextIcon icon={icon} className={iconClassName} />
             </span>
             <input accessKey="s"

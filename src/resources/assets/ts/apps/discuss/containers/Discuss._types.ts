@@ -6,6 +6,7 @@ import {
     IPostEntity,
     IThreadEntity,
 } from '@root/connectors/backend/IDiscussApi';
+import { IRoleManager } from '@root/security';
 
 import { IFormChangeData } from '../components/Form._types';
 import { IThreadMetadataArgs } from '../components/toolbar/index._types';
@@ -35,6 +36,8 @@ export interface IProps {
     onPageChange?: ComponentEventHandler<IPageChangeEvent>;
     onReferenceLinkClick?: ComponentEventHandler<IReferenceLinkClickDetails>;
     posts?: IPostEntity[];
+    readonly?: boolean;
+    roleManager?: IRoleManager;
     thread?: IThreadEntity;
     threadMetadata?: IThreadMetadataState;
     threadPostId?: number;

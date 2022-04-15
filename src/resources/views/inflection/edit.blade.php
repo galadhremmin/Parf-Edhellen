@@ -24,7 +24,7 @@
   </div>
   <div class="form-group">
     <button type="submit" class="btn btn-primary">Save</button>
-    <a href="{{ route('inflection.index') }}" class="btn btn-default">Cancel</a>
+    <a href="{{ route('inflection.index') }}" class="btn btn-secondary">Cancel</a>
   </div>
   {{ csrf_field() }}
   {{ method_field('PUT') }}

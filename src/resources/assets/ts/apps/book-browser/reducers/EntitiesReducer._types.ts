@@ -3,6 +3,7 @@ import { IReduxAction } from '@root/_types';
 
 export interface IEntitiesAction<T = IGlossaryResponse> extends IReduxAction {
     entities: T;
+    entityMorph: string;
     groupId: number;
     groupIntlName: string;
     single: boolean;
@@ -10,6 +11,7 @@ export interface IEntitiesAction<T = IGlossaryResponse> extends IReduxAction {
 }
 
 export interface IEntitiesState {
+    entityMorph?: string;
     groupId: number;
     groupIntlName: string;
     loading: boolean;

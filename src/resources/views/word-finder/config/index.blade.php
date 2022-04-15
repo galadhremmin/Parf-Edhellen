@@ -27,7 +27,7 @@
             @endforeach
         </select>
     </div>
-    <div class="text-right">
+    <div class="text-end">
         <button class="bnt btn-primary" type="submit">Save</button>
     </div>
 </form>

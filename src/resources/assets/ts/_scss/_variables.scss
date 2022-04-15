@@ -1,15 +1,15 @@
-// Body
-$body-bg: #f5f8fa;
+$primary: #015788;
+$info: #8eb4cb;
+$success: #2ab27b;
+$warning: #cbb956;
+$danger: #bf5329;
 
-// Brands
-$brand-primary: #015788;
-$brand-info: #8eb4cb;
-$brand-success: #2ab27b;
-$brand-warning: #cbb956;
-$brand-danger: #bf5329;
-
-// Typography
-$icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
+// Disable custom bootstrap components
+$enable-cssgrid: false;
+$enable-rfs: false;
+$enable-deprecation-messages: false;
+$enable-shadows: true;
+$enable-gradients: false;
 
 // Default body font:
 // - Iowan Old Style: preferred serif font on iOS
@@ -18,32 +18,14 @@ $icon-font-path: "~bootstrap-sass/assets/fonts/bootstrap/";
 // - serif: fallback
 $font-family-sans-serif: "Iowan Old Style", Georgia, "Bitstream Charter", "Charis SIL", Utopia, "URW Bookman L", serif;
 $font-family-tiny: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-$font-size-base: 14px;
+$font-size-root: 16px;
 $line-height-base: 1.6;
-$text-color: #202020;
 
-// Navbar
-$navbar-default-bg: #202020;
-$navbar-default-link-color: white;
-$navbar-default-link-hover-color: white;
-$navbar-default-link-active-color: $text-color;
-$navbar-default-link-active-bg: white;
-$navbar-default-link-hover-bg: #202020;
+// Custom components
+$link-block-background-color-hover: #d9edf7;
 
-// Buttons
-$btn-default-color: $text-color;
-
-// Inputs
-$input-border: lighten($text-color, 40%);
-$input-border-focus: lighten($brand-primary, 25%);
-$input-color-placeholder: lighten($text-color, 30%);
-
-// Panels
-$panel-default-heading-bg: #fff;
-
-$screen-xxl-width: 1700px;
-$screen-xxxl-width: 2200px;
-
-$footer-height: 150px;
-
-@import 'node_modules/bootstrap-sass/assets/stylesheets/bootstrap/_variables';
+// Bootstrap configuration
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/utilities";

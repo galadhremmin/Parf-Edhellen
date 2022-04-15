@@ -7,7 +7,6 @@ import {
 import { ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
 import debounce from '@root/utilities/func/debounce';
 import { IFragmentGridMetadata } from '../FragmentsGrid._types';
-import KeyboardConstants from './KeyboardConstants';
 
 import './GlossCellEditor.scss';
 
@@ -54,8 +53,8 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
         if (params.cellStartedEdit) {
             this.focusAfterAttached = true;
 
-            if (KeyboardConstants.Backspace === params.keyPress ||
-                KeyboardConstants.Delete    === params.keyPress) {
+            if ('Backspace' === params.eventKey ||
+                'Delete'    === params.eventKey) {
                 value = 0;
 
             } else if (params.charPress) {

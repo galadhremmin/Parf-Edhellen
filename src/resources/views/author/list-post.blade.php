@@ -13,24 +13,23 @@
     @foreach ($posts as $post)
       <li class="{{ $post->inverted ? 'timeline-inverted' : '' }}">
         @if (! $post->i) 
-        <div class="timeline-badge info"><i class="glyphicon glyphicon-{{ $post->icon }}"></i></div>
+        <div class="timeline-badge info"><i class="TextIcon TextIcon--{{ $post->icon }} bg-white"></i></div>
         @endif
         <div class="timeline-panel">
           <div class="timeline-heading">
             <h4 class="timeline-title">{{ $post->subject }}</h4>
             <p>
               <small class="text-muted">
-                <i class="glyphicon glyphicon-time"></i> 
-                <span class="date">{{ $post->created_at }}</span>
+                <i class="TextIcon TextIcon--calendar"></i> 
+                @date($post->created_at)
               </small>
             </p>
           </div>
           <div class="timeline-body">
             @markdown($post->content)
             <hr>
-            <div class="{{ $post->inverted ? 'text-right' : '' }}">
-              <a href="{{ $link->forumThread($post->forum_group_id, 'g', $post->forum_thread_id, $post->subject_path, $post->id) }}" class="btn btn-sm btn-default">
-                <span class="glyphicon glyphicon-envelope"></span>
+            <div class="{{ $post->inverted ? 'text-end' : '' }}">
+              <a href="{{ $link->forumThread($post->forum_group_id, 'g', $post->forum_thread_id, $post->subject_path, $post->id) }}" class="btn btn-sm btn-secondary">
                 View thread
               </a>
             </div>
@@ -44,17 +43,17 @@
   <div class="text-center">
     <nav aria-label="Page navigation">
       <ul class="pagination">
-        <li class="{{ $page < 1 ? 'disabled' : '' }}">
-          <a href="{{ route('author.posts', ['id' => $author->id, 'page' => max(0, $page - 1)]) }}" aria-label="Previous">
+        <li class="page-item{{ $page < 1 ? ' disabled' : '' }}">
+          <a href="{{ route('author.posts', ['id' => $author->id, 'page' => max(0, $page - 1)]) }}" class="page-link" aria-label="Previous">
             <span aria-hidden="true">&larr;</span>
             Previous
           </a>
         </li>
         @for ($i = 0; $i < $noOfPages; $i += 1)
-        <li class="{{ $page === $i ? 'active' : '' }}"><a href="{{ route('author.posts', ['id' => $author->id, 'page' => $i]) }}">{{ $i + 1 }}</a></li>
+        <li class="page-item{{ $page === $i ? ' active' : '' }}"><a href="{{ route('author.posts', ['id' => $author->id, 'page' => $i]) }}" class="page-link">{{ $i + 1 }}</a></li>
         @endfor
-        <li class="{{ $page >= $noOfPages - 1 ? 'disabled' : '' }}">
-          <a href="{{ route('author.posts', ['id' => $author->id, 'page' => min($noOfPages - 1, $page + 1)]) }}" aria-label="Next">
+        <li class="page-item{{ $page >= $noOfPages - 1 ? ' disabled' : '' }}">
+          <a href="{{ route('author.posts', ['id' => $author->id, 'page' => min($noOfPages - 1, $page + 1)]) }}" class="page-link" aria-label="Next">
             Next
             <span aria-hidden="true">&rarr;</span>
           </a>

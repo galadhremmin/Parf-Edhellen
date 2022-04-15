@@ -23,7 +23,6 @@ const DiscussFilters = [
 const FilterQueryStringKeyName = 'filters';
 
 function FiltersButton(props: IProps) {
-    const [ expanded, setExpanded ] = useState(false);
     const [ filterMap, setFilterMap ] = useState(() => {
         // Retrieve the current filter configuration, or default to the filters described by the `DiscussFilters` constant
         const existingFilter = queryString.parse(window.location.search, {
@@ -38,9 +37,12 @@ function FiltersButton(props: IProps) {
         }, {});
     });
 
-    const _onExpand = useCallback(() => {
-        setExpanded(! expanded);
-    }, [ expanded ]);
+    const [ isOpen, setIsOpen ] = useState<boolean>(false);
+
+    const _onOpenClick = useCallback((ev: React.MouseEvent) => {
+        ev.preventDefault();
+        setIsOpen((x) => !x);
+    }, []);
 
     const _onFilterChange = useCallback((ev: React.ChangeEvent) => {
         const {
@@ -66,11 +68,11 @@ function FiltersButton(props: IProps) {
         });
     }, [ filterMap ]);
 
-    return <div className={classNames('btn-group', 'right', 'FiltersButton', { open: expanded })}>
-        <button type="button" className="btn btn-default" onClick={_onExpand}>
+    return <div className={classNames('dropdown', 'right', 'FiltersButton')}>
+        <button type="button" className="btn btn-secondary dropdown-toggle" onClick={_onOpenClick}>
             Filters <span className="caret"></span>
         </button>
-        <ul className="dropdown-menu FiltersButton--menu">
+        <ul className={classNames('dropdown-menu', 'FiltersButton--menu', { show: isOpen })}>
             {DiscussFilters.map((f) => <li key={f.id} className="checkbox">
                 <label>
                     <input type="checkbox"

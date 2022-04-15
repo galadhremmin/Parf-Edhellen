@@ -18,7 +18,7 @@ function SearchGroup(props: IProps) {
     }
 
     return <>
-        <h3 className="SearchGroup__group-name">{groupName}</h3>
+        <h3 className="SearchGroup__group-name p-1">{groupName}</h3>
         <ul className="search-result">
             {searchResults.map((result) => <li key={result.id}>
                 <SearchResult searchResult={result} onClick={onClick} selected={selectedResultId === result.id} />

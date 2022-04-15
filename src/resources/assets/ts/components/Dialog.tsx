@@ -7,6 +7,7 @@ import { fireEvent } from './Component';
 import { IProps } from './Dialog._types';
 
 import './Dialog.scss';
+import classNames from 'classnames';
 
 function Dialog<V>(props: IProps<V>) {
     const {
@@ -17,6 +18,7 @@ function Dialog<V>(props: IProps<V>) {
         open,
         onConfirm,
         onDismiss,
+        size,
         title,
         valid,
         value,
@@ -46,27 +48,27 @@ function Dialog<V>(props: IProps<V>) {
      // This is needed so screen readers don't see main content when modal is opened.
      const appElement = document.querySelector('main');
     return <Modal appElement={appElement}
-        className="modal-dialog"
+        className="modal"
         isOpen={open}
         style={DialogStyles}>
-        <div className="modal-content">
-            <div className="modal-header">
-                <button type="button" className="close" aria-label="Close" onClick={_onDismissDialog}>
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 className="modal-title">{title}</h4>
+        <div className={classNames('modal-dialog', { [`modal-${size}`]: !! size })}>
+            <div className="modal-content">
+                <div className="modal-header">
+                    <h4 className="modal-title">{title}</h4>
+                    <button type="button" className="btn-close" aria-label="Close" onClick={_onDismissDialog} />
+                </div>
+                <div className="modal-body">
+                    {children}
+                </div>
+                {actionBar && <div className="modal-footer Dialog--footer">
+                    <button type="button" className="btn btn-light" onClick={_onDismissDialog}>
+                        {cancelButtonText}
+                    </button>
+                    {onConfirm && <button type="button" className="btn btn-primary" onClick={_onConfirm}>
+                        {confirmButtonText}
+                    </button>}
+                </div>}
             </div>
-            <div className="modal-body">
-                {children}
-            </div>
-            {actionBar && <div className="modal-footer Dialog--footer">
-                <button type="button" className="btn btn-default" onClick={_onDismissDialog}>
-                    {cancelButtonText}
-                </button>
-                {onConfirm && <button type="button" className="btn btn-primary" onClick={_onConfirm}>
-                    {confirmButtonText}
-                </button>}
-            </div>}
         </div>
     </Modal>;
 }
@@ -80,6 +82,7 @@ Dialog.defaultProps = {
 
 const DialogStyles = {
     content: {
+        display: 'inherit',
         left: '50%',
         marginRight: '-50%',
         right: 'auto',

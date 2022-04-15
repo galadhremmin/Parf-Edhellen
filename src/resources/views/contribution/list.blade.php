@@ -12,7 +12,7 @@
     <div class="col-md-12">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h2 class="panel-title"><span class="glyphicon glyphicon-hourglass"></span> Awaiting review</h2>
+          <h2 class="panel-title">Awaiting review</h2>
         </div>
         <div class="panel-body">
           @if ($pendingReviews->isEmpty())
@@ -28,7 +28,7 @@
       </div>
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h2 class="panel-title"><span class="glyphicon glyphicon-ok"></span> Approved contributions</h2>
+          <h2 class="panel-title">Approved contributions</h2>
         </div>
         <div class="panel-body">
           @if ($approvedReviews->isEmpty())
@@ -44,7 +44,7 @@
       </div>
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h2 class="panel-title"><span class="glyphicon glyphicon-remove"></span> Rejected contributions</h2>
+          <h2 class="panel-title">Rejected contributions</h2>
         </div>
         <div class="panel-body">
           @if ($rejectedReviews->isEmpty())

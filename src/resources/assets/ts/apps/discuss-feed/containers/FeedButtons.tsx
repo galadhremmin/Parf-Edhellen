@@ -42,7 +42,7 @@ function Feeds(props: IProps) {
 
     const feedUrl = feedUrlFactory('discuss', 'posts', props.groupId, feedType);
     return <div className="discuss-feed-buttons">
-        <button className="btn btn-sm btn-default" onClick={_onOpen}>
+        <button className="btn btn-sm btn-secondary" onClick={_onOpen}>
             <TextIcon icon="bell" />
             &#32;
             Feed
@@ -72,7 +72,7 @@ function Feeds(props: IProps) {
                        type="text"
                        readOnly={true}
                        value={feedUrl} />
-                <div className="text-right">
+                <div className="text-end">
                     <a href={feedUrl} target="_blank">Open feed in a new tab</a>
                 </div>
             </div>

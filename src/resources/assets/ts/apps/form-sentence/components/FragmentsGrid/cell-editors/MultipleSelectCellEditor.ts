@@ -1,4 +1,3 @@
-import KeyboardConstants from './KeyboardConstants';
 import {
     ICellEditorComp,
     ICellEditorParams,
@@ -51,13 +50,13 @@ export default class MultipleSelectCellEditor<T, V = T> extends PopupComponent i
         if (params.cellStartedEdit) {
             this.focusAfterAttached = true;
 
-            if (KeyboardConstants.Backspace === params.keyPress) {
+            if ('Backspace' === params.eventKey) {
                 // The customer is interacting with the grid via the keyboard, and they pressed
                 // the backspace key -- the expected behavior is to remove the last value from
                 // the list of values.
                 values = values.slice(0, values.length - 1);
 
-            } else if (KeyboardConstants.Delete === params.keyPress) {
+            } else if ('Delete' === params.eventKey) {
                 // The customer is pressing the delete key -- the expected behavior is that all
                 // current values are removed.
                 values = [];
@@ -129,7 +128,7 @@ export default class MultipleSelectCellEditor<T, V = T> extends PopupComponent i
             const valueId = this.getValueId(value);
             const valueText = this.getValueText(value);
             valueMap.add(valueId);
-            labels.push(`<span class="label label-default">${valueText}</span>`);
+            labels.push(`<span class="badge bg-secondary">${valueText}</span>`);
         });
 
         wrapper.innerHTML = labels.join('');

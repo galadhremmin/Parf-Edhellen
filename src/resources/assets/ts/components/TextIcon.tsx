@@ -2,8 +2,10 @@ import classNames from 'classnames';
 import React from 'react';
 import { IProps } from './TextIcon._types';
 
+import './TextIcon.scss';
+
 const TextIcon: React.FC<IProps> = (props: IProps) => <span
-    className={classNames(`glyphicon glyphicon-${props.icon}`, props.className || '')}
+    className={classNames(`TextIcon TextIcon--${props.icon}`, props.className || '')}
 />;
 
 export default TextIcon;

@@ -9,7 +9,7 @@
 
   <p>
     Are you sure you want to reject <strong>{{ $review->word }}</strong> ({{ $review->sense }}) which 
-    was submitted for review <span class="date">{{ $review->created_at }}</span> by 
+    was submitted for review @date($review->created_at) by 
     <a href="{{ $link->author($review->account_id, $review->account->nickname) }}">{{ $review->account->nickname }}</a>?
   </p>
 
@@ -22,10 +22,10 @@
       <input type="text" class="form-control" id="ed-rejection-justification" name="justification" placeholder="Optional explanation why the contribution was rejected.">
     </div>
 
-    <div class="text-right">
+    <div class="text-end">
       <div class="btn-group" role="group">
-        <a href="{{ route('contribution.show', ['contribution' => $review->id]) }}" class="btn btn-default">Cancel rejection</a>
-        <button type="submit" class="btn btn-warning"><span class="glyphicon glyphicon-minus-sign"></span> Reject</button>
+        <a href="{{ route('contribution.show', ['contribution' => $review->id]) }}" class="btn btn-secondary">Cancel rejection</a>
+        <button type="submit" class="btn btn-warning"><span class="TextIcon TextIcon--trash"></span> Reject</button>
       </div>
     </div>
   </form>

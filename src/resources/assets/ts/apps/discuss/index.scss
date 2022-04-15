@@ -25,9 +25,6 @@ h1 {
     }
 
     .discuss-body__toolbar--primary {
-        margin-top: 1em;
-        text-align: center;
-
         > form, .alert {
             text-align: initial;
         }
@@ -37,12 +34,6 @@ h1 {
                 width: 100%;
             }
         }
-    }
-
-    .discuss-body__bottom {
-        position: fixed;
-        right: 1em;
-        bottom: 1em;
     }
 }
 
@@ -58,15 +49,15 @@ h1 {
     .r {
         display: flex;
         flex-wrap: wrap;
-        padding: $padding-base-vertical;
+        padding: $container-padding-x;
 
         &:nth-child(even) {
-            background-color: $table-bg-accent;
+            background-color: $table-striped-bg;
         }
         
         &:hover {
-            background-color: $alert-info-bg;
-            border-radius: $border-radius-base;
+            background-color: $link-block-background-color-hover;
+            border-radius: $border-radius;
         }
 
         /* column */
@@ -121,9 +112,9 @@ h1 {
     display: table;
     width: 100%;
     box-sizing: border-box;
-    margin-top: $line-height-computed;
-    padding-top: $line-height-computed;
-    border-top: 1px solid $gray-lighter;
+    margin-top: $container-padding-x;
+    padding-top: $container-padding-x;
+    border-top: 1px solid $gray-200;
     transition: background-color 2s, padding 2s;
 
     &:first-child {
@@ -136,12 +127,13 @@ h1 {
     }
 
     &.highlight {
-        background-color: $alert-info-bg;
-        padding: $padding-large-vertical;
-        border-radius: $border-radius-large;
+        background-color: $link-block-background-color-hover;
+        border-radius: $border-radius-lg;
     }
 
     .post-body {
+        overflow: hidden;
+
         p, ul, ol {
             max-width: $ed-forum-post-body-maximum-width;
         }
@@ -172,7 +164,6 @@ h1 {
     .post-content {
         display: table-cell;
         vertical-align: top;
-        overflow: hidden;
     }
 
     footer, header {
@@ -180,13 +171,13 @@ h1 {
     }
 
     footer {
-        font-size: $font-size-small;
-        color: $gray-light;
+        font-size: $font-size-sm;
+        color: $gray-600;
 
         .post-no {
             float: right;
-            font-size: $font-size-small;
-            color: $gray-light;
+            font-size: $font-size-sm;
+            color: $gray-600;
         }
 
         > a {
@@ -196,14 +187,6 @@ h1 {
 
     a {
         text-decoration: none;
-
-        .like-not-liked {
-            color: $gray-light;
-        }
-
-        .like-liked {
-            color: $brand-success;
-        }
     }
 }
 
@@ -226,6 +209,5 @@ h1 {
 @media (min-width: calc(#{$ed-forum-post-body-maximum-width} + #{$ed-forum-post-profile-width})) {
     .forum-post {
         max-width: calc(#{$ed-forum-post-body-maximum-width} + #{$ed-forum-post-profile-width});
-        margin: $line-height-computed auto 0 auto;
     }
 }

@@ -4,8 +4,11 @@ import IDiscussApi, {
     ICreatePostRequest,
     ICreatePostResponse,
     IDeletePostRequest,
+    IGroupsResponse,
     ILikePostRequest,
     ILikePostResponse,
+    IMoveThreadRequest,
+    IMoveThreadResponse,
     IPostRequest,
     IPostResponse,
     IStickThreadRequest,
@@ -20,6 +23,10 @@ import IDiscussApi, {
 
 export default class DiscussApiConnector implements IDiscussApi {
     constructor(private _api = resolve<ApiConnector>(DI.BackendApi)) {
+    }
+
+    public groups(): Promise<IGroupsResponse> {
+        return this._api.get(this._makePath('group'));
     }
 
     public thread(payload: IThreadRequest) {
@@ -80,6 +87,12 @@ export default class DiscussApiConnector implements IDiscussApi {
     public likePost(payload: ILikePostRequest) {
         return this._api.post<ILikePostResponse>(
             this._makePath('like'),
+            payload,
+        );
+    }
+
+    public moveThread(payload: IMoveThreadRequest): Promise<IMoveThreadResponse> {
+        return this._api.put(this._makePath('thread/move'),
             payload,
         );
     }

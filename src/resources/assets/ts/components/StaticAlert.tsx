@@ -16,10 +16,8 @@ function StaticAlert(props: IProps) {
         fireEvent('StaticAlert', onDismiss);
     }, [onDismiss]);
 
-    return <div className={classNames(`alert alert-${type}`, { 'alert-dismissible': dismissable })}>
-        {dismissable && <button type="button" className="close" aria-label="Close" onClick={_onDismiss}>
-            <span aria-hidden="true">&times;</span>
-        </button>}
+    return <div className={classNames(`alert alert-${type} bg-gradient`, { 'alert-dismissible': dismissable })} role="alert">
+        {dismissable && <button type="button" className="btn-close" aria-label="Close" onClick={_onDismiss} />}
         {children}
     </div>;
 };

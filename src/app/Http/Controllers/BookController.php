@@ -70,7 +70,8 @@ class BookController extends BookBaseController
 
         return view('book.version', [
             'word'      => $word,
-            'versions'  => $model['sections'][0]['entities']
+            'versions'  => $model['sections'][0]['entities'],
+            'user'      => $request->user()
         ]);
     }
 }

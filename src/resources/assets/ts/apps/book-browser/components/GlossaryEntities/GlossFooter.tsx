@@ -14,12 +14,12 @@ const GlossFooter = (props: IProps) => {
         {' '}
         {gloss.externalLinkFormat && gloss.externalId && <>
             <a href={gloss.externalLinkFormat.replace(/\{ExternalID\}/g, gloss.externalId)}
-                title={`Goes to ${gloss.glossGroupName} in new tab or window.`}
+                title={`Opens ${gloss.glossGroupName} in new tab or window.`}
                 target="_blank">
                 <TextIcon icon="globe" />
                 {' '}
-                Source
-            </a>.
+                External source
+            </a>
         </>
         }
         {' '}

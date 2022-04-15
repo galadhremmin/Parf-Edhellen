@@ -65,13 +65,17 @@ class DiscussRepository
      */
     public function getGroups() 
     {
-        $groups = ForumGroup::orderBy('name')->get();
-        $numberOfThreads = ForumThread::groupBy('forum_group_id')
-            ->select('forum_group_id', DB::raw('count(*) as count'))
+        $groups = ForumGroup::orderBy('name') //
+            ->orderBy('name')
+            ->get()
+            ->groupBy('category');
+        $numberOfThreads = ForumThread::groupBy('forum_group_id') //
+            ->select('forum_group_id', DB::raw('count(*) as count')) //
             ->pluck('count', 'forum_group_id');
 
         return new ForumGroupsValue([
             'groups' => $groups,
+            'group_categories' => $groups->keys(),
             'number_of_threads' => $numberOfThreads
         ]);
     }
@@ -83,9 +87,10 @@ class DiscussRepository
      */
     public function getAccountsInGroup(Collection $groups)
     {
-        $groupIds = $groups->map(function ($group) {
-            return $group->id;
-        });
+        $groupIds = $groups->flatMap(function ($group) {
+            return $group->pluck('id');
+        })->unique();
+
         $accountIds = DB::table('forum_threads')
             ->join('forum_posts', 'forum_posts.forum_thread_id', '=', 'forum_threads.id')
             ->join('accounts', 'accounts.id', '=', 'forum_posts.account_id')
@@ -195,7 +200,7 @@ class DiscussRepository
             return $this->checkThreadAuthorization($account, $thread);
         });
 
-        $pages = $this->createPageArray($noOfPages);
+        $pages = $this->createPageArray($noOfPages, $currentPage);
 
         return new ForumThreadsInGroupValue([
             'current_page'  => $currentPage,
@@ -423,7 +428,7 @@ class DiscussRepository
             */
         }
 
-        $pages = $this->createPageArray($noOfPages);
+        $pages = $this->createPageArray($noOfPages, $pageNumber);
 
         return new ForumPostsInThreadValue([
             'posts'          => $posts,
@@ -846,6 +851,13 @@ class DiscussRepository
         return $sticky;
     }
 
+    public function moveThread(int $threadId, int $groupId)
+    {
+        ForumThread::where('id', $threadId)
+            ->update(['forum_group_id' => $groupId]);
+        return $groupId;
+    }
+
     private function checkPostAuthorization(?Account $account, ForumPost $post, ForumThread $thread = null)
     {
         if ($thread === null) {
@@ -946,13 +958,28 @@ class DiscussRepository
      * @param integer $noOfPages
      * @return void
      */
-    private function createPageArray(int $noOfPages)
+    private function createPageArray(int $noOfPages, int $currentPage = 1)
     {
-        $pages = [];
-        for ($i = 0; $i < $noOfPages; $i += 1) {
-            $pages[$i] = $i + 1;
+        // NOTE: This should mirror Pagination.tsx.
+        $maximumPages = intval(config('ed.forum_pagination_max_pages'));
+        $modifier = floor($maximumPages / 2) - 1;
+        $firstPage = config('ed.forum_pagination_first_page_number');
+        $start = $currentPage - $modifier;
+        $end = $currentPage + $modifier;
+    
+        if ($start < $firstPage) {
+            $start = $firstPage;
+            $end   = min($start + $maximumPages - 1, $noOfPages);
+        } else if ($end > $noOfPages) {
+            $start = max($noOfPages - $maximumPages + 1, $firstPage);
+            $end   = min($start + $maximumPages, $noOfPages);
         }
 
+        $pages = [];
+        for ($page = $start; $page <= $end; $page += 1) {
+            $pages[] = $page;
+        }
+    
         return $pages;
     }
 }

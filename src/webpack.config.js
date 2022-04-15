@@ -2,7 +2,7 @@ const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const cleanWebpack = require('clean-webpack-plugin');
 const WebpackNotifierPlugin = require('webpack-notifier');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 // Reads `.env` configuration values to `process.env`
 require('dotenv').config();
@@ -10,6 +10,7 @@ require('dotenv').config();
 const bundleCssWithJavaScript = false;
 const version = process.env.ED_VERSION;
 
+const nodeModulesPath = path.resolve(__dirname, 'node_modules');
 const sourcePath = path.resolve(__dirname, 'resources/assets/ts');
 const publicPath = `/v${version}`;
 const outputPath = path.resolve(__dirname, `public/${publicPath}`);
@@ -24,19 +25,18 @@ module.exports = {
     'style-sentence': `${sourcePath}/apps/sentence/index.scss`,
   },
   output: {
-    chunkFilename: `[name].js`,
-    filename: '[name].js',
     path: outputPath,
     publicPath: `${publicPath}/`,
   },
   optimization: {
+    chunkIds: 'deterministic',
     splitChunks: {
       cacheGroups: {
         default: false,
         vendors: {
           test: /\/node_modules\/(axios|classnames|html\-to\-react|query\-string|luxon|react|redux|spinkit)/,
           priority: 0,
-          reuseExistingChunk: true,
+          reuseExistingChunk: false,
         },
         glaemscribe: {
           name(module, chunks, cacheGroupKey) {
@@ -100,51 +100,48 @@ module.exports = {
           },
         }],
       },
-      {
-        test: /\.(eot|ttf|svg)$/,
-        use: [
-          'file-loader?name=fonts/[name].[ext]'
-        ]
-      },
-      {
-        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        use: [{
-          loader: 'url-loader',
-          options: {
-            mimetype: 'application/font-woff',
-            name: 'fonts/[name].[ext]',
-          }
-        }],
-      },
-      {
-        test: /\.(gif|jpg|png)$/i,
-        use: [
-          {
-            loader: 'file-loader',
-          }
-        ],
-      },
       { 
         test: /\.tsx?$/, 
         use: 'ts-loader',
       },
       // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
+      /*
       { 
         enforce: 'pre', 
         test: /\.js$/, 
         use: 'source-map-loader'
       },
+      */
       {
-        test: /\.s?css$/,
+        test: /\.scss$/,
         use: [
           bundleCssWithJavaScript ? 'style-loader' : MiniCssExtractPlugin.loader, // creates style nodes from JS strings
           {
             loader: 'css-loader',
             options: {
               modules: false, // translates CSS into CommonJS
+              sourceMap: false,
             },
           },
-          "sass-loader" // compiles Sass to CSS, using Node Sass by default
+          {
+            loader: 'sass-loader', // compiles Sass to CSS, using Node Sass by defaultoptions: {
+            options: {
+              sourceMap: false,
+            },
+          },
+        ]
+      },
+      {
+        test: /\.css$/,
+        use: [
+          bundleCssWithJavaScript ? 'style-loader' : MiniCssExtractPlugin.loader, // creates style nodes from JS strings
+          {
+            loader: 'css-loader',
+            options: {
+              modules: false, // translates CSS into CommonJS
+              sourceMap: false,
+            },
+          },
         ]
       },
     ],

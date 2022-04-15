@@ -48,7 +48,7 @@ class AccountContext implements IDiscussContext
     public function getIconPath()
     {
         // Refer to Bootstrap glyphicons.
-        return 'user';
+        return 'person';
     }
 
     public function view(Model $entity)

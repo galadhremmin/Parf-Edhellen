@@ -11,6 +11,7 @@ import { IProps } from './index._types';
 import DeletePost from './DeletePost';
 import EditPost from './EditPost';
 import Likes from './Likes';
+import MovePost from './MovePost';
 import StickyPost from './StickyPost';
 
 import './index.scss';
@@ -23,6 +24,7 @@ const getEligibleToolbarComponents = (roleManager: IRoleManager, post: IPostEnti
     if (role === SecurityRole.Administrator) {
         if (post._isThreadPost) {
             components.push(StickyPost);
+            components.push(MovePost);
         }
         // components.push(RestorePost); -- TODO
     }

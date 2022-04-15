@@ -5,16 +5,17 @@ import { DI, resolve } from '@root/di';
 import {
     SecurityRole,
 } from '@root/security';
+import TextIcon from '@root/components/TextIcon';
 
 import { IProps } from './GlossTitle._types';
 
-import GlossAbsoluteLink from './GlossAbsoluteLink';
 import GlossGroupLabel from './GlossGroupLabel';
 import NumberOfComments from './NumberOfComments';
+import VersionsLink from './VersionsLink';
 
 const ToolbarAsync = React.lazy(() => import('./toolbar'));
 
-const GlossTitle: React.SFC<IProps> = (props: IProps) => {
+const GlossTitle = (props: IProps) => {
     const {
         gloss,
         toolbar,
@@ -26,7 +27,9 @@ const GlossTitle: React.SFC<IProps> = (props: IProps) => {
     const hasWarning = ! gloss.isCanon || !! gloss.isUncertain;
 
     return <h3 className="gloss-word">
-        {hasWarning && <span className="uncertain" title="Neologism/unattested">*</span>}
+        {hasWarning && <span className="uncertain" title="Neologism/unattested">
+            <TextIcon icon="asterisk" className="fs-5" />
+        </span>}
         <span itemProp="headline" className={className}>
             {gloss.word}
         </span>
@@ -44,11 +47,13 @@ const GlossTitle: React.SFC<IProps> = (props: IProps) => {
                     {inflection.name}
                 </span>)}
         </span>}
-        {toolbar && <Suspense fallback={null}>
+        {toolbar && <>
             <NumberOfComments gloss={gloss} />
-            <GlossAbsoluteLink gloss={gloss} />
-            {isAuthenticated && <ToolbarAsync gloss={gloss} />}
-        </Suspense>}
+            <VersionsLink gloss={gloss} />
+            {isAuthenticated && <Suspense fallback={null}>
+                <ToolbarAsync gloss={gloss} />
+            </Suspense>}
+        </>}
     </h3>;
 };
 

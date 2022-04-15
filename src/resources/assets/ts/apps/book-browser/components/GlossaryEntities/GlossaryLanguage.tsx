@@ -7,7 +7,11 @@ import Language from '../Language';
 
 export default class GlossaryLanguage extends React.Component<IProps> {
     public render() {
-        const { glosses, language, onReferenceLinkClick } = this.props;
+        const {
+            glosses,
+            language,
+            onReferenceLinkClick,
+        } = this.props;
 
         return <article className="ed-glossary__language">
             <header>
@@ -17,7 +21,7 @@ export default class GlossaryLanguage extends React.Component<IProps> {
                 {glosses.map((gloss) => <Gloss gloss={gloss} key={gloss.id}
                     onReferenceLinkClick={onReferenceLinkClick} />)}
             </section>
-            <section>
+            <section className="mt-3">
                 <Ad ad="glossary" />
             </section>
         </article>;

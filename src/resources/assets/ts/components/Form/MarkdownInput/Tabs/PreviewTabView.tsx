@@ -8,7 +8,11 @@ function PreviewTabView(props: IProps) {
         value,
     } = props;
 
-    return <Markdown parse={true} text={value} />;
+    if (/^\s*$/.test(value)) {
+        return <em>There is nothing to preview!</em>;
+    } else {
+        return <Markdown parse={true} text={value} />;
+    }
 }
 
 export default PreviewTabView;

@@ -1,8 +1,13 @@
+import classNames from 'classnames';
 import React from 'react';
 
 import { IProps, PageModes } from './Pagination._types';
 import PaginationLink from './PaginationLink';
-import { createPageArray } from './utils';
+import {
+    createPageArray,
+    getFirstPageNumber,
+    isPageArrayTruncated,
+} from './utils';
 
 const Pagination = (props: IProps) => {
     const {
@@ -19,7 +24,7 @@ const Pagination = (props: IProps) => {
     let pageArray: (number | string)[];
     switch (pages) {
         case PageModes.AutoGenerate:
-            pageArray = createPageArray(noOfPages);
+            pageArray = createPageArray(noOfPages, currentPage);
             break;
         case PageModes.None:
             pageArray = [];
@@ -28,26 +33,28 @@ const Pagination = (props: IProps) => {
             pageArray = pages || [];
     }
 
-    return <nav className="text-center">
-        <ul className="pagination">
-            {currentPage > 1 && <li>
-                <PaginationLink pageNumber={currentPage - 1}
+    const truncated = isPageArrayTruncated(pageArray, noOfPages);
+
+    return <nav>
+        <ul className="pagination justify-content-center">
+            {currentPage > getFirstPageNumber() && <li className="page-item">
+                <PaginationLink pageNumber={truncated ? getFirstPageNumber() : currentPage - 1}
                     onClick={onClick}>
                     <span aria-hidden="true">← </span>
-                    Older
+                    {truncated ? 'First' : 'Previous'}
                 </PaginationLink>
             </li>}
             {pageArray.map((pageNumber) => <li key={pageNumber}
-                className={currentPage === pageNumber ? 'active' : ''}>
+                className={classNames('page-item', { active: currentPage === pageNumber})}>
                 <PaginationLink pageNumber={pageNumber}
                     onClick={onClick}>
                     {pageNumber}
                 </PaginationLink>
             </li>)}
-            {currentPage < noOfPages && <li>
-                <PaginationLink pageNumber={currentPage + 1}
+            {currentPage < noOfPages && <li className="page-item">
+                <PaginationLink pageNumber={truncated ? noOfPages : currentPage + 1}
                     onClick={onClick}>
-                    Newer
+                    {truncated ? 'Last' : 'Next'}
                     <span aria-hidden="true"> →</span>
                 </PaginationLink>
             </li>}

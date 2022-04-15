@@ -6,6 +6,7 @@ import {
     CellValueChangedEvent,
     ColDef,
     DetailGridInfo,
+    GetRowIdParams,
     GridReadyEvent,
     RowClassParams,
     RowNode,
@@ -47,7 +48,7 @@ const DefaultColumnDefinition = {
 } as ColDef;
 
 const RowClassRules = {
-    'in-error': (params: RowClassParams) => {
+    'bg-danger text-white': (params: RowClassParams) => {
         const {
             _error: error,
         } = params.data as ISentenceFragmentReducerState;
@@ -121,6 +122,7 @@ class FragmentsGrid extends React.Component<IProps, IState> {
             {
                 cellEditor: GlossCellEditor,
                 cellEditorParams: cellRendererParams,
+                cellEditorPopup: true,
                 cellRenderer: GlossRenderer,
                 cellRendererParams,
                 editable: true,
@@ -131,6 +133,7 @@ class FragmentsGrid extends React.Component<IProps, IState> {
             {
                 cellEditor: SpeechSelectCellEditor,
                 cellEditorParams: cellRendererParams,
+                cellEditorPopup: true,
                 cellRenderer: SpeechRenderer,
                 cellRendererParams,
                 editable: true,
@@ -141,6 +144,7 @@ class FragmentsGrid extends React.Component<IProps, IState> {
             {
                 cellEditor: InflectionCellEditor,
                 cellEditorParams: cellRendererParams,
+                cellEditorPopup: true,
                 cellRenderer: InflectionRenderer,
                 cellRendererParams,
                 editable: true,
@@ -181,8 +185,7 @@ class FragmentsGrid extends React.Component<IProps, IState> {
                 {columnDefinition &&
                     <AgGridReact
                         modules={AllCommunityModules}
-                        deltaRowDataMode
-                        getRowNodeId={this._onGetRowNodeId}
+                        getRowId={this._onGetRowId}
                         isExternalFilterPresent={this._onIsExternalFilterPresent}
                         doesExternalFilterPass={this._onDoesExternalFilterPass}
                         rowClassRules={RowClassRules}
@@ -267,7 +270,7 @@ class FragmentsGrid extends React.Component<IProps, IState> {
         });
 
         if (transaction.length > 0) {
-            api.updateRowData({
+            api.applyTransaction({
                 update: transaction,
             });
         }
@@ -327,10 +330,10 @@ class FragmentsGrid extends React.Component<IProps, IState> {
 
     /**
      * Returns an unique string identifier given a fragment entity. This is required
-     * by agGrid's `deltaRowDataMode`.
+     * by agGrid's `immutableData`.
      */
-    private _onGetRowNodeId = (row: ISentenceFragmentEntity) => {
-        return row.id.toString(10);
+    private _onGetRowId = (row: GetRowIdParams) => {
+        return row.data.id.toString(10);
     }
 
     /**

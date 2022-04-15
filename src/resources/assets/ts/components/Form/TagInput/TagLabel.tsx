@@ -30,7 +30,7 @@ function TagLabel(props: IProps) {
         setFocused(true);
     }, [ setFocused ]);
 
-    return <label className={classNames({ focused })}>
+    return <label className={classNames('badge', 'border', 'bg-light', 'text-dark', { focused })}>
         <input checked={true}
                name={`tag-checkbox--${tag}`}
                onBlur={_onTagBlur}
@@ -40,7 +40,7 @@ function TagLabel(props: IProps) {
         />
         {tag}
         &#32;
-        <TextIcon icon="remove-sign" />
+        <TextIcon icon="remove" />
     </label>;
 }
 

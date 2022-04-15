@@ -66,13 +66,14 @@ function CreateThreadButton(props: IProps) {
 
     return <>
         <button className="btn btn-primary" onClick={_onOpen}>
-            <TextIcon icon="pencil" />
+            <TextIcon icon="comment" />
             {' '}
             New post
         </button>
         <Dialog actionBar={false}
                 open={isOpen}
                 onDismiss={_onDismiss}
+                size="xl"
                 title={`Create thread in ${groupName}`}>
             <ValidationErrorAlert error={error} />
             {enabled

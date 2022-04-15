@@ -21,10 +21,11 @@ class StorageHelper
         // will therefore have to be current.
         if ($account === null || ! $account->has_avatar) {
             return $anonymousIfNotExists 
-                ? asset('img/anonymous-profile-picture.png') 
+                ? asset('img/anonymous-profile-picture.png')
                 : null;
         } else {
-            return Storage::url('avatars/'.$account->id.'.png');
+            $path = Storage::url('avatars/'.$account->id.'.png');
+            return $path;
         }
     }
 }

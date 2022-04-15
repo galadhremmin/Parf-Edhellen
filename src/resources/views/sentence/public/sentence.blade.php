@@ -33,15 +33,15 @@
   <div id="ed-fragment-navigator" data-inject-module="sentence-inspector" data-inject-prop-sentence="{{ json_encode($sentence) }}"></div>
 
   @if (Auth::check())
-  <p class="text-right">
+  <p class="text-end">
     @if (Auth::user()->isAdministrator())
-    <a href="{{ route('sentence.confirm-destroy', [ 'id' => $sentence['sentence']->id ]) }}" class="btn btn-default">
-      <span class="glyphicon glyphicon-trash"></span>
+    <a href="{{ route('sentence.confirm-destroy', [ 'id' => $sentence['sentence']->id ]) }}" class="btn btn-secondary">
+      <span class="TextIcon TextIcon--trash"></span>
       Delete
     </a>
     @endif
-    <a href="{{ $link->contributeSentence($sentence['sentence']->id) }}" class="btn btn-default">
-      <span class="glyphicon glyphicon-edit"></span>
+    <a href="{{ $link->contributeSentence($sentence['sentence']->id) }}" class="btn btn-secondary">
+      <span class="TextIcon TextIcon--edit"></span>
       Propose changes
     </a>
   </p>
@@ -50,9 +50,9 @@
   <footer class="sentence-footer">
     &mdash;
     Source [{{ $sentence['sentence']->source }}]. 
-    Published <span class="date">{{ $sentence['sentence']->created_at }}</span>
+    Published @date($sentence['sentence']->created_at)
     @if ($sentence['sentence']->updated_at)
-    and edited <span class="date">{{ $sentence['sentence']->updated_at }}</span>
+    and edited @date($sentence['sentence']->updated_at)
     @endif
     @if ($sentence['sentence']->account)
     by 

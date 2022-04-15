@@ -19,7 +19,7 @@
             @endif
         </div>
         <div class="post-tools">
-            <span class="date">{{ $post->created_at }}</span>
+            @date($post->created_at)
         </div> 
     </div>
 </div>

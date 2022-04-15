@@ -94,7 +94,7 @@ function GlossForm(props: IProps) {
         fireEvent(name, onSubmit, newGloss);
     };
 
-    return <form onSubmit={_onSubmit}>
+    return <form onSubmit={_onSubmit} className="container">
         <ValidationErrorAlert error={errors} />
         {edit && <StaticAlert type="warning">
             <p>

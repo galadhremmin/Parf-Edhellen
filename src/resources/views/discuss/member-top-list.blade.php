@@ -12,7 +12,7 @@
   </p>
   <p>
     On this page, we display top activity and contribution metrics by categories we believe you might be interested in. This page was
-    generated <span class="date">{{ $data['created_at'] }}</span> and will be updated automatically <span class="date">{{ $data['expires_at'] }}</span>.
+    generated @date($data['created_at']) and will be updated automatically @date($data['expires_at']).
   </p>
 
   @foreach ($data['categories'] as $category)

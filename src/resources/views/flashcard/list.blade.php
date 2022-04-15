@@ -23,7 +23,7 @@
     <tbody>
       @foreach ($results as $r)
       <tr class="{{ $r->correct ? '' : 'danger' }}">
-        <td class="date">{{ $r->created_at }}</td>
+        <td>@date($r->created_at)</td>
         <td>
           @if ($r->gloss) 
           <a href="{{ $link->gloss($r->gloss_id) }}">
@@ -36,7 +36,7 @@
         <td>{{ $r->expected }}</td>
         <td>
           <span class="{{ $r->correct ? 'text-success' : 'text-danger' }}">
-            <span class="glyphicon {{ $r->correct ? 'glyphicon-ok' : 'glyphicon-remove' }}"></span>
+            <span class="TextIcon {{ $r->correct ? 'TextIcon--thumbs-up bg-success' : 'TextIcon--thumbs-down bg-danger' }}"></span>
             {{ $r->actual }}
           </span>
         </td>

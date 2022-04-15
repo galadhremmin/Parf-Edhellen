@@ -102,11 +102,14 @@ class SearchIndexRepository
     public function resolveIndexToEntities(int $searchGroupId, SearchIndexSearchValue $v)
     {
         $entityName = $this->getEntityNameFromSearchGroup($searchGroupId);
+        $entityMorph = Morphs::getAlias($entityName);
 
         $config = config('ed.book_entities');
         $resolverName = $config[$entityName]['resolver'];
         $intlName = $config[$entityName]['intl_name'];
-        $entities = resolve($resolverName)->resolve($v);
+        
+        $resolver = resolve($resolverName);
+        $entities = $resolver->resolve($v);
 
         $single = count($entities) === 1;
         $word   = $v->getWord();
@@ -128,7 +131,8 @@ class SearchIndexRepository
             'group_id'        => $searchGroupId,
             'group_intl_name' => $intlName,
             'single'          => $single,
-            'word'            => $word
+            'word'            => $word,
+            'entity_morph'    => $entityMorph
         ];
     }
 

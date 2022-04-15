@@ -6,7 +6,7 @@ $gloss-border-color: #dedede;
   &.ed-glossary--unusual {
     margin-top: 2rem;
     padding-top: 2rem;
-    border-top: 1px solid $gloss-border-color;
+//    border-top: 1px solid $gloss-border-color;
   }
 
   .ed-glossary__language {
@@ -19,6 +19,7 @@ $gloss-border-color: #dedede;
   .ed-glossary__language__words {
     columns: 2;
   }
+  /*
   @media (max-width: $screen-sm-min) {
     .ed-glossary__language__words {
       columns: auto;
@@ -34,6 +35,7 @@ $gloss-border-color: #dedede;
       columns: 4;
     }
   }
+  */
 
   &.ed-glossary--single {
     .ed-glossary__language__words {

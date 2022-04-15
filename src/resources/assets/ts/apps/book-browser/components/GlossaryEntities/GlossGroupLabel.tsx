@@ -13,7 +13,7 @@ const GlossGroupLabel = (props: IProps) => {
     }
 
     return <span className="gloss-word__neologism">
-        <span className="label" title={label}>{label}</span>
+        <span className="badge rounded-pill badge-sm bg-info position-absolute top-0 start-0 ms-1 translate-middle-y" title={label}>{label}</span>
     </span>;
 };
 

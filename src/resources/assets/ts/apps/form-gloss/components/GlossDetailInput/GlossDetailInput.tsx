@@ -90,7 +90,7 @@ function GlossDetailInput(props: IComponentProps<IGlossDetail[]>) {
 
     return <>
             {value.map((detail, i) => <div key={detail.order} className="form-group row">
-            <div className="col-sm-3">
+            <div className="col-sm-3 d-flex flex-column">
                 <input type="text"
                     className="form-control"
                     id={`ed-gloss-detail-title-${detail.order}`}
@@ -99,14 +99,14 @@ function GlossDetailInput(props: IComponentProps<IGlossDetail[]>) {
                     required={true}
                     value={detail.category}
                 />
-                <div className="btn-group btn-group-xs" role="group">
-                    <button type="button" className="btn btn-default" onClick={_onMoveClick(i, -1)}>
+                <div className="btn-group btn-group-sm" role="group">
+                    <button type="button" className="btn btn-secondary" onClick={_onMoveClick(i, -1)}>
                         <TextIcon icon="arrow-up" />
                     </button>
-                    <button type="button" className="btn btn-default" onClick={_onDeleteClick(i)}>
+                    <button type="button" className="btn btn-secondary" onClick={_onDeleteClick(i)}>
                         <TextIcon icon="remove" />
                     </button>
-                    <button type="button" className="btn btn-default" onClick={_onMoveClick(i, 1)}>
+                    <button type="button" className="btn btn-secondary" onClick={_onMoveClick(i, 1)}>
                     <TextIcon icon="arrow-down" />
                     </button>
                 </div>
@@ -117,12 +117,13 @@ function GlossDetailInput(props: IComponentProps<IGlossDetail[]>) {
                         rows={5}
                         onChange={_onDetailChange(i, 'text')}
                         required={true}
+                        placeholder="Details go here. Markdown is supported."
                         value={detail.text}
                 />
             </div>
         </div>)}
-        {(value.length === 0 || value[value.length - 1].text.length > 0) && <div className="text-center">
-            <button className="btn btn-default"
+        {(value.length === 0 || value[value.length - 1].text.length > 0) && <div className="text-end">
+            <button className="btn btn-secondary"
                     onClick={_onAddClick}>Add details</button>
         </div>}
     </>;

@@ -38,7 +38,7 @@ const ValidationErrorAlert = (props: IProps) => {
     });
 
     const modifiedMessage = /[!\?\.:]{1}$/.test(error.errorMessage)
-        ? error.errorMessage.substr(0, error.errorMessage.length - 1)
+        ? error.errorMessage.substring(0, error.errorMessage.length - 1)
         : error.errorMessage;
 
     return <StaticAlert type="warning">

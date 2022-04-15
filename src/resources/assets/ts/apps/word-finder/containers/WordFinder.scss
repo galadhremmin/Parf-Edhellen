@@ -9,9 +9,11 @@
     background-size: cover;
     @include ed-box-shadow();
 
+    /*
     @media (min-width: $screen-sm-min) {
         border-radius: 0.5rem;
     }
+    */
 }
 
 .WordFinder {
