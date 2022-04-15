@@ -257,7 +257,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
         // If the user has only made changes to the filtering functions (such as language selection),
         // *and* has a previous glossary already loaded, the user expects the changes to their configuration
         // to reflect to the glossary currently loaded.
-        if (queryChanged === false && this.props.currentGlossaryWord.length > 0) {
+        if (queryChanged === false && this.props.currentGlossaryWord?.length > 0) {
             this.props.dispatch(
                 this._actions.reloadGlossary(),
             );

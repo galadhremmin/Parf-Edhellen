@@ -122,11 +122,6 @@ function Discuss(props: IProps) {
         }
     }, [ currentPage, thread, _onDiscardNewPost, onPageChange ]);
 
-    const _onGotoNavigation = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
-        ev.preventDefault();
-        makeVisibleInViewport(paginationRef.current);
-    }, [ paginationRef ]);
-
     const _renderToolbar = useCallback((postProps: IPostProps) => {
         return <ConditionalToolbar
             onAuthenticationRequired={_onAuthenticationRequired}
@@ -153,7 +148,7 @@ function Discuss(props: IProps) {
                 renderToolbar={_renderToolbar}
             />,
         )}
-        {(! readonly || roleManager.isAdministrator) && <aside ref={formRef} className="discuss-body__toolbar--primary">
+        {(! readonly || roleManager.isAdministrator) && <aside ref={formRef} className="discuss-body__toolbar--primary mb-3 mt-3 text-center">
             {newPostEnabled
                 ? <Form name="discussForm"
                         content={newPostContent}
@@ -172,9 +167,6 @@ function Discuss(props: IProps) {
                 pages={PageModes.AutoGenerate}
             />
         </div>
-        {posts.length > 0 && <a href="#" className="discuss-body__bottom" onClick={_onGotoNavigation}>
-            <TextIcon icon="chevron-down" />
-        </a>}
         <AuthenticationDialog onDismiss={_onAuthenticationCancelled} open={promoteAuth} />
     </>;
 }

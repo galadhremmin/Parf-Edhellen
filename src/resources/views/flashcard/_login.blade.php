@@ -1,4 +1,4 @@
-<div class="alert alert-info">
+<div class="alert bg-info">
   <p>
     <strong><span class="TextIcon TextIcon--info-sign"></span> Log in to record your progress!</strong>
     We store your answer to every single flashcard when you are logged in. 

@@ -23,6 +23,7 @@ const EntitiesReducer = (state: IEntitiesState = {
                 ...state,
                 loading: false,
 
+                entityMorph: action.entityMorph || null,
                 groupId: action.groupId,
                 groupIntlName: action.groupIntlName,
                 single: action.single,

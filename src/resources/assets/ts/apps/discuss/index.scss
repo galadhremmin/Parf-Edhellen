@@ -25,9 +25,6 @@ h1 {
     }
 
     .discuss-body__toolbar--primary {
-        margin: 1em 0 1em 0;
-        text-align: center;
-
         > form, .alert {
             text-align: initial;
         }
@@ -37,12 +34,6 @@ h1 {
                 width: 100%;
             }
         }
-    }
-
-    .discuss-body__bottom {
-        position: fixed;
-        right: 1em;
-        bottom: 1em;
     }
 }
 

@@ -21,7 +21,7 @@ import LoadingIndicator from '../LoadingIndicator';
 
 import './GlossaryEntities.scss';
 
-const DiscussComponent = lazy(() => import('@root/apps/discuss'));
+const DiscussAsync = lazy(() => import('@root/apps/discuss'));
 
 export default class GlossaryEntities extends React.Component<IEntitiesComponentProps, IState> {
     public state: IState = {
@@ -156,7 +156,7 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
     private _renderLanguages(languages: ILanguageEntity[], abstract: React.ReactNode = null, //
         classNames: string[] = []) {
         const {
-            groupName,
+            entityMorph,
             sections,
             single,
         } = this.props;
@@ -174,7 +174,7 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
                         glosses={sections[language.id]} onReferenceLinkClick={this._onReferenceClick} />
                     {single && <section className="mt-3">
                         <Suspense fallback={<Spinner />}>
-                            <DiscussComponent entityId={sections[language.id][0].id} entityType={groupName} />
+                            <DiscussAsync entityId={sections[language.id][0].id} entityType={entityMorph} prefetched={false} />
                         </Suspense>
                     </section>}
                 </Fragment>,

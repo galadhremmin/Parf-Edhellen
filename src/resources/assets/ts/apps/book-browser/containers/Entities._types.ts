@@ -8,6 +8,7 @@ import { ISectionsState } from '../reducers/SectionsReducer._types';
 
 export interface IEntitiesComponentProps<T = IBookGlossEntity> {
     dispatch?: ThunkDispatch<any, any, any>;
+    entityMorph?: string;
     groupId?: number;
     groupName?: string;
     isEmpty: boolean;

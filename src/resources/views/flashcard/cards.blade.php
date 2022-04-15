@@ -14,7 +14,7 @@
 
     <aside>
       @if ($user) 
-      <div class="alert alert-info">
+      <div class="alert bg-info">
         Your answers are saved so you can <a href="{{ route('flashcard.list', ['id' => $flashcard->id]) }}">review your performance</a>.
         Good luck!
       </div>
