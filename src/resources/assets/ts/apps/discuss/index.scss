@@ -133,6 +133,7 @@ h1 {
 
     .post-body {
         overflow: hidden;
+        clear: right; // This is to prevent the header from overflowing into the text.
 
         p, ul, ol {
             max-width: $ed-forum-post-body-maximum-width;
