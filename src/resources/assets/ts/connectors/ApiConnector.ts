@@ -130,7 +130,7 @@ export default class ApiConnector implements IReportErrorApi {
                 'X-CSRF-TOKEN': this._getCsrfToken(),
                 'X-Requested-With': 'XMLHttpRequest',
             },
-            timeout: 2500,
+            timeout: 0,
         };
     }
 

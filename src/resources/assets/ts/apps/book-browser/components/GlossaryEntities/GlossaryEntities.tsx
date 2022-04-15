@@ -10,6 +10,7 @@ import { IComponentEvent } from '@root/components/Component._types';
 import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
 import Spinner from '@root/components/Spinner';
 import { ILanguageEntity } from '@root/connectors/backend/IBookApi';
+import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import Cache from '@root/utilities/Cache';
 
 import { SearchActions } from '../../actions';
@@ -186,10 +187,8 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
      * Default event handler for reference link clicks.
      */
     private _onReferenceClick = async (ev: IComponentEvent<IReferenceLinkClickDetails>) => {
-        this.props.dispatch(
-            this._actions.loadReference(ev.value.word, ev.value.normalizedWord, ev.value.languageShortName,
-                ev.value.updateBrowserHistory),
-        );
+        const globalEvents = new GlobalEventConnector();
+        globalEvents.fire(globalEvents.loadReference, ev.value);
     }
 
     /**

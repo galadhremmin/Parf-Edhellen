@@ -12,7 +12,6 @@ import { fireEvent } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
 import Pagination from '@root/components/Pagination';
 import { PageModes } from '@root/components/Pagination/Pagination._types';
-import TextIcon from '@root/components/TextIcon';
 import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import { DI, resolve } from '@root/di';
 import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
