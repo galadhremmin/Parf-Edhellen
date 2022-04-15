@@ -99,16 +99,12 @@ export default class Flashcards extends React.Component<IProps, IState> {
                 {' '}
                 That's right! Good job!
             </p> : <p className="text-danger">
-                <TextIcon icon="remove" />
+                <TextIcon icon="warning-sign" />
                 {' '}
                 Wrong - better luck next time!
             </p>}
-            <nav>
-                <ul className="pager">
-                    <li className="next">
-                        <a href="#" onClick={this._onNextClick}>Next card &rarr;</a>
-                    </li>
-                </ul>
+            <nav className="text-center">
+                <a href="#" className="btn btn-primary" onClick={this._onNextClick}>Next card</a>
             </nav>
         </React.Fragment>;
     }
