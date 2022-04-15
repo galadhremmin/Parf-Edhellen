@@ -9,7 +9,7 @@
     <span class="tengwar">{{ $account->tengwar }}</span>
     @endif
     <p class="profile-summary">
-      Joined <time datetime="{{ $account->created_at }}">{{ $account->created_at }}</time>
+      Joined @date($account->created_at)
       &bull; 
       @markdownInline(mb_strimwidth($account->profile, 0, 64, '...'))
     </p>

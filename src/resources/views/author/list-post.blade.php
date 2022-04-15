@@ -21,7 +21,7 @@
             <p>
               <small class="text-muted">
                 <i class="TextIcon TextIcon--calendar"></i> 
-                <time datetime="{{ $post->created_at }}">{{ $post->created_at }}</time>
+                @date($post->created_at)
               </small>
             </p>
           </div>

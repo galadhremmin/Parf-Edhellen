@@ -17,6 +17,7 @@ class Discuss extends Migration
     {
         Schema::table('forum_groups', function (Blueprint $table) {
             $table->string('category', 128)->nullable();
+            $table->boolean('is_readonly')->default(0);
         });
 
         ForumGroup::where('name', '<>', 'General conversation')
@@ -45,6 +46,7 @@ class Discuss extends Migration
 
         Schema::table('forum_groups', function (Blueprint $table) {
             $table->dropColumn('category');
+            $table->dropColumn('is_readonly');
         });
     }
 
@@ -53,7 +55,8 @@ class Discuss extends Migration
             new ForumGroup([
                 'name'        => 'FAQ',
                 'description' => 'A curated list of questions often asked by the community.',
-                'category'    => 'Discussions'
+                'category'    => 'Discussions',
+                'is_readonly' => 1
             ]),
             new ForumGroup([
                 'name'        => 'Translations',

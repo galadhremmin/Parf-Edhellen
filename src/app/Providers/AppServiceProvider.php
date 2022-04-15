@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\{
     Blade,
     Schema
 };
+use Carbon\Carbon;
 
 use App\Models\Initialization\Morphs;
 
@@ -27,16 +28,18 @@ class AppServiceProvider extends ServiceProvider
         Paginator::useBootstrap();
 
         // @markdown method injection
-        Blade::directive('markdown', function (string $data) {
-            return "<?php echo (new \App\Helpers\MarkdownParser)->text($data); ?>";
+        Blade::directive('markdown', function (string $expression) {
+            return "<?php echo(resolve(\App\Helpers\MarkdownParser::class)->text($expression)); ?>";
         });
-        Blade::directive('markdownInline', function (string $data) {
-            return "<?php echo (new \App\Helpers\MarkdownParser)->line($data); ?>";
+        Blade::directive('markdownInline', function (string $expression) {
+            return "<?php echo(resolve(\App\Helpers\MarkdownParser::class)->line($expression)); ?>";
         });
-        Blade::directive('json', function (string $data) {
-            return "<?php echo (htmlentities(($data) instanceOf \Illuminate\Contracts\Support\Jsonable ? ($data)->toJSON() : json_encode(($data), ENT_QUOTES))); ?>";
+        Blade::directive('json', function (string $expression) {
+            return '<?php echo(resolve(\App\Helpers\BladeHelper::class)->jsonSerialize('.$expression.')); ?>';
         });
-
+        Blade::directive('date', function ($expression, array $props = []) {
+            return '<?php echo(resolve(\App\Helpers\BladeHelper::class)->createTimeTag('.$expression.')); ?>';
+        });
         Blade::directive('assetpath', function (string $filePath) {
             $root = '/v'.config('ed.version');
 

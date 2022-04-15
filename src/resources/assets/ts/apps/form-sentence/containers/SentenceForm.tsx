@@ -104,7 +104,7 @@ function SentenceForm(props: IProps) {
     ]);
 
     return <form method="post" action="." onSubmit={_onSubmit}>
-        {(sentenceId && currentSentenceName) && <StaticAlert type="info">
+        {!! (sentenceId && currentSentenceName) && <StaticAlert type="info">
             <TextIcon icon="info-sign" />{' '}
             You are proposing a change to the phrase{' '}
             <Quote>{currentSentenceName}</Quote>{' '}
@@ -131,15 +131,13 @@ function SentenceForm(props: IProps) {
                 paragraphs={sentenceParagraphs}
             />
         </Panel>
-        <div className="text-end">
+        <div className="text-center">
             {!! sentenceId && <button className="btn btn-secondary" formAction="button" onClick={_onOpenOriginal}>
                 <TextIcon icon="search" />
                 &#32;
                 View original
             </button>}
             <button className="btn btn-primary" formAction="submit">
-                <TextIcon icon="ok" />
-                &#32;
                 Save contribution
             </button>
         </div>

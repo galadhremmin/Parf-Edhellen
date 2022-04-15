@@ -1,7 +1,7 @@
 import { IAccountEntity } from './IBookApi';
 
 export interface IGroupsResponse {
-    groups: IForumGroupEntity[];
+    groups: Record<string, IForumGroupEntity[]>;
     numberOfThreads: Record<number, number>;
 }
 

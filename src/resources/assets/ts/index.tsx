@@ -1,12 +1,12 @@
 import React from 'react';
 import { render } from 'react-dom';
+import { DateTime } from 'luxon';
 
 import BookBrowserApp from './apps/book-browser';
 import inject from './Injector';
 
 import './index.scss';
 import './components/Tengwar.scss'; // Tengwar is scattered across the website, so this will ensure all will render appropriately.
-import DateLabel from './components/DateLabel';
 import bootstrapServerSideRenderedBootstrapComponents from './utilities/BootstrapBootstrapper';
 
 const loadLatestScript = () => {
@@ -37,15 +37,17 @@ if (loadLatestScript()) {
         render(<BookBrowserApp />, document.getElementById('ed-search-component'));
     };
 
+    /**
+     * Converts server-side rendered UTC times into local time. This operation is only
+     * updating the title of the element, so no reflow should be necessary.
+     */
     const renderDates = () => {
-        const dateElements = document.querySelectorAll<HTMLElement>('time');
-        dateElements.forEach((dateElement: HTMLTimeElement) => {
+        const dateElements = document.querySelectorAll<HTMLElement>('time:not(.react)');
+        for (let i = 0; i < dateElements.length; i += 1) {
+            const dateElement = dateElements.item(i) as HTMLTimeElement;
             const date = dateElement.dateTime.trim();
-            if (date.length > 0) {
-                render(<DateLabel dateTime={date} ignoreTag={true} />, dateElement);
-                dateElement.classList.add('opacity-100');
-            }
-        });
+            dateElement.title = DateTime.fromISO(date).toLocaleString(DateTime.DATETIME_FULL);
+        }
     };
 
     window.addEventListener('load', () => {

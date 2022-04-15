@@ -50,6 +50,8 @@ return [
     ],
     'forum_resultset_max_length' => 10,
     'forum_thread_resultset_max_length' => 15,
+    'forum_pagination_max_pages' => 6,
+    'forum_pagination_first_page_number' => 1, // This should really never have to change.
 
     // book configuration, including resolvers.
     // NOTE: when adding new entities, ensure that the following files are available:

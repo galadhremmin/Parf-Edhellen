@@ -50,9 +50,9 @@
   <footer class="sentence-footer">
     &mdash;
     Source [{{ $sentence['sentence']->source }}]. 
-    Published <time datetime="{{ $sentence['sentence']->created_at }}">{{ $sentence['sentence']->created_at }}</time>
+    Published @date($sentence['sentence']->created_at)
     @if ($sentence['sentence']->updated_at)
-    and edited <time datetime="{{ $sentence['sentence']->updated_at }}">{{ $sentence['sentence']->updated_at }}</time>
+    and edited @date($sentence['sentence']->updated_at)
     @endif
     @if ($sentence['sentence']->account)
     by 

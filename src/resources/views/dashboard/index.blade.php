@@ -20,7 +20,7 @@
              data-inject-prop-readonly="false"></div>
       </div>
       <div class="text-muted mb-3 mb-sm-0">
-        Last modified: <time datetime="{{ $user->updated_at }}">{{ $user->updated_at }}</time>
+        Last modified: @date($user->updated_at)
       </div>
     </section>
     <section class="col">

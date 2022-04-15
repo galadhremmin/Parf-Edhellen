@@ -12,13 +12,14 @@ export function DateLabel(props: IProps) {
     const dateTimeISOString = typeof dateTime === 'string'
         ? dateTime : dateTime.toISOString();
     const date = DateTime.fromISO(dateTimeISOString);
-    const dateString = date.toFormat('fff');
+    const absoluteDfateString = date.toLocaleString(DateTime.DATETIME_FULL);
+    const relativeDateString = date.toRelative();
 
     if (ignoreTag) {
-        return <>{dateString}</>;
+        return <>{relativeDateString}</>;
     }
     else if (date.isValid) {
-        return <time className="react" dateTime={dateTimeISOString}>{dateString}</time>;
+        return <time className="react" dateTime={dateTimeISOString} title={absoluteDfateString}>{relativeDateString}</time>;
     } else {
         return <span>{`Unknown date (${dateTime})`}</span>;
     }

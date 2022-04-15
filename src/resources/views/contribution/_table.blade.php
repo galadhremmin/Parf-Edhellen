@@ -1,7 +1,8 @@
 <table class="table table-striped table-hover">
   <thead>
     <tr>
-      <th>Date</th>
+      <th>Submitted date</th>
+      <th>Reviewed date</th>
       <th>Word</th>
       <th>Status</th>
     </tr>
@@ -10,9 +11,13 @@
     @foreach ($reviews as $review)
     <tr>
       <td>
-        <time datetime="{{ $review->created_at }}">{{ $review->created_at }}</time>
+        @date($review->created_at)
+      </td>
+      <td>
         @if ($review->date_reviewed)
-        &rarr; <time datetime="{{ $review->date_reviewed }}" title="The submission was reviewed {{ $review->date_reviewed }} by {{ $review->reviewed_by->nickname }}.">{{ $review->date_reviewed }}</time>
+        @date($review->date_reviewed)
+        @else
+        -
         @endif
       </td>
       <td>

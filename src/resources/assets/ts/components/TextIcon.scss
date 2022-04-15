@@ -71,6 +71,9 @@
     &.TextIcon--globe {
         @include mask-image-compatible("~bootstrap-icons/icons/globe.svg");
     }
+    &.TextIcon--lock {
+        @include mask-image-compatible("~bootstrap-icons/icons/lock.svg");
+    }
     &.TextIcon--ok {
         @include mask-image-compatible("~bootstrap-icons/icons/check.svg");
     }

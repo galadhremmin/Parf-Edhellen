@@ -81,7 +81,9 @@ class DiscussController extends Controller
             $threads = $this->_discussRepository->getThreadDataInGroup($args);
             $this->_discussAdapter->adaptThreads($threads->getThreads());
         
-            return view('discuss.group', $threads->getAllValues());
+            return view('discuss.group', $threads->getAllValues() + [
+                'user' => $request->user()
+            ]);
         } catch (ModelNotFoundException $ex) {
             // unfortunately, before groups were a thing, the path pattern was identical to threads
             // so implement a graceful fallback before giving up:

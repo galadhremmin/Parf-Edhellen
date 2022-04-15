@@ -62,7 +62,7 @@
       Group: <span itemprop="sourceOrganization">{{ $gloss->gloss_group_name }}</span>.
     @endif
   
-    Published <time itemprop="datePublished" datetime="{{ $gloss->created_at }}">{{ $gloss->created_at }}</time> by 
+    Published @date($gloss->created_at, [ 'itemprop' => 'datePublished' ]) by 
     <a href="{{ $link->author($gloss->account_id, $gloss->account_name) }}" itemprop="author" rel="author" title="View profile for {{ $gloss->account_name }}.">
       <span itemprop="name">{{ $gloss->account_name }}</span>
     </a>

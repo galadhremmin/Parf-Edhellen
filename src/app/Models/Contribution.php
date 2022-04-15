@@ -31,6 +31,11 @@ class Contribution extends ModelBase implements Interfaces\IHasFriendlyName
         return $this->belongsTo(Account::class, 'reviewed_by_account_id');
     }
 
+    public function scopeWhereAccount($query, int $accountId)
+    {
+        return $query->where('account_id', $accountId);
+    }
+
     public function getFriendlyName() 
     {
         return $this->word;

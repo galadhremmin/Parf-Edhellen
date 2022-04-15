@@ -11,8 +11,10 @@ import AuthenticationDialog from '@root/components/AuthenticationDialog';
 import { fireEvent } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
 import Pagination from '@root/components/Pagination';
+import { PageModes } from '@root/components/Pagination/Pagination._types';
 import TextIcon from '@root/components/TextIcon';
 import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
+import { DI, resolve } from '@root/di';
 import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
 import DiscussActions from '../actions/DiscussActions';
@@ -39,9 +41,9 @@ function Discuss(props: IProps) {
         newPostContent,
         newPostEnabled,
         noOfPages,
-        pages,
         posts,
         readonly,
+        roleManager,
         thread,
         threadMetadata,
 
@@ -132,6 +134,7 @@ function Discuss(props: IProps) {
             onThreadChange={onExistingThreadChange}
             onThreadMetadataChange={onExistingThreadMetadataChange}
             post={postProps.post}
+            roleManager={roleManager}
             thread={thread}
             threadMetadata={threadMetadata} />;
     }, [
@@ -150,7 +153,7 @@ function Discuss(props: IProps) {
                 renderToolbar={_renderToolbar}
             />,
         )}
-        {! readonly && <aside ref={formRef} className="discuss-body__toolbar--primary">
+        {(! readonly || roleManager.isAdministrator) && <aside ref={formRef} className="discuss-body__toolbar--primary">
             {newPostEnabled
                 ? <Form name="discussForm"
                         content={newPostContent}
@@ -166,7 +169,7 @@ function Discuss(props: IProps) {
             <Pagination currentPage={currentPage}
                 noOfPages={noOfPages}
                 onClick={_onPaginate}
-                pages={pages}
+                pages={PageModes.AutoGenerate}
             />
         </div>
         {posts.length > 0 && <a href="#" className="discuss-body__bottom" onClick={_onGotoNavigation}>
@@ -184,6 +187,7 @@ const mapStateToProps = (state: RootReducer) => ({
     posts: state.posts,
     thread: state.thread,
     threadMetadata: state.threadMetadata,
+    roleManager: resolve(DI.RoleManager),
 } as Partial<IProps>);
 
 const actions = new DiscussActions();

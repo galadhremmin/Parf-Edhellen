@@ -8,7 +8,7 @@
       {{ $a['account_name'] }}
     </a>
     {!! $a['message'] . ($a['entity'] === null ? '.' : ' '. $a['entity'].'.') !!}
-    <time datetime="{{ $a['created_at'] }}">{{ $a['created_at'] }}</time>
+    @date($a['created_at'])
   </li>
   @endforeach
 </ul>

@@ -15,7 +15,12 @@
   <blockquote>
     <a class="block-link" href="{{ $linker->forumGroup($group->id, $group->name) }}">
       <span class="badge bg-secondary">{{ isset($number_of_threads[$group->id]) ? $number_of_threads[$group->id] : '0' }}</span>
-      <h3>{{ $group->name }}</h3>
+      <h3>
+        {{ $group->name }}
+        @if ($group->is_readonly)
+        <span class="TextIcon TextIcon--lock fs-6" title="Locked"></span>
+        @endif
+      </h3>
       <p>{{ $group->description }}</p>
       @if (isset($accounts_in_group[$group->id]))
       <div data-inject-module="discuss-groups" data-inject-prop-accounts="@json($accounts_in_group[$group->id])"></div>

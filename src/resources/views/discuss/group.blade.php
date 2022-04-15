@@ -7,7 +7,9 @@
 
   <h1>Discussion about {{ $group->name }}</h1>
   
+  @if (! $group->is_readonly || ($user && $user->isAdministrator()))
   <div class="discuss-thread-tools" data-inject-module="discuss-threads-tools" data-inject-prop-group-id="{{ $group->id }}" data-inject-prop-group-name="{{ $group->name }}"></div>
+  @endif
 
   <hr>
 

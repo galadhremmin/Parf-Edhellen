@@ -23,8 +23,8 @@ function MovePost(props: IProps) {
     } = props.thread;
 
     const [ isDialogOpen, setIsDialogOpen ] = useState<boolean>(false);
-    const [ groups, setGroups ] = useState<IForumGroupEntity[]>([]);
-    const [ groupId, setGroupId ] = useState<number>(thread?.forumGroupId || 0);
+    const [ groups, setGroups ] = useState<Record<string, IForumGroupEntity[]>>({});
+    const [ groupId, setGroupId ] = useState<number>(currentGroupId || 0);
     const [ error, setError ] = useState<string>(null);
 
     const _onDialogOpen = useCallback(async () => {
@@ -34,7 +34,7 @@ function MovePost(props: IProps) {
                 setGroups(nextGroups.groups);
             } catch (ex) {
                 setError(`Failed to load discuss groups. Error description: ${ex}`);
-                setGroups([]);
+                setGroups({});
             }
         }
 
@@ -51,18 +51,23 @@ function MovePost(props: IProps) {
 
     const _onMoveSubmit = useCallback(async () => {
         try {
+            if (currentGroupId === groupId) {
+                throw new Error(`No movement necessary, the thread is already assigned to the group you've selected.`);
+            }
+
             apiConnector.moveThread({
                 forumGroupId: groupId,
                 forumThreadId: threadId,
             });
             setError(null);
-            alert(`The thread has been successfully moved to ${groups.find((g) => g.id === groupId).name}. The change will reflect next time you load the thread.`);
+            alert(`The thread has been successfully moved. The change will reflect next time you load the thread.`);
             setIsDialogOpen(false);
         } catch (ex) {
-            setError(`Failed to move the thread. Error description: ${ex}`);
+            setError(`Failed to move the thread. ${ex}`);
         }
     }, [
         apiConnector,
+        currentGroupId,
         threadId,
         groups,
         groupId,
@@ -83,13 +88,14 @@ function MovePost(props: IProps) {
             <select className="form-select" id="ed-discuss--forum-group-id"
                 onChange={_onForumGroupChange}
                 value={groupId}>
-                {groups.map((group) => <option
-                    key={group.id}
-                    value={group.id}>
-                    {group.name}
-                </option>)}
+                {Object.keys(groups).map(groupName => <optgroup key={groupName} label={groupName}>
+                    {groups[groupName].map((group) => <option
+                        key={group.id}
+                        value={group.id}>
+                        {group.name}
+                    </option>)}
+                </optgroup>)}
             </select>
-            <small>The thread is currently in <Quote>{groups.find((g) => g.id === currentGroupId)?.name}.</Quote></small>
         </Dialog>
     </>;
 }
