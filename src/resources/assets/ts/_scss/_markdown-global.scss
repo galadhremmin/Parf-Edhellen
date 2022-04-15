@@ -8,6 +8,11 @@
   h1, h2, h3, h4, h5 {
     text-align: left;
   }
+  
+  pre {
+    word-break: break-word;
+    white-space: normal;
+  }
 
   h1 {
     font-size: $h3-font-size;
