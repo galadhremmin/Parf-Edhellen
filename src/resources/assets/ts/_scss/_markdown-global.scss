@@ -1,0 +1,41 @@
+@import './variables';
+
+@mixin markdown-global() {
+  img {
+    max-width: 100%;
+  }
+
+  h1, h2, h3, h4, h5 {
+    text-align: left;
+  }
+
+  h1 {
+    font-size: $h3-font-size;
+    margin-top: 2rem;
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  h2 {
+    font-size: $h4-font-size;
+  }
+
+  h3 {
+    font-size: $h5-font-size;
+  }
+
+  h4 {
+    font-size: $h6-font-size;
+  }
+
+  h5 {
+    font-size: inherit;
+    font-weight: bold;
+  }
+
+  blockquote {
+    border-left: 4px solid $border-color;
+    padding-left: 0.5rem;
+  }
+}
