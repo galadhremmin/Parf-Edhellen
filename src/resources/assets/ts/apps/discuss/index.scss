@@ -1,5 +1,6 @@
 @import '../../_scss/_variables';
 @import '../../_scss/fx';
+@import '../../_scss/markdown-global';
 
 $ed-toolbar-height: 30px;
 $ed-forum-post-profile-width: 120px;
@@ -16,9 +17,7 @@ h1 {
 }
 
 .discuss-body {
-    img {
-        max-width: 100%;
-    }
+    @include markdown-global();
 
     > .sk-spinner.noscript--hidden {
         margin-bottom: 100vh;
@@ -210,5 +209,7 @@ h1 {
 @media (min-width: calc(#{$ed-forum-post-body-maximum-width} + #{$ed-forum-post-profile-width})) {
     .forum-post {
         max-width: calc(#{$ed-forum-post-body-maximum-width} + #{$ed-forum-post-profile-width});
+        margin-left: auto;
+        margin-right: auto;
     }
 }

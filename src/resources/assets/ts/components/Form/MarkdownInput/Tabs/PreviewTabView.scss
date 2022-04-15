@@ -1,0 +1,5 @@
+@import '../../../../_scss/markdown-global';
+
+.PreviewTabView {
+    @include markdown-global();
+}

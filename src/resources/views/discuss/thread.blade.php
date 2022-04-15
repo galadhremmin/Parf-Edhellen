@@ -7,7 +7,7 @@
       {!! Breadcrumbs::render('discuss.show', $group, $thread) !!}
     </nav>
     <header>
-      <h1>{{ $thread->subject }}</h1>
+      <h1 class="mb-3">{{ $thread->subject }}</h1>
     </header>
     @if ($thread->entity_type !== 'discussion')
     <section class="discuss-entity">

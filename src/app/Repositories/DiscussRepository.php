@@ -376,12 +376,10 @@ class DiscussRepository
                 } while ($pageNumber > 1);
             }
             // if there are no preferences, go to the latest post.
-            /* 20220415: Disabled this feature.
             if ($pageNumber <= 0) {
                 $pageNumber = $noOfPages;
-                $jumpToLatestPost = true;
+                // $jumpToLatestPost = true; 20220415: Disabled this feature.
             }
-            */
             $skip = ($pageNumber - 1) * $maxLength;
 
         } else {

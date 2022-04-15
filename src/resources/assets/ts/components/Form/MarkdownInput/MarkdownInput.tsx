@@ -2,7 +2,6 @@ import React from 'react';
 
 import Cache from '@root/utilities/Cache';
 
-import { fireEvent } from '../../Component';
 import { IComponentEvent } from '../../Component._types';
 import {
     IComponentConfig,
@@ -14,6 +13,8 @@ import Tabs from './Tabs';
 import EditTabView from './Tabs/EditTabView';
 import PreviewTabView from './Tabs/PreviewTabView';
 import SyntaxTabView from './Tabs/SyntaxTabView';
+
+import './MarkdownInput.scss';
 
 const DefaultConfigCacheFactory = () => Cache.withLocalStorage<IComponentConfig>(() => Promise.resolve({
     enter2Paragraph: true,
@@ -64,7 +65,7 @@ export default class MarkdownInput extends React.Component<IProps, IState> {
             enter2Paragraph,
         } = this.state;
 
-        return <div className="clearfix">
+        return <div className="MarkdownInput">
             <Tabs tab={currentTab} onTabChange={this._onOpenTab} />
             {currentTab === Tab.EditTab && <EditTabView
                 {...this.props}
