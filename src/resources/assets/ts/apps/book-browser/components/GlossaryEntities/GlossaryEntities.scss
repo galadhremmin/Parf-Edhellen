@@ -19,8 +19,7 @@ $gloss-border-color: #dedede;
   .ed-glossary__language__words {
     columns: 2;
   }
-  /*
-  @media (max-width: $screen-sm-min) {
+  @media (max-width: map-get($grid-breakpoints, 'sm')) {
     .ed-glossary__language__words {
       columns: auto;
     }
@@ -35,8 +34,6 @@ $gloss-border-color: #dedede;
       columns: 4;
     }
   }
-  */
-
   &.ed-glossary--single {
     .ed-glossary__language__words {
       columns: auto;
