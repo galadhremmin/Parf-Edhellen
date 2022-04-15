@@ -7,11 +7,6 @@
   {!! Breadcrumbs::render('flashcard.cards', $flashcard) !!}
 
   <div class="flashcard-container">
-    <div id="ed-flashcard-component" 
-      data-inject-module="flashcards"
-      data-inject-prop-flashcard-id="{{ $flashcard->id }}"
-      data-inject-prop-tengwar-mode="{{ $flashcard->language->tengwar_mode }}"></div>
-
     <aside>
       @if ($user) 
       <div class="alert bg-info">
@@ -22,6 +17,10 @@
       @include('flashcard._login')
       @endif
     </aside>
+    <div id="ed-flashcard-component" 
+      data-inject-module="flashcards"
+      data-inject-prop-flashcard-id="{{ $flashcard->id }}"
+      data-inject-prop-tengwar-mode="{{ $flashcard->language->tengwar_mode }}"></div>
   </div>
       
 @endsection
