@@ -12,7 +12,7 @@
         {{ $thread->subject }}
     </a>
     <div class="pi">
-        {{ $thread->account ? $thread->account->nickname : 'nobody' }} on
+        {{ $thread->account ? $thread->account->nickname : 'nobody' }} &bull; 
         @date($thread->updated_at ?: $thread->created_at)
     </div>
     </div>

@@ -14,12 +14,12 @@
       The process for getting your contribution approved has the following steps:
     </p>
     <ol>
-      <li>You submit as much information about your gloss of phrase as possible via the form below.</li>
+      <li>You submit as much information about your gloss or phrase as possible via the forms below.</li>
       <li>An administrator reviews the contribution and requests additional information, if necessary. This usually happens because you have provided insufficient source information.</li>
       <li>Once approved, the contribution is created in your name and highlighted on the front page! You get full attribution for your work.</li>
     </ol>
     <p>
-      To get started, click on the button that corresponds to what you would like to create below. Thank you!
+      To get started, click on the button that corresponds to what you would like to add below.
     </p>
     <div class="text-center">
       <a href="{{ route('contribution.create', ['morph' => 'gloss']) }}" class="btn btn-primary">Add gloss</a>
