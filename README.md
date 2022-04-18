@@ -3,7 +3,7 @@ This is the source code for [elfdict.com](http://www.elfdict.com), a non-profit,
 
 Version 71 (model 4.0 incl. migrations) is in production.
 
-## Configuration
+## Service configuration
 Ensure that the following dependencies are installed:
 
 ```
@@ -28,6 +28,10 @@ php artisan storage:link
 ```
 
 > Always make sure to [follow Laravel's guidelines and best practices](https://laravel.com/docs/9.x/deployment) before moving the app into production.
+
+## Development
+
+Run *Parf Edhellen* locally by executing `php artisan serve`. You need to compile the TypeScript application by running `npm run watch`. 
 
 ## Want to help out?
 If you are interested in helping out, please get in touch with [galadhremmin](https://github.com/galadhremmin).
