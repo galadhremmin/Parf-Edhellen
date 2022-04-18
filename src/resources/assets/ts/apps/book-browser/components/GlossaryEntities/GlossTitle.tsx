@@ -11,6 +11,7 @@ import { IProps } from './GlossTitle._types';
 
 import GlossGroupLabel from './GlossGroupLabel';
 import NumberOfComments from './NumberOfComments';
+import ShareLink from './ShareLink';
 import VersionsLink from './VersionsLink';
 
 const ToolbarAsync = React.lazy(() => import('./toolbar'));
@@ -47,13 +48,14 @@ const GlossTitle = (props: IProps) => {
                     {inflection.name}
                 </span>)}
         </span>}
-        {toolbar && <>
-            <NumberOfComments gloss={gloss} />
-            <VersionsLink gloss={gloss} />
+        {toolbar && <div className="gloss-word--toolbar">
             {isAuthenticated && <Suspense fallback={null}>
                 <ToolbarAsync gloss={gloss} />
             </Suspense>}
-        </>}
+            <ShareLink gloss={gloss} />
+            <VersionsLink gloss={gloss} />
+            <NumberOfComments gloss={gloss} />
+        </div>}
     </h3>;
 };
 

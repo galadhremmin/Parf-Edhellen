@@ -9,6 +9,7 @@ type BootstrapIcons = 'arrow-down' |
 'chevron-up' |
 'chevron-down' |
 'clock-history' |
+'clipboard' |
 'comment' |
 'edit' |
 'envelope' |
