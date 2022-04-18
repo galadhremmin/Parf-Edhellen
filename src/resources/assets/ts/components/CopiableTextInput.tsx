@@ -26,21 +26,21 @@ function CopiableTextInput(props: IProps) {
         }
 
         const type = 'text/plain';
-        var blob = new Blob([ value.toString() ], { type });
-        var data = [new ClipboardItem({ [type]: blob })];
+        const blob = new Blob([ value.toString() ], { type });
+        const data = [new ClipboardItem({ [type]: blob })];
 
         navigator.clipboard.write(data).then(
-            function () {
+            () => {
                 fireEventAsync('CopiableTextInput', onCopyActionSuccess, value);
             },
-            function (reason: any) {
+            (reason: any) => {
                 fireEventAsync('CopiableTextInput', onCopyActionFail, reason);
-            }
+            },
         );
     }, [
         onCopyActionFail,
         onCopyActionSuccess,
-        value
+        value,
     ]);
 
     return <div className={`input-group ${formGroupClassName}`}>

@@ -1,4 +1,4 @@
-import { IBookGlossEntity } from "@root/connectors/backend/IBookApi";
+import { IBookGlossEntity } from '@root/connectors/backend/IBookApi';
 
 export interface IProps {
     gloss: IBookGlossEntity;
