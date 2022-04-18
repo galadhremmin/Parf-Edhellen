@@ -93,6 +93,8 @@
   },
   "resolutions": {
     "@types/react": "17.0.44",
-    "@types/react-dom": "17.0.15"
+    "@types/react-dom": "17.0.15",
+    "react": "17.0.44",
+    "react-dom": "17.0.15"
   }
 }
