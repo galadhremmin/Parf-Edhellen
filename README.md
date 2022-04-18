@@ -1,7 +1,5 @@
 # Parf Edhellen
-This is the source code for [elfdict.com](http://www.elfdict.com), a non-profit, free dictionary online for Tolkien's languages. Maintained by Leonard Wickmark. Follow me on twitter at [@parmaeldo](https://twitter.com/parmaeldo).
-
-Version 71 (model 4.0 incl. migrations) is in production.
+This is the source code for [elfdict.com](http://www.elfdict.com), a non-profit, free dictionary online for Tolkien's languages. Maintained by Leonard. Follow me on twitter at [@parmaeldo](https://twitter.com/parmaeldo).
 
 ## Service configuration
 Ensure that the following dependencies are installed:
@@ -33,11 +31,11 @@ php artisan storage:link
 
 Run *Parf Edhellen* locally by executing `php artisan serve`. You need to compile the TypeScript application by running `npm run watch`. 
 
+Make sure to run Node v16. Parf Edhellen isn't currently compatible with Node 17+.
+
 ## Want to help out?
 If you are interested in helping out, please get in touch with [galadhremmin](https://github.com/galadhremmin).
 You can also help us by donating. Please visit [elfdict.com](http://www.elfdict.com) for more information.
-
-I'd like to thank JetBrains for supporting ElfDict by giving us their excellent PHPStorm for free.
 
 ## Documentation
 ### Audit trail
