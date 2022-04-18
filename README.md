@@ -26,6 +26,7 @@ composer install
 php artisan key:generate
 ```
 
+> Always make sure to [follow Laravel's guidelines and best practices](https://laravel.com/docs/9.x/deployment) before moving the app into production.
 
 ## Want to help out?
 If you are interested in helping out, please get in touch with [galadhremmin](https://github.com/galadhremmin).
