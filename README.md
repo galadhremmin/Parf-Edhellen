@@ -24,6 +24,7 @@ cp .env.example .env
 vim .env # configure appropriately
 composer install
 php artisan key:generate
+php artisan storage:link
 ```
 
 > Always make sure to [follow Laravel's guidelines and best practices](https://laravel.com/docs/9.x/deployment) before moving the app into production.
