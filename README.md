@@ -7,31 +7,25 @@ Version 71 (model 4.0 incl. migrations) is in production.
 Ensure that the following dependencies are installed:
 
 ```
-php7.3 php7.3-cli php7.3-common php7.3-curl php7.3-gd php7.3-intl php7.3-json php7.3-mbstring php7.3-mysql php7.3-readline php7.3-xml php7.3-zip
+php7.4 php7.4-cli php7.4-common php7.4-curl php7.4-gd php7.4-intl php7.4-json php7.4-mbstring php7.4-mysql php7.4-readline php7.4-xml php7.4-zip
 ```
 
-Installation is relatively easy:
-1. Configure the database using the model files. Execute the script files in ascending order, starting with _schema.sql_
-2. Shut down your web server
-3. Configure your web server to serve the _src/public_ directory. 
-4. Make _src/storage_ writeable.
-5. Review the application's _.env_ configuration
-6. Compile stylesheets and JavaScript assets.
-7. Cache sysconfig and routing configuration.
-8. Create a symlink to the storage directory (for avatars)
-
-> Always make sure to follow Laravel's guidelines and best practices before moving the app into production.
+Configure the database using the model files. Execute the script files in ascending order, starting with schema.sql. You can apply the migrations once you've got Laravel configured. To configure Laravel, run the following commands sequentially:
 
 ```
-chmod -R o+w project/storage # step 4
-cp .env.example .env         # step 5
-vim .env                     # step 5
-php artisan key:generate      
-npm run production           # step 6
-php artisan config:cache     # step 7 
-php artisan route:cache      # step 7
-php artisan storage:link     # step 8
+gh repo clone galadhremmin/Parf-Edhellen
+cd Parf-Edhellen/src
+npm install
+mkdir bootstrap/cache
+chmod 755 bootstrap/cache
+mkdir -p storage/framework/{sessions,views,cache}
+chmod -R 775 storage/framework
+cp .env.example .env
+vim .env # configure appropriately
+composer install
+php artisan key:generate
 ```
+
 
 ## Want to help out?
 If you are interested in helping out, please get in touch with [galadhremmin](https://github.com/galadhremmin).
