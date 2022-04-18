@@ -87,8 +87,12 @@
     "react-redux": "^7.2.6",
     "react-router-dom": "^6.2.2",
     "recharts": "^2.1.9",
-    "redux": "^4.1.2",
+    "redux": "^4.2.0",
     "redux-thunk": "^2.4.1",
     "spinkit": "^2.0.1"
+  },
+  "resolutions": {
+    "@types/react": "17.0.44",
+    "@types/react-dom": "17.0.15"
   }
 }

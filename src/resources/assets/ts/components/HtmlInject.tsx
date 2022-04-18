@@ -50,7 +50,7 @@ export default class HtmlInject extends React.Component<IProps, IState> {
         } = this.props;
         return isEmptyString(html)
             ? null
-            : this.state.elements;
+            : <>{this.state.elements}</>;
     }
 
     private _inject() {

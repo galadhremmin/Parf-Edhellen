@@ -6,7 +6,6 @@ $gloss-border-color: #dedede;
   &.ed-glossary--unusual {
     margin-top: 2rem;
     padding-top: 2rem;
-//    border-top: 1px solid $gloss-border-color;
   }
 
   .ed-glossary__language {
@@ -39,10 +38,4 @@ $gloss-border-color: #dedede;
       columns: auto;
     }
   }
-}
-.ed-admin-tool {
-  display: none;
-}
-body.ed-admin .ed-admin-tool {
-  display: inline-block;
 }

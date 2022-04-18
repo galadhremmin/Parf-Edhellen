@@ -44,6 +44,9 @@
     &.TextIcon--clock-history {
         @include mask-image-compatible("~bootstrap-icons/icons/clock-history.svg");
     }
+    &.TextIcon--clipboard {
+        @include mask-image-compatible("~bootstrap-icons/icons/clipboard.svg");
+    }
     &.TextIcon--comment {
         @include mask-image-compatible("~bootstrap-icons/icons/chat-square-dots.svg");
     }

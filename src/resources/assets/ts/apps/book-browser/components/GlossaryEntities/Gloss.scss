@@ -34,38 +34,45 @@ blockquote.gloss {
       }
     }
 
-    a {
+    .gloss-word--toolbar {
       float: right;
-      margin-left: 5px;
-      font-size: 0.8rem;
-      color: inherit;
-
-      &:hover {
+      a {
+        margin-left: 0.5rem;
+        font-size: 1rem;
         color: inherit;
-      }
+        > .TextIcon {
+          transition: transform 1s;
+        }
+  
+        &:hover {
+          color: inherit;
 
-      &.neologism {
-        float: none;
-        content: '*';
+          > .TextIcon {
+            transform: scale(1.25);
+          }
+        }
+  
+        &.neologism {
+          float: none;
+          content: '*';
+        }
+
+        &.ed-comments-no {
+          text-decoration: none;
+  
+          &:hover, &:active, &:visited {
+            text-decoration: none;
+          }
+        }
       }
     }
+
     .rejected {
       text-decoration: line-through;
     }
   }
   .word-type {
     font-style: italic;
-  }
-  .ed-comments-no {
-    text-decoration: none;
-
-    &:hover, &:active, &:visited {
-      text-decoration: none;
-    }
-
-    > .no {
-      vertical-align: top;
-    }
   }
   .word-footer {
     max-width: 100%;

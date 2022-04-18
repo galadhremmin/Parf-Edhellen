@@ -47,6 +47,11 @@ function Dialog<V>(props: IProps<V>) {
 
      // This is needed so screen readers don't see main content when modal is opened.
      const appElement = document.querySelector('main');
+    if (! open) {
+        // This is an optimization that is intended to keep the Dialog component mounted
+        // but that pesky `ReactModalPortal` element NOT in the DOM.
+        return null;
+    }
     return <Modal appElement={appElement}
         className="modal"
         isOpen={open}
