@@ -2,10 +2,10 @@ import React, { useCallback, useState } from 'react';
 
 import Dialog from '@root/components/Dialog';
 import TextIcon from '@root/components/TextIcon';
-import { IProps } from './ShareLink._types';
 import Quote from '@root/components/Quote';
 import CopiableTextInput from '@root/components/CopiableTextInput';
 import StaticAlert from '@root/components/StaticAlert';
+import { IProps } from './ShareLink._types';
 
 const onInputFocus = (ev: React.FocusEvent<HTMLInputElement>) => {
     ev.target.select();
@@ -64,21 +64,21 @@ function ShareLink(props: IProps) {
                 id={`ed-form-share-address-${glossId}`}
                 value={url}
                 readOnly
-                onFocus={onInputFocus} 
+                onFocus={onInputFocus}
             />
-            
+
             <label htmlFor={`ed-form-share-markdown-${glossId}`} className="form-label">Discuss (direct link)</label>
-            <CopiableTextInput formGroupClassName="mb-3" 
+            <CopiableTextInput formGroupClassName="mb-3"
                 onCopyActionSuccess={_onCopy}
                 onCopyActionFail={_onCopyFail}
                 type="text"
                 className="form-control"
                 id={`ed-form-share-markdown-${glossId}`}
-                value={markdownLocalLink} 
+                value={markdownLocalLink}
                 readOnly
-                onFocus={onInputFocus} 
+                onFocus={onInputFocus}
             />
-            
+
             <label htmlFor={`ed-form-share-language-word-markdown-${glossId}`} className="form-label">Discuss (can yield multiple definitions of the same word)</label>
             <CopiableTextInput formGroupClassName="mb-3"
                 onCopyActionSuccess={_onCopy}
