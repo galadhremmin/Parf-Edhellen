@@ -63,9 +63,11 @@
       },
     },
     _mount: () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       ((window[googleAdsKey] || []) as any).push({});
     },
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   window[configKey] = config;
 })();
