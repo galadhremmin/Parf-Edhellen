@@ -30,20 +30,20 @@ export default class Markdown extends React.Component<IProps, IState> {
 
     private _api = resolve<IUtilityApi>(DI.UtilityApi);
 
-    public componentDidMount() {
+    public async componentDidMount() {
         if (this.props.parse) {
-            this._parse(this.props.text);
+            await this._parse(this.props.text);
         }
     }
 
-    public componentDidUpdate() {
+    public async componentDidUpdate() {
         const {
             dirty,
             lastText,
         } = this.state;
 
         if (this.props.parse && dirty) {
-            this._parse(lastText);
+            await this._parse(lastText);
         }
     }
 

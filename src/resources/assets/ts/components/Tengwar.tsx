@@ -31,20 +31,20 @@ export default class Tengwar extends React.Component<IProps> {
         transcribed: null,
     };
 
-    public componentDidMount() {
+    public async componentDidMount() {
         if (this.props.transcribe) {
-            this._transcribe();
+            await this._transcribe();
         }
     }
 
-    public componentDidUpdate() {
+    public async componentDidUpdate() {
         const {
             lastText,
             transcribed,
         } = this.state;
 
         if (this.props.transcribe && transcribed === null && lastText !== null) {
-            this._transcribe();
+            await this._transcribe();
         }
     }
 

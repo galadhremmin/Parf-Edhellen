@@ -32,7 +32,7 @@ function GlossFragmentInspector(props: IProps) {
 
     return <article>
         <header>
-            <h1><Tengwar transcribe={!!! fragment.tengwar} text={fragment.tengwar || fragment.fragment} /></h1>
+            <h1><Tengwar transcribe={! fragment.tengwar} text={fragment.tengwar || fragment.fragment} /></h1>
         </header>
         {fragment.comments && <section className="abstract">
             <Markdown text={fragment.comments} parse={true} />

@@ -4,22 +4,25 @@ import { isEmptyString } from './func/string-manipulation';
 import LazyLoader, { ILoader } from './LazyLoader';
 import MemoryStorage from './MemoryStorage';
 
-export default class Cache<T, L = T> extends LazyLoader<T, L> {
-    public static withLocalStorage<T, L = T>(loader: ILoader<L>, storageKey: string) {
-        return new this<T, L>(loader, window.localStorage, storageKey);
+/**
+ * Provides a cache for records of type `T`. The payload is optionally wrapped by type `R`.
+ */
+export default class Cache<T, R = T> extends LazyLoader<T, T> {
+    public static withLocalStorage<T, R = T>(loader: ILoader<T>, storageKey: string) {
+        return new this<T, R>(loader, window.localStorage, storageKey);
     }
 
-    public static withSessionStorage<T, L = T>(loader: ILoader<L>, storageKey: string) {
-        return new this<T, L>(loader, window.sessionStorage, storageKey);
+    public static withSessionStorage<T, R = T>(loader: ILoader<T>, storageKey: string) {
+        return new this<T, R>(loader, window.sessionStorage, storageKey);
     }
 
-    public static withMemoryStorage<T, L = T>(loader: ILoader<L>, storageKey: string) {
-        return new this<T, L>(loader, new MemoryStorage(), storageKey);
+    public static withMemoryStorage<T, R = T>(loader: ILoader<T>, storageKey: string) {
+        return new this<T, R>(loader, new MemoryStorage(), storageKey);
     }
 
     private _storageKey: string;
 
-    constructor(loader: ILoader<L>, private _store: Storage, storageKey: string) {
+    constructor(loader: ILoader<T>, private _store: Storage, storageKey: string) {
         super(loader);
 
         if (isEmptyString(storageKey)) {
@@ -51,15 +54,33 @@ export default class Cache<T, L = T> extends LazyLoader<T, L> {
     }
 
     /**
+     * Wraps the specified payload with the wrapper `R`.
+     * @param record the payload
+     * @returns a wrapped record
+     */
+    protected wrap(record: T): R {
+        return record as unknown as R;
+    }
+
+    /**
+     * Unwraps the specified record and returns the intended original type `T`
+     * @param record the record
+     * @returns the original payload
+     */
+    protected unwrap(record: R): T {
+        return record as unknown as T;
+    }
+
+    /**
      * Attempts to load the value from the store, and returns `null` if
      * the item does not exist (or is corrupt).
      */
-    protected loadFromStore(): T {
+     private loadFromStore(): T {
         const json = this._store.getItem(this._storageKey);
         if (json !== null) {
             try {
-                const value = JSON.parse(json);
-                return value;
+                const value = JSON.parse(json) as R;
+                return this.unwrap(value);
             } catch (e) {
                 // deliberate suppression
             }
@@ -72,8 +93,8 @@ export default class Cache<T, L = T> extends LazyLoader<T, L> {
      * Stores the specified value payload in the store.
      * @param value the payload
      */
-    protected saveInStore(value: T) {
-        const json = JSON.stringify(value);
+    private saveInStore(value: T) {
+        const json = JSON.stringify(this.wrap(value));
         this._store.setItem(this._storageKey, json);
     }
 }

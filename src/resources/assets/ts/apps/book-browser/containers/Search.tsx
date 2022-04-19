@@ -168,7 +168,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
         }
 
         this.setState(nextState);
-        this._persistState(
+        void this._persistState(
             excludeProps({
                 ...state,
                 ...nextState,
@@ -182,7 +182,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
             reversed,
         });
 
-        this._persistState('reversed', reversed);
+        void this._persistState('reversed', reversed);
         this._beginSearch(/* queryChanged: */ true);
     }
 
@@ -192,7 +192,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
             includeOld,
         });
 
-        this._persistState('includeOld', includeOld);
+        void this._persistState('includeOld', includeOld);
         this._beginSearch(/* queryChanged: */ false);
     }
 
@@ -202,7 +202,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
             languageId,
         });
 
-        this._persistState('languageId', languageId);
+        void this._persistState('languageId', languageId);
         this._beginSearch(/* queryChanged: */ false);
     }
 
@@ -242,7 +242,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
      * Performs a keyword search operation, *and* refreshes the glossary if filters
      * changed.
      */
-    private _search(queryChanged: boolean) {
+    private _search = (queryChanged: boolean) => {
         const state = this.state;
         this.props.dispatch(
             this._actions.search({

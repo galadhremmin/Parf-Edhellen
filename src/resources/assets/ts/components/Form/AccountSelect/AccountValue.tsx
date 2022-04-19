@@ -8,13 +8,15 @@ import { DI, resolve } from '@root/di';
 import { IProps } from './AccountValue._types';
 
 const useFetch = (apiConnector: IAccountApi, accountId: number) => {
-    const [ path, setPath ] = useState(null);
+    const [ path, setPath ] = useState<string>(null);
 
     useEffect(() => {
         apiConnector.getAvatar({
             accountId,
         }).then((a) => {
             setPath(a.avatar);
+        }).catch(() => {
+            setPath(null);
         });
     }, []);
 

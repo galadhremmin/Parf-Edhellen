@@ -75,13 +75,13 @@ function GlossDetailInput(props: IComponentProps<IGlossDetail[]>) {
         fireEvent(name, onChange, newValue);
     };
 
-    const _onDetailChange = (sourceIndex: number, propertyName: keyof IGlossDetail) =>
+    const _onDetailChange = (sourceIndex: number, propertyName: keyof Pick<IGlossDetail, "text" | "category">) =>
         (ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const {
             value: textValue,
         } = ev.target;
 
-        const detail = value[sourceIndex] as any;
+        const detail = value[sourceIndex];
         detail[propertyName] = textValue;
 
         const newValue = _createNewValue(detail, sourceIndex, value);

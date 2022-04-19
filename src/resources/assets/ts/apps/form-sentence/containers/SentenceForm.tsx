@@ -65,7 +65,7 @@ function SentenceForm(props: IProps) {
         }
     }, [ sentenceId ]);
 
-    const _onSubmit = useCallback((ev) => {
+    const _onSubmit = useCallback((ev: React.FormEvent) => {
         ev.preventDefault();
         let translations: typeof sentenceTranslations = [];
         // Only include translations if they are valid. These are meant to be optional.

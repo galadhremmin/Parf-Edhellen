@@ -91,7 +91,7 @@ function ShareLink(props: IProps) {
                 onFocus={onInputFocus}
             />
 
-            <label htmlFor={`ed-form-share-markdown-remote-${glossId}`} className="form-label">Direct link</label>
+            <label htmlFor={`ed-form-share-markdown-remote-${glossId}`} className="form-label">Markdown direct link</label>
             <CopiableTextInput formGroupClassName="mb-3"
                 onCopyActionSuccess={_onCopy}
                 onCopyActionFail={_onCopyFail}

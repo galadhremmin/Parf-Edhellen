@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import React, { useCallback } from 'react';
 
 import { fireEvent } from '@root/components/Component';
@@ -21,7 +22,7 @@ const InternalProps: (keyof IProps)[] = [
 ];
 
 function AsyncSelect<T = any>(props: IProps<T>) {
-    const componentProps = excludeProps(props, InternalProps);
+    const componentProps = excludeProps<Partial<IProps<T>>>(props, InternalProps);
 
     const {
         allowEmpty,
@@ -39,7 +40,6 @@ function AsyncSelect<T = any>(props: IProps<T>) {
 
     const _onChange = useCallback((ev: React.ChangeEvent<HTMLSelectElement>) => {
         const newValue = getDesiredValue(
-// tslint:disable-next-line: triple-equals
             values.find((v) => v[valueField] as any == ev.target.value),
             valueType,
             valueField as string,
@@ -71,7 +71,7 @@ function getNativeValue(v: any, valueField: string): IdValue {
     }
 
     if (typeof v === 'object') {
-        return v[valueField];
+        return v[valueField] as IdValue;
     }
 
     return v;

@@ -25,19 +25,14 @@ describe('utilities/ExpiringCache', () => {
 
     it('transforms data from loader to output data', async () => {
         const expectedData = { x: 1 };
-        const expectedLifetime = 1000;
-        const expectedTimeUnit = TimeUnit.Minutes;
-        const expectedPayload: IDataWithExpiration<ITestData> = {
-            data: expectedData,
-            lifetime: expectedLifetime,
-            unit: expectedTimeUnit,
-        };
+        const expectedLifetime = 1;
+        const expectedTimeUnit = TimeUnit.Hours;
         const expectedKey = `${ApplicationGlobalPrefix}.unit-test`;
 
         sandbox.useFakeTimers(0);
 
         const store = new MemoryStorage();
-        const cache = new ExpiringCache<ITestData>(() => Promise.resolve(expectedPayload), store, expectedKey);
+        const cache = new ExpiringCache<ITestData>(() => Promise.resolve(expectedData), store, expectedKey);
 
         const actualData = await cache.get();
 
@@ -57,14 +52,11 @@ describe('utilities/ExpiringCache', () => {
             d: expiredData,
             t: beginningOfTime,
         });
-        const newPayload = {
-            data: expectedData,
-            lifetime: 1000,
-            unit: TimeUnit.Hours,
-        };
+        const expectedLifetime = 1000;
+        const expectedUnit = TimeUnit.Days;
         const newJson = JSON.stringify({
             d: expectedData,
-            t: beginningOfTime + newPayload.lifetime * newPayload.unit,
+            t: beginningOfTime + expectedLifetime * expectedUnit,
         });
 
         sandbox.useFakeTimers(beginningOfTime);
@@ -72,7 +64,8 @@ describe('utilities/ExpiringCache', () => {
         const store = new MemoryStorage();
         store.setItem(expectedKey, expiredJson);
 
-        const cache = new ExpiringCache<ITestData>(() => Promise.resolve(newPayload), store, expectedKey);
+        const cache = new ExpiringCache<ITestData>(() => Promise.resolve(expectedData), store, expectedKey,
+            expectedLifetime, expectedUnit);
         const data = await cache.get();
 
         expect(store.getItem(expectedKey)).to.equal(newJson);

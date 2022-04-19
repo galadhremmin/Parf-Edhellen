@@ -1,8 +1,8 @@
 import { INewable } from '../_types';
 import { ApplicationGlobalPrefix } from '../config';
 
-declare var window: Window; // compatibility with browser.
-declare var global: any; // compatibility with node.js.
+declare const window: Window; // compatibility with browser.
+declare const global: Record<string, unknown>; // compatibility with node.js.
 
 export default class SharedReference<T> {
     /**
@@ -15,7 +15,7 @@ export default class SharedReference<T> {
     }
 
     private static get container() {
-        return typeof window === 'object' ? window : global;
+        return (typeof window === 'object' ? window : global) as Record<string, unknown>;
     }
 
     private _name: string;
@@ -47,7 +47,7 @@ export default class SharedReference<T> {
     public get value() {
         const container = SharedReference.container;
 
-        let instance: T = container[this._name];
+        let instance = container[this._name] as T;
         if (instance === undefined) {
             instance = container[this._name] = new this._type();
         }

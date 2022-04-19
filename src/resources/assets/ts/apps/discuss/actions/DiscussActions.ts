@@ -23,7 +23,7 @@ export default class DiscussActions {
     constructor(private _api: IDiscussApi = resolve(DI.DiscussApi)) {
     }
 
-    public thread(args: IThreadAction, jump: boolean = true): ReduxThunk {
+    public thread(args: IThreadAction, jump = true): ReduxThunk {
         return async (dispatch: ReduxThunkDispatch) => {
             dispatch({
                 type: Actions.RequestThread,
@@ -47,7 +47,7 @@ export default class DiscussActions {
             }
         }
 
-        return async (dispatch: ReduxThunkDispatch) => {
+        return (dispatch: ReduxThunkDispatch) => {
             if (! jump) {
                 threadData.jumpPostId = null;
             }

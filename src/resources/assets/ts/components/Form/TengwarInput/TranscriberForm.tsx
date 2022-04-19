@@ -16,6 +16,7 @@ import { transcribe } from './transcriber';
 import { IProps } from './TranscriberForm._types';
 
 import './TranscriberForm.scss';
+import StaticAlert from '@root/components/StaticAlert';
 
 function TranscriberForm(props: IProps) {
     const {
@@ -27,12 +28,17 @@ function TranscriberForm(props: IProps) {
 
     const [ subjectLanguageId, setSubjectLanguageId ] = useState(() => languageId || 0);
     const [ textSubject, setTextSubject ] = useState(() => text || '');
+    const [ error, setError ] = useState<string>(null);
 
-    const updateTranscription = async (newText: string, newLanguageId: number) => {
-        const newTranscription = await transcribe(newText, newLanguageId);
-        fireEventAsync('TranscriberForm', onTranscription, {
-            text: newText,
-            transcription: newTranscription,
+    const updateTranscription = (newText: string, newLanguageId: number) => {
+        transcribe(newText, newLanguageId).then((newTranscription) => {
+            fireEventAsync('TranscriberForm', onTranscription, {
+                text: newText,
+                transcription: newTranscription,
+            });
+            setError(null);
+        }).catch ((reason) => {
+            setError(String(reason));
         });
     };
 
@@ -73,6 +79,7 @@ function TranscriberForm(props: IProps) {
                 onChange={_onTextChange}
                 className="form-control" />
         </fieldset>
+        {error && <StaticAlert type="danger">Transcription failed! {error}</StaticAlert>}
         <fieldset className="TranscriberForm__transcription">
             <legend>Transcription</legend>
             {transcription ? <Tengwar as="div" text={transcription} transcribe={false} />

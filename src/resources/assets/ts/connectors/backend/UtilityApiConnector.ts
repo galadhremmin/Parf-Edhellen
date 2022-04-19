@@ -11,7 +11,7 @@ export default class UtilityApiConnector implements IUtilityApi {
     constructor(private _api = resolve<ApiConnector>(DI.BackendApi)) {
     }
 
-    public getErrors(page: number = 1) {
+    public getErrors(page = 1) {
         page = Math.max(1, page);
         return this._api.get<IGetErrorsResponse>('utility/errors', { page });
     }

@@ -20,7 +20,7 @@ function StaticAlert(props: IProps) {
         {dismissable && <button type="button" className="btn-close" aria-label="Close" onClick={_onDismiss} />}
         {children}
     </div>;
-};
+}
 
 StaticAlert.defaultProps = {
     type: 'info',

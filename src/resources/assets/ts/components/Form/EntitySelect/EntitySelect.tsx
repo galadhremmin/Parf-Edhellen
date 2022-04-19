@@ -119,7 +119,7 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
         }
     }
 
-    private _requestSuggestions(text: string) {
+    private _requestSuggestions = (text: string) => {
         const {
             name,
             onSuggest,

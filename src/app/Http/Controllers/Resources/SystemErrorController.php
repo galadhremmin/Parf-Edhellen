@@ -75,7 +75,7 @@ class SystemErrorController extends Controller
             ->where($dateColumn, '>=', $cutoffDate)
             ->get();
 
-        $categories = $countByWeek->pluck('category')->unique();
+        $categories = $countByWeek->pluck('category')->unique()->values();
         $countByWeek = $countByWeek->reduce(function ($carry, $item) {
                 $key      = $item->year_week;
                 $value    = $item->number_of_errors;

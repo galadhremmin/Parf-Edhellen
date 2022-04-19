@@ -4,8 +4,12 @@ import {
     IComponentEvent,
 } from './Component._types';
 
+interface INamedComponent {
+    displayName?: string;
+}
+
 export const fireEvent = <V>(componentOrName: ComponentOrName, ev: ComponentEventHandler<V>, value: V = undefined,
-    async: boolean = false) => {
+    async = false) => {
     if (componentOrName === undefined) {
         throw new Error('Component reference is undefined.');
     }
@@ -22,7 +26,7 @@ export const fireEvent = <V>(componentOrName: ComponentOrName, ev: ComponentEven
             name: componentName,
         } = componentOrName.props;
 
-        name = componentName || componentId || (componentOrName as any).displayName || null;
+        name = componentName || componentId || (componentOrName as INamedComponent).displayName || null;
     }
 
     if (typeof ev !== 'function') {

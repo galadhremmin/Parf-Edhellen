@@ -1,7 +1,7 @@
 const DEFAULT_MAXIMUM_PAGES = 6;
 const FIRST_PAGE_NUMBER = 1;
 
-export const createPageArray = (noOfPages: number = 0, currentPage: number, maximumPages = DEFAULT_MAXIMUM_PAGES) => {
+export const createPageArray = (noOfPages = 0, currentPage: number, maximumPages = DEFAULT_MAXIMUM_PAGES) => {
     const pages: number[] = [];
 
     const modifier = Math.floor(maximumPages / 2) - 1;

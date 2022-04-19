@@ -1,5 +1,5 @@
 export default class MemoryStorage implements Storage {
-    private _data: any = {};
+    private _data: Record<string, string> = {};
 
     public get length() {
         return Object.keys(this._data).length;
@@ -10,7 +10,7 @@ export default class MemoryStorage implements Storage {
     }
 
     public getItem(key: string) {
-        return (this._data[key] as string) || null;
+        return this._data[key] || null;
     }
 
     public key(index: number) {

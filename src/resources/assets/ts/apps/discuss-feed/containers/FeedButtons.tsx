@@ -54,7 +54,7 @@ function Feeds(props: IProps) {
                 Paste the feed address below into your feed reader of choice to register to this web feed.
             </p>
             <p>
-                Not sure what this is? You can read about <a href={LearnMoreWebFeedUrl} target="_blank">
+                Not sure what this is? You can read about <a href={LearnMoreWebFeedUrl} target="_blank" rel="noreferrer">
                     web feeds on Wikipedia
                 </a>.
             </p>
@@ -73,7 +73,7 @@ function Feeds(props: IProps) {
                        readOnly={true}
                        value={feedUrl} />
                 <div className="text-end">
-                    <a href={feedUrl} target="_blank">Open feed in a new tab</a>
+                    <a href={feedUrl} target="_blank" rel="noreferrer">Open feed in a new tab</a>
                 </div>
             </div>
         </Dialog>

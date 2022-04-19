@@ -35,7 +35,7 @@ const GlossInflections = (props: IProps) => {
                                 <em>{firstInflection.speech}</em>
                                 {inflections.filter((inf) => !! inf.inflection).map(
                                     (inf, i) => <span key={`${sentenceId}-${i}`}>
-                                        {` ${inf.inflection}`}
+                                        {' '}{inf.inflection}
                                     </span>,
                                 )}
                             </td>

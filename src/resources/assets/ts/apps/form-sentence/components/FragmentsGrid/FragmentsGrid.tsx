@@ -274,7 +274,7 @@ class FragmentsGrid extends React.Component<IProps, IState> {
                 update: transaction,
             });
         }
-    };
+    }
 
     /**
      * Resizes the grid's columns appropriately when the viewport changes.
@@ -322,7 +322,7 @@ class FragmentsGrid extends React.Component<IProps, IState> {
 
         const field = column.getColId() as keyof ISentenceFragmentEntity;
         if (field === 'glossId') {
-            this._useGlossToUpdateSimilarFragments(fragment, value);
+            void this._useGlossToUpdateSimilarFragments(fragment, value);
         } else {
             this._notifyChange(fragment, field, value);
         }
@@ -333,7 +333,7 @@ class FragmentsGrid extends React.Component<IProps, IState> {
      * by agGrid's `immutableData`.
      */
     private _onGetRowId = (row: GetRowIdParams) => {
-        return row.data.id.toString(10);
+        return (row.data as ISentenceFragmentEntity).id.toString(10);
     }
 
     /**

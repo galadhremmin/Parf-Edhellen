@@ -43,8 +43,7 @@ function Toolbar(props: IProps) {
     }, [ apiConnector, setError ]);
 
     return <div className="DiscussToolbar text-center">
-        <FiltersButton groupId={props.groupId}
-                       groupName={props.groupName} />
+        <FiltersButton />
         <CreateThreadButton error={error}
                             enabled={roleManager.currentRole !== SecurityRole.Anonymous}
                             groupId={props.groupId}

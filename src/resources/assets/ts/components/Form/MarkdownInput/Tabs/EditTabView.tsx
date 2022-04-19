@@ -9,7 +9,6 @@ import { IProps, IState } from './EditTabView._types';
 import './EditTabView.scss';
 
 const ParagraphDelimiter = `\n\n`;
-const EnterKeyCode = 13;
 
 export default class EditTabView extends React.Component<IProps, IState> {
     private _markdownEditor: HTMLTextAreaElement;
@@ -89,7 +88,7 @@ export default class EditTabView extends React.Component<IProps, IState> {
                 </div>
                 <small className="float-end">
                     {' Supports Markdown. '}
-                    <a href={LearnMoreMarkdownUrl} target="_blank">
+                    <a href={LearnMoreMarkdownUrl} target="_blank" rel="noreferrer">
                         Read more (opens a new window)
                     </a>.
                 </small>

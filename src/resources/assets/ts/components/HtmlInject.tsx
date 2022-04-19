@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 /// <reference path="../_types/html-to-react.d.ts" />
 import {
     INode,
@@ -108,6 +109,7 @@ export default class HtmlInject extends React.Component<IProps, IState> {
         const normalizedWord = node.attribs['data-word'];
         const word = node.attribs['data-original-word'];
         const languageShortName = node.attribs['data-language-short-name'];
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         const childElements = nodeElements.props.children;
 
         return <a href={href} onClick={this._onReferenceLinkClick.bind(this, word, normalizedWord, languageShortName)}

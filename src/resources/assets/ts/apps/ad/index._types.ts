@@ -1,5 +1,9 @@
+import { GlobalAdsConfigurationName } from "@root/config";
+
+export type AdName = string;
+
 export interface IProps {
-    ad: string;
+    ad: AdName;
 }
 
 export interface IGlobalAdConfiguration {
@@ -10,7 +14,11 @@ export interface IGlobalAdConfiguration {
 }
 
 export type IGlobalAdsConfiguration = {
-    [adName: string]: IGlobalAdConfiguration;
+    [adName: AdName]: IGlobalAdConfiguration;
 } & {
     _mount?: () => void;
+};
+
+export type WindowWithAds = Window & {
+    [GlobalAdsConfigurationName]?: IGlobalAdsConfiguration;
 };

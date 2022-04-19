@@ -50,10 +50,10 @@ export default class LazyLoader<T, L = T> {
      */
     protected async load(): Promise<T> {
         try {
-            const data = await this.loader.call(this);
+            const data = await this.loader.call(this) as L;
             return this.adapt(data);
         } catch (e) {
-            throw new Error(e);
+            throw new Error(String(e));
         }
     }
 

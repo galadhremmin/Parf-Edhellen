@@ -10,13 +10,19 @@ import {
     YAxis,
 } from 'recharts';
 
+import { IProps } from './Graph._types';
+
 const ChartColors = ['#00818a', '#404b69', '#283149', '#6c5b7c', '#c06c84', '#f67280', '#f8b595'];
 
-function ErrorsByWeekBarGraph(props: any) {
+function Graph(props: IProps) {
     const {
         categories,
         data,
     } = props;
+
+    if (! Array.isArray(categories)) {
+        return null;
+    }
 
     return <ResponsiveContainer width="100%" aspect={4 / 1.5}>
         <BarChart width={730} height={250} data={data}>
@@ -35,4 +41,4 @@ function ErrorsByWeekBarGraph(props: any) {
     </ResponsiveContainer>;
 }
 
-export default ErrorsByWeekBarGraph;
+export default Graph;
