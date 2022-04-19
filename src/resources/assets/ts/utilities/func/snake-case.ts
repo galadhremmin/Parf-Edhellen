@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+
 /**
  * Converts the string subject from camelCase to snake_case.
  * @param s string subject
@@ -14,7 +19,7 @@ export const toSnakeCase = (s: string, delimiter = '_') => {
 export const camelCaseFromSnakeCase = (s: string, delimiter = '_') => {
     let length = 0;
     const words = s.split(delimiter) //
-        .map((word: string, i: number) => {
+        .map((word: string) => {
             const ps = length === 0
                 ? (word.length === 0 ? delimiter : word)
                 : word.charAt(0).toUpperCase() + word.substr(1);
@@ -57,7 +62,7 @@ const transform = <T>(obj: any, converter: (obj: any) => string): T => {
 
     // Handle non-objects by simply returning them untouched.
     if (typeof obj !== 'object') {
-        return obj as any;
+        return obj;
     }
 
     // Handle objects by recreating the object from scratch.
@@ -69,5 +74,5 @@ const transform = <T>(obj: any, converter: (obj: any) => string): T => {
         newObj[camelCaseProp] = transform(obj[prop], converter);
     }
 
-    return newObj as any;
+    return newObj;
 };

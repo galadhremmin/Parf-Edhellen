@@ -2,7 +2,9 @@ function onBsToggle(target: HTMLUListElement, ev: MouseEvent) {
     ev.preventDefault();
 
     target.classList.toggle('show');
-    this.classList.toggle('open');
+
+    const triggerElement = this as HTMLElement;
+    triggerElement.classList.toggle('open');
 }
 
 function bootstrapBsToggle() {
@@ -29,12 +31,13 @@ function bootstrapBsToggle() {
                 throw new Error(`${targetSelector} matches no element.`);
             }
 
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             element.addEventListener('click', onBsToggle.bind(element, target));
         } catch (ex) {
             console.warn([`[Bootstrap] Failed to initialize component behavior. Error: ${ex}`, element]);
         }
     }
-};
+}
 
 export default function bootstrapServerSideRenderedBootstrapComponents() {
     bootstrapBsToggle();

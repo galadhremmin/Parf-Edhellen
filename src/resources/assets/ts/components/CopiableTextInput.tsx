@@ -12,7 +12,7 @@ function CopiableTextInput(props: IProps) {
         onCopyActionSuccess,
         value,
     } = props;
-    const inputProps = excludeProps<IProps>(props, [
+    const inputProps = excludeProps(props, [
         'formGroupClassName',
         'onCopyActionFail',
         'onCopyActionSuccess',
@@ -33,7 +33,7 @@ function CopiableTextInput(props: IProps) {
             () => {
                 fireEventAsync('CopiableTextInput', onCopyActionSuccess, value);
             },
-            (reason: any) => {
+            (reason) => {
                 fireEventAsync('CopiableTextInput', onCopyActionFail, reason);
             },
         );

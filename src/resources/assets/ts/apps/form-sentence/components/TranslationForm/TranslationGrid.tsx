@@ -90,7 +90,7 @@ export default class TranslationGrid extends React.Component<IProps> {
 
         fireEventAsync(this, onChange, {
             ...row,
-            translation: value.trim(),
+            translation: String(value).trim(),
         });
     }
 

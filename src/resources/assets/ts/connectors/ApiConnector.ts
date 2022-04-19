@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import axios, {
     AxiosError,
     AxiosInstance,
@@ -19,7 +20,18 @@ import {
     ErrorCategory,
     IReportErrorApi,
 } from './IReportErrorApi';
-import ValidationError from './ValidationError';
+import ValidationError, { IErrorMap } from './ValidationError';
+
+type AxiosRequestFactory = typeof axios.delete |
+    typeof axios.head |
+    typeof axios.get |
+    typeof axios.post |
+    typeof axios.put;
+
+interface IValidationFailedResponse {
+    message: string;
+    errors: IErrorMap;
+}
 
 interface IErrorReport {
     apiMethod?: string;
@@ -31,7 +43,7 @@ interface IErrorReport {
 }
 
 interface IQueryStringMap {
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 export default class ApiConnector implements IReportErrorApi {
@@ -46,70 +58,70 @@ export default class ApiConnector implements IReportErrorApi {
      * Execute a DELETE request.
      */
     public delete<T>(apiMethod: string, queryStringMap: IQueryStringMap = null) {
-        return this._consume<T>(apiMethod, this.deleteRaw(apiMethod, queryStringMap));
+        return this._consume<T>(apiMethod, this.deleteRaw<T>(apiMethod, queryStringMap));
     }
 
     /**
      * Execute a DELETE request and returns the request object.
      */
-    public deleteRaw(apiMethod: string, queryStringMap: IQueryStringMap = null) {
-        return this._createRequest(this._factory.delete, apiMethod, queryStringMap);
+    public deleteRaw<T = any>(apiMethod: string, queryStringMap: IQueryStringMap = null) {
+        return this._createRequest<T>(this._factory.delete, apiMethod, queryStringMap);
     }
 
     /**
      * Execute a HEAD request.
      */
     public head<T>(apiMethod: string, queryStringMap: IQueryStringMap = null) {
-        return this._consume<T>(apiMethod, this.headRaw(apiMethod, queryStringMap));
+        return this._consume<T>(apiMethod, this.headRaw<T>(apiMethod, queryStringMap));
     }
 
     /**
      * Execute a HEAD request.
      */
-    public headRaw(apiMethod: string, queryStringMap: IQueryStringMap = null) {
-        return this._createRequest(this._factory.head, apiMethod, queryStringMap);
+    public headRaw<T = any>(apiMethod: string, queryStringMap: IQueryStringMap = null) {
+        return this._createRequest<T>(this._factory.head, apiMethod, queryStringMap);
     }
 
     /**
      * Execute a GET request.
      */
     public get<T>(apiMethod: string, queryStringMap: IQueryStringMap = null) {
-        return this._consume<T>(apiMethod, this.getRaw(apiMethod, queryStringMap));
+        return this._consume<T>(apiMethod, this.getRaw<T>(apiMethod, queryStringMap));
     }
 
     /**
      * Execute a GET request.
      */
-    public getRaw(apiMethod: string, queryStringMap: IQueryStringMap = null) {
-        return this._createRequest(this._factory.get, apiMethod, queryStringMap);
+    public getRaw<T = any>(apiMethod: string, queryStringMap: IQueryStringMap = null) {
+        return this._createRequest<T>(this._factory.get, apiMethod, queryStringMap);
     }
 
     /**
      * Execute a POST request.
      */
     public post<T>(apiMethod: string, payload: any, queryStringMap: IQueryStringMap = null) {
-        return this._consume<T>(apiMethod, this.postRaw(apiMethod, payload || {}, queryStringMap));
+        return this._consume<T>(apiMethod, this.postRaw<T>(apiMethod, payload || {}, queryStringMap));
     }
 
     /**
      * Execute a POST request.
      */
-    public postRaw(apiMethod: string, payload: any, queryStringMap: IQueryStringMap = null) {
-        return this._createRequest(this._factory.post, apiMethod, queryStringMap, payload || {});
+    public postRaw<T = any>(apiMethod: string, payload: any, queryStringMap: IQueryStringMap = null) {
+        return this._createRequest<T>(this._factory.post, apiMethod, queryStringMap, payload || {});
     }
 
     /**
      * Execute a PUT request.
      */
     public put<T>(apiMethod: string, payload: any, queryStringMap: IQueryStringMap = null) {
-        return this._consume<T>(apiMethod, this.putRaw(apiMethod, payload || {}, queryStringMap));
+        return this._consume<T>(apiMethod, this.putRaw<T>(apiMethod, payload || {}, queryStringMap));
     }
 
     /**
      * Execute a PUT request.
      */
-    public putRaw(apiMethod: string, payload: any, queryStringMap: IQueryStringMap = null) {
-        return this._createRequest(this._factory.put, apiMethod, queryStringMap, payload || {});
+    public putRaw<T = any>(apiMethod: string, payload: any, queryStringMap: IQueryStringMap = null) {
+        return this._createRequest<T>(this._factory.put, apiMethod, queryStringMap, payload || {});
     }
 
     /**
@@ -162,9 +174,9 @@ export default class ApiConnector implements IReportErrorApi {
         let url = this._absPath(methodName);
 
         if (queryStringMap !== null) {
-            const keyValuePairs = Object.keys(queryStringMap).reduce((carry, key) => [
+            const keyValuePairs = Object.keys(queryStringMap).reduce((carry: string[], key: string) => [
                 ...carry,
-                `${toSnakeCase(key)}=${encodeURIComponent(queryStringMap[key])}`,
+                `${toSnakeCase(key)}=${encodeURIComponent(String(queryStringMap[key]))}`,
             ], []);
 
             if (keyValuePairs.length > 0) {
@@ -175,8 +187,8 @@ export default class ApiConnector implements IReportErrorApi {
         return url;
     }
 
-    private _createRequest(factory: any, apiMethod: string, queryStringMap: IQueryStringMap,
-        payload: any = null): AxiosPromise<AxiosResponse> {
+    private _createRequest<T = any>(factory: AxiosRequestFactory, apiMethod: string, queryStringMap: IQueryStringMap,
+        payload: any = null): AxiosPromise<AxiosResponse<T>> {
         if (! apiMethod || apiMethod.length < 1) {
             return Promise.reject(`You need to specify an API method to invoke.`);
         }
@@ -191,10 +203,16 @@ export default class ApiConnector implements IReportErrorApi {
             }
         }
 
-        return factory.call(this._factory, this._prepareUrl(apiMethod, queryStringMap),
-            hasBody ? payload : config,
-            hasBody ? config : undefined,
-        );
+        
+        const url = this._prepareUrl(apiMethod, queryStringMap);
+        let promise: AxiosPromise<AxiosResponse<T>>;
+        if (hasBody) {
+            promise = factory.apply(this._factory, [url, payload, config]);
+        } else {
+            promise = factory.apply(this._factory, [url, config]);
+        }
+
+        return promise;
     }
 
     private async _consume<T>(apiMethod: string, request: AxiosPromise<AxiosResponse<T>>): Promise<T> {
@@ -206,11 +224,11 @@ export default class ApiConnector implements IReportErrorApi {
 
             return snakeCasePropsToCamelCase(response.data);
         } catch (error) {
-            return this._handleError(apiMethod, error);
+            return this._handleError(apiMethod, error as AxiosError);
         }
     }
 
-    private _handleError(apiMethod: string, error: AxiosError) {
+    private async _handleError(apiMethod: string, error: AxiosError) {
         if (error === undefined) {
             console.warn(`Received an empty error from ${apiMethod}.`);
         }
@@ -249,8 +267,8 @@ export default class ApiConnector implements IReportErrorApi {
                     break;
                 case this._apiValidationErrorStatusCode:
                     return Promise.reject(new ValidationError(
-                        error.response.data.message,
-                        error.response.data.errors,
+                        (error.response.data as IValidationFailedResponse).message,
+                        (error.response.data as IValidationFailedResponse).errors,
                     )); // Validation errors are pass-through.
                 default:
                     errorReport = {
@@ -292,7 +310,7 @@ export default class ApiConnector implements IReportErrorApi {
 
         if (errorReport !== null) {
             errorReport.config = error.config;
-            this.error('API request failed', apiMethod, JSON.stringify(errorReport, undefined, 2), category);
+            await this.error('API request failed', apiMethod, JSON.stringify(errorReport, undefined, 2), category);
         }
 
         return Promise.reject('API request failed ' + apiMethod);

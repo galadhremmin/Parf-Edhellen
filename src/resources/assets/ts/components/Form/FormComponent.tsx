@@ -1,4 +1,4 @@
-/* tslint:disable:interface-name */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import React from 'react';
 
 import {
@@ -12,19 +12,6 @@ import {
 const DefaultComponentPropNames: (keyof IBackingComponentProps<any>)[] = //
     ['className', 'name', 'value', 'required', 'tabIndex'];
 
-export interface FormComponent {
-    /**
-     * Optional getter which overrides the `DefaultComponentPropNames` configuration.
-     */
-    componentPropNames?: string[];
-
-    /**
-     * Optional getter which determines whether the prop names returned from `componentPropNames`
-     * should be appended to the default configuration. Defaults to `true`.
-     */
-    appendComponentPropNames?: boolean;
-}
-
 const isNull = (value: any) => value === undefined || value === null;
 export const integerConverter = (value: string) => isNull(value) ? 0 : parseInt(value, 10);
 export const floatConverter = (value: string) => isNull(value) ? 0.00 : parseFloat(value);
@@ -35,15 +22,31 @@ export const booleanConverter = (value: string | boolean) => isNull(value) ? fal
  * Represents a form component wrapping a HTML element (backing component).
  * `V` is the value type, `P` props type, `CP` backing component props type, `S` state type.
  */
-export abstract class FormComponent<V = any, P = {}, CP = {}, S = {}, SS = any>
+export abstract class FormComponent<V = any, P = Record<string, unknown>, CP = Record<string, unknown>, S = Record<string, unknown>, SS = any>
     extends React.Component<P & IComponentProps<V>, S & IBackingComponentProps<V>, SS> {
+
+
+    /**
+     * Optional getter which overrides the `DefaultComponentPropNames` configuration.
+     */
+    public get componentPropNames() {
+        return [] as string[];
+    }
+
+     /**
+      * Optional getter which determines whether the prop names returned from `componentPropNames`
+      * should be appended to the default configuration. Defaults to `true`.
+      */
+    public get appendComponentPropNames() {
+        return true;
+    }
 
     /**
      * Default value converter for string values.
      * @param value value from backing component
      */
     protected convertValue(value: string) {
-        return value as any as V;
+        return value as unknown as V;
     }
 
     /**

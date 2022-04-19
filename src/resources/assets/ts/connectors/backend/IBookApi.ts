@@ -125,6 +125,8 @@ export interface IBookInflectionEntity {
     sentenceUrl: string;
     speech: string;
     word: string;
+    id: number;
+    name: string;
 }
 
 export interface ISentenceRequest {
@@ -204,11 +206,6 @@ export enum SentenceFragmentType {
     OpenParanthesis   = 40,
     CloseParanthesis  = 41,
     WordConnection    = 45,
-}
-
-export interface IBookInflectionEntity {
-    id: number;
-    name: string;
 }
 
 export interface ISentenceTranslationMap {

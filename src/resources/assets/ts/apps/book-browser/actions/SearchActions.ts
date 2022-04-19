@@ -146,7 +146,10 @@ export default class SearchActions {
      */
     public selectSearchResultByWord(word: string) {
         return (dispatch: ThunkDispatch<any, any, any>, getState: () => RootReducer) => {
-            const results = getState().searchResults;
+            const {
+                resultsById,
+            } = getState().searchResults;
+            const results = Object.values(resultsById);
             if (! Array.isArray(results) || results.length < 1) {
                 return;
             }

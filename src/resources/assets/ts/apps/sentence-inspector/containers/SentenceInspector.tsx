@@ -76,7 +76,7 @@ const mapStateToProps = (props: RootReducer): IProps => ({
 });
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<any, any, any>): IEventProps => ({
-    onFragmentSelect: async (args) => {
+    onFragmentSelect: (args) => {
         const actions = new SentenceActions();
         const fragment = args.value;
         dispatch(actions.selectFragment(fragment || null));

@@ -186,7 +186,7 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
     /**
      * Default event handler for reference link clicks.
      */
-    private _onReferenceClick = async (ev: IComponentEvent<IReferenceLinkClickDetails>) => {
+    private _onReferenceClick = (ev: IComponentEvent<IReferenceLinkClickDetails>) => {
         const globalEvents = new GlobalEventConnector();
         globalEvents.fire(globalEvents.loadReference, ev.value);
     }

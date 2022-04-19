@@ -1,8 +1,10 @@
+import MemoryStorage from '@root/utilities/MemoryStorage';
 import {
+    CacheLengthMinutes,
     LocalStorageLanguages,
-} from '../../config';
+} from '@root/config';
 
-import ExpiringCache, { IDataWithExpiration, TimeUnit } from '../../utilities/ExpiringCache';
+import ExpiringCache, { TimeUnit } from '../../utilities/ExpiringCache';
 import LazyLoader from '../../utilities/LazyLoader';
 import BookApiConnector from './BookApiConnector';
 import {
@@ -17,7 +19,8 @@ export default class LanguageConnector implements ILanguageApi {
         if (_cache === undefined) {
             let cache: LazyLoader<ILanguagesResponse> = null;
             try {
-                cache = ExpiringCache.withLocalStorage(this._load.bind(this), LocalStorageLanguages);
+                cache = new ExpiringCache(() => this._api.languages(), window.localStorage, LocalStorageLanguages,
+                    CacheLengthMinutes.languages, TimeUnit.Minutes);
             } catch (e) {
                 console.info(
                     'Falling back to in-memory storage because LanguageConnector ' +
@@ -27,7 +30,8 @@ export default class LanguageConnector implements ILanguageApi {
             } finally {
                 // fallback - in-memory cache
                 if (cache === null) {
-                    cache = ExpiringCache.withMemoryStorage(this._load.bind(this), LocalStorageLanguages);
+                    cache = new ExpiringCache(() => this._api.languages(), new MemoryStorage(), LocalStorageLanguages,
+                        CacheLengthMinutes.languages, TimeUnit.Minutes);
                 }
             }
 
@@ -64,19 +68,5 @@ export default class LanguageConnector implements ILanguageApi {
         }
 
         return null;
-    }
-
-    /**
-     * Default language loader. Makes a request to the service API.
-     */
-    private async _load() {
-        const languages = await this._api.languages();
-        const cacheConfig: IDataWithExpiration<ILanguagesResponse> = {
-            data: languages,
-            lifetime: 1,
-            unit: TimeUnit.Days,
-        };
-
-        return cacheConfig;
     }
 }

@@ -26,7 +26,7 @@ const SearchResultsReducer = (state: ISearchResultState = {
 
             const groups: string[] = [];
             const resultsByGroupIndex: ISearchResult[][] = [];
-            const resultsById: any = {};
+            const resultsById: Record<number, ISearchResult> = {};
             const resultIds: number[] = [];
 
             for (const group of searchResults.keywords.keys()) {

@@ -10,7 +10,7 @@ const InitialState: ISentenceTranslationsReducerState = [];
 const SentenceTranslationsReducer = (state = InitialState, action: ISentenceTranslationsAction) => {
     switch (action.type) {
         case Actions.ReloadAllFragments:
-        case Actions.ReceiveTranslation:
+        case Actions.ReceiveTranslation: {
             const newState = action.sentenceTranslations.map(
                 (sentenceTranslation) => SentenceTranslationReducer(null, {
                     ...action,
@@ -38,6 +38,7 @@ const SentenceTranslationsReducer = (state = InitialState, action: ISentenceTran
                 return 0;
             });
             return newState;
+        }
         case Actions.SetTranslation:
             return state.map((translation) => {
                 if (translation.paragraphNumber === action.sentenceTranslation.paragraphNumber &&

@@ -1,42 +1,52 @@
 import Cache from './Cache';
+import { ILoader } from './LazyLoader';
 
-export default class ExpiringCache<T> extends Cache<T, IDataWithExpiration<T>> {
+export default class ExpiringCache<T> extends Cache<T, IExpiringRecord<T>> {
     private _lifetime: number;
+    private _unit: TimeUnit;
 
-    protected adapt(data: IDataWithExpiration<T>): T {
-        this._lifetime = this._convertToMilliseconds(data.lifetime, data.unit);
-        return data.data;
+    constructor(loader: ILoader<T>, store: Storage, storageKey: string, lifetime = 1, unit = TimeUnit.Hours) {
+        super(loader, store, storageKey);
+        this._lifetime =  lifetime;
+        this._unit = unit;
     }
 
-    protected loadFromStore(): T {
-        const data = this._convertToExpiringRecord(super.loadFromStore());
-        if (data === null) {
+    public get lifetime() {
+        return this._lifetime;
+    }
+
+    public set lifetime(value: number) {
+        this._lifetime = value;
+    }
+
+    public get unit() {
+        return this._unit;
+    }
+
+    public set unit(unit: TimeUnit) {
+        this._unit = unit;
+    }
+
+    protected wrap(payload: T) {
+        const wrappedData: IExpiringRecord<T> = {
+            d: payload,
+            t: this._getTimeExpired(),
+        };
+
+        return wrappedData;
+    }
+
+    protected unwrap(record: IExpiringRecord<T>) {
+        if (record === null) {
             return null;
         }
 
         const time = this._getTime();
-        if (data.t <= time) {
+        if (record.t <= time) {
             return null;
         }
 
-        return data.d;
-    }
-
-    protected saveInStore(data: T) {
-        const wrappedData: IExpiringRecord<T> = {
-            d: data,
-            t: this._getTimeExpired(),
-        };
-
-        super.saveInStore(wrappedData as any);
-    }
-
-    private _convertToMilliseconds(lifetime: number, unit: TimeUnit) {
-        return lifetime * unit.valueOf();
-    }
-
-    private _convertToExpiringRecord(data: T) {
-        return data as unknown as IExpiringRecord<T>;
+        return record.d;
     }
 
     private _getTime() {
@@ -44,7 +54,7 @@ export default class ExpiringCache<T> extends Cache<T, IDataWithExpiration<T>> {
     }
 
     private _getTimeExpired() {
-        return this._getTime() + this._lifetime;
+        return this._getTime() + this._lifetime * this._unit;
     }
 }
 

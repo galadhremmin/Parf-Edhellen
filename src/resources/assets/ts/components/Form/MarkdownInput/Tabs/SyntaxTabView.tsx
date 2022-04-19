@@ -4,7 +4,7 @@ import TextIcon from '@root/components/TextIcon';
 import { LearnMoreMarkdownUrl } from '@root/config';
 
 function SyntaxTabView() {
-    return <>
+    return <div className="overflow-auto">
         <p>
             Markdown is a lightweight markup language with plain text formatting syntax.
             It is designed to make it easy for you to apply formatting to your text with
@@ -47,7 +47,7 @@ function SyntaxTabView() {
                 <tr>
                     <td><code>[Link to trees](https://en.wikipedia.org/wiki/Tree)</code></td>
                     <td>
-                        <a href="https://en.wikipedia.org/wiki/Tree" target="_blank">
+                        <a href="https://en.wikipedia.org/wiki/Tree" rel="noreferrer" target="_blank">
                             Link to trees
                         </a>
                         . Links to the specified page.
@@ -115,11 +115,11 @@ function SyntaxTabView() {
         <p>
             More information about Markdown
             {' '}
-            <a href={LearnMoreMarkdownUrl} target="_blank">
+            <a href={LearnMoreMarkdownUrl} rel="noreferrer" target="_blank">
                 can be found on Wikipedia
             </a>.
         </p>
-    </>;
+    </div>;
 }
 
 export default SyntaxTabView;

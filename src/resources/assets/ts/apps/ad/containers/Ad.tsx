@@ -18,10 +18,10 @@ function Ad(props: IProps & IAppProps) {
 
     let data = {};
     if (typeof dataset === 'object') {
-        data = Object.keys(dataset).reduce((carry: any, key: string) => {
+        data = Object.keys(dataset).reduce((carry: Record<string, string>, key: string) => {
             carry[`data-${toSnakeCase(key, '-')}`] = dataset[key];
             return carry;
-        }, {});
+        }, {} as Record<string, string>);
     }
 
     return <ins {...props.props} {...data}></ins>;

@@ -20,12 +20,12 @@ function AvatarForm(props: IProps) {
     const fileComponent = useRef<HTMLInputElement>(null);
     const [ showCallToAction, setShowCallToAction ] = useState(false);
 
-    const _onShowCallToAction = useCallback((ev: any) => {
+    const _onShowCallToAction = useCallback((ev: React.MouseEvent) => {
         ev.preventDefault();
         setShowCallToAction(true);
     }, []);
 
-    const _onHideCallToAction = useCallback((ev: any) => {
+    const _onHideCallToAction = useCallback(() => {
         setShowCallToAction(false);
     }, []);
 

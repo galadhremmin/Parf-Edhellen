@@ -55,7 +55,7 @@ function MovePost(props: IProps) {
                 throw new Error(`No movement necessary, the thread is already assigned to the group you've selected.`);
             }
 
-            apiConnector.moveThread({
+            await apiConnector.moveThread({
                 forumGroupId: groupId,
                 forumThreadId: threadId,
             });
@@ -74,15 +74,15 @@ function MovePost(props: IProps) {
     ]);
 
     return <>
-        <a href="#" onClick={_onDialogOpen}>
+        <a href="#" onClick={void _onDialogOpen}>
             <TextIcon icon="move" />{' Move'}
         </a>
         <Dialog<number>
             confirmButtonText="Move"
             open={isDialogOpen}
             title={<>Move <Quote>{subject}</Quote></>}
-            onDismiss={_onDialogOpen}
-            onConfirm={_onMoveSubmit}>
+            onDismiss={void _onDialogOpen}
+            onConfirm={void _onMoveSubmit}>
             {error && <StaticAlert type="danger">{error}</StaticAlert>}
             <label htmlFor="ed-discuss--forum-group-id">Discuss group:</label>
             <select className="form-select" id="ed-discuss--forum-group-id"

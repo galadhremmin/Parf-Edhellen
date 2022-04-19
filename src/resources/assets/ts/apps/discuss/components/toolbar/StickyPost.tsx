@@ -23,7 +23,7 @@ function StickyPost(props: IProps) {
         try {
             await apiConnector.stickThread({
                 forumThreadId: id,
-                sticky: !!!isSticky,
+                sticky: ! isSticky,
             });
 
             fireEventAsync(`StickyPost[${id}]`, onThreadChange, id);

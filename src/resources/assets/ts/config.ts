@@ -41,3 +41,7 @@ export const CommonPaths = {
     },
     dashboard: '/dashboard',
 };
+
+export const CacheLengthMinutes = {
+    languages: 60 * 24,
+};

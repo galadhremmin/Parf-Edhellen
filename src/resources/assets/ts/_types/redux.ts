@@ -1,5 +1,3 @@
-/// <reference path="./ts.d.ts" />
-
 import {
     AnyAction,
 } from 'redux';
@@ -13,6 +11,8 @@ export interface IReduxAction<TType = string> {
 }
 
 export type IReduxActionableState<T> = T & IReduxAction;
+
+export type FirstArgument<T> = T extends (arg1: infer U, ...args: any[]) => any ? U : any;
 
 export type CreateRootReducer<T> = {
     [R in keyof T]: FirstArgument<T[R]>;

@@ -15,7 +15,7 @@ function FeedFormatSelect(props: IProps) {
 
     const values = Object.keys(FeedFormat).map((text) => ({
         text,
-        value: (FeedFormat as any)[text], // TODO - there has to be a more elegant way to do this.
+        value: (FeedFormat as Record<string, string>)[text], // TODO - there has to be a more elegant way to do this.
     }));
 
     const _onChange = useCallback((ev: React.ChangeEvent<HTMLSelectElement>) => {

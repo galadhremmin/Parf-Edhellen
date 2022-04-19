@@ -11,7 +11,7 @@ export default class ErrorBoundary extends React.Component<IProps, IState> {
         reportErrorApi: resolve(DI.BackendApi),
     };
 
-    public static getDerivedStateFromError(error: Error) {
+    public static getDerivedStateFromError() {
         return {
             healthy: false,
         };
@@ -21,12 +21,12 @@ export default class ErrorBoundary extends React.Component<IProps, IState> {
         healthy: true,
     };
 
-    public componentDidCatch(error: Error, errorInfo: object) {
+    public async componentDidCatch(error: Error, errorInfo: object) {
         const {
             reportErrorApi,
         } = this.props;
 
-        reportErrorApi.error(
+        await reportErrorApi.error(
             error.message,
             window.location.href,
             `${error.stack}\n\n${JSON.stringify(errorInfo, undefined, 2)}`,

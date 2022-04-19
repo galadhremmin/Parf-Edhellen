@@ -1,4 +1,4 @@
-interface IErrorMap {
+export interface IErrorMap {
     [propertyName: string]: string[];
 }
 

@@ -16,7 +16,7 @@ const loadLatestScript = () => {
     }
 
     const latestVersion = document.body.dataset[`v`];
-    const latestScriptReg = new RegExp(`\/v${latestVersion}\/index\.js$`);
+    const latestScriptReg = new RegExp(`/v${latestVersion}/index.js$`);
     if (latestScriptReg.test(scriptTag.src)) {
         console.info(`🧙‍♂️ Parf Edhellen version ${latestVersion}`);
         return true;

@@ -69,6 +69,7 @@ const SentenceFragmentsReducer = (state = InitialState, action: ISentenceFragmen
                     });
                 });
             }
+        // eslint-disable-next-line no-fallthrough
         default:
             return state;
     }

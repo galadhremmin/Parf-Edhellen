@@ -3,16 +3,6 @@ import React, {
     useEffect,
     useState,
 } from 'react';
-import {
-    Bar,
-    BarChart,
-    CartesianGrid,
-    Legend,
-    ResponsiveContainer,
-    Tooltip,
-    XAxis,
-    YAxis,
-} from 'recharts';
 
 import { IComponentEvent } from '@root/components/Component._types';
 import { IErrorEntity } from '@root/connectors/backend/ILogApi';
@@ -54,7 +44,7 @@ function Log(props: IProps) {
     }, []);
 
     useEffect(() => {
-        _loadLogs(currentPage);
+        void _loadLogs(currentPage);
     }, [ currentPage ]);
 
     return <>

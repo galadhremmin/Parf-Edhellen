@@ -1,4 +1,4 @@
-type ConversionTable<S, D> = {
+type ConversionTable<S extends Partial<Record<keyof S, unknown>>, D extends Partial<Record<keyof D, unknown>>> = {
     [R in keyof D]?: (keyof S) | ((v: S, index?: number) => D[R]) | null;
 };
 
@@ -13,16 +13,16 @@ const isIneligible = <T>(subject: T) => //
  * @param subject source entity
  * @param resolverArgs optional arguments to pass to the resolver function in the conversion table.
  */
-export const mapper = <S, D>(table: ConversionTable<S, D>, subject: S, resolverArgs: any[] = []): D => {
+export const mapper = <S extends Partial<Record<keyof S, unknown>>, D extends Partial<Record<keyof D, unknown>>>(table: ConversionTable<S, D>, subject: S, resolverArgs: unknown[] = []): D => {
     if (isIneligible(subject)) {
         return null;
     }
 
-    const props = Object.keys(table);
-    const result: any = {};
+    const props = Object.keys(table) as (keyof D)[];
+    const result = {} as D;
 
     for (const prop of props) {
-        const resolver = (table as any)[prop];
+        const resolver = table[prop];
         let value; // = undefined;
 
         switch (typeof resolver) {
@@ -30,7 +30,7 @@ export const mapper = <S, D>(table: ConversionTable<S, D>, subject: S, resolverA
                 value = resolver.apply(this, [ subject, ...resolverArgs ]);
                 break;
             case 'string':
-                value = (subject as any)[resolver];
+                value = (subject as unknown)[resolver];
                 break;
             default:
                 value = resolver;
@@ -41,7 +41,7 @@ export const mapper = <S, D>(table: ConversionTable<S, D>, subject: S, resolverA
         }
     }
 
-    return result as D;
+    return result;
 };
 
 /**
@@ -49,7 +49,7 @@ export const mapper = <S, D>(table: ConversionTable<S, D>, subject: S, resolverA
  * @param table
  * @param subjects
  */
-export const mapArray = <S, D>(table: ConversionTable<S, D>, subjects: S[]): D[] => {
+export const mapArray = <S extends Partial<Record<keyof S, unknown>>, D extends Partial<Record<keyof D, unknown>>>(table: ConversionTable<S, D>, subjects: S[]): D[] => {
     if (isIneligible(subjects)) {
         return [];
     }
@@ -57,14 +57,15 @@ export const mapArray = <S, D>(table: ConversionTable<S, D>, subjects: S[]): D[]
     return subjects.map((s, i) => mapper(table, s, [i]));
 };
 
-export const mapArrayGroupBy = <S, D, G = string>(table: ConversionTable<S, D>, subjects: S[], groupBy: (v: S) => G): Map<G, D[]> => {
+export const mapArrayGroupBy = <S extends Partial<Record<keyof S, unknown>>, D extends Partial<Record<keyof D, unknown>>, G = string>(table: ConversionTable<S, D>, subjects: S[], groupBy: (v: S) => G): Map<G, D[]> => {
     const map = new Map<G, D[]>();
     if (isIneligible(subjects)) {
         return map;
     }
 
     for (const subject of subjects) {
-        const groupName = groupBy.call(subjects, subject);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const groupName = groupBy.call(subjects, subject) as G;
         if (! map.has(groupName)) {
             map.set(groupName, []);
         }

@@ -61,8 +61,8 @@ export default class ContributionResourceApiConnector implements IContributionRe
         return this._api.post<void>(this._apiPath('substep-validate'), envelope);
     }
 
-    public validateTransformations(args: ISentenceFragmentEntity[], suggestForLanguageId: number = 0) {
-        const envelope: any = {
+    public validateTransformations(args: ISentenceFragmentEntity[], suggestForLanguageId = 0) {
+        const envelope: Record<string, unknown> = {
             fragments: args,
             morph: 'sentence',
             substepId: 2,
@@ -75,7 +75,7 @@ export default class ContributionResourceApiConnector implements IContributionRe
         return this._api.post<IValidateTransformationsResponse>(this._apiPath('substep-validate'), envelope);
     }
 
-    private _apiPath(path: string = '') {
+    private _apiPath(path = '') {
         return `${ContributionResourceApiConnector.ApiPrefix}/${path}`;
     }
 }

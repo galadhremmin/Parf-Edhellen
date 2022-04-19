@@ -37,7 +37,7 @@ const ValidationErrorAlert = (props: IProps) => {
         }
     });
 
-    const modifiedMessage = /[!\?\.:]{1}$/.test(error.errorMessage)
+    const modifiedMessage = /[!?.:]{1}$/.test(error.errorMessage)
         ? error.errorMessage.substring(0, error.errorMessage.length - 1)
         : error.errorMessage;
 

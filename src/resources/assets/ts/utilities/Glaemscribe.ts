@@ -1,4 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable no-undef */
 /// <reference path="../_types/glaemscribe.d.ts" />
+
 import { ITranscriber } from '@root/components/Tengwar._types';
 import {
     DefaultGlaemscribeCharacterSet,
@@ -61,7 +64,7 @@ export default class Transcriber implements ITranscriber {
         }
 
         let humanName: string;
-        if (! transcriber.resource_manager.loaded_modes.hasOwnProperty(mode)) {
+        if (! (mode in transcriber.resource_manager.loaded_modes)) {
             mode = await this._loadMode(mode);
 
             if (mode === null) {
@@ -73,7 +76,7 @@ export default class Transcriber implements ITranscriber {
         }
 
         const charset = DefaultGlaemscribeCharacterSet;
-        if (! transcriber.resource_manager.loaded_charsets.hasOwnProperty(charset)) {
+        if (! (charset in transcriber.resource_manager.loaded_charsets)) {
             await this._loadCharset(charset);
             transcriber.resource_manager.load_charsets(charset);
         }
@@ -86,7 +89,7 @@ export default class Transcriber implements ITranscriber {
     }
 
     private _getGlaemscribe() {
-        return (window as any).Glaemscribe;
+        return (window as any).Glaemscribe as IGlaemscribe;
     }
 
     private _setGlaemscribe(transcriber: IGlaemscribe) {
@@ -96,6 +99,7 @@ export default class Transcriber implements ITranscriber {
     private async _loadGlaemscribe(): Promise<IGlaemscribe> {
         // Load and execute Glaemscribe
         const module = await import('glaemscribe/js/glaemscribe.min.js');
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         this._setGlaemscribe(module.Glaemscribe);
         return this._getGlaemscribe();
     }

@@ -22,8 +22,8 @@ const DiscussFilters = [
 ];
 const FilterQueryStringKeyName = 'filters';
 
-function FiltersButton(props: IProps) {
-    const [ filterMap, setFilterMap ] = useState(() => {
+function FiltersButton() {
+    const [ filterMap, setFilterMap ] = useState<Record<string, boolean>>(() => {
         // Retrieve the current filter configuration, or default to the filters described by the `DiscussFilters` constant
         const existingFilter = queryString.parse(window.location.search, {
             arrayFormat: 'bracket',
@@ -31,10 +31,10 @@ function FiltersButton(props: IProps) {
         // Build a collection by ensuring that the `existingFilter` is an array.
         const filterCollection: string[] = Array.isArray(existingFilter) ? existingFilter : [existingFilter];
         // Create a map for O(1) loop up as opposed to O(N) for retaining an array.
-        return filterCollection.reduce<any>((carry, filterName) => {
+        return filterCollection.reduce((carry, filterName) => {
             carry[filterName] = true;
             return carry;
-        }, {});
+        }, {} as Record<string, boolean>);
     });
 
     const [ isOpen, setIsOpen ] = useState<boolean>(false);
@@ -56,6 +56,8 @@ function FiltersButton(props: IProps) {
     }, [ filterMap ]);
 
     const _onApply = useCallback((ev: React.MouseEvent) => {
+        ev.preventDefault();
+
         const filters = Object.keys(filterMap).filter((f) => filterMap[f]);
         if (filters.length < 1) {
             return;

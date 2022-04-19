@@ -15,7 +15,8 @@ const GlossFooter = (props: IProps) => {
         {gloss.externalLinkFormat && gloss.externalId && <>
             <a href={gloss.externalLinkFormat.replace(/\{ExternalID\}/g, gloss.externalId)}
                 title={`Opens ${gloss.glossGroupName} in new tab or window.`}
-                target="_blank">
+                target="_blank"
+                rel="noreferrer">
                 <TextIcon icon="globe" />
                 {' '}
                 External source
