@@ -102,7 +102,6 @@ class SearchIndexRepository
     public function resolveIndexToEntities(int $searchGroupId, SearchIndexSearchValue $v)
     {
         $entityName = $this->getEntityNameFromSearchGroup($searchGroupId);
-        $entityMorph = Morphs::getAlias($entityName);
 
         $config = config('ed.book_entities');
         $resolverName = $config[$entityName]['resolver'];
@@ -125,6 +124,9 @@ class SearchIndexRepository
             unset($entities['word']);
         }
         // DEPRECATED END
+
+        $discussEntityType = $this->getDiscussEntityTypeFromEntityName($entityName);
+        $entityMorph = Morphs::getAlias($discussEntityType);
 
         return [
             'entities'        => $entities,
@@ -155,5 +157,15 @@ class SearchIndexRepository
         }
 
         throw new \Exception(sprintf('Unrecognised search group %d.', $searchGroupId));
+    }
+
+    private function getDiscussEntityTypeFromEntityName(string $entityName): ?string
+    {
+        $config = config('ed.book_entities');
+        if (isset($config[$entityName])) {
+            return $config[$entityName]['discuss_entity_type'] ?: $entityName;
+        }
+
+        throw new \Exception(sprintf('Unrecognised entity name %s.', $entityName));
     }
 }

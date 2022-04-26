@@ -60,18 +60,14 @@ class BookController extends BookBaseController
 
     public function versions(Request $request, int $id)
     {
-        $glosses = $this->_glossRepository->getVersions($id);
-        if (count($glosses) < 1) {
+        $glosses = $this->_glossRepository->getGlossVersions($id);
+        if ($glosses->getVersions()->count() < 1) {
             abort(404);
         }
 
-        $word = $glosses[0]->word;
-        $model = $this->_bookAdapter->adaptGlosses($glosses, [], [], $word, false, false);
-
-        return view('book.version', [
-            'word'      => $word,
-            'versions'  => $model['sections'][0]['entities'],
-            'user'      => $request->user()
+        $model = $this->_bookAdapter->adaptGlossVersions($glosses->getVersions(), $glosses->getLatestVersionId());
+        return view('book.version', $model + [
+            'user' => $request->user()
         ]);
     }
 }

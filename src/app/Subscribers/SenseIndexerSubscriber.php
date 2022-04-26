@@ -62,7 +62,6 @@ class SenseIndexerSubscriber
 
         $keywords = [];
         $glosses = $sense->glosses()
-            ->where('is_latest', 1)
             ->where('is_deleted', 0)
             ->get();
 

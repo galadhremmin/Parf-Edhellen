@@ -63,9 +63,6 @@ class GlossRepositoryTest extends TestCase
         $this->assertEquals($gloss->speech_id, $savedGloss->speech_id);
         $this->assertEquals($gloss->external_id, $savedGloss->external_id);
 
-        $this->assertEquals($existingGloss->id, $savedGloss->origin_gloss_id);
-        $this->assertEquals($savedGloss->id, $existingGloss->child_gloss_id);
-        $this->assertNull($savedGloss->child_gloss_id);
 
         $this->assertEquals($savedGloss->translations->count(), count($translations));
         $this->assertTrue(

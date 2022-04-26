@@ -7,7 +7,6 @@ use App\Models\{
     Account, 
     AuditTrail, 
     Contribution,
-    Favourite, 
     FlashcardResult,
     Gloss, 
     ForumDiscussion,
@@ -18,6 +17,11 @@ use App\Models\{
     Sense,
     Word
 };
+use App\Models\Versioning\{
+    GlossVersion,
+    GlossDetailVersion,
+    TranslationVersion
+};
 
 class Morphs 
 {
@@ -26,7 +30,6 @@ class Morphs
         Relation::morphMap([
             'account'      => Account::class,
             'contribution' => Contribution::class,
-            'favourite'    => Favourite::class,
             'flashcard'    => FlashcardResult::class,
             'sentence'     => Sentence::class,
             'fragment'     => SentenceFragment::class,
@@ -35,7 +38,11 @@ class Morphs
             'forum_thread' => ForumThread::class,
             'forum'        => ForumPost::class,
             'sense'        => Sense::class,
-            'word'         => Word::class
+            'word'         => Word::class,
+
+            'glossv'       => GlossVersion::class,
+            'glossdetailv' => GlossDetailVersion::class,
+            'translationv' => TranslationVersion::class
         ]);
     }
 

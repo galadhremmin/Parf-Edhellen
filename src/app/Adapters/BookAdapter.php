@@ -18,6 +18,9 @@ use App\Models\{
     Language,
     Translation
 };
+use App\Models\Versioning\{
+    GlossVersion
+};
 
 class BookAdapter
 {
@@ -29,7 +32,7 @@ class BookAdapter
      * @param mixed $commentsById - an associative array mapping glosses with number of comments (optional)
      * @param string|null $word - the search query yielding the specified list of glosses (optional)
      * @param bool $groupByLanguage - declares whether the glosses should be sectioned up by language  (optional)
-     * @param bool $atomDate - ATOM format dates? (option)
+     * @param bool $atomDate - ATOM format dates? (optional)
      * @return mixed - return value is determined by $groupByLanguage
      */
     public function adaptGlosses(array $glosses, array $inflections = [], array $commentsById = [], string $word = null, 
@@ -214,10 +217,9 @@ class BookAdapter
             $linker = resolve(LinkHelper::class);
         }
 
-        $isGlossEntity = $gloss instanceof Gloss;
         $separator = config('ed.gloss_translations_separator');
 
-        if ($isGlossEntity) {
+        if ($gloss instanceof Gloss || $gloss instanceof GlossVersion) {
             $entity = $gloss;
 
             $gloss = (object) $gloss->attributesToArray();
@@ -247,7 +249,6 @@ class BookAdapter
             unset(
                 $gloss->word_id,
                 $gloss->is_deleted,
-                $gloss->child_gloss_id,
                 $gloss->updated_at,
                 $gloss->speech_id,
                 $gloss->has_details
@@ -312,6 +313,9 @@ class BookAdapter
         $gloss->comment_count = isset($commentsById[$gloss->id]) 
             ? $commentsById[$gloss->id] : 0;
 
+        // Unversioned glosses are always the latest version
+        $gloss->is_latest = true;
+
         // Create links upon the first element of each sentence fragment.
         if ($gloss->inflections !== null) {
             foreach ($gloss->inflections as $sentenceFragmentId => $inflectionsForFragment) {
@@ -333,6 +337,28 @@ class BookAdapter
         }
 
         return $gloss;
+    }
+
+    public function adaptGlossVersions(Collection $values, int $latestVersionId)
+    {
+        $word = null;
+        $versions = [];
+        if ($values->count() > 0) {
+            $word = $values->first()->word->word;
+
+            $model = $this->adaptGlosses($values->all(), [], [], $word);
+            $versions = $model['sections'][0]['entities'];
+            unset($model);
+
+            foreach ($versions as $version) {
+                $version->is_latest = $version->id === $latestVersionId;
+            }
+        }
+
+        return [
+            'word'     => $word,
+            'versions' => $versions
+        ];
     }
 
     /**

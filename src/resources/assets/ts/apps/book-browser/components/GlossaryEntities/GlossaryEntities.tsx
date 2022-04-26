@@ -175,7 +175,7 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
                         glosses={sections[language.id]} onReferenceLinkClick={this._onReferenceClick} />
                     {single && <section className="mt-3">
                         <Suspense fallback={<Spinner />}>
-                            <DiscussAsync entityId={sections[language.id][0].id} entityType={entityMorph} prefetched={false} />
+                            <DiscussAsync entityId={sections[language.id][0].latestGlossVersionId} entityType={entityMorph} prefetched={false} />
                         </Suspense>
                     </section>}
                 </Fragment>,

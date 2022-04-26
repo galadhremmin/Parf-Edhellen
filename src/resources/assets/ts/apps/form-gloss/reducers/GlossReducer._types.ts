@@ -4,7 +4,7 @@ import { IGlossEntity } from '@root/connectors/backend/IGlossResourceApi';
 
 export type IGlossState = IContribution<Pick<IGlossEntity, 'account' | 'comments' |
     'etymology' | 'externalId' | 'glossDetails' | 'glossGroupId' | 'id' |
-    'isRejected' | 'isUncertain' | 'keywords' | 'label' | 'languageId' | 'phonetic' |
+    'isRejected' | 'isUncertain' | 'keywords' | 'label' | 'languageId' | 'latestGlossVersionId' |
     'sense' | 'source' | 'speechId' | 'tengwar' | 'translations' | 'word'>>;
 
 export interface IGlossAction extends IReduxAction {

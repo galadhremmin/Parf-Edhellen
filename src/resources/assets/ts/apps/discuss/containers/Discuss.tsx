@@ -81,16 +81,23 @@ function Discuss(props: IProps) {
     }, []);
 
     const _onCreateNewPost = useCallback(() => {
-        fireEvent(null, onNewPostCreate);
-    }, [ onNewPostCreate ]);
+        fireEvent(null, onNewPostCreate, {
+            forumThreadId: threadId,
+        });
+    }, [ onNewPostCreate, threadId ]);
 
     const _onDiscardNewPost = useCallback(() => {
-        fireEvent(null, onNewPostDiscard);
-    }, [ onNewPostDiscard ]);
+        fireEvent(null, onNewPostDiscard, {
+            forumThreadId: threadId,
+        });
+    }, [ onNewPostDiscard, threadId ]);
 
     const _onNewPostChange = useCallback((ev: IComponentEvent<IFormChangeData>) => {
-        fireEvent(null, onNewPostChange, ev.value);
-    }, [ onNewPostChange ]);
+        fireEvent(null, onNewPostChange, {
+            change: ev.value,
+            forumThreadId: threadId,
+        });
+    }, [ onNewPostChange, threadId ]);
 
     const _onNewPostSubmit = useCallback((ev: IComponentEvent<IFormOutput>) => {
         fireEvent(null, onNewPostSubmit, {
@@ -159,53 +166,94 @@ function Discuss(props: IProps) {
                   />
                 : <RespondButton onClick={_onCreateNewPost} isNewPost={posts.length === 0} />}
         </aside>}
-        <div ref={paginationRef}>
+        {posts.length > 0 && <div ref={paginationRef}>
             <Pagination currentPage={currentPage}
                 noOfPages={noOfPages}
                 onClick={_onPaginate}
                 pages={PageModes.AutoGenerate}
             />
-        </div>
+        </div>}
         <AuthenticationDialog onDismiss={_onAuthenticationCancelled} open={promoteAuth} />
     </>;
 }
 
-const mapStateToProps = (state: RootReducer) => ({
-    ...state.pagination,
-    newPostContent: state.newPost.content,
-    newPostEnabled: state.newPost.enabled,
-    newPostLoading: state.newPost.loading,
-    posts: state.posts,
-    thread: state.thread,
-    threadMetadata: state.threadMetadata,
-    roleManager: resolve(DI.RoleManager),
-} as Partial<IProps>);
+const mapStateToProps = (state: RootReducer, ownProps: IProps) => {
+    const {
+        entityId,
+        entityType,
+    } = ownProps;
+    const {
+        paginations,
+        newPosts,
+        posts: allPosts,
+        threads,
+        threadMetadatas,
+    } = state;
+
+    const thread = threads.find(t => t.entityId === entityId && t.entityType === entityType);
+    if (thread) {
+        const pagination     = paginations.find(e => e.forumThreadId === thread.id);
+        const newPost        = newPosts.find(e => e.forumThreadId === thread.id);
+        const threadMetadata = threadMetadatas.find(e => e.forumThreadId === thread.id);
+        const posts          = allPosts.filter(e => e.forumThreadId === thread.id) || [];
+
+        if (pagination && threadMetadata) {
+            return {
+                ...pagination,
+                newPostContent: newPost?.content || '',
+                newPostEnabled: newPost?.enabled || false,
+                posts,
+                thread,
+                threadMetadata,
+                roleManager: resolve(DI.RoleManager),
+            } as Partial<IProps>;
+        }
+    }
+
+    return {
+        newPostContent: '',
+        newPostEnabled: false,
+        posts: [],
+        roleManager: resolve(DI.RoleManager),
+        thread: {
+            entityId,
+            entityType,
+            forumGroupId: 0,
+            id: 0,
+        },
+    } as Partial<IProps>;
+};
 
 const actions = new DiscussActions();
-const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => ({
-    onExistingPostChange: (ev) => dispatch(actions.post({
-        forumPostId: ev.value,
-        includeDeleted: true,
-    })),
-    onExistingThreadChange: (ev) => dispatch(actions.thread({ id: ev.value })),
-    onExistingThreadMetadataChange: (ev) => dispatch(actions.threadMetadata(ev.value)),
-    onNewPostChange: (ev) => dispatch(actions.changeNewPost({
-        propertyName: ev.value.name,
-        value: ev.value.value,
-    })),
-    onNewPostCreate: () => dispatch(actions.createNewPost()),
-    onNewPostDiscard: () => dispatch(actions.discardNewPost()),
-    onNewPostSubmit: (ev) => dispatch(actions.createPost(ev.value)),
-    onPageChange: (ev) => dispatch(actions.thread({
-        entityId: ev.value.thread.entityId,
-        entityType: ev.value.thread.entityType,
-        id: ev.value.thread.id,
-        offset: ev.value.pageNumber,
-    })),
-    onReferenceLinkClick: (ev) => {
-        const globalEvent = new GlobalEventConnector();
-        globalEvent.fire(globalEvent.loadReference, ev.value);
-    },
-} as Partial<IProps>);
+const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => {
+    return {
+        onExistingPostChange: (ev) => dispatch(actions.post({
+            forumPostId: ev.value,
+            includeDeleted: true,
+        })),
+        onExistingThreadChange: (ev) => dispatch(actions.thread({
+            id: ev.value,
+        })),
+        onExistingThreadMetadataChange: (ev) => dispatch(actions.threadMetadata(ev.value)),
+        onNewPostChange: (ev) => dispatch(actions.changeNewPost({
+            propertyName: ev.value.change.name,
+            forumThreadId: ev.value.forumThreadId,
+            value: ev.value.change.value,
+        })),
+        onNewPostCreate: (ev) => dispatch(actions.createNewPost(ev.value.forumThreadId)),
+        onNewPostDiscard: (ev) => dispatch(actions.discardNewPost(ev.value.forumThreadId)),
+        onNewPostSubmit: (ev) => dispatch(actions.createPost(ev.value)),
+        onPageChange: (ev) => dispatch(actions.thread({
+            entityId: ev.value.thread.entityId,
+            entityType: ev.value.thread.entityType,
+            id: ev.value.thread.id,
+            offset: ev.value.pageNumber,
+        })),
+        onReferenceLinkClick: (ev) => {
+            const globalEvent = new GlobalEventConnector();
+            globalEvent.fire(globalEvent.loadReference, ev.value);
+        },
+    } as Partial<IProps>;
+};
 
 export default connect<Partial<IProps>, Partial<IProps>, IProps>(mapStateToProps, mapDispatchToProps)(Discuss);

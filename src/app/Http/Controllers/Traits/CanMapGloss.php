@@ -23,7 +23,6 @@ trait CanMapGloss
 
         $gloss->is_rejected   = boolval($request->input('is_rejected'));
         $gloss->is_uncertain  = boolval($request->input('is_uncertain'));
-        $gloss->is_latest     = 1;
             
         $gloss->source        = $request->input('source');
         $gloss->comments      = $request->input('comments');
@@ -55,8 +54,7 @@ trait CanMapGloss
                 return new GlossDetail([
                     'category'   => trim($d['category']),
                     'text'       => trim($d['text']),
-                    'order'      => intval($d['order']),
-                    'account_id' => $gloss->account_id
+                    'order'      => intval($d['order'])
                 ]);
             }, $request->input('gloss_details'))
             : [];

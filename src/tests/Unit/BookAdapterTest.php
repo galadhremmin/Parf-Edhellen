@@ -103,8 +103,6 @@ class BookAdapterTest extends TestCase
         
         $this->assertEquals(2, count($glosses));
         $this->assertEquals(count($glosses), count($glossesFromRepository) / ($numberOfTranslations * $numberOfDetails));
-        $this->assertTrue($gloss0->is_latest == true);
-        $this->assertTrue($gloss1->is_latest == true);
         $this->assertFalse($adapted['single']);
 
         $this->assertEquals(1, count($adapted['sections']));

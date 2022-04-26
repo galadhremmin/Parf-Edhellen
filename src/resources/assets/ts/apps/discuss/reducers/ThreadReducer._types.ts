@@ -19,14 +19,17 @@ export type IThreadMetadataAction = IThreadMetadataRequest;
 
 export interface IChangePostAction {
     propertyName: string;
+    forumThreadId: number;
     value: string;
 }
 
-export interface IThreadState extends IThreadEntity {
-    loading: boolean;
+export interface IThreadState extends Partial<IThreadEntity> {
+    loading?: boolean;
 }
 
 export interface IThreadReducerAction extends IReduxAction {
+    entityId?: number;
+    entityType?: string;
     threadData: IThreadResponse;
     postData: IPostResponse;
 }

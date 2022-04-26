@@ -37,8 +37,8 @@ class GlossApiController extends Controller
         $replacementId = intval($data['replacement_id']);
 
         if ($replacementId !== 0) {
-            $glosses = $this->_repository->getGlossVersion($replacementId);
-            if ($glosses->count() === 0) {
+            $glossVersions = $this->_repository->getGlossVersions($replacementId)->getVersions();
+            if ($glossVersions->count() === 0) {
                 return response(null, 400);
             }
         }

@@ -43,6 +43,12 @@ function Dialog<V>(props: IProps<V>) {
         } else {
             document.body.classList.remove(noscrollClass);
         }
+
+        return () => {
+            if (open) {
+                document.body.classList.remove(noscrollClass);
+            }
+        };
     }, [ open ]);
 
      // This is needed so screen readers don't see main content when modal is opened.

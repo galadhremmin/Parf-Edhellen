@@ -18,21 +18,27 @@ export interface IPageChangeEvent {
     thread: IThreadEntity;
 }
 
+export interface IThreadActivity {
+    forumThreadId: number;
+    change?: IFormChangeData;
+}
+
 export interface IProps {
     currentPage?: number;
+    entityId?: number;
+    entityType?: string;
     jumpPostId?: number;
     newPostContent?: string;
     newPostEnabled?: boolean;
-    newPostLoading?: boolean;
     noOfPages?: number;
     pages?: (string | number)[];
     onExistingPostChange?: ComponentEventHandler<number>;
     onExistingThreadChange?: ComponentEventHandler<number>;
     onExistingThreadMetadataChange?: ComponentEventHandler<IThreadMetadataArgs>;
-    onNewPostChange?: ComponentEventHandler<IFormChangeData>;
-    onNewPostCreate?: ComponentEventHandler<void>;
+    onNewPostChange?: ComponentEventHandler<IThreadActivity>;
+    onNewPostCreate?: ComponentEventHandler<IThreadActivity>;
     onNewPostSubmit?: ComponentEventHandler<ICreatePostAction>;
-    onNewPostDiscard?: ComponentEventHandler<void>;
+    onNewPostDiscard?: ComponentEventHandler<IThreadActivity>;
     onPageChange?: ComponentEventHandler<IPageChangeEvent>;
     onReferenceLinkClick?: ComponentEventHandler<IReferenceLinkClickDetails>;
     posts?: IPostEntity[];

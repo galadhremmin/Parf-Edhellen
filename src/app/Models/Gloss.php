@@ -9,7 +9,7 @@ class Gloss extends ModelBase implements Interfaces\IHasFriendlyName
     protected $fillable = [ 
         'account_id', 'language_id', 'word_id', 'speech_id', 'gloss_group_id', 'sense', 
         'source', 'comments', 'notes', 'is_uncertain', 'is_rejected', 'tengwar',
-        'word', 'external_id', 'has_details', 'label'
+        'word', 'external_id', 'has_details', 'label', 'latest_gloss_version_id'
     ];
 
     public function translations() 
@@ -62,24 +62,14 @@ class Gloss extends ModelBase implements Interfaces\IHasFriendlyName
         return $this->hasMany(Contribution::class);
     }
 
-    public function favourites() 
+    public function flashcard_results()
     {
-        return $this->hasMany(Favourite::class);
+        return $this->hasMany(FlashcardResult::class);
     }
 
     public function scopeNotDeleted($query)
     {
         $query->where('is_deleted', 0);
-    }
-
-    public function scopeNotIndex($query)
-    {
-        $query->where('is_index', 0);
-    }
-
-    public function scopeLatest($query)
-    {
-        $query->where('is_latest', 1);
     }
 
     public function scopeNotUncertain($query)
@@ -93,43 +83,6 @@ class Gloss extends ModelBase implements Interfaces\IHasFriendlyName
     public function scopeActive($query) 
     {
         $this->scopeNotDeleted($query);
-        $this->scopeNotIndex($query);
-        $this->scopeLatest($query);
-    }
-
-    public function getParent()
-    {
-        return Gloss::where('child_gloss_id', $this->id)
-            ->get();
-    }
-
-    public function getOrigin()
-    {
-        if (! $this->origin_gloss_id) {
-            return $this;
-        }
-
-        return Gloss::where('origin_gloss_id', $this->id)
-            ->get();
-    }
-
-    public function getChild()
-    {
-        if (! $this->child_gloss_id) {
-            return null;
-        }
-
-        return Gloss::find($this->child_gloss_id);
-    }
-
-    public function getLatestVersion() 
-    {
-        return $this->is_latest
-            ? $this
-            : Gloss::where([
-                [ 'origin_gloss_id', '=', $this->origin_gloss_id ?: $this->id ],
-                [ 'is_latest', '=', 1]
-            ])->first() ?: $this;
     }
 
     public function getFriendlyName() 

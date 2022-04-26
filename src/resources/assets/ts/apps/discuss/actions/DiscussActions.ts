@@ -25,7 +25,22 @@ export default class DiscussActions {
 
     public thread(args: IThreadAction, jump = true): ReduxThunk {
         return async (dispatch: ReduxThunkDispatch) => {
+            const {
+                entityId,
+                entityType,
+                id,
+            } = args;
+
+            const payload = id ? {
+                threadData: {
+                    threadId: id,
+                }
+            } : {
+                entityId,
+                entityType,
+            };
             dispatch({
+                ...payload,
                 type: Actions.RequestThread,
             });
 
@@ -67,19 +82,22 @@ export default class DiscussActions {
     public threadMetadata(args: IThreadMetadataAction): ReduxThunk {
         return async (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
             // Bail if this request is already being processed.
-            if (getState().threadMetadata.loading ||
+            const metadata = getState().threadMetadatas.find((e) => e.forumThreadId === args.forumThreadId);
+            if (metadata?.loading ||
                 args.forumPostId.length < 1 ||
                 args.forumThreadId === null) {
                 return;
             }
 
             dispatch({
+                forumThreadId: args.forumThreadId,
                 type: Actions.RequestThreadMetadata,
             });
 
-            const metadata = await this._api.threadMetadata(args);
+            const newMetadata = await this._api.threadMetadata(args);
             dispatch({
-                metadata,
+                metadata: newMetadata,
+                forumThreadId: args.forumThreadId,
                 type: Actions.ReceiveThreadMetadata,
             });
         };
@@ -101,21 +119,23 @@ export default class DiscussActions {
         };
     }
 
-    public createNewPost() {
+    public createNewPost(forumThreadId: number) {
         return {
+            forumThreadId,
             type: Actions.CreateNewPost,
         };
     }
 
     public changeNewPost(args: IChangePostAction) {
         return {
-            type: Actions.ChangeNewPost,
             ...args,
+            type: Actions.ChangeNewPost,
         };
     }
 
-    public discardNewPost() {
+    public discardNewPost(forumThreadId: number) {
         return {
+            forumThreadId,
             type: Actions.DiscardNewPost,
         };
     }
@@ -123,13 +143,18 @@ export default class DiscussActions {
     public createPost(args: ICreatePostAction): ReduxThunk {
         return async (dispatch: ReduxThunkDispatch) => {
             try {
+                const {
+                    forumThreadId
+                } = args;
                 dispatch({
+                    forumThreadId,
                     type: Actions.RequestCreatePost,
                 });
 
                 const postData = await this._api.createPost(args);
 
                 dispatch({
+                    forumThreadId,
                     type: Actions.ReceiveCreatePost,
                 });
 

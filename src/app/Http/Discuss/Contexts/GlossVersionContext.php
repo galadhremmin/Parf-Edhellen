@@ -3,6 +3,7 @@
 namespace App\Http\Discuss\Contexts;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 use App\Adapters\BookAdapter;
 use App\Repositories\GlossRepository;
@@ -11,9 +12,10 @@ use App\Models\{
     Account,
     Gloss
 };
+use App\Models\Versioning\GlossVersion;
 use App\Helpers\LinkHelper;
 
-class GlossContext implements IDiscussContext
+class GlossVersionContext implements IDiscussContext
 {
     private $_linkHelper;
     private $_bookAdapter;
@@ -33,7 +35,7 @@ class GlossContext implements IDiscussContext
 
     public function resolveById(int $entityId)
     {
-        return Gloss::find($entityId);
+        return GlossVersion::find($entityId);
     }
 
     public function available($entityOrId, Account $account = null)
@@ -47,7 +49,8 @@ class GlossContext implements IDiscussContext
             return null;
         }
         
-        return 'Gloss “'.$entity->word->word.'” by '.$entity->account->nickname;
+        $date = new Carbon($entity->version_created_at);
+        return 'Gloss “'.$entity->word->word.'” by '.$entity->account->nickname.' created '.$date->diffForHumans();
     }
 
     public function getIconPath()
@@ -58,9 +61,8 @@ class GlossContext implements IDiscussContext
 
     public function view(Model $entity)
     {
-        $data = $this->_glossRepository->getGlossVersion($entity->id)->toArray();
-        $model = $this->_bookAdapter->adaptGlosses($data);
-
+        $gloss = Gloss::findOrFail($entity->gloss_id);
+        $model = $this->_bookAdapter->adaptGlosses([$gloss]);
         return view('discuss.context._gloss', $model);
     }
 }

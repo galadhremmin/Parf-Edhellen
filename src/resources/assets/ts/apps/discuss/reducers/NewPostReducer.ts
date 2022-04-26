@@ -9,6 +9,7 @@ const NewPostReducer = (state: INewPostState = {
     enabled: false,
     loading: false,
     subject: '',
+    forumThreadId: 0,
 }, action: INewPostAction) => {
     switch (action.type) {
         case Actions.ReceiveCreatePost:
@@ -16,6 +17,7 @@ const NewPostReducer = (state: INewPostState = {
                 ...state,
                 enabled: false, // disable editing mode
                 loading: false,
+                forumThreadId: action.forumThreadId,
             };
         case Actions.RequestCreatePost:
             return {
@@ -23,21 +25,25 @@ const NewPostReducer = (state: INewPostState = {
                 content: '',
                 loading: true,
                 subject: '',
+                forumThreadId: action.forumThreadId,
             };
         case Actions.ChangeNewPost:
             return {
                 ...state,
+                forumThreadId: action.forumThreadId,
                 [action.propertyName]: action.value,
             };
         case Actions.CreateNewPost:
             return {
                 ...state,
                 enabled: true,
+                forumThreadId: action.forumThreadId,
             };
         case Actions.DiscardNewPost:
             return {
                 ...state,
                 enabled: false,
+                forumThreadId: action.forumThreadId,
             };
         default:
             return state;

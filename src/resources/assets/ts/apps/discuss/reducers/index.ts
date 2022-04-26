@@ -2,18 +2,18 @@ import { combineReducers } from 'redux';
 
 import { CreateRootReducer } from '@root/_types';
 
-import { default as newPost } from './NewPostReducer';
-import { default as pagination } from './PostPaginationReducer';
+import { default as newPosts } from './NewPostsReducer';
+import { default as paginations } from './PostPaginationsReducer';
 import { default as posts } from './PostsReducer';
-import { default as threadMetadata } from './ThreadMetadataReducer';
-import { default as thread } from './ThreadReducer';
+import { default as threadMetadatas } from './ThreadMetadatasReducer';
+import { default as threads } from './ThreadsReducer';
 
 const reducers = {
-    newPost,
-    pagination,
+    newPosts,
+    paginations,
     posts,
-    thread,
-    threadMetadata,
+    threads,
+    threadMetadatas,
 };
 
 export type RootReducer = CreateRootReducer<typeof reducers>;

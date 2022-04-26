@@ -15,15 +15,14 @@ export interface IGlossEntity {
     hasDetails?: boolean;
     id?: number;
     isDeleted?: boolean;
-    isIndex?: boolean;
     isLatest?: boolean;
     isRejected?: boolean;
     isUncertain?: boolean;
     keywords?: IKeywordEntity[];
     label?: string;
     languageId: number;
+    latestGlossVersionId?: number;
     originGlossId?: number;
-    phonetic?: null;
     sense: ISenseEntity;
     senseId?: number;
     source: string;

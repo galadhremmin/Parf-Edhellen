@@ -68,18 +68,17 @@ abstract class BookBaseController extends Controller
      */
     protected function getGlossUnadapted(int $glossId, bool $coerceLatest = false)
     {
-        $glosses = $this->_glossRepository->getGlossVersion($glossId);
-        if ($glosses->count() < 1) {
+        $glossVersions = $this->_glossRepository->getGlossVersions($glossId);
+        if ($glossVersions->getVersions()->count() < 1) {
             return null;
         }
 
-        $gloss = $glosses->first();
-        if (! $gloss->is_latest && $coerceLatest) {
-            $glossId = $this->_glossRepository->getLatestGloss($gloss->origin_gloss_id ?: $gloss->id);
-            return $this->getGlossUnadapted($glossId, false);
+        if ($coerceLatest) {
+            $latestVersion = $glossVersions->getVersions()->firstWhere('id', $glossVersions->getLatestVersionId());
+            return $this->getGlossUnadapted($latestVersion->gloss_id, false);
         }
 
-        return $glosses;
+        return $glossVersions;
     }
 
     /**
