@@ -1,10 +1,11 @@
 import collectivize from '@root/utilities/redux/collectivize';
 import { Actions } from '../actions';
+import { keyGenerator } from './key-generator';
 import PostPaginationReducer from './PostPaginationReducer';
 
 export default collectivize(
     PostPaginationReducer,
-    (e, a) => e.forumThreadId === (a.threadData.threadId ?? a.threadData.thread.id),
+    action => keyGenerator(action.entityType, action.entityId),
     [
         Actions.ReceiveThread,
     ]

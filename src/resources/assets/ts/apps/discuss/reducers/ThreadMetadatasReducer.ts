@@ -1,10 +1,11 @@
 import collectivize from '@root/utilities/redux/collectivize';
 import { Actions } from '../actions';
+import { keyGenerator } from './key-generator';
 import ThreadMetadataReducer from './ThreadMetadataReducer';
 
 export default collectivize(
     ThreadMetadataReducer,
-    (e, a) => e.forumThreadId === a.forumThreadId,
+    action => keyGenerator(action.entityType, action.entityId),
     [
         Actions.ReceiveThreadMetadata,
         Actions.RequestThreadMetadata,

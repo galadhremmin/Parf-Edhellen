@@ -26,8 +26,10 @@ import Post from '../components/Post';
 import { IProps as IPostProps } from '../components/Post._types';
 import RespondButton from '../components/RespondButton';
 import ConditionalToolbar from '../components/toolbar/ConditionalToolbar';
-import { RootReducer } from '../reducers';
+import { keyGenerator, RootReducer } from '../reducers';
 import { IProps } from './Discuss._types';
+import { DEFAULT_COLLECTIVIZE_KEY, getStateOrDefault } from '@root/utilities/redux/collectivize';
+import ThreadsReducer from '../reducers/ThreadsReducer';
 
 function Discuss(props: IProps) {
     const formRef = useRef(null);
@@ -82,26 +84,31 @@ function Discuss(props: IProps) {
 
     const _onCreateNewPost = useCallback(() => {
         fireEvent(null, onNewPostCreate, {
-            forumThreadId: threadId,
+            entityId,
+            entityType,
         });
-    }, [ onNewPostCreate, threadId ]);
+    }, [ onNewPostCreate, entityId, entityType ]);
 
     const _onDiscardNewPost = useCallback(() => {
         fireEvent(null, onNewPostDiscard, {
-            forumThreadId: threadId,
+            entityId,
+            entityType,
         });
-    }, [ onNewPostDiscard, threadId ]);
+    }, [ onNewPostDiscard, entityId, entityType ]);
 
     const _onNewPostChange = useCallback((ev: IComponentEvent<IFormChangeData>) => {
         fireEvent(null, onNewPostChange, {
             change: ev.value,
-            forumThreadId: threadId,
+            entityId,
+            entityType,
         });
-    }, [ onNewPostChange, threadId ]);
+    }, [ onNewPostChange, entityId, entityType ]);
 
     const _onNewPostSubmit = useCallback((ev: IComponentEvent<IFormOutput>) => {
         fireEvent(null, onNewPostSubmit, {
             ...(threadId ? {
+                entityId,
+                entityType,
                 forumThreadId: threadId,
             } : {
                 entityId,
@@ -190,37 +197,22 @@ const mapStateToProps = (state: RootReducer, ownProps: IProps) => {
         threadMetadatas,
     } = state;
 
-    const thread = threads.find(t => t.entityId === entityId && t.entityType === entityType);
-    if (thread) {
-        const pagination     = paginations.find(e => e.forumThreadId === thread.id);
-        const newPost        = newPosts.find(e => e.forumThreadId === thread.id);
-        const threadMetadata = threadMetadatas.find(e => e.forumThreadId === thread.id);
-        const posts          = allPosts.filter(e => e.forumThreadId === thread.id) || [];
+    const key = keyGenerator(entityType, entityId);
 
-        if (pagination && threadMetadata) {
-            return {
-                ...pagination,
-                newPostContent: newPost?.content || '',
-                newPostEnabled: newPost?.enabled || false,
-                posts,
-                thread,
-                threadMetadata,
-                roleManager: resolve(DI.RoleManager),
-            } as Partial<IProps>;
-        }
-    }
+    const pagination = getStateOrDefault(paginations, key);
+    const thread = getStateOrDefault(threads, key);
+    const threadMetadata = getStateOrDefault(threadMetadatas, key);
+    const newPost = getStateOrDefault(newPosts, key);
+    const posts = allPosts.filter(p => p.forumThreadId === thread.id);
 
     return {
-        newPostContent: '',
-        newPostEnabled: false,
-        posts: [],
+        ...pagination,
+        newPostContent: newPost?.content || '',
+        newPostEnabled: newPost?.enabled || false,
+        posts,
+        thread,
+        threadMetadata,
         roleManager: resolve(DI.RoleManager),
-        thread: {
-            entityId,
-            entityType,
-            forumGroupId: 0,
-            id: 0,
-        },
     } as Partial<IProps>;
 };
 
@@ -236,12 +228,13 @@ const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => {
         })),
         onExistingThreadMetadataChange: (ev) => dispatch(actions.threadMetadata(ev.value)),
         onNewPostChange: (ev) => dispatch(actions.changeNewPost({
+            entityId: ev.value.entityId,
+            entityType: ev.value.entityType,
             propertyName: ev.value.change.name,
-            forumThreadId: ev.value.forumThreadId,
             value: ev.value.change.value,
         })),
-        onNewPostCreate: (ev) => dispatch(actions.createNewPost(ev.value.forumThreadId)),
-        onNewPostDiscard: (ev) => dispatch(actions.discardNewPost(ev.value.forumThreadId)),
+        onNewPostCreate: (ev) => dispatch(actions.createNewPost(ev.value)),
+        onNewPostDiscard: (ev) => dispatch(actions.discardNewPost(ev.value)),
         onNewPostSubmit: (ev) => dispatch(actions.createPost(ev.value)),
         onPageChange: (ev) => dispatch(actions.thread({
             entityId: ev.value.thread.entityId,

@@ -11,15 +11,17 @@ import { IRoleManager } from '@root/security';
 import { IFormChangeData } from '../components/Form._types';
 import { IThreadMetadataArgs } from '../components/toolbar/index._types';
 import { IThreadMetadataState } from '../reducers/ThreadMetadataReducer._types';
-import { ICreatePostAction } from '../reducers/ThreadReducer._types';
+import {
+    ICreatePostAction,
+    IThreadEntityAction,
+} from '../reducers/ThreadReducer._types';
 
 export interface IPageChangeEvent {
     pageNumber: number;
     thread: IThreadEntity;
 }
 
-export interface IThreadActivity {
-    forumThreadId: number;
+export interface IThreadActivity extends IThreadEntityAction {
     change?: IFormChangeData;
 }
 

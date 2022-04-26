@@ -8,7 +8,6 @@ const ThreadMetadataReducer = (state: IThreadMetadataState = {
     likes: [],
     likesPerPost: {},
     loading: false,
-    forumThreadId: 0,
 }, action: IThreadMetadataReducerAction): IThreadMetadataState => {
     switch (action.type) {
         case Actions.ReceiveThreadMetadata: {
@@ -26,7 +25,6 @@ const ThreadMetadataReducer = (state: IThreadMetadataState = {
                     ...action.metadata.likesPerPost,
                 },
                 loading: false,
-                forumThreadId: action.forumThreadId,
             };
         }
         case Actions.RequestThreadMetadata:

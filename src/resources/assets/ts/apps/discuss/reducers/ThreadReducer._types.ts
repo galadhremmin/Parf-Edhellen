@@ -15,11 +15,12 @@ import {
 export type ICreatePostAction = ICreatePostRequest;
 export type IThreadAction = IThreadRequest;
 export type IPostAction = IPostRequest;
-export type IThreadMetadataAction = IThreadMetadataRequest;
+export interface IThreadMetadataAction extends IThreadMetadataRequest, IThreadEntityAction {
 
-export interface IChangePostAction {
+};
+
+export interface IChangePostAction extends IThreadEntityAction {
     propertyName: string;
-    forumThreadId: number;
     value: string;
 }
 
@@ -27,9 +28,12 @@ export interface IThreadState extends Partial<IThreadEntity> {
     loading?: boolean;
 }
 
-export interface IThreadReducerAction extends IReduxAction {
-    entityId?: number;
-    entityType?: string;
+export interface IThreadEntityAction {
+    entityId: number;
+    entityType: string;
+}
+
+export interface IThreadReducerAction extends IReduxAction, IThreadEntityAction {
     threadData: IThreadResponse;
     postData: IPostResponse;
 }

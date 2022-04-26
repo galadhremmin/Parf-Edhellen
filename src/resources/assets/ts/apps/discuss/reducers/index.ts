@@ -8,6 +8,8 @@ import { default as posts } from './PostsReducer';
 import { default as threadMetadatas } from './ThreadMetadatasReducer';
 import { default as threads } from './ThreadsReducer';
 
+export { keyGenerator } from './key-generator';
+
 const reducers = {
     newPosts,
     paginations,

@@ -1,10 +1,11 @@
 import collectivize from '@root/utilities/redux/collectivize';
 import { Actions } from '../actions';
+import { keyGenerator } from './key-generator';
 import NewPostReducer from './NewPostReducer';
 
 export default collectivize(
     NewPostReducer,
-    (e, a) => e.forumThreadId === a.forumThreadId,
+    action => keyGenerator(action.entityType, action.entityId),
     [
         Actions.ReceiveCreatePost,
         Actions.RequestCreatePost,
