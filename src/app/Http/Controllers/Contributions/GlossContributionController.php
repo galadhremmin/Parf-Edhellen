@@ -208,7 +208,12 @@ class GlossContributionController extends Controller implements IContributionCon
         $gloss = new Gloss($glossData);
         // is the contribution a proposed change to an existing gloss?
         if (array_key_exists('id', $glossData)) {
-            $gloss->id = intval($glossData['id']);
+            $id = intval($glossData['id']);
+            $originalGloss = $this->_glossRepository->getGloss($id);
+            if ($originalGloss->count() > 0) {
+                $gloss = $originalGloss->first();
+                $gloss->fill($glossData);
+            }
         }
 
         $keywords = json_decode($contribution->keywords, true);
