@@ -61,8 +61,12 @@ class GlossVersionContext implements IDiscussContext
 
     public function view(Model $entity)
     {
-        $gloss = Gloss::findOrFail($entity->gloss_id);
-        $model = $this->_bookAdapter->adaptGlosses([$gloss]);
+        $gloss = $this->_glossRepository->getGloss($entity->gloss_id);
+        if ($gloss->count() < 1) {
+            return response(null, 404);
+        }
+
+        $model = $this->_bookAdapter->adaptGlosses([$gloss->first()]);
         return view('discuss.context._gloss', $model);
     }
 }
