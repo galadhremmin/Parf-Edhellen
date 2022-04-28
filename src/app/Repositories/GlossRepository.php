@@ -375,7 +375,6 @@ class GlossRepository
                 $newTranslations->sort();
 
                 if ($newTranslations != $existingTranslations) {
-                    dd([$newTranslations->all(), $existingTranslations->all()]);
                     $changed |= self::GLOSS_CHANGE_TRANSLATIONS;
                 }
             }
