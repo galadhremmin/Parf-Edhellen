@@ -87,16 +87,16 @@ class SenseIndexerSubscriber
                         $keyword->keyword,
                         $keyword->normalized_keyword,
                         $keyword->normalized_keyword_unaccented,
-                        $keyword->normalized_keyword_reversed,
-                        $keyword->normalized_keyword_reversed_unaccented,
+                        $keyword->reversed_normalized_keyword,
+                        $keyword->reversed_normalized_keyword_unaccented,
                         $keyword->word
                     ]);
                     
-                    if (! $carry->has($$key)) {
-                        $carry->offsetSet($key, []);
+                    if (! $carry->has($key)) {
+                        $carry->offsetSet($key, collect([]));
                     }
 
-                    $carry->offsetGet($key)[] = $keyword;
+                    $carry->offsetGet($key)->push($keyword);
                 }
                 return $carry;
             }, collect([])
@@ -104,16 +104,16 @@ class SenseIndexerSubscriber
         
         // determines which indexes to delete by retrieving the values in the original collection
         // that are not present in the given collection ($newIndex):
-        $toRemove = $existingIndex->keys()->diff($newIndex->keys())->map(function ($key) use($existingIndex) {
-            foreach ($existingIndex[$key] as $index) {
-                yield $index->id;
-            }
-        });
+        $toRemove = $existingIndex->keys()->diff($newIndex->keys())->flatMap(function ($key) use($existingIndex) {
+            return array_map(function ($i) {
+                return $i->id;
+            }, $existingIndex[$key]);
+        })->toArray();
         $this->_searchIndexRepository->deleteAllWithId($toRemove);
 
         $toAdd = $newIndex->keys()->diff($existingIndex->keys());
         foreach ($toAdd as $key) {
-            $keyword = $newIndex->offsetGet($key)[0]; // We only need the first entity to resolve the word
+            $keyword = $newIndex->offsetGet($key)->first(); // We only need the first entity to resolve the word
             ProcessSearchIndexCreation::dispatch($sense, $keyword->wordEntity) //
                 ->onQueue('indexing');
         }
