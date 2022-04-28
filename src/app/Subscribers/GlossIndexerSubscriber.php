@@ -81,7 +81,7 @@ class GlossIndexerSubscriber
 
     private function update(Gloss $gloss)
     {
-        $this->delete($gloss->id);
+        $this->delete($gloss);
         foreach ($gloss->keywords as $keyword) {
             ProcessSearchIndexCreation::dispatch($gloss, $keyword->wordEntity, $keyword->keyword) //
                 ->onQueue('indexing');

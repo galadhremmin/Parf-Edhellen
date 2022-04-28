@@ -49,7 +49,7 @@ class GlossVersionContext implements IDiscussContext
             return null;
         }
         
-        $date = new Carbon($entity->version_created_at);
+        $date = new Carbon($entity->created_at);
         return 'Gloss “'.$entity->word->word.'” by '.$entity->account->nickname.' created '.$date->diffForHumans();
     }
 

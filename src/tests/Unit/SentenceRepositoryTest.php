@@ -25,14 +25,12 @@ class SentenceRepositoryTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        DB::beginTransaction();
-        $this->setUpGlosses();   
+        $this->setUpGlosses();
     }
 
     public function tearDown(): void
     {
         $this->tearDownGlosses();
-        DB::rollBack();
         parent::tearDown();
     }
 
@@ -42,9 +40,12 @@ class SentenceRepositoryTest extends TestCase
         $account  = Account::first();
 
         extract( $this->createGloss(__FUNCTION__) );
-        
         $helloGloss = $this->getGlossRepository()->saveGloss('hello', 'greetings', $gloss, $translations, $keywords, $details);
+
+        extract( $this->createGloss(__FUNCTION__) );
         $worldGloss = $this->getGlossRepository()->saveGloss('world', 'earth', $gloss, $translations, $keywords, $details);
+
+        $this->assertNotEquals($helloGloss->id, $worldGloss->id);
 
         $fragments = [
             new SentenceFragment([

@@ -3,24 +3,15 @@
 namespace App\Http\Controllers\Abstracts;
 
 use Illuminate\Http\Request;
-use Cache;
 
-use App\Helpers\StringHelper;
 use App\Repositories\{
     DiscussRepository,
     GlossRepository,
     SearchIndexRepository,
-    SentenceRepository
 };
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
 use App\Adapters\BookAdapter;
-use App\Models\{
-    Keyword,
-    Gloss, 
-    GlossGroup, 
-    Language,
-    Word
-};
+use App\Models\Versioning\GlossVersion;
 
 abstract class BookBaseController extends Controller 
 {
@@ -44,18 +35,18 @@ abstract class BookBaseController extends Controller
      *
      * @param int $glossId
      * @param bool $coerceLatest
-     * @return void
+     * @return Collection
      */
-    protected function getGloss(int $glossId, bool $coerceLatest = false)
+    protected function getGloss(int $glossId)
     {
-        $glosses = $this->getGlossUnadapted($glossId, $coerceLatest);
-        if ($glosses === null) {
-            return null;
+        $glosses = $this->getGlossUnadapted($glossId);
+        if ($glosses->count() < 1) {
+            return collect([]);
         }
 
         $gloss = $glosses->first();
-        $comments = $this->_discussRepository->getNumberOfPostsForEntities(Gloss::class, [$glossId]);
-        return $this->_bookAdapter->adaptGlosses($glosses->toArray(), [/* no inflections */], $comments, $gloss->word);
+        $comments = $this->_discussRepository->getNumberOfPostsForEntities(GlossVersion::class, [$gloss->latest_gloss_version_id]);
+        return $this->_bookAdapter->adaptGlosses([$gloss], [/* no inflections */], $comments, $gloss->word->word);
     }
 
     /**
@@ -64,21 +55,26 @@ abstract class BookBaseController extends Controller
      *
      * @param int $glossId
      * @param bool $coerceLatest
-     * @return void
+     * @return Collection
      */
-    protected function getGlossUnadapted(int $glossId, bool $coerceLatest = false)
+    protected function getGlossUnadapted(int $glossId)
     {
-        $glossVersions = $this->_glossRepository->getGlossVersions($glossId);
-        if ($glossVersions->getVersions()->count() < 1) {
-            return null;
+        $gloss = $this->_glossRepository->getGloss($glossId);
+
+        if ($gloss === null) {
+            // The gloss might still be present in `gloss_versions` and the link consequently
+            // incorrect. This may only happen for legacy reasons where each gloss version had
+            // its own unique ID. All deprecated versions were migrated to the gloss_versions
+            // table on 2022-04-25 but their IDs retained as `__migration_gloss_id`.
+            $version = $this->_glossRepository->getGlossVersionByPreMigrationId($glossId);
+            if ($version === null) {
+                return collect([]);
+            }
+
+            $gloss = $this->_glossRepository->getGloss($version->gloss_id);
         }
 
-        if ($coerceLatest) {
-            $latestVersion = $glossVersions->getVersions()->firstWhere('id', $glossVersions->getLatestVersionId());
-            return $this->getGlossUnadapted($latestVersion->gloss_id, false);
-        }
-
-        return $glossVersions;
+        return $gloss;
     }
 
     /**

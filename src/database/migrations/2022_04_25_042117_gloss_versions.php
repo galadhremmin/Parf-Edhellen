@@ -74,7 +74,7 @@ class GlossVersions extends Migration
             'mail_settings' => ['account_id']
         ];
         Log::info("Updating primary keys and foreign keys (pass 2 of 2)");
-        foreach ($tablesToUpdatePkFor as $tableName => $columnNames) {
+        foreach ($tablesToUpdateFksFor as $tableName => $columnNames) {
             Schema::table($tableName, function (Blueprint $table) use ($columnNames) {
                 foreach ($columnNames as $columnName) {
                     $table->unsignedBigInteger($columnName)->change();
@@ -90,12 +90,12 @@ class GlossVersions extends Migration
             $table->engine = 'InnoDB';
 
             $table->bigIncrements('id');
+            $table->unsignedInteger('version_change_flags')->nullable();
 
-            $table->dateTime('version_created_at');
             $table->foreignId('gloss_id')
-                ->constrained();
-            $table->unique(['version_created_at', 'gloss_id']);
-
+                ->constrained()
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
             $table->foreignId('language_id')
                 ->constrained();
             $table->foreignId('word_id')
@@ -123,6 +123,8 @@ class GlossVersions extends Migration
             $table->unsignedBigInteger('__migration_gloss_id')->nullable(); // temporary field for migration purposes!
 
             $table->timestamps();
+            $table->index(['created_at', 'gloss_id']);
+            $table->index('__migration_gloss_id');
         });
 
         Log::info("Creating table `gloss_detail_versions`");
@@ -185,11 +187,11 @@ class GlossVersions extends Migration
             // Create a version for each gloss presently in the dictionary, including their translations and details
             Log::info("Migrating old glosses to the `gloss_versions` table (step 1 of 4)");
             DB::statement('
-                insert into `gloss_versions` (`version_created_at`, `gloss_id`, `language_id`,
+                insert into `gloss_versions` (`gloss_id`, `language_id`,
                     `word_id`, `account_id`, `sense_id`, `gloss_group_id`, `speech_id`, `is_uncertain`,
                     `is_rejected`, `has_details`, `etymology`, `tengwar`, `source`, `comments`, `external_id`,
                     `label`, `__migration_gloss_id`, `created_at`, `updated_at`)
-                select `created_at` + interval `id` second, `latest_gloss_id`, `language_id`, `word_id`, 
+                select `latest_gloss_id`, `language_id`, `word_id`, 
                     `account_id`, `sense_id`, `gloss_group_id`, `speech_id`, `is_uncertain`, `is_rejected`,
                     `has_details`, `etymology`, `tengwar`, `source`, `comments`, `external_id`, `label`,
                     `id`, `created_at`, `updated_at`
@@ -201,8 +203,7 @@ class GlossVersions extends Migration
                     ) latest on latest.`origin_gloss_id` = `glosses`.`origin_gloss_id`
                 where `is_latest` = 0
                 union
-                select `created_at` + interval `id` second, -- to avoid clashes due to lacking precision
-                    `id`, `language_id`, `word_id`, `account_id`, `sense_id`, `gloss_group_id`, `speech_id`,
+                select `id`, `language_id`, `word_id`, `account_id`, `sense_id`, `gloss_group_id`, `speech_id`,
                     `is_uncertain`, `is_rejected`, `has_details`, `etymology`, `tengwar`, `source`, `comments`,
                     `external_id`, `label`, `id`, `created_at`, `updated_at`
                 from `glosses`
@@ -229,7 +230,7 @@ class GlossVersions extends Migration
             DB::statement('
                 update `glosses` g
                 inner join (
-                    select `gloss_id`, max(`version_created_at`) as `version_created_at`
+                    select `gloss_id`, max(`created_at`) as `created_at`
                     from `gloss_versions`
                     group by `gloss_id`
                 ) lgv on lgv.`gloss_id` = g.`id`
@@ -238,7 +239,7 @@ class GlossVersions extends Migration
                     from `gloss_versions` v
                     where 
                         v.`gloss_id` = g.`id` and
-                        v.`version_created_at` = lgv.`version_created_at`
+                        v.`created_at` = lgv.`created_at`
                 )
             ');
 

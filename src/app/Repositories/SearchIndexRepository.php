@@ -75,9 +75,20 @@ class SearchIndexRepository
             'search_group'   => $this->getSearchGroup($entityName)
         ];
 
-        $keyword = SearchKeyword::create($data);
-        $keyword->save();
-        return $keyword;
+        return SearchKeyword::create($data);
+    }
+
+    public function getForEntity(ModelBase $model)
+    {
+        $entityName = Morphs::getAlias($model);
+        if ($entityName === null) {
+            return;
+        }
+
+        return SearchKeyword::where([
+            ['entity_name', $entityName],
+            ['entity_id', $model->id]
+        ])->get();
     }
 
     public function deleteAll(ModelBase $model)
@@ -91,6 +102,11 @@ class SearchIndexRepository
             ['entity_name', $entityName],
             ['entity_id', $model->id]
         ])->delete();
+    }
+
+    public function deleteAllWithId(array $ids)
+    {
+        SearchKeyword::whereIn('id', $ids)->delete();
     }
 
     public function findKeywords(SearchIndexSearchValue $v)

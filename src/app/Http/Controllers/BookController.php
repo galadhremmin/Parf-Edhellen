@@ -50,7 +50,7 @@ class BookController extends BookBaseController
 
     public function redirectToLatest(Request $request, int $id)
     {
-        $gloss = $this->getGlossUnadapted($id, true);
+        $gloss = $this->getGlossUnadapted($id);
         if (! $gloss) {
             abort(404);
         }

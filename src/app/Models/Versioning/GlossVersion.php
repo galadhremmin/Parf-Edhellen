@@ -5,14 +5,12 @@ namespace App\Models\Versioning;
 use App\Models\Interfaces\IHasFriendlyName;
 use App\Models\Traits\HasAccount;
 use App\Models\{
-    Account,
     Gloss,
     GlossGroup,
     Language,
     ModelBase,
     Sense,
     Speech,
-    Translation,
     Word
 };
 
@@ -21,10 +19,9 @@ class GlossVersion extends ModelBase implements IHasFriendlyName
     use HasAccount;
     
     protected $fillable = [
-        'version_created_at', 'gloss_id', 'language_id', 'word_id', 'account_id',
-        'sense_id', 'gloss_group_id', 'speech_id', 'is_uncertain', 'is_rejected',
-        'has_details', 'etymology', 'tengwar', 'source', 'comments', 'external_id',
-        'label'
+        'gloss_id', 'language_id', 'word_id', 'account_id', 'sense_id', 'gloss_group_id', 
+        'speech_id', 'is_uncertain', 'is_rejected', 'has_details', 'etymology', 'tengwar',
+        'source', 'comments', 'external_id', 'label', 'version_change_flags'
     ];
 
     public function gloss() 

@@ -4,8 +4,8 @@ namespace App\Repositories;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Auth\AuthManager;
-use Carbon\Carbon;
 
 use App\Helpers\StringHelper;
 use App\Events\{
@@ -16,6 +16,7 @@ use App\Events\{
 use App\Models\{ 
     Keyword,
     Gloss,
+    GlossDetail,
     Translation,
     SearchKeyword,
     Sense,
@@ -32,6 +33,13 @@ use App\Repositories\ValueObjects\{
 
 class GlossRepository
 {
+    public const GLOSS_CHANGE_NO_CHANGE    = 0;
+    public const GLOSS_CHANGE_NEW          = 1 << 0;
+    public const GLOSS_CHANGE_METADATA     = 1 << 1;
+    public const GLOSS_CHANGE_DETAILS      = 1 << 2;
+    public const GLOSS_CHANGE_TRANSLATIONS = 1 << 3;
+    public const GLOSS_CHANGE_KEYWORDS     = 1 << 4;
+
     /**
      * @var KeywordRepository
      */
@@ -134,7 +142,8 @@ class GlossRepository
     {
         $version = GlossVersion::where('gloss_id', $glossId)
             ->with('translations', 'gloss_details', 'word')
-            ->orderBy('version_created_at', 'desc') // order by latest
+            ->orderBy('created_at', 'desc') // order by latest
+            ->orderBy('id', 'desc')
             ->first();
         
         return $version;
@@ -150,13 +159,21 @@ class GlossRepository
     {
         $versions = GlossVersion::where('gloss_id', $glossId)
             ->with('translations', 'gloss_details', 'word')
-            ->orderBy('version_created_at', 'desc') // order by latest
+            ->orderBy('created_at', 'desc') // order by latest
+            ->orderBy('id', 'desc')
             ->get();
         
         return new GlossVersionsValue([
             'versions' => $versions,
             'latest_version_id' => $versions->count() > 0 ? $versions->first()->id : null
         ]);
+    }
+
+    public function getGlossVersionByPreMigrationId(int $glossId)
+    {
+        Log::warning('[DEPRECATED] Calling getGlossVersionByPreMigrationId for '.$glossId);
+        $version = GlossVersion::where('__migration_gloss_id', $glossId)->first();
+        return $version;
     }
 
     public function suggest(array $words, int $languageId, $inexact = false) 
@@ -251,7 +268,7 @@ class GlossRepository
         return $groupedSuggestions;
     }
 
-    public function saveGloss(string $wordString, string $senseString, Gloss $gloss, array $translations, array $keywords, array $details = [], $resetKeywords = true, bool & $changed = null)
+    public function saveGloss(string $wordString, string $senseString, Gloss $gloss, array $translations, array $keywords, array $details = [], int & $changed = self::GLOSS_CHANGE_NO_CHANGE)
     {
         if (! $gloss instanceof Gloss) {
             throw new \Exception("Gloss must be an instance of the Gloss class.");
@@ -263,6 +280,12 @@ class GlossRepository
             }
         }
 
+        foreach ($details as $detail) {
+            if (! ($detail instanceof GlossDetail)) {
+                throw new \Exception('The array of details must consist of instances of the GlossDetail model.');
+            }
+        }
+
         foreach ($keywords as $keyword) {
             if (! is_string($keyword)) {
                 throw new \Exception(sprintf('The array of keywords must only contain strings. Found "%s".', json_encode($keyword)));
@@ -271,12 +294,6 @@ class GlossRepository
 
         if (! $gloss->account_id) {
             throw new \Exception('Invalid account ID.');
-        }
-
-        foreach ($details as $detail) {
-            if (! $detail->account_id) {
-                throw new \Exception('Invalid account ID for details.');
-            }
         }
 
         // All words should be lower case.
@@ -300,11 +317,8 @@ class GlossRepository
         unset($translationStrings);
 
         // These variables will be set to true if any changes are detected on the specified entity.
-        $new                 = false;
-        $infoChanged         = false;
-        $translationsChanged = false;
-        $detailsChanged      = false;
-        $keywordsChanged     = false;
+        $changed = self::GLOSS_CHANGE_NO_CHANGE;
+        $isNew = false;
 
         // Load the original translation and update the translation's origin and parent columns.
         if (! $gloss->id && $gloss->external_id) {
@@ -317,8 +331,6 @@ class GlossRepository
         }
 
         if ($gloss->id) {
-            $new = false;
-
             $originalGloss = Gloss::with('sense', 'translations', 'word', 'keywords', 'gloss_details')
                 ->findOrFail($gloss->id);
 
@@ -330,11 +342,13 @@ class GlossRepository
             // 
             // The repository will only update the aspects that has been
             // modified.
-            $infoChanged = $originalGloss->sense_id !== $sense->id ||
-                           $originalGloss->word_id !== $word->id;
+            if ($originalGloss->sense_id !== $sense->id ||
+                $originalGloss->word_id !== $word->id) {
+                $changed |= self::GLOSS_CHANGE_METADATA;
+            }
             
-            if (! $infoChanged) {
-                $infoChanged = ! $originalGloss->equals($gloss);
+            if (! ($changed & self::GLOSS_CHANGE_METADATA) && ! $originalGloss->equals($gloss)) {
+                $changed |= self::GLOSS_CHANGE_METADATA;
             }
             
             // If no other parameters have changed, iterate through the list of translations 
@@ -343,32 +357,42 @@ class GlossRepository
             // Begin by checking the length of the two collections. Laravel collections are not
             // used by the repository, but is utilised by the Eloquent ORM, thus the different
             // syntax.
-            $translationsChanged = $originalGloss->translations->count() !== count($translations);
+            if ($originalGloss->translations->count() !== count($translations)) {
+                $changed |= self::GLOSS_CHANGE_TRANSLATIONS;
+            }
 
-            if (! $translationsChanged) {
+            if (! ($changed & self::GLOSS_CHANGE_TRANSLATIONS)) {
                 // If the length matches, iterate through each element and check whether they 
                 // exist in both collections.
-                foreach ($translations as $t) {
-                    if (! $originalGloss->translations->contains(function ($ot) use($t) {
-                        return $ot->translation === $t->translation;
-                    })) {
-                        // When not existing, the collection has changed.
-                        $translationsChanged = true;
-                        break;
-                    }
+                $existingTranslations = $originalGloss->translations->map(function ($t) {
+                    return $t->translation;
+                });
+                $newTranslations = collect($translations)->map(function ($t) {
+                    return $t->translation;
+                });
+
+                $existingTranslations->sort();
+                $newTranslations->sort();
+
+                if ($newTranslations != $existingTranslations) {
+                    dd([$newTranslations->all(), $existingTranslations->all()]);
+                    $changed |= self::GLOSS_CHANGE_TRANSLATIONS;
                 }
             }
 
             // Gloss details changed?
-            $detailsChanged = $originalGloss->gloss_details->count() !== count($details);
-            if (! $detailsChanged) {
+            if ($originalGloss->gloss_details->count() !== count($details)) {
+                $changed |= self::GLOSS_CHANGE_DETAILS;
+            }
+
+            if (! ($changed & self::GLOSS_CHANGE_DETAILS)) {
                 foreach ($details as $d) {
                     if (! $originalGloss->gloss_details->contains(function ($od) use($d) {
                         return $od->category === $d->category &&
                                 $od->order === $d->order &&
                                 $od->text === $d->text;
                     })) {
-                        $detailsChanged = true;
+                        $changed |= self::GLOSS_CHANGE_DETAILS;
                         break;
                     }
                 }
@@ -381,58 +405,68 @@ class GlossRepository
             );
             sort($oldKeywords);
 
-            $keywordsChanged = $newKeywords !== $oldKeywords;
+            if ($newKeywords != $oldKeywords) {
+                $changed |= self::GLOSS_CHANGE_KEYWORDS;
+            }
         } else {
-            $new = true;
+            $changed |= self::GLOSS_CHANGE_NEW;
         }
 
-        if ($infoChanged || $new) {
-            $gloss->word_id  = $word->id;
-            $gloss->sense_id = $sense->id;
-            $gloss->is_deleted = 0;
-            $gloss->has_details = count($details) > 0;
-            $gloss->save();
-        }
+        if ($changed !== self::GLOSS_CHANGE_NO_CHANGE) {
+            try {
+                DB::beginTransaction();
 
-        if ($detailsChanged || $new) {
-            if (! $new) {
-                $gloss->gloss_details()->delete();
+                $isNew = $changed & self::GLOSS_CHANGE_NEW;
+                if ($isNew || $changed & self::GLOSS_CHANGE_METADATA) {
+                    $gloss->word_id  = $word->id;
+                    $gloss->sense_id = $sense->id;
+                    $gloss->is_deleted = 0;
+                    $gloss->has_details = count($details) > 0;
+                    $gloss->save();
+                }
+
+                if ($isNew || $changed & self::GLOSS_CHANGE_DETAILS) {
+                    if (! $isNew) {
+                        $gloss->gloss_details()->delete();
+                    }
+                    $gloss->gloss_details()->saveMany($details);
+                }
+
+                if ($isNew || $changed & self::GLOSS_CHANGE_TRANSLATIONS) {
+                    if (! $isNew) {
+                        $gloss->translations()->delete();
+                    }
+                    $gloss->translations()->saveMany($translations);
+                }
+
+                if ($isNew || $changed & self::GLOSS_CHANGE_KEYWORDS) {
+                    if (! $isNew) {
+                        $gloss->keywords()->delete();
+                    }
+
+                    foreach ($newKeywords as $keyword) {
+                        $keywordWord = $this->_wordRepository->save($keyword, $gloss->account_id);
+                        $this->_keywordRepository->createKeyword($keywordWord, $sense, $gloss);
+                    }
+                }
+
+                $this->saveVersion($gloss, $changed);
+
+                DB::commit();
+            } catch (\Exception $ex) {
+                DB::rollBack();
+                throw $ex;
             }
-            $gloss->gloss_details()->saveMany($details);
-        }
-
-        if ($translationsChanged || $new) {
-            if (! $new) {
-                $gloss->translations()->delete();
-            }
-            $gloss->translations()->saveMany($translations);
-        }
-
-        if ($keywordsChanged || $new) {
-            if (! $new) {
-                $gloss->keywords()->delete();
-            }
-
-            foreach ($newKeywords as $keyword) {
-                $keywordWord = $this->_wordRepository->save($keyword, $gloss->account_id);
-                $this->_keywordRepository->createKeyword($keywordWord, $sense, $gloss);
-            }
-        }
-
-        $newVersion = $infoChanged || $detailsChanged || $translationsChanged || $new;
-        if ($newVersion) {
-            $this->saveVersion($gloss);
         }
 
         // 13. Register an audit trail
-        $notify = $newVersion || $keywordsChanged;
-        if ($notify) {
-            $event = $new ? new GlossCreated($gloss, $gloss->account_id) //
-                          : new GlossEdited($gloss, $this->_authManager->check() ? $this->_authManager->user()->id : $gloss->account_id);
+        if ($changed !== self::GLOSS_CHANGE_NO_CHANGE) {
+            $event = $isNew ? new GlossCreated($gloss, $gloss->account_id) //
+                            : new GlossEdited($gloss, $this->_authManager->check() ? $this->_authManager->user()->id : $gloss->account_id);
             
             event($event);
 
-            if ($new || $keywordsChanged) {
+            if ($isNew || $changed & self::GLOSS_CHANGE_KEYWORDS) {
                 event(new SenseEdited($sense));
             }
         }
@@ -625,28 +659,28 @@ class GlossRepository
         $g->save();
     }
 
-    protected function saveVersion(Gloss $gloss)
+    protected function saveVersion(Gloss $gloss, int $changes)
     {
+        // Make sure we're working with the latest version fo the gloss.
+        $gloss->refresh();
+
         $data = $gloss->toArray();
         $data['gloss_id'] = $data['id'];
-        $data['version_created_at'] = Carbon::now();
-
+        $data['version_change_flags'] = $changes;
         unset($data['id']);
-        unset($data['created_at']);
-        unset($data['updated_at']);
         
         try {
             DB::beginTransaction();
 
             $version = GlossVersion::create($data);
-            $version->saveMany(
+            $version->gloss_details()->saveMany(
                 $gloss->gloss_details->map(function ($d) {
-                    return new GlossDetailVersion($d->all());
+                    return new GlossDetailVersion($d->getAttributes());
                 })
             );
-            $version->saveMany(
+            $version->translations()->saveMany(
                 $gloss->translations->map(function ($t) {
-                    return new TranslationVersion($t->all());
+                    return new TranslationVersion($t->getAttributes());
                 })
             );
 

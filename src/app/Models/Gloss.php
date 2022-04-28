@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Versioning\GlossVersion;
+
 class Gloss extends ModelBase implements Interfaces\IHasFriendlyName
 {
     use Traits\HasAccount;
@@ -25,6 +27,11 @@ class Gloss extends ModelBase implements Interfaces\IHasFriendlyName
     public function gloss_group() 
     {
         return $this->belongsTo(GlossGroup::class);
+    }
+
+    public function gloss_versions() 
+    {
+        return $this->hasMany(GlossVersion::class);
     }
     
     public function language() 

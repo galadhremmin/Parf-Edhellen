@@ -33,7 +33,7 @@ class DiscussGlossVersion extends Migration
                     select v.`id`
                     from `gloss_versions` v
                     where v.`gloss_id` = lgv.`gloss_id`
-                    order by `version_created_at` desc
+                    order by `created_at` desc
                     limit 1
                 ),
                 t.`entity_type` = \'glossv\'

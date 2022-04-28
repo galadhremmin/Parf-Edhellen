@@ -45,19 +45,16 @@ trait CanCreateGloss
     {
         $glosses = Gloss::where('gloss_group_id', $this->_glossGroup->id)
             ->get();
+        $senses = [];
 
         foreach ($glosses as $gloss)
         {
+            $senses[] = $gloss->sense;
+
             $gloss->keywords()->delete();
             $gloss->translations()->delete();
             $gloss->gloss_details()->delete();
-            
-            $sense = $gloss->sense;
-            if ($sense) {
-                $sense->keywords()->delete();
-                $sense->delete();
-            }
-
+            $gloss->gloss_versions()->delete();
             $gloss->delete();
         }
     }
@@ -87,7 +84,7 @@ trait CanCreateGloss
         $gloss->comments = 'This gloss was created in an unit test.';
         $gloss->tengwar = 'yljjh6';
         $gloss->speech_id = $speechId;
-        $gloss->external_id = 'UA-Unit-GlossRepository-'.$method;
+        $gloss->external_id = 'UA-Unit-GlossRepository-'.$method.'-'.uniqid();
         $gloss->label = null;
 
         $translations = $this->createTranslations();
