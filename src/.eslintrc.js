@@ -31,7 +31,7 @@ module.exports = {
         "@typescript-eslint/no-explicit-any": 1,
         "@typescript-eslint/no-unsafe-return": 1,
         "@typescript-eslint/no-unsafe-call": 1,
-        "@typescript-eslint/no-unsafe-argument": 1,
+        "@typescript-eslint/no-unsafe-argument": 0, // Doesn't seem to work at all with lambda functions. Too many false positives.
         "@typescript-eslint/restrict-plus-operands": 1,
         "@typescript-eslint/no-misused-promises": 1,
         "@typescript-eslint/no-floating-promises": 1,

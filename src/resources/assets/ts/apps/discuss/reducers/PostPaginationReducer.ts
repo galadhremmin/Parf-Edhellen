@@ -9,7 +9,7 @@ const PostPaginationReducer = (state: IPostPaginationState = {
     currentPage: 0,
     noOfPages: 0,
     pages: [],
-}, action: IPostsReducerAction) => {
+}, action: IPostsReducerAction): IPostPaginationState => {
     switch (action.type) {
         case Actions.ReceiveThread:
             return mapper<typeof action.threadData, IPostPaginationState>({

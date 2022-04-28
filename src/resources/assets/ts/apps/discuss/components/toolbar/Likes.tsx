@@ -21,6 +21,11 @@ function Likes(props: IProps) {
         threadMetadata,
     } = props;
 
+    const {
+        entityId,
+        entityType,
+    } = thread;
+
     const forumPostId = post.id;
     const forumThreadId = thread.id;
     const likedByAccount = threadMetadata.likes.indexOf(forumPostId) > -1;
@@ -37,6 +42,8 @@ function Likes(props: IProps) {
                     forumPostId,
                 });
                 fireEventAsync(name, onThreadMetadataChange, {
+                    entityId,
+                    entityType,
                     forumPostId: [ forumPostId ],
                     forumThreadId,
                 });
@@ -48,6 +55,8 @@ function Likes(props: IProps) {
         }
     }, [
         apiConnector,
+        entityId,
+        entityType,
         forumPostId,
         forumThreadId,
         onAuthenticationRequired,

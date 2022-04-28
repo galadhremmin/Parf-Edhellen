@@ -45,19 +45,16 @@ trait CanCreateGloss
     {
         $glosses = Gloss::where('gloss_group_id', $this->_glossGroup->id)
             ->get();
+        $senses = [];
 
         foreach ($glosses as $gloss)
         {
+            $senses[] = $gloss->sense;
+
             $gloss->keywords()->delete();
             $gloss->translations()->delete();
             $gloss->gloss_details()->delete();
-            
-            $sense = $gloss->sense;
-            if ($sense) {
-                $sense->keywords()->delete();
-                $sense->delete();
-            }
-
+            $gloss->gloss_versions()->delete();
             $gloss->delete();
         }
     }
@@ -87,7 +84,7 @@ trait CanCreateGloss
         $gloss->comments = 'This gloss was created in an unit test.';
         $gloss->tengwar = 'yljjh6';
         $gloss->speech_id = $speechId;
-        $gloss->external_id = 'UA-Unit-GlossRepository-'.$method;
+        $gloss->external_id = 'UA-Unit-GlossRepository-'.$method.'-'.uniqid();
         $gloss->label = null;
 
         $translations = $this->createTranslations();
@@ -128,32 +125,27 @@ trait CanCreateGloss
             new GlossDetail([
                 'category'   => 'Section 1',
                 'text'       => 'This is the first item for '.$gloss->external_id,
-                'order'      => 10,
-                'account_id' => $accountId
+                'order'      => 10
             ]),
             new GlossDetail([
                 'category'   => 'Section 2',
                 'text'       => 'This is the second item for '.$gloss->external_id,
-                'order'      => 20,
-                'account_id' => $accountId
+                'order'      => 20
             ]),
             new GlossDetail([
                 'category'   => 'Section 3',
                 'text'       => 'This is the third item for '.$gloss->external_id,
-                'order'      => 30,
-                'account_id' => $accountId
+                'order'      => 30
             ]),
             new GlossDetail([
                 'category'   => 'Section 4',
                 'text'       => 'This is the fourth item for '.$gloss->external_id,
-                'order'      => 40,
-                'account_id' => $accountId
+                'order'      => 40
             ]),
             new GlossDetail([
                 'category'   => 'Section 5',
                 'text'       => 'This is the fifth item for '.$gloss->external_id,
-                'order'      => 50,
-                'account_id' => $accountId
+                'order'      => 50
             ])
         ];
     }

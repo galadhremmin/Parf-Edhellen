@@ -8,7 +8,7 @@ const ThreadMetadataReducer = (state: IThreadMetadataState = {
     likes: [],
     likesPerPost: {},
     loading: false,
-}, action: IThreadMetadataReducerAction) => {
+}, action: IThreadMetadataReducerAction): IThreadMetadataState => {
     switch (action.type) {
         case Actions.ReceiveThreadMetadata: {
             const likes = action.metadata.likes.concat(

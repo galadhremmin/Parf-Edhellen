@@ -47,7 +47,7 @@ const GlossReducer = (state: IGlossState = InitialState, action: IGlossAction) =
                 isUncertain: 'isUncertain',
                 keywords: 'keywords',
                 languageId: 'languageId',
-                phonetic: 'phonetic',
+                latestGlossVersionId: 'latestGlossVersionId',
                 sense: 'sense',
                 source: 'source',
                 speechId: 'speechId',

@@ -26,8 +26,10 @@ import Post from '../components/Post';
 import { IProps as IPostProps } from '../components/Post._types';
 import RespondButton from '../components/RespondButton';
 import ConditionalToolbar from '../components/toolbar/ConditionalToolbar';
-import { RootReducer } from '../reducers';
+import { keyGenerator, RootReducer } from '../reducers';
 import { IProps } from './Discuss._types';
+import { DEFAULT_COLLECTIVIZE_KEY, getStateOrDefault } from '@root/utilities/redux/collectivize';
+import ThreadsReducer from '../reducers/ThreadsReducer';
 
 function Discuss(props: IProps) {
     const formRef = useRef(null);
@@ -81,20 +83,32 @@ function Discuss(props: IProps) {
     }, []);
 
     const _onCreateNewPost = useCallback(() => {
-        fireEvent(null, onNewPostCreate);
-    }, [ onNewPostCreate ]);
+        fireEvent(null, onNewPostCreate, {
+            entityId,
+            entityType,
+        });
+    }, [ onNewPostCreate, entityId, entityType ]);
 
     const _onDiscardNewPost = useCallback(() => {
-        fireEvent(null, onNewPostDiscard);
-    }, [ onNewPostDiscard ]);
+        fireEvent(null, onNewPostDiscard, {
+            entityId,
+            entityType,
+        });
+    }, [ onNewPostDiscard, entityId, entityType ]);
 
     const _onNewPostChange = useCallback((ev: IComponentEvent<IFormChangeData>) => {
-        fireEvent(null, onNewPostChange, ev.value);
-    }, [ onNewPostChange ]);
+        fireEvent(null, onNewPostChange, {
+            change: ev.value,
+            entityId,
+            entityType,
+        });
+    }, [ onNewPostChange, entityId, entityType ]);
 
     const _onNewPostSubmit = useCallback((ev: IComponentEvent<IFormOutput>) => {
         fireEvent(null, onNewPostSubmit, {
             ...(threadId ? {
+                entityId,
+                entityType,
                 forumThreadId: threadId,
             } : {
                 entityId,
@@ -159,53 +173,80 @@ function Discuss(props: IProps) {
                   />
                 : <RespondButton onClick={_onCreateNewPost} isNewPost={posts.length === 0} />}
         </aside>}
-        <div ref={paginationRef}>
+        {posts.length > 0 && <div ref={paginationRef}>
             <Pagination currentPage={currentPage}
                 noOfPages={noOfPages}
                 onClick={_onPaginate}
                 pages={PageModes.AutoGenerate}
             />
-        </div>
+        </div>}
         <AuthenticationDialog onDismiss={_onAuthenticationCancelled} open={promoteAuth} />
     </>;
 }
 
-const mapStateToProps = (state: RootReducer) => ({
-    ...state.pagination,
-    newPostContent: state.newPost.content,
-    newPostEnabled: state.newPost.enabled,
-    newPostLoading: state.newPost.loading,
-    posts: state.posts,
-    thread: state.thread,
-    threadMetadata: state.threadMetadata,
-    roleManager: resolve(DI.RoleManager),
-} as Partial<IProps>);
+const mapStateToProps = (state: RootReducer, ownProps: IProps) => {
+    const {
+        entityId,
+        entityType,
+    } = ownProps;
+    const {
+        paginations,
+        newPosts,
+        posts: allPosts,
+        threads,
+        threadMetadatas,
+    } = state;
+
+    const key = keyGenerator(entityType, entityId);
+
+    const pagination = getStateOrDefault(paginations, key);
+    const thread = getStateOrDefault(threads, key);
+    const threadMetadata = getStateOrDefault(threadMetadatas, key);
+    const newPost = getStateOrDefault(newPosts, key);
+    const posts = allPosts.filter(p => p.forumThreadId === thread.id);
+
+    return {
+        ...pagination,
+        newPostContent: newPost?.content || '',
+        newPostEnabled: newPost?.enabled || false,
+        posts,
+        thread,
+        threadMetadata,
+        roleManager: resolve(DI.RoleManager),
+    } as Partial<IProps>;
+};
 
 const actions = new DiscussActions();
-const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => ({
-    onExistingPostChange: (ev) => dispatch(actions.post({
-        forumPostId: ev.value,
-        includeDeleted: true,
-    })),
-    onExistingThreadChange: (ev) => dispatch(actions.thread({ id: ev.value })),
-    onExistingThreadMetadataChange: (ev) => dispatch(actions.threadMetadata(ev.value)),
-    onNewPostChange: (ev) => dispatch(actions.changeNewPost({
-        propertyName: ev.value.name,
-        value: ev.value.value,
-    })),
-    onNewPostCreate: () => dispatch(actions.createNewPost()),
-    onNewPostDiscard: () => dispatch(actions.discardNewPost()),
-    onNewPostSubmit: (ev) => dispatch(actions.createPost(ev.value)),
-    onPageChange: (ev) => dispatch(actions.thread({
-        entityId: ev.value.thread.entityId,
-        entityType: ev.value.thread.entityType,
-        id: ev.value.thread.id,
-        offset: ev.value.pageNumber,
-    })),
-    onReferenceLinkClick: (ev) => {
-        const globalEvent = new GlobalEventConnector();
-        globalEvent.fire(globalEvent.loadReference, ev.value);
-    },
-} as Partial<IProps>);
+const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => {
+    return {
+        onExistingPostChange: (ev) => dispatch(actions.post({
+            forumPostId: ev.value,
+            includeDeleted: true,
+        })),
+        onExistingThreadChange: (ev) => dispatch(actions.thread({
+            id: ev.value,
+        })),
+        onExistingThreadMetadataChange: (ev) => dispatch(actions.threadMetadata(ev.value)),
+        onNewPostChange: (ev) => dispatch(actions.changeNewPost({
+            entityId: ev.value.entityId,
+            entityType: ev.value.entityType,
+            propertyName: ev.value.change.name,
+            value: ev.value.change.value,
+        })),
+        onNewPostCreate: (ev) => dispatch(actions.createNewPost(ev.value)),
+        onNewPostDiscard: (ev) => dispatch(actions.discardNewPost(ev.value)),
+        onNewPostSubmit: (ev) => dispatch(actions.createPost(ev.value)),
+        onPageChange: (ev) => dispatch(actions.thread({
+            entityId: ev.value.thread.entityId,
+            entityType: ev.value.thread.entityType,
+            id: ev.value.thread.id,
+            offset: ev.value.pageNumber,
+        })),
+        onReferenceLinkClick: (ev) => {
+            const globalEvent = new GlobalEventConnector();
+            globalEvent.fire(globalEvent.loadReference, ev.value);
+        },
+    } as Partial<IProps>;
+};
 
 export default connect<Partial<IProps>, Partial<IProps>, IProps>(mapStateToProps, mapDispatchToProps)(Discuss);

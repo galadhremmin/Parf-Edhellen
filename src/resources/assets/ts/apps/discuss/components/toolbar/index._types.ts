@@ -6,8 +6,9 @@ import IDiscussApi, {
 import { IRoleManager } from '@root/security';
 
 import { IThreadMetadataState } from '../../reducers/ThreadMetadataReducer._types';
+import { IThreadEntityAction } from '../../reducers/ThreadReducer._types';
 
-export interface IThreadMetadataArgs {
+export interface IThreadMetadataArgs extends IThreadEntityAction {
     forumPostId: number[];
     forumThreadId: number;
 }

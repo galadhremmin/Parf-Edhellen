@@ -8,6 +8,7 @@ use App\Models\{
     GlossDetail,
     Translation
 };
+use App\Models\Versioning\GlossVersion;
 
 class GlossAggregationHelper
 {
@@ -18,14 +19,16 @@ class GlossAggregationHelper
             return $numberOfGlosses;
         }
 
-        if ($glosses[0] instanceOf Gloss) {
+        $firstGloss = $glosses[0];
+        if ($firstGloss instanceOf Gloss ||
+            $firstGloss instanceof GlossVersion) {
             return $this->aggregateEloquentEntities($glosses);
         }
 
         return $this->aggregateStdObjects($glosses);
     }
 
-    private function aggregateEloquentEntities(& $glosses) {
+    private function aggregateEloquentEntities(array &$glosses) {
         // Gloss model entities already have the 'translations' relation, and would therefore
         // only requiring eager loading. This is not performant to be doing in the adapter, and 
         // therefore raises an error.

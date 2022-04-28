@@ -32,9 +32,7 @@ class GlossController extends Controller
 
     public function index(Request $request)
     {
-        $latestGlosses = Gloss::latest()
-            ->notDeleted()
-            ->notIndex()
+        $latestGlosses = Gloss::notDeleted()
             ->orderBy('id', 'desc')
             ->take(10)
             ->with('word', 'account')

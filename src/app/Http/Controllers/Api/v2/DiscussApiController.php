@@ -108,6 +108,10 @@ class DiscussApiController extends Controller
     {
         $threadData = $this->_discussRepository->getThreadDataForEntity($entityType, $entityId, true, $request->user());
 
+        if ($threadData == null) {
+            return response(null, 404);
+        }
+
         if ($threadData->getThread()->exists) {
             return $this->getThread($request, $threadData->getThread()->id);
         }

@@ -42,11 +42,11 @@ return [
     'system_errors_logging' => env('ED_SYSTEM_ERRORS_LOGGING', false),
 
     'forum_entities' => [
-        App\Models\Account::class         => App\Http\Discuss\Contexts\AccountContext::class,
-        App\Models\Contribution::class    => App\Http\Discuss\Contexts\ContributionContext::class,
-        App\Models\ForumDiscussion::class => App\Http\Discuss\Contexts\DiscussContext::class,
-        App\Models\Sentence::class        => App\Http\Discuss\Contexts\SentenceContext::class,
-        App\Models\Gloss::class           => App\Http\Discuss\Contexts\GlossContext::class
+        App\Models\Account::class                 => App\Http\Discuss\Contexts\AccountContext::class,
+        App\Models\Contribution::class            => App\Http\Discuss\Contexts\ContributionContext::class,
+        App\Models\ForumDiscussion::class         => App\Http\Discuss\Contexts\DiscussContext::class,
+        App\Models\Sentence::class                => App\Http\Discuss\Contexts\SentenceContext::class,
+        App\Models\Versioning\GlossVersion::class => App\Http\Discuss\Contexts\GlossVersionContext::class
     ],
     'forum_resultset_max_length' => 10,
     'forum_thread_resultset_max_length' => 15,
@@ -59,19 +59,22 @@ return [
     //       2. resources/assets/ts/apps/book-browser/<frontend alias>/index.ts.
     'book_entities' => [
         App\Models\Gloss::class => [
-            'group_id'  => App\Models\SearchKeyword::SEARCH_GROUP_DICTIONARY,
-            'resolver'  => App\Repositories\SearchIndexResolvers\GlossSearchIndexResolver::class,
-            'intl_name' => 'glossary'
+            'group_id'            => App\Models\SearchKeyword::SEARCH_GROUP_DICTIONARY,
+            'resolver'            => App\Repositories\SearchIndexResolvers\GlossSearchIndexResolver::class,
+            'intl_name'           => 'glossary',
+            'discuss_entity_type' => App\Models\Versioning\GlossVersion::class
         ],
         App\Models\ForumPost::class => [
-            'group_id'  => App\Models\SearchKeyword::SEARCH_GROUP_FORUM_POST,
-            'resolver'  => App\Repositories\SearchIndexResolvers\ForumPostSearchIndexResolver::class,
-            'intl_name' => 'discuss'
+            'group_id'            => App\Models\SearchKeyword::SEARCH_GROUP_FORUM_POST,
+            'resolver'            => App\Repositories\SearchIndexResolvers\ForumPostSearchIndexResolver::class,
+            'intl_name'           => 'discuss',
+            'discuss_entity_type' => null // defaults to entity type
         ],
         App\Models\SentenceFragment::class => [
-            'group_id' => App\Models\SearchKeyword::SEARCH_GROUP_SENTENCE,
-            'resolver' => App\Repositories\SearchIndexResolvers\SentenceSearchIndexResolver::class,
-            'intl_name' => 'sentence'
+            'group_id'           => App\Models\SearchKeyword::SEARCH_GROUP_SENTENCE,
+            'resolver'           => App\Repositories\SearchIndexResolvers\SentenceSearchIndexResolver::class,
+            'intl_name'          => 'sentence',
+            'discuss_entity_type' => null // default to entity type
         ]
     ],
     'book_group_id_to_book_entities' => [

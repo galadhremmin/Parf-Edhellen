@@ -9,12 +9,13 @@ import IDiscussApi, {
 import { DI, resolve } from '@root/di';
 import BrowserHistory from '@root/utilities/BrowserHistory';
 
-import { RootReducer } from '../reducers';
+import { keyGenerator, RootReducer } from '../reducers';
 import {
     IChangePostAction,
     ICreatePostAction,
     IPostAction,
     IThreadAction,
+    IThreadEntityAction,
     IThreadMetadataAction,
 } from '../reducers/ThreadReducer._types';
 import Actions from './Actions';
@@ -25,9 +26,16 @@ export default class DiscussActions {
 
     public thread(args: IThreadAction, jump = true): ReduxThunk {
         return async (dispatch: ReduxThunkDispatch) => {
-            dispatch({
-                type: Actions.RequestThread,
-            });
+            const {
+                entityId,
+                entityType,
+            } = args;
+            if (entityId && entityType) {
+                dispatch({
+                    ...args,
+                    type: Actions.RequestThread,
+                });
+            }
 
             const threadData = await this._api.thread(args);
             dispatch(this.setThread(threadData, false, jump));
@@ -48,16 +56,25 @@ export default class DiscussActions {
         }
 
         return (dispatch: ReduxThunkDispatch) => {
+            const {
+                entityId,
+                entityType,
+            } = threadData.thread;
+
             if (! jump) {
                 threadData.jumpPostId = null;
             }
 
             dispatch({
+                entityId,
+                entityType,
                 threadData,
                 type: Actions.ReceiveThread,
             });
 
             dispatch(this.threadMetadata({
+                entityId,
+                entityType,
                 forumPostId: threadData.posts.map((p) => p.id),
                 forumThreadId: threadData.thread.id,
             }));
@@ -67,19 +84,29 @@ export default class DiscussActions {
     public threadMetadata(args: IThreadMetadataAction): ReduxThunk {
         return async (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
             // Bail if this request is already being processed.
-            if (getState().threadMetadata.loading ||
+            const {
+                entityId,
+                entityType,
+            } = args;
+            const key = keyGenerator(entityType, entityId);
+            const metadata = getState().threadMetadatas[key];
+            if (metadata?.loading ||
                 args.forumPostId.length < 1 ||
                 args.forumThreadId === null) {
                 return;
             }
 
             dispatch({
+                entityId,
+                entityType,
                 type: Actions.RequestThreadMetadata,
             });
 
-            const metadata = await this._api.threadMetadata(args);
+            const newMetadata = await this._api.threadMetadata(args);
             dispatch({
-                metadata,
+                entityId,
+                entityType,
+                metadata: newMetadata,
                 type: Actions.ReceiveThreadMetadata,
             });
         };
@@ -101,21 +128,23 @@ export default class DiscussActions {
         };
     }
 
-    public createNewPost() {
+    public createNewPost(args: IThreadEntityAction) {
         return {
+            ...args,
             type: Actions.CreateNewPost,
         };
     }
 
     public changeNewPost(args: IChangePostAction) {
         return {
-            type: Actions.ChangeNewPost,
             ...args,
+            type: Actions.ChangeNewPost,
         };
     }
 
-    public discardNewPost() {
+    public discardNewPost(args: IThreadEntityAction) {
         return {
+            ...args,
             type: Actions.DiscardNewPost,
         };
     }
@@ -123,13 +152,21 @@ export default class DiscussActions {
     public createPost(args: ICreatePostAction): ReduxThunk {
         return async (dispatch: ReduxThunkDispatch) => {
             try {
+                const {
+                    entityId,
+                    entityType,
+                } = args;
                 dispatch({
+                    entityId,
+                    entityType,
                     type: Actions.RequestCreatePost,
                 });
 
                 const postData = await this._api.createPost(args);
 
                 dispatch({
+                    entityId,
+                    entityType,
                     type: Actions.ReceiveCreatePost,
                 });
 

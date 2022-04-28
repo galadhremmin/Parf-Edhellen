@@ -7,6 +7,7 @@ import {
 import thunkMiddleware from 'redux-thunk';
 
 import { ReduxThunkDispatch } from '@root/_types';
+import { IThreadResponse } from '@root/connectors/backend/IDiscussApi';
 import { composeEnhancers } from '@root/utilities/func/redux-tools';
 
 import DiscussActions from './actions/DiscussActions';
@@ -22,13 +23,19 @@ const store = createStore(rootReducer, undefined,
 );
 
 const Inject = (props: IProps) => {
+    const {
+        prefetched,
+        thread,
+    } = props;
+
+    let {
+        entityId,
+        entityType,
+    } = props;
+
     useEffect(() => {
         const {
-            entityId,
-            entityType,
             jumpEnabled,
-            prefetched,
-            thread,
         } = props;
 
         const dispatch = store.dispatch as ReduxThunkDispatch;
@@ -36,9 +43,9 @@ const Inject = (props: IProps) => {
         const actions = new DiscussActions();
         if (prefetched) {
             if (thread !== undefined) {
-                const args: any = {
+                const args = {
                     ...props,
-                };
+                } as IThreadResponse;
                 dispatch(actions.setThread(args, /* updateHistory: */ false, jumpEnabled));
             }
         } else {
@@ -49,8 +56,16 @@ const Inject = (props: IProps) => {
         }
     }, []);
 
+    if (prefetched) {
+        entityId = thread.entityId;
+        entityType = thread.entityType;
+    }
+
     return <Provider store={store}>
-        <Discuss readonly={props.readonly} />
+        <Discuss entityId={entityId}
+                 entityType={entityType}
+                 readonly={props.readonly}
+        />
     </Provider>;
 };
 

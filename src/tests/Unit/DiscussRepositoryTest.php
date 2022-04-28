@@ -51,7 +51,7 @@ class DiscussRepositoryTest extends TestCase
 
     public function testGetThreadForEntityShouldBeNull()
     {
-        $thread = $this->_repository->getThreadDataForEntity('gloss', 1);
+        $thread = $this->_repository->getThreadDataForEntity('glossv', 1);
         $this->assertEquals(null, $thread);
     }
 
@@ -60,16 +60,16 @@ class DiscussRepositoryTest extends TestCase
         extract( $this->createGloss(__FUNCTION__) );
         $gloss = $this->getRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
 
-        $threadData = $this->_repository->getThreadDataForEntity('gloss', $gloss->id, true);
+        $threadData = $this->_repository->getThreadDataForEntity('glossv', $gloss->latest_gloss_version_id, true);
         $this->assertTrue($threadData instanceof ForumThreadForEntityValue);
 
         $t = $threadData->getThread();
         $this->assertTrue($t instanceof ForumThread);
-        $this->assertEquals('gloss', $t->entity_type);
-        $this->assertEquals($gloss->id, $t->entity_id);
+        $this->assertEquals('glossv', $t->entity_type);
+        $this->assertEquals($gloss->latest_gloss_version_id, $t->entity_id);
         $this->assertEquals(Auth::user()->id, $t->account_id);
         $this->assertEquals(
-            ForumGroup::where('role', 'gloss')->first()->id,
+            ForumGroup::where('role', 'glossv')->first()->id,
             $t->forum_group_id
         );
         $this->assertEquals(
@@ -83,20 +83,20 @@ class DiscussRepositoryTest extends TestCase
         extract( $this->createGloss(__FUNCTION__) );
         $gloss = $this->getRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
 
-        $threadData = $this->_repository->getThreadDataForEntity('gloss', $gloss->id, true);
+        $threadData = $this->_repository->getThreadDataForEntity('glossv', $gloss->latest_gloss_version_id, true);
         $t = $threadData->getThread();
         $t->subject = 'Subject';
 
-        $existingThreadData = $this->_repository->getThreadDataForEntity('gloss', $gloss->id, true);
+        $existingThreadData = $this->_repository->getThreadDataForEntity('glossv', $gloss->latest_gloss_version_id, true);
         $this->assertTrue($existingThreadData instanceof ForumThreadForEntityValue);
 
         $t = $existingThreadData->getThread();
         $this->assertTrue($t instanceof ForumThread);
-        $this->assertEquals('gloss', $t->entity_type);
-        $this->assertEquals($gloss->id, $t->entity_id);
+        $this->assertEquals('glossv', $t->entity_type);
+        $this->assertEquals($gloss->latest_gloss_version_id, $t->entity_id);
         $this->assertEquals(Auth::user()->id, $t->account_id);
         $this->assertEquals(
-            ForumGroup::where('role', 'gloss')->first()->id,
+            ForumGroup::where('role', 'glossv')->first()->id,
             $t->forum_group_id
         );
         $this->assertEquals(
@@ -110,7 +110,7 @@ class DiscussRepositoryTest extends TestCase
         extract( $this->createGloss(__FUNCTION__) );
         $gloss = $this->getRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
 
-        $threadData = $this->_repository->getThreadDataForEntity('gloss', $gloss->id, true);
+        $threadData = $this->_repository->getThreadDataForEntity('glossv', $gloss->latest_gloss_version_id, true);
         $t = $threadData->getThread();
         $t->subject = 'Subject';
 

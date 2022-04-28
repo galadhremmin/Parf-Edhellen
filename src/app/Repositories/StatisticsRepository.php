@@ -100,7 +100,6 @@ class StatisticsRepository
         // Retrieve approved, latest glosses
         $data['glosses'] = $this->getTopContributors('glosses', $columns, $numberOfResultsPerCategory, function ($query) {
             return $query->where([
-                ['glosses.is_latest', 1],
                 ['glosses.is_deleted', 0]
             ]);
         });

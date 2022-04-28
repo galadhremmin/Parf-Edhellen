@@ -12,8 +12,8 @@
       @if ($single)
         <hr>
         @include('discuss._standalone', [
-          'entity_id'   => $gloss->id,
-          'entity_type' => 'gloss'
+          'entity_id'   => $gloss->latest_gloss_version_id,
+          'entity_type' => 'glossv'
         ])
       @endif
     @endforeach

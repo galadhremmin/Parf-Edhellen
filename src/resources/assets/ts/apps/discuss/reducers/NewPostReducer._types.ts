@@ -1,4 +1,5 @@
 import { IReduxAction } from '@root/_types';
+import { IThreadEntityAction } from './ThreadReducer._types';
 
 export interface IPost {
     content: string;
@@ -10,7 +11,7 @@ export interface INewPostState extends IPost {
     loading: boolean;
 }
 
-export interface INewPostAction extends IReduxAction {
+export interface INewPostAction extends IReduxAction, IThreadEntityAction {
     propertyName: string;
     value: string;
 }

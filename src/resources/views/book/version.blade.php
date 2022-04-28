@@ -22,8 +22,6 @@
         @date($v->created_at) · <em>
           @if ($v->is_latest) 
             Latest
-          @elseif (! $v->origin_gloss_id || $v->origin_gloss_id === $v->id)
-            Original
           @else 
             Deprecated
           @endif
@@ -50,7 +48,7 @@
 
   @include('discuss._standalone', [
     'entity_id'   => $v->id,
-    'entity_type' => 'gloss',
+    'entity_type' => 'glossv',
     'enabled'     => !! $v->is_latest
   ])
 

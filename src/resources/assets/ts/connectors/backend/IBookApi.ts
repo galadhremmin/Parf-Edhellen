@@ -80,16 +80,15 @@ export interface IBookGlossEntity {
         [ sentenceId: string ]: IBookInflectionEntity[];
     };
     isCanon: boolean;
-    isIndex: boolean;
     isLatest: boolean;
     isRejected: boolean;
     isUncertain: boolean;
     label: string;
     language: ILanguageEntity;
     languageId: number;
+    latestGlossVersionId: number;
     normalizedWord: string;
     originalGlossId: number;
-    phonetic: null; // unsupported: always `null`
     rating: number;
     senseId: number;
     source: string;

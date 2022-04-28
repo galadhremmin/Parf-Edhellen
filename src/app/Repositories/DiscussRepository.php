@@ -10,7 +10,10 @@ use DB;
 use Exception;
 use BadMethodCallException;
 
-use App\Http\Discuss\ContextFactory;
+use App\Http\Discuss\{
+    ContextFactory,
+    IDiscussEntityRemapper
+};
 use App\Models\Initialization\Morphs;
 use App\Helpers\StringHelper;
 use App\Events\{

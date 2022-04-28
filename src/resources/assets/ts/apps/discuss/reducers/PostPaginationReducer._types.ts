@@ -1,4 +1,6 @@
-import { IThreadReducerAction } from './ThreadReducer._types';
+import {
+    IThreadReducerAction,
+} from './ThreadReducer._types';
 
 export interface IPostPaginationState {
     currentPage: number;

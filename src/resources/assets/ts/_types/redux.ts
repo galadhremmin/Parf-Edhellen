@@ -6,6 +6,8 @@ import {
     ThunkDispatch,
 } from 'redux-thunk';
 
+export type Reducer<TState, TAction extends IReduxAction> = (state: TState, action: TAction) => TState;
+
 export interface IReduxAction<TType = string> {
     type: TType;
 }

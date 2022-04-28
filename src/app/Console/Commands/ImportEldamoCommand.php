@@ -321,7 +321,6 @@ class ImportEldamoCommand extends Command
             return new GlossDetail([
                 'category' => $d->title,
                 'text' => $d->body,
-                'account_id' => $gloss->account_id,
                 'order' => $order[$d->title],
                 'type' => isset($d->type) ? $d->type : null,
             ]);

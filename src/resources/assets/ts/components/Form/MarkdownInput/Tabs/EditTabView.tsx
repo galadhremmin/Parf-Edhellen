@@ -79,14 +79,14 @@ export default class EditTabView extends React.Component<IProps, IState> {
                     <Markdown parse={true} text={previewValue} />
                 </div>
             </div>
-            <div>
-                <div className="checkbox text-end">
+            <div className="text-end">
+                <div className="checkbox">
                     <label>
                         <input type="checkbox" checked={enter2Paragraph} onChange={this._onEnter2ParagraphChange} />
                         Enter key inserts a paragraph (&para;)
                     </label>
                 </div>
-                <small className="float-end">
+                <small>
                     {' Supports Markdown. '}
                     <a href={LearnMoreMarkdownUrl} target="_blank" rel="noreferrer">
                         Read more (opens a new window)
