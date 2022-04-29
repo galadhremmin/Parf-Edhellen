@@ -31,7 +31,7 @@ interface IContributionController
      * @param Request $request
      * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
      */
-    function create(Request $request, int $entityId = 0);
+    function create(Request $request);
 
     /**
      * Performs partial validation of the specified request.

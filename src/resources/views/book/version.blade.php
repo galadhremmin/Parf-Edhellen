@@ -33,7 +33,7 @@
         'disable_tools' => true
       ])
       <div class="text-end">
-        <a class="btn btn-secondary" href="{{ $link->contributeGloss($v->id) }}">
+        <a class="btn btn-secondary" href="{{ $link->contributeGloss(0, $v->id) }}">
           {{ $v->is_latest ? 'Propose changes' : 'Restore' }}
         </a>
         @if ($user !== null && $user->isAdministrator())

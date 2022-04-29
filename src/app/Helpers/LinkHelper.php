@@ -119,11 +119,14 @@ class LinkHelper
         return route('contribution.show', ['contribution' => $contributionId]);
     }
 
-    public function contributeGloss(int $originalGlossId = 0)
+    public function contributeGloss(int $originalGlossId = 0, int $glossVersionId = 0)
     {
         $params = ['morph' => Morphs::getAlias(Gloss::class)];
         if ($originalGlossId !== 0) {
             $params['entity_id'] = $originalGlossId;
+        }
+        if ($glossVersionId !== 0) {
+            $params['gloss_version_id'] = $glossVersionId;
         }
 
         return route('contribution.create', $params);
