@@ -140,21 +140,28 @@ class GlossContributionController extends Controller implements IContributionCon
      * @param Request $request
      * @return array|\Illuminate\View\View|\Illuminate\Contracts\View\Factory
      */
-    public function create(Request $request, int $entityId = 0)
+    public function create(Request $request)
     {
-        $gloss = null;
+        $data = $request->validate([
+            'entity_id'        => 'sometimes|numeric',
+            'gloss_version_id' => 'sometimes|numeric',
+        ]);
+        $entityId       = isset($data['entity_id']) ? intval($data['entity_id']) : 0;
+        $glossVersionId = isset($data['gloss_version_id']) ? intval($data['gloss_version_id']) : 0;
 
-        if ($entityId) {
+        $gloss = null;
+        if ($entityId !== 0) {
             $glosses = $this->_glossRepository->getGloss($entityId);
             if (! $glosses->isEmpty()) {
                 $gloss = $glosses->first();
-            } else {
-                $gloss = $this->_glossRepository->getGlossFromVersion($entityId);
             }
+        }
+        if ($glossVersionId !== 0) {
+            $gloss = $this->_glossRepository->getGlossFromVersion($glossVersionId);
+        }
 
-            if ($gloss !== null) {
-                $gloss->keywords = $this->_glossRepository->getKeywords($gloss->sense_id, $gloss->id);
-            }
+        if ($gloss !== null) {
+            $gloss->keywords = $this->_glossRepository->getKeywords($gloss->sense_id, $gloss->id);
         }
 
         return $request->ajax()
