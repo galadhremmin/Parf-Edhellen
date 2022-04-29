@@ -148,6 +148,11 @@ class GlossContributionController extends Controller implements IContributionCon
             $glosses = $this->_glossRepository->getGloss($entityId);
             if (! $glosses->isEmpty()) {
                 $gloss = $glosses->first();
+            } else {
+                $gloss = $this->_glossRepository->getGlossFromVersion($entityId);
+            }
+
+            if ($gloss !== null) {
                 $gloss->keywords = $this->_glossRepository->getKeywords($gloss->sense_id, $gloss->id);
             }
         }
