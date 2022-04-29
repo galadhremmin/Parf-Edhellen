@@ -169,6 +169,45 @@ class GlossRepository
         ]);
     }
 
+    public function getGlossFromVersion($versionId)
+    {
+        $version = GlossVersion::find($versionId);
+        if ($version === null) {
+            return null;
+        }
+
+        $gloss = new Gloss($version->getAttributes());
+
+        if (! $gloss->sense_id) {
+            $sense = Gloss::where('id', $version->gloss_id)
+                ->select('sense_id')
+                ->first();
+            if ($sense === null) {
+                return null;
+            }
+
+            $gloss->sense_id = $sense->sense_id;
+        }
+
+        $gloss->id = $version->gloss_id;
+        $gloss->exists = true;
+
+        $gloss->load('account', 'gloss_group', 'language', 'sense', 'sense.word', 'speech', 'word');
+        $gloss->translations = $version->translations->map(function ($t) {
+            return new TranslationVersion($t->getAttributes());
+        });
+        $gloss->gloss_details = $version->gloss_details->map(function ($d) {
+            return new GlossDetail($d->getAttributes());
+        });
+
+        return $gloss;
+    }
+
+    /**
+     * Gets the latest gloss associated with the legay gloss ID.
+     * @param int $glossId legacy gloss ID (pre-migration)
+     * @return Gloss
+     */
     public function getGlossVersionByPreMigrationId(int $glossId)
     {
         Log::warning('[DEPRECATED] Calling getGlossVersionByPreMigrationId for '.$glossId);
