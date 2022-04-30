@@ -257,45 +257,50 @@ class GlossVersions extends Migration
             DB::statement('
                 update `sentence_fragments` f 
                 left join (
-                    select latest.`latest_gloss_id`, g.`id` as `gloss_id`
+                    select g.`id`, latest.`latest_gloss_id`
                     from `glosses` g
-                        left join (
-                            select `id` as `latest_gloss_id`, `origin_gloss_id`
+                        inner join (
+                            select `id` as `latest_gloss_id`, coalesce(`origin_gloss_id`, `id`) as `origin_gloss_id`
                             from `glosses`
                             where `is_latest` = 1
                         ) latest on latest.`origin_gloss_id` = g.`origin_gloss_id`
-                    where g.`is_latest` = 0) l on l.`gloss_id` = f.`gloss_id`
-                set f.`gloss_id` = l.`latest_gloss_id`
+                    where g.`is_latest` = 0
+                ) l on l.`id` = f.`gloss_id`
+                set f.`gloss_id` = coalesce(l.`latest_gloss_id`, f.`gloss_id`)
+                where f.`gloss_id` is not null
             ');
 
             Log::info("Refreshing gloss references (step 2 of 3)");
             DB::statement('
                 update `contributions` c 
                 left join (
-                    select latest.`latest_gloss_id`, g.`id` as `gloss_id`
+                    select g.`id`, latest.`latest_gloss_id`
                     from `glosses` g
-                        left join (
-                            select `id` as `latest_gloss_id`, `origin_gloss_id`
+                        inner join (
+                            select `id` as `latest_gloss_id`, coalesce(`origin_gloss_id`, `id`) as `origin_gloss_id`
                             from `glosses`
                             where `is_latest` = 1
                         ) latest on latest.`origin_gloss_id` = g.`origin_gloss_id`
-                    where g.`is_latest` = 0) l on l.`gloss_id` = c.`gloss_id`
-                set c.`gloss_id` = l.`latest_gloss_id`
+                    where g.`is_latest` = 0
+                ) l on l.`id` = c.`gloss_id`
+                set c.`gloss_id` = coalesce(l.`latest_gloss_id`, c.`gloss_id`)
+                where c.`type` = \'gloss\' and c.`gloss_id` is not null;
             ');
 
             Log::info("Refreshing gloss references (step 3 of 3)");
             DB::statement('
                 update `flashcard_results` f 
                 left join (
-                    select latest.`latest_gloss_id`, g.`id` as `gloss_id`
+                    select g.`id`, latest.`latest_gloss_id`
                     from `glosses` g
-                        left join (
-                            select `id` as `latest_gloss_id`, `origin_gloss_id`
+                        inner join (
+                            select `id` as `latest_gloss_id`, coalesce(`origin_gloss_id`, `id`) as `origin_gloss_id`
                             from `glosses`
                             where `is_latest` = 1
                         ) latest on latest.`origin_gloss_id` = g.`origin_gloss_id`
-                    where g.`is_latest` = 0) l on l.`gloss_id` = f.`gloss_id`
-                set f.`gloss_id` = l.`latest_gloss_id`
+                    where g.`is_latest` = 0
+                ) l on l.`id` = f.`gloss_id`
+                set f.`gloss_id` = coalesce(l.`latest_gloss_id`, f.`gloss_id`)
             ');
             
             DB::commit();
