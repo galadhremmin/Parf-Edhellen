@@ -1,83 +1,44 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-import IUtilityApi from '@root/connectors/backend/IUtilityApi';
+import IUtilityApi, { IMarkdownParserRequest, IMarkdownParserResponse } from '@root/connectors/backend/IUtilityApi';
 import { DI, resolve } from '@root/di';
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
 
 import HtmlInject from './HtmlInject';
 import {
     IProps,
-    IState,
 } from './Markdown._types';
 
-export default class Markdown extends React.Component<IProps, IState> {
-    public static getDerivedStateFromProps(nextProps: IProps, prevState: IState) {
-        if (nextProps.parse && nextProps.text !== prevState.lastText) {
-            return {
-                dirty: true,
-                lastText: nextProps.text,
-            } as IState;
+function Markdown(props: IProps) {
+    const {
+        text,
+        parse,
+        markdownApi,
+    } = props;
+
+    const [ html, setHtml ] = useState<string>(null);
+    
+    useEffect(() => {
+        if (parse && ! isEmptyString(text)) {
+            (markdownApi as IUtilityApi).parseMarkdown({
+                markdown: text,
+            }).then((response: IMarkdownParserResponse) => {
+                setHtml(response.html);
+            }).catch((reason: unknown) => {
+                setHtml(`The server failed to parse the specified string. Reason: ${String(reason)}`);
+            });
+        } else {
+            setHtml(text);
         }
+    }, [ text, parse, markdownApi ]);
 
-        return null;
-    }
-
-    public state: IState = {
-        dirty: true,
-        html: null,
-        lastText: null,
-    };
-
-    private _api = resolve<IUtilityApi>(DI.UtilityApi);
-
-    public async componentDidMount() {
-        if (this.props.parse) {
-            await this._parse(this.props.text);
-        }
-    }
-
-    public async componentDidUpdate() {
-        const {
-            dirty,
-            lastText,
-        } = this.state;
-
-        if (this.props.parse && dirty) {
-            await this._parse(lastText);
-        }
-    }
-
-    public render() {
-        const {
-            html,
-        } = this.state;
-        const {
-            parse,
-            text,
-        } = this.props;
-
-        return parse
-            ? <HtmlInject html={html} />
-            : text;
-    }
-
-    private async _parse(markdown: string) {
-        let html = markdown;
-        if (! isEmptyString(markdown)) {
-            try {
-                const response = await this._api.parseMarkdown({
-                    markdown,
-                });
-
-                html = response.html;
-            } catch (ex) {
-                html = markdown;
-            }
-        }
-
-        this.setState({
-            dirty: false,
-            html,
-        });
-    }
+    return <>
+        {(parse && html) ? <HtmlInject html={html} /> : (html || '')}
+    </>;
 }
+
+Markdown.defaultProps = {
+    markdownApi: resolve<IUtilityApi>(DI.UtilityApi),
+} as Partial<IProps>;
+
+export default Markdown;

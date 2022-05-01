@@ -249,7 +249,6 @@ class BookAdapter
             unset(
                 $gloss->word_id,
                 $gloss->is_deleted,
-                $gloss->updated_at,
                 $gloss->speech_id,
                 $gloss->has_details
             );
@@ -287,13 +286,15 @@ class BookAdapter
         }); // <-- infer success
 
         // Convert dates
-        if (! ($gloss->created_at instanceof Carbon)) {
-            $date = Carbon::parse($gloss->created_at);
-            
-            if ($atomDate) {
-                $gloss->created_at = $date->toAtomString();
-            } else {
-                $gloss->created_at = $date;
+        foreach (['created_at', 'updated_at'] as $dateField) {
+            if ($gloss->$dateField !== null && ! ($gloss->$dateField instanceof Carbon)) {
+                $date = Carbon::parse($gloss->$dateField);
+                
+                if ($atomDate) {
+                    $gloss->$dateField = $date->toAtomString();
+                } else {
+                    $gloss->$dateField = $date;
+                }
             }
         }
 

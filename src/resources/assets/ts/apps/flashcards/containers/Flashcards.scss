@@ -1,5 +1,9 @@
 @import "../../../_scss/_variables";
 
+#ed-flashcard-component {
+  min-height: 100vh;
+}
+
 /* entire container, keeps perspective */
 .flip-container {
   perspective: 1000px;

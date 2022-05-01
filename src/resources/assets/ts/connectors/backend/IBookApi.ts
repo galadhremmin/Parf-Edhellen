@@ -98,6 +98,7 @@ export interface IBookGlossEntity {
     }[];
     type: string;
     word: string;
+    updatedAt: string;
 }
 
 export interface IBookGlossDetailEntity {

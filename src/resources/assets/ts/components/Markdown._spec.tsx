@@ -38,9 +38,10 @@ describe('components/Markdown', () => {
                 expect(data).to.deep.equal({
                     markdown: MarkdownText,
                 });
-
                 done();
-                return Promise.reject();
+                return Promise.resolve({
+                    html: ''
+                });
             });
 
         wrapper.setProps({
@@ -48,28 +49,22 @@ describe('components/Markdown', () => {
         });
     });
 
-    it('can parse', (done) => {
-        sandbox.stub(axios, 'post')
-            .callsFake(() => {
-                return Promise.resolve({
-                    data: {
-                        html: HtmlText,
-                    },
-                    status: 200,
-                }) as any;
-            });
-
-        // force refresh by resetting `lastText`.
-        wrapper.setState({
-            lastText: null,
+    it('can parse', () => {
+        const markdownResponse = Promise.resolve({
+            data: {
+                html: HtmlText,
+            },
+            status: 200,
         });
+
+        sandbox.stub(axios, 'post')
+            .callsFake(() => markdownResponse);
+
         wrapper.setProps({
             parse: true,
         });
 
-        window.setTimeout(() => {
-            wrapper.update();
-
+        markdownResponse.then(() => {
             expect(wrapper.children().length).to.equal(1);
 
             let c = wrapper.childAt(0).find('i');
@@ -79,8 +74,6 @@ describe('components/Markdown', () => {
             c = wrapper.childAt(0).find('b');
             expect(c.length).to.equal(1);
             expect(c.first().text()).to.equal('bold');
-
-            done();
-        }, 0);
+        });
     });
 });

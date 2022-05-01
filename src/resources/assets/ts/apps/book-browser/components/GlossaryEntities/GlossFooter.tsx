@@ -27,10 +27,16 @@ const GlossFooter = (props: IProps) => {
         {gloss.glossGroupId && <>
             Group: <span itemProp="sourceOrganization">{gloss.glossGroupName}.</span>
         </>}
-        {' Published: '}
+        {' Published '}
         <span itemProp="datePublished">
             <DateLabel dateTime={gloss.createdAt} />
         </span>
+        {(gloss.updatedAt && gloss.updatedAt !== gloss.createdAt) && <>
+            {' and modified '}
+            <span itemProp="dateModified">
+                <DateLabel dateTime={gloss.updatedAt} />
+            </span>
+        </>}
         {' by '}
         <a href={gloss.accountUrl} itemProp="author" rel="author" title={`View profile for ${gloss.accountName}.`}>
             {gloss.accountName}

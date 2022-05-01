@@ -11,8 +11,3 @@ export interface IProps {
     rows?: number;
     value: string;
 }
-
-export interface IState {
-    previewValue: string;
-    caretPosition: number;
-}
