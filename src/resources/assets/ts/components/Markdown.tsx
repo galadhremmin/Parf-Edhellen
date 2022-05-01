@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import React, { useEffect, useState } from 'react';
 
-import IUtilityApi, { IMarkdownParserRequest, IMarkdownParserResponse } from '@root/connectors/backend/IUtilityApi';
+import IUtilityApi, { IMarkdownParserResponse } from '@root/connectors/backend/IUtilityApi';
 import { DI, resolve } from '@root/di';
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
 
@@ -20,7 +22,7 @@ function Markdown(props: IProps) {
     
     useEffect(() => {
         if (parse && ! isEmptyString(text)) {
-            (markdownApi as IUtilityApi).parseMarkdown({
+            markdownApi?.parseMarkdown({
                 markdown: text,
             }).then((response: IMarkdownParserResponse) => {
                 setHtml(response.html);
