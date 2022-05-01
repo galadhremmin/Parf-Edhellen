@@ -205,6 +205,10 @@ class GlossContributionController extends Controller implements IContributionCon
         $contribution->sense    = $sense;
         $contribution->keywords = json_encode($keywords);
 
+        if ($entity->exists) {
+            $contribution->gloss_id = $entity->id;
+        }
+
         return $entity;
     }
 

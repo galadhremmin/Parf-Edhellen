@@ -57,7 +57,7 @@ class KeywordRepositoryTest extends TestCase
 
         $expected = array_unique(array_merge($keywords, array_map(function ($t) {
             return $t->translation;
-        }, $translations), [ $word ]));
+        }, $translations), [ $word, $gloss->sense->word->word ]));
         $actual = $gloss->keywords->map(function ($k) {
             return $k->keyword;
         })->toArray();
