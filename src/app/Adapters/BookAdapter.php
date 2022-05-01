@@ -287,6 +287,10 @@ class BookAdapter
 
         // Convert dates
         foreach (['created_at', 'updated_at'] as $dateField) {
+            if (! property_exists($gloss, $dateField)) {
+                continue;
+            }
+
             if ($gloss->$dateField !== null && ! ($gloss->$dateField instanceof Carbon)) {
                 $date = Carbon::parse($gloss->$dateField);
                 
