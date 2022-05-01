@@ -17,11 +17,11 @@ use App\Models\{
 class GlossVersion extends ModelBase implements IHasFriendlyName
 {
     use HasAccount;
-    
-    protected $fillable = [
-        'gloss_id', 'language_id', 'word_id', 'account_id', 'sense_id', 'gloss_group_id', 
-        'speech_id', 'is_uncertain', 'is_rejected', 'has_details', 'etymology', 'tengwar',
-        'source', 'comments', 'external_id', 'label', 'version_change_flags'
+
+    protected $fillable = [ 
+        'account_id', 'language_id', 'word_id', 'speech_id', 'gloss_group_id', 'sense_id', 
+        'source', 'comments', 'is_uncertain', 'is_rejected', 'tengwar', 'word_id', 'external_id',
+        'has_details', 'label', 'source', 'etymology', 'version_change_flags', 'gloss_id'
     ];
 
     public function gloss() 

@@ -84,7 +84,7 @@ class GlossRepositoryTest extends TestCase
             return $k->keyword;
         })->toArray();
         $expected = array_unique(
-            array_merge([$word], $keywords, array_map(function ($t) {
+            array_merge([$word, $savedGloss->sense->word->word], $keywords, array_map(function ($t) {
                 return $t->translation;
             }, $translations))
         );
@@ -276,5 +276,21 @@ class GlossRepositoryTest extends TestCase
             return $k->keyword === $newKeyword;
         }));
         $this->assertEquals(2, $versions->getVersions()->count());
+    }
+
+    public function testNavigationPropertiesForGloss()
+    {
+        $r = $this->getGlossRepository();
+
+        extract( $this->createGloss(__FUNCTION__) );
+        $r->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
+
+        $this->assertNotNull($gloss->account);
+        $this->assertNotNull($gloss->language);
+        $this->assertNotNull($gloss->gloss_group);
+        $this->assertNotNull($gloss->speech);
+        
+        $this->assertEquals(count($translations), $gloss->translations->count());
+        $this->assertEquals(count($details), $gloss->gloss_details->count());
     }
 }

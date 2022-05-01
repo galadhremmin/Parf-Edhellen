@@ -9,9 +9,10 @@ class Gloss extends ModelBase implements Interfaces\IHasFriendlyName
     use Traits\HasAccount;
     
     protected $fillable = [ 
-        'account_id', 'language_id', 'word_id', 'speech_id', 'gloss_group_id', 'sense', 
-        'source', 'comments', 'notes', 'is_uncertain', 'is_rejected', 'tengwar',
-        'word', 'external_id', 'has_details', 'label', 'latest_gloss_version_id'
+        'account_id', 'language_id', 'word_id', 'speech_id', 'gloss_group_id', 'sense_id', 
+        'source', 'comments', 'is_uncertain', 'is_rejected', 'is_deleted', 'tengwar',
+        'word_id', 'external_id', 'has_details', 'label', 'latest_gloss_version_id',
+        'source', 'etymology'
     ];
 
     public function translations() 

@@ -351,7 +351,7 @@ class GlossRepository
         $translationStrings = array_map(function ($t) {
             return $t->translation;
         }, $translations);
-        $newKeywords = array_unique(array_merge($keywords, [ $wordString ], $translationStrings));
+        $newKeywords = array_unique(array_merge($keywords, [ $wordString, $senseString ], $translationStrings));
         sort($newKeywords);
         unset($translationStrings);
 
@@ -461,6 +461,7 @@ class GlossRepository
                     $gloss->is_deleted = 0;
                     $gloss->has_details = count($details) > 0;
                     $gloss->save();
+                    $gloss->refresh();
                 }
 
                 if ($isNew || $changed & self::GLOSS_CHANGE_DETAILS) {
