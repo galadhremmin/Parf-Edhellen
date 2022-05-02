@@ -212,7 +212,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
             glossGroupIds,
         });
 
-        this._persistState('glossGroupIds', glossGroupIds);
+        void this._persistState('glossGroupIds', glossGroupIds);
         this._beginSearch(/* queryChanged: */ false);
     }
 
@@ -233,7 +233,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
      * keys and the enter key.
      */
     private _onSearchResultNavigate = (ev: IComponentEvent<number>) => {
-        this.props.dispatch(
+        void this.props.dispatch(
             this._actions.selectNextResult(ev.value),
         );
     }
@@ -244,7 +244,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
      */
     private _search = (queryChanged: boolean) => {
         const state = this.state;
-        this.props.dispatch(
+        void this.props.dispatch(
             this._actions.search({
                 ...state,
                 // These hacks only accommodates for the fact that the UI does not currently support
@@ -258,7 +258,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
         // *and* has a previous glossary already loaded, the user expects the changes to their configuration
         // to reflect to the glossary currently loaded.
         if (queryChanged === false && this.props.currentGlossaryWord?.length > 0) {
-            this.props.dispatch(
+            void this.props.dispatch(
                 this._actions.reloadGlossary(),
             );
         }

@@ -62,6 +62,9 @@ class SentenceContext implements IDiscussContext
     public function view(Model $entity)
     {   
         $sentence = $this->_repository->getSentence($entity->id);
+        if (! $sentence) {
+            return response(null, 404);
+        }
         return view('discuss.context._sentence', [
             'sentence' => $sentence
         ]);

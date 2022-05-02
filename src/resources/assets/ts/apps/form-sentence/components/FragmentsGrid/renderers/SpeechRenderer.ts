@@ -1,7 +1,7 @@
 import {
     ICellRendererComp,
     ICellRendererParams,
-} from '@ag-grid-community/all-modules';
+} from '@ag-grid-community/core';
 import { IAugmentedCellRendererParams } from '../FragmentsGrid._types';
 
 export default class SpeechRenderer implements ICellRendererComp {

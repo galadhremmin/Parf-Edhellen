@@ -2,7 +2,6 @@ import React from 'react';
 
 import { AgGridReact } from '@ag-grid-community/react';
 import {
-    AllCommunityModules,
     CellValueChangedEvent,
     ColDef,
     DetailGridInfo,
@@ -10,9 +9,12 @@ import {
     GridReadyEvent,
     RowClassParams,
     RowNode,
-} from '@ag-grid-community/all-modules';
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
+} from '@ag-grid-community/core';
+import {
+    ClientSideRowModelModule,
+} from '@ag-grid-community/client-side-row-model';
+import '@ag-grid-community/core/dist/styles/ag-grid.css';
+import '@ag-grid-community/core/dist/styles/ag-theme-balham.css';
 
 import {
     DI,
@@ -152,6 +154,7 @@ class FragmentsGrid extends React.Component<IProps, IState> {
                 resizable: true,
             },
             {
+                cellEditorPopup: true,
                 editable: true,
                 field: 'comments',
                 cellEditor: 'agLargeTextCellEditor',
@@ -184,7 +187,7 @@ class FragmentsGrid extends React.Component<IProps, IState> {
             <div className="ag-theme-balham FragmentsGrid--container">
                 {columnDefinition &&
                     <AgGridReact
-                        modules={AllCommunityModules}
+                        modules={[ClientSideRowModelModule]}
                         getRowId={this._onGetRowId}
                         isExternalFilterPresent={this._onIsExternalFilterPresent}
                         doesExternalFilterPass={this._onDoesExternalFilterPass}

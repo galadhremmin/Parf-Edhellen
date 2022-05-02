@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from 'react';
 
-import { fireEventAsync } from '@root/components/Component';
 import Dialog from '@root/components/Dialog';
 import TextIcon from '@root/components/TextIcon';
 import { IForumGroupEntity } from '@root/connectors/backend/IDiscussApi';
@@ -14,7 +13,6 @@ import Quote from '@root/components/Quote';
 function MovePost(props: IProps) {
     const {
         apiConnector,
-        thread,
     } = props;
     const {
         id: threadId,
@@ -27,18 +25,20 @@ function MovePost(props: IProps) {
     const [ groupId, setGroupId ] = useState<number>(currentGroupId || 0);
     const [ error, setError ] = useState<string>(null);
 
-    const _onDialogOpen = useCallback(async () => {
-        if (! isDialogOpen) {
-            try {
-                const nextGroups = await apiConnector.groups();
-                setGroups(nextGroups.groups);
-            } catch (ex) {
-                setError(`Failed to load discuss groups. Error description: ${ex}`);
-                setGroups({});
+    const _onDialogOpen = useCallback(() => {
+        void (async () => {
+            if (! isDialogOpen) {
+                try {
+                    const nextGroups = await apiConnector.groups();
+                    setGroups(nextGroups.groups);
+                } catch (ex) {
+                    setError(`Failed to load discuss groups. Error description: ${ex}`);
+                    setGroups({});
+                }
             }
-        }
 
-        setIsDialogOpen(x => !x);
+            setIsDialogOpen(x => !x);
+        })();
     }, [
         isDialogOpen,
         apiConnector,
@@ -49,22 +49,24 @@ function MovePost(props: IProps) {
         setGroupId(nextGroupId);
     }, []);
 
-    const _onMoveSubmit = useCallback(async () => {
-        try {
-            if (currentGroupId === groupId) {
-                throw new Error(`No movement necessary, the thread is already assigned to the group you've selected.`);
-            }
+    const _onMoveSubmit = useCallback(() => {
+        void (async () => {
+            try {
+                if (currentGroupId === groupId) {
+                    throw new Error(`No movement necessary, the thread is already assigned to the group you've selected.`);
+                }
 
-            await apiConnector.moveThread({
-                forumGroupId: groupId,
-                forumThreadId: threadId,
-            });
-            setError(null);
-            alert(`The thread has been successfully moved. The change will reflect next time you load the thread.`);
-            setIsDialogOpen(false);
-        } catch (ex) {
-            setError(`Failed to move the thread. ${ex}`);
-        }
+                await apiConnector.moveThread({
+                    forumGroupId: groupId,
+                    forumThreadId: threadId,
+                });
+                setError(null);
+                alert(`The thread has been successfully moved. The change will reflect next time you load the thread.`);
+                setIsDialogOpen(false);
+            } catch (ex) {
+                setError(`Failed to move the thread. ${ex}`);
+            }
+        })();
     }, [
         apiConnector,
         currentGroupId,
@@ -74,15 +76,15 @@ function MovePost(props: IProps) {
     ]);
 
     return <>
-        <a href="#" onClick={void _onDialogOpen}>
+        <a href="#" onClick={_onDialogOpen}>
             <TextIcon icon="move" />{' Move'}
         </a>
         <Dialog<number>
             confirmButtonText="Move"
             open={isDialogOpen}
             title={<>Move <Quote>{subject}</Quote></>}
-            onDismiss={void _onDialogOpen}
-            onConfirm={void _onMoveSubmit}>
+            onDismiss={_onDialogOpen}
+            onConfirm={_onMoveSubmit}>
             {error && <StaticAlert type="danger">{error}</StaticAlert>}
             <label htmlFor="ed-discuss--forum-group-id">Discuss group:</label>
             <select className="form-select" id="ed-discuss--forum-group-id"

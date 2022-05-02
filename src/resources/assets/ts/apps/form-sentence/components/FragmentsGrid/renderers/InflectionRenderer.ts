@@ -1,7 +1,7 @@
 import {
     ICellRendererComp,
     ICellRendererParams,
-} from '@ag-grid-community/all-modules';
+} from '@ag-grid-community/core';
 
 import { ISentenceFragmentInflection } from '@root/connectors/backend/IBookApi';
 import { IAugmentedCellRendererParams } from '../FragmentsGrid._types';

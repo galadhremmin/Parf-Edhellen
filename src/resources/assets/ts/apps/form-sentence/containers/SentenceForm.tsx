@@ -58,7 +58,7 @@ function SentenceForm(props: IProps) {
     ]);
 
     useEffect(() => {
-        if (bookApi) {
+        if (bookApi && sentenceId !== 0) {
             bookApi.sentence({ id: sentenceId }).then((s) => {
                 setCurrentSentenceName(s.sentence.name);
             });

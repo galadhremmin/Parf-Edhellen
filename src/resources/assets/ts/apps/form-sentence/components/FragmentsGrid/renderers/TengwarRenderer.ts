@@ -1,7 +1,7 @@
 import {
     ICellRendererComp,
     ICellRendererParams,
-} from '@ag-grid-community/all-modules';
+} from '@ag-grid-community/core';
 
 export default class TengwarRenderer implements ICellRendererComp {
     private _cell: HTMLElement;
