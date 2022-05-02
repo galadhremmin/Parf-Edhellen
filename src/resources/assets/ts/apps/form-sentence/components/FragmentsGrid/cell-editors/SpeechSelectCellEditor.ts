@@ -1,4 +1,4 @@
-import { ICellEditorParams } from '@ag-grid-community/all-modules';
+import { ICellEditorParams } from '@ag-grid-community/core';
 
 import { IFragmentGridMetadata } from '../FragmentsGrid._types';
 import MultipleSelectCellEditor from './MultipleSelectCellEditor';

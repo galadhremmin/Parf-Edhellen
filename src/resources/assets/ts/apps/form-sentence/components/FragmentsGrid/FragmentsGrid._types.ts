@@ -2,7 +2,7 @@ import {
     ColDef,
     ICellEditorParams,
     ICellRendererParams,
-} from '@ag-grid-community/all-modules';
+} from '@ag-grid-community/core';
 
 import { ComponentEventHandler } from '@root/components/Component._types';
 import { ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';

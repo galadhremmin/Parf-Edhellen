@@ -2,10 +2,7 @@ import {
     ICellEditorComp,
     ICellEditorParams,
     PopupComponent,
-} from '@ag-grid-community/all-modules';
-
-const KEY_BACKSPACE = 8;
-const KEY_DELETE    = 46;
+} from '@ag-grid-community/core';
 
 export default class MultipleSelectCellEditor<T, V = T> extends PopupComponent implements ICellEditorComp {
     private static TEMPLATE = `<div class="ag-input-wrapper" role="presentation">

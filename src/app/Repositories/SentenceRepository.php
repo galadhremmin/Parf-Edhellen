@@ -108,8 +108,10 @@ class SentenceRepository
 
     public function getSentence(int $id)
     {
-        $sentence = Sentence::findOrFail($id)
-            ->load('account', 'language');
+        $sentence = Sentence::with('account', 'language')->find($id);
+        if ($sentence == null) {
+            return $sentence;
+        }
 
         $fragments = $sentence->sentence_fragments;
         $fragmentIds = $fragments->map(function ($f) {

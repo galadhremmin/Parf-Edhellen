@@ -1,10 +1,12 @@
 import {
-    AllCommunityModules,
     CellValueChangedEvent,
     DetailGridInfo,
     GridReadyEvent,
-} from '@ag-grid-community/all-modules';
+} from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react/lib/agGridReact';
+import {
+    ClientSideRowModelModule,
+} from '@ag-grid-community/client-side-row-model';
 import React from 'react';
 
 import { fireEventAsync } from '@root/components/Component';
@@ -24,11 +26,13 @@ export default class TranslationGrid extends React.Component<IProps> {
     public componentDidMount() {
         const columnDefinition: TranslationGridColumnDefinition = [
             {
+                cellEditorPopup: true,
                 editable: false,
                 field: 'sentenceText',
                 resizable: true,
             },
             {
+                cellEditorPopup: true,
                 editable: true,
                 field: 'translation',
                 cellEditor: 'agLargeTextCellEditor',
@@ -58,8 +62,9 @@ export default class TranslationGrid extends React.Component<IProps> {
 
         return <div className="ag-theme-balham FragmentsGrid--container">
             {columnDefinition &&
-                <AgGridReact columnDefs={columnDefinition}
-                    modules={AllCommunityModules}
+                <AgGridReact
+                    modules={[ClientSideRowModelModule]}
+                    columnDefs={columnDefinition}
                     onCellValueChanged={this._onCellValueChanged}
                     onGridReady={this._onGridReady}
                     ref={this._onSetGridReference}

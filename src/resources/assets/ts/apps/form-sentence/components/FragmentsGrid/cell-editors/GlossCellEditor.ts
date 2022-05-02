@@ -2,7 +2,7 @@ import {
     ICellEditorComp,
     ICellEditorParams,
     PopupComponent,
-} from '@ag-grid-community/all-modules';
+} from '@ag-grid-community/core';
 
 import { ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
 import debounce from '@root/utilities/func/debounce';
@@ -85,6 +85,8 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
                         word: gloss.word.word,
                     },
                 ], 1);
+            }).catch(() => {
+                // Do nothing if the gloss isn't found.
             });
         }
 
