@@ -1,16 +1,13 @@
 <?php
-
-namespace Tests\Unit;
+namespace Tests\Unit\Repositories;
 
 use Tests\TestCase;
-use Illuminate\Support\Collection;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Mail\SendQueuedMailable;
 use Illuminate\Support\Facades\Queue;
 use Auth;
 use DB;
 use Mail;
+
+use Tests\Unit\Traits\MocksAuth;
 
 use App\Repositories\MailSettingRepository;
 use App\Models\Initialization\Morphs;
@@ -26,7 +23,6 @@ use App\Events\{
 use App\Models\{
     Account,
     MailSetting,
-    MailSettingOverride,
 
     Contribution,
     Language,
@@ -43,8 +39,8 @@ use App\Mail\{
 
 class MailSettingRepositoryTest extends TestCase
 {
-    use Traits\MocksAuth {
-        Traits\MocksAuth::setUp as setUpAuth;
+    use MocksAuth {
+        MocksAuth::setUp as setUpAuth;
     } // ;
 
     private $_accounts;

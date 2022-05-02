@@ -18,11 +18,8 @@ use App\Models\{
     Word
 };
 
-use DB;
-
 class SearchIndexRepository 
 {
-    private static $_resolvers = null;
     private $_keywordsResolver;
 
     public function __construct(KeywordsSearchIndexResolver $keywordsResolver)
@@ -32,6 +29,13 @@ class SearchIndexRepository
 
     public function createIndex(ModelBase $model, Word $wordEntity, string $inflection = null): SearchKeyword
     {
+        if (! $model->exists) {
+            throw new \Exception("Search keyword target model does not exist. Make sure that the entity has been saved before calling this method.");
+        }
+        if (! $wordEntity->exists) {
+            throw new \Exception("Word '".$wordEntity->word."' does not exist. Make sure that the entity has been saved before calling this method.");
+        }
+
         $entityName   = Morphs::getAlias($model);
         $entityId     = $model->id;
         $word         = StringHelper::toLower(StringHelper::clean($wordEntity->word));
@@ -45,6 +49,11 @@ class SearchIndexRepository
             $isOld = $glossGroupId
                 ? $model->gloss_group->is_old
                 : false;
+        }
+
+        $languageId = null;
+        if (property_exists($model, 'language_id')) {
+            $languageId = $model->language_id;
         }
 
         $normalizedKeyword           = StringHelper::normalize($keyword, true);
@@ -65,6 +74,7 @@ class SearchIndexRepository
             'normalized_keyword_reversed_length'     => mb_strlen($normalizedKeywordUnaccented),
             'normalized_keyword_reversed_unaccented_length' => mb_strlen($normalizedKeywordUnaccentedReversed),
 
+            'language_id'    => $languageId,
             'gloss_group_id' => $glossGroupId,
             'entity_name'    => $entityName,
             'entity_id'      => $entityId,
@@ -162,7 +172,8 @@ class SearchIndexRepository
             return $config[$morpedModel]['group_id'];
         }
 
-        throw new \Exception(sprintf('Unrecognised search group for %s and %s.', $entityName, $morpedModel));
+        throw new \Exception(sprintf('Unrecognised search group for %s and | 1846745 | 2022-05-02 17:42:34 | 2022-05-02 17:42:34 |            1 | vehicle | vehicle            | elcihev                     | vehicle                       | elcihev                                |              7 |                         7 |                                  7 |                                    7 |                                             7 | gloss       |    522554 | vehicle |  120338 |        NULL |      NULL |              2 |      0 |
+        %s.', $entityName, $morpedModel));
     }
 
     private function getEntityNameFromSearchGroup(int $searchGroupId): ?string

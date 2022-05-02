@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Repositories;
 
 use Tests\TestCase;
 use Tests\Unit\Traits\CanCreateGloss;
