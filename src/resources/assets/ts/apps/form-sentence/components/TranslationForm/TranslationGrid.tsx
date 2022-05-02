@@ -79,7 +79,7 @@ export default class TranslationGrid extends React.Component<IProps> {
         } = this;
 
         if (gridRef) {
-            (gridRef as any as DetailGridInfo).api.sizeColumnsToFit();
+            gridRef.api.sizeColumnsToFit();
         }
     }
 

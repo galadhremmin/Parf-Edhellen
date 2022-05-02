@@ -18,7 +18,7 @@ class ContributionContext implements IDiscussContext
             return null;
         }
 
-        return route('contribution.show', ['id' => $entity->id]);
+        return route('contribution.show', ['contribution' => $entity->id]);
     }
 
     public function resolveById(int $entityId)
