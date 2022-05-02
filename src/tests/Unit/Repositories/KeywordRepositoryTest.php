@@ -1,19 +1,12 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Repositories;
 
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Auth;
 use Queue;
 
 use Tests\Unit\Traits\CanCreateGloss;
 use App\Repositories\KeywordRepository;
-use App\Models\{
-    Gloss,
-    Translation
-};
 
 class KeywordRepositoryTest extends TestCase
 {
