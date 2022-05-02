@@ -117,7 +117,6 @@ function GlossForm(props: IProps) {
                             value={gloss.word.word}
                             onChange={_onChangeNative('word', wordTransformer)}
                             required={true}
-                            readOnly={edit}
                         />
                     </div>
                     <div className="form-group">

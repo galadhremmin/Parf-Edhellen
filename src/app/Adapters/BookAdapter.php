@@ -211,7 +211,7 @@ class BookAdapter
      * @return void
      */
     public function adaptGloss($gloss, Collection $languages = null, array $inflections = [], array $commentsById = [], 
-        bool $atomDate = false, LinkHelper $linker = null) 
+        bool $atomDate = false, LinkHelper $linker = null): \stdClass
     {
         if ($linker === null) {
             $linker = resolve(LinkHelper::class);
@@ -351,7 +351,7 @@ class BookAdapter
         if ($values->count() > 0) {
             $word = $values->first()->word->word;
 
-            $model = $this->adaptGlosses($values->all(), [], [], $word);
+            $model = $this->adaptGlosses($values->all(), [], [], $word, false);
             $versions = $model['sections'][0]['entities'];
             unset($model);
 

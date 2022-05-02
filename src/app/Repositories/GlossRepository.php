@@ -162,7 +162,7 @@ class GlossRepository
             ->orderBy('created_at', 'desc') // order by latest
             ->orderBy('id', 'desc')
             ->get();
-        
+
         return new GlossVersionsValue([
             'versions' => $versions,
             'latest_version_id' => $versions->count() > 0 ? $versions->first()->id : null
