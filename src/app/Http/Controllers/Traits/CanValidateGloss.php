@@ -11,7 +11,7 @@ trait CanValidateGloss
         
         $rules = [
             'id'                         => 'sometimes|numeric|exists:glosses,id',
-            'account.id'                 => 'required|numeric|exists:accounts,id',
+            'account.id'                 => 'sometimes|numeric|exists:accounts,id',
             'account_id'                 => 'sometimes|numeric|exists:accounts,id',
             'language_id'                => 'required|numeric|exists:languages,id',
             'speech_id'                  => 'required|numeric|exists:speeches,id',

@@ -2,6 +2,7 @@
 
 namespace App\Http\Discuss\Contexts;
 
+use App\Http\Controllers\Resources\ContributionController;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Http\Discuss\IDiscussContext;
@@ -12,6 +13,11 @@ use App\Models\{
 
 class ContributionContext implements IDiscussContext
 {
+    private $_contributionController;
+    public function __construct(ContributionController $contributionController) {
+        $this->_contributionController = $contributionController;
+    }
+
     public function resolve(Model $entity)
     {
         if (! $entity) {
@@ -28,6 +34,7 @@ class ContributionContext implements IDiscussContext
 
     public function available($entityOrId, Account $account = null)
     {
+        /*
         if ($account === null) {
             return false;
         }
@@ -43,6 +50,9 @@ class ContributionContext implements IDiscussContext
         }
 
         return $accountId === $account->id || $account->isAdministrator();
+        */
+        // Commenting on contributions are now possible for everyone
+        return true;
     }
 
     public function getName(Model $entity)
@@ -63,8 +73,8 @@ class ContributionContext implements IDiscussContext
     public function view(Model $entity)
     {
         return view('discuss.context._contribution', [
-            'contribution' => $entity,
-            'address'      => $this->resolve($entity)
+            'contribution'      => $entity,
+            'address'           => $this->resolve($entity)
         ]);
     }
 }
