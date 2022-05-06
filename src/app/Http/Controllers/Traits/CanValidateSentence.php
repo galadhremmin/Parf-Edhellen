@@ -16,7 +16,7 @@ trait CanValidateSentence
             'language_id'     => 'required|numeric|exists:languages,id',
             'source'          => 'required|min:3|max:64',
             'is_neologism'    => 'required|boolean',
-            'account.id'      => 'required|numeric|exists:accounts,id'
+            'account.id'      => 'sometimes|numeric|exists:accounts,id'
         ];
 
         parent::validate($request, $rules);

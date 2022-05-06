@@ -400,7 +400,7 @@ class ContributionController extends Controller
 
         // payloads might already be configured at this point, either by the save methods
         // or earlier in the call stack.
-        if (! $contribution->isDirty('payload') && empty($contribution->payload)) {
+        if (! $contribution->isDirty('payload')) {
             $contribution->payload = $entity instanceof Jsonable
                 ? $entity->toJson()
                 : json_encode($entity);
@@ -433,7 +433,7 @@ class ContributionController extends Controller
      * @param array $cases
      * @return void
      */
-    protected function createController($morphOrRequest)
+    public function createController($morphOrRequest)
     {
         $morph = ($morphOrRequest instanceof Request) 
             ? $morphOrRequest->input('morph') 
