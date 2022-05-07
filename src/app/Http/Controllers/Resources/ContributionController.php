@@ -18,10 +18,7 @@ use App\Models\{
     Sentence,
     Gloss
 };
-use App\Http\Controllers\Contributions\{
-    SentenceContributionController,
-    GlossContributionController
-};
+use App\Http\Controllers\Contributions\ContributionControllerFactory;
 
 class ContributionController extends Controller
 {
@@ -86,7 +83,10 @@ class ContributionController extends Controller
         $contribution = Contribution::findOrFail($id);
         $this->requestPermission($request, $contribution);
 
-        return $this->createController($contribution->type)->show($contribution, $admin);
+        $model = ContributionControllerFactory::createController($contribution->type)->getViewModel($contribution);
+        return view('contribution.show', $model->toModelArray() + [
+            'admin' => $admin
+        ]);
     }
 
     /**
@@ -101,7 +101,7 @@ class ContributionController extends Controller
             ? intval($request->input('entity_id'))
             : 0;
 
-        return $this->createController($morph)->create($request, $id);
+        return ContributionControllerFactory::createController($morph)->create($request, $id);
     }
 
     /**
@@ -121,7 +121,7 @@ class ContributionController extends Controller
             $this->contributionAlreadyApproved();
         }
 
-        return $this->createController($contribution->type)->edit($contribution, $request);
+        return ContributionControllerFactory::createController($contribution->type)->edit($contribution, $request);
     }
 
     /**
@@ -257,7 +257,7 @@ class ContributionController extends Controller
             $this->contributionAlreadyApproved();
         }
 
-        $this->createController($contribution->type)->approve($contribution, $request);
+        ContributionControllerFactory::createController($contribution->type)->approve($contribution, $request);
 
         $contribution->is_approved = 1;
         $contribution->date_reviewed = Carbon::now();
@@ -307,7 +307,7 @@ class ContributionController extends Controller
         
         $id = $this->getEntityId($request);
         
-        $result = $this->createController($request)->validateSubstep($request, $id, $substepId);
+        $result = ContributionControllerFactory::createController($request)->validateSubstep($request, $id, $substepId);
         if (is_bool($result)) {
             return response(null, $result ? 204 : 400);
         }
@@ -330,7 +330,7 @@ class ContributionController extends Controller
 
         $id = $this->getEntityId($request);
 
-        $this->createController($request)->validateBeforeSave($request, $id);
+        ContributionControllerFactory::createController($request)->validateBeforeSave($request, $id);
     }
 
     protected function getEntityId(Request $request)
@@ -390,7 +390,7 @@ class ContributionController extends Controller
      */
     protected function saveContribution(Contribution $contribution, Request $request)
     {
-        $entity = $this->createController($request)->populate($contribution, $request);
+        $entity = ContributionControllerFactory::createController($request)->populate($contribution, $request);
 
         $contribution->type        = Morphs::getAlias($entity);
         $contribution->language_id = $entity->language_id;
@@ -412,48 +412,5 @@ class ContributionController extends Controller
     protected function contributionAlreadyApproved() 
     {
         abort(400, 'Contribution is already approved.');
-    }
-
-    /**
-     * Aborts the current thread with a HTTP 400 error, since the morph cannot be identified.
-     *
-     * @param string $morph
-     * @return void
-     */
-    protected function unrecognisedMorph(string $morph)
-    {
-        abort(400, 'Unrecognised morph "'.$morph.'".');
-    }
-
-    /**
-     * Invokes the closure associated with the morph's model name. The morph can be passed
-     * as a string, or it can be identified from a request's input parameters.
-     *
-     * @param [string|Request] $morphOrRequest
-     * @param array $cases
-     * @return void
-     */
-    public function createController($morphOrRequest)
-    {
-        $morph = ($morphOrRequest instanceof Request) 
-            ? $morphOrRequest->input('morph') 
-            : $morphOrRequest;
-
-        $modelName = Morphs::getMorphedModel($morph);
-        
-        $controllerName = null;
-        switch ($modelName)
-        {
-            case Gloss::class:
-                $controllerName = GlossContributionController::class;
-                break;
-            case Sentence::class:
-                $controllerName = SentenceContributionController::class;
-                break;
-            default:
-                $this->unrecognisedMorph($morph);
-        }
-
-        return app()->make($controllerName);
     }
 }

@@ -36,14 +36,7 @@ class GlossContributionController extends Controller implements IContributionCon
         $this->_glossRepository = $glossRepository;
     }
 
-    /**
-     * HTTP GET. Shows a gloss contribution.
-     *
-     * @param Contribution $contribution
-     * @param bool $admin is an administrator viewing other's contributions?
-     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
-     */
-    public function show(Contribution $contribution, bool $admin)
+    public function getViewModel(Contribution $contribution): ViewModel
     {
         $keywords = json_decode($contribution->keywords);
 
@@ -72,12 +65,13 @@ class GlossContributionController extends Controller implements IContributionCon
         $gloss->setRelation('gloss_details', new Collection($details));
 
         $glossData = $this->_bookAdapter->adaptGlosses($glosses);
-        return view('contribution.gloss.show', $glossData + [
-            'review'      => $contribution,
+
+        $model = $glossData + [
             'keywords'    => $keywords,
-            'parentGloss' => $parentGloss,
-            'admin'       => $admin
-        ]);
+            'parentGloss' => $parentGloss
+        ];
+
+        return new ViewModel($contribution, 'contribution.gloss._show', $model);
     }
 
     /**

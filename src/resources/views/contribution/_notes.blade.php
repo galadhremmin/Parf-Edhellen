@@ -1,6 +1,6 @@
-@if (! empty($review->notes))
+@if (! empty($contribution->notes))
 <div class="well">
   <strong>Author's notes</strong>
-  <p>{{ $review->notes }}</p>
+  <p>{{ $contribution->notes }}</p>
 </div>
 @endif

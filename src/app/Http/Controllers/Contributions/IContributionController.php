@@ -8,13 +8,9 @@ use App\Models\Contribution;
 interface IContributionController
 {
     /**
-     * Shows the specified contribution
-     *
-     * @param Contribution $contribution
-     * @param bool $admin is an administrator viewing other's contributions?
-     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
+     * Retrieves a view model with everything needed to render the particular contribution.
      */
-    function show(Contribution $contribution, bool $admin);
+    function getViewModel(Contribution $contribution): ViewModel;
 
     /**
      * Shows an editing form for the specified contribution
