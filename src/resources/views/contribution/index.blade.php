@@ -10,7 +10,7 @@
   <div class="card-body">
     <h2>New contribution</h2>
     <p>
-      Everyone can contribute, but to ensure that we maintain a high bar on quality and protect ourselves against abusive content, each contribution must be reviewed and approved by an administrator.
+      Everyone can contribute, but to ensure that we maintain a high bar on quality and protect ourselves against abusive content, each contribution must be reviewed and approved.
       The process for getting your contribution approved has the following steps:
     </p>
     <ol>
