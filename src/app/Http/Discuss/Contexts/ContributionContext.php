@@ -2,6 +2,7 @@
 
 namespace App\Http\Discuss\Contexts;
 
+use App\Http\Controllers\Contributions\ContributionControllerFactory;
 use App\Http\Controllers\Resources\ContributionController;
 use Illuminate\Database\Eloquent\Model;
 
@@ -72,9 +73,9 @@ class ContributionContext implements IDiscussContext
 
     public function view(Model $entity)
     {
-        return view('discuss.context._contribution', [
-            'contribution'      => $entity,
-            'address'           => $this->resolve($entity)
+        $model = ContributionControllerFactory::createController($entity->type)->getViewModel($entity);
+        return view('discuss.context._contribution', $model->toModelArray() + [
+            'address' => $this->resolve($entity)
         ]);
     }
 }
