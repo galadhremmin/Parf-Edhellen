@@ -2,7 +2,7 @@
 <div class="alert bg-info">
   <strong>Thank you!</strong>
   Your contribution was received @date($contribution->created_at)
-  and is waiting to be reviewed by an administrator.
+  and is waiting to be reviewed.
 </div>
 @elseif ($contribution->is_approved)
 <div class="alert bg-success">
