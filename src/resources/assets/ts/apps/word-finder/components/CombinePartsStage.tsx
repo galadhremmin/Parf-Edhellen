@@ -70,7 +70,7 @@ function CombinePartsStage(props: IProps) {
                 data-part-id={parts[i]?.id}>
                     {parts[i]?.part}
                 </a>) : <span className="info">
-                    Select your initial letters...
+                    Select your first set letters below...
                 </span>}
         </div>
         <div className="CombinePartsStage__parts">
