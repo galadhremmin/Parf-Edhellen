@@ -25,6 +25,7 @@ class WordFinderApiController extends Controller
         $glossary = [];
         $glosses = [];
         $words = [];
+        $ids = [];
 
         for ($i = 0; $i < 8; $i += 1) {
             $gloss = Gloss::active()
@@ -34,6 +35,7 @@ class WordFinderApiController extends Controller
                 ->whereIn('gloss_group_id', $groupIds)
                 ->whereNotIn('translation', $glosses)
                 ->whereNotIn('word', $words)
+                ->whereNotIn('glosses.id', $ids)
                 ->where(DB::raw('LENGTH(normalized_word)'), '>=', 4)
                 ->where('translation', '<>', DB::raw('word'))
                 ->inRandomOrder()
@@ -47,6 +49,7 @@ class WordFinderApiController extends Controller
             $glosses[] = $gloss->gloss;
             $words[] = $gloss->word;
             $glossary[] = $gloss;
+            $ids[] = $gloss->id;
         }
 
         return [
