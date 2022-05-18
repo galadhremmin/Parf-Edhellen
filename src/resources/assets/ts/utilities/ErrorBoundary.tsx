@@ -7,6 +7,11 @@ import { DI, resolve } from '@root/di';
 import { IProps, IState } from './ErrorBoundary._types';
 
 export default class ErrorBoundary extends React.Component<IProps, IState> {
+    private static excludeErrorMessages: RegExp[] = [
+        /^Loading chunk [0-9]+ failed\.$/,
+        /^Loading CSS chunk [0-9]+ failed\.$/,
+    ];
+
     public static defaultProps = {
         reportErrorApi: resolve(DI.BackendApi),
     };
@@ -27,7 +32,7 @@ export default class ErrorBoundary extends React.Component<IProps, IState> {
         } = this.props;
 
         // async chunk loading errors are deliberately excluded
-        if (/^Loading chunk [0-9]+ failed\.$/.test(error.message)) {
+        if (ErrorBoundary.excludeErrorMessages.some((reg) => reg.test(error.message))) {
             return;
         }
 
