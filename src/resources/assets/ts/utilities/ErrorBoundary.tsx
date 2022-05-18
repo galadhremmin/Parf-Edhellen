@@ -26,6 +26,11 @@ export default class ErrorBoundary extends React.Component<IProps, IState> {
             reportErrorApi,
         } = this.props;
 
+        // async chunk loading errors are deliberately excluded
+        if (/^Loading chunk [0-9]+ failed\.$/.test(error.message)) {
+            return;
+        }
+
         await reportErrorApi.error(
             error.message,
             window.location.href,
