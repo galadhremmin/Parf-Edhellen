@@ -61,7 +61,7 @@ function WordFinder(props: IContainerProps) {
         }
     }, [ selectedParts ]);
 
-    return <div className="WordFinder--container">
+    return <div className="WordFinder--container shadow-lg rounded mb-4">
         <div className="WordFinder">
             <span className="WordFinder__timer">
                 <Timer onTick={onTimeUpdate}
