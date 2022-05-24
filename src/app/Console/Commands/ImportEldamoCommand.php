@@ -16,7 +16,7 @@ use App\Jobs\{
 };
 use App\Models\{
     Account,
-    Gloss, 
+    Gloss,
     GlossDetail,
     GlossGroup,  
     Language, 
@@ -39,9 +39,6 @@ class ImportEldamoCommand extends Command
      * @var string
      */
     protected $description = 'Imports definitions from eldamo.json. Transform the XML data source to JSON using EDEldamoParser.exe.';
-
-    private $_glossRepository;
-    private $_keywordRepository;
 
     private $_languageMap;
     private $_speechMap;
@@ -128,7 +125,7 @@ class ImportEldamoCommand extends Command
         }
 
         // Find the user account for an existing gloss from Eldamo. 
-        $existing = Gloss::where('gloss_group_id', $this->_glossGroups['default'])
+        $existing = Gloss::where('gloss_group_id', $this->_glossGroups['default']->id)
             ->select('account_id')
             ->firstOrFail();
 

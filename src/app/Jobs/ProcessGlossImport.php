@@ -49,7 +49,7 @@ class ProcessGlossImport implements ShouldQueue
 
         $changed = false;
         try {
-            $importedGloss = $glossRepository->saveGloss($word, $sense, $gloss, $translations, $keywords, $details, false, $changed);
+            $importedGloss = $glossRepository->saveGloss($word, $sense, $gloss, $translations, $keywords, $details, $changed);
         } catch (\Exception $ex) {
             throw $ex;
         }
