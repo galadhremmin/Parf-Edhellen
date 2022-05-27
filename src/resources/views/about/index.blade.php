@@ -20,7 +20,7 @@ a Tolkien-fan, and language enthusiast.
   Please note that discrepancies from the source material can arise while importing.</p>
 <dl>
   <dt><a href="http://www.eldamo.org" target="_blank">Eldamo</a></dt>
-  <dd><em>Eldamo</em> is perhaps the best, most comprehensive data source for Tolkien's languages to date. Maintained by Paul Strack. v. 0.7.9 (updated 2021-06-22).</dd>
+  <dd><em>Eldamo</em> is perhaps the best, most comprehensive data source for Tolkien's languages to date. Maintained by Paul Strack. v. 0.8.3 (updated 2022-05-25).</dd>
   <dt><a href="http://folk.uib.no/hnohf/wordlists.htm" target="_blank">Quettaparma Quenyallo</a></dt>
   <dd>The best Quenya lexicon maintained by <em>Helge Fauskanger</em>, presented alongside his excellent course work material on Ardalambion.</dd>
   <dt><a href="http://folk.uib.no/hnohf" target="_blank">Parviphith</a></dt>
