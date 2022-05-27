@@ -1,6 +1,6 @@
 @extends('_layouts.default')
 
-@section('title', 'Dashboard - Mail notifications')
+@section('title', 'Dashboard - Privacy settings')
 @section('body')
 
 <h1>Mail notifications</h1>
@@ -55,5 +55,20 @@
 </tbody>
 </table>
 @endif
+
+<h3>Account deletion</h3>
+<p>
+    Would you like to delete your account? Please <a href="{{ route('about.privacy') }}">read our privacy policy</a>
+    before you do. <strong>Account deletion is irreverible!</strong> If you still want to proceed, please click the 
+    button below to get started.
+</p>
+
+<form method="post" action="{{ route('api.account.delete', ['id' => $user->id]) }}" onsubmit="return confirm('Are you sure you want to proceed with irreversible account deletion?');">
+    @method('delete')
+    @csrf
+    <div class="text-end">
+        <button type="submit" class="btn btn-secondary">Delete account</button>
+    </div>
+</form>
 
 @endsection

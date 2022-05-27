@@ -28,9 +28,6 @@
         <a href="{{ route('author.my-profile') }}" class="list-group-item list-group-item-action">
           Your profile
         </a>
-        <a href="{{ route('mail-setting.index') }}" class="list-group-item list-group-item-action">
-          Mail notifications
-        </a>
         <a href="{{ route('flashcard') }}" class="list-group-item list-group-item-action">
           Flashcards
 
@@ -46,6 +43,9 @@
         </a>
         <a href="{{ route('author.posts', ['id' => $user->id]) }}" class="list-group-item list-group-item-action">
           Comments
+        </a>
+        <a href="{{ route('mail-setting.index') }}" class="list-group-item list-group-item-action">
+          Privacy settings
         </a>
       </div>
       @if ($user->isAdministrator())

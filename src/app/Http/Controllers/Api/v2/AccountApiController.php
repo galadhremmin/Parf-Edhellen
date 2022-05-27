@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\v2;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\{
     Auth,
     Storage
@@ -19,15 +18,18 @@ use App\Helpers\LinkHelper;
 use App\Models\Account;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Helpers\StorageHelper;
+use App\Repositories\DiscussRepository;
 use Image;
 
 class AccountApiController extends Controller 
 {
+    private $_discussRepository;
     private $_storageHelper;
     private $_linkHelper;
 
-    public function __construct(StorageHelper $storageHelper, LinkHelper $linkHelper) 
+    public function __construct(DiscussRepository $discussRepository, StorageHelper $storageHelper, LinkHelper $linkHelper) 
     {
+        $this->_discussRepository = $discussRepository;
         $this->_storageHelper = $storageHelper;
         $this->_linkHelper = $linkHelper;
     }
@@ -167,8 +169,13 @@ class AccountApiController extends Controller
             unlink($localPath);
         }
 
+        $this->_discussRepository->destroyPostsByAccount($account);
+        $redirectUrl = route('logout');
+        if (! $request->ajax()) {
+            return redirect($redirectUrl);
+        }
         return [
-            'redirect_to' => route('logout')
+            'redirect_to' => $redirectUrl
         ];
     }
 
@@ -177,7 +184,7 @@ class AccountApiController extends Controller
         return Storage::disk('local')->path(sprintf('public/avatars/%d.png', $accountId));
     }
 
-    private function getAuthorizedAccount(Request $request, int $accountId)
+    private function getAuthorizedAccount(Request $request, int $accountId): Account
     {
         if ($accountId === null) {
             return $request->user();

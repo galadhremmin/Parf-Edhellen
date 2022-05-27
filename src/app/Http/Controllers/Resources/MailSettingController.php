@@ -35,7 +35,8 @@ class MailSettingController extends Controller
             'settings'  => $settings,
             'overrides' => $overrides,
             'events'    => $events,
-            'email'     => $user->email
+            'email'     => $user->email,
+            'user'      => $user
         ]);
     }
 

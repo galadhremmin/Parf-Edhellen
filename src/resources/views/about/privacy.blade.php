@@ -18,9 +18,22 @@
 
 <p>Your continued use of our website will be regarded as acceptance of our practices around privacy and personal information. If you have any questions about how we handle user data and personal information, feel free to contact us.</p>
 
-<p>If ever in doubt, please refer to our <a href="https://github.com/galadhremmin/Parf-Edhellen" target="_blank">source repository on Github</a>. The latest commit in the mainline branch is always the version we are currently running in production.</p>
-
-<p>If you want to delete your account, please make a DELETE request to <code>/api/v2/account/edit/{ID}</code> where <code>{ID}</code> represents your actual account ID.</p>
+<p>If ever in doubt, please refer to our <a href="https://github.com/galadhremmin/Parf-Edhellen" target="_blank">source repository on Github</a>. The latest commit in the <i>parf-edhellen-prod</i> branch is always the version we are currently running in production.</p>
 
 <p>This policy is effective as of 29 September 2018.</p>
+
+<h3>Account deletion</h3>
+
+<p>We support irreversible account deletion. Log in to your account's dashboard and go to your account privacy settings. Click the <i>Delete account</i> button and confirm the action. <strong>This is an irreversible action and you cannot ask us to restore your deleted account!</strong></p>
+
+<p>Account deletion performs the following actions:</p>
+
+<ul>
+    <li>Discard your account's unique identifier from your identity provider.</li>
+    <li>Discard all personal information (such as your e-mail address) provided by your identity provider.</li>
+    <li>Nullifying your account identity provider configuration.</li>
+    <li>Resetting your account's avatar, tengwar and profile settings.</li>
+    <li>Delete all threads and posts in Discuss.</li>
+</ul>
+
 @endsection
