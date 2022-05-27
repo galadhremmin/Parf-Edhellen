@@ -861,6 +861,14 @@ class DiscussRepository
         return $groupId;
     }
 
+    public function destroyPostsByAccount(Account $account)
+    {
+        ForumThread::where('account_id', $account->id)
+            ->update(['subject' => '[Deleted]']);
+        ForumPost::where('account_id', $account->id)
+            ->update(['content' => '[Deleted]']);
+    }
+
     private function checkPostAuthorization(?Account $account, ForumPost $post, ForumThread $thread = null)
     {
         if ($thread === null) {
