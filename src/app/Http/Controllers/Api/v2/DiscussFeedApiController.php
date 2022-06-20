@@ -113,8 +113,8 @@ class DiscussFeedApiController extends Controller
                         'date_published' => $d->created_at->toRfc3339String(),
                         'date_modified' => ($d->updated_at ?: $d->created_at)->toRfc3339String(),
                         'author' => [
-                            'name' => $d->account->nickname,
-                            'url' => $this->_linkHelper->author($d->account_id, $d->account->nickname)
+                            'name' => $d->account ? $d->account->nickname : 'unknown',
+                            'url' => $this->_linkHelper->author($d->account_id, $d->account ? $d->account->nickname : 'unknown')
                         ]
                     ];
                 };

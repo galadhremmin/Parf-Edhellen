@@ -53,10 +53,7 @@ class AccountApiControllerTest extends TestCase
 
         $response = $this->actingAs($account)
             ->delete(route('api.account.delete', ['id' => $account->id]));
-        $response->assertSuccessful()
-            ->assertJson([
-                'redirect_to' => route('logout')
-            ]);
+        $response->assertRedirect(route('logout'));
 
         $deleted = Account::findOrFail($account->id);
         $this->assertTrue($deleted->nickname !== $account->nickname);
