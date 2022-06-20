@@ -454,6 +454,7 @@ class DiscussRepository
         $this->resolveAccount($account);
 
         $threads = ForumThread::orderBy('id', 'desc')
+            ->with('account')
             ->take($take);
         if ($forumGroupId !== 0) {
             $threads = $threads->where('forum_group_id', $forumGroupId);
@@ -471,7 +472,7 @@ class DiscussRepository
     {
         $this->resolveAccount($account);
 
-        $posts = ForumPost::active()->orderBy('id', 'desc')->take($take);
+        $posts = ForumPost::active()->with('account')->orderBy('id', 'desc')->take($take);
 
         if ($forumGroupId !== 0) {
             $posts = $posts->whereHas('forum_thread', function ($q) use ($forumGroupId) {

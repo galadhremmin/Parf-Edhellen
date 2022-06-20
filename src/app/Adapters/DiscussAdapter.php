@@ -12,7 +12,10 @@ use App\Models\{
     ForumPost,
     ForumThread
 };
-use App\Repositories\ValueObjects\ForumThreadsForPostsValue;
+use App\Repositories\ValueObjects\{
+    ForumThreadsForPostsValue,
+    ForumThreadValue
+};
 use App\Helpers\{
     LinkHelper,
     StorageHelper
@@ -78,7 +81,7 @@ class DiscussAdapter
 
     public function adaptThread(ForumThread $thread)
     {
-        if ($thread->account_id) {
+        if ($thread->account !== null) {
             $this->adaptAccount($thread->account);
         }
         return $thread;
