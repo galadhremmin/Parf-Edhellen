@@ -246,22 +246,18 @@ export default class SearchActions {
             document.title = title;
 
             this._globalEvents.fire(this._globalEvents.loadEntity, {
-                detail: {
-                    address,
-                    groupId: searchResult.groupId,
-                    languageId: language?.id,
-                    word: searchResult.word,
-                },
+                address,
+                groupId: searchResult.groupId,
+                languageId: language?.id,
+                word: searchResult.word,
             });
 
             // DEPRECATED: Inform indirect listeners about the navigation. Kept for backwards compatibility.
             if (searchResult.groupId === SearchResultGlossaryGroupId) {
                 this._globalEvents.fire(this._globalEvents.loadGlossary, {
-                    detail: {
-                        address,
-                        languageId: args.languageId,
-                        word,
-                    },
+                    address,
+                    languageId: args.languageId,
+                    word,
                 });
             }
 
