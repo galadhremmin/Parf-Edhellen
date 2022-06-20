@@ -8,8 +8,14 @@
   font-weight: normal;
   font-style: normal;
 }
+@font-face {
+  font-family: 'TengwarTelcontar';
+  src: url('../../fonts/tengwar/tengtelcOTL-embedding.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 .tengwar {
-  font-family: 'TengwarAnnatarGlaemunicode';
+  font-family: 'TengwarAnnatarGlaemunicode', 'TengwarTelcontar';
   font-size: 110%;
   line-height: 1.5;
   text-decoration: none;
