@@ -53,6 +53,10 @@ class SentenceController extends Controller
                                int $sentId, string $sentName)
     {
         $sentence = $this->_sentenceRepository->getSentence($sentId);
+        if ($sentence === null) {
+            return response(null, 404);
+        }
+
         $language = Language::findOrFail($langId);
         
         return view('sentence.public.sentence', [
