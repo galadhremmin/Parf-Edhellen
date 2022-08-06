@@ -45,6 +45,10 @@ function SyntaxTabView() {
                     <td>Link to the dictionary entry for <em>tree</em>.</td>
                 </tr>
                 <tr>
+                    <td><code>[[s:tree]]</code></td>
+                    <td>Link to Sindarin dictionary entries for <em>tree</em>.</td>
+                </tr>
+                <tr>
                     <td><code>[Link to trees](https://en.wikipedia.org/wiki/Tree)</code></td>
                     <td>
                         <a href="https://en.wikipedia.org/wiki/Tree" rel="noreferrer" target="_blank">
@@ -103,7 +107,7 @@ function SyntaxTabView() {
                     <td>3rd level header. <em>Please use with care!</em></td>
                 </tr>
                 <tr>
-                    <td><code>@sindarin|mae govannen!@</code></td>
+                    <td><code>@sindarin:mae govannen!@</code></td>
                     <td>
                         Transcribes <em>mae govannen</em> to <span className="tengwar">{'tlE xr^5{#5$Á'}</span>
                         We use Glaemscribe for transcriptions. Supported modes are: {' '}

@@ -51,4 +51,37 @@ class MarkdownTest extends TestCase
 
         $this->assertEquals($expected, $actual);
     }
+
+    public function testTengwarTranscription()
+    {
+        $markdown = 'mae govannen @sindarin:mellon@!';
+        $expected = '<p>mae govannen <span class="tengwar" data-tengwar-transcribe="true" data-tengwar-mode="sindarin">mellon</span>!</p>';
+    
+        $parser = new MarkdownParser;
+        $actual = $parser->parse($markdown);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testReferenceWithShortLanguageName()
+    {
+        $markdown = 'mae govannen [[s:mellon]]!';
+        $expected = '<p>mae govannen <a href="/w/mellon/s" title="Navigate to mellon." class="ed-word-reference" data-word="mellon" data-original-word="mellon" data-language-short-name="s">mellon</a>!</p>';
+    
+        $parser = new MarkdownParser;
+        $actual = $parser->parse($markdown);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testReference()
+    {
+        $markdown = 'mae govannen [[mellon]]!';
+        $expected = '<p>mae govannen <a href="/w/mellon" title="Navigate to mellon." class="ed-word-reference" data-word="mellon" data-original-word="mellon">mellon</a>!</p>';
+    
+        $parser = new MarkdownParser;
+        $actual = $parser->parse($markdown);
+
+        $this->assertEquals($expected, $actual);
+    }
 }
