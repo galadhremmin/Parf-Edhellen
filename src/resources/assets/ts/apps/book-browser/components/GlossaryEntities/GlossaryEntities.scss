@@ -16,6 +16,7 @@ $gloss-border-color: #dedede;
     }
   }
   .ed-glossary__language__words {
+    padding-top: 1rem;
     columns: 2;
   }
   @media (max-width: map-get($grid-breakpoints, 'sm')) {

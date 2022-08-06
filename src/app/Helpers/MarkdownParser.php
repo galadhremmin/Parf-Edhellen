@@ -124,7 +124,11 @@ class MarkdownParser extends \Parsedown
         $wordLength = strlen($tagBegin.$tagBegin . $word . $tagEnd.$tagEnd);
 
         // Extract language, if present
-        $pos = strpos($word, '|');
+        $pos = strpos($word, ':');
+        if ($pos === false) {
+            // 20220806: backwards compatibility with former syntax
+            $pos = strpos($word, '|');
+        }
         $language = '';
         if ($pos !== false) {
             $language = substr($word, 0, $pos);
@@ -196,7 +200,11 @@ class MarkdownParser extends \Parsedown
         $extent = $pos + 1;
         $text = substr($text, 1, $pos - 1);
 
-        $pos = strpos($text, '|');
+        $pos = strpos($text, ':');
+        if ($pos === false) {
+            // 20220806: backwards compatibility with former syntax
+            $pos = strpos($text, '|');
+        }
         if ($pos === false) {
             return;
         }
