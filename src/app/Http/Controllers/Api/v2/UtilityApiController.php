@@ -51,6 +51,11 @@ class UtilityApiController extends Controller
             $category = self::DEFAULT_SYSTEM_ERROR_CATEGORY;
         }
 
+        $userAgent = $_SERVER['HTTP_USER_AGENT'];
+        if (strlen($userAgent) > 190) {
+            $userAgent = substr($userAgent, 0, 190).'...';
+        }
+
         $user = $request->user();
         SystemError::create([
             'message'    => $request->input('message'),
@@ -66,7 +71,7 @@ class UtilityApiController extends Controller
                 : null,
             'is_common'  => 0,
             'category'   => $category,
-            'user_agent' => $_SERVER['HTTP_USER_AGENT']
+            'user_agent' => $userAgent
         ]);
 
         return response(null, 201);

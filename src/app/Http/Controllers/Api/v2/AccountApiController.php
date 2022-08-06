@@ -169,7 +169,6 @@ class AccountApiController extends Controller
             unlink($localPath);
         }
 
-        $this->_discussRepository->destroyPostsByAccount($account);
         $redirectUrl = route('logout');
         if (! $request->ajax()) {
             return redirect($redirectUrl);

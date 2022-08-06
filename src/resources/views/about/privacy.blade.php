@@ -33,7 +33,6 @@
     <li>Discard all personal information (such as your e-mail address) provided by your identity provider.</li>
     <li>Nullifying your account identity provider configuration.</li>
     <li>Resetting your account's avatar, tengwar and profile settings.</li>
-    <li>Delete all threads and posts in Discuss.</li>
 </ul>
 
 @endsection
