@@ -37,20 +37,6 @@ class AccountApiControllerTest extends TestCase
             'profile'  => 'Lots of personal data.'
         ]);
 
-        $thread = ForumThread::create([
-            'entity_type' => 'account',
-            'entity_id'   => $account->id,
-            'subject'     => 'This should be deleted',
-            'account_id'  => $account->id,
-            'forum_group_id' => 0
-        ]);
-
-        $post = ForumPost::create([
-            'forum_thread_id' => $thread->id,
-            'account_id'      => $account->id,
-            'content'         => 'This should be deleted'
-        ]);
-
         $response = $this->actingAs($account)
             ->delete(route('api.account.delete', ['id' => $account->id]));
         $response->assertRedirect(route('logout'));
@@ -59,12 +45,6 @@ class AccountApiControllerTest extends TestCase
         $this->assertTrue($deleted->nickname !== $account->nickname);
         $this->assertTrue($deleted->identity !== $account->identity);
         $this->assertTrue($deleted->profile !== $account->profile);
-
-        $thread->refresh();
-        $post->refresh();
-
-        $this->assertEquals('[Deleted]', $thread->subject);
-        $this->assertEquals('[Deleted]', $post->content);
 
         $account->delete();
     }
