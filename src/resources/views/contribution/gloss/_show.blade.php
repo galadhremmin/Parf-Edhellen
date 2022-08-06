@@ -1,3 +1,4 @@
+@inject('link', 'App\Helpers\LinkHelper')
 @if ($parentGloss)
 <p>
   <span class="TextIcon TextIcon--info-sign"></span>

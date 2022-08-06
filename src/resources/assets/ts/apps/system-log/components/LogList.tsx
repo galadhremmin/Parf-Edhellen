@@ -6,6 +6,8 @@ import { IErrorEntity } from '@root/connectors/backend/ILogApi';
 import LogDetails from './LogDetails';
 import { IProps } from './LogList._types';
 
+import './LogList.scss';
+
 function LogList(props: IProps) {
     const {
         currentPage,
@@ -21,7 +23,7 @@ function LogList(props: IProps) {
     };
 
     return <>
-        <table className="table table-striped table-condensed table-bordered table-hover">
+        <table className="LogList table table-striped table-condensed table-bordered table-hover">
             <thead>
                 <tr>
                     <th>Category</th>
