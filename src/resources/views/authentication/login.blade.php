@@ -5,23 +5,17 @@
 
 @section('body')
   <h1>Logging in</h1>
-  <p>
-    Greetings traveller! Would you like to join our community? You are more than welcome to do!
-  </p>
-  <blockquote>
-    We are not interested in your personal information. We use these
-    services to <em>confirm your identity</em>. That is all. The only information we save is 
-    your e-mail address, which is kept secret in our database.
-  </blockquote>
-  <p>
-    We believe in protecting your privacy, and this solution enables us to create accounts without 
-    storing sensitive information, like passwords. These third party identity providers 
-    (as they are called) assert your identity by confirming that you have an account with them. 
-    It works a bit like a passport, where your country provides the identity!
-  </p>
+  <div class="container">
+    <div class="alert alert-info">
+      <span class="TextIcon TextIcon--info-sign bg-info"></span>
+      We do not store usernames and passwords; we trust so-called identity providers instead
+      @if (! empty($providers)) (like {{ $providers[0]->name }}). @else . @endif
+      Your profile will be linked to the provider you choose.
+    </div>
+    <p>Welcome! Please choose an identity provider to log in:</p>
+  </div>
 
-  <hr>
-
+  <div class="text-center">
   @foreach ($providers as $provider)
   <a href="{{ $link->authRedirect($provider->name_identifier) }}" 
     style="background-image:url(/img/openid-providers/{{ $provider->logo_file_name }})"
@@ -30,10 +24,15 @@
     {{ $provider->name }}
   </a>
   @endforeach
+  </div>
 
   <hr>
 
-  Do you miss your community? If you would contact <em>@parmaeldo</em> on Twitter, I'll see what I can do!
+  <p>
+    Do you miss an identity provider? Please reach out to <em>@parmaeldo</em> on Twitter.
+    Please refer to our <a href="{{ route('about.privacy') }}">privacy policy</a> and <a href="{{ route('about.cookies') }}">cookie policy</a> for information about how we use your data.
+  </p>
+
 @endsection
 @section('styles')
 <link rel="stylesheet" href="@assetpath(style-auth.css)">

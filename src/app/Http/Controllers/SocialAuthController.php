@@ -43,7 +43,7 @@ class SocialAuthController extends Controller
             }
         }
 
-        $providers = AuthorizationProvider::all();
+        $providers = AuthorizationProvider::orderBy('name')->get();
         return view('authentication.login', [ 'providers' => $providers ]);
     }
 
