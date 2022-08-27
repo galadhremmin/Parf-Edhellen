@@ -8,6 +8,7 @@ use App\Repositories\{
     DiscussRepository,
     GlossRepository,
     SearchIndexRepository,
+    SentenceRepository
 };
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
 use App\Adapters\BookAdapter;
@@ -18,14 +19,16 @@ abstract class BookBaseController extends Controller
     protected $_discussRepository;
     protected $_glossRepository;
     protected $_searchIndexRepository;
+    protected $_sentenceRepository;
     protected $_bookAdapter;
 
     public function __construct(DiscussRepository $discussRepository, GlossRepository $glossRepository,
-        SearchIndexRepository $searchIndexRepository, BookAdapter $bookAdapter)
+        SearchIndexRepository $searchIndexRepository, SentenceRepository $sentenceRepository, BookAdapter $bookAdapter)
     {
         $this->_discussRepository     = $discussRepository;
         $this->_glossRepository       = $glossRepository;
         $this->_searchIndexRepository = $searchIndexRepository;
+        $this->_sentenceRepository    = $sentenceRepository;
         $this->_bookAdapter           = $bookAdapter;
     }
 
@@ -46,7 +49,8 @@ abstract class BookBaseController extends Controller
 
         $gloss = $glosses->first();
         $comments = $this->_discussRepository->getNumberOfPostsForEntities(GlossVersion::class, [$gloss->latest_gloss_version_id]);
-        return $this->_bookAdapter->adaptGlosses([$gloss], [/* no inflections */], $comments, $gloss->word->word);
+        $inflections = $this->_sentenceRepository->getInflectionsForGlosses([$glossId]);
+        return $this->_bookAdapter->adaptGlosses([$gloss], $inflections, $comments, $gloss->word->word);
     }
 
     /**

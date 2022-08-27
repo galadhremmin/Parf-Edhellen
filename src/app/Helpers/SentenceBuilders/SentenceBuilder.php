@@ -11,6 +11,7 @@ abstract class SentenceBuilder
     protected $_maxFragmentIndexPerSentence;
     protected $_numberOfFragments;
 
+    const TYPE_CODE_WORD              =  0;
     const TYPE_CODE_NEWLINE           = 10;
     const TYPE_CODE_EXCLUDE           = 24;
     const TYPE_CODE_INTERPUNCTUATION  = 31;

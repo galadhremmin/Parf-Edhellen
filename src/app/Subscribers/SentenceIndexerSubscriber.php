@@ -2,22 +2,7 @@
 
 namespace App\Subscribers;
 
-use Aws\Credentials\{
-    AssumeRoleCredentialProvider,
-    CredentialProvider,
-    InstanceProfileProvider
-};
-use Aws\Sts\StsClient;
-
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Mail;
-
-use App\Interfaces\IIdentifiesPhrases;
-use App\Repositories\{
-    SearchIndexRepository,
-    WordRepository
-};
-use App\Models\Initialization\Morphs;
+use App\Repositories\SearchIndexRepository;
 use App\Models\{
     Sentence
 };
@@ -49,12 +34,12 @@ class SentenceIndexerSubscriber
             self::class.'@onSentenceCreated'
         );
         $events->listen(
-            SentenceDestroyed::class,
-            self::class.'@onSentenceDestroyed'
-        );
-        $events->listen(
             SentenceEdited::class,
             self::class.'@onSentenceEdited'
+        );
+        $events->listen(
+            SentenceDestroyed::class,
+            self::class.'@onSentenceDestroyed'
         );
     }
 
@@ -63,22 +48,20 @@ class SentenceIndexerSubscriber
         $this->update($event->sentence);
     }
 
-    public function onSentenceDestroyed(SentenceDestroyed $event)
-    {
-        $sentence = $event->sentence;
-        $this->_searchIndexRepository->deleteAll($fragment);
-    }
-
     public function onSentenceEdited(SentenceEdited $event)
     {
         $this->update($event->sentence);
     }
 
-    private function delete(Sentence $sentence)
+    public function onSentenceDestroyed(SentenceDestroyed $event)
     {
+        $sentence = $event->sentence;
+
         foreach ($sentence->sentence_fragments as $fragment) {
             $this->_searchIndexRepository->deleteAll($fragment);
         }
+        
+        $this->_searchIndexRepository->deleteAll($sentence);
     }
 
     private function update(Sentence $sentence)
