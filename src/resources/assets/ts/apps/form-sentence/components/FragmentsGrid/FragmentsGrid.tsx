@@ -150,7 +150,8 @@ class FragmentsGrid extends React.Component<IProps, IState> {
                 cellRenderer: InflectionRenderer,
                 cellRendererParams,
                 editable: true,
-                field: 'inflections',
+                headerName: 'Inflections',
+                field: 'glossInflections',
                 resizable: true,
             },
             {

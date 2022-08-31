@@ -56,6 +56,10 @@ class InflectionController extends Controller
         return redirect()->route('inflection.index');
     }
 
+    /*
+    20220828: Disabled destroying inflections as the deletion process is non-trivial and requires 
+              a deletion flow where you have to provide an alternative inflection.
+
     public function destroy(Request $request, int $id) 
     {
         $inflection = Inflection::findOrFail($id);
@@ -67,9 +71,10 @@ class InflectionController extends Controller
         $inflection->delete();
 
         event(new InflectionDestroyed($inflection));
-
+        
         return redirect()->route('inflection.index');
     }
+    */
 
     protected function validateRequest(Request $request, int $id = 0)
     {

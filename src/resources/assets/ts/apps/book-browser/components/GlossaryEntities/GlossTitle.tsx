@@ -35,17 +35,17 @@ const GlossTitle = (props: IProps) => {
             {gloss.word}
         </span>
         <GlossGroupLabel gloss={gloss} />
-        {gloss.inflectedWord && <span className="gloss-word__inflection">
-            {gloss.inflectedWord.word.toLocaleLowerCase() !== gloss.word.toLocaleLowerCase() &&
+        {gloss._inflectedWord && <span className="gloss-word__inflection">
+            {gloss._inflectedWord.word.toLocaleLowerCase() !== gloss.word.toLocaleLowerCase() &&
                 <span className="gloss-word__inflection__word">
-                    {gloss.inflectedWord.word.toLocaleLowerCase()}
+                    {gloss._inflectedWord.word.toLocaleLowerCase()}
                 </span>}
             <span className="gloss-word__inflection__name">
-                {gloss.inflectedWord.speech}
+                {gloss._inflectedWord.speech}
             </span>
-            {gloss.inflectedWord.inflections && gloss.inflectedWord.inflections.map(
-                (inflection) => <span key={inflection.inflectionId || inflection.name} className="gloss-word__inflection__name">
-                    {inflection.name}
+            {gloss._inflectedWord.inflections && gloss._inflectedWord.inflections.map(
+                (i) => <span key={i.inflectionId || i.inflection?.name} className="gloss-word__inflection__name">
+                    {i.inflection?.name}
                 </span>)}
         </span>}
         {toolbar && <div className="gloss-word--toolbar">

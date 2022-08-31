@@ -10,10 +10,10 @@ use App\Helpers\SentenceHelper;
 use App\Repositories\SentenceRepository;
 use App\Models\{
     Contribution,
+    GlossInflection,
     Inflection,
     Sentence,
     SentenceFragment,
-    SentenceFragmentInflectionRel,
     SentenceTranslation
 };
 use App\Http\Controllers\Traits\{
@@ -41,7 +41,7 @@ class SentenceContributionController extends Controller implements IContribution
         $this->makeMapCurrent($payload);
 
         $originalSentence = isset($payload['id'])
-            ? Sentence::findOrFail($payload['id']) : null;
+            ? Sentence::with('sentence_fragments')->findOrFail(intval($payload['id'])) : null;
 
         $sentence = new Sentence($payload['sentence']);
 
@@ -193,6 +193,15 @@ class SentenceContributionController extends Controller implements IContribution
     }
 
     /**
+     * Disable change detection within the parent controller as the payload is always
+     * populated by the `populate` method.
+     */
+    function disableChangeDetection(): bool
+    {
+        return true;
+    }
+
+    /**
      * HTTP POST.
      * Approves the specified contributions by transforming it into a sentence entity.
      * The contribution's _sentence_id_ property is assigned the resulting entity's ID.
@@ -224,10 +233,10 @@ class SentenceContributionController extends Controller implements IContribution
             return new SentenceFragment($fragment);
         }, $map['fragments']);
 
-        // Transform inflections into SentenceFragmentInflectionRel entities.
+        // Transform inflections into GlossInflection entities.
         $inflections = array_map(function ($inflections) {
             return array_map(function ($inflection) {
-                return new SentenceFragmentInflectionRel($inflection);
+                return new GlossInflection($inflection);
             }, $inflections);
         }, $map['inflections']);
 
@@ -279,13 +288,13 @@ class SentenceContributionController extends Controller implements IContribution
             $translations = $payload->sentence_translations;
 
             foreach ($fragments as $fragment) {
-                $fragment->inflections = $fragment->inflection_associations;
+                $fragment->load('gloss_inflections');
             }
 
         } else {
             $fragments = new Collection();
             $translations = new Collection();
-            
+
             $i = 0;
             foreach ($payload['fragments'] as $fragmentData) {
                 $fragment = new SentenceFragment($fragmentData);
@@ -294,7 +303,9 @@ class SentenceContributionController extends Controller implements IContribution
                 $fragment->id = ($i + 1) * -1;
 
                 // Create an array of IDs for inflections associated with this fragment.
-                $fragment->inflections = $payload['inflections'][$i];
+                $fragment->gloss_inflections = isset($payload['gloss_inflections']) 
+                    ? $payload['gloss_inflections'][$i]
+                    : $payload['inflections'][$i]; // 20220831: maintained for backwards compatibility.
 
                 $fragments->push($fragment);
                 

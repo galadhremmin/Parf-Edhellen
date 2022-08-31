@@ -2,9 +2,7 @@
 
     namespace App\Repositories;
 
-    use Carbon\Carbon;
     use Illuminate\Support\Facades\DB;
-    use App\Models\Contribution;
 
     class ContributionRepository
     {

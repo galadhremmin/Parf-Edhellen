@@ -12,28 +12,30 @@ use App\Events\{
 };
 use App\Models\{
     Gloss,
+    GlossInflection,
     Keyword,
     Sentence,
-    SentenceFragment,
-    SentenceFragmentInflectionRel,
     Speech
 };
 use App\Helpers\{
     SentenceHelper,
     StringHelper
 };
+use App\Helpers\SentenceBuilders\SentenceBuilder;
 use Illuminate\Support\Collection;
 
 class SentenceRepository
 {
+    private $_glossInflectionRepository;
     private $_keywordRepository;
     /**
      * @var AuthManager
      */
     private $_authManager;
 
-    public function __construct(KeywordRepository $keywordRepository, AuthManager $authManager)
+    public function __construct(GlossInflectionRepository $glossInflectionRepository, KeywordRepository $keywordRepository, AuthManager $authManager)
     {
+        $this->_glossInflectionRepository = $glossInflectionRepository;
         $this->_keywordRepository = $keywordRepository;
         $this->_authManager = $authManager;
     }
@@ -91,11 +93,11 @@ class SentenceRepository
     public function getInflectionsForGlosses(array $ids)
     {
         return DB::table('sentence_fragments as sf')
-            ->join('speeches as sp', 'sf.speech_id', 'sp.id')
             ->join('sentences as s', 'sf.sentence_id', 's.id')
-            ->join('languages as l', 's.language_id', 'l.id')
-            ->leftJoin('sentence_fragment_inflection_rels as r', 'sf.id', 'r.sentence_fragment_id')
-            ->leftJoin('inflections as i', 'r.inflection_id', 'i.id')
+            ->join('gloss_inflections as gi', 'sf.inflection_group_uuid', 'gi.inflection_group_uuid')
+            ->join('speeches as sp', 'gi.speech_id', 'sp.id')
+            ->join('languages as l', 'gi.language_id', 'l.id')
+            ->join('inflections as i', 'gi.inflection_id', 'i.id')
             ->whereIn('sf.gloss_id', $ids)
             ->select('sf.gloss_id', 'sf.fragment as word', 'i.name as inflection', 'sp.name as speech', 
                 'sf.sentence_id', 'sf.id as sentence_fragment_id', 's.name as sentence_name', 'l.name as language_name',
@@ -114,15 +116,11 @@ class SentenceRepository
         }
 
         $fragments = $sentence->sentence_fragments;
-        $fragmentIds = $fragments->map(function ($f) {
-            return $f->id;
+        $fragmentGroupUuids = $fragments->map(function ($f) {
+            return $f->inflection_group_uuid;
         });
 
-        $inflections = SentenceFragmentInflectionRel::whereIn('sentence_fragment_id', $fragmentIds)
-            ->join('inflections', 'inflections.id', 'inflection_id')
-            ->select('sentence_fragment_id', 'inflections.name', 'inflections.id as inflection_id')
-            ->get()
-            ->groupBy('sentence_fragment_id');
+        $inflections = $this->_glossInflectionRepository->getInflectionsInGroups($fragmentGroupUuids);
 
         $translations = $sentence->sentence_translations()
             ->select('sentence_number', 'paragraph_number', 'translation')
@@ -153,7 +151,7 @@ class SentenceRepository
             if ($f->speech_id !== null && !in_array($f->speech_id, $carry)) {
                 $carry[] = $f->speech_id;
             }
-
+ 
             return $carry;
         }, []);
         $speeches = count($speechIds) < 1 ? [] : Speech::whereIn('id', $speechIds)
@@ -165,47 +163,44 @@ class SentenceRepository
         return $speeches;
     }
 
-    public function saveSentence(Sentence $sentence, array $fragments, array $inflections, array $translations = []) 
+    public function saveSentence(Sentence $sentence, array $fragments, array $inflectionsPerFragments, array $translations = []) 
     {
         $changed = !! $sentence->id;
         $numberOfFragments = count($fragments);
-        if ($numberOfFragments !== count($inflections)) {
+        if ($numberOfFragments !== count($inflectionsPerFragments)) {
             throw new \Exception('The number of fragments must match the number of inflections.');
+        }
+
+        foreach ($fragments as $fragment) {
+            $fragment->inflection_group_uuid = null;
         }
         
         try {
             DB::beginTransaction();
-
             $sentence->save();
 
             // Re-create all sentence fragments
             $this->destroyFragments($sentence);
-            for ($i = 0; $i < $numberOfFragments; $i += 1) {
-                $fragment = $fragments[$i];
-                $fragment->sentence_id = $sentence->id;
-                $fragment->save();
+            $sentence->sentence_fragments()->saveMany($fragments);
 
-                if (! $fragment->type) {
-                    try {
-                        for ($j = 0; $j < count($inflections[$i]); $j += 1) {
-                            $inflectionRel = $inflections[$i][$j];
-                            $inflectionRel->sentence_fragment_id = $fragment->id;
-                            $inflectionRel->save(); 
-                        }
-                    } catch (Exception $ex) {
-                        throw new Exception(
-                            sprintf('Failed to process inflections for "%s" (%i). Inflections: %s',
-                                $fragment->fragment, $i, \json_encode($inflections)),
-                            0, $ex);
+            $i = 0;
+            foreach ($sentence->sentence_fragments as $fragment) {
+                $inflections = $inflectionsPerFragments[$i++];
+
+                if (! empty($inflections)) {
+                    foreach ($inflections as $inflection) {
+                        $inflection->speech_id   = $fragment->speech_id;
+                        $inflection->gloss_id    = $fragment->gloss_id;
+                        $inflection->language_id = $sentence->language_id;
+                        $inflection->account_id  = $sentence->account_id;
                     }
 
-                    try {
-                        $this->_keywordRepository->createKeyword($fragment->gloss->word, $fragment->gloss->sense, 
-                            $fragment->gloss, $fragment->fragment, $fragment->id);
-                    } catch (Exception $ex) {
-                        throw new Exception(sprintf('Failed to save keywords for "%s" (%i).', $fragment->fragment, $i), 0, $ex);
-                    }
+                    $fragment->inflection_group_uuid = $this->_glossInflectionRepository->save(collect($inflections));
+                    $fragment->save();
                 }
+
+                $this->_keywordRepository->createKeyword($fragment->gloss->word, $fragment->gloss->sense, 
+                    $fragment->gloss, $fragment->fragment, $fragment->id);
             }
 
             // Re-create all sentence translations
@@ -232,10 +227,10 @@ class SentenceRepository
     public function destroyFragments(Sentence $sentence) 
     {
         foreach ($sentence->sentence_fragments as $fragment) {
-            $fragment->inflection_associations()->delete();
+            $fragment->gloss_inflections()->delete();
             $fragment->keywords()->delete();
-            $fragment->delete();
         }
+        $sentence->sentence_fragments()->delete();
     }
 
     public function suggestFragmentGlosses(Collection $fragments, int $languageId)
@@ -268,7 +263,7 @@ class SentenceRepository
                 ->first();
 
             if ($fragmentData !== null) {
-                $inflectionIds = SentenceFragmentInflectionRel::where('sentence_fragment_id', $fragmentData->sentence_fragment_id) //
+                $inflectionIds = GlossInflection::where('sentence_fragment_id', $fragmentData->sentence_fragment_id) //
                     ->pluck('inflection_id');
                 $glossId = $fragmentData->gloss_id;
                 $speechId = $fragmentData->speech_id;

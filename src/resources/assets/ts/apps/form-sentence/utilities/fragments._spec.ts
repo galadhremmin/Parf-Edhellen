@@ -66,7 +66,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
         const expected = [{
             fragment: 'mae',
             glossId: 0,
-            inflections: [],
+            glossInflections: [],
             paragraphNumber: 1,
             sentenceNumber: 1,
             speechId: 0,
@@ -75,7 +75,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
         }, {
             fragment: 'govannen',
             glossId: 0,
-            inflections: [],
+            glossInflections: [],
             paragraphNumber: 1,
             sentenceNumber: 1,
             speechId: 0,
@@ -84,7 +84,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
         }, {
             fragment: 'mellon',
             glossId: 0,
-            inflections: [],
+            glossInflections: [],
             paragraphNumber: 1,
             sentenceNumber: 1,
             speechId: 0,
@@ -93,7 +93,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
         }, {
             fragment: '!',
             glossId: 0,
-            inflections: [],
+            glossInflections: [],
             paragraphNumber: 1,
             sentenceNumber: 1,
             speechId: 0,
@@ -110,7 +110,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
         const expected = [{
             fragment: 'a',
             glossId: 0,
-            inflections: [],
+            glossInflections: [],
             paragraphNumber: 1,
             sentenceNumber: 1,
             speechId: 0,
@@ -119,7 +119,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
         }, {
             fragment: 'b',
             glossId: 0,
-            inflections: [],
+            glossInflections: [],
             paragraphNumber: 1,
             sentenceNumber: 1,
             speechId: 0,
@@ -128,7 +128,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
         }, {
             fragment: '!',
             glossId: 0,
-            inflections: [],
+            glossInflections: [],
             paragraphNumber: 1,
             sentenceNumber: 1,
             speechId: 0,
@@ -137,7 +137,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
         }, {
             fragment: 'c',
             glossId: 0,
-            inflections: [],
+            glossInflections: [],
             paragraphNumber: 1,
             sentenceNumber: 2,
             speechId: 0,
@@ -146,7 +146,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
         }, {
             fragment: '!',
             glossId: 0,
-            inflections: [],
+            glossInflections: [],
             paragraphNumber: 1,
             sentenceNumber: 2,
             speechId: 0,
@@ -155,7 +155,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
         }, {
             fragment: 'd',
             glossId: 0,
-            inflections: [],
+            glossInflections: [],
             paragraphNumber: 1,
             sentenceNumber: 3,
             speechId: 0,
@@ -164,7 +164,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
         }, {
             fragment: '!',
             glossId: 0,
-            inflections: [],
+            glossInflections: [],
             paragraphNumber: 1,
             sentenceNumber: 3,
             speechId: 0,
@@ -181,7 +181,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
         const expected = [{
             fragment: 'a',
             glossId: 0,
-            inflections: [],
+            glossInflections: [],
             paragraphNumber: 1,
             sentenceNumber: 1,
             speechId: 0,
@@ -190,7 +190,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
         }, {
             fragment: 'b',
             glossId: 0,
-            inflections: [],
+            glossInflections: [],
             paragraphNumber: 1,
             sentenceNumber: 1,
             speechId: 0,
@@ -199,7 +199,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
         }, {
             fragment: '!',
             glossId: 0,
-            inflections: [],
+            glossInflections: [],
             paragraphNumber: 1,
             sentenceNumber: 1,
             speechId: 0,
@@ -208,7 +208,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
         }, {
             fragment: '',
             glossId: 0,
-            inflections: [],
+            glossInflections: [],
             paragraphNumber: 1,
             sentenceNumber: 2,
             speechId: 0,
@@ -217,7 +217,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
         }, {
             fragment: 'c',
             glossId: 0,
-            inflections: [],
+            glossInflections: [],
             paragraphNumber: 2,
             sentenceNumber: 2,
             speechId: 0,
@@ -226,7 +226,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
         }, {
             fragment: '!',
             glossId: 0,
-            inflections: [],
+            glossInflections: [],
             paragraphNumber: 2,
             sentenceNumber: 2,
             speechId: 0,
@@ -235,7 +235,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
         }, {
             fragment: '',
             glossId: 0,
-            inflections: [],
+            glossInflections: [],
             paragraphNumber: 2,
             sentenceNumber: 3,
             speechId: 0,
@@ -244,7 +244,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
         }, {
             fragment: 'd',
             glossId: 0,
-            inflections: [],
+            glossInflections: [],
             paragraphNumber: 3,
             sentenceNumber: 3,
             speechId: 0,
@@ -253,7 +253,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
         }, {
             fragment: '!',
             glossId: 0,
-            inflections: [],
+            glossInflections: [],
             paragraphNumber: 3,
             sentenceNumber: 3,
             speechId: 0,
@@ -285,7 +285,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
         const expected = [{
                 fragment: 'A',
                 glossId: 0,
-                inflections: [],
+                glossInflections: [],
                 paragraphNumber: 1,
                 sentenceNumber: 1,
                 speechId: 0,
@@ -294,7 +294,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
             }, {
                 fragment: 'B',
                 glossId: 0,
-                inflections: [],
+                glossInflections: [],
                 paragraphNumber: 1,
                 sentenceNumber: 1,
                 speechId: 0,
@@ -303,7 +303,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
             }, {
                 fragment: 'Changes',
                 glossId: 0,
-                inflections: [],
+                glossInflections: [],
                 paragraphNumber: 1,
                 sentenceNumber: 1,
                 speechId: 0,
@@ -312,7 +312,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
             }, {
                 fragment: '!',
                 glossId: 0,
-                inflections: [],
+                glossInflections: [],
                 paragraphNumber: 1,
                 sentenceNumber: 1,
                 speechId: 0,
@@ -321,7 +321,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
             }, {
                 fragment: '',
                 glossId: 0,
-                inflections: [],
+                glossInflections: [],
                 paragraphNumber: 1,
                 sentenceNumber: 2,
                 speechId: 0,
@@ -348,7 +348,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
             {
                 fragment: '',
                 glossId: 0,
-                inflections: [],
+                glossInflections: [],
                 paragraphNumber,
                 sentenceNumber,
                 speechId: 0,
@@ -358,7 +358,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
             {
                 fragment: 'A',
                 glossId: 0,
-                inflections: [],
+                glossInflections: [],
                 paragraphNumber: paragraphNumber + 1,
                 sentenceNumber,
                 speechId: 0,
@@ -367,7 +367,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
             }, {
                 fragment: 'B',
                 glossId: 0,
-                inflections: [],
+                glossInflections: [],
                 paragraphNumber: paragraphNumber + 1,
                 sentenceNumber,
                 speechId: 0,
@@ -376,7 +376,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
             }, {
                 fragment: 'Changes',
                 glossId: 0,
-                inflections: [],
+                glossInflections: [],
                 paragraphNumber: paragraphNumber + 1,
                 sentenceNumber,
                 speechId: 0,
@@ -385,7 +385,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
             }, {
                 fragment: '!',
                 glossId: 0,
-                inflections: [],
+                glossInflections: [],
                 paragraphNumber: paragraphNumber + 1,
                 sentenceNumber,
                 speechId: 0,
@@ -420,7 +420,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
             {
                 fragment: 'G',
                 glossId: 0,
-                inflections: [],
+                glossInflections: [],
                 paragraphNumber: 2,
                 sentenceNumber: 2,
                 speechId: 0,
@@ -430,7 +430,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
             {
                 fragment: 'H',
                 glossId: 0,
-                inflections: [],
+                glossInflections: [],
                 paragraphNumber: 2,
                 sentenceNumber: 2,
                 speechId: 0,
@@ -440,7 +440,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
             {
                 fragment: 'I',
                 glossId: 0,
-                inflections: [],
+                glossInflections: [],
                 paragraphNumber: 2,
                 sentenceNumber: 2,
                 speechId: 0,
@@ -450,7 +450,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
             {
                 fragment: '.',
                 glossId: 0,
-                inflections: [],
+                glossInflections: [],
                 paragraphNumber: 2,
                 sentenceNumber: 2,
                 speechId: 0,
@@ -460,7 +460,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
             {
                 fragment: '',
                 glossId: 0,
-                inflections: [],
+                glossInflections: [],
                 paragraphNumber: 2,
                 sentenceNumber: 3,
                 speechId: 0,

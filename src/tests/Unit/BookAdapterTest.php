@@ -13,9 +13,7 @@ use Queue;
 use Tests\Unit\Traits\CanCreateGloss;
 use App\Adapters\BookAdapter;
 use App\Models\{
-    Gloss,
     Translation,
-    SentenceFragmentInflectionRel
 };
 
 class BookAdapterTest extends TestCase

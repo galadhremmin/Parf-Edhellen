@@ -23,8 +23,8 @@ function GlossFragmentInspector(props: IProps) {
 
     const gloss = useGloss(fragment?.glossId, (nextGloss) => ({
         ...nextGloss,
-        inflectedWord: {
-            inflections: fragment.inflections,
+        _inflectedWord: {
+            inflections: fragment.glossInflections,
             speech: fragment.speech,
             word: fragment.fragment,
         },

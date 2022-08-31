@@ -59,6 +59,12 @@ interface IContributionController
     function populate(Contribution $contribution, Request $request);
 
     /**
+     * Returns whether the controller should be in full control of the population of the payload,
+     * and all automatic change detection in the parent controller should be ignored.
+     */
+    function disableChangeDetection(): bool;
+
+    /**
      * Approves the specified contribution by transforming it into a respective entity.
      * Populates the contribution with meta-data.
      *

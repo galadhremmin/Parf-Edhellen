@@ -206,6 +206,15 @@ class GlossContributionController extends Controller implements IContributionCon
         return $entity;
     }
 
+    /**
+     * Disable change detection within the parent controller as the payload is always
+     * populated by the `populate` method.
+     */
+    function disableChangeDetection(): bool
+    {
+        return false;
+    }
+
     public function approve(Contribution $contribution, Request $request)
     {
         $glossData = json_decode($contribution->payload, true) + [

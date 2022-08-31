@@ -1,4 +1,5 @@
 import { IGlossGroup } from './IGlossResourceApi';
+import { IInflection } from './IInflectionResourceApi';
 
 export interface IFindRequest {
     glossGroupIds?: number[];
@@ -60,6 +61,7 @@ export interface ILanguageEntity {
 }
 
 export interface IBookGlossEntity {
+    _inflectedWord?: IBookWordInflection;
     accountId: number;
     accountName: string;
     accountUrl: string;
@@ -75,7 +77,6 @@ export interface IBookGlossEntity {
     glossGroupLabel?: string;
     glossGroupName: string;
     id: number;
-    inflectedWord?: IBookWordInflection;
     inflections: {
         [ sentenceId: string ]: IBookInflectionEntity[];
     };
@@ -109,7 +110,7 @@ export interface IBookGlossDetailEntity {
 }
 
 export interface IBookWordInflection {
-    inflections: ISentenceFragmentInflection[];
+    inflections: IGlossInflection[];
     speech: string;
     word: string;
 }
@@ -134,7 +135,7 @@ export interface ISentenceRequest {
 }
 
 export interface ISentenceResponse {
-    inflections: ISentenceFragmentInflectionMap;
+    inflections: IInflectionMap;
     sentence: ISentenceEntity;
     sentenceFragments: ISentenceFragmentEntity[];
     sentenceTranslations: ISentenceTranslationMap;
@@ -142,13 +143,8 @@ export interface ISentenceResponse {
     speeches: ISpeechMap;
 }
 
-export interface ISentenceFragmentInflectionMap {
-    [sentenceFragmentId: string]: ISentenceFragmentInflection[];
-}
-
-export interface ISentenceFragmentInflection {
-    inflectionId: number;
-    name?: string;
+export interface IInflectionMap {
+    [sentenceFragmentId: string]: IInflection;
 }
 
 export interface ISentenceEntity {
@@ -182,13 +178,20 @@ export interface ISentenceFragmentEntity {
     fragment?: string;
     glossId?: number;
     id?: number;
-    inflections?: ISentenceFragmentInflection[];
+    inflectionGroupUuid?: string;
+    glossInflections?: IGlossInflection[];
     paragraphNumber?: number;
     sentenceNumber?: number;
     speech?: string;
     speechId?: number;
     tengwar?: string;
     type?: SentenceFragmentType;
+}
+
+export interface IGlossInflection {
+    inflectionId: number;
+    inflection?: IInflection;
+    order?: number;
 }
 
 export interface ISentenceTranslationEntity {

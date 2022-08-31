@@ -5,10 +5,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 use App\Models\{
-    Account,
+    GlossInflection,
     Sentence, 
     SentenceFragment,
-    SentenceFragmentInflectionRel,
     SentenceTranslation
 };
 
@@ -68,12 +67,16 @@ trait CanMapSentence
             $fragments[] = $fragment;
 
             $inflectionsForFragment = [];
-            if (! $fragment->type && isset($fragmentData['inflections'])) {
-                foreach ($fragmentData['inflections'] as $inflection) {
-                    $inflectionRel = new SentenceFragmentInflectionRel;
-
-                    $inflectionRel->inflection_id        = $inflection['inflection_id'];
-                    $inflectionRel->sentence_fragment_id = $fragment->id;
+            if (! $fragment->type && isset($fragmentData['gloss_inflections'])) {
+                foreach ($fragmentData['gloss_inflections'] as $inflection) {
+                    $inflectionRel = new GlossInflection([
+                        'inflection_id' => intval($inflection['inflection_id']),
+                        'order'         => intval($inflection['order']),
+                        'speech_id'     => $fragment->speech_id,
+                        'language_id'   => $sentence->language_id,
+                        'gloss_id'      => $fragment->gloss_id,
+                        'account_id'    => $sentence->account_id,
+                    ]);
 
                     $inflectionsForFragment[] = $inflectionRel;
                 }

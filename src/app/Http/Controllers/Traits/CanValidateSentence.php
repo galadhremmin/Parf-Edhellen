@@ -60,16 +60,17 @@ trait CanValidateSentence
             if (! $fragments[$i]['type']) {
                 $rules[$prefix.'tengwar']     = 'required|max:128';
                 // inflections are optional, but when present, have to be declared as an array
-                $rules[$prefix.'inflections'] = 'sometimes|array';
+                $rules[$prefix.'gloss_inflections'] = 'sometimes|array';
+                $rules[$prefix.'gloss_inflections.*.order'] = 'required|numeric';
                 
                 if ($validateIdCorrectness) {
                     $rules[$prefix.'gloss_id']  = 'required|exists:glosses,id';
                     $rules[$prefix.'speech_id'] = 'required|exists:speeches,id';
-                    $rules[$prefix.'inflections.*.inflection_id'] = 'sometimes|exists:inflections,id';
+                    $rules[$prefix.'gloss_inflections.*.inflection_id'] = 'sometimes|exists:inflections,id';
                 } else {
                     $rules[$prefix.'gloss_id']  = 'required|numeric';
                     $rules[$prefix.'speech_id'] = 'required|numeric';
-                    $rules[$prefix.'inflections.*.inflection_id'] = 'sometimes|numeric';
+                    $rules[$prefix.'gloss_inflections.*.inflection_id'] = 'sometimes|numeric';
                 }
             }
         }
