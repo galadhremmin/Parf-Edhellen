@@ -1,14 +1,14 @@
 import {
+    IGlossInflection,
     SentenceFragmentType,
 } from '@root/connectors/backend/IBookApi';
-import { IInflection } from '@root/connectors/backend/IInflectionResourceApi';
 
 export interface IFragmentsReducerState {
     comments: string;
     fragment: string;
     glossId: number;
     id: number;
-    glossInflections: IInflection[];
+    glossInflections: IGlossInflection[];
     nextFragmentId: number;
     previousFragmentId: number;
     sentenceNumber: number;

@@ -5,7 +5,6 @@ namespace App\Repositories;
 use App\Models\GlossInflection;
 use Illuminate\Support\Collection;
 use Ramsey\Uuid\Uuid;
-use Ramsey\Uuid\UuidInterface;
 
 class GlossInflectionRepository
 {
@@ -35,14 +34,17 @@ class GlossInflectionRepository
         return $uuids;
     }
 
-    public function save(Collection $inflections): UuidInterface
+    public function save(Collection $inflections): string
     {
-        $uuid = Uuid::uuid4();
+        $uuid = Uuid::uuid4()->toString();
+        $rows = [];
         foreach ($inflections as $inflection) {
-            $inflection->inflection_group_uuid = $uuid;
+            $rows[] = $inflection->toArray() + [
+                'inflection_group_uuid' => $uuid
+            ];
         }
 
-        GlossInflection::insert($inflections);
+        GlossInflection::insert($rows);
         return $uuid;
     }
 }

@@ -1,5 +1,6 @@
 import { IGlossGroup } from './IGlossResourceApi';
 import { IInflection } from './IInflectionResourceApi';
+import { ISpeechEntity } from './ISpeechResourceApi';
 
 export interface IFindRequest {
     glossGroupIds?: number[];
@@ -135,16 +136,16 @@ export interface ISentenceRequest {
 }
 
 export interface ISentenceResponse {
-    inflections: IInflectionMap;
     sentence: ISentenceEntity;
     sentenceFragments: ISentenceFragmentEntity[];
     sentenceTranslations: ISentenceTranslationMap;
     sentenceTransformations: ITextTransformationsMap;
     speeches: ISpeechMap;
+    inflections: IInflectionMap;
 }
 
 export interface IInflectionMap {
-    [sentenceFragmentId: string]: IInflection;
+    [inflectionId: string]: IInflection;
 }
 
 export interface ISentenceEntity {
@@ -232,7 +233,7 @@ export type ParagraphTransformation = FragmentTransformation[];
 export type FragmentTransformation = [number, string?] | string;
 
 export interface ISpeechMap {
-    [speechId: string]: string;
+    [speechId: string]: ISpeechEntity;
 }
 
 export interface IEntitiesRequest {

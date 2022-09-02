@@ -11,6 +11,8 @@ use App\Events\{
     SentenceDestroyed,
     SentenceEdited
 };
+use App\Helpers\SentenceBuilders\SentenceBuilder;
+use App\Helpers\StringHelper;
 use App\Jobs\ProcessSearchIndexCreation;
 
 class SentenceIndexerSubscriber
@@ -67,8 +69,15 @@ class SentenceIndexerSubscriber
     private function update(Sentence $sentence)
     {
         foreach ($sentence->sentence_fragments as $fragment) {
-            foreach ($fragment->keywords as $keyword) {
-                ProcessSearchIndexCreation::dispatch($fragment, $keyword->wordEntity, $keyword->keyword) //
+            if ($fragment->type === SentenceBuilder::TYPE_CODE_WORD) {
+                $word = $fragment->gloss->word;
+                $inflection = StringHelper::toLower($fragment->fragment);
+
+                if ($inflection === StringHelper::toLower($word->word)) {
+                    $inflection = null; // if the words are identical, don't consider the fragment an inflection
+                }
+
+                ProcessSearchIndexCreation::dispatch($fragment, $word, $inflection) //
                     ->onQueue('indexing');
             }
         }

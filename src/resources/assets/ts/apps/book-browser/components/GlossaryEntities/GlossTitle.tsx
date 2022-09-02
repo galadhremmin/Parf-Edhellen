@@ -43,8 +43,8 @@ const GlossTitle = (props: IProps) => {
             <span className="gloss-word__inflection__name">
                 {gloss._inflectedWord.speech}
             </span>
-            {gloss._inflectedWord.inflections && gloss._inflectedWord.inflections.map(
-                (i) => <span key={i.inflectionId || i.inflection?.name} className="gloss-word__inflection__name">
+            {(gloss._inflectedWord.inflections || []).map(
+                (i) => <span key={i.inflectionId || i.inflection?.id} className="gloss-word__inflection__name">
                     {i.inflection?.name}
                 </span>)}
         </span>}

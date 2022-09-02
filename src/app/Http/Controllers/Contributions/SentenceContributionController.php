@@ -49,8 +49,8 @@ class SentenceContributionController extends Controller implements IContribution
         // based on the JSON payload that is stored on the contribution. This is a bit clumsy, but
         // it is currently the only way to visualize the sentence in the contribution preview view.
         $fragmentData = $this->createFragmentDataFromPayload($payload);
-        $speeches     = $this->_sentenceRepository->getSpeechesForFragments($fragmentData['fragments']);
-        $inflections  = Inflection::all()->keyBy('id');
+        $speeches     = $this->_sentenceRepository->getSpeechesForSentenceFragments($fragmentData['fragments']);
+        $inflections  = $this->_sentenceRepository->getInflectionsForSentenceFragments($fragmentData['fragments']);
 
         $fragmentData = [
             'inflections'              => $inflections,
@@ -299,16 +299,23 @@ class SentenceContributionController extends Controller implements IContribution
             foreach ($payload['fragments'] as $fragmentData) {
                 $fragment = new SentenceFragment($fragmentData);
 
-                // Generate a fake ID (descending order, starting at -10).
+                // Generate a fake ID (descending order, starting at -1).
                 $fragment->id = ($i + 1) * -1;
 
                 // Create an array of IDs for inflections associated with this fragment.
-                $fragment->gloss_inflections = isset($payload['gloss_inflections']) 
-                    ? $payload['gloss_inflections'][$i]
-                    : $payload['inflections'][$i]; // 20220831: maintained for backwards compatibility.
+                $fragment->gloss_inflections = collect(
+                    isset($payload['gloss_inflections'])
+                        ? $payload['gloss_inflections'][$i]->orderBy('order')
+                        : array_map(function ($i) {  // 20220831: maintained for backwards compatibility.
+                            return [
+                                'inflection_id' => $i['inflection_id']
+                            ];
+                        }, $payload['inflections'][$i])
+                )->map(function ($i, $order) {
+                    return new GlossInflection($i + ['order' => $order]);
+                });
 
                 $fragments->push($fragment);
-                
                 $i += 1;
             }
 

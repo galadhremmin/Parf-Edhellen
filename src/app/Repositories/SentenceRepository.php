@@ -15,7 +15,7 @@ use App\Models\{
     GlossInflection,
     Keyword,
     Sentence,
-    Speech
+    Inflection,
 };
 use App\Helpers\{
     SentenceHelper,
@@ -115,13 +115,7 @@ class SentenceRepository
             return $sentence;
         }
 
-        $fragments = $sentence->sentence_fragments;
-        $fragmentGroupUuids = $fragments->map(function ($f) {
-            return $f->inflection_group_uuid;
-        });
-
-        $inflections = $this->_glossInflectionRepository->getInflectionsInGroups($fragmentGroupUuids);
-
+        $fragments = $sentence->sentence_fragments()->with(['gloss_inflections', 'speech'])->get();
         $translations = $sentence->sentence_translations()
             ->select('sentence_number', 'paragraph_number', 'translation')
             ->get()
@@ -134,33 +128,39 @@ class SentenceRepository
 
         $sentence->makeHidden(['account_id', 'language_id', 'sentence_translations', 'sentence_fragments']);
 
-        $speeches = $this->getSpeechesForFragments($fragments);
         return [
-            'inflections' => $inflections,
             'sentence' => $sentence,
             'sentence_fragments' => $fragments,
             'sentence_translations' => $translations,
             'sentence_transformations' => resolve(SentenceHelper::class)->buildSentences($fragments),
-            'speeches' => $speeches
+            'speeches' => $this->getSpeechesForSentenceFragments($fragments),
+            'inflections' => $this->getInflectionsForSentenceFragments($fragments)
         ];
     }
 
-    public function getSpeechesForFragments(Collection $fragments)
+    public function getSpeechesForSentenceFragments(Collection $fragments)
     {
-        $speechIds = $fragments->reduce(function ($carry, $f) {
-            if ($f->speech_id !== null && !in_array($f->speech_id, $carry)) {
-                $carry[] = $f->speech_id;
-            }
- 
-            return $carry;
-        }, []);
-        $speeches = count($speechIds) < 1 ? [] : Speech::whereIn('id', $speechIds)
-            ->select('id', 'name')
-            ->get()
-            ->mapWithKeys(function ($item) {
-                return [$item->id => $item->name];
-            });
+        $speeches = $fragments->map(function ($f) {
+            return $f->speech;
+        }) //
+            ->whereNotNull() //
+            ->unique() //
+            ->keyBy('id');
+
         return $speeches;
+    }
+
+    public function getInflectionsForSentenceFragments(Collection $fragments)
+    {
+        $inflections = Inflection::whereIn('id', $fragments->map(function ($f) {
+            return $f->gloss_inflections->map(function ($i) {
+                return $i->inflection_id;
+            });
+        })->flatten()) //
+            ->get() //
+            ->keyBy('id');
+
+        return $inflections;
     }
 
     public function saveSentence(Sentence $sentence, array $fragments, array $inflectionsPerFragments, array $translations = []) 
@@ -182,6 +182,7 @@ class SentenceRepository
             // Re-create all sentence fragments
             $this->destroyFragments($sentence);
             $sentence->sentence_fragments()->saveMany($fragments);
+            $sentence->refresh();
 
             $i = 0;
             foreach ($sentence->sentence_fragments as $fragment) {
@@ -198,9 +199,6 @@ class SentenceRepository
                     $fragment->inflection_group_uuid = $this->_glossInflectionRepository->save(collect($inflections));
                     $fragment->save();
                 }
-
-                $this->_keywordRepository->createKeyword($fragment->gloss->word, $fragment->gloss->sense, 
-                    $fragment->gloss, $fragment->fragment, $fragment->id);
             }
 
             // Re-create all sentence translations

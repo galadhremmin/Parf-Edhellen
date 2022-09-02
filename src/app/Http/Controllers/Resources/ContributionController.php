@@ -56,9 +56,9 @@ class ContributionController extends Controller
         $pendingReviews  = Contribution::whereNull('is_approved')
             ->orderBy('id', 'asc')->simplePaginate(10, ['*'], 'pending');
         $rejectedReviews = Contribution::where('is_approved', 0)
-            ->orderBy('id', 'asc')->simplePaginate(10, ['*'], 'rejected');
+            ->orderBy('updated_at', 'desc')->simplePaginate(10, ['*'], 'rejected');
         $approvedReviews = Contribution::where('is_approved', 1)
-            ->orderBy('id', 'asc')->simplePaginate(10, ['*'], 'approved');
+            ->orderBy('updated_at', 'desc')->simplePaginate(10, ['*'], 'approved');
 
         return view('contribution.list', [
             'approvedReviews' => $approvedReviews,
@@ -85,7 +85,8 @@ class ContributionController extends Controller
 
         $model = ContributionControllerFactory::createController($contribution->type)->getViewModel($contribution);
         return view('contribution.show', $model->toModelArray() + [
-            'admin' => $admin
+            'returnToAdminView' => $admin,
+            'isAdmin' => $request->user()->isAdministrator()
         ]);
     }
 
