@@ -28,8 +28,7 @@ import RespondButton from '../components/RespondButton';
 import ConditionalToolbar from '../components/toolbar/ConditionalToolbar';
 import { keyGenerator, RootReducer } from '../reducers';
 import { IProps } from './Discuss._types';
-import { DEFAULT_COLLECTIVIZE_KEY, getStateOrDefault } from '@root/utilities/redux/collectivize';
-import ThreadsReducer from '../reducers/ThreadsReducer';
+import { getStateOrDefault } from '@root/utilities/redux/collectivize';
 
 function Discuss(props: IProps) {
     const formRef = useRef(null);

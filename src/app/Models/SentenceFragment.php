@@ -6,8 +6,7 @@ class SentenceFragment extends ModelBase
 {
     protected $fillable = [ 
         'fragment', 'tengwar', 'comments', 'speech_id', 'gloss_id', 'sentence_id',
-        'order', 'is_linebreak', 'type', 'paragraph_number', 'sentence_number',
-        'inflection_group_uuid'
+        'order', 'is_linebreak', 'type', 'paragraph_number', 'sentence_number'
     ];
 
     public function gloss()
@@ -37,6 +36,6 @@ class SentenceFragment extends ModelBase
 
     public function gloss_inflections()
     {
-        return $this->hasMany(GlossInflection::class, 'inflection_group_uuid', 'inflection_group_uuid');
+        return $this->hasMany(GlossInflection::class);
     }
 }

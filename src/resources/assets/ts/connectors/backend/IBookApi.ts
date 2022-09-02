@@ -190,9 +190,17 @@ export interface ISentenceFragmentEntity {
 }
 
 export interface IGlossInflection {
+    inflectionGroupUuid?: string;
     inflectionId: number;
     inflection?: IInflection;
     order?: number;
+    glossId?: number;
+    languageId?: number;
+    speechId?: number;
+    isNeologism?: boolean;
+    isRejected?: boolean;
+    source?: string;
+    sentenceFragmentId?: number;
 }
 
 export interface ISentenceTranslationEntity {

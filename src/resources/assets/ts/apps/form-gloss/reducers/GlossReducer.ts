@@ -55,7 +55,7 @@ const GlossReducer = (state: IGlossState = InitialState, action: IGlossAction) =
                 translations: 'translations',
                 word: 'word',
             }, action.gloss);
-        case Actions.SetField:
+        case Actions.SetGlossField:
             return {
                 ...state,
                 [action.field]: action.value,

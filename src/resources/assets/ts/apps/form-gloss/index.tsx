@@ -14,6 +14,10 @@ import { IProps } from './index._types';
 import rootReducer from './reducers';
 
 import GlossForm from './containers/GlossForm';
+import InflectionForm from './containers/InflectionForm';
+
+import '@ag-grid-community/core/dist/styles/ag-grid.css';
+import '@ag-grid-community/core/dist/styles/ag-theme-balham.css';
 
 const store = createStore(rootReducer, undefined,
     composeEnhancers('form-gloss')(
@@ -25,6 +29,7 @@ const Inject = (props: IProps) => {
     const {
         confirmButton,
         gloss,
+        inflections,
         prefetched,
     } = props;
 
@@ -36,11 +41,15 @@ const Inject = (props: IProps) => {
             if (gloss !== undefined) {
                 dispatch(actions.setLoadedGloss(gloss));
             }
+            if (inflections !== undefined) {
+                dispatch(actions.setLoadedInflections(inflections));
+            }
         }
     }, []);
 
     return <Provider store={store}>
         <GlossForm confirmButton={confirmButton || undefined} />
+        <InflectionForm confirmButton={confirmButton || undefined} />
     </Provider>;
 };
 

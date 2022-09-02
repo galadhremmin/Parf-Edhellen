@@ -94,7 +94,7 @@ class SentenceRepository
     {
         return DB::table('sentence_fragments as sf')
             ->join('sentences as s', 'sf.sentence_id', 's.id')
-            ->join('gloss_inflections as gi', 'sf.inflection_group_uuid', 'gi.inflection_group_uuid')
+            ->join('gloss_inflections as gi', 'sf.id', 'gi.sentence_fragment_id')
             ->join('speeches as sp', 'gi.speech_id', 'sp.id')
             ->join('languages as l', 'gi.language_id', 'l.id')
             ->join('inflections as i', 'gi.inflection_id', 'i.id')
@@ -170,10 +170,6 @@ class SentenceRepository
         if ($numberOfFragments !== count($inflectionsPerFragments)) {
             throw new \Exception('The number of fragments must match the number of inflections.');
         }
-
-        foreach ($fragments as $fragment) {
-            $fragment->inflection_group_uuid = null;
-        }
         
         try {
             DB::beginTransaction();
@@ -190,14 +186,16 @@ class SentenceRepository
 
                 if (! empty($inflections)) {
                     foreach ($inflections as $inflection) {
-                        $inflection->speech_id   = $fragment->speech_id;
-                        $inflection->gloss_id    = $fragment->gloss_id;
-                        $inflection->language_id = $sentence->language_id;
-                        $inflection->account_id  = $sentence->account_id;
+                        $inflection->speech_id            = $fragment->speech_id;
+                        $inflection->gloss_id             = $fragment->gloss_id;
+                        $inflection->language_id          = $sentence->language_id;
+                        $inflection->account_id           = $sentence->account_id;
+                        $inflection->sentence_id          = $fragment->sentence_id;
+                        $inflection->sentence_fragment_id = $fragment->id;
+                        $inflection->word                 = $fragment->fragment;
                     }
 
-                    $fragment->inflection_group_uuid = $this->_glossInflectionRepository->save(collect($inflections));
-                    $fragment->save();
+                    $this->_glossInflectionRepository->save(collect($inflections));
                 }
             }
 

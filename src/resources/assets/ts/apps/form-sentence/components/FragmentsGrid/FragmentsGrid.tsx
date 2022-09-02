@@ -13,8 +13,6 @@ import {
 import {
     ClientSideRowModelModule,
 } from '@ag-grid-community/client-side-row-model';
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import '@ag-grid-community/core/dist/styles/ag-theme-balham.css';
 
 import {
     DI,

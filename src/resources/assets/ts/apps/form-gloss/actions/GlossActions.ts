@@ -8,6 +8,8 @@ import IGlossResourceApi, { IGlossEntity } from '@root/connectors/backend/IGloss
 import { DI, resolve } from '@root/di';
 
 import Actions from './Actions';
+import { IGlossInflection } from '@root/connectors/backend/IBookApi';
+import { IInflectionGroupState } from '../reducers/InflectionsReducer._types';
 
 export default class GlossActions {
     constructor(
@@ -24,7 +26,7 @@ export default class GlossActions {
     public setEditingGlossId(glossId: number) {
         return {
             field: 'id',
-            type: Actions.SetField,
+            type: Actions.SetGlossField,
             value: glossId || 0,
         };
     }
@@ -39,7 +41,7 @@ export default class GlossActions {
     public setGlossField<T extends keyof IContribution<IGlossEntity>>(field: T, value: IContribution<IGlossEntity>[T]) {
         return {
             field,
-            type: Actions.SetField,
+            type: Actions.SetGlossField,
             value,
         };
     }
@@ -51,5 +53,27 @@ export default class GlossActions {
                 window.location.href = response.url;
             }
         });
+    }
+
+    public setLoadedInflections(inflections: IGlossInflection[]) {
+        return {
+            preloadedInflections: inflections,
+            type: Actions.ReceiveInflections,
+        }
+    }
+
+    public setInflectionGroup(inflectionGroupUuid: string, inflectionGroup: IInflectionGroupState) {
+        return {
+            inflectionGroupUuid,
+            inflectionGroup,
+            type: Actions.SetInflectionGroup,
+        }
+    }
+
+    public unsetInflectionGroup(inflectionGroupUuid: string) {
+        return {
+            inflectionGroupUuid,
+            type: Actions.UnsetInflectionGroup,
+        }
     }
 }

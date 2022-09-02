@@ -32,18 +32,18 @@ class GlossInflections extends Migration
             $table->unsignedBigInteger('speech_id');
             $table->unsignedBigInteger('inflection_id');
             $table->unsignedBigInteger('account_id')->nullable();
+            $table->unsignedBigInteger('sentence_id')->nullable();
+            $table->unsignedBigInteger('sentence_fragment_id')->nullable();
             $table->boolean('is_neologism')->default(false);
             $table->boolean('is_rejected')->default(false);
             $table->string('source', 64)->nullable();
+            $table->string('word', 196);
             $table->unsignedSmallInteger('order', false)->default(0);
             $table->timestamps();
 
-            $table->index('inflection_group_uuid');
             $table->index('gloss_id');
-        });
-
-        Schema::table('sentence_fragments', function (Blueprint $table) {
-            $table->uuid('inflection_group_uuid')->nullable();
+            $table->index('sentence_fragment_id');
+            $table->index('inflection_group_uuid');
         });
 
         try {
@@ -64,12 +64,12 @@ class GlossInflections extends Migration
                         'account_id'            => $f->sentence->account_id,
                         'language_id'           => $f->sentence->language_id,
                         'speech_id'             => $f->speech_id,
+                        'word'                  => $f->fragment,
+                        'sentence_id'           => $f->sentence_id,
+                        'sentence_fragment_id'  => $f->id,
                         'order'                 => $order++ * 10
                     ]);
                 }
-
-                $f->inflection_group_uuid = $inflection_group_uuid;
-                $f->save();
             }
 
             DB::commit();
@@ -88,8 +88,5 @@ class GlossInflections extends Migration
     public function down()
     {
         Schema::dropIfExists('gloss_inflections');
-        Schema::table('sentence_fragments', function (Blueprint $table) {
-            $table->dropColumn('inflection_group_uuid');
-        });
     }
 }

@@ -33,14 +33,12 @@ import {
     GlossProps,
     IProps,
 } from './GlossForm._types';
-import InflectionsInput from '../components/InflectionsInput';
 
 function GlossForm(props: IProps) {
     const {
         confirmButton,
         edit,
         errors,
-        inflections,
         name,
         onEditChange,
         onGlossFieldChange,
@@ -96,197 +94,182 @@ function GlossForm(props: IProps) {
         fireEvent(name, onSubmit, newGloss);
     };
 
-    const _onInflectionSubmit = (ev: React.FormEvent) => {
-        ev.preventDefault();
-    };
-
-    return <div className="container">
-        <form onSubmit={_onGlossSubmit}>
-            <ValidationErrorAlert error={errors} />
-            {edit && <StaticAlert type="warning">
-                <p>
-                    <TextIcon icon="info-sign" />{' '}
-                    <strong>
-                        You are proposing changes to the gloss <Quote>{gloss.word.word}</Quote> ({gloss.id}).
-                    </strong>{' '}
-                    You can <a href="#" onClick={_onDisableEdit}>copy the gloss</a> if you want to use it as
-                    a template.
-                </p>
-            </StaticAlert>}
-            <div className="row">
-                <div className="col-sm-12 col-lg-6">
-                    <Panel title="Basic information">
-                        <div className="form-group">
-                            <label htmlFor="ed-gloss-word" className="control-label">Word</label>
-                            <input type="text"
-                                className="form-control"
-                                id="ed-gloss-word"
-                                value={gloss.word.word}
-                                onChange={_onChangeNative('word', wordTransformer)}
-                                required={true}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="ed-gloss-sense-word" className="control-label">Sense</label>
-                            <input type="text"
-                                className="form-control"
-                                id="ed-gloss-sense-word"
-                                value={gloss.sense.word.word}
-                                onChange={_onChangeNative('sense', senseTransformer)}
-                                required={true}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="ed-gloss-language">Language</label>
-                            <LanguageSelect
-                                className="form-control"
-                                name="ed-gloss-language"
-                                value={gloss.languageId}
-                                onChange={_onChange('languageId')}
-                                required={true}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="ed-gloss-translations">Translations</label>
-                            <TagInput
-                                name="ed-gloss-translations"
-                                value={gloss.translations.map((t) => t.translation)}
-                                onChange={_onChange('translations', translationsTransformer)}
-                                required={true}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="ed-gloss-speech">Speech</label>
-                            <SpeechSelect
-                                className="form-control"
-                                name="ed-gloss-speech"
-                                value={gloss.speechId}
-                                onChange={_onChange('speechId')}
-                                required={true}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="ed-gloss-sources" className="control-label">Sources</label>
-                            <input type="text"
-                                className="form-control"
-                                id="ed-gloss-sources"
-                                value={gloss.source}
-                                onChange={_onChangeNative('source')}
-                                required={true}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="ed-gloss-comments">Comments</label>
-                            <MarkdownInput name="ed-gloss-comments"
-                                value={gloss.comments}
-                                onChange={_onChange('comments')}
-                            />
-                        </div>
-                    </Panel>
-                </div>
-                <div className="col-sm-12 col-lg-6">
-                    <Panel title="Additional information">
-                        <div className="checkbox">
-                            <label>
-                                <input type="checkbox"
-                                    name="ed-gloss-is-uncertain"
-                                    checked={gloss.isUncertain}
-                                    value={1}
-                                    onChange={_onChangeNative('isUncertain')}
-                                /> Uncertain
-                            </label>
-                        </div>
-                        <div className="checkbox">
-                            <label>
-                                <input type="checkbox"
-                                    name="ed-gloss-is-rejected"
-                                    checked={gloss.isRejected}
-                                    value={1}
-                                    onChange={_onChangeNative('isRejected')}
-                                /> Rejected (strikethrough)
-                            </label>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="ed-gloss-details">
-                                Details
-                                <OptionalLabel />
-                            </label>
-                            <GlossDetailInput name="ed-gloss-details"
-                                onChange={_onChange('glossDetails')}
-                                value={gloss.glossDetails} />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="ed-gloss-keywords">
-                                Keywords
-                                <OptionalLabel />
-                            </label>
-                            <TagInput
-                                name="ed-gloss-keywords"
-                                value={gloss.keywords.map((k) => k.word)}
-                                onChange={_onChange('keywords', keywordsTransformer)}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="ed-gloss-tengwar">
-                                Transcription
-                                <OptionalLabel />
-                            </label>
-                            <TengwarInput
-                                inputSize="sm"
-                                languageId={gloss.languageId}
-                                name="ed-gloss-tengwar"
-                                onChange={_onChange('tengwar')}
-                                originalText={gloss.word.word}
-                                value={gloss.tengwar}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="ed-gloss-account">Account</label>
-                            <AccountSelect
-                                name="ed-gloss-account"
-                                onChange={_onChange('account')}
-                                value={gloss.account}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="ed-gloss-speech">Categorization</label>
-                            <GlossGroupSelect
-                                className="form-control"
-                                name="ed-gloss-group-id"
-                                onChange={_onChange('glossGroupId')}
-                                value={gloss.glossGroupId}
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="ed-gloss-label">
-                                Label
-                                <OptionalLabel />
-                            </label>
-                            <input type="text"
-                                className="form-control"
-                                id="ed-gloss-label"
-                                value={gloss.label}
-                                onChange={_onChangeNative('label')}
-                                required={false}
-                            />
-                        </div>
-                    </Panel>
-                </div>
+    return <form onSubmit={_onGlossSubmit}>
+        <ValidationErrorAlert error={errors} />
+        {edit && <StaticAlert type="warning">
+            <p>
+                <TextIcon icon="info-sign" />{' '}
+                <strong>
+                    You are proposing changes to the gloss <Quote>{gloss.word.word}</Quote> ({gloss.id}).
+                </strong>{' '}
+                You can <a href="#" onClick={_onDisableEdit}>copy the gloss</a> if you want to use it as
+                a template.
+            </p>
+        </StaticAlert>}
+        <div className="row">
+            <div className="col-sm-12 col-lg-6">
+                <Panel title="Basic information">
+                    <div className="form-group">
+                        <label htmlFor="ed-gloss-word" className="control-label">Word</label>
+                        <input type="text"
+                            className="form-control"
+                            id="ed-gloss-word"
+                            value={gloss.word.word}
+                            onChange={_onChangeNative('word', wordTransformer)}
+                            required={true}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="ed-gloss-sense-word" className="control-label">Sense</label>
+                        <input type="text"
+                            className="form-control"
+                            id="ed-gloss-sense-word"
+                            value={gloss.sense.word.word}
+                            onChange={_onChangeNative('sense', senseTransformer)}
+                            required={true}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="ed-gloss-language">Language</label>
+                        <LanguageSelect
+                            className="form-control"
+                            name="ed-gloss-language"
+                            value={gloss.languageId}
+                            onChange={_onChange('languageId')}
+                            required={true}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="ed-gloss-translations">Translations</label>
+                        <TagInput
+                            name="ed-gloss-translations"
+                            value={gloss.translations.map((t) => t.translation)}
+                            onChange={_onChange('translations', translationsTransformer)}
+                            required={true}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="ed-gloss-speech">Speech</label>
+                        <SpeechSelect
+                            className="form-control"
+                            name="ed-gloss-speech"
+                            value={gloss.speechId}
+                            onChange={_onChange('speechId')}
+                            required={true}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="ed-gloss-sources" className="control-label">Sources</label>
+                        <input type="text"
+                            className="form-control"
+                            id="ed-gloss-sources"
+                            value={gloss.source}
+                            onChange={_onChangeNative('source')}
+                            required={true}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="ed-gloss-comments">Comments</label>
+                        <MarkdownInput name="ed-gloss-comments"
+                            value={gloss.comments}
+                            onChange={_onChange('comments')}
+                        />
+                    </div>
+                </Panel>
             </div>
-            <div className="text-center">
-                <button type="submit" className="btn btn-primary">{confirmButton}</button>
+            <div className="col-sm-12 col-lg-6">
+                <Panel title="Additional information">
+                    <div className="checkbox">
+                        <label>
+                            <input type="checkbox"
+                                name="ed-gloss-is-uncertain"
+                                checked={gloss.isUncertain}
+                                value={1}
+                                onChange={_onChangeNative('isUncertain')}
+                            /> Uncertain
+                        </label>
+                    </div>
+                    <div className="checkbox">
+                        <label>
+                            <input type="checkbox"
+                                name="ed-gloss-is-rejected"
+                                checked={gloss.isRejected}
+                                value={1}
+                                onChange={_onChangeNative('isRejected')}
+                            /> Rejected (strikethrough)
+                        </label>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="ed-gloss-details">
+                            Details
+                            <OptionalLabel />
+                        </label>
+                        <GlossDetailInput name="ed-gloss-details"
+                            onChange={_onChange('glossDetails')}
+                            value={gloss.glossDetails} />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="ed-gloss-keywords">
+                            Keywords
+                            <OptionalLabel />
+                        </label>
+                        <TagInput
+                            name="ed-gloss-keywords"
+                            value={gloss.keywords.map((k) => k.word)}
+                            onChange={_onChange('keywords', keywordsTransformer)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="ed-gloss-tengwar">
+                            Transcription
+                            <OptionalLabel />
+                        </label>
+                        <TengwarInput
+                            inputSize="sm"
+                            languageId={gloss.languageId}
+                            name="ed-gloss-tengwar"
+                            onChange={_onChange('tengwar')}
+                            originalText={gloss.word.word}
+                            value={gloss.tengwar}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="ed-gloss-account">Account</label>
+                        <AccountSelect
+                            name="ed-gloss-account"
+                            onChange={_onChange('account')}
+                            value={gloss.account}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="ed-gloss-speech">Categorization</label>
+                        <GlossGroupSelect
+                            className="form-control"
+                            name="ed-gloss-group-id"
+                            onChange={_onChange('glossGroupId')}
+                            value={gloss.glossGroupId}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="ed-gloss-label">
+                            Label
+                            <OptionalLabel />
+                        </label>
+                        <input type="text"
+                            className="form-control"
+                            id="ed-gloss-label"
+                            value={gloss.label}
+                            onChange={_onChangeNative('label')}
+                            required={false}
+                        />
+                    </div>
+                </Panel>
             </div>
-        </form>
-        {edit && <form onSubmit={_onInflectionSubmit}>
-            <div className="row mt-3">
-                <div className="col-12">
-                    <Panel title="Inflections">
-                        <InflectionsInput inflections={inflections} />
-                    </Panel>
-                </div>
-            </div>
-        </form>}
-    </div>;
+        </div>
+        <div className="text-center">
+            <button type="submit" className="btn btn-primary">{confirmButton}</button>
+        </div>
+    </form>;
 }
 
 GlossForm.defaultProps = {

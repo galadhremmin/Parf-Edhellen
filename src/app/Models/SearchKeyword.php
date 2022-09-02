@@ -29,6 +29,5 @@ class SearchKeyword extends ModelBase
         'is_old',
         'word',
         'word_id',
-        'inflection_group_uuid',
     ];
 }

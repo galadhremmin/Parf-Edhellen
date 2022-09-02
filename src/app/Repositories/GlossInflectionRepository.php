@@ -8,17 +8,11 @@ use Ramsey\Uuid\Uuid;
 
 class GlossInflectionRepository
 {
-    public function getInflectionsInGroups(Collection $groups)
-    {
-        return GlossInflection::whereIn('inflection_group_uuid', $groups) //
-            ->with('inflection') //
-            ->get() //
-            ->groupBy('inflection_group_uuid');
-    }
-
     public function getInflectionsForGloss(int $glossId)
     {
-        return GlossInflection::where('gloss_id', $glossId)->get();
+        return GlossInflection::where('gloss_id', $glossId)
+            ->with('sentence')
+            ->get();
     }
 
     public function saveMany(Collection $inflectionGroups): array
