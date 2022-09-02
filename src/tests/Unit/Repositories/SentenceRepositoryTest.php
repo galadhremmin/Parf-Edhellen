@@ -100,7 +100,7 @@ class SentenceRepositoryTest extends TestCase
 
             $savedKeywords = $savedFragment->keywords;
             
-            $this->assertEquals(1, $savedKeywords->count());
+            $this->assertEquals(0, $savedKeywords->count());
             $this->assertEquals($fragments[$i]->fragment, $savedKeywords[0]->keyword);
         }
     }
