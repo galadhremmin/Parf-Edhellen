@@ -5,7 +5,7 @@ const InflectionsReducer = (state: GroupedInflectionsState = [], action: IInflec
     switch (action.type) {
         case Actions.ReceiveInflections: {
             const nextInflections = action.preloadedInflections.reduce<GroupedInflectionsState>((carry, inflection) => {
-                var pos = carry.findIndex((i) => i.inflectionGroupUuid === action.inflectionGroupUuid);
+                var pos = carry.findIndex((i) => i.inflectionGroupUuid === inflection.inflectionGroupUuid);
                 if (pos === -1) {
                     carry.push({
                         ...inflection,
