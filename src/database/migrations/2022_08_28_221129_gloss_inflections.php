@@ -42,10 +42,6 @@ class GlossInflections extends Migration
             $table->index('gloss_id');
         });
 
-        Schema::table('search_keywords', function (Blueprint $table) {
-            $table->uuid('inflection_group_uuid')->nullable();
-        });
-
         Schema::table('sentence_fragments', function (Blueprint $table) {
             $table->uuid('inflection_group_uuid')->nullable();
         });

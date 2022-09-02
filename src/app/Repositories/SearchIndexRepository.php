@@ -172,8 +172,7 @@ class SearchIndexRepository
             return $config[$morpedModel]['group_id'];
         }
 
-        throw new \Exception(sprintf('Unrecognised search group for %s and | 1846745 | 2022-05-02 17:42:34 | 2022-05-02 17:42:34 |            1 | vehicle | vehicle            | elcihev                     | vehicle                       | elcihev                                |              7 |                         7 |                                  7 |                                    7 |                                             7 | gloss       |    522554 | vehicle |  120338 |        NULL |      NULL |              2 |      0 |
-        %s.', $entityName, $morpedModel));
+        throw new \Exception(sprintf('Unrecognised search group for %s and %s.', $entityName, $morpedModel));
     }
 
     private function getEntityNameFromSearchGroup(int $searchGroupId): ?string

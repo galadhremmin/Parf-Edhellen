@@ -79,6 +79,7 @@ return [
     ],
     'book_group_id_to_book_entities' => [
         // This is just a fast lookup table used by the search index repository. It should mirror the `book_entities` configuration
+        // The entirety of the search index must be rebuilt if you change the order of these entries!
         App\Models\SearchKeyword::SEARCH_GROUP_DICTIONARY => App\Models\Gloss::class,
         App\Models\SearchKeyword::SEARCH_GROUP_FORUM_POST => App\Models\ForumPost::class,
         App\Models\SearchKeyword::SEARCH_GROUP_SENTENCE   => App\Models\SentenceFragment::class

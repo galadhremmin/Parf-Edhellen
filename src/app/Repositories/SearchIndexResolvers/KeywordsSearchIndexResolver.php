@@ -4,13 +4,6 @@ namespace App\Repositories\SearchIndexResolvers;
 
 use DB;
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
-use App\Models\Gloss;
-use App\Repositories\{
-    DiscussRepository,
-    GlossRepository,
-    SentenceRepository
-};
-use App\Adapters\BookAdapter;
 
 class KeywordsSearchIndexResolver extends SearchIndexResolverBase
 {
@@ -29,6 +22,7 @@ class KeywordsSearchIndexResolver extends SearchIndexResolverBase
                 'normalized_keyword',
                 'word'
             )
+            ->orderBy('search_group', 'asc')
             ->orderBy(DB::raw('MAX('.$params['length_column'].')'), 'asc')
             ->orderBy($params['search_column'], 'asc')
             ->limit(100)
