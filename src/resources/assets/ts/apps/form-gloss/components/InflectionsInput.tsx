@@ -19,6 +19,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { IProps } from './InflectionsInput._types';
 import { IInflectionGroupState } from '../reducers/InflectionsReducer._types';
 
+import './InflectionsInput.scss';
+
 function InflectionsInput(props: IProps) {
     const [ gridColumnDefinition, setColumnDefinition ] = useState<(ColDef | ColGroupDef)[]>(null);
     const gridRef = useRef(null);
@@ -139,7 +141,7 @@ function InflectionsInput(props: IProps) {
                 // defaultColDef={DefaultColumnDefinition}
                 enableBrowserTooltips={true}
                 rowData={inflections}
-                // onCellValueChanged={_onGridCellValueChanged}
+                onCellValueChanged={_onGridCellValueChanged}
                 onGridReady={_onGridReady}
                 ref={gridRef}
             />}
