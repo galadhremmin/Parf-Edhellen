@@ -85,7 +85,7 @@ class SearchIndexRepository
             'search_group'   => $this->getSearchGroup($entityName)
         ];
 
-        return SearchKeyword::create($data);
+        return SearchKeyword::upsert($data);
     }
 
     public function getForEntity(ModelBase $model)

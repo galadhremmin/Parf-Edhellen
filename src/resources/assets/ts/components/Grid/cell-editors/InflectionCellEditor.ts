@@ -2,7 +2,7 @@ import { ICellEditorParams } from '@ag-grid-community/core';
 
 import { IGlossInflection } from '@root/connectors/backend/IBookApi';
 import { IInflection } from '@root/connectors/backend/IInflectionResourceApi';
-import { IFragmentGridMetadata } from '../FragmentsGrid._types';
+import { IFragmentGridMetadata } from './InflectionCellEditor._types';
 import MultipleSelectCellEditor from './MultipleSelectCellEditor';
 
 export default class InflectionCellEditor extends MultipleSelectCellEditor<IInflection, IGlossInflection> {

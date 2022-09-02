@@ -2,7 +2,7 @@ import {
     ICellRendererComp,
     ICellRendererParams,
 } from '@ag-grid-community/core';
-import { IAugmentedCellRendererParams } from '../FragmentsGrid._types';
+import { IAugmentedCellRendererParams } from '../cell-editors/InflectionCellEditor._types';
 
 export default class SpeechRenderer implements ICellRendererComp {
     private _cell: HTMLDivElement;

@@ -9,6 +9,7 @@
   <div id="ed-gloss-form"
     data-inject-module="form-gloss"
     data-inject-prop-gloss="@json($payload)"
+    data-inject-prop-inflections="@json($inflections)"
     data-inject-prop-confirm-button="{{ $review->is_approved === null ? 'Save changes' : 'Resubmit for review' }}"
   ></div>
 

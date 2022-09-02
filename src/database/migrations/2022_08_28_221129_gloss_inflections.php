@@ -68,12 +68,6 @@ class GlossInflections extends Migration
                     ]);
                 }
 
-                SearchKeyword::where('entity_name', 'fragment')
-                    ->where('entity_id', $f->id)
-                    ->update([
-                        'inflection_group_uuid' => $inflection_group_uuid
-                    ]);
-
                 $f->inflection_group_uuid = $inflection_group_uuid;
                 $f->save();
             }
@@ -94,9 +88,6 @@ class GlossInflections extends Migration
     public function down()
     {
         Schema::dropIfExists('gloss_inflections');
-        Schema::table('search_keywords', function (Blueprint $table) {
-            $table->dropColumn('inflection_group_uuid');
-        });
         Schema::table('sentence_fragments', function (Blueprint $table) {
             $table->dropColumn('inflection_group_uuid');
         });

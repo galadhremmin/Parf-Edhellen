@@ -21,6 +21,7 @@ use App\Http\Controllers\Traits\{
     CanValidateGloss, 
     CanMapGloss
 };
+use App\Repositories\GlossInflectionRepository;
 
 class GlossContributionController extends Controller implements IContributionController
 {
@@ -29,11 +30,14 @@ class GlossContributionController extends Controller implements IContributionCon
 
     private $_bookAdapter;
     private $_glossRepository;
+    private $_glossInflectionRepository;
 
-    public function __construct(BookAdapter $bookAdapter, GlossRepository $glossRepository)
+    public function __construct(BookAdapter $bookAdapter, GlossRepository $glossRepository,
+        GlossInflectionRepository $glossInflectionRepository)
     {
         $this->_bookAdapter = $bookAdapter;
         $this->_glossRepository = $glossRepository;
+        $this->_glossInflectionRepository = $glossInflectionRepository;
     }
 
     public function getViewModel(Contribution $contribution): ViewModel
@@ -106,6 +110,9 @@ class GlossContributionController extends Controller implements IContributionCon
         );
         $translations = $this->getTranslationsFromPayload($payload);
         $details      = $this->getDetailsFromPayload($payload);
+        $inflections  = $this->_glossInflectionRepository->getInflectionsForGloss(
+            array_key_exists('id', $payload) ? $payload['id'] : 0
+        );
 
         $payloadData = $payload + [ 
             'contribution_id' => $contribution->id,
@@ -124,7 +131,8 @@ class GlossContributionController extends Controller implements IContributionCon
                 'payload' => $payloadData
             ] : view('contribution.gloss.edit', [
                 'review' => $contribution, 
-                'payload' => $payloadData
+                'payload' => $payloadData,
+                'inflections' => $inflections
             ]);
     }
     
@@ -154,15 +162,18 @@ class GlossContributionController extends Controller implements IContributionCon
             $gloss = $this->_glossRepository->getGlossFromVersion($glossVersionId);
         }
 
+        $inflections = [];
         if ($gloss !== null) {
             $gloss->keywords = $this->_glossRepository->getKeywords($gloss->sense_id, $gloss->id);
+            $inflections     = $this->_glossInflectionRepository->getInflectionsForGloss($gloss->id);
         }
 
         return $request->ajax()
             ? $gloss
             // create a payload model if a gloss exists.
             : view('contribution.gloss.create', $gloss ? [
-                'payload' => $gloss
+                'payload' => $gloss,
+                'inflections' => $inflections
             ] : []);
     }
 

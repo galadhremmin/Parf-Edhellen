@@ -1,8 +1,8 @@
 import { ICellEditorParams } from '@ag-grid-community/core';
 
-import { IFragmentGridMetadata } from '../FragmentsGrid._types';
 import MultipleSelectCellEditor from './MultipleSelectCellEditor';
 import { ISpeechEntity } from '@root/connectors/backend/ISpeechResourceApi';
+import { IFragmentGridMetadata } from './InflectionCellEditor._types';
 
 export default class SpeechSelectCellEditor extends MultipleSelectCellEditor<ISpeechEntity, number> {
     private _allOptions: Set<ISpeechEntity>;

@@ -47,9 +47,11 @@ function FragmentsForm(props: IProps) {
                       rows={10}
                       value={text}
             />
-            <button className="btn btn-primary btn-block"
-                    disabled={! textIsDirty}
-                    onClick={_onParseFragments}>Update text body</button>
+            <div className="text-center mt-3">
+                <button className="btn btn-primary btn-block"
+                        disabled={! textIsDirty}
+                        onClick={_onParseFragments}>Update text body</button>
+            </div>
         </div>
         <hr />
         <FragmentsGrid
