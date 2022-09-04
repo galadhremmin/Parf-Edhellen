@@ -42,7 +42,7 @@ export default class MultipleSelectCellEditor<T, V = T> extends PopupComponent i
         this._dataListElement = dataListElement;
         this._valuesWrapper = valuesWrapper;
 
-        let values = Array.isArray(params.value) ? params.value : [params.value];
+        let values = Array.isArray(params.value) ? [...params.value] : [params.value];
 
         if (params.cellStartedEdit) {
             this.focusAfterAttached = true;
@@ -69,8 +69,16 @@ export default class MultipleSelectCellEditor<T, V = T> extends PopupComponent i
         this._values = values;
         this._updateValues();
 
-
         this.addManagedListener(this._inputElement, 'keydown', this._onKeyDown);
+    }
+
+    public getValue() {
+        const values = this._values;
+        if (this.maxNumberOfValues === 1) {
+            return values.length === 0 ? 0 : values[0];
+        } else {
+            return values;
+        }
     }
 
     public afterGuiAttached() {
@@ -81,15 +89,6 @@ export default class MultipleSelectCellEditor<T, V = T> extends PopupComponent i
 
     public focusIn() {
         this._inputElement.focus();
-    }
-
-    public getValue() {
-        const values = this._values;
-        if (this.maxNumberOfValues === 1) {
-            return values.length === 0 ? 0 : values[0];
-        } else {
-            return values;
-        }
     }
 
     public isPopup() {

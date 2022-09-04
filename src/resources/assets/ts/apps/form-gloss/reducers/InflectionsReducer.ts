@@ -1,3 +1,4 @@
+import { isEmptyString } from '@root/utilities/func/string-manipulation';
 import { Actions } from '../actions';
 import { GroupedInflectionsState, IInflectionAction } from './InflectionsReducer._types';
 
@@ -20,14 +21,24 @@ const InflectionsReducer = (state: GroupedInflectionsState = [], action: IInflec
 
             return nextInflections;
         }
-
         case Actions.SetInflectionGroup:
-            return {
-                ...state,
-                [action.inflectionGroupUuid]: action.inflectionGroup,
-            };
+            return state.map((i) => {
+                if (i.inflectionGroupUuid === action.inflectionGroupUuid) {
+                    return action.inflectionGroup;
+                }
+                return i;
+            });
         case Actions.UnsetInflectionGroup:
             return state.filter((i) => i.inflectionGroupUuid !== action.inflectionGroupUuid);
+        case Actions.CreateBlankInflectionGroup:
+            return [
+                ...state,
+                {
+                    inflections: [],
+                    inflectionGroupUuid: crypto.randomUUID(),
+                    word: '',
+                },
+            ];
         default:
             return state;
     }

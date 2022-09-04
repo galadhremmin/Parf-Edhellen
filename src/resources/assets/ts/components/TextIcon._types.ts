@@ -31,6 +31,7 @@ type BootstrapIcons = 'arrow-down' |
 'minus-sign' |
 'people' |
 'plus-sign' |
+'lock' |
 'logout' |
 'move' |
 'login' |

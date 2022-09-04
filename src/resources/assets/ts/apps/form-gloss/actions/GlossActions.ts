@@ -9,7 +9,8 @@ import { DI, resolve } from '@root/di';
 
 import Actions from './Actions';
 import { IGlossInflection } from '@root/connectors/backend/IBookApi';
-import { IInflectionGroupState } from '../reducers/InflectionsReducer._types';
+import { GroupedInflectionsState, IInflectionGroupState } from '../reducers/InflectionsReducer._types';
+import { IChangeTrackerReducerState } from '../reducers/ChangeTrackerReducer._types';
 
 export default class GlossActions {
     constructor(
@@ -46,20 +47,17 @@ export default class GlossActions {
         };
     }
 
-    public saveGloss(gloss: IGlossEntity) {
-        return (dispatch: ReduxThunkDispatch) => handleValidationErrors(dispatch, async () => {
-            const response = await this._contributionApi.saveGloss(gloss);
-            if (response.url) {
-                window.location.href = response.url;
-            }
-        });
-    }
-
     public setLoadedInflections(inflections: IGlossInflection[]) {
         return {
             preloadedInflections: inflections,
             type: Actions.ReceiveInflections,
         }
+    }
+
+    public createInflectionGroup() {
+        return {
+            type: Actions.CreateBlankInflectionGroup,
+        };
     }
 
     public setInflectionGroup(inflectionGroupUuid: string, inflectionGroup: IInflectionGroupState) {
@@ -75,5 +73,30 @@ export default class GlossActions {
             inflectionGroupUuid,
             type: Actions.UnsetInflectionGroup,
         }
+    }
+
+    public saveGloss(gloss: IGlossEntity, inflections: GroupedInflectionsState = null) {
+        return (dispatch: ReduxThunkDispatch) => handleValidationErrors(dispatch, async () => {
+            const response = await this._contributionApi.saveGloss(gloss);
+            if (inflections) {
+                // Register a related contributed against `response.id`.
+                throw new Error('Not implemented yet.');
+            }
+            if (response.url) {
+                window.location.href = response.url;
+            }
+        });
+    }
+
+    public saveInflections(glossId: number, inflections: GroupedInflectionsState) {
+        throw new Error('Not implemented yet.');
+        return (dispatch: ReduxThunkDispatch) => handleValidationErrors(dispatch, async () => {
+            /* TODO!
+            const response = await this._contributionApi.saveGloss(gloss);
+            if (response.url) {
+                window.location.href = response.url;
+            }
+            */
+        });
     }
 }

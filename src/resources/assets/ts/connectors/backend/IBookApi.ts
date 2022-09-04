@@ -201,6 +201,7 @@ export interface IGlossInflection {
     isRejected?: boolean;
     source?: string;
     sentenceFragmentId?: number;
+    word?: string;
 }
 
 export interface ISentenceTranslationEntity {

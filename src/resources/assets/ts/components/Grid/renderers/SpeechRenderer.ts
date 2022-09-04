@@ -23,7 +23,7 @@ export default class SpeechRenderer implements ICellRendererComp {
         const value = params.value;
 
         this._cell.textContent = speeches.has(value) //
-            ? speeches.get(value).name : 'invalid';
+            ? speeches.get(value).name : '-';
         return true;
     }
 

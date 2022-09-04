@@ -1,7 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
 
-import { ReduxThunkDispatch } from '@root/_types';
 import { fireEvent } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
 import AccountSelect from '@root/components/Form/AccountSelect';
@@ -12,15 +10,10 @@ import OptionalLabel from '@root/components/Form/OptionalLabel';
 import SpeechSelect from '@root/components/Form/SpeechSelect';
 import TagInput from '@root/components/Form/TagInput';
 import TengwarInput from '@root/components/Form/TengwarInput';
-import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
 import Panel from '@root/components/Panel';
-import Quote from '@root/components/Quote';
-import StaticAlert from '@root/components/StaticAlert';
-import TextIcon from '@root/components/TextIcon';
 
-import GlossActions from '../actions/GlossActions';
 import GlossDetailInput from '../components/GlossDetailInput';
-import { RootReducer } from '../reducers';
+import { GlossProps } from '../containers/MasterForm._types';
 import {
     defaultTransformer,
     keywordsTransformer,
@@ -29,30 +22,17 @@ import {
     wordTransformer,
 } from '../utilities/value-transformers';
 import { ValueTransformer } from '../utilities/value-transformers._types';
-import {
-    GlossProps,
-    IProps,
-} from './GlossForm._types';
+import { IProps } from './GlossForm._types';
 
 function GlossForm(props: IProps) {
     const {
-        confirmButton,
-        edit,
-        errors,
         name,
-        onEditChange,
         onGlossFieldChange,
-        onSubmit,
     } = props;
 
     const {
         gloss,
     } = props;
-
-    const _onDisableEdit = (ev: React.MouseEvent<HTMLAnchorElement>) => {
-        ev.preventDefault();
-        fireEvent(name, onEditChange, 0);
-    };
 
     const _onFieldChange = (field: GlossProps, value: string) => {
         const params = {
@@ -78,34 +58,7 @@ function GlossForm(props: IProps) {
         _onFieldChange(field, value);
     };
 
-    const _onGlossSubmit = (ev: React.FormEvent) => {
-        ev.preventDefault();
-
-        // create a deep copy of the gloss.
-        const newGloss = JSON.parse(JSON.stringify(gloss)) as typeof gloss;
-        if (! edit) {
-            delete newGloss.id;
-        }
-
-        if (newGloss.tengwar.length < 1) {
-            delete newGloss.tengwar;
-        }
-
-        fireEvent(name, onSubmit, newGloss);
-    };
-
-    return <form onSubmit={_onGlossSubmit}>
-        <ValidationErrorAlert error={errors} />
-        {edit && <StaticAlert type="warning">
-            <p>
-                <TextIcon icon="info-sign" />{' '}
-                <strong>
-                    You are proposing changes to the gloss <Quote>{gloss.word.word}</Quote> ({gloss.id}).
-                </strong>{' '}
-                You can <a href="#" onClick={_onDisableEdit}>copy the gloss</a> if you want to use it as
-                a template.
-            </p>
-        </StaticAlert>}
+    return <>
         <div className="row">
             <div className="col-sm-12 col-lg-6">
                 <Panel title="Basic information">
@@ -266,31 +219,12 @@ function GlossForm(props: IProps) {
                 </Panel>
             </div>
         </div>
-        <div className="text-center">
-            <button type="submit" className="btn btn-primary">{confirmButton}</button>
-        </div>
-    </form>;
+    </>;
 }
 
 GlossForm.defaultProps = {
-    confirmButton: 'Confirm and Save',
-    edit: false,
-    errors: null,
     gloss: null,
     name: 'GlossForm',
 } as IProps;
 
-const mapStateToProps = (state: RootReducer) => ({
-    edit: state.gloss && !! state.gloss.id,
-    errors: state.errors,
-    gloss: state.gloss,
-} as IProps);
-
-const actions = new GlossActions();
-const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => ({
-    onEditChange: (e) => dispatch(actions.setEditingGlossId(e.value)),
-    onGlossFieldChange: (e) => dispatch(actions.setGlossField(e.value.field, e.value.value)),
-    onSubmit: (e) => dispatch(actions.saveGloss(e.value)),
-} as IProps);
-
-export default connect<IProps, IProps, IProps>(mapStateToProps, mapDispatchToProps)(GlossForm);
+export default GlossForm;
