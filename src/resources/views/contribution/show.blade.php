@@ -8,6 +8,7 @@
   {!! Breadcrumbs::render('contribution.show', $contribution->id, $returnToAdminView) !!}
 
   @include('contribution._status-alert', $model)
+  @include('contribution._dependencies', $model)
   @include($viewName, $model)
   @include('contribution._notes', $contribution)
   @include('contribution._pending-info', $contribution)

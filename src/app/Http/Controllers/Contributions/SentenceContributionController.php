@@ -12,6 +12,7 @@ use App\Models\{
     Contribution,
     GlossInflection,
     Inflection,
+    ModelBase,
     Sentence,
     SentenceFragment,
     SentenceTranslation
@@ -173,7 +174,7 @@ class SentenceContributionController extends Controller implements IContribution
      * @param Request $request
      * @return void
      */
-    public function populate(Contribution $contribution, Request $request)
+    public function populate(Contribution $contribution, Request $request): ModelBase|array
     {
         $entity = $request->has('id') 
             ? Sentence::findOrFail( intval($request->input('id')) ) 
@@ -185,9 +186,10 @@ class SentenceContributionController extends Controller implements IContribution
             $entity->account_id = $contribution->account_id;
         }
     
-        $contribution->payload = json_encode($map);
-        $contribution->word    = $entity->name;
-        $contribution->sense   = 'text';
+        $contribution->payload     = json_encode($map);
+        $contribution->word        = $entity->name;
+        $contribution->sense       = 'text';
+        $contribution->language_id = $entity->language_id;
 
         return $entity;
     }
@@ -210,7 +212,7 @@ class SentenceContributionController extends Controller implements IContribution
      * @param Request $request
      * @return void
      */
-    public function approve(Contribution $contribution, Request $request)
+    public function approve(Contribution $contribution, Request $request): int
     {
         $map = json_decode($contribution->payload, true);
         $this->makeMapCurrent($map);
@@ -249,7 +251,8 @@ class SentenceContributionController extends Controller implements IContribution
 
         // Save the sentence and assign the resulting ID to the contribution entity.
         $this->_sentenceRepository->saveSentence($sentence, $fragments, $inflections, $translations);
-        $contribution->sentence_id = $sentence->id;
+
+        return $sentence->id;
     }
 
     private function createTransformations(Request $request)

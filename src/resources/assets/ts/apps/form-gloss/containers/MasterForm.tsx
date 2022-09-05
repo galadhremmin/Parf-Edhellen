@@ -1,21 +1,21 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
 import StaticAlert from '@root/components/StaticAlert';
 import TextIcon from '@root/components/TextIcon';
 import Quote from '@root/components/Quote';
+import { ReduxThunkDispatch } from '@root/_types';
+import { fireEvent } from '@root/components/Component';
+import { IInflectionGroupState } from '../reducers/InflectionsReducer._types';
+import { isEmptyString } from '@root/utilities/func/string-manipulation';
 
 import GlossActions from '../actions/GlossActions';
 import GlossForm from '../components/GlossForm';
 import InflectionForm from '../components/InflectionForm';
 import { RootReducer } from '../reducers';
 import { IProps } from './MasterForm._types';
-
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import '@ag-grid-community/core/dist/styles/ag-theme-balham.css';
-import { ReduxThunkDispatch } from '@root/_types';
-import { fireEvent } from '@root/components/Component';
+import { FormSection } from '../index._types';
 
 function MasterForm(props: IProps) {
     const {
@@ -23,6 +23,7 @@ function MasterForm(props: IProps) {
         confirmButton,
         edit,
         errors,
+        formSections,
         gloss,
         inflections,
 
@@ -42,6 +43,7 @@ function MasterForm(props: IProps) {
         ev.preventDefault();
         fireEvent('MasterForm', onSubmit, {
             changes,
+            edit,
             gloss,
             inflections,
         });
@@ -59,20 +61,20 @@ function MasterForm(props: IProps) {
                 a template for a new gloss.
             </p>
         </StaticAlert>}
-        <section>
+        {formSections.includes(FormSection.Gloss) && <section>
             <GlossForm name="ed-gloss-form"
                     gloss={gloss}
                     onGlossFieldChange={onGlossFieldChange} 
             />
-        </section>
-        <section className="mt-3">
+        </section>}
+        {formSections.includes(FormSection.Inflections) && <section className="mt-3">
             <InflectionForm name="ed-inflections-form"
                             inflections={inflections}
                             glossId={gloss.id}
                             onInflectionCreate={onInflectionCreate}
                             onInflectionsChange={onInflectionsChange}
             />
-        </section>
+        </section>}
         <section className="mt-3 text-center">
             <button type="submit" className="btn btn-primary">{confirmButton || 'Confirm and Save'}</button>
         </section>
@@ -96,14 +98,30 @@ const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => ({
     onSubmit: ({value: v}) => {
         const {
             changes,
+            edit,
             gloss,
             inflections,
         } = v;
 
+        const eligibleInflections = inflections.filter((i: IInflectionGroupState) => ! isEmptyString(i.word));
+
         if (changes.glossChanged) {
-            dispatch(actions.saveGloss(gloss, changes.inflectionsChanged ? inflections : null));
+            // grandfathered sanitization logic from the GlossForm.
+            if (! edit) {
+                delete gloss.id;
+            }
+    
+            if (gloss.tengwar.length < 1) {
+                delete gloss.tengwar;
+            }
+
+            dispatch(actions.saveGloss(gloss, changes.inflectionsChanged //
+                ? eligibleInflections : null));
         } else if (changes.inflectionsChanged) {
-            dispatch(actions.saveInflections(gloss.id, inflections));
+            dispatch(actions.saveInflections( //
+                eligibleInflections, //
+                gloss.contributionId,
+                gloss.id));
         } else {
             // Neither inflections nor gloss is modified - do nothing!
             // TODO: Better error handling? Notify the user that nothing's done?

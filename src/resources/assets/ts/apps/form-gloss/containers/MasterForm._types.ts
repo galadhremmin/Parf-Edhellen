@@ -1,4 +1,5 @@
 import { ComponentEventHandler } from '@root/components/Component._types';
+import { FormSection } from '../index._types';
 import { RootReducer } from '../reducers';
 import { IGlossState } from '../reducers/GlossReducer._types';
 import { IInflectionGroupState } from '../reducers/InflectionsReducer._types';
@@ -6,6 +7,7 @@ import { IInflectionGroupState } from '../reducers/InflectionsReducer._types';
 export interface IProps extends Partial<Pick<RootReducer, 'changes' | 'errors' | 'gloss' | 'inflections'>> {
     confirmButton?: string;
     edit?: boolean;
+    formSections?: FormSection[];
 
     onCopyGloss?: ComponentEventHandler<void>;
     onGlossFieldChange?: ComponentEventHandler<IGlossFieldChangeArgs>;
@@ -27,4 +29,5 @@ export interface IInflectionsChangeArgs {
 }
 
 export interface ISubmitArgs extends Partial<Pick<RootReducer, 'changes' | 'gloss' | 'inflections'>> {
+    edit: boolean;
 }

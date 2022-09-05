@@ -11,7 +11,8 @@ use App\Models\{
     Gloss, 
     ForumDiscussion,
     ForumThread,
-    ForumPost, 
+    ForumPost,
+    GlossInflection,
     Sentence,
     SentenceFragment,
     Sense,
@@ -22,6 +23,7 @@ use App\Models\Versioning\{
     GlossDetailVersion,
     TranslationVersion
 };
+use Illuminate\Support\Enumerable;
 
 class Morphs 
 {
@@ -34,6 +36,7 @@ class Morphs
             'sentence'     => Sentence::class,
             'fragment'     => SentenceFragment::class,
             'gloss'        => Gloss::class,
+            'gloss_infl'   => GlossInflection::class,
             'discussion'   => ForumDiscussion::class,
             'forum_thread' => ForumThread::class,
             'forum'        => ForumPost::class,
@@ -52,8 +55,22 @@ class Morphs
      * @param Model|string $entity
      * @return string|null
      */
-    public static function getAlias($entityOrClassName)
+    public static function getAlias($entityOrClassName, $inferArrays = true)
     {
+        if ($inferArrays) {
+            if (is_array($entityOrClassName)) {
+                if (count($entityOrClassName) < 1) {
+                    return null;
+                }
+
+                return self::getAlias($entityOrClassName[array_key_first($entityOrClassName)]);
+            } else if ($entityOrClassName instanceof Enumerable) {
+                return self::getAlias($entityOrClassName->first());
+            }
+        } else if (is_array($entityOrClassName) || $entityOrClassName instanceof Enumerable) {
+            return null;
+        }
+
         $map = Relation::morphMap();
         $entityClassName = is_string($entityOrClassName)
             ? $entityOrClassName : get_class($entityOrClassName);

@@ -3,7 +3,7 @@ import {
     ReduxThunkDispatch,
 } from '@root/_types';
 import { handleValidationErrors } from '@root/components/Form/Validation';
-import IContributionResourceApi, { IContribution } from '@root/connectors/backend/IContributionResourceApi';
+import IContributionResourceApi, { IContribution, IContributionSaveResponse } from '@root/connectors/backend/IContributionResourceApi';
 import IGlossResourceApi, { IGlossEntity } from '@root/connectors/backend/IGlossResourceApi';
 import { DI, resolve } from '@root/di';
 
@@ -77,26 +77,35 @@ export default class GlossActions {
 
     public saveGloss(gloss: IGlossEntity, inflections: GroupedInflectionsState = null) {
         return (dispatch: ReduxThunkDispatch) => handleValidationErrors(dispatch, async () => {
-            const response = await this._contributionApi.saveGloss(gloss);
+            const r0 = await this._contributionApi.saveGloss(gloss);
+
+            let r1: IContributionSaveResponse = null;
             if (inflections) {
                 // Register a related contributed against `response.id`.
-                throw new Error('Not implemented yet.');
+                r1 = await this._contributionApi.saveContribution({
+                    inflectionGroups: inflections,
+                    dependentOnContributionId: r0.id,
+                }, 'gloss_infl');
             }
-            if (response.url) {
-                window.location.href = response.url;
+
+            const url = r0?.url || r1?.url || null;
+            if (url) {
+                window.location.href = url;
             }
         });
     }
 
-    public saveInflections(glossId: number, inflections: GroupedInflectionsState) {
-        throw new Error('Not implemented yet.');
+    public saveInflections(inflections: GroupedInflectionsState, contributionId: number = null, glossId: number = null) {
         return (dispatch: ReduxThunkDispatch) => handleValidationErrors(dispatch, async () => {
-            /* TODO!
-            const response = await this._contributionApi.saveGloss(gloss);
-            if (response.url) {
-                window.location.href = response.url;
+            const r = await this._contributionApi.saveContribution({
+                inflectionGroups: inflections,
+                contributionId: contributionId || null,
+                glossId: glossId || null,
+            }, 'gloss_infl');
+
+            if (r.url) {
+                window.location.href = r.url;
             }
-            */
         });
     }
 }

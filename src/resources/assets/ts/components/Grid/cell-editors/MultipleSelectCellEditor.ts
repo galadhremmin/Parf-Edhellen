@@ -231,13 +231,13 @@ export default class MultipleSelectCellEditor<T, V = T> extends PopupComponent i
             case 'Enter':
                 if (target.value.length > 0) {
                     if (this._addValue(target.value) && maxNumberOfValues !== values.length) {
-                        event.stopPropagation();
+                        event.preventDefault();
                     }
                 }
                 break;
             case 'Backspace':
                 if (target.value.length === 0) {
-                    event.stopPropagation();
+                    event.preventDefault();
                     this._removeLastValue();
                 }
                 break;

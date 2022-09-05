@@ -10,7 +10,7 @@ import { ReduxThunkDispatch } from '@root/_types';
 import { composeEnhancers } from '@root/utilities/func/redux-tools';
 
 import GlossActions from './actions/GlossActions';
-import { IProps } from './index._types';
+import { FormSection, IProps } from './index._types';
 import rootReducer from './reducers';
 
 import Form from './containers';
@@ -25,6 +25,7 @@ const Inject = (props: IProps) => {
     const {
         confirmButton,
         gloss,
+        formSections,
         inflections,
         prefetched,
     } = props;
@@ -44,12 +45,13 @@ const Inject = (props: IProps) => {
     }, []);
 
     return <Provider store={store}>
-        <Form confirmButton={confirmButton || undefined} />
+        <Form confirmButton={confirmButton || undefined} formSections={formSections} />
     </Provider>;
 };
 
 Inject.defaultProps = {
     prefetched: true,
+    formSections: [ FormSection.Gloss, FormSection.Inflections ]
 } as Partial<IProps>;
 
 export default Inject;

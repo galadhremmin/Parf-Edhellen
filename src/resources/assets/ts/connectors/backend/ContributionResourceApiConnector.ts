@@ -5,6 +5,7 @@ import {
     ISentenceFragmentEntity,
 } from './IBookApi';
 import IContributionResourceApi, {
+    ContributionMorph,
     IContribution,
     IContributionSaveResponse,
     ISaveSentenceContributionEntity,
@@ -26,7 +27,7 @@ export default class ContributionResourceApiConnector implements IContributionRe
         return this.saveContribution(args, 'sentence');
     }
 
-    public saveContribution<T>(args: IContribution<T>, morph: 'gloss' | 'sentence') {
+    public saveContribution<T>(args: IContribution<T>, morph: ContributionMorph) {
         const envelope = {
             ...args,
             morph,

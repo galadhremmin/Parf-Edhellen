@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Initialization\Morphs;
 use App\Models\{
     Gloss,
+    GlossInflection,
     Sentence
 };
 
@@ -32,6 +33,9 @@ class ContributionControllerFactory
         {
             case Gloss::class:
                 $controllerName = GlossContributionController::class;
+                break;
+            case GlossInflection::class:
+                $controllerName = GlossInflectionContributionController::class;
                 break;
             case Sentence::class:
                 $controllerName = SentenceContributionController::class;

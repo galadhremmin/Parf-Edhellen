@@ -1,4 +1,3 @@
-import { isEmptyString } from '@root/utilities/func/string-manipulation';
 import { Actions } from '../actions';
 import { GroupedInflectionsState, IInflectionAction } from './InflectionsReducer._types';
 

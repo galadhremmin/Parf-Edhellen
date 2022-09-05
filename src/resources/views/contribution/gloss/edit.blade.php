@@ -10,6 +10,7 @@
     data-inject-module="form-gloss"
     data-inject-prop-gloss="@json($payload)"
     data-inject-prop-inflections="@json($inflections)"
+    @if (isset($form_restrictions)) data-inject-prop-form-sections="@json($form_restrictions)" @endif
     data-inject-prop-confirm-button="{{ $review->is_approved === null ? 'Save changes' : 'Resubmit for review' }}"
   ></div>
 

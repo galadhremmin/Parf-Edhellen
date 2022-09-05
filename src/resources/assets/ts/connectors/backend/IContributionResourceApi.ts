@@ -8,6 +8,7 @@ import { IGlossEntity } from './IGlossResourceApi';
 
 export type IContribution<T> = T & {
     contributionId?: number;
+    dependentOnContributionId?: number;
 }
 
 export interface ISaveSentenceContributionEntity extends Partial<ISentenceEntity> {
@@ -46,6 +47,8 @@ export interface ISentenceContributionApi {
     validateTransformations(args: ISentenceFragmentEntity[], suggestForLanguageId?: number): Promise<IValidateTransformationsResponse>;
 }
 
+export type ContributionMorph = 'gloss' | 'sentence' | 'gloss_infl';
+
 export default interface IContributionResourceApi extends IGlossContributionApi, ISentenceContributionApi {
-    saveContribution<T>(args: IContribution<T>, morph: 'gloss' | 'sentence'): Promise<IContributionSaveResponse>;
+    saveContribution<T>(args: IContribution<T>, morph: ContributionMorph): Promise<IContributionSaveResponse>;
 }

@@ -124,6 +124,7 @@ function GlossDetailInput(props: IComponentProps<IGlossDetail[]>) {
         </div>)}
         {(value.length === 0 || value[value.length - 1].text.length > 0) && <div className="text-end">
             <button className="btn btn-secondary"
+                    type="button"
                     onClick={_onAddClick}>Add details</button>
         </div>}
     </>;

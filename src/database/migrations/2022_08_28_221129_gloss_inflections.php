@@ -10,7 +10,6 @@ use Ramsey\Uuid\Uuid;
 use App\Helpers\SentenceBuilders\SentenceBuilder;
 use App\Models\{
     GlossInflection,
-    SearchKeyword,
     SentenceFragment
 };
 
@@ -46,6 +45,12 @@ class GlossInflections extends Migration
             $table->index('inflection_group_uuid');
         });
 
+        Schema::table('contributions', function (Blueprint $table) {
+            $table->unsignedBigInteger('approved_as_entity_id')->nullable();
+            $table->unsignedBigInteger('dependent_on_contribution_id')->nullable();
+            $table->string('word', 128)->nullable()->change();
+        });
+
         try {
             DB::beginTransaction();
 
@@ -72,6 +77,8 @@ class GlossInflections extends Migration
                 }
             }
 
+            DB::statement('UPDATE contributions SET approved_as_entity_id = COALESCE(gloss_id, sentence_id)');
+
             DB::commit();
         } catch (\Exception $ex) {
             // ignore exception
@@ -88,5 +95,11 @@ class GlossInflections extends Migration
     public function down()
     {
         Schema::dropIfExists('gloss_inflections');
+
+        Schema::table('contributions', function (Blueprint $table) {
+            $table->dropColumn('approved_as_entity_id');
+            $table->dropColumn('dependent_on_contribution_id');
+            // $table->string('word', 64)->change(); <~~ there really isn't a reason to roll this back
+        });
     }
 }

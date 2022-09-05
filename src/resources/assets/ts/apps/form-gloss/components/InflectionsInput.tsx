@@ -21,9 +21,11 @@ import { DI, resolve } from '@root/di';
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { IProps } from './InflectionsInput._types';
 import { IInflectionGroupState } from '../reducers/InflectionsReducer._types';
-
-import './InflectionsInput.scss';
 import { fireEventAsync } from '@root/components/Component';
+
+import '@ag-grid-community/core/dist/styles/ag-grid.css';
+import '@ag-grid-community/core/dist/styles/ag-theme-balham.css';
+import './InflectionsInput.scss';
 
 function InflectionsInput(props: IProps) {
     const [ gridColumnDefinition, setColumnDefinition ] = useState<(ColDef | ColGroupDef)[]>(null);

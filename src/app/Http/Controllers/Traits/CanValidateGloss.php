@@ -29,7 +29,7 @@ trait CanValidateGloss
             'details.*.category'         => 'required|string',
             'details.*.order'            => 'required|numeric|min:1',
             'details.*.text'             => 'required|string',
-            'gloss_group_id'             => 'sometimes|numeric|exists:gloss_groups,id',
+            'gloss_group_id'             => 'sometimes|nullable|numeric|exists:gloss_groups,id',
             'label'                      => 'sometimes|string|max:16'
         ];
 

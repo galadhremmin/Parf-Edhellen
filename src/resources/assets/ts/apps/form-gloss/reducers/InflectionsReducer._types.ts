@@ -8,7 +8,8 @@ export interface IInflectionAction extends IReduxAction {
     inflectionGroup: IInflectionGroupState;
 }
 
-export interface IInflectionGroupState extends Partial<IGlossInflection> {
+export interface IInflectionGroupState extends Partial<Pick<IGlossInflection, 'inflectionGroupUuid' | 
+    'isNeologism' | 'isRejected' | 'languageId' | 'source' | 'speechId' | 'word'>> {
     inflections: IGlossInflection[];
 }
 
