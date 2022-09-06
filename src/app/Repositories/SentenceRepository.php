@@ -8,7 +8,8 @@ use Illuminate\Auth\AuthManager;
 
 use App\Events\{
     SentenceCreated,
-    SentenceEdited
+    SentenceEdited,
+    SentenceFragmentsDestroyed
 };
 use App\Models\{
     Gloss,
@@ -21,7 +22,6 @@ use App\Helpers\{
     SentenceHelper,
     StringHelper
 };
-use App\Helpers\SentenceBuilders\SentenceBuilder;
 use Illuminate\Support\Collection;
 
 class SentenceRepository
@@ -178,26 +178,6 @@ class SentenceRepository
             // Re-create all sentence fragments
             $this->destroyFragments($sentence);
             $sentence->sentence_fragments()->saveMany($fragments);
-            $sentence->refresh();
-
-            $i = 0;
-            foreach ($sentence->sentence_fragments as $fragment) {
-                $inflections = $inflectionsPerFragments[$i++];
-
-                if (! empty($inflections)) {
-                    foreach ($inflections as $inflection) {
-                        $inflection->speech_id            = $fragment->speech_id;
-                        $inflection->gloss_id             = $fragment->gloss_id;
-                        $inflection->language_id          = $sentence->language_id;
-                        $inflection->account_id           = $sentence->account_id;
-                        $inflection->sentence_id          = $fragment->sentence_id;
-                        $inflection->sentence_fragment_id = $fragment->id;
-                        $inflection->word                 = $fragment->fragment;
-                    }
-
-                    $this->_glossInflectionRepository->save(collect($inflections));
-                }
-            }
 
             // Re-create all sentence translations
             $sentence->sentence_translations()->delete();
@@ -211,6 +191,27 @@ class SentenceRepository
             throw $ex;
         }
 
+        $sentence->refresh();
+
+        $i = 0;
+        foreach ($sentence->sentence_fragments as $fragment) {
+            $inflections = $inflectionsPerFragments[$i++];
+
+            if (! empty($inflections)) {
+                foreach ($inflections as $inflection) {
+                    $inflection->speech_id            = $fragment->speech_id;
+                    $inflection->gloss_id             = $fragment->gloss_id;
+                    $inflection->language_id          = $sentence->language_id;
+                    $inflection->account_id           = $sentence->account_id;
+                    $inflection->sentence_id          = $fragment->sentence_id;
+                    $inflection->sentence_fragment_id = $fragment->id;
+                    $inflection->word                 = $fragment->fragment;
+                }
+
+                $this->_glossInflectionRepository->saveInflectionAsOneGroup(collect($inflections));
+            }
+        }
+
         // Inform listeners of this change.
         $event = ! $changed 
                 ? new SentenceCreated($sentence, $sentence->account_id)
@@ -222,11 +223,14 @@ class SentenceRepository
 
     public function destroyFragments(Sentence $sentence) 
     {
-        foreach ($sentence->sentence_fragments as $fragment) {
+        $fragments = $sentence->sentence_fragments;
+        foreach ($fragments as $fragment) {
             $fragment->gloss_inflections()->delete();
             $fragment->keywords()->delete();
         }
         $sentence->sentence_fragments()->delete();
+
+        event(new SentenceFragmentsDestroyed($fragments));
     }
 
     public function suggestFragmentGlosses(Collection $fragments, int $languageId)

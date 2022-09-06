@@ -9,7 +9,8 @@ use App\Models\{
 use App\Events\{
     SentenceCreated,
     SentenceDestroyed,
-    SentenceEdited
+    SentenceEdited,
+    SentenceFragmentsDestroyed
 };
 use App\Helpers\SentenceBuilders\SentenceBuilder;
 use App\Helpers\StringHelper;
@@ -43,6 +44,10 @@ class SentenceIndexerSubscriber
             SentenceDestroyed::class,
             self::class.'@onSentenceDestroyed'
         );
+        $events->listen(
+            SentenceFragmentsDestroyed::class,
+            self::class.'@onSentenceFragmentsDestroyed'
+        );
     }
 
     public function onSentenceCreated(SentenceCreated $event)
@@ -64,6 +69,13 @@ class SentenceIndexerSubscriber
         }
         
         $this->_searchIndexRepository->deleteAll($sentence);
+    }
+
+    public function onSentenceFragmentsDestroyed(SentenceFragmentsDestroyed $event)
+    {
+        foreach ($event->sentence_fragments as $fragment) {
+            $this->_searchIndexRepository->deleteAll($fragment);
+        }
     }
 
     private function update(Sentence $sentence)

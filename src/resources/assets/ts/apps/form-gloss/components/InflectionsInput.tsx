@@ -2,8 +2,10 @@ import {
     CellValueChangedEvent,
     ColDef,
     ColGroupDef,
+    EditableCallbackParams,
     GetRowIdParams,
     GridReadyEvent,
+    ICellRendererParams,
 } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { AgGridReact } from '@ag-grid-community/react';
@@ -66,10 +68,18 @@ function InflectionsInput(props: IProps) {
                 speeches,
             };
 
-            const columnDefinition = [
+            const columnDefinition: ColDef[] = [
                 {
+                    cellRenderer: (params: ICellRendererParams) => {
+                        if ((params.data as IInflectionGroupState).sentenceFragmentId) {
+                            return <LockedRenderer {...params} />;
+                        }
+
+                        return params.value;
+                    },
                     colId: 'inflection-word',
-                    editable: true,
+                    editable: (params: EditableCallbackParams) => //
+                        ! (params.data as IInflectionGroupState).sentenceFragmentId,
                     headerName: 'Word',
                     field: 'word',
                     resizable: true,

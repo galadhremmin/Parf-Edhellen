@@ -28,14 +28,14 @@ class GlossInflections extends Migration
             $table->uuid('inflection_group_uuid');
             $table->unsignedBigInteger('gloss_id');
             $table->unsignedBigInteger('language_id');
-            $table->unsignedBigInteger('speech_id');
             $table->unsignedBigInteger('inflection_id');
+            $table->unsignedBigInteger('speech_id')->nullable();
             $table->unsignedBigInteger('account_id')->nullable();
             $table->unsignedBigInteger('sentence_id')->nullable();
             $table->unsignedBigInteger('sentence_fragment_id')->nullable();
             $table->boolean('is_neologism')->default(false);
             $table->boolean('is_rejected')->default(false);
-            $table->string('source', 64)->nullable();
+            $table->string('source', 196)->nullable();
             $table->string('word', 196);
             $table->unsignedSmallInteger('order', false)->default(0);
             $table->timestamps();

@@ -60,40 +60,28 @@ class GlossRepository
         $this->_authManager = $authManager;
     }
 
-    /**
-     * Returns a list of glosses which match the specified word. This method looks for sense.
-     *
-     * @param string $word
-     * @param int $languageId
-     * @param bool $includeOld
-     * @return array
-     */
-    public function getWordGlosses(string $word, int $languageId = 0, bool $includeOld = true, array $speechIds = null,
-        array $glossGroupIds = null) 
+    public function getGlossesByExpandingViaSense(array $glossIds, $languageId = 0, $includeOld = true, $filters = [])
     {
-        if (empty($word)) {
-            return [];
-        }
-
-        $senses = self::getSensesForWord($word);
-        $collections = [
-            'g.sense_id'       => $senses,
-            'g.speech_id'      => $speechIds,
-            'g.gloss_group_id' => $glossGroupIds
-        ];
-        $maximumNumberOfResources = config('ed.gloss_repository_maximum_results');
-
-        return self::createGlossQuery($languageId, $includeOld, function($q) use($collections) {
-                foreach ($collections as $column => $collection) {
-                    if (is_array($collection) && count($collection) > 0) {
-                        $q = $q->whereIn($column, $collection);
-                    }
-                }
-                return $q;
-            })
-            ->limit($maximumNumberOfResources)
+        $senseIds = Gloss::whereIn('id', $glossIds)
+            ->select('sense_id')
             ->get()
-            ->toArray();
+            ->pluck('sense_id');
+
+        $maximumNumberOfResources = config('ed.gloss_repository_maximum_results');
+        return self::createGlossQuery($languageId, $includeOld, function ($q) use($senseIds, $filters) {
+            $q = $q->whereIn('g.sense_id', $senseIds);
+
+            if (! empty($filters)) {
+                foreach ($filters as $column => $values) {
+                    $q = $q->whereIn('g.'.$column, $values);
+                }
+            }
+
+            return $q;
+        })
+        ->limit($maximumNumberOfResources)
+        ->get()
+        ->toArray();
     }
 
     /**
@@ -105,8 +93,7 @@ class GlossRepository
     {
         $maximumNumberOfResources = config('ed.gloss_repository_maximum_results');
         return self::createGlossQuery(0, true /* = include old */, function ($q) use($ids) {
-            $q->whereIn('g.id', $ids);
-            return $q;
+            return $q->whereIn('g.id', $ids);
         })
         ->limit($maximumNumberOfResources)
         ->get()
@@ -547,21 +534,6 @@ class GlossRepository
                 ->get();
 
         return $keywords;
-    }
-
-    protected static function getSensesForWord(string $word) 
-    {
-        $rows = DB::table('keywords')
-            ->where('normalized_keyword', $word)
-            ->select('sense_id')
-            ->distinct()
-            ->get();
-
-        $ids = array();
-        foreach ($rows as $row)
-            $ids[] = $row->sense_id;
-        
-        return $ids;
     }
 
     protected function createSense(Word $senseWord)

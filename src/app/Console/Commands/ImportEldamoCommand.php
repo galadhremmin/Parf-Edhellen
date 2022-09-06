@@ -18,11 +18,13 @@ use App\Models\{
     Account,
     Gloss,
     GlossDetail,
-    GlossGroup,  
+    GlossGroup,
+    Inflection,
     Language, 
     Speech, 
     Translation
 };
+use Ramsey\Uuid\Uuid;
 
 class ImportEldamoCommand extends Command 
 {
@@ -42,6 +44,7 @@ class ImportEldamoCommand extends Command
 
     private $_languageMap;
     private $_speechMap;
+    private $_inflectionMap;
 
     private $_glossGroups;
     private $_eldamoAccount;
@@ -52,8 +55,9 @@ class ImportEldamoCommand extends Command
         $this->_glossRepository = $glossRepository;
         $this->_keywordRepository = $keywordRepository;
 
-        $this->_languageMap = null;
-        $this->_speechMap   = null;
+        $this->_languageMap   = null;
+        $this->_speechMap     = null;
+        $this->_inflectionMap = Inflection::get()->keyBy('name');
 
         $this->_glossGroups = [];
         $this->_eldamoAccount = null;
@@ -329,7 +333,58 @@ class ImportEldamoCommand extends Command
     private function createInflections(object $data, Gloss $gloss): array
     {
         // This is by design - the new EldamoParser implementation creates inflections for us.
-        return $data->inflections;
+        $inflections = [];
+
+        foreach ($data->inflections as $i) {
+            $eligibleInflections = [];
+            if (! isset($this->_inflectionMap[$i->form])) {
+                $parts = explode(' ', $i->form);
+                foreach ($parts as $part) {
+                    if (! isset($this->_inflectionMap[$part])) {
+                        $eligibleInflections = [
+                            Inflection::insert([
+                                'name' => $i->form,
+                                'group_name' => 'Eldamo compatibility (do not use)'
+                            ])
+                        ];
+                        break;
+                    }
+
+                    $eligibleInflections[] = $this->_inflectionMap[$part];
+                }
+                $this->_inflectionMap[$i->form] = $eligibleInflections;
+            } else {
+                $inflection = $this->_inflectionMap[$i->form];
+                $eligibleInflections = is_array($inflection) ? $inflection : [$inflection];
+            }
+
+            $uuid = Uuid::uuid4();
+            foreach ($eligibleInflections as $inflection) {
+                $inflection = [
+                    'inflection_id'         => $inflection->id,
+                    'speech_id'             => $gloss->speech_id ?: null,
+                    'language_id'           => $gloss->language_id,
+                    'source'                => $i->source,
+                    'word'                  => $i->word,
+                    'inflection_group_uuid' => $uuid
+                ];
+
+                switch ($i->mark) {
+                    case '-':
+                        $inflection['is_rejected'] = true;
+                        break;
+                    case '!':
+                    case '*':
+                    case '?':
+                        $inflection['is_neologism'] = true;
+                        break;
+                }
+
+                $inflections[] = $inflection;
+            }
+        }
+
+        return $inflections;
     }
 
     private function createKeywords(object $data, Gloss $gloss): array

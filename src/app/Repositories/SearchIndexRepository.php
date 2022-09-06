@@ -85,7 +85,15 @@ class SearchIndexRepository
             'search_group'   => $this->getSearchGroup($entityName)
         ];
 
-        return SearchKeyword::upsert($data);
+        return SearchKeyword::updateOrCreate($data, [
+            // UPSERT row identification fields
+            'keyword', 'language_id', 'gloss_group_id', 'entity_name', 'entity_id', 'is_old', 'word', 'word_id', 'search_group'
+        ], [
+            // UPSERT update field if a row already exists
+            'normalized_keyword', 'normalized_keyword_unaccented', 'normalized_keyword_reversed', 'normalized_keyword_reversed_unaccented',
+            'keyword_length', 'normalized_keyword_length', 'normalized_keyword_unaccented_length', 'normalized_keyword_reversed_length',
+            'normalized_keyword_reversed_unaccented_length'
+        ]);
     }
 
     public function getForEntity(ModelBase $model)

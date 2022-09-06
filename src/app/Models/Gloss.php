@@ -75,6 +75,11 @@ class Gloss extends ModelBase implements Interfaces\IHasFriendlyName
         return $this->hasMany(FlashcardResult::class);
     }
 
+    public function gloss_inflections() 
+    {
+        return $this->hasMany(GlossInflection::class);
+    }
+
     public function scopeNotDeleted($query)
     {
         $query->where('is_deleted', 0);

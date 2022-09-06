@@ -9,7 +9,7 @@ export interface IInflectionAction extends IReduxAction {
 }
 
 export interface IInflectionGroupState extends Partial<Pick<IGlossInflection, 'inflectionGroupUuid' | 
-    'isNeologism' | 'isRejected' | 'languageId' | 'source' | 'speechId' | 'word'>> {
+    'isNeologism' | 'isRejected' | 'languageId' | 'sentenceFragmentId' | 'source' | 'speechId' | 'word'>> {
     inflections: IGlossInflection[];
 }
 

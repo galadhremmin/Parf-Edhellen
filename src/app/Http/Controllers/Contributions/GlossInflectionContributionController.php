@@ -127,13 +127,14 @@ class GlossInflectionContributionController extends Controller implements IContr
     public function validateBeforeSave(Request $request, int $id = 0)
     {
         $request->validate([
-            'gloss_id'                         => 'sometimes|nullable|numeric|exists:glosses,id',
-            'inflection_groups'                => 'required|array',
-            'inflection_groups.*.is_neologism' => 'sometimes|boolean',
-            'inflection_groups.*.is_rejected'  => 'sometimes|boolean',
-            'inflection_groups.*.speech_id'    => 'required|numeric|exists:speeches,id',
-            'inflection_groups.*.source'       => 'sometimes|nullable|string|max:64',
-            'inflection_groups.*.word'         => 'required|string|max:196',
+            'gloss_id'                                  => 'sometimes|nullable|numeric|exists:glosses,id',
+            'inflection_groups'                         => 'required|array',
+            'inflection_groups.*.inflection_group_uuid' => 'required|uuid',
+            'inflection_groups.*.is_neologism'          => 'sometimes|boolean',
+            'inflection_groups.*.is_rejected'           => 'sometimes|boolean',
+            'inflection_groups.*.speech_id'             => 'required|numeric|exists:speeches,id',
+            'inflection_groups.*.source'                => 'sometimes|nullable|string|max:64',
+            'inflection_groups.*.word'                  => 'required|string|max:196',
 
             'inflection_groups.*.inflections'                 => 'required|array',
             'inflection_groups.*.inflections.*.inflection_id' => 'required|numeric|exists:inflections,id'
@@ -186,7 +187,20 @@ class GlossInflectionContributionController extends Controller implements IContr
 
     public function approve(Contribution $contribution, Request $request): int
     {
-        // TODO
-        return 0;
+        if ($contribution->dependent_on !== null) {
+            $gloss = $contribution->dependent_on->entity;
+        } else {
+            $gloss = $contribution->gloss;
+        }
+
+        $inflections = collect(json_decode($contribution->payload, /* associative? */ true))->map(function ($i) use($gloss) {
+            return new GlossInflection($i + [
+                'gloss_id' => $gloss->id,
+                'language_id' => $gloss->language_id
+            ]);
+        });
+
+        $this->_glossInflectionRepository->saveManyOnGloss($gloss, $inflections);
+        return $gloss->id;
     }
 }

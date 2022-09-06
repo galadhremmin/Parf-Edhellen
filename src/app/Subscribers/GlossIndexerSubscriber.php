@@ -2,30 +2,18 @@
 
 namespace App\Subscribers;
 
-use Aws\Credentials\{
-    AssumeRoleCredentialProvider,
-    CredentialProvider,
-    InstanceProfileProvider
-};
-use Aws\Sts\StsClient;
-
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Mail;
-
-use App\Interfaces\IIdentifiesPhrases;
 use App\Repositories\{
-    SearchIndexRepository,
-    WordRepository
+    SearchIndexRepository
 };
-use App\Models\Initialization\Morphs;
 use App\Models\{
-    Account,
     Gloss
 };
 use App\Events\{
     GlossCreated,
     GlossDestroyed,
-    GlossEdited
+    GlossEdited,
+    GlossInflectionsCreated
 };
 use App\Jobs\ProcessSearchIndexCreation;
 
@@ -50,18 +38,41 @@ class GlossIndexerSubscriber
             self::class.'@onGlossCreated'
         );
         $events->listen(
-            GlossDestroyed::class,
-            self::class.'@onGlossDestroyed'
-        );
-        $events->listen(
             GlossEdited::class,
             self::class.'@onGlossEdited'
+        );
+        $events->listen(
+            GlossInflectionsCreated::class,
+            self::class.'@onGlossInflectionsCreated'
+        );
+        $events->listen(
+            GlossDestroyed::class,
+            self::class.'@onGlossDestroyed'
         );
     }
 
     public function onGlossCreated(GlossCreated $event)
     {
-        $this->update($event->gloss);
+        $this->update($event->gloss, $event->gloss->gloss_inflections);
+    }
+
+    public function onGlossEdited(GlossEdited $event)
+    {
+        $this->update($event->gloss, $event->gloss->gloss_inflections);
+    }
+
+    public function onGlossInflectionsCreated(GlossInflectionsCreated $event)
+    {
+        if ($event->incremental) {
+            // Incremental are only adding to what's already there. This is useful when iteratively adding new indexes
+            // although it comes with the downside that you have to manage the history (to avoid dead index links).
+            foreach ($event->gloss_inflections as $inflection) {
+                ProcessSearchIndexCreation::dispatch($inflection->gloss, $inflection->gloss->word, $inflection->word) //
+                    ->onQueue('indexing');
+            }
+        } else {
+            $this->update($event->gloss, $event->gloss_inflections);
+        }
     }
 
     public function onGlossDestroyed(GlossDestroyed $event)
@@ -69,22 +80,23 @@ class GlossIndexerSubscriber
         $this->delete($event->gloss);
     }
 
-    public function onGlossEdited(GlossEdited $event)
+    private function update(Gloss $gloss, Collection $inflections)
     {
-        $this->update($event->gloss);
+        $this->delete($gloss);
+
+        foreach ($gloss->keywords as $keyword) {
+            ProcessSearchIndexCreation::dispatch($gloss, $keyword->wordEntity, $keyword->keyword) //
+                ->onQueue('indexing');
+        }
+
+        foreach ($inflections as $inflection) {
+            ProcessSearchIndexCreation::dispatch($inflection->gloss, $inflection->gloss->word, $inflection->word) //
+                ->onQueue('indexing');
+        }
     }
 
     private function delete(Gloss $gloss)
     {
         $this->_searchIndexRepository->deleteAll($gloss);
-    }
-
-    private function update(Gloss $gloss)
-    {
-        $this->delete($gloss);
-        foreach ($gloss->keywords as $keyword) {
-            ProcessSearchIndexCreation::dispatch($gloss, $keyword->wordEntity, $keyword->keyword) //
-                ->onQueue('indexing');
-        }
     }
 }

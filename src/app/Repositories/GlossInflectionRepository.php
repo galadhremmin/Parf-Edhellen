@@ -2,6 +2,10 @@
 
 namespace App\Repositories;
 
+use App\Events\{
+    GlossInflectionsCreated
+};
+use App\Models\Gloss;
 use App\Models\GlossInflection;
 use Illuminate\Support\Collection;
 use Ramsey\Uuid\Uuid;
@@ -15,26 +19,24 @@ class GlossInflectionRepository
             ->get();
     }
 
-    public function saveMany(Collection $inflectionGroups): array
+    public function saveManyOnGloss(Gloss $gloss, Collection $inflections)
     {
-        $allInflections = [];
-        $uuids = [];
-
-        foreach ($inflectionGroups as $inflectionGroup) {
-            $uuid = Uuid::uuid4();
-            foreach ($inflectionGroup as $inflection) {
-                $inflection->inflection_group_uuid = $uuid;
-                $allInflections[] = $inflection;
-            }
-            $uuids[] = $uuid;
+        if ($inflections->count() < 1) {
+            return;
         }
 
-        GlossInflection::insert($allInflections);
-        return $uuids;
+        $gloss->gloss_inflections()->delete();
+        $gloss->gloss_inflections()->saveMany($inflections);
+
+        event(new GlossInflectionsCreated($gloss, $inflections, /* incremental: */ false));
     }
 
-    public function save(Collection $inflections): string
+    public function saveInflectionAsOneGroup(Collection $inflections): string
     {
+        if ($inflections->count() < 1) {
+            return null;
+        }
+
         $uuid = Uuid::uuid4()->toString();
         $rows = [];
         foreach ($inflections as $inflection) {
@@ -44,6 +46,8 @@ class GlossInflectionRepository
         }
 
         GlossInflection::insert($rows);
+
+        event(new GlossInflectionsCreated($inflections->first()->gloss, $inflection, /* incremental: */ true));
         return $uuid;
     }
 }
