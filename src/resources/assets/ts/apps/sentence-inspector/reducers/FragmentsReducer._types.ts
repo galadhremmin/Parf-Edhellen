@@ -1,4 +1,5 @@
 import {
+    IGlossInflection,
     SentenceFragmentType,
 } from '@root/connectors/backend/IBookApi';
 
@@ -7,7 +8,7 @@ export interface IFragmentsReducerState {
     fragment: string;
     glossId: number;
     id: number;
-    inflections: IFragmentInflection[];
+    glossInflections: IGlossInflection[];
     nextFragmentId: number;
     previousFragmentId: number;
     sentenceNumber: number;
@@ -15,11 +16,6 @@ export interface IFragmentsReducerState {
     speech: string;
     tengwar: string;
     type: SentenceFragmentType;
-}
-
-export interface IFragmentInflection {
-    inflectionId: number;
-    name?: string;
 }
 
 export type FragmentsReducerState = IFragmentsReducerState[];

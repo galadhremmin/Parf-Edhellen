@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Contributions;
 
 use Illuminate\Http\Request;
 use App\Models\Contribution;
+use App\Models\ModelBase;
 
 interface IContributionController
 {
@@ -56,7 +57,13 @@ interface IContributionController
      * @param Request $request
      * @return App\Models\ModelBase
      */
-    function populate(Contribution $contribution, Request $request);
+    function populate(Contribution $contribution, Request $request): ModelBase|array;
+
+    /**
+     * Returns whether the controller should be in full control of the population of the payload,
+     * and all automatic change detection in the parent controller should be ignored.
+     */
+    function disableChangeDetection(): bool;
 
     /**
      * Approves the specified contribution by transforming it into a respective entity.
@@ -64,7 +71,7 @@ interface IContributionController
      *
      * @param Contribution $contribution
      * @param Request $request
-     * @return void
+     * @return int Entity primary ID
      */
-    function approve(Contribution $contribution, Request $request);
+    function approve(Contribution $contribution, Request $request): int;
 }

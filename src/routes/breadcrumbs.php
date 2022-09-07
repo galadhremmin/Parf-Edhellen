@@ -194,7 +194,7 @@ Breadcrumbs::register('contribution.list', function ($breadcrumbs)
 Breadcrumbs::register('contribution.confirm-destroy', function ($breadcrumbs, int $id)
 {
     $breadcrumbs->parent('contribution.show', $id);
-    $breadcrumbs->push('Confirm deletion', route('contribution.confirm-destroy', ['contribution' => $id]));
+    $breadcrumbs->push('Confirm deletion', route('contribution.confirm-destroy', ['id' => $id]));
 });
 
 Breadcrumbs::register('contribution.confirm-reject', function ($breadcrumbs, int $id)

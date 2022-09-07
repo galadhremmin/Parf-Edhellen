@@ -30,7 +30,7 @@ const SentenceFragmentReducer = (state = InitialState, action: ISentenceFragment
                 fragment: 'fragment',
                 glossId: 'glossId',
                 id: 'id',
-                inflections: 'inflections',
+                glossInflections: 'glossInflections',
                 paragraphNumber: 'paragraphNumber',
                 sentenceNumber: 'sentenceNumber',
                 speechId: 'speechId',

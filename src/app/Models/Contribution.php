@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Initialization\Morphs;
 use Illuminate\Database\Eloquent\Model;
 
 class Contribution extends ModelBase implements Interfaces\IHasFriendlyName
@@ -18,7 +19,9 @@ class Contribution extends ModelBase implements Interfaces\IHasFriendlyName
         'keywords', 
         'notes',
         'sense',
-        'type' 
+        'type',
+        'approved_as_entity_id',
+        'dependent_on_contribution_id'
     ];
     protected $dates = [
         'created_at',
@@ -29,6 +32,27 @@ class Contribution extends ModelBase implements Interfaces\IHasFriendlyName
     public function reviewed_by() 
     {
         return $this->belongsTo(Account::class, 'reviewed_by_account_id');
+    }
+
+    public function entity()
+    {
+        $modelName = Morphs::getMorphedModel($this->type);
+        return $this->belongsTo($modelName, 'approved_as_entity_id', 'id');
+    }
+
+    public function dependencies()
+    {
+        return $this->hasMany(Contribution::class, 'dependent_on_contribution_id', 'id');
+    }
+
+    public function dependent_on()
+    {
+        return $this->belongsTo(Contribution::class, 'dependent_on_contribution_id', 'id');
+    }
+
+    public function gloss()
+    {
+        return $this->belongsTo(Gloss::class);
     }
 
     public function scopeWhereAccount($query, int $accountId)

@@ -61,39 +61,39 @@ class GlossRepository
     }
 
     /**
-     * Returns a list of glosses which match the specified word. This method looks for sense.
-     *
-     * @param string $word
-     * @param int $languageId
-     * @param bool $includeOld
+     * Obtains the senses for the specified array of glosses and uses these senses to, in turn, find *all* glosses
+     * with the same senses. This is useful for the search index, which currently only indexes glosses.
+     * 
+     * @param array $glossIds list of glosses
+     * @param int $languageId optional language parameter
+     * @param bool $includeOld optional is_old filter (false filters them out)
+     * @param callback $filters optional filters, refer to `createGlossQuery` for more information.
      * @return array
      */
-    public function getWordGlosses(string $word, int $languageId = 0, bool $includeOld = true, array $speechIds = null,
-        array $glossGroupIds = null) 
+    public function getGlossesByExpandingViaSense(array $glossIds, $languageId = 0, $includeOld = true, $filters = [])
     {
-        if (empty($word)) {
-            return [];
-        }
+        $senseIds = Gloss::whereIn('id', $glossIds)
+            ->select('sense_id')
+            ->get()
+            ->pluck('sense_id');
 
-        $senses = self::getSensesForWord($word);
-        $collections = [
-            'g.sense_id'       => $senses,
-            'g.speech_id'      => $speechIds,
-            'g.gloss_group_id' => $glossGroupIds
-        ];
         $maximumNumberOfResources = config('ed.gloss_repository_maximum_results');
+        $glosses = self::createGlossQuery($languageId, $includeOld, function ($q) use($senseIds, $filters) {
+                $q = $q->whereIn('g.sense_id', $senseIds);
 
-        return self::createGlossQuery($languageId, $includeOld, function($q) use($collections) {
-                foreach ($collections as $column => $collection) {
-                    if (is_array($collection) && count($collection) > 0) {
-                        $q = $q->whereIn($column, $collection);
+                if (! empty($filters)) {
+                    foreach ($filters as $column => $values) {
+                        $q = $q->whereIn($column, $values);
                     }
                 }
+
                 return $q;
-            })
-            ->limit($maximumNumberOfResources)
-            ->get()
+            }) //
+            ->limit($maximumNumberOfResources) //
+            ->get() //
             ->toArray();
+        
+        return $glosses;
     }
 
     /**
@@ -105,8 +105,7 @@ class GlossRepository
     {
         $maximumNumberOfResources = config('ed.gloss_repository_maximum_results');
         return self::createGlossQuery(0, true /* = include old */, function ($q) use($ids) {
-            $q->whereIn('g.id', $ids);
-            return $q;
+            return $q->whereIn('g.id', $ids);
         })
         ->limit($maximumNumberOfResources)
         ->get()
@@ -549,21 +548,6 @@ class GlossRepository
         return $keywords;
     }
 
-    protected static function getSensesForWord(string $word) 
-    {
-        $rows = DB::table('keywords')
-            ->where('normalized_keyword', $word)
-            ->select('sense_id')
-            ->distinct()
-            ->get();
-
-        $ids = array();
-        foreach ($rows as $row)
-            $ids[] = $row->sense_id;
-        
-        return $ids;
-    }
-
     protected function createSense(Word $senseWord)
     {
         $sense = Sense::find($senseWord->id);
@@ -619,7 +603,6 @@ class GlossRepository
         ];
 
         $q0 = self::createGlossQueryWithoutDetails($columns, true)
-            ->where('has_details', 0)
             ->where($filters);
         
         if ($whereCallback != null) {
@@ -629,50 +612,30 @@ class GlossRepository
             }
         }
 
-        $q1 = self::createGlossQueryWithDetails($columns)
-            ->where($filters);
-        
-        if ($whereCallback != null) {
-            $tmp = $whereCallback($q1);
-            if ($tmp) {
-                $q1 = $tmp;
-            }
-        }
-
-        return $q1->union($q0);
+        return $q0;
     }
 
     protected static function createGlossQueryWithoutDetails(array $columns, bool $addDetailsColumns)
     {
+        $query = DB::table('glosses as g')
+            ->join('translations as t', 'g.id', 't.gloss_id')
+            ->join('accounts as a', 'g.account_id', 'a.id')
+            ->join('words as w', 'g.word_id', 'w.id')
+            ->leftJoin('gloss_groups as tg', 'g.gloss_group_id', 'tg.id')
+            ->leftJoin('speeches as s', 'g.speech_id', 's.id');
+
+        
         if ($addDetailsColumns) {
+            $query = $query->leftJoin('gloss_details as gd', 'g.id', 'gd.gloss_id');
             $columns = array_merge($columns, [
-                DB::raw('NULL as gloss_details_category'), 
-                DB::raw('NULL as gloss_details_text'), 
-                DB::raw('NULL as gloss_details_order'),
-                DB::raw('NULL as gloss_details_type')
+                DB::raw('gd.category as gloss_details_category'), 
+                DB::raw('gd.text as gloss_details_text'), 
+                DB::raw('gd.category as gloss_details_order'),
+                DB::raw('gd.type as gloss_details_type')
             ]);
         }
 
-        return DB::table('glosses as g')
-            ->join('words as w', 'g.word_id', 'w.id')
-            ->join('translations as t', 'g.id', 't.gloss_id')
-            ->join('accounts as a', 'g.account_id', 'a.id')
-            ->leftJoin('gloss_groups as tg', 'g.gloss_group_id', 'tg.id')
-            ->leftJoin('speeches as s', 'g.speech_id', 's.id')
-            ->select($columns);
-    }
-
-    protected static function createGlossQueryWithDetails(array $columns)
-    {
-        $columns = array_merge($columns, [
-            'gd.category as gloss_details_category', 
-            'gd.text as gloss_details_text', 
-            'gd.order as gloss_details_order',
-            'gd.type as gloss_details_type'
-        ]);
-        
-        return self::createGlossQueryWithoutDetails($columns, false)
-            ->join('gloss_details as gd', 'g.id', 'gd.gloss_id');
+        return $query->select($columns);
     }
 
     protected function deleteGloss(Gloss $g, int $replaceId = null) 

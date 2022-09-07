@@ -1,6 +1,7 @@
 import { IReduxAction } from '@root/_types';
 import { IContribution } from '@root/connectors/backend/IContributionResourceApi';
 import { IGlossEntity } from '@root/connectors/backend/IGlossResourceApi';
+import { IGlossInflection } from '@root/connectors/backend/IBookApi';
 
 export type IGlossState = IContribution<Pick<IGlossEntity, 'account' | 'comments' |
     'etymology' | 'externalId' | 'glossDetails' | 'glossGroupId' | 'id' |

@@ -26,13 +26,14 @@ class BladeHelper
         return implode('', $html);
     }
 
-    public function jsonSerialize($data)
+    public function jsonSerialize($data, $pretty = false)
     {
+        $options = $pretty ? JSON_PRETTY_PRINT : 0;
         $json = '';
         if ($data instanceOf Jsonable) {
-            $json = $data->toJSON();
+            $json = $data->toJSON($options);
         } else {
-            $tmp = json_encode($data);
+            $tmp = json_encode($data, $options);
             if ($tmp !== false) {
                 $json = $tmp;
             }

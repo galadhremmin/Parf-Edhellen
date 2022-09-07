@@ -3,16 +3,15 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Repositories\{
-    GlossRepository,
-    KeywordRepository
+    GlossInflectionRepository,
+    GlossRepository
 };
-use App\Events\GlossEdited;
+use App\Models\GlossInflection;
 
 class ProcessGlossImport implements ShouldQueue
 {
@@ -35,7 +34,7 @@ class ProcessGlossImport implements ShouldQueue
      *
      * @return void
      */
-    public function handle(GlossRepository $glossRepository, KeywordRepository $keywordRepository)
+    public function handle(GlossRepository $glossRepository, GlossInflectionRepository $glossInflectionRepository)
     {
         $data = & $this->data;
 
@@ -47,17 +46,15 @@ class ProcessGlossImport implements ShouldQueue
         $translations = $data['translations'];
         $word         = $data['word'];
 
-        $changed = false;
         try {
-            $importedGloss = $glossRepository->saveGloss($word, $sense, $gloss, $translations, $keywords, $details, $changed);
+            $glossEntity = $glossRepository->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
+            $glossInflectionRepository->saveManyOnGloss($glossEntity, collect($inflections)->map(function ($i) use($glossEntity) {
+                return new GlossInflection(array_merge($i, [
+                    'gloss_id' => $glossEntity->id
+                ]));
+            }));
         } catch (\Exception $ex) {
             throw $ex;
-        }
-
-        if ($changed) {
-            foreach ($inflections as $inflection) {
-                $keyword = $keywordRepository->createKeyword($importedGloss->word, $importedGloss->sense, $importedGloss, $inflection->word);
-            }
         }
     }
 }

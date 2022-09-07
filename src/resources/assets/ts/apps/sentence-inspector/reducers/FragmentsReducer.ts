@@ -34,17 +34,14 @@ const FragmentsReducer = (state: FragmentsReducerState = [], action: ISentenceRe
                 fragment: 'fragment',
                 glossId: 'glossId',
                 id: (v) => v.type === SentenceFragmentType.Word ? (v.id || 0) : 0,
-                inflections: (v) => {
-                    if (Array.isArray(v.inflections)) {
-                        return v.inflections.map<any>((i) => action.sentence.inflections[i.inflectionId]);
-                    }
-
-                    return action.sentence.inflections[v.id.toString(10)]
-                },
+                glossInflections: (v: ISentenceFragmentEntity) => v.glossInflections?.map((i) => ({
+                    ...i,
+                    inflection: action.sentence.inflections[i.inflectionId.toString(10)] || null,
+                })) || [],
                 nextFragmentId: (v, i) => findNextFragmentId(v, fragments, i, 1),
                 previousFragmentId: (v, i) => findNextFragmentId(v, fragments, i, -1),
                 sentenceNumber: 'sentenceNumber',
-                speech: (v) => action.sentence.speeches[v.speechId],
+                speech: (v) => v.speechId ? action.sentence.speeches[v.speechId.toString(10)]?.name : null,
                 speechId: 'speechId',
                 tengwar: 'tengwar',
                 type: 'type',

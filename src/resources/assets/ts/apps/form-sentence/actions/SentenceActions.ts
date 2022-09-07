@@ -190,8 +190,9 @@ export default class GlossActions {
                 if (suggestion !== undefined) {
                     f.glossId = suggestion.glossId;
                     f.speechId = suggestion.speechId;
-                    f.inflections = suggestion.inflectionIds.map((i) => ({
-                        inflectionId: i,
+                    f.glossInflections = suggestion.inflectionIds.map((inflectionId, i) => ({
+                        inflectionId,
+                        order: i,
                     }));
                 }
             });

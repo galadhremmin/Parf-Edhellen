@@ -6,7 +6,7 @@ import {
 
 import { ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
 import debounce from '@root/utilities/func/debounce';
-import { IFragmentGridMetadata } from '../FragmentsGrid._types';
+import { IFragmentGridMetadata } from './InflectionCellEditor._types';
 
 import './GlossCellEditor.scss';
 

@@ -24,7 +24,7 @@ class SentenceFragment extends ModelBase
         return $this->belongsTo(Speech::class);
     }
 
-    public function inflection_associations()
+    public function inflection_associations__deprecated()
     {
         return $this->hasMany(SentenceFragmentInflectionRel::class);
     }
@@ -32,5 +32,10 @@ class SentenceFragment extends ModelBase
     public function keywords()
     {
         return $this->hasMany(Keyword::class);
+    }
+
+    public function gloss_inflections()
+    {
+        return $this->hasMany(GlossInflection::class);
     }
 }

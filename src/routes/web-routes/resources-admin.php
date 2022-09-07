@@ -11,7 +11,7 @@ Route::group([
         'except' => ['show', 'create', 'store', 'update', 'destroy']
     ]);
     Route::resource('inflection', 'InflectionController', [
-        'except' => ['show']
+        'except' => ['show', 'destroy']
     ]);
     Route::resource('speech', 'SpeechController', [
         'except' => ['show']

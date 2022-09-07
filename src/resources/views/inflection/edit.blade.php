@@ -29,10 +29,4 @@
   {{ csrf_field() }}
   {{ method_field('PUT') }}
 </form>
-<hr>
-<form method="post" action="{{ route('inflection.destroy', [ 'inflection' => $inflection->id ]) }}">
-  <p>Alternatively, you can <button type="submit" class="link-button">delete the inflection</button>.</p>
-  {{ csrf_field() }}
-  {{ method_field('DELETE') }}
-</form>
 @endsection

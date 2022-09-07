@@ -1,6 +1,5 @@
 import {
     CellValueChangedEvent,
-    DetailGridInfo,
     GridReadyEvent,
 } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react/lib/agGridReact';

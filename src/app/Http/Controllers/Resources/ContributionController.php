@@ -56,9 +56,9 @@ class ContributionController extends Controller
         $pendingReviews  = Contribution::whereNull('is_approved')
             ->orderBy('id', 'asc')->simplePaginate(10, ['*'], 'pending');
         $rejectedReviews = Contribution::where('is_approved', 0)
-            ->orderBy('id', 'asc')->simplePaginate(10, ['*'], 'rejected');
+            ->orderBy('updated_at', 'desc')->simplePaginate(10, ['*'], 'rejected');
         $approvedReviews = Contribution::where('is_approved', 1)
-            ->orderBy('id', 'asc')->simplePaginate(10, ['*'], 'approved');
+            ->orderBy('updated_at', 'desc')->simplePaginate(10, ['*'], 'approved');
 
         return view('contribution.list', [
             'approvedReviews' => $approvedReviews,
@@ -85,7 +85,8 @@ class ContributionController extends Controller
 
         $model = ContributionControllerFactory::createController($contribution->type)->getViewModel($contribution);
         return view('contribution.show', $model->toModelArray() + [
-            'admin' => $admin
+            'returnToAdminView' => $admin,
+            'isAdmin' => $request->user()->isAdministrator()
         ]);
     }
 
@@ -171,6 +172,10 @@ class ContributionController extends Controller
         $contribution = new Contribution;
         $contribution->account_id = $request->user()->id;
         $contribution->is_approved = null;
+        
+        if ($request->has('dependent_on_contribution_id')) {
+            $contribution->dependent_on_contribution_id = intval($request->input('dependent_on_contribution_id'));
+        }
 
         $this->saveContribution($contribution, $request);
 
@@ -257,11 +262,16 @@ class ContributionController extends Controller
             $this->contributionAlreadyApproved();
         }
 
-        ContributionControllerFactory::createController($contribution->type)->approve($contribution, $request);
+        if ($contribution->dependent_on !== null && ! $contribution->dependent_on->is_approved) {
+            abort(400, 'Contribution\'s dependencies are not approved.');
+        }
+
+        $id = ContributionControllerFactory::createController($contribution->type)->approve($contribution, $request);
 
         $contribution->is_approved = 1;
         $contribution->date_reviewed = Carbon::now();
         $contribution->reviewed_by_account_id = $request->user()->id;
+        $contribution->approved_as_entity_id = $id;
         $contribution->save();
 
         event(new ContributionApproved($contribution));
@@ -281,6 +291,11 @@ class ContributionController extends Controller
         $contribution = Contribution::findOrFail($id);
         $this->requestPermission($request, $contribution);
 
+        if ($contribution->is_approved) {
+            abort(400, 'You cannot delete an approved contribution.');
+        }
+
+        $contribution->dependencies()->delete();
         $contribution->delete();
 
         event(new ContributionDestroyed($contribution));
@@ -353,8 +368,9 @@ class ContributionController extends Controller
     protected function validateContributionRequest(Request $request)
     {
         $this->validate($request, [
-            'morph'           => 'required|string',
-            'contribution_id' => 'sometimes|required|numeric|exists:contributions,id'
+            'morph'                        => 'required|string',
+            'contribution_id'              => 'sometimes|numeric|exists:contributions,id',
+            'dependent_on_contribution_id' => 'sometimes|nullable|numeric|exists:contributions,id'
         ]);
     }
 
@@ -390,17 +406,22 @@ class ContributionController extends Controller
      */
     protected function saveContribution(Contribution $contribution, Request $request)
     {
-        $entity = ContributionControllerFactory::createController($request)->populate($contribution, $request);
+        $controller = ContributionControllerFactory::createController($request);
+        $entity = $controller->populate($contribution, $request);
 
-        $contribution->type        = Morphs::getAlias($entity);
-        $contribution->language_id = $entity->language_id;
-        $contribution->notes       = $request->has('notes') 
+        $type = Morphs::getAlias($entity);
+        if ($type === null) {
+            abort(400, 'Unrecognised type of contribution.');
+        }
+
+        $contribution->type  = $type;
+        $contribution->notes = $request->has('notes') 
             ? $request->input('notes') 
             : null;
 
         // payloads might already be configured at this point, either by the save methods
         // or earlier in the call stack.
-        if (! $contribution->isDirty('payload')) {
+        if (! $controller->disableChangeDetection() && ! $contribution->isDirty('payload')) {
             $contribution->payload = $entity instanceof Jsonable
                 ? $entity->toJson()
                 : json_encode($entity);

@@ -10,10 +10,11 @@ use App\Helpers\SentenceHelper;
 use App\Repositories\SentenceRepository;
 use App\Models\{
     Contribution,
+    GlossInflection,
     Inflection,
+    ModelBase,
     Sentence,
     SentenceFragment,
-    SentenceFragmentInflectionRel,
     SentenceTranslation
 };
 use App\Http\Controllers\Traits\{
@@ -41,7 +42,7 @@ class SentenceContributionController extends Controller implements IContribution
         $this->makeMapCurrent($payload);
 
         $originalSentence = isset($payload['id'])
-            ? Sentence::findOrFail($payload['id']) : null;
+            ? Sentence::with('sentence_fragments')->findOrFail(intval($payload['id'])) : null;
 
         $sentence = new Sentence($payload['sentence']);
 
@@ -49,8 +50,8 @@ class SentenceContributionController extends Controller implements IContribution
         // based on the JSON payload that is stored on the contribution. This is a bit clumsy, but
         // it is currently the only way to visualize the sentence in the contribution preview view.
         $fragmentData = $this->createFragmentDataFromPayload($payload);
-        $speeches     = $this->_sentenceRepository->getSpeechesForFragments($fragmentData['fragments']);
-        $inflections  = Inflection::all()->keyBy('id');
+        $speeches     = $this->_sentenceRepository->getSpeechesForSentenceFragments($fragmentData['fragments']);
+        $inflections  = $this->_sentenceRepository->getInflectionsForSentenceFragments($fragmentData['fragments']);
 
         $fragmentData = [
             'inflections'              => $inflections,
@@ -173,7 +174,7 @@ class SentenceContributionController extends Controller implements IContribution
      * @param Request $request
      * @return void
      */
-    public function populate(Contribution $contribution, Request $request)
+    public function populate(Contribution $contribution, Request $request): ModelBase|array
     {
         $entity = $request->has('id') 
             ? Sentence::findOrFail( intval($request->input('id')) ) 
@@ -185,11 +186,21 @@ class SentenceContributionController extends Controller implements IContribution
             $entity->account_id = $contribution->account_id;
         }
     
-        $contribution->payload = json_encode($map);
-        $contribution->word    = $entity->name;
-        $contribution->sense   = 'text';
+        $contribution->payload     = json_encode($map);
+        $contribution->word        = $entity->name;
+        $contribution->sense       = 'text';
+        $contribution->language_id = $entity->language_id;
 
         return $entity;
+    }
+
+    /**
+     * Disable change detection within the parent controller as the payload is always
+     * populated by the `populate` method.
+     */
+    function disableChangeDetection(): bool
+    {
+        return true;
     }
 
     /**
@@ -201,7 +212,7 @@ class SentenceContributionController extends Controller implements IContribution
      * @param Request $request
      * @return void
      */
-    public function approve(Contribution $contribution, Request $request)
+    public function approve(Contribution $contribution, Request $request): int
     {
         $map = json_decode($contribution->payload, true);
         $this->makeMapCurrent($map);
@@ -224,10 +235,10 @@ class SentenceContributionController extends Controller implements IContribution
             return new SentenceFragment($fragment);
         }, $map['fragments']);
 
-        // Transform inflections into SentenceFragmentInflectionRel entities.
+        // Transform inflections into GlossInflection entities.
         $inflections = array_map(function ($inflections) {
             return array_map(function ($inflection) {
-                return new SentenceFragmentInflectionRel($inflection);
+                return new GlossInflection($inflection);
             }, $inflections);
         }, $map['inflections']);
 
@@ -240,7 +251,8 @@ class SentenceContributionController extends Controller implements IContribution
 
         // Save the sentence and assign the resulting ID to the contribution entity.
         $this->_sentenceRepository->saveSentence($sentence, $fragments, $inflections, $translations);
-        $contribution->sentence_id = $sentence->id;
+
+        return $sentence->id;
     }
 
     private function createTransformations(Request $request)
@@ -279,25 +291,34 @@ class SentenceContributionController extends Controller implements IContribution
             $translations = $payload->sentence_translations;
 
             foreach ($fragments as $fragment) {
-                $fragment->inflections = $fragment->inflection_associations;
+                $fragment->load('gloss_inflections');
             }
 
         } else {
             $fragments = new Collection();
             $translations = new Collection();
-            
+
             $i = 0;
             foreach ($payload['fragments'] as $fragmentData) {
                 $fragment = new SentenceFragment($fragmentData);
 
-                // Generate a fake ID (descending order, starting at -10).
+                // Generate a fake ID (descending order, starting at -1).
                 $fragment->id = ($i + 1) * -1;
 
                 // Create an array of IDs for inflections associated with this fragment.
-                $fragment->inflections = $payload['inflections'][$i];
+                $fragment->gloss_inflections = collect(
+                    isset($payload['gloss_inflections'])
+                        ? $payload['gloss_inflections'][$i]->orderBy('order')
+                        : array_map(function ($i) {  // 20220831: maintained for backwards compatibility.
+                            return [
+                                'inflection_id' => $i['inflection_id']
+                            ];
+                        }, $payload['inflections'][$i])
+                )->map(function ($i, $order) {
+                    return new GlossInflection($i + ['order' => $order]);
+                });
 
                 $fragments->push($fragment);
-                
                 $i += 1;
             }
 

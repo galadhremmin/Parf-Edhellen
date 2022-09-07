@@ -11,9 +11,10 @@ use App\Adapters\BookAdapter;
 use App\Models\{
     Account,
     Contribution,
-    Sense,
     Gloss,
     GlossDetail,
+    ModelBase,
+    Sense,
     Translation,
     Word
 };
@@ -21,6 +22,7 @@ use App\Http\Controllers\Traits\{
     CanValidateGloss, 
     CanMapGloss
 };
+use App\Repositories\GlossInflectionRepository;
 
 class GlossContributionController extends Controller implements IContributionController
 {
@@ -29,11 +31,14 @@ class GlossContributionController extends Controller implements IContributionCon
 
     private $_bookAdapter;
     private $_glossRepository;
+    private $_glossInflectionRepository;
 
-    public function __construct(BookAdapter $bookAdapter, GlossRepository $glossRepository)
+    public function __construct(BookAdapter $bookAdapter, GlossRepository $glossRepository,
+        GlossInflectionRepository $glossInflectionRepository)
     {
         $this->_bookAdapter = $bookAdapter;
         $this->_glossRepository = $glossRepository;
+        $this->_glossInflectionRepository = $glossInflectionRepository;
     }
 
     public function getViewModel(Contribution $contribution): ViewModel
@@ -75,13 +80,9 @@ class GlossContributionController extends Controller implements IContributionCon
     }
 
     /**
-     * HTTP GET. Opens a view for editing a gloss contribution.
-     *
-     * @param Request $request
-     * @param Contribution $contribution
-     * @return array|\Illuminate\View\View|\Illuminate\Contracts\View\Factory
+     * Creates the view model for the gloss editing view.
      */
-    public function edit(Contribution $contribution, Request $request)
+    public function getEditViewModel(Contribution $contribution)
     {
         // retrieve word and sense based on the information specified in the review object. If the word does not exist in 
         // the database, create a new instance of the model for the word.
@@ -107,25 +108,41 @@ class GlossContributionController extends Controller implements IContributionCon
         $translations = $this->getTranslationsFromPayload($payload);
         $details      = $this->getDetailsFromPayload($payload);
 
-        $payloadData = $payload + [ 
-            'contribution_id' => $contribution->id,
-            'account'         => $account,
-            'word'            => $word,
-            'sense'           => $sense,
-            'keywords'        => $keywords,
-            'notes'           => $contribution->notes,
-            'translations'    => $translations,
-            'gloss_details'   => $details
+        return $payload + [ 
+            'contribution_id'   => $contribution->id,
+            'account'           => $account,
+            'word'              => $word,
+            'sense'             => $sense,
+            'keywords'          => $keywords,
+            'notes'             => $contribution->notes,
+            'translations'      => $translations,
+            'gloss_details'     => $details
+        ];
+    }
+
+    /**
+     * HTTP GET. Opens a view for editing a gloss contribution.
+     *
+     * @param Request $request
+     * @param Contribution $contribution
+     * @return array|\Illuminate\View\View|\Illuminate\Contracts\View\Factory
+     */
+    public function edit(Contribution $contribution, Request $request)
+    {
+        $payloadData = $this->getEditViewModel($contribution);
+        $inflections  = $this->_glossInflectionRepository->getInflectionsForGloss(
+            array_key_exists('id', $payloadData) ? $payloadData['id'] : 0
+        );
+
+        $viewModel = [
+            'review' => $contribution, 
+            'payload' => $payloadData,
+            'inflections' => $inflections,
+            'form_restrictions' => ['gloss']
         ];
 
-        return $request->ajax()
-            ? [
-                'review' => $contribution, 
-                'payload' => $payloadData
-            ] : view('contribution.gloss.edit', [
-                'review' => $contribution, 
-                'payload' => $payloadData
-            ]);
+        return $request->ajax() //
+            ? $viewModel : view('contribution.gloss.edit', $viewModel);
     }
     
     /**
@@ -154,15 +171,18 @@ class GlossContributionController extends Controller implements IContributionCon
             $gloss = $this->_glossRepository->getGlossFromVersion($glossVersionId);
         }
 
+        $inflections = [];
         if ($gloss !== null) {
             $gloss->keywords = $this->_glossRepository->getKeywords($gloss->sense_id, $gloss->id);
+            $inflections     = $this->_glossInflectionRepository->getInflectionsForGloss($gloss->id);
         }
 
         return $request->ajax()
             ? $gloss
             // create a payload model if a gloss exists.
             : view('contribution.gloss.create', $gloss ? [
-                'payload' => $gloss
+                'payload' => $gloss,
+                'inflections' => $inflections
             ] : []);
     }
 
@@ -178,12 +198,14 @@ class GlossContributionController extends Controller implements IContributionCon
         return true;
     }
 
-    public function populate(Contribution $contribution, Request $request)
+    public function populate(Contribution $contribution, Request $request): ModelBase|array
     {
         // Modify an existing gloss, if the request body specifies the ID of such an entity. This is optional functionality.
-        $entity = $request->has('id') 
-            ? Gloss::findOrFail(intval($request->input('id'))) 
-            : new Gloss;
+        if ($request->has('id')) {
+            $entity = Gloss::findOrFail(intval($request->input('id')));
+        } else {
+            $entity = new Gloss;
+        }
 
         $map = $this->mapGloss($entity, $request);
         extract($map);
@@ -195,9 +217,10 @@ class GlossContributionController extends Controller implements IContributionCon
         $entity->_translations  = $translations;
         $entity->_details       = $details;
 
-        $contribution->word     = $word;
-        $contribution->sense    = $sense;
-        $contribution->keywords = json_encode($keywords);
+        $contribution->word        = $word;
+        $contribution->sense       = $sense;
+        $contribution->keywords    = json_encode($keywords);
+        $contribution->language_id = $entity->language_id;
 
         if ($entity->exists) {
             $contribution->gloss_id = $entity->id;
@@ -206,7 +229,16 @@ class GlossContributionController extends Controller implements IContributionCon
         return $entity;
     }
 
-    public function approve(Contribution $contribution, Request $request)
+    /**
+     * Disable change detection within the parent controller as the payload is always
+     * populated by the `populate` method.
+     */
+    function disableChangeDetection(): bool
+    {
+        return false;
+    }
+
+    public function approve(Contribution $contribution, Request $request): int
     {
         $glossData = json_decode($contribution->payload, true) + [
             'account_id' => $contribution->account_id
@@ -230,7 +262,8 @@ class GlossContributionController extends Controller implements IContributionCon
 
         $gloss = $this->_glossRepository->saveGloss(
             $contribution->word, $contribution->sense, $gloss, $translations, $keywords, $details);
-        $contribution->gloss_id = $gloss->id;
+
+        return $gloss->id;
     }
 
     /**

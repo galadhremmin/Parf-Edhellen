@@ -1,4 +1,6 @@
 import { IGlossGroup } from './IGlossResourceApi';
+import { IInflection } from './IInflectionResourceApi';
+import { ISpeechEntity } from './ISpeechResourceApi';
 
 export interface IFindRequest {
     glossGroupIds?: number[];
@@ -60,6 +62,7 @@ export interface ILanguageEntity {
 }
 
 export interface IBookGlossEntity {
+    _inflectedWord?: IBookWordInflection;
     accountId: number;
     accountName: string;
     accountUrl: string;
@@ -75,7 +78,6 @@ export interface IBookGlossEntity {
     glossGroupLabel?: string;
     glossGroupName: string;
     id: number;
-    inflectedWord?: IBookWordInflection;
     inflections: {
         [ sentenceId: string ]: IBookInflectionEntity[];
     };
@@ -109,7 +111,7 @@ export interface IBookGlossDetailEntity {
 }
 
 export interface IBookWordInflection {
-    inflections: ISentenceFragmentInflection[];
+    inflections: IGlossInflection[];
     speech: string;
     word: string;
 }
@@ -134,21 +136,16 @@ export interface ISentenceRequest {
 }
 
 export interface ISentenceResponse {
-    inflections: ISentenceFragmentInflectionMap;
     sentence: ISentenceEntity;
     sentenceFragments: ISentenceFragmentEntity[];
     sentenceTranslations: ISentenceTranslationMap;
     sentenceTransformations: ITextTransformationsMap;
     speeches: ISpeechMap;
+    inflections: IInflectionMap;
 }
 
-export interface ISentenceFragmentInflectionMap {
-    [sentenceFragmentId: string]: ISentenceFragmentInflection[];
-}
-
-export interface ISentenceFragmentInflection {
-    inflectionId: number;
-    name?: string;
+export interface IInflectionMap {
+    [inflectionId: string]: IInflection;
 }
 
 export interface ISentenceEntity {
@@ -182,13 +179,29 @@ export interface ISentenceFragmentEntity {
     fragment?: string;
     glossId?: number;
     id?: number;
-    inflections?: ISentenceFragmentInflection[];
+    inflectionGroupUuid?: string;
+    glossInflections?: IGlossInflection[];
     paragraphNumber?: number;
     sentenceNumber?: number;
     speech?: string;
     speechId?: number;
     tengwar?: string;
     type?: SentenceFragmentType;
+}
+
+export interface IGlossInflection {
+    inflectionGroupUuid?: string;
+    inflectionId: number;
+    inflection?: IInflection;
+    order?: number;
+    glossId?: number;
+    languageId?: number;
+    speechId?: number;
+    isNeologism?: boolean;
+    isRejected?: boolean;
+    source?: string;
+    sentenceFragmentId?: number;
+    word?: string;
 }
 
 export interface ISentenceTranslationEntity {
@@ -229,7 +242,7 @@ export type ParagraphTransformation = FragmentTransformation[];
 export type FragmentTransformation = [number, string?] | string;
 
 export interface ISpeechMap {
-    [speechId: string]: string;
+    [speechId: string]: ISpeechEntity;
 }
 
 export interface IEntitiesRequest {

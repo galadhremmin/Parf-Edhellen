@@ -13,8 +13,6 @@ import {
 import {
     ClientSideRowModelModule,
 } from '@ag-grid-community/client-side-row-model';
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import '@ag-grid-community/core/dist/styles/ag-theme-balham.css';
 
 import {
     DI,
@@ -30,13 +28,13 @@ import {
 import ISpeechResourceApi, { ISpeechEntity } from '@root/connectors/backend/ISpeechResourceApi';
 
 import { ISentenceFragmentReducerState } from '../../reducers/child-reducers/SentenceFragmentReducer._types';
-import GlossCellEditor from './cell-editors/GlossCellEditor';
-import InflectionCellEditor from './cell-editors/InflectionCellEditor';
-import SpeechSelectCellEditor from './cell-editors/SpeechSelectCellEditor';
-import GlossRenderer from './renderers/GlossRenderer';
-import InflectionRenderer from './renderers/InflectionRenderer';
-import SpeechRenderer from './renderers/SpeechRenderer';
-import TengwarRenderer from './renderers/TengwarRenderer';
+import GlossCellEditor from '../../../../components/Grid/cell-editors/GlossCellEditor';
+import InflectionCellEditor from '../../../../components/Grid/cell-editors/InflectionCellEditor';
+import SpeechSelectCellEditor from '../../../../components/Grid/cell-editors/SpeechSelectCellEditor';
+import GlossRenderer from '@root/components/Grid/renderers/GlossRenderer';
+import InflectionRenderer from '@root/components/Grid/renderers/InflectionRenderer';
+import SpeechRenderer from '@root/components/Grid/renderers/SpeechRenderer';
+import TengwarRenderer from '@root/components/Grid/renderers/TengwarRenderer';
 import {
     FragmentGridColumnDefinition,
     IProps,
@@ -150,7 +148,8 @@ class FragmentsGrid extends React.Component<IProps, IState> {
                 cellRenderer: InflectionRenderer,
                 cellRendererParams,
                 editable: true,
-                field: 'inflections',
+                headerName: 'Inflections',
+                field: 'glossInflections',
                 resizable: true,
             },
             {

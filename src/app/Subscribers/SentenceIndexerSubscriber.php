@@ -2,30 +2,18 @@
 
 namespace App\Subscribers;
 
-use Aws\Credentials\{
-    AssumeRoleCredentialProvider,
-    CredentialProvider,
-    InstanceProfileProvider
-};
-use Aws\Sts\StsClient;
-
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Mail;
-
-use App\Interfaces\IIdentifiesPhrases;
-use App\Repositories\{
-    SearchIndexRepository,
-    WordRepository
-};
-use App\Models\Initialization\Morphs;
+use App\Repositories\SearchIndexRepository;
 use App\Models\{
     Sentence
 };
 use App\Events\{
     SentenceCreated,
     SentenceDestroyed,
-    SentenceEdited
+    SentenceEdited,
+    SentenceFragmentsDestroyed
 };
+use App\Helpers\SentenceBuilders\SentenceBuilder;
+use App\Helpers\StringHelper;
 use App\Jobs\ProcessSearchIndexCreation;
 
 class SentenceIndexerSubscriber
@@ -49,12 +37,16 @@ class SentenceIndexerSubscriber
             self::class.'@onSentenceCreated'
         );
         $events->listen(
+            SentenceEdited::class,
+            self::class.'@onSentenceEdited'
+        );
+        $events->listen(
             SentenceDestroyed::class,
             self::class.'@onSentenceDestroyed'
         );
         $events->listen(
-            SentenceEdited::class,
-            self::class.'@onSentenceEdited'
+            SentenceFragmentsDestroyed::class,
+            self::class.'@onSentenceFragmentsDestroyed'
         );
     }
 
@@ -63,20 +55,25 @@ class SentenceIndexerSubscriber
         $this->update($event->sentence);
     }
 
-    public function onSentenceDestroyed(SentenceDestroyed $event)
-    {
-        $sentence = $event->sentence;
-        $this->_searchIndexRepository->deleteAll($fragment);
-    }
-
     public function onSentenceEdited(SentenceEdited $event)
     {
         $this->update($event->sentence);
     }
 
-    private function delete(Sentence $sentence)
+    public function onSentenceDestroyed(SentenceDestroyed $event)
     {
+        $sentence = $event->sentence;
+
         foreach ($sentence->sentence_fragments as $fragment) {
+            $this->_searchIndexRepository->deleteAll($fragment);
+        }
+        
+        $this->_searchIndexRepository->deleteAll($sentence);
+    }
+
+    public function onSentenceFragmentsDestroyed(SentenceFragmentsDestroyed $event)
+    {
+        foreach ($event->sentence_fragments as $fragment) {
             $this->_searchIndexRepository->deleteAll($fragment);
         }
     }
@@ -84,8 +81,15 @@ class SentenceIndexerSubscriber
     private function update(Sentence $sentence)
     {
         foreach ($sentence->sentence_fragments as $fragment) {
-            foreach ($fragment->keywords as $keyword) {
-                ProcessSearchIndexCreation::dispatch($fragment, $keyword->wordEntity, $keyword->keyword) //
+            if ($fragment->type === SentenceBuilder::TYPE_CODE_WORD) {
+                $word = $fragment->gloss->word;
+                $inflection = StringHelper::toLower($fragment->fragment);
+
+                if ($inflection === StringHelper::toLower($word->word)) {
+                    $inflection = null; // if the words are identical, don't consider the fragment an inflection
+                }
+
+                ProcessSearchIndexCreation::dispatch($fragment, $word, $inflection) //
                     ->onQueue('indexing');
             }
         }
