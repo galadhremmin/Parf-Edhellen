@@ -15,7 +15,10 @@ use App\Repositories\{
 use App\Adapters\BookAdapter;
 use App\Helpers\StringHelper;
 use App\Models\Initialization\Morphs;
-use App\Models\SearchKeyword;
+use App\Models\{
+    SearchKeyword,
+    Sense
+};
 
 class GlossSearchIndexResolver implements ISearchIndexResolver
 {
@@ -24,6 +27,9 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
     private $_discussRepository;
     private $_bookAdapter;
 
+    private $_glossMorph;
+    private $_senseMorph;
+
     public function __construct(GlossRepository $glossRepository, SentenceRepository $sentenceRepository,
         DiscussRepository $discussRepository, BookAdapter $bookAdapter)
     {
@@ -31,6 +37,9 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
         $this->_sentenceRepository    = $sentenceRepository;
         $this->_discussRepository     = $discussRepository;
         $this->_bookAdapter           = $bookAdapter;
+
+        $this->_glossMorph = Morphs::getAlias(Gloss::class);
+        $this->_senseMorph = Morphs::getAlias(Sense::class);
     }
 
     public function resolve(SearchIndexSearchValue $value): array
@@ -39,8 +48,16 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
             $glosses = $this->_glossRepository->getGlosses($value->getIds());
         } else {
             $normalizedWord = StringHelper::normalize($value->getWord(), /* accentsMatter = */ true, /* retainWildcard = */ false);
-
-            $query = SearchKeyword::where('entity_name', Morphs::getAlias(Gloss::class)) //
+            
+            // Sense morph is technically not supported by the search engine but there's plenty of them in the
+            // database grandfathered in by the previous data model. It simply wasn't possible back in the day,
+            // when the migration was implemented, to associate disassociated senses with the right gloss, resulting
+            // in what can be best described as 'dangling' senses. These senses aren't directly tied to a word (for 
+            // an example, 'gold-full one' maps to 'gold') but they're still useful to retain in the index. This is why
+            // the sense morph is included in the query. If you're rebuilding the database from scratch, this will not
+            // do anything as it's currently not possible to create senses within the search keyword table (it'll result
+            // in an exception.)
+            $query = SearchKeyword::whereIn('entity_name', [$this->_glossMorph, $this->_senseMorph]) //
                 ->where($value->getReversed() ? 'normalized_keyword_reversed' : 'normalized_keyword', $normalizedWord);
 
             if ($value->getLanguageId() !== 0) {
@@ -62,12 +79,31 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
                 $query = $query->whereIn($column, $values);
             }
 
-            $entityIds = $query //
-                ->select('entity_id') //
+            $entities = $query //
+                ->select('entity_name', 'entity_id') //
                 ->get() //
-                ->pluck('entity_id') //
-                ->toArray();
-            
+                ->groupBy('entity_name');
+
+            $entityIds = [];
+
+            // Senses are *not* supported by the search index, so with this shim, the 'sense' is resolved to
+            // whatever gloss it might be associated with. This ensures that all relevant glosses are found.
+            if ($entities->has($this->_senseMorph)) {
+                // we've got the sense, now obtain glosses
+                $entityIds = Gloss::whereIn('sense_id', $entities[$this->_senseMorph]->pluck('entity_id')) //
+                    ->select('id')
+                    ->get()
+                    ->pluck('id')
+                    ->all();
+            }
+
+            if ($entities->has($this->_glossMorph)) {
+                $entityIds = array_merge(
+                    $entityIds,
+                    $entities[$this->_glossMorph]->pluck('entity_id')->all()
+                );
+            }
+
             $glosses = $this->_glossRepository->getGlossesByExpandingViaSense(
                 $entityIds,
                 $value->getLanguageId(),
