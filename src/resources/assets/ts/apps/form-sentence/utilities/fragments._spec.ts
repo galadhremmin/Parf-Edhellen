@@ -30,7 +30,7 @@ describe('apps/form-sentence/utilities/fragments', () => {
         const expected = {
             fragment,
             glossId: 0,
-            inflections: [],
+            glossInflections: [],
             paragraphNumber,
             sentenceNumber,
             speechId: 0,
