@@ -39,7 +39,7 @@ function MasterForm(props: IProps) {
         fireEvent('MasterForm', onCopyGloss);
     };
 
-    const _onSubmit = async (ev: React.FormEvent) => {
+    const _onSubmit = (ev: React.FormEvent) => {
         ev.preventDefault();
         fireEvent('MasterForm', onSubmit, {
             changes,
