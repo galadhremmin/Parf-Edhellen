@@ -332,27 +332,21 @@ class ImportEldamoCommand extends Command
 
     private function createInflections(object $data, Gloss $gloss): array
     {
-        // This is by design - the new EldamoParser implementation creates inflections for us.
         $inflections = [];
 
         foreach ($data->inflections as $i) {
             $eligibleInflections = [];
+            // In the event that the inflection does not exist in our database currently,
+            // create a new set of inflections based on Eldamo's pattern. These will have
+            // to be transitioned at some point in the future.
             if (! isset($this->_inflectionMap[$i->form])) {
-                $parts = explode(' ', $i->form);
-                foreach ($parts as $part) {
-                    if (! isset($this->_inflectionMap[$part])) {
-                        $eligibleInflections = [
-                            Inflection::insert([
-                                'name' => $i->form,
-                                'group_name' => 'Eldamo compatibility (do not use)'
-                            ])
-                        ];
-                        break;
-                    }
-
-                    $eligibleInflections[] = $this->_inflectionMap[$part];
-                }
-                $this->_inflectionMap[$i->form] = $eligibleInflections;
+                $inflection = new Inflection([
+                    'name' => $i->form,
+                    'group_name' => 'Eldamo compatibility (do not use)'
+                ]);
+                $inflection->save();
+                $this->_inflectionMap[$inflection->name] = $inflection;
+                $eligibleInflections[] = $inflection;
             } else {
                 $inflection = $this->_inflectionMap[$i->form];
                 $eligibleInflections = is_array($inflection) ? $inflection : [$inflection];
