@@ -189,7 +189,7 @@ export const createFragment = async (fragment: string, type: SentenceFragmentTyp
     return {
         fragment,
         glossId: 0,
-        inflections: [],
+        glossInflections: [],
         paragraphNumber,
         speechId: 0,
         sentenceNumber,
