@@ -47,7 +47,8 @@ class GlossInflectionRepository
 
         GlossInflection::insert($rows);
 
-        event(new GlossInflectionsCreated($inflections->first()->gloss, $inflection, /* incremental: */ true));
+        $gloss = Gloss::findOrFail($inflections->first()->gloss_id);
+        event(new GlossInflectionsCreated($gloss, $inflections, /* incremental: */ true));
         return $uuid;
     }
 }
