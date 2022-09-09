@@ -32,11 +32,11 @@ class ContributionController extends Controller
     {
         $user = $request->user();
         $pendingReviews  = Contribution::whereAccount($user->id)->whereNull('is_approved')
-            ->orderBy('id', 'asc')->simplePaginate(10, ['*'], 'pending');
+            ->orderBy('id', 'asc')->paginate(10, ['*'], 'pending')->withQueryString();
         $rejectedReviews = Contribution::whereAccount($user->id)->where('is_approved', 0)
-            ->orderBy('id', 'asc')->simplePaginate(10, ['*'], 'rejected');
+            ->orderBy('id', 'asc')->paginate(10, ['*'], 'rejected')->withQueryString();
         $approvedReviews = Contribution::whereAccount($user->id)->where('is_approved', 1)
-            ->orderBy('id', 'asc')->simplePaginate(10, ['*'], 'approved');
+            ->orderBy('id', 'asc')->paginate(10, ['*'], 'approved')->withQueryString();
 
         return view('contribution.index', [
             'approvedReviews' => $approvedReviews,
@@ -54,11 +54,11 @@ class ContributionController extends Controller
     public function list(Request $request)
     {
         $pendingReviews  = Contribution::whereNull('is_approved')
-            ->orderBy('id', 'asc')->simplePaginate(10, ['*'], 'pending');
+            ->orderBy('id', 'asc')->paginate(10, ['*'], 'pending')->withQueryString();
         $rejectedReviews = Contribution::where('is_approved', 0)
-            ->orderBy('updated_at', 'desc')->simplePaginate(10, ['*'], 'rejected');
+            ->orderBy('updated_at', 'desc')->paginate(10, ['*'], 'rejected')->withQueryString();
         $approvedReviews = Contribution::where('is_approved', 1)
-            ->orderBy('updated_at', 'desc')->simplePaginate(10, ['*'], 'approved');
+            ->orderBy('updated_at', 'desc')->paginate(10, ['*'], 'approved')->withQueryString();
 
         return view('contribution.list', [
             'approvedReviews' => $approvedReviews,
