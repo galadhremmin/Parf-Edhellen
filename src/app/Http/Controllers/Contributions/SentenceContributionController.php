@@ -174,7 +174,7 @@ class SentenceContributionController extends Controller implements IContribution
      * @param Request $request
      * @return void
      */
-    public function populate(Contribution $contribution, Request $request): ModelBase|array
+    public function populate(Contribution $contribution, Request $request)
     {
         $entity = $request->has('id') 
             ? Sentence::findOrFail( intval($request->input('id')) ) 

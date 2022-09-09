@@ -142,7 +142,7 @@ class GlossInflectionContributionController extends Controller implements IContr
         return true;
     }
 
-    public function populate(Contribution $contribution, Request $request): ModelBase|array
+    public function populate(Contribution $contribution, Request $request)
     {
         $contribution->gloss_id = $request->has('gloss_id') //
             ? intval($request->input('gloss_id')) : null;
