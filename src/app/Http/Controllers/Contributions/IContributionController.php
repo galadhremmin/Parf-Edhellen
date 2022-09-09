@@ -57,7 +57,7 @@ interface IContributionController
      * @param Request $request
      * @return App\Models\ModelBase
      */
-    function populate(Contribution $contribution, Request $request): ModelBase|array;
+    function populate(Contribution $contribution, Request $request);
 
     /**
      * Returns whether the controller should be in full control of the population of the payload,

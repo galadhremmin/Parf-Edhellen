@@ -198,7 +198,7 @@ class GlossContributionController extends Controller implements IContributionCon
         return true;
     }
 
-    public function populate(Contribution $contribution, Request $request): ModelBase|array
+    public function populate(Contribution $contribution, Request $request)
     {
         // Modify an existing gloss, if the request body specifies the ID of such an entity. This is optional functionality.
         if ($request->has('id')) {
