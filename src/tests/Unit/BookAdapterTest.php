@@ -47,7 +47,7 @@ class BookAdapterTest extends TestCase
         $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
 
         $languages   = new Collection([ $gloss->language ]);
-        $inflections = [];
+        $inflections = collect([]);
         $comments    = [ $gloss->id => 10 ];
         $atomDate    = true;
 
@@ -93,7 +93,7 @@ class BookAdapterTest extends TestCase
             $glossary[] = $savedGloss;
         }
 
-        $adapted = $this->_adapter->adaptGlosses($glossary, [], [], 'mal');
+        $adapted = $this->_adapter->adaptGlosses($glossary, collect([]), [], 'mal');
         $adaptedGlossary = &$adapted['sections'][0]['entities'];
 
         for ($i = 0; $i < count($expected); $i += 1) {

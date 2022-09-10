@@ -347,7 +347,7 @@ class BookAdapter
         if ($values->count() > 0) {
             $word = $values->first()->word->word;
 
-            $model = $this->adaptGlosses($values->all(), [], [], $word, false);
+            $model = $this->adaptGlosses($values->all(), collect([]), [], $word, false);
             $versions = $model['sections'][0]['entities'];
             unset($model);
 
