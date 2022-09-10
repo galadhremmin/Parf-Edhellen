@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
 import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
@@ -34,6 +34,8 @@ function MasterForm(props: IProps) {
         onSubmit,
     } = props;
 
+    const [ showNoChangesWereMade, setShowNoChangesWereMade ] = useState<boolean>(false);
+
     const _onDisableEdit = (ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
         fireEvent('MasterForm', onCopyGloss);
@@ -41,6 +43,10 @@ function MasterForm(props: IProps) {
 
     const _onSubmit = (ev: React.FormEvent) => {
         ev.preventDefault();
+        setShowNoChangesWereMade(! Object.keys(changes) //
+            .some((context) => (changes as any)[context] === true)
+        );
+
         fireEvent('MasterForm', onSubmit, {
             changes,
             edit,
@@ -60,6 +66,10 @@ function MasterForm(props: IProps) {
                 You can make a <a href="#" onClick={_onDisableEdit}>copy the gloss</a> if you want to use it as
                 a template for a new gloss.
             </p>
+        </StaticAlert>}
+        {showNoChangesWereMade && <StaticAlert type="info">
+            <TextIcon icon="info-sign" />{' '}
+            <strong>No changes were made!</strong> Please make at least one change before trying to submit.
         </StaticAlert>}
         {formSections.includes(FormSection.Gloss) && <section>
             <GlossForm name="ed-gloss-form"

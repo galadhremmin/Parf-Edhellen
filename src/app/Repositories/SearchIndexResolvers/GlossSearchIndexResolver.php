@@ -9,6 +9,7 @@ use App\Repositories\ValueObjects\{
 use App\Models\Gloss;
 use App\Repositories\{
     DiscussRepository,
+    GlossInflectionRepository,
     GlossRepository,
     SentenceRepository
 };
@@ -23,20 +24,20 @@ use App\Models\{
 class GlossSearchIndexResolver implements ISearchIndexResolver
 {
     private $_glossRepository;
-    private $_sentenceRepository;
+    private $_glossInflectionRepository;
     private $_discussRepository;
     private $_bookAdapter;
 
     private $_glossMorph;
     private $_senseMorph;
 
-    public function __construct(GlossRepository $glossRepository, SentenceRepository $sentenceRepository,
+    public function __construct(GlossRepository $glossRepository, GlossInflectionRepository $glossInflectionRepository,
         DiscussRepository $discussRepository, BookAdapter $bookAdapter)
     {
-        $this->_glossRepository       = $glossRepository;
-        $this->_sentenceRepository    = $sentenceRepository;
-        $this->_discussRepository     = $discussRepository;
-        $this->_bookAdapter           = $bookAdapter;
+        $this->_glossRepository           = $glossRepository;
+        $this->_glossInflectionRepository = $glossInflectionRepository;
+        $this->_discussRepository         = $discussRepository;
+        $this->_bookAdapter               = $bookAdapter;
 
         $this->_glossMorph = Morphs::getAlias(Gloss::class);
         $this->_senseMorph = Morphs::getAlias(Sense::class);
@@ -117,10 +118,9 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
         }, $glosses);
 
         $inflections = $value->getIncludesInflections() //
-            ? $this->_sentenceRepository->getInflectionsForGlosses($glossIds) //
+            ? $this->_glossInflectionRepository->getInflectionsForGlosses($glossIds) //
             : [];
         $comments = $this->_discussRepository->getNumberOfPostsForEntities(Gloss::class, $glossIds);
-
         return $this->_bookAdapter->adaptGlosses($glosses, $inflections, $comments, $value->getWord());
     }
 }

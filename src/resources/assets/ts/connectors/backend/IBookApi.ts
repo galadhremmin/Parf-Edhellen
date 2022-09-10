@@ -79,7 +79,7 @@ export interface IBookGlossEntity {
     glossGroupName: string;
     id: number;
     inflections: {
-        [ sentenceId: string ]: IBookInflectionEntity[];
+        [ inflectionGroupUuid: string ]: IBookInflectionEntity[];
     };
     isCanon: boolean;
     isLatest: boolean;
@@ -117,18 +117,23 @@ export interface IBookWordInflection {
 }
 
 export interface IBookInflectionEntity {
+    inflectionGroupUuid: string;
     glossId: number;
-    inflection: string;
     languageId: number;
-    languageName: string;
-    sentenceFragmentId: number;
-    sentenceId: number;
-    sentenceName: string;
-    sentenceUrl: string;
-    speech: string;
+    inflectionId: number;
+    speechId: number;
+    accountId: number;
+    sentenceId?: number;
+    sentenceFragmentId?: number;
+    isNeologism?: boolean;
+    isRejected?: boolean;
+    source?: string;
     word: string;
-    id: number;
-    name: string;
+    order: number;
+    sentence?: ISentenceEntity;
+    speech?: ISpeechEntity;
+    inflection: IInflection;
+    sentenceUrl?: string;
 }
 
 export interface ISentenceRequest {
@@ -201,6 +206,7 @@ export interface IGlossInflection {
     isRejected?: boolean;
     source?: string;
     sentenceFragmentId?: number;
+    sentence?: ISentenceEntity;
     word?: string;
 }
 

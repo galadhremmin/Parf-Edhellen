@@ -111,7 +111,7 @@ function InflectionsInput(props: IProps) {
                     cellRenderer: BooleanRenderer,
                     editable: true,
                     headerName: 'Rejected?',
-                    field: 'is_rejected',
+                    field: 'isRejected',
                     resizable: true,
                 },
                 {
@@ -119,7 +119,7 @@ function InflectionsInput(props: IProps) {
                     cellRenderer: BooleanRenderer,
                     editable: true,
                     headerName: 'Neologism?',
-                    field: 'is_neologism',
+                    field: 'isNeologism',
                     resizable: true,
                 },
                 {

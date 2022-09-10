@@ -28,14 +28,14 @@ class BookAdapter
      * Transforms the specified glosses array to a view model.
      *
      * @param array $glosses - the glosses should be an ordinary PHP object.
-     * @param array $inflections - an assocative array mapping glosses with inflections (optional)
+     * @param Collection $inflections - an assocative array mapping glosses with inflections (optional)
      * @param mixed $commentsById - an associative array mapping glosses with number of comments (optional)
      * @param string|null $word - the search query yielding the specified list of glosses (optional)
      * @param bool $groupByLanguage - declares whether the glosses should be sectioned up by language  (optional)
      * @param bool $atomDate - ATOM format dates? (optional)
      * @return mixed - return value is determined by $groupByLanguage
      */
-    public function adaptGlosses(array $glosses, array $inflections = [], array $commentsById = [], string $word = null, 
+    public function adaptGlosses(array $glosses, ?Collection $inflections = null, array $commentsById = [], string $word = null, 
         bool $groupByLanguage = true, bool $atomDate = true)
     {
         $numberOfGlosses = count($glosses);
@@ -204,13 +204,13 @@ class BookAdapter
      *
      * @param Gloss|stdClass $gloss
      * @param Collection $languages - an Eloquent collection of languages.
-     * @param array $inflections - an array of inflections with valid *gloss_id*.
+     * @param Collection $inflections - an array of inflections with valid *gloss_id*.
      * @param array $commentsById - an associative array with the entity ID as key, and the number of comments as value.
      * @param bool $atomDate - whether to format dates using the ATOM format.
      * @param LinkHelper $linker
      * @return void
      */
-    public function adaptGloss($gloss, Collection $languages = null, array $inflections = [], array $commentsById = [], 
+    public function adaptGloss($gloss, Collection $languages = null, ?Collection $inflections = null, array $commentsById = [], 
         bool $atomDate = false, LinkHelper $linker = null): \stdClass
     {
         if ($linker === null) {
@@ -310,11 +310,7 @@ class BookAdapter
         // Filter among the inflections, looking for references to the specified gloss.
         // The array is associative two-dimensional with the sentence fragment ID as the key, and an array containing
         // the  inflections associated with the fragment.
-        $inflectionsForGloss = array_filter($inflections, function ($i) use($gloss) {
-            return $i[0]->gloss_id === $gloss->id;
-        });
-        $gloss->inflections = count($inflectionsForGloss) > 0 
-            ? $inflectionsForGloss : null;
+        $gloss->inflections = $inflections !== null && $inflections->has($gloss->id) ? $inflections[$gloss->id] : null;
         $gloss->comment_count = isset($commentsById[$gloss->id]) 
             ? $commentsById[$gloss->id] : 0;
 
@@ -323,19 +319,19 @@ class BookAdapter
 
         // Create links upon the first element of each sentence fragment.
         if ($gloss->inflections !== null) {
-            foreach ($gloss->inflections as $sentenceFragmentId => $inflectionsForFragment) {
-
-                // The [0] restricts the URL to the first element in the array. 
-                if (! isset($inflectionsForFragment[0]->sentence_url)) {
+            foreach ($gloss->inflections as $inflectionGroup) {
+                if ($inflectionGroup[0]->sentence) {
                     // Use the linker to generate the URL
-                    $inflectionsForFragment[0]->sentence_url = $linker->sentence(
-                        $inflectionsForFragment[0]->language_id, 
-                        $inflectionsForFragment[0]->language_name, 
-                        $inflectionsForFragment[0]->sentence_id, 
-                        $inflectionsForFragment[0]->sentence_name,
-                        $inflectionsForFragment[0]->sentence_id,
-                        $sentenceFragmentId
-                    );
+                    foreach ($inflectionGroup as $inflection) {
+                        $inflection->sentence_url = $linker->sentence(
+                            $inflection->language_id,
+                            $inflection->language->name,
+                            $inflection->sentence_id, 
+                            $inflection->sentence->name,
+                            $inflection->sentence_id,
+                            $inflection->sentence_fragment_id
+                        );
+                    }
                 }
                 
             }

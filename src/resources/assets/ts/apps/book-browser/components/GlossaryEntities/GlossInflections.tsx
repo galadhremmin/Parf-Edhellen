@@ -1,3 +1,4 @@
+import TextIcon from '@root/components/TextIcon';
 import React from 'react';
 
 import { IProps } from './GlossInflections._types';
@@ -8,12 +9,11 @@ const GlossInflections = (props: IProps) => {
     if (!gloss.inflections) {
         return null;
     }
-
-    const sentenceIds = Object.keys(gloss.inflections);
+    const inflectionGroups = Object.keys(gloss.inflections);
 
     return <section className="GlossDetails details">
         <header>
-            <h4>Inflections (from phrases)</h4>
+            <h4>Inflections</h4>
         </header>
         <div className="table-responsive details__body">
             <table className="table table-striped table-hover table-condensed">
@@ -25,24 +25,23 @@ const GlossInflections = (props: IProps) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {sentenceIds.map((sentenceId) => {
-                        const inflections = gloss.inflections[sentenceId];
+                    {inflectionGroups.map((inflectionGroup: string) => {
+                        const inflections = gloss.inflections[inflectionGroup];
                         const firstInflection = inflections[0];
 
-                        return <tr key={sentenceId}>
-                            <td>{firstInflection.word}</td>
+                        return <tr key={firstInflection.inflectionGroupUuid}>
                             <td>
-                                <em>{firstInflection.speech}</em>
-                                {inflections.filter((inf) => !! inf.inflection).map(
-                                    (inf, i) => <span key={`${sentenceId}-${i}`}>
-                                        {' '}{inf.inflection}
-                                    </span>,
-                                )}
+                                {firstInflection.isNeologism ? <TextIcon icon="asterisk" /> : null}
+                                {firstInflection.isRejected ? <s>{firstInflection.word}</s> : firstInflection.word}
                             </td>
                             <td>
-                                <a href={firstInflection.sentenceUrl} title={`Go to ${firstInflection.sentenceName}.`}>
-                                    {firstInflection.sentenceName}
-                                </a>
+                                <em>{firstInflection.speech.name}</em>
+                                {' ' + inflections.map(i => i.inflection.name).join(' ')}
+                            </td>
+                            <td>
+                                {firstInflection.sentenceUrl ? <a href={firstInflection.sentenceUrl} title={`Go to ${firstInflection.sentence.name}.`}>
+                                    {firstInflection.sentence.name}
+                                </a> : (firstInflection.source ? `✧ ${firstInflection.source}` : '')}
                             </td>
                         </tr>;
                     })}

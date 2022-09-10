@@ -1,22 +1,25 @@
+import { pickProps } from '@root/utilities/func/props';
 import { Actions } from '../actions';
 import { GroupedInflectionsState, IInflectionAction } from './InflectionsReducer._types';
 
 const InflectionsReducer = (state: GroupedInflectionsState = [], action: IInflectionAction): GroupedInflectionsState => {
     switch (action.type) {
         case Actions.ReceiveInflections: {
-            const nextInflections = action.preloadedInflections.reduce<GroupedInflectionsState>((carry, inflection) => {
-                const pos = carry.findIndex((i) => i.inflectionGroupUuid === inflection.inflectionGroupUuid);
-                if (pos === -1) {
-                    carry.push({
-                        ...inflection,
-                        inflections: [inflection],
-                    });
-                } else {
-                    carry[pos].inflections.push(inflection);
-                }
-
-                return carry;
-            }, []);
+            const nextInflections = Object.keys(action.preloadedInflections).map((inflectionGroup) => ({
+                ...pickProps(action.preloadedInflections[inflectionGroup][0], [
+                    'glossId',
+                    'inflectionGroupUuid',
+                    'isNeologism',
+                    'isRejected',
+                    'languageId',
+                    'sentenceFragmentId',
+                    'source',
+                    'speechId',
+                    'word',
+                    'sentence'
+                ]),
+                inflections: action.preloadedInflections[inflectionGroup],
+            }));
 
             return nextInflections;
         }
