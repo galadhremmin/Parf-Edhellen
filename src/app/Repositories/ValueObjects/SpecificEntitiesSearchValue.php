@@ -6,7 +6,9 @@ class SpecificEntitiesSearchValue extends SearchIndexSearchValue
 {
     public function __construct(array $ids)
     {
-        parent::__construct([]);
+        parent::__construct([
+            'inflections' => true
+        ]);
 
         $args = [ 'ids' => $ids ];
         $this->initialize($args, 'ids', true /* required */);

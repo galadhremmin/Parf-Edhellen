@@ -13,6 +13,7 @@ use App\Models\{
     GlossInflection,
     Inflection,
     ModelBase,
+    Sentence,
     Speech
 };
 use App\Repositories\GlossInflectionRepository;
@@ -75,7 +76,18 @@ class GlossInflectionContributionController extends Controller implements IContr
      */
     public function edit(Contribution $contribution, Request $request)
     {
-        $glossInflections = json_decode($contribution->payload);
+        $inflections = collect(json_decode($contribution->payload));
+        $sentences = Sentence::whereIn('id', $inflections->pluck('sentence_id'))//
+            ->get() //
+            ->keyBy('id');
+        $inflectionGroups = $inflections->map(function ($i) use ($sentences) {
+            if ($i->sentence_id && $sentences->has($i->sentence_id)) {
+                $i->sentence = $sentences[$i->sentence_id];
+            }
+            return $i;
+        }) //
+            ->groupBy('inflection_group_uuid');
+
         $glossPayload = [
             'contribution_id' => $contribution->id,
             'id' => $contribution->dependent_on === null ? $contribution->gloss_id : 0
@@ -99,7 +111,7 @@ class GlossInflectionContributionController extends Controller implements IContr
 
         $viewModel = [
             'payload'           => $glossPayload,
-            'inflections'       => $glossInflections,
+            'inflections'       => $inflectionGroups,
             'form_restrictions' => ['inflections'],
             'review'            => $contribution
         ];
@@ -133,12 +145,14 @@ class GlossInflectionContributionController extends Controller implements IContr
             'inflection_groups.*.is_neologism'          => 'sometimes|boolean',
             'inflection_groups.*.is_rejected'           => 'sometimes|boolean',
             'inflection_groups.*.speech_id'             => 'required|numeric|exists:speeches,id',
+            'inflection_groups.*.sentence_fragment_id'  => 'sometimes|numeric|nullable|exists:sentence_fragments,id',
             'inflection_groups.*.source'                => 'sometimes|nullable|string|max:64',
             'inflection_groups.*.word'                  => 'required|string|max:196',
 
             'inflection_groups.*.inflections'                 => 'required|array',
             'inflection_groups.*.inflections.*.inflection_id' => 'required|numeric|exists:inflections,id'
         ]);
+
         return true;
     }
 
@@ -169,7 +183,7 @@ class GlossInflectionContributionController extends Controller implements IContr
         return array_reduce($groups, function ($inflections, $group) {
             foreach ($group['inflections'] as $inflection) {
                 $inflections[] = new GlossInflection(
-                    array_merge($group, $inflection) // denormalization
+                    array_merge($inflection, $group) // denormalization
                 );
             }
             return $inflections;

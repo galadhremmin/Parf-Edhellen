@@ -4,7 +4,9 @@ import { IReduxAction } from '@root/_types';
 export interface IInflectionAction extends IReduxAction {
     inflectionGroupUuid: string;
     order: number;
-    preloadedInflections: IGlossInflection[];
+    preloadedInflections: {
+        [inflectionGroupUuid: string]: IGlossInflection[]
+    };
     inflectionGroup: IInflectionGroupState;
 }
 

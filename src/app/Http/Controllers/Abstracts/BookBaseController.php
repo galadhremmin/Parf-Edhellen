@@ -6,9 +6,9 @@ use Illuminate\Http\Request;
 
 use App\Repositories\{
     DiscussRepository,
+    GlossInflectionRepository,
     GlossRepository,
-    SearchIndexRepository,
-    SentenceRepository
+    SearchIndexRepository
 };
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
 use App\Adapters\BookAdapter;
@@ -19,17 +19,18 @@ abstract class BookBaseController extends Controller
     protected $_discussRepository;
     protected $_glossRepository;
     protected $_searchIndexRepository;
-    protected $_sentenceRepository;
+    protected $_glossInflectionRepository;
     protected $_bookAdapter;
 
     public function __construct(DiscussRepository $discussRepository, GlossRepository $glossRepository,
-        SearchIndexRepository $searchIndexRepository, SentenceRepository $sentenceRepository, BookAdapter $bookAdapter)
+        GlossInflectionRepository $glossInflectionRepository, SearchIndexRepository $searchIndexRepository,
+        BookAdapter $bookAdapter)
     {
-        $this->_discussRepository     = $discussRepository;
-        $this->_glossRepository       = $glossRepository;
-        $this->_searchIndexRepository = $searchIndexRepository;
-        $this->_sentenceRepository    = $sentenceRepository;
-        $this->_bookAdapter           = $bookAdapter;
+        $this->_discussRepository         = $discussRepository;
+        $this->_glossRepository           = $glossRepository;
+        $this->_searchIndexRepository     = $searchIndexRepository;
+        $this->_glossInflectionRepository = $glossInflectionRepository;
+        $this->_bookAdapter               = $bookAdapter;
     }
 
     /**
@@ -49,7 +50,7 @@ abstract class BookBaseController extends Controller
 
         $gloss = $glosses->first();
         $comments = $this->_discussRepository->getNumberOfPostsForEntities(GlossVersion::class, [$gloss->latest_gloss_version_id]);
-        $inflections = $this->_sentenceRepository->getInflectionsForGlosses([$glossId]);
+        $inflections = $this->_glossInflectionRepository->getInflectionsForGlosses([$glossId]);
         return $this->_bookAdapter->adaptGlosses([$gloss], $inflections, $comments, $gloss->word->word);
     }
 
