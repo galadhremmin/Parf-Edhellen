@@ -14,6 +14,7 @@ import GlossActions from '../actions/GlossActions';
 import GlossForm from '../components/GlossForm';
 import InflectionForm from '../components/InflectionForm';
 import { RootReducer } from '../reducers';
+import { IChangeTrackerReducerState } from '../reducers/ChangeTrackerReducer._types';
 import { IProps } from './MasterForm._types';
 import { FormSection } from '../index._types';
 
@@ -44,7 +45,7 @@ function MasterForm(props: IProps) {
     const _onSubmit = (ev: React.FormEvent) => {
         ev.preventDefault();
         setShowNoChangesWereMade(! Object.keys(changes) //
-            .some((context) => (changes as any)[context] === true)
+            .some((context: keyof IChangeTrackerReducerState) => changes[context] === true)
         );
 
         fireEvent('MasterForm', onSubmit, {
