@@ -119,7 +119,7 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
 
         $inflections = $value->getIncludesInflections() //
             ? $this->_glossInflectionRepository->getInflectionsForGlosses($glossIds) //
-            : [];
+            : collect([]);
         $comments = $this->_discussRepository->getNumberOfPostsForEntities(Gloss::class, $glossIds);
         return $this->_bookAdapter->adaptGlosses($glosses, $inflections, $comments, $value->getWord());
     }
