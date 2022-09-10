@@ -23,7 +23,7 @@ class MarkdownTest extends TestCase
         $expected = '<p><a href="'.htmlentities($uri).'" title="Goes to: '.htmlentities($uri).'">www.reallylonglink.com</a></p>';
     
         $parser = new MarkdownParser;
-        $actual = $parser->parse($uri);
+        $actual = $parser->text($uri);
 
         $this->assertEquals($expected, $actual);
     }
@@ -34,7 +34,7 @@ class MarkdownTest extends TestCase
         $expected = '<p><a href="'.htmlentities($uri).'" title="Goes to: '.htmlentities($uri).'">www.reallylonglink.com</a></p>';
     
         $parser = new MarkdownParser;
-        $actual = $parser->parse('['.$uri.']('.$uri.')');
+        $actual = $parser->text('['.$uri.']('.$uri.')');
 
         $this->assertEquals($expected, $actual);
     }
@@ -47,7 +47,7 @@ class MarkdownTest extends TestCase
         $expected = '<p><a href="'.htmlentities($uri).'">A text sample</a></p>';
     
         $parser = new MarkdownParser;
-        $actual = $parser->parse($markdown);
+        $actual = $parser->text($markdown);
 
         $this->assertEquals($expected, $actual);
     }
@@ -58,7 +58,7 @@ class MarkdownTest extends TestCase
         $expected = '<p>mae govannen <span class="tengwar" data-tengwar-transcribe="true" data-tengwar-mode="sindarin">mellon</span>!</p>';
     
         $parser = new MarkdownParser;
-        $actual = $parser->parse($markdown);
+        $actual = $parser->text($markdown);
 
         $this->assertEquals($expected, $actual);
     }
@@ -69,7 +69,7 @@ class MarkdownTest extends TestCase
         $expected = '<p>mae govannen <a href="/w/mellon/s" title="Navigate to mellon." class="ed-word-reference" data-word="mellon" data-original-word="mellon" data-language-short-name="s">mellon</a>!</p>';
     
         $parser = new MarkdownParser;
-        $actual = $parser->parse($markdown);
+        $actual = $parser->text($markdown);
 
         $this->assertEquals($expected, $actual);
     }
@@ -80,7 +80,7 @@ class MarkdownTest extends TestCase
         $expected = '<p>mae govannen <a href="/w/mellon" title="Navigate to mellon." class="ed-word-reference" data-word="mellon" data-original-word="mellon">mellon</a>!</p>';
     
         $parser = new MarkdownParser;
-        $actual = $parser->parse($markdown);
+        $actual = $parser->text($markdown);
 
         $this->assertEquals($expected, $actual);
     }

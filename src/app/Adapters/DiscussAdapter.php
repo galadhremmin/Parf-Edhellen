@@ -65,7 +65,7 @@ class DiscussAdapter
             $post->content = null;
         } else {
             $parser = new MarkdownParser();
-            $post->content = $parser->parse($post->content);
+            $post->content = $parser->text($post->content);
         }
 
         return $post;

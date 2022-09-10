@@ -49,7 +49,7 @@ class AuthorController extends Controller
         if ($author) {
             $markdownParser = new MarkdownParser();
 
-            $profile = $markdownParser->parse($author->profile ?? '');
+            $profile = $markdownParser->text($author->profile ?? '');
             $stats   = $this->_statisticsRepository->getStatisticsForAccount($author);
         }
 
