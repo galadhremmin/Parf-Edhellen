@@ -225,15 +225,15 @@ class BookAdapter
             $gloss = (object) $gloss->attributesToArray();
 
             $gloss->account_name         = $entity->account->nickname;
-            $gloss->is_canon             = $entity->gloss_group_id ? $entity->gloss_group->is_canon : null;
+            $gloss->is_canon             = $entity->gloss_group_id ? $entity->gloss_group?->is_canon : null;
             $gloss->all_translations     = $entity->translations->implode('translation', $separator);
             $gloss->word                 = $entity->word->word;
             $gloss->normalized_word      = $entity->word->normalized_word;
-            $gloss->type                 = $entity->speech_id ? $entity->speech->name : null;
+            $gloss->type                 = $entity->speech_id ? $entity->speech?->name : null;
             $gloss->gloss_group_id       = $entity->gloss_group_id ?: null;
-            $gloss->gloss_group_label    = $entity->gloss_group_id ? $entity->gloss_group->label : null;
-            $gloss->gloss_group_name     = $entity->gloss_group_id ? $entity->gloss_group->name : null;
-            $gloss->external_link_format = $entity->gloss_group_id ? $entity->gloss_group->external_link_format : null;
+            $gloss->gloss_group_label    = $entity->gloss_group_id ? $entity->gloss_group?->label : null;
+            $gloss->gloss_group_name     = $entity->gloss_group_id ? $entity->gloss_group?->name : null;
+            $gloss->external_link_format = $entity->gloss_group_id ? $entity->gloss_group?->external_link_format : null;
             $gloss->translations         = $entity->translations->map(function ($t) {
                 return new Translation(['translation' => $t->translation]);
             })->all();

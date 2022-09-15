@@ -68,10 +68,11 @@ trait CanMapSentence
 
             $inflectionsForFragment = [];
             if (! $fragment->type && isset($fragmentData['gloss_inflections'])) {
+                $order = 0;
                 foreach ($fragmentData['gloss_inflections'] as $inflection) {
                     $inflectionRel = new GlossInflection([
                         'inflection_id' => intval($inflection['inflection_id']),
-                        'order'         => intval($inflection['order']),
+                        'order'         => $order++,
                         'speech_id'     => $fragment->speech_id,
                         'language_id'   => $sentence->language_id,
                         'gloss_id'      => $fragment->gloss_id,

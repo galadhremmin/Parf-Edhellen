@@ -53,9 +53,10 @@ class HomeController extends Controller
         // Retrieve a random sentence to be featured.
         $randomSentence = Cache::remember('ed.home.sentence', 60 * 24 /* seconds */, function () {
             $sentence = Sentence::approved()->inRandomOrder()
-                ->select('id')->first();
+                ->select('id')
+                ->first();
             return [
-                'sentence' => $this->_sentenceRepository->getSentence($sentence->id)
+                'sentence' => $sentence === null ? null : $this->_sentenceRepository->getSentence($sentence->id)
             ];
         });
 

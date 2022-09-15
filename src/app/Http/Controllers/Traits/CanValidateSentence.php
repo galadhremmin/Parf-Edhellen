@@ -61,7 +61,7 @@ trait CanValidateSentence
                 $rules[$prefix.'tengwar']     = 'required|max:128';
                 // inflections are optional, but when present, have to be declared as an array
                 $rules[$prefix.'gloss_inflections'] = 'sometimes|array';
-                $rules[$prefix.'gloss_inflections.*.order'] = 'required|numeric';
+                $rules[$prefix.'gloss_inflections.*.order'] = 'sometimes|numeric';
                 
                 if ($validateIdCorrectness) {
                     $rules[$prefix.'gloss_id']  = 'required|exists:glosses,id';
