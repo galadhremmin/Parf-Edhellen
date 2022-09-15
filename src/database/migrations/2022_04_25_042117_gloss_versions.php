@@ -166,7 +166,12 @@ class GlossVersions extends Migration
         // There are some cases where glosses have invalid gloss group IDs.
         Log::info("Cleaning data within the `glosses` table");
         Gloss::where('gloss_group_id', 0)->update(['gloss_group_id' => null]);
-        Gloss::where('language_id', 0)->update(['language_id' => Language::where('name', 'Undetermined')->first()->id]);
+        Gloss::where('language_id', 0)->update(['language_id' => Language::firstOrCreate([
+            'name' => 'Undetermined'
+        ], [
+            'order' => 999,
+            'short_name' => ''
+        ])->id]);
         Gloss::where('is_index', 1)->delete();
 
         // update `is_latest` flag for glosses which appear to lack a 'latest' version
@@ -345,5 +350,8 @@ class GlossVersions extends Migration
         Schema::dropIfExists('translation_versions');
         Schema::dropIfExists('gloss_detail_versions');
         Schema::dropIfExists('gloss_versions');
+        Schema::table('glosses', function (Blueprint $table) {
+            $table->dropColumn('latest_gloss_version_id');
+        });
     }
 }

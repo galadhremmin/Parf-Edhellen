@@ -24,14 +24,14 @@ class UtilityApiController extends Controller
 
         $markdown = $request->input('markdown');
         if ($markdown)
-            return [ 'html' => $parser->parse($markdown) ];
+            return [ 'html' => $parser->text($markdown) ];
         
         $markdowns = $request->input('markdowns');
         $keys = array_keys($markdowns);
         $html = [];
 
         foreach ($keys as $key) {
-            $html[$key] = $parser->parse($markdowns[$key]);
+            $html[$key] = $parser->text($markdowns[$key]);
         }
 
         return $html;

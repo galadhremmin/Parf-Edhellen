@@ -21,8 +21,11 @@ class SearchIndexUpdate extends Migration
                 AND language_id IS NULL
         ");
 
+        DB::statement(
+            "DROP INDEX IF EXISTS idx_glosses ON glosses"
+        );
+
         Schema::table('translations', function (Blueprint $table) {
-            $table->dropIndex('idx_glosses');
             $table->index('gloss_id');
         });
     }

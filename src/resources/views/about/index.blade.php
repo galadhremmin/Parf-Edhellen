@@ -25,8 +25,8 @@ a Tolkien-fan, and language enthusiast.
   <dd>The best Quenya lexicon maintained by <em>Helge Fauskanger</em>, presented alongside his excellent course work material on Ardalambion.</dd>
   <dt><a href="http://folk.uib.no/hnohf" target="_blank">Parviphith</a></dt>
   <dd>Sindarin lexicon maintained by <em>Helge Fauskanger</em>.</dd>
-  <dt><a href="http://www.jrrvf.com/hisweloke/sindar/index.html" target="_blank">Hiswelókë's Sindarin Dictionary</a></dt>
-  <dd>A dictionary project initiated by <em>Didier Willis</em> and maintained by the SinDict community, ancient, yet still legendary.</dd>
+  <dt><a href="https://github.com/Omikhleia/sindict" target="_blank">SINDICT</a></dt>
+  <dd>A Sindarin and Noldorin dictionary, compiled, edited and annotated by The Sindarin Dictionary Project.</dd>
   <dt><a href="http://lambenore.free.fr/" target="_blank">Parma Eldalamberon 17 Sindarin Corpus</a></dt>
   <dd>A big thank-you to <em>David Giraudeau</em> for contributing with his compilation of Sindarin words from <em>Parma Eldalamberon</em> 17. You can find the original <a href="http://lambenore.free.fr/downloads/PE17_S.pdf" target="_blank">over here</a>.</dd>
   <dt><a href="http://www.forodrim.org/daeron/md_home.html" target="_blank">Mellonath Daeron</a></dt>

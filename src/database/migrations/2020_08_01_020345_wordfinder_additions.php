@@ -28,22 +28,24 @@ class WordfinderAdditions extends Migration
      */
     public function up()
     {
-        try {
-            DB::beginTransaction();
-            GameWordFinderLanguage::create([
-                'language_id' => $this->_lAd->id,
-                'title'       => $this->_lAd->name,
-                'description' => 'Adûnaic was the official language of the Númenoreans, the kingly denizens of Númenor.'
-            ]);
-            GameWordFinderLanguage::create([
-                'language_id' => $this->_lPe->id,
-                'title'       => $this->_lPe->name,
-                'description' => 'Primitive Elvish is the origin of all Elvish languages. It is believed to have been formed during the Elves\' stay by Cuiviénen, the Water of Awakening.'
-            ]);
-            DB::commit();
-        } catch (\Exception $ex) {
-            DB::rollBack();
-            throw $ex;
+        if ($this->_lAd !== null && $this->_lPe !== null) {
+            try {
+                DB::beginTransaction();
+                GameWordFinderLanguage::create([
+                    'language_id' => $this->_lAd->id,
+                    'title'       => $this->_lAd->name,
+                    'description' => 'Adûnaic was the official language of the Númenoreans, the kingly denizens of Númenor.'
+                ]);
+                GameWordFinderLanguage::create([
+                    'language_id' => $this->_lPe->id,
+                    'title'       => $this->_lPe->name,
+                    'description' => 'Primitive Elvish is the origin of all Elvish languages. It is believed to have been formed during the Elves\' stay by Cuiviénen, the Water of Awakening.'
+                ]);
+                DB::commit();
+            } catch (\Exception $ex) {
+                DB::rollBack();
+                throw $ex;
+            }
         }
     }
 
