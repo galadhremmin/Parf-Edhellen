@@ -49,7 +49,7 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
             $glosses = $this->_glossRepository->getGlosses($value->getIds());
         } else {
             $normalizedWord = StringHelper::normalize($value->getWord(), /* accentsMatter = */ true, /* retainWildcard = */ false);
-            
+
             // Sense morph is technically not supported by the search engine but there's plenty of them in the
             // database grandfathered in by the previous data model. It simply wasn't possible back in the day,
             // when the migration was implemented, to associate disassociated senses with the right gloss, resulting
@@ -58,29 +58,8 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
             // the sense morph is included in the query. If you're rebuilding the database from scratch, this will not
             // do anything as it's currently not possible to create senses within the search keyword table (it'll result
             // in an exception.)
-            $query = SearchKeyword::whereIn('entity_name', [$this->_glossMorph, $this->_senseMorph]) //
-                ->where($value->getReversed() ? 'normalized_keyword_reversed' : 'normalized_keyword', $normalizedWord);
-
-            if ($value->getLanguageId() !== 0) {
-                $query = $query->where('language_id', $value->getLanguageId());
-            }
-            if (! $value->getIncludesOld()) {
-                $query = $query->where('is_old', false);
-            }
-
-            $filters = [];
-            if (! empty($value->getGlossGroupIds())) {
-                $filters['gloss_group_id'] = $value->getGlossGroupIds();
-            }
-            if (! empty($value->getSpeechIds())) {
-                $filters['speech_id'] = $value->getSpeechIds();
-            }
-
-            foreach ($filters as $column => $values) {
-                $query = $query->whereIn($column, $values);
-            }
-
-            $entities = $query //
+            $entities = SearchKeyword::whereIn('entity_name', [$this->_glossMorph, $this->_senseMorph]) //
+                ->where($value->getReversed() ? 'normalized_keyword_reversed' : 'normalized_keyword', $normalizedWord) //
                 ->select('entity_name', 'entity_id') //
                 ->get() //
                 ->groupBy('entity_name');
@@ -103,6 +82,14 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
                     $entityIds,
                     $entities[$this->_glossMorph]->pluck('entity_id')->all()
                 );
+            }
+
+            $filters = [];
+            if (! empty($value->getGlossGroupIds())) {
+                $filters['gloss_group_id'] = $value->getGlossGroupIds();
+            }
+            if (! empty($value->getSpeechIds())) {
+                $filters['speech_id'] = $value->getSpeechIds();
             }
 
             $glosses = $this->_glossRepository->getGlossesByExpandingViaSense(
