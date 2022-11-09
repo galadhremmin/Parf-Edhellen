@@ -27,7 +27,7 @@ describe('utilities/ErrorBoundary', () => {
     });
 
     it('excludes unwanted async JavaScript exceptions', () => {
-        const error = new Error('Loading chunk 8600 failed.');
+        const error = new Error('ChunkLoadError: Loading chunk 8086 failed.');
         component.instance().componentDidCatch(error, null);
         expect(mockedErrorApi.error.notCalled).to.be.true;
     });
