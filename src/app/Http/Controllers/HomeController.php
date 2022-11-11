@@ -12,6 +12,7 @@ use App\Repositories\{
 };
 use App\Repositories\Interfaces\IAuditTrailRepository;
 use App\Models\{
+    AuditTrail,
     Gloss,
     Sentence
 };
@@ -78,7 +79,16 @@ class HomeController extends Controller
 
         // Retrieve the 10 latest audit trail
         $auditTrails = Cache::remember('ed.home.audit', 60 * 5 /* seconds */, function() {
-            return $this->_auditTrailAdapter->adaptAndMerge( $this->_auditTrail->get(10) );
+            return $this->_auditTrailAdapter->adaptAndMerge(
+                $this->_auditTrail->get(10, 0, [
+                    AuditTrail::ACTION_COMMENT_ADD,
+                    AuditTrail::ACTION_COMMENT_LIKE,
+                    AuditTrail::ACTION_GLOSS_ADD,
+                    AuditTrail::ACTION_GLOSS_EDIT,
+                    AuditTrail::ACTION_SENTENCE_ADD,
+                    AuditTrail::ACTION_SENTENCE_EDIT
+                ])
+            );
         });
 
         $data = $randomSentence + $randomGloss + $statistics + [

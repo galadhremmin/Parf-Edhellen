@@ -17,4 +17,14 @@ Route::group([
     Route::delete('account/edit/{id?}',      [ 'uses' => 'AccountApiController@delete' ])
         ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ])
         ->name('api.account.delete');
+
+    Route::get('subscription/{morph}/{id}',  [ 'uses' => 'SubscriptionApiController@getSubscriptionForEntity' ])
+        ->where([ 'morph' => REGULAR_EXPRESSION_SEO_STRING, 'id' => REGULAR_EXPRESSION_NUMERIC ])
+        ->name('api.subscription.specific-entity');
+    Route::post('subscription/{morph}/{id}',  [ 'uses' => 'SubscriptionApiController@subscribeToEntity' ])
+        ->where([ 'morph' => REGULAR_EXPRESSION_SEO_STRING, 'id' => REGULAR_EXPRESSION_NUMERIC ])
+        ->name('api.subscription.specific-entity.subscribe');
+    Route::delete('subscription/{morph}/{id}',  [ 'uses' => 'SubscriptionApiController@unsubscribeFromEntity' ])
+        ->where([ 'morph' => REGULAR_EXPRESSION_SEO_STRING, 'id' => REGULAR_EXPRESSION_NUMERIC ])
+        ->name('api.subscription.specific-entity.unsubscribe');
 });

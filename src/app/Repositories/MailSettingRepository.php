@@ -7,7 +7,6 @@ use Illuminate\Support\Collection;
 use Hash;
 use Validator;
 
-use App\Helpers\StringHelper;
 use App\Models\{ 
     Account,
     MailSetting,
@@ -104,12 +103,22 @@ class MailSettingRepository
      *
      * @param integer $accountId
      * @param mixed $entity
-     * @param boolean $notificationEnabled
+     * @param ?boolean $notificationEnabled
      * @return boolean
      */
-    public function setNotifications(int $accountId, $entity, bool $notificationEnabled)
+    public function setNotifications(int $accountId, $entity, ?bool $notificationEnabled)
     {
         $morph = $this->getMorph($entity);
+
+        if ($notificationEnabled === null) {
+            MailSettingOverride::where([
+                'account_id'  => $accountId,
+                'entity_type' => $morph,
+                'entity_id'   => $entity->id
+            ])->delete();
+
+            return false;
+        }
 
         $override = MailSettingOverride::updateOrCreate([
             'account_id'  => $accountId,
@@ -118,7 +127,6 @@ class MailSettingRepository
         ]);
         $override->disabled = ! $notificationEnabled;
         $override->save();
-
         return ! $override->disabled;
     }
 

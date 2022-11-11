@@ -34,7 +34,7 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
         $this->_authManager = $authManager;
     }
 
-    public function get(int $noOfRows, int $skipNoOfRows = 0)
+    public function get(int $noOfRows, int $skipNoOfRows = 0, array $action_ids = [])
     {
         $query = AuditTrail::orderBy('id', 'desc')
             ->with([
@@ -46,11 +46,11 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
         
         if (! $this->_authManager->check() || ! $this->_authManager->user()->isAdministrator()) {
             // Put audit trail actions here that only administrators should see.
-            $query = $query->where('is_admin', 0)
-                ->whereNotIn('action_id', [
-                    AuditTrail::ACTION_PROFILE_AUTHENTICATED,
-                    AuditTrail::ACTION_PROFILE_FIRST_TIME
-                ]);
+            $query = $query->where('is_admin', 0);
+        }
+
+        if (count($action_ids) > 0) {
+            $query = $query->whereIn('action_id', $action_ids);
         }
         
         $actions = $query->skip($skipNoOfRows)->take($noOfRows)->get();
