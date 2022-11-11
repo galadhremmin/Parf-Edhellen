@@ -35,7 +35,8 @@ type BootstrapIcons = 'arrow-down' |
 'logout' |
 'move' |
 'login' |
-'person';
+'person' |
+'rss';
 
 export interface IProps {
     className?: string;

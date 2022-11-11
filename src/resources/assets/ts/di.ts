@@ -7,6 +7,7 @@ import GlossResourceApiConnector from './connectors/backend/GlossResourceApiConn
 import InflectionResourceApiConnector from './connectors/backend/InflectionResourceApiConnector';
 import LanguageConnector from './connectors/backend/LanguageConnector';
 import SpeechResourceApiConnector from './connectors/backend/SpeechResourceApiConnector';
+import SubscriptionApiConnector from './connectors/backend/SubscriptionApiConnector';
 import UtilityApiConnector from './connectors/backend/UtilityApiConnector';
 import WordFinderConnector from './connectors/backend/WordFinderConnector';
 import { RoleManager } from './security';
@@ -28,6 +29,7 @@ export enum DI {
     LanguageApi = 'LanguageApi',
     RoleManager = 'RoleManager',
     SpeechApi = 'SpeechApi',
+    SubscriptionApi = 'SubscriptionApi',
     UtilityApi = 'UtilityApi',
     WordFinderApi = 'WordFinderApi',
 }
@@ -58,6 +60,8 @@ export const getType = (name: DI): any => {
             return RoleManager;
         case DI.SpeechApi:
             return SpeechResourceApiConnector;
+        case DI.SubscriptionApi:
+            return SubscriptionApiConnector;
         case DI.UtilityApi:
             return UtilityApiConnector;
         case DI.WordFinderApi:
