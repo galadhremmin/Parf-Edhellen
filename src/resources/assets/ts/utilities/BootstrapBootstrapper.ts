@@ -1,3 +1,24 @@
+function shimRequestIdleCallback() {
+    // Currently not supported by Safari, so shimming it to make it work as intended (kind of...)
+    window.requestIdleCallback = window.requestIdleCallback ||
+        function (cb: any) {
+            const start = Date.now();
+            return setTimeout(function () {
+                cb({
+                    didTimeout: false,
+                    timeRemaining: function () {
+                        return Math.max(0, 50 - (Date.now() - start));
+                    }
+                });
+            }, 1);
+        } as any;
+
+    window.cancelIdleCallback = window.cancelIdleCallback || //
+        function (id) {
+            clearTimeout(id);
+        }
+}
+
 function onBsToggle(target: HTMLUListElement, ev: MouseEvent) {
     ev.preventDefault();
 
@@ -40,5 +61,6 @@ function bootstrapBsToggle() {
 }
 
 export default function bootstrapServerSideRenderedBootstrapComponents() {
+    shimRequestIdleCallback();
     bootstrapBsToggle();
 }
