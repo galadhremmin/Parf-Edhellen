@@ -10,6 +10,8 @@ import {
     mergeFragments,
 } from './fragments';
 
+declare var require: any;
+
 describe('apps/form-sentence/utilities/fragments', () => {
     let testData: {
         sentenceFragments: ISentenceFragmentEntity[];

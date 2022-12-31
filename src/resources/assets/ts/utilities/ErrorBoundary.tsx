@@ -16,15 +16,15 @@ export default class ErrorBoundary extends React.Component<IProps, IState> {
         reportErrorApi: resolve(DI.BackendApi),
     };
 
+    public state = {
+        healthy: true,
+    };
+
     public static getDerivedStateFromError() {
         return {
             healthy: false,
         };
     }
-
-    public state = {
-        healthy: true,
-    };
 
     public async componentDidCatch(error: Error, errorInfo: object) {
         const {

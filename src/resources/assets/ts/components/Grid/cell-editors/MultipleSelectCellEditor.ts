@@ -2,7 +2,7 @@ import {
     ICellEditorComp,
     ICellEditorParams,
     PopupComponent,
-} from '@ag-grid-community/core';
+} from 'ag-grid-community';
 
 export default class MultipleSelectCellEditor<T, V = T> extends PopupComponent implements ICellEditorComp {
     private static TEMPLATE = `<div class="ag-input-wrapper" role="presentation">

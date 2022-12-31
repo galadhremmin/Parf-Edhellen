@@ -1,7 +1,7 @@
 import {
     ICellRendererComp,
     ICellRendererParams,
-} from '@ag-grid-community/core';
+} from 'ag-grid-community';
 
 import { IGlossInflection } from '@root/connectors/backend/IBookApi';
 import { IAugmentedCellRendererParams } from '../cell-editors/InflectionCellEditor._types';

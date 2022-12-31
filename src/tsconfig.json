@@ -5,7 +5,7 @@
         "sourceMap": true,
         "noImplicitAny": true,
         "module": "esnext",
-        "target": "ES2017",
+        "target": "ES2018",
         "jsx": "react",
         "allowSyntheticDefaultImports": true,
         "downlevelIteration": false,

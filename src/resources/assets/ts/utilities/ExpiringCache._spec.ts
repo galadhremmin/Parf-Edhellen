@@ -2,10 +2,8 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { ApplicationGlobalPrefix } from '@root/config';
-import ExpiringCache, { IDataWithExpiration, TimeUnit } from './ExpiringCache';
+import ExpiringCache, { TimeUnit } from './ExpiringCache';
 import MemoryStorage from './MemoryStorage';
-
-import '../utilities/Enzyme';
 
 interface ITestData {
     x: number;

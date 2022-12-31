@@ -1,7 +1,7 @@
 import {
     ICellRendererComp,
     ICellRendererParams,
-} from '@ag-grid-community/core';
+} from 'ag-grid-community';
 import { IFragmentGridMetadata } from '../cell-editors/InflectionCellEditor._types';
 
 export default class GlossRenderer implements ICellRendererComp {

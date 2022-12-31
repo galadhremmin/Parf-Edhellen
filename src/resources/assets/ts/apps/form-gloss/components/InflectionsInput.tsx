@@ -6,9 +6,9 @@ import {
     GetRowIdParams,
     GridReadyEvent,
     ICellRendererParams,
-} from '@ag-grid-community/core';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { AgGridReact } from '@ag-grid-community/react';
+} from 'ag-grid-community';
+// import { ClientSideRowModelModule } from 'ag-grid-community/community-modules/client-side-row-model';
+import { AgGridReact } from 'ag-grid-react';
 import InflectionCellEditor from '@root/components/Grid/cell-editors/InflectionCellEditor';
 import { IFragmentGridMetadata } from '@root/components/Grid/cell-editors/InflectionCellEditor._types';
 import SpeechSelectCellEditor from '@root/components/Grid/cell-editors/SpeechSelectCellEditor';
@@ -25,8 +25,8 @@ import { IProps } from './InflectionsInput._types';
 import { IInflectionGroupState } from '../reducers/InflectionsReducer._types';
 import { fireEventAsync } from '@root/components/Component';
 
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import '@ag-grid-community/core/dist/styles/ag-theme-balham.css';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-balham.css';
 import './InflectionsInput.scss';
 
 function InflectionsInput(props: IProps) {
@@ -189,7 +189,7 @@ function InflectionsInput(props: IProps) {
     return <div className="ag-theme-balham InflectionsInput--container">
         {gridColumnDefinition &&
             <AgGridReact
-                modules={[ClientSideRowModelModule]}
+                // modules={[ClientSideRowModelModule]}
                 getRowId={_onGridGetRowId}
                 // rowClassRules={RowClassRules}
                 columnDefs={gridColumnDefinition}

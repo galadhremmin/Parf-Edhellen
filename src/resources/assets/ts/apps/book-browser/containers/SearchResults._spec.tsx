@@ -1,13 +1,11 @@
+import { render } from '@testing-library/react';
 import { expect } from 'chai';
-import { mount, ReactWrapper } from 'enzyme';
 import React from 'react';
 
-import '@root/utilities/Enzyme';
 import { ISearchResult } from '../reducers/SearchResultsReducer._types';
 import { SearchResults } from './SearchResults';
 
 describe('apps/book-browser/containers/SearchResults', () => {
-    let wrapper: ReactWrapper;
     const groups = [ 'Unit test' ];
     const searchResults: ISearchResult[][] = [
         [
@@ -32,18 +30,13 @@ describe('apps/book-browser/containers/SearchResults', () => {
         ],
     ];
 
-    before(() => {
-        wrapper = mount(<SearchResults searchGroups={groups} searchResults={searchResults} word={'word'}/>);
-    });
-
     it(`was mounted with ${searchResults[0].length} search results`, () => {
-        const list = wrapper.find('ul');
+        const { container } = render(<SearchResults searchGroups={groups} searchResults={searchResults} word={'word'}/>);
+
+        const list = container.querySelector('ul');
         expect(list).to.exist;
 
-        const items = list.find('.search-result li');
+        const items = list.querySelectorAll('.search-result li');
         expect(items.length).to.equal(searchResults[0].length);
-
-        const results = items.map((item) => item.find('SearchResult').prop('searchResult'));
-        expect(results).to.deep.equal(searchResults[0]);
     });
 });

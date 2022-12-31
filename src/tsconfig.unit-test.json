@@ -28,7 +28,7 @@
         }
     },
     "include": [
-        "./resources/assets/ts/**/*"
+        "./resources/assets/ts/**/*._spec.{ts,tsx}"
     ],
     "exclude": [
         "node_modules"

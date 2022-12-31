@@ -2,7 +2,7 @@ import React from 'react';
 
 import './OptionalLabel.scss';
 
-const OptionalLabel: React.SFC<any> = () => <span className="OptionalLabel">
+const OptionalLabel = () => <span className="OptionalLabel">
     (optional)
 </span>;
 

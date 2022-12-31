@@ -1,4 +1,4 @@
-import { ColDef } from '@ag-grid-community/core';
+import { ColDef } from 'ag-grid-community';
 
 import { ComponentEventHandler } from '@root/components/Component._types';
 import { ITranslationRow } from './TranslationForm._types';

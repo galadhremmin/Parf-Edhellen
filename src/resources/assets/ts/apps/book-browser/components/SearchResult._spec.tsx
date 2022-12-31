@@ -1,8 +1,6 @@
+import { render, screen } from '@testing-library/react';
 import { expect } from 'chai';
-import { mount, ReactWrapper } from 'enzyme';
 import React from 'react';
-
-import '@root/utilities/Enzyme';
 import { ISearchResult } from '../reducers/SearchResultsReducer._types';
 import SearchResult from './SearchResult';
 
@@ -14,40 +12,37 @@ describe('apps/book-browser/components/SearchResultsContainer', () => {
         word: 'word',
     };
 
-    let wrapper: ReactWrapper = null;
+    it('displays a word', async () => {
+        render(<SearchResult searchResult={searchResult} />);
 
-    before(() => {
-        wrapper = mount(<SearchResult searchResult={searchResult} />);
-    });
-
-    it('displays a word', () => {
-        const link = wrapper.find('a');
+        const link = await screen.findByRole('link');
         expect(link).to.exist;
-        expect(link.prop('href')).to.equal('#');
+        expect(link.getAttribute('href')).to.equal('#');
 
-        const word = link.find('.word');
+        const word = link.querySelector('.word');
         expect(word).to.exist;
-        expect(word.text()).to.equal(searchResult.word);
+        expect(word.textContent).to.equal(searchResult.word);
     });
 
     it('displays original word', () => {
+
         const newSearchResult = { ...searchResult, originalWord: 'original word' };
-        wrapper.setProps({ searchResult: newSearchResult });
+        const { container } = render(<SearchResult searchResult={newSearchResult} />);
 
-        const word = wrapper.find('.word');
+        const word = container.querySelector('.word');
         expect(word).to.exist;
-        expect(word.text()).to.equal(newSearchResult.originalWord);
+        expect(word.textContent).to.equal(newSearchResult.originalWord);
 
-        const originalWord = wrapper.find('.development');
+        const originalWord = container.querySelector('.development');
         expect(originalWord).to.exist;
-        expect(originalWord.text()).to.equal(newSearchResult.word);
+        expect(originalWord.textContent).to.equal(newSearchResult.word);
     });
 
     it('selects the word', () => {
-        const newSearchResult = { ...searchResult, selected: true };
-        wrapper.setProps({ searchResult: newSearchResult });
+        const { container } = render(<SearchResult searchResult={searchResult} selected={true} />);
 
-        const link = wrapper.find('a.selected');
+        const link = container.querySelector('a.selected');
         expect(link).to.exist;
+        expect(link.querySelector('.word').textContent).to.equal(searchResult.word);
     });
 });

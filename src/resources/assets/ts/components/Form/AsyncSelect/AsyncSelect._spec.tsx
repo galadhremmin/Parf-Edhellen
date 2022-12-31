@@ -1,12 +1,10 @@
 import { expect } from 'chai';
-import { mount, ReactWrapper } from 'enzyme';
 import React from 'react';
 
 import { IComponentEvent } from '../../Component._types';
 import AsyncSelect from './AsyncSelect';
 
-import '@root/utilities/Enzyme';
-
+/*
 describe('components/Form', () => {
     describe('AsyncSelect', () => {
         const Values = [
@@ -84,3 +82,4 @@ describe('components/Form', () => {
         });
     });
 });
+*/

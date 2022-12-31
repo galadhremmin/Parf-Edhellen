@@ -15,8 +15,8 @@ import rootReducer from './reducers';
 
 import SentenceForm from './containers/SentenceForm';
 
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import '@ag-grid-community/core/dist/styles/ag-theme-balham.css';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-balham.css';
 
 const store = createStore(rootReducer, undefined,
     composeEnhancers('form-sentence')(

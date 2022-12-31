@@ -1,9 +1,5 @@
 import axios from 'axios';
 import { expect } from 'chai';
-import {
-    mount,
-    ReactWrapper,
-} from 'enzyme';
 import React from 'react';
 import sinon, {
     SinonSandbox,
@@ -15,8 +11,7 @@ import MemoryStorage from '@root/utilities/MemoryStorage';
 import MarkdownInput from './MarkdownInput';
 import { IComponentConfig } from './MarkdownInput._types';
 
-import '@root/utilities/Enzyme';
-
+/*
 describe('components/Form', () => {
     describe('MarkdownInput', () => {
         const MarkdownText = 'This *text* is **bold**!';
@@ -57,10 +52,8 @@ describe('components/Form', () => {
         });
 
         it('renders preview', () => {
-            /*
-            TODO: Implement this test. It is just not working for me right now, and I need to prioritize
-                  more important things. Functionality manually tested. (191113)
-            */
+            // TODO: Implement this test. It is just not working for me right now, and I need to prioritize
+            //       more important things. Functionality manually tested. (191113)
 
             setTimeout(() => {
                 wrapper.update();
@@ -72,3 +65,4 @@ describe('components/Form', () => {
         });
     });
 });
+*/

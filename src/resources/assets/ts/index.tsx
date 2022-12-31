@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { DateTime } from 'luxon';
 
 import BookBrowserApp from './apps/book-browser';
@@ -34,7 +34,9 @@ if (loadLatestScript()) {
      * Render the website's most important component.
      */
     const renderDictionary = () => {
-        render(<BookBrowserApp />, document.getElementById('ed-search-component'));
+        const container = document.getElementById('ed-search-component');
+        const root = createRoot(container!);
+        root.render(<BookBrowserApp />);
     };
 
     /**

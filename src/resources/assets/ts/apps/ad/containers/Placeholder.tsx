@@ -15,7 +15,7 @@ function Placeholder(props: IProps) {
     const {
         ad,
     } = props;
-    return <ins style={PlaceholderStyles}>{ad}</ins>;
+    return <ins className="ed-no-ad" style={PlaceholderStyles}>{ad}</ins>;
 }
 
 export default Placeholder;

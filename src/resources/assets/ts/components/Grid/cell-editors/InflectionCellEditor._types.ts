@@ -1,4 +1,4 @@
-import { ICellEditorParams, ICellRendererParams } from '@ag-grid-community/core';
+import { ICellEditorParams, ICellRendererParams } from 'ag-grid-community';
 import { IGlossEntity, ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
 import { IInflection } from '@root/connectors/backend/IInflectionResourceApi';
 import { ISpeechEntity } from '@root/connectors/backend/ISpeechResourceApi';

@@ -21,7 +21,7 @@ const InternalProps: (keyof IProps)[] = [
     'valueType',
 ];
 
-function AsyncSelect<T = string>(props: IProps<T>) {
+function AsyncSelect<T = {}>(props: IProps<T>) {
     const componentProps = excludeProps<Partial<IProps<T>>>(props, InternalProps);
 
     const {
@@ -55,7 +55,7 @@ function AsyncSelect<T = string>(props: IProps<T>) {
         {allowEmpty && <option key="empty" value="">{emptyText || ''}</option>}
         {values.map((option) => {
             const optionValue = option[valueField] as any;
-            return <option key={optionValue} value={optionValue}>{option[textField]}</option>;
+            return <option key={optionValue} value={optionValue}>{String(option[textField])}</option>;
         })}
     </select>;
 }
