@@ -8,8 +8,8 @@ import {
     LanguageSelect,
     LanguageWithWritingModeOnlyFilter,
 } from './LanguageSelect';
+import { render } from '@testing-library/react';
 
-/*
 describe('components/Form', () => {
     describe('LanguageSelect', () => {
         const languages: ILanguagesResponse = JSON.parse(
@@ -23,46 +23,40 @@ describe('components/Form', () => {
             languageConnector.all.returns(Promise.resolve(languages));
         });
 
-        it('includes all languages by default', (done) => {
-            const wrapper = mount(<LanguageSelect languageConnector={languageConnector as any} />);
-            setTimeout(() => {
-                wrapper.update();
-                expect(wrapper.find('optgroup').length).to.equal(Object.keys(languages).length);
-                expect(wrapper.find('option').length).to.equal(
-                    // starting from 1 here because the component will always have a "select a language" alternative.
-                    Object.keys(languages).reduce((carry, group) => carry + languages[group].length, 1),
-                );
-                done();
-            });
+        it('includes all languages by default', async () => {
+            const result = render(<LanguageSelect languageConnector={languageConnector as any} />);
+            
+            const groups = await result.findAllByRole('group');
+            const options = await result.findAllByRole('option');
+
+            expect(groups.length).to.equal(Object.keys(languages).length);
+            expect(options.length).to.equal(
+                // starting from 1 here because the component will always have a "select a language" alternative.
+                Object.keys(languages).reduce((carry, group) => carry + languages[group].length, 1),
+            );
         });
 
-        it('includes filters languages with writing modes', (done) => {
-            const wrapper = mount(<LanguageSelect languageConnector={languageConnector as any}
+        it('includes filters languages with writing modes', async () => {
+            const wrapper = render(<LanguageSelect languageConnector={languageConnector as any}
                 filter={LanguageWithWritingModeOnlyFilter} />);
-            setTimeout(() => {
-                wrapper.update();
-                expect(wrapper.find('option').length).to.equal(
-                    // starting from 1 here because the component will always have a "select a language" alternative.
-                    Object.keys(languages).reduce(
-                        (carry, group) => carry + languages[group].filter((v) => !! v.tengwarMode).length, 1),
-                );
-                done();
-            });
+
+            const options = await wrapper.findAllByRole('option');
+            expect(options.length).to.equal(
+                // starting from 1 here because the component will always have a "select a language" alternative.
+                Object.keys(languages).reduce(
+                    (carry, group) => carry + languages[group].filter((v) => !! v.tengwarMode).length, 1),
+            );
         });
 
-        it('supports formatting', (done) => {
-            const wrapper = mount(<LanguageSelect languageConnector={languageConnector as any}
+        it('supports formatting', async () => {
+            const wrapper = render(<LanguageSelect languageConnector={languageConnector as any}
                 formatter={(l) => String(l.id)} />);
 
-            setTimeout(() => {
-                wrapper.update();
-                expect(wrapper.find('option').map((v) => v.text())).to.deep.equal(
-                    Object.keys(languages).reduce(
-                        (carry, group) => carry.concat(languages[group].map((v) => String(v.id))), [ 'All languages' ]),
-                );
-                done();
-            });
+            const options = await wrapper.findAllByRole('option');
+            expect(options.map((v) => v.textContent)).to.deep.equal(
+                Object.keys(languages).reduce(
+                    (carry, group) => carry.concat(languages[group].map((v) => String(v.id))), [ 'All languages' ]),
+            );
         });
     });
 });
-*/

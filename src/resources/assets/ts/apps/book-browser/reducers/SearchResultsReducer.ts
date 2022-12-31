@@ -5,7 +5,6 @@ import {
     ISearchResultState,
 } from './SearchResultsReducer._types';
 
-
 const SearchResultsReducer = (state: ISearchResultState = {
     groups: [],
     resultIds: [],

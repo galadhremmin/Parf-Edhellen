@@ -69,7 +69,7 @@ class HomeController extends Controller
                 ->first();
             
             return [
-                'gloss' => $this->_bookAdapter->adaptGloss($gloss)
+                'gloss' => $gloss === null ? null : $this->_bookAdapter->adaptGloss($gloss)
             ];
         });
 

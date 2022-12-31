@@ -1,4 +1,4 @@
-import { IAccountEntity } from './IBookApi';
+import { IAccountEntity } from './IGlossResourceApi';
 
 export interface IGroupsResponse {
     groups: Record<string, IForumGroupEntity[]>;

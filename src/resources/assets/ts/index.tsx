@@ -35,7 +35,7 @@ if (loadLatestScript()) {
      */
     const renderDictionary = () => {
         const container = document.getElementById('ed-search-component');
-        const root = createRoot(container!);
+        const root = createRoot(container);
         root.render(<BookBrowserApp />);
     };
 

@@ -4,10 +4,11 @@
         "outDir": "./public/build",
         "sourceMap": true,
         "noImplicitAny": true,
-        "module": "commonjs",
-        "target": "es6",
+        "module": "CommonJS",
+        "target": "ES2018",
         "jsx": "react",
         "allowSyntheticDefaultImports": true,
+        "downlevelIteration": false,
         "moduleResolution": "node",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
@@ -28,7 +29,7 @@
         }
     },
     "include": [
-        "./resources/assets/ts/**/*._spec.{ts,tsx}"
+        "./resources/assets/**/*"
     ],
     "exclude": [
         "node_modules"

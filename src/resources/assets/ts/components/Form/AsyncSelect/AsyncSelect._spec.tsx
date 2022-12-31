@@ -1,10 +1,10 @@
+import { fireEvent, render, RenderResult, screen } from '@testing-library/react';
 import { expect } from 'chai';
 import React from 'react';
 
 import { IComponentEvent } from '../../Component._types';
 import AsyncSelect from './AsyncSelect';
 
-/*
 describe('components/Form', () => {
     describe('AsyncSelect', () => {
         const Values = [
@@ -17,21 +17,15 @@ describe('components/Form', () => {
 
         const DefaultLoader = () => Promise.resolve(Values);
 
-        it('mounts', (done) => {
-            const wrapper = mount(<AsyncSelect loaderOfValues={DefaultLoader} textField="t" valueField="x" />);
+        it('mounts', async () => {
+            render(<AsyncSelect loaderOfValues={DefaultLoader} textField="t" valueField="x" />);
 
-            setTimeout(() => {
-                wrapper.update();
+            const options = await screen.findAllByRole<HTMLOptionElement>('option');
+            expect(options.length).to.equal(Values.length);
 
-                const options = wrapper.find('option');
-                expect(options.length).to.equal(Values.length);
-
-                for (let i = 0; i < Values.length; i += 1) {
-                    expect(options.at(i).prop('value')).to.equal(Values[i].x);
-                    expect(options.at(i).text()).to.equal(Values[i].t);
-                }
-
-                done();
+            options.forEach((option, i) => {
+                expect(option.value).to.equal(Values[i].x.toString(10));
+                expect(option.textContent).to.equal(Values[i].t);
             });
         });
 
@@ -43,7 +37,7 @@ describe('components/Form', () => {
                 done();
             };
 
-            const wrapper = mount(<AsyncSelect
+            const result = render(<AsyncSelect
                 loaderOfValues={DefaultLoader}
                 name="unit-test"
                 onChange={onChange}
@@ -52,9 +46,12 @@ describe('components/Form', () => {
                 valueType="id"
             />);
 
-            setTimeout(() => {
-                wrapper.update();
-                wrapper.find(`select`).simulate('change', { target: { value: value.x } });
+            result.findAllByRole('option').then((options) => {
+                fireEvent.change(options[0].parentElement, {
+                    target: {
+                        value: value.x,
+                    }
+                });
             });
         });
 
@@ -66,7 +63,7 @@ describe('components/Form', () => {
                 done();
             };
 
-            const wrapper = mount(<AsyncSelect
+            const result = render(<AsyncSelect
                 loaderOfValues={DefaultLoader}
                 name="unit-test"
                 onChange={onChange}
@@ -75,11 +72,13 @@ describe('components/Form', () => {
                 valueType="entity"
             />);
 
-            setTimeout(() => {
-                wrapper.update();
-                wrapper.find(`select`).simulate('change', { target: { value: value.x } });
+            result.findAllByRole('option').then((options) => {
+                fireEvent.change(options[0].parentElement, {
+                    target: {
+                        value: value.x,
+                    }
+                });
             });
         });
     });
 });
-*/

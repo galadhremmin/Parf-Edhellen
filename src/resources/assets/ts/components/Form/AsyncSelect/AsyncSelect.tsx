@@ -21,7 +21,7 @@ const InternalProps: (keyof IProps)[] = [
     'valueType',
 ];
 
-function AsyncSelect<T = {}>(props: IProps<T>) {
+function AsyncSelect<T = any>(props: IProps<T>) {
     const componentProps = excludeProps<Partial<IProps<T>>>(props, InternalProps);
 
     const {

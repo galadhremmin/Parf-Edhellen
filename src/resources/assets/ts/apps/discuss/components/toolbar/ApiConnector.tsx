@@ -1,3 +1,5 @@
+import React from 'react';
+
 import IDiscussApi from '@root/connectors/backend/IDiscussApi';
 import { DI, resolve } from '@root/di';
 

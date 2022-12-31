@@ -1,3 +1,4 @@
+import { render, screen } from '@testing-library/react';
 import axios from 'axios';
 import { expect } from 'chai';
 import React from 'react';
@@ -5,16 +6,13 @@ import sinon, { SinonSandbox } from 'sinon';
 
 import Markdown from './Markdown';
 
-/*
 describe('components/Markdown', () => {
     const MarkdownText = 'This *text* is **bold**!';
     const HtmlText = 'This <i>text</i> is <b>bold</b>!';
 
-    let wrapper: ReactWrapper;
     let sandbox: SinonSandbox;
 
     before(() => {
-        wrapper = mount(<Markdown parse={false} text={MarkdownText} />);
         sandbox = sinon.createSandbox();
     });
 
@@ -22,8 +20,10 @@ describe('components/Markdown', () => {
         sandbox.restore();
     });
 
-    it('mounts', () => {
-        expect(wrapper.text()).to.equal(MarkdownText);
+    it('mounts', async () => {
+        render(<Markdown parse={false} text={MarkdownText} />);
+        const markdownText = await screen.findByText(MarkdownText);
+        expect(markdownText).to.exist;
     });
 
     it('makes the right request', (done) => {
@@ -39,12 +39,10 @@ describe('components/Markdown', () => {
                 });
             });
 
-        wrapper.setProps({
-            parse: true,
-        });
+        render(<Markdown parse={true} text={MarkdownText} />);
     });
 
-    it('can parse', () => {
+    it('can parse', async () => {
         const markdownResponse = Promise.resolve({
             data: {
                 html: HtmlText,
@@ -55,21 +53,12 @@ describe('components/Markdown', () => {
         sandbox.stub(axios, 'post')
             .callsFake(() => markdownResponse);
 
-        wrapper.setProps({
-            parse: true,
-        });
+        render(<Markdown parse={true} text={MarkdownText} />);
+        
+        const textContent = await screen.findAllByText('text');
+        const boldContent = await screen.findAllByText('bold');
 
-        markdownResponse.then(() => {
-            expect(wrapper.children().length).to.equal(1);
-
-            let c = wrapper.childAt(0).find('i');
-            expect(c.length).to.equal(1);
-            expect(c.first().text()).to.equal('text');
-
-            c = wrapper.childAt(0).find('b');
-            expect(c.length).to.equal(1);
-            expect(c.first().text()).to.equal('bold');
-        });
+        expect(textContent.length).to.equal(1);
+        expect(boldContent.length).to.equal(1);
     });
 });
-*/

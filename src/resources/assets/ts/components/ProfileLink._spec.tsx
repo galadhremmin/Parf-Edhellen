@@ -1,51 +1,42 @@
+import { render, screen } from '@testing-library/react';
 import { expect } from 'chai';
 import React from 'react';
 
-import { IAccountEntity } from '../connectors/backend/IBookApi';
+import { IAccountEntity } from '../connectors/backend/IGlossResourceApi';
 import ProfileLink from './ProfileLink';
 
-/*
 describe('components/ProfileLink', () => {
     const SampleAccount = {
         id: Math.floor(Math.random() * 1000),
         nickname: 'Glorfindel',
     } as Partial<IAccountEntity>;
 
-    let wrapper: ReactWrapper;
+    it('renders a clickable link', async () => {
+        render(<ProfileLink account={SampleAccount as any} />);
 
-    before(() => {
-        // Throwing the `SampleAccount` as `any` to suppress the TypeScript compiler error related to
-        // non-essential properties on `IAccountEntity` are optional (due to `Partial` above) on the
-        // `account` attribute.
-        wrapper = mount(<ProfileLink account={SampleAccount as any} />);
+        const link = await screen.findAllByRole('link');
+        expect(link.length).to.equal(1);
+        
+        expect(link[0].getAttribute('href')).to.equal(`/author/${SampleAccount.id}`);
+        expect(link[0].getAttribute('title')).to.equal(`View ${SampleAccount.nickname}'s profile`);
+        expect(link[0].textContent).to.equal(SampleAccount.nickname);
     });
 
-    it('renders a clickable link', () => {
-        expect(wrapper.find('a').prop('href')).to.equal(`/author/${SampleAccount.id}`);
-        expect(wrapper.find('a').prop('title')).to.equal(`View ${SampleAccount.nickname}'s profile`);
-        expect(wrapper.find('a').text()).to.equal(SampleAccount.nickname);
-    });
-
-    it('supports `className` attribute', () => {
+    it('supports `className` attribute', async () => {
         const className = 'test';
-        wrapper.setProps({
-            className,
-        });
 
-        expect(wrapper.find('a').prop('className')).to.equal(className);
+        render(<ProfileLink account={SampleAccount as any} className={className} />);
+
+        const link = await screen.findByRole('link');
+        expect(link.classList.contains(className)).to.be.true;
     });
 
     it('gracefully handles erroneous input', () => {
-        const nullWrapper = mount(<ProfileLink account={null} />);
         const badInput = [ null, undefined, 1, 'string', 1.521 ];
 
         for (const account of badInput) {
-            nullWrapper.setProps({
-                account,
-            });
-
-            expect(nullWrapper.children()).to.be.empty;
+            const { container } = render(<ProfileLink account={account as any} />);
+            expect(container.children.length).to.equal(0);
         }
     });
 });
-*/
