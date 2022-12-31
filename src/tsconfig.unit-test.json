@@ -1,18 +1,20 @@
 {
+    "compileOnSave": false,
     "compilerOptions": {
         "baseUrl": "./resources/assets/ts",
         "outDir": "./public/build",
-        "sourceMap": true,
-        "noImplicitAny": true,
+        "sourceMap": false,
+        "noImplicitAny": false,
         "module": "CommonJS",
-        "target": "ES2018",
+        "target": "ESNext",
         "jsx": "react",
         "allowSyntheticDefaultImports": true,
         "downlevelIteration": false,
         "moduleResolution": "node",
         "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
+        "emitDecoratorMetadata": false,
         "esModuleInterop": true,
+        "strict": false,
         "types": [
             "luxon",
             "react",
@@ -20,18 +22,26 @@
             "react-redux",
             "redux",
             "mocha",
-            "chai"
+            "chai",
+            "node"
         ],
         "paths": {
             "@root/*": [
                 "*"
             ]
-        }
+        },
     },
     "include": [
         "./resources/assets/**/*"
     ],
     "exclude": [
         "node_modules"
-    ]
+    ],
+    "ts-node": {
+        "transpileOnly": false,
+        "esm": true,
+        "preferTsExts": true,
+        "pretty": true,
+        "logError": true
+    }
 }

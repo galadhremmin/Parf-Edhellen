@@ -34,8 +34,7 @@
                 "tsconfig-paths/register",
                 "-r",
                 "ignore-styles",
-                "${workspaceFolder}/resources/assets/ts/*/*._spec.ts",
-                "${workspaceFolder}/resources/assets/ts/*/*._spec.tsx"
+                "${workspaceFolder}/resources/assets/ts/**/*._spec.{ts,tsx}"
             ],
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen"
