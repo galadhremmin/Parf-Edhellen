@@ -1,4 +1,3 @@
-import queryString from 'query-string';
 import { Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
@@ -15,7 +14,7 @@ import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import { DI, resolve } from '@root/di';
 import { stringHashAll } from '@root/utilities/func/hashing';
 import { mapArrayGroupBy } from '@root/utilities/func/mapper';
-import { capitalize } from '@root/utilities/func/string-manipulation';
+import { capitalize, isEmptyString } from '@root/utilities/func/string-manipulation';
 import { toSnakeCase } from '@root/utilities/func/snake-case';
 
 import { RootReducer } from '../reducers';
@@ -31,6 +30,7 @@ import {
     IBrowserHistoryState,
     IExpandSearchResultAction,
 } from './SearchActions._types';
+import { buildQueryString } from '@root/utilities/func/query-string';
 
 export default class SearchActions {
     constructor(private _api: IBookApi = resolve(DI.BookApi),
@@ -406,11 +406,7 @@ export default class SearchActions {
         }
 
         if (noOfSettings > 0) {
-            address += '?' + queryString.stringify(settings, {
-                arrayFormat: 'bracket',
-                skipEmptyString: true,
-                skipNull: true,
-            });
+            address += '?' + buildQueryString(settings);
         }
 
         return {

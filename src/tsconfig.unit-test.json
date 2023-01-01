@@ -36,12 +36,5 @@
     ],
     "exclude": [
         "node_modules"
-    ],
-    "ts-node": {
-        "transpileOnly": false,
-        "esm": true,
-        "preferTsExts": true,
-        "pretty": true,
-        "logError": true
-    }
+    ]
 }

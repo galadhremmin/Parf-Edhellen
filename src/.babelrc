@@ -1,5 +1,0 @@
-{
-  "presets": ["@babel/preset-react", "@babel/preset-env"],
-  "plugins": ["transform-es2015-destructuring", "transform-object-rest-spread", "syntax-dynamic-import"]
-}
-

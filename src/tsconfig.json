@@ -20,7 +20,8 @@
             "react-redux",
             "redux",
             "mocha",
-            "chai"
+            "chai",
+            "node"
         ],
         "paths": {
             "@root/*": [

@@ -17,3 +17,4 @@ package-lock.json
 BingSiteAuth.xml
 *.bak
 *.cache
+resources/assets/ts/coverage
