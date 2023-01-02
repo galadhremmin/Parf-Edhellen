@@ -1,4 +1,10 @@
-import { expect } from 'chai';
+import {
+    afterEach,
+    beforeEach,
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 import sinon from 'sinon';
 
 import { ApplicationGlobalPrefix } from '@root/config';
@@ -12,7 +18,7 @@ interface ITestData {
 describe('utilities/ExpiringCache', () => {
     let sandbox: sinon.SinonSandbox;
 
-    before(() => {
+    beforeEach(() => {
         // ExpiringCache relies on `Date` -- the following causes the Date object to always be 0.
         sandbox = sinon.createSandbox();
     });
@@ -21,7 +27,7 @@ describe('utilities/ExpiringCache', () => {
         sandbox.restore();
     });
 
-    it('transforms data from loader to output data', async () => {
+    test('transforms data from loader to output data', async () => {
         const expectedData = { x: 1 };
         const expectedLifetime = 1;
         const expectedTimeUnit = TimeUnit.Hours;
@@ -34,14 +40,14 @@ describe('utilities/ExpiringCache', () => {
 
         const actualData = await cache.get();
 
-        expect(actualData).to.deep.equal(expectedData);
-        expect(store.getItem(expectedKey)).to.equal(JSON.stringify({
+        expect(actualData).toEqual(expectedData);
+        expect(store.getItem(expectedKey)).toEqual(JSON.stringify({
             d: expectedData,
             t: expectedTimeUnit.valueOf() * expectedLifetime,
         }));
     });
 
-    it('expires', async () => {
+    test('expires', async () => {
         const expiredData = { x: 0 };
         const expectedData = { x: 1 };
         const expectedKey = `${ApplicationGlobalPrefix}.unit-test`;
@@ -66,7 +72,7 @@ describe('utilities/ExpiringCache', () => {
             expectedLifetime, expectedUnit);
         const data = await cache.get();
 
-        expect(store.getItem(expectedKey)).to.equal(newJson);
-        expect(data).to.deep.equal(expectedData);
+        expect(store.getItem(expectedKey)).toEqual(newJson);
+        expect(data).toEqual(expectedData);
     });
 });

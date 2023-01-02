@@ -1,49 +1,55 @@
 /* tslint:disable:no-empty */
-import { expect } from 'chai';
+import {
+    afterAll,
+    beforeAll,
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 import GlobalEventConnector from './GlobalEventConnector';
 
 describe('connectors/GlobalEventConnector', () => {
     let e: GlobalEventConnector;
 
-    beforeEach(() => {
+    beforeAll(() => {
         e = new GlobalEventConnector();
     });
 
-    afterEach(() => {
+    afterAll(() => {
         e.disconnect();
         e = null;
     });
 
-    it('subscribes to an event', () => {
+    test('subscribes to an event', () => {
         e.loadGlossary = () => {};
-        expect(e.listeners[e.loadGlossary as unknown as string]).to.exist;
+        expect(e.listeners[e.loadGlossary as unknown as string]).toEqual(expect.anything());
     });
 
-    it('unsubscribes to an event', () => {
+    test('unsubscribes to an event', () => {
 
         e.loadGlossary = () => {};
         e.loadReference = () => {};
         e.disconnect();
 
-        expect(e.listeners).to.deep.equal({});
+        expect(e.listeners).toEqual({});
     });
 
-    it('fires event', (done) => {
+    test('fires event', (done) => {
         e.loadGlossary = (ev: CustomEvent) => {
-            expect(ev.detail).to.be.null;
+            expect(ev.detail).toBeNull();
             done();
         };
 
         e.fire(e.loadGlossary);
     });
 
-    it('fires event with details', (done) => {
+    test('fires event with details', (done) => {
         const details = {
             x: 1,
         };
 
         e.loadGlossary = (ev: CustomEvent) => {
-            expect(ev.detail).to.deep.equal(details);
+            expect(ev.detail).toEqual(details);
             done();
         };
 

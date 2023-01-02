@@ -1,5 +1,9 @@
 import { render, screen } from '@testing-library/react';
-import { expect } from 'chai';
+import {
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 import React from 'react';
 import { ISearchResult } from '../reducers/SearchResultsReducer._types';
 import SearchResult from './SearchResult';
@@ -12,37 +16,37 @@ describe('apps/book-browser/components/SearchResultsContainer', () => {
         word: 'word',
     };
 
-    it('displays a word', async () => {
+    test('displays a word', async () => {
         render(<SearchResult searchResult={searchResult} />);
 
         const link = await screen.findByRole('link');
-        expect(link).to.exist;
-        expect(link.getAttribute('href')).to.equal('#');
+        expect(link).toEqual(expect.anything());
+        expect(link.getAttribute('href')).toEqual('#');
 
         const word = link.querySelector('.word');
-        expect(word).to.exist;
-        expect(word.textContent).to.equal(searchResult.word);
+        expect(word).toEqual(expect.anything());
+        expect(word.textContent).toEqual(searchResult.word);
     });
 
-    it('displays original word', () => {
+    test('displays original word', () => {
 
         const newSearchResult = { ...searchResult, originalWord: 'original word' };
         const { container } = render(<SearchResult searchResult={newSearchResult} />);
 
         const word = container.querySelector('.word');
-        expect(word).to.exist;
-        expect(word.textContent).to.equal(newSearchResult.originalWord);
+        expect(word).toEqual(expect.anything());
+        expect(word.textContent).toEqual(newSearchResult.originalWord);
 
         const originalWord = container.querySelector('.development');
-        expect(originalWord).to.exist;
-        expect(originalWord.textContent).to.equal(newSearchResult.word);
+        expect(originalWord).toEqual(expect.anything());
+        expect(originalWord.textContent).toEqual(newSearchResult.word);
     });
 
-    it('selects the word', () => {
+    test('selects the word', () => {
         const { container } = render(<SearchResult searchResult={searchResult} selected={true} />);
 
         const link = container.querySelector('a.selected');
-        expect(link).to.exist;
-        expect(link.querySelector('.word').textContent).to.equal(searchResult.word);
+        expect(link).toEqual(expect.anything());
+        expect(link.querySelector('.word').textContent).toEqual(searchResult.word);
     });
 });

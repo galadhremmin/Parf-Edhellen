@@ -1,4 +1,9 @@
-import { expect } from 'chai';
+import {
+    beforeAll,
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 
 import {
     ISentenceFragmentEntity,
@@ -18,11 +23,11 @@ describe('apps/form-sentence/utilities/fragments', () => {
         text: string;
     };
 
-    before(() => {
+    beforeAll(() => {
         testData = require('./fragments._spec.json');
     });
 
-    it('creates valid fragments', async () => {
+    test('creates valid fragments', async () => {
         const fragment = 'A';
         const paragraphNumber = 100;
         const sentenceNumber = 50;
@@ -40,10 +45,10 @@ describe('apps/form-sentence/utilities/fragments', () => {
             type,
         } as ISentenceFragmentEntity;
 
-        expect(actual).to.deep.equal(expected);
+        expect(actual).toEqual(expected);
     });
 
-    it('is case sensitive', async () => {
+    test('is case sensitive', async () => {
         const oldText = 'A B C';
         const newText = 'a b c';
 
@@ -60,10 +65,10 @@ describe('apps/form-sentence/utilities/fragments', () => {
             return f;
         });
 
-        expect(actual).to.deep.equal(expected);
+        expect(actual).toEqual(expected);
     });
 
-    it('transcribes a simple sentence without tengwar', async () => {
+    test('transcribes a simple sentence without tengwar', async () => {
         const input = 'mae govannen mellon!';
         const expected = [{
             fragment: 'mae',
@@ -104,10 +109,10 @@ describe('apps/form-sentence/utilities/fragments', () => {
         }] as ISentenceFragmentEntity[];
         const actual = await parseFragments(input);
 
-        expect(actual).to.deep.equal(expected);
+        expect(actual).toEqual(expected);
     });
 
-    it('handles multiple sentences', async () => {
+    test('handles multiple sentences', async () => {
         const input = 'a b! c! d!';
         const expected = [{
             fragment: 'a',
@@ -175,10 +180,10 @@ describe('apps/form-sentence/utilities/fragments', () => {
         }] as ISentenceFragmentEntity[];
         const actual = await parseFragments(input);
 
-        expect(actual).to.deep.equal(expected);
+        expect(actual).toEqual(expected);
     });
 
-    it('handles multiple sentences and paragraphs', async () => {
+    test('handles multiple sentences and paragraphs', async () => {
         const input = 'a b!\nc!\nd!';
         const expected = [{
             fragment: 'a',
@@ -264,18 +269,18 @@ describe('apps/form-sentence/utilities/fragments', () => {
         }] as ISentenceFragmentEntity[];
         const actual = await parseFragments(input);
 
-        expect(actual).to.deep.equal(expected);
+        expect(actual).toEqual(expected);
     });
 
-    it('restores original set when no changes were made', async () => {
+    test('restores original set when no changes were made', async () => {
         const fragments = await parseFragments(testData.text, null);
         const actual = mergeFragments(fragments, testData.sentenceFragments);
         const expected = testData.sentenceFragments;
 
-        expect(actual).to.deep.equal(expected);
+        expect(actual).toEqual(expected);
     });
 
-    it('merges fragments when forward changes were made to the original set', async () => {
+    test('merges fragments when forward changes were made to the original set', async () => {
         const modifiedText = `A B Changes!\n${testData.text}`;
         const modifiedFragments = await parseFragments(modifiedText, null);
         const originalFragments = testData.sentenceFragments.map((f) => ({
@@ -333,10 +338,10 @@ describe('apps/form-sentence/utilities/fragments', () => {
             ...originalFragments,
         ];
 
-        expect(actual).to.deep.equal(expected);
+        expect(actual).toEqual(expected);
     });
 
-    it('merges fragments when rear changes were made to the original set', async () => {
+    test('merges fragments when rear changes were made to the original set', async () => {
         const modifiedText = `${testData.text}\nA B Changes!`;
         const modifiedFragments = await parseFragments(modifiedText, null);
         const originalFragments = testData.sentenceFragments;
@@ -396,10 +401,10 @@ describe('apps/form-sentence/utilities/fragments', () => {
             },
         ];
 
-        expect(actual).to.deep.equal(expected);
+        expect(actual).toEqual(expected);
     });
 
-    it('merges fragments when middle changes were made to the original set', async () => {
+    test('merges fragments when middle changes were made to the original set', async () => {
         // this is a sophisticated and moderately complicated use case:
         // the user is making changes within the text body (i.e. adding and/or removing fragments).
         // it is essential that we maintain existing fragments to the greatest degree possible.
@@ -475,10 +480,10 @@ describe('apps/form-sentence/utilities/fragments', () => {
                 sentenceNumber: 3,
             })),
         ];
-        expect(actual).to.deep.equal(expected);
+        expect(actual).toEqual(expected);
     });
 
-    it('merges fragments for dispersed changes to the original set', async () => {
+    test('merges fragments for dispersed changes to the original set', async () => {
         // This is the use case where the user has integrated changes throughout the
         // original text.
         const oldText = 'mellon i vellon i mellyn';
@@ -510,6 +515,6 @@ describe('apps/form-sentence/utilities/fragments', () => {
             newFragments[12], // dunadan
         ];
 
-        expect(actual).to.deep.equal(expected);
+        expect(actual).toEqual(expected);
     });
 });

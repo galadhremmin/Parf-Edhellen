@@ -1,5 +1,9 @@
 import { fireEvent, render, RenderResult, screen } from '@testing-library/react';
-import { expect } from 'chai';
+import {
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 import React from 'react';
 
 import { IComponentEvent } from '../../Component._types';
@@ -17,23 +21,23 @@ describe('components/Form', () => {
 
         const DefaultLoader = () => Promise.resolve(Values);
 
-        it('mounts', async () => {
+        test('mounts', async () => {
             render(<AsyncSelect loaderOfValues={DefaultLoader} textField="t" valueField="x" />);
 
             const options = await screen.findAllByRole<HTMLOptionElement>('option');
-            expect(options.length).to.equal(Values.length);
+            expect(options.length).toEqual(Values.length);
 
             options.forEach((option, i) => {
-                expect(option.value).to.equal(Values[i].x.toString(10));
-                expect(option.textContent).to.equal(Values[i].t);
+                expect(option.value).toEqual(Values[i].x.toString(10));
+                expect(option.textContent).toEqual(Values[i].t);
             });
         });
 
-        it('supports id as value output', (done) => {
+        test('supports id as value output', (done) => {
             const value = Values[Math.ceil(Values.length / 2)];
 
             const onChange = (ev: IComponentEvent<any>) => {
-                expect(ev.value).to.equal(value.x);
+                expect(ev.value).toEqual(value.x);
                 done();
             };
 
@@ -55,11 +59,11 @@ describe('components/Form', () => {
             });
         });
 
-        it('supports entity as value output', (done) => {
+        test('supports entity as value output', (done) => {
             const value = Values[Math.ceil(Values.length / 2)];
 
             const onChange = (ev: IComponentEvent<any>) => {
-                expect(ev.value).to.deep.equal(value);
+                expect(ev.value).toEqual(value);
                 done();
             };
 

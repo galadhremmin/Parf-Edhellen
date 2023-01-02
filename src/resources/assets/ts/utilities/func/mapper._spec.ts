@@ -1,4 +1,8 @@
-import { expect } from 'chai';
+import {
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 import {
     mapArrayGroupBy,
     mapper,
@@ -19,7 +23,7 @@ interface IDestination {
 }
 
 describe('utilities/func/convert', () => {
-    it('can convert non-complex types', () => {
+    test('can convert non-complex types', () => {
         const o: IOrigin = {
             x: 10,
             y: 'hello world',
@@ -32,13 +36,13 @@ describe('utilities/func/convert', () => {
             c: 'z',
         }, o);
 
-        expect(d.a).to.equal(o.x);
-        expect(d.b).to.equal(o.y);
-        expect(d.c).to.equal(o.z);
-        expect(d.d).to.be.undefined;
+        expect(d.a).toEqual(o.x);
+        expect(d.b).toEqual(o.y);
+        expect(d.c).toEqual(o.z);
+        expect(d.d).toBeUndefined();
     });
 
-    it('can convert complex types', () => {
+    test('can convert complex types', () => {
         const complexType = {
             hello: 'world',
         };
@@ -57,28 +61,28 @@ describe('utilities/func/convert', () => {
             d: 'n',
         }, o);
 
-        expect(d.a).to.equal(Math.sqrt(o.x));
-        expect(d.b).to.be.undefined;
-        expect(d.c).to.be.null;
-        expect(d.d).to.equal(o.n);
+        expect(d.a).toEqual(Math.sqrt(o.x));
+        expect(d.b).toBeUndefined();
+        expect(d.c).toBeNull();
+        expect(d.d).toEqual(o.n);
     });
 
-    it('returns null when given null', () => {
+    test('returns null when given null', () => {
         const d = mapper<IOrigin, IDestination>({}, null);
-        expect(d).to.be.null;
+        expect(d).toBeNull();
     });
 
-    it('returns null when given undefined', () => {
+    test('returns null when given undefined', () => {
         const d = mapper<IOrigin, IDestination>({}, undefined);
-        expect(d).to.be.null;
+        expect(d).toBeNull();
     });
 
-    it('returns null when given NaN as a number', () => {
+    test('returns null when given NaN as a number', () => {
         const d = mapper<number, IDestination>({}, NaN);
-        expect(d).to.be.null;
+        expect(d).toBeNull();
     });
 
-    it ('can group by a property', () => {
+    test('can group by a property', () => {
         const o: IOrigin[] = [];
         const numberOfElementsInTestSet = 10;
 
@@ -99,13 +103,13 @@ describe('utilities/func/convert', () => {
 
         const keys = Array.from(a.keys());
 
-        expect(keys).to.have.lengthOf(2);
-        expect(keys).to.contain(0);
-        expect(keys).to.contain(1);
+        expect(keys).toHaveLength(2);
+        expect(keys).toContain(0);
+        expect(keys).toContain(1);
 
         for (const key of keys) {
             const values = a.get(key);
-            expect(values).to.have.lengthOf(numberOfElementsInTestSet/2);
+            expect(values).toHaveLength(numberOfElementsInTestSet/2);
             // tslint:disable-next-line: triple-equals
             const expectedValues = o.filter((v) => v.n == key).map<IDestination>((v) => ({
                 a: v.x,
@@ -113,7 +117,7 @@ describe('utilities/func/convert', () => {
                 c: v.z,
             }));
 
-            expect(values).to.deep.equal(expectedValues);
+            expect(values).toEqual(expectedValues);
         }
     });
 });

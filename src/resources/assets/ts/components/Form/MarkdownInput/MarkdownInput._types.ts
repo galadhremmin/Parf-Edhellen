@@ -1,6 +1,6 @@
 import Cache from '@root/utilities/Cache';
 
-import { ComponentEventHandler } from '../../Component._types';
+import { IProps as IMarkdownProps } from '@root/components/Markdown._types';
 import { IProps as IEditTabViewProps } from './Tabs/EditTabView._types';
 
 export interface IComponentProps {
@@ -11,7 +11,7 @@ export interface IComponentConfig {
     enter2Paragraph: boolean;
 }
 
-export interface IProps extends IEditTabViewProps {
+export interface IProps extends IEditTabViewProps, Partial<Pick<IMarkdownProps, 'markdownApi'>> {
     className?: string;
     configCacheFactory?: () => Cache<IComponentConfig>;
 }

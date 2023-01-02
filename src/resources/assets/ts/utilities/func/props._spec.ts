@@ -1,4 +1,8 @@
-import { expect } from 'chai';
+import {
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 
 import {
     excludeProps,
@@ -6,7 +10,7 @@ import {
 } from './props';
 
 describe('utilities/func/props', () => {
-    it('picks props from an object', () => {
+    test('picks props from an object', () => {
         const i = {
             x: 10,
             y: 20,
@@ -18,13 +22,13 @@ describe('utilities/func/props', () => {
         };
 
         let a = excludeProps(i, ['y']);
-        expect(a).to.deep.equal(e);
+        expect(a).toEqual(e);
 
         a = pickProps(i, ['x', 'z']);
-        expect(a).to.deep.equal(e);
+        expect(a).toEqual(e);
     });
 
-    it('sanitizes bad input', () => {
+    test('sanitizes bad input', () => {
         const i = {
             x: 10,
             y: 20,
@@ -36,14 +40,14 @@ describe('utilities/func/props', () => {
 
         for (const input of inputs) {
             let a = excludeProps(i, input as any);
-            expect(a).to.deep.equal(i);
+            expect(a).toEqual(i);
 
             a = pickProps(i, input as any);
-            expect(a).to.deep.equal(e);
+            expect(a).toEqual(e);
         }
     });
 
-    it('supports empty prop names', () => {
+    test('supports empty prop names', () => {
         const i = {
             x: 10,
             y: 20,
@@ -52,9 +56,9 @@ describe('utilities/func/props', () => {
         const e = {};
 
         let a = excludeProps(i, []);
-        expect(a).to.deep.equal(i);
+        expect(a).toEqual(i);
 
         a = pickProps(i, []);
-        expect(a).to.deep.equal(e);
+        expect(a).toEqual(e);
     });
 });

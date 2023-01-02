@@ -1,10 +1,16 @@
-import { expect } from 'chai';
+import {
+    afterEach,
+    beforeEach,
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 import { SecurityRole } from '../config';
 import RoleManager from './RoleManager';
 
 describe('security/RoleManager', () => {
     let rootElement: HTMLElement;
-    before(() => {
+    beforeEach(() => {
         rootElement = document.createElement('div');
     });
 
@@ -12,42 +18,42 @@ describe('security/RoleManager', () => {
         rootElement.className = '';
     });
 
-    it('no active role, but finds default anonymous', () => {
+    test('no active role, but finds default anonymous', () => {
         const manager = new RoleManager(rootElement);
-        expect(manager.currentRole).to.equal(SecurityRole.Anonymous);
-        expect(manager.currentRole).to.equal(SecurityRole.Anonymous); // testing memory cache
+        expect(manager.currentRole).toEqual(SecurityRole.Anonymous);
+        expect(manager.currentRole).toEqual(SecurityRole.Anonymous); // testing memory cache
     });
 
-    it('supports anonymous role', () => {
+    test('supports anonymous role', () => {
         rootElement.classList.add(SecurityRole.Anonymous);
         const manager = new RoleManager(rootElement);
-        expect(manager.currentRole).to.equal(SecurityRole.Anonymous);
-        expect(manager.currentRole).to.equal(SecurityRole.Anonymous); // testing memory cache
+        expect(manager.currentRole).toEqual(SecurityRole.Anonymous);
+        expect(manager.currentRole).toEqual(SecurityRole.Anonymous); // testing memory cache
     });
 
-    it('supports user role', () => {
+    test('supports user role', () => {
         rootElement.classList.add(SecurityRole.User);
         const manager = new RoleManager(rootElement);
-        expect(manager.currentRole).to.equal(SecurityRole.User);
-        expect(manager.currentRole).to.equal(SecurityRole.User); // testing memory cache
+        expect(manager.currentRole).toEqual(SecurityRole.User);
+        expect(manager.currentRole).toEqual(SecurityRole.User); // testing memory cache
     });
 
-    it('supports admin role', () => {
+    test('supports admin role', () => {
         rootElement.classList.add(SecurityRole.Administrator);
         const manager = new RoleManager(rootElement);
-        expect(manager.currentRole).to.equal(SecurityRole.Administrator);
-        expect(manager.currentRole).to.equal(SecurityRole.Administrator); // testing memory cache
+        expect(manager.currentRole).toEqual(SecurityRole.Administrator);
+        expect(manager.currentRole).toEqual(SecurityRole.Administrator); // testing memory cache
     });
 
-    it('no active account ID, supports default 0', () => {
+    test('no active account ID, supports default 0', () => {
         const manager = new RoleManager(rootElement);
-        expect(manager.accountId).to.equal(0);
+        expect(manager.accountId).toEqual(0);
     });
 
-    it('supports account ID', () => {
+    test('supports account ID', () => {
         const accountId = 5;
         rootElement.setAttribute('data-account-id', String(accountId));
         const manager = new RoleManager(rootElement);
-        expect(manager.accountId).to.equal(accountId);
+        expect(manager.accountId).toEqual(accountId);
     });
 });

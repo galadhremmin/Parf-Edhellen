@@ -125,8 +125,12 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
         const {
             showUnusualLanguages,
         } = this.state;
+        const {
+            unusualLanguages,
+            forceShowUnusualLanguages,
+        } = this.props;
 
-        if (this.props.unusualLanguages.length === 0) {
+        if (unusualLanguages.length === 0) {
             return null;
         }
 
@@ -141,8 +145,8 @@ export default class GlossaryEntities extends React.Component<IEntitiesComponent
             </p>
         </>;
 
-        if (showUnusualLanguages) {
-            return this._renderLanguages(this.props.unusualLanguages, abstract, ['ed-glossary--unusual']);
+        if (forceShowUnusualLanguages || showUnusualLanguages) {
+            return this._renderLanguages(unusualLanguages, abstract, ['ed-glossary--unusual']);
         } else {
             return <div className="text-center">
                 {abstract}

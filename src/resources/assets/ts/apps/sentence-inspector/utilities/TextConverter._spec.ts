@@ -1,5 +1,9 @@
 /* tslint:disable */
-import { expect } from 'chai';
+import {
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 
 import {
     ISentenceFragmentEntity,
@@ -17,11 +21,11 @@ describe('apps/sentence/utilities/TextConverter', () => {
     const LatinMap: ITextTransformation = JSON.parse(`{"10":[[0]," ",[1]," ",[2]," ",[3]," ",[4],[5]]}`);
     const TengwarMap: ITextTransformation = JSON.parse(`{"10":[[0,"\`C"]," ",[1,"1~M7T5"]," ",[2,"1U7Ew#6"]," ",[3,"1U7~M5"]," ",[4,"\`Cw#61E5$5"]," ",[5,"\u00c1"]]}`);
 
-    it('supports simple map without substitutions', () => {
+    test('supports simple map without substitutions', () => {
         const map = convert('latin', LatinMap, Fragments);
 
-        expect(map.paragraphs.length).to.equal(1);
-        expect(map.paragraphs[0].length).to.equal(10);
+        expect(map.paragraphs.length).toEqual(1);
+        expect(map.paragraphs[0].length).toEqual(10);
         
         const expectedIds = [
             Fragments[0].id,
@@ -35,7 +39,7 @@ describe('apps/sentence/utilities/TextConverter', () => {
             Fragments[4].id,
             MinimumId,
         ];
-        expect(map.paragraphs[0].map((v) => v.id)).to.deep.equal(expectedIds);
+        expect(map.paragraphs[0].map((v) => v.id)).toEqual(expectedIds);
 
         const expectedFragments = [
             Fragments[0].fragment,
@@ -49,14 +53,14 @@ describe('apps/sentence/utilities/TextConverter', () => {
             Fragments[4].fragment,
             Fragments[5].fragment,
         ];
-        expect(map.paragraphs[0].map((v) => v.fragment)).to.deep.equal(expectedFragments);
+        expect(map.paragraphs[0].map((v) => v.fragment)).toEqual(expectedFragments);
     });
 
-    it('supports map with substitutions', () => {
+    test('supports map with substitutions', () => {
         const map = convert('tengwar', TengwarMap, Fragments);
 
-        expect(map.paragraphs.length).to.equal(1);
-        expect(map.paragraphs[0].length).to.equal(11);
+        expect(map.paragraphs.length).toEqual(1);
+        expect(map.paragraphs[0].length).toEqual(11);
         
         const expectedIds = [
             Fragments[0].id,
@@ -71,7 +75,7 @@ describe('apps/sentence/utilities/TextConverter', () => {
             MinimumId,
             MinimumId,
         ];
-        expect(map.paragraphs[0].map((v) => v.id)).to.deep.equal(expectedIds);
+        expect(map.paragraphs[0].map((v) => v.id)).toEqual(expectedIds);
 
         const expectedFragments = [
             '\`C',
@@ -86,6 +90,6 @@ describe('apps/sentence/utilities/TextConverter', () => {
             ' ',
             '\u00c1'
         ];
-        expect(map.paragraphs[0].map((v) => v.fragment)).to.deep.equal(expectedFragments);
+        expect(map.paragraphs[0].map((v) => v.fragment)).toEqual(expectedFragments);
     });
 });

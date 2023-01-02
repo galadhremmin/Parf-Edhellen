@@ -1,5 +1,9 @@
 import { render, screen } from '@testing-library/react';
-import { expect } from 'chai';
+import {
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 import React from 'react';
 import sinon from 'sinon';
 
@@ -10,7 +14,7 @@ describe('components/Tengwar', () => {
     const DefaultMode = 'sindarin';
     const DefaultModeName = 'unit-test';
 
-    it('can transcribe with Glaemscribe', async () => {
+    test('can transcribe with Glaemscribe', async () => {
         const text = 'ai na vadui dúnadan! mae govannen!';
         const expected = 'yeah...';
         const transcriber = new class MockedTranscriber implements ITranscriber {
@@ -23,8 +27,8 @@ describe('components/Tengwar', () => {
         render(<Tengwar mode={DefaultMode} text={text} transcribe={true} transcriber={transcriber} />);
 
         const tengwar = await screen.findByText(expected);
-        expect(tengwar).to.exist;
+        expect(tengwar).toEqual(expect.anything());
         const title = await screen.findByTitle(`${text} (${DefaultModeName})`);
-        expect(title).to.exist;
+        expect(title).toEqual(expect.anything());
     });
 });

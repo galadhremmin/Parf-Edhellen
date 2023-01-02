@@ -1,19 +1,23 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { expect } from 'chai';
 import React from 'react';
 import { act } from 'react-dom/test-utils';
 import sinon from 'sinon';
+import {
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 
 import SearchQueryInput from './SearchQueryInput';
 
 describe('apps/book-browser/components/SearchQueryInput', () => {
-    it('is mounted', () => {
-        const noop = (ev: any) => { expect(ev).to.to.exist; };
+    test('is mounted', () => {
+        const noop = (ev: any) => { expect(ev).toBe(expect.anything()); };
         const wrapper = render(<SearchQueryInput name="unit-test" value={''} onChange={noop} />);
-        expect(wrapper.container).to.be.not.null;
+        expect(wrapper.container).not.toBeNull();
     });
 
-    it('will propagate props', async () => {
+    test('will propagate props', async () => {
         const expectedProps = {
             name: 'unit-test-name',
             value: 'a value',
@@ -23,11 +27,11 @@ describe('apps/book-browser/components/SearchQueryInput', () => {
 
         const input = await screen.findAllByRole('searchbox');
         for (const prop of Object.keys(expectedProps)) {
-            expect(input[0].getAttribute(prop)).to.equal((expectedProps as any)[prop]);
+            expect(input[0].getAttribute(prop)).toEqual((expectedProps as any)[prop]);
         }
     });
 
-    it('will notify on change', () => {
+    test('will notify on change', () => {
         const expectedValue = 'this is a new value which will trigger `onChange`.';
         const expectedChangeArguments = {
             name: "unit-test",
@@ -47,7 +51,7 @@ describe('apps/book-browser/components/SearchQueryInput', () => {
             );
         });
 
-        expect(changeStub.callCount).to.equal(1);
-        expect(changeStub.firstCall.args[0]).to.deep.equal(expectedChangeArguments);
+        expect(changeStub.callCount).toEqual(1);
+        expect(changeStub.firstCall.args[0]).toEqual(expectedChangeArguments);
     });
 });

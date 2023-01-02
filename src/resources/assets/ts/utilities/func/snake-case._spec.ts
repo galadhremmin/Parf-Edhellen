@@ -1,4 +1,8 @@
-import { expect} from 'chai';
+import {
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 import {
     camelCaseFromSnakeCase,
     propsToSnakeCase,
@@ -7,39 +11,39 @@ import {
 } from './snake-case';
 
 describe('utilities/func/snake-case', () => {
-    it('converts camelCase to snake_case', () => {
+    test('converts camelCase to snake_case', () => {
         const input = 'aSmallStepForAMan';
         const expected = 'a_small_step_for_a_man';
         const actual = toSnakeCase(input);
 
-        expect(actual).to.equal(expected);
+        expect(actual).toEqual(expected);
     });
 
-    it('converts CamelCase to snake_case', () => {
+    test('converts CamelCase to snake_case', () => {
         const input = 'ASmallStepForAMan';
         const expected = 'a_small_step_for_a_man';
         const actual = toSnakeCase(input);
 
-        expect(actual).to.equal(expected);
+        expect(actual).toEqual(expected);
     });
 
-    it('converts camelCase to snake-case (- as delimiter)', () => {
+    test('converts camelCase to snake-case (- as delimiter)', () => {
         const input = 'aSmallStepForAMan';
         const expected = 'a-small-step-for-a-man';
         const actual = toSnakeCase(input, '-');
 
-        expect(actual).to.equal(expected);
+        expect(actual).toEqual(expected);
     });
 
-    it('converts CamelCase to snake-case (- as delimiter)', () => {
+    test('converts CamelCase to snake-case (- as delimiter)', () => {
         const input = 'ASmallStepForAMan';
         const expected = 'a-small-step-for-a-man';
         const actual = toSnakeCase(input, '-');
 
-        expect(actual).to.equal(expected);
+        expect(actual).toEqual(expected);
     });
 
-    it('converts an object with camelCase props to snake_case', () => {
+    test('converts an object with camelCase props to snake_case', () => {
         const obj = {
             aSmallStepForAMan: 10,
             oneGiantLeapForMankind: 20,
@@ -50,28 +54,28 @@ describe('utilities/func/snake-case', () => {
         };
 
         const actual = propsToSnakeCase<any>(obj);
-        expect(Object.keys(actual)).to.deep.equal(Object.keys(expected));
-        expect(actual.a_small_step_for_a_man).to.equal(expected.a_small_step_for_a_man);
-        expect(actual.one_giant_leap_for_mankind).to.equal(expected.one_giant_leap_for_mankind);
+        expect(Object.keys(actual)).toEqual(Object.keys(expected));
+        expect(actual.a_small_step_for_a_man).toEqual(expected.a_small_step_for_a_man);
+        expect(actual.one_giant_leap_for_mankind).toEqual(expected.one_giant_leap_for_mankind);
     });
 
-    it('converts snake_case to camelCase', () => {
+    test('converts snake_case to camelCase', () => {
         const input = 'we_are_not_yet_on_mars';
         const expected = 'weAreNotYetOnMars';
 
         const actual = camelCaseFromSnakeCase(input);
-        expect(actual).to.equal(expected);
+        expect(actual).toEqual(expected);
     });
 
-    it('converts snake-case (- as delimiter) to camelCase', () => {
+    test('converts snake-case (- as delimiter) to camelCase', () => {
         const input = 'we-are-not-yet-on-mars';
         const expected = 'weAreNotYetOnMars';
 
         const actual = camelCaseFromSnakeCase(input, '-');
-        expect(actual).to.equal(expected);
+        expect(actual).toEqual(expected);
     });
 
-    it('converts _snake_case to _camelCase', () => {
+    test('converts _snake_case to _camelCase', () => {
         const snakes = [
             ['_we_are_not_yet_on_mars', '_weAreNotYetOnMars'],
             ['__lan_gladh_iol', '__lanGladhIol'],
@@ -79,11 +83,11 @@ describe('utilities/func/snake-case', () => {
 
         for (const snake of snakes) {
             const actual = camelCaseFromSnakeCase(snake[0]);
-            expect(actual).to.equal(snake[1], `Expected "${actual}" to be "${snake[1]}".`);
+            expect(actual).toEqual(snake[1]);
         }
     });
 
-    it('converts snake_case object to camelCase object', () => {
+    test('converts snake_case object to camelCase object', () => {
         const input = {
             mars: {
                 apparent_magnitude: [-2.94, +1.86],
@@ -125,6 +129,6 @@ describe('utilities/func/snake-case', () => {
         };
 
         const actual = snakeCasePropsToCamelCase(input);
-        expect(actual).to.deep.equal(expected);
+        expect(actual).toEqual(expected);
     });
 });

@@ -2,7 +2,7 @@ import { Actions } from '../actions';
 import { IEntitiesAction } from './EntitiesReducer._types';
 import { ISectionsState } from './SectionsReducer._types';
 
-const SectionsReducer = (state: ISectionsState = {}, action: IEntitiesAction) => {
+const SectionsReducer = (state: ISectionsState = {}, action: IEntitiesAction): ISectionsState => {
     switch (action.type) {
         case Actions.ReceiveEntities:
             return action.entities.sections.reduce<ISectionsState>((map, section) => {

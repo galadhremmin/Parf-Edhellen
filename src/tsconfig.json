@@ -19,8 +19,6 @@
             "react-dom",
             "react-redux",
             "redux",
-            "mocha",
-            "chai",
             "node"
         ],
         "paths": {

@@ -1,5 +1,9 @@
 import { render } from '@testing-library/react';
-import { expect } from 'chai';
+import {
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 import React from 'react';
 
 import { ISearchResult } from '../reducers/SearchResultsReducer._types';
@@ -30,13 +34,13 @@ describe('apps/book-browser/containers/SearchResults', () => {
         ],
     ];
 
-    it(`was mounted with ${searchResults[0].length} search results`, () => {
+    test(`was mounted with ${searchResults[0].length} search results`, () => {
         const { container } = render(<SearchResults searchGroups={groups} searchResults={searchResults} word={'word'}/>);
 
         const list = container.querySelector('ul');
-        expect(list).to.exist;
+        expect(list).toEqual(expect.anything());
 
         const items = list.querySelectorAll('.search-result li');
-        expect(items.length).to.equal(searchResults[0].length);
+        expect(items.length).toEqual(searchResults[0].length);
     });
 });

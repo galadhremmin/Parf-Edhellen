@@ -2,7 +2,7 @@
 
 module.exports = {
   preset: 'ts-jest',
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   rootDir: 'resources/assets/ts',
   testMatch: [
     '**/*._spec.ts?(x)',
@@ -17,5 +17,6 @@ module.exports = {
   },
   moduleNameMapper: {
     '^@root/(.*)$': '<rootDir>/$1',
+    '\\.(css|scss)$': 'identity-obj-proxy',
   },
 };

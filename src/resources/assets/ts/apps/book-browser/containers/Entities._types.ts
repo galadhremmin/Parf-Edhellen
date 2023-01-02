@@ -18,4 +18,5 @@ export interface IEntitiesComponentProps<T = IBookGlossEntity> {
     single: boolean;
     word: string;
     unusualLanguages?: ILanguageEntity[];
+    forceShowUnusualLanguages?: boolean;
 }

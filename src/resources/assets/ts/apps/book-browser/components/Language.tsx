@@ -12,7 +12,7 @@ function Language(props: IProps) {
     return <>
         <h2 className="Language__header">
             { language.isUnusual ? '† ' : '' }
-            { language.name }
+            <span className="language-name">{ language.name }</span>
             &nbsp;
             <span className="tengwar">{ language.tengwar }</span>
         </h2>

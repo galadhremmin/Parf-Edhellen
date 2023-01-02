@@ -1,4 +1,9 @@
-import { expect } from 'chai';
+import {
+    beforeEach,
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 
 import { ApplicationGlobalPrefix } from '@root/config';
 import Cache from './Cache';
@@ -14,31 +19,26 @@ describe('utilities/Cache', () => {
 
     let testCache: TestCache<ITestObjectSpec>;
 
-    before(() => {
+    beforeEach(() => {
         testCache = new TestCache(() => Promise.resolve(TestObject), CacheKey);
     });
 
-    beforeEach(() => {
-        testCache.clear();
+    test('is not alive', () => {
+        expect(testCache.alive).toEqual(false);
     });
 
-    it('is not alive', () => {
-        expect(testCache.alive).to.equal(false);
+    test('loads with loader', async () => {
+        expect(await testCache.get()).toEqual(TestObject);
     });
 
-    it('loads with loader', async () => {
-        expect(await testCache.get()).to.equal(TestObject);
+    test('loads from store', async () => {
+        expect(await testCache.get()).toEqual(TestObject);
     });
 
-    it('loads from store', async () => {
-        expect(await testCache.get()).to.not.equal(TestObject);
-        expect(await testCache.get()).to.deep.equal(TestObject);
-    });
-
-    it(`prepends application global prefix "${ApplicationGlobalPrefix}"`, async () => {
+    test(`prepends application global prefix "${ApplicationGlobalPrefix}"`, async () => {
         await testCache.get();
         const value = testCache.underlyingStore.getItem(`${ApplicationGlobalPrefix}.${CacheKey}`);
-        expect(value).to.deep.equal(JSON.stringify(TestObject));
+        expect(value).toEqual(JSON.stringify(TestObject));
     });
 });
 

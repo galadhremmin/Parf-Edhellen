@@ -1,9 +1,18 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import axios from 'axios';
-import { expect } from 'chai';
+import {
+    afterEach,
+    beforeAll,
+    beforeEach,
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 import React from 'react';
-import sinon, { SinonSandbox } from 'sinon';
+import sinon, { SinonSandbox, SinonStub, SinonStubbedInstance } from 'sinon';
 
+import UtilityApiConnector from '@root/connectors/backend/UtilityApiConnector';
+import IUtilityApi from '@root/connectors/backend/IUtilityApi';
 import Markdown from './Markdown';
 
 describe('components/Markdown', () => {
@@ -11,54 +20,50 @@ describe('components/Markdown', () => {
     const HtmlText = 'This <i>text</i> is <b>bold</b>!';
 
     let sandbox: SinonSandbox;
+    let markdownApiStub: SinonStubbedInstance<IUtilityApi>;
 
-    before(() => {
+    beforeAll(() => {
         sandbox = sinon.createSandbox();
-    });
+
+        markdownApiStub = sinon.createStubInstance(UtilityApiConnector);
+        markdownApiStub.parseMarkdown.resolves({
+            html: HtmlText,
+        });
+    })
 
     afterEach(() => {
         sandbox.restore();
     });
 
-    it('mounts', async () => {
-        render(<Markdown parse={false} text={MarkdownText} />);
-        const markdownText = await screen.findByText(MarkdownText);
-        expect(markdownText).to.exist;
-    });
+    test('mounts', async () => {
+        render(<Markdown parse={false} text={MarkdownText} markdownApi={null} />);
 
-    it('makes the right request', (done) => {
-        sandbox.stub(axios, 'post')
-            .callsFake((path, data) => {
-                expect(path).to.contain('utility/markdown');
-                expect(data).to.deep.equal({
-                    markdown: MarkdownText,
-                });
-                done();
-                return Promise.resolve({
-                    html: ''
-                });
-            });
-
-        render(<Markdown parse={true} text={MarkdownText} />);
-    });
-
-    it('can parse', async () => {
-        const markdownResponse = Promise.resolve({
-            data: {
-                html: HtmlText,
-            },
-            status: 200,
+        await waitFor(() => {
+            const markdownText = screen.getByText(MarkdownText);
+            expect(markdownText).toEqual(expect.anything());
         });
+    });
 
-        sandbox.stub(axios, 'post')
-            .callsFake(() => markdownResponse);
+    test('makes the right request', async () => {
 
-        render(<Markdown parse={true} text={MarkdownText} />);
+        render(<Markdown parse={true} text={MarkdownText} markdownApi={markdownApiStub} />);
+
+        await waitFor(() => {
+            expect(markdownApiStub.parseMarkdown.calledOnceWith({
+                markdown: MarkdownText,
+            })).toBeTruthy();
+        });
+    });
+
+    test('can parse', async () => {
+        render(<Markdown parse={true} text={MarkdownText} markdownApi={markdownApiStub} />);
         
-        const textContent = await screen.findAllByText('text');
-        const boldContent = await screen.findAllByText('bold');
+        await waitFor(() => {
+            const textContent = screen.getAllByText('text');
+            const boldContent = screen.getAllByText('bold');
 
-        expect(textContent.length).to.equal(1);
-        expect(boldContent.length).to.equal(1);
+            expect(textContent.length).toEqual(1);
+            expect(boldContent.length).toEqual(1);
+        });
     });
 });

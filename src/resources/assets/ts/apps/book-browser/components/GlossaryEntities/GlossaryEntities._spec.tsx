@@ -1,36 +1,25 @@
-import { expect } from 'chai';
+import {
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 
-import { IEntitiesResponse } from '@root/connectors/backend/IBookApi';
+import { IBookGlossEntity, IEntitiesResponse, ILanguageEntity } from '@root/connectors/backend/IBookApi';
 import { snakeCasePropsToCamelCase } from '@root/utilities/func/snake-case';
 import { Actions } from '../../actions';
 import EntitiesReducer from '../../reducers/EntitiesReducer';
 import SectionsReducer from '../../reducers/SectionsReducer';
 import LanguagesReducer from '../../reducers/CategoriesReducer';
 import GlossaryEntities from './GlossaryEntities';
+import { act } from 'react-dom/test-utils';
 
 // Define node `require` for synchronous file loading
 declare var require: any;
 
-describe('apps/book-browser/containers/GlossaryEntities', async () => {
-    it('is loading', async () => {
-        render(<GlossaryEntities
-            sections={[]}
-            isEmpty={false}
-            languages={[]}
-            loading={true}
-            single={false}
-            unusualLanguages={[]}
-            word={null}
-        />);
-
-        await screen.findAllByRole('form');
-        // expect(container.querySelector('.sk-bounce')).to.exist;
-    });
-
-    /*
-    it('displays results', () => {
+describe('apps/book-browser/containers/GlossaryEntities', () => {
+    test('displays results', async () => {
         const testData = snakeCasePropsToCamelCase<IEntitiesResponse<any>>(
             require('./GlossaryEntities._spec.glossary'),
         );
@@ -42,28 +31,32 @@ describe('apps/book-browser/containers/GlossaryEntities', async () => {
         const sections = SectionsReducer(null, action);
         const languages = LanguagesReducer(null, action);
 
-        const { container } = render(<GlossaryEntities
+        render(<GlossaryEntities
             sections={sections}
             isEmpty={false}
             languages={languages.common}
             loading={false}
             single={false}
             unusualLanguages={languages.unusual}
+            forceShowUnusualLanguages={true}
             word={glossary.word}
         />);
 
-        // the test data collection contains unusual and common languages, so there
-        // should be two sections, one of which shouldb be flagged as `unusual`.
-        expect(container.querySelectorAll('.ed-glossary').length).to.equal(2);
+        await waitFor(() => {
+            const languageTitles = screen.getAllByRole('heading', {
+                level: 2,
+            });
+            const expectedLanguages = languages.common.concat(languages.unusual).map((language) => language.name);
 
-        const unusualSection = container.querySelector('.ed-glossary.ed-glossary--unusual');
-        expect(unusualSection).to.exist;
-        expect(unusualSection.textContent).to.contain('There are more words but they are from Tolkien\'s earlier conceptional periods');
+            expect(languageTitles).toHaveLength(expectedLanguages.length);
+            expect(languageTitles.map((header) => header.querySelector('.language-name').textContent)).toEqual(expectedLanguages);
 
-        // Expect there to be a `Language` component per language.
-        expect(container.querySelectorAll('.ed-glossary__language').length).to.equal(
-            languages.unusual.length + languages.common.length,
-        );
+            const wordBlocks = screen.getAllByRole('heading', {
+                level: 3,
+            });
+            const expectedWords = Object.values(sections).flat(1) as IBookGlossEntity[];
+            expect(wordBlocks).toHaveLength(expectedWords.length + 1 /* because of "There are more words but they are from Tolkien's earlier conceptional periods" */);
+            expect(wordBlocks.map(block => block.textContent)).toContain('There are more words but they are from Tolkien\'s earlier conceptional periods');
+        });
     });
-    */
 });

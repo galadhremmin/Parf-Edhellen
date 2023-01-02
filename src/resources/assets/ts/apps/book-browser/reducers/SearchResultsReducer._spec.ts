@@ -1,11 +1,15 @@
-import { expect } from 'chai';
+import {
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 
 import { Actions } from '../actions';
 import SearchResultsReducer from './SearchResultsReducer';
 import { ISearchResult } from './SearchResultsReducer._types';
 
 describe('apps/book-browser/reducers/SearchResultsReducer', () => {
-    it ('builds correct state', () => {
+    test('builds correct state', () => {
         const keywords = new Map<string, ISearchResult[]>();
         const groupName = 'unit test';
         const values = [
@@ -45,14 +49,14 @@ describe('apps/book-browser/reducers/SearchResultsReducer', () => {
             type: Actions.ReceiveSearchResults,
         });
 
-        expect(actual.groups).to.have.lengthOf(1);
-        expect(actual.groups).to.contain(groupName);
-        expect(actual.resultIds).to.deep.equal(values.map((v) => v.id));
-        expect(actual.resultsByGroupIndex).to.deep.equal([values]);
-        expect(actual.resultsById).to.deep.equal(values.reduce((carry, v) => {
+        expect(actual.groups).toHaveLength(1);
+        expect(actual.groups).toContain(groupName);
+        expect(actual.resultIds).toEqual(values.map((v) => v.id));
+        expect(actual.resultsByGroupIndex).toEqual([values]);
+        expect(actual.resultsById).toEqual(values.reduce((carry, v) => {
             carry[v.id] = v;
             return carry;
         }, {} as any));
-        expect(actual.selectedId).to.equal(0);
+        expect(actual.selectedId).toEqual(0);
     });
 });

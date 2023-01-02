@@ -1,8 +1,12 @@
-import { expect } from 'chai';
+import {
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 import { stringHash, stringHashAll } from './hashing';
 
 describe('utilities/func/hashing', () => {
-    it('hashes correctly', () => {
+    test('hashes correctly', () => {
         const input = [
             'a', 'b', 'revenge', 'revenue',
         ];
@@ -11,13 +15,13 @@ describe('utilities/func/hashing', () => {
         ];
         const actual = input.map(stringHash);
 
-        expect(actual).to.deep.equal(expected);
+        expect(actual).toEqual(expected);
     });
 
-    it('hashes multiple components', () => {
+    test('hashes multiple components', () => {
         const actual = stringHashAll('a', 'b', 'c');
         const expected = stringHash('a|b|c');
 
-        expect(actual).to.equal(expected);
+        expect(actual).toEqual(expected);
     });
 });

@@ -1,13 +1,13 @@
 {
-    "compileOnSave": false,
     "compilerOptions": {
         "baseUrl": "./resources/assets/ts",
         "outDir": "./public/build",
-        "sourceMap": false,
+        "sourceMap": true,
         "noImplicitAny": false,
         "module": "CommonJS",
         "target": "ESNext",
         "jsx": "react",
+        "allowJs": true,
         "allowSyntheticDefaultImports": true,
         "downlevelIteration": false,
         "moduleResolution": "node",
@@ -15,14 +15,13 @@
         "emitDecoratorMetadata": false,
         "esModuleInterop": true,
         "strict": false,
+        "pretty": true,
         "types": [
             "luxon",
             "react",
             "react-dom",
             "react-redux",
             "redux",
-            "mocha",
-            "chai",
             "node"
         ],
         "paths": {
@@ -35,6 +34,7 @@
         "./resources/assets/**/*"
     ],
     "exclude": [
-        "node_modules"
+        "node_modules/**/*",
+        "build/**/*"
     ]
 }

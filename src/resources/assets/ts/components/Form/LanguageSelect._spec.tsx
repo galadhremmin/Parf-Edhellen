@@ -1,4 +1,9 @@
-import { expect } from 'chai';
+import {
+    beforeAll,
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 import React from 'react';
 import sinon from 'sinon';
 
@@ -18,42 +23,42 @@ describe('components/Form', () => {
         );
         let languageConnector: sinon.SinonStubbedInstance<LanguageConnector>;
 
-        before(() => {
+        beforeAll(() => {
             languageConnector = sinon.createStubInstance(LanguageConnector);
             languageConnector.all.returns(Promise.resolve(languages));
         });
 
-        it('includes all languages by default', async () => {
+        test('includes all languages by default', async () => {
             const result = render(<LanguageSelect languageConnector={languageConnector as any} />);
             
             const groups = await result.findAllByRole('group');
             const options = await result.findAllByRole('option');
 
-            expect(groups.length).to.equal(Object.keys(languages).length);
-            expect(options.length).to.equal(
+            expect(groups.length).toEqual(Object.keys(languages).length);
+            expect(options.length).toEqual(
                 // starting from 1 here because the component will always have a "select a language" alternative.
                 Object.keys(languages).reduce((carry, group) => carry + languages[group].length, 1),
             );
         });
 
-        it('includes filters languages with writing modes', async () => {
+        test('includes filters languages with writing modes', async () => {
             const wrapper = render(<LanguageSelect languageConnector={languageConnector as any}
                 filter={LanguageWithWritingModeOnlyFilter} />);
 
             const options = await wrapper.findAllByRole('option');
-            expect(options.length).to.equal(
+            expect(options.length).toEqual(
                 // starting from 1 here because the component will always have a "select a language" alternative.
                 Object.keys(languages).reduce(
                     (carry, group) => carry + languages[group].filter((v) => !! v.tengwarMode).length, 1),
             );
         });
 
-        it('supports formatting', async () => {
+        test('supports formatting', async () => {
             const wrapper = render(<LanguageSelect languageConnector={languageConnector as any}
                 formatter={(l) => String(l.id)} />);
 
             const options = await wrapper.findAllByRole('option');
-            expect(options.map((v) => v.textContent)).to.deep.equal(
+            expect(options.map((v) => v.textContent)).toEqual(
                 Object.keys(languages).reduce(
                     (carry, group) => carry.concat(languages[group].map((v) => String(v.id))), [ 'All languages' ]),
             );

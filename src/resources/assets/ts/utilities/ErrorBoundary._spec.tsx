@@ -1,4 +1,9 @@
-import { expect } from 'chai';
+import {
+    beforeAll,
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 import sinon, { SinonStubbedInstance } from 'sinon';
 
 import ApiConnector from '@root/connectors/ApiConnector';
@@ -8,7 +13,7 @@ describe('utilities/ErrorBoundary', () => {
     let component: ErrorBoundary;
     let mockedErrorApi: SinonStubbedInstance<ApiConnector>;
 
-    beforeEach(() => {
+    beforeAll(() => {
         mockedErrorApi = sinon.createStubInstance(ApiConnector);
         component = new ErrorBoundary({
             children: [],
@@ -16,21 +21,21 @@ describe('utilities/ErrorBoundary', () => {
         });
     });
 
-    it('excludes unwanted CSS exceptions', () => {
+    test('excludes unwanted CSS exceptions', () => {
         const error = new Error('Loading CSS chunk 8600 failed.');
         component.componentDidCatch(error, null);
-        expect(mockedErrorApi.error.notCalled).to.be.true;
+        expect(mockedErrorApi.error.notCalled).toBeTruthy();
     });
 
-    it('excludes unwanted async JavaScript exceptions', () => {
+    test('excludes unwanted async JavaScript exceptions', () => {
         const error = new Error('ChunkLoadError: Loading chunk 8086 failed.');
         component.componentDidCatch(error, null);
-        expect(mockedErrorApi.error.notCalled).to.be.true;
+        expect(mockedErrorApi.error.notCalled).toBeTruthy();
     });
 
-    it('saves wanted exceptions', () => {
+    test('saves wanted exceptions', () => {
         const error = new Error('This is a wanted exception');
         component.componentDidCatch(error, null);
-        expect(mockedErrorApi.error.calledOnce).to.be.true;
+        expect(mockedErrorApi.error.calledOnce).toBeTruthy();
     });
 });

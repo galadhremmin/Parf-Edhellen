@@ -1,4 +1,9 @@
-import { expect } from 'chai';
+import {
+    beforeAll,
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 
 import { TestCache } from '../../utilities/Cache._spec';
 import LanguageConnector from './LanguageConnector';
@@ -18,25 +23,25 @@ const CategorizedLanguages = {
 describe('connectors/backend/LanguageConnector', () => {
     let languages: LanguageConnector;
 
-    before(() => {
+    beforeAll(() => {
         const cache = new TestCache<any>(() => Promise.resolve(CategorizedLanguages), 'ed.unit-test');
         languages = new LanguageConnector(null, cache);
     });
 
-    it('returns categoried languages', async () => {
+    test('returns categoried languages', async () => {
         const all = await languages.all();
-        expect(all).to.equal(CategorizedLanguages);
+        expect(all).toEqual(CategorizedLanguages);
     });
 
-    it('finds a specific language', async () => {
+    test('finds a specific language', async () => {
         const expected = CategorizedLanguages.category[0];
         const language = await languages.find(expected.name, 'name');
-        expect(language).to.equal(expected);
+        expect(language).toEqual(expected);
     });
 
-    it('cannot find a language', async () => {
+    test('cannot find a language', async () => {
         const expected: any = null;
         const language = await languages.find('bogus', 'name');
-        expect(language).to.equal(expected);
+        expect(language).toEqual(expected);
     });
 });

@@ -1,16 +1,26 @@
 import axios from 'axios';
-import { expect } from 'chai';
+import {
+    afterEach,
+    beforeAll,
+    beforeEach,
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 import React from 'react';
 import sinon, {
     SinonSandbox,
+    SinonStubbedInstance,
 } from 'sinon';
+import { render, screen, waitFor } from '@testing-library/react';
 
+import UtilityApiConnector from '@root/connectors/backend/UtilityApiConnector';
+import IUtilityApi from '@root/connectors/backend/IUtilityApi';
 import Cache from '@root/utilities/Cache';
 import MemoryStorage from '@root/utilities/MemoryStorage';
 
 import MarkdownInput from './MarkdownInput';
 import { IComponentConfig } from './MarkdownInput._types';
-import { render, screen } from '@testing-library/react';
 
 describe('components/Form', () => {
     describe('MarkdownInput', () => {
@@ -18,15 +28,19 @@ describe('components/Form', () => {
         const HtmlText = 'This <em>text</em> is <b>bold</b>!';
 
         let sandbox: SinonSandbox;
+        let markdownApiStub: SinonStubbedInstance<IUtilityApi>;
         let config: () => Cache<IComponentConfig>;
 
-        before(() => {
+        beforeAll(() => {
             sandbox = sinon.createSandbox();
+
+            markdownApiStub = sinon.createStubInstance(UtilityApiConnector);
+            markdownApiStub.parseMarkdown.resolves({
+                html: HtmlText,
+            });
         });
 
         beforeEach(() => {
-            sandbox.stub(axios, 'post').returns(Promise.resolve(HtmlText));
-
             // This is necessary as `localstorage` is not supported by Mocha (in this context).
             config = () => new Cache<IComponentConfig>(() => Promise.resolve({
                 enter2Paragraph: true,
@@ -37,18 +51,23 @@ describe('components/Form', () => {
             sandbox.restore();
         });
 
-        it('mounts', async () => {
-            render(<MarkdownInput value={MarkdownText} configCacheFactory={config} />);
+        test('mounts', async () => {
+            render(<MarkdownInput value={MarkdownText} configCacheFactory={config} markdownApi={markdownApiStub} />);
 
-            const textareas = await screen.findAllByRole('textbox');
-            expect(textareas).to.have.lengthOf(1);
-            expect(textareas[0]).to.have.property('value', MarkdownText);
+            await waitFor(() => {
+                const textareas = screen.getAllByRole('textbox');
+                expect(textareas).toHaveLength(1);
+                expect(textareas[0]).toHaveProperty('value', MarkdownText);
+            });
         });
 
-        it('respects required', async () => {
-            render(<MarkdownInput value={MarkdownText} configCacheFactory={config} required={true} />);
+        test('respects required', async () => {
+            render(<MarkdownInput value={MarkdownText} configCacheFactory={config} required={true} markdownApi={markdownApiStub} />);
 
-            expect(await screen.findByRole('textbox')).to.have.property('required', true);
+            await waitFor(() => {
+                const textBox = screen.getByRole('textbox');
+                expect(textBox).toHaveProperty('required', true);
+            });
         });
     });
 });

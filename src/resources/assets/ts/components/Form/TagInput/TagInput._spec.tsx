@@ -1,6 +1,10 @@
 import { fireEvent, render } from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
-import { expect } from 'chai';
+import {
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 import React from 'react';
 
 import TagInput from './TagInput';
@@ -8,7 +12,7 @@ import { IComponentEvent } from '@root/components/Component._types';
 
 describe('components/Form', () => {
     describe('TagInput', () => {
-        it('mounts', async () => {
+        test('mounts', async () => {
             const tags = [
                 'A', 'B', 'C', 'D',
             ];
@@ -18,13 +22,13 @@ describe('components/Form', () => {
             </span>);
 
             const tagInputs = await wrapper.findAllByRole('checkbox');
-            expect(tagInputs.length).to.equal(tags.length);
+            expect(tagInputs.length).toEqual(tags.length);
 
             const inputs = await wrapper.findAllByRole('textbox');
-            expect(inputs.length).to.equal(1);
+            expect(inputs.length).toEqual(1);
         });
 
-        it('can add tags', async () => {
+        test('can add tags', async () => {
             const original = [ 'S', '3', 'X', 'Y' ];
             const inject = 'i pace';
             const expected = [ '3', inject, 'S', 'X', 'Y' ];
@@ -47,15 +51,15 @@ describe('components/Form', () => {
                 key: 'Enter',
             });
 
-            expect(actual).to.deep.equal(expected);
+            expect(actual).toEqual(expected);
         });
 
-        it('trims tags', async () => {
+        test('trims tags', async () => {
             const inject = ' tesla ';
             const expected = 'tesla';
 
             const _onChange = (ev: IComponentEvent<string[]>) => {
-                expect(ev.value).to.contain(expected);
+                expect(ev.value).toContain(expected);
             };
             const wrapper = render(<TagInput name="unit-test" onChange={_onChange} />);
             const input = await wrapper.findByRole('textbox');
