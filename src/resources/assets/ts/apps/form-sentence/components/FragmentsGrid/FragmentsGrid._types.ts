@@ -1,7 +1,6 @@
 import {
     ColDef,
-    ICellRendererParams,
-} from '@ag-grid-community/core';
+} from 'ag-grid-community';
 
 import { ComponentEventHandler } from '@root/components/Component._types';
 import { IFragmentGridMetadata } from '@root/components/Grid/cell-editors/InflectionCellEditor._types';

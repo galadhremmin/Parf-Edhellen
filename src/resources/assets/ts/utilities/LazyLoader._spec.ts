@@ -1,22 +1,27 @@
-import { expect } from 'chai';
+import {
+    beforeEach,
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 import LazyLoader from './LazyLoader';
 
 describe('utilities/LazyLoader', () => {
     let loader: LazyLoader<boolean>;
 
-    before(() => {
+    beforeEach(() => {
         loader = new LazyLoader(() => Promise.resolve(true));
     });
 
-    it('is not alive', () => {
-        expect(loader.alive).to.equal(false);
+    test('is not alive', () => {
+        expect(loader.alive).toEqual(false);
     });
 
-    it('loads', async () => {
-        expect(await loader.get()).to.equal(true);
+    test('loads', async () => {
+        expect(await loader.get()).toEqual(true);
     });
 
-    it('fails', (done) => {
+    test('fails', (done) => {
         const error = 'error';
         const failingLoader = new LazyLoader(() => Promise.reject(error));
 
@@ -25,8 +30,8 @@ describe('utilities/LazyLoader', () => {
             () => done());
     });
 
-    it('is cleared', () => {
+    test('is cleared', () => {
         loader.clear();
-        expect(loader.alive).to.equal(false);
+        expect(loader.alive).toEqual(false);
     });
 });

@@ -1,58 +1,57 @@
-import { expect } from 'chai';
-import { mount, ReactWrapper } from 'enzyme';
+import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
+import { act } from 'react-dom/test-utils';
 import sinon from 'sinon';
-
-import '@root/utilities/Enzyme';
+import {
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 
 import SearchQueryInput from './SearchQueryInput';
 
 describe('apps/book-browser/components/SearchQueryInput', () => {
-    let wrapper: ReactWrapper;
-
-    before(() => {
-        const noop = (ev: any) => { expect(ev).to.to.exist; };
-        wrapper = mount(<SearchQueryInput name="unit-test" value={''} onChange={noop} />);
+    test('is mounted', () => {
+        const noop = (ev: any) => { expect(ev).toBe(expect.anything()); };
+        const wrapper = render(<SearchQueryInput name="unit-test" value={''} onChange={noop} />);
+        expect(wrapper.container).not.toBeNull();
     });
 
-    it('is mounted', () => {
-        expect(wrapper.exists()).to.be.true;
-    });
-
-    it('will propagate props', () => {
-        const expectedProps: any = {
+    test('will propagate props', async () => {
+        const expectedProps = {
             name: 'unit-test-name',
             value: 'a value',
         };
 
-        wrapper.setProps(expectedProps);
+        render(<SearchQueryInput {...expectedProps} />);
 
-        const input = wrapper.find('input');
+        const input = await screen.findAllByRole('searchbox');
         for (const prop of Object.keys(expectedProps)) {
-            expect(input.prop(prop)).to.equal(expectedProps[prop]);
+            expect(input[0].getAttribute(prop)).toEqual((expectedProps as any)[prop]);
         }
     });
 
-    it('will notify on change', () => {
+    test('will notify on change', () => {
         const expectedValue = 'this is a new value which will trigger `onChange`.';
         const expectedChangeArguments = {
-            name: wrapper.prop('name'),
+            name: "unit-test",
             value: expectedValue,
         };
         const changeStub = sinon.stub();
-        const input = wrapper.find('input');
 
-        wrapper.setProps({
-            onChange: changeStub,
+        render(<SearchQueryInput name="unit-test" value="" onChange={changeStub} />);
+
+        act(() => {
+            fireEvent.change(
+                screen.getByRole('searchbox'), {
+                    target: {
+                        value: expectedValue,
+                    },
+                }
+            );
         });
 
-        input.simulate('change', {
-            target: {
-                value: expectedValue,
-            },
-        });
-
-        expect(changeStub.callCount).to.equal(1);
-        expect(changeStub.firstCall.args[0]).to.deep.equal(expectedChangeArguments);
+        expect(changeStub.callCount).toEqual(1);
+        expect(changeStub.firstCall.args[0]).toEqual(expectedChangeArguments);
     });
 });

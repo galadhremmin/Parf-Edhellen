@@ -9,4 +9,4 @@ export default function ConditionalToolbar(props: IProps) {
     </Suspense>;
 }
 
-const ToolbarAsync = React.lazy(() => import('.'));
+const ToolbarAsync = React.lazy(() => import('./index'));

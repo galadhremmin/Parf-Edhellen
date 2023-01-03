@@ -1,36 +1,25 @@
-import { expect } from 'chai';
 import {
-    mount,
-    ReactWrapper,
-} from 'enzyme';
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
 
-import { IEntitiesResponse } from '@root/connectors/backend/IBookApi';
+import { IBookGlossEntity, IEntitiesResponse, ILanguageEntity } from '@root/connectors/backend/IBookApi';
 import { snakeCasePropsToCamelCase } from '@root/utilities/func/snake-case';
 import { Actions } from '../../actions';
-import {
-    IEntitiesState,
-} from '../../reducers/EntitiesReducer._types';
 import EntitiesReducer from '../../reducers/EntitiesReducer';
 import SectionsReducer from '../../reducers/SectionsReducer';
-import { ISectionsState } from '../../reducers/SectionsReducer._types';
-import { ICategoriesState } from '../../reducers/CategoriesReducer._types';
 import LanguagesReducer from '../../reducers/CategoriesReducer';
 import GlossaryEntities from './GlossaryEntities';
-
-import '@root/utilities/Enzyme';
+import { act } from 'react-dom/test-utils';
 
 // Define node `require` for synchronous file loading
 declare var require: any;
 
 describe('apps/book-browser/containers/GlossaryEntities', () => {
-    let wrapper: ReactWrapper;
-
-    let glossary: IEntitiesState;
-    let sections: ISectionsState;
-    let languages: ICategoriesState;
-
-    before(() => {
+    test('displays results', async () => {
         const testData = snakeCasePropsToCamelCase<IEntitiesResponse<any>>(
             require('./GlossaryEntities._spec.glossary'),
         );
@@ -38,42 +27,36 @@ describe('apps/book-browser/containers/GlossaryEntities', () => {
             ...testData,
             type: Actions.ReceiveEntities,
         };
-        glossary = EntitiesReducer(null, action);
-        sections = SectionsReducer(null, action);
-        languages = LanguagesReducer(null, action);
+        const glossary = EntitiesReducer(null, action);
+        const sections = SectionsReducer(null, action);
+        const languages = LanguagesReducer(null, action);
 
-        wrapper = mount(<GlossaryEntities
+        render(<GlossaryEntities
             sections={sections}
             isEmpty={false}
             languages={languages.common}
             loading={false}
             single={false}
             unusualLanguages={languages.unusual}
+            forceShowUnusualLanguages={true}
             word={glossary.word}
         />);
-    });
 
-    it('is loading', () => {
-        wrapper.setProps({ loading: true });
+        await waitFor(() => {
+            const languageTitles = screen.getAllByRole('heading', {
+                level: 2,
+            });
+            const expectedLanguages = languages.common.concat(languages.unusual).map((language) => language.name);
 
-        expect(wrapper.find('Spinner')).to.exist;
-    });
+            expect(languageTitles).toHaveLength(expectedLanguages.length);
+            expect(languageTitles.map((header) => header.querySelector('.language-name').textContent)).toEqual(expectedLanguages);
 
-    it('displays results', () => {
-        wrapper.setProps({ loading: false });
-        wrapper.setState({ showUnusualLanguages: true });
-
-        // the test data collection contains unusual and common languages, so there
-        // should be two sections, one of which shouldb be flagged as `unusual`.
-        expect(wrapper.find('.ed-glossary').length).to.equal(2);
-
-        const unusualSection = wrapper.find('.ed-glossary.ed-glossary--unusual');
-        expect(unusualSection).to.exist;
-        expect(unusualSection.text()).to.contain('There are more words but they are from Tolkien\'s earlier conceptional periods');
-
-        // Expect there to be a `Language` component per language.
-        expect(wrapper.find('.ed-glossary__language').length).to.equal(
-            languages.unusual.length + languages.common.length,
-        );
+            const wordBlocks = screen.getAllByRole('heading', {
+                level: 3,
+            });
+            const expectedWords = Object.values(sections).flat(1) as IBookGlossEntity[];
+            expect(wordBlocks).toHaveLength(expectedWords.length + 1 /* because of "There are more words but they are from Tolkien's earlier conceptional periods" */);
+            expect(wordBlocks.map(block => block.textContent)).toContain('There are more words but they are from Tolkien\'s earlier conceptional periods');
+        });
     });
 });

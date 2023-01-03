@@ -3,34 +3,38 @@
         "baseUrl": "./resources/assets/ts",
         "outDir": "./public/build",
         "sourceMap": true,
-        "noImplicitAny": true,
-        "module": "commonjs",
-        "target": "es6",
+        "noImplicitAny": false,
+        "module": "CommonJS",
+        "target": "ESNext",
         "jsx": "react",
+        "allowJs": true,
         "allowSyntheticDefaultImports": true,
+        "downlevelIteration": false,
         "moduleResolution": "node",
         "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
+        "emitDecoratorMetadata": false,
         "esModuleInterop": true,
+        "strict": false,
+        "pretty": true,
         "types": [
             "luxon",
             "react",
             "react-dom",
             "react-redux",
             "redux",
-            "mocha",
-            "chai"
+            "node"
         ],
         "paths": {
             "@root/*": [
                 "*"
             ]
-        }
+        },
     },
     "include": [
-        "./resources/assets/ts/**/*"
+        "./resources/assets/**/*"
     ],
     "exclude": [
-        "node_modules"
+        "node_modules/**/*",
+        "build/**/*"
     ]
 }

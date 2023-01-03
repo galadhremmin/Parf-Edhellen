@@ -2,7 +2,7 @@ import {
     ICellEditorComp,
     ICellEditorParams,
     PopupComponent,
-} from '@ag-grid-community/core';
+} from 'ag-grid-community';
 
 import { ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
 import debounce from '@root/utilities/func/debounce';

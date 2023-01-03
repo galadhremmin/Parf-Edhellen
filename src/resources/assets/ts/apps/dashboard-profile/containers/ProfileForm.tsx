@@ -14,7 +14,7 @@ import { IProps } from './ProfileForm._types';
 
 import './ProfileForm.scss';
 
-const ProfileForm: React.SFC<IProps> = (props: IProps) => {
+const ProfileForm = (props: IProps) => {
     const {
         account,
         api,

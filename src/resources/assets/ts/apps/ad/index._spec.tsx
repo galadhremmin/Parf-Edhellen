@@ -1,21 +1,26 @@
-import { expect } from 'chai';
-import { mount } from 'enzyme';
 import React from 'react';
+import { render } from '@testing-library/react';
+import {
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 
 import { GlobalAdsConfigurationName } from '@root/config';
-import '@root/utilities/Enzyme';
 
 import Ad from '.';
-import Placeholder from './containers/Placeholder';
 import { IGlobalAdConfiguration } from './index._types';
 
 describe('apps/ad', () => {
-    it('does not render when there is no ads available', () => {
-        const wrapper = mount(<Ad ad="frontpage" />);
-        expect(wrapper.find(Placeholder).length).to.equal(1);
+    test('does not render when there is no ads available', () => {
+        const wrapper = render(<Ad ad="frontpage" />);
+        
+        const placeholders = wrapper.container.querySelectorAll('ins');
+        expect(placeholders.length).toEqual(1);
+        expect(placeholders[0].classList.contains('ed-no-ad')).toBeTruthy();
     });
 
-    it('does render when there is an ad available', () => {
+    test('does render when there is an ad available', () => {
         const config: IGlobalAdConfiguration = {
             props: {
                 title: 'this is a test',
@@ -30,12 +35,16 @@ describe('apps/ad', () => {
             frontpage: config,
         };
 
-        const wrapper = mount(<Ad ad="frontpage" />);
-        const ad = wrapper.find('ins');
-        expect(ad.length).to.equal(1);
-        expect(ad.get(0).props).to.deep.equal({
-            ...config.props,
-            'data-hello-world': 'mae govannen!',
+        const wrapper = render(<Ad ad="frontpage" />);
+        
+        const ads = wrapper.container.querySelectorAll('ins');
+        expect(ads.length).toEqual(1);
+
+        Object.keys(config.props).forEach((prop) => {
+            expect((ads[0] as any)[prop]).toEqual(config.props[prop]);
+        });
+        Object.keys(config.dataset).forEach((prop) => {
+            expect(ads[0].dataset[prop]).toEqual(config.dataset[prop]);
         });
     });
 });

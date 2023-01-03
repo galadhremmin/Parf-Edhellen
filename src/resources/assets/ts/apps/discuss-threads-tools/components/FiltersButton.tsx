@@ -1,10 +1,14 @@
 import classNames from 'classnames';
-import queryString from 'query-string';
 import React, { useCallback, useState } from 'react';
 
 import { IProps } from './FiltersButton._types';
 
 import './FiltersButton.scss';
+import {
+    buildQueryString,
+    parseQueryString,
+    QueryStringValue,
+} from '@root/utilities/func/query-string';
 
 const DiscussFilters = [
     {
@@ -25,13 +29,11 @@ const FilterQueryStringKeyName = 'filters';
 function FiltersButton() {
     const [ filterMap, setFilterMap ] = useState<Record<string, boolean>>(() => {
         // Retrieve the current filter configuration, or default to the filters described by the `DiscussFilters` constant
-        const existingFilter = queryString.parse(window.location.search, {
-            arrayFormat: 'bracket',
-        })[FilterQueryStringKeyName] || DiscussFilters.map((f) => f.id);
+        const existingFilter = parseQueryString(window.location.search)[FilterQueryStringKeyName] || DiscussFilters.map((f) => f.id);
         // Build a collection by ensuring that the `existingFilter` is an array.
-        const filterCollection: string[] = Array.isArray(existingFilter) ? existingFilter : [existingFilter];
+        const filterCollection: QueryStringValue[] = Array.isArray(existingFilter) ? existingFilter : [existingFilter];
         // Create a map for O(1) loop up as opposed to O(N) for retaining an array.
-        return filterCollection.reduce((carry, filterName) => {
+        return filterCollection.reduce((carry, filterName: string) => {
             carry[filterName] = true;
             return carry;
         }, {} as Record<string, boolean>);
@@ -63,10 +65,8 @@ function FiltersButton() {
             return;
         }
 
-        window.location.search = queryString.stringify({
+        window.location.search = buildQueryString({
             [FilterQueryStringKeyName]: filters,
-        }, {
-            arrayFormat: 'bracket',
         });
     }, [ filterMap ]);
 

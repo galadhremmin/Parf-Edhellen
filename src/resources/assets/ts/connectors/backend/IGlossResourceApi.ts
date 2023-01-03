@@ -1,5 +1,14 @@
-import { IAccountEntity } from './IBookApi';
 import { ISpeechEntity } from './ISpeechResourceApi';
+
+export interface IAccountEntity {
+    avatarPath?: string;
+    hasAvatar?: boolean;
+    id: number;
+    isConfigured?: boolean;
+    nickname: string;
+    profile?: string;
+    tengwar?: string;
+}
 
 export interface IGlossEntity {
     account?: IAccountEntity;

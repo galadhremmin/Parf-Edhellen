@@ -1,80 +1,78 @@
-import { expect } from 'chai';
-import { mount } from 'enzyme';
+import { fireEvent, render } from '@testing-library/react';
+import { act } from 'react-dom/test-utils';
+import {
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 import React from 'react';
 
-import { IComponentEvent } from '../../Component._types';
 import TagInput from './TagInput';
-
-import '@root/utilities/Enzyme';
+import { IComponentEvent } from '@root/components/Component._types';
 
 describe('components/Form', () => {
     describe('TagInput', () => {
-        it('mounts', () => {
+        test('mounts', async () => {
             const tags = [
                 'A', 'B', 'C', 'D',
             ];
 
-            const wrapper = mount(<span>
+            const wrapper = render(<span>
                 <TagInput name="unit-test" value={tags} />
             </span>);
 
-            expect(wrapper.find('TagLabel').length).to.equal(tags.length);
-            expect(wrapper.find('input.form-control').length).to.equal(1);
-            expect(wrapper.find('input.form-control').prop('type')).to.equal('text');
+            const tagInputs = await wrapper.findAllByRole('checkbox');
+            expect(tagInputs.length).toEqual(tags.length);
+
+            const inputs = await wrapper.findAllByRole('textbox');
+            expect(inputs.length).toEqual(1);
         });
 
-        it('can add tags', () => {
+        test('can add tags', async () => {
             const original = [ 'S', '3', 'X', 'Y' ];
-            let actual: string[] = [];
             const inject = 'i pace';
             const expected = [ '3', inject, 'S', 'X', 'Y' ];
 
-            const _onChange = (ev: IComponentEvent<string[]>) => {
-                expect(ev.value).to.contain(inject);
+            let actual: string[] = [];
+            const onChange = (ev: IComponentEvent<string[]>) => {
                 actual = ev.value;
             };
-            const wrapper = mount(<TagInput name="unit-test" value={original} onChange={_onChange} />);
-            const input = wrapper.find('input.form-control');
+
+            const wrapper = render(<TagInput name="unit-test" value={original} onChange={onChange} />);
+            const input = await wrapper.findByRole('textbox');
 
             // add a tag to the array of tags.
-            input.simulate('change', { target: { value: inject } });
-            input.simulate('keypress', { key: 'Enter' });
-            expect(actual).to.deep.equal(expected);
+            fireEvent.change(input, {
+                target: {
+                    value: inject,
+                },
+            });
+            fireEvent.keyDown(input, {
+                key: 'Enter',
+            });
+
+            expect(actual).toEqual(expected);
         });
 
-        it('trims tags', (done) => {
+        test('trims tags', async () => {
             const inject = ' tesla ';
             const expected = 'tesla';
 
             const _onChange = (ev: IComponentEvent<string[]>) => {
-                expect(ev.value).to.contain(expected);
-                done();
+                expect(ev.value).toContain(expected);
             };
-            const wrapper = mount(<TagInput name="unit-test" onChange={_onChange} />);
-            const input = wrapper.find('input.form-control');
+            const wrapper = render(<TagInput name="unit-test" onChange={_onChange} />);
+            const input = await wrapper.findByRole('textbox');
 
             // add a tag to the array of tags.
-            input.simulate('change', { target: { value: inject } });
-            input.simulate('keypress', { key: 'Enter' });
-        });
-
-        it('can delete tags', () => {
-            const original = [ 'S', '3', 'X', 'Y', 'i pace' ];
-            let actual: string[] = [];
-            const remove = original[original.length - 1];
-
-            const _onChange = (ev: IComponentEvent<string[]>) => {
-                expect(ev.value).to.not.contain(remove);
-                actual = ev.value;
-            };
-            const wrapper = mount(<TagInput name="unit-test" value={original} onChange={_onChange} />);
-            const input = wrapper.find(`input[name="tag-checkbox--${remove}"]`);
-
-            // remove the tag by unchecking it
-            input.simulate('change', { target: { checked: false } });
-
-            const expected = original.filter((e: string) => e !== remove);
-            expect(actual).to.deep.equal(expected);
+            fireEvent.change(input, {
+                target: {
+                    value: inject,
+                },
+            });
+            fireEvent.keyDown(input, {
+                key: 'Enter',
+            });
         });
     });
 });

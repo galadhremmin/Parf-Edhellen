@@ -1,12 +1,16 @@
-import { expect } from 'chai';
+import {
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 
 import BrowserHistory from './BrowserHistory';
 
 describe('utilities/BrowserHistory', () => {
-    it('supports query string', () => {
+    test('supports query string', () => {
         const history = new BrowserHistory({
             pushState: (...args) => {
-                expect(args[2]).to.equal('?hello=world&name=arda');
+                expect(args[2]).toEqual('?hello=world&name=arda');
             },
         });
 
@@ -18,10 +22,10 @@ describe('utilities/BrowserHistory', () => {
         });
     });
 
-    it('supports path property', () => {
+    test('supports path property', () => {
         const history = new BrowserHistory({
             pushState: (...args) => {
-                expect(args[2]).to.equal('/hello/world');
+                expect(args[2]).toEqual('/hello/world');
             },
         });
 
@@ -30,10 +34,10 @@ describe('utilities/BrowserHistory', () => {
         });
     });
 
-    it('supports path and query string property', () => {
+    test('supports path and query string property', () => {
         const history = new BrowserHistory({
             pushState: (...args) => {
-                expect(args[2]).to.equal('/hello/world?hello=world&name=arda');
+                expect(args[2]).toEqual('/hello/world?hello=world&name=arda');
             },
         });
 

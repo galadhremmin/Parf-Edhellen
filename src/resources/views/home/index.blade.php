@@ -41,6 +41,7 @@
     ])
   </div>
   <div class="col-xs-12 col-sm-6 col-md-4">
+    @if ($gloss)
     <h4>Gloss of the hour</h4>
     <div class="hourly-gloss">
       @include('book._gloss', [
@@ -53,6 +54,7 @@
         </a>
       </p>
     </div>
+    @endif
     @if ($sentence)
     <hr class="d-sm-none d-md-block" />
     <h4>Phrase of the day</h4>

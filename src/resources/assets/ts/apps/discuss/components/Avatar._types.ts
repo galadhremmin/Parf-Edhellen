@@ -1,4 +1,4 @@
-import { IAccountEntity } from '@root/connectors/backend/IBookApi';
+import { IAccountEntity } from '@root/connectors/backend/IGlossResourceApi';
 
 export interface IProps {
     account: IAccountEntity;

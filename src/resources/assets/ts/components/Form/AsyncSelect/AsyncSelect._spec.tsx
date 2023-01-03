@@ -1,11 +1,13 @@
-import { expect } from 'chai';
-import { mount, ReactWrapper } from 'enzyme';
+import { fireEvent, render, RenderResult, screen } from '@testing-library/react';
+import {
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 import React from 'react';
 
 import { IComponentEvent } from '../../Component._types';
 import AsyncSelect from './AsyncSelect';
-
-import '@root/utilities/Enzyme';
 
 describe('components/Form', () => {
     describe('AsyncSelect', () => {
@@ -19,33 +21,27 @@ describe('components/Form', () => {
 
         const DefaultLoader = () => Promise.resolve(Values);
 
-        it('mounts', (done) => {
-            const wrapper = mount(<AsyncSelect loaderOfValues={DefaultLoader} textField="t" valueField="x" />);
+        test('mounts', async () => {
+            render(<AsyncSelect loaderOfValues={DefaultLoader} textField="t" valueField="x" />);
 
-            setTimeout(() => {
-                wrapper.update();
+            const options = await screen.findAllByRole<HTMLOptionElement>('option');
+            expect(options.length).toEqual(Values.length);
 
-                const options = wrapper.find('option');
-                expect(options.length).to.equal(Values.length);
-
-                for (let i = 0; i < Values.length; i += 1) {
-                    expect(options.at(i).prop('value')).to.equal(Values[i].x);
-                    expect(options.at(i).text()).to.equal(Values[i].t);
-                }
-
-                done();
+            options.forEach((option, i) => {
+                expect(option.value).toEqual(Values[i].x.toString(10));
+                expect(option.textContent).toEqual(Values[i].t);
             });
         });
 
-        it('supports id as value output', (done) => {
+        test('supports id as value output', (done) => {
             const value = Values[Math.ceil(Values.length / 2)];
 
             const onChange = (ev: IComponentEvent<any>) => {
-                expect(ev.value).to.equal(value.x);
+                expect(ev.value).toEqual(value.x);
                 done();
             };
 
-            const wrapper = mount(<AsyncSelect
+            const result = render(<AsyncSelect
                 loaderOfValues={DefaultLoader}
                 name="unit-test"
                 onChange={onChange}
@@ -54,21 +50,24 @@ describe('components/Form', () => {
                 valueType="id"
             />);
 
-            setTimeout(() => {
-                wrapper.update();
-                wrapper.find(`select`).simulate('change', { target: { value: value.x } });
+            result.findAllByRole('option').then((options) => {
+                fireEvent.change(options[0].parentElement, {
+                    target: {
+                        value: value.x,
+                    }
+                });
             });
         });
 
-        it('supports entity as value output', (done) => {
+        test('supports entity as value output', (done) => {
             const value = Values[Math.ceil(Values.length / 2)];
 
             const onChange = (ev: IComponentEvent<any>) => {
-                expect(ev.value).to.deep.equal(value);
+                expect(ev.value).toEqual(value);
                 done();
             };
 
-            const wrapper = mount(<AsyncSelect
+            const result = render(<AsyncSelect
                 loaderOfValues={DefaultLoader}
                 name="unit-test"
                 onChange={onChange}
@@ -77,9 +76,12 @@ describe('components/Form', () => {
                 valueType="entity"
             />);
 
-            setTimeout(() => {
-                wrapper.update();
-                wrapper.find(`select`).simulate('change', { target: { value: value.x } });
+            result.findAllByRole('option').then((options) => {
+                fireEvent.change(options[0].parentElement, {
+                    target: {
+                        value: value.x,
+                    }
+                });
             });
         });
     });

@@ -1,4 +1,4 @@
-import { ICellEditorParams } from '@ag-grid-community/core';
+import { ICellEditorParams } from 'ag-grid-community';
 
 import MultipleSelectCellEditor from './MultipleSelectCellEditor';
 import { ISpeechEntity } from '@root/connectors/backend/ISpeechResourceApi';

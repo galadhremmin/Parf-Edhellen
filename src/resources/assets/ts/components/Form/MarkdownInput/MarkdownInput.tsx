@@ -57,6 +57,7 @@ export default class MarkdownInput extends React.Component<IProps, IState> {
 
     public render() {
         const {
+            markdownApi,
             value,
         } = this.props;
 
@@ -73,7 +74,7 @@ export default class MarkdownInput extends React.Component<IProps, IState> {
                 onEnter2ParagraphChange={this._onEnter2ParagraphChange}
             />}
             {currentTab === Tab.SyntaxTab && <SyntaxTabView />}
-            {currentTab === Tab.PreviewTab && <PreviewTabView value={value} />}
+            {currentTab === Tab.PreviewTab && <PreviewTabView value={value} markdownApi={markdownApi} />}
         </div>;
     }
 

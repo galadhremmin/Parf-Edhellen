@@ -1,4 +1,7 @@
-import { IGlossGroup } from './IGlossResourceApi';
+import {
+    IAccountEntity,
+    IGlossGroup,
+} from './IGlossResourceApi';
 import { IInflection } from './IInflectionResourceApi';
 import { ISpeechEntity } from './ISpeechResourceApi';
 
@@ -167,16 +170,6 @@ export interface ISentenceEntity {
     name?: string;
     source?: string;
     updatedAt?: string;
-}
-
-export interface IAccountEntity {
-    avatarPath?: string;
-    hasAvatar?: boolean;
-    id: number;
-    isConfigured?: boolean;
-    nickname: string;
-    profile?: string;
-    tengwar?: string;
 }
 
 export interface ISentenceFragmentEntity {

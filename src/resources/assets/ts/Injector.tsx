@@ -1,7 +1,7 @@
 import React, {
     Suspense,
 } from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import Spinner from './components/Spinner';
 import ErrorBoundary from './utilities/ErrorBoundary';
 import { snakeCasePropsToCamelCase } from './utilities/func/snake-case';
@@ -27,14 +27,15 @@ const InjectPropAttributeName = 'injectProp';
  */
 const load = (element: HTMLElement, moduleName: string, props: any) => {
     const Component = React.lazy(() => import(`./apps/${moduleName}/index`));
-
-    render(<Suspense fallback={<Spinner />}>
+    const root = createRoot(element);
+    
+    root.render(<Suspense fallback={<Spinner />}>
         <ErrorBoundary>
             <React.StrictMode>
                 <Component {...props} />
             </React.StrictMode>
         </ErrorBoundary>
-    </Suspense>, element);
+    </Suspense>);
 };
 
 /**

@@ -1,73 +1,72 @@
 import axios from 'axios';
-import { expect } from 'chai';
 import {
-    mount,
-    ReactWrapper,
-} from 'enzyme';
+    afterEach,
+    beforeAll,
+    beforeEach,
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 import React from 'react';
 import sinon, {
     SinonSandbox,
+    SinonStubbedInstance,
 } from 'sinon';
+import { render, screen, waitFor } from '@testing-library/react';
 
+import UtilityApiConnector from '@root/connectors/backend/UtilityApiConnector';
+import IUtilityApi from '@root/connectors/backend/IUtilityApi';
 import Cache from '@root/utilities/Cache';
 import MemoryStorage from '@root/utilities/MemoryStorage';
 
 import MarkdownInput from './MarkdownInput';
 import { IComponentConfig } from './MarkdownInput._types';
 
-import '@root/utilities/Enzyme';
-
 describe('components/Form', () => {
     describe('MarkdownInput', () => {
         const MarkdownText = 'This *text* is **bold**!';
         const HtmlText = 'This <em>text</em> is <b>bold</b>!';
 
-        let wrapper: ReactWrapper;
         let sandbox: SinonSandbox;
+        let markdownApiStub: SinonStubbedInstance<IUtilityApi>;
+        let config: () => Cache<IComponentConfig>;
 
-        before(() => {
+        beforeAll(() => {
             sandbox = sinon.createSandbox();
+
+            markdownApiStub = sinon.createStubInstance(UtilityApiConnector);
+            markdownApiStub.parseMarkdown.resolves({
+                html: HtmlText,
+            });
         });
 
         beforeEach(() => {
-            sandbox.stub(axios, 'post').returns(Promise.resolve(HtmlText));
-
             // This is necessary as `localstorage` is not supported by Mocha (in this context).
-            const config = () => new Cache<IComponentConfig>(() => Promise.resolve({
+            config = () => new Cache<IComponentConfig>(() => Promise.resolve({
                 enter2Paragraph: true,
             }), new MemoryStorage(), 'unit-test');
-            wrapper = mount(<MarkdownInput value={MarkdownText} configCacheFactory={config} />);
         });
 
         afterEach(() => {
             sandbox.restore();
         });
 
-        it('mounts', () => {
-            const textareas = wrapper.find('textarea');
-            expect(textareas).to.have.lengthOf(1);
-            expect(textareas.getDOMNode()).to.have.property('value', MarkdownText);
-        });
+        test('mounts', async () => {
+            render(<MarkdownInput value={MarkdownText} configCacheFactory={config} markdownApi={markdownApiStub} />);
 
-        it('respects required', () => {
-            wrapper.setProps({
-                required: true,
+            await waitFor(() => {
+                const textareas = screen.getAllByRole('textbox');
+                expect(textareas).toHaveLength(1);
+                expect(textareas[0]).toHaveProperty('value', MarkdownText);
             });
-            expect(wrapper.find('textarea').getDOMNode()).to.have.property('required', true);
         });
 
-        it('renders preview', () => {
-            /*
-            TODO: Implement this test. It is just not working for me right now, and I need to prioritize
-                  more important things. Functionality manually tested. (191113)
-            */
+        test('respects required', async () => {
+            render(<MarkdownInput value={MarkdownText} configCacheFactory={config} required={true} markdownApi={markdownApiStub} />);
 
-            setTimeout(() => {
-                wrapper.update();
-
-                const container = wrapper.find('Markdown');
-                expect(container.length).to.equal(1);
-                // expect(container.state('html')).to.equal(HtmlText); -- Broken!!!
+            await waitFor(() => {
+                const textBox = screen.getByRole('textbox');
+                expect(textBox).toHaveProperty('required', true);
             });
         });
     });

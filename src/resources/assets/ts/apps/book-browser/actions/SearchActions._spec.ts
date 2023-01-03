@@ -1,4 +1,10 @@
-import { expect } from 'chai';
+import {
+    afterEach,
+    beforeEach,
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 import * as sinon from 'sinon';
 
 import BookApiConnector from '@root/connectors/backend/BookApiConnector';
@@ -32,7 +38,7 @@ describe('apps/book-browser/reducers/SearchReducer', () => {
     let sandbox: sinon.SinonSandbox;
     let actions: SearchActions;
 
-    before(() => {
+    beforeEach(() => {
         sandbox = sinon.createSandbox();
 
         const api = sinon.createStubInstance(BookApiConnector);
@@ -44,21 +50,21 @@ describe('apps/book-browser/reducers/SearchReducer', () => {
         sandbox.restore();
     });
 
-    it('searches for word', async () => {
+    test('searches for word', async () => {
         const fakeDispatch = sandbox.spy();
 
         const searchArgs: ISearchAction = { word: 'hello' };
         const action = actions.search(searchArgs);
         await action(fakeDispatch);
 
-        expect(fakeDispatch.callCount).to.equal(2);
-        expect(fakeDispatch.firstCall.args.length).to.equal(1);
-        expect(fakeDispatch.firstCall.args[0]).to.deep.equal({
+        expect(fakeDispatch.callCount).toEqual(2);
+        expect(fakeDispatch.firstCall.args.length).toEqual(1);
+        expect(fakeDispatch.firstCall.args[0]).toEqual({
             type: Actions.RequestSearchResults,
             ...searchArgs,
         });
-        expect(fakeDispatch.secondCall.args.length).to.equal(1);
-        expect(fakeDispatch.secondCall.args[0].type).to.equal(Actions.ReceiveSearchResults);
+        expect(fakeDispatch.secondCall.args.length).toEqual(1);
+        expect(fakeDispatch.secondCall.args[0].type).toEqual(Actions.ReceiveSearchResults);
 
         const items = TestSearchResults.keywords.map((r) => ({
             groupId: r.g,
@@ -68,6 +74,6 @@ describe('apps/book-browser/reducers/SearchReducer', () => {
             word: r.k,
         }));
         const actual = fakeDispatch.secondCall.args[0].searchResults.keywords.get(TestSearchResults.searchGroups[1]);
-        expect(actual).to.deep.equal(items);
+        expect(actual).toEqual(items);
     });
 });

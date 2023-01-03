@@ -1,4 +1,4 @@
-import { SelectCellEditor } from '@ag-grid-community/core';
+import { SelectCellEditor } from 'ag-grid-community';
 
 export default class NumericSelectCellEditor extends SelectCellEditor {
     public getValue() {

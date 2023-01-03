@@ -1,37 +1,42 @@
-import { expect } from 'chai';
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import {
+    describe,
+    expect,
+    test,
+} from '@jest/globals';
 import { DateTime } from 'luxon';
 import React from 'react';
 
 import DateLabel from './DateLabel';
 
-import '../utilities/Enzyme';
-
 describe('components/DateLabel', () => {
-    it('formats Date appropriately', () => {
+    test('formats Date appropriately', () => {
         const dateTime = DateTime.now().minus({ month: 1 }).toJSDate();
-        const wrapper = mount(<DateLabel dateTime={dateTime} />);
+        const { container } = render(<DateLabel dateTime={dateTime} />);
 
-        expect(wrapper.find('time').prop('dateTime')).to.equal(dateTime.toISOString());
-        expect(wrapper.find('time').prop('title')).to.equal(DateTime.fromJSDate(dateTime).toLocaleString(DateTime.DATETIME_FULL));
-        expect(wrapper.find('time').text()).to.equal(DateTime.fromJSDate(dateTime).toRelative());
+        const time = container.querySelector('time');
+        expect(time.getAttribute('dateTime')).toEqual(dateTime.toISOString());
+        expect(time.getAttribute('title')).toEqual(DateTime.fromJSDate(dateTime).toLocaleString(DateTime.DATETIME_FULL));
+        expect(time.textContent).toEqual(DateTime.fromJSDate(dateTime).toRelative());
     });
 
-    it('formats ISO string dates appropriately', () => {
+    test('formats ISO string dates appropriately', () => {
         const dateTime = DateTime.now().minus({ year: 1 }).toISOTime();
-        const wrapper = mount(<DateLabel dateTime={dateTime} />);
+        const { container } = render(<DateLabel dateTime={dateTime} />);
 
-        expect(wrapper.find('time').prop('dateTime')).to.equal(dateTime);
-        expect(wrapper.find('time').prop('title')).to.equal(DateTime.fromISO(dateTime).toLocaleString(DateTime.DATETIME_FULL));
-        expect(wrapper.find('time').text()).to.equal(DateTime.fromISO(dateTime).toRelative());
+        const time = container.querySelector('time');
+        expect(time.getAttribute('dateTime')).toEqual(dateTime);
+        expect(time.getAttribute('title')).toEqual(DateTime.fromISO(dateTime).toLocaleString(DateTime.DATETIME_FULL));
+        expect(time.textContent).toEqual(DateTime.fromISO(dateTime).toRelative());
     });
 
-    it('handles failures', () => {
+    test('handles failures', () => {
         const dateTime = 'Lá hanyan lúme!';
-        const wrapper = mount(<DateLabel dateTime={dateTime} />);
+        const { container } = render(<DateLabel dateTime={dateTime} />);
 
-        expect(wrapper.find('time')).to.be.empty;
-        expect(wrapper.find('span').prop('dateTime')).to.be.undefined;
-        expect(wrapper.find('span').text()).to.equal(`Unknown date (${dateTime})`);
+        const time = container.querySelector('time');
+        expect(time).not.toEqual(expect.anything());
+        expect(container.querySelector('span').getAttribute('dateTime')).toBeNull();
+        expect(container.querySelector('span').textContent).toEqual(`Unknown date (${dateTime})`);
     });
 });

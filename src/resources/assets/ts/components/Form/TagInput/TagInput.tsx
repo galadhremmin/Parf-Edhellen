@@ -31,7 +31,7 @@ export default class TagInput extends React.Component<IProps, IState> {
         const {
             _onBlur,
             _onDeleteTag,
-            _onKeyPress,
+            _onKeyDown,
             _onTextChange,
         } = this;
 
@@ -50,7 +50,7 @@ export default class TagInput extends React.Component<IProps, IState> {
                 id={name}
                 onBlur={_onBlur}
                 onChange={_onTextChange}
-                onKeyPress={_onKeyPress}
+                onKeyDown={_onKeyDown}
                 type="text"
                 value={textValue}
             />
@@ -135,7 +135,7 @@ export default class TagInput extends React.Component<IProps, IState> {
         this._addTag(textValue);
     }
 
-    private _onKeyPress = (ev: React.KeyboardEvent<HTMLInputElement>) => {
+    private _onKeyDown = (ev: React.KeyboardEvent<HTMLInputElement>) => {
         const {
             textValue,
         } = this.state;
