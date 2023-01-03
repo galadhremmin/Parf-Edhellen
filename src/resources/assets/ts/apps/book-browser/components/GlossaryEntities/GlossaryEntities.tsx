@@ -29,13 +29,14 @@ function GlossaryEntities(props: IEntitiesComponentProps) {
 
     const {
         entityMorph,
+        forceShowUnusualLanguages,
         languages: commonLanguages,
         loading,
         isEmpty,
         sections,
         single,
         unusualLanguages,
-        forceShowUnusualLanguages,
+        word,
     } = props;
 
     useEffect(() => {
@@ -91,7 +92,7 @@ function GlossaryEntities(props: IEntitiesComponentProps) {
     return <div className="ed-glossary-container" ref={glossaryContainerRef}>
         {notifyLoaded && <FixedBouncingArrow />}
         {loading && <GlossaryEntitiesLoading minHeight={glossaryContainerRef.current?.offsetHeight || 500} />}
-        {! loading && isEmpty && <GlossaryEntitiesEmpty />}
+        {! loading && isEmpty && <GlossaryEntitiesEmpty word={word} />}
         {! loading && ! isEmpty && <Waypoint onEnter={_onWaypointEnter} onLeave={_onWaypointLeave}>
             <div className="ed-glossary-waypoint">
                 <GlossaryLanguages
