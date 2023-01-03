@@ -34,7 +34,7 @@ module.exports = {
       cacheGroups: {
         default: false,
         vendors: {
-          test: /\/node_modules\/(axios|classnames|html\-to\-react|query\-string|luxon|react|redux|spinkit)/,
+          test: /\/node_modules\/(axios|classnames|html\-to\-react|luxon|react|redux|spinkit)/,
           priority: 0,
           reuseExistingChunk: false,
         },
@@ -50,7 +50,7 @@ module.exports = {
           reuseExistingChunk: true,
         },
         grid: {
-          test: /\/node_modules\/\@ag\-grid\-community/,
+          test: /\/node_modules\/ag\-grid\-(community|react)/,
           priority: 20,
           reuseExistingChunk: true,
         },
