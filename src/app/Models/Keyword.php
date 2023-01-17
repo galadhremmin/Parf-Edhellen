@@ -29,6 +29,11 @@ class Keyword extends ModelBase
         return $this->belongsTo(Word::class, 'word_id');
     }
 
+    public function sense()
+    {
+        return $this->belongsTo(Sense::class, 'sense_id');
+    }
+
     public function scopeFindByWord($query, string $word, $reversed = false, $includeOld = true) 
     {
         $filter = [
