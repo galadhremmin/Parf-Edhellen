@@ -11,21 +11,21 @@ use App\Models\{
 use App\Models\Initialization\Morphs;
 use App\Repositories\SearchIndexRepository;
 
-class PopulateSearchIndexCommand extends Command 
+class RefreshSearchIndexFromKeywordsCommand extends Command 
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'ed-search:refresh-gloss-sentence';
+    protected $signature = 'ed-search:refresh-from-keywords';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Refreshes all search indexes for glossary and sentences.';
+    protected $description = 'Refreshes all search indexes using stored keywords.';
 
     /**
      * Search index repository used to refresh search keywords.
@@ -111,7 +111,7 @@ class PopulateSearchIndexCommand extends Command
             $delete = $this->ask('Do you want to delete them? [yes/no]');
 
             if ($delete) {
-
+                
             }
         }
 
