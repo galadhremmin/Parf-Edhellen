@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class SearchKeyword extends ModelBase
+class SearchKeyword extends ModelBase implements Interfaces\IHasLanguage
 {
     public const SEARCH_GROUP_UNASSIGNED = 0;
     public const SEARCH_GROUP_DICTIONARY = 1;
@@ -29,5 +29,22 @@ class SearchKeyword extends ModelBase
         'is_old',
         'word',
         'word_id',
+        'keyword_language_id',
+        'is_keyword_language_invented'
     ];
+
+    public function language()
+    {
+        return $this->belongsTo(Language::class);
+    }
+
+    public function keyword_language()
+    {
+        return $this->belongsTo(Language::class, 'keyword_language_id', 'id');
+    }
+
+    public function entity()
+    {
+        return $this->morphTo('entity', 'entity_name', 'entity_id');
+    }
 }

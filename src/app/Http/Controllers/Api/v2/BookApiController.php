@@ -7,13 +7,9 @@ use Cache;
 
 use App\Http\Controllers\Abstracts\BookBaseController;
 use App\Helpers\StringHelper;
-use App\Repositories\ValueObjects\SearchIndexSearchValue;
 use App\Models\{
-    Keyword,
-    Gloss,
     GlossGroup,
     Language,
-    SearchKeyword,
     Word
 };
 

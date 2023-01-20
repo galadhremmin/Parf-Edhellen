@@ -6,12 +6,15 @@ use Illuminate\Console\Command;
 use App\Models\{
     Gloss,
     Keyword,
+    Language,
+    SearchKeyword,
     Sense,
 };
 use App\Models\Initialization\Morphs;
 use App\Repositories\{
     KeywordRepository,
-    SearchIndexRepository
+    SearchIndexRepository,
+    WordRepository
 };
 
 class RefreshSearchIndexFromGlossesCommand extends Command 
@@ -44,12 +47,27 @@ class RefreshSearchIndexFromGlossesCommand extends Command
      */
     private $_keywordRepository;
 
+    /**
+     * Search index repository used to refresh search keywords.
+     * 
+     * @var WordRepository
+     */
+    private $_wordRepository;
+
+    /**
+     * English language (default systems language)
+     */
+    private $_englishLanguage;
+
     public function __construct(KeywordRepository $keywordRepository,
-        SearchIndexRepository $searchIndexRepository)
+        SearchIndexRepository $searchIndexRepository,
+        WordRepository $wordRepository)
     {
         parent::__construct();
         $this->_keywordRepository = $keywordRepository;
         $this->_searchIndexRepository = $searchIndexRepository;
+        $this->_wordRepository = $wordRepository;
+        $this->_englishLanguage = Language::where('name', 'English')->firstOrFail();
     }
 
     /**
@@ -59,13 +77,44 @@ class RefreshSearchIndexFromGlossesCommand extends Command
      */
     public function handle()
     {
-        $glosses = Gloss::active()
-            ->doesntHave('keywords')
-            ->get();
+        $unreferencedKeywords = SearchKeyword::where('entity_name', Morphs::getAlias(Gloss::class))
+            ->doesntHave('entity');
+        $noUnreferencedKeywords = $unreferencedKeywords->count();
         
-        foreach ($glosses as $gloss) {
-            $this->_keywordRepository->createKeyword($gloss->word, $gloss->sense, $gloss);
-            $this->_searchIndexRepository->createIndex($gloss, $gloss->word);
+        if ($noUnreferencedKeywords > 0) {
+            if ($this->confirm(sprintf('There are %d unreferenced keywords. Do you want to delete them?', $noUnreferencedKeywords))) {
+                $unreferencedKeywords->delete();
+            }
+        }
+
+        $deletedGlosses = SearchKeyword::where('entity_name', Morphs::getAlias(Gloss::class))
+            ->join('glosses', 'glosses.id', 'entity_id')
+            ->where('glosses.is_deleted', 1);
+        $noDeletedGlosses = $deletedGlosses->count();
+
+        if ($noDeletedGlosses > 0) {
+            if ($this->confirm(sprintf('There are %d deleted glosses still in the search index. Do you want to delete them?', $noDeletedGlosses))) {
+                $deletedGlosses->delete();
+            }
+        }
+
+        $glosses = Gloss::active()->with('translations', 'word', 'sense', 'language');
+        $noOfGlosses = $glosses->count();
+
+        if ($this->confirm(sprintf('This operation will refresh %d glosses. Do you want to proceed?', $noOfGlosses))) {
+            $i = 0;
+            foreach ($glosses->cursor() as $gloss) {
+                $this->_keywordRepository->createKeyword($gloss->word, $gloss->sense, $gloss, $gloss->language);
+                $this->_searchIndexRepository->createIndex($gloss, $gloss->word, $gloss->language);
+
+                foreach ($gloss->translations as $translation) {
+                    $translationWord = $this->_wordRepository->save($translation->translation, $gloss->account_id);
+                    $this->_keywordRepository->createKeyword($translationWord, $gloss->sense, $gloss, $this->_englishLanguage);
+                    $this->_searchIndexRepository->createIndex($gloss, $translationWord, $this->_englishLanguage);
+                }
+
+                echo (++$i)." (".round(($i / $noOfGlosses)*100,2)."%): $gloss->id\n";
+            }
         }
     }
 }

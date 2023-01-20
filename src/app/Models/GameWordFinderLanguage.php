@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class GameWordFinderLanguage extends ModelBase implements Interfaces\IHasFriendlyName
+class GameWordFinderLanguage extends ModelBase implements Interfaces\IHasFriendlyName, Interfaces\IHasLanguage
 {
     protected $fillable = [ 
         'language_id', 'title', 'description'

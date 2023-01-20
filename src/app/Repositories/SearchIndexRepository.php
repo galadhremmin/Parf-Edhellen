@@ -5,95 +5,52 @@ namespace App\Repositories;
 use App\Helpers\StringHelper;
 use App\Models\Initialization\Morphs;
 use App\Repositories\SearchIndexResolvers\{
-    GlossSearchIndexResolver,
     KeywordsSearchIndexResolver
 };
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
 use App\Models\{
     Gloss,
-    ForumPost,
+    Language,
     ModelBase,
     SearchKeyword,
-    SentenceFragment,
     Word
 };
+use App\Models\Interfaces\IHasLanguage;
 
 class SearchIndexRepository 
 {
-    private $_keywordsResolver;
+    private static $latestStoredIndexHashes = [];
+    private static $upsetFields = ['keyword', 'language_id', 'gloss_group_id', 'entity_name', 'entity_id', 'is_old', 'word', 'word_id', 'search_group'];
 
-    public function __construct(KeywordsSearchIndexResolver $keywordsResolver)
+    private $_keywordsResolver;
+    private $_wordRepository;
+
+    public function __construct(KeywordsSearchIndexResolver $keywordsResolver, WordRepository $wordRepository)
     {
         $this->_keywordsResolver = $keywordsResolver;
+        $this->_wordRepository   = $wordRepository;
     }
 
-    public function createIndex(ModelBase $model, Word $wordEntity, string $inflection = null): SearchKeyword
+    public function createIndex(ModelBase $model, Word $wordEntity, Language $keywordLanguage = null, string $inflection = null): void
     {
-        if (! $model->exists) {
-            throw new \Exception("Search keyword target model does not exist. Make sure that the entity has been saved before calling this method.");
+        $data = $this->saveIndexInternal($model, $wordEntity, $keywordLanguage, $inflection);
+
+        if (config('ed.search_index_expands_english_infinitives')) {
+            // Expansion of English infinitives is designed to create _two_ search keywords for every to-infinitive,
+            // one with the to included and one without. It's a little bit slower and more expensive than the typcial
+            // call.
+            if (! $data['is_keyword_language_invented'] && $model instanceof Gloss) {
+                $containsTo = preg_match('/^to\s\w{2,}/', $data['keyword']) === 1;
+                $isVerb = (! $model->speech_id && $containsTo) ||
+                    ($model->speech_id && $model->speech->is_verb);
+                
+                if ($isVerb) {
+                    $expandedString = $containsTo ? substr($data['keyword'], 3 /* 'to ' */) : 'to '.$data['keyword'];
+                    $expandedWord = $this->_wordRepository->save($expandedString, $model->account_id);
+                    $this->saveIndexInternal($model, $expandedWord, $keywordLanguage);
+                }
+            }
         }
-        if (! $wordEntity->exists) {
-            throw new \Exception("Word '".$wordEntity->word."' does not exist. Make sure that the entity has been saved before calling this method.");
-        }
-
-        $entityName   = Morphs::getAlias($model);
-        $entityId     = $model->id;
-        $word         = StringHelper::toLower(StringHelper::clean($wordEntity->word));
-        $inflection   = StringHelper::toLower(StringHelper::clean($inflection));
-        $keyword      = empty($inflection) ? $word : $inflection;
-        $glossGroupId = null;
-
-        $isOld = false;
-        if ($model instanceOf Gloss) {
-            $glossGroupId = $model->gloss_group_id;
-            $isOld = $glossGroupId
-                ? $model->gloss_group->is_old
-                : false;
-        }
-
-        $languageId = null;
-        if (property_exists($model, 'language_id')) {
-            $languageId = $model->language_id;
-        }
-
-        $normalizedKeyword           = StringHelper::normalize($keyword, true);
-        $normalizedKeywordUnaccented = StringHelper::normalize($keyword, false);
-
-        $normalizedKeywordReversed           = strrev($normalizedKeyword);
-        $normalizedKeywordUnaccentedReversed = strrev($normalizedKeywordUnaccented);
-
-        $data = [
-            'keyword'                                => $keyword,
-            'normalized_keyword'                     => $normalizedKeyword,
-            'normalized_keyword_unaccented'          => $normalizedKeywordUnaccented,
-            'normalized_keyword_reversed'            => $normalizedKeywordReversed,
-            'normalized_keyword_reversed_unaccented' => $normalizedKeywordUnaccentedReversed,
-            'keyword_length'                         => mb_strlen($keyword),
-            'normalized_keyword_length'              => mb_strlen($normalizedKeyword),
-            'normalized_keyword_unaccented_length'   => mb_strlen($normalizedKeywordUnaccented),
-            'normalized_keyword_reversed_length'     => mb_strlen($normalizedKeywordUnaccented),
-            'normalized_keyword_reversed_unaccented_length' => mb_strlen($normalizedKeywordUnaccentedReversed),
-
-            'language_id'    => $languageId,
-            'gloss_group_id' => $glossGroupId,
-            'entity_name'    => $entityName,
-            'entity_id'      => $entityId,
-            'is_old'         => $isOld,
-            'word'           => $word,
-            'word_id'        => $wordEntity->id,
-
-            'search_group'   => $this->getSearchGroup($entityName)
-        ];
-
-        return SearchKeyword::updateOrCreate($data, [
-            // UPSERT row identification fields
-            'keyword', 'language_id', 'gloss_group_id', 'entity_name', 'entity_id', 'is_old', 'word', 'word_id', 'search_group'
-        ], [
-            // UPSERT update field if a row already exists
-            'normalized_keyword', 'normalized_keyword_unaccented', 'normalized_keyword_reversed', 'normalized_keyword_reversed_unaccented',
-            'keyword_length', 'normalized_keyword_length', 'normalized_keyword_unaccented_length', 'normalized_keyword_reversed_length',
-            'normalized_keyword_reversed_unaccented_length'
-        ]);
     }
 
     public function getForEntity(ModelBase $model)
@@ -172,6 +129,91 @@ class SearchIndexRepository
         ];
     }
 
+    private function saveIndexInternal(ModelBase $model, Word $wordEntity, Language $keywordLanguage = null, string $inflection = null): array
+    {
+
+        if (! $model->exists) {
+            throw new \Exception("Search keyword target model does not exist. Make sure that the entity has been saved before calling this method.");
+        }
+        if (! $wordEntity->exists) {
+            throw new \Exception("Word '".$wordEntity->word."' does not exist. Make sure that the entity has been saved before calling this method.");
+        }
+
+        $entityName   = Morphs::getAlias($model);
+        $entityId     = $model->id;
+        $word         = StringHelper::toLower(StringHelper::clean($wordEntity->word));
+        $inflection   = StringHelper::toLower(StringHelper::clean($inflection));
+        $keyword      = empty($inflection) ? $word : $inflection;
+        $glossGroupId = null;
+        $isOld        = false;
+        
+        if ($model instanceof Gloss) {
+            $glossGroupId = $model->gloss_group_id;
+            $isOld = $glossGroupId
+                ? $model->gloss_group->is_old
+                : false;
+        }
+
+        $languageId = null;
+        if ($model instanceof IHasLanguage) {
+            $languageId = $model->language_id;
+        }
+
+        $keywordLanguageId = null;
+        $keywordLanguageIsInvented = true;
+        if ($keywordLanguage !== null) {
+            $keywordLanguageId = $keywordLanguage->id;
+            $keywordLanguageIsInvented = $keywordLanguage->is_invented;
+        }
+
+        $normalizedKeyword           = StringHelper::normalize($keyword, true);
+        $normalizedKeywordUnaccented = StringHelper::normalize($keyword, false);
+
+        $normalizedKeywordReversed           = strrev($normalizedKeyword);
+        $normalizedKeywordUnaccentedReversed = strrev($normalizedKeywordUnaccented);
+
+        $data = [
+            'keyword'                                => $keyword,
+            'normalized_keyword'                     => $normalizedKeyword,
+            'normalized_keyword_unaccented'          => $normalizedKeywordUnaccented,
+            'normalized_keyword_reversed'            => $normalizedKeywordReversed,
+            'normalized_keyword_reversed_unaccented' => $normalizedKeywordUnaccentedReversed,
+            'keyword_length'                         => mb_strlen($keyword),
+            'normalized_keyword_length'              => mb_strlen($normalizedKeyword),
+            'normalized_keyword_unaccented_length'   => mb_strlen($normalizedKeywordUnaccented),
+            'normalized_keyword_reversed_length'     => mb_strlen($normalizedKeywordUnaccented),
+            'normalized_keyword_reversed_unaccented_length' => mb_strlen($normalizedKeywordUnaccentedReversed),
+
+            'language_id'                  => $languageId,
+            'keyword_language_id'          => $keywordLanguageId,
+            'is_keyword_language_invented' => $keywordLanguageIsInvented,
+
+            'gloss_group_id' => $glossGroupId,
+            'entity_name'    => $entityName,
+            'entity_id'      => $entityId,
+            'is_old'         => $isOld,
+            'word'           => $word,
+            'word_id'        => $wordEntity->id,
+
+            'search_group'   => $this->getSearchGroup($entityName)
+        ];
+
+        $hash = $this->makeStoreHash($data);
+        if (! in_array($hash, self::$latestStoredIndexHashes)) {
+
+            SearchKeyword::updateOrCreate($data, self::$upsetFields, [
+                // UPSERT update field if a row already exists
+                'normalized_keyword', 'normalized_keyword_unaccented', 'normalized_keyword_reversed', 'normalized_keyword_reversed_unaccented',
+                'keyword_length', 'normalized_keyword_length', 'normalized_keyword_unaccented_length', 'normalized_keyword_reversed_length',
+                'normalized_keyword_reversed_unaccented_length', 'keyword_language_id', 'is_keyword_language_invented'
+            ]);
+
+            self::$latestStoredIndexHashes[] = $hash;
+        }
+
+        return $data;
+    }
+
     private function getSearchGroup(string $entityName): int
     {
         $morpedModel = Morphs::getMorphedModel($entityName);
@@ -201,5 +243,19 @@ class SearchIndexRepository
         }
 
         throw new \Exception(sprintf('Unrecognised entity name %s.', $entityName));
+    }
+
+    private function makeStoreHash(array $keywordData)
+    {
+        $values = '';
+        
+        $keys = array_keys($keywordData);
+        sort($keys);
+
+        foreach ($keys as $key) {
+            $values .= $key.'='.$keywordData[$key].'|';
+        }
+
+        return sha1($values);
     }
 }

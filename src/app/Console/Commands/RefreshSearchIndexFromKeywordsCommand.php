@@ -56,12 +56,13 @@ class RefreshSearchIndexFromKeywordsCommand extends Command
 
     private function refreshGlossary()
     {
-        if (! $this->confirm('Do you want to reprocess the glossary? [yes/no]')) {
+        if (! $this->confirm('Do you want to reprocess the glossary?')) {
             return 0;
         }
 
         $baseQuery = Keyword::whereNull('sentence_fragment_id') //
-        ->whereNotNull('gloss_id');
+            ->whereNotNull('gloss_id')
+            ->with('keyword_language', 'wordEntity');
         $numberOfKeywords = $baseQuery->count();
 
         $this->info(sprintf('There are %d keywords to rebuild the index from.', $numberOfKeywords));
@@ -76,7 +77,7 @@ class RefreshSearchIndexFromKeywordsCommand extends Command
             $take = 40000;
         }
 
-        if (! $this->confirm(sprintf('Do you want to skip %d keywords and process %d keywords (final keywords no %d)? [yes/no]', $skip, $take, $skip + $take))) {
+        if (! $this->confirm(sprintf('Do you want to skip %d keywords and process %d keywords (final keywords no %d)?', $skip, $take, $skip + $take))) {
             $this->info('Cancelling...');
             return 0;
         }
@@ -92,7 +93,9 @@ class RefreshSearchIndexFromKeywordsCommand extends Command
             if ($keyword->gloss_id) {
                 $gloss = Gloss::find($keyword->gloss_id);
                 if ($gloss) {
-                    $this->_searchIndexRepository->createIndex($gloss, $keyword->wordEntity, $keyword->keyword);
+                    if (! $gloss->is_deleted) {
+                        $this->_searchIndexRepository->createIndex($gloss, $keyword->wordEntity, $keyword->keyword_language, $keyword->keyword);
+                    }
                 } else {
                     if (! $keyword->sense_id) {
                         $erroneous[] = $keyword->gloss_id;
@@ -108,7 +111,7 @@ class RefreshSearchIndexFromKeywordsCommand extends Command
         if (! empty($erroneous)) {
             $erroneous = array_unique($erroneous);
             $this->warn(sprintf('Discovered %d invalid glosses.', count($erroneous)));
-            $delete = $this->ask('Do you want to delete them? [yes/no]');
+            $delete = $this->ask('Do you want to delete them?');
 
             if ($delete) {
                 
@@ -120,7 +123,7 @@ class RefreshSearchIndexFromKeywordsCommand extends Command
 
     private function refreshSentences()
     {
-        if (! $this->confirm('Do you want to reprocess all phrases? [yes/no]')) {
+        if (! $this->confirm('Do you want to reprocess all phrases?')) {
             return 0;
         }
 

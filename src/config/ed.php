@@ -89,5 +89,8 @@ return [
     'sentence_repository_maximum_fragments' => 100,
     
     // gloss repository configuration
-    'gloss_repository_maximum_results' => 1000
+    'gloss_repository_maximum_results' => 1000,
+
+    // search index repository configuration
+    'search_index_expands_english_infinitives' => true
 ];
