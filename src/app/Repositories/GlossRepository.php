@@ -13,6 +13,7 @@ use App\Events\{
     GlossEdited,
     SenseEdited
 };
+use App\Interfaces\ISystemLanguageFactory;
 use App\Models\{ 
     Keyword,
     Gloss,
@@ -55,14 +56,15 @@ class GlossRepository
     /**
      * @var Language
      */
-    protected $_englishLanguage;
+    protected $_systemLanguage;
 
-    public function __construct(KeywordRepository $keywordRepository, WordRepository $wordRepository, AuthManager $authManager)
+    public function __construct(KeywordRepository $keywordRepository, WordRepository $wordRepository, AuthManager $authManager,
+        ISystemLanguageFactory $systemLanguageFactory)
     {
         $this->_keywordRepository = $keywordRepository;
         $this->_wordRepository = $wordRepository;
         $this->_authManager = $authManager;
-        $this->_englishLanguage = Language::where('name', 'English')->firstOrFail();
+        $this->_systemLanguage = $systemLanguageFactory->language();
     }
 
     /**
@@ -488,7 +490,11 @@ class GlossRepository
 
                     foreach ($newKeywords as $keyword) {
                         $keywordWord = $this->_wordRepository->save($keyword, $gloss->account_id);
-                        $keywordLanguage = in_array($keyword, $translationStrings) ? $this->_englishLanguage : $gloss->language;
+                        $keywordLanguage = (
+                                in_array($keyword, $translationStrings) || //
+                                $senseString === $keyword
+                            ) && $keyword !== $wordString //
+                            ? $this->_systemLanguage : $gloss->language;
                         $this->_keywordRepository->createKeyword($keywordWord, $sense, $gloss, $keywordLanguage);
                     }
                 }

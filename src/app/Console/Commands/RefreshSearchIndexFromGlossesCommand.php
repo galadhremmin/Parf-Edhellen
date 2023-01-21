@@ -3,6 +3,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
+use App\Interfaces\ISystemLanguageFactory;
 use App\Models\{
     Gloss,
     Keyword,
@@ -57,17 +58,18 @@ class RefreshSearchIndexFromGlossesCommand extends Command
     /**
      * English language (default systems language)
      */
-    private $_englishLanguage;
+    private $_systemLanguage;
 
     public function __construct(KeywordRepository $keywordRepository,
         SearchIndexRepository $searchIndexRepository,
-        WordRepository $wordRepository)
+        WordRepository $wordRepository,
+        ISystemLanguageFactory $systemLanguageFactory)
     {
         parent::__construct();
         $this->_keywordRepository = $keywordRepository;
         $this->_searchIndexRepository = $searchIndexRepository;
         $this->_wordRepository = $wordRepository;
-        $this->_englishLanguage = Language::where('name', 'English')->firstOrFail();
+        $this->_systemLanguage = $systemLanguageFactory->language();
     }
 
     /**
@@ -109,8 +111,8 @@ class RefreshSearchIndexFromGlossesCommand extends Command
 
                 foreach ($gloss->translations as $translation) {
                     $translationWord = $this->_wordRepository->save($translation->translation, $gloss->account_id);
-                    $this->_keywordRepository->createKeyword($translationWord, $gloss->sense, $gloss, $this->_englishLanguage);
-                    $this->_searchIndexRepository->createIndex($gloss, $translationWord, $this->_englishLanguage);
+                    $this->_keywordRepository->createKeyword($translationWord, $gloss->sense, $gloss, $this->_systemLanguage);
+                    $this->_searchIndexRepository->createIndex($gloss, $translationWord, $this->_systemLanguage);
                 }
 
                 echo (++$i)." (".round(($i / $noOfGlosses)*100,2)."%): $gloss->id\n";

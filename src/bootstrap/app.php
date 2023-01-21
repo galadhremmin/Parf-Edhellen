@@ -32,6 +32,23 @@ $app->singleton(
 );
 
 $app->singleton(
+    App\Interfaces\ISystemLanguageFactory::class,
+    function() {
+        return new class() implements App\Interfaces\ISystemLanguageFactory {
+            private $_language = null;
+    
+            function language(): App\Models\Language {
+                if ($this->_language === null) {
+                    $languageName = config('ed.system_language');
+                    $this->_language = App\Models\Language::where('name', $languageName)->firstOrFail();
+                }
+                return $this->_language;
+            }
+        };
+    }
+);
+
+$app->singleton(
     Illuminate\Contracts\Console\Kernel::class,
     App\Console\Kernel::class
 );

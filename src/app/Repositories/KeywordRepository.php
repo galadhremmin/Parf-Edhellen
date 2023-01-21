@@ -14,7 +14,7 @@ use App\Models\{
 class KeywordRepository 
 {
     public function createKeyword(Word $word, Sense $sense, Gloss $gloss = null, Language $keywordLanguage = null, //
-        string $inflection = null, int $inflectionId = 0): Keyword
+        string $inflection = null, int $inflectionId = 0): void
     {
         $keywordString = $inflection ? $inflection : $word->word;
 
@@ -56,6 +56,6 @@ class KeywordRepository
         $updateFields = [
             'is_old', 'is_sense', 'normalized_keyword'
         ];
-        return Keyword::updateOrCreate($data, $qualifyingFields, $updateFields);
+        Keyword::upsert([$data], $qualifyingFields, $updateFields);
     }
 }

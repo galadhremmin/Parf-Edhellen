@@ -201,7 +201,7 @@ class SearchIndexRepository
         $hash = $this->makeStoreHash($data);
         if (! in_array($hash, self::$latestStoredIndexHashes)) {
 
-            SearchKeyword::updateOrCreate($data, self::$upsetFields, [
+            SearchKeyword::upsert([$data], self::$upsetFields, [
                 // UPSERT update field if a row already exists
                 'normalized_keyword', 'normalized_keyword_unaccented', 'normalized_keyword_reversed', 'normalized_keyword_reversed_unaccented',
                 'keyword_length', 'normalized_keyword_length', 'normalized_keyword_unaccented_length', 'normalized_keyword_reversed_length',

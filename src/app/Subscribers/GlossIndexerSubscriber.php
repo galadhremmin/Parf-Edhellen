@@ -17,19 +17,21 @@ use App\Events\{
     GlossEdited,
     GlossInflectionsCreated
 };
+use App\Interfaces\ISystemLanguageFactory;
 use App\Jobs\ProcessSearchIndexCreation;
 
 class GlossIndexerSubscriber
 {
     private $_searchIndexRepository;
     private $_wordRepository;
-    private $_englishLanguage;
+    private $_systemLanguage;
 
-    public function __construct(SearchIndexRepository $searchIndexRepository, WordRepository $wordRepository)
+    public function __construct(SearchIndexRepository $searchIndexRepository, WordRepository $wordRepository,
+        ISystemLanguageFactory $systemLanguageFactory)
     {
         $this->_searchIndexRepository = $searchIndexRepository;
         $this->_wordRepository = $wordRepository;
-        $this->_englishLanguage = Language::where('name', 'English')->firstOrFail();
+        $this->_systemLanguage = $systemLanguageFactory->language();
     }
 
     /**
@@ -97,14 +99,15 @@ class GlossIndexerSubscriber
 
         foreach ($gloss->keywords as $keyword) {
             if (! $translations->contains($keyword->keyword)) {
-                ProcessSearchIndexCreation::dispatch($gloss, $keyword->wordEntity, $keyword->keyword_language, $keyword->keyword) //
+                $keywordLanguage = $keyword->keyword_language ?: $this->_systemLanguage;
+                ProcessSearchIndexCreation::dispatch($gloss, $keyword->wordEntity, $keywordLanguage, $keyword->keyword) //
                     ->onQueue('indexing');
             }
         }
 
         foreach ($translations as $translation) {
             $translationWord = $this->_wordRepository->save($translation, $gloss->account_id);
-            ProcessSearchIndexCreation::dispatch($gloss, $translationWord, $this->_englishLanguage) //
+            ProcessSearchIndexCreation::dispatch($gloss, $translationWord, $this->_systemLanguage) //
                 ->onQueue('indexing');
         }
 

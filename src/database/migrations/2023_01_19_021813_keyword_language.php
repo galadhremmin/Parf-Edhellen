@@ -1,5 +1,6 @@
 <?php
 
+use App\Interfaces\ISystemLanguageFactory;
 use App\Models\ForumPost;
 use App\Models\Gloss;
 use App\Models\Initialization\Morphs;
@@ -20,7 +21,7 @@ class KeywordLanguage extends Migration
      */
     public function up()
     {
-        $englishLanguage = Language::where('name', 'English')->firstOrFail();
+        $englishLanguage = resolve(ISystemLanguageFactory::class)->language();
 
         Schema::table('keywords', function (Blueprint $table) {
             $table->unsignedBigInteger('keyword_language_id')->nullable();
