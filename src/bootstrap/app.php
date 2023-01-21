@@ -37,7 +37,7 @@ $app->singleton(
         return new class() implements App\Interfaces\ISystemLanguageFactory {
             private $_language = null;
     
-            function language(): App\Models\Language {
+            function language(): ?App\Models\Language {
                 if ($this->_language === null) {
                     $languageName = config('ed.system_language');
                     $this->_language = App\Models\Language::where('name', $languageName)->first();

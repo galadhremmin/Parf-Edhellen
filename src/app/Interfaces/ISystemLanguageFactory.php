@@ -6,5 +6,5 @@ use App\Models\Language;
 
 interface ISystemLanguageFactory
 {
-    function language(): Language;
+    function language(): ?Language;
 }
