@@ -17,7 +17,6 @@ class Kernel extends ConsoleKernel
         Commands\RefreshSearchIndexFromKeywordsCommand::class,
         Commands\RefreshSearchIndexFromGlossesCommand::class,
         Commands\RefreshDiscussIndexesCommand::class,
-        Commands\RefreshNormalizationCommand::class,
     ];
 
     /**

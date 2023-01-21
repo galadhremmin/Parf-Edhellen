@@ -16,6 +16,8 @@ use App\Repositories\{
     WordRepository
 };
 use App\Interfaces\IIdentifiesPhrases;
+use App\Interfaces\ISystemLanguageFactory;
+use App\Models\Language;
 
 class ProcessDiscussIndex implements ShouldQueue
 {
@@ -38,7 +40,8 @@ class ProcessDiscussIndex implements ShouldQueue
      *
      * @return void
      */
-    public function handle(SearchIndexRepository $searchIndexRepository, WordRepository $wordRepository, IIdentifiesPhrases $analyzer)
+    public function handle(SearchIndexRepository $searchIndexRepository, WordRepository $wordRepository, IIdentifiesPhrases $analyzer,
+        ISystemLanguageFactory $systemLanguageFactory)
     {
         $post = $this->post;
 
@@ -48,7 +51,7 @@ class ProcessDiscussIndex implements ShouldQueue
                 $keywords = $analyzer->detectKeyPhrases($post->content);
                 foreach ($keywords as $keyword) {
                     $word = $wordRepository->save($keyword, $post->account_id);
-                    $searchIndexRepository->createIndex($post, $word);
+                    $searchIndexRepository->createIndex($post, $word, $systemLanguageFactory->language());
                 }
             } catch (\Exception $ex) {
                 // Errors can fail silently but make sure to log the error.

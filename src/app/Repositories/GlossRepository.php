@@ -13,12 +13,13 @@ use App\Events\{
     GlossEdited,
     SenseEdited
 };
+use App\Interfaces\ISystemLanguageFactory;
 use App\Models\{ 
     Keyword,
     Gloss,
     GlossDetail,
+    Language,
     Translation,
-    SearchKeyword,
     Sense,
     Word
 };
@@ -52,12 +53,18 @@ class GlossRepository
      * @var AuthManager
      */
     protected $_authManager;
+    /**
+     * @var Language
+     */
+    protected $_systemLanguage;
 
-    public function __construct(KeywordRepository $keywordRepository, WordRepository $wordRepository, AuthManager $authManager)
+    public function __construct(KeywordRepository $keywordRepository, WordRepository $wordRepository, AuthManager $authManager,
+        ISystemLanguageFactory $systemLanguageFactory)
     {
         $this->_keywordRepository = $keywordRepository;
         $this->_wordRepository = $wordRepository;
         $this->_authManager = $authManager;
+        $this->_systemLanguage = $systemLanguageFactory->language();
     }
 
     /**
@@ -352,7 +359,6 @@ class GlossRepository
         }, $translations);
         $newKeywords = array_unique(array_merge($keywords, [ $wordString, $senseString ], $translationStrings));
         sort($newKeywords);
-        unset($translationStrings);
 
         // These variables will be set to true if any changes are detected on the specified entity.
         $changed = self::GLOSS_CHANGE_NO_CHANGE;
@@ -484,7 +490,12 @@ class GlossRepository
 
                     foreach ($newKeywords as $keyword) {
                         $keywordWord = $this->_wordRepository->save($keyword, $gloss->account_id);
-                        $this->_keywordRepository->createKeyword($keywordWord, $sense, $gloss);
+                        $keywordLanguage = (
+                                in_array($keyword, $translationStrings) || //
+                                $senseString === $keyword
+                            ) && $keyword !== $wordString //
+                            ? $this->_systemLanguage : $gloss->language;
+                        $this->_keywordRepository->createKeyword($keywordWord, $sense, $gloss, $keywordLanguage);
                     }
                 }
 

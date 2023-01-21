@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Models\Versioning\GlossVersion;
 
-class Gloss extends ModelBase implements Interfaces\IHasFriendlyName
+class Gloss extends ModelBase implements Interfaces\IHasFriendlyName, Interfaces\IHasLanguage
 {
     use Traits\HasAccount;
     

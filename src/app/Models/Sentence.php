@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class Sentence extends ModelBase implements Interfaces\IHasFriendlyName
+class Sentence extends ModelBase implements Interfaces\IHasFriendlyName, Interfaces\IHasLanguage
 {
     use Traits\HasAccount;
 

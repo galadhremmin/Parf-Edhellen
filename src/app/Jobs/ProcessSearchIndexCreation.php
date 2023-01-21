@@ -3,14 +3,13 @@
 namespace App\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Models\{
+    Language,
     ModelBase,
-    Keyword,
     Word
 };
 use App\Repositories\SearchIndexRepository;
@@ -21,6 +20,7 @@ class ProcessSearchIndexCreation implements ShouldQueue
 
     protected $entity;
     protected $keyword;
+    protected $keywordLanguage;
     protected $inflection;
 
     /**
@@ -28,11 +28,12 @@ class ProcessSearchIndexCreation implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(ModelBase $entity, Word $keyword, string $inflection = null)
+    public function __construct(ModelBase $entity, Word $keyword, Language $keywordLanguage, string $inflection = null)
     {
-        $this->entity     = $entity;
-        $this->keyword    = $keyword;
-        $this->inflection = $inflection;
+        $this->entity          = $entity;
+        $this->keyword         = $keyword;
+        $this->keywordLanguage = $keywordLanguage;
+        $this->inflection      = $inflection;
     }
 
     /**
@@ -42,6 +43,6 @@ class ProcessSearchIndexCreation implements ShouldQueue
      */
     public function handle(SearchIndexRepository $searchIndexRepository)
     {
-        $searchIndexRepository->createIndex($this->entity, $this->keyword, $this->inflection);
+        $searchIndexRepository->createIndex($this->entity, $this->keyword, $this->keywordLanguage, $this->inflection);
     }
 }

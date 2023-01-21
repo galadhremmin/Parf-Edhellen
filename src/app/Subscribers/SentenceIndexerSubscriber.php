@@ -89,7 +89,7 @@ class SentenceIndexerSubscriber
                     $inflection = null; // if the words are identical, don't consider the fragment an inflection
                 }
 
-                ProcessSearchIndexCreation::dispatch($fragment, $word, $inflection) //
+                ProcessSearchIndexCreation::dispatch($fragment, $word, $fragment->gloss->language, $inflection) //
                     ->onQueue('indexing');
             }
         }
