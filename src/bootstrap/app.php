@@ -40,7 +40,7 @@ $app->singleton(
             function language(): App\Models\Language {
                 if ($this->_language === null) {
                     $languageName = config('ed.system_language');
-                    $this->_language = App\Models\Language::where('name', $languageName)->firstOrFail();
+                    $this->_language = App\Models\Language::where('name', $languageName)->first();
                 }
                 return $this->_language;
             }
