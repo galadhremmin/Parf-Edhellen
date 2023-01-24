@@ -35,7 +35,7 @@ const GlossInflections = (props: IProps) => {
                                 {firstInflection.isRejected ? <s>{firstInflection.word}</s> : firstInflection.word}
                             </td>
                             <td>
-                                <em>{firstInflection.speech.name}</em>
+                                <em>{firstInflection.speech?.name}</em>
                                 {' ' + inflections.map(i => i.inflection.name).join(' ')}
                             </td>
                             <td>
