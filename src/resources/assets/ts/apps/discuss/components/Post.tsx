@@ -34,7 +34,7 @@ export function Post(props: IProps) {
 
     return <section className={classNames('forum-post', {
         'forum-post--thread': isThreadPost,
-        'shadow py-4 pe-4': isThreadPost && highlightThreadPost,
+        'highlighted': isThreadPost && highlightThreadPost,
     })} ref={postRef}>
         <div className="post-profile-picture">
             <Avatar account={post.account} />
