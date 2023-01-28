@@ -8,6 +8,9 @@ function PaginationDetails(props: IProps) {
         numberOfPages,
         numberOfPosts,
         numberOfTotalPosts,
+    } = props;
+
+    const {
         originalPostIsAlwaysVisible,
     } = props;
 
