@@ -129,15 +129,22 @@ h1 {
 
     &.forum-post--thread {
         border-top: none;
+
+        &.highlighted {
+            padding: $spacer * 1.5;
+            padding-left: 0;
+            box-shadow: $box-shadow;
+            background: $gray-100;
+
+            @media (max-width: $ed-device-width) {
+                box-shadow: none;
+                background: none;
+            }
+        }
     }
 
     &.forum-post--thread + aside.discuss-body--pagination-details + .forum-post {
         margin-top: $container-padding-x/2;
-    }
-
-    &.highlight {
-        background-color: $link-block-background-color-hover;
-        border-radius: $border-radius-lg;
     }
 
     .post-body {
