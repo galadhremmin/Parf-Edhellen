@@ -34,7 +34,10 @@
                 "-i",
                 "--no-cache",
                 "--testTimeout",
-                "999999"
+                "999999",
+                "--runInBand",
+                "--coverage",
+                "false"
               ],
               "console": "integratedTerminal",
               "internalConsoleOptions": "neverOpen"

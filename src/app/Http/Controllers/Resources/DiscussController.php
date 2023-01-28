@@ -111,9 +111,10 @@ class DiscussController extends Controller
         $postData = $this->_discussRepository->getPostDataInThread($threadData->getThread(), $request->user(), 'asc', $currentPage, $forumPostId);
         $this->_discussAdapter->adaptPosts($postData->getPosts());
 
-        return view('discuss.thread', $threadData->getAllValues() + $groupData + [
+        $model = $threadData->getAllValues() + $groupData + [
             'preloadedPosts' => $postData->getAllValues()
-        ]);
+        ];
+        return view('discuss.thread', $model);
     }
 
     public function topMembers(Request $request)

@@ -14,6 +14,7 @@ import { IProps } from './Post._types';
 
 export function Post(props: IProps) {
     const {
+        highlightThreadPost,
         post,
         renderToolbar,
         onReferenceLinkClick,
@@ -31,7 +32,10 @@ export function Post(props: IProps) {
         }
     }, [ focused, postRef ]);
 
-    return <section className={classNames('forum-post', { 'forum-post--thread': isThreadPost })} ref={postRef}>
+    return <section className={classNames('forum-post', {
+        'forum-post--thread': isThreadPost,
+        'shadow py-4 pe-4': isThreadPost && highlightThreadPost,
+    })} ref={postRef}>
         <div className="post-profile-picture">
             <Avatar account={post.account} />
         </div>

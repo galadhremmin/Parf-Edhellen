@@ -5,6 +5,7 @@ import {
 export interface IPostPaginationState {
     currentPage: number;
     noOfPages: number;
+    noOfPosts: number;
     pages: (string | number)[];
 }
 

@@ -34,6 +34,14 @@ h1 {
             }
         }
     }
+
+    > aside.discuss-body--pagination-details {
+        font-family: $font-family-tiny;
+        font-size: $font-size-sm;
+        color: $gray-600;
+        text-align: center;
+        margin-top: 1rem;
+    }
 }
 
 .discuss-table {
@@ -49,6 +57,7 @@ h1 {
         display: flex;
         flex-wrap: wrap;
         padding: $container-padding-x;
+        color: inherit;
 
         &:nth-child(even) {
             background-color: $table-striped-bg;
@@ -67,6 +76,10 @@ h1 {
 
             &.p2 {
                 flex-grow: 2;
+                > .subject {
+                    font-weight: bold;
+                    font-size: 1.2rem;
+                }
             }
 
             &:first-child {
@@ -74,13 +87,11 @@ h1 {
             }
 
             /* profile picture */
-            .pp {
-                img {
-                    width: 60px;
-                    height: 60px;
-                    border-radius: 30px;
-                    @include ed-box-shadow();
-                }
+            img.pp {
+                width: 60px;
+                height: 60px;
+                border-radius: 30px;
+                @include ed-box-shadow();
             }
 
             /* profile information */
@@ -116,13 +127,12 @@ h1 {
     border-top: 1px solid $gray-200;
     transition: background-color 2s, padding 2s;
 
-    &:first-child {
-        padding-top: 0;
+    &.forum-post--thread {
         border-top: none;
     }
 
-    &.forum-post--thread + .forum-post {
-        border-top-width: thick;
+    &.forum-post--thread + aside.discuss-body--pagination-details + .forum-post {
+        margin-top: $container-padding-x/2;
     }
 
     &.highlight {

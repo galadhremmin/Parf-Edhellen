@@ -1,4 +1,5 @@
 import React, {
+    Fragment,
     useCallback,
     useEffect,
     useRef,
@@ -15,6 +16,7 @@ import { PageModes } from '@root/components/Pagination/Pagination._types';
 import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import { DI, resolve } from '@root/di';
 import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
+import { getStateOrDefault } from '@root/utilities/redux/collectivize';
 
 import DiscussActions from '../actions/DiscussActions';
 import {
@@ -24,11 +26,11 @@ import {
 import Form from '../components/Form';
 import Post from '../components/Post';
 import { IProps as IPostProps } from '../components/Post._types';
+import PaginationDetails from '../components/PaginationDetails';
 import RespondButton from '../components/RespondButton';
 import ConditionalToolbar from '../components/toolbar/ConditionalToolbar';
 import { keyGenerator, RootReducer } from '../reducers';
 import { IProps } from './Discuss._types';
-import { getStateOrDefault } from '@root/utilities/redux/collectivize';
 
 function Discuss(props: IProps) {
     const formRef = useRef(null);
@@ -38,9 +40,11 @@ function Discuss(props: IProps) {
 
     const {
         currentPage,
+        highlightThreadPost,
         newPostContent,
         newPostEnabled,
         noOfPages,
+        noOfPosts,
         posts,
         readonly,
         roleManager,
@@ -154,12 +158,28 @@ function Discuss(props: IProps) {
 
     return <>
         {posts.map(
-            (post) => <Post key={post.id}
-                onReferenceLinkClick={onReferenceLinkClick}
-                post={post}
-                renderToolbar={_renderToolbar}
-            />,
+            (post) => <Fragment key={`${currentPage}.${post.id}`}>
+                <Post
+                    highlightThreadPost={highlightThreadPost}
+                    onReferenceLinkClick={onReferenceLinkClick}
+                    post={post}
+                    renderToolbar={_renderToolbar}
+                />
+                {post._isThreadPost && <PaginationDetails
+                    currentPage={currentPage}
+                    numberOfPages={noOfPages}
+                    numberOfPosts={posts.length}
+                    numberOfTotalPosts={noOfPosts}
+                />}
+            </Fragment>,
         )}
+        {posts.length > 0 && <div ref={paginationRef}>
+            <Pagination currentPage={currentPage}
+                noOfPages={noOfPages}
+                onClick={_onPaginate}
+                pages={PageModes.AutoGenerate}
+            />
+        </div>}
         {(! readonly || roleManager.isAdministrator) && <aside ref={formRef} className="discuss-body__toolbar--primary mb-3 mt-3 text-center">
             {newPostEnabled
                 ? <Form name="discussForm"
@@ -172,13 +192,6 @@ function Discuss(props: IProps) {
                   />
                 : <RespondButton onClick={_onCreateNewPost} isNewPost={posts.length === 0} />}
         </aside>}
-        {posts.length > 0 && <div ref={paginationRef}>
-            <Pagination currentPage={currentPage}
-                noOfPages={noOfPages}
-                onClick={_onPaginate}
-                pages={PageModes.AutoGenerate}
-            />
-        </div>}
         <AuthenticationDialog onDismiss={_onAuthenticationCancelled} open={promoteAuth} />
     </>;
 }

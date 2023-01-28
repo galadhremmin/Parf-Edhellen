@@ -18,6 +18,7 @@ export interface IThreadResponse {
     jumpPostId?: number;
     pages: (string | number)[];
     noOfPages: number;
+    noOfPosts: number;
     posts: IPostEntity[];
     thread: IThreadEntity;
     threadId: number;

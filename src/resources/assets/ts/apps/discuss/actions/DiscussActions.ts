@@ -19,6 +19,7 @@ import {
     IThreadMetadataAction,
 } from '../reducers/ThreadReducer._types';
 import Actions from './Actions';
+import { updateQueryString } from '@root/utilities/func/query-string';
 
 export default class DiscussActions {
     constructor(private _api: IDiscussApi = resolve(DI.DiscussApi)) {
@@ -38,7 +39,7 @@ export default class DiscussActions {
             }
 
             const threadData = await this._api.thread(args);
-            dispatch(this.setThread(threadData, false, jump));
+            dispatch(this.setThread(threadData, true, jump));
         };
     }
 
@@ -51,7 +52,7 @@ export default class DiscussActions {
             } = threadData;
 
             if (currentPage !== undefined) {
-                browserHistory.push(`?offset=${currentPage}`);
+                browserHistory.push('?' + updateQueryString({offset: currentPage}));
             }
         }
 
