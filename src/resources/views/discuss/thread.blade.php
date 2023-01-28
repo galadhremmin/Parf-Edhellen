@@ -16,10 +16,12 @@
     @endif
     <section class="discuss-body"
              data-inject-module="discuss"
+             data-inject-prop-highlight-thread-post="true"
              data-inject-prop-current-page="@json($preloadedPosts['current_page'])"
              data-inject-prop-no-of-pages="@json($preloadedPosts['no_of_pages'])"
              data-inject-prop-thread-post-id="@json($preloadedPosts['thread_post_id'])"
              data-inject-prop-jump-post-id="@json($preloadedPosts['jump_post_id'])"
+             data-inject-prop-no-of-posts="@json($preloadedPosts['no_of_posts'])"
              data-inject-prop-pages="@json($preloadedPosts['pages'])"
              data-inject-prop-posts="@json($preloadedPosts['posts'])"
              data-inject-prop-thread="@json($thread)">

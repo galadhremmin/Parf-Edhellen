@@ -30,9 +30,11 @@ export interface IProps {
     entityId?: number;
     entityType?: string;
     jumpPostId?: number;
+    highlightThreadPost?: boolean;
     newPostContent?: string;
     newPostEnabled?: boolean;
     noOfPages?: number;
+    noOfPosts?: number;
     pages?: (string | number)[];
     onExistingPostChange?: ComponentEventHandler<number>;
     onExistingThreadChange?: ComponentEventHandler<number>;

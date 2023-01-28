@@ -65,6 +65,7 @@ const Inject = (props: IProps) => {
         <Discuss entityId={entityId}
                  entityType={entityType}
                  readonly={props.readonly}
+                 highlightThreadPost={props.highlightThreadPost}
         />
     </Provider>;
 };
@@ -73,6 +74,7 @@ Inject.defaultProps = {
     prefetched: true,
     jumpEnabled: true,
     readonly: false,
+    highlightThreadPost: false,
 } as Partial<IProps>;
 
 export default Inject;

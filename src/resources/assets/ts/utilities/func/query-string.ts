@@ -48,6 +48,13 @@ export const buildQueryString = (obj: IQueryStringObject): string => {
     return decodeURIComponent(parser.toString());
 }
 
+export const updateQueryString = (obj: IQueryStringObject) => {
+    const currentQueryString = window.location.search;
+    const currentObj = parseQueryString(currentQueryString);
+
+    return buildQueryString({ ...currentObj, ...obj });
+};
+
 const parseQueryStringValue = (value: string): QueryStringValue => {
     if (isEmptyString(value)) {
         return undefined;

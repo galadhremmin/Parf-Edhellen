@@ -228,8 +228,9 @@ class DiscussRepository
         $context = $this->_contextFactory->create($thread->entity_type);
 
         return new ForumThreadValue([
-            'context' => $context,
-            'thread'  => $thread
+            'context'   => $context,
+            'thread'    => $thread,
+            'thread_id' => $threadId
         ]);
     }
 
@@ -334,12 +335,13 @@ class DiscussRepository
 
         // Determine the number of 'pages' there are, which is relevant when
         // retrieving things in an ascending order.
+        $noOfPosts = $thread->forum_posts()
+            ->where($filters)
+            ->count();
+        
         $noOfPages = 0;
         if ($ascending) {
-            $noOfPages = ceil($thread->forum_posts()
-                ->where($filters)
-                ->count() / $maxLength
-            );
+            $noOfPages = ceil($noOfPosts / $maxLength);
         }
 
         // composer "filters" (where-conditions for the query fetching the posts). This is a
@@ -422,25 +424,25 @@ class DiscussRepository
             // Prepend the first post in the thread to the resulting collection if it does not already exist.
             $firstPostInThreadId = $firstPostInThread->id;
 
-            /* TODO: #26 Remove this functionality after the experiment is complete.
             if (! $posts->contains(function ($post) use ($firstPostInThreadId) {
                 return $post->id === $firstPostInThreadId;
             })) {
                 $posts->prepend($firstPostInThread);
             }
-            */
         }
 
         $pages = $this->createPageArray($noOfPages, $pageNumber);
 
         return new ForumPostsInThreadValue([
-            'posts'          => $posts,
-            'current_page'   => $pageNumber,
-            'pages'          => $pages,
-            'no_of_pages'    => $noOfPages,
-            'thread_id'      => $thread->id ?: null,
-            'thread_post_id' => $firstPostInThreadId,
-            'jump_post_id'   => $jumpToId
+            'posts'                => $posts,
+            'current_page'         => $pageNumber,
+            'pages'                => $pages,
+            'no_of_pages'          => $noOfPages,
+            'no_of_posts'          => $noOfPosts,
+            'no_of_posts_per_page' => $maxLength,
+            'thread_id'            => $thread->id ?: null,
+            'thread_post_id'       => $firstPostInThreadId,
+            'jump_post_id'         => $jumpToId
         ]);
     }
 
@@ -581,6 +583,7 @@ class DiscussRepository
 
         return new ForumThreadForEntityValue([
             'thread' => $thread,
+            'thread_id' => $thread->id,
             'forum_post_id' => $forumPostId
         ]);
     }

@@ -11,7 +11,7 @@ class ForumPostsInThreadValue implements \JsonSerializable
     {
         $this->setupForumPagination($properties);
         $this->initializeAll($properties, [
-            'posts', 'thread_id', 'thread_post_id', 'jump_post_id'
+            'posts', 'thread_id', 'thread_post_id', 'jump_post_id', 'no_of_posts', 'no_of_posts_per_page'
         ]);
     }
 

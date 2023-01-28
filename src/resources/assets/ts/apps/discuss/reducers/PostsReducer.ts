@@ -6,14 +6,23 @@ import {
 
 const PostsReducer = (state: IPostsState = [], action: IPostsReducerAction) => {
     switch (action.type) {
-        case Actions.ReceiveThread:
-            return state.filter(p => p.forumThreadId !== action.threadData.threadId)
+        case Actions.ReceiveThread: {
+            // `threadId` is not always present on the `threadData` field. For example, when
+            // you preload the thread, this field is missing but still available via the
+            // the `thread` field. This is a discrepancy between the server side rendering code
+            // and the public API. Instead of updating the interface (which is obviously painful)
+            // this hack is here for the time being. TODO: replace `threadId` with `thread`.
+            // <hack>
+            const threadId = action.threadData.threadId || action.threadData.thread?.id;
+            // </hack>
+            return state.filter(p => p.forumThreadId !== threadId) // there can be posts from multiple threads in the same reducer
                 .concat(action.threadData.posts.map((post) => {
                     post._isThreadPost = (post.id === action.threadData.threadPostId);
                     post._isFocused = (post.id === action.threadData.jumpPostId);
                     return post;
                 }),
             );
+        }
         case Actions.UpdatePost: {
             const pos = getPostIndex(state, action);
             if (pos === -1) {

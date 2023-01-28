@@ -16,12 +16,13 @@
 
 <hr>
 
-<div class="discuss-table">
 @if (count($threads) < 1)
-<p>
-  <span class="TextIcon TextIcon--info-sign"></span>
-  There are currently no threads associated with this subject.
-</p>
+<div class="discuss-table">
+  <p>
+    <span class="TextIcon TextIcon--info-sign"></span>
+    There are currently no threads associated with this subject.
+  </p>
+</div>
 @else
 
 @include('discuss._threads', [
@@ -33,7 +34,6 @@
   'name'    => 'All threads'
 ])
 @endif
-</div>
 
 <div data-inject-module="discuss-feed" data-inject-prop-group-id="{{ $group->id }}"></div>
 

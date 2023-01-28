@@ -9,7 +9,8 @@ trait HasForumThread
     public function setupForumThread(array $properties)
     {
         $this->initializeAll($properties, [
-            'thread'
+            'thread',
+            'thread_id'
         ]);
     }
 
@@ -19,5 +20,13 @@ trait HasForumThread
     public function getThread() 
     {
         return $this->getValue('thread');
+    }
+
+    /**
+     * @return int
+     */
+    public function getThreadId() 
+    {
+        return $this->getValue('thread_id');
     }
 }
