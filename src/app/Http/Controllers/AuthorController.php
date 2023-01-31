@@ -14,9 +14,9 @@ use App\Adapters\{
 use App\Http\Controllers\Abstracts\Controller;
 use App\Repositories\StatisticsRepository;
 use App\Helpers\{
-    MarkdownParser,
     StorageHelper
 };
+use App\Interfaces\IMarkdownParser;
 use App\Models\{ 
     Account, 
     ForumPost,
@@ -30,14 +30,17 @@ class AuthorController extends Controller
     protected $_discussAdapter;
     protected $_statisticsRepository;
     protected $_storageHelper;
+    protected $_markdownParser;
 
     public function __construct(BookAdapter $bookAdapter, DiscussAdapter $discussAdapter, 
-        StatisticsRepository $statisticsRepository, StorageHelper $storageHelper)
+        StatisticsRepository $statisticsRepository, StorageHelper $storageHelper,
+        IMarkdownParser $markdownParser)
     {
         $this->_bookAdapter          = $bookAdapter;
         $this->_discussAdapter       = $discussAdapter;
         $this->_statisticsRepository = $statisticsRepository;
         $this->_storageHelper        = $storageHelper;
+        $this->_markdownParser       = $markdownParser;
     }
 
     public function index(Request $request, int $id = null, $nickname = '')
@@ -47,9 +50,7 @@ class AuthorController extends Controller
         $stats   = null;
 
         if ($author) {
-            $markdownParser = new MarkdownParser();
-
-            $profile = $markdownParser->text($author->profile ?? '');
+            $profile = $this->_markdownParser->parseMarkdown($author->profile ?? '');
             $stats   = $this->_statisticsRepository->getStatisticsForAccount($author);
         }
 

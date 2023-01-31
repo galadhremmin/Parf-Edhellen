@@ -2,14 +2,20 @@
 
 namespace App\Helpers;
 
+use App\Interfaces\IExternalToInternalUrlResolver;
+
 class MarkdownParser extends \Parsedown
 {
     const SYMBOL_REFERENCE     = '[';
     const SYMBOL_TRANSCRIPTION = '@';
     const SYMBOL_SEE_ALSO      = '>';
 
-    function __construct($disabledBlockTypes = [])
+    private $_externalToInternalUrlResolver;
+
+    function __construct(IExternalToInternalUrlResolver $externalToInternalUrlResolver = null, $disabledBlockTypes = [])
     {
+        $this->_externalToInternalUrlResolver = $externalToInternalUrlResolver;
+
         $this->InlineTypes[self::SYMBOL_REFERENCE][]   = 'Reference';
         $this->InlineTypes[self::SYMBOL_TRANSCRIPTION] = ['Transcription'];
 
@@ -236,6 +242,26 @@ class MarkdownParser extends \Parsedown
     protected function inlineLink($Excerpt)
     {
         $link = parent::inlineLink($Excerpt);
+        if (
+            $link === null ||
+            ! isset($link['element']) ||
+            ! isset($link['element']['attributes']) ||
+            ! isset($link['element']['attributes']['href'])) {
+            return $link;
+        }
+        
+        $attr = &$link['element']['attributes'];
+        $url  =  $attr['href'];
+        if ($url !== null) {
+            $internalUrl = $this->_externalToInternalUrlResolver->getInternalUrl($url);
+            if ($internalUrl !== null) {
+                $attr['href']  = $internalUrl;
+                $attr['class'] = 'ed-word-external-reference';
+
+                return $link;
+            }
+        }
+
         return $this->shortenUri($link);
     }
 
@@ -261,7 +287,7 @@ class MarkdownParser extends \Parsedown
             return;
         }
         
-        $attrs =& $link['element']['attributes'];
+        $attrs = &$link['element']['attributes'];
         $uri   = $attrs['href'];
         $text  = $link['element']['text'];
         if (! filter_var($uri, FILTER_VALIDATE_URL) ||

@@ -98,22 +98,26 @@ export default class HtmlInject extends React.Component<IProps, IState> {
 
     private _referenceRender(definitions: ProcessNodeDefinitions, node: INode, children: INode[]) {
         const nodeElements = definitions.processDefaultNode(node, children);
-        if (node.attribs.class !== 'ed-word-reference') {
-            return nodeElements;
+
+        switch (node.attribs.class) {
+            case 'ed-word-external-reference':
+                return nodeElements; // TODO: implement AJAX loading
+            case 'ed-word-reference': {
+                // Replace reference links with a link that is aware of
+                // the component, and can intercept click attempts.
+                const href = node.attribs.href;
+                const title = node.attribs.title;
+                const normalizedWord = node.attribs['data-word'];
+                const word = node.attribs['data-original-word'];
+                const languageShortName = node.attribs['data-language-short-name'];
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                const childElements = nodeElements.props.children;
+
+                return <a href={href} onClick={this._onReferenceLinkClick.bind(this, word, normalizedWord, languageShortName)}
+                    title={title}>{childElements}</a>;
+            } default:
+                return nodeElements;
         }
-
-        // Replace reference links with a link that is aware of
-        // the component, and can intercept click attempts.
-        const href = node.attribs.href;
-        const title = node.attribs.title;
-        const normalizedWord = node.attribs['data-word'];
-        const word = node.attribs['data-original-word'];
-        const languageShortName = node.attribs['data-language-short-name'];
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        const childElements = nodeElements.props.children;
-
-        return <a href={href} onClick={this._onReferenceLinkClick.bind(this, word, normalizedWord, languageShortName)}
-            title={title}>{childElements}</a>;
     }
 
     private _transcriptionRender(definitions: ProcessNodeDefinitions, node: INode, children: INode[]) {

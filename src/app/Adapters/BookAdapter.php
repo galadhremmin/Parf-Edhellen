@@ -8,11 +8,9 @@ use Carbon\Carbon;
 use App\Helpers\{
     GlossAggregationHelper,
     LinkHelper, 
-    StringHelper, 
-    MarkdownParser
+    StringHelper
 };
 use App\Models\{
-    Account, 
     Gloss, 
     GlossDetail,
     Language,
@@ -21,9 +19,19 @@ use App\Models\{
 use App\Models\Versioning\{
     GlossVersion
 };
+use App\Interfaces\IMarkdownParser;
 
 class BookAdapter
 {
+    private $_markdownParser;
+    private $_linkHelper;
+
+    public function __construct(IMarkdownParser $markdownParser, LinkHelper $linkHelper)
+    {
+        $this->_markdownParser = $markdownParser;
+        $this->_linkHelper = $linkHelper;
+    }
+
     /**
      * Transforms the specified glosses array to a view model.
      *
@@ -59,8 +67,6 @@ class BookAdapter
         $aggregator = new GlossAggregationHelper;
         $numberOfGlosses = $aggregator->aggregate($glosses);
 
-        $linker = resolve(LinkHelper::class);
-
         //    - Just one translation result.
         if ($numberOfGlosses === 1) {
             $gloss = $glosses[0];
@@ -72,7 +78,7 @@ class BookAdapter
                     [
                         // Load the language by examining the first (and only) element of the array
                         'language' => $language,
-                        'entities'  => [ $this->adaptGloss($gloss, new Collection([$language]), $inflections, $commentsById, $atomDate, $linker) ]
+                        'entities'  => [ $this->adaptGloss($gloss, new Collection([$language]), $inflections, $commentsById, $atomDate) ]
                     ]
                 ],
                 'single' => true,
@@ -214,7 +220,7 @@ class BookAdapter
         bool $atomDate = false, LinkHelper $linker = null): \stdClass
     {
         if ($linker === null) {
-            $linker = resolve(LinkHelper::class);
+            $linker = $this->_linkHelper;
         }
 
         $separator = config('ed.gloss_translations_separator');
@@ -263,9 +269,8 @@ class BookAdapter
             }, $gloss->translations));
         }
 
-        $markdownParser = new MarkdownParser(['>', '#']);
         if (!empty($gloss->comments)) {
-            $gloss->comments = $markdownParser->text($gloss->comments);
+            $gloss->comments = $this->_markdownParser->parseMarkdownNoBlocks($gloss->comments);
         }
 
         // Restore the order of the details based on the `order` property
@@ -275,7 +280,7 @@ class BookAdapter
 
         // Parse markdown to HTML
         foreach ($gloss->gloss_details as $detail) {
-            $detail->text = $markdownParser->text($detail->text);
+            $detail->text = $this->_markdownParser->parseMarkdownNoBlocks($detail->text);
         }
 
         $gloss->account_url = $linker->author($gloss->account_id, $gloss->account_name);

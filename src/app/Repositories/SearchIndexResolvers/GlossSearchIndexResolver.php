@@ -3,6 +3,7 @@
 namespace App\Repositories\SearchIndexResolvers;
 
 use App\Repositories\ValueObjects\{
+    ExternalEntitySearchValue,
     SearchIndexSearchValue,
     SpecificEntitiesSearchValue
 };
@@ -10,8 +11,7 @@ use App\Models\Gloss;
 use App\Repositories\{
     DiscussRepository,
     GlossInflectionRepository,
-    GlossRepository,
-    SentenceRepository
+    GlossRepository
 };
 use App\Adapters\BookAdapter;
 use App\Helpers\StringHelper;
@@ -20,6 +20,7 @@ use App\Models\{
     SearchKeyword,
     Sense
 };
+use DB;
 
 class GlossSearchIndexResolver implements ISearchIndexResolver
 {
@@ -47,6 +48,10 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
     {
         if ($value instanceof SpecificEntitiesSearchValue) {
             $glosses = $this->_glossRepository->getGlosses($value->getIds());
+        } else if ($value instanceof ExternalEntitySearchValue) {
+            $glosses = $this->_glossRepository->getGlossesByExternalId(
+                $value->getExternalId(), $value->getGlossGroupId()
+            );
         } else {
             $normalizedWord = StringHelper::normalize($value->getWord(), /* accentsMatter = */ true, /* retainWildcard = */ false);
 
