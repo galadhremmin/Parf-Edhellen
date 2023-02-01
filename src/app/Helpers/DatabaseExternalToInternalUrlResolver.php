@@ -51,7 +51,7 @@ class DatabaseExternalToInternalUrlResolver implements IExternalToInternalUrlRes
         $regex = $this->getRegularExpressionForHostUnsafe($host);
         $path = parse_url($url, PHP_URL_PATH);
         $matches = null;
-        if (preg_match($regex, $path, $matches) === false) {
+        if (! preg_match($regex, $path, $matches)) {
             return null;
         }
 
