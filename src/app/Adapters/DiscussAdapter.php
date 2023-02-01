@@ -6,7 +6,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Auth\AuthManager;
 
 use App\Http\Discuss\ContextFactory;
-use App\Helpers\MarkdownParser;
 use App\Models\{
     Account,
     ForumPost,
@@ -20,6 +19,7 @@ use App\Helpers\{
     LinkHelper,
     StorageHelper
 };
+use App\Interfaces\IMarkdownParser;
 
 class DiscussAdapter
 {
@@ -27,14 +27,16 @@ class DiscussAdapter
     private $_storageHelper;
     private $_authManager;
     private $_linkHelper;
+    private $_markdownParser;
 
     public function __construct(ContextFactory $contextFactory, StorageHelper $storageHelper, AuthManager $authManager,
-        LinkHelper $linkHelper)
+        LinkHelper $linkHelper, IMarkdownParser $markdownParser)
     {
         $this->_contextFactory = $contextFactory;
         $this->_storageHelper = $storageHelper;
         $this->_authManager = $authManager;
         $this->_linkHelper = $linkHelper;
+        $this->_markdownParser = $markdownParser;
     }
 
     public function adaptAccount(Account $account)
@@ -64,8 +66,7 @@ class DiscussAdapter
         if ($post->is_hidden || $post->is_deleted) {
             $post->content = null;
         } else {
-            $parser = new MarkdownParser();
-            $post->content = $parser->text($post->content);
+            $post->content = $this->_markdownParser->parseMarkdown($post->content);
         }
 
         return $post;

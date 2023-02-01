@@ -4,14 +4,21 @@ namespace App\Http\Controllers\Api\v2;
 
 use Illuminate\Http\Request;
 
-use App\Helpers\MarkdownParser;
 use App\Http\Controllers\Abstracts\Controller;
+use App\Interfaces\IMarkdownParser;
 use App\Models\SystemError;
 
 class UtilityApiController extends Controller
 {
     const DEFAULT_SYSTEM_ERROR_CATEGORY = 'frontend';
     const RESTRICTED_SYSTEM_ERROR_CATEGORIES = ['backend'];
+
+    private $_markdownParser;
+
+    public function __construct(IMarkdownParser $markdownParser)
+    {
+        $this->_markdownParser = $markdownParser;
+    }
 
     public function parseMarkdown(Request $request)
     {
@@ -20,18 +27,16 @@ class UtilityApiController extends Controller
             'markdowns' => 'sometimes|required|array'
         ]);
 
-        $parser = new MarkdownParser();
-
         $markdown = $request->input('markdown');
         if ($markdown)
-            return [ 'html' => $parser->text($markdown) ];
+            return [ 'html' => $this->_markdownParser->parseMarkdown($markdown) ];
         
         $markdowns = $request->input('markdowns');
         $keys = array_keys($markdowns);
         $html = [];
 
         foreach ($keys as $key) {
-            $html[$key] = $parser->text($markdowns[$key]);
+            $html[$key] = $this->_markdownParser->parseMarkdown($markdowns[$key]);
         }
 
         return $html;

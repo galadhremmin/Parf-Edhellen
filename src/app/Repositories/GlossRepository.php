@@ -120,6 +120,26 @@ class GlossRepository
     }
 
     /**
+     * Gets a list of glosses within the specified gloss group that matches the specified external ID.
+     * @param string $externalId external source ID
+     * @return array
+     */
+    public function getGlossesByExternalId(string $externalId, int $glossGroupId)
+    {
+        $maximumNumberOfResources = config('ed.gloss_repository_maximum_results');
+        return self::createGlossQuery(0, true /* = include old */, function ($q) use($externalId, $glossGroupId) {
+            $q = $q->where('g.external_id', $externalId);
+            if ($glossGroupId !== 0) {
+                $q = $q->where('g.gloss_group_id', $glossGroupId);
+            }
+            return $q;
+        })
+        ->limit($maximumNumberOfResources)
+        ->get()
+        ->toArray();
+    }
+
+    /**
      * Gets the gloss entity with the specified ID.
      * 
      * @param int $id
