@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\SearchKeyword;
 use App\Http\Controllers\Abstracts\BookBaseController;
 use App\Http\Controllers\Traits\CanGetLanguage;
+use App\Models\GlossGroup;
 use App\Repositories\ValueObjects\ExternalEntitySearchValue;
 use App\Repositories\ValueObjects\SpecificEntitiesSearchValue;
 
@@ -40,7 +41,7 @@ class BookController extends BookBaseController
     {
         $v = new SpecificEntitiesSearchValue([$id]);
         $entities = $this->_searchIndexRepository->resolveIndexToEntities(SearchKeyword::SEARCH_GROUP_DICTIONARY, $v);
-        if (count($entities['entities']) === 0) {
+        if (count($entities['entities']['sections']) === 0) {
             abort(404);
         }
 
@@ -55,8 +56,21 @@ class BookController extends BookBaseController
             'external_id' => $externalId
         ]);
         $entities = $this->_searchIndexRepository->resolveIndexToEntities(SearchKeyword::SEARCH_GROUP_DICTIONARY, $v);
-        if (count($entities['entities']) === 0) {
-            abort(404);
+        if (count($entities['entities']['sections']) === 0) {
+            $glossGroup = GlossGroup::findOrFail($glossGroupId);
+
+            // Don't navigate the client to another website destination if they want to be taken back.
+            $url = config('app.url');
+            $referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : $url;
+            if (parse_url($referer, PHP_URL_HOST) !== parse_url($url, PHP_URL_HOST)) {
+                $referer = $url;
+            }
+
+            return view('book.not-found-external', [
+                'external_url' => str_replace('{ExternalID}', $externalId, $glossGroup->external_link_format),
+                'gloss_group'  => $glossGroup,
+                'referer'      => $referer
+            ]);
         }
 
         return view('book.page', [
