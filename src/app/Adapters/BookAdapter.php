@@ -110,7 +110,7 @@ class BookAdapter
         $sense = [];
         $noOfSense = 0;
         foreach ($glosses as $gloss) {
-            $adapted = $this->adaptGloss($gloss, $allLanguages, $inflections, $commentsById, $atomDate, $linker);
+            $adapted = $this->adaptGloss($gloss, $allLanguages, $inflections, $commentsById, $atomDate);
             if ($word !== null) {
                 self::calculateRating($adapted, $word);
             }

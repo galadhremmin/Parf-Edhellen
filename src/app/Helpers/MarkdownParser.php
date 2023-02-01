@@ -250,15 +250,17 @@ class MarkdownParser extends \Parsedown
             return $link;
         }
         
-        $attr = &$link['element']['attributes'];
-        $url  =  $attr['href'];
-        if ($url !== null) {
-            $internalUrl = $this->_externalToInternalUrlResolver->getInternalUrl($url);
-            if ($internalUrl !== null) {
-                $attr['href']  = $internalUrl;
-                $attr['class'] = 'ed-word-external-reference';
+        if ($this->_externalToInternalUrlResolver !== null) {
+            $attr = &$link['element']['attributes'];
+            $url  =  $attr['href'];
+            if ($url !== null) {
+                $internalUrl = $this->_externalToInternalUrlResolver->getInternalUrl($url);
+                if ($internalUrl !== null) {
+                    $attr['href']  = $internalUrl;
+                    $attr['class'] = 'ed-word-external-reference';
 
-                return $link;
+                    return $link;
+                }
             }
         }
 
