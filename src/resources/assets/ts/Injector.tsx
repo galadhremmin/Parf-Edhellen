@@ -1,10 +1,15 @@
 import React, {
     Suspense,
 } from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot, hydrateRoot } from 'react-dom/client';
 import Spinner from './components/Spinner';
 import ErrorBoundary from './utilities/ErrorBoundary';
 import { snakeCasePropsToCamelCase } from './utilities/func/snake-case';
+
+const enum RenderMode {
+    Async = 'async',
+    Ssr = 'ssr',
+};
 
 /**
  * The `data-inject-module` attribute is used to identify elements that depend
@@ -19,23 +24,38 @@ const InjectModuleAttributeName = 'injectModule';
 const InjectPropAttributeName = 'injectProp';
 
 /**
+ * Server-side rendered and thus only needs to be hydrated?
+ */
+const InjectModeAttributeName = 'injectMode';
+
+/**
  * Loads the module `moduleName`'s default component and injects it to the
  * page.
  * @param element the element to inject the component into.
  * @param moduleName the module to load.
  * @param props properties to inject to the loaded component.
  */
-const load = (element: HTMLElement, moduleName: string, props: any) => {
+const load = (element: HTMLElement, mode: RenderMode, moduleName: string, props: any) => {
     const Component = React.lazy(() => import(`./apps/${moduleName}/index`));
-    const root = createRoot(element);
+
+    switch (mode) {
+        case RenderMode.Async: {
+            const root = createRoot(element);
     
-    root.render(<Suspense fallback={<Spinner />}>
-        <ErrorBoundary>
-            <React.StrictMode>
-                <Component {...props} />
-            </React.StrictMode>
-        </ErrorBoundary>
-    </Suspense>);
+            root.render(<Suspense fallback={<Spinner />}>
+                    <ErrorBoundary>
+                        <React.StrictMode>
+                            <Component {...props} />
+                        </React.StrictMode>
+                    </ErrorBoundary>
+                </Suspense>);
+            }
+            break;
+        case RenderMode.Ssr:
+            hydrateRoot(element, <Component {...props} />);
+            break;
+    }
+    
 };
 
 /**
@@ -70,9 +90,10 @@ const inject = () => {
         const element = elements.item(i) as HTMLElement;
 
         const moduleName = element.dataset[InjectModuleAttributeName];
+        const mode = (element.dataset[InjectModeAttributeName] as RenderMode) || RenderMode.Async;
         const props = getProps(element);
 
-        load(element, moduleName, props);
+        load(element, mode, moduleName, props);
     }
 };
 

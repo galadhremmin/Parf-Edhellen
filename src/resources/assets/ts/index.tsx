@@ -1,5 +1,5 @@
 import React from 'react';
-import { createRoot } from 'react-dom/client';
+import { createRoot, hydrateRoot } from 'react-dom/client';
 import { DateTime } from 'luxon';
 
 import BookBrowserApp from './apps/book-browser';
@@ -35,8 +35,12 @@ if (loadLatestScript()) {
      */
     const renderDictionary = () => {
         const container = document.getElementById('ed-search-component');
-        const root = createRoot(container);
-        root.render(<BookBrowserApp />);
+        if (container.children.length > 0) {
+            hydrateRoot(container, <BookBrowserApp />);
+        } else {
+            const root = createRoot(container);
+            root.render(<BookBrowserApp />);
+        }
     };
 
     /**
