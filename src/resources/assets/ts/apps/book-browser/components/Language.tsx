@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { IProps } from './Language._types';
 
 import './Language.scss';

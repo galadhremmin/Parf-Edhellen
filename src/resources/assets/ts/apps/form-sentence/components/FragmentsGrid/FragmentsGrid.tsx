@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { AgGridReact } from 'ag-grid-react';
 import {
     CellValueChangedEvent,
@@ -26,9 +25,9 @@ import {
 import ISpeechResourceApi, { ISpeechEntity } from '@root/connectors/backend/ISpeechResourceApi';
 
 import { ISentenceFragmentReducerState } from '../../reducers/child-reducers/SentenceFragmentReducer._types';
-import GlossCellEditor from '../../../../components/Grid/cell-editors/GlossCellEditor';
-import InflectionCellEditor from '../../../../components/Grid/cell-editors/InflectionCellEditor';
-import SpeechSelectCellEditor from '../../../../components/Grid/cell-editors/SpeechSelectCellEditor';
+import GlossCellEditor from '@root/components/Grid/cell-editors/GlossCellEditor';
+import InflectionCellEditor from '@root/components/Grid/cell-editors/InflectionCellEditor';
+import SpeechSelectCellEditor from '@root/components/Grid/cell-editors/SpeechSelectCellEditor';
 import GlossRenderer from '@root/components/Grid/renderers/GlossRenderer';
 import InflectionRenderer from '@root/components/Grid/renderers/InflectionRenderer';
 import SpeechRenderer from '@root/components/Grid/renderers/SpeechRenderer';
@@ -54,6 +53,7 @@ const RowClassRules = {
     },
 };
 
+// TODO: Convert to React functional component
 class FragmentsGrid extends React.Component<IProps, IState> {
     public state: IState = {
         columnDefinition: null,

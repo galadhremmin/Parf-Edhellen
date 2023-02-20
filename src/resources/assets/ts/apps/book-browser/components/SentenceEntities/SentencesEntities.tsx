@@ -1,6 +1,4 @@
 import { ISentenceEntity } from '@root/connectors/backend/IBookApi';
-import React from 'react';
-
 import { IEntitiesComponentProps } from '../../containers/Entities._types';
 import Sentences from './Sentences';
 

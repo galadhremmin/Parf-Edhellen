@@ -4,8 +4,6 @@ import {
     expect,
     test,
 } from '@jest/globals';
-import React from 'react';
-
 import { IAccountEntity } from '../connectors/backend/IGlossResourceApi';
 import ProfileLink from './ProfileLink';
 

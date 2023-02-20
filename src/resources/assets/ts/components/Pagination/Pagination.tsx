@@ -1,6 +1,4 @@
 import classNames from 'classnames';
-import React from 'react';
-
 import { IProps, PageModes } from './Pagination._types';
 import PaginationLink from './PaginationLink';
 import {

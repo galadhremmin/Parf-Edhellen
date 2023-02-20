@@ -6,7 +6,7 @@
         "noImplicitAny": false,
         "module": "CommonJS",
         "target": "ESNext",
-        "jsx": "react",
+        "jsx": "react-jsx",
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
         "downlevelIteration": false,

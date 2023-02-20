@@ -150,6 +150,7 @@
     <a href="http://www.tolkienestate.com/" target="_blank" class="link-secondary text-decoration-underline">Tolkien Estate</a>.
   </section>
 </footer>
+<div id="ed-eu-consent"></div>
 
 <script type="text/javascript" src="@assetpath(index.js)"></script>
 

@@ -3,7 +3,6 @@ import {
     expect,
     test,
 } from '@jest/globals';
-import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 
 import { IBookGlossEntity, IEntitiesResponse, ILanguageEntity } from '@root/connectors/backend/IBookApi';

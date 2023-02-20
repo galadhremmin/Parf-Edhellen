@@ -1,6 +1,4 @@
 import { fireEvent } from '@root/components/Component';
-import React from 'react';
-
 import { IProps } from './UnusualLanguagesWarning._types';
 
 function UnusualLanguagesWarning({

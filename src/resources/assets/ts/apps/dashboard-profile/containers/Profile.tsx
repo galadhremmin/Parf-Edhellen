@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Avatar from '@root/components/Avatar';
 import Markdown from '@root/components/Markdown';
 import Tengwar from '@root/components/Tengwar';

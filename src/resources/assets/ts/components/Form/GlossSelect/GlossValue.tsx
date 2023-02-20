@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
 import GlossSuggestion from './GlossSuggestion';
 

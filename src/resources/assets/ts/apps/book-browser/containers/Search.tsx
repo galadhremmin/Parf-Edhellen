@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import React from 'react';
 import {
     connect,
@@ -23,6 +22,7 @@ import { excludeProps } from '@root/utilities/func/props';
 
 const AdditionalSearchParametersAsync = React.lazy(() => import('../components/AdditionalSearchParameters'));
 
+// TODO: Migrate to React component `function`
 export class SearchQuery extends React.Component<IProps, IState> {
 
     public state: IState;

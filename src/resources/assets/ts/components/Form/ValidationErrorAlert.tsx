@@ -1,5 +1,3 @@
-import React from 'react';
-
 import StaticAlert from '../StaticAlert';
 import TextIcon from '../TextIcon';
 import { IProps } from './ValidationErrorAlert._types';

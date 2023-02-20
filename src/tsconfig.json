@@ -6,7 +6,7 @@
         "noImplicitAny": true,
         "module": "esnext",
         "target": "ES2018",
-        "jsx": "react",
+        "jsx": "react-jsx",
         "allowSyntheticDefaultImports": true,
         "downlevelIteration": false,
         "moduleResolution": "node",

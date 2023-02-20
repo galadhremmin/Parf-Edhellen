@@ -1,5 +1,4 @@
 import React from 'react';
-
 import HtmlInject from '@root/components/HtmlInject';
 import Spinner from '@root/components/Spinner';
 import Tengwar from '@root/components/Tengwar';
@@ -14,6 +13,8 @@ import {
 } from './Flashcards._types';
 
 import './Flashcards.scss';
+
+// TODO: Convert to React `functional` component
 export default class Flashcards extends React.Component<IProps, IState> {
     public state: IState = {
         correct: true,

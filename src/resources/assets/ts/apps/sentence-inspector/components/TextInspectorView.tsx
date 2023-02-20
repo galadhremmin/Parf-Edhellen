@@ -1,5 +1,4 @@
 import React from 'react';
-
 import {
     IFragmentInSentenceState,
     ITextState,
@@ -17,6 +16,7 @@ import ParagraphGroup from './ParagraphGroup';
 // This is just to be safe in case something really goes wrong in the backend.
 const NumberOfParagraphsSafetyLimit = 10000;
 
+// TODO: Refactor to a React functional component
 export default class TextInspectorView extends React.Component<IProps> {
     public render() {
         const {

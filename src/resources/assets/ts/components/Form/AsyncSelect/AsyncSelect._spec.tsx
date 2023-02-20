@@ -4,8 +4,6 @@ import {
     expect,
     test,
 } from '@jest/globals';
-import React from 'react';
-
 import { IComponentEvent } from '../../Component._types';
 import AsyncSelect from './AsyncSelect';
 

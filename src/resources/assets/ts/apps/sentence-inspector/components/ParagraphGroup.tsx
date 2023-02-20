@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { IProps } from './ParagraphGroup._types';
 
 const ParagraphGroup = (props: IProps) => {

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import SearchResult from './SearchResult';
 import { IProps } from './SearchGroup._types';
 

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { IProps } from './Sentence._types';
 
 function Sentence(props: IProps) {

@@ -8,7 +8,6 @@ import {
     expect,
     test,
 } from '@jest/globals';
-import React from 'react';
 import sinon, { SinonSandbox, SinonStub, SinonStubbedInstance } from 'sinon';
 
 import UtilityApiConnector from '@root/connectors/backend/UtilityApiConnector';

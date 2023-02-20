@@ -1,12 +1,15 @@
-import React from 'react';
+import {
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 
 import Cache from '@root/utilities/Cache';
-
 import { IComponentEvent } from '../../Component._types';
 import {
     IComponentConfig,
     IProps,
-    IState,
     Tab,
 } from './MarkdownInput._types';
 import Tabs from './Tabs';
@@ -20,91 +23,59 @@ const DefaultConfigCacheFactory = () => Cache.withLocalStorage<IComponentConfig>
     enter2Paragraph: true,
 }), 'components.MarkdownInput.config');
 
-export default class MarkdownInput extends React.Component<IProps, IState> {
-    public static defaultProps = {
-        configCacheFactory: DefaultConfigCacheFactory,
-        id: 'markdownBody',
-        name: 'markdownBody',
-        props: {},
-        required: false,
-        rows: 15,
-        value: '',
-    } as Partial<IProps>;
+function MarkdownInput(props: IProps) {
+    const {
+        markdownApi,
+        configCacheFactory,
+        value,
+    } = props;
 
-    public state = {
-        currentTab: Tab.EditTab,
-        enter2Paragraph: true,
-    };
+    const [ currentTab, setCurrentTab ] = useState(Tab.EditTab);
+    const [ enter2Paragraph, setEnter2Paragraph ] = useState(true);
 
-    private _config: Cache<IComponentConfig>;
-    constructor(props: IProps) {
-        super(props);
-        this._config = props.configCacheFactory();
-    }
+    const configCacheRef = useRef<Cache<IComponentConfig>>();
 
-    public async componentDidMount() {
-        const {
-            enter2Paragraph: current,
-        } = this.state;
-
-        const actual = await this._config.get();
-        if (current !== actual.enter2Paragraph) {
-            this.setState({
-                enter2Paragraph: actual.enter2Paragraph || true,
-            });
-        }
-    }
-
-    public render() {
-        const {
-            markdownApi,
-            value,
-        } = this.props;
-
-        const {
-            currentTab,
-            enter2Paragraph,
-        } = this.state;
-
-        return <div className="MarkdownInput">
-            <Tabs tab={currentTab} onTabChange={this._onOpenTab} />
-            {currentTab === Tab.EditTab && <EditTabView
-                {...this.props}
-                enter2Paragraph={enter2Paragraph}
-                onEnter2ParagraphChange={this._onEnter2ParagraphChange}
-            />}
-            {currentTab === Tab.SyntaxTab && <SyntaxTabView />}
-            {currentTab === Tab.PreviewTab && <PreviewTabView value={value} markdownApi={markdownApi} />}
-        </div>;
-    }
-
-    private _onOpenTab = (ev: IComponentEvent<Tab>) => {
-        const {
-            currentTab,
-        } = this.state;
-
-        const tab = ev.value;
-
-        // Is the tab currently opened?
-        if (currentTab === tab) {
-            return;
-        }
-
-        this.setState({
-            currentTab: tab,
+    useEffect(() => {
+        configCacheRef.current = configCacheFactory();
+        configCacheRef.current?.get().then((config) => {
+            setEnter2Paragraph(config.enter2Paragraph);
         });
+    }, []);
+
+    const _onOpenTab = (ev: IComponentEvent<Tab>) => {
+        setCurrentTab(ev.value);
     }
 
-    private _onEnter2ParagraphChange = async (ev: IComponentEvent<boolean>) => {
-        const enter2Paragraph = ev.value;
-        const current = await this._config.get();
+    const _onEnter2ParagraphChange = useCallback(async (ev: IComponentEvent<boolean>) => {
+        setEnter2Paragraph(ev.value);
 
-        this._config.set({
-            ...current,
-            enter2Paragraph,
+        const config = await configCacheRef.current?.get();
+        configCacheRef.current?.set({
+            ...config,
+            enter2Paragraph: ev.value,
         });
-        this.setState({
-            enter2Paragraph,
-        });
-    }
+    }, []);
+
+    return <div className="MarkdownInput">
+        <Tabs tab={currentTab} onTabChange={_onOpenTab} />
+        {currentTab === Tab.EditTab && <EditTabView
+            {...this.props}
+            enter2Paragraph={enter2Paragraph}
+            onEnter2ParagraphChange={_onEnter2ParagraphChange}
+        />}
+        {currentTab === Tab.SyntaxTab && <SyntaxTabView />}
+        {currentTab === Tab.PreviewTab && <PreviewTabView value={value} markdownApi={markdownApi} />}
+    </div>;
 }
+
+MarkdownInput.defaultProps = {
+    configCacheFactory: DefaultConfigCacheFactory,
+    id: 'markdownBody',
+    name: 'markdownBody',
+    props: {},
+    required: false,
+    rows: 15,
+    value: '',
+} as Partial<IProps>;
+
+export default MarkdownInput;

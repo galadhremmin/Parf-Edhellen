@@ -15,6 +15,7 @@ function Dialog<V>(props: IProps<V>) {
         cancelButtonText,
         children,
         confirmButtonText,
+        dismissable,
         open,
         onConfirm,
         onDismiss,
@@ -66,15 +67,15 @@ function Dialog<V>(props: IProps<V>) {
             <div className="modal-content">
                 <div className="modal-header">
                     <h4 className="modal-title">{title}</h4>
-                    <button type="button" className="btn-close" aria-label="Close" onClick={_onDismissDialog} />
+                    {dismissable && <button type="button" className="btn-close" aria-label="Close" onClick={_onDismissDialog} />}
                 </div>
                 <div className="modal-body">
                     {children}
                 </div>
                 {actionBar && <div className="modal-footer Dialog--footer">
-                    <button type="button" className="btn btn-light" onClick={_onDismissDialog}>
+                    {dismissable && <button type="button" className="btn btn-light" onClick={_onDismissDialog}>
                         {cancelButtonText}
-                    </button>
+                    </button>}
                     {onConfirm && <button type="button" className="btn btn-primary" onClick={_onConfirm}>
                         {confirmButtonText}
                     </button>}
@@ -88,6 +89,7 @@ Dialog.defaultProps = {
     actionBar: true,
     cancelButtonText: 'Close',
     confirmButtonText: 'OK',
+    dismissable: true,
     valid: true,
 } as Partial<IProps<any>>;
 

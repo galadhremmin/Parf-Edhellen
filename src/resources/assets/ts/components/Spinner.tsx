@@ -1,5 +1,3 @@
-import React from 'react';
-
 import 'spinkit/spinkit.css';
 
 const Spinner = () => <div className="sk-bounce">

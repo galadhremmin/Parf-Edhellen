@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Spinner from '@root/components/Spinner';
 import { IProps } from './LoadingIndicator._types';
 

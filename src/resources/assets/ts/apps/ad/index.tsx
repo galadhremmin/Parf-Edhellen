@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import React from 'react';
 import { GlobalAdsConfigurationName } from '@root/config';
 
 import Ad from './containers/Ad';

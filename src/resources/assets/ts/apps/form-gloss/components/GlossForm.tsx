@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { fireEvent } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
 import AccountSelect from '@root/components/Form/AccountSelect';

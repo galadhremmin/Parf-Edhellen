@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Avatar from '@root/components/Avatar';
 import { IProps } from '../index._types';
 

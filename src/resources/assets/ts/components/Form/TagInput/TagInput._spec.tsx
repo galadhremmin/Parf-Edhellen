@@ -5,8 +5,6 @@ import {
     expect,
     test,
 } from '@jest/globals';
-import React from 'react';
-
 import TagInput from './TagInput';
 import { IComponentEvent } from '@root/components/Component._types';
 

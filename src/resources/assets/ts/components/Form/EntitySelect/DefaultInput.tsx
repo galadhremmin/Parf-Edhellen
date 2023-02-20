@@ -1,6 +1,4 @@
 import classNames from 'classnames';
-import React from 'react';
-
 import { RenderInputComponentProps } from 'react-autosuggest';
 
 function DefaultInput(props: RenderInputComponentProps) {

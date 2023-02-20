@@ -1,4 +1,3 @@
-import React from 'react';
 import { ComponentEventHandler } from './Component._types';
 
 export interface IProps extends React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> {

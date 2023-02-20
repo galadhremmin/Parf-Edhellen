@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Ad from '@root/apps/ad/containers/Ad';
 import Language from '../Language';
 import { IProps } from './Sentences._types';

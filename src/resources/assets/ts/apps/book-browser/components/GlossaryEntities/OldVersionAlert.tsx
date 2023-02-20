@@ -1,5 +1,3 @@
-import React from 'react';
-
 import TextIcon from '@root/components/TextIcon';
 import { IProps } from './OldVersionAlert._types';
 

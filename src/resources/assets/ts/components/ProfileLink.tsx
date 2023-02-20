@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { IProps } from './ProfileLink._types';
 
 const ProfileLink = (props: IProps) => {

@@ -1,4 +1,3 @@
-import React from 'react';
 import { IProps } from './GlossGroupLabel._types';
 
 const GlossGroupLabel = (props: IProps) => {

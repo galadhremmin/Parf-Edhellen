@@ -1,6 +1,4 @@
 declare module 'html-to-react' {
-    import React from 'react';
-
     export class ProcessNodeDefinitions {
         constructor(react: any);
         public processDefaultNode(node: INode, children: INode[]): React.ReactElement<any>;

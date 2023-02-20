@@ -1,4 +1,3 @@
-import React from 'react';
 import LoadingIndicator from '../LoadingIndicator';
 
 function GlossaryEntitiesLoading({minHeight}: { minHeight: number }) {

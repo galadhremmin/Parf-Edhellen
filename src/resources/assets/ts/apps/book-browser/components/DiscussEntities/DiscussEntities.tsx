@@ -1,6 +1,5 @@
 import Quote from '@root/components/Quote';
 import { IThreadEntity } from '@root/connectors/backend/IDiscussApi';
-import React from 'react';
 import { IEntitiesComponentProps } from '../../containers/Entities._types';
 import DiscussTable from './DiscussTable';
 

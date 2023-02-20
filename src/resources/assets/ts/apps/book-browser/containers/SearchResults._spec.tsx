@@ -4,8 +4,6 @@ import {
     expect,
     test,
 } from '@jest/globals';
-import React from 'react';
-
 import { ISearchResult } from '../reducers/SearchResultsReducer._types';
 import { SearchResults } from './SearchResults';
 

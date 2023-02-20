@@ -1,6 +1,4 @@
 import classNames from 'classnames';
-import React from 'react';
-
 import { fireEvent } from '@root/components/Component';
 import { Tab } from '../MarkdownInput._types';
 import { IProps } from './Tabs._types';

@@ -1,8 +1,8 @@
-import React from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import { DateTime } from 'luxon';
 
 import BookBrowserApp from './apps/book-browser';
+import EuConsent from './apps/eu-consent';
 import inject from './Injector';
 
 import './index.scss';
@@ -44,6 +44,17 @@ if (loadLatestScript()) {
     };
 
     /**
+     * Cookie consent dialogue as required by the European Union.
+     */
+    const renderEuConsent = () => {
+        const container = document.getElementById('ed-eu-consent');
+        if (container) {
+            const root = createRoot(container);
+            root.render(<EuConsent />);
+        }
+    };
+
+    /**
      * Converts server-side rendered UTC times into local time. This operation is only
      * updating the title of the element, so no reflow should be necessary.
      */
@@ -60,6 +71,7 @@ if (loadLatestScript()) {
         bootstrapServerSideRenderedBootstrapComponents();
         renderDates();
         renderDictionary();
+        renderEuConsent();
         inject();
     });
 }
