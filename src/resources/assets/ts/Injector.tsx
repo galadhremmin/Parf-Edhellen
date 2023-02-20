@@ -9,7 +9,7 @@ import { snakeCasePropsToCamelCase } from './utilities/func/snake-case';
 const enum RenderMode {
     Async = 'async',
     Ssr = 'ssr',
-};
+}
 
 /**
  * The `data-inject-module` attribute is used to identify elements that depend
