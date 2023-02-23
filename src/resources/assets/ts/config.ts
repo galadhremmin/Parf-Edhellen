@@ -46,7 +46,7 @@ export const CacheLengthMinutes = {
     languages: 60 * 24,
 };
 
-export const EuTimezones = [
+export const TimezonesWithEuConsent = [
     'Europe/Vienna',
     'Europe/Brussels',
     'Europe/Sofia',
@@ -82,3 +82,30 @@ export const EuTimezones = [
     'Europe/Stockholm',
     'America/Los_Angeles',
 ];
+export const AdvertisingUseCaseScriptName = 'advertising';
+export const CookieUseCases = [
+    {
+        domain: 'Essential',
+        description: 'Essential cookies for basic functionality on the website, including protecting against cross-site request forgery (CSRF). These cookies are required for the website to function and we will assume implicit consent.',
+        readonly: true,
+        scriptName: 'required',
+    },
+    {
+        domain: 'Analytics',
+        description: 'Helps us understand how our guests interact with the website so we can find issues and improve the user experience in the future.',
+        readonly: false,
+        readMore: 'https://support.google.com/analytics/answer/11397207?hl=en',
+        scriptName: 'analytics',
+    },
+    {
+        domain: 'Advertising',
+        description: 'Third-party cookies that personalizes ads and improves their relevancy. The purpose is to advertise things you might be interested in.',
+        readonly: false,
+        readMore: 'https://business.safety.google/adscookies/',
+        scriptName: AdvertisingUseCaseScriptName,
+    },
+];
+export const EuConsentCookieName = 'ed.euconsent';
+export const EuConsentCookieSelection = 'ed.euconsent.usecases';
+export const EuConsentGivenCookieValue = 'true';
+export const EuConsentExemptionPaths = ['/about/cookies', '/about/privacy'];
