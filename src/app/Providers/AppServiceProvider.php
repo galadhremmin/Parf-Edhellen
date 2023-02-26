@@ -36,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('json', function (string $expression) {
             return '<?php echo(resolve(\App\Helpers\BladeHelper::class)->jsonSerialize('.$expression.')); ?>';
         });
-        Blade::directive('date', function ($expression, array $props = []) {
+        Blade::directive('date', function ($expression) {
             return '<?php echo(resolve(\App\Helpers\BladeHelper::class)->createTimeTag('.$expression.')); ?>';
         });
         Blade::directive('assetpath', function (string $filePath) {
