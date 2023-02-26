@@ -1,8 +1,10 @@
+import { ReactNode } from 'react';
+
 import StaticAlert from '../StaticAlert';
 import TextIcon from '../TextIcon';
 import { IProps } from './ValidationErrorAlert._types';
 
-const ValidationErrorAlert = (props: IProps) => {
+function ValidationErrorAlert(props: IProps) {
     const {
         error,
     } = props;
@@ -26,7 +28,7 @@ const ValidationErrorAlert = (props: IProps) => {
         </StaticAlert>;
     }
 
-    const errors: React.ReactNode[] = [];
+    const errors: ReactNode[] = [];
     error.errors.forEach((propertyErrors, propertyName) => {
         for (const propertyError of propertyErrors) {
             errors.push(<span key={errors.length}>
@@ -43,6 +45,6 @@ const ValidationErrorAlert = (props: IProps) => {
         <strong>{modifiedMessage}:</strong>
         {errors.map((err, i) => <li key={i}>{err}</li>)}
     </StaticAlert>;
-};
+}
 
 export default ValidationErrorAlert;
