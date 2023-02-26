@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { DI, resolve } from '@root/di';
 import { createFeedUrl } from '@root/connectors/FeedApiConnector';
 

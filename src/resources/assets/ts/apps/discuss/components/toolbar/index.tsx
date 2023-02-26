@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { IPostEntity } from '@root/connectors/backend/IDiscussApi';
 import {
     IRoleManager,

@@ -1,5 +1,4 @@
 import React from 'react';
-
 import StaticAlert from '@root/components/StaticAlert';
 import { ErrorCategory } from '@root/connectors/IReportErrorApi';
 import { DI, resolve } from '@root/di';

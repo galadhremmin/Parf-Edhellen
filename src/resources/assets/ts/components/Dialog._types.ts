@@ -6,6 +6,7 @@ export interface IProps<V> {
     cancelButtonText?: string;
     children: React.ReactNode;
     confirmButtonText?: string;
+    dismissable?: boolean;
     onConfirm?: ComponentEventHandler<V>;
     onDismiss: ComponentEventHandler<void>;
     open: boolean;

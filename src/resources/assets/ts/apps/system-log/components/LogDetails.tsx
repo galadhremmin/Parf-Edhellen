@@ -1,5 +1,3 @@
-import React from 'react';
-
 import ProfileLink from '@root/components/ProfileLink';
 import { IProps } from './LogDetails._types';
 

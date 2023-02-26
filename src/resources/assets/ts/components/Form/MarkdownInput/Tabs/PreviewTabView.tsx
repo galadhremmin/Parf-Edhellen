@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Markdown from '@root/components/Markdown';
 import { IProps } from './PreviewTabView._types';
 

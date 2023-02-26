@@ -1,6 +1,4 @@
 import TextIcon from '@root/components/TextIcon';
-import React from 'react';
-
 import { IProps } from './GlossInflections._types';
 
 const GlossInflections = (props: IProps) => {

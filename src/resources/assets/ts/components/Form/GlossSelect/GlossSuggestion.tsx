@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Quote from '@root/components/Quote';
 import { ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
 

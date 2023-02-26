@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import React from 'react';
-
 import {
     fireEvent,
 } from '../Component';
@@ -24,7 +23,6 @@ export const booleanConverter = (value: string | boolean) => isNull(value) ? fal
  */
 export abstract class FormComponent<V = any, P = Record<string, unknown>, CP = Record<string, unknown>, S = Record<string, unknown>, SS = any>
     extends React.Component<P & IComponentProps<V>, S & IBackingComponentProps<V>, SS> {
-
 
     /**
      * Optional getter which overrides the `DefaultComponentPropNames` configuration.

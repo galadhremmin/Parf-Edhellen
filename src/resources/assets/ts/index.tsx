@@ -1,13 +1,15 @@
-import React from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import { DateTime } from 'luxon';
 
 import BookBrowserApp from './apps/book-browser';
+import EuConsent from './apps/eu-consent';
 import inject from './Injector';
 
 import './index.scss';
 import './components/Tengwar.scss'; // Tengwar is scattered across the website, so this will ensure all will render appropriately.
 import bootstrapServerSideRenderedBootstrapComponents from './utilities/BootstrapBootstrapper';
+import Cookies from 'js-cookie';
+import { EuConsentCookieName, EuConsentExemptionPaths, EuConsentGivenCookieValue } from './config';
 
 const loadLatestScript = () => {
     const scriptTag = document.currentScript as HTMLScriptElement;
@@ -44,6 +46,27 @@ if (loadLatestScript()) {
     };
 
     /**
+     * Cookie consent dialogue as required by the European Union.
+     */
+    const renderEuConsent = () => {
+        // If consent is already given, don't ask again!
+        if (Cookies.get(EuConsentCookieName) === EuConsentGivenCookieValue) {
+            return;
+        }
+
+        // If the user is viewing an exempted page, don't ask.
+        if (EuConsentExemptionPaths.indexOf(location.pathname) > -1) {
+            return;
+        }
+
+        const container = document.getElementById('ed-eu-consent');
+        if (container) {
+            const root = createRoot(container);
+            root.render(<EuConsent />);
+        }
+    };
+
+    /**
      * Converts server-side rendered UTC times into local time. This operation is only
      * updating the title of the element, so no reflow should be necessary.
      */
@@ -60,6 +83,7 @@ if (loadLatestScript()) {
         bootstrapServerSideRenderedBootstrapComponents();
         renderDates();
         renderDictionary();
+        renderEuConsent();
         inject();
     });
 }

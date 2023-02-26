@@ -1,43 +1,41 @@
-import React from 'react';
-
+import { updateQueryString } from '@root/utilities/func/query-string';
+import { useEffect, useState } from 'react';
 import { fireEvent } from '../Component';
 import { IProps } from './PaginationLink._types';
 
-export default class PaginationLink extends React.Component<IProps> {
-    public static defaultProps = {
-        onClick: null,
-        parameterName: 'offset',
-    } as Partial<IProps>;
+function PaginationLink(props: IProps) {
+    const {
+        children,
+        onClick,
+        pageNumber,
+        parameterName,
+    } = props;
 
-    public render() {
-        const {
-            children,
-            pageNumber,
-        } = this.props;
+    const [ queryString, setQueryString ] = useState<string>('?');
 
-        return <a href={this._createLink()} onClick={this._onClick} className="page-link">
-            {children || pageNumber}
-        </a>;
-    }
-
-    private _createLink() {
-        const {
-            pageNumber,
-            parameterName,
-        } = this.props;
-
-        return `?${parameterName}=${pageNumber}`;
-    }
-
-    private _onClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
-        const {
-            onClick,
-            pageNumber,
-        } = this.props;
-
+    const _onClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
         if (onClick !== null) {
             ev.preventDefault();
             fireEvent(this, onClick, pageNumber);
         }
     }
+
+    useEffect(() => {
+        const nextQueryString = updateQueryString({
+            [parameterName]: pageNumber,
+        });
+
+        setQueryString(nextQueryString);
+    }, [ pageNumber, parameterName, window.location.search ]);
+
+    return <a href={queryString} onClick={_onClick} className="page-link">
+        {children || pageNumber}
+    </a>;
 }
+
+PaginationLink.defaultProps = {
+    onClick: null,
+    parameterName: 'offset',
+} as Partial<IProps>;
+
+export default PaginationLink;

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import './OptionalLabel.scss';
 
 const OptionalLabel = () => <span className="OptionalLabel">

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import DeleteGloss from './DeleteGloss';
 import EditGloss from './EditGloss';
 

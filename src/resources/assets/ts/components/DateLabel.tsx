@@ -1,6 +1,4 @@
 import { DateTime } from 'luxon';
-import React from 'react';
-
 import { IProps } from './DateLabel._types';
 
 export function DateLabel(props: IProps) {

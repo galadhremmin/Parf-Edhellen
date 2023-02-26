@@ -1,5 +1,4 @@
 import TextIcon from '@root/components/TextIcon';
-import React from 'react';
 import { IProps } from './VersionsLink._types';
 
 function VersionsLink(props: IProps) {

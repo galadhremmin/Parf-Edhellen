@@ -1,24 +1,22 @@
-import React from 'react';
-
 import { fireEvent } from '@root/components/Component';
 import TextIcon from '@root/components/TextIcon';
 import { IProps } from './ActionLink._types';
 
-export default class ActionLink extends React.Component<IProps> {
-    public render() {
-        const {
-            icon,
-        } = this.props;
+export default function ActionLink(props: IProps) {
+    const {
+        children,
+        icon,
+        onClick,
+    } = props;
 
-        return <a href="#" onClick={this._onClick}>
-            <TextIcon icon={icon} />
-            {' '}
-            {this.props.children}
-        </a>;
-    }
-
-    private _onClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
+    const _onClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
-        fireEvent(this, this.props.onClick, null);
+        fireEvent('ActionLink', onClick, null);
     }
+
+    return <a href="#" onClick={_onClick}>
+        <TextIcon icon={icon} />
+        {' '}
+        {children}
+    </a>;
 }

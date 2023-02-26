@@ -4,7 +4,6 @@ import {
     expect,
     test,
 } from '@jest/globals';
-import React from 'react';
 import PaginationDetails from './PaginationDetails';
 
 describe('apps/discuss/components/PaginationDetails', () => {

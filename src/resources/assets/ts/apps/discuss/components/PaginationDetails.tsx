@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { IProps } from './PaginationDetails._types';
 
 function PaginationDetails(props: IProps) {

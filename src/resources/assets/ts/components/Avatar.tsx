@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { AnonymousAvatarPath } from '@root/config';
 import { excludeProps } from '@root/utilities/func/props';
 import { IProps } from './Avatar._types';

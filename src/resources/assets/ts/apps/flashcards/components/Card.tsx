@@ -1,4 +1,3 @@
-import React from 'react';
 import { IProps, SideOfTheCard } from './Card._types';
 
 const classNameFromSideOfCard = (side: SideOfTheCard) => {

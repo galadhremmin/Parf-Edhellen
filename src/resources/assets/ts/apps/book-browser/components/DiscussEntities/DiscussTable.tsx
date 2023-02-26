@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { IProps } from './DiscussTable._types';
 import DiscussTableRow from './DiscussTableRow';
 

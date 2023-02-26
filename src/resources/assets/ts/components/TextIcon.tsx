@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-import React from 'react';
 import { IProps } from './TextIcon._types';
 
 import './TextIcon.scss';

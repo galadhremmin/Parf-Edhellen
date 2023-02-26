@@ -4,7 +4,6 @@ import {
     expect,
     test,
 } from '@jest/globals';
-import React from 'react';
 import sinon from 'sinon';
 
 import Tengwar from './Tengwar';

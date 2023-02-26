@@ -1,0 +1,13 @@
+import { DateTime } from 'luxon';
+
+import { TimezonesWithEuConsent } from '@root/config';
+import CookieConsent from './containers/CookieConsent';
+
+export default function () {
+    const zone = DateTime.now().zoneName;
+    if (TimezonesWithEuConsent.indexOf(zone) === -1) {
+        return null;
+    }
+
+    return <CookieConsent zone={zone} />;
+}

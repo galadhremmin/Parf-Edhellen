@@ -4,7 +4,7 @@ export interface ITranscriber {
 }
 
 export interface IProps {
-    as?: string | React.ComponentType;
+    as?: keyof JSX.IntrinsicElements;
     mode?: string;
     text: string;
     transcribe?: boolean;

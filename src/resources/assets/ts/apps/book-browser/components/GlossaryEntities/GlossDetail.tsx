@@ -1,6 +1,4 @@
 import classNames from 'classnames';
-import React from 'react';
-
 import HtmlInject from '@root/components/HtmlInject';
 import { IProps } from './GlossDetail._types';
 

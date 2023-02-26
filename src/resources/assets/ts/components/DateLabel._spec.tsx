@@ -5,8 +5,6 @@ import {
     test,
 } from '@jest/globals';
 import { DateTime } from 'luxon';
-import React from 'react';
-
 import DateLabel from './DateLabel';
 
 describe('components/DateLabel', () => {

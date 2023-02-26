@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Tengwar from '@root/components/Tengwar';
 import { IProps } from './GlossTranslations._types';
 

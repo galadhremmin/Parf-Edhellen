@@ -1,5 +1,3 @@
-import React from 'react';
-
 import DateLabel from '@root/components/DateLabel';
 import TextIcon from '@root/components/TextIcon';
 import { IProps } from './GlossFooter._types';

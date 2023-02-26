@@ -1,11 +1,10 @@
+import React from 'react';
 import {
     CellValueChangedEvent,
     GridReadyEvent,
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react/lib/agGridReact';
 // import { ClientSideRowModelModule } from 'ag-grid-community/client-side-row-model';
-import React from 'react';
-
 import { fireEventAsync } from '@root/components/Component';
 import {
     IProps,

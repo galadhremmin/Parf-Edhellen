@@ -1,5 +1,5 @@
-import classNames from 'classnames';
 import React from 'react';
+import classNames from 'classnames';
 import Autosuggest, {
     ChangeEvent,
     SuggestionSelectedEventData,
@@ -16,10 +16,7 @@ import {
 
 import './EntitySelect.scss';
 
-/**
- * This component does not currently work. It needs to be reinvented.
- * @param props
- */
+// TODO: Refactor as a React functional component
 export default class EntitySelect<T> extends React.Component<IProps<T>, IState> {
     public static defaultProps = {
         formatter: (s) => s || '',

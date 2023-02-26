@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { IProps } from './Paragraph._types';
 
 import '@root/components/Tengwar';
