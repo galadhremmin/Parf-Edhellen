@@ -95,24 +95,24 @@ export default class MultipleSelectCellEditor<T, V = T> extends PopupComponent i
         return true;
     }
 
-    protected getOptionId(option: T) {
+    protected getOptionId(_option: T) {
         return 0;
     }
 
-    protected getOptionText(option: T) {
+    protected getOptionText(_option: T) {
         return '';
     }
 
-    protected getValueId(value: V) {
+    protected getValueId(_value: V) {
         return 0;
     }
 
-    protected getValueText(value: V) {
+    protected getValueText(_value: V) {
         return '';
     }
 
     protected convertOptionToValue(option: T): V {
-        return option as any; // infer it the option is the same as the value type.
+        return option as unknown as V; // infer it the option is the same as the value type.
     }
 
     private _updateValues() {

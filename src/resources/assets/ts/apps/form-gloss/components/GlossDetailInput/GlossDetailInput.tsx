@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { fireEvent } from '@root/components/Component';
 import { IComponentProps } from '@root/components/Form/FormComponent._types';
 import TextIcon from '@root/components/TextIcon';

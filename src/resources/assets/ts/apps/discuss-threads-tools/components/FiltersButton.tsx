@@ -1,8 +1,6 @@
 import classNames from 'classnames';
 import React, { useCallback, useState } from 'react';
 
-import { IProps } from './FiltersButton._types';
-
 import './FiltersButton.scss';
 import {
     buildQueryString,

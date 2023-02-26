@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import { TimezonesWithEuConsent } from '@root/config';
 import CookieConsent from './containers/CookieConsent';
 
-export default function () {
+export default function EuConsent() {
     const zone = DateTime.now().zoneName;
     if (TimezonesWithEuConsent.indexOf(zone) === -1) {
         return null;

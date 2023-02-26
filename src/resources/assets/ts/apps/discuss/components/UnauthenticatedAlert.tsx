@@ -1,3 +1,4 @@
+import React from 'react';
 import StaticAlert from '@root/components/StaticAlert';
 import TextIcon from '@root/components/TextIcon';
 

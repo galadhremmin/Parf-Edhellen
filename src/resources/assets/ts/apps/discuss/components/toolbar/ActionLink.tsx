@@ -1,3 +1,4 @@
+import React from 'react';
 import { fireEvent } from '@root/components/Component';
 import TextIcon from '@root/components/TextIcon';
 import { IProps } from './ActionLink._types';

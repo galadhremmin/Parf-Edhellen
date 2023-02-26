@@ -12,7 +12,7 @@ export default class BrowserHistory {
     constructor(private _history: IHistory = window.history) {
     }
 
-    public push(urlComponents: UrlComponents, title: string = null, data: any = null) {
+    public push<TData>(urlComponents: UrlComponents, title: string = null, data: TData | null = null) {
         if (! this._assertOkay()) {
             return;
         }
