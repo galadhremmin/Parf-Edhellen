@@ -1,3 +1,6 @@
+@inject('cookie', 'App\Helpers\CookieHelper')
+
+@if ($cookie->hasUserConsent('analytics'))
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-6J3WM5JEVV"></script>
 <script>
 window.dataLayer = window.dataLayer || [];
@@ -15,3 +18,4 @@ google_ad_client:'ca-pub-8268364504414566',
 enable_page_level_ads:true
 });
 </script>
+@endif
