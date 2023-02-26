@@ -3,7 +3,7 @@ import {
     PanelType,
 } from './Panel._types';
 
-const Panel: React.FunctionComponent<IProps> = (props: IProps) => {
+function Panel(props: IProps) {
     const {
         children,
         title,
@@ -19,7 +19,7 @@ const Panel: React.FunctionComponent<IProps> = (props: IProps) => {
             {children}
         </div>
     </div>;
-};
+}
 
 Panel.defaultProps = {
     title: null,
