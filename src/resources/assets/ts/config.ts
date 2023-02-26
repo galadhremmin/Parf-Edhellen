@@ -80,7 +80,7 @@ export const TimezonesWithEuConsent = [
     'Atlantic/Canary',
     'Europe/Madrid',
     'Europe/Stockholm',
-    'America/Los_Angeles',
+    'America/Los_Angeles', // California
 ];
 export const AdvertisingUseCaseScriptName = 'advertising';
 export const CookieUseCases = [
