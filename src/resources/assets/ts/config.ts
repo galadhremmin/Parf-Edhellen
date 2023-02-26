@@ -105,7 +105,7 @@ export const CookieUseCases = [
         scriptName: AdvertisingUseCaseScriptName,
     },
 ];
-export const EuConsentCookieName = 'ed.euconsent';
-export const EuConsentCookieSelection = 'ed.euconsent.usecases';
+export const EuConsentCookieName = 'ed-euconsent';
+export const EuConsentCookieSelection = 'ed-euconsent-usecases';
 export const EuConsentGivenCookieValue = 'true';
 export const EuConsentExemptionPaths = ['/about/cookies', '/about/privacy'];
