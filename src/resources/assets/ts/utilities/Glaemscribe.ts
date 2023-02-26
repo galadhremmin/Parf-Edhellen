@@ -8,6 +8,10 @@ import {
     GlaemscribeModeMappings,
 } from '../config';
 
+interface IGlaemscribeWindow extends Window {
+    Glaemscribe: IGlaemscribe;
+}
+
 const enum InitializationContext {
     Charset = 'charset',
     Mode = 'mode',
@@ -89,11 +93,11 @@ export default class Transcriber implements ITranscriber {
     }
 
     private _getGlaemscribe() {
-        return (window as any).Glaemscribe as IGlaemscribe;
+        return (window as unknown as IGlaemscribeWindow).Glaemscribe;
     }
 
     private _setGlaemscribe(transcriber: IGlaemscribe) {
-        (window as any).Glaemscribe = transcriber;
+        (window as unknown as IGlaemscribeWindow).Glaemscribe = transcriber;
     }
 
     private async _loadGlaemscribe(): Promise<IGlaemscribe> {

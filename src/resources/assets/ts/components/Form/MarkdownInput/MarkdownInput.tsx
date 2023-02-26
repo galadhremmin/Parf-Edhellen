@@ -59,7 +59,7 @@ function MarkdownInput(props: IProps) {
     return <div className="MarkdownInput">
         <Tabs tab={currentTab} onTabChange={_onOpenTab} />
         {currentTab === Tab.EditTab && <EditTabView
-            {...this.props}
+            {...props}
             enter2Paragraph={enter2Paragraph}
             onEnter2ParagraphChange={_onEnter2ParagraphChange}
         />}

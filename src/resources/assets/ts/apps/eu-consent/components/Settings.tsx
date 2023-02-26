@@ -39,7 +39,7 @@ export default function Settings(props: IProps) {
                 /> <strong>{useCase.domain}</strong>
             </label>
             : {` ${useCase.description} `}
-            {useCase.readMore && <a href={useCase.readMore} target="_blank">
+            {useCase.readMore && <a href={useCase.readMore} target="_blank" rel="noreferrer">
                 Read more about these cookies
             </a>}.
         </p>)}

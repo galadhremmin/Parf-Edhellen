@@ -1,3 +1,4 @@
+import React from 'react';
 import classNames from 'classnames';
 import { fireEventAsync } from '@root/components/Component';
 import { FormComponent } from '@root/components/Form/FormComponent';

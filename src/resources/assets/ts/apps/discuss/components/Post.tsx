@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, {
+import {
     useEffect,
     useRef,
 } from 'react';

@@ -1,9 +1,13 @@
+import {
+    ComponentClass,
+    FunctionComponent,
+} from 'react';
 import IDiscussApi from '@root/connectors/backend/IDiscussApi';
 import { DI, resolve } from '@root/di';
 
 function connectApi<TProps extends {
     apiConnector?: IDiscussApi,
-}>(component: React.FunctionComponent<TProps> | React.ComponentClass<TProps>) {
+}>(component: FunctionComponent<TProps> | ComponentClass<TProps>) {
     const existingProps = component.defaultProps || {};
 
     component.defaultProps = Object.assign({}, existingProps, {

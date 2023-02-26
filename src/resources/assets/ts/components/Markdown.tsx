@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import IUtilityApi, { IMarkdownParserResponse } from '@root/connectors/backend/IUtilityApi';
 import { DI, resolve } from '@root/di';

@@ -1,3 +1,5 @@
+import { ChangeEvent } from 'react';
+
 import { fireEvent } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
 import AccountSelect from '@root/components/Form/AccountSelect';
@@ -42,7 +44,7 @@ function GlossForm(props: IProps) {
     };
 
     const _onChangeNative = (field: GlossProps, transform: ValueTransformer = defaultTransformer) =>
-        (e: React.ChangeEvent<HTMLInputElement>) => {
+        (e: ChangeEvent<HTMLInputElement>) => {
         const value = transform(e.target.type === 'checkbox' || e.target.type === 'radio'
             ? e.target.checked
             : e.target.value,

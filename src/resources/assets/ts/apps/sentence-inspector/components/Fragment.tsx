@@ -1,3 +1,4 @@
+import React from 'react';
 import { fireEventAsync } from '@root/components/Component';
 import { IProps } from './Fragment._types';
 

@@ -1,3 +1,4 @@
+import { INewable } from './_types';
 import ApiConnector from './connectors/ApiConnector';
 import AccountApiConnector from './connectors/backend/AccountApiConnector';
 import BookApiConnector from './connectors/backend/BookApiConnector';

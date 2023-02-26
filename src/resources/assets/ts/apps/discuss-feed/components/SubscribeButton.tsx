@@ -1,7 +1,6 @@
 import classNames from 'classnames';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import Dialog from '@root/components/Dialog';
 import TextIcon from '@root/components/TextIcon';
 
 import { IProps } from './SubscribeButton._types';

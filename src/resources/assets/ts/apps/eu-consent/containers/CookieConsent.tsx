@@ -17,7 +17,7 @@ import { DateTime } from 'luxon';
 const enum ConsentView {
     Overview = 'overview',
     Settings = 'settings',
-};
+}
 
 export default function CookieConsent({ zone }: { zone: string }) {
     const [ view, setView ] = useState<ConsentView>(ConsentView.Overview);
