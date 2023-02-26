@@ -1,9 +1,12 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import {
     describe,
     expect,
     test,
 } from '@jest/globals';
+import sinon from 'sinon';
+import { IComponentEvent } from '@root/components/Component._types';
+
 import { ISearchResult } from '../reducers/SearchResultsReducer._types';
 import SearchResult from './SearchResult';
 
@@ -47,5 +50,24 @@ describe('apps/book-browser/components/SearchResultsContainer', () => {
         const link = container.querySelector('a.selected');
         expect(link).toEqual(expect.anything());
         expect(link.querySelector('.word').textContent).toEqual(searchResult.word);
+    });
+
+    test('dispatches onClick', async () => {
+        const onClickSpy = sinon.spy();
+        
+        const newSearchResult = { ...searchResult, originalWord: 'original word' };
+        render(<SearchResult searchResult={newSearchResult} onClick={onClickSpy} />);
+
+        const link = await screen.findByRole('link');
+        fireEvent(link, new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+        }));
+
+        expect(onClickSpy.calledOnce).toBeTruthy();
+        expect(onClickSpy.calledOnceWith({
+            name: 'SearchResult',
+            value: newSearchResult,
+        } as IComponentEvent<ISearchResult>)).toBeTruthy();
     });
 });
