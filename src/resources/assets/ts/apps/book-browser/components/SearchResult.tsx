@@ -16,7 +16,7 @@ export default function SearchResult(props: IProps) {
     const _onClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
 
-        fireEvent(this, onClick, r);
+        fireEvent('SearchResult', onClick, r);
     }
 
     const className = selected ? 'selected' : undefined;
