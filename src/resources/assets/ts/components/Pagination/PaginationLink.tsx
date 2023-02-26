@@ -1,5 +1,6 @@
+import React, { useEffect, useState } from 'react';
+
 import { updateQueryString } from '@root/utilities/func/query-string';
-import { useEffect, useState } from 'react';
 import { fireEvent } from '../Component';
 import { IProps } from './PaginationLink._types';
 
