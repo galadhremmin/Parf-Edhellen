@@ -1,4 +1,4 @@
-import React, {
+import {
     useEffect,
     useState,
 } from 'react';
@@ -11,14 +11,18 @@ const useFetch = (apiConnector: IAccountApi, accountId: number) => {
     const [ path, setPath ] = useState<string>(null);
 
     useEffect(() => {
-        apiConnector.getAvatar({
-            accountId,
-        }).then((a) => {
-            setPath(a.avatar);
-        }).catch(() => {
+        if (! accountId) {
             setPath(null);
-        });
-    }, []);
+        } else {
+            apiConnector.getAvatar({
+                accountId,
+            }).then((a) => {
+                setPath(a.avatar);
+            }).catch(() => {
+                setPath(null);
+            });
+        }
+    }, [accountId]);
 
     return path;
 };
@@ -29,11 +33,11 @@ function AccountValue(props: IProps) {
         apiConnector,
     } = props;
 
+    const avatar = useFetch(apiConnector, account?.id);
+
     if (account === null) {
         return <span>No account</span>;
     }
-
-    const avatar = useFetch(apiConnector, account.id);
 
     return <>
         {avatar && <img src={avatar} className="avatar" alt={account.nickname} />}

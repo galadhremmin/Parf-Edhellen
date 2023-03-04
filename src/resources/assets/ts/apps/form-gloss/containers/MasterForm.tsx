@@ -8,6 +8,7 @@ import Quote from '@root/components/Quote';
 import { ReduxThunkDispatch } from '@root/_types';
 import { fireEvent } from '@root/components/Component';
 import { IInflectionGroupState } from '../reducers/InflectionsReducer._types';
+import { deepClone } from '@root/utilities/func/clone';
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
 
 import GlossActions from '../actions/GlossActions';
@@ -110,11 +111,12 @@ const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => ({
         const {
             changes,
             edit,
-            gloss,
-            inflections,
+            gloss: originalGloss,
+            inflections: originalInflections,
         } = v;
 
-        const eligibleInflections = inflections.filter((i: IInflectionGroupState) => ! isEmptyString(i.word));
+        const gloss = deepClone(originalGloss);
+        const inflections = originalInflections.filter((i: IInflectionGroupState) => ! isEmptyString(i.word));
 
         if (changes.glossChanged) {
             // grandfathered sanitization logic from the GlossForm.
@@ -127,10 +129,10 @@ const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => ({
             }
 
             dispatch(actions.saveGloss(gloss, changes.inflectionsChanged //
-                ? eligibleInflections : null));
+                ? inflections : null));
         } else if (changes.inflectionsChanged) {
             dispatch(actions.saveInflections( //
-                eligibleInflections, //
+                inflections, //
                 gloss.contributionId,
                 gloss.id));
         } else {

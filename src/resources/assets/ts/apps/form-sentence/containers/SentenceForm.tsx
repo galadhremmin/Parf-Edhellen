@@ -19,6 +19,7 @@ import MetadataForm from '../components/MetadataForm';
 import TranslationForm from '../components/TranslationForm';
 import { RootReducer } from '../reducers';
 import { IProps } from './SentenceForm._types';
+import { deepClone } from '@root/utilities/func/clone';
 import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
 function SentenceForm(props: IProps) {
@@ -75,9 +76,9 @@ function SentenceForm(props: IProps) {
         }
 
         const payload = {
-            ...sentence,
-            fragments: sentenceFragments,
-            translations,
+            ...(deepClone(sentence)),
+            fragments: deepClone(sentenceFragments),
+            translations: deepClone(translations),
         };
         // leaving `id` will trick the API backend to look for an existing entity
         // with the matching ID, even when it is zero or null.
