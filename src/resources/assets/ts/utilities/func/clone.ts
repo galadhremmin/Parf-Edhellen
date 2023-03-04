@@ -4,7 +4,7 @@ export function deepClone<T>(obj: T): T {
     }
 
     return structuredClone(obj);
-};
+}
 
 function deepCloneLegacy<T>(item: T): T {
     console.warn(`Using imperfect deep cloner on ${JSON.stringify(item)}. Browser doesn't support structuredClone.`);
