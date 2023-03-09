@@ -35,4 +35,7 @@
     <li>Resetting your account's avatar, tengwar and profile settings.</li>
 </ul>
 
+<h3>Analytics and advertising</h3>
+<p>We use Google Analytics and Google Ads. Please refer to <a href="https://policies.google.com/technologies/partner-sites" target="_blank"  rel="noreferrer">Google’s Privacy & Terms site</a> for more information.</p>
+
 @endsection
