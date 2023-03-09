@@ -40,6 +40,8 @@ export const CommonPaths = {
         sentence: '/dashboard/contribution/create/sentence',
     },
     dashboard: '/dashboard',
+    privacyPolicy: '/about/privacy',
+    cookiePolicy: '/about/cookies',
 };
 
 export const CacheLengthMinutes = {
@@ -108,4 +110,4 @@ export const CookieUseCases = [
 export const EuConsentCookieName = 'ed-euconsent';
 export const EuConsentCookieSelection = 'ed-euconsent-usecases';
 export const EuConsentGivenCookieValue = 'true';
-export const EuConsentExemptionPaths = ['/about/cookies', '/about/privacy'];
+export const EuConsentExemptionPaths = [CommonPaths.cookiePolicy, CommonPaths.privacyPolicy];

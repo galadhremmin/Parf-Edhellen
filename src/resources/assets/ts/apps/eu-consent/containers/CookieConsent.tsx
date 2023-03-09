@@ -46,7 +46,7 @@ export default function CookieConsent({ zone }: { zone: string }) {
     return <Dialog open={true}
                    dismissable={false}
                    title="We use cookies"
-                   confirmButtonText="I consent"
+                   confirmButtonText="OK"
                    onConfirm={_onConsent}>
         {view === ConsentView.Overview && <Overview onSettings={_onSettings} />}
         {view === ConsentView.Settings && <Settings
