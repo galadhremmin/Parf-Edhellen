@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Interfaces\IExternalToInternalUrlResolver;
 use App\Interfaces\IMarkdownParser;
 
 class MarkdownParserWrapper implements IMarkdownParser
@@ -9,10 +10,10 @@ class MarkdownParserWrapper implements IMarkdownParser
     private $_defaultParser;
     private $_parserNoBlocks;
 
-    public function __construct()
+    public function __construct(IExternalToInternalUrlResolver $externalToInternalUrlResolver)
     {
-        $this->_defaultParser = resolve(MarkdownParser::class);
-        $this->_parserNoBlocks = resolve(MarkdownParser::class, [['#','>']]);
+        $this->_defaultParser = new MarkdownParser($externalToInternalUrlResolver);
+        $this->_parserNoBlocks = new MarkdownParser($externalToInternalUrlResolver, ['#','>']);
     }
 
     public function parseMarkdown(string $markdown): string
