@@ -8,7 +8,7 @@ trait CanInitialize
 {
     private $_values;
 
-    public function jsonSerialize(): mixed
+    public function jsonSerialize()
     {
         $v = array_merge([], $this->getAllValues());
         ksort($v);
