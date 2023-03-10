@@ -1,4 +1,4 @@
-import React from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import {
     CellValueChangedEvent,
@@ -54,156 +54,128 @@ const RowClassRules = {
 };
 
 // TODO: Convert to React functional component
-class FragmentsGrid extends React.Component<IProps, IState> {
-    public state: IState = {
-        columnDefinition: null,
-        inflections: null,
-        groupedInflections: null,
-        speeches: null,
-    };
+export default function FragmentsGrid(props: IProps) {
+    const gridRef = useRef<AgGridReact & DetailGridInfo>();
+    const glossCacheRef = useRef<Map<number, Promise<IGlossEntity>>>();
 
-    private _glossCache: Map<number, Promise<IGlossEntity>>;
-    private _gridRef: AgGridReact & DetailGridInfo;
-    private _glossApi: IGlossResourceApi;
+    const [ columnDefinition, setColumnDefinition ] = useState<IState['columnDefinition']>(null);
+    const [ inflections, setInflections ] = useState<IState['inflections']>(null);
+    const [ groupedInflections, setGroupedInflections ] = useState<IState['groupedInflections']>(null);
+    const [ speeches, setSpeeches ] = useState<IState['speeches']>(null);
 
-    constructor(props: IProps) {
-        super(props);
-        this._glossCache = new Map();
-        this._gridRef = null;
-        this._glossApi = resolve<IGlossResourceApi>(DI.GlossApi);
-    }
+    const {
+        fragments,
+        languageId,
+        onChange,
 
-    public async componentDidMount() {
-        const [ groupedInflections, speeches ] = await Promise.all([
-            resolve<IInflectionResourceApi>(DI.InflectionApi).inflections(),
-            resolve<ISpeechResourceApi>(DI.SpeechApi).speeches(),
-        ]);
+        inflectionApi,
+        glossApi,
+        speechApi,
+    } = props;
 
-        const groupedInflectionsMap = new Map<string, IInflection[]>();
-        const inflectionMap = new Map<number, IInflection>();
-        const speechMap = new Map<number, ISpeechEntity>();
+    useEffect(() => {
+        glossCacheRef.current = new Map();
 
-        Object.keys(groupedInflections) //
-            .forEach((group) => {
-                for (const inflection of groupedInflections[group]) {
-                    inflectionMap.set(inflection.id, inflection);
-                }
+        Promise.all([ inflectionApi.inflections(), speechApi.speeches(), ]).then(([groupedInflections, speeches]) => {
+            const groupedInflectionsMap = new Map<string, IInflection[]>();
+            const inflectionMap = new Map<number, IInflection>();
+            const speechMap = new Map<number, ISpeechEntity>();
+    
+            Object.keys(groupedInflections) //
+                .forEach((group) => {
+                    for (const inflection of groupedInflections[group]) {
+                        inflectionMap.set(inflection.id, inflection);
+                    }
+    
+                    groupedInflectionsMap.set(group, groupedInflections[group]);
+                });
+    
+            for (const speech of speeches) {
+                speechMap.set(speech.id, speech);
+            }
+    
+            const cellRendererParams = {
+                groupedInflections: groupedInflectionsMap,
+                inflections: inflectionMap,
+                resolveGloss: _onResolveGloss,
+                speeches: speechMap,
+                suggestGloss: _onSuggestGloss,
+            } as IState;
+    
+            const nextColumnDefinition: FragmentGridColumnDefinition = [
+                {
+                    editable: false,
+                    headerName: 'Word',
+                    field: 'fragment',
+                    resizable: true,
+                },
+                {
+                    cellRenderer: TengwarRenderer,
+                    editable: false,
+                    field: 'tengwar',
+                    resizable: true,
+                },
+                {
+                    cellEditor: GlossCellEditor,
+                    cellEditorParams: cellRendererParams,
+                    cellEditorPopup: true,
+                    cellRenderer: GlossRenderer,
+                    cellRendererParams,
+                    editable: true,
+                    headerName: 'Gloss',
+                    field: 'glossId',
+                    resizable: true,
+                },
+                {
+                    cellEditor: SpeechSelectCellEditor,
+                    cellEditorParams: cellRendererParams,
+                    cellEditorPopup: true,
+                    cellRenderer: SpeechRenderer,
+                    cellRendererParams,
+                    editable: true,
+                    headerName: 'Speech',
+                    field: 'speechId',
+                    resizable: true,
+                },
+                {
+                    cellEditor: InflectionCellEditor,
+                    cellEditorParams: cellRendererParams,
+                    cellEditorPopup: true,
+                    cellRenderer: InflectionRenderer,
+                    cellRendererParams,
+                    editable: true,
+                    headerName: 'Inflections',
+                    field: 'glossInflections',
+                    resizable: true,
+                },
+                {
+                    cellEditorPopup: true,
+                    editable: true,
+                    field: 'comments',
+                    cellEditor: 'agLargeTextCellEditor',
+                    resizable: true,
+                },
+            ];
 
-                groupedInflectionsMap.set(group, groupedInflections[group]);
-            });
-
-        for (const speech of speeches) {
-            speechMap.set(speech.id, speech);
-        }
-
-        const cellRendererParams = {
-            groupedInflections: groupedInflectionsMap,
-            inflections: inflectionMap,
-            resolveGloss: this._onResolveGloss,
-            speeches: speechMap,
-            suggestGloss: this._onSuggestGloss,
-        } as IState;
-
-        const columnDefinition: FragmentGridColumnDefinition = [
-            {
-                editable: false,
-                headerName: 'Word',
-                field: 'fragment',
-                resizable: true,
-            },
-            {
-                cellRenderer: TengwarRenderer,
-                editable: false,
-                field: 'tengwar',
-                resizable: true,
-            },
-            {
-                cellEditor: GlossCellEditor,
-                cellEditorParams: cellRendererParams,
-                cellEditorPopup: true,
-                cellRenderer: GlossRenderer,
-                cellRendererParams,
-                editable: true,
-                headerName: 'Gloss',
-                field: 'glossId',
-                resizable: true,
-            },
-            {
-                cellEditor: SpeechSelectCellEditor,
-                cellEditorParams: cellRendererParams,
-                cellEditorPopup: true,
-                cellRenderer: SpeechRenderer,
-                cellRendererParams,
-                editable: true,
-                headerName: 'Speech',
-                field: 'speechId',
-                resizable: true,
-            },
-            {
-                cellEditor: InflectionCellEditor,
-                cellEditorParams: cellRendererParams,
-                cellEditorPopup: true,
-                cellRenderer: InflectionRenderer,
-                cellRendererParams,
-                editable: true,
-                headerName: 'Inflections',
-                field: 'glossInflections',
-                resizable: true,
-            },
-            {
-                cellEditorPopup: true,
-                editable: true,
-                field: 'comments',
-                cellEditor: 'agLargeTextCellEditor',
-                resizable: true,
-            },
-        ];
-
-        this.setState({
-            ...cellRendererParams,
-            columnDefinition,
+            setColumnDefinition(nextColumnDefinition);
+            setInflections(inflectionMap);
+            setGroupedInflections(groupedInflectionsMap);
+            setSpeeches(speechMap);
         });
 
-        window.addEventListener('resize', this._onWindowResize);
-    }
+        /**
+         * Resizes the grid's columns appropriately when the viewport changes.
+         */
+        const _onWindowResize = () => {
+            gridRef.current?.api.sizeColumnsToFit();
+        }
 
-    public componentWillUnmount() {
-        window.removeEventListener('resize', this._onWindowResize);
-    }
+        window.addEventListener('resize', _onWindowResize);
+        return () => {
+            window.removeEventListener('resize', _onWindowResize);
+        };
+    }, []);
 
-    public render() {
-        const {
-            columnDefinition,
-        } = this.state;
-
-        const {
-            fragments,
-        } = this.props;
-
-        return <>
-            <div className="ag-theme-balham FragmentsGrid--container">
-                {columnDefinition &&
-                    <AgGridReact
-//                        modules={[ClientSideRowModelModule]}
-                        getRowId={this._onGetRowId}
-                        isExternalFilterPresent={this._onIsExternalFilterPresent}
-                        doesExternalFilterPass={this._onDoesExternalFilterPass}
-                        rowClassRules={RowClassRules}
-                        columnDefs={columnDefinition}
-                        defaultColDef={DefaultColumnDefinition}
-                        enableBrowserTooltips={true}
-                        rowData={fragments}
-                        onCellValueChanged={this._onCellValueChanged}
-                        onGridReady={this._onGridReady}
-                        ref={this._onSetGridReference}
-                    />}
-            </div>
-            <p>
-                <strong>Tip!</strong> While searching for glosses, repeat vowels for longer sounds
-                (eg. <em>niin</em> matches <em>nín</em> and <em>niiin</em> matches <em>nîn</em>).
-            </p>
-        </>;
-    }
 
     /**
      * Triggers the component's `onChange` event for the specified fragment, informing underlying data model to
@@ -213,13 +185,9 @@ class FragmentsGrid extends React.Component<IProps, IState> {
      * @param field field to update
      * @param value value to assign
      */
-    private _notifyChange<T extends keyof ISentenceFragmentEntity>(fragment: ISentenceFragmentEntity, field: T,
-        value: ISentenceFragmentEntity[T]) {
-        const {
-            onChange,
-        } = this.props;
-
-        fireEventAsync(this, onChange, {
+    const _notifyChange = <T extends keyof ISentenceFragmentEntity>(fragment: ISentenceFragmentEntity, field: T,
+        value: ISentenceFragmentEntity[T]) => {
+        fireEventAsync('FragmentsGrid', onChange, {
             field,
             fragment,
             value,
@@ -232,15 +200,13 @@ class FragmentsGrid extends React.Component<IProps, IState> {
      * @param fragment fragment that was changed.
      * @param glossId gloss ID assigned to the specified fragment.
      */
-    private async _useGlossToUpdateSimilarFragments(fragment: ISentenceFragmentEntity, glossId: number) {
-        if (! glossId) {
+    const _useGlossToUpdateSimilarFragments = useCallback(async (fragment: ISentenceFragmentEntity, glossId: number) => {
+        if (! glossId || ! gridRef.current?.api) {
             return;
         }
 
-        const gloss = await this._onResolveGloss(glossId);
-        const {
-            api,
-        } = this._gridRef;
+        const api = gridRef.current?.api;
+        const gloss = await _onResolveGloss(glossId);
 
         const transaction: ISentenceFragmentEntity[] = [];
         api.forEachNodeAfterFilter((node) => {
@@ -255,13 +221,13 @@ class FragmentsGrid extends React.Component<IProps, IState> {
             if (! f.glossId || f === fragment) {
                 f.glossId = glossId;
                 changed = true;
-                this._notifyChange(f, 'glossId', f.glossId);
+                _notifyChange(f, 'glossId', f.glossId);
             }
 
             if (! f.speechId || f === fragment) {
                 f.speechId = gloss.speechId || null;
                 changed = true;
-                this._notifyChange(f, 'speechId', f.speechId);
+                _notifyChange(f, 'speechId', f.speechId);
             }
 
             if (changed) {
@@ -274,30 +240,17 @@ class FragmentsGrid extends React.Component<IProps, IState> {
                 update: transaction,
             });
         }
-    }
-
-    /**
-     * Resizes the grid's columns appropriately when the viewport changes.
-     */
-    private _onWindowResize = () => {
-        const {
-            _gridRef: gridRef,
-        } = this;
-
-        if (gridRef) {
-            gridRef.api.sizeColumnsToFit();
-        }
-    }
+    }, [ gridRef ]);
 
     /**
      * Tells agGrid that there a custom filter function is exists.
      */
-    private _onIsExternalFilterPresent = () => true;
+    const _onIsExternalFilterPresent = () => true;
 
     /**
      * Custom agGrid view filter that only shows words.
      */
-    private _onDoesExternalFilterPass = (ev: RowNode) => {
+    const _onDoesExternalFilterPass = (ev: RowNode) => {
         const data = ev.data as ISentenceFragmentEntity;
         return data.type === SentenceFragmentType.Word;
     }
@@ -305,7 +258,7 @@ class FragmentsGrid extends React.Component<IProps, IState> {
     /**
      * On-change handler for agGrid.
      */
-    private _onCellValueChanged = (ev: CellValueChangedEvent) => {
+    const _onCellValueChanged = (ev: CellValueChangedEvent) => {
         let {
             newValue: value,
         } = ev;
@@ -322,9 +275,9 @@ class FragmentsGrid extends React.Component<IProps, IState> {
 
         const field = column.getColId() as keyof ISentenceFragmentEntity;
         if (field === 'glossId') {
-            void this._useGlossToUpdateSimilarFragments(fragment, value);
+            void _useGlossToUpdateSimilarFragments(fragment, value);
         } else {
-            this._notifyChange(fragment, field, value);
+            _notifyChange(fragment, field, value);
         }
     }
 
@@ -332,22 +285,22 @@ class FragmentsGrid extends React.Component<IProps, IState> {
      * Returns an unique string identifier given a fragment entity. This is required
      * by agGrid's `immutableData`.
      */
-    private _onGetRowId = (row: GetRowIdParams) => {
+    const _onGetRowId = (row: GetRowIdParams) => {
         return (row.data as ISentenceFragmentEntity).id.toString(10);
     }
 
     /**
      * Grid initialization (once it mounts).
      */
-    private _onGridReady = (params: GridReadyEvent) => {
+    const _onGridReady = (params: GridReadyEvent) => {
         params.api.sizeColumnsToFit()
     }
 
     /**
      * Reference callback (assigns `_gridRef`).
      */
-    private _onSetGridReference = (gridRef: AgGridReact) => {
-        this._gridRef = gridRef as any; // this really works!
+    const _onSetGridReference = (ref: AgGridReact) => {
+        gridRef.current = ref as any; // this really works!
     }
 
     /**
@@ -356,17 +309,17 @@ class FragmentsGrid extends React.Component<IProps, IState> {
      * @param glossId gloss ID to look up
      * @returns A gloss resolver promise.
      */
-    private _onResolveGloss = (glossId: number): Promise<IGlossEntity> => {
-        if (this._glossCache.has(glossId)) {
-            return this._glossCache.get(glossId);
+    const _onResolveGloss = (glossId: number): Promise<IGlossEntity> => {
+        if (glossCacheRef.current?.has(glossId)) {
+            return glossCacheRef.current.get(glossId);
         }
 
         if (! glossId) {
             return Promise.resolve<IGlossEntity>(null);
         }
 
-        const glossPromise = this._glossApi.gloss(glossId);
-        this._glossCache.set(glossId, glossPromise);
+        const glossPromise = glossApi.gloss(glossId);
+        glossCacheRef.current?.set(glossId, glossPromise);
         return glossPromise;
     }
 
@@ -374,12 +327,8 @@ class FragmentsGrid extends React.Component<IProps, IState> {
      * Retrieves suggestions asynchronously for the specified word.
      * @param word look-up word
      */
-    private _onSuggestGloss = async (word: string): Promise<ISuggestionEntity[]> => {
-        const {
-            languageId,
-        } = this.props;
-
-        const suggestions = await this._glossApi.suggest({
+    const _onSuggestGloss = async (word: string): Promise<ISuggestionEntity[]> => {
+        const suggestions = await glossApi.suggest({
             inexact: true,
             languageId,
             parameterized: true,
@@ -392,6 +341,34 @@ class FragmentsGrid extends React.Component<IProps, IState> {
 
         return null;
     };
+
+    return <>
+        <div className="ag-theme-balham FragmentsGrid--container">
+            {columnDefinition &&
+                <AgGridReact
+//                        modules={[ClientSideRowModelModule]}
+                    getRowId={_onGetRowId}
+                    isExternalFilterPresent={_onIsExternalFilterPresent}
+                    doesExternalFilterPass={_onDoesExternalFilterPass}
+                    rowClassRules={RowClassRules}
+                    columnDefs={columnDefinition}
+                    defaultColDef={DefaultColumnDefinition}
+                    enableBrowserTooltips={true}
+                    rowData={fragments}
+                    onCellValueChanged={_onCellValueChanged}
+                    onGridReady={_onGridReady}
+                    ref={_onSetGridReference}
+                />}
+        </div>
+        <p>
+            <strong>Tip!</strong> While searching for glosses, repeat vowels for longer sounds
+            (eg. <em>niin</em> matches <em>nín</em> and <em>niiin</em> matches <em>nîn</em>).
+        </p>
+    </>;
 }
 
-export default FragmentsGrid;
+FragmentsGrid.defaultProps = {
+    inflectionApi: resolve<IInflectionResourceApi>(DI.InflectionApi),
+    glossApi: resolve<IGlossResourceApi>(DI.GlossApi),
+    speechApi: resolve<ISpeechResourceApi>(DI.SpeechApi),
+} as Partial<IProps>;
