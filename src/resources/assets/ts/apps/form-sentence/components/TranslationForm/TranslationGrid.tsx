@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
     CellValueChangedEvent,
     GridReadyEvent,
@@ -8,98 +8,75 @@ import { AgGridReact } from 'ag-grid-react/lib/agGridReact';
 import { fireEventAsync } from '@root/components/Component';
 import {
     IProps,
-    IState,
     TranslationGridColumnDefinition,
 } from './TranslationGrid._types';
 
-export default class TranslationGrid extends React.Component<IProps> {
-    public state = {
-        columnDefinition: [],
-    } as IState;
+const columnDefinition: TranslationGridColumnDefinition = [
+    {
+        cellEditorPopup: true,
+        editable: false,
+        field: 'sentenceText',
+        resizable: true,
+    },
+    {
+        cellEditorPopup: true,
+        editable: true,
+        field: 'translation',
+        cellEditor: 'agLargeTextCellEditor',
+        resizable: true,
+    },
+];
 
-    private _gridRef: AgGridReact;
+export default function TranslationGrid(props: IProps) {
+    const gridRef = useRef<AgGridReact>(null);
 
-    public componentDidMount() {
-        const columnDefinition: TranslationGridColumnDefinition = [
-            {
-                cellEditorPopup: true,
-                editable: false,
-                field: 'sentenceText',
-                resizable: true,
-            },
-            {
-                cellEditorPopup: true,
-                editable: true,
-                field: 'translation',
-                cellEditor: 'agLargeTextCellEditor',
-                resizable: true,
-            },
-        ];
+    const {
+        onChange,
+        rows,
+    } = props;
 
-        this.setState({
-            columnDefinition,
-        });
-
-        window.addEventListener('resize', this._onWindowResize);
-    }
-
-    public componentWillUnmount() {
-        window.removeEventListener('resize', this._onWindowResize);
-    }
-
-    public render() {
-        const {
-            columnDefinition,
-        } = this.state;
-
-        const {
-            rows,
-        } = this.props;
-
-        return <div className="ag-theme-balham FragmentsGrid--container">
-            {columnDefinition &&
-                <AgGridReact
-//                    modules={[ClientSideRowModelModule]}
-                    columnDefs={columnDefinition}
-                    onCellValueChanged={this._onCellValueChanged}
-                    onGridReady={this._onGridReady}
-                    ref={this._onSetGridReference}
-                    rowData={rows}
-                />}
-        </div>;
-    }
-
-    private _onWindowResize = () => {
-        const {
-            _gridRef: gridRef,
-        } = this;
-
-        if (gridRef) {
-            gridRef.api.sizeColumnsToFit();
+    useEffect(() => {
+        const _onWindowResize = () => {    
+            if (gridRef) {
+                gridRef.current?.api.sizeColumnsToFit();
+            }
         }
-    }
 
-    private _onCellValueChanged = (ev: CellValueChangedEvent) => {
+        window.addEventListener('resize', _onWindowResize);
+        return () => {
+            window.removeEventListener('resize', _onWindowResize);
+        };
+    }, []);
+
+    const _onCellValueChanged = (ev: CellValueChangedEvent) => {
         const {
             data: row,
             newValue: value,
         } = ev;
 
-        const {
-            onChange,
-        } = this.props;
-
-        fireEventAsync(this, onChange, {
+        fireEventAsync('TranslationGrid', onChange, {
             ...row,
             translation: String(value).trim(),
         });
     }
 
-    private _onGridReady = (params: GridReadyEvent) => {
-        params.api.sizeColumnsToFit()
+    const _onGridReady = (params: GridReadyEvent) => {
+        params.api.sizeColumnsToFit();
     }
 
-    private _onSetGridReference = (gridRef: AgGridReact) => {
-        this._gridRef = gridRef;
+    const _onSetGridReference = (ref: AgGridReact) => {
+        gridRef.current = ref;
     }
+
+    return <div className="ag-theme-balham FragmentsGrid--container">
+        {columnDefinition &&
+            <AgGridReact
+//                modules={[ClientSideRowModelModule]}
+                columnDefs={columnDefinition}
+                onCellValueChanged={_onCellValueChanged}
+                onGridReady={_onGridReady}
+                ref={_onSetGridReference}
+                rowData={rows}
+            />}
+    </div>;
 }

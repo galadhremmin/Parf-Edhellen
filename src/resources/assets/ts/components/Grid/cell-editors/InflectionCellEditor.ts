@@ -21,6 +21,10 @@ export default class InflectionCellEditor extends MultipleSelectCellEditor<IInfl
         return (this._editorParams as IFragmentGridMetadata).inflections;
     }
 
+    protected isOptionAvailable(option: IInflection) {
+        return ! option.isRestricted;
+    }
+
     protected getOptionId(option: IInflection) {
         return option.id;
     }

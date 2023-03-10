@@ -2,6 +2,7 @@ export interface IInflection {
     groupName: string;
     id: number;
     name: string;
+    isRestricted?: boolean;
 }
 
 export interface IInflectionMap {

@@ -4,7 +4,7 @@ namespace App\Helpers;
 
 class CookieHelper
 {
-    private const EU_CONSENT_USE_CASES_COOKIE_NAME = 'ed-euconsent-usecases';
+    private const EU_CONSENT_USE_CASES_COOKIE_NAME = 'ed-euconsent-usecases-v2';
 
     public static function hasUserConsent(string $useCase)
     {

@@ -95,6 +95,10 @@ export default class MultipleSelectCellEditor<T, V = T> extends PopupComponent i
         return true;
     }
 
+    protected isOptionAvailable(_option: T) {
+        return true;
+    }
+
     protected getOptionId(_option: T) {
         return 0;
     }
@@ -204,14 +208,14 @@ export default class MultipleSelectCellEditor<T, V = T> extends PopupComponent i
         if (allOptions instanceof Map) {
             for (const group of allOptions.keys()) {
                 for (const option of allOptions.get(group)) {
-                    if (! values.has(this.getOptionId(option))) {
+                    if (! values.has(this.getOptionId(option)) && this.isOptionAvailable(option)) {
                         html.push(`<option value="${this.getOptionText(option)}">${group}</option>`);
                     }
                 }
             }
         } else {
             for (const option of allOptions) {
-                if (! values.has(this.getOptionId(option))) {
+                if (! values.has(this.getOptionId(option)) && this.isOptionAvailable(option)) {
                     html.push(`<option value="${this.getOptionText(option)}"></option>`);
                 }
             }

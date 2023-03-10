@@ -5,7 +5,7 @@ import CookieConsent from './containers/CookieConsent';
 
 export default function EuConsent() {
     const zone = DateTime.now().zoneName;
-    if (TimezonesWithEuConsent.indexOf(zone) === -1) {
+    if (zone.startsWith('Europe/') || TimezonesWithEuConsent.indexOf(zone) === -1) {
         return null;
     }
 
