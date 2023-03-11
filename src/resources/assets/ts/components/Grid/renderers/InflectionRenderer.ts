@@ -23,10 +23,11 @@ export default class InflectionRenderer implements ICellRendererComp {
     public refresh(params: ICellRendererParams) {
         const inflections = (params as IAugmentedCellRendererParams).inflections;
         const selectedInflections = params.value as IGlossInflection[];
-        const formatted = selectedInflections //
-            .filter((i) => inflections.has(i.inflectionId)) //
-            .map((i) => inflections.get(i.inflectionId).name) //
-            .join(', ');
+        const formatted = selectedInflections?.filter( //
+                (i) => inflections.has(i.inflectionId), //
+            ) //
+             .map((i) => inflections.get(i.inflectionId).name) //
+             .join(', ');
 
         this._cell.textContent = formatted;
         return true;
