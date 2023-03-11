@@ -10,6 +10,7 @@ use Illuminate\Auth\AuthManager;
 use App\Helpers\StringHelper;
 use App\Events\{
     GlossCreated,
+    GlossDestroyed,
     GlossEdited,
     SenseEdited
 };
@@ -671,6 +672,8 @@ class GlossRepository
 
     protected function deleteGloss(Gloss $g, int $replaceId = null) 
     {
+        $replacement = $replaceId ? Gloss::findOrFail($replaceId) : null;
+
         $g->keywords()->delete();
         
         // delete the sense if the specified gloss is the only gloss with that sense.
@@ -690,6 +693,8 @@ class GlossRepository
 
         $g->is_deleted = true;
         $g->save();
+
+        event(new GlossDestroyed($g, $replacement));
     }
 
     protected function saveVersion(Gloss $gloss, int $changes)
