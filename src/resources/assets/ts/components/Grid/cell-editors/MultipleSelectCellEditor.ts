@@ -42,7 +42,7 @@ export default class MultipleSelectCellEditor<T, V = T> extends PopupComponent i
         this._dataListElement = dataListElement;
         this._valuesWrapper = valuesWrapper;
 
-        let values = Array.isArray(params.value) ? [...params.value] : [params.value];
+        let values = Array.isArray(params.value) ? [...params.value] : (params.value /* null protect */ ? [params.value] : []);
 
         if (params.cellStartedEdit) {
             this.focusAfterAttached = true;
