@@ -70,8 +70,7 @@ function SentenceForm(props: IProps) {
         ev.preventDefault();
         let translations: typeof sentenceTranslations = [];
         // Only include translations if they are valid. These are meant to be optional.
-        if (sentenceTranslations.length > 0 && //
-            ! sentenceTranslations.some((t) => isEmptyString(t.translation))) {
+        if (sentenceTranslations?.length > 0) {
             translations = sentenceTranslations;
         }
 
@@ -126,7 +125,7 @@ function SentenceForm(props: IProps) {
                 onParseTextRequest={onParseTextRequest}
                 onTextChange={onTextChange} />
         </Panel>
-        <Panel title="Translations (optional)">
+        <Panel title="Translations">
             <TranslationForm onTranslationChange={onTranslationChange}
                 translations={sentenceTranslations}
                 paragraphs={sentenceParagraphs}

@@ -1,8 +1,10 @@
 import { ParagraphState } from '@root/apps/sentence-inspector/reducers/FragmentsReducer._types';
+import { deepClone } from '@root/utilities/func/clone';
 import { ITranslationRow } from '../components/TranslationForm/TranslationForm._types';
 import {
     ISentenceFragmentEntity,
     ISentenceTranslationEntity,
+    SentenceFragmentType,
 } from '@root/connectors/backend/IBookApi';
 import { ISentenceTranslationReducerState } from '../reducers/child-reducers/SentenceTranslationReducer._types';
 import { ISentenceTranslationsReducerState } from '../reducers/SentenceTranslationsReducer._types';
@@ -25,9 +27,11 @@ function groupByParagraphAndSentence<T extends Pick<ISentenceFragmentEntity, 'pa
 }
 
 export function rebuildTranslations(oldTranslations: ISentenceTranslationsReducerState, existingFragments: ISentenceFragmentEntity[], nextFragments: ISentenceFragmentEntity[]) {
-    const existingGroup = groupByParagraphAndSentence(existingFragments);
     const existingTranslationGroup = groupByParagraphAndSentence(oldTranslations);
-    const nextGroup = groupByParagraphAndSentence(nextFragments);
+
+    const fragmentFilter = (f: typeof nextFragments[0]) => f.type === SentenceFragmentType.Word;
+    const existingGroup = groupByParagraphAndSentence(existingFragments.filter(fragmentFilter));
+    const nextGroup = groupByParagraphAndSentence(nextFragments.filter(fragmentFilter));
 
     const nextTranslations: ISentenceTranslationEntity[] = [];
     for (const groupKey of nextGroup.keys()) {
@@ -37,7 +41,7 @@ export function rebuildTranslations(oldTranslations: ISentenceTranslationsReduce
         if (existingGroup.has(groupKey) && //
             existingTranslationGroup.has(groupKey) && //
             existingGroup.get(groupKey).every((v, i) => v.fragment === fragments[i].fragment)) {
-            nextTranslation = existingTranslationGroup.get(groupKey)[0];
+            nextTranslation = deepClone(existingTranslationGroup.get(groupKey)[0]);
         } else {
             const firstFragment = fragments[0];
             nextTranslation = {
