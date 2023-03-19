@@ -2,7 +2,7 @@ import {
     ReduxThunkDispatch,
 } from '@root/_types';
 import { ParagraphState } from '@root/apps/sentence-inspector/reducers/FragmentsReducer._types';
-import convert from '@root/apps/sentence-inspector/utilities/TextConverter';
+import convertTransformationToTextComponents from '@root/apps/sentence-inspector/utilities/TextConverter';
 import { DI, resolve } from '@root/di';
 import { setValidationErrors } from '@root/components/Form/Validation';
 import { ISentenceFragmentEntity, SentenceFragmentType } from '@root/connectors/backend/IBookApi';
@@ -17,8 +17,8 @@ import { ISentenceReducerState } from '../reducers/SentenceReducer._types';
 import { ISentenceTranslationsReducerState } from '../reducers/SentenceTranslationsReducer._types';
 import { TextTransformationsReducerState } from '../reducers/TextTransformationsReducer._types';
 import { parseFragments, mergeFragments } from '../utilities/fragments';
-import { convertTransformationToString } from '../utilities/transformations';
-import { parseTranslations } from '../utilities/translations';
+import { convertParagraphsToString, convertTextComponentsToParagraphs, convertTextComponentsToString } from '../utilities/transformations';
+import { rebuildTranslations } from '../utilities/translations';
 
 import Actions from './Actions';
 
@@ -147,8 +147,8 @@ export default class GlossActions {
         return (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
             const transformer = getState().textTransformations.latin;
             if (transformer) {
-                const text = convert(null, transformer, fragments);
-                const textString = convertTransformationToString(text, fragments);
+                const text = convertTransformationToTextComponents(null, transformer, fragments);
+                const textString = convertTextComponentsToString(text, fragments);
                 dispatch(this.setLatinText(textString, text.paragraphs, false));
             }
         };
@@ -161,6 +161,7 @@ export default class GlossActions {
     public reloadFragments(text: string) {
         return async (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
             const oldFragments = getState().sentenceFragments;
+            const oldTranslations = getState().sentenceTranslations;
             const languageId   = getState().sentence.languageId;
 
             const language = await this._languageApi.find(languageId, 'id');
@@ -169,15 +170,28 @@ export default class GlossActions {
                 throw new Error(`Failed to parse fragments because language ${languageId} does not exist!`);
             }
 
+            // Re-create fragments based on the next text body. These fragments should be merged with
+            // existing fragments (i.e. fragments prior to the change) to ensure that only state is
+            // reset for fragments affected by the forward change.
             const newFragments = await parseFragments(text, language.tengwarMode || null);
             mergeFragments(newFragments, oldFragments);
 
+            // Validate the transformation and rely on the server to render the necessary transformations.
+            // A transformation is a writing system transformation of the specified sentence. A transformation
+            // is the ordering of each fragment while rendering sentences. For example, a sentence written
+            // using a Latin transformation would differ from the Chinese transformation.
             const api = this._contributionApi;
             const metadata = await api.validateTransformations(newFragments, languageId);
-            const translations = parseTranslations(newFragments);
 
-            const textComponents = convert(null, metadata.transformations.latin, newFragments);
-            const latinText = convertTransformationToString(textComponents, newFragments);
+            // Create a string using the Latin transformation. Regardless of localization, a Latin transformation
+            // is always expected from the server side.
+            const textComponents = convertTransformationToTextComponents(null, metadata.transformations.latin, newFragments);
+            const latinText = convertTextComponentsToString(textComponents, newFragments);
+
+            // Carry over the old translations into the new array of translations. Only the paragraphs and
+            // sentences that have changed since the last update will be blanked out. All else should be
+            // as it was prior to the reconstruction.
+            const translations = rebuildTranslations(oldTranslations, oldFragments, newFragments);
 
             // Use suggestions for fragments that have not been assigned a gloss.
             newFragments.forEach((f) => {

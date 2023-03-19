@@ -6,6 +6,7 @@ import {
 import { AgGridReact } from 'ag-grid-react/lib/agGridReact';
 // import { ClientSideRowModelModule } from 'ag-grid-community/client-side-row-model';
 import { fireEventAsync } from '@root/components/Component';
+import { isEmptyString } from '@root/utilities/func/string-manipulation';
 import {
     IProps,
     TranslationGridColumnDefinition,
@@ -56,7 +57,7 @@ export default function TranslationGrid(props: IProps) {
 
         fireEventAsync('TranslationGrid', onChange, {
             ...row,
-            translation: String(value).trim(),
+            translation: isEmptyString(value) ? '' : String(value).trim(),
         });
     }
 
