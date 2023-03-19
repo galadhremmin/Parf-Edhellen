@@ -3,7 +3,6 @@ import { ITranslationRow } from '../components/TranslationForm/TranslationForm._
 import {
     ISentenceFragmentEntity,
     ISentenceTranslationEntity,
-    SentenceFragmentType,
 } from '@root/connectors/backend/IBookApi';
 import { ISentenceTranslationReducerState } from '../reducers/child-reducers/SentenceTranslationReducer._types';
 import { ISentenceTranslationsReducerState } from '../reducers/SentenceTranslationsReducer._types';
@@ -52,7 +51,7 @@ export function rebuildTranslations(oldTranslations: ISentenceTranslationsReduce
     }
 
     return nextTranslations;
-};
+}
 
 export function createTranslationRows(paragraphs: ParagraphState[], translations: ISentenceTranslationReducerState[]) {
     const _createKey = (paragraphNumber: number, sentenceNumber: number) => {
@@ -105,4 +104,4 @@ export function createTranslationRows(paragraphs: ParagraphState[], translations
     }
 
     return rows;
-};
+}
