@@ -6,31 +6,55 @@ import {
     SentenceFragmentType,
 } from '@root/connectors/backend/IBookApi';
 import { ISentenceTranslationReducerState } from '../reducers/child-reducers/SentenceTranslationReducer._types';
+import { ISentenceTranslationsReducerState } from '../reducers/SentenceTranslationsReducer._types';
 
-export const parseTranslations = (fragments: ISentenceFragmentEntity[]) => {
-    const translations: ISentenceTranslationEntity[] = [];
-    const sentenceParagraphs = new Set<string>();
-    const words = fragments.filter((f) => f.type === SentenceFragmentType.Word);
-    for (const fragment of words) {
-        const {
-            sentenceNumber,
-            paragraphNumber,
-        } = fragment;
-        const sentenceParagraph = `${sentenceNumber}.${paragraphNumber}`;
-        if (! sentenceParagraphs.has(sentenceParagraph)) {
-            translations.push({
-                paragraphNumber,
-                sentenceNumber,
-                translation: '',
-            });
-            sentenceParagraphs.add(sentenceParagraph);
-        }
+function groupByParagraphAndSentence<T extends Pick<ISentenceFragmentEntity, 'paragraphNumber' | 'sentenceNumber'>>(fragments: T[]): Map<string, T[]> {
+    const group = new Map<string, T[]>();
+    if (! Array.isArray(fragments)) {
+        return group;
     }
 
-    return translations;
+    for (const f of fragments) {
+        const key = `${f.paragraphNumber}|${f.sentenceNumber}`;
+        if (! group.has(key)) {
+            group.set(key, []);
+        }
+        group.get(key).push(f);
+    }
+
+    return group;
+}
+
+export function rebuildTranslations(oldTranslations: ISentenceTranslationsReducerState, existingFragments: ISentenceFragmentEntity[], nextFragments: ISentenceFragmentEntity[]) {
+    const existingGroup = groupByParagraphAndSentence(existingFragments);
+    const existingTranslationGroup = groupByParagraphAndSentence(oldTranslations);
+    const nextGroup = groupByParagraphAndSentence(nextFragments);
+
+    const nextTranslations: ISentenceTranslationEntity[] = [];
+    for (const groupKey of nextGroup.keys()) {
+        const fragments = nextGroup.get(groupKey);
+
+        let nextTranslation: typeof nextTranslations[0];
+        if (existingGroup.has(groupKey) && //
+            existingTranslationGroup.has(groupKey) && //
+            existingGroup.get(groupKey).every((v, i) => v.fragment === fragments[i].fragment)) {
+            nextTranslation = existingTranslationGroup.get(groupKey)[0];
+        } else {
+            const firstFragment = fragments[0];
+            nextTranslation = {
+                paragraphNumber: firstFragment.paragraphNumber,
+                sentenceNumber: firstFragment.sentenceNumber,
+                translation: '',
+            };
+        }
+
+        nextTranslations.push(nextTranslation);
+    }
+
+    return nextTranslations;
 };
 
-export const createTranslationRows = (paragraphs: ParagraphState[], translations: ISentenceTranslationReducerState[]) => {
+export function createTranslationRows(paragraphs: ParagraphState[], translations: ISentenceTranslationReducerState[]) {
     const _createKey = (paragraphNumber: number, sentenceNumber: number) => {
         return [paragraphNumber, sentenceNumber].join('|');
     }

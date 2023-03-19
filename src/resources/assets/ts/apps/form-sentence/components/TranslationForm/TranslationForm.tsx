@@ -19,6 +19,11 @@ export default function TranslationForm(props: IProps) {
     } = props;
 
     useEffect(() => {
+        // When the paragraphs are reset, the underlying state has changed but not yet been committed.
+        // So break out of the change and retain current state.
+        if (! Array.isArray(paragraphs) || paragraphs.length < 1) {
+            return;
+        }
         try {
             const nextTranslationRows = createTranslationRows(paragraphs, translations);
             setTranslationRows(nextTranslationRows);

@@ -1,5 +1,5 @@
 import { Actions } from '../actions';
-import convert from '../utilities/TextConverter';
+import convertTransformationToTextComponents from '../utilities/TextConverter';
 import { ITextState } from './FragmentsReducer._types';
 import { ISentenceReducerAction } from './SentenceReducer._types';
 
@@ -10,7 +10,7 @@ const TengwarFragmentsReducer = (state: ITextState = {
 }, action: ISentenceReducerAction) => {
     switch (action.type) {
         case Actions.ReceiveSentence:
-            return convert(TransformerName, action.sentence.sentenceTransformations[TransformerName], //
+            return convertTransformationToTextComponents(TransformerName, action.sentence.sentenceTransformations[TransformerName], //
                 action.sentence.sentenceFragments);
         default:
             return state;

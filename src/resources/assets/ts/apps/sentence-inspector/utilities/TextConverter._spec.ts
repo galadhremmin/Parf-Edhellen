@@ -11,7 +11,7 @@ import {
 } from '@root/connectors/backend/IBookApi';
 import { snakeCasePropsToCamelCase } from '@root/utilities/func/snake-case';
 
-import convert from './TextConverter';
+import convertTransformationToTextComponents from './TextConverter';
 
 describe('apps/sentence/utilities/TextConverter', () => {
     const MinimumId = 0;
@@ -22,7 +22,7 @@ describe('apps/sentence/utilities/TextConverter', () => {
     const TengwarMap: ITextTransformation = JSON.parse(`{"10":[[0,"\`C"]," ",[1,"1~M7T5"]," ",[2,"1U7Ew#6"]," ",[3,"1U7~M5"]," ",[4,"\`Cw#61E5$5"]," ",[5,"\u00c1"]]}`);
 
     test('supports simple map without substitutions', () => {
-        const map = convert('latin', LatinMap, Fragments);
+        const map = convertTransformationToTextComponents('latin', LatinMap, Fragments);
 
         expect(map.paragraphs.length).toEqual(1);
         expect(map.paragraphs[0].length).toEqual(10);
@@ -57,7 +57,7 @@ describe('apps/sentence/utilities/TextConverter', () => {
     });
 
     test('supports map with substitutions', () => {
-        const map = convert('tengwar', TengwarMap, Fragments);
+        const map = convertTransformationToTextComponents('tengwar', TengwarMap, Fragments);
 
         expect(map.paragraphs.length).toEqual(1);
         expect(map.paragraphs[0].length).toEqual(11);

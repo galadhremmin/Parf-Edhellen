@@ -10,7 +10,7 @@ import {
     ITextState,
 } from '../reducers/FragmentsReducer._types';
 
-const convert = (transformerName: string, textTransformation: ITextTransformation, //
+const convertTransformationToTextComponents = (transformerName: string, textTransformation: ITextTransformation, //
     fragments: ISentenceFragmentEntity[]) => {
     const text: ITextState = {
         paragraphs: [],
@@ -48,4 +48,4 @@ const convert = (transformerName: string, textTransformation: ITextTransformatio
     return text;
 };
 
-export default convert;
+export default convertTransformationToTextComponents;
