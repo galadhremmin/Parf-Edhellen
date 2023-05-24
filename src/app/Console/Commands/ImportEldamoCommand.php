@@ -121,8 +121,8 @@ class ImportEldamoCommand extends Command
         try {
             $this->_glossGroups = [
                 'default'      => GlossGroup::where('name', 'Eldamo')->firstOrFail(),
-                'adaptations'  => GlossGroup::where('name', 'Eldamo - fan adaptations')->firstOrFail(),
-                'fan invented' => GlossGroup::where('name', 'Eldamo - fan inventions')->firstOrFail()
+                'adaptations'  => GlossGroup::where('name', 'Eldamo - neologism/adaptations')->firstOrFail(),
+                'fan invented' => GlossGroup::where('name', 'Eldamo - neologism/reconstructions')->firstOrFail()
             ];
         } catch (ModelNotFoundException $ex) {
             throw new ModelNotFoundException("Failed to initialize import of Eldamo dataset because the required gloss groups do not exist.", $ex->getCode(), $ex);
