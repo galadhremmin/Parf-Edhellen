@@ -82,7 +82,6 @@ export class SearchQuery extends React.Component<IProps, IState> {
             <div className="row">
                 <div className="col">
                     <SearchQueryInput
-                        autoFocus={true}
                         name="query"
                         loading={loading}
                         onChange={this._onQueryChange}
