@@ -13,6 +13,17 @@
 <p><em>Parf Edhellen</em> is open source, and actively developed and maintained by Leonard &ldquo;Aldaleon&rdquo;, 
 a Tolkien-fan.</p>
 
+<h2>What is Elvish?</h2>
+
+<p>Elvish, or the Elvish languages of Middle-earth, were constructed by J.R.R. Tolkien for the Elves of Middle-earth as they developed as a society throughout the ages. Although Quenya and Sindarin are the most famous and the most developed of the languages that Tolkien invented for his Secondary World, they are by no means the only ones.</p>
+
+<p>Quenya is one of the two most prominent Elvish languages in Tolkien’s legendarium. It is an archaic language that was spoken by the High Elves of Valinor. Sindarin is another prominent Elvish language in Tolkien’s legendarium. It is a language that was spoken by the Grey Elves and later by the Elves of Middle-earth.</p>
+<p>In addition to Quenya and Sindarin, Tolkien created several other languages for his legendarium. These include Telerin, Noldorin, Silvan, Avarin, Vanyarin, and Valarin. Telerin is the language of the Teleri, a group of Elves who stayed behind during the Great Journey to Aman. Noldorin is a precursor to Sindarin. Silvan is a language that was spoken by the Wood-elves of Middle Earth. Avarin is a language that was spoken by the Avari, a group of Elves who refused to undertake the Great Journey to Aman. Vanyarin is an archaic language that was spoken by the Vanyar. Valarin is the language of the Valar, the angelic beings who created the world of Arda.</p>
+<p>You will find all these languages in the dictionary! If you are studying these languages and perhaps intend to write some prose of your own, please remember never to mix words from different languages: it would be like mixing English with German!</p>
+
+<h2>Can you write Elvish?</h2>
+<p>Yes, but it is not as straight forward as you might think. Tolkien developed many writing systems, including Cirth, Sarati and Tengwar. Tengwar was used for the One Ring and has become a popular writing system for wedding bands.</p>
+
 <a name="search"></a>
 <h2>Browsing the dictionary</h2>
 <p>Use the search field above to browse the dictionary. As you type, you will be presented with a list of words that match your search term. A match can be direct and indirect: a direct match is a word that contains the characters you have entered, for an example <em>mi</em> yielding <em>mi, mir, mil</em> etcetera; an indirect match is thematically relevant to what you are looking for, for an example <em>maple</em> yielding <em>trees, plants, olvar</em> (the latter of which is a Quenya word for “growing things with roots in the earth.”)</p> 
@@ -24,18 +35,6 @@ a Tolkien-fan.</p>
 <blockquote><span class="TextIcon TextIcon--info-sign"></span> Wildcards disable thematic search when you choose a language.</blockquote>
 
 <p>By checking the <em>Old sources</em> checkbox, the dictionary will include words from dictionaries that have not been updated for several years. These words are usually not incorrect, but they can lack information from later linguistic publications.</p>
-
-
-<h2>What is Elvish?</h2>
-
-<p>Elvish, or the Elvish languages of Middle-earth, were constructed by J.R.R. Tolkien for the Elves of Middle-earth as they developed as a society throughout the ages. Although Quenya and Sindarin are the most famous and the most developed of the languages that Tolkien invented for his Secondary World, they are by no means the only ones.</p>
-
-<p>Quenya is one of the two most prominent Elvish languages in Tolkien’s legendarium. It is an archaic language that was spoken by the High Elves of Valinor. Sindarin is another prominent Elvish language in Tolkien’s legendarium. It is a language that was spoken by the Grey Elves and later by the Elves of Middle-earth.</p>
-<p>In addition to Quenya and Sindarin, Tolkien created several other languages for his legendarium. These include Telerin, Noldorin, Silvan, Avarin, Vanyarin, and Valarin. Telerin is the language of the Teleri, a group of Elves who stayed behind during the Great Journey to Aman. Noldorin is a precursor to Sindarin. Silvan is a language that was spoken by the Wood-elves of Middle Earth. Avarin is a language that was spoken by the Avari, a group of Elves who refused to undertake the Great Journey to Aman. Vanyarin is an archaic language that was spoken by the Vanyar. Valarin is the language of the Valar, the angelic beings who created the world of Arda.</p>
-<p>You will find all these languages in the dictionary! If you are studying these languages and perhaps intend to write some prose of your own, please remember never to mix words from different languages: it would be like mixing English with German!</p>
-
-<h2>Can you write Elvish?</h2>
-<p>Yes, but it is not as straight forward as you might think. Tolkien developed many writing systems, including Cirth, Sarati and Tengwar. Tengwar was used for the One Ring and has become a popular writing system for wedding bands.</p>
 
 <h2>Terminology &amp; Notation</h2>
 <p>
