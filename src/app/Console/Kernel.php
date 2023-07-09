@@ -13,6 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
+        Commands\ImportDictionaryCommand::class,
         Commands\ImportEldamoCommand::class,
         Commands\RefreshSearchIndexFromKeywordsCommand::class,
         Commands\RefreshSearchIndexFromGlossesCommand::class,

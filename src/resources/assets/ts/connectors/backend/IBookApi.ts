@@ -85,6 +85,7 @@ export interface IBookGlossEntity {
         [ inflectionGroupUuid: string ]: IBookInflectionEntity[];
     };
     isCanon: boolean;
+    isOld: boolean;
     isLatest: boolean;
     isRejected: boolean;
     isUncertain: boolean;
