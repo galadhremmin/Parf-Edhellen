@@ -630,7 +630,7 @@ class GlossRepository
             'w.word', 'g.id', 't.translation', 'g.etymology', 's.name as type', 'g.source',
             'g.comments', 'g.tengwar', 'g.language_id', 'g.account_id', 'a.nickname as account_name',
             'w.normalized_word', 'g.created_at', 'g.updated_at', 'g.gloss_group_id', 'tg.name as gloss_group_name',
-            'tg.is_canon', 'tg.external_link_format', 'g.is_uncertain', 'g.external_id', 'g.is_rejected',
+            'tg.is_canon', 'tg.is_old', 'tg.external_link_format', 'g.is_uncertain', 'g.external_id', 'g.is_rejected',
             'g.sense_id', 'tg.label as gloss_group_label', 'g.label', 'g.latest_gloss_version_id'
         ];
 
