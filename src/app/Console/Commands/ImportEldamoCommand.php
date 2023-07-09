@@ -47,13 +47,16 @@ class ImportEldamoCommand extends Command
     private $_inflectionMap;
 
     private $_glossGroups;
+    /**
+     * Import destination account.
+     * 
+     * @var Account
+     */
     private $_eldamoAccount;
 
-    public function __construct(GlossRepository $glossRepository, KeywordRepository $keywordRepository)
+    public function __construct()
     {
         parent::__construct();
-        $this->_glossRepository = $glossRepository;
-        $this->_keywordRepository = $keywordRepository;
 
         $this->_languageMap   = null;
         $this->_speechMap     = null;
