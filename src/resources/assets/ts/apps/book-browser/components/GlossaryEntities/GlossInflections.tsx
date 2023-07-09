@@ -34,7 +34,7 @@ const GlossInflections = (props: IProps) => {
                             </td>
                             <td>
                                 <em>{firstInflection.speech?.name}</em>
-                                {' ' + inflections.map(i => i.inflection.name).join(' ')}
+                                {' ' + inflections.filter(i => !! i.inflection).map(i => i.inflection.name).join(' ')}
                             </td>
                             <td>
                                 {firstInflection.sentenceUrl ? <a href={firstInflection.sentenceUrl} title={`Go to ${firstInflection.sentence.name}.`}>
