@@ -35,6 +35,12 @@ class MailSettingRepository
                 ['entity_id', $entity->id]
             ])->get();
 
+        $currentUser = auth()->user();
+        $currentUserId = 0;
+        if ($currentUser !== null) {
+            $currentUserId = $currentUser->id;
+        }
+
         $ids = [];
         foreach ($accountIds as $id) {
             $setting = $settings->firstWhere('account_id', $id);
@@ -45,7 +51,11 @@ class MailSettingRepository
                 continue;
             }
 
-            $ids[] = $id;
+            // don't have the current user being e-mailed by their own
+            // notifications.
+            if ($id !== $currentUserId) {
+                $ids[] = $id;
+            }
         }
 
         if (empty($ids)) {
