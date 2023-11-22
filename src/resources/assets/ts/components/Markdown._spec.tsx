@@ -1,5 +1,4 @@
 import { render, screen, waitFor } from '@testing-library/react';
-import axios from 'axios';
 import {
     afterEach,
     beforeAll,
@@ -8,7 +7,7 @@ import {
     expect,
     test,
 } from '@jest/globals';
-import sinon, { SinonSandbox, SinonStub, SinonStubbedInstance } from 'sinon';
+import sinon, { SinonSandbox, SinonStubbedInstance } from 'sinon';
 
 import UtilityApiConnector from '@root/connectors/backend/UtilityApiConnector';
 import IUtilityApi from '@root/connectors/backend/IUtilityApi';
