@@ -1,7 +1,7 @@
 function shimRequestIdleCallback() {
     // Currently not supported by Safari, so shimming it to make it work as intended (kind of...)
     window.requestIdleCallback = window.requestIdleCallback ||
-        function (cb: IdleRequestCallback, _options?: IdleRequestOptions): number {
+        function (cb: IdleRequestCallback): number {
             const start = Date.now();
             return setTimeout(function () {
                 cb({
