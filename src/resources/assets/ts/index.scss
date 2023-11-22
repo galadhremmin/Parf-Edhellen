@@ -65,6 +65,15 @@ a {
   background-size: cover;
   padding-bottom: 0;
 
+  .avatar-in-menu {
+    background-size: cover;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.5rem;
+    display: inline-block;
+    margin-right: 0.15rem;
+  }
+
   .navbar-brand {
     overflow: hidden;
     text-indent: -9999px;

@@ -10,7 +10,8 @@
         data-inject-module="dashboard-profile"
         data-inject-prop-container="Profile"
         data-inject-prop-account="@json($author)"
-        data-inject-prop-statistics="@json($stats)"></div>
+        data-inject-prop-statistics="@json($stats)"
+        data-inject-prop-view-jumbotron="true"></div>
   @endif
   <hr>
   @include('discuss._standalone', [

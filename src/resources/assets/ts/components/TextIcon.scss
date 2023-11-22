@@ -142,6 +142,6 @@
 
 // This is a hack to support icons used within buttons. Unfortunately, the SVG approach
 // doesn't automatically pick up the text colour.
-button > .TextIcon {
+button > .TextIcon, a.btn > .TextIcon {
     background-color: white;
 }

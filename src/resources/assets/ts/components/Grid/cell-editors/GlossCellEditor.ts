@@ -57,8 +57,6 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
                 'Delete'    === params.eventKey) {
                 value = 0;
 
-            } else if (params.charPress) {
-                this._inputElement.value = params.charPress;
             }
 
         } else {

@@ -5,15 +5,17 @@ const ProfileLink = (props: IProps) => {
         account,
     } = props;
 
+    const children = props.children || props.account.nickname;
+
     if (account !== null && typeof account === 'object') {
         return <a href={`/author/${props.account.id}`}
             title={`View ${props.account.nickname}'s profile`}
             className={props.className}>
-            {props.children || props.account.nickname}
+            {children}
         </a>;
     } else {
         // No account = no link. Render nothing.
-        return null;
+        return children;
     }
 };
 

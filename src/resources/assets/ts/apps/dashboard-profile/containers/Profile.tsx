@@ -21,10 +21,12 @@ function Profile(props: IProps) {
         roleManager,
         readonly,
         statistics,
+        viewJumbotron,
+        viewProfileLink,
     } = props;
 
     return <article className="Profile--container">
-        <header className="text-center">
+        <header className={viewJumbotron ? 'with-background' : ''}>
             <Avatar path={avatarPath} />
             <h1>{nickname}</h1>
             {tengwar && <Tengwar as="h2" text={tengwar} />}
@@ -47,17 +49,25 @@ function Profile(props: IProps) {
                 and <em>{statistics.noOfWords} words</em>.
             </p>
         </section>}
-        {(! readonly && (roleManager.accountId === id || roleManager.isAdministrator)) && <aside className="text-center">
+        <aside className="text-center">
+            {viewProfileLink && <a href={`/author/${id}`} className="btn btn-primary">
+                <TextIcon icon="person" />{' '}
+                View your profile
+            </a>}
+            {' '}
+            {(! readonly && (roleManager.accountId === id || roleManager.isAdministrator)) && 
             <a href={`/author/edit/${id}`} className="btn btn-secondary">
-                <TextIcon icon="edit" />
-                Edit profile
-            </a>
-        </aside>}
+                <TextIcon icon="edit" />{' '}
+                Change your profile
+            </a>}
+        </aside>
     </article>;
 }
 
 Profile.defaultProps = {
     roleManager: resolve(DI.RoleManager),
+    viewJumbotron: false,
+    viewProfileLink: false,
 } as Partial<IProps>;
 
 export default Profile;

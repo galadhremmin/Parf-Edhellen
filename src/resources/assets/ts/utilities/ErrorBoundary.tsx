@@ -9,6 +9,7 @@ export default class ErrorBoundary extends React.Component<IProps, IState> {
     private static excludeErrorMessages: RegExp[] = [
         /Loading chunk [0-9]+ failed\./,
         /Loading CSS chunk [0-9]+ failed\./,
+        /Request aborted/,
     ];
 
     public static defaultProps = {

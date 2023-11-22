@@ -15,4 +15,6 @@ export interface IProps {
     hideProfile?: boolean;
     readonly?: boolean;
     statistics?: IAccountStatistics;
+    viewJumbotron?: boolean;
+    viewProfileLink?: boolean;
 }
