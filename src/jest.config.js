@@ -8,7 +8,7 @@ module.exports = {
     '**/*._spec.ts?(x)',
   ],
   transform: {
-    '^.+\\.tsx?$': [
+    '^.+\\.[tj]sx?$': [
       'ts-jest',
       {
         tsconfig: 'tsconfig.unit-test.json',
@@ -19,4 +19,7 @@ module.exports = {
     '^@root/(.*)$': '<rootDir>/$1',
     '\\.(css|scss)$': 'identity-obj-proxy',
   },
+  transformIgnorePatterns: [
+    "<rootDir>/node_modules/(?!sinon)"
+  ],
 };

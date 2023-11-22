@@ -5,7 +5,7 @@ const ProfileLink = (props: IProps) => {
         account,
     } = props;
 
-    const children = props.children || props.account.nickname;
+    const children = props.children || props.account?.nickname || null;
 
     if (account !== null && typeof account === 'object') {
         return <a href={`/author/${props.account.id}`}
