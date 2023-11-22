@@ -58,10 +58,7 @@ export default class MultipleSelectCellEditor<T, V = T> extends PopupComponent i
                 // current values are removed.
                 values = [];
 
-            } else if (params.charPress) {
-                this._inputElement.value = params.charPress;
             }
-
         } else {
             this.focusAfterAttached = false;
         }

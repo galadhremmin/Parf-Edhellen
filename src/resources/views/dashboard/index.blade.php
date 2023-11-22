@@ -17,7 +17,8 @@
              data-inject-prop-container="Profile"
              data-inject-prop-account="@json($user)"
              data-inject-prop-hide-profile="true"
-             data-inject-prop-readonly="false"></div>
+             data-inject-prop-readonly="false"
+             data-inject-prop-view-profile-link="true"></div>
       </div>
       <div class="text-muted mb-3 mb-sm-0">
         Last modified: @date($user->updated_at)

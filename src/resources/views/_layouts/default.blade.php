@@ -1,4 +1,5 @@
 @inject('cookie', 'App\Helpers\CookieHelper')
+@inject('storage', 'App\Helpers\StorageHelper')
 
 <!DOCTYPE html>
 <html lang="{{ config('ed.view_locale') }}" prefix="og: http://ogp.me/ns#">
@@ -57,7 +58,8 @@
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="user-menu-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               @if ($user)
-                {{ $user->nickname }}
+              <span class="avatar-in-menu" style="background-image:url({{ $storage->accountAvatar($user, true) }})"></span>
+              {{ $user->nickname }}
               @else
                 @lang('discuss.community.title')
               @endif

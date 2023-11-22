@@ -29,7 +29,17 @@ export const isPageArrayTruncated = (array: (number | string)[], numberOfPages: 
         return false;
     }
 
-    return array[array.length - 1] < numberOfPages || array[0] > getFirstPageNumber();
+    let firstPage = array[0];
+    let lastPage = array[array.length - 1];
+
+    if (typeof firstPage === 'string') {
+        firstPage = parseInt(firstPage, 10);
+    }
+    if (typeof lastPage === 'string') {
+        lastPage = parseInt(lastPage, 10);
+    }
+
+    return lastPage < numberOfPages || firstPage > getFirstPageNumber();
 }
 
 export const getFirstPageNumber = () => FIRST_PAGE_NUMBER;
