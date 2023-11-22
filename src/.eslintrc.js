@@ -24,9 +24,10 @@ module.exports = {
     ],
     "rules": {
         "no-unused-vars": 0,
-        "@typescript-eslint/restrict-template-expressions": 0,
+        "@typescript-eslint/no-unused-vars": 0,
         "@typescript-eslint/no-unsafe-assignment": 0,
         "@typescript-eslint/restrict-template-expressions": 0,
+        "@typescript-eslint/no-unsafe-enum-comparison": 0,
         "@typescript-eslint/triple-slash-reference": 0, // For Glaemscribe
         "@typescript-eslint/no-explicit-any": 1,
         "@typescript-eslint/no-unsafe-return": 1,
