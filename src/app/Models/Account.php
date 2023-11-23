@@ -20,7 +20,7 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName
      */
     protected $fillable = [
         'nickname', 'email', 'identity', 'authorization_provider_id', 'created_at', 'provider_id', 'is_configured',
-        'profile', 'has_avatar'
+        'profile', 'has_avatar', 'feature_background_file', 'is_deleted'
     ];
 
     /**
@@ -29,7 +29,7 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName
      * @var array
      */
     protected $hidden = [
-        'identity', 'authorization_provider_id', 'remember_token', 'email'
+        'identity', 'authorization_provider_id', 'remember_token', 'email', 'is_deleted'
     ];
 
     public function authorization_provider()

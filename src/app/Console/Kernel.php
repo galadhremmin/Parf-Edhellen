@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         Commands\ImportDictionaryCommand::class,
         Commands\ImportEldamoCommand::class,
+        Commands\ImportProfileFeatureBackground::class,
         Commands\RefreshSearchIndexFromKeywordsCommand::class,
         Commands\RefreshSearchIndexFromGlossesCommand::class,
         Commands\RefreshDiscussIndexesCommand::class,

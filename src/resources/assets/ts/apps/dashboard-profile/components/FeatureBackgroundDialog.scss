@@ -1,0 +1,12 @@
+@import '../../../_scss/variables';
+
+a {
+    & > img.feature-background {
+        transition: border-color 0.5s;
+        border: 0.25rem solid transparent;
+    }
+
+    &:hover > img.feature-background {
+        border: 0.25rem solid $primary;
+    }
+}

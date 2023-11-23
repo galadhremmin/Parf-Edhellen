@@ -13,6 +13,10 @@ import InformationForm from '../components/InformationForm';
 import { IProps } from './ProfileForm._types';
 
 import './ProfileForm.scss';
+import TextIcon from '@root/components/TextIcon';
+import FeatureBackgroundDialog from '../components/FeatureBackgroundDialog';
+import Jumbotron from '@root/components/Jumbotron';
+import Tengwar from '@root/components/Tengwar';
 
 const ProfileForm = (props: IProps) => {
     const {
@@ -22,11 +26,13 @@ const ProfileForm = (props: IProps) => {
     const accountId = account.id;
 
     const [ avatarPath, setAvatarPath ] = useState(() => account.avatarPath || AnonymousAvatarPath);
+    const [ featureBackground, setFeatureBackground ] = useState(account.featureBackgroundFile || null);
     const [ introduction, setIntroduction ] = useState(() => account.profile || '');
     const [ nickname, setNickname ] = useState(() => account.nickname || '');
     const [ tengwar, setTengwar ] = useState(() => account.tengwar || '');
 
     const [ errors, setErrors ] = useState(null);
+    const [ openFeatureBackground, setOpenFeatureBackground ] = useState(false);
 
     const _onAvatarChange = useCallback(async (ev: IComponentEvent<File>) => {
         try {
@@ -46,17 +52,36 @@ const ProfileForm = (props: IProps) => {
         }
     }, [ accountId, avatarPath, api ]);
 
-    const _onIntroductionChange = useCallback((ev: IComponentEvent<string>) => {
+    const _onIntroductionChange = (ev: IComponentEvent<string>) => {
         setIntroduction(ev.value);
-    }, [ setIntroduction ]);
+    };
 
-    const _onNicknameChange = useCallback((ev: IComponentEvent<string>) => {
+    const _onNicknameChange = (ev: IComponentEvent<string>) => {
         setNickname(ev.value);
-    }, [ setNickname ]);
+    };
 
-    const _onTengwarChange = useCallback((ev: IComponentEvent<string>) => {
+    const _onTengwarChange = (ev: IComponentEvent<string>) => {
         setTengwar(ev.value);
-    }, [ setTengwar ]);
+    };
+
+    const _onSelectBackground = async (ev: IComponentEvent<string>) => {
+        try {
+            const response = await api.saveFeatureBackground({
+                accountId,
+                featureBackgroundFile: ev.value,
+            });
+
+            setFeatureBackground(response.featureBackgroundFile);
+        } catch (e) {
+            setErrors(e);
+        } finally {
+            setOpenFeatureBackground(false);
+        }
+    };
+
+    const _onDismissBackground = () => {
+        _onSelectBackground({ value: null });
+    }
 
     const _onSubmit = useCallback(async () => {
         try {
@@ -76,14 +101,16 @@ const ProfileForm = (props: IProps) => {
 
     return <>
         <ValidationErrorAlert error={errors} />
-        <section className="InformationForm--avatar-form">
+        <Jumbotron className="InformationForm--avatar-form" backgroundImageUrl={featureBackground}>
+            <button className="btn btn-secondary float-end" onClick={() => setOpenFeatureBackground(true)}>
+                <TextIcon icon="edit" />
+            </button>
             <AvatarForm path={avatarPath}
                         onAvatarChange={_onAvatarChange}
             />
-            <div className="InformationForm--avatar-form__instructions">
-                Click or drag to change.
-            </div>
-        </section>
+            <h1>{nickname}</h1>
+            {tengwar && <Tengwar as="h2" text={tengwar} />}
+        </Jumbotron>
         <section className="InformationForm--info-form">
             <InformationForm introduction={introduction}
                             nickname={nickname}
@@ -94,6 +121,11 @@ const ProfileForm = (props: IProps) => {
                             onSubmit={_onSubmit}
             />
         </section>
+        <FeatureBackgroundDialog open={openFeatureBackground}
+            accountApi={api}
+            onSelectBackground={_onSelectBackground}
+            onDismiss={_onDismissBackground}
+        />
     </>;
 };
 

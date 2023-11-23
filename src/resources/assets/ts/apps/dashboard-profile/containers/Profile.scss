@@ -3,24 +3,13 @@
 $ed-profile-body-maximum-width: 50rem;
 
 .Profile--container {
-    header {
+    header, .Jumbotron {
         text-align: center;
         h1, h2 {
             margin-top: 0;
         }
-        &.with-background {
-            margin: 1rem calc(50% - 50vw);
-            padding: 3rem;
-            box-sizing: border-box;
-            background-color: $gray-200;
-            background-size: cover;
-
-            > .Avatar--picture {
-                border-width: 4px;
-            }
-
-            h1, h2 {
-            }
+        &.with-background > .Avatar--picture {
+            border-width: 4px;
         }
     }
     .Profile--container__statistics {

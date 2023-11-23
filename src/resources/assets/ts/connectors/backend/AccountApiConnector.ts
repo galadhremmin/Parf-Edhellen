@@ -8,6 +8,9 @@ import IAccountApi, {
     IGetAvatarResponse,
     ISaveAvatarRequest,
     ISaveAvatarResponse,
+    IGetFeatureBackgroundsResponse,
+    ISaveFeatureBackgroundRequest,
+    ISaveFeatureBackgroundResponse,
     ISaveProfileRequest,
     ISaveProfileResponse,
 } from './IAccountApi';
@@ -24,11 +27,22 @@ export default class AccountApiConnector implements IAccountApi {
         return this._api.get<IGetAvatarResponse>(`account/${args.accountId}/avatar`);
     }
 
+    public getFeatureBackgrounds() {
+        return this._api.get<IGetFeatureBackgroundsResponse>('account/backgrounds');
+    }
+
     public saveAvatar(args: ISaveAvatarRequest) {
         const formData = new FormData();
         formData.append('avatar', args.file, args.file.name);
 
         return this._api.post<ISaveAvatarResponse>(`account/avatar/edit/${args.accountId}`, formData);
+    }
+
+    public saveFeatureBackground(args: ISaveFeatureBackgroundRequest): Promise<ISaveFeatureBackgroundResponse> {
+        const formData = {
+            featureBackgroundFile: args.featureBackgroundFile,
+        };
+        return this._api.put<ISaveFeatureBackgroundRequest>(`account/background/edit/${args.accountId}`, formData);
     }
 
     public saveProfile(args: ISaveProfileRequest) {

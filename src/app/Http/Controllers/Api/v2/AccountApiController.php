@@ -23,7 +23,6 @@ use Image;
 
 class AccountApiController extends Controller 
 {
-    private $_discussRepository;
     private $_storageHelper;
     private $_linkHelper;
 
@@ -83,6 +82,24 @@ class AccountApiController extends Controller
         $account = Account::find($id);
         return [
             'avatar' => $this->_storageHelper->accountAvatar($account, true)
+        ];
+    }
+
+    public function getFeatureBackgrounds(Request $request)
+    {
+        $files = $this->_storageHelper->featureBackgrounds();
+        $baseDirectory = null;
+        if (! empty($files)) {
+            $baseDirectory = pathinfo(Storage::url($files[0]))['dirname'];
+
+            for ($i = 0; $i < count($files); $i += 1) {
+                $files[$i] = pathinfo($files[$i])['basename'];
+            }
+        }
+
+        return [
+            'path' => $baseDirectory,
+            'files' => $files
         ];
     }
 
@@ -149,12 +166,34 @@ class AccountApiController extends Controller
         ];
     }
 
+    public function updateFeatureBackground(Request $request, int $accountId)
+    {
+        $request->validate([
+            'feature_background_file' => 'required|nullable|string|max:128'
+        ]);
+
+        $file = $request->input('feature_background_file');
+        if ($file !== null && ! $this->_storageHelper->isFeatureBackground($file)) {
+            abort(400, 'Bad feature background file. You can only choose among the files in the library.');
+        }
+
+        $account = $this->getAuthorizedAccount($request, $accountId);
+        $account->feature_background_file = $file;
+        $account->save();
+
+        return [
+            'account_id' => $account->id,
+            'feature_background_file' => $file
+        ];
+    }
+
     public function delete(Request $request, int $accountId)
     {
         $uuid    = 'DELETED'.Str::uuid();
         $date    = Carbon::now()->toDateTimeString();
 
         $account = $this->getAuthorizedAccount($request, $accountId);
+        $account->is_deleted                 = true;
         $account->nickname                   = sprintf('(Deleted %s)', $date);
         $account->email                      = 'deleted@'.$uuid;
         $account->authorization_provider_id  = null;
@@ -180,7 +219,7 @@ class AccountApiController extends Controller
 
     private function getAvatarPath(int $accountId)
     {
-        return Storage::disk('local')->path(sprintf('public/avatars/%d.png', $accountId));
+        return Storage::path(sprintf('public/avatars/%d.png', $accountId));
     }
 
     private function getAuthorizedAccount(Request $request, int $accountId): Account

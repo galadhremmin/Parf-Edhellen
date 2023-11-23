@@ -6,11 +6,13 @@ import { DI, resolve } from '@root/di';
 import { IProps } from './Profile._types';
 
 import './Profile.scss';
+import JumbotronOrHeader from '../components/JumbotronOrHeader';
 
 function Profile(props: IProps) {
     const {
         avatarPath,
         id,
+        featureBackgroundFile,
         nickname,
         profile,
         tengwar,
@@ -25,12 +27,17 @@ function Profile(props: IProps) {
         viewProfileLink,
     } = props;
 
+    const canModify = roleManager.accountId === id || //
+        roleManager.isAdministrator;
+
     return <article className="Profile--container">
-        <header className={viewJumbotron ? 'with-background' : ''}>
+        <JumbotronOrHeader className={viewJumbotron ? 'with-background' : ''}
+            isJumbotron={viewJumbotron}
+            backgroundImageUrl={featureBackgroundFile}>
             <Avatar path={avatarPath} />
             <h1>{nickname}</h1>
             {tengwar && <Tengwar as="h2" text={tengwar} />}
-        </header>
+        </JumbotronOrHeader>
         {! hideProfile && <section>
             {profile ? <Markdown parse={true} text={profile} />
                      : <p>
@@ -55,7 +62,7 @@ function Profile(props: IProps) {
                 View your profile
             </a>}
             {' '}
-            {(! readonly && (roleManager.accountId === id || roleManager.isAdministrator)) && 
+            {(! readonly && canModify) && 
             <a href={`/author/edit/${id}`} className="btn btn-secondary">
                 <TextIcon icon="edit" />{' '}
                 Change your profile

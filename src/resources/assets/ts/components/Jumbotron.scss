@@ -1,0 +1,14 @@
+@import '../_scss/variables';
+
+div.Jumbotron {
+    margin: 1rem calc(50% - 50vw);
+    padding: 3rem;
+    box-sizing: border-box;
+    background-color: $gray-200;
+    background-size: cover;
+    background-position: center center;
+
+    &.has-background {
+        color: white;
+    }
+}

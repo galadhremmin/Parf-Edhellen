@@ -136,6 +136,7 @@ class DiscussController extends Controller
     public function allMembers(Request $request)
     {
         $members = Account::orderBy('nickname', 'asc')
+            ->where('is_deleted', false)
             ->paginate(30);
 
         return view('discuss.member-all-list', ['members' => $members]);

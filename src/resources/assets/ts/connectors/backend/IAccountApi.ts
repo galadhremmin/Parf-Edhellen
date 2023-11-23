@@ -18,6 +18,11 @@ export interface IGetAvatarResponse {
     avatar: string;
 }
 
+export interface IGetFeatureBackgroundsResponse {
+    path: string;
+    files: string[];
+}
+
 export interface ISaveAvatarRequest {
     accountId: number;
     file: File;
@@ -26,6 +31,16 @@ export interface ISaveAvatarRequest {
 export interface ISaveAvatarResponse {
     accountId: number;
     avatarPath: string;
+}
+
+export interface ISaveFeatureBackgroundRequest {
+    accountId: number;
+    featureBackgroundFile: string;
+}
+
+export interface ISaveFeatureBackgroundResponse {
+    accountId: number;
+    featureBackgroundFile: string;
 }
 
 export interface ISaveProfileRequest {
@@ -43,6 +58,8 @@ export interface ISaveProfileResponse {
 export default interface IAccountApi {
     find(args: IFindRequest): Promise<FindResponse>;
     getAvatar(args: IGetAvatarRequest): Promise<IGetAvatarResponse>;
+    getFeatureBackgrounds(): Promise<IGetFeatureBackgroundsResponse>;
     saveAvatar(args: ISaveAvatarRequest): Promise<ISaveAvatarResponse>;
+    saveFeatureBackground(args: ISaveFeatureBackgroundRequest): Promise<ISaveFeatureBackgroundResponse>;
     saveProfile(args: ISaveProfileRequest): Promise<ISaveProfileResponse>;
 }
