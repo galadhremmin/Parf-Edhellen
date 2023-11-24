@@ -1,8 +1,8 @@
+import { MouseEvent, useEffect, useState } from 'react';
 import Dialog from "@root/components/Dialog";
 import { IProps as IDialogProps } from '@root/components/Dialog._types';
 import IAccountApi from "@root/connectors/backend/IAccountApi";
 import { DI, resolve } from "@root/di";
-import { useEffect, useState } from "react";
 
 interface IProps extends Pick<IDialogProps<any>, 'onDismiss'> {
     accountApi: IAccountApi;
@@ -39,7 +39,7 @@ export default function FeatureBackgroundDialog(props: IProps) {
 
     }, [accountApi]);
 
-    const _onBackgroundClick = (background: string, ev: React.MouseEvent) => {
+    const _onBackgroundClick = (background: string, ev: MouseEvent) => {
         ev.preventDefault();
         fireEvent('FeatureBackgroundDialog', onSelectBackground, background);
     }
