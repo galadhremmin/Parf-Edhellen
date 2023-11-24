@@ -169,7 +169,7 @@ class AccountApiController extends Controller
     public function updateFeatureBackground(Request $request, int $accountId)
     {
         $request->validate([
-            'feature_background_url' => 'required|nullable|string|max:128'
+            'feature_background_url' => 'string|nullable|max:128'
         ]);
 
         $file = $request->input('feature_background_url');
