@@ -18,6 +18,9 @@ Route::group([
         ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ])
         ->name('api.account.delete');
 
+    Route::get('account/backgrounds', [ 'uses' => 'AccountApiController@getFeatureBackgrounds' ]);
+    Route::put('account/background/edit/{id}', [ 'uses' => 'AccountApiController@updateFeatureBackground' ]);
+
     Route::get('subscription/{morph}/{id}',  [ 'uses' => 'SubscriptionApiController@getSubscriptionForEntity' ])
         ->where([ 'morph' => REGULAR_EXPRESSION_SEO_STRING, 'id' => REGULAR_EXPRESSION_NUMERIC ])
         ->name('api.subscription.specific-entity');

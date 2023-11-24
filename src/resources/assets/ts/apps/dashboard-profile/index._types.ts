@@ -12,9 +12,10 @@ export interface IAccountStatistics {
 export interface IProps {
     account: IAccountEntity;
     container: string;
-    hideProfile?: boolean;
     readonly?: boolean;
+    showJumbotron?: boolean;
+    showProfile?: boolean;
+    showProfileLink?: boolean;
+    showDiscuss?: boolean;
     statistics?: IAccountStatistics;
-    viewJumbotron?: boolean;
-    viewProfileLink?: boolean;
 }

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import {
     applyMiddleware,
@@ -61,13 +61,15 @@ const Inject = (props: IProps) => {
         entityType = thread.entityType;
     }
 
-    return <Provider store={store}>
-        <Discuss entityId={entityId}
-                 entityType={entityType}
-                 readonly={props.readonly}
-                 highlightThreadPost={props.highlightThreadPost}
-        />
-    </Provider>;
+    return <div className="discuss-body">
+        <Provider store={store}>
+            <Discuss entityId={entityId}
+                    entityType={entityType}
+                    readonly={props.readonly}
+                    highlightThreadPost={props.highlightThreadPost}
+            />
+        </Provider>
+    </div>;
 };
 
 Inject.defaultProps = {

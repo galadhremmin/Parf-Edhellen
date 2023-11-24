@@ -28,4 +28,15 @@ class StorageHelper
             return $path;
         }
     }
+
+    public function featureBackgrounds()
+    {
+        return Storage::files('public/profile-feature-backgrounds', /* recursive: */ false);
+    }
+
+    public function isFeatureBackground(string $path)
+    {
+        $file = pathinfo($path)['basename'];
+        return Storage::exists('public/profile-feature-backgrounds/'.$file);
+    }
 }
