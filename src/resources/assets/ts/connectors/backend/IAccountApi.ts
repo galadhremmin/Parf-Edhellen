@@ -35,12 +35,12 @@ export interface ISaveAvatarResponse {
 
 export interface ISaveFeatureBackgroundRequest {
     accountId: number;
-    featureBackgroundFile: string;
+    featureBackgroundUrl: string;
 }
 
 export interface ISaveFeatureBackgroundResponse {
     accountId: number;
-    featureBackgroundFile: string;
+    featureBackgroundUrl: string;
 }
 
 export interface ISaveProfileRequest {

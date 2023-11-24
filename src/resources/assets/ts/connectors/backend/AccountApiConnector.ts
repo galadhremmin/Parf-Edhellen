@@ -40,7 +40,7 @@ export default class AccountApiConnector implements IAccountApi {
 
     public saveFeatureBackground(args: ISaveFeatureBackgroundRequest): Promise<ISaveFeatureBackgroundResponse> {
         const formData = {
-            featureBackgroundFile: args.featureBackgroundFile,
+            featureBackgroundUrl: args.featureBackgroundUrl,
         };
         return this._api.put<ISaveFeatureBackgroundRequest>(`account/background/edit/${args.accountId}`, formData);
     }

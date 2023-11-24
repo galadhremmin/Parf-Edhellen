@@ -8,7 +8,7 @@ export interface IAccountEntity {
     nickname: string;
     profile?: string;
     tengwar?: string;
-    featureBackgroundFile?: string;
+    featureBackgroundUrl?: string;
 }
 
 export interface IGlossEntity {

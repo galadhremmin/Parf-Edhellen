@@ -26,7 +26,7 @@ const ProfileForm = (props: IProps) => {
     const accountId = account.id;
 
     const [ avatarPath, setAvatarPath ] = useState(() => account.avatarPath || AnonymousAvatarPath);
-    const [ featureBackground, setFeatureBackground ] = useState(account.featureBackgroundFile || null);
+    const [ featureBackground, setFeatureBackground ] = useState(account.featureBackgroundUrl || null);
     const [ introduction, setIntroduction ] = useState(() => account.profile || '');
     const [ nickname, setNickname ] = useState(() => account.nickname || '');
     const [ tengwar, setTengwar ] = useState(() => account.tengwar || '');
@@ -68,10 +68,10 @@ const ProfileForm = (props: IProps) => {
         try {
             const response = await api.saveFeatureBackground({
                 accountId,
-                featureBackgroundFile: ev.value,
+                featureBackgroundUrl: ev.value,
             });
 
-            setFeatureBackground(response.featureBackgroundFile);
+            setFeatureBackground(response.featureBackgroundUrl);
         } catch (e) {
             setErrors(e);
         } finally {

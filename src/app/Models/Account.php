@@ -20,7 +20,7 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName
      */
     protected $fillable = [
         'nickname', 'email', 'identity', 'authorization_provider_id', 'created_at', 'provider_id', 'is_configured',
-        'profile', 'has_avatar', 'feature_background_file', 'is_deleted'
+        'profile', 'has_avatar', 'feature_background_url', 'is_deleted'
     ];
 
     /**

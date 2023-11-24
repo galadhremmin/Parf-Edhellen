@@ -9,6 +9,9 @@ div.Jumbotron {
     background-position: center center;
 
     &.has-background {
-        color: white;
+        h1, h2, h3, h4 {
+            color: white;
+            text-shadow: #000 0.1rem 0 1rem;
+        }
     }
 }

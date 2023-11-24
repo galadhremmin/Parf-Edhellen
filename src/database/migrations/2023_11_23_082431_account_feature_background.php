@@ -16,7 +16,7 @@ class AccountFeatureBackground extends Migration
     public function up()
     {
         Schema::table('accounts', function (Blueprint $blueprint) {
-            $blueprint->string('feature_background_file', 128)->nullable();
+            $blueprint->string('feature_background_url', 128)->nullable();
         });
     }
 
@@ -28,7 +28,7 @@ class AccountFeatureBackground extends Migration
     public function down()
     {
         Schema::table('accounts', function (Blueprint $blueprint) {
-            $blueprint->dropColumn('feature_background_file');
+            $blueprint->dropColumn('feature_background_url');
         });
     }
 }

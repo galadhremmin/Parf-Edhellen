@@ -169,21 +169,21 @@ class AccountApiController extends Controller
     public function updateFeatureBackground(Request $request, int $accountId)
     {
         $request->validate([
-            'feature_background_file' => 'required|nullable|string|max:128'
+            'feature_background_url' => 'required|nullable|string|max:128'
         ]);
 
-        $file = $request->input('feature_background_file');
+        $file = $request->input('feature_background_url');
         if ($file !== null && ! $this->_storageHelper->isFeatureBackground($file)) {
             abort(400, 'Bad feature background file. You can only choose among the files in the library.');
         }
 
         $account = $this->getAuthorizedAccount($request, $accountId);
-        $account->feature_background_file = $file;
+        $account->feature_background_url = $file;
         $account->save();
 
         return [
             'account_id' => $account->id,
-            'feature_background_file' => $file
+            'feature_background_url' => $file
         ];
     }
 
