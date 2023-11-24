@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { CSSProperties, useEffect, useState } from 'react';
 import { IProps } from './Jumbotron._types';
 
 import './Jumbotron.scss';
@@ -9,7 +9,7 @@ export default function Jumbotron({
     children,
     className,
 }: IProps) {
-    const [ computedStyle, setComputedStyle ] = useState<React.CSSProperties>(null);
+    const [ computedStyle, setComputedStyle ] = useState<CSSProperties>(null);
     useEffect(() => {
         if (! backgroundImageUrl) {
             setComputedStyle(null);
