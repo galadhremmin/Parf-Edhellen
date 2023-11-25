@@ -135,7 +135,7 @@
     </main>
   </div>
 </div>
-<footer class="text-muted p-4 d-flex">
+<footer class="text-secondary p-4 d-flex">
   <section class="flex-fill w-100">
     <h3 class="fst-italic fs-5">{{ config('ed.title') }}</h3>
     <nav>
