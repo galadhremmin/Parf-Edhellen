@@ -34,4 +34,35 @@ class SystemErrorRepository
             'session_id' => Session::getId()
         ]);
     }
+
+    public function saveFrontendException(string $url, string $message, string $error, string $category)
+    {
+        $userAgent = $_SERVER['HTTP_USER_AGENT'];
+        if (strlen($userAgent) > 190) {
+            $userAgent = substr($userAgent, 0, 190).'...';
+        }
+
+        $request = request();
+        $user = $request->user();
+
+        if ($error !== null) {
+            $error .= "\n\n".print_r($_COOKIE, true)."\n";
+        }
+
+        SystemError::create([
+            'message'    => $message,
+            'url'        => $url,
+            'ip'         => isset($_SERVER['REMOTE_ADDR'])
+                ? $_SERVER['REMOTE_ADDR']
+                : null,
+            'error'      => $error,
+            'account_id' => $user !== null
+                ? $user->id 
+                : null,
+            'category'   => $category,
+            'session_id' => Session::getId(),
+            'user_agent' => $userAgent,
+        ]);
+
+    }
 }

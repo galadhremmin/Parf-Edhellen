@@ -7,17 +7,22 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Interfaces\IMarkdownParser;
 use App\Models\SystemError;
+use App\Repositories\SystemErrorRepository;
 
 class UtilityApiController extends Controller
 {
     const DEFAULT_SYSTEM_ERROR_CATEGORY = 'frontend';
-    const RESTRICTED_SYSTEM_ERROR_CATEGORIES = ['backend'];
 
     private $_markdownParser;
+    /**
+     * @var SystemErrorRepository
+     */
+    private $_systemErrorRepository;
 
-    public function __construct(IMarkdownParser $markdownParser)
+    public function __construct(IMarkdownParser $markdownParser, SystemErrorRepository $systemErrorRepository)
     {
         $this->_markdownParser = $markdownParser;
+        $this->_systemErrorRepository = $systemErrorRepository;
     }
 
     public function parseMarkdown(Request $request)
@@ -47,37 +52,20 @@ class UtilityApiController extends Controller
         $this->validate($request, [
             'message'  => 'string|required',
             'url'      => 'string|required',
-            'error'    => 'string',
-            'category' => 'string'
+            'error'    => 'string|nullable',
+            'category' => 'string|nullable'
         ]);
 
-        $category = $request->has('category') ? $request->input('category') : null;
-        if ($category === null || in_array($category, self::RESTRICTED_SYSTEM_ERROR_CATEGORIES)) {
-            $category = self::DEFAULT_SYSTEM_ERROR_CATEGORY;
-        }
+        $category = $request->has('category')
+            ? 'frontend-'.substr($request->input('category'), 0, 16)
+            : self::DEFAULT_SYSTEM_ERROR_CATEGORY;
 
-        $userAgent = $_SERVER['HTTP_USER_AGENT'];
-        if (strlen($userAgent) > 190) {
-            $userAgent = substr($userAgent, 0, 190).'...';
-        }
-
-        $user = $request->user();
-        SystemError::create([
-            'message'    => $request->input('message'),
-            'url'        => $request->input('url'),
-            'ip'         => isset($_SERVER['REMOTE_ADDR'])
-                ? $_SERVER['REMOTE_ADDR']
-                : null,
-            'error'      => $request->has('error') 
-                ? $request->input('error') 
-                : null,
-            'account_id' => $user !== null
-                ? $user->id 
-                : null,
-            'is_common'  => 0,
-            'category'   => $category,
-            'user_agent' => $userAgent
-        ]);
+        $this->_systemErrorRepository->saveFrontendException(
+            $request->input('url'),
+            $request->input('message'),
+            $request->input('error'),
+            $category
+        );
 
         return response(null, 201);
     }
