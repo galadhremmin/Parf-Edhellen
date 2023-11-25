@@ -9,6 +9,7 @@ import {
 import * as sinon from 'sinon';
 
 import ApiConnector from './ApiConnector';
+import { ErrorCategory } from './IReportErrorApi';
 
 describe('connectors/ApiConnector', () => {
     const ApiPrefix = '/api/unit-test';
@@ -105,7 +106,7 @@ describe('connectors/ApiConnector', () => {
         const message = 'something went wrong';
         const url = 'http://localhost/unit-tests';
         const error = 'stacktrace missing';
-        const category = 'unit-tests';
+        const category: ErrorCategory = ErrorCategory.UnitTest;
 
         sandbox.stub(axios, 'post')
             .callsFake((method, payload) => {

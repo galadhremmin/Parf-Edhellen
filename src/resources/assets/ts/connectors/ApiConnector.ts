@@ -127,7 +127,7 @@ export default class ApiConnector implements IReportErrorApi {
     /**
      * Register the specified error.
      */
-    public error(message: string, url: string, error: string, category: string = ErrorCategory.Frontend) {
+    public error(message: string, url: string, error: string, category: ErrorCategory = null) {
         return this.post<void>(this._apiErrorMethod, { message, url, error, category });
     }
 
@@ -238,10 +238,10 @@ export default class ApiConnector implements IReportErrorApi {
         }
 
         let errorReport: IErrorReport = null;
-        let category: string;
+        let category: ErrorCategory;
         if (error.code === 'ECONNABORTED') {
             alert('Your request timed out. This is likely due to us failing to respond to your request in time. Please try to reload the page and try again.');
-            category = 'frontend-timeout';
+            category = ErrorCategory.Timeout;
             errorReport = {
                 apiMethod,
                 data: error.message,
@@ -252,18 +252,18 @@ export default class ApiConnector implements IReportErrorApi {
             switch (error.response.status) {
                 case 401:
                     message = 'You must log in to use this feature.';
-                    category = 'frontend-401';
+                    category = ErrorCategory.RequestUnauthorized;
                     break;
                 case 403:
                     message = 'You are not authorized to use this feature.';
-                    category = 'frontend-403';
+                    category = ErrorCategory.RequestForbidden;
                     break;
                 case 404:
                     return Promise.reject(`${apiMethod}: The specified resource cannot be found.`);
                 case 419:
                     message = 'Your browsing session has timed out. This usually happens when you leave ' +
                         'the page open for a long time. Please refresh the page and try again.';
-                    category = 'frontend-419';
+                    category = ErrorCategory.SessionExpired;
                     break;
                 case this._apiValidationErrorStatusCode:
                     return Promise.reject(new ValidationError(
