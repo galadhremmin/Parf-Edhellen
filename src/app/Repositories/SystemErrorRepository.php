@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Models\{ 
     SystemError
 };
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Session;
 
 class SystemErrorRepository
@@ -64,5 +65,10 @@ class SystemErrorRepository
             'user_agent' => $userAgent,
         ]);
 
+    }
+
+    public function deleteOlderThan(Carbon $date) 
+    {
+        SystemError::where('created_at', '<', $date)->delete();
     }
 }
