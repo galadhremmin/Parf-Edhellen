@@ -14,9 +14,9 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         \SocialiteProviders\Manager\SocialiteWasCalled::class => [
             // add your listeners (aka providers) here
-            'SocialiteProviders\Live\LiveExtendSocialite@handle',
-            'SocialiteProviders\Discord\DiscordExtendSocialite@handle',
-            'SocialiteProviders\Twitter\TwitterExtendSocialite@handle'
+            \SocialiteProviders\Live\LiveExtendSocialite::class.'@handle',
+            \SocialiteProviders\Discord\DiscordExtendSocialite::class.'@handle',
+            \SocialiteProviders\Twitter\TwitterExtendSocialite::class.'@handle'
         ]
     ];
 
