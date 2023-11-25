@@ -3,9 +3,12 @@
 namespace App\Console;
 
 use App\Models\SystemError;
+use App\Repositories\SystemErrorRepository;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Stringable;
 
 class Kernel extends ConsoleKernel
 {
@@ -31,9 +34,16 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->call(function () {
-            SystemError::where('created_at', '>=', Carbon::now()->addDays(-90))->delete();
-        })->name('Delete SystemError entities older than 90 days.')->daily();
+        $schedule->call(function (SystemErrorRepository $systemErrorRepository) {
+                $systemErrorRepository->deleteOlderThan(Carbon::now()->addDays(-90));
+            }) //
+            ->onFailure(function (Stringable $output, SystemErrorRepository $systemErrorRepository) {
+                $systemErrorRepository->saveException(new Exception(
+                    sprintf('Failed to delete old SystemErrors. Output: %s', $output)
+                ), 'scheduler');
+            }) //
+            ->name('Delete SystemError entities older than 90 days.') //
+            ->hourly();
     }
 
     /**
