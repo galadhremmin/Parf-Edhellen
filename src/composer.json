@@ -20,7 +20,6 @@
         "nunomaduro/collision": "^5.0",
         "socialiteproviders/discord": "^4.1",
         "socialiteproviders/microsoft-live": "^4.1",
-        "socialiteproviders/twitter": "^4.1",
         "watson/active": "^6.0"
     },
     "require-dev": {
