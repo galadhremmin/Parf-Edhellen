@@ -6,12 +6,22 @@ use App\Models\{
     SystemError
 };
 use Carbon\Carbon;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Session;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SystemErrorRepository
 {
     public function saveException(\Throwable $exception, string $category = 'backend')
     {
+        if ($exception instanceof NotFoundHttpException) {
+            $category = 'http-404';
+        }
+
+        if ($exception instanceof AuthenticationException) {
+            $category = 'http-401';
+        }
+
         // make sure that it is possible to establish a database connection
         $request = request();
         $user = $request->user();
