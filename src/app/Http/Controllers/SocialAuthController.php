@@ -3,13 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\{
+    Auth,
+    Session
+};
 
 use Socialite;
-use Carbon\Carbon;
 
 use App\Events\AccountAuthenticated;
 use App\Http\Controllers\Abstracts\Controller;
+use App\Repositories\SystemErrorRepository;
 use App\Models\{ 
     Account, 
     AuthorizationProvider 
@@ -17,6 +20,16 @@ use App\Models\{
 
 class SocialAuthController extends Controller
 {
+    /**
+     * @var SystemErrorRepository
+     */
+    private $_systemErrorRepository;
+
+    public function __construct(SystemErrorRepository $systemErrorRepository)
+    {
+        $this->_systemErrorRepository = $systemErrorRepository;
+    }
+
     public function login(Request $request)
     {
         if (app()->environment() === 'local' && $request->has('login-as')) {
@@ -43,8 +56,19 @@ class SocialAuthController extends Controller
             }
         }
 
+        $error = null;
+        if ($request->has('error')) {
+            $error = (object) [
+                'provider' => $request->query('provider'),
+                'session_id' => Session::getId()
+            ];
+        }
+
         $providers = AuthorizationProvider::orderBy('name')->get();
-        return view('authentication.login', [ 'providers' => $providers ]);
+        return view('authentication.login', [
+            'providers' => $providers,
+            'error'     => $error
+        ]);
     }
 
     public function logout(Request $request)
@@ -64,7 +88,8 @@ class SocialAuthController extends Controller
             $provider = self::getProvider($providerName);
             return Socialite::driver($provider->name_identifier)->redirect();
         } catch(\Exception $ex) {
-            abort(500, $ex->getMessage());
+            $this->log('redirect', $providerName, $ex);
+            return $this->redirectOnSystemError($providerName);
         }
     }   
 
@@ -74,7 +99,8 @@ class SocialAuthController extends Controller
             $provider = self::getProvider($providerName);
             $providerUser = Socialite::driver($provider->name_identifier)->user(); 
         } catch (\Exception $ex) {
-            abort(500, $ex->getMessage());
+            $this->log('callback', $providerName, $ex);
+            return $this->redirectOnSystemError($providerName);
         }
 
         $user = Account::where([
@@ -111,6 +137,11 @@ class SocialAuthController extends Controller
         }
 
         return $this->doLogin($request, $user, $first);
+    }
+
+    private function redirectOnSystemError(string $providerName)
+    {
+        return redirect()->to(route('login', ['error' => $providerName]));
     }
 
     private function doLogin(Request $request, Account $user, bool $first = false)
@@ -165,5 +196,10 @@ class SocialAuthController extends Controller
             $tmp = $nickname . ' ' . $i;
             $i = $i + 1;
         } while (true);
+    }
+
+    private function log(string $method, string $provider, \Throwable $ex)
+    {
+        $this->_systemErrorRepository->saveException($ex, $provider.'-auth-'.$method);
     }
 }

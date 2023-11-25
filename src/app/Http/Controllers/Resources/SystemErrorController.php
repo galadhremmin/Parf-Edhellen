@@ -52,8 +52,6 @@ class SystemErrorController extends Controller
 
     private function getRowCountPerWeek(string $modelName, string $category, string $dateColumn = 'created_at')
     {
-        $cutoffDate = Carbon::today()->addMonth(-6);
-
         $selectFields = [
             DB::raw('YEAR('.$dateColumn.') AS year'), 
             DB::raw('WEEK('.$dateColumn.') AS week'),
@@ -72,7 +70,6 @@ class SystemErrorController extends Controller
         $model = new $modelName;
         $countByWeek = $model::select($selectFields)
             ->groupBy($groupByFields)
-            ->where($dateColumn, '>=', $cutoffDate)
             ->get();
 
         $categories = $countByWeek->pluck('category')->unique()->values();

@@ -2,6 +2,8 @@
 
 namespace App\Console;
 
+use App\Models\SystemError;
+use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -29,10 +31,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        /*
-        $schedule->command('keywords')
-                  ->weekly();
-        */
+        $schedule->call(function () {
+            SystemError::where('created_at', '>=', Carbon::now()->addDays(-90))->delete();
+        })->name('Delete SystemError entities older than 90 days.')->daily();
     }
 
     /**

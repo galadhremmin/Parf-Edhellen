@@ -4,14 +4,22 @@ namespace App\Exceptions;
 
 use Exception;
 
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Session\TokenMismatchException;
-use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use App\Models\SystemError;
+use Illuminate\Contracts\Container\Container;
+use App\Repositories\SystemErrorRepository;
 
 class DBHandler extends Handler
 {
+    /**
+     * @var SystemErrorRepository
+     */
+    private $_systemErrorRepository;
+
+    public function __construct(Container $container, SystemErrorRepository $systemErrorRepository)
+    {
+        $this->_systemErrorRepository = $systemErrorRepository;
+        parent::__construct($container);
+    }
+
     /**
      * Report or log an exception.
      *
@@ -22,37 +30,7 @@ class DBHandler extends Handler
      */
     public function report(\Throwable $exception)
     {
-        $shouldIgnore = $exception instanceof AuthenticationException ||
-                        $exception instanceof NotFoundHttpException ||
-                        $exception instanceof ValidationException ||
-                        $exception instanceof TokenMismatchException;
-
-        // make sure that it is possible to establish a database connection
-        if (! $shouldIgnore) {
-            $request = request();
-            $user = $request->user();
-            $common = $this->shouldReport($exception);
-            $message = get_class($exception).(! empty($exception->getMessage()) ? ': '.$exception->getMessage() : '');
-
-            if (strlen($message) > 1024) {
-                $message = substr($message, 0, 1024);
-            }
-
-            SystemError::create([
-                'message'    => $message,
-                'url'        => $request->fullUrl(),
-                'ip'         => array_key_exists('REMOTE_ADDR', $_SERVER) ? $_SERVER['REMOTE_ADDR'] : null,
-                'is_common'  => $common,
-                'category'   => 'backend',
-                'error'      => $common
-                    ? $exception->getFile().' ('.$exception->getLine().')'."\n".$exception->getTraceAsString()
-                    : null,
-                'account_id' => $user !== null
-                    ? $user->id 
-                    : null
-            ]);
-        }
-
+        $this->_systemErrorRepository->saveException($exception);
         parent::report($exception);
     }
 }
