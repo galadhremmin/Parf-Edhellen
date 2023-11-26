@@ -18,18 +18,18 @@ class InflectionController extends Controller
     public function index(Request $request)
     {
         $inflections = Inflection::all()->groupBy('group_name')->sortBy('name');
-        return view('inflection.index', ['inflections' => $inflections]);
+        return view('admin.inflection.index', ['inflections' => $inflections]);
     }
 
     public function create(Request $request)
     {
-        return view('inflection.create');
+        return view('admin.inflection.create');
     }
 
     public function edit(Request $request, int $id) 
     {
         $inflection = Inflection::findOrFail($id);
-        return view('inflection.edit', ['inflection' => $inflection]);
+        return view('admin.inflection.edit', ['inflection' => $inflection]);
     }
 
     public function store(Request $request)
@@ -41,7 +41,7 @@ class InflectionController extends Controller
         $inflection->group_name = $request->input('group');
         $inflection->save();
 
-        return redirect()->route('inflection.index');
+        return redirect()->route('admin.inflection.index');
     }
 
     public function update(Request $request, int $id)
@@ -53,7 +53,7 @@ class InflectionController extends Controller
         $inflection->group_name = $request->input('group');
         $inflection->save();
 
-        return redirect()->route('inflection.index');
+        return redirect()->route('admin.inflection.index');
     }
 
     /*

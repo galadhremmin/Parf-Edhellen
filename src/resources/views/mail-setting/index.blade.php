@@ -1,9 +1,9 @@
 @extends('_layouts.default')
 
-@section('title', 'Dashboard - Privacy settings')
+@section('title', 'Notification settings')
 @section('body')
 
-<h1>Mail notifications</h1>
+<h1>Notification settings</h1>
 {!! Breadcrumbs::render('mail-setting.index') !!}
 
 <p>

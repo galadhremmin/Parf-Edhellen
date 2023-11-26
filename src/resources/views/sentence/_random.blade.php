@@ -21,7 +21,7 @@
     </a>
     @endif
   </footer>
-  @include('sentence.public._readmore', [ 
+  @include('sentence._readmore', [ 
     'languageId'   => $sentence['sentence']->language->id,
     'languageName' => $sentence['sentence']->language->name,
     'sentenceId'   => $sentence['sentence']->id,

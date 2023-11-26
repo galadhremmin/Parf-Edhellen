@@ -18,10 +18,10 @@ require_once 'constants.php';
 
 require 'web-routes/authentication.php';
 require 'web-routes/common.php';
-require 'web-routes/dashboard-admin.php';
-require 'web-routes/dashboard-user.php';
+require 'web-routes/author-user.php';
 require 'web-routes/dictionary.php';
 require 'web-routes/flashcards.php';
+require 'web-routes/flashcards-user.php';
 require 'web-routes/games.php';
 require 'web-routes/phrases.php';
 require 'web-routes/word-finder-admin.php';

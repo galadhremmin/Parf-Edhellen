@@ -25,114 +25,35 @@
   @endif
 </head>
 <body class="bg-dark {{ $isAdmin ? 'ed-admin' : ($isAdmin === false ? 'ed-user' : 'ed-anonymous') }}" data-account-id="{{ $user ? $user->id : '0' }}" data-v="{{ config('ed.version') }}">
-<div class="bg-white pb-4">
+<div class="bg-white">
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="ed-site-main-menu">
-    <div class="container">
-      <a class="navbar-brand" href="/">{{ config('ed.title') }}</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main-menu-content" aria-controls="main-menu-content" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="main-menu-content">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <a class="nav-link {{ active('home') }}" href="/">@lang('home.title')</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {{ active('about') }}" href="{{ route('about') }}">@lang('about.title')</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {{ active(['sentence.public', 'sentence.public.language', 'sentence.public.sentence']) }}" href="{{ route('sentence.public') }}">@lang('sentence.title')</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {{ active(['games', 'flashcard', 'flashcard.cards', 'word-finder.index', 'word-finder.show']) }}" href="{{ route('games') }}">@lang('games.title')</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {{ active(['discuss.index', 'discuss.group', 'discuss.show', 'discuss.member-list']) }}" href="{{ route('discuss.index') }}">
-              @lang('discuss.title')
-            </a>
-          </li>
-        </ul>
-        <ul class="navbar-nav d-flex">
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="user-menu-dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              @if ($user)
-              <span class="avatar-in-menu" style="background-image:url({{ $storage->accountAvatar($user, true) }})"></span>
-              {{ $user->nickname }}
-              @else
-                @lang('discuss.community.title')
-              @endif
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="user-menu-dropdown">
-              @if ($user)
-              <li>
-                <a class="dropdown-item {{ active('dashboard') }}" href="{{ route('dashboard') }}">
-                  <span class="TextIcon TextIcon--house"></span> 
-                  &nbsp;@lang('dashboard.title')
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item {{ active('author.my-profile') }}" href="{{ route('author.my-profile') }}">
-                  <span class="TextIcon TextIcon--person"></span> 
-                  &nbsp;@lang('discuss.community.profile')
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item {{ active('contribution.index') }}" href="{{ route('contribution.index') }}">
-                  <span class="TextIcon TextIcon--book"></span> 
-                  &nbsp;@lang('dashboard.contributions')
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="{{ route('logout') }}">
-                  <span class="TextIcon TextIcon--logout"></span> 
-                  &nbsp;@lang('dashboard.logout')
-                </a>
-              </li>
-              @else
-              <li>
-                <a class="dropdown-item {{ active('login') }}" href="{{ route('login') }}">
-                  <span class="TextIcon TextIcon--login"></span> 
-                  &nbsp;@lang('dashboard.login')
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="{{ route('login') }}">
-                  <span class="TextIcon TextIcon--person"></span> 
-                  &nbsp;@lang('dashboard.register')
-                </a>
-              </li>
-              @endif
-              <li><hr class="dropdown-divider"></li>
-              <li>
-                <a class="dropdown-item {{ active('discuss.members') }}" href="{{ route('discuss.members') }}">
-                  <span class="TextIcon TextIcon--people"></span> 
-                  @lang('discuss.member-list.title')
-                </a>
-              </li>
-            </ul>
-          </li>
-      </div>
-    </div>
+    @include('_layouts._menu-main', [
+      'user' => $user,
+      'isAdmin' => $isAdmin,
+      'storage' => $storage
+    ])
   </nav>
-  <div class="head-content">
-    <main class="container" id="site-container">
-      <!-- scripting disabled warning -->
-      <noscript>
-        <div id="noscript" class="alert alert-danger">
-          <strong><span class="TextIcon TextIcon--warning-sign" aria-hidden="true"></span> @lang('home.noscript.title')</strong>
-          <p>@lang('home.noscript.message', ['website' => config('ed.title')])</p>
-          <p><a href="https://support.google.com/bin/answer.py?hl=en&amp;answer=23852" target="_blank">@lang('home.noscript.call-to-action')</a>.</p>
-        </div>
-      </noscript>
-
-      <!-- search component -->
-      <div id="ed-search-component" class="mt-4"></div>
-
-      <!-- begin content -->
-      @yield('body')
+  <div id="ed-site-main">
+    <main>
+      <div class="container">
+        <noscript>
+          <div id="noscript" class="alert alert-danger">
+            <strong><span class="TextIcon TextIcon--warning-sign" aria-hidden="true"></span> @lang('home.noscript.title')</strong>
+            <p>@lang('home.noscript.message', ['website' => config('ed.title')])</p>
+            <p><a href="https://support.google.com/bin/answer.py?hl=en&amp;answer=23852" target="_blank">@lang('home.noscript.call-to-action')</a>.</p>
+          </div>
+        </noscript>
+        <div id="ed-search-component" class="mt-4"></div>
+        @yield('body')
+      </div>
     </main>
+    <aside>
+      @include('_layouts._menu-user', [
+        'user' => $user,
+        'isAdmin' => $isAdmin,
+        'storage' => $storage
+      ])
+    </aside>
   </div>
 </div>
 <footer class="text-secondary p-4 d-flex">
@@ -153,6 +74,7 @@
     <a href="http://www.tolkienestate.com/" target="_blank" class="link-secondary text-decoration-underline">Tolkien Estate</a>.
   </section>
 </footer>
+
 <div id="ed-eu-consent"></div>
 
 <script type="text/javascript" src="@assetpath(index.js)"></script>

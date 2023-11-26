@@ -1,6 +1,7 @@
 <?php
 
 // Home
+
 Breadcrumbs::register('home', function($breadcrumbs)
 {
     $breadcrumbs->push('Home', route('home'));
@@ -39,8 +40,10 @@ Breadcrumbs::register('sentence.public.sentence', function($breadcrumbs, int $la
 
 Breadcrumbs::register('dashboard', function ($breadcrumbs)
 {
+    $name = request()->user()->nickname;
+
     $breadcrumbs->parent('home');
-    $breadcrumbs->push('Dashboard', route('dashboard'));
+    $breadcrumbs->push($name, route('author.my-profile'));
 });
 
 // //////////////////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +66,7 @@ Breadcrumbs::register('speech.create', function ($breadcrumbs)
 Breadcrumbs::register('speech.edit', function ($breadcrumbs, App\Models\Speech $speech)
 {
     $breadcrumbs->parent('speech.index');
-    $breadcrumbs->push('Speech: '.$speech->Name, route('speech.edit', [ 'speech' => $speech->id ]));
+    $breadcrumbs->push('Speech: '.$speech->name, route('speech.edit', [ 'speech' => $speech->id ]));
 });
 
 // //////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,7 +89,7 @@ Breadcrumbs::register('inflection.create', function ($breadcrumbs)
 Breadcrumbs::register('inflection.edit', function ($breadcrumbs, App\Models\Inflection $inflection)
 {
     $breadcrumbs->parent('inflection.index');
-    $breadcrumbs->push('Inflection: '.$inflection->Name, route('inflection.edit', [
+    $breadcrumbs->push('Inflection: '.$inflection->name, route('inflection.edit', [
         'inflection' => $inflection->id
     ]));
 });
@@ -331,12 +334,12 @@ Breadcrumbs::register('account.by-role', function ($breadcrumbs, App\Models\Role
 });
 
 // //////////////////////////////////////////////////////////////////////////////////////////////
-// Dashboard > Mail settings
+// Dashboard > Notification settings
 
 Breadcrumbs::register('mail-setting.index', function ($breadcrumbs)
 {
     $breadcrumbs->parent('dashboard');
-    $breadcrumbs->push('Mail notifications', route('mail-setting.index'));
+    $breadcrumbs->push('Notification settings', route('mail-setting.index'));
 });
 
 

@@ -10,7 +10,7 @@ Show {{ $post->account->nickname }}'s post
 
 You can unsubscribe from this thread by [clicking the link]({{ $link->mailCancellation($cancellationToken) }}). Alternatively, you can log in 
 to [{{ config('app.name') }}]({{ config('app.url') }}) and configure what you would like to
-be subscribed to on your dashboard.
+be subscribed to on your profile.
 
 Thanks,<br>
 {{ config('app.name') }}

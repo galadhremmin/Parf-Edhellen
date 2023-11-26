@@ -11,7 +11,7 @@
   @include('contribution._dependencies', $model)
   @include($viewName, $model)
   @include('contribution._notes', $contribution)
-  @include('contribution._pending-info', $contribution)
+  @include('admin.contribution._pending-info', $contribution)
 
   @if ($returnToAdminView && $isAdmin)
   <div class="text-center">

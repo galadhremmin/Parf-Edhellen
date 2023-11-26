@@ -13,7 +13,7 @@
 
   <div class="container">
     <header>
-      @include('sentence.public._header')
+      @include('sentence._header')
       <h2>{{ $sentence['sentence']->name }}</h2>
     </header>
 

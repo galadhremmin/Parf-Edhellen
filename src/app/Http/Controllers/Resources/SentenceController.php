@@ -25,13 +25,13 @@ class SentenceController extends Controller
     public function index(Request $request)
     {
         $sentences = $this->_sentenceRepository->getAllGroupedByLanguage();
-        return view('sentence.index', ['sentences' => $sentences]);
+        return view('admin.sentence.index', ['sentences' => $sentences]);
     }
 
     public function confirmDestroy(Request $request, int $id)
     {
         $sentence = Sentence::findOrFail($id);
-        return view('sentence.confirm-destroy', [
+        return view('admin.sentence.confirm-destroy', [
             'sentence' => $sentence
         ]);
     }

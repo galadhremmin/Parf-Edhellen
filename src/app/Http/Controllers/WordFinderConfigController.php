@@ -20,7 +20,7 @@ class WordFinderConfigController extends Controller
         $groups = GlossGroup::all();
         $selectedGroupIds = GameWordFinderGlossGroup::all()->groupBy('gloss_group_id');
 
-        return view('word-finder.config.index', [
+        return view('admin.word-finder.index', [
             'all_gloss_groups' => $groups,
             'selected_gloss_group_ids' => $selectedGroupIds
         ]);

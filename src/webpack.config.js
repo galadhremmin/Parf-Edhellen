@@ -19,7 +19,6 @@ module.exports = {
   entry: {
     index: `${sourcePath}/index.tsx`,
     'style-auth': `${sourcePath}/apps/auth/index.scss`,
-    'style-dashboard': `${sourcePath}/apps/dashboard/index.scss`,
     'style-timeline': `${sourcePath}/apps/timeline/index.scss`,
     'style-sentence': `${sourcePath}/apps/sentence/index.scss`,
   },

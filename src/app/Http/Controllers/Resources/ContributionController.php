@@ -60,7 +60,7 @@ class ContributionController extends Controller
         $approvedReviews = Contribution::where('is_approved', 1)
             ->orderBy('updated_at', 'desc')->paginate(10, ['*'], 'approved')->withQueryString();
 
-        return view('contribution.list', [
+        return view('admin.contribution.list', [
             'approvedReviews' => $approvedReviews,
             'rejectedReviews' => $rejectedReviews,
             'pendingReviews'  => $pendingReviews
@@ -137,7 +137,7 @@ class ContributionController extends Controller
         $contribution = Contribution::findOrFail($id);
         $this->requestPermission($request, $contribution);
 
-        return view('contribution.confirm-destroy', [
+        return view('admin.contribution.confirm-destroy', [
             'review' => $contribution
         ]);
     }
@@ -154,7 +154,7 @@ class ContributionController extends Controller
         $contribution = Contribution::findOrFail($id);
         $this->requestPermission($request, $contribution);
 
-        return view('contribution.confirm-reject', [
+        return view('admin.contribution.confirm-reject', [
             'review' => $contribution
         ]);
     }
@@ -301,7 +301,7 @@ class ContributionController extends Controller
         event(new ContributionDestroyed($contribution));
         
         return $request->user()->isAdministrator()
-            ? redirect()->route('contribution.list')
+            ? redirect()->route('admin.contribution.list')
             : redirect()->route('contribution.index');
     }
 

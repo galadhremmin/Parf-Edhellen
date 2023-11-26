@@ -42,13 +42,6 @@ class LinkHelper
         ]);
     }
     
-    public function authRedirect(string $url)
-    {
-        return route('auth.redirect', [
-            'providerName' => $url
-        ]);
-    }
-    
     public function sentencesByLanguage(int $languageId, string $languageName)
     {
         $languageName = StringHelper::normalizeForUrl($languageName);

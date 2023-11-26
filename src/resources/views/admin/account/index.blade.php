@@ -26,7 +26,7 @@
   </div>
 </div>
 
-@include('account._account-list', [
+@include('admin.account._account-list', [
   'accounts' => $accounts
 ])
 {{ $accounts->links() }}

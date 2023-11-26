@@ -7,8 +7,7 @@
 {!! Breadcrumbs::render('inflection.edit', $inflection) !!}
 
 <p>
-  There are {{ $inflection->sentence_fragment_associations()->count() }} sentence fragments which has
-  this inflection.
+  There are {{ $inflection->gloss_inflections()->count() }} recorded words with this inflection.
 </p>
 
 @include('_shared._errors', [ 'errors' => $errors ])

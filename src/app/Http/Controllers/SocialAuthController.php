@@ -17,6 +17,7 @@ use App\Models\{
     Account, 
     AuthorizationProvider 
 };
+use Exception;
 
 class SocialAuthController extends Controller
 {
@@ -30,7 +31,7 @@ class SocialAuthController extends Controller
         $this->_systemErrorRepository = $systemErrorRepository;
     }
 
-    public function login(Request $request)
+    public function login(Request $request, $isNew = false)
     {
         if (app()->environment() === 'local' && $request->has('login-as')) {
             $accountId = intval($request->input('login-as'));
@@ -67,8 +68,14 @@ class SocialAuthController extends Controller
         $providers = AuthorizationProvider::orderBy('name')->get();
         return view('authentication.login', [
             'providers' => $providers,
-            'error'     => $error
+            'error'     => $error,
+            'is_new'    => $isNew
         ]);
+    }
+
+    public function register(Request $request)
+    {
+        return $this->login($request, true);
     }
 
     public function logout(Request $request)
@@ -141,7 +148,20 @@ class SocialAuthController extends Controller
 
     private function redirectOnSystemError(string $providerName)
     {
-        return redirect()->to(route('login', ['error' => $providerName]));
+        // Figure out if the user originated from the sign up or the log in page.
+        // Redirect them to the correct origin.
+        // We're hard coding the options here to avoid HTTP_REFERER spoofing, deliberately
+        // defaulting to `login` if the path doesn't exactly match what we'd expect of the
+        // `register` route.
+        $routeName = 'login';
+        if (isset($_SERVER['HTTP_REFERER'])) {
+            $referrer = $_SERVER['HTTP_REFERER'];
+            if (parse_url($referrer, PHP_URL_PATH) === route('register', [], false)) {
+                $routeName = 'register';
+            }
+        }
+
+        return redirect()->to(route($routeName, ['error' => $providerName]));
     }
 
     private function doLogin(Request $request, Account $user, bool $first = false)
@@ -155,7 +175,7 @@ class SocialAuthController extends Controller
             return redirect($path);
         }
         
-        return redirect()->route('dashboard', [ 'loggedIn' => true ]);
+        return redirect()->route('author.my-profile', [ 'loggedIn' => true ]);
     }
 
     public static function getProvider(string $providerName)

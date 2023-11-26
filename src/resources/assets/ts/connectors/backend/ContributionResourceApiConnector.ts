@@ -14,7 +14,7 @@ import IContributionResourceApi, {
 import { IGlossEntity } from './IGlossResourceApi';
 
 export default class ContributionResourceApiConnector implements IContributionResourceApi {
-    private static readonly ApiPrefix = '/dashboard/contribution';
+    private static readonly ApiPrefix = '/contribute/contribution';
 
     constructor(private _api = resolve<ApiConnector>(DI.BackendApi)) {
     }

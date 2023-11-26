@@ -4,7 +4,13 @@
 @section('title', 'Logging in')
 
 @section('body')
-  <h1>Logging in</h1>
+  <h1>
+    @if ($is_new)
+    Welcome to our community!
+    @else
+    Welcome back!
+    @endif
+  </h1>
   <div class="container">
     @if ($error !== null)
     <div class="alert alert-danger">
@@ -30,7 +36,7 @@
 
   <div class="text-center">
   @foreach ($providers as $provider)
-  <a href="{{ $link->authRedirect($provider->name_identifier) }}" 
+  <a href="{{ route('auth.redirect', [ 'providerName' => $provider->name_identifier ]) }}" 
     style="background-image:url(/img/openid-providers/{{ $provider->logo_file_name }})"
     title="Log in using {{ $provider->name }}." 
     class="ed-authorize-idp">

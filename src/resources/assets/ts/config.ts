@@ -36,10 +36,9 @@ export enum SecurityRole {
 
 export const CommonPaths = {
     contributions: {
-        gloss: '/dashboard/contribution/create/gloss',
-        sentence: '/dashboard/contribution/create/sentence',
+        gloss: '/contribute/contribution/create/gloss',
+        sentence: '/contribute/contribution/create/sentence',
     },
-    dashboard: '/dashboard',
     privacyPolicy: '/about/privacy',
     cookiePolicy: '/about/cookies',
 };

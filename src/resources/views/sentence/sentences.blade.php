@@ -7,7 +7,7 @@
   {!! Breadcrumbs::render('sentence.public.language', $language->id, $language->name) !!}
 
   <header>
-      @include('sentence.public._header')
+      @include('sentence._header')
       <h2>{{ $language->name }} <span class="tengwar" aria-hidden="true">{{ $language->tengwar }}</span></h2>
   </header>
   <p>

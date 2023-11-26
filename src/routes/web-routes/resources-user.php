@@ -3,7 +3,7 @@
 // Restricted resources
 Route::group([ 
     'namespace'  => 'Resources', 
-    'prefix'     => 'dashboard', 
+    'prefix'     => 'contribute', 
     'middleware' => ['auth']
 ], function () {
 
