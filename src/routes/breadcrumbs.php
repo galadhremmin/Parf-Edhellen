@@ -336,10 +336,10 @@ Breadcrumbs::register('account.by-role', function ($breadcrumbs, App\Models\Role
 // //////////////////////////////////////////////////////////////////////////////////////////////
 // Dashboard > Notification settings
 
-Breadcrumbs::register('mail-setting.index', function ($breadcrumbs)
+Breadcrumbs::register('notifications.index', function ($breadcrumbs)
 {
     $breadcrumbs->parent('dashboard');
-    $breadcrumbs->push('Notification settings', route('mail-setting.index'));
+    $breadcrumbs->push('Notification settings', route('notifications.index'));
 });
 
 

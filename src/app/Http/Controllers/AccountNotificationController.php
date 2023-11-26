@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Resources;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
@@ -10,9 +10,8 @@ use App\Models\{
     MailSetting,
     MailSettingOverride
 };
-use Lang;
 
-class MailSettingController extends Controller
+class AccountNotificationController extends Controller
 {
     private $_mailSettingRepository;
 
@@ -31,18 +30,13 @@ class MailSettingController extends Controller
             ->with('entity')->get();
         $events = $this->getEvents();
 
-        return view('mail-setting.index', [
+        return view('account.notification.index', [
             'settings'  => $settings,
             'overrides' => $overrides,
             'events'    => $events,
             'email'     => $user->email,
             'user'      => $user
         ]);
-    }
-
-    public function create(Request $request)
-    {
-        return view('inflection.create');
     }
 
     public function store(Request $request)
@@ -64,13 +58,26 @@ class MailSettingController extends Controller
             'account_id' => $request->user()->id
         ])->update($events);
 
-        return redirect()->route('mail-setting.index');
+        return redirect()->route('notifications.index');
+    }
+
+    public function deleteOverride(Request $request, string $entityType, int $entityId)
+    {
+        $accountId = $request->user()->id;
+
+        MailSettingOverride::where([
+            'entity_type' => $entityType,
+            'entity_id' => $entityId,
+            'account_id' => $accountId
+        ])->delete();
+
+        return redirect()->route('notifications.index');
     }
 
     public function handleCancellationToken(Request $request, string $token)
     {
         $ok = is_string($token) && $this->_mailSettingRepository->handleCancellationToken($token);
-        return view($ok ? 'mail-setting.public.override-ok' : 'mail-setting.public.override-error');
+        return view($ok ? 'account.notification.override-ok' : 'account.notification.override-error');
     }
 
     private function getEvents()

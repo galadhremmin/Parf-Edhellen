@@ -139,19 +139,6 @@ class AuthorController extends Controller
         ]);
     }
 
-    public function privacy(Request $request)
-    {
-        $user = request()->user();
-        $accounts = Account::with('authorization_provider') //
-            ->where('email', $user->email) //
-            ->get();
-
-        return view('author.privacy', [
-            'user' => $user,
-            'accounts' => $accounts
-        ]);
-    }
-
     private function getAccount(Request $request, $id)
     {
         if (! is_numeric($id) || ! $id) {

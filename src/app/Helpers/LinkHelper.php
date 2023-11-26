@@ -104,7 +104,7 @@ class LinkHelper
 
     public function mailCancellation(string $cancellationToken)
     {
-        return route('mail-setting.cancellation', ['token' => $cancellationToken]);
+        return route('notifications.cancellation', ['token' => $cancellationToken]);
     }
 
     public function contribution(int $contributionId)

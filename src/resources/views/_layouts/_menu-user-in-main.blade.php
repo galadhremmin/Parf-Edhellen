@@ -44,7 +44,7 @@
     </a>
   </li>
   <li class="nav-item">
-    <a class="nav-link {{ active('mail-setting.index') }}"  href="{{ route('mail-setting.index') }}">
+    <a class="nav-link {{ active('notifications.index') }}"  href="{{ route('notifications.index') }}">
       &nbsp;@lang('community.notification-settings')
     </a>
   </li>

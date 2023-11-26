@@ -6,12 +6,6 @@ Route::group([
     'prefix'     => 'contribute', 
     'middleware' => ['auth']
 ], function () {
-
-    // Mail settings
-    Route::resource('mail-setting', 'MailSettingController', [
-        'only' => ['index', 'create', 'store']
-    ]);
-
     // Discuss
     Route::resource('discuss', 'DiscussController', [
         'only' => [ 'create', 'store' ]

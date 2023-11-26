@@ -12,13 +12,13 @@
       </a>
     </li>
     <li class="list-group-item">
-      <a class="{{ active('mail-setting.index') }}"  href="{{ route('mail-setting.index') }}">
+      <a class="{{ active('notifications.index') }}"  href="{{ route('notifications.index') }}">
         <span class="TextIcon TextIcon--bell"></span> 
         &nbsp;@lang('community.notification-settings')
       </a>
     </li>
     <li class="list-group-item">
-      <a class="{{ active('author.privacy') }}"  href="{{ route('author.privacy') }}">
+      <a class="{{ active('account.privacy') }}"  href="{{ route('account.privacy') }}">
         <span class="TextIcon TextIcon--person"></span> 
         &nbsp;@lang('community.privacy')
       </a>
