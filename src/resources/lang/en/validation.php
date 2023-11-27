@@ -111,6 +111,9 @@ return [
         ],
         'sense.word.word' => [
             'required' => 'Sense is required.'
+        ],
+        'account_id' => [
+            'required' => 'You have to select at least one account.'
         ]
     ],
 

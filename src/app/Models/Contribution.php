@@ -21,7 +21,8 @@ class Contribution extends ModelBase implements Interfaces\IHasFriendlyName
         'sense',
         'type',
         'approved_as_entity_id',
-        'dependent_on_contribution_id'
+        'dependent_on_contribution_id',
+        'reviewed_by_account_id'
     ];
     protected $dates = [
         'created_at',

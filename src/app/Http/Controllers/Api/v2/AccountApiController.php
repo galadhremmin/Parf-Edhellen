@@ -18,7 +18,6 @@ use App\Helpers\LinkHelper;
 use App\Models\Account;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Helpers\StorageHelper;
-use App\Repositories\DiscussRepository;
 use Image;
 
 class AccountApiController extends Controller 
@@ -26,9 +25,8 @@ class AccountApiController extends Controller
     private $_storageHelper;
     private $_linkHelper;
 
-    public function __construct(DiscussRepository $discussRepository, StorageHelper $storageHelper, LinkHelper $linkHelper) 
+    public function __construct(StorageHelper $storageHelper, LinkHelper $linkHelper) 
     {
-        $this->_discussRepository = $discussRepository;
         $this->_storageHelper = $storageHelper;
         $this->_linkHelper = $linkHelper;
     }
@@ -142,7 +140,7 @@ class AccountApiController extends Controller
             abort(400, 'Bad avatar image.');
         }
 
-        $localPath = $this->getAvatarPath($accountId);
+        $localPath = $this->_storageHelper->getAvatarPath($accountId);
         $maxSizeInPixels = config('ed.avatar_size');
 
         try {
@@ -189,7 +187,7 @@ class AccountApiController extends Controller
 
     public function delete(Request $request, int $accountId)
     {
-        $uuid    = 'DELETED'.Str::uuid();
+        $uuid    = 'DELETED|'.Str::uuid();
         $date    = Carbon::now()->toDateTimeString();
 
         $account = $this->getAuthorizedAccount($request, $accountId);
@@ -203,7 +201,7 @@ class AccountApiController extends Controller
         $account->has_avatar                 = 0;
         $account->save();
 
-        $localPath = $this->getAvatarPath($accountId);
+        $localPath = $this->_storageHelper->getAvatarPath($accountId);
         if (file_exists($localPath)) {
             unlink($localPath);
         }
@@ -215,11 +213,6 @@ class AccountApiController extends Controller
         return [
             'redirect_to' => $redirectUrl
         ];
-    }
-
-    private function getAvatarPath(int $accountId)
-    {
-        return Storage::path(sprintf('public/avatars/%d.png', $accountId));
     }
 
     private function getAuthorizedAccount(Request $request, int $accountId): Account

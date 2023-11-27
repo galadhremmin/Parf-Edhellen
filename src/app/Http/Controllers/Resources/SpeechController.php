@@ -53,6 +53,7 @@ class SpeechController extends Controller
         return redirect()->route('speech.index');
     } 
 
+    /*
     public function destroy(Request $request, int $id) 
     {
         $speech = Speech::findOrFail($id);
@@ -70,6 +71,7 @@ class SpeechController extends Controller
 
         return redirect()->route('speech.index');
     }
+    */
 
     protected function validateRequest(Request $request, int $id = 0)
     {

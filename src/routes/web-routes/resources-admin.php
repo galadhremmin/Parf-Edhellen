@@ -1,17 +1,20 @@
 <?php
 
 // Admin resources
+
+use App\Security\RoleConstants;
+
 Route::group([ 
         'namespace'  => 'Resources', 
         'prefix'     => 'admin', 
-        'middleware' => ['auth', 'auth.require-role:Administrators'] 
+        'middleware' => ['auth', 'auth.require-role:'.RoleConstants::Administrators] 
     ], function () {
 
     Route::resource('account', 'AccountController', [
         'except' => ['show', 'create', 'store', 'update', 'destroy']
     ]);
     Route::resource('inflection', 'InflectionController', [
-        'except' => ['show', 'destroy']
+        'except' => ['show']
     ]);
     Route::resource('speech', 'SpeechController', [
         'except' => ['show']

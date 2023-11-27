@@ -6,6 +6,12 @@
   </a>
   <ul class="list-group mb-3">
     <li class="list-group-item">
+      <a class="{{ active('author.my-profile') }}" href="{{ route('author.my-profile') }}">
+        <span class="TextIcon TextIcon--person"></span> 
+        &nbsp;@lang('community.profile')
+      </a>
+    </li>
+    <li class="list-group-item">
       <a class="{{ active('contribution.index') }}" href="{{ route('contribution.index') }}">
         <span class="TextIcon TextIcon--book"></span> 
         &nbsp;@lang('community.contributions')
@@ -19,7 +25,7 @@
     </li>
     <li class="list-group-item">
       <a class="{{ active('account.privacy') }}"  href="{{ route('account.privacy') }}">
-        <span class="TextIcon TextIcon--person"></span> 
+        <span class="TextIcon TextIcon--exclamation-sign"></span> 
         &nbsp;@lang('community.privacy')
       </a>
     </li>

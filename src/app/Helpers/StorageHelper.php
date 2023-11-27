@@ -29,6 +29,11 @@ class StorageHelper
         }
     }
 
+    public function getAvatarPath(int $accountId)
+    {
+        return Storage::path(sprintf('public/avatars/%d.png', $accountId));
+    }
+
     public function featureBackgrounds()
     {
         return Storage::files('public/profile-feature-backgrounds', /* recursive: */ false);

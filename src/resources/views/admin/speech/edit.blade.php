@@ -25,10 +25,4 @@
   {{ method_field('PUT') }}
 </form>
 
-<hr>
-<form method="post" action="{{ route('speech.destroy', [ 'speech' => $speech->id ]) }}">
-  <p>Alternatively, you can <button type="submit" class="link-button">delete the type of speech</button>.</p>
-  {{ csrf_field() }}
-  {{ method_field('DELETE') }}
-</form>
 @endsection

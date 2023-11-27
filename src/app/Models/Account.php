@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Versioning\GlossVersion;
+use App\Security\RoleConstants;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\{
@@ -20,7 +22,8 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName
      */
     protected $fillable = [
         'nickname', 'email', 'identity', 'authorization_provider_id', 'created_at', 'provider_id', 'is_configured',
-        'profile', 'has_avatar', 'feature_background_url', 'is_deleted'
+        'profile', 'has_avatar', 'feature_background_url', 'is_deleted', 'password', 'is_passworded',
+        'is_master_account', 'master_account_id'
     ];
 
     /**
@@ -29,12 +32,73 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName
      * @var array
      */
     protected $hidden = [
-        'identity', 'authorization_provider_id', 'remember_token', 'email', 'is_deleted'
+        'identity', 'authorization_provider_id', 'remember_token', 'email', 'is_deleted',
+        'password', 'is_passworded', 'is_master_account', 'master_account_id'
     ];
 
     public function authorization_provider()
     {
         return $this->belongsTo(AuthorizationProvider::class);
+    }
+
+    public function master_account()
+    {
+        return $this->belongsTo(Account::class, 'master_account_id', 'id');
+    }
+
+    public function contributions()
+    {
+        return $this->hasMany(Contribution::class);
+    }
+
+    public function flashcard_results()
+    {
+        return $this->hasMany(FlashcardResult::class);
+    }
+
+    public function forum_discussions()
+    {
+        return $this->hasMany(ForumDiscussion::class);
+    }
+
+    public function forum_post_likes()
+    {
+        return $this->hasMany(ForumPostLike::class);
+    }
+
+    public function forum_posts()
+    {
+        return $this->hasMany(ForumPost::class);
+    }
+
+    public function forum_threads()
+    {
+        return $this->hasMany(ForumThread::class);
+    }
+
+    public function gloss_inflections()
+    {
+        return $this->hasMany(GlossInflection::class);
+    }
+
+    public function gloss_versions()
+    {
+        return $this->hasMany(GlossVersion::class);
+    }
+
+    public function glosses()
+    {
+        return $this->hasMany(Gloss::class);
+    }
+
+    public function sentences()
+    {
+        return $this->hasMany(Sentence::class);
+    }
+
+    public function words()
+    {
+        return $this->hasMany(Gloss::class);
     }
 
     public function roles()
@@ -59,7 +123,7 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName
         $roles = Cache::remember('ed.rol.'.$user->id, 5 * 60 /* seconds */, function() use($user) {
             return Role::forAccount($user)->pluck('name');
         });
-        
+
         return $roles->search($roleName) !== false;
     }
 
@@ -93,7 +157,7 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName
 
     public function isAdministrator() 
     {
-        return $this->memberOf('Administrators');
+        return $this->memberOf(RoleConstants::Administrators);
     }
 
     public function getAuthIdentifierName()

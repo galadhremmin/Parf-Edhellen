@@ -19,7 +19,7 @@
     <tbody>
       @foreach ($sentences as $sentence)
       <tr>
-        <td class="hidden-xs date">{{ $sentence->created_at }}</td>
+        <td class="hidden-xs date">@date($sentence->created_at)</td>
         <td>{{ $sentence->language->name }}</td>
         <td>
             @if ($sentence->is_neologism)

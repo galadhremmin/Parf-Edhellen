@@ -151,6 +151,13 @@ class AuthorController extends Controller
         }
 
         $account = Account::findOrFail($id);
+
+        // If this account has been linked to a master account, forward the request to that account.
+        // Linked accounts are only used for authentication.
+        if ($account->master_account_id !== null) {
+            $account = $account->master_account;
+        }
+
         if ($account->has_avatar) {
             $account->avatar_path = $this->_storageHelper->accountAvatar($account, false /* = _null_ if none exists */);
         }

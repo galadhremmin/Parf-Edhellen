@@ -39,6 +39,11 @@
 </a>
 <ul class="navbar-nav">
   <li class="nav-item">
+    <a class="nav-link {{ active('author.my-profile') }}" href="{{ route('author.my-profile') }}">
+      &nbsp;@lang('community.profile')
+    </a>
+  </li>
+  <li class="nav-item">
     <a class="nav-link {{ active('contribution.index') }}" href="{{ route('contribution.index') }}">
       &nbsp;@lang('community.contributions')
     </a>
@@ -60,7 +65,7 @@
   </li>
 </ul>
 @else
-<a class="avatar-in-menu {{ active('author.my-profile') }}" href="{{ route('author.my-profile') }}">
+<a class="avatar-in-menu" href="{{ route('login') }}">
   <ins class="avatar-in-menu" style="background-image:url({{ $storage->accountAvatar(null, true) }})" role="img"></ins>
   <span>Guest</span>
 </a>

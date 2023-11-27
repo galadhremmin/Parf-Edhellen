@@ -17,7 +17,7 @@ use App\Models\{
     Account, 
     AuthorizationProvider 
 };
-use Exception;
+use App\Security\RoleConstants;
 
 class SocialAuthController extends Controller
 {
@@ -105,45 +105,45 @@ class SocialAuthController extends Controller
         try {
             $provider = self::getProvider($providerName);
             $providerUser = Socialite::driver($provider->name_identifier)->user(); 
+
+            $user = Account::where([
+                    [ 'email', '=', $providerUser->getEmail() ],
+                    [ 'authorization_provider_id', '=', $provider->id ]
+                ])->first();
+
+            $first = false;
+            if ($user === null) {
+                $firstAccountThusAdmin = Account::count() === 0;
+                $nickname = $firstAccountThusAdmin 
+                    ? 'Administrator' 
+                    : self::getNextAvailableNickname($providerUser->getName());
+
+                $user = Account::create([
+                    'email'          => $providerUser->getEmail(),
+                    'identity'       => $providerUser->getId(),
+                    'nickname'       => $nickname,
+                    'is_configured'  => 0,
+                    
+                    'authorization_provider_id'  => $provider->id
+                ]);
+
+                // Important!
+                // The first user ever created is assumed to have been created by an administrator
+                // of the website, and thus assigned the role Administrator.
+                if ($firstAccountThusAdmin) {
+                    $user->addMembershipTo(RoleConstants::Administrators);
+                }
+
+                $user->addMembershipTo(RoleConstants::Users);
+
+                $first = true;
+            }
+
+            return $this->doLogin($request, $user, $first);
         } catch (\Exception $ex) {
             $this->log('callback', $providerName, $ex);
             return $this->redirectOnSystemError($providerName);
         }
-
-        $user = Account::where([
-                [ 'email', '=', $providerUser->getEmail() ],
-                [ 'authorization_provider_id', '=', $provider->id ]
-            ])->first();
-
-        $first = false;
-        if (! $user) {
-            $firstAccountThusAdmin = Account::count() === 0;
-            $nickname = $firstAccountThusAdmin 
-                ? 'Administrator' 
-                : self::getNextAvailableNickname($providerUser->getName());
-
-            $user = Account::create([
-                'email'          => $providerUser->getEmail(),
-                'identity'       => $providerUser->getId(),
-                'nickname'       => $nickname,
-                'is_configured'  => 0,
-                
-                'authorization_provider_id'  => $provider->id
-            ]);
-
-            // Important!
-            // The first user ever created is assumed to have been created by an administrator
-            // of the website, and thus assigned the role Administrator.
-            if ($firstAccountThusAdmin) {
-                $user->addMembershipTo('Administrators');
-            }
-
-            $user->addMembershipTo('Users');
-
-            $first = true;
-        }
-
-        return $this->doLogin($request, $user, $first);
     }
 
     private function redirectOnSystemError(string $providerName)
@@ -166,6 +166,14 @@ class SocialAuthController extends Controller
 
     private function doLogin(Request $request, Account $user, bool $first = false)
     {
+        $user = $user->master_account ?: $user;
+
+        if (! $user->memberOf(RoleConstants::Users)) {
+            throw new \Exception('You are not authorized to log in. You are missing the '. //
+                RoleConstants::Users.' role.');
+        }
+
+        // If the account is linked, log in as the master account
         auth()->login($user);
 
         event(new AccountAuthenticated($user, $first));
