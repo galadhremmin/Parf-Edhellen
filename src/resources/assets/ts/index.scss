@@ -198,15 +198,21 @@ a.avatar-in-menu {
 }
 
 #ed-site-main {
+  > aside {
+    display: none;
+  }
+  > main {
+    padding-bottom: 1rem;
+  }
   @media (min-width: #{map-get($grid-breakpoints, 'lg') + 1}) {  
     display: flex;
 
     > main {
       flex: auto;
-      padding-bottom: 1rem;
     }
     > aside {
       box-sizing: border-box;
+      display: block;
       padding: 1rem;
       width: $size-desktop-user-menu-width;
       background: #f3f3f3;

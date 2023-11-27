@@ -9,45 +9,42 @@
 <h2>Accounts</h2>
 <p>The following accounts have been registered to your e-mail ({{ $user->email }}):</p>
 
-<table class="table table-striped">
-<thead>
-  <tr>
-    <th></th>
-    <th>User ID</th>
-    <th>Username</th>
-    <th>Provider</th>
-    <th>Created</th>
-    <th>Last modified</th>
-    <th>Principal account</th>
-  </tr>
-</thead>
-<tbody>
-@foreach ($accounts as $account)
-<tr>
-  <td><input type="checkbox" name="account_id[]" value="{{ $account->id }}" /></td>
-  <td>{{ $account->id }}</td>
-  <td>
-    {{ $account->nickname }}
-    @if ($account->id === $user->id)
-    <em>(current account)</em>
-    @endif
-  </td>
-  <td>{{ $account->authorization_provider?->name }}</td>
-  <td>@date($account->created_at)</td>
-  <td>@date($account->updated_at)</time></td>
-  <td>{{ $account->is_master_account ? 'Yes' : 'No' }}</td>
-</tr>
-@endforeach
-</tbody>
-</table>
-
-<h3 class="mt-5">Merge accounts</h3>
-<p>
-  Yes, you can now merge your accounts. When you merge an account, your data is moved to a new account (called your principal account) and
-  your subsequent logins will be routed to that account. Your accounts will remain, but you will only use them to access your principal account.
-</p>
-
-<form method="post">
+<form method="post" action="">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th></th>
+        <th>User ID</th>
+        <th>Username</th>
+        <th>Provider</th>
+        <th>Created</th>
+        <th>Last modified</th>
+        <th>Principal account</th>
+      </tr>
+    </thead>
+    <tbody>
+    @foreach ($accounts as $account)
+    <tr>
+      <td><input type="checkbox" name="account_id[]" value="{{ $account->id }}" /></td>
+      <td>{{ $account->id }}</td>
+      <td>
+        {{ $account->nickname }}
+        @if ($account->id === $user->id)
+        <em>(current account)</em>
+        @endif
+      </td>
+      <td>{{ $account->authorization_provider?->name }}</td>
+      <td>@date($account->created_at)</td>
+      <td>@date($account->updated_at)</time></td>
+      <td>{{ $account->is_master_account ? 'Yes' : ($account->master_account_id ? 'Linked' : 'Unlinked') }}</td>
+    </tr>
+    @endforeach
+    </tbody>
+  </table>
+  <p>
+    You can merge your accounts. When you merge an account, your data is moved to a new account (called your principal account) and
+    your subsequent logins will be routed to that account. Your accounts will remain, but you will only use them to access your principal account.
+  </p>
   @csrf
   <button type="submit" class="btn btn-secondary">Merge selected accounts</button>
 </form>
@@ -60,7 +57,7 @@
 
 <form method="post">
   @csrf
-  <button type="submit" class="btn btn-secondary">Save password</button>
+  <button type="submit" class="btn btn-secondary">Create password</button>
 </form>
 
 <h3 class="mt-5">Account deletion</h3>
