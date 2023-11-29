@@ -19,4 +19,6 @@ Route::group([
         ->name('account.privacy');
     Route::post('merge',  [ 'uses' => 'AccountPrivacyController@merge' ])
         ->name('account.merge');
+    Route::post('password',  [ 'uses' => 'AccountPrivacyController@createPassword' ])
+        ->name('account.password');
 });

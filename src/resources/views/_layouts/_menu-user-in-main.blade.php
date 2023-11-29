@@ -40,17 +40,22 @@
 <ul class="navbar-nav">
   <li class="nav-item">
     <a class="nav-link {{ active('author.my-profile') }}" href="{{ route('author.my-profile') }}">
-      &nbsp;@lang('community.profile')
+      @lang('community.profile')
     </a>
   </li>
   <li class="nav-item">
     <a class="nav-link {{ active('contribution.index') }}" href="{{ route('contribution.index') }}">
-      &nbsp;@lang('community.contributions')
+      @lang('community.contributions')
     </a>
   </li>
   <li class="nav-item">
-    <a class="nav-link {{ active('notifications.index') }}"  href="{{ route('notifications.index') }}">
-      &nbsp;@lang('community.notification-settings')
+    <a class="nav-link {{ active('notifications.index') }}" href="{{ route('notifications.index') }}">
+      @lang('community.notification-settings')
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link {{ active('account.privacy') }}" href="{{ route('account.privacy') }}">
+      @lang('community.privacy')
     </a>
   </li>
   <li class="nav-item">
@@ -60,7 +65,7 @@
   </li>
   <li class="nav-item">
     <a class="nav-link" href="{{ route('logout') }}">
-      &nbsp;@lang('community.logout')
+      @lang('community.logout')
     </a>
   </li>
 </ul>
@@ -72,12 +77,12 @@
 <ul class="navbar-nav">
   <li class="nav-item">
     <a class="nav-link {{ active('login') }}" href="{{ route('login') }}">
-      &nbsp;@lang('community.login')
+      @lang('community.login')
     </a>
   </li>
   <li class="nav-item">
     <a class="nav-link {{ active('register') }}"  href="{{ route('register') }}">
-      &nbsp;@lang('community.register')
+      @lang('community.register')
     </a>
   </li>
 </ul>

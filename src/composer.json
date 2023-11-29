@@ -5,27 +5,28 @@
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": ">=7.3",
+        "php": ">=8.1",
         "aws/aws-sdk-php": "~3.0",
         "diglactic/laravel-breadcrumbs": "^8.0",
-        "doctrine/dbal": "^3.2",
+        "doctrine/dbal": "^3.0",
         "erusev/parsedown": "^1.6",
-        "spatie/laravel-ignition": "^1.0",
+        "spatie/laravel-ignition": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "intervention/image": "^2.5",
-        "laravel/framework": "^9.0",
+        "laravel/framework": "^10.0",
         "laravel/socialite": "^5.0",
         "laravel/tinker": "~2.0",
-        "laravel/ui": "^3.0",
-        "nunomaduro/collision": "^6.1",
+        "laravel/ui": "^4.0",
+        "nunomaduro/collision": "^7.0",
         "socialiteproviders/discord": "^4.1",
         "socialiteproviders/microsoft-live": "^4.1",
-        "watson/active": "^6.0"
+        "watson/active": "^7.0",
+        "laravel/sanctum": "^3.2"
     },
     "require-dev": {
         "filp/whoops": "~2.0",
         "mockery/mockery": "0.9.*",
-        "phpunit/phpunit": "^9.0"
+        "phpunit/phpunit": "^10.0"
     },
     "autoload": {
         "classmap": [

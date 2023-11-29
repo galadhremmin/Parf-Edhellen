@@ -12,7 +12,9 @@ function Ad(props: IProps & IAppProps) {
 
     useEffect(() => {
         if (typeof onMount === 'function') {
-            onMount();
+            requestIdleCallback(() => {
+                onMount();
+            });
         }
     }, [ ad ]);
 

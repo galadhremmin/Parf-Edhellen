@@ -59,6 +59,7 @@ class AccountApiController extends Controller
         }
 
         $queryByNickname = Account::where('nickname', 'like', $nickname.'%')
+            ->whereNull('master_account_id')
             ->select('id', 'nickname')
             ->orderBy('nickname');
 
