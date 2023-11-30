@@ -96,7 +96,7 @@ class AccountSecurityController extends Controller
     {
         $account = $request->user();
         $data = Validator::make($request->all(), [
-            'new-password'      => [
+            'new-password' => [
                 'required',
                 'confirmed',
                 Password::defaults(),
@@ -107,9 +107,8 @@ class AccountSecurityController extends Controller
                 }
             ],
             'existing-password' => [
-                'sometimes',
                 function (string $attribute, mixed $value, Closure $fail) use ($account) {
-                    if (! $this->_accountManager->checkPasswordWithAccount($account, $value)) {
+                    if ($account->is_passworded && ! $this->_accountManager->checkPasswordWithAccount($account, $value)) {
                         $fail('Incorrect current password. Please try again.');
                     }
                 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{
     Auth,
+    Password as FacadesPassword,
     Session,
     Validator
 };
@@ -88,6 +89,11 @@ class SocialAuthController extends Controller
         return $this->login($request, true);
     }
 
+    public function forgotPassword()
+    {
+        return view('authentication.forgot-password');
+    }
+
     public function logout(Request $request)
     {
         $account = $request->user();
@@ -134,7 +140,7 @@ class SocialAuthController extends Controller
                 $first = true;
             }
 
-            return $this->doLogin($request, $user, $first);
+            return $this->doLogin($request, $user, $first, /* remember: */ true);
         } catch (\Exception $ex) {
             $this->log('callback', $providerName, $ex);
             return $this->redirectOnSystemError($providerName);
@@ -145,6 +151,7 @@ class SocialAuthController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'username' => [ 'required', 'string' ],
+            'remember' => [ 'boolean' ],
             'password' => [
                 'required',
                 'string',
@@ -162,7 +169,8 @@ class SocialAuthController extends Controller
             throw new Exception('Failed to find an account with the user name: '.$data['username']);
         }
 
-        return $this->doLogin($request, $account);
+        $remember = isset($data['remember']) ? boolval($data['remember']) : false;
+        return $this->doLogin($request, $account, /* new: */ false, $remember);
     }
 
     public function registerWithPassword(Request $request)
@@ -177,7 +185,12 @@ class SocialAuthController extends Controller
                     }
                 }
             ],
-            'password' => [ 'required', 'confirmed', Password::defaults() ]
+            'password' => [
+                'required',
+                'confirmed',
+                Password::defaults()
+            ],
+            'remember' => [ 'boolean' ]
         ]);
 
         $data = $validator->validate();
@@ -188,7 +201,27 @@ class SocialAuthController extends Controller
             $data['password']
         );
 
-        return $this->doLogin($request, $user);
+        return $this->doLogin($request, $user, /* new: */ true, /* remember: */ false);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'username' => [
+                'required',
+                function (string $attribute, mixed $value, Closure $fail) {
+                    if ($this->_accountManager->getAccountByUsername($value) === null) {
+                        $fail('We cannot find an account with that e-mail address.');
+                    }
+                }
+            ]
+        ]);
+
+        $data = $validator->validate();
+        $status = FacadesPassword::sendResetLink([
+            'email' => $data['username'],
+            'is_master_account' => 1
+        ]);        
     }
 
     private function redirectOnSystemError(string $providerName)
@@ -209,7 +242,7 @@ class SocialAuthController extends Controller
         return redirect()->to(route($routeName, ['error' => $providerName]));
     }
 
-    private function doLogin(Request $request, Account $user, bool $first = false)
+    private function doLogin(Request $request, Account $user, bool $first = false, bool $remember = false)
     {
         $user = $user->master_account ?: $user;
 
@@ -219,7 +252,7 @@ class SocialAuthController extends Controller
         }
 
         // If the account is linked, sign in as the master account
-        auth()->login($user);
+        auth()->login($user, $remember);
 
         event(new AccountAuthenticated($user, $first));
 

@@ -65,10 +65,19 @@
       <label for="password-login-password" class="form-label">Password</label>
       <input type="password" name="password" class="form-control" id="password-login-password">
     </div>
+    <div class="form-group mt-3">
+      <label>
+        <input type="checkbox" name="remember" value="1">
+        Remember me
+      </label>
+    </div>
     <div class="text-center mt-3">
       <button type="submit" class="btn btn-secondary">Sign in</button>
     </div>
   </form>
+  <p>
+    Forgot your password? <a href="{{ route('auth.forgot-password') }}">Request a password reset by e-mail</a>.
+  </p>
 @endsection
 @section('styles')
 <link rel="stylesheet" href="@assetpath(style-auth.css)">

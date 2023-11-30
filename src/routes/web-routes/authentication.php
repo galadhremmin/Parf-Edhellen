@@ -11,3 +11,7 @@ Route::post('/login/password', 'SocialAuthController@loginWithPassword')
     ->name('auth.password');
 Route::post('/register/password', 'SocialAuthController@registerWithPassword')
     ->name('auth.register');
+Route::get('/login/password/forgot', 'SocialAuthController@forgotPassword')
+    ->name('auth.forgot-password');
+Route::post('/login/password/reset', 'SocialAuthController@resetPassword')
+    ->name('auth.reset-password');
