@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{
     Auth,
-    Session
+    Session,
+    Validator
 };
+use Illuminate\Validation\Rules\Password;
 
 use Socialite;
 
@@ -17,7 +19,10 @@ use App\Models\{
     Account, 
     AuthorizationProvider 
 };
+use App\Security\AccountManager;
 use App\Security\RoleConstants;
+use Closure;
+use Exception;
 
 class SocialAuthController extends Controller
 {
@@ -26,9 +31,15 @@ class SocialAuthController extends Controller
      */
     private $_systemErrorRepository;
 
-    public function __construct(SystemErrorRepository $systemErrorRepository)
+    /**
+     * @var AccountManager
+     */
+    private $_accountManager;
+
+    public function __construct(SystemErrorRepository $systemErrorRepository, AccountManager $passwordManager)
     {
         $this->_systemErrorRepository = $systemErrorRepository;
+        $this->_accountManager = $passwordManager;
     }
 
     public function login(Request $request, $isNew = false)
@@ -66,10 +77,9 @@ class SocialAuthController extends Controller
         }
 
         $providers = AuthorizationProvider::orderBy('name')->get();
-        return view('authentication.login', [
+        return view($isNew ? 'authentication.register' : 'authentication.login', [
             'providers' => $providers,
-            'error'     => $error,
-            'is_new'    => $isNew
+            'error'     => $error
         ]);
     }
 
@@ -113,28 +123,13 @@ class SocialAuthController extends Controller
 
             $first = false;
             if ($user === null) {
-                $firstAccountThusAdmin = Account::count() === 0;
-                $nickname = $firstAccountThusAdmin 
-                    ? 'Administrator' 
-                    : self::getNextAvailableNickname($providerUser->getName());
-
-                $user = Account::create([
-                    'email'          => $providerUser->getEmail(),
-                    'identity'       => $providerUser->getId(),
-                    'nickname'       => $nickname,
-                    'is_configured'  => 0,
-                    
-                    'authorization_provider_id'  => $provider->id
-                ]);
-
-                // Important!
-                // The first user ever created is assumed to have been created by an administrator
-                // of the website, and thus assigned the role Administrator.
-                if ($firstAccountThusAdmin) {
-                    $user->addMembershipTo(RoleConstants::Administrators);
-                }
-
-                $user->addMembershipTo(RoleConstants::Users);
+                $user = $this->_accountManager->createAccount(
+                    $providerUser->getEmail(),
+                    $providerUser->getId(),
+                    $provider->id,
+                    null,
+                    $providerUser->getName()
+                );
 
                 $first = true;
             }
@@ -146,9 +141,59 @@ class SocialAuthController extends Controller
         }
     }
 
+    public function loginWithPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'username' => [ 'required', 'string' ],
+            'password' => [
+                'required',
+                'string',
+                function (string $attribute, mixed $value, Closure $fail) use ($request) {
+                    if (! $this->_accountManager->checkPasswordWithUsername($request->input('username'), $value)) {
+                        $fail('We did not find an account with that e-mail and password combination. Check your e-mail and password and try again.');
+                    }
+                }
+            ]
+        ]);
+
+        $data = $validator->validate();
+        $account = $this->_accountManager->getAccountByUsername($data['username']);
+        if ($account === null) {
+            throw new Exception('Failed to find an account with the user name: '.$data['username']);
+        }
+
+        return $this->doLogin($request, $account);
+    }
+
+    public function registerWithPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'username' => [
+                'required',
+                'email',
+                function (string $attribute, mixed $value, Closure $fail) {
+                    if ($this->_accountManager->getAccountByUsername($value) !== null) {
+                        $fail('An account already exists with that e-mail address.');
+                    }
+                }
+            ],
+            'password' => [ 'required', 'confirmed', Password::defaults() ]
+        ]);
+
+        $data = $validator->validate();
+        $user = $this->_accountManager->createAccount(
+            $data['username'],
+            null,
+            null,
+            $data['password']
+        );
+
+        return $this->doLogin($request, $user);
+    }
+
     private function redirectOnSystemError(string $providerName)
     {
-        // Figure out if the user originated from the sign up or the log in page.
+        // Figure out if the user originated from the sign up or the sign in page.
         // Redirect them to the correct origin.
         // We're hard coding the options here to avoid HTTP_REFERER spoofing, deliberately
         // defaulting to `login` if the path doesn't exactly match what we'd expect of the
@@ -169,11 +214,11 @@ class SocialAuthController extends Controller
         $user = $user->master_account ?: $user;
 
         if (! $user->memberOf(RoleConstants::Users)) {
-            throw new \Exception('You are not authorized to log in. You are missing the '. //
+            throw new \Exception('You are not authorized to sign in. You are missing the '. //
                 RoleConstants::Users.' role.');
         }
 
-        // If the account is linked, log in as the master account
+        // If the account is linked, sign in as the master account
         auth()->login($user);
 
         event(new AccountAuthenticated($user, $first));
@@ -198,32 +243,6 @@ class SocialAuthController extends Controller
         }
 
         return $provider;
-    }
-
-    public static function getNextAvailableNickname(string $nickname) 
-    {
-        if ($nickname === null || empty($nickname)) {
-            $nickname = config('ed.default_account_name');
-        }
-
-        // reduce maximum length to accomodate for space and numbering,
-        // in the event that a user with the same nickname already exists.
-        $maxLength = config('ed.max_nickname_length') - 4;
-        if (mb_strlen($nickname) > $maxLength) {
-            $nickname = mb_substr($nickname, 0, $maxLength);
-        }
-
-        $i = 1;
-        $tmp = $nickname;
-
-        do {
-            if (Account::where('nickname', '=', $tmp)->count() < 1) {
-                return $tmp;
-            }
-
-            $tmp = $nickname . ' ' . $i;
-            $i = $i + 1;
-        } while (true);
     }
 
     private function log(string $method, string $provider, \Throwable $ex)

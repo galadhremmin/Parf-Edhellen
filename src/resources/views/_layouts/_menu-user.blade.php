@@ -24,9 +24,9 @@
       </a>
     </li>
     <li class="list-group-item">
-      <a class="{{ active('account.privacy') }}"  href="{{ route('account.privacy') }}">
+      <a class="{{ active('account.security') }}"  href="{{ route('account.security') }}">
         <span class="TextIcon TextIcon--exclamation-sign"></span> 
-        &nbsp;@lang('community.privacy')
+        &nbsp;@lang('community.security')
       </a>
     </li>
   </ul>

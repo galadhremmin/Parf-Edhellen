@@ -138,6 +138,8 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName
             'account_id' => $this->id,
             'role_id'    => $role->id
         ]);
+
+        Cache::forget('ed.rol.'.$this->id);
     }
 
     public function removeMembership(string $roleName)

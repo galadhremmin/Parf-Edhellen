@@ -253,7 +253,7 @@ class MarkdownParser extends \Parsedown
         $attr = &$link['element']['attributes'];
         $url  =  $attr['href'];
         if ($url !== null) {
-            $internalUrl = $this->_externalToInternalUrlResolver->getInternalUrl($url);
+            $internalUrl = $this->_externalToInternalUrlResolver?->getInternalUrl($url);
             if ($internalUrl !== null) {
                 $attr['href']  = $internalUrl;
                 $attr['class'] = 'ed-word-external-reference';

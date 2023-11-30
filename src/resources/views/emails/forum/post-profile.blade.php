@@ -8,7 +8,7 @@ This is a notification that someone has attempted to reach out to you on your pr
 Show {{ $post->account->nickname }}'s post
 @endcomponent
 
-You can unsubscribe from this thread by [clicking the link]({{ $link->mailCancellation($cancellationToken) }}). Alternatively, you can log in 
+You can unsubscribe from this thread by [clicking the link]({{ $link->mailCancellation($cancellationToken) }}). Alternatively, you can sign in 
 to [{{ config('app.name') }}]({{ config('app.url') }}) and configure what you would like to
 be subscribed to on your profile.
 

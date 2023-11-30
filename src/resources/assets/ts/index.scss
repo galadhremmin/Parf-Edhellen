@@ -58,6 +58,18 @@ a {
   display: none;
 }
 
+hr.next-overlaps {
+  margin-bottom: -1rem;
+  + span {
+    background-color: white;
+    display: table;
+    margin: 0 auto;
+    color: $gray-700;
+    padding: 0 0.25rem;
+    opacity: 0.99; // chrome hack
+  }
+}
+
 a.avatar-in-menu {
   font-size: 1.4rem;
   margin-bottom: 1rem;

@@ -24,7 +24,7 @@
 
 <h3>Account deletion</h3>
 
-<p>We support irreversible account deletion. Log in to your account's dashboard and go to your account privacy settings. Click the <i>Delete account</i> button and confirm the action. <strong>This is an irreversible action and you cannot ask us to restore your deleted account!</strong></p>
+<p>We support irreversible account deletion. Sign in to your account's dashboard and go to your account privacy settings. Click the <i>Delete account</i> button and confirm the action. <strong>This is an irreversible action and you cannot ask us to restore your deleted account!</strong></p>
 
 <p>Account deletion performs the following actions:</p>
 

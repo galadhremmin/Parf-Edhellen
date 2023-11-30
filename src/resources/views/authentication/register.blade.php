@@ -4,7 +4,9 @@
 @section('title', 'Logging in')
 
 @section('body')
-  <h1>Welcome back!</h1>
+  <h1>
+    Welcome to our community!
+  </h1>
   <h2 class="mt-4">Sign in with social media</h2>
 
   @if ($error !== null)
@@ -43,7 +45,11 @@
   <hr class="next-overlaps">
   <span>or</span>
 
-  <h2 class="mt-4">Sign in with a password</h2>
+  <h2 class="mt-4">Create an account with username and password</h2>
+  <p>
+    You can sign in with your e-mail address and password. This is an option if you don't have access to the social media above, or prefer not 
+    to use them. If you have previously signed in with your social media, you need to create a password to your account before you can sign in.
+  </p>
   @if ($errors->any())
   <div class="alert alert-warning">
   @foreach ($errors->all() as $error)
@@ -51,11 +57,7 @@
   @endforeach
   </div>
   @endif
-  <p>
-    You can sign in with your e-mail address and password. This is an option if you don't have access to the social media above, or prefer not 
-    to use them. If you have previously signed in with your social media, you need to create a password to your account before you can sign in.
-  </p>
-  <form method="post" action="{{ route('auth.password') }}">
+  <form method="post" action="{{ route('auth.register') }}">
     @csrf
     <div class="form-group">
       <label for="password-login-username" class="form-label">E-mail address</label>
@@ -65,8 +67,12 @@
       <label for="password-login-password" class="form-label">Password</label>
       <input type="password" name="password" class="form-control" id="password-login-password">
     </div>
+    <div class="form-group mt-3">
+      <label for="password-login-password-2" class="form-label">Repeat password</label>
+      <input type="password" name="password_confirmation" class="form-control" id="password-login-password-2">
+    </div>
     <div class="text-center mt-3">
-      <button type="submit" class="btn btn-secondary">Sign in</button>
+      <button type="submit" class="btn btn-primary">Create account</button>
     </div>
   </form>
 @endsection

@@ -61,7 +61,7 @@
     <h3 class="fst-italic fs-5">{{ config('ed.title') }}</h3>
     <nav>
       <ul>
-        <li><a href="{{ route('login') }}" class="link-secondary text-decoration-underline">Log in</a></li>
+        <li><a href="{{ route('login') }}" class="link-secondary text-decoration-underline">Sign in</a></li>
         <li><a href="{{ route('about') }}" class="link-secondary text-decoration-underline">About the website</a></li>
         <li><a href="{{ route('about.cookies') }}" class="link-secondary text-decoration-underline">Cookie policy</a></li>
         <li><a href="{{ route('about.privacy') }}" class="link-secondary text-decoration-underline">Privacy policy</a></li>

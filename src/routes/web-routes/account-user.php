@@ -15,10 +15,10 @@ Route::group([
         ->name('notifications.delete-override');
 
     // User profile
-    Route::get('privacy', [ 'uses' => 'AccountPrivacyController@privacy' ])
-        ->name('account.privacy');
-    Route::post('merge',  [ 'uses' => 'AccountPrivacyController@merge' ])
+    Route::get('security', [ 'uses' => 'AccountSecurityController@security' ])
+        ->name('account.security');
+    Route::post('merge',  [ 'uses' => 'AccountSecurityController@merge' ])
         ->name('account.merge');
-    Route::post('password',  [ 'uses' => 'AccountPrivacyController@createPassword' ])
+    Route::post('password',  [ 'uses' => 'AccountSecurityController@createPassword' ])
         ->name('account.password');
 });

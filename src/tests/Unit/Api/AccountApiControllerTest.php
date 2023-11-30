@@ -11,6 +11,7 @@ use App\Models\{
     ForumPost,
     ForumThread
 };
+use Exception;
 
 class AccountApiControllerTest extends TestCase
 {
@@ -26,27 +27,31 @@ class AccountApiControllerTest extends TestCase
 
     public function testDeletion()
     {
-        $controller = resolve(AccountApiController::class);
-
         $uuid = (string) Str::uuid();
-        $account = Account::create([
-            'nickname' => $uuid,
-            'email'    => 'private@domain.com',
-            'identity' => $uuid,
-            'authorization_provider_id' => 1000,
-            'profile'  => 'Lots of personal data.'
-        ]);
+        try {
+            $account = Account::create([
+                'nickname' => $uuid,
+                'email'    => 'private@domain.com',
+                'identity' => $uuid,
+                'authorization_provider_id' => 1000,
+                'profile'  => 'Lots of personal data.'
+            ]);
 
-        $response = $this->actingAs($account)
-            ->delete(route('api.account.delete', ['id' => $account->id]));
-        $response->assertRedirect(route('logout'));
+            $response = $this->actingAs($account)
+                ->delete(route('api.account.delete', ['id' => $account->id]));
+            $response->assertRedirect(route('logout'));
 
-        $deleted = Account::findOrFail($account->id);
-        $this->assertTrue($deleted->nickname !== $account->nickname);
-        $this->assertTrue($deleted->identity !== $account->identity);
-        $this->assertTrue($deleted->profile !== $account->profile);
+            $deleted = Account::findOrFail($account->id);
 
-        $account->delete();
+            $this->assertTrue($deleted->nickname !== $account->nickname);
+            $this->assertTrue($deleted->identity !== $account->identity);
+            $this->assertTrue($deleted->profile !== $account->profile);
+
+        } catch (Exception $ex) {
+            throw $ex;
+        } finally {
+            $account->delete();
+        }
     }
 
     public function testUnauthorizedToDelete()

@@ -14,6 +14,11 @@ class ComprehendFacade implements IIdentifiesPhrases
 {
     private const AWSComprehendChunkSize = 5000;
 
+    /**
+     * @var ComprehendFactory
+     */
+    private $_clientFactory;
+
     public function __construct(ComprehendFactory $factory)
     {
         $this->_clientFactory = $factory;

@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\{
     Auth,
     Storage
 };
-use Illuminate\Support\Str;
 
 use App\Events\{
     AccountChanged,
@@ -18,17 +17,30 @@ use App\Helpers\LinkHelper;
 use App\Models\Account;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Helpers\StorageHelper;
+use App\Security\AccountManager;
 use Image;
 
 class AccountApiController extends Controller 
 {
+    /**
+     * @var StorageHelper
+     */
     private $_storageHelper;
+    /**
+     * @var LinkHelper
+     */
     private $_linkHelper;
+    /**
+     * @var AccountManager
+     */
+    private $_accountManager;
 
-    public function __construct(StorageHelper $storageHelper, LinkHelper $linkHelper) 
+    public function __construct(StorageHelper $storageHelper, LinkHelper $linkHelper,
+        AccountManager $accountManager) 
     {
         $this->_storageHelper = $storageHelper;
         $this->_linkHelper = $linkHelper;
+        $this->_accountManager = $accountManager;
     }
 
     public function index(Request $request)
@@ -188,24 +200,8 @@ class AccountApiController extends Controller
 
     public function delete(Request $request, int $accountId)
     {
-        $uuid    = 'DELETED|'.Str::uuid();
-        $date    = Carbon::now()->toDateTimeString();
-
         $account = $this->getAuthorizedAccount($request, $accountId);
-        $account->is_deleted                 = true;
-        $account->nickname                   = sprintf('(Deleted %s)', $date);
-        $account->email                      = 'deleted@'.$uuid;
-        $account->authorization_provider_id  = null;
-        $account->identity                   = $uuid;
-        $account->profile                    = 'The user deleted their account on '.$date;
-        $account->tengwar                    = null;
-        $account->has_avatar                 = 0;
-        $account->save();
-
-        $localPath = $this->_storageHelper->getAvatarPath($accountId);
-        if (file_exists($localPath)) {
-            unlink($localPath);
-        }
+        $this->_accountManager->delete($account);
 
         $redirectUrl = route('logout');
         if (! $request->ajax()) {

@@ -5,8 +5,8 @@ return [
     'profile' => 'Home',
     'contributions' => 'Contribute',
     'notification-settings' => 'Notifications',
-    'privacy' => 'Privacy',
+    'security' => 'Security',
     'logout' => 'Log out',
-    'login' => 'Log in',
+    'login' => 'Sign in',
     'register' => 'Sign up'
 ];

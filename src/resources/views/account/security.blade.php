@@ -16,7 +16,7 @@
   </p>
   <p class="mb-0">
     We've proceeded to log you in to your principal account. You haven't created a password for this account yet,
-    so you will have to use one of your linked accounts (see table below) to log in to this account in the future.
+    so you will have to use one of your linked accounts (see table below) to sign in to this account in the future.
     You don't have to create a password as long as you have access to one of your linked accounts.
   </p>
 </dialog>
@@ -25,10 +25,15 @@
 @if ($is_passworded)
 <dialog open class="alert alert-success">
   <p class="mb-0">
+    @if ($is_new_account)
     <strong>We have created a new account with your new password.</strong> Your username will be your e-mail address
     ({{ $user->email }}). Your information will be moved to your new account soon, and your original account has been
-    linked to your new account, so you can now decide whether to log in with your new password <em>or</em> the
+    linked to your new account, so you can now decide whether to sign in with your new password <em>or</em> the
     identity provider.
+    @else
+    <strong>Your password has been changed.</strong> Your username continues to be your e-mail address
+    ({{ $user->email }}).
+    @endif
   </p>
 </dialog>
 @endif
@@ -118,7 +123,7 @@
     <input type="password" name="new-password_confirmation" class="form-control" id="create-password-2">
   </div>
   <div class="text-center mt-3">
-    <button type="submit" class="btn btn-secondary">Create password</button>
+    <button type="submit" class="btn btn-secondary">Change password</button>
   </div>
 </form>
 @elseif ($user->is_master_account || $number_of_accounts === 1)
