@@ -19,6 +19,10 @@ Route::group([
         ->name('account.security');
     Route::post('merge',  [ 'uses' => 'AccountSecurityController@merge' ])
         ->name('account.merge');
+    Route::get('merge/{requestId}/status',  [ 'uses' => 'AccountSecurityController@mergeStatus' ])
+        ->name('account.merge-status');
+    Route::get('merge/{requestId}/confirm',  [ 'uses' => 'AccountSecurityController@confirmMerge' ])
+        ->name('account.confirm-merge');
     Route::post('password',  [ 'uses' => 'AccountSecurityController@createPassword' ])
         ->name('account.password');
 });

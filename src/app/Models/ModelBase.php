@@ -7,10 +7,9 @@ use DateTimeInterface;
 
 abstract class ModelBase extends Model
 {
-    protected $dates = [
-        Model::CREATED_AT,
-        Model::UPDATED_AT
-        // 'deleted_at' <-- presently not supported
+    protected $casts = [
+        Model::CREATED_AT => 'datetime',
+        Model::UPDATED_AT => 'datetime'
     ];
 
     public function hasAttribute($attr)
@@ -26,7 +25,7 @@ abstract class ModelBase extends Model
      */
     protected function serializeDate(DateTimeInterface $date)
     {
-        return $date->toAtomString();
+        return $date?->format(DateTimeInterface::ATOM);
     }
 
     public function equals($gloss)
