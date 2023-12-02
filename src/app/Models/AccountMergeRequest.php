@@ -4,6 +4,9 @@ namespace App\Models;
 
 class AccountMergeRequest extends ModelBase
 {
+    use Traits\HasAccount;
+    use Traits\HasUuidId;
+
     protected $fillable = [
         'id',
         'account_id',
@@ -15,8 +18,6 @@ class AccountMergeRequest extends ModelBase
     ];
 
     protected $hidden = ['verification_token', 'requester_account_id', 'requester_ip'];
-
-    use Traits\HasAccount;
 
     public function requester_account()
     {

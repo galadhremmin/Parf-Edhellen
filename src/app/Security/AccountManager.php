@@ -37,7 +37,7 @@ class AccountManager
             'email'          => $username,
             'identity'       => ! empty($identity) ? $identity : 'MASTER|'.$username,
             'nickname'       => $nickname,
-            'is_configured'  => 0,
+            'is_configured'  => ! empty($identity), // require e-mail validation?
 
             'authorization_provider_id'  => $providerId,
             'is_passworded'              => ! empty($password),
@@ -69,18 +69,18 @@ class AccountManager
         }
 
         $masterAccount = Account::create([
-            'email' => $account->email,
-            'nickname' => $account->nickname,
-            'tengwar' => $account->tengwar,
-            'profile' => $account->profile,
-            'has_avatar' => $account->has_avatar,
-            'feature_background_url' => $account->feature_background_url,
+            'email'                     => $account->email,
+            'nickname'                  => $account->nickname,
+            'tengwar'                   => $account->tengwar,
+            'profile'                   => $account->profile,
+            'has_avatar'                => $account->has_avatar,
+            'feature_background_url'    => $account->feature_background_url,
             'authorization_provider_id' => null,
-            'master_account_id' => null,
-            'identity' => 'MASTER|'.$account->email,
-            'is_configured' => 0,
-            'is_master_account' => 1,
-            'is_passworded' => 0
+            'master_account_id'         => null,
+            'identity'                  => 'MASTER|'.$account->email,
+            'is_configured'             => 0,
+            'is_master_account'         => 1,
+            'is_passworded'             => 0
         ]);
 
         foreach ($account->roles as $role) {

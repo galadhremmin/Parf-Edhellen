@@ -339,10 +339,15 @@ Breadcrumbs::for('account.by-role', function (BreadcrumbTrail $breadcrumbs, App\
 // //////////////////////////////////////////////////////////////////////////////////////////////
 // Dashboard > Notification settings
 
-Breadcrumbs::for('notifications.index', function (BreadcrumbTrail $breadcrumbs)
+Breadcrumbs::for('account.security', function (BreadcrumbTrail $breadcrumbs)
 {
     $breadcrumbs->parent('dashboard');
-    $breadcrumbs->push('Notification settings', route('notifications.index'));
+    $breadcrumbs->push('Security', route('account.security'));
 });
 
+Breadcrumbs::for('account.merge-status', function (BreadcrumbTrail $breadcrumbs, App\Models\AccountMergeRequest $mergeRequest)
+{
+    $breadcrumbs->parent('account.security');
+    $breadcrumbs->push('Request '.$mergeRequest->id.' ('.$mergeRequest->created_at.')', route('account.merge-status', [ 'requestId' => $mergeRequest->id ]));
+});
 

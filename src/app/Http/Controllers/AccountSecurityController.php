@@ -35,6 +35,7 @@ class AccountSecurityController extends Controller
 
         $accounts = Account::with('authorization_provider') //
             ->where('email', $user->email) //
+            ->orWhere('master_account_id', $user->id)
             ->get();
 
         $isMerged     = intval($request->query('merged', 0)) !== 0;
@@ -46,22 +47,29 @@ class AccountSecurityController extends Controller
                 ! $account->is_master_account;
         })->count();
 
+        $mergeRequests = AccountMergeRequest::where([
+            'account_id' => $user->id
+        ])->get();
+
         return view('account.security', [
             'user' => $user,
             'accounts' => $accounts,
             'is_merged' => $isMerged,
             'is_passworded' => $isPassworded,
             'number_of_accounts' => $numberOfAccounts,
-            'is_new_account' => $isNewAccount
+            'is_new_account' => $isNewAccount,
+            'merge_requests' => $mergeRequests
         ]);
     }
+
     public function merge(Request $request)
     {
+        $account = $request->user();
         $validator = Validator::make($request->all(), [
             'account_id' => [
                 'required', 
                 'array',
-                function (string $attribute, mixed $values, Closure $fail) {
+                function (string $attribute, mixed $values, Closure $fail) use ($account) {
                     $invalidEntries = array_filter($values, function ($value) {
                         return ! is_numeric($value);
                     });
@@ -80,19 +88,24 @@ class AccountSecurityController extends Controller
                     if ($accounts->count() !== count($values)) {
                         $fail('Cannot merge the accounts you have selected. Have some of them already been linked?');
                     }
+
+                    $mergeRequests = AccountMergeRequest::where('account_id', $account->id);
+                    if ($mergeRequests->count() > 0) {
+                        $fail('Complete existing linking requests before creating a new one.');
+                    }
+
+                    if (! $account->is_configured) {
+                        $fail('Verify your e-mail address before creating a linking request.');
+                    }
                 }
             ]
         ]);
 
         $data = $validator->validate();
 
-        $account = $request->user();
         $accountIds = collect($data['account_id'])
             ->map(function ($id) {
                 return intval($id);
-            })
-            ->filter(function ($value) use($account) {
-                return $value !== $account->id;
             })
             ->values();
 
@@ -118,6 +131,9 @@ class AccountSecurityController extends Controller
 
         $providers = Account::whereIn('id', $accountIds)
             ->get()
+            ->filter(function ($account) {
+                return $account->authorization_provider !== null;
+            })
             ->map(function ($account) {
                 return $account->authorization_provider->name;
             })
@@ -133,12 +149,28 @@ class AccountSecurityController extends Controller
     {
         $account = $request->user();
 
-        $request = AccountMergeRequest::where([
+        $mergeRequest = AccountMergeRequest::where([
             'id' => $requestId,
             'account_id' => $account->id
         ])->firstOrFail();
 
-        dd($request);
+        return view('account.merge-status', [
+            'mergeRequest' => $mergeRequest
+        ]);
+    }
+
+    public function cancelMerge(Request $request, string $requestId)
+    {
+        $account = $request->user();
+
+        $mergeRequest = AccountMergeRequest::where([
+            'id' => $requestId,
+            'account_id' => $account->id
+        ])->firstOrFail();
+
+        $mergeRequest->delete();
+
+        return redirect()->route('account.security');
     }
 
     public function confirmMerge(Request $request)
@@ -156,6 +188,10 @@ class AccountSecurityController extends Controller
                     ])->first();
                     if ($request === null) {
                         $fail('Either your verification token is incorrect or there is no outstanding linking request for your account.');
+                    }
+
+                    if (! $account->is_configured) {
+                        $fail('Verify your e-mail address before creating a linking request.');
                     }
                 }
             ]

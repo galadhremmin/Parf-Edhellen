@@ -1,10 +1,10 @@
 @extends('_layouts.default')
 
-@section('title', 'Privacy')
+@section('title', 'Security')
 @section('body')
 
 <h1>Privacy</h1>
-{!! Breadcrumbs::render('notifications.index') !!}
+{!! Breadcrumbs::render('account.security') !!}
 
 @if ($is_merged)
 <dialog open class="alert alert-success">
@@ -46,7 +46,20 @@
 </div>
 @endif
 
-<h2>Accounts</h2>
+<h2>E-mail address</h2>
+<p>
+  Your e-mail address is <strong>{{ $user->email }}</strong>.
+
+  @if ($user->authorization_provider !== null)
+    It was provided by {{ $user->authorization_provider->name }}.
+  @else
+    We don't currently support changing your e-mail address.
+  @endif
+</p>
+
+<h2 class="mt-5">Accounts</h2>
+
+@if ($user->is_configured)
 <p>The following accounts have been registered to your e-mail ({{ $user->email }}):</p>
 
 <form method="post" action="{{ route('account.merge') }}">
@@ -55,7 +68,7 @@
     <thead>
       <tr>
         <th></th>
-        <th>User ID</th>
+        <th>ID</th>
         <th>Username</th>
         <th>Provider</th>
         <th>Created</th>
@@ -101,8 +114,49 @@
   @endif
 </form>
 
+@if ($merge_requests->count() > 0)
+<h3 class="mt-5">Ongoing linking requests</h3>
+<table class="table table-striped">
+  <thead>
+    <th>Date</th>
+    <th>Accounts</th>
+    <th>Status</th>
+    <th></th>
+  </thead>
+  <tbody>
+    @foreach ($merge_requests as $merge_request)
+    <tr>
+      <td>@date($merge_request->created_at)</td>
+      <td>
+        <a href="{{ route('account.merge-status', [ 'requestId' => $merge_request->id ]) }}">{{
+          collect(json_decode($merge_request->account_ids))->map(function ($id) {
+            return App\Models\Account::find($id)?->authorization_provider?->name.' ('.$id.')';
+          })->join(', ');
+        }}</a>
+      </td>
+      <td>
+        {{ $merge_request->is_fulfilled ? 'Complete' : 'Ongoing' }}
+      </td>
+      <td>
+        <form method="post" action="{{ route('account.cancel-merge', [ 'requestId' => $merge_request->id ]) }}">
+          @csrf
+          <input type="submit" class="btn btn-sm btn-secondary" value="Cancel">
+        </form>
+      </td>
+    </tr>
+    @endforeach
+  </tbody>
+</table>
+@endif
+
+@else
+
+<em>Verify your e-mail address to see your other accounts.</em>
+
+@endif
+
 @if ($user->is_passworded)
-<h3 class="mt-5">Change your password</h3>
+<h2 class="mt-5">Change your password</h2>
 <p>
   This account has a password and you can change it as many times as you like. Just remember to pick a secure password, ideally something
   you would store in a password vault.
@@ -127,7 +181,7 @@
   </div>
 </form>
 @elseif ($user->is_master_account || $number_of_accounts === 1)
-<h3 class="mt-5">Create a password</h3>
+<h2 class="mt-5">Create a password</h2>
 <p>
   You can only create a password on your principal account. The password can be used to access your account without one an identity provider. This can be useful
   if you've lost or deleted the account you used to have with the identity provider (like Facebook).
@@ -149,7 +203,7 @@
 </form>
 @endif
 
-<h3 class="mt-5">Account deletion</h3>
+<h2 class="mt-5">Account deletion</h2>
 <p>
   Would you like to delete the account {{ $user->nickname }} ({{ $user->id }})? Please <a href="{{ route('about.privacy') }}">read our privacy policy</a>
   before you do. <strong>Account deletion is irreverible!</strong> If you still want to proceed, please click the 

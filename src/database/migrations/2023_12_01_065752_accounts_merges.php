@@ -21,6 +21,8 @@ return new class extends Migration
             $table->unsignedBigInteger('requester_account_id');
             $table->string('requester_ip', 16);
             $table->boolean('is_fulfilled')->default(false);
+            $table->text('error')->nullable()->default(null);
+            $table->boolean('is_error')->nullable();
 
             $table->foreign('account_id')->references('id')->on('accounts')->cascadeOnDelete();
             $table->foreign('requester_account_id')->references('id')->on('accounts')->cascadeOnDelete();
