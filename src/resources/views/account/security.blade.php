@@ -129,8 +129,8 @@
       <td>@date($merge_request->created_at)</td>
       <td>
         <a href="{{ route('account.merge-status', [ 'requestId' => $merge_request->id ]) }}">{{
-          collect(json_decode($merge_request->account_ids))->map(function ($id) {
-            return App\Models\Account::find($id)?->authorization_provider?->name.' ('.$id.')';
+          $merge_request_accounts[$merge_request->id]->map(function ($account) {
+            return $account->authorization_provider?->name.' ('.$account->id.')';
           })->join(', ');
         }}</a>
       </td>
@@ -138,10 +138,12 @@
         {{ $merge_request->is_fulfilled ? 'Complete' : 'Ongoing' }}
       </td>
       <td>
+        @if (! $merge_request->is_fulfilled && ! $merge_request->is_error)
         <form method="post" action="{{ route('account.cancel-merge', [ 'requestId' => $merge_request->id ]) }}">
           @csrf
           <input type="submit" class="btn btn-sm btn-secondary" value="Cancel">
         </form>
+        @endif
       </td>
     </tr>
     @endforeach

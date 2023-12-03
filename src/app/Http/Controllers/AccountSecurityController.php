@@ -29,6 +29,9 @@ class AccountSecurityController extends Controller
         $this->_accountManager = $passwordManager;
     }
 
+    /**
+     * Landing page for account security settings and account linking.
+     */
     public function security(Request $request)
     {
         $user = $request->user();
@@ -50,6 +53,15 @@ class AccountSecurityController extends Controller
         $mergeRequests = AccountMergeRequest::where([
             'account_id' => $user->id
         ])->get();
+ 
+        // create a map of request id to to-be-linked accounts. The map will be used in the table that lists ongoing
+        // linking requests.
+        $mergeRequestAccounts = $mergeRequests->reduce(function(array $carry, AccountMergeRequest $request) {
+            $carry[$request->id] = collect(json_decode($request->account_ids))->map(function ($id) {
+                return Account::findOrFail($id);
+            });
+            return $carry;
+        }, []);
 
         return view('account.security', [
             'user' => $user,
@@ -58,7 +70,8 @@ class AccountSecurityController extends Controller
             'is_passworded' => $isPassworded,
             'number_of_accounts' => $numberOfAccounts,
             'is_new_account' => $isNewAccount,
-            'merge_requests' => $mergeRequests
+            'merge_requests' => $mergeRequests,
+            'merge_request_accounts' => $mergeRequestAccounts
         ]);
     }
 
@@ -89,7 +102,8 @@ class AccountSecurityController extends Controller
                         $fail('Cannot merge the accounts you have selected. Have some of them already been linked?');
                     }
 
-                    $mergeRequests = AccountMergeRequest::where('account_id', $account->id);
+                    $mergeRequests = AccountMergeRequest::where('account_id', $account->id)
+                        ->where('is_fulfilled', '<>', 1);
                     if ($mergeRequests->count() > 0) {
                         $fail('Complete existing linking requests before creating a new one.');
                     }
@@ -150,12 +164,21 @@ class AccountSecurityController extends Controller
         $account = $request->user();
 
         $mergeRequest = AccountMergeRequest::where([
-            'id' => $requestId,
-            'account_id' => $account->id
+            'id' => $requestId
         ])->firstOrFail();
 
+        if ($mergeRequest->account_id !== $account->id &&
+            in_array($account->id, json_decode($mergeRequest->account_ids))) {
+            return response(null, 404);
+        }
+
+        $accounts = collect(json_decode($mergeRequest->account_ids))->map(function ($id) {
+            return Account::findOrFail(intval($id));
+        });
+
         return view('account.merge-status', [
-            'mergeRequest' => $mergeRequest
+            'mergeRequest' => $mergeRequest,
+            'accounts'     => $accounts
         ]);
     }
 
@@ -165,10 +188,12 @@ class AccountSecurityController extends Controller
 
         $mergeRequest = AccountMergeRequest::where([
             'id' => $requestId,
-            'account_id' => $account->id
+            'account_id' => $account->id,
         ])->firstOrFail();
 
-        $mergeRequest->delete();
+        if (! $mergeRequest->is_fulfilled && ! $mergeRequest->is_error) {
+            $mergeRequest->delete();
+        }
 
         return redirect()->route('account.security');
     }
@@ -209,6 +234,13 @@ class AccountSecurityController extends Controller
             $accountIds = collect(json_decode($request->account_ids))->merge([$request->id]);
             $accounts = Account::whereIn('id', $accountIds)->get();
             $masterAccount = $this->_accountManager->mergeAccounts($accounts);
+
+            // Since linking requires the user to have approved the request via e-mail, we can here
+            // safely say that the account has been verified (i.e. configured). This removes the
+            // unnecessary step for the account holder to verify their account.
+            $masterAccount->is_configured = true;
+            $masterAccount->save();
+
             auth()->login($masterAccount);
         } catch (\Exception $ex) {
             $error = $ex->getMessage()."\n\n".$ex->getTraceAsString();
