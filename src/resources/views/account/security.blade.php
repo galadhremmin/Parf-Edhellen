@@ -3,7 +3,7 @@
 @section('title', 'Security')
 @section('body')
 
-<h1>Privacy</h1>
+<h1>Account security</h1>
 {!! Breadcrumbs::render('account.security') !!}
 
 @if ($is_merged)
@@ -46,6 +46,29 @@
 </div>
 @endif
 
+@if ($user->email_verified_at === null)
+<form method="post" action="{{ route('account.resent-verification') }}">
+  @csrf
+  <dialog open class="alert alert-info">
+    @if ($verification_status === 'sent')
+    <p>
+      <strong>A verification e-mail has been sent to your e-mail address.</strong> Verify your e-mail address by following
+      the instructions in the e-mail.
+    </p>
+    @else
+    <p>
+      <strong>You haven't verified your e-mail address.</strong> Verify your e-mail address to gain access to all features.
+    </p>
+    @endif
+    <div class="text-center">
+      <button class="btn btn-secondary" type="submit">Send verification e-mail</button>
+    </div>
+  </dialog>
+</form>
+@elseif ($verification_status === 'ok')
+<dialog open class="alert alert-success">Your e-mail address has been successfully verified. Thank you!</dialog>
+@endif
+
 <h2>E-mail address</h2>
 <p>
   Your e-mail address is <strong>{{ $user->email }}</strong>.
@@ -59,7 +82,7 @@
 
 <h2 class="mt-5">Accounts</h2>
 
-@if ($user->is_configured)
+@if ($user->email_verified_at)
 <p>The following accounts have been registered to your e-mail ({{ $user->email }}):</p>
 
 <form method="post" action="{{ route('account.merge') }}">

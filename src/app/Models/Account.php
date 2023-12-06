@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Versioning\GlossVersion;
 use App\Security\RoleConstants;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\{
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\{
     Cookie
 };
 
-class Account extends Authenticatable implements Interfaces\IHasFriendlyName
+class Account extends Authenticatable implements Interfaces\IHasFriendlyName, MustVerifyEmail
 {
     use Notifiable;
 
@@ -21,9 +22,9 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName
      * @var array
      */
     protected $fillable = [
-        'nickname', 'email', 'identity', 'authorization_provider_id', 'created_at', 'provider_id', 'is_configured',
+        'nickname', 'email', 'identity', 'authorization_provider_id', 'created_at', 'provider_id',
         'profile', 'has_avatar', 'feature_background_url', 'is_deleted', 'password', 'is_passworded',
-        'is_master_account', 'master_account_id'
+        'is_master_account', 'master_account_id', 'email_verified_at'
     ];
 
     /**
@@ -33,7 +34,7 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName
      */
     protected $hidden = [
         'identity', 'authorization_provider_id', 'remember_token', 'email', 'is_deleted',
-        'password', 'is_passworded', 'is_master_account', 'master_account_id'
+        'password', 'is_passworded', 'is_master_account', 'master_account_id', 'email_verified_at'
     ];
 
     public function authorization_provider()

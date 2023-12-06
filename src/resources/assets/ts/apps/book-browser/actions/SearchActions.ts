@@ -272,6 +272,19 @@ export default class SearchActions {
         }
     }
 
+    public expandSpecificGloss(glossId: number) {
+        return async (dispatch: ThunkDispatch<any, any, any>) => {
+            try {
+                const gloss = await this._api.gloss(glossId);
+                // TODO: Use the gloss to populate the dictionary. The request should hopefully be identical to the
+                //       regular entity request...
+            } catch (e) {
+                // Ignore errors for now... the gloss probably doesn't exist (invalid reference)
+                console.error(e);
+            }
+        };
+    }
+
     /**
      * Reloads the glossary based on current state.
      */

@@ -2,14 +2,11 @@ import { createRoot, hydrateRoot } from 'react-dom/client';
 import { DateTime } from 'luxon';
 
 import BookBrowserApp from './apps/book-browser';
-import EuConsent from './apps/eu-consent';
 import inject from './Injector';
 
 import './index.scss';
 import './components/Tengwar.scss'; // Tengwar is scattered across the website, so this will ensure all will render appropriately.
 import bootstrapServerSideRenderedBootstrapComponents from './utilities/BootstrapBootstrapper';
-import Cookies from 'js-cookie';
-import { EuConsentCookieName, EuConsentExemptionPaths, EuConsentGivenCookieValue } from './config';
 
 const loadLatestScript = () => {
     const scriptTag = document.currentScript as HTMLScriptElement;
@@ -48,6 +45,7 @@ if (loadLatestScript()) {
     /**
      * Cookie consent dialogue as required by the European Union.
      */
+    /*
     const renderEuConsent = () => {
         // If consent is already given, don't ask again!
         if (Cookies.get(EuConsentCookieName) === EuConsentGivenCookieValue) {
@@ -65,6 +63,7 @@ if (loadLatestScript()) {
             root.render(<EuConsent />);
         }
     };
+    */
 
     /**
      * Converts server-side rendered UTC times into local time. This operation is only
@@ -83,7 +82,6 @@ if (loadLatestScript()) {
         bootstrapServerSideRenderedBootstrapComponents();
         renderDates();
         renderDictionary();
-        renderEuConsent();
         inject();
     });
 }

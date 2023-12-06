@@ -338,6 +338,14 @@ Breadcrumbs::for('account.by-role', function (BreadcrumbTrail $breadcrumbs, App\
 
 // //////////////////////////////////////////////////////////////////////////////////////////////
 // Dashboard > Notification settings
+Breadcrumbs::for('notifications.index', function (BreadcrumbTrail $breadcrumbs)
+{
+    $breadcrumbs->parent('dashboard');
+    $breadcrumbs->push('Notification settings', route('notifications.index'));
+});
+
+// //////////////////////////////////////////////////////////////////////////////////////////////
+// Dashboard > Security
 
 Breadcrumbs::for('account.security', function (BreadcrumbTrail $breadcrumbs)
 {
@@ -351,3 +359,8 @@ Breadcrumbs::for('account.merge-status', function (BreadcrumbTrail $breadcrumbs,
     $breadcrumbs->push('Request '.$mergeRequest->id.' ('.$mergeRequest->created_at.')', route('account.merge-status', [ 'requestId' => $mergeRequest->id ]));
 });
 
+Breadcrumbs::for('verification.notice', function (BreadcrumbTrail $breadcrumbs)
+{
+    $breadcrumbs->parent('account.security');
+    $breadcrumbs->push('E-mail verification', route('verification.notice'));
+});

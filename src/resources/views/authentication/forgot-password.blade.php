@@ -4,13 +4,18 @@
 @section('title', 'Logging in')
 
 @section('body')
-  <h1>Request a password reset</h1>
+  <h1>Forgot password</h1>
   @if ($errors->any())
-  <div class="alert alert-warning">
+  <dialog open class="alert alert-warning">
   @foreach ($errors->all() as $error)
   {{ $error }} 
   @endforeach
-  </div>
+  </dialog>
+  @endif
+  @if (! empty($status))
+  <dialog open class="alert alert-info">
+    {{ $status }}
+  </dialog>
   @endif
   <p>
     Enter your e-mail address in the text area below and we'll send you an e-mail with instructions on how to reset your password.
@@ -27,7 +32,7 @@
     </div>
   </form>
   
-@endsection
+@endsection 
 @section('styles')
 <link rel="stylesheet" href="@assetpath(style-auth.css)">
 @endsection

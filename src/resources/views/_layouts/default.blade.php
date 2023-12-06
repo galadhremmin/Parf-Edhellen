@@ -34,6 +34,13 @@
     ])
   </nav>
   <div id="ed-site-main">
+    <aside>
+      @include('_layouts._menu-user', [
+        'user' => $user,
+        'isAdmin' => $isAdmin,
+        'storage' => $storage
+      ])
+    </aside>
     <main>
       <div class="container">
         <noscript>
@@ -47,13 +54,6 @@
         @yield('body')
       </div>
     </main>
-    <aside>
-      @include('_layouts._menu-user', [
-        'user' => $user,
-        'isAdmin' => $isAdmin,
-        'storage' => $storage
-      ])
-    </aside>
   </div>
 </div>
 <footer class="text-secondary p-4 d-flex">

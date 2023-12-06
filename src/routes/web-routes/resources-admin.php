@@ -7,7 +7,7 @@ use App\Security\RoleConstants;
 Route::group([ 
         'namespace'  => 'Resources', 
         'prefix'     => 'admin', 
-        'middleware' => ['auth', 'auth.require-role:'.RoleConstants::Administrators] 
+        'middleware' => ['auth', 'auth.require-role:'.RoleConstants::Administrators, 'verified'] 
     ], function () {
 
     Route::resource('account', 'AccountController', [

@@ -10,7 +10,15 @@ Route::group([
     Route::resource('discuss', 'DiscussController', [
         'only' => [ 'create', 'store' ]
     ]);
+});
 
+
+// Restricted resources
+Route::group([ 
+    'namespace'  => 'Resources', 
+    'prefix'     => 'contribute', 
+    'middleware' => ['auth', 'verified']
+], function () {
     // Contribute
     Route::resource('contribution', 'ContributionController', [
         'except' => ['create']

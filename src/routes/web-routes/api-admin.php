@@ -7,7 +7,7 @@ use App\Security\RoleConstants;
 Route::group([ 
     'namespace' => API_NAMESPACE, 
     'prefix'    => API_PATH,
-    'middleware' => ['auth', 'auth.require-role:'.RoleConstants::Administrators]
+    'middleware' => ['auth', 'auth.require-role:'.RoleConstants::Administrators, 'verified']
 ], function () {
     Route::delete('gloss/{id}', [ 'uses' => 'GlossApiController@destroy' ])
         ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ]);

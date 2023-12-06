@@ -11,8 +11,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use App\Models\Account;
+use App\Models\AuthorizationProvider;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Auth\Events\Registered;
 
 class AccountManager
 {
@@ -33,16 +35,19 @@ class AccountManager
             ? 'Administrator' 
             : $this->getNextAvailableNickname($name);
 
-        $user = Account::create([
-            'email'          => $username,
-            'identity'       => ! empty($identity) ? $identity : 'MASTER|'.$username,
-            'nickname'       => $nickname,
-            'is_configured'  => ! empty($identity), // require e-mail validation?
+        if ($providerId !== null) {
+            AuthorizationProvider::findOrFail($providerId);
+        }
 
-            'authorization_provider_id'  => $providerId,
-            'is_passworded'              => ! empty($password),
-            'is_master_account'          => ! empty($password),
-            'password'                   => ! empty($password) ? Hash::make($password) : null
+        $user = Account::create([
+            'email'             => $username,
+            'identity'          => ! empty($identity) ? $identity : 'MASTER|'.$username,
+            'nickname'          => $nickname,
+
+            'authorization_provider_id' => $providerId,
+            'is_passworded'             => ! empty($password),
+            'is_master_account'         => ! empty($password),
+            'password'                  => ! empty($password) ? Hash::make($password) : null
         ]);
 
         // Important!
@@ -54,7 +59,10 @@ class AccountManager
 
         $user->addMembershipTo(RoleConstants::Users);
 
-        event(new AccountChanged($user));
+        // Notify Laravel that this user has been created. This will trigger downstream flows like
+        // e-mail verification.
+        event(new Registered($user));
+
         return $user;
     }
 
@@ -75,10 +83,10 @@ class AccountManager
             'profile'                   => $account->profile,
             'has_avatar'                => $account->has_avatar,
             'feature_background_url'    => $account->feature_background_url,
+            'email_verified_at'         => $account->email_verified_at,
             'authorization_provider_id' => null,
             'master_account_id'         => null,
             'identity'                  => 'MASTER|'.$account->email,
-            'is_configured'             => 0,
             'is_master_account'         => 1,
             'is_passworded'             => 0
         ]);
@@ -96,6 +104,7 @@ class AccountManager
             }
         }
 
+        event(new Registered($masterAccount));
         return $masterAccount;
     }
 

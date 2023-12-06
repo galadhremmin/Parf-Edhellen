@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::table('accounts', function (Blueprint $table) {
             $table->timestamp('email_verified_at')->nullable();
+            $table->dropColumn('is_configured');
         });
     }
 
@@ -23,6 +24,7 @@ return new class extends Migration
     {
         Schema::table('accounts', function (Blueprint $table) {
             $table->dropColumn('email_verified_at');
+            $table->boolean('is_configured')->default(false);
         });
     }
 };

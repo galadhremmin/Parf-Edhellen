@@ -1,30 +1,54 @@
 <?php
 
 // Restricted resources
-Route::group([
-    'prefix'     => 'account', 
-    'middleware' => ['auth']
-], function () {
 
-    // Mail settings
-    Route::resource('notifications', 'AccountNotificationController', [
-        'only' => ['index', 'store']
-    ]);
+use App\Http\Controllers\{
+    AccountMergeController,
+    AccountNotificationController,
+    AccountPasswordController,
+    AccountSecurityController,
+    AccountVerificationController
+};
 
-    Route::delete('notifications/override/{entityType}/{entityId}', 'AccountNotificationController@deleteOverride')
-        ->name('notifications.delete-override');
+Route::middleware('auth')->prefix('account')->group(function () {
 
     // User profile
-    Route::get('security', [ 'uses' => 'AccountSecurityController@security' ])
+    Route::get('security', [ AccountSecurityController::class, 'security' ])
         ->name('account.security');
-    Route::post('merge',  [ 'uses' => 'AccountSecurityController@merge' ])
-        ->name('account.merge');
-    Route::get('merge/{requestId}/status',  [ 'uses' => 'AccountSecurityController@mergeStatus' ])
-        ->name('account.merge-status');
-    Route::get('merge/{requestId}/confirm',  [ 'uses' => 'AccountSecurityController@confirmMerge' ])
-        ->name('account.confirm-merge');
-    Route::post('merge/{requestId}/cancel', [ 'uses' => 'AccountSecurityController@cancelMerge' ])
-        ->name('account.cancel-merge');
-    Route::post('password',  [ 'uses' => 'AccountSecurityController@createPassword' ])
+
+    Route::post('password', [ AccountPasswordController::class, 'createPassword' ])
         ->name('account.password');
+
+    Route::post('resend-verification',  [ AccountVerificationController::class, 'verifyAccount' ])
+        ->middleware(['auth', 'throttle:6,1'])
+        ->name('account.resent-verification');
+
+    Route::get('verify/{id}/{hash}', [ AccountVerificationController::class, 'confirmVerificationFromEmail' ])
+        ->middleware(['auth', 'signed'])
+        ->name('verification.verify');
+
+    Route::get('verification-required', [ AccountVerificationController::class, 'verificationNotice' ])
+        ->name('verification.notice');
+});
+
+Route::middleware(['auth', 'verified'])->prefix('account')->group(function () {
+
+    // Mail settings
+    Route::resource('notifications', AccountNotificationController::class, [
+        'only' => ['index', 'store']
+    ]);
+    Route::delete('notifications/override/{entityType}/{entityId}', [ AccountNotificationController::class, 'deleteOverride' ])
+        ->name('notifications.delete-override');
+
+    Route::post('merge', [ AccountMergeController::class, 'merge' ])
+        ->name('account.merge');
+
+    Route::get('merge/{requestId}/status',  [ AccountMergeController::class, 'mergeStatus' ])
+        ->name('account.merge-status');
+
+    Route::get('merge/{requestId}/confirm',  [ AccountMergeController::class, 'confirmMerge' ])
+        ->name('account.confirm-merge');
+
+    Route::post('merge/{requestId}/cancel', [ AccountMergeController::class, 'cancelMerge' ])
+        ->name('account.cancel-merge');
 });
