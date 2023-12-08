@@ -4,14 +4,17 @@ namespace App\Http\Controllers\Authentication;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{
+    Hash,
     Password as FacadesPassword,
     Validator
 };
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Auth\Events\PasswordReset;
 
 use Closure;
 use Exception;
-use Illuminate\Validation\ValidationException;
 
 class UsernamePasswordAuthenticationController extends AuthenticationController
 {
@@ -80,7 +83,7 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
         return $this->doLogin($request, $user, /* new: */ true, /* remember: */ false);
     }
 
-    public function resetPassword(Request $request)
+    public function requestPasswordReset(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'username' => [
@@ -108,8 +111,52 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
         ]);
     }
 
-    public function resetPasswordConfirmedFromEmail(Request $request)
+    public function initiatePasswordResetFromEmail(Request $request, string $token)
     {
-        dd($request->all()); // TODO
+        $data = $request->validate([
+            'email' => 'email|required'
+        ]);
+
+        return view('authentication.reset-password', [
+            'token' => $token,
+            'email' => $data['email']
+        ]);
+    }
+
+    public function completePasswordReset(Request $request, string $token)
+    {
+        $data = $request->validate([
+            'email'        => 'email|required',
+            'password' => [
+                'required',
+                'confirmed',
+                Password::defaults()
+            ]
+        ]);
+
+        $status = FacadesPassword::reset(
+            $data + [
+                'token' => $token
+            ],
+            function ($user) use ($request) {
+                $user->forceFill([
+                    'password' => Hash::make($request->password),
+                    'remember_token' => Str::random(60),
+                ])->save();
+
+                event(new PasswordReset($user));
+            }
+        );
+
+        // If the password was successfully reset, we will redirect the user back to
+        // the application's home authenticated view. If there is an error we can
+        // redirect them back to where they came from with their error message.
+        if ($status == FacadesPassword::PASSWORD_RESET) {
+            return redirect()->route('login')->with('status', __($status));
+        }
+
+        throw ValidationException::withMessages([
+            'password' => [trans($status)],
+        ]);
     }
 }

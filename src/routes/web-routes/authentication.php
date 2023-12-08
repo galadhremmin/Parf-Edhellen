@@ -22,8 +22,10 @@ Route::post('/register/password', [ UsernamePasswordAuthenticationController::cl
     ->name('auth.register');
 Route::get('/login/password/forgot', [ UsernamePasswordAuthenticationController::class, 'forgotPassword' ])
     ->name('auth.forgot-password');
-Route::post('/login/password/reset', [ UsernamePasswordAuthenticationController::class, 'resetPassword' ])
+Route::post('/login/password/reset', [ UsernamePasswordAuthenticationController::class, 'requestPasswordReset' ])
     ->middleware('throttle:6,1')
     ->name('auth.reset-password');
-Route::get('login/reset-password/{token}', [ UsernamePasswordAuthenticationController::class, 'resetPasswordConfirmedFromEmail' ])
+Route::get('login/reset-password/{token}', [ UsernamePasswordAuthenticationController::class, 'initiatePasswordResetFromEmail' ])
+    ->name('password.reset');
+Route::post('login/reset-password/{token}', [ UsernamePasswordAuthenticationController::class, 'completePasswordReset' ])
     ->name('password.reset');

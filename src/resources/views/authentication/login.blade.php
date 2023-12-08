@@ -1,7 +1,7 @@
 @inject('link', 'App\Helpers\LinkHelper')
 @extends('_layouts.default')
 
-@section('title', 'Logging in')
+@section('title', 'Sign in')
 
 @section('body')
   <h1>Welcome back!</h1>
@@ -50,6 +50,11 @@
   {{ $error }} 
   @endforeach
   </div>
+  @endif
+  @if (! empty($status))
+  <dialog open class="alert alert-success">
+    {{$status}}
+  </dialog>
   @endif
   <p>
     You can sign in with your e-mail address and password. This is an option if you don't have access to the social media above, or prefer not 

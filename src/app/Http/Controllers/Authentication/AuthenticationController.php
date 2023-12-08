@@ -70,10 +70,16 @@ class AuthenticationController extends Controller
             ];
         }
 
+        // Status are random messages from various surfaces that might interact or require
+        // authentication. For example, the password reset feature confirming that the reset
+        // was successful and that they now can log in.
+        $status = session('status', null);
+
         $providers = AuthorizationProvider::orderBy('name')->get();
         return view($isNew ? 'authentication.register' : 'authentication.login', [
             'providers' => $providers,
-            'error'     => $error
+            'error'     => $error,
+            'status'    => $status
         ]);
     }
 

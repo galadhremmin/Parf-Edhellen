@@ -1,7 +1,7 @@
 @inject('link', 'App\Helpers\LinkHelper')
 @extends('_layouts.default')
 
-@section('title', 'Logging in')
+@section('title', 'Forgot password')
 
 @section('body')
   <h1>Forgot password</h1>
