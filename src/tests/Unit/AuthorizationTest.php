@@ -2,15 +2,15 @@
 
 namespace Tests\Unit;
 
+use App\Security\AccountManager;
 use Tests\TestCase;
-use App\Http\Controllers\SocialAuthController;
 
 class AuthorizationTest extends TestCase
 {
     public function testAvailableNickname()
     {
         $expected = '5nOHivFbGMCVya8bY1SXeUZaXy';
-        $actual   = SocialAuthController::getNextAvailableNickname($expected);
+        $actual   = resolve(AccountManager::class)->getNextAvailableNickname($expected);
 
         $this->assertEquals($expected, $actual);
     }
@@ -22,7 +22,7 @@ class AuthorizationTest extends TestCase
         $this->assertTrue(mb_strlen($name) > $maxLength);
 
         $expected = mb_substr($name, 0, $maxLength - 4);
-        $actual   = SocialAuthController::getNextAvailableNickname($name);
+        $actual   = resolve(AccountManager::class)->getNextAvailableNickname($name);
 
         $this->assertEquals($expected, $actual);
     }

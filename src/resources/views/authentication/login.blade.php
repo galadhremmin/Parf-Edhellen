@@ -1,51 +1,88 @@
 @inject('link', 'App\Helpers\LinkHelper')
 @extends('_layouts.default')
 
-@section('title', 'Logging in')
+@section('title', 'Sign in')
 
 @section('body')
-  <h1>Logging in</h1>
-  <div class="container">
-    @if ($error !== null)
-    <div class="alert alert-danger">
-      <p>
-        ⚠️ We received an error from {{ ucfirst($error->provider) }} while trying to log you in. We've recorded the reason and we'll look into it. 
-        Please pick another account or try again later. 
-        @if (! empty($error->session_id))
-        If this error persists, please reach out to us with your session ID: {{ $error->session_id }}.</p>
-        @endif
-      </p>
-    </div>
-    @else
-    <div class="alert alert-info">
-      <span class="TextIcon TextIcon--info-sign bg-info"></span>
-      We do not store usernames and passwords; we trust so-called identity providers instead
-      @if (! empty($providers)) (like {{ $providers[0]->name }}). @else . @endif
-      Your profile will be linked to the provider you choose.
-    </div>
-    @endif
+  <h1>Welcome back!</h1>
+  <h2 class="mt-4">Sign in with social media</h2>
 
-    <p>Welcome! Please choose an identity provider to log in:</p>
+  @if ($error !== null)
+  <div class="alert alert-danger">
+    <p>
+      ⚠️ We received an error from {{ ucfirst($error->provider) }} while trying to log you in. We've recorded the reason and we'll look into it. 
+      Please pick another account or try again later. 
+      @if (! empty($error->session_id))
+      If this error persists, please reach out to us with your session ID: {{ $error->session_id }}.</p>
+      @endif
+    </p>
   </div>
+  @endif
+
+  <p class="mb-3">
+    This is the easiest option since you can just use your existing social media account. You won't have to create a password and we won't store
+    any sensitive sign in information about you.
+  </p>
 
   <div class="text-center">
   @foreach ($providers as $provider)
-  <a href="{{ $link->authRedirect($provider->name_identifier) }}" 
+  <a href="{{ route('auth.redirect', [ 'providerName' => $provider->name_identifier ]) }}" 
     style="background-image:url(/img/openid-providers/{{ $provider->logo_file_name }})"
-    title="Log in using {{ $provider->name }}." 
+    title="Sign in using {{ $provider->name }}." 
     class="ed-authorize-idp">
     {{ $provider->name }}
   </a>
   @endforeach
   </div>
 
-  <hr>
-
-  <p>
+  <p class="mb-4 mt-3">
     Do you miss an identity provider? Please reach out to <em>@parmaeldo</em> on X.
     Please refer to our <a href="{{ route('about.privacy') }}">privacy policy</a> and <a href="{{ route('about.cookies') }}">cookie policy</a> for information about how we use your data.
   </p>
 
+  <hr class="next-overlaps">
+  <span>or</span>
+
+  <h2 class="mt-4">Sign in with a password</h2>
+  @if ($errors->any())
+  <div class="alert alert-warning">
+  @foreach ($errors->all() as $error)
+  {{ $error }} 
+  @endforeach
+  </div>
+  @endif
+  @if (! empty($status))
+  <dialog open class="alert alert-success">
+    {{$status}}
+  </dialog>
+  @endif
+  <p>
+    You can sign in with your e-mail address and password. This is an option if you don't have access to the social media above, or prefer not 
+    to use them. If you have previously signed in with your social media, you need to create a password to your account before you can sign in.
+  </p>
+  <form method="post" action="{{ route('auth.password') }}">
+    @csrf
+    <div class="form-group">
+      <label for="password-login-username" class="form-label">E-mail address</label>
+      <input type="text" name="username" class="form-control" id="password-login-username">
+    </div>
+    <div class="form-group mt-3">
+      <label for="password-login-password" class="form-label">Password</label>
+      <input type="password" name="password" class="form-control" id="password-login-password">
+    </div>
+    <div class="form-group mt-3">
+      <label>
+        <input type="checkbox" name="remember" value="1">
+        Remember me
+      </label>
+    </div>
+    <div class="text-center mt-3">
+      <button type="submit" class="btn btn-secondary">Sign in</button>
+    </div>
+  </form>
+  <p>
+    Forgot your password? <a href="{{ route('auth.forgot-password') }}">Request a password reset by e-mail</a>.
+  </p>
 @endsection
 @section('styles')
 <link rel="stylesheet" href="@assetpath(style-auth.css)">

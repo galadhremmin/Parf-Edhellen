@@ -3,14 +3,12 @@
 namespace Tests\Unit\Aws;
 
 use Aws\Comprehend\ComprehendClient;
-use Illuminate\Support\Collection;
 
 use Tests\TestCase;
 use App\Aws\{
     ComprehendFacade,
     ComprehendFactory
 };
-use App\Interfaces\IIdentifiesPhrases;
 
 class ComprehendFacadeTest extends TestCase
 {
@@ -18,7 +16,7 @@ class ComprehendFacadeTest extends TestCase
     {
         $clientMock = $this->getMockBuilder(ComprehendClient::class) //
             ->disableOriginalConstructor() //
-            ->setMethods(['detectKeyPhrases']) //
+            ->onlyMethods(['detectKeyPhrases']) //
             ->getMock();
 
         $factoryMock = $this->createMock(ComprehendFactory::class);

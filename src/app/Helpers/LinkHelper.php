@@ -42,13 +42,6 @@ class LinkHelper
         ]);
     }
     
-    public function authRedirect(string $url)
-    {
-        return route('auth.redirect', [
-            'providerName' => $url
-        ]);
-    }
-    
     public function sentencesByLanguage(int $languageId, string $languageName)
     {
         $languageName = StringHelper::normalizeForUrl($languageName);
@@ -111,7 +104,7 @@ class LinkHelper
 
     public function mailCancellation(string $cancellationToken)
     {
-        return route('mail-setting.cancellation', ['token' => $cancellationToken]);
+        return route('notifications.cancellation', ['token' => $cancellationToken]);
     }
 
     public function contribution(int $contributionId)

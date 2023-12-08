@@ -251,7 +251,7 @@ export default class ApiConnector implements IReportErrorApi {
             let message = null;
             switch (error.response.status) {
                 case 401:
-                    message = 'You must log in to use this feature.';
+                    message = 'You must sign in to use this feature.';
                     category = ErrorCategory.RequestUnauthorized;
                     break;
                 case 403:

@@ -214,7 +214,7 @@ class BookAdapter
      * @param array $commentsById - an associative array with the entity ID as key, and the number of comments as value.
      * @param bool $atomDate - whether to format dates using the ATOM format.
      * @param LinkHelper $linker
-     * @return void
+     * @return \stdClass
      */
     public function adaptGloss($gloss, Collection $languages = null, ?Collection $inflections = null, array $commentsById = [], 
         bool $atomDate = false, LinkHelper $linker = null): \stdClass

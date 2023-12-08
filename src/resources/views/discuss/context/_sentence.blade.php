@@ -1,3 +1,3 @@
-@include('sentence.public._random', [
+@include('sentence._random', [
   'sentence' => $sentence
 ])

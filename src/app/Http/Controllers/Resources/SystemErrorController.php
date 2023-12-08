@@ -19,7 +19,7 @@ class SystemErrorController extends Controller
         $errorsByWeek = $this->getRowCountPerWeek(SystemError::class, 'category');
         $failedJobsByWeek = $this->getRowCountPerWeek(FailedJob::class, 'queue', 'failed_at');
 
-        return view('system-error.index', [
+        return view('admin.system-error.index', [
             'errorsByWeek'         => $errorsByWeek['count_by_week'],
             'errorCategories'      => $errorsByWeek['categories'],
             'failedJobsByWeek'     => $failedJobsByWeek['count_by_week'],

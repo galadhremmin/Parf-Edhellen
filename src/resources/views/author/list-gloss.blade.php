@@ -20,7 +20,7 @@
     <tbody>
       @foreach ($glossary as $gloss)
       <tr>
-        <td class="hidden-xs date">{{ $gloss->created_at }}</td>
+        <td class="hidden-xs date">@date($gloss->created_at)</td>
         <td>{{ $gloss->language->name }}</td>
         <td>
           @if ($gloss->is_uncertain || ! $gloss->is_canon)

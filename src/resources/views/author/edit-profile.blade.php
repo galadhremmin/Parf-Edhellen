@@ -8,8 +8,6 @@
     This is not the droid you are looking for.
   @else
   
-  <h1>{{ $author->nickname }}</h1>
-
   <section class="edit-profile"
           data-inject-module="dashboard-profile"
           data-inject-prop-container="ProfileForm"

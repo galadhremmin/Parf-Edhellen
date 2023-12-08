@@ -9,8 +9,8 @@ function DiscussTableRow(props: IProps) {
 
     return <div className="r">
         <div className="c">
-            <a href={thread.accountPath} title={`View ${thread.accountName} profile`} className="pp">
-                <img src={thread.accountAvatarPath} />
+            <a href={thread.accountPath} title={`View ${thread.accountName} profile`}>
+                <img className="pp" src={thread.accountAvatarPath} />
             </a>
         </div>
         <div className="c p2">

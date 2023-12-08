@@ -67,8 +67,8 @@ class DatabaseExternalToInternalUrlResolver implements IExternalToInternalUrlRes
 
     private static function extractHost(string $url)
     {
-        $host = strtolower(parse_url($url, PHP_URL_HOST));
-        return $host;
+        $host = parse_url($url, PHP_URL_HOST);
+        return empty($host) ? $url : $host;
     }
 
     private function getRegularExpressionForHostUnsafe(string $host)

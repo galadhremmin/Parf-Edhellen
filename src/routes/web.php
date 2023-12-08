@@ -16,12 +16,13 @@ $urlSeoReg = '[a-z_\-0-9]+';
 
 require_once 'constants.php';
 
+require 'web-routes/account-user.php';
 require 'web-routes/authentication.php';
 require 'web-routes/common.php';
-require 'web-routes/dashboard-admin.php';
-require 'web-routes/dashboard-user.php';
+require 'web-routes/author-user.php';
 require 'web-routes/dictionary.php';
 require 'web-routes/flashcards.php';
+require 'web-routes/flashcards-user.php';
 require 'web-routes/games.php';
 require 'web-routes/phrases.php';
 require 'web-routes/word-finder-admin.php';
@@ -39,8 +40,8 @@ require 'web-routes/resources-user.php';
 require 'web-routes/resources.php';
 
 // Mail cancellation
-Route::get('/stop-notification/{token}', ['uses' => 'Resources\\MailSettingController@handleCancellationToken'])
-    ->name('mail-setting.cancellation');
+Route::get('/stop-notification/{token}', ['uses' => 'AccountNotificationController@handleCancellationToken'])
+    ->name('notifications.cancellation');
 
 // Sitemap
 Route::get('sitemap/{context}', 'SitemapController@index');

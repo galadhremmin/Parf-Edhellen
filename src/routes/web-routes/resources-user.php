@@ -3,20 +3,22 @@
 // Restricted resources
 Route::group([ 
     'namespace'  => 'Resources', 
-    'prefix'     => 'dashboard', 
+    'prefix'     => 'contribute', 
     'middleware' => ['auth']
 ], function () {
-
-    // Mail settings
-    Route::resource('mail-setting', 'MailSettingController', [
-        'only' => ['index', 'create', 'store']
-    ]);
-
     // Discuss
     Route::resource('discuss', 'DiscussController', [
         'only' => [ 'create', 'store' ]
     ]);
+});
 
+
+// Restricted resources
+Route::group([ 
+    'namespace'  => 'Resources', 
+    'prefix'     => 'contribute', 
+    'middleware' => ['auth', 'verified']
+], function () {
     // Contribute
     Route::resource('contribution', 'ContributionController', [
         'except' => ['create']

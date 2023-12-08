@@ -2,6 +2,8 @@
 
 // Public unrestricted API for discuss
 
+use App\Security\RoleConstants;
+
 Route::group([ 
     'namespace' => API_NAMESPACE, 
     'prefix'    => API_PATH.'/discuss'
@@ -65,7 +67,7 @@ Route::group([
 Route::group([ 
     'namespace' => API_NAMESPACE, 
     'prefix'    => API_PATH.'/discuss',
-    'middleware' => ['auth', 'auth.require-role:Administrators']
+    'middleware' => ['auth', 'auth.require-role:'.RoleConstants::Administrators]
 ], function () {
     Route::put('thread/stick', [ 'uses' => 'DiscussApiController@updateThreadStickiness' ])
         ->name('api.discuss.stick');

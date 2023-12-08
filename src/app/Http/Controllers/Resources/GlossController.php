@@ -43,7 +43,7 @@ class GlossController extends Controller
             ->select('name', 'id')
             ->get();
 
-        return view('gloss.index', [ 
+        return view('admin.gloss.index', [ 
             'latestGlosses' => $latestGlosses,
             'languages' => $languages
         ]);
@@ -60,7 +60,7 @@ class GlossController extends Controller
             ->select('glosses.*')
             ->paginate(30);
 
-        return view('gloss.list', [
+        return view('admin.gloss.list', [
             'language' => $language,
             'glosses' => $glosses
         ]);

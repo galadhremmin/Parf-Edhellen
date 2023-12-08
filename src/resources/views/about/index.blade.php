@@ -101,12 +101,12 @@ a Tolkien-fan.</p>
 
 <a name="authentication"></a>
 <h2>Privacy</h2>
-<p>We collect only information about you when you log in, and even then, we only collect the very minimum we need to 
+<p>We collect only information about you when you sign in, and even then, we only collect the very minimum we need to 
 provide you with an unique identity. We do not and never will resell your information, and we do not share your information
 with any third party. For more information, please refer to our <a href="{{ route('about.privacy') }}">Privacy Policy</a>.</p>
 
 <h2>Cookies</h2>
-<p>We use cookies to maintain session state, which is essential for knowing whether you are logged in. We also use cookies to collect anonymous 
+<p>We use cookies to maintain session state, which is essential for knowing whether you are signed in. We also use cookies to collect anonymous 
 information about how you use our service. You can read more about our use of cookies (and cookies themselves) in our 
 <a href="{{ route('about.cookies') }}">Cookie Policy</a>.</p>
 

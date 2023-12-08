@@ -58,7 +58,7 @@
     @if ($sentence)
     <hr class="d-sm-none d-md-block" />
     <h4>Phrase of the day</h4>
-    @include('sentence.public._random', [ 
+    @include('sentence._random', [ 
       'sentence' => $sentence
     ])
     @endif

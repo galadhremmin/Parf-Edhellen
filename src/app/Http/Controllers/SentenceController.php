@@ -26,7 +26,7 @@ class SentenceController extends Controller
         $randomSentence     = $this->_sentenceRepository->getSentence($randomSentence->id);
         $languages          = $this->_sentenceRepository->getLanguages();
 
-        return view('sentence.public.index', [
+        return view('sentence.index', [
             'numberOfSentences'  => $numberOfSentences,
             'numberOfNeologisms' => $numberOfNeologisms,
             'languages'          => $languages,
@@ -41,7 +41,7 @@ class SentenceController extends Controller
             ->toArray();
         $language = Language::find($langId);
 
-        return view('sentence.public.sentences', [
+        return view('sentence.sentences', [
             'sentences'    => array_key_exists(0, $sentences) ? $sentences[0] : [],
             'neologisms'   => array_key_exists(1, $sentences) ? $sentences[1] : [],
             'language'     => $language
@@ -58,7 +58,7 @@ class SentenceController extends Controller
 
         $language = Language::findOrFail($langId);
         
-        return view('sentence.public.sentence', [
+        return view('sentence.sentence', [
             'sentence' => $sentence,
             'language' => $language
         ]);

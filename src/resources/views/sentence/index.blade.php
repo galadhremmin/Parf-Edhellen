@@ -1,42 +1,30 @@
 @inject('link', 'App\Helpers\LinkHelper')
 @extends('_layouts.default')
 
-@section('title', 'Phrases - Administration')
+@section('title', 'Phrases')
 @section('body')
 
-<h1>Phrases</h1>
-{!! Breadcrumbs::render('sentence.index') !!}
+  {!! Breadcrumbs::render('sentence.public') !!}
 
-<p>Click on a phrase beneath to edit it.</p>
+  @include('sentence._header')
+  <p>
+    Studying attested phrases is a great way of learn Tolkien's languages.
+    We currently have {{ $numberOfSentences }} phrases in our database, and
+    {{ $numberOfNeologisms }} of them are neologisms.
+  </p>
 
-<a class="btn btn-primary" href="{{ $link->contributeSentence() }}">Add phrase</a>
+  <div class="link-blocks">
+    @foreach ($languages as $language)
+    <blockquote>
+      <a class="block-link" href="{{ $link->sentencesByLanguage($language->id, $language->name) }}">
+        <h3>{{ $language->name }}</h3>
+        <p>{{ $language->description }}</p>
+      </a>
+    </blockquote>
+    @endforeach
+  </div>
+@endsection
 
-@if (count($sentences) < 1)
-<em>No known phrases.</em> 
-@else
-  @foreach ($sentences as $languageName => $sentencesForLanguage)
-    <h2>{{ $languageName }}</h2>
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Author</th>
-          <th>Flag</th>
-        </tr>
-      </thead>
-      <tbody>
-        @foreach ($sentencesForLanguage as $sentence)
-        <tr>
-          <td>{{ $sentence->id }}</td>
-          <td><a href="{{ $link->contributeSentence($sentence->id) }}">{{ $sentence->name }}</a></td>
-          <td>{{ $sentence->account_name }}</td>
-          <td>{{ $sentence->is_neologism ? 'Neologism' : 'Attested' }}</td>
-        </tr>
-        @endforeach
-      </tbody>
-    </table>
-  @endforeach
-@endif
-
+@section('styles')
+  <link href="@assetpath(/css/app.sentences.css)" rel="stylesheet">
 @endsection

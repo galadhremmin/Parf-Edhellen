@@ -33,7 +33,7 @@
 
 <li>
     <p>Login related cookies</p>
-    <p>We use cookies when you are logged in so that we can remember this fact. This prevents you from having to log in every single time you visit a new page. These cookies are typically removed or cleared when you log out to ensure that you can only access restricted features and areas when logged in.</p>
+    <p>We use cookies when you are logged in so that we can remember this fact. This prevents you from having to sign in every single time you visit a new page. These cookies are typically removed or cleared when you log out to ensure that you can only access restricted features and areas when logged in.</p>
 </li>
 
 

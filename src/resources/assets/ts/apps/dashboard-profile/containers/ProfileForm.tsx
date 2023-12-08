@@ -102,14 +102,15 @@ const ProfileForm = (props: IProps) => {
     return <>
         <ValidationErrorAlert error={errors} />
         <Jumbotron className="InformationForm--avatar-form" backgroundImageUrl={featureBackground}>
-            <button className="btn btn-secondary float-end" onClick={() => setOpenFeatureBackground(true)}>
-                <TextIcon icon="edit" />
-            </button>
             <AvatarForm path={avatarPath}
                         onAvatarChange={_onAvatarChange}
             />
             <h1>{nickname}</h1>
             {tengwar && <Tengwar as="h2" text={tengwar} />}
+            <button className="btn btn-secondary" onClick={() => setOpenFeatureBackground(true)}>
+                <TextIcon icon="edit" />{' '}
+                Change background
+            </button>
         </Jumbotron>
         <section className="InformationForm--info-form">
             <InformationForm introduction={introduction}

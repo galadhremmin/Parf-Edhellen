@@ -29,6 +29,11 @@ $screen-xxxl-width: 2200px;
 // Custom components
 $link-block-background-color-hover: #d9edf7;
 
+// Sizes
+$size-desktop-large-min-width: 1920px;
+$size-desktop-menu-height: 3.5rem;
+$size-desktop-user-menu-width: 16rem;
+
 // Bootstrap configuration
 @import "~bootstrap/scss/functions";
 @import "~bootstrap/scss/variables";

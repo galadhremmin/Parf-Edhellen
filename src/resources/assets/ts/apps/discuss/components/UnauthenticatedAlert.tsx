@@ -16,7 +16,7 @@ function UnauthenticatedAlert() {
         </strong>
         {' '}
         <a href="#" onClick={onAuthenticateClick}>
-            Log in to create a profile
+            Sign in and create a profile
         </a>.
     </StaticAlert>;
 }

@@ -8,6 +8,7 @@ use App\Events\{
     AccountAuthenticated,
     AccountChanged,
     AccountAvatarChanged,
+    AccountPasswordChanged,
     ForumPostCreated,
     ForumPostEdited,
     ForumPostLikeCreated,
@@ -55,6 +56,11 @@ class AuditTrailSubscriber
         $events->listen(
             AccountAvatarChanged::class,
             self::class.'@onAccountAvatarChanged'
+        );
+
+        $events->listen(
+            AccountPasswordChanged::class,
+            self::class."@onAccountPasswordChanged"
         );
 
         $events->listen(
@@ -134,6 +140,11 @@ class AuditTrailSubscriber
     public function onAccountAvatarChanged(AccountAvatarChanged $event)
     {
         $this->repository()->store(AuditTrail::ACTION_PROFILE_EDIT_AVATAR, $event->account);
+    }
+
+    public function onAccountPasswordChanged(AccountPasswordChanged $event)
+    {
+        $this->repository()->store(AuditTrail::ACTION_PROFILE_CHANGED_PASSWORD, $event->account);
     }
 
     /**

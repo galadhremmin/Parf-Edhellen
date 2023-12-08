@@ -47,6 +47,7 @@ export interface IGlossaryResponse<T = IBookGlossEntity> {
         language: ILanguageEntity;
     }[];
     sense: number[];
+    single?: boolean;
 }
 
 export interface ILanguagesResponse {
@@ -252,7 +253,9 @@ export interface IEntitiesRequest {
 
 export interface IEntitiesResponse<T> {
     entities: T;
+    entityMorph?: string;
     groupId: number;
+    groupIntlName?: string;
     single: boolean;
     word: string;
 }

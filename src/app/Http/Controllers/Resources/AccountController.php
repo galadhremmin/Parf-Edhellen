@@ -38,7 +38,7 @@ class AccountController extends Controller
 
         $accounts = $query->paginate(self::PAGINATION_SIZE);
         
-        return view('account.index', [
+        return view('admin.account.index', [
             'accounts' => $accounts
         ] + $v);
     }
@@ -52,7 +52,7 @@ class AccountController extends Controller
             ->paginate(15);
         $auditTrail = $this->_auditTrailAdapter->adapt($auditTrailPagination->items());
 
-        return view('account.edit', [
+        return view('admin.account.edit', [
             'account'              => $account,
             'auditTrail'           => $auditTrail,
             'auditTrailPagination' => $auditTrailPagination,
@@ -66,7 +66,7 @@ class AccountController extends Controller
         $accounts = $role->accounts()->orderBy('nickname', 'asc')
             ->paginate(self::PAGINATION_SIZE);
 
-        return view('account.by-role-list', [
+        return view('admin.account.by-role-list', [
             'accounts' => $accounts,
             'role'     => $role
         ]);
@@ -84,7 +84,7 @@ class AccountController extends Controller
         $account = Account::findOrFail($id);
         $account->addMembershipTo($role->name);
 
-        return redirect()->route('account.edit', ['account' => $account->id]);
+        return redirect()->route('admin.account.edit', ['account' => $account->id]);
     }
 
     public function deleteMembership(Request $request, int $id)
@@ -99,6 +99,6 @@ class AccountController extends Controller
         $account = Account::findOrFail($id);
         $account->removeMembership($role->name);
 
-        return redirect()->route('account.edit', ['account' => $account->id]);
+        return redirect()->route('admin.account.edit', ['account' => $account->id]);
     }
 }

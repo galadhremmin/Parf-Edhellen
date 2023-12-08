@@ -3,6 +3,7 @@ import React, { useCallback } from 'react';
 
 import Quote from '@root/components/Quote';
 import Tengwar from '@root/components/Tengwar';
+import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import { IProps } from './GlossList._types';
 
 import './GlossList.scss';
@@ -18,8 +19,9 @@ function GlossList(props: IProps) {
 
         const glossIdAttribute = 'glossId';
         const glossId = parseInt((ev.target as HTMLAnchorElement).dataset[glossIdAttribute], 10);
-        console.log(glossId);
-        // TODO: navigate to gloss
+        
+        const globalEvents = new GlobalEventConnector();
+        globalEvents.fire(globalEvents.loadReference, { glossId });
     }, []);
 
     return <ul className="GlossList--glosses">
