@@ -4,7 +4,7 @@ sudo git pull
 cd src
 if ! [ -z "$1" ]
   then
-    mv $1 public/
+    mv -v $1 public/
 fi
 sudo chown -R nginx:nginx .
 sudo -u nginx composer update
