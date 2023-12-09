@@ -19,6 +19,8 @@ class AuditTrail extends ModelBase
     const ACTION_PROFILE_EDIT_AVATAR      = 32;
     const ACTION_PROFILE_AUTHENTICATED    = 33;
     const ACTION_PROFILE_CHANGED_PASSWORD = 34;
+    const ACTION_PROFILE_CREATED          = 35;
+    const ACTION_PROFILE_MERGED           = 36;
 
     const ACTION_COMMENT_ADD              = 40;
     const ACTION_COMMENT_EDIT             = 41;

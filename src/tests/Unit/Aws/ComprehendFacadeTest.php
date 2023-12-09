@@ -16,7 +16,7 @@ class ComprehendFacadeTest extends TestCase
     {
         $clientMock = $this->getMockBuilder(ComprehendClient::class) //
             ->disableOriginalConstructor() //
-            ->onlyMethods(['detectKeyPhrases']) //
+            ->onlyMethods(['__call']) //
             ->getMock();
 
         $factoryMock = $this->createMock(ComprehendFactory::class);
@@ -38,7 +38,10 @@ class ComprehendFacadeTest extends TestCase
             ]
         ];
 
-        $clientMock->method('detectKeyPhrases')->willReturn($response);
+        $clientMock->expects($this->once())
+            ->method('__call')
+            ->with('detectKeyPhrases')
+            ->willReturn($response);
         $factoryMock->method('create')->willReturn($clientMock);
 
         $facade = new ComprehendFacade($factoryMock);

@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Helpers\StringHelper;
 use App\Models\Initialization\Morphs;
 use App\Repositories\SearchIndexResolvers\{
+    ISearchIndexResolver,
     KeywordsSearchIndexResolver
 };
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
@@ -92,41 +93,18 @@ class SearchIndexRepository
 
     public function resolveIndexToEntities(int $searchGroupId, SearchIndexSearchValue $v)
     {
-        $entityName = $this->getEntityNameFromSearchGroup($searchGroupId);
-
-        $config = config('ed.book_entities');
-        $resolverName = $config[$entityName]['resolver'];
-        $intlName = $config[$entityName]['intl_name'];
-        
-        $resolver = resolve($resolverName);
+        $resolver = $this->getResolverBySearchGroup($searchGroupId);
         $entities = $resolver->resolve($v);
 
-        $single = count($entities) === 1;
-        $word   = $v->getWord();
+        return $this->formatEntitiesResponse($entities, $searchGroupId, $v->getWord());
+    }
 
-        // DEPRECATED START: Backwards compatibility for the BookAdapter for the glossary
-        if (array_key_exists('single', $entities)) {
-            $single = $entities['single'];
-            unset($entities['single']);
-        }
+    public function resolveEntity(int $searchGroupId, int $entityId)
+    {
+        $resolver = $this->getResolverBySearchGroup($searchGroupId);
+        $entities = $resolver->resolveId($entityId);
 
-        if (array_key_exists('word', $entities)) {
-            $word = $entities['word'];
-            unset($entities['word']);
-        }
-        // DEPRECATED END
-
-        $discussEntityType = $this->getDiscussEntityTypeFromEntityName($entityName);
-        $entityMorph = Morphs::getAlias($discussEntityType);
-
-        return [
-            'entities'        => $entities,
-            'group_id'        => $searchGroupId,
-            'group_intl_name' => $intlName,
-            'single'          => $single,
-            'word'            => $word,
-            'entity_morph'    => $entityMorph
-        ];
+        return $this->formatEntitiesResponse($entities, $searchGroupId);
     }
 
     private function saveIndexInternal(ModelBase $model, Word $wordEntity, Language $keywordLanguage = null, string $inflection = null): array
@@ -235,6 +213,27 @@ class SearchIndexRepository
         throw new \Exception(sprintf('Unrecognised search group %d.', $searchGroupId));
     }
 
+    private function getResolverBySearchGroup(int $searchGroupId): ISearchIndexResolver
+    {
+        $entityName = $this->getEntityNameFromSearchGroup($searchGroupId);
+
+        $config = config('ed.book_entities');
+        if (! isset($config[$entityName])) {
+            throw new \Exception($entityName.' is not a supported book entity.');
+        }
+        $resolverName = $config[$entityName]['resolver'];
+        return resolve($resolverName);
+    }
+
+    private function getIntlByEntityName(string $entityName): string
+    {
+        $config = config('ed.book_entities');
+        if (! isset($config[$entityName])) {
+            throw new \Exception($entityName.' is not a supported book entity.');
+        }
+        return $config[$entityName]['intl_name'];
+    }
+
     private function getDiscussEntityTypeFromEntityName(string $entityName): ?string
     {
         $config = config('ed.book_entities');
@@ -243,6 +242,37 @@ class SearchIndexRepository
         }
 
         throw new \Exception(sprintf('Unrecognised entity name %s.', $entityName));
+    }
+
+    private function formatEntitiesResponse(array $entities, int $searchGroupId, ?string $word = null)
+    {
+        $entityName = $this->getEntityNameFromSearchGroup($searchGroupId);
+        $single = count($entities) === 1;
+
+        // DEPRECATED START: Backwards compatibility for the BookAdapter for the glossary
+        if (array_key_exists('single', $entities)) {
+            $single = $entities['single'];
+            unset($entities['single']);
+        }
+
+        if (array_key_exists('word', $entities)) {
+            $word = $entities['word'];
+            unset($entities['word']);
+        }
+        // DEPRECATED END
+
+        $discussEntityType = $this->getDiscussEntityTypeFromEntityName($entityName);
+        $intlName = $this->getIntlByEntityName($entityName);
+        $entityMorph = Morphs::getAlias($discussEntityType);
+
+        return [
+            'entities'        => $entities,
+            'group_id'        => $searchGroupId,
+            'group_intl_name' => $intlName,
+            'single'          => $single,
+            'word'            => $word,
+            'entity_morph'    => $entityMorph
+        ];
     }
 
     private function makeStoreHash(array $keywordData)

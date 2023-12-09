@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use Tests\TestCase;
 use App\Helpers\MarkdownParser;
+use App\Interfaces\IExternalToInternalUrlResolver;
 
 class MarkdownTest extends TestCase
 {
@@ -82,6 +83,26 @@ class MarkdownTest extends TestCase
         $parser = new MarkdownParser;
         $actual = $parser->text($markdown);
 
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testReferenceInterception()
+    {
+        $markdown = 'mae govannen [mellon](https://www.google.com)!';
+        $expected = '<p>mae govannen <a href="https://www.elfdict.com" class="ed-word-external-reference">mellon</a>!</p>';
+    
+        $parser = new MarkdownParser(new class implements IExternalToInternalUrlResolver {
+            function getInternalUrl(string $url): ?string {
+                return 'https://www.elfdict.com';
+            }
+            function isHostQualified(string $host): bool {
+                return true;
+            }
+            function getSources(): array {
+                return [];
+            }
+        });
+        $actual = $parser->text($markdown);
         $this->assertEquals($expected, $actual);
     }
 }
