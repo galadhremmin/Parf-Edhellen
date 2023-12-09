@@ -3,7 +3,6 @@ export interface IErrorEntity {
     category: string;
     createdAt: Date;
     error: string;
-    file: never;
     id: number;
     ip: string;
     isCommon: boolean;
@@ -11,22 +10,31 @@ export interface IErrorEntity {
     updatedAt: Date;
     url: string;
     userAgent: string;
+    sessionId: number;
+    file: string;
+    line: number;
+}
+
+export interface IFailedJob {
+    id: number;
+    uuid: string;
+    queue: string;
+    payload: string;
+    exception: string;
+    failedAt: string;
 }
 
 export interface IGetErrorsResponse {
-    currentPage: number;
-    data: IErrorEntity[];
-    firstPageUrl: number;
-    from: number;
-    lastPage?: number;
-    nextPageUrl: number;
-    path: string;
-    perPage: number;
-    prevPageUrl: string;
-    to: number;
-    total?: number;
+    errors: IErrorEntity[];
+    length: number;
+}
+
+export interface IGetFailedJobsResponse {
+    errors: IFailedJob[];
+    length: number;
 }
 
 export interface ILogApi {
-    getErrors(page?: number): Promise<IGetErrorsResponse>;
+    getErrors(from?: number, to?: number): Promise<IGetErrorsResponse>;
+    getFailedJobs(from?: number, to?: number): Promise<IGetFailedJobsResponse>;
 }

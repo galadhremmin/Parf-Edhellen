@@ -10,34 +10,34 @@ import {
 } from 'ag-grid-community';
 import { DateTime } from 'luxon';
 
-import { IErrorEntity } from '@root/connectors/backend/ILogApi';
+import { IFailedJob } from '@root/connectors/backend/ILogApi';
 import { IProps } from './LogList._types';
 
 import '@root/components/AgGrid.scss';
 
-const ColumnDefinitions: ColDef<IErrorEntity>[] = [
+const ColumnDefinitions: ColDef<IFailedJob>[] = [
     {
-        field: 'createdAt',
+        field: 'failedAt',
         valueFormatter: params => DateTime.fromISO(params.value).toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS),
     },
     {
-        field: 'message',
-        minWidth: 150,
+        field: 'queue',
+    },
+    { field: 'uuid' },
+    {
+        cellEditor: 'agLargeTextCellEditor',
+        cellEditorPopup: true,
+        editable: true,
+        field: 'exception',
+        minWidth: 300,
     },
     {
         cellEditor: 'agLargeTextCellEditor',
         cellEditorPopup: true,
         editable: true,
-        field: 'error',
+        field: 'payload',
         minWidth: 300,
     },
-    { field: 'url' },
-    { field: 'ip' },
-    { field: 'sessionId' },
-    { field: 'userAgent' },
-    { field: 'category' },
-    { field: 'file' },
-    { field: 'line' },
 ];
 
 const DefaultColumnDefinitions = {
@@ -50,12 +50,12 @@ const GridStyle = {
     height: '500px',
 };
 
-function LogList({ logApi }: IProps) {
+function FailedJobsList({ logApi }: IProps) {
     const onGridReady = useCallback((params: GridReadyEvent) => {
         const dataSource: IDatasource = {
             rowCount: undefined,
             getRows: (params) => {
-                logApi.getErrors(params.startRow, params.endRow)
+                logApi.getFailedJobs(params.startRow, params.endRow)
                     .then((data) => {
                         let lastRow = -1;
                         if (data.length <= params.endRow) {
@@ -84,4 +84,4 @@ function LogList({ logApi }: IProps) {
     </div>;
 }
 
-export default LogList;
+export default FailedJobsList;

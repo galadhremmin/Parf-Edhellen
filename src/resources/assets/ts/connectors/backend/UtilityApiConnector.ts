@@ -1,19 +1,26 @@
 import { DI, resolve } from '@root/di';
 import ApiConnector from '../ApiConnector';
 
-import { IGetErrorsResponse } from './ILogApi';
+import {
+    IGetErrorsResponse,
+    IGetFailedJobsResponse,
+    ILogApi,
+} from './ILogApi';
 import IUtilityApi, {
     IMarkdownParserRequest,
     IMarkdownParserResponse,
 } from './IUtilityApi';
 
-export default class UtilityApiConnector implements IUtilityApi {
+export default class UtilityApiConnector implements IUtilityApi, ILogApi {
     constructor(private _api = resolve<ApiConnector>(DI.BackendApi)) {
     }
 
-    public getErrors(page = 1) {
-        page = Math.max(1, page);
-        return this._api.get<IGetErrorsResponse>('utility/errors', { page });
+    public getErrors(from: number = 0, to: number = 100) {
+        return this._api.get<IGetErrorsResponse>('utility/errors', { from, to });
+    }
+
+    public getFailedJobs(from: number = 0, to: number = 100) {
+        return this._api.get<IGetFailedJobsResponse>('utility/failed-jobs', { from, to });
     }
 
     public parseMarkdown(args: IMarkdownParserRequest) {

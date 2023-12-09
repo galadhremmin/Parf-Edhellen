@@ -1,10 +1,7 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Provider } from 'react-redux';
-import {
-    applyMiddleware,
-    createStore,
-} from 'redux';
-import thunkMiddleware from 'redux-thunk';
+import { thunk } from 'redux-thunk';
+import { configureStore } from '@reduxjs/toolkit';
 
 import { ReduxThunkDispatch } from '@root/_types';
 import { composeEnhancers } from '@root/utilities/func/redux-tools';
@@ -15,14 +12,13 @@ import rootReducer from './reducers';
 
 import SentenceForm from './containers/SentenceForm';
 
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-balham.css';
+import '@root/components/AgGrid.scss';
 
-const store = createStore(rootReducer, undefined,
-    composeEnhancers('form-sentence')(
-        applyMiddleware(thunkMiddleware),
-    ),
-);
+const store = configureStore({
+    reducer: rootReducer,
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
+    enhancers: (getDefaultEnhancers) => getDefaultEnhancers().concat(composeEnhancers('form-sentence')),
+ })
 
 const Inject = (props: IProps) => {
     const {

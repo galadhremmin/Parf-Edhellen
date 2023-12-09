@@ -1,10 +1,7 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Provider } from 'react-redux';
-import {
-    applyMiddleware,
-    createStore,
-} from 'redux';
-import thunkMiddleware from 'redux-thunk';
+import { configureStore } from '@reduxjs/toolkit';
+import { thunk } from 'redux-thunk';
 
 import { composeEnhancers } from '@root/utilities/func/redux-tools';
 
@@ -14,9 +11,11 @@ import rootReducer from './reducers';
 
 import SentenceInspector from './containers/SentenceInspector';
 
-const store = createStore(rootReducer, undefined,
-    composeEnhancers('sentence-inspector')(applyMiddleware(thunkMiddleware)),
-);
+const store = configureStore({
+    reducer: rootReducer,
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
+    enhancers: (getDefaultEnhancers) => getDefaultEnhancers().concat(composeEnhancers('sentence-inspector')),
+ });
 
 const Inject = (props: IProps) => {
 
