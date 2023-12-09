@@ -2,9 +2,7 @@
 
 namespace Tests\Unit\Api;
 
-use Illuminate\Support\Str;
 use Tests\TestCase;
-use App\Http\Controllers\Api\v2\BookApiController;
 use App\Models\{
     Gloss,
     SearchKeyword

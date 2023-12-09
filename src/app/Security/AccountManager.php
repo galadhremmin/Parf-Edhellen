@@ -216,7 +216,7 @@ class AccountManager
         }
     }
 
-    private function getNextAvailableNickname(string $nickname = null)
+    public function getNextAvailableNickname(string $nickname = null)
     {
         if ($nickname === null || empty($nickname)) {
             $nickname = config('ed.default_account_name');

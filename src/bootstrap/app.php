@@ -38,7 +38,12 @@ $app->singleton(
 
 $app->singleton(
     App\Interfaces\IExternalToInternalUrlResolver::class,
-    App\Helpers\DatabaseExternalToInternalUrlResolver::class
+    function () {
+        $externalLinks = \App\Models\GlossGroup::whereNotNull('external_link_format')
+            ->orderBy('id')
+            ->get();
+        return new \App\Helpers\ExternalGlossGroupToInternalUrlResolver($externalLinks);
+    }
 );
 
 $app->singleton(

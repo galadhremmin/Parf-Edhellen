@@ -9,6 +9,7 @@ use App\Events\{
     AccountChanged,
     AccountAvatarChanged,
     AccountPasswordChanged,
+    AccountsMerged,
     ForumPostCreated,
     ForumPostEdited,
     ForumPostLikeCreated,
@@ -18,6 +19,7 @@ use App\Events\{
     GlossCreated,
     GlossEdited
 };
+use Illuminate\Auth\Events\Registered;
 
 class AuditTrailSubscriber
 {
@@ -51,6 +53,16 @@ class AuditTrailSubscriber
         $events->listen(
             AccountChanged::class,
             self::class.'@onAccountChanged'
+        );
+
+        $events->listen(
+            Registered::class,
+            self::class.'@onAccountCreated'
+        );
+
+        $events->listen(
+            AccountsMerged::class,
+            self::class.'@onAccountsMerged'
         );
 
         $events->listen(
@@ -119,19 +131,34 @@ class AuditTrailSubscriber
     }
 
     /**
-     * Handle the creation of a new like
-     */
-    public function onForumPostLiked(ForumPostLikeCreated $event) 
-    {
-        $this->repository()->store(AuditTrail::ACTION_COMMENT_LIKE, $event->post, $event->accountId);
-    }
-
-    /**
      * Handle the editing of an account's profile
      */
     public function onAccountChanged(AccountChanged $event)
     {
         $this->repository()->store(AuditTrail::ACTION_PROFILE_EDIT, $event->account);
+    }
+
+    /**
+     * Handle new account registration.
+     */
+    public function onAccountCreated(Registered $event)
+    {
+        $this->repository()->store(AuditTrail::ACTION_PROFILE_CREATED, $event->user);
+    }
+
+    public function onAccountsMerged(AccountsMerged $event)
+    {
+        foreach ($event->accountsMerged as $account) {
+            $this->repository()->store(AuditTrail::ACTION_PROFILE_MERGED, $account, $event->masterAccount->id);
+        }
+    }
+
+    /**
+     * Handle the creation of a new like
+     */
+    public function onForumPostLiked(ForumPostLikeCreated $event) 
+    {
+        $this->repository()->store(AuditTrail::ACTION_COMMENT_LIKE, $event->post, $event->accountId);
     }
 
     /**
@@ -215,7 +242,7 @@ class AuditTrailSubscriber
         $this->repository()->store(AuditTrail::ACTION_GLOSS_EDIT, $event->gloss, $event->accountId);
     }
 
-    private function repository()
+    private function repository(): IAuditTrailRepository
     {
         return resolve(IAuditTrailRepository::class);
     }

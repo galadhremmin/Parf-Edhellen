@@ -272,30 +272,20 @@ export default class SearchActions {
         }
     }
 
-    public expandSpecificGloss(glossId: number) {
+    public expandSpecificGloss(entityId: number) {
         return async (dispatch: ThunkDispatch<any, any, any>) => {
             try {
+                const groupId = SearchResultGlossaryGroupId;
                 dispatch({
-                    groupId: SearchResultGlossaryGroupId,
+                    groupId,
                     type: Actions.RequestEntities,
                 });
 
-                const entities = await this._api.gloss(glossId);
-                if (entities.sections.length > 0) {
-                    const {
-                        word,
-                        languageId
-                     } = entities.sections[0].entities[0];
-
-                    dispatch(this.setEntities({
-                        entities,
-                        groupId: SearchResultGlossaryGroupId,
-                        entityMorph: 'glossv', // TODO: don't specify this, return by entity API instead.
-                        groupIntlName: 'glossary', // TODO: don't specify this, return by entity API instead.
-                        single: entities.single ?? false,
-                        word,
-                    }));
-                }
+                const entities = await this._api.entity({
+                    entityId,
+                    groupId,
+                });
+                dispatch(this.setEntities(entities));
             } catch (e) {
                 // Ignore errors for now... the gloss probably doesn't exist (invalid reference)
                 console.error(e);

@@ -4,41 +4,40 @@ namespace App\Helpers;
 
 use App\Helpers\StringHelper;
 use App\Interfaces\IExternalToInternalUrlResolver;
-use App\Models\GlossGroup;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Collection;
 
-class DatabaseExternalToInternalUrlResolver implements IExternalToInternalUrlResolver
+class ExternalGlossGroupToInternalUrlResolver implements IExternalToInternalUrlResolver
 {
     private $_sources;
 
-    public function __construct()
+    public function __construct(Collection $glossGroups)
     {
-        $this->_sources = Cache::remember('ed.DatabaseExternalToInternalUrlResolver.sources', 60 * 60 /* seconds */, function () {
-            $externalLinks = GlossGroup::whereNotNull('external_link_format')
-                ->orderBy('id')
-                ->get();
-            $sources = [];
+        $sources = [];
 
-            foreach ($externalLinks as $group) {
-                $url = $group->external_link_format;
-                $host = self::extractHost($url);
-                $path = parse_url($url, PHP_URL_PATH);
+        foreach ($glossGroups as $group) {
+            $url = $group->external_link_format;
+            $host = self::extractHost($url);
+            $path = parse_url($url, PHP_URL_PATH);
 
-                if ($host === false || $path === false) {
-                    continue;
-                }
-
-                if (! array_key_exists($host, $sources)) {
-                    $sources[$host] = [
-                        'regex'      => '/'.str_replace('\{ExternalID\}', '([0-9]+)', preg_quote($path, '/')).'/',
-                        'group_id'   => $group->id,
-                        'group_name' => StringHelper::normalizeForUrl($group->name)
-                    ];
-                }
+            if ($host === false || $path === false) {
+                continue;
             }
 
-            return $sources;
-        });
+            if (! array_key_exists($host, $sources)) {
+                $sources[$host] = [
+                    'regex'      => '/'.str_replace('\{ExternalID\}', '([0-9]+)', preg_quote($path, '/')).'/',
+                    'group_id'   => $group->id,
+                    'group_name' => StringHelper::normalizeForUrl($group->name)
+                ];
+            }
+        }
+
+        $this->_sources = $sources;
+    }
+
+    public function getSources(): array
+    {
+        return $this->_sources;
     }
 
     public function getInternalUrl(string $url): ?string
@@ -52,6 +51,7 @@ class DatabaseExternalToInternalUrlResolver implements IExternalToInternalUrlRes
         $path = parse_url($url, PHP_URL_PATH);
         $matches = null;
         if (! preg_match($regex, $path, $matches)) {
+            print_r([$url, $path, $matches]);
             return null;
         }
 

@@ -24,9 +24,21 @@ use DB;
 
 class GlossSearchIndexResolver implements ISearchIndexResolver
 {
+    /**
+     * @var GlossRepository
+     */
     private $_glossRepository;
+    /**
+     * @var GlossInflectionRepository
+     */
     private $_glossInflectionRepository;
+    /**
+     * @var DiscussRepository
+     */
     private $_discussRepository;
+    /**
+     * @var BookAdapter
+     */
     private $_bookAdapter;
 
     private $_glossMorph;
@@ -114,5 +126,13 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
             : collect([]);
         $comments = $this->_discussRepository->getNumberOfPostsForEntities(Gloss::class, $glossIds);
         return $this->_bookAdapter->adaptGlosses($glosses, $inflections, $comments, $value->getWord());
+    }
+
+    public function resolveId(int $entityId): array
+    {
+        $glosses = $this->_glossRepository->getGloss($entityId)->all();
+        $inflections = $this->_glossInflectionRepository->getInflectionsForGlosses([$entityId]);
+        $comments = $this->_discussRepository->getNumberOfPostsForEntities(Gloss::class, [$entityId]);
+        return $this->_bookAdapter->adaptGlosses($glosses, $inflections, $comments, count($glosses) > 0 ? $glosses[0]->word->word : null);
     }
 }

@@ -42,7 +42,8 @@ abstract class ModelBase extends Model
 
             foreach ($attributeNames as $attributeName => $attribute) {
                 if ($attributeName === $this->primaryKey ||
-                    in_array($attributeName, $this->dates) ||
+                    // deliberately don't compare date times as they mutate when entities are persisted.
+                    (array_key_exists($attributeName, $this->casts) && $this->casts[$attributeName] === 'datetime') ||
                     ! array_key_exists($attributeName, $gloss->attributes)) {
                     continue;
                 }

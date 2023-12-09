@@ -260,8 +260,14 @@ export interface IEntitiesResponse<T> {
     word: string;
 }
 
+export interface ISpecificEntityRequest<T> {
+    groupId: number;
+    entityId: number;
+}
+
 export default interface IBookApi {
     entities<T = IGlossaryResponse>(args: IEntitiesRequest): Promise<IEntitiesResponse<T>>;
+    entity<T = IGlossaryResponse>(args: ISpecificEntityRequest<T>): Promise<IEntitiesResponse<T>>;
     find(args: IFindRequest): Promise<IFindResponse>;
     gloss(id: number): Promise<IGlossaryResponse>;
     groups(): Promise<IGlossGroup[]>;

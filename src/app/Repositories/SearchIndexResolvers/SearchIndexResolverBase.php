@@ -13,6 +13,11 @@ abstract class SearchIndexResolverBase implements ISearchIndexResolver
         $query = $this->buildQuery($value);
         return $this->resolveByQuery($query, $value);
     }
+    
+    public function resolveId(int $entityId): array
+    {
+        throw new \Exception('Not supported.');
+    }
 
     abstract protected function resolveByQuery(array $params, SearchIndexSearchValue $value): array;
 

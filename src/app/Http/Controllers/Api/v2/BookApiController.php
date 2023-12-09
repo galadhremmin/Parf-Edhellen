@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\v2;
 
 use Illuminate\Http\Request;
-use Cache;
+use Illuminate\Support\Facades\Cache;
 
 use App\Http\Controllers\Abstracts\BookBaseController;
 use App\Helpers\StringHelper;
@@ -112,17 +112,13 @@ class BookApiController extends BookBaseController
     /**
      * HTTP POST. Finds entitites corresponding to a specified keyword.
      */
-    public function entities(Request $request, int $groupId)
+    public function entities(Request $request, int $groupId, $entityId = 0): array
     {
-        $v = $this->validateFindRequest($request);
-
-        $cacheKey = 'ed.entities.'.$groupId.'.'.md5(json_encode($v));
-        $entities = Cache::get($cacheKey);
-        if ($entities === null) {
-            $entities = $this->_searchIndexRepository->resolveIndexToEntities($groupId, $v);
-            if (is_array($entities) && ! empty($entities['entities'])) {
-                Cache::put($cacheKey, $entities, 60 * 60 /* 1 hour */);
-            }
+        $entities = array();
+        if ($entityId !== 0) {
+            $entities = $this->getEntity($groupId, $entityId);
+        } else {
+            $entities = $this->findMatchingEntities($request, $groupId);
         }
         
         return $entities;
@@ -143,5 +139,33 @@ class BookApiController extends BookBaseController
         }
 
         return $gloss;
+    }
+
+    /**
+     * Finds the matching entities with the search query parameters in the request.
+     */
+    private function findMatchingEntities(Request $request, int $groupId)
+    {
+        $v = $this->validateFindRequest($request);
+
+        $cacheKey = 'ed.entities.'.$groupId.'.'.md5(json_encode($v));
+        $entities = Cache::get($cacheKey);
+        if ($entities === null) {
+            $entities = $this->_searchIndexRepository->resolveIndexToEntities($groupId, $v);
+            if (is_array($entities) && ! empty($entities['entities'])) {
+                Cache::put($cacheKey, $entities, 60 * 60 /* 1 hour */);
+            }
+        }
+
+        return $entities;
+    }
+
+    /**
+     * Retrieves the entity that matches the specific entity ID. The output is compatible
+     * with `findMatchesEntities`.
+     */
+    private function getEntity(int $groupId, int $entityId)
+    {
+        return $this->_searchIndexRepository->resolveEntity($groupId, $entityId);
     }
 }

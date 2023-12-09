@@ -9,6 +9,7 @@ import IBookApi, {
     ILanguagesResponse,
     ISentenceRequest,
     ISentenceResponse,
+    ISpecificEntityRequest,
 } from './IBookApi';
 import { IGlossGroup } from './IGlossResourceApi';
 
@@ -16,8 +17,12 @@ export default class BookApiConnector implements IBookApi {
     constructor(private _api = resolve<ApiConnector>(DI.BackendApi)) {
     }
 
-    entities<T>({ groupId, data }: IEntitiesRequest): Promise<IEntitiesResponse<T>> {
+    public entities<T>({ groupId, data }: IEntitiesRequest): Promise<IEntitiesResponse<T>> {
         return this._api.post<IEntitiesResponse<T>>(`book/entities/${groupId}`, data);
+    }
+
+    public entity<T = IGlossaryResponse>({ groupId, entityId }: ISpecificEntityRequest<T>): Promise<IEntitiesResponse<T>> {
+        return this._api.post<IEntitiesResponse<T>>(`book/entities/${groupId}/${entityId}`, {});
     }
 
     public find(args: IFindRequest) {
