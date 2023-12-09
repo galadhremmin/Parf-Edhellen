@@ -69,6 +69,7 @@ class SystemErrorController extends Controller
 
         $model = new $modelName;
         $countByWeek = $model::select($selectFields)
+            ->whereNotIn($category, ['http-401', 'http-404'])
             ->groupBy($groupByFields)
             ->get();
 

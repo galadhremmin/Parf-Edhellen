@@ -73,6 +73,7 @@ class UtilityApiController extends Controller
     public function getErrors()
     {
         $errors = SystemError::orderBy('id', 'desc')
+            ->whereNotIn('category', ['http-401', 'http-404'])
             ->paginate(10);
 
         return $errors;
