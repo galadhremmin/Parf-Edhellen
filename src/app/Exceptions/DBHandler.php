@@ -30,6 +30,12 @@ class DBHandler extends Handler
      */
     public function report(\Throwable $exception)
     {
+        foreach ($this->dontReport as $type) {
+            if ($exception instanceof $type) {
+                return;
+            }
+        }
+
         $this->_systemErrorRepository->saveException($exception);
         parent::report($exception);
     }
