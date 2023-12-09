@@ -28,4 +28,4 @@ Route::post('/login/password/reset', [ UsernamePasswordAuthenticationController:
 Route::get('login/reset-password/{token}', [ UsernamePasswordAuthenticationController::class, 'initiatePasswordResetFromEmail' ])
     ->name('password.reset');
 Route::post('login/reset-password/{token}', [ UsernamePasswordAuthenticationController::class, 'completePasswordReset' ])
-    ->name('password.reset');
+    ->name('password.complete-reset');
