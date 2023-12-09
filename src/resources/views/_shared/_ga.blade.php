@@ -7,7 +7,7 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-6J3WM5JEVV');
-window.addEventListener('ednavigate',function(ev){
+window.addEventListener('ednavigate-entity',function(ev){
 gtag('config','G-6J3WM5JEVV',{'page_path':ev.detail.address});  
 gtag('event','page_view');
 });
