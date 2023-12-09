@@ -2,7 +2,7 @@
 
 return [
     'title' => 'Account',
-    'profile' => 'Home',
+    'profile' => 'Your profile',
     'contributions' => 'Contribute',
     'notification-settings' => 'Notifications',
     'security' => 'Security',

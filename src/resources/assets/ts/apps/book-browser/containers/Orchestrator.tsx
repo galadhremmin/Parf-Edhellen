@@ -3,16 +3,13 @@ import {
     useEffect,
     useRef,
 } from 'react';
-import { Provider } from 'react-redux';import {
-    applyMiddleware,
-    createStore,
-} from 'redux';
-import thunkMiddleware from 'redux-thunk';
+import { Provider } from 'react-redux';
+import { thunk } from 'redux-thunk';
+import { configureStore } from '@reduxjs/toolkit';
 
 import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
 import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
-import { composeEnhancers } from '@root/utilities/func/redux-tools';
 
 import rootReducer from '../reducers';
 import Entities from './Entities';
@@ -20,9 +17,10 @@ import Search from './Search';
 import SearchResults from './SearchResults';
 import { SearchActions } from '../actions';
 
-const store = createStore(rootReducer, undefined,
-    composeEnhancers('book-browser')(applyMiddleware(thunkMiddleware)),
-);
+const store = configureStore({
+    reducer: rootReducer,
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
+})
 
 function Orchestrator() {
     const globalConnectorRef = useRef<GlobalEventConnector>();

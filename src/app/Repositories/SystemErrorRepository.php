@@ -42,7 +42,9 @@ class SystemErrorRepository
             'category'   => $category,
             'error'      => $error,
             'account_id' => $user !== null ? $user->id : null,
-            'session_id' => Session::getId()
+            'session_id' => Session::getId(),
+            'file'       => $exception->getFile(),
+            'line'       => $exception->getLine()
         ]);
     }
 

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\Abstracts\Controller;
 use App\Interfaces\IMarkdownParser;
+use App\Models\FailedJob;
 use App\Models\SystemError;
 use App\Repositories\SystemErrorRepository;
 
@@ -70,12 +71,42 @@ class UtilityApiController extends Controller
         return response(null, 201);
     }
 
-    public function getErrors()
+    public function getErrors(Request $request)
     {
-        $errors = SystemError::orderBy('id', 'desc')
-            ->whereNotIn('category', ['http-401', 'http-404'])
-            ->paginate(10);
+        $from = intval($request->query('from', 0));
+        $to   = intval($request->query('to', 100));
 
-        return $errors;
+        $query = SystemError::orderBy('id', 'desc')
+            ->whereNotIn('category', ['http-401', 'http-404']);
+
+        $length = $query->count();
+        $errors = $query
+            ->skip($from)
+            ->take($to)
+            ->get();
+
+        return [
+            'errors' => $errors,
+            'length' => $length
+        ];
+    }
+
+    public function getFailedJobs(Request $request)
+    {
+        $from = intval($request->query('from', 0));
+        $to   = intval($request->query('to', 100));
+
+        $query = FailedJob::orderBy('id', 'desc');
+
+        $length = $query->count();
+        $errors = $query
+            ->skip($from)
+            ->take($to)
+            ->get();
+
+        return [
+            'errors' => $errors,
+            'length' => $length
+        ];
     }
 }

@@ -17,4 +17,5 @@ Route::group([
         ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ]);
 
     Route::get('utility/errors', [ 'uses' => 'UtilityApiController@getErrors' ]);
+    Route::get('utility/failed-jobs', [ 'uses' => 'UtilityApiController@getFailedJobs' ]);
 });

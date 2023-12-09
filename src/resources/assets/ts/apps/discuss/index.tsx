@@ -1,10 +1,7 @@
 import { useEffect } from 'react';
 import { Provider } from 'react-redux';
-import {
-    applyMiddleware,
-    createStore,
-} from 'redux';
-import thunkMiddleware from 'redux-thunk';
+import { thunk } from 'redux-thunk';
+import { configureStore } from '@reduxjs/toolkit';
 
 import { ReduxThunkDispatch } from '@root/_types';
 import { IThreadResponse } from '@root/connectors/backend/IDiscussApi';
@@ -16,11 +13,11 @@ import rootReducer from './reducers';
 
 import Discuss from './containers/Discuss';
 
-const store = createStore(rootReducer, undefined,
-    composeEnhancers('discuss')(
-        applyMiddleware(thunkMiddleware),
-    ),
-);
+const store = configureStore({
+    reducer: rootReducer,
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
+    enhancers: (getDefaultEnhancers) => getDefaultEnhancers().concat(composeEnhancers('discuss')),
+ })
 
 const Inject = (props: IProps) => {
     const {
