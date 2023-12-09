@@ -15,7 +15,7 @@
   <p>
     Pick a new password for {{ $email }}:
   </p>
-  <form method="post" action="{{ route('password.reset', ['token' => $token]) }}">
+  <form method="post" action="{{ route('password.complete-reset', ['token' => $token]) }}">
     @csrf
     <input type="hidden" name="email" value="{{ $email }}">
     <div class="form-group">
