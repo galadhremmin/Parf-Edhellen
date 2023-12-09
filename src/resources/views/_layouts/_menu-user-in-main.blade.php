@@ -55,7 +55,7 @@
   </li>
   <li class="nav-item">
     <a class="nav-link {{ active('account.security') }}" href="{{ route('account.security') }}">
-      @lang('community.privacy')
+      @lang('community.security')
     </a>
   </li>
   <li class="nav-item">
