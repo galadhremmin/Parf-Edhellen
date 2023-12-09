@@ -258,8 +258,7 @@ class MarkdownParser extends \Parsedown
                 $attr['href']  = $internalUrl;
                 $attr['class'] = 'ed-word-external-reference';
 
-                    return $link;
-                }
+                return $link;
             }
         }
 
