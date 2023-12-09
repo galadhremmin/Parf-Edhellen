@@ -252,15 +252,6 @@ export default class SearchActions {
                 word: searchResult.word,
             });
 
-            // DEPRECATED: Inform indirect listeners about the navigation. Kept for backwards compatibility.
-            if (searchResult.groupId === SearchResultGlossaryGroupId) {
-                this._globalEvents.fire(this._globalEvents.loadGlossary, {
-                    address,
-                    languageId: args.languageId,
-                    word,
-                });
-            }
-
             dispatch(this.selectSearchResult(args.searchResult));
 
             dispatch({
