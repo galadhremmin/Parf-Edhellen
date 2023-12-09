@@ -98,11 +98,12 @@ class AccountMergeController extends Controller
 
         $providers = Account::whereIn('id', $accountIds)
             ->get()
-            ->filter(function ($account) {
-                return $account->authorization_provider !== null;
-            })
             ->map(function ($account) {
-                return $account->authorization_provider->name;
+                $provider = $account->authorization_provider()->withTrashed()->first();
+                return $provider !== null ? $provider->name : null;
+            })
+            ->filter(function ($providerName) {
+                return $providerName !== null;
             })
             ->join(', ');
 

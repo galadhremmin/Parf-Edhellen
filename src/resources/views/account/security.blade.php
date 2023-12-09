@@ -118,7 +118,7 @@
         @if ($account->is_passworded)
         Password
         @else
-        {{ $account->authorization_provider?->name }}
+        {{ $account->authorization_provider()->withTrashed()->first()?->name }}
         @endif
       </td>
       <td>@date($account->created_at)</td>
@@ -153,7 +153,7 @@
       <td>
         <a href="{{ route('account.merge-status', [ 'requestId' => $merge_request->id ]) }}">{{
           $merge_request_accounts[$merge_request->id]->map(function ($account) {
-            return $account->authorization_provider?->name.' ('.$account->id.')';
+            return $account->authorization_provider()->withTrashed()->first()?->name.' ('.$account->id.')';
           })->join(', ');
         }}</a>
       </td>
