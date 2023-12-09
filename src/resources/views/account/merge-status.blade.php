@@ -22,7 +22,7 @@
     <tr>
       <td>{{ $account->id }}</td>
       <td>{{ $account->nickname }}</td>
-      <td>{{ $account->authorization_provider?->name ?: 'Password' }}</td>
+      <td>{{ $account->authorization_provider()->withTrashed()->first()?->name ?: 'Password' }}</td>
       <td>@date($account->created_at)</td>
     </tr>
     @endforeach
