@@ -89,7 +89,8 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
             'username' => [
                 'required',
                 function (string $attribute, mixed $value, Closure $fail) {
-                    if ($this->_accountManager->getAccountByUsername($value) === null) {
+                    $account = $this->_accountManager->getAccountByUsername($value);
+                    if ($account === null || ! $account->is_passworded) {
                         $fail('We cannot find an account with that e-mail address.');
                     }
                 }
