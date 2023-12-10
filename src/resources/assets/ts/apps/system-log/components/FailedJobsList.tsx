@@ -18,7 +18,9 @@ import '@root/components/AgGrid.scss';
 const ColumnDefinitions: ColDef<IFailedJob>[] = [
     {
         field: 'failedAt',
-        valueFormatter: params => DateTime.fromISO(params.value).toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS),
+        valueFormatter: params => params.value
+            ? DateTime.fromISO(params.value).toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS)
+            : '-',
     },
     {
         field: 'queue',
