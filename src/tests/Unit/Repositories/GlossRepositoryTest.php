@@ -11,6 +11,7 @@ use App\Models\{
     GlossDetail,
     Translation
 };
+use App\Repositories\Enumerations\GlossChange;
 use App\Repositories\GlossRepository;
 
 class GlossRepositoryTest extends TestCase
@@ -111,11 +112,11 @@ class GlossRepositoryTest extends TestCase
 
         $changed = 0;
         $gloss0 = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details, $changed);
-        $this->assertEquals(GlossRepository::GLOSS_CHANGE_NEW, $changed);
+        $this->assertEquals(GlossChange::NEW->value, $changed);
 
         $changed = false;
         $gloss1 = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details, $changed);
-        $this->assertEquals(GlossRepository::GLOSS_CHANGE_NO_CHANGE, $changed);
+        $this->assertEquals(GlossChange::NO_CHANGE->value, $changed);
 
         $this->assertEquals($gloss0->id, $gloss1->id);
     }
@@ -195,7 +196,7 @@ class GlossRepositoryTest extends TestCase
         $versions = $r->getGlossVersions($gloss->id);
 
         $this->assertTrue(!! $changed);
-        $this->assertEquals(GlossRepository::GLOSS_CHANGE_METADATA, $changed);
+        $this->assertEquals(GlossChange::METADATA->value, $changed);
         $this->assertEquals(2, $versions->getVersions()->count());
     }
 
@@ -219,7 +220,7 @@ class GlossRepositoryTest extends TestCase
         $versions = $r->getGlossVersions($gloss->id);
 
         $this->assertTrue(!! $changed);
-        $this->assertEquals(GlossRepository::GLOSS_CHANGE_DETAILS, $changed);
+        $this->assertEquals(GlossChange::DETAILS->value, $changed);
         $this->assertEquals(1, $gloss->gloss_details->filter(function ($d) use ($newDetail) {
             return $d->text === $newDetail->text && $d->category === $newDetail->category;
         })->count());
@@ -244,7 +245,7 @@ class GlossRepositoryTest extends TestCase
         $versions = $r->getGlossVersions($gloss->id);
 
         $this->assertTrue(!! $changed);
-        $this->assertEquals(GlossRepository::GLOSS_CHANGE_TRANSLATIONS | GlossRepository::GLOSS_CHANGE_KEYWORDS, $changed);
+        $this->assertEquals(GlossChange::TRANSLATIONS->value | GlossChange::KEYWORDS->value, $changed);
         $this->assertEquals(1, $gloss->translations->filter(function ($t) use ($newTranslation) {
             return $t->translation === $newTranslation->translation;
         })->count());
@@ -267,7 +268,7 @@ class GlossRepositoryTest extends TestCase
         $versions = $r->getGlossVersions($gloss->id);
 
         $this->assertTrue(!! $changed);
-        $this->assertEquals(GlossRepository::GLOSS_CHANGE_KEYWORDS, $changed);
+        $this->assertEquals(GlossChange::KEYWORDS->value, $changed);
         $this->assertTrue($gloss->keywords->contains(function ($k) use ($newKeyword) {
             return $k->keyword === $newKeyword;
         }));

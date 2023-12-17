@@ -138,9 +138,9 @@ class BookAdapterTest extends TestCase
 
         $this->assertEquals(4, count($glosses));
 
-        $this->assertTrue(!! $glosses[0]->is_latest);
-        $this->assertFalse(!!$glosses[1]->is_latest);
-        $this->assertFalse(!!$glosses[2]->is_latest);
-        $this->assertFalse(!!$glosses[3]->is_latest);
+        $this->assertTrue(!! $glosses[0]->_is_latest);
+        $this->assertFalse(!! $glosses[1]->_is_latest);
+        $this->assertFalse(!! $glosses[2]->_is_latest);
+        $this->assertFalse(!! $glosses[3]->_is_latest);
     }
 }

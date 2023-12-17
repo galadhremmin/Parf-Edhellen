@@ -8,7 +8,7 @@ import {
 import { resolve, DI } from '@root/di';
 
 import { splitWord } from '../utilities/word-splitter';
-import { Actions } from '../actions';
+import Actions from '../actions/Actions';
 import {
     IGameAction,
     GameStage,
