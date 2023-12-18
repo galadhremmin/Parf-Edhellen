@@ -1,13 +1,15 @@
 import classNames from 'classnames';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 
 import { fireEventAsync } from '@root/components/Component';
-import { SecurityRole } from '@root/config';
 import TextIcon from '@root/components/TextIcon';
+import { SecurityRole } from '@root/config';
+import { withPropResolving } from '@root/di';
+import { DI } from '@root/di/keys';
 import useAnimationOnChange from '@root/utilities/hooks/useAnimationOnChange';
 
-import connectApi from './ApiConnector';
-import { IProps } from './ApiConnector._types';
+import { IProps } from './index._types';
+
 import './Likes.scss';
 
 function Likes(props: IProps) {
@@ -74,4 +76,6 @@ function Likes(props: IProps) {
     </a>;
 }
 
-export default connectApi(Likes);
+export default withPropResolving(Likes, {
+    apiConnector: DI.DiscussApi,
+});

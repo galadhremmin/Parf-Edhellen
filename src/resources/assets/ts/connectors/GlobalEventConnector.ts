@@ -10,11 +10,6 @@ import {
 
 export default class GlobalEventConnector {
     /**
-     * Prevent this class from being used in conjunction with the `SharedReference` class.
-     */
-    public static shared = false;
-
-    /**
      * Local in-memory collection of active listeners. There can only be one listener per
      * event *and* `GlobalEventConnector` instance.
      */

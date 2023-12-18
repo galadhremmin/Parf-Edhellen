@@ -3,11 +3,13 @@ import Avatar from '@root/components/Avatar';
 import Markdown from '@root/components/Markdown';
 import Tengwar from '@root/components/Tengwar';
 import TextIcon from '@root/components/TextIcon';
-import { DI, resolve } from '@root/di';
+import { withPropResolving } from '@root/di';
+import { DI } from '@root/di/keys';
+
+import JumbotronOrHeader from '../components/JumbotronOrHeader';
 import { IProps } from './Profile._types';
 
 import './Profile.scss';
-import JumbotronOrHeader from '../components/JumbotronOrHeader';
 
 function Profile(props: IProps) {
     const {
@@ -83,11 +85,12 @@ function Profile(props: IProps) {
 }
 
 Profile.defaultProps = {
-    roleManager: resolve(DI.RoleManager),
     showDiscuss: false,
     showProfile: false,
     showJumbotron: false,
     showProfileLink: false,
 } as Partial<IProps>;
 
-export default Profile;
+export default withPropResolving(Profile, {
+    roleManager: DI.RoleManager,
+});

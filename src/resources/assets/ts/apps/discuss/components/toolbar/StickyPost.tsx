@@ -1,12 +1,12 @@
-import classNames from 'classnames';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 
 import { fireEventAsync } from '@root/components/Component';
-import { SecurityRole } from '@root/config';
 import TextIcon from '@root/components/TextIcon';
+import { withPropResolving } from '@root/di';
+import { DI } from '@root/di/keys';
 
-import connectApi from './ApiConnector';
-import { IProps } from './ApiConnector._types';
+import { IProps } from './index._types';
+
 import './Likes.scss';
 
 function StickyPost(props: IProps) {
@@ -43,4 +43,6 @@ function StickyPost(props: IProps) {
     </a>;
 }
 
-export default connectApi(StickyPost);
+export default withPropResolving(StickyPost, {
+    apiConnector: DI.DiscussApi,
+});

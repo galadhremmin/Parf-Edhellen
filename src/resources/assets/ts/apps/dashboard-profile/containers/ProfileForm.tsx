@@ -6,22 +6,24 @@ import {
 import { IComponentEvent } from '@root/components/Component._types';
 import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
 import { AnonymousAvatarPath } from '@root/config';
-import { DI, resolve } from '@root/di';
+import { withPropResolving } from '@root/di';
+import { DI } from '@root/di/keys';
 
 import AvatarForm from '../components/AvatarForm';
 import InformationForm from '../components/InformationForm';
 import { IProps } from './ProfileForm._types';
 
-import './ProfileForm.scss';
-import TextIcon from '@root/components/TextIcon';
-import FeatureBackgroundDialog from '../components/FeatureBackgroundDialog';
 import Jumbotron from '@root/components/Jumbotron';
 import Tengwar from '@root/components/Tengwar';
+import TextIcon from '@root/components/TextIcon';
+import FeatureBackgroundDialog from '../components/FeatureBackgroundDialog';
+
+import './ProfileForm.scss';
 
 const ProfileForm = (props: IProps) => {
     const {
         account,
-        api,
+        api: accountApi,
     } = props;
     const accountId = account.id;
 
@@ -36,7 +38,7 @@ const ProfileForm = (props: IProps) => {
 
     const _onAvatarChange = useCallback(async (ev: IComponentEvent<File>) => {
         try {
-            const response = await api.saveAvatar({
+            const response = await accountApi.saveAvatar({
                 accountId,
                 file: ev.value,
             });
@@ -50,7 +52,7 @@ const ProfileForm = (props: IProps) => {
         } catch (e) {
             setErrors(e);
         }
-    }, [ accountId, avatarPath, api ]);
+    }, [ accountId, avatarPath ]);
 
     const _onIntroductionChange = (ev: IComponentEvent<string>) => {
         setIntroduction(ev.value);
@@ -66,7 +68,7 @@ const ProfileForm = (props: IProps) => {
 
     const _onSelectBackground = async (ev: IComponentEvent<string>) => {
         try {
-            const response = await api.saveFeatureBackground({
+            const response = await accountApi.saveFeatureBackground({
                 accountId,
                 featureBackgroundUrl: ev.value,
             });
@@ -85,7 +87,7 @@ const ProfileForm = (props: IProps) => {
 
     const _onSubmit = useCallback(async () => {
         try {
-            const response = await api.saveProfile({
+            const response = await accountApi.saveProfile({
                 accountId,
                 introduction,
                 nickname,
@@ -97,7 +99,7 @@ const ProfileForm = (props: IProps) => {
         } catch (e) {
             setErrors(e);
         }
-    }, [ accountId, api, introduction, nickname, tengwar ]);
+    }, [ accountId, introduction, nickname, tengwar ]);
 
     return <>
         <ValidationErrorAlert error={errors} />
@@ -123,15 +125,13 @@ const ProfileForm = (props: IProps) => {
             />
         </section>
         <FeatureBackgroundDialog open={openFeatureBackground}
-            accountApi={api}
+            accountApi={accountApi}
             onSelectBackground={_onSelectBackground}
             onDismiss={_onDismissBackground}
         />
     </>;
 };
 
-ProfileForm.defaultProps = {
-    api: resolve(DI.AccountApi),
-};
-
-export default ProfileForm;
+export default withPropResolving(ProfileForm, {
+    api: DI.AccountApi,
+});

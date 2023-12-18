@@ -6,11 +6,11 @@ import {
 import { IComponentEvent } from '@root/components/Component._types';
 import { ICreatePostRequest } from '@root/connectors/backend/IDiscussApi';
 import ValidationError from '@root/connectors/ValidationError';
-import { DI, resolve } from '@root/di';
+import { resolve, withPropResolving } from '@root/di';
+import { DI } from '@root/di/keys';
 import {
     SecurityRole,
 } from '@root/security';
-import BrowserHistory from '@root/utilities/BrowserHistory';
 
 import CreateThreadButton from '../components/CreateThreadButton';
 import FiltersButton from '../components/FiltersButton';
@@ -31,7 +31,7 @@ function Toolbar(props: IProps) {
             const postData = await apiConnector.createPost(ev.value);
             setError(null);
 
-            const browserHistory = resolve<BrowserHistory>(DI.BrowserHistory);
+            const browserHistory = resolve(DI.BrowserHistory);
             browserHistory.redirect(postData.postUrl);
         } catch (e) {
             if (e instanceof ValidationError) {
@@ -52,9 +52,7 @@ function Toolbar(props: IProps) {
     </div>;
 }
 
-Toolbar.defaultProps = {
-    apiConnector: resolve(DI.DiscussApi),
-    roleManager: resolve(DI.RoleManager),
-} as Partial<IProps>;
-
-export default Toolbar;
+export default withPropResolving(Toolbar, {
+    apiConnector: DI.DiscussApi,
+    roleManager: DI.RoleManager,
+});

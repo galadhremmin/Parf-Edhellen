@@ -1,10 +1,11 @@
-import React, {
+import {
     useCallback,
     useState,
 } from 'react';
 
 import { IAccountSuggestion } from '@root/connectors/backend/IAccountApi';
-import { DI, resolve } from '@root/di';
+import { withPropResolving } from '@root/di';
+import { DI } from '@root/di/keys';
 
 import { fireEvent } from '../../Component';
 import { IComponentEvent } from '../../Component._types';
@@ -60,8 +61,6 @@ function AccountSelect(props: IProps) {
     />;
 }
 
-AccountSelect.defaultProps = {
-    apiConnector: resolve(DI.AccountApi),
-} as Partial<IProps>;
-
-export default AccountSelect;
+export default withPropResolving(AccountSelect, {
+    apiConnector: DI.AccountApi,
+});

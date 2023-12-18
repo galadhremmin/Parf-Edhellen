@@ -28,10 +28,10 @@ const SearchResultsReducer = (state: ISearchResultState = {
             const resultsById: Record<number, ISearchResult> = {};
             const resultIds: number[] = [];
 
-            for (const group of searchResults.keywords.keys()) {
+            for (const group of Object.keys(searchResults.keywords)) {
                 groups.push(group);
 
-                const r = searchResults.keywords.get(group);
+                const r = searchResults.keywords[group];
                 resultsByGroupIndex.push(r);
                 r.forEach((v) => {
                     resultIds.push(v.id);

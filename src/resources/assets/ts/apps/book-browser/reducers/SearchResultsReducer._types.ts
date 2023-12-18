@@ -1,5 +1,5 @@
-import { ISearchGroups } from '@root/connectors/backend/IBookApi';
 import { IReduxAction } from '@root/_types';
+import { ISearchGroups } from '@root/connectors/backend/IBookApi';
 
 export interface ISearchResult {
     id: number;
@@ -19,7 +19,7 @@ export interface ISearchResultState {
 }
 
 export interface ISetSearchResultAction {
-    keywords: Map<string, ISearchResult[]>;
+    keywords: Record<string, ISearchResult[]>;
     searchGroups: ISearchGroups;
 }
 export interface ISelectSearchResultAction {

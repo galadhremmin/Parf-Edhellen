@@ -1,10 +1,9 @@
+import { configureStore } from '@reduxjs/toolkit';
 import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { thunk } from 'redux-thunk';
-import { configureStore } from '@reduxjs/toolkit';
 
 import { ReduxThunkDispatch } from '@root/_types';
-import { composeEnhancers } from '@root/utilities/func/redux-tools';
 
 import { SentenceActions } from './actions';
 import { IProps } from './index._types';
@@ -17,7 +16,6 @@ import '@root/components/AgGrid.scss';
 const store = configureStore({
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
-    enhancers: (getDefaultEnhancers) => getDefaultEnhancers().concat(composeEnhancers('form-sentence')),
  })
 
 const Inject = (props: IProps) => {

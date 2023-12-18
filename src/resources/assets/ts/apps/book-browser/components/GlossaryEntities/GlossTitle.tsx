@@ -1,11 +1,12 @@
 import classNames from 'classnames';
 import React, { Suspense } from 'react';
 
-import { DI, resolve } from '@root/di';
+import TextIcon from '@root/components/TextIcon';
+import { withPropResolving } from '@root/di';
+import { DI } from '@root/di/keys';
 import {
     SecurityRole,
 } from '@root/security';
-import TextIcon from '@root/components/TextIcon';
 
 import { IProps } from './GlossTitle._types';
 
@@ -59,8 +60,6 @@ const GlossTitle = (props: IProps) => {
     </h3>;
 };
 
-GlossTitle.defaultProps = {
-    roleManager: resolve(DI.RoleManager),
-};
-
-export default GlossTitle;
+export default withPropResolving(GlossTitle, {
+    roleManager: DI.RoleManager,
+});

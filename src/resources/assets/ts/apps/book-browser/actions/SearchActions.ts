@@ -1,26 +1,28 @@
 import { Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
+import { SearchResultGlossaryGroupId } from '@root/config';
+import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import IBookApi, {
-    IFindEntity,
-    ILanguageEntity,
     IEntitiesRequest,
     IEntitiesResponse,
+    IFindEntity,
+    ILanguageEntity,
     ISearchGroups,
 } from '@root/connectors/backend/IBookApi';
 import ILanguageApi from '@root/connectors/backend/ILanguageApi';
-import { SearchResultGlossaryGroupId } from '@root/config';
-import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
-import { DI, resolve } from '@root/di';
+import { resolve } from '@root/di';
+import { DI } from '@root/di/keys';
 import { stringHashAll } from '@root/utilities/func/hashing';
 import { mapArrayGroupBy } from '@root/utilities/func/mapper';
-import { capitalize, isEmptyString } from '@root/utilities/func/string-manipulation';
 import { toSnakeCase } from '@root/utilities/func/snake-case';
+import { capitalize } from '@root/utilities/func/string-manipulation';
 
 import { RootReducer } from '../reducers';
 import { ISearchAction } from '../reducers/SearchReducer._types';
 import Actions from './Actions';
 
+import { buildQueryString } from '@root/utilities/func/query-string';
 import {
     ISearchResult,
     ISelectSearchResultAction,
@@ -30,7 +32,6 @@ import {
     IBrowserHistoryState,
     IExpandSearchResultAction,
 } from './SearchActions._types';
-import { buildQueryString } from '@root/utilities/func/query-string';
 
 export default class SearchActions {
     constructor(private _api: IBookApi = resolve(DI.BookApi),
@@ -49,7 +50,7 @@ export default class SearchActions {
                 ...args,
             });
 
-            let keywords = new Map<string, ISearchResult[]>();
+            let keywords: Record<string, ISearchResult[]> = {};
             let searchGroups: ISearchGroups = {};
             if (typeof args.word === 'string' && args.word.length > 0) {
                 try {

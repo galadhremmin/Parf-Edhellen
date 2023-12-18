@@ -6,9 +6,9 @@ import GlossSelect from '@root/components/Form/GlossSelect';
 import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
 import Quote from '@root/components/Quote';
 import TextIcon from '@root/components/TextIcon';
-import IGlossResourceApi from '@root/connectors/backend/IGlossResourceApi';
 import ValidationError from '@root/connectors/ValidationError';
-import { DI, resolve } from '@root/di';
+import { resolve } from '@root/di';
+import { DI } from '@root/di/keys';
 import { IProps } from './index._types';
 
 function DeleteGloss(props: IProps) {
@@ -35,7 +35,7 @@ function DeleteGloss(props: IProps) {
     }, [ setIsOpen ]);
 
     const _onDelete = useCallback(async (ev: IComponentEvent<number>) => {
-        const api = resolve<IGlossResourceApi>(DI.GlossApi);
+        const api = resolve(DI.GlossApi);
         try {
             await api.delete(glossId, ev.value);
             setIsOpen(false);

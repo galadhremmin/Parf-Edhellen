@@ -1,8 +1,10 @@
 import { MouseEvent, useEffect, useState } from 'react';
+
 import Dialog from "@root/components/Dialog";
 import { IProps as IDialogProps } from '@root/components/Dialog._types';
 import IAccountApi from "@root/connectors/backend/IAccountApi";
-import { DI, resolve } from "@root/di";
+import { withPropResolving } from "@root/di";
+import { DI } from '@root/di/keys';
 
 interface IProps extends Pick<IDialogProps<any>, 'onDismiss'> {
     accountApi: IAccountApi;
@@ -10,11 +12,12 @@ interface IProps extends Pick<IDialogProps<any>, 'onDismiss'> {
     onSelectBackground: ComponentEventHandler<string>;
 }
 
-import './FeatureBackgroundDialog.scss';
-import { ComponentEventHandler } from "@root/components/Component._types";
 import { fireEvent } from "@root/components/Component";
+import { ComponentEventHandler } from "@root/components/Component._types";
 
-export default function FeatureBackgroundDialog(props: IProps) {
+import './FeatureBackgroundDialog.scss';
+
+export function FeatureBackgroundDialog(props: IProps) {
     const {
         accountApi,
         open,
@@ -26,7 +29,6 @@ export default function FeatureBackgroundDialog(props: IProps) {
     const [ backgrounds, setBackgrounds ] = useState([]);
 
     useEffect(() => {
-        
         if (accountApi) {
             accountApi.getFeatureBackgrounds().then((r) => {
                 setBackgrounds(
@@ -36,8 +38,7 @@ export default function FeatureBackgroundDialog(props: IProps) {
                 setLoading(false);
             });
         }
-
-    }, [accountApi]);
+    }, []);
 
     const _onBackgroundClick = (background: string, ev: MouseEvent) => {
         ev.preventDefault();
@@ -62,6 +63,9 @@ export default function FeatureBackgroundDialog(props: IProps) {
 }
 
 FeatureBackgroundDialog.defaultProps = {
-    accountApi: resolve<IAccountApi>(DI.AccountApi),
     open: false,
 } as IProps;
+
+export default withPropResolving(FeatureBackgroundDialog, {
+    accountApi: DI.AccountApi,
+});

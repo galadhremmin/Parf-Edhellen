@@ -1,8 +1,9 @@
-import { DI, resolve } from '@root/di';
+import { withPropResolving } from '@root/di';
+import { DI } from '@root/di/keys';
 import { IProps } from './Tengwar._types';
 
-import './Tengwar.scss';
 import { useEffect, useState } from 'react';
+import './Tengwar.scss';
 
 function Tengwar(props: IProps) {
     const {
@@ -45,7 +46,8 @@ function Tengwar(props: IProps) {
 
 Tengwar.defaultProps = {
     as: 'span',
-    transcriber: resolve(DI.Glaemscribe),
 } as Partial<IProps>;
 
-export default Tengwar;
+export default withPropResolving(Tengwar, {
+    transcriber: DI.Glaemscribe,
+});

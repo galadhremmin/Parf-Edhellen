@@ -2,8 +2,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { useEffect, useState } from 'react';
 
-import IUtilityApi, { IMarkdownParserResponse } from '@root/connectors/backend/IUtilityApi';
-import { DI, resolve } from '@root/di';
+import { IMarkdownParserResponse } from '@root/connectors/backend/IUtilityApi';
+import { withPropResolving } from '@root/di';
+import { DI } from '@root/di/keys';
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
 
 import HtmlInject from './HtmlInject';
@@ -39,8 +40,6 @@ function Markdown(props: IProps) {
     </>;
 }
 
-Markdown.defaultProps = {
-    markdownApi: resolve<IUtilityApi>(DI.UtilityApi),
-} as Partial<IProps>;
-
-export default Markdown;
+export default withPropResolving(Markdown, {
+    markdownApi: DI.UtilityApi,
+});

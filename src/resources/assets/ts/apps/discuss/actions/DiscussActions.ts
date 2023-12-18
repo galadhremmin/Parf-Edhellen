@@ -6,9 +6,10 @@ import IDiscussApi, {
     IPostResponse,
     IThreadResponse,
 } from '@root/connectors/backend/IDiscussApi';
-import { DI, resolve } from '@root/di';
-import BrowserHistory from '@root/utilities/BrowserHistory';
+import { resolve } from '@root/di';
+import { DI } from '@root/di/keys';
 
+import { updateQueryString } from '@root/utilities/func/query-string';
 import { keyGenerator, RootReducer } from '../reducers';
 import {
     IChangePostAction,
@@ -19,7 +20,6 @@ import {
     IThreadMetadataAction,
 } from '../reducers/ThreadReducer._types';
 import Actions from './Actions';
-import { updateQueryString } from '@root/utilities/func/query-string';
 
 export default class DiscussActions {
     constructor(private _api: IDiscussApi = resolve(DI.DiscussApi)) {
@@ -46,7 +46,7 @@ export default class DiscussActions {
     public setThread(threadData: IThreadResponse, updateHistory = false, jump = true): ReduxThunk {
         if (updateHistory) {
             // Update the browser's current page (in the event that the client refreshes the window)
-            const browserHistory = resolve<BrowserHistory>(DI.BrowserHistory);
+            const browserHistory = resolve(DI.BrowserHistory);
             const {
                 currentPage,
             } = threadData;

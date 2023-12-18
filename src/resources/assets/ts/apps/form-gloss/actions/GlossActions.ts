@@ -5,12 +5,12 @@ import {
 import { handleValidationErrors } from '@root/components/Form/Validation';
 import IContributionResourceApi, { IContribution, IContributionSaveResponse } from '@root/connectors/backend/IContributionResourceApi';
 import IGlossResourceApi, { IGlossEntity } from '@root/connectors/backend/IGlossResourceApi';
-import { DI, resolve } from '@root/di';
+import { resolve } from '@root/di';
+import { DI } from '@root/di/keys';
 
-import Actions from './Actions';
 import { IGlossInflection } from '@root/connectors/backend/IBookApi';
 import { GroupedInflectionsState, IInflectionGroupState } from '../reducers/InflectionsReducer._types';
-import { IChangeTrackerReducerState } from '../reducers/ChangeTrackerReducer._types';
+import Actions from './Actions';
 
 export default class GlossActions {
     constructor(

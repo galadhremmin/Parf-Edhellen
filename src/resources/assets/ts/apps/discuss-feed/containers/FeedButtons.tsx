@@ -1,10 +1,11 @@
-import { DI, resolve } from '@root/di';
 import { createFeedUrl } from '@root/connectors/FeedApiConnector';
 
+import { withPropResolving } from '@root/di';
+import { DI } from '@root/di/keys';
+import { SecurityRole } from '@root/security';
+import FeedButton from '../components/FeedButton';
 import SubscribeButton from '../components/SubscribeButton';
 import { IProps } from '../index._types';
-import FeedButton from '../components/FeedButton';
-import { SecurityRole } from '@root/security';
 
 function Feeds({
     groupId,
@@ -21,8 +22,8 @@ function Feeds({
 
 Feeds.defaultProps = {
     feedUrlFactory: createFeedUrl,
-    roleManager: resolve(DI.RoleManager),
-    subscriptionApi: resolve(DI.SubscriptionApi),
 } as Partial<IProps>;
 
-export default Feeds;
+export default withPropResolving(Feeds, {
+    roleManager: DI.RoleManager,
+});

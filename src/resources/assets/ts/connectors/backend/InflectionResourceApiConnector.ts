@@ -1,12 +1,12 @@
-import { DI, resolve } from '@root/di';
-import ApiConnector from '../ApiConnector';
+import { resolve } from '@root/di';
+import { DI } from '@root/di/keys';
 import {
     IInflectionMap,
     IInflectionResourceApi,
 } from './IInflectionResourceApi';
 
 export default class InflectionResourceApiConnector implements IInflectionResourceApi {
-    constructor(private _api = resolve<ApiConnector>(DI.BackendApi)) {
+    constructor(private _api = resolve(DI.BackendApi)) {
     }
 
     public inflections() {

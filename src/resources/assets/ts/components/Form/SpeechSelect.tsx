@@ -1,8 +1,9 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 
-import { DI, resolve } from '@root/di';
+import { DI } from '@root/di/keys';
 import { excludeProps } from '@root/utilities/func/props';
 
+import { withPropResolving } from '@root/di';
 import AsyncSelect from './AsyncSelect/AsyncSelect';
 import { IProps } from './SpeechSelect._types';
 
@@ -27,8 +28,9 @@ function SpeechSelect(props: IProps) {
 }
 
 SpeechSelect.defaultProps = {
-    apiConnector: resolve(DI.SpeechApi),
     value: null,
 } as IProps;
 
-export default SpeechSelect;
+export default withPropResolving(SpeechSelect, {
+    apiConnector: DI.SpeechApi,
+});

@@ -1,9 +1,10 @@
-import { DI, resolve } from '@root/di';
+import { withPropResolving } from '@root/di';
+import { DI } from '@root/di/keys';
 
+import FailedJobsList from '../components/FailedJobsList';
+import ErrorsByWeekBarGraph from '../components/Graph';
 import LogList from '../components/LogList';
 import { IProps } from '../index._types';
-import ErrorsByWeekBarGraph from '../components/Graph';
-import FailedJobsList from '../components/FailedJobsList';
 
 function Log(props: IProps) {
     const {
@@ -32,8 +33,6 @@ function Log(props: IProps) {
     </>;
 }
 
-Log.defaultProps = {
-    logApi: resolve(DI.UtilityApi),
-} as Partial<IProps>;
-
-export default Log;
+export default withPropResolving(Log, {
+    logApi: DI.LogApi,
+});

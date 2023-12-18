@@ -10,7 +10,7 @@ import { ISearchResult } from './SearchResultsReducer._types';
 
 describe('apps/book-browser/reducers/SearchResultsReducer', () => {
     test('builds correct state', () => {
-        const keywords = new Map<string, ISearchResult[]>();
+        const keywords: Record<string, ISearchResult[]> = {};
         const groupName = 'unit test';
         const values = [
             {
@@ -32,7 +32,7 @@ describe('apps/book-browser/reducers/SearchResultsReducer', () => {
                 word: 'elfin',
             },
         ];
-        keywords.set(groupName, values);
+        keywords[groupName] = values;
 
         const actual = SearchResultsReducer({
             groups: [],

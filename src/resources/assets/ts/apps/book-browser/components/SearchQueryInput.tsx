@@ -1,14 +1,14 @@
-import React from 'react';
-import classNames from 'classnames';
 import { fireEventAsync } from '@root/components/Component';
 import { FormComponent } from '@root/components/Form/FormComponent';
 import TextIcon from '@root/components/TextIcon';
+import classNames from 'classnames';
+import React from 'react';
 import {
-    IComponentProps,
     IProps,
+    ISearchComponentProps,
 } from './SearchQueryInput._types';
 
-export default class SearchQueryInput extends FormComponent<string, IProps, IComponentProps> {
+export default class SearchQueryInput extends FormComponent<string, IProps, ISearchComponentProps> {
     public get componentPropNames() {
         return ['autoFocus'];
     }
@@ -31,7 +31,7 @@ export default class SearchQueryInput extends FormComponent<string, IProps, ICom
                 autoCapitalize="off"
                 autoComplete="off"
                 className={fieldClasses}
-                onChange={this.onChange}
+                onChange={this.onBackingComponentChange}
                 onKeyDown={this._onKeyDown}
                 placeholder="What are you looking for?"
                 type="search"

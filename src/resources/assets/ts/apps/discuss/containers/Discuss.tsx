@@ -1,4 +1,4 @@
-import React, {
+import {
     Fragment,
     useCallback,
     useEffect,
@@ -14,22 +14,23 @@ import { IComponentEvent } from '@root/components/Component._types';
 import Pagination from '@root/components/Pagination';
 import { PageModes } from '@root/components/Pagination/Pagination._types';
 import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
-import { DI, resolve } from '@root/di';
+import { resolve } from '@root/di';
+import { DI } from '@root/di/keys';
 import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 import { getStateOrDefault } from '@root/utilities/redux/collectivize';
 
 import DiscussActions from '../actions/DiscussActions';
+import Form from '../components/Form';
 import {
     IFormChangeData,
     IFormOutput,
 } from '../components/Form._types';
-import Form from '../components/Form';
+import PaginationDetails from '../components/PaginationDetails';
 import Post from '../components/Post';
 import { IProps as IPostProps } from '../components/Post._types';
-import PaginationDetails from '../components/PaginationDetails';
 import RespondButton from '../components/RespondButton';
 import ConditionalToolbar from '../components/toolbar/ConditionalToolbar';
-import { keyGenerator, RootReducer } from '../reducers';
+import { RootReducer, keyGenerator } from '../reducers';
 import { IProps } from './Discuss._types';
 
 function Discuss(props: IProps) {
@@ -228,8 +229,8 @@ const mapStateToProps = (state: RootReducer, ownProps: IProps) => {
     } as Partial<IProps>;
 };
 
-const actions = new DiscussActions();
 const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => {
+    const actions = new DiscussActions();
     return {
         onExistingPostChange: (ev) => dispatch(actions.post({
             forumPostId: ev.value,

@@ -1,4 +1,4 @@
-import React, {
+import {
     useCallback,
     useState,
 } from 'react';
@@ -6,11 +6,12 @@ import React, {
 import { fireEventAsync } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
 import Dialog from '@root/components/Dialog';
+import { withPropResolving } from '@root/di';
+import { DI } from '@root/di/keys';
 
 import Form from '../Form';
 import { IFormChangeData } from '../Form._types';
 import ActionLink from './ActionLink';
-import connectApi from './ApiConnector';
 import { IProps } from './index._types';
 
 function EditPost(props: IProps) {
@@ -112,4 +113,7 @@ function EditPost(props: IProps) {
     </>;
 }
 
-export default connectApi(EditPost);
+export default withPropResolving(EditPost, {
+    apiConnector: DI.DiscussApi,
+});
+

@@ -3,18 +3,19 @@ import {
     ILanguagesResponse,
 } from '@root/connectors/backend/IBookApi';
 import ILanguageApi from '@root/connectors/backend/ILanguageApi';
-import { DI, resolve } from '@root/di';
+import { withPropResolving } from '@root/di';
+import { DI } from '@root/di/keys';
 import {
     FormComponent,
     integerConverter,
 } from './FormComponent';
+import { IComponentProps } from './FormComponent._types';
 
-interface IProps {
+interface IProps extends IComponentProps<number> {
     filter?: (language: ILanguageEntity) => boolean;
     formatter?: (language: ILanguageEntity) => string;
     includeAllLanguages?: boolean;
     languageConnector?: ILanguageApi;
-    value: number;
 }
 
 interface IState {
@@ -37,7 +38,6 @@ export class LanguageSelect extends FormComponent<number, IProps, IProps, IState
         filter: DefaultLanguageFilter,
         formatter: DefaultLanguageFormatter,
         includeAllLanguages: true,
-        languageConnector: resolve(DI.LanguageApi),
         value: 0,
     } as Partial<IProps>;
 
@@ -68,7 +68,7 @@ export class LanguageSelect extends FormComponent<number, IProps, IProps, IState
         const formatter = this.props.formatter || DefaultLanguageFormatter;
         const includeAllLanguages = this.props.includeAllLanguages;
 
-        return <select {...props} onChange={this.onChange}>
+        return <select {...props} onChange={this.onBackingComponentChange}>
             {includeAllLanguages && <option value={0}>All languages</option>}
             {!includeAllLanguages && <option value={0}></option>}
             {periods.map((period) => <LanguagePeriod
@@ -106,4 +106,6 @@ const LanguagePeriod = (props: {
     </optgroup>;
 };
 
-export default LanguageSelect;
+export default withPropResolving(LanguageSelect, {
+    languageConnector: DI.LanguageApi,
+});

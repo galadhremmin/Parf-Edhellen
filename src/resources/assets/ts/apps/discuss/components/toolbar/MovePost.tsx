@@ -1,14 +1,16 @@
 import React, { useCallback, useState } from 'react';
 
 import Dialog from '@root/components/Dialog';
+import Quote from '@root/components/Quote';
+import StaticAlert from '@root/components/StaticAlert';
 import TextIcon from '@root/components/TextIcon';
 import { IForumGroupEntity } from '@root/connectors/backend/IDiscussApi';
+import { withPropResolving } from '@root/di';
+import { DI } from '@root/di/keys';
 
-import connectApi from './ApiConnector';
-import { IProps } from './ApiConnector._types';
+import { IProps } from './index._types';
+
 import './Likes.scss';
-import StaticAlert from '@root/components/StaticAlert';
-import Quote from '@root/components/Quote';
 
 function MovePost(props: IProps) {
     const {
@@ -102,4 +104,6 @@ function MovePost(props: IProps) {
     </>;
 }
 
-export default connectApi(MovePost);
+export default withPropResolving(MovePost, {
+    apiConnector: DI.DiscussApi,
+});

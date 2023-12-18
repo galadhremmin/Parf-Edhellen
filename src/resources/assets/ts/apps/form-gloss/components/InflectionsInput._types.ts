@@ -5,12 +5,12 @@ import { GroupedInflectionsState, IInflectionGroupState } from '../reducers/Infl
 
 export interface IProps {
     inflections: GroupedInflectionsState;
-    inflectionApi: IInflectionResourceApi;
+    inflectionApi?: IInflectionResourceApi;
     focusNextRow?: boolean;
 
     onChange: ComponentEventHandler<IChangeEventArgs>;
 
-    speechApi: ISpeechResourceApi;
+    speechApi?: ISpeechResourceApi;
 }
 
 export interface IChangeEventArgs {

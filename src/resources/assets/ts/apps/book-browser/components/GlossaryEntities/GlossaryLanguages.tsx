@@ -1,6 +1,6 @@
 import Spinner from '@root/components/Spinner';
 import classNames from 'classnames';
-import React, { Fragment, lazy, Suspense } from 'react';
+import { Fragment, lazy, Suspense } from 'react';
 import GlossaryLanguage from './GlossaryLanguage';
 import { IProps } from './GlossaryLanguages._types';
 

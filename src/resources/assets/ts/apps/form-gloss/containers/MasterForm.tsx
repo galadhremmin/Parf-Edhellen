@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
-import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
-import StaticAlert from '@root/components/StaticAlert';
-import TextIcon from '@root/components/TextIcon';
-import Quote from '@root/components/Quote';
 import { ReduxThunkDispatch } from '@root/_types';
 import { fireEvent } from '@root/components/Component';
-import { IInflectionGroupState } from '../reducers/InflectionsReducer._types';
+import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
+import Quote from '@root/components/Quote';
+import StaticAlert from '@root/components/StaticAlert';
+import TextIcon from '@root/components/TextIcon';
 import { deepClone } from '@root/utilities/func/clone';
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
+import { IInflectionGroupState } from '../reducers/InflectionsReducer._types';
 
 import GlossActions from '../actions/GlossActions';
 import GlossForm from '../components/GlossForm';
 import InflectionForm from '../components/InflectionForm';
+import { FormSection } from '../index._types';
 import { RootReducer } from '../reducers';
 import { IChangeTrackerReducerState } from '../reducers/ChangeTrackerReducer._types';
 import { IProps } from './MasterForm._types';
-import { FormSection } from '../index._types';
 
 function MasterForm(props: IProps) {
     const {
@@ -101,45 +101,47 @@ const mapStateToProps = (state: RootReducer) => ({
     inflections: state.inflections,
 } as IProps);
 
-const actions = new GlossActions();
-const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => ({
-    onCopyGloss: () => dispatch(actions.setEditingGlossId(0)),
-    onGlossFieldChange: ({value: v}) => dispatch(actions.setGlossField(v.field, v.value)),
-    onInflectionCreate: () => dispatch(actions.createInflectionGroup()),
-    onInflectionsChange: ({value: v}) => dispatch(actions.setInflectionGroup(v.inflectionGroupUuid, v.inflectionGroup)),
-    onSubmit: ({value: v}) => {
-        const {
-            changes,
-            edit,
-            gloss: originalGloss,
-            inflections: originalInflections,
-        } = v;
+const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => {
+    const actions = new GlossActions();
+    return {
+        onCopyGloss: () => dispatch(actions.setEditingGlossId(0)),
+        onGlossFieldChange: ({value: v}) => dispatch(actions.setGlossField(v.field, v.value)),
+        onInflectionCreate: () => dispatch(actions.createInflectionGroup()),
+        onInflectionsChange: ({value: v}) => dispatch(actions.setInflectionGroup(v.inflectionGroupUuid, v.inflectionGroup)),
+        onSubmit: ({value: v}) => {
+            const {
+                changes,
+                edit,
+                gloss: originalGloss,
+                inflections: originalInflections,
+            } = v;
 
-        const gloss = deepClone(originalGloss);
-        const inflections = originalInflections.filter((i: IInflectionGroupState) => ! isEmptyString(i.word));
+            const gloss = deepClone(originalGloss);
+            const inflections = originalInflections.filter((i: IInflectionGroupState) => ! isEmptyString(i.word));
 
-        if (changes.glossChanged) {
-            // grandfathered sanitization logic from the GlossForm.
-            if (! edit) {
-                delete gloss.id;
+            if (changes.glossChanged) {
+                // grandfathered sanitization logic from the GlossForm.
+                if (! edit) {
+                    delete gloss.id;
+                }
+        
+                if (gloss.tengwar.length < 1) {
+                    delete gloss.tengwar;
+                }
+
+                dispatch(actions.saveGloss(gloss, changes.inflectionsChanged //
+                    ? inflections : null));
+            } else if (changes.inflectionsChanged) {
+                dispatch(actions.saveInflections( //
+                    inflections, //
+                    gloss.contributionId,
+                    gloss.id));
+            } else {
+                // Neither inflections nor gloss is modified - do nothing!
+                // TODO: Better error handling? Notify the user that nothing's done?
             }
-    
-            if (gloss.tengwar.length < 1) {
-                delete gloss.tengwar;
-            }
-
-            dispatch(actions.saveGloss(gloss, changes.inflectionsChanged //
-                ? inflections : null));
-        } else if (changes.inflectionsChanged) {
-            dispatch(actions.saveInflections( //
-                inflections, //
-                gloss.contributionId,
-                gloss.id));
-        } else {
-            // Neither inflections nor gloss is modified - do nothing!
-            // TODO: Better error handling? Notify the user that nothing's done?
-        }
-    },
-} as IProps);
+        },
+    } as IProps;
+};
 
 export default connect<IProps, IProps, IProps>(mapStateToProps, mapDispatchToProps)(MasterForm);

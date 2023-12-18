@@ -1,14 +1,14 @@
-import { DI, resolve } from '@root/di';
+import { resolve } from '@root/di';
+import { DI } from '@root/di/keys';
 
-import ApiConnector from '../ApiConnector';
 import IAccountApi, {
     FindResponse,
     IFindRequest,
     IGetAvatarRequest,
     IGetAvatarResponse,
+    IGetFeatureBackgroundsResponse,
     ISaveAvatarRequest,
     ISaveAvatarResponse,
-    IGetFeatureBackgroundsResponse,
     ISaveFeatureBackgroundRequest,
     ISaveFeatureBackgroundResponse,
     ISaveProfileRequest,
@@ -16,7 +16,7 @@ import IAccountApi, {
 } from './IAccountApi';
 
 export default class AccountApiConnector implements IAccountApi {
-    constructor(private _api = resolve<ApiConnector>(DI.BackendApi)) {
+    constructor(private _api = resolve(DI.BackendApi)) {
     }
 
     public find(args: IFindRequest) {

@@ -26,9 +26,9 @@ export interface IProps {
     languageId: number;
     onChange: ComponentEventHandler<IFragmentChangeEventArgs>;
 
-    glossApi: IGlossResourceApi;
-    inflectionApi: IInflectionResourceApi;
-    speechApi: ISpeechResourceApi;
+    glossApi?: IGlossResourceApi;
+    inflectionApi?: IInflectionResourceApi;
+    speechApi?: ISpeechResourceApi;
 }
 
 export interface IState extends IFragmentGridMetadata {

@@ -1,6 +1,7 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 
-import { DI, resolve } from '@root/di';
+import { withPropResolving } from '@root/di';
+import { DI } from '@root/di/keys';
 import { excludeProps } from '@root/utilities/func/props';
 
 import AsyncSelect from './AsyncSelect/AsyncSelect';
@@ -28,8 +29,9 @@ function GlossGroupSelect(props: IProps) {
 
 GlossGroupSelect.defaultProps = {
     allowEmpty: true,
-    apiConnector: resolve(DI.BookApi),
     value: null,
 } as IProps;
 
-export default GlossGroupSelect;
+export default withPropResolving(GlossGroupSelect, {
+    apiConnector: DI.BookApi,
+});

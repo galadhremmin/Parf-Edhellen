@@ -17,36 +17,19 @@ import {
     toSnakeCase,
 } from '../utilities/func/snake-case';
 import {
+    AxiosRequestFactory,
+    IApiBaseConnector,
+    IErrorReport,
+    IQueryStringMap,
+    IValidationFailedResponse,
+} from './ApiConnector._types';
+import {
     ErrorCategory,
     IReportErrorApi,
 } from './IReportErrorApi';
-import ValidationError, { IErrorMap } from './ValidationError';
+import ValidationError from './ValidationError';
 
-type AxiosRequestFactory = typeof axios.delete |
-    typeof axios.head |
-    typeof axios.get |
-    typeof axios.post |
-    typeof axios.put;
-
-interface IValidationFailedResponse {
-    message: string;
-    errors: IErrorMap;
-}
-
-interface IErrorReport {
-    apiMethod?: string;
-    config?: any;
-    data?: any;
-    error?: string;
-    headers?: any;
-    status?: number;
-}
-
-interface IQueryStringMap {
-    [key: string]: unknown;
-}
-
-export default class ApiConnector implements IReportErrorApi {
+export default class ApiConnector implements IApiBaseConnector, IReportErrorApi {
     constructor(
         private _apiPathName: string = ApiPath,
         private _apiErrorMethod: string = ApiExceptionCollectorMethod,

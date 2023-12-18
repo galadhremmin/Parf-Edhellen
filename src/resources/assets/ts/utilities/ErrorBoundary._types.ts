@@ -2,7 +2,7 @@ import { IReportErrorApi } from '@root/connectors/IReportErrorApi';
 
 export interface IProps {
     children: React.ReactNode;
-    reportErrorApi: IReportErrorApi;
+    reportErrorApi?: IReportErrorApi;
 }
 
 export interface IState {

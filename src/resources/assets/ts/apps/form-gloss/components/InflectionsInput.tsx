@@ -8,22 +8,23 @@ import {
     ICellRendererParams,
 } from 'ag-grid-community';
 // import { ClientSideRowModelModule } from 'ag-grid-community/community-modules/client-side-row-model';
-import { AgGridReact } from 'ag-grid-react';
+import { fireEventAsync } from '@root/components/Component';
+import BooleanCellEditor from '@root/components/Grid/cell-editors/BooleanCellEditor';
 import InflectionCellEditor from '@root/components/Grid/cell-editors/InflectionCellEditor';
 import { IFragmentGridMetadata } from '@root/components/Grid/cell-editors/InflectionCellEditor._types';
 import SpeechSelectCellEditor from '@root/components/Grid/cell-editors/SpeechSelectCellEditor';
-import BooleanCellEditor from '@root/components/Grid/cell-editors/BooleanCellEditor';
 import BooleanRenderer from '@root/components/Grid/renderers/BooleanRenderer';
-import LockedRenderer from '@root/components/Grid/renderers/LockedRenderer';
 import InflectionRenderer from '@root/components/Grid/renderers/InflectionRenderer';
+import LockedRenderer from '@root/components/Grid/renderers/LockedRenderer';
 import SpeechRenderer from '@root/components/Grid/renderers/SpeechRenderer';
 import { IInflection } from '@root/connectors/backend/IInflectionResourceApi';
 import { ISpeechEntity } from '@root/connectors/backend/ISpeechResourceApi';
-import { DI, resolve } from '@root/di';
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { IProps } from './InflectionsInput._types';
+import { withPropResolving } from '@root/di';
+import { DI } from '@root/di/keys';
+import { AgGridReact } from 'ag-grid-react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { IInflectionGroupState } from '../reducers/InflectionsReducer._types';
-import { fireEventAsync } from '@root/components/Component';
+import { IProps } from './InflectionsInput._types';
 
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-balham.css';
@@ -203,9 +204,7 @@ function InflectionsInput(props: IProps) {
     </div>;
 }
 
-InflectionsInput.defaultProps = {
-    inflectionApi: resolve(DI.InflectionApi),
-    speechApi: resolve(DI.SpeechApi),
-};
-
-export default InflectionsInput;
+export default withPropResolving(InflectionsInput, {
+    inflectionApi: DI.InflectionApi,
+    speechApi: DI.SpeechApi,
+});

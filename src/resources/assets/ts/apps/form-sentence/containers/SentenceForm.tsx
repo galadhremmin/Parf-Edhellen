@@ -1,26 +1,23 @@
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 
 import { ReduxThunkDispatch } from '@root/_types';
-import {
-    DI,
-    resolve,
-} from '@root/di';
 import { fireEvent } from '@root/components/Component';
+import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
 import Panel from '@root/components/Panel';
 import Quote from '@root/components/Quote';
 import StaticAlert from '@root/components/StaticAlert';
 import TextIcon from '@root/components/TextIcon';
-import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
-import { isEmptyString } from '@root/utilities/func/string-manipulation';
+import { resolve } from '@root/di';
+import { DI } from '@root/di/keys';
+import { deepClone } from '@root/utilities/func/clone';
+import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 import { SentenceActions } from '../actions';
 import FragmentsForm from '../components/FragmentsForm';
 import MetadataForm from '../components/MetadataForm';
 import TranslationForm from '../components/TranslationForm';
 import { RootReducer } from '../reducers';
 import { IProps } from './SentenceForm._types';
-import { deepClone } from '@root/utilities/func/clone';
-import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
 function SentenceForm(props: IProps) {
     const {

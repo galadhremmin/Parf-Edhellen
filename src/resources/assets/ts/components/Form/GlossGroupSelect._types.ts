@@ -4,5 +4,5 @@ import { IProps as IAsyncSelectProps } from './AsyncSelect/AsyncSelect._types';
 import { IComponentProps } from './FormComponent._types';
 
 export interface IProps extends IComponentProps<number>, Partial<Pick<IAsyncSelectProps, 'allowEmpty' | 'emptyText'>> {
-    apiConnector: IBookApi;
+    apiConnector?: IBookApi;
 }

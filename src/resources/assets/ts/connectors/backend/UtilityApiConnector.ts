@@ -1,5 +1,5 @@
-import { DI, resolve } from '@root/di';
-import ApiConnector from '../ApiConnector';
+import { resolve } from '@root/di';
+import { DI } from '@root/di/keys';
 
 import {
     IGetErrorsResponse,
@@ -12,7 +12,7 @@ import IUtilityApi, {
 } from './IUtilityApi';
 
 export default class UtilityApiConnector implements IUtilityApi, ILogApi {
-    constructor(private _api = resolve<ApiConnector>(DI.BackendApi)) {
+    constructor(private _api = resolve(DI.BackendApi)) {
     }
 
     public getErrors(from: number = 0, to: number = 100) {

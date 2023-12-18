@@ -1,10 +1,9 @@
+import { configureStore } from '@reduxjs/toolkit';
 import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { thunk } from 'redux-thunk';
-import { configureStore } from '@reduxjs/toolkit';
 
 import { ReduxThunkDispatch } from '@root/_types';
-import { composeEnhancers } from '@root/utilities/func/redux-tools';
 
 import GlossActions from './actions/GlossActions';
 import { FormSection, IProps } from './index._types';
@@ -15,7 +14,6 @@ import Form from './containers';
 const store = configureStore({
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
-    enhancers: (getDefaultEnhancers) => getDefaultEnhancers().concat(composeEnhancers('form-gloss')),
  })
 
 const Inject = (props: IProps) => {

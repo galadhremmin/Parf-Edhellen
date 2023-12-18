@@ -1,12 +1,14 @@
-import { DI, resolve } from '@root/di';
+import { resolve } from '@root/di';
+import { DI } from '@root/di/keys';
 import {
+    IBrowserHistoryUtility,
     IHistory,
     UrlComponents,
 } from './BrowserHistory._types';
 
-export default class BrowserHistory {
+export default class BrowserHistory implements IBrowserHistoryUtility {
     static get default() {
-        return resolve<BrowserHistory>(DI.BrowserHistory);
+        return resolve(DI.BrowserHistory);
     }
 
     constructor(private _history: IHistory = window.history) {

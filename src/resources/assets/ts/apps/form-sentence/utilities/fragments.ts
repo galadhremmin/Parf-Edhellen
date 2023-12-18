@@ -1,13 +1,10 @@
 import {
-    DI,
-    resolve,
-} from '@root/di';
-import {
     ISentenceFragmentEntity,
     SentenceFragmentType,
 } from '@root/connectors/backend/IBookApi';
+import { resolve } from '@root/di';
+import { DI } from '@root/di/keys';
 import { stringHash } from '@root/utilities/func/hashing';
-import Glaemscribe from '@root/utilities/Glaemscribe';
 
 const NewLinesCharacters          = '\n';
 const FullStopCharacters          = '.!?';
@@ -182,7 +179,7 @@ export const createFragment = async (fragment: string, type: SentenceFragmentTyp
     let tengwar: string = null;
 
     if (tengwarMode) {
-        const transcriber = resolve<Glaemscribe>(DI.Glaemscribe);
+        const transcriber = resolve(DI.Glaemscribe);
         tengwar = await transcriber.transcribe(fragment, tengwarMode);
     }
 
