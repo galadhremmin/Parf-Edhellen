@@ -3,15 +3,17 @@ import React, { useCallback } from 'react';
 
 import Quote from '@root/components/Quote';
 import Tengwar from '@root/components/Tengwar';
-import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import { IProps } from './GlossList._types';
 
+import { withPropInjection } from '@root/di';
+import { DI } from '@root/di/keys';
 import './GlossList.scss';
 
 function GlossList(props: IProps) {
     const {
         glosses,
         tengwarMode,
+        globalEvents,
     } = props;
 
     const _onWordOpen = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
@@ -20,8 +22,7 @@ function GlossList(props: IProps) {
         const glossIdAttribute = 'glossId';
         const glossId = parseInt((ev.target as HTMLAnchorElement).dataset[glossIdAttribute], 10);
         
-        const globalEvents = new GlobalEventConnector();
-        globalEvents.fire(globalEvents.loadReference, { glossId });
+        globalEvents?.fire(globalEvents.loadReference, { glossId });
     }, []);
 
     return <ul className="GlossList--glosses">
@@ -47,4 +48,6 @@ function GlossList(props: IProps) {
     </ul>;
 }
 
-export default GlossList;
+export default withPropInjection(GlossList, {
+    globalEvents: DI.GlobalEvents,
+});

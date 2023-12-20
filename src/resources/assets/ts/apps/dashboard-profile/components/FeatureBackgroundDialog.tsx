@@ -3,7 +3,7 @@ import { MouseEvent, useEffect, useState } from 'react';
 import Dialog from "@root/components/Dialog";
 import { IProps as IDialogProps } from '@root/components/Dialog._types';
 import IAccountApi from "@root/connectors/backend/IAccountApi";
-import { withPropResolving } from "@root/di";
+import { withPropInjection } from "@root/di";
 import { DI } from '@root/di/keys';
 
 interface IProps extends Pick<IDialogProps<any>, 'onDismiss'> {
@@ -66,6 +66,6 @@ FeatureBackgroundDialog.defaultProps = {
     open: false,
 } as IProps;
 
-export default withPropResolving(FeatureBackgroundDialog, {
+export default withPropInjection(FeatureBackgroundDialog, {
     accountApi: DI.AccountApi,
 });

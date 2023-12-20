@@ -1,6 +1,6 @@
 import {
-    useCallback,
-    useState,
+  useCallback,
+  useState,
 } from 'react';
 
 import { fireEvent } from '@root/components/Component';
@@ -8,7 +8,7 @@ import { IComponentEvent } from '@root/components/Component._types';
 import DateLabel from '@root/components/DateLabel';
 import Dialog from '@root/components/Dialog';
 import ProfileLink from '@root/components/ProfileLink';
-import { withPropResolving } from '@root/di';
+import { withPropInjection } from '@root/di';
 
 import { DI } from '@root/di/keys';
 import ActionLink from './ActionLink';
@@ -70,6 +70,6 @@ function DeletePost(props: IProps) {
     </>;
 }
 
-export default withPropResolving(DeletePost, {
+export default withPropInjection(DeletePost, {
     apiConnector: DI.DiscussApi,
 });

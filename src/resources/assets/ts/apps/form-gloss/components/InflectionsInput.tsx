@@ -1,11 +1,11 @@
 import {
-    CellValueChangedEvent,
-    ColDef,
-    ColGroupDef,
-    EditableCallbackParams,
-    GetRowIdParams,
-    GridReadyEvent,
-    ICellRendererParams,
+  CellValueChangedEvent,
+  ColDef,
+  ColGroupDef,
+  EditableCallbackParams,
+  GetRowIdParams,
+  GridReadyEvent,
+  ICellRendererParams,
 } from 'ag-grid-community';
 // import { ClientSideRowModelModule } from 'ag-grid-community/community-modules/client-side-row-model';
 import { fireEventAsync } from '@root/components/Component';
@@ -19,7 +19,7 @@ import LockedRenderer from '@root/components/Grid/renderers/LockedRenderer';
 import SpeechRenderer from '@root/components/Grid/renderers/SpeechRenderer';
 import { IInflection } from '@root/connectors/backend/IInflectionResourceApi';
 import { ISpeechEntity } from '@root/connectors/backend/ISpeechResourceApi';
-import { withPropResolving } from '@root/di';
+import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 import { AgGridReact } from 'ag-grid-react';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -204,7 +204,7 @@ function InflectionsInput(props: IProps) {
     </div>;
 }
 
-export default withPropResolving(InflectionsInput, {
+export default withPropInjection(InflectionsInput, {
     inflectionApi: DI.InflectionApi,
     speechApi: DI.SpeechApi,
 });

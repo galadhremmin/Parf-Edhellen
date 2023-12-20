@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { fireEventAsync } from '@root/components/Component';
 import TextIcon from '@root/components/TextIcon';
-import { withPropResolving } from '@root/di';
+import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 
 import { IProps } from './index._types';
@@ -43,6 +43,6 @@ function StickyPost(props: IProps) {
     </a>;
 }
 
-export default withPropResolving(StickyPost, {
+export default withPropInjection(StickyPost, {
     apiConnector: DI.DiscussApi,
 });

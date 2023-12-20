@@ -1,18 +1,20 @@
 import React, { Suspense } from 'react';
 
-import Markdown from '@root/components/Markdown';
-import Spinner from '@root/components/Spinner';
-import useGloss from '@root/utilities/hooks/useGloss';
-import { IProps } from './GlossFragmentInspector._types';
-import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
 import { IComponentEvent } from '@root/components/Component._types';
+import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
+import Markdown from '@root/components/Markdown';
 import Quote from '@root/components/Quote';
+import Spinner from '@root/components/Spinner';
 import StaticAlert from '@root/components/StaticAlert';
-import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import Tengwar from '@root/components/Tengwar';
+import { resolve } from '@root/di';
+import { DI } from '@root/di/keys';
+import useGloss from '@root/utilities/hooks/useGloss';
+
+import { IProps } from './GlossFragmentInspector._types';
 
 function onReferenceLinkClick(ev: IComponentEvent<IReferenceLinkClickDetails>) {
-    const globalEvents = new GlobalEventConnector();
+    const globalEvents = resolve(DI.GlobalEvents);
     globalEvents.fire(globalEvents.loadReference, ev.value);
 }
 

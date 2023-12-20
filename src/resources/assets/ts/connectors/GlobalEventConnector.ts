@@ -1,14 +1,15 @@
 import {
+    GlobalEventErrorLogger,
     GlobalEventLoadEntity,
     GlobalEventLoadGlossary,
     GlobalEventLoadReference,
 } from '../config';
-import {
+import IGlobalEvents, {
     EventListenerOrName,
     IEventMap,
-} from './GlobalEventConnector._types';
+} from './IGlobalEvents';
 
-export default class GlobalEventConnector {
+export default class GlobalEventConnector implements IGlobalEvents {
     /**
      * Local in-memory collection of active listeners. There can only be one listener per
      * event *and* `GlobalEventConnector` instance.
@@ -66,6 +67,20 @@ export default class GlobalEventConnector {
      */
     public get loadReference() {
         return GlobalEventLoadReference;
+    }
+
+    /**
+     * Specifies the global error handler.
+     */
+    public set errorLogger(listenerFunc: EventListenerOrName) {
+        this._connect(GlobalEventErrorLogger, listenerFunc);
+    }
+
+    /**
+     * Retrieves the current global error handler
+     */
+    public get errorLogger() {
+        return GlobalEventErrorLogger;
     }
 
     /**

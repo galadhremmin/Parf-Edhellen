@@ -8,5 +8,5 @@ export function deepClone<T>(obj: T): T {
 
 function deepCloneLegacy<T>(item: T): T {
     console.warn(`Using imperfect deep cloner on ${JSON.stringify(item)}. Browser doesn't support structuredClone.`);
-    return JSON.parse(JSON.stringify(item));
+    return JSON.parse(JSON.stringify(item)) as T;
 }

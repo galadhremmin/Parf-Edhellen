@@ -1,4 +1,5 @@
 import ApiConnector from '@root/connectors/ApiConnector';
+import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import AccountApiConnector from '@root/connectors/backend/AccountApiConnector';
 import BookApiConnector from '@root/connectors/backend/BookApiConnector';
 import ContributionResourceApiConnector from '@root/connectors/backend/ContributionResourceApiConnector';
@@ -14,25 +15,27 @@ import { RoleManager } from '@root/security';
 import BrowserHistory from '@root/utilities/BrowserHistory';
 import { default as GlaemscribeUtility } from '@root/utilities/Glaemscribe';
 import {
-    singleton,
+    setInstance,
+    setSingleton,
 } from '.';
 import { DI } from './keys';
 
 export default function setupContainer() {
-    singleton(DI.AccountApi, AccountApiConnector);
-    singleton(DI.BackendApi, ApiConnector);
-    singleton(DI.BookApi, BookApiConnector);
-    singleton(DI.BrowserHistory, BrowserHistory);
-    singleton(DI.ContributionApi, ContributionResourceApiConnector);
-    singleton(DI.DiscussApi, DiscussApiConnector);
-    singleton(DI.Glaemscribe, GlaemscribeUtility);
-    singleton(DI.GlossApi, GlossResourceApiConnector);
-    singleton(DI.InflectionApi, InflectionResourceApiConnector);
-    singleton(DI.LanguageApi, LanguageConnector);
-    singleton(DI.RoleManager, RoleManager);
-    singleton(DI.SpeechApi, SpeechResourceApiConnector);
-    singleton(DI.SubscriptionApi, SubscriptionApiConnector);
-    singleton(DI.UtilityApi, UtilityApiConnector);
-    singleton(DI.LogApi, ApiConnector);
-    singleton(DI.WordFinderApi, WordFinderConnector);
+    setSingleton(DI.AccountApi, AccountApiConnector);
+    setSingleton(DI.BackendApi, ApiConnector);
+    setSingleton(DI.BookApi, BookApiConnector);
+    setSingleton(DI.BrowserHistory, BrowserHistory);
+    setSingleton(DI.ContributionApi, ContributionResourceApiConnector);
+    setSingleton(DI.DiscussApi, DiscussApiConnector);
+    setSingleton(DI.Glaemscribe, GlaemscribeUtility);
+    setSingleton(DI.GlossApi, GlossResourceApiConnector);
+    setSingleton(DI.InflectionApi, InflectionResourceApiConnector);
+    setSingleton(DI.LanguageApi, LanguageConnector);
+    setSingleton(DI.RoleManager, RoleManager);
+    setSingleton(DI.SpeechApi, SpeechResourceApiConnector);
+    setSingleton(DI.SubscriptionApi, SubscriptionApiConnector);
+    setSingleton(DI.UtilityApi, UtilityApiConnector);
+    setSingleton(DI.LogApi, ApiConnector);
+    setSingleton(DI.WordFinderApi, WordFinderConnector);
+    setInstance(DI.GlobalEvents, GlobalEventConnector);
 }

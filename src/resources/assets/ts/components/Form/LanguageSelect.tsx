@@ -1,13 +1,13 @@
 import {
-    ILanguageEntity,
-    ILanguagesResponse,
+  ILanguageEntity,
+  ILanguagesResponse,
 } from '@root/connectors/backend/IBookApi';
 import ILanguageApi from '@root/connectors/backend/ILanguageApi';
-import { withPropResolving } from '@root/di';
+import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 import {
-    FormComponent,
-    integerConverter,
+  FormComponent,
+  integerConverter,
 } from './FormComponent';
 import { IComponentProps } from './FormComponent._types';
 
@@ -106,6 +106,6 @@ const LanguagePeriod = (props: {
     </optgroup>;
 };
 
-export default withPropResolving(LanguageSelect, {
+export default withPropInjection(LanguageSelect, {
     languageConnector: DI.LanguageApi,
 });

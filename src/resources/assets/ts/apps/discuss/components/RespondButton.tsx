@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 
 import { fireEvent } from '@root/components/Component';
 import TextIcon from '@root/components/TextIcon';
-import { withPropResolving } from '@root/di';
+import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 import { SecurityRole } from '@root/security';
 
@@ -34,6 +34,6 @@ function RespondButton(props: IProps) {
     }
 }
 
-export default withPropResolving(RespondButton, {
+export default withPropInjection(RespondButton, {
     roleManager: DI.RoleManager,
 });

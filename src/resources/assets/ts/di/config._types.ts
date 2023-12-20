@@ -1,5 +1,6 @@
 import { ITranscriber } from '@root/components/Tengwar._types';
 import { IApiBaseConnector } from '@root/connectors/ApiConnector._types';
+import IGlobalEvents from '@root/connectors/IGlobalEvents';
 import IAccountApi from '@root/connectors/backend/IAccountApi';
 import IBookApi from '@root/connectors/backend/IBookApi';
 import IContributionResourceApi from '@root/connectors/backend/IContributionResourceApi';
@@ -34,4 +35,5 @@ export type DIContainerType = {
     [DI.UtilityApi]?: IUtilityApi;
     [DI.LogApi]?: ILogApi;
     [DI.WordFinderApi]?: IWordFinderApi;
+    [DI.GlobalEvents]?: IGlobalEvents;
 }

@@ -2,15 +2,13 @@ import { Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 
 import { SearchResultGlossaryGroupId } from '@root/config';
-import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
-import IBookApi, {
+import {
     IEntitiesRequest,
     IEntitiesResponse,
     IFindEntity,
     ILanguageEntity,
     ISearchGroups,
 } from '@root/connectors/backend/IBookApi';
-import ILanguageApi from '@root/connectors/backend/ILanguageApi';
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
 import { stringHashAll } from '@root/utilities/func/hashing';
@@ -34,9 +32,9 @@ import {
 } from './SearchActions._types';
 
 export default class SearchActions {
-    constructor(private _api: IBookApi = resolve(DI.BookApi),
-        private _languages: ILanguageApi = resolve(DI.LanguageApi),
-        private _globalEvents = new GlobalEventConnector()) {
+    constructor(private _api = resolve(DI.BookApi),
+        private _languages = resolve(DI.LanguageApi),
+        private _globalEvents = resolve(DI.GlobalEvents)) {
     }
 
     /**
@@ -246,7 +244,7 @@ export default class SearchActions {
             // because most browsers doesn't change the document title when pushing state
             document.title = title;
 
-            this._globalEvents.fire(this._globalEvents.loadEntity, {
+            this._globalEvents?.fire(this._globalEvents.loadEntity, {
                 address,
                 groupId: searchResult.groupId,
                 languageId: language?.id,

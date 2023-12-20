@@ -1,12 +1,12 @@
 import {
-    useCallback,
-    useState,
+  useCallback,
+  useState,
 } from 'react';
 
 import { IComponentEvent } from '@root/components/Component._types';
 import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
 import { AnonymousAvatarPath } from '@root/config';
-import { withPropResolving } from '@root/di';
+import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 
 import AvatarForm from '../components/AvatarForm';
@@ -132,6 +132,6 @@ const ProfileForm = (props: IProps) => {
     </>;
 };
 
-export default withPropResolving(ProfileForm, {
+export default withPropInjection(ProfileForm, {
     api: DI.AccountApi,
 });

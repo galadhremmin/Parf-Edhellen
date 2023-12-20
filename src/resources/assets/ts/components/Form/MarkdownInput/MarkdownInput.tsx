@@ -17,7 +17,7 @@ import EditTabView from './Tabs/EditTabView';
 import PreviewTabView from './Tabs/PreviewTabView';
 import SyntaxTabView from './Tabs/SyntaxTabView';
 
-import { withPropResolving } from '@root/di';
+import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 import './MarkdownInput.scss';
 
@@ -81,6 +81,6 @@ MarkdownInput.defaultProps = {
     value: '',
 } as Partial<IProps>;
 
-export default withPropResolving(MarkdownInput, {
+export default withPropInjection(MarkdownInput, {
     markdownApi: DI.UtilityApi,
 });

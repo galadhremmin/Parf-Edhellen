@@ -1,11 +1,11 @@
 import {
-    CellValueChangedEvent,
-    ColDef,
-    DetailGridInfo,
-    GetRowIdParams,
-    GridReadyEvent,
-    RowClassParams,
-    RowNode,
+  CellValueChangedEvent,
+  ColDef,
+  DetailGridInfo,
+  GetRowIdParams,
+  GridReadyEvent,
+  RowClassParams,
+  RowNode,
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -15,7 +15,7 @@ import { fireEventAsync } from '@root/components/Component';
 import { ISentenceFragmentEntity, SentenceFragmentType } from '@root/connectors/backend/IBookApi';
 import { IGlossEntity, ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
 import {
-    IInflection
+  IInflection
 } from '@root/connectors/backend/IInflectionResourceApi';
 import { ISpeechEntity } from '@root/connectors/backend/ISpeechResourceApi';
 
@@ -26,12 +26,12 @@ import GlossRenderer from '@root/components/Grid/renderers/GlossRenderer';
 import InflectionRenderer from '@root/components/Grid/renderers/InflectionRenderer';
 import SpeechRenderer from '@root/components/Grid/renderers/SpeechRenderer';
 import TengwarRenderer from '@root/components/Grid/renderers/TengwarRenderer';
-import { withPropResolving } from '@root/di';
+import { withPropInjection } from '@root/di';
 import { ISentenceFragmentReducerState } from '../../reducers/child-reducers/SentenceFragmentReducer._types';
 import {
-    FragmentGridColumnDefinition,
-    IProps,
-    IState,
+  FragmentGridColumnDefinition,
+  IProps,
+  IState,
 } from './FragmentsGrid._types';
 
 import { DI } from '@root/di/keys';
@@ -364,7 +364,7 @@ export function FragmentsGrid(props: IProps) {
     </>;
 }
 
-export default withPropResolving(FragmentsGrid, {
+export default withPropInjection(FragmentsGrid, {
     inflectionApi: DI.InflectionApi,
     glossApi: DI.GlossApi,
     speechApi: DI.SpeechApi,

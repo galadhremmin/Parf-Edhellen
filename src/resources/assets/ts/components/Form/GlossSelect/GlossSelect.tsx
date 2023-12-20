@@ -1,16 +1,16 @@
 import {
-    useCallback,
-    useEffect,
-    useState,
+  useCallback,
+  useEffect,
+  useState,
 } from 'react';
 
 import {
-    ISuggestionEntity,
+  ISuggestionEntity,
 } from '@root/connectors/backend/IGlossResourceApi';
 import { DI } from '@root/di/keys';
 import { mapper } from '@root/utilities/func/mapper';
 
-import { withPropResolving } from '@root/di';
+import { withPropInjection } from '@root/di';
 import { fireEvent } from '../../Component';
 import { IComponentEvent } from '../../Component._types';
 import EntitySelect from '../EntitySelect';
@@ -108,6 +108,6 @@ GlossSelect.defaultProps = {
     value: 0,
 } as Partial<IProps>;
 
-export default withPropResolving(GlossSelect, {
+export default withPropInjection(GlossSelect, {
     apiConnector: DI.GlossApi,
 });

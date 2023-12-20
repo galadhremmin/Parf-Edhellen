@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import { IMarkdownParserResponse } from '@root/connectors/backend/IUtilityApi';
-import { withPropResolving } from '@root/di';
+import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
 
@@ -40,6 +40,6 @@ function Markdown(props: IProps) {
     </>;
 }
 
-export default withPropResolving(Markdown, {
+export default withPropInjection(Markdown, {
     markdownApi: DI.UtilityApi,
 });

@@ -2,7 +2,7 @@ import React from 'react';
 
 import StaticAlert from '@root/components/StaticAlert';
 import { ErrorCategory } from '@root/connectors/IReportErrorApi';
-import { withPropResolving } from '@root/di';
+import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 
 import { IProps, IState } from './ErrorBoundary._types';
@@ -42,6 +42,21 @@ export class ErrorBoundary extends React.Component<IProps, IState> {
         );
     }
 
+    public componentDidMount() {
+        const events = this.props.globalEvents;
+        if (events) {
+            events.errorLogger = this._onError;
+        }
+    }
+
+    public componentWillUnmount() {
+        this.props.globalEvents?.disconnect();
+    }
+
+    private _onError = async (evt: CustomEvent<Error>) => {
+        await this.componentDidCatch(evt.detail, {});
+    }
+
     public render() {
         const {
             healthy,
@@ -59,6 +74,7 @@ export class ErrorBoundary extends React.Component<IProps, IState> {
     }
 }
 
-export default withPropResolving(ErrorBoundary, {
+export default withPropInjection(ErrorBoundary, {
     reportErrorApi: DI.LogApi,
+    globalEvents: DI.GlobalEvents,
 });

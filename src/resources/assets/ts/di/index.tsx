@@ -4,11 +4,11 @@ import {
     DIContainerType,
 } from './config._types';
 
-var diContainer: {
-    [K in keyof DIContainerType]?: () => DIContainerType[K];
+const diContainer: {
+    [C in keyof DIContainerType]?: () => DIContainerType[C];
 } = {};
 
-export function singleton<K extends keyof DIContainerType, C extends CanBeConstructed<any>>(key: K, constructor: C) {
+export function setSingleton<K extends keyof DIContainerType, C extends CanBeConstructed<any>>(key: K, constructor: C) {
     let instance: InstanceType<C> = null;
     diContainer[key] = () => {
         if (instance === null) {
@@ -16,6 +16,10 @@ export function singleton<K extends keyof DIContainerType, C extends CanBeConstr
         }
         return instance;
     };
+}
+
+export function setInstance<K extends keyof DIContainerType, C extends CanBeConstructed<any>>(key: K, constructor: C) {
+    diContainer[key] = () => new constructor();
 }
 
 export function resolve<T extends keyof DIContainerType>(name: T) {
@@ -26,13 +30,13 @@ export function resolve<T extends keyof DIContainerType>(name: T) {
 
     const instance = factory();
     return instance;
-};
+}
 
-export function withPropResolving<P>(
+export function withPropInjection<P>(
     UnderlyingComponent: FunctionComponent<P> | ComponentClass<P>,
     injectProps: { [key in keyof P]?: keyof DIContainerType },
 ): FunctionComponent<P> | ComponentClass<P> {
-    return (props: P) => {
+    return function DIComponent(props: P) {
         const resolved: Partial<P> = {};
         const injectableProps = Object.keys(injectProps);
 

@@ -1,15 +1,15 @@
 import {
-    useCallback,
-    useState,
+  useCallback,
+  useState,
 } from 'react';
 
 import { IComponentEvent } from '@root/components/Component._types';
 import { ICreatePostRequest } from '@root/connectors/backend/IDiscussApi';
 import ValidationError from '@root/connectors/ValidationError';
-import { resolve, withPropResolving } from '@root/di';
+import { resolve, withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 import {
-    SecurityRole,
+  SecurityRole,
 } from '@root/security';
 
 import CreateThreadButton from '../components/CreateThreadButton';
@@ -52,7 +52,7 @@ function Toolbar(props: IProps) {
     </div>;
 }
 
-export default withPropResolving(Toolbar, {
+export default withPropInjection(Toolbar, {
     apiConnector: DI.DiscussApi,
     roleManager: DI.RoleManager,
 });

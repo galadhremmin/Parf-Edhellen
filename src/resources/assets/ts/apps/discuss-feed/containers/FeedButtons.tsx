@@ -1,6 +1,6 @@
 import { createFeedUrl } from '@root/connectors/FeedApiConnector';
 
-import { withPropResolving } from '@root/di';
+import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 import { SecurityRole } from '@root/security';
 import FeedButton from '../components/FeedButton';
@@ -24,6 +24,6 @@ Feeds.defaultProps = {
     feedUrlFactory: createFeedUrl,
 } as Partial<IProps>;
 
-export default withPropResolving(Feeds, {
+export default withPropInjection(Feeds, {
     roleManager: DI.RoleManager,
 });

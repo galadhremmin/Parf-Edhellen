@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { withPropResolving } from '@root/di';
+import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 import { excludeProps } from '@root/utilities/func/props';
 
@@ -32,6 +32,6 @@ GlossGroupSelect.defaultProps = {
     value: null,
 } as IProps;
 
-export default withPropResolving(GlossGroupSelect, {
+export default withPropInjection(GlossGroupSelect, {
     apiConnector: DI.BookApi,
 });

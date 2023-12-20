@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { DI } from '@root/di/keys';
 import { excludeProps } from '@root/utilities/func/props';
 
-import { withPropResolving } from '@root/di';
+import { withPropInjection } from '@root/di';
 import AsyncSelect from './AsyncSelect/AsyncSelect';
 import { IProps } from './SpeechSelect._types';
 
@@ -31,6 +31,6 @@ SpeechSelect.defaultProps = {
     value: null,
 } as IProps;
 
-export default withPropResolving(SpeechSelect, {
+export default withPropInjection(SpeechSelect, {
     apiConnector: DI.SpeechApi,
 });

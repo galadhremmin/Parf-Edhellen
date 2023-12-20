@@ -13,7 +13,6 @@ import { fireEvent } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
 import Pagination from '@root/components/Pagination';
 import { PageModes } from '@root/components/Pagination/Pagination._types';
-import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
 import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
@@ -256,7 +255,7 @@ const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => {
             offset: ev.value.pageNumber,
         })),
         onReferenceLinkClick: (ev) => {
-            const globalEvent = new GlobalEventConnector();
+            const globalEvent = resolve(DI.GlobalEvents);
             globalEvent.fire(globalEvent.loadReference, ev.value);
         },
     } as Partial<IProps>;

@@ -1,4 +1,4 @@
-import { withPropResolving } from '@root/di';
+import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 
 import FailedJobsList from '../components/FailedJobsList';
@@ -33,6 +33,6 @@ function Log(props: IProps) {
     </>;
 }
 
-export default withPropResolving(Log, {
+export default withPropInjection(Log, {
     logApi: DI.LogApi,
 });

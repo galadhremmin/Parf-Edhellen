@@ -5,7 +5,7 @@ import Quote from '@root/components/Quote';
 import StaticAlert from '@root/components/StaticAlert';
 import TextIcon from '@root/components/TextIcon';
 import { IForumGroupEntity } from '@root/connectors/backend/IDiscussApi';
-import { withPropResolving } from '@root/di';
+import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 
 import { IProps } from './index._types';
@@ -104,6 +104,6 @@ function MovePost(props: IProps) {
     </>;
 }
 
-export default withPropResolving(MovePost, {
+export default withPropInjection(MovePost, {
     apiConnector: DI.DiscussApi,
 });

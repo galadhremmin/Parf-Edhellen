@@ -30,20 +30,7 @@ function loadLatestScript() {
     };
     document.body.appendChild(latestScript);
     return false;
-};
-
-/**
- * Render the website's most important component.
- */
-function renderDictionary() {
-    const container = document.getElementById('ed-search-component');
-    if (container.children.length > 0) {
-        hydrateRoot(container, <BookBrowserApp />);
-    } else {
-        const root = createRoot(container);
-        root.render(<BookBrowserApp />);
-    }
-};
+}
 
 /**
  * Converts server-side rendered UTC times into local time. This operation is only
@@ -56,7 +43,20 @@ function renderDates() {
         const date = dateElement.dateTime.trim();
         dateElement.title = DateTime.fromISO(date).toLocaleString(DateTime.DATETIME_FULL);
     }
-};
+}
+
+/**
+ * Render the website's most important component.
+ */
+function renderDictionary() {
+    const container = document.getElementById('ed-search-component');
+    if (container.children.length > 0) {
+        hydrateRoot(container, <BookBrowserApp />);
+    } else {
+        const root = createRoot(container);
+        root.render(<BookBrowserApp />);
+    }
+}
 
 function globalOrchestration() {
     setupContainer();

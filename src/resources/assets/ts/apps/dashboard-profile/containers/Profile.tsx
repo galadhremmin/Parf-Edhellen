@@ -3,7 +3,7 @@ import Avatar from '@root/components/Avatar';
 import Markdown from '@root/components/Markdown';
 import Tengwar from '@root/components/Tengwar';
 import TextIcon from '@root/components/TextIcon';
-import { withPropResolving } from '@root/di';
+import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 
 import JumbotronOrHeader from '../components/JumbotronOrHeader';
@@ -91,6 +91,6 @@ Profile.defaultProps = {
     showProfileLink: false,
 } as Partial<IProps>;
 
-export default withPropResolving(Profile, {
+export default withPropInjection(Profile, {
     roleManager: DI.RoleManager,
 });
