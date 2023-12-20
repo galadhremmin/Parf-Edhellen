@@ -1,5 +1,5 @@
 import { CanBeConstructed } from '@root/_types';
-import { ComponentClass, FunctionComponent } from 'react';
+import { ComponentClass, FunctionComponent, useRef } from 'react';
 import {
     DIContainerType,
 } from './config._types';
@@ -37,18 +37,26 @@ export function withPropInjection<P>(
     injectProps: { [key in keyof P]?: keyof DIContainerType },
 ): FunctionComponent<P> | ComponentClass<P> {
     return function DIComponent(props: P) {
-        const resolved: Partial<P> = {};
-        const injectableProps = Object.keys(injectProps);
+        const resolved = useRef<Partial<P>>(null);
 
-        for (const prop of injectableProps) {
-            const key = prop as keyof P;
-            if (! props[key]) {
-                resolved[key] = resolve(injectProps[key]) as any;
+        // This is *required* to maintain non-singleton instances across component renders. Without references,
+        // non-singleton instances will be reconstructed every render.
+        if (resolved.current === null) {
+            const nextResolved: Partial<P> = {};
+            const injectableProps = Object.keys(injectProps);
+
+            for (const prop of injectableProps) {
+                const key = prop as keyof P;
+                if (! props[key]) {
+                    nextResolved[key] = resolve(injectProps[key]) as any;
+                }
             }
+
+            resolved.current = nextResolved;
         }
 
         const finalProps = {
-            ...resolved,
+            ...resolved.current,
             ...props,
         };
         return <UnderlyingComponent {...finalProps} />;
