@@ -73,7 +73,7 @@ describe('apps/book-browser/reducers/SearchReducer', () => {
             originalWord: r.ok,
             word: r.k,
         }));
-        const actual = fakeDispatch.secondCall.args[0].searchResults.keywords.get(TestSearchResults.searchGroups[1]);
+        const actual = fakeDispatch.secondCall.args[0].searchResults.keywords[TestSearchResults.searchGroups[1]];
         expect(actual).toEqual(items);
     });
 });

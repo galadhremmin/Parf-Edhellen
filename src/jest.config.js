@@ -1,5 +1,3 @@
-/** @type {import('ts-jest').JestConfigWithTsJest} */
-
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
@@ -9,9 +7,15 @@ module.exports = {
   ],
   transform: {
     '^.+\\.[tj]sx?$': [
-      'ts-jest',
+      '@swc/jest',
       {
-        tsconfig: 'tsconfig.unit-test.json',
+        jsc: {
+          transform: {
+            react: {
+              runtime: 'automatic',
+            },
+          }
+        }
       },
     ],
   },

@@ -1,23 +1,28 @@
 import {
+    beforeAll,
     describe,
     expect,
     test,
 } from '@jest/globals';
 import { render, screen, waitFor } from '@testing-library/react';
 
-import { IBookGlossEntity, IEntitiesResponse, ILanguageEntity } from '@root/connectors/backend/IBookApi';
+import { IBookGlossEntity, IEntitiesResponse } from '@root/connectors/backend/IBookApi';
+import setupContainer from '@root/di/config';
 import { snakeCasePropsToCamelCase } from '@root/utilities/func/snake-case';
 import { Actions } from '../../actions';
+import LanguagesReducer from '../../reducers/CategoriesReducer';
 import EntitiesReducer from '../../reducers/EntitiesReducer';
 import SectionsReducer from '../../reducers/SectionsReducer';
-import LanguagesReducer from '../../reducers/CategoriesReducer';
 import GlossaryEntities from './GlossaryEntities';
-import { act } from 'react-dom/test-utils';
 
 // Define node `require` for synchronous file loading
 declare var require: any;
 
 describe('apps/book-browser/containers/GlossaryEntities', () => {
+    beforeAll(() => {
+        setupContainer();
+    });
+
     test('displays results', async () => {
         const testData = snakeCasePropsToCamelCase<IEntitiesResponse<any>>(
             require('./GlossaryEntities._spec.glossary'),

@@ -1,5 +1,5 @@
 import { CanBeConstructed } from '@root/_types';
-import { ComponentClass, FunctionComponent, useState } from 'react';
+import { ComponentClass, FunctionComponent } from 'react';
 import {
     DIContainerType,
 } from './config._types';
@@ -29,24 +29,24 @@ export function resolve<T extends keyof DIContainerType>(name: T) {
 };
 
 export function withPropResolving<P>(
-    Component: FunctionComponent<P> | ComponentClass<P>,
+    UnderlyingComponent: FunctionComponent<P> | ComponentClass<P>,
     injectProps: { [key in keyof P]?: keyof DIContainerType },
 ): FunctionComponent<P> | ComponentClass<P> {
     return (props: P) => {
-        const [ resolvedProps ] = useState(() => {
-            const resolved: Partial<P> = {};
-            for (const prop of Object.keys(injectProps)) {
-                const key = prop as keyof P;
+        const resolved: Partial<P> = {};
+        const injectableProps = Object.keys(injectProps);
+
+        for (const prop of injectableProps) {
+            const key = prop as keyof P;
+            if (! props[key]) {
                 resolved[key] = resolve(injectProps[key]) as any;
             }
-
-            return resolved;
-        });
+        }
 
         const finalProps = {
-            ...resolvedProps,
+            ...resolved,
             ...props,
         };
-        return <Component {...finalProps} />;
-    };
+        return <UnderlyingComponent {...finalProps} />;
+    }
 }

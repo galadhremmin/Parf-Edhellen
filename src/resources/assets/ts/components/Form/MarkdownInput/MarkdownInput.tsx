@@ -17,6 +17,8 @@ import EditTabView from './Tabs/EditTabView';
 import PreviewTabView from './Tabs/PreviewTabView';
 import SyntaxTabView from './Tabs/SyntaxTabView';
 
+import { withPropResolving } from '@root/di';
+import { DI } from '@root/di/keys';
 import './MarkdownInput.scss';
 
 const DefaultConfigCacheFactory = () => Cache.withLocalStorage<IComponentConfig>(() => Promise.resolve({
@@ -62,6 +64,7 @@ function MarkdownInput(props: IProps) {
             {...props}
             enter2Paragraph={enter2Paragraph}
             onEnter2ParagraphChange={_onEnter2ParagraphChange}
+            markdownApi={markdownApi}
         />}
         {currentTab === Tab.SyntaxTab && <SyntaxTabView />}
         {currentTab === Tab.PreviewTab && <PreviewTabView value={value} markdownApi={markdownApi} />}
@@ -78,4 +81,6 @@ MarkdownInput.defaultProps = {
     value: '',
 } as Partial<IProps>;
 
-export default MarkdownInput;
+export default withPropResolving(MarkdownInput, {
+    markdownApi: DI.UtilityApi,
+});
