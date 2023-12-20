@@ -1,3 +1,4 @@
+import { configureStore } from '@reduxjs/toolkit';
 import {
     useCallback,
     useEffect,
@@ -5,25 +6,25 @@ import {
 } from 'react';
 import { Provider } from 'react-redux';
 import { thunk } from 'redux-thunk';
-import { configureStore } from '@reduxjs/toolkit';
 
 import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
-import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
+import { withPropInjection } from '@root/di';
 import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
+import { DI } from '@root/di/keys';
+import { SearchActions } from '../actions';
 import rootReducer from '../reducers';
 import Entities from './Entities';
+import { IProps } from './Orchestrator._types';
 import Search from './Search';
 import SearchResults from './SearchResults';
-import { SearchActions } from '../actions';
 
 const store = configureStore({
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
 })
 
-function Orchestrator() {
-    const globalConnectorRef = useRef<GlobalEventConnector>();
+function Orchestrator({ globalEvents }: IProps) {
     const glossaryRef = useRef<HTMLDivElement>();
 
     /**
@@ -59,12 +60,10 @@ function Orchestrator() {
     useEffect(() => {
         // Subscribe to the global event `loadReference` which occurs when the customer clicks
         // a reference link in any component not associated with the Glossary app.
-        const connector = new GlobalEventConnector();
-        connector.loadReference = _onGlobalListenerReferenceLoad;
-        globalConnectorRef.current = connector;
+        globalEvents.loadReference = _onGlobalListenerReferenceLoad;
 
         return () => {
-            globalConnectorRef.current?.disconnect();
+            globalEvents.disconnect();
         }
     }, []);
 
@@ -77,4 +76,6 @@ function Orchestrator() {
     </Provider>;
 }
 
-export default Orchestrator;
+export default withPropInjection(Orchestrator, {
+    globalEvents: DI.GlobalEvents,
+});

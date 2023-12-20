@@ -57,7 +57,7 @@ export const mapArray = <S extends Partial<Record<keyof S, unknown>>, D extends 
     return subjects.map((s, i) => mapper(table, s, [i]));
 };
 
-export const mapArrayGroupBy = <S extends Partial<Record<keyof S, unknown>>, D extends Partial<Record<keyof D, unknown>>, G = string>(table: ConversionTable<S, D>, subjects: S[], groupBy: (v: S) => G): Map<G, D[]> => {
+export const mapArrayGroupByMap = <S extends Partial<Record<keyof S, unknown>>, D extends Partial<Record<keyof D, unknown>>, G = string>(table: ConversionTable<S, D>, subjects: S[], groupBy: (v: S) => G): Map<G, D[]> => {
     const map = new Map<G, D[]>();
     if (isIneligible(subjects)) {
         return map;
@@ -75,3 +75,23 @@ export const mapArrayGroupBy = <S extends Partial<Record<keyof S, unknown>>, D e
 
     return map;
 };
+
+export const mapArrayGroupBy = <S extends Partial<Record<keyof S, unknown>>, D extends Partial<Record<keyof D, unknown>>>(table: ConversionTable<S, D>, subjects: S[], groupBy: (v: S) => string): Record<string, D[]> => {
+    const map: Record<string, D[]> = {};
+    if (isIneligible(subjects)) {
+        return map;
+    }
+
+    for (const subject of subjects) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const groupName = groupBy.call(subjects, subject) as string;
+        if (map[groupName] === undefined) {
+            map[groupName] = [];
+        }
+        const group = map[groupName];
+        group.push(mapper(table, subject, [group.length]));
+    }
+
+    return map;
+};
+

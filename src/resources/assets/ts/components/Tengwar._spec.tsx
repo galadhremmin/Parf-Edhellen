@@ -1,17 +1,25 @@
-import { render, screen } from '@testing-library/react';
 import {
+    beforeAll,
     describe,
     expect,
     test,
 } from '@jest/globals';
+import { render, screen } from '@testing-library/react';
 import sinon from 'sinon';
 
+import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
+import { setInstance } from '@root/di';
+import { DI } from '@root/di/keys';
 import Tengwar from './Tengwar';
 import { ITranscriber } from './Tengwar._types';
 
 describe('components/Tengwar', () => {
     const DefaultMode = 'sindarin';
     const DefaultModeName = 'unit-test';
+
+    beforeAll(() => {
+        setInstance(DI.GlobalEvents, GlobalEventConnector);
+    });
 
     test('can transcribe with Glaemscribe', async () => {
         const text = 'ai na vadui dúnadan! mae govannen!';

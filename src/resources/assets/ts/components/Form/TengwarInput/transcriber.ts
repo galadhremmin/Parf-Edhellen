@@ -1,15 +1,14 @@
-import ILanguageApi from '@root/connectors/backend/ILanguageApi';
-import { DI, resolve } from '@root/di';
-import Glaemscribe from '@root/utilities/Glaemscribe';
+import { resolve } from '@root/di';
+import { DI } from '@root/di/keys';
 
 export const transcribe = async (text: string, languageId: number) => {
-    const languageConnector = resolve<ILanguageApi>(DI.LanguageApi);
+    const languageConnector = resolve(DI.LanguageApi);
     const language = await languageConnector.find(languageId, 'id');
     if (language === null) {
         return null;
     }
 
-    const transcriber = resolve<Glaemscribe>(DI.Glaemscribe);
+    const transcriber = resolve(DI.Glaemscribe);
     const transcribedText = await transcriber.transcribe(text, language.tengwarMode);
     return transcribedText || null;
 };

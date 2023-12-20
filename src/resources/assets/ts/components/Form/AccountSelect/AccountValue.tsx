@@ -4,7 +4,8 @@ import {
 } from 'react';
 
 import IAccountApi, { IAccountSuggestion } from '@root/connectors/backend/IAccountApi';
-import { DI, resolve } from '@root/di';
+import { resolve } from '@root/di';
+import { DI } from '@root/di/keys';
 import { IProps } from './AccountValue._types';
 
 const useFetch = (apiConnector: IAccountApi, accountId: number) => {

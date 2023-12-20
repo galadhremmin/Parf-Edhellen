@@ -1,6 +1,6 @@
-import React, {
-    useCallback,
-    useState,
+import {
+  useCallback,
+  useState,
 } from 'react';
 
 import { fireEvent } from '@root/components/Component';
@@ -8,10 +8,11 @@ import { IComponentEvent } from '@root/components/Component._types';
 import DateLabel from '@root/components/DateLabel';
 import Dialog from '@root/components/Dialog';
 import ProfileLink from '@root/components/ProfileLink';
+import { withPropInjection } from '@root/di';
 
+import { DI } from '@root/di/keys';
 import ActionLink from './ActionLink';
-import connectApi from './ApiConnector';
-import { IProps } from './ApiConnector._types';
+import { IProps } from './index._types';
 
 function DeletePost(props: IProps) {
     const [ needsConfirmation, setNeedsConfirmation ] = useState(false);
@@ -69,4 +70,6 @@ function DeletePost(props: IProps) {
     </>;
 }
 
-export default connectApi(DeletePost);
+export default withPropInjection(DeletePost, {
+    apiConnector: DI.DiscussApi,
+});

@@ -1,12 +1,15 @@
-import { DI, resolve } from '@root/di';
+import { withPropInjection } from '@root/di';
+import { DI } from '@root/di/keys';
+import { useEffect, useState } from 'react';
+
 import { IProps } from './Tengwar._types';
 
 import './Tengwar.scss';
-import { useEffect, useState } from 'react';
 
 function Tengwar(props: IProps) {
     const {
         as: Component,
+        globalEvents,
         mode,
         text,
         transcribe,
@@ -24,6 +27,8 @@ function Tengwar(props: IProps) {
             ]).then(([ nextTranscribedText, nextModeName ]) => {
                 setTranscribedText(nextTranscribedText);
                 setModeName(nextModeName);
+            }).catch((error) => {
+                globalEvents.fire(globalEvents.errorLogger, error);
             });
         }
     }, [ text ]);
@@ -45,7 +50,9 @@ function Tengwar(props: IProps) {
 
 Tengwar.defaultProps = {
     as: 'span',
-    transcriber: resolve(DI.Glaemscribe),
 } as Partial<IProps>;
 
-export default Tengwar;
+export default withPropInjection(Tengwar, {
+    globalEvents: DI.GlobalEvents,
+    transcriber: DI.Glaemscribe,
+});

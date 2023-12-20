@@ -11,8 +11,8 @@ import { LearnMoreMarkdownUrl } from '@root/config';
 import debounce from '@root/utilities/func/debounce';
 import { IProps } from './EditTabView._types';
 
-import './EditTabView.scss';
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
+import './EditTabView.scss';
 
 const ParagraphDelimiter = `\n\n`;
 
@@ -20,6 +20,7 @@ function EditTabView(props: IProps) {
     const {
         enter2Paragraph,
         id,
+        markdownApi,
         name,
         required,
         rows,
@@ -123,7 +124,7 @@ function EditTabView(props: IProps) {
                 />
             </div>
             <div className="EditTabView--split-view__preview">
-                <Markdown parse={true} text={previewValue} />
+                <Markdown parse={true} text={previewValue} markdownApi={markdownApi} />
             </div>
         </div>
         <div className="text-end">

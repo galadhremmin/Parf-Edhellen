@@ -1,11 +1,11 @@
-import { DI, resolve } from '@root/di';
-import ApiConnector from '../ApiConnector';
+import { resolve } from '@root/di';
+import { DI } from '@root/di/keys';
 import ISpeechResourceApi, {
     ISpeechEntity,
 } from './ISpeechResourceApi';
 
 export default class SpeechResourceApiConnector implements ISpeechResourceApi {
-    constructor(private _api = resolve<ApiConnector>(DI.BackendApi)) {
+    constructor(private _api = resolve(DI.BackendApi)) {
     }
 
     public speeches() {

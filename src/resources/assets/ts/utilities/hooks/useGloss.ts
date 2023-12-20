@@ -1,5 +1,6 @@
-import IBookApi, { IBookGlossEntity } from '@root/connectors/backend/IBookApi';
-import { DI, resolve } from '@root/di';
+import { IBookGlossEntity } from '@root/connectors/backend/IBookApi';
+import { resolve } from '@root/di';
+import { DI } from '@root/di/keys';
 import { useEffect, useState } from 'react';
 
 import { IHookedGloss } from './useGloss._types';
@@ -11,7 +12,7 @@ function useGloss<T extends IBookGlossEntity = IBookGlossEntity>(glossId: number
         if (! glossId) {
             setGloss(null);
         } else {
-            const api = resolve<IBookApi>(DI.BookApi);
+            const api = resolve(DI.BookApi);
             api.gloss(glossId) //
                 .then((details) => {
                     const entity = details.sections[0].entities[0];

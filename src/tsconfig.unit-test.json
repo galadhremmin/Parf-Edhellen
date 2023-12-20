@@ -2,7 +2,7 @@
     "compilerOptions": {
         "baseUrl": "./resources/assets/ts",
         "outDir": "./public/build",
-        "sourceMap": true,
+        "sourceMap": false,
         "noImplicitAny": false,
         "module": "CommonJS",
         "target": "ESNext",
@@ -11,11 +11,10 @@
         "allowSyntheticDefaultImports": true,
         "downlevelIteration": false,
         "moduleResolution": "node",
-        "experimentalDecorators": true,
         "emitDecoratorMetadata": false,
         "esModuleInterop": true,
         "strict": false,
-        "pretty": true,
+        "pretty": false,
         "types": [
             "luxon",
             "react",

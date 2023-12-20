@@ -7,7 +7,7 @@ import {
 import sinon, { SinonStubbedInstance } from 'sinon';
 
 import ApiConnector from '@root/connectors/ApiConnector';
-import ErrorBoundary from './ErrorBoundary';
+import { ErrorBoundary } from './ErrorBoundary';
 
 describe('utilities/ErrorBoundary', () => {
     let component: ErrorBoundary;

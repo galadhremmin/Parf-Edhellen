@@ -1,18 +1,17 @@
-import { DI, resolve } from '@root/di';
-import ApiConnector from '../ApiConnector';
+import { resolve } from '@root/di';
+import { DI } from '@root/di/keys';
 import IGlossResourceApi, {
     IGetGlossResponse,
     ISuggestionEntity,
     ISuggestRequest,
     ISuggestResponse,
 } from './IGlossResourceApi';
-import ILanguageApi from './ILanguageApi';
 
 const LanguageParameterRegEx = /\blang:([\w\s]+)$/u;
 
 export default class GlossResourceApiConnector implements IGlossResourceApi {
-    constructor(private _api = resolve<ApiConnector>(DI.BackendApi),
-        private _languageApi = resolve<ILanguageApi>(DI.LanguageApi)) {
+    constructor(private _api = resolve(DI.BackendApi),
+        private _languageApi = resolve(DI.LanguageApi)) {
     }
 
     public delete(glossId: number, replacementId: number) {

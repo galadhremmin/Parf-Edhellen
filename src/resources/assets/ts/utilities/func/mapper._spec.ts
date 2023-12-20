@@ -5,7 +5,8 @@ import {
 } from '@jest/globals';
 import {
     mapArrayGroupBy,
-    mapper,
+    mapArrayGroupByMap,
+    mapper
 } from './mapper';
 
 interface IOrigin {
@@ -82,7 +83,46 @@ describe('utilities/func/convert', () => {
         expect(d).toBeNull();
     });
 
-    test('can group by a property', () => {
+    test('can group by a property using Map', () => {
+        const o: IOrigin[] = [];
+        const numberOfElementsInTestSet = 10;
+
+        for (let i = 1; i <= numberOfElementsInTestSet; i += 1) {
+            o.push({
+                n: i % 2,
+                x: 20,
+                y: '30',
+                z: true,
+            });
+        };
+
+        const a = mapArrayGroupByMap<IOrigin, IDestination>({
+            a: 'x',
+            b: 'y',
+            c: 'z',
+        }, o, (v) => v.n);
+
+        const keys = Array.from(a.keys());
+
+        expect(keys).toHaveLength(2);
+        expect(keys).toContain(0);
+        expect(keys).toContain(1);
+
+        for (const key of keys) {
+            const values = a.get(key);
+            expect(values).toHaveLength(numberOfElementsInTestSet/2);
+            // tslint:disable-next-line: triple-equals
+            const expectedValues = o.filter((v) => v.n == key).map<IDestination>((v) => ({
+                a: v.x,
+                b: v.y,
+                c: v.z,
+            }));
+
+            expect(values).toEqual(expectedValues);
+        }
+    });
+
+    test('can group by a property using JSObject', () => {
         const o: IOrigin[] = [];
         const numberOfElementsInTestSet = 10;
 
@@ -101,14 +141,14 @@ describe('utilities/func/convert', () => {
             c: 'z',
         }, o, (v) => v.n);
 
-        const keys = Array.from(a.keys());
+        const keys = Object.keys(a);
 
         expect(keys).toHaveLength(2);
-        expect(keys).toContain(0);
-        expect(keys).toContain(1);
+        expect(keys).toContain('0');
+        expect(keys).toContain('1');
 
         for (const key of keys) {
-            const values = a.get(key);
+            const values = a[key];
             expect(values).toHaveLength(numberOfElementsInTestSet/2);
             // tslint:disable-next-line: triple-equals
             const expectedValues = o.filter((v) => v.n == key).map<IDestination>((v) => ({

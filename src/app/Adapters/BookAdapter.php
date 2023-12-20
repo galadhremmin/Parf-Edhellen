@@ -20,6 +20,7 @@ use App\Models\Versioning\{
     GlossVersion
 };
 use App\Interfaces\IMarkdownParser;
+use App\Repositories\Enumerations\GlossChange;
 
 class BookAdapter
 {
@@ -357,7 +358,15 @@ class BookAdapter
             unset($model);
 
             foreach ($versions as $version) {
-                $version->is_latest = $version->id === $latestVersionId;
+                $version->_is_latest = $version->id === $latestVersionId;
+
+                $changes = [];
+                foreach (GlossChange::cases() as $change) {
+                    if ($change->value & $version->version_change_flags) {
+                        $changes[] = trans('glossary.changes.'.$change->name);
+                    }
+                }
+                $version->_recorded_changes = $changes;
             }
         }
 

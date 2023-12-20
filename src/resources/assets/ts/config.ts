@@ -8,6 +8,7 @@ export const LocalStorageLanguages = 'ed.languages';
 export const GlobalEventLoadGlossary = 'ednavigate';
 export const GlobalEventLoadEntity = 'ednavigate-entity';
 export const GlobalEventLoadReference = 'edref';
+export const GlobalEventErrorLogger = 'ederror';
 
 export const GlobalAdsConfigurationName = 'ed.ads.config';
 

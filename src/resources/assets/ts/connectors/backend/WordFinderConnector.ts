@@ -1,12 +1,12 @@
-import { resolve, DI } from '@root/di';
-import ApiConnector from '../ApiConnector';
+import { resolve } from '@root/di';
+import { DI } from '@root/di/keys';
 import {
     IWordFinderApi,
     IWordFinderGame,
 } from './IWordFinderApi';
 
 export default class WordFinderConnector implements IWordFinderApi {
-    constructor(private _api = resolve<ApiConnector>(DI.BackendApi)) {
+    constructor(private _api = resolve(DI.BackendApi)) {
     }
 
     newGame(languageId: number): Promise<IWordFinderGame> {

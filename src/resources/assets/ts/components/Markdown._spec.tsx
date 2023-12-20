@@ -1,16 +1,15 @@
-import { render, screen, waitFor } from '@testing-library/react';
 import {
     afterEach,
     beforeAll,
-    beforeEach,
     describe,
     expect,
-    test,
+    test
 } from '@jest/globals';
+import { render, screen, waitFor } from '@testing-library/react';
 import sinon, { SinonSandbox, SinonStubbedInstance } from 'sinon';
 
-import UtilityApiConnector from '@root/connectors/backend/UtilityApiConnector';
 import IUtilityApi from '@root/connectors/backend/IUtilityApi';
+import UtilityApiConnector from '@root/connectors/backend/UtilityApiConnector';
 import Markdown from './Markdown';
 
 describe('components/Markdown', () => {
@@ -34,7 +33,7 @@ describe('components/Markdown', () => {
     });
 
     test('mounts', async () => {
-        render(<Markdown parse={false} text={MarkdownText} markdownApi={null} />);
+        render(<Markdown parse={false} text={MarkdownText} markdownApi={markdownApiStub} />);
 
         await waitFor(() => {
             const markdownText = screen.getByText(MarkdownText);

@@ -21,8 +21,8 @@ export const booleanConverter = (value: string | boolean) => isNull(value) ? fal
  * Represents a form component wrapping a HTML element (backing component).
  * `V` is the value type, `P` props type, `CP` backing component props type, `S` state type.
  */
-export abstract class FormComponent<V = any, P = Record<string, unknown>, CP = Record<string, unknown>, S = Record<string, unknown>, SS = any>
-    extends React.Component<P & IComponentProps<V>, S & IBackingComponentProps<V>, SS> {
+export abstract class FormComponent<V = any, P extends IComponentProps<V> = Record<string, unknown>, CP = Record<string, unknown>, S = Record<string, unknown>, SS = any>
+    extends React.Component<P, S, SS> {
 
     /**
      * Optional getter which overrides the `DefaultComponentPropNames` configuration.
@@ -50,7 +50,7 @@ export abstract class FormComponent<V = any, P = Record<string, unknown>, CP = R
     /**
      * Default change event handler for backing component.
      */
-    protected onChange = (ev: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    protected onBackingComponentChange = (ev: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const value = this.convertValue(ev.target.value);
         if (value === this.props.value) {
             return;
@@ -69,8 +69,7 @@ export abstract class FormComponent<V = any, P = Record<string, unknown>, CP = R
      * (which is `true` by default) if you want to prevent your custom configuration to merge with
      * default configuration.
      */
-    protected pickComponentProps(): { [ PN in keyof (CP & IBackingComponentProps<V>) ]: (CP &
-        IBackingComponentProps<V>)[PN] } {
+    protected pickComponentProps(): any {
         let propNames = this.componentPropNames;
         if (propNames === undefined) {
             propNames = DefaultComponentPropNames;

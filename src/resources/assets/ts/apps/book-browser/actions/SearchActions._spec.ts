@@ -9,8 +9,8 @@ import * as sinon from 'sinon';
 
 import BookApiConnector from '@root/connectors/backend/BookApiConnector';
 import { stringHashAll } from '@root/utilities/func/hashing';
-import SearchActions from '../actions/SearchActions';
 
+import SearchActions from '../actions/SearchActions';
 import { ISearchAction } from '../reducers/SearchReducer._types';
 import Actions from './Actions';
 
@@ -43,7 +43,7 @@ describe('apps/book-browser/reducers/SearchReducer', () => {
 
         const api = sinon.createStubInstance(BookApiConnector);
         api.find.callsFake(() => Promise.resolve(TestSearchResults));
-        actions = new SearchActions(api as any, null /* LanguageConnector */);
+        actions = new SearchActions(api as any, null /* LanguageConnector */, null /* global events */);
     });
 
     afterEach(() => {
@@ -73,7 +73,7 @@ describe('apps/book-browser/reducers/SearchReducer', () => {
             originalWord: r.ok,
             word: r.k,
         }));
-        const actual = fakeDispatch.secondCall.args[0].searchResults.keywords.get(TestSearchResults.searchGroups[1]);
+        const actual = fakeDispatch.secondCall.args[0].searchResults.keywords[TestSearchResults.searchGroups[1]];
         expect(actual).toEqual(items);
     });
 });

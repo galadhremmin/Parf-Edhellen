@@ -1,5 +1,5 @@
-import { DI, resolve } from '@root/di';
-import ApiConnector from '../ApiConnector';
+import { resolve } from '@root/di';
+import { DI } from '@root/di/keys';
 import {
     ISentenceEntity,
     ISentenceFragmentEntity,
@@ -16,7 +16,7 @@ import { IGlossEntity } from './IGlossResourceApi';
 export default class ContributionResourceApiConnector implements IContributionResourceApi {
     private static readonly ApiPrefix = '/contribute/contribution';
 
-    constructor(private _api = resolve<ApiConnector>(DI.BackendApi)) {
+    constructor(private _api = resolve(DI.BackendApi)) {
     }
 
     public saveGloss(args: IContribution<IGlossEntity>) {

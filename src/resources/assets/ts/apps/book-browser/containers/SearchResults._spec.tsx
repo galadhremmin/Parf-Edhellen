@@ -1,9 +1,11 @@
-import { render } from '@testing-library/react';
 import {
+    beforeAll,
     describe,
     expect,
     test,
 } from '@jest/globals';
+import setupContainer from '@root/di/config';
+import { render } from '@testing-library/react';
 import { ISearchResult } from '../reducers/SearchResultsReducer._types';
 import { SearchResults } from './SearchResults';
 
@@ -31,6 +33,10 @@ describe('apps/book-browser/containers/SearchResults', () => {
             },
         ],
     ];
+
+    beforeAll(() => {
+        setupContainer();
+    });
 
     test(`was mounted with ${searchResults[0].length} search results`, () => {
         const { container } = render(<SearchResults searchGroups={groups} searchResults={searchResults} word={'word'}/>);

@@ -1,19 +1,18 @@
 import {
     afterEach,
-    beforeAll,
     beforeEach,
     describe,
     expect,
-    test,
+    test
 } from '@jest/globals';
+import { render, screen, waitFor } from '@testing-library/react';
 import sinon, {
     SinonSandbox,
     SinonStubbedInstance,
 } from 'sinon';
-import { render, screen, waitFor } from '@testing-library/react';
 
-import UtilityApiConnector from '@root/connectors/backend/UtilityApiConnector';
 import IUtilityApi from '@root/connectors/backend/IUtilityApi';
+import UtilityApiConnector from '@root/connectors/backend/UtilityApiConnector';
 import Cache from '@root/utilities/Cache';
 import MemoryStorage from '@root/utilities/MemoryStorage';
 
@@ -29,16 +28,14 @@ describe('components/Form', () => {
         let markdownApiStub: SinonStubbedInstance<IUtilityApi>;
         let config: () => Cache<IComponentConfig>;
 
-        beforeAll(() => {
+        beforeEach(() => {
             sandbox = sinon.createSandbox();
 
             markdownApiStub = sinon.createStubInstance(UtilityApiConnector);
             markdownApiStub.parseMarkdown.resolves({
                 html: HtmlText,
             });
-        });
 
-        beforeEach(() => {
             // This is necessary as `localstorage` is not supported by Mocha (in this context).
             config = () => new Cache<IComponentConfig>(() => Promise.resolve({
                 enter2Paragraph: true,
@@ -50,7 +47,7 @@ describe('components/Form', () => {
         });
 
         test('mounts', async () => {
-            render(<MarkdownInput value={MarkdownText} configCacheFactory={config} markdownApi={markdownApiStub} />);
+            render(<MarkdownInput name="markdown" value={MarkdownText} configCacheFactory={config} markdownApi={markdownApiStub} />);
 
             await waitFor(() => {
                 const textareas = screen.getAllByRole('textbox');
@@ -60,7 +57,7 @@ describe('components/Form', () => {
         });
 
         test('respects required', async () => {
-            render(<MarkdownInput value={MarkdownText} configCacheFactory={config} required={true} markdownApi={markdownApiStub} />);
+            render(<MarkdownInput name="markdown" value={MarkdownText} configCacheFactory={config} required={true} markdownApi={markdownApiStub} />);
 
             await waitFor(() => {
                 const textBox = screen.getByRole('textbox');

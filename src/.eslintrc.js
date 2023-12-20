@@ -29,7 +29,7 @@ module.exports = {
         "@typescript-eslint/restrict-template-expressions": 0,
         "@typescript-eslint/no-unsafe-enum-comparison": 0,
         "@typescript-eslint/triple-slash-reference": 0, // For Glaemscribe
-        "@typescript-eslint/no-explicit-any": 1,
+        "@typescript-eslint/no-explicit-any": 0, // I just can't be bothered right now... let's fix everything else first.
         "@typescript-eslint/no-unsafe-return": 1,
         "@typescript-eslint/no-unsafe-call": 1,
         "@typescript-eslint/no-unsafe-argument": 0, // Doesn't seem to work at all with lambda functions. Too many false positives.

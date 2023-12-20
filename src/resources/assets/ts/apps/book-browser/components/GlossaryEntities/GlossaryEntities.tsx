@@ -1,21 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Waypoint } from 'react-waypoint';
 
+import { ReduxThunkDispatch } from '@root/_types';
 import { IComponentEvent } from '@root/components/Component._types';
 import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
-import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
+import { resolve } from '@root/di';
+import { DI } from '@root/di/keys';
 import Cache from '@root/utilities/Cache';
-import { ReduxThunkDispatch } from '@root/_types';
 
 import { SearchActions } from '../../actions';
 import { IBrowserHistoryState } from '../../actions/SearchActions._types';
 import { IEntitiesComponentProps } from '../../containers/Entities._types';
-
 import GlossaryEntitiesEmpty from '../GlossaryEntitiesEmpty';
-import './GlossaryEntities.scss';
 import GlossaryEntitiesLoading from './GlossaryEntitiesLoading';
 import GlossaryLanguages from './GlossaryLanguages';
 import UnusualLanguagesWarning from './UnusualLanguagesWarning';
+
+import './GlossaryEntities.scss';
 
 const GlossaryEntitiesLanguagesConfigKey = 'ed.glossary.unusual-languages';
 
@@ -152,7 +153,7 @@ function onPopState(actions: SearchActions, dispatch: ReduxThunkDispatch, ev: Po
 * Default event handler for reference link clicks.
 */
 function onReferenceClick(ev: IComponentEvent<IReferenceLinkClickDetails>) {
-   const globalEvents = new GlobalEventConnector();
+   const globalEvents = resolve(DI.GlobalEvents);
    globalEvents.fire(globalEvents.loadReference, ev.value);
 }
 
