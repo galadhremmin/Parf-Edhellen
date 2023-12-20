@@ -2,7 +2,7 @@ import {
     beforeAll,
     describe,
     expect,
-    test
+    test,
 } from '@jest/globals';
 import { resolve } from '.';
 import setupContainer from './config';
