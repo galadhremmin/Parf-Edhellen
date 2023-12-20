@@ -9,5 +9,6 @@ fi
 sudo chown -R nginx:nginx .
 sudo -u nginx composer update
 sudo -u nginx php artisan migrate
+sudo -u nginx rm -f storage/framework/views/*.php
 sudo -u nginx php artisan optimize
 cd ..
