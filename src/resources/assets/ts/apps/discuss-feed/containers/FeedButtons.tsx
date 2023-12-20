@@ -26,4 +26,5 @@ Feeds.defaultProps = {
 
 export default withPropInjection(Feeds, {
     roleManager: DI.RoleManager,
+    subscriptionApi: DI.SubscriptionApi,
 });
