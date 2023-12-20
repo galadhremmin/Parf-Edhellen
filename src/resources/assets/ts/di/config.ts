@@ -35,7 +35,7 @@ export default function setupContainer() {
     setSingleton(DI.SpeechApi, SpeechResourceApiConnector);
     setSingleton(DI.SubscriptionApi, SubscriptionApiConnector);
     setSingleton(DI.UtilityApi, UtilityApiConnector);
-    setSingleton(DI.LogApi, ApiConnector);
+    setSingleton(DI.LogApi, UtilityApiConnector);
     setSingleton(DI.WordFinderApi, WordFinderConnector);
     setInstance(DI.GlobalEvents, GlobalEventConnector);
 }
