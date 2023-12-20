@@ -2,7 +2,7 @@
 
 namespace App\Console;
 
-use App\Models\SystemError;
+use App\Models\FailedJob;
 use App\Repositories\SystemErrorRepository;
 use Carbon\Carbon;
 use Exception;
@@ -44,6 +44,17 @@ class Kernel extends ConsoleKernel
             }) //
             ->name('Delete SystemError entities older than 90 days.') //
             ->hourly();
+
+        $schedule->call(function () {
+                FailedJob::where('failed_at', '<=', Carbon::now()->addDays(-90))->delete();
+            }) //
+            ->onFailure(function (Stringable $output, SystemErrorRepository $systemErrorRepository) {
+                $systemErrorRepository->saveException(new Exception(
+                    sprintf('Failed to delete old failed jobs. Output: %s', $output)
+                ), 'scheduler');
+            }) //
+            ->name('Delete failed jobs entities older than 90 days.') //
+            ->monthly();
     }
 
     /**

@@ -520,7 +520,9 @@ class GlossRepository
                     }
                 }
 
-                $this->saveVersion($gloss, $changed);
+                if ($changed !== GlossChange::NO_CHANGE->value) {
+                    $this->saveVersion($gloss, $changed);
+                }
 
                 DB::commit();
             } catch (\Exception $ex) {
