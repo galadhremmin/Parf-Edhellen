@@ -6,9 +6,9 @@ if ! [ -z "$1" ]
   then
     mv -v $1 public/
 fi
-sudo chown -R nginx:nginx .
-sudo -u nginx composer update
-sudo -u nginx php artisan migrate
-sudo -u nginx rm -f storage/framework/views/*.php
-sudo -u nginx php artisan optimize
+sudo chown -R www-data:www-data .
+sudo -u www-data composer update
+sudo -u www-data php artisan migrate
+sudo -u www-data rm -f storage/framework/views/*.php
+sudo -u www-data php artisan optimize
 cd ..
