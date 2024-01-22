@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo git pull
+sudo -u www-data git pull
 cd src
 if ! [ -z "$1" ]
   then
