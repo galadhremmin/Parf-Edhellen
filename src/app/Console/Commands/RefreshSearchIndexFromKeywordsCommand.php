@@ -95,6 +95,7 @@ class RefreshSearchIndexFromKeywordsCommand extends Command
                 if ($gloss) {
                     if (! $gloss->is_deleted) {
                         $this->_searchIndexRepository->createIndex($gloss, $keyword->wordEntity, $keyword->keyword_language, $keyword->keyword);
+                        $count += 1;
                     }
                 } else {
                     if (! $keyword->sense_id) {
@@ -103,6 +104,7 @@ class RefreshSearchIndexFromKeywordsCommand extends Command
                         // remove the invalid gloss reference from the Keyword
                         $keyword->gloss_id = NULL;
                         $keyword->save();
+                        $count += 1;
                     }
                 }
             }
