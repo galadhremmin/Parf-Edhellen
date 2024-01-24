@@ -17,7 +17,7 @@ class CarbonLocale
     public function handle($request, Closure $next)
     {
         $locale = \Locale::parseLocale($request->server('HTTP_ACCEPT_LANGUAGE'));
-        $languageName = $locale['language'] ?: 'en';
+        $languageName = ($locale === null || ! is_array($locale)) ? 'en' : $locale['language'];
 
         Carbon::setLocale($languageName);
         Carbon::setToStringFormat('c');
