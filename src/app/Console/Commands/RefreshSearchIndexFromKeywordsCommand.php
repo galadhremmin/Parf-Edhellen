@@ -2,13 +2,12 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 use App\Models\{
     Gloss,
     Keyword,
-    Sense,
 };
-use App\Models\Initialization\Morphs;
 use App\Repositories\SearchIndexRepository;
 
 class RefreshSearchIndexFromKeywordsCommand extends Command 
@@ -34,10 +33,16 @@ class RefreshSearchIndexFromKeywordsCommand extends Command
      */
     private $_searchIndexRepository;
 
+    /**
+     * @var ConsoleOutput
+     */
+    private $_logger;
+
     public function __construct(SearchIndexRepository $searchIndexRepository)
     {
         parent::__construct();
         $this->_searchIndexRepository = $searchIndexRepository;
+        $this->_logger = new ConsoleOutput();
     }
 
     /**
@@ -89,23 +94,49 @@ class RefreshSearchIndexFromKeywordsCommand extends Command
 
         $count = 0;
         $erroneous = [];
+        $glossCache = [];
         foreach ($keywords as $keyword) {
+            $this->_logger->writeln('# '.$keyword->keyword);
             if ($keyword->gloss_id) {
-                $gloss = Gloss::find($keyword->gloss_id);
+                if (! isset($glossCache[$keyword->gloss_id])) {
+                    $glossCache[$keyword->gloss_id] = Gloss::with('word', 'gloss_group', 'speech', 'gloss_inflections') //
+                        ->find($keyword->gloss_id);
+                }
+
+                $gloss = $glossCache[$keyword->gloss_id];
                 if ($gloss) {
                     if (! $gloss->is_deleted) {
                         $this->_searchIndexRepository->createIndex($gloss, $keyword->wordEntity, $keyword->keyword_language, $keyword->keyword);
+                        $this->_logger->writeln('   Refreshed for "'.$keyword->wordEntity->word.'" -> "'.$keyword->keyword.'".');
+                        $this->_logger->writeln('   Gloss: '.$keyword->gloss_id);
                         $count += 1;
+                    } else {
+                        $this->_logger->writeln('   Gloss '.$keyword->gloss_id.' is deleted.');
                     }
                 } else {
                     if (! $keyword->sense_id) {
                         $erroneous[] = $keyword->gloss_id;
                     } else {
+                        $this->_logger->writeln('   Gloss not found: '.$keyword->gloss_id);
+
                         // remove the invalid gloss reference from the Keyword
                         $keyword->gloss_id = NULL;
                         $keyword->save();
                         $count += 1;
                     }
+                }
+            }
+        }
+
+        foreach ($glossCache as $id => $gloss) {
+            if (! $gloss) {
+                continue;
+            }
+            $this->_logger->writeln('# Registering inflections for '.$gloss->id);
+            foreach($gloss->gloss_inflections as $inflection) {
+                if ($gloss->word->word !== $inflection->word) {
+                    $this->_logger->writeln('   "'.$gloss->word->word.'" -> "'.$inflection->word.'".');
+                    $this->_searchIndexRepository->createIndex($gloss, $gloss->word, $inflection->language, $inflection->word);
                 }
             }
         }
