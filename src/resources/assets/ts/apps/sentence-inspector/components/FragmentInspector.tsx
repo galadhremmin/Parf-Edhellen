@@ -4,11 +4,11 @@ import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
 import { IProps } from './FragmentInspector._types';
 
-import './FragmentInspector.scss';
-import TextIcon from '@root/components/TextIcon';
-import GlossFragmentInspector from './GlossFragmentInspector';
 import { fireEventAsync } from '@root/components/Component';
+import TextIcon from '@root/components/TextIcon';
 import classNames from 'classnames';
+import './FragmentInspector.scss';
+import GlossFragmentInspector from './GlossFragmentInspector';
 
 function jumpToComponent(component: HTMLElement) {
     if (component) {
@@ -88,7 +88,7 @@ export function FragmentInspector(props: IProps) {
             className={classNames('navigation-arrows right', { 'disabled': ! nextFragmentId})}>
             <TextIcon icon="chevron-right" />
         </a>
-        <button type="button" onClick={_onCloseClick} className="btn-close" />
+        <button type="button" onClick={_onCloseClick} className="btn-close btn-close-white" />
         {fragment && <GlossFragmentInspector fragment={fragment} />}
     </aside>;
 }

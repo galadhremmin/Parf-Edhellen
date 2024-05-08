@@ -18,7 +18,7 @@ const TranscriberFormAsync = React.lazy(() => import('./TranscriberForm'));
 function TengwarInput(props: IProps) {
     const {
         className,
-        inputSize = 'lg',
+        inputSize = '',
         languageId = null,
         onChange,
         name,

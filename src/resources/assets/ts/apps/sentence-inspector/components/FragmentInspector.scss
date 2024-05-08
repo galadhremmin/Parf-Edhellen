@@ -1,9 +1,10 @@
 @import '../../../_scss/variables';
 
 $inspector-border-radius: 0.2em;
-$inspector-background: $gray-200; //$panel-default-heading-bg;
+$inspector-background: $gray-800; //$panel-default-heading-bg;
+$inspector-text-color: white;
 $inspector-border: #ccc;// $panel-default-border;
-$inspector-height: 45vh;
+$inspector-height: 55vh;
 $inspector-max-width: 600px;
 $inspector-border-top: $gray-200; // #8aa5c3;
 
@@ -29,13 +30,22 @@ $inspector-border-top: $gray-200; // #8aa5c3;
     z-index: 1000;
     overflow-y: scroll;
     background: $inspector-background;
+    color: $inspector-text-color;
     padding: 1rem 2rem 0 2rem;
-    box-shadow: inset 0 0 10px  rgba(0, 0, 0, 0.2);
     font-size: 1rem;
     pointer-events: all;
 
     h1 {
         font-size: 1.75rem;
+    }
+
+    a, .btn-close {
+        color: white;
+        font-style: italic;
+    }
+
+    .TextIcon {
+        background-color: white;
     }
 
     .btn-close {

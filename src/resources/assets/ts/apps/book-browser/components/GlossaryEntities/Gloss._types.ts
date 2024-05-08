@@ -4,6 +4,6 @@ import { IBookGlossEntity } from '@root/connectors/backend/IBookApi';
 export interface IProps extends IEventProps {
     bordered?: boolean;
     gloss: IBookGlossEntity;
-    toolbar: boolean;
+    toolbar?: boolean;
     warnings?: boolean;
 }

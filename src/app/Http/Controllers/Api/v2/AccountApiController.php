@@ -201,7 +201,11 @@ class AccountApiController extends Controller
     public function delete(Request $request, int $accountId)
     {
         $account = $this->getAuthorizedAccount($request, $accountId);
-        if ($account->isAdministrator()) {
+        if ($account->isRoot()) {
+            abort(400, 'You cannot delete a root account.');
+        }
+
+        if ($account->isAdministrator() && ! $request->user()->isRoot()) {
             abort(400, 'You cannot delete an administrator\'s account.');
         }
 
