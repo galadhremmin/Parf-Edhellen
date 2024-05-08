@@ -22,12 +22,12 @@ function Profile(props: IProps) {
     } = props.account;
 
     const {
-        showProfile,
+        showProfile = false,
         roleManager,
         readonly,
-        showDiscuss,
-        showJumbotron,
-        showProfileLink,
+        showDiscuss = false,
+        showJumbotron = false,
+        showProfileLink = false,
         statistics,
     } = props;
 
@@ -83,13 +83,6 @@ function Profile(props: IProps) {
         </div>
     </div>;
 }
-
-Profile.defaultProps = {
-    showDiscuss: false,
-    showProfile: false,
-    showJumbotron: false,
-    showProfileLink: false,
-} as Partial<IProps>;
 
 export default withPropInjection(Profile, {
     roleManager: DI.RoleManager,

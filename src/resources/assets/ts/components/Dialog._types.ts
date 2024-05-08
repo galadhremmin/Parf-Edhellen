@@ -12,6 +12,6 @@ export interface IProps<V> {
     open: boolean;
     size?: 'sm' | 'lg' | 'xl' | undefined;
     title: ReactNode;
-    valid: boolean;
+    valid?: boolean;
     value?: V;
 }

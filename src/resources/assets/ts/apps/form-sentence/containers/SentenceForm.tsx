@@ -21,7 +21,7 @@ import { IProps } from './SentenceForm._types';
 
 function SentenceForm(props: IProps) {
     const {
-        bookApi,
+        bookApi = resolve(DI.BookApi),
         errors,
         onFragmentChange,
         onMetadataChange,
@@ -29,8 +29,8 @@ function SentenceForm(props: IProps) {
         onTextChange,
         onSubmit,
         onTranslationChange,
-        sentence,
-        sentenceFragments,
+        sentence = null,
+        sentenceFragments = [],
         sentenceParagraphs,
         sentenceText,
         sentenceTextIsDirty,
@@ -140,12 +140,6 @@ function SentenceForm(props: IProps) {
         </div>
     </form>;
 }
-
-SentenceForm.defaultProps = {
-    bookApi: resolve(DI.BookApi),
-    sentence: null,
-    sentenceFragments: [],
-} as Partial<IProps>;
 
 const mapStateToProps = (state: RootReducer) => ({
     errors: state.errors,

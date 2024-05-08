@@ -1,4 +1,3 @@
-import { Component } from 'react';
 import classNames from 'classnames';
 import { IProps } from './Gloss._types';
 
@@ -13,11 +12,11 @@ import './Gloss.scss';
 
 function Gloss(props: IProps) {
     const {
-        bordered,
+        bordered = true,
         gloss,
         onReferenceLinkClick,
-        toolbar,
-        warnings,
+        toolbar = true,
+        warnings = true,
     } = props;
 
     const id = `gloss-block-${gloss.id}`;
@@ -37,11 +36,5 @@ function Gloss(props: IProps) {
         <GlossFooter gloss={gloss} />
     </blockquote>;
 }
-
-Gloss.defaultProps = {
-    bordered: true,
-    toolbar: true,
-    warnings: true,
-};
 
 export default Gloss;

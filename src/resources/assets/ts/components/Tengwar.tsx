@@ -8,7 +8,7 @@ import './Tengwar.scss';
 
 function Tengwar(props: IProps) {
     const {
-        as: Component,
+        as: Component = 'span',
         globalEvents,
         mode,
         text,
@@ -47,10 +47,6 @@ function Tengwar(props: IProps) {
 
     return <Component className={className} title={title}>{tengwar}</Component>;
 }
-
-Tengwar.defaultProps = {
-    as: 'span',
-} as Partial<IProps>;
 
 export default withPropInjection(Tengwar, {
     globalEvents: DI.GlobalEvents,

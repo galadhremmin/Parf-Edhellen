@@ -25,7 +25,7 @@ function AsyncSelect<T = any>(props: IProps<T>) {
     const componentProps = excludeProps<Partial<IProps<T>>>(props, InternalProps);
 
     const {
-        allowEmpty,
+        allowEmpty = false,
         emptyText,
         loaderOfValues,
         name,
@@ -33,7 +33,7 @@ function AsyncSelect<T = any>(props: IProps<T>) {
         textField,
         value,
         valueField,
-        valueType,
+        valueType = 'entity',
     } = props;
 
     const values = useFetch(loaderOfValues, value);
@@ -59,11 +59,6 @@ function AsyncSelect<T = any>(props: IProps<T>) {
         })}
     </select>;
 }
-
-AsyncSelect.defaultProps = {
-    allowEmpty: false,
-    valueType: 'entity',
-} as IProps;
 
 function getNativeValue(v: any, valueField: string): IdValue {
     if (v === null || v === undefined) {

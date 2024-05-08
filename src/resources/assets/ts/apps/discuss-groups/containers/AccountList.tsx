@@ -5,7 +5,7 @@ import './AccountList.scss';
 
 function AccountList(props: IProps) {
     const {
-        accounts,
+        accounts = [],
     } = props;
 
     return <div className="AccountList--avatars">
@@ -15,9 +15,5 @@ function AccountList(props: IProps) {
         />)}
     </div>;
 }
-
-AccountList.defaultProps = {
-    accounts: [],
-} as Partial<IProps>;
 
 export default AccountList;

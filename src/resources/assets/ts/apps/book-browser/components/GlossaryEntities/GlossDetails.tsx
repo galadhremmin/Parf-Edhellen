@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 
 import HtmlInject from '@root/components/HtmlInject';
 import GlossDetail from './GlossDetail';
@@ -10,7 +9,7 @@ const GlossDetails = (props: IProps) => {
     const {
         gloss,
         onReferenceLinkClick,
-        showDetails,
+        showDetails = true,
     } = props;
     return <>
         <HtmlInject html={gloss.comments} onReferenceLinkClick={onReferenceLinkClick} />
@@ -18,10 +17,6 @@ const GlossDetails = (props: IProps) => {
             (d) => <GlossDetail key={`${d.order}_${d.category}`} detail={d} onReferenceLinkClick={onReferenceLinkClick} />,
         )}
     </>;
-};
-
-GlossDetails.defaultProps = {
-    showDetails: true,
 };
 
 export default GlossDetails;

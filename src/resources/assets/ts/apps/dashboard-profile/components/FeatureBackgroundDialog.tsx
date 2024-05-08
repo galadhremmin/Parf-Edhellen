@@ -20,7 +20,7 @@ import './FeatureBackgroundDialog.scss';
 export function FeatureBackgroundDialog(props: IProps) {
     const {
         accountApi,
-        open,
+        open = false,
         onDismiss,
         onSelectBackground,
     } = props;
@@ -61,10 +61,6 @@ export function FeatureBackgroundDialog(props: IProps) {
         </div>
     </Dialog>
 }
-
-FeatureBackgroundDialog.defaultProps = {
-    open: false,
-} as IProps;
 
 export default withPropInjection(FeatureBackgroundDialog, {
     accountApi: DI.AccountApi,

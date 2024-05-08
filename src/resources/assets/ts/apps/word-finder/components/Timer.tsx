@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
 import { DateTime } from 'luxon';
+import { useEffect } from 'react';
 
 import { fireEvent } from '@root/components/Component';
 import { IProps } from './Timer._types';
@@ -7,9 +7,9 @@ import { IProps } from './Timer._types';
 function Timer(props: IProps) {
     const {
         onTick,
-        startValue,
         tick,
-        value,
+        startValue = DateTime.local().toMillis(),
+        value = DateTime.local().toMillis(),
     } = props;
 
     useEffect(() => {
@@ -34,10 +34,5 @@ function Timer(props: IProps) {
         {duration.toFormat('s')}
     </span>;
 }
-
-Timer.defaultProps = {
-    startValue: DateTime.local().toMillis(),
-    value: DateTime.local().toMillis(),
-} as IProps;
 
 export default Timer;

@@ -18,12 +18,12 @@ const TranscriberFormAsync = React.lazy(() => import('./TranscriberForm'));
 function TengwarInput(props: IProps) {
     const {
         className,
-        inputSize,
-        languageId,
+        inputSize = 'sm',
+        languageId = null,
         onChange,
         name,
-        originalText,
-        value,
+        originalText = '',
+        value = '',
     } = props;
 
     const [ newTranscription, setNewTranscription ] = useState(() => value);
@@ -88,11 +88,5 @@ function TengwarInput(props: IProps) {
     </div>;
 }
 
-TengwarInput.defaultProps = {
-    inputSize: '',
-    languageId: null,
-    originalText: null,
-    value: '',
-} as IProps;
 
 export default TengwarInput;

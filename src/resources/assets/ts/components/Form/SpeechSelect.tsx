@@ -7,11 +7,12 @@ import { withPropInjection } from '@root/di';
 import AsyncSelect from './AsyncSelect/AsyncSelect';
 import { IProps } from './SpeechSelect._types';
 
-const InternalProps: (keyof IProps)[] = [ 'apiConnector' ];
+const InternalProps: (keyof IProps)[] = [ 'apiConnector', 'value' ];
 
 function SpeechSelect(props: IProps) {
     const {
         apiConnector,
+        value = null,
     } = props;
 
     const componentProps = excludeProps(props, InternalProps);
@@ -21,15 +22,12 @@ function SpeechSelect(props: IProps) {
     return <AsyncSelect
         {...componentProps}
         loaderOfValues={_getValues}
+        value={value}
         textField="name"
         valueField="id"
         valueType="id"
     />;
 }
-
-SpeechSelect.defaultProps = {
-    value: null,
-} as IProps;
 
 export default withPropInjection(SpeechSelect, {
     apiConnector: DI.SpeechApi,

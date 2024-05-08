@@ -2,5 +2,5 @@ import IAccountApi, { IAccountSuggestion } from '@root/connectors/backend/IAccou
 
 export interface IProps {
     account: IAccountSuggestion;
-    apiConnector: IAccountApi;
+    apiConnector?: IAccountApi;
 }

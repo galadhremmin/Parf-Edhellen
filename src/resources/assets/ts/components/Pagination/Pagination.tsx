@@ -9,10 +9,11 @@ import {
 
 const Pagination = (props: IProps) => {
     const {
-        currentPage,
-        noOfPages,
+        currentPage = 1,
+        noOfPages = 1,
+        pageQueryParameterName = 'offset',
         onClick,
-        pages,
+        pages = null,
     } = props;
 
     if (noOfPages < 2) {
@@ -37,6 +38,7 @@ const Pagination = (props: IProps) => {
         <ul className="pagination justify-content-center">
             {currentPage > getFirstPageNumber() && <li className="page-item">
                 <PaginationLink pageNumber={truncated ? getFirstPageNumber() : currentPage - 1}
+                    parameterName={pageQueryParameterName}
                     onClick={onClick}>
                     <span aria-hidden="true">← </span>
                     {truncated ? 'First' : 'Previous'}
@@ -45,12 +47,14 @@ const Pagination = (props: IProps) => {
             {pageArray.map((pageNumber) => <li key={pageNumber}
                 className={classNames('page-item', { active: currentPage === pageNumber})}>
                 <PaginationLink pageNumber={pageNumber}
-                    onClick={onClick}>
+                    onClick={onClick}
+                    parameterName={pageQueryParameterName}>
                     {pageNumber}
                 </PaginationLink>
             </li>)}
             {currentPage < noOfPages && <li className="page-item">
                 <PaginationLink pageNumber={truncated ? noOfPages : currentPage + 1}
+                    parameterName={pageQueryParameterName}
                     onClick={onClick}>
                     {truncated ? 'Last' : 'Next'}
                     <span aria-hidden="true"> →</span>
@@ -59,12 +63,5 @@ const Pagination = (props: IProps) => {
         </ul>
     </nav>;
 };
-
-Pagination.defaultProps = {
-    currentPage: 1,
-    noOfPages: 1,
-    pageQueryParameterName: 'offset',
-    pages: null,
-} as Partial<IProps>;
 
 export default Pagination;

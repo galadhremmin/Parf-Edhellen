@@ -1,11 +1,11 @@
 import { CSSProperties, useEffect, useState } from 'react';
 import { IProps } from './Jumbotron._types';
 
-import './Jumbotron.scss';
 import classNames from 'classnames';
+import './Jumbotron.scss';
 
 export default function Jumbotron({
-    backgroundImageUrl,
+    backgroundImageUrl = null,
     children,
     className,
 }: IProps) {
@@ -25,7 +25,3 @@ export default function Jumbotron({
         {children}
     </div>
 }
-
-Jumbotron.defaultProps = {
-    backgroundImageUrl: null,
-};

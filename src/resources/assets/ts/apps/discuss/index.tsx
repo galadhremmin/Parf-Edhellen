@@ -18,7 +18,9 @@ const store = configureStore({
 
 const Inject = (props: IProps) => {
     const {
-        prefetched,
+        highlightThreadPost = false,
+        readonly = false,
+        prefetched = true,
         thread,
     } = props;
 
@@ -29,7 +31,7 @@ const Inject = (props: IProps) => {
 
     useEffect(() => {
         const {
-            jumpEnabled,
+            jumpEnabled = true,
         } = props;
 
         const dispatch = store.dispatch as ReduxThunkDispatch;
@@ -59,18 +61,11 @@ const Inject = (props: IProps) => {
         <Provider store={store}>
             <Discuss entityId={entityId}
                     entityType={entityType}
-                    readonly={props.readonly}
-                    highlightThreadPost={props.highlightThreadPost}
+                    readonly={readonly}
+                    highlightThreadPost={highlightThreadPost}
             />
         </Provider>
     </div>;
 };
-
-Inject.defaultProps = {
-    prefetched: true,
-    jumpEnabled: true,
-    readonly: false,
-    highlightThreadPost: false,
-} as Partial<IProps>;
 
 export default Inject;

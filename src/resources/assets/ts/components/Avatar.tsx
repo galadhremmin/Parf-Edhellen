@@ -6,7 +6,7 @@ import './Avatar.scss';
 
 function Avatar(props: IProps) {
     let {
-        path,
+        path = null,
     } = props;
 
     if (path === null) {
@@ -20,9 +20,5 @@ function Avatar(props: IProps) {
         {props.children}
     </div>;
 }
-
-Avatar.defaultProps = {
-    path: null,
-} as Partial<IProps>;
 
 export default Avatar;

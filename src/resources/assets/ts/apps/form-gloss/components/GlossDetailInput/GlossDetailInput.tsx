@@ -23,7 +23,7 @@ function GlossDetailInput(props: IComponentProps<IGlossDetail[]>) {
     const {
         name,
         onChange,
-        value,
+        value = [],
     } = props;
 
     const _onAddClick = (ev: React.MouseEvent<HTMLButtonElement>) => {
@@ -129,9 +129,5 @@ function GlossDetailInput(props: IComponentProps<IGlossDetail[]>) {
         </div>}
     </>;
 }
-
-GlossDetailInput.defaultProps = {
-    value: [],
-} as Partial<IComponentProps<IGlossDetail[]>>;
 
 export default GlossDetailInput;

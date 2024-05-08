@@ -1,18 +1,17 @@
-import React from 'react';
 import classNames from 'classnames';
+import React, { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
-import { useEffect, useRef, useState } from 'react';
 
 import { IComponentEvent } from '@root/components/Component._types';
+import Quote from '@root/components/Quote';
 import StaticAlert from '@root/components/StaticAlert';
 import Cache from '@root/utilities/Cache';
 import { SearchActions } from '../actions';
+import LoadingIndicator from '../components/LoadingIndicator';
 import SearchGroup from '../components/SearchGroup';
 import { RootReducer } from '../reducers';
 import { ISearchResult } from '../reducers/SearchResultsReducer._types';
 import { IProps } from './SearchResults._types';
-import LoadingIndicator from '../components/LoadingIndicator';
-import Quote from '@root/components/Quote';
 
 const EnableTipsCacheKey = 'search-results.tips-enabled';
 
@@ -25,12 +24,12 @@ export function SearchResults(props: IProps) {
 
     const {
         dispatch,
-        loading,
+        loading = true,
         reversed,
-        searchGroups,
-        searchResults,
-        selectedResultId,
-        word,
+        searchGroups = [],
+        searchResults = [],
+        selectedResultId = 0,
+        word = '',
     } = props;
 
     useEffect(() => {
@@ -141,14 +140,6 @@ export function SearchResults(props: IProps) {
         </div>
     </section>;
 }
-
-SearchResults.defaultProps = {
-    loading: true,
-    searchGroups: [],
-    searchResults: [],
-    selectedResultId: 0,
-    word: '',
-} as IProps;
 
 const mapStateToProps = (state: RootReducer): IProps => ({
     loading: state.search.loading,
