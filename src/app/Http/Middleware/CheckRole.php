@@ -17,7 +17,9 @@ class CheckRole
      */
     public function handle($request, Closure $next, string $role)
     {
-        if (! $request->user()->memberOf($role)) {
+        $user = $request->user();
+
+        if (! $user->isRoot() && ! $user->memberOf($role)) {
             abort(403, 'Access denied');
         }
 

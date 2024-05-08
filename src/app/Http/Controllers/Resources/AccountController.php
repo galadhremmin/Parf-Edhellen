@@ -11,15 +11,19 @@ use App\Models\{
     AuditTrail,
     Role
 };
+use App\Security\AccountManager;
+use App\Security\RoleConstants;
 
 class AccountController extends Controller
 {
+    private $_accountManager;
     private $_auditTrailAdapter;
 
     const PAGINATION_SIZE = 30;
 
-    public function __construct(AuditTrailAdapter $auditTrailAdapter)
+    public function __construct(AccountManager $accountManager, AuditTrailAdapter $auditTrailAdapter)
     {
+        $this->_accountManager = $accountManager;
         $this->_auditTrailAdapter = $auditTrailAdapter;
     }
 
@@ -37,9 +41,15 @@ class AccountController extends Controller
         }
 
         $accounts = $query->paginate(self::PAGINATION_SIZE);
+
+        $recentlyDeleted = Account::where('is_deleted', 1)
+            ->orderBy('updated_at', 'desc')
+            ->limit(20)
+            ->get();
         
         return view('admin.account.index', [
-            'accounts' => $accounts
+            'accounts' => $accounts,
+            'deletedAccounts' => $recentlyDeleted
         ] + $v);
     }
 
@@ -82,9 +92,19 @@ class AccountController extends Controller
         $role = Role::findOrFail($roleId);
 
         $account = Account::findOrFail($id);
+        $this->blockAdministratorChanges($account, $request->user());
+
+        if ($role->name === RoleConstants::Root) {
+            // There can only be one root account
+            $root = $this->_accountManager->getRootAccount();
+            if ($root !== null && $root->id !== $account->id) {
+                abort(400, 'You can only assign one account to be root.');
+            }
+        }
+
         $account->addMembershipTo($role->name);
 
-        return redirect()->route('admin.account.edit', ['account' => $account->id]);
+        return redirect()->route('account.edit', ['account' => $account->id]);
     }
 
     public function deleteMembership(Request $request, int $id)
@@ -96,9 +116,21 @@ class AccountController extends Controller
         $roleId = intval( $request->input('role_id') );
         $role = Role::findOrFail($roleId);
 
+        if ($role->name === RoleConstants::Root) {
+            abort(400, 'Root permissions cannot be revoked.');
+        }
+
         $account = Account::findOrFail($id);
+        $this->blockAdministratorChanges($account, $request->user());
+
         $account->removeMembership($role->name);
 
-        return redirect()->route('admin.account.edit', ['account' => $account->id]);
+        return redirect()->route('account.edit', ['account' => $account->id]);
+    }
+
+    private function blockAdministratorChanges(Account $account, Account $withAccount) {
+        if ($account->isAdministrator() && $withAccount->id !== $account->id && ! $withAccount->isRoot()) {
+            abort(400, 'Only the root account can revoke elevated permissions from other administrators.');
+        }
     }
 }

@@ -151,6 +151,8 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
             'account_id' => $this->id,
             'role_id'    => $role->id
         ])->delete();
+
+        Cache::forget('ed.rol.'.$this->id);
     }
 
     public function forgetRoles()
@@ -158,9 +160,14 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
         Cache::forget('ed.rol.'.$this->id);
     }
 
+    public function isRoot() 
+    {
+        return $this->memberOf(RoleConstants::Root);
+    }
+
     public function isAdministrator() 
     {
-        return $this->memberOf(RoleConstants::Administrators);
+        return $this->memberOf(RoleConstants::Administrators) || $this->isRoot();
     }
 
     public function getAuthIdentifierName()
