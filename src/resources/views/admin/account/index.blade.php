@@ -31,4 +31,11 @@
 ])
 {{ $accounts->links() }}
 
+<h2>Recently deleted accounts</h2>
+<ol>
+@foreach ($deletedAccounts as $account)
+<li><a href="{{ route('account.edit', ['account' => $account]) }}">{{ $account->id }}</a> deleted @date($account->updated_at) (created @date($account->created_at))</li>
+@endforeach
+</ol>
+
 @endsection

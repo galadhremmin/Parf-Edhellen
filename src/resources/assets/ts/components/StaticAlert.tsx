@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
 import classNames from 'classnames';
+import { useCallback } from 'react';
 
 import { fireEvent } from './Component';
 import { IProps } from './StaticAlert._types';
@@ -9,7 +9,7 @@ function StaticAlert(props: IProps) {
         children,
         dismissable,
         onDismiss,
-        type,
+        type = 'info',
     } = props;
 
     const _onDismiss = useCallback(() => {
@@ -21,9 +21,5 @@ function StaticAlert(props: IProps) {
         {children}
     </div>;
 }
-
-StaticAlert.defaultProps = {
-    type: 'info',
-};
 
 export default StaticAlert;

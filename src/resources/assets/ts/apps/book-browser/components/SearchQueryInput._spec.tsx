@@ -1,12 +1,12 @@
-import { fireEvent, render, screen } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
-import sinon from 'sinon';
 import {
     describe,
     expect,
     test,
 } from '@jest/globals';
+import { fireEvent, render, screen } from '@testing-library/react';
+import sinon from 'sinon';
 
+import { act } from 'react';
 import SearchQueryInput from './SearchQueryInput';
 
 describe('apps/book-browser/components/SearchQueryInput', () => {

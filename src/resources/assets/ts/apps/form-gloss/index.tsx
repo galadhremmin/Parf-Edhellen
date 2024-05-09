@@ -20,9 +20,9 @@ const Inject = (props: IProps) => {
     const {
         confirmButton,
         gloss,
-        formSections,
+        formSections = [ FormSection.Gloss, FormSection.Inflections ],
         inflections,
-        prefetched,
+        prefetched = true,
     } = props;
 
     useEffect(() => {
@@ -43,10 +43,5 @@ const Inject = (props: IProps) => {
         <Form confirmButton={confirmButton || undefined} formSections={formSections} />
     </Provider>;
 };
-
-Inject.defaultProps = {
-    prefetched: true,
-    formSections: [ FormSection.Gloss, FormSection.Inflections ]
-} as Partial<IProps>;
 
 export default Inject;

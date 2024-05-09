@@ -1,4 +1,3 @@
-import React, { useState, useCallback } from 'react';
 import GlossGroupSelect from '@root/components/Form/GlossGroupSelect';
 import SpeechSelect from '@root/components/Form/SpeechSelect';
 
@@ -8,10 +7,10 @@ import './AdditionalSearchParameters.scss';
 
 function AdditionalSearchParameters(props: IProps) {
     const {
-        glossGroupId,
+        glossGroupId = 0,
         onGlossGroupIdChange,
         onSpeechIdChange,
-        speechId,
+        speechId = 0,
     } = props;
 
     return <div className="AdditionalSearchParameters">
@@ -35,10 +34,5 @@ function AdditionalSearchParameters(props: IProps) {
         </div>
     </div>;
 }
-
-AdditionalSearchParameters.defaultProps = {
-    glossGroupId: 0,
-    speechId: 0,
-} as Partial<IProps>;
 
 export default AdditionalSearchParameters;

@@ -7,9 +7,9 @@ import { IProps } from './PaginationLink._types';
 function PaginationLink(props: IProps) {
     const {
         children,
-        onClick,
+        onClick = null,
         pageNumber,
-        parameterName,
+        parameterName = 'offset',
     } = props;
 
     const [ queryString, setQueryString ] = useState<string>('?');
@@ -33,10 +33,5 @@ function PaginationLink(props: IProps) {
         {children || pageNumber}
     </a>;
 }
-
-PaginationLink.defaultProps = {
-    onClick: null,
-    parameterName: 'offset',
-} as Partial<IProps>;
 
 export default PaginationLink;

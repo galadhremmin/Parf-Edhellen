@@ -8,10 +8,10 @@ export interface IProps<V> {
     confirmButtonText?: string;
     dismissable?: boolean;
     onConfirm?: ComponentEventHandler<V>;
-    onDismiss: ComponentEventHandler<void>;
+    onDismiss?: ComponentEventHandler<void>;
     open: boolean;
     size?: 'sm' | 'lg' | 'xl' | undefined;
     title: ReactNode;
-    valid: boolean;
+    valid?: boolean;
     value?: V;
 }

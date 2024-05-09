@@ -9,7 +9,7 @@ import { IProps } from '../index._types';
 
 function Feeds({
     groupId,
-    feedUrlFactory,
+    feedUrlFactory = createFeedUrl,
     roleManager,
     subscriptionApi,
 }: IProps) {
@@ -19,10 +19,6 @@ function Feeds({
         <FeedButton feedUrlFactory={feedUrlFactory} groupId={groupId}  />
     </div>;
 }
-
-Feeds.defaultProps = {
-    feedUrlFactory: createFeedUrl,
-} as Partial<IProps>;
 
 export default withPropInjection(Feeds, {
     roleManager: DI.RoleManager,

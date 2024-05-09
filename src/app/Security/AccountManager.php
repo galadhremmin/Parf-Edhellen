@@ -12,6 +12,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use App\Models\Account;
 use App\Models\AuthorizationProvider;
+use App\Models\Role;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Auth\Events\Registered;
@@ -26,6 +27,18 @@ class AccountManager
     public function __construct(StorageHelper $storageHelper)
     {
         $this->_storageHelper = $storageHelper;
+    }
+
+    public function getRootAccount()
+    {
+        $role = Role::where('name', RoleConstants::Root)
+            ->first();
+
+        if ($role === null) {
+            return null;
+        }
+
+        return $role->accounts()->first();
     }
 
     public function createAccount(string $username, string $identity = null, int $providerId = null, string $password = null, string $name = null)

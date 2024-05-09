@@ -1,11 +1,11 @@
 import {
-  useCallback,
-  useEffect,
-  useState,
+    useCallback,
+    useEffect,
+    useState,
 } from 'react';
 
 import {
-  ISuggestionEntity,
+    ISuggestionEntity,
 } from '@root/connectors/backend/IGlossResourceApi';
 import { DI } from '@root/di/keys';
 import { mapper } from '@root/utilities/func/mapper';
@@ -25,7 +25,7 @@ function GlossSelect(props: IProps) {
         apiConnector,
         name,
         onChange,
-        value,
+        value = 0,
     } = props;
 
     const [ suggestions, setSuggestions ] = useState([]);
@@ -103,10 +103,6 @@ function GlossSelect(props: IProps) {
         valueClassNames="GlossSelect--value"
     />;
 }
-
-GlossSelect.defaultProps = {
-    value: 0,
-} as Partial<IProps>;
 
 export default withPropInjection(GlossSelect, {
     apiConnector: DI.GlossApi,

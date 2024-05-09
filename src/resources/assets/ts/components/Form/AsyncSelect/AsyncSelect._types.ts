@@ -15,6 +15,6 @@ export interface IProps<T = any> extends IComponentProps<T | IdValue> {
     emptyText?: string;
     loaderOfValues: ValueLoader<T>;
     textField: keyof T;
-    valueField: AllowedNames<T, IdValue>;
+    valueField?: AllowedNames<T, IdValue>;
     valueType: ValueType;
 }

@@ -17,13 +17,13 @@ import {
 
 function Form(props: IProps) {
     const {
-        content,
+        content = '',
         name,
-        onCancel,
-        onChange,
-        onSubmit,
-        subject,
-        subjectEnabled,
+        onCancel = null,
+        onChange = null,
+        onSubmit = null,
+        subject = '',
+        subjectEnabled = true,
     } = props;
 
     const _onContentChange = useCallback(
@@ -84,14 +84,5 @@ function Form(props: IProps) {
         </div>
     </form>;
 }
-
-Form.defaultProps = {
-    content: '',
-    subject: '',
-    subjectEnabled: true,
-
-    onCancel: null,
-    onSubmit: null,
-} as Partial<IProps>;
 
 export default Form;

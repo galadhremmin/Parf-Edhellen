@@ -6,22 +6,22 @@ import Modal from 'react-modal';
 import { fireEvent } from './Component';
 import { IProps } from './Dialog._types';
 
-import './Dialog.scss';
 import classNames from 'classnames';
+import './Dialog.scss';
 
 function Dialog<V>(props: IProps<V>) {
     const {
-        actionBar,
-        cancelButtonText,
+        actionBar = true,
+        cancelButtonText = 'Close',
         children,
-        confirmButtonText,
-        dismissable,
+        confirmButtonText = 'OK',
+        dismissable = true,
         open,
         onConfirm,
         onDismiss,
         size,
         title,
-        valid,
+        valid = true,
         value,
     } = props;
 
@@ -84,14 +84,6 @@ function Dialog<V>(props: IProps<V>) {
         </div>
     </Modal>;
 }
-
-Dialog.defaultProps = {
-    actionBar: true,
-    cancelButtonText: 'Close',
-    confirmButtonText: 'OK',
-    dismissable: true,
-    valid: true,
-} as Partial<IProps<any>>;
 
 const DialogStyles = {
     content: {

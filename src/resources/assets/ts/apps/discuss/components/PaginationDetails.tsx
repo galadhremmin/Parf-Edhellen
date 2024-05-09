@@ -9,7 +9,7 @@ function PaginationDetails(props: IProps) {
     } = props;
 
     const {
-        originalPostIsAlwaysVisible,
+        originalPostIsAlwaysVisible = true,
     } = props;
 
     // clamp to 0 < x < inf
@@ -34,9 +34,5 @@ function PaginationDetails(props: IProps) {
         Viewing {numberOfPosts} of {numberOfTotalPosts} replies - {offsetBegin} through {offsetEnd} (page {currentPage} of {numberOfPages})
     </aside>;
 }
-
-PaginationDetails.defaultProps = {
-    originalPostIsAlwaysVisible: true,
-} as IProps;
 
 export default PaginationDetails;

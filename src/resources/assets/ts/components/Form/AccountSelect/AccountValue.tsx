@@ -31,7 +31,7 @@ const useFetch = (apiConnector: IAccountApi, accountId: number) => {
 function AccountValue(props: IProps) {
     const {
         account,
-        apiConnector,
+        apiConnector = resolve(DI.AccountApi),
     } = props;
 
     const avatar = useFetch(apiConnector, account?.id);
@@ -46,10 +46,6 @@ function AccountValue(props: IProps) {
         <span className="id">{account.id}</span>
     </>;
 }
-
-AccountValue.defaultProps = {
-    apiConnector: resolve(DI.AccountApi),
-} as Partial<IProps>;
 
 export const injectAccountValue = (account: IAccountSuggestion) => <AccountValue account={account} />;
 

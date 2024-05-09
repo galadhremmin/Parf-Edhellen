@@ -26,12 +26,9 @@ import { IProps } from './GlossForm._types';
 
 function GlossForm(props: IProps) {
     const {
-        name,
+        name = 'GlossForm',
         onGlossFieldChange,
-    } = props;
-
-    const {
-        gloss,
+        gloss = null,
     } = props;
 
     const _onFieldChange = (field: GlossProps, value: string) => {
@@ -221,10 +218,5 @@ function GlossForm(props: IProps) {
         </div>
     </>;
 }
-
-GlossForm.defaultProps = {
-    gloss: null,
-    name: 'GlossForm',
-} as IProps;
 
 export default GlossForm;

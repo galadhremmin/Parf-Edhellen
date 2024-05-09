@@ -1,12 +1,12 @@
-import React, { useEffect, useRef } from 'react';
 import {
     CellValueChangedEvent,
     GridReadyEvent,
 } from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react/lib/agGridReact';
+import { useEffect, useRef } from 'react';
 // import { ClientSideRowModelModule } from 'ag-grid-community/client-side-row-model';
 import { fireEventAsync } from '@root/components/Component';
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
+import { AgGridReact } from 'ag-grid-react';
 import {
     IProps,
     TranslationGridColumnDefinition,

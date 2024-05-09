@@ -6,8 +6,8 @@ export const enum PageModes {
 }
 
 export interface IProps {
-    currentPage: number;
-    noOfPages: number;
+    currentPage?: number;
+    noOfPages?: number;
     onClick?: ComponentEventHandler<number>;
     pageQueryParameterName?: string;
     pages?: (string | number)[] | PageModes;

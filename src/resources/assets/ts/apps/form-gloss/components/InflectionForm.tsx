@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { IComponentEvent } from '@root/components/Component._types';
 import Panel from '@root/components/Panel';
 
-import { IProps } from './InflectionForm._types';
-import InflectionsInput from '../components/InflectionsInput';
-import { IChangeEventArgs } from './InflectionsInput._types';
 import { fireEvent } from '@root/components/Component';
+import InflectionsInput from '../components/InflectionsInput';
+import { IProps } from './InflectionForm._types';
+import { IChangeEventArgs } from './InflectionsInput._types';
 
 function InflectionForm(props: IProps) {
     const [ focusNextRow, setFocusNextRow ] = useState(false);
 
     const {
-        inflections,
-        name,
+        inflections = [],
+        name = 'InflectionForm',
 
         onInflectionCreate,
         onInflectionsChange,
@@ -52,11 +52,5 @@ function InflectionForm(props: IProps) {
         </div>
     </div>;
 }
-
-InflectionForm.defaultProps = {
-    inflections: [],
-    glossId: null,
-    name: 'InflectionForm',
-} as IProps;
 
 export default InflectionForm;

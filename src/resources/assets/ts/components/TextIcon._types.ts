@@ -41,4 +41,5 @@ type BootstrapIcons = 'arrow-down' |
 export interface IProps {
     className?: string;
     icon: BootstrapIcons;
+    color?: string;
 }

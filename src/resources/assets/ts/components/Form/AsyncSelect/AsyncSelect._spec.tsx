@@ -1,9 +1,9 @@
-import { fireEvent, render, RenderResult, screen } from '@testing-library/react';
 import {
     describe,
     expect,
     test,
 } from '@jest/globals';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { IComponentEvent } from '../../Component._types';
 import AsyncSelect from './AsyncSelect';
 
@@ -20,7 +20,7 @@ describe('components/Form', () => {
         const DefaultLoader = () => Promise.resolve(Values);
 
         test('mounts', async () => {
-            render(<AsyncSelect loaderOfValues={DefaultLoader} textField="t" valueField="x" />);
+            render(<AsyncSelect loaderOfValues={DefaultLoader} textField="t" valueField="x" valueType="entity" />);
 
             const options = await screen.findAllByRole<HTMLOptionElement>('option');
             expect(options.length).toEqual(Values.length);

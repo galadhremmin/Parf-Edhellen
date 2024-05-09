@@ -28,8 +28,13 @@ const DefaultConfigCacheFactory = () => Cache.withLocalStorage<IComponentConfig>
 function MarkdownInput(props: IProps) {
     const {
         markdownApi,
-        configCacheFactory,
-        value,
+        configCacheFactory = DefaultConfigCacheFactory,
+        value = '',
+
+        id = 'markdownBody',
+        required = false,
+        rows = 15,
+
     } = props;
 
     const [ currentTab, setCurrentTab ] = useState(Tab.EditTab);
@@ -62,6 +67,9 @@ function MarkdownInput(props: IProps) {
         <Tabs tab={currentTab} onTabChange={_onOpenTab} />
         {currentTab === Tab.EditTab && <EditTabView
             {...props}
+            id={id}
+            required={required}
+            rows={rows}
             enter2Paragraph={enter2Paragraph}
             onEnter2ParagraphChange={_onEnter2ParagraphChange}
             markdownApi={markdownApi}
@@ -70,16 +78,6 @@ function MarkdownInput(props: IProps) {
         {currentTab === Tab.PreviewTab && <PreviewTabView value={value} markdownApi={markdownApi} />}
     </div>;
 }
-
-MarkdownInput.defaultProps = {
-    configCacheFactory: DefaultConfigCacheFactory,
-    id: 'markdownBody',
-    name: 'markdownBody',
-    props: {},
-    required: false,
-    rows: 15,
-    value: '',
-} as Partial<IProps>;
 
 export default withPropInjection(MarkdownInput, {
     markdownApi: DI.UtilityApi,
