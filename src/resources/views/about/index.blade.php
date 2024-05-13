@@ -14,6 +14,27 @@
 a Tolkien-fan.</p>
 
 <div class="about-container">
+<div class="about-section">
+  <a name="search"></a>
+  <h2>Browsing the dictionary</h2>
+  <p>
+    Use the search field above to browse the dictionary. As you type, you will be presented with a list of words that match your search term. A match can be direct and indirect: a direct match is a word that contains the characters you
+    have entered, for an example <em>mi</em> yielding <em>mi, mir, mil</em> etcetera; an indirect match is thematically relevant to what you are looking for, for an example <em>maple</em> yielding <em>trees, plants, olvar</em> (the latter
+    of which is a Quenya word for “growing things with roots in the earth.”)
+  </p> 
+  <p>
+    Wildcard, or the asterisk, search terms are supported. You can position a wildcard character <strong>*</strong> wherever you wish and the dictionary will fill in the rest. A wildcard is usually inserted at the end of what you are
+    typing, so if you type <em>lo</em>, you will find words that begin with those letters, such as <em>long, love, low,</em> etcetera. If you want to find words that end with <em>lo</em>, you can search for <em>*lo</em>, yielding
+    <em>hello, solo, polo,</em> etcetera. You can achieve the same result by using the dictionary’s reversed search feature, by checking the <em>Reversed</em> checkbox underneath the search field, and searching for <em>ol</em>.
+  </p>
+  <p>
+    Use wildcards to search in multiple directions, for an example <em>*en*</em> would yield <em>endeavor, envelop, generalization, sentimentality, taken,</em> ectetera.
+  </p>
+  <p>
+    By checking the <em>Old sources</em> checkbox, the dictionary will include words from dictionaries that have not been updated for several years. These words are usually not incorrect, but they can lack information from later linguistic
+    publications.
+  </p>
+</div>
 
 <div class="about-section">
   <h2>What is Elvish?</h2>
@@ -72,27 +93,6 @@ a Tolkien-fan.</p>
   </p>
   <p>
     We very clearly indicate what words and phrases are neo-Elvish (or neologisms) with labelling.
-  </p>
-</div>
-<div class="about-section">
-  <a name="search"></a>
-  <h2>Browsing the dictionary</h2>
-  <p>
-    Use the search field above to browse the dictionary. As you type, you will be presented with a list of words that match your search term. A match can be direct and indirect: a direct match is a word that contains the characters you
-    have entered, for an example <em>mi</em> yielding <em>mi, mir, mil</em> etcetera; an indirect match is thematically relevant to what you are looking for, for an example <em>maple</em> yielding <em>trees, plants, olvar</em> (the latter
-    of which is a Quenya word for “growing things with roots in the earth.”)
-  </p> 
-  <p>
-    Wildcard, or the asterisk, search terms are supported. You can position a wildcard character <strong>*</strong> wherever you wish and the dictionary will fill in the rest. A wildcard is usually inserted at the end of what you are
-    typing, so if you type <em>lo</em>, you will find words that begin with those letters, such as <em>long, love, low,</em> etcetera. If you want to find words that end with <em>lo</em>, you can search for <em>*lo</em>, yielding
-    <em>hello, solo, polo,</em> etcetera. You can achieve the same result by using the dictionary’s reversed search feature, by checking the <em>Reversed</em> checkbox underneath the search field, and searching for <em>ol</em>.
-  </p>
-  <p>
-    Use wildcards to search in multiple directions, for an example <em>*en*</em> would yield <em>endeavor, envelop, generalization, sentimentality, taken,</em> ectetera.
-  </p>
-  <p>
-    By checking the <em>Old sources</em> checkbox, the dictionary will include words from dictionaries that have not been updated for several years. These words are usually not incorrect, but they can lack information from later linguistic
-    publications.
   </p>
 </div>
 <div>
