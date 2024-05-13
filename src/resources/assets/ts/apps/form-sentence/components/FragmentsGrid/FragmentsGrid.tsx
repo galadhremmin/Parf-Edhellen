@@ -1,11 +1,11 @@
 import {
-  CellValueChangedEvent,
-  ColDef,
-  DetailGridInfo,
-  GetRowIdParams,
-  GridReadyEvent,
-  RowClassParams,
-  RowNode,
+    CellValueChangedEvent,
+    ColDef,
+    DetailGridInfo,
+    GetRowIdParams,
+    GridReadyEvent,
+    RowClassParams,
+    RowNode,
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -15,7 +15,7 @@ import { fireEventAsync } from '@root/components/Component';
 import { ISentenceFragmentEntity, SentenceFragmentType } from '@root/connectors/backend/IBookApi';
 import { IGlossEntity, ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
 import {
-  IInflection
+    IInflection
 } from '@root/connectors/backend/IInflectionResourceApi';
 import { ISpeechEntity } from '@root/connectors/backend/ISpeechResourceApi';
 
@@ -29,9 +29,9 @@ import TengwarRenderer from '@root/components/Grid/renderers/TengwarRenderer';
 import { withPropInjection } from '@root/di';
 import { ISentenceFragmentReducerState } from '../../reducers/child-reducers/SentenceFragmentReducer._types';
 import {
-  FragmentGridColumnDefinition,
-  IProps,
-  IState,
+    FragmentGridColumnDefinition,
+    IProps,
+    IState,
 } from './FragmentsGrid._types';
 
 import { DI } from '@root/di/keys';
@@ -163,13 +163,13 @@ export function FragmentsGrid(props: IProps) {
         /**
          * Resizes the grid's columns appropriately when the viewport changes.
          */
-        const _onWindowResize = () => {
+        const __onWindowResize = () => {
             gridRef.current?.api.sizeColumnsToFit();
         }
 
-        window.addEventListener('resize', _onWindowResize);
+        window.addEventListener('resize', __onWindowResize);
         return () => {
-            window.removeEventListener('resize', _onWindowResize);
+            window.removeEventListener('resize', __onWindowResize);
         };
     }, []);
 

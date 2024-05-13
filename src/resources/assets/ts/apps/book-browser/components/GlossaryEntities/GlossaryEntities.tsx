@@ -49,11 +49,11 @@ function GlossaryEntities(props: IEntitiesComponentProps) {
         const actions = new SearchActions();
         actionsRef.current = actions;
 
-        const _onPopState = onPopState.bind(this, actionsRef.current, actions);
-        window.addEventListener('popstate', _onPopState);
+        const __onPopState = onPopState.bind(this, actionsRef.current, actions);
+        window.addEventListener('popstate', __onPopState);
 
         return () => {
-            window.removeEventListener('popstate', _onPopState);
+            window.removeEventListener('popstate', __onPopState);
         };
     }, []);
 

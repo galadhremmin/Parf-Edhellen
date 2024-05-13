@@ -1,11 +1,11 @@
 import {
-  CellValueChangedEvent,
-  ColDef,
-  ColGroupDef,
-  EditableCallbackParams,
-  GetRowIdParams,
-  GridReadyEvent,
-  ICellRendererParams,
+    CellValueChangedEvent,
+    ColDef,
+    ColGroupDef,
+    EditableCallbackParams,
+    GetRowIdParams,
+    GridReadyEvent,
+    ICellRendererParams,
 } from 'ag-grid-community';
 // import { ClientSideRowModelModule } from 'ag-grid-community/community-modules/client-side-row-model';
 import { fireEventAsync } from '@root/components/Component';
@@ -141,15 +141,15 @@ function InflectionsInput(props: IProps) {
             setColumnDefinition(columnDefinition);
         });
 
-        const resizeGrid = () => {
+        const __onResizeGrid = () => {
             if (gridRef.current) {
                 gridRef.current.api.sizeColumnsToFit();
             }
         };
 
-        window.addEventListener('resize', resizeGrid);
+        window.addEventListener('resize', __onResizeGrid);
         return () => {
-            window.removeEventListener('resize', resizeGrid);
+            window.removeEventListener('resize', __onResizeGrid);
         };
     }, []);
 
