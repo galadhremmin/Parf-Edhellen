@@ -37,15 +37,15 @@ export default function TranslationGrid(props: IProps) {
     } = props;
 
     useEffect(() => {
-        const _onWindowResize = () => {    
+        const __onWindowResize = () => {    
             if (gridRef) {
                 gridRef.current?.api.sizeColumnsToFit();
             }
         }
 
-        window.addEventListener('resize', _onWindowResize);
+        window.addEventListener('resize', __onWindowResize);
         return () => {
-            window.removeEventListener('resize', _onWindowResize);
+            window.removeEventListener('resize', __onWindowResize);
         };
     }, []);
 

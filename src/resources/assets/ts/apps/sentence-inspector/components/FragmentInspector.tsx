@@ -28,26 +28,6 @@ function jumpToComponent(component: HTMLElement) {
 export function FragmentInspector(props: IProps) {
     const _rootRef = useRef<HTMLElement>();
 
-    /**
-     * Jump to the component when it mounts, as it is expected to only be
-     * mounted when the customer is interested in its content.
-     */
-    useEffect(() => {
-        jumpToComponent(_rootRef.current);
-        document.body.classList.add('fragment-inspector--open');
-        return () => {
-            document.body.classList.remove('fragment-inspector--open');
-        }
-    }, []);
-
-    /**
-     * Jump to the component when it re-renders, as the customer is expecting
-     * to see its content.
-     */
-    useEffect(() => {
-        jumpToComponent(_rootRef.current);
-    });
-
     const {
         fragment,
         onNextOrPreviousFragmentClick,
@@ -63,19 +43,60 @@ export function FragmentInspector(props: IProps) {
         fireEventAsync('FragmentInspector', onSelectFragment, null);
     }, [ onSelectFragment ]);
 
-    const _onPreviousClick = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
-        ev.preventDefault();
+    const _onPreviousClick = useCallback((ev?: React.MouseEvent<HTMLAnchorElement>) => {
+        ev?.preventDefault();
         if (previousFragmentId) {
             fireEventAsync('FragmentInspector', onNextOrPreviousFragmentClick, previousFragmentId);
         }
     }, [ onNextOrPreviousFragmentClick, previousFragmentId ]);
 
-    const _onNextClick = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
-        ev.preventDefault();
+    const _onNextClick = useCallback((ev?: React.MouseEvent<HTMLAnchorElement>) => {
+        ev?.preventDefault();
         if (nextFragmentId) {
             fireEventAsync('FragmentInspector', onNextOrPreviousFragmentClick, nextFragmentId);
         }
     }, [ onNextOrPreviousFragmentClick, nextFragmentId ]);
+
+    /**
+     * Jump to the component when it mounts, as it is expected to only be
+     * mounted when the customer is interested in its content.
+     */
+    useEffect(() => {
+        jumpToComponent(_rootRef.current);
+        document.body.classList.add('fragment-inspector--open');
+        return () => {
+            document.body.classList.remove('fragment-inspector--open');
+        }
+    }, []);
+
+    useEffect(() => {
+        if (! onNextOrPreviousFragmentClick) {
+            return;
+        }
+
+        const __onKeyPress = (ev: KeyboardEvent) => {
+            switch (ev.code) {
+                case 'ArrowLeft':
+                    _onPreviousClick();
+                    break;
+                case 'ArrowRight':
+                    _onNextClick();
+                    break;
+            }
+        };
+        document.addEventListener('keyup', __onKeyPress);
+        return () => {
+            document.removeEventListener('keyup', __onKeyPress);
+        }
+    }, [ onNextOrPreviousFragmentClick, _onPreviousClick, _onNextClick ]);
+
+    /**
+     * Jump to the component when it re-renders, as the customer is expecting
+     * to see its content.
+     */
+    useEffect(() => {
+        jumpToComponent(_rootRef.current);
+    });
 
     return <aside className="fragment-inspector" ref={_rootRef}>
         <a href="#previous"
