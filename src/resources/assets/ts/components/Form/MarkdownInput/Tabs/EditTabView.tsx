@@ -97,7 +97,7 @@ function EditTabView(props: IProps) {
             let insert = ParagraphDelimiter;
             if (lastNewLineBeforeCaret > -1 && lastNewLineBeforeCaret < start && 
                 // New line starting with * (unordered list), \d. (ordered list) or | (table) OR when the line is empty
-                (/^\s*([\*\|]{1}|\d+\.\s)/.test(currentLine) || currentLine.length < 1)
+                (/^\s*([*|]{1}|\d+\.\s)/.test(currentLine) || currentLine.length < 1)
             ) {
                 insert = LineDelimiter;
             }
