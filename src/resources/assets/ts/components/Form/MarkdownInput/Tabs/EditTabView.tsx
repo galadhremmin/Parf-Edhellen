@@ -14,6 +14,7 @@ import { IProps } from './EditTabView._types';
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
 import './EditTabView.scss';
 
+const LineDelimiter = `\n`;
 const ParagraphDelimiter = `\n\n`;
 
 function EditTabView(props: IProps) {
@@ -90,17 +91,28 @@ function EditTabView(props: IProps) {
             ev.preventDefault();
             ev.stopPropagation();
 
+            const stringUntilCaret = target.value.substring(0, start);
+            const lastNewLineBeforeCaret = stringUntilCaret.lastIndexOf(LineDelimiter);
+            const currentLine = target.value.substring(lastNewLineBeforeCaret + 1, start).trim();
+            let insert = ParagraphDelimiter;
+            if (lastNewLineBeforeCaret > -1 && lastNewLineBeforeCaret < start && 
+                // New line starting with * (unordered list), \d. (ordered list) or | (table) OR when the line is empty
+                (/^\s*([\*\|]{1}|\d+\.\s)/.test(currentLine) || currentLine.length < 1)
+            ) {
+                insert = LineDelimiter;
+            }
+
             // Insert a paragraph between the start and end position of the current 'selection' (i.e. caret position).
             const newValue = [
-                target.value.substring(0, start),
-                ParagraphDelimiter,
+                stringUntilCaret,
+                insert,
                 target.value.substring(end),
             ].join('');
 
             // The component needs to remember the last caret position so that it can be restored after the
             // component's value prop is changed. If the component do not remember the caret position, the
             // caret will be moved to the end of the string.
-            setCaretPosition(end + ParagraphDelimiter.length);
+            setCaretPosition(end + insert.length);
 
             // Inform observers that the value has changed. It is necessary to manually fire the change event
             // because the event has been intercepted and propagation has been disabled.
