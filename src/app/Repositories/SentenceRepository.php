@@ -118,13 +118,9 @@ class SentenceRepository
         $fragments = $sentence->sentence_fragments()->with(['gloss_inflections', 'speech'])->get();
         $translations = $sentence->sentence_translations()
             ->select('sentence_number', 'paragraph_number', 'translation')
-            ->get()
-            ->transform(function ($item) {
-                $item->makeHidden('paragraph_number');
-                return $item;
-            })->mapWithKeys(function ($item) {
-                return [ $item->paragraph_number => $item ];
-            });
+            ->orderBy('paragraph_number', 'asc')
+            ->orderBy('sentence_number', 'asc')
+            ->get();
 
         $sentence->makeHidden(['account_id', 'language_id', 'sentence_translations', 'sentence_fragments']);
 

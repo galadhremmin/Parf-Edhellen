@@ -148,7 +148,7 @@ export interface ISentenceRequest {
 export interface ISentenceResponse {
     sentence: ISentenceEntity;
     sentenceFragments: ISentenceFragmentEntity[];
-    sentenceTranslations: ISentenceTranslationMap;
+    sentenceTranslations: ISentenceTranslation[];
     sentenceTransformations: ITextTransformationsMap;
     speeches: ISpeechMap;
     inflections: IInflectionMap;
@@ -222,11 +222,8 @@ export enum SentenceFragmentType {
     WordConnection    = 45,
 }
 
-export interface ISentenceTranslationMap {
-    [paragraphNumber: string]: ISentenceTranslation;
-}
-
 export interface ISentenceTranslation {
+    paragraphNumber: number;
     sentenceNumber: number;
     translation: string;
 }

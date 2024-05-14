@@ -38,8 +38,8 @@ export function FragmentInspector(props: IProps) {
         nextFragmentId,
     } = props.fragment;
 
-    const _onCloseClick = useCallback((ev: React.MouseEvent<HTMLButtonElement>) => {
-        ev.preventDefault();
+    const _onCloseClick = useCallback((ev?: React.MouseEvent<HTMLButtonElement>) => {
+        ev?.preventDefault();
         fireEventAsync('FragmentInspector', onSelectFragment, null);
     }, [ onSelectFragment ]);
 
@@ -82,13 +82,16 @@ export function FragmentInspector(props: IProps) {
                 case 'ArrowRight':
                     _onNextClick();
                     break;
+                case 'Escape':
+                    _onCloseClick();
+                    break;
             }
         };
         document.addEventListener('keyup', __onKeyPress);
         return () => {
             document.removeEventListener('keyup', __onKeyPress);
         }
-    }, [ onNextOrPreviousFragmentClick, _onPreviousClick, _onNextClick ]);
+    }, [ onNextOrPreviousFragmentClick, _onPreviousClick, _onNextClick, _onCloseClick ]);
 
     /**
      * Jump to the component when it re-renders, as the customer is expecting

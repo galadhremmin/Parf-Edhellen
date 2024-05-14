@@ -14,7 +14,6 @@ import {
 
 const columnDefinition: TranslationGridColumnDefinition = [
     {
-        cellEditorPopup: true,
         editable: false,
         field: 'sentenceText',
         resizable: true,
@@ -25,6 +24,18 @@ const columnDefinition: TranslationGridColumnDefinition = [
         field: 'translation',
         cellEditor: 'agLargeTextCellEditor',
         resizable: true,
+    },
+    {
+        editable: true,
+        field: 'sentenceNumber',
+        resizable: true,
+        type: 'numericColumn',
+    },
+    {
+        editable: true,
+        field: 'paragraphNumber',
+        resizable: true,
+        type: 'numericColumn',
     },
 ];
 
