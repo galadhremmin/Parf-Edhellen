@@ -14,13 +14,13 @@
 .GlossCellEditor--scroller {
     height: 210px;
     overflow-y: scroll;
+    background: white;
 }
 
 .GlossCellEditor--suggestions {
     list-style-type: none;
     margin: 0;
     padding: 0;
-    background: white;
 }
 
 .GlossCellEditor--suggestion {
