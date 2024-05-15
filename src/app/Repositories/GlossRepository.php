@@ -295,7 +295,7 @@ class GlossRepository
 
         $suggestions = $query
             ->where([
-                ['is_deleted', 0]
+                ['g.is_deleted', 0]
             ])
             ->orderBy(DB::raw('CHAR_LENGTH(w.normalized_word)'))
             ->limit($numberOfNormalizedWords*15)
