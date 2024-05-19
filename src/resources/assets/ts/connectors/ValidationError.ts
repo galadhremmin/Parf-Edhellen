@@ -1,25 +1,23 @@
-export interface IErrorMap {
-    [propertyName: string]: string[];
-}
-
 export default class ValidationError {
-    constructor(private _errorMessage: string, private _errorMap: IErrorMap = null) {}
+    constructor(private _errorMessage: string, private _errorMap: Record<string, string[]> = null) {}
 
     public get errorMessage() {
         return this._errorMessage;
     }
 
     public get errors() {
-        const map = new Map<string, string[]>();
-
         if (this._errorMap === null) {
-            return map;
+            return {};
         }
 
-        Object.keys(this._errorMap).forEach((propertyName) => {
-            map.set(propertyName, this._errorMap[propertyName]);
-        });
+        return this._errorMap;
+    }
 
-        return map;
+    public get keys() {
+        return Object.keys(this.errors);
+    }
+
+    public get size() {
+        return this.keys.length;
     }
 }

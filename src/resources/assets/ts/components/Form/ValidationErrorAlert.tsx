@@ -22,15 +22,15 @@ function ValidationErrorAlert(props: IProps) {
         </StaticAlert>;
     }
 
-    if (error.errors.size < 1) {
+    if (error.size < 1) {
         return <StaticAlert type="warning">
             {error.errorMessage}
         </StaticAlert>;
     }
 
     const errors: ReactNode[] = [];
-    error.errors.forEach((propertyErrors, propertyName) => {
-        for (const propertyError of propertyErrors) {
+    error.keys.forEach((propertyName) => {
+        for (const propertyError of error.errors[propertyName]) {
             errors.push(<span key={errors.length}>
                 <em>{propertyName}</em>: {propertyError}
             </span>);
