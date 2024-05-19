@@ -1,5 +1,4 @@
 import axios, { AxiosPromise, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { IErrorMap } from './ValidationError';
 
 export type AxiosRequestFactory = typeof axios.delete |
     typeof axios.head |
@@ -9,7 +8,7 @@ export type AxiosRequestFactory = typeof axios.delete |
 
 export interface IValidationFailedResponse {
     message: string;
-    errors: IErrorMap;
+    errors: Record<string, string[]>;
 }
 
 export interface IErrorReport {

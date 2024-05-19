@@ -252,7 +252,7 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
                     return Promise.reject(new ValidationError(
                         (error.response.data as IValidationFailedResponse).message,
                         (error.response.data as IValidationFailedResponse).errors,
-                    )); // Validation errors are pass-through.
+                    ));
                 default:
                     errorReport = {
                         apiMethod,

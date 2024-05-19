@@ -163,6 +163,10 @@ export default class SentenceActions {
      */
     public reloadFragments(text: string) {
         return async (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
+            dispatch({
+                type: Actions.RequestTransformation,
+            });
+
             const oldFragments = getState().sentenceFragments;
             const oldTranslations = getState().sentenceTranslations;
             const languageId   = getState().sentence.languageId;
@@ -184,45 +188,53 @@ export default class SentenceActions {
             // is the ordering of each fragment while rendering sentences. For example, a sentence written
             // using a Latin transformation would differ from the Chinese transformation.
             const api = this._contributionApi;
-            const metadata = await api.validateTransformations(newFragments, language.id);
+            try {
+                const metadata = await api.validateTransformations(newFragments, language.id);
 
-            // Create a string using the Latin transformation. Regardless of localization, a Latin transformation
-            // is always expected from the server side.
-            const textComponents = convertTransformationToTextComponents(null, metadata.transformations.latin, newFragments);
-            const latinText = convertTextComponentsToString(textComponents, newFragments);
+                // Create a string using the Latin transformation. Regardless of localization, a Latin transformation
+                // is always expected from the server side.
+                const textComponents = convertTransformationToTextComponents(null, metadata.transformations.latin, newFragments);
+                const latinText = convertTextComponentsToString(textComponents, newFragments);
 
-            // Carry over the old translations into the new array of translations. Only the paragraphs and
-            // sentences that have changed since the last update will be blanked out. All else should be
-            // as it was prior to the reconstruction.
-            const translations = rebuildTranslations(oldTranslations, oldFragments, newFragments);
+                // Carry over the old translations into the new array of translations. Only the paragraphs and
+                // sentences that have changed since the last update will be blanked out. All else should be
+                // as it was prior to the reconstruction.
+                const translations = rebuildTranslations(oldTranslations, oldFragments, newFragments);
 
-            // Use suggestions for fragments that have not been assigned a gloss.
-            newFragments.forEach((f) => {
-                if (f.type !== SentenceFragmentType.Word || f.glossId) {
-                    return;
+                // Use suggestions for fragments that have not been assigned a gloss.
+                newFragments.forEach((f) => {
+                    if (f.type !== SentenceFragmentType.Word || f.glossId) {
+                        return;
+                    }
+
+                    const fragment = f.fragment.toLocaleLowerCase();
+                    const suggestion = metadata.suggestions[fragment];
+                    if (suggestion !== undefined) {
+                        f.glossId = suggestion.glossId;
+                        f.speechId = suggestion.speechId;
+                        f.glossInflections = suggestion.inflectionIds.map((inflectionId, i) => ({
+                            inflectionId,
+                            order: i,
+                        }));
+                    }
+                });
+
+                dispatch({
+                    dirty: false,
+                    latinText,
+                    paragraphs: textComponents.paragraphs,
+                    type: Actions.ReloadAllFragments,
+                    sentenceFragments: newFragments,
+                    sentenceTranslations: translations,
+                    textTransformations: metadata.transformations,
+                });
+            } catch (e) {
+                if (e instanceof ValidationError) {
+                    dispatch(setValidationErrors(e));
+                } else {
+                    throw e;
                 }
-
-                const fragment = f.fragment.toLocaleLowerCase();
-                const suggestion = metadata.suggestions[fragment];
-                if (suggestion !== undefined) {
-                    f.glossId = suggestion.glossId;
-                    f.speechId = suggestion.speechId;
-                    f.glossInflections = suggestion.inflectionIds.map((inflectionId, i) => ({
-                        inflectionId,
-                        order: i,
-                    }));
-                }
-            });
-
-            dispatch({
-                dirty: false,
-                latinText,
-                paragraphs: textComponents.paragraphs,
-                type: Actions.ReloadAllFragments,
-                sentenceFragments: newFragments,
-                sentenceTranslations: translations,
-                textTransformations: metadata.transformations,
-            });
+            }
         };
     }
 

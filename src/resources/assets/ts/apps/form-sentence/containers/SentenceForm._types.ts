@@ -27,6 +27,7 @@ export interface IProps extends Partial<ISentenceFormEvents>, Partial<IFragmentF
     prefetched?: boolean;
     sentence?: ISentenceReducerState;
     sentenceFragments?: ISentenceFragmentsReducerState;
+    sentenceFragmentsLoading?: boolean;
     sentenceParagraphs?: ILatinTextReducerState['paragraphs'];
     sentenceText?: string;
     sentenceTextIsDirty?: boolean;

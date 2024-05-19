@@ -2,11 +2,11 @@ import { Actions as ValidationActions } from '@root/components/Form/Validation/A
 import { IAction as IValidationAction } from '@root/components/Form/Validation/ValidationErrorReducer._types';
 import ValidationError from '@root/connectors/ValidationError';
 import { Actions } from '../actions';
-import SentenceFragmentReducer from './child-reducers/SentenceFragmentReducer';
 import {
     ISentenceFragmentsAction,
     ISentenceFragmentsReducerState,
 } from './SentenceFragmentsReducer._types';
+import SentenceFragmentReducer from './child-reducers/SentenceFragmentReducer';
 
 const InitialState: ISentenceFragmentsReducerState = [];
 const ErrorKeyRegEx = /^fragments\.(\d+)\./;
@@ -46,8 +46,8 @@ const SentenceFragmentsReducer = (state = InitialState, action: ISentenceFragmen
         case ValidationActions.SetValidationErrors:
             if (validationAction.errors instanceof ValidationError) {
                 const errorSet = new Map<number, string[]>();
-                const errors = validationAction.errors.errors;
-                for (const key of errors.keys()) {
+                const err = validationAction.errors;
+                for (const key of err.keys) {
                     const m = ErrorKeyRegEx.exec(key);
                     if (! m) {
                         continue;
@@ -55,9 +55,9 @@ const SentenceFragmentsReducer = (state = InitialState, action: ISentenceFragmen
 
                     const index = parseInt(m[1], 10);
                     if (errorSet.has(index)) {
-                        errorSet.set(index, [ ...errorSet.get(index), ...errors.get(key) ]);
+                        errorSet.set(index, [ ...errorSet.get(index), ...err.errors[key] ]);
                     } else {
-                        errorSet.set(index, errors.get(key));
+                        errorSet.set(index, err.errors[key]);
                     }
                 }
                 return state.map((fragment, i) => {

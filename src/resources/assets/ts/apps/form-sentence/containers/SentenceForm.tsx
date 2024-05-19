@@ -3,9 +3,11 @@ import { connect } from 'react-redux';
 
 import { ReduxThunkDispatch } from '@root/_types';
 import { fireEvent } from '@root/components/Component';
+import Dialog from '@root/components/Dialog';
 import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
 import Panel from '@root/components/Panel';
 import Quote from '@root/components/Quote';
+import Spinner from '@root/components/Spinner';
 import StaticAlert from '@root/components/StaticAlert';
 import TextIcon from '@root/components/TextIcon';
 import { resolve } from '@root/di';
@@ -20,6 +22,8 @@ import TranslationForm from '../components/TranslationForm';
 import { RootReducer } from '../reducers';
 import { IProps } from './SentenceForm._types';
 
+import './SentenceForm.scss';
+
 function SentenceForm(props: IProps) {
     const {
         bookApi = resolve(DI.BookApi),
@@ -32,6 +36,7 @@ function SentenceForm(props: IProps) {
         onTranslationChange,
         sentence = null,
         sentenceFragments = [],
+        sentenceFragmentsLoading,
         sentenceParagraphs,
         sentenceText,
         sentenceTextIsDirty,
@@ -46,7 +51,7 @@ function SentenceForm(props: IProps) {
     const languageId = sentence.languageId;
 
     useEffect(() => {
-        if (errors && errors.errors.size && submitted) {
+        if (errors && errors.size && submitted) {
             makeVisibleInViewport(errorContainer.current);
             setSubmitted(false);
         }
@@ -102,6 +107,18 @@ function SentenceForm(props: IProps) {
     ]);
 
     return <form method="post" action="." onSubmit={_onSubmit}>
+        <Dialog<void> title="Preparing the phrase" open={sentenceFragmentsLoading} dismissable={false}>
+            <div className="SentenceForm--loading-dialog-spinner">
+                <Spinner />
+            </div>
+            <p>
+                We're currently transcribing the phrase using the appropriate writing system, and we're
+                doing our best to identify and inflect the words you've used in the text.
+            </p>
+            <p>
+                Please be patient. This might take a while.
+            </p>
+        </Dialog>
         {!! (sentenceId && currentSentenceName) && <StaticAlert type="info">
             <TextIcon icon="info-sign" />{' '}
             You are proposing a change to the phrase{' '}
@@ -151,6 +168,7 @@ const mapStateToProps = (state: RootReducer) => ({
     errors: state.errors,
     sentence: state.sentence,
     sentenceFragments: state.sentenceFragments,
+    sentenceFragmentsLoading: state.sentenceFragmentsLoading,
     sentenceParagraphs: state.latinText.paragraphs,
     sentenceText: state.latinText.text,
     sentenceTextIsDirty: state.latinText.dirty,
