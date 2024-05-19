@@ -21,11 +21,13 @@ import { mergeFragments, parseFragments } from '../utilities/fragments';
 import { convertTextComponentsToString } from '../utilities/transformations';
 import { rebuildTranslations } from '../utilities/translations';
 
+import { ISentenceResourceApi } from '@root/connectors/backend/ISentenceResourceApi';
 import Actions from './Actions';
 
-export default class GlossActions {
+export default class SentenceActions {
     constructor(
         private _contributionApi: IContributionResourceApi = resolve(DI.ContributionApi),
+        private _sentenceApi: ISentenceResourceApi = resolve(DI.SentenceApi),
         private _languageApi: ILanguageApi = resolve(DI.LanguageApi)) {}
 
     /**
@@ -182,7 +184,7 @@ export default class GlossActions {
             // is the ordering of each fragment while rendering sentences. For example, a sentence written
             // using a Latin transformation would differ from the Chinese transformation.
             const api = this._contributionApi;
-            const metadata = await api.validateTransformations(newFragments, languageId);
+            const metadata = await api.validateTransformations(newFragments, language.id);
 
             // Create a string using the Latin transformation. Regardless of localization, a Latin transformation
             // is always expected from the server side.
