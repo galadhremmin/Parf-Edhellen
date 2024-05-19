@@ -17,6 +17,7 @@ use App\Models\{
     Word
 };
 use App\Models\Interfaces\IHasLanguage;
+use Illuminate\Support\Collection;
 
 class SearchIndexRepository 
 {
@@ -107,6 +108,29 @@ class SearchIndexRepository
         return $this->formatEntitiesResponse($entities, $searchGroupId);
     }
 
+    public function indexSearch(array $terms, ?callable $filterFunc): Collection
+    {
+        $normalizedTerms = array_map(function ($term) {
+            return StringHelper::normalize(
+                StringHelper::toLower(StringHelper::clean($term)),
+                true
+            );
+        }, $terms);
+
+        $query = SearchKeyword::whereIn('normalized_keyword', $normalizedTerms);
+
+        if (is_callable($filterFunc)) {
+            $tmp = $filterFunc($query);
+            if (! $tmp) {
+                $query = $tmp;
+            }
+        }
+
+        return $query
+            ->get()
+            ->groupBy('keyword');
+    }
+
     private function saveIndexInternal(ModelBase $model, Word $wordEntity, Language $keywordLanguage = null, string $inflection = null): array
     {
 
@@ -192,7 +216,7 @@ class SearchIndexRepository
         return $data;
     }
 
-    private function getSearchGroup(string $entityName): int
+    public function getSearchGroup(string $entityName): int
     {
         $morpedModel = Morphs::getMorphedModel($entityName);
         $config = config('ed.book_entities');

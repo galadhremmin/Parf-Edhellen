@@ -7,6 +7,7 @@ import DiscussApiConnector from '@root/connectors/backend/DiscussApiConnector';
 import GlossResourceApiConnector from '@root/connectors/backend/GlossResourceApiConnector';
 import InflectionResourceApiConnector from '@root/connectors/backend/InflectionResourceApiConnector';
 import LanguageConnector from '@root/connectors/backend/LanguageConnector';
+import SentenceResourceApiConnector from '@root/connectors/backend/SentenceApiConnector';
 import SpeechResourceApiConnector from '@root/connectors/backend/SpeechResourceApiConnector';
 import SubscriptionApiConnector from '@root/connectors/backend/SubscriptionApiConnector';
 import UtilityApiConnector from '@root/connectors/backend/UtilityApiConnector';
@@ -32,6 +33,7 @@ export default function setupContainer() {
     setSingleton(DI.InflectionApi, InflectionResourceApiConnector);
     setSingleton(DI.LanguageApi, LanguageConnector);
     setSingleton(DI.RoleManager, RoleManager);
+    setSingleton(DI.SentenceApi, SentenceResourceApiConnector);
     setSingleton(DI.SpeechApi, SpeechResourceApiConnector);
     setSingleton(DI.SubscriptionApi, SubscriptionApiConnector);
     setSingleton(DI.UtilityApi, UtilityApiConnector);

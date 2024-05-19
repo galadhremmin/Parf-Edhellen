@@ -16,7 +16,7 @@ function Panel(props: IProps) {
                 {title}
                 {titleButton && <span className="float-end">{titleButton}</span>}
             </h3>}
-            {children}
+            {children ?? ''}
         </div>
     </div>;
 }

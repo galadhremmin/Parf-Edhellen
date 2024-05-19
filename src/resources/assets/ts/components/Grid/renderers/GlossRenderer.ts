@@ -30,7 +30,7 @@ export default class GlossRenderer implements ICellRendererComp {
             const translations = gloss.translations.map((t) => t.translation);
             cell.textContent = `${gloss.word.word} “${translations.join(', ')}” (${gloss.id})`;
         }).catch(() => {
-            cell.textContent = '⚠ Invalid';
+            cell.textContent = '⚠ Unset';
         });
         return true;
     }

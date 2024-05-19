@@ -30,12 +30,14 @@ const columnDefinition: TranslationGridColumnDefinition = [
         field: 'sentenceNumber',
         resizable: true,
         type: 'numericColumn',
+        width: 50,
     },
     {
         editable: true,
         field: 'paragraphNumber',
         resizable: true,
         type: 'numericColumn',
+        width: 50,
     },
 ];
 

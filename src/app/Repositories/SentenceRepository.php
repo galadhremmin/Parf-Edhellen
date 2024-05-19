@@ -17,26 +17,37 @@ use App\Models\{
     Keyword,
     Sentence,
     Inflection,
+    SentenceFragment,
 };
 use App\Helpers\{
     SentenceHelper,
     StringHelper
 };
+use App\Models\Initialization\Morphs;
 use Illuminate\Support\Collection;
 
 class SentenceRepository
 {
+    /**
+     * @var GlossInflectionRepository
+     */
     private $_glossInflectionRepository;
-    private $_keywordRepository;
+    /**
+     * @var SearchIndexRepository
+     */
+    private $_searchRepository;
     /**
      * @var AuthManager
      */
     private $_authManager;
 
-    public function __construct(GlossInflectionRepository $glossInflectionRepository, KeywordRepository $keywordRepository, AuthManager $authManager)
+    public function __construct(
+        GlossInflectionRepository $glossInflectionRepository,
+        SearchIndexRepository $searchRepository,
+        AuthManager $authManager)
     {
         $this->_glossInflectionRepository = $glossInflectionRepository;
-        $this->_keywordRepository = $keywordRepository;
+        $this->_searchRepository = $searchRepository;
         $this->_authManager = $authManager;
     }
 
@@ -234,58 +245,74 @@ class SentenceRepository
         $distinctFragments = $fragments->filter(function ($f) {
             return $f->type === 0 && $f->gloss_id === 0; // = i.e. words
         })->map(function ($f) {
-            return [
-                'normalized' => StringHelper::normalize($f->fragment, true),
-                'original'   => StringHelper::toLower($f->fragment)
-            ];
-        })->unique('normalized');
+            return StringHelper::toLower(StringHelper::clean($f->fragment));
+        })->unique();
 
         $maximumFragments = config('ed.sentence_repository_maximum_fragments');
         if ($distinctFragments->count() > $maximumFragments) {
             $distinctFragments->splice(0, $maximumFragments);
         }
 
-        $suggestions = [];
-        foreach ($distinctFragments as $f) {
-            $inflectionIds = [];
-            $glossId = null;
-            $speechId = null;
+        // This can be a very costly query to run depending on the number of fragments
+        // the phrase consists of. To optimize for database performance and to reduce
+        // latency, we'll turn to the search index table for the suggestions. This table
+        // is already optimized for queries like these.
+        //
+        // We need to narrow the search to the glossary and existing phrases. The index
+        // groups their entries in so-called 'search groups'. Generally, the search group
+        // is tied to the underlying entry's entity, so we can obtain the search group 
+        // IDs for the glossary and for fragments by aquiring the morph for for `Gloss`
+        // and `SentenceFragment` entities:
+        $sentenceFragmentMorph = Morphs::getAlias(SentenceFragment::class);
+        $glossMorph = Morphs::getAlias(Gloss::class);
 
-            $fragmentData = Keyword::where('normalized_keyword', $f['normalized'])
-                ->whereNotNull('sentence_fragment_id')
-                ->join('sentence_fragments', 'sentence_fragments.id', '=', 'keywords.sentence_fragment_id')
-                ->where('is_sense', 0)
-                ->select('sentence_fragment_id', 'speech_id', 'sentence_fragments.gloss_id')
-                ->first();
-
-            if ($fragmentData !== null) {
-                $inflectionIds = GlossInflection::where('sentence_fragment_id', $fragmentData->sentence_fragment_id) //
-                    ->pluck('inflection_id');
-                $glossId = $fragmentData->gloss_id;
-                $speechId = $fragmentData->speech_id;
-            }
-
-            if ($glossId === null) {
-                $gloss = Gloss::active()
-                    ->join('words', 'words.id', '=', 'glosses.word_id')
+        // Query the index but narrow the search to the language and the search groups
+        // identified above.
+        $results = $this->_searchRepository->indexSearch(
+            $distinctFragments->all(),
+            function ($query) use ($languageId, $sentenceFragmentMorph, $glossMorph) {
+                $query = $query
                     ->where('language_id', $languageId)
-                    ->where('normalized_word', $f['normalized'])
-                    ->orderBy('glosses.speech_id', 'desc')
-                    ->select('glosses.id', 'glosses.speech_id')
-                    ->first();
-                
-                if ($gloss !== null) {
-                    $glossId = $gloss->id;
-                    $speechId = $gloss->speech_id;
-                }
+                    ->whereIn('entity_name', [
+                        $sentenceFragmentMorph,
+                        $glossMorph
+                    ]);
+                return $query;
+            });
+
+        // Results are grouped by the term. The term isn't normalized. This maps well with'
+        // the associative array type we'd like to return from this method. Iterate through
+        // the matching search index entries and pick the first most appropriate entry.
+        $suggestions = [];
+        foreach ($distinctFragments as $fragment) {
+            if (! $results->has($fragment)) {
+                continue;
             }
 
-            if ($glossId !== null) {
-                $suggestions[$f['original']] = [
+            foreach ($results[$fragment] as $result) {
+                if ($result->entity_name === $sentenceFragmentMorph) {
+                    // Protect against dangling/incorrect database entries. These can exist
+                    // for legacy reasons.
+                    if ($result->entity === null) {
+                        continue;
+                    }
+
+                    $glossId = $result->entity->gloss_id;
+                    $speechId = $result->entity->speech_id;
+                    $inflectionIds = $result->entity->gloss_inflections->pluck('inflection_id');
+                } else {
+                    $glossId = $result->entity_id;
+                    $speechId = $result->speech_id;
+                    $inflectionIds = [];
+                }
+
+                $suggestions[$fragment] = [
                     'gloss_id' => $glossId,
                     'speech_id' => $speechId,
                     'inflection_ids' => $inflectionIds
                 ];
+
+                break;
             }
         }
 

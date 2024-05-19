@@ -1,6 +1,9 @@
 <?php
 
 // Restricted API
+
+use App\Http\Controllers\Api\v2\SentenceApiController;
+
 Route::group([ 
     'namespace'  => API_NAMESPACE, 
     'prefix'     => API_PATH,
@@ -30,4 +33,6 @@ Route::group([
     Route::delete('subscription/{morph}/{id}',  [ 'uses' => 'SubscriptionApiController@unsubscribeFromEntity' ])
         ->where([ 'morph' => REGULAR_EXPRESSION_SEO_STRING, 'id' => REGULAR_EXPRESSION_NUMERIC ])
         ->name('api.subscription.specific-entity.unsubscribe');
+
+    Route::post('sentence/suggest-glosses', [ SentenceApiController::class, 'suggestFragments' ]);
 });

@@ -3,7 +3,6 @@ import React, { useCallback } from 'react';
 import { fireEvent } from '@root/components/Component';
 import { IComponentEvent } from '@root/components/Component._types';
 import AccountSelect from '@root/components/Form/AccountSelect';
-import LanguageSelect from '@root/components/Form/LanguageSelect';
 import MarkdownInput from '@root/components/Form/MarkdownInput';
 import { IProps } from './MetadataForm._types';
 
@@ -40,16 +39,6 @@ function MetadataForm(props: IProps) {
                 id="ed-sentence-name"
                 value={sentence.name}
                 onChange={_onChangeNative('name')}
-                required={true}
-            />
-        </div>
-        <div className="form-group">
-            <label htmlFor="ed-sentence-language">Language</label>
-            <LanguageSelect
-                className="form-control"
-                name="ed-sentence-language"
-                value={sentence.languageId}
-                onChange={_onChange('languageId')}
                 required={true}
             />
         </div>

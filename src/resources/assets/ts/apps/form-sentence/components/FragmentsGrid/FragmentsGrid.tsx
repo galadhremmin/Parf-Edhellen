@@ -34,6 +34,7 @@ import {
     IState,
 } from './FragmentsGrid._types';
 
+import { IAugmentedCellRendererParams } from '@root/components/Grid/cell-editors/InflectionCellEditor._types';
 import { DI } from '@root/di/keys';
 import './FragmentsGrid.scss';
 
@@ -42,7 +43,7 @@ const DefaultColumnDefinition = {
 } as ColDef;
 
 const RowClassRules = {
-    'bg-danger text-white': (params: RowClassParams) => {
+    'bg-warning': (params: RowClassParams) => {
         const {
             _error: error,
         } = params.data as ISentenceFragmentReducerState;
@@ -97,7 +98,7 @@ export function FragmentsGrid(props: IProps) {
                 resolveGloss: _onResolveGloss,
                 speeches: speechMap,
                 suggestGloss: _onSuggestGloss,
-            } as IState;
+            } as IAugmentedCellRendererParams;
     
             const nextColumnDefinition: FragmentGridColumnDefinition = [
                 {
@@ -343,7 +344,6 @@ export function FragmentsGrid(props: IProps) {
         <div className="ag-theme-balham FragmentsGrid--container">
             {columnDefinition &&
                 <AgGridReact
-//                        modules={[ClientSideRowModelModule]}
                     getRowId={_onGetRowId}
                     isExternalFilterPresent={_onIsExternalFilterPresent}
                     doesExternalFilterPass={_onDoesExternalFilterPass}

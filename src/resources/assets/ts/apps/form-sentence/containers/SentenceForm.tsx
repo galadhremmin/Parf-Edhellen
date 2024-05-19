@@ -14,6 +14,7 @@ import { deepClone } from '@root/utilities/func/clone';
 import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 import { SentenceActions } from '../actions';
 import FragmentsForm from '../components/FragmentsForm';
+import LanguageForm from '../components/LanguageForm';
 import MetadataForm from '../components/MetadataForm';
 import TranslationForm from '../components/TranslationForm';
 import { RootReducer } from '../reducers';
@@ -110,24 +111,29 @@ function SentenceForm(props: IProps) {
         <div ref={errorContainer}>
             <ValidationErrorAlert error={errors} />
         </div>
-        <Panel title="Basic information">
-            <MetadataForm sentence={sentence} onMetadataChange={onMetadataChange} />
+        <Panel title="Language">
+            <LanguageForm sentence={sentence} onLanguageChange={onMetadataChange} />
         </Panel>
-        <Panel title="Phrase">
-            <FragmentsForm fragments={sentenceFragments}
-                languageId={sentence.languageId}
-                text={sentenceText}
-                textIsDirty={sentenceTextIsDirty}
-                onFragmentChange={onFragmentChange}
-                onParseTextRequest={onParseTextRequest}
-                onTextChange={onTextChange} />
-        </Panel>
-        <Panel title="Translations">
-            <TranslationForm onTranslationChange={onTranslationChange}
-                translations={sentenceTranslations}
-                paragraphs={sentenceParagraphs}
-            />
-        </Panel>
+        {languageId && <>
+            <Panel title="Information about the phrase">
+                <MetadataForm sentence={sentence} onMetadataChange={onMetadataChange} />
+            </Panel>
+            <Panel title="Phrase and words">
+                <FragmentsForm fragments={sentenceFragments}
+                    languageId={sentence.languageId}
+                    text={sentenceText}
+                    textIsDirty={sentenceTextIsDirty}
+                    onFragmentChange={onFragmentChange}
+                    onParseTextRequest={onParseTextRequest}
+                    onTextChange={onTextChange} />
+            </Panel>
+            <Panel title="Translations">
+                <TranslationForm onTranslationChange={onTranslationChange}
+                    translations={sentenceTranslations}
+                    paragraphs={sentenceParagraphs}
+                />
+            </Panel>
+        </>}
         <div className="text-center">
             {!! sentenceId && <button className="btn btn-secondary me-3" formAction="button" onClick={_onOpenOriginal}>
                 <TextIcon icon="search" />
