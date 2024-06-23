@@ -131,7 +131,7 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
     }
 
     private _getCsrfToken() {
-        const metaField = document.getElementById('ed-csrf-token');
+        const metaField = document.querySelector('meta[name=csrf-token]');
         if (! metaField) {
             return undefined;
         }

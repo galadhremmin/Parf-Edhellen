@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 
 class CarbonLocale
 {

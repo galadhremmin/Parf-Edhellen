@@ -4,7 +4,7 @@ namespace Tests\Unit\Models;
 
 use Tests\TestCase;
 use App\Models\Gloss;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 
 class GlossTest extends TestCase
 {

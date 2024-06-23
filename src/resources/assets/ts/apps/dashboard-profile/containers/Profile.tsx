@@ -6,6 +6,7 @@ import TextIcon from '@root/components/TextIcon';
 import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 
+import AccountFeed from '../components/AccountFeed';
 import JumbotronOrHeader from '../components/JumbotronOrHeader';
 import { IProps } from './Profile._types';
 
@@ -75,6 +76,7 @@ function Profile(props: IProps) {
                     </p>
                 </div>}
             </div>
+            <AccountFeed account={props.account} />
             {showDiscuss && <div className="row">
                 <div className="col-12">
                     <Discuss entityId={id} entityType="account" prefetched={false} />

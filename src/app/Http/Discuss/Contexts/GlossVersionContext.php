@@ -3,7 +3,7 @@
 namespace App\Http\Discuss\Contexts;
 
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 
 use App\Adapters\BookAdapter;
 use App\Repositories\GlossRepository;

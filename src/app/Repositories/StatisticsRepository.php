@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use DB;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use App\Models\{ 
     Account, 
     FlashcardResult,
