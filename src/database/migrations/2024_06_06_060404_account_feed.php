@@ -17,7 +17,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignIdFor(Account::class);
             $table->timestamp('happened_at')->useCurrent();
-            $table->string('content_name', 32)->nullable();
+            $table->string('content_type', 32)->nullable();
             $table->unsignedBigInteger('content_id')->nullable();
             $table->unsignedInteger('audit_trail_action_id')->nullable();
             $table->foreignIdFor(AuditTrail::class)->nullable();
@@ -28,12 +28,12 @@ return new class extends Migration
 
         Schema::create('account_feed_refresh_times', function (Blueprint $table) {
             $table->foreignIdFor(Account::class);
-            $table->string('feed_content_name', 32);
+            $table->string('feed_content_type', 32);
             $table->timestamp('oldest_happened_at')->nullable();
             $table->timestamp('newest_happened_at')->nullable();
             $table->timestamps();
 
-            $table->primary(['account_id', 'feed_content_name']);
+            $table->primary(['account_id', 'feed_content_type']);
         });
     }
 

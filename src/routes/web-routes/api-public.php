@@ -4,6 +4,7 @@
 
 use App\Http\Controllers\Api\v2\{
     AccountApiController,
+    AccountFeedApiController,
     BookApiController,
     GlossApiController,
     InflectionApiController,
@@ -49,7 +50,7 @@ Route::group([
     Route::get('account/{id}/avatar', [ AccountApiController::class, 'getAvatar' ])
         ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ]);
     Route::post('account/find',       [ AccountApiController::class, 'findAccount' ]);
-    Route::get('account/{id}/feed', [ AccountApiController::class, 'getFeed' ]);
+    Route::get('account/{id}/feed',   [ AccountFeedApiController::class, 'getFeed' ]);
 });
 
 // Public, throttled API

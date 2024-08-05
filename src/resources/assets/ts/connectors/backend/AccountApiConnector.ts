@@ -7,6 +7,8 @@ import IAccountApi, {
     IGetAvatarRequest,
     IGetAvatarResponse,
     IGetFeatureBackgroundsResponse,
+    IGetFeedRequest,
+    IGetFeedResponse,
     ISaveAvatarRequest,
     ISaveAvatarResponse,
     ISaveFeatureBackgroundRequest,
@@ -25,6 +27,10 @@ export default class AccountApiConnector implements IAccountApi {
 
     public getAvatar(args: IGetAvatarRequest) {
         return this._api.get<IGetAvatarResponse>(`account/${args.accountId}/avatar`);
+    }
+
+    public getFeed(args: IGetFeedRequest): Promise<IGetFeedResponse> {
+        return this._api.get<IGetFeedResponse>(`account/${args.accountId}/feed` + (args.cursor ? `?cursor=${encodeURIComponent(args.cursor)}` : ''));
     }
 
     public getFeatureBackgrounds() {

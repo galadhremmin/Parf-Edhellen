@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class AccountFeedRefreshTime extends ModelBase
 {
-    protected $fillable = ['account_id', 'feed_content_name', 'oldest_happened_at', 'newest_happened_at'];
+    protected $fillable = ['account_id', 'feed_content_type', 'oldest_happened_at', 'newest_happened_at'];
     protected $casts = [
         Model::CREATED_AT    => 'datetime',
         Model::UPDATED_AT    => 'datetime',
@@ -23,6 +23,6 @@ class AccountFeedRefreshTime extends ModelBase
 
     public function scopeForUniverse($query)
     {
-        $query->where('feed_content_name', 'universe');
+        $query->where('feed_content_type', 'universe');
     }
 }

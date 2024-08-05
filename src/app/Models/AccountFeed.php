@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class AccountFeed extends ModelBase
 {
-    protected $fillable = ['account_id', 'happened_at', 'content_name', 'content_id', 'audit_trail_action_id', 'audit_trail_id'];
+    protected $fillable = ['account_id', 'happened_at', 'content_type', 'content_id', 'audit_trail_action_id', 'audit_trail_id'];
     protected $casts = [
         Model::CREATED_AT => 'datetime',
         Model::UPDATED_AT => 'datetime',
@@ -18,11 +18,6 @@ class AccountFeed extends ModelBase
 
     use HasUuids;
     use Traits\HasAccount;
-
-    public function account()
-    {
-        return $this->belongsTo(Account::class);
-    }
 
     public function content(): MorphTo
     {

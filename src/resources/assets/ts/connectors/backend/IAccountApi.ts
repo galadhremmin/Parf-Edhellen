@@ -55,9 +55,24 @@ export interface ISaveProfileResponse {
     profileUrl: string;
 }
 
+export interface IGetFeedRequest {
+    accountId: number;
+    cursor?: string;
+}
+
+export interface IGetFeedResponse {
+    data: never[];
+    path: string;
+    perPage: number;
+    nextCursor: string;
+    nextPageUrl: string | null;
+    prevPageUrl: string | null;
+}
+
 export default interface IAccountApi {
     find(args: IFindRequest): Promise<FindResponse>;
     getAvatar(args: IGetAvatarRequest): Promise<IGetAvatarResponse>;
+    getFeed(args: IGetFeedRequest): Promise<IGetFeedResponse>;
     getFeatureBackgrounds(): Promise<IGetFeatureBackgroundsResponse>;
     saveAvatar(args: ISaveAvatarRequest): Promise<ISaveAvatarResponse>;
     saveFeatureBackground(args: ISaveFeatureBackgroundRequest): Promise<ISaveFeatureBackgroundResponse>;

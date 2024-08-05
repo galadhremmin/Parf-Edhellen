@@ -21,6 +21,11 @@ class ForumPost extends ModelBase implements Interfaces\IHasFriendlyName
         return $this->belongsTo(ForumThread::class);
     }
 
+    public function account_feed()
+    {
+        return $this->belongsTo(AccountFeed::class);
+    }
+
     public function forum_post_likes() 
     {
         return $this->hasMany(ForumPostLike::class);

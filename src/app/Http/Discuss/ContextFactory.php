@@ -26,6 +26,7 @@ class ContextFactory
             }
 
             $entities = config('ed.forum_entities');
+
             if (! is_array($entities) || ! isset($entities[$className])) {
                 return null;
             }

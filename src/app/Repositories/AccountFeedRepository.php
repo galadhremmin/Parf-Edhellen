@@ -31,7 +31,7 @@ class AccountFeedRepository
 
         $lastTimestamps = AccountFeedRefreshTime::forAccount($account)
             ->get()
-            ->groupBy('feed_content_name');
+            ->groupBy('feed_content_type');
 
         $feed = collect([]);
 
@@ -56,39 +56,42 @@ class AccountFeedRepository
                 'id'                    => (string) Str::uuid(),
                 'account_id'            => $account->id,
                 'happened_at'           => $record->created_at,
-                'content_name'          => $record->morph,
+                'content_type'          => $record->morph,
                 'content_id'            => $record->id,
                 'created_at'            => Date::now(),
+                'updated_at'            => Date::now(),
                 'audit_trail_action_id' => null, // TODO
                 'audit_trail_id'        => null  // TODO
             ];
         });
 
         $newDates = $records->reduce(function ($dates, $record) {
-            if (! isset($dates[$record['content_name']])) {
-                $dates[$record['content_name']] = $record['happened_at'];
-            } else if ($dates[$record['content_name']] < $record['happened_at']) {
-                $date[$record['content_name']] = $record['happened_at'];
+            if (! isset($dates[$record['content_type']])) {
+                $dates[$record['content_type']] = $record['happened_at'];
+            } else if ($dates[$record['content_type']] < $record['happened_at']) {
+                $date[$record['content_type']] = $record['happened_at'];
             }
 
             return $dates;
         }, collect([]))->reduce(function ($args, $date, $morph) use ($account) {
             $args[] = [
                 'account_id' => $account->id,
-                'feed_content_name' => $morph,
+                'feed_content_type' => $morph,
                 'newest_happened_at' => $date,
-                'oldest_happened_at' => null, // TODO
+                'oldest_happened_at' => null // TODO
             ];
             return $args;
         }, []);
         $newDates[] = [
             'account_id'        => $account->id,
-            'feed_content_name' => 'universe'
+            'feed_content_type' => 'universe',
+            'newest_happened_at' => Date::now(),
+            'oldest_happened_at' => Date::now()
         ];
         AccountFeed::insert($records->all());
         AccountFeedRefreshTime::upsert(
             $newDates,
-            /* unique by: */ [ 'account_id', 'feed_content_name' ],
+            /* unique by: */ [ 'account_id', 'feed_content_type' ],
             /* update: */ [ 'newest_happened_at', 'oldest_happened_at' ]
         );
     }
