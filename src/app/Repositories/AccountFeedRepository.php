@@ -51,10 +51,6 @@ class AccountFeedRepository
             }
         }
 
-        if ($feed->count() < 1) {
-            return;
-        }
-
         $records = $feed->sortByDesc('created_at')->map(function ($record) use ($account) {
             return [
                 'id'                    => (string) Str::uuid(),
@@ -85,7 +81,10 @@ class AccountFeedRepository
             ];
             return $args;
         }, []);
-
+        $newDates[] = [
+            'account_id'        => $account->id,
+            'feed_content_name' => 'universe'
+        ];
         AccountFeed::insert($records->all());
         AccountFeedRefreshTime::upsert(
             $newDates,

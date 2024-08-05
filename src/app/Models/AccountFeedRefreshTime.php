@@ -20,4 +20,9 @@ class AccountFeedRefreshTime extends ModelBase
     {
         return $this->belongsTo(Account::class);
     }
+
+    public function scopeForUniverse($query)
+    {
+        $query->where('feed_content_name', 'universe');
+    }
 }

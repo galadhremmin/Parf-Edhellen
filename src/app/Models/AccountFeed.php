@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class AccountFeed extends ModelBase
 {
@@ -13,6 +14,7 @@ class AccountFeed extends ModelBase
         Model::UPDATED_AT => 'datetime',
         'happened_at'     => 'datetime'
     ];
+    protected $hidden = ['created_at', 'updated_at'];
 
     use HasUuids;
     use Traits\HasAccount;
@@ -22,7 +24,7 @@ class AccountFeed extends ModelBase
         return $this->belongsTo(Account::class);
     }
 
-    public function content()
+    public function content(): MorphTo
     {
         return $this->morphTo();
     }

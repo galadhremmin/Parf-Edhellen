@@ -16,7 +16,12 @@ use App\Models\Account;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Helpers\StorageHelper;
 use App\Models\AccountFeed;
+use App\Models\AccountFeedRefreshTime;
+use App\Models\Initialization\Morphs;
+use App\Repositories\AccountFeedRepository;
 use App\Security\AccountManager;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Carbon;
 use Intervention\Image\Facades\Image;
 
 class AccountApiController extends Controller 
@@ -33,13 +38,18 @@ class AccountApiController extends Controller
      * @var AccountManager
      */
     private $_accountManager;
+    /**
+     * @var AccountFeedRepository
+     */
+    private $_feedRepository;
 
     public function __construct(StorageHelper $storageHelper, LinkHelper $linkHelper,
-        AccountManager $accountManager) 
+        AccountManager $accountManager, AccountFeedRepository $feedRepository) 
     {
         $this->_storageHelper = $storageHelper;
         $this->_linkHelper = $linkHelper;
         $this->_accountManager = $accountManager;
+        $this->_feedRepository = $feedRepository;
     }
 
     public function index(Request $request)
@@ -95,9 +105,21 @@ class AccountApiController extends Controller
         ];
     }
 
-    public function getFeed(Request $request, int $id) 
+    public function getFeed(Request $request, int $id)
     {
-        $feed = AccountFeed::forAccount($id)->orderByDesc('happened_at')->take(50)->get();
+        $skip = intval($request->query('skip', 0));
+
+        $lastChange = AccountFeedRefreshTime::forAccount($id)->forUniverse()->first();
+        if ($lastChange === null || $lastChange->created_at < Carbon::now()->add(1, 'week')) {
+            $this->_feedRepository->generateForAccountId($id);
+        }
+
+        $feed = AccountFeed::forAccount($id) //
+            ->orderByDesc('happened_at') //
+            ->take(50) //
+            ->skip($skip) //
+            ->get();
+
         return $feed;
     }
 

@@ -49,6 +49,7 @@ Route::group([
     Route::get('account/{id}/avatar', [ AccountApiController::class, 'getAvatar' ])
         ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ]);
     Route::post('account/find',       [ AccountApiController::class, 'findAccount' ]);
+    Route::get('account/{id}/feed', [ AccountApiController::class, 'getFeed' ]);
 });
 
 // Public, throttled API
