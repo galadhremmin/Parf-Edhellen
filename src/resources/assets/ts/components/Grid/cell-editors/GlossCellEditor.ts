@@ -88,7 +88,9 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
             });
         }
 
-        this.addManagedListener(this._inputElement, 'keydown', this._onKeyDown);
+        this.addManagedElementListeners(this._inputElement, {
+            'keydown': this._onKeyDown,
+        });
     }
 
     public afterGuiAttached() {
@@ -137,7 +139,9 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
 
         suggestionListElement.innerHTML = html.join('');
         suggestionListElement.querySelectorAll('a[data-gloss-id]').forEach((a) => {
-            this.addManagedListener(a, 'click', this._onSuggestionClick);
+            this.addManagedElementListeners(a, {
+                'click': this._onSuggestionClick,
+            });
         });
     }
 

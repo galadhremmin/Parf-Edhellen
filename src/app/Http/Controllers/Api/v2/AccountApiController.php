@@ -15,6 +15,7 @@ use App\Helpers\LinkHelper;
 use App\Models\Account;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Helpers\StorageHelper;
+use App\Models\AccountFeed;
 use App\Security\AccountManager;
 use Intervention\Image\Facades\Image;
 
@@ -92,6 +93,12 @@ class AccountApiController extends Controller
         return [
             'avatar' => $this->_storageHelper->accountAvatar($account, true)
         ];
+    }
+
+    public function getFeed(Request $request, int $id) 
+    {
+        $feed = AccountFeed::forAccount($id)->orderByDesc('happened_at')->take(50)->get();
+        return $feed;
     }
 
     public function getFeatureBackgrounds(Request $request)

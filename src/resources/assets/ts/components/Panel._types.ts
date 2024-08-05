@@ -14,4 +14,5 @@ export interface IProps {
     title?: string;
     titleButton?: React.ReactNode;
     type?: PanelType;
+    shadow?: boolean;
 }

@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import {
     IProps
 } from './Panel._types';
@@ -7,10 +8,11 @@ function Panel(props: IProps) {
         children,
         title = null,
         titleButton,
+        shadow,
 //      type = PanelType.Info, not supported
     } = props;
 
-    return <div className="card mb-3">
+    return <div className={classNames("card", "mb-3", {"shadow-lg": shadow})}>
         <div className="card-body">
             {!! title && <h3 className="panel-title">
                 {title}

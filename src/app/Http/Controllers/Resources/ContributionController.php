@@ -14,9 +14,7 @@ use App\Events\{
     ContributionRejected
 };
 use App\Models\{
-    Contribution,
-    Sentence,
-    Gloss
+    Contribution
 };
 use App\Http\Controllers\Contributions\ContributionControllerFactory;
 

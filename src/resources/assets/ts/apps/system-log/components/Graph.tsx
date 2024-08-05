@@ -1,12 +1,12 @@
 import {
-    Bar,
-    BarChart,
     CartesianGrid,
     Legend,
+    Line,
+    LineChart,
     ResponsiveContainer,
     Tooltip,
     XAxis,
-    YAxis,
+    YAxis
 } from 'recharts';
 
 import { IProps } from './Graph._types';
@@ -24,19 +24,19 @@ function Graph(props: IProps) {
     }
 
     return <ResponsiveContainer width="100%" aspect={4 / 1.5}>
-        <BarChart width={730} height={250} data={data}>
+        <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="week" />
-            <YAxis />
+            <YAxis scale="auto" />
             <Tooltip />
             <Legend />
-            {categories.map((category: string, i: number) => <Bar
+            {categories.map((category: string, i: number) => <Line
                 key={category}
                 dataKey={category}
-                fill={ChartColors[i % ChartColors.length]}
-                stackId="yearWeek"
+                stroke={ChartColors[i % ChartColors.length]}
+                strokeWidth="2"
             />)}
-        </BarChart>
+        </LineChart>
     </ResponsiveContainer>;
 }
 

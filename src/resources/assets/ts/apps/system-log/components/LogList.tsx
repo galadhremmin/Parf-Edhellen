@@ -2,12 +2,12 @@ import {
     useCallback
 } from 'react';
 
-import { AgGridReact } from 'ag-grid-react';
 import {
     ColDef,
     GridReadyEvent,
     IDatasource,
 } from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
 import { DateTime } from 'luxon';
 
 import { IErrorEntity } from '@root/connectors/backend/ILogApi';
@@ -19,10 +19,11 @@ const ColumnDefinitions: ColDef<IErrorEntity>[] = [
     {
         field: 'createdAt',
         valueFormatter: params => DateTime.fromISO(params.value).toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS),
+        minWidth: 160,
     },
     {
         field: 'message',
-        minWidth: 150,
+        minWidth: 300,
     },
     {
         cellEditor: 'agLargeTextCellEditor',
@@ -31,7 +32,10 @@ const ColumnDefinitions: ColDef<IErrorEntity>[] = [
         field: 'error',
         minWidth: 300,
     },
-    { field: 'url' },
+    {
+        field: 'url',
+        minWidth: 200,
+    },
     { field: 'ip' },
     { field: 'sessionId' },
     { field: 'userAgent' },

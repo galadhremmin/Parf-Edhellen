@@ -92,7 +92,7 @@ class Morphs
      * @param string $alias
      * @return string
      */
-    public static function getMorphedModel(string $alias)
+    public static function getMorphedModel(string $alias): string
     {
         return Relation::getMorphedModel($alias);
     }

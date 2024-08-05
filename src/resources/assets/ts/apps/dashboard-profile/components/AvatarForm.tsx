@@ -13,9 +13,12 @@ import { IProps } from './AvatarForm._types';
 
 import './AvatarForm.scss';
 
+const TooLargeAvatarInTermsOfFileSize = 'The picture you\'re trying to upload is too large. Please resize it and try again.';
+const DragAndDropNotSupported = 'We unfortunately do not support drag and drop on your browser. Please tap on the avatar instead.';
+
 function uploadImage(imageFile: File, changeEvent: ComponentEventHandler<File>) {
     if (! imageFile) {
-        alert('We unfortunately do not support drag and drop on your browser. Please tap on the avatar instead.');
+        alert(DragAndDropNotSupported);
         return;
     }
 
@@ -55,7 +58,7 @@ function uploadImage(imageFile: File, changeEvent: ComponentEventHandler<File>) 
 
         const context = canvas.getContext('2d');
         if (! context) {
-            return Promise.reject('The picture you\'re trying to upload is too large. Please resize it and try again.');
+            return Promise.reject(TooLargeAvatarInTermsOfFileSize);
         }
 
         context.drawImage(image, 0, 0, canvas.width, canvas.height);
@@ -67,10 +70,16 @@ function uploadImage(imageFile: File, changeEvent: ComponentEventHandler<File>) 
             }, 'image/png', 0.85);
         });
     }).then(resizedImageFile => {
+        if (resizedImageFile?.size > AvatarMaximiumFileSize) {
+            return Promise.reject(TooLargeAvatarInTermsOfFileSize);
+        }
+
+        return resizedImageFile;
+    }).then(resizedImageFile => {
         fireEventAsync('Avatar', changeEvent, resizedImageFile ?? imageFile);
     }).catch((error) => {
         // todo - send error somewhere
-        alert('Your avatar unforutnately can\'t be changed due to an expected error. Error: ' + error);
+        alert('Your avatar unfortunately can\'t be changed due to an expected error. Error: ' + error);
     });
 }
 
