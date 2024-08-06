@@ -1,3 +1,7 @@
+import { ISentenceEntity } from "./IBookApi";
+import { IPostEntity } from "./IDiscussApi";
+import { IGlossEntity } from "./IGlossResourceApi";
+
 export interface IFindRequest {
     max?: number;
     nickname: string;
@@ -61,13 +65,28 @@ export interface IGetFeedRequest {
 }
 
 export interface IGetFeedResponse {
-    data: never[];
+    data: IFeedRecord[];
     path: string;
     perPage: number;
     nextCursor: string;
     nextPageUrl: string | null;
     prevPageUrl: string | null;
 }
+
+export interface IGenericFeedRecord<TContentType = string, TEntity = any> {
+    id: string;
+    accountId: number;
+    happenedAt: string;
+    contentType: TContentType;
+    contentId: number;
+    auditTrailActionId: number;
+    auditTrailId: number;
+    content: TEntity;
+}
+
+export type IFeedRecord = IGenericFeedRecord<'gloss', IGlossEntity>
+    | IGenericFeedRecord<'sentence', ISentenceEntity>
+    | IGenericFeedRecord<'forum', IPostEntity>;
 
 export default interface IAccountApi {
     find(args: IFindRequest): Promise<FindResponse>;

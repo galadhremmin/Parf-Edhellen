@@ -186,7 +186,6 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             }
         }
 
-        
         const url = this._prepareUrl(apiMethod, queryStringMap);
         let promise: AxiosPromise<AxiosResponse<T>>;
         if (hasBody) {

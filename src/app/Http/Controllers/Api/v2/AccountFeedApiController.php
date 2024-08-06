@@ -10,7 +10,6 @@ use App\Models\AccountFeed;
 use App\Models\AccountFeedRefreshTime;
 use App\Repositories\AccountFeedRepository;
 use Illuminate\Support\Carbon;
-use Illuminate\Pagination\CursorPaginator;
 
 class AccountFeedApiController extends Controller 
 {
@@ -45,6 +44,7 @@ class AccountFeedApiController extends Controller
 
         // TODO: this technically doesn't work for `gloss` nor `forum` because discuss is tracked on `ForumDiscussion` and `GlossVersion`.
         //       we need to figure out a way to handle this complicated case.
+        $changed = false;
         for ($offset = 0; $offset < $feed->getCollection()->count(); $offset += 1) {
             $record = $feed->getCollection()->get($offset);
 
@@ -57,6 +57,7 @@ class AccountFeedApiController extends Controller
                 if ($record->content->hasAttribute($prop) &&
                     $record->content->$prop) {
                     $feed->getCollection()->offsetUnset($offset);
+                    $changed = true;
                     $pass = false;
                     break;
                 }
@@ -66,8 +67,17 @@ class AccountFeedApiController extends Controller
                 $context = $this->_contextFactory->create($record->content_type);
                 if ($context !== null && $record->content !== null && ! $context->available($record->content, $request->user())) {
                     $feed->getCollection()->offsetUnset($offset);
+                    $changed = true;
                 }
             }
+        }
+
+        // We need to reset the collection if it was modified because it'd change the array to an object if some indices
+        // were removed. Reference: Illuminate\Pagination\CursorPaginator
+        if ($changed) {
+            $feed->setCollection(
+                $feed->getCollection()->values()
+            );
         }
 
         return $feed;
