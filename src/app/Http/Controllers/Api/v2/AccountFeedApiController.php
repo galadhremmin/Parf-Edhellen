@@ -8,6 +8,9 @@ use App\Http\Controllers\Abstracts\Controller;
 use App\Http\Discuss\ContextFactory;
 use App\Models\AccountFeed;
 use App\Models\AccountFeedRefreshTime;
+use App\Models\ForumPost;
+use App\Models\Gloss;
+use App\Models\Sentence;
 use App\Repositories\AccountFeedRepository;
 use Illuminate\Support\Carbon;
 
@@ -68,6 +71,16 @@ class AccountFeedApiController extends Controller
                 if ($context !== null && $record->content !== null && ! $context->available($record->content, $request->user())) {
                     $feed->getCollection()->offsetUnset($offset);
                     $changed = true;
+                }
+            }
+
+            if ($record->content !== null) {
+                if ($record->content instanceof ForumPost) {
+                    $record->content->load('forum_thread');
+                } else if ($record->content instanceof Gloss) {
+                    // todo?
+                } else if ($record->content instanceof Sentence) {
+                    // todo?
                 }
             }
         }

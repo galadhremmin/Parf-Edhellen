@@ -1,13 +1,13 @@
+import Spinner from '@root/components/Spinner';
 import { IFeedRecord } from '@root/connectors/backend/IAccountApi';
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
 import { useEffect, useState } from 'react';
 import { Waypoint } from 'react-waypoint';
+import FeedUnit from './FeedUnit';
 import { IProps } from './index._types';
 
-import Spinner from '@root/components/Spinner';
 import './AccountFeed.scss';
-import FeedUnit from './FeedUnit';
 
 export default function AccountFeed({
     account,
@@ -50,9 +50,9 @@ export default function AccountFeed({
     }, [account.id]);
 
     return <>
-        <ul className="timeline">
+        <section className="account-feed">
             {feed.map(f => <FeedUnit unit={f} key={f.id} />)}
-        </ul>
+        </section>
         <Waypoint onEnter={_onWaypointExposed} />
         {loading && <div className="text-center">
             <Spinner />

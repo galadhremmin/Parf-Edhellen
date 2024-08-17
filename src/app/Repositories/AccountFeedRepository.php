@@ -88,7 +88,11 @@ class AccountFeedRepository
             'newest_happened_at' => Date::now(),
             'oldest_happened_at' => Date::now()
         ];
-        AccountFeed::insert($records->all());
+        
+        $records->chunk(100)->map(function ($chunk) {
+            AccountFeed::insert($chunk->all());
+        });
+
         AccountFeedRefreshTime::upsert(
             $newDates,
             /* unique by: */ [ 'account_id', 'feed_content_type' ],
@@ -107,9 +111,13 @@ class AccountFeedRepository
             $query = $query->where('created_at', '>', $newest);
         }
 
-        $entities = $query //
+        $entities = collect([]);
+        
+        foreach ($query //
             ->select('id', 'created_at', 'updated_at') //
-            ->get();
+            ->cursor() as $record) {
+            $entities->add($record);
+        }
 
         if ($entities->count() < 1) {
             return [
