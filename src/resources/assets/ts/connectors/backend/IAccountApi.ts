@@ -71,22 +71,23 @@ export interface IGetFeedResponse {
     nextCursor: string;
     nextPageUrl: string | null;
     prevPageUrl: string | null;
+    restricted?: boolean;
 }
 
-export interface IGenericFeedRecord<TContentType = string, TEntity = any> {
+export interface IFeedRecord<TContentType = string, TEntity = any> {
     id: string;
     accountId: number;
     happenedAt: string;
-    contentType: TContentType;
     contentId: number;
     auditTrailActionId: number;
     auditTrailId: number;
+    contentType: TContentType;
     content: TEntity;
 }
 
-export type IFeedRecord = IGenericFeedRecord<'gloss', IGlossEntity>
-    | IGenericFeedRecord<'sentence', ISentenceEntity>
-    | IGenericFeedRecord<'forum', IPostEntity>;
+export interface IGlossFeedRecord extends IFeedRecord<'gloss', IGlossEntity> {}
+export interface ISentenceFeedRecord extends IFeedRecord<'gloss', ISentenceEntity> {}
+export interface IForumFeedRecord extends IFeedRecord<'forum', IPostEntity> {}
 
 export default interface IAccountApi {
     find(args: IFindRequest): Promise<FindResponse>;

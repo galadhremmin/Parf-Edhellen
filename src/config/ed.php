@@ -93,5 +93,9 @@ return [
     'gloss_repository_maximum_results' => 1000,
 
     // search index repository configuration
-    'search_index_expands_english_infinitives' => true
+    'search_index_expands_english_infinitives' => true,
+    
+    'blocked_ips_due_to_violations' => explode(',', env('ED_BLOCKED_IPS', '')),
+
+    'restricted_profile_ids' => explode(',', env('ED_RESTRICTED_PROFILE_IDS', ''))
 ];

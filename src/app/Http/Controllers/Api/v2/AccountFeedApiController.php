@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v2;
 
+use App\Helpers\MarkdownParser;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\Abstracts\Controller;
@@ -35,6 +36,13 @@ class AccountFeedApiController extends Controller
 
     public function getFeed(Request $request, int $id)
     {
+        if (in_array($id, config('ed.restricted_profile_ids')) &&
+            ($request->user() === null || ! $request->user()->isAdministrator())) {
+            return [
+                'restricted' => true
+            ];
+        }
+
         $lastChange = AccountFeedRefreshTime::forAccount($id)->forUniverse()->first();
         if ($lastChange === null || $lastChange->created_at < Carbon::now()->add(1, 'week')) {
             $this->_feedRepository->generateForAccountId($id);

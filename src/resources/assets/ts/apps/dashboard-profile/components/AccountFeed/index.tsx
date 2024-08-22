@@ -13,7 +13,8 @@ export default function AccountFeed({
     account,
     accountApi = resolve(DI.AccountApi),
 }: IProps) {
-    const [ loading, setLoading ] = useState<boolean>(false);
+    const [ loading, setLoading ] = useState(false);
+    const [ restricted, setRestricted ] = useState(false);
     const [ feed, setFeed ] = useState<IFeedRecord[]>([]);
     const [ cursor, setCursor ] = useState<string | null>(null);
 
@@ -29,10 +30,16 @@ export default function AccountFeed({
             accountId: account.id,
             cursor,
         }).then((response) => {
-            // Catch duplicate requests
-            if (response.nextCursor !== cursor || response.nextCursor === null) {
-                setFeed((feed || []).concat(response.data));
-                setCursor(response.nextCursor);
+            if (response.restricted) {
+                // the account has a restricted feed
+                setRestricted(true);
+                setFeed([]);
+            } else {
+                // Catch duplicate requests
+                if (response.nextCursor !== cursor || response.nextCursor === null) {
+                    setFeed((feed || []).concat(response.data));
+                    setCursor(response.nextCursor);
+                }
             }
         }).finally(() => {
             setLoading(false);
@@ -48,6 +55,10 @@ export default function AccountFeed({
     useEffect(() => {
         load();
     }, [account.id]);
+
+    if (restricted) {
+        return <div/>;
+    }
 
     return <>
         <section className="account-feed">

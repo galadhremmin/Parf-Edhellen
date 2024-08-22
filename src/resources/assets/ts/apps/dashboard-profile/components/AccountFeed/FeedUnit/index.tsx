@@ -40,8 +40,8 @@ export default function FeedUnit(props: IProps) {
 
     return <div ref={componentRef}>
         <Panel type={PanelType.Info} shadow>
-            {visible ? 'Visible' : 'Not visible'}
-            {unit.contentType === 'forum'    ? <ForumFeedUnit {...props} /> : (
+            <h2></h2>
+            {unit.contentType === 'forum'       ? <ForumFeedUnit {...props} /> : (
                 unit.contentType === 'gloss'    ? <GlossFeedUnit {...props} /> : (
                 unit.contentType === 'sentence' ? <SentenceFeedUnit {...props} /> : 
                 `unknown content ${JSON.stringify(unit)}`))}    

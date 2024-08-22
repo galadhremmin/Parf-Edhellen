@@ -17,3 +17,7 @@ Route::get('/author/{id}/sentences', [ 'uses' => 'AuthorController@sentences' ])
     ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ])->name('author.sentences');
 Route::get('/author/{id}/posts', [ 'uses' => 'AuthorController@posts' ])
     ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ])->name('author.posts');
+
+// Unfortuantely a necessity, a landing page for traffic from IP violating addresses.
+Route::get('/blocked', [ App\Http\Controllers\IpBlockedController::class, 'index' ])
+    ->name('blocked');
