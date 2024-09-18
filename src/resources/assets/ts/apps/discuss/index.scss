@@ -223,10 +223,12 @@ h1 {
     }
 }
 
-@media (min-width: calc(#{$ed-forum-post-body-maximum-width} + #{$ed-forum-post-profile-width})) {
-    .forum-post {
-        max-width: calc(#{$ed-forum-post-body-maximum-width} + #{$ed-forum-post-profile-width});
-        margin-left: auto;
-        margin-right: auto;
+.discuss-body:not(.stretch) {
+    @media (min-width: calc(#{$ed-forum-post-body-maximum-width} + #{$ed-forum-post-profile-width})) {
+        .forum-post {
+            max-width: calc(#{$ed-forum-post-body-maximum-width} + #{$ed-forum-post-profile-width});
+            margin-left: auto;
+            margin-right: auto;
+        }
     }
 }

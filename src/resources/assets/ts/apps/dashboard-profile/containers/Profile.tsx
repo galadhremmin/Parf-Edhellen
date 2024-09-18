@@ -76,12 +76,20 @@ function Profile(props: IProps) {
                     </p>
                 </div>}
             </div>
-            <AccountFeed account={props.account} />
             {showDiscuss && <div className="row">
                 <div className="col-12">
-                    <Discuss entityId={id} entityType="account" prefetched={false} />
+                    <h2>Messages</h2>
+                    <p>These are personal messages as well as messages left by others on their profile.</p>
+                    <Discuss entityId={id} entityType="account" prefetched={false} stretchUi={true} />
                 </div>
             </div>}
+            <div className="row">
+                <div className="col-12">
+                    <h2>Timeline</h2>
+                    <p>Their community and dictionary activities sorted by date in descending order.</p>
+                    <AccountFeed account={props.account} />
+                </div>
+            </div>
         </div>
     </div>;
 }

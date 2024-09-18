@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\Abstracts\Controller;
 use App\Http\Discuss\ContextFactory;
+use App\Interfaces\IMarkdownParser;
 use App\Models\AccountFeed;
 use App\Models\AccountFeedRefreshTime;
 use App\Models\ForumPost;
@@ -26,12 +27,19 @@ class AccountFeedApiController extends Controller
      */
     private $_contextFactory;
 
+    /**
+     * @var IMarkdownParser
+     */
+    private $_markdownParser;
+
     const FILTERABLE_PROPS = ['is_deleted', 'is_hidden'];
 
-    public function __construct(AccountFeedRepository $feedRepository, ContextFactory $contextFactory) 
+    public function __construct(AccountFeedRepository $feedRepository, ContextFactory $contextFactory,
+        IMarkdownParser $markdownParser)
     {
         $this->_feedRepository = $feedRepository;
         $this->_contextFactory = $contextFactory;
+        $this->_markdownParser = $markdownParser;
     }
 
     public function getFeed(Request $request, int $id)
@@ -56,49 +64,55 @@ class AccountFeedApiController extends Controller
         // TODO: this technically doesn't work for `gloss` nor `forum` because discuss is tracked on `ForumDiscussion` and `GlossVersion`.
         //       we need to figure out a way to handle this complicated case.
         $changed = false;
-        for ($offset = 0; $offset < $feed->getCollection()->count(); $offset += 1) {
-            $record = $feed->getCollection()->get($offset);
-
+        $filteredRecords = collect([]);
+        foreach ($feed->getCollection() as $record) {
+            $pass = true;
             if ($record->content === null) {
-                continue;
+                $pass = false;
             }
 
-            $pass = true;
-            foreach (self::FILTERABLE_PROPS as $prop) {
-                if ($record->content->hasAttribute($prop) &&
-                    $record->content->$prop) {
-                    $feed->getCollection()->offsetUnset($offset);
-                    $changed = true;
-                    $pass = false;
-                    break;
+            if ($pass) {
+                foreach (self::FILTERABLE_PROPS as $prop) {
+                    if ($record->content->hasAttribute($prop) &&
+                        $record->content->$prop) {
+                        $pass = false;
+                        break;
+                    }
                 }
             }
 
-            if ($pass === true) {
+            if ($pass) {
                 $context = $this->_contextFactory->create($record->content_type);
                 if ($context !== null && $record->content !== null && ! $context->available($record->content, $request->user())) {
-                    $feed->getCollection()->offsetUnset($offset);
-                    $changed = true;
+                    $pass = false;
                 }
             }
 
-            if ($record->content !== null) {
-                if ($record->content instanceof ForumPost) {
-                    $record->content->load('forum_thread');
-                } else if ($record->content instanceof Gloss) {
-                    // todo?
-                } else if ($record->content instanceof Sentence) {
-                    // todo?
-                }
+            if (! $pass) {
+                $changed = true;
+                continue; // skip this record as it does not pass our checks.
+            }
+
+            $c = $record->content;
+            if ($c instanceof ForumPost) {
+                $c->load('forum_thread');
+                $c->content = $this->_markdownParser->parseMarkdownNoBlocks($c->content);
+            } else if ($c instanceof Gloss) {
+                // todo?
+            } else if ($c instanceof Sentence) {
+                // todo?
+            }
+
+            if ($changed) {
+                // only use teh filteredRecords collection if there were actual changes made.
+                $filteredRecords->push($record);
             }
         }
 
         // We need to reset the collection if it was modified because it'd change the array to an object if some indices
         // were removed. Reference: Illuminate\Pagination\CursorPaginator
         if ($changed) {
-            $feed->setCollection(
-                $feed->getCollection()->values()
-            );
+            $feed->setCollection($filteredRecords);
         }
 
         return $feed;

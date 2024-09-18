@@ -6,6 +6,7 @@ import { thunk } from 'redux-thunk';
 import { ReduxThunkDispatch } from '@root/_types';
 import { IThreadResponse } from '@root/connectors/backend/IDiscussApi';
 
+import classNames from 'classnames';
 import DiscussActions from './actions/DiscussActions';
 import Discuss from './containers/Discuss';
 import { IProps } from './index._types';
@@ -21,6 +22,7 @@ const Inject = (props: IProps) => {
         highlightThreadPost = false,
         readonly = false,
         prefetched = true,
+        stretchUi = false,
         thread,
     } = props;
 
@@ -57,7 +59,7 @@ const Inject = (props: IProps) => {
         entityType = thread.entityType;
     }
 
-    return <div className="discuss-body">
+    return <div className={classNames('discuss-body', { stretch: stretchUi, })}>
         <Provider store={store}>
             <Discuss entityId={entityId}
                     entityType={entityType}

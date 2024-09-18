@@ -85,7 +85,7 @@ class StringHelper
 
         $str = self::toLower($str);
         $str = self::clean($str);
-        $str = preg_replace('/[’\\{\\}\\[\\]\+=!\.]/u', '', $str);
+        $str = preg_replace('/[’\\{\\}\\[\\]\+=!\.%]/u', '', $str);
 
         if (! $retainWildcard) {
             $str = str_replace('*', '', $str);

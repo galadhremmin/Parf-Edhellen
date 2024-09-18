@@ -6,13 +6,14 @@ import {
 function Panel(props: IProps) {
     const {
         children,
+        className,
         title = null,
         titleButton,
         shadow,
 //      type = PanelType.Info, not supported
     } = props;
 
-    return <div className={classNames("card", "mb-3", {"shadow-lg": shadow})}>
+    return <div className={classNames("card", "mb-3", {"shadow": shadow}, className ?? '')}>
         <div className="card-body">
             {!! title && <h3 className="panel-title">
                 {title}

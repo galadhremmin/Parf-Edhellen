@@ -145,6 +145,10 @@ class AuthenticationController extends Controller
 
     protected function log(string $method, string $provider, \Throwable $ex)
     {
+        if ($ex instanceof \UnexpectedValueException) {
+            $provider = 'invalid';
+        }
+
         $this->_systemErrorRepository->saveException($ex, $provider.'-auth-'.$method);
     }
 }

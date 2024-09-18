@@ -62,7 +62,7 @@ export default function AccountFeed({
 
     return <>
         <section className="account-feed">
-            {feed.map(f => <FeedUnit unit={f} key={f.id} />)}
+            {feed.map((f, i) => <FeedUnit unit={f} key={f.id} first={i === 0} />)}
         </section>
         <Waypoint onEnter={_onWaypointExposed} />
         {loading && <div className="text-center">

@@ -10,7 +10,7 @@ div.Jumbotron {
 
     @media (min-width: #{map-get($grid-breakpoints, 'lg') + 1}) {
       // the main menu in desktop mode offsets everything to the left, hence the ncessary to adjust the margin
-      margin: 1rem calc(50% - 50vw + #{$size-desktop-user-menu-width/2});
+      margin: 1rem calc(50% - 50vw + #{($size-desktop-user-menu-width + 1 /* padding */)/2});
     }
 
     &.has-background {

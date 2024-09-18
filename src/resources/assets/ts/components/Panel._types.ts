@@ -11,6 +11,7 @@ export const enum PanelType {
 
 export interface IProps {
     children?: ReactNode;
+    className?: string;
     title?: string;
     titleButton?: React.ReactNode;
     type?: PanelType;

@@ -35,7 +35,11 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
                 'required',
                 'string',
                 function (string $attribute, mixed $value, Closure $fail) use ($request) {
-                    if (! $this->_accountManager->checkPasswordWithUsername($request->input('username'), $value)) {
+                    $username = $request->input('username');
+                    if (empty($username)) {
+                        $fail('You need to specify an e-mail address.');
+                    }
+                    else if (! $this->_accountManager->checkPasswordWithUsername($username, $value)) {
                         $fail('We did not find an account with that e-mail and password combination. Check your e-mail and password and try again.');
                     }
                 }

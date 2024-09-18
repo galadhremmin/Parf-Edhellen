@@ -51,7 +51,6 @@ class ExternalGlossGroupToInternalUrlResolver implements IExternalToInternalUrlR
         $path = parse_url($url, PHP_URL_PATH);
         $matches = null;
         if (! preg_match($regex, $path, $matches)) {
-            print_r([$url, $path, $matches]);
             return null;
         }
 
