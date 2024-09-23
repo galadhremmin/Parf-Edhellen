@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
+use Carbon\Carbon;
 
 use App\Http\Controllers\Abstracts\Controller;
 use App\Models\{ForumGroup, Sentence, Gloss};

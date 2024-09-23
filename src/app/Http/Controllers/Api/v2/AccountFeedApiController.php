@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api\v2;
 
-use App\Helpers\MarkdownParser;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\Abstracts\Controller;
@@ -14,7 +13,7 @@ use App\Models\ForumPost;
 use App\Models\Gloss;
 use App\Models\Sentence;
 use App\Repositories\AccountFeedRepository;
-use Illuminate\Support\Carbon;
+use Carbon\Carbon;
 
 class AccountFeedApiController extends Controller 
 {

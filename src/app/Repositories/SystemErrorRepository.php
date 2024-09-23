@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Models\{ 
     SystemError
 };
-use Illuminate\Support\Carbon;
+use Carbon\Carbon;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

@@ -3,7 +3,6 @@
 namespace App\Adapters;
             
 use Illuminate\Support\Collection;
-use Illuminate\Support\Carbon;
 
 use App\Helpers\{
     LinkHelper,

@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 use App\Models\Account;
 use App\Models\AuthorizationProvider;
 use App\Models\Role;
-use Illuminate\Support\Carbon;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Auth\Events\Registered;
 

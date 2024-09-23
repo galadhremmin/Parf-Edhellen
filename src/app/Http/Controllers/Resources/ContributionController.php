@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Resources;
 
-use Illuminate\Support\Carbon;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Support\Jsonable;
 

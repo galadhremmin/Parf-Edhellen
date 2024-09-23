@@ -4,17 +4,9 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-use Illuminate\Support\Carbon;
 use App\Models\{
     Gloss,
-    GlossDetail,
     Language,
-    Translation
-};
-use App\Models\Versioning\{
-    GlossVersion,
-    GlossDetailVersion,
-    TranslationVersion
 };
 
 class GlossVersions extends Migration
