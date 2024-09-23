@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+
 use App\Http\Controllers\Abstracts\Controller;
 use App\Models\{ForumGroup, Sentence, Gloss};
-use App\Helpers\{LinkHelper, StringHelper};
-
-use Illuminate\Http\Request;
+use App\Helpers\LinkHelper;
 
 class SitemapController extends Controller
 {
@@ -140,7 +141,7 @@ class SitemapController extends Controller
         }
     }
 
-    private function addNode(string& $xml, string $location, string $changeFrequency = 'monthly', \Carbon\Carbon $lastModified = null) {
+    private function addNode(string& $xml, string $location, string $changeFrequency = 'monthly', Carbon $lastModified = null) {
         $xml .= '<url>'.
             '<loc>'.$location.'</loc>'.
             ($lastModified !== null ? '<lastmod>'.$lastModified->format('Y-m-d').'</lastmod>' : '').
