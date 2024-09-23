@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use Carbon\Carbon as LegacyCarbon;
 use Illuminate\Support\Carbon;
 use Illuminate\Contracts\Support\Jsonable;
 
@@ -11,7 +12,7 @@ class BladeHelper
     {
         if (is_string($date)) {
             $date = new Carbon($date);
-        } else if (! ($date instanceOf Carbon)) {
+        } else if (! ($date instanceOf Carbon) && ! ($date instanceOf LegacyCarbon)) {
             throw new \Exception('Unsupported data type: '.get_class($date));
         }
 
