@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Cache;
-use DB;
 
 use App\Adapters\BookAdapter;
 use App\Helpers\StringHelper;
@@ -12,8 +12,7 @@ use App\Http\Controllers\Abstracts\Controller;
 use App\Events\FlashcardFlipped;
 use App\Models\{
     Flashcard, 
-    FlashcardResult, 
-    Language, 
+    FlashcardResult,
     Gloss,
     Speech,
     Translation
@@ -131,7 +130,7 @@ class FlashcardController extends Controller
 
         // retrieve the flashcard for its language and gloss group 
         // which will be used to filter amongst the glosses.
-        $flashcard = Flashcard::find($id);
+        $flashcard = Flashcard::findOrFail($id);
 
         // select a random gloss
         $q = Gloss::active()

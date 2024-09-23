@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Resources;
 
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Support\Jsonable;
 
@@ -14,9 +14,7 @@ use App\Events\{
     ContributionRejected
 };
 use App\Models\{
-    Contribution,
-    Sentence,
-    Gloss
+    Contribution
 };
 use App\Http\Controllers\Contributions\ContributionControllerFactory;
 

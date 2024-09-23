@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Resources;
 
 use Illuminate\Http\Request;
 use DB;
-use Carbon\Carbon;
+use Illuminate\Support\Carbon;
 
 use App\Models\{
     SystemError,

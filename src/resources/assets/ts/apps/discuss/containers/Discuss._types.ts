@@ -48,6 +48,7 @@ export interface IProps {
     posts?: IPostEntity[];
     readonly?: boolean;
     roleManager?: IRoleManager;
+    stretchUi?: boolean;
     thread?: IThreadEntity;
     threadMetadata?: IThreadMetadataState;
     threadPostId?: number;

@@ -2,6 +2,9 @@ export const ApiPath = '/api/v2';
 export const ApiExceptionCollectorMethod = 'utility/error';
 export const ApiValidationFailedStatusCode = 422;
 
+export const AvatarMaximiumFileSize = Math.pow(1024,2)/2;
+export const AvatarMaximumImageWidthInPixels = 160;
+
 export const ApplicationGlobalPrefix = 'ed';
 export const LocalStorageLanguages = 'ed.languages';
 

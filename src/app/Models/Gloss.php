@@ -80,6 +80,11 @@ class Gloss extends ModelBase implements Interfaces\IHasFriendlyName, Interfaces
         return $this->hasMany(GlossInflection::class);
     }
 
+    public function account_feed()
+    {
+        return $this->belongsTo(AccountFeed::class);
+    }
+
     public function scopeNotDeleted($query)
     {
         $query->where('is_deleted', 0);

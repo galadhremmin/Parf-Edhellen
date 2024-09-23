@@ -3,7 +3,7 @@
 namespace Tests\Unit\Repositories;
 
 use Tests\TestCase;
-use Queue;
+use Illuminate\Support\Facades\Queue;
 
 use Tests\Unit\Traits\CanCreateGloss;
 use App\Models\{

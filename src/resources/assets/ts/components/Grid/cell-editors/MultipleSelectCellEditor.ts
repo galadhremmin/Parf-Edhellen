@@ -66,7 +66,9 @@ export default class MultipleSelectCellEditor<T, V = T> extends PopupComponent i
         this._values = values;
         this._updateValues();
 
-        this.addManagedListener(this._inputElement, 'keydown', this._onKeyDown);
+        this.addManagedElementListeners(this._inputElement, {
+            'keydown': this._onKeyDown,
+        });
     }
 
     public getValue() {

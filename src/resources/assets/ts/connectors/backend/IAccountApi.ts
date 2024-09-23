@@ -1,3 +1,7 @@
+import { ISentenceEntity } from "./IBookApi";
+import { IPostEntity } from "./IDiscussApi";
+import { IGlossEntity } from "./IGlossResourceApi";
+
 export interface IFindRequest {
     max?: number;
     nickname: string;
@@ -55,9 +59,40 @@ export interface ISaveProfileResponse {
     profileUrl: string;
 }
 
+export interface IGetFeedRequest {
+    accountId: number;
+    cursor?: string;
+}
+
+export interface IGetFeedResponse {
+    data: IFeedRecord[];
+    path: string;
+    perPage: number;
+    nextCursor: string;
+    nextPageUrl: string | null;
+    prevPageUrl: string | null;
+    restricted?: boolean;
+}
+
+export interface IFeedRecord<TContentType = string, TEntity = any> {
+    id: string;
+    accountId: number;
+    happenedAt: string;
+    contentId: number;
+    auditTrailActionId: number;
+    auditTrailId: number;
+    contentType: TContentType;
+    content: TEntity;
+}
+
+export interface IGlossFeedRecord extends IFeedRecord<'gloss', IGlossEntity> {}
+export interface ISentenceFeedRecord extends IFeedRecord<'gloss', ISentenceEntity> {}
+export interface IForumFeedRecord extends IFeedRecord<'forum', IPostEntity> {}
+
 export default interface IAccountApi {
     find(args: IFindRequest): Promise<FindResponse>;
     getAvatar(args: IGetAvatarRequest): Promise<IGetAvatarResponse>;
+    getFeed(args: IGetFeedRequest): Promise<IGetFeedResponse>;
     getFeatureBackgrounds(): Promise<IGetFeatureBackgroundsResponse>;
     saveAvatar(args: ISaveAvatarRequest): Promise<ISaveAvatarResponse>;
     saveFeatureBackground(args: ISaveFeatureBackgroundRequest): Promise<ISaveFeatureBackgroundResponse>;

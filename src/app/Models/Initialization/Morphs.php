@@ -92,8 +92,25 @@ class Morphs
      * @param string $alias
      * @return string
      */
-    public static function getMorphedModel(string $alias)
+    public static function getMorphedModel(string $alias): string
     {
         return Relation::getMorphedModel($alias);
+    }
+
+    public static function getMorphToMap()
+    {
+        $map = Relation::morphMap();
+        $morphs = array_keys($map);
+
+        return array_reduce($morphs, function ($carry, $morph) use ($map) {
+            if (key_exists($map[$morph], $carry)) {
+                $carry[$map[$morph]][] = $morph;
+                dd($morph);
+            } else {
+                $carry[$map[$morph]] = [$morph];
+            }
+
+            return $carry;
+        }, []);
     }
 }

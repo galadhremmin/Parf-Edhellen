@@ -6,6 +6,7 @@ import TextIcon from '@root/components/TextIcon';
 import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 
+import AccountFeed from '../components/AccountFeed';
 import JumbotronOrHeader from '../components/JumbotronOrHeader';
 import { IProps } from './Profile._types';
 
@@ -77,9 +78,18 @@ function Profile(props: IProps) {
             </div>
             {showDiscuss && <div className="row">
                 <div className="col-12">
-                    <Discuss entityId={id} entityType="account" prefetched={false} />
+                    <h2>Messages</h2>
+                    <p>These are personal messages as well as messages left by others on their profile.</p>
+                    <Discuss entityId={id} entityType="account" prefetched={false} stretchUi={true} />
                 </div>
             </div>}
+            <div className="row">
+                <div className="col-12">
+                    <h2>Timeline</h2>
+                    <p>Their community and dictionary activities sorted by date in descending order.</p>
+                    <AccountFeed account={props.account} />
+                </div>
+            </div>
         </div>
     </div>;
 }

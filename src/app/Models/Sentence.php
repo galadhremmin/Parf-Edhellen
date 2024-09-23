@@ -26,6 +26,11 @@ class Sentence extends ModelBase implements Interfaces\IHasFriendlyName, Interfa
     {
         return $this->belongsTo(Language::class);
     }
+
+    public function account_feed()
+    {
+        return $this->belongsTo(AccountFeed::class);
+    }
     
     public function scopeNeologisms($query)
     {

@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers\Api\v2;
 
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{
-    Auth,
     Storage
 };
 
@@ -18,7 +16,7 @@ use App\Models\Account;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Helpers\StorageHelper;
 use App\Security\AccountManager;
-use Image;
+use Intervention\Image\Facades\Image;
 
 class AccountApiController extends Controller 
 {
@@ -158,9 +156,16 @@ class AccountApiController extends Controller
 
         try {
             $image = Image::make($file->getRealPath());
-            $image->resize($maxSizeInPixels, $maxSizeInPixels, function ($constraint) {
-                $constraint->aspectRatio();
-            })->save($localPath);
+
+            if ($image->width() < $image->height()) {
+                $image->resize($maxSizeInPixels, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save($localPath);
+            } else {
+                $image->resize(null, $maxSizeInPixels, function ($constraint) {
+                    $constraint->aspectRatio();
+                })->save($localPath);
+            }
             
             $account->has_avatar = true;
             $account->save();

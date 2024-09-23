@@ -47,8 +47,8 @@ class HomeController extends Controller
         // positioned upon the jumbotron.
         $jumbotronFiles = config('ed.jumbotron_files');
         $noOfJumbotronFiles = count($jumbotronFiles);
-        $background = $noOfJumbotronFiles > 0 
-            ? $jumbotronFiles[mt_rand(0, $noOfJumbotronFiles - 1)] 
+        $background = $noOfJumbotronFiles > 0 //
+            ? $jumbotronFiles[mt_rand(0, $noOfJumbotronFiles - 1)] //
             : null;
 
         // Retrieve a random sentence to be featured.
@@ -57,7 +57,9 @@ class HomeController extends Controller
                 ->select('id')
                 ->first();
             return [
-                'sentence' => $sentence === null ? null : $this->_sentenceRepository->getSentence($sentence->id)
+                'sentence' => $sentence === null // 
+                    ? null //
+                    : $this->_sentenceRepository->getSentence($sentence->id)
             ];
         });
 
@@ -69,7 +71,9 @@ class HomeController extends Controller
                 ->first();
             
             return [
-                'gloss' => $gloss === null ? null : $this->_bookAdapter->adaptGloss($gloss)
+                'gloss' => $gloss === null //
+                    ? null //
+                    : $this->_bookAdapter->adaptGloss($gloss)
             ];
         });
 
@@ -80,7 +84,7 @@ class HomeController extends Controller
         // Retrieve the 10 latest audit trail
         $auditTrails = Cache::remember('ed.home.audit', 60 * 5 /* seconds */, function() {
             return $this->_auditTrailAdapter->adaptAndMerge(
-                $this->_auditTrail->get(10, 0, [
+                $this->_auditTrail->get(15, 0, [
                     AuditTrail::ACTION_COMMENT_ADD,
                     AuditTrail::ACTION_COMMENT_LIKE,
                     AuditTrail::ACTION_GLOSS_ADD,

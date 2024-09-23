@@ -9,12 +9,12 @@
   <meta property="og:title" content="@yield('title') - {{ config('ed.title') }}">
   <meta property="og:description" content="{{ config('ed.description') }}">
   <meta property="og:locale" content="{{ config('ed.view_locale') }}">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta name="description" content="{{ config('ed.description') }}">
   <meta name="keywords" content="sindarin, quenya, noldorin, quendya, elvish, tolkien, nandorin, ilkorin, black speech, westron">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" value="#333333">
-  <meta name="csrf-token" id="ed-csrf-token" content="{{ csrf_token() }}">
   <link rel="apple-touch-icon-precomposed" href="/img/favicons/apple-touch-icon-precomposed.png">
   <link rel="icon" type="image/png" href="/img/favicons/favicon-194x194.png">
   <link rel="manifest" href="/img/favicons/manifest.json">
