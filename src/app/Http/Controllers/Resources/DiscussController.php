@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Resources;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Cache;
-use Illuminate\Support\Carbon;
+use Carbon\Carbon;
 
 use App\Http\Controllers\Abstracts\Controller;
 use App\Http\Discuss\ContextFactory;

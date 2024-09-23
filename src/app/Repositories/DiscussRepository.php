@@ -40,7 +40,7 @@ use App\Repositories\ValueObjects\{
     ForumThreadsInGroupValue,
     ForumThreadValue
 };
-use Illuminate\Support\Carbon;
+use Carbon\Carbon;
 
 class DiscussRepository
 {

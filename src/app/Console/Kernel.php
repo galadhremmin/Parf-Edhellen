@@ -4,7 +4,7 @@ namespace App\Console;
 
 use App\Models\FailedJob;
 use App\Repositories\SystemErrorRepository;
-use Illuminate\Support\Carbon;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
