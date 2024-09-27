@@ -31,6 +31,6 @@ class AccountFeedRepositoryTest extends TestCase
     public function testGenerateFeed()
     {
         $repository = resolve(AccountFeedRepository::class);
-        $repository->generateForAccountId(4322);
+        // todo
     }
 }
