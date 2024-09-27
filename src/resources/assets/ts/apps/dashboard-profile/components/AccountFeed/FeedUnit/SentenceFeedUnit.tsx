@@ -33,7 +33,7 @@ export default function SentenceFeedUnit(props: IProps<ISentenceFeedRecord>) {
     return <>
         <p>
             <TextIcon icon="book" />{' '}
-            Published the phrase <em>{name}</em>. <a href={sentenceUrl} target="_blank">Open in the viewer</a>.
+            Published the phrase <em>{name}</em>. <a href={sentenceUrl} target="_blank" rel="noreferrer">Open in the viewer</a>.
         </p>
         {transformations.length > 0 && <>
             <hr />
@@ -41,7 +41,7 @@ export default function SentenceFeedUnit(props: IProps<ISentenceFeedRecord>) {
             <HtmlInject html={description} />
             {paragraphIndexes.map(paragraphIndex => <p key={paragraphIndex}>
                 {transformations.map(transformation => <div key={transformation}>
-                    {sentenceTransformations[transformation][paragraphIndex]?.map(fragment => <span>
+                    {sentenceTransformations[transformation][paragraphIndex]?.map((fragment, i) => <span key={i}>
                         {Array.isArray(fragment) //
                             ? (fragment.length > 1 //
                                     ? <Tengwar transcribe={false} text={fragment[1]} />

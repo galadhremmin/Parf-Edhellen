@@ -22,7 +22,7 @@ export default function GlossFeedUnit(props: IProps<IGlossFeedRecord>) {
     return <>
         <p>
             <TextIcon icon="book" />{' '}
-            Published the gloss {unit.contentId}. <a href={`/wt/${unit.contentId}`} target="_blank">Open in the dictionary</a>.
+            Published the gloss {unit.contentId}. <a href={`/wt/${unit.contentId}`} target="_blank" rel="noreferrer">Open in the dictionary</a>.
         </p>
         <hr className="mb-0" />
         <Gloss gloss={gloss} bordered={false} toolbar={false} />

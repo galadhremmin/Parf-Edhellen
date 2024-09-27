@@ -1,3 +1,5 @@
+/* eslint @typescript-eslint/no-empty-object-type: 0 */
+
 import { ISentenceEntity, ISentenceFragmentEntity } from "./IBookApi";
 import { IPostEntity } from "./IDiscussApi";
 import { IGlossEntity } from "./IGlossResourceApi";

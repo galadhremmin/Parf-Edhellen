@@ -1,5 +1,7 @@
-export default class ValidationError {
-    constructor(private _errorMessage: string, private _errorMap: Record<string, string[]> = null) {}
+export default class ValidationError extends Error {
+    constructor(private _errorMessage: string, private _errorMap: Record<string, string[]> = null) {
+        super(_errorMessage);
+    }
 
     public get errorMessage() {
         return this._errorMessage;

@@ -39,7 +39,7 @@ function uploadImage(imageFile: File, changeEvent: ComponentEventHandler<File>) 
             reader.readAsDataURL(imageFile);
         } catch (e) {
             // whops todo
-            reject(e);
+            reject(e as Error);
         }
     }).then(image => {
         if (! image) {
@@ -58,7 +58,7 @@ function uploadImage(imageFile: File, changeEvent: ComponentEventHandler<File>) 
 
         const context = canvas.getContext('2d');
         if (! context) {
-            return Promise.reject(TooLargeAvatarInTermsOfFileSize);
+            return Promise.reject(new Error(TooLargeAvatarInTermsOfFileSize));
         }
 
         context.drawImage(image, 0, 0, canvas.width, canvas.height);
@@ -71,7 +71,7 @@ function uploadImage(imageFile: File, changeEvent: ComponentEventHandler<File>) 
         });
     }).then(resizedImageFile => {
         if (resizedImageFile?.size > AvatarMaximiumFileSize) {
-            return Promise.reject(TooLargeAvatarInTermsOfFileSize);
+            return Promise.reject(new Error(TooLargeAvatarInTermsOfFileSize));
         }
 
         return resizedImageFile;

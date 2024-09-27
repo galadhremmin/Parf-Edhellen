@@ -36,7 +36,8 @@ module.exports = {
         "@typescript-eslint/restrict-plus-operands": 1,
         "@typescript-eslint/no-misused-promises": 1,
         "@typescript-eslint/no-floating-promises": 1,
-        "react/no-unescaped-entities": 0
+        "react/no-unescaped-entities": 0,
+        "react/prop-types": 0 // We don't use propTypes
     },
     "ignorePatterns": ["*._spec.ts", "*._spec.tsx", "*._types.ts", "*.d.ts"],
     "settings": {

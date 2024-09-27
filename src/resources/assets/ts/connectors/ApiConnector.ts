@@ -173,7 +173,7 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
     private _createRequest<T = any>(factory: AxiosRequestFactory, apiMethod: string, queryStringMap: IQueryStringMap,
         payload: any = null): AxiosPromise<AxiosResponse<T>> {
         if (! apiMethod || apiMethod.length < 1) {
-            return Promise.reject(`You need to specify an API method to invoke.`);
+            return Promise.reject(new Error('You need to specify an API method to invoke.'));
         }
 
         const config = this.config;
@@ -241,7 +241,7 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
                     category = ErrorCategory.RequestForbidden;
                     break;
                 case 404:
-                    return Promise.reject(`${apiMethod}: The specified resource cannot be found.`);
+                    return Promise.reject(new Error(`${apiMethod}: The specified resource cannot be found.`));
                 case 419:
                     message = 'Your browsing session has timed out. This usually happens when you leave ' +
                         'the page open for a long time. Please refresh the page and try again.';
@@ -295,6 +295,6 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             await this.error('API request failed', apiMethod, JSON.stringify(errorReport, undefined, 2), category);
         }
 
-        return Promise.reject('API request failed ' + apiMethod);
+        return Promise.reject(new Error(`API request failed ${apiMethod}`));
     }
 }
