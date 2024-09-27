@@ -62,7 +62,7 @@ export class ErrorBoundary extends React.Component<IProps, IState> {
             healthy,
         } = this.state;
 
-        if (! healthy) {
+    if (! healthy) {
             return <StaticAlert type="danger">
                 <strong>Something went wrong!</strong>{' '}
                 Your browser raised an error while trying to create one of our components.
@@ -75,6 +75,6 @@ export class ErrorBoundary extends React.Component<IProps, IState> {
 }
 
 export default withPropInjection(ErrorBoundary, {
-    reportErrorApi: DI.LogApi,
+    reportErrorApi: DI.BackendApi,
     globalEvents: DI.GlobalEvents,
 });

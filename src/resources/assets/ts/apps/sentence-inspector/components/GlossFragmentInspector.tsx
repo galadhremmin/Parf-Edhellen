@@ -23,14 +23,16 @@ function GlossFragmentInspector(props: IProps) {
         fragment,
     } = props;
 
-    const gloss = useGloss(fragment?.glossId, (nextGloss) => ({
-        ...nextGloss,
-        _inflectedWord: {
-            inflections: fragment.glossInflections,
-            speech: fragment.speech,
-            word: fragment.fragment,
-        },
-    }));
+    const { gloss, error } = useGloss(fragment?.glossId, {
+        glossAdapter: (nextGloss) => ({
+            ...nextGloss,
+            _inflectedWord: {
+                inflections: fragment.glossInflections,
+                speech: fragment.speech,
+                word: fragment.fragment,
+            },
+        }),
+    });
 
     return <article>
         <header>
@@ -40,20 +42,20 @@ function GlossFragmentInspector(props: IProps) {
             <Markdown text={fragment.comments} parse={true} />
         </section>}
         <section>
+            {(! gloss && ! error) && <Spinner />}
             {gloss && <Suspense fallback={<Spinner />}>
-                {gloss.error === null && <GlossInspectorAsync
+                <GlossInspectorAsync
                     bordered={false}
-                    gloss={gloss?.gloss}
+                    gloss={gloss}
                     onReferenceLinkClick={onReferenceLinkClick}
                     toolbar={false}
                     warnings={false}
-                />}
-                {gloss.error !== null && <StaticAlert type="warning">
-                    <strong>Sorry, cannot find a gloss for <Quote>{fragment.fragment}</Quote>!</strong>{' '}
-                    This usually happens when the gloss is deleted or outdated after the phrase was published. You can notify the author about this error alternatively contribute with a correction yourself.
-                </StaticAlert>}
+                />
             </Suspense>}
-            {! gloss && <Spinner />}
+            {error && <StaticAlert type="warning">
+                <strong>Sorry, cannot find a gloss for <Quote>{fragment.fragment}</Quote>!</strong>{' '}
+                This usually happens when the gloss is deleted or outdated after the phrase was published. You can notify the author about this error alternatively contribute with a correction yourself.
+            </StaticAlert>}
         </section>
     </article>;
 }

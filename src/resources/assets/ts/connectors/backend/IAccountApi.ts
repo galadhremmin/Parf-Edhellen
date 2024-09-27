@@ -1,4 +1,4 @@
-import { ISentenceEntity } from "./IBookApi";
+import { ISentenceEntity, ISentenceFragmentEntity } from "./IBookApi";
 import { IPostEntity } from "./IDiscussApi";
 import { IGlossEntity } from "./IGlossResourceApi";
 
@@ -85,9 +85,13 @@ export interface IFeedRecord<TContentType = string, TEntity = any> {
     content: TEntity;
 }
 
-export interface IGlossFeedRecord extends IFeedRecord<'gloss', IGlossEntity> {}
-export interface ISentenceFeedRecord extends IFeedRecord<'gloss', ISentenceEntity> {}
 export interface IForumFeedRecord extends IFeedRecord<'forum', IPostEntity> {}
+export interface IGlossFeedRecord extends IFeedRecord<'gloss', IGlossEntity> {}
+export interface ISentenceFeedRecord extends IFeedRecord<'sentence', ISentenceEntity & {
+    sentenceUrl: string;
+    sentenceFragments: ISentenceFragmentEntity[];
+    sentenceTransformations: Record<string, Record<string, Array<[number, string?] | string>>>;
+}> {}
 
 export default interface IAccountApi {
     find(args: IFindRequest): Promise<FindResponse>;
