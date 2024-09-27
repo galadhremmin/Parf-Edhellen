@@ -4,7 +4,11 @@ export interface ISuggestGlossesForFragmentsRequest {
 }
 
 export interface ISuggestGlossesForFragmentsResponse {
-
+    [fragment: string]: Array<{
+        glossId: number;
+        speechId: number;
+        inflectionIds: number[];
+    }>;
 }
 
 export interface ISentenceResourceApi {

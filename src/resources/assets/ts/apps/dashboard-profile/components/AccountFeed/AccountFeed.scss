@@ -1,24 +1,35 @@
 @import '../../../../_scss/variables';
 
-.timeline--line {
-    border-left: 1px solid $border-color;
-    &.first {
-        >span::before {
-            display: block;
-            width: 1rem;
-            height: 1rem;
-            border-radius: 1rem;
-            border: 1px solid $border-color;
-            background: white;
-        }
+$thread-color: #8d3f3f;
+$thread-width: 2px;
+$thread-coil-size: 0.8rem;
+
+.account-feed {
+    img {
+        max-width: 100%;
     }
-    > span {
-        display: block;
-        border-left: 1px solid $border-color;
-        border-bottom: 1px solid $border-color;
-        width: 1rem;
-        height: 2rem;
-        border-end-start-radius: 1rem;
-        margin-left: -1px;
+    .timeline--line {
+        border-left: $thread-width solid $thread-color;
+        &.first {
+            >span::before {
+                content: "";
+                display: block;
+                width: $thread-coil-size;
+                height: $thread-coil-size;
+                border-radius: $thread-coil-size;
+                border: $thread-width solid $thread-color;
+                background: $thread-color;
+                margin-left: $thread-coil-size/-2;
+            }
+        }
+        > span {
+            display: block;
+            border-left: $thread-width solid $thread-color;
+            border-bottom: $thread-width solid $thread-color;
+            width: 1rem;
+            height: 2rem;
+            border-end-start-radius: 1rem;
+            margin-left: -$thread-width;
+        }
     }
 }

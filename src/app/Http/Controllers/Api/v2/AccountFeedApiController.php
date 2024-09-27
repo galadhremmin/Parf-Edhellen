@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers\Api\v2;
 
+use App\Helpers\{
+    LinkHelper,
+    SentenceHelper
+};
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\Abstracts\Controller;
@@ -31,14 +35,26 @@ class AccountFeedApiController extends Controller
      */
     private $_markdownParser;
 
+    /**
+     * @var SentenceHelper
+     */
+    private $_sentenceHelper;
+
+    /**
+     * @var LinkHelper
+     */
+    private $_linkHelper;
+
     const FILTERABLE_PROPS = ['is_deleted', 'is_hidden'];
 
     public function __construct(AccountFeedRepository $feedRepository, ContextFactory $contextFactory,
-        IMarkdownParser $markdownParser)
+        IMarkdownParser $markdownParser, SentenceHelper $sentenceHelper, LinkHelper $linkHelper)
     {
         $this->_feedRepository = $feedRepository;
         $this->_contextFactory = $contextFactory;
         $this->_markdownParser = $markdownParser;
+        $this->_sentenceHelper = $sentenceHelper;
+        $this->_linkHelper     = $linkHelper;
     }
 
     public function getFeed(Request $request, int $id)
@@ -97,9 +113,13 @@ class AccountFeedApiController extends Controller
                 $c->load('forum_thread');
                 $c->content = $this->_markdownParser->parseMarkdownNoBlocks($c->content);
             } else if ($c instanceof Gloss) {
-                // todo?
+                // noop, relying on `useGloss` hook on client.
             } else if ($c instanceof Sentence) {
-                // todo?
+                $c->load('language');
+                $c->load('sentence_fragments');
+                $c->description = $this->_markdownParser->parseMarkdownNoBlocks($c->description ?: "");
+                $c->sentence_url = $this->_linkHelper->sentence($c->language->id, $c->language->name, $c->id, $c->name);
+                $c->sentence_transformations = $this->_sentenceHelper->buildSentences($c->sentence_fragments);
             }
 
             if ($changed) {

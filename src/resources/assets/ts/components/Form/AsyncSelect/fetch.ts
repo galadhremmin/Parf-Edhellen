@@ -14,6 +14,9 @@ const useFetch = <T>(loader: ValueLoader<T>, value: T | IdValue) => {
     useEffect(() => {
         loader(value).then((vs) => {
             setValues(vs);
+        }).catch((e) => {
+            console.error(`AsyncSelect value promise: ${e}`);
+            setValues([]);
         });
     }, []);
 

@@ -2,12 +2,12 @@ import {
     useCallback
 } from 'react';
 
-import { AgGridReact } from 'ag-grid-react';
 import {
     ColDef,
     GridReadyEvent,
     IDatasource,
 } from 'ag-grid-community';
+import { AgGridReact } from 'ag-grid-react';
 import { DateTime } from 'luxon';
 
 import { IFailedJob } from '@root/connectors/backend/ILogApi';
@@ -64,6 +64,9 @@ function FailedJobsList({ logApi }: IProps) {
                             lastRow = data.length;
                         }
                         params.successCallback(data.errors, lastRow);
+                    })
+                    .catch((e) => {
+                        console.error(`FailedJobsList values promise: ${e}`);
                     });
             },
         };

@@ -3,22 +3,33 @@ import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
 import { useEffect, useState } from 'react';
 
-import { IHookedGloss } from './useGloss._types';
+import { IGlossHookOptions, IHookedGloss } from './useGloss._types';
 
-function useGloss<T extends IBookGlossEntity = IBookGlossEntity>(glossId: number, adapter?: (gloss: IBookGlossEntity) => T): IHookedGloss<T> {
-    const [ gloss, setGloss ] = useState<IHookedGloss<T>>(null);
+const NoGloss: IHookedGloss<any> = {
+    error: null,
+    gloss: null,
+};
+
+function useGloss<T extends IBookGlossEntity = IBookGlossEntity>(glossId: number, options: IGlossHookOptions<T> = {}): IHookedGloss<T> {
+    const {
+        isEnabled,
+    } = options;
+
+    const [ gloss, setGloss ] = useState<IHookedGloss<T>>(NoGloss);
 
     useEffect(() => {
+        const disabled = isEnabled !== undefined && ! isEnabled;
+
         if (! glossId) {
-            setGloss(null);
-        } else {
+            setGloss(NoGloss);
+        } else if (! disabled) {
             const api = resolve(DI.BookApi);
             api.gloss(glossId) //
                 .then((details) => {
                     const entity = details.sections[0].entities[0];
                     let nextGloss;
-                    if (typeof adapter === 'function') {
-                        nextGloss = adapter(entity);
+                    if (typeof options?.glossAdapter === 'function') {
+                        nextGloss = options.glossAdapter(entity);
                     } else {
                         nextGloss = entity as T;
                     }
@@ -37,7 +48,7 @@ function useGloss<T extends IBookGlossEntity = IBookGlossEntity>(glossId: number
                     });
                 });
         }
-    }, [ glossId ]);
+    }, [ glossId, isEnabled ]);
 
     return gloss;
 }

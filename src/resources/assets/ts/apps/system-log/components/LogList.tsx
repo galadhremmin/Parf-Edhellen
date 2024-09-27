@@ -66,6 +66,9 @@ function LogList({ logApi }: IProps) {
                             lastRow = data.length;
                         }
                         params.successCallback(data.errors, lastRow);
+                    })
+                    .catch((e) => {
+                        console.error(`LogList values promise: ${e}`);
                     });
             },
         };

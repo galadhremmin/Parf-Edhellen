@@ -1,7 +1,7 @@
 import DateLabel from "@root/components/DateLabel";
 import Panel from "@root/components/Panel";
 import { PanelType } from "@root/components/Panel._types";
-import { IForumFeedRecord } from "@root/connectors/backend/IAccountApi";
+import { IForumFeedRecord, IGlossFeedRecord, ISentenceFeedRecord } from "@root/connectors/backend/IAccountApi";
 import classNames from "classnames";
 import { useEffect, useRef, useState } from "react";
 import ForumFeedUnit from "./ForumFeedUnit";
@@ -9,7 +9,7 @@ import GlossFeedUnit from "./GlossFeedUnit";
 import { IProps } from './index._types';
 import SentenceFeedUnit from "./SentenceFeedUnit";
 
-export default function FeedUnit(props: IProps) {
+export default function FeedUnit(props: IProps<IForumFeedRecord | IGlossFeedRecord | ISentenceFeedRecord>) {
     const {
         first,
         unit,
@@ -47,10 +47,9 @@ export default function FeedUnit(props: IProps) {
             <span></span>
         </div>
         <Panel type={PanelType.Info} className="flex-fill" shadow>
-            {unit.contentType === 'forum'       ? <ForumFeedUnit unit={unit as IForumFeedRecord} /> : (
-                unit.contentType === 'gloss'    ? <GlossFeedUnit {...props} /> : (
-                unit.contentType === 'sentence' ? <SentenceFeedUnit {...props} /> : 
-                `unknown content ${JSON.stringify(unit)}`))}
+            {unit.contentType === 'forum'    && <ForumFeedUnit unit={unit} visible={visible} />}
+            {unit.contentType === 'gloss'    && <GlossFeedUnit unit={unit} visible={visible} />}
+            {unit.contentType === 'sentence' && <SentenceFeedUnit unit={unit} visible={visible} />}
             <div className="text-end text-secondary">
                 <DateLabel dateTime={unit.happenedAt} />
             </div>
