@@ -35,6 +35,7 @@ function Graph(props: IProps) {
                 dataKey={category}
                 stroke={ChartColors[i % ChartColors.length]}
                 strokeWidth="2"
+                connectNulls={true}
             />)}
         </LineChart>
     </ResponsiveContainer>;

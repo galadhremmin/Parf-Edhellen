@@ -22,6 +22,9 @@ const ColumnDefinitions: ColDef<IErrorEntity>[] = [
         minWidth: 160,
     },
     {
+        cellEditor: 'agLargeTextCellEditor',
+        cellEditorPopup: true,
+        editable: true,
         field: 'message',
         minWidth: 300,
     },
@@ -36,12 +39,13 @@ const ColumnDefinitions: ColDef<IErrorEntity>[] = [
         field: 'url',
         minWidth: 200,
     },
-    { field: 'ip' },
+    { field: 'accountId' },
     { field: 'sessionId' },
-    { field: 'userAgent' },
-    { field: 'category' },
+    { field: 'ip' },
     { field: 'file' },
     { field: 'line' },
+    { field: 'userAgent' },
+    { field: 'category' },
 ];
 
 const DefaultColumnDefinitions = {
