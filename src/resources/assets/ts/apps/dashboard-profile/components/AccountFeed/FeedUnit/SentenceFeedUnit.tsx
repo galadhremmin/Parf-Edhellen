@@ -28,7 +28,7 @@ export default function SentenceFeedUnit(props: IProps<ISentenceFeedRecord>) {
      * determines the paragraph indexes. These indexes should be the same for all transformations.
      */
     const transformations = Object.keys(sentenceTransformations);
-    const paragraphIndexes = Object.keys(transformations[0] || {});
+    const paragraphIndexes = Object.keys(sentenceTransformations[transformations[0]] || {});
 
     return <>
         <p>
@@ -40,7 +40,7 @@ export default function SentenceFeedUnit(props: IProps<ISentenceFeedRecord>) {
             <h3>{name}</h3>
             <HtmlInject html={description} />
             {paragraphIndexes.map(paragraphIndex => <p key={paragraphIndex}>
-                {transformations.map(transformation => <div key={transformation}>
+                {transformations.map(transformation => <span key={transformation} className="d-block">
                     {sentenceTransformations[transformation][paragraphIndex]?.map((fragment, i) => <span key={i}>
                         {Array.isArray(fragment) //
                             ? (fragment.length > 1 //
@@ -50,7 +50,7 @@ export default function SentenceFeedUnit(props: IProps<ISentenceFeedRecord>) {
                             : fragment
                         }
                     </span>)}
-                </div>)}
+                </span>)}
             </p>)}
         </>}
     </>;
