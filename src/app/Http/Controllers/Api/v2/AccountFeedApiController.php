@@ -66,7 +66,7 @@ class AccountFeedApiController extends Controller
         }
 
         $lastChange = AccountFeedRefreshTime::forAccount($id)->forUniverse()->first();
-        if ($lastChange === null || Carbon::now()->add(-1, 'hour') > $lastChange->created_at) {
+        if ($lastChange === null || Carbon::now()->add(-15, 'minutes') > $lastChange->created_at) {
             $this->_feedRepository->generateForAccountId($id);
         }
 
