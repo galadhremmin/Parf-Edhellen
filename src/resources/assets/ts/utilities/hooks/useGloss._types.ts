@@ -8,4 +8,5 @@ export interface IHookedGloss<T extends IBookGlossEntity = IBookGlossEntity> {
 export interface IGlossHookOptions<T = any> {
     glossAdapter?: (gloss: IBookGlossEntity) => T;
     isEnabled?: boolean;
+    isVersion?: boolean;
 }

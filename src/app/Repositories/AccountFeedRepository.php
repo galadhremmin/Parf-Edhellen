@@ -11,6 +11,7 @@ use App\Models\{
     Sentence
 };
 use App\Models\Initialization\Morphs;
+use App\Models\Versioning\GlossVersion;
 use Illuminate\Support\{
     Carbon,
     Str
@@ -25,7 +26,7 @@ class AccountFeedRepository
 
         $classNames = [
             ForumPost::class,
-            Gloss::class,
+            GlossVersion::class,
             Sentence::class,
         ];
 

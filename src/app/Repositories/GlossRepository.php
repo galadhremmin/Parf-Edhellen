@@ -190,9 +190,17 @@ class GlossRepository
         ]);
     }
 
-    public function getGlossFromVersion($versionId)
+    public function getSpecificGlossVersion(int $versionId)
     {
-        $version = GlossVersion::find($versionId);
+        $version = GlossVersion::with('translations', 'gloss_details', 'word')
+            ->find($versionId);
+
+        return $version;
+    }
+
+    public function getGlossFromVersion(int $versionId)
+    {
+        $version = $this->getSpecificGlossVersion($versionId);
         if ($version === null) {
             return null;
         }

@@ -141,6 +141,12 @@ class BookApiController extends BookBaseController
         return $gloss;
     }
 
+    public function getFromVersion(Request $request, int $id)
+    {
+        $gloss = $this->_glossRepository->getSpecificGlossVersion($id);
+        return $this->_bookAdapter->adaptGlosses([$gloss], null, [], $gloss->word->word);
+    }
+
     /**
      * Finds the matching entities with the search query parameters in the request.
      */

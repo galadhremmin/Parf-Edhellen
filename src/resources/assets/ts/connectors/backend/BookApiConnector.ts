@@ -33,6 +33,10 @@ export default class BookApiConnector implements IBookApi {
         return this._api.get<IGlossaryResponse>(`book/translate/${id}`);
     }
 
+    public glossFromVersion(id: number): Promise<IGlossaryResponse> {
+        return this._api.get<IGlossaryResponse>(`book/translate/version/${id}`);
+    }
+
     public groups() {
         return this._api.get<IGlossGroup[]>('book/group');
     }

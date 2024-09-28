@@ -57,7 +57,9 @@ export default function AccountFeed({
     }, [account.id]);
 
     if (restricted) {
-        return <div/>;
+        return <p>
+            <em>{account.nickname}'s feed is restricted. It's probably a system account.</em>
+        </p>;
     }
 
     return <>

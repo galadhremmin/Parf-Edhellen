@@ -12,7 +12,8 @@ const NoGloss: IHookedGloss<any> = {
 
 function useGloss<T extends IBookGlossEntity = IBookGlossEntity>(glossId: number, options: IGlossHookOptions<T> = {}): IHookedGloss<T> {
     const {
-        isEnabled,
+        isEnabled = undefined, // undefined disables the toggle.
+        isVersion = false,
     } = options;
 
     const [ gloss, setGloss ] = useState<IHookedGloss<T>>(NoGloss);
@@ -24,7 +25,7 @@ function useGloss<T extends IBookGlossEntity = IBookGlossEntity>(glossId: number
             setGloss(NoGloss);
         } else if (! disabled) {
             const api = resolve(DI.BookApi);
-            api.gloss(glossId) //
+            (isVersion ? api.glossFromVersion(glossId) : api.gloss(glossId)) //
                 .then((details) => {
                     const entity = details.sections[0].entities[0];
                     let nextGloss;

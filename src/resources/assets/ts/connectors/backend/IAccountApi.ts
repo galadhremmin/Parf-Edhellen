@@ -88,7 +88,10 @@ export interface IFeedRecord<TContentType = string, TEntity = any> {
 }
 
 export interface IForumFeedRecord extends IFeedRecord<'forum', IPostEntity> {}
-export interface IGlossFeedRecord extends IFeedRecord<'gloss', IGlossEntity> {}
+export interface IGlossVersionFeedRecord extends IFeedRecord<'glossv', IGlossEntity & {
+    glossId?: number;
+    versionChangeFlags?: number;
+}> {}
 export interface ISentenceFeedRecord extends IFeedRecord<'sentence', ISentenceEntity & {
     sentenceUrl: string;
     sentenceFragments: ISentenceFragmentEntity[];
