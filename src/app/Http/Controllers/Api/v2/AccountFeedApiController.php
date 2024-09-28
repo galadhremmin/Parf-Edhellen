@@ -16,6 +16,7 @@ use App\Models\AccountFeedRefreshTime;
 use App\Models\ForumPost;
 use App\Models\Gloss;
 use App\Models\Sentence;
+use App\Models\Versioning\GlossVersion;
 use App\Repositories\AccountFeedRepository;
 use Carbon\Carbon;
 
@@ -67,7 +68,7 @@ class AccountFeedApiController extends Controller
         }
 
         $lastChange = AccountFeedRefreshTime::forAccount($id)->forUniverse()->first();
-        if ($lastChange === null || $lastChange->created_at < Carbon::now()->add(1, 'week')) {
+        if ($lastChange === null || Carbon::now()->add(-1, 'hour') > $lastChange->created_at) {
             $this->_feedRepository->generateForAccountId($id);
         }
 
@@ -112,7 +113,7 @@ class AccountFeedApiController extends Controller
             if ($c instanceof ForumPost) {
                 $c->load('forum_thread');
                 $c->content = $this->_markdownParser->parseMarkdownNoBlocks($c->content);
-            } else if ($c instanceof Gloss) {
+            } else if ($c instanceof GlossVersion) {
                 // noop, relying on `useGloss` hook on client.
             } else if ($c instanceof Sentence) {
                 $c->load('language');

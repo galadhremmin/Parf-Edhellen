@@ -1,15 +1,15 @@
 import DateLabel from "@root/components/DateLabel";
 import Panel from "@root/components/Panel";
 import { PanelType } from "@root/components/Panel._types";
-import { IForumFeedRecord, IGlossFeedRecord, ISentenceFeedRecord } from "@root/connectors/backend/IAccountApi";
+import { IForumFeedRecord, IGlossVersionFeedRecord, ISentenceFeedRecord } from "@root/connectors/backend/IAccountApi";
 import classNames from "classnames";
 import { useEffect, useRef, useState } from "react";
 import ForumFeedUnit from "./ForumFeedUnit";
-import GlossFeedUnit from "./GlossFeedUnit";
+import GlossVersionFeedUnit from "./GlossVersionFeedUnit";
 import { IProps } from './index._types';
 import SentenceFeedUnit from "./SentenceFeedUnit";
 
-export default function FeedUnit(props: IProps<IForumFeedRecord | IGlossFeedRecord | ISentenceFeedRecord>) {
+export default function FeedUnit(props: IProps<IForumFeedRecord | IGlossVersionFeedRecord | ISentenceFeedRecord>) {
     const {
         first,
         unit,
@@ -25,7 +25,7 @@ export default function FeedUnit(props: IProps<IForumFeedRecord | IGlossFeedReco
             threshold: 0.5,
         };
 
-        const observer = new IntersectionObserver((entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
+        const observer = new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
             entries.forEach(entry => {
                 setVisible(entry.isIntersecting);
             })
@@ -48,7 +48,7 @@ export default function FeedUnit(props: IProps<IForumFeedRecord | IGlossFeedReco
         </div>
         <Panel type={PanelType.Info} className="flex-fill" shadow>
             {unit.contentType === 'forum'    && <ForumFeedUnit unit={unit} visible={visible} />}
-            {unit.contentType === 'gloss'    && <GlossFeedUnit unit={unit} visible={visible} />}
+            {unit.contentType === 'glossv'   && <GlossVersionFeedUnit unit={unit} visible={visible} />}
             {unit.contentType === 'sentence' && <SentenceFeedUnit unit={unit} visible={visible} />}
             <div className="text-end text-secondary">
                 <DateLabel dateTime={unit.happenedAt} />

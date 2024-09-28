@@ -17,13 +17,15 @@ Route::group([
     'prefix'    => API_PATH
 ], function () {
 
-    Route::get('book/group',               [ BookApiController::class, 'getGroups' ])
+    Route::get('book/group',                  [ BookApiController::class, 'getGroups' ])
         ->name('api.book.groups');
-    Route::get('book/languages',           [ BookApiController::class, 'getLanguages' ])
+    Route::get('book/languages',              [ BookApiController::class, 'getLanguages' ])
         ->name('api.book.languages');
-    Route::get('book/translate/{glossId}', [ BookApiController::class, 'get' ])
+    Route::get('book/translate/{glossId}',    [ BookApiController::class, 'get' ])
         ->where([ 'glossId' => REGULAR_EXPRESSION_NUMERIC ])
         ->name('api.book.gloss');
+    Route::get('book/translate/version/{id}', [ BookApiController::class, 'getFromVersion' ])
+            ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ]);
     Route::post('book/entities/{groupId}/{entityId?}', [ BookApiController::class, 'entities' ])
         ->where([
             'groupId' => REGULAR_EXPRESSION_NUMERIC,

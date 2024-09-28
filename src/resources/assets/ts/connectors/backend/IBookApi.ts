@@ -267,6 +267,7 @@ export default interface IBookApi {
     entity<T = IGlossaryResponse>(args: ISpecificEntityRequest<T>): Promise<IEntitiesResponse<T>>;
     find(args: IFindRequest): Promise<IFindResponse>;
     gloss(id: number): Promise<IGlossaryResponse>;
+    glossFromVersion(id: number): Promise<IGlossaryResponse>;
     groups(): Promise<IGlossGroup[]>;
     languages(): Promise<ILanguagesResponse>;
     sentence(args: ISentenceRequest): Promise<ISentenceResponse>;
