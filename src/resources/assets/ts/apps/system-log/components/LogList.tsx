@@ -20,12 +20,14 @@ const ColumnDefinitions: ColDef<IErrorEntity>[] = [
         field: 'createdAt',
         valueFormatter: params => DateTime.fromISO(params.value).toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS),
         minWidth: 160,
+        filter: 'agDateColumnFilter',
     },
     {
         cellEditor: 'agLargeTextCellEditor',
         cellEditorPopup: true,
         editable: true,
         field: 'message',
+        filter: true,
         minWidth: 300,
     },
     {
@@ -36,16 +38,40 @@ const ColumnDefinitions: ColDef<IErrorEntity>[] = [
         minWidth: 300,
     },
     {
+        editable: true,
         field: 'url',
         minWidth: 200,
+        filter: true,
     },
-    { field: 'accountId' },
-    { field: 'sessionId' },
-    { field: 'ip' },
-    { field: 'file' },
+    {
+        editable: true,
+        field: 'accountId',
+        filter: 'agNumberColumnFilter',
+    },
+    {
+        editable: true,
+        field: 'sessionId',
+        filter: true,
+    },
+    {
+        editable: true,
+        field: 'ip',
+        filter: true,
+    },
+    {
+        editable: true,
+        field: 'file',
+        filter: true,
+    },
     { field: 'line' },
-    { field: 'userAgent' },
-    { field: 'category' },
+    { 
+        field: 'userAgent',
+        filter: true,
+    },
+    {
+        field: 'category',
+        filter: true,
+    },
 ];
 
 const DefaultColumnDefinitions = {
