@@ -21,9 +21,11 @@ return new class extends Migration
         AccountFeedRefreshTime::where('feed_content_type', Morphs::getAlias(Gloss::class))->delete();
 
         $accountIds = GlossVersion::select('account_id')
+            ->whereNotIn('account_id', config('ed.restricted_profile_ids'))
             ->distinct()
             ->union(
                 ForumPost::where('created_at', '>', Carbon::now()->add(-1, 'year'))
+                    ->whereNotIn('account_id', config('ed.restricted_profile_ids'))
                     ->select('account_id')
                     ->distinct()
             )
