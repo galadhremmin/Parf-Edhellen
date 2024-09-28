@@ -13,8 +13,10 @@ Route::get('/logout', [ AuthenticationController::class, 'logout' ])->name('logo
 Route::get('/signup', [ AuthenticationController::class, 'register' ])->name('register');
 
 Route::get('/federated-auth/redirect/{providerName}', [ OAuthAuthenticationController::class, 'redirect' ])
+    ->where([ 'providerName' => REGULAR_EXPRESSION_SEO_STRING ])
     ->name('auth.redirect');
-Route::get('/federated-auth/callback/{providerName}', [ OAuthAuthenticationController::class, 'callback' ]);
+Route::get('/federated-auth/callback/{providerName}', [ OAuthAuthenticationController::class, 'callback' ])
+    ->where([ 'providerName' => REGULAR_EXPRESSION_SEO_STRING ]);
 
 Route::post('/login/password', [ UsernamePasswordAuthenticationController::class, 'loginWithPassword' ])
     ->name('auth.password');
