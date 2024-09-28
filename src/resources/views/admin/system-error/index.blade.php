@@ -1,4 +1,4 @@
-@extends('_layouts.default')
+@extends('_layouts.default', ['containerClass' => 'container-fluid'])
 
 @section('title', 'System errors - Administration')
 @section('body')
