@@ -14,7 +14,6 @@ use App\Interfaces\IMarkdownParser;
 use App\Models\AccountFeed;
 use App\Models\AccountFeedRefreshTime;
 use App\Models\ForumPost;
-use App\Models\Gloss;
 use App\Models\Sentence;
 use App\Models\Versioning\GlossVersion;
 use App\Repositories\AccountFeedRepository;
@@ -60,15 +59,14 @@ class AccountFeedApiController extends Controller
 
     public function getFeed(Request $request, int $id)
     {
-        if (in_array($id, config('ed.restricted_profile_ids')) &&
-            ($request->user() === null || ! $request->user()->isAdministrator())) {
+        if (in_array($id, config('ed.restricted_profile_ids'))) {
             return [
                 'restricted' => true
             ];
         }
 
         $lastChange = AccountFeedRefreshTime::forAccount($id)->forUniverse()->first();
-        if ($lastChange === null || Carbon::now()->add(-1, 'hour') > $lastChange->created_at) {
+        if ($lastChange === null || Carbon::now()->add(-15, 'minutes') > $lastChange->created_at) {
             $this->_feedRepository->generateForAccountId($id);
         }
 
