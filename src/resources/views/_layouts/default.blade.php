@@ -42,7 +42,7 @@
       ])
     </aside>
     <main>
-      <div class="container">
+      <div class="{{ $containerClass ?? 'container' }}">
         <noscript>
           <div id="noscript" class="alert alert-danger">
             <strong><span class="TextIcon TextIcon--warning-sign" aria-hidden="true"></span> @lang('home.noscript.title')</strong>
