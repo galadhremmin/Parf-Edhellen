@@ -52,9 +52,17 @@ class AccountManager
             AuthorizationProvider::findOrFail($providerId);
         }
 
+        $identity = ! empty($identity) ? $identity : 'MASTER|'.$username;
+        $user = Account::where('identity', $identity)->first();
+        if ($user !== null) {
+            // this master account already exists so it's probably in the process of being created. 
+            // We need to perform this check to ensure that this isn't happening twice.
+            return $user;
+        }
+
         $user = Account::create([
             'email'             => $username,
-            'identity'          => ! empty($identity) ? $identity : 'MASTER|'.$username,
+            'identity'          => $identity,
             'nickname'          => $nickname,
 
             'authorization_provider_id' => $providerId,
