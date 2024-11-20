@@ -102,6 +102,11 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
         return $this->hasMany(Gloss::class);
     }
 
+    public function linked_accounts()
+    {
+        return $this->hasMany(Account::class, 'master_account_id', 'id');
+    }
+
     public function roles()
     {
         return $this->hasManyThrough(

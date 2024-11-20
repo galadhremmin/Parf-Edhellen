@@ -11,31 +11,31 @@
   in groups of <strong>{{ $accounts->count() }}</strong>, ordered by their nickname.
 </p>
 
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h2 class="panel-title">Filter</h2>
-  </div>
-  <div class="panel-body">
-    <form class="form-inline" method="get">
-      <div class="form-group">
-        <label for="filter-params">Filter</label>
-        <input type="text" class="form-control" id="filter-params" name="filter" value="{{ isset($filter) ? $filter : '' }}">
+<div class="card shadow-lg mb-3">
+  <div class="card-body">
+    <form method="get">
+      <div class="input-group mb-3">
+        <input type="text" class="form-control" id="filter-params" placeholder="Custom filter..." name="filter" value="{{ isset($filter) ? $filter : '' }}">
+        <button type="submit" class="btn btn-secondary">Apply</button>
       </div>
-      <button type="submit" class="btn btn-secondary">Apply</button>
     </form>
+    @include('admin.account._account-list', [
+      'accounts' => $accounts
+    ])
+    {{ $accounts->links() }}
   </div>
 </div>
 
-@include('admin.account._account-list', [
-  'accounts' => $accounts
-])
-{{ $accounts->links() }}
 
-<h2>Recently deleted accounts</h2>
-<ol>
-@foreach ($deletedAccounts as $account)
-<li><a href="{{ route('account.edit', ['account' => $account]) }}">{{ $account->id }}</a> deleted @date($account->updated_at) (created @date($account->created_at))</li>
-@endforeach
-</ol>
+<div class="card shadow-lg mb-3">
+  <div class="card-body">
+    <h2>Recently deleted accounts</h2>
+    <ol>
+    @foreach ($deletedAccounts as $account)
+    <li><a href="{{ route('account.edit', ['account' => $account]) }}">{{ $account->id }}</a> deleted @date($account->updated_at) (created @date($account->created_at))</li>
+    @endforeach
+    </ol>
+  </div>
+</div>
 
 @endsection

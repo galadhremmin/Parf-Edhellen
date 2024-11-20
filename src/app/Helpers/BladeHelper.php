@@ -10,6 +10,11 @@ class BladeHelper
 {
     public function createTimeTag($date, array $props = [])
     {
+        // guard against null or empty strings (which are obviously invalid input)
+        if (empty($date)) {
+            return '';
+        }
+
         if (is_string($date)) {
             $date = new Carbon($date);
         } else if (! ($date instanceOf Carbon) && ! ($date instanceOf IlluminateCarbon)) {

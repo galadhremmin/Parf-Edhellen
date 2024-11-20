@@ -16,6 +16,7 @@ use App\Models\Account;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Helpers\StorageHelper;
 use App\Security\AccountManager;
+use Carbon\Carbon;
 use Intervention\Image\Facades\Image;
 
 class AccountApiController extends Controller 
@@ -117,7 +118,8 @@ class AccountApiController extends Controller
         $account = $this->getAuthorizedAccount($request, $id);
 
         $this->validate($request, [
-            'nickname' => 'bail|required|unique:accounts,nickname,' . $account->id . ',id|min:3|max:'.config('ed.max_nickname_length')
+            'nickname' => 'bail|required|unique:accounts,nickname,' . $account->id . ',id|min:3|max:'.config('ed.max_nickname_length'),
+            'tengwar'  => 'string|max:64'
         ]);
 
         $account->nickname = $request->input('nickname');
@@ -200,6 +202,25 @@ class AccountApiController extends Controller
         return [
             'account_id' => $account->id,
             'feature_background_url' => $file
+        ];
+    }
+
+    public function updateVerifyEmail(Request $request, int $accountId)
+    {
+        $account = $this->getAuthorizedAccount($request, $accountId);
+        if ($account->email_verified_at === null) {
+            $account->email_verified_at = Carbon::now();
+            $account->save();
+        }
+
+        if (! $request->ajax()) {
+            return redirect(
+                route('account.edit', ['account' => $account])
+            );
+        }
+        
+        return [
+            'email_verified_at' => $account->email_verified_at
         ];
     }
 
