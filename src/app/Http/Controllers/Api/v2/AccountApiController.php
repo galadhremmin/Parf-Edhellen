@@ -207,11 +207,15 @@ class AccountApiController extends Controller
 
     public function updateVerifyEmail(Request $request, int $accountId)
     {
+        $request->validate([
+            'is_verified' => 'required|boolean'
+        ]);
+
+        $verify = boolval($request->input('is_verified'));
+
         $account = $this->getAuthorizedAccount($request, $accountId);
-        if ($account->email_verified_at === null) {
-            $account->email_verified_at = Carbon::now();
-            $account->save();
-        }
+        $account->email_verified_at = $verify ? Carbon::now() : null;
+        $account->save();
 
         if (! $request->ajax()) {
             return redirect(
