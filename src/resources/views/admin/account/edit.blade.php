@@ -62,10 +62,20 @@
                 @endif
                 (<a href="mailto:{{ $account->email }}">{{ $account->email }}</a>)
                 @if ($account->email_verified_at === null)
-                  <form method="post" action="{{ route('api.account.verify-email', ['id' => $account->id]) }}" class="float-end">
+                  <form method="post" action="{{ route('api.account.verify-email', ['id' => $account->id]) }}" class="float-end"
+                    onsubmit="return confirm('Are you sure you want to forcefully verify the account\'s e-mail address? This is usually an operation that should be performed by the account owner.')">
                     {{ csrf_field() }}
                     {{ method_field('PUT') }}
+                    <input type="hidden" name="is_verified" value="1">
                     <button class="btn btn-sm btn-secondary" type="submit">Verify</button>
+                  </form>
+                @else
+                  <form method="post" action="{{ route('api.account.verify-email', ['id' => $account->id]) }}" class="float-end"
+                    onsubmit="return confirm('Are you sure you want to forcefully unverify the account\'s e-mail address?')">
+                    {{ csrf_field() }}
+                    {{ method_field('PUT') }}
+                    <input type="hidden" name="is_verified" value="0">
+                    <button class="btn btn-sm btn-secondary" type="submit">Unverify</button>
                   </form>
                 @endif
               </td>
