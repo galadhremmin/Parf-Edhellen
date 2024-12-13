@@ -12,6 +12,7 @@ use App\Repositories\AuditTrailRepository;
 use App\Models\{
     Account,
     AuditTrail,
+    Contribution,
     FlashcardResult,
     ForumPost,
     Gloss,
@@ -22,6 +23,7 @@ class AuditTrailAdapter
 {
     private $_link;
     private $_repository;
+    private $_storageHelper;
 
     public function __construct(LinkHelper $linkHelper, AuditTrailRepository $repository, StorageHelper $storageHelper)
     {
@@ -96,6 +98,25 @@ class AuditTrailAdapter
                     case AuditTrail::ACTION_PROFILE_CHANGED_PASSWORD:
                         $message = 'changed password';
                         break;
+                    case AuditTrail::ACTION_PROFILE_FORGOT_PASSWORD:
+                        $message = 'requested a password reset link';
+                        break;
+                    case AuditTrail::ACTION_PROFILE_RESET_PASSWORD:
+                        $message = 'reset their password';
+                        break;
+                    case AuditTrail::ACTION_ACCOUNT_ADD_ROLE:
+                        $message = 'added the role '.json_decode($action->data)->role;
+                        break;
+                    case AuditTrail::ACTION_ACCOUNT_REMOVE_ROLE:
+                        $message = 'removed the role '.json_decode($action->data)->role;
+                        break;
+                }
+
+                if ($action->entity_id !== $action->account_id) {
+                    $entity = 'for <a href="'.
+                        route('account.edit', ['account' => $action->entity]).'">'.
+                        $action->entity_name.
+                    '</a>';
                 }
 
             } else if ($action->entity instanceof ForumPost) {
@@ -139,6 +160,22 @@ class AuditTrailAdapter
                         $message = 'completed 500 flashcards';
                         break;
                 }
+            } else if ($action->entity instanceof Contribution) {
+                switch ($action->action_id) {
+                    case AuditTrail::ACTION_CONTRIBUTION_APPROVE:
+                        $message = 'approved the contribution';
+                        break;
+                    case AuditTrail::ACTION_CONTRIBUTION_REJECT:
+                        $message = 'rejected the contribution';
+                        break;
+                }
+
+                $entity = '<a href="'.
+                    route('contribution.show', [
+                        'contribution' => $action->entity_id
+                    ]).'">'.
+                    $action->entity_name.
+                '</a>';
             }
 
             // Some messages might be deliberately hidden or not yet supported -- skip them

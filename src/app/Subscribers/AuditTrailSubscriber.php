@@ -10,7 +10,14 @@ use App\Events\{
     AccountAvatarChanged,
     AccountDestroyed,
     AccountPasswordChanged,
+    AccountPasswordForgot,
+    AccountRoleAdd,
+    AccountRoleRemove,
     AccountsMerged,
+    ContributionApproved,
+    ContributionDestroyed,
+    ContributionRejected,
+    EmailVerificationSent,
     ForumPostCreated,
     ForumPostEdited,
     ForumPostLikeCreated,
@@ -22,7 +29,11 @@ use App\Events\{
     GlossEdited,
     SentenceDestroyed
 };
-use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Events\{
+    PasswordReset,
+    Registered,
+    Verified
+};
 
 class AuditTrailSubscriber
 {
@@ -48,6 +59,7 @@ class AuditTrailSubscriber
             ForumPostCreated::class => 'onForumPostCreated',
             ForumPostEdited::class => 'onForumPostEdited',
             ForumPostLikeCreated::class => 'onForumPostLiked',
+            
             AccountAuthenticated::class => 'onAccountAuthenticated',
             AccountChanged::class => 'onAccountChanged',
             AccountDestroyed::class => 'onAccountDeleted',
@@ -55,13 +67,26 @@ class AuditTrailSubscriber
             AccountsMerged::class => 'onAccountsMerged',
             AccountAvatarChanged::class => 'onAccountAvatarChanged',
             AccountPasswordChanged::class => 'onAccountPasswordChanged',
+            AccountPasswordForgot::class => 'onAccountPasswordForgot',
+            PasswordReset::class => 'onAccountPasswordReset',
+            Verified::class => 'onAccountEmailVerified',
+            EmailVerificationSent::class => 'onAccountEmailVerificationSent',
+            AccountRoleAdd::class => 'onAccountRoleAdded',
+            AccountRoleRemove::class => 'onAccountRoleRemoved',
+            
             FlashcardFlipped::class => 'onFlashcardFlipped',
+            
             SentenceCreated::class => 'onSentenceCreated',
             SentenceEdited::class => 'onSentenceEdited',
             SentenceDestroyed::class => 'onSentenceDeleted',
+            
             GlossCreated::class => 'onGlossCreated',
             GlossEdited::class => 'onGlossEdited',
-            GlossDestroyed::class => 'onGlossDeleted'
+            GlossDestroyed::class => 'onGlossDeleted',
+
+            ContributionApproved::class => 'onContributionApproved',
+            ContributionRejected::class => 'onContributionRejected',
+            ContributionDestroyed::class => 'onContributionDestroyed'
         ];
     }
 
@@ -144,6 +169,35 @@ class AuditTrailSubscriber
     public function onAccountPasswordChanged(AccountPasswordChanged $event)
     {
         $this->_repository->store(AuditTrail::ACTION_PROFILE_CHANGED_PASSWORD, $event->account, $event->account->id, true);
+    }
+
+    public function onAccountPasswordForgot(AccountPasswordForgot $event)
+    {
+        $this->_repository->store(AuditTrail::ACTION_PROFILE_FORGOT_PASSWORD, $event->account, $event->account->id, true);
+    }
+
+    public function onAccountPasswordReset(PasswordReset $event)
+    {
+        $this->_repository->store(AuditTrail::ACTION_PROFILE_RESET_PASSWORD, $event->user, $event->user->id, true);
+    }
+
+    public function onAccountEmailVerified(Verified $event)
+    {
+        $this->_repository->store(AuditTrail::ACTION_MAIL_VERIFY_VERIFIED, $event->user, $event->user->id, true);
+    }
+
+    public function onAccountRoleAdded(AccountRoleAdd $event)
+    {
+        $this->_repository->store(AuditTrail::ACTION_ACCOUNT_ADD_ROLE, $event->account, $event->byAccountId, true, [
+            'role' => $event->role
+        ]);
+    }
+
+    public function onAccountRoleRemoved(AccountRoleRemove $event)
+    {
+        $this->_repository->store(AuditTrail::ACTION_ACCOUNT_REMOVE_ROLE, $event->account, $event->byAccountId, true, [
+            'role' => $event->role
+        ]);
     }
 
     /**
@@ -230,5 +284,21 @@ class AuditTrailSubscriber
         }
         
         $this->_repository->store(AuditTrail::ACTION_GLOSS_DELETE, $event->gloss, $event->accountId, true);
+    }
+
+    public function onContributionApproved(ContributionApproved $event)
+    {
+        $this->_repository->store(AuditTrail::ACTION_CONTRIBUTION_APPROVE, $event->contribution, $event->contribution->reviewed_by_account_id, true);
+    }
+
+    public function onContributionRejected(ContributionRejected $event)
+    {
+        $this->_repository->store(AuditTrail::ACTION_CONTRIBUTION_REJECT, $event->contribution, $event->contribution->reviewed_by_account_id, true);
+    }
+
+    public function onContributionDestroyed(ContributionDestroyed $event)
+    {
+        // TODO: contribution technically doesn't exist, so need to figure this out.
+        // $this->_repository->store(AuditTrail::ACTION_CONTRIBUTION_DELETE, $event->contribution, $event->accountId, true);
     }
 }

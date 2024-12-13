@@ -22,6 +22,8 @@ class AuditTrail extends ModelBase
     const ACTION_PROFILE_CREATED          = 35;
     const ACTION_PROFILE_MERGED           = 36;
     const ACTION_PROFILE_DELETE           = 37;
+    const ACTION_PROFILE_FORGOT_PASSWORD  = 38;
+    const ACTION_PROFILE_RESET_PASSWORD   = 39;
 
     const ACTION_COMMENT_ADD              = 40;
     const ACTION_COMMENT_EDIT             = 41;
@@ -36,23 +38,23 @@ class AuditTrail extends ModelBase
 
     const ACTION_MAIL_VERIFY_DISPATCHED   = 60;
     const ACTION_MAIL_VERIFY_VERIFIED     = 61;
-    const ACTION_MAIL_VERIFY_UNVERIFIED   = 62;
+    const ACTION_MAIL_VERIFY_UNVERIFIED   = 62; // Not implemented
 
-    const ACTION_SEARCH_GLOSSARY          = 70;
+    const ACTION_SEARCH_GLOSSARY          = 70; // Not implemented
     
     const ACTION_CONTRIBUTION_APPROVE     = 80;
     const ACTION_CONTRIBUTION_REJECT      = 81;
-    const ACTION_CONTRIBUTION_DELETE      = 82;
+    const ACTION_CONTRIBUTION_DELETE      = 82; // Not implemented
 
-    const ACTION_ACCOUNT_ADMIN_VIEW       = 1000;
+    const ACTION_ACCOUNT_ADMIN_VIEW       = 1000; // Not implemented
     const ACTION_ACCOUNT_ADD_ROLE         = 1001;
     const ACTION_ACCOUNT_REMOVE_ROLE      = 1002;
 
-    const ACTION_INFLECTION_ADD           = 1010;
-    const ACTION_INFLECTION_EDIT          = 1011;
+    const ACTION_INFLECTION_ADD           = 1010; // Not implemented
+    const ACTION_INFLECTION_EDIT          = 1011; // Not implemented
 
-    const ACTION_SPEECH_ADD               = 1020;
-    const ACTION_SPEECH_EDIT              = 1021;
+    const ACTION_SPEECH_ADD               = 1020; // Not implemented
+    const ACTION_SPEECH_EDIT              = 1021; // Not implemented
 
     /**
      * The attributes that are mass assignable.
@@ -60,7 +62,7 @@ class AuditTrail extends ModelBase
      * @var array
      */
     protected $fillable = [
-        'account_id', 'entity_type', 'entity_id', 'action_id', 'is_admin', 'entity_name'
+        'account_id', 'entity_type', 'entity_id', 'action_id', 'is_admin', 'entity_name', 'data'
     ];
 
     public function entity() 

@@ -10,8 +10,10 @@ class ContributionDestroyed
     use SerializesModels;
 
     public $contribution;
-    public function __construct(Contribution $contribution)
+    public $accountId;
+    public function __construct(Contribution $contribution, int $accountId)
     {
         $this->contribution = $contribution;
+        $this->accountId = $accountId;
     }
 }

@@ -57,7 +57,7 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
         return $actions;
     }
 
-    public function store(int $action, $entity, int $userId = 0, bool $is_elevated = null)
+    public function store(int $action, $entity, int $userId = 0, bool $is_elevated = null, ?array $data = null)
     {
         if ($userId === 0) {
             // Is the user authenticated?
@@ -106,7 +106,8 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
             'entity_type' => $typeName,
             'entity_name' => $entityName,
             'action_id'   => $action,
-            'is_admin'    => $is_elevated
+            'is_admin'    => $is_elevated,
+            'data'        => is_array($data) ? json_encode($data) : null
         ]);
     }
 }

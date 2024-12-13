@@ -296,7 +296,7 @@ class ContributionController extends Controller
         $contribution->dependencies()->delete();
         $contribution->delete();
 
-        event(new ContributionDestroyed($contribution));
+        event(new ContributionDestroyed($contribution, $request->user()->id));
         
         return $request->user()->isAdministrator()
             ? redirect()->route('admin.contribution.list')
