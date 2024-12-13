@@ -704,7 +704,7 @@ class GlossRepository
         $g->is_deleted = true;
         $g->save();
 
-        event(new GlossDestroyed($g, $replacement));
+        event(new GlossDestroyed($g, $replacement, $this->_authManager->check() ? $this->_authManager->user()->id : 0));
     }
 
     protected function saveVersion(Gloss $gloss, int $changes)

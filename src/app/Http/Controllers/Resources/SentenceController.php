@@ -39,11 +39,7 @@ class SentenceController extends Controller
     public function destroy(Request $request, int $id) 
     {
         $sentence = Sentence::findOrFail($id);
-        
-        $this->_sentenceRepository->destroyFragments($sentence);
-        $sentence->delete();
-
-        event(new SentenceDestroyed($sentence));
+        $this->_sentenceRepository->destroy($sentence);
 
         return redirect()->route('sentence.index');
     }

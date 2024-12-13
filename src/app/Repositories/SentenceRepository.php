@@ -8,13 +8,12 @@ use Illuminate\Auth\AuthManager;
 
 use App\Events\{
     SentenceCreated,
+    SentenceDestroyed,
     SentenceEdited,
     SentenceFragmentsDestroyed
 };
 use App\Models\{
     Gloss,
-    GlossInflection,
-    Keyword,
     Sentence,
     Inflection,
     SentenceFragment,
@@ -238,6 +237,15 @@ class SentenceRepository
         $sentence->sentence_fragments()->delete();
 
         event(new SentenceFragmentsDestroyed($fragments));
+    }
+
+    public function destroy(Sentence $sentence)
+    {
+        $this->destroyFragments($sentence);
+        $sentence->sentence_translations()->delete();
+        $sentence->delete();
+
+        event(new SentenceDestroyed($sentence, $this->_authManager->user()->id));
     }
 
     public function suggestFragmentGlosses(Collection $fragments, int $languageId)

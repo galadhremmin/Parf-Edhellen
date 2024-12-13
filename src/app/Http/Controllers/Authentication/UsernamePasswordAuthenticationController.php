@@ -59,6 +59,12 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
     public function registerWithPassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'nickname' => [
+                'required',
+                'string',
+                'max:64',
+                'unique:accounts,nickname'
+            ],
             'username' => [
                 'required',
                 'email',
@@ -81,7 +87,8 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
             $data['username'],
             null,
             null,
-            $data['password']
+            $data['password'],
+            $data['nickname']
         );
 
         return $this->doLogin($request, $user, /* new: */ true, /* remember: */ false);

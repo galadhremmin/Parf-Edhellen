@@ -10,8 +10,11 @@ class SentenceDestroyed
     use SerializesModels;
 
     public $sentence;
-    public function __construct(Sentence $sentence)
+    public $accountId;
+
+    public function __construct(Sentence $sentence, int $accountId = 0)
     {
         $this->sentence = $sentence;
+        $this->accountId = $accountId;
     }
 }

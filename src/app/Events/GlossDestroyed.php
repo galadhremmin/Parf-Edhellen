@@ -11,10 +11,12 @@ class GlossDestroyed
 
     public $gloss;
     public $replacementGloss;
+    public $accountId;
 
-    public function __construct(Gloss $gloss, Gloss $replacement = null)
+    public function __construct(Gloss $gloss, Gloss $replacement = null, $accountId = 0)
     {
         $this->gloss = $gloss;
         $this->replacementGloss = $replacement;
+        $this->accountId = $accountId;
     }
 }

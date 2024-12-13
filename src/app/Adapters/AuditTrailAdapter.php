@@ -52,6 +52,9 @@ class AuditTrailAdapter
                     case AuditTrail::ACTION_GLOSS_EDIT:
                         $message = 'changed the gloss';
                         break;
+                    case AuditTrail::ACTION_GLOSS_DELETE:
+                        $message = 'deleted the gloss';
+                        break;
                 }
 
                 $entity = '<a href="'.$this->_link->gloss($action->entity_id).'">' . 
@@ -64,6 +67,9 @@ class AuditTrailAdapter
                         break;
                     case AuditTrail::ACTION_SENTENCE_EDIT:
                         $message = 'changed the phrase';
+                        break;
+                    case AuditTrail::ACTION_SENTENCE_DELETE:
+                        $message = 'deleted the phrase';
                         break;
                 }
 
@@ -84,6 +90,12 @@ class AuditTrailAdapter
                     case AuditTrail::ACTION_PROFILE_AUTHENTICATED:
                         $message = 'logged in';
                         break;
+                    case AuditTrail::ACTION_PROFILE_MERGED:
+                        $message = 'account merged with '.$action->entity_name;
+                        break;
+                    case AuditTrail::ACTION_PROFILE_CHANGED_PASSWORD:
+                        $message = 'changed password';
+                        break;
                 }
 
             } else if ($action->entity instanceof ForumPost) {
@@ -92,7 +104,7 @@ class AuditTrailAdapter
                         $message = 'posted';
                         break;
                     case AuditTrail::ACTION_COMMENT_EDIT:
-                        $message = 'changed a post ';
+                        $message = 'changed a post';
                         break;
                     case AuditTrail::ACTION_COMMENT_LIKE:
                         $message = 'liked a post';

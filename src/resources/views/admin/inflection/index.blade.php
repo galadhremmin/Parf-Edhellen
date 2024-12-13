@@ -12,16 +12,20 @@
   <em>No known type of inflections.</em>
 @else
   @foreach ($inflections as $groupName => $inflectionsInGroup)
-    <h2>{{ $groupName }}</h2>
-    <ul>
-    @foreach ($inflectionsInGroup as $inflection)
-    <li>
-      <a href="{{ route('inflection.edit', ['inflection' => $inflection->id]) }}">
-        {{$inflection->name}}
-      </a>
-    </li>
-    @endforeach
-    </ul>
+  <div class="card shadow-lg mb-3">
+    <div class="card-body">
+      <h2>{{ $groupName }}</h2>
+      <ul>
+      @foreach ($inflectionsInGroup as $inflection)
+      <li>
+        <a href="{{ route('inflection.edit', ['inflection' => $inflection->id]) }}">
+          {{$inflection->name}}
+        </a>
+      </li>
+      @endforeach
+      </ul>
+    </div>
+  </div>
   @endforeach
   <a class="btn btn-primary" href="{{ route('inflection.create') }}">Add an inflection</a>
 @endif

@@ -2,11 +2,14 @@
 
 namespace App\Security;
 
-use App\Events\AccountAvatarChanged;
-use App\Events\AccountChanged;
-use App\Events\AccountPasswordChanged;
-use App\Events\AccountsMerged;
+use App\Events\{
+    AccountAvatarChanged,
+    AccountPasswordChanged,
+    AccountsMerged,
+    AccountDestroyed
+};
 use App\Helpers\StorageHelper;
+use Illuminate\Auth\AuthManager;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -16,6 +19,7 @@ use App\Models\Role;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\DB;
 
 class AccountManager
 {
@@ -24,9 +28,15 @@ class AccountManager
      */
     private $_storageHelper;
 
-    public function __construct(StorageHelper $storageHelper)
+    /**
+     * @var AuthManager
+     */
+    private $_authManager;
+
+    public function __construct(StorageHelper $storageHelper, AuthManager $authManager)
     {
         $this->_storageHelper = $storageHelper;
+        $this->_authManager = $authManager;
     }
 
     public function getRootAccount()
@@ -205,36 +215,49 @@ class AccountManager
 
     public function delete(Account $account)
     {
-        $uuid      = 'DELETED|'.Str::uuid();
-        $date      = Carbon::now()->toDateTimeString();
-        $accountId = $account->id;
+        $accountName = $account->getFriendlyName();
 
-        $account->is_deleted                 = true;
-        $account->nickname                   = sprintf('(Deleted %s)', $date);
-        $account->email                      = 'deleted@'.$uuid;
-        $account->authorization_provider_id  = null;
-        $account->identity                   = $uuid;
-        $account->profile                    = 'The user deleted their account on '.$date;
-        $account->tengwar                    = null;
-        $account->has_avatar                 = 0;
-        $account->is_master_account          = false;
-        $account->is_passworded              = false;
-        $account->master_account_id          = null;
-        $account->password                   = null;
-        $account->save();
+        try {
+            DB::beginTransaction();
 
-        $linkedAccounts = Account::where('master_account_id', $accountId)
-            ->get();
+            $uuid      = 'DELETED|'.Str::uuid();
+            $date      = Carbon::now()->toDateTimeString();
+            $accountId = $account->id;
 
-        foreach ($linkedAccounts as $linkedAccount) {
-            $linkedAccount->master_account_id = null;
-            $linkedAccount->save();
+            $account->is_deleted                 = true;
+            $account->nickname                   = sprintf('(Deleted %s)', $date);
+            $account->email                      = 'deleted@'.$uuid;
+            $account->authorization_provider_id  = null;
+            $account->identity                   = $uuid;
+            $account->profile                    = 'The user deleted their account on '.$date;
+            $account->tengwar                    = null;
+            $account->has_avatar                 = 0;
+            $account->is_master_account          = false;
+            $account->is_passworded              = false;
+            $account->master_account_id          = null;
+            $account->password                   = null;
+            $account->save();
+
+            $linkedAccounts = Account::where('master_account_id', $accountId)
+                ->get();
+
+            foreach ($linkedAccounts as $linkedAccount) {
+                $linkedAccount->master_account_id = null;
+                $linkedAccount->save();
+            }
+
+            DB::commit();
+        } catch (\Exception $ex) {
+            DB::rollBack();
+            throw $ex;
         }
 
         $localPath = $this->_storageHelper->getAvatarPath($accountId);
         if (file_exists($localPath)) {
             unlink($localPath);
         }
+
+        event(new AccountDestroyed($account, $accountName, $this->_authManager->user()->id));
     }
 
     public function getNextAvailableNickname(string $nickname = null)

@@ -10,13 +10,10 @@
   <div class="row">
     <div class="col-md-6">
 
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h2 class="panel-title">Functions</h2>
-        </div>
-        <div class="panel-body">
+      <div class="card shadow-lg">
+        <div class="card-body">
+          <h2>Explore the glossary</h2>
           <ul>
-            <li><a href="{{ $link->contributeGloss() }}">Add gloss</a></li>
             <li>
               Glossaries by language:
               <ul>
@@ -26,17 +23,16 @@
               </ul>
             </li>
           </ul>
+          <a href="{{ $link->contributeGloss() }}" class="btn btn-primary">Add gloss</a>
         </div>
       </div>
 
     </div>
     <div class="col-md-6">
 
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h2 class="panel-title">Latest activity</h2>
-        </div>
-        <div class="panel-body">
+      <div class="card shadow-lg">
+        <div class="card-body">
+          <h2>Latest activity</h2>
             <ul>
                 @foreach ($latestGlosses as $t)
                 <li>

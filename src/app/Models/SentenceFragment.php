@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 class SentenceFragment extends ModelBase
 {
+    use SoftDeletes;
+
     protected $fillable = [ 
         'fragment', 'tengwar', 'comments', 'speech_id', 'gloss_id', 'sentence_id',
         'order', 'is_linebreak', 'type', 'paragraph_number', 'sentence_number'

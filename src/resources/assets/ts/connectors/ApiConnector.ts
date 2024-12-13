@@ -219,16 +219,15 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             return Promise.reject(error);
         }
 
+        const requestWasCanceled = axios.isCancel(error as any);
+
         let errorReport: IErrorReport = null;
         let category: ErrorCategory;
-        if (error.code === 'ECONNABORTED') {
-            alert('Your request timed out. This is likely due to us failing to respond to your request in time. Please try to reload the page and try again.');
-            category = ErrorCategory.Timeout;
-            errorReport = {
-                apiMethod,
-                data: error.message,
-                headers: error.toJSON(),
-            };
+        if (requestWasCanceled) {
+            console.warn('Your request timed out. This is likely due to us failing to respond to your request in time. Please try to reload the page and try again.');
+            // We don't need to record cancellations.
+            errorReport = null;
+
         } else if (error.response) {
             let message = null;
             switch (error.response.status) {
@@ -267,27 +266,18 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             }
 
         } else if (error.request) {
-            // The request was made but no response was received
-            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-            // http.ClientRequest in node.js
-            //
-            // 180602: This type of error is non-actionable.
-            errorReport = null;
-
-            /*
             errorReport = {
                 apiMethod,
-                request: error.request,
                 error: 'API call received no response.'
             };
-            category = 'api-noresponse';
-            */
+            category = ErrorCategory.Empty;
         } else {
             // Something happened in setting up the request that triggered an Error
             errorReport = {
                 apiMethod,
-                error: 'API call failed to initialize. Error message: ' + error.message,
+                error: `API call failed to initialize. Error message: ${error.message}`,
             };
+            category = ErrorCategory.Frontend;
         }
 
         if (errorReport !== null) {
