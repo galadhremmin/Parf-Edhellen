@@ -11,11 +11,11 @@ class StorageHelper
      * Gets relative path to the avatar associated with the specified account. The account
      * entity must have loaded the _has_avatar_ property.
      *
-     * @param Account $account
+     * @param ?Account $account
      * @param boolean $anonymousIfNotExists - should an anonymous avatar be returned when none exists; else null.
      * @return string
      */
-    public function accountAvatar(Account $account = null, $anonymousIfNotExists = false)
+    public function accountAvatar(?Account $account = null, $anonymousIfNotExists = false)
     {
         // A file system check is not performed for performance reasons. The database
         // will therefore have to be current.

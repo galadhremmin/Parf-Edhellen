@@ -51,7 +51,7 @@ class AccountManager
         return $role->accounts()->first();
     }
 
-    public function createAccount(string $username, string $identity = null, int $providerId = null, string $password = null, string $name = null)
+    public function createAccount(string $username, ?string $identity = null, ?int $providerId = null, ?string $password = null, ?string $name = null)
     {
         $firstAccountThusAdmin = Account::count() === 0;
         $nickname = $firstAccountThusAdmin 
@@ -260,7 +260,7 @@ class AccountManager
         event(new AccountDestroyed($account, $accountName, $this->_authManager->user()->id));
     }
 
-    public function getNextAvailableNickname(string $nickname = null)
+    public function getNextAvailableNickname(?string $nickname = null)
     {
         if ($nickname === null || empty($nickname)) {
             $nickname = config('ed.default_account_name');

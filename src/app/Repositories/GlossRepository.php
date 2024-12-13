@@ -554,7 +554,7 @@ class GlossRepository
         return $gloss;
     }
 
-    public function deleteGlossWithId(int $id, int $replaceId = null)
+    public function deleteGlossWithId(int $id, ?int $replaceId = null)
     {
         $gloss = Gloss::findOrFail($id);
 
@@ -622,7 +622,7 @@ class GlossRepository
      * @param boolean $includeOld
      * @return Illuminate\Database\Eloquent\Builder
      */
-    protected static function createGlossQuery($languageId = 0, $includeOld = true, callable $whereCallback = null) 
+    protected static function createGlossQuery($languageId = 0, $includeOld = true, ?callable $whereCallback = null) 
     {
         $filters = [
             ['g.is_deleted', 0]
@@ -680,7 +680,7 @@ class GlossRepository
         return $query->select($columns);
     }
 
-    protected function deleteGloss(Gloss $g, int $replaceId = null) 
+    protected function deleteGloss(Gloss $g, ?int $replaceId = null) 
     {
         $replacement = $replaceId ? Gloss::findOrFail($replaceId) : null;
 

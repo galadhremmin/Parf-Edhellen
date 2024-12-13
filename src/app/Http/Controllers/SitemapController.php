@@ -141,7 +141,7 @@ class SitemapController extends Controller
         }
     }
 
-    private function addNode(string& $xml, string $location, string $changeFrequency = 'monthly', Carbon $lastModified = null) {
+    private function addNode(string& $xml, string $location, string $changeFrequency = 'monthly', ?Carbon $lastModified = null) {
         $xml .= '<url>'.
             '<loc>'.$location.'</loc>'.
             ($lastModified !== null ? '<lastmod>'.$lastModified->format('Y-m-d').'</lastmod>' : '').

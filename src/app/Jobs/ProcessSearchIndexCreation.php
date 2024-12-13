@@ -28,7 +28,7 @@ class ProcessSearchIndexCreation implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(ModelBase $entity, Word $keyword, Language $keywordLanguage, string $inflection = null)
+    public function __construct(ModelBase $entity, Word $keyword, Language $keywordLanguage, ?string $inflection = null)
     {
         $this->entity          = $entity;
         $this->keyword         = $keyword;

@@ -27,7 +27,7 @@ class DiscussContext implements IDiscussContext
         return $thread;
     }
 
-    public function available($entityOrId, Account $account = null)
+    public function available($entityOrId, ?Account $account = null)
     {
         return true;
     }

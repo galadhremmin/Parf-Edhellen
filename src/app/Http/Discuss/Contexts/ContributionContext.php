@@ -33,7 +33,7 @@ class ContributionContext implements IDiscussContext
         return Contribution::find($entityId);
     }
 
-    public function available($entityOrId, Account $account = null)
+    public function available($entityOrId, ?Account $account = null)
     {
         /*
         if ($account === null) {

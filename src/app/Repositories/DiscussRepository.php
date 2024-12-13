@@ -285,7 +285,7 @@ class DiscussRepository
      * @param integer $jumpToId
      * @return ForumPostsInThreadValue
      */
-    public function getPostDataInThread(ForumThread $thread, Account $account = null, $direction = 'desc',
+    public function getPostDataInThread(ForumThread $thread, ?Account $account = null, $direction = 'desc',
         int $pageNumber = 0, int $jumpToId = 0)
     {
         $this->resolveAccount($account);
@@ -450,7 +450,7 @@ class DiscussRepository
      * @param $forumGroupId (optional) latest threads within the specified group
      * @return Collection
      */
-    public function getLatestThreads(Account $account = null, int $forumGroupId = 0, int $take = 10)
+    public function getLatestThreads(?Account $account = null, int $forumGroupId = 0, int $take = 10)
     {
         $this->resolveAccount($account);
 
@@ -469,7 +469,7 @@ class DiscussRepository
      * @param $forumGroupId (optional) latest posts within the specified group
      * @return Collection
      */
-    public function getLatestPosts(Account $account = null, int $forumGroupId = 0, int $take = 20, int $fromId = 0)
+    public function getLatestPosts(?Account $account = null, int $forumGroupId = 0, int $take = 20, int $fromId = 0)
     {
         $this->resolveAccount($account);
 
@@ -512,7 +512,7 @@ class DiscussRepository
      * @param Account $account
      * @return ForumThreadForEntityValue
      */
-    public function getThreadDataForEntity($entityType, int $id = null, $createIfNotExists = false, Account $account = null)
+    public function getThreadDataForEntity($entityType, ?int $id = null, $createIfNotExists = false, ?Account $account = null)
     {
         if (is_object($entityType) && $entityType instanceof ModelBase) {
             $id = $entityType->id;
@@ -630,7 +630,7 @@ class DiscussRepository
         return $group;
     }
 
-    public function getThreadMetadataData(int $threadId, array $postIds, Account $account = null)
+    public function getThreadMetadataData(int $threadId, array $postIds, ?Account $account = null)
     {
         $this->resolveAccount($account);
 
@@ -670,7 +670,7 @@ class DiscussRepository
     /**
      * @return ForumPost
      */
-    public function getPost(int $postId, Account $account = null, $includeDeleted = false)
+    public function getPost(int $postId, ?Account $account = null, $includeDeleted = false)
     {
         $this->resolveAccount($account);
 
@@ -717,7 +717,7 @@ class DiscussRepository
      * @param Account $account (optional) post author
      * @return boolean
      */
-    public function savePost(ForumPost &$originalPost, ForumThread $thread, Account $account = null)
+    public function savePost(ForumPost &$originalPost, ForumThread $thread, ?Account $account = null)
     {
         $this->resolveAccount($account);
         
@@ -771,7 +771,7 @@ class DiscussRepository
         return true;
     }
 
-    public function saveLike(int $postId, Account $account = null)
+    public function saveLike(int $postId, ?Account $account = null)
     {
         $this->resolveAccount($account);
         if ($account === null) {
@@ -823,7 +823,7 @@ class DiscussRepository
         return $like;
     }
 
-    public function deletePost(ForumPost $post, Account $account = null)
+    public function deletePost(ForumPost $post, ?Account $account = null)
     {
         $this->resolveAccount($account);
         if (! $this->checkPostAuthorization($account, $post)) {
@@ -872,7 +872,7 @@ class DiscussRepository
             ->update(['content' => '[Deleted]']);
     }
 
-    private function checkPostAuthorization(?Account $account, ForumPost $post, ForumThread $thread = null)
+    private function checkPostAuthorization(?Account $account, ForumPost $post, ?ForumThread $thread = null)
     {
         if ($thread === null) {
             $thread = $post->forum_thread;
@@ -959,7 +959,7 @@ class DiscussRepository
      * @param Account $account
      * @return void
      */
-    private function resolveAccount(Account &$account = null)
+    private function resolveAccount(?Account &$account = null)
     {
         if ($account === null) {
             $account = $this->_authManager->user();

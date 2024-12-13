@@ -31,7 +31,7 @@ class AccountContext implements IDiscussContext
         return Account::find($entityId);
     }
 
-    public function available($entityOrId, Account $account = null)
+    public function available($entityOrId, ?Account $account = null)
     {
         return true;
     }
