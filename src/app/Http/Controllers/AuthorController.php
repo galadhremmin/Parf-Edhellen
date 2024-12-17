@@ -43,7 +43,7 @@ class AuthorController extends Controller
         $this->_markdownParser       = $markdownParser;
     }
 
-    public function index(Request $request, int $id = null, $nickname = '')
+    public function index(Request $request, ?int $id = null, $nickname = '')
     {
         $author  = $this->getAccount($request, $id);
         $profile = '';
@@ -61,7 +61,7 @@ class AuthorController extends Controller
         ]);
     }
 
-    public function glosses(Request $request, int $id = null)
+    public function glosses(Request $request, ?int $id = null)
     {
         $author = $this->getAccount($request, $id);
         $entities = Gloss::active()
@@ -83,7 +83,7 @@ class AuthorController extends Controller
         ]);
     }
 
-    public function sentences(Request $request, int $id = null)
+    public function sentences(Request $request, ?int $id = null)
     {
         $author = $this->getAccount($request, $id);
         $sentences = Sentence::approved()

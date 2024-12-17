@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Authentication;
 
+use App\Events\AccountPasswordForgot;
+use App\Models\Account;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{
     Hash,
@@ -59,6 +61,12 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
     public function registerWithPassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'nickname' => [
+                'required',
+                'string',
+                'max:64',
+                'unique:accounts,nickname'
+            ],
             'username' => [
                 'required',
                 'email',
@@ -81,7 +89,8 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
             $data['username'],
             null,
             null,
-            $data['password']
+            $data['password'],
+            $data['nickname']
         );
 
         return $this->doLogin($request, $user, /* new: */ true, /* remember: */ false);
@@ -102,12 +111,16 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
         ]);
 
         $data = $validator->validate();
-        $status = FacadesPassword::sendResetLink([
+        $filter = [
             'email' => $data['username'],
             'is_master_account' => 1
-        ]);
+        ];
+        $user = Account::where($filter)->firstOrFail();
+        $status = FacadesPassword::sendResetLink($filter);
         
         if ($status === FacadesPassword::RESET_LINK_SENT) {
+            event(new AccountPasswordForgot($user));
+
             return redirect()->route('auth.forgot-password', ['status' => __($status)]);
         }
 

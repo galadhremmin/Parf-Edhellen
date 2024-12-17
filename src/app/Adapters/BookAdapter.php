@@ -44,7 +44,7 @@ class BookAdapter
      * @param bool $atomDate - ATOM format dates? (optional)
      * @return mixed - return value is determined by $groupByLanguage
      */
-    public function adaptGlosses(array $glosses, ?Collection $inflections = null, array $commentsById = [], string $word = null, 
+    public function adaptGlosses(array $glosses, ?Collection $inflections = null, array $commentsById = [], ?string $word = null, 
         bool $groupByLanguage = true, bool $atomDate = true)
     {
         $numberOfGlosses = count($glosses);
@@ -217,8 +217,8 @@ class BookAdapter
      * @param LinkHelper $linker
      * @return \stdClass
      */
-    public function adaptGloss($gloss, Collection $languages = null, ?Collection $inflections = null, array $commentsById = [], 
-        bool $atomDate = false, LinkHelper $linker = null): \stdClass
+    public function adaptGloss($gloss, ?Collection $languages = null, ?Collection $inflections = null, array $commentsById = [], 
+        bool $atomDate = false, ?LinkHelper $linker = null): \stdClass
     {
         if ($linker === null) {
             $linker = $this->_linkHelper;

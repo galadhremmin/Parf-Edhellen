@@ -13,27 +13,16 @@ use App\Models\{
 };
 use App\Repositories\Enumerations\GlossChange;
 use App\Repositories\GlossRepository;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class GlossRepositoryTest extends TestCase
 {
+    use DatabaseTransactions; 
+
     use CanCreateGloss {
         CanCreateGloss::setUp as setUpGlosses;
-        CanCreateGloss::tearDown as tearDownGlosses;
         CanCreateGloss::getRepository as getGlossRepository;
     } // ; <-- remedies Visual Studio Code colouring bug
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->setUpGlosses();
-        Queue::fake();
-    }
-
-    protected function tearDown(): void
-    {
-        $this->tearDownGlosses();
-        parent::tearDown();
-    }
 
     /**
      * A basic example of versioning when saving glosses.

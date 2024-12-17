@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 class Sentence extends ModelBase implements Interfaces\IHasFriendlyName, Interfaces\IHasLanguage
 {
     use Traits\HasAccount;
+    use SoftDeletes;
 
     protected $fillable = [
         'description', 'language_id', 'source', 'is_neologism', 'is_approved', 'account_id',

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 class Word extends ModelBase implements Interfaces\IHasFriendlyName
 {
     use Traits\HasAccount;

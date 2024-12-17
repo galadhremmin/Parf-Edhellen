@@ -94,7 +94,7 @@ class ContributionController extends Controller
      * @param Request $request
      * @return \Illuminate\Contracts\View\View
      */
-    public function create(Request $request, string $morph = null)
+    public function create(Request $request, ?string $morph = null)
     {
         $id = $request->has('entity_id')
             ? intval($request->input('entity_id'))
@@ -296,7 +296,7 @@ class ContributionController extends Controller
         $contribution->dependencies()->delete();
         $contribution->delete();
 
-        event(new ContributionDestroyed($contribution));
+        event(new ContributionDestroyed($contribution, $request->user()->id));
         
         return $request->user()->isAdministrator()
             ? redirect()->route('admin.contribution.list')

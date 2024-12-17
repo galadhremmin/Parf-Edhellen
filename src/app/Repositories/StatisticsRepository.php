@@ -181,7 +181,7 @@ class StatisticsRepository
      * @param callable $where
      * @return array
      */
-    private function getTopContributors(string $table, array $columns, int $numberOfResults, callable $where = null)
+    private function getTopContributors(string $table, array $columns, int $numberOfResults, ?callable $where = null)
     {
         $columns = $this->prefixColumnsWithTableName($columns, 'accounts');
         $query = Account::select($this->addCountToColumns($columns, 'number_of_items'))

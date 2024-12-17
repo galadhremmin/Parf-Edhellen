@@ -5,9 +5,12 @@ namespace Tests\Unit\Models;
 use Tests\TestCase;
 use App\Models\Gloss;
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class GlossTest extends TestCase
 {
+    use DatabaseTransactions; 
+
     private $_gloss;
 
     protected function setUp(): void

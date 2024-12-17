@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Http\Controllers\Abstracts\Controller;
 use App\Adapters\AuditTrailAdapter;
+use App\Events\AccountRoleAdd;
+use App\Events\AccountRoleRemove;
 use App\Models\{
     Account,
     AuditTrail,
@@ -104,6 +106,8 @@ class AccountController extends Controller
 
         $account->addMembershipTo($role->name);
 
+        event(new AccountRoleAdd($account, $role->name, $request->user()->id));
+
         return redirect()->route('account.edit', ['account' => $account->id]);
     }
 
@@ -124,6 +128,8 @@ class AccountController extends Controller
         $this->blockAdministratorChanges($account, $request->user());
 
         $account->removeMembership($role->name);
+
+        event(new AccountRoleRemove($account, $role->name, $request->user()->id));
 
         return redirect()->route('account.edit', ['account' => $account->id]);
     }

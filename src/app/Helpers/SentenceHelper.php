@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 
 class SentenceHelper
 {
-    public function buildSentences(Collection $adaptedFragments, string $builderName = null) {
+    public function buildSentences(Collection $adaptedFragments, ?string $builderName = null) {
         $result = [];
 
         $sentenceBuilders = config('ed.required_sentence_builders');

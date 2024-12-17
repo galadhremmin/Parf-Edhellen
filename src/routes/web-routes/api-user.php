@@ -14,9 +14,11 @@ Route::group([
     Route::post('book/word/find', [ 'uses' => 'BookApiController@findWord'  ]);
 
     Route::post('account/edit/{id?}',        [ 'uses' => 'AccountApiController@update' ])
-        ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ]);
+        ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ])
+        ->name('api.account.update');
     Route::post('account/avatar/edit/{id?}', [ 'uses' => 'AccountApiController@updateAvatar' ])
-        ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ]);
+        ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ])
+        ->name('api.account.update-avatar');
     Route::delete('account/edit/{id?}',      [ 'uses' => 'AccountApiController@delete' ])
         ->where([ 'id' => REGULAR_EXPRESSION_NUMERIC ])
         ->name('api.account.delete');

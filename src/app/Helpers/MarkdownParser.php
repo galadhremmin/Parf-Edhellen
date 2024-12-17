@@ -12,7 +12,7 @@ class MarkdownParser extends \Parsedown
 
     private $_externalToInternalUrlResolver;
 
-    function __construct(IExternalToInternalUrlResolver $externalToInternalUrlResolver = null, $disabledBlockTypes = [])
+    function __construct(?IExternalToInternalUrlResolver $externalToInternalUrlResolver = null, $disabledBlockTypes = [])
     {
         $this->_externalToInternalUrlResolver = $externalToInternalUrlResolver;
 
@@ -51,7 +51,7 @@ class MarkdownParser extends \Parsedown
      * Adds bootstrap classes to the table element.
      * 
      */
-    protected function blockTable($Line, array $Block = null)
+    protected function blockTable($Line, ?array $Block = null)
     {
         $table = parent::blockTable($Line, $Block);
 
@@ -67,7 +67,7 @@ class MarkdownParser extends \Parsedown
         return $table;
     }
 
-    protected function blockTableComplete(array $Block = null)
+    protected function blockTableComplete(?array $Block = null)
     {
         $Block['element'] = [
             'name' => 'div',

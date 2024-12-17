@@ -52,14 +52,21 @@
   </p>
   @if ($errors->any())
   <div class="alert alert-warning">
-  @foreach ($errors->all() as $error)
-  {{ $error }} 
-  @endforeach
+    There are a few things you need to correct to proceed:
+    <ul>
+      @foreach ($errors->all() as $error)
+      <li>{{ $error }}</li>
+      @endforeach
+    </ul>
   </div>
   @endif
   <form method="post" action="{{ route('auth.register') }}">
     @csrf
     <div class="form-group">
+      <label for="password-login-nickname" class="form-label">Nickname</label>
+      <input type="text" name="nickname" class="form-control" id="password-login-nickname">
+    </div>
+    <div class="form-group mt-3">
       <label for="password-login-username" class="form-label">E-mail address</label>
       <input type="text" name="username" class="form-control" id="password-login-username">
     </div>

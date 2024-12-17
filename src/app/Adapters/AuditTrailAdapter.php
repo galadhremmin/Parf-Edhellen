@@ -12,6 +12,7 @@ use App\Repositories\AuditTrailRepository;
 use App\Models\{
     Account,
     AuditTrail,
+    Contribution,
     FlashcardResult,
     ForumPost,
     Gloss,
@@ -22,6 +23,7 @@ class AuditTrailAdapter
 {
     private $_link;
     private $_repository;
+    private $_storageHelper;
 
     public function __construct(LinkHelper $linkHelper, AuditTrailRepository $repository, StorageHelper $storageHelper)
     {
@@ -52,6 +54,9 @@ class AuditTrailAdapter
                     case AuditTrail::ACTION_GLOSS_EDIT:
                         $message = 'changed the gloss';
                         break;
+                    case AuditTrail::ACTION_GLOSS_DELETE:
+                        $message = 'deleted the gloss';
+                        break;
                 }
 
                 $entity = '<a href="'.$this->_link->gloss($action->entity_id).'">' . 
@@ -64,6 +69,9 @@ class AuditTrailAdapter
                         break;
                     case AuditTrail::ACTION_SENTENCE_EDIT:
                         $message = 'changed the phrase';
+                        break;
+                    case AuditTrail::ACTION_SENTENCE_DELETE:
+                        $message = 'deleted the phrase';
                         break;
                 }
 
@@ -84,6 +92,31 @@ class AuditTrailAdapter
                     case AuditTrail::ACTION_PROFILE_AUTHENTICATED:
                         $message = 'logged in';
                         break;
+                    case AuditTrail::ACTION_PROFILE_MERGED:
+                        $message = 'account merged with '.$action->entity_name;
+                        break;
+                    case AuditTrail::ACTION_PROFILE_CHANGED_PASSWORD:
+                        $message = 'changed password';
+                        break;
+                    case AuditTrail::ACTION_PROFILE_FORGOT_PASSWORD:
+                        $message = 'requested a password reset link';
+                        break;
+                    case AuditTrail::ACTION_PROFILE_RESET_PASSWORD:
+                        $message = 'reset their password';
+                        break;
+                    case AuditTrail::ACTION_ACCOUNT_ADD_ROLE:
+                        $message = 'added the role '.json_decode($action->data)->role;
+                        break;
+                    case AuditTrail::ACTION_ACCOUNT_REMOVE_ROLE:
+                        $message = 'removed the role '.json_decode($action->data)->role;
+                        break;
+                }
+
+                if ($action->entity_id !== $action->account_id) {
+                    $entity = 'for <a href="'.
+                        route('account.edit', ['account' => $action->entity]).'">'.
+                        $action->entity_name.
+                    '</a>';
                 }
 
             } else if ($action->entity instanceof ForumPost) {
@@ -92,7 +125,7 @@ class AuditTrailAdapter
                         $message = 'posted';
                         break;
                     case AuditTrail::ACTION_COMMENT_EDIT:
-                        $message = 'changed a post ';
+                        $message = 'changed a post';
                         break;
                     case AuditTrail::ACTION_COMMENT_LIKE:
                         $message = 'liked a post';
@@ -127,6 +160,22 @@ class AuditTrailAdapter
                         $message = 'completed 500 flashcards';
                         break;
                 }
+            } else if ($action->entity instanceof Contribution) {
+                switch ($action->action_id) {
+                    case AuditTrail::ACTION_CONTRIBUTION_APPROVE:
+                        $message = 'approved the contribution';
+                        break;
+                    case AuditTrail::ACTION_CONTRIBUTION_REJECT:
+                        $message = 'rejected the contribution';
+                        break;
+                }
+
+                $entity = '<a href="'.
+                    route('contribution.show', [
+                        'contribution' => $action->entity_id
+                    ]).'">'.
+                    $action->entity_name.
+                '</a>';
             }
 
             // Some messages might be deliberately hidden or not yet supported -- skip them

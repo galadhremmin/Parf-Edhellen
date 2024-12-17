@@ -36,7 +36,7 @@ interface IDiscussContext
      * @param Account $account
      * @return bool 
      */
-    function available($entityOrId, Account $account = null);
+    function available($entityOrId, ?Account $account = null);
 
     /**
      * Gets a friendly name for the route.

@@ -33,7 +33,7 @@ class SearchIndexRepository
         $this->_wordRepository   = $wordRepository;
     }
 
-    public function createIndex(ModelBase $model, Word $wordEntity, Language $keywordLanguage = null, string $inflection = null): void
+    public function createIndex(ModelBase $model, Word $wordEntity, ?Language $keywordLanguage = null, ?string $inflection = null): void
     {
         $data = $this->saveIndexInternal($model, $wordEntity, $keywordLanguage, $inflection);
 
@@ -131,7 +131,7 @@ class SearchIndexRepository
             ->groupBy('keyword');
     }
 
-    private function saveIndexInternal(ModelBase $model, Word $wordEntity, Language $keywordLanguage = null, string $inflection = null): array
+    private function saveIndexInternal(ModelBase $model, Word $wordEntity, ?Language $keywordLanguage = null, ?string $inflection = null): array
     {
 
         if (! $model->exists) {

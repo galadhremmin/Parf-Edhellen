@@ -8,7 +8,18 @@
             "name": "PHP: Listen for Xdebug",
             "type": "php",
             "request": "launch",
-            "port": 9000
+            "port": 9005
+        },
+        {
+            "name": "PHP: Debug current file",
+            "type": "php",
+            "request": "launch",
+            "port": 9005,
+            "program": "${file}",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "APP_ENV": "testing"
+            }
         },
         {
             "type": "node",

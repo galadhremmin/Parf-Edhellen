@@ -5,7 +5,7 @@ This is the source code for [elfdict.com](http://www.elfdict.com), a non-profit,
 Ensure that the following dependencies are installed:
 
 ```
-php8.1-curl php8.1-gd php8.1-intl php8.1-mbstring php8.1-mysql php8.1-readline php8.1-xml php8.1-zip
+php8.2-curl php8.2-gd php8.2-intl php8.2-mbstring php8.2-mysql php8.2-readline php8.2-xml php8.2-zip
 ```
 
 Configure the database using the model files. Execute the script files in ascending order, starting with schema.sql. You can apply the migrations once you've got Laravel configured. To configure Laravel, run the following commands sequentially:

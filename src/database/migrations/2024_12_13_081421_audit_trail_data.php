@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('accounts', function (Blueprint $table) {
-            $table->timestamp('email_verified_at')->nullable();
-            $table->dropColumn('is_configured');
+        Schema::table('audit_trails', function (Blueprint $table) {
+            $table->mediumText('data')->nullable();
         });
     }
 
@@ -22,9 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('accounts', function (Blueprint $table) {
-            $table->dropColumn('email_verified_at');
-            $table->boolean('is_configured')->default(false);
+        Schema::table('audit_trails', function (Blueprint $table) {
+            $table->dropColumn('data');
         });
     }
 };

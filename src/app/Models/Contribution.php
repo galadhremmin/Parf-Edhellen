@@ -4,10 +4,12 @@ namespace App\Models;
 
 use App\Models\Initialization\Morphs;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Contribution extends ModelBase implements Interfaces\IHasFriendlyName
 {
     use Traits\HasAccount;
+    use SoftDeletes;
 
     protected $fillable = [ 
         'account_id', 

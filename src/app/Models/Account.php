@@ -199,7 +199,12 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
     {
         return $this->remember_token;
     }
-    
+
+    public function getAuthPasswordName()
+    {
+        return 'password';
+    }
+
     /**
      * Determines whether the client has specifically requested to operate in incognito mode.
      *

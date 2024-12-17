@@ -2,27 +2,89 @@
 
 namespace Tests\Unit\Api;
 
+use App\Helpers\StorageHelper;
 use Illuminate\Support\Str;
 use Tests\TestCase;
-use App\Http\Controllers\Api\v2\AccountApiController;
 use App\Models\{
     Account,
-    ForumGroup,
-    ForumPost,
-    ForumThread
 };
 use Exception;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Http\UploadedFile;
 
 class AccountApiControllerTest extends TestCase
 {
-    protected function setUp(): void
+    use DatabaseTransactions; 
+
+    public function testEdited()
     {
-        /**
-         * This disables the exception handling to display the stacktrace on the console
-         * the same way as it shown on the browser
-         */
-        parent::setUp();
-        // $this->withoutExceptionHandling();
+        $uuid = (string) Str::uuid();
+        try {
+            $account = Account::create([
+                'nickname' => $uuid,
+                'email'    => 'private@domain.com',
+                'identity' => $uuid,
+                'authorization_provider_id' => 1000,
+                'profile'  => 'Lots of personal data.'
+            ]);
+
+            $newNickname = (string) Str::uuid();
+            $newIntroduction = 'No personal data';
+
+            $response = $this->actingAs($account)
+                ->post(route('api.account.update', ['id' => $account->id]), [
+                    'nickname' => $newNickname,
+                    'tengwar' => $newNickname,
+                    'introduction' => $newIntroduction
+                ]);
+            $response->assertSuccessful();
+            $account->refresh();
+
+            $this->assertEquals($newNickname, $account->nickname);
+            $this->assertEquals($newNickname, $account->tengwar);
+            $this->assertEquals($newIntroduction, $account->profile);
+
+        } catch (Exception $ex) {
+            throw $ex;
+        } finally {
+            $account->delete();
+        }
+    }
+
+    public function testAvatar()
+    {
+        $uuid = (string) Str::uuid();
+        $avatarPath = null;
+        try {
+            $account = Account::create([
+                'nickname' => $uuid,
+                'email'    => 'private@domain.com',
+                'identity' => $uuid,
+                'authorization_provider_id' => 1000,
+                'profile'  => 'Lots of personal data.'
+            ]);
+
+            $newAvatar = UploadedFile::fake()->image('avatar.gif', 200, 200);
+
+            $response = $this->actingAs($account)
+                ->post(route('api.account.update-avatar', ['id' => $account->id]), [
+                    'avatar' => $newAvatar
+                ]);
+            $response->assertSuccessful();
+            $account->refresh();
+
+            $helper = new StorageHelper();
+            $avatarPath = $helper->accountAvatar($account, false);
+            $this->assertNotNull($avatarPath);
+
+        } catch (Exception $ex) {
+            throw $ex;
+        } finally {
+            $account->delete();
+            if ($avatarPath !== null) {
+                unlink(public_path().$avatarPath);
+            }
+        }
     }
 
     public function testDeletion()
@@ -56,8 +118,6 @@ class AccountApiControllerTest extends TestCase
 
     public function testUnauthorizedToDelete()
     {
-        $controller = resolve(AccountApiController::class);
-
         $uuid1 = (string) Str::uuid();
         $account1 = Account::create([
             'nickname' => $uuid1,

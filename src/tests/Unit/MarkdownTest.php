@@ -8,15 +8,6 @@ use App\Interfaces\IExternalToInternalUrlResolver;
 
 class MarkdownTest extends TestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-    }
-
-    public function tearDown(): void
-    {
-        parent::tearDown();
-    }
 
     public function testLongUriImplicitShortening()
     {

@@ -10,7 +10,7 @@ use App\Models\Initialization\Morphs;
 
 class LinkHelper
 {
-    public function author(int $authorId, string $authorName = null)
+    public function author(int $authorId, ?string $authorName = null)
     {
         $nickname = $authorName === null || empty($authorName) 
             ? '' 
@@ -80,7 +80,7 @@ class LinkHelper
         ]);
     }
 
-    public function forumThread(int $groupId, string $groupName, int $threadId, string $normalizedSubject = null, $postId = 0)
+    public function forumThread(int $groupId, string $groupName, int $threadId, ?string $normalizedSubject = null, $postId = 0)
     {
         $slug = $normalizedSubject === null || empty($normalizedSubject) ? 'thread' : $normalizedSubject;
         $props = [
