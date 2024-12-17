@@ -127,6 +127,13 @@ class AuditTrailSubscriber
         $this->_repository->store(AuditTrail::ACTION_PROFILE_EDIT, $event->account);
     }
 
+    public function onAccountDeleted(AccountDestroyed $event)
+    {
+        $this->_repository->store(AuditTrail::ACTION_PROFILE_DELETE, $event->account, $event->accountId, true, [
+            'nickname' => $event->friendlyName
+        ]);
+    }
+
     /**
      * Handle the deletion of an account
      */

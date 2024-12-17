@@ -7,27 +7,16 @@ use Queue;
 
 use Tests\Unit\Traits\CanCreateGloss;
 use App\Repositories\KeywordRepository;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class KeywordRepositoryTest extends TestCase
 {
+    use DatabaseTransactions; 
+
     use CanCreateGloss {
         CanCreateGloss::setUp as setUpGlosses;
-        CanCreateGloss::tearDown as tearDownGlosses;
         CanCreateGloss::getRepository as getGlossRepository;
     } // ; <-- remedies Visual Studio Code colouring bug
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->setUpGlosses();
-        Queue::fake();
-    }
-
-    protected function tearDown(): void
-    {
-        $this->tearDownGlosses();
-        parent::tearDown();
-    }
 
     /**
      * A basic example of versioning when saving glosses.

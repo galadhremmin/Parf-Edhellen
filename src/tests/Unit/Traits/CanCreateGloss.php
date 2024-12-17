@@ -23,8 +23,10 @@ trait CanCreateGloss
     protected $_glossGroup;
     protected $_glossRepository;
 
-    protected function setUp()
+    protected function setUp(): void
     {
+        parent::setUp();
+
         $this->setUpAuth();
 
         $this->_glossRepository = resolve(GlossRepository::class);
@@ -33,11 +35,6 @@ trait CanCreateGloss
             'is_canon' => true
         ]);
 
-        $this->cleanGlosses();
-    }
-
-    protected function tearDown()
-    {
         $this->cleanGlosses();
     }
 

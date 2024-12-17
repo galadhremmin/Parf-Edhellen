@@ -22,12 +22,14 @@ use App\Models\{
     ForumPostLike,
     ForumThread
 };
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class DiscussRepositoryTest extends TestCase
 {
+    use DatabaseTransactions;
+
     use CanCreateGloss {
         CanCreateGloss::setUp as setUpGlosses;
-        CanCreateGloss::tearDown as tearDownGlosses;
     } // ; <-- remedies Visual Studio Code colouring bug
     
     private $_repository;
@@ -35,18 +37,10 @@ class DiscussRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        DB::beginTransaction();
         $this->setUpGlosses();
         Queue::fake();
 
         $this->_repository = resolve(DiscussRepository::class);
-    }
-
-    protected function tearDown(): void
-    {
-        $this->tearDownGlosses();
-        DB::rollBack();
-        parent::tearDown();
     }
 
     public function testGetThreadForEntityShouldBeNull()

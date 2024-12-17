@@ -13,26 +13,16 @@ use App\Models\{
     SentenceFragment
 };
 use DB;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class SentenceRepositoryTest extends TestCase
 {
+    use DatabaseTransactions; 
+
     use CanCreateGloss {
         CanCreateGloss::setUp as setUpGlosses;
-        CanCreateGloss::tearDown as tearDownGlosses;
         CanCreateGloss::getRepository as getGlossRepository;
     } // ; <-- remedies Visual Studio Code colouring bug
-
-    public function setUp(): void
-    {
-        parent::setUp();
-        $this->setUpGlosses();
-    }
-
-    public function tearDown(): void
-    {
-        $this->tearDownGlosses();
-        parent::tearDown();
-    }
 
     public function testExpectsSuccessfulSentenceSaveLog()
     {

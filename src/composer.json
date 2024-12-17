@@ -25,7 +25,7 @@
     },
     "require-dev": {
         "filp/whoops": "~2.0",
-        "mockery/mockery": "0.9.*",
+        "mockery/mockery": "^1.6.12",
         "phpunit/phpunit": "^10.0"
     },
     "autoload": {

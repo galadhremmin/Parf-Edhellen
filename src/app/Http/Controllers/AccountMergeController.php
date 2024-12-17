@@ -93,7 +93,7 @@ class AccountMergeController extends Controller
 
             // Save some basic information about who is making the request
             'requester_account_id' => $account->id,
-            'requester_ip' => $_SERVER['REMOTE_ADDR']
+            'requester_ip' => $request->ip()
         ]);
 
         $providers = Account::whereIn('id', $accountIds)

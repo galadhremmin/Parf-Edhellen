@@ -36,9 +36,12 @@ use App\Mail\{
     ForumPostCreatedMail,
     ForumPostOnProfileMail
 };
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class MailSettingRepositoryTest extends TestCase
 {
+    use DatabaseTransactions; 
+
     use MocksAuth {
         MocksAuth::setUp as setUpAuth;
     } // ;
@@ -50,8 +53,6 @@ class MailSettingRepositoryTest extends TestCase
     {
         parent::setUp();
         $this->setUpAuth();
-
-        DB::beginTransaction();
 
         $this->_accounts = [
             Account::create([
@@ -82,13 +83,7 @@ class MailSettingRepositoryTest extends TestCase
         ]);
         $this->_repository = resolve(MailSettingRepository::class);
     }
-
-    public function tearDown(): void
-    {
-        DB::rollBack();
-        parent::tearDown();
-    }
-
+    
     public function testShouldQualify()
     {
         $account = $this->_accounts[0];

@@ -18,9 +18,10 @@ use App\Models\{
 
 class BookAdapterTest extends TestCase
 {
+    use DatabaseTransactions; 
+
     use CanCreateGloss {
         CanCreateGloss::setUp as setUpGlosses;
-        CanCreateGloss::tearDown as tearDownGlosses;
         CanCreateGloss::getRepository as getGlossRepository;
     } // ; <-- remedies Visual Studio Code colouring bug
 
@@ -29,16 +30,10 @@ class BookAdapterTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->setUpGlosses();
         Queue::fake();
+        $this->setUpGlosses();
         
         $this->_adapter = resolve(BookAdapter::class);
-    }
-
-    protected function tearDown(): void
-    {
-        $this->tearDownGlosses();
-        parent::tearDown();
     }
 
     public function testAdaptGloss()
