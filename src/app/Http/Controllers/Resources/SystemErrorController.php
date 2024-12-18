@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Resources;
 
+use App\Adapters\AuditTrailAdapter;
 use Illuminate\Http\Request;
 use DB;
 
@@ -10,15 +11,41 @@ use App\Models\{
     FailedJob
 };
 use App\Http\Controllers\Abstracts\Controller;
+use App\Repositories\AuditTrailRepository;
 
 class SystemErrorController extends Controller
 {
+    const MaxAuditTrailEntriesPerPage = 30;
+
+    /**
+     * @var AuditTrailRepository
+     */
+    private $_auditTrailRepository;
+
+    /**
+     * @var AuditTrailAdapter
+     */
+    private $_auditTrailAdapter;
+
+    public function __construct(AuditTrailRepository $auditTrailRepository, AuditTrailAdapter $auditTrailAdapter)
+    {
+        $this->_auditTrailRepository = $auditTrailRepository;
+        $this->_auditTrailAdapter = $auditTrailAdapter;
+    }
+
     public function index(Request $request)
     {
         $errorsByWeek = $this->getRowCountPerWeek(SystemError::class, 'category');
         $failedJobsByWeek = $this->getRowCountPerWeek(FailedJob::class, 'queue', 'failed_at');
 
+        $auditTrailPage = $request->query('audit_trail_page', 0);
+        $auditTrailEntries = $this->_auditTrailAdapter->adapt(
+            $this->_auditTrailRepository->get(self::MaxAuditTrailEntriesPerPage, $auditTrailPage * self::MaxAuditTrailEntriesPerPage)
+        );
+
         return view('admin.system-error.index', [
+            'auditTrailEntries'    => $auditTrailEntries, 
+            'auditTrailPage'       => $auditTrailPage,         
             'errorsByWeek'         => $errorsByWeek['count_by_week'],
             'errorCategories'      => $errorsByWeek['categories'],
             'failedJobsByWeek'     => $failedJobsByWeek['count_by_week'],
