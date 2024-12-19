@@ -193,6 +193,11 @@ class AuditTrailSubscriber
         $this->_repository->store(AuditTrail::ACTION_MAIL_VERIFY_VERIFIED, $event->user, $event->user->id, true);
     }
 
+    public function onAccountEmailVerificationSent(EmailVerificationSent $event)
+    {
+        $this->_repository->store(AuditTrail::ACTION_MAIL_VERIFY_DISPATCHED, $event->user, $event->user->id, true);
+    }
+
     public function onAccountRoleAdded(AccountRoleAdd $event)
     {
         $this->_repository->store(AuditTrail::ACTION_ACCOUNT_ADD_ROLE, $event->account, $event->byAccountId, true, [

@@ -23,7 +23,9 @@ class SentenceController extends Controller
         $numberOfNeologisms = Sentence::approved()->neologisms()->count();
         $randomSentence     = Sentence::approved()->inRandomOrder()->select('id')->first();
 
-        $randomSentence     = $this->_sentenceRepository->getSentence($randomSentence->id);
+        if ($randomSentence !== null) {
+            $randomSentence     = $this->_sentenceRepository->getSentence($randomSentence->id);
+        }
         $languages          = $this->_sentenceRepository->getLanguages();
 
         return view('sentence.index', [
