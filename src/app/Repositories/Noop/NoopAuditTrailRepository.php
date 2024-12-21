@@ -3,7 +3,6 @@
 namespace App\Repositories\Noop;
 
 use App\Repositories\Interfaces\IAuditTrailRepository;
-use Illuminate\Database\Eloquent\Relations\Relation;
 
 class NoopAuditTrailRepository implements IAuditTrailRepository
 {
@@ -13,7 +12,7 @@ class NoopAuditTrailRepository implements IAuditTrailRepository
         return collect([]);
     }
 
-    public function store(int $action, $entity, int $userId = 0, bool $is_elevated = null, ?array $data = null)
+    public function store(int $action, $entity, int $userId = 0, ?bool $is_elevated = null, ?array $data = null)
     {
         // Noop
     }

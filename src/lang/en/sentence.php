@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Phrases'
+    'title' => 'Phrases',
 ];

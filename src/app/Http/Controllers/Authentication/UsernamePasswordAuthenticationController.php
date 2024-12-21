@@ -4,35 +4,33 @@ namespace App\Http\Controllers\Authentication;
 
 use App\Events\AccountPasswordForgot;
 use App\Models\Account;
+use Closure;
+use Exception;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\{
-    Hash,
-    Password as FacadesPassword,
-    Validator
-};
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password as FacadesPassword;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Auth\Events\PasswordReset;
-
-use Closure;
-use Exception;
 
 class UsernamePasswordAuthenticationController extends AuthenticationController
 {
     public function forgotPassword(Request $request)
     {
         $status = $request->query('status', null);
+
         return view('authentication.forgot-password', [
-            'status' => $status
+            'status' => $status,
         ]);
     }
 
     public function loginWithPassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'username' => [ 'required', 'string' ],
-            'remember' => [ 'boolean' ],
+            'username' => ['required', 'string'],
+            'remember' => ['boolean'],
             'password' => [
                 'required',
                 'string',
@@ -40,12 +38,11 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
                     $username = $request->input('username');
                     if (empty($username)) {
                         $fail('You need to specify an e-mail address.');
-                    }
-                    else if (! $this->_accountManager->checkPasswordWithUsername($username, $value)) {
+                    } elseif (! $this->_accountManager->checkPasswordWithUsername($username, $value)) {
                         $fail('We did not find an account with that e-mail and password combination. Check your e-mail and password and try again.');
                     }
-                }
-            ]
+                },
+            ],
         ]);
 
         $data = $validator->validate();
@@ -55,6 +52,7 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
         }
 
         $remember = isset($data['remember']) ? boolval($data['remember']) : false;
+
         return $this->doLogin($request, $account, /* new: */ false, $remember);
     }
 
@@ -65,7 +63,7 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
                 'required',
                 'string',
                 'max:64',
-                'unique:accounts,nickname'
+                'unique:accounts,nickname',
             ],
             'username' => [
                 'required',
@@ -74,14 +72,14 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
                     if ($this->_accountManager->getAccountByUsername($value) !== null) {
                         $fail('An account already exists with that e-mail address.');
                     }
-                }
+                },
             ],
             'password' => [
                 'required',
                 'confirmed',
-                Password::defaults()
+                Password::defaults(),
             ],
-            'remember' => [ 'boolean' ]
+            'remember' => ['boolean'],
         ]);
 
         $data = $validator->validate();
@@ -106,18 +104,18 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
                     if ($account === null || ! $account->is_passworded) {
                         $fail('We cannot find an account with that e-mail address.');
                     }
-                }
-            ]
+                },
+            ],
         ]);
 
         $data = $validator->validate();
         $filter = [
             'email' => $data['username'],
-            'is_master_account' => 1
+            'is_master_account' => 1,
         ];
         $user = Account::where($filter)->firstOrFail();
         $status = FacadesPassword::sendResetLink($filter);
-        
+
         if ($status === FacadesPassword::RESET_LINK_SENT) {
             event(new AccountPasswordForgot($user));
 
@@ -132,29 +130,29 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
     public function initiatePasswordResetFromEmail(Request $request, string $token)
     {
         $data = $request->validate([
-            'email' => 'email|required'
+            'email' => 'email|required',
         ]);
 
         return view('authentication.reset-password', [
             'token' => $token,
-            'email' => $data['email']
+            'email' => $data['email'],
         ]);
     }
 
     public function completePasswordReset(Request $request, string $token)
     {
         $data = $request->validate([
-            'email'        => 'email|required',
+            'email' => 'email|required',
             'password' => [
                 'required',
                 'confirmed',
-                Password::defaults()
-            ]
+                Password::defaults(),
+            ],
         ]);
 
         $status = FacadesPassword::reset(
             $data + [
-                'token' => $token
+                'token' => $token,
             ],
             function ($user) use ($request) {
                 $user->forceFill([

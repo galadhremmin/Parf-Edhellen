@@ -1,29 +1,26 @@
 <?php
 
 namespace App\Adapters;
-            
-use Illuminate\Support\Collection;
 
-use App\Helpers\{
-    LinkHelper,
-    StorageHelper
-};
+use App\Helpers\LinkHelper;
+use App\Helpers\StorageHelper;
+use App\Models\Account;
+use App\Models\AuditTrail;
+use App\Models\Contribution;
+use App\Models\FlashcardResult;
+use App\Models\ForumPost;
+use App\Models\Gloss;
+use App\Models\Sentence;
 use App\Repositories\AuditTrailRepository;
-use App\Models\{
-    Account,
-    AuditTrail,
-    Contribution,
-    FlashcardResult,
-    ForumPost,
-    Gloss,
-    Sentence
-};
+use Illuminate\Support\Collection;
 
 class AuditTrailAdapter
 {
-    private $_link;
-    private $_repository;
-    private $_storageHelper;
+    private LinkHelper $_link;
+
+    private AuditTrailRepository $_repository;
+
+    private StorageHelper $_storageHelper;
 
     public function __construct(LinkHelper $linkHelper, AuditTrailRepository $repository, StorageHelper $storageHelper)
     {
@@ -33,10 +30,10 @@ class AuditTrailAdapter
     }
 
     /**
-     * Transforms the specified collection of audit trail actions into an associative array 
+     * Transforms the specified collection of audit trail actions into an associative array
      * containing strings a human would be able to understand.
      *
-     * @param Collection|array $actions
+     * @param  Collection|array  $actions
      * @return array
      */
     public function adapt($actions)
@@ -59,10 +56,10 @@ class AuditTrailAdapter
                         break;
                 }
 
-                $entity = '<a href="'.$this->_link->gloss($action->entity_id).'">' . 
-                    $action->entity_name . '</a>';
+                $entity = '<a href="'.$this->_link->gloss($action->entity_id).'">'.
+                    $action->entity_name.'</a>';
 
-            } else if ($action->entity instanceof Sentence) {
+            } elseif ($action->entity instanceof Sentence) {
                 switch ($action->action_id) {
                     case AuditTrail::ACTION_SENTENCE_ADD:
                         $message = 'added the phrase';
@@ -76,9 +73,9 @@ class AuditTrailAdapter
                 }
 
                 $entity = '<a href="'.$this->_link->sentence($action->entity->language_id, $action->entity->language->name,
-                    $action->entity->id, $action->entity->name).'">' . $action->entity_name . '</a>';
+                    $action->entity->id, $action->entity->name).'">'.$action->entity_name.'</a>';
 
-            } else if ($action->entity instanceof Account) {
+            } elseif ($action->entity instanceof Account) {
                 switch ($action->action_id) {
                     case AuditTrail::ACTION_PROFILE_FIRST_TIME:
                         $message = 'logged in for the first time';
@@ -119,7 +116,7 @@ class AuditTrailAdapter
                     '</a>';
                 }
 
-            } else if ($action->entity instanceof ForumPost) {
+            } elseif ($action->entity instanceof ForumPost) {
                 switch ($action->action_id) {
                     case AuditTrail::ACTION_COMMENT_ADD:
                         $message = 'posted';
@@ -135,11 +132,11 @@ class AuditTrailAdapter
                 $entity = 'in <a href="'.
                     route('api.discuss.resolve', [
                         'entityType' => $action->entity_type,
-                        'entityId' => $action->entity_id
+                        'entityId' => $action->entity_id,
                     ]).'">'.
                     $action->entity_name.
                 '</a>';
-            } else if ($action->entity instanceof FlashcardResult) {
+            } elseif ($action->entity instanceof FlashcardResult) {
                 switch ($action->action_id) {
                     case AuditTrail::ACTION_FLASHCARD_FIRST_CARD:
                         $message = 'completed their first flashcard';
@@ -160,7 +157,7 @@ class AuditTrailAdapter
                         $message = 'completed 500 flashcards';
                         break;
                 }
-            } else if ($action->entity instanceof Contribution) {
+            } elseif ($action->entity instanceof Contribution) {
                 switch ($action->action_id) {
                     case AuditTrail::ACTION_CONTRIBUTION_APPROVE:
                         $message = 'approved the contribution';
@@ -172,7 +169,7 @@ class AuditTrailAdapter
 
                 $entity = '<a href="'.
                     route('contribution.show', [
-                        'contribution' => $action->entity_id
+                        'contribution' => $action->entity_id,
                     ]).'">'.
                     $action->entity_name.
                 '</a>';
@@ -184,12 +181,12 @@ class AuditTrailAdapter
             }
 
             $item = [
-                'account_id'     => $action->account_id,
-                'account_name'   => $action->account->nickname,
+                'account_id' => $action->account_id,
+                'account_name' => $action->account->nickname,
                 'account_avatar' => $this->_storageHelper->accountAvatar($action->account, true /* = _null_ if none exists */),
-                'created_at'     => $action->created_at,
-                'message'        => $message,
-                'entity'         => $entity
+                'created_at' => $action->created_at,
+                'message' => $message,
+                'entity' => $entity,
             ];
 
             $trail[] = $item;
@@ -200,12 +197,10 @@ class AuditTrailAdapter
 
     /**
      * Adapts the specified collection of audit trail actions, and merges similar actions (such as the user
-     * repetitively editing the same entity). This method might reach out to the repository in order to 
+     * repetitively editing the same entity). This method might reach out to the repository in order to
      * compensate for the number of rows merged.
      *
-     * @param Collection $actions
-     * @param int $skipNoOfRows
-     * @param array $previousItem
+     * @param  array  $previousItem
      * @return array
      */
     public function adaptAndMerge(Collection $actions, int $skipNoOfRows = 0, $previousItem = null)
@@ -214,7 +209,7 @@ class AuditTrailAdapter
         $trail = [];
         foreach ($unmergedTrail as $item) {
             // merge equivalent audit trail items to avoid spamming the log with the same message.
-            if ($previousItem !== null && 
+            if ($previousItem !== null &&
                 $previousItem['account_id'] === $item['account_id'] &&
                 $previousItem['message'] === $item['message'] &&
                 $previousItem['entity'] === $item['entity']) {
@@ -240,9 +235,10 @@ class AuditTrailAdapter
         // count the number of missing items to the list and attempt to populate the list
         // with remaining items.
         $noOfRows = $actions->count();
-        $noOfMergers = $noOfRows - count($trail); 
+        $noOfMergers = $noOfRows - count($trail);
         if ($noOfMergers > 0) {
             $remainingRows = $this->_repository->get($noOfMergers, $skipNoOfRows + $noOfRows);
+
             return array_merge($trail, $this->adapt($remainingRows));
         }
 

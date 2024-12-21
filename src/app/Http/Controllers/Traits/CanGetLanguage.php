@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Traits;
 
 use App\Models\Language;
@@ -12,6 +13,7 @@ trait CanGetLanguage
         }
 
         $language = Language::shortName($shortName)->first();
+
         return $language;
     }
 }

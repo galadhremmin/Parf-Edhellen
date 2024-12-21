@@ -2,48 +2,46 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Cache;
-
+use App\Adapters\AuditTrailAdapter;
+use App\Adapters\BookAdapter;
 use App\Http\Controllers\Abstracts\Controller;
-use App\Repositories\{
-    ContributionRepository,
-    SentenceRepository,
-    StatisticsRepository
-};
+use App\Models\AuditTrail;
+use App\Models\Gloss;
+use App\Models\Sentence;
+use App\Repositories\ContributionRepository;
 use App\Repositories\Interfaces\IAuditTrailRepository;
-use App\Models\{
-    AuditTrail,
-    Gloss,
-    Sentence
-};
-use App\Adapters\{
-    AuditTrailAdapter,
-    BookAdapter
-};
+use App\Repositories\SentenceRepository;
+use App\Repositories\StatisticsRepository;
+use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
-    protected $_auditTrail;
-    protected $_auditTrailAdapter;
-    protected $_sentenceRepository;
-    protected $_bookAdapter;
-    protected $_reviewRepository;
-    protected $_statisticsRepository;
+    protected IAuditTrailRepository $_auditTrail;
+
+    protected AuditTrailAdapter $_auditTrailAdapter;
+
+    protected SentenceRepository $_sentenceRepository;
+
+    protected BookAdapter $_bookAdapter;
+
+    protected ContributionRepository $_reviewRepository;
+
+    protected StatisticsRepository $_statisticsRepository;
 
     public function __construct(IAuditTrailRepository $auditTrail, AuditTrailAdapter $auditTrailAdapter, StatisticsRepository $statisticsRepository,
-        BookAdapter $bookAdapter, SentenceRepository $sentenceRepository, ContributionRepository $contributionRepository) 
+        BookAdapter $bookAdapter, SentenceRepository $sentenceRepository, ContributionRepository $contributionRepository)
     {
-        $this->_auditTrail           = $auditTrail;
-        $this->_auditTrailAdapter    = $auditTrailAdapter;
-        $this->_bookAdapter          = $bookAdapter;
-        $this->_sentenceRepository   = $sentenceRepository;
-        $this->_reviewRepository     = $contributionRepository;
+        $this->_auditTrail = $auditTrail;
+        $this->_auditTrailAdapter = $auditTrailAdapter;
+        $this->_bookAdapter = $bookAdapter;
+        $this->_sentenceRepository = $sentenceRepository;
+        $this->_reviewRepository = $contributionRepository;
         $this->_statisticsRepository = $statisticsRepository;
     }
 
-    public function index() 
+    public function index()
     {
-        // Retrieve a random jumbotron background image from configuration. The background is 
+        // Retrieve a random jumbotron background image from configuration. The background is
         // positioned upon the jumbotron.
         $jumbotronFiles = config('ed.jumbotron_files');
         $noOfJumbotronFiles = count($jumbotronFiles);
@@ -56,10 +54,11 @@ class HomeController extends Controller
             $sentence = Sentence::approved()->inRandomOrder()
                 ->select('id')
                 ->first();
+
             return [
-                'sentence' => $sentence === null // 
+                'sentence' => $sentence === null //
                     ? null //
-                    : $this->_sentenceRepository->getSentence($sentence->id)
+                    : $this->_sentenceRepository->getSentence($sentence->id),
             ];
         });
 
@@ -69,11 +68,11 @@ class HomeController extends Controller
                 ->inRandomOrder()
                 ->notUncertain()
                 ->first();
-            
+
             return [
                 'gloss' => $gloss === null //
                     ? null //
-                    : $this->_bookAdapter->adaptGloss($gloss)
+                    : $this->_bookAdapter->adaptGloss($gloss),
             ];
         });
 
@@ -82,7 +81,7 @@ class HomeController extends Controller
         });
 
         // Retrieve the 10 latest audit trail
-        $auditTrails = Cache::remember('ed.home.audit', 60 * 5 /* seconds */, function() {
+        $auditTrails = Cache::remember('ed.home.audit', 60 * 5 /* seconds */, function () {
             return $this->_auditTrailAdapter->adaptAndMerge(
                 $this->_auditTrail->get(15, 0, [
                     AuditTrail::ACTION_COMMENT_ADD,
@@ -90,16 +89,16 @@ class HomeController extends Controller
                     AuditTrail::ACTION_GLOSS_ADD,
                     AuditTrail::ACTION_GLOSS_EDIT,
                     AuditTrail::ACTION_SENTENCE_ADD,
-                    AuditTrail::ACTION_SENTENCE_EDIT
+                    AuditTrail::ACTION_SENTENCE_EDIT,
                 ])
             );
         });
 
         $data = $randomSentence + $randomGloss + $statistics + [
-            'auditTrails'      => $auditTrails,
-            'background'       => $background
+            'auditTrails' => $auditTrails,
+            'background' => $background,
         ];
-        
+
         return view('home.index', $data);
     }
 }

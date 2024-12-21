@@ -2,17 +2,14 @@
 
 namespace Tests\Unit\Aws;
 
+use App\Aws\ComprehendFacade;
+use App\Aws\ComprehendFactory;
 use Aws\Comprehend\ComprehendClient;
-
 use Tests\TestCase;
-use App\Aws\{
-    ComprehendFacade,
-    ComprehendFactory
-};
 
 class ComprehendFacadeTest extends TestCase
 {
-    public function testUniqueKeywordsOnly()
+    public function test_unique_keywords_only()
     {
         $clientMock = $this->getMockBuilder(ComprehendClient::class) //
             ->disableOriginalConstructor() //
@@ -24,18 +21,18 @@ class ComprehendFacadeTest extends TestCase
         $response = [
             'KeyPhrases' => [
                 [
-                    'Text' => 'A'
+                    'Text' => 'A',
                 ],
                 [
-                    'Text' => 'A'
+                    'Text' => 'A',
                 ],
                 [
-                    'Text' => 'B'
+                    'Text' => 'B',
                 ],
                 [
-                    'Text' => 'C'
-                ]
-            ]
+                    'Text' => 'C',
+                ],
+            ],
         ];
 
         $clientMock->expects($this->once())

@@ -4,18 +4,17 @@ namespace App\Http\Discuss\Contexts;
 
 use App\Http\Controllers\Contributions\ContributionControllerFactory;
 use App\Http\Controllers\Resources\ContributionController;
-use Illuminate\Database\Eloquent\Model;
-
 use App\Http\Discuss\IDiscussContext;
-use App\Models\{
-    Account,
-    Contribution
-};
+use App\Models\Account;
+use App\Models\Contribution;
+use Illuminate\Database\Eloquent\Model;
 
 class ContributionContext implements IDiscussContext
 {
-    private $_contributionController;
-    public function __construct(ContributionController $contributionController) {
+    private ContributionController $_contributionController;
+
+    public function __construct(ContributionController $contributionController)
+    {
         $this->_contributionController = $contributionController;
     }
 
@@ -61,7 +60,7 @@ class ContributionContext implements IDiscussContext
         if (! $entity) {
             return null;
         }
-        
+
         return 'Contribution “'.$entity->word.'” by '.$entity->account->nickname;
     }
 
@@ -74,8 +73,9 @@ class ContributionContext implements IDiscussContext
     public function view(Model $entity)
     {
         $model = ContributionControllerFactory::createController($entity->type)->getViewModel($entity);
+
         return view('discuss.context._contribution', $model->toModelArray() + [
-            'address' => $this->resolve($entity)
+            'address' => $this->resolve($entity),
         ]);
     }
 }

@@ -2,13 +2,13 @@
 
 namespace App\Adapters;
 
-use Illuminate\Support\Collection;
 use App\Helpers\LinkHelper;
 use App\Models\Language;
+use Illuminate\Support\Collection;
 
 class SentenceAdapter
 {
-    private $_linkHelper;
+    private LinkHelper $_linkHelper;
 
     public function __construct(LinkHelper $linkHelper)
     {
@@ -25,15 +25,15 @@ class SentenceAdapter
             $language = null;
 
             if (array_key_exists($languageId, $sectionToLanguageMap)) {
-                $section  = $sections[$sectionToLanguageMap[$languageId]];
+                $section = $sections[$sectionToLanguageMap[$languageId]];
                 $language = $section['language'];
                 $section['entities'][] = $sentence;
             } else {
                 $pos = count($sections);
                 $language = Language::findOrFail($languageId);
                 $section = [
-                    'language'  => $language,
-                    'entities' => [ $sentence ]
+                    'language' => $language,
+                    'entities' => [$sentence],
                 ];
                 $sections[$pos] = $section;
                 $sectionToLanguageMap[$languageId] = $pos;
@@ -43,7 +43,7 @@ class SentenceAdapter
         }
 
         return [
-            'sections' => $sections
+            'sections' => $sections,
         ];
     }
 }

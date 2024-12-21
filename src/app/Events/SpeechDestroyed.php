@@ -9,7 +9,8 @@ class SpeechDestroyed
 {
     use SerializesModels;
 
-    public $speech;
+    public Speech $speech;
+
     public function __construct(Speech $speech)
     {
         $this->speech = $speech;

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Helpers\SentenceBuilders;
 
 class LatinSentenceBuilder extends SentenceBuilder
@@ -27,7 +28,7 @@ class LatinSentenceBuilder extends SentenceBuilder
     {
         return $this->fragment($fragment, $fragment['fragment'], $fragmentIndex, $previousFragment, $sentence);
     }
-    
+
     protected function handleParanthesisStart($fragment, int $fragmentIndex, $previousFragment, array $sentence)
     {
         $f = $fragment['fragment'];
@@ -44,7 +45,7 @@ class LatinSentenceBuilder extends SentenceBuilder
         return [$fragment['fragment']];
     }
 
-    protected function finalizeParagraph(array& $sentence)
+    protected function finalizeParagraph(array &$sentence)
     {
         // Noop
     }
@@ -54,9 +55,9 @@ class LatinSentenceBuilder extends SentenceBuilder
         if (count($sentence) < 1) {
             return [$mappingValue];
         }
-        
+
         if ($previousFragment !== null && (
-            $this->isConnection($previousFragment) || 
+            $this->isConnection($previousFragment) ||
             $this->isParanthesisStart($previousFragment))) {
             return [$mappingValue];
         }

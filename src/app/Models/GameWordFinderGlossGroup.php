@@ -4,7 +4,7 @@ namespace App\Models;
 
 class GameWordFinderGlossGroup extends ModelBase
 {
-    protected $fillable = [ 
+    protected $fillable = [
         'gloss_group_id',
     ];
 

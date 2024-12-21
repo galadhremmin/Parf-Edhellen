@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class AccountFeedRefreshTime extends ModelBase
 {
     protected $fillable = ['account_id', 'feed_content_type', 'oldest_happened_at', 'newest_happened_at'];
+
     protected $casts = [
-        Model::CREATED_AT    => 'datetime',
-        Model::UPDATED_AT    => 'datetime',
+        Model::CREATED_AT => 'datetime',
+        Model::UPDATED_AT => 'datetime',
         'oldest_happened_at' => 'datetime',
-        'newest_happened_at' => 'datetime'
+        'newest_happened_at' => 'datetime',
     ];
 
     use Traits\HasAccount;

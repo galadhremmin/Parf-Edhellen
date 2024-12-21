@@ -2,7 +2,7 @@
 
 namespace App\Repositories\ValueObjects;
 
-class SearchIndexSearchValue implements \JsonSerializable 
+class SearchIndexSearchValue implements \JsonSerializable
 {
     use Traits\CanInitialize;
 
@@ -10,11 +10,11 @@ class SearchIndexSearchValue implements \JsonSerializable
     {
         $this->initializeAll($properties, [
             'gloss_group_ids', 'inflections', 'include_old', 'language_id', 'reversed',
-            'speech_ids', 'word'
+            'speech_ids', 'word',
         ], /* required: */ false);
     }
 
-    public function getGlossGroupIds() 
+    public function getGlossGroupIds()
     {
         return $this->getValue('gloss_group_ids');
     }
@@ -22,33 +22,37 @@ class SearchIndexSearchValue implements \JsonSerializable
     public function getIncludesInflections()
     {
         $v = $this->getValue('inflections');
+
         return $v ? $v : false;
     }
 
     public function getIncludesOld()
     {
         $v = $this->getValue('include_old');
-        return !$v ? $v : true;
+
+        return ! $v ? $v : true;
     }
 
-    public function getLanguageId() 
+    public function getLanguageId()
     {
         $v = $this->getValue('language_id');
+
         return $v ? $v : 0;
     }
 
-    public function getReversed() 
+    public function getReversed()
     {
         $v = $this->getValue('reversed');
+
         return $v ? $v : false;
     }
 
-    public function getSpeechIds() 
+    public function getSpeechIds()
     {
         return $this->getValue('speech_ids');
     }
 
-    public function getWord() 
+    public function getWord()
     {
         return $this->getValue('word');
     }

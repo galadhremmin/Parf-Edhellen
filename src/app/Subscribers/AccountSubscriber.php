@@ -14,16 +14,15 @@ class AccountSubscriber
      */
     public function subscribe($events)
     {
-        $events->listen(
-            AccountsMerged::class,
-            self::class.'@onAccountMerged'
-        );
+        return [
+            AccountsMerged::class => 'onAccountMerged',
+        ];
     }
 
     /**
      * Handle the destruction of contributions.
      */
-    public function onAccountMerged(AccountsMerged $event) 
+    public function onAccountMerged(AccountsMerged $event): void
     {
         foreach ($event->accountsMerged as $account) {
             MigrateAccountData::dispatch($account->id, $event->masterAccount->id) //

@@ -9,7 +9,8 @@ class EmailVerificationSent
 {
     use SerializesModels;
 
-    public $user;
+    public Account $user;
+
     public function __construct(Account $user)
     {
         $this->user = $user;

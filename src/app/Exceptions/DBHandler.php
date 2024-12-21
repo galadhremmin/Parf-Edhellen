@@ -2,17 +2,13 @@
 
 namespace App\Exceptions;
 
-use Exception;
-
-use Illuminate\Contracts\Container\Container;
 use App\Repositories\SystemErrorRepository;
+use Exception;
+use Illuminate\Contracts\Container\Container;
 
 class DBHandler extends Handler
 {
-    /**
-     * @var SystemErrorRepository
-     */
-    private $_systemErrorRepository;
+    private SystemErrorRepository $_systemErrorRepository;
 
     public function __construct(Container $container, SystemErrorRepository $systemErrorRepository)
     {

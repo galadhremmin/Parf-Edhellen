@@ -18,7 +18,7 @@ class AccountMergeRequest extends ModelBase
         'requester_ip',
         'is_fulfilled',
         'is_error',
-        'error'
+        'error',
     ];
 
     protected $hidden = ['verification_token', 'requester_account_id', 'requester_ip'];
@@ -27,7 +27,7 @@ class AccountMergeRequest extends ModelBase
         Model::CREATED_AT => 'datetime',
         Model::UPDATED_AT => 'datetime',
         'is_fulfilled' => 'boolean',
-        'is_error'     => 'boolean'
+        'is_error' => 'boolean',
     ];
 
     public function account()

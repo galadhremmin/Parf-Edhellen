@@ -45,6 +45,7 @@ class ImportProfileFeatureBackground extends Command
         foreach ($images as $image) {
             if (! file_exists($image)) {
                 $this->error(sprintf('Aborted! %s can\'t be found.', $image));
+
                 return 1;
             }
         }

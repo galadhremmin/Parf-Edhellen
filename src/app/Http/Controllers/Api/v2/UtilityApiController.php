@@ -2,23 +2,20 @@
 
 namespace App\Http\Controllers\Api\v2;
 
-use Illuminate\Http\Request;
-
 use App\Http\Controllers\Abstracts\Controller;
 use App\Interfaces\IMarkdownParser;
 use App\Models\FailedJob;
 use App\Models\SystemError;
 use App\Repositories\SystemErrorRepository;
+use Illuminate\Http\Request;
 
 class UtilityApiController extends Controller
 {
     const DEFAULT_SYSTEM_ERROR_CATEGORY = 'frontend';
 
-    private $_markdownParser;
-    /**
-     * @var SystemErrorRepository
-     */
-    private $_systemErrorRepository;
+    private IMarkdownParser $_markdownParser;
+
+    private SystemErrorRepository $_systemErrorRepository;
 
     public function __construct(IMarkdownParser $markdownParser, SystemErrorRepository $systemErrorRepository)
     {
@@ -29,14 +26,15 @@ class UtilityApiController extends Controller
     public function parseMarkdown(Request $request)
     {
         $this->validate($request, [
-            'markdown'  => 'sometimes|required|string',
-            'markdowns' => 'sometimes|required|array'
+            'markdown' => 'sometimes|required|string',
+            'markdowns' => 'sometimes|required|array',
         ]);
 
         $markdown = $request->input('markdown');
-        if ($markdown)
-            return [ 'html' => $this->_markdownParser->parseMarkdown($markdown) ];
-        
+        if ($markdown) {
+            return ['html' => $this->_markdownParser->parseMarkdown($markdown)];
+        }
+
         $markdowns = $request->input('markdowns');
         $keys = array_keys($markdowns);
         $html = [];
@@ -48,13 +46,13 @@ class UtilityApiController extends Controller
         return $html;
     }
 
-    public function logError(Request $request) 
+    public function logError(Request $request)
     {
         $this->validate($request, [
-            'message'  => 'string|required',
-            'url'      => 'string|required',
-            'error'    => 'string|nullable',
-            'category' => 'string|nullable'
+            'message' => 'string|required',
+            'url' => 'string|required',
+            'error' => 'string|nullable',
+            'category' => 'string|nullable',
         ]);
 
         $category = $request->has('category')
@@ -74,7 +72,7 @@ class UtilityApiController extends Controller
     public function getErrors(Request $request)
     {
         $from = intval($request->query('from', 0));
-        $to   = intval($request->query('to', 100));
+        $to = intval($request->query('to', 100));
 
         $query = SystemError::orderBy('id', 'desc')
             ->whereNotIn('category', ['http-401', 'http-404']);
@@ -87,14 +85,14 @@ class UtilityApiController extends Controller
 
         return [
             'errors' => $errors,
-            'length' => $length
+            'length' => $length,
         ];
     }
 
     public function getFailedJobs(Request $request)
     {
         $from = intval($request->query('from', 0));
-        $to   = intval($request->query('to', 100));
+        $to = intval($request->query('to', 100));
 
         $query = FailedJob::orderBy('id', 'desc');
 
@@ -106,7 +104,7 @@ class UtilityApiController extends Controller
 
         return [
             'errors' => $errors,
-            'length' => $length
+            'length' => $length,
         ];
     }
 }

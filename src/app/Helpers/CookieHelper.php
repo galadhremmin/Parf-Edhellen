@@ -13,6 +13,7 @@ class CookieHelper
         }
 
         $useCases = explode('|', $_COOKIE[self::EU_CONSENT_USE_CASES_COOKIE_NAME]);
+
         return in_array($useCase, $useCases);
     }
 }

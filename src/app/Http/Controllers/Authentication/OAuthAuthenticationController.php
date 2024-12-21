@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers\Authentication;
 
+use App\Models\Account;
+use App\Models\AuthorizationProvider;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite as FacadesSocialite;
-
-use App\Models\{ 
-    Account, 
-    AuthorizationProvider 
-};
 
 class OAuthAuthenticationController extends AuthenticationController
 {
@@ -16,23 +13,25 @@ class OAuthAuthenticationController extends AuthenticationController
     {
         try {
             $provider = self::getProvider($providerName);
+
             return FacadesSocialite::driver($provider->name_identifier)->redirect();
-        } catch(\Exception $ex) {
+        } catch (\Exception $ex) {
             $this->log('redirect', $providerName, $ex);
+
             return $this->redirectOnSystemError($providerName);
         }
-    }   
+    }
 
     public function callback(Request $request, string $providerName)
     {
         try {
             $provider = self::getProvider($providerName);
-            $providerUser = FacadesSocialite::driver($provider->name_identifier)->user(); 
+            $providerUser = FacadesSocialite::driver($provider->name_identifier)->user();
 
             $user = Account::where([
-                    [ 'email', '=', $providerUser->getEmail() ],
-                    [ 'authorization_provider_id', '=', $provider->id ]
-                ])->first();
+                ['email', '=', $providerUser->getEmail()],
+                ['authorization_provider_id', '=', $provider->id],
+            ])->first();
 
             $first = false;
             if ($user === null) {
@@ -50,6 +49,7 @@ class OAuthAuthenticationController extends AuthenticationController
             return $this->doLogin($request, $user, $first, /* remember: */ true);
         } catch (\Exception $ex) {
             $this->log('callback', $providerName, $ex);
+
             return $this->redirectOnSystemError($providerName);
         }
     }
@@ -62,7 +62,7 @@ class OAuthAuthenticationController extends AuthenticationController
 
         $provider = AuthorizationProvider::where('name_identifier', $providerName)->first();
         if (! $provider) {
-            throw new \UnexpectedValueException('The identity provider "' . $providerName . '" does not exist!');
+            throw new \UnexpectedValueException('The identity provider "'.$providerName.'" does not exist!');
         }
 
         return $provider;

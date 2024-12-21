@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Helpers\SentenceBuilders;
 
 class TengwarSentenceBuilder extends SentenceBuilder
@@ -11,6 +12,7 @@ class TengwarSentenceBuilder extends SentenceBuilder
     protected function handleInterpunctuation($fragment, int $fragmentIndex, $previousFragment, array $sentence)
     {
         $fragment = $this->getFragment($fragmentIndex);
+
         return [' ', [$fragmentIndex, $fragment['tengwar']]];
     }
 
@@ -28,7 +30,7 @@ class TengwarSentenceBuilder extends SentenceBuilder
     {
         return $this->fragment($fragment, $fragment['tengwar'], $fragmentIndex, $previousFragment, $sentence);
     }
-    
+
     protected function handleParanthesisStart($fragment, int $fragmentIndex, $previousFragment, array $sentence)
     {
         if (count($sentence) < 1 || $this->isParanthesisStart($previousFragment)) {
@@ -43,7 +45,7 @@ class TengwarSentenceBuilder extends SentenceBuilder
         return [$fragment['tengwar']];
     }
 
-    protected function finalizeParagraph(array& $sentence)
+    protected function finalizeParagraph(array &$sentence)
     {
         // Noop
     }

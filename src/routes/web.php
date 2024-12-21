@@ -45,4 +45,3 @@ Route::get('/stop-notification/{token}', ['uses' => 'AccountNotificationControll
 
 // Sitemap
 Route::get('sitemap/{context}', 'SitemapController@index');
-

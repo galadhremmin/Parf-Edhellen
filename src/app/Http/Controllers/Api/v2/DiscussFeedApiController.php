@@ -2,23 +2,20 @@
 
 namespace App\Http\Controllers\Api\v2;
 
+use App\Adapters\JsonFeedAdapter;
+use App\Adapters\RssFeedAdapter;
+use App\Helpers\LinkHelper;
+use App\Http\Controllers\Abstracts\Controller;
+use App\Repositories\DiscussRepository;
 use Cache;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
-use App\Http\Controllers\Abstracts\Controller;
-use App\Repositories\DiscussRepository;
-use App\Helpers\LinkHelper;
-use App\Adapters\{
-    JsonFeedAdapter,
-    RssFeedAdapter
-};
-
-class DiscussFeedApiController extends Controller 
+class DiscussFeedApiController extends Controller
 {
-    private $_discussRepository;
-    private $_linkHelper;
+    private DiscussRepository $_discussRepository;
+
+    private LinkHelper $_linkHelper;
 
     public function __construct(DiscussRepository $discussRepository, LinkHelper $linkHelper)
     {
@@ -38,8 +35,8 @@ class DiscussFeedApiController extends Controller
     public function getPostsInGroup(Request $request, int $forumGroupId)
     {
         $group = $this->_discussRepository->getGroup($forumGroupId);
-        $posts = $this->caching($request, 'ed.feed.d.p.'.$group->id, function ($account) use($group) {
-            return  $this->_discussRepository->getLatestPosts($account, $group->id);
+        $posts = $this->caching($request, 'ed.feed.d.p.'.$group->id, function ($account) use ($group) {
+            return $this->_discussRepository->getLatestPosts($account, $group->id);
         });
 
         return $this->formatResponse($request, $posts, sprintf('Latest posts in %s', $group->name));
@@ -65,7 +62,8 @@ class DiscussFeedApiController extends Controller
         }
 
         $format = $this->getFormat($request);
-        return Cache::remember($cacheKey.'.'.$format, 5 * 60, function () use($account, $func) {
+
+        return Cache::remember($cacheKey.'.'.$format, 5 * 60, function () use ($account, $func) {
             return $func($account);
         });
     }
@@ -77,23 +75,23 @@ class DiscussFeedApiController extends Controller
 
         $formatter = null;
         $itemFormatter = null;
-        switch ($this->getFormat($request))
-        {
+        switch ($this->getFormat($request)) {
             case 'rss':
                 $contentType = 'application/rss+xml; charset=utf-8';
                 $formatter = new RssFeedAdapter($title, $websiteUrl, $feedUrl, $title);
                 $domain = parse_url(config('app.url'))['host'];
-                $itemFormatter = function ($d) use($domain) {
-                    // Please refer to `RssFeedAdapter` for expected properties. 
+                $itemFormatter = function ($d) use ($domain) {
+                    // Please refer to `RssFeedAdapter` for expected properties.
                     $url = $this->_linkHelper->forumThread($d->forum_thread->forum_group_id,
                         'g', $d->forum_thread_id, $d->forum_thread->normalized_subject, $d->id);
+
                     return [
                         'author' => sprintf('%s@%s (%s)', $d->account->nickname, $domain, $d->account->nickname),
                         'title' => $d->forum_thread->subject,
                         'description' => trim($d->content),
                         'link' => $url,
                         'pubDate' => $d->created_at->toRfc1123String(),
-                        'guid' => $url
+                        'guid' => $url,
                     ];
                 };
                 break;
@@ -114,8 +112,8 @@ class DiscussFeedApiController extends Controller
                         'date_modified' => ($d->updated_at ?: $d->created_at)->toRfc3339String(),
                         'author' => [
                             'name' => $d->account ? $d->account->nickname : 'unknown',
-                            'url' => $this->_linkHelper->author($d->account_id, $d->account ? $d->account->nickname : 'unknown')
-                        ]
+                            'url' => $this->_linkHelper->author($d->account_id, $d->account ? $d->account->nickname : 'unknown'),
+                        ],
                     ];
                 };
                 break;

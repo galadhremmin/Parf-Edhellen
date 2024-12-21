@@ -17,7 +17,7 @@ class EventServiceProvider extends ServiceProvider
         \SocialiteProviders\Manager\SocialiteWasCalled::class => [
             // add your listeners (aka providers) here
             \SocialiteProviders\Live\LiveExtendSocialite::class.'@handle',
-            \SocialiteProviders\Discord\DiscordExtendSocialite::class.'@handle'
+            \SocialiteProviders\Discord\DiscordExtendSocialite::class.'@handle',
         ],
         Registered::class => [
             SendEmailVerificationNotification::class,
@@ -37,7 +37,7 @@ class EventServiceProvider extends ServiceProvider
         \App\Subscribers\DiscussMailEventSubscriber::class,
         \App\Subscribers\DiscussPostIndexerSubscriber::class,
         \App\Subscribers\GlossIndexerSubscriber::class,
-        \App\Subscribers\SentenceIndexerSubscriber::class
+        \App\Subscribers\SentenceIndexerSubscriber::class,
     ];
 
     /**

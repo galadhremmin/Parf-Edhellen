@@ -7,7 +7,7 @@ use App\Models\Language;
 
 class DefaultSystemLanguageFactory implements ISystemLanguageFactory
 {
-    private $_language = null;
+    private ?Language $_language = null;
 
     public function __construct()
     {
@@ -15,7 +15,7 @@ class DefaultSystemLanguageFactory implements ISystemLanguageFactory
         $this->_language = Language::where('name', $languageName)->first();
     }
 
-    function language(): ?Language
+    public function language(): ?Language
     {
         return $this->_language;
     }

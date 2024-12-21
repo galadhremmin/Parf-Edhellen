@@ -6,9 +6,9 @@ class ForumPostLike extends ModelBase
 {
     use Traits\HasAccount;
 
-    protected $fillable = [ 'forum_post_id', 'account_id' ];
+    protected $fillable = ['forum_post_id', 'account_id'];
 
-    public function scopeForPost($query, int $postId, $accountId = 0) 
+    public function scopeForPost($query, int $postId, $accountId = 0)
     {
         $query->where('forum_post_id', $postId);
 

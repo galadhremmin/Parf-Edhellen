@@ -2,13 +2,11 @@
 
 namespace App\Helpers;
 
-use Illuminate\Support\Collection;
-use App\Models\{
-    Gloss,
-    GlossDetail,
-    Translation
-};
+use App\Models\Gloss;
+use App\Models\GlossDetail;
+use App\Models\Translation;
 use App\Models\Versioning\GlossVersion;
+use Illuminate\Support\Collection;
 
 class GlossAggregationHelper
 {
@@ -20,7 +18,7 @@ class GlossAggregationHelper
         }
 
         $firstGloss = $glosses[0];
-        if ($firstGloss instanceOf Gloss ||
+        if ($firstGloss instanceof Gloss ||
             $firstGloss instanceof GlossVersion) {
             return $this->aggregateEloquentEntities($glosses);
         }
@@ -28,9 +26,10 @@ class GlossAggregationHelper
         return $this->aggregateStdObjects($glosses);
     }
 
-    private function aggregateEloquentEntities(array &$glosses) {
+    private function aggregateEloquentEntities(array &$glosses)
+    {
         // Gloss model entities already have the 'translations' relation, and would therefore
-        // only requiring eager loading. This is not performant to be doing in the adapter, and 
+        // only requiring eager loading. This is not performant to be doing in the adapter, and
         // therefore raises an error.
         $eagerLoading = ['translations', 'gloss_details'];
 
@@ -46,7 +45,8 @@ class GlossAggregationHelper
         return count($glosses);
     }
 
-    private function aggregateStdObjects(array &$glosses) {
+    private function aggregateStdObjects(array &$glosses)
+    {
 
         $collection = new Collection($glosses);
         $collection = $collection->groupBy('id');
@@ -55,6 +55,7 @@ class GlossAggregationHelper
 
             $gloss->translations = $items->unique('translation')->reduce(function ($carry, $item) {
                 $carry[] = new Translation(['translation' => $item->translation]);
+
                 return $carry;
             }, []);
             unset($gloss->translation);
@@ -63,11 +64,12 @@ class GlossAggregationHelper
                 if ($item->gloss_details_category !== null) {
                     $carry[] = new GlossDetail([
                         'category' => $item->gloss_details_category,
-                        'order'    => $item->gloss_details_order,
-                        'text'     => $item->gloss_details_text,
-                        'type'     => $item->gloss_details_type
+                        'order' => $item->gloss_details_order,
+                        'text' => $item->gloss_details_text,
+                        'type' => $item->gloss_details_type,
                     ]);
                 }
+
                 return $carry;
             }, []);
 
@@ -82,6 +84,7 @@ class GlossAggregationHelper
         });
 
         $glosses = $collection->values()->all();
+
         return count($glosses);
-    } 
+    }
 }

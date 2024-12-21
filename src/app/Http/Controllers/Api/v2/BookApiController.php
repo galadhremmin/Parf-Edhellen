@@ -2,24 +2,19 @@
 
 namespace App\Http\Controllers\Api\v2;
 
+use App\Helpers\StringHelper;
+use App\Http\Controllers\Abstracts\BookBaseController;
+use App\Models\GlossGroup;
+use App\Models\Language;
+use App\Models\Word;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-
-use App\Http\Controllers\Abstracts\BookBaseController;
-use App\Helpers\StringHelper;
-use App\Models\{
-    GlossGroup,
-    Language,
-    Word
-};
 
 class BookApiController extends BookBaseController
 {
     /**
-     * HTTP GET. Gets the word which corresponds to the specified ID. 
+     * HTTP GET. Gets the word which corresponds to the specified ID.
      *
-     * @param Request $request
-     * @param int $id
      * @return void
      */
     public function getWord(Request $request, int $id)
@@ -48,7 +43,6 @@ class BookApiController extends BookBaseController
     /**
      * HTTP GET. Gets all available gloss groups.
      *
-     * @param Request $request
      * @return void
      */
     public function getGroups(Request $request)
@@ -59,18 +53,17 @@ class BookApiController extends BookBaseController
     /**
      * HTTP POST. Performs a forward search among words for the specified word parameter.
      *
-     * @param Request $request
      * @return void
      */
-    public function findWord(Request $request) 
+    public function findWord(Request $request)
     {
         $this->validate($request, [
             'word' => 'required|string|max:64',
-            'max'  => 'sometimes|numeric|min:1'
+            'max' => 'sometimes|numeric|min:1',
         ]);
 
-        $normalizedWord = StringHelper::normalize( $request->input('word') );
-        $max = intval( $request->input('max') );
+        $normalizedWord = StringHelper::normalize($request->input('word'));
+        $max = intval($request->input('max'));
 
         $query = Word::where('normalized_word', 'like', $normalizedWord.'%');
 
@@ -84,7 +77,6 @@ class BookApiController extends BookBaseController
     /**
      * HTTP POST. Finds keywords for the specified word.
      *
-     * @param Request $request
      * @return void
      */
     public function find(Request $request)
@@ -95,17 +87,19 @@ class BookApiController extends BookBaseController
         // Create a key-value pair that maps group ID (integers) to a human readable, internationalized format.
         $locale = $request->getLocale();
         $searchGroups = Cache::remember('ed.search-groups.'.$locale, 60 * 60 /* = 1 hour */, function () {
-            $config   = config('ed.book_entities');
+            $config = config('ed.book_entities');
             $entities = array_values($config);
+
             return array_reduce($entities, function ($carry, $entity) {
                 $carry[intval($entity['group_id'])] = __('entities.'.$entity['intl_name']);
+
                 return $carry;
             }, []);
         });
 
         return [
-            'keywords'      => $keywords,
-            'search_groups' => $searchGroups
+            'keywords' => $keywords,
+            'search_groups' => $searchGroups,
         ];
     }
 
@@ -114,21 +108,19 @@ class BookApiController extends BookBaseController
      */
     public function entities(Request $request, int $groupId, $entityId = 0): array
     {
-        $entities = array();
+        $entities = [];
         if ($entityId !== 0) {
             $entities = $this->getEntity($groupId, $entityId);
         } else {
             $entities = $this->findMatchingEntities($request, $groupId);
         }
-        
+
         return $entities;
     }
 
     /**
      * HTTP GET. Gets the gloss corresponding to the specified ID.
      *
-     * @param Request $request
-     * @param int $glossId
      * @return void
      */
     public function get(Request $request, int $glossId)
@@ -144,6 +136,7 @@ class BookApiController extends BookBaseController
     public function getFromVersion(Request $request, int $id)
     {
         $gloss = $this->_glossRepository->getSpecificGlossVersion($id);
+
         return $this->_bookAdapter->adaptGlosses([$gloss], null, [], $gloss->word->word);
     }
 

@@ -2,13 +2,13 @@
 
 namespace App\Monitors;
 
-use App\Interfaces\{
-    IHealthMonitor,
-    IIdentifiesPhrases
-};
+use App\Interfaces\IHealthMonitor;
+use App\Interfaces\IIdentifiesPhrases;
 
 class IdentifiesPhrasesMonitor implements IHealthMonitor
 {
+    private IIdentifiesPhrases $_provider;
+
     public function __construct(IIdentifiesPhrases $provider)
     {
         $this->_provider = $provider;

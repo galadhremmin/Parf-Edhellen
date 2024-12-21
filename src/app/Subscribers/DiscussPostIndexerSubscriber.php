@@ -2,46 +2,13 @@
 
 namespace App\Subscribers;
 
-use Aws\Credentials\{
-    AssumeRoleCredentialProvider,
-    CredentialProvider,
-    InstanceProfileProvider
-};
-use Aws\Sts\StsClient;
-
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Mail;
-
-use App\Interfaces\IIdentifiesPhrases;
-use App\Repositories\{
-    SearchIndexRepository,
-    WordRepository
-};
-use App\Models\Initialization\Morphs;
-use App\Models\{
-    Account,
-    ForumPost,
-    ForumThread
-};
-use App\Events\{
-    ForumPostCreated,
-    ForumPostEdited
-};
+use App\Events\ForumPostCreated;
+use App\Events\ForumPostEdited;
 use App\Jobs\ProcessDiscussIndex;
+use App\Models\ForumPost;
 
 class DiscussPostIndexerSubscriber
 {
-    private $_analyzer;
-    private $_searchIndexRepository;
-    private $_wordRepository;
-
-    public function __construct(IIdentifiesPhrases $analyzer, SearchIndexRepository $searchIndexRepository, WordRepository $wordRepository)
-    {
-        $this->_analyzer = $analyzer;
-        $this->_searchIndexRepository = $searchIndexRepository;
-        $this->_wordRepository = $wordRepository;
-    }
-
     /**
      * Register the listeners for the subscriber.
      *
@@ -49,28 +16,23 @@ class DiscussPostIndexerSubscriber
      */
     public function subscribe($events)
     {
-        $events->listen(
-            ForumPostCreated::class,
-            self::class.'@onForumPostCreated'
-        );
-
-        $events->listen(
-            ForumPostEdited::class,
-            self::class.'@onForumPostEdited'
-        );
+        return [
+            ForumPostCreated::class => 'onForumPostCreated',
+            ForumPostEdited::class => 'onForumPostEdited',
+        ];
     }
 
-    public function onForumPostCreated(ForumPostCreated $event)
+    public function onForumPostCreated(ForumPostCreated $event): void
     {
         $this->update($event->post);
     }
 
-    public function onForumPostEdited(ForumPostEdited $event)
+    public function onForumPostEdited(ForumPostEdited $event): void
     {
         $this->update($event->post);
     }
 
-    private function update(ForumPost $post)
+    private function update(ForumPost $post): void
     {
         ProcessDiscussIndex::dispatch($post)->onQueue('indexing');
     }

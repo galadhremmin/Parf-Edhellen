@@ -9,6 +9,6 @@ class SentenceTranslation extends ModelBase
     use SoftDeletes;
 
     protected $fillable = [
-        'sentence_id', 'paragraph_number', 'sentence_number', 'translation'
+        'sentence_id', 'paragraph_number', 'sentence_number', 'translation',
     ];
 }

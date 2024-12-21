@@ -5,12 +5,10 @@ namespace App\Models;
 use App\Models\Versioning\GlossVersion;
 use App\Security\RoleConstants;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Support\Facades\{
-    Cache,
-    Cookie
-};
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Cookie;
 
 class Account extends Authenticatable implements Interfaces\IHasFriendlyName, MustVerifyEmail
 {
@@ -24,7 +22,7 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
     protected $fillable = [
         'nickname', 'email', 'identity', 'authorization_provider_id', 'created_at', 'provider_id',
         'profile', 'has_avatar', 'feature_background_url', 'is_deleted', 'password', 'is_passworded',
-        'is_master_account', 'master_account_id', 'email_verified_at'
+        'is_master_account', 'master_account_id', 'email_verified_at',
     ];
 
     /**
@@ -34,7 +32,7 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
      */
     protected $hidden = [
         'identity', 'authorization_provider_id', 'remember_token', 'email', 'is_deleted',
-        'password', 'is_passworded', 'is_master_account', 'master_account_id', 'email_verified_at'
+        'password', 'is_passworded', 'is_master_account', 'master_account_id', 'email_verified_at',
     ];
 
     public function authorization_provider()
@@ -118,15 +116,15 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
         );
     }
 
-    public function getFriendlyName() 
+    public function getFriendlyName()
     {
         return $this->nickname;
     }
 
-    public function memberOf(string $roleName) 
+    public function memberOf(string $roleName)
     {
         $user = $this;
-        $roles = Cache::remember('ed.rol.'.$user->id, 5 * 60 /* seconds */, function() use($user) {
+        $roles = Cache::remember('ed.rol.'.$user->id, 5 * 60 /* seconds */, function () use ($user) {
             return Role::forAccount($user)->pluck('name');
         });
 
@@ -142,7 +140,7 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
         $role = Role::firstOrCreate(['name' => $roleName]);
         AccountRoleRel::create([
             'account_id' => $this->id,
-            'role_id'    => $role->id
+            'role_id' => $role->id,
         ]);
 
         Cache::forget('ed.rol.'.$this->id);
@@ -154,7 +152,7 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
 
         AccountRoleRel::where([
             'account_id' => $this->id,
-            'role_id'    => $role->id
+            'role_id' => $role->id,
         ])->delete();
 
         Cache::forget('ed.rol.'.$this->id);
@@ -165,12 +163,12 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
         Cache::forget('ed.rol.'.$this->id);
     }
 
-    public function isRoot() 
+    public function isRoot()
     {
         return $this->memberOf(RoleConstants::Root);
     }
 
-    public function isAdministrator() 
+    public function isAdministrator()
     {
         return $this->memberOf(RoleConstants::Administrators) || $this->isRoot();
     }
@@ -208,29 +206,30 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
     /**
      * Determines whether the client has specifically requested to operate in incognito mode.
      *
-     * @return boolean
+     * @return bool
      */
-    public function isIncognito() 
+    public function isIncognito()
     {
         if (! $this->isAdministrator()) {
             return false;
         }
 
         $request = request();
+
         return $request !== null && $request->cookie('ed-usermode') === 'incognito';
     }
 
     /**
      * Registers a cookie specifying whether the client requests to operate in an incognito mode.
      *
-     * @param bool $v - whether to go incognito or not (=false).
+     * @param  bool  $v  - whether to go incognito or not (=false).
      * @return void
      */
     public function setIncognito(bool $v)
     {
         $request = request();
         if ($request !== null) {
-            $cookie = Cookie::make('ed-usermode', $v ? 'incognito' : 'visible', 60*24, null, null, 
+            $cookie = Cookie::make('ed-usermode', $v ? 'incognito' : 'visible', 60 * 24, null, null,
                 isset($_SERVER['HTTPS']) /* = secure */, true /* = HTTP only */);
             Cookie::queue($cookie);
         }

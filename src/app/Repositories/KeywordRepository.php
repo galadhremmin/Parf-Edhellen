@@ -3,15 +3,13 @@
 namespace App\Repositories;
 
 use App\Helpers\StringHelper;
-use App\Models\{ 
-    Keyword,
-    Gloss,
-    Language,
-    Sense, 
-    Word
-};
+use App\Models\Gloss;
+use App\Models\Keyword;
+use App\Models\Language;
+use App\Models\Sense;
+use App\Models\Word;
 
-class KeywordRepository 
+class KeywordRepository
 {
     public function createKeyword(Word $word, Sense $sense, ?Gloss $gloss = null, ?Language $keywordLanguage = null, //
         ?string $inflection = null, int $inflectionId = 0): void
@@ -24,20 +22,20 @@ class KeywordRepository
         $normalizedAccented = StringHelper::normalize($keywordString, true);
 
         $data = [
-            'keyword'            => $keywordString,
-            'word'               => $word->word,
-            'word_id'            => $word->id,
-            'sense_id'           => $sense->id,
-            'normalized_keyword' => $normalizedAccented
+            'keyword' => $keywordString,
+            'word' => $word->word,
+            'word_id' => $word->id,
+            'sense_id' => $sense->id,
+            'normalized_keyword' => $normalizedAccented,
         ];
 
         if ($gloss !== null) {
             $data['gloss_id'] = $gloss->id;
             $data['is_sense'] = 0;
-            $data['is_old']   = $gloss->gloss_group_id 
+            $data['is_old'] = $gloss->gloss_group_id
                 ? $gloss->gloss_group->is_old
                 : false;
-            
+
             if ($inflectionId) {
                 $data['sentence_fragment_id'] = $inflectionId;
             }
@@ -51,10 +49,10 @@ class KeywordRepository
         }
 
         $qualifyingFields = [
-            'keyword', 'word_id', 'sense_id', 'gloss_id', 'sentence_fragment_id', 'keyword_language_id'
+            'keyword', 'word_id', 'sense_id', 'gloss_id', 'sentence_fragment_id', 'keyword_language_id',
         ];
         $updateFields = [
-            'is_old', 'is_sense', 'normalized_keyword'
+            'is_old', 'is_sense', 'normalized_keyword',
         ];
         Keyword::upsert([$data], $qualifyingFields, $updateFields);
     }

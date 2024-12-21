@@ -2,33 +2,27 @@
 
 namespace App\Http\Controllers\Contributions;
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Abstracts\Controller;
-use Illuminate\Support\Collection;
-
 use App\Helpers\SentenceHelper;
+use App\Http\Controllers\Abstracts\Controller;
+use App\Http\Controllers\Traits\CanMapSentence;
+use App\Http\Controllers\Traits\CanValidateSentence;
+use App\Models\Contribution;
+use App\Models\GlossInflection;
+use App\Models\Sentence;
+use App\Models\SentenceFragment;
+use App\Models\SentenceTranslation;
 use App\Repositories\SentenceRepository;
-use App\Models\{
-    Contribution,
-    GlossInflection,
-    Inflection,
-    ModelBase,
-    Sentence,
-    SentenceFragment,
-    SentenceTranslation
-};
-use App\Http\Controllers\Traits\{
-    CanValidateSentence, 
-    CanMapSentence
-};
+use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class SentenceContributionController extends Controller implements IContributionController
 {
-    use CanValidateSentence, 
-        CanMapSentence;
+    use CanMapSentence,
+        CanValidateSentence;
 
-    private $_sentenceHelper;
-    private $_sentenceRepository;
+    private SentenceHelper $_sentenceHelper;
+
+    private SentenceRepository $_sentenceRepository;
 
     public function __construct(SentenceHelper $sentenceHelper, SentenceRepository $sentenceRepository)
     {
@@ -50,39 +44,38 @@ class SentenceContributionController extends Controller implements IContribution
         // based on the JSON payload that is stored on the contribution. This is a bit clumsy, but
         // it is currently the only way to visualize the sentence in the contribution preview view.
         $fragmentData = $this->createFragmentDataFromPayload($payload);
-        $speeches     = $this->_sentenceRepository->getSpeechesForSentenceFragments($fragmentData['fragments']);
-        $inflections  = $this->_sentenceRepository->getInflectionsForSentenceFragments($fragmentData['fragments']);
+        $speeches = $this->_sentenceRepository->getSpeechesForSentenceFragments($fragmentData['fragments']);
+        $inflections = $this->_sentenceRepository->getInflectionsForSentenceFragments($fragmentData['fragments']);
 
         $fragmentData = [
-            'inflections'              => $inflections,
-            'sentence'                 => $sentence,
-            'sentence_fragments'       => $fragmentData['fragments'],
-            'sentence_translations'    => $fragmentData['translations'],
+            'inflections' => $inflections,
+            'sentence' => $sentence,
+            'sentence_fragments' => $fragmentData['fragments'],
+            'sentence_translations' => $fragmentData['translations'],
             'sentence_transformations' => $fragmentData['transformations'],
-            'speeches'                 => $speeches
+            'speeches' => $speeches,
         ];
 
         $model = [
-            'fragmentData'     => $fragmentData,
-            'sentence'         => $sentence,
+            'fragmentData' => $fragmentData,
+            'sentence' => $sentence,
             'originalSentence' => $originalSentence,
-            'review'           => $contribution
+            'review' => $contribution,
         ];
+
         return new ViewModel($contribution, 'contribution.sentence._show', $model);
     }
 
     /**
      * HTTP GET. Opens a view for editing a sentence contribution.
      *
-     * @param Request $request
-     * @param Contribution $contribution
      * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
      */
     public function edit(Contribution $contribution, Request $request)
     {
         $payload = json_decode($contribution->payload, true);
         $this->makeMapCurrent($payload);
-        
+
         $sentenceData = $payload['sentence'];
         $sentence = new Sentence($sentenceData);
         $sentence->contribution_id = $contribution->id;
@@ -95,17 +88,16 @@ class SentenceContributionController extends Controller implements IContribution
 
         $fragmentData = $this->createFragmentDataFromPayload($payload);
         $model = array_merge($fragmentData, [
-            'review'   => $contribution,
-            'sentence' => $sentence
+            'review' => $contribution,
+            'sentence' => $sentence,
         ]);
 
         return view('contribution.sentence.edit', $model);
     }
-    
+
     /**
      * Shows a form for a new contribution.
      *
-     * @param Request $request
      * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
      */
     public function create(Request $request, int $entityId = 0)
@@ -118,7 +110,7 @@ class SentenceContributionController extends Controller implements IContribution
 
             $fragmentData = $this->createFragmentDataFromPayload($sentence);
             $model = array_merge($fragmentData, [
-                'sentence' => $sentence
+                'sentence' => $sentence,
             ]);
         }
 
@@ -131,9 +123,6 @@ class SentenceContributionController extends Controller implements IContribution
      * - 0 (default): sentence form
      * - 1:           fragments
      *
-     * @param Request $request
-     * @param int $id
-     * @param int $substepId
      * @return void
      */
     public function validateSubstep(Request $request, int $id = 0, int $substepId = 0)
@@ -148,20 +137,20 @@ class SentenceContributionController extends Controller implements IContribution
             case 2:
                 return $this->createTransformations($request);
         }
+
         return true;
     }
 
     /**
      * HTTP POST. Performs a full validation of the request's input parameters.
      *
-     * @param Request $request
-     * @param int $id
      * @return void
      */
     public function validateBeforeSave(Request $request, int $id = 0)
     {
         $this->validateSentenceInRequest($request, $id);
         $this->validateFragmentsInRequest($request);
+
         return true;
     }
 
@@ -170,25 +159,23 @@ class SentenceContributionController extends Controller implements IContribution
      * sentence payload located within the request's input parameters. Returns
      * the resulting entity.
      *
-     * @param Contribution $contribution
-     * @param Request $request
      * @return void
      */
     public function populate(Contribution $contribution, Request $request)
     {
-        $entity = $request->has('id') 
-            ? Sentence::findOrFail( intval($request->input('id')) ) 
+        $entity = $request->has('id')
+            ? Sentence::findOrFail(intval($request->input('id')))
             : new Sentence;
-        
+
         $map = $this->mapSentence($entity, $request);
 
         if (! $request->user()->isAdministrator()) {
             $entity->account_id = $contribution->account_id;
         }
-    
-        $contribution->payload     = json_encode($map);
-        $contribution->word        = $entity->name;
-        $contribution->sense       = 'text';
+
+        $contribution->payload = json_encode($map);
+        $contribution->word = $entity->name;
+        $contribution->sense = 'text';
         $contribution->language_id = $entity->language_id;
 
         return $entity;
@@ -198,7 +185,7 @@ class SentenceContributionController extends Controller implements IContribution
      * Disable change detection within the parent controller as the payload is always
      * populated by the `populate` method.
      */
-    function disableChangeDetection(): bool
+    public function disableChangeDetection(): bool
     {
         return true;
     }
@@ -208,8 +195,6 @@ class SentenceContributionController extends Controller implements IContribution
      * Approves the specified contributions by transforming it into a sentence entity.
      * The contribution's _sentence_id_ property is assigned the resulting entity's ID.
      *
-     * @param Contribution $contribution
-     * @param Request $request
      * @return void
      */
     public function approve(Contribution $contribution, Request $request): int
@@ -220,7 +205,7 @@ class SentenceContributionController extends Controller implements IContribution
         // Is the proposed contribution a modification of an existing sentence entity?
         $sentence = null;
         if (isset($map['sentence']['id'])) {
-            $sentence = Sentence::find( intval($map['sentence']['id']) );
+            $sentence = Sentence::find(intval($map['sentence']['id']));
             if ($sentence) {
                 $sentence->fill($map['sentence']);
             }
@@ -259,10 +244,10 @@ class SentenceContributionController extends Controller implements IContribution
     {
         $this->validateFragmentsInRequest($request, false);
         $suggestionMap = $request->validate([
-            'suggest_for_language_id' => 'sometimes|numeric|exists:languages,id'
+            'suggest_for_language_id' => 'sometimes|numeric|exists:languages,id',
         ]);
 
-        $sentence = new Sentence();
+        $sentence = new Sentence;
         $fragmentsMap = $this->mapSentenceFragments($sentence, $request);
         $transformations = $this->_sentenceHelper->buildSentences($fragmentsMap['fragments']);
         $suggestions = [];
@@ -273,21 +258,21 @@ class SentenceContributionController extends Controller implements IContribution
         }
 
         return [
-            'suggestions'     => (object) $suggestions,
-            'transformations' => $transformations
+            'suggestions' => (object) $suggestions,
+            'transformations' => $transformations,
         ];
     }
 
     /**
      * Transforms the specified payload into a view object, ready to be JSON-serialized.
      *
-     * @param \stdClass|Sentence $payload
+     * @param  \stdClass|Sentence  $payload
      * @return array
      */
     private function createFragmentDataFromPayload($payload)
     {
         if ($payload instanceof Sentence) {
-            $fragments    = $payload->sentence_fragments;
+            $fragments = $payload->sentence_fragments;
             $translations = $payload->sentence_translations;
 
             foreach ($fragments as $fragment) {
@@ -295,8 +280,8 @@ class SentenceContributionController extends Controller implements IContribution
             }
 
         } else {
-            $fragments = new Collection();
-            $translations = new Collection();
+            $fragments = new Collection;
+            $translations = new Collection;
 
             $i = 0;
             foreach ($payload['fragments'] as $fragmentData) {
@@ -311,7 +296,7 @@ class SentenceContributionController extends Controller implements IContribution
                         ? $payload['gloss_inflections'][$i]->orderBy('order')
                         : array_map(function ($i) {  // 20220831: maintained for backwards compatibility.
                             return [
-                                'inflection_id' => $i['inflection_id']
+                                'inflection_id' => $i['inflection_id'],
                             ];
                         }, $payload['inflections'][$i])
                 )->map(function ($i, $order) {
@@ -331,10 +316,11 @@ class SentenceContributionController extends Controller implements IContribution
         }
 
         $transformations = $this->_sentenceHelper->buildSentences($fragments);
+
         return [
-            'fragments'       => $fragments,
-            'translations'    => $translations,
-            'transformations' => $transformations
+            'fragments' => $fragments,
+            'translations' => $translations,
+            'transformations' => $transformations,
         ];
     }
 
@@ -343,16 +329,15 @@ class SentenceContributionController extends Controller implements IContribution
      * the API. This transition was made necessary after transitioning to version 2, when
      * a breaking change was introduced: _translations_ was renamed _glosses_.
      *
-     * @param array $map
      * @return void
      */
-    private function makeMapCurrent(array& $map)
+    private function makeMapCurrent(array &$map)
     {
         if (! isset($map['fragments'])) {
             abort(400, 'A strange payload, indeed. There are no fragments.');
         }
-        
-        $fragments =& $map['fragments'];
+
+        $fragments = &$map['fragments'];
         $inflections = $map['inflections'];
 
         if (count($fragments) !== count($inflections)) {
@@ -370,7 +355,7 @@ class SentenceContributionController extends Controller implements IContribution
         $i = 0;
         $numberOfFragments = count($fragments);
         while ($i < $numberOfFragments) {
-            $fragment =& $fragments[$i];
+            $fragment = &$fragments[$i];
 
             // transition from API version v1 to v2.
             if (isset($fragment['translation_id'])) {

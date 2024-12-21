@@ -3,19 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Events\EmailVerificationSent;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Repositories\SystemErrorRepository;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class AccountVerificationController extends Controller
 {
-    /**
-     * @var SystemErrorRepository
-     */
-    private $_systemErrorRepository;
+    private SystemErrorRepository $_systemErrorRepository;
 
     public function __construct(SystemErrorRepository $systemErrorRepository)
     {
@@ -34,7 +31,7 @@ class AccountVerificationController extends Controller
             $this->_systemErrorRepository->saveException($ex);
         }
 
-        return redirect()->route('account.security', [ 'verification' => 'sent' ]);
+        return redirect()->route('account.security', ['verification' => 'sent']);
     }
 
     public function confirmVerificationFromEmail(EmailVerificationRequest $request): RedirectResponse
@@ -48,7 +45,7 @@ class AccountVerificationController extends Controller
             event(new Verified($request->user()));
         }
 
-        return redirect()->intended(route('account.security', [ 'verification' => 'ok' ]));
+        return redirect()->intended(route('account.security', ['verification' => 'ok']));
     }
 
     public function verificationNotice(Request $request)

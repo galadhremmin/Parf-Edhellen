@@ -2,20 +2,12 @@
 
 namespace App\Subscribers;
 
+use App\Events\ContributionDestroyed;
+use App\Events\GlossDestroyed;
+use App\Events\SentenceDestroyed;
+use App\Models\ForumThread;
 use App\Models\Initialization\Morphs;
-use App\Models\{
-    Contribution,
-    ForumThread,
-    Gloss,
-    ModelBase,
-    Sentence,
-    SystemError
-};
-use App\Events\{
-    ContributionDestroyed,
-    SentenceDestroyed,
-    GlossDestroyed
-};
+use App\Models\ModelBase;
 
 class DiscussEventSubscriber
 {
@@ -26,26 +18,17 @@ class DiscussEventSubscriber
      */
     public function subscribe($events)
     {
-        $events->listen(
-            ContributionDestroyed::class,
-            self::class.'@onContributionDestroyed'
-        );
-
-        $events->listen(
-            SentenceDestroyed::class,
-            self::class.'@onSentenceDestroyed'
-        );
-
-        $events->listen(
-            GlossDestroyed::class,
-            self::class.'@onGlossDestroyed'
-        );
+        return [
+            ContributionDestroyed::class => 'onContributionDestroyed',
+            SentenceDestroyed::class => 'onSentenceDestroyed',
+            GlossDestroyed::class => 'onGlossDestroyed',
+        ];
     }
 
     /**
      * Handle the destruction of contributions.
      */
-    public function onContributionDestroyed(ContributionDestroyed $event) 
+    public function onContributionDestroyed(ContributionDestroyed $event): void
     {
         $this->deleteThread($event->contribution);
     }
@@ -53,7 +36,7 @@ class DiscussEventSubscriber
     /**
      * Handle the destruction of sentences.
      */
-    public function onSentenceDestroyed(SentenceDestroyed $event) 
+    public function onSentenceDestroyed(SentenceDestroyed $event): void
     {
         $this->deleteThread($event->sentence);
     }
@@ -61,28 +44,27 @@ class DiscussEventSubscriber
     /**
      * Handle the destruction of glosses.
      */
-    public function onGlossDestroyed(GlossDestroyed $event) 
+    public function onGlossDestroyed(GlossDestroyed $event): void
     {
-        $this->deleteThread($event->gloss, 
+        $this->deleteThread($event->gloss,
             $event->replacementGloss !== null ? $event->replacementGloss->id : 0
         );
     }
-    
+
     /**
      * Deletes the thread associated with the specified entity. If a replacement is specified,
      * the existing thread is either repurposed for that entity, alternatively its posts are
      * re-associated with the replacement's thread.
      *
-     * @param ModelBase $entity - the entity whose thread should be deleted
-     * @param int $replaceWithId - the ID for an entity which should replace the aforementioned entity.
-     * @return void
+     * @param  ModelBase  $entity  - the entity whose thread should be deleted
+     * @param  int  $replaceWithId  - the ID for an entity which should replace the aforementioned entity.
      */
-    private function deleteThread(ModelBase $entity, int $replaceWithId = 0)
+    private function deleteThread(ModelBase $entity, int $replaceWithId = 0): void
     {
         $morph = Morphs::getAlias($entity);
         $thread = ForumThread::where([
             ['entity_type', $morph],
-            ['entity_id', $entity->id]
+            ['entity_id', $entity->id],
         ])->first();
 
         if ($thread === null) {
@@ -96,11 +78,11 @@ class DiscussEventSubscriber
             // for the specified replacement entity.
             $existingThread = ForumThread::where([
                 ['entity_type', $morph],
-                ['entity_id', $replaceWithId]
+                ['entity_id', $replaceWithId],
             ])->first();
 
             if ($existingThread === null) {
-                // no such thread exists - so repurpose the thread for the deleted entity 
+                // no such thread exists - so repurpose the thread for the deleted entity
                 // to the replacement entity.
                 $thread->entity_id = $replaceWithId;
                 $thread->save();
@@ -111,7 +93,7 @@ class DiscussEventSubscriber
                 // an thread for the replacement entity exists. This is somewhat problematic,
                 // as there is likely already a discussion being conducted, and it would make
                 // little sense for us to "inject" the posts from the deleted entity's thread
-                // into an ongoing discussion, which is why the thread is deleted, along with 
+                // into an ongoing discussion, which is why the thread is deleted, along with
                 // its posts.
                 //
                 // The code beneath would inject the posts into the thread:

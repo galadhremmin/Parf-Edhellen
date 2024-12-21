@@ -2,20 +2,14 @@
 
 namespace App\Http\Controllers\Resources;
 
-use Illuminate\Http\Request;
-
 use App\Http\Controllers\Abstracts\Controller;
+use App\Models\Sentence;
 use App\Repositories\SentenceRepository;
-use App\Events\{
-    SentenceDestroyed
-};
-use App\Models\{
-    Sentence
-};
+use Illuminate\Http\Request;
 
 class SentenceController extends Controller
 {
-    protected $_sentenceRepository;
+    protected SentenceRepository $_sentenceRepository;
 
     public function __construct(SentenceRepository $sentenceRepository)
     {
@@ -25,18 +19,20 @@ class SentenceController extends Controller
     public function index(Request $request)
     {
         $sentences = $this->_sentenceRepository->getAllGroupedByLanguage();
+
         return view('admin.sentence.index', ['sentences' => $sentences]);
     }
 
     public function confirmDestroy(Request $request, int $id)
     {
         $sentence = Sentence::findOrFail($id);
+
         return view('admin.sentence.confirm-destroy', [
-            'sentence' => $sentence
+            'sentence' => $sentence,
         ]);
     }
 
-    public function destroy(Request $request, int $id) 
+    public function destroy(Request $request, int $id)
     {
         $sentence = Sentence::findOrFail($id);
         $this->_sentenceRepository->destroy($sentence);

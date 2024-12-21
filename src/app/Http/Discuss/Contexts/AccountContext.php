@@ -2,15 +2,14 @@
 
 namespace App\Http\Discuss\Contexts;
 
-use Illuminate\Database\Eloquent\Model;
-
-use App\Models\Account;
-use App\Http\Discuss\IDiscussContext;
 use App\Helpers\LinkHelper;
+use App\Http\Discuss\IDiscussContext;
+use App\Models\Account;
+use Illuminate\Database\Eloquent\Model;
 
 class AccountContext implements IDiscussContext
 {
-    private $_linkHelper;
+    private LinkHelper $_linkHelper;
 
     public function __construct(LinkHelper $linkHelper)
     {
@@ -55,7 +54,7 @@ class AccountContext implements IDiscussContext
     {
         return view('discuss.context._account', [
             'account' => $entity,
-            'address' => $this->resolve($entity)
+            'address' => $this->resolve($entity),
         ]);
     }
 }

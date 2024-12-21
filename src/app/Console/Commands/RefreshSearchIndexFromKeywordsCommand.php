@@ -1,16 +1,14 @@
 <?php
+
 namespace App\Console\Commands;
 
+use App\Models\Gloss;
+use App\Models\Keyword;
+use App\Repositories\SearchIndexRepository;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
-use App\Models\{
-    Gloss,
-    Keyword,
-};
-use App\Repositories\SearchIndexRepository;
-
-class RefreshSearchIndexFromKeywordsCommand extends Command 
+class RefreshSearchIndexFromKeywordsCommand extends Command
 {
     /**
      * The name and signature of the console command.
@@ -28,7 +26,7 @@ class RefreshSearchIndexFromKeywordsCommand extends Command
 
     /**
      * Search index repository used to refresh search keywords.
-     * 
+     *
      * @var SearchIndexRepository
      */
     private $_searchIndexRepository;
@@ -42,7 +40,7 @@ class RefreshSearchIndexFromKeywordsCommand extends Command
     {
         parent::__construct();
         $this->_searchIndexRepository = $searchIndexRepository;
-        $this->_logger = new ConsoleOutput();
+        $this->_logger = new ConsoleOutput;
     }
 
     /**
@@ -72,8 +70,8 @@ class RefreshSearchIndexFromKeywordsCommand extends Command
 
         $this->info(sprintf('There are %d keywords to rebuild the index from.', $numberOfKeywords));
 
-        $take = intval( $this->ask('How many keywords do you want to process?', 100000) );
-        $skip = intval( $this->ask('How many glosses do you want to skip?', 0) );
+        $take = intval($this->ask('How many keywords do you want to process?', 100000));
+        $skip = intval($this->ask('How many glosses do you want to skip?', 0));
 
         if (! $skip) {
             $skip = 0;
@@ -84,6 +82,7 @@ class RefreshSearchIndexFromKeywordsCommand extends Command
 
         if (! $this->confirm(sprintf('Do you want to skip %d keywords and process %d keywords (final keywords no %d)?', $skip, $take, $skip + $take))) {
             $this->info('Cancelling...');
+
             return 0;
         }
 
@@ -120,7 +119,7 @@ class RefreshSearchIndexFromKeywordsCommand extends Command
                         $this->_logger->writeln('   Gloss not found: '.$keyword->gloss_id);
 
                         // remove the invalid gloss reference from the Keyword
-                        $keyword->gloss_id = NULL;
+                        $keyword->gloss_id = null;
                         $keyword->save();
                         $count += 1;
                     }
@@ -133,7 +132,7 @@ class RefreshSearchIndexFromKeywordsCommand extends Command
                 continue;
             }
             $this->_logger->writeln('# Registering inflections for '.$gloss->id);
-            foreach($gloss->gloss_inflections as $inflection) {
+            foreach ($gloss->gloss_inflections as $inflection) {
                 if ($gloss->word->word !== $inflection->word) {
                     $this->_logger->writeln('   "'.$gloss->word->word.'" -> "'.$inflection->word.'".');
                     $this->_searchIndexRepository->createIndex($gloss, $gloss->word, $inflection->language, $inflection->word);
@@ -147,7 +146,7 @@ class RefreshSearchIndexFromKeywordsCommand extends Command
             $delete = $this->ask('Do you want to delete them?');
 
             if ($delete) {
-                
+
             }
         }
 

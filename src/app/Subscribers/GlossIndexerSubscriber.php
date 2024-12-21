@@ -2,29 +2,25 @@
 
 namespace App\Subscribers;
 
-use Illuminate\Support\Collection;
-use App\Repositories\{
-    SearchIndexRepository,
-    WordRepository
-};
-use App\Models\{
-    Gloss,
-    Language
-};
-use App\Events\{
-    GlossCreated,
-    GlossDestroyed,
-    GlossEdited,
-    GlossInflectionsCreated
-};
+use App\Events\GlossCreated;
+use App\Events\GlossDestroyed;
+use App\Events\GlossEdited;
+use App\Events\GlossInflectionsCreated;
 use App\Interfaces\ISystemLanguageFactory;
 use App\Jobs\ProcessSearchIndexCreation;
+use App\Models\Gloss;
+use App\Models\Language;
+use App\Repositories\SearchIndexRepository;
+use App\Repositories\WordRepository;
+use Illuminate\Support\Collection;
 
 class GlossIndexerSubscriber
 {
-    private $_searchIndexRepository;
-    private $_wordRepository;
-    private $_systemLanguage;
+    private SearchIndexRepository $_searchIndexRepository;
+
+    private WordRepository $_wordRepository;
+
+    private ?Language $_systemLanguage;
 
     public function __construct(SearchIndexRepository $searchIndexRepository, WordRepository $wordRepository,
         ISystemLanguageFactory $systemLanguageFactory)
@@ -41,42 +37,32 @@ class GlossIndexerSubscriber
      */
     public function subscribe($events)
     {
-        $events->listen(
-            GlossCreated::class,
-            self::class.'@onGlossCreated'
-        );
-        $events->listen(
-            GlossEdited::class,
-            self::class.'@onGlossEdited'
-        );
-        $events->listen(
-            GlossInflectionsCreated::class,
-            self::class.'@onGlossInflectionsCreated'
-        );
-        $events->listen(
-            GlossDestroyed::class,
-            self::class.'@onGlossDestroyed'
-        );
+        return [
+            GlossCreated::class => 'onGlossCreated',
+            GlossEdited::class => 'onGlossEdited',
+            GlossInflectionsCreated::class => 'onGlossInflectionsCreated',
+            GlossDestroyed::class => 'onGlossDestroyed',
+        ];
     }
 
-    public function onGlossCreated(GlossCreated $event)
+    public function onGlossCreated(GlossCreated $event): void
     {
         $this->update($event->gloss, $event->gloss->gloss_inflections);
     }
 
-    public function onGlossEdited(GlossEdited $event)
+    public function onGlossEdited(GlossEdited $event): void
     {
         $this->update($event->gloss, $event->gloss->gloss_inflections);
     }
 
-    public function onGlossInflectionsCreated(GlossInflectionsCreated $event)
+    public function onGlossInflectionsCreated(GlossInflectionsCreated $event): void
     {
         if ($event->incremental) {
             // Incremental are only adding to what's already there. This is useful when iteratively adding new indexes
             // although it comes with the downside that you have to manage the history (to avoid dead index links).
             $gloss = $event->gloss;
             foreach ($event->gloss_inflections as $inflection) {
-                ProcessSearchIndexCreation::dispatch($inflection->gloss, $gloss->word, $gloss->language, // 
+                ProcessSearchIndexCreation::dispatch($inflection->gloss, $gloss->word, $gloss->language, //
                     $inflection->word)->onQueue('indexing');
             }
         } else {
@@ -84,12 +70,12 @@ class GlossIndexerSubscriber
         }
     }
 
-    public function onGlossDestroyed(GlossDestroyed $event)
+    public function onGlossDestroyed(GlossDestroyed $event): void
     {
         $this->delete($event->gloss);
     }
 
-    private function update(Gloss $gloss, Collection $inflections)
+    private function update(Gloss $gloss, Collection $inflections): void
     {
         $this->delete($gloss);
 
@@ -117,7 +103,7 @@ class GlossIndexerSubscriber
         }
     }
 
-    private function delete(Gloss $gloss)
+    private function delete(Gloss $gloss): void
     {
         $this->_searchIndexRepository->deleteAll($gloss);
     }

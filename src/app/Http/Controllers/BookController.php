@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\SearchKeyword;
 use App\Http\Controllers\Abstracts\BookBaseController;
 use App\Http\Controllers\Traits\CanGetLanguage;
 use App\Models\GlossGroup;
+use App\Models\SearchKeyword;
 use App\Repositories\ValueObjects\ExternalEntitySearchValue;
 use App\Repositories\ValueObjects\SpecificEntitiesSearchValue;
+use Illuminate\Http\Request;
 
 class BookController extends BookBaseController
 {
@@ -33,7 +33,7 @@ class BookController extends BookBaseController
         $entities = $this->_searchIndexRepository->resolveIndexToEntities($groupId, $v);
 
         return view('book.page', [
-            'payload' => $entities
+            'payload' => $entities,
         ]);
     }
 
@@ -46,14 +46,14 @@ class BookController extends BookBaseController
         }
 
         return view('book.page', [
-            'payload' => $entities
+            'payload' => $entities,
         ]);
     }
 
     public function pageForExternalSource(Request $request, int $glossGroupId, string $glossGroupName, string $externalId)
     {
         $v = new ExternalEntitySearchValue([
-            'external_id' => $externalId
+            'external_id' => $externalId,
         ]);
         $entities = $this->_searchIndexRepository->resolveIndexToEntities(SearchKeyword::SEARCH_GROUP_DICTIONARY, $v);
         if (count($entities['entities']['sections']) === 0) {
@@ -68,13 +68,13 @@ class BookController extends BookBaseController
 
             return view('book.not-found-external', [
                 'external_url' => str_replace('{ExternalID}', $externalId, $glossGroup->external_link_format),
-                'gloss_group'  => $glossGroup,
-                'referer'      => $referer
+                'gloss_group' => $glossGroup,
+                'referer' => $referer,
             ]);
         }
 
         return view('book.page', [
-            'payload' => $entities
+            'payload' => $entities,
         ]);
     }
 
@@ -96,8 +96,9 @@ class BookController extends BookBaseController
         }
 
         $model = $this->_bookAdapter->adaptGlossVersions($glosses->getVersions(), $glosses->getLatestVersionId());
+
         return view('book.version', $model + [
-            'user' => $request->user()
+            'user' => $request->user(),
         ]);
     }
 }

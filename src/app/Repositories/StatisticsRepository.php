@@ -2,17 +2,15 @@
 
 namespace App\Repositories;
 
-use DB;
+use App\Models\Account;
+use App\Models\FlashcardResult;
+use App\Models\ForumPost;
+use App\Models\ForumPostLike;
+use App\Models\Gloss;
+use App\Models\Sentence;
+use App\Models\Word;
 use Carbon\Carbon;
-use App\Models\{ 
-    Account, 
-    FlashcardResult,
-    ForumPost, 
-    ForumPostLike, 
-    Gloss, 
-    Sentence, 
-    Word
-};
+use DB;
 
 class StatisticsRepository
 {
@@ -28,12 +26,12 @@ class StatisticsRepository
         $noOfPosts = ForumPost::count();
 
         return [
-            'noOfWords'      => $noOfWords,
-            'noOfGlosses'    => $noOfGlosses,
-            'noOfSentences'  => $noOfSentences,
-            'noOfThanks'     => $noOfThanks,
+            'noOfWords' => $noOfWords,
+            'noOfGlosses' => $noOfGlosses,
+            'noOfSentences' => $noOfSentences,
+            'noOfThanks' => $noOfThanks,
             'noOfFlashcards' => $noOfFlashcards,
-            'noOfPosts'      => $noOfPosts
+            'noOfPosts' => $noOfPosts,
         ];
     }
 
@@ -60,12 +58,12 @@ class StatisticsRepository
             ->count();
 
         return [
-            'noOfWords'      => $noOfWords,
-            'noOfGlosses'    => $noOfGlosses,
-            'noOfSentences'  => $noOfSentences,
-            'noOfThanks'     => $noOfThanks,
+            'noOfWords' => $noOfWords,
+            'noOfGlosses' => $noOfGlosses,
+            'noOfSentences' => $noOfSentences,
+            'noOfThanks' => $noOfThanks,
             'noOfFlashcards' => $noOfFlashcards,
-            'noOfPosts'      => $noOfPosts
+            'noOfPosts' => $noOfPosts,
         ];
     }
 
@@ -73,7 +71,7 @@ class StatisticsRepository
      * Gets a list of top contributors based on the number of glosses, sentences, contributions,
      * forum_posts, likes, and flashcard cards registered to their account.
      *
-     * @param int $numberOfResultsPerCategory the number of results to yield maximum per qualification category.
+     * @param  int  $numberOfResultsPerCategory  the number of results to yield maximum per qualification category.
      * @return mixed an object containing statistics.
      */
     public function getContributors(int $numberOfResultsPerCategory = 5)
@@ -89,10 +87,10 @@ class StatisticsRepository
         $data['contributions'] = $this->getTopContributors('contributions', $columns, $numberOfResultsPerCategory, function ($query) {
             return $query->where('contributions.is_approved', 1);
         });
-        
+
         // Likes are saved in a rather peculiar manner and must be extracted individually.
         $data['forum_post_likes'] = $this->getTopContributorsByLikes($columns, $numberOfResultsPerCategory);
-        
+
         // Retrieve a list of all categories, and their total count
         $data['categories'] = array_keys($data);
         $data['totals'] = $this->getNumberOfEntities($data['categories']);
@@ -100,14 +98,14 @@ class StatisticsRepository
         // Retrieve approved, latest glosses
         $data['glosses'] = $this->getTopContributors('glosses', $columns, $numberOfResultsPerCategory, function ($query) {
             return $query->where([
-                ['glosses.is_deleted', 0]
+                ['glosses.is_deleted', 0],
             ]);
         });
         $data['categories'][] = 'glosses';
         $data['totals']['glosses'] = Gloss::active()->count();
 
         // Retrieve growth over time (grouped by day) and involve the members previously identified as parth of the growth.
-        $data['growth'] = $this->getGrowthOverTime($data['categories'], Carbon::now()->addYears(-1), Carbon::now(), 
+        $data['growth'] = $this->getGrowthOverTime($data['categories'], Carbon::now()->addYears(-1), Carbon::now(),
             // create an array [category] => [account ids]
             array_reduce($data['categories'], function ($carry, $category) use ($data) {
                 $carry[$category] = array_unique(array_map(function ($v) {
@@ -121,39 +119,41 @@ class StatisticsRepository
         // Retrieve newest accounts
         $data['new_accounts'] = $this->getNewestAccounts($numberOfResultsPerCategory);
         $data['categories'][] = 'new_accounts';
-        
+
         // Retrieve user accounts for the accounts specified in the aforementioned result set.
-        $accountIds = array_reduce($data['categories'], function ($carry, $key) use($data) {
+        $accountIds = array_reduce($data['categories'], function ($carry, $key) use ($data) {
             foreach ($data[$key] as $account) {
                 if (! in_array($account->id, $carry)) {
                     $carry[] = $account->id;
                 }
             }
             sort($carry);
+
             return $carry;
         }, []);
 
         // Transform the array of accounts into an associative array, where the account ID is the key.
-        $data['accounts'] = count($accountIds) < 1 
-            ? [] 
+        $data['accounts'] = count($accountIds) < 1
+            ? []
             : Account::whereIn('id', $accountIds)->get()->reduce(function ($carry, $account) {
                 $carry[$account->id] = $account;
+
                 return $carry;
-            }, []); 
-        
+            }, []);
+
         return $data;
     }
 
     /**
      * Prefixes the specified array of columns with the specified table name.
      *
-     * @param array $columns an array with columns in the specified table name.
-     * @param string $tableName the name of the table, ie. the prefix.
+     * @param  array  $columns  an array with columns in the specified table name.
+     * @param  string  $tableName  the name of the table, ie. the prefix.
      * @return array
      */
     private function prefixColumnsWithTableName(array $columns, string $tableName)
     {
-        return array_map(function ($column) use($tableName) {
+        return array_map(function ($column) use ($tableName) {
             return $tableName.'.'.$column;
         }, $columns);
     }
@@ -161,13 +161,11 @@ class StatisticsRepository
     /**
      * Adds `count(*)` to the specified array of columns.
      *
-     * @param array $columns
-     * @param string $columnName
      * @return array
      */
     private function addCountToColumns(array $columns, string $columnName)
     {
-        return array_merge($columns, [ DB::raw('count(*) as '.$columnName) ]);
+        return array_merge($columns, [DB::raw('count(*) as '.$columnName)]);
     }
 
     /**
@@ -175,10 +173,6 @@ class StatisticsRepository
      * association in the specified table. The table must have the aforementioned column for
      * this method to be successful.
      *
-     * @param string $table
-     * @param array $columns
-     * @param integer $numberOfResults
-     * @param callable $where
      * @return array
      */
     private function getTopContributors(string $table, array $columns, int $numberOfResults, ?callable $where = null)
@@ -201,13 +195,12 @@ class StatisticsRepository
     /**
      * Gets the top recipient of likes.
      *
-     * @param array $columns
-     * @param integer $numberOfResults
      * @return array
      */
     private function getTopContributorsByLikes(array $columns, int $numberOfResults)
     {
         $columns = $this->prefixColumnsWithTableName($columns, 'accounts');
+
         return ForumPostLike::select($this->addCountToColumns($columns, 'number_of_items'))
             ->join('forum_posts', 'forum_posts.id', '=', 'forum_post_likes.forum_post_id')
             ->join('accounts', 'accounts.id', '=', 'forum_posts.account_id')
@@ -220,11 +213,10 @@ class StatisticsRepository
 
     /**
      * Gets the most recently created accounts.
-     * 
-     * @param int $numberOfResults 
+     *
      * @return array
      */
-    private function getNewestAccounts(int $numberOfResults) 
+    private function getNewestAccounts(int $numberOfResults)
     {
         return Account::orderBy('id', 'desc')
             ->select('id')
@@ -235,8 +227,7 @@ class StatisticsRepository
 
     /**
      * Gets the number of entities within the specified tables.
-     * 
-     * @param array $tableNames
+     *
      * @return array
      */
     private function getNumberOfEntities(array $tableNames)
@@ -251,10 +242,8 @@ class StatisticsRepository
 
     /**
      * Gets growth over the specified time period. Returns an array with `date` and `number_of_items`.
-     * @param array $tableNames
-     * @param Carbon $from
-     * @param Carbom $to
-     * @param array $accountsPerTable
+     *
+     * @param  Carbom  $to
      * @return array
      */
     private function getGrowthOverTime(array $tableNames, Carbon $from, Carbon $to, array $accountsPerTable = [])
@@ -266,11 +255,11 @@ class StatisticsRepository
                 ->groupBy(DB::raw('DATE(created_at)'))
                 ->where([
                     ['created_at', '>=', $from],
-                    ['created_at', '<=', $to] 
+                    ['created_at', '<=', $to],
                 ])
                 ->orderBy('created_at')
                 ->get();
-            
+
             $accounts = isset($accountsPerTable[$tableName]) ? $accountsPerTable[$tableName] : [];
             if (count($accounts) > 0) {
                 $growthPerAccountAndDay = DB::table($tableName)
@@ -279,18 +268,19 @@ class StatisticsRepository
                     ->groupBy(DB::raw('DATE('.$tableName.'.created_at)'), 'accounts.nickname')
                     ->where([
                         [$tableName.'.created_at', '>=', $from],
-                        [$tableName.'.created_at', '<=', $to] 
+                        [$tableName.'.created_at', '<=', $to],
                     ])
                     ->whereIn($tableName.'.account_id', $accounts)
                     ->orderBy($tableName.'.created_at')
                     ->get()
                     ->groupBy('date');
-                
+
                 $totalGrowthPerDay = $totalGrowth->reduce(function ($carry, $value) {
                     $carry[$value->date] = &$value;
+
                     return $carry;
                 }, []);
-                
+
                 foreach ($growthPerAccountAndDay as $date => $growthByAccounts) {
                     $contextualGrowth = &$totalGrowthPerDay[$date];
                     foreach ($growthByAccounts as $growth) {

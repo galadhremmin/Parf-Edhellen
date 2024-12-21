@@ -2,35 +2,37 @@
 
 namespace App\Http\Middleware;
 
-use \Illuminate\Auth\AuthenticationException;
-use \Illuminate\Contracts\Foundation\Application;
-use \Illuminate\Http\Request;
 use Closure;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Http\Request;
 
 class EnsureHttpsAndWww
 {
-    protected $_appUrl;
-    protected $_expects;
-    protected $_expectsLength;
-    protected $_isSecure;
+    protected string $_appUrl;
 
-    public function __construct(Application $app) {
+    protected string $_expects;
+
+    protected int $_expectsLength;
+
+    protected bool $_isSecure;
+
+    public function __construct(Application $app)
+    {
         $appUrl = config('app.url');
         $parts = parse_url($appUrl);
 
         $urlLength = strlen($appUrl);
-        $this->_appUrl        = $urlLength > 0 && $appUrl[$urlLength - 1] === '/' 
+        $this->_appUrl = $urlLength > 0 && $appUrl[$urlLength - 1] === '/'
             ? substr($appUrl, 0, $urlLength - 1) : $appUrl;
-        $this->_expects       = $parts['scheme'] . '://' . $parts['host'];
+        $this->_expects = $parts['scheme'].'://'.$parts['host'];
         $this->_expectsLength = strlen($this->_expects);
-        $this->_isSecure      = $parts['scheme'] === 'https';
-    } 
+        $this->_isSecure = $parts['scheme'] === 'https';
+    }
 
     /**
      * Ensures that the request is handled over HTTPS.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @param  string  $role
      * @return mixed
      */
@@ -43,16 +45,16 @@ class EnsureHttpsAndWww
             $path = $request->path();
             $correctUrl = $this->_appUrl.(strlen($path) > 0 && $path[0] !== '/' ? '/' : '').$path;
 
-            if (!$this->_isSecure) {
+            if (! $this->_isSecure) {
                 return redirect()->to($correctUrl);
             }
 
             // for Proxies
             Request::setTrustedProxies([$request->getClientIp()], Request::getTrustedHeaderSet());
+
             return redirect()->secure($correctUrl);
         }
 
         return $next($request);
     }
-
 }

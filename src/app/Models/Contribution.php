@@ -3,36 +3,36 @@
 namespace App\Models;
 
 use App\Models\Initialization\Morphs;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Contribution extends ModelBase implements Interfaces\IHasFriendlyName
 {
-    use Traits\HasAccount;
     use SoftDeletes;
+    use Traits\HasAccount;
 
-    protected $fillable = [ 
-        'account_id', 
-        'language_id', 
+    protected $fillable = [
+        'account_id',
+        'language_id',
         'gloss_id',
         'sentence_id',
         'word',
-        'payload', 
-        'keywords', 
+        'payload',
+        'keywords',
         'notes',
         'sense',
         'type',
         'approved_as_entity_id',
         'dependent_on_contribution_id',
-        'reviewed_by_account_id'
+        'reviewed_by_account_id',
     ];
+
     protected $dates = [
         'created_at',
         'updated_at',
-        'date_reviewed'
+        'date_reviewed',
     ];
-    
-    public function reviewed_by() 
+
+    public function reviewed_by()
     {
         return $this->belongsTo(Account::class, 'reviewed_by_account_id');
     }
@@ -40,6 +40,7 @@ class Contribution extends ModelBase implements Interfaces\IHasFriendlyName
     public function entity()
     {
         $modelName = Morphs::getMorphedModel($this->type);
+
         return $this->belongsTo($modelName, 'approved_as_entity_id', 'id');
     }
 
@@ -63,7 +64,7 @@ class Contribution extends ModelBase implements Interfaces\IHasFriendlyName
         return $query->where('account_id', $accountId);
     }
 
-    public function getFriendlyName() 
+    public function getFriendlyName()
     {
         return $this->word;
     }

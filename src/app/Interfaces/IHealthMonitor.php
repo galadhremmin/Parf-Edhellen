@@ -4,5 +4,5 @@ namespace App\Interfaces;
 
 interface IHealthMonitor
 {
-    function testOnce(): ?\Exception;
+    public function testOnce(): ?\Exception;
 }

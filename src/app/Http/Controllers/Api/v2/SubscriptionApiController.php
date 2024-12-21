@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers\Api\v2;
 
-use Illuminate\Http\Request;
-
 use App\Http\Controllers\Abstracts\Controller;
 use App\Models\Initialization\Morphs;
 use App\Repositories\MailSettingRepository;
+use Illuminate\Http\Request;
 
-class SubscriptionApiController extends Controller 
+class SubscriptionApiController extends Controller
 {
-    private $_mailSettingRepository;
+    private MailSettingRepository $_mailSettingRepository;
 
     public function __construct(MailSettingRepository $mailSettingRepository)
     {
@@ -20,25 +19,27 @@ class SubscriptionApiController extends Controller
     public function getSubscriptionForEntity(Request $request, string $morph, int $id)
     {
         $entity = $this->loadEntity($morph, $id);
+
         return [
-            'subscribed' => $this->_mailSettingRepository->getOverride($request->user()->id, $entity) ?? false
+            'subscribed' => $this->_mailSettingRepository->getOverride($request->user()->id, $entity) ?? false,
         ];
     }
 
     public function subscribeToEntity(Request $request, string $morph, int $id)
     {
         $entity = $this->loadEntity($morph, $id);
+
         return [
-            'subscribed' => $this->_mailSettingRepository->setNotifications($request->user()->id, $entity, true)
+            'subscribed' => $this->_mailSettingRepository->setNotifications($request->user()->id, $entity, true),
         ];
     }
 
     public function unsubscribeFromEntity(Request $request, string $morph, int $id)
     {
         $entity = $this->loadEntity($morph, $id);
-        
+
         return [
-            'subscribed' => $this->_mailSettingRepository->setNotifications($request->user()->id, $entity, null)
+            'subscribed' => $this->_mailSettingRepository->setNotifications($request->user()->id, $entity, null),
         ];
     }
 

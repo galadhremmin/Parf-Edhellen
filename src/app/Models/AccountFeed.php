@@ -12,11 +12,13 @@ class AccountFeed extends ModelBase
     use Traits\HasAccount;
 
     protected $fillable = ['account_id', 'happened_at', 'content_type', 'content_id', 'audit_trail_action_id', 'audit_trail_id'];
+
     protected $casts = [
         Model::CREATED_AT => 'datetime',
         Model::UPDATED_AT => 'datetime',
-        'happened_at'     => 'datetime'
+        'happened_at' => 'datetime',
     ];
+
     protected $hidden = ['created_at', 'updated_at'];
 
     public function content(): MorphTo

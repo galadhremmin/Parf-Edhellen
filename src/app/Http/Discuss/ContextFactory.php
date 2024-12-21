@@ -6,12 +6,11 @@ use App\Models\Initialization\Morphs;
 
 class ContextFactory
 {
-    private static $_cache = [];
+    private static array $_cache = [];
 
     /**
      * Creates an instance of IDiscussContext for the specified morph alias.
      *
-     * @param string $morph
      * @return \App\Http\Discuss\IDiscussContext
      */
     public function create(string $morph)

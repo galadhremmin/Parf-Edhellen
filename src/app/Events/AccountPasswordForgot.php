@@ -9,7 +9,8 @@ class AccountPasswordForgot
 {
     use SerializesModels;
 
-    public $account;
+    public Account $account;
+
     public function __construct(Account $account)
     {
         $this->account = $account;

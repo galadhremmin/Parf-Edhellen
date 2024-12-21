@@ -2,18 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 use App\Http\Controllers\Abstracts\Controller;
+use App\Models\MailSetting;
+use App\Models\MailSettingOverride;
 use App\Repositories\MailSettingRepository;
-use App\Models\{ 
-    MailSetting,
-    MailSettingOverride
-};
+use Illuminate\Http\Request;
 
 class AccountNotificationController extends Controller
 {
-    private $_mailSettingRepository;
+    private MailSettingRepository $_mailSettingRepository;
 
     public function __construct(MailSettingRepository $mailSettingRepository)
     {
@@ -24,18 +21,18 @@ class AccountNotificationController extends Controller
     {
         $user = $request->user();
         $settings = MailSetting::firstOrCreate([
-            'account_id' => $user->id
+            'account_id' => $user->id,
         ]);
         $overrides = MailSettingOverride::forAccount($user)
             ->with('entity')->get();
         $events = $this->getEvents();
 
         return view('account.notification.index', [
-            'settings'  => $settings,
+            'settings' => $settings,
             'overrides' => $overrides,
-            'events'    => $events,
-            'email'     => $user->email,
-            'user'      => $user
+            'events' => $events,
+            'email' => $user->email,
+            'user' => $user,
         ]);
     }
 
@@ -55,7 +52,7 @@ class AccountNotificationController extends Controller
         }
 
         MailSetting::firstOrCreate([
-            'account_id' => $request->user()->id
+            'account_id' => $request->user()->id,
         ])->update($events);
 
         return redirect()->route('notifications.index');
@@ -68,7 +65,7 @@ class AccountNotificationController extends Controller
         MailSettingOverride::where([
             'entity_type' => $entityType,
             'entity_id' => $entityId,
-            'account_id' => $accountId
+            'account_id' => $accountId,
         ])->delete();
 
         return redirect()->route('notifications.index');
@@ -77,6 +74,7 @@ class AccountNotificationController extends Controller
     public function handleCancellationToken(Request $request, string $token)
     {
         $ok = is_string($token) && $this->_mailSettingRepository->handleCancellationToken($token);
+
         return view($ok ? 'account.notification.override-ok' : 'account.notification.override-error');
     }
 
@@ -86,7 +84,7 @@ class AccountNotificationController extends Controller
             'forum_post_created',
             'forum_contribution_approved',
             'forum_contribution_rejected',
-            'forum_posted_on_profile'
+            'forum_posted_on_profile',
         ];
     }
 }

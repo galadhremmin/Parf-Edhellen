@@ -2,25 +2,23 @@
 
 namespace App\Subscribers;
 
-use Illuminate\Support\Facades\Mail;
-
+use App\Events\ForumPostCreated;
+use App\Mail\ForumPostCreatedMail;
+use App\Mail\ForumPostOnProfileMail;
+use App\Models\Account;
+use App\Models\ForumPost;
 use App\Repositories\MailSettingRepository;
-use App\Models\Initialization\Morphs;
-use App\Models\{
-    Account,
-    ForumPost,
-    ForumThread
-};
-use App\Events\{
-    ForumPostCreated
-};
-use App\Mail\{
-    ForumPostCreatedMail,
-    ForumPostOnProfileMail
-};
+use Illuminate\Support\Facades\Mail;
 
 class DiscussMailEventSubscriber
 {
+    private MailSettingRepository $_mailSettingRepository;
+
+    public function __construct(MailSettingRepository $mailSettingRepository)
+    {
+        $this->_mailSettingRepository = $mailSettingRepository;
+    }
+
     /**
      * Register the listeners for the subscriber.
      *
@@ -28,20 +26,15 @@ class DiscussMailEventSubscriber
      */
     public function subscribe($events)
     {
-        if (config('app.env') !== 'production') {
-            return;
-        }
-
-        $events->listen(
-            ForumPostCreated::class,
-            self::class.'@onForumPostCreated'
-        );
+        return [
+            ForumPostCreated::class => 'onForumPostCreated',
+        ];
     }
 
     /**
      * Notify subscribers of the new post.
      */
-    public function onForumPostCreated(ForumPostCreated $event) 
+    public function onForumPostCreated(ForumPostCreated $event): void
     {
         $accountIds = ForumPost::where('forum_thread_id', $event->post->forum_thread_id)
             ->where('account_id', '<>', $event->accountId)
@@ -50,7 +43,7 @@ class DiscussMailEventSubscriber
             ->get()
             ->pluck('account_id')
             ->toArray();
-        
+
         $entity = $event->post->forum_thread->entity;
         if ($entity instanceof Account) {
             // The associated entity is in fact someone's profile, which should trigger a different event.
@@ -59,53 +52,48 @@ class DiscussMailEventSubscriber
 
             // The associated profile owner should not receive two notifications.
             if ($notified) {
-                $accountIds = array_filter($accountIds, function ($id) use($entity) {
+                $accountIds = array_filter($accountIds, function ($id) use ($entity) {
                     return $id !== $entity->id;
                 });
             }
 
-        } else if ($entity->hasAttribute('account_id') && ! in_array($entity->account_id, $accountIds)) {
+        } elseif ($entity->hasAttribute('account_id') && ! in_array($entity->account_id, $accountIds)) {
             // Also inform the originator of the affected entity of the new post.
             $accountIds[] = $entity->account_id;
         }
-        
-        $recipients = $this->repository()->qualify($accountIds, 'forum_post_created', $event->post->forum_thread);
+
+        $recipients = $this->_mailSettingRepository->qualify($accountIds, 'forum_post_created', $event->post->forum_thread);
         if (! $recipients->count()) {
             return;
         }
-        
+
         foreach ($recipients as $recipient) {
-            $cancellationToken = $this->repository()->generateCancellationToken($recipient->id, $event->post->forum_thread);
+            $cancellationToken = $this->_mailSettingRepository->generateCancellationToken($recipient->id, $event->post->forum_thread);
             $mail = new ForumPostCreatedMail($cancellationToken, $event->post);
-            
+
             Mail::to($recipient->email)->queue($mail);
         }
     }
 
-    private function notifyNewPostOnProfile(int $accountId, ForumPostCreated $event)
+    private function notifyNewPostOnProfile(int $accountId, ForumPostCreated $event): bool
     {
         // Is the recipient the same as the sender, i.e. is the author writing on their own wall?
         if ($accountId === $event->accountId) {
             return true;
         }
 
-        $recipients = $this->repository()->qualify([$accountId], 'forum_posted_on_profile', $event->post->forum_thread);
+        $recipients = $this->_mailSettingRepository->qualify([$accountId], 'forum_posted_on_profile', $event->post->forum_thread);
         if (! $recipients->count()) {
             return false;
         }
-        
+
         foreach ($recipients as $recipient) {
-            $cancellationToken = $this->repository()->generateCancellationToken($recipient->id, $event->post->forum_thread);
+            $cancellationToken = $this->_mailSettingRepository->generateCancellationToken($recipient->id, $event->post->forum_thread);
             $mail = new ForumPostOnProfileMail($cancellationToken, $event->post);
-            
+
             Mail::to($recipient->email)->queue($mail);
         }
 
         return true;
-    }
-
-    private function repository()
-    {
-        return resolve(MailSettingRepository::class);
     }
 }

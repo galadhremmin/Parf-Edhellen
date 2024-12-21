@@ -6,16 +6,17 @@ use App\Models\ModelBase;
 
 class TranslationVersion extends ModelBase
 {
-    protected $fillable = [ 
-        'gloss_version_id', 'translation'
+    protected $fillable = [
+        'gloss_version_id', 'translation',
     ];
+
     protected $hidden = [
         'gloss_version_id',
         'created_at',
-        'updated_at' 
+        'updated_at',
     ];
 
-    public function gloss() 
+    public function gloss()
     {
         return $this->belongsTo(GlossVersion::class);
     }

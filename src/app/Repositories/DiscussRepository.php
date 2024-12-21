@@ -2,70 +2,55 @@
 
 namespace App\Repositories;
 
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Support\Collection;
-use Illuminate\Auth\AuthManager;
-
+use App\Events\ForumPostCreated;
+use App\Events\ForumPostDeleted;
+use App\Events\ForumPostEdited;
+use App\Events\ForumPostLikeCreated;
+use App\Helpers\StringHelper;
+use App\Http\Discuss\ContextFactory;
+use App\Models\Account;
+use App\Models\ForumDiscussion;
+use App\Models\ForumGroup;
+use App\Models\ForumPost;
+use App\Models\ForumPostLike;
+use App\Models\ForumThread;
+use App\Models\Initialization\Morphs;
+use App\Models\ModelBase;
+use App\Repositories\ValueObjects\ForumGroupsValue;
+use App\Repositories\ValueObjects\ForumPostsInThreadValue;
+use App\Repositories\ValueObjects\ForumThreadFilterValue;
+use App\Repositories\ValueObjects\ForumThreadForEntityValue;
+use App\Repositories\ValueObjects\ForumThreadMetadataValue;
+use App\Repositories\ValueObjects\ForumThreadsForPostsValue;
+use App\Repositories\ValueObjects\ForumThreadsInGroupValue;
+use App\Repositories\ValueObjects\ForumThreadValue;
+use BadMethodCallException;
+use Carbon\Carbon;
 use DB;
 use Exception;
-use BadMethodCallException;
-
-use App\Http\Discuss\{
-    ContextFactory
-};
-use App\Models\Initialization\Morphs;
-use App\Helpers\StringHelper;
-use App\Events\{
-    ForumPostCreated,
-    ForumPostDeleted,
-    ForumPostEdited,
-    ForumPostLikeCreated
-};
-use App\Models\{
-    Account,
-    ForumDiscussion,
-    ForumGroup,
-    ForumThread,
-    ForumPost,
-    ForumPostLike,
-    ModelBase
-};
-use App\Repositories\ValueObjects\{
-    ForumGroupsValue,
-    ForumPostsInThreadValue,
-    ForumThreadFilterValue,
-    ForumThreadForEntityValue,
-    ForumThreadMetadataValue,
-    ForumThreadsForPostsValue,
-    ForumThreadsInGroupValue,
-    ForumThreadValue
-};
-use Carbon\Carbon;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Auth\AuthManager;
+use Illuminate\Support\Collection;
 
 class DiscussRepository
 {
-    /**
-     * @var ContextFactory
-     */
-    private $_contextFactory;
-    /**
-     * @var AuthManager
-     */
-    private $_authManager;
+    private ContextFactory $_contextFactory;
+
+    private AuthManager $_authManager;
 
     public function __construct(ContextFactory $contextFactory, AuthManager $authManager)
     {
         $this->_contextFactory = $contextFactory;
-        $this->_authManager    = $authManager;
+        $this->_authManager = $authManager;
     }
 
     /**
      * Gets an associative array with the following keys:
      * * `groups`: all available groups in the system.
-     * 
+     *
      * @return ForumGroupsValue
      */
-    public function getGroups() 
+    public function getGroups()
     {
         $groups = ForumGroup::orderBy('name') //
             ->orderBy('name')
@@ -78,13 +63,13 @@ class DiscussRepository
         return new ForumGroupsValue([
             'groups' => $groups,
             'group_categories' => $groups->keys(),
-            'number_of_threads' => $numberOfThreads
+            'number_of_threads' => $numberOfThreads,
         ]);
     }
 
     /**
      * Gets active account contributors in the specified groups.
-     * 
+     *
      * @return Collection
      */
     public function getAccountsInGroup(Collection $groups)
@@ -105,12 +90,13 @@ class DiscussRepository
             ->get()
             ->mapToDictionary(function ($a) {
                 $account = new Account([
-                    'nickname'   => $a->nickname,
+                    'nickname' => $a->nickname,
                     'has_avatar' => $a->has_avatar,
                 ]);
                 $account->id = $a->account_id; // `id` is not fillable
+
                 return [
-                    $a->forum_group_id => $account
+                    $a->forum_group_id => $account,
                 ];
             });
 
@@ -121,12 +107,12 @@ class DiscussRepository
      * Gets an associative array with the following keys:
      * * `group`: the ForumGroup with the corresponding `$groupId`.
      *
-     * @param integer $groupId
      * @return ForumGroup
      */
     public function getGroup(int $groupId)
     {
         $group = ForumGroup::findOrFail($groupId);
+
         return $group;
     }
 
@@ -138,16 +124,16 @@ class DiscussRepository
      * * `no_of_pages`: number of pages for the pagination of threads.
      * * `pages`: an array of pages from 0 to `no_of_pages - 1`.
      *
-     * @param ForumGroup $group
-     * @param Account $account
-     * @param integer $pageNumber
+     * @param  ForumGroup  $group
+     * @param  Account  $account
+     * @param  int  $pageNumber
      * @return ForumThreadsInGroupValue
      */
     public function getThreadDataInGroup(ForumThreadFilterValue $arguments)
     {
-        $group       = $arguments->getForumGroup();
-        $account     = $arguments->getAccount();
-        $pageNumber  = $arguments->getPageNumber();
+        $group = $arguments->getForumGroup();
+        $account = $arguments->getAccount();
+        $pageNumber = $arguments->getPageNumber();
         $filterNames = $arguments->getFilterNames();
 
         $this->resolveAccount($account);
@@ -159,20 +145,20 @@ class DiscussRepository
         }
 
         if (! empty($filterNames)) {
-            $threads = $threads->where(function ($q) use($filterNames) {
+            $threads = $threads->where(function ($q) use ($filterNames) {
                 $first = true;
                 foreach ($filterNames as $filterName) {
                     $criteria = [];
 
                     switch ($filterName) {
                         case 'unanswered':
-                            $criteria = [ 'is_empty', true ];
+                            $criteria = ['is_empty', true];
                             break;
                         case 'sticky':
-                            $criteria = [ 'is_sticky', true ];
+                            $criteria = ['is_sticky', true];
                             break;
                         case 'default':
-                            $criteria = [ 'is_empty', false ];
+                            $criteria = ['is_empty', false];
                             break;
                     }
 
@@ -198,18 +184,18 @@ class DiscussRepository
             ->get();
 
         // Filter out threads that the user is not authorized to see.
-        $threads = $threads->filter(function ($thread) use($account) {
+        $threads = $threads->filter(function ($thread) use ($account) {
             return $this->checkThreadAuthorization($account, $thread);
         });
 
         $pages = $this->createPageArray($noOfPages, $currentPage);
 
         return new ForumThreadsInGroupValue([
-            'current_page'  => $currentPage,
-            'group'         => $group,
-            'threads'       => $threads,
-            'no_of_pages'   => $noOfPages,
-            'pages'         => $pages
+            'current_page' => $currentPage,
+            'group' => $group,
+            'threads' => $threads,
+            'no_of_pages' => $noOfPages,
+            'pages' => $pages,
         ]);
     }
 
@@ -218,7 +204,6 @@ class DiscussRepository
      * * `context`: the context associated with the thread with the corresponding `$threadId`.
      * * `thread`: the thread with the corresponding `$threadId`.
      *
-     * @param integer $threadId
      * @return ForumThreadValue
      */
     public function getThreadData(int $threadId)
@@ -227,9 +212,9 @@ class DiscussRepository
         $context = $this->_contextFactory->create($thread->entity_type);
 
         return new ForumThreadValue([
-            'context'   => $context,
-            'thread'    => $thread,
-            'thread_id' => $threadId
+            'context' => $context,
+            'thread' => $thread,
+            'thread_id' => $threadId,
         ]);
     }
 
@@ -258,7 +243,7 @@ class DiscussRepository
             ->get()
             ->keyBy('id');
 
-        $threadsWithPosts = $postIdAndThreadId->map(function($data) use($threads) {
+        $threadsWithPosts = $postIdAndThreadId->map(function ($data) use ($threads) {
             $thread = clone $threads[$data->forum_thread_id];
             $thread->forum_post_id = $data->id;
 
@@ -267,22 +252,18 @@ class DiscussRepository
 
         return new ForumThreadsForPostsValue([
             'forum_threads' => $threadsWithPosts,
-            'forum_groups'  => $groups
+            'forum_groups' => $groups,
         ]);
     }
 
     /**
-     * Gets an associative array with the following keys:   
+     * Gets an associative array with the following keys:
      * * `posts`: contains a curated array of posts associated with the specified thread.
      * * `current_page`: an integer denoting the current page.
      * * `pages`: an array of pages from 0 to `no_of_pages - 1`.
      * * `no_of_pages`: number of pages for the pagination of posts within the thread.
-     * 
-     * @param ForumThread $thread
-     * @param Account $account
-     * @param string $direction
-     * @param integer $pageNumber
-     * @param integer $jumpToId
+     *
+     * @param  string  $direction
      * @return ForumPostsInThreadValue
      */
     public function getPostDataInThread(ForumThread $thread, ?Account $account = null, $direction = 'desc',
@@ -301,14 +282,14 @@ class DiscussRepository
             // eager load _account_, but grab only information relevant for the view.
             'account' => function ($query) {
                 $query->select('id', 'nickname', 'has_avatar', 'tengwar');
-            }
+            },
         ];
 
         if ($account !== null) {
             // has the current user liked the post? Don't care about the rest.
             $loadingOptions['forum_post_likes'] = function ($query) use ($account) {
                 $query->where('account_id', $account->id)
-                    ->select('account_id', 'forum_post_id');  
+                    ->select('account_id', 'forum_post_id');
             };
         }
 
@@ -329,7 +310,7 @@ class DiscussRepository
         // we are not filtering out deleted.
         $filters = [
             ['is_hidden', 0],
-            ['is_deleted', 0]
+            ['is_deleted', 0],
         ];
 
         // Determine the number of 'pages' there are, which is relevant when
@@ -337,7 +318,7 @@ class DiscussRepository
         $noOfPosts = $thread->forum_posts()
             ->where($filters)
             ->count();
-        
+
         $noOfPages = 0;
         if ($ascending) {
             $noOfPages = ceil($noOfPosts / $maxLength);
@@ -351,15 +332,15 @@ class DiscussRepository
         //                    client is interested in the _latest_ posts, albeit presented in an
         //                    ascending order. The major ID, in this situation, acts as the page number.
         //
-        // DESC (descending): The API offers an infinite scroll-like experience, where pageNumber is 
+        // DESC (descending): The API offers an infinite scroll-like experience, where pageNumber is
         //                    always the least ID of the result set. The result set is 'paginated'
         //                    by the client continuously sending the last, least major ID to the API.
-        // 
+        //
         $skip = 0;
         $jumpToLatestPost = false;
         if ($ascending) {
             if ($jumpToId !== 0) {
-                // if the the client is, in fact, requesting to load a specific post, we 
+                // if the the client is, in fact, requesting to load a specific post, we
                 // must determine the page on which the post can be found.
                 $pageNumber = $noOfPages;
                 do {
@@ -397,9 +378,9 @@ class DiscussRepository
             ->orderBy('id', 'asc')
             ->first();
         $firstPostInThreadId = 0;
-        
+
         // Create an empty collection in the event that the thread is empty (i.e. all posts have been deleted)
-        $posts = new Collection();
+        $posts = new Collection;
         if ($firstPostInThread !== null) {
             $query = $thread->forum_posts()
                 ->with($loadingOptions)
@@ -433,21 +414,22 @@ class DiscussRepository
         $pages = $this->createPageArray($noOfPages, $pageNumber);
 
         return new ForumPostsInThreadValue([
-            'posts'                => $posts,
-            'current_page'         => $pageNumber,
-            'pages'                => $pages,
-            'no_of_pages'          => $noOfPages,
-            'no_of_posts'          => $noOfPosts,
+            'posts' => $posts,
+            'current_page' => $pageNumber,
+            'pages' => $pages,
+            'no_of_pages' => $noOfPages,
+            'no_of_posts' => $noOfPosts,
             'no_of_posts_per_page' => $maxLength,
-            'thread_id'            => $thread->id ?: null,
-            'thread_post_id'       => $firstPostInThreadId,
-            'jump_post_id'         => $jumpToId
+            'thread_id' => $thread->id ?: null,
+            'thread_post_id' => $firstPostInThreadId,
+            'jump_post_id' => $jumpToId,
         ]);
     }
 
     /**
      * Gets the latest threads in Discuss, regardless of groups (unless specified).
-     * @param $forumGroupId (optional) latest threads within the specified group
+     *
+     * @param  $forumGroupId  (optional) latest threads within the specified group
      * @return Collection
      */
     public function getLatestThreads(?Account $account = null, int $forumGroupId = 0, int $take = 10)
@@ -466,7 +448,8 @@ class DiscussRepository
 
     /**
      * Gets the latest posts in Discuss, regardless of groups (unless specified).
-     * @param $forumGroupId (optional) latest posts within the specified group
+     *
+     * @param  $forumGroupId  (optional) latest posts within the specified group
      * @return Collection
      */
     public function getLatestPosts(?Account $account = null, int $forumGroupId = 0, int $take = 20, int $fromId = 0)
@@ -492,7 +475,7 @@ class DiscussRepository
         $posts = $allPosts->filter(function ($post) use ($account) {
             return $this->checkThreadAuthorization($account, $post->forum_thread);
         });
-        
+
         $numberOfMissingPosts = $take - $posts->count();
         if ($allPosts->count() !== $posts->count() && $numberOfMissingPosts > 0) {
             $complimentaryPosts = $this->getLatestPosts($account, $forumGroupId, $numberOfMissingPosts, $allPosts->last()->id);
@@ -506,10 +489,9 @@ class DiscussRepository
 
     /**
      * Gets a thread entity (either existing thread or a new instance of a thread) associated with the specified entity.
-     * @param ModelBase|string $entityType
-     * @param int $id 
-     * @param boolean $createIfNotExists
-     * @param Account $account
+     *
+     * @param  ModelBase|string  $entityType
+     * @param  bool  $createIfNotExists
      * @return ForumThreadForEntityValue
      */
     public function getThreadDataForEntity($entityType, ?int $id = null, $createIfNotExists = false, ?Account $account = null)
@@ -518,7 +500,7 @@ class DiscussRepository
             $id = $entityType->id;
             $entityType = Morphs::getAlias($entityType);
 
-        } else if (! is_string($entityType)) {
+        } elseif (! is_string($entityType)) {
             throw new Exception(sprintf('Unsupported entity %s.', serialize($entityType)));
         }
 
@@ -546,7 +528,7 @@ class DiscussRepository
 
             $data = [
                 'entity_type' => $entityType,
-                'entity_id'   => $id
+                'entity_id' => $id,
             ];
             $thread = ForumThread::where($data)->first();
 
@@ -571,11 +553,11 @@ class DiscussRepository
 
                 $defaultGroup = $this->getDefaultForumGroupByEntity($entityType);
                 $thread = new ForumThread([
-                    'account_id'     => $account === null ? null : $account->id,
-                    'entity_id'      => $entity->id,
-                    'entity_type'    => $entityType,
+                    'account_id' => $account === null ? null : $account->id,
+                    'entity_id' => $entity->id,
+                    'entity_type' => $entityType,
                     'forum_group_id' => $defaultGroup->id,
-                    'subject'        => $context->getName($entity)
+                    'subject' => $context->getName($entity),
                 ]);
             }
         }
@@ -583,14 +565,15 @@ class DiscussRepository
         return new ForumThreadForEntityValue([
             'thread' => $thread,
             'thread_id' => $thread->id,
-            'forum_post_id' => $forumPostId
+            'forum_post_id' => $forumPostId,
         ]);
     }
 
     /**
      * Gets the number of posts associated with the specified entities
-     * @param string $className class mane for the corresponding entity
-     * @param array $ids IDs to the corresponding entities
+     *
+     * @param  string  $className  class mane for the corresponding entity
+     * @param  array  $ids  IDs to the corresponding entities
      */
     public function getNumberOfPostsForEntities(string $className, array $ids)
     {
@@ -607,13 +590,14 @@ class DiscussRepository
 
     /**
      * Gets the default forum group associated with the specified entity type.
-     * @param string $entityType entity type ("morph")
+     *
+     * @param  string  $entityType  entity type ("morph")
      * @return ForumGroup
      */
     public function getDefaultForumGroupByEntity(string $entityType)
     {
         $group = ForumGroup::where('role', $entityType)
-                ->first();
+            ->first();
 
         // If no forum group is associated with the specified entity, then defer to the default
         // 'catch all' entity, `ForumDiscussion`.
@@ -652,7 +636,7 @@ class DiscussRepository
             return $l->forum_post_id;
         });
         $countPerPostIds = $countPerPost->keys();
-        $missingPostIds = array_filter($postIds, function ($id) use($countPerPostIds) {
+        $missingPostIds = array_filter($postIds, function ($id) use ($countPerPostIds) {
             return ! $countPerPostIds->contains($id);
         });
 
@@ -663,7 +647,7 @@ class DiscussRepository
         return new ForumThreadMetadataValue([
             'forum_post_id' => $postIds,
             'likes' => $likedByAccount,
-            'likes_per_post' => $countPerPost
+            'likes_per_post' => $countPerPost,
         ]);
     }
 
@@ -675,9 +659,9 @@ class DiscussRepository
         $this->resolveAccount($account);
 
         $post = ForumPost::where([
-                ['id', $postId],
-                ['is_hidden', 0]
-            ])->first();
+            ['id', $postId],
+            ['is_hidden', 0],
+        ])->first();
 
         if ($post === null) {
             return null;
@@ -688,11 +672,12 @@ class DiscussRepository
                 return null;
             }
 
-        } else if (! $this->checkThreadAuthorization($account, $post->forum_thread)) {
+        } elseif (! $this->checkThreadAuthorization($account, $post->forum_thread)) {
             return null;
         }
-        
+
         $post->load('account');
+
         return $post;
     }
 
@@ -712,18 +697,19 @@ class DiscussRepository
 
     /**
      * Stores the post with as a reply to the the thread.
-     * @param ForumPost $originalPost reference to the post to be stored (and ultimately stored) in the database.
-     * @param ForumThread $thread the thread that the post should be associated with
-     * @param Account $account (optional) post author
-     * @return boolean
+     *
+     * @param  ForumPost  $originalPost  reference to the post to be stored (and ultimately stored) in the database.
+     * @param  ForumThread  $thread  the thread that the post should be associated with
+     * @param  Account  $account  (optional) post author
+     * @return bool
      */
     public function savePost(ForumPost &$originalPost, ForumThread $thread, ?Account $account = null)
     {
         $this->resolveAccount($account);
-        
+
         if ($originalPost->exists && ! $this->checkPostAuthorization($account, $originalPost, $thread)) {
             return false;
-        } else if (! $originalPost->exists && ! $this->checkThreadAuthorization($account, $thread)) {
+        } elseif (! $originalPost->exists && ! $this->checkThreadAuthorization($account, $thread)) {
             return false;
         }
 
@@ -739,14 +725,14 @@ class DiscussRepository
                 $event = new ForumPostEdited($originalPost, $account->id);
             } else {
                 $post = ForumPost::create([
-                    'account_id'          => $account->id,
-                    'forum_thread_id'     => $thread->id,
-                    'number_of_likes'     => 0,
+                    'account_id' => $account->id,
+                    'forum_thread_id' => $thread->id,
+                    'number_of_likes' => 0,
 
-                    'content'             => $originalPost->content,
+                    'content' => $originalPost->content,
                     'parent_form_post_id' => $originalPost->parent_form_post_id,
                 ]);
-                
+
                 // Abandon the original post by pointing at the post we just created.
                 $originalPost = $post;
 
@@ -758,7 +744,7 @@ class DiscussRepository
             DB::commit();
         } catch (\Exception $ex) {
             DB::rollBack();
-            $errorMessage = sprintf("Failed to save post %s.", $originalPost->toJson());
+            $errorMessage = sprintf('Failed to save post %s.', $originalPost->toJson());
             throw new \Exception($errorMessage, 0, $ex);
         }
 
@@ -790,11 +776,11 @@ class DiscussRepository
             $like = ForumPostLike::forAccount($account)
                 ->where('forum_post_id', $post->id)
                 ->first();
-            
+
             if ($like === null) {
                 $like = ForumPostLike::create([
                     'account_id' => $account->id,
-                    'forum_post_id' => $post->id
+                    'forum_post_id' => $post->id,
                 ]);
             } else {
                 $like->delete();
@@ -808,7 +794,7 @@ class DiscussRepository
             DB::commit();
         } catch (Exception $ex) {
             DB::rollBack();
-            $errorMessage = sprintf("Failed to save post like for %d for account %d.", $postId, $account->id);
+            $errorMessage = sprintf('Failed to save post like for %d for account %d.', $postId, $account->id);
             throw new \Exception($errorMessage, 0, $ex);
         }
 
@@ -838,8 +824,7 @@ class DiscussRepository
             $post->save();
 
             DB::commit();
-        }
-        catch (Exception $ex) {
+        } catch (Exception $ex) {
             DB::rollBack();
             throw $ex;
         }
@@ -854,6 +839,7 @@ class DiscussRepository
     {
         ForumThread::where('id', $threadId)
             ->update(['is_sticky' => $sticky]);
+
         return $sticky;
     }
 
@@ -861,6 +847,7 @@ class DiscussRepository
     {
         ForumThread::where('id', $threadId)
             ->update(['forum_group_id' => $groupId]);
+
         return $groupId;
     }
 
@@ -885,20 +872,19 @@ class DiscussRepository
         if ($post->id === 0) {
             return true;
         }
-        
+
         return $post->account_id === $account->id || $account->isAdministrator();
     }
 
     /**
      * Determines whether the specified thread `$thread` can be accessed by `$account`.
      *
-     * @param ForumThread $thread
-     * @param Account $account
      * @return bool
      */
     private function checkThreadAuthorization(?Account $account, ForumThread $thread)
     {
         $context = $this->_contextFactory->create($thread->entity_type);
+
         return $context->available($thread->entity_id, $account);
     }
 
@@ -911,13 +897,13 @@ class DiscussRepository
                 ->orderBy('created_at', 'asc')
                 ->where([
                     ['is_deleted', '<>', 1],
-                    ['is_hidden', '<>', 1]
+                    ['is_hidden', '<>', 1],
                 ]) //
                 ->select('id') //
                 ->pluck('id');
 
             $noOfPosts = $postIds->count();
-            $isEmpty   = $noOfPosts < 2; // 1 = only main post is present
+            $isEmpty = $noOfPosts < 2; // 1 = only main post is present
             $noOfLikes = $noOfPosts === 0 ? 0 : //
                 ForumPostLike::whereIn('forum_post_id', $postIds)->count();
 
@@ -928,7 +914,7 @@ class DiscussRepository
 
             $thread->number_of_posts = $noOfPosts;
             $thread->number_of_likes = $noOfLikes;
-            $thread->is_empty        = $isEmpty;
+            $thread->is_empty = $isEmpty;
 
             // Make sure that `account_id` reflects the `account_id` for the last record associated with
             // the given thread.
@@ -944,11 +930,10 @@ class DiscussRepository
             $thread->save();
 
             DB::commit();
-        }
-        catch (\Exception $ex) {
+        } catch (\Exception $ex) {
             DB::rollBack();
 
-            $errorMessage = sprintf("Failed to update thread medadata %s.", $thread->toJson());
+            $errorMessage = sprintf('Failed to update thread medadata %s.', $thread->toJson());
             throw new \Exception($errorMessage, 0, $ex);
         }
     }
@@ -956,7 +941,6 @@ class DiscussRepository
     /**
      * Updates the reference to point to the account associated with the request, if the current reference is `null`.
      *
-     * @param Account $account
      * @return void
      */
     private function resolveAccount(?Account &$account = null)
@@ -969,7 +953,6 @@ class DiscussRepository
     /**
      * Creates an array of incrementing numbers from 1 to `$noOfPages`. `0` is supported.
      *
-     * @param integer $noOfPages
      * @return void
      */
     private function createPageArray(int $noOfPages, int $currentPage = 1)
@@ -980,20 +963,20 @@ class DiscussRepository
         $firstPage = config('ed.forum_pagination_first_page_number');
         $start = $currentPage - $modifier;
         $end = $currentPage + $modifier;
-    
+
         if ($start < $firstPage) {
             $start = $firstPage;
-            $end   = min($start + $maximumPages - 1, $noOfPages);
-        } else if ($end > $noOfPages) {
+            $end = min($start + $maximumPages - 1, $noOfPages);
+        } elseif ($end > $noOfPages) {
             $start = max($noOfPages - $maximumPages + 1, $firstPage);
-            $end   = min($start + $maximumPages, $noOfPages);
+            $end = min($start + $maximumPages, $noOfPages);
         }
 
         $pages = [];
         for ($page = $start; $page <= $end; $page += 1) {
             $pages[] = $page;
         }
-    
+
         return $pages;
     }
 }

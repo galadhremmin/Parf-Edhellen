@@ -11,6 +11,6 @@ class AuthorizationProvider extends ModelBase
     protected $fillable = [
         'name',
         'name_identifier',
-        'logo_file_name'
+        'logo_file_name',
     ];
 }

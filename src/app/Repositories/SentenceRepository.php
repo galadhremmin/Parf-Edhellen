@@ -2,43 +2,29 @@
 
 namespace App\Repositories;
 
-use Exception;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Auth\AuthManager;
-
-use App\Events\{
-    SentenceCreated,
-    SentenceDestroyed,
-    SentenceEdited,
-    SentenceFragmentsDestroyed
-};
-use App\Models\{
-    Gloss,
-    Sentence,
-    Inflection,
-    SentenceFragment,
-};
-use App\Helpers\{
-    SentenceHelper,
-    StringHelper
-};
+use App\Events\SentenceCreated;
+use App\Events\SentenceDestroyed;
+use App\Events\SentenceEdited;
+use App\Events\SentenceFragmentsDestroyed;
+use App\Helpers\SentenceHelper;
+use App\Helpers\StringHelper;
+use App\Models\Gloss;
+use App\Models\Inflection;
 use App\Models\Initialization\Morphs;
+use App\Models\Sentence;
+use App\Models\SentenceFragment;
+use Exception;
+use Illuminate\Auth\AuthManager;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class SentenceRepository
 {
-    /**
-     * @var GlossInflectionRepository
-     */
-    private $_glossInflectionRepository;
-    /**
-     * @var SearchIndexRepository
-     */
-    private $_searchRepository;
-    /**
-     * @var AuthManager
-     */
-    private $_authManager;
+    private GlossInflectionRepository $_glossInflectionRepository;
+
+    private SearchIndexRepository $_searchRepository;
+
+    private AuthManager $_authManager;
 
     public function __construct(
         GlossInflectionRepository $glossInflectionRepository,
@@ -52,6 +38,7 @@ class SentenceRepository
 
     /**
      * Gets the languages for all available sentences.
+     *
      * @return mixed
      */
     public function getLanguages()
@@ -65,6 +52,7 @@ class SentenceRepository
 
     /**
      * Gets sentences for the specified language.
+     *
      * @return mixed
      */
     public function getByLanguage(int $languageId)
@@ -97,7 +85,7 @@ class SentenceRepository
      * Gets inflections for the specified IDs. Returns an associative array
      * keyed with the sentence fragment associated with the inflection.
      *
-     * @param number[] $ids
+     * @param  number[]  $ids
      * @return array
      */
     public function getInflectionsForGlosses(array $ids)
@@ -109,7 +97,7 @@ class SentenceRepository
             ->join('languages as l', 'gi.language_id', 'l.id')
             ->join('inflections as i', 'gi.inflection_id', 'i.id')
             ->whereIn('sf.gloss_id', $ids)
-            ->select('sf.gloss_id', 'sf.fragment as word', 'i.name as inflection', 'sp.name as speech', 
+            ->select('sf.gloss_id', 'sf.fragment as word', 'i.name as inflection', 'sp.name as speech',
                 'sf.sentence_id', 'sf.id as sentence_fragment_id', 's.name as sentence_name', 'l.name as language_name',
                 'l.id as language_id')
             ->orderBy('sf.fragment')
@@ -140,7 +128,7 @@ class SentenceRepository
             'sentence_translations' => $translations,
             'sentence_transformations' => resolve(SentenceHelper::class)->buildSentences($fragments),
             'speeches' => $this->getSpeechesForSentenceFragments($fragments),
-            'inflections' => $this->getInflectionsForSentenceFragments($fragments)
+            'inflections' => $this->getInflectionsForSentenceFragments($fragments),
         ];
     }
 
@@ -169,14 +157,14 @@ class SentenceRepository
         return $inflections;
     }
 
-    public function saveSentence(Sentence $sentence, array $fragments, array $inflectionsPerFragments, array $translations = []) 
+    public function saveSentence(Sentence $sentence, array $fragments, array $inflectionsPerFragments, array $translations = [])
     {
-        $changed = !! $sentence->id;
+        $changed = (bool) $sentence->id;
         $numberOfFragments = count($fragments);
         if ($numberOfFragments !== count($inflectionsPerFragments)) {
             throw new \Exception('The number of fragments must match the number of inflections.');
         }
-        
+
         try {
             DB::beginTransaction();
             $sentence->save();
@@ -205,13 +193,13 @@ class SentenceRepository
 
             if (! empty($inflections)) {
                 foreach ($inflections as $inflection) {
-                    $inflection->speech_id            = $fragment->speech_id;
-                    $inflection->gloss_id             = $fragment->gloss_id;
-                    $inflection->language_id          = $sentence->language_id;
-                    $inflection->account_id           = $sentence->account_id;
-                    $inflection->sentence_id          = $fragment->sentence_id;
+                    $inflection->speech_id = $fragment->speech_id;
+                    $inflection->gloss_id = $fragment->gloss_id;
+                    $inflection->language_id = $sentence->language_id;
+                    $inflection->account_id = $sentence->account_id;
+                    $inflection->sentence_id = $fragment->sentence_id;
                     $inflection->sentence_fragment_id = $fragment->id;
-                    $inflection->word                 = $fragment->fragment;
+                    $inflection->word = $fragment->fragment;
                 }
 
                 $this->_glossInflectionRepository->saveInflectionAsOneGroup(collect($inflections));
@@ -219,7 +207,7 @@ class SentenceRepository
         }
 
         // Inform listeners of this change.
-        $event = ! $changed 
+        $event = ! $changed
                 ? new SentenceCreated($sentence, $sentence->account_id)
                 : new SentenceEdited($sentence, $this->_authManager->user()->id);
         event($event);
@@ -227,7 +215,7 @@ class SentenceRepository
         return $sentence;
     }
 
-    public function destroyFragments(Sentence $sentence) 
+    public function destroyFragments(Sentence $sentence)
     {
         $fragments = $sentence->sentence_fragments;
         foreach ($fragments as $fragment) {
@@ -268,7 +256,7 @@ class SentenceRepository
         //
         // We need to narrow the search to the glossary and existing phrases. The index
         // groups their entries in so-called 'search groups'. Generally, the search group
-        // is tied to the underlying entry's entity, so we can obtain the search group 
+        // is tied to the underlying entry's entity, so we can obtain the search group
         // IDs for the glossary and for fragments by aquiring the morph for for `Gloss`
         // and `SentenceFragment` entities:
         $sentenceFragmentMorph = Morphs::getAlias(SentenceFragment::class);
@@ -283,8 +271,9 @@ class SentenceRepository
                     ->where('language_id', $languageId)
                     ->whereIn('entity_name', [
                         $sentenceFragmentMorph,
-                        $glossMorph
+                        $glossMorph,
                     ]);
+
                 return $query;
             });
 
@@ -317,7 +306,7 @@ class SentenceRepository
                 $suggestions[$fragment] = [
                     'gloss_id' => $glossId,
                     'speech_id' => $speechId,
-                    'inflection_ids' => $inflectionIds
+                    'inflection_ids' => $inflectionIds,
                 ];
 
                 break;

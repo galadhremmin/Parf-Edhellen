@@ -2,69 +2,67 @@
 
 namespace Tests\Unit\Controllers;
 
-use Tests\TestCase;
 use App\Mail\AccountMergeMail;
-use Illuminate\Support\Str;
-use App\Models\{
-    Account,
-    AccountMergeRequest,
-    AuthorizationProvider,
-};
+use App\Models\Account;
+use App\Models\AccountMergeRequest;
+use App\Models\AuthorizationProvider;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
+use Tests\TestCase;
 
 class AccountMergeControllerTest extends TestCase
 {
-    use DatabaseTransactions; 
+    use DatabaseTransactions;
 
-    public function testMergeAccounts()
+    public function test_merge_accounts()
     {
         $providers = [
             AuthorizationProvider::create([
                 'name' => 'Merge test provider 1',
                 'name_identifier' => 'unit-test-merge-1',
-                'logo_file_name' => 'unit-test-merge-1.jpg'
+                'logo_file_name' => 'unit-test-merge-1.jpg',
             ]),
             AuthorizationProvider::create([
                 'name' => 'Merge test provider 2',
                 'name_identifier' => 'unit-test-merge-2',
-                'logo_file_name' => 'unit-test-merge-2.jpg'
-            ])
+                'logo_file_name' => 'unit-test-merge-2.jpg',
+            ]),
         ];
 
         $uuid1 = (string) Str::uuid();
         $account1 = Account::create([
             'nickname' => $uuid1,
-            'email'    => 'private1@domain.com',
+            'email' => 'private1@domain.com',
             'identity' => $uuid1,
             'authorization_provider_id' => $providers[0]->id,
-            'profile'  => 'Lots of personal data.'
+            'profile' => 'Lots of personal data.',
         ]);
         $uuid2 = (string) Str::uuid();
         $account2 = Account::create([
             'nickname' => $uuid2,
-            'email'    => 'private1@domain.com',
+            'email' => 'private1@domain.com',
             'identity' => $uuid2,
             'authorization_provider_id' => $providers[1]->id,
-            'profile'  => 'Lots of personal data.'
+            'profile' => 'Lots of personal data.',
         ]);
 
         $mail = Mail::fake();
 
         $request = $this->actingAs($account1)
             ->post(route('account.merge'), [
-                'account_id' => [$account1->id, $account2->id]
+                'account_id' => [$account1->id, $account2->id],
             ])
             ->assertRedirect(route('verification.notice'));
 
         $account1->update([
-            'email_verified_at' => Carbon::now()
+            'email_verified_at' => Carbon::now(),
         ]);
 
         $request = $this->actingAs($account1)
             ->post(route('account.merge'), [
-                'account_id' => [$account1->id, $account2->id]
+                'account_id' => [$account1->id, $account2->id],
             ])
             ->assertRedirect();
 
@@ -79,7 +77,7 @@ class AccountMergeControllerTest extends TestCase
         $request = $this->actingAs($account1)
             ->get(route('account.confirm-merge', ['requestId' => $requestId, 'token' => $verificationToken]))
             ->assertRedirect(route('account.merge-status', ['requestId' => $requestId]));
-        
+
         $account1->refresh();
         $account2->refresh();
 

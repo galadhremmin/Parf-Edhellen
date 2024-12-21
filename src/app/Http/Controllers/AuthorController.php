@@ -2,62 +2,57 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\{
-    Auth
-};
-
-use App\Adapters\{
-    BookAdapter,
-    DiscussAdapter
-};
+use App\Adapters\BookAdapter;
+use App\Adapters\DiscussAdapter;
+use App\Helpers\StorageHelper;
 use App\Http\Controllers\Abstracts\Controller;
-use App\Repositories\StatisticsRepository;
-use App\Helpers\{
-    StorageHelper
-};
 use App\Interfaces\IMarkdownParser;
-use App\Models\{ 
-    Account, 
-    ForumPost,
-    Gloss,
-    Sentence
-};
+use App\Models\Account;
+use App\Models\ForumPost;
+use App\Models\Gloss;
+use App\Models\Sentence;
+use App\Repositories\StatisticsRepository;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthorController extends Controller
 {
-    protected $_bookAdapter;
-    protected $_discussAdapter;
-    protected $_statisticsRepository;
-    protected $_storageHelper;
-    protected $_markdownParser;
+    protected BookAdapter $_bookAdapter;
 
-    public function __construct(BookAdapter $bookAdapter, DiscussAdapter $discussAdapter, 
+    protected DiscussAdapter $_discussAdapter;
+
+    protected StatisticsRepository $_statisticsRepository;
+
+    protected StorageHelper $_storageHelper;
+
+    protected IMarkdownParser $_markdownParser;
+
+    public function __construct(BookAdapter $bookAdapter, DiscussAdapter $discussAdapter,
         StatisticsRepository $statisticsRepository, StorageHelper $storageHelper,
         IMarkdownParser $markdownParser)
     {
-        $this->_bookAdapter          = $bookAdapter;
-        $this->_discussAdapter       = $discussAdapter;
+        $this->_bookAdapter = $bookAdapter;
+        $this->_discussAdapter = $discussAdapter;
         $this->_statisticsRepository = $statisticsRepository;
-        $this->_storageHelper        = $storageHelper;
-        $this->_markdownParser       = $markdownParser;
+        $this->_storageHelper = $storageHelper;
+        $this->_markdownParser = $markdownParser;
     }
 
     public function index(Request $request, ?int $id = null, $nickname = '')
     {
-        $author  = $this->getAccount($request, $id);
+        $author = $this->getAccount($request, $id);
         $profile = '';
-        $stats   = null;
+        $stats = null;
 
         if ($author) {
             $profile = $this->_markdownParser->parseMarkdown($author->profile ?? '');
-            $stats   = $this->_statisticsRepository->getStatisticsForAccount($author);
+            $stats = $this->_statisticsRepository->getStatisticsForAccount($author);
         }
 
         return view('author.profile', [
-            'author'  => $author,
+            'author' => $author,
             'profile' => $profile,
-            'stats'   => $stats
+            'stats' => $stats,
         ]);
     }
 
@@ -74,12 +69,13 @@ class AuthorController extends Controller
         $glossary = $entities->map(function ($gloss) {
             $adapted = $this->_bookAdapter->adaptGloss($gloss);
             $adapted->sense = $gloss->sense->word->word;
+
             return $adapted;
         });
-        
+
         return view('author.list-gloss', [
             'glossary' => $glossary,
-            'author'  => $author
+            'author' => $author,
         ]);
     }
 
@@ -92,10 +88,10 @@ class AuthorController extends Controller
             ->orderBy('id', 'desc')
             ->limit(100)
             ->get();
-        
+
         return view('author.list-sentence', [
             'sentences' => $sentences,
-            'author'    => $author
+            'author' => $author,
         ]);
     }
 
@@ -103,15 +99,15 @@ class AuthorController extends Controller
     {
         $noOfPosts = ForumPost::forAccount($id)->count();
         $pageSize = 10;
-        $page = $request->has('page') 
-            ? intval($request->input('page')) 
+        $page = $request->has('page')
+            ? intval($request->input('page'))
             : 0;
 
         $posts = ForumPost::forAccount($id)
             ->with('forum_thread')
             ->where([
                 ['is_deleted', 0],
-                ['is_hidden', 0]
+                ['is_hidden', 0],
             ])
             ->orderBy('id', 'desc')
             ->skip($page * $pageSize)
@@ -122,11 +118,11 @@ class AuthorController extends Controller
         $author = Account::findOrFail($id);
 
         return view('author.list-post', [
-            'posts'     => $adapted,
+            'posts' => $adapted,
             'noOfPosts' => $noOfPosts,
             'noOfPages' => ceil($noOfPosts / $pageSize),
-            'page'      => $page,
-            'author'    => $author
+            'page' => $page,
+            'author' => $author,
         ]);
     }
 
@@ -135,7 +131,7 @@ class AuthorController extends Controller
         $author = $this->getAccount($request, $id);
 
         return view('author.edit-profile', [
-            'author' => $author
+            'author' => $author,
         ]);
     }
 

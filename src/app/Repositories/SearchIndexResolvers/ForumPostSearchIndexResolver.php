@@ -3,20 +3,22 @@
 namespace App\Repositories\SearchIndexResolvers;
 
 use App\Adapters\DiscussAdapter;
-use App\Models\Initialization\Morphs;
 use App\Models\ForumPost;
+use App\Models\Initialization\Morphs;
 use App\Repositories\DiscussRepository;
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
 
 class ForumPostSearchIndexResolver extends SearchIndexResolverBase
 {
-    private $_discussRepository;
-    private $_discussAdapter;
-    private $_forumPostMorphName;
+    private DiscussRepository $_discussRepository;
+
+    private DiscussAdapter $_discussAdapter;
+
+    private ?string $_forumPostMorphName;
 
     public function __construct(DiscussRepository $discussRepository, DiscussAdapter $discussAdapter)
     {
-        $this->_discussRepository  = $discussRepository;
+        $this->_discussRepository = $discussRepository;
         $this->_discussAdapter = $discussAdapter;
         $this->_forumPostMorphName = Morphs::getAlias(ForumPost::class);
     }
@@ -32,6 +34,7 @@ class ForumPostSearchIndexResolver extends SearchIndexResolverBase
             ->toArray();
 
         $threadData = $this->_discussRepository->getThreadsForPosts($entityIds);
+
         return $this->_discussAdapter->adaptForSearchResults($threadData);
     }
 }

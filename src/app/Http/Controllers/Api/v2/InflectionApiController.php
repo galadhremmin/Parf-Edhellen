@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Api\v2;
 
+use App\Http\Controllers\Abstracts\Controller;
+use App\Models\Inflection;
 use Illuminate\Http\Request;
 
-use App\Models\Inflection;
-use App\Http\Controllers\Abstracts\Controller;
-
-class InflectionApiController extends Controller 
+class InflectionApiController extends Controller
 {
     public function index(Request $request, int $id = 0)
     {

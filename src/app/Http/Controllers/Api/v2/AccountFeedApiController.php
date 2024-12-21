@@ -2,12 +2,8 @@
 
 namespace App\Http\Controllers\Api\v2;
 
-use App\Helpers\{
-    LinkHelper,
-    SentenceHelper
-};
-use Illuminate\Http\Request;
-
+use App\Helpers\LinkHelper;
+use App\Helpers\SentenceHelper;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Http\Discuss\ContextFactory;
 use App\Interfaces\IMarkdownParser;
@@ -18,32 +14,19 @@ use App\Models\Sentence;
 use App\Models\Versioning\GlossVersion;
 use App\Repositories\AccountFeedRepository;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 
-class AccountFeedApiController extends Controller 
+class AccountFeedApiController extends Controller
 {
-    /**
-     * @var AccountFeedRepository
-     */
-    private $_feedRepository;
-    /**
-     * @var ContextFactory
-     */
-    private $_contextFactory;
+    private AccountFeedRepository $_feedRepository;
 
-    /**
-     * @var IMarkdownParser
-     */
-    private $_markdownParser;
+    private ContextFactory $_contextFactory;
 
-    /**
-     * @var SentenceHelper
-     */
-    private $_sentenceHelper;
+    private IMarkdownParser $_markdownParser;
 
-    /**
-     * @var LinkHelper
-     */
-    private $_linkHelper;
+    private SentenceHelper $_sentenceHelper;
+
+    private LinkHelper $_linkHelper;
 
     const FILTERABLE_PROPS = ['is_deleted', 'is_hidden'];
 
@@ -54,14 +37,14 @@ class AccountFeedApiController extends Controller
         $this->_contextFactory = $contextFactory;
         $this->_markdownParser = $markdownParser;
         $this->_sentenceHelper = $sentenceHelper;
-        $this->_linkHelper     = $linkHelper;
+        $this->_linkHelper = $linkHelper;
     }
 
     public function getFeed(Request $request, int $id)
     {
         if (in_array($id, config('ed.restricted_profile_ids'))) {
             return [
-                'restricted' => true
+                'restricted' => true,
             ];
         }
 
@@ -104,6 +87,7 @@ class AccountFeedApiController extends Controller
 
             if (! $pass) {
                 $changed = true;
+
                 continue; // skip this record as it does not pass our checks.
             }
 
@@ -111,12 +95,12 @@ class AccountFeedApiController extends Controller
             if ($c instanceof ForumPost) {
                 $c->load('forum_thread');
                 $c->content = $this->_markdownParser->parseMarkdownNoBlocks($c->content);
-            } else if ($c instanceof GlossVersion) {
+            } elseif ($c instanceof GlossVersion) {
                 // noop, relying on `useGloss` hook on client.
-            } else if ($c instanceof Sentence) {
+            } elseif ($c instanceof Sentence) {
                 $c->load('language');
                 $c->load('sentence_fragments');
-                $c->description = $this->_markdownParser->parseMarkdownNoBlocks($c->description ?: "");
+                $c->description = $this->_markdownParser->parseMarkdownNoBlocks($c->description ?: '');
                 $c->sentence_url = $this->_linkHelper->sentence($c->language->id, $c->language->name, $c->id, $c->name);
                 $c->sentence_transformations = $this->_sentenceHelper->buildSentences($c->sentence_fragments);
             }

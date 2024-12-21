@@ -2,19 +2,18 @@
 
 namespace App\Mail;
 
+use App\Models\Contribution;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
-
-use App\Models\Contribution;
 
 class ContributionRejectedMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    private $_cancellationToken;
-    private $_contribution;
+    private string $_cancellationToken;
+
+    private Contribution $_contribution;
 
     /**
      * Create a new message instance.
@@ -38,7 +37,7 @@ class ContributionRejectedMail extends Mailable
 
         return $this->markdown('emails.contribution.rejected', [
             'cancellationToken' => $this->_cancellationToken,
-            'contribution' => $this->_contribution
+            'contribution' => $this->_contribution,
         ]);
     }
 }

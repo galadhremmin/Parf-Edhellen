@@ -3,34 +3,32 @@
 namespace App\Repositories;
 
 use App\Helpers\StringHelper;
+use App\Models\Gloss;
 use App\Models\Initialization\Morphs;
-use App\Repositories\SearchIndexResolvers\{
-    ISearchIndexResolver,
-    KeywordsSearchIndexResolver
-};
-use App\Repositories\ValueObjects\SearchIndexSearchValue;
-use App\Models\{
-    Gloss,
-    Language,
-    ModelBase,
-    SearchKeyword,
-    Word
-};
 use App\Models\Interfaces\IHasLanguage;
+use App\Models\Language;
+use App\Models\ModelBase;
+use App\Models\SearchKeyword;
+use App\Models\Word;
+use App\Repositories\SearchIndexResolvers\ISearchIndexResolver;
+use App\Repositories\SearchIndexResolvers\KeywordsSearchIndexResolver;
+use App\Repositories\ValueObjects\SearchIndexSearchValue;
 use Illuminate\Support\Collection;
 
-class SearchIndexRepository 
+class SearchIndexRepository
 {
-    private static $latestStoredIndexHashes = [];
-    private static $upsetFields = ['keyword', 'language_id', 'gloss_group_id', 'entity_name', 'entity_id', 'is_old', 'word', 'word_id', 'search_group'];
+    private static array $latestStoredIndexHashes = [];
 
-    private $_keywordsResolver;
-    private $_wordRepository;
+    private static array $upsetFields = ['keyword', 'language_id', 'gloss_group_id', 'entity_name', 'entity_id', 'is_old', 'word', 'word_id', 'search_group'];
+
+    private KeywordsSearchIndexResolver $_keywordsResolver;
+
+    private WordRepository $_wordRepository;
 
     public function __construct(KeywordsSearchIndexResolver $keywordsResolver, WordRepository $wordRepository)
     {
         $this->_keywordsResolver = $keywordsResolver;
-        $this->_wordRepository   = $wordRepository;
+        $this->_wordRepository = $wordRepository;
     }
 
     public function createIndex(ModelBase $model, Word $wordEntity, ?Language $keywordLanguage = null, ?string $inflection = null): void
@@ -45,7 +43,7 @@ class SearchIndexRepository
                 $containsTo = preg_match('/^to\s\w{2,}/', $data['keyword']) === 1;
                 $isVerb = (! $model->speech_id && $containsTo) ||
                     ($model->speech_id && $model->speech->is_verb);
-                
+
                 if ($isVerb) {
                     $expandedString = $containsTo ? substr($data['keyword'], 3 /* 'to ' */) : 'to '.$data['keyword'];
                     $expandedWord = $this->_wordRepository->save($expandedString, $model->account_id);
@@ -64,7 +62,7 @@ class SearchIndexRepository
 
         return SearchKeyword::where([
             ['entity_name', $entityName],
-            ['entity_id', $model->id]
+            ['entity_id', $model->id],
         ])->get();
     }
 
@@ -77,7 +75,7 @@ class SearchIndexRepository
 
         SearchKeyword::where([
             ['entity_name', $entityName],
-            ['entity_id', $model->id]
+            ['entity_id', $model->id],
         ])->delete();
     }
 
@@ -89,6 +87,7 @@ class SearchIndexRepository
     public function findKeywords(SearchIndexSearchValue $v)
     {
         $keywords = $this->_keywordsResolver->resolve($v);
+
         return $keywords;
     }
 
@@ -135,20 +134,20 @@ class SearchIndexRepository
     {
 
         if (! $model->exists) {
-            throw new \Exception("Search keyword target model does not exist. Make sure that the entity has been saved before calling this method.");
+            throw new \Exception('Search keyword target model does not exist. Make sure that the entity has been saved before calling this method.');
         }
         if (! $wordEntity->exists) {
             throw new \Exception("Word '".$wordEntity->word."' does not exist. Make sure that the entity has been saved before calling this method.");
         }
 
-        $entityName   = Morphs::getAlias($model);
-        $entityId     = $model->id;
-        $word         = StringHelper::toLower(StringHelper::clean($wordEntity->word));
-        $inflection   = StringHelper::toLower(StringHelper::clean($inflection));
-        $keyword      = empty($inflection) ? $word : $inflection;
+        $entityName = Morphs::getAlias($model);
+        $entityId = $model->id;
+        $word = StringHelper::toLower(StringHelper::clean($wordEntity->word));
+        $inflection = StringHelper::toLower(StringHelper::clean($inflection));
+        $keyword = empty($inflection) ? $word : $inflection;
         $glossGroupId = null;
-        $isOld        = false;
-        
+        $isOld = false;
+
         if ($model instanceof Gloss) {
             $glossGroupId = $model->gloss_group_id;
             $isOld = $glossGroupId
@@ -168,36 +167,36 @@ class SearchIndexRepository
             $keywordLanguageIsInvented = $keywordLanguage->is_invented;
         }
 
-        $normalizedKeyword           = StringHelper::normalize($keyword, true);
+        $normalizedKeyword = StringHelper::normalize($keyword, true);
         $normalizedKeywordUnaccented = StringHelper::normalize($keyword, false);
 
-        $normalizedKeywordReversed           = strrev($normalizedKeyword);
+        $normalizedKeywordReversed = strrev($normalizedKeyword);
         $normalizedKeywordUnaccentedReversed = strrev($normalizedKeywordUnaccented);
 
         $data = [
-            'keyword'                                => $keyword,
-            'normalized_keyword'                     => $normalizedKeyword,
-            'normalized_keyword_unaccented'          => $normalizedKeywordUnaccented,
-            'normalized_keyword_reversed'            => $normalizedKeywordReversed,
+            'keyword' => $keyword,
+            'normalized_keyword' => $normalizedKeyword,
+            'normalized_keyword_unaccented' => $normalizedKeywordUnaccented,
+            'normalized_keyword_reversed' => $normalizedKeywordReversed,
             'normalized_keyword_reversed_unaccented' => $normalizedKeywordUnaccentedReversed,
-            'keyword_length'                         => mb_strlen($keyword),
-            'normalized_keyword_length'              => mb_strlen($normalizedKeyword),
-            'normalized_keyword_unaccented_length'   => mb_strlen($normalizedKeywordUnaccented),
-            'normalized_keyword_reversed_length'     => mb_strlen($normalizedKeywordUnaccented),
+            'keyword_length' => mb_strlen($keyword),
+            'normalized_keyword_length' => mb_strlen($normalizedKeyword),
+            'normalized_keyword_unaccented_length' => mb_strlen($normalizedKeywordUnaccented),
+            'normalized_keyword_reversed_length' => mb_strlen($normalizedKeywordUnaccented),
             'normalized_keyword_reversed_unaccented_length' => mb_strlen($normalizedKeywordUnaccentedReversed),
 
-            'language_id'                  => $languageId,
-            'keyword_language_id'          => $keywordLanguageId,
+            'language_id' => $languageId,
+            'keyword_language_id' => $keywordLanguageId,
             'is_keyword_language_invented' => $keywordLanguageIsInvented,
 
             'gloss_group_id' => $glossGroupId,
-            'entity_name'    => $entityName,
-            'entity_id'      => $entityId,
-            'is_old'         => $isOld,
-            'word'           => $word,
-            'word_id'        => $wordEntity->id,
+            'entity_name' => $entityName,
+            'entity_id' => $entityId,
+            'is_old' => $isOld,
+            'word' => $word,
+            'word_id' => $wordEntity->id,
 
-            'search_group'   => $this->getSearchGroup($entityName)
+            'search_group' => $this->getSearchGroup($entityName),
         ];
 
         $hash = $this->makeStoreHash($data);
@@ -207,7 +206,7 @@ class SearchIndexRepository
                 // UPSERT update field if a row already exists
                 'normalized_keyword', 'normalized_keyword_unaccented', 'normalized_keyword_reversed', 'normalized_keyword_reversed_unaccented',
                 'keyword_length', 'normalized_keyword_length', 'normalized_keyword_unaccented_length', 'normalized_keyword_reversed_length',
-                'normalized_keyword_reversed_unaccented_length', 'keyword_language_id', 'is_keyword_language_invented'
+                'normalized_keyword_reversed_unaccented_length', 'keyword_language_id', 'is_keyword_language_invented',
             ]);
 
             self::$latestStoredIndexHashes[] = $hash;
@@ -246,6 +245,7 @@ class SearchIndexRepository
             throw new \Exception($entityName.' is not a supported book entity.');
         }
         $resolverName = $config[$entityName]['resolver'];
+
         return resolve($resolverName);
     }
 
@@ -255,6 +255,7 @@ class SearchIndexRepository
         if (! isset($config[$entityName])) {
             throw new \Exception($entityName.' is not a supported book entity.');
         }
+
         return $config[$entityName]['intl_name'];
     }
 
@@ -290,19 +291,19 @@ class SearchIndexRepository
         $entityMorph = Morphs::getAlias($discussEntityType);
 
         return [
-            'entities'        => $entities,
-            'group_id'        => $searchGroupId,
+            'entities' => $entities,
+            'group_id' => $searchGroupId,
             'group_intl_name' => $intlName,
-            'single'          => $single,
-            'word'            => $word,
-            'entity_morph'    => $entityMorph
+            'single' => $single,
+            'word' => $word,
+            'entity_morph' => $entityMorph,
         ];
     }
 
     private function makeStoreHash(array $keywordData)
     {
         $values = '';
-        
+
         $keys = array_keys($keywordData);
         sort($keys);
 

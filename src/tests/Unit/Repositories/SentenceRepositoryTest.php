@@ -2,70 +2,65 @@
 
 namespace Tests\Unit\Repositories;
 
+use App\Models\Account;
+use App\Models\Language;
+use App\Models\Sentence;
+use App\Models\SentenceFragment;
+use App\Repositories\SentenceRepository;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 use Tests\Unit\Traits\CanCreateGloss;
-use App\Repositories\SentenceRepository;
-use App\Models\{
-    Account,
-    Inflection,
-    Language,
-    Sentence,
-    SentenceFragment
-};
-use DB;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class SentenceRepositoryTest extends TestCase
 {
-    use DatabaseTransactions; 
-
     use CanCreateGloss {
         CanCreateGloss::setUp as setUpGlosses;
         CanCreateGloss::getRepository as getGlossRepository;
-    } // ; <-- remedies Visual Studio Code colouring bug
+    }
+    use DatabaseTransactions; // ; <-- remedies Visual Studio Code colouring bug
 
-    public function testExpectsSuccessfulSentenceSaveLog()
+    public function test_expects_successful_sentence_save_log()
     {
         $language = Language::first();
-        $account  = Account::first();
+        $account = Account::first();
 
-        extract( $this->createGloss(__FUNCTION__) );
+        extract($this->createGloss(__FUNCTION__));
         $helloGloss = $this->getGlossRepository()->saveGloss('hello', 'greetings', $gloss, $translations, $keywords, $details);
 
-        extract( $this->createGloss(__FUNCTION__) );
+        extract($this->createGloss(__FUNCTION__));
         $worldGloss = $this->getGlossRepository()->saveGloss('world', 'earth', $gloss, $translations, $keywords, $details);
 
         $this->assertNotEquals($helloGloss->id, $worldGloss->id);
 
         $fragments = [
             new SentenceFragment([
-                'fragment'     => '你好',
-                'tengwar'      => 'hello',
-                'gloss_id'     => $helloGloss->id,
-                'order'        => 10,
+                'fragment' => '你好',
+                'tengwar' => 'hello',
+                'gloss_id' => $helloGloss->id,
+                'order' => 10,
                 'is_linebreak' => false,
-                'type'         => 0,
-                'comments'     => 'comments 1'
+                'type' => 0,
+                'comments' => 'comments 1',
             ]),
             new SentenceFragment([
-                'fragment'     => '世界',
-                'tengwar'      => 'world',
-                'gloss_id'     => $worldGloss->id,
-                'order'        => 20,
+                'fragment' => '世界',
+                'tengwar' => 'world',
+                'gloss_id' => $worldGloss->id,
+                'order' => 20,
                 'is_linebreak' => false,
-                'type'         => 0,
-                'comments'     => 'comments 2'
-            ])
+                'type' => 0,
+                'comments' => 'comments 2',
+            ]),
         ];
 
         $sentence = new Sentence([
-            'description'      => 'Test sentence',
-            'language_id'      => $language->id,
-            'source'           => 'Test source',
-            'is_neologism'     => true,
-            'account_id'       => $account->id,
+            'description' => 'Test sentence',
+            'language_id' => $language->id,
+            'source' => 'Test source',
+            'is_neologism' => true,
+            'account_id' => $account->id,
             'long_description' => 'Test description',
-            'name'             => 'Test'
+            'name' => 'Test',
         ]);
 
         $inflections = [[], []];
@@ -89,7 +84,7 @@ class SentenceRepositoryTest extends TestCase
             $this->assertEquals($fragments[$i]->comments, $savedFragment->comments);
 
             $savedKeywords = $savedFragment->keywords;
-            
+
             $this->assertEquals(0, $savedKeywords->count());
         }
     }

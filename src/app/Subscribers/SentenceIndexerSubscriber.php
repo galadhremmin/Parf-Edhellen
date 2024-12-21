@@ -2,23 +2,19 @@
 
 namespace App\Subscribers;
 
-use App\Repositories\SearchIndexRepository;
-use App\Models\{
-    Sentence
-};
-use App\Events\{
-    SentenceCreated,
-    SentenceDestroyed,
-    SentenceEdited,
-    SentenceFragmentsDestroyed
-};
+use App\Events\SentenceCreated;
+use App\Events\SentenceDestroyed;
+use App\Events\SentenceEdited;
+use App\Events\SentenceFragmentsDestroyed;
 use App\Helpers\SentenceBuilders\SentenceBuilder;
 use App\Helpers\StringHelper;
 use App\Jobs\ProcessSearchIndexCreation;
+use App\Models\Sentence;
+use App\Repositories\SearchIndexRepository;
 
 class SentenceIndexerSubscriber
 {
-    private $_searchIndexRepository;
+    private SearchIndexRepository $_searchIndexRepository;
 
     public function __construct(SearchIndexRepository $searchIndexRepository)
     {
@@ -32,53 +28,43 @@ class SentenceIndexerSubscriber
      */
     public function subscribe($events)
     {
-        $events->listen(
-            SentenceCreated::class,
-            self::class.'@onSentenceCreated'
-        );
-        $events->listen(
-            SentenceEdited::class,
-            self::class.'@onSentenceEdited'
-        );
-        $events->listen(
-            SentenceDestroyed::class,
-            self::class.'@onSentenceDestroyed'
-        );
-        $events->listen(
-            SentenceFragmentsDestroyed::class,
-            self::class.'@onSentenceFragmentsDestroyed'
-        );
+        return [
+            SentenceCreated::class => 'onSentenceCreated',
+            SentenceEdited::class => 'onSentenceEdited',
+            SentenceDestroyed::class => 'onSentenceDestroyed',
+            SentenceFragmentsDestroyed::class => 'onSentenceFragmentsDestroyed',
+        ];
     }
 
-    public function onSentenceCreated(SentenceCreated $event)
+    public function onSentenceCreated(SentenceCreated $event): void
     {
         $this->update($event->sentence);
     }
 
-    public function onSentenceEdited(SentenceEdited $event)
+    public function onSentenceEdited(SentenceEdited $event): void
     {
         $this->update($event->sentence);
     }
 
-    public function onSentenceDestroyed(SentenceDestroyed $event)
+    public function onSentenceDestroyed(SentenceDestroyed $event): void
     {
         $sentence = $event->sentence;
 
         foreach ($sentence->sentence_fragments as $fragment) {
             $this->_searchIndexRepository->deleteAll($fragment);
         }
-        
+
         $this->_searchIndexRepository->deleteAll($sentence);
     }
 
-    public function onSentenceFragmentsDestroyed(SentenceFragmentsDestroyed $event)
+    public function onSentenceFragmentsDestroyed(SentenceFragmentsDestroyed $event): void
     {
         foreach ($event->sentence_fragments as $fragment) {
             $this->_searchIndexRepository->deleteAll($fragment);
         }
     }
 
-    private function update(Sentence $sentence)
+    private function update(Sentence $sentence): void
     {
         foreach ($sentence->sentence_fragments as $fragment) {
             if ($fragment->type === SentenceBuilder::TYPE_CODE_WORD) {

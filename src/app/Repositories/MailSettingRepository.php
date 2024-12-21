@@ -2,29 +2,24 @@
 
 namespace App\Repositories;
 
+use App\Models\Account;
+use App\Models\Initialization\Morphs;
+use App\Models\MailSetting;
+use App\Models\MailSettingOverride;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Collection;
-use Hash;
-use Validator;
-
-use App\Models\{ 
-    Account,
-    MailSetting,
-    MailSettingOverride 
-};
-use App\Models\Initialization\Morphs;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class MailSettingRepository
 {
     /**
      * Returns the e-mail addresses for the accounts which qualify for the specified event and entity.
      *
-     * @param array $accountIds
-     * @param string $event
-     * @param App\Models\ModelBase $entity
-     * @return array
+     * @param  App\Models\ModelBase  $entity
      */
-    public function qualify(array $accountIds, string $event, $entity)
+    public function qualify(array $accountIds, string $event, $entity): Collection
     {
         $alias = $this->getMorph($entity);
         $settings = MailSetting::forAccounts($accountIds)
@@ -32,10 +27,10 @@ class MailSettingRepository
         $overrides = MailSettingOverride::forAccounts($accountIds)
             ->where([
                 ['entity_type', $alias],
-                ['entity_id', $entity->id]
+                ['entity_id', $entity->id],
             ])->get();
 
-        $currentUser = auth()->user();
+        $currentUser = Auth::user();
         $currentUserId = 0;
         if ($currentUser !== null) {
             $currentUserId = $currentUser->id;
@@ -59,7 +54,7 @@ class MailSettingRepository
         }
 
         if (empty($ids)) {
-            return new Collection();
+            return new Collection;
         }
 
         return Account::whereIn('id', $ids)
@@ -73,17 +68,18 @@ class MailSettingRepository
 
     /**
      * Checks whether the specified account has a configuration override associated with the specified entity.
-     * @param integer $accountId
-     * @param App\Models\ModelBase $entity
-     * @return boolean
+     *
+     * @param  App\Models\ModelBase  $entity
+     * @return bool
      */
     public function getOverride(int $accountId, $entity)
     {
         $morph = $this->getMorph($entity);
+
         return MailSettingOverride::forAccount($accountId)
             ->where([
                 'entity_type' => $morph,
-                'entity_id'   => $entity->id
+                'entity_id' => $entity->id,
             ])
             ->first();
     }
@@ -91,69 +87,64 @@ class MailSettingRepository
     /**
      * Checks whether the account can be notified about the change to the specified entity.
      *
-     * @param integer $accountId
-     * @param App\Models\ModelBase $entity
-     * @return boolean
+     * @param  App\Models\ModelBase  $entity
      */
-    public function canNotify(int $accountId, $entity)
+    public function canNotify(int $accountId, $entity): bool
     {
         $morph = $this->getMorph($entity);
-        
+
         $override = MailSettingOverride::forAccount($accountId)
             ->where([
                 ['entity_type', $morph],
-                ['entity_id', $entity->id]
+                ['entity_id', $entity->id],
             ])
             ->first();
+
         return ! $override || $override->disabled === 0;
     }
 
     /**
      * Enables or disables notification for the specified entity, for the specified account.
      *
-     * @param integer $accountId
-     * @param mixed $entity
-     * @param ?boolean $notificationEnabled
-     * @return boolean
+     * @param  mixed  $entity
      */
-    public function setNotifications(int $accountId, $entity, ?bool $notificationEnabled)
+    public function setNotifications(int $accountId, $entity, ?bool $notificationEnabled): bool
     {
         $morph = $this->getMorph($entity);
 
         if ($notificationEnabled === null) {
             MailSettingOverride::where([
-                'account_id'  => $accountId,
+                'account_id' => $accountId,
                 'entity_type' => $morph,
-                'entity_id'   => $entity->id
+                'entity_id' => $entity->id,
             ])->delete();
 
             return false;
         }
 
         $override = MailSettingOverride::updateOrCreate([
-            'account_id'  => $accountId,
+            'account_id' => $accountId,
             'entity_type' => $morph,
-            'entity_id'   => $entity->id
+            'entity_id' => $entity->id,
         ]);
         $override->disabled = ! $notificationEnabled;
         $override->save();
+
         return ! $override->disabled;
     }
 
     /**
      * Generates a cancellation token for the specified entity and user account.
      *
-     * @param integer $accountId
-     * @param mixed $entity
-     * @return string
+     * @param  mixed  $entity
      */
-    public function generateCancellationToken(int $accountId, $entity)
+    public function generateCancellationToken(int $accountId, $entity): string
     {
         $morph = $this->getMorph($entity);
         $token = [
             'id' => $accountId,
             'ea' => $morph,
-            'eid' => $entity->id  
+            'eid' => $entity->id,
         ];
         $token['x'] = Hash::make(serialize($token));
 
@@ -163,11 +154,8 @@ class MailSettingRepository
     /**
      * Processes the specified token and creates a setting override for the entity
      * it refers to.
-     *
-     * @param string $token
-     * @return boolean
      */
-    public function handleCancellationToken(string $token)
+    public function handleCancellationToken(string $token): bool
     {
         try {
             $token = decrypt($token);
@@ -180,10 +168,10 @@ class MailSettingRepository
         }
 
         $validator = Validator::make($token, [
-            'x'   => 'required',
-            'id'  => 'required|numeric|exists:accounts,id',
-            'ea'  => 'required|string',
-            'eid' => 'required|numeric'
+            'x' => 'required',
+            'id' => 'required|numeric|exists:accounts,id',
+            'ea' => 'required|string',
+            'eid' => 'required|numeric',
         ]);
 
         if ($validator->fails()) {
@@ -204,9 +192,9 @@ class MailSettingRepository
         }
 
         $override = MailSettingOverride::updateOrCreate([
-            'account_id'  => $token['id'],
+            'account_id' => $token['id'],
             'entity_type' => $token['ea'],
-            'entity_id'   => $token['eid']
+            'entity_id' => $token['eid'],
         ]);
         $override->disabled = 1;
         $override->save();
@@ -218,10 +206,9 @@ class MailSettingRepository
      * Gets the morph alias for the specified entity. Throws an exception if the entity
      * is not supported.
      *
-     * @param mixed $entity
-     * @return string
+     * @param  mixed  $entity
      */
-    protected function getMorph($entity)
+    protected function getMorph($entity): string
     {
         $morph = Morphs::getAlias($entity);
         if (! $morph || ! $entity->id) {

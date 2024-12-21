@@ -2,9 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Events\{
-    GlossInflectionsCreated
-};
+use App\Events\GlossInflectionsCreated;
 use App\Models\Gloss;
 use App\Models\GlossInflection;
 use Illuminate\Support\Collection;
@@ -35,6 +33,7 @@ class GlossInflectionRepository
                     $inflections[$inflection->gloss_id][$inflection->inflection_group_uuid] = collect([]);
                 }
                 $inflections[$inflection->gloss_id][$inflection->inflection_group_uuid]->push($inflection);
+
                 return $inflections;
             }, collect([]));
     }
@@ -61,7 +60,7 @@ class GlossInflectionRepository
         $rows = [];
         foreach ($inflections as $inflection) {
             $rows[] = $inflection->toArray() + [
-                'inflection_group_uuid' => $uuid
+                'inflection_group_uuid' => $uuid,
             ];
         }
 
@@ -69,6 +68,7 @@ class GlossInflectionRepository
 
         $gloss = Gloss::findOrFail($inflections->first()->gloss_id);
         event(new GlossInflectionsCreated($gloss, $inflections, /* incremental: */ true));
+
         return $uuid;
     }
 }

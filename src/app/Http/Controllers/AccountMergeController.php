@@ -2,26 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\{
-    Hash,
-    Mail,
-    Validator
-};
-use Illuminate\Support\Str;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Mail\AccountMergeMail;
 use App\Models\Account;
 use App\Models\AccountMergeRequest;
 use App\Security\AccountManager;
 use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class AccountMergeController extends Controller
 {
-    /**
-     * @var AccountManager
-     */
-    private $_accountManager;
+    private AccountManager $_accountManager;
 
     public function __construct(AccountManager $passwordManager)
     {
@@ -33,7 +28,7 @@ class AccountMergeController extends Controller
         $account = $request->user();
         $validator = Validator::make($request->all(), [
             'account_id' => [
-                'required', 
+                'required',
                 'array',
                 function (string $attribute, mixed $values, Closure $fail) use ($account) {
                     $invalidEntries = array_filter($values, function ($value) {
@@ -50,7 +45,7 @@ class AccountMergeController extends Controller
                         ->whereNull('master_account_id') //
                         ->distinct() //
                         ->get();
-                    
+
                     if ($accounts->count() !== count($values)) {
                         $fail('Cannot merge the accounts you have selected. Have some of them already been linked?');
                     }
@@ -64,8 +59,8 @@ class AccountMergeController extends Controller
                     if (! $account->email_verified_at === null) {
                         $fail('Verify your e-mail address before creating a linking request.');
                     }
-                }
-            ]
+                },
+            ],
         ]);
 
         $data = $validator->validate();
@@ -84,8 +79,8 @@ class AccountMergeController extends Controller
 
         $requestId = Str::uuid();
         $request = AccountMergeRequest::create([
-            'id'          => $requestId,
-            'account_id'  => $account->id,
+            'id' => $requestId,
+            'account_id' => $account->id,
             'account_ids' => json_encode($accountIds),
 
             // The client needs to provide the token via their e-mail inbox to activate the merge.
@@ -93,13 +88,14 @@ class AccountMergeController extends Controller
 
             // Save some basic information about who is making the request
             'requester_account_id' => $account->id,
-            'requester_ip' => $request->ip()
+            'requester_ip' => $request->ip(),
         ]);
 
         $providers = Account::whereIn('id', $accountIds)
             ->get()
             ->map(function ($account) {
                 $provider = $account->authorization_provider()->withTrashed()->first();
+
                 return $provider !== null ? $provider->name : null;
             })
             ->filter(function ($providerName) {
@@ -118,7 +114,7 @@ class AccountMergeController extends Controller
         $account = $request->user();
 
         $mergeRequest = AccountMergeRequest::where([
-            'id' => $requestId
+            'id' => $requestId,
         ])->firstOrFail();
 
         if ($mergeRequest->account_id !== $account->id &&
@@ -132,7 +128,7 @@ class AccountMergeController extends Controller
 
         return view('account.merge-status', [
             'mergeRequest' => $mergeRequest,
-            'accounts'     => $accounts
+            'accounts' => $accounts,
         ]);
     }
 
@@ -163,7 +159,7 @@ class AccountMergeController extends Controller
                     $request = AccountMergeRequest::where([
                         'account_id' => $account->id,
                         'verification_token' => $value,
-                        'is_fulfilled' => false
+                        'is_fulfilled' => false,
                     ])->first();
                     if ($request === null) {
                         $fail('Either your verification token is incorrect or there is no outstanding linking request for your account.');
@@ -172,15 +168,15 @@ class AccountMergeController extends Controller
                     if (! $account->email_verified_at === null) {
                         $fail('Verify your e-mail address before creating a linking request.');
                     }
-                }
-            ]
+                },
+            ],
         ]);
 
         $data = $validator->validate();
         $request = AccountMergeRequest::where([
             'account_id' => $account->id,
             'verification_token' => $data['token'],
-            'is_fulfilled' => false
+            'is_fulfilled' => false,
         ])->firstOrFail();
 
         $error = null;
@@ -198,6 +194,6 @@ class AccountMergeController extends Controller
             $request->save();
         }
 
-        return redirect()->route('account.merge-status', [ 'requestId' => $request->id ]);
+        return redirect()->route('account.merge-status', ['requestId' => $request->id]);
     }
 }

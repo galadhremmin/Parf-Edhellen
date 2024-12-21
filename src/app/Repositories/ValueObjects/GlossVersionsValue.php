@@ -2,7 +2,7 @@
 
 namespace App\Repositories\ValueObjects;
 
-class GlossVersionsValue implements \JsonSerializable 
+class GlossVersionsValue implements \JsonSerializable
 {
     use Traits\CanInitialize;
 
@@ -10,12 +10,13 @@ class GlossVersionsValue implements \JsonSerializable
     {
         $this->initializeAll($properties, [
             'versions',
-            'latest_version_id'
+            'latest_version_id',
         ]);
     }
 
     /**
      * Get a collection of versions
+     *
      * @return Collection
      */
     public function getVersions()
@@ -25,6 +26,7 @@ class GlossVersionsValue implements \JsonSerializable
 
     /**
      * Get the ID for the latest version
+     *
      * @return int
      */
     public function getLatestVersionId()

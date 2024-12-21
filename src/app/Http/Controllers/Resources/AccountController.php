@@ -2,24 +2,22 @@
 
 namespace App\Http\Controllers\Resources;
 
-use Illuminate\Http\Request;
-
-use App\Http\Controllers\Abstracts\Controller;
 use App\Adapters\AuditTrailAdapter;
 use App\Events\AccountRoleAdd;
 use App\Events\AccountRoleRemove;
-use App\Models\{
-    Account,
-    AuditTrail,
-    Role
-};
+use App\Http\Controllers\Abstracts\Controller;
+use App\Models\Account;
+use App\Models\AuditTrail;
+use App\Models\Role;
 use App\Security\AccountManager;
 use App\Security\RoleConstants;
+use Illuminate\Http\Request;
 
 class AccountController extends Controller
 {
-    private $_accountManager;
-    private $_auditTrailAdapter;
+    private AccountManager $_accountManager;
+
+    private AuditTrailAdapter $_auditTrailAdapter;
 
     const PAGINATION_SIZE = 30;
 
@@ -32,7 +30,7 @@ class AccountController extends Controller
     public function index(Request $request)
     {
         $v = $request->validate([
-            'filter' => 'string|min:1|max:128'
+            'filter' => 'string|min:1|max:128',
         ]);
 
         $query = Account::with('authorization_provider')
@@ -48,49 +46,49 @@ class AccountController extends Controller
             ->orderBy('updated_at', 'desc')
             ->limit(20)
             ->get();
-        
+
         return view('admin.account.index', [
             'accounts' => $accounts,
-            'deletedAccounts' => $recentlyDeleted
+            'deletedAccounts' => $recentlyDeleted,
         ] + $v);
     }
 
-    public function edit(Request $request, int $id) 
+    public function edit(Request $request, int $id)
     {
         $account = Account::findOrFail($id);
-        $roles   = Role::orderBy('name', 'asc')->get();
+        $roles = Role::orderBy('name', 'asc')->get();
 
         $auditTrailPagination = AuditTrail::forAccount($account->id)->orderBy('id', 'desc')
             ->paginate(15);
         $auditTrail = $this->_auditTrailAdapter->adapt($auditTrailPagination->items());
 
         return view('admin.account.edit', [
-            'account'              => $account,
-            'auditTrail'           => $auditTrail,
+            'account' => $account,
+            'auditTrail' => $auditTrail,
             'auditTrailPagination' => $auditTrailPagination,
-            'roles'                => $roles
+            'roles' => $roles,
         ]);
     }
 
     public function byRole(Request $request, int $id)
     {
-        $role     = Role::findOrFail($id);
+        $role = Role::findOrFail($id);
         $accounts = $role->accounts()->orderBy('nickname', 'asc')
             ->paginate(self::PAGINATION_SIZE);
 
         return view('admin.account.by-role-list', [
             'accounts' => $accounts,
-            'role'     => $role
+            'role' => $role,
         ]);
     }
 
     public function addMembership(Request $request, int $id)
     {
         $request->validate([
-            'role_id' => 'required|exists:roles,id'
+            'role_id' => 'required|exists:roles,id',
         ]);
 
-        $roleId = intval( $request->input('role_id') );
+        $roleId = intval($request->input('role_id'));
         $role = Role::findOrFail($roleId);
 
         $account = Account::findOrFail($id);
@@ -114,10 +112,10 @@ class AccountController extends Controller
     public function deleteMembership(Request $request, int $id)
     {
         $request->validate([
-            'role_id' => 'required|exists:roles,id'
+            'role_id' => 'required|exists:roles,id',
         ]);
 
-        $roleId = intval( $request->input('role_id') );
+        $roleId = intval($request->input('role_id'));
         $role = Role::findOrFail($roleId);
 
         if ($role->name === RoleConstants::Root) {
@@ -134,7 +132,8 @@ class AccountController extends Controller
         return redirect()->route('account.edit', ['account' => $account->id]);
     }
 
-    private function blockAdministratorChanges(Account $account, Account $withAccount) {
+    private function blockAdministratorChanges(Account $account, Account $withAccount)
+    {
         if ($account->isAdministrator() && $withAccount->id !== $account->id && ! $withAccount->isRoot()) {
             abort(400, 'Only the root account can revoke elevated permissions from other administrators.');
         }

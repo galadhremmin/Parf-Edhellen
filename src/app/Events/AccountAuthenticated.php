@@ -9,8 +9,9 @@ class AccountAuthenticated
 {
     use SerializesModels;
 
-    public $account;
-    public $firstTime;
+    public Account $account;
+
+    public bool $firstTime;
 
     public function __construct(Account $account, bool $firstTime)
     {

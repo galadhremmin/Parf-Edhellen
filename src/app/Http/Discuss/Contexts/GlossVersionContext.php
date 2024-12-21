@@ -2,29 +2,27 @@
 
 namespace App\Http\Discuss\Contexts;
 
-use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
-
 use App\Adapters\BookAdapter;
-use App\Repositories\GlossRepository;
-use App\Http\Discuss\IDiscussContext;
-use App\Models\{
-    Account,
-    Gloss
-};
-use App\Models\Versioning\GlossVersion;
 use App\Helpers\LinkHelper;
+use App\Http\Discuss\IDiscussContext;
+use App\Models\Account;
+use App\Models\Versioning\GlossVersion;
+use App\Repositories\GlossRepository;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 
 class GlossVersionContext implements IDiscussContext
 {
-    private $_linkHelper;
-    private $_bookAdapter;
-    private $_glossRepository;
+    private LinkHelper $_linkHelper;
+
+    private BookAdapter $_bookAdapter;
+
+    private GlossRepository $_glossRepository;
 
     public function __construct(LinkHelper $linkHelper, BookAdapter $bookAdapter, GlossRepository $glossRepository)
     {
-        $this->_linkHelper      = $linkHelper;
-        $this->_bookAdapter     = $bookAdapter; 
+        $this->_linkHelper = $linkHelper;
+        $this->_bookAdapter = $bookAdapter;
         $this->_glossRepository = $glossRepository;
     }
 
@@ -48,8 +46,9 @@ class GlossVersionContext implements IDiscussContext
         if (! $entity) {
             return null;
         }
-        
+
         $date = new Carbon($entity->created_at);
+
         return 'Gloss “'.$entity->word->word.'” by '.$entity->account->nickname.' created '.$date->diffForHumans();
     }
 
@@ -67,6 +66,7 @@ class GlossVersionContext implements IDiscussContext
         }
 
         $model = $this->_bookAdapter->adaptGlosses([$gloss->first()]);
+
         return view('discuss.context._gloss', $model);
     }
 }

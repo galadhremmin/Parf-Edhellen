@@ -2,24 +2,23 @@
 
 namespace App\Repositories\SearchIndexResolvers;
 
-use Illuminate\Support\Collection;
 use App\Adapters\SentenceAdapter;
-use App\Repositories\ValueObjects\SearchIndexSearchValue;
-use App\Models\{
-    Account,
-    Sentence,
-    SentenceFragment
-};
+use App\Models\Account;
 use App\Models\Initialization\Morphs;
+use App\Models\Sentence;
+use App\Models\SentenceFragment;
+use App\Repositories\ValueObjects\SearchIndexSearchValue;
+use Illuminate\Support\Collection;
 
 class SentenceSearchIndexResolver extends SearchIndexResolverBase
 {
-    private $_sentenceAdapter;
-    private $_fragmentMorphName;
+    private SentenceAdapter $_sentenceAdapter;
+
+    private ?string $_fragmentMorphName;
 
     public function __construct(SentenceAdapter $adapter)
     {
-        $this->_sentenceAdapter   = $adapter;
+        $this->_sentenceAdapter = $adapter;
         $this->_fragmentMorphName = Morphs::getAlias(SentenceFragment::class);
     }
 
@@ -33,14 +32,14 @@ class SentenceSearchIndexResolver extends SearchIndexResolverBase
             ->pluck('entity_id');
 
         if ($entityIds->isEmpty()) {
-            $sentences = new Collection();
+            $sentences = new Collection;
 
         } else {
             $sentenceIds = SentenceFragment::whereIn('id', $entityIds)
                 ->select('sentence_id')
                 ->distinct()
                 ->pluck('sentence_id');
-            
+
             $sentences = Sentence::whereIn('id', $sentenceIds)
                 ->select('id', 'name', 'description', 'language_id', 'is_neologism', 'account_id', 'source')
                 ->get();

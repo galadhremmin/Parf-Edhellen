@@ -2,32 +2,29 @@
 
 namespace App\Adapters;
 
-use Illuminate\Support\Collection;
-use Illuminate\Auth\AuthManager;
-
+use App\Helpers\LinkHelper;
+use App\Helpers\StorageHelper;
 use App\Http\Discuss\ContextFactory;
-use App\Models\{
-    Account,
-    ForumPost,
-    ForumThread
-};
-use App\Repositories\ValueObjects\{
-    ForumThreadsForPostsValue,
-    ForumThreadValue
-};
-use App\Helpers\{
-    LinkHelper,
-    StorageHelper
-};
 use App\Interfaces\IMarkdownParser;
+use App\Models\Account;
+use App\Models\ForumPost;
+use App\Models\ForumThread;
+use App\Repositories\ValueObjects\ForumThreadsForPostsValue;
+use App\Repositories\ValueObjects\ForumThreadValue;
+use Illuminate\Auth\AuthManager;
+use Illuminate\Support\Collection;
 
 class DiscussAdapter
 {
-    private $_contextFactory;
-    private $_storageHelper;
-    private $_authManager;
-    private $_linkHelper;
-    private $_markdownParser;
+    private ContextFactory $_contextFactory;
+
+    private StorageHelper $_storageHelper;
+
+    private AuthManager $_authManager;
+
+    private LinkHelper $_linkHelper;
+
+    private IMarkdownParser $_markdownParser;
 
     public function __construct(ContextFactory $contextFactory, StorageHelper $storageHelper, AuthManager $authManager,
         LinkHelper $linkHelper, IMarkdownParser $markdownParser)
@@ -44,6 +41,7 @@ class DiscussAdapter
         if ($account->has_avatar) {
             $account->setAttribute('avatar_path', $this->_storageHelper->accountAvatar($account, true));
         }
+
         return $account;
     }
 
@@ -54,6 +52,7 @@ class DiscussAdapter
                 $this->adaptAccount($account);
             }
         }
+
         return $data;
     }
 
@@ -77,6 +76,7 @@ class DiscussAdapter
         $posts->map(function ($post, $i) {
             $this->adaptPost($post);
         });
+
         return $posts;
     }
 
@@ -85,6 +85,7 @@ class DiscussAdapter
         if ($thread->account !== null) {
             $this->adaptAccount($thread->account);
         }
+
         return $thread;
     }
 
@@ -93,13 +94,14 @@ class DiscussAdapter
         $thread = null;
         if ($data instanceof ForumThreadValue) {
             $thread = $data->getThread();
-        } else if ($data instanceof ForumThread) {
+        } elseif ($data instanceof ForumThread) {
             $thread = &$data;
         } else {
             throw new \Exception(sprintf('Unsupported entity %s.', get_class($data)));
         }
 
         $this->adaptThread($thread);
+
         return $data;
     }
 
@@ -108,6 +110,7 @@ class DiscussAdapter
         $threads->map(function ($thread) {
             $this->adaptThread($thread);
         });
+
         return $threads;
     }
 
@@ -115,16 +118,15 @@ class DiscussAdapter
     {
         $user = $this->_authManager->user();
         $thread_id = 0;
-        $inverted   = true;
+        $inverted = true;
 
         $adapted = [];
         $i = 0;
-        foreach ($posts as $post)
-        {
+        foreach ($posts as $post) {
             if ($thread_id !== $post->forum_thread_id) {
                 $i = 0;
 
-                $inverted  = ! $inverted; 
+                $inverted = ! $inverted;
                 $thread_id = $post->forum_thread_id;
             }
 
@@ -135,17 +137,17 @@ class DiscussAdapter
 
             $iconPath = $context->getIconPath();
             $adapted[] = (object) [
-                'id'              => $post->id,
-                'forum_group_id'  => $post->forum_thread->forum_group_id,
+                'id' => $post->id,
+                'forum_group_id' => $post->forum_thread->forum_group_id,
                 'forum_thread_id' => $post->forum_thread_id,
-                'subject'         => $post->forum_thread->subject,
-                'subject_path'    => $post->forum_thread->normalized_subject,
-                'icon'            => $iconPath,
-                'created_at'      => $post->updated_at ?: $post->created_at,
-                'content'         => $post->content,
+                'subject' => $post->forum_thread->subject,
+                'subject_path' => $post->forum_thread->normalized_subject,
+                'icon' => $iconPath,
+                'created_at' => $post->updated_at ?: $post->created_at,
+                'content' => $post->content,
                 'number_of_likes' => $post->number_of_likes,
-                'i'               => $i,
-                'inverted'        => $inverted
+                'i' => $i,
+                'inverted' => $inverted,
             ];
 
             $i += 1;
@@ -163,7 +165,7 @@ class DiscussAdapter
             $groupId = $thread->forum_group_id;
             $group = $value->getGroups()[$groupId];
 
-            $author = new Account();
+            $author = new Account;
             $author->id = $thread->account_id;
             $author->has_avatar = $thread->has_avatar;
             $thread->account_avatar_path = $this->_storageHelper->accountAvatar($author);
@@ -179,14 +181,14 @@ class DiscussAdapter
 
             } else {
                 $sections[$groupId] = [
-                    'entities' => [ $thread ],
-                    'language' => $group
+                    'entities' => [$thread],
+                    'language' => $group,
                 ];
             }
         }
 
         return [
-            'sections' => array_values($sections)
+            'sections' => array_values($sections),
         ];
     }
 }

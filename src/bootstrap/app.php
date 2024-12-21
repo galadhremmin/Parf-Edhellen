@@ -42,6 +42,7 @@ $app->singleton(
         $externalLinks = \App\Models\GlossGroup::whereNotNull('external_link_format')
             ->orderBy('id')
             ->get();
+
         return new \App\Helpers\ExternalGlossGroupToInternalUrlResolver($externalLinks);
     }
 );
@@ -59,8 +60,8 @@ $app->singleton(
 $app->singleton(
     App\Repositories\Interfaces\IAuditTrailRepository::class,
     function ($app) {
-        
-        $handlerType = ! $app->runningInConsole()  
+
+        $handlerType = ! $app->runningInConsole()
             ? App\Repositories\AuditTrailRepository::class
             : App\Repositories\Noop\NoopAuditTrailRepository::class;
 
@@ -72,7 +73,7 @@ $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
     function ($app) {
         // DB logging isn't by design enabled in CLI
-        $handlerType = ! $app->runningInConsole() && config('ed.system_errors_logging') 
+        $handlerType = ! $app->runningInConsole() && config('ed.system_errors_logging')
             ? App\Exceptions\DBHandler::class
             : App\Exceptions\Handler::class;
 

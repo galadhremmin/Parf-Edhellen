@@ -1,24 +1,18 @@
 <?php
+
 namespace App\Console\Commands;
 
+use App\Interfaces\ISystemLanguageFactory;
+use App\Models\Gloss;
+use App\Models\Initialization\Morphs;
+use App\Models\Language;
+use App\Models\SearchKeyword;
+use App\Repositories\KeywordRepository;
+use App\Repositories\SearchIndexRepository;
+use App\Repositories\WordRepository;
 use Illuminate\Console\Command;
 
-use App\Interfaces\ISystemLanguageFactory;
-use App\Models\{
-    Gloss,
-    Keyword,
-    Language,
-    SearchKeyword,
-    Sense,
-};
-use App\Models\Initialization\Morphs;
-use App\Repositories\{
-    KeywordRepository,
-    SearchIndexRepository,
-    WordRepository
-};
-
-class RefreshSearchIndexFromGlossesCommand extends Command 
+class RefreshSearchIndexFromGlossesCommand extends Command
 {
     /**
      * The name and signature of the console command.
@@ -36,21 +30,21 @@ class RefreshSearchIndexFromGlossesCommand extends Command
 
     /**
      * Search index repository used to refresh search keywords.
-     * 
+     *
      * @var SearchIndexRepository
      */
     private $_searchIndexRepository;
 
     /**
      * Search index repository used to refresh search keywords.
-     * 
+     *
      * @var KeywordRepository
      */
     private $_keywordRepository;
 
     /**
      * Search index repository used to refresh search keywords.
-     * 
+     *
      * @var WordRepository
      */
     private $_wordRepository;
@@ -82,7 +76,7 @@ class RefreshSearchIndexFromGlossesCommand extends Command
         $unreferencedKeywords = SearchKeyword::where('entity_name', Morphs::getAlias(Gloss::class))
             ->doesntHave('entity');
         $noUnreferencedKeywords = $unreferencedKeywords->count();
-        
+
         if ($noUnreferencedKeywords > 0) {
             if ($this->confirm(sprintf('There are %d unreferenced keywords. Do you want to delete them?', $noUnreferencedKeywords))) {
                 $unreferencedKeywords->delete();
@@ -115,7 +109,7 @@ class RefreshSearchIndexFromGlossesCommand extends Command
                     $this->_searchIndexRepository->createIndex($gloss, $translationWord, $this->_systemLanguage);
                 }
 
-                echo (++$i)." (".round(($i / $noOfGlosses)*100,2)."%): $gloss->id\n";
+                echo (++$i).' ('.round(($i / $noOfGlosses) * 100, 2)."%): $gloss->id\n";
             }
         }
     }

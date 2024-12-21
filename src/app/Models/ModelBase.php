@@ -2,25 +2,24 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Model;
 
 abstract class ModelBase extends Model
 {
     protected $casts = [
         Model::CREATED_AT => 'datetime',
-        Model::UPDATED_AT => 'datetime'
+        Model::UPDATED_AT => 'datetime',
     ];
 
     public function hasAttribute($attr)
     {
         return array_key_exists($attr, $this->attributes);
     }
-    
+
     /**
      * Prepare a date for array / JSON serialization.
      *
-     * @param  \DateTimeInterface  $date
      * @return string
      */
     protected function serializeDate(DateTimeInterface $date)

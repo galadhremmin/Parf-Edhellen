@@ -3,29 +3,20 @@
 namespace App\Http\Controllers\Resources;
 
 use App\Adapters\AuditTrailAdapter;
-use Illuminate\Http\Request;
-use DB;
-
-use App\Models\{
-    SystemError,
-    FailedJob
-};
 use App\Http\Controllers\Abstracts\Controller;
+use App\Models\FailedJob;
+use App\Models\SystemError;
 use App\Repositories\AuditTrailRepository;
+use DB;
+use Illuminate\Http\Request;
 
 class SystemErrorController extends Controller
 {
     const MaxAuditTrailEntriesPerPage = 30;
 
-    /**
-     * @var AuditTrailRepository
-     */
-    private $_auditTrailRepository;
+    private AuditTrailRepository $_auditTrailRepository;
 
-    /**
-     * @var AuditTrailAdapter
-     */
-    private $_auditTrailAdapter;
+    private AuditTrailAdapter $_auditTrailAdapter;
 
     public function __construct(AuditTrailRepository $auditTrailRepository, AuditTrailAdapter $auditTrailAdapter)
     {
@@ -44,12 +35,12 @@ class SystemErrorController extends Controller
         );
 
         return view('admin.system-error.index', [
-            'auditTrailEntries'    => $auditTrailEntries, 
-            'auditTrailPage'       => $auditTrailPage,         
-            'errorsByWeek'         => $errorsByWeek['count_by_week'],
-            'errorCategories'      => $errorsByWeek['categories'],
-            'failedJobsByWeek'     => $failedJobsByWeek['count_by_week'],
-            'failedJobsCategories' => $failedJobsByWeek['categories']
+            'auditTrailEntries' => $auditTrailEntries,
+            'auditTrailPage' => $auditTrailPage,
+            'errorsByWeek' => $errorsByWeek['count_by_week'],
+            'errorCategories' => $errorsByWeek['categories'],
+            'failedJobsByWeek' => $failedJobsByWeek['count_by_week'],
+            'failedJobsCategories' => $failedJobsByWeek['categories'],
         ]);
     }
 
@@ -79,18 +70,18 @@ class SystemErrorController extends Controller
     private function getRowCountPerWeek(string $modelName, string $category, string $dateColumn = 'created_at')
     {
         $selectFields = [
-            DB::raw('YEAR('.$dateColumn.') AS year'), 
+            DB::raw('YEAR('.$dateColumn.') AS year'),
             DB::raw('WEEK('.$dateColumn.') AS week'),
             DB::raw('CONCAT(YEAR('.$dateColumn.'), "/",  WEEK('.$dateColumn.')) AS year_week'),
             DB::raw('COUNT(*) AS number_of_errors'),
-            DB::raw($category.' AS category')
+            DB::raw($category.' AS category'),
         ];
 
         $groupByFields = [
             DB::raw('year'),
             DB::raw('week'),
             DB::raw('year_week'),
-            DB::raw('category')
+            DB::raw('category'),
         ];
 
         $model = new $modelName;
@@ -101,27 +92,27 @@ class SystemErrorController extends Controller
 
         $categories = $countByWeek->pluck('category')->unique()->values();
         $countByWeek = $countByWeek->reduce(function ($carry, $item) {
-                $key      = $item->year_week;
-                $value    = $item->number_of_errors;
-                $category = $item->category;
-    
-                if (isset($carry[$key])) {
-                    $carry[$key][$category] = $value;
-                } else {
-                    $carry[$key] = [
-                        'year_week' => $item->year_week,
-                        'week'      => $item->week,
-                        'year'      => $item->year,
-                        $category   => $value
-                    ];
-                }
-    
-                return $carry;
-            }, []);
-        
+            $key = $item->year_week;
+            $value = $item->number_of_errors;
+            $category = $item->category;
+
+            if (isset($carry[$key])) {
+                $carry[$key][$category] = $value;
+            } else {
+                $carry[$key] = [
+                    'year_week' => $item->year_week,
+                    'week' => $item->week,
+                    'year' => $item->year,
+                    $category => $value,
+                ];
+            }
+
+            return $carry;
+        }, []);
+
         return [
             'count_by_week' => collect(array_values($countByWeek)),
-            'categories'    => $categories
+            'categories' => $categories,
         ];
     }
 }

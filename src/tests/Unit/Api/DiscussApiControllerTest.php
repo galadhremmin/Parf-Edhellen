@@ -2,14 +2,10 @@
 
 namespace Tests\Unit\Api;
 
-use Illuminate\Support\Str;
+use App\Models\ForumGroup;
+use App\Models\ForumPost;
+use App\Models\ForumThread;
 use Tests\TestCase;
-use App\Http\Controllers\Api\v2\DiscussApiController;
-use App\Models\{
-    ForumGroup,
-    ForumPost,
-    ForumThread
-};
 
 class DiscussApiControllerTest extends TestCase
 {
@@ -23,13 +19,13 @@ class DiscussApiControllerTest extends TestCase
         // $this->withoutExceptionHandling();
     }
 
-    public function testGroups()
+    public function test_groups()
     {
         $response = $this->getJson(route('api.discuss.groups'));
         $response->assertSuccessful();
     }
 
-    public function testGroup()
+    public function test_group()
     {
         $response = $this->getJson(route('api.discuss.group', ['groupId' => 0]));
         $response->assertNotFound();
@@ -42,13 +38,13 @@ class DiscussApiControllerTest extends TestCase
         $this->assertTrue($response['group']['id'] == $group->id);
     }
 
-    public function testThreads()
+    public function test_threads()
     {
         $response = $this->getJson(route('api.discuss.threads'));
         $response->assertSuccessful();
     }
 
-    public function testThread()
+    public function test_thread()
     {
         $response = $this->getJson(route('api.discuss.thread', ['threadId' => 0]));
         $response->assertNotFound();
@@ -61,7 +57,7 @@ class DiscussApiControllerTest extends TestCase
         $this->assertTrue($response['thread']['id'] == $thread->id);
     }
 
-    public function testThreadByEntity()
+    public function test_thread_by_entity()
     {
         $thread = ForumThread::first();
         $response = $this->getJson(route('api.discuss.thread-by-entity', ['entityType' => $thread->entity_type, 'entityId' => $thread->entity_id]));
@@ -71,44 +67,44 @@ class DiscussApiControllerTest extends TestCase
         $this->assertTrue($response['thread']['id'] == $thread->id);
     }
 
-    public function testResolve()
+    public function test_resolve()
     {
         $thread = ForumThread::first();
         $response = $this->getJson(route('api.discuss.resolve', ['entityType' => $thread->entity_type, 'entityId' => $thread->entity_id]));
         $response->assertRedirect();
     }
 
-    public function testResolveByPost()
+    public function test_resolve_by_post()
     {
         $post = ForumPost::first();
         $response = $this->getJson(route('api.discuss.resolve-by-post', ['postId' => $post->id]));
         $response->assertRedirect();
     }
 
-    public function testMetadata()
+    public function test_metadata()
     {
         $post = ForumPost::first();
         $response = $this->postJson(route('api.discuss.metadata'), [
             'forum_thread_id' => $post->forum_thread_id,
-            'forum_post_id'   => [$post->id]
+            'forum_post_id' => [$post->id],
         ]);
 
         $this->assertTrue(isset($response['likes']));
         $this->assertTrue(isset($response['likes_per_post']));
     }
 
-    public function testStoreLike()
+    public function test_store_like()
     {
         $post = ForumPost::first();
         $response = $this->postJson(route('api.discuss.like'), [
-            'forum_post_id'   => $post->id
+            'forum_post_id' => $post->id,
         ]);
         $response->assertUnauthorized();
 
         // TODO: Actually store a like
     }
 
-    public function testStorePost()
+    public function test_store_post()
     {
         $response = $this->postJson(route('api.discuss.store-post'));
         $response->assertUnauthorized();
@@ -116,7 +112,7 @@ class DiscussApiControllerTest extends TestCase
         // TODO: Actually store a post
     }
 
-    public function testUpdatePost()
+    public function test_update_post()
     {
         $post = ForumPost::first();
         $response = $this->putJson(route('api.discuss.update-post', ['postId' => $post->id]));
@@ -125,7 +121,7 @@ class DiscussApiControllerTest extends TestCase
         // TODO: Actually update a post
     }
 
-    public function testDeletePost()
+    public function test_delete_post()
     {
         $post = ForumPost::first();
         $response = $this->deleteJson(route('api.discuss.delete-post', ['postId' => $post->id]));
@@ -134,7 +130,7 @@ class DiscussApiControllerTest extends TestCase
         // TODO: Actually delete a post
     }
 
-    public function testPostStick()
+    public function test_post_stick()
     {
         $post = ForumPost::first();
         $response = $this->putJson(route('api.discuss.stick', ['postId' => $post->id]));
@@ -143,13 +139,13 @@ class DiscussApiControllerTest extends TestCase
         // TODO: Actually sticky a post
     }
 
-    public function testFeedPosts()
+    public function test_feed_posts()
     {
         $response = $this->getJson(route('api.discuss-feed.posts'));
         $response->assertSuccessful();
     }
 
-    public function testFeedPostsInGroup()
+    public function test_feed_posts_in_group()
     {
         $group = ForumGroup::first();
         $response = $this->getJson(route('api.discuss-feed.posts-in-group', ['groupId' => $group->id]));

@@ -2,10 +2,8 @@
 
 namespace App\Http;
 
-use App\Http\Middleware\{
-    IpGate,
-    VerifyCsrfToken
-};
+use App\Http\Middleware\IpGate;
+use App\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -24,7 +22,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\CarbonLocale::class,
-        \App\Http\Middleware\LayoutDataLoader::class
+        \App\Http\Middleware\LayoutDataLoader::class,
     ];
 
     /**

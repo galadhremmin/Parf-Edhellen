@@ -2,18 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Carbon\Carbon;
-
-use App\Http\Controllers\Abstracts\Controller;
-use App\Models\{ForumGroup, Sentence, Gloss};
 use App\Helpers\LinkHelper;
+use App\Http\Controllers\Abstracts\Controller;
+use App\Models\ForumGroup;
+use App\Models\Gloss;
+use App\Models\Sentence;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class SitemapController extends Controller
 {
-    private $_linkHelper;
-    private $_domain;
-    private $_accessKey;
+    private LinkHelper $_linkHelper;
+
+    private ?string $_domain;
+
+    private ?string $_accessKey;
 
     public function __construct(LinkHelper $linkHelper)
     {
@@ -37,18 +40,18 @@ class SitemapController extends Controller
             case 'pages':
                 $this->addPages($xml);
                 break;
-            case 'translations': 
-                {
-                    $this->validate($request, [
-                        'from'    => 'required|numeric|min:0',
-                        'to'      => 'required|numeric|min:0'
-                    ]);
+            case 'translations':
 
-                    $from    = intval($request->input('from'));
-                    $to      = intval($request->input('to'));
+                $this->validate($request, [
+                    'from' => 'required|numeric|min:0',
+                    'to' => 'required|numeric|min:0',
+                ]);
 
-                    $this->addGlosses($xml, $from, $to);
-                }
+                $from = intval($request->input('from'));
+                $to = intval($request->input('to'));
+
+                $this->addGlosses($xml, $from, $to);
+
                 break;
             case 'sentences':
                 $this->addSentences($xml);
@@ -66,7 +69,7 @@ class SitemapController extends Controller
             ->header('Content-Type', 'text/xml; charset=utf-8');
     }
 
-    private function addPages(string& $xml)
+    private function addPages(string &$xml)
     {
         $routeNames = ['home', 'about', 'about.cookies', 'about.privacy', 'flashcard', 'sentence.public', 'discuss.index'];
 
@@ -78,7 +81,7 @@ class SitemapController extends Controller
         }
     }
 
-    private function addGlosses(string& $xml, int $from, int $to) 
+    private function addGlosses(string &$xml, int $from, int $to)
     {
         if ($from > $to || $to - $from > 50000) {
             return;
@@ -101,7 +104,7 @@ class SitemapController extends Controller
         }
     }
 
-    private function addSentences(string& $xml)
+    private function addSentences(string &$xml)
     {
         $this->addNode($xml, route('sentence.public'));
 
@@ -120,7 +123,7 @@ class SitemapController extends Controller
                 );
             }
 
-            $this->addNode($xml, 
+            $this->addNode($xml,
                 $this->_linkHelper->sentence($sentence->language_id, $sentence->language->name, $sentence->id, $sentence->name),
                 'monthly',
                 $sentence->updated_at ?: $sentence->created_at
@@ -128,7 +131,7 @@ class SitemapController extends Controller
         }
     }
 
-    private function addDiscuss(string& $xml)
+    private function addDiscuss(string &$xml)
     {
         $this->addNode($xml, route('discuss.index'));
 
@@ -141,7 +144,8 @@ class SitemapController extends Controller
         }
     }
 
-    private function addNode(string& $xml, string $location, string $changeFrequency = 'monthly', ?Carbon $lastModified = null) {
+    private function addNode(string &$xml, string $location, string $changeFrequency = 'monthly', ?Carbon $lastModified = null)
+    {
         $xml .= '<url>'.
             '<loc>'.$location.'</loc>'.
             ($lastModified !== null ? '<lastmod>'.$lastModified->format('Y-m-d').'</lastmod>' : '').

@@ -2,7 +2,7 @@
 
 namespace App\Repositories\ValueObjects;
 
-class ExternalEntitySearchValue extends SearchIndexSearchValue implements \JsonSerializable 
+class ExternalEntitySearchValue extends SearchIndexSearchValue implements \JsonSerializable
 {
     use Traits\CanInitialize;
 
@@ -13,12 +13,12 @@ class ExternalEntitySearchValue extends SearchIndexSearchValue implements \JsonS
         $this->initialize($properties, 'gloss_group_id', false);
     }
 
-    public function getExternalId() 
+    public function getExternalId()
     {
         return $this->getValue('external_id');
     }
 
-    public function getGlossGroupId() 
+    public function getGlossGroupId()
     {
         return $this->getValue('gloss_group_id') ?? 0;
     }
