@@ -55,6 +55,7 @@ function AsyncSelect<T = any>(props: IProps<T>) {
         {allowEmpty && <option key="empty" value="">{emptyText || ''}</option>}
         {values.map((option) => {
             const optionValue = option[valueField] as any;
+            // eslint-disable-next-line @typescript-eslint/no-base-to-string
             return <option key={optionValue} value={optionValue}>{String(option[textField])}</option>;
         })}
     </select>;

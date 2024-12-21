@@ -44,6 +44,9 @@ function GlossaryEntities(props: IEntitiesComponentProps) {
         const config = createLanguageConfig();
         (languageConfigRef.current = config).get().then((shouldShowUnusualLanguages) => {
             setShowUnusualLanguages(shouldShowUnusualLanguages);
+        }).catch(err => {
+            console.warn(err);
+            setShowUnusualLanguages(false);
         });
 
         const actions = new SearchActions();

@@ -44,6 +44,9 @@ export function SearchResults(props: IProps) {
 
         enableTipsCacheRef.current?.get().then((nextEnableTips: boolean) => {
             setEnableTips(nextEnableTips);
+        }).catch (err => {
+            console.warn(err);
+            setEnableTips(true);
         });
 
         actionsRef.current = new SearchActions();

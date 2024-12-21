@@ -65,9 +65,9 @@ const load = (element: HTMLElement, mode: RenderMode, moduleName: string, props:
  */
 const getProps = (element: HTMLElement) => Object.keys(element.dataset) //
     .filter((p: string) => p.indexOf(InjectPropAttributeName) === 0) //
-    .reduce((ps: any, p: string) => {
+    .reduce((ps: Record<string, unknown>, p: string) => {
         const propName = p.charAt(InjectPropAttributeName.length).toLowerCase() + //
-        p.substr(InjectPropAttributeName.length + 1);
+            p.substring(InjectPropAttributeName.length + 1);
 
         let v = element.dataset[p];
         try {
