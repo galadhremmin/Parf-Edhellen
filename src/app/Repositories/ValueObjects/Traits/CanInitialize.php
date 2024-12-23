@@ -6,7 +6,7 @@ use Exception;
 
 trait CanInitialize
 {
-    private $_values;
+    private array $_values = [];
 
     public function jsonSerialize(): mixed
     {
