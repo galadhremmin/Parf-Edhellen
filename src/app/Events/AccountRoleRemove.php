@@ -9,18 +9,11 @@ class AccountRoleRemove
 {
     use SerializesModels;
 
-    /**
-     * @var Account
-     */
-    public $account;
-    /**
-     * @var string
-     */
-    public $role;
-    /**
-     * @var int
-     */
-    public $byAccountId;
+    public Account $account;
+
+    public string $role;
+
+    public int $byAccountId;
 
     public function __construct(Account $account, string $role, int $byAccountId)
     {

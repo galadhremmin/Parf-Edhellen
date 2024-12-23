@@ -2,29 +2,25 @@
 
 namespace App\Http\Controllers\Resources;
 
-use App\Http\Controllers\Abstracts\Controller;
-use Illuminate\Http\Request;
-
 use App\Adapters\BookAdapter;
+use App\Http\Controllers\Abstracts\Controller;
+use App\Http\Controllers\Traits\CanMapGloss;
+use App\Http\Controllers\Traits\CanValidateGloss;
+use App\Models\Gloss;
+use App\Models\Language;
 use App\Repositories\GlossRepository;
-use App\Models\{
-    Gloss, 
-    Language 
-};
-use App\Http\Controllers\Traits\{
-    CanValidateGloss, 
-    CanMapGloss 
-};
+use Illuminate\Http\Request;
 
 class GlossController extends Controller
 {
     use CanMapGloss,
         CanValidateGloss;
 
-    protected $_bookAdapter;
-    protected $_glossRepository;
+    protected BookAdapter $_bookAdapter;
 
-    public function __construct(BookAdapter $adapter, GlossRepository $glossRepository) 
+    protected GlossRepository $_glossRepository;
+
+    public function __construct(BookAdapter $adapter, GlossRepository $glossRepository)
     {
         $this->_bookAdapter = $adapter;
         $this->_glossRepository = $glossRepository;
@@ -43,9 +39,9 @@ class GlossController extends Controller
             ->select('name', 'id')
             ->get();
 
-        return view('admin.gloss.index', [ 
+        return view('admin.gloss.index', [
             'latestGlosses' => $latestGlosses,
-            'languages' => $languages
+            'languages' => $languages,
         ]);
     }
 
@@ -62,7 +58,7 @@ class GlossController extends Controller
 
         return view('admin.gloss.list', [
             'language' => $language,
-            'glosses' => $glosses
+            'glosses' => $glosses,
         ]);
     }
 }

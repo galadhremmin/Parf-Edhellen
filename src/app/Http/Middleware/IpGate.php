@@ -4,15 +4,12 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use View;
 
 class IpGate
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
     public function handle(Request $request, Closure $next)
@@ -23,7 +20,7 @@ class IpGate
             return $request->ajax()
                 ? response('', 403)
                 : redirect(route('blocked'));
-        } else if ($request->routeIs('blocked') && ! $request->ajax()) {
+        } elseif ($request->routeIs('blocked') && ! $request->ajax()) {
             return redirect('/');
         }
 

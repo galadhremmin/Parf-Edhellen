@@ -8,12 +8,12 @@ use App\Models\Traits\HasAccount;
 class GlossDetailVersion extends ModelBase
 {
     use HasAccount;
-    
-    protected $fillable = [ 
-        'gloss_version_id', 'category', 'text', 'order', 'type'
+
+    protected $fillable = [
+        'gloss_version_id', 'category', 'text', 'order', 'type',
     ];
 
-    public function gloss() 
+    public function gloss()
     {
         return $this->belongsTo(GlossVersion::class);
     }

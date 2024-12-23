@@ -2,44 +2,55 @@
 
 namespace App\Http\Controllers\Api\v2;
 
-use Illuminate\Http\Request;
-
-use App\Http\Controllers\Abstracts\Controller;
-use App\Models\{
-    ForumPost
-};
 use App\Adapters\DiscussAdapter;
+use App\Helpers\LinkHelper;
+use App\Http\Controllers\Abstracts\Controller;
+use App\Models\ForumPost;
 use App\Repositories\DiscussRepository;
 use App\Repositories\ValueObjects\ForumThreadFilterValue;
-use App\Helpers\LinkHelper;
+use Illuminate\Http\Request;
 
-class DiscussApiController extends Controller 
+class DiscussApiController extends Controller
 {
     const DEFAULT_SORT_BY_DATE_ORDER = 'asc';
 
     const PARAMETER_PAGE_NUMBER = 'offset';
+
     const PARAMETER_CREATE = 'create';
+
     const PARAMETER_ENTITY_TYPE = 'entity_type';
+
     const PARAMETER_ENTITY_ID = 'entity_id';
+
     const PARAMETER_FORUM_POST_CONTENT = 'content';
+
     const PARAMETER_FORUM_POST_SUBJECT = 'subject';
+
     const PARAMETER_FORUM_THREAD_ID = 'forum_thread_id';
+
     const PARAMETER_FORUM_THREAD_STICKY = 'sticky';
+
     const PARAMETER_FORUM_GROUP_ID = 'forum_group_id';
+
     const PARAMETER_FORUM_POST_ID = 'forum_post_id';
-    
+
     const PROPERTY_THREAD = 'thread';
+
     const PROPERTY_THREAD_GROUP_COLLECTION = 'groups';
+
     const PROPERTY_POST = 'post';
+
     const PROPERTY_POST_LIKE = 'like';
+
     const PROPERTY_POST_URL = 'postUrl';
 
-    protected $_discussAdapter;
-    protected $_discussRepository;
+    protected DiscussAdapter $_discussAdapter;
+
+    protected DiscussRepository $_discussRepository;
 
     public function __construct(DiscussAdapter $discussAdapter, DiscussRepository $discussRepository)
     {
-        $this->_discussAdapter    = $discussAdapter;
+        $this->_discussAdapter = $discussAdapter;
         $this->_discussRepository = $discussRepository;
     }
 
@@ -56,8 +67,8 @@ class DiscussApiController extends Controller
 
         $args = new ForumThreadFilterValue([
             'forum_group' => $group,
-            'account'     => $user,
-            'page_number' => $page
+            'account' => $user,
+            'page_number' => $page,
         ]);
         $threadData = $this->_discussRepository->getThreadDataInGroup($args);
         $this->_discussAdapter->adaptThreads($threadData->getThreads());
@@ -72,6 +83,7 @@ class DiscussApiController extends Controller
     {
         $threadData = $this->_discussRepository->getLatestThreads();
         $this->_discussAdapter->adaptThreads($threadData);
+
         return $threadData;
     }
 
@@ -89,7 +101,7 @@ class DiscussApiController extends Controller
         // they want to 'jump' to a specific forum post.
         $postId = 0;
         $data = $request->validate([
-            self::PARAMETER_FORUM_POST_ID => 'sometimes|numeric|exists:forum_posts,id'
+            self::PARAMETER_FORUM_POST_ID => 'sometimes|numeric|exists:forum_posts,id',
         ]);
         if (isset($data[self::PARAMETER_FORUM_POST_ID])) {
             $postId = intval($data[self::PARAMETER_FORUM_POST_ID]);
@@ -120,7 +132,7 @@ class DiscussApiController extends Controller
             $threadData->getAllValues(),
             [
                 // no posts are available since the thread does not actually exist.
-                'posts' => []
+                'posts' => [],
             ]
         );
     }
@@ -132,7 +144,7 @@ class DiscussApiController extends Controller
     {
         $data = $request->validate([
             'include_deleted' => 'sometimes|boolean',
-            'markdown' => 'sometimes|boolean'
+            'markdown' => 'sometimes|boolean',
         ]);
 
         $includeDeleted = isset($data['include_deleted'])
@@ -149,7 +161,7 @@ class DiscussApiController extends Controller
         }
 
         return [
-            self::PROPERTY_POST => $post
+            self::PROPERTY_POST => $post,
         ];
     }
 
@@ -178,7 +190,7 @@ class DiscussApiController extends Controller
             $forumPostId = $threadData->getForumPostId();
             $linker = resolve(LinkHelper::class);
 
-            return redirect($linker->forumThread($thread->forum_group_id, $thread->forum_group->name, 
+            return redirect($linker->forumThread($thread->forum_group_id, $thread->forum_group->name,
                 $thread->id, $thread->normalized_subject, $forumPostId));
         }
     }
@@ -197,6 +209,7 @@ class DiscussApiController extends Controller
             return $post->forum_thread;
         } else {
             $linker = resolve(LinkHelper::class);
+
             return redirect($linker->forumThread(
                 $post->forum_thread->forum_group_id,
                 $post->forum_thread->forum_group->name,
@@ -214,12 +227,13 @@ class DiscussApiController extends Controller
     {
         $data = $request->validate([
             self::PARAMETER_FORUM_THREAD_ID => 'required|numeric',
-            self::PARAMETER_FORUM_POST_ID.'.*' => 'required|numeric'
+            self::PARAMETER_FORUM_POST_ID.'.*' => 'required|numeric',
         ]);
         $user = $request->user();
 
         $threadId = intval($data[self::PARAMETER_FORUM_THREAD_ID]);
         $postsId = $data[self::PARAMETER_FORUM_POST_ID];
+
         return $this->_discussRepository->getThreadMetadataData($threadId, $postsId, $user);
     }
 
@@ -227,7 +241,6 @@ class DiscussApiController extends Controller
      * HTTP POST. Creates a new forum post.
      *            Caller must be authenticated.
      *
-     * @param Request $request
      * @return response 201 on success
      */
     public function storePost(Request $request)
@@ -235,7 +248,7 @@ class DiscussApiController extends Controller
         $account = $request->user();
         $data = $request->validate([
             self::PARAMETER_FORUM_POST_CONTENT => 'required|string|min:1',
-            self::PARAMETER_FORUM_THREAD_ID    => 'sometimes|numeric|exists:forum_threads,id'
+            self::PARAMETER_FORUM_THREAD_ID => 'sometimes|numeric|exists:forum_threads,id',
         ]);
 
         if (isset($data[self::PARAMETER_FORUM_THREAD_ID])) {
@@ -247,10 +260,10 @@ class DiscussApiController extends Controller
         } else {
             $subjectRule = 'sometimes|string|min:3|max:512';
             $data = $data + $request->validate([
-                self::PARAMETER_ENTITY_TYPE        => 'required|string|min:1|max:16',
-                self::PARAMETER_ENTITY_ID          => 'sometimes|numeric',
-                self::PARAMETER_FORUM_GROUP_ID     => 'sometimes|numeric|exists:forum_groups,id',
-                self::PARAMETER_FORUM_POST_SUBJECT => $subjectRule
+                self::PARAMETER_ENTITY_TYPE => 'required|string|min:1|max:16',
+                self::PARAMETER_ENTITY_ID => 'sometimes|numeric',
+                self::PARAMETER_FORUM_GROUP_ID => 'sometimes|numeric|exists:forum_groups,id',
+                self::PARAMETER_FORUM_POST_SUBJECT => $subjectRule,
             ]);
 
             $entityType = $data[self::PARAMETER_ENTITY_TYPE];
@@ -263,13 +276,13 @@ class DiscussApiController extends Controller
             $threadData = $this->_discussRepository->getThreadDataForEntity($entityType, $entityId, true, $account);
             $thread = $threadData->getThread();
 
-            // the default forum group usually comes with an auto generated subject. Replace it with the 
+            // the default forum group usually comes with an auto generated subject. Replace it with the
             // subject specified in the request.
             if (isset($data[self::PARAMETER_FORUM_POST_SUBJECT])) {
                 $thread->subject = $data[self::PARAMETER_FORUM_POST_SUBJECT];
-            } else if (empty($thread->subject)) {
+            } elseif (empty($thread->subject)) {
                 $request->validate([
-                    self::PARAMETER_FORUM_POST_SUBJECT => $subjectRule
+                    self::PARAMETER_FORUM_POST_SUBJECT => $subjectRule,
                 ]);
 
                 abort(422);
@@ -281,9 +294,9 @@ class DiscussApiController extends Controller
                 $thread->forum_group_id = intval($data[self::PARAMETER_FORUM_GROUP_ID]);
             }
         }
-        
+
         $post = new ForumPost([
-            self::PARAMETER_FORUM_POST_CONTENT => $data[self::PARAMETER_FORUM_POST_CONTENT]
+            self::PARAMETER_FORUM_POST_CONTENT => $data[self::PARAMETER_FORUM_POST_CONTENT],
         ]);
         $ok = $this->_discussRepository->savePost($post, $thread, $request->user());
         if (! $ok) {
@@ -300,10 +313,11 @@ class DiscussApiController extends Controller
         );
 
         $post->makeHidden(['forum_thread']);
+
         return [
             self::PROPERTY_POST => $post,
             self::PROPERTY_POST_URL => $postUrl,
-            self::PROPERTY_THREAD => $thread
+            self::PROPERTY_THREAD => $thread,
         ];
     }
 
@@ -321,10 +335,10 @@ class DiscussApiController extends Controller
     {
         $account = $request->user();
         $postData = $request->validate([
-            self::PARAMETER_FORUM_POST_CONTENT => 'required|string|min:1'
+            self::PARAMETER_FORUM_POST_CONTENT => 'required|string|min:1',
         ]);
         $threadData = $request->validate([
-            self::PARAMETER_FORUM_POST_SUBJECT => 'sometimes|string|min:3|max:512'
+            self::PARAMETER_FORUM_POST_SUBJECT => 'sometimes|string|min:3|max:512',
         ]);
 
         $post = $this->_discussRepository->getPost($postId, $account);
@@ -340,13 +354,14 @@ class DiscussApiController extends Controller
         }
 
         $ok = $this->_discussRepository->savePost($post, $thread, $account);
+
         return response(null, $ok ? 200 : 403);
     }
 
     public function storeLike(Request $request)
     {
         $data = $request->validate([
-            self::PARAMETER_FORUM_POST_ID => 'required|numeric|exists:forum_posts,id'
+            self::PARAMETER_FORUM_POST_ID => 'required|numeric|exists:forum_posts,id',
         ]);
 
         $like = $this->_discussRepository->saveLike($data[self::PARAMETER_FORUM_POST_ID], $request->user());
@@ -355,23 +370,23 @@ class DiscussApiController extends Controller
         }
 
         return [
-            self::PROPERTY_POST_LIKE => $like
+            self::PROPERTY_POST_LIKE => $like,
         ];
     }
 
     public function updateThreadStickiness(Request $request)
     {
         $data = $request->validate([
-            self::PARAMETER_FORUM_THREAD_ID     => 'required|numeric|exists:forum_threads,id',
-            self::PARAMETER_FORUM_THREAD_STICKY => 'required|boolean'
+            self::PARAMETER_FORUM_THREAD_ID => 'required|numeric|exists:forum_threads,id',
+            self::PARAMETER_FORUM_THREAD_STICKY => 'required|boolean',
         ]);
 
         $threadId = intval($data[self::PARAMETER_FORUM_THREAD_ID]);
-        $sticky   = boolval($data[self::PARAMETER_FORUM_THREAD_STICKY]);
+        $sticky = boolval($data[self::PARAMETER_FORUM_THREAD_STICKY]);
         $this->_discussRepository->saveSticky($threadId, $sticky);
 
         return [
-            self::PARAMETER_FORUM_THREAD_STICKY => $sticky
+            self::PARAMETER_FORUM_THREAD_STICKY => $sticky,
         ];
     }
 
@@ -379,27 +394,27 @@ class DiscussApiController extends Controller
     {
         $data = $request->validate([
             self::PARAMETER_FORUM_THREAD_ID => 'required|numeric|exists:forum_threads,id',
-            self::PARAMETER_FORUM_GROUP_ID  => 'required|numeric|exists:forum_groups,id',
+            self::PARAMETER_FORUM_GROUP_ID => 'required|numeric|exists:forum_groups,id',
         ]);
 
         $threadId = intval($data[self::PARAMETER_FORUM_THREAD_ID]);
-        $groupId  = intval($data[self::PARAMETER_FORUM_GROUP_ID]);
+        $groupId = intval($data[self::PARAMETER_FORUM_GROUP_ID]);
         $this->_discussRepository->moveThread($threadId, $groupId);
 
         return [
             self::PARAMETER_FORUM_THREAD_ID => $threadId,
-            self::PARAMETER_FORUM_GROUP_ID  => $groupId
+            self::PARAMETER_FORUM_GROUP_ID => $groupId,
         ];
     }
 
     private function getPageFromRequest(Request $request)
     {
         $params = $request->validate([
-            self::PARAMETER_PAGE_NUMBER => 'sometimes|numeric'
+            self::PARAMETER_PAGE_NUMBER => 'sometimes|numeric',
         ]);
 
         return isset($params[self::PARAMETER_PAGE_NUMBER])
-            ? $params[self::PARAMETER_PAGE_NUMBER] 
+            ? $params[self::PARAMETER_PAGE_NUMBER]
             : 0;
     }
 }

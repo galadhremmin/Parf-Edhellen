@@ -2,40 +2,28 @@
 
 namespace App\Http\Controllers\Api\v2;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\{
-    Storage
-};
-
-use App\Events\{
-    AccountChanged,
-    AccountAvatarChanged
-};
+use App\Events\AccountAvatarChanged;
+use App\Events\AccountChanged;
 use App\Helpers\LinkHelper;
-use App\Models\Account;
-use App\Http\Controllers\Abstracts\Controller;
 use App\Helpers\StorageHelper;
+use App\Http\Controllers\Abstracts\Controller;
+use App\Models\Account;
 use App\Security\AccountManager;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 
-class AccountApiController extends Controller 
+class AccountApiController extends Controller
 {
-    /**
-     * @var StorageHelper
-     */
-    private $_storageHelper;
-    /**
-     * @var LinkHelper
-     */
-    private $_linkHelper;
-    /**
-     * @var AccountManager
-     */
-    private $_accountManager;
+    private StorageHelper $_storageHelper;
+
+    private LinkHelper $_linkHelper;
+
+    private AccountManager $_accountManager;
 
     public function __construct(StorageHelper $storageHelper, LinkHelper $linkHelper,
-        AccountManager $accountManager) 
+        AccountManager $accountManager)
     {
         $this->_storageHelper = $storageHelper;
         $this->_linkHelper = $linkHelper;
@@ -54,11 +42,11 @@ class AccountApiController extends Controller
         return Account::findOrFail($id);
     }
 
-    public function findAccount(Request $request) 
+    public function findAccount(Request $request)
     {
         $this->validate($request, [
             'nickname' => 'required|string',
-            'max'      => 'sometimes|numeric|min:1'
+            'max' => 'sometimes|numeric|min:1',
         ]);
 
         $nickname = $request->input('nickname');
@@ -90,8 +78,9 @@ class AccountApiController extends Controller
     public function getAvatar(Request $request, int $id)
     {
         $account = Account::find($id);
+
         return [
-            'avatar' => $this->_storageHelper->accountAvatar($account, true)
+            'avatar' => $this->_storageHelper->accountAvatar($account, true),
         ];
     }
 
@@ -109,7 +98,7 @@ class AccountApiController extends Controller
 
         return [
             'path' => $baseDirectory,
-            'files' => $files
+            'files' => $files,
         ];
     }
 
@@ -118,13 +107,13 @@ class AccountApiController extends Controller
         $account = $this->getAuthorizedAccount($request, $id);
 
         $this->validate($request, [
-            'nickname' => 'bail|required|unique:accounts,nickname,' . $account->id . ',id|min:3|max:'.config('ed.max_nickname_length'),
-            'tengwar'  => 'string|max:64'
+            'nickname' => 'bail|required|unique:accounts,nickname,'.$account->id.',id|min:3|max:'.config('ed.max_nickname_length'),
+            'tengwar' => 'string|max:64',
         ]);
 
         $account->nickname = $request->input('nickname');
-        $account->tengwar  = $request->input('tengwar');
-        $account->profile  = $request->input('introduction');
+        $account->tengwar = $request->input('tengwar');
+        $account->profile = $request->input('introduction');
 
         $changed = $account->isDirty();
         if ($changed) {
@@ -136,19 +125,19 @@ class AccountApiController extends Controller
 
         return [
             'nickname' => $account->nickname,
-            'profile_url' => $this->_linkHelper->author($account->id, $account->nickname)
+            'profile_url' => $this->_linkHelper->author($account->id, $account->nickname),
         ];
     }
 
     public function updateAvatar(Request $request, int $accountId)
     {
         $request->validate([
-            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif|max:4096'
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif|max:4096',
         ]);
 
         $account = $this->getAuthorizedAccount($request, $accountId);
         $file = $request->file('avatar');
-        
+
         if (! $file->isValid()) {
             abort(400, 'Bad avatar image.');
         }
@@ -168,7 +157,7 @@ class AccountApiController extends Controller
                     $constraint->aspectRatio();
                 })->save($localPath);
             }
-            
+
             $account->has_avatar = true;
             $account->save();
 
@@ -180,14 +169,14 @@ class AccountApiController extends Controller
 
         return [
             'account_id' => $account->id,
-            'avatar_path' => $this->_storageHelper->accountAvatar($account, false /* = _null_ if none exists */)
+            'avatar_path' => $this->_storageHelper->accountAvatar($account, false /* = _null_ if none exists */),
         ];
     }
 
     public function updateFeatureBackground(Request $request, int $accountId)
     {
         $request->validate([
-            'feature_background_url' => 'string|nullable|max:128'
+            'feature_background_url' => 'string|nullable|max:128',
         ]);
 
         $file = $request->input('feature_background_url');
@@ -201,14 +190,14 @@ class AccountApiController extends Controller
 
         return [
             'account_id' => $account->id,
-            'feature_background_url' => $file
+            'feature_background_url' => $file,
         ];
     }
 
     public function updateVerifyEmail(Request $request, int $accountId)
     {
         $request->validate([
-            'is_verified' => 'required|boolean'
+            'is_verified' => 'required|boolean',
         ]);
 
         $verify = boolval($request->input('is_verified'));
@@ -222,9 +211,9 @@ class AccountApiController extends Controller
                 route('account.edit', ['account' => $account])
             );
         }
-        
+
         return [
-            'email_verified_at' => $account->email_verified_at
+            'email_verified_at' => $account->email_verified_at,
         ];
     }
 
@@ -251,8 +240,9 @@ class AccountApiController extends Controller
         if (! $request->ajax()) {
             return redirect($redirectUrl);
         }
+
         return [
-            'redirect_to' => $redirectUrl
+            'redirect_to' => $redirectUrl,
         ];
     }
 
@@ -268,6 +258,7 @@ class AccountApiController extends Controller
         }
 
         $account = Account::findOrFail($accountId);
+
         return $account;
     }
 }

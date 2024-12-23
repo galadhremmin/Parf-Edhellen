@@ -3,34 +3,21 @@
 namespace App\Repositories;
 
 use App\Helpers\LinkHelper;
-use App\Models\Interfaces\IHasFriendlyName;
-use App\Models\{ 
-    Account, 
-    AuditTrail, 
-    FlashcardResult, 
-    ForumPost, 
-    Gloss,
-    ModelBase, 
-    Sentence
-};
+use App\Models\AuditTrail;
 use App\Models\Initialization\Morphs;
-
+use App\Models\Interfaces\IHasFriendlyName;
+use App\Models\ModelBase;
 use Illuminate\Auth\AuthManager;
 
 class AuditTrailRepository implements Interfaces\IAuditTrailRepository
 {
-    /**
-     * @var LinkHelper
-     */
-    protected $_link;
-    /**
-     * @var AuthManager
-     */
-    protected $_authManager;
+    protected LinkHelper $_link;
+
+    protected AuthManager $_authManager;
 
     public function __construct(LinkHelper $link, AuthManager $authManager)
     {
-        $this->_link        = $link;
+        $this->_link = $link;
         $this->_authManager = $authManager;
     }
 
@@ -41,9 +28,9 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
                 'account' => function ($query) {
                     $query->select('id', 'nickname', 'has_avatar');
                 },
-                'entity' => function () {}
+                'entity' => function () {},
             ]);
-        
+
         if (! $this->_authManager->check() || ! $this->_authManager->user()->isAdministrator()) {
             // Put audit trail actions here that only administrators should see.
             $query = $query->where('is_admin', 0);
@@ -52,12 +39,13 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
         if (count($action_ids) > 0) {
             $query = $query->whereIn('action_id', $action_ids);
         }
-        
+
         $actions = $query->skip($skipNoOfRows)->take($noOfRows)->get();
+
         return $actions;
     }
 
-    public function store(int $action, $entity, int $userId = 0, bool $is_elevated = null, ?array $data = null)
+    public function store(int $action, $entity, int $userId = 0, ?bool $is_elevated = null, ?array $data = null)
     {
         if ($userId === 0) {
             // Is the user authenticated?
@@ -90,24 +78,24 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
                 $is_elevated = $user !== null && $user->isIncognito();
             }
         }
-        
+
         if ($is_elevated === null) {
             $is_elevated = false;
         }
 
         $entityName = null;
-        if ($entity instanceOf IHasFriendlyName) {
+        if ($entity instanceof IHasFriendlyName) {
             $entityName = $entity->getFriendlyName();
         }
 
         AuditTrail::create([
-            'account_id'  => $userId,
-            'entity_id'   => $entity->id,
+            'account_id' => $userId,
+            'entity_id' => $entity->id,
             'entity_type' => $typeName,
             'entity_name' => $entityName,
-            'action_id'   => $action,
-            'is_admin'    => $is_elevated,
-            'data'        => is_array($data) ? json_encode($data) : null
+            'action_id' => $action,
+            'is_admin' => $is_elevated,
+            'data' => is_array($data) ? json_encode($data) : null,
         ]);
     }
 }

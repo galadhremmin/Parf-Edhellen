@@ -2,36 +2,28 @@
 
 namespace App\Security;
 
-use App\Events\{
-    AccountAvatarChanged,
-    AccountPasswordChanged,
-    AccountsMerged,
-    AccountDestroyed
-};
+use App\Events\AccountAvatarChanged;
+use App\Events\AccountDestroyed;
+use App\Events\AccountPasswordChanged;
+use App\Events\AccountsMerged;
 use App\Helpers\StorageHelper;
-use Illuminate\Auth\AuthManager;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use App\Models\Account;
 use App\Models\AuthorizationProvider;
 use App\Models\Role;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Auth\AuthManager;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AccountManager
 {
-    /**
-     * @var StorageHelper
-     */
-    private $_storageHelper;
+    private StorageHelper $_storageHelper;
 
-    /**
-     * @var AuthManager
-     */
-    private $_authManager;
+    private AuthManager $_authManager;
 
     public function __construct(StorageHelper $storageHelper, AuthManager $authManager)
     {
@@ -54,8 +46,8 @@ class AccountManager
     public function createAccount(string $username, ?string $identity = null, ?int $providerId = null, ?string $password = null, ?string $name = null)
     {
         $firstAccountThusAdmin = Account::count() === 0;
-        $nickname = $firstAccountThusAdmin 
-            ? 'Administrator' 
+        $nickname = $firstAccountThusAdmin
+            ? 'Administrator'
             : $this->getNextAvailableNickname($name);
 
         if ($providerId !== null) {
@@ -65,20 +57,20 @@ class AccountManager
         $identity = ! empty($identity) ? $identity : 'MASTER|'.$username;
         $user = Account::where('identity', $identity)->first();
         if ($user !== null) {
-            // this master account already exists so it's probably in the process of being created. 
+            // this master account already exists so it's probably in the process of being created.
             // We need to perform this check to ensure that this isn't happening twice.
             return $user;
         }
 
         $user = Account::create([
-            'email'             => $username,
-            'identity'          => $identity,
-            'nickname'          => $nickname,
+            'email' => $username,
+            'identity' => $identity,
+            'nickname' => $nickname,
 
             'authorization_provider_id' => $providerId,
-            'is_passworded'             => ! empty($password),
-            'is_master_account'         => ! empty($password),
-            'password'                  => ! empty($password) ? Hash::make($password) : null
+            'is_passworded' => ! empty($password),
+            'is_master_account' => ! empty($password),
+            'password' => ! empty($password) ? Hash::make($password) : null,
         ]);
 
         // Important!
@@ -108,18 +100,18 @@ class AccountManager
         }
 
         $masterAccount = Account::create([
-            'email'                     => $account->email,
-            'nickname'                  => $account->nickname,
-            'tengwar'                   => $account->tengwar,
-            'profile'                   => $account->profile,
-            'has_avatar'                => $account->has_avatar,
-            'feature_background_url'    => $account->feature_background_url,
-            'email_verified_at'         => $account->email_verified_at,
+            'email' => $account->email,
+            'nickname' => $account->nickname,
+            'tengwar' => $account->tengwar,
+            'profile' => $account->profile,
+            'has_avatar' => $account->has_avatar,
+            'feature_background_url' => $account->feature_background_url,
+            'email_verified_at' => $account->email_verified_at,
             'authorization_provider_id' => null,
-            'master_account_id'         => null,
-            'identity'                  => 'MASTER|'.$account->email,
-            'is_master_account'         => 1,
-            'is_passworded'             => 0
+            'master_account_id' => null,
+            'identity' => 'MASTER|'.$account->email,
+            'is_master_account' => 1,
+            'is_passworded' => 0,
         ]);
 
         foreach ($account->roles as $role) {
@@ -136,6 +128,7 @@ class AccountManager
         }
 
         event(new Registered($masterAccount));
+
         return $masterAccount;
     }
 
@@ -152,7 +145,7 @@ class AccountManager
         if ($masterAccount === null) {
             $masterAccount = $this->createMasterAccount($accounts->first());
         }
-        
+
         foreach ($accounts as $account) {
             if ($account->id !== $masterAccount->id) {
                 $this->linkAccountToMasterAccount($account, $masterAccount);
@@ -182,12 +175,13 @@ class AccountManager
             $this->linkAccountToMasterAccount($account, $masterAccount);
             $account = $masterAccount;
         }
-        
+
         $account->is_passworded = true;
         $account->password = Hash::make($password);
         $account->save();
 
         event(new AccountPasswordChanged($account));
+
         return $account;
     }
 
@@ -220,22 +214,22 @@ class AccountManager
         try {
             DB::beginTransaction();
 
-            $uuid      = 'DELETED|'.Str::uuid();
-            $date      = Carbon::now()->toDateTimeString();
+            $uuid = 'DELETED|'.Str::uuid();
+            $date = Carbon::now()->toDateTimeString();
             $accountId = $account->id;
 
-            $account->is_deleted                 = true;
-            $account->nickname                   = sprintf('(Deleted %s)', $date);
-            $account->email                      = 'deleted@'.$uuid;
-            $account->authorization_provider_id  = null;
-            $account->identity                   = $uuid;
-            $account->profile                    = 'The user deleted their account on '.$date;
-            $account->tengwar                    = null;
-            $account->has_avatar                 = 0;
-            $account->is_master_account          = false;
-            $account->is_passworded              = false;
-            $account->master_account_id          = null;
-            $account->password                   = null;
+            $account->is_deleted = true;
+            $account->nickname = sprintf('(Deleted %s)', $date);
+            $account->email = 'deleted@'.$uuid;
+            $account->authorization_provider_id = null;
+            $account->identity = $uuid;
+            $account->profile = 'The user deleted their account on '.$date;
+            $account->tengwar = null;
+            $account->has_avatar = 0;
+            $account->is_master_account = false;
+            $account->is_passworded = false;
+            $account->master_account_id = null;
+            $account->password = null;
             $account->save();
 
             $linkedAccounts = Account::where('master_account_id', $accountId)
@@ -281,7 +275,7 @@ class AccountManager
                 return $tmp;
             }
 
-            $tmp = $nickname . ' ' . $i;
+            $tmp = $nickname.' '.$i;
             $i = $i + 1;
         } while (true);
     }

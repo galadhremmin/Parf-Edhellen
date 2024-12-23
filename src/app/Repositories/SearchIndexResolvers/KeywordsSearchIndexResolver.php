@@ -2,8 +2,8 @@
 
 namespace App\Repositories\SearchIndexResolvers;
 
-use DB;
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
+use DB;
 
 class KeywordsSearchIndexResolver extends SearchIndexResolverBase
 {
@@ -28,7 +28,7 @@ class KeywordsSearchIndexResolver extends SearchIndexResolverBase
             ->limit(100)
             ->get()
             ->toArray();
-        
+
         return $keywords;
     }
 }

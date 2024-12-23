@@ -10,14 +10,9 @@ class AccountsMerged
 {
     use SerializesModels;
 
-    /**
-     * @var Account
-     */
-    public $masterAccount;
-    /**
-     * @var Collection
-     */
-    public $accountsMerged;
+    public Account $masterAccount;
+
+    public Collection $accountsMerged;
 
     public function __construct(Account $masterAccount, Collection $accountsMerged)
     {

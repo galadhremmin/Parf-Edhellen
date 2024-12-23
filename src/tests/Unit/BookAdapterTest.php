@@ -2,28 +2,21 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
-use Illuminate\Support\Collection;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Auth;
-use Route;
-use Queue;
-
-use Tests\Unit\Traits\CanCreateGloss;
 use App\Adapters\BookAdapter;
-use App\Models\{
-    Translation,
-};
+use App\Models\Translation;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Collection;
+use Queue;
+use Tests\TestCase;
+use Tests\Unit\Traits\CanCreateGloss;
 
 class BookAdapterTest extends TestCase
 {
-    use DatabaseTransactions; 
-
     use CanCreateGloss {
         CanCreateGloss::setUp as setUpGlosses;
         CanCreateGloss::getRepository as getGlossRepository;
-    } // ; <-- remedies Visual Studio Code colouring bug
+    }
+    use DatabaseTransactions; // ; <-- remedies Visual Studio Code colouring bug
 
     private $_adapter;
 
@@ -32,19 +25,19 @@ class BookAdapterTest extends TestCase
         parent::setUp();
         Queue::fake();
         $this->setUpGlosses();
-        
+
         $this->_adapter = resolve(BookAdapter::class);
     }
 
-    public function testAdaptGloss()
+    public function test_adapt_gloss()
     {
-        extract( $this->createGloss(__FUNCTION__) );
+        extract($this->createGloss(__FUNCTION__));
         $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
 
-        $languages   = new Collection([ $gloss->language ]);
+        $languages = new Collection([$gloss->language]);
         $inflections = collect([]);
-        $comments    = [ $gloss->id => 10 ];
-        $atomDate    = true;
+        $comments = [$gloss->id => 10];
+        $atomDate = true;
 
         $adapted = $this->_adapter->adaptGloss($gloss, $languages, $inflections, $comments, $atomDate);
 
@@ -57,9 +50,9 @@ class BookAdapterTest extends TestCase
         }, $translations)), $adapted->all_translations);
     }
 
-    public function testAdaptGlossesWithoutDetails()
+    public function test_adapt_glosses_without_details()
     {
-        extract( $this->createGloss(__FUNCTION__) );
+        extract($this->createGloss(__FUNCTION__));
 
         $gloss = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, []);
 
@@ -72,17 +65,17 @@ class BookAdapterTest extends TestCase
         $this->assertEquals(0, count($adaptedGlossary[0]->gloss_details));
     }
 
-    public function testRating()
+    public function test_rating()
     {
         $glosses = [
-            'mal', 'malina', 'malda', 'nan', 'tulca', 'anat'
+            'mal', 'malina', 'malda', 'nan', 'tulca', 'anat',
         ];
         $expected = [
-            'mal', 'malda', 'malina', 'nan', 'anat', 'tulca'
+            'mal', 'malda', 'malina', 'nan', 'anat', 'tulca',
         ];
         $glossary = [];
         foreach ($glosses as $gloss) {
-            extract( $this->createGloss(__FUNCTION__, $gloss) );
+            extract($this->createGloss(__FUNCTION__, $gloss));
             $savedGloss = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
             $savedGloss->load('translations', 'gloss_details');
             $glossary[] = $savedGloss;
@@ -96,25 +89,25 @@ class BookAdapterTest extends TestCase
         }
     }
 
-    public function testShouldGetVersions()
+    public function test_should_get_versions()
     {
-        extract( $this->createGloss(__FUNCTION__) );
+        extract($this->createGloss(__FUNCTION__));
         $gloss0 = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
-        
+
         $gloss->is_uncertain = false;
         $translations = $this->createTranslations();
         $details = $this->createGlossDetails($gloss);
         $gloss1 = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
 
         $newWord = $word.' 1';
-        $translations = $this->createTranslations(); 
+        $translations = $this->createTranslations();
         $details = $this->createGlossDetails($gloss);
         $gloss2 = $this->getGlossRepository()->saveGloss($newWord, $sense, $gloss, $translations, $keywords, $details);
 
         $translations = array_merge(
             $this->createTranslations(),
-            [ new Translation(['translation' => 'test '.count($translations)]) ]
-        ); 
+            [new Translation(['translation' => 'test '.count($translations)])]
+        );
         $details = $this->createGlossDetails($gloss);
         $gloss3 = $this->getGlossRepository()->saveGloss($newWord, $sense, $gloss, $translations, $keywords, $details);
 
@@ -129,13 +122,13 @@ class BookAdapterTest extends TestCase
 
         $versions = $this->getGlossRepository()->getGlossVersions($gloss0->id);
         $adapted = $this->_adapter->adaptGlossVersions($versions->getVersions(), $versions->getLatestVersionId());
-        $glosses = & $adapted['versions'];
+        $glosses = &$adapted['versions'];
 
         $this->assertEquals(4, count($glosses));
 
-        $this->assertTrue(!! $glosses[0]->_is_latest);
-        $this->assertFalse(!! $glosses[1]->_is_latest);
-        $this->assertFalse(!! $glosses[2]->_is_latest);
-        $this->assertFalse(!! $glosses[3]->_is_latest);
+        $this->assertTrue((bool) $glosses[0]->_is_latest);
+        $this->assertFalse((bool) $glosses[1]->_is_latest);
+        $this->assertFalse((bool) $glosses[2]->_is_latest);
+        $this->assertFalse((bool) $glosses[3]->_is_latest);
     }
 }

@@ -9,9 +9,10 @@ class FlashcardFlipped
 {
     use SerializesModels;
 
-    public $result;
-    public $numberOfCards;
-    
+    public FlashcardResult $result;
+
+    public int $numberOfCards;
+
     public function __construct(FlashcardResult $result, int $numberOfCards)
     {
         $this->result = $result;

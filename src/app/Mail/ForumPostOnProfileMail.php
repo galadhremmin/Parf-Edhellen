@@ -2,19 +2,18 @@
 
 namespace App\Mail;
 
+use App\Models\ForumPost;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
-
-use App\Models\ForumPost;
 
 class ForumPostOnProfileMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    private $_cancellationToken;
-    private $_post;
+    private string $_cancellationToken;
+
+    private ForumPost $_post;
 
     /**
      * Create a new message instance.
@@ -38,7 +37,7 @@ class ForumPostOnProfileMail extends Mailable
 
         return $this->markdown('emails.forum.post-profile', [
             'cancellationToken' => $this->_cancellationToken,
-            'post' => $this->_post
+            'post' => $this->_post,
         ]);
     }
 }

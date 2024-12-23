@@ -2,21 +2,16 @@
 
 namespace App\Repositories;
 
-use App\Models\{
-    Account,
-    AccountFeed,
-    AccountFeedRefreshTime,
-    ForumPost,
-    Gloss,
-    Sentence
-};
+use App\Models\Account;
+use App\Models\AccountFeed;
+use App\Models\AccountFeedRefreshTime;
+use App\Models\ForumPost;
 use App\Models\Initialization\Morphs;
+use App\Models\Sentence;
 use App\Models\Versioning\GlossVersion;
-use Illuminate\Support\{
-    Carbon,
-    Str
-};
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Str;
 
 class AccountFeedRepository
 {
@@ -54,22 +49,22 @@ class AccountFeedRepository
 
         $records = $feed->sortByDesc('created_at')->map(function ($record) use ($account) {
             return [
-                'id'                    => (string) Str::uuid(),
-                'account_id'            => $account->id,
-                'happened_at'           => $record->created_at,
-                'content_type'          => $record->morph,
-                'content_id'            => $record->id,
-                'created_at'            => Date::now(),
-                'updated_at'            => Date::now(),
+                'id' => (string) Str::uuid(),
+                'account_id' => $account->id,
+                'happened_at' => $record->created_at,
+                'content_type' => $record->morph,
+                'content_id' => $record->id,
+                'created_at' => Date::now(),
+                'updated_at' => Date::now(),
                 'audit_trail_action_id' => null, // TODO
-                'audit_trail_id'        => null  // TODO
+                'audit_trail_id' => null,  // TODO
             ];
         });
 
         $newDates = $records->reduce(function ($dates, $record) {
             if (! isset($dates[$record['content_type']])) {
                 $dates[$record['content_type']] = $record['happened_at'];
-            } else if ($dates[$record['content_type']] < $record['happened_at']) {
+            } elseif ($dates[$record['content_type']] < $record['happened_at']) {
                 $date[$record['content_type']] = $record['happened_at'];
             }
 
@@ -79,29 +74,30 @@ class AccountFeedRepository
                 'account_id' => $account->id,
                 'feed_content_type' => $morph,
                 'newest_happened_at' => $date,
-                'oldest_happened_at' => null // TODO
+                'oldest_happened_at' => null, // TODO
             ];
+
             return $args;
         }, []);
         $newDates[] = [
-            'account_id'        => $account->id,
+            'account_id' => $account->id,
             'feed_content_type' => 'universe',
             'newest_happened_at' => Date::now(),
-            'oldest_happened_at' => Date::now()
+            'oldest_happened_at' => Date::now(),
         ];
-        
+
         $records->chunk(100)->map(function ($chunk) {
             AccountFeed::insert($chunk->all());
         });
 
         AccountFeedRefreshTime::upsert(
             $newDates,
-            /* unique by: */ [ 'account_id', 'feed_content_type' ],
-            /* update: */ [ 'newest_happened_at', 'oldest_happened_at' ]
+            /* unique by: */ ['account_id', 'feed_content_type'],
+            /* update: */ ['newest_happened_at', 'oldest_happened_at']
         );
     }
 
-    private function generateForMorphAndAccount(Account $account, string $morph, Carbon|null $newest)
+    private function generateForMorphAndAccount(Account $account, string $morph, ?Carbon $newest)
     {
         $entityModel = Morphs::getMorphedModel($morph);
 
@@ -113,7 +109,7 @@ class AccountFeedRepository
         }
 
         $entities = collect([]);
-        
+
         foreach ($query //
             ->select('id', 'created_at', 'updated_at') //
             ->cursor() as $record) {
@@ -124,14 +120,14 @@ class AccountFeedRepository
             return [
                 'oldest_happened_at' => null,
                 'newest_happened_at' => null,
-                'entities' => collect([])
+                'entities' => collect([]),
             ];
         }
 
         return [
             'oldest_happened_at' => $entities->last()?->created_at,
             'newest_happened_at' => $entities->first()?->created_at,
-            'entities' => $entities
+            'entities' => $entities,
         ];
     }
 }

@@ -2,34 +2,28 @@
 
 namespace App\Http\Controllers\Resources;
 
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Contracts\Support\Jsonable;
-
+use App\Events\ContributionApproved;
+use App\Events\ContributionDestroyed;
+use App\Events\ContributionRejected;
 use App\Http\Controllers\Abstracts\Controller;
-use App\Models\Initialization\Morphs;
-use App\Events\{
-    ContributionApproved,
-    ContributionDestroyed,
-    ContributionRejected
-};
-use App\Models\{
-    Contribution
-};
 use App\Http\Controllers\Contributions\ContributionControllerFactory;
+use App\Models\Contribution;
+use App\Models\Initialization\Morphs;
+use Carbon\Carbon;
+use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Http\Request;
 
 class ContributionController extends Controller
 {
     /**
      * HTTP GET. Landing page for the current user.
      *
-     * @param Request $request
      * @return \Illuminate\Contracts\View\View
      */
     public function index(Request $request)
     {
         $user = $request->user();
-        $pendingReviews  = Contribution::whereAccount($user->id)->whereNull('is_approved')
+        $pendingReviews = Contribution::whereAccount($user->id)->whereNull('is_approved')
             ->orderBy('id', 'asc')->paginate(10, ['*'], 'pending')->withQueryString();
         $rejectedReviews = Contribution::whereAccount($user->id)->where('is_approved', 0)
             ->orderBy('id', 'asc')->paginate(10, ['*'], 'rejected')->withQueryString();
@@ -39,19 +33,18 @@ class ContributionController extends Controller
         return view('contribution.index', [
             'approvedReviews' => $approvedReviews,
             'rejectedReviews' => $rejectedReviews,
-            'pendingReviews'  => $pendingReviews
+            'pendingReviews' => $pendingReviews,
         ]);
     }
-    
+
     /**
      * HTTP GET. Page for administrators where all reviews are listed.
      *
-     * @param Request $request
      * @return \Illuminate\Contracts\View\View
      */
     public function list(Request $request)
     {
-        $pendingReviews  = Contribution::whereNull('is_approved')
+        $pendingReviews = Contribution::whereNull('is_approved')
             ->orderBy('id', 'asc')->paginate(10, ['*'], 'pending')->withQueryString();
         $rejectedReviews = Contribution::where('is_approved', 0)
             ->orderBy('updated_at', 'desc')->paginate(10, ['*'], 'rejected')->withQueryString();
@@ -61,18 +54,16 @@ class ContributionController extends Controller
         return view('admin.contribution.list', [
             'approvedReviews' => $approvedReviews,
             'rejectedReviews' => $rejectedReviews,
-            'pendingReviews'  => $pendingReviews
+            'pendingReviews' => $pendingReviews,
         ]);
     }
 
     /**
      * HTTP GET. Presents a the specified contribution.
      *
-     * @param Request $request
-     * @param int $id
      * @return \Illuminate\Contracts\View\View
      */
-    public function show(Request $request, int $id) 
+    public function show(Request $request, int $id)
     {
         $admin = $request->has('admin')
             ? boolval($request->input('admin'))
@@ -82,16 +73,16 @@ class ContributionController extends Controller
         $this->requestPermission($request, $contribution);
 
         $model = ContributionControllerFactory::createController($contribution->type)->getViewModel($contribution);
+
         return view('contribution.show', $model->toModelArray() + [
             'returnToAdminView' => $admin,
-            'isAdmin' => $request->user()->isAdministrator()
+            'isAdmin' => $request->user()->isAdministrator(),
         ]);
     }
 
     /**
      * HTTP GET. Presents a form for creating a contribution.
      *
-     * @param Request $request
      * @return \Illuminate\Contracts\View\View
      */
     public function create(Request $request, ?string $morph = null)
@@ -106,11 +97,9 @@ class ContributionController extends Controller
     /**
      * HTTP GET. Presents a form for re-submitting a rejected contribution, or editing one pending review.
      *
-     * @param Request $request
-     * @param int $id
      * @return \Illuminate\Contracts\View\View
      */
-    public function edit(Request $request, int $id) 
+    public function edit(Request $request, int $id)
     {
         // retrieve the review
         $contribution = Contribution::findOrFail($id);
@@ -124,10 +113,8 @@ class ContributionController extends Controller
     }
 
     /**
-     * HTTP GET. Confirm dialogue for deleting a specified submission. 
+     * HTTP GET. Confirm dialogue for deleting a specified submission.
      *
-     * @param Request $request
-     * @param int $id
      * @return \Illuminate\Contracts\View\View
      */
     public function confirmDestroy(Request $request, int $id)
@@ -136,15 +123,13 @@ class ContributionController extends Controller
         $this->requestPermission($request, $contribution);
 
         return view('admin.contribution.confirm-destroy', [
-            'review' => $contribution
+            'review' => $contribution,
         ]);
     }
 
     /**
      * HTTP GET. Confirm dialogue for rejecting a specified submission.
      *
-     * @param Request $request
-     * @param int $id
      * @return \Illuminate\Contracts\View\View
      */
     public function confirmReject(Request $request, int $id)
@@ -153,15 +138,14 @@ class ContributionController extends Controller
         $this->requestPermission($request, $contribution);
 
         return view('admin.contribution.confirm-reject', [
-            'review' => $contribution
+            'review' => $contribution,
         ]);
     }
 
     /**
      * HTTP POST. Creates a contribution.
      *
-     * @param Request $request
-     * @return \Illuminate\Http\Response 
+     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
@@ -170,7 +154,7 @@ class ContributionController extends Controller
         $contribution = new Contribution;
         $contribution->account_id = $request->user()->id;
         $contribution->is_approved = null;
-        
+
         if ($request->has('dependent_on_contribution_id')) {
             $contribution->dependent_on_contribution_id = intval($request->input('dependent_on_contribution_id'));
         }
@@ -178,8 +162,8 @@ class ContributionController extends Controller
         $this->saveContribution($contribution, $request);
 
         return response([
-            'id'  => $contribution->id,
-            'url' => route('contribution.show', ['contribution' => $contribution->id])
+            'id' => $contribution->id,
+            'url' => route('contribution.show', ['contribution' => $contribution->id]),
         ], 201);
     }
 
@@ -187,9 +171,7 @@ class ContributionController extends Controller
      * HTTP PUT. Updates a specified contribution, or creates a new review in the event that
      * the specified review was previously rejected.
      *
-     * @param Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response 
+     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, int $id)
     {
@@ -212,17 +194,15 @@ class ContributionController extends Controller
         $this->saveContribution($contribution, $request);
 
         return response([
-            'id'  => $contribution->id,
-            'url' => route('contribution.show', ['contribution' => $contribution->id])
+            'id' => $contribution->id,
+            'url' => route('contribution.show', ['contribution' => $contribution->id]),
         ], 200);
-    } 
+    }
 
     /**
      * HTTP PUT. Rejects a specified contribution.
      *
-     * @param Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response 
+     * @return \Illuminate\Http\Response
      */
     public function updateReject(Request $request, int $id)
     {
@@ -243,14 +223,12 @@ class ContributionController extends Controller
         event(new ContributionRejected($contribution));
 
         return redirect()->route('contribution.show', ['contribution' => $contribution->id]);
-    } 
+    }
 
     /**
      * HTTP PUT. Approves a specified contribution.
      *
-     * @param Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response 
+     * @return \Illuminate\Http\Response
      */
     public function updateApprove(Request $request, int $id)
     {
@@ -280,9 +258,7 @@ class ContributionController extends Controller
     /**
      * HTTP DELETE. Deletes a specified contribution.
      *
-     * @param Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response 
+     * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request, int $id)
     {
@@ -297,7 +273,7 @@ class ContributionController extends Controller
         $contribution->delete();
 
         event(new ContributionDestroyed($contribution, $request->user()->id));
-        
+
         return $request->user()->isAdministrator()
             ? redirect()->route('admin.contribution.list')
             : redirect()->route('contribution.index');
@@ -305,10 +281,9 @@ class ContributionController extends Controller
 
     /**
      * HTTP POST. Validate a sub-step in the contribution process.
-     * 
-     * @param Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response 
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
      */
     public function validateSubstep(Request $request)
     {
@@ -317,9 +292,9 @@ class ContributionController extends Controller
         $substepId = $request->has('substep_id')
             ? intval($request->input('substep_id'))
             : 0;
-        
+
         $id = $this->getEntityId($request);
-        
+
         $result = ContributionControllerFactory::createController($request)->validateSubstep($request, $id, $substepId);
         if (is_bool($result)) {
             return response(null, $result ? 204 : 400);
@@ -333,8 +308,7 @@ class ContributionController extends Controller
      * by the request input parameters. The request parameter ("morph") is
      * required.
      *
-     * @param Request $request
-     * @param int $id
+     * @param  int  $id
      * @return void
      */
     protected function validateAll(Request $request)
@@ -353,6 +327,7 @@ class ContributionController extends Controller
         }
 
         $entityId = intval($request->input('id'));
+
         return $entityId;
     }
 
@@ -360,15 +335,14 @@ class ContributionController extends Controller
      * Validates the request to ensure that it is compatible with the requirements of a contribution
      * request.
      *
-     * @param Request $request
      * @return void
      */
     protected function validateContributionRequest(Request $request)
     {
         $this->validate($request, [
-            'morph'                        => 'required|string',
-            'contribution_id'              => 'sometimes|numeric|exists:contributions,id',
-            'dependent_on_contribution_id' => 'sometimes|nullable|numeric|exists:contributions,id'
+            'morph' => 'required|string',
+            'contribution_id' => 'sometimes|numeric|exists:contributions,id',
+            'dependent_on_contribution_id' => 'sometimes|nullable|numeric|exists:contributions,id',
         ]);
     }
 
@@ -376,8 +350,6 @@ class ContributionController extends Controller
      * Requests permission for the specified contribution based on the information associated with
      * the specified request.
      *
-     * @param Request $request
-     * @param Contribution $model
      * @return void
      */
     protected function requestPermission(Request $request, Contribution $model)
@@ -398,8 +370,6 @@ class ContributionController extends Controller
     /**
      * Updates the specified contribution based on the infromation provided by the request.
      *
-     * @param Contribution $contribution
-     * @param Request $request
      * @return void
      */
     protected function saveContribution(Contribution $contribution, Request $request)
@@ -412,9 +382,9 @@ class ContributionController extends Controller
             abort(400, 'Unrecognised type of contribution.');
         }
 
-        $contribution->type  = $type;
-        $contribution->notes = $request->has('notes') 
-            ? $request->input('notes') 
+        $contribution->type = $type;
+        $contribution->notes = $request->has('notes')
+            ? $request->input('notes')
             : null;
 
         // payloads might already be configured at this point, either by the save methods
@@ -428,7 +398,7 @@ class ContributionController extends Controller
         $contribution->save();
     }
 
-    protected function contributionAlreadyApproved() 
+    protected function contributionAlreadyApproved()
     {
         abort(400, 'Contribution is already approved.');
     }

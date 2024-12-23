@@ -9,7 +9,7 @@ class ForumThreadsForPostsValue implements \JsonSerializable
     public function __construct($properties)
     {
         $this->initializeAll($properties, [
-            'forum_threads', 'forum_groups'
+            'forum_threads', 'forum_groups',
         ]);
     }
 

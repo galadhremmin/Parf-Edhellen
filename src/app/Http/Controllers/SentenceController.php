@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Abstracts\Controller;
 use App\Models\Language;
 use App\Models\Sentence;
-use App\Http\Controllers\Abstracts\Controller;
 use App\Repositories\SentenceRepository;
 use Illuminate\Http\Request;
 
 class SentenceController extends Controller
 {
-    private $_sentenceRepository;
+    private SentenceRepository $_sentenceRepository;
 
     public function __construct(SentenceRepository $sentenceRepository)
     {
@@ -19,20 +19,20 @@ class SentenceController extends Controller
 
     public function index()
     {
-        $numberOfSentences  = Sentence::approved()->count();
+        $numberOfSentences = Sentence::approved()->count();
         $numberOfNeologisms = Sentence::approved()->neologisms()->count();
-        $randomSentence     = Sentence::approved()->inRandomOrder()->select('id')->first();
+        $randomSentence = Sentence::approved()->inRandomOrder()->select('id')->first();
 
         if ($randomSentence !== null) {
-            $randomSentence     = $this->_sentenceRepository->getSentence($randomSentence->id);
+            $randomSentence = $this->_sentenceRepository->getSentence($randomSentence->id);
         }
-        $languages          = $this->_sentenceRepository->getLanguages();
+        $languages = $this->_sentenceRepository->getLanguages();
 
         return view('sentence.index', [
-            'numberOfSentences'  => $numberOfSentences,
+            'numberOfSentences' => $numberOfSentences,
             'numberOfNeologisms' => $numberOfNeologisms,
-            'languages'          => $languages,
-            'randomSentence'     => $randomSentence
+            'languages' => $languages,
+            'randomSentence' => $randomSentence,
         ]);
     }
 
@@ -44,14 +44,14 @@ class SentenceController extends Controller
         $language = Language::find($langId);
 
         return view('sentence.sentences', [
-            'sentences'    => array_key_exists(0, $sentences) ? $sentences[0] : [],
-            'neologisms'   => array_key_exists(1, $sentences) ? $sentences[1] : [],
-            'language'     => $language
+            'sentences' => array_key_exists(0, $sentences) ? $sentences[0] : [],
+            'neologisms' => array_key_exists(1, $sentences) ? $sentences[1] : [],
+            'language' => $language,
         ]);
     }
 
     public function bySentence(Request $request, int $langId, string $languageName,
-                               int $sentId, string $sentName)
+        int $sentId, string $sentName)
     {
         $sentence = $this->_sentenceRepository->getSentence($sentId);
         if ($sentence === null) {
@@ -59,10 +59,10 @@ class SentenceController extends Controller
         }
 
         $language = Language::findOrFail($langId);
-        
+
         return view('sentence.sentence', [
             'sentence' => $sentence,
-            'language' => $language
+            'language' => $language,
         ]);
     }
 }

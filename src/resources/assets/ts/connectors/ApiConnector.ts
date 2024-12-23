@@ -159,7 +159,11 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
         if (queryStringMap !== null) {
             const keyValuePairs = Object.keys(queryStringMap).reduce((carry: string[], key: string) => [
                 ...carry,
-                `${toSnakeCase(key)}=${encodeURIComponent(String(queryStringMap[key]))}`,
+                `${toSnakeCase(key)}=${encodeURIComponent(
+                    typeof queryStringMap[key] === 'object' 
+                        ? JSON.stringify(queryStringMap[key])
+                        // eslint-disable-next-line @typescript-eslint/no-base-to-string
+                        : String(queryStringMap[key]))}`,
             ], []);
 
             if (keyValuePairs.length > 0) {

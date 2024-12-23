@@ -2,25 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Cache;
-
 use App\Adapters\BookAdapter;
+use App\Events\FlashcardFlipped;
 use App\Helpers\StringHelper;
 use App\Http\Controllers\Abstracts\Controller;
-use App\Events\FlashcardFlipped;
-use App\Models\{
-    Flashcard, 
-    FlashcardResult,
-    Gloss,
-    Speech,
-    Translation
-};
+use App\Models\Flashcard;
+use App\Models\FlashcardResult;
+use App\Models\Gloss;
+use App\Models\Speech;
+use App\Models\Translation;
+use Cache;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class FlashcardController extends Controller
 {
-    private $_bookAdapter;
+    private BookAdapter $_bookAdapter;
 
     public function __construct(BookAdapter $bookAdapter)
     {
@@ -31,17 +28,18 @@ class FlashcardController extends Controller
     {
         $flashcards = Flashcard::all()
             ->sortBy('language.name');
-     
+
         $user = $request->user();
+
         return view('flashcard.index', [
-            'flashcards' => $flashcards, 
-            'statistics' => $this->getStatisticsByUser($user)
+            'flashcards' => $flashcards,
+            'statistics' => $this->getStatisticsByUser($user),
         ]);
     }
 
-    private function getStatisticsByUser($user) 
+    private function getStatisticsByUser($user)
     {
-        // Retrieve flashcard history and compile a 'statistics' by language associative array. 
+        // Retrieve flashcard history and compile a 'statistics' by language associative array.
         if (! $user) {
             return null;
         }
@@ -52,7 +50,7 @@ class FlashcardController extends Controller
         $statistics = FlashcardResult::where('account_id', $accountId)
             ->join('flashcards', 'flashcard_results.flashcard_id', 'flashcards.id')
             ->join('languages', 'flashcards.language_id', 'languages.id')
-            ->groupBy([ 'languages.name', 'correct' ])
+            ->groupBy(['languages.name', 'correct'])
             ->select('languages.name', 'correct', DB::raw('count(*) as numberOfResults'))
             ->get();
 
@@ -67,7 +65,7 @@ class FlashcardController extends Controller
                 $statisticsByLanguage[$statistic->name] = [
                     'total' => 0,
                     'correct' => 0,
-                    'wrong' => 0
+                    'wrong' => 0,
                 ];
             }
 
@@ -91,9 +89,10 @@ class FlashcardController extends Controller
     public function cards(Request $request, int $id)
     {
         $flashcard = Flashcard::findOrFail($id);
+
         return view('flashcard.cards', [
             'flashcard' => $flashcard,
-            'user'      => $request->user()
+            'user' => $request->user(),
         ]);
     }
 
@@ -108,27 +107,27 @@ class FlashcardController extends Controller
             ->get();
 
         return view('flashcard.list', [
-            'results'  => $results,
-            'flashcard' => $flashcard
+            'results' => $results,
+            'flashcard' => $flashcard,
         ]);
     }
 
     public function card(Request $request, int $n = 0)
     {
         $this->validate($request, [
-            'id'    => 'numeric|exists:flashcards,id',
-            'not'   => 'sometimes|array',
-            'not.*' => 'sometimes|numeric'
+            'id' => 'numeric|exists:flashcards,id',
+            'not' => 'sometimes|array',
+            'not.*' => 'sometimes|numeric',
         ]);
 
-        $id = intval( $request->input('id') );
-        
+        $id = intval($request->input('id'));
+
         $not = [];
         if ($request->has('not')) {
             $not = $request->input('not');
         }
 
-        // retrieve the flashcard for its language and gloss group 
+        // retrieve the flashcard for its language and gloss group
         // which will be used to filter amongst the glosses.
         $flashcard = Flashcard::findOrFail($id);
 
@@ -137,7 +136,7 @@ class FlashcardController extends Controller
             ->with('translations')
             ->where([
                 ['language_id', $flashcard->language_id],
-                ['gloss_group_id', $flashcard->gloss_group_id]
+                ['gloss_group_id', $flashcard->gloss_group_id],
             ])
             ->inRandomOrder();
 
@@ -146,7 +145,7 @@ class FlashcardController extends Controller
         if (! empty($not)) {
             $q = $q->whereNotIn('id', $not);
         }
-        
+
         // retrieve the random gloss or fail (if none exists!)
         $gloss = $q->firstOrFail();
 
@@ -169,12 +168,13 @@ class FlashcardController extends Controller
         $options = [$translation->translation];
 
         // Create filter parameters for getting other (erroneous) translations
-        $filters = [ ['translation', '<>', $translation->translation] ];
+        $filters = [['translation', '<>', $translation->translation]];
 
         // group verbs w/ one another as they tend to be in the infinitive
         // in English.
         $verbSpeechId = Cache::remember('ed.speech.v', 60 * 60 /* seconds */, function () {
             $speech = Speech::where('name', 'verb')->first();
+
             return $speech ? $speech->id : -1;
         });
         if ($gloss->speech_id !== $verbSpeechId) {
@@ -207,11 +207,11 @@ class FlashcardController extends Controller
                 LIMIT 16    
             ) AS t0 ON t0.id = t.id
             LIMIT 4', [
-                'translation' => $translation->translation, 
-                'speech0' => $verbSpeechId, 
-                'speech1' => $verbSpeechId, 
-                'speech2' => $verbSpeechId
-            ]);
+            'translation' => $translation->translation,
+            'speech0' => $verbSpeechId,
+            'speech1' => $verbSpeechId,
+            'speech2' => $verbSpeechId,
+        ]);
 
         foreach ($fakeOptions as $option) {
             $options[] = $option->translation;
@@ -219,27 +219,27 @@ class FlashcardController extends Controller
 
         shuffle($options);
 
-        return [ 
-            'word'           => $gloss->word->word,
-            'options'        => $options,
-            'translation_id' => $translation->id 
-         ];
+        return [
+            'word' => $gloss->word->word,
+            'options' => $options,
+            'translation_id' => $translation->id,
+        ];
     }
 
     public function test(Request $request)
     {
         $this->validate($request, [
-            'flashcard_id'   => 'numeric|exists:flashcards,id',
+            'flashcard_id' => 'numeric|exists:flashcards,id',
             'translation_id' => 'numeric|exists:translations,id',
-            'gloss'          => 'string'
+            'gloss' => 'string',
         ]);
 
-        $translationId = intval( $request->input('translation_id') );
+        $translationId = intval($request->input('translation_id'));
         $gloss = Translation::findOrFail($translationId)->gloss;
 
         $offeredGloss = $request->input('translation');
         $ok = false;
-        
+
         foreach ($gloss->translations as $translation) {
             $ok = strcmp($translation->translation, $offeredGloss) === 0;
             if ($ok) {
@@ -252,12 +252,12 @@ class FlashcardController extends Controller
         if ($account) {
             $result = new FlashcardResult;
 
-            $result->flashcard_id = intval( $request->input('flashcard_id') );
-            $result->account_id   = $account->id;
-            $result->gloss_id     = $translation->gloss_id;
-            $result->expected     = $translation->translation;
-            $result->actual       = $offeredGloss;
-            $result->correct      = $ok;
+            $result->flashcard_id = intval($request->input('flashcard_id'));
+            $result->account_id = $account->id;
+            $result->gloss_id = $translation->gloss_id;
+            $result->expected = $translation->translation;
+            $result->actual = $offeredGloss;
+            $result->correct = $ok;
 
             $result->save();
 
@@ -272,7 +272,7 @@ class FlashcardController extends Controller
 
         return [
             'correct' => $ok,
-            'gloss'   => $this->_bookAdapter->adaptGloss($gloss)
+            'gloss' => $this->_bookAdapter->adaptGloss($gloss),
         ];
     }
 }

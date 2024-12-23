@@ -2,19 +2,13 @@
 
 namespace App\Http\Controllers\Api\v2;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-
-use DB;
-use Cache;
-
 use App\Http\Controllers\Abstracts\Controller;
-use App\Helpers\StringHelper;
-use App\Models\{ 
-    GameWordFinderGlossGroup,
-    Gloss,
-    GlossGroup
-};
+use App\Models\GameWordFinderGlossGroup;
+use App\Models\Gloss;
+use App\Models\GlossGroup;
+use Cache;
+use DB;
+use Illuminate\Http\Request;
 
 class WordFinderApiController extends Controller
 {
@@ -53,7 +47,7 @@ class WordFinderApiController extends Controller
         }
 
         return [
-            'glossary' => $glossary
+            'glossary' => $glossary,
         ];
     }
 

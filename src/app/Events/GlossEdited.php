@@ -9,8 +9,9 @@ class GlossEdited
 {
     use SerializesModels;
 
-    public $gloss;
-    public $accountId;
+    public Gloss $gloss;
+
+    public int $accountId;
 
     public function __construct(Gloss $gloss, int $accountId)
     {

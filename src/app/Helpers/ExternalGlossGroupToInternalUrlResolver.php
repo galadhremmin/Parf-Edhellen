@@ -2,13 +2,12 @@
 
 namespace App\Helpers;
 
-use App\Helpers\StringHelper;
 use App\Interfaces\IExternalToInternalUrlResolver;
 use Illuminate\Support\Collection;
 
 class ExternalGlossGroupToInternalUrlResolver implements IExternalToInternalUrlResolver
 {
-    private $_sources;
+    private array $_sources;
 
     public function __construct(Collection $glossGroups)
     {
@@ -25,9 +24,9 @@ class ExternalGlossGroupToInternalUrlResolver implements IExternalToInternalUrlR
 
             if (! array_key_exists($host, $sources)) {
                 $sources[$host] = [
-                    'regex'      => '/'.str_replace('\{ExternalID\}', '([0-9]+)', preg_quote($path, '/')).'/',
-                    'group_id'   => $group->id,
-                    'group_name' => StringHelper::normalizeForUrl($group->name)
+                    'regex' => '/'.str_replace('\{ExternalID\}', '([0-9]+)', preg_quote($path, '/')).'/',
+                    'group_id' => $group->id,
+                    'group_name' => StringHelper::normalizeForUrl($group->name),
                 ];
             }
         }
@@ -56,6 +55,7 @@ class ExternalGlossGroupToInternalUrlResolver implements IExternalToInternalUrlR
 
         $groupId = $this->getGroupIdForHostUnsafe($host);
         $groupName = $this->getGroupNameForHostUnsafe($host);
+
         return sprintf('/wg/%d-%s/%s', $groupId, $groupName, $matches[1]);
     }
 
@@ -67,6 +67,7 @@ class ExternalGlossGroupToInternalUrlResolver implements IExternalToInternalUrlR
     private static function extractHost(string $url)
     {
         $host = parse_url($url, PHP_URL_HOST);
+
         return empty($host) ? $url : $host;
     }
 

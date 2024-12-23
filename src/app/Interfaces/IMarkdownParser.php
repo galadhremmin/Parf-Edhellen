@@ -4,6 +4,7 @@ namespace App\Interfaces;
 
 interface IMarkdownParser
 {
-    function parseMarkdown(string $markdown): string;
-    function parseMarkdownNoBlocks(string $markdown): string;
+    public function parseMarkdown(string $markdown): string;
+
+    public function parseMarkdownNoBlocks(string $markdown): string;
 }

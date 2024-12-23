@@ -77,7 +77,7 @@ return [
     |
     */
 
-    'locale' => 'en', 
+    'locale' => 'en',
 
     /*
     |--------------------------------------------------------------------------
@@ -90,7 +90,7 @@ return [
     |
     */
 
-    'fallback_locale' => 'en', 
+    'fallback_locale' => 'en',
 
     /*
     |--------------------------------------------------------------------------
@@ -176,7 +176,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        
+
         /**
          * Custom AWS Service Providers...
          */
@@ -187,7 +187,7 @@ return [
          */
         Watson\Active\ActiveServiceProvider::class, // https://packagist.org/packages/watson/active
         \SocialiteProviders\Manager\ServiceProvider::class, // http://socialiteproviders.github.io/providers/microsoft-live/
-        Intervention\Image\ImageServiceProvider::class // http://image.intervention.io/
+        Intervention\Image\ImageServiceProvider::class, // http://image.intervention.io/
     ],
 
     /*
@@ -237,7 +237,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
-        'Image' => Intervention\Image\ImageServiceProvider::class
+        'Image' => Intervention\Image\ImageServiceProvider::class,
     ],
 
 ];

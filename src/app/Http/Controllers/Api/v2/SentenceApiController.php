@@ -2,19 +2,14 @@
 
 namespace App\Http\Controllers\Api\v2;
 
-use Illuminate\Http\Request;
-
 use App\Http\Controllers\Abstracts\Controller;
 use App\Models\SentenceFragment;
 use App\Repositories\SentenceRepository;
-use DB;
+use Illuminate\Http\Request;
 
-class SentenceApiController extends Controller 
+class SentenceApiController extends Controller
 {
-    /**
-     * @var SentenceRepository
-     */
-    private $_repository;
+    private SentenceRepository $_repository;
 
     public function __construct(SentenceRepository $repository)
     {
@@ -27,6 +22,7 @@ class SentenceApiController extends Controller
         if (! $sentence) {
             return response(null, 404);
         }
+
         return $sentence;
     }
 
@@ -34,16 +30,16 @@ class SentenceApiController extends Controller
     {
         $suggestionMap = $request->validate([
             'language_id' => 'required|numeric|exists:languages,id',
-            'fragment' => 'required|string'
+            'fragment' => 'required|string',
         ]);
 
         $languageId = intval($suggestionMap['language_id']);
         $suggestions = $this->_repository->suggestFragmentGlosses(collect([
             new SentenceFragment([
                 'fragment' => $suggestionMap['fragment'],
-                'type'     => 0,
-                'gloss_id' => 0
-            ])
+                'type' => 0,
+                'gloss_id' => 0,
+            ]),
         ]), $languageId);
 
         return $suggestions;

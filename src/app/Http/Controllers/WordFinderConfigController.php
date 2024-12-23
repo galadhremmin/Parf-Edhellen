@@ -2,16 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use DB;
-use Cache;
-
 use App\Http\Controllers\Abstracts\Controller;
+use App\Models\GameWordFinderGlossGroup;
+use App\Models\GlossGroup;
+use Cache;
+use DB;
 use Illuminate\Http\Request;
-
-use App\Models\{
-    GameWordFinderGlossGroup,
-    GlossGroup
-};
 
 class WordFinderConfigController extends Controller
 {
@@ -22,21 +18,21 @@ class WordFinderConfigController extends Controller
 
         return view('admin.word-finder.index', [
             'all_gloss_groups' => $groups,
-            'selected_gloss_group_ids' => $selectedGroupIds
+            'selected_gloss_group_ids' => $selectedGroupIds,
         ]);
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'gloss_group_ids'   => 'array|required',
-            'gloss_group_ids.*' => 'numeric|exists:gloss_groups,id'
+            'gloss_group_ids' => 'array|required',
+            'gloss_group_ids.*' => 'numeric|exists:gloss_groups,id',
         ]);
 
         DB::table('game_word_finder_gloss_groups')->delete();
         foreach ($data['gloss_group_ids'] as $glossGroupId) {
             GameWordFinderGlossGroup::create([
-                'gloss_group_id' => $glossGroupId
+                'gloss_group_id' => $glossGroupId,
             ]);
         }
 

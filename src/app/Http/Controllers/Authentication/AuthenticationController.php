@@ -2,33 +2,22 @@
 
 namespace App\Http\Controllers\Authentication;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\{
-    Auth,
-    Session,
-};
-
 use App\Events\AccountAuthenticated;
 use App\Http\Controllers\Abstracts\Controller;
+use App\Models\Account;
+use App\Models\AuthorizationProvider;
 use App\Repositories\SystemErrorRepository;
-use App\Models\{ 
-    Account, 
-    AuthorizationProvider 
-};
 use App\Security\AccountManager;
 use App\Security\RoleConstants;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class AuthenticationController extends Controller
 {
-    /**
-     * @var SystemErrorRepository
-     */
-    protected $_systemErrorRepository;
+    protected SystemErrorRepository $_systemErrorRepository;
 
-    /**
-     * @var AccountManager
-     */
-    protected $_accountManager;
+    protected AccountManager $_accountManager;
 
     public function __construct(SystemErrorRepository $systemErrorRepository, AccountManager $passwordManager)
     {
@@ -41,6 +30,7 @@ class AuthenticationController extends Controller
         if (app()->environment() === 'local' && $request->has('login-as')) {
             $accountId = intval($request->input('login-as'));
             $account = Account::findOrFail($accountId);
+
             return $this->doLogin($request, $account, false);
         }
 
@@ -66,7 +56,7 @@ class AuthenticationController extends Controller
         if ($request->has('error')) {
             $error = (object) [
                 'provider' => $request->query('provider'),
-                'session_id' => Session::getId()
+                'session_id' => Session::getId(),
             ];
         }
 
@@ -76,10 +66,11 @@ class AuthenticationController extends Controller
         $status = session('status', null);
 
         $providers = AuthorizationProvider::orderBy('name')->get();
+
         return view($isNew ? 'authentication.register' : 'authentication.login', [
             'providers' => $providers,
-            'error'     => $error,
-            'status'    => $status
+            'error' => $error,
+            'status' => $status,
         ]);
     }
 
@@ -137,10 +128,11 @@ class AuthenticationController extends Controller
 
         if ($request->session()->has('auth.redirect')) {
             $path = $request->session()->pull('auth.redirect');
+
             return redirect($path);
         }
-        
-        return redirect()->route('author.my-profile', [ 'loggedIn' => true ]);
+
+        return redirect()->route('author.my-profile', ['loggedIn' => true]);
     }
 
     protected function log(string $method, string $provider, \Throwable $ex)

@@ -2,11 +2,9 @@
 
 namespace Tests\Unit\Api;
 
+use App\Models\Gloss;
+use App\Models\SearchKeyword;
 use Tests\TestCase;
-use App\Models\{
-    Gloss,
-    SearchKeyword
-};
 
 class BookApiControllerTest extends TestCase
 {
@@ -20,26 +18,26 @@ class BookApiControllerTest extends TestCase
         // $this->withoutExceptionHandling();
     }
 
-    public function testSearchGroups()
+    public function test_search_groups()
     {
         $response = $this->getJson(route('api.book.groups'));
         $response->assertSuccessful();
     }
 
-    public function testLanguages()
+    public function test_languages()
     {
         $response = $this->getJson(route('api.book.languages'));
         $response->assertSuccessful();
     }
 
-    public function testGloss()
+    public function test_gloss()
     {
         $gloss = Gloss::active()->first();
         $response = $this->getJson(route('api.book.gloss', ['glossId' => $gloss->id]));
         $response->assertSuccessful();
     }
 
-    public function testEntities()
+    public function test_entities()
     {
         $response = $this->postJson(
             route('api.book.entities', ['groupId' => SearchKeyword::SEARCH_GROUP_DICTIONARY]),
@@ -48,7 +46,7 @@ class BookApiControllerTest extends TestCase
         $response->assertSuccessful();
     }
 
-    public function testFind()
+    public function test_find()
     {
         $response = $this->postJson(route('api.book.find', []));
         $response->assertStatus(422);

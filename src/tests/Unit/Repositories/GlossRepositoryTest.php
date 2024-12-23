@@ -2,41 +2,35 @@
 
 namespace Tests\Unit\Repositories;
 
-use Tests\TestCase;
-use Illuminate\Support\Facades\Queue;
-
-use Tests\Unit\Traits\CanCreateGloss;
-use App\Models\{
-    Gloss,
-    GlossDetail,
-    Translation
-};
+use App\Models\Gloss;
+use App\Models\GlossDetail;
+use App\Models\Translation;
 use App\Repositories\Enumerations\GlossChange;
-use App\Repositories\GlossRepository;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tests\TestCase;
+use Tests\Unit\Traits\CanCreateGloss;
 
 class GlossRepositoryTest extends TestCase
 {
-    use DatabaseTransactions; 
-
     use CanCreateGloss {
         CanCreateGloss::setUp as setUpGlosses;
         CanCreateGloss::getRepository as getGlossRepository;
-    } // ; <-- remedies Visual Studio Code colouring bug
+    }
+    use DatabaseTransactions; // ; <-- remedies Visual Studio Code colouring bug
 
     /**
      * A basic example of versioning when saving glosses.
      *
      * @return void
      */
-    public function testSaveGloss()
+    public function test_save_gloss()
     {
-        extract( $this->createGloss(__FUNCTION__) );
+        extract($this->createGloss(__FUNCTION__));
 
         // Create an origin gloss, to validate the versioning system. By appending 'origin' to the word string,
         // the next gloss saved (with an unsuffixed word) create a new version of the gloss.
-        $existingGloss = $this->getGlossRepository()->saveGloss($word . ' origin', $sense, $gloss, $translations, $keywords, $details);
-        // Create a new gloss, derived from the origin gloss. 
+        $existingGloss = $this->getGlossRepository()->saveGloss($word.' origin', $sense, $gloss, $translations, $keywords, $details);
+        // Create a new gloss, derived from the origin gloss.
         $newGloss = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
 
         $savedGloss = Gloss::findOrFail($newGloss->id);
@@ -59,7 +53,7 @@ class GlossRepositoryTest extends TestCase
 
         $this->assertEquals($savedGloss->translations->count(), count($translations));
         $this->assertTrue(
-            $savedGloss->translations->every(function ($t) use($translations) {
+            $savedGloss->translations->every(function ($t) use ($translations) {
                 return ! empty(array_filter($translations, function ($t0) use ($t) {
                     return $t->translation === $t0->translation;
                 }));
@@ -74,7 +68,7 @@ class GlossRepositoryTest extends TestCase
                 return $t->translation;
             }, $translations))
         );
-        
+
         sort($actual);
         sort($expected);
 
@@ -95,9 +89,9 @@ class GlossRepositoryTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function testShouldNotSave()
+    public function test_should_not_save()
     {
-        extract( $this->createGloss(__FUNCTION__) );
+        extract($this->createGloss(__FUNCTION__));
 
         $changed = 0;
         $gloss0 = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details, $changed);
@@ -110,15 +104,15 @@ class GlossRepositoryTest extends TestCase
         $this->assertEquals($gloss0->id, $gloss1->id);
     }
 
-    public function testShouldDelete()
+    public function test_should_delete()
     {
-        extract( $this->createGloss(__FUNCTION__) );
+        extract($this->createGloss(__FUNCTION__));
 
         $savedGloss = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
         $this->assertEquals($gloss->id, $savedGloss->id);
 
         $this->getGlossRepository()->deleteGlossWithId($gloss->id);
-        
+
         // resynchronize the model with the database
         $gloss->refresh();
 
@@ -127,26 +121,26 @@ class GlossRepositoryTest extends TestCase
         $this->assertEquals(0, $gloss->sense->keywords()->count());
     }
 
-    public function testShouldGetVersions()
+    public function test_should_get_versions()
     {
-        extract( $this->createGloss(__FUNCTION__) );
+        extract($this->createGloss(__FUNCTION__));
         $gloss0 = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
-        
+
         $gloss->is_uncertain = false;
         $translations = $this->createTranslations();
         $details = $this->createGlossDetails($gloss);
         $gloss1 = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
 
         $newWord = $word.' 1';
-        $translations = $this->createTranslations(); 
+        $translations = $this->createTranslations();
         $details = $this->createGlossDetails($gloss);
         $gloss2 = $this->getGlossRepository()->saveGloss($newWord, $sense, $gloss, $translations, $keywords, $details);
 
         $newTranslation = uniqid();
         $translations = array_merge(
             $this->createTranslations(),
-            [ new Translation(['translation' => $newTranslation]) ]
-        ); 
+            [new Translation(['translation' => $newTranslation])]
+        );
         $details = $this->createGlossDetails($gloss);
         $gloss3 = $this->getGlossRepository()->saveGloss($newWord, $sense, $gloss, $translations, $keywords, $details);
 
@@ -170,11 +164,11 @@ class GlossRepositoryTest extends TestCase
         $this->assertTrue($gloss3Translations->contains($newTranslation));
     }
 
-    public function testDetectsGlossMetadataChanges()
+    public function test_detects_gloss_metadata_changes()
     {
         $r = $this->getGlossRepository();
 
-        extract( $this->createGloss(__FUNCTION__) );
+        extract($this->createGloss(__FUNCTION__));
         $r->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
         $gloss->refresh();
 
@@ -184,16 +178,16 @@ class GlossRepositoryTest extends TestCase
         $r->saveGloss($word, $sense, $gloss, $translations, $keywords, $details, $changed);
         $versions = $r->getGlossVersions($gloss->id);
 
-        $this->assertTrue(!! $changed);
+        $this->assertTrue((bool) $changed);
         $this->assertEquals(GlossChange::METADATA->value, $changed);
         $this->assertEquals(2, $versions->getVersions()->count());
     }
 
-    public function testDetectsGlossDetailsChanges()
+    public function test_detects_gloss_details_changes()
     {
         $r = $this->getGlossRepository();
 
-        extract( $this->createGloss(__FUNCTION__) );
+        extract($this->createGloss(__FUNCTION__));
         $r->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
         $gloss->refresh();
 
@@ -201,14 +195,14 @@ class GlossRepositoryTest extends TestCase
 
         $newDetail = new GlossDetail([
             'category' => 'Category '.uniqid(),
-            'text' => 'Text '.uniqid(), 
+            'text' => 'Text '.uniqid(),
             'order' => 100,
         ]);
         $details[] = $newDetail;
         $r->saveGloss($word, $sense, $gloss, $translations, $keywords, $details, $changed);
         $versions = $r->getGlossVersions($gloss->id);
 
-        $this->assertTrue(!! $changed);
+        $this->assertTrue((bool) $changed);
         $this->assertEquals(GlossChange::DETAILS->value, $changed);
         $this->assertEquals(1, $gloss->gloss_details->filter(function ($d) use ($newDetail) {
             return $d->text === $newDetail->text && $d->category === $newDetail->category;
@@ -216,24 +210,24 @@ class GlossRepositoryTest extends TestCase
         $this->assertEquals(2, $versions->getVersions()->count());
     }
 
-    public function testDetectsGlossTranslationsChanges()
+    public function test_detects_gloss_translations_changes()
     {
         $r = $this->getGlossRepository();
 
-        extract( $this->createGloss(__FUNCTION__) );
+        extract($this->createGloss(__FUNCTION__));
         $r->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
         $gloss->refresh();
 
         $changed = 0;
 
         $newTranslation = new Translation([
-            'translation' => 'Translation '.uniqid()
+            'translation' => 'Translation '.uniqid(),
         ]);
         $translations[] = $newTranslation;
         $r->saveGloss($word, $sense, $gloss, $translations, $keywords, $details, $changed);
         $versions = $r->getGlossVersions($gloss->id);
 
-        $this->assertTrue(!! $changed);
+        $this->assertTrue((bool) $changed);
         $this->assertEquals(GlossChange::TRANSLATIONS->value | GlossChange::KEYWORDS->value, $changed);
         $this->assertEquals(1, $gloss->translations->filter(function ($t) use ($newTranslation) {
             return $t->translation === $newTranslation->translation;
@@ -241,11 +235,11 @@ class GlossRepositoryTest extends TestCase
         $this->assertEquals(2, $versions->getVersions()->count());
     }
 
-    public function testDetectsGlossKeywordChanges()
+    public function test_detects_gloss_keyword_changes()
     {
         $r = $this->getGlossRepository();
 
-        extract( $this->createGloss(__FUNCTION__) );
+        extract($this->createGloss(__FUNCTION__));
         $r->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
         $gloss->refresh();
 
@@ -256,7 +250,7 @@ class GlossRepositoryTest extends TestCase
         $r->saveGloss($word, $sense, $gloss, $translations, $keywords, $details, $changed);
         $versions = $r->getGlossVersions($gloss->id);
 
-        $this->assertTrue(!! $changed);
+        $this->assertTrue((bool) $changed);
         $this->assertEquals(GlossChange::KEYWORDS->value, $changed);
         $this->assertTrue($gloss->keywords->contains(function ($k) use ($newKeyword) {
             return $k->keyword === $newKeyword;
@@ -264,18 +258,18 @@ class GlossRepositoryTest extends TestCase
         $this->assertEquals(2, $versions->getVersions()->count());
     }
 
-    public function testNavigationPropertiesForGloss()
+    public function test_navigation_properties_for_gloss()
     {
         $r = $this->getGlossRepository();
 
-        extract( $this->createGloss(__FUNCTION__) );
+        extract($this->createGloss(__FUNCTION__));
         $r->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
 
         $this->assertNotNull($gloss->account);
         $this->assertNotNull($gloss->language);
         $this->assertNotNull($gloss->gloss_group);
         $this->assertNotNull($gloss->speech);
-        
+
         $this->assertEquals(count($translations), $gloss->translations->count());
         $this->assertEquals(count($details), $gloss->gloss_details->count());
     }

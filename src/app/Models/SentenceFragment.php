@@ -8,17 +8,17 @@ class SentenceFragment extends ModelBase
 {
     use SoftDeletes;
 
-    protected $fillable = [ 
+    protected $fillable = [
         'fragment', 'tengwar', 'comments', 'speech_id', 'gloss_id', 'sentence_id',
-        'order', 'is_linebreak', 'type', 'paragraph_number', 'sentence_number'
+        'order', 'is_linebreak', 'type', 'paragraph_number', 'sentence_number',
     ];
 
     public function gloss()
     {
         return $this->belongsTo(Gloss::class);
     }
-    
-    public function sentence() 
+
+    public function sentence()
     {
         return $this->belongsTo(Sentence::class);
     }

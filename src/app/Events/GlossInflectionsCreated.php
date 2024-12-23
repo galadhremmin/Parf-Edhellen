@@ -10,10 +10,12 @@ class GlossInflectionsCreated
 {
     use SerializesModels;
 
-    public $gloss;
-    public $gloss_inflections;
-    public $incremental;
-    
+    public Gloss $gloss;
+
+    public Collection $gloss_inflections;
+
+    public int $incremental;
+
     public function __construct(Gloss $gloss, Collection $inflections, bool $incremental)
     {
         $this->gloss = $gloss;

@@ -9,9 +9,11 @@ class AccountDestroyed
 {
     use SerializesModels;
 
-    public $account;
-    public $friendlyName;
-    public $accountId;
+    public Account $account;
+
+    public string $friendlyName;
+
+    public int $accountId;
 
     public function __construct(Account $account, string $friendlyName, int $accountId)
     {

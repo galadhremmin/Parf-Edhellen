@@ -2,18 +2,19 @@
 
 namespace App\Repositories\SearchIndexResolvers;
 
-use App\Repositories\ValueObjects\SearchIndexSearchValue;
-use App\Models\SearchKeyword;
 use App\Helpers\StringHelper;
+use App\Models\SearchKeyword;
+use App\Repositories\ValueObjects\SearchIndexSearchValue;
 
 abstract class SearchIndexResolverBase implements ISearchIndexResolver
 {
     public function resolve(SearchIndexSearchValue $value): array
     {
         $query = $this->buildQuery($value);
+
         return $this->resolveByQuery($query, $value);
     }
-    
+
     public function resolveId(int $entityId): array
     {
         throw new \Exception('Not supported.');
@@ -36,7 +37,7 @@ abstract class SearchIndexResolverBase implements ISearchIndexResolver
         if ($v->getIncludesOld() === false) {
             $query = $query->where('is_old', 0);
         }
-    
+
         if (! empty($v->getSpeechIds())) {
             $query = $query->whereIn('speech_id', $v->getSpeechIds());
         }
@@ -46,19 +47,19 @@ abstract class SearchIndexResolverBase implements ISearchIndexResolver
         }
 
         return [
-            'query'         => $query,
+            'query' => $query,
             'search_column' => $searchColumn,
-            'length_column' => $lengthColumn
+            'length_column' => $lengthColumn,
         ];
     }
 
-    private function formatWord(string $word) 
+    private function formatWord(string $word)
     {
         $word = StringHelper::normalize($word, /* accentsMatter = */ false, /* retainWildcard = */ true);
 
         if (strpos($word, '*') !== false) {
             return str_replace('*', '%', $word);
-        } 
+        }
 
         return $word.'%';
     }

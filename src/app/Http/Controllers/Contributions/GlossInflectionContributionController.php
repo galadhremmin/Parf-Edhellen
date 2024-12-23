@@ -2,28 +2,24 @@
 
 namespace App\Http\Controllers\Contributions;
 
-use Illuminate\Http\Request;
-
 use App\Http\Controllers\Abstracts\Controller;
-use App\Repositories\GlossRepository;
-use App\Adapters\BookAdapter;
-use App\Models\{
-    Contribution,
-    Gloss,
-    GlossInflection,
-    Inflection,
-    ModelBase,
-    Sentence,
-    Speech
-};
+use App\Models\Contribution;
+use App\Models\Gloss;
+use App\Models\GlossInflection;
+use App\Models\Inflection;
+use App\Models\Sentence;
+use App\Models\Speech;
 use App\Repositories\GlossInflectionRepository;
-use Illuminate\Support\Collection;
+use App\Repositories\GlossRepository;
+use Illuminate\Http\Request;
 
 class GlossInflectionContributionController extends Controller implements IContributionController
 {
-    private $_glossInflectionRepository;
-    private $_glossContributionController;
-    private $_glossRepository;
+    private GlossInflectionRepository $_glossInflectionRepository;
+
+    private GlossContributionController $_glossContributionController;
+
+    private GlossRepository $_glossRepository;
 
     public function __construct(GlossInflectionRepository $glossInflectionRepository,
         GlossRepository $glossRepository, GlossContributionController $glossContributionController)
@@ -55,23 +51,23 @@ class GlossInflectionContributionController extends Controller implements IContr
             }
 
             $carry[$i->inflection_group_uuid]->inflections[] = $inflections[$i->inflection_id]->name;
+
             return $carry;
         }, []);
 
         $gloss = $contribution->gloss_id ? Gloss::find($contribution->gloss_id) : null;
         $viewModel = [
-            'review'            => $contribution,
-            'gloss'             => $gloss,
-            'inflections'       => $glossInflections
+            'review' => $contribution,
+            'gloss' => $gloss,
+            'inflections' => $glossInflections,
         ];
+
         return new ViewModel($contribution, 'contribution.gloss_infl._show', $viewModel);
     }
 
     /**
      * HTTP GET. Opens a view for editing a gloss inflections contribution.
      *
-     * @param Request $request
-     * @param Contribution $contribution
      * @return array|\Illuminate\View\View|\Illuminate\Contracts\View\Factory
      */
     public function edit(Contribution $contribution, Request $request)
@@ -84,13 +80,14 @@ class GlossInflectionContributionController extends Controller implements IContr
             if ($i->sentence_id && $sentences->has($i->sentence_id)) {
                 $i->sentence = $sentences[$i->sentence_id];
             }
+
             return $i;
         }) //
             ->groupBy('inflection_group_uuid');
 
         $glossPayload = [
             'contribution_id' => $contribution->id,
-            'id' => $contribution->dependent_on === null ? $contribution->gloss_id : 0
+            'id' => $contribution->dependent_on === null ? $contribution->gloss_id : 0,
         ];
 
         if ($glossPayload['id']) {
@@ -110,20 +107,19 @@ class GlossInflectionContributionController extends Controller implements IContr
         }
 
         $viewModel = [
-            'payload'           => $glossPayload,
-            'inflections'       => $inflectionGroups,
+            'payload' => $glossPayload,
+            'inflections' => $inflectionGroups,
             'form_restrictions' => ['inflections'],
-            'review'            => $contribution
+            'review' => $contribution,
         ];
 
         return $request->ajax() //
             ? $viewModel : view('contribution.gloss.edit', $viewModel);
     }
-    
+
     /**
      * Shows a form for a new contribution.
      *
-     * @param Request $request
      * @return array|\Illuminate\View\View|\Illuminate\Contracts\View\Factory
      */
     public function create(Request $request)
@@ -139,18 +135,18 @@ class GlossInflectionContributionController extends Controller implements IContr
     public function validateBeforeSave(Request $request, int $id = 0)
     {
         $request->validate([
-            'gloss_id'                                  => 'sometimes|nullable|numeric|exists:glosses,id',
-            'inflection_groups'                         => 'required|array',
+            'gloss_id' => 'sometimes|nullable|numeric|exists:glosses,id',
+            'inflection_groups' => 'required|array',
             'inflection_groups.*.inflection_group_uuid' => 'required|uuid',
-            'inflection_groups.*.is_neologism'          => 'sometimes|boolean',
-            'inflection_groups.*.is_rejected'           => 'sometimes|boolean',
-            'inflection_groups.*.speech_id'             => 'required|numeric|exists:speeches,id',
-            'inflection_groups.*.sentence_fragment_id'  => 'sometimes|numeric|nullable|exists:sentence_fragments,id',
-            'inflection_groups.*.source'                => 'sometimes|nullable|string|max:64',
-            'inflection_groups.*.word'                  => 'required|string|max:196',
+            'inflection_groups.*.is_neologism' => 'sometimes|boolean',
+            'inflection_groups.*.is_rejected' => 'sometimes|boolean',
+            'inflection_groups.*.speech_id' => 'required|numeric|exists:speeches,id',
+            'inflection_groups.*.sentence_fragment_id' => 'sometimes|numeric|nullable|exists:sentence_fragments,id',
+            'inflection_groups.*.source' => 'sometimes|nullable|string|max:64',
+            'inflection_groups.*.word' => 'required|string|max:196',
 
-            'inflection_groups.*.inflections'                 => 'required|array',
-            'inflection_groups.*.inflections.*.inflection_id' => 'required|numeric|exists:inflections,id'
+            'inflection_groups.*.inflections' => 'required|array',
+            'inflection_groups.*.inflections.*.inflection_id' => 'required|numeric|exists:inflections,id',
         ]);
 
         return true;
@@ -180,12 +176,14 @@ class GlossInflectionContributionController extends Controller implements IContr
         // flattens the data structure and denormalizes for performance. This is what
         // the next couple of lines will do:
         $groups = $request->input('inflection_groups');
+
         return array_reduce($groups, function ($inflections, $group) {
             foreach ($group['inflections'] as $inflection) {
                 $inflections[] = new GlossInflection(
                     array_merge($inflection, $group) // denormalization
                 );
             }
+
             return $inflections;
         }, []);
     }
@@ -194,7 +192,7 @@ class GlossInflectionContributionController extends Controller implements IContr
      * Disable change detection within the parent controller as the payload is always
      * populated by the `populate` method.
      */
-    function disableChangeDetection(): bool
+    public function disableChangeDetection(): bool
     {
         return false;
     }
@@ -207,14 +205,15 @@ class GlossInflectionContributionController extends Controller implements IContr
             $gloss = $contribution->gloss;
         }
 
-        $inflections = collect(json_decode($contribution->payload, /* associative? */ true))->map(function ($i) use($gloss) {
+        $inflections = collect(json_decode($contribution->payload, /* associative? */ true))->map(function ($i) use ($gloss) {
             return new GlossInflection($i + [
                 'gloss_id' => $gloss->id,
-                'language_id' => $gloss->language_id
+                'language_id' => $gloss->language_id,
             ]);
         });
 
         $this->_glossInflectionRepository->saveManyOnGloss($gloss, $inflections);
+
         return $gloss->id;
     }
 }

@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers\Contributions;
 
-use Illuminate\Http\Request;
+use App\Models\Gloss;
+use App\Models\GlossInflection;
 use App\Models\Initialization\Morphs;
-use App\Models\{
-    Gloss,
-    GlossInflection,
-    Sentence
-};
+use App\Models\Sentence;
+use Illuminate\Http\Request;
 
 class ContributionControllerFactory
 {
@@ -17,20 +15,18 @@ class ContributionControllerFactory
      * as a string, or it can be identified from a request's input parameters.
      *
      * @param [string|Request] $morphOrRequest
-     * @param array $cases
-     * @return IContributionController
+     * @param  array  $cases
      */
     public static function createController($morphOrRequest): IContributionController
     {
-        $morph = ($morphOrRequest instanceof Request) 
-            ? $morphOrRequest->input('morph') 
+        $morph = ($morphOrRequest instanceof Request)
+            ? $morphOrRequest->input('morph')
             : $morphOrRequest;
 
         $modelName = Morphs::getMorphedModel($morph);
-        
+
         $controllerName = null;
-        switch ($modelName)
-        {
+        switch ($modelName) {
             case Gloss::class:
                 $controllerName = GlossContributionController::class;
                 break;

@@ -4,33 +4,33 @@
 
 use App\Security\RoleConstants;
 
-Route::group([ 
-        'namespace'  => 'Resources', 
-        'prefix'     => 'admin', 
-        'middleware' => ['auth', 'auth.require-role:'.RoleConstants::Administrators, 'verified'] 
-    ], function () {
+Route::group([
+    'namespace' => 'Resources',
+    'prefix' => 'admin',
+    'middleware' => ['auth', 'auth.require-role:'.RoleConstants::Administrators, 'verified'],
+], function () {
 
     Route::resource('account', 'AccountController', [
-        'except' => ['show', 'create', 'store', 'update', 'destroy']
+        'except' => ['show', 'create', 'store', 'update', 'destroy'],
     ]);
     Route::resource('inflection', 'InflectionController', [
-        'except' => ['show']
+        'except' => ['show'],
     ]);
     Route::resource('speech', 'SpeechController', [
-        'except' => ['show']
+        'except' => ['show'],
     ]);
     Route::resource('gloss', 'GlossController', [
-        'only' => ['index']
+        'only' => ['index'],
     ]);
     Route::resource('sentence', 'SentenceController', [
-        'only' => ['index', 'destroy']
+        'only' => ['index', 'destroy'],
     ]);
 
     Route::resource('system-error', 'SystemErrorController', [
-        'only' => ['index']
+        'only' => ['index'],
     ]);
     Route::get('system-error/connectivity/{component}', 'SystemErrorController@testConnectivity')
-        ->where([ 'component' => '[a-zA-Z]+' ])
+        ->where(['component' => '[a-zA-Z]+'])
         ->name('system-error.connectivity');
 
     Route::get('sentence/confirm-destroy/{id}', 'SentenceController@confirmDestroy')->name('sentence.confirm-destroy');
@@ -49,4 +49,3 @@ Route::group([
     Route::put('contribution/{id}/approve', 'ContributionController@updateApprove')->name('contribution.approve');
     Route::put('contribution/{id}/reject', 'ContributionController@updateReject')->name('contribution.reject');
 });
-

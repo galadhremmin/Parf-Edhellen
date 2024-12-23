@@ -1,9 +1,10 @@
 <?php
+
 namespace App\Helpers;
 
-class StringHelper 
+class StringHelper
 {
-    private static $_normalizationTable = [
+    private static array $_normalizationTable = [
         'θ' => 'th',
         'ʃ' => 'sh',
         'χ' => 'ch',
@@ -17,10 +18,10 @@ class StringHelper
         ')' => '-',
         ' ' => '_',
         ';' => '_or',
-        '/' => '_or_'
+        '/' => '_or_',
     ];
 
-    private static $_accentsNormalizationTable = [
+    private static array $_accentsNormalizationTable = [
         'é' => 'ee',
         'ê' => 'eee',
         'ý' => 'yy',
@@ -35,9 +36,9 @@ class StringHelper
         'â' => 'aaa',
     ];
 
-    private static $_reversedAccentsNormalizationTable = null;
+    private static ?array $_reversedAccentsNormalizationTable = null;
 
-    private function __construct() 
+    private function __construct()
     {
         // Disable construction
     }
@@ -51,7 +52,7 @@ class StringHelper
         return htmlentities($str, ENT_HTML5 | ENT_SUBSTITUTE | ENT_QUOTES, 'UTF-8');
     }
 
-    public static function toLower(?string $str) 
+    public static function toLower(?string $str)
     {
         if (empty($str)) {
             return $str;
@@ -72,12 +73,11 @@ class StringHelper
     /**
      * Normalizes the specified string.
      *
-     * @param string $str
-     * @param boolean $accentsMatter - whether accents should be normalized according to a phonetic approximation
-     * @param boolean $retainWildcard - retains wildcard character (*) 
+     * @param  bool  $accentsMatter  - whether accents should be normalized according to a phonetic approximation
+     * @param  bool  $retainWildcard  - retains wildcard character (*)
      * @return string
      */
-    public static function normalize(?string $str, $accentsMatter = true, $retainWildcard = false) 
+    public static function normalize(?string $str, $accentsMatter = true, $retainWildcard = false)
     {
         if (empty($str)) {
             return $str;
@@ -121,7 +121,7 @@ class StringHelper
         return trim($str);
     }
 
-    public static function normalizeForUrl(string $str) 
+    public static function normalizeForUrl(string $str)
     {
         $str = self::normalize($str);
 
@@ -137,12 +137,11 @@ class StringHelper
     /**
      * Reversed normalization, attempting to convert a normalized string into its accented version.
      *
-     * @param string $str
      * @return void
      */
     public static function reverseNormalization(string $str)
     {
-        $reversed =& self::$_reversedAccentsNormalizationTable;
+        $reversed = &self::$_reversedAccentsNormalizationTable;
 
         if ($reversed === null) {
             self::$_reversedAccentsNormalizationTable = [];
@@ -152,13 +151,13 @@ class StringHelper
             }
         }
 
-        // remove underline slugs 
+        // remove underline slugs
         $str = str_replace('_', ' ', $str);
-        
+
         return strtr($str, $reversed);
     }
 
-    public static function createLink($s) 
+    public static function createLink($s)
     {
         return rawurlencode($s);
     }

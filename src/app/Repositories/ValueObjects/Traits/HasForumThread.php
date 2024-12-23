@@ -4,20 +4,20 @@ namespace App\Repositories\ValueObjects\Traits;
 
 use App\Models\ForumThread;
 
-trait HasForumThread 
+trait HasForumThread
 {
     public function setupForumThread(array $properties)
     {
         $this->initializeAll($properties, [
             'thread',
-            'thread_id'
+            'thread_id',
         ]);
     }
 
     /**
      * @return ForumThread
      */
-    public function getThread() 
+    public function getThread()
     {
         return $this->getValue('thread');
     }
@@ -25,7 +25,7 @@ trait HasForumThread
     /**
      * @return int
      */
-    public function getThreadId() 
+    public function getThreadId()
     {
         return $this->getValue('thread_id');
     }

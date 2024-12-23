@@ -4,15 +4,15 @@ namespace App\Models;
 
 class ForumThread extends ModelBase implements Interfaces\IHasFriendlyName
 {
-    protected $fillable = [ 
+    protected $fillable = [
         'entity_type', 'entity_id', 'subject', 'account_id',
         'number_of_posts', 'number_of_likes', 'normalized_subject',
-        'is_sticky', 'forum_group_id', 'is_empty'
+        'is_sticky', 'forum_group_id', 'is_empty',
     ];
 
     use Traits\HasAccount;
 
-    public function entity() 
+    public function entity()
     {
         return $this->morphTo();
     }
@@ -27,7 +27,7 @@ class ForumThread extends ModelBase implements Interfaces\IHasFriendlyName
         return $this->hasMany(ForumPost::class);
     }
 
-    public function getFriendlyName() 
+    public function getFriendlyName()
     {
         return $this->subject;
     }
@@ -36,7 +36,7 @@ class ForumThread extends ModelBase implements Interfaces\IHasFriendlyName
     {
         $query->where([
             ['number_of_posts', '>', 0],
-            ['forum_group_id', $id]
+            ['forum_group_id', $id],
         ]);
     }
 }

@@ -9,6 +9,6 @@ class FailedJob extends ModelBase
     protected $casts = [
         Model::CREATED_AT => 'datetime',
         Model::UPDATED_AT => 'datetime',
-        'failed_at'       => 'datetime'
+        'failed_at' => 'datetime',
     ];
 }

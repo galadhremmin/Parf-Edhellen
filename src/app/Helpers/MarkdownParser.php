@@ -6,17 +6,19 @@ use App\Interfaces\IExternalToInternalUrlResolver;
 
 class MarkdownParser extends \Parsedown
 {
-    const SYMBOL_REFERENCE     = '[';
+    const SYMBOL_REFERENCE = '[';
+
     const SYMBOL_TRANSCRIPTION = '@';
-    const SYMBOL_SEE_ALSO      = '>';
 
-    private $_externalToInternalUrlResolver;
+    const SYMBOL_SEE_ALSO = '>';
 
-    function __construct(?IExternalToInternalUrlResolver $externalToInternalUrlResolver = null, $disabledBlockTypes = [])
+    private ?IExternalToInternalUrlResolver $_externalToInternalUrlResolver;
+
+    public function __construct(?IExternalToInternalUrlResolver $externalToInternalUrlResolver = null, $disabledBlockTypes = [])
     {
         $this->_externalToInternalUrlResolver = $externalToInternalUrlResolver;
 
-        $this->InlineTypes[self::SYMBOL_REFERENCE][]   = 'Reference';
+        $this->InlineTypes[self::SYMBOL_REFERENCE][] = 'Reference';
         $this->InlineTypes[self::SYMBOL_TRANSCRIPTION] = ['Transcription'];
 
         $this->inlineMarkerList = implode('', array_keys($this->InlineTypes));
@@ -24,23 +26,22 @@ class MarkdownParser extends \Parsedown
         // escapes markup (HTML)
         $this->setMarkupEscaped(true);
 
-        foreach ($disabledBlockTypes as $disabledBlockType)
+        foreach ($disabledBlockTypes as $disabledBlockType) {
             unset($this->BlockTypes[$disabledBlockType]);
+        }
     }
 
     /**
      * Overrides the original elements method, which combines all elements into a HTML string.
-     * This method is overridden to remove excessive new lines being inserted before every element. 
+     * This method is overridden to remove excessive new lines being inserted before every element.
      *
-     * @param array $Elements
      * @return void
      */
     protected function elements(array $Elements)
     {
         $markup = '';
 
-        foreach ($Elements as $Element)
-        {
+        foreach ($Elements as $Element) {
             $markup .= $this->element($Element);
         }
 
@@ -49,7 +50,6 @@ class MarkdownParser extends \Parsedown
 
     /**
      * Adds bootstrap classes to the table element.
-     * 
      */
     protected function blockTable($Line, ?array $Block = null)
     {
@@ -58,12 +58,13 @@ class MarkdownParser extends \Parsedown
         if (! $table || ! isset($table['element'])) {
             return $table;
         }
-        
+
         if (! isset($table['element']['attributes'])) {
             $table['element']['attributes'] = [];
         }
 
-        $table['element']['attributes']['class'] = "table table-condensed table-striped table-hover";
+        $table['element']['attributes']['class'] = 'table table-condensed table-striped table-hover';
+
         return $table;
     }
 
@@ -73,22 +74,23 @@ class MarkdownParser extends \Parsedown
             'name' => 'div',
             'handler' => 'element',
             'attributes' => [
-                'class' => 'table-responsive'
+                'class' => 'table-responsive',
             ],
-            'text' => $Block['element']
+            'text' => $Block['element'],
         ];
+
         return $Block;
     }
 
     /**
      * Implements [[references]]
-     * @param $Excerpt
+     *
      * @return array|void
      */
     protected function inlineReference($Excerpt)
     {
         $tagBegin = '[';
-        $tagEnd   = ']';
+        $tagEnd = ']';
 
         $word = '';
         $text = $Excerpt['text'];
@@ -127,7 +129,7 @@ class MarkdownParser extends \Parsedown
 
         // Calculate the extent of the change, which would be the word, including
         // the start and end tags.
-        $wordLength = strlen($tagBegin.$tagBegin . $word . $tagEnd.$tagEnd);
+        $wordLength = strlen($tagBegin.$tagBegin.$word.$tagEnd.$tagEnd);
 
         // Extract language, if present
         $pos = strpos($word, ':');
@@ -150,11 +152,11 @@ class MarkdownParser extends \Parsedown
         $normalizedWord = StringHelper::normalize($word);
 
         $attrs = [
-            'href' => '/w/' . urlencode($normalizedWord),
+            'href' => '/w/'.urlencode($normalizedWord),
             'title' => 'Navigate to '.$word.'.',
             'class' => 'ed-word-reference',
             'data-word' => $normalizedWord,
-            'data-original-word' => $wordLowercase
+            'data-original-word' => $wordLowercase,
         ];
         if (! empty($language)) {
             $attrs['href'] .= '/'.$language;
@@ -167,14 +169,13 @@ class MarkdownParser extends \Parsedown
                 'name' => 'a',
                 'handler' => 'line',
                 'text' => $word,
-                'attributes' => $attrs
-            ]
+                'attributes' => $attrs,
+            ],
         ];
     }
 
     /**
      * Implements >> "see also"-tokens
-     * @param $Excerpt
      */
     /* 220412: There isn't an elegant way to do this currently. Disabled for now.
     protected function inlineSeeAlso($Excerpt)
@@ -215,16 +216,16 @@ class MarkdownParser extends \Parsedown
             return;
         }
 
-        $mode = trim( substr($text, 0, $pos) );
+        $mode = trim(substr($text, 0, $pos));
         if (empty($mode)) {
             return;
         }
 
-        $body = trim( substr($text, $pos + 1) );
+        $body = trim(substr($text, $pos + 1));
         if (empty($body)) {
             return;
         }
-        
+
         return [
             'extent' => $extent,
             'element' => [
@@ -233,9 +234,9 @@ class MarkdownParser extends \Parsedown
                 'attributes' => [
                     'class' => 'tengwar',
                     'data-tengwar-transcribe' => 'true',
-                    'data-tengwar-mode' => $mode
-                ]
-            ]
+                    'data-tengwar-mode' => $mode,
+                ],
+            ],
         ];
     }
 
@@ -249,13 +250,13 @@ class MarkdownParser extends \Parsedown
             ! isset($link['element']['attributes']['href'])) {
             return $link;
         }
-        
+
         $attr = &$link['element']['attributes'];
-        $url  =  $attr['href'];
+        $url = $attr['href'];
         if ($url !== null) {
             $internalUrl = $this->_externalToInternalUrlResolver?->getInternalUrl($url);
             if ($internalUrl !== null) {
-                $attr['href']  = $internalUrl;
+                $attr['href'] = $internalUrl;
                 $attr['class'] = 'ed-word-external-reference';
 
                 return $link;
@@ -268,6 +269,7 @@ class MarkdownParser extends \Parsedown
     protected function inlineUrl($Excerpt)
     {
         $link = parent::inlineUrl($Excerpt);
+
         return $this->shortenUri($link);
     }
 
@@ -286,10 +288,10 @@ class MarkdownParser extends \Parsedown
         if (! is_array($link)) {
             return;
         }
-        
+
         $attrs = &$link['element']['attributes'];
-        $uri   = $attrs['href'];
-        $text  = $link['element']['text'];
+        $uri = $attrs['href'];
+        $text = $link['element']['text'];
         if (! filter_var($uri, FILTER_VALIDATE_URL) ||
             ! filter_var($text, FILTER_VALIDATE_URL)) {
             return $link;
@@ -302,7 +304,7 @@ class MarkdownParser extends \Parsedown
 
         $link['element']['text'] = $parts['host'];
         $attrs['title'] = 'Goes to: '.$uri;
-        
+
         return $link;
     }
 }

@@ -6,12 +6,13 @@ use Exception;
 
 trait CanInitialize
 {
-    private $_values;
+    private array $_values = [];
 
     public function jsonSerialize(): mixed
     {
         $v = array_merge([], $this->getAllValues());
         ksort($v);
+
         return $v;
     }
 
@@ -30,7 +31,7 @@ trait CanInitialize
             if ($required) {
                 throw new Exception(sprintf('The %s does not contain the required property %s.', json_encode($properties), $propertyName));
             }
-            
+
             $v = null;
         } else {
             $v = $properties[$propertyName];

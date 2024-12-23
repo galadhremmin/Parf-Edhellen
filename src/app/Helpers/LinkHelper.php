@@ -2,53 +2,51 @@
 
 namespace App\Helpers;
 
-use App\Models\{
-    Gloss,
-    Sentence
-};
+use App\Models\Gloss;
 use App\Models\Initialization\Morphs;
+use App\Models\Sentence;
 
 class LinkHelper
 {
     public function author(int $authorId, ?string $authorName = null)
     {
-        $nickname = $authorName === null || empty($authorName) 
-            ? '' 
+        $nickname = $authorName === null || empty($authorName)
+            ? ''
             : StringHelper::normalizeForUrl($authorName);
-        
+
         if (empty($nickname)) {
             return route('author.profile-without-nickname', [
-                'id' => $authorId
+                'id' => $authorId,
             ]);
         }
 
         return route('author.profile', [
             'id' => $authorId,
-            'nickname' => $nickname
+            'nickname' => $nickname,
         ]);
     }
 
     public function gloss(int $glossId)
     {
         return route('gloss.ref', [
-            'id' => $glossId
+            'id' => $glossId,
         ]);
     }
 
     public function glossVersions(int $glossId)
     {
         return route('gloss.ref.version', [
-            'id' => $glossId
+            'id' => $glossId,
         ]);
     }
-    
+
     public function sentencesByLanguage(int $languageId, string $languageName)
     {
         $languageName = StringHelper::normalizeForUrl($languageName);
 
         return route('sentence.public.language', [
-            'langId'   => $languageId,
-            'langName' => $languageName
+            'langId' => $languageId,
+            'langName' => $languageName,
         ]);
     }
 
@@ -59,10 +57,10 @@ class LinkHelper
         $sentenceName = StringHelper::normalizeForUrl($sentenceName);
 
         $url = route('sentence.public.sentence', [
-            'langId'   => $languageId,
+            'langId' => $languageId,
             'langName' => $languageName,
-            'sentId'   => $sentenceId,
-            'sentName' => $sentenceName
+            'sentId' => $sentenceId,
+            'sentName' => $sentenceName,
         ]);
 
         if ($sentenceFragmentId !== 0) {
@@ -71,12 +69,12 @@ class LinkHelper
 
         return $url;
     }
-    
+
     public function forumGroup(int $groupId, string $groupName)
     {
         return route('discuss.group', [
             'id' => $groupId,
-            'slug' => StringHelper::normalizeForUrl($groupName)
+            'slug' => StringHelper::normalizeForUrl($groupName),
         ]);
     }
 
@@ -99,7 +97,7 @@ class LinkHelper
 
     public function resolveThreadByPost(int $postId)
     {
-        return route('api.discuss.resolve-by-post', [ 'postId' => $postId ]);
+        return route('api.discuss.resolve-by-post', ['postId' => $postId]);
     }
 
     public function mailCancellation(string $cancellationToken)

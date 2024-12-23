@@ -2,28 +2,23 @@
 
 namespace App\Jobs;
 
+use App\Interfaces\IIdentifiesPhrases;
+use App\Interfaces\ISystemLanguageFactory;
+use App\Models\ForumPost;
+use App\Repositories\SearchIndexRepository;
+use App\Repositories\WordRepository;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-use App\Models\ForumPost;
-use App\Repositories\{
-    SearchIndexRepository,
-    WordRepository
-};
-use App\Interfaces\IIdentifiesPhrases;
-use App\Interfaces\ISystemLanguageFactory;
-use App\Models\Language;
-
 class ProcessDiscussIndex implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $post;
+    protected ForumPost $post;
 
     /**
      * Create a new job instance.

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-destination='./model/5. sindict.sql'
+destination='./model/3. sindict (optional).sql'
 gloss_group_id=30
 
 echo "Exporting languages..."

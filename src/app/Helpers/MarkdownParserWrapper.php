@@ -7,13 +7,14 @@ use App\Interfaces\IMarkdownParser;
 
 class MarkdownParserWrapper implements IMarkdownParser
 {
-    private $_defaultParser;
-    private $_parserNoBlocks;
+    private MarkdownParser $_defaultParser;
+
+    private MarkdownParser $_parserNoBlocks;
 
     public function __construct(IExternalToInternalUrlResolver $externalToInternalUrlResolver)
     {
         $this->_defaultParser = new MarkdownParser($externalToInternalUrlResolver);
-        $this->_parserNoBlocks = new MarkdownParser($externalToInternalUrlResolver, ['#','>']);
+        $this->_parserNoBlocks = new MarkdownParser($externalToInternalUrlResolver, ['#', '>']);
     }
 
     public function parseMarkdown(string $markdown): string

@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Api\v2;
 
-use Illuminate\Http\Request;
-
 use App\Http\Controllers\Abstracts\Controller;
 use App\Repositories\GlossRepository;
+use Illuminate\Http\Request;
 
 class GlossApiController extends Controller
 {
-    private $_repository;
+    private GlossRepository $_repository;
 
     public function __construct(GlossRepository $repository)
     {
@@ -24,14 +23,14 @@ class GlossApiController extends Controller
         }
 
         return [
-            'gloss' => $glosses->first()
+            'gloss' => $glosses->first(),
         ];
     }
 
     public function destroy(Request $request, int $id)
     {
         $data = $request->validate([
-            'replacement_id' => 'numeric|not_in:'.$id
+            'replacement_id' => 'numeric|not_in:'.$id,
         ]);
 
         $replacementId = intval($data['replacement_id']);
@@ -49,23 +48,22 @@ class GlossApiController extends Controller
     }
 
     /**
-     * HTTP POST. Suggests glosses for the specified array of words. 
+     * HTTP POST. Suggests glosses for the specified array of words.
      *
-     * @param Request $request
      * @return void
      */
-    public function suggest(Request $request) 
+    public function suggest(Request $request)
     {
         $this->validate($request, [
-            'words'       => 'required|array',
+            'words' => 'required|array',
             'language_id' => 'numeric',
-            'inexact'     => 'boolean'
+            'inexact' => 'boolean',
         ]);
 
         $words = $request->input('words');
         $languageId = intval($request->input('language_id'));
         $inexact = boolval($request->input('inexact'));
-        
-        return $this->_repository->suggest($words, $languageId, $inexact); 
+
+        return $this->_repository->suggest($words, $languageId, $inexact);
     }
 }

@@ -10,20 +10,11 @@ class AccountMergeMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * @var string
-     */
-    private $_requestId;
+    private string $_requestId;
 
-    /**
-     * @var string
-     */
-    private $_providerList;
+    private string $_providerList;
 
-    /**
-     * @var string
-     */
-    private $_token;
+    private string $_token;
 
     /**
      * Create a new message instance.
@@ -49,7 +40,7 @@ class AccountMergeMail extends Mailable
         return $this->markdown('emails.account.merge', [
             'requestId' => $this->_requestId,
             'providerList' => $this->_providerList,
-            'token' => $this->_token
+            'token' => $this->_token,
         ]);
     }
 }

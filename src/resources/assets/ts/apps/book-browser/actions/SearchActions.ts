@@ -360,7 +360,11 @@ export default class SearchActions {
                 updateBrowserHistory,
             };
 
-            this.expandSearchResult(args)(dispatch, getState);
+            try {
+                await this.expandSearchResult(args)(dispatch, getState);
+            } catch (err) {
+                console.warn(err);
+            }
         };
     }
 
