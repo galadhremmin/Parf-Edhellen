@@ -9,9 +9,11 @@ class GlossDestroyed
 {
     use SerializesModels;
 
-    public $gloss;
-    public $replacementGloss;
-    public $accountId;
+    public Gloss $gloss;
+
+    public ?Gloss $replacementGloss;
+
+    public int $accountId;
 
     public function __construct(Gloss $gloss, ?Gloss $replacement = null, $accountId = 0)
     {

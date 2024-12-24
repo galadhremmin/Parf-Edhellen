@@ -2,7 +2,7 @@
 
 namespace App\Repositories\ValueObjects;
 
-class ForumThreadValue implements \JsonSerializable 
+class ForumThreadValue implements \JsonSerializable
 {
     use Traits\CanInitialize;
     use Traits\HasDiscussContext;

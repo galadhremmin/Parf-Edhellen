@@ -11,5 +11,5 @@ return [
     'member-list.category.forum_posts' => 'Most forum posts',
     'member-list.category.flashcard_results' => 'Most flashcards',
     'member-list.category.forum_post_likes' => 'Most likes received',
-    'member-list.category.new_accounts' => 'Newest contributors'
+    'member-list.category.new_accounts' => 'Newest contributors',
 ];

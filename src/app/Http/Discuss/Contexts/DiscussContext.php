@@ -2,13 +2,10 @@
 
 namespace App\Http\Discuss\Contexts;
 
-use Illuminate\Database\Eloquent\Model;
-
 use App\Http\Discuss\IDiscussContext;
-use App\Models\{
-    Account,
-    ForumDiscussion
-};
+use App\Models\Account;
+use App\Models\ForumDiscussion;
+use Illuminate\Database\Eloquent\Model;
 
 class DiscussContext implements IDiscussContext
 {
@@ -46,7 +43,7 @@ class DiscussContext implements IDiscussContext
     public function view(Model $entity)
     {
         return view('discuss.context._discuss', [
-            'post' => $entity
+            'post' => $entity,
         ]);
     }
 }

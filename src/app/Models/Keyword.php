@@ -11,13 +11,13 @@ class Keyword extends ModelBase
         'word_id',
         'sense_id',
         'is_sense',
-        'word'
+        'word',
     ];
 
     /**
      * Retrieves the Word entity associated with this keyword. It is deliberately suffixed `Entity` because `word` exists as a column. :(
      */
-    public function wordEntity() 
+    public function wordEntity()
     {
         return $this->belongsTo(Word::class, 'word_id');
     }

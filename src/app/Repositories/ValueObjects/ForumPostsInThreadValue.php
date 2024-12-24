@@ -2,7 +2,7 @@
 
 namespace App\Repositories\ValueObjects;
 
-class ForumPostsInThreadValue implements \JsonSerializable 
+class ForumPostsInThreadValue implements \JsonSerializable
 {
     use Traits\CanInitialize;
     use Traits\HasForumPagination;
@@ -11,26 +11,26 @@ class ForumPostsInThreadValue implements \JsonSerializable
     {
         $this->setupForumPagination($properties);
         $this->initializeAll($properties, [
-            'posts', 'thread_id', 'thread_post_id', 'jump_post_id', 'no_of_posts', 'no_of_posts_per_page'
+            'posts', 'thread_id', 'thread_post_id', 'jump_post_id', 'no_of_posts', 'no_of_posts_per_page',
         ]);
     }
 
-    public function getPosts() 
+    public function getPosts()
     {
         return $this->getValue('posts');
     }
 
-    public function getThreadId() 
+    public function getThreadId()
     {
         return $this->getValue('thread_id');
     }
 
-    public function getThreadPostId() 
+    public function getThreadPostId()
     {
         return $this->getValue('thread_post_id');
     }
 
-    public function getJumpPostId() 
+    public function getJumpPostId()
     {
         return $this->getValue('jump_post_id');
     }

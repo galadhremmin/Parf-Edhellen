@@ -2,13 +2,11 @@
 
 namespace App\Aws;
 
-use Aws\Credentials\{
-    AssumeRoleCredentialProvider,
-    CredentialProvider
-};
+use Aws\Credentials\AssumeRoleCredentialProvider;
+use Aws\Credentials\CredentialProvider;
 use Aws\Sts\StsClient;
 
-class CredentialProviderFactory 
+class CredentialProviderFactory
 {
     public static function create()
     {
@@ -26,10 +24,10 @@ class CredentialProviderFactory
                 ]),
                 'assume_role_params' => [
                     'RoleArn' => 'arn:aws:iam::007151906553:role/ElfdictProdRole',
-                    'RoleSessionName' => 'ED'.ucfirst( config('app.env') ),
+                    'RoleSessionName' => 'ED'.ucfirst(config('app.env')),
                 ],
             ]);
-    
+
             // To avoid unnecessarily fetching STS credentials on every API operation,
             // the memoize function handles automatically refreshing the credentials when they expire
             $provider = CredentialProvider::memoize($assumeRoleCredentials);

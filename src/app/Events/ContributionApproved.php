@@ -9,7 +9,8 @@ class ContributionApproved
 {
     use SerializesModels;
 
-    public $contribution;
+    public Contribution $contribution;
+
     public function __construct(Contribution $contribution)
     {
         $this->contribution = $contribution;

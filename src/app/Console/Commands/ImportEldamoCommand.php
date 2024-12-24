@@ -1,32 +1,22 @@
 <?php
+
 namespace App\Console\Commands;
 
+use App\Jobs\ProcessGlossDeprecation;
+use App\Jobs\ProcessGlossImport;
+use App\Models\Account;
+use App\Models\Gloss;
+use App\Models\GlossDetail;
+use App\Models\GlossGroup;
+use App\Models\Inflection;
+use App\Models\Language;
+use App\Models\Speech;
+use App\Models\Translation;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\DB;
-
-use App\Repositories\{
-    GlossRepository,
-    KeywordRepository
-};
-use App\Helpers\StringHelper;
-use App\Jobs\{
-    ProcessGlossDeprecation,
-    ProcessGlossImport
-};
-use App\Models\{
-    Account,
-    Gloss,
-    GlossDetail,
-    GlossGroup,
-    Inflection,
-    Language, 
-    Speech, 
-    Translation
-};
 use Ramsey\Uuid\Uuid;
 
-class ImportEldamoCommand extends Command 
+class ImportEldamoCommand extends Command
 {
     /**
      * The name and signature of the console command.
@@ -43,13 +33,16 @@ class ImportEldamoCommand extends Command
     protected $description = 'Imports definitions from eldamo.json. Transform the XML data source to JSON using EDEldamoParser.exe.';
 
     private $_languageMap;
+
     private $_speechMap;
+
     private $_inflectionMap;
 
     private $_glossGroups;
+
     /**
      * Import destination account.
-     * 
+     *
      * @var Account
      */
     private $_eldamoAccount;
@@ -58,8 +51,8 @@ class ImportEldamoCommand extends Command
     {
         parent::__construct();
 
-        $this->_languageMap   = null;
-        $this->_speechMap     = null;
+        $this->_languageMap = null;
+        $this->_speechMap = null;
         $this->_inflectionMap = Inflection::get()->keyBy('name');
 
         $this->_glossGroups = [];
@@ -74,13 +67,14 @@ class ImportEldamoCommand extends Command
     public function handle()
     {
         $this->initializeImport();
-        
+
         $path = $this->argument('source');
         if (! file_exists($path)) {
             $this->error($path.' does not exist.');
+
             return;
         }
-        
+
         // Create glossary by reading line by line (expecting jsonl file).
         if ($fp = fopen($path, 'r')) {
             try {
@@ -106,7 +100,7 @@ class ImportEldamoCommand extends Command
                         } else {
                             $this->validateImports($lineNumber, $data);
                             $this->import($lineNumber, $data);
-                            
+
                         }
                     }
 
@@ -123,15 +117,15 @@ class ImportEldamoCommand extends Command
     {
         try {
             $this->_glossGroups = [
-                'default'      => GlossGroup::where('name', 'Eldamo')->firstOrFail(),
-                'adaptations'  => GlossGroup::where('name', 'Eldamo - neologism/adaptations')->firstOrFail(),
-                'fan invented' => GlossGroup::where('name', 'Eldamo - neologism/reconstructions')->firstOrFail()
+                'default' => GlossGroup::where('name', 'Eldamo')->firstOrFail(),
+                'adaptations' => GlossGroup::where('name', 'Eldamo - neologism/adaptations')->firstOrFail(),
+                'fan invented' => GlossGroup::where('name', 'Eldamo - neologism/reconstructions')->firstOrFail(),
             ];
         } catch (ModelNotFoundException $ex) {
-            throw new ModelNotFoundException("Failed to initialize import of Eldamo dataset because the required gloss groups do not exist.", $ex->getCode(), $ex);
+            throw new ModelNotFoundException('Failed to initialize import of Eldamo dataset because the required gloss groups do not exist.', $ex->getCode(), $ex);
         }
 
-        // Find the user account for an existing gloss from Eldamo. 
+        // Find the user account for an existing gloss from Eldamo.
         $existing = Gloss::where('gloss_group_id', $this->_glossGroups['default']->id)
             ->select('account_id')
             ->firstOrFail();
@@ -143,17 +137,17 @@ class ImportEldamoCommand extends Command
     {
         $gloss = Gloss::firstOrNew(['external_id' => $data->gloss->id]);
 
-        $gloss->account_id     = $this->_eldamoAccount->id;
-        $gloss->source         = implode('; ', $data->sources);
-        $gloss->comments       = $data->gloss->notes;
-        $gloss->is_deleted     = 0;
-        $gloss->is_uncertain   = $data->gloss->mark === '?' ||
+        $gloss->account_id = $this->_eldamoAccount->id;
+        $gloss->source = implode('; ', $data->sources);
+        $gloss->comments = $data->gloss->notes;
+        $gloss->is_deleted = 0;
+        $gloss->is_uncertain = $data->gloss->mark === '?' ||
                                  $data->gloss->mark === '*' ||
                                  $data->gloss->mark === '‽' ||
                                  $data->gloss->mark === '!' ||
                                  $data->gloss->mark === '^' ||
                                  $data->gloss->mark === '⚠️';
-        $gloss->is_rejected    = $data->gloss->mark === '-';
+        $gloss->is_rejected = $data->gloss->mark === '-';
 
         $groupName = 'default';
         switch ($data->gloss->mark) {
@@ -170,54 +164,54 @@ class ImportEldamoCommand extends Command
             case '*':
                 $gloss->label = 'Reconstructed';
                 break;
-            /*  
-                For your purposes, you may not want to indicate "#" markers. Those are for items derived from well
-                known principles from attested forms, and are pretty "safe". I think marking those as "Derived" would
-                confuse your target audience of less knowledgeable students.
-            case '#':
-                $gloss->label = 'Derived';
-                break;
-            */
-            /*
-                You may want to be careful about using deprecated tags and ⚠️ markers. Both are reflections
-                of my opinion only.
-            case '⚠️':
-                $gloss->label = 'Not recommended';
-                break;
-            */
+                /*
+                    For your purposes, you may not want to indicate "#" markers. Those are for items derived from well
+                    known principles from attested forms, and are pretty "safe". I think marking those as "Derived" would
+                    confuse your target audience of less knowledgeable students.
+                case '#':
+                    $gloss->label = 'Derived';
+                    break;
+                */
+                /*
+                    You may want to be careful about using deprecated tags and ⚠️ markers. Both are reflections
+                    of my opinion only.
+                case '⚠️':
+                    $gloss->label = 'Not recommended';
+                    break;
+                */
         }
         $gloss->gloss_group_id = $this->_glossGroups[$groupName]->id;
 
         $this->setLanguage($data, $gloss);
         $this->setSpeech($data, $gloss);
-        
-        $word         = $data->gloss->word;
-        $details      = $this->createDetails($data, $gloss);
-        $inflections  = $this->createInflections($data, $gloss);
-        $keywords     = $this->createKeywords($data, $gloss);
+
+        $word = $data->gloss->word;
+        $details = $this->createDetails($data, $gloss);
+        $inflections = $this->createInflections($data, $gloss);
+        $keywords = $this->createKeywords($data, $gloss);
         $translations = $this->createTranslations($data, $gloss);
-        $sense        = $translations[0]->translation;
+        $sense = $translations[0]->translation;
 
         return [
-            'details'      => $details,
-            'gloss'        => $gloss,
-            'inflections'  => $inflections,
-            'keywords'     => $keywords,
-            'sense'        => $sense,
+            'details' => $details,
+            'gloss' => $gloss,
+            'inflections' => $inflections,
+            'keywords' => $keywords,
+            'sense' => $sense,
             'translations' => $translations,
-            'word'         => $word,
+            'word' => $word,
         ];
     }
 
     private function validateImports(int $index, array $data): void
     {
-        $details      = $data['details'];
-        $gloss        = $data['gloss'];
-        $inflections  = $data['inflections'];
-        $keywords     = $data['keywords'];
-        $sense        = $data['sense'];
+        $details = $data['details'];
+        $gloss = $data['gloss'];
+        $inflections = $data['inflections'];
+        $keywords = $data['keywords'];
+        $sense = $data['sense'];
         $translations = $data['translations'];
-        $word         = $data['word'];
+        $word = $data['word'];
 
         $id = $gloss->external_id;
 
@@ -280,18 +274,18 @@ class ImportEldamoCommand extends Command
 
     private function setLanguage(object $data, Gloss $gloss): void
     {
-        $languageMap    = $this->getLanguageMap();
+        $languageMap = $this->getLanguageMap();
         $neoLanguageMap = $this->getNeoLanguageMap();
 
         if (isset($neoLanguageMap[$data->gloss->language])) {
-            $gloss->language_id  = $neoLanguageMap[$data->gloss->language];
+            $gloss->language_id = $neoLanguageMap[$data->gloss->language];
             $gloss->is_uncertain = true;
 
-        } else if (isset($languageMap[$data->gloss->language])) {
-            $gloss->language_id  = $languageMap[$data->gloss->language];
+        } elseif (isset($languageMap[$data->gloss->language])) {
+            $gloss->language_id = $languageMap[$data->gloss->language];
 
         } else {
-            $this->line("\tUnrecognised language for ".$data->gloss->id.": ".$data->gloss->language);
+            $this->line("\tUnrecognised language for ".$data->gloss->id.': '.$data->gloss->language);
         }
     }
 
@@ -306,20 +300,20 @@ class ImportEldamoCommand extends Command
     private function createDetails(object $data, Gloss $gloss): array
     {
         $order = [
-            'Variations'            => 10,
-            'Changes'               => 20,
-            'Derivatives'           => 25,
-            'Derivations'           => 30,
-            'Cognates'              => 40,
-            'Element in'            => 50,
-            'Elements'              => 60,
+            'Variations' => 10,
+            'Changes' => 20,
+            'Derivatives' => 25,
+            'Derivations' => 30,
+            'Cognates' => 40,
+            'Element in' => 50,
+            'Elements' => 60,
             'Phonetic Developments' => 70,
-            'Inflections'           => 80,
+            'Inflections' => 80,
         ];
 
-        $details = array_map(function ($d) use($gloss, $order) {
+        $details = array_map(function ($d) use ($order) {
             if (! isset($order[$d->title])) {
-                throw new \Exception(sprintf("Unknown gloss detail category: %s.", $d->title));
+                throw new \Exception(sprintf('Unknown gloss detail category: %s.', $d->title));
             }
 
             return new GlossDetail([
@@ -345,7 +339,7 @@ class ImportEldamoCommand extends Command
             if (! isset($this->_inflectionMap[$i->form])) {
                 $inflection = new Inflection([
                     'name' => $i->form,
-                    'group_name' => 'Eldamo compatibility (do not use)'
+                    'group_name' => 'Eldamo compatibility (do not use)',
                 ]);
                 $inflection->save();
                 $this->_inflectionMap[$inflection->name] = $inflection;
@@ -358,12 +352,12 @@ class ImportEldamoCommand extends Command
             $uuid = Uuid::uuid4();
             foreach ($eligibleInflections as $inflection) {
                 $inflection = [
-                    'inflection_id'         => $inflection->id,
-                    'speech_id'             => $gloss->speech_id ?: null,
-                    'language_id'           => $gloss->language_id,
-                    'source'                => $i->source,
-                    'word'                  => $i->word,
-                    'inflection_group_uuid' => $uuid
+                    'inflection_id' => $inflection->id,
+                    'speech_id' => $gloss->speech_id ?: null,
+                    'language_id' => $gloss->language_id,
+                    'source' => $i->source,
+                    'word' => $i->word,
+                    'inflection_group_uuid' => $uuid,
                 ];
 
                 switch ($i->mark) {
@@ -413,61 +407,61 @@ class ImportEldamoCommand extends Command
         // Establish a language mapping between Eldamo and Parf Edhellen. This map is based on
         // Eldamo's XSD (xs:simpleType name="language-type") for v0.5.5
         $languageMap = [
-            'ad'   => 'adunaic',
-            'aq'   => 'ancient quenya',
-            'at'   => 'ancient telerin',
-            'av'   => 'avarin',
-            'bel'  => 0, // _beleriandic_ not supported
-            'bs'   => 'black speech',
-            'cir'  => 0, // _cirth_ not supported
-            'dan'  => 'ossriandric', // <~~ deviation from "danian"!
-            'dun'  => 'dunlending',
-            'dor'  => 'doriathrin',
-            'eas'  => 'easterling',
-            'ed'   => 'edain',
+            'ad' => 'adunaic',
+            'aq' => 'ancient quenya',
+            'at' => 'ancient telerin',
+            'av' => 'avarin',
+            'bel' => 0, // _beleriandic_ not supported
+            'bs' => 'black speech',
+            'cir' => 0, // _cirth_ not supported
+            'dan' => 'ossriandric', // <~~ deviation from "danian"!
+            'dun' => 'dunlending',
+            'dor' => 'doriathrin',
+            'eas' => 'easterling',
+            'ed' => 'edain',
             'edan' => 0,
             'eilk' => 'early ilkorin',
-            'en'   => 'early noldorin',
-            'ent'  => 'entish',
-            'eon'  => 0, // 'early old noldorin',
-            'eoq'  => 0, // 'early old qenya',
-            'ep'   => 'early primitive elvish',
-            'eq'   => 'early quenya',
-            'et'   => 'solosimpi', // 'early telerin',
-            'fal'  => 'doriathrin', // 'falathrin',
-            'g'    => 'gnomish',
-            'ilk'  => 'doriathrin', // <~~ deviation from "ilkorin"!
-            'kh'   => 'khuzdul',
-            'khx'  => 'khuzdul', // <~~ deviation from "Khuzdul, External"!
-            'lem'  => 'lemberin',
-            'ln'   => 'noldorin', // <~~ deviation from "late noldorin"!
-            'lon'  => 'old noldorin', // <~~ deviation from "late old noldorin"!
-            'mp'   => 'middle primitive elvish',
-            'mq'   => 'qenya', // <~~ deviation from "middle quenya"!
-            'mt'   => 'middle telerin',
-            'n'    => 'noldorin',
-            'oss'  => 'ossriandric',
-            'p'    => 'primitive elvish',
-            'pad'  => 'primitive adunaic',
-            'nan'  => 'nandorin',
-            'ns'   => 'north sindarin',
-            'on'   => 'old noldorin',
-            'os'   => 'old sindarin',
-            'q'    => 'quenya',
-            'roh'  => 'rohirric',
-            's'    => 'sindarin',
-            'sar'  => 0, // _sarati_ not supported
-            'sol'  => 'solosimpi',
-            't'    => 'telerin',
-            'tal'  => 'taliska',
+            'en' => 'early noldorin',
+            'ent' => 'entish',
+            'eon' => 0, // 'early old noldorin',
+            'eoq' => 0, // 'early old qenya',
+            'ep' => 'early primitive elvish',
+            'eq' => 'early quenya',
+            'et' => 'solosimpi', // 'early telerin',
+            'fal' => 'doriathrin', // 'falathrin',
+            'g' => 'gnomish',
+            'ilk' => 'doriathrin', // <~~ deviation from "ilkorin"!
+            'kh' => 'khuzdul',
+            'khx' => 'khuzdul', // <~~ deviation from "Khuzdul, External"!
+            'lem' => 'lemberin',
+            'ln' => 'noldorin', // <~~ deviation from "late noldorin"!
+            'lon' => 'old noldorin', // <~~ deviation from "late old noldorin"!
+            'mp' => 'middle primitive elvish',
+            'mq' => 'qenya', // <~~ deviation from "middle quenya"!
+            'mt' => 'middle telerin',
+            'n' => 'noldorin',
+            'oss' => 'ossriandric',
+            'p' => 'primitive elvish',
+            'pad' => 'primitive adunaic',
+            'nan' => 'nandorin',
+            'ns' => 'north sindarin',
+            'on' => 'old noldorin',
+            'os' => 'old sindarin',
+            'q' => 'quenya',
+            'roh' => 'rohirric',
+            's' => 'sindarin',
+            'sar' => 0, // _sarati_ not supported
+            'sol' => 'solosimpi',
+            't' => 'telerin',
+            'tal' => 'taliska',
             'teng' => 0, // _tengwar_ not supported
-            'un'   => 'undetermined',
-            'val'  => 'valarin',
-            'van'  => 'quendya', // vanyarin
-            'wes'  => 'westron',
-            'wos'  => 'wose',
-            'maq'  => 'middle ancient quenya',
-            'norths' => 'north sindarin'
+            'un' => 'undetermined',
+            'val' => 'valarin',
+            'van' => 'quendya', // vanyarin
+            'wes' => 'westron',
+            'wos' => 'wose',
+            'maq' => 'middle ancient quenya',
+            'norths' => 'north sindarin',
         ];
 
         $missing = [];
@@ -482,6 +476,7 @@ class ImportEldamoCommand extends Command
 
             if (! $language) {
                 $missing[] = $id;
+
                 continue;
             }
 
@@ -494,16 +489,18 @@ class ImportEldamoCommand extends Command
         }
 
         $this->_languageMap = $languageMap;
+
         return $languageMap;
     }
 
     private function getNeoLanguageMap()
     {
         $languageMap = $this->getLanguageMap();
+
         return [
             'ns' => $languageMap['s'],
             'nq' => $languageMap['q'],
-            'np' => $languageMap['p']
+            'np' => $languageMap['p'],
         ];
     }
 
@@ -514,63 +511,63 @@ class ImportEldamoCommand extends Command
         }
 
         $speechMap = [
-            '?'        => '?',
-            'adj'      => 'adjective',
-            'adv'      => 'adverb',
-            'affix'    => 'affix',
-            'article'  => 'article',
+            '?' => '?',
+            'adj' => 'adjective',
+            'adv' => 'adverb',
+            'affix' => 'affix',
+            'article' => 'article',
             'cardinal' => 'cardinal',
-            'conj'     => 'conjunction',
+            'conj' => 'conjunction',
 
             'collective-name' => 'collective name',
             'collective-noun' => 'collective noun',
-            'family-name'     => 'family name',
-            'fem-name'        => 'feminine name',
-            
-            'fraction'  => 'fraction',
-            'grammar'   => 0, // not supported
-            'infix'     => 'infix',
-            'interj'    => 'interjection',
+            'family-name' => 'family name',
+            'fem-name' => 'feminine name',
+
+            'fraction' => 'fraction',
+            'grammar' => 0, // not supported
+            'infix' => 'infix',
+            'interj' => 'interjection',
             'masc-name' => 'masculine name',
-            'n'         => 'noun',
-            'ordinal'   => 'ordinal',
-            'particle'  => 'particle',
-            'phoneme'   => 'phoneme',
+            'n' => 'noun',
+            'ordinal' => 'ordinal',
+            'particle' => 'particle',
+            'phoneme' => 'phoneme',
             'phonetics' => 0,
 
             'phonetic-group' => 0,
-            'phonetic-rule'  => 0,
-            'phrase'         => 0,
+            'phonetic-rule' => 0,
+            'phrase' => 0,
 
-            'place-name'  => 'place name',
-            'pref'        => 'prefix',
-            'prep'        => 'preposition',
-            'pron'        => 'pronoun',
+            'place-name' => 'place name',
+            'pref' => 'prefix',
+            'prep' => 'preposition',
+            'pron' => 'pronoun',
             'proper-name' => 'proper name',
-            'radical'     => 'radical',
-            'root'        => 'root',
-            'text'        => 0,
-            'suf'         => 'suffix',
-            'vb'          => 'verb',
+            'radical' => 'radical',
+            'root' => 'root',
+            'text' => 0,
+            'suf' => 'suffix',
+            'vb' => 'verb',
 
-            'prep adv'        => 'preposition/adverb',
-            'n adj'           => 'noun/adjective',
-            'adj n'           => 'noun/adjective',
-            'n adv'           => 'noun/adverb',
-            'adv n'           => 'noun/adverb',
-            'interj prep'     => 'interjection/preposition',
-            'adv conj'        => 'adverb/conjunction',
-            'adv adj'         => 'adverb/adjective',
-            'adj adv'         => 'adverb/adjective',
-            'adv prep'        => 'preposition and adverb',
-            'conj adv'        => 'adverb/conjunction',
-            'prep pref'       => 'preposition/prefix',
-            'adv interj'      => 'adverb/interjection',
-            'interj adv'      => 'adverb/interjection',
-            'n vb'            => 'noun/verb',
+            'prep adv' => 'preposition/adverb',
+            'n adj' => 'noun/adjective',
+            'adj n' => 'noun/adjective',
+            'n adv' => 'noun/adverb',
+            'adv n' => 'noun/adverb',
+            'interj prep' => 'interjection/preposition',
+            'adv conj' => 'adverb/conjunction',
+            'adv adj' => 'adverb/adjective',
+            'adj adv' => 'adverb/adjective',
+            'adv prep' => 'preposition and adverb',
+            'conj adv' => 'adverb/conjunction',
+            'prep pref' => 'preposition/prefix',
+            'adv interj' => 'adverb/interjection',
+            'interj adv' => 'adverb/interjection',
+            'n vb' => 'noun/verb',
 
             'interj particle' => 0, // not supported
-            'pron adv'        => 0
+            'pron adv' => 0,
         ];
 
         foreach ($speechMap as $key => $id) {
@@ -592,6 +589,7 @@ class ImportEldamoCommand extends Command
         }
 
         $this->_speechMap = $speechMap;
+
         return $speechMap;
     }
 }

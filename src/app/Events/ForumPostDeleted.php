@@ -9,9 +9,10 @@ class ForumPostDeleted
 {
     use SerializesModels;
 
-    public $post;
-    public $accountId;
-    
+    public ForumPost $post;
+
+    public int $accountId;
+
     public function __construct(ForumPost $post, int $accountId)
     {
         $this->post = $post;

@@ -2,55 +2,40 @@
 
 namespace App\Repositories\SearchIndexResolvers;
 
-use App\Repositories\ValueObjects\{
-    ExternalEntitySearchValue,
-    SearchIndexSearchValue,
-    SpecificEntitiesSearchValue
-};
-use App\Models\Gloss;
-use App\Repositories\{
-    DiscussRepository,
-    GlossInflectionRepository,
-    GlossRepository
-};
 use App\Adapters\BookAdapter;
 use App\Helpers\StringHelper;
+use App\Models\Gloss;
 use App\Models\Initialization\Morphs;
-use App\Models\{
-    SearchKeyword,
-    Sense
-};
-use DB;
+use App\Models\SearchKeyword;
+use App\Models\Sense;
+use App\Repositories\DiscussRepository;
+use App\Repositories\GlossInflectionRepository;
+use App\Repositories\GlossRepository;
+use App\Repositories\ValueObjects\ExternalEntitySearchValue;
+use App\Repositories\ValueObjects\SearchIndexSearchValue;
+use App\Repositories\ValueObjects\SpecificEntitiesSearchValue;
 
 class GlossSearchIndexResolver implements ISearchIndexResolver
 {
-    /**
-     * @var GlossRepository
-     */
-    private $_glossRepository;
-    /**
-     * @var GlossInflectionRepository
-     */
-    private $_glossInflectionRepository;
-    /**
-     * @var DiscussRepository
-     */
-    private $_discussRepository;
-    /**
-     * @var BookAdapter
-     */
-    private $_bookAdapter;
+    private GlossRepository $_glossRepository;
 
-    private $_glossMorph;
-    private $_senseMorph;
+    private GlossInflectionRepository $_glossInflectionRepository;
+
+    private DiscussRepository $_discussRepository;
+
+    private BookAdapter $_bookAdapter;
+
+    private ?string $_glossMorph;
+
+    private ?string $_senseMorph;
 
     public function __construct(GlossRepository $glossRepository, GlossInflectionRepository $glossInflectionRepository,
         DiscussRepository $discussRepository, BookAdapter $bookAdapter)
     {
-        $this->_glossRepository           = $glossRepository;
+        $this->_glossRepository = $glossRepository;
         $this->_glossInflectionRepository = $glossInflectionRepository;
-        $this->_discussRepository         = $discussRepository;
-        $this->_bookAdapter               = $bookAdapter;
+        $this->_discussRepository = $discussRepository;
+        $this->_bookAdapter = $bookAdapter;
 
         $this->_glossMorph = Morphs::getAlias(Gloss::class);
         $this->_senseMorph = Morphs::getAlias(Sense::class);
@@ -60,7 +45,7 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
     {
         if ($value instanceof SpecificEntitiesSearchValue) {
             $glosses = $this->_glossRepository->getGlosses($value->getIds());
-        } else if ($value instanceof ExternalEntitySearchValue) {
+        } elseif ($value instanceof ExternalEntitySearchValue) {
             $glosses = $this->_glossRepository->getGlossesByExternalId(
                 $value->getExternalId(), $value->getGlossGroupId()
             );
@@ -70,7 +55,7 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
             // Sense morph is technically not supported by the search engine but there's plenty of them in the
             // database grandfathered in by the previous data model. It simply wasn't possible back in the day,
             // when the migration was implemented, to associate disassociated senses with the right gloss, resulting
-            // in what can be best described as 'dangling' senses. These senses aren't directly tied to a word (for 
+            // in what can be best described as 'dangling' senses. These senses aren't directly tied to a word (for
             // an example, 'gold-full one' maps to 'gold') but they're still useful to retain in the index. This is why
             // the sense morph is included in the query. If you're rebuilding the database from scratch, this will not
             // do anything as it's currently not possible to create senses within the search keyword table (it'll result
@@ -125,6 +110,7 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
             ? $this->_glossInflectionRepository->getInflectionsForGlosses($glossIds) //
             : collect([]);
         $comments = $this->_discussRepository->getNumberOfPostsForEntities(Gloss::class, $glossIds);
+
         return $this->_bookAdapter->adaptGlosses($glosses, $inflections, $comments, $value->getWord());
     }
 
@@ -133,6 +119,7 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
         $glosses = $this->_glossRepository->getGloss($entityId)->all();
         $inflections = $this->_glossInflectionRepository->getInflectionsForGlosses([$entityId]);
         $comments = $this->_discussRepository->getNumberOfPostsForEntities(Gloss::class, [$entityId]);
+
         return $this->_bookAdapter->adaptGlosses($glosses, $inflections, $comments, count($glosses) > 0 ? $glosses[0]->word->word : null);
     }
 }

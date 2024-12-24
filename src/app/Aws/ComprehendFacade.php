@@ -2,22 +2,15 @@
 
 namespace App\Aws;
 
-use Aws\Credentials\CredentialProvider;
+use App\Interfaces\IIdentifiesPhrases;
 use Aws\Comprehend\ComprehendClient;
 use Aws\Comprehend\Exception\ComprehendException;
-
-use App\Interfaces\{
-    IIdentifiesPhrases
-};
 
 class ComprehendFacade implements IIdentifiesPhrases
 {
     private const AWSComprehendChunkSize = 5000;
 
-    /**
-     * @var ComprehendFactory
-     */
-    private $_clientFactory;
+    private ComprehendFactory $_clientFactory;
 
     public function __construct(ComprehendFactory $factory)
     {
@@ -32,11 +25,12 @@ class ComprehendFacade implements IIdentifiesPhrases
     {
         $chunks = $this->_createChunks($text);
         $keywords = $this->_identifyKeyPhrasesFromChunks($chunks);
+
         return array_unique($keywords);
     }
 
     /**
-     * Split the text body into chunks that can be ingested and processed by 
+     * Split the text body into chunks that can be ingested and processed by
      * Amazon Comprehend, and coalesce the result to a single collection.
      */
     private function _identifyKeyPhrasesFromChunks(array $chunks): array
@@ -64,12 +58,12 @@ class ComprehendFacade implements IIdentifiesPhrases
         try {
             $result = $client->detectKeyPhrases([
                 'LanguageCode' => 'en',
-                'Text'         => $chunk
+                'Text' => $chunk,
             ]);
 
             if (! isset($result['KeyPhrases'])) {
                 throw new \RuntimeException(
-                    sprintf("Unrecognised Amazon comprehend response payload: %s for chunk: %s.",
+                    sprintf('Unrecognised Amazon comprehend response payload: %s for chunk: %s.',
                         json_encode($result), $chunk)
                 );
             }
@@ -87,7 +81,7 @@ class ComprehendFacade implements IIdentifiesPhrases
                         return $this->_identifyKeyPhrasesFromChunk($client, $chunk, $retries - 1);
                     }
                 default:
-                    throw new \RuntimeException(sprintf("Failed to process the chunk: %s", $chunk), 0, $ex);
+                    throw new \RuntimeException(sprintf('Failed to process the chunk: %s', $chunk), 0, $ex);
             }
         }
 
@@ -96,9 +90,6 @@ class ComprehendFacade implements IIdentifiesPhrases
 
     /**
      * Chunks the specific content into ingestiable chunks for Amazon Comprehend.
-     * 
-     * @param string $content
-     * @return array
      */
     private function _createChunks(string $content): array
     {
@@ -113,7 +104,7 @@ class ComprehendFacade implements IIdentifiesPhrases
             } else {
                 $chunk = substr($content, $pos, $offset);
             }
-            
+
             $chunks[] = $chunk;
             $pos += $offset;
         }

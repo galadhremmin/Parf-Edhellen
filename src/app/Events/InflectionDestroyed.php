@@ -9,7 +9,8 @@ class InflectionDestroyed
 {
     use SerializesModels;
 
-    public $inflection;
+    public Inflection $inflection;
+
     public function __construct(Inflection $inflection)
     {
         $this->inflection = $inflection;

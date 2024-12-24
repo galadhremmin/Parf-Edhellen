@@ -2,36 +2,32 @@
 
 namespace App\Http\Controllers\Contributions;
 
-use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\Collection;
-
-use App\Http\Controllers\Abstracts\Controller;
-use App\Repositories\GlossRepository;
 use App\Adapters\BookAdapter;
-use App\Models\{
-    Account,
-    Contribution,
-    Gloss,
-    GlossDetail,
-    ModelBase,
-    Sense,
-    Translation,
-    Word
-};
-use App\Http\Controllers\Traits\{
-    CanValidateGloss, 
-    CanMapGloss
-};
+use App\Http\Controllers\Abstracts\Controller;
+use App\Http\Controllers\Traits\CanMapGloss;
+use App\Http\Controllers\Traits\CanValidateGloss;
+use App\Models\Account;
+use App\Models\Contribution;
+use App\Models\Gloss;
+use App\Models\GlossDetail;
+use App\Models\Sense;
+use App\Models\Translation;
+use App\Models\Word;
 use App\Repositories\GlossInflectionRepository;
+use App\Repositories\GlossRepository;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
 
 class GlossContributionController extends Controller implements IContributionController
 {
     use CanMapGloss,
         CanValidateGloss;
 
-    private $_bookAdapter;
-    private $_glossRepository;
-    private $_glossInflectionRepository;
+    private BookAdapter $_bookAdapter;
+
+    private GlossRepository $_glossRepository;
+
+    private GlossInflectionRepository $_glossInflectionRepository;
 
     public function __construct(BookAdapter $bookAdapter, GlossRepository $glossRepository,
         GlossInflectionRepository $glossInflectionRepository)
@@ -51,18 +47,18 @@ class GlossContributionController extends Controller implements IContributionCon
         }
 
         $translations = $this->getTranslationsFromPayload($glossData);
-        $details      = $this->getDetailsFromPayload($glossData);
+        $details = $this->getDetailsFromPayload($glossData);
         $parentGloss = array_key_exists('id', $glossData)
             ? $glossData['id'] : 0;
-        $glossData = $glossData + [ 
-            'sense' => $contribution->sense
+        $glossData = $glossData + [
+            'sense' => $contribution->sense,
         ];
         $gloss = new Gloss($glossData);
-        $glosses = [ $gloss ];
+        $glosses = [$gloss];
 
-        $gloss->created_at   = $contribution->created_at;
+        $gloss->created_at = $contribution->created_at;
         $gloss->account_name = $contribution->account->nickname;
-        $gloss->type         = $gloss->speech->name;
+        $gloss->type = $gloss->speech->name;
 
         // Hack for assigning to the relation _translations_ without saving them to the database.
         $gloss->setRelation('translations', new Collection($translations));
@@ -72,8 +68,8 @@ class GlossContributionController extends Controller implements IContributionCon
         $glossData = $this->_bookAdapter->adaptGlosses($glosses);
 
         $model = $glossData + [
-            'keywords'    => $keywords,
-            'parentGloss' => $parentGloss
+            'keywords' => $keywords,
+            'parentGloss' => $parentGloss,
         ];
 
         return new ViewModel($contribution, 'contribution.gloss._show', $model);
@@ -84,7 +80,7 @@ class GlossContributionController extends Controller implements IContributionCon
      */
     public function getEditViewModel(Contribution $contribution)
     {
-        // retrieve word and sense based on the information specified in the review object. If the word does not exist in 
+        // retrieve word and sense based on the information specified in the review object. If the word does not exist in
         // the database, create a new instance of the model for the word.
         $word = Word::forString($contribution->word)->firstOrNew(['word' => $contribution->word]);
         $senseWord = Word::forString($contribution->sense)->firstOrNew([]);
@@ -96,68 +92,65 @@ class GlossContributionController extends Controller implements IContributionCon
 
         // Convert keyword strings to Word objects
         $keywords = array_map(function ($k) {
-            return new Word([ 'word' => $k ]);
+            return new Word(['word' => $k]);
         }, json_decode($contribution->keywords));
 
         // extend the payload with information necessary for the form.
         $payload = json_decode($contribution->payload, true);
         $account = Account::find(isset($payload['account_id'])
-            ? $payload['account_id'] 
+            ? $payload['account_id']
             : $contribution->account_id
         );
         $translations = $this->getTranslationsFromPayload($payload);
-        $details      = $this->getDetailsFromPayload($payload);
+        $details = $this->getDetailsFromPayload($payload);
 
-        return $payload + [ 
-            'contribution_id'   => $contribution->id,
-            'account'           => $account,
-            'word'              => $word,
-            'sense'             => $sense,
-            'keywords'          => $keywords,
-            'notes'             => $contribution->notes,
-            'translations'      => $translations,
-            'gloss_details'     => $details
+        return $payload + [
+            'contribution_id' => $contribution->id,
+            'account' => $account,
+            'word' => $word,
+            'sense' => $sense,
+            'keywords' => $keywords,
+            'notes' => $contribution->notes,
+            'translations' => $translations,
+            'gloss_details' => $details,
         ];
     }
 
     /**
      * HTTP GET. Opens a view for editing a gloss contribution.
      *
-     * @param Request $request
-     * @param Contribution $contribution
      * @return array|\Illuminate\View\View|\Illuminate\Contracts\View\Factory
      */
     public function edit(Contribution $contribution, Request $request)
     {
         $payloadData = $this->getEditViewModel($contribution);
-        $inflections  = $this->_glossInflectionRepository->getInflectionsForGloss(
+        $inflections = $this->_glossInflectionRepository->getInflectionsForGloss(
             array_key_exists('id', $payloadData) ? $payloadData['id'] : 0
         );
 
         $viewModel = [
-            'review' => $contribution, 
+            'review' => $contribution,
             'payload' => $payloadData,
             'inflections' => $inflections,
-            'form_restrictions' => ['gloss']
+            'form_restrictions' => ['gloss'],
         ];
 
         return $request->ajax() //
             ? $viewModel : view('contribution.gloss.edit', $viewModel);
     }
-    
+
     /**
      * Shows a form for a new contribution.
      *
-     * @param Request $request
      * @return array|\Illuminate\View\View|\Illuminate\Contracts\View\Factory
      */
     public function create(Request $request)
     {
         $data = $request->validate([
-            'entity_id'        => 'sometimes|numeric',
+            'entity_id' => 'sometimes|numeric',
             'gloss_version_id' => 'sometimes|numeric',
         ]);
-        $entityId       = isset($data['entity_id']) ? intval($data['entity_id']) : 0;
+        $entityId = isset($data['entity_id']) ? intval($data['entity_id']) : 0;
         $glossVersionId = isset($data['gloss_version_id']) ? intval($data['gloss_version_id']) : 0;
 
         $gloss = null;
@@ -174,7 +167,7 @@ class GlossContributionController extends Controller implements IContributionCon
         $inflections = [];
         if ($gloss !== null) {
             $gloss->keywords = $this->_glossRepository->getKeywords($gloss->sense_id, $gloss->id);
-            $inflections     = $this->_glossInflectionRepository->getInflectionsForGloss($gloss->id);
+            $inflections = $this->_glossInflectionRepository->getInflectionsForGloss($gloss->id);
         }
 
         return $request->ajax()
@@ -182,7 +175,7 @@ class GlossContributionController extends Controller implements IContributionCon
             // create a payload model if a gloss exists.
             : view('contribution.gloss.create', $gloss ? [
                 'payload' => $gloss,
-                'inflections' => $inflections
+                'inflections' => $inflections,
             ] : []);
     }
 
@@ -195,6 +188,7 @@ class GlossContributionController extends Controller implements IContributionCon
     public function validateBeforeSave(Request $request, int $id = 0)
     {
         $this->validateGlossInRequest($request, $id);
+
         return true;
     }
 
@@ -214,12 +208,12 @@ class GlossContributionController extends Controller implements IContributionCon
             $entity->account_id = $request->user()->id;
         }
 
-        $entity->_translations  = $translations;
-        $entity->_details       = $details;
+        $entity->_translations = $translations;
+        $entity->_details = $details;
 
-        $contribution->word        = $word;
-        $contribution->sense       = $sense;
-        $contribution->keywords    = json_encode($keywords);
+        $contribution->word = $word;
+        $contribution->sense = $sense;
+        $contribution->keywords = json_encode($keywords);
         $contribution->language_id = $entity->language_id;
 
         if ($entity->exists) {
@@ -233,7 +227,7 @@ class GlossContributionController extends Controller implements IContributionCon
      * Disable change detection within the parent controller as the payload is always
      * populated by the `populate` method.
      */
-    function disableChangeDetection(): bool
+    public function disableChangeDetection(): bool
     {
         return false;
     }
@@ -241,11 +235,11 @@ class GlossContributionController extends Controller implements IContributionCon
     public function approve(Contribution $contribution, Request $request): int
     {
         $glossData = json_decode($contribution->payload, true) + [
-            'account_id' => $contribution->account_id
+            'account_id' => $contribution->account_id,
         ];
 
         $translations = $this->getTranslationsFromPayload($glossData);
-        $details      = $this->getDetailsFromPayload($glossData);
+        $details = $this->getDetailsFromPayload($glossData);
 
         $gloss = new Gloss($glossData);
         // is the contribution a proposed change to an existing gloss?
@@ -268,48 +262,50 @@ class GlossContributionController extends Controller implements IContributionCon
 
     /**
      * Gets translations (if available) from the specified array.
-     * @param $glossData array payload from persistence layer
+     *
+     * @param  $glossData  array payload from persistence layer
      * @return array
      */
-    private function getTranslationsFromPayload(array& $glossData)
+    private function getTranslationsFromPayload(array &$glossData)
     {
         // Retrieve translations, which should either be a an array stored
         // upon the data carrier with the key "_translations" (API v.2) or
-        // a string with the key "translation", also on the data carrier 
+        // a string with the key "translation", also on the data carrier
         // (API v.1).
-        $apiVersion = isset($glossData['_translations']) 
-            ? 2 
+        $apiVersion = isset($glossData['_translations'])
+            ? 2
             : (isset($glossData['translation']) ? 1 : 0);
-            
+
         switch ($apiVersion) {
             case 2:
-                $translations = array_map(function ($data) { 
+                $translations = array_map(function ($data) {
                     return new Translation($data);
                 }, $glossData['_translations']);
-                
+
                 unset($glossData['_translations']);
                 break;
 
             case 1:
                 $translations = [
                     new Translation([
-                        'translation' => $glossData['translation']
-                    ])
+                        'translation' => $glossData['translation'],
+                    ]),
                 ];
                 break;
             default:
                 abort(400, 'Unrecognised payload.');
         }
-        
+
         return $translations;
     }
 
     /**
      * Gets gloss details from the specified array.
-     * @param $glossData array payload from persistence layer
+     *
+     * @param  $glossData  array payload from persistence layer
      * @return array
      */
-    private function getDetailsFromPayload(array& $glossData)
+    private function getDetailsFromPayload(array &$glossData)
     {
         if (! isset($glossData['_details'])) {
             return [];

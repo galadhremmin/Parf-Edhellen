@@ -29,14 +29,13 @@ class Kernel extends ConsoleKernel
     /**
      * Define the application's command schedule.
      *
-     * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
      * @return void
      */
     protected function schedule(Schedule $schedule)
     {
         $schedule->call(function (SystemErrorRepository $systemErrorRepository) {
-                $systemErrorRepository->deleteOlderThan(Carbon::now()->addDays(-90));
-            }) //
+            $systemErrorRepository->deleteOlderThan(Carbon::now()->addDays(-90));
+        }) //
             ->onFailure(function (Stringable $output, SystemErrorRepository $systemErrorRepository) {
                 $systemErrorRepository->saveException(new Exception(
                     sprintf('Failed to delete old SystemErrors. Output: %s', $output)
@@ -46,8 +45,8 @@ class Kernel extends ConsoleKernel
             ->hourly();
 
         $schedule->call(function () {
-                FailedJob::where('failed_at', '<=', Carbon::now()->addDays(-90))->delete();
-            }) //
+            FailedJob::where('failed_at', '<=', Carbon::now()->addDays(-90))->delete();
+        }) //
             ->onFailure(function (Stringable $output, SystemErrorRepository $systemErrorRepository) {
                 $systemErrorRepository->saveException(new Exception(
                     sprintf('Failed to delete old failed jobs. Output: %s', $output)

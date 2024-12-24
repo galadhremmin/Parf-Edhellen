@@ -6,15 +6,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Sentence extends ModelBase implements Interfaces\IHasFriendlyName, Interfaces\IHasLanguage
 {
-    use Traits\HasAccount;
     use SoftDeletes;
+    use Traits\HasAccount;
 
     protected $fillable = [
         'description', 'language_id', 'source', 'is_neologism', 'is_approved', 'account_id',
-        'long_description', 'name'
+        'long_description', 'name',
     ];
-    
-    public function sentence_fragments() 
+
+    public function sentence_fragments()
     {
         return $this->hasMany(SentenceFragment::class)
             ->orderBy('order');
@@ -25,7 +25,7 @@ class Sentence extends ModelBase implements Interfaces\IHasFriendlyName, Interfa
         return $this->hasMany(SentenceTranslation::class);
     }
 
-    public function language() 
+    public function language()
     {
         return $this->belongsTo(Language::class);
     }
@@ -34,7 +34,7 @@ class Sentence extends ModelBase implements Interfaces\IHasFriendlyName, Interfa
     {
         return $this->belongsTo(AccountFeed::class);
     }
-    
+
     public function scopeNeologisms($query)
     {
         $query->where('is_neologism', 1);
@@ -50,7 +50,7 @@ class Sentence extends ModelBase implements Interfaces\IHasFriendlyName, Interfa
         $query->where('language_id', $langId);
     }
 
-    public function getFriendlyName() 
+    public function getFriendlyName()
     {
         return $this->name;
     }

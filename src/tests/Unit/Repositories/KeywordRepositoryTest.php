@@ -2,44 +2,41 @@
 
 namespace Tests\Unit\Repositories;
 
-use Tests\TestCase;
-use Queue;
-
-use Tests\Unit\Traits\CanCreateGloss;
 use App\Repositories\KeywordRepository;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tests\TestCase;
+use Tests\Unit\Traits\CanCreateGloss;
 
 class KeywordRepositoryTest extends TestCase
 {
-    use DatabaseTransactions; 
-
     use CanCreateGloss {
         CanCreateGloss::setUp as setUpGlosses;
         CanCreateGloss::getRepository as getGlossRepository;
-    } // ; <-- remedies Visual Studio Code colouring bug
+    }
+    use DatabaseTransactions; // ; <-- remedies Visual Studio Code colouring bug
 
     /**
      * A basic example of versioning when saving glosses.
      *
      * @return void
      */
-    public function testResolveKeyword()
+    public function test_resolve_keyword()
     {
-        extract( $this->createGloss(__FUNCTION__) );
+        extract($this->createGloss(__FUNCTION__));
 
         // Create an origin gloss, to validate the versioning system. By appending 'origin' to the word string,
         // the next gloss saved (with an unsuffixed word) create a new version of the gloss.
         $keywords[] = $word;
         $gloss = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
-        
+
         $repository = resolve(KeywordRepository::class);
-        
+
         $repository->createKeyword($gloss->word, $gloss->sense, $gloss);
         $repository->createKeyword($gloss->word, $gloss->sense, $gloss);
 
         $expected = array_unique(array_merge($keywords, array_map(function ($t) {
             return $t->translation;
-        }, $translations), [ $word, $gloss->sense->word->word ]));
+        }, $translations), [$word, $gloss->sense->word->word]));
         $actual = $gloss->keywords->map(function ($k) {
             return $k->keyword;
         })->toArray();

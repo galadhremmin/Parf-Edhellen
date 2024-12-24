@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models\Traits;
+
 use App\Models\Account;
 
 trait HasAccount
@@ -21,7 +22,7 @@ trait HasAccount
         $query->whereIn('account_id', $accountIds);
     }
 
-    public function account() 
+    public function account()
     {
         return $this->belongsTo(Account::class)
             ->select(['id', 'nickname', 'tengwar', 'has_avatar']);
@@ -32,8 +33,8 @@ trait HasAccount
         if (is_numeric($accountOrId)) {
             return intval($accountOrId);
         }
-        
-        if ($accountOrId instanceOf Account) {
+
+        if ($accountOrId instanceof Account) {
             return $accountOrId->id;
         }
 

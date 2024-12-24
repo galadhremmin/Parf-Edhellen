@@ -3,8 +3,8 @@
 namespace App\Helpers;
 
 use Carbon\Carbon;
-use Illuminate\Support\Carbon as IlluminateCarbon;
 use Illuminate\Contracts\Support\Jsonable;
+use Illuminate\Support\Carbon as IlluminateCarbon;
 
 class BladeHelper
 {
@@ -17,7 +17,7 @@ class BladeHelper
 
         if (is_string($date)) {
             $date = new Carbon($date);
-        } else if (! ($date instanceOf Carbon) && ! ($date instanceOf IlluminateCarbon)) {
+        } elseif (! ($date instanceof Carbon) && ! ($date instanceof IlluminateCarbon)) {
             throw new \Exception('Unsupported data type: '.get_class($date));
         }
 
@@ -36,7 +36,7 @@ class BladeHelper
     {
         $options = $pretty ? JSON_PRETTY_PRINT : 0;
         $json = '';
-        if ($data instanceOf Jsonable) {
+        if ($data instanceof Jsonable) {
             $json = $data->toJSON($options);
         } else {
             $tmp = json_encode($data, $options);
@@ -44,7 +44,7 @@ class BladeHelper
                 $json = $tmp;
             }
         }
-        
+
         return htmlentities($json, ENT_QUOTES);
     }
 }

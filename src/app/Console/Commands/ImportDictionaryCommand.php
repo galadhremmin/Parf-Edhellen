@@ -1,28 +1,19 @@
 <?php
+
 namespace App\Console\Commands;
 
+use App\Jobs\ProcessGlossImport;
+use App\Models\Account;
+use App\Models\Gloss;
+use App\Models\GlossGroup;
+use App\Models\Inflection;
+use App\Models\Language;
+use App\Models\Translation;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\DB;
-
-use App\Helpers\StringHelper;
-use App\Jobs\{
-    ProcessGlossDeprecation,
-    ProcessGlossImport
-};
-use App\Models\{
-    Account,
-    Gloss,
-    GlossDetail,
-    GlossGroup,
-    Inflection,
-    Language, 
-    Translation
-};
 use Ramsey\Uuid\Uuid;
 
-class ImportDictionaryCommand extends Command 
+class ImportDictionaryCommand extends Command
 {
     /**
      * The name and signature of the console command.
@@ -38,20 +29,13 @@ class ImportDictionaryCommand extends Command
      */
     protected $description = 'Imports definitions from any JSON file formatted using the ElfDict JSON standard.';
 
-    /**
-     * @var Collection
-     */
-    private $_languageMap;
+    private Collection $_languageMap;
 
-    /**
-     * @var GlossGroup
-     */
-    private $_glossGroup;
-    /**
-     * @var Account
-     */
-    private $_importAccount;
-    private $_externalIdPrefix;
+    private ?GlossGroup $_glossGroup;
+
+    private ?Account $_importAccount;
+
+    private ?string $_externalIdPrefix;
 
     public function __construct()
     {
@@ -76,6 +60,7 @@ class ImportDictionaryCommand extends Command
 
         if ($this->option('account-id') === null) {
             $this->error('--account-id: You must specify the ID for the account you\'d like to use for the import.');
+
             return;
         }
         $this->_importAccount = Account::findOrFail(intval($this->option('account-id')));
@@ -87,6 +72,7 @@ class ImportDictionaryCommand extends Command
         $path = $this->argument('source');
         if (! file_exists($path)) {
             $this->error($path.' does not exist.');
+
             return;
         }
 
@@ -95,7 +81,7 @@ class ImportDictionaryCommand extends Command
             $this->_externalIdPrefix ?? 'none'))) {
             return;
         }
-        
+
         // Create glossary by reading line by line (expecting jsonl file).
         if ($fp = fopen($path, 'r')) {
             try {
@@ -124,7 +110,7 @@ class ImportDictionaryCommand extends Command
         }
     }
 
-    function createImportData(\stdClass $entity): array
+    public function createImportData(\stdClass $entity): array
     {
         // This is just simplifying things. If it is null, initiate it as an empty collection to avoid having to check for nulls...
         if (! is_array($entity->references)) {
@@ -133,7 +119,7 @@ class ImportDictionaryCommand extends Command
 
         $externalId = $this->_externalIdPrefix.'_'.($entity->id !== null
             ? $entity->id
-            : md5(sprintf('%s|%s|%s|%s', $entity->language, $entity->word, $entity->mark ?? 'NULL', implode(';', $entity->translations))) // generate an imperfect key  
+            : md5(sprintf('%s|%s|%s|%s', $entity->language, $entity->word, $entity->mark ?? 'NULL', implode(';', $entity->translations))) // generate an imperfect key
         );
 
         if (! $this->_languageMap->has($entity->language)) {
@@ -145,7 +131,7 @@ class ImportDictionaryCommand extends Command
             array_unique(
                 array_map(function ($reference) {
                     return $reference->source;
-                }, array_filter($entity->references, function($reference) {
+                }, array_filter($entity->references, function ($reference) {
                     return ! empty($reference->source);
                 }))
             )
@@ -155,30 +141,31 @@ class ImportDictionaryCommand extends Command
 
         $gloss = Gloss::firstOrNew(['external_id' => $externalId]);
         $gloss->fill([
-            'language_id'    => $languageId,
-            'is_deleted'     => 0,
-            'comments'       => $notes,
-            'source'         => $source,
-            'is_uncertain'   => $uncertain,
+            'language_id' => $languageId,
+            'is_deleted' => 0,
+            'comments' => $notes,
+            'source' => $source,
+            'is_uncertain' => $uncertain,
             'gloss_group_id' => $this->_glossGroup ? $this->_glossGroup->id : null,
-            'account_id'     => $this->_importAccount->id
+            'account_id' => $this->_importAccount->id,
         ]);
 
         $languageMap = $this->_languageMap;
-        $inflections = array_map(function ($reference) use($languageMap, $languageId) {
+        $inflections = array_map(function ($reference) use ($languageMap, $languageId) {
             $inflectionLanguageId = ($reference->language === null || ! $languageMap->has($reference->language))
                 ? $languageId : $languageMap[$reference->language]->id;
             $uuid = Uuid::uuid4();
+
             return [
                 /*
                 TODO: Not presently supported
                 'inflection_id'         => $inflection->id,
                 'speech_id'             => $gloss->speech_id ?: null,
                 */
-                'language_id'           => $inflectionLanguageId,
-                'source'                => $reference->source,
-                'word'                  => $reference->inflect->word,
-                'inflection_group_uuid' => $uuid
+                'language_id' => $inflectionLanguageId,
+                'source' => $reference->source,
+                'word' => $reference->inflect->word,
+                'inflection_group_uuid' => $uuid,
             ];
         }, array_filter($entity->references, function ($reference) {
             return $reference->inflect !== null;
@@ -193,7 +180,7 @@ class ImportDictionaryCommand extends Command
         $translations = array_map(function ($translation) {
             return new Translation(['translation' => $translation]);
         }, $entity->translations);
-        
+
         $word = $entity->word;
 
         return [
@@ -203,11 +190,11 @@ class ImportDictionaryCommand extends Command
             'keywords' => $keywords,
             'sense' => $sense,
             'translations' => $translations,
-            'word' => $word
+            'word' => $word,
         ];
     }
 
-    function import($index, array $data)
+    public function import($index, array $data)
     {
         $this->line($index.' - dispatching job');
         ProcessGlossImport::dispatch($data)->onQueue('import');

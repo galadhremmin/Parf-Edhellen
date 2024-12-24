@@ -9,8 +9,9 @@ class SentenceDestroyed
 {
     use SerializesModels;
 
-    public $sentence;
-    public $accountId;
+    public Sentence $sentence;
+
+    public int $accountId;
 
     public function __construct(Sentence $sentence, int $accountId = 0)
     {

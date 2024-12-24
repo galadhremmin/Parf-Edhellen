@@ -2,9 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\{ 
-    SystemError
-};
+use App\Models\SystemError;
 use Carbon\Carbon;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Session;
@@ -36,15 +34,15 @@ class SystemErrorRepository
             print_r($_COOKIE, true)."\n";
 
         SystemError::create([
-            'message'    => $message,
-            'url'        => $request->fullUrl(),
-            'ip'         => array_key_exists('REMOTE_ADDR', $_SERVER) ? $_SERVER['REMOTE_ADDR'] : null,
-            'category'   => $category,
-            'error'      => $error,
+            'message' => $message,
+            'url' => $request->fullUrl(),
+            'ip' => array_key_exists('REMOTE_ADDR', $_SERVER) ? $_SERVER['REMOTE_ADDR'] : null,
+            'category' => $category,
+            'error' => $error,
             'account_id' => $user !== null ? $user->id : null,
             'session_id' => Session::getId(),
-            'file'       => $exception->getFile(),
-            'line'       => $exception->getLine()
+            'file' => $exception->getFile(),
+            'line' => $exception->getLine(),
         ]);
     }
 
@@ -63,23 +61,23 @@ class SystemErrorRepository
         }
 
         SystemError::create([
-            'message'    => $message,
-            'url'        => $url,
-            'ip'         => isset($_SERVER['REMOTE_ADDR'])
+            'message' => $message,
+            'url' => $url,
+            'ip' => isset($_SERVER['REMOTE_ADDR'])
                 ? $_SERVER['REMOTE_ADDR']
                 : null,
-            'error'      => $error,
+            'error' => $error,
             'account_id' => $user !== null
-                ? $user->id 
+                ? $user->id
                 : null,
-            'category'   => $category,
+            'category' => $category,
             'session_id' => Session::getId(),
             'user_agent' => $userAgent,
         ]);
 
     }
 
-    public function deleteOlderThan(Carbon $date) 
+    public function deleteOlderThan(Carbon $date)
     {
         SystemError::where('created_at', '<', $date)->delete();
     }

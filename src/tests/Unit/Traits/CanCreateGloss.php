@@ -2,17 +2,14 @@
 
 namespace Tests\Unit\Traits;
 
-use Auth;
-
+use App\Models\Gloss;
+use App\Models\GlossDetail;
+use App\Models\GlossGroup;
+use App\Models\Language;
+use App\Models\Speech;
+use App\Models\Translation;
 use App\Repositories\GlossRepository;
-use App\Models\{
-    Gloss,
-    GlossDetail,
-    GlossGroup,
-    Language,
-    Speech,
-    Translation
-};
+use Auth;
 
 trait CanCreateGloss
 {
@@ -20,8 +17,9 @@ trait CanCreateGloss
         MocksAuth::setUp as setUpAuth;
     } // ;
 
-    protected $_glossGroup;
-    protected $_glossRepository;
+    protected ?GlossGroup $_glossGroup;
+
+    protected GlossRepository $_glossRepository;
 
     protected function setUp(): void
     {
@@ -32,7 +30,7 @@ trait CanCreateGloss
         $this->_glossRepository = resolve(GlossRepository::class);
         $this->_glossGroup = GlossGroup::firstOrCreate([
             'name' => 'Unit tests',
-            'is_canon' => true
+            'is_canon' => true,
         ]);
 
         $this->cleanGlosses();
@@ -44,8 +42,7 @@ trait CanCreateGloss
             ->get();
         $senses = [];
 
-        foreach ($glosses as $gloss)
-        {
+        foreach ($glosses as $gloss) {
             $senses[] = $gloss->sense;
 
             $gloss->keywords()->delete();
@@ -59,9 +56,7 @@ trait CanCreateGloss
     /**
      * Creates a gloss.
      *
-     * @param string $word
-     * @param string $sense
-     * @param string $method
+     * @param  string  $sense
      * @return array
      */
     protected function createGloss(string $method = __FUNCTION__, string $word = 'test-word')
@@ -85,11 +80,11 @@ trait CanCreateGloss
         $gloss->label = null;
 
         $translations = $this->createTranslations();
-        
+
         $keywords = [
             'test 3',
-            'test 4', 
-            'test 5'
+            'test 4',
+            'test 5',
         ];
 
         $details = $this->createGlossDetails($gloss);
@@ -102,48 +97,49 @@ trait CanCreateGloss
             'gloss' => $gloss,
             'translations' => $translations,
             'keywords' => $keywords,
-            'details' => $details
+            'details' => $details,
         ];
     }
 
     protected function createTranslations()
     {
         return [
-            new Translation([ 'translation' => 'test 0' ]),
-            new Translation([ 'translation' => 'test 1' ]),
-            new Translation([ 'translation' => 'test 2' ])
+            new Translation(['translation' => 'test 0']),
+            new Translation(['translation' => 'test 1']),
+            new Translation(['translation' => 'test 2']),
         ];
     }
 
     protected function createGlossDetails(Gloss $gloss)
     {
         $accountId = $gloss->account_id;
+
         return [
             new GlossDetail([
-                'category'   => 'Section 1',
-                'text'       => 'This is the first item for '.$gloss->external_id,
-                'order'      => 10
+                'category' => 'Section 1',
+                'text' => 'This is the first item for '.$gloss->external_id,
+                'order' => 10,
             ]),
             new GlossDetail([
-                'category'   => 'Section 2',
-                'text'       => 'This is the second item for '.$gloss->external_id,
-                'order'      => 20
+                'category' => 'Section 2',
+                'text' => 'This is the second item for '.$gloss->external_id,
+                'order' => 20,
             ]),
             new GlossDetail([
-                'category'   => 'Section 3',
-                'text'       => 'This is the third item for '.$gloss->external_id,
-                'order'      => 30
+                'category' => 'Section 3',
+                'text' => 'This is the third item for '.$gloss->external_id,
+                'order' => 30,
             ]),
             new GlossDetail([
-                'category'   => 'Section 4',
-                'text'       => 'This is the fourth item for '.$gloss->external_id,
-                'order'      => 40
+                'category' => 'Section 4',
+                'text' => 'This is the fourth item for '.$gloss->external_id,
+                'order' => 40,
             ]),
             new GlossDetail([
-                'category'   => 'Section 5',
-                'text'       => 'This is the fifth item for '.$gloss->external_id,
-                'order'      => 50
-            ])
+                'category' => 'Section 5',
+                'text' => 'This is the fifth item for '.$gloss->external_id,
+                'order' => 50,
+            ]),
         ];
     }
 

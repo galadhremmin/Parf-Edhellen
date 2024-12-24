@@ -3,29 +3,27 @@
 namespace Tests\Unit\Api;
 
 use App\Helpers\StorageHelper;
-use Illuminate\Support\Str;
-use Tests\TestCase;
-use App\Models\{
-    Account,
-};
+use App\Models\Account;
 use Exception;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
+use Tests\TestCase;
 
 class AccountApiControllerTest extends TestCase
 {
-    use DatabaseTransactions; 
+    use DatabaseTransactions;
 
-    public function testEdited()
+    public function test_edited()
     {
         $uuid = (string) Str::uuid();
         try {
             $account = Account::create([
                 'nickname' => $uuid,
-                'email'    => 'private@domain.com',
+                'email' => 'private@domain.com',
                 'identity' => $uuid,
                 'authorization_provider_id' => 1000,
-                'profile'  => 'Lots of personal data.'
+                'profile' => 'Lots of personal data.',
             ]);
 
             $newNickname = (string) Str::uuid();
@@ -35,7 +33,7 @@ class AccountApiControllerTest extends TestCase
                 ->post(route('api.account.update', ['id' => $account->id]), [
                     'nickname' => $newNickname,
                     'tengwar' => $newNickname,
-                    'introduction' => $newIntroduction
+                    'introduction' => $newIntroduction,
                 ]);
             $response->assertSuccessful();
             $account->refresh();
@@ -51,29 +49,29 @@ class AccountApiControllerTest extends TestCase
         }
     }
 
-    public function testAvatar()
+    public function test_avatar()
     {
         $uuid = (string) Str::uuid();
         $avatarPath = null;
         try {
             $account = Account::create([
                 'nickname' => $uuid,
-                'email'    => 'private@domain.com',
+                'email' => 'private@domain.com',
                 'identity' => $uuid,
                 'authorization_provider_id' => 1000,
-                'profile'  => 'Lots of personal data.'
+                'profile' => 'Lots of personal data.',
             ]);
 
             $newAvatar = UploadedFile::fake()->image('avatar.gif', 200, 200);
 
             $response = $this->actingAs($account)
                 ->post(route('api.account.update-avatar', ['id' => $account->id]), [
-                    'avatar' => $newAvatar
+                    'avatar' => $newAvatar,
                 ]);
             $response->assertSuccessful();
             $account->refresh();
 
-            $helper = new StorageHelper();
+            $helper = new StorageHelper;
             $avatarPath = $helper->accountAvatar($account, false);
             $this->assertNotNull($avatarPath);
 
@@ -87,16 +85,16 @@ class AccountApiControllerTest extends TestCase
         }
     }
 
-    public function testDeletion()
+    public function test_deletion()
     {
         $uuid = (string) Str::uuid();
         try {
             $account = Account::create([
                 'nickname' => $uuid,
-                'email'    => 'private@domain.com',
+                'email' => 'private@domain.com',
                 'identity' => $uuid,
                 'authorization_provider_id' => 1000,
-                'profile'  => 'Lots of personal data.'
+                'profile' => 'Lots of personal data.',
             ]);
 
             $response = $this->actingAs($account)
@@ -116,23 +114,23 @@ class AccountApiControllerTest extends TestCase
         }
     }
 
-    public function testUnauthorizedToDelete()
+    public function test_unauthorized_to_delete()
     {
         $uuid1 = (string) Str::uuid();
         $account1 = Account::create([
             'nickname' => $uuid1,
-            'email'    => 'private1@domain.com',
+            'email' => 'private1@domain.com',
             'identity' => $uuid1,
             'authorization_provider_id' => 1000,
-            'profile'  => 'Lots of personal data.'
+            'profile' => 'Lots of personal data.',
         ]);
         $uuid2 = (string) Str::uuid();
         $account2 = Account::create([
             'nickname' => $uuid2,
-            'email'    => 'private2@domain.com',
+            'email' => 'private2@domain.com',
             'identity' => $uuid2,
             'authorization_provider_id' => 2000,
-            'profile'  => 'Lots of personal data.'
+            'profile' => 'Lots of personal data.',
         ]);
 
         $path = route('api.account.delete', ['id' => $account1->id]);
@@ -142,7 +140,7 @@ class AccountApiControllerTest extends TestCase
         $this->actingAs($account2)
             ->delete($path)
             ->assertForbidden();
-        
+
         $account1->delete();
         $account2->delete();
     }

@@ -28,7 +28,7 @@ function Markdown(props: IProps) {
             }).then((response: IMarkdownParserResponse) => {
                 setHtml(response.html);
             }).catch((reason: unknown) => {
-                setHtml(`The server failed to parse the specified string. Reason: ${String(reason)}`);
+                setHtml(`The server failed to parse the specified string. Reason: ${JSON.stringify(reason)}`);
             });
         } else {
             setHtml(text);

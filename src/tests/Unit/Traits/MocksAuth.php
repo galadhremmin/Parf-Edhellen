@@ -2,9 +2,6 @@
 
 namespace Tests\Unit\Traits;
 
-use Tests\TestCase;
-use Illuminate\Auth\AuthManager;
-use Illuminate\Contracts\Auth\UserProvider;
 use App\Models\Account;
 use Mockery;
 

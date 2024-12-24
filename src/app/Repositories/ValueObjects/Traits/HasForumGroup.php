@@ -9,14 +9,14 @@ trait HasForumGroup
     public function setupForumGroup(array $properties)
     {
         $this->initializeAll($properties, [
-            'group'
+            'group',
         ]);
     }
 
     /**
      * @return ForumGroup
      */
-    public function getGroup() 
+    public function getGroup()
     {
         return $this->getValue('group');
     }

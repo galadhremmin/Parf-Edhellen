@@ -5,7 +5,7 @@ namespace App\Models\Interfaces;
 /**
  * The entity can be surmised in a human-readable manner.
  */
-interface IHasFriendlyName 
+interface IHasFriendlyName
 {
-    function getFriendlyName();
+    public function getFriendlyName();
 }

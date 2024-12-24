@@ -1,8 +1,5 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
-use App\Console\Commands\RefreshKeywordsCommand;
-
 /*
 |--------------------------------------------------------------------------
 | Console Routes
@@ -13,4 +10,3 @@ use App\Console\Commands\RefreshKeywordsCommand;
 | simple approach to interacting with each command's IO methods.
 |
 */
-

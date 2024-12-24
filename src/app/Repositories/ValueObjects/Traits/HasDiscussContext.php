@@ -7,11 +7,11 @@ trait HasDiscussContext
     public function setupDiscussContext(array $properties)
     {
         $this->initializeAll($properties, [
-            'context'
+            'context',
         ]);
     }
 
-    public function getContext() 
+    public function getContext()
     {
         return $this->getValue('context');
     }

@@ -2,12 +2,9 @@
 
 namespace App\Providers\Aws;
 
-use Illuminate\Support\ServiceProvider;
-
 use App\Aws\ComprehendFacade;
-use App\Interfaces\{
-    IIdentifiesPhrases
-};
+use App\Interfaces\IIdentifiesPhrases;
+use Illuminate\Support\ServiceProvider;
 
 class ComprehendServiceProvider extends ServiceProvider
 {

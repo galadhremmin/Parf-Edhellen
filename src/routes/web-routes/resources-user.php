@@ -1,27 +1,26 @@
 <?php
 
 // Restricted resources
-Route::group([ 
-    'namespace'  => 'Resources', 
-    'prefix'     => 'contribute', 
-    'middleware' => ['auth']
+Route::group([
+    'namespace' => 'Resources',
+    'prefix' => 'contribute',
+    'middleware' => ['auth'],
 ], function () {
     // Discuss
     Route::resource('discuss', 'DiscussController', [
-        'only' => [ 'create', 'store' ]
+        'only' => ['create', 'store'],
     ]);
 });
 
-
 // Restricted resources
-Route::group([ 
-    'namespace'  => 'Resources', 
-    'prefix'     => 'contribute', 
-    'middleware' => ['auth', 'verified']
+Route::group([
+    'namespace' => 'Resources',
+    'prefix' => 'contribute',
+    'middleware' => ['auth', 'verified'],
 ], function () {
     // Contribute
     Route::resource('contribution', 'ContributionController', [
-        'except' => ['create']
+        'except' => ['create'],
     ]);
     Route::get('contribution/create/{morph}', 'ContributionController@create')
         ->where(['morph' => '[a-z]+'])->name('contribution.create');

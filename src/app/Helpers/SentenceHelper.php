@@ -6,7 +6,8 @@ use Illuminate\Support\Collection;
 
 class SentenceHelper
 {
-    public function buildSentences(Collection $adaptedFragments, ?string $builderName = null) {
+    public function buildSentences(Collection $adaptedFragments, ?string $builderName = null)
+    {
         $result = [];
 
         $sentenceBuilders = config('ed.required_sentence_builders');
@@ -36,7 +37,7 @@ class SentenceHelper
 
             foreach ($lineMapping as $mapping) {
                 if (is_array($mapping)) {
-                    $parts[] = count($mapping) < 2 
+                    $parts[] = count($mapping) < 2
                         ? $fragments[$mapping[0]]['fragment']
                         : $mapping[1];
                 } else {
@@ -46,6 +47,7 @@ class SentenceHelper
         }
 
         $str = implode('', $parts);
+
         return $str;
     }
 }

@@ -2,20 +2,18 @@
 
 namespace App\Http\Discuss\Contexts;
 
-use Illuminate\Database\Eloquent\Model;
-
-use App\Http\Discuss\IDiscussContext;
 use App\Helpers\LinkHelper;
-use App\Models\{
-    Account,
-    Sentence
-};
+use App\Http\Discuss\IDiscussContext;
+use App\Models\Account;
+use App\Models\Sentence;
 use App\Repositories\SentenceRepository;
+use Illuminate\Database\Eloquent\Model;
 
 class SentenceContext implements IDiscussContext
 {
-    private $_linkHelper;
-    private $_repository;
+    private LinkHelper $_linkHelper;
+
+    private SentenceRepository $_repository;
 
     public function __construct(LinkHelper $linkHelper, SentenceRepository $repository)
     {
@@ -29,7 +27,7 @@ class SentenceContext implements IDiscussContext
             return null;
         }
 
-        return $this->_linkHelper->sentence($entity->language_id, $entity->language->name, 
+        return $this->_linkHelper->sentence($entity->language_id, $entity->language->name,
             $entity->id, $entity->name);
     }
 
@@ -42,7 +40,7 @@ class SentenceContext implements IDiscussContext
     {
         return true;
     }
-    
+
     public function getName(Model $entity)
     {
         if (! $entity) {
@@ -50,7 +48,7 @@ class SentenceContext implements IDiscussContext
         }
 
         // Some sentences actually do lack an author (as they were imported). SO make sure one exists before adding 'by'.
-        return 'Phrase “'.$entity->name.'”' . ($entity->account_id ? ' by '.$entity->account->nickname : '');
+        return 'Phrase “'.$entity->name.'”'.($entity->account_id ? ' by '.$entity->account->nickname : '');
     }
 
     public function getIconPath()
@@ -60,13 +58,14 @@ class SentenceContext implements IDiscussContext
     }
 
     public function view(Model $entity)
-    {   
+    {
         $sentence = $this->_repository->getSentence($entity->id);
         if (! $sentence) {
             return response(null, 404);
         }
+
         return view('discuss.context._sentence', [
-            'sentence' => $sentence
+            'sentence' => $sentence,
         ]);
     }
 }

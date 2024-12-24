@@ -8,5 +8,5 @@ return [
     'security' => 'Security',
     'logout' => 'Log out',
     'login' => 'Sign in',
-    'register' => 'Sign up'
+    'register' => 'Sign up',
 ];

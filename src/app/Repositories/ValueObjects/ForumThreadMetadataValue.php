@@ -9,7 +9,7 @@ class ForumThreadMetadataValue implements \JsonSerializable
     public function __construct($properties)
     {
         $this->initializeAll($properties, [
-            'forum_post_id', 'likes', 'likes_per_post'
+            'forum_post_id', 'likes', 'likes_per_post',
         ]);
     }
 

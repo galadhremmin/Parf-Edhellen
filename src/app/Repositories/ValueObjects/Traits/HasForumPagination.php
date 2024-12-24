@@ -2,19 +2,19 @@
 
 namespace App\Repositories\ValueObjects\Traits;
 
-trait HasForumPagination 
+trait HasForumPagination
 {
     public function setupForumPagination(array $properties)
     {
         $this->initializeAll($properties, [
-            'current_page', 'no_of_pages', 'pages'
+            'current_page', 'no_of_pages', 'pages',
         ]);
     }
 
     /**
      * @return int
      */
-    public function getCurrentPage() 
+    public function getCurrentPage()
     {
         return $this->getValue('current_page');
     }
@@ -30,7 +30,7 @@ trait HasForumPagination
     /**
      * @return array
      */
-    public function getPages() 
+    public function getPages()
     {
         return $this->getValue('pages');
     }

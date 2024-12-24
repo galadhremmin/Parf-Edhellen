@@ -2,15 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-
-use DB;
-
 use App\Http\Controllers\Abstracts\Controller;
-use App\Models\{ 
-    GameWordFinderLanguage
-};
+use App\Models\GameWordFinderLanguage;
+use Illuminate\Http\Request;
 
 class WordFinderController extends Controller
 {
@@ -18,14 +12,16 @@ class WordFinderController extends Controller
     {
         $games = GameWordFinderLanguage::orderBy('title')
             ->get();
-        return view('word-finder.index', [ 'games' => $games ]);
+
+        return view('word-finder.index', ['games' => $games]);
     }
 
     public function show(Request $request, int $gameId)
     {
         $game = GameWordFinderLanguage::findOrFail($gameId);
+
         return view('word-finder.show', [
-            'game' => $game
+            'game' => $game,
         ]);
     }
 }

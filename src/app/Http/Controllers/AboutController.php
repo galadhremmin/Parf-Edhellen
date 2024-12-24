@@ -7,20 +7,21 @@ use App\Models\Language;
 
 class AboutController extends Controller
 {
-    public function index() 
+    public function index()
     {
         $languages = Language::whereNotNull('short_name')->orderBy('name')->get();
+
         return view('about.index', [
-            'languages' => $languages
+            'languages' => $languages,
         ]);
     }
-    
-    public function cookies() 
+
+    public function cookies()
     {
         return view('about.cookies');
     }
-    
-    public function privacy() 
+
+    public function privacy()
     {
         return view('about.privacy');
     }

@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Api\v2;
 
+use App\Http\Controllers\Abstracts\Controller;
+use App\Models\Speech;
 use Illuminate\Http\Request;
 
-use App\Models\Speech;
-use App\Http\Controllers\Abstracts\Controller;
-
-class SpeechApiController extends Controller 
+class SpeechApiController extends Controller
 {
     public function index(Request $request, int $id = 0)
     {
