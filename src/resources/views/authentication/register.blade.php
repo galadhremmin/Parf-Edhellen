@@ -78,6 +78,10 @@
       <label for="password-login-password-2" class="form-label">Repeat password</label>
       <input type="password" name="password_confirmation" class="form-control" id="password-login-password-2">
     </div>
+    <div style="position:absolute;left:-100vw;">
+      <label for="password-account-control" class="form-label">Account control</label>
+      <input type="text" name="account_control" class="form-control" id="password-account-control">
+    </div>
     <div class="text-center mt-3">
       <button type="submit" class="btn btn-primary">Create account</button>
     </div>

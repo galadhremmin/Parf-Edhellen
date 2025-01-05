@@ -8,7 +8,7 @@ class ViewModel
 {
     public Contribution $contribution;
 
-    public string $model;
+    public array $model;
 
     public string $viewName;
 
