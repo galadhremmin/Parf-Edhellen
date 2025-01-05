@@ -58,6 +58,11 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
 
     public function registerWithPassword(Request $request)
     {
+        // Protect the registration flow against binary actors.
+        if (! empty($request->input('account_control'))) {
+            return redirect()->to('login');
+        }
+
         $validator = Validator::make($request->all(), [
             'nickname' => [
                 'required',
