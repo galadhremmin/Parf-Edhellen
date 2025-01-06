@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Authentication;
 
 use App\Events\AccountPasswordForgot;
+use App\Exceptions\SuspiciousBotActivityException;
 use App\Models\Account;
+use App\Security\RoleConstants;
 use Closure;
 use Exception;
 use Illuminate\Auth\Events\PasswordReset;
@@ -38,7 +40,7 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
                     $username = $request->input('username');
                     if (empty($username)) {
                         $fail('You need to specify an e-mail address.');
-                    } elseif (! $this->_accountManager->checkPasswordWithUsername($username, $value)) {
+                    } else if (! $this->_accountManager->checkPasswordWithUsername($username, $value)) {
                         $fail('We did not find an account with that e-mail and password combination. Check your e-mail and password and try again.');
                     }
                 },
@@ -60,6 +62,7 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
     {
         // Protect the registration flow against binary actors.
         if (! empty($request->input('account_control'))) {
+            $this->_systemErrorRepository->saveException(new SuspiciousBotActivityException($request, 'user registration'), 'security');
             return redirect()->to('login');
         }
 
@@ -108,6 +111,10 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
                     $account = $this->_accountManager->getAccountByUsername($value);
                     if ($account === null || ! $account->is_passworded) {
                         $fail('We cannot find an account with that e-mail address.');
+                    }
+
+                    if (! $account->memberOf(RoleConstants::Users)) {
+                        $fail('This account needs to be activated by an administrator.');
                     }
                 },
             ],
