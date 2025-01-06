@@ -112,8 +112,7 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
                     if ($account === null || ! $account->is_passworded) {
                         $fail('We cannot find an account with that e-mail address.');
                     }
-
-                    if (! $account->memberOf(RoleConstants::Users)) {
+                    else if (! $account->memberOf(RoleConstants::Users)) {
                         $fail('This account needs to be activated by an administrator.');
                     }
                 },
