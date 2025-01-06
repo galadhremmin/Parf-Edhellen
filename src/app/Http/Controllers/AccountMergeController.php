@@ -8,6 +8,7 @@ use App\Models\Account;
 use App\Models\AccountMergeRequest;
 use App\Security\AccountManager;
 use Closure;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -184,6 +185,10 @@ class AccountMergeController extends Controller
             $accountIds = collect(json_decode($request->account_ids))->merge([$request->id]);
             $accounts = Account::whereIn('id', $accountIds)->get();
             $masterAccount = $this->_accountManager->mergeAccounts($accounts);
+            if ($masterAccount === null) {
+                throw new Exception('Failed to merge accounts '.$accountIds->join(', '));
+            }
+
             auth()->login($masterAccount);
         } catch (\Exception $ex) {
             $error = $ex->getMessage()."\n\n".$ex->getTraceAsString();

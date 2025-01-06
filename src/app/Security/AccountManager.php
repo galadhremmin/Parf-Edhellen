@@ -31,7 +31,7 @@ class AccountManager
         $this->_authManager = $authManager;
     }
 
-    public function getRootAccount()
+    public function getRootAccount(): ?Account
     {
         $role = Role::where('name', RoleConstants::Root)
             ->first();
@@ -43,7 +43,7 @@ class AccountManager
         return $role->accounts()->first();
     }
 
-    public function createAccount(string $username, ?string $identity = null, ?int $providerId = null, ?string $password = null, ?string $name = null)
+    public function createAccount(string $username, ?string $identity = null, ?int $providerId = null, ?string $password = null, ?string $name = null): Account
     {
         $firstAccountThusAdmin = Account::count() === 0;
         $nickname = $firstAccountThusAdmin
@@ -89,7 +89,7 @@ class AccountManager
         return $user;
     }
 
-    public function createMasterAccount(Account $account)
+    public function createMasterAccount(Account $account): Account
     {
         if ($account->is_master_account) {
             throw new Exception('Attempting to create a master account for a master account. There can only be one master account per account.');
@@ -132,10 +132,10 @@ class AccountManager
         return $masterAccount;
     }
 
-    public function mergeAccounts(Collection $accounts)
+    public function mergeAccounts(Collection $accounts): ?Account
     {
         if ($accounts->count() < 2) {
-            return;
+            return null;
         }
 
         $masterAccount = Account::where('email', $accounts->first()->email)
@@ -185,14 +185,14 @@ class AccountManager
         return $account;
     }
 
-    public function getAccountByUsername(string $username)
+    public function getAccountByUsername(string $username): ?Account
     {
         return Account::where('email', $username)
             ->where('is_master_account', true)
             ->first();
     }
 
-    public function checkPasswordWithUsername(string $username, string $password)
+    public function checkPasswordWithUsername(string $username, string $password): bool
     {
         $account = self::getAccountByUsername($username);
         if ($account === null) {
@@ -202,7 +202,7 @@ class AccountManager
         return self::checkPasswordWithAccount($account, $password);
     }
 
-    public function checkPasswordWithAccount(Account $account, string $password)
+    public function checkPasswordWithAccount(Account $account, string $password): bool
     {
         return Hash::check($password, $account->password);
     }
@@ -254,7 +254,7 @@ class AccountManager
         event(new AccountDestroyed($account, $accountName, $this->_authManager->user()->id));
     }
 
-    public function getNextAvailableNickname(?string $nickname = null)
+    public function getNextAvailableNickname(?string $nickname = null): string
     {
         if ($nickname === null || empty($nickname)) {
             $nickname = config('ed.default_account_name');
