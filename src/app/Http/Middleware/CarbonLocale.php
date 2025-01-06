@@ -7,7 +7,7 @@ use Closure;
 
 class CarbonLocale
 {
-    const string DEFAULT_CARBON_LOCALE = 'en';
+    const DEFAULT_CARBON_LOCALE = 'en';
 
     /**
      * Handle the incoming request.
