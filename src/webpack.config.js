@@ -3,6 +3,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const cleanWebpack = require('clean-webpack-plugin');
 const WebpackNotifierPlugin = require('webpack-notifier');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
+const { readdirSync, statSync } = require('fs');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 // Reads `.env` configuration values to `process.env`
@@ -11,18 +12,25 @@ require('dotenv').config();
 const bundleCssWithJavaScript = false;
 const version = process.env.ED_VERSION;
 
-const nodeModulesPath = path.resolve(__dirname, 'node_modules');
 const sourcePath = path.resolve(__dirname, 'resources/assets/ts');
 const publicPath = `/v${version}`;
 const outputPath = path.resolve(__dirname, `public/${publicPath}`);
 
-module.exports = {
+const entry = readdirSync(path.resolve(sourcePath, 'apps')) //
+  .filter(file => statSync(path.resolve(sourcePath, 'apps', file)).isDirectory())
+  .reduce((entries, file) => ({
+    ...entries,
+    [file]: path.resolve(sourcePath, 'apps', file, 'index.tsx'),
+  }), {});
+
+const clientConfig = {
   entry: {
     index: `${sourcePath}/index.tsx`,
-    'style-auth': `${sourcePath}/apps/auth/index.scss`,
-    'style-timeline': `${sourcePath}/apps/timeline/index.scss`,
-    'style-sentence': `${sourcePath}/apps/sentence/index.scss`,
+    'style-auth': `${sourcePath}/styles/auth.scss`,
+    'style-timeline': `${sourcePath}/styles/timeline.scss`,
+    'style-sentence': `${sourcePath}/styles/sentence.scss`,
   },
+  target: 'web',
   output: {
     path: outputPath,
     publicPath: `${publicPath}/`,
@@ -101,7 +109,12 @@ module.exports = {
       },
       { 
         test: /\.tsx?$/, 
-        use: 'ts-loader',
+        use: [{
+          loader: 'ts-loader',
+          options: {
+            configFile: path.resolve(__dirname, 'tsconfig.json'),
+          },
+        }],
       },
       // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
       /*
@@ -170,3 +183,114 @@ module.exports = {
     }),
   ],
 };
+
+const serverConfig = {
+  entry,
+  target: 'node',
+  output: {
+    path: `${outputPath}-server`,
+    publicPath: `${publicPath}-server/`,
+  },
+  // devtool: 'source-map',
+  resolve: {
+    alias: {
+      '@root': sourcePath,
+    },
+    extensions: [ 
+      '.ts', 
+      '.tsx', 
+      '.js', 
+      '.json' 
+    ],
+  },
+  module: {
+    rules: [
+      {
+        test: require.resolve('glaemscribe/js/glaemscribe.min.js'),
+        use: [{
+          loader: 'exports-loader',
+          options: {
+            exports: 'Glaemscribe',
+          },
+        }],
+      },
+      {
+        test: /\.(cst|glaem)\.js$/,
+        use: [{
+          loader: 'imports-loader',
+          options: {
+            additionalCode: 'var Glaemscribe = window.Glaemscribe;',
+          },
+        }],
+      },
+      { 
+        test: /\.tsx?$/, 
+        use: [{
+          loader: 'ts-loader',
+          options: {
+            configFile: path.resolve(__dirname, 'tsconfig.server.json'),
+          },
+        }],
+      },
+      {
+        test: /\.scss$/,
+        use: [
+          bundleCssWithJavaScript ? 'style-loader' : MiniCssExtractPlugin.loader, // creates style nodes from JS strings
+          {
+            loader: 'css-loader',
+            options: {
+              modules: false, // translates CSS into CommonJS
+              sourceMap: false,
+            },
+          },
+          {
+            loader: 'sass-loader', // compiles Sass to CSS, using Node Sass by defaultoptions: {
+            options: {
+              sourceMap: false,
+            },
+          },
+        ]
+      },
+      {
+        test: /\.css$/,
+        use: [
+          bundleCssWithJavaScript ? 'style-loader' : MiniCssExtractPlugin.loader, // creates style nodes from JS strings
+          {
+            loader: 'css-loader',
+            options: {
+              modules: false, // translates CSS into CommonJS
+              sourceMap: false,
+            },
+          },
+        ]
+      },
+    ],
+  },
+  plugins: [
+    new cleanWebpack.CleanWebpackPlugin(),
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: "[name].css",
+      chunkFilename: "[id].css",
+      ignoreOrder: true,
+    }),
+    // new BundleAnalyzerPlugin(),
+    new CircularDependencyPlugin({
+      // exclude detection of files based on a RegExp
+      exclude: /node_modules/,
+      // add errors to webpack instead of warnings
+      failOnError: true,
+      // allow import cycles that include an asyncronous import,
+      // e.g. via import(/* webpackMode: "weak" */ './file.js')
+      allowAsyncCycles: false,
+      // set the current working directory for displaying module paths
+      cwd: process.cwd(),
+    }),
+  ],
+};
+
+module.exports = [
+  clientConfig,
+  serverConfig,
+]

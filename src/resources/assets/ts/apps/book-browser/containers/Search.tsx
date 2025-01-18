@@ -51,7 +51,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
 
         this._actions = new SearchActions();
         this._beginSearch = debounce(500, this._search);
-        this._stateCache = Cache.withLocalStorage(
+        this._stateCache = Cache.withPersistentStorage(
             () => Promise.resolve(defaultState),
             'ed.search-state.v2',
         );

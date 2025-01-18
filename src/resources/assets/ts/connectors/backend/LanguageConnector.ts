@@ -19,7 +19,7 @@ export default class LanguageConnector implements ILanguageApi {
         if (_cache === undefined) {
             let cache: LazyLoader<ILanguagesResponse> = null;
             try {
-                cache = new ExpiringCache(() => this._api.languages(), window.localStorage, LocalStorageLanguages,
+                cache = new ExpiringCache(() => this._api.languages(), ExpiringCache.persistentStore(), LocalStorageLanguages,
                     CacheLengthMinutes.languages, TimeUnit.Minutes);
             } catch (e) {
                 console.info(
@@ -30,7 +30,7 @@ export default class LanguageConnector implements ILanguageApi {
             } finally {
                 // fallback - in-memory cache
                 if (cache === null) {
-                    cache = new ExpiringCache(() => this._api.languages(), new MemoryStorage(), LocalStorageLanguages,
+                    cache = new ExpiringCache(() => this._api.languages(), ExpiringCache.persistentStore(), LocalStorageLanguages,
                         CacheLengthMinutes.languages, TimeUnit.Minutes);
                 }
             }

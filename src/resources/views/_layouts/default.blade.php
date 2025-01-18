@@ -51,7 +51,13 @@
             <p><a href="https://support.google.com/bin/answer.py?hl=en&amp;answer=23852" target="_blank">@lang('home.noscript.call-to-action')</a>.</p>
           </div>
         </noscript>
-        <div id="ed-search-component" class="mt-4"></div>
+        @ssr('book-browser', [], [
+          'element' => 'div',
+          'attributes' => [
+            'id' => 'ed-search-component',
+            'class' => 'mt-4'
+          ]
+        ])
         @yield('body')
       </div>
     </main>

@@ -127,12 +127,7 @@ function GlossaryEntities(props: IEntitiesComponentProps) {
 
 function createLanguageConfig(): Cache<boolean> {
     const falsyResolver = () => Promise.resolve(false);
-    try {
-        return Cache.withLocalStorage(falsyResolver, GlossaryEntitiesLanguagesConfigKey);
-    } catch (e) {
-        // Probably a unit test
-        return Cache.withMemoryStorage(falsyResolver, GlossaryEntitiesLanguagesConfigKey);
-    }
+    return Cache.withPersistentStorage(falsyResolver, GlossaryEntitiesLanguagesConfigKey);
 }
 
 function onPopState(actions: SearchActions, dispatch: ReduxThunkDispatch, ev: PopStateEvent) {

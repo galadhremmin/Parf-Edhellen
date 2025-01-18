@@ -29,16 +29,16 @@ interface IContributionController
     /**
      * Performs partial validation of the specified request.
      *
-     * @return void
+     * @return bool
      */
-    public function validateSubstep(Request $request, int $id = 0, int $substepId = 0);
+    public function validateSubstep(Request $request, int $id = 0, int $substepId = 0): bool;
 
     /**
      * Performs complete validation of the specified request.
      *
-     * @return void
+     * @return bool
      */
-    public function validateBeforeSave(Request $request, int $id = 0);
+    public function validateBeforeSave(Request $request, int $id = 0): bool;
 
     /**
      * Populates the specified contribution payload with the information passed through

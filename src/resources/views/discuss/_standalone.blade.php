@@ -4,3 +4,4 @@
          data-inject-prop-readonly="{{ isset($enabled) && $enabled === false ? 'true' : 'false' }}"
          data-inject-prop-entity-type="{{ $entity_type }}"
          data-inject-prop-entity-id="{{ $entity_id }}"></section>
+

@@ -3,11 +3,27 @@ import { ApplicationGlobalPrefix } from '@root/config';
 import { isEmptyString } from './func/string-manipulation';
 import LazyLoader, { ILoader } from './LazyLoader';
 import MemoryStorage from './MemoryStorage';
+import { isNodeJs } from './func/node';
 
 /**
  * Provides a cache for records of type `T`. The payload is optionally wrapped by type `R`.
  */
 export default class Cache<T, R = T> extends LazyLoader<T, T> {
+    public static withPersistentStorage<T, R = T>(loader: ILoader<T>, storageKey: string) {
+        if (isNodeJs()) {
+            return this.withMemoryStorage<T, R>(loader, storageKey);
+        } else {
+            return this.withLocalStorage<T, R>(loader, storageKey);
+        }
+    }
+    public static withTransientStorage<T, R = T>(loader: ILoader<T>, storageKey: string) {
+        if (isNodeJs()) {
+            return this.withMemoryStorage<T, R>(loader, storageKey);
+        } else {
+            return this.withSessionStorage<T, R>(loader, storageKey);
+        }
+    }
+
     public static withLocalStorage<T, R = T>(loader: ILoader<T>, storageKey: string) {
         return new this<T, R>(loader, window.localStorage, storageKey);
     }

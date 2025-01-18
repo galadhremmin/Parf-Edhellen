@@ -1,9 +1,27 @@
 import Cache from './Cache';
+import { isNodeJs } from './func/node';
 import { ILoader } from './LazyLoader';
+import MemoryStorage from './MemoryStorage';
 
 export default class ExpiringCache<T> extends Cache<T, IExpiringRecord<T>> {
     private _lifetime: number;
     private _unit: TimeUnit;
+
+    public static persistentStore() {
+        if (isNodeJs()) {
+            return new MemoryStorage();
+        }
+
+        return window.localStorage;
+    }
+
+    public static transientStorage() {
+        if (isNodeJs()) {
+            return new MemoryStorage();
+        }
+
+        return window.sessionStorage;
+    }
 
     constructor(loader: ILoader<T>, store: Storage, storageKey: string, lifetime = 1, unit = TimeUnit.Hours) {
         super(loader, store, storageKey);

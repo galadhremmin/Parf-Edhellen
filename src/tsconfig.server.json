@@ -4,7 +4,7 @@
         "outDir": "./public/build",
         "sourceMap": true,
         "noImplicitAny": true,
-        "module": "ESNext",
+        "module": "CommonJS",
         "target": "ES2018",
         "jsx": "react-jsx",
         "allowSyntheticDefaultImports": true,

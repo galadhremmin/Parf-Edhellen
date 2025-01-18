@@ -11,6 +11,7 @@ import DiscussActions from './actions/DiscussActions';
 import Discuss from './containers/Discuss';
 import { IProps } from './index._types';
 import rootReducer from './reducers';
+import registerApp from '../app';
 
 const store = configureStore({
     reducer: rootReducer,
@@ -70,4 +71,4 @@ const Inject = (props: IProps) => {
     </div>;
 };
 
-export default Inject;
+export default registerApp(Inject);

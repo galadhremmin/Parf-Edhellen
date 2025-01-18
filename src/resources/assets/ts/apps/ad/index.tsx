@@ -7,6 +7,7 @@ import {
     WindowWithAds,
     IProps,
 } from './index._types';
+import registerApp from '../app';
 
 const Inject = (props: IProps) => {
     const {
@@ -23,4 +24,4 @@ const Inject = (props: IProps) => {
     return config ? <Ad ad={ad} {...config} onMount={adConfigs._mount || null} /> : null;
 };
 
-export default Inject;
+export default registerApp(Inject);

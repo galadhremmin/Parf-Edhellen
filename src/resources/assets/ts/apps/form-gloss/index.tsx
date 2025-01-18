@@ -10,6 +10,7 @@ import { FormSection, IProps } from './index._types';
 import rootReducer from './reducers';
 
 import Form from './containers';
+import registerApp from '../app';
 
 const store = configureStore({
     reducer: rootReducer,
@@ -44,4 +45,4 @@ const Inject = (props: IProps) => {
     </Provider>;
 };
 
-export default Inject;
+export default registerApp(Inject);

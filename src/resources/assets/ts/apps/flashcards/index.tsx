@@ -1,3 +1,4 @@
+import registerApp from '../app';
 import Flashcards from './containers/Flashcards';
 
-export default Flashcards;
+export default registerApp(Flashcards);

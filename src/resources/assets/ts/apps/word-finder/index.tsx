@@ -7,6 +7,7 @@ import { thunk } from 'redux-thunk';
 import WordFinder from './containers/WordFinder';
 import { IGameProps } from './index._types';
 import rootReducer from './reducers';
+import registerApp from '../app';
 
 const store = configureStore({
     reducer: rootReducer,
@@ -19,4 +20,4 @@ const Inject = (props: IGameProps) => {
     </Provider>;
 };
 
-export default Inject;
+export default registerApp(Inject);

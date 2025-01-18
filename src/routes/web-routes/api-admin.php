@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\v2\AccountApiController;
 use App\Http\Controllers\Api\v2\GlossApiController;
 use App\Http\Controllers\Api\v2\UtilityApiController;
 use App\Security\RoleConstants;
+use Illuminate\Support\Facades\Route;
 
 Route::group([
     'namespace' => API_NAMESPACE,
