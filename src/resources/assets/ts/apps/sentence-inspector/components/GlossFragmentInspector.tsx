@@ -1,7 +1,6 @@
-import React, { Suspense } from 'react';
-
 import { IComponentEvent } from '@root/components/Component._types';
 import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
+import GlossInspector from '@root/apps/book-browser/components/GlossaryEntities/Gloss';
 import Markdown from '@root/components/Markdown';
 import Quote from '@root/components/Quote';
 import Spinner from '@root/components/Spinner';
@@ -43,15 +42,13 @@ function GlossFragmentInspector(props: IProps) {
         </section>}
         <section>
             {(! gloss && ! error) && <Spinner />}
-            {gloss && <Suspense fallback={<Spinner />}>
-                <GlossInspectorAsync
-                    bordered={false}
-                    gloss={gloss}
-                    onReferenceLinkClick={onReferenceLinkClick}
-                    toolbar={false}
-                    warnings={false}
-                />
-            </Suspense>}
+            {gloss && <GlossInspector
+                bordered={false}
+                gloss={gloss}
+                onReferenceLinkClick={onReferenceLinkClick}
+                toolbar={false}
+                warnings={false}
+            />}
             {error && <StaticAlert type="warning">
                 <strong>Sorry, cannot find a gloss for <Quote>{fragment.fragment}</Quote>!</strong>{' '}
                 This usually happens when the gloss is deleted or outdated after the phrase was published. You can notify the author about this error alternatively contribute with a correction yourself.
@@ -59,7 +56,5 @@ function GlossFragmentInspector(props: IProps) {
         </section>
     </article>;
 }
-
-const GlossInspectorAsync = React.lazy(() => import('@root/apps/book-browser/components/GlossaryEntities/Gloss'));
 
 export default GlossFragmentInspector;

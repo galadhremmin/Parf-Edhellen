@@ -8,7 +8,9 @@ import LanguageSelect from '@root/components/Form/LanguageSelect';
 import TextIcon from '@root/components/TextIcon';
 import Cache from '@root/utilities/Cache';
 import debounce from '@root/utilities/func/debounce';
+import { excludeProps } from '@root/utilities/func/props';
 import { SearchActions } from '../actions';
+import AdditionalSearchParameters from '../components/AdditionalSearchParameters';
 import SearchQueryInput from '../components/SearchQueryInput';
 import { RootReducer } from '../reducers';
 
@@ -18,9 +20,6 @@ import {
 } from './Search._types';
 
 import './Search.scss';
-import { excludeProps } from '@root/utilities/func/props';
-
-const AdditionalSearchParametersAsync = React.lazy(() => import('../components/AdditionalSearchParameters'));
 
 // TODO: Migrate to React component `function`
 export class SearchQuery extends React.Component<IProps, IState> {
@@ -127,14 +126,12 @@ export class SearchQuery extends React.Component<IProps, IState> {
             </div>
             <div className="row">
                 <div className="col">
-                    {showMore && <React.Suspense fallback={null}>
-                        <AdditionalSearchParametersAsync
-                            glossGroupId={glossGroupIds[0]}
-                            onGlossGroupIdChange={this._onGlossGroupIdChange}
-                            onSpeechIdChange={this._onSpeechIdChange}
-                            speechId={speechIds[0]}
-                        />
-                    </React.Suspense>}
+                    {showMore && <AdditionalSearchParameters
+                        glossGroupId={glossGroupIds[0]}
+                        onGlossGroupIdChange={this._onGlossGroupIdChange}
+                        onSpeechIdChange={this._onSpeechIdChange}
+                        speechId={speechIds[0]}
+                    />}
                 </div>
             </div>
         </form>;

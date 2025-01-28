@@ -10,7 +10,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SystemErrorRepository
 {
-    public function saveException(\Throwable $exception, string $category = 'backend')
+    public function saveException(\Throwable $exception, string $category = 'backend'): SystemError
     {
         if ($exception instanceof NotFoundHttpException) {
             $category = 'http-404';
@@ -31,18 +31,19 @@ class SystemErrorRepository
 
         $error = $exception->getFile().':'.$exception->getLine()."\n". //
             $exception->getTraceAsString()."\n\n". //
-            print_r($_COOKIE, true)."\n";
+            print_r($request->cookie(), true)."\n";
 
-        SystemError::create([
+        return SystemError::create([
             'message' => $message,
-            'url' => $request->fullUrl(),
-            'ip' => array_key_exists('REMOTE_ADDR', $_SERVER) ? $_SERVER['REMOTE_ADDR'] : null,
             'category' => $category,
             'error' => $error,
-            'account_id' => $user !== null ? $user->id : null,
-            'session_id' => Session::getId(),
             'file' => $exception->getFile(),
             'line' => $exception->getLine(),
+            'account_id' => $user !== null ? $user->id : null,
+            'session_id' => Session::getId(),
+            'url' => $request->fullUrl(),
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent(),
         ]);
     }
 
@@ -57,15 +58,12 @@ class SystemErrorRepository
         $user = $request->user();
 
         if ($error !== null) {
-            $error .= "\n\n".print_r($_COOKIE, true)."\n";
+            $error .= "\n\n".print_r($request->cookie(), true)."\n";
         }
 
         SystemError::create([
             'message' => $message,
             'url' => $url,
-            'ip' => isset($_SERVER['REMOTE_ADDR'])
-                ? $_SERVER['REMOTE_ADDR']
-                : null,
             'error' => $error,
             'account_id' => $user !== null
                 ? $user->id
@@ -73,6 +71,7 @@ class SystemErrorRepository
             'category' => $category,
             'session_id' => Session::getId(),
             'user_agent' => $userAgent,
+            'ip' => $request->ip(),
         ]);
 
     }
