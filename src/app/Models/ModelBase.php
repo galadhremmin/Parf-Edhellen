@@ -5,6 +5,9 @@ namespace App\Models;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property-read int|string $id
+ */
 abstract class ModelBase extends Model
 {
     protected $casts = [

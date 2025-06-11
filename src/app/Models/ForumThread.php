@@ -16,6 +16,9 @@ class ForumThread extends ModelBase implements Interfaces\IHasFriendlyName
 
     use Traits\HasAccount;
 
+    /**
+     * @return MorphTo<Account|Contribution|FlashcardResult|Sentence|SentenceFragment|Gloss|GlossInflection|ForumDiscussion|ForumGroup|ForumThread|ForumPost|Sense|Word>
+     */
     public function entity(): MorphTo
     {
         return $this->morphTo();

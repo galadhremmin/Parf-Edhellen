@@ -15,7 +15,6 @@ use App\Models\Initialization\Morphs;
 use App\Repositories\AuditTrailRepository;
 use App\Repositories\Interfaces\IAuditTrailRepository;
 use App\Repositories\Noop\NoopAuditTrailRepository;
-use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Schema;

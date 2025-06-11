@@ -12,6 +12,7 @@ use Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode;
 use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
 use Illuminate\Foundation\Http\Middleware\ValidatePostSize;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Session\Middleware\StartSession;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -39,6 +40,7 @@ return Application::configure(basePath: dirname(__DIR__))
             ->append(ValidatePostSize::class)
             ->append(TrimStrings::class)
             ->append(ConvertEmptyStringsToNull::class)
+            ->append(StartSession::class)
             ->append(VerifyCsrfToken::class)
             ->append(CarbonLocale::class)
             ->append(LayoutDataLoader::class);

@@ -61,8 +61,6 @@ class WordFinderApiController extends Controller
 
         if (! is_array($glossGroupIds) || count($glossGroupIds) < 1) {
             $glossGroupIds = GlossGroup::safe()
-                ->select('id')
-                ->get()
                 ->pluck('id')
                 ->toArray();
         }

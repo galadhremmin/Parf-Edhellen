@@ -3,6 +3,7 @@
 namespace App\Models\Traits;
 
 use App\Models\Account;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 trait HasAccount
 {
@@ -22,7 +23,10 @@ trait HasAccount
         $query->whereIn('account_id', $accountIds);
     }
 
-    public function account()
+    /**
+     * @return BelongsTo<Account>
+     */
+    public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class)
             ->select(['id', 'nickname', 'tengwar', 'has_avatar']);

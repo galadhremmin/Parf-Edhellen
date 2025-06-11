@@ -21,10 +21,8 @@ class DiscussMailEventSubscriber
 
     /**
      * Register the listeners for the subscriber.
-     *
-     * @param  Illuminate\Events\Dispatcher  $events
      */
-    public function subscribe($events)
+    public function subscribe()
     {
         return [
             ForumPostCreated::class => 'onForumPostCreated',
@@ -38,9 +36,7 @@ class DiscussMailEventSubscriber
     {
         $accountIds = ForumPost::where('forum_thread_id', $event->post->forum_thread_id)
             ->where('account_id', '<>', $event->accountId)
-            ->select('account_id')
             ->distinct()
-            ->get()
             ->pluck('account_id')
             ->toArray();
 

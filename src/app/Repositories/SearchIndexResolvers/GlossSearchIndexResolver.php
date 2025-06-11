@@ -73,8 +73,6 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
             if ($entities->has($this->_senseMorph)) {
                 // we've got the sense, now obtain glosses
                 $entityIds = Gloss::whereIn('sense_id', $entities[$this->_senseMorph]->pluck('entity_id')) //
-                    ->select('id')
-                    ->get()
                     ->pluck('id')
                     ->all();
             }

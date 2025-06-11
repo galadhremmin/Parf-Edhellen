@@ -921,7 +921,6 @@ class DiscussRepository
             if ($noOfPosts > 0) {
                 $postId = $postIds->last();
                 $latest = ForumPost::where('id', $postId) //
-                    ->select('account_id') //
                     ->pluck('account_id');
 
                 $thread->account_id = $latest->first();

@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Request;
 
 class EnsureHttpsAndWww
@@ -16,7 +15,7 @@ class EnsureHttpsAndWww
 
     protected bool $_isSecure;
 
-    public function __construct(Application $app)
+    public function __construct()
     {
         $appUrl = config('app.url');
         $parts = parse_url($appUrl);

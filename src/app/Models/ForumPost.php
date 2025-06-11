@@ -19,16 +19,25 @@ class ForumPost extends ModelBase implements Interfaces\IHasFriendlyName
         ]);
     }
 
+    /**
+     * @return BelongsTo<ForumThread>
+     */
     public function forum_thread(): BelongsTo
     {
         return $this->belongsTo(ForumThread::class);
     }
 
+    /**
+     * @return BelongsTo<AccountFeed>
+     */
     public function account_feed(): BelongsTo
     {
         return $this->belongsTo(AccountFeed::class);
     }
 
+    /**
+     * @return HasMany<ForumPostLike>
+     */
     public function forum_post_likes(): HasMany
     {
         return $this->hasMany(ForumPostLike::class);

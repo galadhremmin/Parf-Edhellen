@@ -167,9 +167,6 @@ class FlashcardController extends Controller
         $translation = $translations->random();
         $options = [$translation->translation];
 
-        // Create filter parameters for getting other (erroneous) translations
-        $filters = [['translation', '<>', $translation->translation]];
-
         // group verbs w/ one another as they tend to be in the infinitive
         // in English.
         $verbSpeechId = Cache::remember('ed.speech.v', 60 * 60 /* seconds */, function () {
@@ -231,21 +228,16 @@ class FlashcardController extends Controller
         $this->validate($request, [
             'flashcard_id' => 'numeric|exists:flashcards,id',
             'translation_id' => 'numeric|exists:translations,id',
+            'translation' => 'string|required',
             'gloss' => 'string',
         ]);
 
         $translationId = intval($request->input('translation_id'));
-        $gloss = Translation::findOrFail($translationId)->gloss;
+        $translation = Translation::findOrFail($translationId);
+        $gloss = $translation->gloss;
 
         $offeredGloss = $request->input('translation');
-        $ok = false;
-
-        foreach ($gloss->translations as $translation) {
-            $ok = strcmp($translation->translation, $offeredGloss) === 0;
-            if ($ok) {
-                break;
-            }
-        }
+        $ok = strcmp($translation->translation, $offeredGloss) === 0;
 
         $account = $request->user();
 
@@ -254,7 +246,7 @@ class FlashcardController extends Controller
 
             $result->flashcard_id = intval($request->input('flashcard_id'));
             $result->account_id = $account->id;
-            $result->gloss_id = $translation->gloss_id;
+            $result->gloss_id = $gloss->id;
             $result->expected = $translation->translation;
             $result->actual = $offeredGloss;
             $result->correct = $ok;

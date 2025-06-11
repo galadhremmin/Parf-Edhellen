@@ -250,9 +250,7 @@ class ImportEldamoCommand extends Command
         $ids = Gloss::active() //
             ->where('gloss_group_id', $eldamoGroup->id) //
             ->whereNotIn('external_id', $externalIds) //
-            ->select('id') //
-            ->get() //
-            ->pluck('id')
+            ->pluck('id') //
             ->toArray();
 
         if (count($ids) < 1) {
