@@ -7,9 +7,9 @@ use App\Adapters\RssFeedAdapter;
 use App\Helpers\LinkHelper;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Repositories\DiscussRepository;
-use Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class DiscussFeedApiController extends Controller
 {

@@ -11,8 +11,8 @@ use App\Models\FlashcardResult;
 use App\Models\Gloss;
 use App\Models\Speech;
 use App\Models\Translation;
-use Cache;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class FlashcardController extends Controller

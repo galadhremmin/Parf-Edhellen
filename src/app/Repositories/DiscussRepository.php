@@ -26,11 +26,11 @@ use App\Repositories\ValueObjects\ForumThreadsInGroupValue;
 use App\Repositories\ValueObjects\ForumThreadValue;
 use BadMethodCallException;
 use Carbon\Carbon;
-use DB;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class DiscussRepository
 {
@@ -953,7 +953,7 @@ class DiscussRepository
     /**
      * Creates an array of incrementing numbers from 1 to `$noOfPages`. `0` is supported.
      *
-     * @return void
+     * @return array
      */
     private function createPageArray(int $noOfPages, int $currentPage = 1)
     {

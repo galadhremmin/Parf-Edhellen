@@ -10,7 +10,7 @@ use App\Models\Gloss;
 use App\Models\Sentence;
 use App\Models\Word;
 use Carbon\Carbon;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class StatisticsRepository
 {

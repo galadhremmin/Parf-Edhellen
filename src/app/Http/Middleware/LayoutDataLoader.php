@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use View;
+use Illuminate\Support\Facades\View;
 
 class LayoutDataLoader
 {

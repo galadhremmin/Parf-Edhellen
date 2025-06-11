@@ -6,9 +6,11 @@ use App\Http\Controllers\Abstracts\Controller;
 use App\Models\GameWordFinderGlossGroup;
 use App\Models\Gloss;
 use App\Models\GlossGroup;
-use Cache;
-use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\{
+    DB,
+    Cache
+};
 
 class WordFinderApiController extends Controller
 {

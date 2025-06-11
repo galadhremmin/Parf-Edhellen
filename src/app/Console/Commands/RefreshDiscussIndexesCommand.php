@@ -8,6 +8,8 @@ use Illuminate\Console\Command;
 
 class RefreshDiscussIndexesCommand extends Command
 {
+    private IIdentifiesPhrases $_analyzer;
+
     /**
      * The name and signature of the console command.
      *

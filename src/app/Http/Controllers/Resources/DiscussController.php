@@ -10,10 +10,10 @@ use App\Models\Account;
 use App\Repositories\DiscussRepository;
 use App\Repositories\StatisticsRepository;
 use App\Repositories\ValueObjects\ForumThreadFilterValue;
-use Cache;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class DiscussController extends Controller
 {

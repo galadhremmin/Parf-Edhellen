@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Models\GameWordFinderGlossGroup;
 use App\Models\GlossGroup;
-use Cache;
-use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class WordFinderConfigController extends Controller
 {
