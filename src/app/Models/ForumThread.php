@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+
 class ForumThread extends ModelBase implements Interfaces\IHasFriendlyName
 {
     protected $fillable = [
@@ -12,17 +16,17 @@ class ForumThread extends ModelBase implements Interfaces\IHasFriendlyName
 
     use Traits\HasAccount;
 
-    public function entity()
+    public function entity(): MorphTo
     {
         return $this->morphTo();
     }
 
-    public function forum_group()
+    public function forum_group(): BelongsTo
     {
         return $this->belongsTo(ForumGroup::class);
     }
 
-    public function forum_posts()
+    public function forum_posts(): HasMany
     {
         return $this->hasMany(ForumPost::class);
     }

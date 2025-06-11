@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 class Sentence extends ModelBase implements Interfaces\IHasFriendlyName, Interfaces\IHasLanguage
 {
@@ -14,23 +17,35 @@ class Sentence extends ModelBase implements Interfaces\IHasFriendlyName, Interfa
         'long_description', 'name',
     ];
 
-    public function sentence_fragments()
+    /**
+     * @return HasMany<SentenceFragment> 
+     */
+    public function sentence_fragments(): HasMany
     {
         return $this->hasMany(SentenceFragment::class)
             ->orderBy('order');
     }
 
-    public function sentence_translations()
+    /**
+     * @return HasMany<SentenceTranslation>
+     */
+    public function sentence_translations(): HasMany
     {
         return $this->hasMany(SentenceTranslation::class);
     }
 
-    public function language()
+    /**
+     * @return BelongsTo<Language>
+     */
+    public function language(): BelongsTo
     {
         return $this->belongsTo(Language::class);
     }
 
-    public function account_feed()
+    /**
+     * @return BelongsTo<AccountFeed>
+     */
+    public function account_feed(): BelongsTo
     {
         return $this->belongsTo(AccountFeed::class);
     }

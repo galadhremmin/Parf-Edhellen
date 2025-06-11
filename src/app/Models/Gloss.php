@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\Versioning\GlossVersion;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Gloss extends ModelBase implements Interfaces\IHasFriendlyName, Interfaces\IHasLanguage
 {
@@ -15,74 +17,116 @@ class Gloss extends ModelBase implements Interfaces\IHasFriendlyName, Interfaces
         'source', 'etymology',
     ];
 
-    public function translations()
+    /**
+     * @return HasMany<Translation>
+     */
+    public function translations(): HasMany
     {
         return $this->hasMany(Translation::class);
     }
 
-    public function sense()
+    /**
+     * @return BelongsTo<Sense>
+     */
+    public function sense(): BelongsTo
     {
         return $this->belongsTo(Sense::class);
     }
 
-    public function gloss_group()
+    /**
+     * @return BelongsTo<GlossGroup>
+     */
+    public function gloss_group(): BelongsTo
     {
         return $this->belongsTo(GlossGroup::class);
     }
 
-    public function gloss_versions()
+    /**
+     * @return HasMany<GlossVersion>
+     */
+    public function gloss_versions(): HasMany
     {
         return $this->hasMany(GlossVersion::class);
     }
 
-    public function language()
+    /**
+     * @return BelongsTo<Language>
+     */
+    public function language(): BelongsTo
     {
         return $this->belongsTo(Language::class);
     }
 
-    public function word()
+    /**
+     * @return BelongsTo<Word>
+     */
+    public function word(): BelongsTo
     {
         return $this->belongsTo(Word::class);
     }
 
-    public function speech()
+    /**
+     * @return BelongsTo<Speech>
+     */
+    public function speech(): BelongsTo
     {
         return $this->belongsTo(Speech::class);
     }
 
-    public function gloss_details()
+    /**
+     * @return HasMany<GlossDetail>
+     */
+    public function gloss_details(): HasMany
     {
         return $this->hasMany(GlossDetail::class);
     }
 
-    public function keywords()
+    /**
+     * @return HasMany<Keyword>
+     */
+    public function keywords(): HasMany
     {
         return $this->hasMany(Keyword::class);
     }
 
-    public function sentence_fragments()
+    /**
+     * @return HasMany<SentenceFragment>
+     */
+    public function sentence_fragments(): HasMany
     {
         return $this->hasMany(SentenceFragment::class);
     }
 
-    public function contributions()
+    /**
+     * @return HasMany<Contribution>
+     */
+    public function contributions(): HasMany
     {
         return $this->hasMany(Contribution::class);
     }
 
-    public function flashcard_results()
+    /**
+     * @return HasMany<FlashcardResult>
+     */
+    public function flashcard_results(): HasMany
     {
         return $this->hasMany(FlashcardResult::class);
     }
 
-    public function gloss_inflections()
+    /**
+     * @return HasMany<GlossInflection>
+     */
+    public function gloss_inflections(): HasMany
     {
         return $this->hasMany(GlossInflection::class);
     }
 
-    public function account_feed()
+    /**
+     * @return HasMany<AccountFeed>
+     */
+    public function account_feed(): HasMany
     {
-        return $this->belongsTo(AccountFeed::class);
+        return $this->hasMany(AccountFeed::class);
     }
 
     public function scopeNotDeleted($query)

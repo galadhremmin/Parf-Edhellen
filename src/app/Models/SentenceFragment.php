@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SentenceFragment extends ModelBase
@@ -13,32 +15,50 @@ class SentenceFragment extends ModelBase
         'order', 'is_linebreak', 'type', 'paragraph_number', 'sentence_number',
     ];
 
-    public function gloss()
+    /**
+     * @return BelongsTo<Gloss>
+     */
+    public function gloss(): BelongsTo
     {
         return $this->belongsTo(Gloss::class);
     }
 
-    public function sentence()
+    /**
+     * @return BelongsTo<Sentence>
+     */
+    public function sentence(): BelongsTo
     {
         return $this->belongsTo(Sentence::class);
     }
 
-    public function speech()
+    /**
+     * @return BelongsTo<Speech>
+     */
+    public function speech(): BelongsTo
     {
         return $this->belongsTo(Speech::class);
     }
 
-    public function inflection_associations__deprecated()
+    /**
+     * @return HasMany<SentenceFragmentInflectionRel>
+     */
+    public function inflection_associations__deprecated(): HasMany
     {
         return $this->hasMany(SentenceFragmentInflectionRel::class);
     }
 
-    public function keywords()
+    /**
+     * @return HasMany<Keyword>
+     */
+    public function keywords(): HasMany
     {
         return $this->hasMany(Keyword::class);
     }
 
-    public function gloss_inflections()
+    /**
+     * @return HasMany<GlossInflection>
+     */
+    public function gloss_inflections(): HasMany
     {
         return $this->hasMany(GlossInflection::class);
     }

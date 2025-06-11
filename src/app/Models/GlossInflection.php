@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 class GlossInflection extends ModelBase implements Interfaces\IHasLanguage
 {
     protected $fillable = [
@@ -12,32 +14,32 @@ class GlossInflection extends ModelBase implements Interfaces\IHasLanguage
 
     protected $hidden = ['created_at', 'updated_at'];
 
-    public function gloss()
+    public function gloss(): BelongsTo
     {
         return $this->belongsTo(Gloss::class);
     }
 
-    public function sentence()
+    public function sentence(): BelongsTo
     {
         return $this->belongsTo(Sentence::class);
     }
 
-    public function sentence_fragment()
+    public function sentence_fragment(): BelongsTo
     {
         return $this->belongsTo(SentenceFragment::class);
     }
 
-    public function language()
+    public function language(): BelongsTo
     {
         return $this->belongsTo(Language::class);
     }
 
-    public function speech()
+    public function speech(): BelongsTo
     {
         return $this->belongsTo(Speech::class);
     }
 
-    public function inflection()
+    public function inflection(): BelongsTo
     {
         return $this->belongsTo(Inflection::class);
     }

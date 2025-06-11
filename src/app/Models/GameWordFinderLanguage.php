@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 class GameWordFinderLanguage extends ModelBase implements Interfaces\IHasFriendlyName, Interfaces\IHasLanguage
 {
     protected $fillable = [
@@ -10,7 +12,7 @@ class GameWordFinderLanguage extends ModelBase implements Interfaces\IHasFriendl
 
     protected $primaryKey = 'language_id';
 
-    public function language()
+    public function language(): BelongsTo
     {
         return $this->belongsTo(Language::class);
     }

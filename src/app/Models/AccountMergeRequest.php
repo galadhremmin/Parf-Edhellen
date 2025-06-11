@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AccountMergeRequest extends ModelBase
 {
@@ -30,12 +31,12 @@ class AccountMergeRequest extends ModelBase
         'is_error' => 'boolean',
     ];
 
-    public function account()
+    public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class);
     }
 
-    public function requester_account()
+    public function requester_account(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'requester_account_id', 'id');
     }

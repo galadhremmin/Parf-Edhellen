@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+
 class AuditTrail extends ModelBase
 {
     use Traits\HasAccount;
@@ -93,7 +95,7 @@ class AuditTrail extends ModelBase
         'account_id', 'entity_type', 'entity_id', 'action_id', 'is_admin', 'entity_name', 'data',
     ];
 
-    public function entity()
+    public function entity(): MorphTo
     {
         return $this->morphTo();
     }

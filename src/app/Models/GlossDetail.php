@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 class GlossDetail extends ModelBase
 {
     use Traits\HasAccount;
@@ -10,7 +12,7 @@ class GlossDetail extends ModelBase
         'gloss_id', 'category', 'text', 'order', 'type',
     ];
 
-    public function gloss()
+    public function gloss(): BelongsTo
     {
         return $this->belongsTo(Gloss::class);
     }

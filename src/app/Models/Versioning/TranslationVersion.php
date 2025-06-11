@@ -3,6 +3,7 @@
 namespace App\Models\Versioning;
 
 use App\Models\ModelBase;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TranslationVersion extends ModelBase
 {
@@ -16,7 +17,7 @@ class TranslationVersion extends ModelBase
         'updated_at',
     ];
 
-    public function gloss()
+    public function gloss(): BelongsTo
     {
         return $this->belongsTo(GlossVersion::class);
     }

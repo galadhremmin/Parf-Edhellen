@@ -5,6 +5,9 @@ namespace App\Models;
 use App\Models\Versioning\GlossVersion;
 use App\Security\RoleConstants;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Cache;
@@ -35,77 +38,77 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
         'password', 'is_passworded', 'is_master_account', 'master_account_id', 'email_verified_at',
     ];
 
-    public function authorization_provider()
+    public function authorization_provider(): BelongsTo
     {
         return $this->belongsTo(AuthorizationProvider::class);
     }
 
-    public function master_account()
+    public function master_account(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'master_account_id', 'id');
     }
 
-    public function contributions()
+    public function contributions(): HasMany
     {
         return $this->hasMany(Contribution::class);
     }
 
-    public function flashcard_results()
+    public function flashcard_results(): HasMany
     {
         return $this->hasMany(FlashcardResult::class);
     }
 
-    public function forum_discussions()
+    public function forum_discussions(): HasMany
     {
         return $this->hasMany(ForumDiscussion::class);
     }
 
-    public function forum_post_likes()
+    public function forum_post_likes(): HasMany
     {
         return $this->hasMany(ForumPostLike::class);
     }
 
-    public function forum_posts()
+    public function forum_posts(): HasMany
     {
         return $this->hasMany(ForumPost::class);
     }
 
-    public function forum_threads()
+    public function forum_threads(): HasMany
     {
         return $this->hasMany(ForumThread::class);
     }
 
-    public function gloss_inflections()
+    public function gloss_inflections(): HasMany
     {
         return $this->hasMany(GlossInflection::class);
     }
 
-    public function gloss_versions()
+    public function gloss_versions(): HasMany
     {
         return $this->hasMany(GlossVersion::class);
     }
 
-    public function glosses()
+    public function glosses(): HasMany
     {
         return $this->hasMany(Gloss::class);
     }
 
-    public function sentences()
+    public function sentences(): HasMany
     {
         return $this->hasMany(Sentence::class);
     }
 
-    public function words()
+    public function words(): HasMany
     {
         return $this->hasMany(Gloss::class);
     }
 
-    public function linked_accounts()
+    public function linked_accounts(): HasMany
     {
         return $this->hasMany(Account::class, 'master_account_id', 'id');
     }
 
-    public function roles()
+    public function roles(): HasManyThrough
     {
         return $this->hasManyThrough(
             Role::class, AccountRoleRel::class,

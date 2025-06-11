@@ -2,14 +2,21 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 class AccountRoleRel extends ModelBase
 {
     protected $fillable = ['account_id', 'role_id'];
 
     use Traits\HasAccount;
 
-    public function role()
+    public function account(): BelongsTo
     {
-        $this->belongsTo(Role::class);
+        return $this->belongsTo(Account::class);
+    }
+
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
     }
 }

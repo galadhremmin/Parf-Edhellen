@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+
 class MailSettingOverride extends ModelBase
 {
     protected $guarded = [];
@@ -12,7 +14,7 @@ class MailSettingOverride extends ModelBase
 
     use Traits\HasAccount;
 
-    public function entity()
+    public function entity(): MorphTo
     {
         return $this->morphTo();
     }

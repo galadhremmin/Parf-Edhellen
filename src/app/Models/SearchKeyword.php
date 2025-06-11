@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+
 class SearchKeyword extends ModelBase implements Interfaces\IHasLanguage
 {
     public const SEARCH_GROUP_UNASSIGNED = 0;
@@ -36,17 +39,17 @@ class SearchKeyword extends ModelBase implements Interfaces\IHasLanguage
         'is_keyword_language_invented',
     ];
 
-    public function language()
+    public function language(): BelongsTo
     {
         return $this->belongsTo(Language::class);
     }
 
-    public function keyword_language()
+    public function keyword_language(): BelongsTo
     {
         return $this->belongsTo(Language::class, 'keyword_language_id', 'id');
     }
 
-    public function entity()
+    public function entity(): MorphTo
     {
         return $this->morphTo('entity', 'entity_name', 'entity_id');
     }

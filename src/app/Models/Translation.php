@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 class Translation extends ModelBase
 {
     protected $fillable = [
@@ -14,7 +16,7 @@ class Translation extends ModelBase
         'updated_at',
     ];
 
-    public function gloss()
+    public function gloss(): BelongsTo
     {
         return $this->belongsTo(Gloss::class);
     }

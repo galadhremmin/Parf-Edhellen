@@ -2,23 +2,26 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 class Sense extends ModelBase
 {
     protected $fillable = ['id', 'description'];
 
     public $incrementing = false;
 
-    public function word()
+    public function word(): BelongsTo
     {
         return $this->belongsTo(Word::class, 'id', 'id');
     }
 
-    public function glosses()
+    public function glosses(): HasMany
     {
         return $this->hasMany(Gloss::class);
     }
 
-    public function keywords()
+    public function keywords(): HasMany
     {
         return $this->hasMany(Keyword::class);
     }
