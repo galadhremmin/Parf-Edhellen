@@ -49,11 +49,6 @@ class SystemErrorRepository
 
     public function saveFrontendException(string $url, string $message, string $error, string $category)
     {
-        $userAgent = $_SERVER['HTTP_USER_AGENT'];
-        if (strlen($userAgent) > 190) {
-            $userAgent = substr($userAgent, 0, 190).'...';
-        }
-
         $request = request();
         $user = $request->user();
 
@@ -70,7 +65,7 @@ class SystemErrorRepository
                 : null,
             'category' => $category,
             'session_id' => Session::getId(),
-            'user_agent' => $userAgent,
+            'user_agent' => $request->userAgent(),
             'ip' => $request->ip(),
         ]);
 
