@@ -38,76 +38,121 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
         'password', 'is_passworded', 'is_master_account', 'master_account_id', 'email_verified_at',
     ];
 
+    /**
+     * @return BelongsTo<AuthorizationProvider>
+     */
     public function authorization_provider(): BelongsTo
     {
         return $this->belongsTo(AuthorizationProvider::class);
     }
 
+    /**
+     * @return BelongsTo<Account>
+     */
     public function master_account(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'master_account_id', 'id');
     }
 
+    /**
+     * @return HasMany<Contribution>
+     */
     public function contributions(): HasMany
     {
         return $this->hasMany(Contribution::class);
     }
 
+    /**
+     * @return HasMany<FlashcardResult>
+     */
     public function flashcard_results(): HasMany
     {
         return $this->hasMany(FlashcardResult::class);
     }
 
+    /**
+     * @return HasMany<ForumDiscussion>
+     */
     public function forum_discussions(): HasMany
     {
         return $this->hasMany(ForumDiscussion::class);
     }
 
+    /**
+     * @return HasMany<ForumPostLike>
+     */
     public function forum_post_likes(): HasMany
     {
         return $this->hasMany(ForumPostLike::class);
     }
 
+    /**
+     * @return HasMany<ForumPost>
+     */
     public function forum_posts(): HasMany
     {
         return $this->hasMany(ForumPost::class);
     }
 
+    /**
+     * @return HasMany<ForumThread>
+     */
     public function forum_threads(): HasMany
     {
         return $this->hasMany(ForumThread::class);
     }
 
+    /**
+     * @return HasMany<GlossInflection>
+     */
     public function gloss_inflections(): HasMany
     {
         return $this->hasMany(GlossInflection::class);
     }
 
+    /**
+     * @return HasMany<GlossVersion>
+     */
     public function gloss_versions(): HasMany
     {
         return $this->hasMany(GlossVersion::class);
     }
 
+    /**
+     * @return HasMany<Gloss>
+     */
     public function glosses(): HasMany
     {
         return $this->hasMany(Gloss::class);
     }
 
+    /**
+     * @return HasMany<Sentence>
+     */
     public function sentences(): HasMany
     {
         return $this->hasMany(Sentence::class);
     }
 
+    /**
+     * @return HasMany<Word>
+     */
     public function words(): HasMany
     {
-        return $this->hasMany(Gloss::class);
+        return $this->hasMany(Word::class);
     }
 
+    /**
+     * @return HasMany<Account>
+     */
     public function linked_accounts(): HasMany
     {
         return $this->hasMany(Account::class, 'master_account_id', 'id');
     }
 
+    /**
+     * @return HasManyThrough<Role>
+     */
     public function roles(): HasManyThrough
     {
         return $this->hasManyThrough(

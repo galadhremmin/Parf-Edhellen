@@ -51,7 +51,7 @@ trait CanInitialize
         }
     }
 
-    protected function getValue($propertyName)
+    protected function getValue($propertyName): mixed
     {
         if (! array_key_exists($propertyName, $this->_values)) {
             throw new Exception(sprintf('The property %s does not exist.', $propertyName));
