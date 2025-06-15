@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\CarbonLocale;
 use App\Http\Middleware\EnsureHttpsAndWww;
+use App\Http\Middleware\InvalidUserGate;
 use App\Http\Middleware\IpGate;
 use App\Http\Middleware\LayoutDataLoader;
 use App\Http\Middleware\TrimStrings;
@@ -42,6 +43,7 @@ return Application::configure(basePath: dirname(__DIR__))
             ->append(ConvertEmptyStringsToNull::class)
             ->append(StartSession::class)
             ->append(VerifyCsrfToken::class)
+            ->append(InvalidUserGate::class)
             ->append(CarbonLocale::class)
             ->append(LayoutDataLoader::class);
     })
