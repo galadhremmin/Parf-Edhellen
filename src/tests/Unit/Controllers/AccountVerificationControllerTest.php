@@ -5,16 +5,21 @@ use App\Events\EmailVerificationSent;
 use App\Http\Controllers\AccountVerificationController;
 use App\Models\Account;
 use App\Repositories\SystemErrorRepository;
+use App\Security\RoleConstants;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\URL;
 use Mockery;
 use Tests\TestCase;
 
 class AccountVerificationControllerTest extends TestCase
 {
+    use DatabaseTransactions;
+
     public function tearDown(): void
     {
         Mockery::close();
@@ -91,5 +96,30 @@ class AccountVerificationControllerTest extends TestCase
         Event::assertDispatched(Verified::class);
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertStringContainsString('verification=ok', $response->getTargetUrl());
+    }
+
+    public function test_confirm_verification_and_discuss_role_is_assigned()
+    {
+        // Integration test: use real models and HTTP request
+        $user = Account::factory()->create();
+        $user->addMembershipTo(RoleConstants::Users);
+
+        $this->actingAs($user);
+
+        // Ensure user is not verified and does not have Discuss role
+        $this->assertFalse($user->hasVerifiedEmail());
+        $this->assertFalse($user->memberOf(RoleConstants::Discuss));
+
+        // Simulate the verification request
+        $response = $this->get(URL::signedRoute('verification.verify', [
+            'id' => $user->getKey(),
+            'hash' => sha1($user->getEmailForVerification()),
+        ]));
+
+        $response->assertRedirect(route('account.security', ['verification' => 'ok']));
+
+        $user->refresh();
+        $this->assertTrue($user->hasVerifiedEmail());
+        $this->assertTrue($user->memberOf(RoleConstants::Discuss));
     }
 }

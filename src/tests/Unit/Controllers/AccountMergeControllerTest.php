@@ -32,21 +32,11 @@ class AccountMergeControllerTest extends TestCase
             ]),
         ];
 
-        $uuid1 = (string) Str::uuid();
-        $account1 = Account::create([
-            'nickname' => $uuid1,
-            'email' => 'private1@domain.com',
-            'identity' => $uuid1,
+        $account1 = Account::factory()->create([
             'authorization_provider_id' => $providers[0]->id,
-            'profile' => 'Lots of personal data.',
         ]);
-        $uuid2 = (string) Str::uuid();
-        $account2 = Account::create([
-            'nickname' => $uuid2,
-            'email' => 'private1@domain.com',
-            'identity' => $uuid2,
+        $account2 = Account::factory()->create([
             'authorization_provider_id' => $providers[1]->id,
-            'profile' => 'Lots of personal data.',
         ]);
 
         $account1->addMembershipTo(RoleConstants::Users);
