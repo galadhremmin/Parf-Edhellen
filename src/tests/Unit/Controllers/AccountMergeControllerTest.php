@@ -6,6 +6,7 @@ use App\Mail\AccountMergeMail;
 use App\Models\Account;
 use App\Models\AccountMergeRequest;
 use App\Models\AuthorizationProvider;
+use App\Security\RoleConstants;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
@@ -47,6 +48,9 @@ class AccountMergeControllerTest extends TestCase
             'authorization_provider_id' => $providers[1]->id,
             'profile' => 'Lots of personal data.',
         ]);
+
+        $account1->addMembershipTo(RoleConstants::Users);
+        $account2->addMembershipTo(RoleConstants::Users);
 
         $mail = Mail::fake();
 

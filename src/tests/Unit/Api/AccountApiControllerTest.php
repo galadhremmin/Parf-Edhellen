@@ -4,6 +4,7 @@ namespace Tests\Unit\Api;
 
 use App\Helpers\StorageHelper;
 use App\Models\Account;
+use App\Security\RoleConstants;
 use Exception;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
@@ -25,6 +26,8 @@ class AccountApiControllerTest extends TestCase
                 'authorization_provider_id' => 1000,
                 'profile' => 'Lots of personal data.',
             ]);
+
+            $account->addMembershipTo(RoleConstants::Users);
 
             $newNickname = (string) Str::uuid();
             $newIntroduction = 'No personal data';
@@ -62,6 +65,8 @@ class AccountApiControllerTest extends TestCase
                 'profile' => 'Lots of personal data.',
             ]);
 
+            $account->addMembershipTo(RoleConstants::Users);
+
             $newAvatar = UploadedFile::fake()->image('avatar.gif', 200, 200);
 
             $response = $this->actingAs($account)
@@ -96,6 +101,8 @@ class AccountApiControllerTest extends TestCase
                 'authorization_provider_id' => 1000,
                 'profile' => 'Lots of personal data.',
             ]);
+
+            $account->addMembershipTo(RoleConstants::Users);
 
             $response = $this->actingAs($account)
                 ->delete(route('api.account.delete', ['id' => $account->id]));
@@ -132,6 +139,9 @@ class AccountApiControllerTest extends TestCase
             'authorization_provider_id' => 2000,
             'profile' => 'Lots of personal data.',
         ]);
+
+        $account1->addMembershipTo(RoleConstants::Users);
+        $account2->addMembershipTo(RoleConstants::Users);
 
         $path = route('api.account.delete', ['id' => $account1->id]);
         $this->delete($path)
