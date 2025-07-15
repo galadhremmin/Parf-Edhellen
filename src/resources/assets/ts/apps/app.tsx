@@ -15,7 +15,7 @@ export default function registerApp<P>(App: FunctionComponent<P> | ComponentClas
     }
 
     // Compile an initial state
-    const { props } = context;
+    const props = globalThis.context?.props || {};
 
     setupContainer();
     const render = ReactDOMServer.renderToString(
@@ -26,7 +26,7 @@ export default function registerApp<P>(App: FunctionComponent<P> | ComponentClas
         </ErrorBoundary>
     );
 
-    dispatch(render);
+    (globalThis.dispatch || function (_: string) {})(render);
 
     return App;
 }

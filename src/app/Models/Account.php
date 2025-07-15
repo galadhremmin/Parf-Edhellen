@@ -169,14 +169,16 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
         return $this->nickname;
     }
 
-    public function memberOf(string $roleName)
-    {
+    public function getAllRoles() {
         $user = $this;
-        $roles = Cache::remember('ed.rol.'.$user->id, 5 * 60 /* seconds */, function () use ($user) {
+        return Cache::remember('ed.rol.'.$user->id, 5 * 60 /* seconds */, function () use ($user) {
             return Role::forAccount($user)->pluck('name');
         });
+    }
 
-        return $roles->search($roleName) !== false;
+    public function memberOf(string $roleName)
+    {
+        return $this->getAllRoles()->search($roleName) !== false;
     }
 
     public function addMembershipTo(string $roleName)

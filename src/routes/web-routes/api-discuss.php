@@ -50,7 +50,7 @@ Route::group([
 Route::group([
     'namespace' => API_NAMESPACE,
     'prefix' => API_PATH.'/discuss',
-    'middleware' => ['auth'],
+    'middleware' => ['auth', 'auth.required-role:'.RoleConstants::Discuss.':verification.notice'],
 ], function () {
     Route::post('like', [DiscussApiController::class, 'storeLike'])
         ->name('api.discuss.like');

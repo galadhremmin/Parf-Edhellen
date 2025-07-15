@@ -25,7 +25,6 @@ const GlossTitle = (props: IProps) => {
     } = props;
 
     const className = classNames({ rejected: gloss.isRejected });
-    const isAuthenticated = roleManager.currentRole !== SecurityRole.Anonymous;
     const hasWarning = ! gloss.isCanon || !! gloss.isUncertain;
 
     return <h3 className="gloss-word">
@@ -50,7 +49,7 @@ const GlossTitle = (props: IProps) => {
                 </span>)}
         </span>}
         {toolbar && <div className="gloss-word--toolbar">
-            {isAuthenticated && <Suspense fallback={null}>
+            {! roleManager.isAnonymous && <Suspense fallback={null}>
                 <ToolbarAsync gloss={gloss} />
             </Suspense>}
             <ShareLink gloss={gloss} />

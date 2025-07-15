@@ -15,11 +15,10 @@ import StickyPost from './StickyPost';
 import './index.scss';
 
 const getEligibleToolbarComponents = (roleManager: IRoleManager, post: IPostEntity) => {
-    const role = roleManager.currentRole;
     const accountId = roleManager.accountId;
     const components = [];
 
-    if (role === SecurityRole.Administrator) {
+    if (roleManager.isAdministrator) {
         if (post._isThreadPost) {
             components.push(StickyPost);
             components.push(MovePost);
@@ -27,7 +26,7 @@ const getEligibleToolbarComponents = (roleManager: IRoleManager, post: IPostEnti
         // components.push(RestorePost); -- TODO
     }
 
-    if (role === SecurityRole.Administrator ||
+    if (roleManager.isAdministrator ||
         accountId === post.account.id) {
         components.push(EditPost);
         components.push(DeletePost);

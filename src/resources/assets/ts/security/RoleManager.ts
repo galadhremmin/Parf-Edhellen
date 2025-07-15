@@ -3,9 +3,11 @@ import IRoleManager from './IRoleManager';
 import { SecurityRoleAsString } from './RoleManager._types';
 
 const AccountIdProperty = 'accountId';
+const AccountRolesProperty = 'accountRoles';
+
 export default class RoleManager implements IRoleManager {
     private _accountId: number = null;
-    private _role: SecurityRole = null;
+    private _roles: SecurityRole[]|null = null;
 
     constructor(private _rootElement = document.body) {
     }
@@ -29,26 +31,41 @@ export default class RoleManager implements IRoleManager {
     /**
      * Gets the customer's active security role.
      */
-    public get currentRole() {
-        if (this._role !== null) {
-            return this._role;
+    public get currentRoles() {
+        if (this._roles !== null) {
+            return this._roles;
         }
 
-        const role = (Object.keys(SecurityRole) as SecurityRoleAsString[]) //
-            .find(this._isRoleActive);
+        const roles = (this._rootElement.dataset[AccountRolesProperty] || '') //
+            .split(',') //
+            .reduce((acc: SecurityRole[], role: string) => {
+                const roleEnum = role as SecurityRole;
+                if (roleEnum.length > 0 && roleEnum !== SecurityRole.Anonymous) {
+                    acc.push(roleEnum);
+                }
+                return acc;
+            }, []);
 
-        return this._role = (
-            role === undefined
-                ? SecurityRole.Anonymous
-                : SecurityRole[role]
-        );
+        // If no roles are defined, assume Anonymous. Anonymous is a pseudo-role since it doesn't actually exist in the system,
+        // but it's used in the UI to indicate that the user is not authenticated.
+        if (roles.length < 1) {
+            roles.push(SecurityRole.Anonymous);
+        }
+
+        this._roles = roles;
+        return this._roles;
     }
 
     public get isAdministrator() {
-        return this.currentRole === SecurityRole.Administrator;
+        return this.currentRoles.includes(SecurityRole.Root) || //
+            this.currentRoles.includes(SecurityRole.Administrator);
     }
 
-    private _isRoleActive = (role: SecurityRoleAsString) => {
-        return this._rootElement.classList.contains(SecurityRole[role]);
+    public get isAnonymous() {
+        return this.currentRoles.includes(SecurityRole.Anonymous);
+    }
+
+    public hasRole(role: SecurityRoleAsString): boolean {
+        return this.currentRoles.includes(role as SecurityRole);
     }
 }

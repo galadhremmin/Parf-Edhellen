@@ -9,4 +9,6 @@ class RoleConstants
     public const Administrators = 'Administrators';
 
     public const Users = 'Users';
+
+    public const Discuss = 'Discuss';
 }

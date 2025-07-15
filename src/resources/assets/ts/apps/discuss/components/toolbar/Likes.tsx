@@ -37,7 +37,7 @@ function Likes(props: IProps) {
         ev.preventDefault();
         try {
             const name = `Likes[${forumThreadId}-${forumPostId}]`;
-            if (roleManager.currentRole === SecurityRole.Anonymous) {
+            if (roleManager.isAnonymous) {
                 fireEventAsync(name, onAuthenticationRequired, 'like this post');
             } else {
                 await apiConnector.likePost({
