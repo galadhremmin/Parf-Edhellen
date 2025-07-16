@@ -21,7 +21,7 @@ use App\Models\Word;
 use App\Repositories\Enumerations\GlossChange;
 use App\Repositories\ValueObjects\GlossVersionsValue;
 use Illuminate\Auth\AuthManager;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;

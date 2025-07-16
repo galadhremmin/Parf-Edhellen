@@ -4,7 +4,7 @@ return [
     /*
      * Enable or disable the server renderer. Enabled in production by default.
      */
-    'enabled' => true,
+    'enabled' => env('SSR_ENABLED', true),
 
     /*
      * When server side rendering goes wrong, nothing will be rendered so the

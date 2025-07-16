@@ -48,7 +48,7 @@ class SsrServiceProvider extends ServiceProvider
             Renderer::class,
             function (Renderer $serverRenderer, $app) {
                 return $serverRenderer
-                    ->enabled($app->config->get('ssr.enabled'))
+                    ->enabled(! $app->runningUnitTests() && $app->config->get('ssr.enabled'))
                     ->debug($app->config->get('ssr.debug'))
                     ->context('url', $app->request->getRequestUri())
                     ->context($app->config->get('ssr.context'))
