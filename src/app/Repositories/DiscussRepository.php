@@ -82,7 +82,7 @@ class DiscussRepository
             ->join('forum_posts', 'forum_posts.forum_thread_id', '=', 'forum_threads.id')
             ->join('accounts', 'accounts.id', '=', 'forum_posts.account_id')
             ->whereIn('forum_group_id', $groupIds)
-            ->where('forum_posts.created_at', '>=', Carbon::now()->addMonth(-12))
+            ->where('forum_posts.created_at', '>=', Carbon::now()->addMonths(-12))
             ->where('accounts.has_avatar', 1)
             ->orderBy('forum_posts.created_at', 'desc')
             ->select('forum_posts.account_id', 'forum_group_id', 'accounts.has_avatar', 'accounts.nickname')

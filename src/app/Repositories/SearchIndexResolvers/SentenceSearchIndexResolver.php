@@ -51,7 +51,7 @@ class SentenceSearchIndexResolver extends SearchIndexResolverBase
 
             foreach ($sentences as $sentence) {
                 if (isset($accounts[$sentence->account_id])) {
-                    $sentence->account = $accounts[$sentence->account_id][0];
+                    $sentence->setAttribute('account', $accounts[$sentence->account_id][0]);
                 }
             }
         }

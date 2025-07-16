@@ -2,7 +2,10 @@
 
 namespace App\Repositories;
 
-use App\Models\Account;
+use App\Models\{
+    Account,
+    ModelBase
+};
 use App\Models\Initialization\Morphs;
 use App\Models\MailSetting;
 use App\Models\MailSettingOverride;
@@ -17,7 +20,7 @@ class MailSettingRepository
     /**
      * Returns the e-mail addresses for the accounts which qualify for the specified event and entity.
      *
-     * @param  App\Models\ModelBase  $entity
+     * @param  ModelBase  $entity
      */
     public function qualify(array $accountIds, string $event, $entity): Collection
     {
@@ -69,7 +72,7 @@ class MailSettingRepository
     /**
      * Checks whether the specified account has a configuration override associated with the specified entity.
      *
-     * @param  App\Models\ModelBase  $entity
+     * @param  ModelBase  $entity
      * @return bool
      */
     public function getOverride(int $accountId, $entity)
@@ -87,7 +90,7 @@ class MailSettingRepository
     /**
      * Checks whether the account can be notified about the change to the specified entity.
      *
-     * @param  App\Models\ModelBase  $entity
+     * @param  ModelBase  $entity
      */
     public function canNotify(int $accountId, $entity): bool
     {
