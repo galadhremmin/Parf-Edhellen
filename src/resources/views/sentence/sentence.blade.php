@@ -30,7 +30,10 @@
     @endif
   </div>
 
-  <div id="ed-fragment-navigator" data-inject-module="sentence-inspector" data-inject-prop-sentence="{{ json_encode($sentence) }}"></div>
+  @ssr('sentence-inspector', ['sentence' => $sentence], [
+    'element' => 'div',
+    'id' => 'ed-fragment-navigator'
+  ])
 
   @if (Auth::check())
   <p class="text-end">

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\Initialization\Morphs;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Contribution extends ModelBase implements Interfaces\IHasFriendlyName
@@ -32,29 +34,29 @@ class Contribution extends ModelBase implements Interfaces\IHasFriendlyName
         'date_reviewed',
     ];
 
-    public function reviewed_by()
+    public function reviewed_by(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'reviewed_by_account_id');
     }
 
-    public function entity()
+    public function entity(): BelongsTo
     {
         $modelName = Morphs::getMorphedModel($this->type);
 
         return $this->belongsTo($modelName, 'approved_as_entity_id', 'id');
     }
 
-    public function dependencies()
+    public function dependencies(): HasMany
     {
         return $this->hasMany(Contribution::class, 'dependent_on_contribution_id', 'id');
     }
 
-    public function dependent_on()
+    public function dependent_on(): BelongsTo
     {
         return $this->belongsTo(Contribution::class, 'dependent_on_contribution_id', 'id');
     }
 
-    public function gloss()
+    public function gloss(): BelongsTo
     {
         return $this->belongsTo(Gloss::class);
     }

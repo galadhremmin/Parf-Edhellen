@@ -51,21 +51,19 @@ class GlossRepository
      * @param  array  $glossIds  list of glosses
      * @param  int  $languageId  optional language parameter
      * @param  bool  $includeOld  optional is_old filter (false filters them out)
-     * @param  callable  $filters  optional filters, refer to `createGlossQuery` for more information.
+     * @param  array  $filters  optional filters, refer to `createGlossQuery` for more information.
      * @return array
      */
     public function getGlossesByExpandingViaSense(array $glossIds, $languageId = 0, $includeOld = true, $filters = [])
     {
-        $senseIds = Gloss::whereIn('id', $glossIds)
-            ->select('sense_id')
-            ->get()
+        $senseIds = Gloss::whereIn('id', $glossIds) //
             ->pluck('sense_id');
 
         $maximumNumberOfResources = config('ed.gloss_repository_maximum_results');
         $glosses = self::createGlossQuery($languageId, $includeOld, function ($q) use ($senseIds, $filters) {
             $q = $q->whereIn('g.sense_id', $senseIds);
 
-            if (! empty($filters)) {
+            if (is_array($filters)) {
                 foreach ($filters as $column => $values) {
                     $q = $q->whereIn($column, $values);
                 }

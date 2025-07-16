@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SentenceFragmentInflectionRel extends ModelBase
@@ -12,13 +13,13 @@ class SentenceFragmentInflectionRel extends ModelBase
 
     protected $hidden = ['created_at', 'updated_at'];
 
-    public function sentence_fragment()
+    public function sentence_fragment(): BelongsTo
     {
         return $this->belongsTo(SentenceFragment::class);
     }
 
-    public function inflection()
+    public function inflection(): BelongsTo
     {
-        return $this->hasOne(Inflection::class);
+        return $this->belongsTo(Inflection::class);
     }
 }

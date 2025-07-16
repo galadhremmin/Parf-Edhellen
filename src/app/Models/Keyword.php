@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 class Keyword extends ModelBase
 {
     protected $fillable = [
@@ -16,18 +18,25 @@ class Keyword extends ModelBase
 
     /**
      * Retrieves the Word entity associated with this keyword. It is deliberately suffixed `Entity` because `word` exists as a column. :(
+     * @return BelongsTo<Word>
      */
-    public function wordEntity()
+    public function wordEntity(): BelongsTo
     {
         return $this->belongsTo(Word::class, 'word_id');
     }
 
-    public function sense()
+    /**
+     * @return BelongsTo<Sense>
+     */
+    public function sense(): BelongsTo
     {
         return $this->belongsTo(Sense::class, 'sense_id');
     }
 
-    public function keyword_language()
+    /**
+     * @return BelongsTo<Language>
+     */
+    public function keyword_language(): BelongsTo
     {
         return $this->belongsTo(Language::class, 'keyword_language_id', 'id');
     }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AccountFeedRefreshTime extends ModelBase
 {
@@ -17,7 +18,7 @@ class AccountFeedRefreshTime extends ModelBase
 
     use Traits\HasAccount;
 
-    public function account()
+    public function account(): BelongsTo
     {
         return $this->belongsTo(Account::class);
     }

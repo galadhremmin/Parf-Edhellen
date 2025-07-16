@@ -7,8 +7,8 @@ use App\Http\Controllers\Abstracts\Controller;
 use App\Models\FailedJob;
 use App\Models\SystemError;
 use App\Repositories\AuditTrailRepository;
-use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SystemErrorController extends Controller
 {

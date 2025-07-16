@@ -21,7 +21,7 @@ import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 import './MarkdownInput.scss';
 
-const DefaultConfigCacheFactory = () => Cache.withLocalStorage<IComponentConfig>(() => Promise.resolve({
+const DefaultConfigCacheFactory = () => Cache.withPersistentStorage<IComponentConfig>(() => Promise.resolve({
     enter2Paragraph: true,
 }), 'components.MarkdownInput.config');
 

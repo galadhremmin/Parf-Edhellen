@@ -35,12 +35,11 @@ const InjectModeAttributeName = 'injectMode';
  * @param moduleName the module to load.
  * @param props properties to inject to the loaded component.
  */
-const load = (element: HTMLElement, mode: RenderMode, moduleName: string, props: any) => {
-    const Component = React.lazy(() => import(`./apps/${moduleName}/index`));
-
+const load = async (element: HTMLElement, mode: RenderMode, moduleName: string, props: any) => {
     switch (mode) {
         case RenderMode.Async: {
             const root = createRoot(element);
+            const Component = React.lazy(() => import(`./apps/${moduleName}`));
     
             root.render(<Suspense fallback={<Spinner />}>
                     <ErrorBoundary>
@@ -51,8 +50,15 @@ const load = (element: HTMLElement, mode: RenderMode, moduleName: string, props:
                 </Suspense>);
             }
             break;
-        case RenderMode.Ssr:
-            hydrateRoot(element, <Component {...props} />);
+        case RenderMode.Ssr: {
+            const Component = await import(`./apps/${moduleName}`);
+            hydrateRoot(element, 
+                <ErrorBoundary>
+                    <React.StrictMode>
+                        <Component.default {...props} />
+                    </React.StrictMode>
+                </ErrorBoundary>);
+            }
             break;
     }
     
@@ -84,8 +90,9 @@ const getProps = (element: HTMLElement) => Object.keys(element.dataset) //
  * Finds components within the current document that have the attribute
  * `data-inject-module`.
  */
-const inject = () => {
+const inject = async () => {
     const elements = document.querySelectorAll('[data-inject-module]');
+    const promises = [];
     for (let i = 0; i < elements.length; i += 1) {
         const element = elements.item(i) as HTMLElement;
 
@@ -93,8 +100,12 @@ const inject = () => {
         const mode = (element.dataset[InjectModeAttributeName] as RenderMode) || RenderMode.Async;
         const props = getProps(element);
 
-        load(element, mode, moduleName, props);
+        promises.push(
+            load(element, mode, moduleName, props)
+        );
     }
+
+    await Promise.all(promises);
 };
 
 export default inject;

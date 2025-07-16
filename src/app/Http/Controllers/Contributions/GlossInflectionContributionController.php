@@ -127,12 +127,12 @@ class GlossInflectionContributionController extends Controller implements IContr
         throw new \Exception('Inflections are not independently supported.');
     }
 
-    public function validateSubstep(Request $request, int $id = 0, int $substepId = 0)
+    public function validateSubstep(Request $request, int $id = 0, int $substepId = 0): bool
     {
         return true;
     }
 
-    public function validateBeforeSave(Request $request, int $id = 0)
+    public function validateBeforeSave(Request $request, int $id = 0): bool
     {
         $request->validate([
             'gloss_id' => 'sometimes|nullable|numeric|exists:glosses,id',

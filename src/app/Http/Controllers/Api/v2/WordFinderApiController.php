@@ -6,9 +6,11 @@ use App\Http\Controllers\Abstracts\Controller;
 use App\Models\GameWordFinderGlossGroup;
 use App\Models\Gloss;
 use App\Models\GlossGroup;
-use Cache;
-use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\{
+    DB,
+    Cache
+};
 
 class WordFinderApiController extends Controller
 {
@@ -28,6 +30,7 @@ class WordFinderApiController extends Controller
                 ->where('language_id', $languageId)
                 ->whereIn('gloss_group_id', $groupIds)
                 ->whereNotIn('translation', $glosses)
+                ->whereNot('translation', 'LIKE', '?%')
                 ->whereNotIn('word', $words)
                 ->whereNotIn('glosses.id', $ids)
                 ->where(DB::raw('LENGTH(normalized_word)'), '>=', 4)
@@ -59,8 +62,6 @@ class WordFinderApiController extends Controller
 
         if (! is_array($glossGroupIds) || count($glossGroupIds) < 1) {
             $glossGroupIds = GlossGroup::safe()
-                ->select('id')
-                ->get()
                 ->pluck('id')
                 ->toArray();
         }

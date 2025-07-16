@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class AccountFeed extends ModelBase
@@ -26,7 +27,7 @@ class AccountFeed extends ModelBase
         return $this->morphTo();
     }
 
-    public function audit_trail()
+    public function audit_trail(): HasOne
     {
         return $this->hasOne(AuditTrail::class);
     }

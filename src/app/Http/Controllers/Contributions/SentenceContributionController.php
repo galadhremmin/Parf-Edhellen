@@ -125,7 +125,7 @@ class SentenceContributionController extends Controller implements IContribution
      *
      * @return void
      */
-    public function validateSubstep(Request $request, int $id = 0, int $substepId = 0)
+    public function validateSubstep(Request $request, int $id = 0, int $substepId = 0): bool
     {
         switch ($substepId) {
             case 0:
@@ -146,7 +146,7 @@ class SentenceContributionController extends Controller implements IContribution
      *
      * @return void
      */
-    public function validateBeforeSave(Request $request, int $id = 0)
+    public function validateBeforeSave(Request $request, int $id = 0): bool
     {
         $this->validateSentenceInRequest($request, $id);
         $this->validateFragmentsInRequest($request);

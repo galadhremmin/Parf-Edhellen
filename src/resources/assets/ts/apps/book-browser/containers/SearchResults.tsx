@@ -35,13 +35,7 @@ export function SearchResults(props: IProps) {
     useEffect(() => {
         // SessionStorage is sometimes unavailable, like within privacy mode or unit testing mode. Provide a graceful
         // fallback in these situations.
-        try {
-            enableTipsCacheRef.current = Cache.withSessionStorage(() => Promise.resolve(true), EnableTipsCacheKey);
-        } catch (ex) {
-            console.warn(ex);
-            enableTipsCacheRef.current = Cache.withMemoryStorage(() => Promise.resolve(true), EnableTipsCacheKey);
-        }
-
+        enableTipsCacheRef.current = Cache.withTransientStorage(() => Promise.resolve(true), EnableTipsCacheKey);
         enableTipsCacheRef.current?.get().then((nextEnableTips: boolean) => {
             setEnableTips(nextEnableTips);
         }).catch (err => {

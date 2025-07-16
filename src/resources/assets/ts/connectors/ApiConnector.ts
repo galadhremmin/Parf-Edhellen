@@ -28,6 +28,7 @@ import {
     IReportErrorApi,
 } from './IReportErrorApi';
 import ValidationError from './ValidationError';
+import { isNodeJs } from '@root/utilities/func/node';
 
 export default class ApiConnector implements IApiBaseConnector, IReportErrorApi {
     constructor(
@@ -174,11 +175,17 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
         return url;
     }
 
+    private _nodeGuard() {
+        
+    }
+
     private _createRequest<T = any>(factory: AxiosRequestFactory, apiMethod: string, queryStringMap: IQueryStringMap,
         payload: any = null): AxiosPromise<AxiosResponse<T>> {
         if (! apiMethod || apiMethod.length < 1) {
             return Promise.reject(new Error('You need to specify an API method to invoke.'));
         }
+
+        this._nodeGuard();
 
         const config = this.config;
         const hasBody = payload !== null;
@@ -202,6 +209,8 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
     }
 
     private async _consume<T>(apiMethod: string, request: AxiosPromise<AxiosResponse<T>>): Promise<T> {
+        this._nodeGuard();
+
         try {
             const response = await request;
             if (response === undefined) {

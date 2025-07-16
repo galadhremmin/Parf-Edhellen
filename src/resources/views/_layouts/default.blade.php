@@ -25,7 +25,10 @@
     @include(config('ed.header_view'))
   @endif
 </head>
-<body class="bg-dark {{ $isAdmin ? 'ed-admin' : ($isAdmin === false ? 'ed-user' : 'ed-anonymous') }}" data-account-id="{{ $user ? $user->id : '0' }}" data-v="{{ config('ed.version') }}">
+<body class="bg-dark"
+  data-account-id="{{ $user ? $user->id : '0' }}"
+  data-account-roles="{{ $user ? $user->getAllRoles()->implode(',') : '' }}"
+  data-v="{{ config('ed.version') }}">
 <div class="bg-white">
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="ed-site-main-menu">
     @include('_layouts._menu-main', [
@@ -51,7 +54,13 @@
             <p><a href="https://support.google.com/bin/answer.py?hl=en&amp;answer=23852" target="_blank">@lang('home.noscript.call-to-action')</a>.</p>
           </div>
         </noscript>
-        <div id="ed-search-component" class="mt-4"></div>
+        @ssr('book-browser', [], [
+          'element' => 'div',
+          'attributes' => [
+            'id' => 'ed-search-component',
+            'class' => 'mt-4'
+          ]
+        ])
         @yield('body')
       </div>
     </main>
