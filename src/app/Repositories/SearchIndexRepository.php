@@ -120,7 +120,7 @@ class SearchIndexRepository
 
         if (is_callable($filterFunc)) {
             $tmp = $filterFunc($query);
-            if (! $tmp) {
+            if ($tmp !== null && $tmp !== false) {
                 $query = $tmp;
             }
         }

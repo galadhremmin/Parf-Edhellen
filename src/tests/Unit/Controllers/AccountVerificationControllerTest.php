@@ -101,7 +101,8 @@ class AccountVerificationControllerTest extends TestCase
     public function test_confirm_verification_and_discuss_role_is_assigned()
     {
         // Integration test: use real models and HTTP request
-        $user = Account::factory()->create();
+        /** @var Account */
+        $user = Account::factory()->createOne();
         $user->addMembershipTo(RoleConstants::Users);
 
         $this->actingAs($user);

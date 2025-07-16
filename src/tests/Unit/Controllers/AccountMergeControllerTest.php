@@ -31,11 +31,12 @@ class AccountMergeControllerTest extends TestCase
                 'logo_file_name' => 'unit-test-merge-2.jpg',
             ]),
         ];
-
-        $account1 = Account::factory()->create([
+        /** @var Account */
+        $account1 = Account::factory()->createOne([
             'authorization_provider_id' => $providers[0]->id,
         ]);
-        $account2 = Account::factory()->create([
+        /** @var Account */
+        $account2 = Account::factory()->createOne([
             'authorization_provider_id' => $providers[1]->id,
         ]);
 

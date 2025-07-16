@@ -18,7 +18,8 @@ class AccountApiControllerTest extends TestCase
     public function test_edited()
     {
         try {
-            $account = Account::factory()->create();
+            /** @var Account */
+            $account = Account::factory()->createOne();
 
             $account->addMembershipTo(RoleConstants::Users);
 
@@ -49,7 +50,8 @@ class AccountApiControllerTest extends TestCase
     {
         $avatarPath = null;
         try {
-            $account = Account::factory()->create();
+            /** @var Account */
+            $account = Account::factory()->createOne();
 
             $account->addMembershipTo(RoleConstants::Users);
 
@@ -79,7 +81,8 @@ class AccountApiControllerTest extends TestCase
     public function test_deletion()
     {
         try {
-            $account = Account::factory()->create();
+            /** @var Account */
+            $account = Account::factory()->createOne();
 
             $account->addMembershipTo(RoleConstants::Users);
 
@@ -102,8 +105,10 @@ class AccountApiControllerTest extends TestCase
 
     public function test_unauthorized_to_delete()
     {
-        $account1 = Account::factory()->create();
-        $account2 = Account::factory()->create();
+        /** @var Account */
+        $account1 = Account::factory()->createOne();
+        /** @var Account */
+        $account2 = Account::factory()->createOne();
 
         $account1->addMembershipTo(RoleConstants::Users);
         $account2->addMembershipTo(RoleConstants::Users);
