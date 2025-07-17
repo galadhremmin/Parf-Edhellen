@@ -56,13 +56,16 @@ export class SearchQuery extends React.Component<IProps, IState> {
         );
     }
 
-    public async componentDidMount() {
-        const persistedState = await this._stateCache.get();
-        if (persistedState) {
-            // TODO: When languageId is invalid, it should be reset to 0. To achieve this, we should
-            //       check the languageId against the list of languages available via ILanguageApi.
-            this.setState(persistedState);
-        }
+    public componentDidMount() {
+        this._stateCache.get().then((persistedState) => {
+            if (persistedState) {
+                // TODO: When languageId is invalid, it should be reset to 0. To achieve this, we should
+                //       check the languageId against the list of languages available via ILanguageApi.
+                this.setState(persistedState);
+            }
+        }).catch(() => {
+            // Should already be default state, so nothing needs to be done.
+        })
     }
 
     public render() {

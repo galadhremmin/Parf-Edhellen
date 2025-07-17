@@ -60,7 +60,7 @@ export function SearchResults(props: IProps) {
             searchResult,
             updateBrowserHistory: true,
         };
-        dispatch(actionsRef.current?.expandSearchResult(payload));
+        void dispatch(actionsRef.current?.expandSearchResult(payload));
         _onDismissInstructions();
     }
 
@@ -71,12 +71,12 @@ export function SearchResults(props: IProps) {
 
     const  _onNextSearchResult = (ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
-        props.dispatch(actionsRef.current?.selectNextResult(+1));
+        void dispatch(actionsRef.current?.selectNextResult(+1));
     }
 
     const  _onPreviousSearchResult = (ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
-        dispatch(actionsRef.current?.selectNextResult(-1));
+        void dispatch(actionsRef.current?.selectNextResult(-1));
     }
 
     const searching = props.word.length > 0;
