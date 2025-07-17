@@ -3,7 +3,6 @@ import React, { useCallback } from 'react';
 
 import { fireEventAsync } from '@root/components/Component';
 import TextIcon from '@root/components/TextIcon';
-import { SecurityRole } from '@root/config';
 import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 import useAnimationOnChange from '@root/utilities/hooks/useAnimationOnChange';

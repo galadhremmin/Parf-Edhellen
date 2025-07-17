@@ -16,7 +16,8 @@ function SubscribeButton({
 
     useEffect(() => {
         subscriptionApi.isSubscribed(ForumGroupEntityName, groupId) //
-            .then((response) => setIsSubscribed(response.subscribed));
+            .then((response) => setIsSubscribed(response.subscribed)) // 
+            .catch(() => setIsSubscribed(false)); // If the request fails, assume not subscribed
     }, [ groupId ]);
 
     const _onSwapSubscription = () => {
@@ -27,7 +28,8 @@ function SubscribeButton({
             response = subscriptionApi.subscribe(ForumGroupEntityName, groupId);
         }
 
-        response.then((r) => setIsSubscribed(r.subscribed));
+        response.then((r) => setIsSubscribed(r.subscribed))
+            .catch(() => {}); // If the request fails, do nothing
     };
 
     return isSubscribed !== null ? //

@@ -30,7 +30,7 @@ export function FeatureBackgroundDialog(props: IProps) {
 
     useEffect(() => {
         if (accountApi) {
-            accountApi.getFeatureBackgrounds().then((r) => {
+            void accountApi.getFeatureBackgrounds().then((r) => {
                 setBackgrounds(
                     r.files.map((file) => `${r.path}/${file}`),
                 );
