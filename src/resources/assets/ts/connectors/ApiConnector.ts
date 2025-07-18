@@ -3,6 +3,7 @@ import axios, {
     AxiosError,
     AxiosInstance,
     AxiosPromise,
+    AxiosRequestConfig,
     AxiosResponse,
 } from 'axios';
 import Cookies from 'js-cookie';
@@ -129,8 +130,8 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             },
             timeout: 0,
             clarifyTimeoutError: true,
-            credentials: 'same-origin',
-        };
+            withCredentials: true,
+        } as AxiosRequestConfig<any>;
     }
 
     /**
