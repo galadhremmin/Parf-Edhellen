@@ -123,18 +123,14 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': this._getCsrfToken(),
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+                'X-XSRF-TOKEN': Cookies.get('XSRF-TOKEN'),
                 'X-Requested-With': 'XMLHttpRequest',
             },
             timeout: 0,
             clarifyTimeoutError: true,
             credentials: 'same-origin',
         };
-    }
-
-    private _getCsrfToken() {
-        const token = Cookies.get('XSRF-TOKEN');
-        return token || undefined;
     }
 
     /**
