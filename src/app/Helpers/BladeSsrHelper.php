@@ -50,7 +50,9 @@ class BladeSsrHelper
         $html[] = ' data-inject-module="'.$appName.'" data-inject-mode="';
         $html[] = $this->_renderer->enabled() ? 'ssr' : 'async';
         $html[] = '">';
-        $html[] = $this->_renderer->entry($appName)->render();
+        if ($this->_renderer->enabled())  {
+            $html[] = $this->_renderer->entry($appName)->render();
+        }
         $html[] = '</'.$config['element'].'>';
 
         return implode('', $html);
