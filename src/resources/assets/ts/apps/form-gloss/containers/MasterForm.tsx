@@ -40,7 +40,7 @@ function MasterForm(props: IProps) {
 
     const _onDisableEdit = (ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
-        fireEvent('MasterForm', onCopyGloss);
+        void fireEvent('MasterForm', onCopyGloss);
     };
 
     const _onSubmit = (ev: React.FormEvent) => {
@@ -49,7 +49,7 @@ function MasterForm(props: IProps) {
             .some((context: keyof IChangeTrackerReducerState) => changes[context] === true)
         );
 
-        fireEvent('MasterForm', onSubmit, {
+        void fireEvent('MasterForm', onSubmit, {
             changes,
             edit,
             gloss,
@@ -104,10 +104,18 @@ const mapStateToProps = (state: RootReducer) => ({
 const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => {
     const actions = new GlossActions();
     return {
-        onCopyGloss: () => dispatch(actions.setEditingGlossId(0)),
-        onGlossFieldChange: ({value: v}) => dispatch(actions.setGlossField(v.field, v.value)),
-        onInflectionCreate: () => dispatch(actions.createInflectionGroup()),
-        onInflectionsChange: ({value: v}) => dispatch(actions.setInflectionGroup(v.inflectionGroupUuid, v.inflectionGroup)),
+        onCopyGloss: () => {
+            dispatch(actions.setEditingGlossId(0));
+        },
+        onGlossFieldChange: ({value: v}) => {
+            dispatch(actions.setGlossField(v.field, v.value));
+        },
+        onInflectionCreate: () => {
+            dispatch(actions.createInflectionGroup());
+        },
+        onInflectionsChange: ({value: v}) => {
+            dispatch(actions.setInflectionGroup(v.inflectionGroupUuid, v.inflectionGroup));
+        },
         onSubmit: ({value: v}) => {
             const {
                 changes,
@@ -129,10 +137,10 @@ const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => {
                     delete gloss.tengwar;
                 }
 
-                dispatch(actions.saveGloss(gloss, changes.inflectionsChanged //
+                void dispatch(actions.saveGloss(gloss, changes.inflectionsChanged //
                     ? inflections : null));
             } else if (changes.inflectionsChanged) {
-                dispatch(actions.saveInflections( //
+                void dispatch(actions.saveInflections( //
                     inflections, //
                     gloss.contributionId,
                     gloss.id));

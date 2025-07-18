@@ -27,7 +27,9 @@ function Form(props: IProps) {
     } = props;
 
     const _onContentChange = useCallback(
-        (e: IComponentEvent<string>) => fireEvent(name, onChange, e),
+        (e: IComponentEvent<string>) => {
+            void fireEvent(name, onChange, e);
+        },
         [ name, onChange ]);
 
     const _onSubjectChange = useCallback(
@@ -38,7 +40,7 @@ function Form(props: IProps) {
 
     const _onCancelClick = useCallback((e: React.MouseEvent) => {
         e.preventDefault();
-        fireEventAsync(null, onCancel);
+        void fireEventAsync(null, onCancel);
     }, [ onCancel ]);
 
     const _onSubmitForm = useCallback((ev: React.FormEvent) => {
@@ -47,7 +49,7 @@ function Form(props: IProps) {
             content,
             subject,
         } as IFormOutput;
-        fireEventAsync(name, onSubmit, args);
+        void fireEventAsync(name, onSubmit, args);
     }, [ content, name, onSubmit, subject ]);
 
     return <form method="get" action="/#intercepted-action" onSubmit={_onSubmitForm}>

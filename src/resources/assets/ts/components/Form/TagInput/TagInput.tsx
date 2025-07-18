@@ -92,7 +92,7 @@ export default class TagInput extends React.Component<IProps, IState> {
         tags.push(tag.trim());
         tags.sort((a, b) => a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase()));
 
-        fireEvent(name, onChange, tags);
+        void fireEvent(name, onChange, tags);
     }
 
     private _deleteTag(tag: string) {
@@ -105,7 +105,7 @@ export default class TagInput extends React.Component<IProps, IState> {
         const pos = tags.indexOf(tag);
         if (pos > -1) {
             tags.splice(pos, 1);
-            fireEvent(name, onChange, tags);
+            void fireEvent(name, onChange, tags);
         }
     }
 

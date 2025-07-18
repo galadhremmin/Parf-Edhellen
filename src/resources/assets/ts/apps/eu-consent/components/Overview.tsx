@@ -7,7 +7,7 @@ import { CommonPaths } from '@root/config';
 export default function Overview({ onSettings }: IProps) {
     const _onSettings = (ev: MouseEvent) => {
         ev.preventDefault();
-        fireEvent('Overview', onSettings);
+        void fireEvent('Overview', onSettings);
     };
 
     return <>

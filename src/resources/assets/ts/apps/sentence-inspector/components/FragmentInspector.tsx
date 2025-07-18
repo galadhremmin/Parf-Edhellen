@@ -40,20 +40,20 @@ export function FragmentInspector(props: IProps) {
 
     const _onCloseClick = useCallback((ev?: React.MouseEvent<HTMLButtonElement>) => {
         ev?.preventDefault();
-        fireEventAsync('FragmentInspector', onSelectFragment, null);
+        void fireEventAsync('FragmentInspector', onSelectFragment, null);
     }, [ onSelectFragment ]);
 
     const _onPreviousClick = useCallback((ev?: React.MouseEvent<HTMLAnchorElement>) => {
         ev?.preventDefault();
         if (previousFragmentId) {
-            fireEventAsync('FragmentInspector', onNextOrPreviousFragmentClick, previousFragmentId);
+            void fireEventAsync('FragmentInspector', onNextOrPreviousFragmentClick, previousFragmentId);
         }
     }, [ onNextOrPreviousFragmentClick, previousFragmentId ]);
 
     const _onNextClick = useCallback((ev?: React.MouseEvent<HTMLAnchorElement>) => {
         ev?.preventDefault();
         if (nextFragmentId) {
-            fireEventAsync('FragmentInspector', onNextOrPreviousFragmentClick, nextFragmentId);
+            void fireEventAsync('FragmentInspector', onNextOrPreviousFragmentClick, nextFragmentId);
         }
     }, [ onNextOrPreviousFragmentClick, nextFragmentId ]);
 

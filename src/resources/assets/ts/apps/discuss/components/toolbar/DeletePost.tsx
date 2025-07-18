@@ -40,7 +40,7 @@ function DeletePost(props: IProps) {
                 forumPostId,
             });
 
-            fireEvent(`DeletePost[${forumPostId}]`, onPostChange, forumPostId);
+            void fireEvent(`DeletePost[${forumPostId}]`, onPostChange, forumPostId);
         } catch (e) {
             // TODO: handle failure
         }

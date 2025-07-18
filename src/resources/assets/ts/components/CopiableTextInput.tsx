@@ -31,10 +31,10 @@ function CopiableTextInput(props: IProps) {
 
         navigator.clipboard.write(data).then(
             () => {
-                fireEventAsync('CopiableTextInput', onCopyActionSuccess, value);
+                void fireEventAsync('CopiableTextInput', onCopyActionSuccess, value);
             },
             (reason) => {
-                fireEventAsync('CopiableTextInput', onCopyActionFail, reason);
+                void fireEventAsync('CopiableTextInput', onCopyActionFail, reason);
             },
         );
     }, [

@@ -74,7 +74,7 @@ export function FragmentsGrid(props: IProps) {
     useEffect(() => {
         glossCacheRef.current = new Map();
 
-        Promise.all([ inflectionApi.inflections(), speechApi.speeches(), ]).then(([groupedInflections, speeches]) => {
+        void Promise.all([ inflectionApi.inflections(), speechApi.speeches(), ]).then(([groupedInflections, speeches]) => {
             const groupedInflectionsMap = new Map<string, IInflection[]>();
             const inflectionMap = new Map<number, IInflection>();
             const speechMap = new Map<number, ISpeechEntity>();
@@ -185,7 +185,7 @@ export function FragmentsGrid(props: IProps) {
      */
     const _notifyChange = <T extends keyof ISentenceFragmentEntity>(fragment: ISentenceFragmentEntity, field: T,
         value: ISentenceFragmentEntity[T]) => {
-        fireEventAsync('FragmentsGrid', onChange, {
+        void fireEventAsync('FragmentsGrid', onChange, {
             field,
             fragment,
             value,

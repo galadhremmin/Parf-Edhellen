@@ -30,11 +30,15 @@ export function FeatureBackgroundDialog(props: IProps) {
 
     useEffect(() => {
         if (accountApi) {
-            void accountApi.getFeatureBackgrounds().then((r) => {
+            accountApi.getFeatureBackgrounds().then((r) => {
                 setBackgrounds(
                     r.files.map((file) => `${r.path}/${file}`),
                 );
-            }).finally(() => {
+            }) //
+            .catch(() => {
+                setBackgrounds([]);
+            }) //
+            .finally(() => {
                 setLoading(false);
             });
         }
@@ -42,7 +46,7 @@ export function FeatureBackgroundDialog(props: IProps) {
 
     const _onBackgroundClick = (background: string, ev: MouseEvent) => {
         ev.preventDefault();
-        fireEvent('FeatureBackgroundDialog', onSelectBackground, background);
+        void fireEvent('FeatureBackgroundDialog', onSelectBackground, background);
     }
 
     return <Dialog open={open}

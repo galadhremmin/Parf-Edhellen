@@ -41,7 +41,7 @@ describe('apps/book-browser/components/SearchQueryInput', () => {
         render(<SearchQueryInput name="unit-test" value="" onChange={changeStub} />);
 
         act(() => {
-            fireEvent.change(
+            void fireEvent.change(
                 screen.getByRole('searchbox'), {
                     target: {
                         value: expectedValue,

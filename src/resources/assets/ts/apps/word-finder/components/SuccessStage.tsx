@@ -16,7 +16,7 @@ function SuccessStage(props: IStageProps) {
     } = props;
 
     const _onPlayAgain = useCallback(() => {
-        fireEvent('SuccessStage', onChangeStage, GameStage.Loading);
+        void fireEvent('SuccessStage', onChangeStage, GameStage.Loading);
     }, []);
 
     const timeElapsed = DateTime.fromMillis(time).diff(DateTime.fromMillis(startTime), 'seconds');

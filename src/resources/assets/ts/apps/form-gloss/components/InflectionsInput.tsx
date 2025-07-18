@@ -44,7 +44,7 @@ function InflectionsInput(props: IProps) {
     } = props;
 
     useEffect(() => {
-        Promise.all([
+        void Promise.all([
             inflectionApi.inflections(),
             speechApi.speeches()
         ]).then(([ allInflections, allSpeeches ]) => {
@@ -181,7 +181,7 @@ function InflectionsInput(props: IProps) {
             node,
         } = e;
 
-        fireEventAsync('InflectionsInput', onChange, {
+        void fireEventAsync('InflectionsInput', onChange, {
             inflection,
             rowId: node.id,
         });

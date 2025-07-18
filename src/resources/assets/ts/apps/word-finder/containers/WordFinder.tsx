@@ -49,7 +49,7 @@ function WordFinder(props: IContainerProps) {
 
     useEffect(() => {
         if (languageId !== 0 && currentStage === GameStage.Loading) {
-            fireEvent('WordFinder', onLoadGame, languageId);
+            void fireEvent('WordFinder', onLoadGame, languageId);
         }
     }, [ languageId, currentStage ]);
 
@@ -57,7 +57,7 @@ function WordFinder(props: IContainerProps) {
         const word = selectedParts.map((i) => parts[i].part).join('');
         const gloss = glosses.find((g) => g.available && g.wordForComparison === word);
         if (gloss) {
-            fireEvent('WordFinder', onDiscoverWord, gloss.id);
+            void fireEvent('WordFinder', onDiscoverWord, gloss.id);
         }
     }, [ selectedParts ]);
 
@@ -103,12 +103,24 @@ const mapStateToProps = (state: RootReducer) => ({
 
 const gameActions = new GameActions();
 const mapDispatchToProps: any = (dispatch: ReduxThunkDispatch) => ({
-    onLoadGame: (ev: IComponentEvent<number>) => dispatch(gameActions.loadGame(ev.value)),
-    onStageChange: (ev: IComponentEvent<GameStage>) => dispatch(gameActions.setStage(ev.value)),
-    onDeselectPart: (ev: IComponentEvent<number>) => dispatch(gameActions.deselectPart(ev.value)),
-    onDiscoverWord: (ev: IComponentEvent<number>) => dispatch(gameActions.discoverWord(ev.value)),
-    onTimeUpdate: (ev: IComponentEvent<number>) => dispatch(gameActions.setTime(ev.value)),
-    onSelectPart: (ev: IComponentEvent<number>) => dispatch(gameActions.selectPart(ev.value)),
+    onLoadGame: (ev: IComponentEvent<number>) => {
+        void dispatch(gameActions.loadGame(ev.value));
+    },
+    onStageChange: (ev: IComponentEvent<GameStage>) => {
+        dispatch(gameActions.setStage(ev.value));
+    },
+    onDeselectPart: (ev: IComponentEvent<number>) => {
+        dispatch(gameActions.deselectPart(ev.value));
+    },
+    onDiscoverWord: (ev: IComponentEvent<number>) => {
+        dispatch(gameActions.discoverWord(ev.value));
+    },
+    onTimeUpdate: (ev: IComponentEvent<number>) => {
+        dispatch(gameActions.setTime(ev.value));
+    },
+    onSelectPart: (ev: IComponentEvent<number>) => {
+        dispatch(gameActions.selectPart(ev.value));
+    },
 }) as Partial<IContainerProps>;
 
 export default connect(mapStateToProps, mapDispatchToProps)(WordFinder);

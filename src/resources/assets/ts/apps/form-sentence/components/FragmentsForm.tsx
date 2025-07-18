@@ -19,12 +19,12 @@ function FragmentsForm(props: IProps) {
 
     const _onChangeNative = useCallback((ev: React.ChangeEvent<HTMLTextAreaElement>) => {
         const value = ev.target.value;
-        fireEvent(null, onTextChange, value);
+        void fireEvent(null, onTextChange, value);
     }, [ onTextChange ]);
 
     const _onParseFragments = useCallback((ev: React.MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
-        fireEvent(null, onParseTextRequest, text);
+        void fireEvent(null, onParseTextRequest, text);
     }, [ onParseTextRequest, text ]);
 
     if (! languageId) {

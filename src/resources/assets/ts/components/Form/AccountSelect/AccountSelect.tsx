@@ -43,7 +43,7 @@ function AccountSelect(props: IProps) {
     }, [ apiConnector ]);
 
     const _onChange = useCallback((ev: IComponentEvent<IAccountSuggestion>) => {
-        fireEvent(name, onChange, ev.value);
+        void fireEvent(name, onChange, ev.value);
     }, [ name, onChange ]);
 
     return <EntitySelect<IAccountSuggestion>

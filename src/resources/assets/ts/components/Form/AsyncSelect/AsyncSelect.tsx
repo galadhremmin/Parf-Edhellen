@@ -45,7 +45,7 @@ function AsyncSelect<T = any>(props: IProps<T>) {
             valueField as string,
         );
 
-        fireEvent(name, onChange, newValue ? newValue : null);
+        void fireEvent(name, onChange, newValue ? newValue : null);
     }, [ name, onChange, values, valueField ]);
 
     return <select {...componentProps}

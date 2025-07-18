@@ -56,7 +56,7 @@ function CreateThreadButton(props: IProps) {
     }, [ setContent, setSubject ]);
 
     const _onSubmit = useCallback((ev: IComponentEvent<IFormOutput>) => {
-        fireEvent(`CreateThreadButton[${groupId}]`, onThreadCreate, {
+        void fireEvent(`CreateThreadButton[${groupId}]`, onThreadCreate, {
             ...ev.value,
             entityType: 'discussion',
             forumGroupId: groupId,

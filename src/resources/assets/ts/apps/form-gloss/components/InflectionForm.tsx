@@ -26,7 +26,7 @@ function InflectionForm(props: IProps) {
         } = ev.value;
 
         setFocusNextRow(false);
-        fireEvent(name, onInflectionsChange, {
+        void fireEvent(name, onInflectionsChange, {
             inflectionGroup,
             inflectionGroupUuid,
         });
@@ -34,7 +34,7 @@ function InflectionForm(props: IProps) {
 
     const _onCreateInflectionGroup = () => {
         setFocusNextRow(true);
-        fireEvent(name, onInflectionCreate);
+        void fireEvent(name, onInflectionCreate);
     };
 
     return <div className="row">

@@ -36,18 +36,18 @@ function CombinePartsStage(props: IProps) {
 
         const availableParts = parts.filter((g) => g.available).length;
         if (availableParts < 1) {
-            fireEvent('CombinePartsStage', onChangeStage, GameStage.Success);
+            void fireEvent('CombinePartsStage', onChangeStage, GameStage.Success);
         }
     }, [ parts ]);
 
     const _onDeselectPart = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
-        fireEvent('PartList', onDeselectPart, getPartIdFromDataset(ev.target));
+        void fireEvent('PartList', onDeselectPart, getPartIdFromDataset(ev.target));
     }, [ onDeselectPart ]);
 
     const _onSelectPart = useCallback((ev: React.MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
-        fireEvent('CombinePartsStage', onSelectPart, getPartIdFromDataset(ev.target));
+        void fireEvent('CombinePartsStage', onSelectPart, getPartIdFromDataset(ev.target));
     }, [ onSelectPart ]);
 
     const _onUndo = useCallback(() => {
@@ -58,7 +58,7 @@ function CombinePartsStage(props: IProps) {
         const partIndex = selectedParts[selectedParts.length - 1];
         const part = parts[partIndex];
 
-        fireEvent('PartList', onDeselectPart, part.id);
+        void fireEvent('PartList', onDeselectPart, part.id);
     }, [ selectedParts, parts ]);
 
     return <div className="CombinePartsStage">

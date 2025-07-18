@@ -37,7 +37,7 @@ function TengwarInput(props: IProps) {
 
     const _onChange = useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
         const { value: newValue } = ev.target;
-        fireEvent(name, onChange, newValue);
+        void fireEvent(name, onChange, newValue);
     }, [ name, onChange, value ]);
 
     const _onTranscribe = useCallback(() => {
@@ -52,7 +52,7 @@ function TengwarInput(props: IProps) {
 
     const _onConfirmDialog = useCallback((ev: IComponentEvent<string>) => {
         setIsDialogOpen(false);
-        fireEventAsync(name, onChange, newTranscription);
+        void fireEventAsync(name, onChange, newTranscription);
     }, [ name, onChange, newTranscription ]);
 
     const _onTranscription = useCallback((ev: IComponentEvent<ITranscription>) => {

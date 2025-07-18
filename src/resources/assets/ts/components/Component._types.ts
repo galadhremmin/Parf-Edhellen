@@ -17,4 +17,6 @@ export interface IComponentEvent<V> {
     value: V;
 }
 
-export type ComponentEventHandler<T> = (ev: IComponentEvent<T>) => Promise<void>|void;
+export type ComponentFiredEvent = Promise<boolean>;
+
+export type ComponentEventHandler<T> = (ev: IComponentEvent<T>) => ComponentFiredEvent | Promise<void> | void;

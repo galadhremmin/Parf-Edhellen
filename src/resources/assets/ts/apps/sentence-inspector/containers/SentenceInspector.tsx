@@ -28,17 +28,17 @@ export function SentenceInspector(props: IProps) {
 
     const _onFragmentClick = useCallback((args: IComponentEvent<IFragmentsReducerState>) => {
         const fragment = fragments.find((f) => f.id === args.value?.id);
-        fireEventAsync('SentenceInspector', onFragmentSelect, fragment || null);
+        void fireEventAsync('SentenceInspector', onFragmentSelect, fragment || null);
     }, [ onFragmentSelect, fragments ]);
 
     const _onNextOrPreviousFragmentClick = useCallback((args: IComponentEvent<number>) => {
         const fragment = fragments.find((f) => f.id === args.value);
-        fireEventAsync('SentenceInspector', onFragmentSelect, fragment || null);
+        void fireEventAsync('SentenceInspector', onFragmentSelect, fragment || null);
     }, [ onFragmentSelect, fragments ]);
 
     const _onFragmentInSentenceClick = useCallback((args: IComponentEvent<IFragmentInSentenceState>) => {
         const fragment = fragments.find((f) => f.id === args.value?.id);
-        fireEventAsync('SentenceInspector', onFragmentSelect, fragment || null);
+        void fireEventAsync('SentenceInspector', onFragmentSelect, fragment || null);
     }, [ onFragmentSelect, fragments ]);
 
     const texts = [

@@ -19,7 +19,7 @@ function RespondButton(props: IProps) {
 
     const onRespondClick = useCallback((ev: React.MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
-        fireEvent(null, onClick);
+        void fireEvent(null, onClick);
     }, [ onClick ]);
 
     if (roleManager.isAnonymous) {

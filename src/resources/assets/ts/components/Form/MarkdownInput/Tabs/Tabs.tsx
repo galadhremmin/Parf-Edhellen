@@ -13,7 +13,7 @@ function Tabs(props: IProps) {
 
     const _onTabChange = (newTab: Tab) => (ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
-        fireEvent('tabs', onTabChange, newTab);
+        void fireEvent('tabs', onTabChange, newTab);
     };
 
     return <ul className="nav nav-tabs">

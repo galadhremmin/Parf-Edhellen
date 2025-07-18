@@ -37,12 +37,12 @@ function Likes(props: IProps) {
         try {
             const name = `Likes[${forumThreadId}-${forumPostId}]`;
             if (roleManager.isAnonymous) {
-                fireEventAsync(name, onAuthenticationRequired, 'like this post');
+                void fireEventAsync(name, onAuthenticationRequired, 'like this post');
             } else {
                 await apiConnector.likePost({
                     forumPostId,
                 });
-                fireEventAsync(name, onThreadMetadataChange, {
+                void fireEventAsync(name, onThreadMetadataChange, {
                     entityId,
                     entityType,
                     forumPostId: [ forumPostId ],

@@ -76,7 +76,7 @@ function EditPost(props: IProps) {
                 subject,
             });
 
-            fireEventAsync(`EditPost[${forumPostId}]`, onPostChange, forumPostId);
+            void fireEventAsync(`EditPost[${forumPostId}]`, onPostChange, forumPostId);
             setIsOpen(false);
         } catch (e) {
             // TODO handle failure

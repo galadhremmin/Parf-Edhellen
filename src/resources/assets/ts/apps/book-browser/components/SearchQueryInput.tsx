@@ -56,6 +56,6 @@ export default class SearchQueryInput extends FormComponent<string, IProps, ISea
             return;
         }
 
-        fireEventAsync(this, this.props.onSearchResultNavigate, direction);
+        void fireEventAsync(this, this.props.onSearchResultNavigate, direction);
     }
 }

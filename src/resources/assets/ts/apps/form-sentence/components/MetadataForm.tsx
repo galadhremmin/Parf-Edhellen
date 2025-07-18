@@ -14,7 +14,7 @@ function MetadataForm(props: IProps) {
 
     const _onChange = useCallback(
         (field: keyof IProps['sentence']) => (ev: IComponentEvent<any>) => {
-        fireEvent(null, onMetadataChange, {
+        void fireEvent(null, onMetadataChange, {
             field,
             value: ev.value,
         });
@@ -25,7 +25,7 @@ function MetadataForm(props: IProps) {
         const value = /checkbox|radio/i.test(ev.target.type)
             ? (ev.target as HTMLInputElement).checked : ev.target.value;
 
-        fireEvent(null, onMetadataChange, {
+        void fireEvent(null, onMetadataChange, {
             field,
             value,
         });

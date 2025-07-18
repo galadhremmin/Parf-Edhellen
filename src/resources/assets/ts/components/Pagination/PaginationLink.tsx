@@ -17,7 +17,7 @@ function PaginationLink(props: IProps) {
     const _onClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
         if (onClick !== null) {
             ev.preventDefault();
-            fireEvent('PaginationLink', onClick, pageNumber);
+            void fireEvent('PaginationLink', onClick, pageNumber);
         }
     }
 

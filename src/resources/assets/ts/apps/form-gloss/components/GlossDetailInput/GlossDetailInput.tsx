@@ -38,7 +38,7 @@ function GlossDetailInput(props: IComponentProps<IGlossDetail[]>) {
         ];
         _setOrder(newValue);
 
-        fireEvent(name, onChange, newValue);
+        void fireEvent(name, onChange, newValue);
     };
 
     const _onMoveClick = (sourceIndex: number, direction: number) => (ev: React.MouseEvent<HTMLButtonElement>) => {
@@ -63,7 +63,7 @@ function GlossDetailInput(props: IComponentProps<IGlossDetail[]>) {
             };
         });
 
-        fireEvent(name, onChange, newValue);
+        void fireEvent(name, onChange, newValue);
     };
 
     const _onDeleteClick = (sourceIndex: number) => (ev: React.MouseEvent<HTMLButtonElement>) => {
@@ -72,7 +72,7 @@ function GlossDetailInput(props: IComponentProps<IGlossDetail[]>) {
         const newValue = value.filter((v, i) => i !== sourceIndex);
         _setOrder(newValue);
 
-        fireEvent(name, onChange, newValue);
+        void fireEvent(name, onChange, newValue);
     };
 
     const _onDetailChange = (sourceIndex: number, propertyName: keyof Pick<IGlossDetail, "text" | "category">) =>
@@ -85,7 +85,7 @@ function GlossDetailInput(props: IComponentProps<IGlossDetail[]>) {
         detail[propertyName] = textValue;
 
         const newValue = _createNewValue(detail, sourceIndex, value);
-        fireEvent(name, onChange, newValue);
+        void fireEvent(name, onChange, newValue);
     };
 
     return <>

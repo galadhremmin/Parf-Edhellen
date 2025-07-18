@@ -13,7 +13,7 @@ function StaticAlert(props: IProps) {
     } = props;
 
     const _onDismiss = useCallback(() => {
-        fireEvent('StaticAlert', onDismiss);
+        void fireEvent('StaticAlert', onDismiss);
     }, [onDismiss]);
 
     return <div className={classNames(`alert alert-${type} bg-gradient`, { 'alert-dismissible': dismissable })} role="alert">

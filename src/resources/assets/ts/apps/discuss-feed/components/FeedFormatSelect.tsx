@@ -19,7 +19,7 @@ function FeedFormatSelect(props: IProps) {
     }));
 
     const _onChange = useCallback((ev: React.ChangeEvent<HTMLSelectElement>) => {
-        fireEvent(id || name, onChange, ev.target.value);
+        void fireEvent(id || name, onChange, ev.target.value);
     }, [ id, name, onChange ]);
 
     return <select className="form-control"
