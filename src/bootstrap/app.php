@@ -29,7 +29,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $routeMiddleware = [
             'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
             'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-            'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
             'can' => \Illuminate\Auth\Middleware\Authorize::class,
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
             'signed' => \App\Http\Middleware\ValidateSignature::class,
@@ -42,7 +41,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(EnsureHttpsAndWww::class)
             ->append(CheckForMaintenanceMode::class)
             ->append(IpGate::class)
+            ->append(EncryptCookies::class)
+            ->append(AddQueuedCookiesToResponse::class)
             ->append(StartSession::class)
+            ->append(ShareErrorsFromSession::class)
             ->append(ValidatePostSize::class)
             ->append(TrimStrings::class)
             ->append(ConvertEmptyStringsToNull::class)
