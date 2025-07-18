@@ -5,6 +5,7 @@ import axios, {
     AxiosPromise,
     AxiosResponse,
 } from 'axios';
+import Cookies from 'js-cookie';
 
 import {
     ApiExceptionCollectorMethod,
@@ -28,7 +29,6 @@ import {
     IReportErrorApi,
 } from './IReportErrorApi';
 import ValidationError from './ValidationError';
-import { isNodeJs } from '@root/utilities/func/node';
 
 export default class ApiConnector implements IApiBaseConnector, IReportErrorApi {
     constructor(
@@ -128,16 +128,13 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             },
             timeout: 0,
             clarifyTimeoutError: true,
+            credentials: 'same-origin',
         };
     }
 
     private _getCsrfToken() {
-        const metaField = document.querySelector('meta[name=csrf-token]');
-        if (! metaField) {
-            return undefined;
-        }
-
-        return metaField.getAttribute('content');
+        const token = Cookies.get('XSRF-TOKEN');
+        return token || undefined;
     }
 
     /**
