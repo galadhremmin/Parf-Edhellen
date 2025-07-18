@@ -7,15 +7,14 @@
     "require": {
         "php": ">=8.2",
         "aws/aws-sdk-php": "~3.0",
-        "diglactic/laravel-breadcrumbs": "^9.0",
+        "diglactic/laravel-breadcrumbs": "^10.0",
         "doctrine/dbal": "^3.0",
         "erusev/parsedown": "^1.6",
         "guzzlehttp/guzzle": "^7.0.1",
         "intervention/image": "^2.5",
-        "laravel/framework": "^11.0",
-        "laravel/sanctum": "^4.0",
+        "laravel/framework": "^12.0",
         "laravel/socialite": "^5.0",
-        "laravel/tinker": "~2.0",
+        "laravel/tinker": "^2.10.1",
         "laravel/ui": "^4.0",
         "nunomaduro/collision": "^8.1",
         "socialiteproviders/discord": "^4.1",
@@ -31,7 +30,7 @@
         "laravel/pint": "^1.18",
         "mockery/mockery": "^1.6.12",
         "phpstan/phpstan": "^2.1",
-        "phpunit/phpunit": "^10.0"
+        "phpunit/phpunit": "^11.0"
     },
     "autoload": {
         "classmap": [
