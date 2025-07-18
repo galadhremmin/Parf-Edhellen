@@ -11,6 +11,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode;
 use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Foundation\Http\Middleware\ValidatePostSize;
@@ -38,23 +39,14 @@ return Application::configure(basePath: dirname(__DIR__))
         ];
         $middleware->alias($routeMiddleware);
 
-        $webMiddleware = [
-            EncryptCookies::class,
-            AddQueuedCookiesToResponse::class,
-            StartSession::class,
-            ShareErrorsFromSession::class,
-            ValidateCsrfToken::class,
-            ValidatePostSize::class,
-            ConvertEmptyStringsToNull::class,
-        ];
-
-        foreach ($webMiddleware as $m) {
-            $middleware->append($m);
-        }
-
         $middleware->append(EnsureHttpsAndWww::class)
+            ->append(CheckForMaintenanceMode::class)
             ->append(IpGate::class)
+            ->append(StartSession::class)
+            ->append(ValidatePostSize::class)
             ->append(TrimStrings::class)
+            ->append(ConvertEmptyStringsToNull::class)
+            ->append(ValidateCsrfToken::class)
             ->append(InvalidUserGate::class)
             ->append(CarbonLocale::class)
             ->append(LayoutDataLoader::class);
