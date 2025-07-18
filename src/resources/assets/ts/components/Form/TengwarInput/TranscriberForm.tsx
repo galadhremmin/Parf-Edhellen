@@ -32,7 +32,7 @@ function TranscriberForm(props: IProps) {
 
     const updateTranscription = (newText: string, newLanguageId: number) => {
         transcribe(newText, newLanguageId).then((newTranscription) => {
-            fireEventAsync('TranscriberForm', onTranscription, {
+            void fireEventAsync('TranscriberForm', onTranscription, {
                 text: newText,
                 transcription: newTranscription,
             });

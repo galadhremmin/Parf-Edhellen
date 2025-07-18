@@ -13,7 +13,7 @@ export default function Fragments(props: IProps) {
         ev.preventDefault();
 
         if (typeof onClick === 'function') {
-            fireEventAsync('Fragment', onClick, fragment);
+            void fireEventAsync('Fragment', onClick, fragment);
         }
     }
 

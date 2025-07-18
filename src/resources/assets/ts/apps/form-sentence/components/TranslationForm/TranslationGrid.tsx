@@ -68,7 +68,7 @@ export default function TranslationGrid(props: IProps) {
             newValue: value,
         } = ev;
 
-        fireEventAsync('TranslationGrid', onChange, {
+        void fireEventAsync('TranslationGrid', onChange, {
             ...row,
             translation: isEmptyString(value) ? '' : String(value).trim(),
         });

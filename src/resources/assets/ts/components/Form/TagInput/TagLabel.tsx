@@ -18,7 +18,7 @@ function TagLabel(props: IProps) {
 
     const _onTagClick = useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
         if (! ev.target.checked) {
-            fireEvent(`Tag[${tag}]`, onDelete, tag);
+            void fireEvent(`Tag[${tag}]`, onDelete, tag);
         }
     }, [ tag, onDelete ]);
 

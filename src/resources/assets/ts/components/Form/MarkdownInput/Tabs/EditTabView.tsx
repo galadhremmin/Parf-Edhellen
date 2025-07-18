@@ -62,12 +62,12 @@ function EditTabView(props: IProps) {
     []);
 
     const _triggerChange = useCallback((newValue: string) => {
-        fireEvent(name, onChange, newValue);
+        void fireEvent(name, onChange, newValue);
         _triggerPreview(newValue);
     }, [ name, onChange ]);
 
     const _onEnter2ParagraphChange = useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
-        fireEvent(name, onEnter2ParagraphChange, ev.target.checked);
+        void fireEvent(name, onEnter2ParagraphChange, ev.target.checked);
     }, [ name, onEnter2ParagraphChange ]);
 
     const _onMarkdownChange = useCallback((ev: React.ChangeEvent<HTMLTextAreaElement>) => {

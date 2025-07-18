@@ -21,12 +21,12 @@ function InformationForm(props: IProps) {
     } = props;
 
     const _onNicknameChange = useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
-        fireEvent(null, onNicknameChange, ev.target.value);
+        void fireEvent(null, onNicknameChange, ev.target.value);
     }, [ nickname, onNicknameChange ]);
 
     const _onSubmit = useCallback((ev: React.FormEvent<HTMLFormElement>) => {
         ev.preventDefault();
-        fireEvent('InformationForm', onSubmit);
+        void fireEvent('InformationForm', onSubmit);
     }, [ onSubmit ]);
 
     return <form method="post" action="#" onSubmit={_onSubmit}>

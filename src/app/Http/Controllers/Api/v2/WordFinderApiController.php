@@ -30,11 +30,11 @@ class WordFinderApiController extends Controller
                 ->where('language_id', $languageId)
                 ->whereIn('gloss_group_id', $groupIds)
                 ->whereNotIn('translation', $glosses)
-                ->whereNot('translation', 'LIKE', '?%')
                 ->whereNotIn('word', $words)
                 ->whereNotIn('glosses.id', $ids)
                 ->where(DB::raw('LENGTH(normalized_word)'), '>=', 4)
                 ->where('translation', '<>', DB::raw('word'))
+                ->whereNot('word', 'LIKE', '?%')
                 ->inRandomOrder()
                 ->select('translation as gloss', 'word', 'glosses.id')
                 ->first();

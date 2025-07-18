@@ -86,21 +86,21 @@ function Discuss(props: IProps) {
     }, []);
 
     const _onCreateNewPost = useCallback(() => {
-        fireEvent(null, onNewPostCreate, {
+        void fireEvent(null, onNewPostCreate, {
             entityId,
             entityType,
         });
     }, [ onNewPostCreate, entityId, entityType ]);
 
     const _onDiscardNewPost = useCallback(() => {
-        fireEvent(null, onNewPostDiscard, {
+        void fireEvent(null, onNewPostDiscard, {
             entityId,
             entityType,
         });
     }, [ onNewPostDiscard, entityId, entityType ]);
 
     const _onNewPostChange = useCallback((ev: IComponentEvent<IFormChangeData>) => {
-        fireEvent(null, onNewPostChange, {
+        void fireEvent(null, onNewPostChange, {
             change: ev.value,
             entityId,
             entityType,
@@ -108,7 +108,7 @@ function Discuss(props: IProps) {
     }, [ onNewPostChange, entityId, entityType ]);
 
     const _onNewPostSubmit = useCallback((ev: IComponentEvent<IFormOutput>) => {
-        fireEvent(null, onNewPostSubmit, {
+        void fireEvent(null, onNewPostSubmit, {
             ...(threadId ? {
                 entityId,
                 entityType,
@@ -129,7 +129,7 @@ function Discuss(props: IProps) {
             _onDiscardNewPost();
 
             // The component is `null` because `this` reference is finicky for functional components.
-            fireEvent(null, onPageChange, {
+            void fireEvent(null, onPageChange, {
                 pageNumber: ev.value,
                 thread,
             });
@@ -231,29 +231,45 @@ const mapStateToProps = (state: RootReducer, ownProps: IProps) => {
 const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => {
     const actions = new DiscussActions();
     return {
-        onExistingPostChange: (ev) => dispatch(actions.post({
-            forumPostId: ev.value,
-            includeDeleted: true,
-        })),
-        onExistingThreadChange: (ev) => dispatch(actions.thread({
-            id: ev.value,
-        })),
-        onExistingThreadMetadataChange: (ev) => dispatch(actions.threadMetadata(ev.value)),
-        onNewPostChange: (ev) => dispatch(actions.changeNewPost({
-            entityId: ev.value.entityId,
-            entityType: ev.value.entityType,
-            propertyName: ev.value.change.name,
-            value: ev.value.change.value,
-        })),
-        onNewPostCreate: (ev) => dispatch(actions.createNewPost(ev.value)),
-        onNewPostDiscard: (ev) => dispatch(actions.discardNewPost(ev.value)),
-        onNewPostSubmit: (ev) => dispatch(actions.createPost(ev.value)),
-        onPageChange: (ev) => dispatch(actions.thread({
-            entityId: ev.value.thread.entityId,
-            entityType: ev.value.thread.entityType,
-            id: ev.value.thread.id,
-            offset: ev.value.pageNumber,
-        })),
+        onExistingPostChange: (ev) => {
+            dispatch(actions.post({
+                forumPostId: ev.value,
+                includeDeleted: true,
+            }));
+        },
+        onExistingThreadChange: (ev) => {
+            dispatch(actions.thread({
+                id: ev.value,
+                }));
+        },
+        onExistingThreadMetadataChange: (ev) => {
+            dispatch(actions.threadMetadata(ev.value));
+        },
+        onNewPostChange: (ev) => {
+            dispatch(actions.changeNewPost({
+                entityId: ev.value.entityId,
+                entityType: ev.value.entityType,
+                propertyName: ev.value.change.name,
+                value: ev.value.change.value,
+            }));
+        },
+        onNewPostCreate: (ev) => {
+            dispatch(actions.createNewPost(ev.value));
+        },
+        onNewPostDiscard: (ev) => {
+            dispatch(actions.discardNewPost(ev.value));
+        },
+        onNewPostSubmit: (ev) => {
+            dispatch(actions.createPost(ev.value));
+        },
+        onPageChange: (ev) => {
+            dispatch(actions.thread({
+                entityId: ev.value.thread.entityId,
+                entityType: ev.value.thread.entityType,
+                id: ev.value.thread.id,
+                offset: ev.value.pageNumber,
+            }));
+        },
         onReferenceLinkClick: (ev) => {
             const globalEvent = resolve(DI.GlobalEvents);
             globalEvent.fire(globalEvent.loadReference, ev.value);

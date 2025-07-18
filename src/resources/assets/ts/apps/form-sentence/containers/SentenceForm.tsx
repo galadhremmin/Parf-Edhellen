@@ -65,6 +65,8 @@ function SentenceForm(props: IProps) {
         if (bookApi && sentenceId !== 0) {
             bookApi.sentence({ id: sentenceId }).then((s) => {
                 setCurrentSentenceName(s.sentence.name);
+            }).catch(() => {
+                setCurrentSentenceName(null);
             });
         }
     }, [ sentenceId ]);
@@ -90,7 +92,7 @@ function SentenceForm(props: IProps) {
 
         setSubmitted(true);
 
-        fireEvent('SentenceForm', onSubmit, payload);
+        void fireEvent('SentenceForm', onSubmit, payload);
     }, [
         onSubmit,
         sentence,
@@ -177,12 +179,24 @@ const mapStateToProps = (state: RootReducer) => ({
 
 const actions = new SentenceActions();
 const mapDispatchToProps: any = (dispatch: ReduxThunkDispatch) => ({
-    onFragmentChange: (ev) => dispatch(actions.setFragmentField(ev.value.fragment, ev.value.field, ev.value.value)),
-    onMetadataChange: (ev) => dispatch(actions.setMetadataField(ev.value.field, ev.value.value)),
-    onParseTextRequest: (ev) => dispatch(actions.reloadFragments(ev.value)),
-    onSubmit: (ev) => dispatch(actions.saveSentence(ev.value)),
-    onTextChange: (ev) => dispatch(actions.setLatinText(ev.value)),
-    onTranslationChange: (ev) => dispatch(actions.setTranslation(ev.value)),
+    onFragmentChange: (ev) => {
+        dispatch(actions.setFragmentField(ev.value.fragment, ev.value.field, ev.value.value));
+    },
+    onMetadataChange: (ev) => {
+        dispatch(actions.setMetadataField(ev.value.field, ev.value.value));
+    },
+    onParseTextRequest: (ev) => {
+        void dispatch(actions.reloadFragments(ev.value));
+    },
+    onSubmit: (ev) => {
+        void dispatch(actions.saveSentence(ev.value));
+    },
+    onTextChange: (ev) => {
+        dispatch(actions.setLatinText(ev.value));
+    },
+    onTranslationChange: (ev) => {
+        dispatch(actions.setTranslation(ev.value));
+    },
 }) as Partial<IProps>;
 
 export default connect(mapStateToProps, mapDispatchToProps)(SentenceForm);
