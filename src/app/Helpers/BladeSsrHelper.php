@@ -8,11 +8,16 @@ use Spatie\Ssr\Renderer;
 
 class BladeSsrHelper
 {
+    private bool $_enabled;
+
     public function __construct(private ?Renderer $_renderer)
-    { }
+    {
+        $this->_enabled = config('ssr.enabled', false);
+    }
 
     public function render(string $appName, ?array $props = null, array $config = [ 'element' => 'div', 'attributes' => [] ])
     {
+       
         if ($this->_renderer === null) {
             return '';
         }
@@ -35,7 +40,9 @@ class BladeSsrHelper
 
         if (is_array($props)) {
             foreach ($props as $prop => $value) {
-                $this->_renderer->context($prop, $value);
+                if ($this->_enabled) {
+                    $this->_renderer->context($prop, $value);
+                }
 
                 if ($value instanceOf Jsonable) {
                     $value = $value->toJson();
@@ -48,9 +55,9 @@ class BladeSsrHelper
         }
 
         $html[] = ' data-inject-module="'.$appName.'" data-inject-mode="';
-        $html[] = $this->_renderer->enabled() ? 'ssr' : 'async';
+        $html[] = $this->_enabled ? 'ssr' : 'async';
         $html[] = '">';
-        if ($this->_renderer->enabled())  {
+        if ($this->_enabled)  {
             $html[] = $this->_renderer->entry($appName)->render();
         }
         $html[] = '</'.$config['element'].'>';
