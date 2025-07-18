@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import {
     describe,
     expect,
@@ -19,7 +19,7 @@ describe('components/DateLabel', () => {
     });
 
     test('formats ISO string dates appropriately', () => {
-        const dateTime = DateTime.now().minus({ year: 1 }).toISOTime();
+        const dateTime = DateTime.now().minus({ year: 1 }).toISO();
         const { container } = render(<DateLabel dateTime={dateTime} />);
 
         const time = container.querySelector('time');
