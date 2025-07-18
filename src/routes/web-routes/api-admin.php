@@ -9,7 +9,6 @@ use App\Security\RoleConstants;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
-    'namespace' => API_NAMESPACE,
     'prefix' => API_PATH,
     'middleware' => ['auth', 'auth.require-role:'.RoleConstants::Administrators, 'verified'],
 ], function () {

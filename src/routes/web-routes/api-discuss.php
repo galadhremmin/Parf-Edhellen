@@ -7,7 +7,6 @@ use App\Security\RoleConstants;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
-    'namespace' => API_NAMESPACE,
     'prefix' => API_PATH.'/discuss',
 ], function () {
     Route::get('group', [DiscussApiController::class, 'getGroups'])
@@ -48,7 +47,6 @@ Route::group([
 // User restricted API for discuss
 
 Route::group([
-    'namespace' => API_NAMESPACE,
     'prefix' => API_PATH.'/discuss',
     'middleware' => ['auth', 'auth.require-role:'.RoleConstants::Discuss.':verification.notice'],
 ], function () {
@@ -67,7 +65,6 @@ Route::group([
 // Admin restricted API for discuss
 
 Route::group([
-    'namespace' => API_NAMESPACE,
     'prefix' => API_PATH.'/discuss',
     'middleware' => ['auth', 'auth.require-role:'.RoleConstants::Administrators],
 ], function () {
