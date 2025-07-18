@@ -250,9 +250,7 @@ class ImportEldamoCommand extends Command
         $ids = Gloss::active() //
             ->where('gloss_group_id', $eldamoGroup->id) //
             ->whereNotIn('external_id', $externalIds) //
-            ->select('id') //
-            ->get() //
-            ->pluck('id')
+            ->pluck('id') //
             ->toArray();
 
         if (count($ids) < 1) {
@@ -337,13 +335,20 @@ class ImportEldamoCommand extends Command
             // create a new set of inflections based on Eldamo's pattern. These will have
             // to be transitioned at some point in the future.
             if (! isset($this->_inflectionMap[$i->form])) {
-                $inflection = new Inflection([
-                    'name' => $i->form,
-                    'group_name' => 'Eldamo compatibility (do not use)',
-                ]);
-                $inflection->save();
-                $this->_inflectionMap[$inflection->name] = $inflection;
-                $eligibleInflections[] = $inflection;
+                foreach (explode(' ', $i->form) as $form) {
+                    $data = [
+                        'name' => $form,
+                    ];
+                    $inflection = Inflection::where($data)->first();
+                    if ($inflection === null) {
+                        $inflection = Inflection::create($data + [
+                            'group_name' => 'Eldamo compatibility (do not use)',
+                        ]);
+                    }
+
+                    $this->_inflectionMap[$form] = $inflection;
+                    $eligibleInflections[] = $inflection;
+                }
             } else {
                 $inflection = $this->_inflectionMap[$i->form];
                 $eligibleInflections = is_array($inflection) ? $inflection : [$inflection];

@@ -185,8 +185,12 @@ class AccountManager
         return $account;
     }
 
-    public function getAccountByUsername(string $username): ?Account
+    public function getAccountByUsername(?string $username): ?Account
     {
+        if (empty($username)) {
+            return null;
+        }
+
         return Account::where('email', $username)
             ->where('is_master_account', true)
             ->first();

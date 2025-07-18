@@ -13,10 +13,8 @@ class DiscussEventSubscriber
 {
     /**
      * Register the listeners for the subscriber.
-     *
-     * @param  Illuminate\Events\Dispatcher  $events
      */
-    public function subscribe($events)
+    public function subscribe()
     {
         return [
             ContributionDestroyed::class => 'onContributionDestroyed',

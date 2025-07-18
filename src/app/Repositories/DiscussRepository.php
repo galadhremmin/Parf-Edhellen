@@ -26,11 +26,11 @@ use App\Repositories\ValueObjects\ForumThreadsInGroupValue;
 use App\Repositories\ValueObjects\ForumThreadValue;
 use BadMethodCallException;
 use Carbon\Carbon;
-use DB;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class DiscussRepository
 {
@@ -82,7 +82,7 @@ class DiscussRepository
             ->join('forum_posts', 'forum_posts.forum_thread_id', '=', 'forum_threads.id')
             ->join('accounts', 'accounts.id', '=', 'forum_posts.account_id')
             ->whereIn('forum_group_id', $groupIds)
-            ->where('forum_posts.created_at', '>=', Carbon::now()->addMonth(-12))
+            ->where('forum_posts.created_at', '>=', Carbon::now()->addMonths(-12))
             ->where('accounts.has_avatar', 1)
             ->orderBy('forum_posts.created_at', 'desc')
             ->select('forum_posts.account_id', 'forum_group_id', 'accounts.has_avatar', 'accounts.nickname')
@@ -921,7 +921,6 @@ class DiscussRepository
             if ($noOfPosts > 0) {
                 $postId = $postIds->last();
                 $latest = ForumPost::where('id', $postId) //
-                    ->select('account_id') //
                     ->pluck('account_id');
 
                 $thread->account_id = $latest->first();
@@ -953,7 +952,7 @@ class DiscussRepository
     /**
      * Creates an array of incrementing numbers from 1 to `$noOfPages`. `0` is supported.
      *
-     * @return void
+     * @return array
      */
     private function createPageArray(int $noOfPages, int $currentPage = 1)
     {

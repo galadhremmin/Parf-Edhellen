@@ -10,7 +10,7 @@ use App\Models\Gloss;
 use App\Models\Sentence;
 use App\Models\Word;
 use Carbon\Carbon;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class StatisticsRepository
 {
@@ -243,7 +243,10 @@ class StatisticsRepository
     /**
      * Gets growth over the specified time period. Returns an array with `date` and `number_of_items`.
      *
-     * @param  Carbom  $to
+     * @param  array  $tableNames
+     * @param  Carbon  $from
+     * @param  Carbon  $to
+     * @param  array   $accountsPerTable
      * @return array
      */
     private function getGrowthOverTime(array $tableNames, Carbon $from, Carbon $to, array $accountsPerTable = [])

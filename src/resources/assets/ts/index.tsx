@@ -1,8 +1,6 @@
 import { DateTime } from 'luxon';
-import { createRoot, hydrateRoot } from 'react-dom/client';
 
 import inject from './Injector';
-import BookBrowserApp from './apps/book-browser';
 import setupContainer from './di/config';
 import bootstrapServerSideRenderedBootstrapComponents from './utilities/BootstrapBootstrapper';
 
@@ -45,24 +43,10 @@ function renderDates() {
     }
 }
 
-/**
- * Render the website's most important component.
- */
-function renderDictionary() {
-    const container = document.getElementById('ed-search-component');
-    if (container.children.length > 0) {
-        hydrateRoot(container, <BookBrowserApp />);
-    } else {
-        const root = createRoot(container);
-        root.render(<BookBrowserApp />);
-    }
-}
-
 function globalOrchestration() {
     setupContainer();
     bootstrapServerSideRenderedBootstrapComponents();
     renderDates();
-    renderDictionary();
     inject();
 }
 

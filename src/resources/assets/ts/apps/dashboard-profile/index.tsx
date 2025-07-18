@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 
 import Spinner from '@root/components/Spinner';
 import { IProps } from './index._types';
+import registerApp from '../app';
 
 const Inject = (props: IProps) => {
     const {
@@ -14,4 +15,4 @@ const Inject = (props: IProps) => {
     </Suspense>;
 };
 
-export default Inject;
+export default registerApp(Inject);

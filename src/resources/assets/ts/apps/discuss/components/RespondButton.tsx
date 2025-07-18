@@ -8,6 +8,7 @@ import { SecurityRole } from '@root/security';
 
 import { IProps } from './RespondButton._types';
 import UnauthenticatedAlert from './UnauthenticatedAlert';
+import ValidateEmailAlert from './ValidateEmailAlert';
 
 function RespondButton(props: IProps) {
     const {
@@ -18,20 +19,22 @@ function RespondButton(props: IProps) {
 
     const onRespondClick = useCallback((ev: React.MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
-        fireEvent(null, onClick);
+        void fireEvent(null, onClick);
     }, [ onClick ]);
 
-    switch (roleManager.currentRole) {
-        case SecurityRole.Anonymous:
-            return <UnauthenticatedAlert />;
-
-        default:
-            return <button className="btn btn-primary" onClick={onRespondClick}>
-                <TextIcon icon="envelope" />
-                &nbsp;
-                {isNewPost ? 'Create thread' : 'Reply'}
-            </button>;
+    if (roleManager.isAnonymous) {
+        return <UnauthenticatedAlert />;
     }
+
+    if (! roleManager.hasRole(SecurityRole.Discuss)) {
+        return <ValidateEmailAlert />;
+    }
+
+    return <button className="btn btn-primary" onClick={onRespondClick}>
+        <TextIcon icon="envelope" />
+        &nbsp;
+        {isNewPost ? 'Create thread' : 'Reply'}
+    </button>;
 }
 
 export default withPropInjection(RespondButton, {

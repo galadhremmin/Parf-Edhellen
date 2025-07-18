@@ -59,7 +59,7 @@ describe('apps/book-browser/components/SearchResultsContainer', () => {
         render(<SearchResult searchResult={newSearchResult} onClick={onClickSpy} />);
 
         const link = await screen.findByRole('link');
-        fireEvent(link, new MouseEvent('click', {
+        void fireEvent(link, new MouseEvent('click', {
             bubbles: true,
             cancelable: true,
         }));

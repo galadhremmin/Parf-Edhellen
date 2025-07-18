@@ -1,95 +1,65 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Create The Application
-|--------------------------------------------------------------------------
-|
-| The first thing we will do is create a new Laravel application instance
-| which serves as the "glue" for all the components of Laravel, and is
-| the IoC container for the system binding all of the various parts.
-|
-*/
+use App\Http\Middleware\CarbonLocale;
+use App\Http\Middleware\CheckRole;
+use App\Http\Middleware\CustomValidateCsrfToken;
+use App\Http\Middleware\EnsureHttpsAndWww;
+use App\Http\Middleware\InvalidUserGate;
+use App\Http\Middleware\IpGate;
+use App\Http\Middleware\LayoutDataLoader;
+use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\TrimStrings;
+use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
+use Illuminate\Auth\Middleware\Authorize;
+use Illuminate\Auth\Middleware\Authenticate;
+use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode;
+use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
+use Illuminate\Foundation\Http\Middleware\ValidatePostSize;
+use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Routing\Middleware\ValidateSignature;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-$app = new Illuminate\Foundation\Application(
-    realpath(__DIR__.'/../')
-);
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        web: __DIR__.'/../routes/web.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
+    )
+    ->withMiddleware(function (Middleware $middleware) {
+        $routeMiddleware = [
+            'auth' => Authenticate::class,
+            'auth.basic' => AuthenticateWithBasicAuth::class,
+            'can' => Authorize::class,
+            'guest' => RedirectIfAuthenticated::class,
+            'signed' => ValidateSignature::class,
+            'throttle' => ThrottleRequests::class,
+            'verified' => EnsureEmailIsVerified::class,
+            'auth.require-role' => CheckRole::class,  
+        ];
+        $middleware->alias($routeMiddleware);
 
-/*
-|--------------------------------------------------------------------------
-| Bind Important Interfaces
-|--------------------------------------------------------------------------
-|
-| Next, we need to bind some important interfaces into the container so
-| we will be able to resolve them when needed. The kernels serve the
-| incoming requests to this application from both the web and CLI.
-|
-*/
-
-$app->singleton(
-    Illuminate\Contracts\Http\Kernel::class,
-    App\Http\Kernel::class
-);
-
-$app->singleton(
-    App\Interfaces\ISystemLanguageFactory::class,
-    App\Factories\DefaultSystemLanguageFactory::class
-);
-
-$app->singleton(
-    App\Interfaces\IExternalToInternalUrlResolver::class,
-    function () {
-        $externalLinks = \App\Models\GlossGroup::whereNotNull('external_link_format')
-            ->orderBy('id')
-            ->get();
-
-        return new \App\Helpers\ExternalGlossGroupToInternalUrlResolver($externalLinks);
-    }
-);
-
-$app->singleton(
-    App\Interfaces\IMarkdownParser::class,
-    App\Helpers\MarkdownParserWrapper::class
-);
-
-$app->singleton(
-    Illuminate\Contracts\Console\Kernel::class,
-    App\Console\Kernel::class
-);
-
-$app->singleton(
-    App\Repositories\Interfaces\IAuditTrailRepository::class,
-    function ($app) {
-
-        $handlerType = ! $app->runningInConsole()
-            ? App\Repositories\AuditTrailRepository::class
-            : App\Repositories\Noop\NoopAuditTrailRepository::class;
-
-        return $app->make($handlerType);
-    }
-);
-
-$app->singleton(
-    Illuminate\Contracts\Debug\ExceptionHandler::class,
-    function ($app) {
-        // DB logging isn't by design enabled in CLI
-        $handlerType = ! $app->runningInConsole() && config('ed.system_errors_logging')
-            ? App\Exceptions\DBHandler::class
-            : App\Exceptions\Handler::class;
-
-        return $app->make($handlerType);
-    }
-);
-
-/*
-|--------------------------------------------------------------------------
-| Return The Application
-|--------------------------------------------------------------------------
-|
-| This script returns the application instance. The instance is given to
-| the calling script so we can separate the building of the instances
-| from the actual running of the application and sending responses.
-|
-*/
-
-return $app;
+        $middleware->append(EnsureHttpsAndWww::class)
+            ->append(CheckForMaintenanceMode::class)
+            ->append(IpGate::class)
+            ->append(EncryptCookies::class)
+            ->append(AddQueuedCookiesToResponse::class)
+            ->append(StartSession::class)
+            ->append(ShareErrorsFromSession::class)
+            ->append(ValidatePostSize::class)
+            ->append(TrimStrings::class)
+            ->append(ConvertEmptyStringsToNull::class)
+            ->append(CustomValidateCsrfToken::class)
+            ->append(InvalidUserGate::class)
+            ->append(CarbonLocale::class)
+            ->append(LayoutDataLoader::class);
+    })
+    ->withExceptions(function (Exceptions $exceptions) {
+        //
+    })->create();

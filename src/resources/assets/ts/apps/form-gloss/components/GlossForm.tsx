@@ -37,7 +37,7 @@ function GlossForm(props: IProps) {
             value,
         };
 
-        fireEvent(name, onGlossFieldChange, params);
+        void fireEvent(name, onGlossFieldChange, params);
     };
 
     const _onChangeNative = (field: GlossProps, transform: ValueTransformer = defaultTransformer) =>

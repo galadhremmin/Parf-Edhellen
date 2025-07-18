@@ -9,16 +9,6 @@ use Tests\TestCase;
 
 class DiscussApiControllerTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        /**
-         * This disables the exception handling to display the stacktrace on the console
-         * the same way as it shown on the browser
-         */
-        parent::setUp();
-        // $this->withoutExceptionHandling();
-    }
-
     public function test_groups()
     {
         $response = $this->getJson(route('api.discuss.groups'));

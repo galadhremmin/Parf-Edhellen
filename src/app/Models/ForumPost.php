@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 class ForumPost extends ModelBase implements Interfaces\IHasFriendlyName
 {
     use Traits\HasAccount;
@@ -16,17 +19,26 @@ class ForumPost extends ModelBase implements Interfaces\IHasFriendlyName
         ]);
     }
 
-    public function forum_thread()
+    /**
+     * @return BelongsTo<ForumThread>
+     */
+    public function forum_thread(): BelongsTo
     {
         return $this->belongsTo(ForumThread::class);
     }
 
-    public function account_feed()
+    /**
+     * @return BelongsTo<AccountFeed>
+     */
+    public function account_feed(): BelongsTo
     {
         return $this->belongsTo(AccountFeed::class);
     }
 
-    public function forum_post_likes()
+    /**
+     * @return HasMany<ForumPostLike>
+     */
+    public function forum_post_likes(): HasMany
     {
         return $this->hasMany(ForumPostLike::class);
     }

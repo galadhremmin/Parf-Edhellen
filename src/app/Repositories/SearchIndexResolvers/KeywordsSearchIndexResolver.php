@@ -3,7 +3,7 @@
 namespace App\Repositories\SearchIndexResolvers;
 
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class KeywordsSearchIndexResolver extends SearchIndexResolverBase
 {

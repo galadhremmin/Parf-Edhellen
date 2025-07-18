@@ -10,7 +10,16 @@ use Illuminate\Http\Request;
 
 trait CanMapGloss
 {
-    public function mapGloss(Gloss $gloss, Request $request)
+    /**
+     * @return array{
+     *     word: string,
+     *     sense: string,
+     *     keywords: string[],
+     *     translations: Translation[],
+     *     details: GlossDetail[]
+     * }
+     */
+    public function mapGloss(Gloss $gloss, Request $request): array
     {
         $word = $request->input('word.word');
         $sense = $request->input('sense.word.word');

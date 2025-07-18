@@ -9,9 +9,9 @@ use App\Http\Controllers\Api\v2\GlossApiController;
 use App\Http\Controllers\Api\v2\InflectionApiController;
 use App\Http\Controllers\Api\v2\SpeechApiController;
 use App\Http\Controllers\Api\v2\UtilityApiController;
+use Illuminate\Support\Facades\Route;
 
 Route::group([
-    'namespace' => API_NAMESPACE,
     'prefix' => API_PATH,
 ], function () {
 
@@ -55,7 +55,6 @@ Route::group([
 
 // Public, throttled API
 Route::group([
-    'namespace' => API_NAMESPACE,
     'prefix' => API_PATH,
     'middleware' => 'throttle',
 ], function () {

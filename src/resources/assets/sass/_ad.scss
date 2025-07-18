@@ -1,0 +1,22 @@
+.ad {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 0 auto;
+    max-width: 600px;
+    overflow: hidden;
+}
+
+.ed-ad--home > .ad {
+    max-width: none;
+    margin: 4em 0 0 0;
+}
+
+.ed-ad--discuss > .ad {
+    margin-top: 4em;
+}
+
+.ed-ad--sentence > .ad {
+    border: none;
+    max-width: none;
+    margin: auto;
+}

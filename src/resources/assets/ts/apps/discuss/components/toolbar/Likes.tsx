@@ -3,7 +3,6 @@ import React, { useCallback } from 'react';
 
 import { fireEventAsync } from '@root/components/Component';
 import TextIcon from '@root/components/TextIcon';
-import { SecurityRole } from '@root/config';
 import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 import useAnimationOnChange from '@root/utilities/hooks/useAnimationOnChange';
@@ -37,13 +36,13 @@ function Likes(props: IProps) {
         ev.preventDefault();
         try {
             const name = `Likes[${forumThreadId}-${forumPostId}]`;
-            if (roleManager.currentRole === SecurityRole.Anonymous) {
-                fireEventAsync(name, onAuthenticationRequired, 'like this post');
+            if (roleManager.isAnonymous) {
+                void fireEventAsync(name, onAuthenticationRequired, 'like this post');
             } else {
                 await apiConnector.likePost({
                     forumPostId,
                 });
-                fireEventAsync(name, onThreadMetadataChange, {
+                void fireEventAsync(name, onThreadMetadataChange, {
                     entityId,
                     entityType,
                     forumPostId: [ forumPostId ],

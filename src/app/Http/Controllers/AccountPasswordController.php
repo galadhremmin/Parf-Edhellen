@@ -33,7 +33,6 @@ class AccountPasswordController extends Controller
                 },
             ],
             'existing-password' => [
-                'required',
                 'string',
                 function (string $attribute, mixed $value, Closure $fail) use ($account) {
                     if ($account->is_passworded && ! $this->_accountManager->checkPasswordWithAccount($account, $value)) {

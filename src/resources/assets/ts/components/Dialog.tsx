@@ -27,13 +27,13 @@ function Dialog<V>(props: IProps<V>) {
 
     const _onDismissDialog = useCallback((ev: React.MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
-        fireEvent('Dialog', onDismiss);
+        void fireEvent('Dialog', onDismiss);
     }, [ onDismiss ]);
 
     const _onConfirm = useCallback((ev: React.MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
         if (valid) {
-            fireEvent('Dialog', onConfirm, value);
+            void fireEvent('Dialog', onConfirm, value);
         }
     }, [ onConfirm, valid, value ]);
 

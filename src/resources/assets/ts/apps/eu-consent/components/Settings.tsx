@@ -21,7 +21,7 @@ export default function Settings(props: IProps) {
         if (checked) {
             nextConsentedUseCases.push(useCase);
         }
-        fireEvent('Settings', onConsentedUseCasesChange, nextConsentedUseCases);
+        void fireEvent('Settings', onConsentedUseCasesChange, nextConsentedUseCases);
     };
 
     return <>

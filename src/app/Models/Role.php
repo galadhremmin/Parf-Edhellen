@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+
 class Role extends ModelBase
 {
     protected $fillable = ['name'];
@@ -13,7 +15,7 @@ class Role extends ModelBase
             ->select('name', 'id');
     }
 
-    public function accounts()
+    public function accounts(): HasManyThrough
     {
         return $this->hasManyThrough(
             Account::class, AccountRoleRel::class,

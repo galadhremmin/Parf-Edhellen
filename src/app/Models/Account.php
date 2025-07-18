@@ -5,6 +5,10 @@ namespace App\Models;
 use App\Models\Versioning\GlossVersion;
 use App\Security\RoleConstants;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Cache;
@@ -13,6 +17,7 @@ use Illuminate\Support\Facades\Cookie;
 class Account extends Authenticatable implements Interfaces\IHasFriendlyName, MustVerifyEmail
 {
     use Notifiable;
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -35,77 +40,122 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
         'password', 'is_passworded', 'is_master_account', 'master_account_id', 'email_verified_at',
     ];
 
-    public function authorization_provider()
+    /**
+     * @return BelongsTo<AuthorizationProvider>
+     */
+    public function authorization_provider(): BelongsTo
     {
         return $this->belongsTo(AuthorizationProvider::class);
     }
 
-    public function master_account()
+    /**
+     * @return BelongsTo<Account>
+     */
+    public function master_account(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'master_account_id', 'id');
     }
 
-    public function contributions()
+    /**
+     * @return HasMany<Contribution>
+     */
+    public function contributions(): HasMany
     {
         return $this->hasMany(Contribution::class);
     }
 
-    public function flashcard_results()
+    /**
+     * @return HasMany<FlashcardResult>
+     */
+    public function flashcard_results(): HasMany
     {
         return $this->hasMany(FlashcardResult::class);
     }
 
-    public function forum_discussions()
+    /**
+     * @return HasMany<ForumDiscussion>
+     */
+    public function forum_discussions(): HasMany
     {
         return $this->hasMany(ForumDiscussion::class);
     }
 
-    public function forum_post_likes()
+    /**
+     * @return HasMany<ForumPostLike>
+     */
+    public function forum_post_likes(): HasMany
     {
         return $this->hasMany(ForumPostLike::class);
     }
 
-    public function forum_posts()
+    /**
+     * @return HasMany<ForumPost>
+     */
+    public function forum_posts(): HasMany
     {
         return $this->hasMany(ForumPost::class);
     }
 
-    public function forum_threads()
+    /**
+     * @return HasMany<ForumThread>
+     */
+    public function forum_threads(): HasMany
     {
         return $this->hasMany(ForumThread::class);
     }
 
-    public function gloss_inflections()
+    /**
+     * @return HasMany<GlossInflection>
+     */
+    public function gloss_inflections(): HasMany
     {
         return $this->hasMany(GlossInflection::class);
     }
 
-    public function gloss_versions()
+    /**
+     * @return HasMany<GlossVersion>
+     */
+    public function gloss_versions(): HasMany
     {
         return $this->hasMany(GlossVersion::class);
     }
 
-    public function glosses()
+    /**
+     * @return HasMany<Gloss>
+     */
+    public function glosses(): HasMany
     {
         return $this->hasMany(Gloss::class);
     }
 
-    public function sentences()
+    /**
+     * @return HasMany<Sentence>
+     */
+    public function sentences(): HasMany
     {
         return $this->hasMany(Sentence::class);
     }
 
-    public function words()
+    /**
+     * @return HasMany<Word>
+     */
+    public function words(): HasMany
     {
-        return $this->hasMany(Gloss::class);
+        return $this->hasMany(Word::class);
     }
 
-    public function linked_accounts()
+    /**
+     * @return HasMany<Account>
+     */
+    public function linked_accounts(): HasMany
     {
         return $this->hasMany(Account::class, 'master_account_id', 'id');
     }
 
-    public function roles()
+    /**
+     * @return HasManyThrough<Role>
+     */
+    public function roles(): HasManyThrough
     {
         return $this->hasManyThrough(
             Role::class, AccountRoleRel::class,
@@ -121,14 +171,16 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
         return $this->nickname;
     }
 
-    public function memberOf(string $roleName)
-    {
+    public function getAllRoles() {
         $user = $this;
-        $roles = Cache::remember('ed.rol.'.$user->id, 5 * 60 /* seconds */, function () use ($user) {
+        return Cache::remember('ed.rol.'.$user->id, 5 * 60 /* seconds */, function () use ($user) {
             return Role::forAccount($user)->pluck('name');
         });
+    }
 
-        return $roles->search($roleName) !== false;
+    public function memberOf(string $roleName)
+    {
+        return $this->getAllRoles()->search($roleName) !== false;
     }
 
     public function addMembershipTo(string $roleName)
