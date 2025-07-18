@@ -9,7 +9,6 @@ use App\Http\Controllers\Api\v2\SubscriptionApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
-    'namespace' => API_NAMESPACE,
     'prefix' => API_PATH,
     'middleware' => 'auth',
 ], function () {

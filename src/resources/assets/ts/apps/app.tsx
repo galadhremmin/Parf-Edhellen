@@ -1,5 +1,7 @@
+/* eslint-env node */
+/* global context, dispatch */
 declare global {
-    var context: { props?: Record<string, any> };
+    const context: { props?: Record<string, any> };
     function dispatch(html: string): void;
 }
 
@@ -15,7 +17,7 @@ export default function registerApp<P>(App: FunctionComponent<P> | ComponentClas
     }
 
     // Compile an initial state
-    const { props } = context;
+    const props = context?.props || {};
 
     setupContainer();
     const render = ReactDOMServer.renderToString(

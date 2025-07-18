@@ -18,7 +18,7 @@ function UnusualLanguagesWarning({
             <p>
                 You can view these words by clicking the button below. You will not be asked again (unless you clear your browser's local storage!)
             </p>
-            <button className="btn btn-secondary" onClick={() => fireEvent('UnusualLanguagesWarning', onOverrideOptionTriggered)}>
+            <button className="btn btn-secondary" onClick={() => void fireEvent('UnusualLanguagesWarning', onOverrideOptionTriggered)}>
                 I understand - show me the words!
             </button>
         </>}

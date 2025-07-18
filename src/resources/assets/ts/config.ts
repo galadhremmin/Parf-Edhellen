@@ -32,10 +32,12 @@ export const LearnMoreWebFeedUrl = 'https://en.wikipedia.org/wiki/Web_feed';
 
 export const AnonymousAvatarPath = '/img/anonymous-profile-picture.png';
 
-export enum SecurityRole {
-    Anonymous = 'ed-anonymous',
-    User = 'ed-user',
-    Administrator = 'ed-admin',
+export const enum SecurityRole {
+    Anonymous = 'Anonymous',
+    Administrator = 'Administrators',
+    User = 'Users',
+    Root = 'Root',
+    Discuss = 'Discuss',
 }
 
 export const CommonPaths = {

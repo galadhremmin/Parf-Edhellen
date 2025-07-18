@@ -5,7 +5,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 module.exports = [
     baseConfig.filter(c => c.target === 'node')[0],
     merge(
-        baseConfig.filter(c => target === 'web')[0],
+        baseConfig.filter(c => c.target === 'web')[0],
         {
             devtool: false,
             optimization: {
@@ -23,8 +23,6 @@ module.exports = [
                     }),
                 ],
             },
-        }
+        },
     ),
 ];
-
-

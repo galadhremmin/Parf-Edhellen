@@ -6,6 +6,7 @@ use App\Mail\AccountMergeMail;
 use App\Models\Account;
 use App\Models\AccountMergeRequest;
 use App\Models\AuthorizationProvider;
+use App\Security\RoleConstants;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
@@ -30,23 +31,17 @@ class AccountMergeControllerTest extends TestCase
                 'logo_file_name' => 'unit-test-merge-2.jpg',
             ]),
         ];
-
-        $uuid1 = (string) Str::uuid();
-        $account1 = Account::create([
-            'nickname' => $uuid1,
-            'email' => 'private1@domain.com',
-            'identity' => $uuid1,
+        /** @var Account */
+        $account1 = Account::factory()->createOne([
             'authorization_provider_id' => $providers[0]->id,
-            'profile' => 'Lots of personal data.',
         ]);
-        $uuid2 = (string) Str::uuid();
-        $account2 = Account::create([
-            'nickname' => $uuid2,
-            'email' => 'private1@domain.com',
-            'identity' => $uuid2,
+        /** @var Account */
+        $account2 = Account::factory()->createOne([
             'authorization_provider_id' => $providers[1]->id,
-            'profile' => 'Lots of personal data.',
         ]);
+
+        $account1->addMembershipTo(RoleConstants::Users);
+        $account2->addMembershipTo(RoleConstants::Users);
 
         $mail = Mail::fake();
 

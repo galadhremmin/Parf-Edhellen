@@ -25,6 +25,7 @@ const entry = readdirSync(path.resolve(sourcePath, 'apps')) //
 
 const clientConfig = {
   entry: {
+    ads: `${sourcePath}/ads.ts`,
     index: `${sourcePath}/index.tsx`,
     'style-auth': `${sourcePath}/styles/auth.scss`,
     'style-timeline': `${sourcePath}/styles/timeline.scss`,

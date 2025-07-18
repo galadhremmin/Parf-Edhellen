@@ -7,7 +7,6 @@ use App\Http\Controllers\Resources\DiscussController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
-    'namespace' => 'Resources',
     'prefix' => 'contribute',
     'middleware' => ['auth'],
 ], function () {
@@ -19,7 +18,6 @@ Route::group([
 
 // Restricted resources
 Route::group([
-    'namespace' => 'Resources',
     'prefix' => 'contribute',
     'middleware' => ['auth', 'verified'],
 ], function () {

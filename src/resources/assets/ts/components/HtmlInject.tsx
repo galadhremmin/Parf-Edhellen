@@ -138,7 +138,7 @@ export default class HtmlInject extends React.Component<IProps, IState> {
         ev: React.MouseEvent<HTMLAnchorElement>) {
         ev.preventDefault();
 
-        fireEvent('HtmlInjectComponent', this.props.onReferenceLinkClick, {
+        void fireEvent('HtmlInjectComponent', this.props.onReferenceLinkClick, {
             languageShortName,
             normalizedWord,
             word,

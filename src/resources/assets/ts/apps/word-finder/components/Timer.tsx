@@ -19,7 +19,7 @@ function Timer(props: IProps) {
 
         const timer = window.setInterval(() => {
             const now  = DateTime.local();
-            fireEvent('Timer', onTick, now.toMillis());
+            void fireEvent('Timer', onTick, now.toMillis());
         }, 1000);
 
         return () => {

@@ -40,12 +40,12 @@ describe('components/Form', () => {
             const input = await wrapper.findByRole('textbox');
 
             // add a tag to the array of tags.
-            fireEvent.change(input, {
+            void fireEvent.change(input, {
                 target: {
                     value: inject,
                 },
             });
-            fireEvent.keyDown(input, {
+            void fireEvent.keyDown(input, {
                 key: 'Enter',
             });
 
@@ -63,12 +63,12 @@ describe('components/Form', () => {
             const input = await wrapper.findByRole('textbox');
 
             // add a tag to the array of tags.
-            fireEvent.change(input, {
+            void fireEvent.change(input, {
                 target: {
                     value: inject,
                 },
             });
-            fireEvent.keyDown(input, {
+            void fireEvent.keyDown(input, {
                 key: 'Enter',
             });
         });

@@ -26,7 +26,7 @@ function StickyPost(props: IProps) {
                 sticky: ! isSticky,
             });
 
-            fireEventAsync(`StickyPost[${id}]`, onThreadChange, id);
+            void fireEventAsync(`StickyPost[${id}]`, onThreadChange, id);
         } catch (ex) {
             alert(`Failed to apply stickiness: ${ex}`);
         }

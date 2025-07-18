@@ -8,6 +8,7 @@ use App\Mail\ForumPostOnProfileMail;
 use App\Models\Account;
 use App\Models\ForumPost;
 use App\Repositories\MailSettingRepository;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Mail;
 
 class DiscussMailEventSubscriber
@@ -26,6 +27,7 @@ class DiscussMailEventSubscriber
     {
         return [
             ForumPostCreated::class => 'onForumPostCreated',
+            Verified::class => 'onAccountVerified',
         ];
     }
 
@@ -69,6 +71,19 @@ class DiscussMailEventSubscriber
 
             Mail::to($recipient->email)->queue($mail);
         }
+    }
+
+    public function onAccountVerified(Verified $event): void
+    {
+        /**
+         * Even though the interface of `Verified` isn't compatible with `Account`, we know that 
+         * the event will always be an instance of `Account` because the event is only dispatched
+         * when an account is verified.
+         * 
+         * @var Account
+         */
+        $account = $event->user;
+        $account->addMembershipTo(\App\Security\RoleConstants::Discuss);
     }
 
     private function notifyNewPostOnProfile(int $accountId, ForumPostCreated $event): bool

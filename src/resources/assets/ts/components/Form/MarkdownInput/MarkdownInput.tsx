@@ -46,7 +46,11 @@ function MarkdownInput(props: IProps) {
         configCacheRef.current = configCacheFactory();
         configCacheRef.current?.get().then((config) => {
             setEnter2Paragraph(config.enter2Paragraph);
+        }).catch(() => {
+            // If the cache fails, we assume the default value:
+            setEnter2Paragraph(true);
         });
+
     }, []);
 
     const _onOpenTab = (ev: IComponentEvent<Tab>) => {

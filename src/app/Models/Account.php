@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Versioning\GlossVersion;
 use App\Security\RoleConstants;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Cookie;
 class Account extends Authenticatable implements Interfaces\IHasFriendlyName, MustVerifyEmail
 {
     use Notifiable;
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -169,14 +171,16 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
         return $this->nickname;
     }
 
-    public function memberOf(string $roleName)
-    {
+    public function getAllRoles() {
         $user = $this;
-        $roles = Cache::remember('ed.rol.'.$user->id, 5 * 60 /* seconds */, function () use ($user) {
+        return Cache::remember('ed.rol.'.$user->id, 5 * 60 /* seconds */, function () use ($user) {
             return Role::forAccount($user)->pluck('name');
         });
+    }
 
-        return $roles->search($roleName) !== false;
+    public function memberOf(string $roleName)
+    {
+        return $this->getAllRoles()->search($roleName) !== false;
     }
 
     public function addMembershipTo(string $roleName)

@@ -4,6 +4,7 @@ namespace Tests\Unit\Api;
 
 use App\Helpers\StorageHelper;
 use App\Models\Account;
+use App\Security\RoleConstants;
 use Exception;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
@@ -16,15 +17,11 @@ class AccountApiControllerTest extends TestCase
 
     public function test_edited()
     {
-        $uuid = (string) Str::uuid();
         try {
-            $account = Account::create([
-                'nickname' => $uuid,
-                'email' => 'private@domain.com',
-                'identity' => $uuid,
-                'authorization_provider_id' => 1000,
-                'profile' => 'Lots of personal data.',
-            ]);
+            /** @var Account */
+            $account = Account::factory()->createOne();
+
+            $account->addMembershipTo(RoleConstants::Users);
 
             $newNickname = (string) Str::uuid();
             $newIntroduction = 'No personal data';
@@ -51,16 +48,12 @@ class AccountApiControllerTest extends TestCase
 
     public function test_avatar()
     {
-        $uuid = (string) Str::uuid();
         $avatarPath = null;
         try {
-            $account = Account::create([
-                'nickname' => $uuid,
-                'email' => 'private@domain.com',
-                'identity' => $uuid,
-                'authorization_provider_id' => 1000,
-                'profile' => 'Lots of personal data.',
-            ]);
+            /** @var Account */
+            $account = Account::factory()->createOne();
+
+            $account->addMembershipTo(RoleConstants::Users);
 
             $newAvatar = UploadedFile::fake()->image('avatar.gif', 200, 200);
 
@@ -87,15 +80,11 @@ class AccountApiControllerTest extends TestCase
 
     public function test_deletion()
     {
-        $uuid = (string) Str::uuid();
         try {
-            $account = Account::create([
-                'nickname' => $uuid,
-                'email' => 'private@domain.com',
-                'identity' => $uuid,
-                'authorization_provider_id' => 1000,
-                'profile' => 'Lots of personal data.',
-            ]);
+            /** @var Account */
+            $account = Account::factory()->createOne();
+
+            $account->addMembershipTo(RoleConstants::Users);
 
             $response = $this->actingAs($account)
                 ->delete(route('api.account.delete', ['id' => $account->id]));
@@ -116,22 +105,13 @@ class AccountApiControllerTest extends TestCase
 
     public function test_unauthorized_to_delete()
     {
-        $uuid1 = (string) Str::uuid();
-        $account1 = Account::create([
-            'nickname' => $uuid1,
-            'email' => 'private1@domain.com',
-            'identity' => $uuid1,
-            'authorization_provider_id' => 1000,
-            'profile' => 'Lots of personal data.',
-        ]);
-        $uuid2 = (string) Str::uuid();
-        $account2 = Account::create([
-            'nickname' => $uuid2,
-            'email' => 'private2@domain.com',
-            'identity' => $uuid2,
-            'authorization_provider_id' => 2000,
-            'profile' => 'Lots of personal data.',
-        ]);
+        /** @var Account */
+        $account1 = Account::factory()->createOne();
+        /** @var Account */
+        $account2 = Account::factory()->createOne();
+
+        $account1->addMembershipTo(RoleConstants::Users);
+        $account2->addMembershipTo(RoleConstants::Users);
 
         $path = route('api.account.delete', ['id' => $account1->id]);
         $this->delete($path)

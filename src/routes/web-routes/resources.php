@@ -5,12 +5,10 @@
 use App\Http\Controllers\Resources\DiscussController;
 use Illuminate\Support\Facades\Route;
 
-Route::group([
-    'namespace' => 'Resources',
-], function () {
+Route::group([], function () {
     Route::get('discuss', [DiscussController::class, 'index'])
         ->name('discuss.index');
-    Route::get('discuss/{id}-{slug?}', 'DiscussController@group')
+    Route::get('discuss/{id}-{slug?}', [DiscussController::class,'group'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
         ->name('discuss.group');
     Route::get('discuss/{groupId}-{groupSlug?}/{id}-{slug?}', [DiscussController::class, 'show'])
