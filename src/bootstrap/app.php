@@ -44,7 +44,6 @@ return Application::configure(basePath: dirname(__DIR__))
             StartSession::class,
             ShareErrorsFromSession::class,
             ValidateCsrfToken::class,
-            SubstituteBindings::class,
             ValidatePostSize::class,
             ConvertEmptyStringsToNull::class,
         ];
