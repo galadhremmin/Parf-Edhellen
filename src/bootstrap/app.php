@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\CarbonLocale;
+use App\Http\Middleware\CustomValidateCsrfToken;
 use App\Http\Middleware\EnsureHttpsAndWww;
 use App\Http\Middleware\InvalidUserGate;
 use App\Http\Middleware\IpGate;
@@ -13,9 +14,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode;
 use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
-use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Foundation\Http\Middleware\ValidatePostSize;
-use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
@@ -48,7 +47,7 @@ return Application::configure(basePath: dirname(__DIR__))
             ->append(ValidatePostSize::class)
             ->append(TrimStrings::class)
             ->append(ConvertEmptyStringsToNull::class)
-            ->append(ValidateCsrfToken::class)
+            ->append(CustomValidateCsrfToken::class)
             ->append(InvalidUserGate::class)
             ->append(CarbonLocale::class)
             ->append(LayoutDataLoader::class);
