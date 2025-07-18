@@ -12,7 +12,6 @@ use App\Http\Controllers\Api\v2\UtilityApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
-    'namespace' => API_NAMESPACE,
     'prefix' => API_PATH,
 ], function () {
 
@@ -56,7 +55,6 @@ Route::group([
 
 // Public, throttled API
 Route::group([
-    'namespace' => API_NAMESPACE,
     'prefix' => API_PATH,
     'middleware' => 'throttle',
 ], function () {

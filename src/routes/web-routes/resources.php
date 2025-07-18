@@ -5,9 +5,7 @@
 use App\Http\Controllers\Resources\DiscussController;
 use Illuminate\Support\Facades\Route;
 
-Route::group([
-    'namespace' => 'Resources',
-], function () {
+Route::group([], function () {
     Route::get('discuss', [DiscussController::class, 'index'])
         ->name('discuss.index');
     Route::get('discuss/{id}-{slug?}', [DiscussController::class,'group'])
