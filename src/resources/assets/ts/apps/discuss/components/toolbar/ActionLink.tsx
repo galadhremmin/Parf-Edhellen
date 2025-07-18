@@ -12,7 +12,7 @@ export default function ActionLink(props: IProps) {
 
     const _onClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
-        fireEvent('ActionLink', onClick, null);
+        void fireEvent('ActionLink', onClick, null);
     }
 
     return <a href="#" onClick={_onClick}>

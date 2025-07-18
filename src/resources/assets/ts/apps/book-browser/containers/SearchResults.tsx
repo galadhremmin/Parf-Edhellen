@@ -35,13 +35,7 @@ export function SearchResults(props: IProps) {
     useEffect(() => {
         // SessionStorage is sometimes unavailable, like within privacy mode or unit testing mode. Provide a graceful
         // fallback in these situations.
-        try {
-            enableTipsCacheRef.current = Cache.withSessionStorage(() => Promise.resolve(true), EnableTipsCacheKey);
-        } catch (ex) {
-            console.warn(ex);
-            enableTipsCacheRef.current = Cache.withMemoryStorage(() => Promise.resolve(true), EnableTipsCacheKey);
-        }
-
+        enableTipsCacheRef.current = Cache.withTransientStorage(() => Promise.resolve(true), EnableTipsCacheKey);
         enableTipsCacheRef.current?.get().then((nextEnableTips: boolean) => {
             setEnableTips(nextEnableTips);
         }).catch (err => {
@@ -66,7 +60,7 @@ export function SearchResults(props: IProps) {
             searchResult,
             updateBrowserHistory: true,
         };
-        dispatch(actionsRef.current?.expandSearchResult(payload));
+        void dispatch(actionsRef.current?.expandSearchResult(payload));
         _onDismissInstructions();
     }
 
@@ -77,12 +71,12 @@ export function SearchResults(props: IProps) {
 
     const  _onNextSearchResult = (ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
-        props.dispatch(actionsRef.current?.selectNextResult(+1));
+        void dispatch(actionsRef.current?.selectNextResult(+1));
     }
 
     const  _onPreviousSearchResult = (ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
-        dispatch(actionsRef.current?.selectNextResult(-1));
+        void dispatch(actionsRef.current?.selectNextResult(-1));
     }
 
     const searching = props.word.length > 0;

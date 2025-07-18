@@ -12,6 +12,7 @@ import rootReducer from './reducers';
 import SentenceForm from './containers/SentenceForm';
 
 import '@root/components/AgGrid.scss';
+import registerApp from '../app';
 
 const store = configureStore({
     reducer: rootReducer,
@@ -55,4 +56,4 @@ const Inject = (props: IProps) => {
     </Provider>;
 };
 
-export default Inject;
+export default registerApp(Inject);

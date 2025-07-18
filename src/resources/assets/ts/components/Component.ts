@@ -1,5 +1,6 @@
 import {
     ComponentEventHandler,
+    ComponentFiredEvent,
     ComponentOrName,
     IComponentEvent,
 } from './Component._types';
@@ -9,7 +10,7 @@ interface INamedComponent {
 }
 
 export const fireEvent = <V>(componentOrName: ComponentOrName, ev: ComponentEventHandler<V>, value: V = undefined,
-    async = false) => {
+    async = false): ComponentFiredEvent => {
     if (componentOrName === undefined) {
         throw new Error('Component reference is undefined.');
     }
@@ -30,7 +31,7 @@ export const fireEvent = <V>(componentOrName: ComponentOrName, ev: ComponentEven
     }
 
     if (typeof ev !== 'function') {
-        return false;
+        return Promise.resolve(false);
     }
 
     const args: IComponentEvent<V> = {
@@ -39,14 +40,17 @@ export const fireEvent = <V>(componentOrName: ComponentOrName, ev: ComponentEven
     };
 
     if (async) {
-        window.setTimeout(() => {
-            ev(args);
-        }, 0);
+        return new Promise((resolve) => {
+            requestIdleCallback(() => {
+                ev(args);
+                resolve(true);
+            });
+        });
     } else {
         ev(args);
     }
 
-    return true;
+    return Promise.resolve(true);
 };
 
 export const fireEventAsync = <V>(componentOrName: ComponentOrName, ev: ComponentEventHandler<V>,

@@ -76,7 +76,7 @@ function uploadImage(imageFile: File, changeEvent: ComponentEventHandler<File>) 
 
         return resizedImageFile;
     }).then(resizedImageFile => {
-        fireEventAsync('Avatar', changeEvent, resizedImageFile ?? imageFile);
+        void fireEventAsync('Avatar', changeEvent, resizedImageFile ?? imageFile);
     }).catch((error) => {
         // todo - send error somewhere
         alert('Your avatar unfortunately can\'t be changed due to an expected error. Error: ' + error);

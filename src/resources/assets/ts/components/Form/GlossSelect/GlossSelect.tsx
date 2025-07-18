@@ -87,7 +87,7 @@ function GlossSelect(props: IProps) {
 
     const _onChange = useCallback((ev: IComponentEvent<ISuggestionEntity>) => {
         setComplexValue(ev.value);
-        fireEvent(name, onChange, ev.value ? ev.value.id : null);
+        void fireEvent(name, onChange, ev.value ? ev.value.id : null);
     }, [ setComplexValue, name, onChange ]);
 
     return <EntitySelect<ISuggestionEntity>

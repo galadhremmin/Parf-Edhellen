@@ -22,7 +22,6 @@
       data-inject-prop-flashcard-id="{{ $flashcard->id }}"
       data-inject-prop-tengwar-mode="{{ $flashcard->language->tengwar_mode }}"></div>
   </div>
-      
 @endsection
 @section('styles')
   <link href="@assetpath(/css/app.flashcard.css)" rel="stylesheet">

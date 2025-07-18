@@ -49,7 +49,7 @@ describe('components/Form', () => {
             />);
 
             result.findAllByRole('option').then((options) => {
-                fireEvent.change(options[0].parentElement, {
+                void fireEvent.change(options[0].parentElement, {
                     target: {
                         value: value.x,
                     }
@@ -75,7 +75,7 @@ describe('components/Form', () => {
             />);
 
             result.findAllByRole('option').then((options) => {
-                fireEvent.change(options[0].parentElement, {
+                void fireEvent.change(options[0].parentElement, {
                     target: {
                         value: value.x,
                     }

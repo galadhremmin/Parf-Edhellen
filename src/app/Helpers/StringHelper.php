@@ -137,7 +137,7 @@ class StringHelper
     /**
      * Reversed normalization, attempting to convert a normalized string into its accented version.
      *
-     * @return void
+     * @return string
      */
     public static function reverseNormalization(string $str)
     {

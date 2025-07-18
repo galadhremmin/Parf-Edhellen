@@ -5,6 +5,7 @@
 use App\Http\Controllers\Authentication\AuthenticationController;
 use App\Http\Controllers\Authentication\OAuthAuthenticationController;
 use App\Http\Controllers\Authentication\UsernamePasswordAuthenticationController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/login', [AuthenticationController::class, 'login'])->name('login');
 Route::get('/logout', [AuthenticationController::class, 'logout'])->name('logout');

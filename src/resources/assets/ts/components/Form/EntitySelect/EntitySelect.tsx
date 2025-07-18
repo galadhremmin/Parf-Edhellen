@@ -122,7 +122,7 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
             onSuggest,
         } = this.props;
 
-        fireEvent(name, onSuggest, text);
+        void fireEvent(name, onSuggest, text);
     }
 
     private _applyValue(newValue: T = null) {
@@ -148,7 +148,7 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
         }
 
         if (newValue !== value) {
-            fireEvent(name, onChange, newValue);
+            void fireEvent(name, onChange, newValue);
         }
 
         if (newValue !== null) {
@@ -254,7 +254,7 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
             onClearSuggestions,
         } = this.props;
 
-        fireEvent(name, onClearSuggestions);
+        void fireEvent(name, onClearSuggestions);
     }
 
     private _onSuggestionSelected = (ev: React.FormEvent<any>, data: SuggestionSelectedEventData<T>) => {

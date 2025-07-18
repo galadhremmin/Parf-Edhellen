@@ -21,7 +21,7 @@ import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 import './MarkdownInput.scss';
 
-const DefaultConfigCacheFactory = () => Cache.withLocalStorage<IComponentConfig>(() => Promise.resolve({
+const DefaultConfigCacheFactory = () => Cache.withPersistentStorage<IComponentConfig>(() => Promise.resolve({
     enter2Paragraph: true,
 }), 'components.MarkdownInput.config');
 
@@ -46,7 +46,11 @@ function MarkdownInput(props: IProps) {
         configCacheRef.current = configCacheFactory();
         configCacheRef.current?.get().then((config) => {
             setEnter2Paragraph(config.enter2Paragraph);
+        }).catch(() => {
+            // If the cache fails, we assume the default value:
+            setEnter2Paragraph(true);
         });
+
     }, []);
 
     const _onOpenTab = (ev: IComponentEvent<Tab>) => {

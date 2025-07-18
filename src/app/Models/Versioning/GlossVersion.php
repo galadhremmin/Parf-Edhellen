@@ -11,6 +11,8 @@ use App\Models\Sense;
 use App\Models\Speech;
 use App\Models\Traits\HasAccount;
 use App\Models\Word;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class GlossVersion extends ModelBase implements IHasFriendlyName
 {
@@ -22,42 +24,42 @@ class GlossVersion extends ModelBase implements IHasFriendlyName
         'has_details', 'label', 'source', 'etymology', 'version_change_flags', 'gloss_id',
     ];
 
-    public function gloss()
+    public function gloss(): BelongsTo
     {
         return $this->belongsTo(Gloss::class);
     }
 
-    public function gloss_details()
+    public function gloss_details(): HasMany
     {
         return $this->hasMany(GlossDetailVersion::class);
     }
 
-    public function translations()
+    public function translations(): HasMany
     {
         return $this->hasMany(TranslationVersion::class);
     }
 
-    public function sense()
+    public function sense(): BelongsTo
     {
         return $this->belongsTo(Sense::class);
     }
 
-    public function gloss_group()
+    public function gloss_group(): BelongsTo
     {
         return $this->belongsTo(GlossGroup::class);
     }
 
-    public function language()
+    public function language(): BelongsTo
     {
         return $this->belongsTo(Language::class);
     }
 
-    public function word()
+    public function word(): BelongsTo
     {
         return $this->belongsTo(Word::class);
     }
 
-    public function speech()
+    public function speech(): BelongsTo
     {
         return $this->belongsTo(Speech::class);
     }

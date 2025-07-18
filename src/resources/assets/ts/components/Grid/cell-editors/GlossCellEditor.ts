@@ -176,18 +176,18 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
                 this._onSelectNextSuggestion();
                 break;
             default:
-                this._onSuggest();
+                void this._onSuggest();
                 break;
         }
     }
 
-    private _onSuggest = debounce(500, async () => {
+    private _onSuggest = debounce(500, async (): Promise<void> => {
         const {
             _inputElement: inputElement,
         } = this;
 
         const text = inputElement.value;
-        const suggestions = await this.suggestGloss(text);
+        const suggestions: ISuggestionEntity[] = await this.suggestGloss(text);
         this._applySuggestions(suggestions);
     });
 

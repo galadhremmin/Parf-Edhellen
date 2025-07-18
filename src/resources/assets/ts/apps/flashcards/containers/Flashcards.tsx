@@ -29,7 +29,7 @@ export default class Flashcards extends React.Component<IProps, IState> {
     private _api = new FlashcardApiConnector();
 
     public componentDidMount() {
-        this._loadCard();
+        void this._loadCard();
     }
 
     public render() {
@@ -173,11 +173,11 @@ export default class Flashcards extends React.Component<IProps, IState> {
 
         const optionKey = 'option';
         const option = (ev.target as HTMLAnchorElement).dataset[optionKey];
-        this._testOption(option);
+        void this._testOption(option);
     }
 
     private _onNextClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
-        this._loadCard();
+        void this._loadCard();
     }
 }

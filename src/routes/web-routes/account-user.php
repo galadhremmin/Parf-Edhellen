@@ -7,6 +7,7 @@ use App\Http\Controllers\AccountNotificationController;
 use App\Http\Controllers\AccountPasswordController;
 use App\Http\Controllers\AccountSecurityController;
 use App\Http\Controllers\AccountVerificationController;
+use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->prefix('account')->group(function () {
 

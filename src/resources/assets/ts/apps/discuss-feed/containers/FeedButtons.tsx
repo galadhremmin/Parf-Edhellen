@@ -13,9 +13,8 @@ function Feeds({
     roleManager,
     subscriptionApi,
 }: IProps) {
-    const isAuthenticated = roleManager.currentRole !== SecurityRole.Anonymous;
     return <div className="text-end">
-        {isAuthenticated && <SubscribeButton className="me-2" groupId={groupId} subscriptionApi={subscriptionApi} />}
+        {! roleManager.isAnonymous && <SubscribeButton className="me-2" groupId={groupId} subscriptionApi={subscriptionApi} />}
         <FeedButton feedUrlFactory={feedUrlFactory} groupId={groupId}  />
     </div>;
 }

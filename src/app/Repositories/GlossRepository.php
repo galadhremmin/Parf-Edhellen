@@ -21,6 +21,7 @@ use App\Models\Word;
 use App\Repositories\Enumerations\GlossChange;
 use App\Repositories\ValueObjects\GlossVersionsValue;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -51,21 +52,19 @@ class GlossRepository
      * @param  array  $glossIds  list of glosses
      * @param  int  $languageId  optional language parameter
      * @param  bool  $includeOld  optional is_old filter (false filters them out)
-     * @param  callable  $filters  optional filters, refer to `createGlossQuery` for more information.
+     * @param  array  $filters  optional filters, refer to `createGlossQuery` for more information.
      * @return array
      */
     public function getGlossesByExpandingViaSense(array $glossIds, $languageId = 0, $includeOld = true, $filters = [])
     {
-        $senseIds = Gloss::whereIn('id', $glossIds)
-            ->select('sense_id')
-            ->get()
+        $senseIds = Gloss::whereIn('id', $glossIds) //
             ->pluck('sense_id');
 
         $maximumNumberOfResources = config('ed.gloss_repository_maximum_results');
         $glosses = self::createGlossQuery($languageId, $includeOld, function ($q) use ($senseIds, $filters) {
             $q = $q->whereIn('g.sense_id', $senseIds);
 
-            if (! empty($filters)) {
+            if (is_array($filters)) {
                 foreach ($filters as $column => $values) {
                     $q = $q->whereIn($column, $values);
                 }
@@ -206,12 +205,12 @@ class GlossRepository
         $gloss->exists = true;
 
         $gloss->load('account', 'gloss_group', 'language', 'sense', 'sense.word', 'speech', 'word');
-        $gloss->translations = $version->translations->map(function ($t) {
+        $gloss->setAttribute('translations', $version->translations->map(function ($t) {
             return new TranslationVersion($t->getAttributes());
-        });
-        $gloss->gloss_details = $version->gloss_details->map(function ($d) {
+        }));
+        $gloss->setAttribute('gloss_details', $version->gloss_details->map(function ($d) {
             return new GlossDetail($d->getAttributes());
-        });
+        }));
 
         return $gloss;
     }
@@ -602,13 +601,8 @@ class GlossRepository
      *
      * The method returns a query builder object, with a SELECT instruction. You can optionally append
      * further filters, and simply _get()_ when ready.
-     *
-     * @param  int  $languageId
-     * @param  bool  $latest
-     * @param  bool  $includeOld
-     * @return Illuminate\Database\Eloquent\Builder
      */
-    protected static function createGlossQuery($languageId = 0, $includeOld = true, ?callable $whereCallback = null)
+    protected static function createGlossQuery(int $languageId = 0, bool $includeOld = true, ?callable $whereCallback = null): Builder
     {
         $filters = [
             ['g.is_deleted', 0],

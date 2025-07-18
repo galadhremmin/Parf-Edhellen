@@ -41,6 +41,8 @@ export default function AccountFeed({
                     setCursor(response.nextCursor);
                 }
             }
+        }).catch(() => {
+            // Refer to existing state, don't update.
         }).finally(() => {
             setLoading(false);
         });

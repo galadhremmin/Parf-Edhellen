@@ -3,8 +3,10 @@ import axios, {
     AxiosError,
     AxiosInstance,
     AxiosPromise,
+    AxiosRequestConfig,
     AxiosResponse,
 } from 'axios';
+import Cookies from 'js-cookie';
 
 import {
     ApiExceptionCollectorMethod,
@@ -122,21 +124,14 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': this._getCsrfToken(),
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+                'X-XSRF-TOKEN': Cookies.get('XSRF-TOKEN'),
                 'X-Requested-With': 'XMLHttpRequest',
             },
             timeout: 0,
             clarifyTimeoutError: true,
-        };
-    }
-
-    private _getCsrfToken() {
-        const metaField = document.querySelector('meta[name=csrf-token]');
-        if (! metaField) {
-            return undefined;
-        }
-
-        return metaField.getAttribute('content');
+            withCredentials: true,
+        } as AxiosRequestConfig<any>;
     }
 
     /**
@@ -174,11 +169,17 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
         return url;
     }
 
+    private _nodeGuard() {
+        
+    }
+
     private _createRequest<T = any>(factory: AxiosRequestFactory, apiMethod: string, queryStringMap: IQueryStringMap,
         payload: any = null): AxiosPromise<AxiosResponse<T>> {
         if (! apiMethod || apiMethod.length < 1) {
             return Promise.reject(new Error('You need to specify an API method to invoke.'));
         }
+
+        this._nodeGuard();
 
         const config = this.config;
         const hasBody = payload !== null;
@@ -202,6 +203,8 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
     }
 
     private async _consume<T>(apiMethod: string, request: AxiosPromise<AxiosResponse<T>>): Promise<T> {
+        this._nodeGuard();
+
         try {
             const response = await request;
             if (response === undefined) {
