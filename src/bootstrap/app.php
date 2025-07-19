@@ -48,14 +48,14 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias($routeMiddleware);
 
         $middleware->group('web', [
+            EncryptCookies::class,
             AddQueuedCookiesToResponse::class,
-            EnsureHttpsAndWww::class,
             StartSession::class,
             ShareErrorsFromSession::class,
+            CustomValidateCsrfToken::class,
             ValidatePostSize::class,
             TrimStrings::class,
             ConvertEmptyStringsToNull::class,
-            CustomValidateCsrfToken::class,
             InvalidUserGate::class,
             CarbonLocale::class,
             LayoutDataLoader::class,
@@ -64,11 +64,11 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->group('api', [
-            IpGate::class,
             EncryptCookies::class,
             AddQueuedCookiesToResponse::class,
             StartSession::class,
             ShareErrorsFromSession::class,
+            IpGate::class,
             InvalidUserGate::class,
             ValidatePostSize::class,
             TrimStrings::class,
