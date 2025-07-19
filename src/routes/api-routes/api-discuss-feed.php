@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\v2\DiscussFeedApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
-    'prefix' => API_PATH.'/discuss/feed',
+    'prefix' => 'discuss/feed',
 ], function () {
     Route::get('posts', [DiscussFeedApiController::class, 'getPosts'])
         ->name('api.discuss-feed.posts');

@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\AccountNotificationController;
+use App\Http\Controllers\SitemapController;
+use Illuminate\Support\Facades\Route;
+
 $numericReg = '[0-9]+';
 $urlSeoReg = '[a-z_\-0-9]+';
 
@@ -28,20 +32,13 @@ require 'web-routes/phrases.php';
 require 'web-routes/word-finder-admin.php';
 require 'web-routes/word-finder.php';
 
-require 'web-routes/api-admin.php';
-require 'web-routes/api-discuss-feed.php';
-require 'web-routes/api-discuss.php';
-require 'web-routes/api-game.php';
-require 'web-routes/api-public.php';
-require 'web-routes/api-user.php';
-
 require 'web-routes/resources-admin.php';
 require 'web-routes/resources-user.php';
 require 'web-routes/resources.php';
 
 // Mail cancellation
-Route::get('/stop-notification/{token}', ['uses' => 'AccountNotificationController@handleCancellationToken'])
+Route::get('/stop-notification/{token}', [AccountNotificationController::class, 'handleCancellationToken'])
     ->name('notifications.cancellation');
 
 // Sitemap
-Route::get('sitemap/{context}', 'SitemapController@index');
+Route::get('sitemap/{context}', [SitemapController::class, 'index']);

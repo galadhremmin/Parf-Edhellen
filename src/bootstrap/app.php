@@ -22,7 +22,6 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode;
 use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
 use Illuminate\Foundation\Http\Middleware\ValidatePostSize;
-use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Routing\Middleware\ValidateSignature;
 use Illuminate\Session\Middleware\StartSession;
@@ -48,21 +47,34 @@ return Application::configure(basePath: dirname(__DIR__))
         ];
         $middleware->alias($routeMiddleware);
 
-        $middleware->append(EnsureHttpsAndWww::class)
-            ->append(CheckForMaintenanceMode::class)
-            ->append(IpGate::class)
-            ->append(EncryptCookies::class)
-            ->append(AddQueuedCookiesToResponse::class)
-            ->append(StartSession::class)
-            ->append(ShareErrorsFromSession::class)
-            ->append(ValidatePostSize::class)
-            ->append(TrimStrings::class)
-            ->append(ConvertEmptyStringsToNull::class)
-            ->append(CustomValidateCsrfToken::class)
-            ->append(InvalidUserGate::class)
-            ->append(CarbonLocale::class)
-            ->append(LayoutDataLoader::class)
-            ->append(SafeSubstituteBindings::class);
+        $middleware->group('web', [
+            AddQueuedCookiesToResponse::class,
+            EnsureHttpsAndWww::class,
+            StartSession::class,
+            ShareErrorsFromSession::class,
+            ValidatePostSize::class,
+            TrimStrings::class,
+            ConvertEmptyStringsToNull::class,
+            CustomValidateCsrfToken::class,
+            InvalidUserGate::class,
+            CarbonLocale::class,
+            LayoutDataLoader::class,
+            CheckForMaintenanceMode::class,
+            SafeSubstituteBindings::class,
+        ]);
+
+        $middleware->group('api', [
+            IpGate::class,
+            EncryptCookies::class,
+            AddQueuedCookiesToResponse::class,
+            StartSession::class,
+            ShareErrorsFromSession::class,
+            InvalidUserGate::class,
+            ValidatePostSize::class,
+            TrimStrings::class,
+            ConvertEmptyStringsToNull::class,
+            SafeSubstituteBindings::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

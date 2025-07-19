@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\v2\AccountFeedApiController;
 use App\Http\Controllers\Api\v2\BookApiController;
 use App\Http\Controllers\Api\v2\GlossApiController;
 use App\Http\Controllers\Api\v2\InflectionApiController;
+use App\Http\Controllers\Api\v2\SentenceApiController;
 use App\Http\Controllers\Api\v2\SpeechApiController;
 use App\Http\Controllers\Api\v2\UtilityApiController;
 use Illuminate\Support\Facades\Route;
@@ -43,7 +44,7 @@ Route::group([
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC]);
     Route::post('gloss/suggest', [GlossApiController::class, 'suggest']);
 
-    Route::resource('sentence', 'SentenceApiController', ['only' => [
+    Route::resource('sentence', SentenceApiController::class, ['only' => [
         'show',
     ]]);
 
