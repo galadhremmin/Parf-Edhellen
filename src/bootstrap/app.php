@@ -8,6 +8,7 @@ use App\Http\Middleware\InvalidUserGate;
 use App\Http\Middleware\IpGate;
 use App\Http\Middleware\LayoutDataLoader;
 use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\SafeSubstituteBindings;
 use App\Http\Middleware\TrimStrings;
 use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 use Illuminate\Auth\Middleware\Authorize;
@@ -36,6 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $routeMiddleware = [
             'auth' => Authenticate::class,
             'auth.basic' => AuthenticateWithBasicAuth::class,
+            'bindings' => SafeSubstituteBindings::class,
             'can' => Authorize::class,
             'guest' => RedirectIfAuthenticated::class,
             'signed' => ValidateSignature::class,
@@ -45,20 +47,34 @@ return Application::configure(basePath: dirname(__DIR__))
         ];
         $middleware->alias($routeMiddleware);
 
-        $middleware->append(EnsureHttpsAndWww::class)
-            ->append(CheckForMaintenanceMode::class)
-            ->append(IpGate::class)
-            ->append(EncryptCookies::class)
-            ->append(AddQueuedCookiesToResponse::class)
-            ->append(StartSession::class)
-            ->append(ShareErrorsFromSession::class)
-            ->append(ValidatePostSize::class)
-            ->append(TrimStrings::class)
-            ->append(ConvertEmptyStringsToNull::class)
-            ->append(CustomValidateCsrfToken::class)
-            ->append(InvalidUserGate::class)
-            ->append(CarbonLocale::class)
-            ->append(LayoutDataLoader::class);
+        $middleware->group('web', [
+            EncryptCookies::class,
+            AddQueuedCookiesToResponse::class,
+            StartSession::class,
+            ShareErrorsFromSession::class,
+            CustomValidateCsrfToken::class,
+            ValidatePostSize::class,
+            TrimStrings::class,
+            ConvertEmptyStringsToNull::class,
+            InvalidUserGate::class,
+            CarbonLocale::class,
+            LayoutDataLoader::class,
+            CheckForMaintenanceMode::class,
+            SafeSubstituteBindings::class,
+        ]);
+
+        $middleware->group('api', [
+            EncryptCookies::class,
+            AddQueuedCookiesToResponse::class,
+            StartSession::class,
+            ShareErrorsFromSession::class,
+            IpGate::class,
+            InvalidUserGate::class,
+            ValidatePostSize::class,
+            TrimStrings::class,
+            ConvertEmptyStringsToNull::class,
+            SafeSubstituteBindings::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
