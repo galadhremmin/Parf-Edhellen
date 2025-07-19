@@ -8,6 +8,7 @@ use App\Http\Middleware\InvalidUserGate;
 use App\Http\Middleware\IpGate;
 use App\Http\Middleware\LayoutDataLoader;
 use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\SafeSubstituteBindings;
 use App\Http\Middleware\TrimStrings;
 use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 use Illuminate\Auth\Middleware\Authorize;
@@ -21,6 +22,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode;
 use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
 use Illuminate\Foundation\Http\Middleware\ValidatePostSize;
+use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Routing\Middleware\ValidateSignature;
 use Illuminate\Session\Middleware\StartSession;
@@ -36,6 +38,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $routeMiddleware = [
             'auth' => Authenticate::class,
             'auth.basic' => AuthenticateWithBasicAuth::class,
+            'bindings' => SafeSubstituteBindings::class,
             'can' => Authorize::class,
             'guest' => RedirectIfAuthenticated::class,
             'signed' => ValidateSignature::class,
@@ -58,7 +61,8 @@ return Application::configure(basePath: dirname(__DIR__))
             ->append(CustomValidateCsrfToken::class)
             ->append(InvalidUserGate::class)
             ->append(CarbonLocale::class)
-            ->append(LayoutDataLoader::class);
+            ->append(LayoutDataLoader::class)
+            ->append(SafeSubstituteBindings::class);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
