@@ -7,11 +7,10 @@ use App\Helpers\LinkHelper;
 use App\Helpers\StringHelper;
 use App\Interfaces\IMarkdownParser;
 use App\Models\Gloss;
-use App\Models\GlossDetail;
+use App\Models\LexicalEntryDetail;
 use App\Models\Language;
-use App\Models\Translation;
 use App\Models\Versioning\GlossVersion;
-use App\Repositories\Enumerations\GlossChange;
+use App\Repositories\Enumerations\LexicalEntryChange;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
@@ -235,10 +234,10 @@ class BookAdapter
             $gloss->gloss_group_name = $entity->gloss_group_id ? $entity->gloss_group->name : null;
             $gloss->external_link_format = $entity->gloss_group_id ? $entity->gloss_group->external_link_format : null;
             $gloss->translations = $entity->translations->map(function ($t) {
-                return new Translation(['translation' => $t->translation]);
+                return new Gloss(['translation' => $t->translation]);
             })->all();
             $gloss->gloss_details = $entity->gloss_details->map(function ($t) {
-                return new GlossDetail([
+                return new LexicalEntryDetail([
                     'category' => $t->category,
                     'order' => $t->order,
                     'text' => $t->text,
@@ -355,7 +354,7 @@ class BookAdapter
                 $version->_is_latest = $version->id === $latestVersionId;
 
                 $changes = [];
-                foreach (GlossChange::cases() as $change) {
+                foreach (LexicalEntryChange::cases() as $change) {
                     if ($change->value & $version->version_change_flags) {
                         $changes[] = trans('glossary.changes.'.$change->name);
                     }

@@ -4,22 +4,22 @@ namespace App\Repositories\SearchIndexResolvers;
 
 use App\Adapters\BookAdapter;
 use App\Helpers\StringHelper;
-use App\Models\Gloss;
+use App\Models\LexicalEntry;
 use App\Models\Initialization\Morphs;
 use App\Models\SearchKeyword;
 use App\Models\Sense;
 use App\Repositories\DiscussRepository;
-use App\Repositories\GlossInflectionRepository;
-use App\Repositories\GlossRepository;
+use App\Repositories\LexicalEntryInflectionRepository;
+use App\Repositories\LexicalEntryRepository;
 use App\Repositories\ValueObjects\ExternalEntitySearchValue;
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
 use App\Repositories\ValueObjects\SpecificEntitiesSearchValue;
 
 class GlossSearchIndexResolver implements ISearchIndexResolver
 {
-    private GlossRepository $_glossRepository;
+    private LexicalEntryRepository $_lexicalEntryRepository;
 
-    private GlossInflectionRepository $_glossInflectionRepository;
+    private LexicalEntryInflectionRepository $_glossInflectionRepository;
 
     private DiscussRepository $_discussRepository;
 
@@ -29,25 +29,25 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
 
     private ?string $_senseMorph;
 
-    public function __construct(GlossRepository $glossRepository, GlossInflectionRepository $glossInflectionRepository,
+    public function __construct(LexicalEntryRepository $glossRepository, LexicalEntryInflectionRepository $glossInflectionRepository,
         DiscussRepository $discussRepository, BookAdapter $bookAdapter)
     {
-        $this->_glossRepository = $glossRepository;
+        $this->_lexicalEntryRepository = $glossRepository;
         $this->_glossInflectionRepository = $glossInflectionRepository;
         $this->_discussRepository = $discussRepository;
         $this->_bookAdapter = $bookAdapter;
 
-        $this->_glossMorph = Morphs::getAlias(Gloss::class);
+        $this->_glossMorph = Morphs::getAlias(LexicalEntry::class);
         $this->_senseMorph = Morphs::getAlias(Sense::class);
     }
 
     public function resolve(SearchIndexSearchValue $value): array
     {
         if ($value instanceof SpecificEntitiesSearchValue) {
-            $glosses = $this->_glossRepository->getGlosses($value->getIds());
+            $glosses = $this->_lexicalEntryRepository->getLexicalEntries($value->getIds());
         } elseif ($value instanceof ExternalEntitySearchValue) {
-            $glosses = $this->_glossRepository->getGlossesByExternalId(
-                $value->getExternalId(), $value->getGlossGroupId()
+            $glosses = $this->_lexicalEntryRepository->getLexicalEntriesByExternalId(
+                $value->getExternalId(), $value->getLexicalEntryGroupId()
             );
         } else {
             $normalizedWord = StringHelper::normalize($value->getWord(), /* accentsMatter = */ true, /* retainWildcard = */ false);
@@ -69,10 +69,10 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
             $entityIds = [];
 
             // Senses are *not* supported by the search index, so with this shim, the 'sense' is resolved to
-            // whatever gloss it might be associated with. This ensures that all relevant glosses are found.
+            // whatever lexical entry it might be associated with. This ensures that all relevant lexical entries are found.
             if ($entities->has($this->_senseMorph)) {
-                // we've got the sense, now obtain glosses
-                $entityIds = Gloss::whereIn('sense_id', $entities[$this->_senseMorph]->pluck('entity_id')) //
+                // we've got the sense, now obtain lexical entries
+                $entityIds = LexicalEntry::whereIn('sense_id', $entities[$this->_senseMorph]->pluck('entity_id')) //
                     ->pluck('id')
                     ->all();
             }
@@ -85,14 +85,14 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
             }
 
             $filters = [];
-            if (! empty($value->getGlossGroupIds())) {
-                $filters['gloss_group_id'] = $value->getGlossGroupIds();
+            if (! empty($value->getLexicalEntryGroupIds())) {
+                $filters['lexical_entry_group_id'] = $value->getLexicalEntryGroupIds();
             }
             if (! empty($value->getSpeechIds())) {
                 $filters['speech_id'] = $value->getSpeechIds();
             }
 
-            $glosses = $this->_glossRepository->getGlossesByExpandingViaSense(
+            $glosses = $this->_lexicalEntryRepository->getLexicalEntriesByExpandingViaSense(
                 $entityIds,
                 $value->getLanguageId(),
                 $value->getIncludesOld(),
@@ -105,18 +105,18 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
         }, $glosses);
 
         $inflections = $value->getIncludesInflections() //
-            ? $this->_glossInflectionRepository->getInflectionsForGlosses($glossIds) //
+            ? $this->_glossInflectionRepository->getInflectionsForLexicalEntries($glossIds) //
             : collect([]);
-        $comments = $this->_discussRepository->getNumberOfPostsForEntities(Gloss::class, $glossIds);
+        $comments = $this->_discussRepository->getNumberOfPostsForEntities(LexicalEntry::class, $glossIds);
 
         return $this->_bookAdapter->adaptGlosses($glosses, $inflections, $comments, $value->getWord());
     }
 
     public function resolveId(int $entityId): array
     {
-        $glosses = $this->_glossRepository->getGloss($entityId)->all();
-        $inflections = $this->_glossInflectionRepository->getInflectionsForGlosses([$entityId]);
-        $comments = $this->_discussRepository->getNumberOfPostsForEntities(Gloss::class, [$entityId]);
+        $glosses = $this->_lexicalEntryRepository->getLexicalEntry($entityId)->all();
+        $inflections = $this->_glossInflectionRepository->getInflectionsForLexicalEntries([$entityId]);
+        $comments = $this->_discussRepository->getNumberOfPostsForEntities(LexicalEntry::class, [$entityId]);
 
         return $this->_bookAdapter->adaptGlosses($glosses, $inflections, $comments, count($glosses) > 0 ? $glosses[0]->word->word : null);
     }

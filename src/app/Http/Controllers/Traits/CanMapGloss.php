@@ -4,8 +4,7 @@ namespace App\Http\Controllers\Traits;
 
 use App\Helpers\StringHelper;
 use App\Models\Gloss;
-use App\Models\GlossDetail;
-use App\Models\Translation;
+use App\Models\LexicalEntryDetail;
 use Illuminate\Http\Request;
 
 trait CanMapGloss
@@ -15,7 +14,7 @@ trait CanMapGloss
      *     word: string,
      *     sense: string,
      *     keywords: string[],
-     *     translations: Translation[],
+     *     translations: Gloss[],
      *     details: GlossDetail[]
      * }
      */
@@ -51,14 +50,14 @@ trait CanMapGloss
         }, $request->input('keywords'));
 
         $translations = array_map(function ($t) {
-            return new Translation([
+            return new Gloss([
                 'translation' => StringHelper::toLower($t['translation']),
             ]);
         }, $request->input('translations'));
 
         $details = $request->has('gloss_details')
             ? array_map(function ($d) {
-                return new GlossDetail([
+                return new LexicalEntryDetail([
                     'category' => trim($d['category']),
                     'text' => trim($d['text']),
                     'order' => intval($d['order']),

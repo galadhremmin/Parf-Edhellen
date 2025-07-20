@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\v2;
 
 use App\Helpers\StringHelper;
 use App\Http\Controllers\Abstracts\BookBaseController;
-use App\Models\GlossGroup;
+use App\Models\LexicalEntryGroup;
 use App\Models\Language;
 use App\Models\Word;
 use Illuminate\Http\Request;
@@ -47,7 +47,7 @@ class BookApiController extends BookBaseController
      */
     public function getGroups(Request $request)
     {
-        return GlossGroup::orderBy('name')->get();
+        return LexicalEntryGroup::orderBy('name')->get();
     }
 
     /**
@@ -135,7 +135,7 @@ class BookApiController extends BookBaseController
 
     public function getFromVersion(Request $request, int $id)
     {
-        $gloss = $this->_glossRepository->getSpecificGlossVersion($id);
+        $gloss = $this->_lexicalEntryRepository->getSpecificLexicalEntryVersion($id);
 
         return $this->_bookAdapter->adaptGlosses([$gloss], null, [], $gloss->word->word);
     }

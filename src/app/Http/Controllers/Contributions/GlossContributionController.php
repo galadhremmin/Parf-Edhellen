@@ -13,8 +13,8 @@ use App\Models\LexicalEntryDetail;
 use App\Models\Sense;
 use App\Models\Gloss;
 use App\Models\Word;
-use App\Repositories\GlossInflectionRepository;
-use App\Repositories\GlossRepository;
+use App\Repositories\LexicalEntryInflectionRepository;
+use App\Repositories\LexicalEntryRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
@@ -25,15 +25,15 @@ class GlossContributionController extends Controller implements IContributionCon
 
     private BookAdapter $_bookAdapter;
 
-    private GlossRepository $_glossRepository;
+    private LexicalEntryRepository $_lexicalEntryRepository;
 
-    private GlossInflectionRepository $_glossInflectionRepository;
+    private LexicalEntryInflectionRepository $_glossInflectionRepository;
 
-    public function __construct(BookAdapter $bookAdapter, GlossRepository $glossRepository,
-        GlossInflectionRepository $glossInflectionRepository)
+    public function __construct(BookAdapter $bookAdapter, LexicalEntryRepository $glossRepository,
+        LexicalEntryInflectionRepository $glossInflectionRepository)
     {
         $this->_bookAdapter = $bookAdapter;
-        $this->_glossRepository = $glossRepository;
+        $this->_lexicalEntryRepository = $glossRepository;
         $this->_glossInflectionRepository = $glossInflectionRepository;
     }
 
@@ -124,7 +124,7 @@ class GlossContributionController extends Controller implements IContributionCon
     public function edit(Contribution $contribution, Request $request)
     {
         $payloadData = $this->getEditViewModel($contribution);
-        $inflections = $this->_glossInflectionRepository->getInflectionsForGloss(
+        $inflections = $this->_glossInflectionRepository->getInflectionsForLexicalEntry(
             array_key_exists('id', $payloadData) ? $payloadData['id'] : 0
         );
 
@@ -155,19 +155,19 @@ class GlossContributionController extends Controller implements IContributionCon
 
         $gloss = null;
         if ($entityId !== 0) {
-            $glosses = $this->_glossRepository->getGloss($entityId);
+            $glosses = $this->_lexicalEntryRepository->getLexicalEntry($entityId);
             if (! $glosses->isEmpty()) {
                 $gloss = $glosses->first();
             }
         }
         if ($glossVersionId !== 0) {
-            $gloss = $this->_glossRepository->getGlossFromVersion($glossVersionId);
+            $gloss = $this->_lexicalEntryRepository->getLexicalEntryFromVersion($glossVersionId);
         }
 
         $inflections = [];
         if ($gloss !== null) {
-            $gloss->keywords = $this->_glossRepository->getKeywords($gloss->sense_id, $gloss->id);
-            $inflections = $this->_glossInflectionRepository->getInflectionsForGloss($gloss->id);
+            $gloss->keywords = $this->_lexicalEntryRepository->getKeywords($gloss->sense_id, $gloss->id);
+            $inflections = $this->_glossInflectionRepository->getInflectionsForLexicalEntry($gloss->id);
         }
 
         return $request->ajax()
@@ -179,7 +179,7 @@ class GlossContributionController extends Controller implements IContributionCon
             ] : []);
     }
 
-    public function validateSubstep(Request $request, int $id = 0, int $substepId = 0): bool
+    public function validateSubstep(Request $request, int $id = 0, int $substepId = 0): mixed
     {
         // noop
         return true;
@@ -242,10 +242,10 @@ class GlossContributionController extends Controller implements IContributionCon
         $details = $this->getDetailsFromPayload($glossData);
 
         $gloss = new LexicalEntry($glossData);
-        // is the contribution a proposed change to an existing gloss?
+        // is the contribution a proposed change to an existing lexical entry?
         if (array_key_exists('id', $glossData)) {
             $id = intval($glossData['id']);
-            $originalGloss = $this->_glossRepository->getGloss($id);
+            $originalGloss = $this->_lexicalEntryRepository->getLexicalEntry($id);
             if ($originalGloss->count() > 0) {
                 $gloss = $originalGloss->first();
                 $gloss->fill($glossData);
@@ -254,7 +254,7 @@ class GlossContributionController extends Controller implements IContributionCon
 
         $keywords = json_decode($contribution->keywords, true);
 
-        $gloss = $this->_glossRepository->saveGloss(
+        $gloss = $this->_lexicalEntryRepository->saveLexicalEntry(
             $contribution->word, $contribution->sense, $gloss, $translations, $keywords, $details);
 
         return $gloss->id;

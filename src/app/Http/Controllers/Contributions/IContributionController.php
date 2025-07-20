@@ -31,7 +31,7 @@ interface IContributionController
      *
      * @return bool
      */
-    public function validateSubstep(Request $request, int $id = 0, int $substepId = 0): bool;
+    public function validateSubstep(Request $request, int $id = 0, int $substepId = 0): mixed;
 
     /**
      * Performs complete validation of the specified request.

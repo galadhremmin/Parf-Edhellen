@@ -36,7 +36,7 @@ class LexicalEntryVersion extends ModelBase implements IHasFriendlyName
         return $this->hasMany(LexicalEntryDetailVersion::class, 'lexical_entry_version_id');
     }
 
-    public function gloss_versions(): HasMany
+    public function glosses(): HasMany
     {
         return $this->hasMany(GlossVersion::class, 'lexical_entry_version_id');
     }

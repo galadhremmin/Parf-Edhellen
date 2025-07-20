@@ -9,7 +9,7 @@ class Gloss extends ModelBase
     protected $table = 'glosses';
 
     protected $fillable = [
-        'lexical_entry_id', 'gloss',
+        'lexical_entry_id', 'translation',
     ];
 
     protected $hidden = [

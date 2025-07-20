@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Abstracts\Controller;
 use App\Models\GameWordFinderGlossGroup;
-use App\Models\GlossGroup;
+use App\Models\LexicalEntryGroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -13,31 +13,31 @@ class WordFinderConfigController extends Controller
 {
     public function index()
     {
-        $groups = GlossGroup::all();
-        $selectedGroupIds = GameWordFinderGlossGroup::all()->groupBy('gloss_group_id');
+        $groups = LexicalEntryGroup::all();
+        $selectedGroupIds = GameWordFinderGlossGroup::all()->groupBy('lexical_entry_group_id');
 
         return view('admin.word-finder.index', [
-            'all_gloss_groups' => $groups,
-            'selected_gloss_group_ids' => $selectedGroupIds,
+            'all_lexical_entry_groups' => $groups,
+            'selected_lexical_entry_group_ids' => $selectedGroupIds,
         ]);
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'gloss_group_ids' => 'array|required',
-            'gloss_group_ids.*' => 'numeric|exists:gloss_groups,id',
+            'lexical_entry_group_ids' => 'array|required',
+            'lexical_entry_group_ids.*' => 'numeric|exists:lexical_entry_groups,id',
         ]);
 
         DB::table('game_word_finder_gloss_groups')->delete();
-        foreach ($data['gloss_group_ids'] as $glossGroupId) {
+        foreach ($data['lexical_entry_group_ids'] as $lexicalEntryGroupId) {
             GameWordFinderGlossGroup::create([
-                'gloss_group_id' => $glossGroupId,
+                'lexical_entry_group_id' => $lexicalEntryGroupId,
             ]);
         }
 
         // Remove any cache, if present.
-        Cache::forget('ed.game.word-finder.gloss-groups');
+        Cache::forget('ed.game.word-finder.lexical-entry-groups');
 
         return redirect(route('word-finder.config.index'));
     }

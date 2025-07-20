@@ -6,7 +6,7 @@ use App\Models\Account;
 use App\Models\FlashcardResult;
 use App\Models\ForumPost;
 use App\Models\ForumPostLike;
-use App\Models\Gloss;
+use App\Models\LexicalEntry;
 use App\Models\Sentence;
 use App\Models\Word;
 use Carbon\Carbon;
@@ -17,7 +17,7 @@ class StatisticsRepository
     public function getGlobalStatistics()
     {
         $noOfWords = Word::count();
-        $noOfGlosses = Gloss::active()
+        $noOfGlosses = LexicalEntry::active()
             ->count();
         $noOfSentences = Sentence::approved()
             ->count();
@@ -40,7 +40,7 @@ class StatisticsRepository
         $noOfWords = Word::forAccount($account->id)
             ->count();
 
-        $noOfGlosses = Gloss::notDeleted()
+        $noOfGlosses = LexicalEntry::notDeleted()
             ->forAccount($account->id)
             ->count();
 
@@ -102,7 +102,7 @@ class StatisticsRepository
             ]);
         });
         $data['categories'][] = 'glosses';
-        $data['totals']['glosses'] = Gloss::active()->count();
+        $data['totals']['glosses'] = LexicalEntry::active()->count();
 
         // Retrieve growth over time (grouped by day) and involve the members previously identified as parth of the growth.
         $data['growth'] = $this->getGrowthOverTime($data['categories'], Carbon::now()->addYears(-1), Carbon::now(),

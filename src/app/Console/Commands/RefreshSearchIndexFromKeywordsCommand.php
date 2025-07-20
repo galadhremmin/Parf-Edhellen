@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Gloss;
+use App\Models\LexicalEntry;
 use App\Models\Keyword;
 use App\Repositories\SearchIndexRepository;
 use Illuminate\Console\Command;
@@ -93,33 +93,33 @@ class RefreshSearchIndexFromKeywordsCommand extends Command
 
         $count = 0;
         $erroneous = [];
-        $glossCache = [];
+        $lexicalEntryCache = [];
         foreach ($keywords as $keyword) {
             $this->_logger->writeln('# '.$keyword->keyword);
-            if ($keyword->gloss_id) {
-                if (! isset($glossCache[$keyword->gloss_id])) {
-                    $glossCache[$keyword->gloss_id] = Gloss::with('word', 'gloss_group', 'speech', 'gloss_inflections') //
-                        ->find($keyword->gloss_id);
+            if ($keyword->lexical_entry_id) {
+                if (! isset($lexicalEntryCache[$keyword->lexical_entry_id])) {
+                    $lexicalEntryCache[$keyword->lexical_entry_id] = LexicalEntry::with('word', 'lexical_entry_group', 'speech', 'lexical_entry_inflections') //
+                        ->find($keyword->lexical_entry_id);
                 }
 
-                $gloss = $glossCache[$keyword->gloss_id];
-                if ($gloss) {
-                    if (! $gloss->is_deleted) {
-                        $this->_searchIndexRepository->createIndex($gloss, $keyword->wordEntity, $keyword->keyword_language, $keyword->keyword);
+                $lexicalEntry = $lexicalEntryCache[$keyword->lexical_entry_id];
+                if ($lexicalEntry) {
+                    if (! $lexicalEntry->is_deleted) {
+                        $this->_searchIndexRepository->createIndex($lexicalEntry, $keyword->wordEntity, $keyword->keyword_language, $keyword->keyword);
                         $this->_logger->writeln('   Refreshed for "'.$keyword->wordEntity->word.'" -> "'.$keyword->keyword.'".');
-                        $this->_logger->writeln('   Gloss: '.$keyword->gloss_id);
+                        $this->_logger->writeln('   Gloss: '.$keyword->lexical_entry_id);
                         $count += 1;
                     } else {
-                        $this->_logger->writeln('   Gloss '.$keyword->gloss_id.' is deleted.');
+                        $this->_logger->writeln('   Gloss '.$keyword->lexical_entry_id.' is deleted.');
                     }
                 } else {
                     if (! $keyword->sense_id) {
-                        $erroneous[] = $keyword->gloss_id;
+                        $erroneous[] = $keyword->lexical_entry_id;
                     } else {
-                        $this->_logger->writeln('   Gloss not found: '.$keyword->gloss_id);
+                        $this->_logger->writeln('   Gloss not found: '.$keyword->lexical_entry_id);
 
                         // remove the invalid gloss reference from the Keyword
-                        $keyword->gloss_id = null;
+                        $keyword->lexical_entry_id = null;
                         $keyword->save();
                         $count += 1;
                     }
@@ -127,15 +127,15 @@ class RefreshSearchIndexFromKeywordsCommand extends Command
             }
         }
 
-        foreach ($glossCache as $id => $gloss) {
-            if (! $gloss) {
+        foreach ($lexicalEntryCache as $id => $lexicalEntry) {
+            if (! $lexicalEntry) {
                 continue;
             }
-            $this->_logger->writeln('# Registering inflections for '.$gloss->id);
-            foreach ($gloss->gloss_inflections as $inflection) {
-                if ($gloss->word->word !== $inflection->word) {
-                    $this->_logger->writeln('   "'.$gloss->word->word.'" -> "'.$inflection->word.'".');
-                    $this->_searchIndexRepository->createIndex($gloss, $gloss->word, $inflection->language, $inflection->word);
+            $this->_logger->writeln('# Registering inflections for '.$lexicalEntry->id);
+            foreach ($lexicalEntry->lexical_entry_inflections as $inflection) {
+                if ($lexicalEntry->word->word !== $inflection->word) {
+                    $this->_logger->writeln('   "'.$lexicalEntry->word->word.'" -> "'.$inflection->word.'".');
+                    $this->_searchIndexRepository->createIndex($lexicalEntry, $lexicalEntry->word, $inflection->language, $inflection->word);
                 }
             }
         }

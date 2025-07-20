@@ -285,7 +285,7 @@ class ContributionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function validateSubstep(Request $request)
+    public function validateSubstep(Request $request): mixed
     {
         $this->validateContributionRequest($request);
 

@@ -2,9 +2,9 @@
 
 namespace App\Jobs;
 
-use App\Models\GlossInflection;
-use App\Repositories\GlossInflectionRepository;
-use App\Repositories\GlossRepository;
+use App\Models\LexicalEntryInflection;
+use App\Repositories\LexicalEntryInflectionRepository;
+use App\Repositories\LexicalEntryRepository;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -32,7 +32,7 @@ class ProcessGlossImport implements ShouldQueue
      *
      * @return void
      */
-    public function handle(GlossRepository $glossRepository, GlossInflectionRepository $glossInflectionRepository)
+    public function handle(LexicalEntryRepository $glossRepository, LexicalEntryInflectionRepository $glossInflectionRepository)
     {
         $data = &$this->data;
 
@@ -45,10 +45,10 @@ class ProcessGlossImport implements ShouldQueue
         $word = $data['word'];
 
         try {
-            $glossEntity = $glossRepository->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
-            $glossInflectionRepository->saveManyOnGloss($glossEntity, collect($inflections)->map(function ($i) use ($glossEntity) {
-                return new GlossInflection(array_merge($i, [
-                    'gloss_id' => $glossEntity->id,
+            $glossEntity = $glossRepository->saveLexicalEntry($word, $sense, $gloss, $translations, $keywords, $details);
+            $glossInflectionRepository->saveManyOnLexicalEntry($glossEntity, collect($inflections)->map(function ($i) use ($glossEntity) {
+                return new LexicalEntryInflection(array_merge($i, [
+                    'lexical_entry_id' => $glossEntity->id,
                 ]));
             }));
         } catch (\Exception $ex) {

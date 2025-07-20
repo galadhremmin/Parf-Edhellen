@@ -4,17 +4,17 @@ namespace Tests\Unit\Repositories;
 
 use App\Models\Gloss;
 use App\Models\GlossDetail;
-use App\Models\Translation;
+use App\Models\Gloss;
 use App\Repositories\Enumerations\GlossChange;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 use Tests\Unit\Traits\CanCreateGloss;
 
-class GlossRepositoryTest extends TestCase
+class LexicalEntryRepositoryTest extends TestCase
 {
     use CanCreateGloss {
         CanCreateGloss::setUp as setUpGlosses;
-        CanCreateGloss::getRepository as getGlossRepository;
+        CanCreateGloss::getRepository as getLexicalEntryRepository;
     }
     use DatabaseTransactions; // ; <-- remedies Visual Studio Code colouring bug
 
@@ -29,9 +29,9 @@ class GlossRepositoryTest extends TestCase
 
         // Create an origin gloss, to validate the versioning system. By appending 'origin' to the word string,
         // the next gloss saved (with an unsuffixed word) create a new version of the gloss.
-        $existingGloss = $this->getGlossRepository()->saveGloss($word.' origin', $sense, $gloss, $translations, $keywords, $details);
+        $existingGloss = $this->getLexicalEntryRepository()->saveGloss($word.' origin', $sense, $gloss, $translations, $keywords, $details);
         // Create a new gloss, derived from the origin gloss.
-        $newGloss = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
+        $newGloss = $this->getLexicalEntryRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
 
         $savedGloss = Gloss::findOrFail($newGloss->id);
         $existingGloss->refresh();
@@ -94,11 +94,11 @@ class GlossRepositoryTest extends TestCase
         extract($this->createGloss(__FUNCTION__));
 
         $changed = 0;
-        $gloss0 = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details, $changed);
+        $gloss0 = $this->getLexicalEntryRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details, $changed);
         $this->assertEquals(GlossChange::NEW->value, $changed);
 
         $changed = false;
-        $gloss1 = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details, $changed);
+        $gloss1 = $this->getLexicalEntryRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details, $changed);
         $this->assertEquals(GlossChange::NO_CHANGE->value, $changed);
 
         $this->assertEquals($gloss0->id, $gloss1->id);
@@ -108,10 +108,10 @@ class GlossRepositoryTest extends TestCase
     {
         extract($this->createGloss(__FUNCTION__));
 
-        $savedGloss = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
+        $savedGloss = $this->getLexicalEntryRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
         $this->assertEquals($gloss->id, $savedGloss->id);
 
-        $this->getGlossRepository()->deleteGlossWithId($gloss->id);
+        $this->getLexicalEntryRepository()->deleteGlossWithId($gloss->id);
 
         // resynchronize the model with the database
         $gloss->refresh();
@@ -124,31 +124,31 @@ class GlossRepositoryTest extends TestCase
     public function test_should_get_versions()
     {
         extract($this->createGloss(__FUNCTION__));
-        $gloss0 = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
+        $gloss0 = $this->getLexicalEntryRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
 
         $gloss->is_uncertain = false;
         $translations = $this->createTranslations();
         $details = $this->createGlossDetails($gloss);
-        $gloss1 = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
+        $gloss1 = $this->getLexicalEntryRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
 
         $newWord = $word.' 1';
         $translations = $this->createTranslations();
         $details = $this->createGlossDetails($gloss);
-        $gloss2 = $this->getGlossRepository()->saveGloss($newWord, $sense, $gloss, $translations, $keywords, $details);
+        $gloss2 = $this->getLexicalEntryRepository()->saveGloss($newWord, $sense, $gloss, $translations, $keywords, $details);
 
         $newTranslation = uniqid();
         $translations = array_merge(
             $this->createTranslations(),
-            [new Translation(['translation' => $newTranslation])]
+            [new Gloss(['translation' => $newTranslation])]
         );
         $details = $this->createGlossDetails($gloss);
-        $gloss3 = $this->getGlossRepository()->saveGloss($newWord, $sense, $gloss, $translations, $keywords, $details);
+        $gloss3 = $this->getLexicalEntryRepository()->saveGloss($newWord, $sense, $gloss, $translations, $keywords, $details);
 
         $this->assertEquals($gloss0->id, $gloss1->id);
         $this->assertEquals($gloss0->id, $gloss2->id);
         $this->assertEquals($gloss0->id, $gloss3->id);
 
-        $versions = $this->getGlossRepository()->getGlossVersions($gloss0->id);
+        $versions = $this->getLexicalEntryRepository()->getGlossVersions($gloss0->id);
 
         $this->assertEquals($versions->getLatestVersionId(), $versions->getVersions()->first()->id);
         $this->assertEquals($versions->getLatestVersionId(), $gloss3->latest_gloss_version_id);
@@ -166,7 +166,7 @@ class GlossRepositoryTest extends TestCase
 
     public function test_detects_gloss_metadata_changes()
     {
-        $r = $this->getGlossRepository();
+        $r = $this->getLexicalEntryRepository();
 
         extract($this->createGloss(__FUNCTION__));
         $r->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
@@ -185,7 +185,7 @@ class GlossRepositoryTest extends TestCase
 
     public function test_detects_gloss_details_changes()
     {
-        $r = $this->getGlossRepository();
+        $r = $this->getLexicalEntryRepository();
 
         extract($this->createGloss(__FUNCTION__));
         $r->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
@@ -212,7 +212,7 @@ class GlossRepositoryTest extends TestCase
 
     public function test_detects_gloss_translations_changes()
     {
-        $r = $this->getGlossRepository();
+        $r = $this->getLexicalEntryRepository();
 
         extract($this->createGloss(__FUNCTION__));
         $r->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
@@ -220,8 +220,8 @@ class GlossRepositoryTest extends TestCase
 
         $changed = 0;
 
-        $newTranslation = new Translation([
-            'translation' => 'Translation '.uniqid(),
+        $newTranslation = new Gloss([
+            'translation' => 'Gloss '.uniqid(),
         ]);
         $translations[] = $newTranslation;
         $r->saveGloss($word, $sense, $gloss, $translations, $keywords, $details, $changed);
@@ -237,7 +237,7 @@ class GlossRepositoryTest extends TestCase
 
     public function test_detects_gloss_keyword_changes()
     {
-        $r = $this->getGlossRepository();
+        $r = $this->getLexicalEntryRepository();
 
         extract($this->createGloss(__FUNCTION__));
         $r->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
@@ -260,7 +260,7 @@ class GlossRepositoryTest extends TestCase
 
     public function test_navigation_properties_for_gloss()
     {
-        $r = $this->getGlossRepository();
+        $r = $this->getLexicalEntryRepository();
 
         extract($this->createGloss(__FUNCTION__));
         $r->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);

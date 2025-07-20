@@ -6,12 +6,12 @@ use App\Jobs\ProcessGlossDeprecation;
 use App\Jobs\ProcessGlossImport;
 use App\Models\Account;
 use App\Models\Gloss;
-use App\Models\GlossDetail;
-use App\Models\GlossGroup;
+use App\Models\LexicalEntry;
+use App\Models\LexicalEntryDetail;
+use App\Models\LexicalEntryGroup;
 use App\Models\Inflection;
 use App\Models\Language;
 use App\Models\Speech;
-use App\Models\Translation;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Ramsey\Uuid\Uuid;
@@ -38,7 +38,7 @@ class ImportEldamoCommand extends Command
 
     private $_inflectionMap;
 
-    private $_glossGroups;
+    private $_lexicalEntryGroups;
 
     /**
      * Import destination account.
@@ -55,7 +55,7 @@ class ImportEldamoCommand extends Command
         $this->_speechMap = null;
         $this->_inflectionMap = Inflection::get()->keyBy('name');
 
-        $this->_glossGroups = [];
+        $this->_lexicalEntryGroups = [];
         $this->_eldamoAccount = null;
     }
 
@@ -88,7 +88,7 @@ class ImportEldamoCommand extends Command
 
                     if (isset($entity->allIds)) {
                         $this->line('allIds records: '.count($entity->allIds));
-                        foreach ($this->_glossGroups as $_ => $group) {
+                        foreach ($this->_lexicalEntryGroups as $_ => $group) {
                             $this->deleteAllBut($group, $entity->allIds);
                         }
 
@@ -116,17 +116,17 @@ class ImportEldamoCommand extends Command
     private function initializeImport()
     {
         try {
-            $this->_glossGroups = [
-                'default' => GlossGroup::where('name', 'Eldamo')->firstOrFail(),
-                'adaptations' => GlossGroup::where('name', 'Eldamo - neologism/adaptations')->firstOrFail(),
-                'fan invented' => GlossGroup::where('name', 'Eldamo - neologism/reconstructions')->firstOrFail(),
+            $this->_lexicalEntryGroups = [
+                'default' => LexicalEntryGroup::where('name', 'Eldamo')->firstOrFail(),
+                'adaptations' => LexicalEntryGroup::where('name', 'Eldamo - neologism/adaptations')->firstOrFail(),
+                'fan invented' => LexicalEntryGroup::where('name', 'Eldamo - neologism/reconstructions')->firstOrFail(),
             ];
         } catch (ModelNotFoundException $ex) {
             throw new ModelNotFoundException('Failed to initialize import of Eldamo dataset because the required gloss groups do not exist.', $ex->getCode(), $ex);
         }
 
         // Find the user account for an existing gloss from Eldamo.
-        $existing = Gloss::where('gloss_group_id', $this->_glossGroups['default']->id)
+        $existing = LexicalEntry::where('lexical_entry_group_id', $this->_lexicalEntryGroups['default']->id)
             ->select('account_id')
             ->firstOrFail();
 
@@ -135,19 +135,19 @@ class ImportEldamoCommand extends Command
 
     private function createImportData(object $data): array
     {
-        $gloss = Gloss::firstOrNew(['external_id' => $data->gloss->id]);
+        $lexicalEntry = LexicalEntry::firstOrNew(['external_id' => $data->gloss->id]);
 
-        $gloss->account_id = $this->_eldamoAccount->id;
-        $gloss->source = implode('; ', $data->sources);
-        $gloss->comments = $data->gloss->notes;
-        $gloss->is_deleted = 0;
-        $gloss->is_uncertain = $data->gloss->mark === '?' ||
+        $lexicalEntry->account_id = $this->_eldamoAccount->id;
+        $lexicalEntry->source = implode('; ', $data->sources);
+        $lexicalEntry->comments = $data->gloss->notes;
+        $lexicalEntry->is_deleted = 0;
+        $lexicalEntry->is_uncertain = $data->gloss->mark === '?' ||
                                  $data->gloss->mark === '*' ||
                                  $data->gloss->mark === '‽' ||
                                  $data->gloss->mark === '!' ||
                                  $data->gloss->mark === '^' ||
                                  $data->gloss->mark === '⚠️';
-        $gloss->is_rejected = $data->gloss->mark === '-';
+        $lexicalEntry->is_rejected = $data->gloss->mark === '-';
 
         $groupName = 'default';
         switch ($data->gloss->mark) {
@@ -159,10 +159,10 @@ class ImportEldamoCommand extends Command
                 $groupName = 'adaptations';
                 break;
             case '?':
-                $gloss->label = 'Speculative';
+                $lexicalEntry->label = 'Speculative';
                 break;
             case '*':
-                $gloss->label = 'Reconstructed';
+                $lexicalEntry->label = 'Reconstructed';
                 break;
                 /*
                     For your purposes, you may not want to indicate "#" markers. Those are for items derived from well
@@ -180,21 +180,21 @@ class ImportEldamoCommand extends Command
                     break;
                 */
         }
-        $gloss->gloss_group_id = $this->_glossGroups[$groupName]->id;
+        $lexicalEntry->lexical_entry_group_id = $this->_lexicalEntryGroups[$groupName]->id;
 
-        $this->setLanguage($data, $gloss);
-        $this->setSpeech($data, $gloss);
+        $this->setLanguage($data, $lexicalEntry);
+        $this->setSpeech($data, $lexicalEntry);
 
         $word = $data->gloss->word;
-        $details = $this->createDetails($data, $gloss);
-        $inflections = $this->createInflections($data, $gloss);
-        $keywords = $this->createKeywords($data, $gloss);
-        $translations = $this->createTranslations($data, $gloss);
+        $details = $this->createDetails($data, $lexicalEntry);
+        $inflections = $this->createInflections($data, $lexicalEntry);
+        $keywords = $this->createKeywords($data, $lexicalEntry);
+        $translations = $this->createTranslations($data, $lexicalEntry);
         $sense = $translations[0]->translation;
 
         return [
             'details' => $details,
-            'gloss' => $gloss,
+            'lexicalEntry' => $lexicalEntry,
             'inflections' => $inflections,
             'keywords' => $keywords,
             'sense' => $sense,
@@ -206,14 +206,14 @@ class ImportEldamoCommand extends Command
     private function validateImports(int $index, array $data): void
     {
         $details = $data['details'];
-        $gloss = $data['gloss'];
+        $lexicalEntry = $data['lexicalEntry'];
         $inflections = $data['inflections'];
         $keywords = $data['keywords'];
         $sense = $data['sense'];
         $translations = $data['translations'];
         $word = $data['word'];
 
-        $id = $gloss->external_id;
+        $id = $lexicalEntry->external_id;
 
         // Validate details
         foreach ($details as $detail) {
@@ -226,11 +226,11 @@ class ImportEldamoCommand extends Command
             }
         }
 
-        if (! $gloss->account_id) {
+        if (! $lexicalEntry->account_id) {
             throw new \Exception(sprintf('Invalid account ID for %d.', $id));
         }
 
-        if (! $gloss->language_id) {
+        if (! $lexicalEntry->language_id) {
             throw new \Exception(sprintf('Invalid language ID for %d.', $id));
         }
 
@@ -245,10 +245,10 @@ class ImportEldamoCommand extends Command
         }
     }
 
-    private function deleteAllBut(GlossGroup $eldamoGroup, array $externalIds)
+    private function deleteAllBut(LexicalEntryGroup $eldamoGroup, array $externalIds)
     {
-        $ids = Gloss::active() //
-            ->where('gloss_group_id', $eldamoGroup->id) //
+        $ids = LexicalEntry::active() //
+            ->where('lexical_entry_group_id', $eldamoGroup->id) //
             ->whereNotIn('external_id', $externalIds) //
             ->pluck('id') //
             ->toArray();
@@ -314,7 +314,7 @@ class ImportEldamoCommand extends Command
                 throw new \Exception(sprintf('Unknown gloss detail category: %s.', $d->title));
             }
 
-            return new GlossDetail([
+            return new LexicalEntryDetail([
                 'category' => $d->title,
                 'text' => $d->body,
                 'order' => $order[$d->title],
@@ -399,7 +399,7 @@ class ImportEldamoCommand extends Command
         }
 
         return array_map(function ($v) {
-            return new Translation(['translation' => $v]);
+            return new Gloss(['translation' => $v]);
         }, $translations);
     }
 

@@ -15,7 +15,7 @@ class SentenceRepositoryTest extends TestCase
 {
     use CanCreateGloss {
         CanCreateGloss::setUp as setUpGlosses;
-        CanCreateGloss::getRepository as getGlossRepository;
+        CanCreateGloss::getRepository as getLexicalEntryRepository;
     }
     use DatabaseTransactions; // ; <-- remedies Visual Studio Code colouring bug
 
@@ -25,10 +25,10 @@ class SentenceRepositoryTest extends TestCase
         $account = Account::first();
 
         extract($this->createGloss(__FUNCTION__));
-        $helloGloss = $this->getGlossRepository()->saveGloss('hello', 'greetings', $gloss, $translations, $keywords, $details);
+        $helloGloss = $this->getLexicalEntryRepository()->saveGloss('hello', 'greetings', $gloss, $translations, $keywords, $details);
 
         extract($this->createGloss(__FUNCTION__));
-        $worldGloss = $this->getGlossRepository()->saveGloss('world', 'earth', $gloss, $translations, $keywords, $details);
+        $worldGloss = $this->getLexicalEntryRepository()->saveGloss('world', 'earth', $gloss, $translations, $keywords, $details);
 
         $this->assertNotEquals($helloGloss->id, $worldGloss->id);
 

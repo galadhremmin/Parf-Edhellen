@@ -9,24 +9,24 @@ use App\Models\LexicalEntryInflection;
 use App\Models\Inflection;
 use App\Models\Sentence;
 use App\Models\Speech;
-use App\Repositories\GlossInflectionRepository;
-use App\Repositories\GlossRepository;
+use App\Repositories\LexicalEntryInflectionRepository;
+use App\Repositories\LexicalEntryRepository;
 use Illuminate\Http\Request;
 
 class GlossInflectionContributionController extends Controller implements IContributionController
 {
-    private GlossInflectionRepository $_glossInflectionRepository;
+    private LexicalEntryInflectionRepository $_glossInflectionRepository;
 
     private GlossContributionController $_glossContributionController;
 
-    private GlossRepository $_glossRepository;
+    private LexicalEntryRepository $_lexicalEntryRepository;
 
-    public function __construct(GlossInflectionRepository $glossInflectionRepository,
-        GlossRepository $glossRepository, GlossContributionController $glossContributionController)
+    public function __construct(LexicalEntryInflectionRepository $glossInflectionRepository,
+        LexicalEntryRepository $glossRepository, GlossContributionController $glossContributionController)
     {
         $this->_glossInflectionRepository = $glossInflectionRepository;
         $this->_glossContributionController = $glossContributionController;
-        $this->_glossRepository = $glossRepository;
+        $this->_lexicalEntryRepository = $glossRepository;
     }
 
     public function getViewModel(Contribution $contribution): ViewModel
@@ -91,9 +91,9 @@ class GlossInflectionContributionController extends Controller implements IContr
         ];
 
         if ($glossPayload['id']) {
-            $gloss = $this->_glossRepository->getGloss($glossPayload['id']);
+            $gloss = $this->_lexicalEntryRepository->getLexicalEntry($glossPayload['id']);
             if ($gloss->count() < 1) {
-                throw new \Exception('Gloss '.$glossPayload['id'].' does not exist.');
+                throw new \Exception('Lexical entry '.$glossPayload['id'].' does not exist.');
             }
             $glossPayload = array_merge(
                 $gloss->first()->toArray(),
@@ -127,7 +127,7 @@ class GlossInflectionContributionController extends Controller implements IContr
         throw new \Exception('Inflections are not independently supported.');
     }
 
-    public function validateSubstep(Request $request, int $id = 0, int $substepId = 0): bool
+    public function validateSubstep(Request $request, int $id = 0, int $substepId = 0): mixed
     {
         return true;
     }
@@ -212,7 +212,7 @@ class GlossInflectionContributionController extends Controller implements IContr
             ]);
         });
 
-        $this->_glossInflectionRepository->saveManyOnGloss($gloss, $inflections);
+        $this->_glossInflectionRepository->saveManyOnLexicalEntry($gloss, $inflections);
 
         return $gloss->id;
     }

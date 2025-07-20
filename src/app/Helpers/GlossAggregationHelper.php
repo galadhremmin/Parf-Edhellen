@@ -3,8 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\Gloss;
-use App\Models\GlossDetail;
-use App\Models\Translation;
+use App\Models\LexicalEntryDetail;
 use App\Models\Versioning\GlossVersion;
 use Illuminate\Support\Collection;
 
@@ -54,7 +53,7 @@ class GlossAggregationHelper
             $gloss = $items[0];
 
             $gloss->translations = $items->unique('translation')->reduce(function ($carry, $item) {
-                $carry[] = new Translation(['translation' => $item->translation]);
+                $carry[] = new Gloss(['translation' => $item->translation]);
 
                 return $carry;
             }, []);
@@ -62,7 +61,7 @@ class GlossAggregationHelper
 
             $gloss->gloss_details = $items->unique('gloss_details_category')->reduce(function ($carry, $item) {
                 if ($item->gloss_details_category !== null) {
-                    $carry[] = new GlossDetail([
+                    $carry[] = new LexicalEntryDetail([
                         'category' => $item->gloss_details_category,
                         'order' => $item->gloss_details_order,
                         'text' => $item->gloss_details_text,

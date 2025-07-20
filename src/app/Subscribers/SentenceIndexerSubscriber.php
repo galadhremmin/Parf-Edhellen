@@ -66,14 +66,14 @@ class SentenceIndexerSubscriber
     {
         foreach ($sentence->sentence_fragments as $fragment) {
             if ($fragment->type === SentenceBuilder::TYPE_CODE_WORD) {
-                $word = $fragment->gloss->word;
+                $word = $fragment->lexical_entry->word;
                 $inflection = StringHelper::toLower($fragment->fragment);
 
                 if ($inflection === StringHelper::toLower($word->word)) {
                     $inflection = null; // if the words are identical, don't consider the fragment an inflection
                 }
 
-                ProcessSearchIndexCreation::dispatch($fragment, $word, $fragment->gloss->language, $inflection) //
+                ProcessSearchIndexCreation::dispatch($fragment, $word, $fragment->lexical_entry->language, $inflection) //
                     ->onQueue('indexing');
             }
         }

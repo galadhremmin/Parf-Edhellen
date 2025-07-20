@@ -9,8 +9,8 @@ use App\Http\Controllers\Abstracts\Controller;
 use App\Models\Flashcard;
 use App\Models\FlashcardResult;
 use App\Models\Gloss;
+use App\Models\LexicalEntry;
 use App\Models\Speech;
-use App\Models\Translation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -102,7 +102,7 @@ class FlashcardController extends Controller
         $userId = $request->user()->id;
         $results = FlashcardResult::forAccount($userId)
             ->where('flashcard_id', $id)
-            ->with('gloss', 'gloss.word')
+            ->with('lexical_entry', 'lexical_entry.word')
             ->orderBy('id', 'desc')
             ->get();
 
@@ -132,11 +132,11 @@ class FlashcardController extends Controller
         $flashcard = Flashcard::findOrFail($id);
 
         // select a random gloss
-        $q = Gloss::active()
-            ->with('translations')
+        $q = LexicalEntry::active()
+            ->with('glosses')
             ->where([
                 ['language_id', $flashcard->language_id],
-                ['gloss_group_id', $flashcard->gloss_group_id],
+                ['lexical_entry_group_id', $flashcard->lexical_entry_group_id],
             ])
             ->inRandomOrder();
 
@@ -147,14 +147,14 @@ class FlashcardController extends Controller
         }
 
         // retrieve the random gloss or fail (if none exists!)
-        $gloss = $q->firstOrFail();
+        $lexicalEntry = $q->firstOrFail();
 
         // ignore untranslated words
-        $lowercaseWord = StringHelper::normalize($gloss->word->word, false);
-        $translations = $gloss->translations->filter(function ($t) use ($lowercaseWord) {
+        $lowercaseWord = StringHelper::normalize($lexicalEntry->word->word, false);
+        $glosses = $lexicalEntry->glosses->filter(function ($t) use ($lowercaseWord) {
             return StringHelper::normalize($t->translation, false) !== $lowercaseWord;
         });
-        if ($translations->count() < 1) {
+        if ($glosses->count() < 1) {
             // maximum 10 levels of recursion
             if ($n > 10) {
                 abort(404);
@@ -164,8 +164,8 @@ class FlashcardController extends Controller
         }
 
         // Compile a list of options
-        $translation = $translations->random();
-        $options = [$translation->translation];
+        $gloss = $glosses->random();
+        $options = [$gloss->translation];
 
         // group verbs w/ one another as they tend to be in the infinitive
         // in English.
@@ -174,7 +174,7 @@ class FlashcardController extends Controller
 
             return $speech ? $speech->id : -1;
         });
-        if ($gloss->speech_id !== $verbSpeechId) {
+        if ($lexicalEntry->speech_id !== $verbSpeechId) {
             $verbSpeechId = -1;
         }
 
@@ -185,12 +185,12 @@ class FlashcardController extends Controller
         $fakeOptions = DB::select('SELECT 
                 t.translation
             FROM
-                translations as t
+                glosses as t
             JOIN (SELECT 
                     ti.id
                 FROM
-                    translations as ti
-                JOIN glosses as g on g.id = ti.gloss_id 
+                    glosses as ti
+                JOIN lexical_entries as g on g.id = ti.lexical_entry_id
                 WHERE
                     ti.translation <> :translation AND
                     ti.translation NOT IN(\'?\', \'\', \'[unglossed]\') AND
@@ -198,13 +198,13 @@ class FlashcardController extends Controller
                     RAND() < (SELECT 
                             (16 / COUNT(*)) * 10
                         FROM
-                            translations
+                            glosses
                     )
                 ORDER BY RAND()
                 LIMIT 16    
             ) AS t0 ON t0.id = t.id
             LIMIT 4', [
-            'translation' => $translation->translation,
+            'translation' => $gloss->translation,
             'speech0' => $verbSpeechId,
             'speech1' => $verbSpeechId,
             'speech2' => $verbSpeechId,
@@ -217,9 +217,9 @@ class FlashcardController extends Controller
         shuffle($options);
 
         return [
-            'word' => $gloss->word->word,
+            'word' => $lexicalEntry->word->word,
             'options' => $options,
-            'translation_id' => $translation->id,
+            'translation_id' => $gloss->id,
         ];
     }
 
@@ -233,11 +233,11 @@ class FlashcardController extends Controller
         ]);
 
         $translationId = intval($request->input('translation_id'));
-        $translation = Translation::findOrFail($translationId);
-        $gloss = $translation->gloss;
+        $gloss = Gloss::findOrFail($translationId);
+        $lexicalEntry = $gloss->lexicalEntry;
 
         $offeredGloss = $request->input('translation');
-        $ok = strcmp($translation->translation, $offeredGloss) === 0;
+        $ok = strcmp($gloss->translation, $offeredGloss) === 0;
 
         $account = $request->user();
 
@@ -246,16 +246,15 @@ class FlashcardController extends Controller
 
             $result->flashcard_id = intval($request->input('flashcard_id'));
             $result->account_id = $account->id;
-            $result->gloss_id = $gloss->id;
-            $result->expected = $translation->translation;
+            $result->gloss_id = $lexicalEntry->id;
+            $result->expected = $gloss->translation;
             $result->actual = $offeredGloss;
             $result->correct = $ok;
 
             $result->save();
 
             // parse comments, as it's saved as markdown
-            $gloss = $translation->gloss;
-            $gloss->load('translations');
+            $lexicalEntry->load('glosses');
 
             // Record the progress
             $numberOfCards = FlashcardResult::where('account_id', $result->account_id)->count();
@@ -264,7 +263,7 @@ class FlashcardController extends Controller
 
         return [
             'correct' => $ok,
-            'gloss' => $this->_bookAdapter->adaptGloss($gloss),
+            'lexicalEntry' => $this->_bookAdapter->adaptGloss($lexicalEntry),
         ];
     }
 }

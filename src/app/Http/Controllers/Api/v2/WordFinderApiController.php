@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api\v2;
 
 use App\Http\Controllers\Abstracts\Controller;
 use App\Models\GameWordFinderGlossGroup;
-use App\Models\Gloss;
-use App\Models\GlossGroup;
+use App\Models\LexicalEntry;
+use App\Models\LexicalEntryGroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{
     DB,
@@ -24,14 +24,14 @@ class WordFinderApiController extends Controller
         $ids = [];
 
         for ($i = 0; $i < 8; $i += 1) {
-            $gloss = Gloss::active()
-                ->join('words', 'words.id', 'glosses.word_id')
-                ->join('translations', 'translations.gloss_id', 'glosses.id')
+            $lexicalEntry = LexicalEntry::active()
+                ->join('words', 'words.id', 'lexical_entries.word_id')
+                ->join('glosses', 'glosses.lexical_entry_id', 'lexical_entries.id')
                 ->where('language_id', $languageId)
-                ->whereIn('gloss_group_id', $groupIds)
+                ->whereIn('lexical_entry_group_id', $groupIds)
                 ->whereNotIn('translation', $glosses)
                 ->whereNotIn('word', $words)
-                ->whereNotIn('glosses.id', $ids)
+                ->whereNotIn('lexical_entries.id', $ids)
                 ->where(DB::raw('LENGTH(normalized_word)'), '>=', 4)
                 ->where('translation', '<>', DB::raw('word'))
                 ->whereNot('word', 'LIKE', '?%')
@@ -39,14 +39,14 @@ class WordFinderApiController extends Controller
                 ->select('translation as gloss', 'word', 'glosses.id')
                 ->first();
 
-            if ($gloss === null) {
+            if ($lexicalEntry === null) {
                 break;
             }
 
-            $glosses[] = $gloss->gloss;
-            $words[] = $gloss->word;
-            $glossary[] = $gloss;
-            $ids[] = $gloss->id;
+            $glosses[] = $lexicalEntry->gloss;
+            $words[] = $lexicalEntry->word;
+            $glossary[] = $lexicalEntry;
+            $ids[] = $lexicalEntry->id;
         }
 
         return [
@@ -56,16 +56,16 @@ class WordFinderApiController extends Controller
 
     private function getGlossGroupIds(): array
     {
-        $glossGroupIds = Cache::remember('ed.game.word-finder.gloss-groups', 60 * 60 * 24 /* seconds */, function () {
-            return GameWordFinderGlossGroup::pluck('gloss_group_id')->toArray();
+        $lexicalEntryGroupIds = Cache::remember('ed.game.word-finder.lexical-entry-groups', 60 * 60 * 24 /* seconds */, function () {
+            return GameWordFinderGlossGroup::pluck('lexical_entry_group_id')->toArray();
         });
 
-        if (! is_array($glossGroupIds) || count($glossGroupIds) < 1) {
-            $glossGroupIds = GlossGroup::safe()
+        if (! is_array($lexicalEntryGroupIds) || count($lexicalEntryGroupIds) < 1) {
+            $lexicalEntryGroupIds = LexicalEntryGroup::safe()
                 ->pluck('id')
                 ->toArray();
         }
 
-        return $glossGroupIds;
+        return $lexicalEntryGroupIds;
     }
 }

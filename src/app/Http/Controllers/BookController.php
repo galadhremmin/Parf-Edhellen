@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Abstracts\BookBaseController;
 use App\Http\Controllers\Traits\CanGetLanguage;
-use App\Models\GlossGroup;
+use App\Models\LexicalEntryGroup;
 use App\Models\SearchKeyword;
 use App\Repositories\ValueObjects\ExternalEntitySearchValue;
 use App\Repositories\ValueObjects\SpecificEntitiesSearchValue;
@@ -50,14 +50,14 @@ class BookController extends BookBaseController
         ]);
     }
 
-    public function pageForExternalSource(Request $request, int $glossGroupId, string $glossGroupName, string $externalId)
+    public function pageForExternalSource(Request $request, int $lexicalEntryGroupId, string $lexicalEntryGroupName, string $externalId)
     {
         $v = new ExternalEntitySearchValue([
             'external_id' => $externalId,
         ]);
         $entities = $this->_searchIndexRepository->resolveIndexToEntities(SearchKeyword::SEARCH_GROUP_DICTIONARY, $v);
         if (count($entities['entities']['sections']) === 0) {
-            $glossGroup = GlossGroup::findOrFail($glossGroupId);
+            $lexicalEntryGroup = LexicalEntryGroup::findOrFail($lexicalEntryGroupId);
 
             // Don't navigate the client to another website destination if they want to be taken back.
             $url = config('app.url');
@@ -67,8 +67,8 @@ class BookController extends BookBaseController
             }
 
             return view('book.not-found-external', [
-                'external_url' => str_replace('{ExternalID}', $externalId, $glossGroup->external_link_format),
-                'gloss_group' => $glossGroup,
+                'external_url' => str_replace('{ExternalID}', $externalId, $lexicalEntryGroup->external_link_format),
+                'lexical_entry_group' => $lexicalEntryGroup,
                 'referer' => $referer,
             ]);
         }
@@ -90,12 +90,12 @@ class BookController extends BookBaseController
 
     public function versions(Request $request, int $id)
     {
-        $glosses = $this->_glossRepository->getGlossVersions($id);
-        if ($glosses->getVersions()->count() < 1) {
+        $lexicalEntries = $this->_lexicalEntryRepository->getLexicalEntryVersions($id);
+        if ($lexicalEntries->getVersions()->count() < 1) {
             abort(404);
         }
 
-        $model = $this->_bookAdapter->adaptGlossVersions($glosses->getVersions(), $glosses->getLatestVersionId());
+        $model = $this->_bookAdapter->adaptGlossVersions($lexicalEntries->getVersions(), $lexicalEntries->getLatestVersionId());
 
         return view('book.version', $model + [
             'user' => $request->user(),

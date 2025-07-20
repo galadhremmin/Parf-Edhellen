@@ -3,7 +3,7 @@
 namespace App\Subscribers;
 
 use App\Events\ContributionDestroyed;
-use App\Events\GlossDestroyed;
+use App\Events\LexicalEntryDestroyed;
 use App\Events\SentenceDestroyed;
 use App\Models\ForumThread;
 use App\Models\Initialization\Morphs;
@@ -19,7 +19,7 @@ class DiscussEventSubscriber
         return [
             ContributionDestroyed::class => 'onContributionDestroyed',
             SentenceDestroyed::class => 'onSentenceDestroyed',
-            GlossDestroyed::class => 'onGlossDestroyed',
+            LexicalEntryDestroyed::class => 'onGlossDestroyed',
         ];
     }
 
@@ -42,10 +42,10 @@ class DiscussEventSubscriber
     /**
      * Handle the destruction of glosses.
      */
-    public function onGlossDestroyed(GlossDestroyed $event): void
+    public function onGlossDestroyed(LexicalEntryDestroyed $event): void
     {
-        $this->deleteThread($event->gloss,
-            $event->replacementGloss !== null ? $event->replacementGloss->id : 0
+        $this->deleteThread($event->lexicalEntry,
+            $event->replacementLexicalEntry !== null ? $event->replacementLexicalEntry->id : 0
         );
     }
 

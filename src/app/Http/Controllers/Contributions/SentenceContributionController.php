@@ -7,7 +7,7 @@ use App\Http\Controllers\Abstracts\Controller;
 use App\Http\Controllers\Traits\CanMapSentence;
 use App\Http\Controllers\Traits\CanValidateSentence;
 use App\Models\Contribution;
-use App\Models\GlossInflection;
+use App\Models\LexicalEntryInflection;
 use App\Models\Sentence;
 use App\Models\SentenceFragment;
 use App\Models\SentenceTranslation;
@@ -83,7 +83,7 @@ class SentenceContributionController extends Controller implements IContribution
         $sentence->load('account');
 
         if (isset($sentenceData['id']) && $sentenceData['id'] !== 0) {
-            $sentence->id = $sentenceData['id'];
+            $sentence->setAttribute('id', $sentenceData['id']);
         }
 
         $fragmentData = $this->createFragmentDataFromPayload($payload);
@@ -125,7 +125,7 @@ class SentenceContributionController extends Controller implements IContribution
      *
      * @return void
      */
-    public function validateSubstep(Request $request, int $id = 0, int $substepId = 0): bool
+    public function validateSubstep(Request $request, int $id = 0, int $substepId = 0): mixed
     {
         switch ($substepId) {
             case 0:
@@ -223,7 +223,7 @@ class SentenceContributionController extends Controller implements IContribution
         // Transform inflections into GlossInflection entities.
         $inflections = array_map(function ($inflections) {
             return array_map(function ($inflection) {
-                return new GlossInflection($inflection);
+                return new LexicalEntryInflection($inflection);
             }, $inflections);
         }, $map['inflections']);
 
@@ -288,19 +288,19 @@ class SentenceContributionController extends Controller implements IContribution
                 $fragment = new SentenceFragment($fragmentData);
 
                 // Generate a fake ID (descending order, starting at -1).
-                $fragment->id = ($i + 1) * -1;
+                $fragment->setAttribute('id', ($i + 1) * -1);
 
                 // Create an array of IDs for inflections associated with this fragment.
-                $fragment->gloss_inflections = collect(
-                    isset($payload['gloss_inflections'])
-                        ? $payload['gloss_inflections'][$i]->orderBy('order')
+                $fragment->lexical_entry_inflections = collect(
+                    isset($payload['lexical_entry_inflections'])
+                        ? $payload['lexical_entry_inflections'][$i]->orderBy('order')
                         : array_map(function ($i) {  // 20220831: maintained for backwards compatibility.
                             return [
                                 'inflection_id' => $i['inflection_id'],
                             ];
                         }, $payload['inflections'][$i])
                 )->map(function ($i, $order) {
-                    return new GlossInflection($i + ['order' => $order]);
+                    return new LexicalEntryInflection($i + ['order' => $order]);
                 });
 
                 $fragments->push($fragment);
@@ -348,7 +348,7 @@ class SentenceContributionController extends Controller implements IContribution
             return;
         }
 
-        if (array_key_exists('gloss_id', $fragments[0])) {
+        if (array_key_exists('lexical_entry_id', $fragments[0])) {
             return;
         }
 
@@ -359,7 +359,7 @@ class SentenceContributionController extends Controller implements IContribution
 
             // transition from API version v1 to v2.
             if (isset($fragment['translation_id'])) {
-                $fragment['gloss_id'] = $fragment['translation_id'];
+                $fragment['lexical_entry_id'] = $fragment['translation_id'];
                 unset($fragment['translation_id']);
             }
 

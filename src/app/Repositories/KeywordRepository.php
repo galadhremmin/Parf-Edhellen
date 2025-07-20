@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\Helpers\StringHelper;
-use App\Models\Gloss;
+use App\Models\LexicalEntry;
 use App\Models\Keyword;
 use App\Models\Language;
 use App\Models\Sense;
@@ -11,7 +11,7 @@ use App\Models\Word;
 
 class KeywordRepository
 {
-    public function createKeyword(Word $word, Sense $sense, ?Gloss $gloss = null, ?Language $keywordLanguage = null, //
+    public function createKeyword(Word $word, Sense $sense, ?LexicalEntry $lexicalEntry = null, ?Language $keywordLanguage = null, //
         ?string $inflection = null, int $inflectionId = 0): void
     {
         $keywordString = $inflection ? $inflection : $word->word;
@@ -29,11 +29,11 @@ class KeywordRepository
             'normalized_keyword' => $normalizedAccented,
         ];
 
-        if ($gloss !== null) {
-            $data['gloss_id'] = $gloss->id;
+        if ($lexicalEntry !== null) {
+            $data['lexical_entry_id'] = $lexicalEntry->id;
             $data['is_sense'] = 0;
-            $data['is_old'] = $gloss->gloss_group_id
-                ? $gloss->gloss_group->is_old
+            $data['is_old'] = $lexicalEntry->lexical_entry_group_id
+                ? $lexicalEntry->lexical_entry_group->is_old
                 : false;
 
             if ($inflectionId) {
@@ -49,7 +49,7 @@ class KeywordRepository
         }
 
         $qualifyingFields = [
-            'keyword', 'word_id', 'sense_id', 'gloss_id', 'sentence_fragment_id', 'keyword_language_id',
+            'keyword', 'word_id', 'sense_id', 'lexical_entry_id', 'sentence_fragment_id', 'keyword_language_id',
         ];
         $updateFields = [
             'is_old', 'is_sense', 'normalized_keyword',

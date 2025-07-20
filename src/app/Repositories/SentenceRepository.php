@@ -8,7 +8,7 @@ use App\Events\SentenceEdited;
 use App\Events\SentenceFragmentsDestroyed;
 use App\Helpers\SentenceHelper;
 use App\Helpers\StringHelper;
-use App\Models\Gloss;
+use App\Models\LexicalEntry;
 use App\Models\Inflection;
 use App\Models\Initialization\Morphs;
 use App\Models\Sentence;
@@ -20,18 +20,18 @@ use Illuminate\Support\Facades\DB;
 
 class SentenceRepository
 {
-    private GlossInflectionRepository $_glossInflectionRepository;
+    private LexicalEntryInflectionRepository $_lexicalEntryInflectionRepository;
 
     private SearchIndexRepository $_searchRepository;
 
     private AuthManager $_authManager;
 
     public function __construct(
-        GlossInflectionRepository $glossInflectionRepository,
+        LexicalEntryInflectionRepository $lexicalEntryInflectionRepository,
         SearchIndexRepository $searchRepository,
         AuthManager $authManager)
     {
-        $this->_glossInflectionRepository = $glossInflectionRepository;
+        $this->_lexicalEntryInflectionRepository = $lexicalEntryInflectionRepository;
         $this->_searchRepository = $searchRepository;
         $this->_authManager = $authManager;
     }
@@ -92,12 +92,12 @@ class SentenceRepository
     {
         return DB::table('sentence_fragments as sf')
             ->join('sentences as s', 'sf.sentence_id', 's.id')
-            ->join('gloss_inflections as gi', 'sf.id', 'gi.sentence_fragment_id')
+            ->join('lexical_entry_inflections as gi', 'sf.id', 'gi.sentence_fragment_id')
             ->join('speeches as sp', 'gi.speech_id', 'sp.id')
             ->join('languages as l', 'gi.language_id', 'l.id')
             ->join('inflections as i', 'gi.inflection_id', 'i.id')
-            ->whereIn('sf.gloss_id', $ids)
-            ->select('sf.gloss_id', 'sf.fragment as word', 'i.name as inflection', 'sp.name as speech',
+            ->whereIn('sf.lexical_entry_id', $ids)
+            ->select('sf.lexical_entry_id', 'sf.fragment as word', 'i.name as inflection', 'sp.name as speech',
                 'sf.sentence_id', 'sf.id as sentence_fragment_id', 's.name as sentence_name', 'l.name as language_name',
                 'l.id as language_id')
             ->orderBy('sf.fragment')
@@ -113,7 +113,7 @@ class SentenceRepository
             return $sentence;
         }
 
-        $fragments = $sentence->sentence_fragments()->with(['gloss_inflections', 'speech'])->get();
+        $fragments = $sentence->sentence_fragments()->with(['lexical_entry_inflections', 'speech'])->get();
         $translations = $sentence->sentence_translations()
             ->select('sentence_number', 'paragraph_number', 'translation')
             ->orderBy('paragraph_number', 'asc')
@@ -194,7 +194,7 @@ class SentenceRepository
             if (! empty($inflections)) {
                 foreach ($inflections as $inflection) {
                     $inflection->speech_id = $fragment->speech_id;
-                    $inflection->gloss_id = $fragment->gloss_id;
+                    $inflection->lexical_entry_id = $fragment->lexical_entry_id;
                     $inflection->language_id = $sentence->language_id;
                     $inflection->account_id = $sentence->account_id;
                     $inflection->sentence_id = $fragment->sentence_id;
@@ -202,7 +202,7 @@ class SentenceRepository
                     $inflection->word = $fragment->fragment;
                 }
 
-                $this->_glossInflectionRepository->saveInflectionAsOneGroup(collect($inflections));
+                $this->_lexicalEntryInflectionRepository->saveInflectionAsOneGroup(collect($inflections));
             }
         }
 
@@ -239,7 +239,7 @@ class SentenceRepository
     public function suggestFragmentGlosses(Collection $fragments, int $languageId)
     {
         $distinctFragments = $fragments->filter(function ($f) {
-            return $f->type === 0 && $f->gloss_id === 0; // = i.e. words
+            return $f->type === 0 && $f->lexical_entry_id === 0; // = i.e. words
         })->map(function ($f) {
             return StringHelper::toLower(StringHelper::clean($f->fragment));
         })->unique();
@@ -257,21 +257,21 @@ class SentenceRepository
         // We need to narrow the search to the glossary and existing phrases. The index
         // groups their entries in so-called 'search groups'. Generally, the search group
         // is tied to the underlying entry's entity, so we can obtain the search group
-        // IDs for the glossary and for fragments by aquiring the morph for for `Gloss`
+        // IDs for the glossary and for fragments by aquiring the morph for for `LexicalEntry`
         // and `SentenceFragment` entities:
         $sentenceFragmentMorph = Morphs::getAlias(SentenceFragment::class);
-        $glossMorph = Morphs::getAlias(Gloss::class);
+        $lexicalEntryMorph = Morphs::getAlias(LexicalEntry::class);
 
         // Query the index but narrow the search to the language and the search groups
         // identified above.
         $results = $this->_searchRepository->indexSearch(
             $distinctFragments->all(),
-            function ($query) use ($languageId, $sentenceFragmentMorph, $glossMorph) {
+            function ($query) use ($languageId, $sentenceFragmentMorph, $lexicalEntryMorph) {
                 $query = $query
                     ->where('language_id', $languageId)
                     ->whereIn('entity_name', [
                         $sentenceFragmentMorph,
-                        $glossMorph,
+                        $lexicalEntryMorph,
                     ]);
 
                 return $query;
@@ -294,17 +294,17 @@ class SentenceRepository
                         continue;
                     }
 
-                    $glossId = $result->entity->gloss_id;
+                    $lexicalEntryId = $result->entity->lexical_entry_id;
                     $speechId = $result->entity->speech_id;
-                    $inflectionIds = $result->entity->gloss_inflections->pluck('inflection_id');
+                    $inflectionIds = $result->entity->lexical_entry_inflections->pluck('inflection_id');
                 } else {
-                    $glossId = $result->entity_id;
+                    $lexicalEntryId = $result->entity_id;
                     $speechId = $result->speech_id;
                     $inflectionIds = [];
                 }
 
                 $suggestions[$fragment] = [
-                    'gloss_id' => $glossId,
+                    'lexical_entry_id' => $lexicalEntryId,
                     'speech_id' => $speechId,
                     'inflection_ids' => $inflectionIds,
                 ];

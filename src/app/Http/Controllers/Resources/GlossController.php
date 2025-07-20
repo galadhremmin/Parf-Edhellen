@@ -8,7 +8,7 @@ use App\Http\Controllers\Traits\CanMapGloss;
 use App\Http\Controllers\Traits\CanValidateGloss;
 use App\Models\LexicalEntry;
 use App\Models\Language;
-use App\Repositories\GlossRepository;
+use App\Repositories\LexicalEntryRepository;
 use Illuminate\Http\Request;
 
 class GlossController extends Controller
@@ -18,12 +18,12 @@ class GlossController extends Controller
 
     protected BookAdapter $_bookAdapter;
 
-    protected GlossRepository $_glossRepository;
+    protected LexicalEntryRepository $_lexicalEntryRepository;
 
-    public function __construct(BookAdapter $adapter, GlossRepository $glossRepository)
+    public function __construct(BookAdapter $adapter, LexicalEntryRepository $glossRepository)
     {
         $this->_bookAdapter = $adapter;
-        $this->_glossRepository = $glossRepository;
+        $this->_lexicalEntryRepository = $glossRepository;
     }
 
     public function index(Request $request)

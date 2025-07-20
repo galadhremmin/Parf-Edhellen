@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Enumerations;
 
-enum GlossChange: int
+enum LexicalEntryChange: int
 {
     case NO_CHANGE = 0;
     case NEW = 1 << 0;

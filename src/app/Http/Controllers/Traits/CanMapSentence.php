@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Traits;
 
-use App\Models\GlossInflection;
+use App\Models\LexicalEntryInflection;
 use App\Models\Sentence;
 use App\Models\SentenceFragment;
 use App\Models\SentenceTranslation;
@@ -48,7 +48,7 @@ trait CanMapSentence
             if (! $fragment->type) {
                 $fragment->comments = $fragmentData['comments'] ?? ''; // cannot be NULL
                 $fragment->speech_id = intval($fragmentData['speech_id']);
-                $fragment->gloss_id = intval($fragmentData['gloss_id']);
+                $fragment->lexical_entry_id = intval($fragmentData['lexical_entry_id']);
             } else {
                 $fragment->comments = '';
 
@@ -66,15 +66,15 @@ trait CanMapSentence
             $fragments[] = $fragment;
 
             $inflectionsForFragment = [];
-            if (! $fragment->type && isset($fragmentData['gloss_inflections'])) {
+            if (! $fragment->type && isset($fragmentData['lexical_entry_inflections'])) {
                 $order = 0;
-                foreach ($fragmentData['gloss_inflections'] as $inflection) {
-                    $inflectionRel = new GlossInflection([
+                foreach ($fragmentData['lexical_entry_inflections'] as $inflection) {
+                    $inflectionRel = new LexicalEntryInflection([
                         'inflection_id' => intval($inflection['inflection_id']),
                         'order' => $order++,
                         'speech_id' => $fragment->speech_id,
                         'language_id' => $sentence->language_id,
-                        'gloss_id' => $fragment->gloss_id,
+                        'lexical_entry_id' => $fragment->lexical_entry_id,
                         'account_id' => $sentence->account_id,
                     ]);
 

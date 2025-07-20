@@ -11,7 +11,7 @@ class KeywordRepositoryTest extends TestCase
 {
     use CanCreateGloss {
         CanCreateGloss::setUp as setUpGlosses;
-        CanCreateGloss::getRepository as getGlossRepository;
+        CanCreateGloss::getRepository as getLexicalEntryRepository;
     }
     use DatabaseTransactions; // ; <-- remedies Visual Studio Code colouring bug
 
@@ -27,7 +27,7 @@ class KeywordRepositoryTest extends TestCase
         // Create an origin gloss, to validate the versioning system. By appending 'origin' to the word string,
         // the next gloss saved (with an unsuffixed word) create a new version of the gloss.
         $keywords[] = $word;
-        $gloss = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
+        $gloss = $this->getLexicalEntryRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
 
         $repository = resolve(KeywordRepository::class);
 

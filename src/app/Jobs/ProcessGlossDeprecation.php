@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Repositories\GlossRepository;
+use App\Repositories\LexicalEntryRepository;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -32,10 +32,10 @@ class ProcessGlossDeprecation implements ShouldQueue
      *
      * @return void
      */
-    public function handle(GlossRepository $glossRepository)
+    public function handle(LexicalEntryRepository $glossRepository)
     {
         foreach ($this->ids as $id) {
-            $glossRepository->deleteGlossWithId($id);
+            $glossRepository->deleteLexicalEntryWithId($id);
         }
     }
 }

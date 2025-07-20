@@ -19,9 +19,9 @@ use App\Events\FlashcardFlipped;
 use App\Events\ForumPostCreated;
 use App\Events\ForumPostEdited;
 use App\Events\ForumPostLikeCreated;
-use App\Events\GlossCreated;
-use App\Events\GlossDestroyed;
-use App\Events\GlossEdited;
+use App\Events\LexicalEntryCreated;
+use App\Events\LexicalEntryDestroyed;
+use App\Events\LexicalEntryEdited;
 use App\Events\SentenceCreated;
 use App\Events\SentenceDestroyed;
 use App\Events\SentenceEdited;
@@ -70,9 +70,9 @@ class AuditTrailSubscriber
             SentenceEdited::class => 'onSentenceEdited',
             SentenceDestroyed::class => 'onSentenceDeleted',
 
-            GlossCreated::class => 'onGlossCreated',
-            GlossEdited::class => 'onGlossEdited',
-            GlossDestroyed::class => 'onGlossDeleted',
+            LexicalEntryCreated::class => 'onGlossCreated',
+            LexicalEntryEdited::class => 'onGlossEdited',
+            LexicalEntryDestroyed::class => 'onGlossDeleted',
 
             ContributionApproved::class => 'onContributionApproved',
             ContributionRejected::class => 'onContributionRejected',
@@ -261,31 +261,31 @@ class AuditTrailSubscriber
         $this->_repository->store(AuditTrail::ACTION_SENTENCE_DELETE, $event->sentence, $event->accountId);
     }
 
-    public function onGlossCreated(GlossCreated $event): void
+    public function onGlossCreated(LexicalEntryCreated $event): void
     {
         if ($event->accountId === 0) {
             return;
         }
 
-        $this->_repository->store(AuditTrail::ACTION_GLOSS_ADD, $event->gloss, $event->accountId);
+        $this->_repository->store(AuditTrail::ACTION_GLOSS_ADD, $event->lexicalEntry, $event->accountId);
     }
 
-    public function onGlossEdited(GlossEdited $event): void
+    public function onGlossEdited(LexicalEntryEdited $event): void
     {
         if ($event->accountId === 0) {
             return;
         }
 
-        $this->_repository->store(AuditTrail::ACTION_GLOSS_EDIT, $event->gloss, $event->accountId);
+        $this->_repository->store(AuditTrail::ACTION_GLOSS_EDIT, $event->lexicalEntry, $event->accountId);
     }
 
-    public function onGlossDeleted(GlossDestroyed $event): void
+    public function onGlossDeleted(LexicalEntryDestroyed $event): void
     {
         if ($event->accountId === 0) {
             return;
         }
 
-        $this->_repository->store(AuditTrail::ACTION_GLOSS_DELETE, $event->gloss, $event->accountId, true);
+        $this->_repository->store(AuditTrail::ACTION_GLOSS_DELETE, $event->lexicalEntry, $event->accountId, true);
     }
 
     public function onContributionApproved(ContributionApproved $event): void

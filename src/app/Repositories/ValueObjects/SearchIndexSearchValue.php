@@ -9,14 +9,14 @@ class SearchIndexSearchValue implements \JsonSerializable
     public function __construct(array $properties)
     {
         $this->initializeAll($properties, [
-            'gloss_group_ids', 'inflections', 'include_old', 'language_id', 'reversed',
+            'lexical_entry_group_ids', 'inflections', 'include_old', 'language_id', 'reversed',
             'speech_ids', 'word',
         ], /* required: */ false);
     }
 
-    public function getGlossGroupIds()
+    public function getLexicalEntryGroupIds()
     {
-        return $this->getValue('gloss_group_ids');
+        return $this->getValue('lexical_entry_group_ids');
     }
 
     public function getIncludesInflections()

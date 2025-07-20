@@ -5,10 +5,8 @@ namespace App\Console\Commands;
 use App\Jobs\ProcessGlossImport;
 use App\Models\Account;
 use App\Models\Gloss;
-use App\Models\GlossGroup;
-use App\Models\Inflection;
+use App\Models\LexicalEntryGroup;
 use App\Models\Language;
-use App\Models\Translation;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Ramsey\Uuid\Uuid;
@@ -31,7 +29,7 @@ class ImportDictionaryCommand extends Command
 
     private Collection $_languageMap;
 
-    private ?GlossGroup $_glossGroup;
+    private ?LexicalEntryGroup $_glossGroup;
 
     private ?Account $_importAccount;
 
@@ -55,7 +53,7 @@ class ImportDictionaryCommand extends Command
     public function handle()
     {
         if ($this->option('gloss-group-id') !== null) {
-            $this->_glossGroup = GlossGroup::findOrFail(intval($this->option('gloss-group-id')));
+            $this->_glossGroup = LexicalEntryGroup::findOrFail(intval($this->option('gloss-group-id')));
         }
 
         if ($this->option('account-id') === null) {
@@ -110,7 +108,7 @@ class ImportDictionaryCommand extends Command
         }
     }
 
-    public function createImportData(\stdClass $entity): array
+    public function createImportData(\stdClass $entity): ?array
     {
         // This is just simplifying things. If it is null, initiate it as an empty collection to avoid having to check for nulls...
         if (! is_array($entity->references)) {
@@ -178,7 +176,7 @@ class ImportDictionaryCommand extends Command
         $sense = $entity->preferredSense !== null ? $entity->preferredSense : $entity->translations[0];
 
         $translations = array_map(function ($translation) {
-            return new Translation(['translation' => $translation]);
+            return new Gloss(['translation' => $translation]);
         }, $entity->translations);
 
         $word = $entity->word;

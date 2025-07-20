@@ -3,7 +3,7 @@
 namespace Tests\Unit;
 
 use App\Adapters\BookAdapter;
-use App\Models\Translation;
+use App\Models\Gloss;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Queue;
@@ -14,7 +14,7 @@ class BookAdapterTest extends TestCase
 {
     use CanCreateGloss {
         CanCreateGloss::setUp as setUpGlosses;
-        CanCreateGloss::getRepository as getGlossRepository;
+        CanCreateGloss::getRepository as getLexicalEntryRepository;
     }
     use DatabaseTransactions; // ; <-- remedies Visual Studio Code colouring bug
 
@@ -32,7 +32,7 @@ class BookAdapterTest extends TestCase
     public function test_adapt_gloss()
     {
         extract($this->createGloss(__FUNCTION__));
-        $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
+        $this->getLexicalEntryRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
 
         $languages = new Collection([$gloss->language]);
         $inflections = collect([]);
@@ -54,9 +54,9 @@ class BookAdapterTest extends TestCase
     {
         extract($this->createGloss(__FUNCTION__));
 
-        $gloss = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, []);
+        $gloss = $this->getLexicalEntryRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, []);
 
-        $versions = $this->getGlossRepository()->getGlossVersions($gloss->id);
+        $versions = $this->getLexicalEntryRepository()->getGlossVersions($gloss->id);
         $adapted = $this->_adapter->adaptGlossVersions($versions->getVersions(), $versions->getLatestVersionId());
         $adaptedGlossary = &$adapted['versions'];
 
@@ -78,7 +78,7 @@ class BookAdapterTest extends TestCase
         $glossary = [];
         foreach ($glosses as $gloss) {
             extract($this->createGloss(__FUNCTION__, $gloss));
-            $savedGloss = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
+            $savedGloss = $this->getLexicalEntryRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
             $savedGloss->load('translations', 'gloss_details');
             $glossary[] = $savedGloss;
         }
@@ -94,24 +94,24 @@ class BookAdapterTest extends TestCase
     public function test_should_get_versions()
     {
         extract($this->createGloss(__FUNCTION__));
-        $gloss0 = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
+        $gloss0 = $this->getLexicalEntryRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
 
         $gloss->is_uncertain = false;
         $translations = $this->createTranslations();
         $details = $this->createGlossDetails($gloss);
-        $gloss1 = $this->getGlossRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
+        $gloss1 = $this->getLexicalEntryRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
 
         $newWord = $word.' 1';
         $translations = $this->createTranslations();
         $details = $this->createGlossDetails($gloss);
-        $gloss2 = $this->getGlossRepository()->saveGloss($newWord, $sense, $gloss, $translations, $keywords, $details);
+        $gloss2 = $this->getLexicalEntryRepository()->saveGloss($newWord, $sense, $gloss, $translations, $keywords, $details);
 
         $translations = array_merge(
             $this->createTranslations(),
-            [new Translation(['translation' => 'test '.count($translations)])]
+            [new Gloss(['translation' => 'test '.count($translations)])]
         );
         $details = $this->createGlossDetails($gloss);
-        $gloss3 = $this->getGlossRepository()->saveGloss($newWord, $sense, $gloss, $translations, $keywords, $details);
+        $gloss3 = $this->getLexicalEntryRepository()->saveGloss($newWord, $sense, $gloss, $translations, $keywords, $details);
 
         $gloss0->refresh();
         $gloss1->refresh();
@@ -122,7 +122,7 @@ class BookAdapterTest extends TestCase
         $this->assertEquals($gloss0->id, $gloss2->id);
         $this->assertEquals($gloss0->id, $gloss3->id);
 
-        $versions = $this->getGlossRepository()->getGlossVersions($gloss0->id);
+        $versions = $this->getLexicalEntryRepository()->getGlossVersions($gloss0->id);
         $adapted = $this->_adapter->adaptGlossVersions($versions->getVersions(), $versions->getLatestVersionId());
         $glosses = &$adapted['versions'];
 

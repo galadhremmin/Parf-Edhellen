@@ -4,7 +4,7 @@ namespace App\Repositories\ValueObjects;
 
 use Illuminate\Support\Collection;
 
-class GlossVersionsValue implements \JsonSerializable
+class LexicalEntryVersionsValue implements \JsonSerializable
 {
     use Traits\CanInitialize;
 

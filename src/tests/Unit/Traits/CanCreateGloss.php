@@ -2,14 +2,14 @@
 
 namespace Tests\Unit\Traits;
 
-use App\Models\Gloss;
-use App\Models\GlossDetail;
-use App\Models\GlossGroup;
+use App\Models\LexicalEntry;
+use App\Models\LexicalEntryDetail;
+use App\Models\LexicalEntryGroup;
 use App\Models\Language;
 use App\Models\Speech;
-use App\Models\Translation;
-use App\Repositories\GlossRepository;
-use Auth;
+use App\Models\Gloss;
+use App\Repositories\LexicalEntryRepository;
+use Illuminate\Support\Facades\Auth;
 
 trait CanCreateGloss
 {
@@ -17,9 +17,9 @@ trait CanCreateGloss
         MocksAuth::setUp as setUpAuth;
     } // ;
 
-    protected ?GlossGroup $_glossGroup;
+    protected ?LexicalEntryGroup $_lexicalEntryGroup;
 
-    protected GlossRepository $_glossRepository;
+    protected LexicalEntryRepository $_lexicalEntryRepository;
 
     protected function setUp(): void
     {
@@ -27,8 +27,8 @@ trait CanCreateGloss
 
         $this->setUpAuth();
 
-        $this->_glossRepository = resolve(GlossRepository::class);
-        $this->_glossGroup = GlossGroup::firstOrCreate([
+        $this->_lexicalEntryRepository = resolve(LexicalEntryRepository::class);
+        $this->_lexicalEntryGroup = LexicalEntryGroup::firstOrCreate([
             'name' => 'Unit tests',
             'is_canon' => true,
         ]);
@@ -38,7 +38,7 @@ trait CanCreateGloss
 
     protected function cleanGlosses()
     {
-        $glosses = Gloss::where('gloss_group_id', $this->_glossGroup->id)
+        $glosses = LexicalEntry::where('lexical_entry_group_id', $this->_lexicalEntryGroup->id)
             ->get();
         $senses = [];
 
@@ -46,9 +46,9 @@ trait CanCreateGloss
             $senses[] = $gloss->sense;
 
             $gloss->keywords()->delete();
-            $gloss->translations()->delete();
-            $gloss->gloss_details()->delete();
-            $gloss->gloss_versions()->delete();
+            $gloss->glosses()->delete();
+            $gloss->lexical_entry_details()->delete();
+            $gloss->lexical_entry_versions()->delete();
             $gloss->delete();
         }
     }
@@ -67,19 +67,19 @@ trait CanCreateGloss
         $speechId = Speech::where('name', 'verb')
             ->firstOrFail()->id;
 
-        $gloss = new Gloss;
-        $gloss->account_id = $accountId;
-        $gloss->language_id = $languageId;
-        $gloss->gloss_group_id = $this->_glossGroup->id;
-        $gloss->is_uncertain = 1;
-        $gloss->source = 'Unit test';
-        $gloss->comments = 'This gloss was created in an unit test.';
-        $gloss->tengwar = 'yljjh6';
-        $gloss->speech_id = $speechId;
-        $gloss->external_id = 'UA-Unit-GlossRepository-'.$method.'-'.uniqid();
-        $gloss->label = null;
+        $lexicalEntry = new LexicalEntry;
+        $lexicalEntry->account_id = $accountId;
+        $lexicalEntry->language_id = $languageId;
+        $lexicalEntry->lexical_entry_group_id = $this->_lexicalEntryGroup->id;
+        $lexicalEntry->is_uncertain = 1;
+        $lexicalEntry->source = 'Unit test';
+        $lexicalEntry->comments = 'This gloss was created in an unit test.';
+        $lexicalEntry->tengwar = 'yljjh6';
+        $lexicalEntry->speech_id = $speechId;
+        $lexicalEntry->external_id = 'UA-Unit-LexicalEntryRepository-'.$method.'-'.uniqid();
+        $lexicalEntry->label = null;
 
-        $translations = $this->createTranslations();
+        $glosses = $this->createGlosses();
 
         $keywords = [
             'test 3',
@@ -87,57 +87,55 @@ trait CanCreateGloss
             'test 5',
         ];
 
-        $details = $this->createGlossDetails($gloss);
+        $details = $this->createLexicalEntryDetails($lexicalEntry);
 
         $sense = $method.'-'.$word;
 
         return [
             'word' => $word,
             'sense' => $sense,
-            'gloss' => $gloss,
-            'translations' => $translations,
+            'lexicalEntry' => $lexicalEntry,
+            'glosses' => $glosses,
             'keywords' => $keywords,
             'details' => $details,
         ];
     }
 
-    protected function createTranslations()
+    protected function createGlosses()
     {
         return [
-            new Translation(['translation' => 'test 0']),
-            new Translation(['translation' => 'test 1']),
-            new Translation(['translation' => 'test 2']),
+            new Gloss(['translation' => 'test 0']),
+            new Gloss(['translation' => 'test 1']),
+            new Gloss(['translation' => 'test 2']),
         ];
     }
 
-    protected function createGlossDetails(Gloss $gloss)
+    protected function createLexicalEntryDetails(LexicalEntry $lexicalEntry)
     {
-        $accountId = $gloss->account_id;
-
         return [
-            new GlossDetail([
+            new LexicalEntryDetail([
                 'category' => 'Section 1',
-                'text' => 'This is the first item for '.$gloss->external_id,
+                'text' => 'This is the first item for '.$lexicalEntry->external_id,
                 'order' => 10,
             ]),
-            new GlossDetail([
+            new LexicalEntryDetail([
                 'category' => 'Section 2',
-                'text' => 'This is the second item for '.$gloss->external_id,
+                'text' => 'This is the second item for '.$lexicalEntry->external_id,
                 'order' => 20,
             ]),
-            new GlossDetail([
+            new LexicalEntryDetail([
                 'category' => 'Section 3',
-                'text' => 'This is the third item for '.$gloss->external_id,
+                'text' => 'This is the third item for '.$lexicalEntry->external_id,
                 'order' => 30,
             ]),
-            new GlossDetail([
+            new LexicalEntryDetail([
                 'category' => 'Section 4',
-                'text' => 'This is the fourth item for '.$gloss->external_id,
+                'text' => 'This is the fourth item for '.$lexicalEntry->external_id,
                 'order' => 40,
             ]),
-            new GlossDetail([
+            new LexicalEntryDetail([
                 'category' => 'Section 5',
-                'text' => 'This is the fifth item for '.$gloss->external_id,
+                'text' => 'This is the fifth item for '.$lexicalEntry->external_id,
                 'order' => 50,
             ]),
         ];
@@ -145,6 +143,6 @@ trait CanCreateGloss
 
     protected function getRepository()
     {
-        return $this->_glossRepository;
+        return $this->_lexicalEntryRepository;
     }
 }

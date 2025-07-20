@@ -7,7 +7,7 @@ use App\Helpers\LinkHelper;
 use App\Http\Discuss\IDiscussContext;
 use App\Models\Account;
 use App\Models\Versioning\GlossVersion;
-use App\Repositories\GlossRepository;
+use App\Repositories\LexicalEntryRepository;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,13 +17,13 @@ class GlossVersionContext implements IDiscussContext
 
     private BookAdapter $_bookAdapter;
 
-    private GlossRepository $_glossRepository;
+    private LexicalEntryRepository $_lexicalEntryRepository;
 
-    public function __construct(LinkHelper $linkHelper, BookAdapter $bookAdapter, GlossRepository $glossRepository)
+    public function __construct(LinkHelper $linkHelper, BookAdapter $bookAdapter, LexicalEntryRepository $glossRepository)
     {
         $this->_linkHelper = $linkHelper;
         $this->_bookAdapter = $bookAdapter;
-        $this->_glossRepository = $glossRepository;
+        $this->_lexicalEntryRepository = $glossRepository;
     }
 
     public function resolve(Model $entity)
@@ -60,7 +60,7 @@ class GlossVersionContext implements IDiscussContext
 
     public function view(Model $entity)
     {
-        $gloss = $this->_glossRepository->getGloss($entity->gloss_id);
+        $gloss = $this->_lexicalEntryRepository->getLexicalEntry($entity->lexical_entry_id);
         if ($gloss->count() < 1) {
             return response(null, 404);
         }

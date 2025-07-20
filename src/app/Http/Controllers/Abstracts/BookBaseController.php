@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Abstracts;
 use App\Adapters\BookAdapter;
 use App\Models\Versioning\GlossVersion;
 use App\Repositories\DiscussRepository;
-use App\Repositories\GlossInflectionRepository;
-use App\Repositories\GlossRepository;
+use App\Repositories\LexicalEntryInflectionRepository;
+use App\Repositories\LexicalEntryRepository;
 use App\Repositories\SearchIndexRepository;
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
 use Illuminate\Http\Request;
@@ -15,20 +15,20 @@ abstract class BookBaseController extends Controller
 {
     protected DiscussRepository $_discussRepository;
 
-    protected GlossRepository $_glossRepository;
+    protected LexicalEntryRepository $_lexicalEntryRepository;
 
     protected SearchIndexRepository $_searchIndexRepository;
 
-    protected GlossInflectionRepository $_glossInflectionRepository;
+    protected LexicalEntryInflectionRepository $_glossInflectionRepository;
 
     protected BookAdapter $_bookAdapter;
 
-    public function __construct(DiscussRepository $discussRepository, GlossRepository $glossRepository,
-        GlossInflectionRepository $glossInflectionRepository, SearchIndexRepository $searchIndexRepository,
+    public function __construct(DiscussRepository $discussRepository, LexicalEntryRepository $glossRepository,
+        LexicalEntryInflectionRepository $glossInflectionRepository, SearchIndexRepository $searchIndexRepository,
         BookAdapter $bookAdapter)
     {
         $this->_discussRepository = $discussRepository;
-        $this->_glossRepository = $glossRepository;
+        $this->_lexicalEntryRepository = $glossRepository;
         $this->_searchIndexRepository = $searchIndexRepository;
         $this->_glossInflectionRepository = $glossInflectionRepository;
         $this->_bookAdapter = $bookAdapter;
@@ -50,7 +50,7 @@ abstract class BookBaseController extends Controller
 
         $gloss = $glosses->first();
         $comments = $this->_discussRepository->getNumberOfPostsForEntities(GlossVersion::class, [$gloss->latest_gloss_version_id]);
-        $inflections = $this->_glossInflectionRepository->getInflectionsForGlosses([$glossId]);
+        $inflections = $this->_glossInflectionRepository->getInflectionsForLexicalEntries([$glossId]);
 
         return $this->_bookAdapter->adaptGlosses([$gloss], $inflections, $comments, $gloss->word->word);
     }
@@ -64,19 +64,19 @@ abstract class BookBaseController extends Controller
      */
     protected function getGlossUnadapted(int $glossId)
     {
-        $gloss = $this->_glossRepository->getGloss($glossId);
+        $gloss = $this->_lexicalEntryRepository->getLexicalEntry($glossId);
 
         if ($gloss === null) {
-            // The gloss might still be present in `gloss_versions` and the link consequently
-            // incorrect. This may only happen for legacy reasons where each gloss version had
-            // its own unique ID. All deprecated versions were migrated to the gloss_versions
+            // The lexical entry might still be present in `lexical_entry_versions` and the link consequently
+            // incorrect. This may only happen for legacy reasons where each lexical entry version had
+            // its own unique ID. All deprecated versions were migrated to the lexical_entry_versions
             // table on 2022-04-25 but their IDs retained as `__migration_gloss_id`.
-            $version = $this->_glossRepository->getGlossVersionByPreMigrationId($glossId);
+            $version = $this->_lexicalEntryRepository->getLexicalEntryVersionByPreMigrationId($glossId);
             if ($version === null) {
                 return collect([]);
             }
 
-            $gloss = $this->_glossRepository->getGloss($version->gloss_id);
+            $gloss = $this->_lexicalEntryRepository->getLexicalEntry($version->lexical_entry_id);
         }
 
         return $gloss;

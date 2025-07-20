@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Contributions;
 
-use App\Models\Gloss;
-use App\Models\GlossInflection;
+use App\Models\LexicalEntry;
+use App\Models\LexicalEntryInflection;
 use App\Models\Initialization\Morphs;
 use App\Models\Sentence;
 use Illuminate\Http\Request;
@@ -27,10 +27,10 @@ class ContributionControllerFactory
 
         $controllerName = null;
         switch ($modelName) {
-            case Gloss::class:
+            case LexicalEntry::class:
                 $controllerName = GlossContributionController::class;
                 break;
-            case GlossInflection::class:
+            case LexicalEntryInflection::class:
                 $controllerName = GlossInflectionContributionController::class;
                 break;
             case Sentence::class:

@@ -10,7 +10,7 @@ use App\Helpers\MarkdownParserWrapper;
 use App\Interfaces\IExternalToInternalUrlResolver;
 use App\Interfaces\IMarkdownParser;
 use App\Interfaces\ISystemLanguageFactory;
-use App\Models\GlossGroup;
+use App\Models\LexicalEntryGroup;
 use App\Models\Initialization\Morphs;
 use App\Repositories\AuditTrailRepository;
 use App\Repositories\Interfaces\IAuditTrailRepository;
@@ -91,7 +91,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(
             IExternalToInternalUrlResolver::class,
             function () {
-                $externalLinks = GlossGroup::whereNotNull('external_link_format')
+                $externalLinks = LexicalEntryGroup::whereNotNull('external_link_format')
                     ->orderBy('id')
                     ->get();
         

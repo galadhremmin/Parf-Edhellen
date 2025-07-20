@@ -3,7 +3,7 @@
 namespace App\Repositories;
 
 use App\Helpers\StringHelper;
-use App\Models\Gloss;
+use App\Models\LexicalEntry;
 use App\Models\Initialization\Morphs;
 use App\Models\Interfaces\IHasLanguage;
 use App\Models\Language;
@@ -39,7 +39,7 @@ class SearchIndexRepository
             // Expansion of English infinitives is designed to create _two_ search keywords for every to-infinitive,
             // one with the to included and one without. It's a little bit slower and more expensive than the typcial
             // call.
-            if (! $data['is_keyword_language_invented'] && $model instanceof Gloss) {
+            if (! $data['is_keyword_language_invented'] && $model instanceof LexicalEntry) {
                 $containsTo = preg_match('/^to\s\w{2,}/', $data['keyword']) === 1;
                 $isVerb = (! $model->speech_id && $containsTo) ||
                     ($model->speech_id && $model->speech->is_verb);
@@ -145,13 +145,13 @@ class SearchIndexRepository
         $word = StringHelper::toLower(StringHelper::clean($wordEntity->word));
         $inflection = StringHelper::toLower(StringHelper::clean($inflection));
         $keyword = empty($inflection) ? $word : $inflection;
-        $glossGroupId = null;
+        $lexicalEntryGroupId = null;
         $isOld = false;
 
-        if ($model instanceof Gloss) {
-            $glossGroupId = $model->gloss_group_id;
-            $isOld = $glossGroupId
-                ? $model->gloss_group->is_old
+        if ($model instanceof LexicalEntry) {
+            $lexicalEntryGroupId = $model->lexical_entry_group_id;
+            $isOld = $lexicalEntryGroupId
+                ? $model->lexical_entry_group->is_old
                 : false;
         }
 
@@ -189,7 +189,7 @@ class SearchIndexRepository
             'keyword_language_id' => $keywordLanguageId,
             'is_keyword_language_invented' => $keywordLanguageIsInvented,
 
-            'gloss_group_id' => $glossGroupId,
+            'lexical_entry_group_id' => $lexicalEntryGroupId,
             'entity_name' => $entityName,
             'entity_id' => $entityId,
             'is_old' => $isOld,

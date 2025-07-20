@@ -3,9 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Interfaces\ISystemLanguageFactory;
-use App\Models\Gloss;
+use App\Models\LexicalEntry;
 use App\Models\Initialization\Morphs;
-use App\Models\Language;
 use App\Models\SearchKeyword;
 use App\Repositories\KeywordRepository;
 use App\Repositories\SearchIndexRepository;
@@ -73,7 +72,7 @@ class RefreshSearchIndexFromGlossesCommand extends Command
      */
     public function handle()
     {
-        $unreferencedKeywords = SearchKeyword::where('entity_name', Morphs::getAlias(Gloss::class))
+        $unreferencedKeywords = SearchKeyword::where('entity_name', Morphs::getAlias(LexicalEntry::class))
             ->doesntHave('entity');
         $noUnreferencedKeywords = $unreferencedKeywords->count();
 
@@ -83,9 +82,9 @@ class RefreshSearchIndexFromGlossesCommand extends Command
             }
         }
 
-        $deletedGlosses = SearchKeyword::where('entity_name', Morphs::getAlias(Gloss::class))
-            ->join('glosses', 'glosses.id', 'entity_id')
-            ->where('glosses.is_deleted', 1);
+        $deletedGlosses = SearchKeyword::where('entity_name', Morphs::getAlias(LexicalEntry::class))
+            ->join('lexical_entries', 'lexical_entries.id', 'entity_id')
+            ->where('lexical_entries.is_deleted', 1);
         $noDeletedGlosses = $deletedGlosses->count();
 
         if ($noDeletedGlosses > 0) {
@@ -94,7 +93,7 @@ class RefreshSearchIndexFromGlossesCommand extends Command
             }
         }
 
-        $glosses = Gloss::active()->with('translations', 'word', 'sense', 'language');
+        $glosses = LexicalEntry::active()->with('glosses', 'word', 'sense', 'language');
         $noOfGlosses = $glosses->count();
 
         if ($this->confirm(sprintf('This operation will refresh %d glosses. Do you want to proceed?', $noOfGlosses))) {

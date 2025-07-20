@@ -10,8 +10,8 @@ class Inflection extends ModelBase
 
     protected $hidden = ['created_at', 'updated_at'];
 
-    public function gloss_inflections(): HasMany
+    public function lexical_entry_inflections(): HasMany
     {
-        return $this->hasMany(GlossInflection::class);
+        return $this->hasMany(LexicalEntryInflection::class);
     }
 }

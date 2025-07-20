@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\LinkHelper;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Models\ForumGroup;
-use App\Models\Gloss;
+use App\Models\LexicalEntry;
 use App\Models\Sentence;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -87,9 +87,9 @@ class SitemapController extends Controller
             return;
         }
 
-        $glosses = Gloss::active()
-            ->join('words', 'words.id', 'glosses.word_id')
-            ->select('words.normalized_word', 'glosses.updated_at', 'glosses.created_at')
+        $glosses = LexicalEntry::active()
+            ->join('words', 'words.id', 'lexical_entries.word_id')
+            ->select('words.normalized_word', 'lexical_entries.updated_at', 'lexical_entries.created_at')
             ->distinct()
             ->skip($from)
             ->take($to - $from)

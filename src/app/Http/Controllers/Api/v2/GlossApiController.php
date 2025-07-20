@@ -3,27 +3,27 @@
 namespace App\Http\Controllers\Api\v2;
 
 use App\Http\Controllers\Abstracts\Controller;
-use App\Repositories\GlossRepository;
+use App\Repositories\LexicalEntryRepository;
 use Illuminate\Http\Request;
 
 class GlossApiController extends Controller
 {
-    private GlossRepository $_repository;
+    private LexicalEntryRepository $_repository;
 
-    public function __construct(GlossRepository $repository)
+    public function __construct(LexicalEntryRepository $repository)
     {
         $this->_repository = $repository;
     }
 
     public function get(Request $request, int $id)
     {
-        $glosses = $this->_repository->getGloss($id);
-        if ($glosses->isEmpty()) {
+        $lexicalEntries = $this->_repository->getLexicalEntry($id);
+        if ($lexicalEntries->isEmpty()) {
             return response('', 404);
         }
 
         return [
-            'gloss' => $glosses->first(),
+            'gloss' => $lexicalEntries->first(),
         ];
     }
 
@@ -36,14 +36,14 @@ class GlossApiController extends Controller
         $replacementId = intval($data['replacement_id']);
 
         if ($replacementId !== 0) {
-            $glossVersions = $this->_repository->getGlossVersions($replacementId)->getVersions();
-            if ($glossVersions->count() === 0) {
+            $lexicalEntryVersions = $this->_repository->getLexicalEntryVersions($replacementId)->getVersions();
+            if ($lexicalEntryVersions->count() === 0) {
                 return response(null, 400);
             }
         }
 
         return response(null,
-            $this->_repository->deleteGlossWithId($id, $replacementId) ? 200 : 400
+            $this->_repository->deleteLexicalEntryWithId($id, $replacementId) ? 200 : 400
         );
     }
 
