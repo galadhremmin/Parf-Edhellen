@@ -26,8 +26,6 @@
       </li>
     </ul>
     @include('_layouts._menu-user-in-main', [
-      'user' => $user,
-      'isAdmin' => $isAdmin,
       'storage' => $storage
     ])
   </div>

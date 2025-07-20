@@ -1,8 +1,8 @@
 <nav>
-  @if ($user)
+  @if (auth()->check())
   <a class="avatar-in-menu {{ active('author.my-profile') }}" href="{{ route('author.my-profile') }}">
-    <ins class="avatar-in-menu" style="background-image:url({{ $storage->accountAvatar($user, true) }})" role="img"></ins>
-    <span>{{ $user->nickname }}</span>
+    <ins class="avatar-in-menu" style="background-image:url({{ $storage->accountAvatar(auth()->user(), true) }})" role="img"></ins>
+    <span>{{ auth()->user()->nickname }}</span>
   </a>
   <ul class="list-group mb-3">
     <li class="list-group-item">
@@ -30,7 +30,7 @@
       </a>
     </li>
   </ul>
-  @if ($isAdmin)
+  @if (auth()->user()->isAdministrator())
   <ul class="list-group mb-3">
     <li class="list-group-item">
       <a class="{{ active('contribution.list') }}" href="{{ route('contribution.list') }}">
@@ -53,7 +53,7 @@
       <a class="{{ active('account.index') }}" href="{{ route('account.index') }}">Accounts</a>
     </li>
     <li class="list-group-item">
-      <a class="{{ active('word-finder.index') }}" href="{{ route('word-finder.config.index') }}">Sage configuration</a>
+      <a class="{{ active('word-finder.config.index') }}" href="{{ route('word-finder.config.index') }}">Sage configuration</a>
     </li>
     <li class="list-group-item">
       <a class="{{ active('system-error.index') }}" href="{{ route('system-error.index') }}">

@@ -1,7 +1,7 @@
 <div class="d-lg-none d-xl-none">
-@if ($user)
+@if (auth()->check())
 
-@if ($isAdmin)
+@if (auth()->user()->isAdministrator())
 <ul class="navbar-nav">
   <li class="nav-item">
     <a class="nav-link {{ active('contribution.list') }}" href="{{ route('contribution.list') }}">
@@ -34,8 +34,8 @@
 </ul>
 @endif
 <a class="avatar-in-menu {{ active('author.my-profile') }}" href="{{ route('author.my-profile') }}">
-  <ins class="avatar-in-menu" style="background-image:url({{ $storage->accountAvatar($user, true) }})" role="img"></ins>
-  <span>{{ $user->nickname }}</span>
+  <ins class="avatar-in-menu" style="background-image:url({{ $storage->accountAvatar(auth()->user(), true) }})" role="img"></ins>
+  <span>{{ auth()->user()->nickname }}</span>
 </a>
 <ul class="navbar-nav">
   <li class="nav-item">

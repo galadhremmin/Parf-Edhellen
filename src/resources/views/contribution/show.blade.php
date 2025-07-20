@@ -13,7 +13,7 @@
   @include('contribution._notes', $contribution)
   @include('admin.contribution._pending-info', $contribution)
 
-  @if ($returnToAdminView && $isAdmin)
+  @if ($returnToAdminView && auth()->user()->isAdministrator())
   <div class="text-center">
     <button class="btn btn-sm btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#contribution-debug-info" aria-expanded="false" aria-controls="contribution-debug-info">
       Admin: show debug info

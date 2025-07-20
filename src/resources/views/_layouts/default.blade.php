@@ -26,22 +26,23 @@
   @endif
 </head>
 <body class="bg-dark"
-  data-account-id="{{ $user ? $user->id : '0' }}"
-  data-account-roles="{{ $user ? $user->getAllRoles()->implode(',') : '' }}"
+  @if (auth()->check())
+  data-account-id="{{ auth()->user()->id }}"
+  data-account-roles="{{ auth()->user()->getAllRoles()->implode(',') }}"
+  @else
+  data-account-id="0"
+  data-account-roles=""
+  @endif
   data-v="{{ config('ed.version') }}">
 <div class="bg-white">
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="ed-site-main-menu">
     @include('_layouts._menu-main', [
-      'user' => $user,
-      'isAdmin' => $isAdmin,
       'storage' => $storage
     ])
   </nav>
   <div id="ed-site-main">
     <aside>
       @include('_layouts._menu-user', [
-        'user' => $user,
-        'isAdmin' => $isAdmin,
         'storage' => $storage
       ])
     </aside>
