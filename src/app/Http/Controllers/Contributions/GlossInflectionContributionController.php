@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Contributions;
 
 use App\Http\Controllers\Abstracts\Controller;
 use App\Models\Contribution;
-use App\Models\Gloss;
-use App\Models\GlossInflection;
+use App\Models\LexicalEntry;
+use App\Models\LexicalEntryInflection;
 use App\Models\Inflection;
 use App\Models\Sentence;
 use App\Models\Speech;
@@ -55,7 +55,7 @@ class GlossInflectionContributionController extends Controller implements IContr
             return $carry;
         }, []);
 
-        $gloss = $contribution->gloss_id ? Gloss::find($contribution->gloss_id) : null;
+        $gloss = $contribution->lexical_entry_id ? LexicalEntry::find($contribution->lexical_entry_id) : null;
         $viewModel = [
             'review' => $contribution,
             'gloss' => $gloss,
@@ -157,8 +157,8 @@ class GlossInflectionContributionController extends Controller implements IContr
         $contribution->gloss_id = $request->has('gloss_id') //
             ? intval($request->input('gloss_id')) : null;
 
-        if ($contribution->gloss_id) {
-            $gloss = Gloss::findOrFail($contribution->gloss_id);
+        if ($contribution->lexical_entry_id) {
+            $gloss = LexicalEntry::findOrFail($contribution->lexical_entry_id);
             $contribution->language_id = $gloss->language_id;
             $word = $gloss->word->word;
         } else {
@@ -179,7 +179,7 @@ class GlossInflectionContributionController extends Controller implements IContr
 
         return array_reduce($groups, function ($inflections, $group) {
             foreach ($group['inflections'] as $inflection) {
-                $inflections[] = new GlossInflection(
+                $inflections[] = new LexicalEntryInflection(
                     array_merge($inflection, $group) // denormalization
                 );
             }
@@ -206,8 +206,8 @@ class GlossInflectionContributionController extends Controller implements IContr
         }
 
         $inflections = collect(json_decode($contribution->payload, /* associative? */ true))->map(function ($i) use ($gloss) {
-            return new GlossInflection($i + [
-                'gloss_id' => $gloss->id,
+            return new LexicalEntryInflection($i + [
+                'lexical_entry_id' => $gloss->id,
                 'language_id' => $gloss->language_id,
             ]);
         });

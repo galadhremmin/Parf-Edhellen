@@ -47,7 +47,7 @@ return [
         App\Models\Contribution::class => App\Http\Discuss\Contexts\ContributionContext::class,
         App\Models\ForumDiscussion::class => App\Http\Discuss\Contexts\DiscussContext::class,
         App\Models\Sentence::class => App\Http\Discuss\Contexts\SentenceContext::class,
-        App\Models\Versioning\GlossVersion::class => App\Http\Discuss\Contexts\GlossVersionContext::class,
+        App\Models\Versioning\LexicalEntryVersion::class => App\Http\Discuss\Contexts\GlossVersionContext::class,
     ],
     'forum_resultset_max_length' => 10,
     'forum_thread_resultset_max_length' => 15,
@@ -59,11 +59,11 @@ return [
     //       1. resources/views/book/<morph alias>/index.blade.php
     //       2. resources/assets/ts/apps/book-browser/<frontend alias>/index.ts.
     'book_entities' => [
-        App\Models\Gloss::class => [
+        App\Models\LexicalEntry::class => [
             'group_id' => App\Models\SearchKeyword::SEARCH_GROUP_DICTIONARY,
             'resolver' => App\Repositories\SearchIndexResolvers\GlossSearchIndexResolver::class,
             'intl_name' => 'glossary',
-            'discuss_entity_type' => App\Models\Versioning\GlossVersion::class,
+            'discuss_entity_type' => App\Models\Versioning\LexicalEntryVersion::class,
         ],
         App\Models\ForumPost::class => [
             'group_id' => App\Models\SearchKeyword::SEARCH_GROUP_FORUM_POST,
@@ -81,7 +81,7 @@ return [
     'book_group_id_to_book_entities' => [
         // This is just a fast lookup table used by the search index repository. It should mirror the `book_entities` configuration
         // The entirety of the search index must be rebuilt if you change the order of these entries!
-        App\Models\SearchKeyword::SEARCH_GROUP_DICTIONARY => App\Models\Gloss::class,
+        App\Models\SearchKeyword::SEARCH_GROUP_DICTIONARY => App\Models\LexicalEntry::class,
         App\Models\SearchKeyword::SEARCH_GROUP_FORUM_POST => App\Models\ForumPost::class,
         App\Models\SearchKeyword::SEARCH_GROUP_SENTENCE => App\Models\SentenceFragment::class,
     ],

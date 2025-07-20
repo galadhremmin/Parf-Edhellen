@@ -9,7 +9,7 @@ class Keyword extends ModelBase
     protected $fillable = [
         'keyword',
         'normalized_keyword',
-        'gloss_id',
+        'lexical_entry_id',
         'word_id',
         'sense_id',
         'is_sense',

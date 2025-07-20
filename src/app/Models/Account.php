@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Versioning\GlossVersion;
+use App\Models\Versioning\LexicalEntryVersion;
 use App\Security\RoleConstants;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -105,27 +105,27 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
     }
 
     /**
-     * @return HasMany<GlossInflection>
+     * @return HasMany<LexicalEntryInflection>
      */
-    public function gloss_inflections(): HasMany
+    public function lexical_entry_inflections(): HasMany
     {
-        return $this->hasMany(GlossInflection::class);
+        return $this->hasMany(LexicalEntryInflection::class, 'account_id');
     }
 
     /**
-     * @return HasMany<GlossVersion>
+     * @return HasMany<LexicalEntryVersion>
      */
-    public function gloss_versions(): HasMany
+    public function lexical_entry_versions(): HasMany
     {
-        return $this->hasMany(GlossVersion::class);
+        return $this->hasMany(LexicalEntryVersion::class, 'account_id');
     }
 
     /**
-     * @return HasMany<Gloss>
+     * @return HasMany<LexicalEntry>
      */
-    public function glosses(): HasMany
+    public function lexical_entries(): HasMany
     {
-        return $this->hasMany(Gloss::class);
+        return $this->hasMany(LexicalEntry::class, 'account_id');
     }
 
     /**

@@ -6,7 +6,7 @@ use App\Adapters\AuditTrailAdapter;
 use App\Adapters\BookAdapter;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Models\AuditTrail;
-use App\Models\Gloss;
+use App\Models\LexicalEntry;
 use App\Models\Sentence;
 use App\Repositories\ContributionRepository;
 use App\Repositories\Interfaces\IAuditTrailRepository;
@@ -62,9 +62,9 @@ class HomeController extends Controller
             ];
         });
 
-        // Retrieve a random gloss to feature
+        // Retrieve a random lexical entry to feature
         $randomGloss = Cache::remember('ed.home.gloss', 60 * 60 /* seconds */, function () {
-            $gloss = Gloss::active()
+            $gloss = LexicalEntry::active()
                 ->inRandomOrder()
                 ->notUncertain()
                 ->first();

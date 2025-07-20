@@ -16,9 +16,9 @@ class Sense extends ModelBase
         return $this->belongsTo(Word::class, 'id', 'id');
     }
 
-    public function glosses(): HasMany
+    public function lexical_entries(): HasMany
     {
-        return $this->hasMany(Gloss::class);
+        return $this->hasMany(LexicalEntry::class, 'sense_id');
     }
 
     public function keywords(): HasMany

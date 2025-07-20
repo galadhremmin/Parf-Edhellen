@@ -15,7 +15,7 @@ class Contribution extends ModelBase implements Interfaces\IHasFriendlyName
     protected $fillable = [
         'account_id',
         'language_id',
-        'gloss_id',
+        'lexical_entry_id',
         'sentence_id',
         'word',
         'payload',
@@ -56,9 +56,9 @@ class Contribution extends ModelBase implements Interfaces\IHasFriendlyName
         return $this->belongsTo(Contribution::class, 'dependent_on_contribution_id', 'id');
     }
 
-    public function gloss(): BelongsTo
+    public function lexical_entry(): BelongsTo
     {
-        return $this->belongsTo(Gloss::class);
+        return $this->belongsTo(LexicalEntry::class, 'lexical_entry_id');
     }
 
     public function scopeWhereAccount($query, int $accountId)

@@ -6,7 +6,7 @@ use App\Adapters\BookAdapter;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Http\Controllers\Traits\CanMapGloss;
 use App\Http\Controllers\Traits\CanValidateGloss;
-use App\Models\Gloss;
+use App\Models\LexicalEntry;
 use App\Models\Language;
 use App\Repositories\GlossRepository;
 use Illuminate\Http\Request;
@@ -28,7 +28,7 @@ class GlossController extends Controller
 
     public function index(Request $request)
     {
-        $latestGlosses = Gloss::notDeleted()
+        $latestLexicalEntries = LexicalEntry::notDeleted()
             ->orderBy('id', 'desc')
             ->take(10)
             ->with('word', 'account')
@@ -40,7 +40,7 @@ class GlossController extends Controller
             ->get();
 
         return view('admin.gloss.index', [
-            'latestGlosses' => $latestGlosses,
+            'latestGlosses' => $latestLexicalEntries,
             'languages' => $languages,
         ]);
     }
@@ -48,17 +48,17 @@ class GlossController extends Controller
     public function listForLanguage(Request $request, int $id)
     {
         $language = Language::findOrFail($id);
-        $glosses = Gloss::active()
+        $lexicalEntries = LexicalEntry::active()
             ->where('language_id', $id)
-            ->join('words', 'words.id', 'glosses.word_id')
+            ->join('words', 'words.id', 'lexical_entries.word_id')
             ->orderBy('words.word', 'asc')
-            ->with('translations', 'account', 'sense.word', 'speech', 'keywords', 'word')
-            ->select('glosses.*')
+            ->with('glosses', 'account', 'sense.word', 'speech', 'keywords', 'word')
+            ->select('lexical_entries.*')
             ->paginate(30);
 
         return view('admin.gloss.list', [
             'language' => $language,
-            'glosses' => $glosses,
+            'glosses' => $lexicalEntries,
         ]);
     }
 }

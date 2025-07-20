@@ -3,20 +3,17 @@
 namespace App\Models\Versioning;
 
 use App\Models\ModelBase;
+use App\Models\Traits\HasAccount;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class GlossVersion extends ModelBase
+class LexicalEntryDetailVersion extends ModelBase
 {
-    protected $table = 'gloss_versions';
+    use HasAccount;
+
+    protected $table = 'lexical_entry_detail_versions';
 
     protected $fillable = [
-        'lexical_entry_version_id', 'gloss',
-    ];
-
-    protected $hidden = [
-        'lexical_entry_version_id',
-        'created_at',
-        'updated_at',
+        'lexical_entry_version_id', 'category', 'text', 'order', 'type',
     ];
 
     public function lexical_entry_version(): BelongsTo

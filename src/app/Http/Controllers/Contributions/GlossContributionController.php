@@ -8,10 +8,10 @@ use App\Http\Controllers\Traits\CanMapGloss;
 use App\Http\Controllers\Traits\CanValidateGloss;
 use App\Models\Account;
 use App\Models\Contribution;
-use App\Models\Gloss;
-use App\Models\GlossDetail;
+use App\Models\LexicalEntry;
+use App\Models\LexicalEntryDetail;
 use App\Models\Sense;
-use App\Models\Translation;
+use App\Models\Gloss;
 use App\Models\Word;
 use App\Repositories\GlossInflectionRepository;
 use App\Repositories\GlossRepository;
@@ -53,17 +53,17 @@ class GlossContributionController extends Controller implements IContributionCon
         $glossData = $glossData + [
             'sense' => $contribution->sense,
         ];
-        $gloss = new Gloss($glossData);
+        $gloss = new LexicalEntry($glossData);
         $glosses = [$gloss];
 
         $gloss->created_at = $contribution->created_at;
         $gloss->account_name = $contribution->account->nickname;
         $gloss->type = $gloss->speech->name;
 
-        // Hack for assigning to the relation _translations_ without saving them to the database.
-        $gloss->setRelation('translations', new Collection($translations));
+        // Hack for assigning to the relation _glosses_ without saving them to the database.
+        $gloss->setRelation('glosses', new Collection($translations));
         $gloss->setRelation('word', new Word(['word' => $contribution->word]));
-        $gloss->setRelation('gloss_details', new Collection($details));
+        $gloss->setRelation('lexical_entry_details', new Collection($details));
 
         $glossData = $this->_bookAdapter->adaptGlosses($glosses);
 
@@ -194,11 +194,11 @@ class GlossContributionController extends Controller implements IContributionCon
 
     public function populate(Contribution $contribution, Request $request)
     {
-        // Modify an existing gloss, if the request body specifies the ID of such an entity. This is optional functionality.
+        // Modify an existing lexical entry, if the request body specifies the ID of such an entity. This is optional functionality.
         if ($request->has('id')) {
-            $entity = Gloss::findOrFail(intval($request->input('id')));
+            $entity = LexicalEntry::findOrFail(intval($request->input('id')));
         } else {
-            $entity = new Gloss;
+            $entity = new LexicalEntry;
         }
 
         $map = $this->mapGloss($entity, $request);
@@ -217,7 +217,7 @@ class GlossContributionController extends Controller implements IContributionCon
         $contribution->language_id = $entity->language_id;
 
         if ($entity->exists) {
-            $contribution->gloss_id = $entity->id;
+            $contribution->lexical_entry_id = $entity->id;
         }
 
         return $entity;
@@ -241,7 +241,7 @@ class GlossContributionController extends Controller implements IContributionCon
         $translations = $this->getTranslationsFromPayload($glossData);
         $details = $this->getDetailsFromPayload($glossData);
 
-        $gloss = new Gloss($glossData);
+        $gloss = new LexicalEntry($glossData);
         // is the contribution a proposed change to an existing gloss?
         if (array_key_exists('id', $glossData)) {
             $id = intval($glossData['id']);
@@ -279,7 +279,7 @@ class GlossContributionController extends Controller implements IContributionCon
         switch ($apiVersion) {
             case 2:
                 $translations = array_map(function ($data) {
-                    return new Translation($data);
+                    return new Gloss($data);
                 }, $glossData['_translations']);
 
                 unset($glossData['_translations']);
@@ -287,7 +287,7 @@ class GlossContributionController extends Controller implements IContributionCon
 
             case 1:
                 $translations = [
-                    new Translation([
+                    new Gloss([
                         'translation' => $glossData['translation'],
                     ]),
                 ];
@@ -312,7 +312,7 @@ class GlossContributionController extends Controller implements IContributionCon
         }
 
         $details = array_map(function ($data) {
-            return new GlossDetail($data);
+            return new LexicalEntryDetail($data);
         }, $glossData['_details']);
         unset($glossData['_details']);
 

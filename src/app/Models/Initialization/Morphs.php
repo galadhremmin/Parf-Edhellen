@@ -9,14 +9,15 @@ use App\Models\ForumDiscussion;
 use App\Models\ForumGroup;
 use App\Models\ForumPost;
 use App\Models\ForumThread;
+use App\Models\LexicalEntry;
 use App\Models\Gloss;
-use App\Models\GlossInflection;
+use App\Models\LexicalEntryInflection;
 use App\Models\Sense;
 use App\Models\Sentence;
 use App\Models\SentenceFragment;
-use App\Models\Versioning\GlossDetailVersion;
+use App\Models\Versioning\LexicalEntryDetailVersion;
+use App\Models\Versioning\LexicalEntryVersion;
 use App\Models\Versioning\GlossVersion;
-use App\Models\Versioning\TranslationVersion;
 use App\Models\Word;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Enumerable;
@@ -31,8 +32,9 @@ class Morphs
             'flashcard' => FlashcardResult::class,
             'sentence' => Sentence::class,
             'fragment' => SentenceFragment::class,
+            'lexical_entry' => LexicalEntry::class,
             'gloss' => Gloss::class,
-            'gloss_infl' => GlossInflection::class,
+            'gloss_infl' => LexicalEntryInflection::class,
             'discussion' => ForumDiscussion::class,
             'forum_group' => ForumGroup::class,
             'forum_thread' => ForumThread::class,
@@ -40,9 +42,9 @@ class Morphs
             'sense' => Sense::class,
             'word' => Word::class,
 
-            'glossv' => GlossVersion::class,
-            'glossdetailv' => GlossDetailVersion::class,
-            'translationv' => TranslationVersion::class,
+            'lex_entry_ver' => LexicalEntryVersion::class,
+            'gloss_version' => GlossVersion::class,
+            'glossdetailv' => LexicalEntryDetailVersion::class,
         ]);
     }
 

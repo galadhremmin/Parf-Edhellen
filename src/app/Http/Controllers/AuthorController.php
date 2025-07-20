@@ -9,7 +9,7 @@ use App\Http\Controllers\Abstracts\Controller;
 use App\Interfaces\IMarkdownParser;
 use App\Models\Account;
 use App\Models\ForumPost;
-use App\Models\Gloss;
+use App\Models\LexicalEntry;
 use App\Models\Sentence;
 use App\Repositories\StatisticsRepository;
 use Illuminate\Http\Request;
@@ -59,9 +59,9 @@ class AuthorController extends Controller
     public function glosses(Request $request, ?int $id = null)
     {
         $author = $this->getAccount($request, $id);
-        $entities = Gloss::active()
+        $entities = LexicalEntry::active()
             ->forAccount($id)
-            ->with('word', 'sense.word', 'language', 'gloss_group', 'translations')
+            ->with('word', 'sense.word', 'language', 'lexical_entry_group', 'glosses')
             ->orderBy('id', 'desc')
             ->limit(100)
             ->get();
