@@ -48,10 +48,16 @@ Route::group([
 
 Route::group([
     'prefix' => API_PATH.'/discuss',
-    'middleware' => ['auth', 'auth.require-role:'.RoleConstants::Discuss.':verification.notice'],
+    'middleware' => ['auth'],
 ], function () {
     Route::post('like', [DiscussApiController::class, 'storeLike'])
         ->name('api.discuss.like');
+});
+
+Route::group([
+    'prefix' => API_PATH.'/discuss',
+    'middleware' => ['auth', 'auth.require-role:'.RoleConstants::Discuss.':verification.notice'],
+], function () {
     Route::post('post', [DiscussApiController::class, 'storePost'])
         ->name('api.discuss.store-post');
     Route::put('post/{postId}', [DiscussApiController::class, 'updatePost'])
