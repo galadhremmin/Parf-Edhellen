@@ -372,6 +372,7 @@ class BookAdapter
 
     /**
      * Estimates how relevant the specified gloss object is based on the search term.
+     * Improved implementation that considers all relevant fields with proper weighting.
      */
     public static function calculateRating(\stdClass $gloss, string $word)
     {
@@ -380,37 +381,282 @@ class BookAdapter
         }
 
         $rating = 0;
+        $normalizedWord = StringHelper::normalize($word);
+        $searchTerms = self::extractSearchTerms($word);
 
-        // First, check if the gloss contains the search term by looking for its
-        // position within the word property, albeit normalized.
-        $ngw = StringHelper::normalize($gloss->word);
-        $nw = StringHelper::normalize($word);
-        $percent = 0;
-        similar_text($ngw, $nw, $percent);
-        $rating = $percent * 100000;
+        // 1. WORD FIELD (highest priority - exact word matches)
+        $wordRating = self::calculateWordFieldRating($gloss->word, $normalizedWord, $searchTerms);
+        $rating += $wordRating * 1000000; // Highest weight
 
-        // If the previous check failed, check for the glosss field. Statistically,
-        // this is the most common case.
-        $maxPercent = 0;
-        foreach ($gloss->translations as $t) {
-            $nt = StringHelper::normalize($t->translation);
-            similar_text($nt, $nw, $percent);
-            if ($percent > $maxPercent) {
-                $maxPercent = $percent;
-            }
+        // 2. TRANSLATIONS FIELD (high priority - English translations)
+        $translationRating = self::calculateTranslationFieldRating($gloss->translations, $normalizedWord, $searchTerms);
+        $rating += $translationRating * 100000; // High weight
+
+        // 3. COMMENTS FIELD (medium priority - rich context)
+        if (!empty($gloss->comments)) {
+            $commentRating = self::calculateCommentFieldRating($gloss->comments, $normalizedWord, $searchTerms);
+            $rating += $commentRating * 10000; // Medium weight
         }
-        $rating = max($rating, $maxPercent * 100000);
 
-        // Default rating for all other cases, probably matches by keyword.
+        // 4. GLOSS DETAILS (lower priority - additional context)
+        if (!empty($gloss->gloss_details)) {
+            $detailsRating = self::calculateDetailsFieldRating($gloss->gloss_details, $normalizedWord, $searchTerms);
+            $rating += $detailsRating * 1000; // Lower weight
+        }
+
+        // 5. SOURCE FIELD (lowest priority - metadata)
+        if (!empty($gloss->source)) {
+            $sourceRating = self::calculateSourceFieldRating($gloss->source, $normalizedWord, $searchTerms);
+            $rating += $sourceRating * 100; // Lowest weight
+        }
+
+        // Default rating for keyword matches (very low priority)
         if ($rating === 0) {
-            $rating = 100;
+            $rating = 10;
         }
 
-        // Bump all unverified glosses to a trailing position
-        if (! $gloss->is_canon || $gloss->is_uncertain) {
-            $rating *= -1;
+        // For uncertain/non-canon glosses, rank them at the lower end of their matching field's score range
+        // This keeps them in results but deprioritizes them compared to certain/canon glosses
+        if (!$gloss->is_canon || $gloss->is_uncertain) {
+            // Reduce the rating to the lower end of the score range
+            // This ensures they appear after certain/canon glosses but still in relevant results
+            $rating = max(1, $rating * 0.1); // Reduce to 10% of original score
         }
 
         $gloss->rating = $rating;
+    }
+
+    /**
+     * Extract meaningful search terms from the input word
+     */
+    private static function extractSearchTerms(string $word): array
+    {
+        $terms = [];
+        
+        // Add the original word
+        $terms[] = $word;
+        
+        // Add normalized version
+        $terms[] = StringHelper::normalize($word);
+        
+        // Add lowercase version
+        $terms[] = strtolower($word);
+        
+        // Add word without diacritics (if any)
+        $terms[] = self::removeDiacritics($word);
+        
+        return array_unique(array_filter($terms));
+    }
+
+    /**
+     * Calculate rating for the word field (highest priority)
+     */
+    private static function calculateWordFieldRating(string $glossWord, string $normalizedWord, array $searchTerms): int
+    {
+        $rating = 0;
+        $normalizedGlossWord = StringHelper::normalize($glossWord);
+        
+        foreach ($searchTerms as $term) {
+            // Exact match (highest score)
+            if (strcasecmp($glossWord, $term) === 0) {
+                $rating = max($rating, 100);
+                continue;
+            }
+            
+            // Normalized exact match
+            if (strcasecmp($normalizedGlossWord, $term) === 0) {
+                $rating = max($rating, 95);
+                continue;
+            }
+            
+            // Starts with match
+            if (stripos($glossWord, $term) === 0) {
+                $rating = max($rating, 80);
+                continue;
+            }
+            
+            // Contains match
+            if (stripos($glossWord, $term) !== false) {
+                $rating = max($rating, 60);
+                continue;
+            }
+            
+            // Similarity match
+            $percent = 0;
+            similar_text($normalizedGlossWord, $term, $percent);
+            if ($percent > 70) {
+                $rating = max($rating, $percent);
+            }
+        }
+        
+        return $rating;
+    }
+
+    /**
+     * Calculate rating for the translations field
+     */
+    private static function calculateTranslationFieldRating(array $translations, string $normalizedWord, array $searchTerms): int
+    {
+        $maxRating = 0;
+        
+        foreach ($translations as $translation) {
+            $translationText = $translation->translation;
+            $normalizedTranslation = StringHelper::normalize($translationText);
+            
+            foreach ($searchTerms as $term) {
+                // Exact match
+                if (strcasecmp($translationText, $term) === 0) {
+                    $maxRating = max($maxRating, 90);
+                    continue;
+                }
+                
+                // Normalized exact match
+                if (strcasecmp($normalizedTranslation, $term) === 0) {
+                    $maxRating = max($maxRating, 85);
+                    continue;
+                }
+                
+                // Word boundary match (check if term is a complete word)
+                if (preg_match('/\b' . preg_quote($term, '/') . '\b/i', $translationText)) {
+                    $maxRating = max($maxRating, 75);
+                    continue;
+                }
+                
+                // Starts with match
+                if (stripos($translationText, $term) === 0) {
+                    $maxRating = max($maxRating, 65);
+                    continue;
+                }
+                
+                // Contains match
+                if (stripos($translationText, $term) !== false) {
+                    $maxRating = max($maxRating, 50);
+                    continue;
+                }
+                
+                // Similarity match
+                $percent = 0;
+                similar_text($normalizedTranslation, $term, $percent);
+                if ($percent > 60) {
+                    $maxRating = max($maxRating, $percent * 0.8);
+                }
+            }
+        }
+        
+        return $maxRating;
+    }
+
+    /**
+     * Calculate rating for the comments field
+     */
+    private static function calculateCommentFieldRating(string $comments, string $normalizedWord, array $searchTerms): int
+    {
+        $rating = 0;
+        $normalizedComments = StringHelper::normalize($comments);
+        
+        foreach ($searchTerms as $term) {
+            // Word boundary match (most relevant in comments)
+            if (preg_match('/\b' . preg_quote($term, '/') . '\b/i', $comments)) {
+                $rating = max($rating, 70);
+                continue;
+            }
+            
+            // Contains match
+            if (stripos($comments, $term) !== false) {
+                $rating = max($rating, 40);
+                continue;
+            }
+            
+            // Normalized contains match
+            if (stripos($normalizedComments, $term) !== false) {
+                $rating = max($rating, 35);
+                continue;
+            }
+            
+            // Similarity match (lower weight for comments)
+            $percent = 0;
+            similar_text($normalizedComments, $term, $percent);
+            if ($percent > 50) {
+                $rating = max($rating, $percent * 0.5);
+            }
+        }
+        
+        return $rating;
+    }
+
+    /**
+     * Calculate rating for the gloss details field
+     */
+    private static function calculateDetailsFieldRating(array $glossDetails, string $normalizedWord, array $searchTerms): int
+    {
+        $maxRating = 0;
+        
+        foreach ($glossDetails as $detail) {
+            $detailText = $detail->text;
+            $normalizedDetailText = StringHelper::normalize($detailText);
+            
+            foreach ($searchTerms as $term) {
+                // Word boundary match
+                if (preg_match('/\b' . preg_quote($term, '/') . '\b/i', $detailText)) {
+                    $maxRating = max($maxRating, 60);
+                    continue;
+                }
+                
+                // Contains match
+                if (stripos($detailText, $term) !== false) {
+                    $maxRating = max($maxRating, 30);
+                    continue;
+                }
+                
+                // Similarity match
+                $percent = 0;
+                similar_text($normalizedDetailText, $term, $percent);
+                if ($percent > 40) {
+                    $maxRating = max($maxRating, $percent * 0.4);
+                }
+            }
+        }
+        
+        return $maxRating;
+    }
+
+    /**
+     * Calculate rating for the source field
+     */
+    private static function calculateSourceFieldRating(string $source, string $normalizedWord, array $searchTerms): int
+    {
+        $rating = 0;
+        $normalizedSource = StringHelper::normalize($source);
+        
+        foreach ($searchTerms as $term) {
+            // Contains match
+            if (stripos($source, $term) !== false) {
+                $rating = max($rating, 20);
+                continue;
+            }
+            
+            // Similarity match (very low weight for source)
+            $percent = 0;
+            similar_text($normalizedSource, $term, $percent);
+            if ($percent > 30) {
+                $rating = max($rating, $percent * 0.2);
+            }
+        }
+        
+        return $rating;
+    }
+
+    /**
+     * Remove diacritics from a string
+     */
+    private static function removeDiacritics(string $text): string
+    {
+        $text = str_replace(
+            ['á', 'é', 'í', 'ó', 'ú', 'à', 'è', 'ì', 'ò', 'ù', 'â', 'ê', 'î', 'ô', 'û', 'ä', 'ë', 'ï', 'ö', 'ü', 'ñ', 'ç'],
+            ['a', 'e', 'i', 'o', 'u', 'a', 'e', 'i', 'o', 'u', 'a', 'e', 'i', 'o', 'u', 'a', 'e', 'i', 'o', 'u', 'n', 'c'],
+            $text
+        );
+        
+        return $text;
     }
 }

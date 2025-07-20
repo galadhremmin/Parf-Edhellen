@@ -6,6 +6,7 @@ import {
 import { IComponentEvent } from '@root/components/Component._types';
 import { ICreatePostRequest } from '@root/connectors/backend/IDiscussApi';
 import ValidationError from '@root/connectors/ValidationError';
+import ValidateEmailAlert from '@root/apps/discuss/components/ValidateEmailAlert';
 import { resolve, withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 import {
@@ -44,11 +45,13 @@ function Toolbar(props: IProps) {
 
     return <div className="DiscussToolbar text-center">
         <FiltersButton />
-        <CreateThreadButton error={error}
-                            enabled={roleManager.hasRole(SecurityRole.Discuss)}
-                            groupId={props.groupId}
-                            groupName={props.groupName}
-                            onThreadCreate={_onThreadCreate} />
+        {roleManager.isAnonymous || roleManager.isAnonymous 
+            ? <CreateThreadButton error={error}
+                    enabled={roleManager.hasRole(SecurityRole.Discuss)}
+                    groupId={props.groupId}
+                    groupName={props.groupName}
+                    onThreadCreate={_onThreadCreate} />
+            : <ValidateEmailAlert />}
     </div>;
 }
 
