@@ -11,16 +11,16 @@ class SentenceFragment extends ModelBase
     use SoftDeletes;
 
     protected $fillable = [
-        'fragment', 'tengwar', 'comments', 'speech_id', 'lexical_entry_id', 'sentence_id',
+        'fragment', 'tengwar', 'comments', 'speech_id', 'gloss_id', 'sentence_id',
         'order', 'is_linebreak', 'type', 'paragraph_number', 'sentence_number',
     ];
 
     /**
-     * @return BelongsTo<LexicalEntry>
+     * @return BelongsTo<Gloss>
      */
-    public function lexical_entry(): BelongsTo
+    public function gloss(): BelongsTo
     {
-        return $this->belongsTo(LexicalEntry::class, 'lexical_entry_id');
+        return $this->belongsTo(Gloss::class);
     }
 
     /**
@@ -56,10 +56,10 @@ class SentenceFragment extends ModelBase
     }
 
     /**
-     * @return HasMany<LexicalEntryInflection>
+     * @return HasMany<GlossInflection>
      */
-    public function lexical_entry_inflections(): HasMany
+    public function gloss_inflections(): HasMany
     {
-        return $this->hasMany(LexicalEntryInflection::class, 'sentence_fragment_id');
+        return $this->hasMany(GlossInflection::class);
     }
 }

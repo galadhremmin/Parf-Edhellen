@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class GameWordFinderGlossGroup extends ModelBase
 {
     protected $fillable = [
-        'lexical_entry_group_id',
+        'gloss_group_id',
     ];
 
-    public function lexical_entry_group(): BelongsTo
+    public function gloss_group(): BelongsTo
     {
-        return $this->belongsTo(LexicalEntryGroup::class, 'lexical_entry_group_id');
+        return $this->belongsTo(GlossGroup::class);
     }
 }

@@ -4,15 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class LexicalEntryGroup extends ModelBase
+class GlossGroup extends ModelBase
 {
-    protected $table = 'lexical_entry_groups';
-
     protected $fillable = ['name', 'external_link_format', 'is_canon', 'is_old', 'label'];
 
-    public function lexical_entries(): HasMany
+    public function glosses(): HasMany
     {
-        return $this->hasMany(LexicalEntry::class, 'lexical_entry_group_id');
+        return $this->hasMany(Gloss::class);
     }
 
     public function scopeSafe($query)

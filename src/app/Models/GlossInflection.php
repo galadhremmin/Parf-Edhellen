@@ -4,21 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class LexicalEntryInflection extends ModelBase implements Interfaces\IHasLanguage
+class GlossInflection extends ModelBase implements Interfaces\IHasLanguage
 {
-    protected $table = 'lexical_entry_inflections';
-
     protected $fillable = [
-        'inflection_group_uuid', 'lexical_entry_id', 'inflection_id', 'account_id', 'sentence_id',
+        'inflection_group_uuid', 'gloss_id', 'inflection_id', 'account_id', 'sentence_id',
         'sentence_fragment_id', 'order', 'language_id', 'speech_id', 'is_neologism',
         'is_rejected', 'source', 'word', 'sentence_fragment_id',
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
 
-    public function lexical_entry(): BelongsTo
+    public function gloss(): BelongsTo
     {
-        return $this->belongsTo(LexicalEntry::class, 'lexical_entry_id');
+        return $this->belongsTo(Gloss::class);
     }
 
     public function sentence(): BelongsTo
