@@ -56,7 +56,7 @@ Route::group([
 
 Route::group([
     'prefix' => API_PATH.'/discuss',
-    'middleware' => ['auth', 'auth.require-role:'.RoleConstants::Discuss.':verification.notice'],
+    'middleware' => ['auth', 'auth.require-role:'.RoleConstants::Discuss.',verification.notice'],
 ], function () {
     Route::post('post', [DiscussApiController::class, 'storePost'])
         ->name('api.discuss.store-post');
