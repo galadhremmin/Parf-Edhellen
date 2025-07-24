@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-use App\Models\Gloss;
+use App\Models\LexicalEntry;
 use App\Models\Initialization\Morphs;
 use App\Models\Sentence;
 
@@ -26,17 +26,17 @@ class LinkHelper
         ]);
     }
 
-    public function gloss(int $glossId)
+    public function lexicalEntry(int $lexicalEntryId)
     {
         return route('gloss.ref', [
-            'id' => $glossId,
+            'id' => $lexicalEntryId,
         ]);
     }
 
-    public function glossVersions(int $glossId)
+    public function lexicalEntryVersions(int $lexicalEntryId)
     {
         return route('gloss.ref.version', [
-            'id' => $glossId,
+            'id' => $lexicalEntryId,
         ]);
     }
 
@@ -110,14 +110,14 @@ class LinkHelper
         return route('contribution.show', ['contribution' => $contributionId]);
     }
 
-    public function contributeGloss(int $originalGlossId = 0, int $glossVersionId = 0)
+    public function contributeGloss(int $originalGlossId = 0, int $lexicalEntryVersionId = 0)
     {
-        $params = ['morph' => Morphs::getAlias(Gloss::class)];
+        $params = ['morph' => Morphs::getAlias(LexicalEntry::class)];
         if ($originalGlossId !== 0) {
             $params['entity_id'] = $originalGlossId;
         }
-        if ($glossVersionId !== 0) {
-            $params['gloss_version_id'] = $glossVersionId;
+        if ($lexicalEntryVersionId !== 0) {
+            $params['lexical_entry_version_id'] = $lexicalEntryVersionId;
         }
 
         return route('contribution.create', $params);

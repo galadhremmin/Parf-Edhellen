@@ -24,11 +24,11 @@ class SentenceRepositoryTest extends TestCase
         $language = Language::first();
         $account = Account::first();
 
-        extract($this->createGloss(__FUNCTION__));
-        $helloGloss = $this->getLexicalEntryRepository()->saveGloss('hello', 'greetings', $gloss, $translations, $keywords, $details);
+        extract($this->createLexicalEntry(__FUNCTION__, 'hello'));
+        $helloGloss = $this->getLexicalEntryRepository()->saveLexicalEntry('hello', 'greetings', $lexicalEntry, $glosses, $keywords, $details);
 
-        extract($this->createGloss(__FUNCTION__));
-        $worldGloss = $this->getLexicalEntryRepository()->saveGloss('world', 'earth', $gloss, $translations, $keywords, $details);
+        extract($this->createLexicalEntry(__FUNCTION__, 'world'));
+        $worldGloss = $this->getLexicalEntryRepository()->saveLexicalEntry('world', 'earth', $lexicalEntry, $glosses, $keywords, $details);
 
         $this->assertNotEquals($helloGloss->id, $worldGloss->id);
 
@@ -36,7 +36,7 @@ class SentenceRepositoryTest extends TestCase
             new SentenceFragment([
                 'fragment' => '你好',
                 'tengwar' => 'hello',
-                'gloss_id' => $helloGloss->id,
+                'lexical_entry_id' => $helloGloss->id,
                 'order' => 10,
                 'is_linebreak' => false,
                 'type' => 0,
@@ -45,7 +45,7 @@ class SentenceRepositoryTest extends TestCase
             new SentenceFragment([
                 'fragment' => '世界',
                 'tengwar' => 'world',
-                'gloss_id' => $worldGloss->id,
+                'lexical_entry_id' => $worldGloss->id,
                 'order' => 20,
                 'is_linebreak' => false,
                 'type' => 0,
@@ -78,7 +78,7 @@ class SentenceRepositoryTest extends TestCase
 
             $this->assertEquals($fragments[$i]->fragment, $savedFragment->fragment);
             $this->assertEquals($fragments[$i]->tengwar, $savedFragment->tengwar);
-            $this->assertEquals($fragments[$i]->gloss_id, $savedFragment->gloss_id);
+            $this->assertEquals($fragments[$i]->lexical_entry_id, $savedFragment->lexical_entry_id);
             $this->assertEquals($fragments[$i]->is_linebreak, $savedFragment->is_linebreak);
             $this->assertEquals($fragments[$i]->type, $savedFragment->type);
             $this->assertEquals($fragments[$i]->comments, $savedFragment->comments);

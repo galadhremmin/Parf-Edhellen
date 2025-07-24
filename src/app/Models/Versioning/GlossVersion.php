@@ -10,7 +10,7 @@ class GlossVersion extends ModelBase
     protected $table = 'gloss_versions';
 
     protected $fillable = [
-        'lexical_entry_version_id', 'gloss',
+        'lexical_entry_version_id', 'translation',
     ];
 
     protected $hidden = [

@@ -109,7 +109,7 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
             : collect([]);
         $comments = $this->_discussRepository->getNumberOfPostsForEntities(LexicalEntry::class, $glossIds);
 
-        return $this->_bookAdapter->adaptGlosses($glosses, $inflections, $comments, $value->getWord());
+        return $this->_bookAdapter->adaptLexicalEntries($glosses, $inflections, $comments, $value->getWord());
     }
 
     public function resolveId(int $entityId): array
@@ -118,6 +118,6 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
         $inflections = $this->_glossInflectionRepository->getInflectionsForLexicalEntries([$entityId]);
         $comments = $this->_discussRepository->getNumberOfPostsForEntities(LexicalEntry::class, [$entityId]);
 
-        return $this->_bookAdapter->adaptGlosses($glosses, $inflections, $comments, count($glosses) > 0 ? $glosses[0]->word->word : null);
+        return $this->_bookAdapter->adaptLexicalEntries($glosses, $inflections, $comments, count($glosses) > 0 ? $glosses[0]->word->word : null);
     }
 }

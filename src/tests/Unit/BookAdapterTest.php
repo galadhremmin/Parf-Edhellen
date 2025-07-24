@@ -31,38 +31,38 @@ class BookAdapterTest extends TestCase
 
     public function test_adapt_gloss()
     {
-        extract($this->createGloss(__FUNCTION__));
-        $this->getLexicalEntryRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
+        extract($this->createLexicalEntry(__FUNCTION__, 'galadh'));
+        $this->getLexicalEntryRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
 
         $languages = new Collection([$gloss->language]);
         $inflections = collect([]);
         $comments = [$gloss->id => 10];
         $atomDate = true;
 
-        $adapted = $this->_adapter->adaptGloss($gloss, $languages, $inflections, $comments, $atomDate);
+        $adapted = $this->_adapter->adaptLexicalEntry($gloss, $languages, $inflections, $comments, $atomDate);
 
         $this->assertEquals(\stdClass::class, get_class($adapted));
         $this->assertEquals($gloss->created_at->toAtomString(), $adapted->created_at);
         $this->assertEquals($gloss->language->id, $adapted->language->id);
         $this->assertEquals($comments[$gloss->id], $adapted->comment_count);
-        $this->assertEquals(implode(config('ed.gloss_translations_separator'), array_map(function ($t) {
-            return $t->translation;
-        }, $translations)), $adapted->all_translations);
+        $this->assertEquals(implode(config('ed.gloss_translations_separator'), array_map(function ($g) {
+            return $g->translation;
+        }, $glosses)), $adapted->all_glosses);
     }
 
     public function test_adapt_glosses_without_details()
     {
-        extract($this->createGloss(__FUNCTION__));
+        extract($this->createLexicalEntry(__FUNCTION__, 'galadh'));
 
-        $gloss = $this->getLexicalEntryRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, []);
+        $gloss = $this->getLexicalEntryRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, []);
 
         $versions = $this->getLexicalEntryRepository()->getGlossVersions($gloss->id);
-        $adapted = $this->_adapter->adaptGlossVersions($versions->getVersions(), $versions->getLatestVersionId());
+        $adapted = $this->_adapter->adaptLexicalEntryVersions($versions->getVersions(), $versions->getLatestVersionId());
         $adaptedGlossary = &$adapted['versions'];
 
         $this->assertEquals(1, count($adaptedGlossary));
-        $this->assertNotNull($adaptedGlossary[0]->gloss_details);
-        $this->assertEquals(0, count($adaptedGlossary[0]->gloss_details));
+        $this->assertNotNull($adaptedGlossary[0]->lexical_entry_details);
+        $this->assertEquals(0, count($adaptedGlossary[0]->lexical_entry_details));
     }
 
     public function test_rating()
@@ -77,13 +77,13 @@ class BookAdapterTest extends TestCase
         ];
         $glossary = [];
         foreach ($glosses as $gloss) {
-            extract($this->createGloss(__FUNCTION__, $gloss));
-            $savedGloss = $this->getLexicalEntryRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
-            $savedGloss->load('translations', 'gloss_details');
+            extract($this->createLexicalEntry(__FUNCTION__, $gloss));
+            $savedGloss = $this->getLexicalEntryRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
+            $savedGloss->load('glosses', 'lexical_entry_details');
             $glossary[] = $savedGloss;
         }
 
-        $adapted = $this->_adapter->adaptGlosses($glossary, collect([]), [], 'mal');
+        $adapted = $this->_adapter->adaptLexicalEntries($glossary, collect([]), [], 'mal');
         $adaptedGlossary = &$adapted['sections'][0]['entities'];
 
         for ($i = 0; $i < count($expected); $i += 1) {
@@ -93,25 +93,25 @@ class BookAdapterTest extends TestCase
 
     public function test_should_get_versions()
     {
-        extract($this->createGloss(__FUNCTION__));
-        $gloss0 = $this->getLexicalEntryRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
+        extract($this->createLexicalEntry(__FUNCTION__, 'galadh'));
+        $gloss0 = $this->getLexicalEntryRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
 
-        $gloss->is_uncertain = false;
-        $translations = $this->createTranslations();
-        $details = $this->createGlossDetails($gloss);
-        $gloss1 = $this->getLexicalEntryRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
+        $lexicalEntry->is_uncertain = false;
+        $glosses = $this->createGlosses();
+        $details = $this->createLexicalEntryDetails($lexicalEntry);
+        $gloss1 = $this->getLexicalEntryRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
 
         $newWord = $word.' 1';
-        $translations = $this->createTranslations();
-        $details = $this->createGlossDetails($gloss);
-        $gloss2 = $this->getLexicalEntryRepository()->saveGloss($newWord, $sense, $gloss, $translations, $keywords, $details);
+        $translations = $this->createGlosses();
+        $details = $this->createLexicalEntryDetails($lexicalEntry);
+        $gloss2 = $this->getLexicalEntryRepository()->saveLexicalEntry($newWord, $sense, $lexicalEntry, $glosses, $keywords, $details);
 
         $translations = array_merge(
-            $this->createTranslations(),
+            $this->createGlosses(),
             [new Gloss(['translation' => 'test '.count($translations)])]
         );
-        $details = $this->createGlossDetails($gloss);
-        $gloss3 = $this->getLexicalEntryRepository()->saveGloss($newWord, $sense, $gloss, $translations, $keywords, $details);
+        $details = $this->createLexicalEntryDetails($lexicalEntry);
+        $gloss3 = $this->getLexicalEntryRepository()->saveLexicalEntry($newWord, $sense, $lexicalEntry, $glosses, $keywords, $details);
 
         $gloss0->refresh();
         $gloss1->refresh();
@@ -122,8 +122,8 @@ class BookAdapterTest extends TestCase
         $this->assertEquals($gloss0->id, $gloss2->id);
         $this->assertEquals($gloss0->id, $gloss3->id);
 
-        $versions = $this->getLexicalEntryRepository()->getGlossVersions($gloss0->id);
-        $adapted = $this->_adapter->adaptGlossVersions($versions->getVersions(), $versions->getLatestVersionId());
+        $versions = $this->getLexicalEntryRepository()->getLexicalEntryVersions($gloss0->id);
+        $adapted = $this->_adapter->adaptLexicalEntryVersions($versions->getVersions(), $versions->getLatestVersionId());
         $glosses = &$adapted['versions'];
 
         $this->assertEquals(4, count($glosses));
@@ -176,7 +176,7 @@ class BookAdapterTest extends TestCase
         $this->assertLessThan(8000000, $gloss->rating);
     }
 
-    public function test_calculate_rating_gloss_details_match()
+    public function test_calculate_rating_lexical_entry_details_match()
     {
         $gloss = $this->createMockGloss('galadh', ['light'], 'No tree here', [
             ['category' => 'Etymology', 'text' => 'From tree root']
@@ -297,7 +297,7 @@ class BookAdapterTest extends TestCase
         $this->assertGreaterThan(8000000, $gloss->rating);
     }
 
-    public function test_calculate_rating_multiple_gloss_details()
+    public function test_calculate_rating_multiple_lexical_entry_details()
     {
         $gloss = $this->createMockGloss('galadh', ['light'], 'No match here', [
             ['category' => 'Etymology', 'text' => 'From light root'],
@@ -373,7 +373,7 @@ class BookAdapterTest extends TestCase
     /**
      * Helper method to create a mock gloss object for testing
      */
-    private function createMockGloss(string $word, array $translations, string $comments = '', array $glossDetails = []): \stdClass
+    private function createMockGloss(string $word, array $glosses, string $comments = '', array $glossDetails = []): \stdClass
     {
         $gloss = new \stdClass();
         $gloss->word = $word;
@@ -381,24 +381,21 @@ class BookAdapterTest extends TestCase
         $gloss->source = '';
         $gloss->is_canon = true;
         $gloss->is_uncertain = false;
-        
-        // Create translation objects
-        $gloss->translations = [];
-        foreach ($translations as $translation) {
-            $translationObj = new \stdClass();
-            $translationObj->translation = $translation;
-            $gloss->translations[] = $translationObj;
+        // Create gloss objects
+        $gloss->glosses = [];
+        foreach ($glosses as $glossText) {
+            $glossObj = new \stdClass();
+            $glossObj->translation = $glossText;
+            $gloss->glosses[] = $glossObj;
         }
-        
         // Create gloss detail objects
-        $gloss->gloss_details = [];
+        $gloss->lexical_entry_details = [];
         foreach ($glossDetails as $detail) {
             $detailObj = new \stdClass();
             $detailObj->text = $detail['text'];
             $detailObj->category = $detail['category'];
-            $gloss->gloss_details[] = $detailObj;
+            $gloss->lexical_entry_details[] = $detailObj;
         }
-        
         return $gloss;
     }
 }

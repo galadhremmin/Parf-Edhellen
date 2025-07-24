@@ -47,7 +47,7 @@ return [
         App\Models\Contribution::class => App\Http\Discuss\Contexts\ContributionContext::class,
         App\Models\ForumDiscussion::class => App\Http\Discuss\Contexts\DiscussContext::class,
         App\Models\Sentence::class => App\Http\Discuss\Contexts\SentenceContext::class,
-        App\Models\Versioning\LexicalEntryVersion::class => App\Http\Discuss\Contexts\GlossVersionContext::class,
+        App\Models\Versioning\LexicalEntryVersion::class => App\Http\Discuss\Contexts\LexicalEntryVersionContext::class,
     ],
     'forum_resultset_max_length' => 10,
     'forum_thread_resultset_max_length' => 15,

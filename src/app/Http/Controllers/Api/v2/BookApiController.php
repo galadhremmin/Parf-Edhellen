@@ -137,7 +137,7 @@ class BookApiController extends BookBaseController
     {
         $gloss = $this->_lexicalEntryRepository->getSpecificLexicalEntryVersion($id);
 
-        return $this->_bookAdapter->adaptGlosses([$gloss], null, [], $gloss->word->word);
+        return $this->_bookAdapter->adaptLexicalEntries([$gloss], null, [], $gloss->word->word);
     }
 
     /**

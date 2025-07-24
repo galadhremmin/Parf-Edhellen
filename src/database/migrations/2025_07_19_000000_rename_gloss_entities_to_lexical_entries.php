@@ -409,6 +409,42 @@ return new class extends Migration
         DB::statement("UPDATE search_keywords SET entity_name = 'lex_entry_ver' WHERE entity_name = 'glossv'");
         DB::statement("UPDATE search_keywords SET entity_name = 'gloss_version' WHERE entity_name = 'translationv'");
         
+        // Update forum_threads table (entity_type field) - keeping under 16 characters
+        DB::statement("UPDATE forum_threads SET entity_type = 'lexical_entry' WHERE entity_type = 'gloss'");
+        DB::statement("UPDATE forum_threads SET entity_type = 'gloss' WHERE entity_type = 'translation'");
+        DB::statement("UPDATE forum_threads SET entity_type = 'lex_entry_ver' WHERE entity_type = 'glossv'");
+        DB::statement("UPDATE forum_threads SET entity_type = 'gloss_version' WHERE entity_type = 'translationv'");
+
+        // Update audit_trails table (entity_type field) - keeping under 16 characters
+        DB::statement("UPDATE audit_trails SET entity_type = 'lexical_entry' WHERE entity_type = 'gloss'");
+        DB::statement("UPDATE audit_trails SET entity_type = 'gloss' WHERE entity_type = 'translation'");
+        DB::statement("UPDATE audit_trails SET entity_type = 'lex_entry_ver' WHERE entity_type = 'glossv'");
+        DB::statement("UPDATE audit_trails SET entity_type = 'gloss_version' WHERE entity_type = 'translationv'");
+
+        // Update mail_setting_overrides table (entity_type field) - keeping under 16 characters
+        DB::statement("UPDATE mail_setting_overrides SET entity_type = 'lexical_entry' WHERE entity_type = 'gloss'");
+        DB::statement("UPDATE mail_setting_overrides SET entity_type = 'gloss' WHERE entity_type = 'translation'");
+        DB::statement("UPDATE mail_setting_overrides SET entity_type = 'lex_entry_ver' WHERE entity_type = 'glossv'");
+        DB::statement("UPDATE mail_setting_overrides SET entity_type = 'gloss_version' WHERE entity_type = 'translationv'");
+
+        // Update account_feed_refresh_times table (feed_content_type field) - keeping under 16 characters
+        DB::statement("UPDATE account_feed_refresh_times SET feed_content_type = 'lexical_entry' WHERE feed_content_type = 'gloss'");
+        DB::statement("UPDATE account_feed_refresh_times SET feed_content_type = 'gloss' WHERE feed_content_type = 'translation'");
+        DB::statement("UPDATE account_feed_refresh_times SET feed_content_type = 'lex_entry_ver' WHERE feed_content_type = 'glossv'");
+        DB::statement("UPDATE account_feed_refresh_times SET feed_content_type = 'gloss_version' WHERE feed_content_type = 'translationv'");
+
+        // Update account_feeds table (content_type field) - keeping under 16 characters
+        DB::statement("UPDATE account_feeds SET content_type = 'lexical_entry' WHERE content_type = 'gloss'");
+        DB::statement("UPDATE account_feeds SET content_type = 'gloss' WHERE content_type = 'translation'");
+        DB::statement("UPDATE account_feeds SET content_type = 'lex_entry_ver' WHERE content_type = 'glossv'");
+        DB::statement("UPDATE account_feeds SET content_type = 'gloss_version' WHERE content_type = 'translationv'");
+
+        // Update forum_groups table (role field) - keeping under 16 characters
+        DB::statement("UPDATE forum_groups SET role = 'lexical_entry' WHERE role = 'gloss'");
+        DB::statement("UPDATE forum_groups SET role = 'gloss' WHERE role = 'translation'");
+        DB::statement("UPDATE forum_groups SET role = 'lex_entry_ver' WHERE role = 'glossv'");
+        DB::statement("UPDATE forum_groups SET role = 'gloss_version' WHERE role = 'translationv'");
+
         // Update account_feeds table to reference new tables
         $this->updateAccountFeeds();
     }

@@ -59,7 +59,7 @@ trait CanCreateGloss
      * @param  string  $sense
      * @return array
      */
-    protected function createGloss(string $method = __FUNCTION__, string $word = 'test-word')
+    protected function createLexicalEntry(string $method = __FUNCTION__, string $word = 'test-word')
     {
         $accountId = Auth::user()->id;
         $languageId = Language::where('name', 'Sindarin')
@@ -73,7 +73,7 @@ trait CanCreateGloss
         $lexicalEntry->lexical_entry_group_id = $this->_lexicalEntryGroup->id;
         $lexicalEntry->is_uncertain = 1;
         $lexicalEntry->source = 'Unit test';
-        $lexicalEntry->comments = 'This gloss was created in an unit test.';
+        $lexicalEntry->comments = 'This lexical entry was created in a unit test.';
         $lexicalEntry->tengwar = 'yljjh6';
         $lexicalEntry->speech_id = $speechId;
         $lexicalEntry->external_id = 'UA-Unit-LexicalEntryRepository-'.$method.'-'.uniqid();

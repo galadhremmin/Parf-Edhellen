@@ -51,7 +51,7 @@
 
   @include('discuss._standalone', [
     'entity_id'   => $v->id,
-    'entity_type' => 'glossv',
+    'entity_type' => 'lex_entry_ver',
     'enabled'     => !! $v->_is_latest
   ])
 

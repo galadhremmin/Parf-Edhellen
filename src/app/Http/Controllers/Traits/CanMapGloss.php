@@ -15,7 +15,7 @@ trait CanMapGloss
      *     sense: string,
      *     keywords: string[],
      *     translations: Gloss[],
-     *     details: GlossDetail[]
+     *     details: LexicalEntryDetail[]
      * }
      */
     public function mapGloss(Gloss $gloss, Request $request): array
@@ -49,27 +49,27 @@ trait CanMapGloss
             return StringHelper::toLower($k['word']);
         }, $request->input('keywords'));
 
-        $translations = array_map(function ($t) {
+        $glosses = array_map(function ($t) {
             return new Gloss([
                 'translation' => StringHelper::toLower($t['translation']),
             ]);
-        }, $request->input('translations'));
+        }, $request->input('glosses'));
 
-        $details = $request->has('gloss_details')
+        $details = $request->has('lexical_entry_details')
             ? array_map(function ($d) {
                 return new LexicalEntryDetail([
                     'category' => trim($d['category']),
                     'text' => trim($d['text']),
                     'order' => intval($d['order']),
                 ]);
-            }, $request->input('gloss_details'))
+            }, $request->input('lexical_entry_details'))
             : [];
 
         return [
             'word' => $word,
             'sense' => $sense,
             'keywords' => $keywords,
-            'translations' => $translations,
+            'glosses' => $glosses,
             'details' => $details,
         ];
     }

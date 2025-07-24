@@ -3,7 +3,7 @@
 namespace Tests\Unit;
 
 use App\Helpers\ExternalGlossGroupToInternalUrlResolver;
-use App\Models\GlossGroup;
+use App\Models\LexicalEntryGroup;
 use Tests\TestCase;
 
 class ExternalGlossGroupToInternalUrlResolverTest extends TestCase
@@ -18,11 +18,11 @@ class ExternalGlossGroupToInternalUrlResolverTest extends TestCase
         parent::setUp();
 
         $groups = collect([
-            GlossGroup::firstOrNew([
+            LexicalEntryGroup::firstOrNew([
                 'name' => 'Group 1',
                 'external_link_format' => 'https://www.test1.com/page/{ExternalID}',
             ]),
-            GlossGroup::firstOrNew([
+            LexicalEntryGroup::firstOrNew([
                 'name' => 'Group 2',
                 'external_link_format' => 'https://www.test2.com/pages/{ExternalID}',
             ]),

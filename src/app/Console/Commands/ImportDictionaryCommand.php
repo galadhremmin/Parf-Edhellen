@@ -4,9 +4,10 @@ namespace App\Console\Commands;
 
 use App\Jobs\ProcessGlossImport;
 use App\Models\Account;
-use App\Models\Gloss;
+use App\Models\LexicalEntry;
 use App\Models\LexicalEntryGroup;
 use App\Models\Language;
+use App\Models\Gloss;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Ramsey\Uuid\Uuid;
@@ -137,14 +138,14 @@ class ImportDictionaryCommand extends Command
 
         $uncertain = $entity->mark === '*' || $entity->mark === '#';
 
-        $gloss = Gloss::firstOrNew(['external_id' => $externalId]);
-        $gloss->fill([
+        $lexicalEntry = LexicalEntry::firstOrNew(['external_id' => $externalId]);
+        $lexicalEntry->fill([
             'language_id' => $languageId,
             'is_deleted' => 0,
             'comments' => $notes,
             'source' => $source,
             'is_uncertain' => $uncertain,
-            'gloss_group_id' => $this->_glossGroup ? $this->_glossGroup->id : null,
+            'lexical_entry_group_id' => $this->_glossGroup ? $this->_glossGroup->id : null,
             'account_id' => $this->_importAccount->id,
         ]);
 
@@ -175,19 +176,19 @@ class ImportDictionaryCommand extends Command
 
         $sense = $entity->preferredSense !== null ? $entity->preferredSense : $entity->translations[0];
 
-        $translations = array_map(function ($translation) {
+        $glosses = array_map(function ($translation) {
             return new Gloss(['translation' => $translation]);
-        }, $entity->translations);
+        }, $entity->glosses);
 
         $word = $entity->word;
 
         return [
             'details' => [],
-            'gloss' => $gloss,
+            'lexical_entry' => $lexicalEntry,
             'inflections' => $inflections,
             'keywords' => $keywords,
             'sense' => $sense,
-            'translations' => $translations,
+            'glosses' => $glosses,
             'word' => $word,
         ];
     }

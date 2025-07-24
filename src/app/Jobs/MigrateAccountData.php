@@ -9,7 +9,7 @@ use App\Models\ForumDiscussion;
 use App\Models\ForumPost;
 use App\Models\ForumPostLike;
 use App\Models\ForumThread;
-use App\Models\Versioning\GlossVersion;
+use App\Models\Versioning\LexicalEntryVersion;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -104,19 +104,19 @@ class MigrateAccountData implements ShouldQueue
 
     private function moveDictionaryActivity(Account $from, Account $to)
     {
-        $from->gloss_inflections()->update([
+        $from->lexical_entry_inflections()->update([
             'account_id' => $to->id,
         ]);
 
-        GlossVersion::withoutTimestamps(function () use ($from, $to) {
+        LexicalEntryVersion::withoutTimestamps(function () use ($from, $to) {
             // Versions are a reflection of the past and shouldn't be updated. The rest
             // of the dictionary is fine to have newer `updated_at` timestamps.
-            $from->gloss_versions()->update([
+            $from->lexical_entry_versions()->update([
                 'account_id' => $to->id,
             ]);
         });
 
-        $from->glosses()->update([
+        $from->lexical_entries()->update([
             'account_id' => $to->id,
         ]);
 

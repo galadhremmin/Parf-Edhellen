@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Abstracts;
 
 use App\Adapters\BookAdapter;
-use App\Models\Versioning\GlossVersion;
+use App\Models\Versioning\LexicalEntryVersion;
 use App\Repositories\DiscussRepository;
 use App\Repositories\LexicalEntryInflectionRepository;
 use App\Repositories\LexicalEntryRepository;
@@ -19,18 +19,18 @@ abstract class BookBaseController extends Controller
 
     protected SearchIndexRepository $_searchIndexRepository;
 
-    protected LexicalEntryInflectionRepository $_glossInflectionRepository;
+    protected LexicalEntryInflectionRepository $_lexicalEntryInflectionRepository;
 
     protected BookAdapter $_bookAdapter;
 
-    public function __construct(DiscussRepository $discussRepository, LexicalEntryRepository $glossRepository,
-        LexicalEntryInflectionRepository $glossInflectionRepository, SearchIndexRepository $searchIndexRepository,
+    public function __construct(DiscussRepository $discussRepository, LexicalEntryRepository $lexicalEntryRepository,
+        LexicalEntryInflectionRepository $lexicalEntryInflectionRepository, SearchIndexRepository $searchIndexRepository,
         BookAdapter $bookAdapter)
     {
         $this->_discussRepository = $discussRepository;
-        $this->_lexicalEntryRepository = $glossRepository;
+        $this->_lexicalEntryRepository = $lexicalEntryRepository;
         $this->_searchIndexRepository = $searchIndexRepository;
-        $this->_glossInflectionRepository = $glossInflectionRepository;
+        $this->_lexicalEntryInflectionRepository = $lexicalEntryInflectionRepository;
         $this->_bookAdapter = $bookAdapter;
     }
 
@@ -49,10 +49,10 @@ abstract class BookBaseController extends Controller
         }
 
         $gloss = $glosses->first();
-        $comments = $this->_discussRepository->getNumberOfPostsForEntities(GlossVersion::class, [$gloss->latest_gloss_version_id]);
-        $inflections = $this->_glossInflectionRepository->getInflectionsForLexicalEntries([$glossId]);
+        $comments = $this->_discussRepository->getNumberOfPostsForEntities(LexicalEntryVersion::class, [$gloss->latest_lexical_entry_version_id]);
+        $inflections = $this->_lexicalEntryInflectionRepository->getInflectionsForLexicalEntries([$glossId]);
 
-        return $this->_bookAdapter->adaptGlosses([$gloss], $inflections, $comments, $gloss->word->word);
+        return $this->_bookAdapter->adaptLexicalEntries([$gloss], $inflections, $comments, $gloss->word->word);
     }
 
     /**

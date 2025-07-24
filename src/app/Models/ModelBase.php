@@ -30,13 +30,13 @@ abstract class ModelBase extends Model
         return $date?->format(DateTimeInterface::ATOM);
     }
 
-    public function equals($gloss)
+    public function equals($entity)
     {
-        if ($gloss === null || $gloss instanceof Gloss === false) {
+        if (! $entity instanceof ModelBase) {
             return false;
         }
 
-        $equals = $this === $gloss;
+        $equals = $this === $entity;
 
         if (! $equals) {
             $equals = true;
@@ -46,11 +46,11 @@ abstract class ModelBase extends Model
                 if ($attributeName === $this->primaryKey ||
                     // deliberately don't compare date times as they mutate when entities are persisted.
                     (array_key_exists($attributeName, $this->casts) && $this->casts[$attributeName] === 'datetime') ||
-                    ! array_key_exists($attributeName, $gloss->attributes)) {
+                    ! array_key_exists($attributeName, $entity->attributes)) {
                     continue;
                 }
 
-                $otherAttribute = $gloss->getAttribute($attributeName);
+                $otherAttribute = $entity->getAttribute($attributeName);
                 if ($attribute instanceof ModelBase) {
                     $equals = $attribute->equals($otherAttribute);
                 } else {

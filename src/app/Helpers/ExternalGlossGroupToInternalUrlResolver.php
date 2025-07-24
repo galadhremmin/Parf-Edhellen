@@ -4,16 +4,17 @@ namespace App\Helpers;
 
 use App\Interfaces\IExternalToInternalUrlResolver;
 use Illuminate\Support\Collection;
+use App\Models\LexicalEntryGroup;
 
 class ExternalGlossGroupToInternalUrlResolver implements IExternalToInternalUrlResolver
 {
     private array $_sources;
 
-    public function __construct(Collection $glossGroups)
+    public function __construct(Collection $lexicalEntryGroups)
     {
         $sources = [];
 
-        foreach ($glossGroups as $group) {
+        foreach ($lexicalEntryGroups as $group) {
             $url = $group->external_link_format;
             $host = self::extractHost($url);
             $path = parse_url($url, PHP_URL_PATH);

@@ -6,12 +6,12 @@ use App\Adapters\BookAdapter;
 use App\Helpers\LinkHelper;
 use App\Http\Discuss\IDiscussContext;
 use App\Models\Account;
-use App\Models\Versioning\GlossVersion;
+use App\Models\Versioning\LexicalEntryVersion;
 use App\Repositories\LexicalEntryRepository;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
-class GlossVersionContext implements IDiscussContext
+class LexicalEntryVersionContext implements IDiscussContext
 {
     private LinkHelper $_linkHelper;
 
@@ -19,21 +19,21 @@ class GlossVersionContext implements IDiscussContext
 
     private LexicalEntryRepository $_lexicalEntryRepository;
 
-    public function __construct(LinkHelper $linkHelper, BookAdapter $bookAdapter, LexicalEntryRepository $glossRepository)
+    public function __construct(LinkHelper $linkHelper, BookAdapter $bookAdapter, LexicalEntryRepository $lexicalEntryRepository)
     {
         $this->_linkHelper = $linkHelper;
         $this->_bookAdapter = $bookAdapter;
-        $this->_lexicalEntryRepository = $glossRepository;
+        $this->_lexicalEntryRepository = $lexicalEntryRepository;
     }
 
     public function resolve(Model $entity)
     {
-        return $this->_linkHelper->glossVersions($entity->id);
+        return $this->_linkHelper->lexicalEntryVersions($entity->id);
     }
 
     public function resolveById(int $entityId)
     {
-        return GlossVersion::find($entityId);
+        return LexicalEntryVersion::find($entityId);
     }
 
     public function available($entityOrId, ?Account $account = null)
@@ -49,7 +49,7 @@ class GlossVersionContext implements IDiscussContext
 
         $date = new Carbon($entity->created_at);
 
-        return 'Gloss “'.$entity->word->word.'” by '.$entity->account->nickname.' created '.$date->diffForHumans();
+        return 'Lexical entry “'.$entity->word->word.'” by '.$entity->account->nickname.' created '.$date->diffForHumans();
     }
 
     public function getIconPath()
@@ -65,7 +65,7 @@ class GlossVersionContext implements IDiscussContext
             return response(null, 404);
         }
 
-        $model = $this->_bookAdapter->adaptGlosses([$gloss->first()]);
+        $model = $this->_bookAdapter->adaptLexicalEntries([$gloss->first()]);
 
         return view('discuss.context._gloss', $model);
     }

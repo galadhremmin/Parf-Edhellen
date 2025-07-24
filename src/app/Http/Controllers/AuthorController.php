@@ -66,9 +66,9 @@ class AuthorController extends Controller
             ->limit(100)
             ->get();
 
-        $glossary = $entities->map(function ($gloss) {
-            $adapted = $this->_bookAdapter->adaptGloss($gloss);
-            $adapted->sense = $gloss->sense->word->word;
+        $glossary = $entities->map(function ($lexicalEntry) {
+            $adapted = $this->_bookAdapter->adaptLexicalEntry($lexicalEntry);
+            $adapted->sense = $lexicalEntry->sense->word->word;
 
             return $adapted;
         });

@@ -27,10 +27,10 @@ class GlossAggregationHelper
 
     private function aggregateEloquentEntities(array &$glosses)
     {
-        // Gloss model entities already have the 'translations' relation, and would therefore
+        // Gloss model entities already have the 'glosses' relation, and would therefore
         // only requiring eager loading. This is not performant to be doing in the adapter, and
         // therefore raises an error.
-        $eagerLoading = ['translations', 'gloss_details'];
+        $eagerLoading = ['glosses', 'lexical_entry_details'];
 
         foreach ($glosses as $gloss) {
             foreach ($eagerLoading as $relation) {
@@ -52,31 +52,29 @@ class GlossAggregationHelper
         $collection = $collection->map(function ($items) {
             $gloss = $items[0];
 
-            $gloss->translations = $items->unique('translation')->reduce(function ($carry, $item) {
-                $carry[] = new Gloss(['translation' => $item->translation]);
-
-                return $carry;
-            }, []);
+            $gloss->glosses = $items->unique('translation')->map(function ($item) {
+                return new Gloss(['translation' => $item->translation]);
+            });
             unset($gloss->translation);
 
-            $gloss->gloss_details = $items->unique('gloss_details_category')->reduce(function ($carry, $item) {
-                if ($item->gloss_details_category !== null) {
-                    $carry[] = new LexicalEntryDetail([
-                        'category' => $item->gloss_details_category,
-                        'order' => $item->gloss_details_order,
-                        'text' => $item->gloss_details_text,
-                        'type' => $item->gloss_details_type,
+            $gloss->lexical_entry_details = $items->unique('lexical_entry_details_category')->map(function ($item) {
+                if ($item->lexical_entry_details_category !== null) {
+                    return new LexicalEntryDetail([
+                        'category' => $item->lexical_entry_details_category,
+                        'order' => $item->lexical_entry_details_order,
+                        'text' => $item->lexical_entry_details_text,
+                        'type' => $item->lexical_entry_details_type,
                     ]);
                 }
 
-                return $carry;
-            }, []);
+                return null;
+            })->filter();
 
             unset(
-                $gloss->gloss_details_category,
-                $gloss->gloss_details_order,
-                $gloss->gloss_details_text,
-                $gloss->gloss_details_type
+                $gloss->lexical_entry_details_category,
+                $gloss->lexical_entry_details_order,
+                $gloss->lexical_entry_details_text,
+                $gloss->lexical_entry_details_type
             );
 
             return $gloss;

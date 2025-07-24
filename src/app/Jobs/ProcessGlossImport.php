@@ -37,18 +37,18 @@ class ProcessGlossImport implements ShouldQueue
         $data = &$this->data;
 
         $details = $data['details'];
-        $gloss = $data['gloss'];
+        $lexicalEntry = $data['lexical_entry'];
         $inflections = $data['inflections'];
         $keywords = $data['keywords'];
         $sense = $data['sense'];
-        $translations = $data['translations'];
+        $glosses = $data['glosses'];
         $word = $data['word'];
 
         try {
-            $glossEntity = $glossRepository->saveLexicalEntry($word, $sense, $gloss, $translations, $keywords, $details);
-            $glossInflectionRepository->saveManyOnLexicalEntry($glossEntity, collect($inflections)->map(function ($i) use ($glossEntity) {
+            $lexicalEntryEntity = $glossRepository->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
+            $glossInflectionRepository->saveManyOnLexicalEntry($lexicalEntryEntity, collect($inflections)->map(function ($i) use ($lexicalEntryEntity) {
                 return new LexicalEntryInflection(array_merge($i, [
-                    'lexical_entry_id' => $glossEntity->id,
+                    'lexical_entry_id' => $lexicalEntryEntity->id,
                 ]));
             }));
         } catch (\Exception $ex) {

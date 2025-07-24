@@ -95,7 +95,7 @@ class BookController extends BookBaseController
             abort(404);
         }
 
-        $model = $this->_bookAdapter->adaptGlossVersions($lexicalEntries->getVersions(), $lexicalEntries->getLatestVersionId());
+        $model = $this->_bookAdapter->adaptLexicalEntryVersions($lexicalEntries->getVersions(), $lexicalEntries->getLatestVersionId());
 
         return view('book.version', $model + [
             'user' => $request->user(),

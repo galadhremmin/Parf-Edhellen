@@ -72,7 +72,7 @@ class HomeController extends Controller
             return [
                 'gloss' => $gloss === null //
                     ? null //
-                    : $this->_bookAdapter->adaptGloss($gloss),
+                    : $this->_bookAdapter->adaptLexicalEntry($gloss),
             ];
         });
 

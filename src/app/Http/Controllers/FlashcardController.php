@@ -263,7 +263,7 @@ class FlashcardController extends Controller
 
         return [
             'correct' => $ok,
-            'lexicalEntry' => $this->_bookAdapter->adaptGloss($lexicalEntry),
+            'lexicalEntry' => $this->_bookAdapter->adaptLexicalEntry($lexicalEntry),
         ];
     }
 }

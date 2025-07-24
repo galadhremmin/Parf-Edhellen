@@ -27,14 +27,14 @@ class GlossContributionController extends Controller implements IContributionCon
 
     private LexicalEntryRepository $_lexicalEntryRepository;
 
-    private LexicalEntryInflectionRepository $_glossInflectionRepository;
+    private LexicalEntryInflectionRepository $_lexicalEntryInflectionRepository;
 
-    public function __construct(BookAdapter $bookAdapter, LexicalEntryRepository $glossRepository,
-        LexicalEntryInflectionRepository $glossInflectionRepository)
+    public function __construct(BookAdapter $bookAdapter, LexicalEntryRepository $lexicalEntryRepository,
+        LexicalEntryInflectionRepository $lexicalEntryInflectionRepository)
     {
         $this->_bookAdapter = $bookAdapter;
-        $this->_lexicalEntryRepository = $glossRepository;
-        $this->_glossInflectionRepository = $glossInflectionRepository;
+        $this->_lexicalEntryRepository = $lexicalEntryRepository;
+        $this->_lexicalEntryInflectionRepository = $lexicalEntryInflectionRepository;
     }
 
     public function getViewModel(Contribution $contribution): ViewModel
@@ -65,7 +65,7 @@ class GlossContributionController extends Controller implements IContributionCon
         $gloss->setRelation('word', new Word(['word' => $contribution->word]));
         $gloss->setRelation('lexical_entry_details', new Collection($details));
 
-        $glossData = $this->_bookAdapter->adaptGlosses($glosses);
+        $glossData = $this->_bookAdapter->adaptLexicalEntries($glosses);
 
         $model = $glossData + [
             'keywords' => $keywords,
@@ -112,7 +112,7 @@ class GlossContributionController extends Controller implements IContributionCon
             'keywords' => $keywords,
             'notes' => $contribution->notes,
             'translations' => $translations,
-            'gloss_details' => $details,
+            'lexical_entry_details' => $details,
         ];
     }
 
@@ -124,7 +124,7 @@ class GlossContributionController extends Controller implements IContributionCon
     public function edit(Contribution $contribution, Request $request)
     {
         $payloadData = $this->getEditViewModel($contribution);
-        $inflections = $this->_glossInflectionRepository->getInflectionsForLexicalEntry(
+        $inflections = $this->_lexicalEntryInflectionRepository->getInflectionsForLexicalEntry(
             array_key_exists('id', $payloadData) ? $payloadData['id'] : 0
         );
 
@@ -148,10 +148,10 @@ class GlossContributionController extends Controller implements IContributionCon
     {
         $data = $request->validate([
             'entity_id' => 'sometimes|numeric',
-            'gloss_version_id' => 'sometimes|numeric',
+            'lexical_entry_version_id' => 'sometimes|numeric',
         ]);
         $entityId = isset($data['entity_id']) ? intval($data['entity_id']) : 0;
-        $glossVersionId = isset($data['gloss_version_id']) ? intval($data['gloss_version_id']) : 0;
+        $lexicalEntryVersionId = isset($data['lexical_entry_version_id']) ? intval($data['lexical_entry_version_id']) : 0;
 
         $gloss = null;
         if ($entityId !== 0) {
@@ -160,14 +160,14 @@ class GlossContributionController extends Controller implements IContributionCon
                 $gloss = $glosses->first();
             }
         }
-        if ($glossVersionId !== 0) {
-            $gloss = $this->_lexicalEntryRepository->getLexicalEntryFromVersion($glossVersionId);
+        if ($lexicalEntryVersionId !== 0) {
+            $gloss = $this->_lexicalEntryRepository->getLexicalEntryFromVersion($lexicalEntryVersionId);
         }
 
         $inflections = [];
         if ($gloss !== null) {
             $gloss->keywords = $this->_lexicalEntryRepository->getKeywords($gloss->sense_id, $gloss->id);
-            $inflections = $this->_glossInflectionRepository->getInflectionsForLexicalEntry($gloss->id);
+            $inflections = $this->_lexicalEntryInflectionRepository->getInflectionsForLexicalEntry($gloss->id);
         }
 
         return $request->ajax()

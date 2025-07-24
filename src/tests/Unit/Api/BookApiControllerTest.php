@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\Api;
 
-use App\Models\Gloss;
+use App\Models\LexicalEntry;
 use App\Models\SearchKeyword;
 use Tests\TestCase;
 
@@ -32,7 +32,7 @@ class BookApiControllerTest extends TestCase
 
     public function test_gloss()
     {
-        $gloss = Gloss::active()->first();
+        $gloss = LexicalEntry::active()->first();
         $response = $this->getJson(route('api.book.gloss', ['glossId' => $gloss->id]));
         $response->assertSuccessful();
     }

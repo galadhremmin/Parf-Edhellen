@@ -77,21 +77,21 @@ class GlossIndexerSubscriber
     {
         $this->delete($lexicalEntry);
 
-        $translations = $lexicalEntry->translations->map(function ($t) {
+        $glosses = $lexicalEntry->glosses->map(function ($t) {
             return $t->translation;
         });
 
         foreach ($lexicalEntry->keywords as $keyword) {
-            if (! $translations->contains($keyword->keyword)) {
+            if (! $glosses->contains($keyword->keyword)) {
                 $keywordLanguage = $keyword->keyword_language ?: $this->_systemLanguage;
                 ProcessSearchIndexCreation::dispatch($lexicalEntry, $keyword->wordEntity, $keywordLanguage, $keyword->keyword) //
                     ->onQueue('indexing');
             }
         }
 
-        foreach ($translations as $translation) {
-            $translationWord = $this->_wordRepository->save($translation, $lexicalEntry->account_id);
-            ProcessSearchIndexCreation::dispatch($lexicalEntry, $translationWord, $this->_systemLanguage) //
+        foreach ($glosses as $glossTranslation) {
+            $glossWord = $this->_wordRepository->save($glossTranslation, $lexicalEntry->account_id);
+            ProcessSearchIndexCreation::dispatch($lexicalEntry, $glossWord, $this->_systemLanguage) //
                 ->onQueue('indexing');
         }
 

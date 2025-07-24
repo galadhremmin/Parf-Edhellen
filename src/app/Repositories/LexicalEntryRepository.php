@@ -368,7 +368,7 @@ class LexicalEntryRepository
 
         // Generate a collection of keywords
         $glossStrings = array_map(function ($g) {
-            return $g->gloss;
+            return $g->translation;
         }, $glosses);
         $newKeywords = array_unique(array_merge($keywords, [$wordString, $senseString], $glossStrings));
         sort($newKeywords);
@@ -424,10 +424,10 @@ class LexicalEntryRepository
                 // If the length matches, iterate through each element and check whether they
                 // exist in both collections.
                 $existingGlosses = $originalLexicalEntry->glosses->map(function ($g) {
-                    return $g->gloss;
+                    return $g->translation;
                 });
                 $newGlosses = collect($glosses)->map(function ($g) {
-                    return $g->gloss;
+                    return $g->translation;
                 });
 
                 $existingGlosses->sort();
@@ -653,12 +653,12 @@ class LexicalEntryRepository
             ->leftJoin('speeches as s', 'g.speech_id', 's.id');
 
         if ($addDetailsColumns) {
-            $query = $query->leftJoin('gloss_details as gd', 'g.id', 'gd.gloss_id');
+            $query = $query->leftJoin('lexical_entry_details as gd', 'g.id', 'gd.lexical_entry_id');
             $columns = array_merge($columns, [
-                DB::raw('gd.category as gloss_details_category'),
-                DB::raw('gd.text as gloss_details_text'),
-                DB::raw('gd.category as gloss_details_order'),
-                DB::raw('gd.type as gloss_details_type'),
+                DB::raw('gd.category as lexical_entry_details_category'),
+                DB::raw('gd.text as lexical_entry_details_text'),
+                DB::raw('gd.category as lexical_entry_details_order'),
+                DB::raw('gd.type as lexical_entry_details_type'),
             ]);
         }
 

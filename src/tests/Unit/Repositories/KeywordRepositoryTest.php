@@ -22,12 +22,12 @@ class KeywordRepositoryTest extends TestCase
      */
     public function test_resolve_keyword()
     {
-        extract($this->createGloss(__FUNCTION__));
+        extract($this->createLexicalEntry(__FUNCTION__, 'testword'));
 
         // Create an origin gloss, to validate the versioning system. By appending 'origin' to the word string,
         // the next gloss saved (with an unsuffixed word) create a new version of the gloss.
         $keywords[] = $word;
-        $gloss = $this->getLexicalEntryRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
+        $gloss = $this->getLexicalEntryRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
 
         $repository = resolve(KeywordRepository::class);
 
@@ -36,7 +36,7 @@ class KeywordRepositoryTest extends TestCase
 
         $expected = array_unique(array_merge($keywords, array_map(function ($t) {
             return $t->translation;
-        }, $translations), [$word, $gloss->sense->word->word]));
+        }, $glosses), [$word, $gloss->sense->word->word]));
         $actual = $gloss->keywords->map(function ($k) {
             return $k->keyword;
         })->toArray();

@@ -30,9 +30,9 @@
   <div class="word-comments" rel="trans-comments" itemprop="articleBody">{!! $gloss->comments !!}</div>
   @endif
 
-  @if (isset($gloss->gloss_details) && is_array($gloss->gloss_details))
-  @foreach ($gloss->gloss_details as $detail)
-  <section class="GlossDetails details">
+  @if (isset($gloss->lexical_entry_details) && is_array($gloss->lexical_entry_details))
+  @foreach ($gloss->lexical_entry_details as $detail)
+  <section class="LexicalEntryDetails details">
     <header><h4>{{ $detail->category }}</h4></header>
     <div class="details__body{{ ! empty($detail->type) ? ' '.$detail->type : '' }}">
       {!! $detail->text !!}

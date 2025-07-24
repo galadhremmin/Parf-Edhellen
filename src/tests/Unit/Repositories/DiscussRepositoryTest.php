@@ -10,9 +10,9 @@ use App\Models\ForumPostLike;
 use App\Models\ForumThread;
 use App\Repositories\DiscussRepository;
 use App\Repositories\ValueObjects\ForumThreadForEntityValue;
-use Auth;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Queue;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 use Tests\Unit\Traits\CanCreateGloss;
 
@@ -36,25 +36,25 @@ class DiscussRepositoryTest extends TestCase
 
     public function test_get_thread_for_entity_should_be_null()
     {
-        $thread = $this->_repository->getThreadDataForEntity('glossv', 1);
+        $thread = $this->_repository->getThreadDataForEntity('lex_entry_ver', 1);
         $this->assertEquals(null, $thread);
     }
 
     public function test_get_thread_for_entity_should_be_new()
     {
-        extract($this->createGloss(__FUNCTION__));
-        $gloss = $this->getRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
+        extract($this->createLexicalEntry(__FUNCTION__, 'testword'));
+        $gloss = $this->getRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
 
-        $threadData = $this->_repository->getThreadDataForEntity('glossv', $gloss->latest_gloss_version_id, true);
+        $threadData = $this->_repository->getThreadDataForEntity('lex_entry_ver', $gloss->latest_lexical_entry_version_id, true);
         $this->assertTrue($threadData instanceof ForumThreadForEntityValue);
 
         $t = $threadData->getThread();
         $this->assertTrue($t instanceof ForumThread);
-        $this->assertEquals('glossv', $t->entity_type);
-        $this->assertEquals($gloss->latest_gloss_version_id, $t->entity_id);
+        $this->assertEquals('lex_entry_ver', $t->entity_type);
+        $this->assertEquals($gloss->latest_lexical_entry_version_id, $t->entity_id);
         $this->assertEquals(Auth::user()->id, $t->account_id);
         $this->assertEquals(
-            ForumGroup::where('role', 'glossv')->first()->id,
+            ForumGroup::where('role', 'lex_entry_ver')->first()?->id,
             $t->forum_group_id
         );
         $this->assertEquals(
@@ -65,23 +65,23 @@ class DiscussRepositoryTest extends TestCase
 
     public function test_get_thread_for_entity_should_be_existing()
     {
-        extract($this->createGloss(__FUNCTION__));
-        $gloss = $this->getRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
+        extract($this->createLexicalEntry(__FUNCTION__, 'testword'));
+        $gloss = $this->getRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
 
-        $threadData = $this->_repository->getThreadDataForEntity('glossv', $gloss->latest_gloss_version_id, true);
+        $threadData = $this->_repository->getThreadDataForEntity('lex_entry_ver', $gloss->latest_lexical_entry_version_id, true);
         $t = $threadData->getThread();
         $t->subject = 'Subject';
 
-        $existingThreadData = $this->_repository->getThreadDataForEntity('glossv', $gloss->latest_gloss_version_id, true);
+        $existingThreadData = $this->_repository->getThreadDataForEntity('lex_entry_ver', $gloss->latest_lexical_entry_version_id, true);
         $this->assertTrue($existingThreadData instanceof ForumThreadForEntityValue);
 
         $t = $existingThreadData->getThread();
         $this->assertTrue($t instanceof ForumThread);
-        $this->assertEquals('glossv', $t->entity_type);
-        $this->assertEquals($gloss->latest_gloss_version_id, $t->entity_id);
+        $this->assertEquals('lex_entry_ver', $t->entity_type);
+        $this->assertEquals($gloss->latest_lexical_entry_version_id, $t->entity_id);
         $this->assertEquals(Auth::user()->id, $t->account_id);
         $this->assertEquals(
-            ForumGroup::where('role', 'glossv')->first()->id,
+            ForumGroup::where('role', 'lex_entry_ver')->first()?->id,
             $t->forum_group_id
         );
         $this->assertEquals(
@@ -92,10 +92,10 @@ class DiscussRepositoryTest extends TestCase
 
     public function test_can_save_post()
     {
-        extract($this->createGloss(__FUNCTION__));
-        $gloss = $this->getRepository()->saveGloss($word, $sense, $gloss, $translations, $keywords, $details);
+        extract($this->createLexicalEntry(__FUNCTION__, 'testword'));
+        $gloss = $this->getRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
 
-        $threadData = $this->_repository->getThreadDataForEntity('glossv', $gloss->latest_gloss_version_id, true);
+        $threadData = $this->_repository->getThreadDataForEntity('lex_entry_ver', $gloss->latest_lexical_entry_version_id, true);
         $t = $threadData->getThread();
         $t->subject = 'Subject';
 
