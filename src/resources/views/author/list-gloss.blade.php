@@ -26,11 +26,11 @@
           @if ($gloss->is_uncertain || ! $gloss->is_canon)
           <span class="TextIcon TextIcon--asterisk"></span>
           @endif
-          <a href="{{ $link->gloss($gloss->id) }}">
+          <a href="{{ $link->lexicalEntry($gloss->id) }}">
             {{ $gloss->word }} / {{ $gloss->sense }}
           </a>
         </td>
-        <td>{{ $gloss->all_translations }}</td>
+        <td>{{ $gloss->all_glosses }}</td>
       </tr>
       @endforeach
     </tbody>

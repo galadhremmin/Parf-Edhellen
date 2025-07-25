@@ -15,35 +15,35 @@ use Illuminate\Http\Request;
 
 class GlossInflectionContributionController extends Controller implements IContributionController
 {
-    private LexicalEntryInflectionRepository $_glossInflectionRepository;
+    private LexicalEntryInflectionRepository $_lexicalEntryInflectionRepository;
 
-    private GlossContributionController $_glossContributionController;
+    private LexicalEntryContributionController $_lexicalEntryContributionController;
 
     private LexicalEntryRepository $_lexicalEntryRepository;
 
-    public function __construct(LexicalEntryInflectionRepository $glossInflectionRepository,
-        LexicalEntryRepository $glossRepository, GlossContributionController $glossContributionController)
+    public function __construct(LexicalEntryInflectionRepository $lexicalEntryInflectionRepository,
+        LexicalEntryRepository $lexicalEntryRepository, LexicalEntryContributionController $lexicalEntryContributionController)
     {
-        $this->_glossInflectionRepository = $glossInflectionRepository;
-        $this->_glossContributionController = $glossContributionController;
-        $this->_lexicalEntryRepository = $glossRepository;
+        $this->_lexicalEntryInflectionRepository = $lexicalEntryInflectionRepository;
+        $this->_lexicalEntryContributionController = $lexicalEntryContributionController;
+        $this->_lexicalEntryRepository = $lexicalEntryRepository;
     }
 
     public function getViewModel(Contribution $contribution): ViewModel
     {
         $payloadData = collect(json_decode($contribution->payload));
 
-        $glossInflections = $payloadData->map(function ($glossInflection) {
-            return (object) $glossInflection;
+        $lexicalEntryInflections = $payloadData->map(function ($lexicalEntryInflection) {
+            return (object) $lexicalEntryInflection;
         });
 
-        $speeches = Speech::whereIn('id', $glossInflections->pluck('speech_id')) //
+        $speeches = Speech::whereIn('id', $lexicalEntryInflections->pluck('speech_id')) //
             ->get()->keyBy('id');
-        $inflections = Inflection::whereIn('id', $glossInflections->pluck('inflection_id')) //
+        $inflections = Inflection::whereIn('id', $lexicalEntryInflections->pluck('inflection_id')) //
             ->get()->keyBy('id');
 
         // create a hierarchical structure that the UI expects based on the unique group identifier
-        $glossInflections = $glossInflections->reduce(function ($carry, $i) use ($speeches, $inflections) {
+        $lexicalEntryInflections = $lexicalEntryInflections->reduce(function ($carry, $i) use ($speeches, $inflections) {
             if (! isset($carry[$i->inflection_group_uuid])) {
                 $i->inflections = [];
                 $i->speech = $speeches[$i->speech_id]->name;
@@ -55,18 +55,18 @@ class GlossInflectionContributionController extends Controller implements IContr
             return $carry;
         }, []);
 
-        $gloss = $contribution->lexical_entry_id ? LexicalEntry::find($contribution->lexical_entry_id) : null;
+        $lexicalEntry = $contribution->lexical_entry_id ? LexicalEntry::find($contribution->lexical_entry_id) : null;
         $viewModel = [
             'review' => $contribution,
-            'gloss' => $gloss,
-            'inflections' => $glossInflections,
+            'lexicalEntry' => $lexicalEntry,
+            'inflections' => $lexicalEntryInflections,
         ];
 
         return new ViewModel($contribution, 'contribution.gloss_infl._show', $viewModel);
     }
 
     /**
-     * HTTP GET. Opens a view for editing a gloss inflections contribution.
+     * HTTP GET. Opens a view for editing a lexical entry inflections contribution.
      *
      * @return array|\Illuminate\View\View|\Illuminate\Contracts\View\Factory
      */
@@ -85,29 +85,29 @@ class GlossInflectionContributionController extends Controller implements IContr
         }) //
             ->groupBy('inflection_group_uuid');
 
-        $glossPayload = [
+        $lexicalEntryPayload = [
             'contribution_id' => $contribution->id,
             'id' => $contribution->dependent_on === null ? $contribution->gloss_id : 0,
         ];
 
-        if ($glossPayload['id']) {
-            $gloss = $this->_lexicalEntryRepository->getLexicalEntry($glossPayload['id']);
-            if ($gloss->count() < 1) {
-                throw new \Exception('Lexical entry '.$glossPayload['id'].' does not exist.');
+        if ($lexicalEntryPayload['id']) {
+            $lexicalEntry = $this->_lexicalEntryRepository->getLexicalEntry($lexicalEntryPayload['id']);
+            if ($lexicalEntry->count() < 1) {
+                throw new \Exception('Lexical entry '.$lexicalEntryPayload['id'].' does not exist.');
             }
-            $glossPayload = array_merge(
-                $gloss->first()->toArray(),
-                $glossPayload
+            $lexicalEntryPayload = array_merge(
+                $lexicalEntry->first()->toArray(),
+                $lexicalEntryPayload
             );
         } else {
-            $glossPayload = array_merge(
-                $this->_glossContributionController->getEditViewModel($contribution->dependent_on),
-                $glossPayload
+            $lexicalEntryPayload = array_merge(
+                $this->_lexicalEntryContributionController->getEditViewModel($contribution->dependent_on),
+                $lexicalEntryPayload
             );
         }
 
         $viewModel = [
-            'payload' => $glossPayload,
+            'payload' => $lexicalEntryPayload,
             'inflections' => $inflectionGroups,
             'form_restrictions' => ['inflections'],
             'review' => $contribution,
@@ -135,7 +135,7 @@ class GlossInflectionContributionController extends Controller implements IContr
     public function validateBeforeSave(Request $request, int $id = 0): bool
     {
         $request->validate([
-            'gloss_id' => 'sometimes|nullable|numeric|exists:glosses,id',
+            'lexical_entry_id' => 'sometimes|nullable|numeric|exists:lexical_entries,id',
             'inflection_groups' => 'required|array',
             'inflection_groups.*.inflection_group_uuid' => 'required|uuid',
             'inflection_groups.*.is_neologism' => 'sometimes|boolean',
@@ -154,13 +154,13 @@ class GlossInflectionContributionController extends Controller implements IContr
 
     public function populate(Contribution $contribution, Request $request)
     {
-        $contribution->gloss_id = $request->has('gloss_id') //
-            ? intval($request->input('gloss_id')) : null;
+        $contribution->lexical_entry_id = $request->has('lexical_entry_id') //
+            ? intval($request->input('lexical_entry_id')) : null;
 
         if ($contribution->lexical_entry_id) {
-            $gloss = LexicalEntry::findOrFail($contribution->lexical_entry_id);
-            $contribution->language_id = $gloss->language_id;
-            $word = $gloss->word->word;
+            $lexicalEntry = LexicalEntry::findOrFail($contribution->lexical_entry_id);
+            $contribution->language_id = $lexicalEntry->language_id;
+            $word = $lexicalEntry->word->word;
         } else {
             $dependency = Contribution::findOrFail($contribution->dependent_on_contribution_id);
             $contribution->language_id = $dependency->language_id;
@@ -200,20 +200,20 @@ class GlossInflectionContributionController extends Controller implements IContr
     public function approve(Contribution $contribution, Request $request): int
     {
         if ($contribution->dependent_on !== null) {
-            $gloss = $contribution->dependent_on->entity;
+            $lexicalEntry = $contribution->dependent_on->entity;
         } else {
-            $gloss = $contribution->gloss;
+            $lexicalEntry = $contribution->lexical_entry;
         }
 
-        $inflections = collect(json_decode($contribution->payload, /* associative? */ true))->map(function ($i) use ($gloss) {
+        $inflections = collect(json_decode($contribution->payload, /* associative? */ true))->map(function ($i) use ($lexicalEntry) {
             return new LexicalEntryInflection($i + [
-                'lexical_entry_id' => $gloss->id,
-                'language_id' => $gloss->language_id,
+                'lexical_entry_id' => $lexicalEntry->id,
+                'language_id' => $lexicalEntry->language_id,
             ]);
         });
 
-        $this->_glossInflectionRepository->saveManyOnLexicalEntry($gloss, $inflections);
+        $this->_lexicalEntryInflectionRepository->saveManyOnLexicalEntry($lexicalEntry, $inflections);
 
-        return $gloss->id;
+        return $lexicalEntry->id;
     }
 }

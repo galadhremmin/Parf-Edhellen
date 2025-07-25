@@ -36,20 +36,20 @@ trait CanCreateGloss
         $this->cleanGlosses();
     }
 
-    protected function cleanGlosses()
+    protected function cleanLexicalEntries()
     {
-        $glosses = LexicalEntry::where('lexical_entry_group_id', $this->_lexicalEntryGroup->id)
+        $lexicalEntries = LexicalEntry::where('lexical_entry_group_id', $this->_lexicalEntryGroup->id)
             ->get();
         $senses = [];
 
-        foreach ($glosses as $gloss) {
-            $senses[] = $gloss->sense;
+        foreach ($lexicalEntries as $lexicalEntry) {
+            $senses[] = $lexicalEntry->sense;
 
-            $gloss->keywords()->delete();
-            $gloss->glosses()->delete();
-            $gloss->lexical_entry_details()->delete();
-            $gloss->lexical_entry_versions()->delete();
-            $gloss->delete();
+            $lexicalEntry->keywords()->delete();
+            $lexicalEntry->glosses()->delete();
+            $lexicalEntry->lexical_entry_details()->delete();
+            $lexicalEntry->lexical_entry_versions()->delete();
+            $lexicalEntry->delete();
         }
     }
 

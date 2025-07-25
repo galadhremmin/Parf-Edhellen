@@ -276,7 +276,7 @@ class SentenceContributionController extends Controller implements IContribution
             $translations = $payload->sentence_translations;
 
             foreach ($fragments as $fragment) {
-                $fragment->load('gloss_inflections');
+                $fragment->load('lexical_entry_inflections');
             }
 
         } else {

@@ -21,9 +21,9 @@
     {{ csrf_field() }}
     <div class="form-group">
         <label for="ed-word-finder-gloss-group-ids" class="control-label">Eligible gloss groups</label>
-        <select multiple name="gloss_group_ids[]" size="10" class="form-control" id="ed-word-finder-gloss-group-ids">
+        <select multiple name="lexical_entry_group_ids[]" size="10" class="form-control" id="ed-word-finder-gloss-group-ids">
             @foreach ($all_gloss_groups as $gloss_group)
-            <option value="{{ $gloss_group->id }}" {{ isset($selected_gloss_group_ids[(string) $gloss_group->id]) ? "selected" : '' }}>{{ $gloss_group->name }}</option>
+            <option value="{{ $gloss_group->id }}" {{ isset($selected_lexical_entry_group_ids[(string) $gloss_group->id]) ? "selected" : '' }}>{{ $gloss_group->name }}</option>
             @endforeach
         </select>
     </div>

@@ -26,7 +26,7 @@
         <td>@date($r->created_at)</td>
         <td>
           @if ($r->gloss) 
-          <a href="{{ $link->gloss($r->gloss_id) }}">
+          <a href="{{ $link->lexicalEntry($r->gloss_id) }}">
             {{ $r->gloss->word->word }}
           </a>
           @else

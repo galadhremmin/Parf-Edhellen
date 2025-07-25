@@ -16,7 +16,7 @@ class WordFinderApiController extends Controller
 {
     public function play(Request $request, int $languageId)
     {
-        $groupIds = $this->getGlossGroupIds();
+        $groupIds = $this->getLexicalEntryGroupIds();
 
         $glossary = [];
         $glosses = [];
@@ -54,7 +54,7 @@ class WordFinderApiController extends Controller
         ];
     }
 
-    private function getGlossGroupIds(): array
+    private function getLexicalEntryGroupIds(): array
     {
         $lexicalEntryGroupIds = Cache::remember('ed.game.word-finder.lexical-entry-groups', 60 * 60 * 24 /* seconds */, function () {
             return GameWordFinderGlossGroup::pluck('lexical_entry_group_id')->toArray();

@@ -42,8 +42,8 @@ abstract class SearchIndexResolverBase implements ISearchIndexResolver
             $query = $query->whereIn('speech_id', $v->getSpeechIds());
         }
 
-        if (! empty($v->getGlossGroupIds())) {
-            $query = $query->whereIn('gloss_group_id', $v->getGlossGroupIds());
+        if (! empty($v->getLexicalEntryGroupIds())) {
+            $query = $query->whereIn('lexical_entry_group_id', $v->getLexicalEntryGroupIds());
         }
 
         return [

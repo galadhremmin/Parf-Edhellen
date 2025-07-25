@@ -2,7 +2,7 @@
 @if ($gloss)
 <p>
   <span class="TextIcon TextIcon--info-sign"></span>
-  This is a proposed modification of the gloss <a href="{{ $link->gloss($gloss->id) }}">{{ $gloss->id }}</a>.
+  This is a proposed modification of the gloss <a href="{{ $link->lexicalEntry($gloss->id) }}">{{ $gloss->id }}</a>.
 </p>
 @endif
 

@@ -126,10 +126,10 @@ Breadcrumbs::for('gloss.create', function (BreadcrumbTrail $breadcrumbs) {
     $breadcrumbs->push('Add gloss', route('gloss.create'));
 });
 
-Breadcrumbs::for('gloss.edit', function (BreadcrumbTrail $breadcrumbs, App\Models\Gloss $gloss) {
+Breadcrumbs::for('gloss.edit', function (BreadcrumbTrail $breadcrumbs, App\Models\LexicalEntry $lexicalEntry) {
     $breadcrumbs->parent('gloss.index');
-    $breadcrumbs->push('Edit gloss ('.$gloss->word->word.')', route('gloss.edit', [
-        'id' => $gloss->id,
+    $breadcrumbs->push('Edit gloss ('.$lexicalEntry->word->word.')', route('gloss.edit', [
+        'id' => $lexicalEntry->id,
     ]));
 });
 
@@ -140,9 +140,9 @@ Breadcrumbs::for('gloss.list', function (BreadcrumbTrail $breadcrumbs, App\Model
     ]));
 });
 
-Breadcrumbs::for('gloss.confirm-delete', function (BreadcrumbTrail $breadcrumbs, App\Models\Gloss $gloss) {
+Breadcrumbs::for('gloss.confirm-delete', function (BreadcrumbTrail $breadcrumbs, App\Models\LexicalEntry $lexicalEntry) {
     $breadcrumbs->parent('gloss.index');
-    $breadcrumbs->push('Delete gloss '.$gloss->word->word);
+    $breadcrumbs->push('Delete gloss '.$lexicalEntry->word->word);
 });
 
 // //////////////////////////////////////////////////////////////////////////////////////////////

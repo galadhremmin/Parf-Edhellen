@@ -80,12 +80,12 @@ class BookController extends BookBaseController
 
     public function redirectToLatest(Request $request, int $id)
     {
-        $glosses = $this->getGlossUnadapted($id);
-        if ($glosses->count() < 1) {
+        $lexicalEntries = $this->getLexicalEntryUnadapted($id);
+        if ($lexicalEntries->count() < 1) {
             abort(404);
         }
 
-        return redirect()->route('gloss.ref', ['id' => $glosses->first()->id]);
+        return redirect()->route('gloss.ref', ['id' => $lexicalEntries->first()->id]);
     }
 
     public function versions(Request $request, int $id)

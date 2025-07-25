@@ -7,7 +7,7 @@
 {!! Breadcrumbs::render('inflection.edit', $inflection) !!}
 
 <p>
-  There are {{ $inflection->gloss_inflections()->count() }} recorded words with this inflection.
+  There are {{ $inflection->lexical_entry_inflections()->count() }} recorded words with this inflection.
 </p>
 
 @include('_shared._errors', [ 'errors' => $errors ])

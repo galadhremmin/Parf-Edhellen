@@ -31,7 +31,7 @@ class SearchKeyword extends ModelBase implements Interfaces\IHasLanguage
         'entity_id',
         'language_id',
         'speech_id',
-        'gloss_group_id',
+        'lexical_entry_group_id',
         'is_old',
         'word',
         'word_id',

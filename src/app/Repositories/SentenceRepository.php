@@ -147,7 +147,7 @@ class SentenceRepository
     public function getInflectionsForSentenceFragments(Collection $fragments)
     {
         $inflections = Inflection::whereIn('id', $fragments->map(function ($f) {
-            return $f->gloss_inflections->map(function ($i) {
+            return $f->lexical_entry_inflections->map(function ($i) {
                 return $i->inflection_id;
             });
         })->flatten()) //
@@ -219,7 +219,7 @@ class SentenceRepository
     {
         $fragments = $sentence->sentence_fragments;
         foreach ($fragments as $fragment) {
-            $fragment->gloss_inflections()->delete();
+            $fragment->lexical_entry_inflections()->delete();
             $fragment->keywords()->delete();
         }
         $sentence->sentence_fragments()->delete();

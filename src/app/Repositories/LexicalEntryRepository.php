@@ -272,7 +272,7 @@ class LexicalEntryRepository
             't.translation',
             'g.source',
             'a.nickname as account_name',
-            'tg.name as gloss_group_name',
+            'tg.name as lexical_entry_group_name',
             'g.id',
         ];
         $query = self::createLexicalEntryQueryWithoutDetails($fields, false);

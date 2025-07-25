@@ -35,51 +35,51 @@ abstract class BookBaseController extends Controller
     }
 
     /**
-     * Gets the gloss with the specified ID. The gloss is also adapted for the immediate
+     * Gets the lexical entry with the specified ID. The lexical entry is also adapted for the immediate
      * use as a view model.
      *
      * @param  bool  $coerceLatest
      * @return Collection
      */
-    protected function getGloss(int $glossId)
+    protected function getLexicalEntry(int $lexicalEntryId)
     {
-        $glosses = $this->getGlossUnadapted($glossId);
-        if ($glosses->count() < 1) {
+        $lexicalEntries = $this->getLexicalEntryUnadapted($lexicalEntryId);
+        if ($lexicalEntries->count() < 1) {
             return collect([]);
         }
 
-        $gloss = $glosses->first();
-        $comments = $this->_discussRepository->getNumberOfPostsForEntities(LexicalEntryVersion::class, [$gloss->latest_lexical_entry_version_id]);
-        $inflections = $this->_lexicalEntryInflectionRepository->getInflectionsForLexicalEntries([$glossId]);
+        $lexicalEntry = $lexicalEntries->first();
+        $comments = $this->_discussRepository->getNumberOfPostsForEntities(LexicalEntryVersion::class, [$lexicalEntry->latest_lexical_entry_version_id]);
+        $inflections = $this->_lexicalEntryInflectionRepository->getInflectionsForLexicalEntries([$lexicalEntryId]);
 
-        return $this->_bookAdapter->adaptLexicalEntries([$gloss], $inflections, $comments, $gloss->word->word);
+        return $this->_bookAdapter->adaptLexicalEntries([$lexicalEntry], $inflections, $comments, $lexicalEntry->word->word);
     }
 
     /**
-     * Gets the gloss with the specified ID. As there might be multiple translations
-     * associated with the specified gloss, this method might return multiple glosses.
+     * Gets the lexical entry with the specified ID. As there might be multiple translations
+     * associated with the specified lexical entry, this method might return multiple lexical entries.
      *
      * @param  bool  $coerceLatest
      * @return Collection
      */
-    protected function getGlossUnadapted(int $glossId)
+    protected function getLexicalEntryUnadapted(int $lexicalEntryId)
     {
-        $gloss = $this->_lexicalEntryRepository->getLexicalEntry($glossId);
+        $lexicalEntry = $this->_lexicalEntryRepository->getLexicalEntry($lexicalEntryId);
 
-        if ($gloss === null) {
+        if ($lexicalEntry === null) {
             // The lexical entry might still be present in `lexical_entry_versions` and the link consequently
             // incorrect. This may only happen for legacy reasons where each lexical entry version had
             // its own unique ID. All deprecated versions were migrated to the lexical_entry_versions
             // table on 2022-04-25 but their IDs retained as `__migration_gloss_id`.
-            $version = $this->_lexicalEntryRepository->getLexicalEntryVersionByPreMigrationId($glossId);
+            $version = $this->_lexicalEntryRepository->getLexicalEntryVersionByPreMigrationId($lexicalEntryId);
             if ($version === null) {
                 return collect([]);
             }
 
-            $gloss = $this->_lexicalEntryRepository->getLexicalEntry($version->lexical_entry_id);
+            $lexicalEntry = $this->_lexicalEntryRepository->getLexicalEntry($version->lexical_entry_id);
         }
 
-        return $gloss;
+        return $lexicalEntry;
     }
 
     /**
@@ -93,8 +93,8 @@ abstract class BookBaseController extends Controller
     protected function validateFindRequest(Request $request, array $overrides = []): SearchIndexSearchValue
     {
         $rules = [
-            'gloss_group_ids' => 'sometimes|array',
-            'gloss_group_ids.*' => 'sometimes|numeric',
+            'lexical_entry_group_ids' => 'sometimes|array',
+            'lexical_entry_group_ids.*' => 'sometimes|numeric',
             'include_old' => 'sometimes|boolean',
             'inflections' => 'sometimes|boolean',
             'language' => 'sometimes|string',
@@ -119,15 +119,15 @@ abstract class BookBaseController extends Controller
         $reversed = isset($v['reversed']) ? boolval($v['reversed']) : false;
         $word = $v['word'];
 
-        $glossGroupIds = isset($v['gloss_group_ids']) ? array_map(function ($v) {
+        $glossGroupIds = isset($v['lexical_entry_group_ids']) ? array_map(function ($v) {
             return intval($v);
-        }, $v['gloss_group_ids']) : null;
+        }, $v['lexical_entry_group_ids']) : null;
         $speechIds = isset($v['speech_ids']) ? array_map(function ($v) {
             return intval($v);
         }, $v['speech_ids']) : null;
 
         $value = new SearchIndexSearchValue([
-            'gloss_group_ids' => $glossGroupIds,
+            'lexical_entry_group_ids' => $glossGroupIds,
             'include_old' => $includeOld,
             'inflections' => $inflections,
             'language_id' => $languageId,

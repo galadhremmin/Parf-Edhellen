@@ -2,7 +2,7 @@
 
 namespace App\Adapters;
 
-use App\Helpers\GlossAggregationHelper;
+use App\Helpers\LexicalEntryAggregationHelper;
 use App\Helpers\LinkHelper;
 use App\Helpers\StringHelper;
 use App\Interfaces\IMarkdownParser;
@@ -60,7 +60,7 @@ class BookAdapter
             ];
         }
 
-        $aggregator = new GlossAggregationHelper;
+        $aggregator = new LexicalEntryAggregationHelper;
         $numberOfLexicalEntries = $aggregator->aggregate($lexicalEntries);
 
         //    - Just one translation result.

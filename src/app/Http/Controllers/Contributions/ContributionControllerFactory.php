@@ -28,7 +28,7 @@ class ContributionControllerFactory
         $controllerName = null;
         switch ($modelName) {
             case LexicalEntry::class:
-                $controllerName = GlossContributionController::class;
+                $controllerName = LexicalEntryContributionController::class;
                 break;
             case LexicalEntryInflection::class:
                 $controllerName = GlossInflectionContributionController::class;

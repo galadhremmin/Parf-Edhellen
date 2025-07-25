@@ -32,7 +32,7 @@
         <strong class="text-danger">SENSE MISSING</strong>
         @endif
         |
-        #<a href="{{ $link->gloss($t->id) }}">{{ $t->id }}</a>
+        #<a href="{{ $link->lexicalEntry($t->id) }}">{{ $t->id }}</a>
       </p>
       @foreach ($t->keywords as $k)
       <span class="badge bg-secondary">{{ $k->keyword }}</span>

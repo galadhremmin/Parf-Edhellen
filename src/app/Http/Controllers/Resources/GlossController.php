@@ -20,10 +20,10 @@ class GlossController extends Controller
 
     protected LexicalEntryRepository $_lexicalEntryRepository;
 
-    public function __construct(BookAdapter $adapter, LexicalEntryRepository $glossRepository)
+    public function __construct(BookAdapter $adapter, LexicalEntryRepository $lexicalEntryRepository)
     {
         $this->_bookAdapter = $adapter;
-        $this->_lexicalEntryRepository = $glossRepository;
+        $this->_lexicalEntryRepository = $lexicalEntryRepository;
     }
 
     public function index(Request $request)

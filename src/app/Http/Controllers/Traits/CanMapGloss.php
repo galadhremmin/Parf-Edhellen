@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Traits;
 
 use App\Helpers\StringHelper;
 use App\Models\Gloss;
+use App\Models\LexicalEntry;
 use App\Models\LexicalEntryDetail;
 use Illuminate\Http\Request;
 
@@ -18,30 +19,30 @@ trait CanMapGloss
      *     details: LexicalEntryDetail[]
      * }
      */
-    public function mapGloss(Gloss $gloss, Request $request): array
+    public function mapLexicalEntry(LexicalEntry $lexicalEntry, Request $request): array
     {
         $word = $request->input('word.word');
         $sense = $request->input('sense.word.word');
 
-        $gloss->account_id = intval($request->input('account.id') ?: $request->input('account_id'));
-        $gloss->language_id = intval($request->input('language_id'));
-        $gloss->speech_id = intval($request->input('speech_id'));
+        $lexicalEntry->account_id = intval($request->input('account.id') ?: $request->input('account_id'));
+        $lexicalEntry->language_id = intval($request->input('language_id'));
+        $lexicalEntry->speech_id = intval($request->input('speech_id'));
 
-        $gloss->is_rejected = boolval($request->input('is_rejected'));
-        $gloss->is_uncertain = boolval($request->input('is_uncertain'));
+        $lexicalEntry->is_rejected = boolval($request->input('is_rejected'));
+        $lexicalEntry->is_uncertain = boolval($request->input('is_uncertain'));
 
-        $gloss->source = $request->input('source');
-        $gloss->comments = $request->input('comments');
+        $lexicalEntry->source = $request->input('source');
+        $lexicalEntry->comments = $request->input('comments');
 
-        $gloss->gloss_group_id = $request->has('gloss_group_id')
-            ? intval($request->input('gloss_group_id'))
+        $lexicalEntry->lexical_entry_group_id = $request->has('lexical_entry_group_id')
+            ? intval($request->input('lexical_entry_group_id'))
             : null;
 
-        $gloss->label = $request->has('label')
+        $lexicalEntry->label = $request->has('label')
             ? $request->input('label')
             : null;
 
-        $gloss->tengwar = $request->has('tengwar')
+        $lexicalEntry->tengwar = $request->has('tengwar')
             ? $request->input('tengwar')
             : null;
 

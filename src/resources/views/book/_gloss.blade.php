@@ -23,7 +23,7 @@
     @if ($gloss->type)
       <span class="word-type" rel="trans-type">{{ $gloss->type }}.</span>
     @endif
-    <span rel="trans-gloss" itemprop="keywords">{{ $gloss->all_translations }}</span>
+    <span rel="trans-gloss" itemprop="keywords">{{ $gloss->all_glosses }}</span>
   </p>
 
   @if (!isset($hideComments) || !$hideComments)
@@ -54,8 +54,8 @@
       <span class="word-etymology" rel="trans-etymology">{{ $gloss->etymology }}.</span>
     @endif
   
-    @if ($gloss->gloss_group_id != null)
-      Group: <span itemprop="sourceOrganization">{{ $gloss->gloss_group_name }}</span>.
+    @if ($gloss->lexical_entry_group_id != null)
+      Group: <span itemprop="sourceOrganization">{{ $gloss->lexical_entry_group_name }}</span>.
     @endif
   
     Published @date($gloss->created_at, [ 'itemprop' => 'datePublished' ]) by 

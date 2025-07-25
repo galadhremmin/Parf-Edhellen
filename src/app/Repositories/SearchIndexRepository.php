@@ -19,7 +19,7 @@ class SearchIndexRepository
 {
     private static array $latestStoredIndexHashes = [];
 
-    private static array $upsetFields = ['keyword', 'language_id', 'gloss_group_id', 'entity_name', 'entity_id', 'is_old', 'word', 'word_id', 'search_group'];
+    private static array $upsetFields = ['keyword', 'language_id', 'lexical_entry_group_id', 'entity_name', 'entity_id', 'is_old', 'word', 'word_id', 'search_group'];
 
     private KeywordsSearchIndexResolver $_keywordsResolver;
 

@@ -2,7 +2,7 @@
 @if ($parentGloss)
 <p>
   <span class="TextIcon TextIcon--info-sign"></span>
-  This is a proposed modification of the gloss <a href="{{ $link->gloss($parentGloss) }}">{{ $parentGloss }}</a>.
+  This is a proposed modification of the gloss <a href="{{ $link->lexicalEntry($parentGloss) }}">{{ $parentGloss }}</a>.
 </p>
 @endif
 

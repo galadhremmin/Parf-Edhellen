@@ -18,7 +18,7 @@ use App\Repositories\LexicalEntryRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
-class GlossContributionController extends Controller implements IContributionController
+class LexicalEntryContributionController extends Controller implements IContributionController
 {
     use CanMapGloss,
         CanValidateGloss;
@@ -201,7 +201,7 @@ class GlossContributionController extends Controller implements IContributionCon
             $entity = new LexicalEntry;
         }
 
-        $map = $this->mapGloss($entity, $request);
+        $map = $this->mapLexicalEntry($entity, $request);
         extract($map);
 
         if (! $request->user()->isAdministrator()) {

@@ -123,14 +123,14 @@ class BookApiController extends BookBaseController
      *
      * @return void
      */
-    public function get(Request $request, int $glossId)
+    public function get(Request $request, int $lexicalEntryId)
     {
-        $gloss = $this->getGloss($glossId);
-        if (! $gloss) {
+        $lexicalEntry = $this->getLexicalEntry($lexicalEntryId);
+        if (! $lexicalEntry) {
             return response(null, 404);
         }
 
-        return $gloss;
+        return $lexicalEntry;
     }
 
     public function getFromVersion(Request $request, int $id)
