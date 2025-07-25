@@ -89,7 +89,7 @@ export default class Flashcards extends React.Component<IProps, IState> {
         return <React.Fragment>
             {this._renderHeader(word, tengwarMode)}
             <p>
-                <span className="gloss">{gloss.allTranslations}</span>
+                <span className="gloss">{gloss.allGlosses}</span>
             </p>
             {gloss.comments && <div className="comments">
                 <HtmlInject html={gloss.comments} />

@@ -3,15 +3,15 @@ import React from 'react';
 import { fireEvent } from '@root/components/Component';
 import { IComponentProps } from '@root/components/Form/FormComponent._types';
 import TextIcon from '@root/components/TextIcon';
-import { IGlossDetail } from '@root/connectors/backend/IGlossResourceApi';
+import { ILexicalEntryDetail } from '@root/connectors/backend/IGlossResourceApi';
 
-const _setOrder = (newValue: IGlossDetail[]) => {
+const _setOrder = (newValue: ILexicalEntryDetail[]) => {
     newValue.forEach((detail, i) => {
         detail.order = (i + 1) * 10;
     });
 };
 
-const _createNewValue = (detail: IGlossDetail, sourceIndex: number, value: IGlossDetail[]) => {
+const _createNewValue = (detail: ILexicalEntryDetail, sourceIndex: number, value: ILexicalEntryDetail[]) => {
     return [
         ...value.slice(0, sourceIndex),
         detail,
@@ -19,7 +19,7 @@ const _createNewValue = (detail: IGlossDetail, sourceIndex: number, value: IGlos
     ];
 };
 
-function GlossDetailInput(props: IComponentProps<IGlossDetail[]>) {
+function LexicalEntryDetailInput(props: IComponentProps<ILexicalEntryDetail[]>) {
     const {
         name,
         onChange,
@@ -28,7 +28,7 @@ function GlossDetailInput(props: IComponentProps<IGlossDetail[]>) {
 
     const _onAddClick = (ev: React.MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
-        const newValue: IGlossDetail[] = [
+        const newValue: ILexicalEntryDetail[] = [
             ...value,
             {
                 category: '',
@@ -75,7 +75,7 @@ function GlossDetailInput(props: IComponentProps<IGlossDetail[]>) {
         void fireEvent(name, onChange, newValue);
     };
 
-    const _onDetailChange = (sourceIndex: number, propertyName: keyof Pick<IGlossDetail, "text" | "category">) =>
+    const _onDetailChange = (sourceIndex: number, propertyName: keyof Pick<ILexicalEntryDetail, "text" | "category">) =>
         (ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const {
             value: textValue,
@@ -130,4 +130,4 @@ function GlossDetailInput(props: IComponentProps<IGlossDetail[]>) {
     </>;
 }
 
-export default GlossDetailInput;
+export default LexicalEntryDetailInput;

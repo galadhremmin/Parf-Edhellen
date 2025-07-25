@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import HtmlInject from '@root/components/HtmlInject';
-import { IProps } from './GlossDetail._types';
+import { IProps } from './LexicalEntryDetail._types';
 
-function GlossDetail(props: IProps) {
+function LexicalEntryDetail(props: IProps) {
     const {
         detail: d,
         onReferenceLinkClick,
@@ -18,4 +18,4 @@ function GlossDetail(props: IProps) {
     </section>;
 }
 
-export default GlossDetail;
+export default LexicalEntryDetail;

@@ -36,7 +36,7 @@ function GlossSelect(props: IProps) {
         if (value && (complexValue === null || value !== complexValue.id)) {
             // Resolve numeric values to complex value. The complex value is local state
             // used by the component to visualize the gloss in a human-readable format.
-            apiConnector.gloss(value)
+            apiConnector.lexicalEntry(value)
                 .then((r) => {
                     if (cancelled) {
                         return;
@@ -45,7 +45,7 @@ function GlossSelect(props: IProps) {
                     const suggestion = mapper<typeof r, ISuggestionEntity>({
                         accountName: (v) => v.account.nickname,
                         comments: 'comments',
-                        glossGroupName: (v) => v.glossGroup?.name,
+                        lexicalEntryGroupName: (v) => v.lexicalEntryGroup?.name,
                         id: 'id',
                         normalizedWord: (v) => v.word.normalizedWord,
                         source: 'source',

@@ -6,7 +6,7 @@ import {
 } from '@jest/globals';
 import { render, screen, waitFor } from '@testing-library/react';
 
-import { IBookGlossEntity, IEntitiesResponse } from '@root/connectors/backend/IBookApi';
+import { ILexicalEntryEntity, IEntitiesResponse } from '@root/connectors/backend/IBookApi';
 import setupContainer from '@root/di/config';
 import { snakeCasePropsToCamelCase } from '@root/utilities/func/snake-case';
 import { Actions } from '../../actions';
@@ -58,7 +58,7 @@ describe('apps/book-browser/containers/GlossaryEntities', () => {
             const wordBlocks = screen.getAllByRole('heading', {
                 level: 3,
             });
-            const expectedWords = Object.values(sections).flat(1) as IBookGlossEntity[];
+            const expectedWords = Object.values(sections).flat(1) as ILexicalEntryEntity[];
             expect(wordBlocks).toHaveLength(expectedWords.length + 1 /* because of "There are more words but they are from Tolkien's earlier conceptional periods" */);
             expect(wordBlocks.map(block => block.textContent)).toContain('There are more words but they are from Tolkien\'s earlier conceptional periods');
         });

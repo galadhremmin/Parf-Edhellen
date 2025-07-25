@@ -10,14 +10,14 @@ import { ISentenceReducerAction } from './SentenceReducer._types';
 
 const findNextFragmentId = (fragment: ISentenceFragmentEntity, fragments: ISentenceFragmentEntity[],
     index: number, direction: number) => {
-    if (fragment.glossId === null ||
+    if (fragment.lexicalEntryId === null ||
         index < 0 ||
         index >= fragments.length) {
         return null;
     }
 
     for (let i = index + direction; i > -1 && i < fragments.length; i += direction) {
-        if (fragments[i].glossId) {
+        if (fragments[i].lexicalEntryId) {
             return fragments[i].id;
         }
     }
@@ -32,9 +32,9 @@ const FragmentsReducer = (state: FragmentsReducerState = [], action: ISentenceRe
             return mapArray<ISentenceFragmentEntity, IFragmentsReducerState>({
                 comments: 'comments',
                 fragment: 'fragment',
-                glossId: 'glossId',
+                lexicalEntryId: 'lexicalEntryId',
                 id: (v) => v.type === SentenceFragmentType.Word ? (v.id || 0) : 0,
-                glossInflections: (v: ISentenceFragmentEntity) => v.glossInflections?.map((i) => ({
+                lexicalEntryInflections: (v: ISentenceFragmentEntity) => v.lexicalEntryInflections?.map((i) => ({
                     ...i,
                     inflection: action.sentence.inflections[i.inflectionId.toString(10)] || null,
                 })) || [],

@@ -1,12 +1,12 @@
-import DeleteGloss from './DeleteGloss';
-import EditGloss from './EditGloss';
+import DeleteLexicalEntry from './DeleteLexicalEntry';
+import EditLexicalEntry from './EditLexicalEntry';
 
 import { IProps } from './index._types';
 
 function Toolbar(props: IProps) {
     return <>
-        <DeleteGloss {...props} />
-        <EditGloss {...props}  />
+        <DeleteLexicalEntry {...props} />
+        <EditLexicalEntry {...props}  />
     </>;
 }
 

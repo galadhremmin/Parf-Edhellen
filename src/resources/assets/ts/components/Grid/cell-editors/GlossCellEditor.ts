@@ -74,7 +74,7 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
                     {
                         accountName: gloss.account.nickname,
                         comments: gloss.comments,
-                        glossGroupName: gloss.glossGroup?.name,
+                        lexicalEntryGroupName: gloss.lexicalEntryGroup?.name,
                         id: gloss.id,
                         normalizedWord: gloss.word.normalizedWord,
                         translation: gloss.translations.map((t) => t.translation).join(', '),
@@ -128,7 +128,7 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
             html.push(
                 `<li>
                     <a href="#" class="GlossCellEditor--suggestion" data-gloss-id="${s.id}">
-                        <strong>${s.word}</strong> <i>${s.type || ''}</i> “${s.translation}” [${source || 'unknown source'}] ${s.glossGroupName} (${s.id}, #${i + 1})
+                        <strong>${s.word}</strong> <i>${s.type || ''}</i> “${s.translation}” [${source || 'unknown source'}] ${s.lexicalEntryGroupName} (${s.id}, #${i + 1})
                     </a>
                 </li>`,
             );
@@ -238,9 +238,9 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
     private _onSuggestionClick = (ev: Event) => {
         ev.preventDefault();
         const target = ev.target as HTMLAnchorElement;
-        const glossId = parseInt(target.dataset.glossId, 10);
+        const lexicalEntryId = parseInt(target.dataset.lexicalEntryId, 10);
 
-        const index = this._suggestions.findIndex((s) => s.id === glossId);
+        const index = this._suggestions.findIndex((s) => s.id === lexicalEntryId);
         if (index > -1) {
             this._suggestionIndex = index + 1; // index is 1-based.
             this._applySuggestion();

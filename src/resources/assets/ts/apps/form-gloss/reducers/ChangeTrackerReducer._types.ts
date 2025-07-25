@@ -1,4 +1,4 @@
 export interface IChangeTrackerReducerState {
-    glossChanged: boolean;
+    lexicalEntryChanged: boolean;
     inflectionsChanged: boolean;
 }

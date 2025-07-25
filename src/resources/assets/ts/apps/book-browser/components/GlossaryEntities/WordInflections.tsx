@@ -1,13 +1,13 @@
 import TextIcon from '@root/components/TextIcon';
-import { IProps } from './GlossInflections._types';
+import { IProps } from './WordInflections._types';
 
-const GlossInflections = (props: IProps) => {
-    const { gloss } = props;
+const WordInflections = (props: IProps) => {
+    const { lexicalEntry: entry } = props;
 
-    if (!gloss.inflections) {
+    if (!entry.inflections) {
         return null;
     }
-    const inflectionGroups = Object.keys(gloss.inflections);
+    const inflectionGroups = Object.keys(entry.inflections);
 
     return <section className="GlossDetails details">
         <header>
@@ -24,7 +24,7 @@ const GlossInflections = (props: IProps) => {
                 </thead>
                 <tbody>
                     {inflectionGroups.map((inflectionGroup: string) => {
-                        const inflections = gloss.inflections[inflectionGroup];
+                        const inflections = entry.inflections[inflectionGroup];
                         const firstInflection = inflections[0];
 
                         return <tr key={firstInflection.inflectionGroupUuid}>
@@ -49,4 +49,4 @@ const GlossInflections = (props: IProps) => {
     </section>;
 };
 
-export default GlossInflections;
+export default WordInflections;

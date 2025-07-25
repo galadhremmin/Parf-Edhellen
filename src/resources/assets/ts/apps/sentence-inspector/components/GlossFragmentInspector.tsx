@@ -1,6 +1,6 @@
 import { IComponentEvent } from '@root/components/Component._types';
 import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
-import GlossInspector from '@root/apps/book-browser/components/GlossaryEntities/Gloss';
+import GlossInspector from '@root/apps/book-browser/components/GlossaryEntities/LexicalEntry';
 import Markdown from '@root/components/Markdown';
 import Quote from '@root/components/Quote';
 import Spinner from '@root/components/Spinner';
@@ -8,7 +8,7 @@ import StaticAlert from '@root/components/StaticAlert';
 import Tengwar from '@root/components/Tengwar';
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
-import useGloss from '@root/utilities/hooks/useGloss';
+import useLexicalEntry from '@root/utilities/hooks/useLexicalEntry';
 
 import { IProps } from './GlossFragmentInspector._types';
 
@@ -22,11 +22,11 @@ function GlossFragmentInspector(props: IProps) {
         fragment,
     } = props;
 
-    const { gloss, error } = useGloss(fragment?.glossId, {
-        glossAdapter: (nextGloss) => ({
+    const { lexicalEntry: gloss, error } = useLexicalEntry(fragment?.lexicalEntryId, {
+        adapter: (nextGloss) => ({
             ...nextGloss,
             _inflectedWord: {
-                inflections: fragment.glossInflections,
+                inflections: fragment.lexicalEntryInflections,
                 speech: fragment.speech,
                 word: fragment.fragment,
             },
@@ -44,7 +44,7 @@ function GlossFragmentInspector(props: IProps) {
             {(! gloss && ! error) && <Spinner />}
             {gloss && <GlossInspector
                 bordered={false}
-                gloss={gloss}
+                lexicalEntry={gloss}
                 onReferenceLinkClick={onReferenceLinkClick}
                 toolbar={false}
                 warnings={false}

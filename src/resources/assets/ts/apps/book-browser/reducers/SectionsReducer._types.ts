@@ -1,5 +1,5 @@
-import { IBookGlossEntity } from '@root/connectors/backend/IBookApi';
+import { ILexicalEntryEntity } from '@root/connectors/backend/IBookApi';
 
-export interface ISectionsState<T = IBookGlossEntity> {
+export interface ISectionsState<T = ILexicalEntryEntity> {
     [ languageId: number ]: T[];
 }

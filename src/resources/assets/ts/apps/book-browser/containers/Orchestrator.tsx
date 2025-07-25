@@ -33,7 +33,7 @@ function Orchestrator({ globalEvents }: IProps) {
      */
      const _onGlobalListenerReferenceLoad = useCallback((ev: CustomEvent<IReferenceLinkClickDetails>) => {
         const {
-            glossId,
+            lexicalEntryId,
             languageShortName,
             normalizedWord,
             word,
@@ -51,8 +51,8 @@ function Orchestrator({ globalEvents }: IProps) {
 
         const searchActions = new SearchActions();
         store.dispatch<any>(
-            glossId //
-                ? searchActions.expandSpecificGloss(glossId)
+            lexicalEntryId //
+                ? searchActions.expandSpecificGloss(lexicalEntryId)
                 : searchActions.loadReference(word, normalizedWord, languageShortName, updateBrowserHistory),
         );
     }, []);

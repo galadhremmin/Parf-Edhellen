@@ -19,10 +19,10 @@ function GlossList(props: IProps) {
     const _onWordOpen = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
 
-        const glossIdAttribute = 'glossId';
-        const glossId = parseInt((ev.target as HTMLAnchorElement).dataset[glossIdAttribute], 10);
+        const lexicalEntryIdAttribute = 'lexicalEntryId';
+        const lexicalEntryId = parseInt((ev.target as HTMLAnchorElement).dataset[lexicalEntryIdAttribute], 10);
         
-        globalEvents?.fire(globalEvents.loadReference, { glossId });
+        globalEvents?.fire(globalEvents.loadReference, { lexicalEntryId });
     }, []);
 
     return <ul className="GlossList--glosses">

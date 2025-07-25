@@ -10,7 +10,7 @@ const GlossSuggestion = (gloss: ISuggestionEntity) => {
         <span className="GlossSuggestion--type">{gloss.type}</span>{' '}
         <span className="GlossSuggestion--trans"><Quote>{gloss.translation}</Quote></span>{' '}
         {gloss.source && `[${gloss.source}]`}{' '}
-        {gloss.glossGroupName && `in ${gloss.glossGroupName}`}
+        {gloss.lexicalEntryGroupName && `in ${gloss.lexicalEntryGroupName}`}
     </span>;
 };
 

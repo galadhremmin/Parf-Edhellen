@@ -1,4 +1,4 @@
-import { IBookGlossEntity } from './IBookApi';
+import { ILexicalEntryEntity } from './IBookApi';
 
 export interface ICardRequest {
     id: number;
@@ -19,7 +19,7 @@ export interface ICardTestRequest {
 
 export interface ICardTestResponse {
     correct: boolean;
-    gloss: IBookGlossEntity;
+    gloss: ILexicalEntryEntity;
 }
 
 export default interface IFlashcardApi {

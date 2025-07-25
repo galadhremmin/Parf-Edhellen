@@ -1,17 +1,17 @@
-import Gloss from '@root/apps/book-browser/components/GlossaryEntities/Gloss';
+import LexicalEntry from '@root/apps/book-browser/components/GlossaryEntities/LexicalEntry';
 import Spinner from '@root/components/Spinner';
 import TextIcon from '@root/components/TextIcon';
-import { IGlossVersionFeedRecord } from "@root/connectors/backend/IAccountApi";
-import useGloss from "@root/utilities/hooks/useGloss";
+import { ILexicalEntryVersionFeedRecord } from "@root/connectors/backend/IAccountApi";
+import useLexicalEntry from "@root/utilities/hooks/useLexicalEntry";
 import { IProps } from "./index._types";
 
-export default function GlossVersionFeedUnit(props: IProps<IGlossVersionFeedRecord>) {
+export default function GlossVersionFeedUnit(props: IProps<ILexicalEntryVersionFeedRecord>) {
     const {
         unit,
         visible = false,
     } = props;
 
-    const { gloss } = useGloss(unit.contentId, {
+    const { lexicalEntry: gloss } = useLexicalEntry(unit.contentId, {
         isEnabled: visible,
         isVersion: true,
     });
@@ -23,9 +23,9 @@ export default function GlossVersionFeedUnit(props: IProps<IGlossVersionFeedReco
     return <>
         <p>
             <TextIcon icon="book" />{' '}
-            Published a gloss revision for {unit.content.glossId}. <a href={`/wt/${unit.content.glossId}`} target="_blank" rel="noreferrer">Open the current version in the dictionary</a>.
+            Published a gloss revision for {unit.content.lexicalEntryId}. <a href={`/wt/${unit.content.lexicalEntryId}`} target="_blank" rel="noreferrer">Open the current version in the dictionary</a>.
         </p>
         <hr className="mb-0" />
-        <Gloss gloss={gloss} bordered={false} toolbar={false} />
+        <LexicalEntry lexicalEntry={gloss} bordered={false} toolbar={false} />
     </>;
 }

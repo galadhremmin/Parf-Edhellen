@@ -10,8 +10,8 @@ const InitialState: IGlossState = {
     comments: '',
     etymology: null,
     externalId: null,
-    glossDetails: [],
-    glossGroupId: 0,
+    lexicalEntryDetails: [],
+    lexicalEntryGroupId: 0,
     id: 0,
     isRejected: false,
     isUncertain: false,
@@ -33,21 +33,21 @@ const InitialState: IGlossState = {
 
 const GlossReducer = (state: IGlossState = InitialState, action: IGlossAction) => {
     switch (action.type) {
-        case Actions.ReceiveGloss:
+        case Actions.ReceiveLexicalEntry:
             return mapper<typeof action['gloss'], IGlossState>({
                 account: 'account',
                 comments: (gloss) => gloss.comments || '',
                 contributionId: 'contributionId',
                 etymology: 'etymology',
                 externalId: 'externalId',
-                glossDetails: 'glossDetails',
-                glossGroupId: 'glossGroupId',
+                lexicalEntryDetails: 'lexicalEntryDetails',
+                lexicalEntryGroupId: 'lexicalEntryGroupId',
                 id: 'id',
                 isRejected: 'isRejected',
                 isUncertain: 'isUncertain',
                 keywords: 'keywords',
                 languageId: 'languageId',
-                latestGlossVersionId: 'latestGlossVersionId',
+                latestLexicalEntryVersionId: 'latestLexicalEntryVersionId',
                 sense: 'sense',
                 source: 'source',
                 speechId: 'speechId',
@@ -55,7 +55,7 @@ const GlossReducer = (state: IGlossState = InitialState, action: IGlossAction) =
                 translations: 'translations',
                 word: 'word',
             }, action.gloss);
-        case Actions.SetGlossField:
+        case Actions.SetLexicalEntryField:
             return {
                 ...state,
                 [action.field]: action.value,

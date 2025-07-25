@@ -4,16 +4,16 @@ import { IGlossAction } from "./GlossReducer._types";
 import { IInflectionAction } from "./InflectionsReducer._types";
 
 const InitialState: IChangeTrackerReducerState = {
-    glossChanged: false,
+    lexicalEntryChanged: false,
     inflectionsChanged: false,
 };
 
 const ChangeTrackerReducer = (state = InitialState, action: IGlossAction | IInflectionAction): IChangeTrackerReducerState => {
     switch (action.type) {
-        case Actions.SetGlossField:
+        case Actions.SetLexicalEntryField:
             return {
                 ...state,
-                glossChanged: true,
+                lexicalEntryChanged: true,
             };
 
         case Actions.CreateBlankInflectionGroup:

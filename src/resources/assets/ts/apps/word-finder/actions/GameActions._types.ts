@@ -3,7 +3,7 @@ import { ILanguageEntity } from '@root/connectors/backend/IBookApi';
 import { IGloss } from '@root/connectors/backend/IWordFinderApi';
 
 export interface IGameAction extends IReduxAction {
-    glossId?: number;
+    lexicalEntryId?: number;
     glossary?: IGloss[];
     language?: ILanguageEntity;
     parts?: string[];

@@ -1,12 +1,12 @@
 import {
     IAccountEntity,
-    IGlossGroup,
+    ILexicalEntryGroup,
 } from './IGlossResourceApi';
 import { IInflection } from './IInflectionResourceApi';
 import { ISpeechEntity } from './ISpeechResourceApi';
 
 export interface IFindRequest {
-    glossGroupIds?: number[];
+    lexicalEntryGroupIds?: number[];
     includeOld?: boolean;
     languageId?: number;
     word?: string;
@@ -31,7 +31,7 @@ export interface IFindResponse {
 }
 
 export interface IEntitiesRequestData {
-    glossGroupIds?: number[];
+    lexicalEntryGroupIds?: number[];
     includeOld: boolean;
     inflections?: boolean;
     languageId?: number;
@@ -40,7 +40,7 @@ export interface IEntitiesRequestData {
     word: string;
 }
 
-export interface IGlossaryResponse<T = IBookGlossEntity> {
+export interface IGlossaryResponse<T = ILexicalEntryEntity> {
     languages: ILanguageEntity[] | null;
     sections: {
         entities: T[];
@@ -65,22 +65,22 @@ export interface ILanguageEntity {
     tengwarMode?: string;
 }
 
-export interface IBookGlossEntity {
+export interface ILexicalEntryEntity {
     _inflectedWord?: IBookWordInflection;
     accountId: number;
     accountName: string;
     accountUrl: string;
-    allTranslations: string;
+    allGlosses: string;
     commentCount: number;
     comments: string;
     createdAt: string;
     etymology: string;
     externalId: string;
     externalLinkFormat: string;
-    glossDetails: IBookGlossDetailEntity[];
-    glossGroupId: number;
-    glossGroupLabel?: string;
-    glossGroupName: string;
+    lexicalEntryDetails: ILexicalEntryDetailEntity[];
+    lexicalEntryGroupId: number;
+    lexicalEntryGroupLabel?: string;
+    lexicalEntryGroupName: string;
     id: number;
     inflections: {
         [ inflectionGroupUuid: string ]: IBookInflectionEntity[];
@@ -93,9 +93,9 @@ export interface IBookGlossEntity {
     label: string;
     language: ILanguageEntity;
     languageId: number;
-    latestGlossVersionId: number;
+    latestLexicalEntryVersionId: number;
     normalizedWord: string;
-    originalGlossId: number;
+    originalLexicalEntryId: number;
     rating: number;
     senseId: number;
     source: string;
@@ -108,7 +108,7 @@ export interface IBookGlossEntity {
     updatedAt: string;
 }
 
-export interface IBookGlossDetailEntity {
+export interface ILexicalEntryDetailEntity {
     category: string;
     order: number;
     text: string;
@@ -116,14 +116,14 @@ export interface IBookGlossDetailEntity {
 }
 
 export interface IBookWordInflection {
-    inflections: IGlossInflection[];
+    inflections: ILexicalEntryInflection[];
     speech: string;
     word: string;
 }
 
 export interface IBookInflectionEntity {
     inflectionGroupUuid: string;
-    glossId: number;
+    lexicalEntryId: number;
     languageId: number;
     inflectionId: number;
     speechId: number;
@@ -177,10 +177,10 @@ export interface ISentenceEntity {
 export interface ISentenceFragmentEntity {
     comments?: string;
     fragment?: string;
-    glossId?: number;
+    lexicalEntryId?: number;
     id?: number;
     inflectionGroupUuid?: string;
-    glossInflections?: IGlossInflection[];
+    lexicalEntryInflections?: ILexicalEntryInflection[];
     paragraphNumber?: number;
     sentenceNumber?: number;
     speech?: string;
@@ -189,12 +189,12 @@ export interface ISentenceFragmentEntity {
     type?: SentenceFragmentType;
 }
 
-export interface IGlossInflection {
+export interface ILexicalEntryInflection {
     inflectionGroupUuid?: string;
     inflectionId: number;
     inflection?: IInflection;
     order?: number;
-    glossId?: number;
+    lexicalEntryId?: number;
     languageId?: number;
     speechId?: number;
     isNeologism?: boolean;
@@ -266,9 +266,9 @@ export default interface IBookApi {
     entities<T = IGlossaryResponse>(args: IEntitiesRequest): Promise<IEntitiesResponse<T>>;
     entity<T = IGlossaryResponse>(args: ISpecificEntityRequest<T>): Promise<IEntitiesResponse<T>>;
     find(args: IFindRequest): Promise<IFindResponse>;
-    gloss(id: number): Promise<IGlossaryResponse>;
-    glossFromVersion(id: number): Promise<IGlossaryResponse>;
-    groups(): Promise<IGlossGroup[]>;
+    lexicalEntry(id: number): Promise<IGlossaryResponse>;
+    lexicalEntryFromVersion(id: number): Promise<IGlossaryResponse>;
+    groups(): Promise<ILexicalEntryGroup[]>;
     languages(): Promise<ILanguagesResponse>;
     sentence(args: ISentenceRequest): Promise<ISentenceResponse>;
 }

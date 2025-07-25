@@ -5,7 +5,7 @@ import IAccountApi from '@root/connectors/backend/IAccountApi';
 import IBookApi from '@root/connectors/backend/IBookApi';
 import IContributionResourceApi from '@root/connectors/backend/IContributionResourceApi';
 import IDiscussApi from '@root/connectors/backend/IDiscussApi';
-import IGlossResourceApi from '@root/connectors/backend/IGlossResourceApi';
+import ILexicalEntryResourceApi from '@root/connectors/backend/IGlossResourceApi';
 import { IInflectionResourceApi } from '@root/connectors/backend/IInflectionResourceApi';
 import ILanguageApi from '@root/connectors/backend/ILanguageApi';
 import { ILogApi } from '@root/connectors/backend/ILogApi';
@@ -27,7 +27,7 @@ export type DIContainerType = {
     [DI.ContributionApi]?: IContributionResourceApi;
     [DI.DiscussApi]?: IDiscussApi;
     [DI.Glaemscribe]?: ITranscriber;
-    [DI.GlossApi]?: IGlossResourceApi;
+    [DI.GlossApi]?: ILexicalEntryResourceApi;
     [DI.InflectionApi]?: IInflectionResourceApi;
     [DI.LanguageApi]?: ILanguageApi;
     [DI.RoleManager]?: IRoleManager;

@@ -5,7 +5,7 @@ import {
 } from './SearchReducer._types';
 
 const SearchReducer = (state: ISearchState = {
-    glossGroupIds: [],
+    lexicalEntryGroupIds: [],
     includeOld: true,
     itemIndex: -1,
     languageId: 0,
@@ -21,7 +21,7 @@ const SearchReducer = (state: ISearchState = {
                 itemIndex: -1,
                 loading: true,
 
-                glossGroupIds: action.glossGroupIds || [],
+                lexicalEntryGroupIds: action.lexicalEntryGroupIds || [],
                 includeOld: action.includeOld,
                 languageId: action.languageId,
                 reversed: action.reversed,

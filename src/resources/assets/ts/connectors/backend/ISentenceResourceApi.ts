@@ -5,7 +5,7 @@ export interface ISuggestGlossesForFragmentsRequest {
 
 export interface ISuggestGlossesForFragmentsResponse {
     [fragment: string]: Array<{
-        glossId: number;
+        lexicalEntryId: number;
         speechId: number;
         inflectionIds: number[];
     }>;

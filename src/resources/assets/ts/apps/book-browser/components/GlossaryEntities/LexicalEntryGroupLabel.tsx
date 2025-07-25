@@ -1,13 +1,13 @@
-import { IProps } from './GlossGroupLabel._types';
+import { IProps } from './LexicalEntryGroupLabel._types';
 
-const GlossGroupLabel = (props: IProps) => {
+const LexicalEntryGroupLabel = (props: IProps) => {
     const {
-        glossGroupLabel,
-        label: glossLabel,
+        lexicalEntryGroupLabel,
+        label: originalLabel,
         isOld = false,
-    } = props.gloss;
+    } = props.lexicalEntry;
 
-    const label = glossLabel ?? glossGroupLabel;
+    const label = originalLabel ?? lexicalEntryGroupLabel;
     if (! label && ! isOld) {
         return null;
     }
@@ -18,4 +18,4 @@ const GlossGroupLabel = (props: IProps) => {
     </span>;
 };
 
-export default GlossGroupLabel;
+export default LexicalEntryGroupLabel;

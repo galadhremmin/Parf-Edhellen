@@ -3,10 +3,10 @@ import { IProps } from './VersionsLink._types';
 
 function VersionsLink(props: IProps) {
     const {
-        gloss,
+        lexicalEntry: entry,
     } = props;
 
-    return <a href={`/wt/${gloss.id}/versions`} title="See earlier versions of this gloss">
+    return <a href={`/wt/${entry.id}/versions`} title="See earlier versions of this entry">
         <TextIcon icon="clock-history" />
     </a>;
 }

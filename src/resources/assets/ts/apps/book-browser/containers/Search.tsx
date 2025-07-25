@@ -34,7 +34,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
         super(props);
 
         const defaultState = {
-            glossGroupIds: [0],
+            lexicalEntryGroupIds: [0],
             includeOld: props.includeOld,
             languageId: props.languageId,
             reversed: props.reversed,
@@ -73,7 +73,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
             loading,
         } = this.props;
         const {
-            glossGroupIds,
+            lexicalEntryGroupIds,
             includeOld,
             languageId,
             reversed,
@@ -132,8 +132,8 @@ export class SearchQuery extends React.Component<IProps, IState> {
             <div className="row">
                 <div className="col">
                     {showMore && <AdditionalSearchParameters
-                        glossGroupId={glossGroupIds[0]}
-                        onGlossGroupIdChange={this._onGlossGroupIdChange}
+                        lexicalEntryGroupId={lexicalEntryGroupIds[0]}
+                        onLexicalEntryGroupIdChange={this._onGlossGroupIdChange}
                         onSpeechIdChange={this._onSpeechIdChange}
                         speechId={speechIds[0]}
                     />}
@@ -164,7 +164,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
         };
         if (! showMore) {
             // reset default configuration
-            nextState.glossGroupIds = [0];
+            nextState.lexicalEntryGroupIds = [0];
             nextState.speechIds     = [0];
         }
 
@@ -208,12 +208,12 @@ export class SearchQuery extends React.Component<IProps, IState> {
     }
 
     private _onGlossGroupIdChange = (ev: IComponentEvent<number>) => {
-        const glossGroupIds = [ev.value || 0];
+        const lexicalEntryGroupIds = [ev.value || 0];
         this.setState({
-            glossGroupIds,
+            lexicalEntryGroupIds,
         });
 
-        void this._persistState('glossGroupIds', glossGroupIds);
+        void this._persistState('lexicalEntryGroupIds', lexicalEntryGroupIds);
         this._beginSearch(/* queryChanged: */ false);
     }
 
@@ -250,7 +250,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
                 ...state,
                 // These hacks only accommodates for the fact that the UI does not currently support
                 // multiple selections.
-                glossGroupIds: state.glossGroupIds[0] === 0 ? [] : state.glossGroupIds,
+                lexicalEntryGroupIds: state.lexicalEntryGroupIds[0] === 0 ? [] : state.lexicalEntryGroupIds,
                 speechIds: state.speechIds[0] === 0 ? [] : state.speechIds,
             }),
         );

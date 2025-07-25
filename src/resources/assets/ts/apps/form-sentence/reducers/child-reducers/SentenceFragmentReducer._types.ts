@@ -3,8 +3,8 @@ import { ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
 import { Actions } from '../../actions';
 
 export type ISentenceFragmentReducerState = Pick<ISentenceFragmentEntity, 'comments' |
-    'fragment' | 'glossId' | 'sentenceNumber' | 'speechId' | 'tengwar' | 'type' | 'id' |
-    'glossInflections' | 'paragraphNumber'> & {
+    'fragment' | 'lexicalEntryId' | 'sentenceNumber' | 'speechId' | 'tengwar' | 'type' | 'id' |
+    'lexicalEntryInflections' | 'paragraphNumber'> & {
         _error?: string[];
     };
 

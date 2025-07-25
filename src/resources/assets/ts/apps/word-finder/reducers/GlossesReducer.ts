@@ -20,7 +20,7 @@ const GlossesReducer = (state = InitialState, action: IGameAction) => {
             }) as IGameGloss);
         case Actions.DiscoverWord:
             return state.map((g) => {
-                if (g.id === action.glossId) {
+                if (g.id === action.lexicalEntryId) {
                     return {
                         ...g,
                         available: false,

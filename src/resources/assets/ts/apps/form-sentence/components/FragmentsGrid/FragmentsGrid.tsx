@@ -13,7 +13,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { fireEventAsync } from '@root/components/Component';
 import { ISentenceFragmentEntity, SentenceFragmentType } from '@root/connectors/backend/IBookApi';
-import { IGlossEntity, ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
+import { ILexicalEntryEntity, ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
 import {
     IInflection
 } from '@root/connectors/backend/IInflectionResourceApi';
@@ -54,7 +54,7 @@ const RowClassRules = {
 // TODO: Convert to React functional component
 export function FragmentsGrid(props: IProps) {
     const gridRef = useRef<AgGridReact & DetailGridInfo>();
-    const glossCacheRef = useRef<Map<number, Promise<IGlossEntity>>>();
+    const glossCacheRef = useRef<Map<number, Promise<ILexicalEntryEntity>>>();
 
     const [ columnDefinition, setColumnDefinition ] = useState<IState['columnDefinition']>(null);
     const [ inflections, setInflections ] = useState<IState['inflections']>(null);
@@ -121,7 +121,7 @@ export function FragmentsGrid(props: IProps) {
                     cellRendererParams,
                     editable: true,
                     headerName: 'Gloss',
-                    field: 'glossId',
+                    field: 'lexicalEntryId',
                     resizable: true,
                 },
                 {
@@ -143,7 +143,7 @@ export function FragmentsGrid(props: IProps) {
                     cellRendererParams,
                     editable: true,
                     headerName: 'Inflections',
-                    field: 'glossInflections',
+                    field: 'lexicalEntryInflections',
                     resizable: true,
                 },
                 {
@@ -196,15 +196,15 @@ export function FragmentsGrid(props: IProps) {
      * Updates agGrid's local state *and* the underlying data model by setting the same gloss and speech
      * to fragments that are similar to the one specified.
      * @param fragment fragment that was changed.
-     * @param glossId gloss ID assigned to the specified fragment.
+     * @param lexicalEntryId gloss ID assigned to the specified fragment.
      */
-    const _useGlossToUpdateSimilarFragments = useCallback(async (fragment: ISentenceFragmentEntity, glossId: number) => {
-        if (! glossId || ! gridRef.current?.api) {
+    const _useGlossToUpdateSimilarFragments = useCallback(async (fragment: ISentenceFragmentEntity, lexicalEntryId: number) => {
+        if (! lexicalEntryId || ! gridRef.current?.api) {
             return;
         }
 
         const api = gridRef.current?.api;
-        const gloss = await _onResolveGloss(glossId);
+        const gloss = await _onResolveGloss(lexicalEntryId);
 
         const transaction: ISentenceFragmentEntity[] = [];
         api.forEachNodeAfterFilter((node) => {
@@ -216,10 +216,10 @@ export function FragmentsGrid(props: IProps) {
             }
 
             let changed = false;
-            if (! f.glossId || f === fragment) {
-                f.glossId = glossId;
+            if (! f.lexicalEntryId || f === fragment) {
+                f.lexicalEntryId = lexicalEntryId;
                 changed = true;
-                _notifyChange(f, 'glossId', f.glossId);
+                _notifyChange(f, 'lexicalEntryId', f.lexicalEntryId);
             }
 
             if (! f.speechId || f === fragment) {
@@ -272,7 +272,7 @@ export function FragmentsGrid(props: IProps) {
         }
 
         const field = column.getColId() as keyof ISentenceFragmentEntity;
-        if (field === 'glossId') {
+        if (field === 'lexicalEntryId') {
             void _useGlossToUpdateSimilarFragments(fragment, value);
         } else {
             _notifyChange(fragment, field, value);
@@ -304,20 +304,20 @@ export function FragmentsGrid(props: IProps) {
     /**
      * Attempts to resolve the specified gloss ID using local cache,
      * or with the API. This is an asychronous operation.
-     * @param glossId gloss ID to look up
+     * @param lexicalEntryId gloss ID to look up
      * @returns A gloss resolver promise.
      */
-    const _onResolveGloss = (glossId: number): Promise<IGlossEntity> => {
-        if (glossCacheRef.current?.has(glossId)) {
-            return glossCacheRef.current.get(glossId);
+    const _onResolveGloss = (lexicalEntryId: number): Promise<ILexicalEntryEntity> => {
+        if (glossCacheRef.current?.has(lexicalEntryId)) {
+            return glossCacheRef.current.get(lexicalEntryId);
         }
 
-        if (! glossId) {
-            return Promise.resolve<IGlossEntity>(null);
+        if (! lexicalEntryId) {
+            return Promise.resolve<ILexicalEntryEntity>(null);
         }
 
-        const glossPromise = glossApi.gloss(glossId);
-        glossCacheRef.current?.set(glossId, glossPromise);
+        const glossPromise = glossApi.lexicalEntry(lexicalEntryId);
+        glossCacheRef.current?.set(lexicalEntryId, glossPromise);
         return glossPromise;
     }
 

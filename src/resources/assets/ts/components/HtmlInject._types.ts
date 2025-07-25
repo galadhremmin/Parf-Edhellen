@@ -5,7 +5,7 @@ export interface IReferenceLinkClickDetails {
     normalizedWord: string;
     word: string;
     updateBrowserHistory?: boolean;
-    glossId?: number;
+    lexicalEntryId?: number;
 }
 
 export interface IEventProps {

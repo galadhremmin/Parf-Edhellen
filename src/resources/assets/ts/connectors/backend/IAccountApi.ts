@@ -2,7 +2,7 @@
 
 import { ISentenceEntity, ISentenceFragmentEntity } from "./IBookApi";
 import { IPostEntity } from "./IDiscussApi";
-import { IGlossEntity } from "./IGlossResourceApi";
+import { ILexicalEntryEntity } from "./IGlossResourceApi";
 
 export interface IFindRequest {
     max?: number;
@@ -88,8 +88,8 @@ export interface IFeedRecord<TContentType = string, TEntity = any> {
 }
 
 export interface IForumFeedRecord extends IFeedRecord<'forum', IPostEntity> {}
-export interface IGlossVersionFeedRecord extends IFeedRecord<'glossv', IGlossEntity & {
-    glossId?: number;
+export interface ILexicalEntryVersionFeedRecord extends IFeedRecord<'lex_entry_ver', ILexicalEntryEntity & {
+    lexicalEntryId?: number;
     versionChangeFlags?: number;
 }> {}
 export interface ISentenceFeedRecord extends IFeedRecord<'sentence', ISentenceEntity & {

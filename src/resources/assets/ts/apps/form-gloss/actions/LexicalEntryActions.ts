@@ -4,50 +4,50 @@ import {
 } from '@root/_types';
 import { handleValidationErrors } from '@root/components/Form/Validation';
 import IContributionResourceApi, { IContribution, IContributionSaveResponse } from '@root/connectors/backend/IContributionResourceApi';
-import IGlossResourceApi, { IGlossEntity } from '@root/connectors/backend/IGlossResourceApi';
+import ILexicalEntryResourceApi, { ILexicalEntryEntity } from '@root/connectors/backend/IGlossResourceApi';
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
 
-import { IGlossInflection } from '@root/connectors/backend/IBookApi';
+import { ILexicalEntryInflection } from '@root/connectors/backend/IBookApi';
 import { GroupedInflectionsState, IInflectionGroupState } from '../reducers/InflectionsReducer._types';
 import Actions from './Actions';
 
-export default class GlossActions {
+export default class LexicalEntryActions {
     constructor(
-        private _glossApi: IGlossResourceApi = resolve(DI.GlossApi),
+        private _glossApi: ILexicalEntryResourceApi = resolve(DI.GlossApi),
         private _contributionApi: IContributionResourceApi = resolve(DI.ContributionApi)) {}
 
-    public loadGloss(glossId: number): ReduxThunk {
+    public loadLexicalEntry(lexicalEntryId: number): ReduxThunk {
         return async (dispatch: ReduxThunkDispatch) => {
-            const gloss = await this._glossApi.gloss(glossId);
-            dispatch(this.setLoadedGloss(gloss));
+            const gloss = await this._glossApi.lexicalEntry(lexicalEntryId);
+            dispatch(this.setLoadedLexicalEntry(gloss));
         };
     }
 
-    public setEditingGlossId(glossId: number) {
+    public setEditingLexicalEntryId(lexicalEntryId: number) {
         return {
             field: 'id',
-            type: Actions.SetGlossField,
-            value: glossId || 0,
+            type: Actions.SetLexicalEntryField,
+            value: lexicalEntryId || 0,
         };
     }
 
-    public setLoadedGloss(gloss: IGlossEntity) {
+    public setLoadedLexicalEntry(gloss: ILexicalEntryEntity) {
         return {
             gloss,
-            type: Actions.ReceiveGloss,
+            type: Actions.ReceiveLexicalEntry,
         };
     }
 
-    public setGlossField<T extends keyof IContribution<IGlossEntity>>(field: T, value: IContribution<IGlossEntity>[T]) {
+    public setLexicalEntryField<T extends keyof IContribution<ILexicalEntryEntity>>(field: T, value: IContribution<ILexicalEntryEntity>[T]) {
         return {
             field,
-            type: Actions.SetGlossField,
+            type: Actions.SetLexicalEntryField,
             value,
         };
     }
 
-    public setLoadedInflections(inflections: IGlossInflection[]) {
+    public setLoadedInflections(inflections: ILexicalEntryInflection[]) {
         return {
             preloadedInflections: inflections,
             type: Actions.ReceiveInflections,
@@ -75,9 +75,9 @@ export default class GlossActions {
         }
     }
 
-    public saveGloss(gloss: IGlossEntity, inflections: GroupedInflectionsState = null) {
+    public saveLexicalEntry(gloss: ILexicalEntryEntity, inflections: GroupedInflectionsState = null) {
         return (dispatch: ReduxThunkDispatch) => handleValidationErrors(dispatch, async () => {
-            const r0 = await this._contributionApi.saveGloss(gloss);
+            const r0 = await this._contributionApi.saveLexicalEntry(gloss);
 
             let r1: IContributionSaveResponse = null;
             if (inflections) {
@@ -85,7 +85,7 @@ export default class GlossActions {
                 r1 = await this._contributionApi.saveContribution({
                     inflectionGroups: inflections,
                     dependentOnContributionId: r0.id,
-                }, 'gloss_infl');
+                }, 'lexical_entry_infl');
             }
 
             const url = r0?.url || r1?.url || null;
@@ -95,13 +95,13 @@ export default class GlossActions {
         });
     }
 
-    public saveInflections(inflections: GroupedInflectionsState, contributionId: number = null, glossId: number = null) {
+    public saveInflections(inflections: GroupedInflectionsState, contributionId: number = null, lexicalEntryId: number = null) {
         return (dispatch: ReduxThunkDispatch) => handleValidationErrors(dispatch, async () => {
             const r = await this._contributionApi.saveContribution({
                 inflectionGroups: inflections,
                 contributionId: contributionId || null,
-                glossId: glossId || null,
-            }, 'gloss_infl');
+                lexicalEntryId: lexicalEntryId || null,
+            }, 'lexical_entry_infl');
 
             if (r.url) {
                 window.location.href = r.url;

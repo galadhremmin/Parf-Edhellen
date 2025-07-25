@@ -11,7 +11,7 @@ import IContributionResourceApi, {
     ISaveSentenceContributionEntity,
     IValidateTransformationsResponse,
 } from './IContributionResourceApi';
-import { IGlossEntity } from './IGlossResourceApi';
+import { ILexicalEntryEntity } from './IGlossResourceApi';
 
 export default class ContributionResourceApiConnector implements IContributionResourceApi {
     private static readonly ApiPrefix = '/contribute/contribution';
@@ -19,8 +19,8 @@ export default class ContributionResourceApiConnector implements IContributionRe
     constructor(private _api = resolve(DI.BackendApi)) {
     }
 
-    public saveGloss(args: IContribution<IGlossEntity>) {
-        return this.saveContribution(args, 'gloss');
+    public saveLexicalEntry(args: IContribution<ILexicalEntryEntity>) {
+        return this.saveContribution(args, 'lexical_entry');
     }
 
     public saveSentence(args: IContribution<ISaveSentenceContributionEntity>): Promise<IContributionSaveResponse> {

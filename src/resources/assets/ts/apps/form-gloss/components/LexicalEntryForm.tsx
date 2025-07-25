@@ -12,7 +12,7 @@ import TagInput from '@root/components/Form/TagInput';
 import TengwarInput from '@root/components/Form/TengwarInput';
 import Panel from '@root/components/Panel';
 
-import GlossDetailInput from '../components/GlossDetailInput';
+import LexicalEntryDetailInput from './LexicalEntryDetailInput';
 import { GlossProps } from '../containers/MasterForm._types';
 import {
     defaultTransformer,
@@ -22,9 +22,9 @@ import {
     wordTransformer,
 } from '../utilities/value-transformers';
 import { ValueTransformer } from '../utilities/value-transformers._types';
-import { IProps } from './GlossForm._types';
+import { IProps } from './LexicalEntryForm._types';
 
-function GlossForm(props: IProps) {
+function LexicalEntryForm(props: IProps) {
     const {
         name = 'GlossForm',
         onGlossFieldChange,
@@ -154,9 +154,9 @@ function GlossForm(props: IProps) {
                             Details
                             <OptionalLabel />
                         </label>
-                        <GlossDetailInput name="ed-gloss-details"
-                            onChange={_onChange('glossDetails')}
-                            value={gloss.glossDetails} />
+                        <LexicalEntryDetailInput name="ed-gloss-details"
+                            onChange={_onChange('lexicalEntryDetails')}
+                            value={gloss.lexicalEntryDetails} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="ed-gloss-keywords">
@@ -196,8 +196,8 @@ function GlossForm(props: IProps) {
                         <GlossGroupSelect
                             className="form-control"
                             name="ed-gloss-group-id"
-                            onChange={_onChange('glossGroupId')}
-                            value={gloss.glossGroupId}
+                            onChange={_onChange('lexicalEntryGroupId')}
+                            value={gloss.lexicalEntryGroupId}
                         />
                     </div>
                     <div className="form-group">
@@ -219,4 +219,4 @@ function GlossForm(props: IProps) {
     </>;
 }
 
-export default GlossForm;
+export default LexicalEntryForm;

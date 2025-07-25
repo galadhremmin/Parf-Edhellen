@@ -7,8 +7,8 @@ import './AdditionalSearchParameters.scss';
 
 function AdditionalSearchParameters(props: IProps) {
     const {
-        glossGroupId = 0,
-        onGlossGroupIdChange,
+        lexicalEntryGroupId = 0,
+        onLexicalEntryGroupIdChange,
         onSpeechIdChange,
         speechId = 0,
     } = props;
@@ -27,9 +27,9 @@ function AdditionalSearchParameters(props: IProps) {
             <GlossGroupSelect
                 allowEmpty={true}
                 emptyText="Any group"
-                name="gloss-group"
-                onChange={onGlossGroupIdChange}
-                value={glossGroupId}
+                name="lexical-entry-group"
+                onChange={onLexicalEntryGroupIdChange}
+                value={lexicalEntryGroupId}
             />
         </div>
     </div>;

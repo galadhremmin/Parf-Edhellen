@@ -36,7 +36,7 @@ function FragmentsForm(props: IProps) {
             Use the text field below to write and press <kbd>Update</kbd> when your text
             is done. Once you have pressed the button, your text will be divided into sentences and words.
             You will need to link each word to a gloss. If a gloss does not currently exist in the dictionary,
-            you can <a href={CommonPaths.contributions.gloss} target="_blank" rel="noreferrer">publish the gloss as a separate contribution</a>{' '}
+            you can <a href={CommonPaths.contributions.lexicalEntry} target="_blank" rel="noreferrer">publish the gloss as a separate contribution</a>{' '}
             <em>(opens in a new tab)</em>.
         </p>
         <div className="form-group">

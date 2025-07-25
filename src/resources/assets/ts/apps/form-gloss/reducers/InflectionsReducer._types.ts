@@ -1,18 +1,18 @@
-import { IGlossInflection } from '@root/connectors/backend/IBookApi';
+import { ILexicalEntryInflection } from '@root/connectors/backend/IBookApi';
 import { IReduxAction } from '@root/_types';
 
 export interface IInflectionAction extends IReduxAction {
     inflectionGroupUuid: string;
     order: number;
     preloadedInflections: {
-        [inflectionGroupUuid: string]: IGlossInflection[]
+        [inflectionGroupUuid: string]: ILexicalEntryInflection[]
     };
     inflectionGroup: IInflectionGroupState;
 }
 
-export interface IInflectionGroupState extends Partial<Pick<IGlossInflection, 'inflectionGroupUuid' | 
+export interface IInflectionGroupState extends Partial<Pick<ILexicalEntryInflection, 'inflectionGroupUuid' | 
     'isNeologism' | 'isRejected' | 'languageId' | 'sentenceFragmentId' | 'source' | 'speechId' | 'word'>> {
-    inflections: IGlossInflection[];
+    inflections: ILexicalEntryInflection[];
 }
 
 export type GroupedInflectionsState = IInflectionGroupState[];

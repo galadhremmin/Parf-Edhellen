@@ -4,7 +4,7 @@ import {
     ISentenceTranslationEntity,
     ITextTransformationsMap,
 } from './IBookApi';
-import { IGlossEntity } from './IGlossResourceApi';
+import { ILexicalEntryEntity } from './IGlossResourceApi';
 
 export type IContribution<T> = T & {
     contributionId?: number;
@@ -22,7 +22,7 @@ export interface IContributionSaveResponse {
 }
 
 export interface IFragmentSuggestion {
-    glossId: number;
+    lexicalEntryId: number;
     inflectionIds: number[];
     speechId: number;
 }
@@ -36,8 +36,8 @@ export interface IValidateTransformationsResponse {
     transformations: ITextTransformationsMap;
 }
 
-export interface IGlossContributionApi {
-    saveGloss(args: IContribution<IGlossEntity>): Promise<IContributionSaveResponse>;
+export interface ILexicalEntryContributionApi {
+    saveLexicalEntry(args: IContribution<ILexicalEntryEntity>): Promise<IContributionSaveResponse>;
 }
 
 export interface ISentenceContributionApi {
@@ -47,8 +47,8 @@ export interface ISentenceContributionApi {
     validateTransformations(args: ISentenceFragmentEntity[], suggestForLanguageId?: number): Promise<IValidateTransformationsResponse>;
 }
 
-export type ContributionMorph = 'gloss' | 'sentence' | 'gloss_infl';
+export type ContributionMorph = 'lexical_entry' | 'sentence' | 'lexical_entry_infl';
 
-export default interface IContributionResourceApi extends IGlossContributionApi, ISentenceContributionApi {
+export default interface IContributionResourceApi extends ILexicalEntryContributionApi, ISentenceContributionApi {
     saveContribution<T>(args: IContribution<T>, morph: ContributionMorph): Promise<IContributionSaveResponse>;
 }

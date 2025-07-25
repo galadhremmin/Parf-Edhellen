@@ -11,18 +11,18 @@ import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
 import { IProps } from './index._types';
 
-function DeleteGloss(props: IProps) {
+function DeleteLexicalEntry(props: IProps) {
     const [ isOpen, setIsOpen ] = useState(false);
     const [ errors, setErrors ] = useState<ValidationError>(null);
     const [ replacementId, setReplacementId ] = useState(0);
 
     const {
-        gloss,
+        lexicalEntry,
     } = props;
 
-    const glossId = gloss.id;
+    const lexicalEntryId = lexicalEntry.id;
     const title = <>
-        Delete <Quote>{gloss.word}</Quote> ({gloss.id})
+        Delete <Quote>{lexicalEntry.word}</Quote> ({lexicalEntry.id})
     </>;
 
     const _onOpen = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
@@ -37,13 +37,13 @@ function DeleteGloss(props: IProps) {
     const _onDelete = useCallback(async (ev: IComponentEvent<number>) => {
         const api = resolve(DI.GlossApi);
         try {
-            await api.delete(glossId, ev.value);
+            await api.delete(lexicalEntryId, ev.value);
             setIsOpen(false);
             setErrors(null);
         } catch (e) {
             setErrors(e as ValidationError);
         }
-    }, [ setIsOpen, glossId, setErrors ]);
+    }, [ setIsOpen, lexicalEntryId, setErrors ]);
 
     return <>
         <Dialog<number> open={isOpen}
@@ -53,15 +53,15 @@ function DeleteGloss(props: IProps) {
                         value={replacementId}>
             <ValidationErrorAlert error={errors} />
             <strong>
-                Do you want to delete the gloss <Quote>{gloss.word}</Quote>?
+                Do you want to delete the lexical entry <Quote>{lexicalEntry.word}</Quote>?
             </strong>
             <p>
-                It is recommended to provide an alternative gloss to ensure that there are no dangling
-                references as a result of the deletion, such as phrases depending on the gloss:
+                It is recommended to provide an alternative entry to ensure that there are no dangling
+                references as a result of the deletion, such as phrases depending on the entry:
             </p>
             <GlossSelect name="test" onChange={(e) => setReplacementId(e.value)} value={replacementId} />
             <p>
-                Remember! A gloss can't be <em>permanently</em>{' '}deleted. A deleted gloss can be restored.
+                Remember! An entry can't be <em>permanently</em>{' '}deleted. A deleted entry can be restored.
             </p>
         </Dialog>
         <a href="#" onClick={_onOpen}>
@@ -70,4 +70,4 @@ function DeleteGloss(props: IProps) {
     </>;
 }
 
-export default DeleteGloss;
+export default DeleteLexicalEntry;

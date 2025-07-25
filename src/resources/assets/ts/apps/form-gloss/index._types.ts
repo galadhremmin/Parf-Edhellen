@@ -1,5 +1,5 @@
-import { IGlossInflection } from '@root/connectors/backend/IBookApi';
-import { IGlossEntity } from '@root/connectors/backend/IGlossResourceApi';
+import { ILexicalEntryInflection } from '@root/connectors/backend/IBookApi';
+import { ILexicalEntryEntity } from '@root/connectors/backend/IGlossResourceApi';
 
 export const enum FormSection {
     Gloss = 'gloss',
@@ -8,8 +8,8 @@ export const enum FormSection {
 
 export interface IProps {
     confirmButton: string;
-    gloss: IGlossEntity;
-    inflections: IGlossInflection[];
+    gloss: ILexicalEntryEntity;
+    inflections: ILexicalEntryInflection[];
     prefetched: boolean;
     formSections: FormSection[];
 }

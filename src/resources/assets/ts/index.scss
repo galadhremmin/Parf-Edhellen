@@ -48,7 +48,7 @@
 @import "./_scss/_link-block";
 
 // Custom components used specifically on the landing page. These styles need to be preloaded to avoid unecessary reflows.
-@import './apps/book-browser/components/GlossaryEntities/Gloss.scss';
+@import './apps/book-browser/components/GlossaryEntities/LexicalEntry.scss';
 
 a {
   text-decoration: none;

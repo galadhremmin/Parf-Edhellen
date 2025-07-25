@@ -322,6 +322,21 @@ return new class extends Migration
             $table->renameColumn('gloss_id', 'lexical_entry_id');
             $table->foreign('lexical_entry_id')->references('id')->on('lexical_entries');
         });
+        
+        Schema::table('search_keywords', function (Blueprint $table) {
+            $table->renameColumn('gloss_group_id', 'lexical_entry_group_id');
+            $table->foreign('lexical_entry_group_id')->references('id')->on('lexical_entry_groups');
+        });
+        
+        Schema::table('game_word_finder_gloss_groups', function (Blueprint $table) {
+            $table->renameColumn('gloss_group_id', 'lexical_entry_group_id');
+            $table->foreign('lexical_entry_group_id')->references('id')->on('lexical_entry_groups');
+        });
+        
+        Schema::table('flashcards', function (Blueprint $table) {
+            $table->renameColumn('gloss_group_id', 'lexical_entry_group_id');
+            $table->foreign('lexical_entry_group_id')->references('id')->on('lexical_entry_groups');
+        });
 
         // Update sentence_fragments table
         // First, find and drop any existing foreign key constraints on gloss_id

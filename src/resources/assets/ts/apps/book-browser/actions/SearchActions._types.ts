@@ -1,7 +1,7 @@
 import { ISearchResult } from '../reducers/SearchResultsReducer._types';
 
 export interface IExpandSearchResultAction {
-    glossGroupIds?: number[];
+    lexicalEntryGroupIds?: number[];
     includeOld?: boolean;
     languageId?: number;
     searchResult: ISearchResult;

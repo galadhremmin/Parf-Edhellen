@@ -1,7 +1,7 @@
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
-import IGlossResourceApi, {
-    IGetGlossResponse,
+import ILexicalEntryResourceApi, {
+    IGetLexicalEntryResponse,
     ISuggestionEntity,
     ISuggestRequest,
     ISuggestResponse,
@@ -9,18 +9,18 @@ import IGlossResourceApi, {
 
 const LanguageParameterRegEx = /\blang:([\w\s]+)$/u;
 
-export default class GlossResourceApiConnector implements IGlossResourceApi {
+export default class GlossResourceApiConnector implements ILexicalEntryResourceApi {
     constructor(private _api = resolve(DI.BackendApi),
         private _languageApi = resolve(DI.LanguageApi)) {
     }
 
-    public delete(glossId: number, replacementId: number) {
-        return this._api.delete<void>(`gloss/${glossId}`, { replacementId });
+    public delete(lexicalEntryId: number, replacementId: number) {
+        return this._api.delete<void>(`gloss/${lexicalEntryId}`, { replacementId });
     }
 
-    public async gloss(glossId: number) {
-        const response = await this._api.get<IGetGlossResponse>(`gloss/${glossId}`);
-        return response.gloss;
+    public async lexicalEntry(lexicalEntryId: number) {
+        const response = await this._api.get<IGetLexicalEntryResponse>(`gloss/${lexicalEntryId}`);
+        return response.lexicalEntry;
     }
 
     public async suggest(args: ISuggestRequest) {

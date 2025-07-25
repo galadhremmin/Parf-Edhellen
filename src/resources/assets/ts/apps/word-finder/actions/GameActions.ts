@@ -64,10 +64,10 @@ export default class GameActions {
         } as IGameAction;
     }
 
-    public discoverWord(glossId: number) {
+    public discoverWord(lexicalEntryId: number) {
         return {
             type: Actions.DiscoverWord,
-            glossId,
+            lexicalEntryId,
         };
     }
 

@@ -11,17 +11,17 @@ export interface IAccountEntity {
     featureBackgroundUrl?: string;
 }
 
-export interface IGlossEntity {
+export interface ILexicalEntryEntity {
     account?: IAccountEntity;
     accountId?: number;
-    childGlossId?: number;
+    childLexicalEntryId?: number;
     comments?: string;
     createdAt?: string;
     etymology?: null;
     externalId?: string;
-    glossDetails?: IGlossDetail[];
-    glossGroup?: IGlossGroup;
-    glossGroupId?: number;
+    lexicalEntryDetails?: ILexicalEntryDetail[];
+    lexicalEntryGroup?: ILexicalEntryGroup;
+    lexicalEntryGroupId?: number;
     hasDetails?: boolean;
     id?: number;
     isDeleted?: boolean;
@@ -31,8 +31,8 @@ export interface IGlossEntity {
     keywords?: IKeywordEntity[];
     label?: string;
     languageId: number;
-    latestGlossVersionId?: number;
-    originGlossId?: number;
+    latestLexicalEntryVersionId?: number;
+    originLexicalEntryId?: number;
     sense: ISenseEntity;
     senseId?: number;
     source: string;
@@ -44,14 +44,14 @@ export interface IGlossEntity {
     word: IWordEntity;
 }
 
-export interface IGlossDetail {
+export interface ILexicalEntryDetail {
     category: string;
     order: number;
     text: string;
     type?: string;
 }
 
-export interface IGlossGroup {
+export interface ILexicalEntryGroup {
     createdAt: string;
     externalLinkFormat?: string;
     id: number;
@@ -88,8 +88,8 @@ export interface IWordEntity {
     word: string;
 }
 
-export interface IGetGlossResponse {
-    gloss: IGlossEntity;
+export interface IGetLexicalEntryResponse {
+    lexicalEntry: ILexicalEntryEntity;
 }
 
 export interface ISuggestRequest {
@@ -106,7 +106,7 @@ export interface ISuggestResponse {
 export interface ISuggestionEntity {
     accountName: string;
     comments: string;
-    glossGroupName: string;
+    lexicalEntryGroupName: string;
     id: number;
     normalizedWord: string;
     source: string;
@@ -115,8 +115,8 @@ export interface ISuggestionEntity {
     word: string;
 }
 
-export default interface IGlossResourceApi {
-    delete(glossId: number, replacementId: number): Promise<void>;
-    gloss(glossId: number): Promise<IGlossEntity>;
+export default interface ILexicalEntryResourceApi {
+    delete(lexicalEntryId: number, replacementId: number): Promise<void>;
+    lexicalEntry(lexicalEntryId: number): Promise<ILexicalEntryEntity>;
     suggest(args: ISuggestRequest): Promise<Map<string, ISuggestionEntity[]>>;
 }

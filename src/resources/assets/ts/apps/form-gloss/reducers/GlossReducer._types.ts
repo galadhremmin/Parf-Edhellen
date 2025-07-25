@@ -1,15 +1,15 @@
 import { IReduxAction } from '@root/_types';
 import { IContribution } from '@root/connectors/backend/IContributionResourceApi';
-import { IGlossEntity } from '@root/connectors/backend/IGlossResourceApi';
-import { IGlossInflection } from '@root/connectors/backend/IBookApi';
+import { ILexicalEntryEntity } from '@root/connectors/backend/IGlossResourceApi';
+import { ILexicalEntryInflection } from '@root/connectors/backend/IBookApi';
 
-export type IGlossState = IContribution<Pick<IGlossEntity, 'account' | 'comments' |
-    'etymology' | 'externalId' | 'glossDetails' | 'glossGroupId' | 'id' |
-    'isRejected' | 'isUncertain' | 'keywords' | 'label' | 'languageId' | 'latestGlossVersionId' |
+export type IGlossState = IContribution<Pick<ILexicalEntryEntity, 'account' | 'comments' |
+    'etymology' | 'externalId' | 'lexicalEntryDetails' | 'lexicalEntryGroupId' | 'id' |
+    'isRejected' | 'isUncertain' | 'keywords' | 'label' | 'languageId' | 'latestLexicalEntryVersionId' |
     'sense' | 'source' | 'speechId' | 'tengwar' | 'translations' | 'word'>>;
 
 export interface IGlossAction extends IReduxAction {
-    gloss: IContribution<IGlossEntity>;
+    gloss: IContribution<ILexicalEntryEntity>;
     field: string;
     value: string;
 }

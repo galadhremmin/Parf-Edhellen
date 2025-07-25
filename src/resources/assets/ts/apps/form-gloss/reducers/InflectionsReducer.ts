@@ -7,7 +7,7 @@ const InflectionsReducer = (state: GroupedInflectionsState = [], action: IInflec
         case Actions.ReceiveInflections: {
             const nextInflections = Object.keys(action.preloadedInflections).map((inflectionGroup) => ({
                 ...pickProps(action.preloadedInflections[inflectionGroup][0], [
-                    'glossId',
+                    'lexicalEntryId',
                     'inflectionGroupUuid',
                     'isNeologism',
                     'isRejected',

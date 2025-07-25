@@ -1,16 +1,16 @@
 import TextIcon from '@root/components/TextIcon';
 import { IProps } from './index._types';
 
-function EditGloss(props: IProps) {
+function EditLexicalEntry(props: IProps) {
     const {
-        gloss,
+        lexicalEntry: entry,
     } = props;
 
     return <>
-        <a href={`/contribute/contribution/create/gloss?entity_id=${gloss.id}`}>
+        <a href={`/contribute/contribution/create/lexical_entry?entity_id=${entry.id}`}>
             <TextIcon icon="edit" />
         </a>
     </>;
 }
 
-export default EditGloss;
+export default EditLexicalEntry;

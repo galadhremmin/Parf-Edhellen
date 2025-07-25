@@ -3,7 +3,7 @@ import {
     ICellRendererParams,
 } from 'ag-grid-community';
 
-import { IGlossInflection } from '@root/connectors/backend/IBookApi';
+import { ILexicalEntryInflection } from '@root/connectors/backend/IBookApi';
 import { IAugmentedCellRendererParams } from '../cell-editors/InflectionCellEditor._types';
 
 export default class InflectionRenderer implements ICellRendererComp {
@@ -22,7 +22,7 @@ export default class InflectionRenderer implements ICellRendererComp {
 
     public refresh(params: ICellRendererParams) {
         const inflections = (params as IAugmentedCellRendererParams).inflections;
-        const selectedInflections = params.value as IGlossInflection[];
+        const selectedInflections = params.value as ILexicalEntryInflection[];
         const formatted = selectedInflections?.filter( //
                 (i) => inflections.has(i.inflectionId), //
             ) //

@@ -185,8 +185,8 @@ export const createFragment = async (fragment: string, type: SentenceFragmentTyp
 
     return {
         fragment,
-        glossId: 0,
-        glossInflections: [],
+        lexicalEntryId: 0,
+        lexicalEntryInflections: [],
         paragraphNumber,
         speechId: 0,
         sentenceNumber,

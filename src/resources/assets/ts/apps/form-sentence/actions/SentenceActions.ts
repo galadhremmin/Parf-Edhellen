@@ -203,16 +203,16 @@ export default class SentenceActions {
 
                 // Use suggestions for fragments that have not been assigned a gloss.
                 newFragments.forEach((f) => {
-                    if (f.type !== SentenceFragmentType.Word || f.glossId) {
+                    if (f.type !== SentenceFragmentType.Word || f.lexicalEntryId) {
                         return;
                     }
 
                     const fragment = f.fragment.toLocaleLowerCase();
                     const suggestion = metadata.suggestions[fragment];
                     if (suggestion !== undefined) {
-                        f.glossId = suggestion.glossId;
+                        f.lexicalEntryId = suggestion.lexicalEntryId;
                         f.speechId = suggestion.speechId;
-                        f.glossInflections = suggestion.inflectionIds.map((inflectionId, i) => ({
+                        f.lexicalEntryInflections = suggestion.inflectionIds.map((inflectionId, i) => ({
                             inflectionId,
                             order: i,
                         }));

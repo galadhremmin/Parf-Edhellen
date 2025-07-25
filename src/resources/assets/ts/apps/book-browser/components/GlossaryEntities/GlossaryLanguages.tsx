@@ -21,10 +21,10 @@ function GlossaryLanguages(props: IProps) {
         {languages.map(
             (language) => <Fragment key={language.id}>
                 <GlossaryLanguage language={language}
-                    glosses={sections[language.id]} onReferenceLinkClick={onReferenceClick} />
+                    entries={sections[language.id]} onReferenceLinkClick={onReferenceClick} />
                 {single && <section className="mt-3">
                     <Suspense fallback={<Spinner />}>
-                        <DiscussAsync entityId={sections[language.id][0].latestGlossVersionId} entityType={entityMorph} prefetched={false} />
+                        <DiscussAsync entityId={sections[language.id][0].latestLexicalEntryVersionId} entityType={entityMorph} prefetched={false} />
                     </Suspense>
                 </section>}
             </Fragment>,

@@ -1,11 +1,11 @@
 import Ad from '@root/apps/ad';
 import Language from '../Language';
-import Gloss from './Gloss';
+import LexicalEntry from './LexicalEntry';
 import { IProps } from './GlossaryLanguage._types';
 
 export default function GlossaryLanguage(props: IProps) {
     const {
-        glosses,
+        entries,
         language,
         onReferenceLinkClick,
     } = props;
@@ -15,7 +15,7 @@ export default function GlossaryLanguage(props: IProps) {
             <Language language={language} />
         </header>
         <section className="ed-glossary__language__words">
-            {glosses.map((gloss) => <Gloss gloss={gloss} key={gloss.id}
+            {entries.map((entry) => <LexicalEntry lexicalEntry={entry} key={entry.id}
                 toolbar={true} onReferenceLinkClick={onReferenceLinkClick} />)}
         </section>
         <section className="mt-3">

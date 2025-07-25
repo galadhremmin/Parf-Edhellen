@@ -42,7 +42,7 @@ export const enum SecurityRole {
 
 export const CommonPaths = {
     contributions: {
-        gloss: '/contribute/contribution/create/gloss',
+        lexicalEntry: '/contribute/contribution/create/lexical_entry',
         sentence: '/contribute/contribution/create/sentence',
     },
     privacyPolicy: '/about/privacy',

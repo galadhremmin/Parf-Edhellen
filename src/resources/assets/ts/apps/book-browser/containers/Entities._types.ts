@@ -1,12 +1,12 @@
 import { ThunkDispatch } from 'redux-thunk';
 
 import {
-    IBookGlossEntity,
+    ILexicalEntryEntity,
     ILanguageEntity,
 } from '@root/connectors/backend/IBookApi';
 import { ISectionsState } from '../reducers/SectionsReducer._types';
 
-export interface IEntitiesComponentProps<T = IBookGlossEntity> {
+export interface IEntitiesComponentProps<T = ILexicalEntryEntity> {
     dispatch?: ThunkDispatch<any, any, any>;
     entityMorph?: string;
     groupId?: number;

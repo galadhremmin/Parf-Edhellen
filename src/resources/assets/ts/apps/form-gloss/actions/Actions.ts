@@ -1,7 +1,7 @@
 enum Actions {
-    ReceiveGloss = 'ED_FORM_GLOSS_LOAD',
+    ReceiveLexicalEntry = 'ED_FORM_LEXICAL_ENTRY_LOAD',
     ReceiveInflections = 'ED_FORM_INFLECTIONS_LOAD',
-    SetGlossField = 'ED_FORM_GLOSS_FIELD_SET',
+    SetLexicalEntryField = 'ED_FORM_LEXICAL_ENTRY_FIELD_SET',
     SetInflectionGroup = 'ED_FORM_INFLECTION_GROUP_SET',
     UnsetInflectionGroup = 'ED_FORM_INFLECTION_GROUP_UNSET',
     CreateBlankInflectionGroup = 'ED_FORM_INFLECTION_GROUP_CREATE',

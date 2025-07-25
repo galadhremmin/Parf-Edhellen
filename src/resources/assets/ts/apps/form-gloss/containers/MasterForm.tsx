@@ -11,8 +11,8 @@ import { deepClone } from '@root/utilities/func/clone';
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
 import { IInflectionGroupState } from '../reducers/InflectionsReducer._types';
 
-import GlossActions from '../actions/GlossActions';
-import GlossForm from '../components/GlossForm';
+import LexicalEntryActions from '../actions/LexicalEntryActions';
+import LexicalEntryForm from '../components/LexicalEntryForm';
 import InflectionForm from '../components/InflectionForm';
 import { FormSection } from '../index._types';
 import { RootReducer } from '../reducers';
@@ -74,7 +74,7 @@ function MasterForm(props: IProps) {
             <strong>No changes were made!</strong> Please make at least one change before trying to submit.
         </StaticAlert>}
         {formSections.includes(FormSection.Gloss) && <section>
-            <GlossForm name="ed-gloss-form"
+            <LexicalEntryForm name="ed-gloss-form"
                     gloss={gloss}
                     onGlossFieldChange={onGlossFieldChange} 
             />
@@ -82,7 +82,7 @@ function MasterForm(props: IProps) {
         {formSections.includes(FormSection.Inflections) && <section className="mt-3">
             <InflectionForm name="ed-inflections-form"
                             inflections={inflections}
-                            glossId={gloss.id}
+                            lexicalEntryId={gloss.id}
                             onInflectionCreate={onInflectionCreate}
                             onInflectionsChange={onInflectionsChange}
             />
@@ -102,13 +102,13 @@ const mapStateToProps = (state: RootReducer) => ({
 } as IProps);
 
 const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => {
-    const actions = new GlossActions();
+    const actions = new LexicalEntryActions();
     return {
         onCopyGloss: () => {
-            dispatch(actions.setEditingGlossId(0));
+            dispatch(actions.setEditingLexicalEntryId(0));
         },
         onGlossFieldChange: ({value: v}) => {
-            dispatch(actions.setGlossField(v.field, v.value));
+            dispatch(actions.setLexicalEntryField(v.field, v.value));
         },
         onInflectionCreate: () => {
             dispatch(actions.createInflectionGroup());
@@ -120,30 +120,30 @@ const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => {
             const {
                 changes,
                 edit,
-                gloss: originalGloss,
+                gloss: originalLexicalEntry,
                 inflections: originalInflections,
             } = v;
 
-            const gloss = deepClone(originalGloss);
+            const lexicalEntry = deepClone(originalLexicalEntry);
             const inflections = originalInflections.filter((i: IInflectionGroupState) => ! isEmptyString(i.word));
 
-            if (changes.glossChanged) {
+            if (changes.lexicalEntryChanged) {
                 // grandfathered sanitization logic from the GlossForm.
                 if (! edit) {
-                    delete gloss.id;
+                    delete lexicalEntry.id;
                 }
         
-                if (gloss.tengwar.length < 1) {
-                    delete gloss.tengwar;
+                if (lexicalEntry.tengwar.length < 1) {
+                    delete lexicalEntry.tengwar;
                 }
 
-                void dispatch(actions.saveGloss(gloss, changes.inflectionsChanged //
+                void dispatch(actions.saveLexicalEntry(lexicalEntry, changes.inflectionsChanged //
                     ? inflections : null));
             } else if (changes.inflectionsChanged) {
                 void dispatch(actions.saveInflections( //
                     inflections, //
-                    gloss.contributionId,
-                    gloss.id));
+                    lexicalEntry.contributionId,
+                    lexicalEntry.id));
             } else {
                 // Neither inflections nor gloss is modified - do nothing!
                 // TODO: Better error handling? Notify the user that nothing's done?

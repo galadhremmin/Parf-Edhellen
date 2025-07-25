@@ -1,11 +1,11 @@
 import { ICellEditorParams } from 'ag-grid-community';
 
-import { IGlossInflection } from '@root/connectors/backend/IBookApi';
+import { ILexicalEntryInflection } from '@root/connectors/backend/IBookApi';
 import { IInflection } from '@root/connectors/backend/IInflectionResourceApi';
 import { IFragmentGridMetadata } from './InflectionCellEditor._types';
 import MultipleSelectCellEditor from './MultipleSelectCellEditor';
 
-export default class InflectionCellEditor extends MultipleSelectCellEditor<IInflection, IGlossInflection> {
+export default class InflectionCellEditor extends MultipleSelectCellEditor<IInflection, ILexicalEntryInflection> {
     private _editorParams: ICellEditorParams;
 
     public init(params: ICellEditorParams): void {
@@ -33,16 +33,16 @@ export default class InflectionCellEditor extends MultipleSelectCellEditor<IInfl
         return option.name;
     }
 
-    protected getValueId(value: IGlossInflection) {
+    protected getValueId(value: ILexicalEntryInflection) {
         return value.inflectionId;
     }
 
-    protected getValueText(value: IGlossInflection) {
+    protected getValueText(value: ILexicalEntryInflection) {
         const id = this.getValueId(value);
         return this._inflections.has(id) ? this._inflections.get(id).name : '⚠ invalid';
     }
 
-    protected convertOptionToValue(option: IInflection): IGlossInflection {
+    protected convertOptionToValue(option: IInflection): ILexicalEntryInflection {
         return {
             inflectionId: option.id,
         };

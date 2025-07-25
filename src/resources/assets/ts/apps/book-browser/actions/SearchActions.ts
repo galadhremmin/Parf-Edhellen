@@ -174,7 +174,7 @@ export default class SearchActions {
             const state = getState();
 
             let {
-                glossGroupIds,
+                lexicalEntryGroupIds,
                 includeOld,
                 languageId,
                 speechIds,
@@ -184,8 +184,8 @@ export default class SearchActions {
                 groupIdMap,
             } = state.searchResults;
 
-            if (args.glossGroupIds !== undefined) {
-                glossGroupIds = args.glossGroupIds;
+            if (args.lexicalEntryGroupIds !== undefined) {
+                lexicalEntryGroupIds = args.lexicalEntryGroupIds;
             }
 
             if (args.includeOld !== undefined) {
@@ -212,7 +212,7 @@ export default class SearchActions {
 
             const request: IEntitiesRequest = {
                 data: {
-                    glossGroupIds,
+                    lexicalEntryGroupIds,
                     includeOld,
                     inflections: true,
                     languageId,
@@ -408,7 +408,7 @@ export default class SearchActions {
 
         // embellish the address with configuration values that are not supported by the native URL format
         const supportedSettings: (keyof typeof args.data)[] = [
-            'glossGroupIds', 'includeOld', 'speechIds',
+            'lexicalEntryGroupIds', 'includeOld', 'speechIds',
         ];
 
         const settings: { [key: string]: any } = {};

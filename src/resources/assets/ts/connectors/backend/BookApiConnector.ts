@@ -11,7 +11,7 @@ import IBookApi, {
     ISentenceResponse,
     ISpecificEntityRequest,
 } from './IBookApi';
-import { IGlossGroup } from './IGlossResourceApi';
+import { ILexicalEntryGroup } from './IGlossResourceApi';
 
 export default class BookApiConnector implements IBookApi {
     constructor(private _api = resolve(DI.BackendApi)) {
@@ -29,16 +29,16 @@ export default class BookApiConnector implements IBookApi {
         return this._api.post<IFindResponse>('book/find', args);
     }
 
-    public gloss(id: number) {
+    public lexicalEntry(id: number) {
         return this._api.get<IGlossaryResponse>(`book/translate/${id}`);
     }
 
-    public glossFromVersion(id: number): Promise<IGlossaryResponse> {
+    public lexicalEntryFromVersion(id: number): Promise<IGlossaryResponse> {
         return this._api.get<IGlossaryResponse>(`book/translate/version/${id}`);
     }
 
     public groups() {
-        return this._api.get<IGlossGroup[]>('book/group');
+        return this._api.get<ILexicalEntryGroup[]>('book/group');
     }
 
     public languages() {

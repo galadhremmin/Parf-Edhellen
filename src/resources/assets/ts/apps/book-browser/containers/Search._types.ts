@@ -9,7 +9,7 @@ import {
 export interface IProps {
     currentGlossaryWord: string;
     dispatch: ThunkDispatch<any, any, any>;
-    glossGroupId?: boolean;
+    lexicalEntryGroupId?: boolean;
     includeOld?: boolean;
     languageId?: number;
     loading?: boolean;

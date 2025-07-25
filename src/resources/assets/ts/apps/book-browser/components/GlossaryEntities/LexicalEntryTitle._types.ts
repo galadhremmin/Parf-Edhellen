@@ -1,8 +1,8 @@
-import { IBookGlossEntity } from '@root/connectors/backend/IBookApi';
+import { ILexicalEntryEntity } from '@root/connectors/backend/IBookApi';
 import IRoleManager from '@root/security/IRoleManager';
 
 export interface IProps {
-    gloss: IBookGlossEntity;
+    lexicalEntry: ILexicalEntryEntity;
     toolbar: boolean;
     roleManager?: IRoleManager;
 }
