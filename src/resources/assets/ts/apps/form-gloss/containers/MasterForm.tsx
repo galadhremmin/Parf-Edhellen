@@ -26,11 +26,11 @@ function MasterForm(props: IProps) {
         edit,
         errors,
         formSections,
-        gloss,
+        lexicalEntry: gloss,
         inflections,
 
-        onCopyGloss,
-        onGlossFieldChange,
+        onCopyLexicalEntry: onCopyGloss,
+        onLexicalEntryFieldChange: onGlossFieldChange,
         onInflectionCreate,
         onInflectionsChange,
         onSubmit,
@@ -52,7 +52,7 @@ function MasterForm(props: IProps) {
         void fireEvent('MasterForm', onSubmit, {
             changes,
             edit,
-            gloss,
+            lexicalEntry: gloss,
             inflections,
         });
     };
@@ -75,8 +75,8 @@ function MasterForm(props: IProps) {
         </StaticAlert>}
         {formSections.includes(FormSection.Gloss) && <section>
             <LexicalEntryForm name="ed-gloss-form"
-                    gloss={gloss}
-                    onGlossFieldChange={onGlossFieldChange} 
+                    lexicalEntry={gloss}
+                    onLexicalEntryFieldChange={onGlossFieldChange} 
             />
         </section>}
         {formSections.includes(FormSection.Inflections) && <section className="mt-3">
@@ -95,19 +95,19 @@ function MasterForm(props: IProps) {
 
 const mapStateToProps = (state: RootReducer) => ({
     changes: state.changes,
-    edit: state.gloss && !! state.gloss.id,
+    edit: state.lexicalEntry && !! state.lexicalEntry.id,
     errors: state.errors,
-    gloss: state.gloss,
+    lexicalEntry: state.lexicalEntry,
     inflections: state.inflections,
 } as IProps);
 
 const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => {
     const actions = new LexicalEntryActions();
     return {
-        onCopyGloss: () => {
+        onCopyLexicalEntry: () => {
             dispatch(actions.setEditingLexicalEntryId(0));
         },
-        onGlossFieldChange: ({value: v}) => {
+        onLexicalEntryFieldChange: ({value: v}) => {
             dispatch(actions.setLexicalEntryField(v.field, v.value));
         },
         onInflectionCreate: () => {
@@ -120,7 +120,7 @@ const mapDispatchToProps = (dispatch: ReduxThunkDispatch) => {
             const {
                 changes,
                 edit,
-                gloss: originalLexicalEntry,
+                lexicalEntry: originalLexicalEntry,
                 inflections: originalInflections,
             } = v;
 

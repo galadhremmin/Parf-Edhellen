@@ -8,7 +8,7 @@ import { fireEventAsync } from '@root/components/Component';
 import TextIcon from '@root/components/TextIcon';
 import classNames from 'classnames';
 import './FragmentInspector.scss';
-import GlossFragmentInspector from './GlossFragmentInspector';
+import SentenceFragmentInspector from './SentenceFragmentInspector';
 
 function jumpToComponent(component: HTMLElement) {
     if (component) {
@@ -113,7 +113,7 @@ export function FragmentInspector(props: IProps) {
             <TextIcon icon="chevron-right" />
         </a>
         <button type="button" onClick={_onCloseClick} className="btn-close btn-close-white" />
-        {fragment && <GlossFragmentInspector fragment={fragment} />}
+        {fragment && <SentenceFragmentInspector fragment={fragment} />}
     </aside>;
 }
 

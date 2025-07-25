@@ -10,19 +10,19 @@ import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
 import useLexicalEntry from '@root/utilities/hooks/useLexicalEntry';
 
-import { IProps } from './GlossFragmentInspector._types';
+import { IProps } from './SentenceFragmentInspector._types';
 
 function onReferenceLinkClick(ev: IComponentEvent<IReferenceLinkClickDetails>) {
     const globalEvents = resolve(DI.GlobalEvents);
     globalEvents.fire(globalEvents.loadReference, ev.value);
 }
 
-function GlossFragmentInspector(props: IProps) {
+function SentenceFragmentInspector(props: IProps) {
     const {
         fragment,
     } = props;
 
-    const { lexicalEntry: gloss, error } = useLexicalEntry(fragment?.lexicalEntryId, {
+    const { lexicalEntry, error } = useLexicalEntry(fragment?.lexicalEntryId, {
         adapter: (nextGloss) => ({
             ...nextGloss,
             _inflectedWord: {
@@ -41,20 +41,20 @@ function GlossFragmentInspector(props: IProps) {
             <Markdown text={fragment.comments} parse={true} />
         </section>}
         <section>
-            {(! gloss && ! error) && <Spinner />}
-            {gloss && <GlossInspector
+            {(! lexicalEntry && ! error) && <Spinner />}
+            {lexicalEntry && <GlossInspector
                 bordered={false}
-                lexicalEntry={gloss}
+                lexicalEntry={lexicalEntry}
                 onReferenceLinkClick={onReferenceLinkClick}
                 toolbar={false}
                 warnings={false}
             />}
             {error && <StaticAlert type="warning">
-                <strong>Sorry, cannot find a gloss for <Quote>{fragment.fragment}</Quote>!</strong>{' '}
-                This usually happens when the gloss is deleted or outdated after the phrase was published. You can notify the author about this error alternatively contribute with a correction yourself.
+                <strong>Sorry, cannot find an lexical entry for <Quote>{fragment.fragment}</Quote>!</strong>{' '}
+                This usually happens when the entry is deleted or outdated after the phrase was published. You can notify the author about this error alternatively contribute with a correction yourself.
             </StaticAlert>}
         </section>
     </article>;
 }
 
-export default GlossFragmentInspector;
+export default SentenceFragmentInspector;

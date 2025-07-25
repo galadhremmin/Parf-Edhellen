@@ -1,11 +1,11 @@
 import { mapper } from '@root/utilities/func/mapper';
 import { Actions } from '../actions';
 import {
-    IGlossAction,
-    IGlossState,
-} from './GlossReducer._types';
+    ILexicalEntryAction,
+    ILexicalEntryState,
+} from './LexicalEntryReducer._types';
 
-const InitialState: IGlossState = {
+const InitialState: ILexicalEntryState = {
     account: null,
     comments: '',
     etymology: null,
@@ -31,12 +31,12 @@ const InitialState: IGlossState = {
     },
 };
 
-const GlossReducer = (state: IGlossState = InitialState, action: IGlossAction) => {
+const LexicalEntryReducer = (state: ILexicalEntryState = InitialState, action: ILexicalEntryAction) => {
     switch (action.type) {
         case Actions.ReceiveLexicalEntry:
-            return mapper<typeof action['gloss'], IGlossState>({
+            return mapper<typeof action['lexicalEntry'], ILexicalEntryState>({
                 account: 'account',
-                comments: (gloss) => gloss.comments || '',
+                comments: (entry) => entry.comments || '',
                 contributionId: 'contributionId',
                 etymology: 'etymology',
                 externalId: 'externalId',
@@ -51,10 +51,10 @@ const GlossReducer = (state: IGlossState = InitialState, action: IGlossAction) =
                 sense: 'sense',
                 source: 'source',
                 speechId: 'speechId',
-                tengwar: (gloss) => gloss.tengwar || '',
+                tengwar: (entry) => entry.tengwar || '',
                 translations: 'translations',
                 word: 'word',
-            }, action.gloss);
+            }, action.lexicalEntry);
         case Actions.SetLexicalEntryField:
             return {
                 ...state,
@@ -65,4 +65,4 @@ const GlossReducer = (state: IGlossState = InitialState, action: IGlossAction) =
     }
 };
 
-export default GlossReducer;
+export default LexicalEntryReducer;

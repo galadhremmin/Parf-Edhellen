@@ -14,13 +14,13 @@ import { withPropInjection } from '@root/di';
 import { fireEvent } from '../../Component';
 import { IComponentEvent } from '../../Component._types';
 import EntitySelect from '../EntitySelect';
-import { IProps } from './GlossSelect._types';
-import GlossSuggestion from './GlossSuggestion';
-import GlossValue from './GlossValue';
+import { IProps } from './LexicalEntrySelect._types';
+import LexicalEntrySuggestion from './LexicalEntrySuggestion';
+import LexicalEntryValue from './LexicalEntryValue';
 
-const glossFormatter = (gloss: ISuggestionEntity) => gloss ? `${gloss.word} (${gloss.id})` : '';
+const defaultFormatter = (entry: ISuggestionEntity) => entry ? `${entry.word} (${entry.id})` : '';
 
-function GlossSelect(props: IProps) {
+function LexicalEntrySelect(props: IProps) {
     const {
         apiConnector,
         name,
@@ -91,19 +91,19 @@ function GlossSelect(props: IProps) {
     }, [ setComplexValue, name, onChange ]);
 
     return <EntitySelect<ISuggestionEntity>
-        formatter={glossFormatter}
+        formatter={defaultFormatter}
         name={name}
         onChange={_onChange}
         onClearSuggestions={_onClearSuggestions}
         onSuggest={_onSuggest}
-        renderSuggestion={GlossSuggestion}
-        renderValue={GlossValue}
+        renderSuggestion={LexicalEntrySuggestion}
+        renderValue={LexicalEntryValue}
         suggestions={suggestions}
         value={complexValue}
         valueClassNames="GlossSelect--value"
     />;
 }
 
-export default withPropInjection(GlossSelect, {
+export default withPropInjection(LexicalEntrySelect, {
     apiConnector: DI.GlossApi,
 });

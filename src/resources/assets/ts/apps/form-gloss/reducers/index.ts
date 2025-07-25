@@ -4,13 +4,13 @@ import { CreateRootReducer } from '@root/_types';
 import { ValidationErrorReducer as errors } from '@root/components/Form/Validation';
 import { default as changes } from './ChangeTrackerReducer';
 import { default as inflections } from './InflectionsReducer';
-import { default as gloss } from './GlossReducer';
+import { default as lexicalEntry } from './LexicalEntryReducer';
 
 const reducers = {
     changes,
     errors,
     inflections,
-    gloss,
+    lexicalEntry,
 };
 
 export type RootReducer = CreateRootReducer<typeof reducers>;

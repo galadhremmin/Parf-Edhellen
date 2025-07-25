@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 
 import { IComponentEvent } from '@root/components/Component._types';
 import Dialog from '@root/components/Dialog';
-import GlossSelect from '@root/components/Form/GlossSelect';
+import LexicalEntrySelect from '@root/components/Form/LexicalEntrySelect';
 import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
 import Quote from '@root/components/Quote';
 import TextIcon from '@root/components/TextIcon';
@@ -59,7 +59,7 @@ function DeleteLexicalEntry(props: IProps) {
                 It is recommended to provide an alternative entry to ensure that there are no dangling
                 references as a result of the deletion, such as phrases depending on the entry:
             </p>
-            <GlossSelect name="test" onChange={(e) => setReplacementId(e.value)} value={replacementId} />
+            <LexicalEntrySelect name="test" onChange={(e) => setReplacementId(e.value)} value={replacementId} />
             <p>
                 Remember! An entry can't be <em>permanently</em>{' '}deleted. A deleted entry can be restored.
             </p>

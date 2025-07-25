@@ -13,7 +13,7 @@ import TengwarInput from '@root/components/Form/TengwarInput';
 import Panel from '@root/components/Panel';
 
 import LexicalEntryDetailInput from './LexicalEntryDetailInput';
-import { GlossProps } from '../containers/MasterForm._types';
+import { LexicalEntryProps } from '../containers/MasterForm._types';
 import {
     defaultTransformer,
     keywordsTransformer,
@@ -27,20 +27,20 @@ import { IProps } from './LexicalEntryForm._types';
 function LexicalEntryForm(props: IProps) {
     const {
         name = 'GlossForm',
-        onGlossFieldChange,
-        gloss = null,
+        onLexicalEntryFieldChange,
+        lexicalEntry: gloss = null,
     } = props;
 
-    const _onFieldChange = (field: GlossProps, value: string) => {
+    const _onFieldChange = (field: LexicalEntryProps, value: string) => {
         const params = {
             field,
             value,
         };
 
-        void fireEvent(name, onGlossFieldChange, params);
+        void fireEvent(name, onLexicalEntryFieldChange, params);
     };
 
-    const _onChangeNative = (field: GlossProps, transform: ValueTransformer = defaultTransformer) =>
+    const _onChangeNative = (field: LexicalEntryProps, transform: ValueTransformer = defaultTransformer) =>
         (e: ChangeEvent<HTMLInputElement>) => {
         const value = transform(e.target.type === 'checkbox' || e.target.type === 'radio'
             ? e.target.checked
@@ -49,7 +49,7 @@ function LexicalEntryForm(props: IProps) {
         _onFieldChange(field, value);
     };
 
-    const _onChange = (field: GlossProps, transform: ValueTransformer = defaultTransformer) =>
+    const _onChange = (field: LexicalEntryProps, transform: ValueTransformer = defaultTransformer) =>
         (e: IComponentEvent<any>) => {
         const value = transform(e.value);
         _onFieldChange(field, value);

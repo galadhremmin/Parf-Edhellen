@@ -1,25 +1,25 @@
 import { ComponentEventHandler } from '@root/components/Component._types';
 import { FormSection } from '../index._types';
 import { RootReducer } from '../reducers';
-import { IGlossState } from '../reducers/GlossReducer._types';
+import { ILexicalEntryState } from '../reducers/LexicalEntryReducer._types';
 import { IInflectionGroupState } from '../reducers/InflectionsReducer._types';
 
-export interface IProps extends Partial<Pick<RootReducer, 'changes' | 'errors' | 'gloss' | 'inflections'>> {
+export interface IProps extends Partial<Pick<RootReducer, 'changes' | 'errors' | 'lexicalEntry' | 'inflections'>> {
     confirmButton?: string;
     edit?: boolean;
     formSections?: FormSection[];
 
-    onCopyGloss?: ComponentEventHandler<void>;
-    onGlossFieldChange?: ComponentEventHandler<IGlossFieldChangeArgs>;
+    onCopyLexicalEntry?: ComponentEventHandler<void>;
+    onLexicalEntryFieldChange?: ComponentEventHandler<ILexicalEntryFieldChangeArgs>;
     onInflectionCreate?: ComponentEventHandler<void>;
     onInflectionsChange?: ComponentEventHandler<IInflectionsChangeArgs>;
     onSubmit?: ComponentEventHandler<ISubmitArgs>;
 }
 
-export type GlossProps = keyof IGlossState;
+export type LexicalEntryProps = keyof ILexicalEntryState;
 
-export interface IGlossFieldChangeArgs {
-    field: GlossProps;
+export interface ILexicalEntryFieldChangeArgs {
+    field: LexicalEntryProps;
     value: any;
 }
 
@@ -28,6 +28,6 @@ export interface IInflectionsChangeArgs {
     inflectionGroup: IInflectionGroupState;
 }
 
-export interface ISubmitArgs extends Partial<Pick<RootReducer, 'changes' | 'gloss' | 'inflections'>> {
+export interface ISubmitArgs extends Partial<Pick<RootReducer, 'changes' | 'lexicalEntry' | 'inflections'>> {
     edit: boolean;
 }

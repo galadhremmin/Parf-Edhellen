@@ -1,6 +1,6 @@
 import { Actions } from "../actions";
 import { IChangeTrackerReducerState } from "./ChangeTrackerReducer._types";
-import { IGlossAction } from "./GlossReducer._types";
+import { ILexicalEntryAction } from "./LexicalEntryReducer._types";
 import { IInflectionAction } from "./InflectionsReducer._types";
 
 const InitialState: IChangeTrackerReducerState = {
@@ -8,7 +8,7 @@ const InitialState: IChangeTrackerReducerState = {
     inflectionsChanged: false,
 };
 
-const ChangeTrackerReducer = (state = InitialState, action: IGlossAction | IInflectionAction): IChangeTrackerReducerState => {
+const ChangeTrackerReducer = (state = InitialState, action: ILexicalEntryAction | IInflectionAction): IChangeTrackerReducerState => {
     switch (action.type) {
         case Actions.SetLexicalEntryField:
             return {
