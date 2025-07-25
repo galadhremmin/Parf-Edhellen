@@ -237,7 +237,7 @@ class BookAdapter
             $lexicalEntry->external_link_format = $entity->lexical_entry_group_id ? $entity->lexical_entry_group->external_link_format : null;
             $lexicalEntry->glosses = $entity->glosses->map(function ($g) {
                 return new Gloss(['translation' => $g->translation]);
-            })->all();
+            });
             $lexicalEntry->lexical_entry_details = $entity->lexical_entry_details->map(function ($d) {
                 return new LexicalEntryDetail([
                     'category' => $d->category,
@@ -245,7 +245,7 @@ class BookAdapter
                     'text' => $d->text,
                     'type' => $d->type,
                 ]);
-            })->all();
+            });
 
             unset(
                 $lexicalEntry->word_id,
@@ -259,9 +259,7 @@ class BookAdapter
             }
 
         } else {
-            $lexicalEntry->all_glosses = implode($separator, array_map(function ($g) {
-                return $g->translation;
-            }, $lexicalEntry->glosses));
+            $lexicalEntry->all_glosses = $lexicalEntry->glosses->map(fn($g) => $g->translation)->implode($separator);
         }
 
         if (! empty($lexicalEntry->comments)) {
@@ -269,14 +267,14 @@ class BookAdapter
         }
 
         // Restore the order of the details based on the `order` property
-        usort($lexicalEntry->lexical_entry_details, function ($a, $b) {
-            return $a->order === $b->order ? 0 : ($a->order > $b->order ? 1 : -1);
-        });
+        $lexicalEntry->lexical_entry_details->sort(fn ($a, $b) =>
+            $a->order === $b->order ? 0 : ($a->order > $b->order ? 1 : -1),
+        );
 
         // Parse markdown to HTML
-        foreach ($lexicalEntry->lexical_entry_details as $detail) {
+        $lexicalEntry->lexical_entry_details->each(function ($detail) {
             $detail->text = $this->_markdownParser->parseMarkdownNoBlocks($detail->text);
-        }
+        });
 
         $lexicalEntry->account_url = $linker->author($lexicalEntry->account_id, $lexicalEntry->account_name);
 
@@ -496,7 +494,7 @@ class BookAdapter
     /**
      * Calculate rating for the translations field
      */
-    private static function calculateTranslationFieldRating(array $glosses, string $normalizedWord, array $searchTerms): int
+    private static function calculateTranslationFieldRating(Collection $glosses, string $normalizedWord, array $searchTerms): int
     {
         $maxRating = 0;
         
@@ -588,7 +586,7 @@ class BookAdapter
     /**
      * Calculate rating for the gloss details field
      */
-    private static function calculateDetailsFieldRating(array $lexicalEntryDetails, string $normalizedWord, array $searchTerms): int
+    private static function calculateDetailsFieldRating(Collection $lexicalEntryDetails, string $normalizedWord, array $searchTerms): int
     {
         $maxRating = 0;
         

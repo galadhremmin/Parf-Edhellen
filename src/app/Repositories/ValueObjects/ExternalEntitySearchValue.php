@@ -10,7 +10,7 @@ class ExternalEntitySearchValue extends SearchIndexSearchValue implements \JsonS
     {
         parent::__construct($properties);
         $this->initialize($properties, 'external_id', true);
-        $this->initialize($properties, 'gloss_group_id', false);
+        $this->initialize($properties, 'lexical_entry_group_id', false);
     }
 
     public function getExternalId()
@@ -18,8 +18,8 @@ class ExternalEntitySearchValue extends SearchIndexSearchValue implements \JsonS
         return $this->getValue('external_id');
     }
 
-    public function getGlossGroupId()
+    public function getLexicalEntryGroupId()
     {
-        return $this->getValue('gloss_group_id') ?? 0;
+        return $this->getValue('lexical_entry_group_id') ?? 0;
     }
 }

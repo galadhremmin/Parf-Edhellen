@@ -32,19 +32,19 @@ class BookAdapterTest extends TestCase
     public function test_adapt_gloss()
     {
         extract($this->createLexicalEntry(__FUNCTION__, 'galadh'));
-        $this->getLexicalEntryRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
+        $lexicalEntry = $this->getLexicalEntryRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
 
-        $languages = new Collection([$gloss->language]);
+        $languages = new Collection([$lexicalEntry->language]);
         $inflections = collect([]);
-        $comments = [$gloss->id => 10];
+        $comments = [$lexicalEntry->id => 10];
         $atomDate = true;
 
-        $adapted = $this->_adapter->adaptLexicalEntry($gloss, $languages, $inflections, $comments, $atomDate);
+        $adapted = $this->_adapter->adaptLexicalEntry($lexicalEntry, $languages, $inflections, $comments, $atomDate);
 
         $this->assertEquals(\stdClass::class, get_class($adapted));
-        $this->assertEquals($gloss->created_at->toAtomString(), $adapted->created_at);
-        $this->assertEquals($gloss->language->id, $adapted->language->id);
-        $this->assertEquals($comments[$gloss->id], $adapted->comment_count);
+        $this->assertEquals($lexicalEntry->created_at->toAtomString(), $adapted->created_at);
+        $this->assertEquals($lexicalEntry->language->id, $adapted->language->id);
+        $this->assertEquals($comments[$lexicalEntry->id], $adapted->comment_count);
         $this->assertEquals(implode(config('ed.gloss_translations_separator'), array_map(function ($g) {
             return $g->translation;
         }, $glosses)), $adapted->all_glosses);
@@ -54,9 +54,9 @@ class BookAdapterTest extends TestCase
     {
         extract($this->createLexicalEntry(__FUNCTION__, 'galadh'));
 
-        $gloss = $this->getLexicalEntryRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, []);
+        $lexicalEntry = $this->getLexicalEntryRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, []);
 
-        $versions = $this->getLexicalEntryRepository()->getGlossVersions($gloss->id);
+        $versions = $this->getLexicalEntryRepository()->getLexicalEntryVersions($lexicalEntry->id);
         $adapted = $this->_adapter->adaptLexicalEntryVersions($versions->getVersions(), $versions->getLatestVersionId());
         $adaptedGlossary = &$adapted['versions'];
 
@@ -94,194 +94,193 @@ class BookAdapterTest extends TestCase
     public function test_should_get_versions()
     {
         extract($this->createLexicalEntry(__FUNCTION__, 'galadh'));
-        $gloss0 = $this->getLexicalEntryRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
+        $lexicalEntry0 = $this->getLexicalEntryRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
 
         $lexicalEntry->is_uncertain = false;
         $glosses = $this->createGlosses();
-        $details = $this->createLexicalEntryDetails($lexicalEntry);
-        $gloss1 = $this->getLexicalEntryRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
+        $details = $this->createLexicalEntryDetails($lexicalEntry0);
+        $lexicalEntry1 = $this->getLexicalEntryRepository()->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
 
         $newWord = $word.' 1';
-        $translations = $this->createGlosses();
         $details = $this->createLexicalEntryDetails($lexicalEntry);
-        $gloss2 = $this->getLexicalEntryRepository()->saveLexicalEntry($newWord, $sense, $lexicalEntry, $glosses, $keywords, $details);
+        $lexicalEntry2 = $this->getLexicalEntryRepository()->saveLexicalEntry($newWord, $sense, $lexicalEntry, $glosses, $keywords, $details);
 
-        $translations = array_merge(
+        $glosses = array_merge(
             $this->createGlosses(),
-            [new Gloss(['translation' => 'test '.count($translations)])]
+            [new Gloss(['translation' => 'test '.count($glosses)])]
         );
         $details = $this->createLexicalEntryDetails($lexicalEntry);
-        $gloss3 = $this->getLexicalEntryRepository()->saveLexicalEntry($newWord, $sense, $lexicalEntry, $glosses, $keywords, $details);
+        $lexicalEntry3 = $this->getLexicalEntryRepository()->saveLexicalEntry($newWord, $sense, $lexicalEntry, $glosses, $keywords, $details);
 
-        $gloss0->refresh();
-        $gloss1->refresh();
-        $gloss2->refresh();
-        $gloss3->refresh();
+        $lexicalEntry0->refresh();
+        $lexicalEntry1->refresh();
+        $lexicalEntry2->refresh();
+        $lexicalEntry3->refresh();
 
-        $this->assertEquals($gloss0->id, $gloss1->id);
-        $this->assertEquals($gloss0->id, $gloss2->id);
-        $this->assertEquals($gloss0->id, $gloss3->id);
+        $this->assertEquals($lexicalEntry0->id, $lexicalEntry1->id);
+        $this->assertEquals($lexicalEntry0->id, $lexicalEntry2->id);
+        $this->assertEquals($lexicalEntry0->id, $lexicalEntry3->id);
 
-        $versions = $this->getLexicalEntryRepository()->getLexicalEntryVersions($gloss0->id);
+        $versions = $this->getLexicalEntryRepository()->getLexicalEntryVersions($lexicalEntry0->id);
         $adapted = $this->_adapter->adaptLexicalEntryVersions($versions->getVersions(), $versions->getLatestVersionId());
-        $glosses = &$adapted['versions'];
+        $lexicalEntries = &$adapted['versions'];
 
-        $this->assertEquals(4, count($glosses));
+        $this->assertEquals(4, count($lexicalEntries));
 
-        $this->assertTrue((bool) $glosses[0]->_is_latest);
-        $this->assertFalse((bool) $glosses[1]->_is_latest);
-        $this->assertFalse((bool) $glosses[2]->_is_latest);
-        $this->assertFalse((bool) $glosses[3]->_is_latest);
+        $this->assertTrue((bool) $lexicalEntries[0]->_is_latest);
+        $this->assertFalse((bool) $lexicalEntries[1]->_is_latest);
+        $this->assertFalse((bool) $lexicalEntries[2]->_is_latest);
+        $this->assertFalse((bool) $lexicalEntries[3]->_is_latest);
     }
 
     public function test_calculate_rating_exact_word_match()
     {
-        $gloss = $this->createMockGloss('galadh', ['tree'], 'This is a tree word');
+        $lexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'This is a tree word');
         
-        BookAdapter::calculateRating($gloss, 'galadh');
+        BookAdapter::calculateRating($lexicalEntry, 'galadh');
         
         // Exact word match should get highest score (100 * 1000000 = 100000000)
-        $this->assertEquals(100000000, $gloss->rating);
+        $this->assertEquals(100000000, $lexicalEntry->rating);
     }
 
     public function test_calculate_rating_exact_translation_match()
     {
-        $gloss = $this->createMockGloss('galadh', ['tree'], 'This is about trees');
+        $lexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'This is about trees');
         
-        BookAdapter::calculateRating($gloss, 'tree');
+        BookAdapter::calculateRating($lexicalEntry, 'tree');
         
         // Exact translation match should get high score
-        $this->assertGreaterThan(8000000, $gloss->rating);
-        $this->assertLessThan(100000000, $gloss->rating);
+        $this->assertGreaterThan(8000000, $lexicalEntry->rating);
+        $this->assertLessThan(100000000, $lexicalEntry->rating);
     }
 
     public function test_calculate_rating_word_boundary_match()
     {
-        $gloss = $this->createMockGloss('galadh', ['big tree'], 'This is about trees');
+        $lexicalEntry = $this->createMockLexicalEntry('galadh', ['big tree'], 'This is about trees');
         
-        BookAdapter::calculateRating($gloss, 'tree');
+        BookAdapter::calculateRating($lexicalEntry, 'tree');
         
         // Word boundary match should get good score
-        $this->assertGreaterThan(7000000, $gloss->rating);
+        $this->assertGreaterThan(7000000, $lexicalEntry->rating);
     }
 
     public function test_calculate_rating_comment_match()
     {
-        $gloss = $this->createMockGloss('galadh', ['light'], 'This word means tree in Sindarin');
+        $lexicalEntry = $this->createMockLexicalEntry('galadh', ['light'], 'This word means tree in Sindarin');
         
-        BookAdapter::calculateRating($gloss, 'tree');
+        BookAdapter::calculateRating($lexicalEntry, 'tree');
         
         // Comment match should get medium score
-        $this->assertGreaterThan(600000, $gloss->rating);
-        $this->assertLessThan(8000000, $gloss->rating);
+        $this->assertGreaterThan(600000, $lexicalEntry->rating);
+        $this->assertLessThan(8000000, $lexicalEntry->rating);
     }
 
     public function test_calculate_rating_lexical_entry_details_match()
     {
-        $gloss = $this->createMockGloss('galadh', ['light'], 'No tree here', [
+        $lexicalEntry = $this->createMockLexicalEntry('galadh', ['light'], 'No tree here', [
             ['category' => 'Etymology', 'text' => 'From tree root']
         ]);
         
-        BookAdapter::calculateRating($gloss, 'tree');
+        BookAdapter::calculateRating($lexicalEntry, 'tree');
         
         // Gloss details match should get lower score
         // Multiple search terms can contribute, so expect higher score
-        $this->assertGreaterThan(50000, $gloss->rating);
-        $this->assertLessThan(1000000, $gloss->rating);
+        $this->assertGreaterThan(50000, $lexicalEntry->rating);
+        $this->assertLessThan(1000000, $lexicalEntry->rating);
     }
 
     public function test_calculate_rating_source_match()
     {
-        $gloss = $this->createMockGloss('galadh', ['light'], 'No tree here');
-        $gloss->source = 'Tree Dictionary';
+        $lexicalEntry = $this->createMockLexicalEntry('galadh', ['light'], 'No tree here');
+        $lexicalEntry->source = 'Tree Dictionary';
         
-        BookAdapter::calculateRating($gloss, 'tree');
+        BookAdapter::calculateRating($lexicalEntry, 'tree');
         
         // Source match should get lowest score
         // Multiple search terms can contribute significantly
-        $this->assertGreaterThan(1000, $gloss->rating);
-        $this->assertLessThan(1000000, $gloss->rating);
+        $this->assertGreaterThan(1000, $lexicalEntry->rating);
+        $this->assertLessThan(1000000, $lexicalEntry->rating);
     }
 
     public function test_calculate_rating_normalized_match()
     {
-        $gloss = $this->createMockGloss('galadh', ['tree'], 'No match here');
+        $lexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'No match here');
         
-        BookAdapter::calculateRating($gloss, 'GALADH');
+        BookAdapter::calculateRating($lexicalEntry, 'GALADH');
         
         // Normalized match should work
-        $this->assertGreaterThan(90000000, $gloss->rating);
+        $this->assertGreaterThan(90000000, $lexicalEntry->rating);
     }
 
     public function test_calculate_rating_starts_with_match()
     {
-        $gloss = $this->createMockGloss('galadh', ['tree'], 'No match here');
+        $lexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'No match here');
         
-        BookAdapter::calculateRating($gloss, 'gal');
+        BookAdapter::calculateRating($lexicalEntry, 'gal');
         
         // Starts with match should work
-        $this->assertGreaterThan(70000000, $gloss->rating);
+        $this->assertGreaterThan(70000000, $lexicalEntry->rating);
     }
 
     public function test_calculate_rating_contains_match()
     {
-        $gloss = $this->createMockGloss('galadh', ['tree'], 'No match here');
+        $lexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'No match here');
         
-        BookAdapter::calculateRating($gloss, 'ala');
+        BookAdapter::calculateRating($lexicalEntry, 'ala');
         
         // Contains match should work
-        $this->assertGreaterThan(50000000, $gloss->rating);
+        $this->assertGreaterThan(50000000, $lexicalEntry->rating);
     }
 
     public function test_calculate_rating_similarity_match()
     {
-        $gloss = $this->createMockGloss('galadh', ['tree'], 'No match here');
+        $lexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'No match here');
         
-        BookAdapter::calculateRating($gloss, 'galad');
+        BookAdapter::calculateRating($lexicalEntry, 'galad');
         
         // Similarity match should work
-        $this->assertGreaterThan(70000000, $gloss->rating);
+        $this->assertGreaterThan(70000000, $lexicalEntry->rating);
     }
 
     public function test_calculate_rating_no_match()
     {
-        $gloss = $this->createMockGloss('galadh', ['light'], 'No tree here');
+        $lexicalEntry = $this->createMockLexicalEntry('galadh', ['light'], 'No tree here');
         
-        BookAdapter::calculateRating($gloss, 'completely_different');
+        BookAdapter::calculateRating($lexicalEntry, 'completely_different');
         
         // No match should get default score
-        $this->assertEquals(10, $gloss->rating);
+        $this->assertEquals(10, $lexicalEntry->rating);
     }
 
     public function test_calculate_rating_uncertain_gloss_penalty()
     {
-        $gloss = $this->createMockGloss('galadh', ['tree'], 'This is a tree');
-        $gloss->is_uncertain = true;
+        $lexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'This is a tree');
+        $lexicalEntry->is_uncertain = true;
         
-        BookAdapter::calculateRating($gloss, 'tree');
+        BookAdapter::calculateRating($lexicalEntry, 'tree');
         
         // Uncertain gloss should be ranked lower but still positive
-        $this->assertGreaterThan(0, $gloss->rating);
-        $this->assertLessThan(1000000, $gloss->rating); // Should be much lower than certain gloss
+        $this->assertGreaterThan(0, $lexicalEntry->rating);
+        $this->assertLessThan(1000000, $lexicalEntry->rating); // Should be much lower than certain gloss
     }
 
     public function test_calculate_rating_non_canon_gloss_penalty()
     {
-        $gloss = $this->createMockGloss('galadh', ['tree'], 'This is a tree');
-        $gloss->is_canon = false;
+        $lexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'This is a tree');
+        $lexicalEntry->is_canon = false;
         
-        BookAdapter::calculateRating($gloss, 'tree');
+        BookAdapter::calculateRating($lexicalEntry, 'tree');
         
         // Non-canon gloss should be ranked lower but still positive
-        $this->assertGreaterThan(0, $gloss->rating);
-        $this->assertLessThan(1000000, $gloss->rating); // Should be much lower than canon gloss
+        $this->assertGreaterThan(0, $lexicalEntry->rating);
+        $this->assertLessThan(1000000, $lexicalEntry->rating); // Should be much lower than canon gloss
     }
 
     public function test_calculate_rating_empty_search_word()
     {
-        $gloss = $this->createMockGloss('galadh', ['tree'], 'This is a tree');
+        $lexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'This is a tree');
         
-        $result = BookAdapter::calculateRating($gloss, '');
+        $result = BookAdapter::calculateRating($lexicalEntry, '');
         
         // Empty search word should return maximum value
         $this->assertEquals(1 << 31, $result);
@@ -289,91 +288,91 @@ class BookAdapterTest extends TestCase
 
     public function test_calculate_rating_multiple_translations()
     {
-        $gloss = $this->createMockGloss('galadh', ['light', 'tree', 'bright'], 'No match here');
+        $lexicalEntry = $this->createMockLexicalEntry('galadh', ['light', 'tree', 'bright'], 'No match here');
         
-        BookAdapter::calculateRating($gloss, 'tree');
+        BookAdapter::calculateRating($lexicalEntry, 'tree');
         
         // Should match the best translation
-        $this->assertGreaterThan(8000000, $gloss->rating);
+        $this->assertGreaterThan(8000000, $lexicalEntry->rating);
     }
 
     public function test_calculate_rating_multiple_lexical_entry_details()
     {
-        $gloss = $this->createMockGloss('galadh', ['light'], 'No match here', [
+        $lexicalEntry = $this->createMockLexicalEntry('galadh', ['light'], 'No match here', [
             ['category' => 'Etymology', 'text' => 'From light root'],
             ['category' => 'Usage', 'text' => 'Used for tree in some contexts']
         ]);
         
-        BookAdapter::calculateRating($gloss, 'tree');
+        BookAdapter::calculateRating($lexicalEntry, 'tree');
         
         // Should match the best detail
-        $this->assertGreaterThan(50000, $gloss->rating);
+        $this->assertGreaterThan(50000, $lexicalEntry->rating);
     }
 
     public function test_calculate_rating_field_priority_order()
     {
         // Create gloss with matches in different fields
-        $gloss = $this->createMockGloss('galadh', ['light'], 'This word means tree in Sindarin', [
+        $lexicalEntry = $this->createMockLexicalEntry('galadh', ['light'], 'This word means tree in Sindarin', [
             ['category' => 'Etymology', 'text' => 'From tree root']
         ]);
-        $gloss->source = 'Tree Dictionary';
+        $lexicalEntry->source = 'Tree Dictionary';
         
-        BookAdapter::calculateRating($gloss, 'tree');
+        BookAdapter::calculateRating($lexicalEntry, 'tree');
         
         // Should prioritize word > translations > comments > details > source
         // Since no word/translation match, comments should win
-        $this->assertGreaterThan(600000, $gloss->rating);
+        $this->assertGreaterThan(600000, $lexicalEntry->rating);
     }
 
     public function test_calculate_rating_diacritics_handling()
     {
-        $gloss = $this->createMockGloss('galadh', ['tree'], 'No match here');
+        $lexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'No match here');
         
-        BookAdapter::calculateRating($gloss, 'galádh');
+        BookAdapter::calculateRating($lexicalEntry, 'galádh');
         
         // Should handle diacritics
-        $this->assertGreaterThan(90000000, $gloss->rating);
+        $this->assertGreaterThan(90000000, $lexicalEntry->rating);
     }
 
     public function test_calculate_rating_case_insensitive()
     {
-        $gloss = $this->createMockGloss('Galadh', ['Tree'], 'No match here');
+        $lexicalEntry = $this->createMockLexicalEntry('Galadh', ['Tree'], 'No match here');
         
-        BookAdapter::calculateRating($gloss, 'galadh');
+        BookAdapter::calculateRating($lexicalEntry, 'galadh');
         
         // Should be case insensitive
-        $this->assertGreaterThan(90000000, $gloss->rating);
+        $this->assertGreaterThan(90000000, $lexicalEntry->rating);
     }
 
     public function test_calculate_rating_certain_vs_uncertain_ranking()
     {
         // Create certain and uncertain glosses with same content
-        $certainGloss = $this->createMockGloss('galadh', ['tree'], 'This is a tree');
-        $certainGloss->is_canon = true;
-        $certainGloss->is_uncertain = false;
+        $certainLexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'This is a tree');
+        $certainLexicalEntry->is_canon = true;
+        $certainLexicalEntry->is_uncertain = false;
         
-        $uncertainGloss = $this->createMockGloss('galadh', ['tree'], 'This is a tree');
-        $uncertainGloss->is_canon = true;
-        $uncertainGloss->is_uncertain = true;
+        $uncertainLexicalEntry = $this->createMockLexicalEntry('galadh', ['tree'], 'This is a tree');
+        $uncertainLexicalEntry->is_canon = true;
+        $uncertainLexicalEntry->is_uncertain = true;
         
-        BookAdapter::calculateRating($certainGloss, 'tree');
-        BookAdapter::calculateRating($uncertainGloss, 'tree');
+        BookAdapter::calculateRating($certainLexicalEntry, 'tree');
+        BookAdapter::calculateRating($uncertainLexicalEntry, 'tree');
         
         // Certain gloss should have higher rating than uncertain gloss
-        $this->assertGreaterThan($uncertainGloss->rating, $certainGloss->rating);
+        $this->assertGreaterThan($uncertainLexicalEntry->rating, $certainLexicalEntry->rating);
         
         // Both should be positive
-        $this->assertGreaterThan(0, $certainGloss->rating);
-        $this->assertGreaterThan(0, $uncertainGloss->rating);
+        $this->assertGreaterThan(0, $certainLexicalEntry->rating);
+        $this->assertGreaterThan(0, $uncertainLexicalEntry->rating);
         
         // Uncertain gloss should be about 10% of certain gloss rating
-        $this->assertEquals($uncertainGloss->rating, $certainGloss->rating * 0.1, '', 0.1);
+        $this->assertEquals($uncertainLexicalEntry->rating, $certainLexicalEntry->rating * 0.1, '', 0.1);
     }
 
     /**
      * Helper method to create a mock gloss object for testing
      */
-    private function createMockGloss(string $word, array $glosses, string $comments = '', array $glossDetails = []): \stdClass
+    private function createMockLexicalEntry(string $word, array $glosses, string $comments = '', array $glossDetails = []): \stdClass
     {
         $gloss = new \stdClass();
         $gloss->word = $word;
@@ -382,19 +381,19 @@ class BookAdapterTest extends TestCase
         $gloss->is_canon = true;
         $gloss->is_uncertain = false;
         // Create gloss objects
-        $gloss->glosses = [];
+        $gloss->glosses = collect([]);
         foreach ($glosses as $glossText) {
             $glossObj = new \stdClass();
             $glossObj->translation = $glossText;
-            $gloss->glosses[] = $glossObj;
+            $gloss->glosses->push($glossObj);
         }
         // Create gloss detail objects
-        $gloss->lexical_entry_details = [];
+        $gloss->lexical_entry_details = collect([]);
         foreach ($glossDetails as $detail) {
             $detailObj = new \stdClass();
             $detailObj->text = $detail['text'];
             $detailObj->category = $detail['category'];
-            $gloss->lexical_entry_details[] = $detailObj;
+            $gloss->lexical_entry_details->push($detailObj);
         }
         return $gloss;
     }

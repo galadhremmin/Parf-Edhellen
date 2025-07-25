@@ -2,13 +2,20 @@
 
 namespace Tests\Unit\Api;
 
-use App\Models\ForumGroup;
-use App\Models\ForumPost;
-use App\Models\ForumThread;
+use App\Models\{
+    ForumGroup,
+    ForumPost,
+    ForumThread,
+    ForumDiscussion,
+};
+use App\Models\Initialization\Morphs;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
 class DiscussApiControllerTest extends TestCase
 {
+    use DatabaseTransactions;
+
     public function test_groups()
     {
         $response = $this->getJson(route('api.discuss.groups'));
@@ -49,7 +56,16 @@ class DiscussApiControllerTest extends TestCase
 
     public function test_thread_by_entity()
     {
-        $thread = ForumThread::first();
+        $discussion = ForumDiscussion::create([
+            'account_id' => 1, // a fake account for testing purposes
+        ]);
+        $thread = ForumThread::create([
+            'entity_type' => Morphs::getAlias(ForumDiscussion::class),
+            'entity_id' => $discussion->id,
+            'subject' => 'Test thread',
+            'account_id' => 1,
+            'forum_group_id' => 1,
+        ]);
         $response = $this->getJson(route('api.discuss.thread-by-entity', ['entityType' => $thread->entity_type, 'entityId' => $thread->entity_id]));
         $response->assertSuccessful();
 
@@ -59,14 +75,27 @@ class DiscussApiControllerTest extends TestCase
 
     public function test_resolve()
     {
-        $thread = ForumThread::first();
+        $discussion = ForumDiscussion::create([
+            'account_id' => 1, // a fake account for testing purposes
+        ]);
+        $thread = ForumThread::create([
+            'entity_type' => Morphs::getAlias(ForumDiscussion::class),
+            'entity_id' => $discussion->id,
+            'subject' => 'Test thread',
+            'account_id' => 1,
+            'forum_group_id' => 1,
+        ]);
         $response = $this->getJson(route('api.discuss.resolve', ['entityType' => $thread->entity_type, 'entityId' => $thread->entity_id]));
         $response->assertRedirect();
     }
 
     public function test_resolve_by_post()
     {
-        $post = ForumPost::first();
+        $post = ForumPost::create([
+            'account_id' => 1, // a fake account for testing purposes
+            'forum_thread_id' => 1,
+            'content' => 'Test post',
+        ]);
         $response = $this->getJson(route('api.discuss.resolve-by-post', ['postId' => $post->id]));
         $response->assertRedirect();
     }

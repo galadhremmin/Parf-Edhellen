@@ -19,48 +19,50 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
 {
     private LexicalEntryRepository $_lexicalEntryRepository;
 
-    private LexicalEntryInflectionRepository $_glossInflectionRepository;
+    private LexicalEntryInflectionRepository $_lexicalEntryInflectionRepository;
 
     private DiscussRepository $_discussRepository;
 
     private BookAdapter $_bookAdapter;
 
-    private ?string $_glossMorph;
+    private ?string $_lexicalEntryMorph;
 
     private ?string $_senseMorph;
 
-    public function __construct(LexicalEntryRepository $glossRepository, LexicalEntryInflectionRepository $glossInflectionRepository,
+    public function __construct(LexicalEntryRepository $lexicalEntryRepository, LexicalEntryInflectionRepository $lexicalEntryInflectionRepository,
         DiscussRepository $discussRepository, BookAdapter $bookAdapter)
     {
-        $this->_lexicalEntryRepository = $glossRepository;
-        $this->_glossInflectionRepository = $glossInflectionRepository;
+        $this->_lexicalEntryRepository = $lexicalEntryRepository;
+        $this->_lexicalEntryInflectionRepository = $lexicalEntryInflectionRepository;
         $this->_discussRepository = $discussRepository;
         $this->_bookAdapter = $bookAdapter;
 
-        $this->_glossMorph = Morphs::getAlias(LexicalEntry::class);
+        $this->_lexicalEntryMorph = Morphs::getAlias(LexicalEntry::class);
         $this->_senseMorph = Morphs::getAlias(Sense::class);
     }
 
     public function resolve(SearchIndexSearchValue $value): array
     {
         if ($value instanceof SpecificEntitiesSearchValue) {
-            $glosses = $this->_lexicalEntryRepository->getLexicalEntries($value->getIds());
+            $lexicalEntries = $this->_lexicalEntryRepository->getLexicalEntries($value->getIds());
+
         } elseif ($value instanceof ExternalEntitySearchValue) {
-            $glosses = $this->_lexicalEntryRepository->getLexicalEntriesByExternalId(
+            $lexicalEntries = $this->_lexicalEntryRepository->getLexicalEntriesByExternalId(
                 $value->getExternalId(), $value->getLexicalEntryGroupId()
             );
+            
         } else {
             $normalizedWord = StringHelper::normalize($value->getWord(), /* accentsMatter = */ true, /* retainWildcard = */ false);
 
             // Sense morph is technically not supported by the search engine but there's plenty of them in the
             // database grandfathered in by the previous data model. It simply wasn't possible back in the day,
-            // when the migration was implemented, to associate disassociated senses with the right gloss, resulting
+            // when the migration was implemented, to associate disassociated senses with the right lexical entry, resulting
             // in what can be best described as 'dangling' senses. These senses aren't directly tied to a word (for
             // an example, 'gold-full one' maps to 'gold') but they're still useful to retain in the index. This is why
             // the sense morph is included in the query. If you're rebuilding the database from scratch, this will not
             // do anything as it's currently not possible to create senses within the search keyword table (it'll result
             // in an exception.)
-            $entities = SearchKeyword::whereIn('entity_name', [$this->_glossMorph, $this->_senseMorph]) //
+            $entities = SearchKeyword::whereIn('entity_name', [$this->_lexicalEntryMorph, $this->_senseMorph]) //
                 ->where($value->getReversed() ? 'normalized_keyword_reversed' : 'normalized_keyword', $normalizedWord) //
                 ->select('entity_name', 'entity_id') //
                 ->get() //
@@ -77,10 +79,10 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
                     ->all();
             }
 
-            if ($entities->has($this->_glossMorph)) {
+            if ($entities->has($this->_lexicalEntryMorph)) {
                 $entityIds = array_merge(
                     $entityIds,
-                    $entities[$this->_glossMorph]->pluck('entity_id')->all()
+                    $entities[$this->_lexicalEntryMorph]->pluck('entity_id')->all()
                 );
             }
 
@@ -92,7 +94,7 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
                 $filters['speech_id'] = $value->getSpeechIds();
             }
 
-            $glosses = $this->_lexicalEntryRepository->getLexicalEntriesByExpandingViaSense(
+            $lexicalEntries = $this->_lexicalEntryRepository->getLexicalEntriesByExpandingViaSense(
                 $entityIds,
                 $value->getLanguageId(),
                 $value->getIncludesOld(),
@@ -100,24 +102,29 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
             );
         }
 
-        $glossIds = array_map(function ($v) {
+        $lexicalEntryIds = array_map(function ($v) {
             return $v->id;
-        }, $glosses);
+        }, $lexicalEntries);
 
         $inflections = $value->getIncludesInflections() //
-            ? $this->_glossInflectionRepository->getInflectionsForLexicalEntries($glossIds) //
+            ? $this->_lexicalEntryInflectionRepository->getInflectionsForLexicalEntries($lexicalEntryIds) //
             : collect([]);
-        $comments = $this->_discussRepository->getNumberOfPostsForEntities(LexicalEntry::class, $glossIds);
+        $comments = $this->_discussRepository->getNumberOfPostsForEntities(LexicalEntry::class, $lexicalEntryIds);
 
-        return $this->_bookAdapter->adaptLexicalEntries($glosses, $inflections, $comments, $value->getWord());
+        return $this->_bookAdapter->adaptLexicalEntries($lexicalEntries, $inflections, $comments, $value->getWord());
     }
 
     public function resolveId(int $entityId): array
     {
-        $glosses = $this->_lexicalEntryRepository->getLexicalEntry($entityId)->all();
-        $inflections = $this->_glossInflectionRepository->getInflectionsForLexicalEntries([$entityId]);
+        $lexicalEntries = $this->_lexicalEntryRepository->getLexicalEntry($entityId)->all();
+        $inflections = $this->_lexicalEntryInflectionRepository->getInflectionsForLexicalEntries([$entityId]);
         $comments = $this->_discussRepository->getNumberOfPostsForEntities(LexicalEntry::class, [$entityId]);
 
-        return $this->_bookAdapter->adaptLexicalEntries($glosses, $inflections, $comments, count($glosses) > 0 ? $glosses[0]->word->word : null);
+        return $this->_bookAdapter->adaptLexicalEntries(
+            $lexicalEntries, 
+            $inflections, 
+            $comments, 
+            count($lexicalEntries) > 0 ? $lexicalEntries[0]->word->word : null,
+        );
     }
 }
