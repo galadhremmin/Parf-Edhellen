@@ -17,7 +17,7 @@ class StatisticsRepository
     public function getGlobalStatistics()
     {
         $noOfWords = Word::count();
-        $noOfGlosses = LexicalEntry::active()
+        $noOfLexicalEntries = LexicalEntry::active()
             ->count();
         $noOfSentences = Sentence::approved()
             ->count();
@@ -27,7 +27,7 @@ class StatisticsRepository
 
         return [
             'noOfWords' => $noOfWords,
-            'noOfGlosses' => $noOfGlosses,
+            'noOfLexicalEntries' => $noOfLexicalEntries,
             'noOfSentences' => $noOfSentences,
             'noOfThanks' => $noOfThanks,
             'noOfFlashcards' => $noOfFlashcards,
@@ -40,7 +40,7 @@ class StatisticsRepository
         $noOfWords = Word::forAccount($account->id)
             ->count();
 
-        $noOfGlosses = LexicalEntry::notDeleted()
+        $noOfLexicalEntries = LexicalEntry::notDeleted()
             ->forAccount($account->id)
             ->count();
 
@@ -59,7 +59,7 @@ class StatisticsRepository
 
         return [
             'noOfWords' => $noOfWords,
-            'noOfGlosses' => $noOfGlosses,
+            'noOfLexicalEntries' => $noOfLexicalEntries,
             'noOfSentences' => $noOfSentences,
             'noOfThanks' => $noOfThanks,
             'noOfFlashcards' => $noOfFlashcards,
@@ -96,13 +96,13 @@ class StatisticsRepository
         $data['totals'] = $this->getNumberOfEntities($data['categories']);
 
         // Retrieve approved, latest glosses
-        $data['glosses'] = $this->getTopContributors('glosses', $columns, $numberOfResultsPerCategory, function ($query) {
+        $data['lexical_entries'] = $this->getTopContributors('lexical_entries', $columns, $numberOfResultsPerCategory, function ($query) {
             return $query->where([
-                ['glosses.is_deleted', 0],
+                ['lexical_entries.is_deleted', 0],
             ]);
         });
-        $data['categories'][] = 'glosses';
-        $data['totals']['glosses'] = LexicalEntry::active()->count();
+        $data['categories'][] = 'lexical_entries';
+        $data['totals']['lexical_entries'] = LexicalEntry::active()->count();
 
         // Retrieve growth over time (grouped by day) and involve the members previously identified as parth of the growth.
         $data['growth'] = $this->getGrowthOverTime($data['categories'], Carbon::now()->addYears(-1), Carbon::now(),
