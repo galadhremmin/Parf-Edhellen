@@ -32,8 +32,6 @@ trait CanCreateGloss
             'name' => 'Unit tests',
             'is_canon' => true,
         ]);
-
-        $this->cleanGlosses();
     }
 
     protected function cleanLexicalEntries()
