@@ -2,14 +2,14 @@
 
 // Public unrestricted API
 
-use App\Http\Controllers\Api\v2\AccountApiController;
-use App\Http\Controllers\Api\v2\AccountFeedApiController;
-use App\Http\Controllers\Api\v2\BookApiController;
-use App\Http\Controllers\Api\v2\GlossApiController;
-use App\Http\Controllers\Api\v2\InflectionApiController;
-use App\Http\Controllers\Api\v2\SentenceApiController;
-use App\Http\Controllers\Api\v2\SpeechApiController;
-use App\Http\Controllers\Api\v2\UtilityApiController;
+use App\Http\Controllers\Api\v3\AccountApiController;
+use App\Http\Controllers\Api\v3\AccountFeedApiController;
+use App\Http\Controllers\Api\v3\BookApiController;
+use App\Http\Controllers\Api\v3\GlossApiController;
+use App\Http\Controllers\Api\v3\InflectionApiController;
+use App\Http\Controllers\Api\v3\SentenceApiController;
+use App\Http\Controllers\Api\v3\SpeechApiController;
+use App\Http\Controllers\Api\v3\UtilityApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([

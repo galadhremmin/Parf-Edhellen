@@ -22,7 +22,8 @@ import { ISpeechEntity } from '@root/connectors/backend/ISpeechResourceApi';
 import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 import { AgGridReact } from 'ag-grid-react';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { deepClone } from '@root/utilities/func/clone';
 import { IInflectionGroupState } from '../reducers/InflectionsReducer._types';
 import { IProps } from './InflectionsInput._types';
 
@@ -106,6 +107,7 @@ function InflectionsInput(props: IProps) {
                     headerName: 'Inflections',
                     field: 'inflections',
                     resizable: true,
+                    valueParser: (value) => value,
                 },
                 {
                     cellEditor: BooleanCellEditor,
@@ -165,7 +167,15 @@ function InflectionsInput(props: IProps) {
                 });
             });
         }
-    }, [inflections]);
+    }, [inflections, focusNextRow]);
+
+    // Create a deep clone of the inflection data to ensure we're not passing
+    // references to mutated state objects. This is required because the grid
+    // is not aware of the immutability of the state.
+    const rowData = useMemo(() => 
+        inflections.map(inflection => deepClone(inflection)), 
+        [inflections]
+    );
 
     const _onGridGetRowId = (row: GetRowIdParams) => {
         return (row.data as IInflectionGroupState).inflectionGroupUuid;
@@ -196,7 +206,7 @@ function InflectionsInput(props: IProps) {
                 columnDefs={gridColumnDefinition}
                 // defaultColDef={DefaultColumnDefinition}
                 enableBrowserTooltips={true}
-                rowData={inflections}
+                rowData={rowData}
                 onCellValueChanged={_onGridCellValueChanged}
                 onGridReady={_onGridReady}
                 ref={gridRef}

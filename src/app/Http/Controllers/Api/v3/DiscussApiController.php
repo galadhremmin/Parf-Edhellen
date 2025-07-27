@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\v2;
+namespace App\Http\Controllers\Api\v3;
 
 use App\Adapters\DiscussAdapter;
 use App\Helpers\LinkHelper;

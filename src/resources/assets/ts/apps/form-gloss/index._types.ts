@@ -8,7 +8,7 @@ export const enum FormSection {
 
 export interface IProps {
     confirmButton: string;
-    gloss: ILexicalEntryEntity;
+    lexicalEntry: ILexicalEntryEntity;
     inflections: ILexicalEntryInflection[];
     prefetched: boolean;
     formSections: FormSection[];

@@ -1,4 +1,4 @@
-export const ApiPath = '/api/v2';
+export const ApiPath = '/api/v3';
 export const ApiExceptionCollectorMethod = 'utility/error';
 export const ApiValidationFailedStatusCode = 422;
 

@@ -41,15 +41,15 @@
     ])
   </div>
   <div class="col-xs-12 col-sm-6 col-md-4">
-    @if ($gloss)
+    @if ($lexicalEntry)
     <h4>Gloss of the hour</h4>
     <div class="hourly-gloss">
-      @include('book._gloss', [
-        'gloss' => $gloss,
+      @include('book._lexical-entry', [
+        'lexicalEntry' => $lexicalEntry,
         'hideComments' => true
       ])
       <p class="text-end">
-        <a href="{{ $link->lexicalEntry($gloss->id) }}" class="btn btn-sm btn-secondary">
+        <a href="{{ $link->lexicalEntry($lexicalEntry->id) }}" class="btn btn-sm btn-secondary">
           Learn more
         </a>
       </p>

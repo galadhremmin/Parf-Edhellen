@@ -1,7 +1,7 @@
 import {
     IKeywordEntity,
     ISenseEntity,
-    ITranslationEntity,
+    IGlossEntity,
     IWordEntity,
 } from '@root/connectors/backend/IGlossResourceApi';
 import { ValueTransformer } from './value-transformers._types';
@@ -19,8 +19,8 @@ export const senseTransformer: ValueTransformer<string, ISenseEntity> = (word) =
         },
     });
 
-export const translationsTransformer: ValueTransformer<string[], ITranslationEntity[]> = (translations) =>
-    translations.map((t) => ({
+export const glossesTransformer: ValueTransformer<string[], IGlossEntity[]> = (glosses) =>
+    glosses.map((t) => ({
         translation: t,
     }));
 

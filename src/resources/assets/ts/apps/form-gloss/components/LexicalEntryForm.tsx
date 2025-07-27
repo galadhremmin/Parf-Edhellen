@@ -18,7 +18,7 @@ import {
     defaultTransformer,
     keywordsTransformer,
     senseTransformer,
-    translationsTransformer,
+    glossesTransformer,
     wordTransformer,
 } from '../utilities/value-transformers';
 import { ValueTransformer } from '../utilities/value-transformers._types';
@@ -28,7 +28,7 @@ function LexicalEntryForm(props: IProps) {
     const {
         name = 'GlossForm',
         onLexicalEntryFieldChange,
-        lexicalEntry: gloss = null,
+        lexicalEntry = null,
     } = props;
 
     const _onFieldChange = (field: LexicalEntryProps, value: string) => {
@@ -64,7 +64,7 @@ function LexicalEntryForm(props: IProps) {
                         <input type="text"
                             className="form-control"
                             id="ed-gloss-word"
-                            value={gloss.word.word}
+                            value={lexicalEntry.word.word}
                             onChange={_onChangeNative('word', wordTransformer)}
                             required={true}
                         />
@@ -74,7 +74,7 @@ function LexicalEntryForm(props: IProps) {
                         <input type="text"
                             className="form-control"
                             id="ed-gloss-sense-word"
-                            value={gloss.sense.word.word}
+                            value={lexicalEntry.sense.word.word}
                             onChange={_onChangeNative('sense', senseTransformer)}
                             required={true}
                         />
@@ -84,17 +84,17 @@ function LexicalEntryForm(props: IProps) {
                         <LanguageSelect
                             className="form-control"
                             name="ed-gloss-language"
-                            value={gloss.languageId}
+                            value={lexicalEntry.languageId}
                             onChange={_onChange('languageId')}
                             required={true}
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="ed-gloss-translations">Translations</label>
+                        <label htmlFor="ed-gloss-translations">Glosses</label>
                         <TagInput
-                            name="ed-gloss-translations"
-                            value={gloss.translations.map((t) => t.translation)}
-                            onChange={_onChange('translations', translationsTransformer)}
+                            name="ed-gloss-glosses"
+                            value={lexicalEntry.glosses.map((t) => t.translation)}
+                            onChange={_onChange('glosses', glossesTransformer)}
                             required={true}
                         />
                     </div>
@@ -103,7 +103,7 @@ function LexicalEntryForm(props: IProps) {
                         <SpeechSelect
                             className="form-control"
                             name="ed-gloss-speech"
-                            value={gloss.speechId}
+                            value={lexicalEntry.speechId}
                             onChange={_onChange('speechId')}
                             required={true}
                         />
@@ -113,7 +113,7 @@ function LexicalEntryForm(props: IProps) {
                         <input type="text"
                             className="form-control"
                             id="ed-gloss-sources"
-                            value={gloss.source}
+                            value={lexicalEntry.source}
                             onChange={_onChangeNative('source')}
                             required={true}
                         />
@@ -121,7 +121,7 @@ function LexicalEntryForm(props: IProps) {
                     <div className="form-group">
                         <label htmlFor="ed-gloss-comments">Comments</label>
                         <MarkdownInput name="ed-gloss-comments"
-                            value={gloss.comments}
+                            value={lexicalEntry.comments}
                             onChange={_onChange('comments')}
                         />
                     </div>
@@ -133,7 +133,7 @@ function LexicalEntryForm(props: IProps) {
                         <label>
                             <input type="checkbox"
                                 name="ed-gloss-is-uncertain"
-                                checked={gloss.isUncertain}
+                                checked={lexicalEntry.isUncertain}
                                 value={1}
                                 onChange={_onChangeNative('isUncertain')}
                             /> Uncertain
@@ -143,7 +143,7 @@ function LexicalEntryForm(props: IProps) {
                         <label>
                             <input type="checkbox"
                                 name="ed-gloss-is-rejected"
-                                checked={gloss.isRejected}
+                                checked={lexicalEntry.isRejected}
                                 value={1}
                                 onChange={_onChangeNative('isRejected')}
                             /> Rejected (strikethrough)
@@ -156,7 +156,7 @@ function LexicalEntryForm(props: IProps) {
                         </label>
                         <LexicalEntryDetailInput name="ed-gloss-details"
                             onChange={_onChange('lexicalEntryDetails')}
-                            value={gloss.lexicalEntryDetails} />
+                            value={lexicalEntry.lexicalEntryDetails} />
                     </div>
                     <div className="form-group">
                         <label htmlFor="ed-gloss-keywords">
@@ -165,7 +165,7 @@ function LexicalEntryForm(props: IProps) {
                         </label>
                         <TagInput
                             name="ed-gloss-keywords"
-                            value={gloss.keywords.map((k) => k.word)}
+                            value={lexicalEntry.keywords.map((k) => k.word)}
                             onChange={_onChange('keywords', keywordsTransformer)}
                         />
                     </div>
@@ -176,11 +176,11 @@ function LexicalEntryForm(props: IProps) {
                         </label>
                         <TengwarInput
                             inputSize="sm"
-                            languageId={gloss.languageId}
+                            languageId={lexicalEntry.languageId}
                             name="ed-gloss-tengwar"
                             onChange={_onChange('tengwar')}
-                            originalText={gloss.word.word}
-                            value={gloss.tengwar}
+                            originalText={lexicalEntry.word.word}
+                            value={lexicalEntry.tengwar}
                         />
                     </div>
                     <div className="form-group">
@@ -188,7 +188,7 @@ function LexicalEntryForm(props: IProps) {
                         <AccountSelect
                             name="ed-gloss-account"
                             onChange={_onChange('account')}
-                            value={gloss.account}
+                            value={lexicalEntry.account}
                         />
                     </div>
                     <div className="form-group">
@@ -197,7 +197,7 @@ function LexicalEntryForm(props: IProps) {
                             className="form-control"
                             name="ed-gloss-group-id"
                             onChange={_onChange('lexicalEntryGroupId')}
-                            value={gloss.lexicalEntryGroupId}
+                            value={lexicalEntry.lexicalEntryGroupId}
                         />
                     </div>
                     <div className="form-group">
@@ -208,7 +208,7 @@ function LexicalEntryForm(props: IProps) {
                         <input type="text"
                             className="form-control"
                             id="ed-gloss-label"
-                            value={gloss.label}
+                            value={lexicalEntry.label}
                             onChange={_onChangeNative('label')}
                             required={false}
                         />

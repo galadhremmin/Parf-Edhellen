@@ -64,15 +64,15 @@ class HomeController extends Controller
 
         // Retrieve a random lexical entry to feature
         $randomGloss = Cache::remember('ed.home.gloss', 60 * 60 /* seconds */, function () {
-            $gloss = LexicalEntry::active()
+            $lexicalEntry = LexicalEntry::active()
                 ->inRandomOrder()
                 ->notUncertain()
                 ->first();
 
             return [
-                'gloss' => $gloss === null //
+                'lexicalEntry' => $lexicalEntry === null //
                     ? null //
-                    : $this->_bookAdapter->adaptLexicalEntry($gloss),
+                    : $this->_bookAdapter->adaptLexicalEntry($lexicalEntry),
             ];
         });
 

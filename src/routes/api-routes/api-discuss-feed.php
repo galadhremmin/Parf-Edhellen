@@ -2,7 +2,7 @@
 
 // Public unrestricted API for discuss
 
-use App\Http\Controllers\Api\v2\DiscussFeedApiController;
+use App\Http\Controllers\Api\v3\DiscussFeedApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([

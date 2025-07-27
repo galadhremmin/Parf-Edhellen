@@ -2,9 +2,9 @@
 
 // Admin API
 
-use App\Http\Controllers\Api\v2\AccountApiController;
-use App\Http\Controllers\Api\v2\GlossApiController;
-use App\Http\Controllers\Api\v2\UtilityApiController;
+use App\Http\Controllers\Api\v3\AccountApiController;
+use App\Http\Controllers\Api\v3\GlossApiController;
+use App\Http\Controllers\Api\v3\UtilityApiController;
 use App\Security\RoleConstants;
 use Illuminate\Support\Facades\Route;
 

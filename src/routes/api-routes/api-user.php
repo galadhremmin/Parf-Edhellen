@@ -2,10 +2,10 @@
 
 // Restricted API
 
-use App\Http\Controllers\Api\v2\AccountApiController;
-use App\Http\Controllers\Api\v2\BookApiController;
-use App\Http\Controllers\Api\v2\SentenceApiController;
-use App\Http\Controllers\Api\v2\SubscriptionApiController;
+use App\Http\Controllers\Api\v3\AccountApiController;
+use App\Http\Controllers\Api\v3\BookApiController;
+use App\Http\Controllers\Api\v3\SentenceApiController;
+use App\Http\Controllers\Api\v3\SubscriptionApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([

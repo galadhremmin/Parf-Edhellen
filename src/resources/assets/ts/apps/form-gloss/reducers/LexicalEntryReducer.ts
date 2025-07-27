@@ -25,7 +25,7 @@ const InitialState: ILexicalEntryState = {
     source: '',
     speechId: 0,
     tengwar: '',
-    translations: [],
+    glosses: [],
     word: {
         word: '',
     },
@@ -52,7 +52,7 @@ const LexicalEntryReducer = (state: ILexicalEntryState = InitialState, action: I
                 source: 'source',
                 speechId: 'speechId',
                 tengwar: (entry) => entry.tengwar || '',
-                translations: 'translations',
+                glosses: 'glosses',
                 word: 'word',
             }, action.lexicalEntry);
         case Actions.SetLexicalEntryField:

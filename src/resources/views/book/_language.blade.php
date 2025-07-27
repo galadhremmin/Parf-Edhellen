@@ -6,13 +6,13 @@
     </h2>
   </header>
   <section class="ed-glossary__language__words" id="language-box-{{ $language->id }}">
-    @foreach ($glosses as $gloss)
-      @include('book._gloss', [ 'gloss' => $gloss, 'language' => $language ])
+    @foreach ($lexicalEntries as $lexicalEntry)
+      @include('book._lexical-entry', [ 'lexicalEntry' => $lexicalEntry, 'language' => $language ])
 
       @if ($single)
         <hr>
         @include('discuss._standalone', [
-          'entity_id'   => $gloss->latest_lexical_entry_version_id,
+          'entity_id'   => $lexicalEntry->latest_lexical_entry_version_id,
           'entity_type' => 'lex_entry_ver'
         ])
       @endif

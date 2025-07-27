@@ -15,7 +15,7 @@ trait CanMapGloss
      *     word: string,
      *     sense: string,
      *     keywords: string[],
-     *     translations: Gloss[],
+     *     glosses: Gloss[],
      *     details: LexicalEntryDetail[]
      * }
      */

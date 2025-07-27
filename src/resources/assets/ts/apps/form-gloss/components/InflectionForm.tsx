@@ -7,6 +7,7 @@ import { fireEvent } from '@root/components/Component';
 import InflectionsInput from '../components/InflectionsInput';
 import { IProps } from './InflectionForm._types';
 import { IChangeEventArgs } from './InflectionsInput._types';
+import { deepClone } from '@root/utilities/func/clone';
 
 function InflectionForm(props: IProps) {
     const [ focusNextRow, setFocusNextRow ] = useState(false);
@@ -27,7 +28,7 @@ function InflectionForm(props: IProps) {
 
         setFocusNextRow(false);
         void fireEvent(name, onInflectionsChange, {
-            inflectionGroup,
+            inflectionGroup: deepClone(inflectionGroup),
             inflectionGroupUuid,
         });
     };

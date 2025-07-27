@@ -67,6 +67,6 @@ class LexicalEntryVersionContext implements IDiscussContext
 
         $model = $this->_bookAdapter->adaptLexicalEntries([$gloss->first()]);
 
-        return view('discuss.context._gloss', $model);
+        return view('discuss.context._lexical-entry', $model);
     }
 }

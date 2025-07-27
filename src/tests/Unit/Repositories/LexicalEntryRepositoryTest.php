@@ -228,7 +228,7 @@ class LexicalEntryRepositoryTest extends TestCase
         $versions = $r->getLexicalEntryVersions($lexicalEntry->id);
 
         $this->assertTrue((bool) $changed);
-        $this->assertEquals(LexicalEntryChange::TRANSLATIONS->value | LexicalEntryChange::KEYWORDS->value, $changed);
+        $this->assertEquals(LexicalEntryChange::GLOSSES->value | LexicalEntryChange::KEYWORDS->value, $changed);
         $this->assertEquals(1, $lexicalEntry->glosses->filter(function ($g) use ($newGloss) {
             return $g->translation === $newGloss->translation;
         })->count());

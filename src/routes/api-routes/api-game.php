@@ -2,7 +2,7 @@
 
 // Public unrestricted API
 
-use App\Http\Controllers\Api\v2\WordFinderApiController;
+use App\Http\Controllers\Api\v3\WordFinderApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([

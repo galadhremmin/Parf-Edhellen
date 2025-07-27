@@ -8,7 +8,7 @@ const LexicalEntrySuggestion = (entry: ISuggestionEntity) => {
         <span className="GlossSuggestion--id">{entry.id}</span>
         <span className="GlossSuggestion--word">{entry.word}</span>{' '}
         <span className="GlossSuggestion--type">{entry.type}</span>{' '}
-        <span className="GlossSuggestion--gloss"><Quote>{entry.translation}</Quote></span>{' '}
+        <span className="GlossSuggestion--gloss"><Quote>{entry.gloss}</Quote></span>{' '}
         {entry.source && `[${entry.source}]`}{' '}
         {entry.lexicalEntryGroupName && `in ${entry.lexicalEntryGroupName}`}
     </span>;

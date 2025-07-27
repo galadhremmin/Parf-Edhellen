@@ -47,7 +47,7 @@ export interface ISentenceContributionApi {
     validateTransformations(args: ISentenceFragmentEntity[], suggestForLanguageId?: number): Promise<IValidateTransformationsResponse>;
 }
 
-export type ContributionMorph = 'lexical_entry' | 'sentence' | 'lexical_entry_infl';
+export type ContributionMorph = 'lexical_entry' | 'sentence' | 'lex_entry_infl';
 
 export default interface IContributionResourceApi extends ILexicalEntryContributionApi, ISentenceContributionApi {
     saveContribution<T>(args: IContribution<T>, morph: ContributionMorph): Promise<IContributionSaveResponse>;

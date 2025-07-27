@@ -20,7 +20,7 @@ const store = configureStore({
 const Inject = (props: IProps) => {
     const {
         confirmButton,
-        gloss,
+        lexicalEntry,
         formSections = [ FormSection.Gloss, FormSection.Inflections ],
         inflections,
         prefetched = true,
@@ -31,8 +31,8 @@ const Inject = (props: IProps) => {
 
         const actions = new LexicalEntryActions();
         if (prefetched) {
-            if (gloss !== undefined) {
-                dispatch(actions.setLoadedLexicalEntry(gloss));
+            if (lexicalEntry !== undefined) {
+                dispatch(actions.setLoadedLexicalEntry(lexicalEntry));
             }
             if (inflections !== undefined) {
                 dispatch(actions.setLoadedInflections(inflections));

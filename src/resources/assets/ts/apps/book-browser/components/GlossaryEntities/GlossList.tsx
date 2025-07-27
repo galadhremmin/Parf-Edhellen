@@ -1,7 +1,7 @@
 import Tengwar from '@root/components/Tengwar';
-import { IProps } from './GlossTranslations._types';
+import { IProps } from './GlossList._types';
 
-const GlossTranslations = (props: IProps) => {
+const GlossList = (props: IProps) => {
     const {
         lexicalEntry,
     } = props;
@@ -19,4 +19,4 @@ const GlossTranslations = (props: IProps) => {
     </p>;
 };
 
-export default GlossTranslations;
+export default GlossList;

@@ -49,7 +49,7 @@ function LexicalEntrySelect(props: IProps) {
                         id: 'id',
                         normalizedWord: (v) => v.word.normalizedWord,
                         source: 'source',
-                        translation: (v) => v.translations.map((t) => t.translation).join(', '),
+                        gloss: (v) => v.glosses.map((t) => t.translation).join(', '),
                         type: (v) => v.speech?.name,
                         word: (v) => v.word.word,
                     }, r);

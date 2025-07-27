@@ -417,10 +417,10 @@ class LexicalEntryRepository
             // used by the repository, but is utilised by the Eloquent ORM, thus the different
             // syntax.
             if ($originalLexicalEntry->glosses->count() !== count($glosses)) {
-                $changed |= LexicalEntryChange::TRANSLATIONS->value;
+                $changed |= LexicalEntryChange::GLOSSES->value;
             }
 
-            if (! ($changed & LexicalEntryChange::TRANSLATIONS->value)) {
+            if (! ($changed & LexicalEntryChange::GLOSSES->value)) {
                 // If the length matches, iterate through each element and check whether they
                 // exist in both collections.
                 $existingGlosses = $originalLexicalEntry->glosses->map(function ($g) {
@@ -434,7 +434,7 @@ class LexicalEntryRepository
                 $newGlosses->sort();
 
                 if ($newGlosses != $existingGlosses) {
-                    $changed |= LexicalEntryChange::TRANSLATIONS->value;
+                    $changed |= LexicalEntryChange::GLOSSES->value;
                 }
             }
 
@@ -497,7 +497,7 @@ class LexicalEntryRepository
                     $lexicalEntry->lexical_entry_details()->saveMany($details);
                 }
 
-                if ($isNew || $changed & LexicalEntryChange::TRANSLATIONS->value) {
+                if ($isNew || $changed & LexicalEntryChange::GLOSSES->value) {
                     if (! $isNew) {
                         $lexicalEntry->glosses()->delete();
                     }
@@ -570,8 +570,8 @@ class LexicalEntryRepository
         $keywords = Keyword::join('words', 'words.id', 'keywords.word_id')
             ->where('keywords.sense_id', $senseId)
             ->where(function ($query) use ($id) {
-                $query->whereNull('keywords.gloss_id')
-                    ->orWhere('keywords.gloss_id', $id);
+                $query->whereNull('keywords.lexical_entry_id')
+                    ->orWhere('keywords.lexical_entry_id', $id);
             })
             ->select('words.word')
             ->distinct()

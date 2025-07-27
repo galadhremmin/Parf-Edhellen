@@ -27,8 +27,8 @@
           @endif
           version</em>
       </div>
-      @include('book._gloss', [ 
-        'gloss' => $v, 
+      @include('book._lexical-entry', [ 
+        'lexicalEntry' => $v, 
         'language' => $v->language,
         'disable_tools' => true
       ])

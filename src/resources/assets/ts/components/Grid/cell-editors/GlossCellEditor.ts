@@ -77,7 +77,7 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
                         lexicalEntryGroupName: gloss.lexicalEntryGroup?.name,
                         id: gloss.id,
                         normalizedWord: gloss.word.normalizedWord,
-                        translation: gloss.translations.map((t) => t.translation).join(', '),
+                        gloss: gloss.glosses.map((t) => t.translation).join(', '),
                         type: gloss.speech?.name,
                         source: gloss.source,
                         word: gloss.word.word,
@@ -128,7 +128,7 @@ export default class GlossCellEditor extends PopupComponent implements ICellEdit
             html.push(
                 `<li>
                     <a href="#" class="GlossCellEditor--suggestion" data-gloss-id="${s.id}">
-                        <strong>${s.word}</strong> <i>${s.type || ''}</i> “${s.translation}” [${source || 'unknown source'}] ${s.lexicalEntryGroupName} (${s.id}, #${i + 1})
+                        <strong>${s.word}</strong> <i>${s.type || ''}</i> “${s.gloss}” [${source || 'unknown source'}] ${s.lexicalEntryGroupName} (${s.id}, #${i + 1})
                     </a>
                 </li>`,
             );

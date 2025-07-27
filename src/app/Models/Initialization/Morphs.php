@@ -34,7 +34,7 @@ class Morphs
             'fragment' => SentenceFragment::class,
             'lexical_entry' => LexicalEntry::class,
             'gloss' => Gloss::class,
-            'gloss_infl' => LexicalEntryInflection::class,
+            'lex_entry_infl' => LexicalEntryInflection::class,
             'discussion' => ForumDiscussion::class,
             'forum_group' => ForumGroup::class,
             'forum_thread' => ForumThread::class,

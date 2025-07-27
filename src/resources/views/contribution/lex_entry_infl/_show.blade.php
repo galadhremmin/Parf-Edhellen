@@ -1,8 +1,8 @@
 @inject('link', 'App\Helpers\LinkHelper')
-@if ($gloss)
+@if ($lexicalEntry)
 <p>
   <span class="TextIcon TextIcon--info-sign"></span>
-  This is a proposed modification of the gloss <a href="{{ $link->lexicalEntry($gloss->id) }}">{{ $gloss->id }}</a>.
+  This is a proposed modification of the lexical entry <a href="{{ $link->lexicalEntry($lexicalEntry->id) }}">{{ $lexicalEntry->id }}</a>.
 </p>
 @endif
 

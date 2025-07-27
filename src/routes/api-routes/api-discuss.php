@@ -2,7 +2,7 @@
 
 // Public unrestricted API for discuss
 
-use App\Http\Controllers\Api\v2\DiscussApiController;
+use App\Http\Controllers\Api\v3\DiscussApiController;
 use App\Security\RoleConstants;
 use Illuminate\Support\Facades\Route;
 

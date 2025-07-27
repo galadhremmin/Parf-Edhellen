@@ -8,7 +8,7 @@
     @if (! $data['language']->is_unusual)
       @include('book._language', [
         'language' => $data['language'],
-        'glosses'  => $data['entities'],
+        'lexicalEntries'  => $data['entities'],
         'single'   => $single
       ])
       <?php $c += 1; ?>
@@ -27,7 +27,7 @@
     @if ($data['language']->is_unusual)
       @include('book._language', [
         'language' => $data['language'],
-        'glosses'  => $data['entities'],
+        'lexicalEntries'  => $data['entities'],
         'single'   => $single
       ])
     @endif

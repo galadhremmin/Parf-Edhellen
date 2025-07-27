@@ -5,7 +5,7 @@ import { ILexicalEntryEntity } from '@root/connectors/backend/IGlossResourceApi'
 export type ILexicalEntryState = IContribution<Pick<ILexicalEntryEntity, 'account' | 'comments' |
     'etymology' | 'externalId' | 'lexicalEntryDetails' | 'lexicalEntryGroupId' | 'id' |
     'isRejected' | 'isUncertain' | 'keywords' | 'label' | 'languageId' | 'latestLexicalEntryVersionId' |
-    'sense' | 'source' | 'speechId' | 'tengwar' | 'translations' | 'word'>>;
+    'sense' | 'source' | 'speechId' | 'tengwar' | 'glosses' | 'word'>>;
 
 export interface ILexicalEntryAction extends IReduxAction {
     lexicalEntry: IContribution<ILexicalEntryEntity>;

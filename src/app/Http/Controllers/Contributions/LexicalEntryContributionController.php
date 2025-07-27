@@ -48,7 +48,7 @@ class LexicalEntryContributionController extends Controller implements IContribu
 
         $translations = $this->getTranslationsFromPayload($glossData);
         $details = $this->getDetailsFromPayload($glossData);
-        $parentGloss = array_key_exists('id', $glossData)
+        $parentLexicalEntry = array_key_exists('id', $glossData)
             ? $glossData['id'] : 0;
         $glossData = $glossData + [
             'sense' => $contribution->sense,
@@ -69,10 +69,10 @@ class LexicalEntryContributionController extends Controller implements IContribu
 
         $model = $glossData + [
             'keywords' => $keywords,
-            'parentGloss' => $parentGloss,
+            'parentLexicalEntry' => $parentLexicalEntry,
         ];
 
-        return new ViewModel($contribution, 'contribution.gloss._show', $model);
+        return new ViewModel($contribution, 'contribution.lexical_entry._show', $model);
     }
 
     /**
@@ -111,7 +111,7 @@ class LexicalEntryContributionController extends Controller implements IContribu
             'sense' => $sense,
             'keywords' => $keywords,
             'notes' => $contribution->notes,
-            'translations' => $translations,
+            'glosses' => $translations,
             'lexical_entry_details' => $details,
         ];
     }

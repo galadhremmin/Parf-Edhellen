@@ -19,8 +19,8 @@ export default class LexicalEntryActions {
 
     public loadLexicalEntry(lexicalEntryId: number): ReduxThunk {
         return async (dispatch: ReduxThunkDispatch) => {
-            const gloss = await this._glossApi.lexicalEntry(lexicalEntryId);
-            dispatch(this.setLoadedLexicalEntry(gloss));
+            const lexicalEntry = await this._glossApi.lexicalEntry(lexicalEntryId);
+            dispatch(this.setLoadedLexicalEntry(lexicalEntry));
         };
     }
 
@@ -32,9 +32,9 @@ export default class LexicalEntryActions {
         };
     }
 
-    public setLoadedLexicalEntry(gloss: ILexicalEntryEntity) {
+    public setLoadedLexicalEntry(lexicalEntry: ILexicalEntryEntity) {
         return {
-            gloss,
+            lexicalEntry,
             type: Actions.ReceiveLexicalEntry,
         };
     }
@@ -75,9 +75,9 @@ export default class LexicalEntryActions {
         }
     }
 
-    public saveLexicalEntry(gloss: ILexicalEntryEntity, inflections: GroupedInflectionsState = null) {
+    public saveLexicalEntry(lexicalEntry: ILexicalEntryEntity, inflections: GroupedInflectionsState = null) {
         return (dispatch: ReduxThunkDispatch) => handleValidationErrors(dispatch, async () => {
-            const r0 = await this._contributionApi.saveLexicalEntry(gloss);
+            const r0 = await this._contributionApi.saveLexicalEntry(lexicalEntry);
 
             let r1: IContributionSaveResponse = null;
             if (inflections) {
@@ -85,7 +85,7 @@ export default class LexicalEntryActions {
                 r1 = await this._contributionApi.saveContribution({
                     inflectionGroups: inflections,
                     dependentOnContributionId: r0.id,
-                }, 'lexical_entry_infl');
+                }, 'lex_entry_infl');
             }
 
             const url = r0?.url || r1?.url || null;
@@ -101,7 +101,7 @@ export default class LexicalEntryActions {
                 inflectionGroups: inflections,
                 contributionId: contributionId || null,
                 lexicalEntryId: lexicalEntryId || null,
-            }, 'lexical_entry_infl');
+            }, 'lex_entry_infl');
 
             if (r.url) {
                 window.location.href = r.url;

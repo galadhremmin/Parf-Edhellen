@@ -26,7 +26,7 @@ function MasterForm(props: IProps) {
         edit,
         errors,
         formSections,
-        lexicalEntry: gloss,
+        lexicalEntry,
         inflections,
 
         onCopyLexicalEntry: onCopyGloss,
@@ -52,7 +52,7 @@ function MasterForm(props: IProps) {
         void fireEvent('MasterForm', onSubmit, {
             changes,
             edit,
-            lexicalEntry: gloss,
+            lexicalEntry,
             inflections,
         });
     };
@@ -63,7 +63,7 @@ function MasterForm(props: IProps) {
             <p>
                 <TextIcon icon="info-sign" />{' '}
                 <strong>
-                    You are proposing changes to the gloss <Quote>{gloss.word.word}</Quote> ({gloss.id}).
+                    You are proposing changes to the lexical entry <Quote>{lexicalEntry.word.word}</Quote> ({lexicalEntry.id}).
                 </strong>{' '}
                 You can make a <a href="#" onClick={_onDisableEdit}>copy the gloss</a> if you want to use it as
                 a template for a new gloss.
@@ -75,14 +75,14 @@ function MasterForm(props: IProps) {
         </StaticAlert>}
         {formSections.includes(FormSection.Gloss) && <section>
             <LexicalEntryForm name="ed-gloss-form"
-                    lexicalEntry={gloss}
+                    lexicalEntry={lexicalEntry}
                     onLexicalEntryFieldChange={onGlossFieldChange} 
             />
         </section>}
         {formSections.includes(FormSection.Inflections) && <section className="mt-3">
             <InflectionForm name="ed-inflections-form"
                             inflections={inflections}
-                            lexicalEntryId={gloss.id}
+                            lexicalEntryId={lexicalEntry.id}
                             onInflectionCreate={onInflectionCreate}
                             onInflectionsChange={onInflectionsChange}
             />

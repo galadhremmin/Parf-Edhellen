@@ -62,7 +62,7 @@ class GlossInflectionContributionController extends Controller implements IContr
             'inflections' => $lexicalEntryInflections,
         ];
 
-        return new ViewModel($contribution, 'contribution.gloss_infl._show', $viewModel);
+        return new ViewModel($contribution, 'contribution.lex_entry_infl._show', $viewModel);
     }
 
     /**

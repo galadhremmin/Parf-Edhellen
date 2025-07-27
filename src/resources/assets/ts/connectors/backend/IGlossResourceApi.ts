@@ -39,7 +39,7 @@ export interface ILexicalEntryEntity {
     speech?: ISpeechEntity;
     speechId: number;
     tengwar?: string;
-    translations: ITranslationEntity[];
+    glosses: IGlossEntity[];
     updatedAt?: string;
     word: IWordEntity;
 }
@@ -74,7 +74,7 @@ export interface ISenseEntity {
     word: IWordEntity;
 }
 
-export interface ITranslationEntity {
+export interface IGlossEntity {
     translation: string;
 }
 
@@ -110,7 +110,7 @@ export interface ISuggestionEntity {
     id: number;
     normalizedWord: string;
     source: string;
-    translation: string;
+    gloss: string;
     type: string;
     word: string;
 }

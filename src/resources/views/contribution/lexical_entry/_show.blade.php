@@ -1,17 +1,17 @@
 @inject('link', 'App\Helpers\LinkHelper')
-@if ($parentGloss)
+@if ($parentLexicalEntry)
 <p>
   <span class="TextIcon TextIcon--info-sign"></span>
-  This is a proposed modification of the gloss <a href="{{ $link->lexicalEntry($parentGloss) }}">{{ $parentGloss }}</a>.
+  This is a proposed modification of the lexical entry <a href="{{ $link->lexicalEntry($parentLexicalEntry) }}">{{ $parentLexicalEntry }}</a>.
 </p>
 @endif
 
 <div class="card">
   <div class="card-body">
     @foreach ($sections as $section)
-      @foreach ($section['entities'] as $gloss)
-        @include('book._gloss', [ 
-          'gloss' => $gloss, 
+      @foreach ($section['entities'] as $lexicalEntry)
+        @include('book._lexicalEntry', [ 
+          'lexicalEntry' => $lexicalEntry, 
           'language' => $section['language'],
           'disable_tools' => true
         ])
