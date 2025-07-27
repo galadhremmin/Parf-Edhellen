@@ -17,7 +17,7 @@
         @if ($t->speech)
         <em>{{ $t->speech->name }}</em>
         @endif
-        {{ $t->translations->implode('translation', ', ') }}
+        {{ $t->glosses->implode('translation', ', ') }}
         @if (! empty($t->source))
         [<span class="text-info">{{ $t->source }}</span>]
         @else

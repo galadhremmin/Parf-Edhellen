@@ -36,6 +36,9 @@ class ContributionControllerFactory
             case Sentence::class:
                 $controllerName = SentenceContributionController::class;
                 break;
+            case 'App\Models\Gloss': // legacy
+                $controllerName = LegacyGlossContributionController::class;
+                break;
             default:
                 throw new \Exception('Unrecognised model name "'.$modelName.'". Ensure that the entity\'s morph is supported by the ContributionControllerFactory.');
         }

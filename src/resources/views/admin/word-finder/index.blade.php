@@ -17,19 +17,24 @@
     </div>
 @endif
 
-<form action="{{ route('word-finder.config.store') }}" method="post">
-    {{ csrf_field() }}
-    <div class="form-group">
-        <label for="ed-word-finder-gloss-group-ids" class="control-label">Eligible gloss groups</label>
-        <select multiple name="lexical_entry_group_ids[]" size="10" class="form-control" id="ed-word-finder-gloss-group-ids">
-            @foreach ($all_gloss_groups as $gloss_group)
-            <option value="{{ $gloss_group->id }}" {{ isset($selected_lexical_entry_group_ids[(string) $gloss_group->id]) ? "selected" : '' }}>{{ $gloss_group->name }}</option>
-            @endforeach
-        </select>
+<div class="card shadow">
+    <div class="card-body">
+        <h2>Sage configuration</h2>
+        <form action="{{ route('word-finder.config.store') }}" method="post">
+            {{ csrf_field() }}
+            <div class="form-group">
+                <label for="ed-word-finder-gloss-group-ids" class="control-label">Eligible gloss groups</label>
+                <select multiple name="lexical_entry_group_ids[]" size="10" class="form-control" id="ed-word-finder-gloss-group-ids">
+                    @foreach ($all_lexical_entry_groups as $group)
+                    <option value="{{ $group->id }}" {{ isset($selected_lexical_entry_group_ids[(string) $group->id]) ? "selected" : '' }}>{{ $group->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="text-end mt-3">
+                <button class="btn btn-primary" type="submit">Save</button>
+            </div>
+        </form>
     </div>
-    <div class="text-end">
-        <button class="bnt btn-primary" type="submit">Save</button>
-    </div>
-</form>
+</div>
 
 @endsection

@@ -10,7 +10,7 @@
   <div class="card-body">
     @foreach ($sections as $section)
       @foreach ($section['entities'] as $lexicalEntry)
-        @include('book._lexicalEntry', [ 
+        @include('book._lexical-entry', [ 
           'lexicalEntry' => $lexicalEntry, 
           'language' => $section['language'],
           'disable_tools' => true

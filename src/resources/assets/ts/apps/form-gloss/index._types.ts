@@ -2,7 +2,7 @@ import { ILexicalEntryInflection } from '@root/connectors/backend/IBookApi';
 import { ILexicalEntryEntity } from '@root/connectors/backend/IGlossResourceApi';
 
 export const enum FormSection {
-    Gloss = 'gloss',
+    LexicalEntry = 'lexical_entry',
     Inflections = 'inflections',
 }
 

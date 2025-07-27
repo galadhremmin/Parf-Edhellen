@@ -21,7 +21,7 @@ const Inject = (props: IProps) => {
     const {
         confirmButton,
         lexicalEntry,
-        formSections = [ FormSection.Gloss, FormSection.Inflections ],
+        formSections = [ FormSection.LexicalEntry, FormSection.Inflections ],
         inflections,
         prefetched = true,
     } = props;

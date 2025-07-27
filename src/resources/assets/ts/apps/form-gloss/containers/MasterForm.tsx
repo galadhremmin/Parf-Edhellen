@@ -73,7 +73,7 @@ function MasterForm(props: IProps) {
             <TextIcon icon="info-sign" />{' '}
             <strong>No changes were made!</strong> Please make at least one change before trying to submit.
         </StaticAlert>}
-        {formSections.includes(FormSection.Gloss) && <section>
+        {formSections.includes(FormSection.LexicalEntry) && <section>
             <LexicalEntryForm name="ed-gloss-form"
                     lexicalEntry={lexicalEntry}
                     onLexicalEntryFieldChange={onGlossFieldChange} 

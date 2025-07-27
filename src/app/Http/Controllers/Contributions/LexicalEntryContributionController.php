@@ -132,11 +132,11 @@ class LexicalEntryContributionController extends Controller implements IContribu
             'review' => $contribution,
             'payload' => $payloadData,
             'inflections' => $inflections,
-            'form_restrictions' => ['gloss'],
+            'form_restrictions' => ['lexical_entry'],
         ];
 
         return $request->ajax() //
-            ? $viewModel : view('contribution.gloss.edit', $viewModel);
+            ? $viewModel : view('contribution.lexical_entry.edit', $viewModel);
     }
 
     /**
@@ -153,28 +153,28 @@ class LexicalEntryContributionController extends Controller implements IContribu
         $entityId = isset($data['entity_id']) ? intval($data['entity_id']) : 0;
         $lexicalEntryVersionId = isset($data['lexical_entry_version_id']) ? intval($data['lexical_entry_version_id']) : 0;
 
-        $gloss = null;
+        $lexicalEntry = null;
         if ($entityId !== 0) {
-            $glosses = $this->_lexicalEntryRepository->getLexicalEntry($entityId);
-            if (! $glosses->isEmpty()) {
-                $gloss = $glosses->first();
+            $lexicalEntries = $this->_lexicalEntryRepository->getLexicalEntry($entityId);
+            if (! $lexicalEntries->isEmpty()) {
+                $lexicalEntry = $lexicalEntries->first();
             }
         }
         if ($lexicalEntryVersionId !== 0) {
-            $gloss = $this->_lexicalEntryRepository->getLexicalEntryFromVersion($lexicalEntryVersionId);
+            $lexicalEntry = $this->_lexicalEntryRepository->getLexicalEntryFromVersion($lexicalEntryVersionId);
         }
 
         $inflections = [];
-        if ($gloss !== null) {
-            $gloss->keywords = $this->_lexicalEntryRepository->getKeywords($gloss->sense_id, $gloss->id);
-            $inflections = $this->_lexicalEntryInflectionRepository->getInflectionsForLexicalEntry($gloss->id);
+        if ($lexicalEntry !== null) {
+            $lexicalEntry->keywords = $this->_lexicalEntryRepository->getKeywords($lexicalEntry->sense_id, $lexicalEntry->id);
+            $inflections = $this->_lexicalEntryInflectionRepository->getInflectionsForLexicalEntry($lexicalEntry->id);
         }
 
         return $request->ajax()
-            ? $gloss
+            ? $lexicalEntry
             // create a payload model if a gloss exists.
-            : view('contribution.gloss.create', $gloss ? [
-                'payload' => $gloss,
+            : view('contribution.lexical_entry.create', $lexicalEntry ? [
+                'payload' => $lexicalEntry,
                 'inflections' => $inflections,
             ] : []);
     }
