@@ -19,10 +19,10 @@ export default class Flashcards extends React.Component<IProps, IState> {
     public state: IState = {
         correct: true,
         flipped: false,
-        gloss: null,
+        lexicalEntry: null,
         loading: true,
         options: [],
-        translationId: null,
+        glossId: null,
         word: null,
     };
 
@@ -78,7 +78,7 @@ export default class Flashcards extends React.Component<IProps, IState> {
     private _renderBack() {
         const {
             correct,
-            gloss,
+            lexicalEntry: gloss,
             word,
         } = this.state;
 
@@ -131,7 +131,7 @@ export default class Flashcards extends React.Component<IProps, IState> {
         this.setState({
             flipped: false,
             options: card.options,
-            translationId: card.translationId,
+            glossId: card.glossId,
             word: card.word,
         });
 
@@ -144,13 +144,13 @@ export default class Flashcards extends React.Component<IProps, IState> {
         const result = await this._api.test({
             flashcardId: this.props.flashcardId,
             translation: option,
-            translationId: this.state.translationId,
+            glossId: this.state.glossId,
         });
 
         this.setState({
             correct: result.correct,
             flipped: true,
-            gloss: result.gloss,
+            lexicalEntry: result.lexicalEntry,
         });
 
         this._endLoading();

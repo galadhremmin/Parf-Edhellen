@@ -9,7 +9,7 @@ export interface IProps {
 interface ILocalState {
     correct: boolean;
     flipped: boolean;
-    gloss: ILexicalEntryEntity;
+    lexicalEntry: ILexicalEntryEntity;
     loading: boolean;
 }
 

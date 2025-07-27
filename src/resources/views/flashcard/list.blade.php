@@ -15,7 +15,7 @@
     <thead>
       <tr>
         <th>Date</th>
-        <th>Word</th>
+        <th>Entry</th>
         <th>Expected</th>
         <th>Answer</th>
       </tr>
@@ -25,12 +25,12 @@
       <tr class="{{ $r->correct ? '' : 'danger' }}">
         <td>@date($r->created_at)</td>
         <td>
-          @if ($r->gloss) 
-          <a href="{{ $link->lexicalEntry($r->gloss_id) }}">
-            {{ $r->gloss->word->word }}
+          @if ($r->lexical_entry) 
+          <a href="{{ $link->lexicalEntry($r->lexical_entry_id) }}">
+            {{ $r->lexical_entry->word->word }}
           </a>
           @else
-          Deleted gloss
+          Deleted entry
           @endif
         </td>
         <td>{{ $r->expected }}</td>

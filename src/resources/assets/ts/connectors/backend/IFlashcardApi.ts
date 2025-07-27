@@ -7,19 +7,19 @@ export interface ICardRequest {
 
 export interface ICardResponse {
     options: string[];
-    translationId: number;
+    glossId: number;
     word: string;
 }
 
 export interface ICardTestRequest {
     flashcardId: number;
     translation: string;
-    translationId: number;
+    glossId: number;
 }
 
 export interface ICardTestResponse {
     correct: boolean;
-    gloss: ILexicalEntryEntity;
+    lexicalEntry: ILexicalEntryEntity;
 }
 
 export default interface IFlashcardApi {

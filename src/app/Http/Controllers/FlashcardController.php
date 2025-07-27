@@ -186,23 +186,13 @@ class FlashcardController extends Controller
                 t.translation
             FROM
                 glosses as t
-            JOIN (SELECT 
-                    ti.id
-                FROM
-                    glosses as ti
-                JOIN lexical_entries as g on g.id = ti.lexical_entry_id
-                WHERE
-                    ti.translation <> :translation AND
-                    ti.translation NOT IN(\'?\', \'\', \'[unglossed]\') AND
-                    ( :speech0 = -1 OR ( :speech1 > -1 AND :speech2 = g.speech_id) ) AND
-                    RAND() < (SELECT 
-                            (16 / COUNT(*)) * 10
-                        FROM
-                            glosses
-                    )
-                ORDER BY RAND()
-                LIMIT 16    
-            ) AS t0 ON t0.id = t.id
+            JOIN lexical_entries as g on g.id = t.lexical_entry_id
+            WHERE
+                t.translation <> :translation AND
+                t.translation NOT IN(\'?\', \'\', \'[unglossed]\') AND
+                ( :speech0 = -1 OR ( :speech1 > -1 AND :speech2 = g.speech_id) ) AND
+                t.id >= FLOOR(RAND() * (SELECT MAX(id) FROM glosses))
+            ORDER BY t.id 
             LIMIT 4', [
             'translation' => $gloss->translation,
             'speech0' => $verbSpeechId,
@@ -219,7 +209,7 @@ class FlashcardController extends Controller
         return [
             'word' => $lexicalEntry->word->word,
             'options' => $options,
-            'translation_id' => $gloss->id,
+            'gloss_id' => $gloss->id,
         ];
     }
 
@@ -227,14 +217,22 @@ class FlashcardController extends Controller
     {
         $this->validate($request, [
             'flashcard_id' => 'numeric|exists:flashcards,id',
-            'translation_id' => 'numeric|exists:translations,id',
+            'gloss_id' => 'numeric|exists:glosses,id',
             'translation' => 'string|required',
             'gloss' => 'string',
         ]);
 
-        $translationId = intval($request->input('translation_id'));
-        $gloss = Gloss::findOrFail($translationId);
-        $lexicalEntry = $gloss->lexicalEntry;
+        $glossId = intval($request->input('gloss_id'));
+        $gloss = Gloss::find($glossId);
+
+        if ($gloss === null) {
+            return [
+                'correct' => false,
+                'lexicalEntry' => null,
+            ];
+        }
+
+        $lexicalEntry = $gloss->lexical_entry;
 
         $offeredGloss = $request->input('translation');
         $ok = strcmp($gloss->translation, $offeredGloss) === 0;
@@ -246,7 +244,7 @@ class FlashcardController extends Controller
 
             $result->flashcard_id = intval($request->input('flashcard_id'));
             $result->account_id = $account->id;
-            $result->gloss_id = $lexicalEntry->id;
+            $result->lexical_entry_id = $lexicalEntry->id;
             $result->expected = $gloss->translation;
             $result->actual = $offeredGloss;
             $result->correct = $ok;

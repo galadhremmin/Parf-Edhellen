@@ -51,7 +51,7 @@ function WordFinder(props: IContainerProps) {
         if (languageId !== 0 && currentStage === GameStage.Loading) {
             void fireEvent('WordFinder', onLoadGame, languageId);
         }
-    }, [ languageId, currentStage ]);
+    }, [ currentStage ]);
 
     useEffect(() => {
         const word = selectedParts.map((i) => parts[i].part).join('');
