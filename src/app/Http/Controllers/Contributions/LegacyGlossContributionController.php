@@ -2,20 +2,9 @@
 
 namespace App\Http\Controllers\Contributions;
 
-use App\Adapters\BookAdapter;
-use App\Http\Controllers\Abstracts\Controller;
-use App\Http\Controllers\Traits\CanMapGloss;
-use App\Http\Controllers\Traits\CanValidateGloss;
-use App\Models\Account;
 use App\Models\Contribution;
-use App\Models\LexicalEntry;
 use App\Models\LexicalEntryDetail;
-use App\Models\Sense;
 use App\Models\Gloss;
-use App\Models\Word;
-use App\Repositories\LexicalEntryInflectionRepository;
-use App\Repositories\LexicalEntryRepository;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 
 class LegacyGlossContributionController extends LexicalEntryContributionController
