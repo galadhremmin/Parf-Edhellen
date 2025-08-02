@@ -13,6 +13,7 @@ import SentenceForm from './containers/SentenceForm';
 
 import '@root/components/AgGrid.scss';
 import registerApp from '../app';
+import { ISentenceTranslationEntity } from '@root/connectors/backend/IBookApi';
 
 const store = configureStore({
     reducer: rootReducer,
@@ -46,7 +47,34 @@ const Inject = (props: IProps) => {
             }
 
             if (sentenceTranslations !== undefined) {
-                dispatch(actions.setLoadedSentenceTranslations(sentenceTranslations));
+                if (sentenceFragments !== undefined && //
+                    sentenceFragments.length > 0 &&  //
+                    sentenceTranslations.length < 1) {
+                    // translations may not have been properly instantiated as a reflection of
+                    // sentence fragments, so the logic below creates a unique translation row
+                    // per paragraph identified from the fragments. This logic is only ever going
+                    // to be relevant during form initialization and prefetch so there's no
+                    // point in trying to extract and generalize this logic for usage elsewhere.
+                    dispatch(
+                        actions.setLoadedSentenceTranslations(
+                            [...sentenceFragments.reduce((rows, f) => {
+                                const key = `${f.paragraphNumber}|${f.sentenceNumber}`;
+                                if (! rows.has(key)) {
+                                    rows.set(key, {
+                                        paragraphNumber: f.paragraphNumber,
+                                        sentenceNumber: f.sentenceNumber,
+                                        translation: '',
+                                    });
+                                }
+        
+                                return rows;
+                            }, new Map<string, ISentenceTranslationEntity>()) //
+                            .values()]
+                        ),
+                    );
+                } else {
+                    dispatch(actions.setLoadedSentenceTranslations(sentenceTranslations));
+                }
             }
         }
     }, []);

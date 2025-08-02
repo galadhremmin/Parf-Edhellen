@@ -2,6 +2,7 @@
 
 return [
     'version' => env('ED_VERSION', 1),
+    'api_version' => env('ED_API_VERSION', 3),
     'title' => env('ED_SITE_TITLE'),
     'description' => env('ED_SITE_DESCRIPTION'),
     'view_locale' => env('ED_SITE_VIEW_LOCALE'),

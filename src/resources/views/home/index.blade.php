@@ -24,7 +24,7 @@
     </p>
     <p>
       The dictionary contains <strong>{{ $noOfWords }}</strong> words, 
-      <strong>{{ $noOfGlosses }}</strong> active glosses and
+      <strong>{{ $noOfLexicalEntries }}</strong> active glosses and
       <strong>{{ $noOfSentences }}</strong> phrases.
       The community has posted <strong>{{ $noOfPosts }}</strong> comments, 
       finished <strong>{{ $noOfFlashcards }}</strong> flashcards and 

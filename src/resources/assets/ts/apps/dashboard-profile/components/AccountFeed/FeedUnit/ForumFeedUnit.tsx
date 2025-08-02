@@ -10,7 +10,7 @@ export default function ForumFeedUnit(props: IProps<IForumFeedRecord>) {
     } = props.unit.content;
 
     return <>
-        <a href={`/api/v2/discuss/thread/resolve/forum/${id}`} target="_blank" rel="noreferrer">
+        <a href={`/api/v3/discuss/thread/resolve/forum/${id}`} target="_blank" rel="noreferrer">
             <h3>{forumThread?.subject || 'unknown thread'}</h3>
         </a>
         <HtmlInject html={content} />

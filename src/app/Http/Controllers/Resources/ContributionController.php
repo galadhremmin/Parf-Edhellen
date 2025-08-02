@@ -154,6 +154,7 @@ class ContributionController extends Controller
         $contribution = new Contribution;
         $contribution->account_id = $request->user()->id;
         $contribution->is_approved = null;
+        $contribution->version = intval(config('ed.api_version'));
 
         if ($request->has('dependent_on_contribution_id')) {
             $contribution->dependent_on_contribution_id = intval($request->input('dependent_on_contribution_id'));

@@ -5,7 +5,7 @@
 use App\Http\Controllers\Api\v3\AccountApiController;
 use App\Http\Controllers\Api\v3\AccountFeedApiController;
 use App\Http\Controllers\Api\v3\BookApiController;
-use App\Http\Controllers\Api\v3\GlossApiController;
+use App\Http\Controllers\Api\v3\LexicalEntryApiController;
 use App\Http\Controllers\Api\v3\InflectionApiController;
 use App\Http\Controllers\Api\v3\SentenceApiController;
 use App\Http\Controllers\Api\v3\SpeechApiController;
@@ -40,9 +40,9 @@ Route::group([
     Route::get('inflection/{id?}', [InflectionApiController::class, 'index'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC]);
 
-    Route::get('gloss/{id?}', [GlossApiController::class, 'get'])
+    Route::get('lexical-entry/{id?}', [LexicalEntryApiController::class, 'get'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC]);
-    Route::post('gloss/suggest', [GlossApiController::class, 'suggest']);
+    Route::post('lexical-entry/suggest', [LexicalEntryApiController::class, 'suggest']);
 
     Route::resource('sentence', SentenceApiController::class, ['only' => [
         'show',

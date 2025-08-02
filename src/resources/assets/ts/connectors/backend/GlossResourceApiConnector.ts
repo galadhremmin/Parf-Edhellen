@@ -15,11 +15,11 @@ export default class GlossResourceApiConnector implements ILexicalEntryResourceA
     }
 
     public delete(lexicalEntryId: number, replacementId: number) {
-        return this._api.delete<void>(`gloss/${lexicalEntryId}`, { replacementId });
+        return this._api.delete<void>(`lexical-entry/${lexicalEntryId}`, { replacementId });
     }
 
     public async lexicalEntry(lexicalEntryId: number) {
-        const response = await this._api.get<IGetLexicalEntryResponse>(`gloss/${lexicalEntryId}`);
+        const response = await this._api.get<IGetLexicalEntryResponse>(`lexical-entry/${lexicalEntryId}`);
         return response.lexicalEntry;
     }
 
@@ -28,7 +28,7 @@ export default class GlossResourceApiConnector implements ILexicalEntryResourceA
             await this._parameterizeSuggestions(args);
         }
 
-        const response = await this._api.post<ISuggestResponse>(`gloss/suggest`, args);
+        const response = await this._api.post<ISuggestResponse>(`lexical-entry/suggest`, args);
         const map = new Map<string, ISuggestionEntity[]>();
 
         Object.keys(response).forEach((word) => {

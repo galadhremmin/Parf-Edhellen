@@ -285,6 +285,12 @@ class SentenceContributionController extends Controller implements IContribution
 
             $i = 0;
             foreach ($payload['fragments'] as $fragmentData) {
+                // To maintain backwards compatibility, make sure to transition fields native to v2 to v3's structure.
+                if (isset($fragmentData['gloss_id'])) {
+                    $fragmentData['lexical_entry_id'] = $fragmentData['gloss_id'];
+                    unset($fragmentData['gloss_id']);
+                }
+
                 $fragment = new SentenceFragment($fragmentData);
 
                 // Generate a fake ID (descending order, starting at -1).
@@ -292,13 +298,11 @@ class SentenceContributionController extends Controller implements IContribution
 
                 // Create an array of IDs for inflections associated with this fragment.
                 $fragment->lexical_entry_inflections = collect(
-                    isset($payload['lexical_entry_inflections'])
-                        ? $payload['lexical_entry_inflections'][$i]->orderBy('order')
-                        : array_map(function ($i) {  // 20220831: maintained for backwards compatibility.
-                            return [
-                                'inflection_id' => $i['inflection_id'],
-                            ];
-                        }, $payload['inflections'][$i])
+                    array_map(function ($i) {  // 20220831: maintained for backwards compatibility.
+                        return [
+                            'inflection_id' => $i['inflection_id'],
+                        ];
+                    }, $payload['inflections'][$i])
                 )->map(function ($i, $order) {
                     return new LexicalEntryInflection($i + ['order' => $order]);
                 });

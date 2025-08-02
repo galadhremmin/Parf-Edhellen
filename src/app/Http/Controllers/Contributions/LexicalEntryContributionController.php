@@ -46,28 +46,27 @@ class LexicalEntryContributionController extends Controller implements IContribu
             abort(400, 'Unrecognised payload: '.$contribution->payload);
         }
 
-        $translations = $this->getTranslationsFromPayload($glossData);
+        $glosses = $this->getGlossesFromPayload($glossData);
         $details = $this->getDetailsFromPayload($glossData);
         $parentLexicalEntry = array_key_exists('id', $glossData)
             ? $glossData['id'] : 0;
         $glossData = $glossData + [
             'sense' => $contribution->sense,
         ];
-        $gloss = new LexicalEntry($glossData);
-        $glosses = [$gloss];
+        $entry = new LexicalEntry($glossData);
 
-        $gloss->created_at = $contribution->created_at;
-        $gloss->account_name = $contribution->account->nickname;
-        $gloss->type = $gloss->speech->name;
+        $entry->created_at = $contribution->created_at;
+        $entry->account_name = $contribution->account->nickname;
+        $entry->type = $entry->speech->name;
 
         // Hack for assigning to the relation _glosses_ without saving them to the database.
-        $gloss->setRelation('glosses', new Collection($translations));
-        $gloss->setRelation('word', new Word(['word' => $contribution->word]));
-        $gloss->setRelation('lexical_entry_details', new Collection($details));
+        $entry->setRelation('glosses', new Collection($glosses));
+        $entry->setRelation('word', new Word(['word' => $contribution->word]));
+        $entry->setRelation('lexical_entry_details', new Collection($details));
 
-        $glossData = $this->_bookAdapter->adaptLexicalEntries($glosses);
+        $entryData = $this->_bookAdapter->adaptLexicalEntries([$entry]);
 
-        $model = $glossData + [
+        $model = $entryData + [
             'keywords' => $keywords,
             'parentLexicalEntry' => $parentLexicalEntry,
         ];
@@ -101,7 +100,7 @@ class LexicalEntryContributionController extends Controller implements IContribu
             ? $payload['account_id']
             : $contribution->account_id
         );
-        $translations = $this->getTranslationsFromPayload($payload);
+        $glosses = $this->getGlossesFromPayload($payload);
         $details = $this->getDetailsFromPayload($payload);
 
         return $payload + [
@@ -111,7 +110,7 @@ class LexicalEntryContributionController extends Controller implements IContribu
             'sense' => $sense,
             'keywords' => $keywords,
             'notes' => $contribution->notes,
-            'glosses' => $translations,
+            'glosses' => $glosses,
             'lexical_entry_details' => $details,
         ];
     }
@@ -208,7 +207,7 @@ class LexicalEntryContributionController extends Controller implements IContribu
             $entity->account_id = $request->user()->id;
         }
 
-        $entity->_translations = $translations;
+        $entity->_glosses = $glosses;
         $entity->_details = $details;
 
         $contribution->word = $word;
@@ -234,69 +233,48 @@ class LexicalEntryContributionController extends Controller implements IContribu
 
     public function approve(Contribution $contribution, Request $request): int
     {
-        $glossData = json_decode($contribution->payload, true) + [
+        $payload = json_decode($contribution->payload, true) + [
             'account_id' => $contribution->account_id,
         ];
 
-        $translations = $this->getTranslationsFromPayload($glossData);
-        $details = $this->getDetailsFromPayload($glossData);
+        $glosses = $this->getGlossesFromPayload($payload);
+        $details = $this->getDetailsFromPayload($payload);
 
-        $gloss = new LexicalEntry($glossData);
+        $entry = new LexicalEntry($payload);
+
         // is the contribution a proposed change to an existing lexical entry?
-        if (array_key_exists('id', $glossData)) {
-            $id = intval($glossData['id']);
-            $originalGloss = $this->_lexicalEntryRepository->getLexicalEntry($id);
-            if ($originalGloss->count() > 0) {
-                $gloss = $originalGloss->first();
-                $gloss->fill($glossData);
+        if (array_key_exists('id', $payload)) {
+            $id = intval($payload['id']);
+            $originalEntry = $this->_lexicalEntryRepository->getLexicalEntry($id);
+            if ($originalEntry->count() > 0) {
+                $entry = $originalEntry->first();
+                $entry->fill($payload);
             }
         }
 
         $keywords = json_decode($contribution->keywords, true);
 
-        $gloss = $this->_lexicalEntryRepository->saveLexicalEntry(
-            $contribution->word, $contribution->sense, $gloss, $translations, $keywords, $details);
+        $entry = $this->_lexicalEntryRepository->saveLexicalEntry($contribution->word, 
+            $contribution->sense, $entry, $glosses, $keywords, $details);
 
-        return $gloss->id;
+        return $entry->id;
     }
 
     /**
      * Gets translations (if available) from the specified array.
      *
-     * @param  $glossData  array payload from persistence layer
+     * @param  $payload  array payload from persistence layer
      * @return array
      */
-    private function getTranslationsFromPayload(array &$glossData)
+    protected function getGlossesFromPayload(array &$payload)
     {
-        // Retrieve translations, which should either be a an array stored
-        // upon the data carrier with the key "_translations" (API v.2) or
-        // a string with the key "translation", also on the data carrier
-        // (API v.1).
-        $apiVersion = isset($glossData['_translations'])
-            ? 2
-            : (isset($glossData['translation']) ? 1 : 0);
+        $glosses = array_map(function ($data) {
+            return new Gloss($data);
+        }, $payload['_glosses']);
 
-        switch ($apiVersion) {
-            case 2:
-                $translations = array_map(function ($data) {
-                    return new Gloss($data);
-                }, $glossData['_translations']);
+        unset($payload['_glosses']);
 
-                unset($glossData['_translations']);
-                break;
-
-            case 1:
-                $translations = [
-                    new Gloss([
-                        'translation' => $glossData['translation'],
-                    ]),
-                ];
-                break;
-            default:
-                abort(400, 'Unrecognised payload.');
-        }
-
-        return $translations;
+        return $glosses;
     }
 
     /**
@@ -305,16 +283,16 @@ class LexicalEntryContributionController extends Controller implements IContribu
      * @param  $glossData  array payload from persistence layer
      * @return array
      */
-    private function getDetailsFromPayload(array &$glossData)
+    protected function getDetailsFromPayload(array &$payload)
     {
-        if (! isset($glossData['_details'])) {
+        if (! isset($payload['_details'])) {
             return [];
         }
 
         $details = array_map(function ($data) {
             return new LexicalEntryDetail($data);
-        }, $glossData['_details']);
-        unset($glossData['_details']);
+        }, $payload['_details']);
+        unset($payload['_details']);
 
         return $details;
     }

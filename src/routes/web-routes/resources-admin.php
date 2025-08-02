@@ -42,7 +42,7 @@ Route::group([
 
     Route::get('sentence/confirm-destroy/{id}', [SentenceController::class, 'confirmDestroy'])->name('sentence.confirm-destroy');
 
-    Route::get('gloss/list/{id}', [GlossController::class, 'listForLanguage'])->name('gloss.list');
+    Route::get('lexical-entry/list/{id}', [GlossController::class, 'listForLanguage'])->name('gloss.list');
 
     Route::get('account/by-role/{id}', [AccountController::class, 'byRole'])->name('account.by-role');
     Route::delete('account/{id}/delete-membership', [AccountController::class, 'deleteMembership'])->name('account.delete-membership');

@@ -6,7 +6,7 @@ use App\Http\Controllers\Abstracts\Controller;
 use App\Repositories\LexicalEntryRepository;
 use Illuminate\Http\Request;
 
-class GlossApiController extends Controller
+class LexicalEntryApiController extends Controller
 {
     private LexicalEntryRepository $_repository;
 
@@ -23,7 +23,7 @@ class GlossApiController extends Controller
         }
 
         return [
-            'gloss' => $lexicalEntries->first(),
+            'lexical_entry' => $lexicalEntries->first(),
         ];
     }
 

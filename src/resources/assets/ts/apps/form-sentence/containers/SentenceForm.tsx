@@ -62,7 +62,7 @@ function SentenceForm(props: IProps) {
     ]);
 
     useEffect(() => {
-        if (bookApi && sentenceId !== 0) {
+        if (bookApi && sentenceId) {
             bookApi.sentence({ id: sentenceId }).then((s) => {
                 setCurrentSentenceName(s.sentence.name);
             }).catch(() => {

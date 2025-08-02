@@ -24,13 +24,13 @@ trait CanValidateGloss
             'keywords' => 'sometimes|array',
             'keywords.*.word' => 'sometimes|string|min:1|max:64',
             'tengwar' => 'sometimes|string|min:1|max:128',
-            'translations.*.translation' => 'required|string|min:1|max:255',
-            'translations' => 'required|array|min:1|max:'.$maximumNumberOfTranslations,
+            'glosses.*.translation' => 'required|string|min:1|max:255',
+            'glosses' => 'required|array|min:1|max:'.$maximumNumberOfTranslations,
             'details' => 'sometimes|array',
             'details.*.category' => 'required|string',
             'details.*.order' => 'required|numeric|min:1',
             'details.*.text' => 'required|string',
-            'lexical_entry_group_id' => 'sometimes|nullable|numeric|exists:gloss_groups,id',
+            'lexical_entry_group_id' => 'sometimes|nullable|numeric|exists:lexical_entry_groups,id',
             'label' => 'sometimes|string|max:16',
         ];
 

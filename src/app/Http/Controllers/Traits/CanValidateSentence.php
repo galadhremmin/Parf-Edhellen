@@ -65,11 +65,11 @@ trait CanValidateSentence
                 $rules[$prefix.'lexical_entry_inflections.*.order'] = 'sometimes|numeric';
 
                 if ($validateIdCorrectness) {
-                    $rules[$prefix.'gloss_id'] = 'required|exists:glosses,id';
+                    $rules[$prefix.'lexical_entry_id'] = 'required|exists:lexical_entries,id';
                     $rules[$prefix.'speech_id'] = 'required|exists:speeches,id';
                     $rules[$prefix.'lexical_entry_inflections.*.inflection_id'] = 'sometimes|exists:inflections,id';
                 } else {
-                    $rules[$prefix.'gloss_id'] = 'required|numeric';
+                    $rules[$prefix.'lexical_entry_id'] = 'required|numeric';
                     $rules[$prefix.'speech_id'] = 'required|numeric';
                     $rules[$prefix.'lexical_entry_inflections.*.inflection_id'] = 'sometimes|numeric';
                 }

@@ -269,7 +269,7 @@ class LexicalEntryRepository
             'w.word',
             'g.comments',
             's.name as type',
-            't.translation',
+            't.translation as gloss',
             'g.source',
             'a.nickname as account_name',
             'tg.name as lexical_entry_group_name',

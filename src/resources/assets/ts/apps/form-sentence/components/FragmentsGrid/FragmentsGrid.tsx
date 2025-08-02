@@ -120,7 +120,7 @@ export function FragmentsGrid(props: IProps) {
                     cellRenderer: GlossRenderer,
                     cellRendererParams,
                     editable: true,
-                    headerName: 'Gloss',
+                    headerName: 'Lexical entry',
                     field: 'lexicalEntryId',
                     resizable: true,
                 },

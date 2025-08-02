@@ -8,7 +8,7 @@ use App\Models\AccountFeedRefreshTime;
 use App\Models\ForumPost;
 use App\Models\Initialization\Morphs;
 use App\Models\Sentence;
-use App\Models\Versioning\GlossVersion;
+use App\Models\Versioning\LexicalEntryVersion;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
@@ -21,7 +21,7 @@ class AccountFeedRepository
 
         $classNames = [
             ForumPost::class,
-            GlossVersion::class,
+            LexicalEntryVersion::class,
             Sentence::class,
         ];
 

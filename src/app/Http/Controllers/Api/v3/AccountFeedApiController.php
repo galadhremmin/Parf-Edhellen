@@ -11,7 +11,7 @@ use App\Models\AccountFeed;
 use App\Models\AccountFeedRefreshTime;
 use App\Models\ForumPost;
 use App\Models\Sentence;
-use App\Models\Versioning\GlossVersion;
+use App\Models\Versioning\LexicalEntryVersion;
 use App\Repositories\AccountFeedRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -58,7 +58,7 @@ class AccountFeedApiController extends Controller
             ->orderByDesc('happened_at') //
             ->cursorPaginate(20);
 
-        // TODO: this technically doesn't work for `gloss` nor `forum` because discuss is tracked on `ForumDiscussion` and `GlossVersion`.
+        // TODO: this technically doesn't work for `gloss` nor `forum` because discuss is tracked on `ForumDiscussion` and `LexicalEntryVersion`.
         //       we need to figure out a way to handle this complicated case.
         $changed = false;
         $filteredRecords = collect([]);
@@ -95,7 +95,7 @@ class AccountFeedApiController extends Controller
             if ($c instanceof ForumPost) {
                 $c->load('forum_thread');
                 $c->content = $this->_markdownParser->parseMarkdownNoBlocks($c->content);
-            } elseif ($c instanceof GlossVersion) {
+            } elseif ($c instanceof LexicalEntryVersion) {
                 // noop, relying on `useGloss` hook on client.
             } elseif ($c instanceof Sentence) {
                 $c->load('language');
