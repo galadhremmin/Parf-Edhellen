@@ -286,9 +286,11 @@ class BookAdapter
         }
 
         // Restore the order of the details based on the `order` property
-        $lexicalEntry->lexical_entry_details->sort(fn ($a, $b) =>
-            $a->order === $b->order ? 0 : ($a->order > $b->order ? 1 : -1),
-        );
+        $lexicalEntry->lexical_entry_details = $lexicalEntry->lexical_entry_details
+            ->sort(fn ($a, $b) =>
+                $a->order === $b->order ? 0 : ($a->order > $b->order ? 1 : -1)
+            )
+            ->values(); // Reindex with sequential keys
 
         // Parse markdown to HTML
         $lexicalEntry->lexical_entry_details->each(function ($detail) {
