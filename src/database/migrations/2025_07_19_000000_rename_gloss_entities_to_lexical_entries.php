@@ -513,19 +513,39 @@ return new class extends Migration
      */
     private function renameIndexesAndConstraints(): void
     {
-        // Rename indexes in lexical_entry_details (was gloss_details)
-        DB::statement('ALTER TABLE lexical_entry_details RENAME INDEX idx_glosses TO lexical_entry_details_lexical_entry_id_index');
-        
-        // Rename indexes in lexical_entry_detail_versions (was gloss_detail_versions)
-        DB::statement('ALTER TABLE lexical_entry_detail_versions RENAME INDEX gloss_detail_versions_gloss_version_id_foreign TO lexical_entry_detail_versions_lexical_entry_version_id_foreign');
-        
-        // Rename indexes in lexical_entry_inflections (was gloss_inflections)
-        DB::statement('ALTER TABLE lexical_entry_inflections RENAME INDEX gloss_inflections_gloss_id_index TO lexical_entry_inflections_lexical_entry_id_index');
-        
-        // Rename indexes in keywords (only the ones that need renaming)
-        DB::statement('ALTER TABLE keywords RENAME INDEX KeywordsTranslationId TO keywords_lexical_entry_id_index');
-        DB::statement('ALTER TABLE keywords RENAME INDEX WordGlossFragmentRelation TO keywords_word_lexical_entry_fragment_index');
+        try {
+            // Rename indexes in lexical_entry_details (was gloss_details)
+            DB::statement('ALTER TABLE lexical_entry_details RENAME INDEX idx_glosses TO lexical_entry_details_lexical_entry_id_index');
+        } catch (\Exception $e) {
+            // Ignore the error if the index doesn't exist
+        }
+
+        try {
+            // Rename indexes in lexical_entry_detail_versions (was gloss_detail_versions)
+            DB::statement('ALTER TABLE lexical_entry_detail_versions RENAME INDEX gloss_detail_versions_gloss_version_id_foreign TO lexical_entry_detail_versions_lexical_entry_version_id_foreign');
+        } catch (\Exception $e) {
+            // Ignore the error if the index doesn't exist
+        }
+
+        try {
+            // Rename indexes in lexical_entry_inflections (was gloss_inflections)
+            DB::statement('ALTER TABLE lexical_entry_inflections RENAME INDEX gloss_inflections_gloss_id_index TO lexical_entry_inflections_lexical_entry_id_index');
+        } catch (\Exception $e) {
+            // Ignore the error if the index doesn't exist
+        }
+
+        try {
+            // Rename indexes in keywords (only the ones that need renaming)
+            DB::statement('ALTER TABLE keywords RENAME INDEX KeywordsTranslationId TO keywords_lexical_entry_id_index');
+        } catch (\Exception $e) {
+            // Ignore the error if the index doesn't exist
+        }
+
+        try {
+            // Rename indexes in keywords (only the ones that need renaming)
+            DB::statement('ALTER TABLE keywords RENAME INDEX WordGlossFragmentRelation TO keywords_word_lexical_entry_fragment_index');
+        } catch (\Exception $e) {
+            // Ignore the error if the index doesn't exist
+        }
     }
-
-
 }; 
