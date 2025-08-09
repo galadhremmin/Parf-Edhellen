@@ -37,6 +37,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
             lexicalEntryGroupIds: [0],
             includeOld: props.includeOld,
             languageId: props.languageId,
+            naturalLanguage: props.naturalLanguage,
             reversed: props.reversed,
             showMore: false,
             speechIds: [0],
@@ -52,7 +53,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
         this._beginSearch = debounce(500, this._search);
         this._stateCache = Cache.withPersistentStorage(
             () => Promise.resolve(defaultState),
-            'ed.search-state.v2',
+            'ed.search-state.v3',
         );
     }
 
@@ -76,6 +77,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
             lexicalEntryGroupIds,
             includeOld,
             languageId,
+            naturalLanguage,
             reversed,
             showMore,
             speechIds,
@@ -105,8 +107,15 @@ export class SearchQuery extends React.Component<IProps, IState> {
                         /> Reverse
                     </label>
                     <label className="ms-2">
+                        <input checked={naturalLanguage}
+                            name="naturalLanguage"
+                            onChange={this._onNaturalLanguageChange}
+                            type="checkbox"
+                        /> NLP
+                    </label>
+                    <label className="ms-2">
                         <input checked={includeOld}
-                            name="excludeOld"
+                            name="includeOld"
                             onChange={this._onIncludeOldChange}
                             type="checkbox"
                         /> Incl. outdated
@@ -185,6 +194,16 @@ export class SearchQuery extends React.Component<IProps, IState> {
 
         void this._persistState('reversed', reversed);
         this._beginSearch(/* queryChanged: */ true);
+    }
+
+    private _onNaturalLanguageChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+        const naturalLanguage = ev.target.checked;
+        this.setState({
+            naturalLanguage,
+        });
+
+        void this._persistState('naturalLanguage', naturalLanguage);
+        this._beginSearch(/* queryChanged: */ false);
     }
 
     private _onIncludeOldChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
@@ -284,6 +303,7 @@ const mapStateToProps = (state: RootReducer) => ({
     includeOld: state.search.includeOld,
     languageId: state.search.languageId,
     loading: state.search.loading,
+    naturalLanguage: state.search.naturalLanguage,
     reversed: state.search.reversed,
     word: state.search.word,
 });

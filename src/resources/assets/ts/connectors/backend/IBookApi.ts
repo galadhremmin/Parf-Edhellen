@@ -9,9 +9,10 @@ export interface IFindRequest {
     lexicalEntryGroupIds?: number[];
     includeOld?: boolean;
     languageId?: number;
-    word?: string;
+    naturalLanguage?: boolean;
     reversed?: boolean;
     speechIds?: number[];
+    word?: string;
 }
 
 export interface IFindEntity {
@@ -35,6 +36,7 @@ export interface IEntitiesRequestData {
     includeOld: boolean;
     inflections?: boolean;
     languageId?: number;
+    naturalLanguage?: boolean;
     normalizedWord?: string;
     speechIds?: number[];
     word: string;

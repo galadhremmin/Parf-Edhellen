@@ -52,7 +52,7 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
             );
             
         } else {
-            $normalizedWord = StringHelper::normalize($value->getWord(), /* accentsMatter = */ true, /* retainWildcard = */ false);
+            $normalizedWord = StringHelper::normalize($value->getWord(), /* accentsMatter = */ true, /* retainWildcard = */ true);
 
             // Sense morph is technically not supported by the search engine but there's plenty of them in the
             // database grandfathered in by the previous data model. It simply wasn't possible back in the day,
@@ -62,11 +62,28 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
             // the sense morph is included in the query. If you're rebuilding the database from scratch, this will not
             // do anything as it's currently not possible to create senses within the search keyword table (it'll result
             // in an exception.)
-            $entities = SearchKeyword::whereIn('entity_name', [$this->_lexicalEntryMorph, $this->_senseMorph]) //
-                ->where($value->getReversed() ? 'normalized_keyword_reversed' : 'normalized_keyword', $normalizedWord) //
-                ->select('entity_name', 'entity_id') //
+            $searchColumn = $value->getReversed() ? 'normalized_keyword_reversed' : 'normalized_keyword';
+            $query = SearchKeyword::whereIn('entity_name', [$this->_lexicalEntryMorph, $this->_senseMorph]);
+
+            if ($value->getNaturalLanguage()) {
+                // If no wildcard is present, add one for prefix matching (similar to LIKE 'term%')
+                if (strpos($normalizedWord, '*') === false) {
+                    $normalizedWord .= '*';
+                }
+
+                $query->whereRaw('MATCH(' . $searchColumn . ') AGAINST(? IN NATURAL LANGUAGE MODE)', [$normalizedWord]);
+            } else {
+                $normalizedWord = str_replace('*', '%', $normalizedWord);
+                $query->where($searchColumn, 'like', $normalizedWord);
+            }
+            
+            $entities = $query->select('entity_name', 'entity_id') //
                 ->get() //
                 ->groupBy('entity_name');
+            
+            if ($value->getNaturalLanguage()) {
+                $query->where('entity_name', $this->_lexicalEntryMorph);
+            }
 
             $entityIds = [];
 

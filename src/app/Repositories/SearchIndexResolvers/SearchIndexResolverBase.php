@@ -28,7 +28,14 @@ abstract class SearchIndexResolverBase implements ISearchIndexResolver
         $searchColumn = $v->getReversed() ? 'normalized_keyword_reversed_unaccented' : 'normalized_keyword_unaccented';
         $lengthColumn = $searchColumn.'_length';
 
-        $query = SearchKeyword::where($searchColumn, 'like', $word);
+        // Use MATCH() AGAINST() with Boolean mode for better performance with fulltext indexes
+        // The * operator provides prefix matching similar to LIKE 'term%' but much faster
+        if ($v->getNaturalLanguage()) {
+            $query = SearchKeyword::whereRaw('MATCH(' . $searchColumn . ') AGAINST(? IN NATURAL LANGUAGE MODE)', [$word]);
+        } else {
+            $word = str_replace('*', '%', $word);
+            $query = SearchKeyword::where($searchColumn, 'like', $word);
+        }
 
         if ($v->getLanguageId()) {
             $query = $query->where('language_id', $v->getLanguageId());
@@ -55,12 +62,14 @@ abstract class SearchIndexResolverBase implements ISearchIndexResolver
 
     private function formatWord(string $word)
     {
-        $word = StringHelper::normalize($word, /* accentsMatter = */ false, /* retainWildcard = */ true);
-
-        if (strpos($word, '*') !== false) {
-            return str_replace('*', '%', $word);
+        // Use StringHelper::normalize with retainWildcard=true to preserve any wildcards the client provides
+        $normalizedWord = StringHelper::normalize($word, /* accentsMatter = */ false, /* retainWildcard = */ true);
+        
+        // If no wildcard is present, add one for prefix matching (similar to LIKE 'term%')
+        if (strpos($normalizedWord, '*') === false) {
+            $normalizedWord .= '*';
         }
-
-        return $word.'%';
+        
+        return $normalizedWord;
     }
 }
