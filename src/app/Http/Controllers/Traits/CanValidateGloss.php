@@ -11,7 +11,7 @@ trait CanValidateGloss
         $maximumNumberOfTranslations = config('ed.max_number_of_translations');
 
         $rules = [
-            'id' => 'sometimes|numeric|exists:glosses,id',
+            'id' => 'sometimes|numeric|exists:lexical_entries,id',
             'account.id' => 'sometimes|numeric|exists:accounts,id',
             'account_id' => 'sometimes|numeric|exists:accounts,id',
             'language_id' => 'required|numeric|exists:languages,id',
