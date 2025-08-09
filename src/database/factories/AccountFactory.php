@@ -25,7 +25,7 @@ class AccountFactory extends Factory
             'nickname' => $this->faker->userName,
             'email' => $this->faker->unique()->safeEmail,
             'identity' => (string) Str::uuid(),
-            'authorization_provider_id' => 0, // Default to 0 for testing
+            'authorization_provider_id' => null, // Default to 0 for testing
             'profile' => 'Lots of personal data.',
         ];
     }

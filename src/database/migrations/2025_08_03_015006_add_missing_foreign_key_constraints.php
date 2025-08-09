@@ -70,92 +70,93 @@ return new class extends Migration
 
         // account_feeds.account_id -> accounts.id
         Schema::table('account_feeds', function (Blueprint $table) {
-            $table->foreign('account_id')->references('id')->on('accounts');
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
         });
 
         // account_feed_refresh_times.account_id -> accounts.id
         Schema::table('account_feed_refresh_times', function (Blueprint $table) {
-            $table->foreign('account_id')->references('id')->on('accounts');
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
         });
 
         // account_role_rels.account_id -> accounts.id
         Schema::table('account_role_rels', function (Blueprint $table) {
-            $table->foreign('account_id')->references('id')->on('accounts');
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
         });
 
         // account_role_rels.role_id -> roles.id
         Schema::table('account_role_rels', function (Blueprint $table) {
-            $table->foreign('role_id')->references('id')->on('roles');
+            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
         });
 
         // audit_trails.account_id -> accounts.id
         Schema::table('audit_trails', function (Blueprint $table) {
-            $table->foreign('account_id')->references('id')->on('accounts');
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
         });
 
         // contributions.account_id -> accounts.id
         Schema::table('contributions', function (Blueprint $table) {
-            $table->foreign('account_id')->references('id')->on('accounts');
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
         });
 
         // contributions.reviewed_by_account_id -> accounts.id
         Schema::table('contributions', function (Blueprint $table) {
-            $table->foreign('reviewed_by_account_id')->references('id')->on('accounts');
+            $table->foreign('reviewed_by_account_id')->references('id')->on('accounts')->onDelete('cascade');
         });
 
         // flashcard_results.account_id -> accounts.id
         Schema::table('flashcard_results', function (Blueprint $table) {
-            $table->foreign('account_id')->references('id')->on('accounts');
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
         });
 
         // forum_discussions.account_id -> accounts.id
         Schema::table('forum_discussions', function (Blueprint $table) {
-            $table->foreign('account_id')->references('id')->on('accounts');
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
         });
 
         // forum_posts.account_id -> accounts.id
         Schema::table('forum_posts', function (Blueprint $table) {
-            $table->foreign('account_id')->references('id')->on('accounts');
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
         });
 
         // forum_post_likes.account_id -> accounts.id
         Schema::table('forum_post_likes', function (Blueprint $table) {
-            $table->foreign('account_id')->references('id')->on('accounts');
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
         });
 
         // forum_threads.account_id -> accounts.id
         Schema::table('forum_threads', function (Blueprint $table) {
-            $table->foreign('account_id')->references('id')->on('accounts');
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
         });
 
         // lexical_entry_inflections.account_id -> accounts.id
         Schema::table('lexical_entry_inflections', function (Blueprint $table) {
-            $table->foreign('account_id')->references('id')->on('accounts');
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('set null');
         });
 
         // mail_settings.account_id -> accounts.id
         Schema::table('mail_settings', function (Blueprint $table) {
-            $table->foreign('account_id')->references('id')->on('accounts');
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
         });
 
         // mail_setting_overrides.account_id -> accounts.id
         Schema::table('mail_setting_overrides', function (Blueprint $table) {
-            $table->foreign('account_id')->references('id')->on('accounts');
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
         });
 
         // sentences.account_id -> accounts.id
         Schema::table('sentences', function (Blueprint $table) {
-            $table->foreign('account_id')->references('id')->on('accounts');
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
         });
 
         // system_errors.account_id -> accounts.id
         Schema::table('system_errors', function (Blueprint $table) {
-            $table->foreign('account_id')->references('id')->on('accounts');
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('set null');
         });
 
         // words.account_id -> accounts.id
         Schema::table('words', function (Blueprint $table) {
-            $table->foreign('account_id')->references('id')->on('accounts');
+            $table->unsignedBigInteger('account_id')->nullable()->change();
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('set null');
         });
     }
 
@@ -193,12 +194,12 @@ return new class extends Migration
 
         // contributions.sentence_id -> sentences.id
         Schema::table('contributions', function (Blueprint $table) {
-            $table->foreign('sentence_id')->references('id')->on('sentences');
+            $table->foreign('sentence_id')->references('id')->on('sentences')->onDelete('set null');
         });
 
         // contributions.dependent_on_contribution_id -> contributions.id (self-referencing)
         Schema::table('contributions', function (Blueprint $table) {
-            $table->foreign('dependent_on_contribution_id')->references('id')->on('contributions');
+            $table->foreign('dependent_on_contribution_id')->references('id')->on('contributions')->onDelete('cascade');
         });
 
         // contributions.approved_as_entity_id -> various entity tables (polymorphic relationship)
@@ -219,7 +220,7 @@ return new class extends Migration
         // First, change the column type to match the referenced primary key
         Schema::table('flashcard_results', function (Blueprint $table) {
             $table->unsignedBigInteger('flashcard_id')->change();
-            $table->foreign('flashcard_id')->references('id')->on('flashcards');
+            $table->foreign('flashcard_id')->references('id')->on('flashcards')->onDelete('cascade');
         });
     }
 
@@ -230,22 +231,22 @@ return new class extends Migration
     {
         // forum_posts.forum_thread_id -> forum_threads.id
         Schema::table('forum_posts', function (Blueprint $table) {
-            $table->foreign('forum_thread_id')->references('id')->on('forum_threads');
+            $table->foreign('forum_thread_id')->references('id')->on('forum_threads')->onDelete('cascade');
         });
 
         // forum_posts.parent_forum_post_id -> forum_posts.id (self-referencing)
         Schema::table('forum_posts', function (Blueprint $table) {
-            $table->foreign('parent_forum_post_id')->references('id')->on('forum_posts');
+            $table->foreign('parent_forum_post_id')->references('id')->on('forum_posts')->onDelete('set null');
         });
 
         // forum_post_likes.forum_post_id -> forum_posts.id
         Schema::table('forum_post_likes', function (Blueprint $table) {
-            $table->foreign('forum_post_id')->references('id')->on('forum_posts');
+            $table->foreign('forum_post_id')->references('id')->on('forum_posts')->onDelete('cascade');
         });
 
         // forum_threads.forum_group_id -> forum_groups.id
         Schema::table('forum_threads', function (Blueprint $table) {
-            $table->foreign('forum_group_id')->references('id')->on('forum_groups');
+            $table->foreign('forum_group_id')->references('id')->on('forum_groups')->onDelete('cascade');
         });
 
         // forum_threads.entity_id -> various entity tables (polymorphic relationship)
@@ -259,17 +260,17 @@ return new class extends Migration
     {
         // keywords.sense_id -> senses.id
         Schema::table('keywords', function (Blueprint $table) {
-            $table->foreign('sense_id')->references('id')->on('senses');
+            $table->foreign('sense_id')->references('id')->on('senses')->onDelete('cascade');
         });
 
         // keywords.sentence_fragment_id -> sentence_fragments.id
         Schema::table('keywords', function (Blueprint $table) {
-            $table->foreign('sentence_fragment_id')->references('id')->on('sentence_fragments');
+            $table->foreign('sentence_fragment_id')->references('id')->on('sentence_fragments')->onDelete('cascade');
         });
 
         // keywords.word_id -> words.id
         Schema::table('keywords', function (Blueprint $table) {
-            $table->foreign('word_id')->references('id')->on('words');
+            $table->foreign('word_id')->references('id')->on('words')->onDelete('cascade');
         });
     }
 
@@ -300,7 +301,7 @@ return new class extends Migration
 
         // lexical_entry_inflections.speech_id -> speeches.id
         Schema::table('lexical_entry_inflections', function (Blueprint $table) {
-            $table->foreign('speech_id')->references('id')->on('speeches');
+            $table->foreign('speech_id')->references('id')->on('speeches')->onDelete('set null');
         });
     }
 
@@ -316,7 +317,7 @@ return new class extends Migration
 
         // search_keywords.speech_id -> speeches.id
         Schema::table('search_keywords', function (Blueprint $table) {
-            $table->foreign('speech_id')->references('id')->on('speeches');
+            $table->foreign('speech_id')->references('id')->on('speeches')->onDelete('set null');
         });
 
         // search_keywords.word_id -> words.id

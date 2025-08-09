@@ -17,13 +17,7 @@ class InvalidUserGateTest extends TestCase
 
     public function test_blocks_banned_users()
     {
-        $uuid = (string) Str::uuid();
-        $user = Account::create([
-            'nickname' => $uuid,
-            'email' => $uuid.'@unittest.com',
-            'identity' => $uuid,
-            'authorization_provider_id' => 1000,
-            'profile' => 'Lots of personal data.',
+        $user = Account::factory()->createOne([
             'is_deleted' => true,
         ]);
 

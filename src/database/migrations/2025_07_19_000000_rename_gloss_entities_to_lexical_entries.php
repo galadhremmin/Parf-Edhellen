@@ -108,7 +108,7 @@ return new class extends Migration
         // Create new_glosses table (was translations) - using a temporary name to avoid conflicts
         Schema::create('new_glosses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('lexical_entry_id')->constrained('lexical_entries');
+            $table->foreignId('lexical_entry_id')->constrained('lexical_entries')->onDelete('cascade');
             $table->string('translation', 255);
             $table->timestamps();
             
@@ -119,7 +119,7 @@ return new class extends Migration
         Schema::create('lexical_entry_versions', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('version_change_flags')->nullable();
-            $table->foreignId('lexical_entry_id')->constrained('lexical_entries');
+            $table->foreignId('lexical_entry_id')->constrained('lexical_entries')->onDelete('cascade');
             $table->foreignId('language_id')->constrained('languages');
             $table->foreignId('word_id')->constrained('words');
             $table->foreignId('account_id')->constrained('accounts');
@@ -152,7 +152,7 @@ return new class extends Migration
         // Create new_gloss_versions table (was translation_versions) - using temporary name
         Schema::create('new_gloss_versions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('lexical_entry_version_id')->constrained('lexical_entry_versions');
+            $table->foreignId('lexical_entry_version_id')->constrained('lexical_entry_versions')->onDelete('cascade');
             $table->string('translation', 255);
             $table->timestamps();
             
