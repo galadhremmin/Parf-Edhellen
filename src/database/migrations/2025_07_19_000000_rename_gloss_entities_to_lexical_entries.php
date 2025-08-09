@@ -12,7 +12,7 @@ return new class extends Migration
      * 
      * This migration renames the following entities:
      * - Gloss → LexicalEntry
-     * - Gloss → Gloss
+     * - Translation → Gloss
      * - GlossVersion → LexicalEntryVersion
      * - TranslationVersion → GlossVersion
      * 
