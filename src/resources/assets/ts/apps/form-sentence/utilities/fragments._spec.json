@@ -3,9 +3,9 @@
     {
       "comments": "",
       "fragment": "Aia",
-      "glossId": 364062,
+      "lexicalEntryId": 364062,
       "id": 10,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 1,
       "sentenceNumber": 1,
       "speechId": 12,
@@ -15,9 +15,9 @@
     {
       "comments": "",
       "fragment": "María",
-      "glossId": 367635,
+      "lexicalEntryId": 367635,
       "id": 20,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 1,
       "sentenceNumber": 1,
       "speechId": 9,
@@ -27,9 +27,9 @@
     {
       "comments": "",
       "fragment": "quanta",
-      "glossId": 385231,
+      "lexicalEntryId": 385231,
       "id": 30,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 1,
       "sentenceNumber": 1,
       "speechId": 1,
@@ -39,9 +39,9 @@
     {
       "comments": "",
       "fragment": "Eruanno",
-      "glossId": 377722,
+      "lexicalEntryId": 377722,
       "id": 40,
-      "glossInflections": [
+      "lexicalEntryInflections": [
         {
           "id": 1429,
           "sentenceFragmentId": 3311,
@@ -59,9 +59,9 @@
     {
       "comments": "",
       "fragment": "",
-      "glossId": null,
+      "lexicalEntryId": null,
       "id": 50,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 1,
       "sentenceNumber": 1,
       "speechId": null,
@@ -71,9 +71,9 @@
     {
       "comments": "",
       "fragment": "i",
-      "glossId": 378363,
+      "lexicalEntryId": 378363,
       "id": 60,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 2,
       "sentenceNumber": 1,
       "speechId": 33,
@@ -83,9 +83,9 @@
     {
       "comments": "",
       "fragment": "Héru",
-      "glossId": 383744,
+      "lexicalEntryId": 383744,
       "id": 70,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 2,
       "sentenceNumber": 1,
       "speechId": 14,
@@ -95,9 +95,9 @@
     {
       "comments": "Used together with [as](https://www.elfdict.com/wt/327897).",
       "fragment": "aselyë",
-      "glossId": 382668,
+      "lexicalEntryId": 382668,
       "id": 80,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 2,
       "sentenceNumber": 1,
       "speechId": 20,
@@ -107,9 +107,9 @@
     {
       "comments": "",
       "fragment": "",
-      "glossId": null,
+      "lexicalEntryId": null,
       "id": 90,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 2,
       "sentenceNumber": 1,
       "speechId": null,
@@ -119,9 +119,9 @@
     {
       "comments": "",
       "fragment": "aistana",
-      "glossId": 376729,
+      "lexicalEntryId": 376729,
       "id": 100,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 3,
       "sentenceNumber": 1,
       "speechId": 1,
@@ -131,9 +131,9 @@
     {
       "comments": "",
       "fragment": "elyë",
-      "glossId": 365640,
+      "lexicalEntryId": 365640,
       "id": 110,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 3,
       "sentenceNumber": 1,
       "speechId": 21,
@@ -143,9 +143,9 @@
     {
       "comments": "",
       "fragment": "imíca",
-      "glossId": 378256,
+      "lexicalEntryId": 378256,
       "id": 120,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 3,
       "sentenceNumber": 1,
       "speechId": 20,
@@ -155,9 +155,9 @@
     {
       "comments": "",
       "fragment": "nísi",
-      "glossId": 348696,
+      "lexicalEntryId": 348696,
       "id": 130,
-      "glossInflections": [
+      "lexicalEntryInflections": [
         {
           "id": 1430,
           "sentenceFragmentId": 3320,
@@ -175,9 +175,9 @@
     {
       "comments": "",
       "fragment": "",
-      "glossId": null,
+      "lexicalEntryId": null,
       "id": 140,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 3,
       "sentenceNumber": 1,
       "speechId": null,
@@ -187,9 +187,9 @@
     {
       "comments": "",
       "fragment": "ar",
-      "glossId": 378343,
+      "lexicalEntryId": 378343,
       "id": 150,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 4,
       "sentenceNumber": 1,
       "speechId": 27,
@@ -199,9 +199,9 @@
     {
       "comments": "",
       "fragment": "aistana",
-      "glossId": 376729,
+      "lexicalEntryId": 376729,
       "id": 160,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 4,
       "sentenceNumber": 1,
       "speechId": 1,
@@ -211,9 +211,9 @@
     {
       "comments": "",
       "fragment": "i",
-      "glossId": 378363,
+      "lexicalEntryId": 378363,
       "id": 170,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 4,
       "sentenceNumber": 1,
       "speechId": 33,
@@ -223,9 +223,9 @@
     {
       "comments": "",
       "fragment": "yávë",
-      "glossId": 386200,
+      "lexicalEntryId": 386200,
       "id": 180,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 4,
       "sentenceNumber": 1,
       "speechId": 14,
@@ -235,9 +235,9 @@
     {
       "comments": "",
       "fragment": "mónalyo",
-      "glossId": 348166,
+      "lexicalEntryId": 348166,
       "id": 190,
-      "glossInflections": [
+      "lexicalEntryInflections": [
         {
           "id": 1431,
           "sentenceFragmentId": 3326,
@@ -255,9 +255,9 @@
     {
       "comments": "",
       "fragment": "Yésus",
-      "glossId": 369596,
+      "lexicalEntryId": 369596,
       "id": 200,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 4,
       "sentenceNumber": 1,
       "speechId": 13,
@@ -267,9 +267,9 @@
     {
       "comments": "",
       "fragment": "",
-      "glossId": null,
+      "lexicalEntryId": null,
       "id": 210,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 4,
       "sentenceNumber": 1,
       "speechId": null,
@@ -279,9 +279,9 @@
     {
       "comments": "",
       "fragment": "Airë",
-      "glossId": 382944,
+      "lexicalEntryId": 382944,
       "id": 220,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 5,
       "sentenceNumber": 1,
       "speechId": 29,
@@ -291,9 +291,9 @@
     {
       "comments": "",
       "fragment": "María",
-      "glossId": 367635,
+      "lexicalEntryId": 367635,
       "id": 230,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 5,
       "sentenceNumber": 1,
       "speechId": 9,
@@ -303,9 +303,9 @@
     {
       "comments": "",
       "fragment": "Eruo",
-      "glossId": 382396,
+      "lexicalEntryId": 382396,
       "id": 240,
-      "glossInflections": [
+      "lexicalEntryInflections": [
         {
           "id": 1432,
           "sentenceFragmentId": 3331,
@@ -323,9 +323,9 @@
     {
       "comments": "",
       "fragment": "ontaril",
-      "glossId": 349261,
+      "lexicalEntryId": 349261,
       "id": 250,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 5,
       "sentenceNumber": 1,
       "speechId": 14,
@@ -335,9 +335,9 @@
     {
       "comments": "",
       "fragment": "",
-      "glossId": null,
+      "lexicalEntryId": null,
       "id": 260,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 5,
       "sentenceNumber": 1,
       "speechId": null,
@@ -347,9 +347,9 @@
     {
       "comments": "",
       "fragment": "á",
-      "glossId": 366117,
+      "lexicalEntryId": 366117,
       "id": 270,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 6,
       "sentenceNumber": 1,
       "speechId": 16,
@@ -359,9 +359,9 @@
     {
       "comments": "",
       "fragment": "hyamë",
-      "glossId": 383890,
+      "lexicalEntryId": 383890,
       "id": 280,
-      "glossInflections": [
+      "lexicalEntryInflections": [
         {
           "id": 1433,
           "sentenceFragmentId": 3335,
@@ -379,9 +379,9 @@
     {
       "comments": "Used together with [rá](https://www.elfdict.com/wt/332762).",
       "fragment": "rámen",
-      "glossId": 378761,
+      "lexicalEntryId": 378761,
       "id": 290,
-      "glossInflections": [
+      "lexicalEntryInflections": [
         {
           "id": 1434,
           "sentenceFragmentId": 3336,
@@ -399,9 +399,9 @@
     {
       "comments": "",
       "fragment": "úcarindor",
-      "glossId": 385965,
+      "lexicalEntryId": 385965,
       "id": 300,
-      "glossInflections": [
+      "lexicalEntryInflections": [
         {
           "id": 1435,
           "sentenceFragmentId": 3337,
@@ -419,9 +419,9 @@
     {
       "comments": "",
       "fragment": "",
-      "glossId": null,
+      "lexicalEntryId": null,
       "id": 310,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 6,
       "sentenceNumber": 1,
       "speechId": null,
@@ -431,9 +431,9 @@
     {
       "comments": "",
       "fragment": "sí",
-      "glossId": 382811,
+      "lexicalEntryId": 382811,
       "id": 320,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 7,
       "sentenceNumber": 1,
       "speechId": 2,
@@ -443,9 +443,9 @@
     {
       "comments": "",
       "fragment": "ar",
-      "glossId": 378343,
+      "lexicalEntryId": 378343,
       "id": 330,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 7,
       "sentenceNumber": 1,
       "speechId": 27,
@@ -455,9 +455,9 @@
     {
       "comments": "",
       "fragment": "lúmessë",
-      "glossId": 384329,
+      "lexicalEntryId": 384329,
       "id": 340,
-      "glossInflections": [
+      "lexicalEntryInflections": [
         {
           "id": 1436,
           "sentenceFragmentId": 3341,
@@ -475,9 +475,9 @@
     {
       "comments": "",
       "fragment": "ya",
-      "glossId": 382413,
+      "lexicalEntryId": 382413,
       "id": 350,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 7,
       "sentenceNumber": 1,
       "speechId": 21,
@@ -487,9 +487,9 @@
     {
       "comments": "",
       "fragment": "firuvammë:",
-      "glossId": 377896,
+      "lexicalEntryId": 377896,
       "id": 360,
-      "glossInflections": [
+      "lexicalEntryInflections": [
         {
           "id": 1437,
           "sentenceFragmentId": 3343,
@@ -514,9 +514,9 @@
     {
       "comments": "",
       "fragment": "násië",
-      "glossId": 348459,
+      "lexicalEntryId": 348459,
       "id": 370,
-      "glossInflections": [],
+      "lexicalEntryInflections": [],
       "paragraphNumber": 7,
       "sentenceNumber": 1,
       "speechId": 12,
