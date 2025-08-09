@@ -52,8 +52,6 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
             );
             
         } else {
-            $normalizedWord = StringHelper::normalize($value->getWord(), /* accentsMatter = */ true, /* retainWildcard = */ true);
-
             // Sense morph is technically not supported by the search engine but there's plenty of them in the
             // database grandfathered in by the previous data model. It simply wasn't possible back in the day,
             // when the migration was implemented, to associate disassociated senses with the right lexical entry, resulting
@@ -66,14 +64,15 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
             $query = SearchKeyword::whereIn('entity_name', [$this->_lexicalEntryMorph, $this->_senseMorph]);
 
             if ($value->getNaturalLanguage()) {
-                // If no wildcard is present, add one for prefix matching (similar to LIKE 'term%')
-                if (strpos($normalizedWord, '*') === false) {
-                    $normalizedWord .= '*';
-                }
-
+                $normalizedWord = StringHelper::normalize($value->getWord(), /* accentsMatter = */ true, /* retainWildcard = */ false);
                 $query->whereRaw('MATCH(' . $searchColumn . ') AGAINST(? IN NATURAL LANGUAGE MODE)', [$normalizedWord]);
             } else {
+                $normalizedWord = StringHelper::normalize($value->getWord(), /* accentsMatter = */ true, /* retainWildcard = */ true);
                 $normalizedWord = str_replace('*', '%', $normalizedWord);
+                if (strpos($normalizedWord, '%') === false) {
+                    $normalizedWord .= '%';
+                }
+                
                 $query->where($searchColumn, 'like', $normalizedWord);
             }
             

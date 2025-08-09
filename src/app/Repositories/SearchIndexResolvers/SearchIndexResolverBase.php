@@ -24,17 +24,23 @@ abstract class SearchIndexResolverBase implements ISearchIndexResolver
 
     private function buildQuery(SearchIndexSearchValue $v): array
     {
-        $word = $this->formatWord($v->getWord());
+        $word = $v->getWord();
         $searchColumn = $v->getReversed() ? 'normalized_keyword_reversed_unaccented' : 'normalized_keyword_unaccented';
         $lengthColumn = $searchColumn.'_length';
 
         // Use MATCH() AGAINST() with Boolean mode for better performance with fulltext indexes
         // The * operator provides prefix matching similar to LIKE 'term%' but much faster
         if ($v->getNaturalLanguage()) {
-            $query = SearchKeyword::whereRaw('MATCH(' . $searchColumn . ') AGAINST(? IN NATURAL LANGUAGE MODE)', [$word]);
+            $normalizedWord = StringHelper::normalize($word, /* accentsMatter = */ false, /* retainWildcard = */ false);
+            $query = SearchKeyword::whereRaw('MATCH(' . $searchColumn . ') AGAINST(? IN NATURAL LANGUAGE MODE)', [$normalizedWord]);
         } else {
-            $word = str_replace('*', '%', $word);
-            $query = SearchKeyword::where($searchColumn, 'like', $word);
+            $normalizedWord = StringHelper::normalize($word, /* accentsMatter = */ false, /* retainWildcard = */ true);
+            $normalizedWord = str_replace('*', '%', $normalizedWord);
+            if (strpos($normalizedWord, '%') === false) {
+                $normalizedWord .= '%';
+            }
+            
+            $query = SearchKeyword::where($searchColumn, 'like', $normalizedWord);
         }
 
         if ($v->getLanguageId()) {
@@ -58,18 +64,5 @@ abstract class SearchIndexResolverBase implements ISearchIndexResolver
             'search_column' => $searchColumn,
             'length_column' => $lengthColumn,
         ];
-    }
-
-    private function formatWord(string $word)
-    {
-        // Use StringHelper::normalize with retainWildcard=true to preserve any wildcards the client provides
-        $normalizedWord = StringHelper::normalize($word, /* accentsMatter = */ false, /* retainWildcard = */ true);
-        
-        // If no wildcard is present, add one for prefix matching (similar to LIKE 'term%')
-        if (strpos($normalizedWord, '*') === false) {
-            $normalizedWord .= '*';
-        }
-        
-        return $normalizedWord;
     }
 }

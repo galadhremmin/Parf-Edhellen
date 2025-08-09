@@ -141,15 +141,15 @@ class BookAdapter
         // Create a section array component for each language in the same order as the languages were retrieved from
         // the database
         if ($groupByLanguage) {
-            $sections = [];
+            // Sort languages by their highest entity rating (highest first)
+            $languagesWithMaxRatings = [];
             foreach ($allLanguages as $language) {
-
                 if (! array_key_exists($language->id, $entry2LanguageMap)) {
                     continue;
                 }
-
+                
                 $entries = $entry2LanguageMap[$language->id];
-
+                
                 // Sort the entries based on their previously calculated rating.
                 if ($word !== null) {
                     usort($entries, function ($a, $b) {
@@ -168,10 +168,29 @@ class BookAdapter
                         return $cmp === 0 ? 0 : ($cmp < 0 ? -1 : 1);
                     });
                 }
-
-                $sections[] = [
+                
+                $maxRating = max(array_column($entries, 'rating'));
+                $languagesWithMaxRatings[] = [
                     'language' => $language,
-                    'entities' => $entries,
+                    'maxRating' => $maxRating,
+                    'entries' => $entries
+                ];
+            }
+            
+            // Sort by max rating (highest first), then by language order as fallback
+            usort($languagesWithMaxRatings, function ($a, $b) {
+                if ($a['maxRating'] !== $b['maxRating']) {
+                    return $b['maxRating'] <=> $a['maxRating']; // Descending order
+                }
+                // Fallback to language order if ratings are equal
+                return $a['language']->order <=> $b['language']->order;
+            });
+            
+            $sections = [];
+            foreach ($languagesWithMaxRatings as $languageData) {
+                $sections[] = [
+                    'language' => $languageData['language'],
+                    'entities' => $languageData['entries'],
                 ];
             }
 
