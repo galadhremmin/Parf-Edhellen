@@ -111,7 +111,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
                             name="naturalLanguage"
                             onChange={this._onNaturalLanguageChange}
                             type="checkbox"
-                        /> NLP
+                        /> Natural language
                     </label>
                     <label className="ms-2">
                         <input checked={includeOld}
