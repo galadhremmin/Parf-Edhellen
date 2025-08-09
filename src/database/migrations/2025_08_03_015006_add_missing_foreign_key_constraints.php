@@ -28,7 +28,6 @@ return new class extends Migration
         $this->addLexicalEntryInflectionForeignKeys();
         $this->addSearchKeywordForeignKeys();
         $this->addSentenceForeignKeys();
-        $this->addSystemErrorForeignKeys();
 
         // Re-enable foreign key checks
         DB::statement('SET FOREIGN_KEY_CHECKS = 1');
@@ -43,7 +42,6 @@ return new class extends Migration
         DB::statement('SET FOREIGN_KEY_CHECKS = 0');
 
         // Drop foreign key constraints in reverse order
-        $this->dropSystemErrorForeignKeys();
         $this->dropSentenceForeignKeys();
         $this->dropSearchKeywordForeignKeys();
         $this->dropLexicalEntryInflectionForeignKeys();
@@ -374,17 +372,6 @@ return new class extends Migration
     }
 
     /**
-     * Add foreign key constraints for system error related tables
-     */
-    private function addSystemErrorForeignKeys(): void
-    {
-        // system_errors.session_id -> sessions.id
-        Schema::table('system_errors', function (Blueprint $table) {
-            $table->foreign('session_id')->references('id')->on('sessions');
-        });
-    }
-
-    /**
      * Drop foreign key constraints for account-related tables
      */
     private function dropAccountForeignKeys(): void
@@ -494,16 +481,6 @@ return new class extends Migration
             'sentence_fragments' => ['sentence_id', 'speech_id'],
             'sentence_fragment_inflection_rels' => ['inflection_id', 'sentence_fragment_id'],
             'sentence_translations' => ['sentence_id'],
-        ]);
-    }
-
-    /**
-     * Drop foreign key constraints for system error related tables
-     */
-    private function dropSystemErrorForeignKeys(): void
-    {
-        $this->dropForeignKeys([
-            'system_errors' => ['session_id'],
         ]);
     }
 
