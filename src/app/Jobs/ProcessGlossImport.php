@@ -22,9 +22,9 @@ class ProcessGlossImport implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(array $glossData)
+    public function __construct(array $lexicalEntryData)
     {
-        $this->data = $glossData;
+        $this->data = $lexicalEntryData;
     }
 
     /**
@@ -32,7 +32,7 @@ class ProcessGlossImport implements ShouldQueue
      *
      * @return void
      */
-    public function handle(LexicalEntryRepository $glossRepository, LexicalEntryInflectionRepository $glossInflectionRepository)
+    public function handle(LexicalEntryRepository $lexicalEntryRepository, LexicalEntryInflectionRepository $lexicalEntryInflectionRepository)
     {
         $data = &$this->data;
 
@@ -45,8 +45,8 @@ class ProcessGlossImport implements ShouldQueue
         $word = $data['word'];
 
         try {
-            $lexicalEntryEntity = $glossRepository->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
-            $glossInflectionRepository->saveManyOnLexicalEntry($lexicalEntryEntity, collect($inflections)->map(function ($i) use ($lexicalEntryEntity) {
+            $lexicalEntryEntity = $lexicalEntryRepository->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
+            $lexicalEntryInflectionRepository->saveManyOnLexicalEntry($lexicalEntryEntity, collect($inflections)->map(function ($i) use ($lexicalEntryEntity) {
                 return new LexicalEntryInflection(array_merge($i, [
                     'lexical_entry_id' => $lexicalEntryEntity->id,
                 ]));

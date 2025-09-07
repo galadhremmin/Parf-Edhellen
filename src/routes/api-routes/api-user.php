@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\v3\AccountApiController;
 use App\Http\Controllers\Api\v3\BookApiController;
 use App\Http\Controllers\Api\v3\SentenceApiController;
 use App\Http\Controllers\Api\v3\SubscriptionApiController;
+use App\Http\Controllers\Api\v3\WordListApiController;
 use Illuminate\Support\Facades\Route;
 
 Route::group([
@@ -40,4 +41,30 @@ Route::group([
         ->name('api.subscription.specific-entity.unsubscribe');
 
     Route::post('sentence/suggest-glosses', [SentenceApiController::class, 'suggestFragments']);
+
+    // Word Lists API
+    Route::get('word-lists', [WordListApiController::class, 'index'])
+        ->name('api.word-lists.index');
+    Route::post('word-lists', [WordListApiController::class, 'store'])
+        ->name('api.word-lists.store');
+    Route::get('word-lists/{id}', [WordListApiController::class, 'show'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('api.word-lists.show');
+    Route::put('word-lists/{id}', [WordListApiController::class, 'update'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('api.word-lists.update');
+    Route::delete('word-lists/{id}', [WordListApiController::class, 'destroy'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('api.word-lists.destroy');
+    
+    // Word list entries management
+    Route::post('word-lists/{id}/entries', [WordListApiController::class, 'addEntry'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('api.word-lists.add-entry');
+    Route::delete('word-lists/{id}/entries/{entryId}', [WordListApiController::class, 'removeEntry'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC, 'entryId' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('api.word-lists.remove-entry');
+    Route::put('word-lists/{id}/entries/reorder', [WordListApiController::class, 'reorderEntries'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('api.word-lists.reorder-entries');
 });
