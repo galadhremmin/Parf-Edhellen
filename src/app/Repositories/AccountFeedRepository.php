@@ -60,12 +60,12 @@ class AccountFeedRepository
                 'audit_trail_id' => null,  // TODO
             ];
         });
-
+        
         $newDates = $records->reduce(function ($dates, $record) {
             if (! isset($dates[$record['content_type']])) {
                 $dates[$record['content_type']] = $record['happened_at'];
             } elseif ($dates[$record['content_type']] < $record['happened_at']) {
-                $date[$record['content_type']] = $record['happened_at'];
+                $dates[$record['content_type']] = $record['happened_at'];
             }
 
             return $dates;
@@ -86,7 +86,7 @@ class AccountFeedRepository
             'oldest_happened_at' => Date::now(),
         ];
 
-        $records->chunk(100)->map(function ($chunk) {
+        $records->chunk(100)->each(function ($chunk) {
             AccountFeed::insert($chunk->all());
         });
 
