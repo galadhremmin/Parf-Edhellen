@@ -94,8 +94,8 @@ class ImportEldamoCommand extends Command
 
                     } else {
                         $data = $this->createImportData($entity);
-                        if (! $data['gloss']->language_id) {
-                            $this->line(sprintf('Skipping %s (line %d): unsupported language %s.', $data['gloss']->external_id, $lineNumber, $entity['gloss']->language));
+                        if (! $data['lexical_entry']->language_id) {
+                            $this->line(sprintf('Skipping %s (line %d): unsupported language %s.', $data['lexical_entry']->external_id, $lineNumber, $entity['lexical_entry']->language));
 
                         } else {
                             $this->validateImports($lineNumber, $data);
@@ -135,22 +135,22 @@ class ImportEldamoCommand extends Command
 
     private function createImportData(object $data): array
     {
-        $lexicalEntry = LexicalEntry::firstOrNew(['external_id' => $data->gloss->id]);
+        $lexicalEntry = LexicalEntry::firstOrNew(['external_id' => $data->lexicalEntry->id]);
 
         $lexicalEntry->account_id = $this->_eldamoAccount->id;
         $lexicalEntry->source = implode('; ', $data->sources);
-        $lexicalEntry->comments = $data->gloss->notes;
+        $lexicalEntry->comments = $data->lexicalEntry->notes;
         $lexicalEntry->is_deleted = 0;
-        $lexicalEntry->is_uncertain = $data->gloss->mark === '?' ||
-                                 $data->gloss->mark === '*' ||
-                                 $data->gloss->mark === '‽' ||
-                                 $data->gloss->mark === '!' ||
-                                 $data->gloss->mark === '^' ||
-                                 $data->gloss->mark === '⚠️';
-        $lexicalEntry->is_rejected = $data->gloss->mark === '-';
+        $lexicalEntry->is_uncertain = $data->lexicalEntry->mark === '?' ||
+                                 $data->lexicalEntry->mark === '*' ||
+                                 $data->lexicalEntry->mark === '‽' ||
+                                 $data->lexicalEntry->mark === '!' ||
+                                 $data->lexicalEntry->mark === '^' ||
+                                 $data->lexicalEntry->mark === '⚠️';
+        $lexicalEntry->is_rejected = $data->lexicalEntry->mark === '-';
 
         $groupName = 'default';
-        switch ($data->gloss->mark) {
+        switch ($data->lexicalEntry->mark) {
             case '!':
                 // ! marks words that are pure neologisms: fabrications and inventions by authors other than Tolkien
                 $groupName = 'fan invented';
@@ -185,20 +185,20 @@ class ImportEldamoCommand extends Command
         $this->setLanguage($data, $lexicalEntry);
         $this->setSpeech($data, $lexicalEntry);
 
-        $word = $data->gloss->word;
+        $word = $data->lexicalEntry->word;
         $details = $this->createDetails($data, $lexicalEntry);
         $inflections = $this->createInflections($data, $lexicalEntry);
         $keywords = $this->createKeywords($data, $lexicalEntry);
-        $translations = $this->createTranslations($data, $lexicalEntry);
-        $sense = $translations[0]->translation;
+        $glosses = $this->createGlosses($data, $lexicalEntry);
+        $sense = $glosses[0]->translation;
 
         return [
             'details' => $details,
-            'lexicalEntry' => $lexicalEntry,
+            'lexical_entry' => $lexicalEntry,
             'inflections' => $inflections,
             'keywords' => $keywords,
             'sense' => $sense,
-            'translations' => $translations,
+            'glosses' => $glosses,
             'word' => $word,
         ];
     }
@@ -206,11 +206,11 @@ class ImportEldamoCommand extends Command
     private function validateImports(int $index, array $data): void
     {
         $details = $data['details'];
-        $lexicalEntry = $data['lexicalEntry'];
+        $lexicalEntry = $data['lexical_entry'];
         $inflections = $data['inflections'];
         $keywords = $data['keywords'];
         $sense = $data['sense'];
-        $translations = $data['translations'];
+        $glosses = $data['glosses'];
         $word = $data['word'];
 
         $id = $lexicalEntry->external_id;
@@ -270,32 +270,32 @@ class ImportEldamoCommand extends Command
         $this->line($index.' - dispatched job');
     }
 
-    private function setLanguage(object $data, Gloss $gloss): void
+    private function setLanguage(object $data, LexicalEntry $lexicalEntry): void
     {
         $languageMap = $this->getLanguageMap();
         $neoLanguageMap = $this->getNeoLanguageMap();
 
-        if (isset($neoLanguageMap[$data->gloss->language])) {
-            $gloss->language_id = $neoLanguageMap[$data->gloss->language];
-            $gloss->is_uncertain = true;
+        if (isset($neoLanguageMap[$data->lexicalEntry->language])) {
+            $lexicalEntry->language_id = $neoLanguageMap[$data->lexicalEntry->language];
+            $lexicalEntry->is_uncertain = true;
 
-        } elseif (isset($languageMap[$data->gloss->language])) {
-            $gloss->language_id = $languageMap[$data->gloss->language];
+        } elseif (isset($languageMap[$data->lexicalEntry->language])) {
+            $lexicalEntry->language_id = $languageMap[$data->lexicalEntry->language];
 
         } else {
-            $this->line("\tUnrecognised language for ".$data->gloss->id.': '.$data->gloss->language);
+            $this->line("\tUnrecognised language for ".$data->lexicalEntry->id.': '.$data->lexicalEntry->language);
         }
     }
 
-    private function setSpeech(object $data, Gloss $gloss): void
+    private function setSpeech(object $data, LexicalEntry $lexicalEntry): void
     {
         $speechMap = $this->getSpeechMap();
-        $gloss->speech_id = isset($speechMap[$data->gloss->speech])
-            ? ($speechMap[$data->gloss->speech] ?: null)
+        $lexicalEntry->speech_id = isset($speechMap[$data->lexicalEntry->speech])
+            ? ($speechMap[$data->lexicalEntry->speech] ?: null)
             : null;
     }
 
-    private function createDetails(object $data, Gloss $gloss): array
+    private function createDetails(object $data, LexicalEntry $lexicalEntry): array
     {
         $order = [
             'Variations' => 10,
@@ -311,7 +311,7 @@ class ImportEldamoCommand extends Command
 
         $details = array_map(function ($d) use ($order) {
             if (! isset($order[$d->title])) {
-                throw new \Exception(sprintf('Unknown gloss detail category: %s.', $d->title));
+                throw new \Exception(sprintf('Unknown lexical entry detail category: %s.', $d->title));
             }
 
             return new LexicalEntryDetail([
@@ -325,7 +325,7 @@ class ImportEldamoCommand extends Command
         return $details;
     }
 
-    private function createInflections(object $data, Gloss $gloss): array
+    private function createInflections(object $data, LexicalEntry $lexicalEntry): array
     {
         $inflections = [];
 
@@ -358,8 +358,8 @@ class ImportEldamoCommand extends Command
             foreach ($eligibleInflections as $inflection) {
                 $inflection = [
                     'inflection_id' => $inflection->id,
-                    'speech_id' => $gloss->speech_id ?: null,
-                    'language_id' => $gloss->language_id,
+                    'speech_id' => $lexicalEntry->speech_id ?: null,
+                    'language_id' => $lexicalEntry->language_id,
                     'source' => $i->source,
                     'word' => $i->word,
                     'inflection_group_uuid' => $uuid,
@@ -383,19 +383,19 @@ class ImportEldamoCommand extends Command
         return $inflections;
     }
 
-    private function createKeywords(object $data, Gloss $gloss): array
+    private function createKeywords(object $data, LexicalEntry $lexicalEntry): array
     {
         // This is by design - the new EldamoParser implementation creates keywords for us.
         return $data->keywords;
     }
 
-    private function createTranslations(object $data, Gloss $gloss): array
+    private function createGlosses(object $data, LexicalEntry $lexicalEntry): array
     {
-        $translations = $data->gloss->translations;
+        $translations = $data->lexicalEntry->glosses;
 
         if ($translations === null) {
             // This is sometimes the case for names without translations, so assign it to the same word.
-            $translations = [$data->gloss->word];
+            $translations = [$data->lexicalEntry->word];
         }
 
         return array_map(function ($v) {
