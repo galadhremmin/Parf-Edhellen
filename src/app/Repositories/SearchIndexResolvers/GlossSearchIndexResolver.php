@@ -75,47 +75,53 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
                 
                 $query->where($searchColumn, 'like', $normalizedWord);
             }
-            
-            $entities = $query->select('entity_name', 'entity_id') //
-                ->get() //
-                ->groupBy('entity_name');
-            
-            if ($value->getNaturalLanguage()) {
-                $query->where('entity_name', $this->_lexicalEntryMorph);
-            }
 
-            $entityIds = [];
+            if (empty($normalizedWord) || $normalizedWord === '%' /* in the event the string normalization failed */) {
+                $lexicalEntries = [];
 
-            // Senses are *not* supported by the search index, so with this shim, the 'sense' is resolved to
-            // whatever lexical entry it might be associated with. This ensures that all relevant lexical entries are found.
-            if ($entities->has($this->_senseMorph)) {
-                // we've got the sense, now obtain lexical entries
-                $entityIds = LexicalEntry::whereIn('sense_id', $entities[$this->_senseMorph]->pluck('entity_id')) //
-                    ->pluck('id')
-                    ->all();
-            }
+            } else {
+                
+                $entities = $query->select('entity_name', 'entity_id') //
+                    ->get() //
+                    ->groupBy('entity_name');
+                
+                if ($value->getNaturalLanguage()) {
+                    $query->where('entity_name', $this->_lexicalEntryMorph);
+                }
 
-            if ($entities->has($this->_lexicalEntryMorph)) {
-                $entityIds = array_merge(
+                $entityIds = [];
+
+                // Senses are *not* supported by the search index, so with this shim, the 'sense' is resolved to
+                // whatever lexical entry it might be associated with. This ensures that all relevant lexical entries are found.
+                if ($entities->has($this->_senseMorph)) {
+                    // we've got the sense, now obtain lexical entries
+                    $entityIds = LexicalEntry::whereIn('sense_id', $entities[$this->_senseMorph]->pluck('entity_id')) //
+                        ->pluck('id')
+                        ->all();
+                }
+
+                if ($entities->has($this->_lexicalEntryMorph)) {
+                    $entityIds = array_merge(
+                        $entityIds,
+                        $entities[$this->_lexicalEntryMorph]->pluck('entity_id')->all()
+                    );
+                }
+
+                $filters = [];
+                if (! empty($value->getLexicalEntryGroupIds())) {
+                    $filters['lexical_entry_group_id'] = $value->getLexicalEntryGroupIds();
+                }
+                if (! empty($value->getSpeechIds())) {
+                    $filters['speech_id'] = $value->getSpeechIds();
+                }
+
+                $lexicalEntries = $this->_lexicalEntryRepository->getLexicalEntriesByExpandingViaSense(
                     $entityIds,
-                    $entities[$this->_lexicalEntryMorph]->pluck('entity_id')->all()
+                    $value->getLanguageId(),
+                    $value->getIncludesOld(),
+                    $filters
                 );
             }
-
-            $filters = [];
-            if (! empty($value->getLexicalEntryGroupIds())) {
-                $filters['lexical_entry_group_id'] = $value->getLexicalEntryGroupIds();
-            }
-            if (! empty($value->getSpeechIds())) {
-                $filters['speech_id'] = $value->getSpeechIds();
-            }
-
-            $lexicalEntries = $this->_lexicalEntryRepository->getLexicalEntriesByExpandingViaSense(
-                $entityIds,
-                $value->getLanguageId(),
-                $value->getIncludesOld(),
-                $filters
-            );
         }
 
         $lexicalEntryIds = array_map(function ($v) {
