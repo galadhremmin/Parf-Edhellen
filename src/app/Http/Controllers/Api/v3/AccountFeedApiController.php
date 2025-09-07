@@ -53,7 +53,7 @@ class AccountFeedApiController extends Controller
             $this->_feedRepository->generateForAccountId($id);
         }
 
-        $feed = AccountFeed::forAccount($id) //
+        $records = AccountFeed::forAccount($id) //
             ->with('content') //
             ->orderByDesc('happened_at') //
             ->cursorPaginate(20);
@@ -61,8 +61,8 @@ class AccountFeedApiController extends Controller
         // TODO: this technically doesn't work for `gloss` nor `forum` because discuss is tracked on `ForumDiscussion` and `LexicalEntryVersion`.
         //       we need to figure out a way to handle this complicated case.
         $changed = false;
-        $filteredRecords = collect([]);
-        foreach ($feed->getCollection() as $record) {
+        $feed = collect([]);
+        foreach ($records->getCollection() as $record) {
             $pass = true;
             if ($record->content === null) {
                 $pass = false;
@@ -105,18 +105,13 @@ class AccountFeedApiController extends Controller
                 $c->sentence_transformations = $this->_sentenceHelper->buildSentences($c->sentence_fragments);
             }
 
-            if ($changed) {
-                // only use teh filteredRecords collection if there were actual changes made.
-                $filteredRecords->push($record);
-            }
+            $feed->push($record);
         }
 
-        // We need to reset the collection if it was modified because it'd change the array to an object if some indices
-        // were removed. Reference: Illuminate\Pagination\CursorPaginator
         if ($changed) {
-            $feed->setCollection($filteredRecords);
+            $records->setCollection($feed);
         }
 
-        return $feed;
+        return $records;
     }
 }
