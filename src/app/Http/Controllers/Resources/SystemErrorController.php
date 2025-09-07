@@ -34,6 +34,11 @@ class SystemErrorController extends Controller
             $this->_auditTrailRepository->get(self::MaxAuditTrailEntriesPerPage, $auditTrailPage * self::MaxAuditTrailEntriesPerPage)
         );
 
+        $jobsByQueue = DB::table('jobs')
+            ->select('queue', DB::raw('COUNT(*) as count'))
+            ->groupBy('queue')
+            ->pluck('count', 'queue');
+
         return view('admin.system-error.index', [
             'auditTrailEntries' => $auditTrailEntries,
             'auditTrailPage' => $auditTrailPage,
@@ -41,6 +46,7 @@ class SystemErrorController extends Controller
             'errorCategories' => $errorsByWeek['categories'],
             'failedJobsByWeek' => $failedJobsByWeek['count_by_week'],
             'failedJobsCategories' => $failedJobsByWeek['categories'],
+            'jobsByQueue' => $jobsByQueue,
         ]);
     }
 

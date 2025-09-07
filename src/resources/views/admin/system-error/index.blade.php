@@ -12,6 +12,28 @@
      data-inject-prop-failed-jobs-by-week="@json($failedJobsByWeek)"
      data-inject-prop-failed-jobs-categories="@json($failedJobsCategories)"></section>
 
+<section class="card mb-3 shadow">
+   <div class="card-body">
+      <h2>Pending jobs</h2>
+
+      <table class="table table-bordered">
+         <thead>
+            <tr>
+               <th>Queue</th>
+               <th>Count</th>
+            </tr>
+         </thead>
+         <tbody>
+            @foreach ($jobsByQueue as $queue => $count)
+               <tr>
+                  <td>{{ $queue }}</td>
+                  <td>{{ $count }}</td>
+               </tr>
+            @endforeach
+         </tbody>
+      </table>
+   </div>
+</section>
 
 <section class="card mb-3 shadow">
    <div class="card-body">
