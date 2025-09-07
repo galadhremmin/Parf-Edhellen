@@ -214,6 +214,20 @@ function LexicalEntryForm(props: IProps) {
                         />
                     </div>
                 </Panel>
+                {lexicalEntry?.externalId && <Panel title="External references">
+                    <div className="form-group">
+                        <label htmlFor="ed-gloss-external-id">
+                            External ID
+                        </label>
+                        <input type="text"
+                            className="form-control"
+                            id="ed-gloss-external-id"
+                            value={lexicalEntry.externalId || ''}
+                            readOnly={true}
+                            onChange={() => {}}
+                        />
+                    </div>
+                </Panel>}
             </div>
         </div>
     </>;
