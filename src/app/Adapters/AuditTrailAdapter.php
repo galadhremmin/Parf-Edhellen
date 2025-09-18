@@ -134,7 +134,7 @@ class AuditTrailAdapter
                         'entityType' => $action->entity_type,
                         'entityId' => $action->entity_id,
                     ]).'">'.
-                    $action->entity_name.
+                    trim($action->entity_name, '.').
                 '</a>';
             } elseif ($action->entity instanceof FlashcardResult) {
                 switch ($action->action_id) {
