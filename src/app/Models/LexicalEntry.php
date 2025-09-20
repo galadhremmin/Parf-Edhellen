@@ -20,7 +20,7 @@ class LexicalEntry extends ModelBase implements Interfaces\IHasFriendlyName, Int
     ];
 
     /**
-     * @return HasMany<Gloss>
+     * @return HasMany<Gloss, LexicalEntry>
      */
     public function glosses(): HasMany
     {
@@ -28,7 +28,7 @@ class LexicalEntry extends ModelBase implements Interfaces\IHasFriendlyName, Int
     }
 
     /**
-     * @return BelongsTo<Sense>
+     * @return BelongsTo<Sense, LexicalEntry>
      */
     public function sense(): BelongsTo
     {
@@ -36,7 +36,7 @@ class LexicalEntry extends ModelBase implements Interfaces\IHasFriendlyName, Int
     }
 
     /**
-     * @return BelongsTo<LexicalEntryGroup>
+     * @return BelongsTo<LexicalEntryGroup, LexicalEntry>
      */
     public function lexical_entry_group(): BelongsTo
     {
@@ -44,7 +44,7 @@ class LexicalEntry extends ModelBase implements Interfaces\IHasFriendlyName, Int
     }
 
     /**
-     * @return HasMany<LexicalEntryVersion>
+     * @return HasMany<LexicalEntryVersion, LexicalEntry>
      */
     public function lexical_entry_versions(): HasMany
     {
@@ -52,7 +52,7 @@ class LexicalEntry extends ModelBase implements Interfaces\IHasFriendlyName, Int
     }
 
     /**
-     * @return BelongsTo<Language>
+     * @return BelongsTo<Language, LexicalEntry>
      */
     public function language(): BelongsTo
     {
@@ -60,7 +60,7 @@ class LexicalEntry extends ModelBase implements Interfaces\IHasFriendlyName, Int
     }
 
     /**
-     * @return BelongsTo<Word>
+     * @return BelongsTo<Word, LexicalEntry>
      */
     public function word(): BelongsTo
     {
@@ -68,7 +68,7 @@ class LexicalEntry extends ModelBase implements Interfaces\IHasFriendlyName, Int
     }
 
     /**
-     * @return BelongsTo<Speech>
+     * @return BelongsTo<Speech, LexicalEntry>
      */
     public function speech(): BelongsTo
     {
@@ -76,7 +76,7 @@ class LexicalEntry extends ModelBase implements Interfaces\IHasFriendlyName, Int
     }
 
     /**
-     * @return HasMany<LexicalEntryDetail>
+     * @return HasMany<LexicalEntryDetail, LexicalEntry>
      */
     public function lexical_entry_details(): HasMany
     {
@@ -84,7 +84,7 @@ class LexicalEntry extends ModelBase implements Interfaces\IHasFriendlyName, Int
     }
 
     /**
-     * @return HasMany<Keyword>
+     * @return HasMany<Keyword, LexicalEntry>
      */
     public function keywords(): HasMany
     {
@@ -92,7 +92,7 @@ class LexicalEntry extends ModelBase implements Interfaces\IHasFriendlyName, Int
     }
 
     /**
-     * @return HasMany<SentenceFragment>
+     * @return HasMany<SentenceFragment, LexicalEntry>
      */
     public function sentence_fragments(): HasMany
     {
@@ -100,7 +100,7 @@ class LexicalEntry extends ModelBase implements Interfaces\IHasFriendlyName, Int
     }
 
     /**
-     * @return HasMany<Contribution>
+     * @return HasMany<Contribution, LexicalEntry>
      */
     public function contributions(): HasMany
     {
@@ -108,7 +108,7 @@ class LexicalEntry extends ModelBase implements Interfaces\IHasFriendlyName, Int
     }
 
     /**
-     * @return HasMany<FlashcardResult>
+     * @return HasMany<FlashcardResult, LexicalEntry>
      */
     public function flashcard_results(): HasMany
     {
@@ -116,7 +116,7 @@ class LexicalEntry extends ModelBase implements Interfaces\IHasFriendlyName, Int
     }
 
     /**
-     * @return HasMany<LexicalEntryInflection>
+     * @return HasMany<LexicalEntryInflection, LexicalEntry>
      */
     public function lexical_entry_inflections(): HasMany
     {

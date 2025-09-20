@@ -24,7 +24,7 @@ trait HasAccount
     }
 
     /**
-     * @return BelongsTo<Account>
+     * @return BelongsTo<Account, $this>
      */
     public function account(): BelongsTo
     {

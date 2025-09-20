@@ -18,7 +18,7 @@ class Sentence extends ModelBase implements Interfaces\IHasFriendlyName, Interfa
     ];
 
     /**
-     * @return HasMany<SentenceFragment> 
+     * @return HasMany<SentenceFragment, Sentence> 
      */
     public function sentence_fragments(): HasMany
     {
@@ -27,7 +27,7 @@ class Sentence extends ModelBase implements Interfaces\IHasFriendlyName, Interfa
     }
 
     /**
-     * @return HasMany<SentenceTranslation>
+     * @return HasMany<SentenceTranslation, Sentence>
      */
     public function sentence_translations(): HasMany
     {
@@ -35,7 +35,7 @@ class Sentence extends ModelBase implements Interfaces\IHasFriendlyName, Interfa
     }
 
     /**
-     * @return BelongsTo<Language>
+     * @return BelongsTo<Language, Sentence>
      */
     public function language(): BelongsTo
     {
@@ -43,7 +43,7 @@ class Sentence extends ModelBase implements Interfaces\IHasFriendlyName, Interfa
     }
 
     /**
-     * @return BelongsTo<AccountFeed>
+     * @return BelongsTo<AccountFeed, Sentence>
      */
     public function account_feed(): BelongsTo
     {
