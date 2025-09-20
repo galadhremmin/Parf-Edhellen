@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 
 import { fireEvent } from '@root/components/Component';
 import { excludeProps } from '@root/utilities/func/props';
@@ -38,6 +38,15 @@ function AsyncSelect<T = any>(props: IProps<T>) {
 
     const values = useFetch(loaderOfValues, value);
 
+    const options = useMemo(() => 
+        values.map((option) => {
+            const optionValue = option[valueField] as any;
+            // eslint-disable-next-line @typescript-eslint/no-base-to-string
+            return <option key={optionValue} value={optionValue}>{String(option[textField])}</option>;
+        }), 
+        [values, valueField, textField]
+    );
+
     const _onChange = useCallback((ev: React.ChangeEvent<HTMLSelectElement>) => {
         const newValue = getDesiredValue(
             values.find((v) => v[valueField] as any == ev.target.value),
@@ -46,18 +55,14 @@ function AsyncSelect<T = any>(props: IProps<T>) {
         );
 
         void fireEvent(name, onChange, newValue ? newValue : null);
-    }, [ name, onChange, values, valueField ]);
+    }, [ name, onChange, values, valueField, valueType ]);
 
     return <select {...componentProps}
         id={name}
         onChange={_onChange}
         value={getNativeValue(value, valueField as string)}>
         {allowEmpty && <option key="empty" value="">{emptyText || ''}</option>}
-        {values.map((option) => {
-            const optionValue = option[valueField] as any;
-            // eslint-disable-next-line @typescript-eslint/no-base-to-string
-            return <option key={optionValue} value={optionValue}>{String(option[textField])}</option>;
-        })}
+        {options}
     </select>;
 }
 

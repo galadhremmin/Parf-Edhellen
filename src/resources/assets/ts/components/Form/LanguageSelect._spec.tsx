@@ -8,8 +8,7 @@ import sinon from 'sinon';
 
 import { ILanguagesResponse } from '@root/connectors/backend/IBookApi';
 import LanguageConnector from '@root/connectors/backend/LanguageConnector';
-import {
-    LanguageSelect,
+import LanguageSelect, {
     LanguageWithWritingModeOnlyFilter,
 } from './LanguageSelect';
 import { render } from '@testing-library/react';
@@ -54,7 +53,7 @@ describe('components/Form', () => {
 
         test('supports formatting', async () => {
             const wrapper = render(<LanguageSelect languageConnector={languageConnector as any}
-                formatter={(l) => String(l.id)} />);
+                formatter={(l: any) => String(l.id)} />);
 
             const options = await wrapper.findAllByRole('option');
             expect(options.map((v) => v.textContent)).toEqual(

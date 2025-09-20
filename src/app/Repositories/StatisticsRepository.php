@@ -7,6 +7,7 @@ use App\Models\FlashcardResult;
 use App\Models\ForumPost;
 use App\Models\ForumPostLike;
 use App\Models\LexicalEntry;
+use App\Models\QueueJobStatistic;
 use App\Models\Sentence;
 use App\Models\Word;
 use Carbon\Carbon;
@@ -297,5 +298,87 @@ class StatisticsRepository
         }
 
         return $data;
+    }
+
+    /**
+     * Get queue job statistics for the global statistics
+     */
+    public function getQueueJobStatistics(): array
+    {
+        $today = Carbon::today();
+        $yesterday = Carbon::yesterday();
+        
+        $todayStats = QueueJobStatistic::completedToday()
+            ->select([
+                DB::raw('COUNT(*) as total_jobs'),
+                DB::raw('SUM(CASE WHEN status = "' . QueueJobStatistic::STATUS_SUCCESS . '" THEN 1 ELSE 0 END) as successful_jobs'),
+                DB::raw('SUM(CASE WHEN status = "' . QueueJobStatistic::STATUS_FAILED . '" THEN 1 ELSE 0 END) as failed_jobs'),
+                DB::raw('AVG(execution_time_ms) as avg_execution_time_ms'),
+            ])
+            ->first();
+
+        $yesterdayStats = QueueJobStatistic::whereDate('completed_at', $yesterday)
+            ->select([
+                DB::raw('COUNT(*) as total_jobs'),
+                DB::raw('SUM(CASE WHEN status = "' . QueueJobStatistic::STATUS_SUCCESS . '" THEN 1 ELSE 0 END) as successful_jobs'),
+                DB::raw('SUM(CASE WHEN status = "' . QueueJobStatistic::STATUS_FAILED . '" THEN 1 ELSE 0 END) as failed_jobs'),
+            ])
+            ->first();
+
+        $totalJobs = $todayStats->total_jobs ?? 0;
+        $successfulJobs = $todayStats->successful_jobs ?? 0;
+        $failedJobs = $todayStats->failed_jobs ?? 0;
+        $yesterdayTotal = $yesterdayStats->total_jobs ?? 0;
+
+        return [
+            'total_jobs_today' => $totalJobs,
+            'successful_jobs_today' => $successfulJobs,
+            'failed_jobs_today' => $failedJobs,
+            'success_rate_today' => $totalJobs > 0 ? round(($successfulJobs / $totalJobs) * 100, 2) : 0,
+            'avg_execution_time_ms' => $todayStats->avg_execution_time_ms ?? 0,
+            'daily_change_percent' => $yesterdayTotal > 0 ? round((($totalJobs - $yesterdayTotal) / $yesterdayTotal) * 100, 2) : 0,
+        ];
+    }
+
+    /**
+     * Get detailed queue job statistics for a specific time period
+     */
+    public function getDetailedQueueJobStatistics(Carbon $startDate, Carbon $endDate): array
+    {
+        $queueJobRepository = new QueueJobStatisticRepository();
+        
+        return [
+            'period_stats' => $queueJobRepository->getStatisticsForPeriod($startDate, $endDate),
+            'by_job_class' => $queueJobRepository->getStatisticsByJobClass($startDate, $endDate),
+            'by_queue' => $queueJobRepository->getStatisticsByQueue($startDate, $endDate),
+            'hourly_stats' => $queueJobRepository->getHourlyStatistics($startDate),
+            'daily_stats' => $queueJobRepository->getDailyStatistics($startDate, $endDate),
+            'most_failing_jobs' => $queueJobRepository->getMostFailingJobs(10),
+            'slowest_jobs' => $queueJobRepository->getSlowestJobs(10),
+            'recent_failures' => $queueJobRepository->getRecentFailures(20),
+            'health_metrics' => $queueJobRepository->getQueueHealthMetrics(),
+        ];
+    }
+
+    /**
+     * Get queue job statistics for the last 30 days
+     */
+    public function getQueueJobStatisticsLast30Days(): array
+    {
+        $startDate = Carbon::now()->subDays(30);
+        $endDate = Carbon::now();
+        
+        return $this->getDetailedQueueJobStatistics($startDate, $endDate);
+    }
+
+    /**
+     * Get queue job statistics for the last 7 days
+     */
+    public function getQueueJobStatisticsLast7Days(): array
+    {
+        $startDate = Carbon::now()->subDays(7);
+        $endDate = Carbon::now();
+        
+        return $this->getDetailedQueueJobStatistics($startDate, $endDate);
     }
 }

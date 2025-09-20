@@ -1,3 +1,4 @@
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   ILanguageEntity,
   ILanguagesResponse,
@@ -33,56 +34,82 @@ export const LanguageAndWritingModeFormatter = (language: ILanguageEntity) => //
 /**
  * Represents a `<select>` component for languages, categorized by the time period when they were invented.
  */
-export class LanguageSelect extends FormComponent<number, IProps, IProps, IState> {
-    public static defaultProps = {
-        filter: DefaultLanguageFilter,
-        formatter: DefaultLanguageFormatter,
-        includeAllLanguages: true,
-        value: 0,
-    } as Partial<IProps>;
+function LanguageSelect(props: IProps) {
+    const {
+        filter = DefaultLanguageFilter,
+        formatter = DefaultLanguageFormatter,
+        includeAllLanguages = true,
+        languageConnector,
+        value = 0,
+        ...componentProps
+    } = props;
 
-    public state: IState = {
-        languages: null,
+    const [languages, setLanguages] = useState<ILanguagesResponse | null>(null);
+
+    useEffect(() => {
+        const loadLanguages = async () => {
+            if (languageConnector) {
+                const languagesData = await languageConnector.all();
+                setLanguages(languagesData);
+            }
+        };
+        loadLanguages();
+    }, [languageConnector]);
+
+    const periods = useMemo(() => 
+        languages ? Object.keys(languages) : [], 
+        [languages]
+    );
+
+    const filteredLanguagesByPeriod = useMemo(() => {
+        if (!languages) return {};
+        
+        return periods.reduce((acc, period) => {
+            acc[period] = languages[period].filter(filter);
+            return acc;
+        }, {} as Record<string, ILanguageEntity[]>);
+    }, [languages, periods, filter]);
+
+    const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const newValue = integerConverter(event.target.value);
+        if (props.onChange) {
+            // Create a proper IComponentEvent structure
+            const componentEvent = {
+                value: newValue,
+                target: event.target,
+                currentTarget: event.currentTarget,
+                bubbles: event.bubbles,
+                cancelable: event.cancelable,
+                defaultPrevented: event.defaultPrevented,
+                eventPhase: event.eventPhase,
+                isTrusted: event.isTrusted,
+                nativeEvent: event.nativeEvent,
+                preventDefault: event.preventDefault,
+                isDefaultPrevented: event.isDefaultPrevented,
+                stopPropagation: event.stopPropagation,
+                isPropagationStopped: event.isPropagationStopped,
+                persist: event.persist,
+                timeStamp: event.timeStamp,
+                type: event.type,
+            };
+            props.onChange(componentEvent);
+        }
     };
 
-    public async componentDidMount() {
-        const {
-            languageConnector,
-        } = this.props;
-        const languages = await languageConnector.all();
-        this.setState({
-            languages,
-        });
+    if (languages === null) {
+        return null;
     }
 
-    public render() {
-        const props = this.pickComponentProps();
-        const languages = this.state.languages;
-
-        if (languages === null) {
-            return null;
-        }
-
-        const periods = Object.keys(this.state.languages);
-        const filter = this.props.filter || DefaultLanguageFilter;
-        const formatter = this.props.formatter || DefaultLanguageFormatter;
-        const includeAllLanguages = this.props.includeAllLanguages;
-
-        return <select {...props} onChange={this.onBackingComponentChange}>
-            {includeAllLanguages && <option value={0}>All languages</option>}
-            {!includeAllLanguages && <option value={0}></option>}
-            {periods.map((period) => <LanguagePeriod
-                key={period}
-                period={period}
-                languages={languages[period].filter(filter)}
-                formatter={formatter}
-            />)}
-        </select>;
-    }
-
-    protected convertValue(value: string) {
-        return integerConverter(value);
-    }
+    return <select {...componentProps} value={value} onChange={handleChange}>
+        {includeAllLanguages && <option value={0}>All languages</option>}
+        {!includeAllLanguages && <option value={0}></option>}
+        {periods.map((period) => <LanguagePeriod
+            key={period}
+            period={period}
+            languages={filteredLanguagesByPeriod[period] || []}
+            formatter={formatter}
+        />)}
+    </select>;
 }
 
 /**

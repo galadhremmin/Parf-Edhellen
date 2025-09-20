@@ -8,7 +8,7 @@ import {
     RowNode,
 } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 // import { ClientSideRowModelModule } from 'ag-grid-community/client-side-row-model';
 
 import { fireEventAsync } from '@root/components/Component';
@@ -51,7 +51,6 @@ const RowClassRules = {
     },
 };
 
-// TODO: Convert to React functional component
 export function FragmentsGrid(props: IProps) {
     const gridRef = useRef<AgGridReact & DetailGridInfo>();
     const glossCacheRef = useRef<Map<number, Promise<ILexicalEntryEntity>>>();
@@ -123,6 +122,16 @@ export function FragmentsGrid(props: IProps) {
                     headerName: 'Lexical entry',
                     field: 'lexicalEntryId',
                     resizable: true,
+                    valueFormatter: (params) => {
+                        // AG Grid needs a value formatter for object data
+                        // The actual display is handled by GlossRenderer
+                        return params.value ? 'Lexical Entry' : '';
+                    },
+                    valueParser: (params) => {
+                        // AG Grid needs a value parser for object data
+                        // The actual editing is handled by GlossCellEditor
+                        return params.newValue;
+                    },
                 },
                 {
                     cellEditor: SpeechSelectCellEditor,
@@ -134,6 +143,16 @@ export function FragmentsGrid(props: IProps) {
                     headerName: 'Speech',
                     field: 'speechId',
                     resizable: true,
+                    valueFormatter: (params) => {
+                        // AG Grid needs a value formatter for object data
+                        // The actual display is handled by SpeechRenderer
+                        return params.value ? 'Speech' : '';
+                    },
+                    valueParser: (params) => {
+                        // AG Grid needs a value parser for object data
+                        // The actual editing is handled by SpeechSelectCellEditor
+                        return params.newValue;
+                    },
                 },
                 {
                     cellEditor: InflectionCellEditor,
@@ -145,6 +164,16 @@ export function FragmentsGrid(props: IProps) {
                     headerName: 'Inflections',
                     field: 'lexicalEntryInflections',
                     resizable: true,
+                    valueFormatter: (params) => {
+                        // AG Grid needs a value formatter for object data
+                        // The actual display is handled by InflectionRenderer
+                        return params.value ? 'Inflections' : '';
+                    },
+                    valueParser: (params) => {
+                        // AG Grid needs a value parser for object data
+                        // The actual editing is handled by InflectionCellEditor
+                        return params.newValue;
+                    },
                 },
                 {
                     cellEditorPopup: true,
@@ -307,7 +336,7 @@ export function FragmentsGrid(props: IProps) {
      * @param lexicalEntryId gloss ID to look up
      * @returns A gloss resolver promise.
      */
-    const _onResolveGloss = (lexicalEntryId: number): Promise<ILexicalEntryEntity> => {
+    const _onResolveGloss = useCallback((lexicalEntryId: number): Promise<ILexicalEntryEntity> => {
         if (glossCacheRef.current?.has(lexicalEntryId)) {
             return glossCacheRef.current.get(lexicalEntryId);
         }
@@ -319,13 +348,13 @@ export function FragmentsGrid(props: IProps) {
         const glossPromise = glossApi.lexicalEntry(lexicalEntryId);
         glossCacheRef.current?.set(lexicalEntryId, glossPromise);
         return glossPromise;
-    }
+    }, [glossApi]);
 
     /**
      * Retrieves suggestions asynchronously for the specified word.
      * @param word look-up word
      */
-    const _onSuggestGloss = async (word: string): Promise<ISuggestionEntity[]> => {
+    const _onSuggestGloss = useCallback(async (word: string): Promise<ISuggestionEntity[]> => {
         const suggestions = await glossApi.suggest({
             inexact: true,
             languageId,
@@ -338,7 +367,7 @@ export function FragmentsGrid(props: IProps) {
         }
 
         return null;
-    };
+    }, [glossApi, languageId]);
 
     return <>
         <div className="ag-theme-balham FragmentsGrid--container">
