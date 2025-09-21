@@ -15,7 +15,9 @@
 <section class="card mb-3 shadow">
    <div class="card-body">
       <h2>Pending jobs</h2>
-
+      @if ($jobsByQueue->isEmpty())
+         <em>No pending jobs.</em>
+      @else
       <table class="table table-bordered">
          <thead>
             <tr>
@@ -30,8 +32,42 @@
                   <td>{{ $count }}</td>
                </tr>
             @endforeach
-         </tbody>
-      </table>
+            </tbody>
+         </table>
+      @endif
+      <h2>Job statistics</h2>
+      @if ($jobStatsByQueue->isEmpty())
+         <em>No job statistics available.</em>
+      @else
+         <table class="table table-bordered">
+            <thead>
+               <tr>
+                  <th>Queue</th>
+                  <th>Jobs</th>
+                  <th>Succeeded</th>
+                  <th>Failed</th>
+                  <th>Retried</th>
+                  <th>Avg Exec Time (s)</th>
+                  <th>p90 Exec Time (s)</th>
+                  <th>p99 Exec Time (s)</th>
+               </tr>
+            </thead>
+            <tbody>
+               @foreach ($jobStatsByQueue as $queue => $stats)
+                  <tr>
+                     <td>{{ $queue }}</td>
+                     <td>{{ $stats['total_count'] ?? 0 }}</td>
+                     <td>{{ $stats['success_count'] ?? 0 }}</td>
+                     <td>{{ $stats['failed_count'] ?? 0 }}</td>
+                     <td>{{ $stats['retry_count'] ?? 0 }}</td>
+                     <td>{{ $stats['avg_execution_time_ms'] ?? 0 }}</td>
+                     <td>{{ $stats['p90_execution_time_ms'] ?? 0 }}</td>
+                     <td>{{ $stats['p99_execution_time_ms'] ?? 0 }}</td>
+                  </tr>
+               @endforeach
+            </tbody>
+         </table>
+      @endif
    </div>
 </section>
 

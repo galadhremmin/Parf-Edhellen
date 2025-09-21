@@ -1,3 +1,4 @@
+import React, { useMemo } from "react";
 import HtmlInject from "@root/components/HtmlInject";
 import Tengwar from "@root/components/Tengwar";
 import TextIcon from "@root/components/TextIcon";
@@ -27,8 +28,15 @@ export default function SentenceFeedUnit(props: IProps<ISentenceFeedRecord>) {
      * The variables below parses out the transformations (we don't want to assume which ones we have available) and also
      * determines the paragraph indexes. These indexes should be the same for all transformations.
      */
-    const transformations = Object.keys(sentenceTransformations);
-    const paragraphIndexes = Object.keys(sentenceTransformations[transformations[0]] || {});
+    const transformations = useMemo(() => 
+        Object.keys(sentenceTransformations), 
+        [sentenceTransformations]
+    );
+    
+    const paragraphIndexes = useMemo(() => 
+        Object.keys(sentenceTransformations[transformations[0]] || {}), 
+        [sentenceTransformations, transformations]
+    );
 
     return <>
         <p>

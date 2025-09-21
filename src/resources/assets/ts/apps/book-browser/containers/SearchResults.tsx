@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 
 import { IComponentEvent } from '@root/components/Component._types';
@@ -79,22 +79,33 @@ export function SearchResults(props: IProps) {
         void dispatch(actionsRef.current?.selectNextResult(-1));
     }
 
+    const searchResultContainerStyles = useMemo(() => 
+        classNames(
+            'results-panel',
+            { hidden: searchResults.length < 1 && !loading },
+        ), 
+        [searchResults.length, loading]
+    );
+    
+    const noSearchResultsStyles = useMemo(() => 
+        classNames('results-empty',
+            { hidden: searchResults.length > 0 || loading },
+        ), 
+        [searchResults.length, loading]
+    );
+    
+    const navigatorStyles = useMemo(() => 
+        classNames('search-result-navigator',
+            { hidden: searchResults.length < 1 },
+        ), 
+        [searchResults.length]
+    );
+
     const searching = props.word.length > 0;
     if (!searching) {
         // Render nothing if there are no search results to show.
         return null;
     }
-
-    const searchResultContainerStyles = classNames(
-        'results-panel',
-        { hidden: searchResults.length < 1 && !loading },
-    );
-    const noSearchResultsStyles = classNames('results-empty',
-        { hidden: searchResults.length > 0 || loading },
-    );
-    const navigatorStyles = classNames('search-result-navigator',
-        { hidden: searchResults.length < 1 },
-    );
 
     return <section>
         <div ref={containerRef} className="shadow-lg p-3 mb-5 bg-body rounded mt-4">

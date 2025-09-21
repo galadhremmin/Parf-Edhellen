@@ -1,5 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
+// Note: react-autosuggest uses deprecated UNSAFE_componentWillReceiveProps which causes warnings in React StrictMode
+// This is a known issue with the library (https://github.com/moroshko/react-autosuggest/issues/835)
+// The functionality works correctly despite the warning
 import Autosuggest, {
     ChangeEvent,
     SuggestionSelectedEventData,
