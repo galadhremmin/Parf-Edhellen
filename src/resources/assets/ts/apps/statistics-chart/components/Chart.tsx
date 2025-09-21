@@ -12,8 +12,8 @@ import {
 } from './Chart._types';
 import GrowthChart, { ReservedDatasetProperties } from './GrowthChart';
 
-const loadAccounts = (data: IData[]) => {
-    const accounts = data.reduce((carry, item) => {
+const loadAccounts = (data: IData[]): string[] => {
+    const accounts = data.reduce((carry: string[], item) => {
         Object.keys(item) //
             .filter((v: string) => ReservedDatasetProperties.indexOf(v) === -1) //
             .forEach((account: string) => { //

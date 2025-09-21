@@ -22,14 +22,13 @@ export function setInstance<K extends keyof DIContainerType, C extends CanBeCons
     diContainer[key] = () => new constructor();
 }
 
-export function resolve<T extends keyof DIContainerType>(name: T) {
+export function resolve<T extends keyof DIContainerType>(name: T): DIContainerType[T] {
     const factory = diContainer[name];
     if (typeof factory !== 'function') {
         throw new Error(`Failed to resolve ${name}. DI container contains: ${Object.keys(diContainer).join(', ')}`);
     }
 
-    const instance = factory();
-    return instance;
+    return factory();
 }
 
 export function withPropInjection<P>(

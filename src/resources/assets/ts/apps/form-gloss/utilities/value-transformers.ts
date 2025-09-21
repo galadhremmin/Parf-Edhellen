@@ -6,7 +6,7 @@ import {
 } from '@root/connectors/backend/IGlossResourceApi';
 import { ValueTransformer } from './value-transformers._types';
 
-export const defaultTransformer: ValueTransformer<any, any> = (x) => x;
+export const defaultTransformer: ValueTransformer<any, any> = (x: any): any => x;
 
 export const keywordsTransformer: ValueTransformer<string[], IKeywordEntity[]> = (keywords) =>
     keywords.map((k) => ({

@@ -24,7 +24,7 @@ function loadLatestScript() {
     const latestScript = document.createElement('script');
     latestScript.src = `/v${latestVersion}/index.js`;
     latestScript.onload = () => {
-        globalOrchestration(); 
+        void globalOrchestration(); 
     };
     document.body.appendChild(latestScript);
     return false;
@@ -52,6 +52,6 @@ function globalOrchestration() {
 
 if (loadLatestScript()) {
     window.addEventListener('load', () => {
-        globalOrchestration();
+        void globalOrchestration();
     });
 }

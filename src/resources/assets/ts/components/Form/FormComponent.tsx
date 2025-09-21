@@ -56,7 +56,8 @@ export abstract class FormComponent<V = any, P extends IComponentProps<V> = Reco
             return;
         }
 
-        if (! fireEvent(this, this.props.onChange, value)) {
+        const result = fireEvent(this, this.props.onChange, value);
+        if (!result) {
             ev.preventDefault();
         }
     }

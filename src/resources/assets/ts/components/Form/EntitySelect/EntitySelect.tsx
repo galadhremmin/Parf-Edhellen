@@ -22,8 +22,8 @@ import './EntitySelect.scss';
 // TODO: Refactor as a React functional component
 export default class EntitySelect<T> extends React.Component<IProps<T>, IState> {
     public static defaultProps = {
-        formatter: (s) => s || '',
-        renderSuggestion: (s) => <span>{JSON.stringify(s)}</span>,
+        formatter: (s: any): string => s || '',
+        renderSuggestion: (s: any) => <span>{JSON.stringify(s)}</span>,
         renderValue: (v) => JSON.stringify(v),
         value: null,
         valueClassNames: '',

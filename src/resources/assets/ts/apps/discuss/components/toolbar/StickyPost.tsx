@@ -37,7 +37,7 @@ function StickyPost(props: IProps) {
         onThreadChange,
     ]);
 
-    return <a href="#" onClick={_onStickyClick}>
+    return <a href="#" onClick={() => void _onStickyClick()}>
         <TextIcon icon="pushpin" />{' '}
         {isSticky ? 'Unstick' : 'Stick'}
     </a>;
