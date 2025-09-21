@@ -24,7 +24,7 @@ export class ErrorBoundary extends React.Component<IProps, IState> {
         };
     }
 
-    public async componentDidCatch(error: Error, errorInfo: object) {
+    public async componentDidCatch(error: Error, errorInfo: object): Promise<void> {
         const {
             reportErrorApi,
         } = this.props;
@@ -53,7 +53,7 @@ export class ErrorBoundary extends React.Component<IProps, IState> {
         this.props.globalEvents?.disconnect();
     }
 
-    private _onError = async (evt: CustomEvent<Error>) => {
+    private _onError = async (evt: CustomEvent<Error>): Promise<void> => {
         await this.componentDidCatch(evt.detail, {});
     }
 

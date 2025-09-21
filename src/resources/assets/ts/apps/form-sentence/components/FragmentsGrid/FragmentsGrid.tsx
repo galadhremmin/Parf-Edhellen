@@ -363,7 +363,7 @@ export function FragmentsGrid(props: IProps) {
         });
 
         if (suggestions.size > 0) {
-            return suggestions.values().next().value;
+            return suggestions.values().next().value as ISuggestionEntity[];
         }
 
         return null;

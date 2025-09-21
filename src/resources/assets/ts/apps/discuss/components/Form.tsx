@@ -33,10 +33,12 @@ function Form(props: IProps) {
         [ name, onChange ]);
 
     const _onSubjectChange = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => fireEvent(name, onChange, {
-            name: 'subject',
-            value: e.target.value,
-        }), [ name, onChange ]);
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            void fireEvent(name, onChange, {
+                name: 'subject',
+                value: e.target.value,
+            });
+        }, [ name, onChange ]);
 
     const _onCancelClick = useCallback((e: React.MouseEvent) => {
         e.preventDefault();

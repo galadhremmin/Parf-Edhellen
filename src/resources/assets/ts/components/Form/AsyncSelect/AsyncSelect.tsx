@@ -75,7 +75,7 @@ function getNativeValue(v: any, valueField: string): IdValue {
         return v[valueField] as IdValue;
     }
 
-    return v;
+    return v as IdValue;
 }
 
 function getDesiredValue(v: any, valueType: ValueType, valueField: string): IdValue {
@@ -85,9 +85,9 @@ function getDesiredValue(v: any, valueType: ValueType, valueField: string): IdVa
 
     switch (valueType) {
         case 'id':
-            return v[valueField];
+            return v[valueField] as IdValue;
         case 'entity':
-            return v;
+            return v as IdValue;
         default:
             return null;
     }

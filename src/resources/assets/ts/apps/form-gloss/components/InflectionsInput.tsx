@@ -77,7 +77,7 @@ function InflectionsInput(props: IProps) {
                             return <LockedRenderer {...params} />;
                         }
 
-                        return params.value;
+                        return params.value as string;
                     },
                     colId: 'inflection-word',
                     editable: (params: EditableCallbackParams) => //

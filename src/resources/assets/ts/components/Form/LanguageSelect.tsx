@@ -53,7 +53,7 @@ function LanguageSelect(props: IProps) {
                 setLanguages(languagesData);
             }
         };
-        loadLanguages();
+        void loadLanguages();
     }, [languageConnector]);
 
     const periods = useMemo(() => 
@@ -70,29 +70,28 @@ function LanguageSelect(props: IProps) {
         }, {} as Record<string, ILanguageEntity[]>);
     }, [languages, periods, filter]);
 
-    const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const newValue = integerConverter(event.target.value);
+    const handleChange = (ev: React.ChangeEvent<HTMLSelectElement>) => {
+        const newValue = integerConverter(ev.target.value);
         if (props.onChange) {
-            // Create a proper IComponentEvent structure
             const componentEvent = {
                 value: newValue,
-                target: event.target,
-                currentTarget: event.currentTarget,
-                bubbles: event.bubbles,
-                cancelable: event.cancelable,
-                defaultPrevented: event.defaultPrevented,
-                eventPhase: event.eventPhase,
-                isTrusted: event.isTrusted,
-                nativeEvent: event.nativeEvent,
-                preventDefault: event.preventDefault,
-                isDefaultPrevented: event.isDefaultPrevented,
-                stopPropagation: event.stopPropagation,
-                isPropagationStopped: event.isPropagationStopped,
-                persist: event.persist,
-                timeStamp: event.timeStamp,
-                type: event.type,
+                target: ev.target,
+                currentTarget: ev.currentTarget,
+                bubbles: ev.bubbles,
+                cancelable: ev.cancelable,
+                defaultPrevented: ev.defaultPrevented,
+                eventPhase: ev.eventPhase,
+                isTrusted: ev.isTrusted,
+                nativeEvent: ev.nativeEvent,
+                preventDefault: () => ev.preventDefault(),
+                isDefaultPrevented: () => ev.isDefaultPrevented(),
+                stopPropagation: () => ev.stopPropagation(),
+                isPropagationStopped: () => ev.isPropagationStopped(),
+                persist: () => ev.persist(),
+                timeStamp: ev.timeStamp,
+                type: ev.type,
             };
-            props.onChange(componentEvent);
+            void props.onChange(componentEvent);
         }
     };
 
