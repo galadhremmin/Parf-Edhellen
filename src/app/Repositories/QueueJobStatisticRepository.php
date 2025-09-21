@@ -72,6 +72,7 @@ class QueueJobStatisticRepository
      */
     public function getStatisticsByQueue(Carbon $startDate, Carbon $endDate): Collection
     {
+
         return QueueJobStatistic::completedBetween($startDate, $endDate)
             ->select([
                 'queue_name',
@@ -80,6 +81,8 @@ class QueueJobStatisticRepository
                 DB::raw('SUM(CASE WHEN status = "' . QueueJobStatistic::STATUS_FAILED . '" THEN 1 ELSE 0 END) as failed_count'),
                 DB::raw('SUM(CASE WHEN status = "' . QueueJobStatistic::STATUS_RETRY . '" THEN 1 ELSE 0 END) as retry_count'),
                 DB::raw('AVG(execution_time_ms) as avg_execution_time_ms'),
+                DB::raw('PERCENTILE_CONT(0.9) WITHIN GROUP (ORDER BY execution_time_ms) as p90_execution_time_ms'),
+                DB::raw('PERCENTILE_CONT(0.99) WITHIN GROUP (ORDER BY execution_time_ms) as p99_execution_time_ms'),
             ])
             ->groupBy('queue_name')
             ->orderBy('total_count', 'desc')
