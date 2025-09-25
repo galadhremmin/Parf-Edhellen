@@ -21,7 +21,7 @@ return new class extends Migration
             $table->text('error_message')->nullable();
             $table->string('connection', 64)->default('database');
             $table->timestamp('started_at')->nullable();
-            $table->timestamp('completed_at');
+            $table->timestamp('completed_at')->nullable();
             $table->timestamps();
 
             // Composite indexes for common queries
