@@ -13,6 +13,7 @@ use App\Repositories\Interfaces\IAuditTrailRepository;
 use App\Repositories\SentenceRepository;
 use App\Repositories\StatisticsRepository;
 use Illuminate\Support\Facades\Cache;
+use DateInterval;
 
 class HomeController extends Controller
 {
@@ -50,7 +51,7 @@ class HomeController extends Controller
             : null;
 
         // Retrieve a random sentence to be featured.
-        $randomSentence = Cache::remember('ed.home.sentence', 60 * 24 /* seconds */, function () {
+        $randomSentence = Cache::remember('ed.home.sentence', DateInterval::createFromDateString('1 day'), function () {
             $sentence = Sentence::approved()->inRandomOrder()
                 ->select('id')
                 ->first();
@@ -63,7 +64,7 @@ class HomeController extends Controller
         });
 
         // Retrieve a random lexical entry to feature
-        $randomGloss = Cache::remember('ed.home.gloss', 60 * 60 /* seconds */, function () {
+        $randomGloss = Cache::remember('ed.home.gloss', DateInterval::createFromDateString('1 day'), function () {
             $lexicalEntry = LexicalEntry::active()
                 ->inRandomOrder()
                 ->notUncertain()
@@ -76,12 +77,12 @@ class HomeController extends Controller
             ];
         });
 
-        $statistics = Cache::remember('ed.home.statistics', 60 * 60 /* seconds */, function () {
+        $statistics = Cache::remember('ed.home.statistics', DateInterval::createFromDateString('1 hour'), function () {
             return $this->_statisticsRepository->getGlobalStatistics();
         });
 
-        // Retrieve the 10 latest audit trail
-        $auditTrails = Cache::remember('ed.home.audit', 60 * 5 /* seconds */, function () {
+        // Retrieve the 15 latest audit trail
+        $auditTrails = Cache::remember('ed.home.audit', DateInterval::createFromDateString('5 minutes'), function () {
             return $this->_auditTrailAdapter->adaptAndMerge(
                 $this->_auditTrail->get(15, 0, [
                     AuditTrail::ACTION_COMMENT_ADD,

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Listeners;
+namespace App\Subscribers;
 
 use App\Models\QueueJobStatistic;
 use App\Repositories\QueueJobStatisticRepository;
@@ -9,7 +9,7 @@ use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\Log;
 
-class QueueJobEventListener
+class QueueJobEventSubscriber
 {
     private QueueJobStatisticRepository $statisticRepository;
     private array $jobStartTimes = [];
@@ -20,10 +20,28 @@ class QueueJobEventListener
     }
 
     /**
+     * Register the event listeners
+     */
+    public function subscribe()
+    {
+        return [
+            JobProcessing::class => 'handleJobProcessing',
+            JobProcessed::class => 'handleJobProcessed',
+            JobFailed::class => 'handleJobFailed',
+        ];
+    }
+
+    /**
      * Handle job processing event (job started)
      */
     public function handleJobProcessing(JobProcessing $event): void
     {
+        Log::info('QueueJobEventListener: Job processing started', [
+            'job_id' => $this->getJobId($event),
+            'job_class' => $this->extractJobData($event)['class'],
+            'queue' => $this->extractJobData($event)['queue'],
+        ]);
+        
         $jobId = $this->getJobId($event);
         $this->jobStartTimes[$jobId] = microtime(true);
     }
@@ -33,6 +51,12 @@ class QueueJobEventListener
      */
     public function handleJobProcessed(JobProcessed $event): void
     {
+        Log::info('QueueJobEventListener: Job processed successfully', [
+            'job_id' => $this->getJobId($event),
+            'job_class' => $this->extractJobData($event)['class'],
+            'queue' => $this->extractJobData($event)['queue'],
+        ]);
+        
         $this->recordJobCompletion($event, QueueJobStatistic::STATUS_SUCCESS);
     }
 
@@ -41,6 +65,13 @@ class QueueJobEventListener
      */
     public function handleJobFailed(JobFailed $event): void
     {
+        Log::info('QueueJobEventListener: Job failed', [
+            'job_id' => $this->getJobId($event),
+            'job_class' => $this->extractJobData($event)['class'],
+            'queue' => $this->extractJobData($event)['queue'],
+            'error' => $event->exception->getMessage(),
+        ]);
+        
         $this->recordJobCompletion($event, QueueJobStatistic::STATUS_FAILED, $event->exception);
     }
 
@@ -108,15 +139,5 @@ class QueueJobEventListener
     private function getJobId($event): string
     {
         return $event->job->getJobId() ?? spl_object_hash($event->job);
-    }
-
-    /**
-     * Register the event listeners
-     */
-    public function subscribe($events): void
-    {
-        $events->listen(JobProcessing::class, [self::class, 'handleJobProcessing']);
-        $events->listen(JobProcessed::class, [self::class, 'handleJobProcessed']);
-        $events->listen(JobFailed::class, [self::class, 'handleJobFailed']);
     }
 }
