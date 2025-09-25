@@ -9,6 +9,7 @@ use App\Models\Language;
 use App\Models\Word;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use DateInterval;
 
 class BookApiController extends BookBaseController
 {
@@ -82,7 +83,8 @@ class BookApiController extends BookBaseController
     public function find(Request $request)
     {
         $v = $this->validateFindRequest($request);
-        $keywords = $this->_searchIndexRepository->findKeywords($v);
+        $keywords = Cache::remember('ed.keywords.'.$v->hashCode(), DateInterval::createFromDateString('1 day'), //
+            fn () => $this->_searchIndexRepository->findKeywords($v));
 
         // Create a key-value pair that maps group ID (integers) to a human readable, internationalized format.
         $locale = $request->getLocale();
@@ -147,16 +149,8 @@ class BookApiController extends BookBaseController
     {
         $v = $this->validateFindRequest($request);
 
-        $cacheKey = 'ed.entities.'.$groupId.'.'.md5(json_encode($v));
-        $entities = Cache::get($cacheKey);
-        if ($entities === null) {
-            $entities = $this->_searchIndexRepository->resolveIndexToEntities($groupId, $v);
-            if (is_array($entities) && ! empty($entities['entities'])) {
-                Cache::put($cacheKey, $entities, 60 * 60 /* 1 hour */);
-            }
-        }
-
-        return $entities;
+        return Cache::remember('ed.entities.'.$groupId.'.'.$v->hashCode(), DateInterval::createFromDateString('1 day'), //
+            fn () => $this->_searchIndexRepository->resolveIndexToEntities($groupId, $v));
     }
 
     /**

@@ -16,6 +16,20 @@ trait CanInitialize
         return $v;
     }
 
+    public function hashCode(): string
+    {
+        $values = [];
+        foreach ($this->getAllValues() as $key => $value) {
+            if (is_string($value)) {
+                $values[$key] = mb_strtolower($value);
+            } else {
+                $values[$key] = $value;
+            }
+        }
+        ksort($values);
+        return hash('sha256', json_encode($values));
+    }
+
     public function getAllValues()
     {
         return $this->_values;

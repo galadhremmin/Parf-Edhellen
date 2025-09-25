@@ -48,8 +48,8 @@
                   <th>Failed</th>
                   <th>Retried</th>
                   <th>Avg Exec Time (s)</th>
-                  <th>p90 Exec Time (s)</th>
-                  <th>p99 Exec Time (s)</th>
+                  <th>Max Exec Time (s)</th>
+                  <th>Min Exec Time (s)</th>
                </tr>
             </thead>
             <tbody>
