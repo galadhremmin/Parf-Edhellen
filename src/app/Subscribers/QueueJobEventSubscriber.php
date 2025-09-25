@@ -123,7 +123,13 @@ class QueueJobEventSubscriber
     private function extractJobData($event): array
     {
         $payload = $event->job->payload();
-        $decodedPayload = json_decode($payload, true);
+        
+        // Handle both string and array payloads
+        if (is_array($payload)) {
+            $decodedPayload = $payload;
+        } else {
+            $decodedPayload = json_decode($payload, true);
+        }
         
         return [
             'class' => $decodedPayload['displayName'] ?? $decodedPayload['job'] ?? 'Unknown',
