@@ -49,6 +49,11 @@ const ColumnDefinitions: ColDef<IErrorEntity>[] = [
         filter: 'agNumberColumnFilter',
     },
     {
+        editable: false,
+        field: 'duration',
+        filter: 'agNumberColumnFilter',
+    },
+    {
         editable: true,
         field: 'sessionId',
         filter: true,
@@ -62,11 +67,14 @@ const ColumnDefinitions: ColDef<IErrorEntity>[] = [
         editable: true,
         field: 'file',
         filter: true,
+        resizable: true,
     },
     { field: 'line' },
     { 
         field: 'userAgent',
         filter: true,
+        editable: true,
+        resizable: true,
     },
     {
         field: 'category',
