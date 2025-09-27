@@ -13,6 +13,7 @@ export interface IErrorEntity {
     sessionId: number;
     file: string;
     line: number;
+    duration: number;
 }
 
 export interface IFailedJob {

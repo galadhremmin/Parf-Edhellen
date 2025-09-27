@@ -15,6 +15,7 @@ export interface IErrorReport {
     apiMethod?: string;
     config?: any;
     data?: any;
+    duration?: number;
     error?: string;
     headers?: any;
     status?: number;
