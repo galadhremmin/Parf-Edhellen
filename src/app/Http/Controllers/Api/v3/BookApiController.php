@@ -30,10 +30,10 @@ class BookApiController extends BookBaseController
 
     public function getLanguages()
     {
-        $languages = Cache::remember('ed.languages', 60 * 60 /* = 1 hour */, function () {
-            return Language::all()
-                ->sortBy('order')
-                ->sortBy('name')
+        $languages = Cache::remember('ed.languages', DateInterval::createFromDateString('1 month'), function () {
+            return Language::orderBy('order')
+                ->orderBy('name')
+                ->get()
                 ->groupBy('category')
                 ->toArray();
         });
