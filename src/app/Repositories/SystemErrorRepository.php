@@ -33,6 +33,14 @@ class SystemErrorRepository
             $exception->getTraceAsString()."\n\n". //
             print_r($request->cookie(), true)."\n";
 
+        if (defined('LARAVEL_START')) {
+            $duration = microtime(true) - LARAVEL_START;
+        } else if (isset($_SERVER['REQUEST_TIME_FLOAT'])) {
+            $duration = microtime(true) - (float) $_SERVER['REQUEST_TIME_FLOAT'];
+        } else {
+            $duration = null;
+        }
+        
         return SystemError::create([
             'message' => $message,
             'category' => $category,
@@ -44,10 +52,11 @@ class SystemErrorRepository
             'url' => $request->fullUrl(),
             'ip' => $request->ip(),
             'user_agent' => $request->userAgent(),
+            'duration' => $duration ?? null,
         ]);
     }
 
-    public function saveFrontendException(string $url, string $message, string $error, string $category)
+    public function saveFrontendException(string $url, string $message, string $error, string $category, ?float $duration = null)
     {
         $request = request();
         $user = $request->user();
@@ -67,6 +76,7 @@ class SystemErrorRepository
             'session_id' => Session::getId(),
             'user_agent' => $request->userAgent(),
             'ip' => $request->ip(),
+            'duration' => $duration,
         ]);
 
     }

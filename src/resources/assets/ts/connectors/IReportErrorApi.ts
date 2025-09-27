@@ -6,6 +6,7 @@ export const enum ErrorCategory {
     RequestForbidden = 'http-403',
     SessionExpired = 'http-419',
     UnitTest = 'unit-test',
+    Performance = 'performance',
 }
 
 export interface IReportErrorApi {

@@ -198,6 +198,8 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             }
         }
 
+        
+
         const url = this._prepareUrl(apiMethod, queryStringMap);
         let promise: AxiosPromise<AxiosResponse<T>>;
         if (hasBody) {
@@ -212,19 +214,30 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
     private async _consume<T>(apiMethod: string, request: AxiosPromise<AxiosResponse<T>>): Promise<T> {
         this._nodeGuard();
 
+        // Record start time for performance measurement
+        const startTime = performance.now();
+        let duration = 0;
+
         try {
             const response = await request;
             if (response === undefined) {
                 return undefined;
             }
 
+            // Log successful request duration
+            duration = performance.now() - startTime;
+            if (duration > 2000) { // Only log slow requests (>2s)
+                this.error('Slow API request', apiMethod, `Completed in ${duration.toFixed(2)}ms`, ErrorCategory.Performance);
+            }
+
             return snakeCasePropsToCamelCase(response.data);
         } catch (error) {
-            return this._handleError(apiMethod, error as AxiosError);
+            duration = performance.now() - startTime;
+            return this._handleError(apiMethod, error as AxiosError, duration);
         }
     }
 
-    private async _handleError(apiMethod: string, error: AxiosError) {
+    private async _handleError(apiMethod: string, error: AxiosError, duration?: number) {
         if (error === undefined) {
             console.warn(`Received an empty error from ${apiMethod}.`);
         }
@@ -271,6 +284,7 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
                         data: error.response.data,
                         headers: error.response.headers,
                         status: error.response.status,
+                        duration,
                     };
                     break;
             }
@@ -282,7 +296,8 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
         } else if (error.request) {
             errorReport = {
                 apiMethod,
-                error: 'API call received no response.'
+                error: 'API call received no response.',
+                duration,
             };
             category = ErrorCategory.Empty;
         } else {
@@ -290,6 +305,7 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             errorReport = {
                 apiMethod,
                 error: `API call failed to initialize. Error message: ${error.message}`,
+                duration,
             };
             category = ErrorCategory.Frontend;
         }

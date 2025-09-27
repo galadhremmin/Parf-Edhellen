@@ -53,6 +53,7 @@ class UtilityApiController extends Controller
             'url' => 'string|required',
             'error' => 'string|nullable',
             'category' => 'string|nullable',
+            'duration' => 'numeric|nullable',
         ]);
 
         $category = $request->has('category')
@@ -63,7 +64,8 @@ class UtilityApiController extends Controller
             $request->input('url'),
             $request->input('message'),
             $request->input('error'),
-            $category
+            $category,
+            $request->input('duration')
         );
 
         return response(null, 201);
