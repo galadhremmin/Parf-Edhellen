@@ -32,11 +32,17 @@ import {
 import ValidationError from './ValidationError';
 
 export default class ApiConnector implements IApiBaseConnector, IReportErrorApi {
+    private _abortController: AbortController;
+    
     constructor(
         private _apiPathName: string = ApiPath,
         private _apiErrorMethod: string = ApiExceptionCollectorMethod,
         private _apiValidationErrorStatusCode: number = ApiValidationFailedStatusCode,
         private _factory: AxiosInstance = axios) {
+        this._abortController = new AbortController();
+        window.addEventListener('beforeunload', () => {
+            this._abortController.abort();
+        });
     }
 
     /**
@@ -128,9 +134,10 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
                 'X-XSRF-TOKEN': Cookies.get('XSRF-TOKEN'),
                 'X-Requested-With': 'XMLHttpRequest',
             },
-            timeout: 0,
+            timeout: 10 * 1000, // 10 seconds
             clarifyTimeoutError: true,
             withCredentials: true,
+            signal: this._abortController.signal,
         } as AxiosRequestConfig<any>;
     }
 
