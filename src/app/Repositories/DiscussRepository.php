@@ -526,11 +526,9 @@ class DiscussRepository
                 throw new AuthenticationException;
             }
 
-            $data = [
-                'entity_type' => $entityType,
-                'entity_id' => $id,
-            ];
-            $thread = ForumThread::where($data)->first();
+            $thread = ForumThread::where('entity_id', $id)
+                ->where('entity_type', $entityType)
+                ->first();
 
             if ($thread === null) {
                 if (! $createIfNotExists) {
