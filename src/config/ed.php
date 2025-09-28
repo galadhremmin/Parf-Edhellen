@@ -102,4 +102,5 @@ return [
 
     // Performance monitoring
     'expensive_request_threshold' => env('ED_EXPENSIVE_REQUEST_THRESHOLD', 2000), // milliseconds
+    'expensive_request_post_logging_routes' => explode(',', env('ED_EXPENSIVE_REQUEST_POST_LOGGING_ROUTES', 'api.book.entities,api.book.find')),
 ];
