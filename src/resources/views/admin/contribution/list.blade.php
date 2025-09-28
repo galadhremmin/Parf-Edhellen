@@ -5,7 +5,7 @@
 @section('body')
   <h1>Contributions</h1>
   
-  {!! Breadcrumbs::render('contribution.list') !!}
+  {!! Breadcrumbs::render('admin.contribution.list') !!}
   
 
   <div class="card shadow-lg mb-3">

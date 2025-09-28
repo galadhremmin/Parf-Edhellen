@@ -163,13 +163,13 @@ Breadcrumbs::for('contribution.edit', function (BreadcrumbTrail $breadcrumbs, in
 });
 
 Breadcrumbs::for('contribution.show', function (BreadcrumbTrail $breadcrumbs, int $id, bool $admin = false) {
-    $breadcrumbs->parent($admin ? 'contribution.list' : 'contribution.index');
+    $breadcrumbs->parent($admin ? 'admin.contribution.list' : 'contribution.index');
     $breadcrumbs->push('Contribution #'.$id, route('contribution.show', ['contribution' => $id]));
 });
 
-Breadcrumbs::for('contribution.list', function (BreadcrumbTrail $breadcrumbs) {
+Breadcrumbs::for('admin.contribution.list', function (BreadcrumbTrail $breadcrumbs) {
     $breadcrumbs->parent('dashboard');
-    $breadcrumbs->push('Administration of contributions', route('contribution.list'));
+    $breadcrumbs->push('Administration of contributions', route('admin.contribution.list'));
 });
 
 Breadcrumbs::for('contribution.confirm-destroy', function (BreadcrumbTrail $breadcrumbs, int $id) {

@@ -48,7 +48,7 @@ Route::group([
     Route::delete('account/{id}/delete-membership', [AccountController::class, 'deleteMembership'])->name('account.delete-membership');
     Route::post('account/{id}/add-membership', [AccountController::class, 'addMembership'])->name('account.add-membership');
 
-    Route::get('contribution/list', [ContributionController::class, 'list'])->name('contribution.list');
+    Route::get('contribution/list', [ContributionController::class, 'list'])->name('admin.contribution.list');
     Route::get('contribution/{id}/reject', [ContributionController::class, 'confirmReject'])->name('contribution.confirm-reject');
     Route::put('contribution/{id}/approve', [ContributionController::class, 'updateApprove'])->name('contribution.approve');
     Route::put('contribution/{id}/reject', [ContributionController::class, 'updateReject'])->name('contribution.reject');
