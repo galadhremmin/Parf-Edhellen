@@ -58,9 +58,9 @@ class SystemErrorRepository
     public function saveExpensiveRequest(Request $request, Response|JsonResponse $response)
     {
         $logData = [
-            'message' => 'Expensive request detected',
+            'message' => 'Expensive request detected (threshold: '.config('ed.expensive_request_threshold').'ms)',
             'category' => 'performance',
-            'error' => json_encode([
+            'error' => [
                 'url' => $request->fullUrl(),
                 'method' => $request->method(),
                 'route' => $request->route()?->getName() ?? $request->route()?->uri(),
@@ -73,7 +73,9 @@ class SystemErrorRepository
                 'request_size_kb' => round(strlen($request->getContent()) / 1024, 2),
                 'response_size_kb' => round(strlen($response->getContent()) / 1024, 2),
                 'query_params' => $request->isMethod('GET') ? $request->query() : null,
-            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
+                'post_body' => null,
+                'controller' => null,
+            ],
             'file' => null,
             'line' => null,
             'user_agent' => $request->userAgent(),
@@ -83,6 +85,27 @@ class SystemErrorRepository
             'ip' => $request->ip(),
             'duration' => self::calculateRequestDuration(),
         ];
+
+        // Get the controller serving the route, if available
+        $route = $request->route();
+        if ($route && method_exists($route, 'getAction')) {
+            $action = $route->getAction();
+            if (isset($action['controller'])) {
+                $logData['error']['controller'] = $action['controller'];
+            }
+        }
+
+        if (in_array($logData['error']['route'], config('ed.expensive_request_post_logging_routes'))) {
+            if ($request->isMethod('POST') || 
+                $request->isMethod('PUT')) {
+                $logData['error']['post_body'] = $request->getContent();
+            } else {
+                $logData['error']['post_body'] = 'restricted, see ED_EXPENSIVE_REQUEST_POST_LOGGING_ROUTES.';
+            }
+        }
+
+        // make sure to serialize the error array before persisting it
+        $logData['error'] = print_r($logData['error'], true);
 
         return SystemError::create($logData);
     }
@@ -119,14 +142,19 @@ class SystemErrorRepository
 
     private static function calculateRequestDuration(): ?float
     {
+        $duration = null;
         if (defined('LARAVEL_START')) {
-            return microtime(true) - LARAVEL_START;
+            $duration = microtime(true) - LARAVEL_START;
         }
         
         if (isset($_SERVER['REQUEST_TIME_FLOAT'])) {
-            return microtime(true) - (float) $_SERVER['REQUEST_TIME_FLOAT'];
+            $duration = microtime(true) - (float) $_SERVER['REQUEST_TIME_FLOAT'];
         }
 
-        return null;
+        if ($duration !== null) {
+            $duration = round($duration * 1000, 2); // milliseconds
+        }
+
+        return $duration;
     }
 }
