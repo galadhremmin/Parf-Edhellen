@@ -4,7 +4,7 @@
 @if (auth()->user()->isAdministrator())
 <ul class="navbar-nav">
   <li class="nav-item">
-    <a class="nav-link {{ active('contribution.list') }}" href="{{ route('contribution.list') }}">
+    <a class="nav-link {{ active('admin.contribution.list') }}" href="{{ route('admin.contribution.list') }}">
       Contributions
     </a>
   </li>

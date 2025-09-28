@@ -33,7 +33,7 @@
   @if (auth()->user()->isAdministrator())
   <ul class="list-group mb-3">
     <li class="list-group-item">
-      <a class="{{ active('contribution.list') }}" href="{{ route('contribution.list') }}">
+      <a class="{{ active('admin.contribution.list') }}" href="{{ route('admin.contribution.list') }}">
         Contributions
       </a>
     </li>
