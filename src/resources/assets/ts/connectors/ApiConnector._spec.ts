@@ -111,7 +111,7 @@ describe('connectors/ApiConnector', () => {
         sandbox.stub(axios, 'post')
             .callsFake((method, payload) => {
                 expect(method).toEqual(`${ApiPrefix}/${ApiErrorMethod}`);
-                expect(payload).toEqual({ message, url, error, category });
+                expect(payload).toEqual({ message, url, error, category, duration: null });
                 return Promise.resolve(ApiResponse) as Promise<any>;
             });
 
