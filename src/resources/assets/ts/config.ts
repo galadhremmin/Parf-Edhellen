@@ -15,6 +15,8 @@ export const GlobalEventErrorLogger = 'ederror';
 
 export const GlobalAdsConfigurationName = 'ed.ads.config';
 
+export const ApiTimeoutInMilliseconds = 15000;
+
 export const DefaultGlaemscribeCharacterSet = 'tengwar_guni_annatar';
 export const GlaemscribeModeMappings: { [mode: string]: string } = {
     'blackspeech': 'blackspeech-tengwar-general_use',

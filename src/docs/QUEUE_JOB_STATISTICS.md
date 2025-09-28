@@ -26,17 +26,21 @@ This system automatically tracks and stores statistics for all queue jobs in you
 #### Basic Statistics
 ```php
 use App\Repositories\StatisticsRepository;
+use App\Repositories\QueueJobStatisticRepository;
 
 $statsRepository = new StatisticsRepository();
+$queueStatsRepository = new QueueJobStatisticRepository();
 
-// Get basic queue job statistics (included in global stats)
+// Get basic global statistics
 $globalStats = $statsRepository->getGlobalStatistics();
-$queueStats = $globalStats['queueJobStats'];
 
-// Get detailed statistics for a specific period
+// Get detailed queue job statistics for a specific period
 $startDate = Carbon::now()->subDays(7);
 $endDate = Carbon::now();
 $detailedStats = $statsRepository->getDetailedQueueJobStatistics($startDate, $endDate);
+
+// Or get queue job statistics directly
+$queueStats = $queueStatsRepository->getStatisticsForPeriod($startDate, $endDate);
 ```
 
 #### Using Console Commands
@@ -54,6 +58,12 @@ php artisan queue:test-statistics --count=10
 **Clean up old statistics:**
 ```bash
 php artisan queue:cleanup-statistics --days=90
+```
+
+**Clean up stuck/active jobs:**
+```bash
+php artisan queue:cleanup-active-jobs --timeout=120
+php artisan queue:cleanup-active-jobs --timeout=60 --dry-run
 ```
 
 ### Available Statistics
@@ -74,14 +84,21 @@ The `queue_job_statistics` table includes:
 
 - `job_class`: The full class name of the job
 - `queue_name`: The queue the job was processed on
-- `status`: 'success', 'failed', or 'retry'
+- `status`: 'success', 'failed', 'retry', 'processing', or 'timeout'
 - `execution_time_ms`: Execution time in milliseconds
 - `attempts`: Number of attempts
 - `error_message`: Error message for failed jobs
 - `connection`: Queue connection name
 - `started_at`: When the job started processing
 - `completed_at`: When the job completed
+- `is_active`: Whether the job is currently running (boolean)
 - `created_at`/`updated_at`: Standard timestamps
+
+**Key Features:**
+- **Database Persistence**: Job start times are stored in the database, ensuring they persist across queue worker restarts and multiple worker instances
+- **Active Job Tracking**: The `is_active` field allows tracking of currently running jobs
+- **Timeout Detection**: Jobs can be marked as 'timeout' if they run too long
+- **Multi-Worker Support**: Works correctly with multiple queue workers running simultaneously
 
 ### Repository Methods
 
@@ -97,6 +114,11 @@ The `QueueJobStatisticRepository` provides these methods:
 - `getRecentFailures($limit)`: Recent job failures with error details
 - `getQueueHealthMetrics()`: Health metrics and trends
 - `cleanupOldStatistics($daysToKeep)`: Remove old statistics
+- `findActiveJob($jobClass, $queueName, $completedAt)`: Find active job for completion tracking
+- `updateJobCompletion($job, $data)`: Update job completion data
+- `getStuckJobs($timeoutMinutes)`: Get jobs that have been running too long
+- `cleanupStuckJobs($timeoutMinutes)`: Mark stuck jobs as timed out
+- `getActiveJobsCount()`: Get count of currently active jobs
 
 ### Model Usage
 
@@ -116,11 +138,35 @@ $failedJobs = QueueJobStatistic::failed()
 // Get jobs with execution time over 5 seconds
 $slowJobs = QueueJobStatistic::where('execution_time_ms', '>', 5000)
     ->get();
+
+// Get jobs completed this week
+$thisWeekJobs = QueueJobStatistic::completedThisWeek()->get();
+
+// Get jobs completed this month
+$thisMonthJobs = QueueJobStatistic::completedThisMonth()->get();
+
+// Get jobs for a specific queue
+$defaultQueueJobs = QueueJobStatistic::forQueue('default')->get();
+
+// Access computed attributes
+$statistic = QueueJobStatistic::first();
+$jobClassName = $statistic->job_class_name; // Gets class name without namespace
+$executionTimeSeconds = $statistic->execution_time_seconds; // Gets time in seconds
+
+// Get active jobs
+$activeJobs = QueueJobStatistic::active()->get();
+
+// Get stuck jobs (running too long)
+$stuckJobs = QueueJobStatistic::stuck(60)->get(); // 60 minutes timeout
+
+// Check if job is active or stuck
+$isActive = $statistic->isActive();
+$isStuck = $statistic->isStuck(60); // 60 minutes timeout
 ```
 
 ### Integration with Existing Statistics
 
-The queue job statistics are automatically included in your existing `StatisticsRepository::getGlobalStatistics()` method under the `queueJobStats` key.
+The queue job statistics are available through the `StatisticsRepository::getDetailedQueueJobStatistics()` method, which provides comprehensive queue job analytics alongside your existing statistics infrastructure.
 
 ### Performance Considerations
 

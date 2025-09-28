@@ -233,6 +233,57 @@ class QueueJobStatisticRepository
     }
 
     /**
+     * Find an active job record for completion tracking by job ID
+     */
+    public function findActiveJobById(string $jobId): ?QueueJobStatistic
+    {
+        return QueueJobStatistic::where('job_id', $jobId)
+            ->where('is_active', true)
+            ->first();
+    }
+
+    /**
+     * Update job completion data
+     */
+    public function updateJobCompletion(QueueJobStatistic $job, array $data): void
+    {
+        $job->update($data);
+    }
+
+    /**
+     * Get stuck jobs (active for too long)
+     */
+    public function getStuckJobs(int $timeoutMinutes = 60): Collection
+    {
+        return QueueJobStatistic::stuck($timeoutMinutes)->get();
+    }
+
+    /**
+     * Clean up stuck jobs (mark as timeout)
+     */
+    public function cleanupStuckJobs(int $timeoutMinutes = 60): int
+    {
+        $cutoff = Carbon::now()->subMinutes($timeoutMinutes);
+        
+        return QueueJobStatistic::where('is_active', true)
+            ->where('started_at', '<', $cutoff)
+            ->update([
+                'status' => 'timeout',
+                'is_active' => false,
+                'error_message' => 'Job timed out or worker crashed',
+                'completed_at' => now(),
+            ]);
+    }
+
+    /**
+     * Get active jobs count
+     */
+    public function getActiveJobsCount(): int
+    {
+        return QueueJobStatistic::active()->count();
+    }
+
+    /**
      * Calculate percentage change between two values
      */
     private function calculatePercentageChange(float $oldValue, float $newValue): float

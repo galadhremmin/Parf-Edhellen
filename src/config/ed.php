@@ -99,4 +99,7 @@ return [
     'blocked_ips_due_to_violations' => explode(',', env('ED_BLOCKED_IPS', '')),
 
     'restricted_profile_ids' => explode(',', env('ED_RESTRICTED_PROFILE_IDS', '')),
+
+    // Performance monitoring
+    'expensive_request_threshold' => env('ED_EXPENSIVE_REQUEST_THRESHOLD', 2000), // milliseconds
 ];

@@ -30,6 +30,7 @@ import {
     IReportErrorApi,
 } from './IReportErrorApi';
 import ValidationError from './ValidationError';
+import { ApiTimeoutInMilliseconds } from '../config';
 
 export default class ApiConnector implements IApiBaseConnector, IReportErrorApi {
     private _abortController: AbortController;
@@ -118,8 +119,14 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
     /**
      * Register the specified error.
      */
-    public error(message: string, url: string, error: string, category: ErrorCategory = null) {
-        return this.post<void>(this._apiErrorMethod, { message, url, error, category });
+    public error(message: string, url: string, error: string, category: ErrorCategory = null, duration: number = null) {
+        return this.post<void>(this._apiErrorMethod, {
+            message,
+            url,
+            error,
+            category,
+            duration,
+        });
     }
 
     /**
@@ -134,7 +141,7 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
                 'X-XSRF-TOKEN': Cookies.get('XSRF-TOKEN'),
                 'X-Requested-With': 'XMLHttpRequest',
             },
-            timeout: 10 * 1000, // 10 seconds
+            timeout: ApiTimeoutInMilliseconds,
             clarifyTimeoutError: true,
             withCredentials: true,
             signal: this._abortController.signal,
@@ -246,7 +253,9 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             return Promise.reject(error);
         }
 
-        const requestWasCanceled = axios.isCancel(error as any);
+        const requestWasCanceled = axios.isCancel(error as any) || //
+            error.code === 'ECONNABORTED' ||
+            (duration || 0) >= ApiTimeoutInMilliseconds;
 
         let errorReport: IErrorReport = null;
         let category: ErrorCategory;
@@ -284,7 +293,6 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
                         data: error.response.data,
                         headers: error.response.headers,
                         status: error.response.status,
-                        duration,
                     };
                     break;
             }
@@ -297,7 +305,6 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             errorReport = {
                 apiMethod,
                 error: 'API call received no response.',
-                duration,
             };
             category = ErrorCategory.Empty;
         } else {
@@ -305,14 +312,19 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             errorReport = {
                 apiMethod,
                 error: `API call failed to initialize. Error message: ${error.message}`,
-                duration,
             };
             category = ErrorCategory.Frontend;
         }
 
         if (errorReport !== null) {
             errorReport.config = error.config;
-            await this.error('API request failed', apiMethod, JSON.stringify(errorReport, undefined, 2), category);
+            await this.error(
+                'API request failed', 
+                apiMethod, 
+                JSON.stringify(errorReport, undefined, 2),
+                category,
+                duration,
+            );
         }
 
         return Promise.reject(new Error(`API request failed ${apiMethod}`));

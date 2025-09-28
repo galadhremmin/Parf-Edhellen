@@ -61,8 +61,8 @@
                      <td>{{ $stats['failed_count'] ?? 0 }}</td>
                      <td>{{ $stats['retry_count'] ?? 0 }}</td>
                      <td>{{ $stats['avg_execution_time_ms'] ?? 0 }}</td>
-                     <td>{{ $stats['p90_execution_time_ms'] ?? 0 }}</td>
-                     <td>{{ $stats['p99_execution_time_ms'] ?? 0 }}</td>
+                     <td>{{ $stats['max_execution_time_ms'] ?? 0 }}</td>
+                     <td>{{ $stats['min_execution_time_ms'] ?? 0 }}</td>
                   </tr>
                @endforeach
             </tbody>
