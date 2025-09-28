@@ -47,9 +47,9 @@
                   <th>Succeeded</th>
                   <th>Failed</th>
                   <th>Retried</th>
-                  <th>Avg Exec Time (s)</th>
-                  <th>Max Exec Time (s)</th>
-                  <th>Min Exec Time (s)</th>
+                  <th>Avg Exec Time (ms)</th>
+                  <th>Max Exec Time (ms)</th>
+                  <th>Min Exec Time (ms)</th>
                </tr>
             </thead>
             <tbody>
@@ -60,9 +60,9 @@
                      <td>{{ $stats['success_count'] ?? 0 }}</td>
                      <td>{{ $stats['failed_count'] ?? 0 }}</td>
                      <td>{{ $stats['retry_count'] ?? 0 }}</td>
-                     <td>{{ $stats['avg_execution_time_ms'] ?? 0 }}</td>
-                     <td>{{ $stats['max_execution_time_ms'] ?? 0 }}</td>
-                     <td>{{ $stats['min_execution_time_ms'] ?? 0 }}</td>
+                     <td>{{ round($stats['avg_execution_time_ms'] ?? 0, 2) }}</td>
+                     <td>{{ round($stats['max_execution_time_ms'] ?? 0, 2) }}</td>
+                     <td>{{ round($stats['min_execution_time_ms'] ?? 0, 2) }}</td>
                   </tr>
                @endforeach
             </tbody>
