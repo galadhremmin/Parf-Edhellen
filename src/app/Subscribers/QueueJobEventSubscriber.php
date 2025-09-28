@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Log;
 class QueueJobEventSubscriber
 {
     private QueueJobStatisticRepository $statisticRepository;
-    private array $jobStartTimes = [];
 
     public function __construct(QueueJobStatisticRepository $statisticRepository)
     {
@@ -36,14 +35,34 @@ class QueueJobEventSubscriber
      */
     public function handleJobProcessing(JobProcessing $event): void
     {
+        $jobId = $this->getJobId($event);
+        $jobData = $this->extractJobData($event);
+        
         Log::info('QueueJobEventListener: Job processing started', [
-            'job_id' => $this->getJobId($event),
-            'job_class' => $this->extractJobData($event)['class'],
-            'queue' => $this->extractJobData($event)['queue'],
+            'job_id' => $jobId,
+            'job_class' => $jobData['class'],
+            'queue' => $jobData['queue'],
         ]);
         
-        $jobId = $this->getJobId($event);
-        $this->jobStartTimes[$jobId] = microtime(true);
+        try {
+            // Create initial record for active job
+            $this->statisticRepository->create([
+                'job_class' => $jobData['class'],
+                'queue_name' => $jobData['queue'],
+                'status' => 'processing',
+                'attempts' => $jobData['attempts'],
+                'connection' => $jobData['connection'],
+                'job_id' => $jobId,
+                'started_at' => now(),
+                'is_active' => true,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to record job start time', [
+                'error' => $e->getMessage(),
+                'job_id' => $jobId,
+                'job_class' => $jobData['class'],
+            ]);
+        }
     }
 
     /**
@@ -82,30 +101,49 @@ class QueueJobEventSubscriber
     {
         try {
             $jobId = $this->getJobId($event);
-            $startTime = $this->jobStartTimes[$jobId] ?? null;
-            
-            // Calculate execution time
-            $executionTimeMs = null;
-            if ($startTime) {
-                $executionTimeMs = (int) ((microtime(true) - $startTime) * 1000);
-                unset($this->jobStartTimes[$jobId]);
-            }
-
-            // Extract job information
             $jobData = $this->extractJobData($event);
+            $completedAt = now();
             
-            // Create statistics record
-            $this->statisticRepository->create([
-                'job_class' => $jobData['class'],
-                'queue_name' => $jobData['queue'],
-                'status' => $status,
-                'execution_time_ms' => $executionTimeMs,
-                'attempts' => $jobData['attempts'],
-                'error_message' => $exception ? $exception->getMessage() : null,
-                'connection' => $jobData['connection'],
-                'started_at' => $startTime ? now()->subMilliseconds($executionTimeMs) : null,
-                'completed_at' => now(),
-            ]);
+            // Find the active job record by job ID (preferred method)
+            $activeJob = $this->statisticRepository->findActiveJobById($jobId);
+            
+            if ($activeJob) {
+                // Calculate execution time
+                $executionTimeMs = null;
+                if ($activeJob->started_at) {
+                    $executionTimeMs = (int) $activeJob->started_at->diffInMilliseconds($completedAt);
+                }
+                
+                // Update the existing record
+                $this->statisticRepository->updateJobCompletion($activeJob, [
+                    'status' => $status,
+                    'execution_time_ms' => $executionTimeMs,
+                    'error_message' => $exception ? $exception->getMessage() : null,
+                    'completed_at' => $completedAt,
+                    'is_active' => false,
+                ]);
+            } else {
+                // Fallback: create a new record if we can't find the active one
+                Log::warning('Could not find active job record, creating new record', [
+                    'job_id' => $jobId,
+                    'job_class' => $jobData['class'],
+                    'status' => $status,
+                ]);
+                
+                $this->statisticRepository->create([
+                    'job_class' => $jobData['class'],
+                    'queue_name' => $jobData['queue'],
+                    'status' => $status,
+                    'execution_time_ms' => null,
+                    'attempts' => $jobData['attempts'],
+                    'error_message' => $exception ? $exception->getMessage() : null,
+                    'connection' => $jobData['connection'],
+                    'job_id' => $jobId,
+                    'started_at' => null,
+                    'completed_at' => $completedAt,
+                    'is_active' => false,
+                ]);
+            }
 
         } catch (\Exception $e) {
             // Log the error but don't let it break the job processing

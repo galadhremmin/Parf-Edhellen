@@ -7,6 +7,11 @@ use Carbon\Carbon;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Session;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Http\{
+    Request,
+    Response,
+    JsonResponse,
+};
 
 class SystemErrorRepository
 {
@@ -33,13 +38,7 @@ class SystemErrorRepository
             $exception->getTraceAsString()."\n\n". //
             print_r($request->cookie(), true)."\n";
 
-        if (defined('LARAVEL_START')) {
-            $duration = microtime(true) - LARAVEL_START;
-        } else if (isset($_SERVER['REQUEST_TIME_FLOAT'])) {
-            $duration = microtime(true) - (float) $_SERVER['REQUEST_TIME_FLOAT'];
-        } else {
-            $duration = null;
-        }
+        $duration = self::calculateRequestDuration();
         
         return SystemError::create([
             'message' => $message,
@@ -54,6 +53,38 @@ class SystemErrorRepository
             'user_agent' => $request->userAgent(),
             'duration' => $duration ?? null,
         ]);
+    }
+
+    public function saveExpensiveRequest(Request $request, Response|JsonResponse $response)
+    {
+        $logData = [
+            'message' => 'Expensive request detected',
+            'category' => 'performance',
+            'error' => json_encode([
+                'url' => $request->fullUrl(),
+                'method' => $request->method(),
+                'route' => $request->route()?->getName() ?? $request->route()?->uri(),
+                'ip' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+                'status_code' => $response->getStatusCode(),
+                'memory_usage_mb' => round(memory_get_peak_usage(true) / 1024 / 1024, 2),
+                'user_id' => $request->user()?->id,
+                'timestamp' => now()->toISOString(),
+                'request_size_kb' => round(strlen($request->getContent()) / 1024, 2),
+                'response_size_kb' => round(strlen($response->getContent()) / 1024, 2),
+                'query_params' => $request->isMethod('GET') ? $request->query() : null,
+            ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES),
+            'file' => null,
+            'line' => null,
+            'user_agent' => $request->userAgent(),
+            'account_id' => $request->user()?->id,
+            'session_id' => Session::getId(),
+            'url' => $request->fullUrl(),
+            'ip' => $request->ip(),
+            'duration' => self::calculateRequestDuration(),
+        ];
+
+        return SystemError::create($logData);
     }
 
     public function saveFrontendException(string $url, string $message, string $error, string $category, ?float $duration = null)
@@ -81,8 +112,21 @@ class SystemErrorRepository
 
     }
 
-    public function deleteOlderThan(Carbon $date)
+    public function deleteOlderThan(Carbon $date): void
     {
         SystemError::where('created_at', '<', $date)->delete();
+    }
+
+    private static function calculateRequestDuration(): ?float
+    {
+        if (defined('LARAVEL_START')) {
+            return microtime(true) - LARAVEL_START;
+        }
+        
+        if (isset($_SERVER['REQUEST_TIME_FLOAT'])) {
+            return microtime(true) - (float) $_SERVER['REQUEST_TIME_FLOAT'];
+        }
+
+        return null;
     }
 }

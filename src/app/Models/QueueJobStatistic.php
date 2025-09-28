@@ -17,8 +17,10 @@ class QueueJobStatistic extends ModelBase
         'attempts',
         'error_message',
         'connection',
+        'job_id',
         'started_at',
         'completed_at',
+        'is_active',
     ];
 
     protected $casts = [
@@ -26,6 +28,7 @@ class QueueJobStatistic extends ModelBase
         'completed_at' => 'datetime',
         'execution_time_ms' => 'integer',
         'attempts' => 'integer',
+        'is_active' => 'boolean',
     ];
 
     // Status constants
@@ -149,5 +152,42 @@ class QueueJobStatistic extends ModelBase
     public function isRetried(): bool
     {
         return $this->status === self::STATUS_RETRY;
+    }
+
+    /**
+     * Scope for active jobs
+     */
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('is_active', true);
+    }
+
+    /**
+     * Scope for stuck jobs (active for too long)
+     */
+    public function scopeStuck(Builder $query, int $timeoutMinutes = 60): Builder
+    {
+        $cutoff = Carbon::now()->subMinutes($timeoutMinutes);
+        return $query->where('is_active', true)->where('started_at', '<', $cutoff);
+    }
+
+    /**
+     * Check if the job is currently active
+     */
+    public function isActive(): bool
+    {
+        return $this->is_active;
+    }
+
+    /**
+     * Check if the job is stuck (running too long)
+     */
+    public function isStuck(int $timeoutMinutes = 60): bool
+    {
+        if (!$this->is_active || !$this->started_at) {
+            return false;
+        }
+        
+        return $this->started_at->isBefore(Carbon::now()->subMinutes($timeoutMinutes));
     }
 }

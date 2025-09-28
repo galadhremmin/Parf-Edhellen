@@ -5,6 +5,7 @@ use App\Http\Middleware\CheckRole;
 use App\Http\Middleware\CustomValidateCsrfToken;
 use App\Http\Middleware\InvalidUserGate;
 use App\Http\Middleware\IpGate;
+use App\Http\Middleware\LogExpensiveRequests;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\SafeSubstituteBindings;
 use App\Http\Middleware\TrimStrings;
@@ -41,7 +42,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'signed' => ValidateSignature::class,
             'throttle' => ThrottleRequests::class,
             'verified' => EnsureEmailIsVerified::class,
-            'auth.require-role' => CheckRole::class,  
+            'auth.require-role' => CheckRole::class,
+            'log.expensive' => LogExpensiveRequests::class,
         ];
         $middleware->alias($routeMiddleware);
 
@@ -71,6 +73,7 @@ return Application::configure(basePath: dirname(__DIR__))
             TrimStrings::class,
             ConvertEmptyStringsToNull::class,
             SafeSubstituteBindings::class,
+            LogExpensiveRequests::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

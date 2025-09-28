@@ -47,7 +47,7 @@ class SystemErrorController extends Controller
         $jobStatsByQueue = $this->_queueJobStatisticRepository->getStatisticsByQueue(
             Carbon::now()->subDays(30),
             Carbon::now(),
-        );
+        )->keyBy('queue_name');
 
         return view('admin.system-error.index', [
             'auditTrailEntries' => $auditTrailEntries,
