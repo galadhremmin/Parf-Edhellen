@@ -205,8 +205,6 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             }
         }
 
-        
-
         const url = this._prepareUrl(apiMethod, queryStringMap);
         let promise: AxiosPromise<AxiosResponse<T>>;
         if (hasBody) {
@@ -223,7 +221,6 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
 
         // Record start time for performance measurement
         const startTime = performance.now();
-        let duration = 0;
 
         try {
             const response = await request;
@@ -231,15 +228,9 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
                 return undefined;
             }
 
-            // Log successful request duration
-            duration = performance.now() - startTime;
-            if (duration > 2000) { // Only log slow requests (>2s)
-                this.error('Slow API request', apiMethod, `Completed in ${duration.toFixed(2)}ms`, ErrorCategory.Performance);
-            }
-
             return snakeCasePropsToCamelCase(response.data);
         } catch (error) {
-            duration = performance.now() - startTime;
+            const duration = performance.now() - startTime;
             return this._handleError(apiMethod, error as AxiosError, duration);
         }
     }
