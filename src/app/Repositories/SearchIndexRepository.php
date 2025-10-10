@@ -322,8 +322,13 @@ class SearchIndexRepository
         return sha1($values);
     }
 
-    private function shortCircuitInEfficientQueries(string $word): bool
+    private function shortCircuitInEfficientQueries(?string $word): bool
     {
+        if ($word === null) {
+            // word isn't defined, so it's probably a query for a specific entity (see pageForEntity)
+            return false;
+        }
+
         return StringHelper::isOnlySymbolsOrInterpunctuation($word) || //
             StringHelper::isOnlyNonLatinCharacters($word);
     }
