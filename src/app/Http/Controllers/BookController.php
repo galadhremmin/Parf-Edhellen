@@ -32,6 +32,10 @@ class BookController extends BookBaseController
         $v = $this->validateFindRequest($request, ['word' => $word, 'language_id' => $languageId]);
         $entities = $this->_searchIndexRepository->resolveIndexToEntities($groupId, $v);
 
+        if (count($entities['entities']['sections']) === 0) {
+            abort(404);
+        }
+
         return view('book.page', [
             'payload' => $entities,
         ]);

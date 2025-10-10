@@ -149,4 +149,9 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
             count($lexicalEntries) > 0 ? $lexicalEntries[0]->word->word : null,
         );
     }
+
+    public function emptyResponse(): array
+    {
+        return $this->_bookAdapter->adaptLexicalEntries([], null, [], null);
+    }
 }

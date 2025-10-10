@@ -58,4 +58,9 @@ class SentenceSearchIndexResolver extends SearchIndexResolverBase
 
         return $this->_sentenceAdapter->adaptSentence($sentences);
     }
+
+    public function emptyResponse(): array
+    {
+        return $this->_sentenceAdapter->adaptSentence(new Collection);
+    }
 }

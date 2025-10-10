@@ -7,6 +7,7 @@ use App\Models\ForumPost;
 use App\Models\Initialization\Morphs;
 use App\Repositories\DiscussRepository;
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
+use App\Repositories\ValueObjects\ForumThreadsForPostsValue;
 
 class ForumPostSearchIndexResolver extends SearchIndexResolverBase
 {
@@ -36,5 +37,13 @@ class ForumPostSearchIndexResolver extends SearchIndexResolverBase
         $threadData = $this->_discussRepository->getThreadsForPosts($entityIds);
 
         return $this->_discussAdapter->adaptForSearchResults($threadData);
+    }
+
+    public function emptyResponse(): array
+    {
+        return $this->_discussAdapter->adaptForSearchResults(new ForumThreadsForPostsValue([
+            'forum_threads' => collect([]),
+            'forum_groups' => collect([]),
+        ]));
     }
 }

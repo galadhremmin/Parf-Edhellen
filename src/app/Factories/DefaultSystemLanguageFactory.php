@@ -12,7 +12,11 @@ class DefaultSystemLanguageFactory implements ISystemLanguageFactory
     public function __construct()
     {
         $languageName = config('ed.system_language');
-        $this->_language = Language::where('name', $languageName)->first();
+        try {
+            $this->_language = Language::where('name', $languageName)->first();
+        } catch (\Exception $e) {
+            $this->_language = null;
+        }
     }
 
     public function language(): ?Language

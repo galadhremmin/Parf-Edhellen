@@ -161,4 +161,15 @@ class StringHelper
     {
         return rawurlencode($s);
     }
+
+    public static function isOnlyNonLatinCharacters(string $str): bool
+    {
+        return (bool) preg_match('/^\p{L}++\z/u', $str) &&
+            !preg_match('/\p{Latin}/u', $str);
+    }
+
+    public static function isOnlySymbolsOrInterpunctuation(string $str): bool
+    {
+        return (bool) preg_match('/^[\p{S}\p{P}\p{Z}]+$/u', $str);
+    }
 }
