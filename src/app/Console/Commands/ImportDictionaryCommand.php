@@ -40,7 +40,11 @@ class ImportDictionaryCommand extends Command
     {
         parent::__construct();
 
-        $this->_languageMap = Language::get()->keyBy('name');
+        try {
+            $this->_languageMap = Language::get()->keyBy('name');
+        } catch (\Exception $e) {
+            $this->_languageMap = collect([]);
+        }
 
         $this->_glossGroup = null;
         $this->_importAccount = null;

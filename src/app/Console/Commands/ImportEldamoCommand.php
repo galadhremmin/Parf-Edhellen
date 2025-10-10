@@ -53,7 +53,11 @@ class ImportEldamoCommand extends Command
 
         $this->_languageMap = null;
         $this->_speechMap = null;
-        $this->_inflectionMap = Inflection::get()->keyBy('name');
+        try {
+            $this->_inflectionMap = Inflection::get()->keyBy('name');
+        } catch (\Exception $e) {
+            $this->_inflectionMap = collect([]);
+        }
 
         $this->_lexicalEntryGroups = [];
         $this->_eldamoAccount = null;

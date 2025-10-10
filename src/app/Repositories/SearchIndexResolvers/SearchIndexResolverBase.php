@@ -22,6 +22,12 @@ abstract class SearchIndexResolverBase implements ISearchIndexResolver
 
     abstract protected function resolveByQuery(array $params, SearchIndexSearchValue $value): array;
 
+    public function emptyResponse(): array
+    {
+        return [];
+    }
+
+
     private function buildQuery(SearchIndexSearchValue $v): array
     {
         $word = $v->getWord();

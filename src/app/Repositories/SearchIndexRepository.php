@@ -86,17 +86,25 @@ class SearchIndexRepository
 
     public function findKeywords(SearchIndexSearchValue $v)
     {
-        $keywords = $this->_keywordsResolver->resolve($v);
+        if ($this->shortCircuitInEfficientQueries($v->getWord())) {
+            return $this->_keywordsResolver->emptyResponse();
+        }
 
+        $keywords = $this->_keywordsResolver->resolve($v);
         return $keywords;
     }
 
     public function resolveIndexToEntities(int $searchGroupId, SearchIndexSearchValue $v)
     {
+        $word = $v->getWord();
         $resolver = $this->getResolverBySearchGroup($searchGroupId);
-        $entities = $resolver->resolve($v);
 
-        return $this->formatEntitiesResponse($entities, $searchGroupId, $v->getWord());
+        if ($this->shortCircuitInEfficientQueries($word)) {
+            return $this->formatEntitiesResponse($resolver->emptyResponse(), $searchGroupId, $word);
+        }
+
+        $entities = $resolver->resolve($v);
+        return $this->formatEntitiesResponse($entities, $searchGroupId, $word);
     }
 
     public function resolveEntity(int $searchGroupId, int $entityId)
@@ -312,5 +320,11 @@ class SearchIndexRepository
         }
 
         return sha1($values);
+    }
+
+    private function shortCircuitInEfficientQueries(string $word): bool
+    {
+        return StringHelper::isOnlySymbolsOrInterpunctuation($word) || //
+            StringHelper::isOnlyNonLatinCharacters($word);
     }
 }
