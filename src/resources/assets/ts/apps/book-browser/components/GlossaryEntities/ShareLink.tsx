@@ -103,7 +103,7 @@ function ShareLink(props: IProps) {
                 onFocus={onInputFocus}
             />
         </Dialog>
-        <a href={url} onClick={_onClick}>
+        <a href={url} onClick={_onClick} title={`Share "${glossWord}" lexical entry`}>
             <TextIcon icon="share" />
         </a>
     </>;
