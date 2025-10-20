@@ -1,13 +1,29 @@
 import TextIcon from '@root/components/TextIcon';
+import UngweInflectionsDialog, { isEligibleForUngweInflections } from './UngweInflectionsDialog';
 import { IProps } from './WordInflections._types';
+import React, { useCallback, useState } from 'react';
 
 const WordInflections = (props: IProps) => {
     const { lexicalEntry: entry } = props;
+    const [dialogOpen, setDialogOpen] = useState(false);
 
-    if (!entry.inflections) {
+    const isUngweEligible = isEligibleForUngweInflections(entry);
+    const visible = !! entry.inflections || isUngweEligible;
+
+    if (! visible) {
         return null;
     }
-    const inflectionGroups = Object.keys(entry.inflections);
+
+    const _onUngweInflectClick = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
+        ev.preventDefault();
+        setDialogOpen(true);
+    }, []);
+
+    const _onDialogDismiss = useCallback(() => {
+        setDialogOpen(false);
+    }, []);
+
+    const inflectionGroups = Object.keys(entry.inflections || {});
 
     return <section className="GlossDetails details">
         <header>
@@ -44,8 +60,22 @@ const WordInflections = (props: IProps) => {
                         </tr>;
                     })}
                 </tbody>
+                {isUngweEligible && <tfoot>
+                    <tr>
+                        <td colSpan={3} className="text-center">
+                            <a href="#" onClick={_onUngweInflectClick}>
+                                Inflect with Quettali
+                            </a>
+                        </td>
+                    </tr>
+                </tfoot>}
             </table>
         </div>
+        <UngweInflectionsDialog
+            lexicalEntryId={entry.id}
+            open={dialogOpen}
+            onDismiss={_onDialogDismiss}
+        />
     </section>;
 };
 
