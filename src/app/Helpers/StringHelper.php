@@ -23,20 +23,24 @@ class StringHelper
 
     private static array $_accentsNormalizationTable = [
         'é' => 'ee',
-        'ê' => 'eee',
         'ý' => 'yy',
-        'ŷ' => 'yyy',
         'ú' => 'uu',
-        'û' => 'uuu',
         'í' => 'ii',
-        'î' => 'iii',
         'ó' => 'oo',
-        'ô' => 'ooo',
         'á' => 'aa',
+    ];
+
+    private static array $_longAccentsNormalizationTable = [
+        'ê' => 'eee',
+        'ŷ' => 'yyy',
+        'û' => 'uuu',
+        'î' => 'iii',
+        'ô' => 'ooo',
         'â' => 'aaa',
     ];
 
     private static ?array $_reversedAccentsNormalizationTable = null;
+    private static ?array $_reversedLongAccentsNormalizationTable = null;
 
     private function __construct()
     {
@@ -75,9 +79,10 @@ class StringHelper
      *
      * @param  bool  $accentsMatter  - whether accents should be normalized according to a phonetic approximation
      * @param  bool  $retainWildcard  - retains wildcard character (*)
+     * @param  bool  $longAccents  - whether long accents should be normalized
      * @return string
      */
-    public static function normalize(?string $str, $accentsMatter = true, $retainWildcard = false)
+    public static function normalize(?string $str, $accentsMatter = true, $retainWildcard = false, $longAccents = true)
     {
         if (empty($str)) {
             return $str;
@@ -92,7 +97,8 @@ class StringHelper
         }
 
         if ($accentsMatter) {
-            $normalizationTable = array_merge(self::$_normalizationTable, self::$_accentsNormalizationTable);
+            $normalizationTable = array_merge(self::$_normalizationTable, self::$_accentsNormalizationTable, 
+                $longAccents ? self::$_longAccentsNormalizationTable : []);
         } else {
             $normalizationTable = self::$_normalizationTable;
         }
@@ -137,23 +143,31 @@ class StringHelper
     /**
      * Reversed normalization, attempting to convert a normalized string into its accented version.
      *
+     * @param  string  $str  - the string to reverse normalize
+     * @param  bool  $longAccents  - whether long accents should be reversed
      * @return string
      */
-    public static function reverseNormalization(string $str)
+    public static function reverseNormalization(string $str, bool $longAccents = true)
     {
-        $reversed = &self::$_reversedAccentsNormalizationTable;
+        $normalizationTable = null;
+        if ($longAccents) {
+            $reversed = &self::$_reversedLongAccentsNormalizationTable;
+            $normalizationTable = array_merge(self::$_accentsNormalizationTable, self::$_longAccentsNormalizationTable);
+        } else {
+            $reversed = &self::$_reversedAccentsNormalizationTable;
+            $normalizationTable = self::$_accentsNormalizationTable;
+        }
 
         if ($reversed === null) {
-            self::$_reversedAccentsNormalizationTable = [];
+            $reversed = [];
 
-            foreach (self::$_accentsNormalizationTable as $key => $value) {
+            foreach ($normalizationTable as $key => $value) {
                 $reversed[$value] = $key;
             }
         }
 
         // remove underline slugs
         $str = str_replace('_', ' ', $str);
-
         return strtr($str, $reversed);
     }
 

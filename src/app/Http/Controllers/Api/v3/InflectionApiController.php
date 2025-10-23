@@ -15,7 +15,8 @@ use DateInterval;
 class InflectionApiController extends Controller
 {
     const UNGWE_API_URL = 'https://ungwe.net/api/v1';
-    const UNGWE_API_TAGS = 'verb-bare,verb-aor1,verb-gerd,verb-futu,verb-past,verb-perf,verb-impe,verb-curt';
+    const UNGWE_API_TAGS = 'verb-bare,verb-aor1,verb-gerd,verb-futu,verb-past,verb-perf,verb-impe,verb-fimp,verb-fper';
+    const UNGWE_API_NO_VERB_FORM_RESPONSE = ['words' => []];
 
     public function __construct(private SystemErrorRepository $_systemErrorRepository)
     {}
@@ -52,7 +53,7 @@ class InflectionApiController extends Controller
          * 
          * TODO: explore whether third party integrations like this can be generalized in a more elegant manner in the future.
          */
-        $inflectData = Cache::remember('ungwe.inflections.'.$lexicalEntryId, DateInterval::createFromDateString('1 month'), function () use ($lexicalEntryId) {
+        $inflectData = Cache::remember('ungwe.inflections.v2.'.$lexicalEntryId, DateInterval::createFromDateString('1 month'), function () use ($lexicalEntryId) {
             try {
                 // Look up the lexical entry
                 $lexicalEntry = \App\Models\LexicalEntry::with('word')->find($lexicalEntryId);
@@ -87,8 +88,7 @@ class InflectionApiController extends Controller
                 }
     
                 if ($qwid === null) {
-                    $this->_systemErrorRepository->saveException(new \Exception('No verb form found for word: '.$word), 'ungwe');
-                    return null;
+                    return self::UNGWE_API_NO_VERB_FORM_RESPONSE;
                 }
     
                 // Step 2: Get inflections using the qwid
@@ -107,7 +107,7 @@ class InflectionApiController extends Controller
                     foreach ($word['forms'] as &$form) {
                         $form['tag'] = __('ungwe.'.$form['tag']);
                         for ($i = 0; $i < count($form['forms']); $i++) {
-                            $form['forms'][$i] = StringHelper::reverseNormalization($form['forms'][$i]);
+                            $form['forms'][$i] = StringHelper::reverseNormalization($form['forms'][$i], longAccents: false);
                         }
                     }
                 }
