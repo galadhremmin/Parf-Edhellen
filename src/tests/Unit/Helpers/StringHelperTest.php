@@ -121,5 +121,20 @@ class StringHelperTest extends TestCase
         $this->assertTrue(StringHelper::isOnlySymbolsOrInterpunctuation(' '));
         $this->assertTrue(StringHelper::isOnlySymbolsOrInterpunctuation('  '));
     }
+
+    public function testReverseNormalizationLongAccents()
+    {
+        $this->assertEquals('é', StringHelper::reverseNormalization('ee', true));
+        $this->assertEquals('â', StringHelper::reverseNormalization('aaa', true));
+        $this->assertEquals('ŷ', StringHelper::reverseNormalization('yyy', true));
+        $this->assertEquals('û', StringHelper::reverseNormalization('uuu', true));
+
+        $this->assertEquals('ée', StringHelper::reverseNormalization('eee', false));
+        $this->assertEquals('ýy', StringHelper::reverseNormalization('yyy', false));
+        $this->assertEquals('úu', StringHelper::reverseNormalization('uuu', false));
+        $this->assertEquals('íi', StringHelper::reverseNormalization('iii', false));
+        $this->assertEquals('óo', StringHelper::reverseNormalization('ooo', false));
+        $this->assertEquals('áa', StringHelper::reverseNormalization('aaa', false));
+    }
 }
 

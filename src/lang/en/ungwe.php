@@ -8,4 +8,6 @@ return [
     'verb-bare' => 'Infinitive (alone)',
     'verb-past' => 'Past',
     'verb-perf' => 'Perfect',
+    'verb-fimp' => 'Future perfect',
+    'verb-fper' => 'Future perfect',
 ];
