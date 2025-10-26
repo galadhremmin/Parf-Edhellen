@@ -15,7 +15,8 @@ import { IProps } from './UngweInflectionsDialog._types';
 import { ILexicalEntryEntity } from '@root/connectors/backend/IBookApi';
 
 export function isEligibleForUngweInflections(lexicalEntry: ILexicalEntryEntity): boolean {
-    return lexicalEntry.type === 'verb' && lexicalEntry.language?.name.toLowerCase() === 'quenya';
+    return lexicalEntry?.type === 'verb' && //
+        lexicalEntry?.language?.name.toLowerCase() === 'quenya';
 }
 
 const UngweInflectionsDialog = (props: IProps) => {
