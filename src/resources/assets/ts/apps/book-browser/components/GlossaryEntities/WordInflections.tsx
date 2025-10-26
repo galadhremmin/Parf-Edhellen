@@ -7,13 +7,6 @@ const WordInflections = (props: IProps) => {
     const { lexicalEntry: entry } = props;
     const [dialogOpen, setDialogOpen] = useState(false);
 
-    const isUngweEligible = isEligibleForUngweInflections(entry);
-    const visible = !! entry.inflections || isUngweEligible;
-
-    if (! visible) {
-        return null;
-    }
-
     const _onUngweInflectClick = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
         setDialogOpen(true);
@@ -22,6 +15,13 @@ const WordInflections = (props: IProps) => {
     const _onDialogDismiss = useCallback(() => {
         setDialogOpen(false);
     }, []);
+
+    const isUngweEligible = isEligibleForUngweInflections(entry);
+    const visible = !! entry?.inflections || isUngweEligible;
+
+    if (! visible) {
+        return null;
+    }
 
     const inflectionGroups = Object.keys(entry.inflections || {});
 
