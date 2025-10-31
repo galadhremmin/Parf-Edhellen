@@ -13,7 +13,7 @@ class LexicalEntry extends ModelBase implements Interfaces\IHasFriendlyName, Int
     protected $table = 'lexical_entries';
 
     protected $fillable = [
-        'account_id', 'language_id', 'word_id', 'speech_id', 'lexical_entry_group_id', 'sense_id',
+        'account_id', 'language_id', 'speech_id', 'lexical_entry_group_id', 'sense_id',
         'source', 'comments', 'is_uncertain', 'is_rejected', 'is_deleted', 'tengwar',
         'word_id', 'external_id', 'has_details', 'label', 'latest_lexical_entry_version_id',
         'source', 'etymology',

@@ -1,5 +1,5 @@
 import TextIcon from '@root/components/TextIcon';
-import UngweInflectionsDialog, { isEligibleForUngweInflections } from './UngweInflectionsDialog';
+import AutoInflectionsDialog, { isEligibleForAutoInflections } from './AutoInflectionsDialog';
 import { IProps } from './WordInflections._types';
 import React, { useCallback, useState } from 'react';
 
@@ -7,7 +7,7 @@ const WordInflections = (props: IProps) => {
     const { lexicalEntry: entry } = props;
     const [dialogOpen, setDialogOpen] = useState(false);
 
-    const _onUngweInflectClick = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
+    const _onAutoInflectClick = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
         setDialogOpen(true);
     }, []);
@@ -16,8 +16,8 @@ const WordInflections = (props: IProps) => {
         setDialogOpen(false);
     }, []);
 
-    const isUngweEligible = isEligibleForUngweInflections(entry);
-    const visible = !! entry?.inflections || isUngweEligible;
+    const isAutoInflectionEligible = isEligibleForAutoInflections(entry);
+    const visible = !! entry?.inflections || isAutoInflectionEligible;
 
     if (! visible) {
         return null;
@@ -60,18 +60,18 @@ const WordInflections = (props: IProps) => {
                         </tr>;
                     })}
                 </tbody>
-                {isUngweEligible && <tfoot>
+                {isAutoInflectionEligible && <tfoot>
                     <tr>
                         <td colSpan={3} className="text-center">
-                            <a href="#" onClick={_onUngweInflectClick}>
-                                Inflect with Quettali
+                            <a href="#" onClick={_onAutoInflectClick}>
+                                More inflections
                             </a>
                         </td>
                     </tr>
                 </tfoot>}
             </table>
         </div>
-        <UngweInflectionsDialog
+        <AutoInflectionsDialog
             lexicalEntryId={entry.id}
             open={dialogOpen}
             onDismiss={_onDialogDismiss}

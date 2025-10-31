@@ -3,8 +3,8 @@ import { DI } from '@root/di/keys';
 import {
     IInflectionMap,
     IInflectionResourceApi,
-    IUngweInflectionsRequest,
-    IUngweInflectionsResponse,
+    IAutoInflectionsRequest,
+    IAutoInflectionsResponse,
 } from './IInflectionResourceApi';
 
 export default class InflectionResourceApiConnector implements IInflectionResourceApi {
@@ -15,7 +15,7 @@ export default class InflectionResourceApiConnector implements IInflectionResour
         return this._api.get<IInflectionMap>('inflection');
     }
 
-    public ungweInflections(args: IUngweInflectionsRequest) {
-        return this._api.get<IUngweInflectionsResponse>(`inflection/ungwe/${args.lexicalEntryId}`);
+    public autoInflections(args: IAutoInflectionsRequest) {
+        return this._api.get<IAutoInflectionsResponse>(`inflection/auto/${args.lexicalEntryId}`);
     }
 }
