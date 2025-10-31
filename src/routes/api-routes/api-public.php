@@ -39,7 +39,7 @@ Route::group([
 
     Route::get('inflection/{id?}', [InflectionApiController::class, 'index'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC]);
-    Route::get('inflection/ungwe/{lexicalEntryId}', [InflectionApiController::class, 'getUngweInflections'])
+    Route::get('inflection/auto/{lexicalEntryId}', [InflectionApiController::class, 'getAutoInflections'])
         ->where(['lexicalEntryId' => REGULAR_EXPRESSION_NUMERIC]);
 
     Route::get('lexical-entry/{id?}', [LexicalEntryApiController::class, 'get'])
