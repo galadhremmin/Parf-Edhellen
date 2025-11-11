@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
+use App\Helpers\RecaptchaHelper;
 
 class UsernamePasswordAuthenticationController extends AuthenticationController
 {
@@ -61,7 +62,7 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
     public function registerWithPassword(Request $request)
     {
         // Protect the registration flow against binary actors.
-        if (! empty($request->input('account_control'))) {
+        if (! empty($request->input('account_control')) || ! RecaptchaHelper::createAssessment($request->input('recaptcha_token'), 'REGISTER')) {
             $this->_systemErrorRepository->saveException(new SuspiciousBotActivityException($request, 'user registration'), 'security');
             return redirect()->to('login');
         }

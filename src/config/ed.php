@@ -103,4 +103,11 @@ return [
     // Performance monitoring
     'expensive_request_threshold' => env('ED_EXPENSIVE_REQUEST_THRESHOLD', 2000), // milliseconds
     'expensive_request_post_logging_routes' => explode(',', env('ED_EXPENSIVE_REQUEST_POST_LOGGING_ROUTES', 'api.book.entities,api.book.find')),
+
+    // Google Recaptcha
+    'recaptcha' => [
+        'key' => env('GOOGLE_RECAPTCHA_KEY', null),
+        'project' => env('GOOGLE_RECAPTCHA_PROJECT', null),
+        'sitekey' => env('GOOGLE_RECAPTCHA_SITEKEY', null),
+    ],
 ];
