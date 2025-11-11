@@ -60,7 +60,7 @@
     </ul>
   </div>
   @endif
-  <form method="post" action="{{ route('auth.register') }}">
+  <form method="post" action="{{ route('auth.register') }}" id="register-form">
     @csrf
     <div class="form-group">
       <label for="password-login-nickname" class="form-label">Nickname</label>
@@ -85,8 +85,27 @@
     <div class="text-center mt-3">
       <button type="submit" class="btn btn-primary">Create account</button>
     </div>
+    @if (config('ed.recaptcha.sitekey'))
+    <input type="hidden" name="recaptcha_token" id="recaptcha-token">
+    @endif
   </form>
 @endsection
 @section('styles')
 <link rel="stylesheet" href="@assetpath(style-auth.css)">
+@if (config('ed.recaptcha.sitekey'))
+<script src="https://www.google.com/recaptcha/enterprise.js?render={{ config('ed.recaptcha.sitekey') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('register-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    grecaptcha.enterprise.ready(async () => {
+      grecaptcha.enterprise.execute("{{ config('ed.recaptcha.sitekey') }}", {action: 'REGISTER'}).then(function(token) {
+        document.getElementById('recaptcha-token').value = token;
+        document.getElementById('register-form').submit();
+      });
+    });
+  });
+});
+</script>
+@endif
 @endsection
