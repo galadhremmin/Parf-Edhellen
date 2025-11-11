@@ -16,7 +16,7 @@ import { ILexicalEntryEntity } from '@root/connectors/backend/IBookApi';
 
 export function isEligibleForAutoInflections(lexicalEntry: ILexicalEntryEntity): boolean {
     return lexicalEntry?.type === 'verb' && //
-        ['quenya', 'sindarin'].includes(lexicalEntry?.language?.name.toLowerCase());
+        ['quenya', /*'sindarin'*/].includes(lexicalEntry?.language?.name.toLowerCase());
 }
 
 const AutoInflectionsDialog = (props: IProps) => {
