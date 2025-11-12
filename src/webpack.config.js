@@ -7,7 +7,7 @@ const { readdirSync, statSync } = require('fs');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 // Reads `.env` configuration values to `process.env`
-require('dotenv').config();
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
 const bundleCssWithJavaScript = false;
 const version = process.env.ED_VERSION;
@@ -23,6 +23,8 @@ const entry = readdirSync(path.resolve(sourcePath, 'apps')) //
     [file]: path.resolve(sourcePath, 'apps', file, 'index.tsx'),
   }), {});
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 const clientConfig = {
   entry: {
     index: `${sourcePath}/index.tsx`,
@@ -34,16 +36,19 @@ const clientConfig = {
   output: {
     path: outputPath,
     publicPath: `${publicPath}/`,
+    filename: '[name].js',
+    chunkFilename: '[name].[contenthash].js',
   },
   optimization: {
     chunkIds: 'deterministic',
     splitChunks: {
+      chunks: 'async',
       cacheGroups: {
-        default: false,
         vendors: {
-          test: /\/node_modules\/(axios|classnames|html\-to\-react|luxon|react|redux|spinkit)/,
-          priority: 0,
-          reuseExistingChunk: false,
+          test: /[\\/]node_modules[\\/](axios|classnames|html-to-react|luxon|redux|spinkit)[\\/]/,
+          name: 'vendors',
+          priority: 30,
+          reuseExistingChunk: true,
         },
         glaemscribe: {
           name(module, chunks, cacheGroupKey) {
@@ -57,7 +62,8 @@ const clientConfig = {
           reuseExistingChunk: true,
         },
         grid: {
-          test: /\/node_modules\/ag\-grid\-(community|react)/,
+          test: /[\\/]node_modules[\\/]@ag-grid-community[\\/]/,
+          name: 'ag-grid',
           priority: 20,
           reuseExistingChunk: true,
         },
@@ -72,10 +78,16 @@ const clientConfig = {
           priority: -10,
           reuseExistingChunk: true,
         },
+        defaultVendors: {
+          test: /[\\/]node_modules[\\/]/,
+          priority: -20,
+          reuseExistingChunk: true,
+        },
+        default: false,
       },
     },
   },
-  // devtool: 'source-map',
+  devtool: isProduction ? false : 'eval-source-map',
   resolve: {
     alias: {
       '@root': sourcePath,
@@ -163,8 +175,8 @@ const clientConfig = {
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       // both options are optional
-      filename: "[name].css",
-      chunkFilename: "[id].css",
+      filename: '[name].css',
+      chunkFilename: '[name].[contenthash].css',
       ignoreOrder: true,
     }),
     // new AsyncChunkNames(),
@@ -191,7 +203,7 @@ const serverConfig = {
     path: `${outputPath}-server`,
     publicPath: `${publicPath}-server/`,
   },
-  // devtool: 'source-map',
+  devtool: isProduction ? false : 'eval-source-map',
   resolve: {
     alias: {
       '@root': sourcePath,
@@ -271,8 +283,8 @@ const serverConfig = {
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       // both options are optional
-      filename: "[name].css",
-      chunkFilename: "[id].css",
+      filename: '[name].css',
+      chunkFilename: '[name].[contenthash].css',
       ignoreOrder: true,
     }),
     // new BundleAnalyzerPlugin(),

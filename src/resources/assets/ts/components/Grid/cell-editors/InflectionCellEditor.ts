@@ -1,4 +1,4 @@
-import { ICellEditorParams } from 'ag-grid-community';
+import type { ICellEditorParams } from '@ag-grid-community/core';
 
 import { ILexicalEntryInflection } from '@root/connectors/backend/IBookApi';
 import { IInflection } from '@root/connectors/backend/IInflectionResourceApi';

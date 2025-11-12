@@ -1,6 +1,6 @@
-import {
+import type {
     ICellRendererParams,
-} from 'ag-grid-community';
+} from '@ag-grid-community/core';
 import TextIcon from '@root/components/TextIcon';
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
 

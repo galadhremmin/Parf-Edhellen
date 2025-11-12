@@ -2,18 +2,19 @@ import {
     useCallback
 } from 'react';
 
-import {
+import type {
     ColDef,
     GridReadyEvent,
     IDatasource,
-} from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+} from '@ag-grid-community/core';
+import { AgGridReact } from '@ag-grid-community/react';
 import { DateTime } from 'luxon';
 
 import { IFailedJob } from '@root/connectors/backend/ILogApi';
 import { IProps } from './LogList._types';
 
 import '@root/components/AgGrid.scss';
+import '@root/utilities/agGridModules';
 
 const ColumnDefinitions: ColDef<IFailedJob>[] = [
     {

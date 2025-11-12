@@ -1,7 +1,7 @@
-import {
+import type {
     ICellEditorComp,
     ICellEditorParams,
-} from 'ag-grid-community';
+} from '@ag-grid-community/core';
 
 export default class BooleanCellEditor implements ICellEditorComp {
     private _value: boolean;

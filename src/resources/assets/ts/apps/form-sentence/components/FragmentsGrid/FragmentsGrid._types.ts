@@ -1,6 +1,6 @@
-import {
+import type {
     ColDef,
-} from 'ag-grid-community';
+} from '@ag-grid-community/core';
 
 import { ComponentEventHandler } from '@root/components/Component._types';
 import { IFragmentGridMetadata } from '@root/components/Grid/cell-editors/InflectionCellEditor._types';

@@ -78,8 +78,11 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.7",
     "@types/luxon": "^3.4.2",
-    "ag-grid-community": "^32.0.2",
-    "ag-grid-react": "^32.0.2",
+    "@ag-grid-community/client-side-row-model": "^32.0.2",
+    "@ag-grid-community/core": "^32.0.2",
+    "@ag-grid-community/infinite-row-model": "^32.0.2",
+    "@ag-grid-community/react": "^32.0.2",
+    "@ag-grid-community/styles": "^32.0.2",
     "axios": "^1.7.3",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",

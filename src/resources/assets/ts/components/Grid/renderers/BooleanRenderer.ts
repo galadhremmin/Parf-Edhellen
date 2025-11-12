@@ -1,6 +1,6 @@
-import {
+import type {
     ICellRendererParams,
-} from 'ag-grid-community';
+} from '@ag-grid-community/core';
 
 const BooleanRenderer = (params: ICellRendererParams) => {
     const value = typeof params.value === 'boolean' ? params.value : !! params.value;

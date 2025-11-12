@@ -29,6 +29,12 @@ const InjectPropAttributeName = 'injectProp';
 const InjectModeAttributeName = 'injectMode';
 
 /**
+ * The `data-inject-completed` attribute is used to indicate that the inject
+ * has completed.
+ */
+const InjectCompletedAttributeName = 'injectCompleted';
+
+/**
  * Loads the module `moduleName`'s default component and injects it to the
  * page.
  * @param element the element to inject the component into.
@@ -96,9 +102,16 @@ const inject = async () => {
     for (let i = 0; i < elements.length; i += 1) {
         const element = elements.item(i) as HTMLElement;
 
+        if (element.dataset[InjectCompletedAttributeName] === 'true') {
+            // already injected. This can happen if the inject function is called multiple times.
+            continue;
+        }
+
         const moduleName = element.dataset[InjectModuleAttributeName];
         const mode = (element.dataset[InjectModeAttributeName] as RenderMode) || RenderMode.Async;
         const props = getProps(element);
+
+        element.dataset[InjectCompletedAttributeName] = 'true';
 
         promises.push(
             load(element, mode, moduleName, props)

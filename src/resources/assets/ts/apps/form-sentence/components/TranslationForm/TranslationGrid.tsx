@@ -1,12 +1,12 @@
-import {
+import type {
     CellValueChangedEvent,
     GridReadyEvent,
-} from 'ag-grid-community';
+} from '@ag-grid-community/core';
 import { useEffect, useRef } from 'react';
-// import { ClientSideRowModelModule } from 'ag-grid-community/client-side-row-model';
 import { fireEventAsync } from '@root/components/Component';
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
-import { AgGridReact } from 'ag-grid-react';
+import { AgGridReact } from '@ag-grid-community/react';
+import '@root/utilities/agGridModules';
 import {
     IProps,
     TranslationGridColumnDefinition,
@@ -85,7 +85,6 @@ export default function TranslationGrid(props: IProps) {
     return <div className="ag-theme-balham FragmentsGrid--container">
         {columnDefinition &&
             <AgGridReact
-//                modules={[ClientSideRowModelModule]}
                 columnDefs={columnDefinition}
                 onCellValueChanged={_onCellValueChanged}
                 onGridReady={_onGridReady}

@@ -1,4 +1,4 @@
-import {
+import type {
     CellValueChangedEvent,
     ColDef,
     DetailGridInfo,
@@ -6,10 +6,9 @@ import {
     GridReadyEvent,
     RowClassParams,
     RowNode,
-} from 'ag-grid-community';
-import { AgGridReact } from 'ag-grid-react';
+} from '@ag-grid-community/core';
+import { AgGridReact } from '@ag-grid-community/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-// import { ClientSideRowModelModule } from 'ag-grid-community/client-side-row-model';
 
 import { fireEventAsync } from '@root/components/Component';
 import { ISentenceFragmentEntity, SentenceFragmentType } from '@root/connectors/backend/IBookApi';
@@ -36,6 +35,7 @@ import {
 
 import { IAugmentedCellRendererParams } from '@root/components/Grid/cell-editors/InflectionCellEditor._types';
 import { DI } from '@root/di/keys';
+import '@root/utilities/agGridModules';
 import './FragmentsGrid.scss';
 
 const DefaultColumnDefinition = {
