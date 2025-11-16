@@ -10,7 +10,7 @@
         "allowSyntheticDefaultImports": true,
         "downlevelIteration": false,
         "moduleResolution": "node",
-        "experimentalDecorators": true,
+        "experimentalDecorators": false,
         "emitDecoratorMetadata": false,
         "esModuleInterop": true,
         "verbatimModuleSyntax": true,
