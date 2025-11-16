@@ -7,7 +7,7 @@ import type { IProps } from './FragmentInspector._types';
 
 import { fireEventAsync } from '@root/components/Component';
 import TextIcon from '@root/components/TextIcon';
-import classNames from 'classnames';
+import classNames from '@root/utilities/ClassNames';
 import './FragmentInspector.scss';
 import SentenceFragmentInspector from './SentenceFragmentInspector';
 

@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import classNames from '@root/utilities/ClassNames';
 import type { RenderInputComponentProps } from 'react-autosuggest';
 
 function DefaultInput(props: RenderInputComponentProps) {

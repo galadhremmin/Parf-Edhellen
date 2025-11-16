@@ -8,7 +8,7 @@ import type {
     IDatasource,
 } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
-import { DateTime } from 'luxon';
+import { formatDateTimeShortWithSeconds } from '@root/utilities/DateTime';
 
 import type { IErrorEntity } from '@root/connectors/backend/ILogApi';
 import type { IProps } from './LogList._types';
@@ -19,7 +19,7 @@ import '@root/utilities/agGridModules';
 const ColumnDefinitions: ColDef<IErrorEntity>[] = [
     {
         field: 'createdAt',
-        valueFormatter: params => DateTime.fromISO(params.value).toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS),
+        valueFormatter: params => formatDateTimeShortWithSeconds(params.value),
         minWidth: 160,
         filter: 'agDateColumnFilter',
     },

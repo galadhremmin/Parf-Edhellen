@@ -18,7 +18,6 @@
         "importHelpers": true,
         "skipLibCheck": true,
         "types": [
-            "luxon",
             "react",
             "react-dom",
             "react-redux",

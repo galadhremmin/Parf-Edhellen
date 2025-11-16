@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon';
+import { dateNowInMilliseconds } from '@root/utilities/DateTime';
 import { useEffect } from 'react';
 
 import { fireEvent } from '@root/components/Component';
@@ -8,8 +8,8 @@ function Timer(props: IProps) {
     const {
         onTick,
         tick,
-        startValue = DateTime.local().toMillis(),
-        value = DateTime.local().toMillis(),
+        startValue = dateNowInMilliseconds(),
+        value = dateNowInMilliseconds(),
     } = props;
 
     useEffect(() => {
@@ -18,8 +18,8 @@ function Timer(props: IProps) {
         }
 
         const timer = window.setInterval(() => {
-            const now  = DateTime.local();
-            void fireEvent('Timer', onTick, now.toMillis());
+            const now  = dateNowInMilliseconds();
+            void fireEvent('Timer', onTick, now);
         }, 1000);
 
         return () => {
@@ -27,11 +27,9 @@ function Timer(props: IProps) {
         }
     }, [ tick ]);
 
-    const duration = DateTime.fromMillis(value).diff(
-        DateTime.fromMillis(startValue), 'seconds',
-    );
+    const durationSeconds = Math.max(0, Math.round((value - startValue) / 1000));
     return <span>
-        {duration.toFormat('s')}
+        {durationSeconds}
     </span>;
 }
 

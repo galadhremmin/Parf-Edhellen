@@ -6,7 +6,7 @@ import { thunk } from 'redux-thunk';
 import type { ReduxThunkDispatch } from '@root/_types';
 import type { IThreadResponse } from '@root/connectors/backend/IDiscussApi';
 
-import classNames from 'classnames';
+import classNames from '@root/utilities/ClassNames';
 import DiscussActions from './actions/DiscussActions';
 import Discuss from './containers/Discuss';
 import type { IProps } from './index._types';

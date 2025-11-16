@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon';
+import { dateNowInMilliseconds } from '@root/utilities/DateTime';
 import {
     Actions,
     type IGameAction,
@@ -16,7 +16,7 @@ const InitialState: IStageReducerState = {
 const StageReducer = (state = InitialState, action: IGameAction) => {
     switch (action.type) {
         case Actions.InitializeGame: {
-            const now = DateTime.local().toMillis();
+            const now = dateNowInMilliseconds();
             return {
                 ...state,
                 duration: 0,

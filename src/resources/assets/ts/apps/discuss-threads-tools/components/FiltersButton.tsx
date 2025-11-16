@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import classNames from '@root/utilities/ClassNames';
 import { useCallback, useState } from 'react';
 import type { ChangeEvent, MouseEvent } from 'react';
 

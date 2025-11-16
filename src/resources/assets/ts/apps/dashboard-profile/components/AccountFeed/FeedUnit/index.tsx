@@ -2,7 +2,7 @@ import DateLabel from "@root/components/DateLabel";
 import Panel from "@root/components/Panel";
 import { PanelType } from "@root/components/Panel._types";
 import type { IForumFeedRecord, ILexicalEntryVersionFeedRecord, ISentenceFeedRecord } from "@root/connectors/backend/IAccountApi";
-import classNames from "classnames";
+import classNames from '@root/utilities/ClassNames';
 import { useEffect, useRef, useState } from "react";
 import ForumFeedUnit from "./ForumFeedUnit";
 import GlossVersionFeedUnit from "./GlossVersionFeedUnit";

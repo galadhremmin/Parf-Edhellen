@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import classNames from '@root/utilities/ClassNames';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 import { connect } from 'react-redux';

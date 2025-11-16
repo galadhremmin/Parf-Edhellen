@@ -12,7 +12,6 @@ import {
 import Overview from '../components/Overview';
 import Settings from '../components/Settings';
 import Cookies from 'js-cookie';
-import { DateTime } from 'luxon';
 
 const enum ConsentView {
     Overview = 'overview',
@@ -29,7 +28,8 @@ export default function CookieConsent({ zone }: { zone: string }) {
         const config = {
             secure: true,
             path: '/',
-            expires: DateTime.now().plus({ years: 2 }).toJSDate(),
+            // Two years from now
+            expires: new Date(Date.now() + 2 * 365 * 24 * 60 * 60 * 1000),
         };
         Cookies.set(EuConsentCookieName, EuConsentGivenCookieValue, config);
         Cookies.set(EuConsentCookieSelection, cookieUseCasesConsent.join('|'), config);

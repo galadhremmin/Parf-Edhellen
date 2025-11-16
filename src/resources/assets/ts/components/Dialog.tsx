@@ -8,7 +8,7 @@ import Modal from 'react-modal';
 import { fireEvent } from './Component';
 import type { IProps } from './Dialog._types';
 
-import classNames from 'classnames';
+import classNames from '@root/utilities/ClassNames';
 import './Dialog.scss';
 
 function Dialog<V>(props: IProps<V>) {

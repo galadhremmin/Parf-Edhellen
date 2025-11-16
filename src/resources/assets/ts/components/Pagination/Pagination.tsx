@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import classNames from '@root/utilities/ClassNames';
 import { type IProps, PageModes } from './Pagination._types';
 import PaginationLink from './PaginationLink';
 import {

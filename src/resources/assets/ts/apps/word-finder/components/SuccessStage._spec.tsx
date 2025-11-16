@@ -6,7 +6,6 @@ import {
 import { render, screen } from '@testing-library/react';
 
 import SuccessStage from './SuccessStage';
-import { DateTime } from 'luxon';
 
 describe('apps/word-finder/components/SuccessStage', () => {
     const GameStageStartTime = 1613351691105;
@@ -15,7 +14,7 @@ describe('apps/word-finder/components/SuccessStage', () => {
     test('mounts and presents the right duration', async () => {
         const { container } = render(<SuccessStage onChangeStage={null} startTime={GameStageStartTime} time={GameStageEndTime} />);
 
-        const duration = DateTime.fromMillis(GameStageEndTime).diff(DateTime.fromMillis(GameStageStartTime), 'seconds').toFormat('s');
+        const duration = Math.round((GameStageEndTime - GameStageStartTime) / 1000);
 
         const durationText = await screen.findByText(`You found all words in ${duration} seconds!`);
         expect(durationText).toEqual(expect.anything());

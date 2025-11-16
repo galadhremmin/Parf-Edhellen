@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import classNames from '@root/utilities/ClassNames';
 import type { IProps } from './TextIcon._types';
 
 import './TextIcon.scss';

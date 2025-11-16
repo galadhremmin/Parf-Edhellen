@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import classNames from '@root/utilities/ClassNames';
 import type { KeyboardEvent } from 'react';
 
 import { fireEventAsync } from '@root/components/Component';

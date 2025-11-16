@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import classNames from '@root/utilities/ClassNames';
 import { useEffect, useState } from 'react';
 
 import TextIcon from '@root/components/TextIcon';
