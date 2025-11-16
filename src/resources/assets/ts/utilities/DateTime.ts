@@ -1,4 +1,4 @@
-const InvalidDate = 'Invalid date';
+export const InvalidDate = 'Invalid date';
 
 /**
  * Returns the current date and time in milliseconds.
@@ -19,7 +19,7 @@ export function fromISOToDate(value: string | Date | null | undefined): Date | n
 	}
 	if (value instanceof Date) {
 		return value;
-	}
+}
 	const d = new Date(value);
 	return isNaN(d.getTime()) ? null : d;
 }
