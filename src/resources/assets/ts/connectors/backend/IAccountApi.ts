@@ -1,8 +1,8 @@
 /* eslint @typescript-eslint/no-empty-object-type: 0 */
 
-import { ISentenceEntity, ISentenceFragmentEntity } from "./IBookApi";
-import { IPostEntity } from "./IDiscussApi";
-import { ILexicalEntryEntity } from "./IGlossResourceApi";
+import type { ISentenceEntity, ISentenceFragmentEntity } from "./IBookApi";
+import type { IPostEntity } from "./IDiscussApi";
+import type { ILexicalEntryEntity } from "./IGlossResourceApi";
 
 export interface IFindRequest {
     max?: number;

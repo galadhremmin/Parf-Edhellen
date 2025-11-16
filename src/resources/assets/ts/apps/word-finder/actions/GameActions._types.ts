@@ -1,6 +1,6 @@
-import { IReduxAction } from '@root/_types';
-import { ILanguageEntity } from '@root/connectors/backend/IBookApi';
-import { IGloss } from '@root/connectors/backend/IWordFinderApi';
+import type { IReduxAction } from '@root/_types';
+import type { ILanguageEntity } from '@root/connectors/backend/IBookApi';
+import type { IGloss } from '@root/connectors/backend/IWordFinderApi';
 
 export interface IGameAction extends IReduxAction {
     lexicalEntryId?: number;

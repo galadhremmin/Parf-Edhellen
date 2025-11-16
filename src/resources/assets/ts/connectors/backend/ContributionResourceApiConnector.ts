@@ -1,17 +1,18 @@
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
-import {
+import type {
     ISentenceEntity,
     ISentenceFragmentEntity,
 } from './IBookApi';
-import IContributionResourceApi, {
+import type IContributionResourceApi from './IContributionResourceApi';
+import type {
     ContributionMorph,
     IContribution,
     IContributionSaveResponse,
     ISaveSentenceContributionEntity,
     IValidateTransformationsResponse,
 } from './IContributionResourceApi';
-import { ILexicalEntryEntity } from './IGlossResourceApi';
+import type { ILexicalEntryEntity } from './IGlossResourceApi';
 
 export default class ContributionResourceApiConnector implements IContributionResourceApi {
     private static readonly ApiPrefix = '/contribute/contribution';

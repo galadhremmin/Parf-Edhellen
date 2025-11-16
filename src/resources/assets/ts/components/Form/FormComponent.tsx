@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import React from 'react';
+import { Component, type ChangeEvent } from 'react';
 import {
     fireEvent,
 } from '../Component';
-import {
+import type {
     IBackingComponentProps,
     IComponentProps,
 } from './FormComponent._types';
@@ -22,7 +22,7 @@ export const booleanConverter = (value: string | boolean) => isNull(value) ? fal
  * `V` is the value type, `P` props type, `CP` backing component props type, `S` state type.
  */
 export abstract class FormComponent<V = any, P extends IComponentProps<V> = Record<string, unknown>, CP = Record<string, unknown>, S = Record<string, unknown>, SS = any>
-    extends React.Component<P, S, SS> {
+    extends Component<P, S, SS> {
 
     /**
      * Optional getter which overrides the `DefaultComponentPropNames` configuration.
@@ -50,7 +50,7 @@ export abstract class FormComponent<V = any, P extends IComponentProps<V> = Reco
     /**
      * Default change event handler for backing component.
      */
-    protected onBackingComponentChange = (ev: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    protected onBackingComponentChange = (ev: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const value = this.convertValue(ev.target.value);
         if (value === this.props.value) {
             return;

@@ -1,5 +1,5 @@
 import { Actions } from '../actions';
-import {
+import type {
     INewPostAction,
     INewPostState,
 } from './NewPostReducer._types';

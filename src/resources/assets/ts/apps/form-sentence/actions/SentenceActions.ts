@@ -1,27 +1,29 @@
-import {
+import type {
     ReduxThunkDispatch,
 } from '@root/_types';
-import { ParagraphState } from '@root/apps/sentence-inspector/reducers/FragmentsReducer._types';
+import type { ParagraphState } from '@root/apps/sentence-inspector/reducers/FragmentsReducer._types';
 import convertTransformationToTextComponents from '@root/apps/sentence-inspector/utilities/TextConverter';
 import { setValidationErrors } from '@root/components/Form/Validation';
-import { ISentenceFragmentEntity, SentenceFragmentType } from '@root/connectors/backend/IBookApi';
-import IContributionResourceApi, { ISaveSentenceContributionEntity } from '@root/connectors/backend/IContributionResourceApi';
-import ILanguageApi from '@root/connectors/backend/ILanguageApi';
+import type { ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
+import { SentenceFragmentType } from '@root/connectors/backend/IBookApi';
+import type IContributionResourceApi from '@root/connectors/backend/IContributionResourceApi';
+import type { ISaveSentenceContributionEntity } from '@root/connectors/backend/IContributionResourceApi';
+import type ILanguageApi from '@root/connectors/backend/ILanguageApi';
 import ValidationError from '@root/connectors/ValidationError';
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
+import type { ISentenceResourceApi } from '@root/connectors/backend/ISentenceResourceApi';
 
-import { RootReducer } from '../reducers';
-import { ISentenceTranslationReducerState } from '../reducers/child-reducers/SentenceTranslationReducer._types';
-import { ISentenceFragmentsReducerState } from '../reducers/SentenceFragmentsReducer._types';
-import { ISentenceReducerState } from '../reducers/SentenceReducer._types';
-import { ISentenceTranslationsReducerState } from '../reducers/SentenceTranslationsReducer._types';
-import { TextTransformationsReducerState } from '../reducers/TextTransformationsReducer._types';
+import type { RootReducer } from '../reducers';
+import type { ISentenceTranslationReducerState } from '../reducers/child-reducers/SentenceTranslationReducer._types';
+import type { ISentenceFragmentsReducerState } from '../reducers/SentenceFragmentsReducer._types';
+import type { ISentenceReducerState } from '../reducers/SentenceReducer._types';
+import type { ISentenceTranslationsReducerState } from '../reducers/SentenceTranslationsReducer._types';
+import type { TextTransformationsReducerState } from '../reducers/TextTransformationsReducer._types';
 import { mergeFragments, parseFragments } from '../utilities/fragments';
 import { convertTextComponentsToString } from '../utilities/transformations';
 import { rebuildTranslations } from '../utilities/translations';
 
-import { ISentenceResourceApi } from '@root/connectors/backend/ISentenceResourceApi';
 import Actions from './Actions';
 
 export default class SentenceActions {

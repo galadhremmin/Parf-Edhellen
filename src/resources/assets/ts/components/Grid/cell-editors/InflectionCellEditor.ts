@@ -1,8 +1,8 @@
 import type { ICellEditorParams } from '@ag-grid-community/core';
 
-import { ILexicalEntryInflection } from '@root/connectors/backend/IBookApi';
-import { IInflection } from '@root/connectors/backend/IInflectionResourceApi';
-import { IFragmentGridMetadata } from './InflectionCellEditor._types';
+import type { ILexicalEntryInflection } from '@root/connectors/backend/IBookApi';
+import type { IInflection } from '@root/connectors/backend/IInflectionResourceApi';
+import type { IFragmentGridMetadata } from './InflectionCellEditor._types';
 import MultipleSelectCellEditor from './MultipleSelectCellEditor';
 
 export default class InflectionCellEditor extends MultipleSelectCellEditor<IInflection, ILexicalEntryInflection> {

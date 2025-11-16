@@ -1,18 +1,18 @@
-import React, {
+import {
     useCallback,
     useState,
 } from 'react';
+import type { FocusEvent, MouseEvent } from 'react';
 
 import { LearnMoreWebFeedUrl } from '@root/config';
-import { IComponentEvent } from '@root/components/Component._types';
+import type { IComponentEvent } from '@root/components/Component._types';
 import Dialog from '@root/components/Dialog';
 import TextIcon from '@root/components/TextIcon';
 import { FeedFormat } from '@root/connectors/IFeedApi';
 import FeedFormatSelect from './FeedFormatSelect';
+import type { IProps } from './FeedButton._types';
 
-import { IProps } from './FeedButton._types';
-
-const onFeedUrlFocus = (ev: React.FocusEvent<HTMLInputElement>) => {
+const onFeedUrlFocus = (ev: FocusEvent<HTMLInputElement>) => {
     ev.target.select();
 };
 
@@ -24,7 +24,7 @@ function FeedButton({
     const [ isOpen, setIsOpen ] = useState(false);
     const [ feedType, setFeedType ] = useState(FeedFormat.RSS);
 
-    const _onOpen = useCallback((ev: React.MouseEvent<HTMLButtonElement>) => {
+    const _onOpen = useCallback((ev: MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
         setIsOpen(true);
     }, [ setIsOpen ]);

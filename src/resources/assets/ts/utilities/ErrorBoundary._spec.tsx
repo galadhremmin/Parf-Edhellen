@@ -4,7 +4,7 @@ import {
     expect,
     test,
 } from '@jest/globals';
-import sinon, { SinonStubbedInstance } from 'sinon';
+import sinon, { type SinonStubbedInstance } from 'sinon';
 
 import ApiConnector from '@root/connectors/ApiConnector';
 import { ErrorBoundary } from './ErrorBoundary';

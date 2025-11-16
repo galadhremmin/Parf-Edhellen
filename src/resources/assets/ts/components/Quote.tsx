@@ -1,4 +1,4 @@
-import { IProps } from './Quote._types';
+import type { IProps } from './Quote._types';
 
 const Quote = (props: IProps) => <>
     &ldquo;{props.children}&rdquo;

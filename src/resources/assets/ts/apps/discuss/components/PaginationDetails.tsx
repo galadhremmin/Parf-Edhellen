@@ -1,4 +1,4 @@
-import { IProps } from './PaginationDetails._types';
+import type { IProps } from './PaginationDetails._types';
 
 function PaginationDetails(props: IProps) {
     let {

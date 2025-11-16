@@ -1,5 +1,5 @@
 import { Actions } from '../actions';
-import {
+import type {
     IThreadMetadataReducerAction,
     IThreadMetadataState,
 } from './ThreadMetadataReducer._types';

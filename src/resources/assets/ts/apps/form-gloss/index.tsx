@@ -3,10 +3,10 @@ import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { thunk } from 'redux-thunk';
 
-import { ReduxThunkDispatch } from '@root/_types';
+import type { ReduxThunkDispatch } from '@root/_types';
 
 import LexicalEntryActions from './actions/LexicalEntryActions';
-import { FormSection, IProps } from './index._types';
+import { FormSection, type IProps } from './index._types';
 import rootReducer from './reducers';
 
 import Form from './containers';

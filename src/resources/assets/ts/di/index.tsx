@@ -1,6 +1,7 @@
-import { CanBeConstructed } from '@root/_types';
-import { ComponentClass, FunctionComponent, useRef } from 'react';
-import {
+import type { CanBeConstructed } from '@root/_types';
+import type { ComponentClass, FunctionComponent } from 'react';
+import { useRef } from 'react';
+import type {
     DIContainerType,
 } from './config._types';
 

@@ -1,5 +1,5 @@
 import { SecurityRole } from '../config';
-import { SecurityRoleAsString } from './RoleManager._types';
+import type { SecurityRoleAsString } from './RoleManager._types';
 
 export default interface IRoleManager {
     readonly accountId: number;

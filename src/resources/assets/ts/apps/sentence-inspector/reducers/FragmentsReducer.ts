@@ -1,12 +1,12 @@
-import { ISentenceFragmentEntity, SentenceFragmentType } from '@root/connectors/backend/IBookApi';
+import  { type ISentenceFragmentEntity, SentenceFragmentType } from '@root/connectors/backend/IBookApi';
 import { mapArray } from '@root/utilities/func/mapper';
 
 import { Actions } from '../actions';
-import {
+import type {
     FragmentsReducerState,
     IFragmentsReducerState,
 } from './FragmentsReducer._types';
-import { ISentenceReducerAction } from './SentenceReducer._types';
+import type { ISentenceReducerAction } from './SentenceReducer._types';
 
 const findNextFragmentId = (fragment: ISentenceFragmentEntity, fragments: ISentenceFragmentEntity[],
     index: number, direction: number) => {

@@ -1,5 +1,5 @@
 import Avatar from '@root/components/Avatar';
-import { IProps } from '../index._types';
+import type { IProps } from '../index._types';
 
 import './AccountList.scss';
 

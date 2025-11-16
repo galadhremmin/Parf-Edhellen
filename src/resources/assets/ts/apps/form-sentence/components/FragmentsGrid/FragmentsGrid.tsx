@@ -11,12 +11,12 @@ import { AgGridReact } from '@ag-grid-community/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { fireEventAsync } from '@root/components/Component';
-import { ISentenceFragmentEntity, SentenceFragmentType } from '@root/connectors/backend/IBookApi';
-import { ILexicalEntryEntity, ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
-import {
-    IInflection
-} from '@root/connectors/backend/IInflectionResourceApi';
-import { ISpeechEntity } from '@root/connectors/backend/ISpeechResourceApi';
+import type { ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
+import { SentenceFragmentType } from '@root/connectors/backend/IBookApi';
+import type { ILexicalEntryEntity, ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
+import type { IInflection } from '@root/connectors/backend/IInflectionResourceApi';
+import type { ISpeechEntity } from '@root/connectors/backend/ISpeechResourceApi';
+import { DI } from '@root/di/keys';
 
 import GlossCellEditor from '@root/components/Grid/cell-editors/GlossCellEditor';
 import InflectionCellEditor from '@root/components/Grid/cell-editors/InflectionCellEditor';
@@ -26,15 +26,14 @@ import InflectionRenderer from '@root/components/Grid/renderers/InflectionRender
 import SpeechRenderer from '@root/components/Grid/renderers/SpeechRenderer';
 import TengwarRenderer from '@root/components/Grid/renderers/TengwarRenderer';
 import { withPropInjection } from '@root/di';
-import { ISentenceFragmentReducerState } from '../../reducers/child-reducers/SentenceFragmentReducer._types';
-import {
+import type { ISentenceFragmentReducerState } from '../../reducers/child-reducers/SentenceFragmentReducer._types';
+import type {
     FragmentGridColumnDefinition,
     IProps,
     IState,
 } from './FragmentsGrid._types';
+import type { IAugmentedCellRendererParams } from '@root/components/Grid/cell-editors/InflectionCellEditor._types';
 
-import { IAugmentedCellRendererParams } from '@root/components/Grid/cell-editors/InflectionCellEditor._types';
-import { DI } from '@root/di/keys';
 import '@root/utilities/agGridModules';
 import './FragmentsGrid.scss';
 

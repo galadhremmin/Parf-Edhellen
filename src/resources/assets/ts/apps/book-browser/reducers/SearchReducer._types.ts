@@ -1,9 +1,5 @@
-import {
-    IReduxAction,
-} from '@root/_types';
-import {
-    IFindRequest,
-} from '@root/connectors/backend/IBookApi';
+import type { IReduxAction } from '@root/_types';
+import type { IFindRequest } from '@root/connectors/backend/IBookApi';
 
 export type ISearchState = IFindRequest & {
     itemIndex?: number;

@@ -1,11 +1,11 @@
 import Spinner from '@root/components/Spinner';
-import { IFeedRecord } from '@root/connectors/backend/IAccountApi';
+import type { IFeedRecord } from '@root/connectors/backend/IAccountApi';
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
 import { useEffect, useState } from 'react';
 import { Waypoint } from 'react-waypoint';
 import FeedUnit from './FeedUnit';
-import { IProps } from './index._types';
+import type { IProps } from './index._types';
 
 import './AccountFeed.scss';
 

@@ -1,6 +1,6 @@
 import Cache from './Cache';
 import { isNodeJs } from './func/node';
-import { ILoader } from './LazyLoader';
+import type { ILoader } from './LazyLoader';
 import MemoryStorage from './MemoryStorage';
 
 export default class ExpiringCache<T> extends Cache<T, IExpiringRecord<T>> {

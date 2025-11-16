@@ -1,7 +1,7 @@
 import GlossGroupSelect from '@root/components/Form/GlossGroupSelect';
 import SpeechSelect from '@root/components/Form/SpeechSelect';
 
-import { IProps } from './AdditionalSearchParameters._types';
+import type { IProps } from './AdditionalSearchParameters._types';
 
 import './AdditionalSearchParameters.scss';
 

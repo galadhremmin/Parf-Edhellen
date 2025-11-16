@@ -5,7 +5,7 @@ import TextIcon from '@root/components/TextIcon';
 import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 
-import { IProps } from './index._types';
+import type { IProps } from './index._types';
 
 import './Likes.scss';
 

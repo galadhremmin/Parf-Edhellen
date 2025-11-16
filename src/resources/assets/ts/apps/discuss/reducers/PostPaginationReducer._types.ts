@@ -1,4 +1,4 @@
-import {
+import type {
     IThreadReducerAction,
 } from './ThreadReducer._types';
 

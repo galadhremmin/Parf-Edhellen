@@ -1,9 +1,9 @@
-import {
+import type {
     IAccountEntity,
     ILexicalEntryGroup,
 } from './IGlossResourceApi';
-import { IInflection } from './IInflectionResourceApi';
-import { ISpeechEntity } from './ISpeechResourceApi';
+import type { IInflection } from './IInflectionResourceApi';
+import type { ISpeechEntity } from './ISpeechResourceApi';
 
 export interface IFindRequest {
     lexicalEntryGroupIds?: number[];

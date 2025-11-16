@@ -1,8 +1,8 @@
 import { Actions as ValidationActions } from '@root/components/Form/Validation/Actions';
-import { IAction as IValidationAction } from '@root/components/Form/Validation/ValidationErrorReducer._types';
+import type { IAction as IValidationAction } from '@root/components/Form/Validation/ValidationErrorReducer._types';
 import ValidationError from '@root/connectors/ValidationError';
 import { Actions } from '../actions';
-import {
+import type {
     ISentenceFragmentsAction,
     ISentenceFragmentsReducerState,
 } from './SentenceFragmentsReducer._types';

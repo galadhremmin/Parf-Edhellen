@@ -1,4 +1,4 @@
-import IUtilityApi from '@root/connectors/backend/IUtilityApi';
+import type IUtilityApi from '@root/connectors/backend/IUtilityApi';
 
 export interface IProps {
     parse: boolean;

@@ -1,5 +1,5 @@
-import { IStageProps } from '../index._types';
-import { IWordPart } from '../reducers/PartsReducer._types';
+import type { IStageProps } from '../index._types';
+import type { IWordPart } from '../reducers/PartsReducer._types';
 
 export interface IProps extends IStageProps {
     parts: IWordPart[];

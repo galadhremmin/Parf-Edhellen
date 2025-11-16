@@ -1,4 +1,4 @@
-import { IProps } from './Language._types';
+import type { IProps } from './Language._types';
 
 import './Language.scss';
 

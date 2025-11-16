@@ -3,8 +3,8 @@ import type {
     ICellRendererParams,
 } from '@ag-grid-community/core';
 
-import { ILexicalEntryInflection } from '@root/connectors/backend/IBookApi';
-import { IAugmentedCellRendererParams } from '../cell-editors/InflectionCellEditor._types';
+import type { ILexicalEntryInflection } from '@root/connectors/backend/IBookApi';
+import type { IAugmentedCellRendererParams } from '../cell-editors/InflectionCellEditor._types';
 
 export default class InflectionRenderer implements ICellRendererComp {
     private _cell: HTMLDivElement;

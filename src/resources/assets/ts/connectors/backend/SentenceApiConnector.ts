@@ -1,6 +1,6 @@
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
-import { ISentenceResourceApi, ISuggestGlossesForFragmentsRequest, ISuggestGlossesForFragmentsResponse } from './ISentenceResourceApi';
+import type { ISentenceResourceApi, ISuggestGlossesForFragmentsRequest, ISuggestGlossesForFragmentsResponse } from './ISentenceResourceApi';
 
 export default class SentenceResourceApiConnector implements ISentenceResourceApi {
     constructor(private _api = resolve(DI.BackendApi)) {

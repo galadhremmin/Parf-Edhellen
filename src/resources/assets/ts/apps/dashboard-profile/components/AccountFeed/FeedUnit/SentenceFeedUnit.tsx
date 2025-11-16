@@ -1,9 +1,9 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import HtmlInject from "@root/components/HtmlInject";
 import Tengwar from "@root/components/Tengwar";
 import TextIcon from "@root/components/TextIcon";
-import { ISentenceFeedRecord } from "@root/connectors/backend/IAccountApi";
-import { IProps } from "./index._types";
+import type { ISentenceFeedRecord } from "@root/connectors/backend/IAccountApi";
+import type { IProps } from "./index._types";
 
 export default function SentenceFeedUnit(props: IProps<ISentenceFeedRecord>) {
     const {

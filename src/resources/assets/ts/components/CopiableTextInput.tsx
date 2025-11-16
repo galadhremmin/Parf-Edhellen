@@ -1,7 +1,8 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
+import type { MouseEvent } from 'react';
 
 import { excludeProps } from '@root/utilities/func/props';
-import { IProps } from './CopiableTextInput._types';
+import type { IProps } from './CopiableTextInput._types';
 import TextIcon from './TextIcon';
 import { fireEventAsync } from './Component';
 
@@ -18,7 +19,7 @@ function CopiableTextInput(props: IProps) {
         'onCopyActionSuccess',
     ]);
 
-    const _onCopy = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
+    const _onCopy = useCallback((ev: MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
 
         if (value === null || value === undefined) {

@@ -1,7 +1,7 @@
-import React, { Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 
 import Spinner from '@root/components/Spinner';
-import { IProps } from './index._types';
+import type { IProps } from './index._types';
 import registerApp from '../app';
 
 const Inject = (props: IProps) => {
@@ -9,7 +9,7 @@ const Inject = (props: IProps) => {
         container,
     } = props;
 
-    const ContainerAsync = React.lazy(() => import(`./containers/${container}`));
+    const ContainerAsync = lazy(() => import(`./containers/${container}`));
     return <Suspense fallback={<Spinner />}>
         <ContainerAsync {...props} />
     </Suspense>;

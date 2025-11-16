@@ -7,17 +7,17 @@ import {
 } from '@jest/globals';
 import { render, screen, waitFor } from '@testing-library/react';
 import sinon, {
-    SinonSandbox,
-    SinonStubbedInstance,
+    type SinonSandbox,
+    type SinonStubbedInstance,
 } from 'sinon';
 
-import IUtilityApi from '@root/connectors/backend/IUtilityApi';
+import type IUtilityApi from '@root/connectors/backend/IUtilityApi';
 import UtilityApiConnector from '@root/connectors/backend/UtilityApiConnector';
 import Cache from '@root/utilities/Cache';
 import MemoryStorage from '@root/utilities/MemoryStorage';
 
 import MarkdownInput from './MarkdownInput';
-import { IComponentConfig } from './MarkdownInput._types';
+import type { IComponentConfig } from './MarkdownInput._types';
 
 describe('components/Form', () => {
     describe('MarkdownInput', () => {

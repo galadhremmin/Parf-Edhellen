@@ -1,4 +1,4 @@
-import {
+import type {
     ComponentEventHandler,
     IComponentProps,
 } from '@root/components/Component._types';

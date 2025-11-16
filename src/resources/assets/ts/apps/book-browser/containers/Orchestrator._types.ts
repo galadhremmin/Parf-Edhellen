@@ -1,4 +1,4 @@
-import IGlobalEvents from '@root/connectors/IGlobalEvents';
+import type IGlobalEvents from '@root/connectors/IGlobalEvents';
 
 export interface IProps {
     globalEvents?: IGlobalEvents;

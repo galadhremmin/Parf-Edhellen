@@ -1,7 +1,5 @@
 import classNames from 'classnames';
-import {
-    IProps
-} from './Panel._types';
+import type { IProps } from './Panel._types';
 
 function Panel(props: IProps) {
     const {

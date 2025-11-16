@@ -1,8 +1,8 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 import StaticAlert from '../StaticAlert';
 import TextIcon from '../TextIcon';
-import { IProps } from './ValidationErrorAlert._types';
+import type { IProps } from './ValidationErrorAlert._types';
 
 function ValidationErrorAlert(props: IProps) {
     const {

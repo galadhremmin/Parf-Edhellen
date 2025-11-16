@@ -1,7 +1,7 @@
 import { ApplicationGlobalPrefix } from '@root/config';
 
 import { isEmptyString } from './func/string-manipulation';
-import LazyLoader, { ILoader } from './LazyLoader';
+import LazyLoader, { type ILoader } from './LazyLoader';
 import MemoryStorage from './MemoryStorage';
 import { isNodeJs } from './func/node';
 

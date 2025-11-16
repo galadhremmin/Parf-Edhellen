@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
-import { IAccountEntity } from '../connectors/backend/IGlossResourceApi';
+import type { IAccountEntity } from '../connectors/backend/IGlossResourceApi';
 
 export interface IProps {
     account: IAccountEntity;

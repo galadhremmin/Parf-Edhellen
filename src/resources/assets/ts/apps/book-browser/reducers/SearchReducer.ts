@@ -1,5 +1,5 @@
 import { Actions } from '../actions';
-import {
+import type {
     ISearchReduxAction,
     ISearchState,
 } from './SearchReducer._types';

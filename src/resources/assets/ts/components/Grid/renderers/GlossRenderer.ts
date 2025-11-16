@@ -2,7 +2,7 @@ import type {
     ICellRendererComp,
     ICellRendererParams,
 } from '@ag-grid-community/core';
-import { IFragmentGridMetadata } from '../cell-editors/InflectionCellEditor._types';
+import type { IFragmentGridMetadata } from '../cell-editors/InflectionCellEditor._types';
 
 export default class GlossRenderer implements ICellRendererComp {
     private _cell: HTMLDivElement;

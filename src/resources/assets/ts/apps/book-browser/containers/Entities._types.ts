@@ -1,10 +1,10 @@
-import { ThunkDispatch } from 'redux-thunk';
+import type { ThunkDispatch } from 'redux-thunk';
 
-import {
+import type {
     ILexicalEntryEntity,
     ILanguageEntity,
 } from '@root/connectors/backend/IBookApi';
-import { ISectionsState } from '../reducers/SectionsReducer._types';
+import type { ISectionsState } from '../reducers/SectionsReducer._types';
 
 export interface IEntitiesComponentProps<T = ILexicalEntryEntity> {
     dispatch?: ThunkDispatch<any, any, any>;

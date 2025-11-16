@@ -1,10 +1,10 @@
-import {
+import type {
     IKeywordEntity,
     ISenseEntity,
     IGlossEntity,
     IWordEntity,
 } from '@root/connectors/backend/IGlossResourceApi';
-import { ValueTransformer } from './value-transformers._types';
+import type { ValueTransformer } from './value-transformers._types';
 
 export const defaultTransformer: ValueTransformer<any, any> = (x: any): any => x;
 

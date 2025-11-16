@@ -4,7 +4,8 @@ import {
     GlobalEventLoadGlossary,
     GlobalEventLoadReference,
 } from '../config';
-import IGlobalEvents, {
+import type IGlobalEvents from './IGlobalEvents';
+import type {
     EventListenerOrName,
     IEventMap,
 } from './IGlobalEvents';

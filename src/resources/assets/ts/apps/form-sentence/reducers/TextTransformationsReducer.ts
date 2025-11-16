@@ -1,5 +1,5 @@
 import { Actions } from '../actions';
-import {
+import type {
     ITextTransformationAction,
     TextTransformationsReducerState,
 } from './TextTransformationsReducer._types';

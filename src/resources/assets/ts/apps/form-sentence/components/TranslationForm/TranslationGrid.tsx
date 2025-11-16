@@ -7,7 +7,7 @@ import { fireEventAsync } from '@root/components/Component';
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@root/utilities/agGridModules';
-import {
+import type {
     IProps,
     TranslationGridColumnDefinition,
 } from './TranslationGrid._types';

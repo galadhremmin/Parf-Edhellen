@@ -1,7 +1,7 @@
 import { Actions } from '../actions';
 import convertTransformationToTextComponents from '../utilities/TextConverter';
-import { ITextState } from './FragmentsReducer._types';
-import { ISentenceReducerAction } from './SentenceReducer._types';
+import type { ITextState } from './FragmentsReducer._types';
+import type { ISentenceReducerAction } from './SentenceReducer._types';
 
 const TransformerName = 'tengwar';
 const TengwarFragmentsReducer = (state: ITextState = {

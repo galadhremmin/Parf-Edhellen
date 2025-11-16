@@ -1,4 +1,4 @@
-import { IProps } from './Sentence._types';
+import type { IProps } from './Sentence._types';
 
 function Sentence(props: IProps) {
     const {

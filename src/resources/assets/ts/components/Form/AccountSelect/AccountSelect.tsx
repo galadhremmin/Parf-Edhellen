@@ -3,14 +3,14 @@ import {
   useState,
 } from 'react';
 
-import { IAccountSuggestion } from '@root/connectors/backend/IAccountApi';
+import type { IAccountSuggestion } from '@root/connectors/backend/IAccountApi';
 import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 
 import { fireEvent } from '../../Component';
-import { IComponentEvent } from '../../Component._types';
+import type { IComponentEvent } from '../../Component._types';
 import EntitySelect from '../EntitySelect';
-import { IProps } from './AccountSelect._types';
+import type { IProps } from './AccountSelect._types';
 import AccountSuggestion from './AccountSuggestion';
 import { injectAccountValue } from './AccountValue';
 

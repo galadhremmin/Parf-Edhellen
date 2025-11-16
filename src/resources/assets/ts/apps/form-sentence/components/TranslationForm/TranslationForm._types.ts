@@ -1,7 +1,7 @@
-import { ComponentEventHandler } from '@root/components/Component._types';
-import { ISentenceTranslation } from '@root/connectors/backend/IBookApi';
-import { ParagraphState } from '@root/apps/sentence-inspector/reducers/FragmentsReducer._types';
-import { ISentenceTranslationReducerState } from '../../reducers/child-reducers/SentenceTranslationReducer._types';
+import type { ComponentEventHandler } from '@root/components/Component._types';
+import type { ISentenceTranslation } from '@root/connectors/backend/IBookApi';
+import type { ParagraphState } from '@root/apps/sentence-inspector/reducers/FragmentsReducer._types';
+import type { ISentenceTranslationReducerState } from '../../reducers/child-reducers/SentenceTranslationReducer._types';
 
 export interface ITranslationRow extends ISentenceTranslation {
     paragraphNumber: number;

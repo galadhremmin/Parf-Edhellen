@@ -1,12 +1,11 @@
 import { fireEvent, render } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
 import {
     describe,
     expect,
     test,
 } from '@jest/globals';
 import TagInput from './TagInput';
-import { IComponentEvent } from '@root/components/Component._types';
+import type { IComponentEvent } from '@root/components/Component._types';
 
 describe('components/Form', () => {
     describe('TagInput', () => {

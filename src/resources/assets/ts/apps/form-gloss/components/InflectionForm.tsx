@@ -1,12 +1,12 @@
 import { useState } from 'react';
 
-import { IComponentEvent } from '@root/components/Component._types';
+import type { IComponentEvent } from '@root/components/Component._types';
 import Panel from '@root/components/Panel';
 
 import { fireEvent } from '@root/components/Component';
 import InflectionsInput from '../components/InflectionsInput';
-import { IProps } from './InflectionForm._types';
-import { IChangeEventArgs } from './InflectionsInput._types';
+import type { IProps } from './InflectionForm._types';
+import type { IChangeEventArgs } from './InflectionsInput._types';
 import { deepClone } from '@root/utilities/func/clone';
 
 function InflectionForm(props: IProps) {

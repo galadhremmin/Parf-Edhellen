@@ -3,7 +3,7 @@ import { GlobalAdsConfigurationName } from '@root/config';
 
 import Ad from './containers/Ad';
 import Placeholder from './containers/Placeholder';
-import {
+import type {
     WindowWithAds,
     IProps,
 } from './index._types';

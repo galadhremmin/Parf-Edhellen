@@ -8,7 +8,7 @@ import { DI } from '@root/di/keys';
 
 import AccountFeed from '../components/AccountFeed';
 import JumbotronOrHeader from '../components/JumbotronOrHeader';
-import { IProps } from './Profile._types';
+import type { IProps } from './Profile._types';
 
 import './Profile.scss';
 

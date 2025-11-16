@@ -1,8 +1,8 @@
-import {
+import type {
     IReduxAction,
 } from '@root/_types';
 
-import {
+import type {
     ICreatePostRequest,
     IPostRequest,
     IPostResponse,

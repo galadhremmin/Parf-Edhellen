@@ -1,6 +1,7 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
+import type { MouseEvent } from 'react';
 
-import { IComponentEvent } from '@root/components/Component._types';
+import type { IComponentEvent } from '@root/components/Component._types';
 import Dialog from '@root/components/Dialog';
 import LexicalEntrySelect from '@root/components/Form/LexicalEntrySelect';
 import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
@@ -9,7 +10,7 @@ import TextIcon from '@root/components/TextIcon';
 import ValidationError from '@root/connectors/ValidationError';
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
-import { IProps } from './index._types';
+import type { IProps } from './index._types';
 
 function DeleteLexicalEntry(props: IProps) {
     const [ isOpen, setIsOpen ] = useState(false);
@@ -25,7 +26,7 @@ function DeleteLexicalEntry(props: IProps) {
         Delete <Quote>{lexicalEntry.word}</Quote> ({lexicalEntry.id})
     </>;
 
-    const _onOpen = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
+    const _onOpen = useCallback((ev: MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
         setIsOpen(true);
     }, [ setIsOpen ]);

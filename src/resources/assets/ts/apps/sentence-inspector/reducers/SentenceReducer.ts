@@ -1,5 +1,5 @@
 import { Actions } from '../actions';
-import {
+import type {
     ISentenceReducerAction,
     ISentenceReducerState,
 } from './SentenceReducer._types';

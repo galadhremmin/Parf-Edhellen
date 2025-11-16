@@ -1,9 +1,10 @@
 import classNames from 'classnames';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
+import type { MouseEvent } from 'react';
 
 import Quote from '@root/components/Quote';
 import Tengwar from '@root/components/Tengwar';
-import { IProps } from './GlossList._types';
+import type { IProps } from './GlossList._types';
 
 import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
@@ -16,7 +17,7 @@ function GlossList(props: IProps) {
         globalEvents,
     } = props;
 
-    const _onWordOpen = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
+    const _onWordOpen = useCallback((ev: MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
 
         const lexicalEntryIdAttribute = 'lexicalEntryId';

@@ -4,7 +4,7 @@ import {
     expect,
     test,
 } from '@jest/globals';
-import { IAccountEntity } from '../connectors/backend/IGlossResourceApi';
+import type { IAccountEntity } from '../connectors/backend/IGlossResourceApi';
 import ProfileLink from './ProfileLink';
 
 describe('components/ProfileLink', () => {

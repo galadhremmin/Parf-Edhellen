@@ -1,4 +1,4 @@
-import { ILexicalEntryEntity } from '@root/connectors/backend/IBookApi';
+import type { ILexicalEntryEntity } from '@root/connectors/backend/IBookApi';
 
 export interface IHookedLexicalEntry<T extends ILexicalEntryEntity = ILexicalEntryEntity> {
     error: string | null;

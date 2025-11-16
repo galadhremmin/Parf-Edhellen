@@ -9,7 +9,7 @@ import {
     YAxis,
 } from 'recharts';
 
-import { IProps } from './GrowthChart._types';
+import type { IProps } from './GrowthChart._types';
 
 export const DatasetXAxis = 'date';
 export const DatasetYAxis = 'numberOfItems';

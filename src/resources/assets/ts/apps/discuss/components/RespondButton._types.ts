@@ -1,5 +1,5 @@
-import { ComponentEventHandler } from '@root/components/Component._types';
-import { IRoleManager } from '@root/security';
+import type { ComponentEventHandler } from '@root/components/Component._types';
+import type { IRoleManager } from '@root/security';
 
 export interface IProps {
     isNewPost?: boolean;

@@ -1,7 +1,7 @@
-import { ComponentEventHandler } from '@root/components/Component._types';
-import { ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
+import type { ComponentEventHandler } from '@root/components/Component._types';
+import type { ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
 
-import { IFragmentChangeEventArgs } from './FragmentsGrid/FragmentsGrid._types';
+import type { IFragmentChangeEventArgs } from './FragmentsGrid/FragmentsGrid._types';
 
 export interface IFragmentFormEvents {
     onFragmentChange: ComponentEventHandler<IFragmentChangeEventArgs>;

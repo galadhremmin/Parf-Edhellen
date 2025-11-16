@@ -5,7 +5,7 @@ import { thunk } from 'redux-thunk';
 
 
 import WordFinder from './containers/WordFinder';
-import { IGameProps } from './index._types';
+import type { IGameProps } from './index._types';
 import rootReducer from './reducers';
 import registerApp from '../app';
 

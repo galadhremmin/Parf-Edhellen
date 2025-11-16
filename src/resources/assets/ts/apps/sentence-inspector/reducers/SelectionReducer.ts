@@ -1,5 +1,5 @@
 import { Actions } from '../actions';
-import {
+import type {
     ISelectionReducerAction,
     ISelectionReducerState,
 } from './SelectionReducer._types';

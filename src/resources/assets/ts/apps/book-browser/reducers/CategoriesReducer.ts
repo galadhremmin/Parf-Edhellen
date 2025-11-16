@@ -1,6 +1,6 @@
 import { Actions } from '../actions';
-import { IEntitiesAction } from './EntitiesReducer._types';
-import { ICategoriesState } from './CategoriesReducer._types';
+import type { IEntitiesAction } from './EntitiesReducer._types';
+import type { ICategoriesState } from './CategoriesReducer._types';
 
 const LanguagesReducer = (state: ICategoriesState = {
     common: [],

@@ -1,7 +1,7 @@
 import { SentenceFragmentType } from '@root/connectors/backend/IBookApi';
 import { mapper } from '@root/utilities/func/mapper';
 import { Actions } from '../../actions';
-import {
+import type {
     ISentenceFragmentAction,
     ISentenceFragmentReducerState,
 } from './SentenceFragmentReducer._types';

@@ -5,7 +5,7 @@ import {
     test,
 } from '@jest/globals';
 
-import {
+import type {
     ISentenceFragmentEntity,
     ITextTransformation,
 } from '@root/connectors/backend/IBookApi';

@@ -1,9 +1,9 @@
 import LexicalEntry from '@root/apps/book-browser/components/GlossaryEntities/LexicalEntry';
 import Spinner from '@root/components/Spinner';
 import TextIcon from '@root/components/TextIcon';
-import { ILexicalEntryVersionFeedRecord } from "@root/connectors/backend/IAccountApi";
+import type { ILexicalEntryVersionFeedRecord } from "@root/connectors/backend/IAccountApi";
 import useLexicalEntry from "@root/utilities/hooks/useLexicalEntry";
-import { IProps } from "./index._types";
+import type { IProps } from "./index._types";
 
 export default function GlossVersionFeedUnit(props: IProps<ILexicalEntryVersionFeedRecord>) {
     const {

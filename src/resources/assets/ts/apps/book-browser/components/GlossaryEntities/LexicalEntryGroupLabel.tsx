@@ -1,4 +1,4 @@
-import { IProps } from './LexicalEntryGroupLabel._types';
+import type { IProps } from './LexicalEntryGroupLabel._types';
 
 const LexicalEntryGroupLabel = (props: IProps) => {
     const {

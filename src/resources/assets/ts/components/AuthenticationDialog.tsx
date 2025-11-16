@@ -1,6 +1,6 @@
 import Dialog from './Dialog';
 
-import { IProps } from './AuthenticationDialog._types';
+import type { IProps } from './AuthenticationDialog._types';
 
 const _onConfirm = () => {
     window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;

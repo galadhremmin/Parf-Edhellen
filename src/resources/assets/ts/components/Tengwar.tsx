@@ -2,7 +2,7 @@ import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 import { useEffect, useState } from 'react';
 
-import { IProps } from './Tengwar._types';
+import type { IProps } from './Tengwar._types';
 
 import './Tengwar.scss';
 

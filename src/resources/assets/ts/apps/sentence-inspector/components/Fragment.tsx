@@ -1,6 +1,6 @@
-import React from 'react';
+import type { MouseEvent } from 'react';
 import { fireEventAsync } from '@root/components/Component';
-import { IProps } from './Fragment._types';
+import type { IProps } from './Fragment._types';
 
 export default function Fragments(props: IProps) {
     const {
@@ -9,7 +9,7 @@ export default function Fragments(props: IProps) {
         selected,
     } = props;
 
-    const _onClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
+    const _onClick = (ev: MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
 
         if (typeof onClick === 'function') {

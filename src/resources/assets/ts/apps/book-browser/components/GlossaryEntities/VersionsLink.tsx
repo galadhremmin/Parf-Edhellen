@@ -1,5 +1,5 @@
 import TextIcon from '@root/components/TextIcon';
-import { IProps } from './VersionsLink._types';
+import type { IProps } from './VersionsLink._types';
 
 function VersionsLink(props: IProps) {
     const {

@@ -1,9 +1,9 @@
-import { ILexicalEntryEntity } from '@root/connectors/backend/IBookApi';
+import type { ILexicalEntryEntity } from '@root/connectors/backend/IBookApi';
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
 import { useEffect, useState } from 'react';
 
-import { IGlossHookOptions as ILexicalEntryHookOptions, IHookedLexicalEntry } from './useLexicalEntry._types';
+import type { IGlossHookOptions as ILexicalEntryHookOptions, IHookedLexicalEntry } from './useLexicalEntry._types';
 
 const NoLexicalEntry: IHookedLexicalEntry<any> = {
     error: null,

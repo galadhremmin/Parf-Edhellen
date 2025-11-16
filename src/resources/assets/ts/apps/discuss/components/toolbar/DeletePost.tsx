@@ -4,7 +4,7 @@ import {
 } from 'react';
 
 import { fireEvent } from '@root/components/Component';
-import { IComponentEvent } from '@root/components/Component._types';
+import type { IComponentEvent } from '@root/components/Component._types';
 import DateLabel from '@root/components/DateLabel';
 import Dialog from '@root/components/Dialog';
 import ProfileLink from '@root/components/ProfileLink';
@@ -12,7 +12,7 @@ import { withPropInjection } from '@root/di';
 
 import { DI } from '@root/di/keys';
 import ActionLink from './ActionLink';
-import { IProps } from './index._types';
+import type { IProps } from './index._types';
 
 function DeletePost(props: IProps) {
     const [ needsConfirmation, setNeedsConfirmation ] = useState(false);

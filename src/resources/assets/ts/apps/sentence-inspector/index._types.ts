@@ -1,4 +1,4 @@
-import { ISentenceResponse } from '@root/connectors/backend/IBookApi';
+import type { ISentenceResponse } from '@root/connectors/backend/IBookApi';
 
 export interface IProps {
     sentence: ISentenceResponse;

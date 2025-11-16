@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 
-import { CreateRootReducer } from '@root/_types';
+import type { CreateRootReducer } from '@root/_types';
 import { ValidationErrorReducer as errors } from '@root/components/Form/Validation';
 import { default as changes } from './ChangeTrackerReducer';
 import { default as inflections } from './InflectionsReducer';

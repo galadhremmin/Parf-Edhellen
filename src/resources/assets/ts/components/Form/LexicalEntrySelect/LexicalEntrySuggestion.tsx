@@ -1,5 +1,5 @@
 import Quote from '@root/components/Quote';
-import { ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
+import type { ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
 
 import './LexicalEntrySuggestion.scss';
 

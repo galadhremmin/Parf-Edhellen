@@ -3,7 +3,7 @@ import {
     useState,
 } from 'react';
 
-import { IComponentEvent } from '@root/components/Component._types';
+import type { IComponentEvent } from '@root/components/Component._types';
 import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
 import { AnonymousAvatarPath } from '@root/config';
 import { withPropInjection } from '@root/di';
@@ -11,7 +11,7 @@ import { DI } from '@root/di/keys';
 
 import AvatarForm from '../components/AvatarForm';
 import InformationForm from '../components/InformationForm';
-import { IProps } from './ProfileForm._types';
+import type { IProps } from './ProfileForm._types';
 
 import Jumbotron from '@root/components/Jumbotron';
 import Tengwar from '@root/components/Tengwar';

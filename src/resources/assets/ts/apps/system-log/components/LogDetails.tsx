@@ -1,5 +1,5 @@
 import ProfileLink from '@root/components/ProfileLink';
-import { IProps } from './LogDetails._types';
+import type { IProps } from './LogDetails._types';
 
 import './LogDetails.scss';
 

@@ -1,5 +1,7 @@
+import type { ReactNode } from "react";
+
 export interface IProps {
-    children: React.ReactNode;
+    children: ReactNode;
     paragraphNumber: number;
     transformerName: string;
 }

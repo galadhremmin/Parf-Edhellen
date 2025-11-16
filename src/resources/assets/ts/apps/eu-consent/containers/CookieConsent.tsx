@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { IComponentEvent } from '@root/components/Component._types';
+import type { IComponentEvent } from '@root/components/Component._types';
 import Dialog from '@root/components/Dialog';
 import {
     CookieUseCases,

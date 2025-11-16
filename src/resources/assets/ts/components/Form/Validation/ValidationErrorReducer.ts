@@ -1,7 +1,7 @@
 import ValidationError from '@root/connectors/ValidationError';
 
 import { Actions } from './Actions';
-import { IAction } from './ValidationErrorReducer._types';
+import type { IAction } from './ValidationErrorReducer._types';
 
 export const ValidationErrorReducer = (state: ValidationError = null, action: IAction) => {
     switch (action.type) {

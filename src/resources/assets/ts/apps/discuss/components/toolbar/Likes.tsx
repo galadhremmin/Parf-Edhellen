@@ -1,5 +1,6 @@
 import classNames from 'classnames';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
+import type { MouseEvent } from 'react';
 
 import { fireEventAsync } from '@root/components/Component';
 import TextIcon from '@root/components/TextIcon';
@@ -7,7 +8,7 @@ import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 import useAnimationOnChange from '@root/utilities/hooks/useAnimationOnChange';
 
-import { IProps } from './index._types';
+import type { IProps } from './index._types';
 
 import './Likes.scss';
 
@@ -32,7 +33,7 @@ function Likes(props: IProps) {
     const likedByAccount = threadMetadata.likes.indexOf(forumPostId) > -1;
     const shouldAnimate = useAnimationOnChange(likedByAccount, 2000);
 
-    const _onLikeClick = useCallback(async (ev: React.MouseEvent<HTMLAnchorElement>) => {
+    const _onLikeClick = useCallback(async (ev: MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
         try {
             const name = `Likes[${forumThreadId}-${forumPostId}]`;

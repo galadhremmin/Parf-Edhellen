@@ -1,4 +1,4 @@
-import { ILogApi } from './ILogApi';
+import type { ILogApi } from './ILogApi';
 
 export interface IMarkdownParserRequest {
     markdown?: string;

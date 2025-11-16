@@ -1,7 +1,7 @@
-import React, { DOMAttributes } from 'react';
+import type { ReactNode, DOMAttributes } from 'react';
 
 export interface IProps extends Partial<DOMAttributes<HTMLDivElement>> {
-    children?: React.ReactNode;
+    children?: ReactNode;
     path?: string;
     title?: string;
 }

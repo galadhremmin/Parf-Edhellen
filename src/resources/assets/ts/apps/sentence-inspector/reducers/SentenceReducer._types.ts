@@ -1,5 +1,5 @@
-import { IReduxAction } from '@root/_types/redux';
-import {
+import type { IReduxAction } from '@root/_types/redux';
+import type {
     ISentenceEntity,
     ISentenceResponse,
 } from '@root/connectors/backend/IBookApi';

@@ -1,6 +1,6 @@
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
-import {
+import type {
     IWordFinderApi,
     IWordFinderGame,
 } from './IWordFinderApi';

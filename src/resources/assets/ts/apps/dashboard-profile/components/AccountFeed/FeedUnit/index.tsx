@@ -1,12 +1,12 @@
 import DateLabel from "@root/components/DateLabel";
 import Panel from "@root/components/Panel";
 import { PanelType } from "@root/components/Panel._types";
-import { IForumFeedRecord, ILexicalEntryVersionFeedRecord, ISentenceFeedRecord } from "@root/connectors/backend/IAccountApi";
+import type { IForumFeedRecord, ILexicalEntryVersionFeedRecord, ISentenceFeedRecord } from "@root/connectors/backend/IAccountApi";
 import classNames from "classnames";
 import { useEffect, useRef, useState } from "react";
 import ForumFeedUnit from "./ForumFeedUnit";
 import GlossVersionFeedUnit from "./GlossVersionFeedUnit";
-import { IProps } from './index._types';
+import type { IProps } from './index._types';
 import SentenceFeedUnit from "./SentenceFeedUnit";
 
 export default function FeedUnit(props: IProps<IForumFeedRecord | ILexicalEntryVersionFeedRecord | ISentenceFeedRecord>) {

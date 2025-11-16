@@ -2,15 +2,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import { useEffect, useState } from 'react';
 
-import { IMarkdownParserResponse } from '@root/connectors/backend/IUtilityApi';
+import type { IMarkdownParserResponse } from '@root/connectors/backend/IUtilityApi';
 import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
 
 import HtmlInject from './HtmlInject';
-import {
-    IProps,
-} from './Markdown._types';
+import type { IProps } from './Markdown._types';
 
 function Markdown(props: IProps) {
     const {

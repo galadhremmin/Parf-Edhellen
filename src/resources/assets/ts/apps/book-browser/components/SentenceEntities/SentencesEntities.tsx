@@ -1,5 +1,5 @@
-import { ISentenceEntity } from '@root/connectors/backend/IBookApi';
-import { IEntitiesComponentProps } from '../../containers/Entities._types';
+import type { ISentenceEntity } from '@root/connectors/backend/IBookApi';
+import type { IEntitiesComponentProps } from '../../containers/Entities._types';
 import Sentences from './Sentences';
 
 function SentencesEntities(props: IEntitiesComponentProps<ISentenceEntity>) {

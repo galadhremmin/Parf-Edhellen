@@ -1,10 +1,12 @@
-import React, {
-    useCallback, useEffect,
+import {
+    useCallback, 
+    useEffect,
 } from 'react';
+import type { MouseEvent } from 'react';
 import Modal from 'react-modal';
 
 import { fireEvent } from './Component';
-import { IProps } from './Dialog._types';
+import type { IProps } from './Dialog._types';
 
 import classNames from 'classnames';
 import './Dialog.scss';
@@ -25,12 +27,12 @@ function Dialog<V>(props: IProps<V>) {
         value,
     } = props;
 
-    const _onDismissDialog = useCallback((ev: React.MouseEvent<HTMLButtonElement>) => {
+    const _onDismissDialog = useCallback((ev: MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
         void fireEvent('Dialog', onDismiss);
     }, [ onDismiss ]);
 
-    const _onConfirm = useCallback((ev: React.MouseEvent<HTMLButtonElement>) => {
+    const _onConfirm = useCallback((ev: MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
         if (valid) {
             void fireEvent('Dialog', onConfirm, value);

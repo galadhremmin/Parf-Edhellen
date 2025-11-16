@@ -1,10 +1,11 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
+import type { ChangeEvent } from 'react';
 
 import { fireEvent } from '@root/components/Component';
-import { IComponentEvent } from '@root/components/Component._types';
+import type { IComponentEvent } from '@root/components/Component._types';
 import AccountSelect from '@root/components/Form/AccountSelect';
 import MarkdownInput from '@root/components/Form/MarkdownInput';
-import { IProps } from './MetadataForm._types';
+import type { IProps } from './MetadataForm._types';
 
 function MetadataForm(props: IProps) {
     const {
@@ -21,7 +22,7 @@ function MetadataForm(props: IProps) {
     }, [ onMetadataChange ]);
 
     const _onChangeNative = useCallback(
-        (field: keyof IProps['sentence']) => (ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        (field: keyof IProps['sentence']) => (ev: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const value = /checkbox|radio/i.test(ev.target.type)
             ? (ev.target as HTMLInputElement).checked : ev.target.value;
 

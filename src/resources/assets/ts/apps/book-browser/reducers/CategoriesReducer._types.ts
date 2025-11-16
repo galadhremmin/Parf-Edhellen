@@ -1,5 +1,5 @@
-import { ILanguageEntity } from '@root/connectors/backend/IBookApi';
-import { IForumGroupEntity } from '@root/connectors/backend/IDiscussApi';
+import type { ILanguageEntity } from '@root/connectors/backend/IBookApi';
+import type { IForumGroupEntity } from '@root/connectors/backend/IDiscussApi';
 
 export type ICategoryState = ILanguageEntity | IForumGroupEntity;
 

@@ -1,4 +1,4 @@
-import { ISearchResult } from '../reducers/SearchResultsReducer._types';
+import type { ISearchResult } from '../reducers/SearchResultsReducer._types';
 
 export interface IExpandSearchResultAction {
     lexicalEntryGroupIds?: number[];

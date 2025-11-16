@@ -1,5 +1,5 @@
-import { ComponentEventHandler } from '@root/components/Component._types';
-import IUtilityApi from '@root/connectors/backend/IUtilityApi';
+import type { ComponentEventHandler } from '@root/components/Component._types';
+import type IUtilityApi from '@root/connectors/backend/IUtilityApi';
 
 export interface IProps {
     enter2Paragraph?: boolean;

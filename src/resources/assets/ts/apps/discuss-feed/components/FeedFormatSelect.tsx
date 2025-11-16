@@ -1,9 +1,10 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
+import type { ChangeEvent } from 'react';
 
 import { fireEvent } from '@root/components/Component';
 import { FeedFormat } from '@root/connectors/IFeedApi';
 
-import { IProps } from './FeedFormatSelect._types';
+import type { IProps } from './FeedFormatSelect._types';
 
 function FeedFormatSelect(props: IProps) {
     const {
@@ -18,7 +19,7 @@ function FeedFormatSelect(props: IProps) {
         value: (FeedFormat as Record<string, string>)[text], // TODO - there has to be a more elegant way to do this.
     }));
 
-    const _onChange = useCallback((ev: React.ChangeEvent<HTMLSelectElement>) => {
+    const _onChange = useCallback((ev: ChangeEvent<HTMLSelectElement>) => {
         void fireEvent(id || name, onChange, ev.target.value);
     }, [ id, name, onChange ]);
 

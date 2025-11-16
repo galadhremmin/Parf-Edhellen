@@ -1,6 +1,6 @@
-import { ILexicalEntryEntity, ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
-import { IInflection } from '@root/connectors/backend/IInflectionResourceApi';
-import { ISpeechEntity } from '@root/connectors/backend/ISpeechResourceApi';
+import type { ILexicalEntryEntity, ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
+import type { IInflection } from '@root/connectors/backend/IInflectionResourceApi';
+import type { ISpeechEntity } from '@root/connectors/backend/ISpeechResourceApi';
 import type { ICellEditorParams, ICellRendererParams } from '@ag-grid-community/core';
 
 export interface IFragmentGridMetadata extends Partial<ICellEditorParams> {

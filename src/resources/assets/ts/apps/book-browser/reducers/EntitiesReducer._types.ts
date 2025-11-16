@@ -1,5 +1,5 @@
-import { IGlossaryResponse } from '@root/connectors/backend/IBookApi';
-import { IReduxAction } from '@root/_types';
+import type { IGlossaryResponse } from '@root/connectors/backend/IBookApi';
+import type { IReduxAction } from '@root/_types';
 
 export interface IEntitiesAction<T = IGlossaryResponse> extends IReduxAction {
     entities: T;

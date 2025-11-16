@@ -7,10 +7,10 @@ import {
 } from 'react';
 import { connect } from 'react-redux';
 
-import { ReduxThunkDispatch } from '@root/_types';
+import type { ReduxThunkDispatch } from '@root/_types';
 import AuthenticationDialog from '@root/components/AuthenticationDialog';
 import { fireEvent } from '@root/components/Component';
-import { IComponentEvent } from '@root/components/Component._types';
+import type { IComponentEvent } from '@root/components/Component._types';
 import Pagination from '@root/components/Pagination';
 import { PageModes } from '@root/components/Pagination/Pagination._types';
 import { resolve } from '@root/di';
@@ -20,17 +20,17 @@ import { getStateOrDefault } from '@root/utilities/redux/collectivize';
 
 import DiscussActions from '../actions/DiscussActions';
 import Form from '../components/Form';
-import {
+import type {
     IFormChangeData,
     IFormOutput,
 } from '../components/Form._types';
 import PaginationDetails from '../components/PaginationDetails';
 import Post from '../components/Post';
-import { IProps as IPostProps } from '../components/Post._types';
+import type { IProps as IPostProps } from '../components/Post._types';
 import RespondButton from '../components/RespondButton';
 import ConditionalToolbar from '../components/toolbar/ConditionalToolbar';
-import { RootReducer, keyGenerator } from '../reducers';
-import { IProps } from './Discuss._types';
+import { type RootReducer, keyGenerator } from '../reducers';
+import type { IProps } from './Discuss._types';
 
 function Discuss(props: IProps) {
     const formRef = useRef(null);

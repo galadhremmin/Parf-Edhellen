@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { SideOfTheCard } from './Card._types';
-import { IProps } from './Table._types';
+import type { IProps } from './Table._types';
 
 const Table = (props: IProps) => <article className={classNames('flip-container', {
         flipped: props.cardState === SideOfTheCard.Back,

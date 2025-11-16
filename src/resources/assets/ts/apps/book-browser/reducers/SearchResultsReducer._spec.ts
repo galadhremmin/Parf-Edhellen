@@ -6,7 +6,7 @@ import {
 
 import { Actions } from '../actions';
 import SearchResultsReducer from './SearchResultsReducer';
-import { ISearchResult } from './SearchResultsReducer._types';
+import type { ISearchResult } from './SearchResultsReducer._types';
 
 describe('apps/book-browser/reducers/SearchResultsReducer', () => {
     test('builds correct state', () => {

@@ -4,7 +4,7 @@ import {
     test,
 } from '@jest/globals';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { IComponentEvent } from '../../Component._types';
+import type { IComponentEvent } from '../../Component._types';
 import AsyncSelect from './AsyncSelect';
 
 describe('components/Form', () => {

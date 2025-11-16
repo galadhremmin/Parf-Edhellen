@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { IProps } from './LexicalEntry._types';
+import type { IProps } from './LexicalEntry._types';
 
 import LexicalEntryDetails from './LexicalEntryDetails';
 import LexicalEntryFooter from './LexicalEntryFooter';

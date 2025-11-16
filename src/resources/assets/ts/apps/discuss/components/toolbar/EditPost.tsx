@@ -4,15 +4,15 @@ import {
 } from 'react';
 
 import { fireEventAsync } from '@root/components/Component';
-import { IComponentEvent } from '@root/components/Component._types';
+import type { IComponentEvent } from '@root/components/Component._types';
 import Dialog from '@root/components/Dialog';
 import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 
 import Form from '../Form';
-import { IFormChangeData } from '../Form._types';
+import type { IFormChangeData } from '../Form._types';
 import ActionLink from './ActionLink';
-import { IProps } from './index._types';
+import type { IProps } from './index._types';
 
 function EditPost(props: IProps) {
     const {

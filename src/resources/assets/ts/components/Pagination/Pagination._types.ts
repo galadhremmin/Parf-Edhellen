@@ -1,4 +1,4 @@
-import { ComponentEventHandler } from '../Component._types';
+import type { ComponentEventHandler } from '../Component._types';
 
 export const enum PageModes {
     AutoGenerate = 'auto',

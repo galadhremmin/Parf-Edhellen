@@ -1,4 +1,5 @@
-import { IProps, SideOfTheCard } from './Card._types';
+import type { IProps } from './Card._types';
+import { SideOfTheCard } from './Card._types';
 
 const classNameFromSideOfCard = (side: SideOfTheCard) => {
     switch (side) {

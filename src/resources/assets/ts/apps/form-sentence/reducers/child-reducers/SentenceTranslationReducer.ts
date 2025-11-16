@@ -1,6 +1,6 @@
 import { mapper } from '@root/utilities/func/mapper';
 import { Actions } from '../../actions';
-import {
+import type {
     ISentenceTranslationAction,
     ISentenceTranslationReducerState,
 } from './SentenceTranslationReducer._types';

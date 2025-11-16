@@ -1,4 +1,4 @@
-import {
+import type {
     ISentenceTranslationAction,
     ISentenceTranslationReducerState,
 } from './child-reducers/SentenceTranslationReducer._types';

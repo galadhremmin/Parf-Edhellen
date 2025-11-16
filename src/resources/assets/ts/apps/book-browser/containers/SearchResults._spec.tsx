@@ -6,7 +6,7 @@ import {
 } from '@jest/globals';
 import setupContainer from '@root/di/config';
 import { render } from '@testing-library/react';
-import { ISearchResult } from '../reducers/SearchResultsReducer._types';
+import type { ISearchResult } from '../reducers/SearchResultsReducer._types';
 import { SearchResults } from './SearchResults';
 
 describe('apps/book-browser/containers/SearchResults', () => {

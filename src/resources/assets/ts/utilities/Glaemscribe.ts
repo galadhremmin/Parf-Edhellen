@@ -2,7 +2,7 @@
 /* eslint-disable no-undef */
 /// <reference path="../_types/glaemscribe.d.ts" />
 
-import { ITranscriber } from '@root/components/Tengwar._types';
+import type { ITranscriber } from '@root/components/Tengwar._types';
 import {
     DefaultGlaemscribeCharacterSet,
     GlaemscribeModeMappings,

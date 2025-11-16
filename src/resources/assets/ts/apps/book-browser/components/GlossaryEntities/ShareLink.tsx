@@ -1,13 +1,14 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
+import type { FocusEvent, MouseEvent } from 'react';
 
 import Dialog from '@root/components/Dialog';
 import TextIcon from '@root/components/TextIcon';
 import Quote from '@root/components/Quote';
 import CopiableTextInput from '@root/components/CopiableTextInput';
 import StaticAlert from '@root/components/StaticAlert';
-import { IProps } from './ShareLink._types';
+import type { IProps } from './ShareLink._types';
 
-const onInputFocus = (ev: React.FocusEvent<HTMLInputElement>) => {
+const onInputFocus = (ev: FocusEvent<HTMLInputElement>) => {
     ev.target.select();
 }
 
@@ -21,7 +22,7 @@ function ShareLink(props: IProps) {
     const [ isShareOpen, setIsShareOpen ] = useState<boolean>(false);
     const [ isCopied, setIsCopied ] = useState<boolean>(false);
 
-    const _onClick = useCallback((ev: React.MouseEvent) => {
+    const _onClick = useCallback((ev: MouseEvent) => {
         ev.preventDefault();
         setIsShareOpen(true);
     }, [ lexicalEntryId ]);

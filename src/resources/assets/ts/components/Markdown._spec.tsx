@@ -6,9 +6,9 @@ import {
     test
 } from '@jest/globals';
 import { render, screen, waitFor } from '@testing-library/react';
-import sinon, { SinonSandbox, SinonStubbedInstance } from 'sinon';
+import sinon, { type SinonSandbox, type SinonStubbedInstance } from 'sinon';
 
-import IUtilityApi from '@root/connectors/backend/IUtilityApi';
+import type IUtilityApi from '@root/connectors/backend/IUtilityApi';
 import UtilityApiConnector from '@root/connectors/backend/UtilityApiConnector';
 import Markdown from './Markdown';
 

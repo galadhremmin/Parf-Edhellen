@@ -1,5 +1,5 @@
 import { Actions } from '../actions';
-import {
+import type {
     IEntitiesAction,
     IEntitiesState,
 } from './EntitiesReducer._types';

@@ -1,8 +1,8 @@
-import {
+import type {
     ThunkDispatch,
 } from 'redux-thunk';
 
-import {
+import type {
     ISearchAction,
 } from '../reducers/SearchReducer._types';
 

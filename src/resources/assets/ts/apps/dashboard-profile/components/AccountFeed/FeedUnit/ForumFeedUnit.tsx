@@ -1,6 +1,6 @@
 import HtmlInject from "@root/components/HtmlInject";
-import { IForumFeedRecord } from "@root/connectors/backend/IAccountApi";
-import { IProps } from "./index._types";
+import type { IForumFeedRecord } from "@root/connectors/backend/IAccountApi";
+import type { IProps } from "./index._types";
 
 export default function ForumFeedUnit(props: IProps<IForumFeedRecord>) {
     const {

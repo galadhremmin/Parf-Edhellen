@@ -10,8 +10,8 @@ import type {
 import { AgGridReact } from '@ag-grid-community/react';
 import { DateTime } from 'luxon';
 
-import { IFailedJob } from '@root/connectors/backend/ILogApi';
-import { IProps } from './LogList._types';
+import type { IFailedJob } from '@root/connectors/backend/ILogApi';
+import type { IProps } from './LogList._types';
 
 import '@root/components/AgGrid.scss';
 import '@root/utilities/agGridModules';

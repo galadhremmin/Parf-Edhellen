@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { IProps, PageModes } from './Pagination._types';
+import { type IProps, PageModes } from './Pagination._types';
 import PaginationLink from './PaginationLink';
 import {
     createPageArray,

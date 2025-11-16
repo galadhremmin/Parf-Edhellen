@@ -8,7 +8,7 @@ import {
 import { GlobalAdsConfigurationName } from '@root/config';
 
 import Ad from '.';
-import { IGlobalAdConfiguration } from './index._types';
+import type { IGlobalAdConfiguration } from './index._types';
 
 describe('apps/ad', () => {
     test('does not render when there is no ads available', () => {

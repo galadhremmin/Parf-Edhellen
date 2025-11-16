@@ -6,7 +6,7 @@ import {
 } from '@jest/globals';
 import sinon from 'sinon';
 
-import { ILanguagesResponse } from '@root/connectors/backend/IBookApi';
+import type { ILanguagesResponse } from '@root/connectors/backend/IBookApi';
 import LanguageConnector from '@root/connectors/backend/LanguageConnector';
 import LanguageSelect, {
     LanguageWithWritingModeOnlyFilter,

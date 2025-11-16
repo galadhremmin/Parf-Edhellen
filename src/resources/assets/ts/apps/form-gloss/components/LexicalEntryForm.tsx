@@ -1,7 +1,7 @@
-import { ChangeEvent } from 'react';
+import type { ChangeEvent } from 'react';
 
 import { fireEvent } from '@root/components/Component';
-import { IComponentEvent } from '@root/components/Component._types';
+import type { IComponentEvent } from '@root/components/Component._types';
 import AccountSelect from '@root/components/Form/AccountSelect';
 import GlossGroupSelect from '@root/components/Form/GlossGroupSelect';
 import LanguageSelect from '@root/components/Form/LanguageSelect';
@@ -13,7 +13,7 @@ import TengwarInput from '@root/components/Form/TengwarInput';
 import Panel from '@root/components/Panel';
 
 import LexicalEntryDetailInput from './LexicalEntryDetailInput';
-import { LexicalEntryProps } from '../containers/MasterForm._types';
+import type { LexicalEntryProps } from '../containers/MasterForm._types';
 import {
     defaultTransformer,
     keywordsTransformer,
@@ -21,8 +21,8 @@ import {
     glossesTransformer,
     wordTransformer,
 } from '../utilities/value-transformers';
-import { ValueTransformer } from '../utilities/value-transformers._types';
-import { IProps } from './LexicalEntryForm._types';
+import type { ValueTransformer } from '../utilities/value-transformers._types';
+import type { IProps } from './LexicalEntryForm._types';
 
 function LexicalEntryForm(props: IProps) {
     const {

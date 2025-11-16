@@ -3,10 +3,11 @@ import {
     useState,
 } from 'react';
 
-import IAccountApi, { IAccountSuggestion } from '@root/connectors/backend/IAccountApi';
+import type IAccountApi from '@root/connectors/backend/IAccountApi';
+import type { IAccountSuggestion } from '@root/connectors/backend/IAccountApi';
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
-import { IProps } from './AccountValue._types';
+import type { IProps } from './AccountValue._types';
 
 const useFetch = (apiConnector: IAccountApi, accountId: number) => {
     const [ path, setPath ] = useState<string>(null);

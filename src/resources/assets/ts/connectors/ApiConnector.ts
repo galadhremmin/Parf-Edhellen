@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import axios, {
     AxiosError,
-    AxiosInstance,
-    AxiosPromise,
-    AxiosRequestConfig,
-    AxiosResponse,
+    type AxiosInstance,
+    type AxiosPromise,
+    type AxiosRequestConfig,
+    type AxiosResponse,
 } from 'axios';
 import Cookies from 'js-cookie';
 
@@ -18,7 +18,7 @@ import {
     snakeCasePropsToCamelCase,
     toSnakeCase,
 } from '../utilities/func/snake-case';
-import {
+import type {
     AxiosRequestFactory,
     IApiBaseConnector,
     IErrorReport,
@@ -27,7 +27,7 @@ import {
 } from './ApiConnector._types';
 import {
     ErrorCategory,
-    IReportErrorApi,
+    type IReportErrorApi,
 } from './IReportErrorApi';
 import ValidationError from './ValidationError';
 import { ApiTimeoutInMilliseconds } from '../config';

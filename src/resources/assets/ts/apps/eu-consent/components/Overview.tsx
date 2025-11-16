@@ -1,7 +1,7 @@
-import { MouseEvent } from 'react';
+import type { MouseEvent } from 'react';
 
 import { fireEvent } from '@root/components/Component';
-import { IProps } from './Overview._types';
+import type { IProps } from './Overview._types';
 import { CommonPaths } from '@root/config';
 
 export default function Overview({ onSettings }: IProps) {

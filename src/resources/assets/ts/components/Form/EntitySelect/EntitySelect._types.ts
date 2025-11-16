@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
-import { ComponentEventHandler } from '../../Component._types';
-import { IComponentProps } from '../FormComponent._types';
+import type { ComponentEventHandler } from '../../Component._types';
+import type { IComponentProps } from '../FormComponent._types';
 
 export interface IProps<T> extends IComponentProps<T> {
     formatter?: (suggestion: T) => string;

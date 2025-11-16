@@ -1,9 +1,9 @@
-import React from 'react';
-import {
+import React, { Component, type ReactNode } from 'react';
+import type {
     IFragmentInSentenceState,
     ITextState,
 } from '../reducers/FragmentsReducer._types';
-import {
+import type {
     IProps,
     IRenderArgs,
 } from './TextInspectorView._types';
@@ -17,7 +17,7 @@ import ParagraphGroup from './ParagraphGroup';
 const NumberOfParagraphsSafetyLimit = 10000;
 
 // TODO: Refactor to a React functional component
-export default class TextInspectorView extends React.Component<IProps> {
+export default class TextInspectorView extends Component<IProps> {
     public render() {
         const {
             texts,
@@ -82,7 +82,7 @@ export default class TextInspectorView extends React.Component<IProps> {
             }
 
             return paragraphs;
-        }, [] as React.ReactNode[]);
+        }, [] as ReactNode[]);
     }
 
     private _renderParagraph(text: ITextState, key: number, args: IRenderArgs) {

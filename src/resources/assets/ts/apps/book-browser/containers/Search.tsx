@@ -1,9 +1,10 @@
-import React from 'react';
+import { Component } from 'react';
+import type { ChangeEvent, FormEvent, MouseEvent } from 'react';
 import {
     connect,
 } from 'react-redux';
 
-import { IComponentEvent } from '@root/components/Component._types';
+import type { IComponentEvent } from '@root/components/Component._types';
 import LanguageSelect from '@root/components/Form/LanguageSelect';
 import TextIcon from '@root/components/TextIcon';
 import Cache from '@root/utilities/Cache';
@@ -12,9 +13,9 @@ import { excludeProps } from '@root/utilities/func/props';
 import { SearchActions } from '../actions';
 import AdditionalSearchParameters from '../components/AdditionalSearchParameters';
 import SearchQueryInput from '../components/SearchQueryInput';
-import { RootReducer } from '../reducers';
+import type { RootReducer } from '../reducers';
 
-import {
+import type {
     IProps,
     IState,
 } from './Search._types';
@@ -22,7 +23,7 @@ import {
 import './Search.scss';
 
 // TODO: Migrate to React component `function`
-export class SearchQuery extends React.Component<IProps, IState> {
+export class SearchQuery extends Component<IProps, IState> {
 
     public state: IState;
 
@@ -159,7 +160,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
         this._beginSearch(/* queryChanged: */ true);
     }
 
-    private _onShowMoreClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
+    private _onShowMoreClick = (ev: MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
         const state = this.state;
         let {
@@ -186,7 +187,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
         );
     }
 
-    private _onReverseChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    private _onReverseChange = (ev: ChangeEvent<HTMLInputElement>) => {
         const reversed = ev.target.checked;
         this.setState({
             reversed,
@@ -196,7 +197,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
         this._beginSearch(/* queryChanged: */ true);
     }
 
-    private _onNaturalLanguageChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    private _onNaturalLanguageChange = (ev: ChangeEvent<HTMLInputElement>) => {
         const naturalLanguage = ev.target.checked;
         this.setState({
             naturalLanguage,
@@ -206,7 +207,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
         this._beginSearch(/* queryChanged: */ false);
     }
 
-    private _onIncludeOldChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    private _onIncludeOldChange = (ev: ChangeEvent<HTMLInputElement>) => {
         const includeOld = ev.target.checked;
         this.setState({
             includeOld,
@@ -244,7 +245,7 @@ export class SearchQuery extends React.Component<IProps, IState> {
         this._beginSearch(/* queryChanged: */ false);
     }
 
-    private _onSubmit = (ev: React.FormEvent<HTMLFormElement>) => {
+    private _onSubmit = (ev: FormEvent<HTMLFormElement>) => {
         ev.preventDefault();
     }
 

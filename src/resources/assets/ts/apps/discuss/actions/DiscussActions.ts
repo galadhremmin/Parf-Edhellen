@@ -1,8 +1,9 @@
-import {
+import type {
     ReduxThunk,
     ReduxThunkDispatch,
 } from '@root/_types';
-import IDiscussApi, {
+import type IDiscussApi from '@root/connectors/backend/IDiscussApi';
+import type {
     IPostResponse,
     IThreadResponse,
 } from '@root/connectors/backend/IDiscussApi';
@@ -10,8 +11,8 @@ import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
 
 import { updateQueryString } from '@root/utilities/func/query-string';
-import { keyGenerator, RootReducer } from '../reducers';
-import {
+import { keyGenerator, type RootReducer } from '../reducers';
+import type {
     IChangePostAction,
     ICreatePostAction,
     IPostAction,

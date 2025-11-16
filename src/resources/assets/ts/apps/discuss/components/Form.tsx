@@ -1,16 +1,17 @@
-import React, {
+import {
     useCallback,
 } from 'react';
+import type { ChangeEvent, MouseEvent, FormEvent } from 'react';
 
 import {
     fireEvent,
     fireEventAsync,
 } from '@root/components/Component';
-import { IComponentEvent } from '@root/components/Component._types';
+import type { IComponentEvent } from '@root/components/Component._types';
 import MarkdownInput from '@root/components/Form/MarkdownInput';
 import TextIcon from '@root/components/TextIcon';
 
-import {
+import type {
     IFormOutput,
     IProps,
 } from './Form._types';
@@ -33,19 +34,19 @@ function Form(props: IProps) {
         [ name, onChange ]);
 
     const _onSubjectChange = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => {
+        (e: ChangeEvent<HTMLInputElement>) => {
             void fireEvent(name, onChange, {
                 name: 'subject',
                 value: e.target.value,
             });
         }, [ name, onChange ]);
 
-    const _onCancelClick = useCallback((e: React.MouseEvent) => {
+    const _onCancelClick = useCallback((e: MouseEvent) => {
         e.preventDefault();
         void fireEventAsync(null, onCancel);
     }, [ onCancel ]);
 
-    const _onSubmitForm = useCallback((ev: React.FormEvent) => {
+    const _onSubmitForm = useCallback((ev: FormEvent) => {
         ev.preventDefault();
         const args = {
             content,

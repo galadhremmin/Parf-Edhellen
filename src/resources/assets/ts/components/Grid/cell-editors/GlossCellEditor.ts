@@ -6,9 +6,9 @@ import type {
     ICellEditorParams,
 } from '@ag-grid-community/core';
 
-import { ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
+import type { ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
 import debounce from '@root/utilities/func/debounce';
-import { IFragmentGridMetadata } from './InflectionCellEditor._types';
+import type { IFragmentGridMetadata } from './InflectionCellEditor._types';
 
 import './GlossCellEditor.scss';
 

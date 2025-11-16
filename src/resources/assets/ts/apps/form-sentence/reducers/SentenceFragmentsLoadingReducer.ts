@@ -1,4 +1,4 @@
-import { IReduxAction } from '@root/_types';
+import type { IReduxAction } from '@root/_types';
 import { Actions as ValidationActions } from '@root/components/Form/Validation/Actions';
 import { Actions } from '../actions';
 

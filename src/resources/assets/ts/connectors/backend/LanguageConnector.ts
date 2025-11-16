@@ -7,11 +7,11 @@ import {
 import ExpiringCache, { TimeUnit } from '../../utilities/ExpiringCache';
 import LazyLoader from '../../utilities/LazyLoader';
 import BookApiConnector from './BookApiConnector';
-import {
+import type {
     ILanguageEntity,
     ILanguagesResponse,
 } from './IBookApi';
-import ILanguageApi from './ILanguageApi';
+import type ILanguageApi from './ILanguageApi';
 
 export default class LanguageConnector implements ILanguageApi {
     constructor(private _api: BookApiConnector = new BookApiConnector(),

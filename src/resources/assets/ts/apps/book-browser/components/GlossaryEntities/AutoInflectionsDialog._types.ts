@@ -1,4 +1,4 @@
-import { IInflectionResourceApi } from "@root/connectors/backend/IInflectionResourceApi";
+import type { IInflectionResourceApi } from "@root/connectors/backend/IInflectionResourceApi";
 
 export interface IProps {
     lexicalEntryId: number;

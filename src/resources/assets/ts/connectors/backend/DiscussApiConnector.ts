@@ -1,6 +1,7 @@
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
-import IDiscussApi, {
+import type IDiscussApi from './IDiscussApi';
+import type {
     ICreatePostRequest,
     ICreatePostResponse,
     IDeletePostRequest,

@@ -3,7 +3,7 @@ import {
     useState,
 } from 'react';
 
-import {
+import type {
     IdValue,
     ValueLoader,
 } from './AsyncSelect._types';

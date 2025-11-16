@@ -1,4 +1,4 @@
-import { ISpeechEntity } from './ISpeechResourceApi';
+import type { ISpeechEntity } from './ISpeechResourceApi';
 
 export interface IAccountEntity {
     avatarPath?: string;

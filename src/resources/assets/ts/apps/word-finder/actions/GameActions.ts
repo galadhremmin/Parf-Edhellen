@@ -1,7 +1,7 @@
-import { ReduxThunkDispatch } from '@root/_types';
-import { ILanguageEntity } from '@root/connectors/backend/IBookApi';
+import type { ReduxThunkDispatch } from '@root/_types';
+import type { ILanguageEntity } from '@root/connectors/backend/IBookApi';
 import {
-    IGloss
+    type IGloss
 } from '@root/connectors/backend/IWordFinderApi';
 import { resolve } from '@root/di';
 
@@ -10,7 +10,7 @@ import Actions from '../actions/Actions';
 import { splitWord } from '../utilities/word-splitter';
 import {
     GameStage,
-    IGameAction,
+    type IGameAction,
 } from './GameActions._types';
 
 export default class GameActions {

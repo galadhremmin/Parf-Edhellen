@@ -1,9 +1,9 @@
 import {
     Actions,
-    IGameAction,
+    type IGameAction,
 } from '../actions';
 import { preprocessWordForSplitting } from '../utilities/word-splitter';
-import { IGameGloss } from './IGlossesReducer';
+import type { IGameGloss } from './IGlossesReducer';
 
 const InitialState: IGameGloss[] = [];
 

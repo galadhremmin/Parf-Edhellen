@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import HtmlInject from '@root/components/HtmlInject';
-import { IProps } from './LexicalEntryDetail._types';
+import type { IProps } from './LexicalEntryDetail._types';
 
 function LexicalEntryDetail(props: IProps) {
     const {

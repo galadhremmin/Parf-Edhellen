@@ -1,6 +1,7 @@
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
-import ILexicalEntryResourceApi, {
+import type ILexicalEntryResourceApi from './IGlossResourceApi'; 
+import type {
     IGetLexicalEntryResponse,
     ISuggestionEntity,
     ISuggestRequest,

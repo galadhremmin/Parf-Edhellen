@@ -1,12 +1,13 @@
 import classNames from 'classnames';
-import React, {
+import {
     useCallback,
     useState,
+    type ChangeEvent,
 } from 'react';
 
 import TextIcon from '@root/components/TextIcon';
 import { fireEvent } from '../../Component';
-import { IProps } from './TagLabel._types';
+import type { IProps } from './TagLabel._types';
 
 function TagLabel(props: IProps) {
     const {
@@ -16,7 +17,7 @@ function TagLabel(props: IProps) {
 
     const [ focused, setFocused ] = useState(false);
 
-    const _onTagClick = useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
+    const _onTagClick = useCallback((ev: ChangeEvent<HTMLInputElement>) => {
         if (! ev.target.checked) {
             void fireEvent(`Tag[${tag}]`, onDelete, tag);
         }

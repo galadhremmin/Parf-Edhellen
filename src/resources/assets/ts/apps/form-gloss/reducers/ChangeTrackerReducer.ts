@@ -1,7 +1,7 @@
 import { Actions } from "../actions";
-import { IChangeTrackerReducerState } from "./ChangeTrackerReducer._types";
-import { ILexicalEntryAction } from "./LexicalEntryReducer._types";
-import { IInflectionAction } from "./InflectionsReducer._types";
+import type { IChangeTrackerReducerState } from "./ChangeTrackerReducer._types";
+import type { ILexicalEntryAction } from "./LexicalEntryReducer._types";
+import type { IInflectionAction } from "./InflectionsReducer._types";
 
 const InitialState: IChangeTrackerReducerState = {
     lexicalEntryChanged: false,

@@ -1,8 +1,8 @@
-import { MouseEvent, useEffect, useState } from 'react';
+import { type MouseEvent, useEffect, useState } from 'react';
 
 import Dialog from "@root/components/Dialog";
-import { IProps as IDialogProps } from '@root/components/Dialog._types';
-import IAccountApi from "@root/connectors/backend/IAccountApi";
+import type { IProps as IDialogProps } from '@root/components/Dialog._types';
+import type IAccountApi from "@root/connectors/backend/IAccountApi";
 import { withPropInjection } from "@root/di";
 import { DI } from '@root/di/keys';
 
@@ -13,7 +13,7 @@ interface IProps extends Pick<IDialogProps<any>, 'onDismiss'> {
 }
 
 import { fireEvent } from "@root/components/Component";
-import { ComponentEventHandler } from "@root/components/Component._types";
+import type { ComponentEventHandler } from "@root/components/Component._types";
 
 import './FeatureBackgroundDialog.scss';
 

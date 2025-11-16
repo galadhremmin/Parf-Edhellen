@@ -1,4 +1,4 @@
-import {
+import type {
     ISentenceFragmentAction,
     ISentenceFragmentReducerState,
 } from './child-reducers/SentenceFragmentReducer._types';

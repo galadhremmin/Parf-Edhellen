@@ -2,10 +2,9 @@ import { createFeedUrl } from '@root/connectors/FeedApiConnector';
 
 import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
-import { SecurityRole } from '@root/security';
 import FeedButton from '../components/FeedButton';
 import SubscribeButton from '../components/SubscribeButton';
-import { IProps } from '../index._types';
+import type { IProps } from '../index._types';
 
 function Feeds({
     groupId,

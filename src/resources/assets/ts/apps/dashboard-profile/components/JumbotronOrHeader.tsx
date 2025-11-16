@@ -1,5 +1,5 @@
 import Jumbotron from '@root/components/Jumbotron';
-import { IProps } from './JumbotronOrHeader._types';
+import type { IProps } from './JumbotronOrHeader._types';
 
 export default function JumbotronOrHeader({
     children,

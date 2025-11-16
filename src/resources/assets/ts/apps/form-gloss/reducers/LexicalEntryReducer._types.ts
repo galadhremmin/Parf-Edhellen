@@ -1,6 +1,6 @@
-import { IReduxAction } from '@root/_types';
-import { IContribution } from '@root/connectors/backend/IContributionResourceApi';
-import { ILexicalEntryEntity } from '@root/connectors/backend/IGlossResourceApi';
+import type { IReduxAction } from '@root/_types';
+import type { IContribution } from '@root/connectors/backend/IContributionResourceApi';
+import type { ILexicalEntryEntity } from '@root/connectors/backend/IGlossResourceApi';
 
 export type ILexicalEntryState = IContribution<Pick<ILexicalEntryEntity, 'account' | 'comments' |
     'etymology' | 'externalId' | 'lexicalEntryDetails' | 'lexicalEntryGroupId' | 'id' |

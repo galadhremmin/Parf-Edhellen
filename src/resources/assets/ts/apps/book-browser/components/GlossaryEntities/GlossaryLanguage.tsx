@@ -1,7 +1,7 @@
 import Ad from '@root/apps/ad';
 import Language from '../Language';
 import LexicalEntry from './LexicalEntry';
-import { IProps } from './GlossaryLanguage._types';
+import type { IProps } from './GlossaryLanguage._types';
 
 export default function GlossaryLanguage(props: IProps) {
     const {

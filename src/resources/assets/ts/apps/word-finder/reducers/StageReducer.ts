@@ -1,10 +1,10 @@
 import { DateTime } from 'luxon';
 import {
     Actions,
-    IGameAction,
+    type IGameAction,
     GameStage,
 } from '../actions';
-import { IStageReducerState } from './StageReducer._types';
+import type { IStageReducerState } from './StageReducer._types';
 
 const InitialState: IStageReducerState = {
     stage: GameStage.Loading,

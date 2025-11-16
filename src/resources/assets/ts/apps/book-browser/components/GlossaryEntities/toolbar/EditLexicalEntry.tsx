@@ -1,5 +1,5 @@
 import TextIcon from '@root/components/TextIcon';
-import { IProps } from './index._types';
+import type { IProps } from './index._types';
 
 function EditLexicalEntry(props: IProps) {
     const {

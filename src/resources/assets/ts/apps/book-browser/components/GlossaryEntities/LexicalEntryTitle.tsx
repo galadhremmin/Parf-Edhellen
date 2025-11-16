@@ -1,18 +1,18 @@
 import classNames from 'classnames';
-import React, { Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 
 import TextIcon from '@root/components/TextIcon';
 import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 
-import { IProps } from './LexicalEntryTitle._types';
+import type { IProps } from './LexicalEntryTitle._types';
 
 import LexicalEntryGroupLabel from './LexicalEntryGroupLabel';
 import NumberOfComments from './NumberOfComments';
 import ShareLink from './ShareLink';
 import VersionsLink from './VersionsLink';
 
-const ToolbarAsync = React.lazy(() => import('./toolbar'));
+const ToolbarAsync = lazy(() => import('./toolbar'));
 
 const LexicalEntryTitle = (props: IProps) => {
     const {

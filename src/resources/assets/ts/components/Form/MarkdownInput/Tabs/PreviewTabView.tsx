@@ -1,5 +1,5 @@
 import Markdown from '@root/components/Markdown';
-import { IProps } from './PreviewTabView._types';
+import type { IProps } from './PreviewTabView._types';
 
 import './PreviewTabView.scss';
 
