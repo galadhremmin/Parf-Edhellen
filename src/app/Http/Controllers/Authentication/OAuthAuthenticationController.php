@@ -6,11 +6,18 @@ use App\Models\Account;
 use App\Models\AuthorizationProvider;
 use Illuminate\Http\Request;
 use Laravel\Socialite\Facades\Socialite as FacadesSocialite;
+use App\Helpers\RecaptchaHelper;
+use App\Exceptions\SuspiciousBotActivityException;
 
 class OAuthAuthenticationController extends AuthenticationController
-{
+{    
     public function redirect(Request $request, string $providerName)
     {
+        if (config('ed.recaptcha.sitekey') && ! RecaptchaHelper::createAssessment($request->query('recaptcha_token'), 'LOGIN')) {
+            $this->log('redirect', $providerName, new SuspiciousBotActivityException($request, 'user login'));
+            return redirect()->route('login')->with('error', 'Recaptcha error - are you a bot?');
+        }
+
         try {
             $provider = self::getProvider($providerName);
 

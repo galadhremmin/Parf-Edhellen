@@ -7,7 +7,7 @@
   <h1>Welcome back!</h1>
   <h2 class="mt-4">Sign in with social media</h2>
 
-  @if ($error !== null)
+  @if ($error !== null && is_object($error))
   <div class="alert alert-danger">
     <p>
       ⚠️ We received an error from {{ ucfirst($error->provider) }} while trying to log you in. We've recorded the reason and we'll look into it. 
@@ -16,6 +16,10 @@
       If this error persists, please reach out to us with your session ID: {{ $error->session_id }}.</p>
       @endif
     </p>
+  </div>
+  @elseif ($error !== null && is_string($error))
+  <div class="alert alert-danger">
+    ⚠️ {{ $error }}
   </div>
   @endif
 
@@ -86,4 +90,5 @@
 @endsection
 @section('styles')
 <link rel="stylesheet" href="@assetpath(style-auth.css)">
+@include('authentication._recaptcha-login')
 @endsection

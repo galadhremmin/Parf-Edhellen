@@ -11,6 +11,7 @@ require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
 const bundleCssWithJavaScript = false;
 const version = process.env.ED_VERSION;
+const ssrEnabled = process.env.SSR_ENABLED === 'true';
 
 const sourcePath = path.resolve(__dirname, 'resources/assets/ts');
 const publicPath = `/v${version}`;
@@ -302,7 +303,9 @@ const serverConfig = {
   ],
 };
 
-module.exports = [
+module.exports = ssrEnabled ? [
   clientConfig,
   serverConfig,
-]
+] : [
+  clientConfig,
+];
