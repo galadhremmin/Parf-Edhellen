@@ -24,7 +24,7 @@ export class ErrorBoundary extends Component<IProps, IState> {
         };
     }
 
-    public async componentDidCatch(error: Error, errorInfo: object): Promise<void> {
+    public componentDidCatch(error: Error, errorInfo: object) {
         const {
             reportErrorApi,
         } = this.props;
@@ -34,7 +34,7 @@ export class ErrorBoundary extends Component<IProps, IState> {
             return;
         }
 
-        await reportErrorApi.error(
+        void reportErrorApi.error(
             error.message,
             window.location.href,
             `${error.stack}\n\n${JSON.stringify(errorInfo, undefined, 2)}`,
@@ -53,8 +53,8 @@ export class ErrorBoundary extends Component<IProps, IState> {
         this.props.globalEvents?.disconnect();
     }
 
-    private _onError = async (evt: CustomEvent<Error>): Promise<void> => {
-        await this.componentDidCatch(evt.detail, {});
+    private _onError = (evt: CustomEvent<Error>) => {
+        void this.componentDidCatch(evt.detail, {});
     }
 
     public render() {

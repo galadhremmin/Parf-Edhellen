@@ -50,7 +50,9 @@ function globalOrchestration() {
     setupContainer();
     bootstrapServerSideRenderedBootstrapComponents();
     renderDates();
-    inject();
+    inject().catch(error => {
+        console.error('Application bootstrapping failed.', error);
+    });
 }
 
 if (loadLatestScript()) {
