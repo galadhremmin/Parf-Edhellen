@@ -1,4 +1,5 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
+import type { MouseEvent } from 'react';
 
 import { fireEvent } from '@root/components/Component';
 import TextIcon from '@root/components/TextIcon';
@@ -6,7 +7,7 @@ import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 import { SecurityRole } from '@root/security';
 
-import { IProps } from './RespondButton._types';
+import type { IProps } from './RespondButton._types';
 import UnauthenticatedAlert from './UnauthenticatedAlert';
 import ValidateEmailAlert from './ValidateEmailAlert';
 
@@ -17,7 +18,7 @@ function RespondButton(props: IProps) {
         roleManager,
     } = props;
 
-    const onRespondClick = useCallback((ev: React.MouseEvent<HTMLButtonElement>) => {
+    const onRespondClick = useCallback((ev: MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
         void fireEvent(null, onClick);
     }, [ onClick ]);

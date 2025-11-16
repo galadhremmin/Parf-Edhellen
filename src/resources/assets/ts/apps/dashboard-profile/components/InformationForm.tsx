@@ -1,11 +1,12 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
 
 import { fireEvent } from '@root/components/Component';
 import MarkdownInput from '@root/components/Form/MarkdownInput';
 import TengwarInput from '@root/components/Form/TengwarInput';
 import TextIcon from '@root/components/TextIcon';
 
-import { IProps } from './InformationForm._types';
+import type { IProps } from './InformationForm._types';
 
 function InformationForm(props: IProps) {
     const {
@@ -20,11 +21,11 @@ function InformationForm(props: IProps) {
         onSubmit,
     } = props;
 
-    const _onNicknameChange = useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
+    const _onNicknameChange = useCallback((ev: ChangeEvent<HTMLInputElement>) => {
         void fireEvent(null, onNicknameChange, ev.target.value);
     }, [ nickname, onNicknameChange ]);
 
-    const _onSubmit = useCallback((ev: React.FormEvent<HTMLFormElement>) => {
+    const _onSubmit = useCallback((ev: FormEvent<HTMLFormElement>) => {
         ev.preventDefault();
         void fireEvent('InformationForm', onSubmit);
     }, [ onSubmit ]);

@@ -1,5 +1,7 @@
+import type { ReactNode } from 'react';
+
 export interface IProps {
     backgroundImageUrl?: string;
-    children: React.ReactNode;
+    children: ReactNode;
     className?: string;
 }

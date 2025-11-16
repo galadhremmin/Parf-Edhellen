@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import type { MouseEvent } from 'react';
 
 import { updateQueryString } from '@root/utilities/func/query-string';
 import { fireEvent } from '../Component';
-import { IProps } from './PaginationLink._types';
+import type { IProps } from './PaginationLink._types';
 
 function PaginationLink(props: IProps) {
     const {
@@ -14,7 +15,7 @@ function PaginationLink(props: IProps) {
 
     const [ queryString, setQueryString ] = useState<string>('?');
 
-    const _onClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
+    const _onClick = (ev: MouseEvent<HTMLAnchorElement>) => {
         if (onClick !== null) {
             ev.preventDefault();
             void fireEvent('PaginationLink', onClick, pageNumber);

@@ -1,12 +1,13 @@
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
 
-import {
+import type {
     IGetErrorsResponse,
     IGetFailedJobsResponse,
     ILogApi,
 } from './ILogApi';
-import IUtilityApi, {
+import type IUtilityApi from './IUtilityApi';
+import type {
     IMarkdownParserRequest,
     IMarkdownParserResponse,
 } from './IUtilityApi';

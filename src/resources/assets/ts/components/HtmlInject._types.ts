@@ -1,4 +1,5 @@
-import { ComponentEventHandler } from './Component._types';
+import type { ReactNode } from 'react';
+import type { ComponentEventHandler } from './Component._types';
 
 export interface IReferenceLinkClickDetails {
     languageShortName: string;
@@ -17,6 +18,6 @@ export interface IProps extends IEventProps {
 }
 
 export interface IState {
-    elements: React.ReactNode;
+    elements: ReactNode;
     lastHtml: string;
 }

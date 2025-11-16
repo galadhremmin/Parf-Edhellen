@@ -1,4 +1,4 @@
-import { IProps } from './DiscussTable._types';
+import type { IProps } from './DiscussTable._types';
 import DiscussTableRow from './DiscussTableRow';
 
 function DiscussTable(props: IProps) {

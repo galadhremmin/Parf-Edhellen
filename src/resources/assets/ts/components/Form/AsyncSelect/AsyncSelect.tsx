@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import React, { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
+import type { ChangeEvent } from 'react';
 
 import { fireEvent } from '@root/components/Component';
 import { excludeProps } from '@root/utilities/func/props';
-import {
+import type {
     IdValue,
     IProps,
     ValueType,
@@ -47,7 +48,7 @@ function AsyncSelect<T = any>(props: IProps<T>) {
         [values, valueField, textField]
     );
 
-    const _onChange = useCallback((ev: React.ChangeEvent<HTMLSelectElement>) => {
+    const _onChange = useCallback((ev: ChangeEvent<HTMLSelectElement>) => {
         const newValue = getDesiredValue(
             values.find((v) => v[valueField] as any == ev.target.value),
             valueType,

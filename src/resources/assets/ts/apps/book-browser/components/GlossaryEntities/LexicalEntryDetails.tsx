@@ -1,7 +1,7 @@
 
 import HtmlInject from '@root/components/HtmlInject';
 import LexicalEntryDetail from './LexicalEntryDetail';
-import { IProps } from './LexicalEntryDetails._types';
+import type { IProps } from './LexicalEntryDetails._types';
 
 import './LexicalEntryDetails.scss';
 

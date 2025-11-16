@@ -1,8 +1,8 @@
-import { ComponentEventHandler } from '@root/components/Component._types';
-import { FormSection } from '../index._types';
-import { RootReducer } from '../reducers';
-import { ILexicalEntryState } from '../reducers/LexicalEntryReducer._types';
-import { IInflectionGroupState } from '../reducers/InflectionsReducer._types';
+import type { ComponentEventHandler } from '@root/components/Component._types';
+import type { FormSection } from '../index._types';
+import type { RootReducer } from '../reducers';
+import type { ILexicalEntryState } from '../reducers/LexicalEntryReducer._types';
+import type { IInflectionGroupState } from '../reducers/InflectionsReducer._types';
 
 export interface IProps extends Partial<Pick<RootReducer, 'changes' | 'errors' | 'lexicalEntry' | 'inflections'>> {
     confirmButton?: string;

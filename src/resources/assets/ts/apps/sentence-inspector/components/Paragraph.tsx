@@ -1,4 +1,4 @@
-import { IProps } from './Paragraph._types';
+import type { IProps } from './Paragraph._types';
 
 import '@root/components/Tengwar';
 import './Paragraph.scss';

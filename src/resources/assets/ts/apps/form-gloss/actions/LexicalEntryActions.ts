@@ -1,15 +1,17 @@
-import {
+import type {
     ReduxThunk,
     ReduxThunkDispatch,
 } from '@root/_types';
 import { handleValidationErrors } from '@root/components/Form/Validation';
-import IContributionResourceApi, { IContribution, IContributionSaveResponse } from '@root/connectors/backend/IContributionResourceApi';
-import ILexicalEntryResourceApi, { ILexicalEntryEntity } from '@root/connectors/backend/IGlossResourceApi';
+import type IContributionResourceApi from '@root/connectors/backend/IContributionResourceApi';
+import type { IContribution, IContributionSaveResponse } from '@root/connectors/backend/IContributionResourceApi';
+import type ILexicalEntryResourceApi from '@root/connectors/backend/IGlossResourceApi';
+import type { ILexicalEntryEntity } from '@root/connectors/backend/IGlossResourceApi';
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
 
-import { ILexicalEntryInflection } from '@root/connectors/backend/IBookApi';
-import { GroupedInflectionsState, IInflectionGroupState } from '../reducers/InflectionsReducer._types';
+import type { ILexicalEntryInflection } from '@root/connectors/backend/IBookApi';
+import type { GroupedInflectionsState, IInflectionGroupState } from '../reducers/InflectionsReducer._types';
 import Actions from './Actions';
 
 export default class LexicalEntryActions {

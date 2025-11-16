@@ -1,5 +1,5 @@
-import { IReduxAction } from '@root/_types';
-import { ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
+import type { IReduxAction } from '@root/_types';
+import type { ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
 import { Actions } from '../../actions';
 
 export type ISentenceFragmentReducerState = Pick<ISentenceFragmentEntity, 'comments' |

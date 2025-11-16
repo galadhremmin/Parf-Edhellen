@@ -1,10 +1,10 @@
-import React, { createRef } from 'react';
+import{ createRef, Component, type ChangeEvent, type KeyboardEvent } from 'react';
 
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
 
 import { fireEvent } from '../../Component';
-import { IComponentEvent } from '../../Component._types';
-import {
+import type { IComponentEvent } from '../../Component._types';
+import type {
     IProps,
     IState,
 } from './TagInput._types';
@@ -12,7 +12,7 @@ import TagLabel from './TagLabel';
 
 import './TagInput.scss';
 
-export default class TagInput extends React.Component<IProps, IState> {
+export default class TagInput extends Component<IProps, IState> {
     public static defaultProps = {
         value: [],
     } as Partial<IProps>;
@@ -123,7 +123,7 @@ export default class TagInput extends React.Component<IProps, IState> {
         }
     }
 
-    private _onTextChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    private _onTextChange = (ev: ChangeEvent<HTMLInputElement>) => {
         this._setTextValue(ev.target.value);
     }
 
@@ -135,7 +135,7 @@ export default class TagInput extends React.Component<IProps, IState> {
         this._addTag(textValue);
     }
 
-    private _onKeyDown = (ev: React.KeyboardEvent<HTMLInputElement>) => {
+    private _onKeyDown = (ev: KeyboardEvent<HTMLInputElement>) => {
         const {
             textValue,
         } = this.state;

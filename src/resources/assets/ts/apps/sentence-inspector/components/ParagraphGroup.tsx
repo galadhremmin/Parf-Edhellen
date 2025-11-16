@@ -1,4 +1,4 @@
-import { IProps } from './ParagraphGroup._types';
+import type { IProps } from './ParagraphGroup._types';
 
 const ParagraphGroup = (props: IProps) => {
     const className = ['p-group'];

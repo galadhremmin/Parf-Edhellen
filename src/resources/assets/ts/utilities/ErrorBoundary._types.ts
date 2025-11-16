@@ -1,8 +1,9 @@
-import IGlobalEvents from '@root/connectors/IGlobalEvents';
-import { IReportErrorApi } from '@root/connectors/IReportErrorApi';
+import type { ReactNode } from 'react';
+import type IGlobalEvents from '@root/connectors/IGlobalEvents';
+import type { IReportErrorApi } from '@root/connectors/IReportErrorApi';
 
 export interface IProps {
-    children: React.ReactNode;
+    children: ReactNode;
     reportErrorApi?: IReportErrorApi;
     globalEvents?: IGlobalEvents;
 }

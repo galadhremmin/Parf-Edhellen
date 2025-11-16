@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 
-import { CreateRootReducer } from '@root/_types';
+import type { CreateRootReducer } from '@root/_types';
 
 import FragmentsReducer from './FragmentsReducer';
 import LatinFragmentsReducer from './LatinFragmentsReducer';

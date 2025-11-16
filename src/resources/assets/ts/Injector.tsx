@@ -1,5 +1,7 @@
-import React, {
+import {
+    lazy,
     Suspense,
+    StrictMode,
 } from 'react';
 import { createRoot, hydrateRoot } from 'react-dom/client';
 import Spinner from './components/Spinner';
@@ -45,13 +47,13 @@ const load = async (element: HTMLElement, mode: RenderMode, moduleName: string, 
     switch (mode) {
         case RenderMode.Async: {
             const root = createRoot(element);
-            const Component = React.lazy(() => import(`./apps/${moduleName}`));
+            const Component = lazy(() => import(`./apps/${moduleName}`));
     
             root.render(<Suspense fallback={<Spinner />}>
                     <ErrorBoundary>
-                        <React.StrictMode>
+                        <StrictMode>
                             <Component {...props} />
-                        </React.StrictMode>
+                        </StrictMode>
                     </ErrorBoundary>
                 </Suspense>);
             }
@@ -60,9 +62,9 @@ const load = async (element: HTMLElement, mode: RenderMode, moduleName: string, 
             const Component = await import(`./apps/${moduleName}`);
             hydrateRoot(element, 
                 <ErrorBoundary>
-                    <React.StrictMode>
+                    <StrictMode>
                         <Component.default {...props} />
-                    </React.StrictMode>
+                    </StrictMode>
                 </ErrorBoundary>);
             }
             break;

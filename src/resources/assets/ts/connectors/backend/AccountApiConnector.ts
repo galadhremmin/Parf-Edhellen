@@ -1,7 +1,8 @@
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
 
-import IAccountApi, {
+import type IAccountApi from './IAccountApi';
+import type {
     FindResponse,
     IFindRequest,
     IGetAvatarRequest,

@@ -1,5 +1,5 @@
 import {
-    ComponentEventHandler,
+    type ComponentEventHandler,
 } from '../Component._types';
 
 export interface IBackingComponentProps<V> {

@@ -1,8 +1,8 @@
-import { Dispatch } from 'redux';
-import { ThunkDispatch } from 'redux-thunk';
+import type { Dispatch } from 'redux';
+import type { ThunkDispatch } from 'redux-thunk';
 
 import { SearchResultGlossaryGroupId } from '@root/config';
-import {
+import type {
     IEntitiesRequest,
     IEntitiesResponse,
     IFindEntity,
@@ -16,17 +16,17 @@ import { mapArrayGroupBy } from '@root/utilities/func/mapper';
 import { toSnakeCase } from '@root/utilities/func/snake-case';
 import { capitalize } from '@root/utilities/func/string-manipulation';
 
-import { RootReducer } from '../reducers';
-import { ISearchAction } from '../reducers/SearchReducer._types';
+import type { RootReducer } from '../reducers';
+import type { ISearchAction } from '../reducers/SearchReducer._types';
 import Actions from './Actions';
 
 import { buildQueryString } from '@root/utilities/func/query-string';
-import {
+import type {
     ISearchResult,
     ISelectSearchResultAction,
     ISetSearchResultAction,
 } from '../reducers/SearchResultsReducer._types';
-import {
+import type {
     IBrowserHistoryState,
     IExpandSearchResultAction,
 } from './SearchActions._types';

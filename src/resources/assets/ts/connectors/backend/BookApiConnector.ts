@@ -1,6 +1,7 @@
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
-import IBookApi, {
+import type IBookApi from './IBookApi';
+import type {
     IEntitiesRequest,
     IEntitiesResponse,
     IFindRequest,
@@ -11,7 +12,7 @@ import IBookApi, {
     ISentenceResponse,
     ISpecificEntityRequest,
 } from './IBookApi';
-import { ILexicalEntryGroup } from './IGlossResourceApi';
+import type { ILexicalEntryGroup } from './IGlossResourceApi';
 
 export default class BookApiConnector implements IBookApi {
     constructor(private _api = resolve(DI.BackendApi)) {

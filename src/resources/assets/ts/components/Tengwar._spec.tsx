@@ -11,7 +11,7 @@ import GlobalEventConnector from '@root/connectors/GlobalEventConnector';
 import { setInstance } from '@root/di';
 import { DI } from '@root/di/keys';
 import Tengwar from './Tengwar';
-import { ITranscriber } from './Tengwar._types';
+import type { ITranscriber } from './Tengwar._types';
 
 describe('components/Tengwar', () => {
     const DefaultMode = 'sindarin';

@@ -1,9 +1,10 @@
+import classNames from 'classnames';
+import type { KeyboardEvent } from 'react';
+
 import { fireEventAsync } from '@root/components/Component';
 import { FormComponent } from '@root/components/Form/FormComponent';
 import TextIcon from '@root/components/TextIcon';
-import classNames from 'classnames';
-import React from 'react';
-import {
+import type {
     IProps,
     ISearchComponentProps,
 } from './SearchQueryInput._types';
@@ -40,7 +41,7 @@ export default class SearchQueryInput extends FormComponent<string, IProps, ISea
         </div>;
     }
 
-    private _onKeyDown = (ev: React.KeyboardEvent<HTMLInputElement>) => {
+    private _onKeyDown = (ev: KeyboardEvent<HTMLInputElement>) => {
         let direction = 0;
         switch (ev.key) {
             case 'ArrowUp': // up

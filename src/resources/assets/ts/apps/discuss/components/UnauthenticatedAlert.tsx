@@ -1,8 +1,8 @@
-import React from 'react';
+import type { MouseEvent } from 'react';
 import StaticAlert from '@root/components/StaticAlert';
 import TextIcon from '@root/components/TextIcon';
 
-const onAuthenticateClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
+const onAuthenticateClick = (ev: MouseEvent<HTMLAnchorElement>) => {
     ev.preventDefault();
     window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
 };

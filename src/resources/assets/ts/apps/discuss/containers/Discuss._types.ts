@@ -1,17 +1,17 @@
-import {
+import type {
     ComponentEventHandler,
 } from '@root/components/Component._types';
-import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
-import {
+import type { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
+import type {
     IPostEntity,
     IThreadEntity,
 } from '@root/connectors/backend/IDiscussApi';
-import { IRoleManager } from '@root/security';
+import type { IRoleManager } from '@root/security';
 
-import { IFormChangeData } from '../components/Form._types';
-import { IThreadMetadataArgs } from '../components/toolbar/index._types';
-import { IThreadMetadataState } from '../reducers/ThreadMetadataReducer._types';
-import {
+import type { IFormChangeData } from '../components/Form._types';
+import type { IThreadMetadataArgs } from '../components/toolbar/index._types';
+import type { IThreadMetadataState } from '../reducers/ThreadMetadataReducer._types';
+import type {
     ICreatePostAction,
     IThreadEntityAction,
 } from '../reducers/ThreadReducer._types';

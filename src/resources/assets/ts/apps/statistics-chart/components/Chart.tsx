@@ -1,4 +1,4 @@
-import React, {
+import {
     useCallback,
     useState,
 } from 'react';
@@ -6,7 +6,7 @@ import { Waypoint } from 'react-waypoint';
 
 import Spinner from '@root/components/Spinner';
 
-import {
+import type {
     IData,
     IProps,
 } from './Chart._types';

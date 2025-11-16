@@ -1,5 +1,5 @@
-import { IEventProps } from '@root/components/HtmlInject._types';
-import {
+import type { IEventProps } from '@root/components/HtmlInject._types';
+import type {
     ILexicalEntryEntity,
     ILanguageEntity,
 } from '@root/connectors/backend/IBookApi';

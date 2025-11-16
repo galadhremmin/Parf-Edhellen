@@ -1,5 +1,5 @@
-import { ILexicalEntryEntity } from '@root/connectors/backend/IBookApi';
-import { ICardResponse } from '@root/connectors/backend/IFlashcardApi';
+import type { ILexicalEntryEntity } from '@root/connectors/backend/IBookApi';
+import type { ICardResponse } from '@root/connectors/backend/IFlashcardApi';
 
 export interface IProps {
     flashcardId: number;

@@ -6,7 +6,7 @@ import {
 } from '@jest/globals';
 import { render, screen, waitFor } from '@testing-library/react';
 
-import { ILexicalEntryEntity, IEntitiesResponse } from '@root/connectors/backend/IBookApi';
+import type { ILexicalEntryEntity, IEntitiesResponse } from '@root/connectors/backend/IBookApi';
 import setupContainer from '@root/di/config';
 import { snakeCasePropsToCamelCase } from '@root/utilities/func/snake-case';
 import { Actions } from '../../actions';

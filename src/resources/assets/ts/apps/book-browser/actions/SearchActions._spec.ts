@@ -11,7 +11,7 @@ import BookApiConnector from '@root/connectors/backend/BookApiConnector';
 import { stringHashAll } from '@root/utilities/func/hashing';
 
 import SearchActions from '../actions/SearchActions';
-import { ISearchAction } from '../reducers/SearchReducer._types';
+import type { ISearchAction } from '../reducers/SearchReducer._types';
 import Actions from './Actions';
 
 describe('apps/book-browser/reducers/SearchReducer', () => {

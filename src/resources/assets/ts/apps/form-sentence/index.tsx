@@ -3,17 +3,17 @@ import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { thunk } from 'redux-thunk';
 
-import { ReduxThunkDispatch } from '@root/_types';
+import type { ReduxThunkDispatch } from '@root/_types';
 
 import { SentenceActions } from './actions';
-import { IProps } from './index._types';
+import type { IProps } from './index._types';
 import rootReducer from './reducers';
 
 import SentenceForm from './containers/SentenceForm';
 
 import '@root/components/AgGrid.scss';
 import registerApp from '../app';
-import { ISentenceTranslationEntity } from '@root/connectors/backend/IBookApi';
+import type { ISentenceTranslationEntity } from '@root/connectors/backend/IBookApi';
 
 const store = configureStore({
     reducer: rootReducer,

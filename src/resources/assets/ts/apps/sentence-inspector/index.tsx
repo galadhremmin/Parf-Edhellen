@@ -5,7 +5,7 @@ import { thunk } from 'redux-thunk';
 
 
 import { SentenceActions } from './actions';
-import { IProps } from './index._types';
+import type { IProps } from './index._types';
 import rootReducer from './reducers';
 
 import SentenceInspector from './containers/SentenceInspector';

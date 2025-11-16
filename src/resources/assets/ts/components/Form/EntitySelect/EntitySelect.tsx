@@ -1,18 +1,19 @@
-import React from 'react';
 import classNames from 'classnames';
+import { Component, type ChangeEvent as ReactChangeEvent, type KeyboardEvent, type FormEvent } from 'react';
+
 // Note: react-autosuggest uses deprecated UNSAFE_componentWillReceiveProps which causes warnings in React StrictMode
 // This is a known issue with the library (https://github.com/moroshko/react-autosuggest/issues/835)
 // The functionality works correctly despite the warning
 import Autosuggest, {
-    ChangeEvent,
-    SuggestionSelectedEventData,
+    type ChangeEvent,
+    type SuggestionSelectedEventData,
 } from 'react-autosuggest';
 
 import debounce from '@root/utilities/func/debounce';
 
 import { fireEvent } from '../../Component';
 import DefaultInput from './DefaultInput';
-import {
+import type {
     IProps,
     IState,
 } from './EntitySelect._types';
@@ -20,7 +21,7 @@ import {
 import './EntitySelect.scss';
 
 // TODO: Refactor as a React functional component
-export default class EntitySelect<T> extends React.Component<IProps<T>, IState> {
+export default class EntitySelect<T> extends Component<IProps<T>, IState> {
     public static defaultProps = {
         formatter: (s: any): string => s || '',
         renderSuggestion: (s: any) => <span>{JSON.stringify(s)}</span>,
@@ -180,7 +181,7 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
         });
     }
 
-    private _onValueChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    private _onValueChange = (ev: ReactChangeEvent<HTMLInputElement>) => {
         const {
             checked,
         } = ev.target;
@@ -196,7 +197,7 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
         });
     }
 
-    private _onValueKeyDown = (ev: React.KeyboardEvent<HTMLInputElement>) => {
+    private _onValueKeyDown = (ev: KeyboardEvent<HTMLInputElement>) => {
         const code = ev.which;
         if (!(code > 47 && code < 58) && // numeric (0-9)
             !(code > 64 && code < 91) && // upper alpha (A-Z)
@@ -212,7 +213,7 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
         this._applyValue();
     }
 
-    private _onTextChange = (ev: React.FormEvent<any>, params: ChangeEvent) => {
+    private _onTextChange = (ev: FormEvent<any>, params: ChangeEvent) => {
         const text = params.newValue;
 
         this.setState({
@@ -221,7 +222,7 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
         });
     }
 
-    private _onTextKeyDown = (ev: React.KeyboardEvent<HTMLInputElement>) => {
+    private _onTextKeyDown = (ev: KeyboardEvent<HTMLInputElement>) => {
         if (ev.which === 13) {
             ev.preventDefault();
             this._applyValue();
@@ -260,7 +261,7 @@ export default class EntitySelect<T> extends React.Component<IProps<T>, IState> 
         void fireEvent(name, onClearSuggestions);
     }
 
-    private _onSuggestionSelected = (ev: React.FormEvent<any>, data: SuggestionSelectedEventData<T>) => {
+    private _onSuggestionSelected = (ev: FormEvent<any>, data: SuggestionSelectedEventData<T>) => {
         this._applyValue(data.suggestion || null);
     }
 }

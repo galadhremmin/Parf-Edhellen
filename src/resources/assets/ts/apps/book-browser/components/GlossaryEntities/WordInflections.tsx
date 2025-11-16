@@ -1,13 +1,14 @@
+import { useCallback, useState } from 'react';
+import type { MouseEvent } from 'react';
 import TextIcon from '@root/components/TextIcon';
 import AutoInflectionsDialog, { isEligibleForAutoInflections } from './AutoInflectionsDialog';
-import { IProps } from './WordInflections._types';
-import React, { useCallback, useState } from 'react';
+import type { IProps } from './WordInflections._types';
 
 const WordInflections = (props: IProps) => {
     const { lexicalEntry: entry } = props;
     const [dialogOpen, setDialogOpen] = useState(false);
 
-    const _onAutoInflectClick = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
+    const _onAutoInflectClick = useCallback((ev: MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
         setDialogOpen(true);
     }, []);

@@ -1,4 +1,4 @@
-import IGlobalEvents from "@root/connectors/IGlobalEvents";
+import type IGlobalEvents from "@root/connectors/IGlobalEvents";
 
 export interface ITranscriber {
     transcribe(text: string, mode: string): Promise<string>;

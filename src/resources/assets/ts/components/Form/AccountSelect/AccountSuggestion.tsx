@@ -1,4 +1,4 @@
-import { IAccountSuggestion } from '@root/connectors/backend/IAccountApi';
+import type { IAccountSuggestion } from '@root/connectors/backend/IAccountApi';
 
 const AccountSuggestion = (account: IAccountSuggestion) => {
     return <span>{account.nickname}</span>;

@@ -1,7 +1,7 @@
 import DeleteLexicalEntry from './DeleteLexicalEntry';
 import EditLexicalEntry from './EditLexicalEntry';
 
-import { IProps } from './index._types';
+import type { IProps } from './index._types';
 
 function Toolbar(props: IProps) {
     return <>

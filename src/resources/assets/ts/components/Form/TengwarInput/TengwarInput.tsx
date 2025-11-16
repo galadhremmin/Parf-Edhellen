@@ -1,19 +1,21 @@
 import classNames from 'classnames';
-import React, {
+import {
     useCallback,
     useState,
+    lazy,
+    type ChangeEvent,
 } from 'react';
 
 import { excludeProps } from '@root/utilities/func/props';
 import {
     fireEvent, fireEventAsync,
 } from '../../Component';
-import { IComponentEvent } from '../../Component._types';
+import type { IComponentEvent } from '../../Component._types';
 import Dialog from '../../Dialog';
-import { IProps } from './TengwarInput._types';
-import { ITranscription } from './TranscriberForm._types';
+import type { IProps } from './TengwarInput._types';
+import type { ITranscription } from './TranscriberForm._types';
 
-const TranscriberFormAsync = React.lazy(() => import('./TranscriberForm'));
+const TranscriberFormAsync = lazy(() => import('./TranscriberForm'));
 
 function TengwarInput(props: IProps) {
     const {
@@ -35,7 +37,7 @@ function TengwarInput(props: IProps) {
     ]);
     const componentClassName = classNames('form-control', 'tengwar', className || '');
 
-    const _onChange = useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
+    const _onChange = useCallback((ev: ChangeEvent<HTMLInputElement>) => {
         const { value: newValue } = ev.target;
         void fireEvent(name, onChange, newValue);
     }, [ name, onChange, value ]);

@@ -1,4 +1,4 @@
-import { ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
+import type { ISuggestionEntity } from '@root/connectors/backend/IGlossResourceApi';
 import LexicalEntrySuggestion from './LexicalEntrySuggestion';
 
 function LexicalEntryValue(entry: ISuggestionEntity) {

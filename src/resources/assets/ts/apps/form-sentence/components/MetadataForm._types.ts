@@ -1,6 +1,6 @@
-import { ComponentEventHandler } from '@root/components/Component._types';
-import { ISentenceFieldChangeSpec } from '../containers/SentenceForm._types';
-import { ISentenceReducerState } from '../reducers/SentenceReducer._types';
+import type { ComponentEventHandler } from '@root/components/Component._types';
+import type { ISentenceFieldChangeSpec } from '../containers/SentenceForm._types';
+import type { ISentenceReducerState } from '../reducers/SentenceReducer._types';
 
 export interface IMetadataFormEvents {
     onMetadataChange?: ComponentEventHandler<ISentenceFieldChangeSpec>;

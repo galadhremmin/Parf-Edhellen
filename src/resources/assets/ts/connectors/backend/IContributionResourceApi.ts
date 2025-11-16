@@ -1,10 +1,10 @@
-import {
+import type {
     ISentenceEntity,
     ISentenceFragmentEntity,
     ISentenceTranslationEntity,
     ITextTransformationsMap,
 } from './IBookApi';
-import { ILexicalEntryEntity } from './IGlossResourceApi';
+import type { ILexicalEntryEntity } from './IGlossResourceApi';
 
 export type IContribution<T> = T & {
     contributionId?: number;

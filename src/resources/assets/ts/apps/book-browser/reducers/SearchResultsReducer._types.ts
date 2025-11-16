@@ -1,5 +1,5 @@
-import { IReduxAction } from '@root/_types';
-import { ISearchGroups } from '@root/connectors/backend/IBookApi';
+import type { IReduxAction } from '@root/_types';
+import type { ISearchGroups } from '@root/connectors/backend/IBookApi';
 
 export interface ISearchResult {
     id: number;

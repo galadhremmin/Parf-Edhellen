@@ -1,5 +1,5 @@
-import { IComponentEvent } from '@root/components/Component._types';
-import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
+import type { IComponentEvent } from '@root/components/Component._types';
+import type { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
 import GlossInspector from '@root/apps/book-browser/components/GlossaryEntities/LexicalEntry';
 import Markdown from '@root/components/Markdown';
 import Quote from '@root/components/Quote';
@@ -10,7 +10,7 @@ import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
 import useLexicalEntry from '@root/utilities/hooks/useLexicalEntry';
 
-import { IProps } from './SentenceFragmentInspector._types';
+import type { IProps } from './SentenceFragmentInspector._types';
 
 function onReferenceLinkClick(ev: IComponentEvent<IReferenceLinkClickDetails>) {
     const globalEvents = resolve(DI.GlobalEvents);

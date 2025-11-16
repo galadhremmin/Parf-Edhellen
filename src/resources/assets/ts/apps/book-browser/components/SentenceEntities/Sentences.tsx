@@ -1,6 +1,6 @@
 import Ad from '@root/apps/ad/containers/Ad';
 import Language from '../Language';
-import { IProps } from './Sentences._types';
+import type { IProps } from './Sentences._types';
 import Sentence from './Sentence';
 
 function Sentences(props: IProps) {

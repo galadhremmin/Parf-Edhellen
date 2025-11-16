@@ -1,4 +1,4 @@
-import { IFeedRecord } from "@root/connectors/backend/IAccountApi";
+import type { IFeedRecord } from "@root/connectors/backend/IAccountApi";
 
 export interface IProps<TEntity extends IFeedRecord = IFeedRecord> {
     unit: TEntity;

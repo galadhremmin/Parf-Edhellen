@@ -1,4 +1,4 @@
-import { ISubscriptionApi } from '@root/connectors/backend/ISubscriptionApi';
+import type { ISubscriptionApi } from '@root/connectors/backend/ISubscriptionApi';
 
 export interface IProps {
     className?: string;

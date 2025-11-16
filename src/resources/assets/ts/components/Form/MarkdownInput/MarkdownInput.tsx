@@ -6,10 +6,10 @@ import {
 } from 'react';
 
 import Cache from '@root/utilities/Cache';
-import { IComponentEvent } from '../../Component._types';
+import type { IComponentEvent } from '../../Component._types';
 import {
-    IComponentConfig,
-    IProps,
+    type IComponentConfig,
+    type IProps,
     Tab,
 } from './MarkdownInput._types';
 import Tabs from './Tabs';

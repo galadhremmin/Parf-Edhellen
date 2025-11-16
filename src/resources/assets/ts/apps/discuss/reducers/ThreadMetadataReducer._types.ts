@@ -1,6 +1,6 @@
-import { IReduxAction } from '@root/_types';
-import { IThreadMetadataResponse } from '@root/connectors/backend/IDiscussApi';
-import { IThreadEntityAction } from './ThreadReducer._types';
+import type { IReduxAction } from '@root/_types';
+import type { IThreadMetadataResponse } from '@root/connectors/backend/IDiscussApi';
+import type { IThreadEntityAction } from './ThreadReducer._types';
 
 export interface IThreadMetadataReducerAction extends IReduxAction, IThreadEntityAction {
     metadata: IThreadMetadataResponse;

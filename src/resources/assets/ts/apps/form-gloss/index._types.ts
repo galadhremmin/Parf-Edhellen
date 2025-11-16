@@ -1,5 +1,5 @@
-import { ILexicalEntryInflection } from '@root/connectors/backend/IBookApi';
-import { ILexicalEntryEntity } from '@root/connectors/backend/IGlossResourceApi';
+import type { ILexicalEntryInflection } from '@root/connectors/backend/IBookApi';
+import type { ILexicalEntryEntity } from '@root/connectors/backend/IGlossResourceApi';
 
 export const enum FormSection {
     LexicalEntry = 'lexical_entry',

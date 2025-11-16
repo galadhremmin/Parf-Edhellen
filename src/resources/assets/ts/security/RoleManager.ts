@@ -1,6 +1,6 @@
 import { SecurityRole } from '../config';
-import IRoleManager from './IRoleManager';
-import { SecurityRoleAsString } from './RoleManager._types';
+import type IRoleManager from './IRoleManager';
+import type { SecurityRoleAsString } from './RoleManager._types';
 
 const AccountIdProperty = 'accountId';
 const AccountRolesProperty = 'accountRoles';

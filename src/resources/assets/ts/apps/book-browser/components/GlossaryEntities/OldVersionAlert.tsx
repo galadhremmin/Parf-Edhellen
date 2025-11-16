@@ -1,5 +1,5 @@
 import TextIcon from '@root/components/TextIcon';
-import { IProps } from './OldVersionAlert._types';
+import type { IProps } from './OldVersionAlert._types';
 
 const OldVersionAlert = (props: IProps) => {
     const { lexicalEntry } = props;

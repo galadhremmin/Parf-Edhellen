@@ -1,5 +1,5 @@
 import TextIcon from '@root/components/TextIcon';
-import { IProps } from './NumberOfComments._types';
+import type { IProps } from './NumberOfComments._types';
 
 const NumberOfComments = (props: IProps) => {
     const { lexicalEntry } = props;

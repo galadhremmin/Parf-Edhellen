@@ -1,11 +1,12 @@
 import classNames from 'classnames';
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
+import type { ChangeEvent, MouseEvent } from 'react';
 
 import './FiltersButton.scss';
 import {
     buildQueryString,
     parseQueryString,
-    QueryStringValue,
+    type QueryStringValue,
 } from '@root/utilities/func/query-string';
 
 const DiscussFilters = [
@@ -39,12 +40,12 @@ function FiltersButton() {
 
     const [ isOpen, setIsOpen ] = useState<boolean>(false);
 
-    const _onOpenClick = useCallback((ev: React.MouseEvent) => {
+    const _onOpenClick = useCallback((ev: MouseEvent) => {
         ev.preventDefault();
         setIsOpen((x) => !x);
     }, []);
 
-    const _onFilterChange = useCallback((ev: React.ChangeEvent) => {
+    const _onFilterChange = useCallback((ev: ChangeEvent) => {
         const {
             value,
         } = ev.target as HTMLInputElement;
@@ -55,7 +56,7 @@ function FiltersButton() {
         setFilterMap(nextFilterMap);
     }, [ filterMap ]);
 
-    const _onApply = useCallback((ev: React.MouseEvent) => {
+    const _onApply = useCallback((ev: MouseEvent) => {
         ev.preventDefault();
 
         const filters = Object.keys(filterMap).filter((f) => filterMap[f]);

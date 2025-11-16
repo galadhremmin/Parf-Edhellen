@@ -1,16 +1,17 @@
 import classNames from 'classnames';
-import React, {
+import {
     useCallback,
     useEffect,
     useRef,
 } from 'react';
+import type { MouseEvent } from 'react';
 
 import { fireEvent } from '@root/components/Component';
 import Quote from '@root/components/Quote';
-import { IProps } from './CombinePartsStage._types';
+import type { IProps } from './CombinePartsStage._types';
+import { GameStage } from '../actions';
 
 import './CombinePartsStage.scss';
-import { GameStage } from '../actions';
 
 const getPartIdFromDataset = (target: EventTarget) => {
     const partIdAttribute = 'partId';
@@ -22,7 +23,6 @@ function CombinePartsStage(props: IProps) {
     const {
         parts,
         selectedParts,
-        tengwarMode,
 
         onChangeStage,
         onDeselectPart,
@@ -40,12 +40,12 @@ function CombinePartsStage(props: IProps) {
         }
     }, [ parts ]);
 
-    const _onDeselectPart = useCallback((ev: React.MouseEvent<HTMLAnchorElement>) => {
+    const _onDeselectPart = useCallback((ev: MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
         void fireEvent('PartList', onDeselectPart, getPartIdFromDataset(ev.target));
     }, [ onDeselectPart ]);
 
-    const _onSelectPart = useCallback((ev: React.MouseEvent<HTMLButtonElement>) => {
+    const _onSelectPart = useCallback((ev: MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
         void fireEvent('CombinePartsStage', onSelectPart, getPartIdFromDataset(ev.target));
     }, [ onSelectPart ]);

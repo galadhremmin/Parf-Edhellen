@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 import TextIcon from '@root/components/TextIcon';
 
-import { IProps } from './SubscribeButton._types';
+import type { IProps } from './SubscribeButton._types';
 
 const ForumGroupEntityName = 'forum_group';
 

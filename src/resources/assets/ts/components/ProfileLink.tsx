@@ -1,4 +1,4 @@
-import { IProps } from './ProfileLink._types';
+import type { IProps } from './ProfileLink._types';
 
 const ProfileLink = (props: IProps) => {
     const {

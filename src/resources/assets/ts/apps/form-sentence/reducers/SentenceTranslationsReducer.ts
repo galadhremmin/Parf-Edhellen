@@ -1,6 +1,6 @@
 import { Actions } from '../actions';
 import SentenceTranslationReducer from './child-reducers/SentenceTranslationReducer';
-import {
+import type {
     ISentenceTranslationsAction,
     ISentenceTranslationsReducerState,
 } from './SentenceTranslationsReducer._types';

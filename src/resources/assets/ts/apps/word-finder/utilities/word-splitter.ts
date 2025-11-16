@@ -1,4 +1,4 @@
-import { IGloss } from '@root/connectors/backend/IWordFinderApi';
+import type { IGloss } from '@root/connectors/backend/IWordFinderApi';
 
 export const preprocessWordForSplitting = (word: string) => //
     word.toLocaleLowerCase().replace(/[-]/g, '');

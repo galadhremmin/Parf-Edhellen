@@ -1,10 +1,10 @@
-import { ComponentEventHandler } from '@root/components/Component._types';
-import {
+import type { ComponentEventHandler } from '@root/components/Component._types';
+import type {
     IFragmentInSentenceState,
     IFragmentsReducerState,
     ITextState,
 } from '../reducers/FragmentsReducer._types';
-import { IEventProps as IInspectorEventProps } from './FragmentInspector._types';
+import type { IEventProps as IInspectorEventProps } from './FragmentInspector._types';
 
 export interface IProps extends IEventProps {
     fragment: IFragmentsReducerState;

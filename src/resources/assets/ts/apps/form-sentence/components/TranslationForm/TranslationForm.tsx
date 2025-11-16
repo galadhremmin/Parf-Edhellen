@@ -3,7 +3,7 @@ import {
     createTranslationRows,
 } from '../../utilities/translations';
 import NoSentencesAlert from '../NoSentencesAlert';
-import {
+import type {
     IProps,
     ITranslationRow,
 } from './TranslationForm._types';

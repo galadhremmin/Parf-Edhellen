@@ -1,6 +1,6 @@
 import Quote from '@root/components/Quote';
-import { IThreadEntity } from '@root/connectors/backend/IDiscussApi';
-import { IEntitiesComponentProps } from '../../containers/Entities._types';
+import type { IThreadEntity } from '@root/connectors/backend/IDiscussApi';
+import type { IEntitiesComponentProps } from '../../containers/Entities._types';
 import DiscussTable from './DiscussTable';
 
 function DiscussEntities(props: IEntitiesComponentProps<IThreadEntity>) {

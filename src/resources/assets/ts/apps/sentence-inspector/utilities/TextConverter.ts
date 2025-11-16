@@ -1,11 +1,11 @@
-import {
+import type {
     FragmentTransformation,
     ISentenceFragmentEntity,
     ITextTransformation,
-    SentenceFragmentType,
 } from '@root/connectors/backend/IBookApi';
+import { SentenceFragmentType } from '@root/connectors/backend/IBookApi';
 import { mapArray } from '@root/utilities/func/mapper';
-import {
+import type {
     IFragmentInSentenceState,
     ITextState,
 } from '../reducers/FragmentsReducer._types';

@@ -4,17 +4,17 @@ import {
 } from 'react';
 
 import Form from '@root/apps/discuss/components/Form';
-import {
+import type {
     IFormChangeData,
     IFormOutput,
 } from '@root/apps/discuss/components/Form._types';
 import UnauthenticatedAlert from '@root/apps/discuss/components/UnauthenticatedAlert';
 import { fireEvent } from '@root/components/Component';
-import { IComponentEvent } from '@root/components/Component._types';
+import type { IComponentEvent } from '@root/components/Component._types';
 import Dialog from '@root/components/Dialog';
 import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
 import TextIcon from '@root/components/TextIcon';
-import { IProps } from './CreateThreadButton._types';
+import type { IProps } from './CreateThreadButton._types';
 
 function CreateThreadButton(props: IProps) {
     const {

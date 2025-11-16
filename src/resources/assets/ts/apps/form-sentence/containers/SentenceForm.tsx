@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { FormEvent, MouseEvent } from 'react';
 import { connect } from 'react-redux';
 
-import { ReduxThunkDispatch } from '@root/_types';
+import type { ReduxThunkDispatch } from '@root/_types';
 import { fireEvent } from '@root/components/Component';
 import Dialog from '@root/components/Dialog';
 import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
@@ -19,8 +20,8 @@ import FragmentsForm from '../components/FragmentsForm';
 import LanguageForm from '../components/LanguageForm';
 import MetadataForm from '../components/MetadataForm';
 import TranslationForm from '../components/TranslationForm';
-import { RootReducer } from '../reducers';
-import { IProps } from './SentenceForm._types';
+import type { RootReducer } from '../reducers';
+import type { IProps } from './SentenceForm._types';
 
 import './SentenceForm.scss';
 
@@ -71,7 +72,7 @@ function SentenceForm(props: IProps) {
         }
     }, [ sentenceId ]);
 
-    const _onSubmit = useCallback((ev: React.FormEvent) => {
+    const _onSubmit = useCallback((ev: FormEvent) => {
         ev.preventDefault();
         let translations: typeof sentenceTranslations = [];
         // Only include translations if they are valid. These are meant to be optional.
@@ -100,7 +101,7 @@ function SentenceForm(props: IProps) {
         sentenceTranslations,
     ]);
 
-    const _onOpenOriginal = useCallback((ev: React.MouseEvent<HTMLButtonElement>) => {
+    const _onOpenOriginal = useCallback((ev: MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
         window.open(`/phrases/${languageId}-default/${sentenceId}-original`, '_blank');
     }, [

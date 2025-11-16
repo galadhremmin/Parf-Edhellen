@@ -1,9 +1,8 @@
-import React from 'react';
-
+import type { ChangeEvent, MouseEvent } from 'react';
 import { fireEvent } from '@root/components/Component';
-import { IComponentProps } from '@root/components/Form/FormComponent._types';
+import type { IComponentProps } from '@root/components/Form/FormComponent._types';
 import TextIcon from '@root/components/TextIcon';
-import { ILexicalEntryDetail } from '@root/connectors/backend/IGlossResourceApi';
+import type { ILexicalEntryDetail } from '@root/connectors/backend/IGlossResourceApi';
 
 const _setOrder = (newValue: ILexicalEntryDetail[]) => {
     newValue.forEach((detail, i) => {
@@ -26,7 +25,7 @@ function LexicalEntryDetailInput(props: IComponentProps<ILexicalEntryDetail[]>) 
         value = [],
     } = props;
 
-    const _onAddClick = (ev: React.MouseEvent<HTMLButtonElement>) => {
+    const _onAddClick = (ev: MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
         const newValue: ILexicalEntryDetail[] = [
             ...value,
@@ -41,7 +40,7 @@ function LexicalEntryDetailInput(props: IComponentProps<ILexicalEntryDetail[]>) 
         void fireEvent(name, onChange, newValue);
     };
 
-    const _onMoveClick = (sourceIndex: number, direction: number) => (ev: React.MouseEvent<HTMLButtonElement>) => {
+    const _onMoveClick = (sourceIndex: number, direction: number) => (ev: MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
 
         const destination = sourceIndex + direction;
@@ -66,7 +65,7 @@ function LexicalEntryDetailInput(props: IComponentProps<ILexicalEntryDetail[]>) 
         void fireEvent(name, onChange, newValue);
     };
 
-    const _onDeleteClick = (sourceIndex: number) => (ev: React.MouseEvent<HTMLButtonElement>) => {
+    const _onDeleteClick = (sourceIndex: number) => (ev: MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
 
         const newValue = value.filter((v, i) => i !== sourceIndex);
@@ -76,7 +75,7 @@ function LexicalEntryDetailInput(props: IComponentProps<ILexicalEntryDetail[]>) 
     };
 
     const _onDetailChange = (sourceIndex: number, propertyName: keyof Pick<ILexicalEntryDetail, "text" | "category">) =>
-        (ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        (ev: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const {
             value: textValue,
         } = ev.target;

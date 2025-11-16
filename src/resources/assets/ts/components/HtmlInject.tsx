@@ -1,25 +1,28 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 /// <reference path="../_types/html-to-react.d.ts" />
 import {
-    INode,
+    type INode,
     Parser as HtmlToReactParser,
-    ParserInstructions,
+    type ParserInstructions,
     ProcessNodeDefinitions,
 } from 'html-to-react';
 import React, {
+    lazy,
+    Component,
     Suspense,
 } from 'react';
+import type { MouseEvent } from 'react';
 
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
 import {
     fireEvent,
 } from './Component';
-import {
+import type {
     IProps,
     IState,
 } from './HtmlInject._types';
 
-export default class HtmlInject extends React.Component<IProps, IState> {
+export default class HtmlInject extends Component<IProps, IState> {
     public static getDerivedStateFromProps(nextProps: IProps, prevState: IState) {
         if (nextProps.html !== prevState.lastHtml) {
             return {
@@ -127,7 +130,7 @@ export default class HtmlInject extends React.Component<IProps, IState> {
             return definitions.processDefaultNode(node, children);
         }
 
-        const Component = React.lazy(() => import('./Tengwar'));
+        const Component = lazy(() => import('./Tengwar'));
 
         return <Suspense fallback={<span>&#128220;</span>}>
             <Component text={node.children[0].data} transcribe={true} mode={mode.toLowerCase()} />
@@ -135,7 +138,7 @@ export default class HtmlInject extends React.Component<IProps, IState> {
     }
 
     private _onReferenceLinkClick(word: string, normalizedWord: string, languageShortName: string,
-        ev: React.MouseEvent<HTMLAnchorElement>) {
+        ev: MouseEvent<HTMLAnchorElement>) {
         ev.preventDefault();
 
         void fireEvent('HtmlInjectComponent', this.props.onReferenceLinkClick, {

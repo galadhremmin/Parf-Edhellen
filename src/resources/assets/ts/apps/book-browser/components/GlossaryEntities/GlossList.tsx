@@ -1,5 +1,5 @@
 import Tengwar from '@root/components/Tengwar';
-import { IProps } from './GlossList._types';
+import type { IProps } from './GlossList._types';
 
 const GlossList = (props: IProps) => {
     const {

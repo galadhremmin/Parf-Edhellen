@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { useCallback } from 'react';
 
 import { fireEvent } from './Component';
-import { IProps } from './StaticAlert._types';
+import type { IProps } from './StaticAlert._types';
 
 function StaticAlert(props: IProps) {
     const {

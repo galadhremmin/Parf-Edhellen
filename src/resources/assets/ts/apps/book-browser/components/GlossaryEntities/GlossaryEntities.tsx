@@ -1,16 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { Waypoint } from 'react-waypoint';
 
-import { ReduxThunkDispatch } from '@root/_types';
-import { IComponentEvent } from '@root/components/Component._types';
-import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
+import type { ReduxThunkDispatch } from '@root/_types';
+import type { IComponentEvent } from '@root/components/Component._types';
+import type { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
 import Cache from '@root/utilities/Cache';
 
 import { SearchActions } from '../../actions';
-import { IBrowserHistoryState } from '../../actions/SearchActions._types';
-import { IEntitiesComponentProps } from '../../containers/Entities._types';
+import type { IBrowserHistoryState } from '../../actions/SearchActions._types';
+import type { IEntitiesComponentProps } from '../../containers/Entities._types';
 import GlossaryEntitiesEmpty from '../GlossaryEntitiesEmpty';
 import GlossaryEntitiesLoading from './GlossaryEntitiesLoading';
 import GlossaryLanguages from './GlossaryLanguages';
@@ -155,11 +155,11 @@ function onReferenceClick(ev: IComponentEvent<IReferenceLinkClickDetails>) {
    globalEvents.fire(globalEvents.loadReference, ev.value);
 }
 
-const BouncingArrowAsync = React.lazy(() => import('@root/components/BouncingArrow'));
-const FixedBouncingArrow = (props: any) => <React.Suspense fallback={null}>
+const BouncingArrowAsync = lazy(() => import('@root/components/BouncingArrow'));
+const FixedBouncingArrow = (props: any) => <Suspense fallback={null}>
     <div className="ed-glossary-loaded-notifier">
         <BouncingArrowAsync {...props} />
     </div>
-</React.Suspense>;
+</Suspense>;
 
 export default GlossaryEntities;

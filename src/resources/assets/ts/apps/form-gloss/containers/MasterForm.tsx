@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import type { MouseEvent, FormEvent } from 'react';
 import { connect } from 'react-redux';
 
-import { ReduxThunkDispatch } from '@root/_types';
+import type { ReduxThunkDispatch } from '@root/_types';
 import { fireEvent } from '@root/components/Component';
 import ValidationErrorAlert from '@root/components/Form/ValidationErrorAlert';
 import Quote from '@root/components/Quote';
@@ -9,15 +10,15 @@ import StaticAlert from '@root/components/StaticAlert';
 import TextIcon from '@root/components/TextIcon';
 import { deepClone } from '@root/utilities/func/clone';
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
-import { IInflectionGroupState } from '../reducers/InflectionsReducer._types';
+import type { IInflectionGroupState } from '../reducers/InflectionsReducer._types';
 
 import LexicalEntryActions from '../actions/LexicalEntryActions';
 import LexicalEntryForm from '../components/LexicalEntryForm';
 import InflectionForm from '../components/InflectionForm';
 import { FormSection } from '../index._types';
-import { RootReducer } from '../reducers';
-import { IChangeTrackerReducerState } from '../reducers/ChangeTrackerReducer._types';
-import { IProps } from './MasterForm._types';
+import type { RootReducer } from '../reducers';
+import type { IChangeTrackerReducerState } from '../reducers/ChangeTrackerReducer._types';
+import type { IProps } from './MasterForm._types';
 
 function MasterForm(props: IProps) {
     const {
@@ -38,12 +39,12 @@ function MasterForm(props: IProps) {
 
     const [ showNoChangesWereMade, setShowNoChangesWereMade ] = useState<boolean>(false);
 
-    const _onDisableEdit = (ev: React.MouseEvent<HTMLAnchorElement>) => {
+    const _onDisableEdit = (ev: MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
         void fireEvent('MasterForm', onCopyGloss);
     };
 
-    const _onSubmit = (ev: React.FormEvent) => {
+    const _onSubmit = (ev: FormEvent) => {
         ev.preventDefault();
         setShowNoChangesWereMade(! Object.keys(changes) //
             .some((context: keyof IChangeTrackerReducerState) => changes[context] === true)

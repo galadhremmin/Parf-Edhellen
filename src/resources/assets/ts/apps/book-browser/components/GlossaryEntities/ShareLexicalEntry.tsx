@@ -1,5 +1,5 @@
 import TextIcon from '@root/components/TextIcon';
-import { IProps } from './ShareLexicalEntry._types';
+import type { IProps } from './ShareLexicalEntry._types';
 
 const ShareLexicalEntry = (props: IProps) => {
     const { lexicalEntry: entry } = props;

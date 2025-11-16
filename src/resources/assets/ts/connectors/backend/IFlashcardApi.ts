@@ -1,4 +1,4 @@
-import { ILexicalEntryEntity } from './IBookApi';
+import type { ILexicalEntryEntity } from './IBookApi';
 
 export interface ICardRequest {
     id: number;

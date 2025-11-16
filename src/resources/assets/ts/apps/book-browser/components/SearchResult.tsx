@@ -1,6 +1,6 @@
-import React from 'react';
+import type { MouseEvent } from 'react';
 import { fireEvent } from '@root/components/Component';
-import { IProps } from './SearchResult._types';
+import type { IProps } from './SearchResult._types';
 
 export default function SearchResult(props: IProps) {
     const {
@@ -13,7 +13,7 @@ export default function SearchResult(props: IProps) {
      * onClick handler for word links. Disables the default behavior and transforms the event to an event
      * that adheres to the component's public interface.
      */
-    const _onClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
+    const _onClick = (ev: MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
 
         void fireEvent('SearchResult', onClick, r);

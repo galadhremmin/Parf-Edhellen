@@ -1,5 +1,4 @@
-import React from 'react';
-
+import type { ChangeEvent } from 'react';
 import TextIcon from '@root/components/TextIcon';
 import { fireEvent } from '@root/components/Component';
 import {
@@ -7,14 +6,14 @@ import {
     CookieUseCases,
 } from '@root/config';
 
-import { IProps } from './Settings._types';
+import type { IProps } from './Settings._types';
 
 export default function Settings(props: IProps) {
     const {
         consentedUseCases,
         onConsentedUseCasesChange,
     } = props;
-    const _onChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+    const _onChange = (ev: ChangeEvent<HTMLInputElement>) => {
         const checked = ev.target.checked;
         const useCase = ev.target.value;
         const nextConsentedUseCases = consentedUseCases.filter((c) => c !== useCase);

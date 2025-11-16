@@ -5,9 +5,9 @@ import {
     test,
 } from '@jest/globals';
 import sinon from 'sinon';
-import { IComponentEvent } from '@root/components/Component._types';
+import type { IComponentEvent } from '@root/components/Component._types';
 
-import { ISearchResult } from '../reducers/SearchResultsReducer._types';
+import type { ISearchResult } from '../reducers/SearchResultsReducer._types';
 import SearchResult from './SearchResult';
 
 describe('apps/book-browser/components/SearchResultsContainer', () => {

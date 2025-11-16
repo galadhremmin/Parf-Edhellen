@@ -1,6 +1,7 @@
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
-import IFlashcardApi, {
+import type IFlashcardApi from './IFlashcardApi';
+import type {
     ICardRequest,
     ICardResponse,
     ICardTestRequest,

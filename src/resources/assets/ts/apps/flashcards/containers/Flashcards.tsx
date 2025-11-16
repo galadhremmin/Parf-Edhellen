@@ -1,4 +1,5 @@
-import React from 'react';
+import { Component, Fragment } from 'react';
+import type { MouseEvent } from 'react';
 import HtmlInject from '@root/components/HtmlInject';
 import Spinner from '@root/components/Spinner';
 import Tengwar from '@root/components/Tengwar';
@@ -7,7 +8,7 @@ import FlashcardApiConnector from '@root/connectors/backend/FlashcardApiConnecto
 import Card from '../components/Card';
 import { SideOfTheCard } from '../components/Card._types';
 import Table from '../components/Table';
-import {
+import type {
     IProps,
     IState,
 } from './Flashcards._types';
@@ -15,7 +16,7 @@ import {
 import './Flashcards.scss';
 
 // TODO: Convert to React `functional` component
-export default class Flashcards extends React.Component<IProps, IState> {
+export default class Flashcards extends Component<IProps, IState> {
     public state: IState = {
         correct: true,
         flipped: false,
@@ -62,7 +63,7 @@ export default class Flashcards extends React.Component<IProps, IState> {
             return <Spinner />;
         }
 
-        return <React.Fragment>
+        return <Fragment>
             {this._renderHeader(word, tengwarMode)}
             <p>What does this mean?</p>
             <nav>
@@ -72,7 +73,7 @@ export default class Flashcards extends React.Component<IProps, IState> {
                     </li>)}
                 </ul>
             </nav>
-        </React.Fragment>;
+        </Fragment>;
     }
 
     private _renderBack() {
@@ -86,7 +87,7 @@ export default class Flashcards extends React.Component<IProps, IState> {
             tengwarMode,
         } = this.props;
 
-        return <React.Fragment>
+        return <Fragment>
             {this._renderHeader(word, tengwarMode)}
             <p>
                 <span className="gloss">{gloss.allGlosses}</span>
@@ -107,7 +108,7 @@ export default class Flashcards extends React.Component<IProps, IState> {
             <nav className="text-center">
                 <a href="#" className="btn btn-primary" onClick={this._onNextClick}>Next card</a>
             </nav>
-        </React.Fragment>;
+        </Fragment>;
     }
 
     private _renderHeader(word: string, tengwarMode: string) {
@@ -168,7 +169,7 @@ export default class Flashcards extends React.Component<IProps, IState> {
         });
     }
 
-    private _onOptionClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
+    private _onOptionClick = (ev: MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
 
         const optionKey = 'option';
@@ -176,7 +177,7 @@ export default class Flashcards extends React.Component<IProps, IState> {
         void this._testOption(option);
     }
 
-    private _onNextClick = (ev: React.MouseEvent<HTMLAnchorElement>) => {
+    private _onNextClick = (ev: MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
         void this._loadCard();
     }

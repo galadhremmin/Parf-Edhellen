@@ -1,7 +1,5 @@
-import {
-    AnyAction,
-} from 'redux';
-import {
+import type { UnknownAction } from 'redux';
+import type {
     ThunkAction,
     ThunkDispatch,
 } from 'redux-thunk';
@@ -20,5 +18,5 @@ export type CreateRootReducer<T> = {
     [R in keyof T]: FirstArgument<T[R]>;
 };
 
-export type ReduxThunk = ThunkAction<any, any, any, AnyAction>;
+export type ReduxThunk = ThunkAction<any, any, any, UnknownAction>;
 export type ReduxThunkDispatch = ThunkDispatch<any, any, any>;

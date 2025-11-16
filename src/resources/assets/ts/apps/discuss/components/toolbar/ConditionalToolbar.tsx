@@ -1,7 +1,7 @@
-import React, { Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 
 import Spinner from '@root/components/Spinner';
-import { IProps } from './ConditionalToolbar._types';
+import type { IProps } from './ConditionalToolbar._types';
 
 export default function ConditionalToolbar(props: IProps) {
     return <Suspense fallback={<Spinner />}>
@@ -9,4 +9,4 @@ export default function ConditionalToolbar(props: IProps) {
     </Suspense>;
 }
 
-const ToolbarAsync = React.lazy(() => import('./index'));
+const ToolbarAsync = lazy(() => import('./index'));

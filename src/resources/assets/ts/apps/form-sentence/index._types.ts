@@ -1,1 +1,1 @@
-export { IProps } from './containers/SentenceForm._types';
+export type { IProps } from './containers/SentenceForm._types';

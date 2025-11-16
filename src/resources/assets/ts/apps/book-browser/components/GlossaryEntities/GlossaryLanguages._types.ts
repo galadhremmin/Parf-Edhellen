@@ -1,7 +1,7 @@
-import { ComponentEventHandler } from '@root/components/Component._types';
-import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
-import { ILexicalEntryEntity, ILanguageEntity } from '@root/connectors/backend/IBookApi';
-import { ISectionsState } from '../../reducers/SectionsReducer._types';
+import type { ComponentEventHandler } from '@root/components/Component._types';
+import type { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
+import type { ILexicalEntryEntity, ILanguageEntity } from '@root/connectors/backend/IBookApi';
+import type { ISectionsState } from '../../reducers/SectionsReducer._types';
 
 export interface IProps {
     abstract?: string;

@@ -1,5 +1,5 @@
 import Spinner from '@root/components/Spinner';
-import { IProps } from './LoadingIndicator._types';
+import type { IProps } from './LoadingIndicator._types';
 
 import './LoadingIndicator.scss';
 

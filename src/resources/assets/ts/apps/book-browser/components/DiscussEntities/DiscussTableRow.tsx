@@ -1,6 +1,6 @@
 import DateLabel from '@root/components/DateLabel';
 import TextIcon from '@root/components/TextIcon';
-import { IProps } from './DiscussTableRow._types';
+import type { IProps } from './DiscussTableRow._types';
 
 function DiscussTableRow(props: IProps) {
     const {

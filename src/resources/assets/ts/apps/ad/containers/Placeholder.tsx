@@ -1,6 +1,6 @@
-import React, { CSSProperties } from 'react';
+import type { CSSProperties } from 'react';
 
-import { IProps } from '../index._types';
+import type { IProps } from '../index._types';
 
 const PlaceholderStyles: CSSProperties = {
     border: '1px solid red',

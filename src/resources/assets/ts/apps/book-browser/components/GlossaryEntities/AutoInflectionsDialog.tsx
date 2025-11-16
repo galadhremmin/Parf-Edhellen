@@ -1,18 +1,18 @@
-import React, { useCallback, useState } from 'react';
-
-import { IComponentEvent } from '@root/components/Component._types';
+import { useCallback, useEffect, useState } from 'react';
+import type { MouseEvent } from 'react';
+import type { IComponentEvent } from '@root/components/Component._types';
 import Dialog from '@root/components/Dialog';
 import Spinner from '@root/components/Spinner';
 import StaticAlert from '@root/components/StaticAlert';
 import Tengwar from '@root/components/Tengwar';
 import TextIcon from '@root/components/TextIcon';
 
-import { IAutoInflectionsResponse } from '@root/connectors/backend/IInflectionResourceApi';
+import type { IAutoInflectionsResponse } from '@root/connectors/backend/IInflectionResourceApi';
 import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 
-import { IProps } from './AutoInflectionsDialog._types';
-import { ILexicalEntryEntity } from '@root/connectors/backend/IBookApi';
+import type { IProps } from './AutoInflectionsDialog._types';
+import type { ILexicalEntryEntity } from '@root/connectors/backend/IBookApi';
 
 export function isEligibleForAutoInflections(lexicalEntry: ILexicalEntryEntity): boolean {
     return lexicalEntry?.type === 'verb' && //
@@ -50,15 +50,15 @@ const AutoInflectionsDialog = (props: IProps) => {
     }, [lexicalEntryId, inflectionApi]);
 
     // Fetch data when dialog opens
-    React.useEffect(() => {
+    useEffect(() => {
         if (open && lexicalEntryId) {
             _fetchInflections();
         }
     }, [open, lexicalEntryId, _fetchInflections]);
 
-    const _onDialogDismiss = useCallback((e: React.MouseEvent<HTMLAnchorElement> | IComponentEvent<void>) => {
-        if (typeof (e as React.MouseEvent<HTMLAnchorElement>).preventDefault === 'function') {
-            (e as React.MouseEvent<HTMLAnchorElement>).preventDefault();
+    const _onDialogDismiss = useCallback((e: MouseEvent<HTMLAnchorElement> | IComponentEvent<void>) => {
+        if (typeof (e as MouseEvent<HTMLAnchorElement>).preventDefault === 'function') {
+            (e as MouseEvent<HTMLAnchorElement>).preventDefault();
         }
         onDismiss();
     }, [onDismiss]);

@@ -1,4 +1,4 @@
-import {
+import type {
     ISentenceFragmentEntity,
     ISentenceResponse,
 } from '@root/connectors/backend/IBookApi';

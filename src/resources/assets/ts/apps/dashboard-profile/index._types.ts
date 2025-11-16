@@ -1,4 +1,4 @@
-import { IAccountEntity } from '@root/connectors/backend/IGlossResourceApi';
+import type { IAccountEntity } from '@root/connectors/backend/IGlossResourceApi';
 
 export interface IAccountStatistics {
     noOfFlashcards?: number;

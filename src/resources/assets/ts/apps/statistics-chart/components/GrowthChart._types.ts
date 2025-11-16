@@ -1,4 +1,4 @@
-import { IData } from './Chart._types';
+import type { IData } from './Chart._types';
 
 export interface IProps {
     accounts: string[];

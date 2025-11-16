@@ -1,19 +1,19 @@
 import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
+import type { ThunkDispatch } from 'redux-thunk';
 
+import { fireEventAsync } from '@root/components/Component';
+import type { IComponentEvent } from '@root/components/Component._types';
 import { SentenceActions } from '../actions';
 import TextInspectorView from '../components/TextInspectorView';
-import { RootReducer } from '../reducers';
-import { IFragmentInSentenceState, IFragmentsReducerState } from '../reducers/FragmentsReducer._types';
-import {
+import type { RootReducer } from '../reducers';
+import type { IFragmentInSentenceState, IFragmentsReducerState } from '../reducers/FragmentsReducer._types';
+import type {
     IEventProps,
     IProps,
 } from './SentenceInspector._types';
 
 import './SentenceInspector.scss';
-import { fireEventAsync } from '@root/components/Component';
-import { IComponentEvent } from '@root/components/Component._types';
 
 export function SentenceInspector(props: IProps) {
     const {

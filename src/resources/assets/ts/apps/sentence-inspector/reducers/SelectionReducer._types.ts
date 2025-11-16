@@ -1,5 +1,5 @@
-import { IReduxAction } from '@root/_types';
-import { IFragmentsReducerState } from './FragmentsReducer._types';
+import type { IReduxAction } from '@root/_types';
+import type { IFragmentsReducerState } from './FragmentsReducer._types';
 
 export type ISelectionReducerState = IFragmentsReducerState;
 

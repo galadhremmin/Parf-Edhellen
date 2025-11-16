@@ -1,5 +1,5 @@
 import { Actions } from '../actions';
-import {
+import type {
     IThreadReducerAction,
     IThreadState,
 } from './ThreadReducer._types';

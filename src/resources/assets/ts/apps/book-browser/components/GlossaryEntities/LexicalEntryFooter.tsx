@@ -1,6 +1,6 @@
 import DateLabel from '@root/components/DateLabel';
 import TextIcon from '@root/components/TextIcon';
-import { IProps } from './LexicalEntryFooter._types';
+import type { IProps } from './LexicalEntryFooter._types';
 
 const LexicalEntryFooter = (props: IProps) => {
     const { lexicalEntry: entry } = props;

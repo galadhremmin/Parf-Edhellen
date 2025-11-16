@@ -1,8 +1,6 @@
-import { IReduxAction } from '@root/_types';
-import {
-    ISentenceEntity,
-} from '@root/connectors/backend/IBookApi';
-import { IContribution } from '@root/connectors/backend/IContributionResourceApi';
+import type { IReduxAction } from '@root/_types';
+import type { ISentenceEntity } from '@root/connectors/backend/IBookApi';
+import type { IContribution } from '@root/connectors/backend/IContributionResourceApi';
 import { Actions } from '../actions';
 
 export type ISentenceReducerState = IContribution<Pick<ISentenceEntity, 'account' | 'description' |

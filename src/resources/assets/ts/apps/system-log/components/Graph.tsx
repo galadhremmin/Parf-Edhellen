@@ -9,7 +9,7 @@ import {
     YAxis
 } from 'recharts';
 
-import { IProps } from './Graph._types';
+import type { IProps } from './Graph._types';
 
 const ChartColors = ['#00818a', '#404b69', '#283149', '#6c5b7c', '#c06c84', '#f67280', '#f8b595'];
 

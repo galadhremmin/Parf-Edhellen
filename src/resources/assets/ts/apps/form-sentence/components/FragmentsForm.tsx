@@ -1,8 +1,9 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
+import type { ChangeEvent, MouseEvent } from 'react';
 
 import { fireEvent } from '@root/components/Component';
 import { CommonPaths } from '@root/config';
-import { IProps } from './FragmentsForm._types';
+import type { IProps } from './FragmentsForm._types';
 import FragmentsGrid from './FragmentsGrid';
 import LanguageAlert from './LanguageAlert';
 
@@ -17,12 +18,12 @@ function FragmentsForm(props: IProps) {
         textIsDirty,
     } = props;
 
-    const _onChangeNative = useCallback((ev: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const _onChangeNative = useCallback((ev: ChangeEvent<HTMLTextAreaElement>) => {
         const value = ev.target.value;
         void fireEvent(null, onTextChange, value);
     }, [ onTextChange ]);
 
-    const _onParseFragments = useCallback((ev: React.MouseEvent<HTMLButtonElement>) => {
+    const _onParseFragments = useCallback((ev: MouseEvent<HTMLButtonElement>) => {
         ev.preventDefault();
         void fireEvent(null, onParseTextRequest, text);
     }, [ onParseTextRequest, text ]);

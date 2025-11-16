@@ -1,5 +1,5 @@
 import { Actions } from '../actions';
-import {
+import type {
     ILatinTextAction,
     ILatinTextReducerState,
 } from './LatinTextReducer._types';

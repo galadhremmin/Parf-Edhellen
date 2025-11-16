@@ -1,4 +1,4 @@
-import { IGlobalAdConfiguration } from '../index._types';
+import type { IGlobalAdConfiguration } from '../index._types';
 
 export interface IProps extends IGlobalAdConfiguration {
     onMount?: () => void;

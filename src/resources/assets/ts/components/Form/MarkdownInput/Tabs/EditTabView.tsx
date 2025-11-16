@@ -1,15 +1,16 @@
-import React, {
+import {
     useCallback,
     useEffect,
     useRef,
     useState,
 } from 'react';
+import type { ChangeEvent, KeyboardEvent } from 'react';
 
 import { fireEvent } from '@root/components/Component';
 import Markdown from '@root/components/Markdown';
 import { LearnMoreMarkdownUrl } from '@root/config';
 import debounce from '@root/utilities/func/debounce';
-import { IProps } from './EditTabView._types';
+import type { IProps } from './EditTabView._types';
 
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
 import './EditTabView.scss';
@@ -66,15 +67,15 @@ function EditTabView(props: IProps) {
         _triggerPreview(newValue);
     }, [ name, onChange ]);
 
-    const _onEnter2ParagraphChange = useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
+    const _onEnter2ParagraphChange = useCallback((ev: ChangeEvent<HTMLInputElement>) => {
         void fireEvent(name, onEnter2ParagraphChange, ev.target.checked);
     }, [ name, onEnter2ParagraphChange ]);
 
-    const _onMarkdownChange = useCallback((ev: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const _onMarkdownChange = useCallback((ev: ChangeEvent<HTMLTextAreaElement>) => {
         _triggerChange(ev.target.value);
     }, []);
 
-    const _onMarkdownKeyDown = useCallback((ev: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const _onMarkdownKeyDown = useCallback((ev: KeyboardEvent<HTMLTextAreaElement>) => {
         // special behavior for enter key: insert paragraph, unless shift key is pressed
         if (enter2Paragraph === false || ev.shiftKey) {
             return;

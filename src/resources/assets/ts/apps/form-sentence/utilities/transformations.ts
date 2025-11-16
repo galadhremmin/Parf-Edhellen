@@ -1,9 +1,5 @@
-import {
-    ISentenceFragmentEntity,
-} from '@root/connectors/backend/IBookApi';
-import {
-    ITextState,
-} from '@root/apps/sentence-inspector/reducers/FragmentsReducer._types';
+import type { ISentenceFragmentEntity } from '@root/connectors/backend/IBookApi';
+import type { ITextState } from '@root/apps/sentence-inspector/reducers/FragmentsReducer._types';
 
 export const convertTextComponentsToString = (text: ITextState, fragments: ISentenceFragmentEntity[]) => {
     const paragraphs = convertTextComponentsToParagraphs(text, fragments);

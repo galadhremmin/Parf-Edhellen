@@ -1,9 +1,9 @@
-import React from 'react';
 import classNames from 'classnames';
+import type { MouseEvent } from 'react';
 
 import { fireEvent } from '@root/components/Component';
 import { Tab } from '../MarkdownInput._types';
-import { IProps } from './Tabs._types';
+import type { IProps } from './Tabs._types';
 
 function Tabs(props: IProps) {
     const {
@@ -11,7 +11,7 @@ function Tabs(props: IProps) {
         tab,
     } = props;
 
-    const _onTabChange = (newTab: Tab) => (ev: React.MouseEvent<HTMLAnchorElement>) => {
+    const _onTabChange = (newTab: Tab) => (ev: MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
         void fireEvent('tabs', onTabChange, newTab);
     };

@@ -1,8 +1,8 @@
-import { ComponentEventHandler } from '@root/components/Component._types';
+import type { ComponentEventHandler } from '@root/components/Component._types';
 import { GameStage } from './actions';
-import { IGameGloss } from './reducers/IGlossesReducer';
-import { IWordPart } from './reducers/PartsReducer._types';
-import { IStageReducerState } from './reducers/StageReducer._types';
+import type { IGameGloss } from './reducers/IGlossesReducer';
+import type { IWordPart } from './reducers/PartsReducer._types';
+import type { IStageReducerState } from './reducers/StageReducer._types';
 
 
 export interface IContainerEvents extends IStageEvents {

@@ -1,4 +1,4 @@
-import { ReduxThunkDispatch } from '@root/_types';
+import type { ReduxThunkDispatch } from '@root/_types';
 import ValidationError from '@root/connectors/ValidationError';
 import { setValidationErrors } from './Actions';
 

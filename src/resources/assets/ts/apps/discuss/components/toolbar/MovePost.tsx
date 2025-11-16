@@ -1,14 +1,15 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
+import type { ChangeEvent } from 'react';
 
 import Dialog from '@root/components/Dialog';
 import Quote from '@root/components/Quote';
 import StaticAlert from '@root/components/StaticAlert';
 import TextIcon from '@root/components/TextIcon';
-import { IForumGroupEntity } from '@root/connectors/backend/IDiscussApi';
+import type { IForumGroupEntity } from '@root/connectors/backend/IDiscussApi';
 import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 
-import { IProps } from './index._types';
+import type { IProps } from './index._types';
 
 import './Likes.scss';
 
@@ -46,7 +47,7 @@ function MovePost(props: IProps) {
         apiConnector,
     ]);
 
-    const _onForumGroupChange = useCallback((ev: React.ChangeEvent<HTMLSelectElement>) => {
+    const _onForumGroupChange = useCallback((ev: ChangeEvent<HTMLSelectElement>) => {
         const nextGroupId = parseInt(ev.target.value, 10);
         setGroupId(nextGroupId);
     }, []);

@@ -1,5 +1,5 @@
-import { IReduxAction } from '@root/_types';
-import { IThreadEntityAction } from './ThreadReducer._types';
+import type { IReduxAction } from '@root/_types';
+import type { IThreadEntityAction } from './ThreadReducer._types';
 
 export interface IPost {
     content: string;

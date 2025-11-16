@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 export const enum PanelType {
     Danger = 'danger',
@@ -13,7 +13,7 @@ export interface IProps {
     children?: ReactNode;
     className?: string;
     title?: string;
-    titleButton?: React.ReactNode;
+    titleButton?: ReactNode;
     type?: PanelType;
     shadow?: boolean;
 }

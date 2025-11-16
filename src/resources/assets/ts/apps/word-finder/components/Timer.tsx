@@ -2,7 +2,7 @@ import { DateTime } from 'luxon';
 import { useEffect } from 'react';
 
 import { fireEvent } from '@root/components/Component';
-import { IProps } from './Timer._types';
+import type { IProps } from './Timer._types';
 
 function Timer(props: IProps) {
     const {

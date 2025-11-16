@@ -5,10 +5,11 @@ declare global {
     function dispatch(html: string): void;
 }
 
-import ReactDOMServer from 'react-dom/server';
+import type { Attributes, ComponentClass, FunctionComponent } from 'react';
+import { StrictMode } from 'react';
+import { renderToString } from 'react-dom/server';
 import setupContainer from '@root/di/config';
 import { isNodeJs } from '@root/utilities/func/node';
-import { Attributes, ComponentClass, FunctionComponent, StrictMode } from 'react';
 import ErrorBoundary from '@root/utilities/ErrorBoundary';
 
 export default function registerApp<P>(App: FunctionComponent<P> | ComponentClass<P>): FunctionComponent<P> | ComponentClass<P> {
@@ -20,7 +21,7 @@ export default function registerApp<P>(App: FunctionComponent<P> | ComponentClas
     const props = context?.props || {};
 
     setupContainer();
-    const render = ReactDOMServer.renderToString(
+    const render = renderToString(
         <ErrorBoundary>
             <StrictMode>
                 <App {...(props as Attributes & P)} />

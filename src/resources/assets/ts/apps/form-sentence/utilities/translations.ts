@@ -1,13 +1,13 @@
-import { ParagraphState } from '@root/apps/sentence-inspector/reducers/FragmentsReducer._types';
+import type { ParagraphState } from '@root/apps/sentence-inspector/reducers/FragmentsReducer._types';
 import { deepClone } from '@root/utilities/func/clone';
-import { ITranslationRow } from '../components/TranslationForm/TranslationForm._types';
+import type{ ITranslationRow } from '../components/TranslationForm/TranslationForm._types';
 import {
-    ISentenceFragmentEntity,
-    ISentenceTranslationEntity,
+    type ISentenceFragmentEntity,
+    type ISentenceTranslationEntity,
     SentenceFragmentType,
 } from '@root/connectors/backend/IBookApi';
-import { ISentenceTranslationReducerState } from '../reducers/child-reducers/SentenceTranslationReducer._types';
-import { ISentenceTranslationsReducerState } from '../reducers/SentenceTranslationsReducer._types';
+import type { ISentenceTranslationReducerState } from '../reducers/child-reducers/SentenceTranslationReducer._types';
+import type { ISentenceTranslationsReducerState } from '../reducers/SentenceTranslationsReducer._types';
 
 function groupByParagraphAndSentence<T extends Pick<ISentenceFragmentEntity, 'paragraphNumber' | 'sentenceNumber'>>(fragments: T[]): Map<string, T[]> {
     const group = new Map<string, T[]>();

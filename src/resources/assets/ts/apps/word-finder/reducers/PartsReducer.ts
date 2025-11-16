@@ -1,8 +1,8 @@
 import {
     Actions,
-    IGameAction,
+    type IGameAction,
 } from '../actions';
-import { IWordPart } from './PartsReducer._types';
+import type { IWordPart } from './PartsReducer._types';
 
 const InitialState: IWordPart[] = [];
 

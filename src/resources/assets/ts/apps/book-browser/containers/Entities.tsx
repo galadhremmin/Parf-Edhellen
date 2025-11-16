@@ -1,17 +1,18 @@
-import React, { useEffect, Suspense, useState } from 'react';
+import { lazy, useEffect, Suspense, useState } from 'react';
+import type { ComponentType } from 'react';
 import { connect } from 'react-redux';
 
-import { IEntitiesResponse } from '@root/connectors/backend/IBookApi';
+import type { IEntitiesResponse } from '@root/connectors/backend/IBookApi';
 import { snakeCasePropsToCamelCase } from '@root/utilities/func/snake-case';
 import { SearchActions } from '../actions';
-import { RootReducer } from '../reducers';
-import { IEntitiesComponentProps } from './Entities._types';
+import type { RootReducer } from '../reducers';
+import type { IEntitiesComponentProps } from './Entities._types';
 import LoadingIndicator from '../components/LoadingIndicator';
 import { capitalize } from '@root/utilities/func/string-manipulation';
 
 function Entities(props: IEntitiesComponentProps) {
     // This is the component that will be used to render the entities.
-    const [ Component, setComponent ] = useState<React.ComponentType<IEntitiesComponentProps>>(null);
+    const [ Component, setComponent ] = useState<ComponentType<IEntitiesComponentProps>>(null);
     const [ componentGroupName, setComponentGroupName ] = useState<string | null>(null);
 
     const {
@@ -39,7 +40,7 @@ function Entities(props: IEntitiesComponentProps) {
             setComponent(null);
             setComponentGroupName(null);
         } else {
-            setComponent(React.lazy(() => import(`../components/${capitalize(groupName)}Entities`)));
+            setComponent(lazy(() => import(`../components/${capitalize(groupName)}Entities`)));
             setComponentGroupName(groupName);
         }
     }, [ groupName ]);

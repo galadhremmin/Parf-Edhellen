@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { CreateRootReducer } from '@root/_types';
+import type { CreateRootReducer } from '@root/_types';
 
 import { default as glosses } from './GlossesReducer';
 import { default as parts } from './PartsReducer';

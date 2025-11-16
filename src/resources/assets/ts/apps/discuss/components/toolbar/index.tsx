@@ -1,10 +1,10 @@
-import { IPostEntity } from '@root/connectors/backend/IDiscussApi';
+import type { IPostEntity } from '@root/connectors/backend/IDiscussApi';
 import {
-    IRoleManager,
+    type IRoleManager,
     SecurityRole,
 } from '@root/security';
 
-import { IProps } from './index._types';
+import type { IProps } from './index._types';
 
 import DeletePost from './DeletePost';
 import EditPost from './EditPost';

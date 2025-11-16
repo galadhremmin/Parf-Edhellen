@@ -10,7 +10,7 @@ import ProfileLink from '@root/components/ProfileLink';
 import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
 import Avatar from './Avatar';
-import { IProps } from './Post._types';
+import type { IProps } from './Post._types';
 
 export function Post(props: IProps) {
     const {

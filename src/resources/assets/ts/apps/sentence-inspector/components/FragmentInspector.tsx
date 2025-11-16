@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+import type { MouseEvent } from 'react';
 
 import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
-import { IProps } from './FragmentInspector._types';
+import type { IProps } from './FragmentInspector._types';
 
 import { fireEventAsync } from '@root/components/Component';
 import TextIcon from '@root/components/TextIcon';
@@ -38,19 +39,19 @@ export function FragmentInspector(props: IProps) {
         nextFragmentId,
     } = props.fragment;
 
-    const _onCloseClick = useCallback((ev?: React.MouseEvent<HTMLButtonElement>) => {
+    const _onCloseClick = useCallback((ev?: MouseEvent<HTMLButtonElement>) => {
         ev?.preventDefault();
         void fireEventAsync('FragmentInspector', onSelectFragment, null);
     }, [ onSelectFragment ]);
 
-    const _onPreviousClick = useCallback((ev?: React.MouseEvent<HTMLAnchorElement>) => {
+    const _onPreviousClick = useCallback((ev?: MouseEvent<HTMLAnchorElement>) => {
         ev?.preventDefault();
         if (previousFragmentId) {
             void fireEventAsync('FragmentInspector', onNextOrPreviousFragmentClick, previousFragmentId);
         }
     }, [ onNextOrPreviousFragmentClick, previousFragmentId ]);
 
-    const _onNextClick = useCallback((ev?: React.MouseEvent<HTMLAnchorElement>) => {
+    const _onNextClick = useCallback((ev?: MouseEvent<HTMLAnchorElement>) => {
         ev?.preventDefault();
         if (nextFragmentId) {
             void fireEventAsync('FragmentInspector', onNextOrPreviousFragmentClick, nextFragmentId);

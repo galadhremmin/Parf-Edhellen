@@ -1,4 +1,4 @@
-import {
+import type {
     ILexicalEntryInflection,
     SentenceFragmentType,
 } from '@root/connectors/backend/IBookApi';

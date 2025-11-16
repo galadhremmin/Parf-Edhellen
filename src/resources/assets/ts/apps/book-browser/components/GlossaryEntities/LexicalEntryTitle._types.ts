@@ -1,5 +1,5 @@
-import { ILexicalEntryEntity } from '@root/connectors/backend/IBookApi';
-import IRoleManager from '@root/security/IRoleManager';
+import type { ILexicalEntryEntity } from '@root/connectors/backend/IBookApi';
+import type IRoleManager from '@root/security/IRoleManager';
 
 export interface IProps {
     lexicalEntry: ILexicalEntryEntity;

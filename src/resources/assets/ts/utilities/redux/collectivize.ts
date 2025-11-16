@@ -1,4 +1,4 @@
-import {
+import type {
     IReduxAction,
     Reducer,
 } from '@root/_types';

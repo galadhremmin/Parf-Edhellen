@@ -1,5 +1,5 @@
 import {
-    ISentenceFragmentEntity,
+    type ISentenceFragmentEntity,
     SentenceFragmentType,
 } from '@root/connectors/backend/IBookApi';
 import { resolve } from '@root/di';

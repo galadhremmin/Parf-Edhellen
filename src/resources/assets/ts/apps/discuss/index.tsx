@@ -3,13 +3,13 @@ import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { thunk } from 'redux-thunk';
 
-import { ReduxThunkDispatch } from '@root/_types';
-import { IThreadResponse } from '@root/connectors/backend/IDiscussApi';
+import type { ReduxThunkDispatch } from '@root/_types';
+import type { IThreadResponse } from '@root/connectors/backend/IDiscussApi';
 
 import classNames from 'classnames';
 import DiscussActions from './actions/DiscussActions';
 import Discuss from './containers/Discuss';
-import { IProps } from './index._types';
+import type { IProps } from './index._types';
 import rootReducer from './reducers';
 import registerApp from '../app';
 

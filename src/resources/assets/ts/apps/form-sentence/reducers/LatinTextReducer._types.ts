@@ -1,5 +1,5 @@
-import { IReduxAction } from '@root/_types';
-import { ParagraphState } from '@root/apps/sentence-inspector/reducers/FragmentsReducer._types';
+import type { IReduxAction } from '@root/_types';
+import type { ParagraphState } from '@root/apps/sentence-inspector/reducers/FragmentsReducer._types';
 
 export interface ILatinTextReducerState {
     dirty: boolean;

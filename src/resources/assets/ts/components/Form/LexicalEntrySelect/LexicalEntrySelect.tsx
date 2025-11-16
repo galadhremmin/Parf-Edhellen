@@ -4,7 +4,7 @@ import {
     useState,
 } from 'react';
 
-import {
+import type {
     ISuggestionEntity,
 } from '@root/connectors/backend/IGlossResourceApi';
 import { DI } from '@root/di/keys';
@@ -12,9 +12,9 @@ import { mapper } from '@root/utilities/func/mapper';
 
 import { withPropInjection } from '@root/di';
 import { fireEvent } from '../../Component';
-import { IComponentEvent } from '../../Component._types';
+import type { IComponentEvent } from '../../Component._types';
 import EntitySelect from '../EntitySelect';
-import { IProps } from './LexicalEntrySelect._types';
+import type{ IProps } from './LexicalEntrySelect._types';
 import LexicalEntrySuggestion from './LexicalEntrySuggestion';
 import LexicalEntryValue from './LexicalEntryValue';
 

@@ -1,6 +1,6 @@
 import { fireEvent } from '@root/components/Component';
 import LanguageSelect from '@root/components/Form/LanguageSelect';
-import { IProps } from './LanguageForm._types';
+import type { IProps } from './LanguageForm._types';
 
 export default function LanguageForm(props: IProps) {
     const {

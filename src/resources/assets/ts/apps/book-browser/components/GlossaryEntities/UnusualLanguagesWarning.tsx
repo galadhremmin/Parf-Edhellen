@@ -1,5 +1,5 @@
 import { fireEvent } from '@root/components/Component';
-import { IProps } from './UnusualLanguagesWarning._types';
+import type { IProps } from './UnusualLanguagesWarning._types';
 
 function UnusualLanguagesWarning({
     showOverrideOption,

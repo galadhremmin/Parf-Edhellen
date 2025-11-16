@@ -1,14 +1,15 @@
-import { ComponentEventHandler } from '@root/components/Component._types';
+import type { ComponentEventHandler } from '@root/components/Component._types';
 import ValidationError from '@root/connectors/ValidationError';
-import IBookApi, { ITextTransformationsMap } from '@root/connectors/backend/IBookApi';
-import { ISaveSentenceContributionEntity } from '@root/connectors/backend/IContributionResourceApi';
-import { IFragmentFormEvents } from '../components/FragmentsForm._types';
-import { IMetadataFormEvents } from '../components/MetadataForm._types';
-import { ITranslationFormEvents } from '../components/TranslationForm/TranslationForm._types';
-import { ILatinTextReducerState } from '../reducers/LatinTextReducer._types';
-import { ISentenceFragmentsReducerState } from '../reducers/SentenceFragmentsReducer._types';
-import { ISentenceReducerState } from '../reducers/SentenceReducer._types';
-import { ISentenceTranslationReducerState } from '../reducers/child-reducers/SentenceTranslationReducer._types';
+import type IBookApi from '@root/connectors/backend/IBookApi';
+import type { ITextTransformationsMap } from '@root/connectors/backend/IBookApi';
+import type { ISaveSentenceContributionEntity } from '@root/connectors/backend/IContributionResourceApi';
+import type { IFragmentFormEvents } from '../components/FragmentsForm._types';
+import type { IMetadataFormEvents } from '../components/MetadataForm._types';
+import type { ITranslationFormEvents } from '../components/TranslationForm/TranslationForm._types';
+import type { ILatinTextReducerState } from '../reducers/LatinTextReducer._types';
+import type { ISentenceFragmentsReducerState } from '../reducers/SentenceFragmentsReducer._types';
+import type { ISentenceReducerState } from '../reducers/SentenceReducer._types';
+import type { ISentenceTranslationReducerState } from '../reducers/child-reducers/SentenceTranslationReducer._types';
 
 export type GlossProps = keyof ISentenceReducerState;
 

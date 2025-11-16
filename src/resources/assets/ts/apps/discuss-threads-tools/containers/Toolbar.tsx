@@ -3,8 +3,8 @@ import {
   useState,
 } from 'react';
 
-import { IComponentEvent } from '@root/components/Component._types';
-import { ICreatePostRequest } from '@root/connectors/backend/IDiscussApi';
+import type { IComponentEvent } from '@root/components/Component._types';
+import type { ICreatePostRequest } from '@root/connectors/backend/IDiscussApi';
 import ValidationError from '@root/connectors/ValidationError';
 import ValidateEmailAlert from '@root/apps/discuss/components/ValidateEmailAlert';
 import UnauthenticatedAlert from '@root/apps/discuss/components/UnauthenticatedAlert';
@@ -16,7 +16,7 @@ import {
 
 import CreateThreadButton from '../components/CreateThreadButton';
 import FiltersButton from '../components/FiltersButton';
-import { IProps } from '../index._types';
+import type { IProps } from '../index._types';
 
 import './Toolbar.scss';
 

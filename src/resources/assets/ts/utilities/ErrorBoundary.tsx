@@ -1,13 +1,13 @@
-import React from 'react';
+import { Component } from 'react';
 
 import StaticAlert from '@root/components/StaticAlert';
 import { ErrorCategory } from '@root/connectors/IReportErrorApi';
 import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 
-import { IProps, IState } from './ErrorBoundary._types';
+import type { IProps, IState } from './ErrorBoundary._types';
 
-export class ErrorBoundary extends React.Component<IProps, IState> {
+export class ErrorBoundary extends Component<IProps, IState> {
     private static excludeErrorMessages: RegExp[] = [
         /Loading chunk [0-9]+ failed\./,
         /Loading CSS chunk [0-9]+ failed\./,

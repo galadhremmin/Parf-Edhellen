@@ -2,7 +2,7 @@ import Spinner from '@root/components/Spinner';
 import classNames from 'classnames';
 import { Fragment, lazy, Suspense } from 'react';
 import GlossaryLanguage from './GlossaryLanguage';
-import { IProps } from './GlossaryLanguages._types';
+import type { IProps } from './GlossaryLanguages._types';
 
 function GlossaryLanguages(props: IProps) {
     const {

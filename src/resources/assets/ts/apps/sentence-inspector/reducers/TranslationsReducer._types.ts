@@ -1,3 +1,3 @@
-import { ITextState } from './FragmentsReducer._types';
+import type { ITextState } from './FragmentsReducer._types';
 
 export type TranslationsState = ITextState;

@@ -1,5 +1,5 @@
-import { ILexicalEntryInflection } from '@root/connectors/backend/IBookApi';
-import { IReduxAction } from '@root/_types';
+import type { ILexicalEntryInflection } from '@root/connectors/backend/IBookApi';
+import type { IReduxAction } from '@root/_types';
 
 export interface IInflectionAction extends IReduxAction {
     inflectionGroupUuid: string;

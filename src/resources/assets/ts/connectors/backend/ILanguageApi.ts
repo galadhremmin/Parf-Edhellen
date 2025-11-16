@@ -1,4 +1,4 @@
-import {
+import type {
     ILanguageEntity,
     ILanguagesResponse,
 } from './IBookApi';

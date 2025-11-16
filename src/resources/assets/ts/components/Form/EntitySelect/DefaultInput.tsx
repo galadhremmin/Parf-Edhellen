@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { RenderInputComponentProps } from 'react-autosuggest';
+import type { RenderInputComponentProps } from 'react-autosuggest';
 
 function DefaultInput(props: RenderInputComponentProps) {
     const { key, ...inputProps } = props;

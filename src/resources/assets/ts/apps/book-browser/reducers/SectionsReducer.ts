@@ -1,6 +1,6 @@
 import { Actions } from '../actions';
-import { IEntitiesAction } from './EntitiesReducer._types';
-import { ISectionsState } from './SectionsReducer._types';
+import type { IEntitiesAction } from './EntitiesReducer._types';
+import type { ISectionsState } from './SectionsReducer._types';
 
 const SectionsReducer = (state: ISectionsState = {}, action: IEntitiesAction): ISectionsState => {
     switch (action.type) {

@@ -1,4 +1,4 @@
-import axios, { AxiosPromise, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { type AxiosPromise, type AxiosRequestConfig, type AxiosResponse } from 'axios';
 
 export type AxiosRequestFactory = typeof axios.delete |
     typeof axios.head |

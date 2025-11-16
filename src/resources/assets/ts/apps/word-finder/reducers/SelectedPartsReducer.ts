@@ -1,6 +1,6 @@
 import {
     Actions,
-    IGameAction,
+    type IGameAction,
 } from '../actions';
 
 const InitialState: number[] = [];

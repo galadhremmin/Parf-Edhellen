@@ -1,12 +1,11 @@
 import { DateTime } from 'luxon';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 
 import { fireEvent } from '@root/components/Component';
-
-import { IStageProps } from '../index._types';
+import type { IStageProps } from '../index._types';
+import { GameStage } from '../actions';
 
 import './SuccessStage.scss';
-import { GameStage } from '../actions';
 
 function SuccessStage(props: IStageProps) {
     const {

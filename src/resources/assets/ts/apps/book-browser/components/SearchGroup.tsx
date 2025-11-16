@@ -1,5 +1,5 @@
 import SearchResult from './SearchResult';
-import { IProps } from './SearchGroup._types';
+import type { IProps } from './SearchGroup._types';
 
 import './SearchGroup.scss';
 

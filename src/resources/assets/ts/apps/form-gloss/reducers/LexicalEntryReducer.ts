@@ -1,6 +1,6 @@
 import { mapper } from '@root/utilities/func/mapper';
 import { Actions } from '../actions';
-import {
+import type {
     ILexicalEntryAction,
     ILexicalEntryState,
 } from './LexicalEntryReducer._types';

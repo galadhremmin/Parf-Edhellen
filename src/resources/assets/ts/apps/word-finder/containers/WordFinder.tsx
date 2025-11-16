@@ -3,9 +3,9 @@ import React, {
 } from 'react';
 import { connect } from 'react-redux';
 
-import { ReduxThunkDispatch } from '@root/_types';
+import type { ReduxThunkDispatch } from '@root/_types';
 import { fireEvent } from '@root/components/Component';
-import { IComponentEvent } from '@root/components/Component._types';
+import type { IComponentEvent } from '@root/components/Component._types';
 
 import {
     GameActions,
@@ -14,11 +14,8 @@ import {
 import CombinePartsStage from '../components/CombinePartsStage';
 import GlossList from '../components/GlossList';
 // import SuccessStage from '../components/SuccessStage';
-import { RootReducer } from '../reducers';
-
-import {
-    IContainerProps,
-} from '../index._types';
+import type { RootReducer } from '../reducers';
+import type { IContainerProps } from '../index._types';
 
 import './WordFinder.scss';
 import Timer from '../components/Timer';

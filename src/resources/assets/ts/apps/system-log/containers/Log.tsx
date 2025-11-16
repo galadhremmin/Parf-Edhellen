@@ -5,7 +5,7 @@ import Panel from '@root/components/Panel';
 import FailedJobsList from '../components/FailedJobsList';
 import ErrorsByWeekBarGraph from '../components/Graph';
 import LogList from '../components/LogList';
-import { IProps } from '../index._types';
+import type { IProps } from '../index._types';
 
 function Log(props: IProps) {
     const {

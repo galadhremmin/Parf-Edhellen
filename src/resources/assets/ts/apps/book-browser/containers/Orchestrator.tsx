@@ -7,7 +7,7 @@ import {
 import { Provider } from 'react-redux';
 import { thunk } from 'redux-thunk';
 
-import { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
+import type { IReferenceLinkClickDetails } from '@root/components/HtmlInject._types';
 import { withPropInjection } from '@root/di';
 import { makeVisibleInViewport } from '@root/utilities/func/visual-focus';
 
@@ -15,7 +15,7 @@ import { DI } from '@root/di/keys';
 import { SearchActions } from '../actions';
 import rootReducer from '../reducers';
 import Entities from './Entities';
-import { IProps } from './Orchestrator._types';
+import type { IProps } from './Orchestrator._types';
 import Search from './Search';
 import SearchResults from './SearchResults';
 

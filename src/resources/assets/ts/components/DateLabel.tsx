@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { IProps } from './DateLabel._types';
+import type { IProps } from './DateLabel._types';
 
 export function DateLabel(props: IProps) {
     const {

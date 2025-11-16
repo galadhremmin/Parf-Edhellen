@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 
-import { CreateRootReducer } from '@root/_types';
+import type { CreateRootReducer } from '@root/_types';
 
 import { default as newPosts } from './NewPostsReducer';
 import { default as paginations } from './PostPaginationsReducer';

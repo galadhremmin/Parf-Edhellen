@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { SideOfTheCard } from './Card._types';
 
 export interface IProps {

@@ -1,7 +1,7 @@
 import Cache from '@root/utilities/Cache';
 
-import { IProps as IMarkdownProps } from '@root/components/Markdown._types';
-import { IProps as IEditTabViewProps } from './Tabs/EditTabView._types';
+import type { IProps as IMarkdownProps } from '@root/components/Markdown._types';
+import type { IProps as IEditTabViewProps } from './Tabs/EditTabView._types';
 
 export interface IComponentProps {
     [propName: string]: any;

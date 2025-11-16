@@ -1,11 +1,12 @@
-import React, {
+import {
     useCallback,
     useEffect,
     useState,
 } from 'react';
+import type { ChangeEvent } from 'react';
 
 import { fireEventAsync } from '@root/components/Component';
-import { IComponentEvent } from '@root/components/Component._types';
+import type { IComponentEvent } from '@root/components/Component._types';
 import Tengwar from '@root/components/Tengwar';
 
 import LanguageSelect, {
@@ -13,7 +14,7 @@ import LanguageSelect, {
     LanguageWithWritingModeOnlyFilter,
 } from '../LanguageSelect';
 import { transcribe } from './transcriber';
-import { IProps } from './TranscriberForm._types';
+import type { IProps } from './TranscriberForm._types';
 
 import './TranscriberForm.scss';
 import StaticAlert from '@root/components/StaticAlert';
@@ -42,7 +43,7 @@ function TranscriberForm(props: IProps) {
         });
     };
 
-    const _onTextChange = useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
+    const _onTextChange = useCallback((ev: ChangeEvent<HTMLInputElement>) => {
         const newText = ev.target.value || '';
         setTextSubject(newText);
         updateTranscription(newText, subjectLanguageId);

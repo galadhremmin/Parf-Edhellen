@@ -1,4 +1,4 @@
-import { IComponentProps } from '../FormComponent._types';
+import type { IComponentProps } from '../FormComponent._types';
 
 type FilterFlags<Base, Condition> = {
     [Key in keyof Base]: Base[Key] extends Condition ? Key : never;

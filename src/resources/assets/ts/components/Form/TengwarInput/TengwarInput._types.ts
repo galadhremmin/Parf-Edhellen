@@ -1,4 +1,4 @@
-import { IComponentProps } from '../FormComponent._types';
+import type { IComponentProps } from '../FormComponent._types';
 
 export interface IProps extends IComponentProps<string> {
     inputSize?: 'sm' | '' | 'lg';

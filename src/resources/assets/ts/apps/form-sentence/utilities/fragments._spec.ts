@@ -6,7 +6,7 @@ import {
 } from '@jest/globals';
 
 import {
-    ISentenceFragmentEntity,
+    type ISentenceFragmentEntity,
     SentenceFragmentType,
 } from '@root/connectors/backend/IBookApi';
 import {

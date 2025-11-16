@@ -1,7 +1,6 @@
 import { pickProps } from '@root/utilities/func/props';
 import { Actions } from '../actions';
-import { GroupedInflectionsState, IInflectionAction } from './InflectionsReducer._types';
-import { deepClone } from '@root/utilities/func/clone';
+import type { GroupedInflectionsState, IInflectionAction } from './InflectionsReducer._types';
 
 const InflectionsReducer = (state: GroupedInflectionsState = [], action: IInflectionAction): GroupedInflectionsState => {
     switch (action.type) {

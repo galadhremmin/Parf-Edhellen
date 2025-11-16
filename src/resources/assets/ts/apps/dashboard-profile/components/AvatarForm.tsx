@@ -1,15 +1,16 @@
 import classNames from 'classnames';
-import React, {
+import {
     useCallback,
     useRef,
     useState,
 } from 'react';
+import type { DragEvent, ChangeEvent } from 'react';
 
 import Avatar from '@root/components/Avatar';
 import { fireEventAsync } from '@root/components/Component';
-import { ComponentEventHandler } from '@root/components/Component._types';
+import type { ComponentEventHandler } from '@root/components/Component._types';
 import { AvatarMaximiumFileSize, AvatarMaximumImageWidthInPixels } from '@root/config';
-import { IProps } from './AvatarForm._types';
+import type { IProps } from './AvatarForm._types';
 
 import './AvatarForm.scss';
 
@@ -92,23 +93,23 @@ function AvatarForm(props: IProps) {
     const fileComponent = useRef<HTMLInputElement>(null);
     const [ showCallToAction, setShowCallToAction ] = useState(false);
 
-    const _onShowCallToAction = useCallback((ev: React.DragEvent<HTMLDivElement>) => {
+    const _onShowCallToAction = useCallback((ev: DragEvent<HTMLDivElement>) => {
         ev.preventDefault();
         setShowCallToAction(true);
     }, []);
 
-    const _onHideCallToAction = useCallback((ev: React.DragEvent<HTMLDivElement>) => {
+    const _onHideCallToAction = useCallback((ev: DragEvent<HTMLDivElement>) => {
         ev.preventDefault();
         setShowCallToAction(false);
     }, []);
 
-    const _onDrop = useCallback((ev: React.DragEvent<HTMLDivElement>) => {
+    const _onDrop = useCallback((ev: DragEvent<HTMLDivElement>) => {
         // Prevent default behavior (Prevent file from being opened)
         ev.preventDefault();
         uploadImage(ev.dataTransfer.files.item(0), onAvatarChange);
     }, [ onAvatarChange ]);
 
-    const _onFileChange = useCallback((ev: React.ChangeEvent<HTMLInputElement>) => {
+    const _onFileChange = useCallback((ev: ChangeEvent<HTMLInputElement>) => {
         ev.preventDefault();
         if (ev.target.files.length > 0) {
             uploadImage(ev.target.files[0], onAvatarChange);

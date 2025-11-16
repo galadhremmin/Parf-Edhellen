@@ -1,6 +1,7 @@
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
-import ISpeechResourceApi, {
+import type ISpeechResourceApi from './ISpeechResourceApi';
+import type {
     ISpeechEntity,
 } from './ISpeechResourceApi';
 

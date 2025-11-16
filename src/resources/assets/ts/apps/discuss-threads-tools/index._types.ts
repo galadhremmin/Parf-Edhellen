@@ -1,5 +1,5 @@
-import IDiscussApi from '@root/connectors/backend/IDiscussApi';
-import { IRoleManager } from '@root/security';
+import type IDiscussApi from '@root/connectors/backend/IDiscussApi';
+import type { IRoleManager } from '@root/security';
 
 export interface IProps {
     apiConnector: IDiscussApi;

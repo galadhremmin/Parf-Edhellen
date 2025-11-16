@@ -1,16 +1,14 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import {
+import { useEffect, useMemo, useState } from 'react';
+import type { ChangeEvent } from 'react';
+import type {
   ILanguageEntity,
   ILanguagesResponse,
 } from '@root/connectors/backend/IBookApi';
-import ILanguageApi from '@root/connectors/backend/ILanguageApi';
+import type ILanguageApi from '@root/connectors/backend/ILanguageApi';
 import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
-import {
-  FormComponent,
-  integerConverter,
-} from './FormComponent';
-import { IComponentProps } from './FormComponent._types';
+import { integerConverter } from './FormComponent';
+import type { IComponentProps } from './FormComponent._types';
 
 interface IProps extends IComponentProps<number> {
     filter?: (language: ILanguageEntity) => boolean;
@@ -70,7 +68,7 @@ function LanguageSelect(props: IProps) {
         }, {} as Record<string, ILanguageEntity[]>);
     }, [languages, periods, filter]);
 
-    const handleChange = (ev: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleChange = (ev: ChangeEvent<HTMLSelectElement>) => {
         const newValue = integerConverter(ev.target.value);
         if (props.onChange) {
             const componentEvent = {

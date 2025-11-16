@@ -1,7 +1,7 @@
 import { Actions } from '../actions';
-import { ParagraphState } from './FragmentsReducer._types';
-import { ISentenceReducerAction } from './SentenceReducer._types';
-import { TranslationsState } from './TranslationsReducer._types';
+import type { ParagraphState } from './FragmentsReducer._types';
+import type { ISentenceReducerAction } from './SentenceReducer._types';
+import type { TranslationsState } from './TranslationsReducer._types';
 
 const TranslationFragmentsReducer = (state: TranslationsState = {
     paragraphs: [],

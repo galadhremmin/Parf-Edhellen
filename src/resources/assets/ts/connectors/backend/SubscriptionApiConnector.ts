@@ -1,6 +1,6 @@
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
-import {
+import type {
     ISubscriptionApi,
     ISubscriptionStatus,
 } from './ISubscriptionApi';

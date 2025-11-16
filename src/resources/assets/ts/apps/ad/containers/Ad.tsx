@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { toSnakeCase } from '@root/utilities/func/snake-case';
-import { IProps } from './Ad._types';
-import { IProps as IAppProps } from '../index._types';
+import type { IProps } from './Ad._types';
+import type { IProps as IAppProps } from '../index._types';
 
 function Ad(props: IProps & IAppProps) {
     const {

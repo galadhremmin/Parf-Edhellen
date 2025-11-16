@@ -1,17 +1,18 @@
 import classNames from 'classnames';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import type { MouseEvent } from 'react';
 import { connect } from 'react-redux';
 
-import { IComponentEvent } from '@root/components/Component._types';
+import type { IComponentEvent } from '@root/components/Component._types';
 import Quote from '@root/components/Quote';
 import StaticAlert from '@root/components/StaticAlert';
 import Cache from '@root/utilities/Cache';
 import { SearchActions } from '../actions';
 import LoadingIndicator from '../components/LoadingIndicator';
 import SearchGroup from '../components/SearchGroup';
-import { RootReducer } from '../reducers';
-import { ISearchResult } from '../reducers/SearchResultsReducer._types';
-import { IProps } from './SearchResults._types';
+import type { RootReducer } from '../reducers';
+import type { ISearchResult } from '../reducers/SearchResultsReducer._types';
+import type { IProps } from './SearchResults._types';
 
 const EnableTipsCacheKey = 'search-results.tips-enabled';
 
@@ -69,12 +70,12 @@ export function SearchResults(props: IProps) {
         enableTipsCacheRef.current?.set(false);
     }
 
-    const  _onNextSearchResult = (ev: React.MouseEvent<HTMLAnchorElement>) => {
+    const  _onNextSearchResult = (ev: MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
         void dispatch(actionsRef.current?.selectNextResult(+1));
     }
 
-    const  _onPreviousSearchResult = (ev: React.MouseEvent<HTMLAnchorElement>) => {
+    const  _onPreviousSearchResult = (ev: MouseEvent<HTMLAnchorElement>) => {
         ev.preventDefault();
         void dispatch(actionsRef.current?.selectNextResult(-1));
     }
