@@ -17,6 +17,7 @@ import type {
     IQueryStringMap,
     IValidationFailedResponse,
     FetchRequestConfig,
+    IConnectorError,
 } from './ApiConnector._types';
 import {
     ErrorCategory,
@@ -221,7 +222,9 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             }
             if (! response.ok) {
                 // Simulate axios-like error handling via throwing with status
-                const error: any = new Error(`HTTP ${response.status}`);
+                const error: IConnectorError = Object.assign(new Error(`HTTP ${response.status}`), {
+                    name: 'HttpError',
+                });
                 error.response = {
                     status: response.status,
                     headers: Object.fromEntries(response.headers.entries()),
@@ -232,23 +235,23 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             }
             const data = await this._safeParseJson(response);
             return snakeCasePropsToCamelCase(data);
-        } catch (error: any) {
+        } catch (error: unknown) {
             const duration = performance.now() - startTime;
-            return this._handleError(apiMethod, error, duration);
+            return this._handleError(apiMethod, error as IConnectorError | Error, duration);
         }
     }
 
-    private async _handleError(apiMethod: string, error: any, duration?: number) {
+    private async _handleError(apiMethod: string, error: IConnectorError | Error, duration?: number) {
         if (error === undefined) {
             console.warn(`Received an empty error from ${apiMethod}.`);
         }
 
         if (apiMethod === this._apiErrorMethod) {
-            return Promise.reject(error);
+            return Promise.reject(error instanceof Error ? error : new Error('Unknown error'));
         }
 
-        const requestWasCanceled = error?.name === 'AbortError' ||
-            error?.code === 'ECONNABORTED' ||
+        const requestWasCanceled = (error as IConnectorError)?.name === 'AbortError' ||
+            (error as IConnectorError)?.code === 'ECONNABORTED' ||
             (duration || 0) >= ApiTimeoutInMilliseconds;
 
         let errorReport: IErrorReport = null;
@@ -258,9 +261,10 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             // We don't need to record cancellations.
             errorReport = null;
 
-        } else if (error.response) {
+        } else if ((error as IConnectorError).response) {
+            const response = (error as IConnectorError).response!;
             let message = null;
-            switch (error.response.status) {
+            switch (response.status) {
                 case 401:
                     message = 'You must sign in to use this feature.';
                     category = ErrorCategory.RequestUnauthorized;
@@ -278,15 +282,15 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
                     break;
                 case this._apiValidationErrorStatusCode:
                     return Promise.reject(new ValidationError(
-                        (error.response.data as IValidationFailedResponse)?.message,
-                        (error.response.data as IValidationFailedResponse)?.errors,
+                        (response.data as IValidationFailedResponse)?.message,
+                        (response.data as IValidationFailedResponse)?.errors,
                     ));
                 default:
                     errorReport = {
                         apiMethod,
-                        data: error.response.data,
-                        headers: error.response.headers,
-                        status: error.response.status,
+                        data: response.data,
+                        headers: response.headers,
+                        status: response.status,
                     };
                     break;
             }
@@ -295,23 +299,32 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
                 alert(message);
             }
 
-        } else if (error.request) {
+        } else if ((error as IConnectorError).request) {
             errorReport = {
                 apiMethod,
                 error: 'API call received no response.',
             };
             category = ErrorCategory.Empty;
         } else {
+            // No response object. Distinguish offline client vs server not responding.
+            const isOffline = typeof window === 'object' &&
+                typeof navigator === 'object' &&
+                (navigator as any)?.onLine === false;
+            if (isOffline) {
+                // Do not record client offline incidents; nothing actionable server-side.
+                return Promise.reject(error instanceof Error ? error : new Error('Network offline'));
+            }
+            
             // Something happened in setting up the request that triggered an Error
             errorReport = {
                 apiMethod,
-                error: `API call failed to initialize. Error message: ${error.message}`,
+                error: `API call failed to initialize. Error message: ${(error as Error).message || 'Unknown error'}`,
             };
             category = ErrorCategory.Frontend;
         }
 
         if (errorReport !== null) {
-            errorReport.config = error.config;
+            errorReport.config = (error as IConnectorError).config;
             await this.error(
                 'API request failed', 
                 apiMethod, 
