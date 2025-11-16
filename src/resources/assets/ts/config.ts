@@ -55,42 +55,6 @@ export const CacheLengthMinutes = {
     languages: 60 * 24,
 };
 
-export const TimezonesWithEuConsent = [
-    'Europe/Vienna',
-    'Europe/Brussels',
-    'Europe/Sofia',
-    'Europe/Zagreb',
-    'Asia/Famagusta',
-    'Asia/Nicosia',
-    'Europe/Prague',
-    'Europe/Copenhagen',
-    'Europe/Tallinn',
-    'Europe/Helsinki',
-    'Europe/Paris',
-    'Europe/Berlin',
-    'Europe/Busingen',
-    'Europe/Athens',
-    'Europe/Budapest',
-    'Europe/Dublin',
-    'Europe/Rome',
-    'Europe/Riga',
-    'Europe/Vilnius',
-    'Europe/Luxembourg',
-    'Europe/Malta',
-    'Europe/Amsterdam',
-    'Europe/Warsaw',
-    'Atlantic/Azores',
-    'Atlantic/Madeira',
-    'Europe/Lisbon',
-    'Europe/Bucharest',
-    'Europe/Bratislava',
-    'Europe/Ljubljana',
-    'Africa/Ceuta',
-    'Atlantic/Canary',
-    'Europe/Madrid',
-    'Europe/Stockholm',
-    'America/Los_Angeles', // California
-];
 export const AdvertisingUseCaseScriptName = 'advertising';
 export const CookieUseCases = [
     {
