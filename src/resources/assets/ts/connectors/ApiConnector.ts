@@ -264,7 +264,7 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             errorReport = null;
 
         } else if ((error as IConnectorError).response) {
-            const response = (error as IConnectorError).response!;
+            const response = (error as IConnectorError).response;
             let message = null;
             switch (response.status) {
                 case 401:
@@ -311,7 +311,7 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             // No response object. Distinguish offline client vs server not responding.
             const isOffline = typeof window === 'object' &&
                 typeof navigator === 'object' &&
-                (navigator as Navigator)?.onLine === false;
+                (navigator as Navigator).onLine === false;
             if (isOffline) {
                 // Do not record client offline incidents; nothing actionable server-side.
                 return Promise.reject(error instanceof Error ? error : new Error('Network offline'));
