@@ -61,14 +61,14 @@ class AuthenticationController extends Controller
         }
 
         // Check if there is an error flashed to the session (from ->with('error', ...))
-        if ($error === null && $request->session()->has('error')) {
-            $error = $request->session('error', null);
+        if ($error === null && session()->has('error')) {
+            $error = session('error', null);
         }
 
         // Status are random messages from various surfaces that might interact or require
         // authentication. For example, the password reset feature confirming that the reset
         // was successful and that they now can log in.
-        $status = $request->session('status', null); 
+        $status = session('status', null); 
 
         $providers = AuthorizationProvider::orderBy('name')->get();
 
