@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import classNames from '@root/utilities/ClassNames';
 import HtmlInject from '@root/components/HtmlInject';
 import type { IProps } from './LexicalEntryDetail._types';
 

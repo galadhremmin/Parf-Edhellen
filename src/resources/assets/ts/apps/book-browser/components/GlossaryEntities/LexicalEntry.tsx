@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import classNames from '@root/utilities/ClassNames';
 import type { IProps } from './LexicalEntry._types';
 
 import LexicalEntryDetails from './LexicalEntryDetails';

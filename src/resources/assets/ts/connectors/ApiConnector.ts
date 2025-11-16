@@ -1,11 +1,4 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import axios, {
-    AxiosError,
-    type AxiosInstance,
-    type AxiosPromise,
-    type AxiosRequestConfig,
-    type AxiosResponse,
-} from 'axios';
 import Cookies from 'js-cookie';
 
 import {
@@ -19,11 +12,11 @@ import {
     toSnakeCase,
 } from '../utilities/func/snake-case';
 import type {
-    AxiosRequestFactory,
     IApiBaseConnector,
     IErrorReport,
     IQueryStringMap,
     IValidationFailedResponse,
+    FetchRequestConfig,
 } from './ApiConnector._types';
 import {
     ErrorCategory,
@@ -38,8 +31,7 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
     constructor(
         private _apiPathName: string = ApiPath,
         private _apiErrorMethod: string = ApiExceptionCollectorMethod,
-        private _apiValidationErrorStatusCode: number = ApiValidationFailedStatusCode,
-        private _factory: AxiosInstance = axios) {
+        private _apiValidationErrorStatusCode: number = ApiValidationFailedStatusCode) {
         this._abortController = new AbortController();
         window.addEventListener('beforeunload', () => {
             this._abortController.abort();
@@ -57,7 +49,7 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
      * Execute a DELETE request and returns the request object.
      */
     public deleteRaw<T = any>(apiMethod: string, queryStringMap: IQueryStringMap = null) {
-        return this._createRequest<T>(this._factory.delete, apiMethod, queryStringMap);
+        return this._createRequest<T>('DELETE', apiMethod, queryStringMap);
     }
 
     /**
@@ -71,7 +63,7 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
      * Execute a HEAD request.
      */
     public headRaw<T = any>(apiMethod: string, queryStringMap: IQueryStringMap = null) {
-        return this._createRequest<T>(this._factory.head, apiMethod, queryStringMap);
+        return this._createRequest<T>('HEAD', apiMethod, queryStringMap);
     }
 
     /**
@@ -85,7 +77,7 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
      * Execute a GET request.
      */
     public getRaw<T = any>(apiMethod: string, queryStringMap: IQueryStringMap = null) {
-        return this._createRequest<T>(this._factory.get, apiMethod, queryStringMap);
+        return this._createRequest<T>('GET', apiMethod, queryStringMap);
     }
 
     /**
@@ -99,7 +91,7 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
      * Execute a POST request.
      */
     public postRaw<T = any>(apiMethod: string, payload: any, queryStringMap: IQueryStringMap = null) {
-        return this._createRequest<T>(this._factory.post, apiMethod, queryStringMap, payload || {});
+        return this._createRequest<T>('POST', apiMethod, queryStringMap, payload || {});
     }
 
     /**
@@ -113,7 +105,7 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
      * Execute a PUT request.
      */
     public putRaw<T = any>(apiMethod: string, payload: any, queryStringMap: IQueryStringMap = null) {
-        return this._createRequest<T>(this._factory.put, apiMethod, queryStringMap, payload || {});
+        return this._createRequest<T>('PUT', apiMethod, queryStringMap, payload || {});
     }
 
     /**
@@ -133,7 +125,7 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
      * Default XMLHTTPRequest configuration.
      */
     public get config() {
-        return {
+        const cfg: FetchRequestConfig = {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -142,10 +134,10 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
                 'X-Requested-With': 'XMLHttpRequest',
             },
             timeout: ApiTimeoutInMilliseconds,
-            clarifyTimeoutError: true,
             withCredentials: true,
             signal: this._abortController.signal,
-        } as AxiosRequestConfig<any>;
+        };
+        return cfg;
     }
 
     /**
@@ -187,36 +179,36 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
         
     }
 
-    private _createRequest<T = any>(factory: AxiosRequestFactory, apiMethod: string, queryStringMap: IQueryStringMap,
-        payload: any = null): AxiosPromise<AxiosResponse<T>> {
+    private _createRequest<T = any>(method: string, apiMethod: string, queryStringMap: IQueryStringMap,
+        payload: any = null): Promise<Response> {
         if (! apiMethod || apiMethod.length < 1) {
             return Promise.reject(new Error('You need to specify an API method to invoke.'));
         }
 
         this._nodeGuard();
 
-        const config = this.config;
+        const url = this._prepareUrl(apiMethod, queryStringMap);
+        const config: RequestInit = {
+            method,
+            headers: { ...(this.config.headers || {}) },
+            credentials: this.config.withCredentials ? 'include' : 'same-origin',
+            signal: this.config.signal,
+        };
         const hasBody = payload !== null;
         if (hasBody) {
             if (payload instanceof FormData) {
-                config.headers['Content-Type'] = 'multipart/form-data';
+                // Let the browser set the multipart boundary
             } else {
+                config.headers = { ...config.headers, 'Content-Type': 'application/json' };
                 payload = propsToSnakeCase(payload);
             }
+            config.body = payload instanceof FormData ? payload : JSON.stringify(payload);
         }
 
-        const url = this._prepareUrl(apiMethod, queryStringMap);
-        let promise: AxiosPromise<AxiosResponse<T>>;
-        if (hasBody) {
-            promise = factory.apply(this._factory, [url, payload, config]);
-        } else {
-            promise = factory.apply(this._factory, [url, config]);
-        }
-
-        return promise;
+        return fetch(url, config);
     }
 
-    private async _consume<T>(apiMethod: string, request: AxiosPromise<AxiosResponse<T>>): Promise<T> {
+    private async _consume<T>(apiMethod: string, request: Promise<Response>): Promise<T> {
         this._nodeGuard();
 
         // Record start time for performance measurement
@@ -224,18 +216,29 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
 
         try {
             const response = await request;
-            if (response === undefined) {
-                return undefined;
+            if (! response) {
+                return undefined as unknown as T;
             }
-
-            return snakeCasePropsToCamelCase(response.data);
-        } catch (error) {
+            if (! response.ok) {
+                // Simulate axios-like error handling via throwing with status
+                const error: any = new Error(`HTTP ${response.status}`);
+                error.response = {
+                    status: response.status,
+                    headers: Object.fromEntries(response.headers.entries()),
+                    data: await this._safeParseJson(response),
+                };
+                error.config = {};
+                throw error;
+            }
+            const data = await this._safeParseJson(response);
+            return snakeCasePropsToCamelCase(data);
+        } catch (error: any) {
             const duration = performance.now() - startTime;
-            return this._handleError(apiMethod, error as AxiosError, duration);
+            return this._handleError(apiMethod, error, duration);
         }
     }
 
-    private async _handleError(apiMethod: string, error: AxiosError, duration?: number) {
+    private async _handleError(apiMethod: string, error: any, duration?: number) {
         if (error === undefined) {
             console.warn(`Received an empty error from ${apiMethod}.`);
         }
@@ -244,8 +247,8 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             return Promise.reject(error);
         }
 
-        const requestWasCanceled = axios.isCancel(error as any) || //
-            error.code === 'ECONNABORTED' ||
+        const requestWasCanceled = error?.name === 'AbortError' ||
+            error?.code === 'ECONNABORTED' ||
             (duration || 0) >= ApiTimeoutInMilliseconds;
 
         let errorReport: IErrorReport = null;
@@ -275,8 +278,8 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
                     break;
                 case this._apiValidationErrorStatusCode:
                     return Promise.reject(new ValidationError(
-                        (error.response.data as IValidationFailedResponse).message,
-                        (error.response.data as IValidationFailedResponse).errors,
+                        (error.response.data as IValidationFailedResponse)?.message,
+                        (error.response.data as IValidationFailedResponse)?.errors,
                     ));
                 default:
                     errorReport = {
@@ -319,5 +322,21 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
         }
 
         return Promise.reject(new Error(`API request failed ${apiMethod}`));
+    }
+
+    private async _safeParseJson(res: Response) {
+        const contentType = res.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+            try {
+                return await res.json();
+            } catch {
+                return null;
+            }
+        }
+        try {
+            return await res.text();
+        } catch {
+            return null;
+        }
     }
 }

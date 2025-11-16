@@ -1,7 +1,7 @@
 import { type CSSProperties, useEffect, useState } from 'react';
 import type { IProps } from './Jumbotron._types';
 
-import classNames from 'classnames';
+import classNames from '@root/utilities/ClassNames';
 import './Jumbotron.scss';
 
 export default function Jumbotron({

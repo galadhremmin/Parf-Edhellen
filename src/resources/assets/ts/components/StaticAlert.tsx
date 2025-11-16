@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import classNames from '@root/utilities/ClassNames';
 import { useCallback } from 'react';
 
 import { fireEvent } from './Component';

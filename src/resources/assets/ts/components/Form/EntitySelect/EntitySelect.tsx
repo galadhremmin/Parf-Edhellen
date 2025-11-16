@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import classNames from '@root/utilities/ClassNames';
 import { Component, type ChangeEvent as ReactChangeEvent, type KeyboardEvent, type FormEvent } from 'react';
 
 // Note: react-autosuggest uses deprecated UNSAFE_componentWillReceiveProps which causes warnings in React StrictMode

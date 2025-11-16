@@ -4,28 +4,29 @@ import {
     expect,
     test,
 } from '@jest/globals';
-import { DateTime } from 'luxon';
+import { formatDateTimeFull, formatRelative } from '@root/utilities/DateTime';
 import DateLabel from './DateLabel';
 
 describe('components/DateLabel', () => {
     test('formats Date appropriately', () => {
-        const dateTime = DateTime.now().minus({ month: 1 }).toJSDate();
+        const dateTime = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
         const { container } = render(<DateLabel dateTime={dateTime} />);
 
         const time = container.querySelector('time');
         expect(time.getAttribute('dateTime')).toEqual(dateTime.toISOString());
-        expect(time.getAttribute('title')).toEqual(DateTime.fromJSDate(dateTime).toLocaleString(DateTime.DATETIME_FULL));
-        expect(time.textContent).toEqual(DateTime.fromJSDate(dateTime).toRelative());
+        expect(time.getAttribute('title')).toEqual(formatDateTimeFull(dateTime));
+        expect(time.textContent).toEqual(formatRelative(dateTime));
     });
 
     test('formats ISO string dates appropriately', () => {
-        const dateTime = DateTime.now().minus({ year: 1 }).toISO();
+        const dateTime = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString();
         const { container } = render(<DateLabel dateTime={dateTime} />);
 
         const time = container.querySelector('time');
         expect(time.getAttribute('dateTime')).toEqual(dateTime);
-        expect(time.getAttribute('title')).toEqual(DateTime.fromISO(dateTime).toLocaleString(DateTime.DATETIME_FULL));
-        expect(time.textContent).toEqual(DateTime.fromISO(dateTime).toRelative());
+        expect(time.getAttribute('title')).toEqual(formatDateTimeFull(dateTime));
+        // Relative text can vary slightly with time; just assert it contains a year difference notion
+        expect(time.textContent).toEqual(formatRelative(dateTime));
     });
 
     test('handles failures', () => {

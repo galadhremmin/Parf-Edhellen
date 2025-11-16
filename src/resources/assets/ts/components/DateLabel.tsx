@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon';
+import { formatDateTimeFull, formatRelative, fromISOToDate } from '@root/utilities/DateTime';
 import type { IProps } from './DateLabel._types';
 
 export function DateLabel(props: IProps) {
@@ -10,12 +10,12 @@ export function DateLabel(props: IProps) {
     const dateTimeISOString = typeof dateTime === 'string'
         ? dateTime : dateTime?.toISOString();
     const date = typeof dateTimeISOString === 'string'
-        ? DateTime.fromISO(dateTimeISOString)
-        : DateTime.invalid(`${dateTime} is null or undefined.`);
-    const absoluteDfateString = date.toLocaleString(DateTime.DATETIME_FULL);
-    const relativeDateString = date.toRelative();
+        ? fromISOToDate(dateTimeISOString)
+        : null;
+    const absoluteDfateString = date ? formatDateTimeFull(date) : `Unknown date (${dateTime})`;
+    const relativeDateString = date ? formatRelative(date) : `Unknown date (${dateTime})`;
 
-    if (! date.isValid) {
+    if (! date) {
         return <span>{`Unknown date (${dateTime})`}</span>;
     }
 

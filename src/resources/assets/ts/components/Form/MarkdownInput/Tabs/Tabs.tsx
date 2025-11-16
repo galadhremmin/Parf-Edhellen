@@ -1,4 +1,4 @@
-import classNames from 'classnames';
+import classNames from '@root/utilities/ClassNames';
 import type { MouseEvent } from 'react';
 
 import { fireEvent } from '@root/components/Component';

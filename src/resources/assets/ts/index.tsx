@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon';
+import { formatDateTimeFull, fromISOToDate } from './utilities/DateTime';
 
 import inject from './Injector';
 import setupContainer from './di/config';
@@ -39,7 +39,10 @@ function renderDates() {
     for (let i = 0; i < dateElements.length; i += 1) {
         const dateElement = dateElements.item(i) as HTMLTimeElement;
         const date = dateElement.dateTime.trim();
-        dateElement.title = DateTime.fromISO(date).toLocaleString(DateTime.DATETIME_FULL);
+        const d = fromISOToDate(date);
+        if (d) {
+            dateElement.title = formatDateTimeFull(d);
+        }
     }
 }
 

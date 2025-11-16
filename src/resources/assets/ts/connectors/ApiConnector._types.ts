@@ -1,10 +1,10 @@
-import axios, { type AxiosPromise, type AxiosRequestConfig, type AxiosResponse } from 'axios';
-
-export type AxiosRequestFactory = typeof axios.delete |
-    typeof axios.head |
-    typeof axios.get |
-    typeof axios.post |
-    typeof axios.put;
+export interface FetchRequestConfig {
+    headers?: Record<string, string>;
+    timeout?: number;
+    withCredentials?: boolean;
+    signal?: AbortSignal;
+    method?: string;
+}
 
 export interface IValidationFailedResponse {
     message: string;
@@ -34,7 +34,7 @@ export interface IApiBaseConnector {
     /**
      * Execute a DELETE request and returns the request object.
      */
-    deleteRaw<T = any>(apiMethod: string, queryStringMap?: IQueryStringMap): AxiosPromise<AxiosResponse<T>>;
+    deleteRaw<T = any>(apiMethod: string, queryStringMap?: IQueryStringMap): Promise<Response>;
 
     /**
      * Execute a HEAD request.
@@ -44,7 +44,7 @@ export interface IApiBaseConnector {
     /**
      * Execute a HEAD request.
      */
-    headRaw<T = any>(apiMethod: string, queryStringMap?: IQueryStringMap): AxiosPromise<AxiosResponse<T>>;
+    headRaw<T = any>(apiMethod: string, queryStringMap?: IQueryStringMap): Promise<Response>;
 
     /**
      * Execute a GET request.
@@ -54,7 +54,7 @@ export interface IApiBaseConnector {
     /**
      * Execute a GET request.
      */
-    getRaw<T = any>(apiMethod: string, queryStringMap?: IQueryStringMap): AxiosPromise<AxiosResponse<T>>;
+    getRaw<T = any>(apiMethod: string, queryStringMap?: IQueryStringMap): Promise<Response>;
 
     /**
      * Execute a POST request.
@@ -64,7 +64,7 @@ export interface IApiBaseConnector {
     /**
      * Execute a POST request.
      */
-    postRaw<T = any>(apiMethod: string, payload: any, queryStringMap?: IQueryStringMap): AxiosPromise<AxiosResponse<T>>;
+    postRaw<T = any>(apiMethod: string, payload: any, queryStringMap?: IQueryStringMap): Promise<Response>;
 
     /**
      * Execute a PUT request.
@@ -74,10 +74,10 @@ export interface IApiBaseConnector {
     /**
      * Execute a PUT request.
      */
-    putRaw<T = any>(apiMethod: string, payload: any, queryStringMap?: IQueryStringMap): AxiosPromise<AxiosResponse<T>>;
+    putRaw<T = any>(apiMethod: string, payload: any, queryStringMap?: IQueryStringMap): Promise<Response>;
 
     /**
      * Default XMLHTTPRequest configuration.
      */
-    get config(): AxiosRequestConfig;
+    get config(): FetchRequestConfig;
 }
