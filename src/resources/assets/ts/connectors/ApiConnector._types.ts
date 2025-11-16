@@ -6,17 +6,16 @@ export interface FetchRequestConfig {
     method?: string;
 }
 
-export interface IConnectorError extends Partial<Error> {
-    name?: string;
+export interface IConnectorError extends Error {
+    name: string;
     code?: string;
-    message?: string;
-    response?: {
+    response: {
         status: number;
-        headers?: any;
-        data?: unknown;
+        headers: Record<string, string>;
+        data: unknown;
     };
-    config?: unknown;
-    request?: unknown;
+    config: FetchRequestConfig;
+    request: unknown;
 }
 
 export interface IValidationFailedResponse {

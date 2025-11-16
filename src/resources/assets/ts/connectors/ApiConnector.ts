@@ -224,13 +224,15 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
                 // Simulate axios-like error handling via throwing with status
                 const error: IConnectorError = Object.assign(new Error(`HTTP ${response.status}`), {
                     name: 'HttpError',
+                    response: {
+                        status: response.status,
+                        headers: Object.fromEntries(response.headers.entries()),
+                        data: await this._safeParseJson(response),
+                    },
+                    config: {},
+                    request: null,
                 });
-                error.response = {
-                    status: response.status,
-                    headers: Object.fromEntries(response.headers.entries()),
-                    data: await this._safeParseJson(response),
-                };
-                error.config = {};
+
                 throw error;
             }
             const data = await this._safeParseJson(response);
@@ -309,7 +311,7 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             // No response object. Distinguish offline client vs server not responding.
             const isOffline = typeof window === 'object' &&
                 typeof navigator === 'object' &&
-                (navigator as any)?.onLine === false;
+                (navigator as Navigator)?.onLine === false;
             if (isOffline) {
                 // Do not record client offline incidents; nothing actionable server-side.
                 return Promise.reject(error instanceof Error ? error : new Error('Network offline'));
