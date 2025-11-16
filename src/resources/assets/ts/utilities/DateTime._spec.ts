@@ -13,6 +13,7 @@ import {
 	formatDateTimeShortWithSeconds,
 	formatRelative,
 	getLocalTimeZone,
+	InvalidDate,
 } from '@root/utilities/DateTime';
 
 describe('utilities/DateTime', () => {
@@ -56,6 +57,16 @@ describe('utilities/DateTime', () => {
 		const date = new Date('2023-06-15T08:30:45.000Z');
 		const expected = new Intl.DateTimeFormat(undefined, { dateStyle: 'short', timeStyle: 'medium' }).format(date);
 		expect(formatDateTimeShortWithSeconds(date)).toEqual(expected);
+	});
+
+	test('formatDateTimeFull returns InvalidDate for null/undefined', () => {
+		expect(formatDateTimeFull(null as unknown as any)).toBe(InvalidDate);
+		expect(formatDateTimeFull(undefined as unknown as any)).toBe(InvalidDate);
+	});
+
+	test('formatDateTimeShortWithSeconds returns InvalidDate for null/undefined', () => {
+		expect(formatDateTimeShortWithSeconds(null as unknown as any)).toBe(InvalidDate);
+		expect(formatDateTimeShortWithSeconds(undefined as unknown as any)).toBe(InvalidDate);
 	});
 
 	test('formatRelative for past and future', () => {

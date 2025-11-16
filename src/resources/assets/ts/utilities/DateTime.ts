@@ -1,3 +1,5 @@
+export const InvalidDate = 'Invalid date';
+
 /**
  * Returns the current date and time in milliseconds.
  * @returns The current date and time in milliseconds.
@@ -12,12 +14,12 @@ export function dateNowInMilliseconds(): number {
  * @returns The Date object.
  */
 export function fromISOToDate(value: string | Date | null | undefined): Date | null {
-	if (!value) {
+	if (! value) {
 		return null;
 	}
 	if (value instanceof Date) {
 		return value;
-	}
+}
 	const d = new Date(value);
 	return isNaN(d.getTime()) ? null : d;
 }
@@ -25,9 +27,13 @@ export function fromISOToDate(value: string | Date | null | undefined): Date | n
 /**
  * Formats a date and time into a full date and time string.
  * @param value - The date and time to format.
- * @returns The formatted date and time string.
+ * @returns The formatted date and time string, or 'Invalid date' if the date is invalid.
  */
 export function formatDateTimeFull(value: string | Date): string {
+	if (! value) {
+		return InvalidDate;
+	}
+
 	const date = value instanceof Date ? value : new Date(value);
 	// Similar to Luxon DateTime.DATETIME_FULL
 	// Use dateStyle/timeStyle if available, otherwise fall back to explicit options.
@@ -49,9 +55,13 @@ export function formatDateTimeFull(value: string | Date): string {
 /**
  * Formats a date and time into a short date and time string with seconds.
  * @param value - The date and time to format.
- * @returns The formatted date and time string.
+ * @returns The formatted date and time string, or 'Invalid date' if the date is invalid.
  */
 export function formatDateTimeShortWithSeconds(value: string | Date): string {
+	if (! value) {
+		return InvalidDate;
+	}
+
 	const date = value instanceof Date ? value : new Date(value);
 	// Similar to Luxon DateTime.DATETIME_SHORT_WITH_SECONDS
 	try {
