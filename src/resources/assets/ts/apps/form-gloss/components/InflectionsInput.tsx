@@ -1,4 +1,4 @@
-import {
+import type {
     CellValueChangedEvent,
     ColDef,
     ColGroupDef,
@@ -6,8 +6,8 @@ import {
     GetRowIdParams,
     GridReadyEvent,
     ICellRendererParams,
-} from 'ag-grid-community';
-// import { ClientSideRowModelModule } from 'ag-grid-community/community-modules/client-side-row-model';
+} from '@ag-grid-community/core';
+import { AgGridReact } from '@ag-grid-community/react';
 import { fireEventAsync } from '@root/components/Component';
 import BooleanCellEditor from '@root/components/Grid/cell-editors/BooleanCellEditor';
 import InflectionCellEditor from '@root/components/Grid/cell-editors/InflectionCellEditor';
@@ -21,14 +21,14 @@ import { IInflection } from '@root/connectors/backend/IInflectionResourceApi';
 import { ISpeechEntity } from '@root/connectors/backend/ISpeechResourceApi';
 import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
-import { AgGridReact } from 'ag-grid-react';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { deepClone } from '@root/utilities/func/clone';
+import '@root/utilities/agGridModules';
 import { IInflectionGroupState } from '../reducers/InflectionsReducer._types';
 import { IProps } from './InflectionsInput._types';
 
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-balham.css';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-balham.css';
 import './InflectionsInput.scss';
 
 function InflectionsInput(props: IProps) {

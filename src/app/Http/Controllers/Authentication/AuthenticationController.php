@@ -12,7 +12,6 @@ use App\Security\RoleConstants;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Cookie;
 
 class AuthenticationController extends Controller
 {
@@ -61,10 +60,15 @@ class AuthenticationController extends Controller
             ];
         }
 
+        // Check if there is an error flashed to the session (from ->with('error', ...))
+        if ($error === null && $request->session()->has('error')) {
+            $error = $request->session('error', null);
+        }
+
         // Status are random messages from various surfaces that might interact or require
         // authentication. For example, the password reset feature confirming that the reset
         // was successful and that they now can log in.
-        $status = session('status', null);
+        $status = $request->session('status', null); 
 
         $providers = AuthorizationProvider::orderBy('name')->get();
 
@@ -123,7 +127,7 @@ class AuthenticationController extends Controller
         }
 
         // If the account is linked, sign in as the master account
-        auth()->login($user, $remember);
+        Auth::login($user, $remember);
 
         event(new AccountAuthenticated($user, $first));
 

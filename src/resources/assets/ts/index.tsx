@@ -51,7 +51,13 @@ function globalOrchestration() {
 }
 
 if (loadLatestScript()) {
-    window.addEventListener('load', () => {
+    const boot = () => {
         void globalOrchestration();
-    });
+    };
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        boot();
+    } else {
+        window.addEventListener('DOMContentLoaded', boot, { once: true });
+    }
 }

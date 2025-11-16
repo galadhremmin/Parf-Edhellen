@@ -1,7 +1,7 @@
-import {
+import type {
     ICellRendererComp,
     ICellRendererParams,
-} from 'ag-grid-community';
+} from '@ag-grid-community/core';
 import { IAugmentedCellRendererParams } from '../cell-editors/InflectionCellEditor._types';
 
 export default class SpeechRenderer implements ICellRendererComp {
