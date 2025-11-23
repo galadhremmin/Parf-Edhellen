@@ -62,8 +62,9 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
     public function registerWithPassword(Request $request)
     {
         // Protect the registration flow against binary actors.
-        if (! empty($request->input('account_control')) || ! RecaptchaHelper::createAssessment($request->input('recaptcha_token'), 'REGISTER')) {
-            $this->_systemErrorRepository->saveException(new SuspiciousBotActivityException($request, 'user registration'), 'security');
+        $assessmentResult = [];
+        if (! empty($request->input('account_control')) || ! RecaptchaHelper::createAssessment($request->input('recaptcha_token'), 'REGISTER', $assessmentResult)) {
+            $this->_systemErrorRepository->saveException(new SuspiciousBotActivityException($request, 'user registration', $assessmentResult), 'security');
             return redirect()->to('login');
         }
 

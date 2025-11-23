@@ -13,8 +13,9 @@ class OAuthAuthenticationController extends AuthenticationController
 {    
     public function redirect(Request $request, string $providerName)
     {
-        if (config('ed.recaptcha.sitekey') && ! RecaptchaHelper::createAssessment($request->query('recaptcha_token'), 'LOGIN')) {
-            $this->log('redirect', $providerName, new SuspiciousBotActivityException($request, 'user login'));
+        $assessmentResult = [];
+        if (config('ed.recaptcha.sitekey') && ! RecaptchaHelper::createAssessment($request->query('recaptcha_token'), 'LOGIN', $assessmentResult)) {
+            $this->log('redirect', $providerName, new SuspiciousBotActivityException($request, 'user login', $assessmentResult));
             return redirect()->route('login')->with('error', 'Recaptcha error - are you a bot?');
         }
 
