@@ -129,7 +129,6 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
         const cfg: FetchRequestConfig = {
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
                 'X-XSRF-TOKEN': Cookies.get('XSRF-TOKEN'),
                 'X-Requested-With': 'XMLHttpRequest',
@@ -189,21 +188,29 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
         this._nodeGuard();
 
         const url = this._prepareUrl(apiMethod, queryStringMap);
+        const isFormData = payload instanceof FormData;
+        
+        // For FormData, we must NOT set Content-Type - browser will set it with boundary automatically
+        // For JSON, we need to set Content-Type explicitly
+        const baseHeaders = { ...(this.config.headers || {}) };
+        if (! isFormData) {
+            baseHeaders['Content-Type'] = 'application/json';
+        }
+        
         const config: RequestInit = {
             method,
-            headers: { ...(this.config.headers || {}) },
+            headers: baseHeaders,
             credentials: this.config.withCredentials ? 'include' : 'same-origin',
             signal: this.config.signal,
         };
+        
         const hasBody = payload !== null;
         if (hasBody) {
-            if (payload instanceof FormData) {
-                // Let the browser set the multipart boundary
-            } else {
+            if (! isFormData) {
                 config.headers = { ...config.headers, 'Content-Type': 'application/json' };
                 payload = propsToSnakeCase(payload);
             }
-            config.body = payload instanceof FormData ? payload : JSON.stringify(payload);
+            config.body = isFormData ? payload : JSON.stringify(payload);
         }
 
         return fetch(url, config);
