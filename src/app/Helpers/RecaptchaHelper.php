@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Log;
 
 class RecaptchaHelper
 {
-    public static function createAssessment(?string $token, string $action): bool
+    public static function createAssessment(?string $token, string $action, ?array &$assessmentResult = null): bool
     {
         if (! config('ed.recaptcha.sitekey')) {
             return true; // we'll assume the token is valid if the recaptcha configuration is not set
@@ -31,6 +31,11 @@ class RecaptchaHelper
         try {
             $request = Http::post($assessmentUrl, $data);
             $response = $request->json();
+            
+            if ($assessmentResult !== null) {
+                $assessmentResult = $response;
+            }
+            
             return $response['tokenProperties']['valid'] ?? false;
         } catch (\Exception $e) {
             Log::error('RecaptchaHelper::createAssessment failed: ' . $e->getMessage());

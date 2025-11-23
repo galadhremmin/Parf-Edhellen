@@ -52,7 +52,7 @@ class UtilityApiController extends Controller
             'message' => 'string|required',
             'url' => 'string|required',
             'error' => 'string|nullable',
-            'category' => 'string|nullable',
+            'category' => ['nullable', 'string', 'regex:/^[a-z0-9\-]+$/'],
             'duration' => 'numeric|nullable',
         ]);
 
@@ -63,7 +63,7 @@ class UtilityApiController extends Controller
         $this->_systemErrorRepository->saveFrontendException(
             $request->input('url'),
             $request->input('message'),
-            $request->input('error'),
+            $request->input('error') ?? '',
             $category,
             $request->input('duration')
         );
