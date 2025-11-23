@@ -75,9 +75,14 @@ class UtilityApiController extends Controller
     {
         $from = intval($request->query('from', 0));
         $to = intval($request->query('to', 100));
+        $category = $request->query('category');
 
         $query = SystemError::orderBy('id', 'desc')
             ->whereNotIn('category', ['http-401', 'http-404']);
+
+        if ($category !== null) {
+            $query->where('category', $category);
+        }
 
         $length = $query->count();
         $errors = $query
@@ -88,6 +93,54 @@ class UtilityApiController extends Controller
         return [
             'errors' => $errors,
             'length' => $length,
+        ];
+    }
+
+    public function deleteError(Request $request, int $id)
+    {
+        $user = $request->user();
+        if ($user === null || ! $user->isRoot()) {
+            abort(403, 'Access denied');
+        }
+
+        $error = SystemError::find($id);
+        if ($error === null) {
+            abort(404, 'Error not found');
+        }
+
+        $error->delete();
+
+        return response(null, 204);
+    }
+
+    public function deleteErrorsByCategory(Request $request)
+    {
+        $user = $request->user();
+        if ($user === null || ! $user->isRoot()) {
+            abort(403, 'Access denied');
+        }
+
+        $this->validate($request, [
+            'category' => 'required|string',
+            'year' => 'sometimes|integer',
+            'week' => 'sometimes|integer',
+        ]);
+
+        $category = $request->query('category');
+        $year = $request->query('year');
+        $week = $request->query('week');
+
+        $query = SystemError::where('category', $category);
+
+        if ($year !== null && $week !== null) {
+            $query->whereRaw('YEAR(created_at) = ?', [$year])
+                  ->whereRaw('WEEK(created_at) = ?', [$week]);
+        }
+
+        $deleted = $query->delete();
+
+        return [
+            'deleted' => $deleted,
         ];
     }
 
