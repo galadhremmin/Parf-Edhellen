@@ -36,6 +36,8 @@ export interface IGetFailedJobsResponse {
 }
 
 export interface ILogApi {
-    getErrors(from?: number, to?: number): Promise<IGetErrorsResponse>;
+    getErrors(from?: number, to?: number, category?: string): Promise<IGetErrorsResponse>;
     getFailedJobs(from?: number, to?: number): Promise<IGetFailedJobsResponse>;
+    deleteError(id: number): Promise<void>;
+    deleteErrorsByCategory(category: string, year?: number, week?: number): Promise<{ deleted: number }>;
 }
