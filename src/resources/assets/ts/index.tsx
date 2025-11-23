@@ -23,9 +23,8 @@ function loadLatestScript() {
     console.warn(`Detected outdated version - sideloading ${latestVersion}!`);
     const latestScript = document.createElement('script');
     latestScript.src = `/v${latestVersion}/index.js`;
-    latestScript.onload = () => {
-        void globalOrchestration(); 
-    };
+    latestScript.type = 'text/javascript';
+    document.currentScript?.parentNode?.removeChild(document.currentScript);
     document.body.appendChild(latestScript);
     return false;
 }
