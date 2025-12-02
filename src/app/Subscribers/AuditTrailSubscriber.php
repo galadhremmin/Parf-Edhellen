@@ -119,6 +119,9 @@ class AuditTrailSubscriber
 
     public function onAccountDeleted(AccountDestroyed $event): void
     {
+        // it's important that we use the account field, and not the accountId (which is the user who performed the action)
+        // excellent naming, I agree -.-
+        $this->_repository->hideForAccount($event->account);
         $this->_repository->store(AuditTrail::ACTION_PROFILE_DELETE, $event->account, $event->accountId, true, [
             'nickname' => $event->friendlyName,
         ]);

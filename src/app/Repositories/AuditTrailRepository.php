@@ -7,6 +7,7 @@ use App\Models\AuditTrail;
 use App\Models\Initialization\Morphs;
 use App\Models\Interfaces\IHasFriendlyName;
 use App\Models\ModelBase;
+use App\Models\Account;
 use Illuminate\Auth\AuthManager;
 
 class AuditTrailRepository implements Interfaces\IAuditTrailRepository
@@ -97,5 +98,11 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
             'is_admin' => $is_elevated,
             'data' => is_array($data) ? json_encode($data) : null,
         ]);
+    }
+
+    public function hideForAccount(Account $account): void
+    {
+        AuditTrail::where('account_id', $account->id)
+            ->update(['is_admin' => true]);
     }
 }

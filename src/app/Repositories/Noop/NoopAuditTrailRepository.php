@@ -3,6 +3,7 @@
 namespace App\Repositories\Noop;
 
 use App\Repositories\Interfaces\IAuditTrailRepository;
+use App\Models\Account;
 
 class NoopAuditTrailRepository implements IAuditTrailRepository
 {
@@ -13,6 +14,11 @@ class NoopAuditTrailRepository implements IAuditTrailRepository
     }
 
     public function store(int $action, $entity, int $userId = 0, ?bool $is_elevated = null, ?array $data = null)
+    {
+        // Noop
+    }
+
+    public function hideForAccount(Account $account): void
     {
         // Noop
     }

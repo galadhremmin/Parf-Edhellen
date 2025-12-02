@@ -16,6 +16,26 @@
         'auditTrail' => $auditTrail
         ])
         {{ $auditTrailPagination->links() }}
+        @if ($securityActivity->count() > 0)
+        <h2>Security activity</h2>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <tbody>
+              @foreach ($securityActivity as $event)
+              <tr>
+                <td>{{ $event->type }}</td>
+                <td>{{ $event->result }}</td>
+                <td>{{ $event->created_at }}</td>
+                <td>{{ $event->ip_address }}</td>
+                <td>{{ $event->user_agent }}</td>
+                <td><pre>{{ $event->assessment }}</pre></td>
+              </tr>
+              @endforeach
+            </tbody>
+          </table>
+        </div>
+        {{ $securityActivityPagination->links() }}
+        @endif
       </div>
     </div>
   </div>

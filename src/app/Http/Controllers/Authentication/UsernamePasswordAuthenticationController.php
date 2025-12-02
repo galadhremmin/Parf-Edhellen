@@ -7,7 +7,6 @@ use App\Exceptions\SuspiciousBotActivityException;
 use App\Models\Account;
 use App\Security\RoleConstants;
 use Closure;
-use Exception;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -17,6 +16,8 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 use App\Helpers\RecaptchaHelper;
+use App\Events\AccountSecurityActivity;
+use App\Events\AccountSecurityActivityResultEnum;
 
 class UsernamePasswordAuthenticationController extends AuthenticationController
 {
@@ -42,6 +43,11 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
                     if (empty($username)) {
                         $fail('You need to specify an e-mail address.');
                     } else if (! $this->_accountManager->checkPasswordWithUsername($username, $value)) {
+                        $account = $this->_accountManager->getAccountByUsername($username);
+                        if ($account !== null) {
+                            event(AccountSecurityActivity::fromRequest($request, $account, 'login', AccountSecurityActivityResultEnum::FAILURE));
+                        }
+                        
                         $fail('We did not find an account with that e-mail and password combination. Check your e-mail and password and try again.');
                     }
                 },
@@ -51,11 +57,24 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
         $data = $validator->validate();
         $account = $this->_accountManager->getAccountByUsername($data['username']);
         if ($account === null) {
-            throw new Exception('Failed to find an account with the user name: '.$data['username']);
+            throw ValidationException::withMessages([
+                'username' => ['We did not find an account with that e-mail and password combination. Check your e-mail and password and try again.'],
+            ]);
         }
 
-        $remember = isset($data['remember']) ? boolval($data['remember']) : false;
+        $assessmentResult = [];
+        if (! RecaptchaHelper::createAssessment($request->input('recaptcha_token'), 'LOGIN', $assessmentResult)) {
+            $this->log('loginWithPassword', 'recaptcha', new SuspiciousBotActivityException($request, 'user login', $assessmentResult));
+            event(AccountSecurityActivity::fromRequest($request, $account, 'login', AccountSecurityActivityResultEnum::BLOCKED, $assessmentResult));
 
+            throw ValidationException::withMessages([
+                'recaptcha' => ['Recaptcha error - are you a bot?'],
+            ]);
+        }
+
+        event(AccountSecurityActivity::fromRequest($request, $account, 'login', AccountSecurityActivityResultEnum::SUCCESS, $assessmentResult));
+
+        $remember = isset($data['remember']) ? boolval($data['remember']) : false;
         return $this->doLogin($request, $account, /* new: */ false, $remember);
     }
 
@@ -64,7 +83,7 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
         // Protect the registration flow against binary actors.
         $assessmentResult = [];
         if (! empty($request->input('account_control')) || ! RecaptchaHelper::createAssessment($request->input('recaptcha_token'), 'REGISTER', $assessmentResult)) {
-            $this->_systemErrorRepository->saveException(new SuspiciousBotActivityException($request, 'user registration', $assessmentResult), 'security');
+            $this->log('registerWithPassword', 'recaptcha', new SuspiciousBotActivityException($request, 'user registration', $assessmentResult));
             return redirect()->to('login');
         }
 
@@ -100,6 +119,8 @@ class UsernamePasswordAuthenticationController extends AuthenticationController
             $data['password'],
             $data['nickname']
         );
+
+        event(AccountSecurityActivity::fromRequest($request, $user, 'registration', AccountSecurityActivityResultEnum::SUCCESS, $assessmentResult));
 
         return $this->doLogin($request, $user, /* new: */ true, /* remember: */ false);
     }

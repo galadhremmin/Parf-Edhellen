@@ -6,6 +6,7 @@ use App\Models\SystemError;
 use Carbon\Carbon;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Session;
+use App\Exceptions\SuspiciousBotActivityException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Http\{
     Request,
@@ -37,6 +38,10 @@ class SystemErrorRepository
         $error = $exception->getFile().':'.$exception->getLine()."\n". //
             $exception->getTraceAsString()."\n\n". //
             print_r($request->cookie(), true)."\n";
+
+        if ($exception instanceof SuspiciousBotActivityException && $exception->getAssessmentResult() !== null) {
+            $error .= "\n\n".'Recaptcha assessment result: '.print_r($exception->getAssessmentResult(), true);
+        }
 
         $duration = self::calculateRequestDuration();
         

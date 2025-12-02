@@ -145,6 +145,14 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
     }
 
     /**
+     * @return HasMany<AccountSecurityEvent>
+     */
+    public function account_security_events(): HasMany
+    {
+        return $this->hasMany(AccountSecurityEvent::class);
+    }
+
+    /**
      * @return HasMany<Account>
      */
     public function linked_accounts(): HasMany
