@@ -22,12 +22,16 @@ class AccountSecurityEventSubscriber
      */
     public function onAccountSecurityActivity(AccountSecurityActivity $event): void
     {
+        $assessment = $event->assessmentResult ?: [];
+        if (isset($assessment['event'])) {
+            // we don't need to store this information
+            unset($assessment['event']);
+        }
+        
         AccountSecurityEvent::create([
             'account_id' => $event->account->id,
             'type' => $event->type,
-            'assessment' => $event->assessmentResult !== null 
-                ? json_encode($event->assessmentResult, JSON_PRETTY_PRINT) 
-                : json_encode([], JSON_PRETTY_PRINT),
+            'assessment' => json_encode($assessment, JSON_PRETTY_PRINT),
             'result' => $event->result->value,
             'ip_address' => $event->ipAddress,
             'user_agent' => $event->userAgent,
