@@ -31,6 +31,7 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $subscribe = [
         \App\Subscribers\AccountSubscriber::class,
+        \App\Subscribers\AccountSecurityEventSubscriber::class,
         \App\Subscribers\AuditTrailSubscriber::class,
         \App\Subscribers\ContributionMailEventSubscriber::class,
         \App\Subscribers\DiscussEventSubscriber::class,

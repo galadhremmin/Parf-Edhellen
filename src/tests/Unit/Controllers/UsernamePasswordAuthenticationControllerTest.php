@@ -2,20 +2,14 @@
 
 namespace Tests\Unit\Controllers;
 
-use App\Events\AccountPasswordForgot;
 use App\Events\AccountSecurityActivity;
 use App\Events\AccountSecurityActivityResultEnum;
-use App\Exceptions\SuspiciousBotActivityException;
-use App\Helpers\RecaptchaHelper;
 use App\Http\Controllers\Authentication\UsernamePasswordAuthenticationController;
 use App\Models\Account;
-use App\Models\AuthorizationProvider;
 use App\Security\AccountManager;
 use App\Security\RoleConstants;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password as FacadesPassword;
 use Illuminate\Validation\ValidationException;
 use Mockery;
@@ -31,7 +25,7 @@ class UsernamePasswordAuthenticationControllerTest extends TestCase
         parent::tearDown();
     }
 
-    private function createController(AccountManager $accountManager = null): UsernamePasswordAuthenticationController
+    private function createController(?AccountManager $accountManager = null): UsernamePasswordAuthenticationController
     {
         $accountManager = $accountManager ?? Mockery::mock(AccountManager::class);
 

@@ -145,11 +145,11 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
     }
 
     /**
-     * @return HasMany<RecaptchaAssessment>
+     * @return HasMany<AccountSecurityEvent>
      */
-    public function recaptcha_assessments(): HasMany
+    public function account_security_events(): HasMany
     {
-        return $this->hasMany(RecaptchaAssessment::class);
+        return $this->hasMany(AccountSecurityEvent::class);
     }
 
     /**

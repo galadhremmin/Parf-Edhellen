@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class RecaptchaAssessment extends ModelBase
+class AccountSecurityEvent extends ModelBase
 {
+    protected $table = 'account_security_events';
+
     protected $fillable = [
         'account_id',
         'type',
@@ -23,3 +25,4 @@ class RecaptchaAssessment extends ModelBase
         return $this->belongsTo(Account::class);
     }
 }
+

@@ -62,10 +62,15 @@ class AccountController extends Controller
             ->paginate(15);
         $auditTrail = $this->_auditTrailAdapter->adapt($auditTrailPagination->items());
 
+        $securityActivity = $account->account_security_events()
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+
         return view('admin.account.edit', [
             'account' => $account,
             'auditTrail' => $auditTrail,
             'auditTrailPagination' => $auditTrailPagination,
+            'securityActivity' => $securityActivity,
             'roles' => $roles,
         ]);
     }

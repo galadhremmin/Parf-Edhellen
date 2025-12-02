@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('recaptcha_assessments', function (Blueprint $table) {
+        Schema::create('account_security_events', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('account_id');
             $table->string('type', 16); // 'login' or 'registration'
@@ -23,9 +23,9 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
-            $table->index(['account_id'], 'idx_ra_account_id');
-            $table->index(['type'], 'idx_ra_type');
-            $table->index(['result'], 'idx_ra_result');
+            $table->index(['account_id'], 'idx_ase_account_id');
+            $table->index(['type'], 'idx_ase_type');
+            $table->index(['result'], 'idx_ase_result');
         });
     }
 
@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('recaptcha_assessments');
+        Schema::dropIfExists('account_security_events');
     }
 };
