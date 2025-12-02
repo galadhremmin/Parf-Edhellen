@@ -16,7 +16,11 @@
         'auditTrail' => $auditTrail
         ])
         {{ $auditTrailPagination->links() }}
-        @if ($securityActivity->count() > 0)
+      </div>
+    </div>
+    @if ($securityActivity->count() > 0)
+    <div class="card shadow-lg mb-3">
+      <div class="card-body">
         <h2>Security activity</h2>
         <div class="table-responsive">
           <table class="table table-striped">
@@ -34,10 +38,10 @@
             </tbody>
           </table>
         </div>
-        {{ $securityActivityPagination->links() }}
-        @endif
+        {{ $securityActivity->links() }}
       </div>
     </div>
+    @endif
   </div>
   <div class="col-sm-6">
     <div class="card shadow-lg mb-3">
