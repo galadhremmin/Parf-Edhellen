@@ -9,7 +9,7 @@
 
 <div class="row">
   <div class="col-sm-6">
-    <div class="card shadow-lg">
+    <div class="card shadow-lg mb-3">
       <div class="card-body">
         <h2>Audit trail</h2>
         @include('_shared._audit-trail', [

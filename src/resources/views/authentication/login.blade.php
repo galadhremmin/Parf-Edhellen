@@ -64,7 +64,7 @@
     You can sign in with your e-mail address and password. This is an option if you don't have access to the social media above, or prefer not 
     to use them. If you have previously signed in with your social media, you need to create a password to your account before you can sign in.
   </p>
-  <form method="post" action="{{ route('auth.password') }}">
+  <form method="post" action="{{ route('auth.password') }}" id="register-form">
     @csrf
     <div class="form-group">
       <label for="password-login-username" class="form-label">E-mail address</label>
@@ -83,6 +83,9 @@
     <div class="text-center mt-3">
       <button type="submit" class="btn btn-secondary">Sign in</button>
     </div>
+    @if (config('ed.recaptcha.sitekey'))
+    <input type="hidden" name="recaptcha_token" id="recaptcha-token">
+    @endif
   </form>
   <p>
     Forgot your password? <a href="{{ route('auth.forgot-password') }}">Request a password reset by e-mail</a>.
