@@ -145,6 +145,14 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
     }
 
     /**
+     * @return HasMany<RecaptchaAssessment>
+     */
+    public function recaptcha_assessments(): HasMany
+    {
+        return $this->hasMany(RecaptchaAssessment::class);
+    }
+
+    /**
      * @return HasMany<Account>
      */
     public function linked_accounts(): HasMany

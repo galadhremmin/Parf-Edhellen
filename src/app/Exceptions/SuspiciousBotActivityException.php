@@ -7,9 +7,24 @@ use Illuminate\Http\Request;
 
 class SuspiciousBotActivityException extends Exception
 {
-    public function __construct(Request $request, string $component, ?array $assessmentResult = null)
+    /**
+     * The assessment result from the Recaptcha API. This is an optional parameter that may be null.
+     */
+    private ?array $_assessmentResult = null;
+
+    public function __construct(Request $request, string $component, ?array $_assessmentResult = null)
     {
-        parent::__construct('Suspicious bot activity from '.$request->ip().' affecting component '.$component.
-            (is_array($assessmentResult) && count($assessmentResult) > 0 ? ' with assessment result: '.json_encode($assessmentResult, JSON_PRETTY_PRINT) : ''));
+        $this->_assessmentResult = $_assessmentResult;
+        parent::__construct('Suspicious bot activity from '.$request->ip().' affecting component '.$component);
+    }
+
+    /**
+     * Returns the assessment result from the Recaptcha API.
+     *
+     * @return ?array
+     */
+    public function getAssessmentResult(): ?array
+    {
+        return $this->_assessmentResult;
     }
 }

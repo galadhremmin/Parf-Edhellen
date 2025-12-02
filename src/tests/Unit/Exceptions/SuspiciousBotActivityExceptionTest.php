@@ -33,7 +33,6 @@ class SuspiciousBotActivityExceptionTest extends TestCase
         $this->assertStringContainsString('Suspicious bot activity from', $exception->getMessage());
         $this->assertStringContainsString($request->ip(), $exception->getMessage());
         $this->assertStringContainsString('affecting component '.$component, $exception->getMessage());
-        $this->assertStringNotContainsString('with assessment result:', $exception->getMessage());
     }
 
     public function test_initializes_with_empty_assessment_result()
@@ -48,7 +47,6 @@ class SuspiciousBotActivityExceptionTest extends TestCase
         $this->assertStringContainsString('Suspicious bot activity from', $exception->getMessage());
         $this->assertStringContainsString($request->ip(), $exception->getMessage());
         $this->assertStringContainsString('affecting component '.$component, $exception->getMessage());
-        $this->assertStringNotContainsString('with assessment result:', $exception->getMessage());
     }
 
     public function test_initializes_with_assessment_result()
@@ -72,9 +70,7 @@ class SuspiciousBotActivityExceptionTest extends TestCase
         $this->assertStringContainsString('Suspicious bot activity from', $exception->getMessage());
         $this->assertStringContainsString($request->ip(), $exception->getMessage());
         $this->assertStringContainsString('affecting component '.$component, $exception->getMessage());
-        $this->assertStringContainsString('with assessment result:', $exception->getMessage());
-        $this->assertStringContainsString('riskAnalysis', $exception->getMessage());
-        $this->assertStringContainsString('tokenProperties', $exception->getMessage());
+        $this->assertEquals($assessmentResult, $exception->getAssessmentResult());
     }
 
     public function test_message_format_with_assessment_result()
@@ -94,11 +90,11 @@ class SuspiciousBotActivityExceptionTest extends TestCase
         $this->assertStringStartsWith('Suspicious bot activity from', $message);
         $this->assertStringContainsString($request->ip(), $message);
         $this->assertStringContainsString('affecting component '.$component, $message);
-        $this->assertStringContainsString('with assessment result:', $message);
         
         // Verify JSON is properly formatted (should contain the keys from assessment result)
-        $this->assertStringContainsString('"score"', $message);
-        $this->assertStringContainsString('"valid"', $message);
+        $assessmentResultJson = json_encode($exception->getAssessmentResult());
+        $this->assertStringContainsString('"score"', $assessmentResultJson);
+        $this->assertStringContainsString('"valid"', $assessmentResultJson);
     }
 
     public function test_extends_exception()
