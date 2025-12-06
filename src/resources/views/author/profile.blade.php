@@ -11,9 +11,9 @@
     <a href="{{ route('account.edit', ['account' => $author->id]) }}" class="btn btn-secondary float-end">Edit</a>
     <strong>Administration</strong><br />
     Roles: {{ $author->roles->pluck('name')->implode(', ') }}</br />
-    @if ($author->security_events?->count() > 0)
-      Last login: @date($author->security_events?->last()?->created_at)<br />
-      Last IP: {{ $author->security_events?->last()?->ip_address }}<br />
+    @if ($author->account_security_events?->count() > 0)
+      Last login: @date($author->account_security_events?->last()?->created_at)<br />
+      Last IP: {{ $author->account_security_events?->last()?->ip_address }}<br />
     @endif
     E-mail verified: {{ $author->email_verified_at ? 'Yes' : 'No' }}<br />
   </div>
