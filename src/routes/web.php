@@ -33,6 +33,7 @@ require 'web-routes/word-finder-admin.php';
 require 'web-routes/word-finder.php';
 
 require 'web-routes/resources-admin.php';
+require 'web-routes/resources-reviewer.php';
 require 'web-routes/resources-user.php';
 require 'web-routes/resources.php';
 

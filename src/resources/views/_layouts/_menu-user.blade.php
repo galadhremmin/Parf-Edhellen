@@ -30,13 +30,17 @@
       </a>
     </li>
   </ul>
-  @if (auth()->user()->isAdministrator())
+  @if (auth()->user()->isAdministrator() || auth()->user()->memberOf(\App\Security\RoleConstants::Reviewers))
   <ul class="list-group mb-3">
     <li class="list-group-item">
       <a class="{{ active('admin.contribution.list') }}" href="{{ route('admin.contribution.list') }}">
         Contributions
       </a>
     </li>
+  </ul>
+  @endif
+  @if (auth()->user()->isAdministrator())
+  <ul class="list-group mb-3">
     <li class="list-group-item">
       <a class="{{ active('inflection.index') }}" href="{{ route('inflection.index') }}">Inflections</a>
     </li>

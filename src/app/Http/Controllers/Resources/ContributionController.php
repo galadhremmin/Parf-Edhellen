@@ -9,6 +9,7 @@ use App\Http\Controllers\Abstracts\Controller;
 use App\Http\Controllers\Contributions\ContributionControllerFactory;
 use App\Models\Contribution;
 use App\Models\Initialization\Morphs;
+use App\Security\RoleConstants;
 use Carbon\Carbon;
 use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Http\Request;
@@ -357,7 +358,7 @@ class ContributionController extends Controller
     {
         $user = $request->user();
 
-        if ($user->isAdministrator()) {
+        if ($user->isAdministrator() || $user->memberOf(RoleConstants::Reviewers)) {
             return;
         }
 

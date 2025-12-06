@@ -1,13 +1,18 @@
 <div class="d-lg-none d-xl-none">
 @if (auth()->check())
 
-@if (auth()->user()->isAdministrator())
+@if (auth()->user()->isAdministrator() || auth()->user()->memberOf(\App\Security\RoleConstants::Reviewers))
 <ul class="navbar-nav">
   <li class="nav-item">
     <a class="nav-link {{ active('admin.contribution.list') }}" href="{{ route('admin.contribution.list') }}">
       Contributions
     </a>
   </li>
+</ul>
+@endif
+
+@if (auth()->user()->isAdministrator())
+<ul class="navbar-nav">
   <li class="nav-item">
     <a class="nav-link {{ active('inflection.index') }}" href="{{ route('inflection.index') }}">Inflections</a>
   </li>

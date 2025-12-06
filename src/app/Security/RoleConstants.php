@@ -11,4 +11,6 @@ class RoleConstants
     public const Users = 'Users';
 
     public const Discuss = 'Discuss';
+
+    public const Reviewers = 'Reviewers';
 }
