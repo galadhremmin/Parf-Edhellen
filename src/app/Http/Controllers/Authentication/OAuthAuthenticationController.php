@@ -46,7 +46,8 @@ class OAuthAuthenticationController extends AuthenticationController
         
         if ($request->session()->has(self::RECAPTCHA_ASSESSMENT_RESULT_SESSION_KEY)) {
             $assessmentResult = json_decode(
-                $request->session()->get(self::RECAPTCHA_ASSESSMENT_RESULT_SESSION_KEY)
+                $request->session()->get(self::RECAPTCHA_ASSESSMENT_RESULT_SESSION_KEY),
+                true
             );
             $request->session()->forget(self::RECAPTCHA_ASSESSMENT_RESULT_SESSION_KEY);
         }

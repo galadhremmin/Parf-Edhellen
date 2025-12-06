@@ -6,7 +6,7 @@
   @if ($author === null)
     This is not the droid you are looking for.
   @else
-  @if (auth()->user()->isAdministrator())
+  @if (auth()->user()?->isAdministrator())
   <div class="bg-dark text-white p-3 mb-3 rounded">
     <a href="{{ route('account.edit', ['account' => $author->id]) }}" class="btn btn-secondary float-end">Edit</a>
     <strong>Administration</strong><br />
