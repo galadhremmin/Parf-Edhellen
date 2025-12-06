@@ -1,5 +1,4 @@
-
-@if (Auth::user()->isAdministrator())
+@if (Auth::user()->isAdministrator() || Auth::user()->memberOf(\App\Security\RoleConstants::Reviewers))
   @if ($contribution->is_approved === null)
     <form method="post" action="{{ route('contribution.approve', ['id' => $contribution->id]) }}">
       {{ csrf_field() }}

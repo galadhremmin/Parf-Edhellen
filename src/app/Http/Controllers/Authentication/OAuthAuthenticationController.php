@@ -24,7 +24,10 @@ class OAuthAuthenticationController extends AuthenticationController
         }
 
         // This is unfortunate, but we need to store the assessment result in the session so that it can be used in the callback.
-        $request->session()->put(self::RECAPTCHA_ASSESSMENT_RESULT_SESSION_KEY, $assessmentResult);
+        $request->session()->put(
+            self::RECAPTCHA_ASSESSMENT_RESULT_SESSION_KEY, //
+            json_encode($assessmentResult)
+        );
 
         try {
             $provider = self::getProvider($providerName);
@@ -39,8 +42,14 @@ class OAuthAuthenticationController extends AuthenticationController
 
     public function callback(Request $request, string $providerName)
     {
-        $assessmentResult = $request->session()->get(self::RECAPTCHA_ASSESSMENT_RESULT_SESSION_KEY);
-        $request->session()->forget(self::RECAPTCHA_ASSESSMENT_RESULT_SESSION_KEY);
+        $assessmentResult = [];
+        
+        if ($request->session()->has(self::RECAPTCHA_ASSESSMENT_RESULT_SESSION_KEY)) {
+            $assessmentResult = json_decode(
+                $request->session()->get(self::RECAPTCHA_ASSESSMENT_RESULT_SESSION_KEY)
+            );
+            $request->session()->forget(self::RECAPTCHA_ASSESSMENT_RESULT_SESSION_KEY);
+        }
 
         $user = null;
         try {

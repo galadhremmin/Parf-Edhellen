@@ -13,6 +13,7 @@ use App\Models\LexicalEntryDetail;
 use App\Models\Sense;
 use App\Models\Gloss;
 use App\Models\Word;
+use App\Security\RoleConstants;
 use App\Repositories\LexicalEntryInflectionRepository;
 use App\Repositories\LexicalEntryRepository;
 use Illuminate\Database\Eloquent\Collection;
@@ -203,7 +204,8 @@ class LexicalEntryContributionController extends Controller implements IContribu
         $map = $this->mapLexicalEntry($entity, $request);
         extract($map);
 
-        if (! $request->user()->isAdministrator()) {
+        if (! $request->user()->isAdministrator() && //
+            ! $request->user()->memberOf(RoleConstants::Reviewers)) {
             $entity->account_id = $request->user()->id;
         }
 

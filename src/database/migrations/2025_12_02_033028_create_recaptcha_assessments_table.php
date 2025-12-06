@@ -17,7 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('account_id');
             $table->string('type', 16); // 'login' or 'registration'
             $table->text('assessment'); // JSON output from reCAPTCHA API
-            $table->enum('result', AccountSecurityActivityResultEnum::cases()); // Login attempt result
+            $table->enum('result', array_column(AccountSecurityActivityResultEnum::cases(), 'value')); // Login attempt result
             $table->string('ip_address', 45)->nullable(); // Support for IPv4 and IPv6
             $table->string('user_agent', 512)->nullable(); // User agent string
             $table->timestamps();

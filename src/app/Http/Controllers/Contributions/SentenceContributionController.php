@@ -12,6 +12,7 @@ use App\Models\Sentence;
 use App\Models\SentenceFragment;
 use App\Models\SentenceTranslation;
 use App\Repositories\SentenceRepository;
+use App\Security\RoleConstants;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
@@ -169,7 +170,8 @@ class SentenceContributionController extends Controller implements IContribution
 
         $map = $this->mapSentence($entity, $request);
 
-        if (! $request->user()->isAdministrator()) {
+        if (! $request->user()->isAdministrator() && //
+            ! $request->user()->memberOf(RoleConstants::Reviewers)) {
             $entity->account_id = $contribution->account_id;
         }
 
