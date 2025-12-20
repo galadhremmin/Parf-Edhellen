@@ -16,7 +16,6 @@ import type {
 import { AgGridReact } from '@ag-grid-community/react';
 import { formatDateTimeShortWithSeconds } from '@root/utilities/DateTime';
 import { SecurityRole } from '@root/config';
-import { fireEvent } from '@root/components/Component';
 import type { IComponentEvent } from '@root/components/Component._types';
 import Dialog from '@root/components/Dialog';
 import TextIcon from '@root/components/TextIcon';
@@ -209,11 +208,11 @@ function LogList({ logApi, category, week, year, weekNumber, roleManager, onCate
         }
     }, [logApi, category, year, weekNumber, refreshGrid, onCategoryDeleted]);
 
-    const onGridReady = useCallback((params: GridReadyEvent) => {
-        const dataSource: IDatasource = {
+    const createDataSource = useCallback((currentCategory: string | undefined): IDatasource => {
+        return {
             rowCount: undefined,
             getRows: (params) => {
-                logApi.getErrors(params.startRow, params.endRow, category)
+                logApi.getErrors(params.startRow, params.endRow, currentCategory)
                     .then((data) => {
                         let lastRow = -1;
                         if (data.errors.length < params.endRow - params.startRow) {
@@ -227,14 +226,18 @@ function LogList({ logApi, category, week, year, weekNumber, roleManager, onCate
                     });
             },
         };
-        params.api.setGridOption('datasource', dataSource);
-    }, [logApi, category]);
+    }, [logApi]);
+
+    const onGridReady = useCallback((params: GridReadyEvent) => {
+        params.api.setGridOption('datasource', createDataSource(category));
+    }, [createDataSource, category]);
 
     useEffect(() => {
         if (gridRef.current?.api) {
+            gridRef.current.api.setGridOption('datasource', createDataSource(category));
             gridRef.current.api.refreshInfiniteCache();
         }
-    }, [category]);
+    }, [category, createDataSource]);
 
     const columnDefs = createColumnDefinitions(isRoot, onDeleteError);
 

@@ -12,7 +12,7 @@ import {
 } from 'recharts';
 
 import type { IProps } from './Graph._types';
-import type { IWeeklyErrors, IWeeklyFailedJobs } from '../index._types';
+import { fireEvent } from '@root/components/Component';
 
 const ChartColors = ['#00818a', '#404b69', '#283149', '#6c5b7c', '#c06c84', '#f67280', '#f8b595'];
 const MAX_LEGEND_CATEGORIES = 8;
@@ -93,7 +93,12 @@ function Graph(props: IProps) {
             const week = data.week || data.year_week || '';
             const year = data.year;
             const weekNumber = typeof data.week === 'number' ? data.week : undefined;
-            onCategoryClick(category, String(week), year, weekNumber);
+            void fireEvent('Graph', onCategoryClick, {
+                week: String(week),
+                year,
+                weekNumber,
+                category,
+            });
         }
     }, [onCategoryClick]);
 

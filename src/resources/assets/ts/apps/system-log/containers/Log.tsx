@@ -7,6 +7,7 @@ import FailedJobsList from '../components/FailedJobsList';
 import ErrorsByWeekBarGraph from '../components/Graph';
 import LogList from '../components/LogList';
 import type { IProps } from '../index._types';
+import type { IComponentEvent } from '@root/components/Component._types';
 
 function Log(props: IProps) {
     const {
@@ -22,11 +23,11 @@ function Log(props: IProps) {
     const [selectedYear, setSelectedYear] = useState<number | undefined>(undefined);
     const [selectedWeekNumber, setSelectedWeekNumber] = useState<number | undefined>(undefined);
 
-    const handleCategoryClick = useCallback((category: string, week: string, year?: number, weekNumber?: number) => {
-        setSelectedCategory(category);
-        setSelectedWeek(week);
-        setSelectedYear(year);
-        setSelectedWeekNumber(weekNumber);
+    const handleCategoryClick = useCallback((ev: IComponentEvent<{ category: string, week: string, year?: number, weekNumber?: number }>) => {
+        setSelectedCategory(ev.value.category);
+        setSelectedWeek(ev.value.week);
+        setSelectedYear(ev.value.year);
+        setSelectedWeekNumber(ev.value.weekNumber);
     }, []);
 
     const handleClearCategory = useCallback(() => {
@@ -41,6 +42,7 @@ function Log(props: IProps) {
         setSelectedWeek(undefined);
         setSelectedYear(undefined);
         setSelectedWeekNumber(undefined);
+
         // Reload the page to refresh the graph data
         window.location.reload();
     }, []);
