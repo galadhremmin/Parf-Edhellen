@@ -315,19 +315,30 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             };
             category = ErrorCategory.Empty;
         } else {
-            // No response object. Distinguish offline client vs server not responding.
             const isOffline = typeof window === 'object' && //
                 typeof navigator === 'object' && //
                 navigator.onLine === false;
             if (isOffline) {
-                // Do not record client offline incidents; nothing actionable server-side.
                 return Promise.reject(error instanceof Error ? error : new Error('Network offline'));
             }
             
-            // Something happened in setting up the request that triggered an Error
+            const errorMessage = (error as Error).message || 'Unknown error';
+            const errorName = (error as Error).name || 'Unknown';
+            const baseUrl = typeof window === 'object' ? window.location.origin : 'unknown';
+            const isOnline = typeof navigator === 'object' ? navigator.onLine : 'unknown';
+            if (errorMessage.includes('Failed to fetch')) {
+                // I don't really care about logging this error. It's not actionable.
+                return Promise.reject(error instanceof Error ? error : new Error('Network offline'));
+            }
+            
             errorReport = {
                 apiMethod,
-                error: `API call failed to initialize. Error message: ${(error as Error).message || 'Unknown error'}`,
+                error: `API call failed to initialize. Error: ${errorName} - ${errorMessage}`,
+                data: {
+                    origin: baseUrl,
+                    isOnline,
+                    duration: duration ? `${duration.toFixed(2)}ms` : 'N/A',
+                },
             };
             category = ErrorCategory.Frontend;
         }

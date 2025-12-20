@@ -1,3 +1,4 @@
+import type { ComponentEventHandler } from '@root/components/Component._types';
 import type {
     IErrorsByWeek,
     IWeeklyErrors,
@@ -7,5 +8,5 @@ import type {
 export interface IProps {
     categories: string[];
     data: IErrorsByWeek<IWeeklyErrors>[] | IWeeklyFailedJobs[];
-    onCategoryClick?: (category: string, week: string, year?: number, weekNumber?: number) => void;
+    onCategoryClick?: ComponentEventHandler<{ category: string, week: string, year?: number, weekNumber?: number }>;
 }
