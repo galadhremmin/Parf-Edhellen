@@ -88,7 +88,7 @@ class BookApiController extends BookBaseController
 
         // Create a key-value pair that maps group ID (integers) to a human readable, internationalized format.
         $locale = $request->getLocale();
-        $searchGroups = Cache::remember('ed.search-groups.'.$locale, 60 * 60 /* = 1 hour */, function () {
+        $searchGroups = Cache::remember('ed.search-groups.'.$locale, DateInterval::createFromDateString('1 month'), function () {
             $config = config('ed.book_entities');
             $entities = array_values($config);
 
