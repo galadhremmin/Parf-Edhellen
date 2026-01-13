@@ -1,0 +1,59 @@
+.PasskeyListItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+
+    &__content {
+        flex: 1;
+    }
+
+    &__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    &__name {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    &__transport {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background-color: #f0f0f0;
+        border-radius: 3px;
+        font-size: 0.875rem;
+        color: #666;
+        text-transform: capitalize;
+    }
+
+    &__metadata {
+        p {
+            margin: 0.25rem 0;
+            font-size: 0.875rem;
+            color: #666;
+        }
+
+        strong {
+            font-weight: 600;
+        }
+    }
+
+    &__actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-left: 1rem;
+
+        .btn {
+            white-space: nowrap;
+        }
+    }
+}

@@ -6,7 +6,7 @@ use App\Models\{
     Flashcard,
     GameWordFinderLanguage,
     Gloss,
-    GlossInflection,
+    LexicalEntryInflection,
     Language,
     SearchKeyword,
     Sentence
@@ -25,7 +25,7 @@ return new class extends Migration
             Flashcard::class,
             GameWordFinderLanguage::class,
             Gloss::class,
-            GlossInflection::class,
+            LexicalEntryInflection::class,
             GlossVersion::class,
             SearchKeyword::class,
             Sentence::class
@@ -36,7 +36,7 @@ return new class extends Migration
                 ->update(['language_id' => 104]);
         }
 
-        Language::find(40)->delete();
+        Language::find(40)?->delete();
     }
 
     /**

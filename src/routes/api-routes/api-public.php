@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\v3\AccountFeedApiController;
 use App\Http\Controllers\Api\v3\BookApiController;
 use App\Http\Controllers\Api\v3\LexicalEntryApiController;
 use App\Http\Controllers\Api\v3\InflectionApiController;
+use App\Http\Controllers\Api\v3\PasskeyApiController;
 use App\Http\Controllers\Api\v3\SentenceApiController;
 use App\Http\Controllers\Api\v3\SpeechApiController;
 use App\Http\Controllers\Api\v3\UtilityApiController;
@@ -54,6 +55,14 @@ Route::group([
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC]);
     Route::post('account/find', [AccountApiController::class, 'findAccount']);
     Route::get('account/{id}/feed', [AccountFeedApiController::class, 'getFeed']);
+
+    // Passkey authentication (public - no auth required)
+    Route::post('passkey/login/challenge', [PasskeyApiController::class, 'generateAuthenticationChallenge'])
+        ->middleware('throttle:12,1')
+        ->name('api.passkey.login-challenge');
+    Route::post('passkey/login/verify', [PasskeyApiController::class, 'verifyAuthenticationResponse'])
+        ->middleware('throttle:12,1')
+        ->name('api.passkey.login-verify');
 });
 
 // Public, throttled API

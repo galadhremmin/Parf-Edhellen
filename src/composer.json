@@ -17,11 +17,16 @@
         "laravel/tinker": "^2.10.1",
         "laravel/ui": "^4.0",
         "nunomaduro/collision": "^8.1",
+        "phpdocumentor/reflection-docblock": "^5.6",
         "socialiteproviders/discord": "^4.1",
         "socialiteproviders/microsoft-live": "^4.1",
         "spatie/laravel-ignition": "^2.0",
         "spatie/server-side-rendering": "^0.4.1",
-        "watson/active": "^7.1"
+        "symfony/property-access": "^7.4",
+        "symfony/property-info": "^7.4",
+        "symfony/serializer": "^7.4",
+        "watson/active": "^7.1",
+        "web-auth/webauthn-lib": "^4.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",

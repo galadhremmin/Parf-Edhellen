@@ -4,6 +4,7 @@
 
 use App\Http\Controllers\Api\v3\AccountApiController;
 use App\Http\Controllers\Api\v3\BookApiController;
+use App\Http\Controllers\Api\v3\PasskeyApiController;
 use App\Http\Controllers\Api\v3\SentenceApiController;
 use App\Http\Controllers\Api\v3\SubscriptionApiController;
 use App\Http\Controllers\Api\v3\WordListApiController;
@@ -67,4 +68,19 @@ Route::group([
     Route::put('word-lists/{id}/entries/reorder', [WordListApiController::class, 'reorderEntries'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
         ->name('api.word-lists.reorder-entries');
+
+    // Passkey management (requires authentication)
+    Route::get('passkey', [PasskeyApiController::class, 'getPasskeys'])
+        ->middleware('throttle:60,1')
+        ->name('api.passkey.index');
+    Route::post('passkey/register/challenge', [PasskeyApiController::class, 'generateRegistrationChallenge'])
+        ->middleware('throttle:12,1')
+        ->name('api.passkey.register-challenge');
+    Route::post('passkey/register/verify', [PasskeyApiController::class, 'verifyRegistrationResponse'])
+        ->middleware('throttle:12,1')
+        ->name('api.passkey.register-verify');
+    Route::delete('passkey/{id}', [PasskeyApiController::class, 'deletePasskey'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->middleware('throttle:12,1')
+        ->name('api.passkey.delete');
 });

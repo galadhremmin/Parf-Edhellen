@@ -289,6 +289,8 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
                         'the page open for a long time. Please refresh the page and try again.';
                     category = ErrorCategory.SessionExpired;
                     break;
+                case 429:
+                    return Promise.reject(new Error('Too many requests. Please try again later.'));
                 case this._apiValidationErrorStatusCode:
                     return Promise.reject(new ValidationError(
                         (response.data as IValidationFailedResponse)?.message,

@@ -82,6 +82,7 @@
     </div>
     <div class="text-center mt-3">
       <button type="submit" class="btn btn-secondary">Sign in</button>
+      @ssr('passkey-login', [], ['element' => 'span', 'attributes' => ['class' => 'ms-2']])
     </div>
     @if (config('ed.recaptcha.sitekey'))
     <input type="hidden" name="recaptcha_token" id="recaptcha-token">
