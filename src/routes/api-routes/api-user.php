@@ -74,7 +74,7 @@ Route::group([
         ->middleware('throttle:60,1')
         ->name('api.passkey.index');
     Route::post('passkey/register/challenge', [PasskeyApiController::class, 'generateRegistrationChallenge'])
-        ->middleware('throttle:12,1')
+        ->middleware('throttle:6,1')
         ->name('api.passkey.register-challenge');
     Route::post('passkey/register/verify', [PasskeyApiController::class, 'verifyRegistrationResponse'])
         ->middleware('throttle:12,1')

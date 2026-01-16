@@ -14,6 +14,7 @@ class WebAuthnSession extends Model
 
     protected $fillable = [
         'challenge',
+        'session_id',
         'account_id',
         'email',
         'session_type',

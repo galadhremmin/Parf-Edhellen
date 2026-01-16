@@ -8,6 +8,7 @@ use App\Models\Account;
 use App\Models\WebAuthnCredential;
 use App\Models\WebAuthnSession;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Webauthn\AttestationStatement\AttestationStatementSupportManager;
 use Webauthn\AttestationStatement\NoneAttestationStatementSupport;
@@ -92,6 +93,52 @@ class WebAuthnService
         );
     }
     /**
+     * Validate session ID format (must be UUID)
+     *
+     * @param string $sessionId The session ID to validate
+     * @throws WebAuthnException If session ID is invalid
+     */
+    private function validateSessionId(string $sessionId): void
+    {
+        if (! Str::isUuid($sessionId)) {
+            throw new WebAuthnException('Invalid session ID format');
+        }
+    }
+
+    /**
+     * Normalize origin for comparison (handles trailing slashes, ports, case)
+     *
+     * @param string $origin The origin to normalize
+     * @return string Normalized origin
+     * @throws WebAuthnException If origin is invalid
+     */
+    private function normalizeOrigin(string $origin): string
+    {
+        $parsed = parse_url($origin);
+        if (! $parsed || ! isset($parsed['scheme'], $parsed['host'])) {
+            throw new WebAuthnException('Invalid origin format');
+        }
+        
+        $port = isset($parsed['port']) ? ':' . $parsed['port'] : '';
+        return strtolower($parsed['scheme'] . '://' . $parsed['host'] . $port);
+    }
+
+    /**
+     * Validate input size to prevent DoS attacks
+     *
+     * @param string $input The input to validate
+     * @param int $maxSize Maximum size in bytes
+     * @param string $inputName Name of input for error message
+     * @throws WebAuthnException If input is too large
+     */
+    private function validateInputSize(string $input, int $maxSize, string $inputName): void
+    {
+        if (strlen($input) > $maxSize) {
+            throw new WebAuthnException("Input too large: {$inputName}");
+        }
+    }
+
+    /**
      * Check if a display name already exists for the given account
      *
      * @param Account $account The account to check
@@ -133,43 +180,64 @@ class WebAuthnService
             throw new WebAuthnException('A passkey with this name already exists. Please choose a different name.');
         }
 
-        // Generate challenge
-        $challenge = $this->generateChallenge();
-        $sessionId = (string) Str::uuid();
+        // Generate challenge with retry logic for uniqueness
+        $maxRetries = 3;
+        $retries = 0;
+        $session = null;
+        
+        do {
+            $challenge = $this->generateChallenge();
+            $sessionId = (string) Str::uuid();
 
-        // Create session - use challenge as the lookup key, store sessionId in challenge_data
-        $session = WebAuthnSession::create([
-            'challenge' => $challenge,
-            'account_id' => $account->id,
-            'email' => null,
-            'session_type' => 'registration',
-            'challenge_data' => [
-                'challenge' => $challenge,
-                'session_id' => $sessionId,
-                'user' => [
-                    'id' => base64_encode((string) $account->id),
-                    'name' => $account->email,
-                    'displayName' => $account->nickname,
-                ],
-                'rp' => [
-                    'name' => config('webauthn.rp.name'),
-                    'id' => config('webauthn.rp.id'),
-                ],
-                'pubKeyCredParams' => [
-                    ['alg' => -7, 'type' => 'public-key'], // ES256
-                    ['alg' => -257, 'type' => 'public-key'], // RS256
-                ],
-                'attestation' => config('webauthn.attestation.conveyance'),
-                'authenticatorSelection' => [
-                    'authenticatorAttachment' => 'platform',
-                    'residentKey' => config('webauthn.authenticator.resident_key'),
-                    'userVerification' => config('webauthn.authenticator.user_verification'),
-                ],
-                'timeout' => config('webauthn.challenge.timeout'),
-                'display_name' => $displayName,
-            ],
-            'expires_at' => Carbon::now()->addSeconds((int) config('webauthn.challenge.session_ttl')),
-        ]);
+            try {
+                // Create session - use challenge as the lookup key, store sessionId in challenge_data and as column
+                $session = WebAuthnSession::create([
+                    'challenge' => $challenge,
+                    'session_id' => $sessionId,
+                    'account_id' => $account->id,
+                    'email' => null,
+                    'session_type' => 'registration',
+                    'challenge_data' => [
+                        'challenge' => $challenge,
+                        'session_id' => $sessionId,
+                        'user' => [
+                            'id' => base64_encode((string) $account->id),
+                            'name' => $account->email,
+                            'displayName' => $account->nickname,
+                        ],
+                        'rp' => [
+                            'name' => config('webauthn.rp.name'),
+                            'id' => config('webauthn.rp.id'),
+                        ],
+                        'pubKeyCredParams' => [
+                            ['alg' => -7, 'type' => 'public-key'], // ES256
+                            ['alg' => -257, 'type' => 'public-key'], // RS256
+                        ],
+                        'attestation' => config('webauthn.attestation.conveyance'),
+                        'authenticatorSelection' => [
+                            'authenticatorAttachment' => 'platform',
+                            'residentKey' => config('webauthn.authenticator.resident_key'),
+                            'userVerification' => config('webauthn.authenticator.user_verification'),
+                        ],
+                        'timeout' => config('webauthn.challenge.timeout'),
+                        'display_name' => $displayName,
+                    ],
+                    'expires_at' => Carbon::now()->addSeconds((int) config('webauthn.challenge.session_ttl')),
+                ]);
+                break; // Success, exit loop
+            } catch (\Illuminate\Database\QueryException $e) {
+                // Check if it's a duplicate entry error (23000 is SQLSTATE for unique constraint violation)
+                if ($e->getCode() === '23000' && $retries < $maxRetries) {
+                    $retries++;
+                    continue; // Retry with new challenge
+                }
+                throw $e; // Re-throw if not a duplicate or max retries reached
+            }
+        } while ($retries < $maxRetries);
+
+        if (! $session) {
+            throw new WebAuthnException('Failed to create session after retries');
+        }
 
         return [
             'challenge' => $challenge,
@@ -215,21 +283,43 @@ class WebAuthnService
         string $sessionId,
         ?array $transportsFromRequest = null
     ): WebAuthnCredential {
-        // Find the session by session_id stored in challenge_data
-        $session = WebAuthnSession::where('session_type', 'registration')
-            ->where('account_id', $account->id)
-            ->whereJsonContains('challenge_data->session_id', $sessionId)
-            ->first();
+        // Validate session ID format
+        $this->validateSessionId($sessionId);
 
-        if (! $session) {
-            throw new WebAuthnException('Invalid or expired session');
-        }
+        // Validate input sizes to prevent DoS
+        $this->validateInputSize($clientDataJSON, 64 * 1024, 'clientDataJSON');
+        $this->validateInputSize($attestationObject, 64 * 1024, 'attestationObject');
 
-        // Check if session is expired
-        if (! $session->isValid()) {
+        // Use database transaction with row locking to prevent session replay attacks
+        $session = null;
+        $challengeData = null;
+        
+        DB::transaction(function () use (&$session, &$challengeData, $sessionId, $account) {
+            // Find and lock the session for update to prevent concurrent access
+            $session = WebAuthnSession::where('session_type', 'registration')
+                ->where('account_id', $account->id)
+                ->where('session_id', $sessionId) // Use indexed column instead of JSON contains
+                ->lockForUpdate() // Prevent concurrent access
+                ->first();
+
+            if (! $session) {
+                throw new WebAuthnException('Invalid or expired session');
+            }
+
+            // Check if session is expired
+            if (! $session->isValid()) {
+                $session->delete();
+                throw new WebAuthnException('Session has expired');
+            }
+
+            // Store challenge data before deleting session
+            $challengeData = $session->challenge_data;
+            
+            // Delete session immediately to prevent replay attacks
             $session->delete();
-            throw new WebAuthnException('Session has expired');
-        }
+        });
+
+        // Session is now deleted, continue with verification using stored challenge data
 
         try {
             // Decode base64 strings
@@ -251,15 +341,15 @@ class WebAuthnService
 
             // Verify challenge matches session challenge
             // Both should be base64url encoded, but normalize by removing padding for comparison
-            $expectedChallenge = StringHelper::convertBase64ToBase64UrlAppropriate($session->challenge_data['challenge']);
+            $expectedChallenge = StringHelper::convertBase64ToBase64UrlAppropriate($challengeData['challenge']);
             $receivedChallenge = StringHelper::convertBase64ToBase64UrlAppropriate($clientData['challenge'] ?? '');
             if ($receivedChallenge !== $expectedChallenge) {
                 throw new WebAuthnException('Challenge mismatch');
             }
 
-            // Verify origin matches configured origin
-            $expectedOrigin = config('webauthn.rp.origin');
-            $receivedOrigin = $clientData['origin'] ?? null;
+            // Verify origin matches configured origin (normalized)
+            $expectedOrigin = $this->normalizeOrigin(config('webauthn.rp.origin'));
+            $receivedOrigin = $this->normalizeOrigin($clientData['origin'] ?? '');
             if ($receivedOrigin !== $expectedOrigin) {
                 throw new WebAuthnException('Origin mismatch');
             }
@@ -318,7 +408,7 @@ class WebAuthnService
             );
 
             // Decode challenge from base64url to bytes
-            $challengeBytes = base64_decode(StringHelper::convertBase64UrlAppropriateToStandardBase64($session->challenge_data['challenge']), true);
+            $challengeBytes = base64_decode(StringHelper::convertBase64UrlAppropriateToStandardBase64($challengeData['challenge']), true);
             if ($challengeBytes === false) {
                 throw new WebAuthnException('Invalid challenge encoding in session');
             }
@@ -356,8 +446,8 @@ class WebAuthnService
                 throw new WebAuthnException('This passkey is already registered');
             }
 
-            // Get display name from session
-            $displayName = $session->challenge_data['display_name'] ?? 'Passkey';
+            // Get display name from stored challenge data
+            $displayName = $challengeData['display_name'] ?? 'Passkey';
 
             // Double-check for duplicate display name (in case of race condition)
             if ($this->isDisplayNameDuplicate($account, $displayName)) {
@@ -381,9 +471,7 @@ class WebAuthnService
             // Update account has_passkeys flag
             $account->update(['has_passkeys' => true]);
 
-            // Delete the session
-            $session->delete();
-
+            // Session already deleted in transaction, no need to delete again
             return $credential;
         } catch (WebAuthnException $e) {
             // Re-throw WebAuthn exceptions as-is, but sanitize the message
@@ -431,6 +519,7 @@ class WebAuthnService
             ->first();
 
         // Get credentials for this account (even if account doesn't exist, we return valid response)
+        // To prevent user enumeration, always return the same structure
         $allowCredentials = [];
         if ($account !== null) {
             // Query credentials directly to ensure we get fresh data
@@ -446,23 +535,62 @@ class WebAuthnService
                 ];
             })->all();
         }
+        
+        // If no account or no credentials, return dummy credentials to prevent user enumeration
+        // The client will still attempt authentication, but it will fail at verification
+        if (empty($allowCredentials)) {
+            $allowCredentials = [
+                [
+                    'type' => 'public-key',
+                    'id' => base64_encode(random_bytes(32)),
+                    'transports' => [],
+                ],
+                [
+                    'type' => 'public-key',
+                    'id' => base64_encode(random_bytes(32)),
+                    'transports' => [],
+                ],
+            ];
+        }
 
-        // Create session - store sessionId in challenge_data for lookup
-        WebAuthnSession::create([
-            'challenge' => $challenge,
-            'account_id' => null,
-            'email' => $email,
-            'session_type' => 'authentication',
-            'challenge_data' => [
-                'challenge' => $challenge,
-                'session_id' => $sessionId,
-                'timeout' => config('webauthn.challenge.timeout'),
-                'rpId' => config('webauthn.rp.id'),
-                'userVerification' => config('webauthn.authenticator.user_verification'),
-                'allowCredentials' => $allowCredentials,
-            ],
-            'expires_at' => Carbon::now()->addSeconds((int) config('webauthn.challenge.session_ttl')),
-        ]);
+        // Create session with retry logic for challenge uniqueness
+        $maxRetries = 3;
+        $retries = 0;
+        $session = null;
+        
+        do {
+            try {
+                $session = WebAuthnSession::create([
+                    'challenge' => $challenge,
+                    'session_id' => $sessionId,
+                    'account_id' => null,
+                    'email' => $email,
+                    'session_type' => 'authentication',
+                    'challenge_data' => [
+                        'challenge' => $challenge,
+                        'session_id' => $sessionId,
+                        'timeout' => config('webauthn.challenge.timeout'),
+                        'rpId' => config('webauthn.rp.id'),
+                        'userVerification' => config('webauthn.authenticator.user_verification'),
+                        'allowCredentials' => $allowCredentials,
+                    ],
+                    'expires_at' => Carbon::now()->addSeconds((int) config('webauthn.challenge.session_ttl')),
+                ]);
+                break; // Success, exit loop
+            } catch (\Illuminate\Database\QueryException $e) {
+                // Check if it's a duplicate entry error
+                if ($e->getCode() === '23000' && $retries < $maxRetries) {
+                    $retries++;
+                    $challenge = $this->generateChallenge(); // Generate new challenge
+                    continue; // Retry
+                }
+                throw $e; // Re-throw if not a duplicate or max retries reached
+            }
+        } while ($retries < $maxRetries);
+
+        if (! $session) {
+            throw new WebAuthnException('Failed to create session after retries');
+        }
 
         return [
             'challenge' => $challenge,
@@ -490,21 +618,43 @@ class WebAuthnService
         string $authenticatorAssertionObject,
         string $sessionId
     ): Account {
-        // Find the session by session_id stored in challenge_data
-        $session = WebAuthnSession::where('session_type', 'authentication')
-            ->where('email', $email)
-            ->whereJsonContains('challenge_data->session_id', $sessionId)
-            ->first();
+        // Validate session ID format
+        $this->validateSessionId($sessionId);
 
-        if (! $session) {
-            throw new WebAuthnException('Invalid or expired session');
-        }
+        // Validate input sizes to prevent DoS
+        $this->validateInputSize($clientDataJSON, 64 * 1024, 'clientDataJSON');
+        $this->validateInputSize($authenticatorAssertionObject, 64 * 1024, 'authenticatorAssertionObject');
 
-        // Check if session is expired
-        if (! $session->isValid()) {
+        // Use database transaction with row locking to prevent session replay attacks
+        $session = null;
+        $challengeData = null;
+        
+        DB::transaction(function () use (&$session, &$challengeData, $sessionId, $email) {
+            // Find and lock the session for update to prevent concurrent access
+            $session = WebAuthnSession::where('session_type', 'authentication')
+                ->where('email', $email)
+                ->where('session_id', $sessionId) // Use indexed column instead of JSON contains
+                ->lockForUpdate() // Prevent concurrent access
+                ->first();
+
+            if (! $session) {
+                throw new WebAuthnException('Invalid or expired session');
+            }
+
+            // Check if session is expired
+            if (! $session->isValid()) {
+                $session->delete();
+                throw new WebAuthnException('Session has expired');
+            }
+
+            // Store challenge data before deleting session
+            $challengeData = $session->challenge_data;
+            
+            // Delete session immediately to prevent replay attacks
             $session->delete();
-            throw new WebAuthnException('Session has expired');
-        }
+        });
+
+        // Session is now deleted, continue with verification using stored challenge data
 
         try {
             // Find master account
@@ -526,15 +676,15 @@ class WebAuthnService
 
             // Verify challenge matches session challenge
             // Both should be base64url encoded, but normalize by removing padding for comparison
-            $expectedChallenge = StringHelper::convertBase64ToBase64UrlAppropriate($session->challenge_data['challenge']);
+            $expectedChallenge = StringHelper::convertBase64ToBase64UrlAppropriate($challengeData['challenge']);
             $receivedChallenge = StringHelper::convertBase64ToBase64UrlAppropriate($clientData['challenge'] ?? '');
             if ($receivedChallenge !== $expectedChallenge) {
                 throw new WebAuthnException('Challenge mismatch');
             }
 
-            // Verify origin matches configured origin
-            $expectedOrigin = config('webauthn.rp.origin');
-            $receivedOrigin = $clientData['origin'] ?? null;
+            // Verify origin matches configured origin (normalized)
+            $expectedOrigin = $this->normalizeOrigin(config('webauthn.rp.origin'));
+            $receivedOrigin = $this->normalizeOrigin($clientData['origin'] ?? '');
             if ($receivedOrigin !== $expectedOrigin) {
                 throw new WebAuthnException('Origin mismatch');
             }
@@ -613,7 +763,7 @@ class WebAuthnService
             );
 
             // Decode challenge from base64url to bytes
-            $challengeBytes = base64_decode(StringHelper::convertBase64UrlAppropriateToStandardBase64($session->challenge_data['challenge']), true);
+            $challengeBytes = base64_decode(StringHelper::convertBase64UrlAppropriateToStandardBase64($challengeData['challenge']), true);
             if ($challengeBytes === false) {
                 throw new WebAuthnException('Invalid challenge encoding in session');
             }
@@ -646,9 +796,19 @@ class WebAuthnService
                     );
 
                     // Update the counter (RFC 8926: signature counter should be updated)
-                    // Note: Some authenticators (especially platform authenticators) may not increment
-                    // the counter on every use, so we allow equal or greater values
+                    // Platform authenticators may not increment, but cross-platform should always increment
                     $newCounter = $verifiedSource->counter;
+                    $transports = $dbCredential->transport ? explode(',', $dbCredential->transport) : [];
+                    $isPlatformAuthenticator = in_array('internal', $transports);
+                    
+                    // Cross-platform authenticators must increment counter
+                    if (! $isPlatformAuthenticator && $newCounter <= $dbCredential->counter) {
+                        throw new WebAuthnException(
+                            'Signature counter must increase for cross-platform authenticators'
+                        );
+                    }
+                    
+                    // Counter should never decrease (indicates cloned authenticator)
                     if ($newCounter < $dbCredential->counter) {
                         throw new WebAuthnException(
                             'Signature counter decreased. Possible cloned authenticator.'
@@ -673,29 +833,17 @@ class WebAuthnService
             // Update account's last_passkey_auth_at
             $masterAccount->update(['last_passkey_auth_at' => Carbon::now()]);
 
-            // Delete the session after successful authentication
-            $session->delete();
-
+            // Session already deleted in transaction, no need to delete again
             return $masterAccount;
         } catch (WebAuthnException $e) {
-            // Delete session on failure to prevent accumulation
-            if (isset($session)) {
-                $session->delete();
-            }
-            // Re-throw WebAuthn exceptions as-is
+            // Session already deleted in transaction, just re-throw
             throw $e;
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException) {
-            // Delete session on failure
-            if (isset($session)) {
-                $session->delete();
-            }
-            throw new WebAuthnException('Account not found');
+            // Use generic error message to prevent information leakage
+            throw new WebAuthnException('Authentication failed');
         } catch (\Exception $e) {
-            // Delete session on failure
-            if (isset($session)) {
-                $session->delete();
-            }
-            throw new WebAuthnException('Authentication verification failed: ' . $e->getMessage());
+            // Use generic error message to prevent information leakage
+            throw new WebAuthnException('Authentication verification failed');
         }
     }
 
@@ -827,7 +975,13 @@ class WebAuthnService
      */
     private function generateChallenge(): string
     {
-        $randomBytes = random_bytes((int) config('webauthn.challenge.length', 32));
+        $length = (int) config('webauthn.challenge.length', 32);
+        // Validate challenge length (WebAuthn spec requires at least 16 bytes)
+        if ($length < 16 || $length > 128) {
+            throw new \InvalidArgumentException('Challenge length must be between 16 and 128 bytes');
+        }
+        
+        $randomBytes = random_bytes($length);
         // Convert base64 to base64url (URL-safe, no padding)
         $base64 = base64_encode($randomBytes);
         return StringHelper::convertBase64ToBase64UrlAppropriate($base64);

@@ -62,10 +62,10 @@ Route::group([
 
     // Passkey authentication (public - no auth required)
     Route::post('passkey/login/challenge', [PasskeyApiController::class, 'generateAuthenticationChallenge'])
-        ->middleware('throttle:12,1')
+        ->middleware('throttle:6,1')
         ->name('api.passkey.login-challenge');
     Route::post('passkey/login/verify', [PasskeyApiController::class, 'verifyAuthenticationResponse'])
-        ->middleware('throttle:12,1')
+        ->middleware('throttle:3,1')
         ->name('api.passkey.login-verify');
 });
 
