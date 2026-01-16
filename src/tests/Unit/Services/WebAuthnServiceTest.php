@@ -117,14 +117,24 @@ class WebAuthnServiceTest extends TestCase
         $this->assertNotNull($session);
     }
 
-    public function test_generate_authentication_challenge_returns_empty_credentials_for_nonexistent_account()
+    public function test_generate_authentication_challenge_returns_dummy_credentials_for_nonexistent_account()
     {
         // Don't create account - test privacy behavior
+        // The service should return dummy credentials to prevent user enumeration
         $challenge = $this->service->generateAuthenticationChallenge('nonexistent@example.com');
 
         $this->assertArrayHasKey('challenge', $challenge);
         $this->assertArrayHasKey('allowCredentials', $challenge);
-        $this->assertCount(0, $challenge['allowCredentials']);
+        // Should return 2 dummy credentials to prevent user enumeration
+        $this->assertCount(2, $challenge['allowCredentials']);
+        
+        // Verify dummy credentials have correct structure
+        foreach ($challenge['allowCredentials'] as $cred) {
+            $this->assertEquals('public-key', $cred['type']);
+            $this->assertArrayHasKey('id', $cred);
+            $this->assertIsString($cred['id']);
+            $this->assertEquals([], $cred['transports']);
+        }
 
         // Session should still be created for timing attack prevention
         $session = WebAuthnSession::where('email', 'nonexistent@example.com')
