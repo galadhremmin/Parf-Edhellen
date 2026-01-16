@@ -23,16 +23,20 @@ Route::group([
         ->name('api.book.languages');
     Route::get('book/translate/{glossId}', [BookApiController::class, 'get'])
         ->where(['glossId' => REGULAR_EXPRESSION_NUMERIC])
+        ->middleware('throttle:60,1')
         ->name('api.book.gloss');
     Route::get('book/translate/version/{id}', [BookApiController::class, 'getFromVersion'])
+        ->middleware('throttle:60,1')
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC]);
     Route::post('book/entities/{groupId}/{entityId?}', [BookApiController::class, 'entities'])
         ->where([
             'groupId' => REGULAR_EXPRESSION_NUMERIC,
             'entityId' => REGULAR_EXPRESSION_NUMERIC,
         ])
+        ->middleware('throttle:60,1')
         ->name('api.book.entities');
     Route::post('book/find', [BookApiController::class, 'find'])
+        ->middleware('throttle:60,1')
         ->name('api.book.find');
 
     Route::get('speech/{id?}', [SpeechApiController::class, 'index'])
