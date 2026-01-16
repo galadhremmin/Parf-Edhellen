@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\v3\AccountFeedApiController;
 use App\Http\Controllers\Api\v3\BookApiController;
 use App\Http\Controllers\Api\v3\LexicalEntryApiController;
 use App\Http\Controllers\Api\v3\InflectionApiController;
+use App\Http\Controllers\Api\v3\PasskeyApiController;
 use App\Http\Controllers\Api\v3\SentenceApiController;
 use App\Http\Controllers\Api\v3\SpeechApiController;
 use App\Http\Controllers\Api\v3\UtilityApiController;
@@ -22,16 +23,20 @@ Route::group([
         ->name('api.book.languages');
     Route::get('book/translate/{glossId}', [BookApiController::class, 'get'])
         ->where(['glossId' => REGULAR_EXPRESSION_NUMERIC])
+        ->middleware('throttle:60,1')
         ->name('api.book.gloss');
     Route::get('book/translate/version/{id}', [BookApiController::class, 'getFromVersion'])
+        ->middleware('throttle:60,1')
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC]);
     Route::post('book/entities/{groupId}/{entityId?}', [BookApiController::class, 'entities'])
         ->where([
             'groupId' => REGULAR_EXPRESSION_NUMERIC,
             'entityId' => REGULAR_EXPRESSION_NUMERIC,
         ])
+        ->middleware('throttle:60,1')
         ->name('api.book.entities');
     Route::post('book/find', [BookApiController::class, 'find'])
+        ->middleware('throttle:60,1')
         ->name('api.book.find');
 
     Route::get('speech/{id?}', [SpeechApiController::class, 'index'])
@@ -54,6 +59,14 @@ Route::group([
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC]);
     Route::post('account/find', [AccountApiController::class, 'findAccount']);
     Route::get('account/{id}/feed', [AccountFeedApiController::class, 'getFeed']);
+
+    // Passkey authentication (public - no auth required)
+    Route::post('passkey/login/challenge', [PasskeyApiController::class, 'generateAuthenticationChallenge'])
+        ->middleware('throttle:6,1')
+        ->name('api.passkey.login-challenge');
+    Route::post('passkey/login/verify', [PasskeyApiController::class, 'verifyAuthenticationResponse'])
+        ->middleware('throttle:3,1')
+        ->name('api.passkey.login-verify');
 });
 
 // Public, throttled API

@@ -27,7 +27,7 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
     protected $fillable = [
         'nickname', 'email', 'identity', 'authorization_provider_id', 'created_at', 'provider_id',
         'profile', 'has_avatar', 'feature_background_url', 'is_deleted', 'password', 'is_passworded',
-        'is_master_account', 'master_account_id', 'email_verified_at',
+        'is_master_account', 'master_account_id', 'email_verified_at', 'has_passkeys', 'last_passkey_auth_at',
     ];
 
     /**
@@ -38,6 +38,7 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
     protected $hidden = [
         'identity', 'authorization_provider_id', 'remember_token', 'email', 'is_deleted',
         'password', 'is_passworded', 'is_master_account', 'master_account_id', 'email_verified_at',
+        'has_passkeys', 'last_passkey_auth_at',
     ];
 
     /**
@@ -172,6 +173,22 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
             'id',
             'role_id'
         );
+    }
+
+    /**
+     * @return HasMany<WebAuthnCredential>
+     */
+    public function webauthn_credentials(): HasMany
+    {
+        return $this->hasMany(WebAuthnCredential::class);
+    }
+
+    /**
+     * Get only active passkeys
+     */
+    public function activeWebauthnCredentials(): HasMany
+    {
+        return $this->webauthn_credentials()->where('is_active', true);
     }
 
     public function getFriendlyName()

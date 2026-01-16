@@ -4,6 +4,7 @@ namespace App\Console;
 
 use App\Models\FailedJob;
 use App\Repositories\SystemErrorRepository;
+use App\Security\WebAuthnService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Console\Scheduling\Schedule;
@@ -54,6 +55,17 @@ class Kernel extends ConsoleKernel
             }) //
             ->name('Delete failed jobs entities older than 90 days.') //
             ->monthly();
+
+        $schedule->call(function (WebAuthnService $webAuthnService) {
+            $webAuthnService->cleanupExpiredSessions();
+        }) //
+            ->onFailure(function (Stringable $output, SystemErrorRepository $systemErrorRepository) {
+                $systemErrorRepository->saveException(new Exception(
+                    sprintf('Failed to cleanup expired WebAuthn sessions. Output: %s', $output)
+                ), 'scheduler');
+            }) //
+            ->name('Cleanup expired WebAuthn sessions.') //
+            ->hourly();
     }
 
     /**

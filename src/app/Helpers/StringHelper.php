@@ -186,4 +186,39 @@ class StringHelper
     {
         return (bool) preg_match('/^[\p{S}\p{P}\p{Z}]+$/u', $str);
     }
+
+    /**
+     * Convert base64UrlAppropriate (URL-safe base64 without padding) to standard base64 (with padding)
+     * 
+     * This is useful when you need to decode base64UrlAppropriate strings using PHP's base64_decode(),
+     * which expects standard base64 format.
+     *
+     * @param string $base64UrlAppropriate Base64UrlAppropriate-encoded string (URL-safe, no padding)
+     * @return string Standard base64-encoded string (with padding if needed)
+     */
+    public static function convertBase64UrlAppropriateToStandardBase64(string $base64UrlAppropriate): string
+    {
+        // Add padding if needed
+        $padding = 4 - (strlen($base64UrlAppropriate) % 4);
+        if ($padding !== 4) {
+            $base64UrlAppropriate .= str_repeat('=', $padding);
+        }
+        // Convert base64UrlAppropriate characters to standard base64 characters
+        return strtr($base64UrlAppropriate, '-_', '+/');
+    }
+
+    /**
+     * Convert standard base64 (with padding) to base64UrlAppropriate (URL-safe base64 without padding)
+     * 
+     * This is useful for encoding data that needs to be URL-safe, such as WebAuthn challenges
+     * or other data that will be used in URLs or JSON.
+     *
+     * @param string $base64 Standard base64-encoded string (may have padding)
+     * @return string Base64UrlAppropriate-encoded string (URL-safe, no padding)
+     */
+    public static function convertBase64ToBase64UrlAppropriate(string $base64): string
+    {
+        // Remove padding and convert to URL-safe characters
+        return rtrim(strtr($base64, '+/', '-_'), '=');
+    }
 }

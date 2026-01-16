@@ -5,18 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Models\Account;
 use App\Models\AccountMergeRequest;
-use App\Security\AccountManager;
 use Illuminate\Http\Request;
 
 class AccountSecurityController extends Controller
 {
-    private AccountManager $_accountManager;
-
-    public function __construct(AccountManager $passwordManager)
-    {
-        $this->_accountManager = $passwordManager;
-    }
-
     /**
      * Landing page for account security settings and account linking.
      */
@@ -65,4 +57,5 @@ class AccountSecurityController extends Controller
             'verification_status' => $verificationStatus,
         ]);
     }
+
 }

@@ -10,6 +10,7 @@ export const enum DI {
     InflectionApi = 'InflectionApi',
     LanguageApi = 'LanguageApi',
     LogApi = 'LogApi',
+    PasskeyApi = 'PasskeyApi',
     RoleManager = 'RoleManager',
     SentenceApi = 'SentenceApi',
     SpeechApi = 'SpeechApi',

@@ -9,7 +9,7 @@ use App\Http\Controllers\AccountSecurityController;
 use App\Http\Controllers\AccountVerificationController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth')->prefix('account')->group(function () {
+Route::middleware(['auth', 'throttle:6,1'])->prefix('account')->group(function () {
 
     // User profile
     Route::get('security', [AccountSecurityController::class, 'security'])
@@ -30,7 +30,7 @@ Route::middleware('auth')->prefix('account')->group(function () {
         ->name('verification.notice');
 });
 
-Route::middleware(['auth', 'verified'])->prefix('account')->group(function () {
+Route::middleware(['auth', 'verified', 'throttle:6,1'])->prefix('account')->group(function () {
 
     // Mail settings
     Route::resource('notifications', AccountNotificationController::class, [

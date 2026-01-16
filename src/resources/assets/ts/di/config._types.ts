@@ -9,6 +9,7 @@ import type ILexicalEntryResourceApi from '@root/connectors/backend/IGlossResour
 import type { IInflectionResourceApi } from '@root/connectors/backend/IInflectionResourceApi';
 import type ILanguageApi from '@root/connectors/backend/ILanguageApi';
 import type { ILogApi } from '@root/connectors/backend/ILogApi';
+import type IPasskeyApi from '@root/connectors/backend/IPasskeyApi';
 import type { ISentenceResourceApi } from '@root/connectors/backend/ISentenceResourceApi';
 import type ISpeechResourceApi from '@root/connectors/backend/ISpeechResourceApi';
 import type { ISubscriptionApi } from '@root/connectors/backend/ISubscriptionApi';
@@ -30,6 +31,7 @@ export type DIContainerType = {
     [DI.GlossApi]?: ILexicalEntryResourceApi;
     [DI.InflectionApi]?: IInflectionResourceApi;
     [DI.LanguageApi]?: ILanguageApi;
+    [DI.PasskeyApi]?: IPasskeyApi;
     [DI.RoleManager]?: IRoleManager;
     [DI.SentenceApi]?: ISentenceResourceApi;
     [DI.SpeechApi]?: ISpeechResourceApi;
