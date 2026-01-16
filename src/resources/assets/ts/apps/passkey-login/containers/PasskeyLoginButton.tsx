@@ -1,9 +1,6 @@
 import { useState, useCallback } from 'react';
-import type IPasskeyApi from '@root/connectors/backend/IPasskeyApi';
-
-interface IProps {
-    passkeyApi?: IPasskeyApi;
-}
+import { base64urlToArrayBuffer, arrayBufferToBase64 } from '@root/utilities/func/base64';
+import type { IProps } from './PasskeyLoginButton._types';
 
 const PasskeyLoginButton = (props: IProps) => {
     const { passkeyApi } = props;
@@ -53,8 +50,7 @@ const PasskeyLoginButton = (props: IProps) => {
                 const statusCode = challengeErr?.response?.status;
                 const errorData = challengeErr?.response?.data || challengeErr?.data;
                 
-                if (statusCode === 429 || 
-                    errorData?.exception === 'Illuminate\\Http\\Exceptions\\ThrottleRequestsException' ||
+                if (statusCode === 429 ||
                     errorData?.message === 'Too Many Attempts.') {
                     const headers = challengeErr?.response?.headers || {};
                     const retryAfter = headers['retry-after'] || headers['Retry-After'];
@@ -72,15 +68,6 @@ const PasskeyLoginButton = (props: IProps) => {
             }
 
             // Step 2: Convert challenge data to WebAuthn format
-            const base64urlToArrayBuffer = (base64url: string): Uint8Array => {
-                let base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
-                while (base64.length % 4) {
-                    base64 += '=';
-                }
-                const binaryString = atob(base64);
-                return Uint8Array.from(binaryString, c => c.charCodeAt(0));
-            };
-
             const allowCredentials = challengeData.allowCredentials.map(cred => ({
                 id: base64urlToArrayBuffer(cred.id) as BufferSource,
                 type: 'public-key' as const,
@@ -126,17 +113,11 @@ const PasskeyLoginButton = (props: IProps) => {
             }
 
             // Step 4: Convert response to base64
-            const clientDataJSON = btoa(
-                String.fromCharCode(...new Uint8Array(assertionResponse.clientDataJSON))
-            );
-            const authenticatorData = btoa(
-                String.fromCharCode(...new Uint8Array(assertionResponse.authenticatorData))
-            );
-            const signature = btoa(
-                String.fromCharCode(...new Uint8Array(assertionResponse.signature))
-            );
+            const clientDataJSON = arrayBufferToBase64(assertionResponse.clientDataJSON);
+            const authenticatorData = arrayBufferToBase64(assertionResponse.authenticatorData);
+            const signature = arrayBufferToBase64(assertionResponse.signature);
             const userHandle = assertionResponse.userHandle 
-                ? btoa(String.fromCharCode(...new Uint8Array(assertionResponse.userHandle)))
+                ? arrayBufferToBase64(assertionResponse.userHandle)
                 : null;
 
             // Step 5: Verify with backend

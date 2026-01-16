@@ -1,13 +1,5 @@
-import { useState } from 'react';
-import type { IPasskey, IAccount } from '../index._types';
-import type IPasskeyApi from '@root/connectors/backend/IPasskeyApi';
 import PasskeyListItem from './PasskeyListItem';
-
-interface IProps {
-    passkeys: IPasskey[];
-    onPasskeyDeleted: () => void;
-    passkeyApi?: IPasskeyApi;
-}
+import type { IProps } from './PasskeyList._types';
 
 const PasskeyList = (props: IProps) => {
     const { passkeys, onPasskeyDeleted, passkeyApi } = props;

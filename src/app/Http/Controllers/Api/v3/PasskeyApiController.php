@@ -113,9 +113,9 @@ class PasskeyApiController extends Controller
 
             // Sanitize error message to ensure it's UTF-8 safe for JSON encoding
             $errorMessage = $e->getMessage();
-            if (!mb_check_encoding($errorMessage, 'UTF-8')) {
+            if (! mb_check_encoding($errorMessage, 'UTF-8')) {
                 $errorMessage = mb_convert_encoding($errorMessage, 'UTF-8', 'UTF-8');
-                if (!mb_check_encoding($errorMessage, 'UTF-8')) {
+                if (! mb_check_encoding($errorMessage, 'UTF-8')) {
                     $errorMessage = 'Credential verification failed';
                 }
             }
@@ -271,7 +271,7 @@ class PasskeyApiController extends Controller
             }
 
             // Verify password if provided
-            if (isset($validated['password']) && $validated['password'] && !Hash::check($validated['password'], $user->password)) {
+            if (isset($validated['password']) && $validated['password'] && ! Hash::check($validated['password'], $user->password)) {
                 return response()->json(['error' => 'Invalid password'], 401);
             }
 

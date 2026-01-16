@@ -1,17 +1,8 @@
 import { useState, useEffect } from 'react';
 import StaticAlert from '@root/components/StaticAlert';
-import type { IAccount } from '../index._types';
-import type IPasskeyApi from '@root/connectors/backend/IPasskeyApi';
-
-interface IProps {
-    account: IAccount;
-    passkeyApi?: IPasskeyApi;
-    existingPasskeys?: Array<{ displayName: string }>;
-    onSuccess: () => void;
-    onCancel: () => void;
-    formRef?: React.RefObject<HTMLFormElement>;
-    onValidationChange?: (canSubmit: boolean) => void;
-}
+import { fireEvent } from '@root/components/Component';
+import { base64urlToArrayBuffer, arrayBufferToBase64 } from '@root/utilities/func/base64';
+import type { IProps } from './AddPasskeyForm._types';
 
 const AddPasskeyForm = (props: IProps) => {
     const { account, passkeyApi, existingPasskeys = [], onSuccess, onCancel, formRef, onValidationChange } = props;
@@ -31,7 +22,7 @@ const AddPasskeyForm = (props: IProps) => {
     useEffect(() => {
         const trimmedName = displayName.trim();
         const canSubmit = trimmedName.length > 0 && !isNameDuplicate(trimmedName) && step === 'name' && !loading;
-        onValidationChange?.(canSubmit);
+        void fireEvent('AddPasskeyForm', onValidationChange, canSubmit);
     }, [displayName, step, loading, onValidationChange, existingPasskeys]);
 
     const handleStartRegistration = async () => {
@@ -59,19 +50,6 @@ const AddPasskeyForm = (props: IProps) => {
 
             // Move to registration step
             setStep('register');
-
-            // Helper to decode base64url to ArrayBuffer (WebAuthn uses base64url, not regular base64)
-            const base64urlToArrayBuffer = (base64url: string): Uint8Array => {
-                // Convert base64url to base64
-                let base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
-                // Add padding if needed
-                while (base64.length % 4) {
-                    base64 += '=';
-                }
-                // Decode using atob
-                const binaryString = atob(base64);
-                return Uint8Array.from(binaryString, c => c.charCodeAt(0));
-            };
 
             // Convert challenge data to PublicKeyCredentialCreationOptions format
             const publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptions = {
@@ -143,12 +121,8 @@ const AddPasskeyForm = (props: IProps) => {
             }
 
             // Convert ArrayBuffers to base64 strings
-            const clientDataJSON = btoa(
-                String.fromCharCode(...new Uint8Array(attestationResponse.clientDataJSON))
-            );
-            const attestationObject = btoa(
-                String.fromCharCode(...new Uint8Array(attestationResponse.attestationObject))
-            );
+            const clientDataJSON = arrayBufferToBase64(attestationResponse.clientDataJSON);
+            const attestationObject = arrayBufferToBase64(attestationResponse.attestationObject);
 
             // Verify with backend
             await passkeyApi.verifyRegistration({
@@ -159,7 +133,7 @@ const AddPasskeyForm = (props: IProps) => {
             });
 
             // Success - callback will reload passkeys
-            onSuccess();
+            void fireEvent('AddPasskeyForm', onSuccess);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An error occurred');
         } finally {

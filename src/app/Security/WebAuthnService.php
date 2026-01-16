@@ -43,6 +43,25 @@ class WebAuthnService
     }
 
     /**
+     * Get secured relying party IDs for WebAuthn validation
+     * 
+     * Allows localhost as a secured RP only in non-production environments
+     * to enable HTTP-based development. In production, localhost is not allowed.
+     *
+     * @param string $rpId The relying party ID to check
+     * @return array Array of secured RP IDs (empty array if none, or ['localhost'] if localhost in non-production)
+     */
+    private function getSecuredRelyingPartyIds(string $rpId): array
+    {
+        // Only allow localhost in non-production environments
+        if ($rpId === 'localhost' && ! app()->isProduction()) {
+            return ['localhost'];
+        }
+        
+        return [];
+    }
+
+    /**
      * Initialize WebAuthn validators and serializer
      */
     private function initializeValidators(): void
@@ -56,9 +75,8 @@ class WebAuthnService
         $this->_serializer = $serializerFactory->create();
 
         // Create ceremony step managers
-        // Allow localhost as secured RP for development (HTTP is allowed on localhost)
         $rpId = config('webauthn.rp.id');
-        $securedRps = $rpId === 'localhost' ? ['localhost'] : [];
+        $securedRps = $this->getSecuredRelyingPartyIds($rpId);
         $ceremonyStepManagerFactory = new CeremonyStepManagerFactory();
         $ceremonyStepManagerFactory->setSecuredRelyingPartyId($securedRps);
         $creationCSM = $ceremonyStepManagerFactory->creationCeremony();
@@ -316,9 +334,8 @@ class WebAuthnService
             );
 
             // Verify the attestation response
-            // Allow localhost as secured RP for development (HTTP is allowed on localhost)
             $rpId = config('webauthn.rp.id');
-            $securedRps = $rpId === 'localhost' ? ['localhost'] : [];
+            $securedRps = $this->getSecuredRelyingPartyIds($rpId);
             $publicKeyCredentialSource = $this->_attestationValidator->check(
                 $publicKeyCredential->response,
                 $creationOptions,
@@ -372,9 +389,9 @@ class WebAuthnService
             // Re-throw WebAuthn exceptions as-is, but sanitize the message
             $message = $e->getMessage();
             // Ensure message is UTF-8 safe for JSON encoding
-            if (!mb_check_encoding($message, 'UTF-8')) {
+            if (! mb_check_encoding($message, 'UTF-8')) {
                 $message = mb_convert_encoding($message, 'UTF-8', 'UTF-8');
-                if (!mb_check_encoding($message, 'UTF-8')) {
+                if (! mb_check_encoding($message, 'UTF-8')) {
                     $message = 'Credential verification failed';
                 }
             }
@@ -383,9 +400,9 @@ class WebAuthnService
             // Sanitize exception message to ensure it's UTF-8 safe for JSON encoding
             $message = $e->getMessage();
             // Remove any non-UTF-8 characters
-            if (!mb_check_encoding($message, 'UTF-8')) {
+            if (! mb_check_encoding($message, 'UTF-8')) {
                 $message = mb_convert_encoding($message, 'UTF-8', 'UTF-8');
-                if (!mb_check_encoding($message, 'UTF-8')) {
+                if (! mb_check_encoding($message, 'UTF-8')) {
                     $message = 'Credential verification failed';
                 } else {
                     $message = 'Credential verification failed: ' . $message;
@@ -617,9 +634,8 @@ class WebAuthnService
 
                     // Verify the assertion response
                     // The check method expects: credentialId/source, response, options, host/rpId, userHandle (string|null), securedRps
-                    // Allow localhost as secured RP for development (HTTP is allowed on localhost)
                     $rpId = config('webauthn.rp.id');
-                    $securedRps = $rpId === 'localhost' ? ['localhost'] : [];
+                    $securedRps = $this->getSecuredRelyingPartyIds($rpId);
                     $verifiedSource = $this->_assertionValidator->check(
                         $credentialSource,
                         $publicKeyCredential->response,
@@ -751,7 +767,7 @@ class WebAuthnService
             ->count();
 
         $account = $credential->account;
-        if ($remainingCredentials === 0 && !$account->is_passworded) {
+        if ($remainingCredentials === 0 && ! $account->is_passworded) {
             throw new WebAuthnException(
                 'Cannot delete the only passkey without a password. Add a password first or contact support.'
             );

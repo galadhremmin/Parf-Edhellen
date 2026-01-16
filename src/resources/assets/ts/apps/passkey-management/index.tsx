@@ -103,7 +103,7 @@ const PasskeyManagement = (props: IPasskeyManagementProps) => {
                                     account={account}
                                     passkeyApi={passkeyApi}
                                     existingPasskeys={passkeys}
-                                    onValidationChange={setCanSubmitForm}
+                                    onValidationChange={(ev) => setCanSubmitForm(ev.value)}
                                     onSuccess={() => {
                                         setShowAddForm(false);
                                         setCanSubmitForm(false);

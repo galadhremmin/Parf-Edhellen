@@ -1,15 +1,9 @@
 import { useState } from 'react';
 import StaticAlert from '@root/components/StaticAlert';
 import Dialog from '@root/components/Dialog';
-import type { IPasskey } from '../index._types';
-import type IPasskeyApi from '@root/connectors/backend/IPasskeyApi';
+import { fireEvent } from '@root/components/Component';
 import './PasskeyListItem.scss';
-
-interface IProps {
-    passkey: IPasskey;
-    onDeleted: () => void;
-    passkeyApi?: IPasskeyApi;
-}
+import type { IProps } from './PasskeyListItem._types';
 
 const PasskeyListItem = (props: IProps) => {
     const { passkey, onDeleted, passkeyApi } = props;
@@ -41,7 +35,7 @@ const PasskeyListItem = (props: IProps) => {
             await passkeyApi.deletePasskey(passkey.id, deletePassword);
             setShowDeleteDialog(false);
             setDeletePassword('');
-            onDeleted();
+            void fireEvent('PasskeyListItem', onDeleted);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An error occurred');
         } finally {
