@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { base64urlToArrayBuffer, arrayBufferToBase64 } from '@root/utilities/func/base64';
+import type { IConnectorError, IValidationFailedResponse } from '@root/connectors/ApiConnector._types';
 import type { IProps } from './PasskeyLoginButton._types';
 
 const PasskeyLoginButton = (props: IProps) => {
@@ -45,25 +46,22 @@ const PasskeyLoginButton = (props: IProps) => {
             let challengeData;
             try {
                 challengeData = await passkeyApi.getAuthenticationChallenge(email);
-            } catch (challengeErr: any) {
+            } catch (challengeErr: unknown) {
                 // Check for throttling on challenge request
-                const statusCode = challengeErr?.response?.status;
-                const errorData = challengeErr?.response?.data || challengeErr?.data;
-                
-                if (statusCode === 429 ||
-                    errorData?.message === 'Too Many Attempts.') {
-                    const headers = challengeErr?.response?.headers || {};
-                    const retryAfter = headers['retry-after'] || headers['Retry-After'];
+                const isConnectorError = (err: unknown): err is IConnectorError => {
+                    return typeof err === 'object' && err !== null && 'response' in err;
+                };
+
+                if (isConnectorError(challengeErr)) {
+                    const statusCode = challengeErr.response?.status;
+                    const errorData = challengeErr.response?.data as IValidationFailedResponse | undefined;
                     
-                    if (retryAfter) {
-                        const seconds = parseInt(retryAfter, 10);
-                        const minutes = Math.ceil(seconds / 60);
-                        throw new Error(`Too many login attempts. Please wait ${minutes} minute${minutes !== 1 ? 's' : ''} before trying again.`);
-                    } else {
+                    if (statusCode === 429 ||
+                        errorData?.message === 'Too Many Attempts.') {
                         throw new Error('Too many login attempts. Please wait a minute before trying again.');
                     }
                 }
-                // Re-throw if not throttling
+                // Re-throw if not throttling or not a connector error
                 throw challengeErr;
             }
 
