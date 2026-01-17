@@ -79,7 +79,6 @@ export class SearchQuery extends Component<IProps, IState> {
             includeOld,
             languageId,
             naturalLanguage,
-            reversed,
             showMore,
             speechIds,
             word,
@@ -100,13 +99,6 @@ export class SearchQuery extends Component<IProps, IState> {
             </div>
             <div className="row Search--config mt-2">
                 <div className="col">
-                    <label className="ms-2">
-                        <input checked={reversed}
-                            name="reversed"
-                            onChange={this._onReverseChange}
-                            type="checkbox"
-                        /> Reverse
-                    </label>
                     <label className="ms-2">
                         <input checked={naturalLanguage}
                             name="naturalLanguage"
@@ -185,16 +177,6 @@ export class SearchQuery extends Component<IProps, IState> {
                 ...nextState,
             }, ['word']),
         );
-    }
-
-    private _onReverseChange = (ev: ChangeEvent<HTMLInputElement>) => {
-        const reversed = ev.target.checked;
-        this.setState({
-            reversed,
-        });
-
-        void this._persistState('reversed', reversed);
-        this._beginSearch(/* queryChanged: */ true);
     }
 
     private _onNaturalLanguageChange = (ev: ChangeEvent<HTMLInputElement>) => {
@@ -305,7 +287,6 @@ const mapStateToProps = (state: RootReducer) => ({
     languageId: state.search.languageId,
     loading: state.search.loading,
     naturalLanguage: state.search.naturalLanguage,
-    reversed: state.search.reversed,
     word: state.search.word,
 });
 
