@@ -175,23 +175,16 @@ class SearchIndexRepository
             $keywordLanguageIsInvented = $keywordLanguage->is_invented;
         }
 
-        $normalizedKeyword = StringHelper::normalize($keyword, true);
-        $normalizedKeywordUnaccented = StringHelper::normalize($keyword, false);
-
-        $normalizedKeywordReversed = strrev($normalizedKeyword);
-        $normalizedKeywordUnaccentedReversed = strrev($normalizedKeywordUnaccented);
+        $normalizedKeyword = StringHelper::transliterate($keyword, true);
+        $normalizedKeywordUnaccented = StringHelper::transliterate($keyword, false);
 
         $data = [
             'keyword' => $keyword,
             'normalized_keyword' => $normalizedKeyword,
             'normalized_keyword_unaccented' => $normalizedKeywordUnaccented,
-            'normalized_keyword_reversed' => $normalizedKeywordReversed,
-            'normalized_keyword_reversed_unaccented' => $normalizedKeywordUnaccentedReversed,
             'keyword_length' => mb_strlen($keyword),
             'normalized_keyword_length' => mb_strlen($normalizedKeyword),
             'normalized_keyword_unaccented_length' => mb_strlen($normalizedKeywordUnaccented),
-            'normalized_keyword_reversed_length' => mb_strlen($normalizedKeywordUnaccented),
-            'normalized_keyword_reversed_unaccented_length' => mb_strlen($normalizedKeywordUnaccentedReversed),
 
             'language_id' => $languageId,
             'keyword_language_id' => $keywordLanguageId,
@@ -212,9 +205,8 @@ class SearchIndexRepository
 
             SearchKeyword::upsert([$data], self::$upsetFields, [
                 // UPSERT update field if a row already exists
-                'normalized_keyword', 'normalized_keyword_unaccented', 'normalized_keyword_reversed', 'normalized_keyword_reversed_unaccented',
-                'keyword_length', 'normalized_keyword_length', 'normalized_keyword_unaccented_length', 'normalized_keyword_reversed_length',
-                'normalized_keyword_reversed_unaccented_length', 'keyword_language_id', 'is_keyword_language_invented',
+                'normalized_keyword', 'normalized_keyword_unaccented', 'keyword_length', 'normalized_keyword_length', 
+                'normalized_keyword_unaccented_length', 'keyword_language_id', 'is_keyword_language_invented',
             ]);
 
             self::$latestStoredIndexHashes[] = $hash;

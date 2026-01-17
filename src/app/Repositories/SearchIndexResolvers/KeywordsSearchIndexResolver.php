@@ -4,12 +4,14 @@ namespace App\Repositories\SearchIndexResolvers;
 
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\QueryException;
 
 class KeywordsSearchIndexResolver extends SearchIndexResolverBase
 {
     protected function resolveByQuery(array $params, SearchIndexSearchValue $value): array
     {
-        $keywords = $params['query'] //
+        try {
+            $keywords = $params['query'] //
             ->select(
                 'search_group as g',
                 'keyword as k',
@@ -28,7 +30,10 @@ class KeywordsSearchIndexResolver extends SearchIndexResolverBase
             ->limit(100)
             ->get()
             ->toArray();
-
+        } catch (QueryException $_) {
+            $keywords = [];
+        }
+        
         return $keywords;
     }
 }

@@ -2,13 +2,15 @@
 
 namespace App\Repositories\SearchIndexResolvers;
 
+use Illuminate\Support\Collection;
+use Illuminate\Database\QueryException;
+
 use App\Adapters\SentenceAdapter;
 use App\Models\Account;
 use App\Models\Initialization\Morphs;
 use App\Models\Sentence;
 use App\Models\SentenceFragment;
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
-use Illuminate\Support\Collection;
 
 class SentenceSearchIndexResolver extends SearchIndexResolverBase
 {
@@ -24,12 +26,16 @@ class SentenceSearchIndexResolver extends SearchIndexResolverBase
 
     public function resolveByQuery(array $params, SearchIndexSearchValue $value): array
     {
-        $entityIds = $params['query'] //
-            ->select('entity_id')
-            ->where('entity_name', $this->_fragmentMorphName)
-            ->orderBy($params['search_column'], 'asc')
-            ->limit(100)
-            ->pluck('entity_id');
+        try {
+            $entityIds = $params['query'] //
+                ->select('entity_id')
+                ->where('entity_name', $this->_fragmentMorphName)
+                ->orderBy($params['search_column'], 'asc')
+                ->limit(100)
+                ->pluck('entity_id');
+        } catch (QueryException $_) {
+            $entityIds = new Collection;
+        }
 
         if ($entityIds->isEmpty()) {
             $sentences = new Collection;

@@ -60,18 +60,16 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
             // the sense morph is included in the query. If you're rebuilding the database from scratch, this will not
             // do anything as it's currently not possible to create senses within the search keyword table (it'll result
             // in an exception.)
-            $searchColumn = $value->getReversed() ? 'normalized_keyword_reversed' : 'normalized_keyword';
             $query = SearchKeyword::whereIn('entity_name', [$this->_lexicalEntryMorph, $this->_senseMorph])
                 ->limit(500); // limit the number of results to 500 to prevent performance issues
 
+            $normalizedWord = StringHelper::transliterate($value->getWord(), /* transformAccentsIntoLetters = */ true);
+            $fulltextTerm = StringHelper::prepareQuotedFulltextTerm($normalizedWord);
+
             if ($value->getNaturalLanguage()) {
-                $normalizedWord = StringHelper::normalize($value->getWord(), /* accentsMatter = */ true, /* retainWildcard = */ false);
-                $query->whereRaw('MATCH(' . $searchColumn . ') AGAINST(? IN NATURAL LANGUAGE MODE)', [$normalizedWord]);
+                $query->whereRaw('MATCH(normalized_keyword) AGAINST(? IN NATURAL LANGUAGE MODE)', [$fulltextTerm]);
             } else {
-                // Use FULLTEXT BOOLEAN MODE for prefix matching - much faster than LIKE queries
-                $normalizedWord = StringHelper::normalize($value->getWord(), /* accentsMatter = */ true, /* retainWildcard = */ false);
-                $fulltextTerm = StringHelper::prepareFulltextBooleanTerm($normalizedWord);
-                $query->whereRaw('MATCH(' . $searchColumn . ') AGAINST(? IN BOOLEAN MODE)', [$fulltextTerm]);
+                $query->whereRaw('MATCH(normalized_keyword) AGAINST(? IN BOOLEAN MODE)', [$fulltextTerm]);
             }
 
             // Check for empty search terms
