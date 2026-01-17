@@ -4,6 +4,14 @@ namespace App\Helpers;
 
 class StringHelper
 {
+    private static array $_slugificationNormalizationTable = [
+        '(' => '-',
+        ')' => '-',
+        ' ' => '_',
+        ';' => '_or',
+        '/' => '_or_',
+    ];
+
     private static array $_normalizationTable = [
         'θ' => 'th',
         'ʃ' => 'sh',
@@ -14,11 +22,6 @@ class StringHelper
         'ŋ' => 'ng',
         'ñ' => 'ng',
         'ë' => 'e',
-        '(' => '-',
-        ')' => '-',
-        ' ' => '_',
-        ';' => '_or',
-        '/' => '_or_',
     ];
 
     private static array $_accentsNormalizationTable = [
@@ -77,26 +80,40 @@ class StringHelper
     /**
      * Normalizes the specified string.
      *
-     * @param  bool  $accentsMatter  - whether accents should be normalized according to a phonetic approximation
+     * @param  bool  $transformAccentsIntoLetters  - whether accents should be normalized according to a phonetic approximation
      * @param  bool  $retainWildcard  - retains wildcard character (*)
      * @param  bool  $longAccents  - whether long accents should be normalized
      * @return string
      */
-    public static function normalize(?string $str, $accentsMatter = true, $retainWildcard = false, $longAccents = true)
+    public static function normalize(?string $str, $transformAccentsIntoLetters = true, $retainWildcard = false, $longAccents = true)
     {
         if (empty($str)) {
             return $str;
         }
 
-        $str = self::toLower($str);
-        $str = self::clean($str);
         $str = preg_replace('/[’\\{\\}\\[\\]\+=!\.%]/u', '', $str);
 
         if (! $retainWildcard) {
             $str = str_replace('*', '', $str);
         }
 
-        if ($accentsMatter) {
+        $str = self::transliterate($str, $transformAccentsIntoLetters, $longAccents);
+        return strtr($str, self::$_slugificationNormalizationTable);
+    }
+
+    /**
+     * Transliterates the specified string.
+     *
+     * @param  string  $str  - the string to transliterate
+     * @param  bool  $transformAccentsIntoLetters  - whether accents should be normalized according to a phonetic approximation
+     * @param  bool  $longAccents  - whether long accents should be normalized
+     * @return string
+     */
+    public static function transliterate(string $str, bool $transformAccentsIntoLetters = true, bool $longAccents = true)
+    {
+        $str = self::toLower($str);
+        
+        if ($transformAccentsIntoLetters) {
             $normalizationTable = array_merge(self::$_normalizationTable, self::$_accentsNormalizationTable, 
                 $longAccents ? self::$_longAccentsNormalizationTable : []);
         } else {
@@ -104,25 +121,7 @@ class StringHelper
         }
 
         $str = strtr($str, $normalizationTable);
-
-        // Do not switch locale, as the appropriate locale should be configured
-        // in application configuration.
-        //
-        $currentLocale = setlocale(LC_ALL, 0);
-        // This is necessary for the iconv-transliteration to function properly
-        // Note: this ought to be unnecessary because a unicode locale should be
-        // specified as application default.
-        setlocale(LC_ALL, 'sv_SE.UTF-8');
-
-        // Transcribe á, ê, é etc.
-        $str = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $str);
-
-        // restore the locale
-        setlocale(LC_ALL, $currentLocale);
-
-        // Mac OS X Server requires some extra 'love' because it uses a different version of iconv
-        // than the rest. It transcribes é -> 'e, ê -> ^e, ë -> "e etc.
-        $str = preg_replace('/[\'^"\?]/', '', $str);
+        $str = transliterator_transliterate('Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove', $str);
 
         return trim($str);
     }
@@ -222,61 +221,8 @@ class StringHelper
         return rtrim(strtr($base64, '+/', '-_'), '=');
     }
 
-    /**
-     * Escapes special characters in a string for use in MySQL FULLTEXT BOOLEAN MODE queries.
-     *
-     * Escapes characters that have special meaning in BOOLEAN MODE: + > < ( ) ~ " \
-     * Note: The * character is NOT escaped as it's used for prefix matching.
-     * Note: The - character is NOT escaped when it's part of a word (e.g., "tree-word").
-     *       Only leading - (for exclusion) would need escaping, but we don't support that.
-     *
-     * @param string $str The string to escape
-     * @return string The escaped string safe for use in MATCH() AGAINST() BOOLEAN MODE queries
-     */
-    public static function escapeFulltextBooleanMode(string $str): string
+    public static function prepareQuotedFulltextTerm(string $term): string
     {
-        // Escape special characters except - (hyphen is treated as part of the word in FULLTEXT)
-        // Characters to escape: + > < ( ) ~ " \
-        // We exclude - because it's commonly used in normalized words (e.g., "tree-word")
-        // and FULLTEXT treats it as part of the word, not a special operator (unless at start)
-        return preg_replace('/([+><()~"\\\\])/', '\\\\$1', $str);
-    }
-
-    /**
-     * Prepares a normalized word for use in MySQL FULLTEXT BOOLEAN MODE queries with prefix matching.
-     *
-     * This method:
-     * 1. Checks if the term already has a wildcard (*)
-     * 2. If not and the term ends with a hyphen, uses quoted phrase matching (no prefix matching)
-     * 3. Otherwise, appends * for prefix matching
-     * 4. Escapes special characters that have meaning in BOOLEAN MODE
-     *
-     * Note: FULLTEXT BOOLEAN MODE doesn't support `-*` (hyphen before asterisk), so terms ending
-     * with hyphens must be searched as quoted phrases without prefix matching.
-     *
-     * @param string $normalizedWord The normalized word (e.g., from StringHelper::normalize())
-     * @return string The prepared fulltext term ready for use in MATCH() AGAINST() BOOLEAN MODE queries
-     */
-    public static function prepareFulltextBooleanTerm(string $normalizedWord): string
-    {
-        if (strpos($normalizedWord, '*') !== false) {
-            // Wildcard already present, use as-is
-            $fulltextTerm = $normalizedWord;
-            // Escape special characters that have meaning in BOOLEAN MODE
-            $fulltextTerm = self::escapeFulltextBooleanMode($fulltextTerm);
-        } elseif (strlen($normalizedWord) > 0 && $normalizedWord[strlen($normalizedWord) - 1] === '-') {
-            // Term ends with hyphen - can't use `-*` syntax in FULLTEXT BOOLEAN MODE
-            // Use quoted phrase to match exact term (including the trailing hyphen)
-            // Inside quoted phrases, only quotes need escaping (other special chars are literal)
-            $inner = str_replace('"', '\\"', $normalizedWord);
-            $fulltextTerm = '"' . $inner . '"';
-        } else {
-            // No wildcard found, append * for prefix matching (equivalent to LIKE 'term%')
-            $fulltextTerm = $normalizedWord . '*';
-            // Escape special characters that have meaning in BOOLEAN MODE
-            $fulltextTerm = self::escapeFulltextBooleanMode($fulltextTerm);
-        }
-
-        return $fulltextTerm;
+        return '"'.str_replace('"', '\\"', $term).'"';
     }
 }

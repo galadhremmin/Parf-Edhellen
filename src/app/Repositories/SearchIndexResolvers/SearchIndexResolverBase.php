@@ -11,7 +11,6 @@ abstract class SearchIndexResolverBase implements ISearchIndexResolver
     public function resolve(SearchIndexSearchValue $value): array
     {
         $query = $this->buildQuery($value);
-
         return $this->resolveByQuery($query, $value);
     }
 
@@ -31,19 +30,24 @@ abstract class SearchIndexResolverBase implements ISearchIndexResolver
     private function buildQuery(SearchIndexSearchValue $v): array
     {
         $word = $v->getWord();
-        $searchColumn = $v->getReversed() ? 'normalized_keyword_reversed_unaccented' : 'normalized_keyword_unaccented';
+        $searchColumn = 'normalized_keyword_unaccented';
         $lengthColumn = $searchColumn.'_length';
 
-        // Use MATCH() AGAINST() with Boolean mode for better performance with fulltext indexes
-        // The * operator provides prefix matching similar to LIKE 'term%' but much faster
+        $normalizedWord = StringHelper::transliterate($word, /* transformAccentsIntoLetters = */ false);
+
         if ($v->getNaturalLanguage()) {
-            $normalizedWord = StringHelper::normalize($word, /* accentsMatter = */ false, /* retainWildcard = */ false);
-            $query = SearchKeyword::whereRaw('MATCH(' . $searchColumn . ') AGAINST(? IN NATURAL LANGUAGE MODE)', [$normalizedWord]);
+            $fulltextTerm = str_replace('*', '', $normalizedWord);
+            $query = SearchKeyword::whereRaw('MATCH(' . $searchColumn . ') AGAINST(? IN NATURAL LANGUAGE MODE)', [$fulltextTerm]);
         } else {
-            // Use FULLTEXT BOOLEAN MODE for prefix matching - much faster than LIKE queries
-            $normalizedWord = StringHelper::normalize($word, /* accentsMatter = */ false, /* retainWildcard = */ true);
-            $fulltextTerm = StringHelper::prepareFulltextBooleanTerm($normalizedWord);
-            
+
+            // If the normalized word contains any Boolean Mode reserved symbols, don't add a wildcard.
+            // Otherwise, add '*' to the end of the normalized word for prefix matching.
+            if (preg_match('/[+\-<>\(\)~"@\*]/', $normalizedWord)) {
+                $fulltextTerm = $normalizedWord;
+            } else {
+                $fulltextTerm = $normalizedWord.'*';
+            }
+
             $query = SearchKeyword::whereRaw('MATCH(' . $searchColumn . ') AGAINST(? IN BOOLEAN MODE)', [$fulltextTerm]);
         }
 
