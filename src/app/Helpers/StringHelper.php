@@ -221,4 +221,62 @@ class StringHelper
         // Remove padding and convert to URL-safe characters
         return rtrim(strtr($base64, '+/', '-_'), '=');
     }
+
+    /**
+     * Escapes special characters in a string for use in MySQL FULLTEXT BOOLEAN MODE queries.
+     *
+     * Escapes characters that have special meaning in BOOLEAN MODE: + > < ( ) ~ " \
+     * Note: The * character is NOT escaped as it's used for prefix matching.
+     * Note: The - character is NOT escaped when it's part of a word (e.g., "tree-word").
+     *       Only leading - (for exclusion) would need escaping, but we don't support that.
+     *
+     * @param string $str The string to escape
+     * @return string The escaped string safe for use in MATCH() AGAINST() BOOLEAN MODE queries
+     */
+    public static function escapeFulltextBooleanMode(string $str): string
+    {
+        // Escape special characters except - (hyphen is treated as part of the word in FULLTEXT)
+        // Characters to escape: + > < ( ) ~ " \
+        // We exclude - because it's commonly used in normalized words (e.g., "tree-word")
+        // and FULLTEXT treats it as part of the word, not a special operator (unless at start)
+        return preg_replace('/([+><()~"\\\\])/', '\\\\$1', $str);
+    }
+
+    /**
+     * Prepares a normalized word for use in MySQL FULLTEXT BOOLEAN MODE queries with prefix matching.
+     *
+     * This method:
+     * 1. Checks if the term already has a wildcard (*)
+     * 2. If not and the term ends with a hyphen, uses quoted phrase matching (no prefix matching)
+     * 3. Otherwise, appends * for prefix matching
+     * 4. Escapes special characters that have meaning in BOOLEAN MODE
+     *
+     * Note: FULLTEXT BOOLEAN MODE doesn't support `-*` (hyphen before asterisk), so terms ending
+     * with hyphens must be searched as quoted phrases without prefix matching.
+     *
+     * @param string $normalizedWord The normalized word (e.g., from StringHelper::normalize())
+     * @return string The prepared fulltext term ready for use in MATCH() AGAINST() BOOLEAN MODE queries
+     */
+    public static function prepareFulltextBooleanTerm(string $normalizedWord): string
+    {
+        if (strpos($normalizedWord, '*') !== false) {
+            // Wildcard already present, use as-is
+            $fulltextTerm = $normalizedWord;
+            // Escape special characters that have meaning in BOOLEAN MODE
+            $fulltextTerm = self::escapeFulltextBooleanMode($fulltextTerm);
+        } elseif (strlen($normalizedWord) > 0 && $normalizedWord[strlen($normalizedWord) - 1] === '-') {
+            // Term ends with hyphen - can't use `-*` syntax in FULLTEXT BOOLEAN MODE
+            // Use quoted phrase to match exact term (including the trailing hyphen)
+            // Inside quoted phrases, only quotes need escaping (other special chars are literal)
+            $inner = str_replace('"', '\\"', $normalizedWord);
+            $fulltextTerm = '"' . $inner . '"';
+        } else {
+            // No wildcard found, append * for prefix matching (equivalent to LIKE 'term%')
+            $fulltextTerm = $normalizedWord . '*';
+            // Escape special characters that have meaning in BOOLEAN MODE
+            $fulltextTerm = self::escapeFulltextBooleanMode($fulltextTerm);
+        }
+
+        return $fulltextTerm;
+    }
 }

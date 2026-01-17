@@ -159,6 +159,7 @@ class BookApiController extends BookBaseController
      */
     private function getEntity(int $groupId, int $entityId)
     {
-        return $this->_searchIndexRepository->resolveEntity($groupId, $entityId);
+        return Cache::remember('ed.entity.'.$groupId.'.'.$entityId, DateInterval::createFromDateString('1 day'), //
+            fn () => $this->_searchIndexRepository->resolveEntity($groupId, $entityId));
     }
 }

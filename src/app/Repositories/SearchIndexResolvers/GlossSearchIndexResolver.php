@@ -61,22 +61,21 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
             // do anything as it's currently not possible to create senses within the search keyword table (it'll result
             // in an exception.)
             $searchColumn = $value->getReversed() ? 'normalized_keyword_reversed' : 'normalized_keyword';
-            $query = SearchKeyword::whereIn('entity_name', [$this->_lexicalEntryMorph, $this->_senseMorph]);
+            $query = SearchKeyword::whereIn('entity_name', [$this->_lexicalEntryMorph, $this->_senseMorph])
+                ->limit(500); // limit the number of results to 500 to prevent performance issues
 
             if ($value->getNaturalLanguage()) {
                 $normalizedWord = StringHelper::normalize($value->getWord(), /* accentsMatter = */ true, /* retainWildcard = */ false);
                 $query->whereRaw('MATCH(' . $searchColumn . ') AGAINST(? IN NATURAL LANGUAGE MODE)', [$normalizedWord]);
             } else {
+                // Use FULLTEXT BOOLEAN MODE for prefix matching - much faster than LIKE queries
                 $normalizedWord = StringHelper::normalize($value->getWord(), /* accentsMatter = */ true, /* retainWildcard = */ true);
-                $normalizedWord = str_replace('*', '%', $normalizedWord);
-                if (strpos($normalizedWord, '%') === false) {
-                    $normalizedWord .= '%';
-                }
-                
-                $query->where($searchColumn, 'like', $normalizedWord);
+                $fulltextTerm = StringHelper::prepareFulltextBooleanTerm($normalizedWord);
+                $query->whereRaw('MATCH(' . $searchColumn . ') AGAINST(? IN BOOLEAN MODE)', [$fulltextTerm]);
             }
 
-            if (empty($normalizedWord) || $normalizedWord === '%' /* in the event the string normalization failed */) {
+            // Check for empty search terms
+            if (empty($normalizedWord) || $normalizedWord === '*') {
                 $lexicalEntries = [];
 
             } else {
