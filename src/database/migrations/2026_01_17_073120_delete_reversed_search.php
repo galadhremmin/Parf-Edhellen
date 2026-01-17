@@ -109,14 +109,14 @@ return new class extends Migration
                 $ids = array_column($updates, 'id');
                 $normalizedKeywordCases = '';
                 $normalizedKeywordUnaccentedCases = '';
-                $bindings = [];
                 
                 foreach ($updates as $update) {
                     $normalizedKeywordCases .= " WHEN {$update['id']} THEN ?";
                     $normalizedKeywordUnaccentedCases .= " WHEN {$update['id']} THEN ?";
-                    $bindings[] = $update['normalized_keyword'];
-                    $bindings[] = $update['normalized_keyword_unaccented'];
                 }
+
+                $bindings = array_merge(array_column($updates, 'normalized_keyword'),  //
+                    array_column($updates, 'normalized_keyword_unaccented'));
                 
                 $idsPlaceholder = implode(',', $ids);
                 $sql = "UPDATE `{$tableName}` 
