@@ -69,7 +69,7 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
                 $query->whereRaw('MATCH(' . $searchColumn . ') AGAINST(? IN NATURAL LANGUAGE MODE)', [$normalizedWord]);
             } else {
                 // Use FULLTEXT BOOLEAN MODE for prefix matching - much faster than LIKE queries
-                $normalizedWord = StringHelper::normalize($value->getWord(), /* accentsMatter = */ true, /* retainWildcard = */ true);
+                $normalizedWord = StringHelper::normalize($value->getWord(), /* accentsMatter = */ true, /* retainWildcard = */ false);
                 $fulltextTerm = StringHelper::prepareFulltextBooleanTerm($normalizedWord);
                 $query->whereRaw('MATCH(' . $searchColumn . ') AGAINST(? IN BOOLEAN MODE)', [$fulltextTerm]);
             }
