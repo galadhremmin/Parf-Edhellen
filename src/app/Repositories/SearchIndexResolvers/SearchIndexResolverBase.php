@@ -40,13 +40,11 @@ abstract class SearchIndexResolverBase implements ISearchIndexResolver
             $normalizedWord = StringHelper::normalize($word, /* accentsMatter = */ false, /* retainWildcard = */ false);
             $query = SearchKeyword::whereRaw('MATCH(' . $searchColumn . ') AGAINST(? IN NATURAL LANGUAGE MODE)', [$normalizedWord]);
         } else {
+            // Use FULLTEXT BOOLEAN MODE for prefix matching - much faster than LIKE queries
             $normalizedWord = StringHelper::normalize($word, /* accentsMatter = */ false, /* retainWildcard = */ true);
-            $normalizedWord = str_replace('*', '%', $normalizedWord);
-            if (strpos($normalizedWord, '%') === false) {
-                $normalizedWord .= '%';
-            }
+            $fulltextTerm = StringHelper::prepareFulltextBooleanTerm($normalizedWord);
             
-            $query = SearchKeyword::where($searchColumn, 'like', $normalizedWord);
+            $query = SearchKeyword::whereRaw('MATCH(' . $searchColumn . ') AGAINST(? IN BOOLEAN MODE)', [$fulltextTerm]);
         }
 
         if ($v->getLanguageId()) {
