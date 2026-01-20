@@ -29,7 +29,8 @@ Route::group([
         ->name('api.account.delete');
 
     Route::get('account/backgrounds', [AccountApiController::class, 'getFeatureBackgrounds']);
-    Route::put('account/background/edit/{id}', [AccountApiController::class, 'updateFeatureBackground']);
+    Route::put('account/background/edit/{id}', [AccountApiController::class, 'updateFeatureBackground'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC]);
 
     Route::get('subscription/{morph}/{id}', [SubscriptionApiController::class, 'getSubscriptionForEntity'])
         ->where(['morph' => REGULAR_EXPRESSION_SEO_STRING, 'id' => REGULAR_EXPRESSION_NUMERIC])

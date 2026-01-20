@@ -11,7 +11,13 @@ Route::group([
     'middleware' => ['auth', 'auth.require-role:'.RoleConstants::Reviewers, 'verified'],
 ], function () {
     Route::get('contribution/list', [ContributionController::class, 'list'])->name('admin.contribution.list');
-    Route::get('contribution/{id}/reject', [ContributionController::class, 'confirmReject'])->name('contribution.confirm-reject');
-    Route::put('contribution/{id}/approve', [ContributionController::class, 'updateApprove'])->name('contribution.approve');
-    Route::put('contribution/{id}/reject', [ContributionController::class, 'updateReject'])->name('contribution.reject');
+    Route::get('contribution/{id}/reject', [ContributionController::class, 'confirmReject'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('contribution.confirm-reject');
+    Route::put('contribution/{id}/approve', [ContributionController::class, 'updateApprove'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('contribution.approve');
+    Route::put('contribution/{id}/reject', [ContributionController::class, 'updateReject'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('contribution.reject');
 });
