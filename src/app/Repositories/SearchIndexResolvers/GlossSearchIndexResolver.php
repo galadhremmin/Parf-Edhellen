@@ -14,6 +14,7 @@ use App\Repositories\LexicalEntryRepository;
 use App\Repositories\ValueObjects\ExternalEntitySearchValue;
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
 use App\Repositories\ValueObjects\SpecificEntitiesSearchValue;
+use Illuminate\Database\QueryException;
 
 class GlossSearchIndexResolver implements ISearchIndexResolver
 {
@@ -78,12 +79,12 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
 
             } else {
                 
-                $entities = $query->select('entity_name', 'entity_id') //
-                    ->get() //
-                    ->groupBy('entity_name');
-                
-                if ($value->getNaturalLanguage()) {
-                    $query->where('entity_name', $this->_lexicalEntryMorph);
+                try {
+                    $entities = $query->select('entity_name', 'entity_id') //
+                        ->get() //
+                        ->groupBy('entity_name');
+                } catch (QueryException $_) {
+                    $entities = collect([]);
                 }
 
                 $entityIds = [];

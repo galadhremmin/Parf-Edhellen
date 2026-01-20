@@ -37,6 +37,10 @@ Route::middleware(['auth', 'verified', 'throttle:6,1'])->prefix('account')->grou
         'only' => ['index', 'store'],
     ]);
     Route::delete('notifications/override/{entityType}/{entityId}', [AccountNotificationController::class, 'deleteOverride'])
+        ->where([
+            'entityType' => '[a-z_]+',
+            'entityId' => REGULAR_EXPRESSION_NUMERIC,
+        ])
         ->name('notifications.delete-override');
 
     Route::post('merge', [AccountMergeController::class, 'merge'])

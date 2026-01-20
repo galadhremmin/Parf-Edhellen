@@ -40,11 +40,21 @@ Route::group([
         ->where(['component' => '[a-zA-Z]+'])
         ->name('system-error.connectivity');
 
-    Route::get('sentence/confirm-destroy/{id}', [SentenceController::class, 'confirmDestroy'])->name('sentence.confirm-destroy');
+    Route::get('sentence/confirm-destroy/{id}', [SentenceController::class, 'confirmDestroy'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('sentence.confirm-destroy');
 
-    Route::get('lexical-entry/list/{id}', [GlossController::class, 'listForLanguage'])->name('gloss.list');
+    Route::get('lexical-entry/list/{id}', [GlossController::class, 'listForLanguage'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('gloss.list');
 
-    Route::get('account/by-role/{id}', [AccountController::class, 'byRole'])->name('account.by-role');
-    Route::delete('account/{id}/delete-membership', [AccountController::class, 'deleteMembership'])->name('account.delete-membership');
-    Route::post('account/{id}/add-membership', [AccountController::class, 'addMembership'])->name('account.add-membership');
+    Route::get('account/by-role/{id}', [AccountController::class, 'byRole'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('account.by-role');
+    Route::delete('account/{id}/delete-membership', [AccountController::class, 'deleteMembership'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('account.delete-membership');
+    Route::post('account/{id}/add-membership', [AccountController::class, 'addMembership'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('account.add-membership');
 });

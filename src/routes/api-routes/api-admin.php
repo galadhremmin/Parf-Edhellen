@@ -19,6 +19,7 @@ Route::group([
     Route::get('account/{id}', [AccountApiController::class, 'getAccount'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC]);
     Route::put('account/{id}/verify-email', [AccountApiController::class, 'updateVerifyEmail'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
         ->name('api.account.verify-email');
 
     Route::get('utility/errors', [UtilityApiController::class, 'getErrors']);

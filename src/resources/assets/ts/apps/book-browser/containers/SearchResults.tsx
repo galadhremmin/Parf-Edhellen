@@ -152,7 +152,6 @@ export function SearchResults(props: IProps) {
 
 const mapStateToProps = (state: RootReducer): IProps => ({
     loading: state.search.loading,
-    reversed: state.search.reversed,
     searchGroups: state.searchResults.groups,
     searchResults: state.searchResults.resultsByGroupIndex,
     selectedResultId: state.searchResults.selectedId,

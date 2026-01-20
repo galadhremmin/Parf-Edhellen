@@ -10,7 +10,6 @@ export interface IFindRequest {
     includeOld?: boolean;
     languageId?: number;
     naturalLanguage?: boolean;
-    reversed?: boolean;
     speechIds?: number[];
     word?: string;
 }

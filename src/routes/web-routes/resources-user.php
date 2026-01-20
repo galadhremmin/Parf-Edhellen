@@ -28,6 +28,7 @@ Route::group([
     Route::get('contribution/create/{morph}', [ContributionController::class, 'create'])
         ->where(['morph' => '[a-z_]+'])->name('contribution.create');
     Route::get('contribution/{id}/destroy', [ContributionController::class, 'confirmDestroy'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
         ->name('contribution.confirm-destroy');
     Route::post('contribution/substep-validate', [ContributionController::class, 'validateSubstep'])
         ->name('contribution.substep-validate');

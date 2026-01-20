@@ -22,7 +22,7 @@ Route::group([
     Route::get('thread/{entityType}/{entityId}', [DiscussApiController::class, 'getThreadByEntity'])
         ->where([
             'entityType' => '[a-z_]+',
-            'threadId' => REGULAR_EXPRESSION_NUMERIC,
+            'entityId' => REGULAR_EXPRESSION_NUMERIC,
         ])
         ->name('api.discuss.thread-by-entity');
     Route::get('thread/resolve/{entityType}/{entityId}', [DiscussApiController::class, 'resolveThread'])

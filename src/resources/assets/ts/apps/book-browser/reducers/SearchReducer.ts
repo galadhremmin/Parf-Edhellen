@@ -11,7 +11,6 @@ const SearchReducer = (state: ISearchState = {
     languageId: 0,
     loading: false,
     naturalLanguage: false,
-    reversed: false,
     speechIds: [],
     word: '',
 }, action: ISearchReduxAction) => {
@@ -26,7 +25,6 @@ const SearchReducer = (state: ISearchState = {
                 includeOld: action.includeOld,
                 languageId: action.languageId,
                 naturalLanguage: action.naturalLanguage || false,
-                reversed: action.reversed,
                 speechIds: action.speechIds || [],
                 word: action.word,
             };
