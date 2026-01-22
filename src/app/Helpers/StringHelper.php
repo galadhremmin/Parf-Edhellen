@@ -228,7 +228,7 @@ class StringHelper
 
     /**
      * Escape all MySQL fulltext binary unique symbols in the given string.
-     * This ensures that symbols such as + - @ > < ( ) ~ * " are escaped with a backslash.
+     * This ensures that symbols such as + - @ > < ( ) ~ * are escaped with a backslash.
      * Useful when constructing raw fulltext queries to avoid special interpretation.
      *
      * @param string $str
@@ -238,7 +238,7 @@ class StringHelper
     {
         // List of MySQL fulltext unique symbols that should be escaped in BINARY mode
         // See: https://dev.mysql.com/doc/refman/8.0/en/fulltext-boolean.html#boolean-operator
-        $uniqueSymbols = ['+', '-', '@', '>', '<', '(', ')', '~', '*', '"'];
+        $uniqueSymbols = ['+', '-', '@', '>', '<', '(', ')', '~', '*'];
         // Escape each symbol with a backslash
         return str_replace(
             $uniqueSymbols,
