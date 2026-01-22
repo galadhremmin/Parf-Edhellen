@@ -70,6 +70,7 @@ class GlossSearchIndexResolver implements ISearchIndexResolver
             if ($value->getNaturalLanguage()) {
                 $query->whereRaw('MATCH(normalized_keyword) AGAINST(? IN NATURAL LANGUAGE MODE)', [$fulltextTerm]);
             } else {
+                $fulltextTerm = StringHelper::escapeFulltextUniqueSymbols($fulltextTerm);
                 $query->whereRaw('MATCH(normalized_keyword) AGAINST(? IN BOOLEAN MODE)', [$fulltextTerm]);
             }
 
