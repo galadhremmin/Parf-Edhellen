@@ -26,28 +26,33 @@ abstract class SearchIndexResolverBase implements ISearchIndexResolver
         return [];
     }
 
-
-    private function buildQuery(SearchIndexSearchValue $v): array
+    public function prepareFulltextTerm(SearchIndexSearchValue $v): string
     {
         $word = $v->getWord();
-        $searchColumn = 'normalized_keyword_unaccented';
-        $lengthColumn = $searchColumn.'_length';
-
         $normalizedWord = StringHelper::transliterate($word, /* transformAccentsIntoLetters = */ false);
 
         if ($v->getNaturalLanguage()) {
-            $fulltextTerm = str_replace('*', '', $normalizedWord);
+            return str_replace('*', '', $normalizedWord);
+        }
+
+        // If the normalized word contains any Boolean Mode reserved symbols, don't add a wildcard.
+        // Otherwise, add '*' to the end of the normalized word for prefix matching.
+        if (preg_match('/[+\-<>\(\)~"@\*]/', $normalizedWord)) {
+            return $normalizedWord;
+        }
+
+        return $normalizedWord.'*';
+    }
+
+    private function buildQuery(SearchIndexSearchValue $v): array
+    {
+        $searchColumn = 'normalized_keyword_unaccented';
+        $lengthColumn = $searchColumn.'_length';
+        $fulltextTerm = $this->prepareFulltextTerm($v);
+
+        if ($v->getNaturalLanguage()) {
             $query = SearchKeyword::whereRaw('MATCH(' . $searchColumn . ') AGAINST(? IN NATURAL LANGUAGE MODE)', [$fulltextTerm]);
         } else {
-
-            // If the normalized word contains any Boolean Mode reserved symbols, don't add a wildcard.
-            // Otherwise, add '*' to the end of the normalized word for prefix matching.
-            if (preg_match('/[+\-<>\(\)~"@\*]/', $normalizedWord)) {
-                $fulltextTerm = $normalizedWord;
-            } else {
-                $fulltextTerm = $normalizedWord.'*';
-            }
-
             $query = SearchKeyword::whereRaw('MATCH(' . $searchColumn . ') AGAINST(? IN BOOLEAN MODE)', [$fulltextTerm]);
         }
 

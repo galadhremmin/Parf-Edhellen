@@ -8,6 +8,7 @@ use App\Models\Initialization\Morphs;
 use App\Repositories\DiscussRepository;
 use App\Repositories\ValueObjects\SearchIndexSearchValue;
 use App\Repositories\ValueObjects\ForumThreadsForPostsValue;
+use App\Helpers\StringHelper;
 
 class ForumPostSearchIndexResolver extends SearchIndexResolverBase
 {
@@ -22,6 +23,16 @@ class ForumPostSearchIndexResolver extends SearchIndexResolverBase
         $this->_discussRepository = $discussRepository;
         $this->_discussAdapter = $discussAdapter;
         $this->_forumPostMorphName = Morphs::getAlias(ForumPost::class);
+    }
+
+    public function prepareFulltextTerm(SearchIndexSearchValue $v): string
+    {
+        $word = $v->getWord();
+        $normalizedWord = StringHelper::transliterate($word, /* transformAccentsIntoLetters = */ false);
+
+        return StringHelper::prepareQuotedFulltextTerm( 
+            StringHelper::escapeFulltextUniqueSymbols($normalizedWord)
+        );
     }
 
     public function resolveByQuery(array $params, SearchIndexSearchValue $value): array
