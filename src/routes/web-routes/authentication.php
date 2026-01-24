@@ -13,10 +13,8 @@ Route::get('/signup', [AuthenticationController::class, 'register'])->name('regi
 
 Route::get('/federated-auth/redirect/{providerName}', [OAuthAuthenticationController::class, 'redirect'])
     ->where(['providerName' => REGULAR_EXPRESSION_SEO_STRING])
-    ->middleware('throttle:6,1')
     ->name('auth.redirect');
 Route::get('/federated-auth/callback/{providerName}', [OAuthAuthenticationController::class, 'callback'])
-    ->middleware('throttle:6,1')
     ->where(['providerName' => REGULAR_EXPRESSION_SEO_STRING]);
 
 Route::post('/login/password', [UsernamePasswordAuthenticationController::class, 'loginWithPassword'])
