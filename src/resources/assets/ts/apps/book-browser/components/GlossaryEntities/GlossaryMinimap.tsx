@@ -28,7 +28,7 @@ function GlossaryMinimap({ languages, sections }: IProps) {
     useEffect(() => {
         const languageElements = languages
             .map((lang) => document.getElementById(`glossary-lang-${lang.id}`))
-            .filter(Boolean) as HTMLElement[];
+            .filter(Boolean);
 
         if (languageElements.length === 0) {
             return;
@@ -75,7 +75,7 @@ function GlossaryMinimap({ languages, sections }: IProps) {
 
     // Shrink the minimap when the page footer scrolls into view
     useEffect(() => {
-        const footer = document.querySelector('body > footer') as HTMLElement | null;
+        const footer = document.querySelector<HTMLElement>('body > footer');
         if (!footer || !scrollRef.current) {
             return;
         }
