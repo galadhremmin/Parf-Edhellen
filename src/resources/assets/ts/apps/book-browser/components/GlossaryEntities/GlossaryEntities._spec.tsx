@@ -18,6 +18,16 @@ import GlossaryEntities from './GlossaryEntities';
 // Define node `require` for synchronous file loading
 declare var require: any;
 
+// jsdom does not implement IntersectionObserver — stub it so
+// GlossaryMinimap (and anything else that uses it) can mount.
+beforeAll(() => {
+    (global as any).IntersectionObserver = class {
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+    };
+});
+
 describe('apps/book-browser/containers/GlossaryEntities', () => {
     beforeAll(() => {
         setupContainer();
