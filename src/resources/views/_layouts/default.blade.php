@@ -25,7 +25,7 @@
     @include(config('ed.header_view'))
   @endif
 </head>
-<body class="bg-dark"
+<body class="bg-dark @yield('body-class')"
   @if (auth()->check())
   data-account-id="{{ auth()->user()->id }}"
   data-account-roles="{{ auth()->user()->getAllRoles()->implode(',') }}"
@@ -55,6 +55,7 @@
             <p><a href="https://support.google.com/bin/answer.py?hl=en&amp;answer=23852" target="_blank">@lang('home.noscript.call-to-action')</a>.</p>
           </div>
         </noscript>
+        @yield('before-search')
         @ssr('book-browser', [], [
           'element' => 'div',
           'attributes' => [

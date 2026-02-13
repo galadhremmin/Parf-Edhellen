@@ -140,6 +140,16 @@
     }
 }
 
+// Spin animation for loading states (e.g. search icon while fetching results)
+@keyframes texticon-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+.TextIcon.loading {
+    animation: texticon-spin 0.8s linear infinite;
+}
+
 // This is a hack to support icons used within buttons. Unfortunately, the SVG approach
 // doesn't automatically pick up the text colour.
 button > .TextIcon, a.btn > .TextIcon {

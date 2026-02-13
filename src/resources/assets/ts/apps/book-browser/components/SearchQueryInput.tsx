@@ -17,6 +17,7 @@ export default class SearchQueryInput extends FormComponent<string, IProps, ISea
     public render() {
         const {
             loading,
+            showEnterHint,
         } = this.props;
 
         const fieldClasses = classNames('form-control', { disabled: loading });
@@ -38,6 +39,9 @@ export default class SearchQueryInput extends FormComponent<string, IProps, ISea
                 type="search"
                 {...componentProps}
             />
+            {showEnterHint && <span className="input-group-text SearchQueryInput--enter-hint">
+                Enter &crarr;
+            </span>}
         </div>;
     }
 

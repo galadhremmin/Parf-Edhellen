@@ -57,13 +57,35 @@ function Orchestrator({ globalEvents }: IProps) {
         );
     }, []);
 
+    // Global keyboard shortcut: press "s" anywhere to focus the search input.
+    // Ignored when the user is already typing in an input, textarea, or contenteditable.
+    const _onGlobalKeyDown = useCallback((ev: KeyboardEvent) => {
+        if (ev.key !== 's' || ev.metaKey || ev.ctrlKey || ev.altKey) {
+            return;
+        }
+
+        const tag = (ev.target as HTMLElement)?.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' ||
+            (ev.target as HTMLElement)?.isContentEditable) {
+            return;
+        }
+
+        ev.preventDefault();
+        const searchInput = document.querySelector<HTMLInputElement>(
+            '#ed-search-component input[type="search"]',
+        );
+        searchInput?.focus();
+    }, []);
+
     useEffect(() => {
         // Subscribe to the global event `loadReference` which occurs when the customer clicks
         // a reference link in any component not associated with the Glossary app.
         globalEvents.loadReference = _onGlobalListenerReferenceLoad;
+        document.addEventListener('keydown', _onGlobalKeyDown);
 
         return () => {
             globalEvents.disconnect();
+            document.removeEventListener('keydown', _onGlobalKeyDown);
         }
     }, []);
 
