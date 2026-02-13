@@ -1,0 +1,235 @@
+@import '../../../../_scss/_variables';
+
+// ============================================================
+// Glossary Minimap — three responsive tiers:
+//   1. Below `lg`:           hidden entirely
+//   2. `lg` to xxxl:         foldable side panel with toggle
+//   3. xxxl+:                always visible in the whitespace
+// ============================================================
+
+$minimap-width: 14rem;
+$minimap-top: calc(#{$size-desktop-menu-height} + 1.5rem);
+$minimap-max-height: calc(100vh - #{$size-desktop-menu-height} - 3rem);
+
+// --- Outer container ---
+// In tier 2, the whole container slides in/out via `right`.
+// The toggle tab extends to the left and is always visible.
+
+.glossary-minimap {
+  display: none;
+
+  // ----- Tier 2: foldable panel (lg to xxxl) -----
+  @media (min-width: map-get($grid-breakpoints, 'lg')) {
+    display: block;
+    position: fixed;
+    // Parked off-screen to the right; the toggle tab still peeks out
+    right: -$minimap-width;
+    top: $minimap-top;
+    bottom: 0; // stretch to viewport bottom so the panel has no gap
+    width: $minimap-width;
+    z-index: 1040;
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.glossary-minimap--open {
+      right: 0;
+    }
+  }
+
+  // ----- Tier 3: always visible (xxxl+) -----
+  @media (min-width: $screen-xxxl-width) {
+    right: 1.5rem;
+    bottom: auto; // size to content, not full height
+    transition: none;
+  }
+}
+
+// --- Toggle button (tab on the right edge) ---
+
+.glossary-minimap__toggle {
+  display: none;
+
+  @media (min-width: map-get($grid-breakpoints, 'lg')) {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    position: absolute;
+    // Sits to the left of the panel, always visible at the screen edge
+    right: 100%;
+    top: 0;
+
+    background: #fff;
+    border: 1px solid #ddd;
+    border-right: none;
+    border-radius: 4px 0 0 4px;
+    padding: 0.4rem 0.5rem;
+    cursor: pointer;
+    box-shadow: -2px 1px 4px rgba(0, 0, 0, 0.06);
+    z-index: 1;
+
+    font-family: $font-family-tiny;
+    font-size: 0.68rem;
+    font-weight: 500;
+    color: #555;
+    white-space: nowrap;
+
+    &:hover {
+      color: $primary;
+      border-color: #ccc;
+    }
+  }
+
+  // Hidden on very wide screens (panel is always open)
+  @media (min-width: $screen-xxxl-width) {
+    display: none;
+  }
+}
+
+// Chevron indicator on the toggle
+.glossary-minimap__toggle-chevron {
+  display: inline-block;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg); // points right (= "open")
+  transition: transform 0.25s ease;
+
+  .glossary-minimap--open & {
+    transform: rotate(135deg); // points left (= "close")
+  }
+}
+
+// --- Panel (the content area) ---
+
+.glossary-minimap__panel {
+  position: relative;
+  width: 100%;
+  max-height: $minimap-max-height;
+
+  font-family: $font-family-tiny;
+  font-size: 0.72rem;
+  line-height: 1.4;
+
+  // --- Tier 2: panel chrome ---
+  @media (min-width: map-get($grid-breakpoints, 'lg')) {
+    height: 100%; // fill the container so background has no gap
+    background: #fff;
+    border-left: 1px solid #e0e0e0;
+    box-shadow: -3px 0 10px rgba(0, 0, 0, 0.07);
+    padding: 0.75rem 0.75rem 0;
+  }
+
+  // --- Tier 3: no panel chrome ---
+  @media (min-width: $screen-xxxl-width) {
+    height: auto;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  // White gradient at the bottom to hint at scrollable content
+  &::after {
+    content: '';
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: block;
+    height: 2.5rem;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 70%);
+    pointer-events: none;
+    margin-top: -2.5rem;
+  }
+
+  @media (min-width: $screen-xxxl-width) {
+    &::after {
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.85) 70%);
+    }
+  }
+}
+
+// --- Scrollable content inside the panel ---
+
+.glossary-minimap__scroll {
+  overflow-y: auto;
+  max-height: $minimap-max-height;
+  padding-bottom: 1.5rem;
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+
+  &::-webkit-scrollbar {
+    width: 3px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 3px;
+  }
+}
+
+// --- Section (language + its words) ---
+
+.glossary-minimap__section {
+  padding: 0.4rem 0;
+  border-left: 2px solid transparent;
+  padding-left: 0.75rem;
+  transition: border-color 0.3s ease;
+
+  & + & {
+    margin-top: 0.25rem;
+  }
+
+  &.glossary-minimap__section--active {
+    border-left-color: $primary;
+
+    > .glossary-minimap__language {
+      color: $primary;
+      font-weight: 600;
+    }
+  }
+}
+
+// --- Language name ---
+
+.glossary-minimap__language {
+  display: block;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  text-decoration: none;
+  margin-bottom: 0.2rem;
+
+  &:hover {
+    color: $primary;
+  }
+}
+
+// --- Word list ---
+
+.glossary-minimap__words {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.glossary-minimap__word {
+  display: block;
+  color: #666;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 0.05rem 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &:hover {
+    color: $primary;
+  }
+}
+
+.glossary-minimap__more {
+  color: #999;
+  font-style: italic;
+  padding: 0.05rem 0;
+}

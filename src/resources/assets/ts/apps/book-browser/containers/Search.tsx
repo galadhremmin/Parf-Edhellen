@@ -92,6 +92,7 @@ export class SearchQuery extends Component<IProps, IState> {
                         loading={loading}
                         onChange={this._onQueryChange}
                         onSearchResultNavigate={this._onSearchResultNavigate}
+                        showEnterHint={word?.length > 0 && !loading}
                         tabIndex={1}
                         value={word}
                     />

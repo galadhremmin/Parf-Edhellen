@@ -8,4 +8,5 @@ export interface ISearchComponentProps extends IComponentProps<string> {
 export interface IProps extends ISearchComponentProps {
     loading?: boolean;
     onSearchResultNavigate?: (ev: IComponentEvent<number>) => void;
+    showEnterHint?: boolean;
 }

@@ -13,6 +13,7 @@ import SpeechResourceApiConnector from '@root/connectors/backend/SpeechResourceA
 import SubscriptionApiConnector from '@root/connectors/backend/SubscriptionApiConnector';
 import UtilityApiConnector from '@root/connectors/backend/UtilityApiConnector';
 import WordFinderConnector from '@root/connectors/backend/WordFinderConnector';
+import WordListApiConnector from '@root/connectors/backend/WordListApiConnector';
 import { RoleManager } from '@root/security';
 import BrowserHistory from '@root/utilities/BrowserHistory';
 import { default as GlaemscribeUtility } from '@root/utilities/Glaemscribe';
@@ -41,5 +42,6 @@ export default function setupContainer() {
     setSingleton(DI.UtilityApi, UtilityApiConnector);
     setSingleton(DI.LogApi, UtilityApiConnector);
     setSingleton(DI.WordFinderApi, WordFinderConnector);
+    setSingleton(DI.WordListApi, WordListApiConnector);
     setInstance(DI.GlobalEvents, GlobalEventConnector);
 }

@@ -59,6 +59,9 @@ Route::group([
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
         ->name('api.word-lists.destroy');
     
+    Route::post('word-lists/check-membership', [WordListApiController::class, 'checkMembership'])
+        ->name('api.word-lists.check-membership');
+
     // Word list entries management
     Route::post('word-lists/{id}/entries', [WordListApiController::class, 'addEntry'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC])

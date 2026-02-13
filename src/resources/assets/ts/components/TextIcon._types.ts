@@ -16,6 +16,7 @@ type BootstrapIcons = 'arrow-down' |
 'exclamation-sign' |
 'info-sign' |
 'hand-index' |
+'heart' |
 'house' |
 'globe' |
 'ok' |

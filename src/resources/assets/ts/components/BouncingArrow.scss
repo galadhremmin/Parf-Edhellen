@@ -1,23 +1,95 @@
-@keyframes bounce {
-	0%, 20%, 50%, 80%, 100% {
-    transform: translateY(0);
+@import "../_scss/_variables";
+
+// --- Keyframes ---
+
+// Slow, breath-like drift (includes rotate so the hand stays flipped)
+@keyframes hand-drift {
+  0%, 100% {
+    transform: rotate(180deg) translateY(0);
   }
-	40% {
-    transform: translateY(-30px);
-  }
-	60% {
-    transform: translateY(-15px);
+  50% {
+    transform: rotate(180deg) translateY(10px);
   }
 }
+
+// Fade in on mount; parent unmounts when no longer needed
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// --- Component ---
+
+$arrow-color: #222;
 
 .bouncing-arrow {
   position: fixed;
   bottom: 0;
-  left: 50%;
-  margin-left:-20px;
-  width: 40px;
-  height: 40px;
-  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4KPHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjUxMnB4IiBoZWlnaHQ9IjUxMnB4IiB2aWV3Qm94PSIwIDAgNTEyIDUxMiIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgNTEyIDUxMiIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxwYXRoIGZpbGw9IiMyMDIwMjAiIGQ9Ik0yOTMuNzUxLDQ1NS44NjhjLTIwLjE4MSwyMC4xNzktNTMuMTY1LDE5LjkxMy03My42NzMtMC41OTVsMCwwYy0yMC41MDgtMjAuNTA4LTIwLjc3My01My40OTMtMC41OTQtNzMuNjcyICBsMTg5Ljk5OS0xOTBjMjAuMTc4LTIwLjE3OCw1My4xNjQtMTkuOTEzLDczLjY3MiwwLjU5NWwwLDBjMjAuNTA4LDIwLjUwOSwyMC43NzIsNTMuNDkyLDAuNTk1LDczLjY3MUwyOTMuNzUxLDQ1NS44Njh6Ii8+CjxwYXRoIGZpbGw9IiMyMDIwMjAiIGQ9Ik0yMjAuMjQ5LDQ1NS44NjhjMjAuMTgsMjAuMTc5LDUzLjE2NCwxOS45MTMsNzMuNjcyLTAuNTk1bDAsMGMyMC41MDktMjAuNTA4LDIwLjc3NC01My40OTMsMC41OTYtNzMuNjcyICBsLTE5MC0xOTBjLTIwLjE3OC0yMC4xNzgtNTMuMTY0LTE5LjkxMy03My42NzEsMC41OTVsMCwwYy0yMC41MDgsMjAuNTA5LTIwLjc3Miw1My40OTItMC41OTUsNzMuNjcxTDIyMC4yNDksNDU1Ljg2OHoiLz4KPC9zdmc+);
-  background-size: contain;
-  animation: bounce 2s infinite;
+  left: 0;
+  right: 0;
+  z-index: 1050;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 28px;
+
+  animation: fade-in 0.8s ease-out forwards;
+  animation-delay: 0.5s;
+  opacity: 0;
+
+  // Full-width container shouldn't capture clicks — only the hand should
+  pointer-events: none;
+
+  // White gradient backdrop — narrow viewports only
+  @media (max-width: map-get($grid-breakpoints, 'md')) {
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 100px;
+      background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 55%);
+      pointer-events: none;
+      z-index: -1;
+    }
+  }
+
+  // Hand icon — bootstrap-icons hand-index, rotated to point down
+  .bouncing-arrow__hand {
+    display: block;
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: $arrow-color;
+    -webkit-mask-image: url("~bootstrap-icons/icons/hand-index.svg");
+    mask-image: url("~bootstrap-icons/icons/hand-index.svg");
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.25));
+    animation: hand-drift 3s ease-in-out infinite;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+
+  // Italic serif label — bookish, bold
+  .bouncing-arrow__label {
+    margin-top: 4px;
+    font-family: $font-family-sans-serif; // the site's serif stack
+    font-size: 0.75rem;
+    font-style: italic;
+    font-weight: bold;
+    letter-spacing: 0.04em;
+    color: rgba($arrow-color, 0.8);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+    pointer-events: none;
+  }
 }

@@ -17,6 +17,7 @@ export const enum DI {
     SubscriptionApi = 'SubscriptionApi',
     UtilityApi = 'UtilityApi',
     WordFinderApi = 'WordFinderApi',
+    WordListApi = 'WordListApi',
 
     GlobalEvents = 'GlobalEvents',
 }

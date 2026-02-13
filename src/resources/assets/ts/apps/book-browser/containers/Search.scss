@@ -19,6 +19,27 @@
   }
 }
 
+// "Enter ↵" keyboard hint — slides in when results are ready
+@keyframes enter-hint-nudge {
+  0%, 100% { transform: translateX(0); }
+  30%      { transform: translateX(-3px); }
+  60%      { transform: translateX(2px); }
+}
+
+.SearchQueryInput--enter-hint {
+  font-family: $font-family-tiny;
+  font-size: 0.7rem;
+  letter-spacing: 0.03em;
+  color: #888;
+  white-space: nowrap;
+  border-left: 1px solid #ddd;
+  background: #f8f8f8;
+  padding: 0.25rem 0.6rem;
+  animation: enter-hint-nudge 0.6s ease-out 0.15s 1;
+  cursor: default;
+  user-select: none;
+}
+
 #ed-search-component {
   min-height: 116px;
 
@@ -71,8 +92,11 @@
 
     > li > a {
       color: inherit;
-      &.selected {
-        font-weight: bold;
+      &.selected > .word {
+        background-color: $primary;
+        color: #fff;
+        padding: 0.1em 0.5em;
+        border-radius: 0.8em;
       }
       > .development {
         &::before {
