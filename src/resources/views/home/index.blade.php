@@ -12,7 +12,7 @@
     to the fictional languages in Tolkien's legendarium. 
   </p>
   <p class="home-hero__hint">
-    Explore <strong>{{ $noOfWords }}</strong> words and <strong>{{ $noOfSentences }}</strong> phrases across Sindarin, Quenya, and more.
+    Explore <strong>{{ number_format($noOfWords, 0, '.') }}</strong> words and <strong>{{ $noOfSentences }}</strong> phrases across Sindarin, Quenya, and more.
   </p>
 </header>
 @endsection
@@ -20,7 +20,6 @@
 @section('body')
 
 <div class="home-welcome">
-  <hr>
   <div class="row">
     <div class="col-xs-12 col-sm-6 col-md-4">
       <h4>About the website</h4>

@@ -15,6 +15,7 @@ import type ISpeechResourceApi from '@root/connectors/backend/ISpeechResourceApi
 import type { ISubscriptionApi } from '@root/connectors/backend/ISubscriptionApi';
 import type IUtilityApi from '@root/connectors/backend/IUtilityApi';
 import type { IWordFinderApi } from '@root/connectors/backend/IWordFinderApi';
+import type { IWordListApi } from '@root/connectors/backend/IWordListApi';
 import type { IRoleManager } from '@root/security';
 import type { IBrowserHistoryUtility } from '@root/utilities/BrowserHistory._types';
 
@@ -39,5 +40,6 @@ export type DIContainerType = {
     [DI.UtilityApi]?: IUtilityApi;
     [DI.LogApi]?: ILogApi;
     [DI.WordFinderApi]?: IWordFinderApi;
+    [DI.WordListApi]?: IWordListApi;
     [DI.GlobalEvents]?: IGlobalEvents;
 }

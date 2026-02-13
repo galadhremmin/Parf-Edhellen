@@ -66,6 +66,12 @@
     &.TextIcon--info-sign {
         @include mask-image-compatible("~bootstrap-icons/icons/info-circle.svg");
     }
+    &.TextIcon--heart {
+        @include mask-image-compatible("~bootstrap-icons/icons/heart.svg");
+        &.filled {
+            @include mask-image-compatible("~bootstrap-icons/icons/heart-fill.svg");
+        }
+    }
     &.TextIcon--hand-index {
         @include mask-image-compatible("~bootstrap-icons/icons/hand-index.svg");
         &.right {

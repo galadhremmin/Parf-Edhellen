@@ -60,7 +60,7 @@
           'element' => 'div',
           'attributes' => [
             'id' => 'ed-search-component',
-            'class' => 'mt-4'
+            'class' => 'mt-4 mb-4'
           ]
         ])
         @yield('body')

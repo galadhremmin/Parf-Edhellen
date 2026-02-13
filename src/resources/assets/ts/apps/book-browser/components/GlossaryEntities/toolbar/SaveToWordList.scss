@@ -1,0 +1,16 @@
+.SaveToWordList--list {
+    .list-group-item {
+        padding: 0.5rem 0.75rem;
+    }
+}
+
+.SaveToWordList--item-in-list {
+    background-color: #fdf8f8;
+}
+
+.SaveToWordList--heart-indicator {
+    color: #c44;
+    background-color: #c44;
+    margin-right: 0.4rem;
+    flex-shrink: 0;
+}

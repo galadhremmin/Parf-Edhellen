@@ -11,17 +11,26 @@ use Illuminate\Http\JsonResponse;
 class WordListApiController extends Controller
 {
     /**
-     * Get all word lists for the authenticated user
+     * Get all word lists for the authenticated user.
+     *
+     * When an optional ?lexical_entry_id=N query parameter is provided,
+     * each list gains a `contains_entry` count (0 or 1) indicating
+     * whether it already holds that specific entry.
      */
     public function index(Request $request): JsonResponse
     {
-        $wordLists = WordList::forAccount($request->user())
+        $query = WordList::forAccount($request->user())
             ->withCount('lexical_entries')
-            ->orderBy('name')
-            ->get();
+            ->orderBy('name');
+
+        if ($entryId = $request->input('lexical_entry_id')) {
+            $query->withCount(['lexical_entries as contains_entry' => function ($q) use ($entryId) {
+                $q->where('lexical_entries.id', (int) $entryId);
+            }]);
+        }
 
         return response()->json([
-            'word_lists' => $wordLists
+            'word_lists' => $query->get()
         ]);
     }
 
@@ -144,6 +153,34 @@ class WordListApiController extends Controller
 
         return response()->json([
             'message' => 'Entry removed from word list'
+        ]);
+    }
+
+    /**
+     * Batch-check which of the given lexical entries appear in any of the
+     * authenticated user's word lists.  Designed to be called once per
+     * glossary page load — accepts up to 1 000 IDs and returns a lean
+     * set of the ones that matched.
+     */
+    public function checkMembership(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'lexical_entry_ids'   => 'required|array|max:1000',
+            'lexical_entry_ids.*' => 'integer',
+        ]);
+
+        $userListIds = WordList::forAccount($request->user())
+            ->pluck('id');
+
+        // GROUP BY is cheaper than DISTINCT on MariaDB — it can use a
+        // loose index scan on a covering index (word_list_id, lexical_entry_id).
+        $savedIds = WordListEntry::whereIn('word_list_id', $userListIds)
+            ->whereIn('lexical_entry_id', $data['lexical_entry_ids'])
+            ->groupBy('lexical_entry_id')
+            ->pluck('lexical_entry_id');
+
+        return response()->json([
+            'saved_lexical_entry_ids' => $savedIds,
         ]);
     }
 

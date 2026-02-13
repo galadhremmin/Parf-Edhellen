@@ -27,8 +27,8 @@ function Dialog<V>(props: IProps<V>) {
         value,
     } = props;
 
-    const _onDismissDialog = useCallback((ev: MouseEvent<HTMLButtonElement>) => {
-        ev.preventDefault();
+    const _onDismissDialog = useCallback((ev?: MouseEvent<HTMLButtonElement>) => {
+        ev?.preventDefault();
         void fireEvent('Dialog', onDismiss);
     }, [ onDismiss ]);
 
@@ -64,6 +64,9 @@ function Dialog<V>(props: IProps<V>) {
     return <Modal appElement={appElement}
         className="modal"
         isOpen={open}
+        onRequestClose={dismissable ? _onDismissDialog : undefined}
+        shouldCloseOnEsc={dismissable}
+        shouldCloseOnOverlayClick={dismissable}
         style={DialogStyles}>
         <div className={classNames('modal-dialog', { [`modal-${size}`]: !! size })}>
             <div className="modal-content">
