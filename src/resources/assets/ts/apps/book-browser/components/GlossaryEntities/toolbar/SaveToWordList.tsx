@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { ChangeEvent, MouseEvent } from 'react';
+import type { ChangeEvent, KeyboardEvent, MouseEvent } from 'react';
 
 import Dialog from '@root/components/Dialog';
 import TextIcon from '@root/components/TextIcon';
@@ -153,7 +153,7 @@ function SaveToWordList(props: IProps) {
         setNewListName(ev.target.value);
     }, []);
 
-    const _onNewListKeyDown = useCallback((ev: React.KeyboardEvent<HTMLInputElement>) => {
+    const _onNewListKeyDown = useCallback((ev: KeyboardEvent<HTMLInputElement>) => {
         if (ev.key === 'Enter') {
             ev.preventDefault();
             void _onCreateAndAdd();
