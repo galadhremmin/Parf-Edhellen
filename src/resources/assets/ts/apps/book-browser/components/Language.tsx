@@ -9,10 +9,9 @@ function Language(props: IProps) {
 
     return <>
         <h2 className="Language__header">
-            { language.isUnusual ? '† ' : '' }
             <span className="language-name">{ language.name }</span>
-            &nbsp;
-            <span className="tengwar">{ language.tengwar }</span>
+            {!!language.tengwar && <>&nbsp;<span className="tengwar">{ language.tengwar }</span></>}
+            {!!language.isUnusual && <span className="language-unusual">&nbsp;†</span>}
         </h2>
         {language.category && <h3 className="Language__subheader">{language.category}</h3>}
     </>;

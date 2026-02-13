@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { Waypoint } from 'react-waypoint';
 
 import type { ReduxThunkDispatch } from '@root/_types';
@@ -14,6 +14,7 @@ import type { IEntitiesComponentProps } from '../../containers/Entities._types';
 import GlossaryEntitiesEmpty from '../GlossaryEntitiesEmpty';
 import GlossaryEntitiesLoading from './GlossaryEntitiesLoading';
 import GlossaryLanguages from './GlossaryLanguages';
+import GlossaryMinimap from './GlossaryMinimap';
 import UnusualLanguagesWarning from './UnusualLanguagesWarning';
 
 import './GlossaryEntities.scss';
@@ -23,6 +24,7 @@ const GlossaryEntitiesLanguagesConfigKey = 'ed.glossary.unusual-languages';
 function GlossaryEntities(props: IEntitiesComponentProps) {
     const languageConfigRef = useRef<Cache<boolean>>();
     const glossaryContainerRef = useRef<HTMLDivElement>();
+    const waypointRef = useRef<HTMLDivElement>();
     const actionsRef = useRef<SearchActions>();
 
     const [ notifyLoaded, setNotifyLoaded ] = useState<boolean>(false);
@@ -69,23 +71,18 @@ function GlossaryEntities(props: IEntitiesComponentProps) {
     }
 
     /**
-     * `Waypoint` default event handler for the `enter` event. It is used to track the notifier arrow,
-     * and hiding it when the user is viewing the glossary.
+     * Smoothly scrolls to the glossary content when the user clicks the bouncing arrow.
      */
-    const _onWaypointEnter = () => {
-        const nextNotifyLoaded = false;
-
-        if (notifyLoaded !== nextNotifyLoaded) {
-            setNotifyLoaded(nextNotifyLoaded);
-        }
+    const _onScrollToContent = () => {
+        waypointRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     /**
-     * `Waypoint` default event handler for the `leave` event. It is used to track the notifier arrow,
-     * and showing it when the component is below the viewport.
+     * `Waypoint` position change handler. Unlike `onEnter`/`onLeave`, `onPositionChange`
+     * fires on initial mount — so the arrow correctly appears when the glossary starts
+     * below the viewport without requiring a scroll first.
      */
-    const _onWaypointLeave = (ev: Waypoint.CallbackArgs) => {
-        // `currentPosition` is the position of the element relative to the viewport.
+    const _onPositionChange = (ev: Waypoint.CallbackArgs) => {
         const nextNotifyLoaded = (ev.currentPosition === Waypoint.below);
 
         if (notifyLoaded !== nextNotifyLoaded) {
@@ -93,12 +90,25 @@ function GlossaryEntities(props: IEntitiesComponentProps) {
         }
     }
 
+    // Combine visible languages for the minimap — common + unusual (if shown)
+    const showUnusual = (forceShowUnusualLanguages || showUnusualLanguages) && unusualLanguages?.length > 0;
+    const minimapLanguages = useMemo(() => {
+        const langs = [...(commonLanguages || [])];
+        if (showUnusual && unusualLanguages) {
+            langs.push(...unusualLanguages);
+        }
+        return langs;
+    }, [commonLanguages, unusualLanguages, showUnusual]);
+
+    const showMinimap = ! loading && ! isEmpty && ! single && minimapLanguages.length >= 2;
+
     return <div className="ed-glossary-container" ref={glossaryContainerRef}>
-        {notifyLoaded && <FixedBouncingArrow />}
+        {notifyLoaded && <FixedBouncingArrow onClick={_onScrollToContent} />}
+        {showMinimap && <GlossaryMinimap languages={minimapLanguages} sections={sections} />}
         {loading && <GlossaryEntitiesLoading minHeight={glossaryContainerRef.current?.offsetHeight || 500} />}
         {! loading && isEmpty && <GlossaryEntitiesEmpty word={word} />}
-        {! loading && ! isEmpty && <Waypoint onEnter={_onWaypointEnter} onLeave={_onWaypointLeave}>
-            <div className="ed-glossary-waypoint">
+        {! loading && ! isEmpty && <Waypoint onPositionChange={_onPositionChange} bottomOffset="50%">
+            <div className="ed-glossary-waypoint" ref={waypointRef}>
                 <GlossaryLanguages
                     languages={commonLanguages}
                     entityMorph={entityMorph}
@@ -111,7 +121,7 @@ function GlossaryEntities(props: IEntitiesComponentProps) {
                         showOverrideOption={! forceShowUnusualLanguages && ! showUnusualLanguages}
                         onOverrideOptionTriggered={_onUnusualLanguagesShowClick}
                     />
-                    {(forceShowUnusualLanguages || showUnusualLanguages) && <GlossaryLanguages
+                    {showUnusual && <GlossaryLanguages
                         className="ed-glossary--unusual"
                         languages={unusualLanguages}
                         entityMorph={entityMorph}

@@ -10,7 +10,7 @@ export default function GlossaryLanguage(props: IProps) {
         onReferenceLinkClick,
     } = props;
 
-    return <article className="ed-glossary__language">
+    return <article className="ed-glossary__language" id={`glossary-lang-${language.id}`}>
         <header>
             <Language language={language} />
         </header>

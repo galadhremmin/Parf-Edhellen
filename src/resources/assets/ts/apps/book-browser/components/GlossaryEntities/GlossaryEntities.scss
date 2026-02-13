@@ -2,6 +2,20 @@
 
 $gloss-border-color: #dedede;
 
+// On wide screens, expand the glossary beyond the Bootstrap container
+// to make better use of the available viewport width.
+// At xxxl, leave right space for the always-visible minimap (~14rem + gap).
+.ed-glossary-container {
+  @media (min-width: $screen-xxl-width) {
+    margin-left: -8rem;
+    margin-right: -8rem;
+  }
+  @media (min-width: $screen-xxxl-width) {
+    margin-left: -16rem;
+    margin-right: -2rem;
+  }
+}
+
 .ed-glossary {
   &.ed-glossary--unusual {
     margin-top: 2rem;
@@ -15,28 +29,35 @@ $gloss-border-color: #dedede;
       margin-top: 0 !important;
     }
   }
+
+  // CSS columns with column-width: entries pack vertically (each takes
+  // only its natural height) and the browser decides how many columns
+  // fit based on the available width.
   .ed-glossary__language__words {
     padding-top: 1rem;
-    columns: 2;
+    column-width: 22rem;
+    column-gap: 1rem;
+
+    // When a language has only one entry, let it use the full width
+    // instead of being squeezed into a single narrow column.
+    &:has(> :only-child) {
+      columns: auto;
+    }
   }
+
   @media (max-width: map-get($grid-breakpoints, 'sm')) {
     .ed-glossary__language__words {
       columns: auto;
     }
   }
-  @media (min-width: $screen-xxl-width) {
-    .ed-glossary__language__words {
-      columns: 3;
-    }
-  }
-  @media (min-width: $screen-xxxl-width) {
-    .ed-glossary__language__words {
-      columns: 4;
-    }
-  }
+
   &.ed-glossary--single {
     .ed-glossary__language__words {
       columns: auto;
     }
   }
+}
+
+.ed-glossary-loaded-notifier {
+  z-index: 1000;
 }
