@@ -4,15 +4,28 @@ $gloss-border-color: #dedede;
 
 // On wide screens, expand the glossary beyond the Bootstrap container
 // to make better use of the available viewport width.
-// At xxxl, leave right space for the always-visible minimap (~14rem + gap).
+//
+// Instead of fixed rem values (which overshoot at certain widths), we
+// compute the actual whitespace between the container and the main-area
+// edge, then expand into it.
+//
+//   main width  = 100vw - sidebar
+//   container   = 100%  (parent content width)
+//   whitespace  = (main width - container) / 2
+//
+// A 2rem gutter prevents touching the edge (and absorbs the scrollbar
+// difference between 100vw and the actual viewport).
 .ed-glossary-container {
   @media (min-width: $screen-xxl-width) {
-    margin-left: -8rem;
-    margin-right: -8rem;
+    // how much whitespace sits on each side of the container
+    --_avail: calc((100vw - #{$size-desktop-user-menu-width} - 100%) / 2 - 2rem);
+    margin-left:  calc(-1 * max(0px, var(--_avail)));
+    margin-right: calc(-1 * max(0px, var(--_avail)));
   }
   @media (min-width: $screen-xxxl-width) {
-    margin-left: -16rem;
-    margin-right: -2rem;
+    // At very wide viewports, reserve space on the right for the
+    // always-visible minimap (~14rem + gap).
+    margin-right: calc(-1 * min(2rem, max(0px, var(--_avail))));
   }
 }
 
