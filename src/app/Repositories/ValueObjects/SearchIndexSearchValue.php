@@ -9,7 +9,7 @@ class SearchIndexSearchValue implements \JsonSerializable
     public function __construct(array $properties)
     {
         $this->initializeAll($properties, [
-            'lexical_entry_group_ids', 'inflections', 'include_old', 'language_id', 'reversed',
+            'lexical_entry_group_ids', 'inflections', 'include_old', 'language_id', 
             'speech_ids', 'word', 'natural_language',
         ], /* required: */ false);
     }

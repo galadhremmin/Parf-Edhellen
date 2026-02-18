@@ -26,7 +26,6 @@ export function SearchResults(props: IProps) {
     const {
         dispatch,
         loading = true,
-        reversed,
         searchGroups = [],
         searchResults = [],
         selectedResultId = 0,
@@ -141,8 +140,7 @@ export function SearchResults(props: IProps) {
             </div>
             <div className={noSearchResultsStyles}>
                 <StaticAlert type="warning">
-                    No words matching <strong><Quote>{reversed ? word.split('').reverse().join('') : word}</Quote></strong>
-                    {reversed ? <em> (<Quote>{word}</Quote> reversed) </em> : ' '}
+                    No words matching <strong><Quote>{word}</Quote></strong>
                     were found in the dictionary. Have you tried synonyms or perhaps antonyms?
                 </StaticAlert>
             </div>

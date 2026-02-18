@@ -83,7 +83,6 @@ export interface IWordEntity {
     createdAt?: string;
     id?: number;
     normalizedWord?: string;
-    reversedNormalizedWord?: string;
     updatedAt?: string;
     word: string;
 }
