@@ -204,7 +204,7 @@ a.avatar-in-menu {
   @media (min-width: #{map-get($grid-breakpoints, 'md') + 1}) {
     background-image: url(../img/backgrounds/header-sm.jpg);
   }
-  @media (min-width: $size-desktop-large-min-width) {
+  @media (min-width: #{$size-desktop-large-min-width*0.5}) {
     background-image: url(../img/backgrounds/header-lg.jpg);
   }
 }

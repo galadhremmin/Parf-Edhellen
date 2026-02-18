@@ -3,11 +3,13 @@ import { useCallback } from 'react';
 import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 import { excludeProps } from '@root/utilities/func/props';
+import Cache from '@root/utilities/Cache';
 
 import AsyncSelect from './AsyncSelect/AsyncSelect';
 import type { IProps } from './GlossGroupSelect._types';
 
 const InternalProps: (keyof IProps)[] = [ 'apiConnector', 'allowEmpty', 'value' ];
+
 
 function GlossGroupSelect(props: IProps) {
     const {
@@ -18,7 +20,8 @@ function GlossGroupSelect(props: IProps) {
 
     const componentProps = excludeProps(props, InternalProps);
 
-    const _getValues = useCallback(() => apiConnector.groups(), [ apiConnector ]);
+    const _getValues = useCallback(() =>
+        Cache.withTransientStorage(() => apiConnector.groups(), 'ed.glossary.groups').get(), [ apiConnector ]);
 
     return <AsyncSelect
         {...componentProps}

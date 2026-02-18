@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 
 import { DI } from '@root/di/keys';
 import { excludeProps } from '@root/utilities/func/props';
+import Cache from '@root/utilities/Cache';
 
 import { withPropInjection } from '@root/di';
 import AsyncSelect from './AsyncSelect/AsyncSelect';
@@ -17,7 +18,8 @@ function SpeechSelect(props: IProps) {
 
     const componentProps = excludeProps(props, InternalProps);
 
-    const _getValues = useCallback(() => apiConnector.speeches(), [ apiConnector ]);
+    const _getValues = useCallback(() =>
+        Cache.withTransientStorage(() => apiConnector.speeches(), 'ed.glossary.speeches').get(), [ apiConnector ]);
 
     return <AsyncSelect
         {...componentProps}

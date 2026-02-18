@@ -38,7 +38,6 @@ export class SearchQuery extends Component<IProps, IState> {
             lexicalEntryGroupIds: [0],
             includeOld: props.includeOld,
             languageId: props.languageId,
-            naturalLanguage: props.naturalLanguage,
             reversed: props.reversed,
             showMore: false,
             speechIds: [0],
@@ -78,7 +77,6 @@ export class SearchQuery extends Component<IProps, IState> {
             lexicalEntryGroupIds,
             includeOld,
             languageId,
-            naturalLanguage,
             showMore,
             speechIds,
             word,
@@ -100,13 +98,6 @@ export class SearchQuery extends Component<IProps, IState> {
             </div>
             <div className="row Search--config mt-2">
                 <div className="col">
-                    <label className="ms-2">
-                        <input checked={naturalLanguage}
-                            name="naturalLanguage"
-                            onChange={this._onNaturalLanguageChange}
-                            type="checkbox"
-                        /> Natural language
-                    </label>
                     <label className="ms-2">
                         <input checked={includeOld}
                             name="includeOld"
@@ -132,7 +123,7 @@ export class SearchQuery extends Component<IProps, IState> {
                     </div>
                 </div>
             </div>
-            <div className="row">
+            <div className="row Search--config">
                 <div className="col">
                     {showMore && <AdditionalSearchParameters
                         lexicalEntryGroupId={lexicalEntryGroupIds[0]}
@@ -178,16 +169,6 @@ export class SearchQuery extends Component<IProps, IState> {
                 ...nextState,
             }, ['word']),
         );
-    }
-
-    private _onNaturalLanguageChange = (ev: ChangeEvent<HTMLInputElement>) => {
-        const naturalLanguage = ev.target.checked;
-        this.setState({
-            naturalLanguage,
-        });
-
-        void this._persistState('naturalLanguage', naturalLanguage);
-        this._beginSearch(/* queryChanged: */ false);
     }
 
     private _onIncludeOldChange = (ev: ChangeEvent<HTMLInputElement>) => {
@@ -287,7 +268,6 @@ const mapStateToProps = (state: RootReducer) => ({
     includeOld: state.search.includeOld,
     languageId: state.search.languageId,
     loading: state.search.loading,
-    naturalLanguage: state.search.naturalLanguage,
     word: state.search.word,
 });
 
