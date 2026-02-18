@@ -285,8 +285,12 @@ class MarkdownParser extends \Parsedown
 
     private function shortenUri($link)
     {
-        if (! is_array($link)) {
-            return;
+        if (! is_array($link) || //
+            ! isset($link['element']) || //
+            ! isset($link['element']['attributes']) || // 
+            ! isset($link['element']['attributes']['href']) || // 
+            ! isset($link['element']['text'])) {
+            return $link;
         }
 
         $attrs = &$link['element']['attributes'];
