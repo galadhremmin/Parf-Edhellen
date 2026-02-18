@@ -10,7 +10,6 @@ const SearchReducer = (state: ISearchState = {
     itemIndex: -1,
     languageId: 0,
     loading: false,
-    naturalLanguage: false,
     speechIds: [],
     word: '',
 }, action: ISearchReduxAction) => {
@@ -24,7 +23,6 @@ const SearchReducer = (state: ISearchState = {
                 lexicalEntryGroupIds: action.lexicalEntryGroupIds || [],
                 includeOld: action.includeOld,
                 languageId: action.languageId,
-                naturalLanguage: action.naturalLanguage || false,
                 speechIds: action.speechIds || [],
                 word: action.word,
             };

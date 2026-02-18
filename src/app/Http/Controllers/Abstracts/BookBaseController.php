@@ -99,7 +99,6 @@ abstract class BookBaseController extends Controller
             'inflections' => 'sometimes|boolean',
             'language' => 'sometimes|string',
             'language_id' => 'sometimes|numeric',
-            'natural_language' => 'sometimes|boolean',
             'reversed' => 'sometimes|boolean',
             'speech_ids' => 'sometimes|array',
             'speech_ids.*' => 'sometimes|numeric',
@@ -118,7 +117,6 @@ abstract class BookBaseController extends Controller
         $inflections = isset($v['inflections']) ? boolval($v['inflections']) : false;
         $languageId = isset($v['language_id']) ? intval($v['language_id']) : 0;
         $reversed = isset($v['reversed']) ? boolval($v['reversed']) : false;
-        $naturalLanguage = isset($v['natural_language']) ? boolval($v['natural_language']) : false;
         $word = $v['word'];
 
         $glossGroupIds = isset($v['lexical_entry_group_ids']) ? array_map(function ($v) {
@@ -133,7 +131,6 @@ abstract class BookBaseController extends Controller
             'include_old' => $includeOld,
             'inflections' => $inflections,
             'language_id' => $languageId,
-            'natural_language' => $naturalLanguage,
             'reversed' => $reversed,
             'speech_ids' => $speechIds,
             'word' => $word,

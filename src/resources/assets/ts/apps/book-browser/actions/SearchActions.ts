@@ -216,7 +216,6 @@ export default class SearchActions {
                     includeOld,
                     inflections: true,
                     languageId,
-                    naturalLanguage: false, // Don't use natural language for glossary since the word doesn't need expansion.
                     normalizedWord: args.searchResult.normalizedWord,
                     speechIds,
                     word,
@@ -236,7 +235,6 @@ export default class SearchActions {
                     glossary: true,
                     groupId: searchResult.groupId,
                     languageShortName,
-                    naturalLanguage: false,
                     normalizedWord: searchResult.normalizedWord,
                     word: searchResult.word,
                 };
@@ -351,7 +349,6 @@ export default class SearchActions {
             const state = getState();
             const args: IExpandSearchResultAction = {
                 ...state.search,
-                naturalLanguage: false, // Don't use natural language for reference links.
                 languageId,
                 searchResult: {
                     id: 0,
@@ -411,7 +408,7 @@ export default class SearchActions {
 
         // embellish the address with configuration values that are not supported by the native URL format
         const supportedSettings: (keyof typeof args.data)[] = [
-            'lexicalEntryGroupIds', 'includeOld', 'naturalLanguage', 'speechIds',
+            'lexicalEntryGroupIds', 'includeOld', 'speechIds',
         ];
 
         const settings: { [key: string]: any } = {};

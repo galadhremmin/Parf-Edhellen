@@ -12,7 +12,6 @@ export interface IProps {
     lexicalEntryGroupId?: boolean;
     includeOld?: boolean;
     languageId?: number;
-    naturalLanguage?: boolean;
     loading?: boolean;
     reversed?: boolean;
     speechId?: boolean;
