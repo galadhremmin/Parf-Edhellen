@@ -38,7 +38,6 @@ export class SearchQuery extends Component<IProps, IState> {
             lexicalEntryGroupIds: [0],
             includeOld: props.includeOld,
             languageId: props.languageId,
-            reversed: props.reversed,
             showMore: false,
             speechIds: [0],
             word: props.word,

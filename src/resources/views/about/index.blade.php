@@ -25,7 +25,7 @@ a Tolkien-fan.</p>
   <p>
     Wildcard, or the asterisk, search terms are supported. You can position a wildcard character <strong>*</strong> wherever you wish and the dictionary will fill in the rest. A wildcard is usually inserted at the end of what you are
     typing, so if you type <em>lo</em>, you will find words that begin with those letters, such as <em>long, love, low,</em> etcetera. If you want to find words that end with <em>lo</em>, you can search for <em>*lo</em>, yielding
-    <em>hello, solo, polo,</em> etcetera. You can achieve the same result by using the dictionary’s reversed search feature, by checking the <em>Reversed</em> checkbox underneath the search field, and searching for <em>ol</em>.
+    <em>hello, solo, polo,</em> etcetera.
   </p>
   <p>
     Use wildcards to search in multiple directions, for an example <em>*en*</em> would yield <em>endeavor, envelop, generalization, sentimentality, taken,</em> ectetera.

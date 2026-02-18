@@ -13,7 +13,6 @@ export interface IProps {
     includeOld?: boolean;
     languageId?: number;
     loading?: boolean;
-    reversed?: boolean;
     speechId?: boolean;
     word?: string;
 }
