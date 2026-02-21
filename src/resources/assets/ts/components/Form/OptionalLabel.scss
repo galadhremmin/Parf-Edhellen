@@ -1,7 +1,7 @@
 @import '../../_scss/_variables';
 
 .OptionalLabel {
-    color: $gray-500;
+    color: var(--ed-text-faint);
     font-weight: normal;
     margin-left: 0.5rem;
 }

@@ -24,10 +24,10 @@
   display: block;
   position: absolute;
   width: 100%;
-  background-color: #fff;
+  background-color: var(--ed-bg-elevated);
   border-bottom-left-radius: $border-radius-lg;
   border-bottom-right-radius: $border-radius-lg;
-  border: 1px solid $dropdown-border-color;
+  border: 1px solid var(--ed-border);
   border-top: none;
   z-index: 100;
 }
@@ -44,11 +44,11 @@
 }
 
 .react-autosuggest__suggestion--highlighted {
-  background-color: $gray-200;
+  background-color: var(--bs-tertiary-bg);
 }
 
 .react-autosuggest__section-container {
-  border-top: 1px dashed #ccc;
+  border-top: 1px dashed var(--ed-border-light);
 }
 
 .react-autosuggest__section-container--first {
@@ -58,5 +58,5 @@
 .react-autosuggest__section-title {
   padding: 10px 0 0 10px;
   font-size: 0.9rem;
-  color: $gray-500;
+  color: var(--ed-text-faint);
 }

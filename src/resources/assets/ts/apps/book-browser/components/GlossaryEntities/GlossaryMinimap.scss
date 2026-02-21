@@ -57,24 +57,24 @@ $minimap-max-height: calc(100vh - #{$size-desktop-menu-height} - 3rem);
     right: 100%;
     top: 0;
 
-    background: #fff;
-    border: 1px solid #ddd;
+    background: var(--ed-bg-elevated);
+    border: 1px solid var(--ed-border);
     border-right: none;
     border-radius: 4px 0 0 4px;
     padding: 0.4rem 0.5rem;
     cursor: pointer;
-    box-shadow: -2px 1px 4px rgba(0, 0, 0, 0.06);
+    box-shadow: -2px 1px 4px var(--ed-shadow);
     z-index: 1;
 
     font-family: $font-family-tiny;
     font-size: 0.68rem;
     font-weight: 500;
-    color: #555;
+    color: var(--ed-text-muted);
     white-space: nowrap;
 
     &:hover {
       color: $primary;
-      border-color: #ccc;
+      border-color: var(--ed-border-light);
     }
   }
 
@@ -113,9 +113,9 @@ $minimap-max-height: calc(100vh - #{$size-desktop-menu-height} - 3rem);
   // --- Tier 2: panel chrome ---
   @media (min-width: map-get($grid-breakpoints, 'lg')) {
     height: 100%; // fill the container so background has no gap
-    background: #fff;
-    border-left: 1px solid #e0e0e0;
-    box-shadow: -3px 0 10px rgba(0, 0, 0, 0.07);
+    background: var(--ed-bg-elevated);
+    border-left: 1px solid var(--ed-border-panel);
+    box-shadow: -3px 0 10px var(--ed-shadow);
     padding: 0.75rem 0.75rem 0;
   }
 
@@ -137,14 +137,14 @@ $minimap-max-height: calc(100vh - #{$size-desktop-menu-height} - 3rem);
     right: 0;
     display: block;
     height: 2.5rem;
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 70%);
+    background: linear-gradient(to bottom, var(--ed-overlay-gradient-start) 0%, var(--ed-overlay-gradient-end) 70%);
     pointer-events: none;
     margin-top: -2.5rem;
   }
 
   @media (min-width: $screen-xxxl-width) {
     &::after {
-      background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.85) 70%);
+      background: linear-gradient(to bottom, var(--ed-overlay-gradient-start) 0%, var(--ed-overlay-gradient-85) 70%);
     }
   }
 }
@@ -157,13 +157,13 @@ $minimap-max-height: calc(100vh - #{$size-desktop-menu-height} - 3rem);
   padding-bottom: 1.5rem;
 
   scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+  scrollbar-color: var(--ed-shadow) transparent;
 
   &::-webkit-scrollbar {
     width: 3px;
   }
   &::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.15);
+    background: var(--ed-shadow);
     border-radius: 3px;
   }
 }
@@ -195,7 +195,7 @@ $minimap-max-height: calc(100vh - #{$size-desktop-menu-height} - 3rem);
 .glossary-minimap__language {
   display: block;
   font-weight: 500;
-  color: #333;
+  color: var(--ed-text);
   cursor: pointer;
   text-decoration: none;
   margin-bottom: 0.2rem;
@@ -215,7 +215,7 @@ $minimap-max-height: calc(100vh - #{$size-desktop-menu-height} - 3rem);
 
 .glossary-minimap__word {
   display: block;
-  color: #666;
+  color: var(--ed-text-muted);
   cursor: pointer;
   text-decoration: none;
   padding: 0.05rem 0;
@@ -229,7 +229,7 @@ $minimap-max-height: calc(100vh - #{$size-desktop-menu-height} - 3rem);
 }
 
 .glossary-minimap__more {
-  color: #999;
+  color: var(--ed-text-faint);
   font-style: italic;
   padding: 0.05rem 0;
 }

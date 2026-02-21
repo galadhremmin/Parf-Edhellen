@@ -1,6 +1,6 @@
 @import '../../../../_scss/variables';
 
-$thread-color: #8d3f3f;
+$thread-color: var(--ed-thread-color);
 $thread-width: 2px;
 $thread-coil-size: 0.8rem;
 

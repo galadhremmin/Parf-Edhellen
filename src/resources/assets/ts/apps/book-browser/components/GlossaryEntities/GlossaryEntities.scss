@@ -1,6 +1,6 @@
 @import '../../../../_scss/_variables';
 
-$gloss-border-color: #dedede;
+$gloss-border-color: var(--ed-border);
 
 // On wide screens, expand the glossary beyond the Bootstrap container
 // to make better use of the available viewport width.

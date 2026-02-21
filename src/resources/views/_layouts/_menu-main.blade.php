@@ -25,8 +25,12 @@
         </a>
       </li>
     </ul>
-    @include('_layouts._menu-user-in-main', [
-      'storage' => $storage
-    ])
+    <ul class="navbar-nav ms-auto">
+      @include('_layouts._menu-admin-dropdown')
+      @include('_layouts._menu-theme-toggle')
+      @include('_layouts._menu-user-dropdown', [
+        'storage' => $storage
+      ])
+    </ul>
   </div>
 </div>

@@ -24,7 +24,7 @@
 
 // --- Component ---
 
-$arrow-color: #222;
+$arrow-color: var(--ed-arrow-color);
 
 .bouncing-arrow {
   position: fixed;
@@ -54,7 +54,7 @@ $arrow-color: #222;
       left: 0;
       right: 0;
       height: 100px;
-      background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 55%);
+      background: linear-gradient(to bottom, var(--ed-overlay-gradient-start) 0%, var(--ed-overlay-gradient-end) 55%);
       pointer-events: none;
       z-index: -1;
     }
@@ -74,7 +74,7 @@ $arrow-color: #222;
     mask-repeat: no-repeat;
     -webkit-mask-position: center;
     mask-position: center;
-    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.25));
+    filter: drop-shadow(0 1px 3px var(--ed-shadow));
     animation: hand-drift 3s ease-in-out infinite;
     cursor: pointer;
     pointer-events: auto;
@@ -88,8 +88,8 @@ $arrow-color: #222;
     font-style: italic;
     font-weight: bold;
     letter-spacing: 0.04em;
-    color: rgba($arrow-color, 0.8);
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+    color: var(--ed-arrow-color);
+    text-shadow: 0 1px 2px var(--ed-shadow);
     pointer-events: none;
   }
 }

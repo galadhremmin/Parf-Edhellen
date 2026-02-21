@@ -3,7 +3,7 @@
 .LoadingIndicator {
     text-align: center;
     font-family: $font-family-tiny;
-    color: #666;
+    color: var(--ed-text-muted);
     font-size: 0.8rem;
     > div {
       display: inline-block;

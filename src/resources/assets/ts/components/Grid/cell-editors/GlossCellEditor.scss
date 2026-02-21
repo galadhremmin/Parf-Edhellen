@@ -14,7 +14,7 @@
 .GlossCellEditor--scroller {
     height: 210px;
     overflow-y: scroll;
-    background: white;
+    background: var(--ed-bg-elevated);
 }
 
 .GlossCellEditor--suggestions {

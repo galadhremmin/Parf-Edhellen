@@ -13,7 +13,7 @@
   </p>
   @foreach ($versions as $v)
   <a name="ed-gloss-version-{{ $v->id }}-container"></a>
-  <div class="card {{ $v->_is_latest ? 'shadow' : 'bg-light text-muted' }} position-relative mb-4">
+  <div class="card {{ $v->_is_latest ? 'shadow' : 'bg-body-secondary text-body-secondary' }} position-relative mb-4">
     @if ($v->_is_latest)
     <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle" title="Latest version"><span class="visually-hidden">Latest version</span></span>
     @endif

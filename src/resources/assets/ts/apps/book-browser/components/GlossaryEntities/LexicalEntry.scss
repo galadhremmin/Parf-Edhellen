@@ -1,6 +1,6 @@
 @import '../../../../_scss/_variables';
 
-$gloss-border-color: #dedede;
+$gloss-border-color: var(--ed-border);
 
 blockquote.lexical-entry {
   padding: 1rem;

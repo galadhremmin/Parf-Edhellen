@@ -9,11 +9,11 @@
 
     @media (min-width: map-get($grid-breakpoints, 'sm')) {
         display: flex;
-        border-bottom: 1px solid $border-color;
+        border-bottom: 1px solid var(--ed-border);
         > div {
             &.EditTabView--split-view__input {
                 margin-right: 0.5rem;
-                border-right: 1px solid $border-color;
+                border-right: 1px solid var(--ed-border);
                 display: flex;
                 align-items: stretch;
                 > textarea {

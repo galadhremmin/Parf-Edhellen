@@ -1,5 +1,6 @@
 // Custom variables to ElfDict
 @import "./_scss/_variables";
+@import "./_scss/_theme";
 
 // Layout & components
 @import "~bootstrap/scss/root";
@@ -61,53 +62,27 @@ a {
 hr.next-overlaps {
   margin-bottom: -1rem;
   + span {
-    background-color: white;
+    background-color: var(--ed-bg);
     display: table;
     margin: 0 auto;
-    color: $gray-700;
+    color: var(--ed-text-faint);
     padding: 0 0.25rem;
     opacity: 0.99; // chrome hack
   }
 }
 
-a.avatar-in-menu {
-  font-size: 1.4rem;
-  margin-bottom: 1rem;
-  color: inherit;
-  display: flex;
-  align-items: center;
-
-  > ins {
-    background-size: cover;
-    width: 1em;
-    height: 1em;
-    border-radius: 0.5em;
-    display: inline-block;
-    margin-right: 0.25em;
-    vertical-align: middle;
-  }
-  > span {
-    flex: auto;
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  &.active {
-    font-weight: bold;
-  }
-}
-
 #ed-site-main-menu {
-  text-transform: uppercase;
-  font-family: $font-family-tiny;
+  text-transform: none;
+  font-family: $font-family-sans-serif;
   background-size: cover;
+  font-size: 1.05rem;
   padding: 0;
   
   > .container {
     padding-bottom: 0;
     min-height: $size-desktop-menu-height;
     @media (min-width: #{map-get($grid-breakpoints, 'lg') + 1}) {  
-      align-items: flex-end;
+      align-items: center;
     }
   }
   .navbar-brand {
@@ -124,12 +99,15 @@ a.avatar-in-menu {
         width: 22px;
         height: 2px;
         border-radius: 1px;
-        background: white;
+        background: white; // always white on the dark navbar
     }
   
     >.icon-bar + .icon-bar {
         margin-top: 4px;
     }
+  }
+  .navbar-nav {
+    align-items: center;
   }
   .navbar-nav > .nav-item > .nav-link {
     color: white;
@@ -137,16 +115,13 @@ a.avatar-in-menu {
     padding-right: 0.5rem;
     text-shadow: 1px 1px 2px $primary-border-subtle;
     &.active {
-      background: white;
-      color: black;
-      text-shadow: none;
+      background: transparent;
+      color: white;
+      font-weight: bold;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 0 0 16px rgba(255, 255, 255, 0.3);
+      // Option 1 (soft box glow): box-shadow: 0 0 12px rgba(255, 255, 255, 0.35); border-radius: $border-radius;
+      // Option 2 (glow + subtle bg): add background: rgba(255, 255, 255, 0.12); box-shadow: 0 0 14px rgba(255, 255, 255, 0.25); border-radius: $border-radius;
     }
-  }
-  .navbar-nav > .nav-item > .nav-link.active {
-    background: white;
-    color: black;
-    border-top-left-radius: $border-radius;
-    border-top-right-radius: $border-radius;
   }
   @media (max-width: map-get($grid-breakpoints, 'lg')) {
     background-image: url(../img/backgrounds/header-sm.jpg);
@@ -191,14 +166,128 @@ a.avatar-in-menu {
       }
     }
     .navbar-nav > .nav-item > .nav-link.active {
-      border-radius: $border-radius;
       transform: none;
     }
-    a.avatar-in-menu {
+  }
+
+  // Theme toggle: moon (switch to dark) when light, sun (switch to light) when dark
+  .ed-theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem 0.5rem;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+
+    .ed-theme-toggle__moon {
+      display: none;
+    }
+    .ed-theme-toggle__sun {
+      display: inline-block;
+    }
+  }
+  // User menu trigger (avatar + nickname/Guest) in top-right
+  .ed-user-menu-trigger {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    text-decoration: none;
+    text-transform: none;
+    padding: 0.25rem 0.5rem;
+
+    &:hover,
+    &:focus {
       color: white;
-      font-family: $font-family-sans-serif;
+      text-decoration: none;
+    }
+
+    &.active {
+      font-weight: bold;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 0 0 16px rgba(255, 255, 255, 0.3);
+    }
+  }
+
+  .ed-user-menu-avatar {
+    display: inline-block;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+  }
+
+  .ed-user-menu-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 8rem;
+  }
+
+  // Admin dropdown: same styling as user menu
+  .ed-admin-menu {
+    min-width: 12rem;
+    z-index: 1050;
+    background: var(--ed-bg-surface);
+    border: 1px solid var(--ed-border);
+    box-shadow: 0 0.5rem 1rem var(--ed-shadow-heavy);
+    text-transform: none;
+
+    .dropdown-item {
+      color: var(--ed-text);
+      padding: 0.5rem 1rem;
       text-transform: none;
-      margin-top: 1rem;
+
+      &:hover {
+        background: var(--ed-bg-surface-hover);
+        color: var(--ed-text);
+      }
+
+      &.active {
+        font-weight: bold;
+        background: var(--ed-bg-surface-hover);
+      }
+    }
+  }
+
+  // Dropdown menu styling: match theme, icon spacing
+  .ed-user-menu {
+    min-width: $size-desktop-user-menu-width;
+    z-index: 1050;
+    background: var(--ed-bg-surface);
+    border: 1px solid var(--ed-border);
+    box-shadow: 0 0.5rem 1rem var(--ed-shadow-heavy);
+    text-transform: none;
+
+    .dropdown-item {
+      color: var(--ed-text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      text-transform: none;
+
+      &:hover {
+        background: var(--ed-bg-surface-hover);
+        color: var(--ed-text);
+      }
+
+      &.active {
+        font-weight: bold;
+        background: var(--ed-bg-surface-hover);
+      }
+
+      .TextIcon {
+        flex-shrink: 0;
+        width: 1em;
+      }
+    }
+
+    .dropdown-divider {
+      border-color: var(--ed-border);
     }
   }
   @media (min-width: #{map-get($grid-breakpoints, 'md') + 1}) {
@@ -209,35 +298,20 @@ a.avatar-in-menu {
   }
 }
 
-#ed-site-main {
-  > aside {
+// Light mode: show moon (click to switch to dark). data-bs-theme is on html.
+// Must include #ed-site-main-menu to override the default rule specificity.
+:root[data-bs-theme="light"] #ed-site-main-menu .ed-theme-toggle {
+  .ed-theme-toggle__moon {
+    display: inline-block;
+  }
+  .ed-theme-toggle__sun {
     display: none;
   }
+}
+
+#ed-site-main {
   > main {
     padding-bottom: 1rem;
-  }
-  @media (min-width: #{map-get($grid-breakpoints, 'lg') + 1}) {  
-    display: flex;
-
-    > main {
-      flex: auto;
-    }
-    > aside {
-      box-sizing: border-box;
-      display: block;
-      padding: 1rem;
-      width: $size-desktop-user-menu-width;
-      background: #f3f3f3;
-      z-index: 999;
-    
-      .list-group-item > a {
-        color: inherit;
-    
-        &.active {
-          font-weight: bold;
-        }
-      }
-    }
   }
 }
 
@@ -289,7 +363,7 @@ a.avatar-in-menu {
   @media (min-width: #{map-get($grid-breakpoints, 'lg') + 1}) {
     column-count: 3;
     column-gap: 2rem;
-    column-rule: #ccc;
+    column-rule: var(--ed-border-light);
     column-rule-width: 0.25rem;
     column-rule-style: dotted; 
     margin-top: 2rem;
@@ -330,14 +404,14 @@ a.avatar-in-menu {
 
     .home-hero__subtitle {
       font-size: 1.05rem;
-      color: #555;
+      color: var(--ed-text-muted);
       max-width: 560px;
       margin: 0 auto;
     }
 
     .home-hero__hint {
       font-style: italic; 
-      color: #777;
+      color: var(--ed-text-faint);
       margin-top: 0.75rem;
       margin-bottom: 0;
     }
@@ -350,13 +424,13 @@ a.avatar-in-menu {
 
       // --- Search input: full width, crisp border, animated glow ---
       .input-group {
-        border: 1.5px solid #333;
+        border: 1.5px solid var(--ed-border-strong);
         border-radius: 0.5rem;
         overflow: hidden;
         animation: home-search-glow 3s ease-in-out infinite;
 
         .input-group-text {
-          border-right: 1px solid #ccc;
+          border-right: 1px solid var(--ed-border-light);
         }
 
         .form-control {
@@ -391,7 +465,7 @@ a.avatar-in-menu {
           flex-wrap: wrap;
           gap: 0.25rem 1.25rem;
           font-size: 0.85rem;
-          color: #555;
+          color: var(--ed-text-muted);
 
           // Strip Bootstrap ms-2 margins — gap handles spacing
           > label,

@@ -1,0 +1,134 @@
+// ============================================================
+// ElfDict Dark Mode — Centralized color tokens
+// ============================================================
+//
+// Every custom (non-Bootstrap) color used across the site is
+// defined here as a CSS custom property.  Light values live on
+// :root; dark overrides kick in via prefers-color-scheme.
+//
+// Usage in component SCSS:
+//   color: var(--ed-text-muted);
+//   background: var(--ed-bg-surface);
+//
+// ============================================================
+
+// --- Light palette ---
+$light-theme: (
+  "bg":                     #fff,
+  "bg-surface":             #f3f3f3,
+  "bg-surface-hover":       #d9edf7,
+  "bg-elevated":            #fff,
+  "bg-code":                #f8f8f8,
+  "text":                   #212529,
+  "text-muted":             #555,
+  "text-faint":             #777,
+  "text-icon":              #000,
+  "border":                 #dedede,
+  "border-strong":          #333,
+  "border-light":           #ccc,
+  "border-panel":           #e0e0e0,
+  "border-input-focus":     #98cbe8,
+  "shadow":                 rgba(0, 0, 0, 0.15),
+  "shadow-heavy":           rgba(50, 50, 50, 0.75),
+  "overlay-gradient-start": rgba(255, 255, 255, 0),
+  "overlay-gradient-end":   rgba(255, 255, 255, 1),
+  "overlay-gradient-85":    rgba(255, 255, 255, 0.85),
+  "heart-color":            #c44,
+  "heart-bg":               #fdf8f8,
+  "thread-color":           #8d3f3f,
+  "tengwar-faint":          #ccc,
+  "timeline-line":          #eee,
+  "timeline-border":        #d4d4d4,
+  "timeline-badge":         #999,
+  "avatar-overlay":         rgba(0, 0, 0, 0.8),
+  "passkey-badge-bg":       #f0f0f0,
+  "arrow-color":            #222,
+  "selected-glow":          #6f9eeb,
+  "link":                   #015788,
+  "link-hover":             #014670,
+);
+
+// --- Dark palette ---
+$dark-theme: (
+  "bg":                     #1C1C1C,
+  "bg-surface":             #1C1C1C,
+  "bg-surface-hover":       #1a3a5c,
+  "bg-elevated":            #1e2a40,
+  "bg-code":                #1e2a40,
+  "text":                   #F5E8D8,
+  "text-muted":             #aaa,
+  "text-faint":             #888,
+  "text-icon":              currentColor,
+  "border":                 #3a3a5a,
+  "border-strong":          #7a8a9a,
+  "border-light":           #3a3a5a,
+  "border-panel":           #2a3a50,
+  "border-input-focus":     #5a9ec8,
+  "shadow":                 rgba(0, 0, 0, 0.4),
+  "shadow-heavy":           rgba(0, 0, 0, 0.6),
+  "overlay-gradient-start": rgba(26, 26, 46, 0),
+  "overlay-gradient-end":   rgba(26, 26, 46, 1),
+  "overlay-gradient-85":    rgba(26, 26, 46, 0.85),
+  "heart-color":            #e66,
+  "heart-bg":               #2a2030,
+  "thread-color":           #c07070,
+  "tengwar-faint":          #555,
+  "timeline-line":          #2a3a50,
+  "timeline-border":        #3a3a5a,
+  "timeline-badge":         #6a7a8a,
+  "avatar-overlay":         rgba(0, 0, 0, 0.85),
+  "passkey-badge-bg":       #1e2a40,
+  "arrow-color":            #ccc,
+  "selected-glow":          #4a7ec0,
+  "link":                   #ff6f61,
+  "link-hover":             #ff4500,
+  "primary":                #ff4500,
+  "secondary":              #daa520,
+);
+
+$body-color-dark:        map-get($dark-theme, "text");
+$link-color-dark:        map-get($dark-theme, "link");
+$link-hover-color-dark:  map-get($dark-theme, "link-hover");
+
+// --- Emit helper ---
+@mixin _emit-tokens($map) {
+  @each $key, $value in $map {
+    --ed-#{$key}: #{$value};
+  }
+}
+
+// --- Apply tokens ---
+// Light by default; dark when system prefers it (unless user override)
+:root {
+  color-scheme: light dark;
+  @include _emit-tokens($light-theme);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-bs-theme="light"]) {
+    @include _emit-tokens($dark-theme);
+  }
+}
+
+// User override from theme toggle (stored in localStorage)
+:root[data-bs-theme="dark"] {
+  @include _emit-tokens($dark-theme);
+}
+:root[data-bs-theme="light"] {
+  @include _emit-tokens($light-theme);
+}
+
+// Smooth transition when toggling theme
+html,
+body {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+}
+
+// Theme-dependent surfaces
+.dropdown-menu,
+.ed-admin-menu,
+.ed-user-menu,
+.modal-content,
+.card {
+  transition: background-color 0.4s ease, color 0.4s ease, border-color 0.4s ease;
+}

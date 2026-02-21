@@ -1,7 +1,7 @@
 @import "../../../_scss/variables";
 
 .SearchGroup__group-name {
-    background: $gray-200;
+    background: var(--bs-tertiary-bg);
     font-size: 1rem;
     font-weight: bold;
     border-radius: $border-radius-sm;

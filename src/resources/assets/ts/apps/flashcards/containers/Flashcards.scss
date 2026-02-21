@@ -54,11 +54,11 @@
 .flip-container {
 
   .front, .back {
-    border: 2px solid white;
-    background: white;
+    border: 2px solid var(--ed-bg-elevated);
+    background: var(--ed-bg-elevated);
     border-radius: 10px;
     padding: 10px;
-    box-shadow: 0px 0px 5px 0px rgba(50, 50, 50, 0.75);
+    box-shadow: 0px 0px 5px 0px var(--ed-shadow-heavy);
   }
 
   header h1 {
@@ -71,7 +71,7 @@
   }
 
   .list-group li:hover {
-    background-color: #eee;
+    background-color: var(--ed-bg-surface);
   }
 
   .list-group a:hover {
@@ -90,7 +90,7 @@
         display: block;
     margin-top: 5px;
     padding-top: 5px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--ed-border);
   }
 
   .text-success, .text-danger {

@@ -12,7 +12,7 @@
     position: absolute;
     content: " ";
     width: 3px;
-    background-color: #eeeeee;
+    background-color: var(--ed-timeline-line);
     left: 50%;
     margin-left: -1.5px;
 }
@@ -37,13 +37,12 @@
 .timeline > li > .timeline-panel {
     width: 46%;
     float: left;
-    border: 1px solid #d4d4d4;
+    border: 1px solid var(--ed-timeline-border);
     border-radius: 2px;
     padding: 20px;
     position: relative;
-    -webkit-box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
-    background: white;
+    box-shadow: 0 1px 6px var(--ed-shadow);
+    background: var(--ed-bg-elevated);
     hr {
         margin-top: 10px;
         margin-bottom: 10px;
@@ -55,8 +54,8 @@
     right: -15px;
     display: inline-block;
     border-top: 15px solid transparent;
-    border-left: 15px solid #ccc;
-    border-right: 0 solid #ccc;
+    border-left: 15px solid var(--ed-border-light);
+    border-right: 0 solid var(--ed-border-light);
     border-bottom: 15px solid transparent;
     content: " ";
 }
@@ -66,13 +65,13 @@
     right: -14px;
     display: inline-block;
     border-top: 14px solid transparent;
-    border-left: 14px solid #fff;
-    border-right: 0 solid #fff;
+    border-left: 14px solid var(--ed-bg-elevated);
+    border-right: 0 solid var(--ed-bg-elevated);
     border-bottom: 14px solid transparent;
     content: " ";
 }
 .timeline > li > .timeline-badge {
-    color: #fff;
+    color: var(--ed-bg);
     width: 50px;
     height: 50px;
     line-height: 50px;
@@ -82,7 +81,7 @@
     top: 16px;
     left: 50%;
     margin-left: -25px;
-    background-color: #999999;
+    background-color: var(--ed-timeline-badge);
     z-index: 100;
     border-top-right-radius: 50%;
     border-top-left-radius: 50%;
@@ -106,19 +105,19 @@
     right: auto;
 }
 .timeline-badge.primary {
-    background-color: #2e6da4 !important;
+    background-color: var(--bs-primary) !important;
 }
 .timeline-badge.success {
-    background-color: #3f903f !important;
+    background-color: var(--bs-success) !important;
 }
 .timeline-badge.warning {
-    background-color: #f0ad4e !important;
+    background-color: var(--bs-warning) !important;
 }
 .timeline-badge.danger {
-    background-color: #d9534f !important;
+    background-color: var(--bs-danger) !important;
 }
 .timeline-badge.info {
-    background-color: #5bc0de !important;
+    background-color: var(--bs-info) !important;
 }
 .timeline-title {
     margin-top: 0;

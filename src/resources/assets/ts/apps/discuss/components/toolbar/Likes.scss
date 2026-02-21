@@ -39,7 +39,7 @@
     }
     100% {
         transform: scale(1);
-        background-color: black;
+        background-color: var(--ed-text-icon);
     }
 }
 

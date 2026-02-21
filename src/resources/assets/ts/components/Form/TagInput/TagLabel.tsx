@@ -31,7 +31,7 @@ function TagLabel(props: IProps) {
         setFocused(true);
     }, [ setFocused ]);
 
-    return <label className={classNames('badge', 'fs-6', 'border', 'bg-light', 'text-dark', { focused })}>
+    return <label className={classNames('badge', 'fs-6', 'border', 'bg-body-secondary', 'text-body', { focused })}>
         <input checked={true}
                name={`tag-checkbox--${tag}`}
                onBlur={_onTagBlur}

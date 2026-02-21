@@ -6,13 +6,13 @@
   blockquote {
     padding: 11px 22px;
     margin: 0 0 22px;
-    border-left: 5px solid #eee;
+    border-left: 5px solid var(--ed-timeline-line);
 
     footer {
       display: block;
       font-size: 0.8rem;
       line-height: 1.6;
-      color: #777;
+      color: var(--ed-text-faint);
       font-family: $font-family-tiny;
     }
   }
@@ -25,7 +25,7 @@
     page-break-inside: avoid;
     
     &:hover {
-      background: $link-block-background-color-hover;
+      background: var(--ed-bg-surface-hover);
       border-radius: 5px;
     }
   

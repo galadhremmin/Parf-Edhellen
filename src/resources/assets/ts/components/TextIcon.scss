@@ -7,7 +7,7 @@
     display: inline-block;
     width: 1em;
     height: 1em;
-    background-color: black;
+    background-color: var(--ed-text-icon);
     -webkit-mask-size: 1em;
     mask-size: 1em;
 
@@ -87,6 +87,9 @@
     &.TextIcon--lock {
         @include mask-image-compatible("~bootstrap-icons/icons/lock.svg");
     }
+    &.TextIcon--moon {
+        @include mask-image-compatible("~bootstrap-icons/icons/moon.svg");
+    }
     &.TextIcon--ok {
         @include mask-image-compatible("~bootstrap-icons/icons/check.svg");
     }
@@ -144,6 +147,9 @@
     &.TextIcon--rss {
         @include mask-image-compatible("~bootstrap-icons/icons/rss.svg");
     }
+    &.TextIcon--sun {
+        @include mask-image-compatible("~bootstrap-icons/icons/sun.svg");
+    }
 }
 
 // Spin animation for loading states (e.g. search icon while fetching results)
@@ -159,5 +165,5 @@
 // This is a hack to support icons used within buttons. Unfortunately, the SVG approach
 // doesn't automatically pick up the text colour.
 button > .TextIcon, a.btn > .TextIcon {
-    background-color: white;
+    background-color: currentColor;
 }
