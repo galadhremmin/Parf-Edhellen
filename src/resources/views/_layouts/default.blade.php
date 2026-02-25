@@ -6,12 +6,16 @@
 <head>
   <script>
     (function(){
-      var t = localStorage.getItem('ed-theme') || 'dark';
-      document.documentElement.setAttribute('data-bs-theme', t);
+      var stored = localStorage.getItem('ed-theme');
+      var t = (stored === 'dark' || stored === 'light') ? stored : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.dataset.bsTheme = t;
+      document.documentElement.dataset.agThemeMode = t;
       window.edToggleTheme = function(){
-        var next = document.documentElement.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-bs-theme', next);
+        var next = document.documentElement.dataset.bsTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.bsTheme = next;
+        document.documentElement.dataset.agThemeMode = next;
         localStorage.setItem('ed-theme', next);
+        document.documentElement.dispatchEvent(new CustomEvent('ed-theme-changed', { detail: { theme: next } }));
       };
     })();
   </script>

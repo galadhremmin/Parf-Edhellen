@@ -4,6 +4,7 @@ import type {
 } from '@ag-grid-community/core';
 import { useEffect, useRef } from 'react';
 import { fireEventAsync } from '@root/components/Component';
+import { useAgGridThemeClass } from '@root/utilities/useAgGridThemeClass';
 import { isEmptyString } from '@root/utilities/func/string-manipulation';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@root/utilities/agGridModules';
@@ -42,6 +43,7 @@ const columnDefinition: TranslationGridColumnDefinition = [
 ];
 
 export default function TranslationGrid(props: IProps) {
+    const agGridThemeClass = useAgGridThemeClass();
     const gridRef = useRef<AgGridReact>(null);
 
     const {
@@ -82,7 +84,7 @@ export default function TranslationGrid(props: IProps) {
         gridRef.current = ref;
     }
 
-    return <div className="ag-theme-balham FragmentsGrid--container">
+    return <div className={`${agGridThemeClass} FragmentsGrid--container`}>
         {columnDefinition &&
             <AgGridReact
                 columnDefs={columnDefinition}

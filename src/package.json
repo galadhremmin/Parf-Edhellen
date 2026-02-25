@@ -39,6 +39,7 @@
     "circular-dependency-plugin": "^5.2.2",
     "clean-webpack-plugin": "^4.0.0",
     "css-loader": "^7.1.2",
+    "css-minimizer-webpack-plugin": "^5.0.0",
     "dotenv": "^16.4.5",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
