@@ -66,7 +66,7 @@ function Likes(props: IProps) {
         roleManager,
     ]);
 
-    return <a href={`?forum_post_id=${forumPostId}`} onClick={() => void _onLikeClick} className="Likes--link">
+    return <a href={`?forum_post_id=${forumPostId}`} onClick={e => void _onLikeClick(e)} className="Likes--link">
         {threadMetadata.likesPerPost[forumPostId] || 0}
         &nbsp;
         <TextIcon icon="thumbs-up" className={classNames({
