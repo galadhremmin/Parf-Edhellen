@@ -21,7 +21,11 @@ const clientConfig = merge(
                         }
                     },
                 }),
-                new CssMinimizerPlugin(),
+                new CssMinimizerPlugin({
+            minimizerOptions: {
+                preset: ['default', { calc: false }],
+            },
+        }),
             ],
         },
     },
