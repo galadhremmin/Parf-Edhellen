@@ -48,7 +48,7 @@
 <li class="nav-item">
   <a class="nav-link ed-user-menu-trigger ed-user-menu-trigger--guest" href="{{ route('login') }}" aria-label="@lang('community.login')">
     <ins class="ed-user-menu-avatar" style="background-image:url({{ $storage->accountAvatar(null, true) }})" role="img" aria-hidden="true"></ins>
-    <span class="ed-user-menu-label">Guest</span>
+    <span class="ed-user-menu-label">Log in</span>
   </a>
 </li>
 @endif
