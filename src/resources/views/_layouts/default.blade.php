@@ -4,6 +4,21 @@
 <!DOCTYPE html>
 <html lang="{{ config('ed.view_locale') }}" prefix="og: http://ogp.me/ns#">
 <head>
+  <script>
+    (function(){
+      var stored = localStorage.getItem('ed-theme');
+      var t = (stored === 'dark' || stored === 'light') ? stored : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.dataset.bsTheme = t;
+      document.documentElement.dataset.agThemeMode = t;
+      window.edToggleTheme = function(){
+        var next = document.documentElement.dataset.bsTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.bsTheme = next;
+        document.documentElement.dataset.agThemeMode = next;
+        localStorage.setItem('ed-theme', next);
+        document.documentElement.dispatchEvent(new CustomEvent('ed-theme-changed', { detail: { theme: next } }));
+      };
+    })();
+  </script>
   <title>@yield('title') - {{ config('ed.title') }}</title>
   <meta charset="UTF-8">
   <meta property="og:title" content="@yield('title') - {{ config('ed.title') }}">
@@ -14,7 +29,8 @@
   <meta name="keywords" content="sindarin, quenya, noldorin, quendya, elvish, tolkien, nandorin, ilkorin, black speech, westron">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" value="#333333">
+  <meta name="theme-color" content="#333333" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1a1a2e" media="(prefers-color-scheme: dark)">
   <meta name="google" content="notranslate"> {{-- Remedies 'Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node' --}}
   <link rel="apple-touch-icon-precomposed" href="/img/favicons/apple-touch-icon-precomposed.png">
   <link rel="icon" type="image/png" href="/img/favicons/favicon-194x194.png">
@@ -25,7 +41,7 @@
     @include(config('ed.header_view'))
   @endif
 </head>
-<body class="bg-dark @yield('body-class')"
+<body class="@yield('body-class')"
   @if (auth()->check())
   data-account-id="{{ auth()->user()->id }}"
   data-account-roles="{{ auth()->user()->getAllRoles()->implode(',') }}"
@@ -34,18 +50,13 @@
   data-account-roles=""
   @endif
   data-v="{{ config('ed.version') }}">
-<div class="bg-white">
+<div>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="ed-site-main-menu">
     @include('_layouts._menu-main', [
       'storage' => $storage
     ])
   </nav>
   <div id="ed-site-main">
-    <aside>
-      @include('_layouts._menu-user', [
-        'storage' => $storage
-      ])
-    </aside>
     <main>
       <div class="{{ $containerClass ?? 'container' }}">
         <noscript>
@@ -68,7 +79,7 @@
     </main>
   </div>
 </div>
-<footer class="text-secondary p-4 d-flex">
+<footer class="bg-dark text-secondary p-4 d-flex">
   <section class="flex-fill w-100">
     <h3 class="fst-italic fs-5">{{ config('ed.title') }}</h3>
     <nav>

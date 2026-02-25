@@ -7,10 +7,9 @@
 
     &.focused {
         /* TODO: This is a shameless copy from the web inspector. Fix this. */
-        border-color: #98cbe8 !important;
+        border-color: var(--ed-border-input-focus) !important;
         outline: 0;
-        -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(152, 203, 232, 0.6);
-        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(152, 203, 232, 0.6);
+        box-shadow: inset 0 1px 1px var(--ed-shadow), 0 0 8px var(--ed-border-input-focus);
     }
 
     > input {
@@ -19,7 +18,7 @@
     }
 
     > span.TextIcon {
-        color: $gray-500;
+        color: var(--ed-text-faint);
         font-size: 70%;
     }
 

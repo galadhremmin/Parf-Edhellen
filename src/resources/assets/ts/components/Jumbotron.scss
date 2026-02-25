@@ -1,16 +1,16 @@
-@import '../_scss/variables';
+@import '../_scss/_variables';
 
 div.Jumbotron {
     margin: 1rem calc(50% - 50vw);
     padding: 3rem;
     box-sizing: border-box;
-    background-color: $gray-200;
+    background-color: var(--bs-secondary-bg);
     background-size: cover;
     background-position: center center;
 
     @media (min-width: #{map-get($grid-breakpoints, 'lg') + 1}) {
       // the main menu in desktop mode offsets everything to the left, hence the ncessary to adjust the margin
-      margin: 1rem calc(50% - 50vw + #{($size-desktop-user-menu-width + 1 /* padding */)/2});
+      margin: 1rem calc(50% - 50vw + #{(1 /* padding */)/2});
     }
 
     &.has-background {

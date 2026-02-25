@@ -23,15 +23,16 @@ import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { deepClone } from '@root/utilities/func/clone';
+import { useAgGridThemeClass } from '@root/utilities/useAgGridThemeClass';
 import '@root/utilities/agGridModules';
 import type { IInflectionGroupState } from '../reducers/InflectionsReducer._types';
 import type { IProps } from './InflectionsInput._types';
 
-import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-balham.css';
+import '@root/components/AgGrid.scss';
 import './InflectionsInput.scss';
 
 function InflectionsInput(props: IProps) {
+    const agGridThemeClass = useAgGridThemeClass();
     const [ gridColumnDefinition, setColumnDefinition ] = useState<(ColDef | ColGroupDef)[]>(null);
     const gridRef = useRef<AgGridReact>(null);
 
@@ -197,7 +198,7 @@ function InflectionsInput(props: IProps) {
         });
     };
 
-    return <div className="ag-theme-balham InflectionsInput--container">
+    return <div className={`${agGridThemeClass} InflectionsInput--container`}>
         {gridColumnDefinition &&
             <AgGridReact
                 // modules={[ClientSideRowModelModule]}

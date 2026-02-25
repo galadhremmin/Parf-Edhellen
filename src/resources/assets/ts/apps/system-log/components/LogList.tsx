@@ -21,6 +21,7 @@ import Dialog from '@root/components/Dialog';
 import TextIcon from '@root/components/TextIcon';
 import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
+import { useAgGridThemeClass } from '@root/utilities/useAgGridThemeClass';
 
 import type { IErrorEntity } from '@root/connectors/backend/ILogApi';
 import type { IProps } from './LogList._types';
@@ -158,6 +159,7 @@ const GridStyle = {
 };
 
 function LogList({ logApi, category, week, year, weekNumber, roleManager, onCategoryDeleted }: IProps) {
+    const agGridThemeClass = useAgGridThemeClass();
     const gridRef = useRef<AgGridReact>(null);
     const [deleteErrorId, setDeleteErrorId] = useState<number | null>(null);
     const [deleteCategory, setDeleteCategory] = useState<string | null>(null);
@@ -242,7 +244,7 @@ function LogList({ logApi, category, week, year, weekNumber, roleManager, onCate
     const columnDefs = createColumnDefinitions(isRoot, onDeleteError);
 
     return <>
-        <div className="ag-theme-balham" style={GridStyle}>
+        <div className={agGridThemeClass} style={GridStyle}>
             <AgGridReact
                 ref={gridRef}
                 columnDefs={columnDefs}

@@ -1,6 +1,7 @@
 import {
-    useCallback
+    useCallback,
 } from 'react';
+import { useAgGridThemeClass } from '@root/utilities/useAgGridThemeClass';
 
 import type {
     ColDef,
@@ -52,6 +53,7 @@ const GridStyle = {
 };
 
 function FailedJobsList({ logApi }: IProps) {
+    const agGridThemeClass = useAgGridThemeClass();
     const onGridReady = useCallback((params: GridReadyEvent) => {
         const dataSource: IDatasource = {
             rowCount: undefined,
@@ -72,7 +74,7 @@ function FailedJobsList({ logApi }: IProps) {
         params.api.setGridOption('datasource', dataSource);
     }, []);
 
-    return  <div className="ag-theme-balham" style={GridStyle}>
+    return  <div className={agGridThemeClass} style={GridStyle}>
         <AgGridReact
             columnDefs={ColumnDefinitions}
             defaultColDef={DefaultColumnDefinitions}

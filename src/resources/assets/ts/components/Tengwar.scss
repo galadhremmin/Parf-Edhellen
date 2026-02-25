@@ -22,7 +22,7 @@
   font-weight: normal !important;
 }
 .tengwar.start {
-  color: #ccc;
+  color: var(--ed-tengwar-faint);
   font-size: 200%;
   text-align: center;
   margin: 20mm 0 8mm 0;
@@ -33,7 +33,7 @@
 }
 .tengwar.header {
   float: right;
-  color: #ccc;
+  color: var(--ed-tengwar-faint);
 }
 input.tengwar {
   font-size: 120%;

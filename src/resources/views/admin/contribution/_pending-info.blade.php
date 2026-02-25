@@ -10,11 +10,11 @@
           </a>
           @if ($contribution->dependent_on === null || $contribution->dependent_on->is_approved)
           <button type="submit" class="btn btn-success">
-            <span class="TextIcon TextIcon--ok bg-black"></span> Approve
+            <span class="TextIcon TextIcon--ok"></span> Approve
           </button>
           @else
           <button type="button" class="btn btn-success btn-disabled" disabled>
-            <span class="TextIcon TextIcon--ok bg-black"></span> Approve
+            <span class="TextIcon TextIcon--ok"></span> Approve
           </button>
           @endif
         </div>

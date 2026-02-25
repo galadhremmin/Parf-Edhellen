@@ -26,6 +26,7 @@ import InflectionRenderer from '@root/components/Grid/renderers/InflectionRender
 import SpeechRenderer from '@root/components/Grid/renderers/SpeechRenderer';
 import TengwarRenderer from '@root/components/Grid/renderers/TengwarRenderer';
 import { withPropInjection } from '@root/di';
+import { useAgGridThemeClass } from '@root/utilities/useAgGridThemeClass';
 import type { ISentenceFragmentReducerState } from '../../reducers/child-reducers/SentenceFragmentReducer._types';
 import type {
     FragmentGridColumnDefinition,
@@ -51,6 +52,7 @@ const RowClassRules = {
 };
 
 export function FragmentsGrid(props: IProps) {
+    const agGridThemeClass = useAgGridThemeClass();
     const gridRef = useRef<AgGridReact & DetailGridInfo>();
     const glossCacheRef = useRef<Map<number, Promise<ILexicalEntryEntity>>>();
 
@@ -369,7 +371,7 @@ export function FragmentsGrid(props: IProps) {
     }, [glossApi, languageId]);
 
     return <>
-        <div className="ag-theme-balham FragmentsGrid--container">
+        <div className={`${agGridThemeClass} FragmentsGrid--container`}>
             {columnDefinition &&
                 <AgGridReact
                     getRowId={_onGetRowId}

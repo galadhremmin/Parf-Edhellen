@@ -1,4 +1,4 @@
-@import './variables';
+@import './_variables';
 
 @mixin markdown-global() {
   img {
@@ -40,7 +40,7 @@
   }
 
   blockquote {
-    border-left: 4px solid $border-color;
+    border-left: 4px solid var(--ed-border-light);
     padding-left: 0.5rem;
   }
 }

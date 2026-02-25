@@ -7,7 +7,7 @@ $danger: #bf5329;
 // Disable custom bootstrap components
 $enable-cssgrid: false;
 $enable-rfs: false;
-$enable-dark-mode: false;
+$enable-dark-mode: true;
 $enable-deprecation-messages: false;
 $enable-shadows: true;
 $enable-gradients: false;
@@ -31,7 +31,7 @@ $link-block-background-color-hover: #d9edf7;
 
 // Sizes
 $size-desktop-large-min-width: 1920px;
-$size-desktop-menu-height: 3.5rem;
+$size-desktop-menu-height: 7rem;
 $size-desktop-user-menu-width: 16rem;
 
 // Bootstrap configuration

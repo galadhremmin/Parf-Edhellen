@@ -1,6 +1,6 @@
 @import '../../_scss/_variables';
-@import '../../_scss/fx';
-@import '../../_scss/markdown-global';
+@import '../../_scss/_fx';
+@import '../../_scss/_markdown-global';
 
 $ed-toolbar-height: 30px;
 $ed-forum-post-profile-width: 120px;
@@ -38,7 +38,7 @@ h1 {
     > aside.discuss-body--pagination-details {
         font-family: $font-family-tiny;
         font-size: $font-size-sm;
-        color: $gray-600;
+        color: var(--ed-text-muted);
         text-align: center;
         margin-top: 1rem;
     }
@@ -60,11 +60,11 @@ h1 {
         color: inherit;
 
         &:nth-child(even) {
-            background-color: $table-striped-bg;
+            background-color: var(--bs-tertiary-bg);
         }
         
         &:hover {
-            background-color: $link-block-background-color-hover;
+            background-color: var(--ed-bg-surface-hover);
             border-radius: $border-radius;
         }
 
@@ -124,7 +124,7 @@ h1 {
     box-sizing: border-box;
     margin-top: $container-padding-x;
     padding-top: $container-padding-x;
-    border-top: 1px solid $gray-200;
+    border-top: 1px solid var(--ed-border);
     transition: background-color 2s, padding 2s;
 
     &.forum-post--thread {
@@ -133,8 +133,8 @@ h1 {
         &.highlighted {
             padding: $spacer * 1.5;
             padding-left: 0;
-            box-shadow: $box-shadow;
-            background: $gray-100;
+            box-shadow: var(--bs-box-shadow);
+            background: var(--bs-tertiary-bg);
 
             @media (max-width: $ed-device-width) {
                 box-shadow: none;
@@ -173,7 +173,7 @@ h1 {
             width: $ed-forum-post-profile-width/2; 
             height: $ed-forum-post-profile-width/2;
             border-radius: $ed-forum-post-profile-width/4;
-            border: 2px solid white;
+            border: 2px solid var(--ed-bg);
             @include ed-box-shadow();
         }
     }
@@ -189,12 +189,12 @@ h1 {
 
     footer {
         font-size: $font-size-sm;
-        color: $gray-600;
+        color: var(--ed-text-muted);
 
         .post-no {
             float: right;
             font-size: $font-size-sm;
-            color: $gray-600;
+            color: var(--ed-text-muted);
         }
 
         > a {

@@ -1,0 +1,49 @@
+---
+description: Approach and code quality standards for refactoring and feature work
+alwaysApply: true
+---
+
+# Refactoring & Feature Work Approach
+
+Apply this methodology for refactors, layout changes, and non-trivial features.
+
+## 1. Planning Before Implementation
+
+- **Design first, build second.** Understand the full scope before writing code.
+- **Lay out the plan in writing**—structure, phases, file changes, and open decisions.
+- **Pause for confirmation** on significant effort or ambiguity. Don't assume; ask.
+- Prefer one thorough plan over multiple reactive iterations.
+
+## 2. Understand the Existing System
+
+- **Explore the codebase** to find all relevant usage: layouts, partials, styles, scripts.
+- **Identify patterns** already in use: naming, structure, conventions, existing components.
+- **Trace dependencies** so changes don't break downstream or orphan code.
+- Use semantic search and grep to map the full picture before editing.
+
+## 3. Follow Established Patterns
+
+- **Reuse existing patterns** instead of inventing new ones.
+- **Match naming, structure, and styling** to the current codebase.
+- **Integrate with existing infrastructure** (e.g., BootstrapBootstrapper, lang keys, theme tokens).
+- Prefer consistency with the project over personal preferences.
+
+## 4. Code Quality Standards
+
+- **Professional thoroughness**—no shortcuts to "ship faster."
+- **Do it right once**—avoid partial fixes and follow-up patches.
+- **Remove dead code** when replacing features (obsolete partials, unused styles).
+- **Verify the build** and ensure nothing regresses.
+
+## 5. Structured Execution
+
+- Break work into clear phases (layout, markup, styles, cleanup).
+- Implement in logical order, resolving dependencies first.
+- Add enhancements (e.g., click-outside-to-close) where they improve UX.
+- Document intent where behavior is non-obvious.
+
+## 6. When in Doubt
+
+- Ask for clarification rather than guessing.
+- Describe options and tradeoffs; let the user choose.
+- Confirm scope before investing in a large change.

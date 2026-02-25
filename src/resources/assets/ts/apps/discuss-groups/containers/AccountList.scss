@@ -1,4 +1,4 @@
-@import '../../../_scss/variables';
+@import '../../../_scss/_variables';
 
 $max-avatar-size: 2rem;
 $avatar-distance: 0.1rem;
@@ -14,7 +14,7 @@ $avatar-distance-step: 5;
         height: $max-avatar-size;
         box-shadow: none;
         margin-left: $avatar-distance*-$avatar-distance-step;
-        background: white;
+        background: var(--ed-bg-elevated);
         background-size: cover;
 
         &:first-child {
@@ -31,7 +31,7 @@ $avatar-distance-step: 5;
         display: inline-block;
         font-family: $font-family-tiny;
         font-size: 0.9rem;
-        color: $gray-500;
+        color: var(--ed-text-faint);
         margin-left: $avatar-distance*5;
     }
 }

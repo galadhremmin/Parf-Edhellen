@@ -1,9 +1,9 @@
-@import '../../../_scss/variables';
+@import '../../../_scss/_variables';
 
 $inspector-border-radius: 0.2em;
 $inspector-background: $gray-800; //$panel-default-heading-bg;
 $inspector-text-color: white;
-$inspector-border: #ccc;// $panel-default-border;
+$inspector-border: var(--ed-border-light);
 $inspector-height: 55vh;
 $inspector-max-width: 600px;
 $inspector-border-top: $gray-200; // #8aa5c3;

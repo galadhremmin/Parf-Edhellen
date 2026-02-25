@@ -7,7 +7,7 @@
     font-style: italic;
 }
 .GlossSuggestion--id {
-    color: $gray-500;
+    color: var(--ed-text-faint);
     font-family: $font-family-tiny;
     float: right;
     font-size: 0.9rem;

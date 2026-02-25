@@ -3,7 +3,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    border: 1px solid #ddd;
+    border: 1px solid var(--ed-border);
     border-radius: 4px;
     margin-bottom: 1rem;
 
@@ -27,10 +27,10 @@
     &__transport {
         display: inline-block;
         padding: 0.25rem 0.75rem;
-        background-color: #f0f0f0;
+        background-color: var(--ed-passkey-badge-bg);
         border-radius: 3px;
         font-size: 0.875rem;
-        color: #666;
+        color: var(--ed-text-muted);
         text-transform: capitalize;
     }
 
@@ -38,7 +38,7 @@
         p {
             margin: 0.25rem 0;
             font-size: 0.875rem;
-            color: #666;
+            color: var(--ed-text-muted);
         }
 
         strong {

@@ -7,6 +7,26 @@ body.DialogBody--noscroll {
     }
 }
 
+// Ensure the modal overlay backdrop adapts to dark mode
+.ReactModal__Overlay {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+// Modal content should use the page's background and text color
+.ReactModal__Content {
+    .modal-content {
+        background-color: var(--ed-bg);
+        color: var(--ed-text);
+        border-color: var(--ed-border);
+    }
+    .modal-header {
+        border-bottom-color: var(--ed-border);
+    }
+    .modal-footer {
+        border-top-color: var(--ed-border);
+    }
+}
+
 /*
 @media (max-width: $screen-sm-min) {
     .Dialog--footer {

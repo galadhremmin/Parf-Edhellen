@@ -1,5 +1,5 @@
-@import '../../../_scss/fx';
-@import '../../../_scss/variables';
+@import '../../../_scss/_fx';
+@import '../../../_scss/_variables';
 
 .Avatar--picture {
     > .Avatar--picture__drophere {
@@ -9,8 +9,8 @@
         pointer-events: none;
         font-family: $font-family-tiny;
         font-size: 0.9rem;
-        background: rgba($color: #000000, $alpha: 0.8);
-        color: white;
+        background: var(--ed-avatar-overlay);
+        color: var(--ed-bg);
 
         &.show {
             opacity: 1;

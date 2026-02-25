@@ -5,12 +5,12 @@
 }
 
 .SaveToWordList--item-in-list {
-    background-color: #fdf8f8;
+    background-color: var(--ed-heart-bg);
 }
 
 .SaveToWordList--heart-indicator {
-    color: #c44;
-    background-color: #c44;
+    color: var(--ed-heart-color);
+    background-color: var(--ed-heart-color);
     margin-right: 0.4rem;
     flex-shrink: 0;
 }

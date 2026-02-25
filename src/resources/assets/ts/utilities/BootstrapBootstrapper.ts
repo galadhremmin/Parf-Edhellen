@@ -19,13 +19,48 @@ function shimRequestIdleCallback() {
         }
 }
 
+function closeOtherDropdowns(excludeMenu: HTMLUListElement) {
+    document.querySelectorAll('.dropdown-menu.show').forEach((menu) => {
+        if (menu !== excludeMenu) {
+            menu.classList.remove('show');
+            const dropdown = menu.closest('.dropdown');
+            if (dropdown) {
+                const trigger = dropdown.querySelector('[data-bs-toggle="dropdown"]');
+                if (trigger) {
+                    trigger.classList.remove('open');
+                }
+            }
+        }
+    });
+}
+
 function onBsToggle(target: HTMLUListElement, ev: MouseEvent) {
     ev.preventDefault();
+    ev.stopPropagation();
+
+    const isOpening = !target.classList.contains('show');
+    if (isOpening) {
+        closeOtherDropdowns(target);
+    }
 
     target.classList.toggle('show');
 
     const triggerElement = this as HTMLElement;
     triggerElement.classList.toggle('open');
+}
+
+function onDocumentClick(ev: MouseEvent) {
+    const target = ev.target as Node;
+    document.querySelectorAll('.dropdown-menu.show').forEach((menu) => {
+        const dropdown = menu.closest('.dropdown');
+        if (dropdown && !dropdown.contains(target)) {
+            menu.classList.remove('show');
+            const trigger = dropdown.querySelector('[data-bs-toggle="dropdown"]');
+            if (trigger) {
+                trigger.classList.remove('open');
+            }
+        }
+    });
 }
 
 function bootstrapBsToggle() {
@@ -63,4 +98,5 @@ function bootstrapBsToggle() {
 export default function bootstrapServerSideRenderedBootstrapComponents() {
     shimRequestIdleCallback();
     bootstrapBsToggle();
+    document.addEventListener('click', onDocumentClick);
 }

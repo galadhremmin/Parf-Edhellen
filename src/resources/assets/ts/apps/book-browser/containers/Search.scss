@@ -30,10 +30,10 @@
   font-family: $font-family-tiny;
   font-size: 0.8rem !important;
   letter-spacing: 0.03em;
-  color: #888;
+  color: var(--ed-text-faint);
   white-space: nowrap;
-  border-left: 1px solid #ddd;
-  background: #f8f8f8;
+  border-left: 1px solid var(--ed-border);
+  background: var(--ed-bg-code);
   padding: 0.25rem 0.6rem;
   animation: enter-hint-nudge 0.6s ease-out 0.15s 1;
   cursor: default;
@@ -93,8 +93,8 @@
     > li > a {
       color: inherit;
       &.selected > .word {
-        background-color: $primary;
-        color: #fff;
+        background-color: var(--ed-link);
+        color: #fff; // always white on the primary-colored pill
         padding: 0.1em 0.5em;
         border-radius: 0.8em;
       }
