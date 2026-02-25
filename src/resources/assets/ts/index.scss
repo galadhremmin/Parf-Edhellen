@@ -80,9 +80,10 @@ hr.next-overlaps {
   
   > .container {
     padding-bottom: 0;
-    min-height: $size-desktop-menu-height;
+    min-height: 3.5rem;
     @media (min-width: #{map-get($grid-breakpoints, 'lg') + 1}) {  
       align-items: center;
+      min-height: $size-desktop-menu-height;
     }
   }
   .navbar-brand {
@@ -107,7 +108,9 @@ hr.next-overlaps {
     }
   }
   .navbar-nav {
-    align-items: center;
+    @media (min-width: #{map-get($grid-breakpoints, 'lg') + 1}) {  
+      align-items: center;
+    }
   }
   .navbar-nav > .nav-item > .nav-link {
     color: white;
