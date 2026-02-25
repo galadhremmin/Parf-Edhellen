@@ -99,22 +99,26 @@ $link-hover-color-dark:  map-get($dark-theme, "link-hover");
 
 // --- Apply tokens ---
 // Light by default; dark when system prefers it (unless user override)
+// color-scheme must match active theme so native form controls (select, input) render correctly
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
   @include _emit-tokens($light-theme);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-bs-theme="light"]) {
+    color-scheme: dark;
     @include _emit-tokens($dark-theme);
   }
 }
 
 // User override from theme toggle (stored in localStorage)
 :root[data-bs-theme="dark"] {
+  color-scheme: dark;
   @include _emit-tokens($dark-theme);
 }
 :root[data-bs-theme="light"] {
+  color-scheme: light;
   @include _emit-tokens($light-theme);
 }
 
