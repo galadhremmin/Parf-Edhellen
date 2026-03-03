@@ -40,6 +40,7 @@ class EventServiceProvider extends ServiceProvider
         \App\Subscribers\GlossIndexerSubscriber::class,
         \App\Subscribers\SentenceIndexerSubscriber::class,
         \App\Subscribers\QueueJobEventSubscriber::class,
+        \App\Subscribers\EntityViewEventSubscriber::class,
     ];
 
     /**

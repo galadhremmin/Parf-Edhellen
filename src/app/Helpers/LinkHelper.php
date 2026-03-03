@@ -26,6 +26,32 @@ class LinkHelper
         ]);
     }
 
+    public function dictionaryWord(string $word, ?int $languageId = null, ?array $speechIds = null): string
+    {
+        $path = '/w/' . rawurlencode($word);
+
+        if ($languageId !== null && $languageId > 0) {
+            $language = \App\Models\Language::find($languageId);
+            if ($language !== null && ! empty($language->short_name)) {
+                $path .= '/' . rawurlencode($language->short_name);
+            }
+        }
+
+        $queryParts = [];
+        if (is_array($speechIds) && count($speechIds) > 0) {
+            foreach ($speechIds as $id) {
+                $queryParts[] = 'speech_ids[]=' . (int) $id;
+            }
+        }
+
+        $url = url($path);
+        if (count($queryParts) > 0) {
+            $url .= '?' . implode('&', $queryParts);
+        }
+
+        return $url;
+    }
+
     public function lexicalEntry(int $lexicalEntryId)
     {
         return route('gloss.ref', [

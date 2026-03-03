@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Adapters\AuditTrailAdapter;
 use App\Adapters\BookAdapter;
+use App\Helpers\LinkHelper;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Models\AuditTrail;
 use App\Models\LexicalEntry;
@@ -12,8 +13,9 @@ use App\Repositories\ContributionRepository;
 use App\Repositories\Interfaces\IAuditTrailRepository;
 use App\Repositories\SentenceRepository;
 use App\Repositories\StatisticsRepository;
-use Illuminate\Support\Facades\Cache;
+use App\Repositories\TrendingRepository;
 use DateInterval;
+use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
@@ -29,8 +31,13 @@ class HomeController extends Controller
 
     protected StatisticsRepository $_statisticsRepository;
 
+    protected TrendingRepository $_trendingRepository;
+
+    protected LinkHelper $_linkHelper;
+
     public function __construct(IAuditTrailRepository $auditTrail, AuditTrailAdapter $auditTrailAdapter, StatisticsRepository $statisticsRepository,
-        BookAdapter $bookAdapter, SentenceRepository $sentenceRepository, ContributionRepository $contributionRepository)
+        BookAdapter $bookAdapter, SentenceRepository $sentenceRepository, ContributionRepository $contributionRepository,
+        TrendingRepository $trendingRepository, LinkHelper $linkHelper)
     {
         $this->_auditTrail = $auditTrail;
         $this->_auditTrailAdapter = $auditTrailAdapter;
@@ -38,6 +45,8 @@ class HomeController extends Controller
         $this->_sentenceRepository = $sentenceRepository;
         $this->_reviewRepository = $contributionRepository;
         $this->_statisticsRepository = $statisticsRepository;
+        $this->_trendingRepository = $trendingRepository;
+        $this->_linkHelper = $linkHelper;
     }
 
     public function index()
@@ -95,8 +104,28 @@ class HomeController extends Controller
             );
         });
 
+        $trendingSearches = Cache::remember('ed.home.trending', DateInterval::createFromDateString('1 hour'), function () {
+            $items = $this->_trendingRepository->getMostSearchedTerms(7, 5);
+            $result = [];
+            foreach ($items as $item) {
+                $result[] = [
+                    'search_term' => $item['search_term'],
+                    'language_id' => $item['language_id'],
+                    'speech_ids' => $item['speech_ids'],
+                    'url' => $this->_linkHelper->dictionaryWord(
+                        $item['search_term'],
+                        $item['language_id'],
+                        $item['speech_ids']
+                    ),
+                ];
+            }
+
+            return $result;
+        });
+
         $data = $randomSentence + $randomGloss + $statistics + [
             'auditTrails' => $auditTrails,
+            'trendingSearches' => $trendingSearches,
             'background' => $background,
         ];
 

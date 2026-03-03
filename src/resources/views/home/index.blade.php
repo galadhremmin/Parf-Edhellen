@@ -69,6 +69,17 @@
       @include('sentence._random', [ 
         'sentence' => $sentence
       ])
+      <hr class="d-sm-none d-md-block" />
+      @endif
+      @if (isset($trendingSearches) && count($trendingSearches) > 0)
+      <h4>Popular searches</h4>
+      <ul>
+        @foreach ($trendingSearches as $item)
+        <li>
+          <a href="{{ $item['url'] }}">{{ e($item['search_term']) }}</a>
+        </li>
+        @endforeach
+      </ul>
       @endif
     </div>
     <div class="col-xs-12 col-sm-12 col-md-4">

@@ -44,11 +44,6 @@ class BookAdapter
     {
         $numberOfLexicalEntries = count($lexicalEntries);
 
-        // Reverses phonetic approximations
-        if ($word !== null) {
-            $word = StringHelper::reverseNormalization($word);
-        }
-
         // * Optimize by dealing with some edge cases first
         //    - No lexical entry results
         if ($numberOfLexicalEntries < 1) {
