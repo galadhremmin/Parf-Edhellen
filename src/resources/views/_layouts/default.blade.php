@@ -51,7 +51,7 @@
   @endif
   data-v="{{ config('ed.version') }}">
 <div>
-  <nav class="navbar navbar-expand-lg navbar-dark" id="ed-site-main-menu">
+  <nav class="navbar navbar-expand-lg navbar-dark" id="ed-site-main-menu" data-ad-region="no-ads">
     @include('_layouts._menu-main', [
       'storage' => $storage
     ])
@@ -79,7 +79,7 @@
     </main>
   </div>
 </div>
-<footer class="bg-dark text-secondary p-4 d-flex">
+<footer class="bg-dark text-secondary p-4 d-flex" data-ad-region="no-ads">
   <section class="flex-fill w-100">
     <h3 class="fst-italic fs-5">{{ config('ed.title') }}</h3>
     <nav>
