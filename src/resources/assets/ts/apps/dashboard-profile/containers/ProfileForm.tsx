@@ -82,7 +82,7 @@ const ProfileForm = (props: IProps) => {
     };
 
     const _onDismissBackground = () => {
-        void _onSelectBackground({ value: null });
+        setOpenFeatureBackground(false);
     }
 
     const _onSubmit = useCallback(async () => {

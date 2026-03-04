@@ -55,6 +55,65 @@ a {
   text-decoration: none;
 }
 
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-image: url(../img/backgrounds/bilbo_mobile.webp);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  @media (min-width: #{map-get($grid-breakpoints, 'md') + 1}) {
+    background-image: url(../img/backgrounds/bilbo_tablet.webp);
+  }
+  @media (min-width: #{$size-desktop-large-min-width*0.5}) {
+    background-image: url(../img/backgrounds/bilbo_desktop.webp);
+  }
+  @media (min-width: #{map-get($grid-breakpoints, 'lg') + 1}) {
+    background-image: url(../img/backgrounds/bilbo_desktop.webp);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-bs-theme="light"]) body {
+    background-image: url(../img/backgrounds/taniquetil_mobile.webp);
+    background-size: 100%;
+    background-position-y: 0%;
+
+    @media (min-width: #{map-get($grid-breakpoints, 'md') + 1}) {
+      background-image: url(../img/backgrounds/taniquetil_tablet.webp);
+      background-position-y: 0%;
+    }
+    @media (min-width: #{$size-desktop-large-min-width*0.5}) {
+      background-image: url(../img/backgrounds/taniquetil_desktop.webp);
+      background-position-y: 20%;
+    }
+    @media (min-width: #{map-get($grid-breakpoints, 'lg') + 1}) {
+      background-image: url(../img/backgrounds/taniquetil_desktop.webp);
+      background-position-y: 20%;
+    }
+  }
+}
+
+:root[data-bs-theme="dark"] body {
+  background-image: url(../img/backgrounds/taniquetil_mobile.webp);
+  background-size: 100%;
+  background-position-y: 0%;
+
+  @media (min-width: #{map-get($grid-breakpoints, 'md') + 1}) {
+    background-image: url(../img/backgrounds/taniquetil_tablet.webp);
+    background-position-y: 20%;
+  }
+  @media (min-width: #{$size-desktop-large-min-width*0.5}) {
+    background-image: url(../img/backgrounds/taniquetil_desktop.webp);
+    background-position-y: 20%;
+  }
+  @media (min-width: #{map-get($grid-breakpoints, 'lg') + 1}) {
+    background-image: url(../img/backgrounds/taniquetil_desktop.webp);
+    background-position-y: 20%;
+  }
+}
+
 .hidden {
   display: none;
 }
@@ -75,7 +134,7 @@ hr.next-overlaps {
   text-transform: none;
   font-family: $font-family-sans-serif;
   background-size: cover;
-  font-size: 1.05rem;
+  font-size: 1.3rem;
   padding: 0;
   
   > .container {
@@ -114,20 +173,18 @@ hr.next-overlaps {
   }
   .navbar-nav > .nav-item > .nav-link {
     color: white;
+    font-weight: 900;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
-    text-shadow: 1px 1px 2px $primary-border-subtle;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
     &.active {
       background: transparent;
       color: white;
       font-weight: bold;
       text-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 0 0 16px rgba(255, 255, 255, 0.3);
-      // Option 1 (soft box glow): box-shadow: 0 0 12px rgba(255, 255, 255, 0.35); border-radius: $border-radius;
-      // Option 2 (glow + subtle bg): add background: rgba(255, 255, 255, 0.12); box-shadow: 0 0 14px rgba(255, 255, 255, 0.25); border-radius: $border-radius;
     }
   }
   @media (max-width: map-get($grid-breakpoints, 'lg')) {
-    background-image: url(../img/backgrounds/header-sm.jpg);
     padding-top: 0.25rem;
     .navbar-collapse {
       transition: max-height 0.5s ease-in-out;
@@ -183,12 +240,32 @@ hr.next-overlaps {
     border: none;
     color: white;
     cursor: pointer;
-
+    --ed-text-icon: currentColor;
+    // filter on icon wrapper works around mask-image + filter Safari bug
+    .ed-theme-toggle__icon {
+      display: flex;
+      filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.9));
+    }
     .ed-theme-toggle__moon {
       display: none;
     }
     .ed-theme-toggle__sun {
       display: inline-block;
+    }
+    .ed-theme-toggle__label {
+      display: none;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
+    }
+
+    @media (max-width: map-get($grid-breakpoints, 'lg')) {
+      justify-content: flex-start;
+      gap: 0.5rem;
+      margin-top: 0.25rem;
+      margin-bottom: 0.25rem;
+
+      .ed-theme-toggle__label--light {
+        display: inline;
+      }
     }
   }
   // User menu trigger (avatar + nickname/Guest) in top-right
@@ -221,6 +298,7 @@ hr.next-overlaps {
     background-size: cover;
     background-position: center;
     flex-shrink: 0;
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6), 0 0 8px 4px black;
   }
 
   .ed-user-menu-label {
@@ -228,6 +306,7 @@ hr.next-overlaps {
     text-overflow: ellipsis;
     white-space: nowrap;
     max-width: 8rem;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
   }
 
   // Admin dropdown: same styling as user menu
@@ -260,9 +339,7 @@ hr.next-overlaps {
   .ed-user-menu {
     min-width: $size-desktop-user-menu-width;
     z-index: 1050;
-    background: var(--ed-bg-surface);
     border: 1px solid var(--ed-border);
-    box-shadow: 0 0.5rem 1rem var(--ed-shadow-heavy);
     text-transform: none;
 
     .dropdown-item {
@@ -293,12 +370,6 @@ hr.next-overlaps {
       border-color: var(--ed-border);
     }
   }
-  @media (min-width: #{map-get($grid-breakpoints, 'md') + 1}) {
-    background-image: url(../img/backgrounds/header-sm.jpg);
-  }
-  @media (min-width: #{$size-desktop-large-min-width*0.5}) {
-    background-image: url(../img/backgrounds/header-lg.jpg);
-  }
 }
 
 // Light mode: show moon (click to switch to dark). data-bs-theme is on html.
@@ -310,9 +381,26 @@ hr.next-overlaps {
   .ed-theme-toggle__sun {
     display: none;
   }
+
+  @media (max-width: map-get($grid-breakpoints, 'lg')) {
+    .ed-theme-toggle__label--light {
+      display: none;
+    }
+    .ed-theme-toggle__label--dark {
+      display: inline;
+    }
+  }
+}
+
+body > div:first-of-type {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
 }
 
 #ed-site-main {
+  flex: 1 0 auto;
+  background: color-mix(in srgb, var(--bs-body-bg) 95%, transparent);
   > main {
     padding-bottom: 1rem;
   }

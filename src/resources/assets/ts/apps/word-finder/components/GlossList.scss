@@ -1,33 +1,64 @@
-@keyframes ed-word-pulsate {
-    from {
-        text-shadow: #000 0 0 0.1rem;
-    }
-    to {
-        text-shadow: rgb(138, 138, 138) 0 0 0.2rem;
-    }
+@keyframes ed-word-discovered {
+    0%   { background: rgba(40, 167, 69, 0.5); transform: scaleX(1.01); }
+    40%  { background: rgba(40, 167, 69, 0.35); transform: scaleX(1); }
+    100% { background: transparent; }
+}
+
+@keyframes ed-question-sway {
+    0%   { transform: rotate(-12deg); }
+    100% { transform: rotate(12deg); }
 }
 
 .GlossList--glosses {
-    list-style-type: square;
-    padding: 0 0 0 1rem;
+    list-style-type: none;
+    padding: 0;
     margin: 0;
 
     > li {
-        animation: ed-word-pulsate 1.5s infinite alternate;
+        display: flex;
+        align-items: baseline;
+        gap: 0.4em;
         transition: opacity 1s;
+        border-radius: 0.2rem;
         &.discovered {
             opacity: 0.8;
-            animation: none;
+            animation: ed-word-discovered 1.4s ease-out forwards;
+        }
+        .bullet {
+            flex-shrink: 0;
+            line-height: 1;
+            .icon-unknown {
+                animation: ed-question-sway 1.2s ease-in-out infinite alternate;
+                display: inline-block;
+                transform-origin: top center;
+                opacity: 0.7;
+            }
+            .icon-discovered {
+                color: #28a745;
+            }
         }
         .word {
             font-weight: bold;
             > a {
                 text-transform: none;
-                color: white;
                 text-decoration: none;
                 span {
                     pointer-events: none;
                 }
+            }
+        }
+        .letter-slots {
+            display: inline-flex;
+            gap: 2px;
+            vertical-align: middle;
+            margin-left: 0.3em;
+
+            .slot {
+                display: inline-block;
+                width: 0.6em;
+                height: 1em;
+                border-bottom: 2px solid var(--ed-text-muted);
+                opacity: 0.7;
             }
         }
     }

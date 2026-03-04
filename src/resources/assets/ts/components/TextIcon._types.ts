@@ -38,6 +38,7 @@ type BootstrapIcons = 'arrow-down' |
 'login' |
 'moon' |
 'person' |
+'question' |
 'rss' |
 'sun';
 

@@ -3,6 +3,7 @@ import { formatDateTimeFull, fromISOToDate } from './utilities/DateTime';
 import inject from './Injector';
 import setupContainer from './di/config';
 import bootstrapServerSideRenderedBootstrapComponents from './utilities/BootstrapBootstrapper';
+import { GlobalEventLoadReference } from './config';
 
 import './components/Tengwar.scss'; // Tengwar is scattered across the website, so this will ensure all will render appropriately.
 import './index.scss';
@@ -45,10 +46,34 @@ function renderDates() {
     }
 }
 
+function initPopularSearches() {
+    const list = document.getElementById('popular-searches');
+    if (!list) {
+        return;
+    }
+
+    list.addEventListener('click', (e) => {
+        const link = (e.target as Element).closest<HTMLAnchorElement>('a[data-word]');
+        if (!link) {
+            return;
+        }
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent(GlobalEventLoadReference, {
+            detail: {
+                word: link.dataset.word,
+                normalizedWord: link.dataset.word,
+                languageShortName: link.dataset.languageShortName ?? '',
+                updateBrowserHistory: true,
+            },
+        }));
+    });
+}
+
 function globalOrchestration() {
     setupContainer();
     bootstrapServerSideRenderedBootstrapComponents();
     renderDates();
+    initPopularSearches();
     inject().catch(error => {
         console.error('Application bootstrapping failed.', error);
     });

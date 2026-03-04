@@ -11,9 +11,9 @@
 
   @if ($statistics && $statistics['_total'] > 0)
   <p>
-    You have been here before! You have reviewed <strong>{{ $statistics['_total'] }}</strong> cards, 
-    <strong>{{ $statistics['_total_correct'] }}</strong> of which you answered correctly 
-    ({{ round($statistics['_total_correct'] / $statistics['_total'] * 100, 0) }} %).
+    You have been here before! You have reviewed <strong>@number($statistics['_total'])</strong> cards, 
+    <strong>@number($statistics['_total_correct'])</strong> of which you answered correctly 
+    (@number(round($statistics['_total_correct'] / $statistics['_total'] * 100, 0)) %).
   </p>
   @endif
 
@@ -35,9 +35,9 @@
       @if ($statistics && isset($statistics[$flashcard->language->name]))
       <footer>
         @if ($statistics && isset($statistics[$flashcard->language->name]))
-          You have reviewed <strong>{{ $statistics[$flashcard->language->name]['total'] }}</strong> cards,
-          <strong>{{ $statistics[$flashcard->language->name]['correct'] }}</strong> of which you answered correctly 
-          ({{ round($statistics[$flashcard->language->name]['correct'] / $statistics[$flashcard->language->name]['total'] * 100, 0) }} %).
+          You have reviewed <strong>@number($statistics[$flashcard->language->name]['total'])</strong> cards,
+          <strong>@number($statistics[$flashcard->language->name]['correct'])</strong> of which you answered correctly 
+          (@number(round($statistics[$flashcard->language->name]['correct'] / $statistics[$flashcard->language->name]['total'] * 100, 0)) %).
           <a href="{{ route('flashcard.list', ['id' => $flashcard->id]) }}">Review performance</a>
         @endif
       </footer>
