@@ -186,11 +186,60 @@ class AccountApiController extends Controller
 
         $account = $this->getAuthorizedAccount($request, $accountId);
         $account->feature_background_url = $file;
+        $account->feature_background_mobile_url = null;
         $account->save();
 
         return [
             'account_id' => $account->id,
             'feature_background_url' => $file,
+            'feature_background_mobile_url' => null,
+        ];
+    }
+
+    public function uploadFeatureBackground(Request $request, int $accountId)
+    {
+        $request->validate([
+            'background' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:8192',
+        ]);
+
+        $account = $this->getAuthorizedAccount($request, $accountId);
+        $file = $request->file('background');
+
+        if (! $file->isValid()) {
+            abort(400, 'Bad background image.');
+        }
+
+        $desktopPath = $this->_storageHelper->getCustomFeatureBackgroundPath($accountId);
+        $mobilePath = $this->_storageHelper->getCustomFeatureBackgroundMobilePath($accountId);
+        $desktopWidth = config('ed.background_width');
+        $mobileWidth = config('ed.background_mobile_width');
+
+        Storage::makeDirectory('public/profile-backgrounds');
+
+        try {
+            $image = Image::make($file->getRealPath());
+            $image->resize($desktopWidth, null, function ($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            })->save($desktopPath);
+
+            $image = Image::make($file->getRealPath());
+            $image->resize($mobileWidth, null, function ($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            })->save($mobilePath);
+
+            $account->feature_background_url = $this->_storageHelper->getCustomFeatureBackgroundUrl($accountId);
+            $account->feature_background_mobile_url = $this->_storageHelper->getCustomFeatureBackgroundMobileUrl($accountId);
+            $account->save();
+        } finally {
+            unlink($file->path());
+        }
+
+        return [
+            'account_id' => $account->id,
+            'feature_background_url' => $account->feature_background_url,
+            'feature_background_mobile_url' => $account->feature_background_mobile_url,
         ];
     }
 

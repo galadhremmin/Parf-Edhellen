@@ -17,6 +17,7 @@ function Profile(props: IProps) {
         avatarPath,
         id,
         featureBackgroundUrl,
+        featureBackgroundMobileUrl,
         nickname,
         profile,
         tengwar,
@@ -38,7 +39,8 @@ function Profile(props: IProps) {
     return <div className="Profile--container">
         <JumbotronOrHeader className={showJumbotron ? 'with-background' : ''}
             isJumbotron={showJumbotron}
-            backgroundImageUrl={featureBackgroundUrl}>
+            backgroundImageUrl={featureBackgroundUrl}
+            backgroundMobileImageUrl={featureBackgroundMobileUrl}>
             <Avatar path={avatarPath} />
             <h1>{nickname}</h1>
             {tengwar && <Tengwar as="h2" text={tengwar} />}

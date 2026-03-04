@@ -5,6 +5,9 @@ export const ApiValidationFailedStatusCode = 422;
 export const AvatarMaximiumFileSize = Math.pow(1024,2)/2;
 export const AvatarMaximumImageWidthInPixels = 160;
 
+export const BackgroundMaximumFileSize = Math.pow(1024, 2) * 2; // 2 MB
+export const BackgroundMaximumImageWidthInPixels = 1920;
+
 export const ApplicationGlobalPrefix = 'ed';
 export const LocalStorageLanguages = 'ed.languages';
 

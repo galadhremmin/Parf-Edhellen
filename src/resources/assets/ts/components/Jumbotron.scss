@@ -19,4 +19,12 @@ div.Jumbotron {
             text-shadow: #000 0.1rem 0 1rem;
         }
     }
+
+    &.has-custom-background {
+        background-image: var(--bg-desktop);
+
+        @media (max-width: map-get($grid-breakpoints, 'md')) {
+            background-image: var(--bg-mobile);
+        }
+    }
 }

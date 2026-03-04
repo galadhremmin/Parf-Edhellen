@@ -100,6 +100,7 @@
 
 <div id="ed-eu-consent"></div>
 
+<script type="text/javascript" src="@assetpath(runtime.js)"></script>
 <script type="text/javascript" src="@assetpath(index.js)"></script>
 
 @yield('scripts')

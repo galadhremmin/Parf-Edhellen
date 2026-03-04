@@ -9,6 +9,7 @@ export interface IAccountEntity {
     profile?: string;
     tengwar?: string;
     featureBackgroundUrl?: string;
+    featureBackgroundMobileUrl?: string;
 }
 
 export interface ILexicalEntryEntity {

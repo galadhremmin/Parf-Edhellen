@@ -15,17 +15,17 @@ const clientConfig = merge(
                     parallel: true,
                     terserOptions: {
                         keep_classnames: true,
-                        keep_fnames: true,
+                        keep_fnames: false,
                         mangle: {
                             reserved: ['Glaemscribe'],
                         }
                     },
                 }),
                 new CssMinimizerPlugin({
-            minimizerOptions: {
-                preset: ['default', { calc: false }],
-            },
-        }),
+                    minimizerOptions: {
+                        preset: ['default', { calc: false }],
+                    },
+                }),
             ],
         },
     },

@@ -47,6 +47,12 @@ export interface ISaveFeatureBackgroundRequest {
 export interface ISaveFeatureBackgroundResponse {
     accountId: number;
     featureBackgroundUrl: string;
+    featureBackgroundMobileUrl?: string;
+}
+
+export interface IUploadFeatureBackgroundRequest {
+    accountId: number;
+    file: File;
 }
 
 export interface ISaveProfileRequest {
@@ -105,5 +111,6 @@ export default interface IAccountApi {
     getFeatureBackgrounds(): Promise<IGetFeatureBackgroundsResponse>;
     saveAvatar(args: ISaveAvatarRequest): Promise<ISaveAvatarResponse>;
     saveFeatureBackground(args: ISaveFeatureBackgroundRequest): Promise<ISaveFeatureBackgroundResponse>;
+    uploadFeatureBackground(args: IUploadFeatureBackgroundRequest): Promise<ISaveFeatureBackgroundResponse>;
     saveProfile(args: ISaveProfileRequest): Promise<ISaveProfileResponse>;
 }
