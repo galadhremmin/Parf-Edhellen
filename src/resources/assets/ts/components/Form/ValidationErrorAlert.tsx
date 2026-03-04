@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import StaticAlert from '../StaticAlert';
 import TextIcon from '../TextIcon';
 import type { IProps } from './ValidationErrorAlert._types';
+import ValidationError from '@root/connectors/ValidationError';
 
 function ValidationErrorAlert(props: IProps) {
     const {
@@ -19,6 +20,13 @@ function ValidationErrorAlert(props: IProps) {
         return <StaticAlert type="danger">
             <TextIcon icon="warning-sign" />
             {` ${error}`}
+        </StaticAlert>;
+    }
+
+    if (! (error instanceof ValidationError)) {
+        return <StaticAlert type="danger">
+            <TextIcon icon="warning-sign" />
+            {` ${error.message}`}
         </StaticAlert>;
     }
 

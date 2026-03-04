@@ -19,6 +19,10 @@ return [
     // maximimum avatar size
     'avatar_size' => env('ED_MAX_AVATAR_SIZE', 100),
 
+    // maximum background widths for custom uploads
+    'background_width' => env('ED_MAX_BACKGROUND_WIDTH', 1920),
+    'background_mobile_width' => env('ED_MAX_BACKGROUND_MOBILE_WIDTH', 768),
+
     // maximum characters in the account field
     'max_nickname_length' => env('ED_MAX_NICKNAME_LENGTH', 64),
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\EntityViewed;
 use App\Http\Controllers\Abstracts\BookBaseController;
 use App\Http\Controllers\Traits\CanGetLanguage;
 use App\Models\LexicalEntryGroup;
@@ -35,6 +36,8 @@ class BookController extends BookBaseController
         if (count($entities['entities']['sections']) === 0) {
             abort(404);
         }
+
+    event(new EntityViewed((int) $groupId, $v, $entities));
 
         return view('book.page', [
             'payload' => $entities,

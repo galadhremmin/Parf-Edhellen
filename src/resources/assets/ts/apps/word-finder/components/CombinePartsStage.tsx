@@ -4,7 +4,7 @@ import {
     useEffect,
     useRef,
 } from 'react';
-import type { MouseEvent } from 'react';
+import type { CSSProperties, MouseEvent } from 'react';
 
 import { fireEvent } from '@root/components/Component';
 import Quote from '@root/components/Quote';
@@ -23,13 +23,17 @@ function CombinePartsStage(props: IProps) {
     const {
         parts,
         selectedParts,
+        hintPartId,
+        hintsRemaining,
 
         onChangeStage,
         onDeselectPart,
+        onHint,
         onSelectPart,
     } = props;
 
     const partsRef = useRef<HTMLDivElement>();
+    const undoButtonRef = useRef<HTMLButtonElement | null>(null);
 
     useEffect(() => {
         partsRef.current?.querySelector('button')?.focus();
@@ -52,6 +56,12 @@ function CombinePartsStage(props: IProps) {
 
     const _onUndo = useCallback(() => {
         if (! selectedParts.length) {
+            const btn = undoButtonRef.current;
+            if (btn) {
+                btn.classList.remove('shaking');
+                void btn.offsetWidth; // force reflow to re-trigger animation
+                btn.classList.add('shaking');
+            }
             return;
         }
 
@@ -75,22 +85,33 @@ function CombinePartsStage(props: IProps) {
         </div>
         <div className="CombinePartsStage__parts">
             <div className="choices" ref={partsRef}>
-                {parts.filter(p => p.available).map((p) => <button key={p.id}
-                    className={classNames('btn btn-secondary', { 'disabled': p.selected })}
+                {parts.filter(p => p.available).map((p, index) => <button key={p.id}
+                    className={classNames('btn btn-secondary', { 'disabled': p.selected, 'hint': p.id === hintPartId })}
                     data-part-id={p.id}
-                    onClick={_onSelectPart}>
+                    onClick={_onSelectPart}
+                    style={{ '--tile-delay': `${index * 0.04}s` } as CSSProperties}>
                         {p.part.trim()}
                 </button>)}
             </div>
-            <div className={classNames('undo-button', { 'opacity-25': selectedParts.length === 0 })}>
-                <button className="btn btn-secondary" onClick={_onUndo}>
-                    {'Undo '}
-                    {selectedParts.length > 0 && <Quote>{parts[selectedParts[selectedParts.length - 1]]?.part}</Quote>}
-                </button>
+            <div className="action-row">
+                <div className="undo-button">
+                    <button className={classNames('btn btn-secondary', { 'opacity-25': selectedParts.length === 0 })}
+                        ref={undoButtonRef}
+                        onClick={_onUndo}>
+                        {'← Undo '}
+                        {selectedParts.length > 0 && <Quote>{parts[selectedParts[selectedParts.length - 1]]?.part}</Quote>}
+                    </button>
+                </div>
+                <div className="hint-button">
+                    {hintsRemaining > 0
+                        ? <button className="btn btn-outline-secondary" onClick={onHint}>
+                            Hint ({hintsRemaining} left)
+                          </button>
+                        : <button className="btn btn-outline-secondary" disabled>
+                            No hints left
+                          </button>}
+                </div>
             </div>
-        </div>
-        <div className="CombinePartsStage__tips">
-            Are you stuck? <a href="#">Ask for a tip!</a>
         </div>
     </div>;
 }

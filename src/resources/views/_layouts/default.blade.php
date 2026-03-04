@@ -51,7 +51,7 @@
   @endif
   data-v="{{ config('ed.version') }}">
 <div>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="ed-site-main-menu">
+  <nav class="navbar navbar-expand-lg navbar-dark" id="ed-site-main-menu">
     @include('_layouts._menu-main', [
       'storage' => $storage
     ])
@@ -100,6 +100,7 @@
 
 <div id="ed-eu-consent"></div>
 
+<script type="text/javascript" src="@assetpath(runtime.js)"></script>
 <script type="text/javascript" src="@assetpath(index.js)"></script>
 
 @yield('scripts')

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api\v3;
 
+use App\Events\EntityViewed;
 use App\Helpers\StringHelper;
 use App\Http\Controllers\Abstracts\BookBaseController;
 use App\Models\LexicalEntryGroup;
 use App\Models\Language;
+use App\Repositories\ValueObjects\SearchIndexSearchValue;
 use App\Models\Word;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -110,12 +112,13 @@ class BookApiController extends BookBaseController
      */
     public function entities(Request $request, int $groupId, $entityId = 0): array
     {
-        $entities = [];
         if ($entityId !== 0) {
-            $entities = $this->getEntity($groupId, $entityId);
-        } else {
-            $entities = $this->findMatchingEntities($request, $groupId);
+            return $this->getEntity($groupId, $entityId);
         }
+
+        $v = $this->validateFindRequest($request);
+        $entities = $this->findMatchingEntities($request, $groupId, $v);
+        event(new EntityViewed($groupId, $v, $entities));
 
         return $entities;
     }
@@ -145,9 +148,9 @@ class BookApiController extends BookBaseController
     /**
      * Finds the matching entities with the search query parameters in the request.
      */
-    private function findMatchingEntities(Request $request, int $groupId)
+    private function findMatchingEntities(Request $request, int $groupId, ?SearchIndexSearchValue $v = null): array
     {
-        $v = $this->validateFindRequest($request);
+        $v = $v ?? $this->validateFindRequest($request);
 
         return Cache::remember('ed.entities.'.$groupId.'.'.$v->hashCode(), DateInterval::createFromDateString('1 day'), //
             fn () => $this->_searchIndexRepository->resolveIndexToEntities($groupId, $v));

@@ -12,7 +12,7 @@
     to the fictional languages in Tolkien's legendarium. 
   </p>
   <p class="home-hero__hint">
-    Explore <strong>{{ number_format($noOfWords, 0, '.') }}</strong> words and <strong>{{ $noOfSentences }}</strong> phrases across Sindarin, Quenya, and more.
+    Explore <strong>@number($noOfWords)</strong> words and <strong>@number($noOfSentences)</strong> phrases across Sindarin, Quenya, and more.
   </p>
 </header>
 @endsection
@@ -31,12 +31,12 @@
         more <a href="{{ route('about') }}">on our about page</a>.
       </p>
       <p>
-        The dictionary contains <strong>{{ $noOfWords }}</strong> words, 
-        <strong>{{ $noOfLexicalEntries }}</strong> active glosses and
-        <strong>{{ $noOfSentences }}</strong> phrases.
-        The community has posted <strong>{{ $noOfPosts }}</strong> comments, 
-        finished <strong>{{ $noOfFlashcards }}</strong> flashcards and 
-        given <strong>{{ $noOfThanks }}</strong> thanks. You can access more
+        The dictionary contains <strong>@number($noOfWords)</strong> words, 
+        <strong>@number($noOfLexicalEntries)</strong> active glosses and
+        <strong>@number($noOfSentences)</strong> phrases.
+        The community has posted <strong>@number($noOfPosts)</strong> comments, 
+        finished <strong>@number($noOfFlashcards)</strong> flashcards and 
+        given <strong>@number($noOfThanks)</strong> thanks. You can access more
         statistics by going to <a href="{{ route('discuss.members') }}">Contributors</a>.
       </p>
       <p>
@@ -69,6 +69,20 @@
       @include('sentence._random', [ 
         'sentence' => $sentence
       ])
+      <hr class="d-sm-none d-md-block" />
+      @endif
+      @if (isset($trendingSearches) && count($trendingSearches) > 0)
+      <h4>Popular searches</h4>
+      <ul id="popular-searches">
+        @foreach ($trendingSearches as $item)
+        <li>
+          <a href="{{ $item['url'] }}"
+             data-word="{{ e($item['search_term']) }}"
+             data-language-short-name="{{ e($item['language_short_name'] ?? '') }}">{{ e($item['search_term']) }}</a>
+          (@number($item['view_count']))
+        </li>
+        @endforeach
+      </ul>
       @endif
     </div>
     <div class="col-xs-12 col-sm-12 col-md-4">

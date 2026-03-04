@@ -16,6 +16,7 @@ import type {
     ISaveFeatureBackgroundResponse,
     ISaveProfileRequest,
     ISaveProfileResponse,
+    IUploadFeatureBackgroundRequest,
 } from './IAccountApi';
 
 export default class AccountApiConnector implements IAccountApi {
@@ -50,6 +51,12 @@ export default class AccountApiConnector implements IAccountApi {
             featureBackgroundUrl: args.featureBackgroundUrl,
         };
         return this._api.put<ISaveFeatureBackgroundRequest>(`account/background/edit/${args.accountId}`, formData);
+    }
+
+    public uploadFeatureBackground(args: IUploadFeatureBackgroundRequest): Promise<ISaveFeatureBackgroundResponse> {
+        const formData = new FormData();
+        formData.append('background', args.file, args.file.name);
+        return this._api.post<ISaveFeatureBackgroundResponse>(`account/background/upload/${args.accountId}`, formData);
     }
 
     public saveProfile(args: ISaveProfileRequest) {

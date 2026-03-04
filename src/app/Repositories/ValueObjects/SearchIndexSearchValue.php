@@ -10,7 +10,7 @@ class SearchIndexSearchValue implements \JsonSerializable
     {
         $this->initializeAll($properties, [
             'lexical_entry_group_ids', 'inflections', 'include_old', 'language_id', 
-            'speech_ids', 'word', 'natural_language',
+            'speech_ids', 'word', 
         ], /* required: */ false);
     }
 
@@ -42,16 +42,7 @@ class SearchIndexSearchValue implements \JsonSerializable
 
     public function getNaturalLanguage()
     {
-        $v = $this->getValue('natural_language');
-
-        return $v ? $v : false;
-    }
-
-    public function getReversed()
-    {
-        $v = $this->getValue('reversed');
-
-        return $v ? $v : false;
+        return false;
     }
 
     public function getSpeechIds()

@@ -29,6 +29,7 @@ const ProfileForm = (props: IProps) => {
 
     const [ avatarPath, setAvatarPath ] = useState(() => account.avatarPath || AnonymousAvatarPath);
     const [ featureBackground, setFeatureBackground ] = useState(account.featureBackgroundUrl || null);
+    const [ featureBackgroundMobile, setFeatureBackgroundMobile ] = useState(account.featureBackgroundMobileUrl || null);
     const [ introduction, setIntroduction ] = useState(() => account.profile || '');
     const [ nickname, setNickname ] = useState(() => account.nickname || '');
     const [ tengwar, setTengwar ] = useState(() => account.tengwar || '');
@@ -74,6 +75,29 @@ const ProfileForm = (props: IProps) => {
             });
 
             setFeatureBackground(response.featureBackgroundUrl);
+            setFeatureBackgroundMobile(null);
+        } catch (e) {
+            setErrors(e);
+        } finally {
+            setOpenFeatureBackground(false);
+        }
+    };
+
+    const _onUploadBackground = async (ev: IComponentEvent<File>) => {
+        try {
+            const response = await accountApi.uploadFeatureBackground({
+                accountId,
+                file: ev.value,
+            });
+
+            setFeatureBackground(featureBackground === response.featureBackgroundUrl //
+                ? URL.createObjectURL(ev.value) // force a refresh of the image
+                : response.featureBackgroundUrl ?? null,
+            );
+            setFeatureBackgroundMobile(featureBackgroundMobile === response.featureBackgroundMobileUrl //
+                ? URL.createObjectURL(ev.value) // force a refresh of the image
+                : response.featureBackgroundMobileUrl ?? null,
+            );
         } catch (e) {
             setErrors(e);
         } finally {
@@ -82,7 +106,7 @@ const ProfileForm = (props: IProps) => {
     };
 
     const _onDismissBackground = () => {
-        void _onSelectBackground({ value: null });
+        setOpenFeatureBackground(false);
     }
 
     const _onSubmit = useCallback(async () => {
@@ -91,7 +115,7 @@ const ProfileForm = (props: IProps) => {
                 accountId,
                 introduction,
                 nickname,
-                tengwar,
+                tengwar, 
             });
 
             setErrors(null);
@@ -103,7 +127,7 @@ const ProfileForm = (props: IProps) => {
 
     return <>
         <ValidationErrorAlert error={errors} />
-        <Jumbotron className="InformationForm--avatar-form" backgroundImageUrl={featureBackground}>
+        <Jumbotron className="InformationForm--avatar-form" backgroundImageUrl={featureBackground} backgroundMobileImageUrl={featureBackgroundMobile}>
             <AvatarForm path={avatarPath}
                         onAvatarChange={_onAvatarChange}
             />
@@ -127,6 +151,7 @@ const ProfileForm = (props: IProps) => {
         <FeatureBackgroundDialog open={openFeatureBackground}
             accountApi={accountApi}
             onSelectBackground={_onSelectBackground}
+            onUploadBackground={_onUploadBackground}
             onDismiss={_onDismissBackground}
         />
     </>;

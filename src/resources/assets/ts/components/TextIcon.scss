@@ -144,6 +144,9 @@
     &.TextIcon--person {
         @include mask-image-compatible("~bootstrap-icons/icons/person.svg");
     }
+    &.TextIcon--question {
+        @include mask-image-compatible("~bootstrap-icons/icons/question-circle.svg");
+    }
     &.TextIcon--rss {
         @include mask-image-compatible("~bootstrap-icons/icons/rss.svg");
     }

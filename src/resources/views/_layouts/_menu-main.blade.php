@@ -24,10 +24,10 @@
           @lang('discuss.title')
         </a>
       </li>
+      @include('_layouts._menu-theme-toggle')
     </ul>
     <ul class="navbar-nav ms-auto">
       @include('_layouts._menu-admin-dropdown')
-      @include('_layouts._menu-theme-toggle')
       @include('_layouts._menu-user-dropdown', [
         'storage' => $storage
       ])

@@ -58,7 +58,8 @@
     background: var(--ed-bg-elevated);
     border-radius: 10px;
     padding: 10px;
-    box-shadow: 0px 0px 5px 0px var(--ed-shadow-heavy);
+    box-shadow: var(--bs-box-shadow-lg);
+    border: var(--bs-border-width) solid var(--bs-border-color);
   }
 
   header h1 {
@@ -112,7 +113,12 @@
 .alert {
     margin-top: 2em;
 }
-
+.flashcard-container {
+  > aside {
+    max-width: 50rem;
+    margin: 0 auto 2rem auto;
+  }
+}
 /*
 @media (min-width: $screen-sm-min) {
   .flashcard-container {

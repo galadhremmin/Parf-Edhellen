@@ -33,4 +33,7 @@ export interface IStageProps extends IStageEvents {
     onChangeStage?: ComponentEventHandler<GameStage>;
     startTime?: number;
     time?: number;
+    hintPartId?: number | null;
+    hintsRemaining?: number;
+    onHint?: () => void;
 }

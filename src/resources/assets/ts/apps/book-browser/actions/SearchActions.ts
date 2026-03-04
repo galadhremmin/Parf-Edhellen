@@ -161,7 +161,7 @@ export default class SearchActions {
     }
 
     /**
-     * Loads entities asspcoated with the specified arguments, including (but not necessarily related to) the glossary.
+     * Loads entities associated with the specified arguments, including (but not necessarily related to) the glossary.
      * @param args Search action arguments
      */
     public expandSearchResult(args: IExpandSearchResultAction) {

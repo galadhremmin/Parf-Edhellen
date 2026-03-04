@@ -10,3 +10,25 @@ a {
         border: 0.25rem solid $primary;
     }
 }
+
+.FeatureBackgroundDialog--dropzone {
+    border: 0.125rem dashed var(--ed-text-faint);
+    border-radius: 0.5rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+    color: var(--ed-text-faint);
+
+    input[type="file"] {
+        display: none;
+    }
+
+    &:hover,
+    &.FeatureBackgroundDialog--dropzone__active {
+        border-color: $primary;
+        background-color: rgba($primary, 0.05);
+        color: $primary;
+    }
+}

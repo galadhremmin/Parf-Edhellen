@@ -3,20 +3,35 @@
 
 .WordFinder--container {
     padding: 1rem;
-    background-color: #355166;
-    background-image: url(../../../../img/word-finder-background.jpg);
-    background-size: cover;
 }
 
 .WordFinder {
     max-width: 360px;
     min-height: 520px;
     margin: 0 auto;
-    color: white;
 }
 
 .WordFinder__timer {
     float: right;
     font-size: 0.8rem;
     font-family: $font-family-tiny;
+}
+
+.WordFinder__progress {
+    display: flex;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+}
+
+.WordFinder__pip {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    border: 2px solid var(--ed-text-muted);
+    transition: background 0.4s, border-color 0.4s;
+
+    &.WordFinder__pip--found {
+        background: #28a745;
+        border-color: #28a745;
+    }
 }

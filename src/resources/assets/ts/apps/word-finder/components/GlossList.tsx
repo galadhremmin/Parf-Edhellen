@@ -4,6 +4,7 @@ import type { MouseEvent } from 'react';
 
 import Quote from '@root/components/Quote';
 import Tengwar from '@root/components/Tengwar';
+import TextIcon from '@root/components/TextIcon';
 import type { IProps } from './GlossList._types';
 
 import { withPropInjection } from '@root/di';
@@ -28,10 +29,15 @@ function GlossList(props: IProps) {
 
     return <ul className="GlossList--glosses">
         {glosses.map((g) => <li key={g.gloss} className={classNames({ discovered: ! g.available })}>
+            <span className="bullet">
+                {g.available
+                    ? <TextIcon icon="question" className="icon-unknown" />
+                    : <TextIcon icon="ok" className="icon-discovered" />}
+            </span>
             {! g.available && <span className="word">
                 <Quote>
                     <a href="#"
-                        data-gloss-id={g.id}
+                        data-lexical-entry-id={g.id}
                         onClick={_onWordOpen}
                         title={`Read more about ${g.word}.`}>
                         {g.word}
@@ -43,7 +49,9 @@ function GlossList(props: IProps) {
             </span>}
             <span className="gloss">
                 {g.gloss}{' '}
-                {g.available && `(${g.wordLength} letters)`}
+                {g.available && <span className="letter-slots" aria-label={`${g.wordLength} letters`}>
+                    {Array.from({ length: g.wordLength }, (_, i) => <span key={i} className="slot" />)}
+                </span>}
             </span>
         </li>)}
     </ul>;

@@ -43,6 +43,8 @@ const clientConfig = {
   },
   optimization: {
     chunkIds: 'deterministic',
+    runtimeChunk: 'single',
+    usedExports: true,
     splitChunks: {
       chunks: 'async',
       cacheGroups: {
@@ -73,6 +75,7 @@ const clientConfig = {
           test: /\/node_modules\/(recharts|d3|lodash|core\-js)/,
           priority: 30,
           reuseExistingChunk: true,
+          name: 'recharts',
         },
         common: {
           name: 'common',
@@ -84,6 +87,7 @@ const clientConfig = {
           test: /[\\/]node_modules[\\/]/,
           priority: -20,
           reuseExistingChunk: true,
+          name: 'lib',
         },
         default: false,
       },
@@ -121,12 +125,17 @@ const clientConfig = {
           },
         }],
       },
-      { 
-        test: /\.tsx?$/, 
+      {
+        test: /\.tsx?$/,
         use: [{
-          loader: 'ts-loader',
+          loader: 'swc-loader',
           options: {
-            configFile: path.resolve(__dirname, 'tsconfig.json'),
+            jsc: {
+              parser: { syntax: 'typescript', tsx: true },
+              transform: { react: { runtime: 'automatic' } },
+              target: 'es2020',
+            },
+            sourceMaps: false,
           },
         }],
       },
@@ -178,7 +187,7 @@ const clientConfig = {
       // Options similar to the same options in webpackOptions.output
       // both options are optional
       filename: '[name].css',
-      chunkFilename: '[name].[contenthash].css',
+      chunkFilename: '[name].css',
       ignoreOrder: true,
     }),
     // new AsyncChunkNames(),
@@ -237,12 +246,21 @@ const serverConfig = {
           },
         }],
       },
-      { 
-        test: /\.tsx?$/, 
+      {
+        test: /\.tsx?$/,
         use: [{
-          loader: 'ts-loader',
+          loader: 'swc-loader',
           options: {
-            configFile: path.resolve(__dirname, 'tsconfig.server.json'),
+            jsc: {
+              parser: { syntax: 'typescript', tsx: true, decorators: true },
+              transform: {
+                react: { runtime: 'automatic' },
+                decoratorMetadata: true,
+              },
+              target: 'es2018',
+            },
+            module: { type: 'commonjs' },
+            sourceMaps: false,
           },
         }],
       },
@@ -290,7 +308,7 @@ const serverConfig = {
       ignoreOrder: true,
     }),
     // new BundleAnalyzerPlugin(),
-    new CircularDependencyPlugin({
+    !isProduction && new CircularDependencyPlugin({
       // exclude detection of files based on a RegExp
       exclude: /node_modules/,
       // add errors to webpack instead of warnings

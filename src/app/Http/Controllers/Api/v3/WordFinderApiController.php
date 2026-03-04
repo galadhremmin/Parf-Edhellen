@@ -36,7 +36,7 @@ class WordFinderApiController extends Controller
                 ->where('translation', '<>', DB::raw('word'))
                 ->whereNot('word', 'LIKE', '?%')
                 ->inRandomOrder()
-                ->select('translation as gloss', 'word', 'glosses.id')
+                ->select('translation as gloss', 'word', 'lexical_entries.id')
                 ->first();
 
             if ($lexicalEntry === null) {

@@ -45,4 +45,24 @@ class StorageHelper
 
         return Storage::exists('public/profile-feature-backgrounds/'.$file);
     }
+
+    public function getCustomFeatureBackgroundPath(int $accountId): string
+    {
+        return Storage::path(sprintf('public/profile-backgrounds/%d.png', $accountId));
+    }
+
+    public function getCustomFeatureBackgroundMobilePath(int $accountId): string
+    {
+        return Storage::path(sprintf('public/profile-backgrounds/%d_mobile.png', $accountId));
+    }
+
+    public function getCustomFeatureBackgroundUrl(int $accountId): string
+    {
+        return Storage::url(sprintf('profile-backgrounds/%d.png', $accountId));
+    }
+
+    public function getCustomFeatureBackgroundMobileUrl(int $accountId): string
+    {
+        return Storage::url(sprintf('profile-backgrounds/%d_mobile.png', $accountId));
+    }
 }

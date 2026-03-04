@@ -48,6 +48,9 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('date', function ($expression) {
             return '<?php echo(resolve(\App\Helpers\BladeHelper::class)->createTimeTag('.$expression.')); ?>';
         });
+        Blade::directive('number', function ($expression) {
+            return '<?php echo(number_format('.$expression.', 0, \'.\', \',\')); ?>';
+        });
         Blade::directive('assetpath', function (string $filePath) {
             $root = '/v'.config('ed.version');
 

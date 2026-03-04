@@ -22,6 +22,7 @@ class Kernel extends ConsoleKernel
         Commands\ImportDictionaryCommand::class,
         Commands\ImportEldamoCommand::class,
         Commands\ImportProfileFeatureBackground::class,
+        Commands\PruneSearchViewEventsCommand::class,
         Commands\RefreshSearchIndexFromKeywordsCommand::class,
         Commands\RefreshSearchIndexFromGlossesCommand::class,
         Commands\RefreshDiscussIndexesCommand::class,
@@ -66,6 +67,10 @@ class Kernel extends ConsoleKernel
             }) //
             ->name('Cleanup expired WebAuthn sessions.') //
             ->hourly();
+
+        $schedule->command('ed:prune-search-view-events') //
+            ->daily() //
+            ->name('Prune search view events older than retention period');
     }
 
     /**
