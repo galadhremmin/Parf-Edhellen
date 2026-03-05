@@ -1,6 +1,8 @@
 @extends('_layouts.default')
 
 @section('title', ucfirst($payload['word']))
+@section('description', __('glossary.description', ['word' => ucfirst($payload['word'])]))
+@section('og_type', 'article')
 
 @section('body')
 <div id="ed-book-for-bots">

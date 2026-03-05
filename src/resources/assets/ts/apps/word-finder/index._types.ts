@@ -36,4 +36,5 @@ export interface IStageProps extends IStageEvents {
     hintPartId?: number | null;
     hintsRemaining?: number;
     onHint?: () => void;
+    rejectFragmentKey?: number;
 }

@@ -73,7 +73,7 @@ $minimap-max-height: calc(100vh - #{$size-desktop-menu-height} - 3rem);
     white-space: nowrap;
 
     &:hover {
-      color: $primary;
+      color: var(--ed-link);
       border-color: var(--ed-border-light);
     }
   }
@@ -128,25 +128,6 @@ $minimap-max-height: calc(100vh - #{$size-desktop-menu-height} - 3rem);
     padding: 0;
   }
 
-  // White gradient at the bottom to hint at scrollable content
-  &::after {
-    content: '';
-    position: sticky;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    display: block;
-    height: 2.5rem;
-    background: linear-gradient(to bottom, var(--ed-overlay-gradient-start) 0%, var(--ed-overlay-gradient-end) 70%);
-    pointer-events: none;
-    margin-top: -2.5rem;
-  }
-
-  @media (min-width: $screen-xxxl-width) {
-    &::after {
-      background: linear-gradient(to bottom, var(--ed-overlay-gradient-start) 0%, var(--ed-overlay-gradient-85) 70%);
-    }
-  }
 }
 
 // --- Scrollable content inside the panel ---
@@ -181,10 +162,10 @@ $minimap-max-height: calc(100vh - #{$size-desktop-menu-height} - 3rem);
   }
 
   &.glossary-minimap__section--active {
-    border-left-color: $primary;
+    border-left-color: var(--ed-link);
 
     > .glossary-minimap__language {
-      color: $primary;
+      color: var(--ed-link);
       font-weight: 600;
     }
   }
@@ -201,7 +182,7 @@ $minimap-max-height: calc(100vh - #{$size-desktop-menu-height} - 3rem);
   margin-bottom: 0.2rem;
 
   &:hover {
-    color: $primary;
+    color: var(--ed-link);
   }
 }
 
@@ -224,7 +205,7 @@ $minimap-max-height: calc(100vh - #{$size-desktop-menu-height} - 3rem);
   text-overflow: ellipsis;
 
   &:hover {
-    color: $primary;
+    color: var(--ed-link);
   }
 }
 

@@ -43,6 +43,10 @@ blockquote.lexical-entry {
         > .TextIcon {
           transition: transform 1s;
         }
+
+        > .TextIcon--heart.filled {
+          background-color: red;
+        }
   
         &:hover {
           color: inherit;

@@ -3,6 +3,7 @@
 @extends('_layouts.default')
 
 @section('title', 'Versions of ' . ucfirst($word))
+@section('description', __('glossary.description.versions', ['word' => ucfirst($word)]))
 
 @section('body')
 <div class="ed-remove-when-navigating">

@@ -21,14 +21,21 @@
   </script>
   <title>@yield('title') - {{ config('ed.title') }}</title>
   <meta charset="UTF-8">
+  <meta name="description" content="@yield('description', config('ed.description'))">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="canonical" href="@yield('canonical', url()->current())">
   <meta property="og:title" content="@yield('title') - {{ config('ed.title') }}">
-  <meta property="og:description" content="{{ config('ed.description') }}">
+  <meta property="og:description" content="@yield('description', config('ed.description'))">
+  <meta property="og:url" content="{{ url()->current() }}">
+  <meta property="og:type" content="@yield('og_type', 'website')">
+  <meta property="og:image" content="@yield('og_image', asset('/img/favicons/android-chrome-192x192.png'))">
   <meta property="og:locale" content="{{ config('ed.view_locale') }}">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="@yield('title') - {{ config('ed.title') }}">
+  <meta name="twitter:description" content="@yield('description', config('ed.description'))">
+  <meta name="twitter:image" content="@yield('og_image', asset('/img/favicons/android-chrome-192x192.png'))">
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <meta name="description" content="{{ config('ed.description') }}">
-  <meta name="keywords" content="sindarin, quenya, noldorin, quendya, elvish, tolkien, nandorin, ilkorin, black speech, westron">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="theme-color" content="#333333" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#1a1a2e" media="(prefers-color-scheme: dark)">
   <meta name="google" content="notranslate"> {{-- Remedies 'Failed to execute 'removeChild' on 'Node': The node to be removed is not a child of this node' --}}
@@ -97,8 +104,6 @@
     <a href="http://www.tolkienestate.com/" target="_blank" class="link-secondary text-decoration-underline">Tolkien Estate</a>.
   </section>
 </footer>
-
-<div id="ed-eu-consent"></div>
 
 <script type="text/javascript" src="@assetpath(runtime.js)"></script>
 <script type="text/javascript" src="@assetpath(index.js)"></script>

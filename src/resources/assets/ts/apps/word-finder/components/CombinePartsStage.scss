@@ -28,6 +28,7 @@
 
 .CombinePartsStage {
     .CombinePartsStage__selected-parts {
+        &.shaking { animation: shake 0.4s ease-out; }
         display: flex;
         align-items: center;
         justify-content: center;

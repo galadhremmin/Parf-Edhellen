@@ -2,6 +2,7 @@
 @extends('_layouts.default')
 
 @section('title', 'Welcome!')
+@section('description', __('home.description', ['words' => number_format($noOfWords), 'sentences' => number_format($noOfSentences)]))
 @section('body-class', 'home-page')
 
 @section('before-search')

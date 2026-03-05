@@ -2,6 +2,7 @@
 @extends('_layouts.default')
 
 @section('title', 'Glossary by '.$author->nickname)
+@section('description', __('author.description.glossary', ['nickname' => $author->nickname]))
 
 @section('body')
   <h1>Glossary by {{ $author->nickname }}</h1>

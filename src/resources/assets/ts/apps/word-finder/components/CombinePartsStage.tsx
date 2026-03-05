@@ -25,6 +25,7 @@ function CombinePartsStage(props: IProps) {
         selectedParts,
         hintPartId,
         hintsRemaining,
+        rejectFragmentKey,
 
         onChangeStage,
         onDeselectPart,
@@ -34,6 +35,16 @@ function CombinePartsStage(props: IProps) {
 
     const partsRef = useRef<HTMLDivElement>();
     const undoButtonRef = useRef<HTMLButtonElement | null>(null);
+    const selectedPartsRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+        if (!rejectFragmentKey) return;
+        const el = selectedPartsRef.current;
+        if (!el) return;
+        el.classList.remove('shaking');
+        void el.offsetWidth;
+        el.classList.add('shaking');
+    }, [ rejectFragmentKey ]);
 
     useEffect(() => {
         partsRef.current?.querySelector('button')?.focus();
@@ -72,7 +83,7 @@ function CombinePartsStage(props: IProps) {
     }, [ selectedParts, parts ]);
 
     return <div className="CombinePartsStage">
-        <div className="CombinePartsStage__selected-parts">
+        <div className="CombinePartsStage__selected-parts" ref={selectedPartsRef}>
             {selectedParts.length ? selectedParts.map((i) => <a key={i}
                 href="#"
                 className=""

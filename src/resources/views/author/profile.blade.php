@@ -1,6 +1,7 @@
 @extends('_layouts.default')
 
 @section('title', $author ? $author->nickname : 'Missing account')
+@section('description', $author ? __('author.description', ['nickname' => $author->nickname]) : config('ed.description'))
 
 @section('body')
   @if ($author === null)
