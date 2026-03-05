@@ -2,6 +2,7 @@
 @extends('_layouts.default')
 
 @section('title', 'Phrases')
+@section('description', __('sentence.description', ['count' => number_format($numberOfSentences)]))
 @section('body')
 
   {!! Breadcrumbs::render('sentence.public') !!}

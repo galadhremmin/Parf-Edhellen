@@ -2,6 +2,7 @@
 @extends('_layouts.default')
 
 @section('title', 'Games')
+@section('description', __('games.description'))
 @section('body')
 <h1>Games</h1>
 

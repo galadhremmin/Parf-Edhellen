@@ -2,6 +2,9 @@
 @extends('_layouts.default')
 
 @section('title', $sentence['sentence']->name . ' (' . $language->name.')')
+@section('description', !empty($sentence['sentence']->description)
+    ? \Illuminate\Support\Str::limit(strip_tags($sentence['sentence']->description), 155)
+    : __('sentence.description.sentence', ['name' => $sentence['sentence']->name, 'language' => $language->name]))
 @section('body')
 
   {!! Breadcrumbs::render('sentence.public.sentence', $language->id, $language->name,

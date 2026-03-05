@@ -1,6 +1,7 @@
 @extends('_layouts.default')
 
 @section('title', __('word-finder.title.show', [ 'language' => $game->language->name ]))
+@section('description', __('word-finder.instructions1', ['language' => $game->language->name]))
 @section('body')
 
 <h1>@lang('word-finder.title.show', [ 'language' => $game->language->name ])</h1>

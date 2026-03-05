@@ -1,6 +1,7 @@
 @extends('_layouts.default')
 
 @section('title', __('word-finder.title.index'))
+@section('description', __('word-finder.description'))
 @section('body')
 
 <h1>@lang('word-finder.title.index')</h1>

@@ -52,6 +52,7 @@ function WordFinder(props: IContainerProps) {
     const MAX_HINTS = 3;
     const [ hintsUsed, setHintsUsed ] = useState(0);
     const [ hintPartId, setHintPartId ] = useState<number | null>(null);
+    const [ rejectFragmentKey, setRejectFragmentKey ] = useState(0);
     const hintTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const onHint = useCallback(() => {
@@ -73,6 +74,16 @@ function WordFinder(props: IContainerProps) {
             );
             if (activeGloss) {
                 targetPart = splitWord(activeGloss.wordForComparison)[selectedParts.length] ?? null;
+            } else {
+                // Fragment doesn't start any available word — shake and clear it.
+                setRejectFragmentKey((k) => k + 1);
+                const partsToDeselect = selectedParts.slice();
+                setTimeout(() => {
+                    for (const id of partsToDeselect) {
+                        void fireEvent('WordFinder', onDeselectPart, id);
+                    }
+                }, 400);
+                return;
             }
         }
 
@@ -146,6 +157,7 @@ function WordFinder(props: IContainerProps) {
                     hintPartId={hintPartId}
                     hintsRemaining={MAX_HINTS - hintsUsed}
                     parts={parts}
+                    rejectFragmentKey={rejectFragmentKey}
                     selectedParts={selectedParts}
                     tengwarMode={tengwarMode}
                 />}

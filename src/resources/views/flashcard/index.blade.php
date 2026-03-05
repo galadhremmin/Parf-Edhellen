@@ -1,6 +1,7 @@
 @extends('_layouts.default')
 
 @section('title', 'Flashcards')
+@section('description', __('flashcard.description'))
 @section('body')
   <h1>Flashcards</h1>
   

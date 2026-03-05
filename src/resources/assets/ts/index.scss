@@ -74,6 +74,14 @@ body {
   }
 }
 
+// SUPER HACKY SHIT!
+// Google Auto Ads injects <ins> elements as direct body children (outside our
+// .ed-ad-container wrappers), which appear below the footer against the body
+// background image. Hide them — our manually-placed ads are never body-direct.
+body > ins.adsbygoogle {
+  display: none !important;
+}
+
 @media (prefers-color-scheme: dark) {
   :root:not([data-bs-theme="light"]) body {
     background-image: url(../img/backgrounds/taniquetil_mobile.webp);

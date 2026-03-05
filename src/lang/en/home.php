@@ -2,6 +2,7 @@
 
 return [
     'title' => 'Home',
+    'description' => 'Search :words words and :sentences phrases in Tolkien\'s elvish languages — Sindarin, Quenya, and more. Parf Edhellen is a free, open-source elvish dictionary.',
     'menu.open' => 'Open menu',
 
     'noscript.title' => 'Ai! Lá polin saca i quettar!',
