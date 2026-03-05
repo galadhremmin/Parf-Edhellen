@@ -78,7 +78,7 @@ body {
 // Google Auto Ads injects <ins> elements as direct body children (outside our
 // .ed-ad-container wrappers), which appear below the footer against the body
 // background image. Hide them — our manually-placed ads are never body-direct.
-body > ins.adsbygoogle {
+body > ins.adsbygoogle, body > .google-auto-placed, #ed-site-main-menu + .google-auto-placed {
   display: none !important;
 }
 
