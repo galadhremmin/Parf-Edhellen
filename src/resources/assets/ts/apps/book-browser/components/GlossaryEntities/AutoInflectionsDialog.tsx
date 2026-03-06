@@ -85,21 +85,21 @@ const AutoInflectionsDialog = (props: IProps) => {
                 </StaticAlert>
             )}
 
-            {inflectionData && inflectionData.words.length === 0 && (
+            {inflectionData?.words && inflectionData.words.length === 0 && (
                 <StaticAlert type="info" className="mt-0">
                     <TextIcon icon="info-sign" />{' '}
                     No inflections found for this word in Quettali.
                 </StaticAlert>
             )}
             
-            {inflectionData && inflectionData.words.length > 0 && (
+            {inflectionData?.words && inflectionData.words.length > 0 && (
                 <div>
                     <StaticAlert type="info" className="mt-0">
                         <TextIcon icon="info-sign" />{' '}
                         These inflections were generated using grammatical rules and patterns observed throughout the corpus, but they may not be 100% accurate. 
                         Some forms may be attested, others may be neologisms, and others may be simply incorrect.
                     </StaticAlert>
-                    {inflectionData.words.map((wordData) => (
+                    {inflectionData?.words?.map((wordData) => (
                         <div key={wordData.qwid}>
                             <table className="table table-striped">
                                 <thead>
