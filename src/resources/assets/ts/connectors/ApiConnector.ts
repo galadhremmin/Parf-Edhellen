@@ -33,9 +33,14 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
         private _apiPathName: string = ApiPath,
         private _apiErrorMethod: string = ApiExceptionCollectorMethod,
         private _apiValidationErrorStatusCode: number = ApiValidationFailedStatusCode) {
-        this._abortController = new AbortController();
+        this._resetAbortController();
         window.addEventListener('beforeunload', () => {
             this._abortController.abort();
+        });
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                this._resetAbortController();
+            }
         });
     }
 
@@ -120,6 +125,10 @@ export default class ApiConnector implements IApiBaseConnector, IReportErrorApi 
             category,
             duration,
         });
+    }
+
+    private _resetAbortController() {
+        this._abortController = new AbortController();
     }
 
     /**
