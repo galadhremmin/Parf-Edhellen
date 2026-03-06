@@ -73,9 +73,9 @@ Route::group([
 // Public, throttled API
 Route::group([
     'prefix' => API_PATH,
-    'middleware' => 'throttle:10,1',
 ], function () {
 
     Route::post('utility/markdown', [UtilityApiController::class, 'parseMarkdown']);
-    Route::post('utility/error', [UtilityApiController::class, 'logError']);
+    Route::post('utility/error', [UtilityApiController::class, 'logError'])
+        ->middleware('throttle:10,1');
 });
