@@ -7,7 +7,7 @@
       <span class="ed-home-activity-avatar" style="background-image:url({{ $a['account_avatar'] }})"></span>
       {{ $a['account_name'] }}
     </a>
-    {!! $a['message'] . ($a['entity'] === null ? '.' : ' '. $a['entity'].'.') !!}
+    {!! $a['message'] . ($a['entity'] === null ? '.' : ' '. $a['entity'].($a['has_interpunctuation'] ? '' : '.')) !!}
     @date($a['created_at'])
   </li>
   @endforeach

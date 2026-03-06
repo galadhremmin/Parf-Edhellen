@@ -8,6 +8,7 @@ use App\Models\FailedJob;
 use App\Models\SystemError;
 use App\Repositories\AuditTrailRepository;
 use App\Repositories\QueueJobStatisticRepository;
+use App\Repositories\TrendingRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -22,11 +23,14 @@ class SystemErrorController extends Controller
 
     private QueueJobStatisticRepository $_queueJobStatisticRepository;
 
-    public function __construct(AuditTrailRepository $auditTrailRepository, AuditTrailAdapter $auditTrailAdapter, QueueJobStatisticRepository $queueJobStatisticRepository)
+    private TrendingRepository $_trendingRepository;
+
+    public function __construct(AuditTrailRepository $auditTrailRepository, AuditTrailAdapter $auditTrailAdapter, QueueJobStatisticRepository $queueJobStatisticRepository, TrendingRepository $trendingRepository)
     {
         $this->_auditTrailRepository = $auditTrailRepository;
         $this->_auditTrailAdapter = $auditTrailAdapter;
         $this->_queueJobStatisticRepository = $queueJobStatisticRepository;
+        $this->_trendingRepository = $trendingRepository;
     }
 
     public function index(Request $request)
@@ -49,7 +53,9 @@ class SystemErrorController extends Controller
             Carbon::now(),
         )->keyBy('queue_name');
 
-        return view('admin.system-error.index', [
+        $viewsPerDay = $this->_trendingRepository->getViewsPerHour(Carbon::now()->subDays(30), Carbon::now());
+
+        return view('admin.dashboard.index', [
             'auditTrailEntries' => $auditTrailEntries,
             'auditTrailPage' => $auditTrailPage,
             'errorsByWeek' => $errorsByWeek['count_by_week'],
@@ -58,6 +64,7 @@ class SystemErrorController extends Controller
             'failedJobsCategories' => $failedJobsByWeek['categories'],
             'jobsByQueue' => $jobsByQueue,
             'jobStatsByQueue' => $jobStatsByQueue,
+            'viewsPerDay' => $viewsPerDay,
         ]);
     }
 

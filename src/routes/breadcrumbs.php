@@ -264,11 +264,11 @@ Breadcrumbs::for('discuss.member-list', function (BreadcrumbTrail $breadcrumbs) 
 });
 
 // //////////////////////////////////////////////////////////////////////////////////////////////
-// Dashboard > System errors
+// Dashboard
 
-Breadcrumbs::for('system-error.index', function (BreadcrumbTrail $breadcrumbs) {
+Breadcrumbs::for('dashboard.index', function (BreadcrumbTrail $breadcrumbs) {
     $breadcrumbs->parent('dashboard');
-    $breadcrumbs->push('List system errors', route('system-error.index'));
+    $breadcrumbs->push('Dashboard', route('dashboard.index'));
 });
 
 // //////////////////////////////////////////////////////////////////////////////////////////////

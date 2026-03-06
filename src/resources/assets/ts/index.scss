@@ -59,18 +59,26 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-image: url(../img/backgrounds/bilbo_mobile.webp);
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  @media (min-width: #{map-get($grid-breakpoints, 'md') + 1}) {
-    background-image: url(../img/backgrounds/bilbo_tablet.webp);
-  }
-  @media (min-width: #{$size-desktop-large-min-width*0.5}) {
-    background-image: url(../img/backgrounds/bilbo_desktop.webp);
-  }
-  @media (min-width: #{map-get($grid-breakpoints, 'lg') + 1}) {
-    background-image: url(../img/backgrounds/bilbo_desktop.webp);
+
+  // background-attachment: fixed is broken on iOS Safari.
+  // A position:fixed pseudo-element achieves the same visual result everywhere.
+  &::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image: url(../img/backgrounds/bilbo_mobile.webp);
+    background-size: cover;
+    background-repeat: no-repeat;
+    @media (min-width: #{map-get($grid-breakpoints, 'md') + 1}) {
+      background-image: url(../img/backgrounds/bilbo_tablet.webp);
+    }
+    @media (min-width: #{$size-desktop-large-min-width*0.5}) {
+      background-image: url(../img/backgrounds/bilbo_desktop.webp);
+    }
+    @media (min-width: #{map-get($grid-breakpoints, 'lg') + 1}) {
+      background-image: url(../img/backgrounds/bilbo_desktop.webp);
+    }
   }
 }
 
@@ -83,7 +91,7 @@ body > ins.adsbygoogle, body > .google-auto-placed, #ed-site-main-menu + .google
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-bs-theme="light"]) body {
+  :root:not([data-bs-theme="light"]) body::before {
     background-image: url(../img/backgrounds/taniquetil_mobile.webp);
     background-size: 100%;
     background-position-y: 0%;
@@ -103,7 +111,7 @@ body > ins.adsbygoogle, body > .google-auto-placed, #ed-site-main-menu + .google
   }
 }
 
-:root[data-bs-theme="dark"] body {
+:root[data-bs-theme="dark"] body::before {
   background-image: url(../img/backgrounds/taniquetil_mobile.webp);
   background-size: 100%;
   background-position-y: 0%;

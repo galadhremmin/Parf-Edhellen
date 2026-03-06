@@ -106,7 +106,7 @@ function Graph(props: IProps) {
         return null;
     }
 
-    return <ResponsiveContainer width="100%" aspect={4 / 1.5}>
+    return <ResponsiveContainer width="100%" aspect={4 / 1}>
         <BarChart data={processedData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="week" />

@@ -42,6 +42,7 @@ class AuditTrailAdapter
         foreach ($actions as $action) {
             $message = null;
             $entity = null;
+            $hasInterpunctuation = false;
 
             if ($action->entity instanceof Gloss) {
                 switch ($action->action_id) {
@@ -134,7 +135,7 @@ class AuditTrailAdapter
                         'entityType' => $action->entity_type,
                         'entityId' => $action->entity_id,
                     ]).'">'.
-                    trim($action->entity_name, '.').
+                    trim($action->entity_name).
                 '</a>';
             } elseif ($action->entity instanceof FlashcardResult) {
                 switch ($action->action_id) {
@@ -180,6 +181,11 @@ class AuditTrailAdapter
                 continue;
             }
 
+            $hasInterpunctuation = (bool) preg_match(
+                '/\p{P}/u',
+                mb_substr(trim((string) ($action->entity_name ?? '')), -1, 1, 'UTF-8')
+            );
+
             $item = [
                 'account_id' => $action->account_id,
                 'account_name' => $action->account->nickname,
@@ -187,6 +193,7 @@ class AuditTrailAdapter
                 'created_at' => $action->created_at,
                 'message' => $message,
                 'entity' => $entity,
+                'has_interpunctuation' => $hasInterpunctuation,
             ];
 
             $trail[] = $item;
