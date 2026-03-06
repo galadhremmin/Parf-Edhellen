@@ -18,6 +18,7 @@ class UtilityApiControllerTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $this->withoutMiddleware(\Illuminate\Routing\Middleware\ThrottleRequests::class);
         $this->_markdownParser = $this->createMock(IMarkdownParser::class);
         $this->_systemErrorRepository = $this->createMock(SystemErrorRepository::class);
     }

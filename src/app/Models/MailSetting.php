@@ -5,6 +5,7 @@ namespace App\Models;
 class MailSetting extends ModelBase
 {
     protected $fillable = [
+        'account_id',
         'forum_post_created',
         'forum_contribution_approved',
         'forum_contribution_rejected',
