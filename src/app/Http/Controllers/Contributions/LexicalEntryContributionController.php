@@ -149,9 +149,11 @@ class LexicalEntryContributionController extends Controller implements IContribu
         $data = $request->validate([
             'entity_id' => 'sometimes|numeric',
             'lexical_entry_version_id' => 'sometimes|numeric',
+            'word' => 'sometimes|string|max:200',
         ]);
         $entityId = isset($data['entity_id']) ? intval($data['entity_id']) : 0;
         $lexicalEntryVersionId = isset($data['lexical_entry_version_id']) ? intval($data['lexical_entry_version_id']) : 0;
+        $prefillWord = $data['word'] ?? null;
 
         $lexicalEntry = null;
         if ($entityId !== 0) {
@@ -176,7 +178,9 @@ class LexicalEntryContributionController extends Controller implements IContribu
             : view('contribution.lexical_entry.create', $lexicalEntry ? [
                 'payload' => $lexicalEntry,
                 'inflections' => $inflections,
-            ] : []);
+            ] : ($prefillWord !== null ? [
+                'prefill' => ['word' => ['word' => $prefillWord]],
+            ] : []));
     }
 
     public function validateSubstep(Request $request, int $id = 0, int $substepId = 0): mixed

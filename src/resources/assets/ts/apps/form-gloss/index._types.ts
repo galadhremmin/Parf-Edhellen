@@ -12,4 +12,5 @@ export interface IProps {
     inflections: ILexicalEntryInflection[];
     prefetched: boolean;
     formSections: FormSection[];
+    prefill?: Partial<ILexicalEntryEntity>;
 }

@@ -78,4 +78,6 @@ Route::group([
     Route::post('utility/markdown', [UtilityApiController::class, 'parseMarkdown']);
     Route::post('utility/error', [UtilityApiController::class, 'logError'])
         ->middleware('throttle:10,1');
+    Route::post('utility/missing-word', [UtilityApiController::class, 'reportMissingWord'])
+        ->middleware('throttle:5,1');
 });

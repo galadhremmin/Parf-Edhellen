@@ -40,7 +40,8 @@ type BootstrapIcons = 'arrow-down' |
 'person' |
 'question' |
 'rss' |
-'sun';
+'sun' |
+'emoji-dizzy';
 
 export interface IProps {
     className?: string;

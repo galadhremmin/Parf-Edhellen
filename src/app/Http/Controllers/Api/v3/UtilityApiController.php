@@ -46,6 +46,23 @@ class UtilityApiController extends Controller
         return $html;
     }
 
+    public function reportMissingWord(Request $request)
+    {
+        $this->validate($request, [
+            'word' => 'required|string|max:200',
+        ]);
+
+        SystemError::firstOrCreate([
+            'category' => 'missing-word',
+            'message'  => $request->input('word'),
+        ], [
+            'url'   => $request->header('Referer', ''),
+            'error' => '',
+        ]);
+
+        return response(null, 204);
+    }
+
     public function logError(Request $request)
     {
         $this->validate($request, [

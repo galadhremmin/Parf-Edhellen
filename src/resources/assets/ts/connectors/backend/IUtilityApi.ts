@@ -11,4 +11,5 @@ export interface IMarkdownParserResponse {
 
 export default interface IUtilityApi {
     parseMarkdown(args: IMarkdownParserRequest): Promise<IMarkdownParserResponse>;
+    reportMissingWord(word: string): Promise<void>;
 }
