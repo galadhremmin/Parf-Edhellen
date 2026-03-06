@@ -7,10 +7,12 @@
   {!! Breadcrumbs::render('contribution.create', 'gloss') !!}
 
   <div id="ed-gloss-form" data-inject-module="form-gloss"
-  @if (isset($payload)) 
+  @if (isset($payload))
     data-inject-prop-lexical-entry="@json($payload)"
-    data-inject-prop-inflections="@json($inflections)"
+    data-inject-prop-inflections="@json($inflections ?? [])"
     data-inject-prop-confirm-button="Propose changes"
+  @elseif (isset($prefill))
+    data-inject-prop-prefill="@json($prefill)"
   @endif></div>
 
 @endsection

@@ -46,4 +46,8 @@ export default class UtilityApiConnector implements IUtilityApi, ILogApi {
     public parseMarkdown(args: IMarkdownParserRequest) {
         return this._api.post<IMarkdownParserResponse>('utility/markdown', args);
     }
+
+    public reportMissingWord(word: string) {
+        return this._api.post<void>('utility/missing-word', { word });
+    }
 }

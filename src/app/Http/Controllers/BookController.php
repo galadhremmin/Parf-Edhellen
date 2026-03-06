@@ -34,10 +34,17 @@ class BookController extends BookBaseController
         $entities = $this->_searchIndexRepository->resolveIndexToEntities($groupId, $v);
 
         if (count($entities['entities']['sections']) === 0) {
-            abort(404);
+            $payload = [
+                'word'            => $word,
+                'group_intl_name' => 'glossary',
+                'group_id'        => $groupId,
+                'single'          => false,
+                'entities'        => ['sections' => [], 'word' => $word],
+            ];
+            return response()->view('book.page', ['payload' => $payload], 404);
         }
 
-    event(new EntityViewed((int) $groupId, $v, $entities));
+        event(new EntityViewed((int) $groupId, $v, $entities));
 
         return view('book.page', [
             'payload' => $entities,

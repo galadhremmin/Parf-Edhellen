@@ -24,6 +24,7 @@ const Inject = (props: IProps) => {
         formSections = [ FormSection.LexicalEntry, FormSection.Inflections ],
         inflections,
         prefetched = true,
+        prefill,
     } = props;
 
     useEffect(() => {
@@ -36,6 +37,11 @@ const Inject = (props: IProps) => {
             }
             if (inflections !== undefined) {
                 dispatch(actions.setLoadedInflections(inflections));
+            }
+        }
+        if (prefill !== undefined) {
+            for (const [field, value] of Object.entries(prefill)) {
+                dispatch(actions.setLexicalEntryField(field as any, value));
             }
         }
     }, []);

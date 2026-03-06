@@ -27,6 +27,13 @@ $gloss-border-color: var(--ed-border);
     // always-visible minimap (~14rem + gap).
     margin-right: calc(-1 * min(2rem, max(0px, var(--_avail))));
   }
+
+  // The empty state doesn't benefit from the wide-screen expansion and
+  // would appear off-center due to the asymmetric margins — reset them.
+  &:has(.GlossaryEntitiesEmpty) {
+    margin-left: 0;
+    margin-right: 0;
+  }
 }
 
 .ed-glossary {

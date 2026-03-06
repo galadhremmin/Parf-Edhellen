@@ -150,6 +150,9 @@
     &.TextIcon--rss {
         @include mask-image-compatible("~bootstrap-icons/icons/rss.svg");
     }
+    &.TextIcon--emoji-dizzy {
+        @include mask-image-compatible("~bootstrap-icons/icons/emoji-dizzy.svg");
+    }
     &.TextIcon--sun {
         @include mask-image-compatible("~bootstrap-icons/icons/sun.svg");
     }
