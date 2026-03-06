@@ -58,7 +58,7 @@ class AuditTrailAdapter
                 }
 
                 $entity = '<a href="'.$this->_link->gloss($action->entity_id).'">'.
-                    $action->entity_name.'</a>';
+                    e($action->entity_name).'</a>';
 
             } elseif ($action->entity instanceof Sentence) {
                 switch ($action->action_id) {
@@ -74,7 +74,7 @@ class AuditTrailAdapter
                 }
 
                 $entity = '<a href="'.$this->_link->sentence($action->entity->language_id, $action->entity->language->name,
-                    $action->entity->id, $action->entity->name).'">'.$action->entity_name.'</a>';
+                    $action->entity->id, $action->entity->name).'">'.e($action->entity_name).'</a>';
 
             } elseif ($action->entity instanceof Account) {
                 switch ($action->action_id) {
@@ -103,17 +103,17 @@ class AuditTrailAdapter
                         $message = 'reset their password';
                         break;
                     case AuditTrail::ACTION_ACCOUNT_ADD_ROLE:
-                        $message = 'added the role '.json_decode($action->data)->role;
+                        $message = 'added the role '.e(json_decode($action->data)->role);
                         break;
                     case AuditTrail::ACTION_ACCOUNT_REMOVE_ROLE:
-                        $message = 'removed the role '.json_decode($action->data)->role;
+                        $message = 'removed the role '.e(json_decode($action->data)->role);
                         break;
                 }
 
                 if ($action->entity_id !== $action->account_id) {
                     $entity = 'for <a href="'.
                         route('account.edit', ['account' => $action->entity]).'">'.
-                        $action->entity_name.
+                        e($action->entity_name).
                     '</a>';
                 }
 
@@ -135,7 +135,7 @@ class AuditTrailAdapter
                         'entityType' => $action->entity_type,
                         'entityId' => $action->entity_id,
                     ]).'">'.
-                    trim($action->entity_name).
+                    e(trim($action->entity_name)).
                 '</a>';
             } elseif ($action->entity instanceof FlashcardResult) {
                 switch ($action->action_id) {
@@ -172,7 +172,7 @@ class AuditTrailAdapter
                     route('contribution.show', [
                         'contribution' => $action->entity_id,
                     ]).'">'.
-                    $action->entity_name.
+                    e($action->entity_name).
                 '</a>';
             }
 

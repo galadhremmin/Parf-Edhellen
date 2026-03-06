@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class MailSettingOverride extends ModelBase
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'entity_type',
+        'entity_id',
+        'disabled',
+    ];
 
     protected $primaryKey = 'account_id';
 

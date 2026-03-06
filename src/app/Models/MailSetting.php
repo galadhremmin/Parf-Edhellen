@@ -4,7 +4,12 @@ namespace App\Models;
 
 class MailSetting extends ModelBase
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'forum_post_created',
+        'forum_contribution_approved',
+        'forum_contribution_rejected',
+        'forum_posted_on_profile',
+    ];
 
     protected $primaryKey = 'account_id';
 
