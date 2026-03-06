@@ -33,12 +33,12 @@ Route::group([
         'only' => ['index', 'destroy'],
     ]);
 
-    Route::resource('system-error', SystemErrorController::class, [
+    Route::resource('dashboard', SystemErrorController::class, [
         'only' => ['index'],
     ]);
-    Route::get('system-error/connectivity/{component}', [SystemErrorController::class, 'testConnectivity'])
+    Route::get('dashboard/connectivity/{component}', [SystemErrorController::class, 'testConnectivity'])
         ->where(['component' => '[a-zA-Z]+'])
-        ->name('system-error.connectivity');
+        ->name('dashboard.connectivity');
 
     Route::get('sentence/confirm-destroy/{id}', [SentenceController::class, 'confirmDestroy'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC])

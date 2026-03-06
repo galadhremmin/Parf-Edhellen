@@ -1,16 +1,17 @@
 @extends('_layouts.default', ['containerClass' => 'container-fluid'])
 
-@section('title', 'System errors - Administration')
+@section('title', 'Dashboard - Administration')
 @section('body')
 
-<h1>Service errors</h1>
-{!! Breadcrumbs::render('system-error.index') !!}
+<h1>Dashboard</h1>
+{!! Breadcrumbs::render('dashboard.index') !!}
 
 <section data-inject-module="system-log"
      data-inject-prop-errors-by-week="@json($errorsByWeek)"
      data-inject-prop-error-categories="@json($errorCategories)"
      data-inject-prop-failed-jobs-by-week="@json($failedJobsByWeek)"
-     data-inject-prop-failed-jobs-categories="@json($failedJobsCategories)"></section>
+     data-inject-prop-failed-jobs-categories="@json($failedJobsCategories)"
+     data-inject-prop-views-per-day="@json($viewsPerDay)"></section>
 
 <section class="card mb-3 shadow">
    <div class="card-body">
@@ -87,7 +88,7 @@
       <h2>Test connectivity</h2>
 
       @foreach ([ 'IdentifiesPhrasesMonitor' ] as $component)
-         <a class="btn btn-secondary" href="{{ route('system-error.connectivity', [ 'component' => $component ]) }}">{{ $component }}</a>
+         <a class="btn btn-secondary" href="{{ route('dashboard.connectivity', [ 'component' => $component ]) }}">{{ $component }}</a>
       @endforeach
    </div>
 </section>

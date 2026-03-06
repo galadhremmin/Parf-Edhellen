@@ -14,10 +14,16 @@ export interface IErrorsByWeek<T> {
     [yearWeek: string]: T;
 }
 
+export interface IViewsPerDay {
+    date: string;
+    count: number;
+}
+
 export interface IProps {
     errorsByWeek: IErrorsByWeek<IWeeklyErrors>[];
     errorCategories: string[];
     failedJobsByWeek: IWeeklyFailedJobs[];
     failedJobsCategories: string[];
     logApi: ILogApi;
+    viewsPerDay?: IViewsPerDay[];
 }

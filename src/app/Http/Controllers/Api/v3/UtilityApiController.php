@@ -49,9 +49,9 @@ class UtilityApiController extends Controller
     public function logError(Request $request)
     {
         $this->validate($request, [
-            'message' => 'string|required',
-            'url' => 'string|required',
-            'error' => 'string|nullable',
+            'message' => 'string|required|max:2000',
+            'url' => 'string|required|max:500',
+            'error' => 'string|nullable|max:5000',
             'category' => ['nullable', 'string', 'regex:/^[a-z0-9\-]+$/'],
             'duration' => 'numeric|nullable',
         ]);

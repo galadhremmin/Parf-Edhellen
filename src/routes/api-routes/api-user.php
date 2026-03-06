@@ -20,19 +20,24 @@ Route::group([
 
     Route::post('account/edit/{id?}', [AccountApiController::class, 'update'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->middleware('throttle:6,1')
         ->name('api.account.update');
     Route::post('account/avatar/edit/{id?}', [AccountApiController::class, 'updateAvatar'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->middleware('throttle:6,1')
         ->name('api.account.update-avatar');
     Route::delete('account/edit/{id?}', [AccountApiController::class, 'delete'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->middleware('throttle:6,1')
         ->name('api.account.delete');
 
     Route::get('account/backgrounds', [AccountApiController::class, 'getFeatureBackgrounds']);
     Route::put('account/background/edit/{id}', [AccountApiController::class, 'updateFeatureBackground'])
-        ->where(['id' => REGULAR_EXPRESSION_NUMERIC]);
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->middleware('throttle:6,1');
     Route::post('account/background/upload/{id}', [AccountApiController::class, 'uploadFeatureBackground'])
-        ->where(['id' => REGULAR_EXPRESSION_NUMERIC]);
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->middleware('throttle:6,1');
 
     Route::get('subscription/{morph}/{id}', [SubscriptionApiController::class, 'getSubscriptionForEntity'])
         ->where(['morph' => REGULAR_EXPRESSION_SEO_STRING, 'id' => REGULAR_EXPRESSION_NUMERIC])

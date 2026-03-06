@@ -195,6 +195,10 @@ class WordListApiController extends Controller
             'entries.*.order' => 'required|integer'
         ]);
 
+        // This may seem like throw-away, but we're intentionally doing this to ensure
+        // that the user has permission to edit this word list.
+        WordList::where('account_id', $request->user()->id)->findOrFail($wordListId);
+
         foreach ($data['entries'] as $entry) {
             WordListEntry::where('word_list_id', $wordListId)
                 ->where('lexical_entry_id', $entry['lexical_entry_id'])

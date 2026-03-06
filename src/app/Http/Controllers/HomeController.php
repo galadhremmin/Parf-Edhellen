@@ -105,7 +105,7 @@ class HomeController extends Controller
         });
 
         $trendingSearches = Cache::remember('ed.home.trending', DateInterval::createFromDateString('1 hour'), function () {
-            $items = $this->_trendingRepository->getMostSearchedTerms(7, 5);
+            $items = $this->_trendingRepository->getMostSearchedTerms(7, 10);
             return array_map(fn (array $item) => $item + [
                 'url' => $this->_linkHelper->dictionaryWord(
                     $item['search_term'],

@@ -6,6 +6,7 @@ import Panel from '@root/components/Panel';
 import FailedJobsList from '../components/FailedJobsList';
 import ErrorsByWeekBarGraph from '../components/Graph';
 import LogList from '../components/LogList';
+import ViewsGraph from '../components/ViewsGraph';
 import type { IProps } from '../index._types';
 import type { IComponentEvent } from '@root/components/Component._types';
 
@@ -16,6 +17,7 @@ function Log(props: IProps) {
         failedJobsByWeek,
         failedJobsCategories,
         logApi,
+        viewsPerDay,
     } = props;
 
     const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
@@ -48,6 +50,9 @@ function Log(props: IProps) {
     }, []);
 
     return <>
+        {viewsPerDay && viewsPerDay.length > 0 && <Panel title="Search views per hour (last 30 days)" shadow={true}>
+            <ViewsGraph data={viewsPerDay} />
+        </Panel>}
         <Panel title="Exception log" shadow={true}>
             {errorsByWeek && <section>
                 <ErrorsByWeekBarGraph 

@@ -44,6 +44,17 @@ class TrendingRepository
             ->toArray();
     }
 
+    public function getViewsPerHour(Carbon $from, Carbon $to): array
+    {
+        return SearchViewEvent::query()
+            ->selectRaw("DATE_FORMAT(viewed_at, '%Y-%m-%d %H:00') AS date, COUNT(*) AS count")
+            ->whereBetween('viewed_at', [$from, $to])
+            ->groupByRaw("DATE_FORMAT(viewed_at, '%Y-%m-%d %H:00')")
+            ->orderBy('date')
+            ->get()
+            ->toArray();
+    }
+
     private function parseSpeechIds(?string $speechIds): ?array
     {
         if (empty($speechIds)) {

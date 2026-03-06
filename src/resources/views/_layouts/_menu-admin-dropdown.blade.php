@@ -27,7 +27,7 @@
       <a class="dropdown-item {{ active('word-finder.config.index') }}" href="{{ route('word-finder.config.index') }}">Sage configuration</a>
     </li>
     <li>
-      <a class="dropdown-item {{ active('system-error.index') }}" href="{{ route('system-error.index') }}">System errors</a>
+      <a class="dropdown-item {{ active('dashboard.index') }}" href="{{ route('dashboard.index') }}">Dashboard</a>
     </li>
     @endif
   </ul>
