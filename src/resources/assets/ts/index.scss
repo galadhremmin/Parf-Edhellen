@@ -633,6 +633,28 @@ body > div:first-of-type {
     overflow: visible;
   }
 
+  // Buy Me a Coffee / support CTA — theme-aware card under About the website
+  .ed-support-cta {
+    background: var(--ed-bg-surface);
+    border: 1px solid var(--ed-border);
+    border-radius: 0.5rem;
+
+    .ed-support-cta__heading {
+      font-size: 1.05rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .ed-support-cta__text {
+      color: var(--ed-text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .ed-support-cta__link:hover {
+      opacity: 0.92;
+    }
+  }
+
   // Progressive disclosure:
   // When the user types (SearchResults <section> appears) or selects a result
   // (glossary .ed-glossary-waypoint loads), collapse the hero and welcome.

@@ -45,6 +45,7 @@
         developed and maintained by Leonard (<a href="https://twitter.com/parmaeldo" target="_blank">@parmaeldo</a>).
         If you are a developer, you can follow the project on <a href="https://github.com/galadhremmin/Parf-Edhellen" target="_blank">Github</a>.
       </p>
+      @include('_shared._buy-me-a-coffee')
       @include('_shared._ad', [
         'ad' => 'frontpage'
       ])
