@@ -3,9 +3,23 @@ import type { ICrosswordClue } from '@root/connectors/backend/ICrosswordApi';
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
 import type IRoleManager from '@root/security/IRoleManager';
+import BoundedCache from '@root/utilities/BoundedCache';
 import type { ICrosswordInitialState } from '../index._types';
 import Actions from './Actions';
 import { CrosswordStage, type ICrosswordAction } from './GameActions._types';
+
+interface ICrosswordDraft {
+    cells?: Record<string, string>;
+    seconds?: number;
+    failed?: boolean;
+}
+
+/**
+ * Shared BoundedCache instance for all crossword draft state.
+ * Namespace `crossword.draft` → keys `ed.crossword.draft.<puzzleId>`.
+ * Capped at 60 entries (~2 months of daily play); oldest are auto-evicted.
+ */
+const _draftCache = BoundedCache.withLocalStorage<ICrosswordDraft>('crossword.draft', 60);
 
 export default class GameActions {
     constructor(
@@ -280,7 +294,6 @@ export default class GameActions {
 
             if (result.completion !== null) {
                 // Server confirmed all correct and recorded a completion.
-                this.clearElapsedSeconds(puzzleId);
                 this.clearDraft(puzzleId);
                 dispatch({
                     type: Actions.CompletionResult,
@@ -412,74 +425,49 @@ export default class GameActions {
         return { row: row - dr, col: col - dc };
     }
 
+    // ── Draft storage (via BoundedCache) ──────────────────────────────────────
+    //
+    // All per-puzzle state (cells, elapsed seconds, failed flag) is stored in a
+    // single BoundedCache entry keyed by puzzleId.  The cache caps entries at 60
+    // and auto-evicts the oldest, so localStorage never grows unboundedly.
+
     private saveDraft(puzzleId: number | undefined, cells: Record<string, string | undefined>): void {
         if (!puzzleId) return;
-        try {
-            // Remove undefined entries.
-            const clean: Record<string, string> = {};
-            for (const [k, v] of Object.entries(cells)) {
-                if (v !== undefined) clean[k] = v;
-            }
-            window.localStorage.setItem(`ed.crossword.${puzzleId}`, JSON.stringify(clean));
-        } catch {
-            // localStorage unavailable (SSR, private mode)
+        const clean: Record<string, string> = {};
+        for (const [k, v] of Object.entries(cells)) {
+            if (v !== undefined) clean[k] = v;
         }
+        const current = _draftCache.get(String(puzzleId)) ?? {};
+        _draftCache.set(String(puzzleId), { ...current, cells: clean });
     }
 
     private loadDraft(puzzleId: number | undefined): Record<string, string> | null {
         if (!puzzleId) return null;
-        try {
-            const raw = window.localStorage.getItem(`ed.crossword.${puzzleId}`);
-            return raw ? JSON.parse(raw) as Record<string, string> : null;
-        } catch {
-            return null;
-        }
-    }
-
-    private clearDraft(puzzleId: number | undefined): void {
-        if (!puzzleId) return;
-        try {
-            window.localStorage.removeItem(`ed.crossword.${puzzleId}`);
-        } catch { }
+        return _draftCache.get(String(puzzleId))?.cells ?? null;
     }
 
     private saveFailed(puzzleId: number): void {
-        try {
-            window.localStorage.setItem(`ed.crossword.${puzzleId}.failed`, '1');
-        } catch {
-            // localStorage unavailable
-        }
+        const current = _draftCache.get(String(puzzleId)) ?? {};
+        _draftCache.set(String(puzzleId), { ...current, failed: true });
     }
 
     private loadFailed(puzzleId: number): boolean {
-        try {
-            return window.localStorage.getItem(`ed.crossword.${puzzleId}.failed`) === '1';
-        } catch {
-            return false;
-        }
+        return _draftCache.get(String(puzzleId))?.failed ?? false;
     }
 
     private saveElapsedSeconds(puzzleId: number | undefined, seconds: number): void {
         if (!puzzleId) return;
-        try {
-            window.localStorage.setItem(`ed.crossword.${puzzleId}.seconds`, String(seconds));
-        } catch { }
+        const current = _draftCache.get(String(puzzleId)) ?? {};
+        _draftCache.set(String(puzzleId), { ...current, seconds });
     }
 
     private loadElapsedSeconds(puzzleId: number | undefined): number {
         if (!puzzleId) return 0;
-        try {
-            const raw = window.localStorage.getItem(`ed.crossword.${puzzleId}.seconds`);
-            return raw ? Math.max(0, parseInt(raw, 10)) : 0;
-        } catch {
-            return 0;
-        }
+        return _draftCache.get(String(puzzleId))?.seconds ?? 0;
     }
 
-    private clearElapsedSeconds(puzzleId: number | undefined): void {
+    private clearDraft(puzzleId: number | undefined): void {
         if (!puzzleId) return;
-        try {
-            window.localStorage.removeItem(`ed.crossword.${puzzleId}.seconds`);
-        } catch { }
+        _draftCache.delete(String(puzzleId));
     }
 }
