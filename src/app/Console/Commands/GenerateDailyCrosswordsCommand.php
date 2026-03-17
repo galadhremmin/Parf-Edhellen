@@ -11,7 +11,8 @@ class GenerateDailyCrosswordsCommand extends Command
 {
     protected $signature = 'ed:generate-daily-crosswords
         {--date= : Target date (Y-m-d). Default: today}
-        {--language= : Only generate for this language ID (optional)}';
+        {--language= : Only generate for this language ID (optional)}
+        {--words=8 : Number of target words per puzzle}';
 
     protected $description = 'Generate daily crossword puzzles for all enabled languages (or one language). Skips dates that already have a puzzle.';
 
@@ -22,11 +23,13 @@ class GenerateDailyCrosswordsCommand extends Command
             ? Carbon::parse($dateStr)->startOfDay()
             : Carbon::now()->startOfDay();
 
+        $targetWords = (int) $this->option('words');
+
         $languageId = $this->option('language');
         if ($languageId !== null) {
             $languageId = (int) $languageId;
             $this->info("Generating crossword for language {$languageId} on {$targetDate->toDateString()}...");
-            $puzzle = $generator->generateForLanguageAndDate($languageId, $targetDate);
+            $puzzle = $generator->generateForLanguageAndDate($languageId, $targetDate, $targetWords);
             if ($puzzle !== null) {
                 $this->info("Created puzzle ID {$puzzle->id}.");
                 return Command::SUCCESS;
@@ -51,7 +54,7 @@ class GenerateDailyCrosswordsCommand extends Command
             }
 
             // Fetch pairs first so we can report a specific reason on failure.
-            $pairs = $generator->fetchWordCluePairs($langId);
+            $pairs = $generator->fetchWordCluePairs($langId, $targetWords);
             if (empty($pairs)) {
                 $failed++;
                 $this->warn("  Language {$langId}: no word/clue pairs found in the dictionary for this language.");
@@ -59,7 +62,7 @@ class GenerateDailyCrosswordsCommand extends Command
             }
 
             $this->line("  Language {$langId}: " . count($pairs) . " pairs available, building grid...");
-            $puzzle = $generator->generateForLanguageAndDate($langId, $targetDate);
+            $puzzle = $generator->generateForLanguageAndDate($langId, $targetDate, $targetWords);
             if ($puzzle !== null) {
                 $created++;
                 $this->info("  Language {$langId}: created puzzle ID {$puzzle->id}.");

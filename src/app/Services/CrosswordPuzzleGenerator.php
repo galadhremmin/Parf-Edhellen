@@ -15,7 +15,7 @@ class CrosswordPuzzleGenerator
 {
     private const MIN_WORD_LENGTH = 3;
     private const MAX_WORD_LENGTH = 12;
-    private const TARGET_WORDS    = 20;
+    private const TARGET_WORDS    = 8;
     private const MIN_PLACED      = 8;    // reject grids with fewer words than this
     private const MAX_ATTEMPTS    = 50;   // stochastic restart budget
 
@@ -27,7 +27,7 @@ class CrosswordPuzzleGenerator
      *
      * @return array<int, array{word: string, clue: string, normalized: string, letters: string[], normLetters: string[]}>
      */
-    public function fetchWordCluePairs(int $languageId): array
+    public function fetchWordCluePairs(int $languageId, int $targetWords = self::TARGET_WORDS): array
     {
         $groupIds = LexicalEntryGroup::safe()->pluck('id')->toArray();
         if (empty($groupIds)) {
@@ -46,7 +46,7 @@ class CrosswordPuzzleGenerator
             ->where('words.word', '!=', '')
             ->where('words.word', 'not like', '% %')
             ->inRandomOrder()
-            ->limit(self::TARGET_WORDS * 5)
+            ->limit($targetWords * 5)
             ->select('words.word as word', 'glosses.translation as gloss', 'words.normalized_word as normalized')
             ->get();
 
@@ -126,7 +126,7 @@ class CrosswordPuzzleGenerator
     /**
      * Generate and persist a puzzle for the given language and date. Returns the CrosswordPuzzle or null.
      */
-    public function generateForLanguageAndDate(int $languageId, Carbon $puzzleDate): ?CrosswordPuzzle
+    public function generateForLanguageAndDate(int $languageId, Carbon $puzzleDate, int $targetWords = self::TARGET_WORDS): ?CrosswordPuzzle
     {
         $dateStr = $puzzleDate->toDateString();
 
@@ -138,7 +138,7 @@ class CrosswordPuzzleGenerator
             return null;
         }
 
-        $pairs = $this->fetchWordCluePairs($languageId);
+        $pairs = $this->fetchWordCluePairs($languageId, $targetWords);
         if (empty($pairs)) {
             Log::error('CrosswordPuzzleGenerator: no word/clue pairs available', [
                 'language_id' => $languageId,
