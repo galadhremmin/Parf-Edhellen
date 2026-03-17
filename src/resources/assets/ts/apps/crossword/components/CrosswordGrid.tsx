@@ -100,7 +100,7 @@ const CrosswordGrid = forwardRef<ICrosswordGridHandle, ICrosswordGridProps>(func
             <input
                 ref={hiddenInputRef}
                 aria-hidden="true"
-                style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0 }}
+                style={{ position: 'fixed', top: 0, left: 0, width: '1px', height: '1px', opacity: 0.01, pointerEvents: 'none' }}
                 autoComplete="off"
                 autoCorrect="off"
                 autoCapitalize="none"
