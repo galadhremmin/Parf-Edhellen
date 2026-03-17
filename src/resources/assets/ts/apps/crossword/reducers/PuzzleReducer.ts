@@ -20,7 +20,7 @@ const InitialState: IPuzzleReducerState = {
 const PuzzleReducer = (state = InitialState, action: ICrosswordAction): IPuzzleReducerState => {
     switch (action.type) {
         case Actions.InitializePuzzle: {
-            const p = action.puzzle as ICrosswordPuzzleResponse;
+            const p = action.puzzle;
             return {
                 puzzleId: p.puzzleId,
                 languageId: p.languageId,

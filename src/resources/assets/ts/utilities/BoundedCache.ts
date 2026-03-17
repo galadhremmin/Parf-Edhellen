@@ -60,7 +60,8 @@ export default class BoundedCache<T> {
             const raw = this._store.getItem(this._prefix + id);
             if (!raw) return null;
             return (JSON.parse(raw) as IBoundedRecord<T>).d;
-        } catch {
+        } catch (e) {
+            // deliberate suppression — storage unavailable or corrupt entry
             return null;
         }
     }
@@ -74,7 +75,9 @@ export default class BoundedCache<T> {
             const record: IBoundedRecord<T> = { d: value, s: Date.now() };
             this._store.setItem(this._prefix + id, JSON.stringify(record));
             this._reap();
-        } catch { }
+        } catch (e) {
+            // deliberate suppression — storage unavailable or quota exceeded
+        }
     }
 
     /**
@@ -83,7 +86,9 @@ export default class BoundedCache<T> {
     delete(id: string): void {
         try {
             this._store.removeItem(this._prefix + id);
-        } catch { }
+        } catch (e) {
+            // deliberate suppression — storage unavailable
+        }
     }
 
     // ── Private ───────────────────────────────────────────────────────────────
@@ -93,8 +98,8 @@ export default class BoundedCache<T> {
             const entries: { key: string; s: number }[] = [];
 
             for (let i = 0; i < this._store.length; i++) {
-                const key = this._store.key(i)!;
-                if (!key.startsWith(this._prefix)) continue;
+                const key = this._store.key(i);
+                if (!key || !key.startsWith(this._prefix)) continue;
 
                 let s = 0;
                 try {
@@ -102,7 +107,9 @@ export default class BoundedCache<T> {
                     if (raw) {
                         s = (JSON.parse(raw) as IBoundedRecord<T>).s ?? 0;
                     }
-                } catch { }
+                } catch (e) {
+                    // deliberate suppression — corrupt entry, treat as oldest
+                }
 
                 entries.push({ key, s });
             }
@@ -113,6 +120,8 @@ export default class BoundedCache<T> {
             for (const { key } of entries.slice(0, entries.length - this._maxEntries)) {
                 this._store.removeItem(key);
             }
-        } catch { }
+        } catch (e) {
+            // deliberate suppression — storage unavailable
+        }
     }
 }

@@ -7,6 +7,7 @@ import BoundedCache from '@root/utilities/BoundedCache';
 import type { ICrosswordInitialState } from '../index._types';
 import Actions from './Actions';
 import { CrosswordStage, type ICrosswordAction } from './GameActions._types';
+import type { RootReducer } from '../reducers';
 
 interface ICrosswordDraft {
     cells?: Record<string, string>;
@@ -84,7 +85,7 @@ export default class GameActions {
     // ─── Selection ────────────────────────────────────────────────────────────
 
     public selectCell(row: number, col: number) {
-        return (dispatch: ReduxThunkDispatch, getState: () => any) => {
+        return (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
             const state = getState();
             const clues: ICrosswordClue[] = state.puzzle?.clues ?? [];
             const currentRow: number | null = state.selection?.row ?? null;
@@ -111,7 +112,7 @@ export default class GameActions {
     }
 
     public selectClue(clue: ICrosswordClue) {
-        return (dispatch: ReduxThunkDispatch, getState: () => any) => {
+        return (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
             const cells: Record<string, string> = getState().cells ?? {};
             // Jump to first empty cell in the word; fall back to the start cell.
             const startCell = this.firstEmptyCell(clue, cells) ?? { row: clue.row, col: clue.col };
@@ -128,7 +129,7 @@ export default class GameActions {
     // ─── Input ────────────────────────────────────────────────────────────────
 
     public enterLetter(letter: string) {
-        return (dispatch: ReduxThunkDispatch, getState: () => any) => {
+        return (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
             const state = getState();
             const { row, col, activeClue } = state.selection ?? {};
             if (row == null || col == null) return;
@@ -157,7 +158,7 @@ export default class GameActions {
     }
 
     public deleteLetter() {
-        return (dispatch: ReduxThunkDispatch, getState: () => any) => {
+        return (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
             const state = getState();
             const { row, col, activeClue } = state.selection ?? {};
             if (row == null || col == null) return;
@@ -189,7 +190,7 @@ export default class GameActions {
     }
 
     public moveSelection(arrowDirection: 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight') {
-        return (dispatch: ReduxThunkDispatch, getState: () => any) => {
+        return (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
             const state = getState();
             const { row, col, direction: currentWordDir } = state.selection ?? {};
             if (row == null || col == null) return;
@@ -227,7 +228,7 @@ export default class GameActions {
     }
 
     public advanceToNextWord() {
-        return (dispatch: ReduxThunkDispatch, getState: () => any) => {
+        return (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
             const state = getState();
             const clues: ICrosswordClue[] = state.puzzle?.clues ?? [];
             const cells: Record<string, string> = state.cells ?? {};
@@ -260,7 +261,7 @@ export default class GameActions {
     // ─── Check & reveal ───────────────────────────────────────────────────────
 
     public checkAnswers() {
-        return async (dispatch: ReduxThunkDispatch, getState: () => any) => {
+        return async (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
             const state = getState();
             const puzzleId: number = state.puzzle?.puzzleId;
             const cells: Record<string, string> = state.cells ?? {};
@@ -325,7 +326,7 @@ export default class GameActions {
     }
 
     public revealClue(clueNumber: number, direction: string) {
-        return async (dispatch: ReduxThunkDispatch, getState: () => any) => {
+        return async (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
             const state = getState();
             const puzzleId: number = state.puzzle?.puzzleId;
             const revealsRemaining: number = state.stage?.revealsRemaining ?? 0;
@@ -344,7 +345,7 @@ export default class GameActions {
     // ─── Timer ────────────────────────────────────────────────────────────────
 
     public pauseTimer() {
-        return (_dispatch: ReduxThunkDispatch, getState: () => any) => {
+        return (_dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
             const state = getState();
             const { startTime, time } = state.stage ?? {};
             const puzzleId: number | undefined = state.puzzle?.puzzleId;
@@ -356,7 +357,7 @@ export default class GameActions {
     }
 
     public resumeTimer() {
-        return (dispatch: ReduxThunkDispatch, getState: () => any) => {
+        return (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
             const puzzleId: number | undefined = getState().puzzle?.puzzleId;
             const prior = this.loadElapsedSeconds(puzzleId);
             dispatch({ type: Actions.ResumeTimer, priorSeconds: prior } as ICrosswordAction);
@@ -370,7 +371,7 @@ export default class GameActions {
     // ─── Admin ────────────────────────────────────────────────────────────────
 
     public adminFill() {
-        return async (dispatch: ReduxThunkDispatch, getState: () => any) => {
+        return async (dispatch: ReduxThunkDispatch, getState: () => RootReducer) => {
             if (!this._roles.isAdministrator) return;
             const state = getState();
             const puzzleId: number = state.puzzle?.puzzleId;

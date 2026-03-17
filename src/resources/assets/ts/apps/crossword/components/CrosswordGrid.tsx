@@ -1,4 +1,11 @@
-import { forwardRef, useCallback, useImperativeHandle, useRef } from 'react';
+import {
+    forwardRef,
+    useCallback,
+    useImperativeHandle,
+    useRef,
+    type CSSProperties,
+    type KeyboardEvent as ReactKeyboardEvent,
+} from 'react';
 import type { ICrosswordClue } from '@root/connectors/backend/ICrosswordApi';
 import type { IComponentEvent } from '@root/components/Component._types';
 import { fireEvent } from '@root/components/Component';
@@ -54,7 +61,7 @@ const CrosswordGrid = forwardRef<ICrosswordGridHandle, ICrosswordGridProps>(func
         containerRef.current?.focus();
     }, [onCellClick, locked]);
 
-    const handleKeyDown = useCallback((ev: React.KeyboardEvent<HTMLDivElement>) => {
+    const handleKeyDown = useCallback((ev: ReactKeyboardEvent<HTMLDivElement>) => {
         if (locked) return;
         ev.stopPropagation();
         void fireEvent('CrosswordGrid', onKeyDown, ev.nativeEvent);
@@ -66,7 +73,7 @@ const CrosswordGrid = forwardRef<ICrosswordGridHandle, ICrosswordGridProps>(func
         <div
             ref={containerRef}
             className={`CrosswordGrid${locked ? ' CrosswordGrid--locked' : ''}`}
-            style={{ '--grid-cols': cols } as React.CSSProperties}
+            style={{ '--grid-cols': cols } as CSSProperties}
             role="grid"
             tabIndex={locked ? -1 : 0}
             onKeyDown={handleKeyDown}

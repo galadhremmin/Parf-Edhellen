@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
 import './CrosswordGridZoom.scss';
 
 interface IProps {
@@ -36,14 +36,14 @@ export default function CrosswordGridZoom({ cols, children }: IProps) {
         // ── Shared helpers ──────────────────────────────────────────────────
 
         function applyTransform() {
-            inner!.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+            inner.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
         }
 
         function clamp() {
-            const ow = outer!.clientWidth;
-            const oh = outer!.clientHeight;
-            const iw = inner!.offsetWidth;
-            const ih = inner!.offsetHeight;
+            const ow = outer.clientWidth;
+            const oh = outer.clientHeight;
+            const iw = inner.offsetWidth;
+            const ih = inner.offsetHeight;
             tx = Math.max(Math.min(0, ow - iw * scale), Math.min(0, tx));
             ty = Math.max(Math.min(0, oh - ih * scale), Math.min(0, ty));
         }
@@ -69,7 +69,7 @@ export default function CrosswordGridZoom({ cols, children }: IProps) {
         }
 
         function updateCursor() {
-            outer!.style.cursor = scale > 1 ? 'grab' : '';
+            outer.style.cursor = scale > 1 ? 'grab' : '';
         }
 
         // ── Touch: one-finger tap to select + two-finger pinch/pan ─────────
@@ -107,7 +107,7 @@ export default function CrosswordGridZoom({ cols, children }: IProps) {
                 const prevMid = { x: (prevA.x + prevB.x) / 2, y: (prevA.y + prevB.y) / 2 };
                 const curMid  = { x: (curA.x  + curB.x)  / 2, y: (curA.y  + curB.y)  / 2 };
 
-                const rect = outer!.getBoundingClientRect();
+                const rect = outer.getBoundingClientRect();
                 zoomAt(curMid.x - rect.left, curMid.y - rect.top, scale * ratio);
 
                 // Two-finger pan: track midpoint movement
@@ -152,7 +152,7 @@ export default function CrosswordGridZoom({ cols, children }: IProps) {
             if (!mouseDown) return;
             if (!dragged && Math.hypot(e.clientX - dragStart.x, e.clientY - dragStart.y) > DRAG_THRESHOLD) {
                 dragged = true;
-                outer!.style.cursor = 'grabbing';
+                outer.style.cursor = 'grabbing';
             }
             if (dragged) {
                 tx += e.clientX - lastMouse.x;
@@ -212,7 +212,7 @@ export default function CrosswordGridZoom({ cols, children }: IProps) {
                 <div
                     ref={innerRef}
                     className="CrosswordGridZoom__inner"
-                    style={{ '--cw-zoom-cols': cols, '--cw-min-cell': `${MIN_CELL_PX}px` } as React.CSSProperties}
+                    style={{ '--cw-zoom-cols': cols, '--cw-min-cell': `${MIN_CELL_PX}px` } as CSSProperties}
                 >
                     {children}
                 </div>
