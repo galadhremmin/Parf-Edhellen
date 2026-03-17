@@ -17,7 +17,7 @@
         <a class="nav-link {{ active(['sentence.public', 'sentence.public.language', 'sentence.public.sentence']) }}" href="{{ route('sentence.public') }}">@lang('sentence.title')</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link {{ active(['games', 'flashcard', 'flashcard.cards', 'word-finder.index', 'word-finder.show']) }}" href="{{ route('games') }}">@lang('games.title')</a>
+        <a class="nav-link {{ active(['games', 'flashcard', 'flashcard.cards', 'word-finder.index', 'word-finder.show', 'crossword.index', 'crossword.calendar', 'crossword.play']) }}" href="{{ route('games') }}">@lang('games.title')</a>
       </li>
       <li class="nav-item">
         <a class="nav-link {{ active(['discuss.index', 'discuss.group', 'discuss.show', 'discuss.member-list']) }}" href="{{ route('discuss.index') }}">

@@ -26,6 +26,7 @@ class Kernel extends ConsoleKernel
         Commands\RefreshSearchIndexFromKeywordsCommand::class,
         Commands\RefreshSearchIndexFromGlossesCommand::class,
         Commands\RefreshDiscussIndexesCommand::class,
+        Commands\GenerateDailyCrosswordsCommand::class,
     ];
 
     /**
@@ -71,6 +72,15 @@ class Kernel extends ConsoleKernel
         $schedule->command('ed:prune-search-view-events') //
             ->daily() //
             ->name('Prune search view events older than retention period');
+
+        $schedule->command('ed:generate-daily-crosswords') //
+            ->daily() //
+            ->onFailure(function (Stringable $output, SystemErrorRepository $systemErrorRepository) {
+                $systemErrorRepository->saveException(new Exception(
+                    sprintf('Failed to generate daily crosswords. Output: %s', $output)
+                ), 'scheduler');
+            }) //
+            ->name('Generate daily crossword puzzles for enabled languages');
     }
 
     /**
