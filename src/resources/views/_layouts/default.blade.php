@@ -24,7 +24,7 @@
   <meta name="description" content="@yield('description', config('ed.description'))">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  {{-- <link rel="canonical" href="@yield('canonical', url()->current())"> --}}
+  <link rel="canonical" href="@yield('canonical', url()->current())">
   <meta property="og:title" content="@yield('title') - {{ config('ed.title') }}">
   <meta property="og:description" content="@yield('description', config('ed.description'))">
   <meta property="og:url" content="{{ url()->current() }}">
