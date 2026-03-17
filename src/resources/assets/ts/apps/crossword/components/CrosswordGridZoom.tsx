@@ -61,8 +61,7 @@ export default function CrosswordGridZoom({ cols, children }: IProps) {
         function resetIfAtMinScale() {
             if (scale <= 1.05) {
                 scale = MIN_SCALE;
-                tx = 0;
-                ty = 0;
+                clamp();
                 applyTransform();
                 updateCursor();
             }
