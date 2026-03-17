@@ -1,0 +1,156 @@
+@import '../../../_scss/variables';
+
+// ─── Page wrapper ─────────────────────────────────────────────────────────────
+
+.CrosswordGame {
+    width: 100%;
+    // With container-fluid the page spans the full viewport; cap and centre the
+    // game component so grid cells never become absurdly large on 4K displays.
+    max-width: 1800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.CrosswordGame--loading {
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+// ─── Active-clue banner ───────────────────────────────────────────────────────
+
+.CrosswordGame__active-clue {
+    background: var(--ed-bg-surface);
+    border: 1px solid var(--ed-border);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+}
+
+// ─── Mobile tabs ──────────────────────────────────────────────────────────────
+
+.CrosswordGame__tabs {
+    border-bottom: 1px solid var(--ed-border);
+}
+
+// ─── Two-column layout ────────────────────────────────────────────────────────
+//
+//   Mobile (< md):  single column; panels shown/hidden via Bootstrap's
+//                   d-none / d-md-block classes; tabs above control which is visible.
+//
+//   Tablet (md–lg): side-by-side, grid takes ~60 %, clue list takes the rest.
+//
+//   Desktop (≥ lg): CSS Grid — grid panel is fluid, clue sidebar is 300 px fixed.
+//                   Clue panel sticks to the viewport so you can scroll the clues
+//                   while the grid stays visible.
+//
+//   Wide (≥ xl):    Clue sidebar widens to 340 px.
+
+.CrosswordGame__layout {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+
+    @media (min-width: 992px) {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 1.5rem;
+    }
+
+    @media (min-width: 1200px) {
+        grid-template-columns: 1fr 360px;
+    }
+
+    // ── Wide (≥ 1500 px): three-column — Across | Grid | Down ──────────────
+    // The grid panel stays in the centre; side panels are placed explicitly
+    // regardless of their DOM order.
+    @media (min-width: 1500px) {
+        grid-template-columns: minmax(200px, 280px) 1fr minmax(200px, 280px);
+    }
+}
+
+// ─── Grid panel ───────────────────────────────────────────────────────────────
+
+.CrosswordGame__grid-panel {
+    flex: 1;       // grow to fill the flex container on mobile
+    min-width: 0;  // prevent flex blowout
+
+    // In the wide 3-column layout the grid sits in the centre column.
+    @media (min-width: 1500px) {
+        grid-column: 2;
+        grid-row: 1;
+    }
+}
+
+// ─── Combined clue panel (mobile + md–xl) ────────────────────────────────────
+//
+// sticky + overflow on the SAME element breaks mouse-wheel scrolling in most
+// browsers: the browser won't scroll an element that is also a sticky anchor.
+// Fix: sticky on the outer panel, scroll on the inner __clue-scroll wrapper.
+
+.CrosswordGame__clue-panel {
+    min-width: 0;
+
+    @media (min-width: 992px) {
+        align-self: start; // don't let the grid stretch the panel to grid-row height
+        position: sticky;
+        top: 1rem;
+    }
+
+    // Hidden on very wide screens — replaced by the split side panels.
+    @media (min-width: 1500px) {
+        display: none !important;
+    }
+}
+
+// ─── Wide-screen split panels ────────────────────────────────────────────────
+
+.CrosswordGame__across-panel,
+.CrosswordGame__down-panel {
+    display: none;
+
+    @media (min-width: 1500px) {
+        display: block;
+        align-self: start;
+        position: sticky;
+        top: 1rem;
+        grid-row: 1;
+    }
+}
+
+.CrosswordGame__across-panel {
+    @media (min-width: 1500px) { grid-column: 1; }
+}
+
+.CrosswordGame__down-panel {
+    @media (min-width: 1500px) { grid-column: 3; }
+}
+
+// ─── Scrollable inner wrapper (all clue panels) ───────────────────────────────
+
+.CrosswordGame__clue-scroll {
+    @media (min-width: 992px) {
+        // A fixed height (not just max-height) is required for the browser to
+        // treat this as a scroll container for mouse-wheel events.
+        // 180px accounts for the navbar + page title + breadcrumb above the grid.
+        height: calc(100vh - 180px);
+        overflow-y: scroll;
+        overscroll-behavior: contain;
+    }
+}
+
+// ─── Toolbar ──────────────────────────────────────────────────────────────────
+
+.CrosswordGame__toolbar {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.CrosswordGame__timer {
+    font-size: 0.9rem;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}

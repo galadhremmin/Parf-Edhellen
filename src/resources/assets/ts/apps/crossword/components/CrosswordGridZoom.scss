@@ -1,0 +1,56 @@
+// ─── Pinch-pan zoom wrapper for the crossword grid ─────────────────────────
+//
+// The outer div clips overflow so that zoomed-in content doesn't bleed into
+// surrounding UI.  The inner div is the actual transform target: it is given a
+// minimum width of (cols × MIN_CELL_PX) so every cell is always at least
+// comfortably tappable even before the user zooms in.
+
+// Space between the grid edges and the mask fade — shared by the mask
+// definition and the inner padding so the fade always covers empty space.
+$cw-zoom-fade: 1.5rem;
+
+.CrosswordGridZoom {
+    overflow: hidden;
+    width: 100%;
+    // Disable double-tap zoom (we handle zoom ourselves) while keeping
+    // normal single-finger interaction (cell taps, page scroll) intact.
+    touch-action: manipulation;
+
+    // ── All-edges fade via CSS mask ───────────────────────────────────────
+    // Fades the grid content out on all four sides to hint that the grid
+    // extends beyond the visible area.  Two gradient layers are intersected:
+    // one for left/right edges, one for top/bottom.
+    $h-mask: linear-gradient(to right,  transparent 0, black #{$cw-zoom-fade}, black calc(100% - #{$cw-zoom-fade}), transparent 100%);
+    $v-mask: linear-gradient(to bottom, transparent 0, black #{$cw-zoom-fade}, black calc(100% - #{$cw-zoom-fade}), transparent 100%);
+
+    mask-image: $h-mask, $v-mask;
+    mask-composite: intersect;
+    // Safari / older Chromium use a different composite keyword.
+    -webkit-mask-image: $h-mask, $v-mask;
+    -webkit-mask-composite: source-in;
+}
+
+.CrosswordGridZoom__inner {
+    transform-origin: 0 0;
+    will-change: transform;
+    // Enforce the minimum tappable cell size.  var(--cw-zoom-cols) is set
+    // as an inline style by the React component.
+    min-width: calc(var(--cw-zoom-cols, 10) * var(--cw-min-cell, 44px));
+    width: 100%;
+    // Buffer zone so the mask gradient fades over empty space, not real cells.
+    padding: $cw-zoom-fade;
+}
+
+// ── Navigation hint ────────────────────────────────────────────────────────
+// Only shown on touch-primary devices; hidden for mouse/pointer users.
+.CrosswordGridZoom__hint {
+    display: none;
+    font-size: 0.78rem;
+    color: var(--ed-text-muted, #6c757d);
+    text-align: center;
+    margin-bottom: 0.4rem;
+
+    @media (hover: none) and (pointer: coarse) {
+        display: block;
+    }
+}

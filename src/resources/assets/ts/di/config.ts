@@ -12,6 +12,7 @@ import SentenceResourceApiConnector from '@root/connectors/backend/SentenceApiCo
 import SpeechResourceApiConnector from '@root/connectors/backend/SpeechResourceApiConnector';
 import SubscriptionApiConnector from '@root/connectors/backend/SubscriptionApiConnector';
 import UtilityApiConnector from '@root/connectors/backend/UtilityApiConnector';
+import CrosswordConnector from '@root/connectors/backend/CrosswordConnector';
 import WordFinderConnector from '@root/connectors/backend/WordFinderConnector';
 import WordListApiConnector from '@root/connectors/backend/WordListApiConnector';
 import { RoleManager } from '@root/security';
@@ -41,6 +42,7 @@ export default function setupContainer() {
     setSingleton(DI.SubscriptionApi, SubscriptionApiConnector);
     setSingleton(DI.UtilityApi, UtilityApiConnector);
     setSingleton(DI.LogApi, UtilityApiConnector);
+    setSingleton(DI.CrosswordApi, CrosswordConnector);
     setSingleton(DI.WordFinderApi, WordFinderConnector);
     setSingleton(DI.WordListApi, WordListApiConnector);
     setInstance(DI.GlobalEvents, GlobalEventConnector);

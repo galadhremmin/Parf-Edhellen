@@ -1,0 +1,58 @@
+@import '../../../_scss/variables';
+
+.ClueList {
+    font-size: 0.9rem;
+    overflow-y: auto;
+}
+
+.ClueList__section {
+    & + & {
+        margin-top: 1rem;
+    }
+}
+
+.ClueList__heading {
+    font-family: $font-family-tiny;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.75rem;
+    color: var(--ed-text-muted);
+    margin-bottom: 0.4rem;
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid var(--ed-border);
+}
+
+.ClueList__items {
+    margin: 0;
+    padding: 0;
+}
+
+.ClueList__item {
+    padding: 0.3rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    line-height: 1.4;
+    color: var(--ed-text);
+    transition: background 0.1s;
+
+    &:hover {
+        background: var(--ed-bg-surface);
+    }
+
+    &--active {
+        background: #c0d8ff;
+        font-weight: 600;
+
+        [data-bs-theme="dark"] & {
+            background: #1e3a5f;
+        }
+    }
+}
+
+.ClueList__item-number {
+    font-weight: 700;
+    min-width: 2em;
+    display: inline-block;
+    color: var(--ed-text-muted);
+}

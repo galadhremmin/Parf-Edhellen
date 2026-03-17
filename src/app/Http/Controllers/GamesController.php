@@ -19,6 +19,11 @@ class GamesController extends Controller
                 'title' => __('word-finder.title'),
                 'description' => __('word-finder.description'),
             ],
+            (object) [
+                'route' => route('crossword.index'),
+                'title' => __('crossword.title'),
+                'description' => __('crossword.description'),
+            ],
         ];
 
         return view('games.index', ['games' => $games]);

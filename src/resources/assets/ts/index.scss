@@ -47,6 +47,7 @@
 // Custom components that are used throughout Parf Edhellen
 @import './_scss/autosuggest';
 @import "./_scss/_link-block";
+@import "./_scss/_crossword-calendar";
 
 // Custom components used specifically on the landing page. These styles need to be preloaded to avoid unecessary reflows.
 @import './apps/book-browser/components/GlossaryEntities/LexicalEntry.scss';
