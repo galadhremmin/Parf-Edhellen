@@ -37,7 +37,8 @@ function ClueList(props: IClueListProps) {
                             aria-selected={isActive}
                         >
                             <span className="ClueList__item-number">{clue.number}.</span>
-                            {' '}{clue.clue}
+                            {' '}{clue.clue}{' '}
+                            <span className="ClueList__item-length">({clue.length})</span>
                         </li>
                     );
                 })}

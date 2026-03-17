@@ -4,6 +4,7 @@ import {
     useImperativeHandle,
     useRef,
     type CSSProperties,
+    type FormEvent,
     type KeyboardEvent as ReactKeyboardEvent,
 } from 'react';
 import type { ICrosswordClue } from '@root/connectors/backend/ICrosswordApi';
@@ -32,8 +33,10 @@ const CrosswordGrid = forwardRef<ICrosswordGridHandle, ICrosswordGridProps>(func
     const { grid, clues, cells, checkResults, activeRow, activeCol, activeClue, onCellClick, onKeyDown, locked } = props;
     const containerRef = useRef<HTMLDivElement>(null);
 
+    const hiddenInputRef = useRef<HTMLInputElement>(null);
+
     useImperativeHandle(ref, () => ({
-        focus: () => containerRef.current?.focus(),
+        focus: () => (hiddenInputRef.current ?? containerRef.current)?.focus(),
     }));
 
     // Build a map of cell positions that start clues: "row:col" => clue number
@@ -58,7 +61,7 @@ const CrosswordGrid = forwardRef<ICrosswordGridHandle, ICrosswordGridProps>(func
     const handleCellClick = useCallback((row: number, col: number) => {
         if (locked) return;
         void fireEvent('CrosswordGrid', onCellClick, { row, col });
-        containerRef.current?.focus();
+        hiddenInputRef.current?.focus();
     }, [onCellClick, locked]);
 
     const handleKeyDown = useCallback((ev: ReactKeyboardEvent<HTMLDivElement>) => {
@@ -67,9 +70,45 @@ const CrosswordGrid = forwardRef<ICrosswordGridHandle, ICrosswordGridProps>(func
         void fireEvent('CrosswordGrid', onKeyDown, ev.nativeEvent);
     }, [onKeyDown, locked]);
 
+    // Hidden-input handlers — iOS virtual keyboard only fires `input` events
+    // (not `keydown`) for regular characters, so we need both:
+    //   onKeyDown → special keys (Backspace, arrows, Tab)
+    //   onInput   → letter keys (e.data contains the typed character)
+    const handleHiddenKeyDown = useCallback((ev: ReactKeyboardEvent<HTMLInputElement>) => {
+        if (locked) return;
+        // Single printable characters are handled by onInput to avoid double-firing.
+        if (ev.key.length === 1) return;
+        ev.stopPropagation();
+        void fireEvent('CrosswordGrid', onKeyDown, ev.nativeEvent);
+    }, [onKeyDown, locked]);
+
+    const handleHiddenInput = useCallback((ev: FormEvent<HTMLInputElement>) => {
+        if (locked) return;
+        const nativeEv = ev.nativeEvent as InputEvent;
+        ev.currentTarget.value = '';
+        if (nativeEv.inputType !== 'insertText' || !nativeEv.data || nativeEv.data.length !== 1) return;
+        const synth = new KeyboardEvent('keydown', { key: nativeEv.data.toUpperCase(), bubbles: true });
+        void fireEvent('CrosswordGrid', onKeyDown, synth);
+    }, [onKeyDown, locked]);
+
     const cols = grid[0]?.length ?? 0;
 
     return (
+        <>
+        {/* Visually hidden input so iOS shows the virtual keyboard on cell tap. */}
+        {!locked && (
+            <input
+                ref={hiddenInputRef}
+                aria-hidden="true"
+                style={{ position: 'fixed', top: 0, left: 0, width: '1px', height: '1px', opacity: 0.01, pointerEvents: 'none' }}
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="none"
+                spellCheck={false}
+                onKeyDown={handleHiddenKeyDown}
+                onInput={handleHiddenInput}
+            />
+        )}
         <div
             ref={containerRef}
             className={`CrosswordGrid${locked ? ' CrosswordGrid--locked' : ''}`}
@@ -105,6 +144,7 @@ const CrosswordGrid = forwardRef<ICrosswordGridHandle, ICrosswordGridProps>(func
                 })
             )}
         </div>
+        </>
     );
 });
 

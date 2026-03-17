@@ -245,7 +245,7 @@ function CrosswordGame(props: ICrosswordGameProps) {
                     </div>}
 
                     {puzzle.grid && (
-                        <CrosswordGridZoom cols={puzzle.grid[0]?.length ?? 0}>
+                        <CrosswordGridZoom cols={puzzle.grid[0]?.length ?? 0} activeRow={selection.row} activeCol={selection.col}>
                             <CrosswordGrid
                                 ref={gridRef}
                                 grid={puzzle.grid}

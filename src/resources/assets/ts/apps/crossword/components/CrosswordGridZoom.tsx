@@ -4,6 +4,8 @@ import './CrosswordGridZoom.scss';
 interface IProps {
     cols: number;
     children: ReactNode;
+    activeRow?: number | null;
+    activeCol?: number | null;
 }
 
 /** Minimum touch-target size (Apple HIG / Material Design recommendation). */
@@ -20,9 +22,13 @@ const DRAG_THRESHOLD = 4;
  * Mouse : wheel to zoom (cursor position stays fixed); drag to pan.
  *         A short click (movement < DRAG_THRESHOLD) still fires as a cell click.
  */
-export default function CrosswordGridZoom({ cols, children }: IProps) {
+export default function CrosswordGridZoom({ cols, children, activeRow, activeCol }: IProps) {
     const outerRef = useRef<HTMLDivElement>(null);
     const innerRef = useRef<HTMLDivElement>(null);
+
+    // Filled in by the main effect so the pan-to-active effect can call into
+    // the closure that owns tx/ty/scale/clamp/applyTransform.
+    const panToActiveRef = useRef<(() => void) | null>(null);
 
     useEffect(() => {
         const outer = outerRef.current;
@@ -189,7 +195,36 @@ export default function CrosswordGridZoom({ cols, children }: IProps) {
         outer.addEventListener('mouseleave',  onMouseUp);
         outer.addEventListener('click',       onClickCapture, { capture: true });
 
+        // ── Pan to active cell ───────────────────────────────────────────────
+        // Called from the separate activeRow/activeCol effect below.
+        // Lives inside this closure so it can read and mutate tx/ty/scale.
+        panToActiveRef.current = () => {
+            const cell = inner.querySelector('.CrosswordGrid__cell--active');
+            if (!cell) return;
+
+            const outerRect = outer.getBoundingClientRect();
+            const cellRect  = cell.getBoundingClientRect();
+
+            const fadeMargin = 24; // matches $cw-zoom-fade (~1.5rem)
+            const visible =
+                cellRect.left   >= outerRect.left   + fadeMargin &&
+                cellRect.right  <= outerRect.right  - fadeMargin &&
+                cellRect.top    >= outerRect.top    + fadeMargin &&
+                cellRect.bottom <= outerRect.bottom - fadeMargin;
+            if (visible) return;
+
+            // Pan horizontally to centre; vertically to near the top so the
+            // cell stays above the virtual keyboard in landscape mode.
+            const cellCx = cellRect.left - outerRect.left + cellRect.width  / 2;
+            const cellTop = cellRect.top - outerRect.top;
+            tx += outerRect.width / 2 - cellCx;
+            ty += fadeMargin - cellTop;
+            clamp();
+            applyTransform();
+        };
+
         return () => {
+            panToActiveRef.current = null;
             outer.removeEventListener('touchstart',  onTouchStart);
             outer.removeEventListener('touchmove',   onTouchMove);
             outer.removeEventListener('touchend',    onTouchEnd);
@@ -201,6 +236,13 @@ export default function CrosswordGridZoom({ cols, children }: IProps) {
             outer.removeEventListener('click',       onClickCapture, { capture: true } as EventListenerOptions);
         };
     }, []);
+
+    // When the active cell changes, pan to it after the DOM has been committed.
+    useEffect(() => {
+        if (activeRow == null || activeCol == null) return;
+        const rafId = requestAnimationFrame(() => panToActiveRef.current?.());
+        return () => cancelAnimationFrame(rafId);
+    }, [activeRow, activeCol]);
 
     return (
         <>

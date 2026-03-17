@@ -94,6 +94,13 @@
 .CrosswordGame__clue-panel {
     min-width: 0;
 
+    // Between md and lg the layout is plain flex; cap the panel so the grid
+    // keeps most of the space (mirrors the 300 px column used at lg+).
+    @media (min-width: 768px) and (max-width: 991.98px) {
+        flex: 0 0 200px;
+        max-width: 200px;
+    }
+
     @media (min-width: 992px) {
         align-self: start; // don't let the grid stretch the panel to grid-row height
         position: sticky;
