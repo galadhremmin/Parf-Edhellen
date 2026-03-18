@@ -254,6 +254,11 @@ Breadcrumbs::for('crossword.play', function (BreadcrumbTrail $breadcrumbs, $lang
     $breadcrumbs->push($label, route('crossword.play', ['languageId' => $languageId, 'date' => $date]));
 });
 
+Breadcrumbs::for('crossword.config.index', function (BreadcrumbTrail $breadcrumbs) {
+    $breadcrumbs->parent('crossword.index');
+    $breadcrumbs->push('Crossword configuration', route('crossword.config.index'));
+});
+
 // //////////////////////////////////////////////////////////////////////////////////////////////
 // Forum
 

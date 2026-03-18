@@ -2,12 +2,15 @@
 
 namespace App\Services;
 
+use DateInterval;
 use App\Helpers\StringHelper;
 use App\Models\CrosswordPuzzle;
 use App\Models\GameCrosswordLanguage;
+use App\Models\GameCrosswordLexicalEntryGroup;
 use App\Models\LexicalEntry;
 use App\Models\LexicalEntryGroup;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -29,7 +32,7 @@ class CrosswordPuzzleGenerator
      */
     public function fetchWordCluePairs(int $languageId, int $targetWords = self::TARGET_WORDS): array
     {
-        $groupIds = LexicalEntryGroup::safe()->pluck('id')->toArray();
+        $groupIds = $this->getLexicalEntryGroupIds();
         if (empty($groupIds)) {
             return [];
         }
@@ -527,6 +530,26 @@ class CrosswordPuzzleGenerator
         }
 
         return $clues;
+    }
+
+    // ─── Configuration ────────────────────────────────────────────────────────
+
+    /**
+     * Return the configured lexical entry group IDs for crossword puzzles.
+     * Falls back to LexicalEntryGroup::safe() when no configuration exists.
+     *
+     * @return array<int>
+     */
+    private function getLexicalEntryGroupIds(): array
+    {
+        return Cache::remember('ed.game.crossword.lexical-entry-groups', DateInterval::createFromDateString('1 day'), function () {
+            $configured = GameCrosswordLexicalEntryGroup::pluck('lexical_entry_group_id')->toArray();
+            if (! empty($configured)) {
+                return $configured;
+            }
+
+            return LexicalEntryGroup::safe()->pluck('id')->toArray();
+        });
     }
 
     // ─── Helpers ──────────────────────────────────────────────────────────────
