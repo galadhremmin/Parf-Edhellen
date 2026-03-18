@@ -27,6 +27,9 @@
       <a class="dropdown-item {{ active('word-finder.config.index') }}" href="{{ route('word-finder.config.index') }}">Sage configuration</a>
     </li>
     <li>
+      <a class="dropdown-item {{ active('crossword.config.index') }}" href="{{ route('crossword.config.index') }}">Crossword configuration</a>
+    </li>
+    <li>
       <a class="dropdown-item {{ active('dashboard.index') }}" href="{{ route('dashboard.index') }}">Dashboard</a>
     </li>
     @endif

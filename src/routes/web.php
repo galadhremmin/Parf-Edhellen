@@ -29,6 +29,7 @@ require 'web-routes/flashcards.php';
 require 'web-routes/flashcards-user.php';
 require 'web-routes/games.php';
 require 'web-routes/crossword.php';
+require 'web-routes/crossword-admin.php';
 require 'web-routes/phrases.php';
 require 'web-routes/word-finder-admin.php';
 require 'web-routes/word-finder.php';
