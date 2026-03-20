@@ -36,7 +36,7 @@ const CrosswordGrid = forwardRef<ICrosswordGridHandle, ICrosswordGridProps>(func
     const hiddenInputRef = useRef<HTMLInputElement>(null);
 
     useImperativeHandle(ref, () => ({
-        focus: () => (hiddenInputRef.current ?? containerRef.current)?.focus(),
+        focus: () => (hiddenInputRef.current ?? containerRef.current)?.focus({ preventScroll: true }),
     }));
 
     // Build a map of cell positions that start clues: "row:col" => clue number
@@ -61,7 +61,7 @@ const CrosswordGrid = forwardRef<ICrosswordGridHandle, ICrosswordGridProps>(func
     const handleCellClick = useCallback((row: number, col: number) => {
         if (locked) return;
         void fireEvent('CrosswordGrid', onCellClick, { row, col });
-        hiddenInputRef.current?.focus();
+        hiddenInputRef.current?.focus({ preventScroll: true });
     }, [onCellClick, locked]);
 
     const handleKeyDown = useCallback((ev: ReactKeyboardEvent<HTMLDivElement>) => {

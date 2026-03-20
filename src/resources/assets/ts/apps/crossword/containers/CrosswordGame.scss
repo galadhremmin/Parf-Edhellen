@@ -28,6 +28,17 @@
     font-size: 0.9rem;
     margin-bottom: 0.75rem;
     line-height: 1.4;
+
+    // On mobile/tablet the clue list isn't always alongside the grid, so pin
+    // the banner to the top of the viewport so the current clue is always
+    // readable no matter how far the user has scrolled into the grid.
+    @media (max-width: 991.98px) {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        border-radius: 0;
+        margin-bottom: 0.5rem;
+    }
 }
 
 // ─── Mobile tabs ──────────────────────────────────────────────────────────────
@@ -137,15 +148,26 @@
 }
 
 // ─── Scrollable inner wrapper (all clue panels) ───────────────────────────────
+//
+// Always constrained so that scrollIntoView (used to keep the active clue
+// visible) scrolls within this container rather than the page itself.
+// A bounded height is also required for mouse-wheel scroll to work correctly.
 
 .CrosswordGame__clue-scroll {
+    // Mobile + tablet: cap at half the viewport so the list is its own scroll
+    // container.  The grid stays visible because the two panels are either
+    // in separate tabs (mobile) or side-by-side (tablet).
+    max-height: 50vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
     @media (min-width: 992px) {
-        // A fixed height (not just max-height) is required for the browser to
-        // treat this as a scroll container for mouse-wheel events.
+        // Desktop: give the full sticky column a fixed height so the clue list
+        // occupies the whole sidebar without growing the page.
         // 180px accounts for the navbar + page title + breadcrumb above the grid.
+        max-height: none;
         height: calc(100vh - 180px);
         overflow-y: scroll;
-        overscroll-behavior: contain;
     }
 }
 
