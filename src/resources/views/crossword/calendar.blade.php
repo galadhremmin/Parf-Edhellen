@@ -97,7 +97,7 @@
           <span class="cw-day__today-badge">Today</span>
         </a>
 
-      @elseif ($isToday)
+      @elseif ($isToday && $hasPuzzle)
         {{-- Today — unsolved, primary CTA --}}
         <a href="{{ route('crossword.play', ['languageId' => $gameLanguage->language_id, 'date' => $dateStr]) }}"
            class="cw-day cw-day--today"
@@ -106,6 +106,13 @@
           <span class="cw-day__num">{{ $cellDate->day }}</span>
           <span class="cw-day__cta">Play →</span>
         </a>
+
+      @elseif ($isToday)
+        {{-- Today — no puzzle generated yet --}}
+        <div class="cw-day cw-day--today cw-day--empty" role="gridcell" aria-label="{{ $cellDate->day }}, today, no puzzle yet">
+          <span class="cw-day__num">{{ $cellDate->day }}</span>
+          <span class="cw-day__today-badge">Today</span>
+        </div>
 
       @elseif ($isCompleted)
         {{-- Past puzzle, solved --}}
