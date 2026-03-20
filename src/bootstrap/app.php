@@ -9,10 +9,15 @@ use App\Http\Middleware\LogExpensiveRequests;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\SafeSubstituteBindings;
 use App\Http\Middleware\TrimStrings;
+use App\Models\FailedJob;
+use App\Repositories\SystemErrorRepository;
+use App\Security\WebAuthnService;
+use Carbon\Carbon;
 use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Application;
@@ -24,6 +29,7 @@ use Illuminate\Foundation\Http\Middleware\ValidatePostSize;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Routing\Middleware\ValidateSignature;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Stringable;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -75,6 +81,53 @@ return Application::configure(basePath: dirname(__DIR__))
             SafeSubstituteBindings::class,
             LogExpensiveRequests::class,
         ]);
+    })
+    ->withSchedule(function (Schedule $schedule) {
+        $schedule->call(function (SystemErrorRepository $systemErrorRepository) {
+            $systemErrorRepository->deleteOlderThan(Carbon::now()->addDays(-90));
+        }) //
+            ->onFailure(function (Stringable $output, SystemErrorRepository $systemErrorRepository) {
+                $systemErrorRepository->saveException(new Exception(
+                    sprintf('Failed to delete old SystemErrors. Output: %s', $output)
+                ), 'scheduler');
+            }) //
+            ->name('Delete SystemError entities older than 90 days.') //
+            ->hourly();
+
+        $schedule->call(function () {
+            FailedJob::where('failed_at', '<=', Carbon::now()->addDays(-90))->delete();
+        }) //
+            ->onFailure(function (Stringable $output, SystemErrorRepository $systemErrorRepository) {
+                $systemErrorRepository->saveException(new Exception(
+                    sprintf('Failed to delete old failed jobs. Output: %s', $output)
+                ), 'scheduler');
+            }) //
+            ->name('Delete failed jobs entities older than 90 days.') //
+            ->monthly();
+
+        $schedule->call(function (WebAuthnService $webAuthnService) {
+            $webAuthnService->cleanupExpiredSessions();
+        }) //
+            ->onFailure(function (Stringable $output, SystemErrorRepository $systemErrorRepository) {
+                $systemErrorRepository->saveException(new Exception(
+                    sprintf('Failed to cleanup expired WebAuthn sessions. Output: %s', $output)
+                ), 'scheduler');
+            }) //
+            ->name('Cleanup expired WebAuthn sessions.') //
+            ->hourly();
+
+        $schedule->command('ed:prune-search-view-events') //
+            ->daily() //
+            ->name('Prune search view events older than retention period');
+
+        $schedule->command('ed:generate-daily-crosswords') //
+            ->daily() //
+            ->onFailure(function (Stringable $output, SystemErrorRepository $systemErrorRepository) {
+                $systemErrorRepository->saveException(new Exception(
+                    sprintf('Failed to generate daily crosswords. Output: %s', $output)
+                ), 'scheduler');
+            }) //
+            ->name('Generate daily crossword puzzles for enabled languages');
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

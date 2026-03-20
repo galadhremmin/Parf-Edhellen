@@ -31,4 +31,8 @@ sudo -u www-data composer update
 sudo -u www-data php artisan migrate
 sudo -u www-data rm -f storage/framework/views/*.php
 sudo -u www-data php artisan optimize
+
+systemctl restart php8.2-fpm
+systemctl restart parf-edhellen*
+
 cd ..
