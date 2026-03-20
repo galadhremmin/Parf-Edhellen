@@ -27,6 +27,8 @@ interface ICrosswordGridProps {
 
 export interface ICrosswordGridHandle {
     focus(): void;
+    /** Focus the grid container directly (no scroll side-effects; use on clue click). */
+    focusContainer(): void;
 }
 
 const CrosswordGrid = forwardRef<ICrosswordGridHandle, ICrosswordGridProps>(function CrosswordGrid(props, ref) {
@@ -37,6 +39,7 @@ const CrosswordGrid = forwardRef<ICrosswordGridHandle, ICrosswordGridProps>(func
 
     useImperativeHandle(ref, () => ({
         focus: () => (hiddenInputRef.current ?? containerRef.current)?.focus({ preventScroll: true }),
+        focusContainer: () => containerRef.current?.focus({ preventScroll: true }),
     }));
 
     // Build a map of cell positions that start clues: "row:col" => clue number

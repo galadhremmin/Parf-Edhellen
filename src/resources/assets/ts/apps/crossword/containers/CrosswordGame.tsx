@@ -117,8 +117,10 @@ function CrosswordGame(props: ICrosswordGameProps) {
     const handleClueClick = useCallback((ev: IComponentEvent<ICrosswordClue>) => {
         setActiveTab('grid');
         onClueClick(ev);
-        // Focus the grid so keyboard input works immediately after clue selection.
-        gridRef.current?.focus();
+        // Focus the grid container (not the hidden input) so keyboard input works
+        // immediately, without triggering a scroll-to-top in browsers that ignore
+        // preventScroll on position:fixed elements inside transformed ancestors.
+        gridRef.current?.focusContainer();
     }, [onClueClick]);
 
     const handleCheck = useCallback(() => {
