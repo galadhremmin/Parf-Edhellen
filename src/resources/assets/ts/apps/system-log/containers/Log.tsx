@@ -3,7 +3,6 @@ import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 
 import Panel from '@root/components/Panel';
-import FailedJobsList from '../components/FailedJobsList';
 import ErrorsByWeekBarGraph from '../components/Graph';
 import LogList from '../components/LogList';
 import ViewsGraph from '../components/ViewsGraph';
@@ -14,8 +13,6 @@ function Log(props: IProps) {
     const {
         errorsByWeek,
         errorCategories,
-        failedJobsByWeek,
-        failedJobsCategories,
         logApi,
         viewsPerDay,
     } = props;
@@ -50,7 +47,7 @@ function Log(props: IProps) {
     }, []);
 
     return <>
-        {viewsPerDay && viewsPerDay.length > 0 && <Panel title="Search views per hour (last 30 days)" shadow={true}>
+        {viewsPerDay && viewsPerDay.length > 0 && <Panel title={<>Search views per hour <small className="text-muted fs-6 fw-normal">last 30 days</small></>} shadow={true}>
             <ViewsGraph data={viewsPerDay} />
         </Panel>}
         <Panel title="Exception log" shadow={true}>
@@ -83,14 +80,6 @@ function Log(props: IProps) {
                     weekNumber={selectedWeekNumber}
                     onCategoryDeleted={handleCategoryDeleted}
                 />
-            </section>
-        </Panel>
-        <Panel title="Failed jobs" shadow={true}>
-            {failedJobsByWeek && <section>
-                <ErrorsByWeekBarGraph data={failedJobsByWeek} categories={failedJobsCategories} />
-            </section>}
-            <section>
-                <FailedJobsList logApi={logApi} />
             </section>
         </Panel>
     </>;

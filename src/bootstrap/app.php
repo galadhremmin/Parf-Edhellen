@@ -128,6 +128,15 @@ return Application::configure(basePath: dirname(__DIR__))
                 ), 'scheduler');
             }) //
             ->name('Generate daily crossword puzzles for enabled languages');
+
+        $schedule->command('queue:cleanup-statistics', ['--days' => 30]) //
+            ->daily() //
+            ->onFailure(function (Stringable $output, SystemErrorRepository $systemErrorRepository) {
+                $systemErrorRepository->saveException(new Exception(
+                    sprintf('Failed to clean up queue job statistics. Output: %s', $output)
+                ), 'scheduler');
+            }) //
+            ->name('Delete queue job statistics older than 30 days (L30)');
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
