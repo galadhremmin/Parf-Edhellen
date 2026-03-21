@@ -22,8 +22,6 @@ export interface IViewsPerDay {
 export interface IProps {
     errorsByWeek: IErrorsByWeek<IWeeklyErrors>[];
     errorCategories: string[];
-    failedJobsByWeek: IWeeklyFailedJobs[];
-    failedJobsCategories: string[];
     logApi: ILogApi;
     viewsPerDay?: IViewsPerDay[];
 }

@@ -9,65 +9,73 @@
 <section data-inject-module="system-log"
      data-inject-prop-errors-by-week="@json($errorsByWeek)"
      data-inject-prop-error-categories="@json($errorCategories)"
-     data-inject-prop-failed-jobs-by-week="@json($failedJobsByWeek)"
-     data-inject-prop-failed-jobs-categories="@json($failedJobsCategories)"
      data-inject-prop-views-per-day="@json($viewsPerDay)"></section>
 
 <section class="card mb-3 shadow">
    <div class="card-body">
-      <h2>Pending jobs</h2>
-      @if ($jobsByQueue->isEmpty())
-         <em>No pending jobs.</em>
-      @else
-      <table class="table table-bordered">
-         <thead>
-            <tr>
-               <th>Queue</th>
-               <th>Count</th>
-            </tr>
-         </thead>
-         <tbody>
-            @foreach ($jobsByQueue as $queue => $count)
-               <tr>
-                  <td>{{ $queue }}</td>
-                  <td>{{ $count }}</td>
-               </tr>
-            @endforeach
-            </tbody>
-         </table>
-      @endif
-      <h2>Job statistics</h2>
+      <h2>Job statistics <small class="text-muted fs-6 fw-normal">last 30 days</small></h2>
       @if ($jobStatsByQueue->isEmpty())
          <em>No job statistics available.</em>
+      @else
+         <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3 mb-1">
+            @foreach ($jobStatsByQueue as $stats)
+               <div class="col">
+                  <div class="card h-100 border-0 bg-body-tertiary">
+                     <div class="card-body">
+                        <h6 class="card-title text-truncate mb-2" title="{{ $stats->queue }}">{{ $stats->queue }}</h6>
+                        <div class="d-flex gap-2 flex-wrap align-items-center mb-2">
+                           <span class="badge text-bg-success">{{ number_format($stats->success) }} ok</span>
+                           @if ($stats->failed > 0)
+                              <span class="badge text-bg-danger">{{ number_format($stats->failed) }} failed</span>
+                           @endif
+                           @if ($stats->retried > 0)
+                              <span class="badge text-bg-warning">{{ number_format($stats->retried) }} retried</span>
+                           @endif
+                        </div>
+                        <div class="progress mb-1" style="height:5px;" role="progressbar" title="{{ $stats->successPct }}% success rate">
+                           <div class="progress-bar bg-success" style="width:{{ $stats->successPct }}%"></div>
+                           @if ($stats->failed > 0)
+                              <div class="progress-bar bg-danger" style="width:{{ $stats->failedPct }}%"></div>
+                           @endif
+                        </div>
+                        <small class="text-muted">{{ number_format($stats->total) }} jobs &bull; {{ $stats->successPct }}% success</small>
+                        <div class="d-flex gap-3 mt-2">
+                           <small class="text-muted" title="Average execution time">avg {{ $stats->avgDisplay }}</small>
+                           <small class="text-muted" title="Minimum execution time">min {{ $stats->minDisplay }}</small>
+                           <small class="text-muted" title="Maximum execution time">max {{ $stats->maxDisplay }}</small>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            @endforeach
+         </div>
+      @endif
+
+      <h2 class="mt-3">Pending jobs</h2>
+      @if ($jobsByQueue->isEmpty())
+         <em>No pending jobs.</em>
       @else
          <table class="table table-bordered">
             <thead>
                <tr>
                   <th>Queue</th>
-                  <th>Jobs</th>
-                  <th>Succeeded</th>
-                  <th>Failed</th>
-                  <th>Retried</th>
-                  <th>Avg Exec Time (ms)</th>
-                  <th>Max Exec Time (ms)</th>
-                  <th>Min Exec Time (ms)</th>
+                  <th>Count</th>
                </tr>
             </thead>
             <tbody>
-               @foreach ($jobStatsByQueue as $queue => $stats)
+               @foreach ($jobsByQueue as $queue => $count)
                   <tr>
                      <td>{{ $queue }}</td>
-                     <td>{{ $stats['total_count'] ?? 0 }}</td>
-                     <td>{{ $stats['success_count'] ?? 0 }}</td>
-                     <td>{{ $stats['failed_count'] ?? 0 }}</td>
-                     <td>{{ $stats['retry_count'] ?? 0 }}</td>
-                     <td>{{ round($stats['avg_execution_time_ms'] ?? 0, 2) }}</td>
-                     <td>{{ round($stats['max_execution_time_ms'] ?? 0, 2) }}</td>
-                     <td>{{ round($stats['min_execution_time_ms'] ?? 0, 2) }}</td>
+                     <td>{{ $count }}</td>
                   </tr>
                @endforeach
             </tbody>
          </table>
+      @endif
+
+      @if ($hasFailedJobs)
+         <h2 class="mt-3">Failed jobs</h2>
+         <div data-inject-module="failed-jobs"></div>
       @endif
    </div>
 </section>

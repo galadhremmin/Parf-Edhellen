@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Resources;
 
 use App\Adapters\AuditTrailAdapter;
+use App\Adapters\QueueJobStatisticAdapter;
 use App\Http\Controllers\Abstracts\Controller;
 use App\Models\FailedJob;
 use App\Models\SystemError;
@@ -21,14 +22,17 @@ class SystemErrorController extends Controller
 
     private AuditTrailAdapter $_auditTrailAdapter;
 
+    private QueueJobStatisticAdapter $_queueJobStatisticAdapter;
+
     private QueueJobStatisticRepository $_queueJobStatisticRepository;
 
     private TrendingRepository $_trendingRepository;
 
-    public function __construct(AuditTrailRepository $auditTrailRepository, AuditTrailAdapter $auditTrailAdapter, QueueJobStatisticRepository $queueJobStatisticRepository, TrendingRepository $trendingRepository)
+    public function __construct(AuditTrailRepository $auditTrailRepository, AuditTrailAdapter $auditTrailAdapter, QueueJobStatisticAdapter $queueJobStatisticAdapter, QueueJobStatisticRepository $queueJobStatisticRepository, TrendingRepository $trendingRepository)
     {
         $this->_auditTrailRepository = $auditTrailRepository;
         $this->_auditTrailAdapter = $auditTrailAdapter;
+        $this->_queueJobStatisticAdapter = $queueJobStatisticAdapter;
         $this->_queueJobStatisticRepository = $queueJobStatisticRepository;
         $this->_trendingRepository = $trendingRepository;
     }
@@ -36,7 +40,6 @@ class SystemErrorController extends Controller
     public function index(Request $request)
     {
         $errorsByWeek = $this->getRowCountPerWeek(SystemError::class, 'category');
-        $failedJobsByWeek = $this->getRowCountPerWeek(FailedJob::class, 'queue', 'failed_at');
 
         $auditTrailPage = $request->query('audit_trail_page', 0);
         $auditTrailEntries = $this->_auditTrailAdapter->adapt(
@@ -48,10 +51,12 @@ class SystemErrorController extends Controller
             ->groupBy('queue')
             ->pluck('count', 'queue');
 
-        $jobStatsByQueue = $this->_queueJobStatisticRepository->getStatisticsByQueue(
-            Carbon::now()->subDays(30),
-            Carbon::now(),
-        )->keyBy('queue_name');
+        $jobStatsByQueue = $this->_queueJobStatisticAdapter->adapt(
+            $this->_queueJobStatisticRepository->getStatisticsByQueue(
+                Carbon::now()->subDays(30),
+                Carbon::now(),
+            )
+        );
 
         $viewsPerDay = $this->_trendingRepository->getViewsPerHour(Carbon::now()->subDays(30), Carbon::now());
 
@@ -60,8 +65,7 @@ class SystemErrorController extends Controller
             'auditTrailPage' => $auditTrailPage,
             'errorsByWeek' => $errorsByWeek['count_by_week'],
             'errorCategories' => $errorsByWeek['categories'],
-            'failedJobsByWeek' => $failedJobsByWeek['count_by_week'],
-            'failedJobsCategories' => $failedJobsByWeek['categories'],
+            'hasFailedJobs' => FailedJob::exists(),
             'jobsByQueue' => $jobsByQueue,
             'jobStatsByQueue' => $jobStatsByQueue,
             'viewsPerDay' => $viewsPerDay,
