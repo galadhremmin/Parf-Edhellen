@@ -20,6 +20,11 @@ return [
          */
         App\Providers\Aws\ComprehendServiceProvider::class,
 
+        /**
+         * Custom Gemini Service Providers...
+         */
+        App\Providers\Gemini\GeminiServiceProvider::class,
+
         /*
          * Custom Service Providers ...
          */
