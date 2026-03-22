@@ -274,12 +274,8 @@ class SentenceContributionController extends Controller implements IContribution
     private function createFragmentDataFromPayload($payload)
     {
         if ($payload instanceof Sentence) {
-            $fragments = $payload->sentence_fragments;
+            $fragments = $payload->sentence_fragments()->with('lexical_entry_inflections')->get();
             $translations = $payload->sentence_translations;
-
-            foreach ($fragments as $fragment) {
-                $fragment->load('lexical_entry_inflections');
-            }
 
         } else {
             $fragments = new Collection;
