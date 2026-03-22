@@ -30,6 +30,14 @@
                     @endforeach
                 </select>
             </div>
+            <div class="form-group mt-3">
+                <label for="ed-crossword-rephrase-speech-ids" class="control-label">Speeches to rephrase with Gemini <small class="text-muted">(leave empty to skip rephrasing)</small></label>
+                <select multiple name="rephrase_speech_ids[]" size="10" class="form-control" id="ed-crossword-rephrase-speech-ids">
+                    @foreach ($all_speeches as $speech)
+                    <option value="{{ $speech->id }}" {{ isset($selected_rephrase_speech_ids[$speech->id]) ? 'selected' : '' }}>{{ $speech->name }}</option>
+                    @endforeach
+                </select>
+            </div>
             <div class="text-end mt-3">
                 <button class="btn btn-primary" type="submit">Save</button>
             </div>

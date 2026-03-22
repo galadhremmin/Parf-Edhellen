@@ -62,7 +62,7 @@ class GenerateDailyCrosswordsCommand extends Command
             }
 
             $this->line("  Language {$langId}: " . count($pairs) . " pairs available, building grid...");
-            $puzzle = $generator->generateForLanguageAndDate($langId, $targetDate, $targetWords);
+            $puzzle = $generator->generateForLanguageAndDate($langId, $targetDate, $targetWords, $pairs);
             if ($puzzle !== null) {
                 $created++;
                 $this->info("  Language {$langId}: created puzzle ID {$puzzle->id}.");

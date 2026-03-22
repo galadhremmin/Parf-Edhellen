@@ -4,7 +4,9 @@ namespace App\Services;
 
 use DateInterval;
 use App\Helpers\StringHelper;
+use App\Interfaces\IRephrasesCrosswordClues;
 use App\Models\CrosswordPuzzle;
+use App\Models\GameCrosswordRephraseSpeech;
 use App\Models\GameCrosswordLanguage;
 use App\Models\GameCrosswordLexicalEntryGroup;
 use App\Models\LexicalEntry;
@@ -22,13 +24,17 @@ class CrosswordPuzzleGenerator
     private const MIN_PLACED      = 8;    // reject grids with fewer words than this
     private const MAX_ATTEMPTS    = 50;   // stochastic restart budget
 
+    public function __construct(private ?IRephrasesCrosswordClues $clueRephraser = null)
+    {
+    }
+
     /**
      * Fetch word/clue pairs for a language from LexicalEntry → Word + Gloss.
      *
      * We fetch TARGET_WORDS × 5 candidates so each restart attempt gets enough
      * variety when shuffling, without hammering the database multiple times.
      *
-     * @return array<int, array{word: string, clue: string, normalized: string, letters: string[], normLetters: string[]}>
+     * @return array<int, array{word: string, clue: string, normalized: string, letters: string[], normalized_letters: string[]}>
      */
     public function fetchWordCluePairs(int $languageId, int $targetWords = self::TARGET_WORDS): array
     {
@@ -40,6 +46,7 @@ class CrosswordPuzzleGenerator
         $rows = LexicalEntry::active()
             ->join('words', 'words.id', 'lexical_entries.word_id')
             ->join('glosses', 'glosses.lexical_entry_id', 'lexical_entries.id')
+            ->join('speeches', 'speeches.id', 'lexical_entries.speech_id')
             ->where('language_id', $languageId)
             ->whereIn('lexical_entry_group_id', $groupIds)
             ->where(DB::raw('CHAR_LENGTH(words.normalized_word)'), '>=', self::MIN_WORD_LENGTH)
@@ -50,7 +57,7 @@ class CrosswordPuzzleGenerator
             ->where('words.word', 'not like', '% %')
             ->inRandomOrder()
             ->limit($targetWords * 5)
-            ->select('words.word as word', 'glosses.translation as gloss', 'words.normalized_word as normalized')
+            ->select('words.word as word', 'glosses.translation as gloss', 'words.normalized_word as normalized', 'lexical_entries.speech_id as speech_id', 'speeches.name as speech_name')
             ->get();
 
         $seen  = [];
@@ -71,9 +78,11 @@ class CrosswordPuzzleGenerator
             $pairs[] = [
                 'word'        => $word,
                 'clue'        => trim((string) $row->gloss),
+                'speech_id'   => (int) $row->speech_id,
+                'speech_name' => (string) ($row->speech_name ?? ''),
                 'normalized'  => $norm,
                 'letters'     => $this->mbSplit($word),
-                'normLetters' => $this->mbSplit($norm),
+                'normalized_letters' => $this->mbSplit($norm),
             ];
         }
 
@@ -87,7 +96,7 @@ class CrosswordPuzzleGenerator
      * the attempt), places words greedily, enforces crossword validity rules,
      * and scores the result. The highest-scoring valid grid wins.
      *
-     * @param  array<int, array{word: string, clue: string, normalized: string, letters: string[], normLetters: string[]}>  $pairs
+     * @param  array<int, array{word: string, clue: string, normalized: string, letters: string[], normalized_letters: string[]}>  $pairs
      * @return array{grid: array<int, array<int, string|null>>, clues: array<int, array<string, mixed>>}|null
      */
     public function buildGrid(array $pairs): ?array
@@ -102,7 +111,7 @@ class CrosswordPuzzleGenerator
         for ($attempt = 0; $attempt < self::MAX_ATTEMPTS; $attempt++) {
             // Shuffle, then stable-sort longest-first so long words still anchor the grid.
             shuffle($pairs);
-            usort($pairs, fn ($a, $b) => count($b['normLetters']) - count($a['normLetters']));
+            usort($pairs, fn ($a, $b) => count($b['normalized_letters']) - count($a['normalized_letters']));
 
             $placed = $this->attemptPlacement($pairs);
             if ($placed === null) {
@@ -128,8 +137,10 @@ class CrosswordPuzzleGenerator
 
     /**
      * Generate and persist a puzzle for the given language and date. Returns the CrosswordPuzzle or null.
+     *
+     * @param  array<int, array{word: string, clue: string, normalized: string, letters: string[], normalized_letters: string[]}>|null  $pairs  Pre-fetched pairs; fetched automatically when null.
      */
-    public function generateForLanguageAndDate(int $languageId, Carbon $puzzleDate, int $targetWords = self::TARGET_WORDS): ?CrosswordPuzzle
+    public function generateForLanguageAndDate(int $languageId, Carbon $puzzleDate, int $targetWords = self::TARGET_WORDS, ?array $pairs = null): ?CrosswordPuzzle
     {
         $dateStr = $puzzleDate->toDateString();
 
@@ -141,7 +152,7 @@ class CrosswordPuzzleGenerator
             return null;
         }
 
-        $pairs = $this->fetchWordCluePairs($languageId, $targetWords);
+        $pairs ??= $this->fetchWordCluePairs($languageId, $targetWords);
         if (empty($pairs)) {
             Log::error('CrosswordPuzzleGenerator: no word/clue pairs available', [
                 'language_id' => $languageId,
@@ -161,11 +172,21 @@ class CrosswordPuzzleGenerator
             return null;
         }
 
+        $rephraseIds = $this->getRephraseSpeechIds();
+        if ($this->clueRephraser !== null && ! empty($rephraseIds)) {
+            $toRephrase = array_filter($result['clues'], fn ($c) => in_array($c['speech_id'] ?? null, $rephraseIds));
+            $rephrased  = $this->clueRephraser->rephraseClues(array_values($toRephrase));
+            foreach (array_keys($toRephrase) as $i => $origIdx) {
+                $result['clues'][$origIdx]['clue'] = $rephrased[$i]['clue'];
+            }
+        }
+        $clues = $result['clues'];
+
         return CrosswordPuzzle::create([
             'language_id' => $languageId,
             'puzzle_date' => $dateStr,
             'grid'        => $result['grid'],
-            'clues'       => $result['clues'],
+            'clues'       => $clues,
         ]);
     }
 
@@ -204,11 +225,12 @@ class CrosswordPuzzleGenerator
 
         // First word anchors the grid horizontally at the origin.
         $first = $pairs[0];
-        $this->placeLetters($cells, $norms, 0, 0, true, $first['letters'], $first['normLetters']);
+        $this->placeLetters($cells, $norms, 0, 0, true, $first['letters'], $first['normalized_letters']);
         $placed[] = [
             'row' => 0, 'col' => 0, 'across' => true,
-            'letters' => $first['letters'], 'normLetters' => $first['normLetters'],
+            'letters' => $first['letters'], 'normalized_letters' => $first['normalized_letters'],
             'clue' => $first['clue'], 'word' => $first['word'],
+            'speech_id' => $first['speech_id'], 'speech_name' => $first['speech_name'],
         ];
 
         for ($i = 1; $i < count($pairs); $i++) {
@@ -246,8 +268,8 @@ class CrosswordPuzzleGenerator
         foreach ($placed as $p) {
             $newAcross = ! $p['across'];
 
-            foreach ($pair['normLetters'] as $wi => $newNorm) {
-                foreach ($p['normLetters'] as $ci => $existingNorm) {
+            foreach ($pair['normalized_letters'] as $wi => $newNorm) {
+                foreach ($p['normalized_letters'] as $ci => $existingNorm) {
                     if ($newNorm !== $existingNorm) {
                         continue;
                     }
@@ -260,16 +282,18 @@ class CrosswordPuzzleGenerator
                     $newRow = $crossR - $wi * ($newAcross ? 0 : 1);
                     $newCol = $crossC - $wi * ($newAcross ? 1 : 0);
 
-                    if ($this->canPlace($cells, $norms, $newRow, $newCol, $newAcross, $pair['normLetters'])) {
-                        $this->placeLetters($cells, $norms, $newRow, $newCol, $newAcross, $pair['letters'], $pair['normLetters']);
+                    if ($this->canPlace($cells, $norms, $newRow, $newCol, $newAcross, $pair['normalized_letters'])) {
+                        $this->placeLetters($cells, $norms, $newRow, $newCol, $newAcross, $pair['letters'], $pair['normalized_letters']);
                         return [
                             'row'         => $newRow,
                             'col'         => $newCol,
                             'across'      => $newAcross,
                             'letters'     => $pair['letters'],
-                            'normLetters' => $pair['normLetters'],
+                            'normalized_letters' => $pair['normalized_letters'],
                             'clue'        => $pair['clue'],
                             'word'        => $pair['word'],
+                            'speech_id'   => $pair['speech_id'],
+                            'speech_name' => $pair['speech_name'],
                         ];
                     }
                 }
@@ -289,9 +313,9 @@ class CrosswordPuzzleGenerator
      *     (no parallel words running side-by-side).
      *  5. The word must cross at least one already-placed cell.
      */
-    private function canPlace(array $cells, array $norms, int $row, int $col, bool $across, array $normLetters): bool
+    private function canPlace(array $cells, array $norms, int $row, int $col, bool $across, array $normalized_letters): bool
     {
-        $len  = count($normLetters);
+        $len  = count($normalized_letters);
         $dr   = $across ? 0 : 1;
         $dc   = $across ? 1 : 0;
         $prDr = $across ? 1 : 0;  // perpendicular direction
@@ -314,7 +338,7 @@ class CrosswordPuzzleGenerator
 
             if (isset($norms[$key])) {
                 // Rule 3: existing letter must match.
-                if ($norms[$key] !== $normLetters[$i]) {
+                if ($norms[$key] !== $normalized_letters[$i]) {
                     return false;
                 }
                 $intersections++;
@@ -331,14 +355,14 @@ class CrosswordPuzzleGenerator
         return $intersections > 0;
     }
 
-    private function placeLetters(array &$cells, array &$norms, int $row, int $col, bool $across, array $letters, array $normLetters): void
+    private function placeLetters(array &$cells, array &$norms, int $row, int $col, bool $across, array $letters, array $normalized_letters): void
     {
         $dr = $across ? 0 : 1;
         $dc = $across ? 1 : 0;
         foreach ($letters as $i => $letter) {
             $key         = ($row + $i * $dr) . '_' . ($col + $i * $dc);
             $cells[$key] = $letter;
-            $norms[$key] = $normLetters[$i];
+            $norms[$key] = $normalized_letters[$i];
         }
     }
 
@@ -370,7 +394,7 @@ class CrosswordPuzzleGenerator
         foreach ($placed as $p) {
             $dr = $p['across'] ? 0 : 1;
             $dc = $p['across'] ? 1 : 0;
-            foreach (array_keys($p['normLetters']) as $i) {
+            foreach (array_keys($p['normalized_letters']) as $i) {
                 $key = ($p['row'] + $i * $dr) . '_' . ($p['col'] + $i * $dc);
                 $cellWordCount[$key] = ($cellWordCount[$key] ?? 0) + 1;
             }
@@ -386,7 +410,7 @@ class CrosswordPuzzleGenerator
             $dr        = $p['across'] ? 0 : 1;
             $dc        = $p['across'] ? 1 : 0;
             $hasCross  = false;
-            foreach (array_keys($p['normLetters']) as $i) {
+            foreach (array_keys($p['normalized_letters']) as $i) {
                 $key = ($p['row'] + $i * $dr) . '_' . ($p['col'] + $i * $dc);
                 if (($cellWordCount[$key] ?? 0) >= 2) {
                     $hasCross = true;
@@ -426,7 +450,7 @@ class CrosswordPuzzleGenerator
             $dr = $p['across'] ? 0 : 1;
             $dc = $p['across'] ? 1 : 0;
             $wordCells[$idx] = [];
-            foreach (array_keys($p['normLetters']) as $i) {
+            foreach (array_keys($p['normalized_letters']) as $i) {
                 $wordCells[$idx][($p['row'] + $i * $dr) . '_' . ($p['col'] + $i * $dc)] = true;
             }
         }
@@ -521,8 +545,10 @@ class CrosswordPuzzleGenerator
             $clues[] = [
                 'number'    => $number,
                 'direction' => $p['across'] ? 'across' : 'down',
-                'clue'      => $p['clue'],
-                'answer'    => $p['word'],
+                'clue'        => $p['clue'],
+                'answer'      => $p['word'],
+                'speech_id'   => $p['speech_id'] ?? null,
+                'speech_name' => $p['speech_name'] ?? null,
                 'row'       => $p['row'] - $minR,
                 'col'       => $p['col'] - $minC,
                 'length'    => count($p['letters']),
@@ -550,6 +576,17 @@ class CrosswordPuzzleGenerator
 
             return LexicalEntryGroup::safe()->pluck('id')->toArray();
         });
+    }
+
+    /**
+     * Return the speech IDs whose clues should be rephrased with Gemini.
+     * Returns an empty array when no speeches are configured (rephrase nothing).
+     *
+     * @return array<int>
+     */
+    private function getRephraseSpeechIds(): array
+    {
+        return GameCrosswordRephraseSpeech::pluck('speech_id')->map(fn ($id) => (int) $id)->toArray();
     }
 
     // ─── Helpers ──────────────────────────────────────────────────────────────
@@ -587,7 +624,7 @@ class CrosswordPuzzleGenerator
     private function normalizeForMatching(string $word): string
     {
         // Use transformAccentsIntoLetters=false so accented vowels map 1-to-1
-        // (í → i, not í → ii). This keeps count($normLetters) === count($letters),
+        // (í → i, not í → ii). This keeps count($normalized_letters) === count($letters),
         // which is required for end-cap checks and crossing-index arithmetic.
         // It also makes sívë, sivë, síve, and sive all normalize to "sive",
         // so variant spellings can cross each other correctly.
