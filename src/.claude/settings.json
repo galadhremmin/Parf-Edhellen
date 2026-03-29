@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "read -r json; f=$(echo \"$json\" | jq -r '.tool_input.file_path // .tool_response.filePath'); case \"$f\" in *.php) ./vendor/bin/pint \"$f\" 2>/dev/null || true ;; *.ts|*.tsx) npx eslint --fix \"$f\" 2>/dev/null || true ;; esac",
+            "timeout": 30,
+            "statusMessage": "Formatting..."
+          }
+        ]
+      }
+    ]
+  }
+}

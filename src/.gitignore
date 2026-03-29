@@ -18,3 +18,4 @@ BingSiteAuth.xml
 *.bak
 *.cache
 resources/assets/ts/coverage
+CLAUDE.local.md
