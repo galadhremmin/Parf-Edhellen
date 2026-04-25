@@ -2,7 +2,7 @@
 
 namespace App\Providers\Aws;
 
-use App\Aws\ComprehendFacade;
+use App\ThirdParty\Aws\ComprehendFacade;
 use App\Interfaces\IIdentifiesPhrases;
 use Illuminate\Support\ServiceProvider;
 

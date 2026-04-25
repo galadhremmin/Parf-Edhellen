@@ -2,7 +2,7 @@
 
 namespace App\Providers\Gemini;
 
-use App\Gemini\GeminiClueFacade;
+use App\ThirdParty\Gemini\GeminiClueFacade;
 use App\Interfaces\IRephrasesCrosswordClues;
 use Illuminate\Support\ServiceProvider;
 

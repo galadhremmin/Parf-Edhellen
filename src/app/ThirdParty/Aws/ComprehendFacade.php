@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Aws;
+namespace App\ThirdParty\Aws;
 
 use App\Interfaces\IIdentifiesPhrases;
 use Aws\Comprehend\ComprehendClient;
@@ -36,7 +36,6 @@ class ComprehendFacade implements IIdentifiesPhrases
     private function _identifyKeyPhrasesFromChunks(array $chunks): array
     {
         $allPhrases = [];
-        $promises = [];
 
         $client = $this->_clientFactory->create();
         foreach ($chunks as $chunk) {

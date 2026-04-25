@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Aws;
+namespace App\ThirdParty\Aws;
 
 use Aws\Credentials\AssumeRoleCredentialProvider;
 use Aws\Credentials\CredentialProvider;
