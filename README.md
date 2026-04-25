@@ -32,6 +32,32 @@ Ensure that the following PHP dependencies are installed:
 php8.2-curl php8.2-gd php8.2-intl php8.2-mbstring php8.2-mysql php8.2-readline php8.2-xml php8.2-zip
 ```
 
+### MariaDB Fulltext Search Configuration
+
+The search index uses InnoDB fulltext indexes. MariaDB's defaults will silently drop short words (min 3 chars) and common English stopwords (e.g. "if", "this", "the") from the index, causing searches for valid Elvish words to return no results.
+
+Add the following to `/etc/mysql/mariadb.conf.d/50-server.cnf` under `[mysqld]`:
+
+```ini
+[mysqld]
+innodb_ft_min_token_size = 2
+innodb_ft_server_stopword_table = elfdict_v3/ft_stopwords
+```
+
+Then create the (empty) stopword table in MariaDB before rebuilding the index:
+
+```sql
+CREATE TABLE elfdict_v3.ft_stopwords (value VARCHAR(30)) ENGINE=InnoDB;
+```
+
+After restarting MariaDB, rebuild the fulltext index:
+
+```sql
+OPTIMIZE TABLE search_keywords;
+```
+
+Without these settings, searches for short words like "i", "o", "an", "if" will return zero results even when matching rows exist.
+
 Configure the database using the model files in the `model/` directory. Execute the script files in ascending order as documented in `model/0. RUN IN ORDER.md`. You can apply the migrations once you've got Laravel configured.
 
 To configure Laravel, run the following commands sequentially:
