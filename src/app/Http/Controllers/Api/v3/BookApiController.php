@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Api\v3;
 use App\Events\EntityViewed;
 use App\Helpers\StringHelper;
 use App\Http\Controllers\Abstracts\BookBaseController;
-use App\Models\LexicalEntryGroup;
 use App\Models\Language;
-use App\Repositories\ValueObjects\SearchIndexSearchValue;
+use App\Models\LexicalEntryGroup;
 use App\Models\Word;
+use App\Repositories\ValueObjects\SearchIndexSearchValue;
+use DateInterval;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use DateInterval;
 
 class BookApiController extends BookBaseController
 {

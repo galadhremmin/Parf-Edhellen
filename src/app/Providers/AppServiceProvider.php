@@ -5,16 +5,20 @@ namespace App\Providers;
 use App\Exceptions\DBHandler;
 use App\Exceptions\Handler;
 use App\Factories\DefaultSystemLanguageFactory;
+use App\ThirdParty\Gemini\GeminiWordOfTheDayFacade;
 use App\Helpers\ExternalGlossGroupToInternalUrlResolver;
 use App\Helpers\MarkdownParserWrapper;
+use App\Interfaces\IComposesWordOfTheDayTweet;
 use App\Interfaces\IExternalToInternalUrlResolver;
 use App\Interfaces\IMarkdownParser;
+use App\Interfaces\IPostsTweet;
 use App\Interfaces\ISystemLanguageFactory;
-use App\Models\LexicalEntryGroup;
 use App\Models\Initialization\Morphs;
+use App\Models\LexicalEntryGroup;
 use App\Repositories\AuditTrailRepository;
 use App\Repositories\Interfaces\IAuditTrailRepository;
 use App\Repositories\Noop\NoopAuditTrailRepository;
+use App\ThirdParty\X\XApiClient;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Schema;
@@ -73,7 +77,7 @@ class AppServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             __DIR__.'/../../config/ed.php', 'ed'
         );
-        
+
         $this->app->singleton(
             \Illuminate\Foundation\Exceptions\Handler::class,
             function ($app) {
@@ -81,7 +85,7 @@ class AppServiceProvider extends ServiceProvider
                 $handlerType = ! $app->runningInConsole() && config('ed.system_errors_logging')
                     ? DBHandler::class
                     : Handler::class;
-        
+
                 return $app->make($handlerType);
             }
         );
@@ -90,18 +94,18 @@ class AppServiceProvider extends ServiceProvider
             ISystemLanguageFactory::class,
             DefaultSystemLanguageFactory::class
         );
-        
+
         $this->app->singleton(
             IExternalToInternalUrlResolver::class,
             function () {
                 $externalLinks = LexicalEntryGroup::whereNotNull('external_link_format')
                     ->orderBy('id')
                     ->get();
-        
+
                 return new ExternalGlossGroupToInternalUrlResolver($externalLinks);
             }
         );
-        
+
         $this->app->singleton(
             IMarkdownParser::class,
             MarkdownParserWrapper::class
@@ -110,13 +114,23 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(
             IAuditTrailRepository::class,
             function ($app) {
-        
+
                 $handlerType = ! $app->runningInConsole()
                     ? AuditTrailRepository::class
                     : NoopAuditTrailRepository::class;
-        
+
                 return $app->make($handlerType);
             }
+        );
+
+        $this->app->singleton(
+            IComposesWordOfTheDayTweet::class,
+            GeminiWordOfTheDayFacade::class,
+        );
+
+        $this->app->singleton(
+            IPostsTweet::class,
+            XApiClient::class,
         );
     }
 }

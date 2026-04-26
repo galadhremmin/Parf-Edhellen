@@ -1,15 +1,12 @@
 <?php
 
-namespace App\Gemini;
+namespace App\ThirdParty\Gemini;
 
 use App\Interfaces\IRephrasesCrosswordClues;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class GeminiClueFacade implements IRephrasesCrosswordClues
+class GeminiClueFacade extends AbstractGeminiFacade implements IRephrasesCrosswordClues
 {
-    private const GeminiApiBase = 'https://generativelanguage.googleapis.com/v1beta/models';
-
     /**
      * Rephrase crossword clues using Google Gemini.
      *
@@ -28,11 +25,12 @@ class GeminiClueFacade implements IRephrasesCrosswordClues
         }
 
         try {
-            $rephrased = $this->_callGemini($apiKey, $clues);
+            $rephrased = $this->_rephraseCluesViaGemini($apiKey, $clues);
         } catch (\Throwable $e) {
             Log::warning('GeminiClueFacade: failed to rephrase clues, using originals.', [
                 'error' => $e->getMessage(),
             ]);
+
             return $clues;
         }
 
@@ -41,6 +39,7 @@ class GeminiClueFacade implements IRephrasesCrosswordClues
                 'expected' => count($clues),
                 'received' => count($rephrased),
             ]);
+
             return $clues;
         }
 
@@ -61,40 +60,10 @@ class GeminiClueFacade implements IRephrasesCrosswordClues
      * @param  array<int, array<string, mixed>>  $clues
      * @return array<int, string>
      */
-    private function _callGemini(string $apiKey, array $clues): array
+    private function _rephraseCluesViaGemini(string $apiKey, array $clues): array
     {
-        $model = config('gemini.model', 'gemini-2.0-flash-lite');
-        $url   = sprintf('%s/%s:generateContent', self::GeminiApiBase, $model);
-
         $prompt = $this->_buildPrompt($clues);
-
-        $response = Http::withQueryParameters(['key' => $apiKey])
-            ->timeout(30)
-            ->post($url, [
-                'contents' => [
-                    ['parts' => [['text' => $prompt]]],
-                ],
-                'generationConfig' => [
-                    'responseMimeType' => 'application/json',
-                ],
-            ]);
-
-        if (! $response->successful()) {
-            throw new \RuntimeException(sprintf(
-                'Gemini API returned HTTP %d: %s',
-                $response->status(),
-                $response->body(),
-            ));
-        }
-
-        $body = $response->json();
-        $text = $body['candidates'][0]['content']['parts'][0]['text'] ?? null;
-        if ($text === null) {
-            throw new \RuntimeException(sprintf(
-                'Unexpected Gemini response shape: %s',
-                json_encode($body),
-            ));
-        }
+        $text = $this->_callGemini($apiKey, $prompt, true);
 
         $decoded = json_decode($text, true);
         if (! is_array($decoded)) {
@@ -116,9 +85,9 @@ class GeminiClueFacade implements IRephrasesCrosswordClues
     {
         $lines = [];
         foreach ($clues as $i => $clue) {
-            $n      = $i + 1;
+            $n = $i + 1;
             $answer = addslashes((string) ($clue['answer'] ?? ''));
-            $def    = addslashes((string) ($clue['clue'] ?? ''));
+            $def = addslashes((string) ($clue['clue'] ?? ''));
             $speech = trim((string) ($clue['speech_name'] ?? ''));
             $speechPart = $speech !== '' ? ", Part of speech: \"{$speech}\"" : '';
             $lines[] = "{$n}. Answer: \"{$answer}\", Definition: \"{$def}\"{$speechPart}";

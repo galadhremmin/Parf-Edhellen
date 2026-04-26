@@ -8,27 +8,23 @@ import type {
 } from './FragmentsReducer._types';
 import type { ISentenceReducerAction } from './SentenceReducer._types';
 
-const findNextFragmentId = (fragment: ISentenceFragmentEntity, fragments: ISentenceFragmentEntity[],
-    index: number, direction: number) => {
-    if (fragment.lexicalEntryId === null ||
-        index < 0 ||
-        index >= fragments.length) {
-        return null;
-    }
-
-    for (let i = index + direction; i > -1 && i < fragments.length; i += direction) {
+const indexWordFragments = (fragments: ISentenceFragmentEntity[]) => {
+    const wordIndices: number[] = [];
+    for (let i = 0; i < fragments.length; i++) {
         if (fragments[i].lexicalEntryId) {
-            return fragments[i].id;
+            wordIndices.push(i);
         }
     }
-
-    return null;
+    // Map each fragment array index → its position within wordIndices
+    const positionOf = new Map<number, number>(wordIndices.map((idx, pos) => [idx, pos]));
+    return { wordIndices, positionOf };
 };
 
 const FragmentsReducer = (state: FragmentsReducerState = [], action: ISentenceReducerAction) => {
     switch (action.type) {
         case Actions.ReceiveSentence: {
             const fragments = action.sentence.sentenceFragments;
+            const { wordIndices, positionOf } = indexWordFragments(fragments);
             return mapArray<ISentenceFragmentEntity, IFragmentsReducerState>({
                 comments: 'comments',
                 fragment: 'fragment',
@@ -38,8 +34,16 @@ const FragmentsReducer = (state: FragmentsReducerState = [], action: ISentenceRe
                     ...i,
                     inflection: action.sentence.inflections[i.inflectionId.toString(10)] || null,
                 })) || [],
-                nextFragmentId: (v, i) => findNextFragmentId(v, fragments, i, 1),
-                previousFragmentId: (v, i) => findNextFragmentId(v, fragments, i, -1),
+                nextFragmentId: (_v, i) => {
+                    const pos = positionOf.get(i);
+                    return pos !== undefined && pos + 1 < wordIndices.length
+                        ? (fragments[wordIndices[pos + 1]].id ?? null) : null;
+                },
+                previousFragmentId: (_v, i) => {
+                    const pos = positionOf.get(i);
+                    return pos !== undefined && pos > 0
+                        ? (fragments[wordIndices[pos - 1]].id ?? null) : null;
+                },
                 sentenceNumber: 'sentenceNumber',
                 speech: (v) => v.speechId ? action.sentence.speeches[v.speechId.toString(10)]?.name : null,
                 speechId: 'speechId',

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Aws;
+namespace App\ThirdParty\Aws;
 
 use Aws\Comprehend\ComprehendClient;
 

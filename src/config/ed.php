@@ -104,6 +104,10 @@ return [
 
     'restricted_profile_ids' => explode(',', env('ED_RESTRICTED_PROFILE_IDS', '')),
 
+    // Tweet word of the day — cron expression controlling when ed:tweet-word-of-the-day runs.
+    // Set to an empty string to disable scheduling entirely.
+    'tweet_word_of_day_cron' => env('ED_TWEET_CRON', '0 12 * * *'), // noon UTC daily by default
+
     // Performance monitoring
     'expensive_request_threshold' => env('ED_EXPENSIVE_REQUEST_THRESHOLD', 2000), // milliseconds
     'expensive_request_post_logging_routes' => explode(',', env('ED_EXPENSIVE_REQUEST_POST_LOGGING_ROUTES', 'api.book.entities,api.book.find')),

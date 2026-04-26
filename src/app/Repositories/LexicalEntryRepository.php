@@ -8,20 +8,16 @@ use App\Events\LexicalEntryEdited;
 use App\Events\SenseEdited;
 use App\Helpers\StringHelper;
 use App\Interfaces\ISystemLanguageFactory;
-use App\Models\{
-    Gloss,
-    LexicalEntry,
-    LexicalEntryDetail,
-    Keyword,
-    Language,
-    Sense,
-    Word
-};
-use App\Models\Versioning\{
-    LexicalEntryVersion,
-    GlossVersion,
-    LexicalEntryDetailVersion
-};
+use App\Models\Gloss;
+use App\Models\Keyword;
+use App\Models\Language;
+use App\Models\LexicalEntry;
+use App\Models\LexicalEntryDetail;
+use App\Models\Sense;
+use App\Models\Versioning\GlossVersion;
+use App\Models\Versioning\LexicalEntryDetailVersion;
+use App\Models\Versioning\LexicalEntryVersion;
+use App\Models\Word;
 use App\Repositories\Enumerations\LexicalEntryChange;
 use App\Repositories\ValueObjects\LexicalEntryVersionsValue;
 use Illuminate\Auth\AuthManager;
@@ -47,6 +43,22 @@ class LexicalEntryRepository
         $this->_wordRepository = $wordRepository;
         $this->_authManager = $authManager;
         $this->_systemLanguage = $systemLanguageFactory->language();
+    }
+
+    /**
+     * Returns a single random, non-deleted, non-rejected lexical entry that has at least one gloss.
+     * When $inventedLanguagesOnly is true (the default), the entry is restricted to invented languages.
+     */
+    public function getRandomLexicalEntry(bool $inventedLanguagesOnly = true): ?LexicalEntry
+    {
+        return LexicalEntry::query()
+            ->where('is_deleted', 0)
+            ->where('is_rejected', 0)
+            ->when($inventedLanguagesOnly, fn ($q) => $q->whereHas('language', fn ($q) => $q->where('is_invented', 1)))
+            ->whereHas('glosses')
+            ->with(['word', 'language', 'speech', 'glosses'])
+            ->inRandomOrder()
+            ->first();
     }
 
     /**

@@ -120,8 +120,20 @@ return Application::configure(basePath: dirname(__DIR__))
             ->daily() //
             ->name('Prune search view events older than retention period');
 
+        $tweetCron = config('ed.tweet_word_of_day_cron', '');
+        if ($tweetCron !== '') {
+            $schedule->command('ed:tweet-word-of-the-day') //
+                ->cron($tweetCron) //
+                ->onFailure(function (Stringable $output, SystemErrorRepository $systemErrorRepository) {
+                    $systemErrorRepository->saveException(new Exception(
+                        sprintf('Failed to tweet word of the day. Output: %s', $output)
+                    ), 'scheduler');
+                }) //
+                ->name('Tweet word of the day');
+        }
+
         $schedule->command('ed:generate-daily-crosswords') //
-            ->daily() //
+            ->weekly() //
             ->onFailure(function (Stringable $output, SystemErrorRepository $systemErrorRepository) {
                 $systemErrorRepository->saveException(new Exception(
                     sprintf('Failed to generate daily crosswords. Output: %s', $output)
