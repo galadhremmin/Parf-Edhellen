@@ -16,11 +16,6 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         /**
-         * Custom AWS Service Providers...
-         */
-        App\Providers\Aws\ComprehendServiceProvider::class,
-
-        /**
          * Custom Gemini Service Providers...
          */
         App\Providers\Gemini\GeminiServiceProvider::class,
