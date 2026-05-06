@@ -40,10 +40,11 @@ class AccountMergeController extends Controller
 
                     if (! empty($invalidEntries)) {
                         $fail('At least one of the accounts does not exist. Check your input.');
+                        return;
                     }
 
                     $accountIds = array_unique($values);
-                    if ((count($accountIds) === 1 && $accountIds[0] === $account->id) || 
+                    if ((count($accountIds) === 1 && (int) $accountIds[0] === $account->id) || 
                         count($accountIds) < 1) {
                         $fail('You have to select at least one account to merge with.');
                         return;
