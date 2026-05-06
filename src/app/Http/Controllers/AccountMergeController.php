@@ -204,7 +204,7 @@ class AccountMergeController extends Controller
 
         $error = null;
         try {
-            $accountIds = collect(json_decode($request->account_ids))->merge([$request->id]);
+            $accountIds = collect(json_decode($request->account_ids))->merge([$account->id]);
             $accounts = Account::whereIn('id', $accountIds)->get();
             $masterAccount = $this->_accountManager->mergeAccounts($accounts);
             if ($masterAccount === null) {
