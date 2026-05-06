@@ -17,6 +17,49 @@ class AccountMergeControllerTest extends TestCase
 {
     use DatabaseTransactions;
 
+    public function test_merge_rejects_accounts_with_different_email()
+    {
+        $providers = [
+            AuthorizationProvider::create([
+                'name' => 'Merge test provider sec-1',
+                'name_identifier' => 'unit-test-merge-sec-1',
+                'logo_file_name' => 'unit-test-merge-sec-1.jpg',
+            ]),
+            AuthorizationProvider::create([
+                'name' => 'Merge test provider sec-2',
+                'name_identifier' => 'unit-test-merge-sec-2',
+                'logo_file_name' => 'unit-test-merge-sec-2.jpg',
+            ]),
+        ];
+
+        /** @var Account */
+        $account1 = Account::factory()->createOne([
+            'authorization_provider_id' => $providers[0]->id,
+            'email' => 'owner@example.com',
+            'email_verified_at' => Carbon::now(),
+        ]);
+        /** @var Account */
+        $accountWithDifferentEmail = Account::factory()->createOne([
+            'authorization_provider_id' => $providers[1]->id,
+            'email' => 'victim@example.com',
+        ]);
+
+        $account1->addMembershipTo(RoleConstants::Users);
+        $accountWithDifferentEmail->addMembershipTo(RoleConstants::Users);
+
+        Mail::fake();
+
+        $this->actingAs($account1)
+            ->post(route('account.merge'), [
+                'account_id' => [$account1->id, $accountWithDifferentEmail->id],
+            ])
+            ->assertSessionHasErrors('account_id');
+
+        $this->assertDatabaseMissing('account_merge_requests', [
+            'account_id' => $account1->id,
+        ]);
+    }
+
     public function test_merge_accounts()
     {
         $providers = [
@@ -31,13 +74,16 @@ class AccountMergeControllerTest extends TestCase
                 'logo_file_name' => 'unit-test-merge-2.jpg',
             ]),
         ];
+        $sharedEmail = 'merge-test-shared@example.com';
         /** @var Account */
         $account1 = Account::factory()->createOne([
             'authorization_provider_id' => $providers[0]->id,
+            'email' => $sharedEmail,
         ]);
         /** @var Account */
         $account2 = Account::factory()->createOne([
             'authorization_provider_id' => $providers[1]->id,
+            'email' => $sharedEmail,
         ]);
 
         $account1->addMembershipTo(RoleConstants::Users);
