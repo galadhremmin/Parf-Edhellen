@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use App\Events\AccountSecurityActivity;
+use App\Events\AccountSecurityActivityResultEnum;
 
 class AccountMergeController extends Controller
 {
@@ -31,9 +33,9 @@ class AccountMergeController extends Controller
             'account_id' => [
                 'required',
                 'array',
-                function (string $attribute, mixed $values, Closure $fail) use ($account) {
+                function (string $attribute, mixed $values, Closure $fail) use ($request, $account) {
                     $invalidEntries = array_filter($values, function ($value) {
-                        return ! is_numeric($value);
+                        return ! is_numeric($value) || in_array($value, config('ed.restricted_profile_ids'));
                     });
 
                     if (! empty($invalidEntries)) {
@@ -41,24 +43,42 @@ class AccountMergeController extends Controller
                     }
 
                     $accountIds = array_unique($values);
+                    if ((count($accountIds) === 1 && $accountIds[0] === $account->id) || 
+                        count($accountIds) < 1) {
+                        $fail('You have to select at least one account to merge with.');
+                        return;
+                    }
+
                     $accounts = Account::whereIn('id', $accountIds) //
                         ->where('is_master_account', '<>', 1) //
+                        ->whereNotNull('email')
                         ->whereNull('master_account_id') //
                         ->distinct() //
                         ->get();
 
                     if ($accounts->count() !== count($values)) {
                         $fail('Cannot merge the accounts you have selected. Have some of them already been linked?');
+                        return;
+                    }
+
+                    if ($accounts->filter(function ($a) use ($account) {
+                        return $a->email !== $account->email;
+                    })->isNotEmpty()) {
+                        $fail('You can only merge accounts that share the same e-mail address.');
+                        event(AccountSecurityActivity::fromRequest($request, $account, 'merge-attempt', AccountSecurityActivityResultEnum::BLOCKED));
+                        return;
                     }
 
                     $mergeRequests = AccountMergeRequest::where('account_id', $account->id)
                         ->where('is_fulfilled', '<>', 1);
                     if ($mergeRequests->count() > 0) {
                         $fail('Complete existing linking requests before creating a new one.');
+                        return;
                     }
 
-                    if (! $account->email_verified_at === null) {
+                    if ($account->email_verified_at === null) {
                         $fail('Verify your e-mail address before creating a linking request.');
+                        return;
                     }
                 },
             ],
@@ -119,7 +139,7 @@ class AccountMergeController extends Controller
         ])->firstOrFail();
 
         if ($mergeRequest->account_id !== $account->id &&
-            in_array($account->id, json_decode($mergeRequest->account_ids))) {
+            ! in_array($account->id, json_decode($mergeRequest->account_ids))) {
             return response(null, 404);
         }
 
@@ -164,10 +184,12 @@ class AccountMergeController extends Controller
                     ])->first();
                     if ($request === null) {
                         $fail('Either your verification token is incorrect or there is no outstanding linking request for your account.');
+                        return;
                     }
 
-                    if (! $account->email_verified_at === null) {
+                    if ($account->email_verified_at === null) {
                         $fail('Verify your e-mail address before creating a linking request.');
+                        return;
                     }
                 },
             ],
