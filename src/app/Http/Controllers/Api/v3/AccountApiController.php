@@ -295,9 +295,9 @@ class AccountApiController extends Controller
         ];
     }
 
-    private function getAuthorizedAccount(Request $request, int $accountId): Account
+    private function getAuthorizedAccount(Request $request, ?int $accountId): Account
     {
-        if ($accountId === null) {
+        if (($accountId ?: 0) === 0) {
             return $request->user();
         }
 
