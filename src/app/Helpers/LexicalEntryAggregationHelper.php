@@ -4,7 +4,6 @@ namespace App\Helpers;
 
 use App\Models\Gloss;
 use App\Models\LexicalEntry;
-use App\Models\LexicalEntryDetail;
 use App\Models\Versioning\LexicalEntryVersion;
 use Illuminate\Support\Collection;
 
@@ -57,25 +56,10 @@ class LexicalEntryAggregationHelper
             });
             unset($lexicalEntry->translation);
 
-            $lexicalEntry->lexical_entry_details = $items->unique('lexical_entry_details_category')->map(function ($item) {
-                if ($item->lexical_entry_details_category !== null) {
-                    return new LexicalEntryDetail([
-                        'category' => $item->lexical_entry_details_category,
-                        'order' => $item->lexical_entry_details_order,
-                        'text' => $item->lexical_entry_details_text,
-                        'type' => $item->lexical_entry_details_type,
-                    ]);
-                }
-
-                return null;
-            })->filter();
-
-            unset(
-                $lexicalEntry->lexical_entry_details_category,
-                $lexicalEntry->lexical_entry_details_order,
-                $lexicalEntry->lexical_entry_details_text,
-                $lexicalEntry->lexical_entry_details_type
-            );
+            // Lexical entry details are attached by the repository through a separate query.
+            if (! isset($lexicalEntry->lexical_entry_details)) {
+                $lexicalEntry->lexical_entry_details = new Collection;
+            }
 
             return $lexicalEntry;
         });

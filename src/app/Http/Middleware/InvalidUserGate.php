@@ -19,7 +19,7 @@ class InvalidUserGate
 
         if ($user !== null && ! $user->isRoot()) {
             $isBanned = $user->is_deleted || //
-                ! $user->roles()->where('name', RoleConstants::Users)->exists();
+                ! $user->memberOf(RoleConstants::Users);
             
             if ($isBanned) {
                 return response('', 403);

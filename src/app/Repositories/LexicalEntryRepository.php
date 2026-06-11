@@ -77,7 +77,7 @@ class LexicalEntryRepository
             ->pluck('sense_id');
 
         $maximumNumberOfResources = config('ed.gloss_repository_maximum_results');
-        $lexicalEntries = self::createLexicalEntryQuery($languageId, $includeOld, function ($q) use ($senseIds, $filters) {
+        $query = self::createLexicalEntryQuery($languageId, $includeOld, function ($q) use ($senseIds, $filters) {
             $q = $q->whereIn('g.sense_id', $senseIds);
 
             if (is_array($filters)) {
@@ -87,12 +87,9 @@ class LexicalEntryRepository
             }
 
             return $q;
-        }) //
-            ->limit($maximumNumberOfResources) //
-            ->get() //
-            ->toArray();
+        });
 
-        return $lexicalEntries;
+        return self::getLexicalEntriesWithDetails($query, $maximumNumberOfResources);
     }
 
     /**
@@ -105,12 +102,11 @@ class LexicalEntryRepository
     {
         $maximumNumberOfResources = config('ed.gloss_repository_maximum_results');
 
-        return self::createLexicalEntryQuery(0, true /* = include old */, function ($q) use ($ids) {
+        $query = self::createLexicalEntryQuery(0, true /* = include old */, function ($q) use ($ids) {
             return $q->whereIn('g.id', $ids);
-        })
-            ->limit($maximumNumberOfResources)
-            ->get()
-            ->toArray();
+        });
+
+        return self::getLexicalEntriesWithDetails($query, $maximumNumberOfResources);
     }
 
     /**
@@ -123,17 +119,16 @@ class LexicalEntryRepository
     {
         $maximumNumberOfResources = config('ed.gloss_repository_maximum_results');
 
-        return self::createLexicalEntryQuery(0, true /* = include old */, function ($q) use ($externalId, $lexicalEntryGroupId) {
+        $query = self::createLexicalEntryQuery(0, true /* = include old */, function ($q) use ($externalId, $lexicalEntryGroupId) {
             $q = $q->where('g.external_id', $externalId);
             if ($lexicalEntryGroupId !== 0) {
                 $q = $q->where('g.lexical_entry_group_id', $lexicalEntryGroupId);
             }
 
             return $q;
-        })
-            ->limit($maximumNumberOfResources)
-            ->get()
-            ->toArray();
+        });
+
+        return self::getLexicalEntriesWithDetails($query, $maximumNumberOfResources);
     }
 
     /**
@@ -287,7 +282,7 @@ class LexicalEntryRepository
             'tg.name as lexical_entry_group_name',
             'g.id',
         ];
-        $query = self::createLexicalEntryQueryWithoutDetails($fields, false);
+        $query = self::createLexicalEntryQueryWithoutDetails($fields);
 
         if ($languageId !== 0) {
             $query = $query->where('g.language_id', $languageId);
@@ -642,7 +637,7 @@ class LexicalEntryRepository
             'g.sense_id', 'tg.label as lexical_entry_group_label', 'g.label', 'g.latest_lexical_entry_version_id',
         ];
 
-        $q0 = self::createLexicalEntryQueryWithoutDetails($columns, true)
+        $q0 = self::createLexicalEntryQueryWithoutDetails($columns)
             ->where($filters);
 
         if ($whereCallback != null) {
@@ -655,26 +650,49 @@ class LexicalEntryRepository
         return $q0;
     }
 
-    protected static function createLexicalEntryQueryWithoutDetails(array $columns, bool $addDetailsColumns)
+    protected static function createLexicalEntryQueryWithoutDetails(array $columns)
     {
-        $query = DB::table('lexical_entries as g')
+        return DB::table('lexical_entries as g')
             ->join('glosses as t', 'g.id', 't.lexical_entry_id')
             ->join('accounts as a', 'g.account_id', 'a.id')
             ->join('words as w', 'g.word_id', 'w.id')
             ->leftJoin('lexical_entry_groups as tg', 'g.lexical_entry_group_id', 'tg.id')
-            ->leftJoin('speeches as s', 'g.speech_id', 's.id');
+            ->leftJoin('speeches as s', 'g.speech_id', 's.id')
+            ->select($columns);
+    }
 
-        if ($addDetailsColumns) {
-            $query = $query->leftJoin('lexical_entry_details as gd', 'g.id', 'gd.lexical_entry_id');
-            $columns = array_merge($columns, [
-                DB::raw('gd.category as lexical_entry_details_category'),
-                DB::raw('gd.text as lexical_entry_details_text'),
-                DB::raw('gd.category as lexical_entry_details_order'),
-                DB::raw('gd.type as lexical_entry_details_type'),
-            ]);
+    /**
+     * Executes a query created by `createLexicalEntryQuery` and attaches lexical entry details
+     * through a separate query. Joining `lexical_entry_details` onto the main query would yield
+     * (glosses × details) rows per entry, inflating the result set and making the row limit
+     * unpredictable.
+     */
+    protected static function getLexicalEntriesWithDetails(Builder $query, int $limit): array
+    {
+        $rows = $query->limit($limit)->get();
+
+        $entryIds = $rows->pluck('id')->unique();
+        $detailsByEntryId = $entryIds->isEmpty()
+            ? collect([])
+            : LexicalEntryDetail::whereIn('lexical_entry_id', $entryIds)
+                ->get()
+                ->groupBy('lexical_entry_id')
+                ->map(function (Collection $details) {
+                    return $details->map(function (LexicalEntryDetail $detail) {
+                        return new LexicalEntryDetail([
+                            'category' => $detail->category,
+                            'order' => $detail->order,
+                            'text' => $detail->text,
+                            'type' => $detail->type,
+                        ]);
+                    })->values();
+                });
+
+        foreach ($rows as $row) {
+            $row->lexical_entry_details = $detailsByEntryId->get($row->id, collect([]));
         }
 
-        return $query->select($columns);
+        return $rows->all();
     }
 
     protected function deleteLexicalEntry(LexicalEntry $lexicalEntry, ?int $replaceId = null)
