@@ -91,7 +91,7 @@ class HomeController extends Controller
         });
 
         // Retrieve the 15 latest audit trail
-        $auditTrails = Cache::remember('ed.home.audit', DateInterval::createFromDateString('5 minutes'), function () {
+        $auditTrails = Cache::remember(IAuditTrailRepository::HOME_CACHE_KEY, DateInterval::createFromDateString('5 minutes'), function () {
             return $this->_auditTrailAdapter->adaptAndMerge(
                 $this->_auditTrail->get(15, 0, [
                     AuditTrail::ACTION_COMMENT_ADD,
@@ -100,12 +100,16 @@ class HomeController extends Controller
                     AuditTrail::ACTION_GLOSS_EDIT,
                     AuditTrail::ACTION_SENTENCE_ADD,
                     AuditTrail::ACTION_SENTENCE_EDIT,
-                ])
+                ], true /* = publicOnly */),
+                0,
+                null,
+                true /* = publicOnly */
             );
         });
 
         $trendingSearches = Cache::remember('ed.home.trending', DateInterval::createFromDateString('1 hour'), function () {
             $items = $this->_trendingRepository->getMostSearchedTerms(7, 10);
+
             return array_map(fn (array $item) => $item + [
                 'url' => $this->_linkHelper->dictionaryWord(
                     $item['search_term'],

@@ -7,6 +7,12 @@
 <h1>Account {{ $account->nickname }}</h1>
 {!! Breadcrumbs::render('account.edit', $account) !!}
 
+@if ($account->is_spammer)
+<div class="alert alert-danger" role="alert">
+  <strong>Marked as spammer.</strong> This account's roles have been revoked and its activity is hidden from the front page.
+</div>
+@endif
+
 <div class="row">
   <div class="col-sm-6">
     <div class="card shadow-lg mb-3">
@@ -56,6 +62,16 @@
             <tr>
               <th>Deleted?</th>
               <td>{{ $account->is_deleted ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+              <th>Spammer?</th>
+              <td>
+                @if ($account->is_spammer)
+                <span class="text-danger fw-bold">Yes</span>
+                @else
+                No
+                @endif
+              </td>
             </tr>
             <tr>
               <th>Passworded?</th>
@@ -180,12 +196,23 @@
 
 <hr>
 
-<form method="post" action="{{ route('api.account.delete', ['id' => $account->id]) }}" onsubmit="return confirm('Are you sure you want to delete this account? This is an irreversible operation.')">
-  {{ csrf_field() }}
-  {{ method_field('DELETE') }}
+<div class="d-flex flex-wrap gap-2 align-items-start">
   <a href="{{ $link->author($account->id, $account->nickname) }}" class="btn btn-secondary">
     View profile
   </a>
-  <button class="btn btn-danger" type="submit">Delete account</button>
-</form>
+
+  @unless ($account->is_spammer)
+  <form method="post" action="{{ route('account.mark-as-spammer', ['id' => $account->id]) }}"
+    onsubmit="return confirm('Are you sure you want to mark {{ $account->nickname }} as a spammer? This revokes all of their roles and hides their activity from the front page.')">
+    {{ csrf_field() }}
+    <button class="btn btn-danger" type="submit">Mark as spammer</button>
+  </form>
+  @endunless
+
+  <form method="post" action="{{ route('api.account.delete', ['id' => $account->id]) }}" onsubmit="return confirm('Are you sure you want to delete this account? This is an irreversible operation.')">
+    {{ csrf_field() }}
+    {{ method_field('DELETE') }}
+    <button class="btn btn-danger" type="submit">Delete account</button>
+  </form>
+</div>
 @endsection

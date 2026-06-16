@@ -2,13 +2,14 @@
 
 namespace Tests\Unit\Api;
 
-use App\Models\{
-    ForumGroup,
-    ForumPost,
-    ForumThread,
-    ForumDiscussion,
-};
+use App\Models\Account;
+use App\Models\ForumDiscussion;
+use App\Models\ForumGroup;
+use App\Models\ForumPost;
+use App\Models\ForumThread;
 use App\Models\Initialization\Morphs;
+use App\Security\RoleConstants;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
@@ -138,6 +139,45 @@ class DiscussApiControllerTest extends TestCase
         $response->assertUnauthorized();
 
         // TODO: Actually update a post
+    }
+
+    public function test_store_post_blocks_links_for_new_account()
+    {
+        /** @var Account */
+        $account = Account::factory()->createOne([
+            // Recently verified, so the account passes the 'verified' middleware but is not yet
+            // trusted to post links.
+            'email_verified_at' => Carbon::now(),
+        ]);
+        $account->addMembershipTo(RoleConstants::Users);
+        $account->addMembershipTo(RoleConstants::Discuss);
+
+        $response = $this->actingAs($account)
+            ->postJson(route('api.discuss.store-post'), [
+                'content' => 'Free stuff at http://spam.example, click now!',
+            ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors('content');
+    }
+
+    public function test_store_post_allows_links_for_administrator()
+    {
+        /** @var Account */
+        $account = Account::factory()->createOne([
+            'email_verified_at' => Carbon::now(),
+        ]);
+        $account->addMembershipTo(RoleConstants::Administrators);
+        $account->addMembershipTo(RoleConstants::Discuss);
+
+        $response = $this->actingAs($account)
+            ->postJson(route('api.discuss.store-post'), [
+                'content' => 'See https://elfdict.com for more.',
+            ]);
+
+        // The administrator is trusted, so the link policy does not reject the content. The request
+        // may still fail validation for unrelated, missing thread parameters.
+        $response->assertJsonMissingValidationErrors('content');
     }
 
     public function test_delete_post()

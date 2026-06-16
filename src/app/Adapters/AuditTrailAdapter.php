@@ -210,7 +210,7 @@ class AuditTrailAdapter
      * @param  array  $previousItem
      * @return array
      */
-    public function adaptAndMerge(Collection $actions, int $skipNoOfRows = 0, $previousItem = null)
+    public function adaptAndMerge(Collection $actions, int $skipNoOfRows = 0, $previousItem = null, bool $publicOnly = false)
     {
         $unmergedTrail = $this->adapt($actions);
         $trail = [];
@@ -244,7 +244,7 @@ class AuditTrailAdapter
         $noOfRows = $actions->count();
         $noOfMergers = $noOfRows - count($trail);
         if ($noOfMergers > 0) {
-            $remainingRows = $this->_repository->get($noOfMergers, $skipNoOfRows + $noOfRows);
+            $remainingRows = $this->_repository->get($noOfMergers, $skipNoOfRows + $noOfRows, [], $publicOnly);
 
             return array_merge($trail, $this->adapt($remainingRows));
         }

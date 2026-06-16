@@ -7,6 +7,7 @@ import type {
     IPostResponse,
     IThreadResponse,
 } from '@root/connectors/backend/IDiscussApi';
+import ValidationError from '@root/connectors/ValidationError';
 import { resolve } from '@root/di';
 import { DI } from '@root/di/keys';
 
@@ -179,7 +180,11 @@ export default class DiscussActions {
                     id: postData.thread.id,
                 }));
             } catch (e) {
-                // TODO: What do we do here?
+                if (e instanceof ValidationError) {
+                    alert(e.errorMessage);
+                } else {
+                    alert('Your post could not be saved. Please try again later.');
+                }
             }
         };
     }

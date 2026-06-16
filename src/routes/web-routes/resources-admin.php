@@ -57,4 +57,7 @@ Route::group([
     Route::post('account/{id}/add-membership', [AccountController::class, 'addMembership'])
         ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
         ->name('account.add-membership');
+    Route::post('account/{id}/mark-as-spammer', [AccountController::class, 'markAsSpammer'])
+        ->where(['id' => REGULAR_EXPRESSION_NUMERIC])
+        ->name('account.mark-as-spammer');
 });

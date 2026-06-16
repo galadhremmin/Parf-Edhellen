@@ -137,6 +137,21 @@ class AccountController extends Controller
         return redirect()->route('account.edit', ['account' => $account->id]);
     }
 
+    /**
+     * Flags the specified account as a spammer. This revokes all of its roles (preventing it from
+     * logging in and posting), hides its entire audit trail from public surfaces such as the front
+     * page, hides its forum posts, and records the account as a spammer for future reference.
+     */
+    public function markAsSpammer(Request $request, int $id)
+    {
+        $account = Account::findOrFail($id);
+        $this->blockAdministratorChanges($account, $request->user());
+
+        $this->_accountManager->markAsSpammer($account, $request->user()->id);
+
+        return redirect()->route('account.edit', ['account' => $account->id]);
+    }
+
     private function blockAdministratorChanges(Account $account, Account $withAccount)
     {
         if ($account->isAdministrator() && $withAccount->id !== $account->id && ! $withAccount->isRoot()) {

@@ -68,7 +68,7 @@ class AuthenticationController extends Controller
         // Status are random messages from various surfaces that might interact or require
         // authentication. For example, the password reset feature confirming that the reset
         // was successful and that they now can log in.
-        $status = session('status', null); 
+        $status = session('status', null);
 
         $providers = AuthorizationProvider::orderBy('name')->get();
 
@@ -120,6 +120,10 @@ class AuthenticationController extends Controller
     protected function doLogin(Request $request, Account $user, bool $first = false, bool $remember = false)
     {
         $user = $user->master_account ?: $user;
+
+        if ($user->is_spammer) {
+            throw new \Exception('You are not authorized to sign in. This account has been disabled.');
+        }
 
         if (! $user->memberOf(RoleConstants::Users)) {
             throw new \Exception('You are not authorized to sign in. You are missing the '. //

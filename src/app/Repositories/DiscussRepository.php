@@ -833,6 +833,35 @@ class DiscussRepository
         return true;
     }
 
+    /**
+     * Hides every active forum post authored by the specified account. Used when an account is
+     * flagged as a spammer so its posts disappear from public surfaces without being permanently
+     * deleted. Thread metadata (post counts, last author) is refreshed for every affected thread.
+     */
+    public function hidePostsForAccount(Account $account): void
+    {
+        $posts = ForumPost::where('account_id', $account->id)
+            ->where('is_hidden', 0)
+            ->where('is_deleted', 0)
+            ->get();
+
+        if ($posts->isEmpty()) {
+            return;
+        }
+
+        DB::transaction(function () use ($posts) {
+            foreach ($posts as $post) {
+                $post->is_hidden = 1;
+                $post->save();
+            }
+        });
+
+        $threadIds = $posts->pluck('forum_thread_id')->unique();
+        foreach (ForumThread::whereIn('id', $threadIds)->get() as $thread) {
+            $this->updateForumThread($thread);
+        }
+    }
+
     public function saveSticky(int $threadId, bool $sticky)
     {
         ForumThread::where('id', $threadId)

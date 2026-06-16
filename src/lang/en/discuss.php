@@ -3,6 +3,8 @@
 return [
     'title' => 'Discuss',
 
+    'links_not_allowed' => 'New accounts cannot post links yet. Please post a few times and verify your e-mail address (for at least a week), then try again.',
+
     'member-list.title' => 'Contributors',
 
     'member-list.category.lexical_entries' => 'Most lexical entries',
