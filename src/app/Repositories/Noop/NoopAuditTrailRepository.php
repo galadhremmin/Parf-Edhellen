@@ -2,12 +2,12 @@
 
 namespace App\Repositories\Noop;
 
-use App\Repositories\Interfaces\IAuditTrailRepository;
 use App\Models\Account;
+use App\Repositories\Interfaces\IAuditTrailRepository;
 
 class NoopAuditTrailRepository implements IAuditTrailRepository
 {
-    public function get(int $noOfRows, int $skipNoOfRows = 0, array $action_ids = [])
+    public function get(int $noOfRows, int $skipNoOfRows = 0, array $action_ids = [], bool $publicOnly = false)
     {
         // Noop
         return collect([]);

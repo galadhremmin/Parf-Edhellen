@@ -6,6 +6,7 @@ import {
 import { fireEventAsync } from '@root/components/Component';
 import type { IComponentEvent } from '@root/components/Component._types';
 import Dialog from '@root/components/Dialog';
+import ValidationError from '@root/connectors/ValidationError';
 import { withPropInjection } from '@root/di';
 import { DI } from '@root/di/keys';
 
@@ -79,7 +80,11 @@ function EditPost(props: IProps) {
             void fireEventAsync(`EditPost[${forumPostId}]`, onPostChange, forumPostId);
             setIsOpen(false);
         } catch (e) {
-            // TODO handle failure
+            if (e instanceof ValidationError) {
+                alert(e.errorMessage);
+            } else {
+                alert('Your post could not be saved. Please try again later.');
+            }
         }
     }, [
         apiConnector, forumPostId, onPostChange, setIsOpen,

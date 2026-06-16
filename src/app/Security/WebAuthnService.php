@@ -660,6 +660,8 @@ class WebAuthnService
             // Find master account
             $masterAccount = Account::where('email', $email)
                 ->where('is_master_account', true)
+                ->where('is_deleted', false)
+                ->where('is_spammer', false)
                 ->firstOrFail();
 
             // Decode base64 strings

@@ -5,11 +5,14 @@ namespace App\Security;
 use App\Events\AccountAvatarChanged;
 use App\Events\AccountDestroyed;
 use App\Events\AccountPasswordChanged;
+use App\Events\AccountRoleRemove;
 use App\Events\AccountsMerged;
 use App\Helpers\StorageHelper;
 use App\Models\Account;
 use App\Models\AuthorizationProvider;
 use App\Models\Role;
+use App\Repositories\DiscussRepository;
+use App\Repositories\Interfaces\IAuditTrailRepository;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Auth\AuthManager;
@@ -18,6 +21,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 
 class AccountManager
 {
@@ -25,10 +29,17 @@ class AccountManager
 
     private AuthManager $_authManager;
 
-    public function __construct(StorageHelper $storageHelper, AuthManager $authManager)
+    private IAuditTrailRepository $_auditTrailRepository;
+
+    private DiscussRepository $_discussRepository;
+
+    public function __construct(StorageHelper $storageHelper, AuthManager $authManager,
+        IAuditTrailRepository $auditTrailRepository, DiscussRepository $discussRepository)
     {
         $this->_storageHelper = $storageHelper;
         $this->_authManager = $authManager;
+        $this->_auditTrailRepository = $auditTrailRepository;
+        $this->_discussRepository = $discussRepository;
     }
 
     public function getRootAccount(): ?Account
@@ -138,6 +149,12 @@ class AccountManager
             return null;
         }
 
+        foreach ($accounts as $account) {
+            if ($account->is_deleted || $account->is_spammer) {
+                throw new InvalidArgumentException('Accounts flagged as deleted or spammers cannot be merged.');
+            }
+        }
+
         $masterAccount = Account::where('email', $accounts->first()->email)
             ->where('is_master_account', true)
             ->first();
@@ -158,7 +175,15 @@ class AccountManager
     public function linkAccountToMasterAccount(Account $account, Account $masterAccount)
     {
         if ($account->id === $masterAccount->id) {
-            throw new Exception('User is attempting to link a master account to itself.');
+            throw new InvalidArgumentException('User is attempting to link a master account to itself.');
+        }
+
+        if ($account->is_spammer || $masterAccount->is_spammer) {
+            throw new InvalidArgumentException('Accounts flagged as spammers cannot be linked.');
+        }
+
+        if ($account->is_deleted || $masterAccount->is_deleted) {
+            throw new InvalidArgumentException('Accounts flagged as deleted cannot be linked.');
         }
 
         $account->nickname = str_replace('(linked)', '', trim($account->nickname)).' (linked)';
@@ -166,6 +191,33 @@ class AccountManager
         $account->save();
 
         event(new AccountsMerged($masterAccount, collect([$account])));
+    }
+
+    /**
+     * Flags the specified account as a spammer. This revokes every role it holds (preventing it from
+     * logging in or posting), hides its audit trail from public surfaces such as the front page,
+     * hides its forum posts, and records the account as a spammer for future reference. The Root role
+     * is never revoked.
+     */
+    public function markAsSpammer(Account $account, int $actingAccountId): void
+    {
+        // Revoke every role the account holds so it can no longer log in or post.
+        foreach ($account->roles()->get() as $role) {
+            if ($role->name === RoleConstants::Root) {
+                // Root permissions cannot be revoked.
+                continue;
+            }
+
+            $account->removeMembership($role->name);
+            event(new AccountRoleRemove($account, $role->name, $actingAccountId));
+        }
+
+        $account->is_spammer = true;
+        $account->save();
+
+        // Hide the account's existing activity from public surfaces.
+        $this->_auditTrailRepository->hideForAccount($account);
+        $this->_discussRepository->hidePostsForAccount($account);
     }
 
     public function updatePassword(Account $account, string $password): Account

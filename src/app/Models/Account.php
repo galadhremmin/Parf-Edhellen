@@ -16,8 +16,8 @@ use Illuminate\Support\Facades\Cookie;
 
 class Account extends Authenticatable implements Interfaces\IHasFriendlyName, MustVerifyEmail
 {
-    use Notifiable;
     use HasFactory;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -26,7 +26,7 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
      */
     protected $fillable = [
         'nickname', 'email', 'identity', 'authorization_provider_id', 'created_at', 'provider_id',
-        'profile', 'has_avatar', 'feature_background_url', 'is_deleted', 'password', 'is_passworded',
+        'profile', 'has_avatar', 'feature_background_url', 'is_deleted', 'is_spammer', 'password', 'is_passworded',
         'is_master_account', 'master_account_id', 'email_verified_at', 'has_passkeys', 'last_passkey_auth_at',
     ];
 
@@ -38,7 +38,16 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
     protected $hidden = [
         'identity', 'authorization_provider_id', 'remember_token', 'email', 'is_deleted',
         'password', 'is_passworded', 'is_master_account', 'master_account_id', 'email_verified_at',
-        'has_passkeys', 'last_passkey_auth_at',
+        'has_passkeys', 'last_passkey_auth_at', 'is_spammer',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'is_spammer' => 'boolean',
     ];
 
     /**
@@ -196,8 +205,10 @@ class Account extends Authenticatable implements Interfaces\IHasFriendlyName, Mu
         return $this->nickname;
     }
 
-    public function getAllRoles() {
+    public function getAllRoles()
+    {
         $user = $this;
+
         return Cache::remember('ed.rol.'.$user->id, 5 * 60 /* seconds */, function () use ($user) {
             return Role::forAccount($user)->pluck('name');
         });

@@ -3,12 +3,13 @@
 namespace App\Repositories;
 
 use App\Helpers\LinkHelper;
+use App\Models\Account;
 use App\Models\AuditTrail;
 use App\Models\Initialization\Morphs;
 use App\Models\Interfaces\IHasFriendlyName;
 use App\Models\ModelBase;
-use App\Models\Account;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Support\Facades\Cache;
 
 class AuditTrailRepository implements Interfaces\IAuditTrailRepository
 {
@@ -22,7 +23,7 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
         $this->_authManager = $authManager;
     }
 
-    public function get(int $noOfRows, int $skipNoOfRows = 0, array $action_ids = [])
+    public function get(int $noOfRows, int $skipNoOfRows = 0, array $action_ids = [], bool $publicOnly = false)
     {
         $query = AuditTrail::orderBy('id', 'desc')
             ->with([
@@ -32,8 +33,10 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
                 'entity' => function () {},
             ]);
 
-        if (! $this->_authManager->check() || ! $this->_authManager->user()->isAdministrator()) {
-            // Put audit trail actions here that only administrators should see.
+        if ($publicOnly || ! $this->_authManager->check() || ! $this->_authManager->user()->isAdministrator()) {
+            // Put audit trail actions here that only administrators should see. When $publicOnly is
+            // set, admin-only entries are hidden even from administrators -- used by surfaces such as
+            // the front page where the result is shared across all visitors.
             $query = $query->where('is_admin', 0);
         }
 
@@ -104,5 +107,8 @@ class AuditTrailRepository implements Interfaces\IAuditTrailRepository
     {
         AuditTrail::where('account_id', $account->id)
             ->update(['is_admin' => true]);
+
+        // Bust the cached front page audit trail so the hidden activity disappears immediately.
+        Cache::forget(Interfaces\IAuditTrailRepository::HOME_CACHE_KEY);
     }
 }

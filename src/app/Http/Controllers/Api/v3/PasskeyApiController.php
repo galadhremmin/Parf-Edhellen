@@ -166,6 +166,13 @@ class PasskeyApiController extends Controller
                 $validated['session_id']
             );
 
+            if ($account->is_spammer) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'This account has been disabled.',
+                ], 403);
+            }
+
             // Log security event
             event(new AccountSecurityActivity(
                 $account,
@@ -304,5 +311,4 @@ class PasskeyApiController extends Controller
             return response()->json(['error' => 'Failed to delete passkey'], 500);
         }
     }
-
 }

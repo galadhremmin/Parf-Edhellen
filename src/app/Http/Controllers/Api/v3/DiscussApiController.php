@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Api\v3;
 use App\Adapters\DiscussAdapter;
 use App\Helpers\LinkHelper;
 use App\Http\Controllers\Abstracts\Controller;
+use App\Models\Account;
 use App\Models\ForumPost;
 use App\Repositories\DiscussRepository;
 use App\Repositories\ValueObjects\ForumThreadFilterValue;
+use App\Services\ForumPostLinkPolicy;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class DiscussApiController extends Controller
 {
@@ -48,10 +51,14 @@ class DiscussApiController extends Controller
 
     protected DiscussRepository $_discussRepository;
 
-    public function __construct(DiscussAdapter $discussAdapter, DiscussRepository $discussRepository)
+    protected ForumPostLinkPolicy $_linkPolicy;
+
+    public function __construct(DiscussAdapter $discussAdapter, DiscussRepository $discussRepository,
+        ForumPostLinkPolicy $linkPolicy)
     {
         $this->_discussAdapter = $discussAdapter;
         $this->_discussRepository = $discussRepository;
+        $this->_linkPolicy = $linkPolicy;
     }
 
     public function getGroups()
@@ -251,6 +258,8 @@ class DiscussApiController extends Controller
             self::PARAMETER_FORUM_THREAD_ID => 'sometimes|numeric|exists:forum_threads,id',
         ]);
 
+        $this->assertMayPostLinks($account, $data[self::PARAMETER_FORUM_POST_CONTENT]);
+
         if (isset($data[self::PARAMETER_FORUM_THREAD_ID])) {
             // update an existing thread
             $threadId = intval($data[self::PARAMETER_FORUM_THREAD_ID]);
@@ -341,6 +350,8 @@ class DiscussApiController extends Controller
             self::PARAMETER_FORUM_POST_SUBJECT => 'sometimes|string|min:3|max:512',
         ]);
 
+        $this->assertMayPostLinks($account, $postData[self::PARAMETER_FORUM_POST_CONTENT]);
+
         $post = $this->_discussRepository->getPost($postId, $account);
         if ($post === null) {
             return response(null, 404);
@@ -405,6 +416,31 @@ class DiscussApiController extends Controller
             self::PARAMETER_FORUM_THREAD_ID => $threadId,
             self::PARAMETER_FORUM_GROUP_ID => $groupId,
         ];
+    }
+
+    /**
+     * Rejects the request when the content contains a hyperlink that the account is not yet trusted
+     * to post. Throws a validation exception so the consumer receives a 422 with a friendly message.
+     *
+     * @throws ValidationException
+     */
+    private function assertMayPostLinks(?Account $account, string $content): void
+    {
+        if ($account === null) {
+            return;
+        }
+
+        if (! $this->_linkPolicy->containsLink($content)) {
+            return;
+        }
+
+        if ($this->_linkPolicy->mayPostLinks($account)) {
+            return;
+        }
+
+        throw ValidationException::withMessages([
+            self::PARAMETER_FORUM_POST_CONTENT => __('discuss.links_not_allowed'),
+        ]);
     }
 
     private function getPageFromRequest(Request $request)
