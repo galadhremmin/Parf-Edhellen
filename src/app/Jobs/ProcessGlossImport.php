@@ -2,7 +2,10 @@
 
 namespace App\Jobs;
 
+use App\Models\LexicalEntryDerivation;
 use App\Models\LexicalEntryInflection;
+use App\Models\LexicalEntryPhoneticDevelopment;
+use App\Repositories\LexicalEntryDerivationRepository;
 use App\Repositories\LexicalEntryInflectionRepository;
 use App\Repositories\LexicalEntryRepository;
 use Illuminate\Bus\Queueable;
@@ -32,8 +35,11 @@ class ProcessGlossImport implements ShouldQueue
      *
      * @return void
      */
-    public function handle(LexicalEntryRepository $lexicalEntryRepository, LexicalEntryInflectionRepository $lexicalEntryInflectionRepository)
-    {
+    public function handle(
+        LexicalEntryRepository $lexicalEntryRepository,
+        LexicalEntryInflectionRepository $lexicalEntryInflectionRepository,
+        LexicalEntryDerivationRepository $lexicalEntryDerivationRepository,
+    ) {
         $data = &$this->data;
 
         $details = $data['details'];
@@ -43,6 +49,8 @@ class ProcessGlossImport implements ShouldQueue
         $sense = $data['sense'];
         $glosses = $data['glosses'];
         $word = $data['word'];
+        $derivations = $data['derivations'] ?? [];
+        $phoneticDevelopments = $data['phonetic_developments'] ?? [];
 
         try {
             $lexicalEntryEntity = $lexicalEntryRepository->saveLexicalEntry($word, $sense, $lexicalEntry, $glosses, $keywords, $details);
@@ -51,6 +59,15 @@ class ProcessGlossImport implements ShouldQueue
                     'lexical_entry_id' => $lexicalEntryEntity->id,
                 ]));
             }));
+            $lexicalEntryDerivationRepository->saveManyOnLexicalEntry(
+                $lexicalEntryEntity,
+                collect($derivations)->map(function ($d) {
+                    return new LexicalEntryDerivation($d);
+                }),
+                collect($phoneticDevelopments)->map(function ($d) {
+                    return new LexicalEntryPhoneticDevelopment($d);
+                }),
+            );
         } catch (\Exception $ex) {
             throw $ex;
         }

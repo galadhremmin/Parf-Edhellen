@@ -124,6 +124,34 @@ class LexicalEntry extends ModelBase implements Interfaces\IHasFriendlyName, Int
     }
 
     /**
+     * This entry's ancestry hypotheses (rows where this entry is the derived word).
+     *
+     * @return HasMany<LexicalEntryDerivation, LexicalEntry>
+     */
+    public function lexical_entry_derivations(): HasMany
+    {
+        return $this->hasMany(LexicalEntryDerivation::class, 'lexical_entry_id');
+    }
+
+    /**
+     * Derivation rows where this entry is the ancestor — i.e. the words derived from it.
+     *
+     * @return HasMany<LexicalEntryDerivation, LexicalEntry>
+     */
+    public function descendant_derivations(): HasMany
+    {
+        return $this->hasMany(LexicalEntryDerivation::class, 'parent_lexical_entry_id');
+    }
+
+    /**
+     * @return HasMany<LexicalEntryPhoneticDevelopment, LexicalEntry>
+     */
+    public function lexical_entry_phonetic_developments(): HasMany
+    {
+        return $this->hasMany(LexicalEntryPhoneticDevelopment::class, 'lexical_entry_id');
+    }
+
+    /**
      * @return HasMany<AccountFeed>
      */
     public function account_feed(): HasMany
@@ -153,4 +181,4 @@ class LexicalEntry extends ModelBase implements Interfaces\IHasFriendlyName, Int
     {
         return $this->word->word;
     }
-} 
+}

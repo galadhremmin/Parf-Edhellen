@@ -2,15 +2,16 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\ProcessDerivationResolution;
 use App\Jobs\ProcessGlossDeprecation;
 use App\Jobs\ProcessGlossImport;
 use App\Models\Account;
 use App\Models\Gloss;
+use App\Models\Inflection;
+use App\Models\Language;
 use App\Models\LexicalEntry;
 use App\Models\LexicalEntryDetail;
 use App\Models\LexicalEntryGroup;
-use App\Models\Inflection;
-use App\Models\Language;
 use App\Models\Speech;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -96,10 +97,19 @@ class ImportEldamoCommand extends Command
                             $this->deleteAllBut($group, $entity->allIds);
                         }
 
+                        // The allIds record is the last line of the file, so every import job has been
+                        // dispatched at this point. The import queue is sequential, which guarantees that
+                        // all entries exist before the resolution pass links derivations to their parents.
+                        $groupIds = array_map(function ($group) {
+                            return $group->id;
+                        }, array_values($this->_lexicalEntryGroups));
+                        ProcessDerivationResolution::dispatch($groupIds)->onQueue('import');
+                        $this->line('!! dispatched derivation resolution job');
+
                     } else {
                         $data = $this->createImportData($entity);
                         if (! $data['lexical_entry']->language_id) {
-                            $this->line(sprintf('Skipping %s (line %d): unsupported language %s.', $data['lexical_entry']->external_id, $lineNumber, $entity['lexical_entry']->language));
+                            $this->line(sprintf('Skipping %s (line %d): unsupported language %s.', $data['lexical_entry']->external_id, $lineNumber, $entity->lexicalEntry->language));
 
                         } else {
                             $this->validateImports($lineNumber, $data);
@@ -145,45 +155,36 @@ class ImportEldamoCommand extends Command
         $lexicalEntry->source = implode('; ', $data->sources);
         $lexicalEntry->comments = $data->lexicalEntry->notes;
         $lexicalEntry->is_deleted = 0;
-        $lexicalEntry->is_uncertain = $data->lexicalEntry->mark === '?' ||
-                                 $data->lexicalEntry->mark === '*' ||
-                                 $data->lexicalEntry->mark === '‽' ||
-                                 $data->lexicalEntry->mark === '!' ||
-                                 $data->lexicalEntry->mark === '^' ||
-                                 $data->lexicalEntry->mark === '⚠️';
-        $lexicalEntry->is_rejected = $data->lexicalEntry->mark === '-';
+        // Marks can be compounded since Eldamo v0.8 (e.g. "-‽", "!†", "^#"), so match on
+        // containment rather than equality.
+        $mark = $data->lexicalEntry->mark;
+        $lexicalEntry->is_uncertain = $this->markContainsAny($mark, ['?', '*', '‽', '!', '^', '⚠️']);
+        $lexicalEntry->is_rejected = $this->markContainsAny($mark, ['-']);
 
         $groupName = 'default';
-        switch ($data->lexicalEntry->mark) {
-            case '!':
-                // ! marks words that are pure neologisms: fabrications and inventions by authors other than Tolkien
-                $groupName = 'fan invented';
-                break;
-            case '^':
-                $groupName = 'adaptations';
-                break;
-            case '?':
-                $lexicalEntry->label = 'Speculative';
-                break;
-            case '*':
-                $lexicalEntry->label = 'Reconstructed';
-                break;
-                /*
-                    For your purposes, you may not want to indicate "#" markers. Those are for items derived from well
-                    known principles from attested forms, and are pretty "safe". I think marking those as "Derived" would
-                    confuse your target audience of less knowledgeable students.
-                case '#':
-                    $gloss->label = 'Derived';
-                    break;
-                */
-                /*
-                    You may want to be careful about using deprecated tags and ⚠️ markers. Both are reflections
-                    of my opinion only.
-                case '⚠️':
-                    $gloss->label = 'Not recommended';
-                    break;
-                */
+        if ($this->markContainsAny($mark, ['!'])) {
+            // ! marks words that are pure neologisms: fabrications and inventions by authors other than Tolkien
+            $groupName = 'fan invented';
+        } elseif ($this->markContainsAny($mark, ['^'])) {
+            $groupName = 'adaptations';
         }
+
+        if ($this->markContainsAny($mark, ['?'])) {
+            $lexicalEntry->label = 'Speculative';
+        } elseif ($this->markContainsAny($mark, ['*'])) {
+            $lexicalEntry->label = 'Reconstructed';
+        } elseif ($this->markContainsAny($mark, ['†'])) {
+            // † marks words Tolkien identified as archaic or poetic.
+            $lexicalEntry->label = 'Archaic';
+        }
+        /*
+            For your purposes, you may not want to indicate "#" markers. Those are for items derived from well
+            known principles from attested forms, and are pretty "safe". I think marking those as "Derived" would
+            confuse your target audience of less knowledgeable students.
+
+            You may want to be careful about using deprecated tags and ⚠️ markers. Both are reflections
+            of my opinion only. [The | mark (revised/replaced form) is deliberately left unflagged, too.]
+        */
         $lexicalEntry->lexical_entry_group_id = $this->_lexicalEntryGroups[$groupName]->id;
 
         $this->setLanguage($data, $lexicalEntry);
@@ -195,6 +196,7 @@ class ImportEldamoCommand extends Command
         $keywords = $this->createKeywords($data, $lexicalEntry);
         $glosses = $this->createGlosses($data, $lexicalEntry);
         $sense = $glosses[0]->translation;
+        [$derivations, $phoneticDevelopments] = $this->createDerivations($data, $lexicalEntry);
 
         return [
             'details' => $details,
@@ -204,6 +206,8 @@ class ImportEldamoCommand extends Command
             'sense' => $sense,
             'glosses' => $glosses,
             'word' => $word,
+            'derivations' => $derivations,
+            'phonetic_developments' => $phoneticDevelopments,
         ];
     }
 
@@ -405,6 +409,118 @@ class ImportEldamoCommand extends Command
         return array_map(function ($v) {
             return new Gloss(['translation' => $v]);
         }, $translations);
+    }
+
+    /**
+     * Transforms the entry's `derivations` (one record per etymological hypothesis) into
+     * row arrays for `lexical_entry_derivations` and `lexical_entry_phonetic_developments`.
+     * Each hypothesis becomes a group of chain rows sharing a UUID, ordered from the
+     * immediate parent (order 0) towards the root. Parent references are recorded by
+     * external ID here and resolved to entry IDs by ProcessDerivationResolution.
+     *
+     * @return array [derivation rows, phonetic development rows]
+     */
+    private function createDerivations(object $data, LexicalEntry $lexicalEntry): array
+    {
+        $derivations = [];
+        $phoneticDevelopments = [];
+
+        if (empty($data->derivations)) {
+            return [$derivations, $phoneticDevelopments];
+        }
+
+        foreach ($data->derivations as $derivation) {
+            $uuid = (string) Uuid::uuid4();
+            $isUncertain = $this->markContainsAny($derivation->mark, ['?', '*', '‽', '!', '^', '⚠️']);
+            $isRejected = $this->markContainsAny($derivation->mark, ['-']);
+
+            $chain = $derivation->chain ?? null;
+            if (empty($chain)) {
+                // The parent could not be resolved to an Eldamo entry; retain the hypothesis
+                // with the information carried by the derivation itself.
+                $derivations[] = [
+                    'derivation_group_uuid' => $uuid,
+                    'order' => 0,
+                    'parent_external_id' => $derivation->parentExternalId,
+                    'parent_form' => $derivation->parentForm,
+                    'parent_language_id' => $this->getLanguageId($derivation->parentLanguage),
+                    'is_uncertain' => $isUncertain,
+                    'is_rejected' => $isRejected,
+                    'source' => $derivation->source,
+                    'comment' => $derivation->comment,
+                    'intermediate_stages' => $derivation->stages,
+                ];
+            } else {
+                foreach ($chain as $step) {
+                    $immediateParent = $step->depth === 0;
+                    $derivations[] = [
+                        'derivation_group_uuid' => $uuid,
+                        'order' => $step->depth,
+                        'parent_external_id' => $step->externalId,
+                        'parent_form' => $immediateParent && ! empty($derivation->parentForm)
+                            ? $derivation->parentForm
+                            : $step->form,
+                        'parent_language_id' => $this->getLanguageId($step->language),
+                        // Hypothesis-level metadata lives on the immediate parent row only;
+                        // deeper rows are denormalised chain context.
+                        'is_uncertain' => $immediateParent ? $isUncertain : false,
+                        'is_rejected' => $immediateParent ? $isRejected : false,
+                        'source' => $immediateParent ? $derivation->source : null,
+                        'comment' => $immediateParent ? $derivation->comment : null,
+                        'intermediate_stages' => $immediateParent ? $derivation->stages : null,
+                    ];
+                }
+            }
+
+            foreach ($derivation->phoneticDevelopments ?? [] as $order => $development) {
+                $phoneticDevelopments[] = [
+                    'derivation_group_uuid' => $uuid,
+                    'order' => $order,
+                    'word' => $development->stage,
+                    'rule' => $development->rule,
+                    'previous_word' => $development->from,
+                    'language_id' => $this->getLanguageId($development->language),
+                ];
+            }
+        }
+
+        return [$derivations, $phoneticDevelopments];
+    }
+
+    private function markContainsAny(?string $mark, array $needles): bool
+    {
+        if ($mark === null || $mark === '') {
+            return false;
+        }
+
+        foreach ($needles as $needle) {
+            if (str_contains($mark, $needle)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Maps an Eldamo language code to a language ID, or null when unsupported. Mirrors the
+     * precedence of setLanguage without its side effects.
+     */
+    private function getLanguageId(?string $eldamoLanguage): ?int
+    {
+        if ($eldamoLanguage === null) {
+            return null;
+        }
+
+        $neoLanguageMap = $this->getNeoLanguageMap();
+        if (isset($neoLanguageMap[$eldamoLanguage])) {
+            return $neoLanguageMap[$eldamoLanguage];
+        }
+
+        $languageMap = $this->getLanguageMap();
+        $languageId = $languageMap[$eldamoLanguage] ?? null;
+
+        return $languageId ?: null;
     }
 
     private function getLanguageMap()
