@@ -201,14 +201,34 @@ class BookAdapter
             // Sections are grouped in the view into a "normal" block and, below a warning divider, an
             // "unusual" (older/rejected conceptual period) block - normally in that fixed order regardless
             // of rating. A language's unusual status never changes; what can change is which block the view
-            // renders *first*. Lead with the unusual block only when the single best-rated entry overall
-            // (the one being promoted to the top of the page) is itself a genuine direct match - i.e. it's
-            // actually the right word, not just the least-bad fuzzy hit that happened to sort first.
+            // renders *first*. Lead with the unusual block only when both:
+            //  1. The single best-rated entry overall (the one being promoted to the top of the page) is
+            //     itself a genuine direct match - i.e. it's actually the right word, not just the
+            //     least-bad fuzzy hit that happened to sort first.
+            //  2. No "normal" language's own best entry has a reasonable match of its own to show instead -
+            //     otherwise a tie (or near-tie) gets arbitrarily decided by unrelated language ordering,
+            //     e.g. an unusual language edging out an equally-good normal-language match by one spot.
             $topLanguageData = $languagesWithMaxRatings[0] ?? null;
             $topEntry = $topLanguageData['entries'][0] ?? null;
+
+            $hasCompetingNormalMatch = false;
+            foreach ($languagesWithMaxRatings as $languageData) {
+                if ($languageData['language']->is_unusual) {
+                    continue;
+                }
+
+                $candidateTopEntry = $languageData['entries'][0] ?? null;
+                if ($candidateTopEntry !== null && ! empty($candidateTopEntry->has_reasonable_match)) {
+                    $hasCompetingNormalMatch = true;
+
+                    break;
+                }
+            }
+
             $leadWithUnusual = $topLanguageData !== null
                 && (bool) $topLanguageData['language']->is_unusual
-                && ! empty($topEntry->is_direct_match);
+                && ! empty($topEntry->is_direct_match)
+                && ! $hasCompetingNormalMatch;
 
             return [
                 'word' => $word,
@@ -657,11 +677,11 @@ class BookAdapter
         $searchTerms = self::extractSearchTerms($word);
 
         // 1. WORD FIELD (highest priority - exact word matches)
-        $wordRating = self::calculateWordFieldRating($lexicalEntry->word, $normalizedWord, $searchTerms);
+        [$wordRating, $wordHasSubstringMatch] = self::calculateWordFieldRating($lexicalEntry->word, $normalizedWord, $searchTerms);
         $rating += $wordRating * 1000000; // Highest weight
 
         // 2. TRANSLATIONS FIELD (high priority - English translations)
-        $translationRating = self::calculateTranslationFieldRating($lexicalEntry->glosses, $normalizedWord, $searchTerms);
+        [$translationRating, $translationHasSubstringMatch] = self::calculateTranslationFieldRating($lexicalEntry->glosses, $normalizedWord, $searchTerms);
         $rating += $translationRating * 100000; // High weight
 
         // A "direct match" is a genuine substring/exact hit on the word or its translation - as opposed to
@@ -669,6 +689,15 @@ class BookAdapter
         // "unusual" language's result is good enough to bypass the older-languages grouping (see
         // adaptLexicalEntries).
         $lexicalEntry->is_direct_match = $wordRating >= 80 || $translationRating >= 65;
+
+        // A looser signal than `is_direct_match`: true the moment *any* substring-level hit (contains,
+        // starts-with, word-boundary, exact) turns up on the word or *any* of its glosses - it doesn't
+        // have to be the entry's best-scoring field, and doesn't need to clear the `is_direct_match`
+        // bar. Deliberately excludes the character-similarity fallback tier, which can score misleadingly
+        // high on coincidental overlap (e.g. "home" vs "at home") without actually containing the term.
+        // Used to check whether a *normal* language has a competing match of its own before letting an
+        // "unusual" language's better match promote it above the divider (see adaptLexicalEntries).
+        $lexicalEntry->has_reasonable_match = $wordHasSubstringMatch || $translationHasSubstringMatch;
 
         // 3. COMMENTS FIELD (medium priority - rich context)
         if (! empty($lexicalEntry->comments)) {
@@ -727,17 +756,21 @@ class BookAdapter
     }
 
     /**
-     * Calculate rating for the word field (highest priority)
+     * Calculate rating for the word field (highest priority).
+     *
+     * @return array{0: int, 1: bool} The rating, and whether any substring-level (non-fuzzy) tier matched.
      */
-    private static function calculateWordFieldRating(string $lexicalEntryWord, string $normalizedWord, array $searchTerms): int
+    private static function calculateWordFieldRating(string $lexicalEntryWord, string $normalizedWord, array $searchTerms): array
     {
         $rating = 0;
+        $hasSubstringMatch = false;
         $normalizedLexicalEntryWord = StringHelper::normalize($lexicalEntryWord);
 
         foreach ($searchTerms as $term) {
             // Exact match (highest score)
             if (strcasecmp($lexicalEntryWord, $term) === 0) {
                 $rating = max($rating, 100);
+                $hasSubstringMatch = true;
 
                 continue;
             }
@@ -745,6 +778,7 @@ class BookAdapter
             // Normalized exact match
             if (strcasecmp($normalizedLexicalEntryWord, $term) === 0) {
                 $rating = max($rating, 95);
+                $hasSubstringMatch = true;
 
                 continue;
             }
@@ -752,6 +786,7 @@ class BookAdapter
             // Starts with match
             if (stripos($lexicalEntryWord, $term) === 0) {
                 $rating = max($rating, 80);
+                $hasSubstringMatch = true;
 
                 continue;
             }
@@ -759,6 +794,7 @@ class BookAdapter
             // Contains match
             if (stripos($lexicalEntryWord, $term) !== false) {
                 $rating = max($rating, 60);
+                $hasSubstringMatch = true;
 
                 continue;
             }
@@ -771,15 +807,19 @@ class BookAdapter
             }
         }
 
-        return $rating;
+        return [$rating, $hasSubstringMatch];
     }
 
     /**
-     * Calculate rating for the translations field
+     * Calculate rating for the translations field.
+     *
+     * @return array{0: int, 1: bool} The rating, and whether any substring-level (non-fuzzy) tier matched
+     *                                on any gloss.
      */
-    private static function calculateTranslationFieldRating(Collection $glosses, string $normalizedWord, array $searchTerms): int
+    private static function calculateTranslationFieldRating(Collection $glosses, string $normalizedWord, array $searchTerms): array
     {
         $maxRating = 0;
+        $hasSubstringMatch = false;
 
         foreach ($glosses as $gloss) {
             $glossText = $gloss->translation;
@@ -789,6 +829,7 @@ class BookAdapter
                 // Exact match
                 if (strcasecmp($glossText, $term) === 0) {
                     $maxRating = max($maxRating, 90);
+                    $hasSubstringMatch = true;
 
                     continue;
                 }
@@ -796,6 +837,7 @@ class BookAdapter
                 // Normalized exact match
                 if (strcasecmp($normalizedGlossText, $term) === 0) {
                     $maxRating = max($maxRating, 85);
+                    $hasSubstringMatch = true;
 
                     continue;
                 }
@@ -803,6 +845,7 @@ class BookAdapter
                 // Word boundary match (check if term is a complete word)
                 if (preg_match('/\b'.preg_quote($term, '/').'\b/i', $glossText)) {
                     $maxRating = max($maxRating, 75);
+                    $hasSubstringMatch = true;
 
                     continue;
                 }
@@ -810,6 +853,7 @@ class BookAdapter
                 // Starts with match
                 if (stripos($glossText, $term) === 0) {
                     $maxRating = max($maxRating, 65);
+                    $hasSubstringMatch = true;
 
                     continue;
                 }
@@ -817,6 +861,7 @@ class BookAdapter
                 // Contains match
                 if (stripos($glossText, $term) !== false) {
                     $maxRating = max($maxRating, 50);
+                    $hasSubstringMatch = true;
 
                     continue;
                 }
@@ -830,7 +875,7 @@ class BookAdapter
             }
         }
 
-        return $maxRating;
+        return [$maxRating, $hasSubstringMatch];
     }
 
     /**
