@@ -32,6 +32,11 @@ export interface IFindResponse {
 export interface IEntitiesRequestData {
     lexicalEntryGroupIds?: number[];
     includeOld: boolean;
+    /** The literal inflected/matched keyword the user actually searched for, when it differs from
+     * `word` (the entry's real headword) — e.g. searching "lond-" navigates here with `word: "lon(de)"`
+     * and `inflection: "lond-"`. Not consumed by the backend search itself; carried through purely so
+     * the UI can (in the future) indicate "you searched for the inflected form X". */
+    inflection?: string;
     inflections?: boolean;
     languageId?: number;
     normalizedWord?: string;
@@ -41,6 +46,10 @@ export interface IEntitiesRequestData {
 
 export interface IGlossaryResponse<T = ILexicalEntryEntity> {
     languages: ILanguageEntity[] | null;
+    /** True when the best overall match lives in an "unusual" language and no normal language has a direct
+     * match of its own — in that case the view should lead with the unusual section instead of the usual
+     * normal-first order. */
+    leadWithUnusual?: boolean;
     sections: {
         entities: T[];
         language: ILanguageEntity;

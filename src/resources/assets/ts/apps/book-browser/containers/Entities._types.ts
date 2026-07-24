@@ -16,6 +16,9 @@ export interface IEntitiesComponentProps<T = ILexicalEntryEntity> {
     languageDictionary?: ILanguageEntity[];
     /** The "common languages" grouping used for the unusual-languages UI toggle. */
     languages?: ILanguageEntity[];
+    /** True when the best overall match lives in an "unusual" language and no normal language has a direct
+     * match of its own — the unusual section should then render above the normal one. */
+    leadWithUnusual?: boolean;
     loading: boolean;
     sections?: ISectionsState<T>;
     single: boolean;

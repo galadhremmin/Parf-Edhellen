@@ -7,12 +7,11 @@ function UnusualLanguagesWarning({
 }: IProps) {
     return <div className="text-center mt-4">
         <h3>
-            There are more words but they are from Tolkien's earlier conceptional periods
+            The entries below are from Tolkien's earlier conceptional periods
         </h3>
         <p>
             Tolkien likely changed these words as he evolved the aesthetics and completeness of the languages. You may even find
-            languages that Tolkien later rejected. Do not mix words from different time periods unless you are familiar with the
-            phonetic developments.
+            languages that Tolkien later rejected. Avoid mixing words from different time periods.
         </p>
         {showOverrideOption && <>
             <p>

@@ -51,6 +51,7 @@ class BookAdapter
                 'sections' => [],
                 'single' => false,
                 'sense' => [],
+                'lead_with_unusual' => false,
             ];
         }
 
@@ -79,6 +80,7 @@ class BookAdapter
                 'languages' => $allLanguages,
                 'single' => true,
                 'sense' => [$lexicalEntry->sense_id],
+                'lead_with_unusual' => false,
             ];
         }
 
@@ -196,12 +198,25 @@ class BookAdapter
                 ];
             }
 
+            // Sections are grouped in the view into a "normal" block and, below a warning divider, an
+            // "unusual" (older/rejected conceptual period) block - normally in that fixed order regardless
+            // of rating. A language's unusual status never changes; what can change is which block the view
+            // renders *first*. Lead with the unusual block only when the single best-rated entry overall
+            // (the one being promoted to the top of the page) is itself a genuine direct match - i.e. it's
+            // actually the right word, not just the least-bad fuzzy hit that happened to sort first.
+            $topLanguageData = $languagesWithMaxRatings[0] ?? null;
+            $topEntry = $topLanguageData['entries'][0] ?? null;
+            $leadWithUnusual = $topLanguageData !== null
+                && (bool) $topLanguageData['language']->is_unusual
+                && ! empty($topEntry->is_direct_match);
+
             return [
                 'word' => $word,
                 'sections' => $sections,
                 'languages' => $allLanguages,
                 'single' => false,
                 'sense' => $sense,
+                'lead_with_unusual' => $leadWithUnusual,
             ];
 
         }
@@ -215,6 +230,7 @@ class BookAdapter
             'languages' => $allLanguages,
             'single' => false,
             'sense' => $sense,
+            'lead_with_unusual' => false,
         ];
     }
 
@@ -631,6 +647,8 @@ class BookAdapter
     public static function calculateRating(\stdClass $lexicalEntry, string $word)
     {
         if (empty($word)) {
+            $lexicalEntry->is_direct_match = false;
+
             return 1 << 31;
         }
 
@@ -645,6 +663,12 @@ class BookAdapter
         // 2. TRANSLATIONS FIELD (high priority - English translations)
         $translationRating = self::calculateTranslationFieldRating($lexicalEntry->glosses, $normalizedWord, $searchTerms);
         $rating += $translationRating * 100000; // High weight
+
+        // A "direct match" is a genuine substring/exact hit on the word or its translation - as opposed to
+        // a fuzzy similarity match or a hit buried in comments/details/source. Used to decide whether an
+        // "unusual" language's result is good enough to bypass the older-languages grouping (see
+        // adaptLexicalEntries).
+        $lexicalEntry->is_direct_match = $wordRating >= 80 || $translationRating >= 65;
 
         // 3. COMMENTS FIELD (medium priority - rich context)
         if (! empty($lexicalEntry->comments)) {

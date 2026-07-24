@@ -11,6 +11,7 @@ import Cache from '@root/utilities/Cache';
 import { SearchActions } from '../../actions';
 import type { IBrowserHistoryState } from '../../actions/SearchActions._types';
 import type { IEntitiesComponentProps } from '../../containers/Entities._types';
+import CurrentLanguagesDivider from './CurrentLanguagesDivider';
 import GlossaryEntitiesEmpty from '../GlossaryEntitiesEmpty';
 import GlossaryEntitiesLoading from './GlossaryEntitiesLoading';
 import GlossaryLanguages from './GlossaryLanguages';
@@ -37,6 +38,7 @@ function GlossaryEntities(props: IEntitiesComponentProps) {
         forceShowUnusualLanguages,
         languageDictionary,
         languages: commonLanguages,
+        leadWithUnusual,
         loading,
         isEmpty,
         sections,
@@ -93,15 +95,13 @@ function GlossaryEntities(props: IEntitiesComponentProps) {
         }
     }
 
-    // Combine visible languages for the minimap — common + unusual (if shown)
-    const showUnusual = (forceShowUnusualLanguages || showUnusualLanguages) && unusualLanguages?.length > 0;
+    // Combine visible languages for the minimap — common + unusual (if shown), in whichever order they render.
+    const showUnusual = unusualLanguages?.length > 0 && (leadWithUnusual || forceShowUnusualLanguages || showUnusualLanguages);
     const minimapLanguages = useMemo(() => {
-        const langs = [...(commonLanguages || [])];
-        if (showUnusual && unusualLanguages) {
-            langs.push(...unusualLanguages);
-        }
-        return langs;
-    }, [commonLanguages, unusualLanguages, showUnusual]);
+        const common = commonLanguages || [];
+        const unusual = showUnusual && unusualLanguages ? unusualLanguages : [];
+        return leadWithUnusual ? [...unusual, ...common] : [...common, ...unusual];
+    }, [commonLanguages, unusualLanguages, showUnusual, leadWithUnusual]);
 
     const showMinimap = ! loading && ! isEmpty && ! single && minimapLanguages.length >= 2;
 
@@ -114,6 +114,25 @@ function GlossaryEntities(props: IEntitiesComponentProps) {
             <WordListMembershipProvider sections={sections}>
                 <Waypoint onPositionChange={_onPositionChange} bottomOffset="50%">
                     <div className="ed-glossary-waypoint" ref={waypointRef}>
+                        {/* The single best-rated entry overall is a genuine direct match and lives in an
+                            "unusual" (older/rejected conceptual period) language — lead with it, fully shown
+                            (no opt-in gate — it's the right word, not just the least-bad fuzzy hit), instead
+                            of burying it below the normal languages. A divider then marks where the current
+                            languages resume, since they'd otherwise be hard to spot below the older ones. */}
+                        {leadWithUnusual && unusualLanguages?.length > 0 && <>
+                            <UnusualLanguagesWarning />
+                            <GlossaryLanguages
+                                className="ed-glossary--unusual"
+                                languages={unusualLanguages}
+                                entityMorph={entityMorph}
+                                featureBestMatch={true}
+                                sections={sections}
+                                single={single}
+                                word={word}
+                                onReferenceClick={onReferenceClick}
+                            />
+                            <CurrentLanguagesDivider />
+                        </>}
                         <GlossaryLanguages
                             languages={commonLanguages}
                             entityMorph={entityMorph}
@@ -123,7 +142,7 @@ function GlossaryEntities(props: IEntitiesComponentProps) {
                             word={word}
                             onReferenceClick={onReferenceClick}
                         />
-                        {unusualLanguages?.length > 0 && <>
+                        {! leadWithUnusual && unusualLanguages?.length > 0 && <>
                             <UnusualLanguagesWarning
                                 showOverrideOption={! forceShowUnusualLanguages && ! showUnusualLanguages}
                                 onOverrideOptionTriggered={_onUnusualLanguagesShowClick}
@@ -163,8 +182,10 @@ function onPopState(actions: SearchActions, dispatch: ReduxThunkDispatch, ev: Po
             updateBrowserHistory: false,
         },
     });
+    // `state.word` is the resolved headword, but the search suggestions list is keyed by the literal
+    // matched keyword — which is `state.inflection` when this navigation came from an inflected form.
     dispatch(
-        actions.selectSearchResultByWord(state.word),
+        actions.selectSearchResultByWord(state.inflection || state.word),
     );
 }
 
@@ -173,7 +194,7 @@ function onPopState(actions: SearchActions, dispatch: ReduxThunkDispatch, ev: Po
 */
 function onReferenceClick(ev: IComponentEvent<IReferenceLinkClickDetails>) {
    const globalEvents = resolve(DI.GlobalEvents);
-   globalEvents.fire(globalEvents.loadReference, ev.value);
+   globalEvents?.fire(globalEvents.loadReference, ev.value);
 }
 
 const BouncingArrowAsync = lazy(() => import('@root/components/BouncingArrow'));

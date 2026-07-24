@@ -107,6 +107,7 @@ const mapStateToProps = (state: RootReducer): IEntitiesComponentProps => ({
     // Glossary
     isEmpty: state.categories.isEmpty,
     languages: state.categories.common,
+    leadWithUnusual: state.entities.leadWithUnusual,
     unusualLanguages: state.categories.unusual,
 });
 

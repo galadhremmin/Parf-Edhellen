@@ -12,6 +12,8 @@ export interface IExpandSearchResultAction {
 export interface IBrowserHistoryState {
     glossary: boolean;
     groupId: number;
+    /** See `IEntitiesRequestData.inflection` — the literal inflected form searched for, if any. */
+    inflection?: string;
     languageShortName: string;
     normalizedWord: string;
     word: string;

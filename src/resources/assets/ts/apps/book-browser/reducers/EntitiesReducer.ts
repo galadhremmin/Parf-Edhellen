@@ -28,6 +28,7 @@ const EntitiesReducer = (state: IEntitiesState = {
                 groupId: action.groupId,
                 groupIntlName: action.groupIntlName,
                 languages: action.entities.languages || [],
+                leadWithUnusual: action.entities.leadWithUnusual || false,
                 single: action.single,
                 word: action.word,
             };

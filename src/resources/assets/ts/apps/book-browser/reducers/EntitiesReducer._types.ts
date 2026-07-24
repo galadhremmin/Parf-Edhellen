@@ -15,6 +15,7 @@ export interface IEntitiesState {
     groupId: number;
     groupIntlName: string;
     languages: ILanguageEntity[];
+    leadWithUnusual?: boolean;
     loading: boolean;
     single: boolean;
     word: string;

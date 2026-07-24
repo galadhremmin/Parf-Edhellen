@@ -200,7 +200,16 @@ export default class SearchActions {
                 speechIds = args.speechIds;
             }
 
-            const word = args.searchResult.word;
+            // `searchResult.word` is the literal matched keyword, which can be an inflected form (e.g.
+            // "lond-") distinct from the entry's real headword (`originalWord`, e.g. "lon(de)"). Search by
+            // the headword so the result ranks correctly on its own merits, but carry the inflected form
+            // along as a separate `inflection` field (URL query param + history state) purely so a future
+            // UI can indicate "you searched for the inflected form X" without another backend round-trip.
+            const matchedKeyword = args.searchResult.word;
+            const isInflection = !! args.searchResult.originalWord && args.searchResult.originalWord !== matchedKeyword;
+            const word = isInflection ? args.searchResult.originalWord : matchedKeyword;
+            const inflection = isInflection ? matchedKeyword : undefined;
+            const normalizedWord = isInflection ? args.searchResult.originalWord : args.searchResult.normalizedWord;
 
             let language: ILanguageEntity = null;
             let languageShortName: string = null;
@@ -212,11 +221,12 @@ export default class SearchActions {
 
             const request: IEntitiesRequest = {
                 data: {
+                    inflection,
                     lexicalEntryGroupIds,
                     includeOld,
                     inflections: true,
                     languageId,
-                    normalizedWord: args.searchResult.normalizedWord,
+                    normalizedWord,
                     speechIds,
                     word,
                 },
@@ -234,9 +244,10 @@ export default class SearchActions {
                 const nextState: IBrowserHistoryState = {
                     glossary: true,
                     groupId: searchResult.groupId,
+                    inflection,
                     languageShortName,
-                    normalizedWord: searchResult.normalizedWord,
-                    word: searchResult.word,
+                    normalizedWord,
+                    word,
                 };
                 window.history.pushState(nextState, title, address);
             }
@@ -248,7 +259,7 @@ export default class SearchActions {
                 address,
                 groupId: searchResult.groupId,
                 languageId: language?.id,
-                word: searchResult.word,
+                word,
             });
 
             dispatch(this.selectSearchResult(args.searchResult));
@@ -408,13 +419,17 @@ export default class SearchActions {
 
         // embellish the address with configuration values that are not supported by the native URL format
         const supportedSettings: (keyof typeof args.data)[] = [
-            'lexicalEntryGroupIds', 'includeOld', 'speechIds',
+            'lexicalEntryGroupIds', 'includeOld', 'speechIds', 'inflection',
         ];
 
         const settings: { [key: string]: any } = {};
         let noOfSettings = 0;
         for (const setting of supportedSettings) {
             const value = args.data[setting];
+            if (value === undefined) {
+                continue;
+            }
+
             // tslint:disable-next-line: no-bitwise
             settings[toSnakeCase(setting)] = typeof value === 'boolean' ? ~~value : value;
             noOfSettings += 1;
